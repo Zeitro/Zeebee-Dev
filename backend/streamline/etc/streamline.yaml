@@ -1,0 +1,6 @@
+Name: streamline
+Host: 0.0.0.0
+Port: 8889
+
+# 数据库配置
+DataSource: host=localhost port=5432 user=zeebee password=zeebee123 dbname=zeebee sslmode=disable

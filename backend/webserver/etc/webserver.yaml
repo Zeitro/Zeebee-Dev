@@ -1,0 +1,28 @@
+Name: webserver
+Host: 0.0.0.0
+Port: 8888
+
+# 数据库配置
+DataSource: host=localhost port=5432 user=zeebee password=zeebee123 dbname=zeebee sslmode=disable
+
+# JWT配置
+Auth:
+  AccessSecret: zeebee-jwt-secret-key
+  AccessExpire: 86400
+
+# 日志配置
+Log:
+  ServiceName: webserver
+  Mode: console
+  Level: info
+  Compress: false
+  KeepDays: 7
+  StackCooldownMillis: 100
+
+# 服务发现配置
+Etcd:
+  etcd:
+    Hosts:
+      - localhost:2379
+    Key: webserver.rpc
+

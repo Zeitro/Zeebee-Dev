@@ -1,0 +1,12 @@
+version: '3.8'
+
+# TBD
+services:
+  # PostgreSQL数据库
+
+
+  # etcd服务发现
+
+
+  # Webserver服务
+ 
