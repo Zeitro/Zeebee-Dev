@@ -1,10 +1,10 @@
 package model
 
 import (
-	"database/sql"
 	"time"
 
 	_ "github.com/lib/pq"
+	"gorm.io/gorm"
 )
 
 type User struct {
@@ -19,23 +19,15 @@ type User struct {
 }
 
 type UserModel struct {
-	db *sql.DB
+	// db *sql.DB
+	db *gorm.DB
 }
 
-func NewUserModel(dataSource string) *UserModel {
-	db, err := sql.Open("postgres", dataSource)
-	if err != nil {
-		panic(err)
-	}
-
-	// Test the connection
-	if err := db.Ping(); err != nil {
-		panic(err)
-	}
+func NewUserModel(db *gorm.DB) *UserModel {
 
 	return &UserModel{db: db}
 }
 
-func (m *UserModel) Close() error {
-	return m.db.Close()
-}
+// func (m *UserModel) Close() error {
+// 	return m.db.Close()
+// }

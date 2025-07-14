@@ -1,0 +1,26 @@
+syntax = "v1"
+
+info (
+	title:  "borrower-api http service" // TODO: add title
+	desc:   "borrower-api http service description" // TODO: add description
+	author: ""
+	email:  ""
+)
+
+type request {}
+
+type response {}
+
+@server (
+	desc:    "borrower-api service"
+	version: "v1"
+	group:   ""
+)
+service borrower-api {
+	@handler GetUser // TODO: set handler name and delete this comment
+	get /users/id/:userId (request) returns (response)
+
+	@handler CreateUser // TODO: set handler name and delete this comment
+	post /users/create (request)
+}
+
