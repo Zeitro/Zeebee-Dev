@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package borrower;
+option go_package="./borrower";
+
+message Request {
+  string ping = 1;
+}
+
+message Response {
+  string pong = 1;
+}
+
+service Borrower {
+  rpc Ping(Request) returns(Response);
+}
