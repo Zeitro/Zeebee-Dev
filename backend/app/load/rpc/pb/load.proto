@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package load;
+option go_package="./load";
+
+message Request {
+  string ping = 1;
+}
+
+message Response {
+  string pong = 1;
+}
+
+service Load {
+  rpc Ping(Request) returns(Response);
+}
