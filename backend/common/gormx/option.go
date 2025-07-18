@@ -1,5 +1,10 @@
 package gormx
 
+type WhereRaw struct {
+	Raw  string
+	Args []interface{}
+}
+
 // QueryOption query option
 type QueryOption struct {
 	Filter   []WhereRaw

@@ -4,11 +4,11 @@ Mode: dev
 
 JwtAuth:
   AccessSecret: accessSecret
-  AccessExpire: 7200
+  AccessExpire: 86400
 
 #Etcd:
 #  Hosts:
 #  - 127.0.0.1:2379
 #  Key: user.rpc
 DbConf:
-  dsn: "host=localhost user=dev_user password=dev_password dbname=dev_db port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+  dsn: "host=localhost user=dev_user password=dev_password dbname=dev_db port=5432 sslmode=disable TimeZone=UTC"

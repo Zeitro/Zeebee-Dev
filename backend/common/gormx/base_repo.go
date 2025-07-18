@@ -10,14 +10,11 @@ import (
 
 type BaseRepo[T schema.Tabler] struct {
 	db *gorm.DB
-	// model T
 }
 
 func NewBaseRepo[T schema.Tabler](db *gorm.DB) *BaseRepo[T] {
-	// m := new(T)
 	return &BaseRepo[T]{
 		db: db,
-		// model: *m,
 	}
 }
 
@@ -51,18 +48,7 @@ func (repo *BaseRepo[T]) Transaction(ctx context.Context, fn func(tx *gorm.DB) e
 	return repo.db.WithContext(ctx).Transaction(fn)
 }
 
-// IsExisted check is exist
-func (repo *BaseRepo[T]) IsExisted(ctx context.Context, opt QueryOption) (bool, error) {
-	query := repo.Client(ctx)
-	query = repo.BuildQuery(query, opt)
-	var count int64
-	err := query.Count(&count).Error
-	if err != nil {
-		return false, err
-	}
-	return count > 0, nil
-}
-
+// IsExistedByColumns check is exist by columns
 func (repo *BaseRepo[T]) IsExistedByColumns(ctx context.Context, columns map[string]interface{}) (bool, error) {
 	query := repo.Client(ctx)
 	for k, v := range columns {
@@ -98,27 +84,10 @@ func (repo *BaseRepo[T]) CreateWithTx(ctx context.Context, tx *gorm.DB, data T) 
 func (repo *BaseRepo[T]) FindOneById(ctx context.Context, id int64) (T, error) {
 	var data T
 	var err error
-	filters := []WhereRaw{
-		{
-			Raw:  "id = ?",
-			Args: []interface{}{id},
-		},
-	}
-	data, err = repo.FindOne(ctx, NewQueryOption(WithFilterOpt(filters)))
+	data, err = repo.FindOneByColumns(ctx, map[string]interface{}{
+		"id": id,
+	})
 	return data, err
-}
-
-// FindOne find one
-func (repo *BaseRepo[T]) FindOne(ctx context.Context, opt QueryOption) (T, error) {
-	query := repo.Client(ctx)
-
-	query = repo.BuildQuery(query, opt)
-	var data T
-	err := query.First(&data).Error
-	if err != nil {
-		return data, err
-	}
-	return data, nil
 }
 
 // FindOneByColumns find one by columns
@@ -137,22 +106,21 @@ func (repo *BaseRepo[T]) FindOneByColumns(ctx context.Context, columns map[strin
 
 // DeleteById delete one
 func (repo *BaseRepo[T]) DeleteByID(ctx context.Context, id int64) (effectRaws int64, err error) {
-	filters := []WhereRaw{
-		{
-			Raw:  "id = ?",
-			Args: []interface{}{id},
-		},
-	}
-	return repo.Delete(ctx, NewQueryOption(WithFilterOpt(filters)))
+
+	return repo.Delete(ctx, map[string]interface{}{
+		"id": id,
+	})
 }
 
 // Delete delete
-func (repo *BaseRepo[T]) Delete(ctx context.Context, opt QueryOption) (effectRaws int64, err error) {
-	if len(opt.Filter) == 0 {
+func (repo *BaseRepo[T]) Delete(ctx context.Context, filters map[string]interface{}) (effectRaws int64, err error) {
+	if len(filters) == 0 {
 		return 0, errors.New("filters is empty")
 	}
 	query := repo.Client(ctx)
-	query = repo.BuildQuery(query, opt)
+	for k, v := range filters {
+		query = query.Where(k+" = ?", v)
+	}
 	err = query.Delete(new(T)).Error
 	if err != nil {
 		return 0, err
@@ -191,9 +159,12 @@ func (repo *BaseRepo[T]) Page(query *gorm.DB, pageReq PageRequest) (page PageRes
 }
 
 // FindAll find all
-func (repo *BaseRepo[T]) FindAll(ctx context.Context, opt QueryOption) ([]T, error) {
+func (repo *BaseRepo[T]) FindAll(ctx context.Context, filter map[string]interface{}) ([]T, error) {
 	query := repo.Client(ctx)
-	query = repo.BuildQuery(query, opt)
+	for k, v := range filter {
+		query = query.Where(k+" = ?", v)
+	}
+
 	var data []T
 	err := query.Find(&data).Error
 	return data, err

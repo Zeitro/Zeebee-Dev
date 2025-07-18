@@ -1,9 +1,12 @@
 package repo
 
 import (
+	"context"
+
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/borrower/rpc/internal/repo/model"
+	"zeebee-backend/common/constants"
 	"zeebee-backend/common/gormx"
 )
 
@@ -17,4 +20,13 @@ func NewUserRepo(db *gorm.DB) *UserRepo {
 		BaseRepo: gormx.NewBaseRepo[*model.User](db),
 		m:        new(model.User),
 	}
+}
+
+// GetBorrowerUser
+func (repo *UserRepo) GetBorrowerUser(ctx context.Context, id int64) (res *model.User, err error) {
+	err = repo.BaseRepo.Client(ctx).
+		Where("id = ? and type = ?", id, constants.UserTypeBorrower).
+		Preload("Borrower").
+		First(&res).Error
+	return res, err
 }

@@ -5,11 +5,10 @@ import (
 
 	"github.com/pkg/errors"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/gormx"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type GetUserInfoLogic struct {
@@ -27,18 +26,7 @@ func NewGetUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUs
 }
 
 func (l *GetUserInfoLogic) GetUserInfo(in *borrower.UserInfoRequest) (*borrower.UserinfoResponse, error) {
-
-	opt := gormx.NewQueryOption(
-		gormx.WithFilterOpt([]gormx.WhereRaw{{Raw: "id = ?", Args: []interface{}{in.Id}}}),
-		gormx.WithPreloadsOpt([]string{"Borrower"}),
-	)
-
-	user, err := l.svcCtx.UserRepo.FindOne(l.ctx, opt)
-
-	// opt := repo.QueryOpt{
-	// 	Preloads: []string{"Borrower"},
-	// }
-	// user, err := repo.GetOneById[*model.User](l.ctx, in.Id, opt)
+	user, err := l.svcCtx.UserRepo.GetBorrowerUser(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
 	}
