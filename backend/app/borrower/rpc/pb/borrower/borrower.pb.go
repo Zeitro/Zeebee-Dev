@@ -21,27 +21,26 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type Request struct {
+type EmptyRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Ping          string                 `protobuf:"bytes,1,opt,name=ping,proto3" json:"ping,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *Request) Reset() {
-	*x = Request{}
+func (x *EmptyRequest) Reset() {
+	*x = EmptyRequest{}
 	mi := &file_app_borrower_rpc_pb_borrower_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Request) String() string {
+func (x *EmptyRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Request) ProtoMessage() {}
+func (*EmptyRequest) ProtoMessage() {}
 
-func (x *Request) ProtoReflect() protoreflect.Message {
+func (x *EmptyRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_app_borrower_rpc_pb_borrower_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -53,40 +52,122 @@ func (x *Request) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Request.ProtoReflect.Descriptor instead.
-func (*Request) Descriptor() ([]byte, []int) {
+// Deprecated: Use EmptyRequest.ProtoReflect.Descriptor instead.
+func (*EmptyRequest) Descriptor() ([]byte, []int) {
 	return file_app_borrower_rpc_pb_borrower_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Request) GetPing() string {
+type EmptyResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EmptyResponse) Reset() {
+	*x = EmptyResponse{}
+	mi := &file_app_borrower_rpc_pb_borrower_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EmptyResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EmptyResponse) ProtoMessage() {}
+
+func (x *EmptyResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_app_borrower_rpc_pb_borrower_proto_msgTypes[1]
 	if x != nil {
-		return x.Ping
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EmptyResponse.ProtoReflect.Descriptor instead.
+func (*EmptyResponse) Descriptor() ([]byte, []int) {
+	return file_app_borrower_rpc_pb_borrower_proto_rawDescGZIP(), []int{1}
+}
+
+// login
+type UserLoginRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
+	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UserLoginRequest) Reset() {
+	*x = UserLoginRequest{}
+	mi := &file_app_borrower_rpc_pb_borrower_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserLoginRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserLoginRequest) ProtoMessage() {}
+
+func (x *UserLoginRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_app_borrower_rpc_pb_borrower_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserLoginRequest.ProtoReflect.Descriptor instead.
+func (*UserLoginRequest) Descriptor() ([]byte, []int) {
+	return file_app_borrower_rpc_pb_borrower_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *UserLoginRequest) GetEmail() string {
+	if x != nil {
+		return x.Email
 	}
 	return ""
 }
 
-type Response struct {
+func (x *UserLoginRequest) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
+}
+
+type UserLoginResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Pong          string                 `protobuf:"bytes,1,opt,name=pong,proto3" json:"pong,omitempty"`
+	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *Response) Reset() {
-	*x = Response{}
-	mi := &file_app_borrower_rpc_pb_borrower_proto_msgTypes[1]
+func (x *UserLoginResponse) Reset() {
+	*x = UserLoginResponse{}
+	mi := &file_app_borrower_rpc_pb_borrower_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Response) String() string {
+func (x *UserLoginResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Response) ProtoMessage() {}
+func (*UserLoginResponse) ProtoMessage() {}
 
-func (x *Response) ProtoReflect() protoreflect.Message {
-	mi := &file_app_borrower_rpc_pb_borrower_proto_msgTypes[1]
+func (x *UserLoginResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_app_borrower_rpc_pb_borrower_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -97,14 +178,288 @@ func (x *Response) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Response.ProtoReflect.Descriptor instead.
-func (*Response) Descriptor() ([]byte, []int) {
-	return file_app_borrower_rpc_pb_borrower_proto_rawDescGZIP(), []int{1}
+// Deprecated: Use UserLoginResponse.ProtoReflect.Descriptor instead.
+func (*UserLoginResponse) Descriptor() ([]byte, []int) {
+	return file_app_borrower_rpc_pb_borrower_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *Response) GetPong() string {
+func (x *UserLoginResponse) GetToken() string {
 	if x != nil {
-		return x.Pong
+		return x.Token
+	}
+	return ""
+}
+
+// register
+type UserRegisterRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
+	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+	FirstName     string                 `protobuf:"bytes,3,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
+	LastName      string                 `protobuf:"bytes,4,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
+	PhoneNumber   string                 `protobuf:"bytes,5,opt,name=phone_number,json=phoneNumber,proto3" json:"phone_number,omitempty"`
+	Address       string                 `protobuf:"bytes,6,opt,name=address,proto3" json:"address,omitempty"`
+	Ssn           string                 `protobuf:"bytes,7,opt,name=ssn,proto3" json:"ssn,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UserRegisterRequest) Reset() {
+	*x = UserRegisterRequest{}
+	mi := &file_app_borrower_rpc_pb_borrower_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserRegisterRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserRegisterRequest) ProtoMessage() {}
+
+func (x *UserRegisterRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_app_borrower_rpc_pb_borrower_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserRegisterRequest.ProtoReflect.Descriptor instead.
+func (*UserRegisterRequest) Descriptor() ([]byte, []int) {
+	return file_app_borrower_rpc_pb_borrower_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *UserRegisterRequest) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *UserRegisterRequest) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
+}
+
+func (x *UserRegisterRequest) GetFirstName() string {
+	if x != nil {
+		return x.FirstName
+	}
+	return ""
+}
+
+func (x *UserRegisterRequest) GetLastName() string {
+	if x != nil {
+		return x.LastName
+	}
+	return ""
+}
+
+func (x *UserRegisterRequest) GetPhoneNumber() string {
+	if x != nil {
+		return x.PhoneNumber
+	}
+	return ""
+}
+
+func (x *UserRegisterRequest) GetAddress() string {
+	if x != nil {
+		return x.Address
+	}
+	return ""
+}
+
+func (x *UserRegisterRequest) GetSsn() string {
+	if x != nil {
+		return x.Ssn
+	}
+	return ""
+}
+
+type UserRegisterResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UserRegisterResponse) Reset() {
+	*x = UserRegisterResponse{}
+	mi := &file_app_borrower_rpc_pb_borrower_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserRegisterResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserRegisterResponse) ProtoMessage() {}
+
+func (x *UserRegisterResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_app_borrower_rpc_pb_borrower_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserRegisterResponse.ProtoReflect.Descriptor instead.
+func (*UserRegisterResponse) Descriptor() ([]byte, []int) {
+	return file_app_borrower_rpc_pb_borrower_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *UserRegisterResponse) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
+}
+
+// userinfo
+type UserInfoRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UserInfoRequest) Reset() {
+	*x = UserInfoRequest{}
+	mi := &file_app_borrower_rpc_pb_borrower_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserInfoRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserInfoRequest) ProtoMessage() {}
+
+func (x *UserInfoRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_app_borrower_rpc_pb_borrower_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserInfoRequest.ProtoReflect.Descriptor instead.
+func (*UserInfoRequest) Descriptor() ([]byte, []int) {
+	return file_app_borrower_rpc_pb_borrower_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *UserInfoRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type UserinfoResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Email         string                 `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
+	FirstName     string                 `protobuf:"bytes,3,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
+	LastName      string                 `protobuf:"bytes,4,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
+	PhoneNumber   string                 `protobuf:"bytes,5,opt,name=phone_number,json=phoneNumber,proto3" json:"phone_number,omitempty"`
+	Address       string                 `protobuf:"bytes,6,opt,name=address,proto3" json:"address,omitempty"`
+	Ssn           string                 `protobuf:"bytes,7,opt,name=ssn,proto3" json:"ssn,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UserinfoResponse) Reset() {
+	*x = UserinfoResponse{}
+	mi := &file_app_borrower_rpc_pb_borrower_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserinfoResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserinfoResponse) ProtoMessage() {}
+
+func (x *UserinfoResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_app_borrower_rpc_pb_borrower_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserinfoResponse.ProtoReflect.Descriptor instead.
+func (*UserinfoResponse) Descriptor() ([]byte, []int) {
+	return file_app_borrower_rpc_pb_borrower_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *UserinfoResponse) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *UserinfoResponse) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *UserinfoResponse) GetFirstName() string {
+	if x != nil {
+		return x.FirstName
+	}
+	return ""
+}
+
+func (x *UserinfoResponse) GetLastName() string {
+	if x != nil {
+		return x.LastName
+	}
+	return ""
+}
+
+func (x *UserinfoResponse) GetPhoneNumber() string {
+	if x != nil {
+		return x.PhoneNumber
+	}
+	return ""
+}
+
+func (x *UserinfoResponse) GetAddress() string {
+	if x != nil {
+		return x.Address
+	}
+	return ""
+}
+
+func (x *UserinfoResponse) GetSsn() string {
+	if x != nil {
+		return x.Ssn
 	}
 	return ""
 }
@@ -113,13 +468,40 @@ var File_app_borrower_rpc_pb_borrower_proto protoreflect.FileDescriptor
 
 const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\n" +
-	"\"app/borrower/rpc/pb/borrower.proto\x12\bborrower\"\x1d\n" +
-	"\aRequest\x12\x12\n" +
-	"\x04ping\x18\x01 \x01(\tR\x04ping\"\x1e\n" +
-	"\bResponse\x12\x12\n" +
-	"\x04pong\x18\x01 \x01(\tR\x04pong29\n" +
-	"\bBorrower\x12-\n" +
-	"\x04Ping\x12\x11.borrower.Request\x1a\x12.borrower.ResponseB\fZ\n" +
+	"\"app/borrower/rpc/pb/borrower.proto\x12\bborrower\"\x0e\n" +
+	"\fEmptyRequest\"\x0f\n" +
+	"\rEmptyResponse\"D\n" +
+	"\x10UserLoginRequest\x12\x14\n" +
+	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\")\n" +
+	"\x11UserLoginResponse\x12\x14\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\"\xd2\x01\n" +
+	"\x13UserRegisterRequest\x12\x14\n" +
+	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x1d\n" +
+	"\n" +
+	"first_name\x18\x03 \x01(\tR\tfirstName\x12\x1b\n" +
+	"\tlast_name\x18\x04 \x01(\tR\blastName\x12!\n" +
+	"\fphone_number\x18\x05 \x01(\tR\vphoneNumber\x12\x18\n" +
+	"\aaddress\x18\x06 \x01(\tR\aaddress\x12\x10\n" +
+	"\x03ssn\x18\a \x01(\tR\x03ssn\",\n" +
+	"\x14UserRegisterResponse\x12\x14\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\"!\n" +
+	"\x0fUserInfoRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\xc3\x01\n" +
+	"\x10UserinfoResponse\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
+	"\x05email\x18\x02 \x01(\tR\x05email\x12\x1d\n" +
+	"\n" +
+	"first_name\x18\x03 \x01(\tR\tfirstName\x12\x1b\n" +
+	"\tlast_name\x18\x04 \x01(\tR\blastName\x12!\n" +
+	"\fphone_number\x18\x05 \x01(\tR\vphoneNumber\x12\x18\n" +
+	"\aaddress\x18\x06 \x01(\tR\aaddress\x12\x10\n" +
+	"\x03ssn\x18\a \x01(\tR\x03ssn2\xd9\x01\n" +
+	"\x04user\x12@\n" +
+	"\x05Login\x12\x1a.borrower.UserLoginRequest\x1a\x1b.borrower.UserLoginResponse\x12I\n" +
+	"\bRegister\x12\x1d.borrower.UserRegisterRequest\x1a\x1e.borrower.UserRegisterResponse\x12D\n" +
+	"\vGetUserInfo\x12\x19.borrower.UserInfoRequest\x1a\x1a.borrower.UserinfoResponseB\fZ\n" +
 	"./borrowerb\x06proto3"
 
 var (
@@ -134,16 +516,26 @@ func file_app_borrower_rpc_pb_borrower_proto_rawDescGZIP() []byte {
 	return file_app_borrower_rpc_pb_borrower_proto_rawDescData
 }
 
-var file_app_borrower_rpc_pb_borrower_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_app_borrower_rpc_pb_borrower_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_app_borrower_rpc_pb_borrower_proto_goTypes = []any{
-	(*Request)(nil),  // 0: borrower.Request
-	(*Response)(nil), // 1: borrower.Response
+	(*EmptyRequest)(nil),         // 0: borrower.EmptyRequest
+	(*EmptyResponse)(nil),        // 1: borrower.EmptyResponse
+	(*UserLoginRequest)(nil),     // 2: borrower.UserLoginRequest
+	(*UserLoginResponse)(nil),    // 3: borrower.UserLoginResponse
+	(*UserRegisterRequest)(nil),  // 4: borrower.UserRegisterRequest
+	(*UserRegisterResponse)(nil), // 5: borrower.UserRegisterResponse
+	(*UserInfoRequest)(nil),      // 6: borrower.UserInfoRequest
+	(*UserinfoResponse)(nil),     // 7: borrower.UserinfoResponse
 }
 var file_app_borrower_rpc_pb_borrower_proto_depIdxs = []int32{
-	0, // 0: borrower.Borrower.Ping:input_type -> borrower.Request
-	1, // 1: borrower.Borrower.Ping:output_type -> borrower.Response
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
+	2, // 0: borrower.user.Login:input_type -> borrower.UserLoginRequest
+	4, // 1: borrower.user.Register:input_type -> borrower.UserRegisterRequest
+	6, // 2: borrower.user.GetUserInfo:input_type -> borrower.UserInfoRequest
+	3, // 3: borrower.user.Login:output_type -> borrower.UserLoginResponse
+	5, // 4: borrower.user.Register:output_type -> borrower.UserRegisterResponse
+	7, // 5: borrower.user.GetUserInfo:output_type -> borrower.UserinfoResponse
+	3, // [3:6] is the sub-list for method output_type
+	0, // [0:3] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -160,7 +552,7 @@ func file_app_borrower_rpc_pb_borrower_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_app_borrower_rpc_pb_borrower_proto_rawDesc), len(file_app_borrower_rpc_pb_borrower_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

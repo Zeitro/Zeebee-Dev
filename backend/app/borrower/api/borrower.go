@@ -7,6 +7,7 @@ import (
 	"zeebee-backend/app/borrower/api/internal/config"
 	"zeebee-backend/app/borrower/api/internal/handler"
 	"zeebee-backend/app/borrower/api/internal/svc"
+	"zeebee-backend/common/response"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/rest"
@@ -20,7 +21,12 @@ func main() {
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
 
-	server := rest.MustNewServer(c.RestConf)
+	runOpts := []rest.RunOption{
+		rest.WithNotFoundHandler(response.NotFoundHandler{}),
+		rest.WithNotAllowedHandler(response.NotFoundHandler{}),
+	}
+
+	server := rest.MustNewServer(c.RestConf, runOpts...)
 	defer server.Stop()
 
 	ctx := svc.NewServiceContext(c)

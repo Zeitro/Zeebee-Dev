@@ -19,101 +19,179 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Borrower_Ping_FullMethodName = "/borrower.Borrower/Ping"
+	User_Login_FullMethodName       = "/borrower.user/Login"
+	User_Register_FullMethodName    = "/borrower.user/Register"
+	User_GetUserInfo_FullMethodName = "/borrower.user/GetUserInfo"
 )
 
-// BorrowerClient is the client API for Borrower service.
+// UserClient is the client API for User service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type BorrowerClient interface {
-	Ping(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error)
+type UserClient interface {
+	// user
+	Login(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserLoginResponse, error)
+	Register(ctx context.Context, in *UserRegisterRequest, opts ...grpc.CallOption) (*UserRegisterResponse, error)
+	GetUserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
 }
 
-type borrowerClient struct {
+type userClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewBorrowerClient(cc grpc.ClientConnInterface) BorrowerClient {
-	return &borrowerClient{cc}
+func NewUserClient(cc grpc.ClientConnInterface) UserClient {
+	return &userClient{cc}
 }
 
-func (c *borrowerClient) Ping(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error) {
+func (c *userClient) Login(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserLoginResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(Response)
-	err := c.cc.Invoke(ctx, Borrower_Ping_FullMethodName, in, out, cOpts...)
+	out := new(UserLoginResponse)
+	err := c.cc.Invoke(ctx, User_Login_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// BorrowerServer is the server API for Borrower service.
-// All implementations must embed UnimplementedBorrowerServer
-// for forward compatibility.
-type BorrowerServer interface {
-	Ping(context.Context, *Request) (*Response, error)
-	mustEmbedUnimplementedBorrowerServer()
+func (c *userClient) Register(ctx context.Context, in *UserRegisterRequest, opts ...grpc.CallOption) (*UserRegisterResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserRegisterResponse)
+	err := c.cc.Invoke(ctx, User_Register_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
-// UnimplementedBorrowerServer must be embedded to have
+func (c *userClient) GetUserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserinfoResponse)
+	err := c.cc.Invoke(ctx, User_GetUserInfo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// UserServer is the server API for User service.
+// All implementations must embed UnimplementedUserServer
+// for forward compatibility.
+type UserServer interface {
+	// user
+	Login(context.Context, *UserLoginRequest) (*UserLoginResponse, error)
+	Register(context.Context, *UserRegisterRequest) (*UserRegisterResponse, error)
+	GetUserInfo(context.Context, *UserInfoRequest) (*UserinfoResponse, error)
+	mustEmbedUnimplementedUserServer()
+}
+
+// UnimplementedUserServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedBorrowerServer struct{}
+type UnimplementedUserServer struct{}
 
-func (UnimplementedBorrowerServer) Ping(context.Context, *Request) (*Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
+func (UnimplementedUserServer) Login(context.Context, *UserLoginRequest) (*UserLoginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
-func (UnimplementedBorrowerServer) mustEmbedUnimplementedBorrowerServer() {}
-func (UnimplementedBorrowerServer) testEmbeddedByValue()                  {}
+func (UnimplementedUserServer) Register(context.Context, *UserRegisterRequest) (*UserRegisterResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
+}
+func (UnimplementedUserServer) GetUserInfo(context.Context, *UserInfoRequest) (*UserinfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserInfo not implemented")
+}
+func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
+func (UnimplementedUserServer) testEmbeddedByValue()              {}
 
-// UnsafeBorrowerServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to BorrowerServer will
+// UnsafeUserServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to UserServer will
 // result in compilation errors.
-type UnsafeBorrowerServer interface {
-	mustEmbedUnimplementedBorrowerServer()
+type UnsafeUserServer interface {
+	mustEmbedUnimplementedUserServer()
 }
 
-func RegisterBorrowerServer(s grpc.ServiceRegistrar, srv BorrowerServer) {
-	// If the following call pancis, it indicates UnimplementedBorrowerServer was
+func RegisterUserServer(s grpc.ServiceRegistrar, srv UserServer) {
+	// If the following call pancis, it indicates UnimplementedUserServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&Borrower_ServiceDesc, srv)
+	s.RegisterService(&User_ServiceDesc, srv)
 }
 
-func _Borrower_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Request)
+func _User_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserLoginRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BorrowerServer).Ping(ctx, in)
+		return srv.(UserServer).Login(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Borrower_Ping_FullMethodName,
+		FullMethod: User_Login_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BorrowerServer).Ping(ctx, req.(*Request))
+		return srv.(UserServer).Login(ctx, req.(*UserLoginRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Borrower_ServiceDesc is the grpc.ServiceDesc for Borrower service.
+func _User_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserRegisterRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).Register(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_Register_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).Register(ctx, req.(*UserRegisterRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _User_GetUserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).GetUserInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_GetUserInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).GetUserInfo(ctx, req.(*UserInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// User_ServiceDesc is the grpc.ServiceDesc for User service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Borrower_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "borrower.Borrower",
-	HandlerType: (*BorrowerServer)(nil),
+var User_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "borrower.user",
+	HandlerType: (*UserServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Ping",
-			Handler:    _Borrower_Ping_Handler,
+			MethodName: "Login",
+			Handler:    _User_Login_Handler,
+		},
+		{
+			MethodName: "Register",
+			Handler:    _User_Register_Handler,
+		},
+		{
+			MethodName: "GetUserInfo",
+			Handler:    _User_GetUserInfo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

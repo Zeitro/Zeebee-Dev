@@ -1,26 +1,45 @@
 syntax = "v1"
 
 info (
-	title:  "borrower-api http service" // TODO: add title
-	desc:   "borrower-api http service description" // TODO: add description
-	author: ""
-	email:  ""
+	title:  "borrower-api http service"
+	desc:   "borrower-api http service description"
+	author: "Wei Zeng"
+	email:  "wei@yeelee-capital.com"
 )
 
-type request {}
+import "desc/user.api"
 
-type response {}
+type (
+	EmptyRequest  {}
+	EmptyResponse  {}
+)
 
 @server (
 	desc:    "borrower-api service"
 	version: "v1"
-	group:   ""
+	group:   "user"
+	prefix:  "/api/user"
 )
 service borrower-api {
-	@handler GetUser // TODO: set handler name and delete this comment
-	get /users/id/:userId (request) returns (response)
+	@doc "register user"
+	@handler Register
+	post /register (UserRegisterRequest) returns (UserRegisterResponse)
 
-	@handler CreateUser // TODO: set handler name and delete this comment
-	post /users/create (request)
+	@doc "login user"
+	@handler Login
+	post /login (UserLoginRequest) returns (UserLoginResponse)
+}
+
+@server (
+	desc:       "borrower-api service"
+	version:    "v1"
+	group:      "user"
+	prefix:     "/api/user"
+	middleware: AuthMiddleware
+)
+service borrower-api {
+	@doc "user info"
+	@handler Info
+	get /info (EmptyRequest) returns (UserInfoResponse)
 }
 

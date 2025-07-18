@@ -16,9 +16,9 @@ type JWTClaims struct {
 }
 
 // GenerateToken 生成JWT token
-func GenerateToken(userID, username, role, secretKey string, expireHours int) (string, error) {
+func GenerateToken(userID string, username, role, secretKey string, expireSeconds int64) (string, error) {
 	now := time.Now()
-	expireTime := now.Add(time.Duration(expireHours) * time.Hour)
+	expireTime := now.Add(time.Duration(expireSeconds) * time.Second)
 
 	claims := JWTClaims{
 		UserID:   userID,

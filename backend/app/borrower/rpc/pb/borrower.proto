@@ -1,16 +1,54 @@
 syntax = "proto3";
 
 package borrower;
-option go_package="./borrower";
+option go_package = "./borrower";
 
-message Request {
-  string ping = 1;
+message EmptyRequest {
+
 }
 
-message Response {
-  string pong = 1;
+message EmptyResponse {
+
+}
+// login
+message UserLoginRequest {
+  string email = 1;
+  string password = 2;
+}
+message UserLoginResponse {
+  string token = 1;
+}
+// register
+message UserRegisterRequest {
+  string email = 1;
+  string password = 2;
+  string first_name = 3;
+  string last_name = 4;
+  string phone_number = 5;
+  string address = 6;
+  string ssn = 7;
+}
+message UserRegisterResponse {
+  string token = 1;
 }
 
-service Borrower {
-  rpc Ping(Request) returns(Response);
+// userinfo
+message UserInfoRequest {
+  int64 id = 1;
+}
+message UserinfoResponse {
+  int64 id = 1;
+  string email = 2;
+  string first_name = 3;
+  string last_name = 4;
+  string phone_number = 5;
+  string address = 6;
+  string ssn = 7;
+}
+
+service user {
+  // user
+  rpc Login(UserLoginRequest) returns(UserLoginResponse);
+  rpc Register(UserRegisterRequest) returns(UserRegisterResponse);
+  rpc GetUserInfo(UserInfoRequest) returns(UserinfoResponse);
 }

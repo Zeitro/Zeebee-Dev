@@ -6,6 +6,7 @@ package handler
 import (
 	"net/http"
 
+	user "zeebee-backend/app/borrower/api/internal/handler/user"
 	"zeebee-backend/app/borrower/api/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
@@ -15,15 +16,33 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
+				// login user
 				Method:  http.MethodPost,
-				Path:    "/users/create",
-				Handler: CreateUserHandler(serverCtx),
+				Path:    "/login",
+				Handler: user.LoginHandler(serverCtx),
 			},
 			{
-				Method:  http.MethodGet,
-				Path:    "/users/id/:userId",
-				Handler: GetUserHandler(serverCtx),
+				// register user
+				Method:  http.MethodPost,
+				Path:    "/register",
+				Handler: user.RegisterHandler(serverCtx),
 			},
 		},
+		rest.WithPrefix("/api/user"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// user info
+					Method:  http.MethodGet,
+					Path:    "/info",
+					Handler: user.InfoHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/user"),
 	)
 }
