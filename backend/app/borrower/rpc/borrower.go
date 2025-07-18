@@ -5,7 +5,8 @@ import (
 	"fmt"
 
 	"zeebee-backend/app/borrower/rpc/internal/config"
-	borrowerServer "zeebee-backend/app/borrower/rpc/internal/server/borrower"
+	"zeebee-backend/app/borrower/rpc/internal/global"
+	userServer "zeebee-backend/app/borrower/rpc/internal/server/user"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 
@@ -16,17 +17,23 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-var configFile = flag.String("f", "etc/borrower.yaml", "the config file")
+var configFile = flag.String("f", "etc/user.yaml", "the config file")
 
 func main() {
 	flag.Parse()
 
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
+	// 初始化全局配置
+	err := global.InitGlobal(c)
+	if err != nil {
+		panic(err)
+	}
+
 	ctx := svc.NewServiceContext(c)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		borrower.RegisterBorrowerServer(grpcServer, borrowerServer.NewBorrowerServer(ctx))
+		borrower.RegisterUserServer(grpcServer, userServer.NewUserServer(ctx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

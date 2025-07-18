@@ -1,0 +1,55 @@
+syntax = "v1"
+
+info(
+    title: "borrower-user-api"
+    desc: "user-api http service description"
+    author: "Wei Zeng"
+    email: "wei@yeelee-capital.com"
+    version: "v1"
+)
+
+type UserInfo {
+    Id int64 `json:"id"`
+    Email string `json:"email"`
+    Password string `json:"password"`
+    FirstName string `json:"first_name"`
+    LastName string `json:"last_name"`
+    PhoneNumber string `json:"phone_number"`
+    Address string `json:"address"`
+    Ssn string `json:"ssn"`
+}
+
+type (
+    UserLoginRequest {
+        Email string `json:"email" validate:"required,email"`
+        Password string `json:"password" validate:"required,min=8,max=32"`
+    }
+
+    UserLoginResponse {
+        Token string `json:"token"`
+    }
+)
+
+type (
+    UserRegisterRequest {
+        Email string `json:"email" validate:"required,email"`
+        Password string `json:"password" validate:"required,min=8,max=32"`
+        FirstName string `json:"first_name" validate:"required,min=2,max=32"`
+        LastName string `json:"last_name" validate:"required,min=2,max=32"`
+        PhoneNumber string `json:"phone_number" validate:"required,min=5,max=20"`
+        Address string `json:"address" validate:"required,min=3,max=256"`
+        Ssn string `json:"ssn" validate:"required,min=6,max=10"`
+    }
+
+    UserRegisterResponse {
+        Token string `json:"token"`
+    }
+)
+
+type (
+    UserInfoResponse {
+        UserInfo
+    }
+)
+
+

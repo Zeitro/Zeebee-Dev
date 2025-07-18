@@ -15,28 +15,7 @@
   },
   "basePath": "/",
   "paths": {
-    "/users/create": {
-      "post": {
-        "consumes": [
-          "application/x-www-form-urlencoded"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "summary": "CreateUser",
-        "operationId": "createUser",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {}
-          }
-        }
-      }
-    },
-    "/users/id/{userId}": {
+    "/api/user/info": {
       "get": {
         "produces": [
           "application/json"
@@ -44,20 +23,166 @@
         "schemes": [
           "https"
         ],
-        "summary": "GetUser",
-        "operationId": "getUser",
+        "summary": "user info",
+        "operationId": "userInfo",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "type": "object"
+              "type": "object",
+              "properties": {
+                "address": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "first_name": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "last_name": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                },
+                "phone": {
+                  "type": "string"
+                },
+                "ssn": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/login": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "login user",
+        "operationId": "userLogin",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "email",
+                "password"
+              ],
+              "properties": {
+                "email": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/register": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "register user",
+        "operationId": "userRegister",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "email",
+                "password",
+                "first_name",
+                "last_name",
+                "phone",
+                "address",
+                "ssn"
+              ],
+              "properties": {
+                "address": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "first_name": {
+                  "type": "string"
+                },
+                "last_name": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                },
+                "phone": {
+                  "type": "string"
+                },
+                "ssn": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": "string"
+                }
+              }
             }
           }
         }
       }
     }
   },
-  "x-date": "2025-07-14 10:44:08",
+  "x-date": "2025-07-17 11:15:41",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

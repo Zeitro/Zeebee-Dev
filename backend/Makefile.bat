@@ -64,7 +64,8 @@ if "%SERVICE%"=="" (
     exit /b 1
 )
 echo create api server: %SERVICE%
-goctl api go --api app\%SERVICE%\api\%SERVICE%.api --dir app\%SERVICE%\api --style go_zero --home third_party\goctl_template --type-group
+goctl api go --api app\%SERVICE%\api\%SERVICE%.api --dir app\%SERVICE%\api --style go_zero --home third_party\goctl_template
+goctl api plugin -p goctl-validate="validate --custom" --api app\%SERVICE%\api\%SERVICE%.api --dir app\%SERVICE%\api
 exit /b 0
 
 rem 创建 proto 文件

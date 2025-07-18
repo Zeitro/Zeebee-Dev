@@ -3,8 +3,60 @@
 
 package types
 
-type Request struct {
+import (
+	"github.com/go-playground/validator/v10"
+)
+
+type EmptyRequest struct {
 }
 
-type Response struct {
+type EmptyResponse struct {
+}
+
+type UserInfo struct {
+	Id          int64  `json:"id"`
+	Email       string `json:"email"`
+	Password    string `json:"password"`
+	FirstName   string `json:"first_name"`
+	LastName    string `json:"last_name"`
+	PhoneNumber string `json:"phone_number"`
+	Address     string `json:"address"`
+	Ssn         string `json:"ssn"`
+}
+
+type UserInfoResponse struct {
+	UserInfo
+}
+
+type UserLoginRequest struct {
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required,min=8,max=32"`
+}
+
+type UserLoginResponse struct {
+	Token string `json:"token"`
+}
+
+type UserRegisterRequest struct {
+	Email       string `json:"email" validate:"required,email"`
+	Password    string `json:"password" validate:"required,min=8,max=32"`
+	FirstName   string `json:"first_name" validate:"required,min=2,max=32"`
+	LastName    string `json:"last_name" validate:"required,min=2,max=32"`
+	PhoneNumber string `json:"phone_number" validate:"required,min=5,max=20"`
+	Address     string `json:"address" validate:"required,min=3,max=256"`
+	Ssn         string `json:"ssn" validate:"required,min=6,max=10"`
+}
+
+type UserRegisterResponse struct {
+	Token string `json:"token"`
+}
+
+var validate = validator.New()
+
+func (r *UserLoginRequest) Validate() error {
+	return validate.Struct(r)
+}
+
+func (r *UserRegisterRequest) Validate() error {
+	return validate.Struct(r)
 }
