@@ -1,6 +1,6 @@
 export const navRouter = [
 	{
-		path: '/home',
+		path: '/',
 		title: 'Home',
 		hideCrumbs: true,
 	},
@@ -10,9 +10,21 @@ export const navRouter = [
 		roles: [],
 		router: [
 			{
-				path: '/details',
+				path: '/loans/details',
 				title: 'details',
 				hideMenu: true,
+			},
+			{
+				path: '/loans/:id',
+				title: 'details',
+					hideMenu: true,
+				router: [
+					{
+						path: '/loans/:id/type',
+						title: 'types',
+						hideMenu: true,
+					},
+				],
 			},
 		],
 	},
@@ -37,4 +49,3 @@ export const routers = [
 		router: navRouter,
 	},
 ];
-

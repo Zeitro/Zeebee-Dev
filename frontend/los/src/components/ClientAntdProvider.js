@@ -18,7 +18,7 @@ const defaultToken = {
 	// ... 其他 token ...
 };
 
-export default function ClientAntdProvider({ children }) {
+export default function ClientAntdProvider({ children,  fontFamily}) {
 	const [antdToken, setAntdToken] = useState({});
 
 	useEffect(
@@ -40,7 +40,7 @@ export default function ClientAntdProvider({ children }) {
 				fontSize: 14, // 基础字体大小
 				// fontSizeHeading: 16, // 标题字体大小
 				// controlHeight: 40, // 控件高度（如按钮、输入框）
-				fontFamily: 'Arial, Helvetica, sans-serif', // 字体
+				fontFamily, // 字体
 				// ... 其他 token ...
 			});
 		},

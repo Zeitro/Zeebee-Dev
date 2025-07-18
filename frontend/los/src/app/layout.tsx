@@ -6,7 +6,7 @@ import '@ant-design/v5-patch-for-react-19';
 import ClientAntdProvider from '@/components/ClientAntdProvider';
 import SiderBar from '@/components/Sidebar';
 import NewHeader from '@/components/NewHeader';
-const roboto = Roboto({
+export const roboto = Roboto({
 	weight: ['400', '500', '700'], // 选择需要的字重
 	subsets: ['latin', 'latin-ext'], // 字符集
 	display: 'swap', // 字体加载策略
@@ -26,7 +26,7 @@ const RootLayout = ({
 	return (
 		<html lang="en">
 			<body className={`${roboto.variable}`}>
-				<ClientAntdProvider>
+				<ClientAntdProvider fontFamily={`${roboto.variable}`}>
 					<div className="h-full flex items-stretch">
 						<SiderBar />
 						<div className="flex-1 overflow-hidden">
