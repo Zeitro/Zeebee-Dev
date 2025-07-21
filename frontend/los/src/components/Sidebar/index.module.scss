@@ -1,5 +1,5 @@
 .sidebar {
-
+    transition: 0.3s width;
     .logo{
     }
     
@@ -13,5 +13,13 @@
         font-weight: 600;
         height: 48px !important;
         line-height: 48px !important;
+    }
+}
+.menuList_collapsed :global{
+    .ant-menu-title-content{
+        display: none;
+    }
+    .ant-menu-item{
+        padding: 0;
     }
 }

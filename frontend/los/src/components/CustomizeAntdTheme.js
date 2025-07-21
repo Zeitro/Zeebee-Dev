@@ -1,8 +1,12 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ConfigProvider } from 'antd';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
-
+import SiderBar from '@/components/Sidebar';
+import NewHeader from '@/components/NewHeader';
+import { getCurrentRouterItem } from '@config/common';
+import { noNavRouter } from '@config/routes';
+import { usePathname } from 'next/navigation';
 function getCssVarValue(name) {
 	if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 		return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -17,9 +21,18 @@ const defaultToken = {
 	colorTextBase: '#222',
 	// ... 其他 token ...
 };
-
-export default function ClientAntdProvider({ children,  fontFamily}) {
+/**
+ * 自定义antd主题，区分有无（导航栏和面包屑）的页面
+ */
+export default function CustomizeAntdTheme({ children, fontFamily }) {
 	const [antdToken, setAntdToken] = useState({});
+	const pathname = usePathname();
+
+    // 没有导航栏/面包屑的纯页面（例如：login
+	const isNoNav = useMemo(() => {
+		const routerItem = getCurrentRouterItem(pathname, noNavRouter);
+		return !!routerItem;
+	}, [pathname]);
 
 	useEffect(
 		() => {
@@ -65,7 +78,19 @@ export default function ClientAntdProvider({ children,  fontFamily}) {
 				},
 			}}
 		>
-			<AntdRegistry>{children}</AntdRegistry>
+			<AntdRegistry>
+				{isNoNav ? (
+					children
+				) : (
+					<div className="h-full flex items-stretch">
+						<SiderBar />
+						<div className="flex-1 overflow-hidden">
+							<NewHeader />
+							<div>{children}</div>
+						</div>
+					</div>
+				)}
+			</AntdRegistry>
 		</ConfigProvider>
 	);
 }

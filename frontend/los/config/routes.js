@@ -1,3 +1,7 @@
+import {
+	UserOutlined,
+	BankOutlined,
+} from '@ant-design/icons';
 export const navRouter = [
 	{
 		path: '/',
@@ -7,7 +11,8 @@ export const navRouter = [
 	{
 		path: '/loans',
 		title: 'My loans',
-		roles: [],
+		roles: ['loan'],
+		icon:<BankOutlined />,
 		router: [
 			{
 				path: '/loans/details',
@@ -32,6 +37,13 @@ export const navRouter = [
 		path: '/properties',
 		title: 'My properties',
 		roles: [],
+		icon:<UserOutlined />
+	},
+	{
+		path: '/not-found',
+		title: '404',
+		hideCrumbs: true,
+		hideMenu: true,
 	},
 ];
 
@@ -44,8 +56,5 @@ export const noNavRouter = [
 
 export const routers = [
 	...noNavRouter,
-	{
-		path: '/',
-		router: navRouter,
-	},
+	...navRouter
 ];

@@ -11,6 +11,7 @@ export const generateMenuBar = (list) => {
 			const newItem = {
 				key: item.path,
 				label: item.title,
+				icon: item.icon
 			};
 			if (item?.router?.length) {
 				newItem.children = item.router;

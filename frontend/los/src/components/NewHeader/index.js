@@ -1,7 +1,7 @@
 'use client';
 import { Breadcrumb } from 'antd';
-import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import React, { useLayoutEffect, useMemo, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { navRouter } from '@config/routes';
 import { getCurrentRouterItem, flattenNavRouter, getCrumbs } from '@config/common';
 import Link from 'next/link';

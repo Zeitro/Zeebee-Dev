@@ -1,5 +1,5 @@
 import { create } from "zustand"
 export const useGlobalStore = create((set) => ({
-  siberWidth: 216,
-  changeSiberWidth: (value) => set({ siberWidth: value })
+  siberCollapsed: false,
+  changeSiberCollapsed: (value) => set({ siberCollapsed: value })
 }))
