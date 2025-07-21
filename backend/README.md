@@ -15,6 +15,9 @@ goctl env check --install --verbose --force
 
 # goctl依赖检查
 goctl env check --verbose
+
+# goctl-validate插件安装
+go install github.com/linabellbiu/goctl-validate@latest
 ```
 ## 项目快速生成
 ```bash

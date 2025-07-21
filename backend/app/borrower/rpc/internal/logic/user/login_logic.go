@@ -6,9 +6,12 @@ import (
 
 	"github.com/pkg/errors"
 
+	innerconstants "zeebee-backend/app/borrower/rpc/internal/constants"
+	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
+	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/utils"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,7 +32,20 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 }
 
 func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (*borrower.UserLoginResponse, error) {
-	// todo check input wrong pwd times
+	// check input wrong pwd times
+	redisKey := stringx.Formate(innerconstants.BorrowerLoginFailedTimes, in.Email)
+	var loginFailedTimes int
+	var err error
+	if global.Config.MaxFailedLoginTimes > 0 {
+		loginFailedTimes, err = global.GetRedis().GetInt(l.ctx, redisKey)
+		if err != nil {
+			return nil, err
+		}
+		if loginFailedTimes >= global.Config.MaxFailedLoginTimes {
+			return nil, errors.New("login failed times exceeded, please try again later")
+		}
+	}
+
 	user, err := l.svcCtx.UserRepo.FindOneByColumns(l.ctx,
 		map[string]interface{}{
 			"email": in.Email,
@@ -38,8 +54,19 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (*borrower.UserLoginRe
 	)
 	// check pwd
 	if !utils.CheckPassword(in.Password, user.PasswordHash) {
-		// todo add input wrong pwd times to redis
+		// add input wrong pwd times to redis
+		_, err = global.GetRedis().IncreaseExpire(l.ctx, redisKey, global.Config.ForbiddenLoginSeconds)
+		if err != nil {
+			return nil, err
+		}
 		return nil, errors.New("password is incorrect")
+	}
+
+	if global.Config.MaxFailedLoginTimes > 0 {
+		err = global.GetRedis().Del(l.ctx, redisKey)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	// check status
