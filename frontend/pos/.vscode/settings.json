@@ -1,0 +1,32 @@
+{
+	"js/ts.implicitProjectConfig.experimentalDecorators": true,
+	"liveServer.settings.port": 5501,
+	"eslint.alwaysShowStatus": true,
+	"editor.tabSize": 4,
+	"editor.insertSpaces": false,
+	"editor.detectIndentation": false,
+	"prettier.tabWidth": 4,
+	"prettier.useTabs": true,
+	"prettier.printWidth": 100,
+	"prettier.arrowParens": "always",
+	"prettier.endOfLine": "auto",
+	"prettier.singleQuote": true,
+	"prettier.trailingComma": "all",
+	"svg.preview.background": "transparent",
+	"tailwindCSS.config": "./tailwind.config.js", // 指定 Tailwind 配置文件路径
+	"files.associations": {
+		"*.css": "tailwindcss"
+	},
+	"editor.quickSuggestions": {
+		"strings": "on"
+	},
+	"tailwindCSS.classFunctions": ["tw", "clsx", "tw\\.[a-z-]+"],
+	"[css]": {
+		"editor.tabSize": 4,
+		"editor.insertSpaces": false
+	},
+	"[json]": {
+		"editor.tabSize": 4,
+		"editor.insertSpaces": false
+	}
+}
