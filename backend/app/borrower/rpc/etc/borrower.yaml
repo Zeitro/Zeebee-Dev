@@ -1,6 +1,8 @@
 Name: borrower.rpc
 ListenOn: 0.0.0.0:10001
 Mode: dev
+MaxFailedLoginTimes: 5
+ForbiddenLoginSeconds: 300
 
 JwtAuth:
   AccessSecret: accessSecret
@@ -10,5 +12,11 @@ JwtAuth:
 #  Hosts:
 #  - 127.0.0.1:2379
 #  Key: user.rpc
+
+RedisConf:
+  Host: 127.0.0.1:6379
+  Type: node
+  Prefix: zeebee
+
 DbConf:
   dsn: "host=localhost user=dev_user password=dev_password dbname=dev_db port=5432 sslmode=disable TimeZone=UTC"
