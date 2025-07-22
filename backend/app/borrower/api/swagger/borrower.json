@@ -23,6 +23,9 @@
         "schemes": [
           "https"
         ],
+        "tags": [
+          "user"
+        ],
         "summary": "user info",
         "operationId": "userInfo",
         "responses": {
@@ -49,7 +52,7 @@
                 "password": {
                   "type": "string"
                 },
-                "phone": {
+                "phone_number": {
                   "type": "string"
                 },
                 "ssn": {
@@ -72,7 +75,10 @@
         "schemes": [
           "https"
         ],
-        "summary": "login user",
+        "tags": [
+          "user"
+        ],
+        "summary": "login",
         "operationId": "userLogin",
         "parameters": [
           {
@@ -102,8 +108,69 @@
             "schema": {
               "type": "object",
               "properties": {
-                "token": {
+                "access_token": {
                   "type": "string"
+                },
+                "access_token_expire": {
+                  "type": "integer"
+                },
+                "refresh_token": {
+                  "type": "string"
+                },
+                "refresh_token_expire": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/refresh": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "user"
+        ],
+        "summary": "refresh",
+        "operationId": "userRefreshToken",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "refresh_token"
+              ],
+              "properties": {
+                "refresh_token": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "access_token": {
+                  "type": "string"
+                },
+                "access_token_expire": {
+                  "type": "integer"
                 }
               }
             }
@@ -122,7 +189,10 @@
         "schemes": [
           "https"
         ],
-        "summary": "register user",
+        "tags": [
+          "user"
+        ],
+        "summary": "register",
         "operationId": "userRegister",
         "parameters": [
           {
@@ -136,7 +206,7 @@
                 "password",
                 "first_name",
                 "last_name",
-                "phone",
+                "phone_number",
                 "address",
                 "ssn"
               ],
@@ -156,7 +226,7 @@
                 "password": {
                   "type": "string"
                 },
-                "phone": {
+                "phone_number": {
                   "type": "string"
                 },
                 "ssn": {
@@ -172,8 +242,17 @@
             "schema": {
               "type": "object",
               "properties": {
-                "token": {
+                "access_token": {
                   "type": "string"
+                },
+                "access_token_expire": {
+                  "type": "integer"
+                },
+                "refresh_token": {
+                  "type": "string"
+                },
+                "refresh_token_expire": {
+                  "type": "integer"
                 }
               }
             }
@@ -182,7 +261,7 @@
       }
     }
   },
-  "x-date": "2025-07-17 11:15:41",
+  "x-date": "2025-07-22 09:53:23",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

@@ -34,7 +34,19 @@ type UserLoginRequest struct {
 }
 
 type UserLoginResponse struct {
-	Token string `json:"token"`
+	AccessToken        string `json:"access_token"`
+	AccessTokenExpire  int64  `json:"access_token_expire"`
+	RefreshToken       string `json:"refresh_token"`
+	RefreshTokenExpire int64  `json:"refresh_token_expire"`
+}
+
+type UserRefreshTokenRequest struct {
+	RefreshToken string `json:"refresh_token" validate:"required"`
+}
+
+type UserRefreshTokenResponse struct {
+	AccessToken       string `json:"access_token"`
+	AccessTokenExpire int64  `json:"access_token_expire"`
 }
 
 type UserRegisterRequest struct {
@@ -48,12 +60,19 @@ type UserRegisterRequest struct {
 }
 
 type UserRegisterResponse struct {
-	Token string `json:"token"`
+	AccessToken        string `json:"access_token"`
+	AccessTokenExpire  int64  `json:"access_token_expire"`
+	RefreshToken       string `json:"refresh_token"`
+	RefreshTokenExpire int64  `json:"refresh_token_expire"`
 }
 
 var validate = validator.New()
 
 func (r *UserLoginRequest) Validate() error {
+	return validate.Struct(r)
+}
+
+func (r *UserRefreshTokenRequest) Validate() error {
 	return validate.Struct(r)
 }
 

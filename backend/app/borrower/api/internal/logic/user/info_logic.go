@@ -34,15 +34,18 @@ func (l *InfoLogic) Info(req *types.EmptyRequest) (resp *types.UserInfoResponse,
 	resp = &types.UserInfoResponse{}
 	userId := utils.GetInt64FromCtx(l.ctx, constants.BorrowerUserIdKey)
 	if userId == 0 {
-		return nil, errors.New("user id not found")
+		return nil, errors.WithStack(errors.New("user id not found"))
 	}
-	userInfo, err := l.svcCtx.RpcClients.UserRpcClient.GetUserInfo(l.ctx, &borrower.UserInfoRequest{
+	userInfo, err := l.svcCtx.UserRpcClient.GetUserInfo(l.ctx, &borrower.UserInfoRequest{
 		Id: userId,
 	})
 	if err != nil {
 		return nil, err
 	}
 	err = copier.Copy(resp, userInfo)
+	if err != nil {
+		return nil, errors.Wrap(err, "trans response error")
+	}
 
 	return resp, err
 }

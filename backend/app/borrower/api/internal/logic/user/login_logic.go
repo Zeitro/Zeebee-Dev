@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/jinzhu/copier"
+	"github.com/pkg/errors"
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
@@ -30,19 +31,22 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 func (l *LoginLogic) Login(req *types.UserLoginRequest) (resp *types.UserLoginResponse, err error) {
 	rpcReq := &borrower.UserLoginRequest{}
 	resp = &types.UserLoginResponse{}
-	// 请求数据转换
+	// trans req
 	err = copier.Copy(rpcReq, req)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "trans request error")
 	}
-	// 调用rpc服务
-	rpcResp, err := l.svcCtx.RpcClients.UserRpcClient.Login(l.ctx, rpcReq)
+	// call rpc
+	rpcResp, err := l.svcCtx.UserRpcClient.Login(l.ctx, rpcReq)
 	if err != nil {
 		return nil, err
 	}
 
-	// 响应数据转换
+	// trans response
 	err = copier.Copy(resp, rpcResp)
+	if err != nil {
+		return nil, errors.Wrap(err, "trans response error")
+	}
 
 	return resp, err
 }

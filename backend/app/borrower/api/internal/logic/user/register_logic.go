@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/jinzhu/copier"
+	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/api/internal/svc"
@@ -29,19 +30,22 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 func (l *RegisterLogic) Register(req *types.UserRegisterRequest) (resp *types.UserRegisterResponse, err error) {
 	rpcReq := &borrower.UserRegisterRequest{}
 	resp = &types.UserRegisterResponse{}
-	// 请求数据转换
+	// trans request data
 	err = copier.Copy(rpcReq, req)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "trans request error")
 	}
-	// 调用rpc服务
-	rpcResp, err := l.svcCtx.RpcClients.UserRpcClient.Register(l.ctx, rpcReq)
+	// call rpc server
+	rpcResp, err := l.svcCtx.UserRpcClient.Register(l.ctx, rpcReq)
 	if err != nil {
 		return nil, err
 	}
 
-	// 响应数据转换
+	// trans response data
 	err = copier.Copy(resp, rpcResp)
+	if err != nil {
+		return nil, errors.Wrap(err, "trans response error")
+	}
 
 	return resp, err
 }

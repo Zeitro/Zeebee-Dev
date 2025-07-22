@@ -16,7 +16,10 @@ message UserLoginRequest {
   string password = 2;
 }
 message UserLoginResponse {
-  string token = 1;
+  string access_token = 1;
+  string refresh_token = 2;
+  int64 access_token_expire = 3;
+  int64 refresh_token_expire = 4;
 }
 // register
 message UserRegisterRequest {
@@ -29,8 +32,22 @@ message UserRegisterRequest {
   string ssn = 7;
 }
 message UserRegisterResponse {
-  string token = 1;
+  string access_token = 1;
+  string refresh_token = 2;
+  int64 access_token_expire = 3;
+  int64 refresh_token_expire = 4;
 }
+
+// refresh
+message RefreshTokenRequest {
+  string refresh_token = 1;
+}
+
+message RefreshTokenResponse {
+  string access_token = 1;
+  int64 access_token_expire = 2;
+}
+
 
 // userinfo
 message UserInfoRequest {
@@ -50,5 +67,6 @@ service user {
   // user
   rpc Login(UserLoginRequest) returns(UserLoginResponse);
   rpc Register(UserRegisterRequest) returns(UserRegisterResponse);
+  rpc RefreshToken(RefreshTokenRequest) returns(RefreshTokenResponse);
   rpc GetUserInfo(UserInfoRequest) returns(UserinfoResponse);
 }

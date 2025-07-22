@@ -16,6 +16,8 @@ import (
 type (
 	EmptyRequest         = borrower.EmptyRequest
 	EmptyResponse        = borrower.EmptyResponse
+	RefreshTokenRequest  = borrower.RefreshTokenRequest
+	RefreshTokenResponse = borrower.RefreshTokenResponse
 	UserInfoRequest      = borrower.UserInfoRequest
 	UserLoginRequest     = borrower.UserLoginRequest
 	UserLoginResponse    = borrower.UserLoginResponse
@@ -27,6 +29,7 @@ type (
 		// user
 		Login(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserLoginResponse, error)
 		Register(ctx context.Context, in *UserRegisterRequest, opts ...grpc.CallOption) (*UserRegisterResponse, error)
+		RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
 		GetUserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
 	}
 
@@ -50,6 +53,11 @@ func (m *defaultUser) Login(ctx context.Context, in *UserLoginRequest, opts ...g
 func (m *defaultUser) Register(ctx context.Context, in *UserRegisterRequest, opts ...grpc.CallOption) (*UserRegisterResponse, error) {
 	client := borrower.NewUserClient(m.cli.Conn())
 	return client.Register(ctx, in, opts...)
+}
+
+func (m *defaultUser) RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error) {
+	client := borrower.NewUserClient(m.cli.Conn())
+	return client.RefreshToken(ctx, in, opts...)
 }
 
 func (m *defaultUser) GetUserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error) {
