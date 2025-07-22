@@ -30,21 +30,27 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 	}
 }
 
-func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (*borrower.UserRegisterResponse, error) {
+func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrower.UserRegisterResponse, err error) {
 
-	isExisted, err := l.svcCtx.UserRepo.IsExistedByColumns(l.ctx, map[string]interface{}{
+	defer func() {
+		if err != nil {
+			l.WithContext(l.ctx).Error(err)
+		}
+	}()
+	var isExisted bool
+	isExisted, err = l.svcCtx.UserRepo.IsExistedByColumns(l.ctx, map[string]interface{}{
 		"email": in.Email,
 	})
 	if err != nil {
 		return nil, err
 	}
 	if isExisted {
-		return nil, errors.New("email already existed")
+		return nil, errors.WithStack(errors.New("email is already registered"))
 	}
 
 	pwd, err := utils.HashPassword(in.Password)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 	userModel := &model.User{
 		Email:        in.Email,
@@ -72,7 +78,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (*borrower.Us
 	})
 
 	// generate token
-	token, err := utils.GenerateToken(
+	accessToken, err := utils.GenerateToken(
 		strconv.Itoa(int(userModel.ID)),
 		userModel.Email,
 		"",
@@ -80,10 +86,21 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (*borrower.Us
 		l.svcCtx.Config.JwtAuth.AccessExpire,
 	)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
+	// refresh token
+	refreshToken, err := utils.GenerateToken(
+		strconv.Itoa(int(userModel.ID)),
+		userModel.Email,
+		"",
+		l.svcCtx.Config.JwtAuth.RefreshSecret,
+		l.svcCtx.Config.JwtAuth.RefreshExpire,
+	)
 
 	return &borrower.UserRegisterResponse{
-		Token: token,
-	}, nil
+		AccessToken:        accessToken,
+		RefreshToken:       refreshToken,
+		AccessTokenExpire:  l.svcCtx.Config.JwtAuth.AccessExpire,
+		RefreshTokenExpire: l.svcCtx.Config.JwtAuth.RefreshExpire,
+	}, errors.WithStack(err)
 }

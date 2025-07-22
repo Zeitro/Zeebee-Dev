@@ -3,6 +3,8 @@ package user
 import (
 	"net/http"
 
+	"github.com/pkg/errors"
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
 
 	"zeebee-backend/app/borrower/api/internal/logic/user"
@@ -13,11 +15,19 @@ import (
 	"zeebee-backend/common/response"
 )
 
-// login user
+// login
 func LoginHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var err error
+		defer func() {
+			if err != nil {
+				logx.WithContext(r.Context()).
+					WithFields(logx.Field("stacks", errorx.GetErrorStack(errors.WithStack(err)))).
+					Error(err)
+			}
+		}()
 		var req types.UserLoginRequest
-		if err := httpx.Parse(r, &req); err != nil {
+		if err = httpx.Parse(r, &req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
 		}

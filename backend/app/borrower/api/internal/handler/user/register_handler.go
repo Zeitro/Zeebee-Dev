@@ -3,6 +3,7 @@ package user
 import (
 	"net/http"
 
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
 
 	"zeebee-backend/app/borrower/api/internal/logic/user"
@@ -16,8 +17,14 @@ import (
 // register user
 func RegisterHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var err error
+		defer func() {
+			if err != nil {
+				logx.WithContext(r.Context()).Error(err)
+			}
+		}()
 		var req types.UserRegisterRequest
-		if err := httpx.Parse(r, &req); err != nil {
+		if err = httpx.Parse(r, &req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
 		}

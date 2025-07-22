@@ -34,6 +34,11 @@ func (s *UserServer) Register(ctx context.Context, in *borrower.UserRegisterRequ
 	return l.Register(in)
 }
 
+func (s *UserServer) RefreshToken(ctx context.Context, in *borrower.RefreshTokenRequest) (*borrower.RefreshTokenResponse, error) {
+	l := userlogic.NewRefreshTokenLogic(ctx, s.svcCtx)
+	return l.RefreshToken(in)
+}
+
 func (s *UserServer) GetUserInfo(ctx context.Context, in *borrower.UserInfoRequest) (*borrower.UserinfoResponse, error) {
 	l := userlogic.NewGetUserInfoLogic(ctx, s.svcCtx)
 	return l.GetUserInfo(in)

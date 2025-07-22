@@ -15,10 +15,6 @@ type ServiceContext struct {
 	AuthMiddleware rest.Middleware
 
 	// rpc client
-	RpcClients RpcClients
-}
-
-type RpcClients struct {
 	UserRpcClient borrower.UserClient
 }
 
@@ -26,8 +22,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config:         c,
 		AuthMiddleware: middleware.NewAuthMiddleware(c.JwtAuth.AccessSecret).Handle,
-		RpcClients: RpcClients{
-			UserRpcClient: borrower.NewUserClient(zrpc.MustNewClient(c.RpcConf.UserConf).Conn()),
-		},
+		// rpc client
+		UserRpcClient: borrower.NewUserClient(zrpc.MustNewClient(c.RpcConf.UserConf).Conn()),
 	}
 }

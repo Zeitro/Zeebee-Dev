@@ -25,14 +25,20 @@ func NewGetUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUs
 	}
 }
 
-func (l *GetUserInfoLogic) GetUserInfo(in *borrower.UserInfoRequest) (*borrower.UserinfoResponse, error) {
+func (l *GetUserInfoLogic) GetUserInfo(in *borrower.UserInfoRequest) (resp *borrower.UserinfoResponse, err error) {
+	defer func() {
+		if err != nil {
+			l.WithContext(l.ctx).Error(err)
+		}
+	}()
+
 	user, err := l.svcCtx.UserRepo.GetBorrowerUser(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
 	}
 	userBorrower := user.Borrower
 	if userBorrower == nil {
-		return nil, errors.New("borrower not found")
+		return nil, errors.WithStack(errors.New("borrower not found"))
 	}
 	userInfo := &borrower.UserinfoResponse{
 		Id:          user.ID,

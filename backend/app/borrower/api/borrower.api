@@ -16,26 +16,32 @@ type (
 
 @server (
 	desc:    "borrower-api service"
-	version: "v1"
-	group:   "user"
-	prefix:  "/api/user"
+	version: v1
+	group:   user
+	prefix:  /api/user
+	tags:    user
 )
 service borrower-api {
-	@doc "register user"
+	@doc "register"
 	@handler Register
 	post /register (UserRegisterRequest) returns (UserRegisterResponse)
 
-	@doc "login user"
+	@doc "login"
 	@handler Login
 	post /login (UserLoginRequest) returns (UserLoginResponse)
+
+	@doc "refresh"
+	@handler RefreshToken
+	post /refresh (UserRefreshTokenRequest) returns (UserRefreshTokenResponse)
 }
 
 @server (
 	desc:       "borrower-api service"
-	version:    "v1"
-	group:      "user"
-	prefix:     "/api/user"
+	version:    v1
+	group:      user
+	prefix:     /api/user
 	middleware: AuthMiddleware
+	tags:       user
 )
 service borrower-api {
 	@doc "user info"
