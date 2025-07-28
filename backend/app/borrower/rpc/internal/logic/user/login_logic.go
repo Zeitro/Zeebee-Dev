@@ -6,7 +6,6 @@ import (
 
 	"github.com/pkg/errors"
 
-	innerconstants "zeebee-backend/app/borrower/rpc/internal/constants"
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
@@ -39,7 +38,7 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 		}
 	}()
 	// check input wrong pwd times
-	redisKey := stringx.Formate(innerconstants.BorrowerLoginFailedTimes, in.Email)
+	redisKey := stringx.Formate(constants.BorrowerLoginFailedTimes, in.Email)
 	var loginFailedTimes int
 	if global.Config.MaxFailedLoginTimes > 0 {
 		loginFailedTimes, err = global.GetRedis().GetInt(l.ctx, redisKey)
@@ -51,12 +50,14 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 		}
 	}
 
-	user, err := l.svcCtx.UserRepo.FindOneByColumns(l.ctx,
-		map[string]interface{}{
-			"email": in.Email,
-			"type":  constants.UserTypeBorrower,
-		},
-	)
+	user, err := l.svcCtx.UserRepo.GetBorrowerUserByEmail(l.ctx, in.Email)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	if user.Borrower == nil {
+		return nil, errors.New("borrower not found")
+	}
+
 	// check pwd
 	if !utils.CheckPassword(in.Password, user.PasswordHash) {
 		// add input wrong pwd times to redis
@@ -79,13 +80,29 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 		return nil, errors.WithStack(errors.New("user is not active"))
 	}
 	// generate token
-	accessToken, err := utils.GenerateToken(strconv.Itoa(int(user.ID)), user.Email, "", l.svcCtx.Config.JwtAuth.AccessSecret, l.svcCtx.Config.JwtAuth.AccessExpire)
+	accessToken, err := utils.GenerateToken(
+		strconv.Itoa(int(user.ID)),
+		strconv.Itoa(int(user.Borrower.ID)),
+		user.Email,
+		"",
+		string(constants.UserTypeBorrower),
+		l.svcCtx.Config.JwtAuth.AccessSecret,
+		l.svcCtx.Config.JwtAuth.AccessExpire,
+	)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 
 	// refresh token
-	refreshToken, err := utils.GenerateToken(strconv.Itoa(int(user.ID)), user.Email, "", l.svcCtx.Config.JwtAuth.RefreshSecret, l.svcCtx.Config.JwtAuth.RefreshExpire)
+	refreshToken, err := utils.GenerateToken(
+		strconv.Itoa(int(user.ID)),
+		strconv.Itoa(int(user.Borrower.ID)),
+		user.Email,
+		"",
+		string(constants.UserTypeBorrower),
+		l.svcCtx.Config.JwtAuth.RefreshSecret,
+		l.svcCtx.Config.JwtAuth.RefreshExpire,
+	)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}

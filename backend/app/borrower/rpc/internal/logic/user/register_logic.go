@@ -58,6 +58,12 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 		Status:       constants.UserStatusActive,
 		Type:         constants.UserTypeBorrower,
 	}
+	borrowerModel := &model.Borrower{
+		FirstName:   in.FirstName,
+		LastName:    in.LastName,
+		Ssn:         in.Ssn,
+		PhoneNumber: in.PhoneNumber,
+	}
 	err = l.svcCtx.UserRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
 		// create user
 		userModel, err = l.svcCtx.UserRepo.CreateWithTx(l.ctx, tx, userModel)
@@ -65,14 +71,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 			return err
 		}
 		// create borrower
-		borrowerModel := &model.Borrower{
-			UserID:      userModel.ID,
-			FirstName:   in.FirstName,
-			LastName:    in.LastName,
-			Ssn:         in.Ssn,
-			PhoneNumber: in.PhoneNumber,
-			Address:     in.Address,
-		}
+		borrowerModel.UserID = userModel.ID
 		_, err = l.svcCtx.BorrowerRepo.CreateWithTx(l.ctx, tx, borrowerModel)
 		return nil
 	})
@@ -80,8 +79,10 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 	// generate token
 	accessToken, err := utils.GenerateToken(
 		strconv.Itoa(int(userModel.ID)),
+		strconv.Itoa(int(borrowerModel.ID)),
 		userModel.Email,
 		"",
+		string(constants.UserTypeBorrower),
 		l.svcCtx.Config.JwtAuth.AccessSecret,
 		l.svcCtx.Config.JwtAuth.AccessExpire,
 	)
@@ -91,8 +92,10 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 	// refresh token
 	refreshToken, err := utils.GenerateToken(
 		strconv.Itoa(int(userModel.ID)),
+		strconv.Itoa(int(borrowerModel.ID)),
 		userModel.Email,
 		"",
+		string(constants.UserTypeBorrower),
 		l.svcCtx.Config.JwtAuth.RefreshSecret,
 		l.svcCtx.Config.JwtAuth.RefreshExpire,
 	)

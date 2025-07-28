@@ -3,9 +3,14 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"zeebee-backend/app/borrower/rpc/internal/config"
 	"zeebee-backend/app/borrower/rpc/internal/global"
+	loanServer "zeebee-backend/app/borrower/rpc/internal/server/loan"
 	userServer "zeebee-backend/app/borrower/rpc/internal/server/user"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
@@ -24,7 +29,7 @@ func main() {
 
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
-	// 初始化全局配置
+	// init global config
 	err := global.InitGlobal(c)
 	if err != nil {
 		panic(err)
@@ -34,13 +39,22 @@ func main() {
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		borrower.RegisterUserServer(grpcServer, userServer.NewUserServer(ctx))
+		borrower.RegisterLoanServer(grpcServer, loanServer.NewLoanServer(ctx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)
 		}
 	})
 	defer s.Stop()
+	go func() {
+		fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
+		s.Start()
+	}()
 
-	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
-	s.Start()
+	// mercy shutdown
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	fmt.Printf("shutdown service in 5 seconds ....")
+	time.Sleep(5 * time.Second)
 }

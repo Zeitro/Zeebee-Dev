@@ -1,0 +1,133 @@
+@startuml
+
+entity "users"{
+    * id  int4
+    * created_at timestamptz
+    * updated_at timestamptz
+    * is_del int2
+    ---
+    * email varchar(100)
+    * password_hash varchar(100)
+    * status varchar(10) // active, inactive
+    * type varchar(10) // borrower, lender
+}
+
+entity "borrowers"{
+    * id int4
+    * created_at timestamptz
+    * updated_at timestamptz
+    * is_del int2
+    ---
+    * user_id int4
+    * first_name varchar(30)
+    * last_name varchar(30)
+    * ssn varchar(10)
+    * phone_number varchar(20)
+    * address jsonb
+}
+
+entity "loans" {
+    * id int4
+    * created_at timestamptz
+    * updated_at timestamptz
+    * is_del int2
+    ---
+    * borrower_id int4
+    * property_id int4
+'    * applicant_id int4
+    * lender_id int4
+    * lender_company varchar(100)
+    * service_company varchar(100)
+    * stage  varchar(10) // pending,active,archived
+    * pending_status varchar(10) // quoting,processing,closing
+    * purpose varchar(20) // Purchase,Rate-term refi,Cash-out refi
+    * loan_type varchar(30) // Bridge,Rehab,Ground up construction
+    * total_amount numeric(10,2)
+    * principle_amount numeric(10,2)
+    * initial_amount numeric(10,2)
+    * holdback_amount numeric(10,2)
+    * holdback_released_amount numeric(10,2)
+    * lien_position varchar(10) // 1st, 2nd, 3rd
+    * rate numeric(4,2)
+    * closing_fund numeric(10,2)
+    * closing_date date
+    * maturity_date date
+    * paid_off_date int4
+    * monthly_payment numeric(10,2)
+    * business_strategy text[] // sale,rent
+    * source varchar(30) // borrower,lender,system
+}
+
+entity "properties" {
+    * id int4
+    * created_at timestamptz
+    * updated_at timestamptz
+    * is_del int2
+    ---
+    * borrower_id int4
+    * type  varchar(30) // Single Family,Townhouse,Multi Family,Condo
+    * unit int2
+    * address jsonb
+}
+
+'entity "loan_properties" {
+'    * id int4
+'    * created_at timestamptz
+'    * updated_at timestamptz
+'    * is_del int2
+'    ---
+'    * borrower_id int4
+'    * loan_id int4
+'    * type  varchar(30) // Single Family,Townhouse,Multi Family,Condo
+'    * unit int2
+'    * address jsonb
+'}
+
+entity "lenders" {
+    * id int4
+    * created_at timestamptz
+    * updated_at timestamptz
+    * is_del int2
+    ---
+    * name varchar(100)
+    * address jsonb
+    * status varchar(10) // active,inactive
+}
+
+entity "applicants"{
+    * id int4
+    * created_at timestamptz
+    * updated_at timestamptz
+    * is_del int2
+    ---
+    * borrower_id int4
+    * loan_id int4
+    * first_name varchar(30)
+    * last_name varchar(30)
+    * mid_name varchar(30)
+    * is_primary int2
+}
+
+'entity "loan_applicants"{
+'    * id int4
+'    * created_at timestamptz
+'    * updated_at timestamptz
+'    * is_del int2
+'    ---
+'    * borrower_id int4
+'    * loan_id int4
+'    * first_name varchar(30)
+'    * last_name varchar(30)
+'    * mid_name varchar(30)
+'    * is_primary int2
+'}
+
+users ||--|| borrowers: has one
+borrowers ||--o{ loans: has many
+borrowers ||--o{ properties: has many
+borrowers ||--o{ applicants: has many
+properties ||--o{ loans: has many
+loans ||--o{ applicants: has many
+lenders ||--o{ loans: has many
+
+@enduml

@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/borrower/api/internal/logic/user"
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
+	"zeebee-backend/common/validator"
 
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/response"
@@ -25,6 +26,16 @@ func InfoHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}()
 		var req types.EmptyRequest
 		if err = httpx.Parse(r, &req); err != nil {
+			response.BadRequest(w, errorx.GetErrorMsg(err))
+			return
+		}
+
+		v, err := validator.GetEnValidator()
+		if err != nil {
+			response.InternalServerError(w, errorx.GetErrorMsg(err))
+			return
+		}
+		if err := v.Validate(&req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
 		}

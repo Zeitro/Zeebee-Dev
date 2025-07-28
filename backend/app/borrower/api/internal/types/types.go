@@ -3,14 +3,53 @@
 
 package types
 
-import (
-	"github.com/go-playground/validator/v10"
-)
+type AddressEntry struct {
+	State    string `json:"state" validate:"required"`
+	City     string `json:"city" validate:"required"`
+	Address1 string `json:"address1" validate:"required"`
+	Address2 string `json:"address2"`
+	ZipCode  string `json:"zip_code"`
+}
 
 type EmptyRequest struct {
 }
 
 type EmptyResponse struct {
+}
+
+type LoanCreateRequest struct {
+	Stage             string         `json:"stage" validate:"required,oneof=Pending Active Archived"`
+	PendingStatus     string         `json:"pending_status" validate:"required_if=Stage Pending,omitempty,oneof=Quoting Processing Closing"`
+	LoanPurpose       string         `json:"loan_purpose" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
+	LoanType          string         `json:"loan_type" validate:"required"`
+	TotalAmount       float32        `json:"total_amount" validate:"required"`
+	InitialAmount     float32        `json:"initial_amount"`
+	Property          *PropertyEntry `json:"property" validate:"required"`
+	ApplicantName     string         `json:"applicant_name" validate:"required"`
+	LenderCompany     string         `json:"lender_company" validate:"required"`
+	ClosingDate       string         `json:"closing_date" validate:"required_if=Stage Pending,omitempty,datetime=01/02/2006"`
+	ClosingFund       float32        `json:"closing_fund" validate:"required_if=Stage Pending"`
+	HoldbackAmunt     float32        `json:"holdback_amount" validate:"required_if=Stage Pending"`
+	Rate              float32        `json:"rate" validate:"required,gt=0"`
+	PrincipalAmount   float32        `json:"principal_amount" validate:"required"`
+	MonthlyPayment    float32        `json:"monthly_payment" validate:"required_id=Stage Active,omitempty,gt=0"`
+	LienPosition      string         `json:"lien_position" validate:"required_if=Stage Pending,omitempty,oneof=1st 2nd 3rd 4th"`
+	MaturityDate      string         `json:"maturity_date" validate:"required_if=Stage Active,omitempty,datetime=01/02/2006"`
+	PrepaymentPenalty float32        `json:"prepayment_penalty" validate:"required_if=Stage Active,omitempty,gte=0"`
+	ServiceCompany    string         `json:"service_company" validate:"required_if=Stage Active"`
+	PaidOffDate       string         `json:"paid_off_date" validate:"required_if=Stage Archived,omitempty,datetime=01/02/2006"`
+	BusinessStrategy  []string       `json:"business_strategy" validate:"required,dive,reuired,oneof=Rent Sale"`
+}
+
+type LoanCreateResponse struct {
+	ID int64 `json:"id"`
+}
+
+type PropertyEntry struct {
+	ID           int64         `json:"id"`
+	PropertyType string        `json:"propertyType" validate:"required,oneof='Single Family' 'Townhouse' 'Multi Family' 'Condo'"`
+	Unit         int           `json:"unit" validate:"required,min=1"`
+	Address      *AddressEntry `json:"address" validate:"required"`
 }
 
 type UserInfo struct {
@@ -64,18 +103,4 @@ type UserRegisterResponse struct {
 	AccessTokenExpire  int64  `json:"access_token_expire"`
 	RefreshToken       string `json:"refresh_token"`
 	RefreshTokenExpire int64  `json:"refresh_token_expire"`
-}
-
-var validate = validator.New()
-
-func (r *UserLoginRequest) Validate() error {
-	return validate.Struct(r)
-}
-
-func (r *UserRefreshTokenRequest) Validate() error {
-	return validate.Struct(r)
-}
-
-func (r *UserRegisterRequest) Validate() error {
-	return validate.Struct(r)
 }

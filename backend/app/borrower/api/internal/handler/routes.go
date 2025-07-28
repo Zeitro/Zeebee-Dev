@@ -6,6 +6,7 @@ package handler
 import (
 	"net/http"
 
+	loan "zeebee-backend/app/borrower/api/internal/handler/loan"
 	user "zeebee-backend/app/borrower/api/internal/handler/user"
 	"zeebee-backend/app/borrower/api/internal/svc"
 
@@ -13,6 +14,21 @@ import (
 )
 
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// create loan
+					Method:  http.MethodGet,
+					Path:    "/",
+					Handler: loan.CreateHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/loan"),
+	)
+
 	server.AddRoutes(
 		[]rest.Route{
 			{

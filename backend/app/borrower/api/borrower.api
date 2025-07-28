@@ -8,6 +8,7 @@ info (
 )
 
 import "desc/user.api"
+import "desc/loan.api"
 
 type (
 	EmptyRequest  {}
@@ -47,5 +48,19 @@ service borrower-api {
 	@doc "user info"
 	@handler Info
 	get /info (EmptyRequest) returns (UserInfoResponse)
+}
+
+@server (
+	desc:       "loan service"
+	version:    v1
+	group:      loan
+	prefix:     /api/loan
+	middleware: AuthMiddleware
+	tags:       user
+)
+service borrower-api {
+	@doc "create loan"
+	@handler Create
+	get / (LoanCreateRequest) returns (LoanCreateResponse)
 }
 
