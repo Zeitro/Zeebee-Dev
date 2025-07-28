@@ -10,6 +10,6 @@ type AddressEntry {
     State string `json:"state" validate:"required"`
     City string `json:"city" validate:"required"`
     Address1 string `json:"address1" validate:"required"`
-    Address2 string `json:"address2"`
+    Address2 string `json:"address2,optional"`
     ZipCode string `json:"zip_code"`
 }

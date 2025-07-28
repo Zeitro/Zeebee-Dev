@@ -7,7 +7,7 @@ type AddressEntry struct {
 	State    string `json:"state" validate:"required"`
 	City     string `json:"city" validate:"required"`
 	Address1 string `json:"address1" validate:"required"`
-	Address2 string `json:"address2"`
+	Address2 string `json:"address2,optional"`
 	ZipCode  string `json:"zip_code"`
 }
 
@@ -19,35 +19,42 @@ type EmptyResponse struct {
 
 type LoanCreateRequest struct {
 	Stage             string         `json:"stage" validate:"required,oneof=Pending Active Archived"`
-	PendingStatus     string         `json:"pending_status" validate:"required_if=Stage Pending,omitempty,oneof=Quoting Processing Closing"`
+	PendingStatus     string         `json:"pending_status,optional" validate:"required_if=Stage Pending,omitempty,oneof=Quoting Processing Closing"`
 	LoanPurpose       string         `json:"loan_purpose" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
-	LoanType          string         `json:"loan_type" validate:"required"`
+	LoanType          string         `json:"loan_type" validate:"required,oneof=Bridge Rehab 'Ground up construction'"`
 	TotalAmount       float32        `json:"total_amount" validate:"required"`
-	InitialAmount     float32        `json:"initial_amount"`
+	InitialAmount     float32        `json:"initial_amount,optional"`
 	Property          *PropertyEntry `json:"property" validate:"required"`
 	ApplicantName     string         `json:"applicant_name" validate:"required"`
-	LenderCompany     string         `json:"lender_company" validate:"required"`
-	ClosingDate       string         `json:"closing_date" validate:"required_if=Stage Pending,omitempty,datetime=01/02/2006"`
-	ClosingFund       float32        `json:"closing_fund" validate:"required_if=Stage Pending"`
-	HoldbackAmunt     float32        `json:"holdback_amount" validate:"required_if=Stage Pending"`
+	LenderCompany     string         `json:"lender_company,optional" validate:"required"`
+	ClosingDate       string         `json:"closing_date,optional" validate:"required_if=Stage Pending,omitempty,datetime=01/02/2006"`
+	ClosingFund       float32        `json:"closing_fund,optional" validate:"required_if=Stage Pending"`
+	HoldbackAmunt     float32        `json:"holdback_amount,optional" validate:"required_if=Stage Pending"`
 	Rate              float32        `json:"rate" validate:"required,gt=0"`
-	PrincipalAmount   float32        `json:"principal_amount" validate:"required"`
-	MonthlyPayment    float32        `json:"monthly_payment" validate:"required_id=Stage Active,omitempty,gt=0"`
-	LienPosition      string         `json:"lien_position" validate:"required_if=Stage Pending,omitempty,oneof=1st 2nd 3rd 4th"`
-	MaturityDate      string         `json:"maturity_date" validate:"required_if=Stage Active,omitempty,datetime=01/02/2006"`
-	PrepaymentPenalty float32        `json:"prepayment_penalty" validate:"required_if=Stage Active,omitempty,gte=0"`
-	ServiceCompany    string         `json:"service_company" validate:"required_if=Stage Active"`
-	PaidOffDate       string         `json:"paid_off_date" validate:"required_if=Stage Archived,omitempty,datetime=01/02/2006"`
-	BusinessStrategy  []string       `json:"business_strategy" validate:"required,dive,reuired,oneof=Rent Sale"`
+	PrincipalAmount   float32        `json:"principal_amount,optional" validate:"required_unless=Stage Pending"`
+	MonthlyPayment    float32        `json:"monthly_payment,optional" validate:"required_if=Stage Active,omitempty,gt=0"`
+	LienPosition      string         `json:"lien_position,optional"`
+	MaturityDate      string         `json:"maturity_date,optional" validate:"required_if=Stage Active,omitempty,datetime=01/02/2006"`
+	PrepaymentPenalty float32        `json:"prepayment_penalty,optional" validate:"required_if=Stage Active,omitempty,gte=0"`
+	ServiceCompany    string         `json:"service_company,optional" validate:"required_if=Stage Active"`
+	PaidOffDate       string         `json:"paid_off_date,optional" validate:"required_if=Stage Archived,omitempty,datetime=01/02/2006"`
+	BusinessStrategy  []string       `json:"business_strategy" validate:"required,dive,required,oneof=Rent Sale"`
 }
 
 type LoanCreateResponse struct {
 	ID int64 `json:"id"`
 }
 
+type LoanDetailRequest struct {
+	ID int64 `path:"id"`
+}
+
+type LoanDetailResponse struct {
+}
+
 type PropertyEntry struct {
-	ID           int64         `json:"id"`
-	PropertyType string        `json:"propertyType" validate:"required,oneof='Single Family' 'Townhouse' 'Multi Family' 'Condo'"`
+	ID           int64         `json:"id,optional"`
+	PropertyType string        `json:"property_type" validate:"required,oneof='Single Family' 'Townhouse' 'Multi Family' 'Condo'"`
 	Unit         int           `json:"unit" validate:"required,min=1"`
 	Address      *AddressEntry `json:"address" validate:"required"`
 }

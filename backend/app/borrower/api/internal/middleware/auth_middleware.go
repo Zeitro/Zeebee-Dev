@@ -32,8 +32,14 @@ func (m *AuthMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			response.Unauthorized(w, "Invalid token")
 			return
 		}
+		if claims.UserType != string(constants.UserTypeBorrower) {
+			response.Unauthorized(w, "Invalid user type")
+			return
+		}
+
 		reqCtx := r.Context()
-		nextCtx := context.WithValue(reqCtx, constants.BorrowerUserIdKey, claims.UserID)
+		nextCtx := context.WithValue(reqCtx, constants.BorrowerUserKey, claims)
+		nextCtx = context.WithValue(nextCtx, constants.BorrowerUserIdKey, claims.UserID)
 		newReq := r.WithContext(nextCtx)
 
 		next(w, newReq)

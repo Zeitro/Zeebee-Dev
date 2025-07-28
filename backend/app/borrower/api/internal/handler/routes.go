@@ -20,13 +20,19 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Route{
 				{
 					// create loan
-					Method:  http.MethodGet,
-					Path:    "/",
+					Method:  http.MethodPost,
+					Path:    "/loan",
 					Handler: loan.CreateHandler(serverCtx),
+				},
+				{
+					// get loan
+					Method:  http.MethodGet,
+					Path:    "/loan/:id",
+					Handler: loan.DetailHandler(serverCtx),
 				},
 			}...,
 		),
-		rest.WithPrefix("/api/loan"),
+		rest.WithPrefix("/api/v1"),
 	)
 
 	server.AddRoutes(
@@ -34,23 +40,23 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			{
 				// login
 				Method:  http.MethodPost,
-				Path:    "/login",
+				Path:    "/user/login",
 				Handler: user.LoginHandler(serverCtx),
 			},
 			{
 				// refresh
 				Method:  http.MethodPost,
-				Path:    "/refresh",
+				Path:    "/user/refresh",
 				Handler: user.RefreshTokenHandler(serverCtx),
 			},
 			{
 				// register
 				Method:  http.MethodPost,
-				Path:    "/register",
+				Path:    "/user/register",
 				Handler: user.RegisterHandler(serverCtx),
 			},
 		},
-		rest.WithPrefix("/api/user"),
+		rest.WithPrefix("/api/v1"),
 	)
 
 	server.AddRoutes(
@@ -60,11 +66,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				{
 					// user info
 					Method:  http.MethodGet,
-					Path:    "/info",
+					Path:    "/user/info",
 					Handler: user.InfoHandler(serverCtx),
 				},
 			}...,
 		),
-		rest.WithPrefix("/api/user"),
+		rest.WithPrefix("/api/v1"),
 	)
 }
