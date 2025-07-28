@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"strings"
 
-	"github.com/duke-git/lancet/v2/datetime"
 	"github.com/lib/pq"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -15,6 +14,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/stringx"
+	"zeebee-backend/common/timex"
 	"zeebee-backend/common/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -42,15 +42,15 @@ func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.CreateLoanRequ
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-
 	loan, property, applicant, err := l.buildCreateModels(in)
 	if err != nil {
 		return nil, err
 	}
 
+	// create loan
 	err = l.svcCtx.LoanRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
 		var innerErr error
-		property, innerErr = l.svcCtx.PropertyRepo.CreateWithTx(l.ctx, tx, property)
+		property, innerErr = l.svcCtx.PropertyRepo.GetOrCreateWithTx(l.ctx, tx, property)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -83,21 +83,21 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.CreateLoanReque
 	firstName, lastName := stringx.ParseUserName(in.ApplicantName)
 
 	loan = &model.Loan{
-		BorrowerID:       in.BorrowerId,
-		LenderCompany:    in.LenderCompany,
-		ServiceCompany:   in.ServiceCompany,
-		Stage:            constants.LoanStage(in.Stage),
-		PendingStatus:    constants.LoanPendingStatusClosing,
-		Purpose:          constants.LoanPurpose(in.LoanPurpose),
-		LoanType:         constants.LoanType(in.LoanType),
-		TotalAmount:      in.TotalAmount,
-		PrincipalAmount:  in.PrincipalAmount,
-		InitialAmount:    in.InitialAmount,
-		HoldbackAmount:   in.HoldbackAmount,
-		LienPosition:     in.LienPosition,
-		Rate:             in.Rate,
-		ClosingFund:      in.ClosingFund,
-		MonthlyPayment:   in.MonthlyPayment,
+		BorrowerID:      in.BorrowerId,
+		LenderCompany:   in.LenderCompany,
+		ServiceCompany:  in.ServiceCompany,
+		Stage:           constants.LoanStage(in.Stage),
+		PendingStatus:   constants.LoanPendingStatusClosing,
+		Purpose:         constants.LoanPurpose(in.LoanPurpose),
+		LoanType:        constants.LoanType(in.LoanType),
+		TotalAmount:     in.TotalAmount,
+		PrincipalAmount: in.PrincipalAmount,
+		InitialAmount:   in.InitialAmount,
+		// HoldbackAmount:   in.HoldbackAmount,
+		// LienPosition:     "1st",
+		Rate: in.Rate,
+		// ClosingFund:      in.ClosingFund,
+		// MonthlyPayment:   in.MonthlyPayment,
 		BusinessStrategy: pq.StringArray(in.BusinessStrategy),
 		Source:           constants.LoanSourceBorrower,
 	}
@@ -121,9 +121,13 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.CreateLoanReque
 		FullName:   in.ApplicantName,
 		IsPrimary:  true,
 	}
+	if loan.TotalAmount < loan.InitialAmount {
+		return nil, nil, nil, errors.New("Total amount cannot be less than initial amount")
+	}
 	switch constants.LoanStage(in.Stage) {
 	case constants.LoanStagePending:
-		closingDate, err := datetime.FormatStrToTime(in.ClosingDate, "mm/dd/yyyy")
+		closingDate, err := timex.FormateTimeToStrWithUsStyle(in.ClosingDate)
+
 		if err != nil {
 			return nil, nil, nil, errors.Wrap(err, "invalid closing date")
 		}
@@ -131,8 +135,13 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.CreateLoanReque
 			Time:  closingDate,
 			Valid: true,
 		}
+		loan.HoldbackAmount = loan.TotalAmount - loan.InitialAmount
+		loan.PrincipalAmount = loan.TotalAmount
+		loan.PendingStatus = constants.LoanPendingStatus(in.PendingStatus)
+
 	case constants.LoanStageActive:
-		maturityDate, err := datetime.FormatStrToTime(in.MaturityDate, "mm/dd/yyyy")
+
+		maturityDate, err := timex.FormateTimeToStrWithUsStyle(in.MaturityDate)
 		if err != nil {
 			return nil, nil, nil, errors.Wrap(err, "invalid maturity date")
 		}
@@ -140,8 +149,13 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.CreateLoanReque
 			Time:  maturityDate,
 			Valid: true,
 		}
+		loan.PrincipalAmount = in.PrincipalAmount
+		loan.MonthlyPayment = in.MonthlyPayment
+		loan.LienPosition = in.LienPosition
+		loan.ServiceCompany = in.ServiceCompany
+		loan.PrepaymentPenalty = in.PrepaymentPenalty
 	case constants.LoanStageArchived:
-		paidOffDate, err := datetime.FormatStrToTime(in.PaidOffDate, "mm/dd/yyyy")
+		paidOffDate, err := timex.FormateTimeToStrWithUsStyle(in.PaidOffDate)
 		if err != nil {
 			return nil, nil, nil, errors.Wrap(err, "invalid paid off date")
 		}
@@ -149,6 +163,7 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.CreateLoanReque
 			Time:  paidOffDate,
 			Valid: true,
 		}
+		loan.PrincipalAmount = in.PrincipalAmount
 	default:
 		return nil, nil, nil, errors.WithStack(errors.New("invalid loan stage"))
 	}

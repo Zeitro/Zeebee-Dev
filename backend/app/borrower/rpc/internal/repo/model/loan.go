@@ -26,6 +26,7 @@ type Loan struct {
 	InitialAmount          float32                     `gorm:"column:initial_amount;type:numeric(10,2);not null;default:0" json:"initial_amount"`
 	HoldbackAmount         float32                     `gorm:"column:holdback_amount;type:numeric(10,2);not null;default:0" json:"holdback_amount"`
 	HoldbackReleasedAmount float32                     `gorm:"column:holdback_released_amount;type:numeric(10,2);not null;default:0" json:"holdback_released_amount"`
+	PrepaymentPenalty      float32                     `gorm:"column:prepayment_penalty;type:numeric(10,2);not null;default:0" json:"prepayment_penalty"`
 	LienPosition           string                      `gorm:"column:lien_position;size:10;not null;default:''" json:"lien_position"`
 	Rate                   float32                     `gorm:"column:rate;type:numeric(4,2);not null;default:0" json:"rate"`
 	ClosingFund            float32                     `gorm:"column:closing_fund;type:numeric(10,2);not null;default:0" json:"closing_fund"`

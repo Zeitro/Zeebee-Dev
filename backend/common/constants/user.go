@@ -17,4 +17,9 @@ const (
 const (
 	BorrowerUserIdKey = "borrower_user_id"
 	LenderUserIdKey   = "lender_user_id"
+
+	BorrowerUserAccountIdKey = "borrower_user_account_id"
+	LenderUserAccountIdKey   = "lender_user_account_id"
+
+	BorrowerUserKey = "borrower_user"
 )

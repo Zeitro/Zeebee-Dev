@@ -19,48 +19,52 @@ type (
 	desc:    "borrower-api service"
 	version: v1
 	group:   user
-	prefix:  /api/user
+	prefix:  /api/v1
 	tags:    user
 )
 service borrower-api {
 	@doc "register"
 	@handler Register
-	post /register (UserRegisterRequest) returns (UserRegisterResponse)
+	post /user/register (UserRegisterRequest) returns (UserRegisterResponse)
 
 	@doc "login"
 	@handler Login
-	post /login (UserLoginRequest) returns (UserLoginResponse)
+	post /user/login (UserLoginRequest) returns (UserLoginResponse)
 
 	@doc "refresh"
 	@handler RefreshToken
-	post /refresh (UserRefreshTokenRequest) returns (UserRefreshTokenResponse)
+	post /user/refresh (UserRefreshTokenRequest) returns (UserRefreshTokenResponse)
 }
 
 @server (
 	desc:       "borrower-api service"
 	version:    v1
 	group:      user
-	prefix:     /api/user
+	prefix:     /api/v1
 	middleware: AuthMiddleware
 	tags:       user
 )
 service borrower-api {
 	@doc "user info"
 	@handler Info
-	get /info (EmptyRequest) returns (UserInfoResponse)
+	get /user/info (EmptyRequest) returns (UserInfoResponse)
 }
 
 @server (
 	desc:       "loan service"
 	version:    v1
 	group:      loan
-	prefix:     /api/loan
+	prefix:     /api/v1
 	middleware: AuthMiddleware
-	tags:       user
+	tags:       loan
 )
 service borrower-api {
 	@doc "create loan"
 	@handler Create
-	get / (LoanCreateRequest) returns (LoanCreateResponse)
+	post /loan (LoanCreateRequest) returns (LoanCreateResponse)
+
+	@doc "get loan"
+	@handler Detail
+	get /loan/:id (LoanDetailRequest) returns (LoanDetailResponse)
 }
 
