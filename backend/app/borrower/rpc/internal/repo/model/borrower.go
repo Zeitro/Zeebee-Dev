@@ -4,6 +4,8 @@ import (
 	"time"
 
 	"gorm.io/plugin/soft_delete"
+
+	"zeebee-backend/common/types"
 )
 
 type Borrower struct {
@@ -13,9 +15,9 @@ type Borrower struct {
 	LastName    string                `gorm:"column:last_name;size:100;not null;default:''" json:"last_name"`
 	Ssn         string                `gorm:"column:ssn;size:20;not null;default:''" json:"ssn"`
 	PhoneNumber string                `gorm:"column:phone_number;size:50;not null;default:''" json:"phone_number"`
-	Address     string                `gorm:"column:address;type:text" json:"address"`
-	CreatedAt   time.Time             `gorm:"column:created_at;default:CURRENT_TIMESTAMP" json:"created_at"`
-	UpdatedAt   time.Time             `gorm:"column:updated_at;default:CURRENT_TIMESTAMP" json:"updated_at"`
+	Address     types.Address         `gorm:"column:address;type:jsonb;serializer:json" json:"address"`
+	CreatedAt   time.Time             `gorm:"column:created_at;default:now()" json:"created_at"`
+	UpdatedAt   time.Time             `gorm:"column:updated_at;default:now()" json:"updated_at"`
 	IsDel       soft_delete.DeletedAt `gorm:"softDelete:flag" json:"-"`
 
 	User *User `json:"user" gorm:"foreignKey:UserID;references:ID"`

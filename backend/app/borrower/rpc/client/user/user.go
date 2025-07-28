@@ -14,8 +14,15 @@ import (
 )
 
 type (
+	AddressEntry         = borrower.AddressEntry
+	ApplicantEntry       = borrower.ApplicantEntry
+	CreateLoanRequest    = borrower.CreateLoanRequest
+	CreateLoanResponse   = borrower.CreateLoanResponse
 	EmptyRequest         = borrower.EmptyRequest
 	EmptyResponse        = borrower.EmptyResponse
+	GetLoanRequest       = borrower.GetLoanRequest
+	GetLoanResponse      = borrower.GetLoanResponse
+	PropertyEntry        = borrower.PropertyEntry
 	RefreshTokenRequest  = borrower.RefreshTokenRequest
 	RefreshTokenResponse = borrower.RefreshTokenResponse
 	UserInfoRequest      = borrower.UserInfoRequest

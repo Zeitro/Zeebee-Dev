@@ -34,7 +34,7 @@ create-api-service:
 		$(eval SERVICE := $(filter-out $@,$(MAKECMDGOALS)))
 		@echo "create api server: $(SERVICE)"
 		goctl api go --api app/$(SERVICE)/api/$(SERVICE).api --dir app/$(SERVICE)/api --style go_zero --home third_party/goctl_template
-		goctl api plugin -p goctl-validate="validate --custom" --api app/$(SERVICE)/api/$(SERVICE).api --dir app/$(SERVICE)/api
+		#goctl api plugin -p goctl-validate="validate --custom" --api app/$(SERVICE)/api/$(SERVICE).api --dir app/$(SERVICE)/api
 
 .PHONY: create-api-validate
 # Create API validate

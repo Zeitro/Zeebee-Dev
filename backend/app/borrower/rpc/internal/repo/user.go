@@ -31,3 +31,11 @@ func (repo *UserRepo) GetBorrowerUser(ctx context.Context, id int64) (res *model
 		First(&res).Error
 	return res, errors.WithStack(err)
 }
+
+func (repo *UserRepo) GetBorrowerUserByEmail(ctx context.Context, email string) (res *model.User, err error) {
+	err = repo.BaseRepo.Client(ctx).
+		Where("email = ? and type = ?", email, constants.UserTypeBorrower).
+		Preload("Borrower").
+		First(&res).Error
+	return res, errors.WithStack(err)
+}

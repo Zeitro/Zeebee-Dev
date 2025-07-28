@@ -40,8 +40,10 @@ func (l *RefreshTokenLogic) RefreshToken(in *borrower.RefreshTokenRequest) (resp
 	}
 	accessToken, err := utils.GenerateToken(
 		claims.UserID,
+		claims.AccountId,
 		claims.Username,
 		claims.Role,
+		claims.UserType,
 		l.svcCtx.Config.JwtAuth.AccessSecret,
 		l.svcCtx.Config.JwtAuth.AccessExpire,
 	)

@@ -46,8 +46,8 @@ func (l *GetUserInfoLogic) GetUserInfo(in *borrower.UserInfoRequest) (resp *borr
 		FirstName:   userBorrower.FirstName,
 		LastName:    userBorrower.LastName,
 		PhoneNumber: userBorrower.PhoneNumber,
-		Address:     userBorrower.Address,
-		Ssn:         userBorrower.Ssn,
+		// Address:     userBorrower.Address,
+		Ssn: userBorrower.Ssn,
 	}
 	return userInfo, nil
 }

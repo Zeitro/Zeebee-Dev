@@ -1,6 +1,7 @@
 Name: borrower.rpc
 ListenOn: 0.0.0.0:10001
 Mode: dev
+Timeout: 60000
 MaxFailedLoginTimes: 5
 ForbiddenLoginSeconds: 300
 
