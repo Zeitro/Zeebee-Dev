@@ -30,17 +30,19 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 }
 
 func (l *CreateLogic) Create(req *types.LoanCreateRequest) (resp *types.LoanCreateResponse, err error) {
-	rpcReq := &borrower.CreateLoanRequest{}
+	rpcReq := &borrower.CreateLoanRequest{
+		Data: &borrower.CreateLoanRequestData{},
+	}
 	resp = &types.LoanCreateResponse{}
 	rpcResp := &borrower.CreateLoanResponse{}
 
-	err = copier.Copy(rpcReq, req)
+	err = copier.Copy(&rpcReq.Data, req)
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
-	rpcReq.Property.Address.State = req.Property.Address.State
+	rpcReq.Data.Property.Address.State = req.Property.Address.State
 	// get borrower id
-	rpcReq.BorrowerId, err = utils.GetAccountIdFromCtx(l.ctx)
+	rpcReq.Data.BorrowerId, err = utils.GetAccountIdFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +51,7 @@ func (l *CreateLogic) Create(req *types.LoanCreateRequest) (resp *types.LoanCrea
 	if err != nil {
 		return nil, err
 	}
-	err = copier.Copy(resp, rpcResp)
+	err = copier.Copy(resp, &rpcResp.Data)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

@@ -14,23 +14,35 @@ import (
 )
 
 type (
-	AddressEntry         = borrower.AddressEntry
-	ApplicantEntry       = borrower.ApplicantEntry
-	CreateLoanRequest    = borrower.CreateLoanRequest
-	CreateLoanResponse   = borrower.CreateLoanResponse
-	EmptyRequest         = borrower.EmptyRequest
-	EmptyResponse        = borrower.EmptyResponse
-	GetLoanRequest       = borrower.GetLoanRequest
-	GetLoanResponse      = borrower.GetLoanResponse
-	PropertyEntry        = borrower.PropertyEntry
-	RefreshTokenRequest  = borrower.RefreshTokenRequest
-	RefreshTokenResponse = borrower.RefreshTokenResponse
-	UserInfoRequest      = borrower.UserInfoRequest
-	UserLoginRequest     = borrower.UserLoginRequest
-	UserLoginResponse    = borrower.UserLoginResponse
-	UserRegisterRequest  = borrower.UserRegisterRequest
-	UserRegisterResponse = borrower.UserRegisterResponse
-	UserinfoResponse     = borrower.UserinfoResponse
+	AddressEntry             = borrower.AddressEntry
+	ApplicantEntry           = borrower.ApplicantEntry
+	CreateLoanRequest        = borrower.CreateLoanRequest
+	CreateLoanRequestData    = borrower.CreateLoanRequestData
+	CreateLoanResponse       = borrower.CreateLoanResponse
+	CreateLoanResponseData   = borrower.CreateLoanResponseData
+	EmptyRequest             = borrower.EmptyRequest
+	EmptyResponse            = borrower.EmptyResponse
+	GetLoanRequest           = borrower.GetLoanRequest
+	GetLoanRequestData       = borrower.GetLoanRequestData
+	GetLoanResponse          = borrower.GetLoanResponse
+	LoanEntry                = borrower.LoanEntry
+	PropertyEntry            = borrower.PropertyEntry
+	RefreshTokenRequest      = borrower.RefreshTokenRequest
+	RefreshTokenRequestData  = borrower.RefreshTokenRequestData
+	RefreshTokenResponse     = borrower.RefreshTokenResponse
+	RefreshTokenResponseData = borrower.RefreshTokenResponseData
+	UserInfoRequest          = borrower.UserInfoRequest
+	UserInfoRequestData      = borrower.UserInfoRequestData
+	UserLoginRequest         = borrower.UserLoginRequest
+	UserLoginRequestData     = borrower.UserLoginRequestData
+	UserLoginResponse        = borrower.UserLoginResponse
+	UserLoginResponseData    = borrower.UserLoginResponseData
+	UserRegisterRequest      = borrower.UserRegisterRequest
+	UserRegisterRequestData  = borrower.UserRegisterRequestData
+	UserRegisterResponse     = borrower.UserRegisterResponse
+	UserRegisterResponseData = borrower.UserRegisterResponseData
+	UserinfoResponse         = borrower.UserinfoResponse
+	UserinfoResponseData     = borrower.UserinfoResponseData
 
 	User interface {
 		// user

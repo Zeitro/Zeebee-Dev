@@ -39,7 +39,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 	}()
 	var isExisted bool
 	isExisted, err = l.svcCtx.UserRepo.IsExistedByColumns(l.ctx, map[string]interface{}{
-		"email": in.Email,
+		"email": in.Data.Email,
 	})
 	if err != nil {
 		return nil, err
@@ -48,21 +48,21 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 		return nil, errors.WithStack(errors.New("email is already registered"))
 	}
 
-	pwd, err := utils.HashPassword(in.Password)
+	pwd, err := utils.HashPassword(in.Data.Password)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 	userModel := &model.User{
-		Email:        in.Email,
+		Email:        in.Data.Email,
 		PasswordHash: pwd,
 		Status:       constants.UserStatusActive,
 		Type:         constants.UserTypeBorrower,
 	}
 	borrowerModel := &model.Borrower{
-		FirstName:   in.FirstName,
-		LastName:    in.LastName,
-		Ssn:         in.Ssn,
-		PhoneNumber: in.PhoneNumber,
+		FirstName:   in.Data.FirstName,
+		LastName:    in.Data.LastName,
+		Ssn:         in.Data.Ssn,
+		PhoneNumber: in.Data.PhoneNumber,
 	}
 	err = l.svcCtx.UserRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
 		// create user
@@ -101,9 +101,11 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 	)
 
 	return &borrower.UserRegisterResponse{
-		AccessToken:        accessToken,
-		RefreshToken:       refreshToken,
-		AccessTokenExpire:  l.svcCtx.Config.JwtAuth.AccessExpire,
-		RefreshTokenExpire: l.svcCtx.Config.JwtAuth.RefreshExpire,
+		Data: &borrower.UserRegisterResponseData{
+			AccessToken:        accessToken,
+			RefreshToken:       refreshToken,
+			AccessTokenExpire:  l.svcCtx.Config.JwtAuth.AccessExpire,
+			RefreshTokenExpire: l.svcCtx.Config.JwtAuth.RefreshExpire,
+		},
 	}, errors.WithStack(err)
 }

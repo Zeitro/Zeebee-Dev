@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
+	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/utils"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -37,15 +38,16 @@ func (l *InfoLogic) Info(req *types.EmptyRequest) (resp *types.UserInfoResponse,
 		return nil, errors.WithStack(errors.New("user id not found"))
 	}
 	userInfo, err := l.svcCtx.UserRpcClient.GetUserInfo(l.ctx, &borrower.UserInfoRequest{
-		Id: userId,
+		Data: &borrower.UserInfoRequestData{
+			Id: userId,
+		},
 	})
 	if err != nil {
 		return nil, err
 	}
-	err = copier.Copy(resp, userInfo)
+	err = copier.Copy(resp, &userInfo.Data)
 	if err != nil {
-		return nil, errors.Wrap(err, "trans response error")
+		return nil, errorx.GetFailedTransRespErr(err)
 	}
-
 	return resp, err
 }

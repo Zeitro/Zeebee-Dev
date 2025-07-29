@@ -38,7 +38,7 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 		}
 	}()
 	// check input wrong pwd times
-	redisKey := stringx.Formate(constants.BorrowerLoginFailedTimes, in.Email)
+	redisKey := stringx.Formate(constants.BorrowerLoginFailedTimes, in.Data.Email)
 	var loginFailedTimes int
 	if global.Config.MaxFailedLoginTimes > 0 {
 		loginFailedTimes, err = global.GetRedis().GetInt(l.ctx, redisKey)
@@ -50,7 +50,7 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 		}
 	}
 
-	user, err := l.svcCtx.UserRepo.GetBorrowerUserByEmail(l.ctx, in.Email)
+	user, err := l.svcCtx.UserRepo.GetBorrowerUserByEmail(l.ctx, in.Data.Email)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
@@ -59,7 +59,7 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 	}
 
 	// check pwd
-	if !utils.CheckPassword(in.Password, user.PasswordHash) {
+	if !utils.CheckPassword(in.Data.Password, user.PasswordHash) {
 		// add input wrong pwd times to redis
 		_, err = global.GetRedis().IncreaseExpire(l.ctx, redisKey, global.Config.ForbiddenLoginSeconds)
 		if err != nil {
@@ -108,9 +108,11 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 	}
 
 	return &borrower.UserLoginResponse{
-		AccessToken:        accessToken,
-		RefreshToken:       refreshToken,
-		AccessTokenExpire:  l.svcCtx.Config.JwtAuth.AccessExpire,
-		RefreshTokenExpire: l.svcCtx.Config.JwtAuth.RefreshExpire,
+		Data: &borrower.UserLoginResponseData{
+			AccessToken:        accessToken,
+			RefreshToken:       refreshToken,
+			AccessTokenExpire:  l.svcCtx.Config.JwtAuth.AccessExpire,
+			RefreshTokenExpire: l.svcCtx.Config.JwtAuth.RefreshExpire,
+		},
 	}, nil
 }
