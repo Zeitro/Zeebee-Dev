@@ -1,0 +1,28 @@
+.filterField {
+	:global {
+		.ant-select-selector,
+		.ant-input {
+			border-color: var(--base-disabled) !important;
+		}
+	}
+}
+
+.treeSelectPopup {
+	:global {
+		.ant-select-tree-switcher {
+			display: none;
+		}
+		.ant-select-tree-treenode {
+			padding-left: 12px;
+			border-radius: 4px;
+		}
+		.ant-select-tree-treenode-checkbox-checked,
+		.ant-select-tree-treenode:hover {
+			background: #e6f7ff;
+		}
+		.ant-select-tree-treenode-active .ant-select-tree-node-content-wrapper,
+		.ant-select-tree-node-content-wrapper:hover {
+			background: none !important;
+		}
+	}
+}

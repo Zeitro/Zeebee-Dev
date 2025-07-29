@@ -9,7 +9,9 @@ import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import { RightCircleTwoTone, LeftCircleTwoTone } from '@ant-design/icons';
 const homePathname = '/';
-
+/**
+ * 侧边栏组件
+ */
 const SidebarDom = () => {
 	const router = useRouter();
 	const pathname = usePathname();

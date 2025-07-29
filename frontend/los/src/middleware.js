@@ -16,7 +16,7 @@ export function middleware(request) {
 	// 	return NextResponse.redirect(new URL('/login', request.url));
 	// }
 
-	const isAuthSuccessful = [1,2].every((role) => routerItem?.roles?.includes(role));
+	const isAuthSuccessful = [].every((role) => routerItem?.roles?.includes(role));
 	//  其他权限逻辑（如角色判断等）
 	if (routerItem && routerItem?.roles?.length && !isAuthSuccessful) {
 		return NextResponse.redirect(new URL('/not-found', request.url));

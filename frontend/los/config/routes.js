@@ -1,7 +1,9 @@
+'use client';
 import {
 	UserOutlined,
 	BankOutlined,
 } from '@ant-design/icons';
+import react from 'react'
 export const navRouter = [
 	{
 		path: '/',
@@ -11,7 +13,7 @@ export const navRouter = [
 	{
 		path: '/loans',
 		title: 'My loans',
-		roles: ['loan'],
+		roles: [],
 		icon:<BankOutlined />,
 		router: [
 			{

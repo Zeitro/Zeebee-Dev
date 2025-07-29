@@ -75,6 +75,16 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 						itemHoverBg: 'var(--blue-light-1)', // 悬停背景
 						itemHoverColor: 'var(--base-primary)', // 悬停文字
 					},
+					Table: {
+						border: '1px solid var(--base-border)',
+						headerBg: 'var(--gray-light)',
+						// headerColor: 'var(--foreground)',
+						rowBg: 'var(--background)',
+						rowHoverBg: 'var(--gray-light)',
+					},
+					TreeSelect:{
+						colorBorder: 'var(--base-disabled)'
+					}
 				},
 			}}
 		>
@@ -84,9 +94,9 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 				) : (
 					<div className="h-full flex items-stretch">
 						<SiderBar />
-						<div className="flex-1 overflow-hidden">
+						<div className="flex-1 overflow-hidden flex flex-col">
 							<NewHeader />
-							<div>{children}</div>
+							<div className='flex-1 overflow-hidden'>{children}</div>
 						</div>
 					</div>
 				)}

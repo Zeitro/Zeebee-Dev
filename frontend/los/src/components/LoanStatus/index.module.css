@@ -1,0 +1,24 @@
+.loanStatus {
+	gap: 3px;
+}
+
+.loanStatus :global(.ant-btn) {
+	border-radius: 2px;
+	border: 1px solid var(--base-border);
+}
+
+.quoting :global(.ant-btn){
+    color: var(--green-medium) !important;
+    background-color: var(--green-light) !important;
+    border-color: var(--green-light-100) !important;
+}
+.processing :global(.ant-btn) {
+    color: var(--blue-dark) !important;
+    background-color: var(--blue-light-2) !important;
+    border-color: var(--blue-light) !important;
+}
+.closing :global(.ant-btn) {
+    color: var(--purple-dark) !important;
+    background-color: var(--purple-light) !important;
+    border-color: var(--purple-medium) !important;
+}

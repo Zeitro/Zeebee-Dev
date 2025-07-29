@@ -6,6 +6,9 @@ import { navRouter } from '@config/routes';
 import { getCurrentRouterItem, flattenNavRouter, getCrumbs } from '@config/common';
 import Link from 'next/link';
 import styles from './index.module.css';
+/**
+ * 面包屑导航
+ */
 const NewHeader = () => {
 	const pathname = usePathname();
 	const config = useMemo(() => getCurrentRouterItem(pathname, navRouter), [pathname]); // 获取当前路由的配置
@@ -24,7 +27,7 @@ const NewHeader = () => {
 		setCrumbs([navRouter[0], ...breadcrumbs]);
 	}, [pathname]);
 	return config && !config?.hideCrumbs ? (
-		<div className={`h-[84px] p-4 ${styles.crumbs}`}>
+		<div className={`h-[84px] p-4 shrink-0 ${styles.crumbs}`}>
 			<Breadcrumb items={crumbs} itemRender={itemRender} />
 			<div className="text-lg font-medium text-gray-medium">{crumbs?.[crumbs.length-1]?.title}</div>
 		</div>

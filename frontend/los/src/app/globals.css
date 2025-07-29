@@ -33,22 +33,25 @@
 	--black-medium: #222;
 	--black-dark: #000;
 
-	--gray-light: #F2F3F5;
+	--gray-light: #FAFAFA;
 	--gray-medium: #6E6E70;
 	--gray-dark: #586570;
 
 	--blue-light-1: #E8F7FF;
+	--blue-light-2: #F0F5FF;
 	--blue-light: #ADC6FF;
 	--blue-medium: #1890FF;
 	--blue-medium-default: #3491FA;
 	--blue-dark: #2F54EB;
 
 	--green-light:#F6FFED;
+	--green-light-100:#B7EB8F;
 	/* --green-medium: ; */
 	--green-medium:#52C41A;
 
 	--purple-light:#F9F0FF;
 	--purple-medium:#D3ADF7;
+	--purple-dark:#722ED1;
 }
 
 .dark {
@@ -59,5 +62,21 @@
 body {
 	background: var(--background);
 	color: var(--foreground);
+	font-family: var(--font-roboto), sans-serif;
+}
+
+div,
+p,
+span,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+a,
+button,
+input,
+textarea {
 	font-family: var(--font-roboto), sans-serif;
 }
