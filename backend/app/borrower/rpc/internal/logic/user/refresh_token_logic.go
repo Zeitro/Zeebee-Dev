@@ -34,7 +34,7 @@ func (l *RefreshTokenLogic) RefreshToken(in *borrower.RefreshTokenRequest) (resp
 	}()
 	var claims *utils.JWTClaims
 	// parse refresh token
-	claims, err = utils.ParseToken(in.RefreshToken, l.svcCtx.Config.JwtAuth.RefreshSecret)
+	claims, err = utils.ParseToken(in.Data.RefreshToken, l.svcCtx.Config.JwtAuth.RefreshSecret)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
@@ -52,7 +52,9 @@ func (l *RefreshTokenLogic) RefreshToken(in *borrower.RefreshTokenRequest) (resp
 	}
 
 	return &borrower.RefreshTokenResponse{
-		AccessToken:       accessToken,
-		AccessTokenExpire: l.svcCtx.Config.JwtAuth.AccessExpire,
+		Data: &borrower.RefreshTokenResponseData{
+			AccessToken:       accessToken,
+			AccessTokenExpire: l.svcCtx.Config.JwtAuth.AccessExpire,
+		},
 	}, nil
 }

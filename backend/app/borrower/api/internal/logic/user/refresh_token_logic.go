@@ -29,14 +29,16 @@ func NewRefreshTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Refr
 
 func (l *RefreshTokenLogic) RefreshToken(req *types.UserRefreshTokenRequest) (resp *types.UserRefreshTokenResponse, err error) {
 	rpcResp, err := l.svcCtx.UserRpcClient.RefreshToken(l.ctx, &borrower.RefreshTokenRequest{
-		RefreshToken: req.RefreshToken,
+		Data: &borrower.RefreshTokenRequestData{
+			RefreshToken: req.RefreshToken,
+		},
 	})
 	if err != nil {
 		return nil, errors.WithStack(errors.New("refresh token error"))
 	}
 
 	return &types.UserRefreshTokenResponse{
-		AccessToken:       rpcResp.AccessToken,
-		AccessTokenExpire: rpcResp.AccessTokenExpire,
+		AccessToken:       rpcResp.Data.AccessToken,
+		AccessTokenExpire: rpcResp.Data.AccessTokenExpire,
 	}, nil
 }

@@ -32,7 +32,7 @@ func (l *GetUserInfoLogic) GetUserInfo(in *borrower.UserInfoRequest) (resp *borr
 		}
 	}()
 
-	user, err := l.svcCtx.UserRepo.GetBorrowerUser(l.ctx, in.Id)
+	user, err := l.svcCtx.UserRepo.GetBorrowerUser(l.ctx, in.Data.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -41,13 +41,15 @@ func (l *GetUserInfoLogic) GetUserInfo(in *borrower.UserInfoRequest) (resp *borr
 		return nil, errors.WithStack(errors.New("borrower not found"))
 	}
 	userInfo := &borrower.UserinfoResponse{
-		Id:          user.ID,
-		Email:       user.Email,
-		FirstName:   userBorrower.FirstName,
-		LastName:    userBorrower.LastName,
-		PhoneNumber: userBorrower.PhoneNumber,
-		// Address:     userBorrower.Address,
-		Ssn: userBorrower.Ssn,
+		Data: &borrower.UserinfoResponseData{
+			Id:          user.ID,
+			Email:       user.Email,
+			FirstName:   userBorrower.FirstName,
+			LastName:    userBorrower.LastName,
+			PhoneNumber: userBorrower.PhoneNumber,
+			// Address:     userBorrower.Address,
+			Ssn: userBorrower.Ssn,
+		},
 	}
 	return userInfo, nil
 }
