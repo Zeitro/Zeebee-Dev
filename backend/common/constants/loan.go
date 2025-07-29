@@ -52,6 +52,17 @@ const (
 	LoanSourceSystem   LoanSource = "system"
 )
 
+type LienPosition string
+
+const LienPositionName = "lien_position"
+const (
+	LienPosition1     LienPosition = "1st"
+	LienPosition2     LienPosition = "2nd"
+	LienPosition3     LienPosition = "3rd"
+	LienPosition4     LienPosition = "4th"
+	LienPositionOther LienPosition = "Other"
+)
+
 func init() {
 	// register loan stage
 	enums.Register(LoanStageName, []enums.EnumOpt{
@@ -127,6 +138,29 @@ func init() {
 		{
 			Label: string(LoanSourceSystem),
 			Value: LoanSourceSystem,
+		},
+	})
+	// register lien position
+	enums.Register(LienPositionName, []enums.EnumOpt{
+		{
+			Label: string(LienPosition1),
+			Value: LienPosition1,
+		},
+		{
+			Label: string(LienPosition2),
+			Value: LienPosition2,
+		},
+		{
+			Label: string(LienPosition3),
+			Value: LienPosition3,
+		},
+		{
+			Label: string(LienPosition4),
+			Value: LienPosition4,
+		},
+		{
+			Label: string(LienPositionOther),
+			Value: LienPositionOther,
 		},
 	})
 

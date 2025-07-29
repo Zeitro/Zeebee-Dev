@@ -42,7 +42,7 @@ func (l *GetUserInfoLogic) GetUserInfo(in *borrower.UserInfoRequest) (resp *borr
 	}
 	userInfo := &borrower.UserinfoResponse{
 		Data: &borrower.UserinfoResponseData{
-			Id:          user.ID,
+			Id:          user.Id,
 			Email:       user.Email,
 			FirstName:   userBorrower.FirstName,
 			LastName:    userBorrower.LastName,

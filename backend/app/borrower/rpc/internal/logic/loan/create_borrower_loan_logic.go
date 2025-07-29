@@ -55,12 +55,12 @@ func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.CreateLoanRequ
 			return innerErr
 		}
 
-		loan.PropertyID = property.ID
+		loan.PropertyId = property.Id
 		loan, innerErr = l.svcCtx.LoanRepo.CreateWithTx(l.ctx, tx, loan)
 		if innerErr != nil {
 			return innerErr
 		}
-		applicant.LoanID = loan.ID
+		applicant.LoanId = loan.Id
 		applicant, innerErr = l.svcCtx.ApplicantRepo.CreateWithTx(l.ctx, tx, applicant)
 
 		return innerErr
@@ -71,7 +71,7 @@ func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.CreateLoanRequ
 
 	return &borrower.CreateLoanResponse{
 		Data: &borrower.CreateLoanResponseData{
-			Id: loan.ID,
+			Id: loan.Id,
 		},
 	}, nil
 }
@@ -85,28 +85,24 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.CreateLoanReque
 	firstName, lastName := stringx.ParseUserName(in.Data.ApplicantName)
 
 	loan = &model.Loan{
-		BorrowerID:      in.Data.BorrowerId,
-		LenderCompany:   in.Data.LenderCompany,
-		ServiceCompany:  in.Data.ServiceCompany,
-		Stage:           constants.LoanStage(in.Data.Stage),
-		PendingStatus:   constants.LoanPendingStatusClosing,
-		Purpose:         constants.LoanPurpose(in.Data.LoanPurpose),
-		LoanType:        constants.LoanType(in.Data.LoanType),
-		TotalAmount:     in.Data.TotalAmount,
-		PrincipalAmount: in.Data.PrincipalAmount,
-		InitialAmount:   in.Data.InitialAmount,
-		// HoldbackAmount:   in.Data.HoldbackAmount,
-		// LienPosition:     "1st",
-		Rate: in.Data.Rate,
-		// ClosingFund:      in.Data.ClosingFund,
-		// MonthlyPayment:   in.Data.MonthlyPayment,
+		BorrowerId:       in.Data.BorrowerId,
+		LenderCompany:    in.Data.LenderCompany,
+		ServiceCompany:   in.Data.ServiceCompany,
+		Stage:            constants.LoanStage(in.Data.Stage),
+		PendingStatus:    constants.LoanPendingStatusClosing,
+		LoanPurpose:      constants.LoanPurpose(in.Data.LoanPurpose),
+		LoanType:         constants.LoanType(in.Data.LoanType),
+		TotalAmount:      in.Data.TotalAmount,
+		PrincipalAmount:  in.Data.PrincipalAmount,
+		InitialAmount:    in.Data.InitialAmount,
+		Rate:             in.Data.Rate,
 		BusinessStrategy: pq.StringArray(in.Data.BusinessStrategy),
 		Source:           constants.LoanSourceBorrower,
 	}
 	property = &model.Property{
-		BorrowerID: in.Data.BorrowerId,
-		Type:       constants.PropertyType(in.Data.Property.PropertyType),
-		Unit:       in.Data.Property.Unit,
+		BorrowerId:   in.Data.BorrowerId,
+		PropertyType: constants.PropertyType(in.Data.Property.PropertyType),
+		Unit:         in.Data.Property.Unit,
 		Address: types.Address{
 			State:    in.Data.Property.Address.State,
 			City:     in.Data.Property.Address.City,
@@ -116,8 +112,8 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.CreateLoanReque
 		},
 	}
 	applicant = &model.Applicant{
-		BorrowerID: in.Data.BorrowerId,
-		LoanID:     0,
+		BorrowerId: in.Data.BorrowerId,
+		LoanId:     0,
 		FirstName:  firstName,
 		LastName:   lastName,
 		FullName:   in.Data.ApplicantName,

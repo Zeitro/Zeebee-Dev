@@ -2,24 +2,22 @@ package model
 
 import (
 	"database/sql"
-	"time"
 
 	"github.com/lib/pq"
-	"gorm.io/plugin/soft_delete"
 
 	"zeebee-backend/common/constants"
 )
 
 type Loan struct {
-	ID                     int64                       `gorm:"primaryKey" json:"id"`
-	BorrowerID             int64                       `gorm:"column:borrower_id;not null;default:0" json:"borrower_id"`
-	PropertyID             int64                       `gorm:"column:property_id;not null;default:0" json:"property_id"`
-	LenderID               int64                       `gorm:"column:lender_id;not null;default:0" json:"lender_id"`
+	Base
+	BorrowerId             int64                       `gorm:"column:borrower_id;not null;default:0" json:"borrower_id"`
+	PropertyId             int64                       `gorm:"column:property_id;not null;default:0" json:"property_id"`
+	LenderId               int64                       `gorm:"column:lender_id;not null;default:0" json:"lender_id"`
 	LenderCompany          string                      `gorm:"column:lender_company;size:100;not null;default:''" json:"lender_company"`
 	ServiceCompany         string                      `gorm:"column:service_company;size:100;not null;default:''" json:"service_company"`
 	Stage                  constants.LoanStage         `gorm:"column:stage;size:10;not null;default:''" json:"stage"`
 	PendingStatus          constants.LoanPendingStatus `gorm:"column:pending_status;size:10;not null;default:''" json:"pending_status"`
-	Purpose                constants.LoanPurpose       `gorm:"column:purpose;size:20;not null;default:''" json:"purpose"`
+	LoanPurpose            constants.LoanPurpose       `gorm:"column:loan_purpose;size:20;not null;default:''" json:"loan_purpose"`
 	LoanType               constants.LoanType          `gorm:"column:loan_type;size:30;not null;default:''" json:"loan_type"`
 	TotalAmount            float32                     `gorm:"column:total_amount;type:numeric(10,2);not null;default:0" json:"total_amount"`
 	PrincipalAmount        float32                     `gorm:"column:principal_amount;type:numeric(10,2);not null;default:0" json:"principle_amount"`
@@ -36,13 +34,11 @@ type Loan struct {
 	MonthlyPayment         float32                     `gorm:"column:monthly_payment;type:numeric(10,2);not null;default:0" json:"monthly_payment"`
 	BusinessStrategy       pq.StringArray              `gorm:"column:business_strategy;type:text[]" json:"business_strategy"`
 	Source                 constants.LoanSource        `gorm:"column:source;size:30;not null;default:''" json:"source"`
-	CreatedAt              time.Time                   `gorm:"column:created_at;default:now()" json:"created_at"`
-	UpdatedAt              time.Time                   `gorm:"column:updated_at;default:now()" json:"updated_at"`
-	IsDel                  soft_delete.DeletedAt       `gorm:"softDelete:flag" json:"-"`
 
-	Borrower *Borrower `json:"borrower" gorm:"foreignKey:BorrowerID;references:ID"`
-	Property *Property `json:"property" gorm:"foreignKey:PropertyID;references:ID"`
-	Lender   *Lender   `json:"lender" gorm:"foreignKey:LenderID;references:ID"`
+	Borrower   *Borrower    `json:"borrower" gorm:"foreignKey:BorrowerId;references:Id"`
+	Property   *Property    `json:"property" gorm:"foreignKey:PropertyId;references:Id"`
+	Lender     *Lender      `json:"lender" gorm:"foreignKey:LenderId;references:Id"`
+	Applicants []*Applicant `json:"applicants" gorm:"foreignKey:LoanId;references:Id"`
 }
 
 func (l *Loan) TableName() string {

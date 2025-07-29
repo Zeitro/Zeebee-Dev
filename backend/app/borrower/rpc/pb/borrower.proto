@@ -129,6 +129,38 @@ message ApplicantEntry{
   bool is_primary = 4;
   string created_at = 5;
   string updated_at = 6;
+  string full_name = 7;
+}
+
+message LoanEntry {
+  int64 id = 1;
+  string stage = 2;
+  string pending_status = 3;
+  string loan_purpose = 4;
+  string loan_type = 5;
+  float total_amount = 6;
+  float initial_amount = 7;
+  PropertyEntry property = 8;
+  string lender_company = 10;
+  string closing_date = 11;
+  float holdback_amount = 12;
+  float holdback_released_amount = 13;
+  float rate = 14;
+  float closing_fund = 15;
+  float principal_amount = 16;
+  float monthly_payment = 17;
+  string lien_position = 18;
+  string maturity_date = 19;
+  float prepayment_penalty = 20;
+  string service_company = 21;
+  string paid_off_date = 22;
+  string created_at = 23;
+  string updated_at = 24;
+  int64 lender_id = 25;
+  int64 borrower_id = 26;
+  repeated string business_strategy = 27;
+  repeated ApplicantEntry applicants = 28;
+  string source = 29;
 }
 
 message CreateLoanRequest {
@@ -179,37 +211,6 @@ message GetLoanRequestData {
 
 message GetLoanResponse {
   LoanEntry data = 1;
-}
-
-message LoanEntry {
-  int64 id = 1;
-  string stage = 2;
-  string pending_status = 3;
-  string loan_purpose = 4;
-  string loan_type = 5;
-  float total_amount = 6;
-  float initial_amount = 7;
-  PropertyEntry property = 8;
-  string applicant_name = 9;
-  string lender_company = 10;
-  string closing_date = 11;
-  float holdback_amount = 12;
-  float holdback_released_amount = 13;
-  float rate = 14;
-  float closing_fund = 15;
-  float principal_amount = 16;
-  float monthly_payment = 17;
-  string lien_position = 18;
-  string maturity_date = 19;
-  float prepayment_penalty = 20;
-  string service_company = 21;
-  string paid_off_date = 22;
-  string created_at = 23;
-  string updated_at = 24;
-  int64 lender_id = 25;
-  int64 borrower_id = 26;
-  repeated string business_strategy = 27;
-  repeated ApplicantEntry applicants = 28;
 }
 
 service Loan {
