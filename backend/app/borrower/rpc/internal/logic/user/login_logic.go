@@ -81,8 +81,8 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 	}
 	// generate token
 	accessToken, err := utils.GenerateToken(
-		strconv.Itoa(int(user.ID)),
-		strconv.Itoa(int(user.Borrower.ID)),
+		strconv.Itoa(int(user.Id)),
+		strconv.Itoa(int(user.Borrower.Id)),
 		user.Email,
 		"",
 		string(constants.UserTypeBorrower),
@@ -95,8 +95,8 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 
 	// refresh token
 	refreshToken, err := utils.GenerateToken(
-		strconv.Itoa(int(user.ID)),
-		strconv.Itoa(int(user.Borrower.ID)),
+		strconv.Itoa(int(user.Id)),
+		strconv.Itoa(int(user.Borrower.Id)),
 		user.Email,
 		"",
 		string(constants.UserTypeBorrower),

@@ -71,15 +71,15 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 			return err
 		}
 		// create borrower
-		borrowerModel.UserID = userModel.ID
+		borrowerModel.UserId = userModel.Id
 		_, err = l.svcCtx.BorrowerRepo.CreateWithTx(l.ctx, tx, borrowerModel)
 		return nil
 	})
 
 	// generate token
 	accessToken, err := utils.GenerateToken(
-		strconv.Itoa(int(userModel.ID)),
-		strconv.Itoa(int(borrowerModel.ID)),
+		strconv.Itoa(int(userModel.Id)),
+		strconv.Itoa(int(borrowerModel.Id)),
 		userModel.Email,
 		"",
 		string(constants.UserTypeBorrower),
@@ -91,8 +91,8 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 	}
 	// refresh token
 	refreshToken, err := utils.GenerateToken(
-		strconv.Itoa(int(userModel.ID)),
-		strconv.Itoa(int(borrowerModel.ID)),
+		strconv.Itoa(int(userModel.Id)),
+		strconv.Itoa(int(borrowerModel.Id)),
 		userModel.Email,
 		"",
 		string(constants.UserTypeBorrower),
