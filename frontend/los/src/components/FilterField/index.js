@@ -1,13 +1,26 @@
 import { Col, Input, Row, Select, Space, TreeSelect } from 'antd';
 const { Search } = Input;
-import React from 'react';
+import React, { useRef } from 'react';
 import styles from './index.module.scss';
+import { debounce } from 'lodash';
+const { SHOW_ALL } = TreeSelect;
 /**
  * Form过滤数据组件，配合table使用
  * @returns
  */
 const FilterField = ({ list, rowProps = {} }) => {
-	const getItemDom = ({ type, options, value, label,selectValue,selectProps, ...eventProps }, index) => {
+	const isFirst = useRef(true);
+	// selectProps用于select和input组合的select-input类型
+	const getItemDom = ({
+		type,
+		options,
+		value,
+		label,
+		treeData,
+		selectValue,
+		selectProps,
+		...eventProps
+	}) => {
 		let filterItem = '';
 		switch (type) {
 			case 'input-search':
@@ -15,9 +28,10 @@ const FilterField = ({ list, rowProps = {} }) => {
 					<Search
 						size="large"
 						placeholder="input search text"
-                        value={value}
-						// onSearch={onSearch}
+						value={value}
+						onSearch={eventProps?.onSearch}
 						style={{ width: 200 }}
+						onChange={debounce(eventProps?.onChange)}
 						{...(eventProps || {})}
 					/>
 				);
@@ -31,14 +45,16 @@ const FilterField = ({ list, rowProps = {} }) => {
 								style={{ width: 120 }}
 								placeholder="select"
 								options={options}
-                                value={selectValue}
+								value={selectValue}
+								onChange={selectProps?.onChange}
 								{...(selectProps || {})}
 							/>
 							<Input
 								size="large"
 								style={{ width: 256 }}
 								placeholder="Search by field"
-                                value={value}
+								value={value}
+								onChange={debounce(eventProps?.onChange)}
 								{...(eventProps || {})}
 							/>
 						</Space.Compact>
@@ -51,7 +67,8 @@ const FilterField = ({ list, rowProps = {} }) => {
 						size="large"
 						placeholder="input text"
 						style={{ width: 148 }}
-                        value={value}
+						value={value}
+						onChange={debounce(eventProps?.onChange)}
 						{...(eventProps || {})}
 					/>
 				);
@@ -63,7 +80,8 @@ const FilterField = ({ list, rowProps = {} }) => {
 						placeholder="select"
 						style={{ width: 148 }}
 						options={options}
-                        value={value}
+						value={value}
+						onChange={eventProps?.onChange}
 						{...(eventProps || {})}
 					/>
 				);
@@ -74,15 +92,25 @@ const FilterField = ({ list, rowProps = {} }) => {
 						size="large"
 						placeholder="select"
 						style={{ width: 148 }}
+						maxTagCount={0}
+						maxTagPlaceholder={() => `${label}(${value?.length})`}
 						treeCheckable={true}
-                        value={value}
-						tagRender={() => `${label}(${value?.length})`}
+						value={value}
+						showSearch={false}
+						allowClear={false}
+						showCheckedStrategy={SHOW_ALL}
+						onChange={eventProps?.onChange}
+						treeData={treeData}
 						{...(eventProps || {})}
 						classNames={{
+							root: [
+								styles.treeSelectRoot,
+								value?.length && styles.treeSelectRoot_border,
+								eventProps?.classNames?.root,
+							].join(' '),
 							popup: {
-								root: styles.treeSelectPopup,
+								root: [styles.treeSelectPopup,eventProps?.classNames?.popup?.root].join(' '),
 							},
-                            ...(eventProps?.classNames || {})
 						}}
 					/>
 				);

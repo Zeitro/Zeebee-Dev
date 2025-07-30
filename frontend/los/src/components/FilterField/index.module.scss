@@ -26,3 +26,16 @@
 		}
 	}
 }
+
+.treeSelectRoot{
+    :global{
+        .ant-select-selection-item{
+            background: none !important;
+            color: var(--base-primary);
+        }
+    }
+}
+
+.treeSelectRoot_border :global(.ant-select-selector){
+    border: 1px solid var(--base-primary) !important;
+}

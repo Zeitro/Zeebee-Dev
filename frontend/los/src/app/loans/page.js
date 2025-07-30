@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import NewTable from '../../components/NewTable';
 import { activeColumns, archivedColumns, pendingColumns } from './components/column';
 import styles from './loans.module.scss';
-import PendingPage from './components/LoanFilterTable/pending';
+import PendingPage from './components/pending';
 
 const Loans = () => {
 	const [tabKey, setTabKey] = useState('pending');
