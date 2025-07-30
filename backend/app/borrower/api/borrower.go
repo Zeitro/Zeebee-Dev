@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"zeebee-backend/app/borrower/api/internal/config"
 	"zeebee-backend/app/borrower/api/internal/handler"
@@ -50,8 +53,15 @@ func main() {
 		},
 	})
 
-	// 将swagger添加到服务中
+	go func() {
+		fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
+		server.Start()
+	}()
 
-	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
-	server.Start()
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	fmt.Printf("shutdown service in 5 seconds ....")
+	time.Sleep(5 * time.Second)
+
 }
