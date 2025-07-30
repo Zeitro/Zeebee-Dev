@@ -3,6 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"net/http"
+	"os"
 
 	"zeebee-backend/app/borrower/api/internal/config"
 	"zeebee-backend/app/borrower/api/internal/handler"
@@ -31,6 +33,24 @@ func main() {
 
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)
+
+	server.AddRoute(rest.Route{
+		Method: http.MethodGet,
+		Path:   "/swagger",
+		Handler: func(w http.ResponseWriter, r *http.Request) {
+			// 读取 swagger.json 文件
+			data, err := os.ReadFile("swagger/borrower.json")
+			if err != nil {
+				http.Error(w, "swagger.json not found", http.StatusNotFound)
+				return
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			w.Write(data)
+		},
+	})
+
+	// 将swagger添加到服务中
 
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
 	server.Start()

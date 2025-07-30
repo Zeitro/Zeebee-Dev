@@ -1,0 +1,45 @@
+package loan
+
+import (
+	"context"
+
+	"zeebee-backend/app/borrower/api/internal/svc"
+	"zeebee-backend/app/borrower/api/internal/types"
+	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/utils"
+
+	"github.com/zeromicro/go-zero/core/logx"
+)
+
+type UpdatePendingStatusLogic struct {
+	logx.Logger
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+}
+
+// update pending status
+func NewUpdatePendingStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdatePendingStatusLogic {
+	return &UpdatePendingStatusLogic{
+		Logger: logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+	}
+}
+
+func (l *UpdatePendingStatusLogic) UpdatePendingStatus(req *types.LoanUpdatePendingStatusRequest) (resp *types.EmptyResponse, err error) {
+	// get borrower id
+	borrowerId, err := utils.GetAccountIdFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = l.svcCtx.LoanRpcClient.UpdateBorrowerLoanPendingStatus(l.ctx, &borrower.UpdateLoanPendingStatusRequest{
+		Data: &borrower.UpdateLoanPendingStatusRequestData{
+			Id:            req.Id,
+			BorrowerId:    borrowerId,
+			PendingStatus: req.PendingStatus,
+		},
+	})
+
+	return
+}

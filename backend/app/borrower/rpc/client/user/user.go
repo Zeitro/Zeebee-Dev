@@ -14,37 +14,41 @@ import (
 )
 
 type (
-	AddressEntry             = borrower.AddressEntry
-	ApplicantEntry           = borrower.ApplicantEntry
-	CreateLoanRequest        = borrower.CreateLoanRequest
-	CreateLoanRequestData    = borrower.CreateLoanRequestData
-	CreateLoanResponse       = borrower.CreateLoanResponse
-	CreateLoanResponseData   = borrower.CreateLoanResponseData
-	EmptyRequest             = borrower.EmptyRequest
-	EmptyResponse            = borrower.EmptyResponse
-	GetLoanRequest           = borrower.GetLoanRequest
-	GetLoanRequestData       = borrower.GetLoanRequestData
-	GetLoanResponse          = borrower.GetLoanResponse
-	LoanEntry                = borrower.LoanEntry
-	PropertyEntry            = borrower.PropertyEntry
-	RefreshTokenRequest      = borrower.RefreshTokenRequest
-	RefreshTokenRequestData  = borrower.RefreshTokenRequestData
-	RefreshTokenResponse     = borrower.RefreshTokenResponse
-	RefreshTokenResponseData = borrower.RefreshTokenResponseData
-	UpdateLoanRequest        = borrower.UpdateLoanRequest
-	UpdateLoanRequestData    = borrower.UpdateLoanRequestData
-	UserInfoRequest          = borrower.UserInfoRequest
-	UserInfoRequestData      = borrower.UserInfoRequestData
-	UserLoginRequest         = borrower.UserLoginRequest
-	UserLoginRequestData     = borrower.UserLoginRequestData
-	UserLoginResponse        = borrower.UserLoginResponse
-	UserLoginResponseData    = borrower.UserLoginResponseData
-	UserRegisterRequest      = borrower.UserRegisterRequest
-	UserRegisterRequestData  = borrower.UserRegisterRequestData
-	UserRegisterResponse     = borrower.UserRegisterResponse
-	UserRegisterResponseData = borrower.UserRegisterResponseData
-	UserinfoResponse         = borrower.UserinfoResponse
-	UserinfoResponseData     = borrower.UserinfoResponseData
+	AddressEntry                       = borrower.AddressEntry
+	ApplicantEntry                     = borrower.ApplicantEntry
+	CreateLoanRequest                  = borrower.CreateLoanRequest
+	CreateLoanRequestData              = borrower.CreateLoanRequestData
+	CreateLoanResponse                 = borrower.CreateLoanResponse
+	CreateLoanResponseData             = borrower.CreateLoanResponseData
+	DeleteLoanRequest                  = borrower.DeleteLoanRequest
+	DeleteLoanRequestData              = borrower.DeleteLoanRequestData
+	EmptyRequest                       = borrower.EmptyRequest
+	EmptyResponse                      = borrower.EmptyResponse
+	GetLoanRequest                     = borrower.GetLoanRequest
+	GetLoanRequestData                 = borrower.GetLoanRequestData
+	GetLoanResponse                    = borrower.GetLoanResponse
+	LoanEntry                          = borrower.LoanEntry
+	PropertyEntry                      = borrower.PropertyEntry
+	RefreshTokenRequest                = borrower.RefreshTokenRequest
+	RefreshTokenRequestData            = borrower.RefreshTokenRequestData
+	RefreshTokenResponse               = borrower.RefreshTokenResponse
+	RefreshTokenResponseData           = borrower.RefreshTokenResponseData
+	UpdateLoanPendingStatusRequest     = borrower.UpdateLoanPendingStatusRequest
+	UpdateLoanPendingStatusRequestData = borrower.UpdateLoanPendingStatusRequestData
+	UpdateLoanRequest                  = borrower.UpdateLoanRequest
+	UpdateLoanRequestData              = borrower.UpdateLoanRequestData
+	UserInfoRequest                    = borrower.UserInfoRequest
+	UserInfoRequestData                = borrower.UserInfoRequestData
+	UserLoginRequest                   = borrower.UserLoginRequest
+	UserLoginRequestData               = borrower.UserLoginRequestData
+	UserLoginResponse                  = borrower.UserLoginResponse
+	UserLoginResponseData              = borrower.UserLoginResponseData
+	UserRegisterRequest                = borrower.UserRegisterRequest
+	UserRegisterRequestData            = borrower.UserRegisterRequestData
+	UserRegisterResponse               = borrower.UserRegisterResponse
+	UserRegisterResponseData           = borrower.UserRegisterResponseData
+	UserinfoResponse                   = borrower.UserinfoResponse
+	UserinfoResponseData               = borrower.UserinfoResponseData
 
 	User interface {
 		// user

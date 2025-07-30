@@ -38,7 +38,7 @@ func (l *DetailLogic) Detail(req *types.LoanDetailRequest) (resp *types.LoanDeta
 
 	rpcResp, err := l.svcCtx.LoanRpcClient.GetBorrowerLoan(l.ctx, &borrower.GetLoanRequest{
 		Data: &borrower.GetLoanRequestData{
-			Id:         req.ID,
+			Id:         req.Id,
 			BorrowerId: borrowerId,
 		},
 	})

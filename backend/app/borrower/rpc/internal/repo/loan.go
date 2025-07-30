@@ -39,3 +39,9 @@ func (repo *LoanRepo) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, id int64
 	}
 	return data, nil
 }
+
+// GetLoanCountByPropertyId
+func (repo *LoanRepo) GetLoanCountByPropertyId(ctx context.Context, propertyId int64) (count int64, err error) {
+	err = repo.Client(ctx).Where("property_id = ?", propertyId).Count(&count).Error
+	return count, errors.WithStack(err)
+}

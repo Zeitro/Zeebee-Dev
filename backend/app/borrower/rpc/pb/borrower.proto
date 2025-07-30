@@ -244,8 +244,27 @@ message GetLoanResponse {
   LoanEntry data = 1;
 }
 
+message UpdateLoanPendingStatusRequest {
+  UpdateLoanPendingStatusRequestData data = 1;
+}
+message UpdateLoanPendingStatusRequestData {
+  int64 id = 1;
+  int64 borrower_id = 2;
+  string pending_status = 3;
+}
+
+message DeleteLoanRequest {
+  DeleteLoanRequestData data = 1;
+}
+message DeleteLoanRequestData {
+  int64 id = 1;
+  int64 borrower_id = 2;
+}
+
 service Loan {
   rpc CreateBorrowerLoan(CreateLoanRequest) returns(CreateLoanResponse);
   rpc UpdateBorrowerLoan(UpdateLoanRequest) returns(EmptyResponse);
+  rpc UpdateBorrowerLoanPendingStatus(UpdateLoanPendingStatusRequest) returns(EmptyResponse);
+  rpc DeleteBorrowerLoan(DeleteLoanRequest) returns(EmptyResponse);
   rpc GetBorrowerLoan(GetLoanRequest) returns(GetLoanResponse);
 }

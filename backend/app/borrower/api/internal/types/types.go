@@ -12,7 +12,7 @@ type AddressEntry struct {
 }
 
 type ApplicantEntry struct {
-	ID         int64  `json:"id"`
+	Id         int64  `json:"id,omitempty"`
 	FirstName  string `json:"first_name,omitempty"`
 	LastName   string `json:"last_name,omitempty"`
 	FullName   string `json:"full_name,omitempty"`
@@ -52,11 +52,15 @@ type LoanCreateRequest struct {
 }
 
 type LoanCreateResponse struct {
-	ID int64 `json:"id"`
+	Id int64 `json:"id"`
+}
+
+type LoanDeleteRequest struct {
+	Id int64 `path:"id"`
 }
 
 type LoanDetailRequest struct {
-	ID int64 `path:"id"`
+	Id int64 `path:"id"`
 }
 
 type LoanDetailResponse struct {
@@ -64,7 +68,7 @@ type LoanDetailResponse struct {
 }
 
 type LoanEntry struct {
-	ID                int64            `json:"id,optional"`
+	Id                int64            `json:"id,optional"`
 	Stage             string           `json:"stage" validate:"required,oneof=Pending Active Archived"`
 	PendingStatus     string           `json:"pending_status,optional" validate:"required_if=Stage Pending,omitempty,oneof=Quoting Processing Closing"`
 	LoanPurpose       string           `json:"loan_purpose" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
@@ -93,6 +97,11 @@ type LoanEntry struct {
 	Source            string           `json:"source"`
 }
 
+type LoanUpdatePendingStatusRequest struct {
+	Id            int64  `path:"id"`
+	PendingStatus string `json:"pending_status" validate:"required,oneof=Quoting Processing Closing"`
+}
+
 type LoanUpdateRequest struct {
 	ID                int64          `path:"id" validate:"required,min=1"`
 	Stage             string         `json:"stage" validate:"required,oneof=Pending Active Archived"`
@@ -119,7 +128,7 @@ type LoanUpdateRequest struct {
 }
 
 type PropertyEntry struct {
-	ID           int64         `json:"id,optional"`
+	Id           int64         `json:"id,optional"`
 	PropertyType string        `json:"property_type" validate:"required,oneof='Single Family' 'Townhouse' 'Multi Family' 'Condo'"`
 	Unit         int           `json:"unit" validate:"required,min=1"`
 	Address      *AddressEntry `json:"address" validate:"required"`

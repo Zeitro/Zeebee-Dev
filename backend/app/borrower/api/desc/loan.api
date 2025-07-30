@@ -9,14 +9,14 @@ import "address.api"
 import "applicant.api"
 
 type PropertyEntry {
-    ID int64 `json:"id,optional"`
+    Id int64 `json:"id,optional"`
     PropertyType string `json:"property_type" validate:"required,oneof='Single Family' 'Townhouse' 'Multi Family' 'Condo'"`
     Unit int `json:"unit" validate:"required,min=1"`
     Address *AddressEntry `json:"address" validate:"required"`
 }
 
 type LoanEntry {
-    ID int64 `json:"id,optional"`
+    Id int64 `json:"id,optional"`
     Stage string `json:"stage" validate:"required,oneof=Pending Active Archived"`
     PendingStatus string `json:"pending_status,optional" validate:"required_if=Stage Pending,omitempty,oneof=Quoting Processing Closing"`
     LoanPurpose string `json:"loan_purpose" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
@@ -72,7 +72,7 @@ type (
     }
 
     LoanCreateResponse {
-        ID int64 `json:"id"`
+        Id int64 `json:"id"`
     }
 )
 
@@ -101,13 +101,27 @@ type (
         PaidOffDate string `json:"paid_off_date,optional" validate:"required_if=Stage Archived,omitempty,datetime=01/02/2006"`
         BusinessStrategy []string `json:"business_strategy" validate:"required,dive,required,oneof=Rentel Sale Flip"`
     }
+)
 
+// update state
+type (
+    LoanUpdatePendingStatusRequest {
+        Id int64 `path:"id"`
+        PendingStatus string `json:"pending_status" validate:"required,oneof=Quoting Processing Closing"`
+    }
+)
+
+// delete loan
+type (
+    LoanDeleteRequest {
+        Id int64 `path:"id"`
+    }
 )
 
 // loan detail
 type (
     LoanDetailRequest {
-        ID int64 `path:"id"`
+        Id int64 `path:"id"`
     }
     LoanDetailResponse {
         LoanEntry
