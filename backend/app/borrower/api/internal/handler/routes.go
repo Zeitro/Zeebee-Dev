@@ -6,6 +6,7 @@ package handler
 import (
 	"net/http"
 
+	common "zeebee-backend/app/borrower/api/internal/handler/common"
 	loan "zeebee-backend/app/borrower/api/internal/handler/loan"
 	user "zeebee-backend/app/borrower/api/internal/handler/user"
 	"zeebee-backend/app/borrower/api/internal/svc"
@@ -14,6 +15,18 @@ import (
 )
 
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// get select options
+				Method:  http.MethodGet,
+				Path:    "/select_options",
+				Handler: common.SelectOptionsHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/api/v1"),
+	)
+
 	server.AddRoutes(
 		rest.WithMiddlewares(
 			[]rest.Middleware{serverCtx.AuthMiddleware},

@@ -63,20 +63,37 @@ const (
 	LienPositionOther LienPosition = "Other"
 )
 
+// business_strategy: Sale,Rental,Flip,ADU/Addition,Single Lot SFR,SB9 lot split,Conforming lot split,New Condo/TH,Community development (>3 units),Commercial
+type BusinessStrategy string
+
+const BusinessStrategyName = "business_strategy"
+const (
+	BusinessStrategySale                 BusinessStrategy = "Sale"
+	BusinessStrategyRental               BusinessStrategy = "Rental"
+	BusinessStrategyFlip                 BusinessStrategy = "Flip"
+	BusinessStrategyADUAddition          BusinessStrategy = "ADU/Addition"
+	BusinessStrategySingleLotSFR         BusinessStrategy = "Single Lot SFR"
+	BusinessStrategySB9LotSplit          BusinessStrategy = "SB9 lot split"
+	BusinessStrategyConformingLotSplit   BusinessStrategy = "Conforming lot split"
+	BusinessStrategyNewCondoTH           BusinessStrategy = "New Condo/TH"
+	BusinessStrategyCommunityDevelopment BusinessStrategy = "Community development (>3 units)"
+	BusinessStrategyCommercial           BusinessStrategy = "Commercial"
+)
+
 func init() {
 	// register loan stage
 	enums.Register(LoanStageName, []enums.EnumOpt{
 		{
 			Label: string(LoanStagePending),
-			Value: LoanStagePending,
+			Value: string(LoanStagePending),
 		},
 		{
 			Label: string(LoanStageActive),
-			Value: LoanStageActive,
+			Value: string(LoanStageActive),
 		},
 		{
 			Label: string(LoanStageArchived),
-			Value: LoanStageArchived,
+			Value: string(LoanStageArchived),
 		},
 	})
 
@@ -84,83 +101,126 @@ func init() {
 	enums.Register(LoanPendingStatusName, []enums.EnumOpt{
 		{
 			Label: string(LoanPendingStatusQuoting),
-			Value: LoanPendingStatusQuoting,
+			Value: string(LoanPendingStatusQuoting),
 		},
 		{
 			Label: string(LoanPendingStatusProcessing),
-			Value: LoanPendingStatusProcessing,
+			Value: string(LoanPendingStatusProcessing),
 		},
 		{
 			Label: string(LoanPendingStatusClosing),
-			Value: LoanPendingStatusClosing,
+			Value: string(LoanPendingStatusClosing),
 		},
 	})
 	// register loan purpose
 	enums.Register(LoanPurposeName, []enums.EnumOpt{
 		{
 			Label: string(LoanPurposePurchase),
-			Value: LoanPurposePurchase,
+			Value: string(LoanPurposePurchase),
 		},
 		{
 			Label: string(LoanPurposeRateTerm),
-			Value: LoanPurposeRateTerm,
+			Value: string(LoanPurposeRateTerm),
 		},
 		{
 			Label: string(LoanPurposeCashOut),
-			Value: LoanPurposeCashOut,
+			Value: string(LoanPurposeCashOut),
 		},
 	})
 	// register loan type
 	enums.Register(LoanTypeName, []enums.EnumOpt{
 		{
 			Label: string(LoanTypeBridge),
-			Value: LoanTypeBridge,
+			Value: string(LoanTypeBridge),
 		},
 		{
 			Label: string(LoanTypeRehab),
-			Value: LoanTypeRehab,
+			Value: string(LoanTypeRehab),
 		},
 		{
 			Label: string(LoanTypeConstruction),
-			Value: LoanTypeConstruction,
+			Value: string(LoanTypeConstruction),
 		},
 	})
 	// register loan source
 	enums.Register(LoanSourceName, []enums.EnumOpt{
 		{
 			Label: string(LoanSourceBorrower),
-			Value: LoanSourceBorrower,
+			Value: string(LoanSourceBorrower),
 		},
 		{
 			Label: string(LoanSourceLender),
-			Value: LoanSourceLender,
+			Value: string(LoanSourceLender),
 		},
 		{
 			Label: string(LoanSourceSystem),
-			Value: LoanSourceSystem,
+			Value: string(LoanSourceSystem),
 		},
 	})
 	// register lien position
 	enums.Register(LienPositionName, []enums.EnumOpt{
 		{
 			Label: string(LienPosition1),
-			Value: LienPosition1,
+			Value: string(LienPosition1),
 		},
 		{
 			Label: string(LienPosition2),
-			Value: LienPosition2,
+			Value: string(LienPosition2),
 		},
 		{
 			Label: string(LienPosition3),
-			Value: LienPosition3,
+			Value: string(LienPosition3),
 		},
 		{
 			Label: string(LienPosition4),
-			Value: LienPosition4,
+			Value: string(LienPosition4),
 		},
 		{
 			Label: string(LienPositionOther),
-			Value: LienPositionOther,
+			Value: string(LienPositionOther),
+		},
+	})
+	// register business strategy
+	enums.Register(BusinessStrategyName, []enums.EnumOpt{
+		{
+			Label: string(BusinessStrategySale),
+			Value: string(BusinessStrategySale),
+		},
+		{
+			Label: string(BusinessStrategyRental),
+			Value: string(BusinessStrategyRental),
+		},
+		{
+			Label: string(BusinessStrategyFlip),
+			Value: string(BusinessStrategyFlip),
+		},
+		{
+			Label: string(BusinessStrategyADUAddition),
+			Value: string(BusinessStrategyADUAddition),
+		},
+		{
+			Label: string(BusinessStrategySingleLotSFR),
+			Value: string(BusinessStrategySingleLotSFR),
+		},
+		{
+			Label: string(BusinessStrategySB9LotSplit),
+			Value: string(BusinessStrategySB9LotSplit),
+		},
+		{
+			Label: string(BusinessStrategyConformingLotSplit),
+			Value: string(BusinessStrategyConformingLotSplit),
+		},
+		{
+			Label: string(BusinessStrategyNewCondoTH),
+			Value: string(BusinessStrategyNewCondoTH),
+		},
+		{
+			Label: string(BusinessStrategyCommunityDevelopment),
+			Value: string(BusinessStrategyCommunityDevelopment),
+		},
+		{
+			Label: string(BusinessStrategyCommercial),
+			Value: string(BusinessStrategyCommercial),
 		},
 	})
 

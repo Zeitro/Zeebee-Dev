@@ -11,6 +11,28 @@ message EmptyResponse {
 
 }
 
+// ========================== common service=================
+message OptionRequest {
+  OptionRequestData data = 1;
+}
+
+message OptionRequestData {
+  string name = 1;
+}
+
+message OptionResponse {
+  repeated OptionEntry data = 1;
+}
+
+message OptionEntry{
+  string label = 1;
+  string value = 2;
+}
+
+service common {
+  rpc GetOpt(OptionRequest) returns(OptionResponse);
+}
+
 // ================= user service ==================
 // login
 message UserLoginRequest {
