@@ -63,6 +63,10 @@ service borrower-api {
 	@handler Create
 	post /loan (LoanCreateRequest) returns (LoanCreateResponse)
 
+	@doc "update loan"
+	@handler Update
+	put /loan/:id (LoanUpdateRequest) returns (EmptyResponse)
+
 	@doc "get loan"
 	@handler Detail
 	get /loan/:id (LoanDetailRequest) returns (LoanDetailResponse)

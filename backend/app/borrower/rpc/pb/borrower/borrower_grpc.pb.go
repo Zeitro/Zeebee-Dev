@@ -238,6 +238,7 @@ var User_ServiceDesc = grpc.ServiceDesc{
 
 const (
 	Loan_CreateBorrowerLoan_FullMethodName = "/borrower.Loan/CreateBorrowerLoan"
+	Loan_UpdateBorrowerLoan_FullMethodName = "/borrower.Loan/UpdateBorrowerLoan"
 	Loan_GetBorrowerLoan_FullMethodName    = "/borrower.Loan/GetBorrowerLoan"
 )
 
@@ -246,6 +247,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type LoanClient interface {
 	CreateBorrowerLoan(ctx context.Context, in *CreateLoanRequest, opts ...grpc.CallOption) (*CreateLoanResponse, error)
+	UpdateBorrowerLoan(ctx context.Context, in *UpdateLoanRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	GetBorrowerLoan(ctx context.Context, in *GetLoanRequest, opts ...grpc.CallOption) (*GetLoanResponse, error)
 }
 
@@ -267,6 +269,16 @@ func (c *loanClient) CreateBorrowerLoan(ctx context.Context, in *CreateLoanReque
 	return out, nil
 }
 
+func (c *loanClient) UpdateBorrowerLoan(ctx context.Context, in *UpdateLoanRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, Loan_UpdateBorrowerLoan_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *loanClient) GetBorrowerLoan(ctx context.Context, in *GetLoanRequest, opts ...grpc.CallOption) (*GetLoanResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetLoanResponse)
@@ -282,6 +294,7 @@ func (c *loanClient) GetBorrowerLoan(ctx context.Context, in *GetLoanRequest, op
 // for forward compatibility.
 type LoanServer interface {
 	CreateBorrowerLoan(context.Context, *CreateLoanRequest) (*CreateLoanResponse, error)
+	UpdateBorrowerLoan(context.Context, *UpdateLoanRequest) (*EmptyResponse, error)
 	GetBorrowerLoan(context.Context, *GetLoanRequest) (*GetLoanResponse, error)
 	mustEmbedUnimplementedLoanServer()
 }
@@ -295,6 +308,9 @@ type UnimplementedLoanServer struct{}
 
 func (UnimplementedLoanServer) CreateBorrowerLoan(context.Context, *CreateLoanRequest) (*CreateLoanResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateBorrowerLoan not implemented")
+}
+func (UnimplementedLoanServer) UpdateBorrowerLoan(context.Context, *UpdateLoanRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateBorrowerLoan not implemented")
 }
 func (UnimplementedLoanServer) GetBorrowerLoan(context.Context, *GetLoanRequest) (*GetLoanResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBorrowerLoan not implemented")
@@ -338,6 +354,24 @@ func _Loan_CreateBorrowerLoan_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Loan_UpdateBorrowerLoan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateLoanRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanServer).UpdateBorrowerLoan(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Loan_UpdateBorrowerLoan_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanServer).UpdateBorrowerLoan(ctx, req.(*UpdateLoanRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Loan_GetBorrowerLoan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetLoanRequest)
 	if err := dec(in); err != nil {
@@ -366,6 +400,10 @@ var Loan_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateBorrowerLoan",
 			Handler:    _Loan_CreateBorrowerLoan_Handler,
+		},
+		{
+			MethodName: "UpdateBorrowerLoan",
+			Handler:    _Loan_UpdateBorrowerLoan_Handler,
 		},
 		{
 			MethodName: "GetBorrowerLoan",

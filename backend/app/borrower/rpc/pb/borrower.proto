@@ -200,6 +200,37 @@ message CreateLoanResponseData {
   int64 id = 1;
 }
 
+message UpdateLoanRequest {
+  UpdateLoanRequestData data = 1;
+}
+
+message UpdateLoanRequestData {
+  int64 borrower_id = 1;
+  string stage = 2;
+  string pending_status = 3;
+  string loan_purpose = 4;
+  string loan_type = 5;
+  float total_amount = 6;
+  float initial_amount = 7;
+  PropertyEntry property = 8;
+  string applicant_name = 9;
+  string lender_company = 10;
+  string closing_date = 11;
+  float holdback_amount = 12;
+  float rate = 13;
+  float closing_fund = 14;
+  float principal_amount = 15;
+  float monthly_payment = 16;
+  string lien_position = 17;
+  string maturity_date = 18;
+  float prepayment_penalty = 19;
+  string service_company = 20;
+  string paid_off_date = 21;
+  repeated string business_strategy = 22;
+  int64 id = 23;
+}
+
+
 message GetLoanRequest {
   GetLoanRequestData data = 1;
 }
@@ -215,5 +246,6 @@ message GetLoanResponse {
 
 service Loan {
   rpc CreateBorrowerLoan(CreateLoanRequest) returns(CreateLoanResponse);
+  rpc UpdateBorrowerLoan(UpdateLoanRequest) returns(EmptyResponse);
   rpc GetBorrowerLoan(GetLoanRequest) returns(GetLoanResponse);
 }

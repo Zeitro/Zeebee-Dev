@@ -90,6 +90,15 @@ func (repo *BaseRepo[T]) FindOneById(ctx context.Context, id int64) (T, error) {
 	return data, errors.WithStack(err)
 }
 
+func (repo *BaseRepo[T]) FindOneByIdWithTx(ctx context.Context, tx *gorm.DB, id int64) (T, error) {
+	var data T
+	var err error
+	data, err = repo.FindOneByColumnsWithTx(ctx, tx, map[string]interface{}{
+		"id": id,
+	})
+	return data, errors.WithStack(err)
+}
+
 // FindOneByColumns find one by columns
 func (repo *BaseRepo[T]) FindOneByColumns(ctx context.Context, columns map[string]interface{}) (T, error) {
 	query := repo.Client(ctx)
@@ -98,6 +107,35 @@ func (repo *BaseRepo[T]) FindOneByColumns(ctx context.Context, columns map[strin
 	}
 	var data T
 	err := query.First(&data).Error
+	if err != nil {
+		return data, errors.WithStack(err)
+	}
+	return data, nil
+}
+
+func (repo *BaseRepo[T]) FindOneByColumnsWithTx(ctx context.Context, tx *gorm.DB, columns map[string]interface{}) (T, error) {
+	query := tx.WithContext(ctx)
+	for k, v := range columns {
+		query = query.Where(k+" = ?", v)
+	}
+	var data T
+	err := query.First(&data).Error
+	if err != nil {
+		return data, errors.WithStack(err)
+	}
+	return data, nil
+}
+
+func (repo *BaseRepo[T]) UpdateOne(ctx context.Context, data T) (T, error) {
+	err := repo.Client(ctx).WithContext(ctx).Save(data).Error
+	if err != nil {
+		return data, errors.WithStack(err)
+	}
+	return data, nil
+}
+
+func (repo *BaseRepo[T]) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, data T) (T, error) {
+	err := tx.WithContext(ctx).Save(data).Error
 	if err != nil {
 		return data, errors.WithStack(err)
 	}
