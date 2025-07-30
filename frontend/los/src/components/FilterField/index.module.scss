@@ -1,4 +1,5 @@
 .filterField {
+    flex-shrink: 0;
 	:global {
 		.ant-select-selector,
 		.ant-input {

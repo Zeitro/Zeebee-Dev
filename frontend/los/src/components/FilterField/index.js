@@ -1,3 +1,4 @@
+'use client'
 import { Col, Input, Row, Select, Space, TreeSelect } from 'antd';
 const { Search } = Input;
 import React, { useRef } from 'react';
@@ -8,7 +9,7 @@ const { SHOW_ALL } = TreeSelect;
  * Form过滤数据组件，配合table使用
  * @returns
  */
-const FilterField = ({ list, rowProps = {} }) => {
+const FilterField = ({ list, className, ...rowProps }) => {
 	const isFirst = useRef(true);
 	// selectProps用于select和input组合的select-input类型
 	const getItemDom = ({
@@ -30,7 +31,7 @@ const FilterField = ({ list, rowProps = {} }) => {
 						placeholder="input search text"
 						value={value}
 						onSearch={eventProps?.onSearch}
-						style={{ width: 200 }}
+						style={{ width: 265 }}
 						onChange={debounce(eventProps?.onChange)}
 						{...(eventProps || {})}
 					/>
@@ -124,7 +125,7 @@ const FilterField = ({ list, rowProps = {} }) => {
 		<Row
 			gutter={8}
 			{...rowProps}
-			className={`${styles.filterField} w-full ${rowProps.className || ''}`}
+			className={`${styles.filterField} w-full ${className || ''}`}
 		>
 			{list?.map(({ colProps, ...item }, index) => {
 				return (

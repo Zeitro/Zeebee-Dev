@@ -38,17 +38,17 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 		() => {
 			setAntdToken({
 				colorPrimary: getCssVarValue('--base-primary'),
-				colorBgContainer: getCssVarValue('--background'),
-				colorBgContainerSelected: getCssVarValue('--blue-light-1'),
+				// colorBgContainer: getCssVarValue('--background'),
+				// colorBgContainerSelected: getCssVarValue('--blue-light-1'),
 				colorTextBase: getCssVarValue('--foreground'),
 				colorBgBase: getCssVarValue('var(--background)'), // 页面背景色
-				colorTextSecondary: getCssVarValue('var(--black-light)'), // 次要文本颜色
-				colorBorder: getCssVarValue('var(--base-border)'), // 边框颜色
+				// colorTextSecondary: getCssVarValue('var(--black-light)'), // 次要文本颜色
+				// colorBorder: getCssVarValue('var(--base-border)'), // 边框颜色
 				colorError: getCssVarValue('var(--base-error)'), // 错误状态颜色
 				colorWarning: getCssVarValue('var(--base-warning)'), // 警告状态颜色
 				colorSuccess: getCssVarValue('var(--base-success)'), // 成功状态颜色
 				colorTextDisabled: getCssVarValue('var(--base-disabled)'), // 禁用状态文本颜色
-				colorTextLabel: '',
+				// colorTextLabel: '',
 				borderRadius: 8, // 圆角大小
 				fontSize: 14, // 基础字体大小
 				// fontSizeHeading: 16, // 标题字体大小

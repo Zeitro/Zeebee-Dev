@@ -1,3 +1,12 @@
+// 分页
+export const getPagination = (pagi = {}) => {
+    return {
+        current: 1,
+        pageSize:10,
+        total: 0,
+        ...pagi,
+    };
+};
 /**
  * 将数组转为指定的键值对结构
  * sourceArray：源数组

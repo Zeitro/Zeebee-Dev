@@ -28,5 +28,6 @@
 	"[json]": {
 		"editor.tabSize": 4,
 		"editor.insertSpaces": false
-	}
+	},
+	"eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"]
 }
