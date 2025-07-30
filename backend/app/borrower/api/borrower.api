@@ -67,6 +67,14 @@ service borrower-api {
 	@handler Update
 	put /loan/:id (LoanUpdateRequest) returns (EmptyResponse)
 
+	@doc "update pending status"
+	@handler UpdatePendingStatus
+	put /loan/:id/pending_status (LoanUpdatePendingStatusRequest) returns (EmptyResponse)
+
+	@doc "delete loan"
+	@handler DeleteLoan
+	delete /loan/:id (LoanDeleteRequest) returns (EmptyResponse)
+
 	@doc "get loan"
 	@handler Detail
 	get /loan/:id (LoanDetailRequest) returns (LoanDetailResponse)

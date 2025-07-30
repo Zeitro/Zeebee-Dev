@@ -31,10 +31,22 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: loan.UpdateHandler(serverCtx),
 				},
 				{
+					// delete loan
+					Method:  http.MethodDelete,
+					Path:    "/loan/:id",
+					Handler: loan.DeleteLoanHandler(serverCtx),
+				},
+				{
 					// get loan
 					Method:  http.MethodGet,
 					Path:    "/loan/:id",
 					Handler: loan.DetailHandler(serverCtx),
+				},
+				{
+					// update pending status
+					Method:  http.MethodPut,
+					Path:    "/loan/:id/pending_status",
+					Handler: loan.UpdatePendingStatusHandler(serverCtx),
 				},
 			}...,
 		),

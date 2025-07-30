@@ -71,6 +71,10 @@ func (repo *BaseRepo[T]) Create(ctx context.Context, data T) (T, error) {
 	return data, nil
 }
 
+func (repo *BaseRepo[T]) UpdateColumnsById(ctx context.Context, id int64, columns map[string]interface{}) error {
+	return errors.WithStack(repo.Client(ctx).Where("id = ?", id).Updates(columns).Error)
+}
+
 // CreateWithTx create with tx
 func (repo *BaseRepo[T]) CreateWithTx(ctx context.Context, tx *gorm.DB, data T) (T, error) {
 	err := tx.WithContext(ctx).Create(&data).Error
@@ -150,12 +154,36 @@ func (repo *BaseRepo[T]) DeleteByID(ctx context.Context, id int64) (effectRaws i
 	})
 }
 
+// DeleteByIDWithTx delete one with tx
+func (repo *BaseRepo[T]) DeleteByIDWithTx(ctx context.Context, tx *gorm.DB, id int64) (effectRaws int64, err error) {
+
+	return repo.DeleteWithTx(ctx, tx, map[string]interface{}{
+		"id": id,
+	})
+}
+
 // Delete delete
 func (repo *BaseRepo[T]) Delete(ctx context.Context, filters map[string]interface{}) (effectRaws int64, err error) {
 	if len(filters) == 0 {
 		return 0, errors.New("filters is empty")
 	}
 	query := repo.Client(ctx)
+	for k, v := range filters {
+		query = query.Where(k+" = ?", v)
+	}
+	err = query.Delete(new(T)).Error
+	if err != nil {
+		return 0, errors.WithStack(err)
+	}
+	return query.RowsAffected, nil
+}
+
+// DeleteWithTx delete with tx
+func (repo *BaseRepo[T]) DeleteWithTx(ctx context.Context, tx *gorm.DB, filters map[string]interface{}) (effectRaws int64, err error) {
+	if len(filters) == 0 {
+		return 0, errors.New("filters is empty")
+	}
+	query := tx.WithContext(ctx)
 	for k, v := range filters {
 		query = query.Where(k+" = ?", v)
 	}

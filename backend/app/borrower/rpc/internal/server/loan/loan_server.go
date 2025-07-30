@@ -33,6 +33,16 @@ func (s *LoanServer) UpdateBorrowerLoan(ctx context.Context, in *borrower.Update
 	return l.UpdateBorrowerLoan(in)
 }
 
+func (s *LoanServer) UpdateBorrowerLoanPendingStatus(ctx context.Context, in *borrower.UpdateLoanPendingStatusRequest) (*borrower.EmptyResponse, error) {
+	l := loanlogic.NewUpdateBorrowerLoanPendingStatusLogic(ctx, s.svcCtx)
+	return l.UpdateBorrowerLoanPendingStatus(in)
+}
+
+func (s *LoanServer) DeleteBorrowerLoan(ctx context.Context, in *borrower.DeleteLoanRequest) (*borrower.EmptyResponse, error) {
+	l := loanlogic.NewDeleteBorrowerLoanLogic(ctx, s.svcCtx)
+	return l.DeleteBorrowerLoan(in)
+}
+
 func (s *LoanServer) GetBorrowerLoan(ctx context.Context, in *borrower.GetLoanRequest) (*borrower.GetLoanResponse, error) {
 	l := loanlogic.NewGetBorrowerLoanLogic(ctx, s.svcCtx)
 	return l.GetBorrowerLoan(in)

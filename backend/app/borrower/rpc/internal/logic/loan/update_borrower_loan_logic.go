@@ -54,7 +54,7 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.UpdateLoanRequ
 		return nil, errors.WithStack(errors.New("applicant is not found"))
 	}
 	if loanModel.Source != constants.LoanSourceBorrower {
-		return nil, errors.WithStack(errors.New("loan source is not borrower"))
+		return nil, errors.WithStack(errors.New("loan source is not 3rd party"))
 	}
 
 	// create loan
