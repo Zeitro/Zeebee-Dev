@@ -14,17 +14,17 @@ const Loans = () => {
 		{
 			key: 'pending',
 			label: 'Pending Loans',
-			children: <PendingPage />,
+			children: <PendingPage filterWrapClassName="px-4 pb-4"/>,
 		},
 		{
 			key: 'active',
 			label: 'Active Loans',
-			children: <ActiveLoans />,
+			children: <ActiveLoans filterWrapClassName="px-4 pb-4"/>,
 		},
 		{
 			key: 'archived',
 			label: 'Archived Loans',
-			children: <ArchivedLoans />,
+			children: <ArchivedLoans filterWrapClassName="px-4 pb-4"/>,
 		},
 	];
 	return (

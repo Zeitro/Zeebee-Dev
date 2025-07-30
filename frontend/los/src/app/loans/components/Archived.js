@@ -2,7 +2,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import FilterTable from '@/components/FilterTable';
 import { archivedColumns } from './column';
-const ArchivedLoans = () => {
+const ArchivedLoans = ({hasFilterField,hasPagination,filterWrapClassName}) => {
     const [type, setType] = useState('');
     const [searchValue, setSearchValue] = useState('');
     const [loanPurpose, setLoanPurpose] = useState([]);
@@ -120,6 +120,9 @@ const ArchivedLoans = () => {
             scroll={{ x: 2000, y: 'calc(100% - 54px)' }}
             dataSource={[{ status: 'quoting', id: 1 }]}
             filterList={filterList}
+            hasFilterField={hasFilterField}
+            pagination={hasPagination}
+            filterWrapClassName={filterWrapClassName}
         />
     );
 };

@@ -2,7 +2,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import FilterTable from '@/components/FilterTable';
 import { activeColumns } from './column';
-const ActiveLoans = () => {
+const ActiveLoans = ({hasFilterField,hasPagination,filterWrapClassName}) => {
     const [type, setType] = useState('');
     const [searchValue, setSearchValue] = useState('');
     const [loanPurpose, setLoanPurpose] = useState([]);
@@ -148,6 +148,9 @@ const ActiveLoans = () => {
             scroll={{ x: 3500, y: 'calc(100% - 54px)' }}
             dataSource={[{ status: 'quoting', id: 1 }]}
             filterList={filterList}
+            hasFilterField={hasFilterField}
+            pagination={hasPagination}
+            filterWrapClassName={filterWrapClassName}
         />
     );
 };

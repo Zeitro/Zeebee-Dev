@@ -4,7 +4,7 @@ import FilterTable from '@/components/FilterTable';
 import { pendingColumns } from './column';
 import { transformArrayStructure } from '@/lib/common';
 import { loanPendingStatus } from '@/enum/loan';
-const PendingPage = () => {
+const PendingPage = ({hasFilterField, hasPagination,filterWrapClassName}) => {
 	const [type, setType] = useState('');
 	const [searchValue, setSearchValue] = useState('');
 	const [loanPurpose, setLoanPurpose] = useState([]);
@@ -161,6 +161,9 @@ const PendingPage = () => {
 			scroll={{ x: 3500, y: 'calc(100% - 54px)' }}
 			dataSource={[{ status: 'quoting', id: 1 }]}
 			filterList={filterList}
+			hasFilterField={hasFilterField}
+			pagination={hasPagination}
+			filterWrapClassName={filterWrapClassName}
 		/>
 	);
 };

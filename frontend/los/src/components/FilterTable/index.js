@@ -8,15 +8,18 @@ const FilterTable = ({
 	scroll,
 	dataSource,
 	filterList,
-	rowProps,
+	rowProps={},
 	filterName = 'Active filters',
+	hasFilterField=true,
+	filterWrapClassName,
+	...props
 }) => {
 	const newList = useMemo(() => {
 		return filterList?.filter((i, index) => i.type === 'treeSelect' && i.value?.length);
 	}, [filterList]);
 	return (
-		<div className={styles.loanFilterTable}>
-			<FilterField list={filterList} rowProps={rowProps} />
+		<div className={[styles.filterTable,filterWrapClassName].join(' ')}>
+			{hasFilterField &&<FilterField list={filterList} {...rowProps} />}
 			{!!newList.length && (
 				<div className={styles.filterStatistics}>
 					<div className={styles.filterName}>{filterName}</div>
@@ -51,7 +54,7 @@ const FilterTable = ({
 					</Row>
 				</div>
 			)}
-			<NewTable dataSource={dataSource} columns={columns} scroll={scroll} />
+			<NewTable dataSource={dataSource} columns={columns} scroll={scroll} {...props}/>
 		</div>
 	);
 };

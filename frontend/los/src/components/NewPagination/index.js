@@ -1,7 +1,7 @@
 import { Pagination } from 'antd';
 import React from 'react';
 import styles from './index.module.scss';
-const NewPagination = ({ total, current, pageSize, onChange, ...props }) => {
+const NewPagination = ({ total, current, pageSize, onChange=()=>{}, ...props }) => {
 	return (
 		<Pagination
 			showQuickJumper
