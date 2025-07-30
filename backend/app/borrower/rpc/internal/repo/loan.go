@@ -30,3 +30,12 @@ func (repo *LoanRepo) GetBorrowerLoan(ctx context.Context, id int64, borrowerId 
 		First(&result).Error
 	return result, errors.WithStack(err)
 }
+
+// UpdateOneWithTx update with tx
+func (repo *LoanRepo) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, id int64, data *model.Loan) (result *model.Loan, err error) {
+	err = tx.WithContext(ctx).Select("*").Omit("id", "source", "created_at").Where("id = ?", id).Updates(data).Error
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return data, nil
+}

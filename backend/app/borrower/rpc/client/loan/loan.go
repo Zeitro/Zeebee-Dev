@@ -31,6 +31,8 @@ type (
 	RefreshTokenRequestData  = borrower.RefreshTokenRequestData
 	RefreshTokenResponse     = borrower.RefreshTokenResponse
 	RefreshTokenResponseData = borrower.RefreshTokenResponseData
+	UpdateLoanRequest        = borrower.UpdateLoanRequest
+	UpdateLoanRequestData    = borrower.UpdateLoanRequestData
 	UserInfoRequest          = borrower.UserInfoRequest
 	UserInfoRequestData      = borrower.UserInfoRequestData
 	UserLoginRequest         = borrower.UserLoginRequest
@@ -46,6 +48,7 @@ type (
 
 	Loan interface {
 		CreateBorrowerLoan(ctx context.Context, in *CreateLoanRequest, opts ...grpc.CallOption) (*CreateLoanResponse, error)
+		UpdateBorrowerLoan(ctx context.Context, in *UpdateLoanRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		GetBorrowerLoan(ctx context.Context, in *GetLoanRequest, opts ...grpc.CallOption) (*GetLoanResponse, error)
 	}
 
@@ -63,6 +66,11 @@ func NewLoan(cli zrpc.Client) Loan {
 func (m *defaultLoan) CreateBorrowerLoan(ctx context.Context, in *CreateLoanRequest, opts ...grpc.CallOption) (*CreateLoanResponse, error) {
 	client := borrower.NewLoanClient(m.cli.Conn())
 	return client.CreateBorrowerLoan(ctx, in, opts...)
+}
+
+func (m *defaultLoan) UpdateBorrowerLoan(ctx context.Context, in *UpdateLoanRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	client := borrower.NewLoanClient(m.cli.Conn())
+	return client.UpdateBorrowerLoan(ctx, in, opts...)
 }
 
 func (m *defaultLoan) GetBorrowerLoan(ctx context.Context, in *GetLoanRequest, opts ...grpc.CallOption) (*GetLoanResponse, error) {

@@ -15,7 +15,7 @@
   },
   "basePath": "/",
   "paths": {
-    "/api/v1/loan/": {
+    "/api/v1/loan": {
       "post": {
         "consumes": [
           "application/json"
@@ -40,25 +40,12 @@
               "type": "object",
               "required": [
                 "stage",
-                "pending_status",
                 "loan_purpose",
                 "loan_type",
                 "total_amount",
-                "initial_amount",
                 "property",
                 "applicant_name",
-                "lender_company",
-                "closing_date",
-                "closing_fund",
-                "holdback_amount",
                 "rate",
-                "principal_amount",
-                "monthly_payment",
-                "lien_position",
-                "maturity_date",
-                "prepayment_penalty",
-                "service_company",
-                "paid_off_date",
                 "business_strategy"
               ],
               "properties": {
@@ -116,7 +103,6 @@
                 "property": {
                   "type": "object",
                   "required": [
-                    "id",
                     "property_type",
                     "unit",
                     "address"
@@ -128,7 +114,6 @@
                         "state",
                         "city",
                         "address1",
-                        "address2",
                         "zip_code"
                       ],
                       "properties": {
@@ -210,6 +195,329 @@
             "name": "id",
             "in": "path",
             "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "applicants": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "first_name",
+                      "last_name",
+                      "full_name",
+                      "borrower_id",
+                      "loan_id",
+                      "is_primary"
+                    ],
+                    "properties": {
+                      "borrower_id": {
+                        "type": "integer"
+                      },
+                      "first_name": {
+                        "type": "string"
+                      },
+                      "full_name": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "is_primary": {
+                        "type": "boolean"
+                      },
+                      "last_name": {
+                        "type": "string"
+                      },
+                      "loan_id": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "borrower_id": {
+                  "type": "integer"
+                },
+                "business_strategy": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "closing_date": {
+                  "type": "string"
+                },
+                "closing_fund": {
+                  "type": "number"
+                },
+                "created_at": {
+                  "type": "string"
+                },
+                "holdback_amount": {
+                  "type": "number"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "initial_amount": {
+                  "type": "number"
+                },
+                "lender_company": {
+                  "type": "string"
+                },
+                "lender_id": {
+                  "type": "integer"
+                },
+                "lien_position": {
+                  "type": "string"
+                },
+                "loan_purpose": {
+                  "type": "string"
+                },
+                "loan_type": {
+                  "type": "string"
+                },
+                "maturity_date": {
+                  "type": "string"
+                },
+                "monthly_payment": {
+                  "type": "number"
+                },
+                "paid_off_date": {
+                  "type": "string"
+                },
+                "pending_status": {
+                  "type": "string"
+                },
+                "prepayment_penalty": {
+                  "type": "number"
+                },
+                "principal_amount": {
+                  "type": "number"
+                },
+                "property": {
+                  "type": "object",
+                  "required": [
+                    "property_type",
+                    "unit",
+                    "address"
+                  ],
+                  "properties": {
+                    "address": {
+                      "type": "object",
+                      "required": [
+                        "state",
+                        "city",
+                        "address1",
+                        "zip_code"
+                      ],
+                      "properties": {
+                        "address1": {
+                          "type": "string"
+                        },
+                        "address2": {
+                          "type": "string"
+                        },
+                        "city": {
+                          "type": "string"
+                        },
+                        "state": {
+                          "type": "string"
+                        },
+                        "zip_code": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "property_type": {
+                      "type": "string"
+                    },
+                    "unit": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "rate": {
+                  "type": "number"
+                },
+                "service_company": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string"
+                },
+                "stage": {
+                  "type": "string"
+                },
+                "total_amount": {
+                  "type": "number"
+                },
+                "updated_at": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "loan"
+        ],
+        "summary": "update loan",
+        "operationId": "loanUpdate",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "stage",
+                "loan_purpose",
+                "loan_type",
+                "total_amount",
+                "property",
+                "applicant_name",
+                "rate",
+                "business_strategy"
+              ],
+              "properties": {
+                "applicant_name": {
+                  "type": "string"
+                },
+                "business_strategy": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "closing_date": {
+                  "type": "string"
+                },
+                "closing_fund": {
+                  "type": "number"
+                },
+                "holdback_amount": {
+                  "type": "number"
+                },
+                "initial_amount": {
+                  "type": "number"
+                },
+                "lender_company": {
+                  "type": "string"
+                },
+                "lien_position": {
+                  "type": "string"
+                },
+                "loan_purpose": {
+                  "type": "string"
+                },
+                "loan_type": {
+                  "type": "string"
+                },
+                "maturity_date": {
+                  "type": "string"
+                },
+                "monthly_payment": {
+                  "type": "number"
+                },
+                "paid_off_date": {
+                  "type": "string"
+                },
+                "pending_status": {
+                  "type": "string"
+                },
+                "prepayment_penalty": {
+                  "type": "number"
+                },
+                "principal_amount": {
+                  "type": "number"
+                },
+                "property": {
+                  "type": "object",
+                  "required": [
+                    "property_type",
+                    "unit",
+                    "address"
+                  ],
+                  "properties": {
+                    "address": {
+                      "type": "object",
+                      "required": [
+                        "state",
+                        "city",
+                        "address1",
+                        "zip_code"
+                      ],
+                      "properties": {
+                        "address1": {
+                          "type": "string"
+                        },
+                        "address2": {
+                          "type": "string"
+                        },
+                        "city": {
+                          "type": "string"
+                        },
+                        "state": {
+                          "type": "string"
+                        },
+                        "zip_code": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "property_type": {
+                      "type": "string"
+                    },
+                    "unit": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "rate": {
+                  "type": "number"
+                },
+                "service_company": {
+                  "type": "string"
+                },
+                "stage": {
+                  "type": "string"
+                },
+                "total_amount": {
+                  "type": "number"
+                }
+              }
+            }
           }
         ],
         "responses": {
@@ -468,7 +776,7 @@
       }
     }
   },
-  "x-date": "2025-07-28 14:58:37",
+  "x-date": "2025-07-29 17:36:30",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

@@ -31,6 +31,8 @@ type (
 	RefreshTokenRequestData  = borrower.RefreshTokenRequestData
 	RefreshTokenResponse     = borrower.RefreshTokenResponse
 	RefreshTokenResponseData = borrower.RefreshTokenResponseData
+	UpdateLoanRequest        = borrower.UpdateLoanRequest
+	UpdateLoanRequestData    = borrower.UpdateLoanRequestData
 	UserInfoRequest          = borrower.UserInfoRequest
 	UserInfoRequestData      = borrower.UserInfoRequestData
 	UserLoginRequest         = borrower.UserLoginRequest

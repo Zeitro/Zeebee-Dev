@@ -25,6 +25,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: loan.CreateHandler(serverCtx),
 				},
 				{
+					// update loan
+					Method:  http.MethodPut,
+					Path:    "/loan/:id",
+					Handler: loan.UpdateHandler(serverCtx),
+				},
+				{
 					// get loan
 					Method:  http.MethodGet,
 					Path:    "/loan/:id",

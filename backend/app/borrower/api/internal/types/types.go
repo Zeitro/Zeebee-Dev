@@ -93,6 +93,31 @@ type LoanEntry struct {
 	Source            string           `json:"source"`
 }
 
+type LoanUpdateRequest struct {
+	ID                int64          `path:"id" validate:"required,min=1"`
+	Stage             string         `json:"stage" validate:"required,oneof=Pending Active Archived"`
+	PendingStatus     string         `json:"pending_status,optional" validate:"required_if=Stage Pending,omitempty,oneof=Quoting Processing Closing"`
+	LoanPurpose       string         `json:"loan_purpose" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
+	LoanType          string         `json:"loan_type" validate:"required,oneof=Bridge Rehab 'Ground up construction'"`
+	TotalAmount       float32        `json:"total_amount" validate:"required"`
+	InitialAmount     float32        `json:"initial_amount,optional"`
+	Property          *PropertyEntry `json:"property" validate:"required"`
+	ApplicantName     string         `json:"applicant_name" validate:"required"`
+	LenderCompany     string         `json:"lender_company,optional" validate:"required"`
+	ClosingDate       string         `json:"closing_date,optional" validate:"required_if=Stage Pending,omitempty,datetime=01/02/2006"`
+	ClosingFund       float32        `json:"closing_fund,optional" validate:"required_if=Stage Pending"`
+	HoldbackAmunt     float32        `json:"holdback_amount,optional" validate:"required_if=Stage Pending"`
+	Rate              float32        `json:"rate" validate:"required,gt=0"`
+	PrincipalAmount   float32        `json:"principal_amount,optional" validate:"required_unless=Stage Pending"`
+	MonthlyPayment    float32        `json:"monthly_payment,optional" validate:"required_if=Stage Active,omitempty,gt=0"`
+	LienPosition      string         `json:"lien_position,optional" validate:"required_if=Stage Active,omitempty,oneof=1st 2nd 3rd 4th Other"`
+	MaturityDate      string         `json:"maturity_date,optional" validate:"required_if=Stage Active,omitempty,datetime=01/02/2006"`
+	PrepaymentPenalty float32        `json:"prepayment_penalty,optional" validate:"required_if=Stage Active,omitempty,gte=0"`
+	ServiceCompany    string         `json:"service_company,optional" validate:"required_if=Stage Active"`
+	PaidOffDate       string         `json:"paid_off_date,optional" validate:"required_if=Stage Archived,omitempty,datetime=01/02/2006"`
+	BusinessStrategy  []string       `json:"business_strategy" validate:"required,dive,required,oneof=Rentel Sale Flip"`
+}
+
 type PropertyEntry struct {
 	ID           int64         `json:"id,optional"`
 	PropertyType string        `json:"property_type" validate:"required,oneof='Single Family' 'Townhouse' 'Multi Family' 'Condo'"`

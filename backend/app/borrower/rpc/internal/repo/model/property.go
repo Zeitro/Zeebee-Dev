@@ -14,6 +14,7 @@ type Property struct {
 	Address      types.Address          `gorm:"column:address;type:jsonb;serializer:json" json:"address"`
 
 	Borrower *Borrower `json:"borrower" gorm:"foreignKey:BorrowerId;references:Id"`
+	Loans    []*Loan   `json:"loans" gorm:"foreignKey:PropertyId;references:Id"`
 }
 
 func (p *Property) TableName() string {
