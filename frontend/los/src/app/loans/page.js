@@ -4,7 +4,9 @@ import React, { useState } from 'react';
 import NewTable from '../../components/NewTable';
 import { activeColumns, archivedColumns, pendingColumns } from './components/column';
 import styles from './loans.module.scss';
-import PendingPage from './components/pending';
+import PendingPage from './components/Pending';
+import ActiveLoans from './components/Active';
+import ArchivedLoans from './components/Archived';
 
 const Loans = () => {
 	const [tabKey, setTabKey] = useState('pending');
@@ -17,20 +19,12 @@ const Loans = () => {
 		{
 			key: 'active',
 			label: 'Active Loans',
-			children: (
-				<NewTable dataSource={[]} columns={activeColumns} scroll={{ x: 3500, y: '100%' }} />
-			),
+			children: <ActiveLoans />,
 		},
 		{
 			key: 'archived',
 			label: 'Archived Loans',
-			children: (
-				<NewTable
-					dataSource={[]}
-					columns={archivedColumns}
-					scroll={{ x: 2000, y: '100%' }}
-				/>
-			),
+			children: <ArchivedLoans />,
 		},
 	];
 	return (
