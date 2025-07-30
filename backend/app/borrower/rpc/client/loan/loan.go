@@ -28,6 +28,10 @@ type (
 	GetLoanRequestData                 = borrower.GetLoanRequestData
 	GetLoanResponse                    = borrower.GetLoanResponse
 	LoanEntry                          = borrower.LoanEntry
+	OptionEntry                        = borrower.OptionEntry
+	OptionRequest                      = borrower.OptionRequest
+	OptionRequestData                  = borrower.OptionRequestData
+	OptionResponse                     = borrower.OptionResponse
 	PropertyEntry                      = borrower.PropertyEntry
 	RefreshTokenRequest                = borrower.RefreshTokenRequest
 	RefreshTokenRequestData            = borrower.RefreshTokenRequestData

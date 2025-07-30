@@ -1,6 +1,10 @@
 package constants
 
+import "zeebee-backend/common/enums"
+
 type UserStatus string
+
+var UserStatusName = "user_status"
 
 const (
 	UserStatusActive   UserStatus = "active"
@@ -23,3 +27,17 @@ const (
 
 	BorrowerUserKey = "borrower_user"
 )
+
+func init() {
+	// register user status
+	enums.Register(UserStatusName, []enums.EnumOpt{
+		{
+			Label: string(UserStatusActive),
+			Value: string(UserStatusActive),
+		},
+		{
+			Label: string(UserStatusInactive),
+			Value: string(UserStatusInactive),
+		},
+	})
+}

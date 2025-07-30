@@ -1,8 +1,8 @@
 package enums
 
 type EnumOpt struct {
-	Label string      `json:"label"`
-	Value interface{} `json:"value"`
+	Label string `json:"label"`
+	Value string `json:"value"`
 }
 
 var enumMap map[string][]EnumOpt = map[string][]EnumOpt{}

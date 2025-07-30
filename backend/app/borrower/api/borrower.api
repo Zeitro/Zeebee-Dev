@@ -9,12 +9,28 @@ info (
 
 import "desc/user.api"
 import "desc/loan.api"
+import "desc/common.api"
 
 type (
 	EmptyRequest  {}
 	EmptyResponse  {}
 )
 
+// ============== common =============
+@server (
+	desc:    "borrower-api service"
+	version: v1
+	group:   common
+	prefix:  /api/v1
+	tags:    common
+)
+service borrower-api {
+	@doc "get select options"
+	@handler SelectOptions
+	get /select_options (GetSelectOptionRequest) returns (GetSelectOptionResponse)
+}
+
+// ============== user =============
 @server (
 	desc:    "borrower-api service"
 	version: v1
@@ -50,6 +66,7 @@ service borrower-api {
 	get /user/info (EmptyRequest) returns (UserInfoResponse)
 }
 
+// ============== loan =============
 @server (
 	desc:       "loan service"
 	version:    v1

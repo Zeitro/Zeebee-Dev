@@ -27,6 +27,14 @@ type EmptyRequest struct {
 type EmptyResponse struct {
 }
 
+type GetSelectOptionRequest struct {
+	Name string `form:"name"`
+}
+
+type GetSelectOptionResponse struct {
+	Options []SelectOptionEntry `json:"options"`
+}
+
 type LoanCreateRequest struct {
 	Stage             string         `json:"stage" validate:"required,oneof=Pending Active Archived"`
 	PendingStatus     string         `json:"pending_status,optional" validate:"required_if=Stage Pending,omitempty,oneof=Quoting Processing Closing"`
@@ -132,6 +140,11 @@ type PropertyEntry struct {
 	PropertyType string        `json:"property_type" validate:"required,oneof='Single Family' 'Townhouse' 'Multi Family' 'Condo'"`
 	Unit         int           `json:"unit" validate:"required,min=1"`
 	Address      *AddressEntry `json:"address" validate:"required"`
+}
+
+type SelectOptionEntry struct {
+	Label string `json:"label"`
+	Value string `json:"value"`
 }
 
 type UserInfo struct {
