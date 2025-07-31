@@ -17,6 +17,27 @@ type Borrower struct {
 	User *User `json:"user" gorm:"foreignKey:UserId;references:Id"`
 }
 
-func (b *Borrower) TableName() string {
+func (m *Borrower) TableName() string {
 	return "borrowers"
+}
+
+func (m Borrower) FieldUserId() string {
+	return "user_id"
+}
+
+func (m Borrower) FieldFirstName() string {
+	return "first_name"
+}
+
+func (m Borrower) FieldLastName() string {
+	return "last_name"
+}
+func (m Borrower) FieldSsn() string {
+	return "ssn"
+}
+func (m Borrower) FieldPhoneNumber() string {
+	return "phone_number"
+}
+func (m Borrower) FieldAddress() string {
+	return "address"
 }

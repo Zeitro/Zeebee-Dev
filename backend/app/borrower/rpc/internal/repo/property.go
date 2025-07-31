@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -22,8 +23,8 @@ func NewPropertyRepo(db *gorm.DB) *PropertyRepo {
 	}
 }
 
-func (r *PropertyRepo) GetOneWithTx(ctx context.Context, tx *gorm.DB, id int64, preloads []string) (result *model.Property, err error) {
-	query := tx.WithContext(ctx).Where("id = ?", id)
+func (repo *PropertyRepo) GetOneWithTx(ctx context.Context, tx *gorm.DB, id int64, preloads []string) (result *model.Property, err error) {
+	query := tx.WithContext(ctx).Where(repo.m.FieldId(), id)
 	for _, preload := range preloads {
 		query = query.Preload(preload)
 	}
@@ -35,8 +36,14 @@ func (r *PropertyRepo) GetOneWithTx(ctx context.Context, tx *gorm.DB, id int64, 
 func (repo *PropertyRepo) GetOrCreateWithTx(ctx context.Context, tx *gorm.DB, data *model.Property) (result *model.Property, err error) {
 	// if not existed,create one
 	err = tx.WithContext(ctx).
-		Where("borrower_id = ? and property_type = ? and unit = ?", data.BorrowerId, data.PropertyType, data.Unit).
-		Where("address->>'state' = ? and address->>'city' = ? and address->>'zip_code' = ? and address->>'address1' = ? and address->>'address2' = ?", data.Address.State, data.Address.City, data.Address.ZipCode, data.Address.Address1, data.Address.Address2).
+		Where(repo.m.FieldBorrowerId(), data.BorrowerId).
+		Where(repo.m.FieldPropertyType(), data.PropertyType).
+		Where(repo.m.FieldUnit(), data.Unit).
+		Where(fmt.Sprintf("%s->>'state'", repo.m.FieldAddress()), data.Address.State).
+		Where(fmt.Sprintf("%s->>'city'", repo.m.FieldAddress()), data.Address.City).
+		Where(fmt.Sprintf("%s->>'zip_code'", repo.m.FieldAddress()), data.Address.ZipCode).
+		Where(fmt.Sprintf("%s->>'address1'", repo.m.FieldAddress()), data.Address.Address1).
+		Where(fmt.Sprintf("%s->>'address2'", repo.m.FieldAddress()), data.Address.Address2).
 		Find(&result).
 		Error
 	if err != nil {
@@ -54,8 +61,14 @@ func (repo *PropertyRepo) GetOrCreateWithTx(ctx context.Context, tx *gorm.DB, da
 
 func (repo *PropertyRepo) GetOneWithTxByProperty(ctx context.Context, tx *gorm.DB, data *model.Property) (result *model.Property, err error) {
 	err = tx.WithContext(ctx).
-		Where("borrower_id = ? and property_type = ? and unit = ?", data.BorrowerId, data.PropertyType, data.Unit).
-		Where("address->>'state' = ? and address->>'city' = ? and address->>'zip_code' = ? and address->>'address1' = ? and address->>'address2' = ?", data.Address.State, data.Address.City, data.Address.ZipCode, data.Address.Address1, data.Address.Address2).
+		Where(repo.m.FieldBorrowerId(), data.BorrowerId).
+		Where(repo.m.FieldPropertyType(), data.PropertyType).
+		Where(repo.m.FieldUnit(), data.Unit).
+		Where(fmt.Sprintf("%s->>'state'", repo.m.FieldAddress()), data.Address.State).
+		Where(fmt.Sprintf("%s->>'city'", repo.m.FieldAddress()), data.Address.City).
+		Where(fmt.Sprintf("%s->>'zip_code'", repo.m.FieldAddress()), data.Address.ZipCode).
+		Where(fmt.Sprintf("%s->>'address1'", repo.m.FieldAddress()), data.Address.Address1).
+		Where(fmt.Sprintf("%s->>'address2'", repo.m.FieldAddress()), data.Address.Address2).
 		Find(&result).
 		Error
 	if err != nil {
@@ -68,7 +81,10 @@ func (repo *PropertyRepo) GetOneWithTxByProperty(ctx context.Context, tx *gorm.D
 }
 
 func (repo *PropertyRepo) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, id int64, data *model.Property) (result *model.Property, err error) {
-	err = tx.WithContext(ctx).Select("*").Omit("id", "created_at").Where("id = ?", id).Updates(data).Error
+	err = tx.WithContext(ctx).Select("*").
+		Omit(repo.m.FieldId(), repo.m.FieldCreatedAt()).
+		Where(repo.m.FieldId(), id).
+		Updates(data).Error
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}

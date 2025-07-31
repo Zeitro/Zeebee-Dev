@@ -7,9 +7,9 @@ ForbiddenLoginSeconds: 300
 
 JwtAuth:
   AccessSecret: accessSecret
-  AccessExpire: 86400
+  AccessExpire: 864000
   RefreshSecret: refreshSecret
-  RefreshExpire: 86400
+  RefreshExpire: 864000
 
 #Etcd:
 #  Hosts:

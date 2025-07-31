@@ -24,6 +24,9 @@ type (
 	DeleteLoanRequestData              = borrower.DeleteLoanRequestData
 	EmptyRequest                       = borrower.EmptyRequest
 	EmptyResponse                      = borrower.EmptyResponse
+	GetLoanLenderCompaniesRequest      = borrower.GetLoanLenderCompaniesRequest
+	GetLoanLenderCompaniesRequestData  = borrower.GetLoanLenderCompaniesRequestData
+	GetLoanLenderCompaniesResponse     = borrower.GetLoanLenderCompaniesResponse
 	GetLoanRequest                     = borrower.GetLoanRequest
 	GetLoanRequestData                 = borrower.GetLoanRequestData
 	GetLoanResponse                    = borrower.GetLoanResponse
@@ -32,6 +35,12 @@ type (
 	OptionRequest                      = borrower.OptionRequest
 	OptionRequestData                  = borrower.OptionRequestData
 	OptionResponse                     = borrower.OptionResponse
+	PageLoanRequest                    = borrower.PageLoanRequest
+	PageLoanRequestData                = borrower.PageLoanRequestData
+	PageLoanRequestFilter              = borrower.PageLoanRequestFilter
+	PageLoanRequestSort                = borrower.PageLoanRequestSort
+	PageLoanResponse                   = borrower.PageLoanResponse
+	PageLoanResponseData               = borrower.PageLoanResponseData
 	PropertyEntry                      = borrower.PropertyEntry
 	RefreshTokenRequest                = borrower.RefreshTokenRequest
 	RefreshTokenRequestData            = borrower.RefreshTokenRequestData
@@ -60,6 +69,8 @@ type (
 		UpdateBorrowerLoanPendingStatus(ctx context.Context, in *UpdateLoanPendingStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		DeleteBorrowerLoan(ctx context.Context, in *DeleteLoanRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		GetBorrowerLoan(ctx context.Context, in *GetLoanRequest, opts ...grpc.CallOption) (*GetLoanResponse, error)
+		GetBorrowerLoanPage(ctx context.Context, in *PageLoanRequest, opts ...grpc.CallOption) (*PageLoanResponse, error)
+		GetBorrowerLoanLenderCompanies(ctx context.Context, in *GetLoanLenderCompaniesRequest, opts ...grpc.CallOption) (*GetLoanLenderCompaniesResponse, error)
 	}
 
 	defaultLoan struct {
@@ -96,4 +107,14 @@ func (m *defaultLoan) DeleteBorrowerLoan(ctx context.Context, in *DeleteLoanRequ
 func (m *defaultLoan) GetBorrowerLoan(ctx context.Context, in *GetLoanRequest, opts ...grpc.CallOption) (*GetLoanResponse, error) {
 	client := borrower.NewLoanClient(m.cli.Conn())
 	return client.GetBorrowerLoan(ctx, in, opts...)
+}
+
+func (m *defaultLoan) GetBorrowerLoanPage(ctx context.Context, in *PageLoanRequest, opts ...grpc.CallOption) (*PageLoanResponse, error) {
+	client := borrower.NewLoanClient(m.cli.Conn())
+	return client.GetBorrowerLoanPage(ctx, in, opts...)
+}
+
+func (m *defaultLoan) GetBorrowerLoanLenderCompanies(ctx context.Context, in *GetLoanLenderCompaniesRequest, opts ...grpc.CallOption) (*GetLoanLenderCompaniesResponse, error) {
+	client := borrower.NewLoanClient(m.cli.Conn())
+	return client.GetBorrowerLoanLenderCompanies(ctx, in, opts...)
 }

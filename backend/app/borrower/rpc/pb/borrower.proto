@@ -283,10 +283,63 @@ message DeleteLoanRequestData {
   int64 borrower_id = 2;
 }
 
+message PageLoanRequest {
+  PageLoanRequestData data = 1;
+}
+
+message PageLoanResponse {
+  PageLoanResponseData data = 1;
+}
+
+message  PageLoanRequestFilter {
+  int64 borrower_id = 1;
+  string stage = 2;
+  string keyword = 3;
+  string keyword_type = 4;
+  repeated string loan_purpose = 5;
+  repeated string loan_type = 6;
+  repeated string lender = 7;
+  repeated string pending_status = 8;
+}
+
+message  PageLoanRequestSort {
+  string column = 1;
+  string sort = 2;
+}
+
+message PageLoanRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  PageLoanRequestFilter filter = 3;
+  PageLoanRequestSort sort = 4;
+}
+
+message PageLoanResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated LoanEntry list = 5;
+}
+
+message GetLoanLenderCompaniesRequest {
+  GetLoanLenderCompaniesRequestData data = 1;
+}
+
+message GetLoanLenderCompaniesRequestData {
+  int64 borrower_id = 1;
+}
+
+message GetLoanLenderCompaniesResponse {
+  repeated string data = 1;
+}
+
 service Loan {
   rpc CreateBorrowerLoan(CreateLoanRequest) returns(CreateLoanResponse);
   rpc UpdateBorrowerLoan(UpdateLoanRequest) returns(EmptyResponse);
   rpc UpdateBorrowerLoanPendingStatus(UpdateLoanPendingStatusRequest) returns(EmptyResponse);
   rpc DeleteBorrowerLoan(DeleteLoanRequest) returns(EmptyResponse);
   rpc GetBorrowerLoan(GetLoanRequest) returns(GetLoanResponse);
+  rpc GetBorrowerLoanPage(PageLoanRequest) returns(PageLoanResponse);
+  rpc GetBorrowerLoanLenderCompanies(GetLoanLenderCompaniesRequest) returns(GetLoanLenderCompaniesResponse);
 }
