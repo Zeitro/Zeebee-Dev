@@ -14,8 +14,8 @@ export const navRouter = [
 		icon: <BankOutlined />,
 		router: [
 			{
-				path: '/loans/details',
-				title: 'details',
+				path: '/createLoan',
+				title: 'Create A New Loan',
 				hideMenu: true,
 			},
 			{

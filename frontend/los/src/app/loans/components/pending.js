@@ -3,8 +3,9 @@ import React, { useEffect, useMemo, useState } from 'react';
 import FilterTable from '@/components/FilterTable';
 import { pendingColumns } from './column';
 import { transformArrayStructure } from '@/lib/common';
-import { loanPendingStatus } from '@/enum/loan';
-const PendingPage = ({hasFilterField, hasPagination,filterWrapClassName}) => {
+import { useLoanStore } from '@/store/loan';
+const PendingPage = ({ hasFilterField, hasPagination, filterWrapClassName }) => {
+	const { loanPendingStatus, loanPurposeOptions, loanTypeOptions } = useLoanStore();
 	const [type, setType] = useState('');
 	const [searchValue, setSearchValue] = useState('');
 	const [loanPurpose, setLoanPurpose] = useState([]);
@@ -51,26 +52,10 @@ const PendingPage = ({hasFilterField, hasPagination,filterWrapClassName}) => {
 				placeholder: 'Loan purpose',
 				value: loanPurpose,
 				onChange: (value) => setLoanPurpose(value),
-				treeData: [
-					{
-						title: 'Purchase',
-						value: 'purchase',
-						key: 'purchase',
-						isLeaf: true,
-					},
-					{
-						title: 'Rate-term refi',
-						value: 'rateTermRefi',
-						key: 'rateTermRefi',
-						isLeaf: true,
-					},
-					{
-						title: 'Cash-out refi',
-						value: 'cashOutRefi',
-						key: 'cashOutRefi',
-						isLeaf: true,
-					},
-				],
+				treeData: transformArrayStructure({
+					sourceArray: loanPurposeOptions,
+					outputKey: 'title',
+				}).map((i) => ({ ...i, key: i.value })),
 			},
 			{
 				type: 'treeSelect',
@@ -78,31 +63,11 @@ const PendingPage = ({hasFilterField, hasPagination,filterWrapClassName}) => {
 				popupMatchSelectWidth: 195,
 				value: loanType,
 				placeholder: 'Loan type',
-				onChange: (value) => {
-                    console.log('change',value);
-                    
-                    setLoanType(value)
-                },
-				treeData: [
-					{
-						title: 'Bridge',
-						value: 'bridge',
-						key: 'bridge',
-						isLeaf: true,
-					},
-					{
-						title: 'Rehab',
-						value: 'rehab',
-						key: 'rehab',
-						isLeaf: true,
-					},
-					{
-						title: 'Ground up construction',
-						value: 'groundUpConstruction',
-						key: 'groundUpConstruction',
-						isLeaf: true,
-					},
-				],
+				onChange: (value) => setLoanType(value),
+				treeData: transformArrayStructure({
+					sourceArray: loanTypeOptions,
+					outputKey: 'title',
+				}).map((i) => ({ ...i, key: i.value })),
 			},
 			{
 				type: 'treeSelect',
@@ -145,14 +110,7 @@ const PendingPage = ({hasFilterField, hasPagination,filterWrapClassName}) => {
 				}).map((i) => ({ ...i, key: i.value })),
 			},
 		],
-		[
-			searchValue,
-			type,
-			loanPurpose,
-			loanType,
-			lender,
-			status,
-		],
+		[searchValue, type, loanPurpose, loanType, lender, status],
 	);
 
 	return (

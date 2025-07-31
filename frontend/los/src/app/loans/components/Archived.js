@@ -2,7 +2,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import FilterTable from '@/components/FilterTable';
 import { archivedColumns } from './column';
+import { transformArrayStructure } from '@/lib/common';
+import {useLoanStore} from '@/store/loan'
 const ArchivedLoans = ({hasFilterField,hasPagination,filterWrapClassName}) => {
+    const {  loanTypeOptions } = useLoanStore();
     const [type, setType] = useState('');
     const [searchValue, setSearchValue] = useState('');
     const [loanPurpose, setLoanPurpose] = useState([]);
@@ -42,38 +45,18 @@ const ArchivedLoans = ({hasFilterField,hasPagination,filterWrapClassName}) => {
                     },
                 ],
             },
-            {
-                type: 'treeSelect',
-                label: 'Loan type',
-                popupMatchSelectWidth: 195,
-                value: loanType,
-                placeholder: 'Loan type',
-                onChange: (value) => {
-                    console.log('change',value);
-                    
-                    setLoanType(value)
-                },
-                treeData: [
-                    {
-                        title: 'Bridge',
-                        value: 'bridge',
-                        key: 'bridge',
-                        isLeaf: true,
-                    },
-                    {
-                        title: 'Rehab',
-                        value: 'rehab',
-                        key: 'rehab',
-                        isLeaf: true,
-                    },
-                    {
-                        title: 'Ground up construction',
-                        value: 'groundUpConstruction',
-                        key: 'groundUpConstruction',
-                        isLeaf: true,
-                    },
-                ],
-            },
+			{
+				type: 'treeSelect',
+				label: 'Loan type',
+				popupMatchSelectWidth: 195,
+				value: loanType,
+				placeholder: 'Loan type',
+				onChange: (value) => setLoanType(value),
+				treeData: transformArrayStructure({
+					sourceArray: loanTypeOptions,
+					outputKey: 'title',
+				}).map((i) => ({ ...i, key: i.value })),
+			}, 
             {
                 type: 'treeSelect',
                 label: 'Lender',

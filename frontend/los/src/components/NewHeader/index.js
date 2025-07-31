@@ -6,6 +6,7 @@ import { navRouter } from '@config/routes';
 import { getCurrentRouterItem, flattenNavRouter, getCrumbs } from '@config/common';
 import Link from 'next/link';
 import styles from './index.module.css';
+import { customContent } from './customContent';
 /**
  * 面包屑导航
  */
@@ -27,9 +28,14 @@ const NewHeader = () => {
 		setCrumbs([navRouter[0], ...breadcrumbs]);
 	}, [pathname]);
 	return config && !config?.hideCrumbs ? (
-		<div className={`h-[84px] p-4 shrink-0 ${styles.crumbs}`}>
-			<Breadcrumb items={crumbs} itemRender={itemRender} />
-			<div className="text-lg font-medium text-gray-medium">{crumbs?.[crumbs.length-1]?.title}</div>
+		<div className={`h-[84px] p-4 shrink-0 flex items-center justify-between ${styles.crumbs}`}>
+			<div>
+				<Breadcrumb items={crumbs} itemRender={itemRender} />
+				<div className="text-lg font-medium text-gray-medium">
+					{crumbs?.[crumbs.length - 1]?.title}
+				</div>
+			</div>
+			{customContent()}
 		</div>
 	) : (
 		''
