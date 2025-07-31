@@ -17,6 +17,19 @@ type Property struct {
 	Loans    []*Loan   `json:"loans" gorm:"foreignKey:PropertyId;references:Id"`
 }
 
-func (p *Property) TableName() string {
+func (m Property) TableName() string {
 	return "properties"
+}
+
+func (m Property) FieldBorrowerId() string {
+	return "borrower_id"
+}
+func (m Property) FieldPropertyType() string {
+	return "property_type"
+}
+func (m Property) FieldUnit() string {
+	return "unit"
+}
+func (m Property) FieldAddress() string {
+	return "address"
 }

@@ -29,7 +29,7 @@
         "tags": [
           "loan"
         ],
-        "summary": "create loan",
+        "summary": "create",
         "operationId": "loanCreate",
         "parameters": [
           {
@@ -176,6 +176,305 @@
         }
       }
     },
+    "/api/v1/loan/lender_companies": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "loan"
+        ],
+        "summary": "lender companies",
+        "operationId": "loanLenderCompanies",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "lender_companies": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/loan/page": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "loan"
+        ],
+        "summary": "page",
+        "operationId": "loanPage",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "filter": {
+                  "type": "object",
+                  "properties": {
+                    "keyword": {
+                      "type": "string"
+                    },
+                    "keyword_type": {
+                      "type": "string"
+                    },
+                    "lender": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "loan_purpose": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "loan_type": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "pending_status": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "stage": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "limit": {
+                  "type": "integer"
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "sorter": {
+                  "type": "object",
+                  "properties": {
+                    "column": {
+                      "type": "string"
+                    },
+                    "sort": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "limit": {
+                  "type": "integer"
+                },
+                "list": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "stage",
+                      "loan_purpose",
+                      "loan_type",
+                      "total_amount",
+                      "property",
+                      "rate",
+                      "business_strategy",
+                      "applicants",
+                      "lender_id",
+                      "borrower_id",
+                      "created_at",
+                      "updated_at",
+                      "source"
+                    ],
+                    "properties": {
+                      "applicants": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "first_name",
+                            "last_name",
+                            "full_name",
+                            "borrower_id",
+                            "loan_id",
+                            "is_primary"
+                          ],
+                          "properties": {
+                            "borrower_id": {
+                              "type": "integer"
+                            },
+                            "first_name": {
+                              "type": "string"
+                            },
+                            "full_name": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "is_primary": {
+                              "type": "boolean"
+                            },
+                            "last_name": {
+                              "type": "string"
+                            },
+                            "loan_id": {
+                              "type": "integer"
+                            }
+                          }
+                        }
+                      },
+                      "borrower_id": {
+                        "type": "integer"
+                      },
+                      "business_strategy": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "closing_date": {
+                        "type": "string"
+                      },
+                      "closing_fund": {
+                        "type": "number"
+                      },
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "holdback_amount": {
+                        "type": "number"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "initial_amount": {
+                        "type": "number"
+                      },
+                      "lender_company": {
+                        "type": "string"
+                      },
+                      "lender_id": {
+                        "type": "integer"
+                      },
+                      "lien_position": {
+                        "type": "string"
+                      },
+                      "loan_purpose": {
+                        "type": "string"
+                      },
+                      "loan_type": {
+                        "type": "string"
+                      },
+                      "maturity_date": {
+                        "type": "string"
+                      },
+                      "monthly_payment": {
+                        "type": "number"
+                      },
+                      "paid_off_date": {
+                        "type": "string"
+                      },
+                      "pending_status": {
+                        "type": "string"
+                      },
+                      "prepayment_penalty": {
+                        "type": "number"
+                      },
+                      "principal_amount": {
+                        "type": "number"
+                      },
+                      "property": {
+                        "type": "object",
+                        "required": [
+                          "property_type",
+                          "unit",
+                          "address"
+                        ],
+                        "properties": {
+                          "address": {
+                            "type": "object"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "property_type": {
+                            "type": "string"
+                          },
+                          "unit": {
+                            "type": "integer"
+                          }
+                        }
+                      },
+                      "rate": {
+                        "type": "number"
+                      },
+                      "service_company": {
+                        "type": "string"
+                      },
+                      "source": {
+                        "type": "string"
+                      },
+                      "stage": {
+                        "type": "string"
+                      },
+                      "total_amount": {
+                        "type": "number"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "total": {
+                  "type": "integer"
+                },
+                "total_page": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/loan/{id}": {
       "get": {
         "produces": [
@@ -187,7 +486,7 @@
         "tags": [
           "loan"
         ],
-        "summary": "get loan",
+        "summary": "detail",
         "operationId": "loanDetail",
         "parameters": [
           {
@@ -382,7 +681,7 @@
         "tags": [
           "loan"
         ],
-        "summary": "update loan",
+        "summary": "update",
         "operationId": "loanUpdate",
         "parameters": [
           {
@@ -542,7 +841,7 @@
         "tags": [
           "loan"
         ],
-        "summary": "delete loan",
+        "summary": "delete",
         "operationId": "loanDeleteLoan",
         "parameters": [
           {
@@ -623,7 +922,7 @@
         "tags": [
           "common"
         ],
-        "summary": "get select options",
+        "summary": "select options",
         "operationId": "commonSelectOptions",
         "parameters": [
           {
@@ -674,7 +973,7 @@
         "tags": [
           "user"
         ],
-        "summary": "user info",
+        "summary": "info",
         "operationId": "userInfo",
         "responses": {
           "200": {
@@ -909,7 +1208,7 @@
       }
     }
   },
-  "x-date": "2025-07-30 16:10:43",
+  "x-date": "2025-07-31 13:22:53",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

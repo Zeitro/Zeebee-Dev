@@ -25,7 +25,7 @@ type (
 	tags:    common
 )
 service borrower-api {
-	@doc "get select options"
+	@doc "select options"
 	@handler SelectOptions
 	get /select_options (GetSelectOptionRequest) returns (GetSelectOptionResponse)
 }
@@ -61,7 +61,7 @@ service borrower-api {
 	tags:       user
 )
 service borrower-api {
-	@doc "user info"
+	@doc "info"
 	@handler Info
 	get /user/info (EmptyRequest) returns (UserInfoResponse)
 }
@@ -76,11 +76,11 @@ service borrower-api {
 	tags:       loan
 )
 service borrower-api {
-	@doc "create loan"
+	@doc "create"
 	@handler Create
 	post /loan (LoanCreateRequest) returns (LoanCreateResponse)
 
-	@doc "update loan"
+	@doc "update"
 	@handler Update
 	put /loan/:id (LoanUpdateRequest) returns (EmptyResponse)
 
@@ -88,12 +88,20 @@ service borrower-api {
 	@handler UpdatePendingStatus
 	put /loan/:id/pending_status (LoanUpdatePendingStatusRequest) returns (EmptyResponse)
 
-	@doc "delete loan"
+	@doc "delete"
 	@handler DeleteLoan
 	delete /loan/:id (LoanDeleteRequest) returns (EmptyResponse)
 
-	@doc "get loan"
+	@doc "lender companies"
+	@handler LenderCompanies
+	get /loan/lender_companies (EmptyRequest) returns (LoanLenderCompanyResponse)
+
+	@doc "detail"
 	@handler Detail
 	get /loan/:id (LoanDetailRequest) returns (LoanDetailResponse)
+
+	@doc "page"
+	@handler Page
+	post /loan/page (LoanPageRequest) returns (LoanPageResponse)
 }
 

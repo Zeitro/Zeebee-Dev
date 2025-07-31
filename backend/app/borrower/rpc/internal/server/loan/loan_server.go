@@ -47,3 +47,13 @@ func (s *LoanServer) GetBorrowerLoan(ctx context.Context, in *borrower.GetLoanRe
 	l := loanlogic.NewGetBorrowerLoanLogic(ctx, s.svcCtx)
 	return l.GetBorrowerLoan(in)
 }
+
+func (s *LoanServer) GetBorrowerLoanPage(ctx context.Context, in *borrower.PageLoanRequest) (*borrower.PageLoanResponse, error) {
+	l := loanlogic.NewGetBorrowerLoanPageLogic(ctx, s.svcCtx)
+	return l.GetBorrowerLoanPage(in)
+}
+
+func (s *LoanServer) GetBorrowerLoanLenderCompanies(ctx context.Context, in *borrower.GetLoanLenderCompaniesRequest) (*borrower.GetLoanLenderCompaniesResponse, error) {
+	l := loanlogic.NewGetBorrowerLoanLenderCompaniesLogic(ctx, s.svcCtx)
+	return l.GetBorrowerLoanLenderCompanies(in)
+}

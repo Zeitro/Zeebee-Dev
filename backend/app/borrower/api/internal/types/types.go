@@ -105,6 +105,40 @@ type LoanEntry struct {
 	Source            string           `json:"source"`
 }
 
+type LoanLenderCompanyResponse struct {
+	LenderCompanies []string `json:"lender_companies"`
+}
+
+type LoanPageFilter struct {
+	Stage         string   `json:"stage,optional"`
+	Keyword       string   `json:"keyword,optional"`
+	KeywordType   string   `json:"keyword_type,optional"`
+	PendingStatus []string `json:"pending_status,optional" `
+	LoanPurpose   []string `json:"loan_purpose,optional" `
+	LoanType      []string `json:"loan_type,optional"`
+	Lender        []string `json:"lender,optional"`
+}
+
+type LoanPageRequest struct {
+	Page   int64          `json:"page,optional"`
+	Limit  int64          `json:"limit,optional"`
+	Filter LoanPageFilter `json:"filter,optional"`
+	Sorter LoanPageSorter `json:"sorter,optional"`
+}
+
+type LoanPageResponse struct {
+	Page      int64       `json:"page"`
+	Limit     int64       `json:"limit"`
+	Total     int64       `json:"total"`
+	TotalPage int64       `json:"total_page"`
+	List      []LoanEntry `json:"list"`
+}
+
+type LoanPageSorter struct {
+	Column string `json:"column,optional"`
+	Sort   string `json:"sort,optional"`
+}
+
 type LoanUpdatePendingStatusRequest struct {
 	Id            int64  `path:"id"`
 	PendingStatus string `json:"pending_status" validate:"required,oneof=Quoting Processing Closing"`

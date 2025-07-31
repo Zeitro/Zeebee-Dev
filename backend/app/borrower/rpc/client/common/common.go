@@ -24,6 +24,9 @@ type (
 	DeleteLoanRequestData              = borrower.DeleteLoanRequestData
 	EmptyRequest                       = borrower.EmptyRequest
 	EmptyResponse                      = borrower.EmptyResponse
+	GetLoanLenderCompaniesRequest      = borrower.GetLoanLenderCompaniesRequest
+	GetLoanLenderCompaniesRequestData  = borrower.GetLoanLenderCompaniesRequestData
+	GetLoanLenderCompaniesResponse     = borrower.GetLoanLenderCompaniesResponse
 	GetLoanRequest                     = borrower.GetLoanRequest
 	GetLoanRequestData                 = borrower.GetLoanRequestData
 	GetLoanResponse                    = borrower.GetLoanResponse
@@ -32,6 +35,12 @@ type (
 	OptionRequest                      = borrower.OptionRequest
 	OptionRequestData                  = borrower.OptionRequestData
 	OptionResponse                     = borrower.OptionResponse
+	PageLoanRequest                    = borrower.PageLoanRequest
+	PageLoanRequestData                = borrower.PageLoanRequestData
+	PageLoanRequestFilter              = borrower.PageLoanRequestFilter
+	PageLoanRequestSort                = borrower.PageLoanRequestSort
+	PageLoanResponse                   = borrower.PageLoanResponse
+	PageLoanResponseData               = borrower.PageLoanResponseData
 	PropertyEntry                      = borrower.PropertyEntry
 	RefreshTokenRequest                = borrower.RefreshTokenRequest
 	RefreshTokenRequestData            = borrower.RefreshTokenRequestData

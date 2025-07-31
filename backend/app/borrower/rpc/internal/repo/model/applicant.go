@@ -14,6 +14,28 @@ type Applicant struct {
 	Loan     *Loan     `json:"loan" gorm:"foreignKey:LoanId;references:Id"`
 }
 
-func (a *Applicant) TableName() string {
+func (m Applicant) TableName() string {
 	return "applicants"
+}
+
+func (m Applicant) FieldBorrowerId() string {
+	return "borrower_id"
+}
+func (m Applicant) FieldLoanId() string {
+	return "loan_id"
+}
+func (m Applicant) FieldFirstName() string {
+	return "first_name"
+}
+func (a Applicant) FieldLastName() string {
+	return "last_name"
+}
+func (a Applicant) FieldMidName() string {
+	return "mid_name"
+}
+func (a Applicant) FieldFullName() string {
+	return "full_name"
+}
+func (a Applicant) FieldIsPrimary() string {
+	return "is_primary"
 }

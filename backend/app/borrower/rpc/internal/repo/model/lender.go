@@ -14,6 +14,18 @@ type Lender struct {
 	Loans []Loan `json:"loans" gorm:"foreignKey:LenderId;references:Id"`
 }
 
-func (l *Lender) TableName() string {
+func (m *Lender) TableName() string {
 	return "lenders"
+}
+
+func (m Lender) FieldName() string {
+	return "name"
+}
+
+func (m Lender) FieldAddress() string {
+	return "address"
+}
+
+func (m Lender) FieldStatus() string {
+	return "status"
 }

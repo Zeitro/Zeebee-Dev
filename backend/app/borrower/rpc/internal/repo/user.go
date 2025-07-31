@@ -26,7 +26,8 @@ func NewUserRepo(db *gorm.DB) *UserRepo {
 // GetBorrowerUser
 func (repo *UserRepo) GetBorrowerUser(ctx context.Context, id int64) (res *model.User, err error) {
 	err = repo.BaseRepo.Client(ctx).
-		Where("id = ? and type = ?", id, constants.UserTypeBorrower).
+		Where(repo.m.FieldId(), id).
+		Where(repo.m.FieldType(), constants.UserTypeBorrower).
 		Preload("Borrower").
 		First(&res).Error
 	return res, errors.WithStack(err)
@@ -34,7 +35,8 @@ func (repo *UserRepo) GetBorrowerUser(ctx context.Context, id int64) (res *model
 
 func (repo *UserRepo) GetBorrowerUserByEmail(ctx context.Context, email string) (res *model.User, err error) {
 	err = repo.BaseRepo.Client(ctx).
-		Where("email = ? and type = ?", email, constants.UserTypeBorrower).
+		Where(repo.m.FieldEmail(), email).
+		Where(repo.m.FieldType(), constants.UserTypeBorrower).
 		Preload("Borrower").
 		First(&res).Error
 	return res, errors.WithStack(err)

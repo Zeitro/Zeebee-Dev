@@ -18,7 +18,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
-				// get select options
+				// select options
 				Method:  http.MethodGet,
 				Path:    "/select_options",
 				Handler: common.SelectOptionsHandler(serverCtx),
@@ -32,25 +32,25 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
 				{
-					// create loan
+					// create
 					Method:  http.MethodPost,
 					Path:    "/loan",
 					Handler: loan.CreateHandler(serverCtx),
 				},
 				{
-					// update loan
+					// update
 					Method:  http.MethodPut,
 					Path:    "/loan/:id",
 					Handler: loan.UpdateHandler(serverCtx),
 				},
 				{
-					// delete loan
+					// delete
 					Method:  http.MethodDelete,
 					Path:    "/loan/:id",
 					Handler: loan.DeleteLoanHandler(serverCtx),
 				},
 				{
-					// get loan
+					// detail
 					Method:  http.MethodGet,
 					Path:    "/loan/:id",
 					Handler: loan.DetailHandler(serverCtx),
@@ -60,6 +60,18 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPut,
 					Path:    "/loan/:id/pending_status",
 					Handler: loan.UpdatePendingStatusHandler(serverCtx),
+				},
+				{
+					// lender companies
+					Method:  http.MethodGet,
+					Path:    "/loan/lender_companies",
+					Handler: loan.LenderCompaniesHandler(serverCtx),
+				},
+				{
+					// page
+					Method:  http.MethodPost,
+					Path:    "/loan/page",
+					Handler: loan.PageHandler(serverCtx),
 				},
 			}...,
 		),
@@ -95,7 +107,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
 				{
-					// user info
+					// info
 					Method:  http.MethodGet,
 					Path:    "/user/info",
 					Handler: user.InfoHandler(serverCtx),

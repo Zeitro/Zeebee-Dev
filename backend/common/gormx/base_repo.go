@@ -18,6 +18,10 @@ func NewBaseRepo[T schema.Tabler](db *gorm.DB) *BaseRepo[T] {
 	}
 }
 
+func (repo *BaseRepo[T]) GetDB() *gorm.DB {
+	return repo.db
+}
+
 // Client return gorm db
 func (repo *BaseRepo[T]) Client(ctx context.Context) *gorm.DB {
 	return repo.db.Model(new(T)).WithContext(ctx)
@@ -210,15 +214,15 @@ func (repo *BaseRepo[T]) Page(query *gorm.DB, pageReq PageRequest) (page PageRes
 	if total == 0 {
 		return page, nil
 	}
-	err = query.Limit(pageReq.Limit).Offset((pageReq.Page - 1) * pageReq.Limit).Find(&page.List).Error
+	err = query.Limit(int(pageReq.Limit)).Offset(int((pageReq.Page - 1) * pageReq.Limit)).Find(&page.List).Error
 	if err != nil {
 		return page, errors.WithStack(err)
 	}
 	page.Page = pageReq.Page
 	page.Limit = pageReq.Limit
-	page.Total = int(total)
-	page.TotalPage = int(total) / pageReq.Limit
-	if int(total)%pageReq.Limit != 0 {
+	page.Total = total
+	page.TotalPage = total / pageReq.Limit
+	if total%pageReq.Limit != 0 {
 		page.TotalPage++
 	}
 	return page, nil
