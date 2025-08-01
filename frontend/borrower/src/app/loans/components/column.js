@@ -1,0 +1,276 @@
+import LoanStatus from '@/components/LoanStatus';
+import TableOperation from '@/components/TableOperation';
+
+
+const common = [
+	{
+		title: 'Property address',
+		dataIndex: 'propertyAddress',
+		key: 'propertyAddress',
+		ellipsis: true,
+		sorter: true,
+		sortDirections: ['ascend', 'descend'],
+		defaultSortOrder: 'descend',
+		fixed: 'left',
+	},
+	{
+		title: 'City',
+		dataIndex: 'city',
+		key: 'city',
+		ellipsis: true,
+	},
+	{
+		title: 'State',
+		dataIndex: 'state',
+		key: 'state',
+		ellipsis: true,
+	},
+	{
+		title: 'Zip code',
+		dataIndex: 'zipCode',
+		key: 'zipCode',
+		ellipsis: true,
+	},
+	{
+		title: 'Borrower',
+		dataIndex: 'borrower',
+		key: 'borrower',
+		ellipsis: true,
+	},
+];
+export const pendingColumns = [
+	...common,
+	{
+		title: 'Loan purpose',
+		dataIndex: 'loanPurpose',
+		key: 'loanPurpose',
+		ellipsis: true,
+	},
+	{
+		title: 'Target closing date',
+		dataIndex: 'targetClosingDate',
+		key: 'targetClosingDate',
+		ellipsis: true,
+		sorter: true,
+		sortDirections: ['ascend', 'descend'],
+	},
+	{
+		title: 'Business strategy',
+		dataIndex: 'businessStrategy',
+		key: 'businessStrategy',
+		ellipsis: true,
+	},
+	{
+		title: 'Target lender',
+		dataIndex: 'targetLender',
+		key: 'targetLender',
+		ellipsis: true,
+	},
+	{
+		title: 'Total loan amount',
+		dataIndex: 'totalLoanAmount',
+		key: 'totalLoanAmount',
+		ellipsis: true,
+		sorter: true,
+		sortDirections: ['ascend', 'descend'],
+	},
+	{
+		title: 'Initial loan',
+		dataIndex: 'initialLoan',
+		key: 'initialLoan',
+		ellipsis: true,
+		sorter: true,
+		sortDirections: ['ascend', 'descend'],
+	},
+	{
+		title: 'Hold back',
+		dataIndex: 'holdback',
+		key: 'holdback',
+		ellipsis: true,
+		sorter: true,
+		sortDirections: ['ascend', 'descend'],
+	},
+	{
+		title: 'Estimated Closing Fund',
+		dataIndex: 'estimatedClosingFund',
+		key: 'estimatedClosingFund',
+		ellipsis: true,
+		sorter: true,
+		sortDirections: ['ascend', 'descend'],
+	},
+	{
+		title: 'Rate',
+		dataIndex: 'rate',
+		key: 'rate',
+		ellipsis: true,
+		sorter: true,
+		sortDirections: ['ascend', 'descend'],
+	},
+	{ title: 'Loan type', dataIndex: 'loanType', key: 'loanType', ellipsis: true },
+	{
+		title: 'Status',
+		dataIndex: 'status',
+		key: 'status',
+		ellipsis: true,
+		width: 160,
+		render: (v, { is3rdParty }) => <LoanStatus status={v} is3rdParty={is3rdParty} />,
+	},
+	{
+		title: '',
+		dataIndex: 'operation',
+		width: 80,
+		render: (_, record) => (
+			<TableOperation
+				record={record}
+				getItems={(editItem, deleteItem) => {
+					return [{ ...editItem, url: `/loans/${record?.id || '111'}` }, deleteItem];
+				}}
+				onSelect={(key) => {
+					
+				}}
+			/>
+		),
+	},
+];
+
+export const activeColumns = [
+	...common,
+	{
+		title: 'Lien Position',
+		dataIndex: 'lienPosition',
+		key: 'lienPosition',
+		ellipsis: true,
+	},
+	{
+		title: 'Lender',
+		dataIndex: 'lender',
+		key: 'lender',
+		ellipsis: true,
+	},
+	{
+		title: 'Loan type',
+		dataIndex: 'loanType',
+		key: 'loanType',
+		ellipsis: true,
+	},
+	{
+		title: 'Business strategy',
+		dataIndex: 'businessStrategy',
+		key: 'businessStrategy',
+		ellipsis: true,
+	},
+	{
+		title: 'Rate',
+		dataIndex: 'rate',
+		key: 'rate',
+		ellipsis: true,
+		sorter: true,
+		sortDirections: ['ascend', 'descend'],
+	},
+	{
+		title: 'Point',
+		dataIndex: 'point',
+		key: 'point',
+		ellipsis: true,
+	},
+	{
+		title: 'Maturity Date',
+		dataIndex: 'maturityDate',
+		key: 'maturityDate',
+		ellipsis: true,
+		sorter: true,
+		sortDirections: ['ascend', 'descend'],
+	},
+	{
+		title: 'Outstanding Loan Amount',
+		dataIndex: 'outstandingLoanAmount',
+		key: 'outstandingLoanAmount',
+		ellipsis: true,
+		sorter: true,
+		sortDirections: ['ascend', 'descend'],
+	},
+	{
+		title: 'Total loan amount',
+		dataIndex: 'totalLoanAmount',
+		key: 'totalLoanAmount',
+		ellipsis: true,
+		sorter: true,
+		sortDirections: ['ascend', 'descend'],
+	},
+	{
+		title: 'Hold back',
+		dataIndex: 'holdback',
+		key: 'holdback',
+		ellipsis: true,
+		sorter: true,
+		sortDirections: ['ascend', 'descend'],
+	},
+	{
+		title: 'Released Holdback',
+		dataIndex: 'releasedHoldback',
+		key: 'releasedHoldback',
+		ellipsis: true,
+		sorter: true,
+		sortDirections: ['ascend', 'descend'],
+	},
+	{
+		title: 'Monthly Payment',
+		dataIndex: 'monthlyPayment',
+		key: 'monthlyPayment',
+		ellipsis: true,
+		sorter: true,
+		sortDirections: ['ascend', 'descend'],
+	},
+	{
+		title: 'Prepayment Penalty',
+		dataIndex: 'prepaymentPenalty',
+		key: 'prepaymentPenalty',
+		ellipsis: true,
+	},
+	{
+		title: 'Servicing Company',
+		dataIndex: 'servicingCompany',
+		key: 'servicingCompany',
+		ellipsis: true,
+	},
+];
+
+export const archivedColumns = [
+	...common,
+	{
+		title: 'Loan type',
+		dataIndex: 'loanType',
+		key: 'loanType',
+		ellipsis: true,
+	},
+	{
+		title: 'Principal Balance',
+		dataIndex: 'principalBalance',
+		key: 'principalBalance',
+		ellipsis: true,
+		sorter: true,
+		sortDirections: ['ascend', 'descend'],
+	},
+	{
+		title: 'Lender',
+		dataIndex: 'lender',
+		key: 'lender',
+		ellipsis: true,
+	},
+	{
+		title: 'Rate',
+		dataIndex: 'rate',
+		key: 'rate',
+		ellipsis: true,
+		sorter: true,
+		sortDirections: ['ascend', 'descend'],
+	},
+	{
+		title: 'Paid Off Date',
+		dataIndex: 'paidOffDate',
+		key: 'paidOffDate',
+		ellipsis: true,
+		sorter: true,
+		sortDirections: ['ascend', 'descend'],
+	},
+];

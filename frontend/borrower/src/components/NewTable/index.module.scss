@@ -1,0 +1,8 @@
+.newTable {
+    :global{
+        .ant-table-scroll-horizontal .ant-table-body{
+            overflow-y: auto !important;
+        }
+    }
+
+}

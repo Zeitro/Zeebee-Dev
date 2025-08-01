@@ -1,0 +1,13 @@
+.create{
+    :global{
+        .ant-form-item-label{
+            padding-bottom: 0 !important;
+            >label{
+                color: #000 !important;
+            }
+        }
+    }
+    .commonFormItem :global(.ant-form-item-control-input){
+        min-height: 22px !important;
+    }
+}
