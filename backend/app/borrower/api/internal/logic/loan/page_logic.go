@@ -31,14 +31,14 @@ func NewPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PageLogic {
 
 func (l *PageLogic) Page(req *types.LoanPageRequest) (resp *types.LoanPageResponse, err error) {
 
-	rpcReq := &borrower.PageLoanRequest{
-		Data: &borrower.PageLoanRequestData{
-			Filter: &borrower.PageLoanRequestFilter{},
+	rpcReq := &borrower.LoanPageRequest{
+		Data: &borrower.LoanPageRequestData{
+			Filter: &borrower.LoanPageRequestFilter{},
 		},
 	}
 	resp = &types.LoanPageResponse{}
-	rpcResp := &borrower.PageLoanResponse{
-		Data: &borrower.PageLoanResponseData{},
+	rpcResp := &borrower.LoanPageResponse{
+		Data: &borrower.LoanPageResponseData{},
 	}
 
 	err = copier.Copy(&rpcReq.Data, req)
@@ -50,7 +50,7 @@ func (l *PageLogic) Page(req *types.LoanPageRequest) (resp *types.LoanPageRespon
 	if err != nil {
 		return nil, err
 	}
-	rpcResp, err = l.svcCtx.LoanRpcClient.GetBorrowerLoanPage(l.ctx, rpcReq)
+	rpcResp, err = l.svcCtx.LoanRpcClient.BorrowerLoanPage(l.ctx, rpcReq)
 	if err != nil {
 		return nil, err
 	}

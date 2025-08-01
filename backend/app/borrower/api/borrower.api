@@ -92,7 +92,7 @@ service borrower-api {
 	@handler DeleteLoan
 	delete /loan/:id (LoanDeleteRequest) returns (EmptyResponse)
 
-	@doc "lender companies"
+	@doc "lender companies list"
 	@handler LenderCompanies
 	get /loan/lender_companies (EmptyRequest) returns (LoanLenderCompanyResponse)
 

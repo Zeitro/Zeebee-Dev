@@ -16,40 +16,40 @@ import (
 type (
 	AddressEntry                       = borrower.AddressEntry
 	ApplicantEntry                     = borrower.ApplicantEntry
-	CreateLoanRequest                  = borrower.CreateLoanRequest
-	CreateLoanRequestData              = borrower.CreateLoanRequestData
-	CreateLoanResponse                 = borrower.CreateLoanResponse
-	CreateLoanResponseData             = borrower.CreateLoanResponseData
-	DeleteLoanRequest                  = borrower.DeleteLoanRequest
-	DeleteLoanRequestData              = borrower.DeleteLoanRequestData
 	EmptyRequest                       = borrower.EmptyRequest
 	EmptyResponse                      = borrower.EmptyResponse
-	GetLoanLenderCompaniesRequest      = borrower.GetLoanLenderCompaniesRequest
-	GetLoanLenderCompaniesRequestData  = borrower.GetLoanLenderCompaniesRequestData
-	GetLoanLenderCompaniesResponse     = borrower.GetLoanLenderCompaniesResponse
-	GetLoanRequest                     = borrower.GetLoanRequest
-	GetLoanRequestData                 = borrower.GetLoanRequestData
-	GetLoanResponse                    = borrower.GetLoanResponse
+	LoanCreateRequest                  = borrower.LoanCreateRequest
+	LoanCreateRequestData              = borrower.LoanCreateRequestData
+	LoanCreateResponse                 = borrower.LoanCreateResponse
+	LoanCreateResponseData             = borrower.LoanCreateResponseData
+	LoanDeleteRequest                  = borrower.LoanDeleteRequest
+	LoanDeleteRequestData              = borrower.LoanDeleteRequestData
+	LoanDetailRequest                  = borrower.LoanDetailRequest
+	LoanDetailRequestData              = borrower.LoanDetailRequestData
+	LoanDetailResponse                 = borrower.LoanDetailResponse
 	LoanEntry                          = borrower.LoanEntry
+	LoanLenderCompaniesRequest         = borrower.LoanLenderCompaniesRequest
+	LoanLenderCompaniesRequestData     = borrower.LoanLenderCompaniesRequestData
+	LoanLenderCompaniesResponse        = borrower.LoanLenderCompaniesResponse
+	LoanPageRequest                    = borrower.LoanPageRequest
+	LoanPageRequestData                = borrower.LoanPageRequestData
+	LoanPageRequestFilter              = borrower.LoanPageRequestFilter
+	LoanPageRequestSort                = borrower.LoanPageRequestSort
+	LoanPageResponse                   = borrower.LoanPageResponse
+	LoanPageResponseData               = borrower.LoanPageResponseData
+	LoanUpdatePendingStatusRequest     = borrower.LoanUpdatePendingStatusRequest
+	LoanUpdatePendingStatusRequestData = borrower.LoanUpdatePendingStatusRequestData
+	LoanUpdateRequest                  = borrower.LoanUpdateRequest
+	LoanUpdateRequestData              = borrower.LoanUpdateRequestData
 	OptionEntry                        = borrower.OptionEntry
 	OptionRequest                      = borrower.OptionRequest
 	OptionRequestData                  = borrower.OptionRequestData
 	OptionResponse                     = borrower.OptionResponse
-	PageLoanRequest                    = borrower.PageLoanRequest
-	PageLoanRequestData                = borrower.PageLoanRequestData
-	PageLoanRequestFilter              = borrower.PageLoanRequestFilter
-	PageLoanRequestSort                = borrower.PageLoanRequestSort
-	PageLoanResponse                   = borrower.PageLoanResponse
-	PageLoanResponseData               = borrower.PageLoanResponseData
 	PropertyEntry                      = borrower.PropertyEntry
 	RefreshTokenRequest                = borrower.RefreshTokenRequest
 	RefreshTokenRequestData            = borrower.RefreshTokenRequestData
 	RefreshTokenResponse               = borrower.RefreshTokenResponse
 	RefreshTokenResponseData           = borrower.RefreshTokenResponseData
-	UpdateLoanPendingStatusRequest     = borrower.UpdateLoanPendingStatusRequest
-	UpdateLoanPendingStatusRequestData = borrower.UpdateLoanPendingStatusRequestData
-	UpdateLoanRequest                  = borrower.UpdateLoanRequest
-	UpdateLoanRequestData              = borrower.UpdateLoanRequestData
 	UserInfoRequest                    = borrower.UserInfoRequest
 	UserInfoRequestData                = borrower.UserInfoRequestData
 	UserLoginRequest                   = borrower.UserLoginRequest
@@ -64,13 +64,13 @@ type (
 	UserinfoResponseData               = borrower.UserinfoResponseData
 
 	Loan interface {
-		CreateBorrowerLoan(ctx context.Context, in *CreateLoanRequest, opts ...grpc.CallOption) (*CreateLoanResponse, error)
-		UpdateBorrowerLoan(ctx context.Context, in *UpdateLoanRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
-		UpdateBorrowerLoanPendingStatus(ctx context.Context, in *UpdateLoanPendingStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
-		DeleteBorrowerLoan(ctx context.Context, in *DeleteLoanRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
-		GetBorrowerLoan(ctx context.Context, in *GetLoanRequest, opts ...grpc.CallOption) (*GetLoanResponse, error)
-		GetBorrowerLoanPage(ctx context.Context, in *PageLoanRequest, opts ...grpc.CallOption) (*PageLoanResponse, error)
-		GetBorrowerLoanLenderCompanies(ctx context.Context, in *GetLoanLenderCompaniesRequest, opts ...grpc.CallOption) (*GetLoanLenderCompaniesResponse, error)
+		CreateBorrowerLoan(ctx context.Context, in *LoanCreateRequest, opts ...grpc.CallOption) (*LoanCreateResponse, error)
+		UpdateBorrowerLoan(ctx context.Context, in *LoanUpdateRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+		UpdateBorrowerLoanPendingStatus(ctx context.Context, in *LoanUpdatePendingStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+		DeleteBorrowerLoan(ctx context.Context, in *LoanDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+		BorrowerLoanDetail(ctx context.Context, in *LoanDetailRequest, opts ...grpc.CallOption) (*LoanDetailResponse, error)
+		BorrowerLoanPage(ctx context.Context, in *LoanPageRequest, opts ...grpc.CallOption) (*LoanPageResponse, error)
+		BorrowerLoanLenderCompanies(ctx context.Context, in *LoanLenderCompaniesRequest, opts ...grpc.CallOption) (*LoanLenderCompaniesResponse, error)
 	}
 
 	defaultLoan struct {
@@ -84,37 +84,37 @@ func NewLoan(cli zrpc.Client) Loan {
 	}
 }
 
-func (m *defaultLoan) CreateBorrowerLoan(ctx context.Context, in *CreateLoanRequest, opts ...grpc.CallOption) (*CreateLoanResponse, error) {
+func (m *defaultLoan) CreateBorrowerLoan(ctx context.Context, in *LoanCreateRequest, opts ...grpc.CallOption) (*LoanCreateResponse, error) {
 	client := borrower.NewLoanClient(m.cli.Conn())
 	return client.CreateBorrowerLoan(ctx, in, opts...)
 }
 
-func (m *defaultLoan) UpdateBorrowerLoan(ctx context.Context, in *UpdateLoanRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+func (m *defaultLoan) UpdateBorrowerLoan(ctx context.Context, in *LoanUpdateRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	client := borrower.NewLoanClient(m.cli.Conn())
 	return client.UpdateBorrowerLoan(ctx, in, opts...)
 }
 
-func (m *defaultLoan) UpdateBorrowerLoanPendingStatus(ctx context.Context, in *UpdateLoanPendingStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+func (m *defaultLoan) UpdateBorrowerLoanPendingStatus(ctx context.Context, in *LoanUpdatePendingStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	client := borrower.NewLoanClient(m.cli.Conn())
 	return client.UpdateBorrowerLoanPendingStatus(ctx, in, opts...)
 }
 
-func (m *defaultLoan) DeleteBorrowerLoan(ctx context.Context, in *DeleteLoanRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+func (m *defaultLoan) DeleteBorrowerLoan(ctx context.Context, in *LoanDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	client := borrower.NewLoanClient(m.cli.Conn())
 	return client.DeleteBorrowerLoan(ctx, in, opts...)
 }
 
-func (m *defaultLoan) GetBorrowerLoan(ctx context.Context, in *GetLoanRequest, opts ...grpc.CallOption) (*GetLoanResponse, error) {
+func (m *defaultLoan) BorrowerLoanDetail(ctx context.Context, in *LoanDetailRequest, opts ...grpc.CallOption) (*LoanDetailResponse, error) {
 	client := borrower.NewLoanClient(m.cli.Conn())
-	return client.GetBorrowerLoan(ctx, in, opts...)
+	return client.BorrowerLoanDetail(ctx, in, opts...)
 }
 
-func (m *defaultLoan) GetBorrowerLoanPage(ctx context.Context, in *PageLoanRequest, opts ...grpc.CallOption) (*PageLoanResponse, error) {
+func (m *defaultLoan) BorrowerLoanPage(ctx context.Context, in *LoanPageRequest, opts ...grpc.CallOption) (*LoanPageResponse, error) {
 	client := borrower.NewLoanClient(m.cli.Conn())
-	return client.GetBorrowerLoanPage(ctx, in, opts...)
+	return client.BorrowerLoanPage(ctx, in, opts...)
 }
 
-func (m *defaultLoan) GetBorrowerLoanLenderCompanies(ctx context.Context, in *GetLoanLenderCompaniesRequest, opts ...grpc.CallOption) (*GetLoanLenderCompaniesResponse, error) {
+func (m *defaultLoan) BorrowerLoanLenderCompanies(ctx context.Context, in *LoanLenderCompaniesRequest, opts ...grpc.CallOption) (*LoanLenderCompaniesResponse, error) {
 	client := borrower.NewLoanClient(m.cli.Conn())
-	return client.GetBorrowerLoanLenderCompanies(ctx, in, opts...)
+	return client.BorrowerLoanLenderCompanies(ctx, in, opts...)
 }

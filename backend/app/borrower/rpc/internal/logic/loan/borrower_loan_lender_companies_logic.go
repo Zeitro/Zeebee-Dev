@@ -13,21 +13,21 @@ import (
 	"zeebee-backend/common/errorx"
 )
 
-type GetBorrowerLoanLenderCompaniesLogic struct {
+type BorrowerLoanLenderCompaniesLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewGetBorrowerLoanLenderCompaniesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetBorrowerLoanLenderCompaniesLogic {
-	return &GetBorrowerLoanLenderCompaniesLogic{
+func NewBorrowerLoanLenderCompaniesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BorrowerLoanLenderCompaniesLogic {
+	return &BorrowerLoanLenderCompaniesLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *GetBorrowerLoanLenderCompaniesLogic) GetBorrowerLoanLenderCompanies(in *borrower.GetLoanLenderCompaniesRequest) (resp *borrower.GetLoanLenderCompaniesResponse, err error) {
+func (l *BorrowerLoanLenderCompaniesLogic) BorrowerLoanLenderCompanies(in *borrower.LoanLenderCompaniesRequest) (resp *borrower.LoanLenderCompaniesResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -39,7 +39,7 @@ func (l *GetBorrowerLoanLenderCompaniesLogic) GetBorrowerLoanLenderCompanies(in 
 		return nil, errors.Wrap(err, "failed to get lender companies")
 	}
 
-	return &borrower.GetLoanLenderCompaniesResponse{
+	return &borrower.LoanLenderCompaniesResponse{
 		Data: lenderCompanies,
 	}, nil
 }

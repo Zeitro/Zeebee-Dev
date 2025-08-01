@@ -27,8 +27,8 @@ func NewLenderCompaniesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *L
 }
 
 func (l *LenderCompaniesLogic) LenderCompanies(req *types.EmptyRequest) (resp *types.LoanLenderCompanyResponse, err error) {
-	rpcReq := &borrower.GetLoanLenderCompaniesRequest{
-		Data: &borrower.GetLoanLenderCompaniesRequestData{},
+	rpcReq := &borrower.LoanLenderCompaniesRequest{
+		Data: &borrower.LoanLenderCompaniesRequestData{},
 	}
 
 	// get borrower id
@@ -37,7 +37,7 @@ func (l *LenderCompaniesLogic) LenderCompanies(req *types.EmptyRequest) (resp *t
 		return nil, err
 	}
 
-	rpcResp, err := l.svcCtx.LoanRpcClient.GetBorrowerLoanLenderCompanies(l.ctx, rpcReq)
+	rpcResp, err := l.svcCtx.LoanRpcClient.BorrowerLoanLenderCompanies(l.ctx, rpcReq)
 	if err != nil {
 		return nil, err
 	}
