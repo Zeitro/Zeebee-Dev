@@ -1,8 +1,7 @@
 import { routers } from './routes';
-import _ from 'lodash';
 // 生成菜单栏
 export const generateMenuBar = (list) => {
-	return _.cloneDeep(list)
+	return JSON.parse(JSON.stringify(list))
 		.filter((i) => !i.hideMenu)
 		.map((item) => {
 			if (item.router) {
@@ -21,11 +20,14 @@ export const generateMenuBar = (list) => {
 };
 
 // 将多层级嵌套路由变为一层级路由，方便查找
-export const flattenNavRouter = (arr, keyStr = 'router') => {
-	return _.flatMap(arr, (item) =>
-		item.router ? [_.omit(item, keyStr), ...flattenNavRouter(item.router)] : [item],
-	);
-};
+export function flattenNavRouter(routes=[]) {
+  return routes?.reduce((acc, next) => {
+    if (next.router) {
+      return [...acc, next, ...flattenNavRouter(next.router)];
+    }
+    return [...acc, next];
+  }, []);
+}
 
 /**
  * 可匹配动态路由

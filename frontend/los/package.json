@@ -12,9 +12,6 @@
 		"clean": "rm -rf .next dist build",
 		"check-env": "env | grep NEXT_PUBLIC"
 	},
-	"lint-staged": {
-		"*.{js,ts,tsx,jsx}": "eslint --fix"
-	},
 	"dependencies": {
 		"@ant-design/nextjs-registry": "^1.0.2",
 		"@ant-design/v5-patch-for-react-19": "^1.0.3",

@@ -28,7 +28,6 @@ const eslintConfig = [
       ecmaVersion: 2020,
       sourceType: 'module',
       ecmaFeatures: {
-        jsx: true,
         arrowFunctions: true,
         classes: true,
         modules: true,
