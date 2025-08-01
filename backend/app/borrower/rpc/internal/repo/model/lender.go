@@ -17,15 +17,3 @@ type Lender struct {
 func (m *Lender) TableName() string {
 	return "lenders"
 }
-
-func (m Lender) FieldName() string {
-	return "name"
-}
-
-func (m Lender) FieldAddress() string {
-	return "address"
-}
-
-func (m Lender) FieldStatus() string {
-	return "status"
-}
