@@ -26,8 +26,7 @@ func NewLoanRepo(db *gorm.DB) *LoanRepo {
 
 func (repo *LoanRepo) GetBorrowerLoan(ctx context.Context, id int64, borrowerId int64) (result *model.Loan, err error) {
 	err = repo.BaseRepo.Client(ctx).
-		Where(repo.m.FieldId(), id).
-		Where(repo.m.FieldBorrowerId(), borrowerId).
+		Where("id = ? and borrower_id = ?", id, borrowerId).
 		Preload("Applicants").
 		Preload("Property").
 		First(&result).Error
@@ -38,8 +37,8 @@ func (repo *LoanRepo) GetBorrowerLoan(ctx context.Context, id int64, borrowerId 
 func (repo *LoanRepo) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, id int64, data *model.Loan) (result *model.Loan, err error) {
 	err = tx.WithContext(ctx).
 		Select("*").
-		Omit(repo.m.FieldId(), repo.m.FieldSource(), repo.m.FieldCreatedAt()).
-		Where(repo.m.FieldId(), id).
+		Omit("id", "source", "created_at").
+		Where("id = ?", id).
 		Updates(data).Error
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -50,7 +49,7 @@ func (repo *LoanRepo) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, id int64
 // GetLoanCountByPropertyId
 func (repo *LoanRepo) GetLoanCountByPropertyId(ctx context.Context, propertyId int64) (count int64, err error) {
 	err = repo.Client(ctx).
-		Where(repo.m.FieldPropertyId(), propertyId).
+		Where("property_id = ?", propertyId).
 		Count(&count).Error
 	return count, errors.WithStack(err)
 }
@@ -66,11 +65,11 @@ func (repo *LoanRepo) Page(ctx context.Context, pageReq *borrower.PageLoanReques
 	filter := pageReq.Filter
 	sorter := pageReq.Sort
 	query := repo.Client(ctx).
-		Where(fmt.Sprintf("%s.%s = ?", loanTable, repo.m.FieldBorrowerId()), filter.BorrowerId).
+		Where(fmt.Sprintf("%s.borrower_id = ?", loanTable), filter.BorrowerId).
 		Preload("Property").
 		Preload("Applicants")
 	if len(filter.Stage) > 0 {
-		query = query.Where(fmt.Sprintf("%s.%s = ?", loanTable, repo.m.FieldStage()), filter.Stage)
+		query = query.Where(fmt.Sprintf("%s.stage = ?", loanTable), filter.Stage)
 	}
 	hasJoinProperty := false
 
@@ -96,19 +95,19 @@ func (repo *LoanRepo) Page(ctx context.Context, pageReq *borrower.PageLoanReques
 	}
 	// loan purpose
 	if len(filter.LoanPurpose) > 0 {
-		query = query.Where(fmt.Sprintf("%s.%s in ?", loanTable, repo.m.FieldLoanPurpose()), filter.LoanPurpose)
+		query = query.Where(fmt.Sprintf("%s.loan_purpose in ?", loanTable), filter.LoanPurpose)
 	}
 	// loan type
 	if len(filter.LoanType) > 0 {
-		query = query.Where(fmt.Sprintf("%s.%s in ?", loanTable, repo.m.FieldLoanType()), filter.LoanType)
+		query = query.Where(fmt.Sprintf("%s.loan_type in ?", loanTable), filter.LoanType)
 	}
 	// lender
 	if len(filter.Lender) > 0 {
-		query = query.Where(fmt.Sprintf("%s.%s in ?", loanTable, repo.m.FieldLenderCompany()), filter.Lender)
+		query = query.Where(fmt.Sprintf("%s.lender_company in ?", loanTable), filter.Lender)
 	}
 	// pending status
 	if len(filter.PendingStatus) > 0 {
-		query = query.Where(fmt.Sprintf("%s.%s in ?", loanTable, repo.m.FieldPendingStatus()), filter.PendingStatus)
+		query = query.Where(fmt.Sprintf("%s.pending_status in ?", loanTable), filter.PendingStatus)
 	}
 	sortColumns := []string{}
 
@@ -120,16 +119,16 @@ func (repo *LoanRepo) Page(ctx context.Context, pageReq *borrower.PageLoanReques
 				query = query.Joins(fmt.Sprintf("left join %s on %s.property_id = %s.id", propertyTable, loanTable, propertyTable))
 			}
 			sortColumns = append(sortColumns,
-				fmt.Sprintf("%s.%s->>'address1' %s", propertyTable, propertyRepo.m.FieldAddress(), sorter.Sort),
-				fmt.Sprintf("%s.%s->>'city' %s", propertyTable, propertyRepo.m.FieldAddress(), sorter.Sort),
-				fmt.Sprintf("%s.%s->>'state' %s", propertyTable, propertyRepo.m.FieldAddress(), sorter.Sort),
+				fmt.Sprintf("%s.address->>'address1' %s", propertyTable, sorter.Sort),
+				fmt.Sprintf("%s.address->>'city' %s", propertyTable, sorter.Sort),
+				fmt.Sprintf("%s.address->>'state' %s", propertyTable, sorter.Sort),
 			)
 		default:
 			sortColumns = append(sortColumns, fmt.Sprintf("%s.%s %s", loanTable, sorter.Column, sorter.Sort))
 		}
 	}
 	if sorter == nil {
-		sortColumns = append(sortColumns, fmt.Sprintf("%s.%s desc", loanTable, repo.m.FieldCreatedAt()))
+		sortColumns = append(sortColumns, fmt.Sprintf("%s.created_at desc", loanTable))
 	}
 	for _, column := range sortColumns {
 		query = query.Order(column)
@@ -159,10 +158,10 @@ func (repo *LoanRepo) Page(ctx context.Context, pageReq *borrower.PageLoanReques
 // GetLenderCompany get lender company
 func (repo *LoanRepo) GetLenderCompany(ctx context.Context, borrowerId int64) (result []string, err error) {
 	err = repo.BaseRepo.Client(ctx).
-		Select(repo.m.FieldLenderCompany()).
-		Where(repo.m.FieldBorrowerId(), borrowerId).
-		Distinct(repo.m.FieldLenderCompany()).
-		Pluck(repo.m.FieldLenderCompany(), &result).
+		Select("lender_company").
+		Where("borrower_id = ?", borrowerId).
+		Distinct("lender_company").
+		Pluck("lender_company", &result).
 		Error
 	return result, errors.WithStack(err)
 }

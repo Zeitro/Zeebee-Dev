@@ -24,18 +24,3 @@ func (m Applicant) FieldBorrowerId() string {
 func (m Applicant) FieldLoanId() string {
 	return "loan_id"
 }
-func (m Applicant) FieldFirstName() string {
-	return "first_name"
-}
-func (a Applicant) FieldLastName() string {
-	return "last_name"
-}
-func (a Applicant) FieldMidName() string {
-	return "mid_name"
-}
-func (a Applicant) FieldFullName() string {
-	return "full_name"
-}
-func (a Applicant) FieldIsPrimary() string {
-	return "is_primary"
-}
