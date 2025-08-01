@@ -174,7 +174,7 @@ message LoanEntry {
   double monthly_payment = 17;
   string lien_position = 18;
   string maturity_date = 19;
-  double prepayment_penalty = 20;
+  int32 prepayment_penalty = 20;
   string service_company = 21;
   string paid_off_date = 22;
   string created_at = 23;
@@ -209,7 +209,7 @@ message LoanCreateRequestData {
   double monthly_payment = 16;
   string lien_position = 17;
   string maturity_date = 18;
-  double prepayment_penalty = 19;
+  int32 prepayment_penalty = 19;
   string service_company = 20;
   string paid_off_date = 21;
   repeated string business_strategy = 22;
@@ -246,7 +246,7 @@ message LoanUpdateRequestData {
   double monthly_payment = 16;
   string lien_position = 17;
   string maturity_date = 18;
-  double prepayment_penalty = 19;
+  int32 prepayment_penalty = 19;
   string service_company = 20;
   string paid_off_date = 21;
   repeated string business_strategy = 22;
