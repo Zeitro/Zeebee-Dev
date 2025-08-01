@@ -31,9 +31,9 @@ type LoanEntry {
     Rate float32 `json:"rate" validate:"required,gt=0"`
     PrincipalAmount float64 `json:"principal_amount,optional" validate:"required_unless=Stage Pending"`
     MonthlyPayment float64 `json:"monthly_payment,optional" validate:"required_if=Stage Active,omitempty,gt=0"`
-    LienPosition string `json:"lien_position,optional" validate:"required_if=Stage Active,omitempty,oneof=1st 2nd 3rd"`
+    LienPosition string `json:"lien_position,optional" validate:"required_if=Stage Active,omitempty,oneof=1st 2nd 3rd 4th Other"`
     MaturityDate string `json:"maturity_date,optional" validate:"required_if=Stage Active,omitempty,datetime=01/02/2006"`
-    PrepaymentPenalty float64 `json:"prepayment_penalty,optional" validate:"required_if=Stage Active,omitempty,gte=0"`
+    PrepaymentPenalty int32 `json:"prepayment_penalty,optional" validate:"gte=0,lte=12"`
     ServiceCompany string `json:"service_company,optional" validate:"required_if=Stage Active"`
     PaidOffDate string `json:"paid_off_date,optional" validate:"required_if=Stage Archived,omitempty,datetime=01/02/2006"`
     BusinessStrategy []string `json:"business_strategy" validate:"required,dive,required,oneof=Rentel Sale Flip"`
@@ -65,7 +65,7 @@ type (
         MonthlyPayment float64 `json:"monthly_payment,optional" validate:"required_if=Stage Active,omitempty,gt=0"`
         LienPosition string `json:"lien_position,optional" validate:"required_if=Stage Active,omitempty,oneof=1st 2nd 3rd 4th Other"`
         MaturityDate string `json:"maturity_date,optional" validate:"required_if=Stage Active,omitempty,datetime=01/02/2006"`
-        PrepaymentPenalty float64 `json:"prepayment_penalty,optional" validate:"required_if=Stage Active,omitempty,gte=0"`
+        PrepaymentPenalty int32 `json:"prepayment_penalty,optional" validate:"gte=0,lte=12"`
         ServiceCompany string `json:"service_company,optional" validate:"required_if=Stage Active"`
         PaidOffDate string `json:"paid_off_date,optional" validate:"required_if=Stage Archived,omitempty,datetime=01/02/2006"`
         BusinessStrategy []string `json:"business_strategy" validate:"required,dive,required,oneof=Rentel Sale Flip"`
@@ -96,7 +96,7 @@ type (
         MonthlyPayment float64 `json:"monthly_payment,optional" validate:"required_if=Stage Active,omitempty,gt=0"`
         LienPosition string `json:"lien_position,optional" validate:"required_if=Stage Active,omitempty,oneof=1st 2nd 3rd 4th Other"`
         MaturityDate string `json:"maturity_date,optional" validate:"required_if=Stage Active,omitempty,datetime=01/02/2006"`
-        PrepaymentPenalty float64 `json:"prepayment_penalty,optional" validate:"required_if=Stage Active,omitempty,gte=0"`
+        PrepaymentPenalty int32 `json:"prepayment_penalty,optional" validate:"gte=0,lte=12"`
         ServiceCompany string `json:"service_company,optional" validate:"required_if=Stage Active"`
         PaidOffDate string `json:"paid_off_date,optional" validate:"required_if=Stage Archived,omitempty,datetime=01/02/2006"`
         BusinessStrategy []string `json:"business_strategy" validate:"required,dive,required,oneof=Rentel Sale Flip"`

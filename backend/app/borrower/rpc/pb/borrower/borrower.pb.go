@@ -1414,7 +1414,7 @@ type LoanEntry struct {
 	MonthlyPayment         float64                `protobuf:"fixed64,17,opt,name=monthly_payment,json=monthlyPayment,proto3" json:"monthly_payment,omitempty"`
 	LienPosition           string                 `protobuf:"bytes,18,opt,name=lien_position,json=lienPosition,proto3" json:"lien_position,omitempty"`
 	MaturityDate           string                 `protobuf:"bytes,19,opt,name=maturity_date,json=maturityDate,proto3" json:"maturity_date,omitempty"`
-	PrepaymentPenalty      float64                `protobuf:"fixed64,20,opt,name=prepayment_penalty,json=prepaymentPenalty,proto3" json:"prepayment_penalty,omitempty"`
+	PrepaymentPenalty      int32                  `protobuf:"varint,20,opt,name=prepayment_penalty,json=prepaymentPenalty,proto3" json:"prepayment_penalty,omitempty"`
 	ServiceCompany         string                 `protobuf:"bytes,21,opt,name=service_company,json=serviceCompany,proto3" json:"service_company,omitempty"`
 	PaidOffDate            string                 `protobuf:"bytes,22,opt,name=paid_off_date,json=paidOffDate,proto3" json:"paid_off_date,omitempty"`
 	CreatedAt              string                 `protobuf:"bytes,23,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
@@ -1584,7 +1584,7 @@ func (x *LoanEntry) GetMaturityDate() string {
 	return ""
 }
 
-func (x *LoanEntry) GetPrepaymentPenalty() float64 {
+func (x *LoanEntry) GetPrepaymentPenalty() int32 {
 	if x != nil {
 		return x.PrepaymentPenalty
 	}
@@ -1718,7 +1718,7 @@ type LoanCreateRequestData struct {
 	MonthlyPayment    float64                `protobuf:"fixed64,16,opt,name=monthly_payment,json=monthlyPayment,proto3" json:"monthly_payment,omitempty"`
 	LienPosition      string                 `protobuf:"bytes,17,opt,name=lien_position,json=lienPosition,proto3" json:"lien_position,omitempty"`
 	MaturityDate      string                 `protobuf:"bytes,18,opt,name=maturity_date,json=maturityDate,proto3" json:"maturity_date,omitempty"`
-	PrepaymentPenalty float64                `protobuf:"fixed64,19,opt,name=prepayment_penalty,json=prepaymentPenalty,proto3" json:"prepayment_penalty,omitempty"`
+	PrepaymentPenalty int32                  `protobuf:"varint,19,opt,name=prepayment_penalty,json=prepaymentPenalty,proto3" json:"prepayment_penalty,omitempty"`
 	ServiceCompany    string                 `protobuf:"bytes,20,opt,name=service_company,json=serviceCompany,proto3" json:"service_company,omitempty"`
 	PaidOffDate       string                 `protobuf:"bytes,21,opt,name=paid_off_date,json=paidOffDate,proto3" json:"paid_off_date,omitempty"`
 	BusinessStrategy  []string               `protobuf:"bytes,22,rep,name=business_strategy,json=businessStrategy,proto3" json:"business_strategy,omitempty"`
@@ -1882,7 +1882,7 @@ func (x *LoanCreateRequestData) GetMaturityDate() string {
 	return ""
 }
 
-func (x *LoanCreateRequestData) GetPrepaymentPenalty() float64 {
+func (x *LoanCreateRequestData) GetPrepaymentPenalty() int32 {
 	if x != nil {
 		return x.PrepaymentPenalty
 	}
@@ -2062,7 +2062,7 @@ type LoanUpdateRequestData struct {
 	MonthlyPayment    float64                `protobuf:"fixed64,16,opt,name=monthly_payment,json=monthlyPayment,proto3" json:"monthly_payment,omitempty"`
 	LienPosition      string                 `protobuf:"bytes,17,opt,name=lien_position,json=lienPosition,proto3" json:"lien_position,omitempty"`
 	MaturityDate      string                 `protobuf:"bytes,18,opt,name=maturity_date,json=maturityDate,proto3" json:"maturity_date,omitempty"`
-	PrepaymentPenalty float64                `protobuf:"fixed64,19,opt,name=prepayment_penalty,json=prepaymentPenalty,proto3" json:"prepayment_penalty,omitempty"`
+	PrepaymentPenalty int32                  `protobuf:"varint,19,opt,name=prepayment_penalty,json=prepaymentPenalty,proto3" json:"prepayment_penalty,omitempty"`
 	ServiceCompany    string                 `protobuf:"bytes,20,opt,name=service_company,json=serviceCompany,proto3" json:"service_company,omitempty"`
 	PaidOffDate       string                 `protobuf:"bytes,21,opt,name=paid_off_date,json=paidOffDate,proto3" json:"paid_off_date,omitempty"`
 	BusinessStrategy  []string               `protobuf:"bytes,22,rep,name=business_strategy,json=businessStrategy,proto3" json:"business_strategy,omitempty"`
@@ -2227,7 +2227,7 @@ func (x *LoanUpdateRequestData) GetMaturityDate() string {
 	return ""
 }
 
-func (x *LoanUpdateRequestData) GetPrepaymentPenalty() float64 {
+func (x *LoanUpdateRequestData) GetPrepaymentPenalty() int32 {
 	if x != nil {
 		return x.PrepaymentPenalty
 	}
@@ -4120,7 +4120,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x0fmonthly_payment\x18\x11 \x01(\x01R\x0emonthlyPayment\x12#\n" +
 	"\rlien_position\x18\x12 \x01(\tR\flienPosition\x12#\n" +
 	"\rmaturity_date\x18\x13 \x01(\tR\fmaturityDate\x12-\n" +
-	"\x12prepayment_penalty\x18\x14 \x01(\x01R\x11prepaymentPenalty\x12'\n" +
+	"\x12prepayment_penalty\x18\x14 \x01(\x05R\x11prepaymentPenalty\x12'\n" +
 	"\x0fservice_company\x18\x15 \x01(\tR\x0eserviceCompany\x12\"\n" +
 	"\rpaid_off_date\x18\x16 \x01(\tR\vpaidOffDate\x12\x1d\n" +
 	"\n" +
@@ -4158,7 +4158,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x0fmonthly_payment\x18\x10 \x01(\x01R\x0emonthlyPayment\x12#\n" +
 	"\rlien_position\x18\x11 \x01(\tR\flienPosition\x12#\n" +
 	"\rmaturity_date\x18\x12 \x01(\tR\fmaturityDate\x12-\n" +
-	"\x12prepayment_penalty\x18\x13 \x01(\x01R\x11prepaymentPenalty\x12'\n" +
+	"\x12prepayment_penalty\x18\x13 \x01(\x05R\x11prepaymentPenalty\x12'\n" +
 	"\x0fservice_company\x18\x14 \x01(\tR\x0eserviceCompany\x12\"\n" +
 	"\rpaid_off_date\x18\x15 \x01(\tR\vpaidOffDate\x12+\n" +
 	"\x11business_strategy\x18\x16 \x03(\tR\x10businessStrategy\"J\n" +
@@ -4189,7 +4189,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x0fmonthly_payment\x18\x10 \x01(\x01R\x0emonthlyPayment\x12#\n" +
 	"\rlien_position\x18\x11 \x01(\tR\flienPosition\x12#\n" +
 	"\rmaturity_date\x18\x12 \x01(\tR\fmaturityDate\x12-\n" +
-	"\x12prepayment_penalty\x18\x13 \x01(\x01R\x11prepaymentPenalty\x12'\n" +
+	"\x12prepayment_penalty\x18\x13 \x01(\x05R\x11prepaymentPenalty\x12'\n" +
 	"\x0fservice_company\x18\x14 \x01(\tR\x0eserviceCompany\x12\"\n" +
 	"\rpaid_off_date\x18\x15 \x01(\tR\vpaidOffDate\x12+\n" +
 	"\x11business_strategy\x18\x16 \x03(\tR\x10businessStrategy\x12\x0e\n" +
