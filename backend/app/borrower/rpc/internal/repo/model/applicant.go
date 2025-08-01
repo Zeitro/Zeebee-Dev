@@ -9,7 +9,9 @@ type Applicant struct {
 	MidName    string `gorm:"column:mid_name;size:30;not null;default:''" json:"mid_name"`
 	FullName   string `gorm:"column:full_name;size:30;not null;default:''" json:"full_name"`
 	IsPrimary  bool   `gorm:"column:is_primary;not null;default:false" json:"is_primary"`
+	PropertyId int64  `gorm:"column:property_id;not null;default:0" json:"property_id"`
 
+	Property *Property `json:"property" gorm:"foreignKey:PropertyId;references:Id"`
 	Borrower *Borrower `json:"borrower" gorm:"foreignKey:BorrowerId;references:Id"`
 	Loan     *Loan     `json:"loan" gorm:"foreignKey:LoanId;references:Id"`
 }

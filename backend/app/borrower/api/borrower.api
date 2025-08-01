@@ -10,6 +10,8 @@ info (
 import "desc/user.api"
 import "desc/loan.api"
 import "desc/common.api"
+import "desc/property.api"
+import "desc/applicant.api"
 
 type (
 	EmptyRequest  {}
@@ -103,5 +105,39 @@ service borrower-api {
 	@doc "page"
 	@handler Page
 	post /loan/page (LoanPageRequest) returns (LoanPageResponse)
+}
+
+// =============== property ==============
+@server (
+	desc:       "property service"
+	version:    v1
+	group:      property
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags:       property
+)
+service borrower-api {
+	@doc "page"
+	@handler PropertyPage
+	post /property/page (PropertyPageRequest) returns (PropertyPageResponse)
+
+	@doc "detail"
+	@handler PropertyDetail
+	get /property/:id (PropertyDetailRequest) returns (PropertyDetailResponse)
+}
+
+// =============== applicant ==============
+@server (
+	desc:       "applicant service"
+	version:    v1
+	group:      applicant
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags:       applicant
+)
+service borrower-api {
+	@doc "borrower names"
+	@handler BorrowerNames
+	post /applicant/borrower (EmptyRequest) returns (BorrowerNamesResponse)
 }
 

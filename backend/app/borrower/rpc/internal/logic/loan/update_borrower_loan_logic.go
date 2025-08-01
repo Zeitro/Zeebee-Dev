@@ -65,6 +65,7 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 		if innerErr != nil {
 			return innerErr
 		}
+		previousPropertyId := loan.PropertyId
 
 		// update loan
 		loan.Id = in.Data.Id
@@ -81,7 +82,10 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 		if innerErr != nil {
 			return innerErr
 		}
-
+		_ = l.svcCtx.PropertyRepo.SyncTotalAmountWithTx(l.ctx, tx, previousPropertyId)
+		if property.Id != previousPropertyId {
+			_ = l.svcCtx.PropertyRepo.SyncTotalAmountWithTx(l.ctx, tx, property.Id)
+		}
 		return innerErr
 	})
 	if err != nil {

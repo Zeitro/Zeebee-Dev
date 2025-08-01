@@ -15,3 +15,7 @@ type ApplicantEntry {
     LoanID int64 `json:"loan_id,omitempty"`
     IsPrimary bool `json:"is_primary"`
 }
+
+type BorrowerNamesResponse {
+    BorrowerNames []string `json:"borrower_names,omitempty"`
+}

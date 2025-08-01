@@ -6,8 +6,10 @@ package handler
 import (
 	"net/http"
 
+	applicant "zeebee-backend/app/borrower/api/internal/handler/applicant"
 	common "zeebee-backend/app/borrower/api/internal/handler/common"
 	loan "zeebee-backend/app/borrower/api/internal/handler/loan"
+	property "zeebee-backend/app/borrower/api/internal/handler/property"
 	user "zeebee-backend/app/borrower/api/internal/handler/user"
 	"zeebee-backend/app/borrower/api/internal/svc"
 
@@ -15,6 +17,21 @@ import (
 )
 
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// borrower names
+					Method:  http.MethodPost,
+					Path:    "/applicant/borrower",
+					Handler: applicant.BorrowerNamesHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
 	server.AddRoutes(
 		[]rest.Route{
 			{
@@ -62,7 +79,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: loan.UpdatePendingStatusHandler(serverCtx),
 				},
 				{
-					// lender companies
+					// lender companies list
 					Method:  http.MethodGet,
 					Path:    "/loan/lender_companies",
 					Handler: loan.LenderCompaniesHandler(serverCtx),
@@ -72,6 +89,27 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/loan/page",
 					Handler: loan.PageHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// detail
+					Method:  http.MethodGet,
+					Path:    "/property/:id",
+					Handler: property.PropertyDetailHandler(serverCtx),
+				},
+				{
+					// page
+					Method:  http.MethodPost,
+					Path:    "/property/page",
+					Handler: property.PropertyPageHandler(serverCtx),
 				},
 			}...,
 		),

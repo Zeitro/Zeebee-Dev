@@ -15,9 +15,11 @@ type ServiceContext struct {
 	AuthMiddleware rest.Middleware
 
 	// rpc client
-	UserRpcClient   borrower.UserClient
-	LoanRpcClient   borrower.LoanClient
-	CommonRpcClient borrower.CommonClient
+	UserRpcClient      borrower.UserClient
+	LoanRpcClient      borrower.LoanClient
+	CommonRpcClient    borrower.CommonClient
+	PropertyRpcClient  borrower.PropertyClient
+	ApplicantRpcClient borrower.ApplicantClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -25,8 +27,10 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Config:         c,
 		AuthMiddleware: middleware.NewAuthMiddleware(c.JwtAuth.AccessSecret).Handle,
 		// rpc client
-		UserRpcClient:   borrower.NewUserClient(zrpc.MustNewClient(c.RpcConf).Conn()),
-		LoanRpcClient:   borrower.NewLoanClient(zrpc.MustNewClient(c.RpcConf).Conn()),
-		CommonRpcClient: borrower.NewCommonClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		UserRpcClient:      borrower.NewUserClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		LoanRpcClient:      borrower.NewLoanClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		CommonRpcClient:    borrower.NewCommonClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		PropertyRpcClient:  borrower.NewPropertyClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		ApplicantRpcClient: borrower.NewApplicantClient(zrpc.MustNewClient(c.RpcConf).Conn()),
 	}
 }

@@ -134,6 +134,7 @@ message PropertyEntry{
   string property_type = 2;
   int32 unit = 3;
   AddressEntry address = 4;
+  double TotalAmount = 5;
 }
 
 message AddressEntry{
@@ -160,20 +161,20 @@ message LoanEntry {
   string pending_status = 3;
   string loan_purpose = 4;
   string loan_type = 5;
-  float total_amount = 6;
-  float initial_amount = 7;
+  double total_amount = 6;
+  double initial_amount = 7;
   PropertyEntry property = 8;
   string lender_company = 10;
   string closing_date = 11;
-  float holdback_amount = 12;
-  float holdback_released_amount = 13;
+  double holdback_amount = 12;
+  double holdback_released_amount = 13;
   float rate = 14;
-  float closing_fund = 15;
-  float principal_amount = 16;
-  float monthly_payment = 17;
+  double closing_fund = 15;
+  double principal_amount = 16;
+  double monthly_payment = 17;
   string lien_position = 18;
   string maturity_date = 19;
-  float prepayment_penalty = 20;
+  double prepayment_penalty = 20;
   string service_company = 21;
   string paid_off_date = 22;
   string created_at = 23;
@@ -195,20 +196,20 @@ message LoanCreateRequestData {
   string pending_status = 3;
   string loan_purpose = 4;
   string loan_type = 5;
-  float total_amount = 6;
-  float initial_amount = 7;
+  double total_amount = 6;
+  double initial_amount = 7;
   PropertyEntry property = 8;
   string applicant_name = 9;
   string lender_company = 10;
   string closing_date = 11;
-  float holdback_amount = 12;
+  double holdback_amount = 12;
   float rate = 13;
-  float closing_fund = 14;
-  float principal_amount = 15;
-  float monthly_payment = 16;
+  double closing_fund = 14;
+  double principal_amount = 15;
+  double monthly_payment = 16;
   string lien_position = 17;
   string maturity_date = 18;
-  float prepayment_penalty = 19;
+  double prepayment_penalty = 19;
   string service_company = 20;
   string paid_off_date = 21;
   repeated string business_strategy = 22;
@@ -232,20 +233,20 @@ message LoanUpdateRequestData {
   string pending_status = 3;
   string loan_purpose = 4;
   string loan_type = 5;
-  float total_amount = 6;
-  float initial_amount = 7;
+  double total_amount = 6;
+  double initial_amount = 7;
   PropertyEntry property = 8;
   string applicant_name = 9;
   string lender_company = 10;
   string closing_date = 11;
-  float holdback_amount = 12;
+  double holdback_amount = 12;
   float rate = 13;
-  float closing_fund = 14;
-  float principal_amount = 15;
-  float monthly_payment = 16;
+  double closing_fund = 14;
+  double principal_amount = 15;
+  double monthly_payment = 16;
   string lien_position = 17;
   string maturity_date = 18;
-  float prepayment_penalty = 19;
+  double prepayment_penalty = 19;
   string service_company = 20;
   string paid_off_date = 21;
   repeated string business_strategy = 22;
@@ -302,7 +303,7 @@ message  LoanPageRequestFilter {
   repeated string pending_status = 8;
 }
 
-message  LoanPageRequestSort {
+message  LoanPageRequestSorter {
   string column = 1;
   string sort = 2;
 }
@@ -311,7 +312,7 @@ message LoanPageRequestData {
   int64 page = 1;
   int64 limit = 2;
   LoanPageRequestFilter filter = 3;
-  LoanPageRequestSort sort = 4;
+  LoanPageRequestSorter sorter = 4;
 }
 
 message LoanPageResponseData {
@@ -346,3 +347,105 @@ service Loan {
 
 
 // ===================== property service ======================
+
+message PropertyPageEntry{
+  int64 id = 1;
+  string property_type = 2;
+  double total_amount = 3;
+  double total_principal_amount = 4;
+  float avg_rate = 5;
+  double total_monthly_payment = 6;
+  repeated string applicants = 7;
+  repeated string lenders = 8;
+  string nearest_maturity_date = 9;
+  int64 pending_loan_count = 10;
+  int64 active_loan_count = 11;
+  int64 archived_loan_count = 12;
+  AddressEntry address = 13;
+}
+
+message PropertyPageRequest {
+  PropertyPageRequestData data = 1;
+}
+
+message PropertyPageResponse {
+  PropertyPageResponseData data = 1;
+}
+
+message PropertyPageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  PropertyPageRequestFilter filter = 3;
+  PropertyPageRequestSorter sorter = 4;
+}
+
+message  PropertyPageRequestFilter{
+  int64 borrower_id = 1;
+  string keyword = 3;
+  repeated string applicant = 5;
+}
+
+message  PropertyPageRequestSorter {
+  string column = 1;
+  string sort = 2;
+}
+
+message PropertyPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated PropertyPageEntry list = 5;
+}
+
+message PropertyDetailRequest {
+  PropertyDetailRequestData data = 1;
+}
+
+message PropertyDetailResponse {
+  PropertyDetailResponseData data = 1;
+}
+
+message PropertyDetailRequestData {
+  int64 id = 1;
+  int64 borrower_id = 2;
+}
+
+message PropertyDetailResponseData {
+  int64 id = 1;
+  string property_type = 2;
+  double total_amount = 3;
+  int32 unit = 4;
+  AddressEntry address = 5;
+  double total_loan_amount = 6;
+  double total_principal_amount = 7;
+  float avg_rate = 8;
+  double total_monthly_payment_amount = 9;
+  repeated LoanEntry pending_loans = 10;
+  repeated LoanEntry active_loans = 11;
+  repeated LoanEntry archived_loans = 12;
+}
+
+
+service Property {
+  rpc PropertyPage(PropertyPageRequest) returns(PropertyPageResponse);
+  rpc PropertyDetail(PropertyDetailRequest) returns(PropertyDetailResponse);
+}
+
+// ===================== applicant service ======================
+
+message BorrowerNamesRequest {
+  BorrowerNamesRequestData data = 1;
+}
+
+message BorrowerNamesRequestData {
+  int64 borrower_id = 1;
+}
+
+message BorrowerNamesResponse {
+  repeated string data = 1;
+}
+
+service Applicant {
+  rpc BorrowerNames(BorrowerNamesRequest) returns(BorrowerNamesResponse);
+}
