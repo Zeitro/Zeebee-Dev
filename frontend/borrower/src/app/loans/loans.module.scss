@@ -1,0 +1,19 @@
+.loans{
+    :global{
+        .ant-tabs-tab{
+            padding-top: 46px !important;
+            font-size: 16px !important;
+        }
+        .ant-tabs-nav{
+            padding: 0 16px;
+        }
+        .ant-spin-container{
+            // padding: 0 16px;
+        }
+        .ant-tabs-content-holder,
+        .ant-tabs-content,
+        .ant-tabs-tabpane{
+            height: 100%;
+        }
+    }
+}

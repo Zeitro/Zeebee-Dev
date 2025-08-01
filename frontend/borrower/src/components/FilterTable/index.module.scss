@@ -1,0 +1,20 @@
+.filterTable{
+    height: 100%;
+    width: 100%;
+    // padding: 0 16px 16px;
+    gap: 16px;
+    display: flex;
+    flex-direction: column;
+    .filterStatistics{
+        display: flex;
+        align-items: center;
+        gap:12px;
+        .filterName{
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+        :global(.ant-tag ){
+            border-radius: 2px;
+        }
+    }
+}
