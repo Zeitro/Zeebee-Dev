@@ -16,6 +16,9 @@ import (
 type (
 	AddressEntry                       = borrower.AddressEntry
 	ApplicantEntry                     = borrower.ApplicantEntry
+	BorrowerNamesRequest               = borrower.BorrowerNamesRequest
+	BorrowerNamesRequestData           = borrower.BorrowerNamesRequestData
+	BorrowerNamesResponse              = borrower.BorrowerNamesResponse
 	EmptyRequest                       = borrower.EmptyRequest
 	EmptyResponse                      = borrower.EmptyResponse
 	LoanCreateRequest                  = borrower.LoanCreateRequest
@@ -34,7 +37,7 @@ type (
 	LoanPageRequest                    = borrower.LoanPageRequest
 	LoanPageRequestData                = borrower.LoanPageRequestData
 	LoanPageRequestFilter              = borrower.LoanPageRequestFilter
-	LoanPageRequestSort                = borrower.LoanPageRequestSort
+	LoanPageRequestSorter              = borrower.LoanPageRequestSorter
 	LoanPageResponse                   = borrower.LoanPageResponse
 	LoanPageResponseData               = borrower.LoanPageResponseData
 	LoanUpdatePendingStatusRequest     = borrower.LoanUpdatePendingStatusRequest
@@ -45,7 +48,18 @@ type (
 	OptionRequest                      = borrower.OptionRequest
 	OptionRequestData                  = borrower.OptionRequestData
 	OptionResponse                     = borrower.OptionResponse
+	PropertyDetailRequest              = borrower.PropertyDetailRequest
+	PropertyDetailRequestData          = borrower.PropertyDetailRequestData
+	PropertyDetailResponse             = borrower.PropertyDetailResponse
+	PropertyDetailResponseData         = borrower.PropertyDetailResponseData
 	PropertyEntry                      = borrower.PropertyEntry
+	PropertyPageEntry                  = borrower.PropertyPageEntry
+	PropertyPageRequest                = borrower.PropertyPageRequest
+	PropertyPageRequestData            = borrower.PropertyPageRequestData
+	PropertyPageRequestFilter          = borrower.PropertyPageRequestFilter
+	PropertyPageRequestSorter          = borrower.PropertyPageRequestSorter
+	PropertyPageResponse               = borrower.PropertyPageResponse
+	PropertyPageResponseData           = borrower.PropertyPageResponseData
 	RefreshTokenRequest                = borrower.RefreshTokenRequest
 	RefreshTokenRequestData            = borrower.RefreshTokenRequestData
 	RefreshTokenResponse               = borrower.RefreshTokenResponse

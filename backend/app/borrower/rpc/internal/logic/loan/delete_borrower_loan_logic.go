@@ -72,6 +72,14 @@ func (l *DeleteBorrowerLoanLogic) DeleteBorrowerLoan(in *borrower.LoanDeleteRequ
 		// delete loan
 		_, innerErr = l.svcCtx.LoanRepo.DeleteByIDWithTx(l.ctx, tx, loanModel.Id)
 
+		if innerErr != nil {
+			return innerErr
+		}
+
+		if property != nil {
+			innerErr = l.svcCtx.PropertyRepo.SyncTotalAmountWithTx(l.ctx, tx, property.Id)
+		}
+
 		return innerErr
 	})
 

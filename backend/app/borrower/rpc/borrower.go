@@ -10,8 +10,10 @@ import (
 
 	"zeebee-backend/app/borrower/rpc/internal/config"
 	"zeebee-backend/app/borrower/rpc/internal/global"
+	applicantServer "zeebee-backend/app/borrower/rpc/internal/server/applicant"
 	commonServer "zeebee-backend/app/borrower/rpc/internal/server/common"
 	loanServer "zeebee-backend/app/borrower/rpc/internal/server/loan"
+	propertyServer "zeebee-backend/app/borrower/rpc/internal/server/property"
 	userServer "zeebee-backend/app/borrower/rpc/internal/server/user"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
@@ -42,6 +44,8 @@ func main() {
 		borrower.RegisterUserServer(grpcServer, userServer.NewUserServer(ctx))
 		borrower.RegisterLoanServer(grpcServer, loanServer.NewLoanServer(ctx))
 		borrower.RegisterCommonServer(grpcServer, commonServer.NewCommonServer(ctx))
+		borrower.RegisterPropertyServer(grpcServer, propertyServer.NewPropertyServer(ctx))
+		borrower.RegisterApplicantServer(grpcServer, applicantServer.NewApplicantServer(ctx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

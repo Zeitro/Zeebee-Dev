@@ -63,7 +63,7 @@ func (repo *LoanRepo) Page(ctx context.Context, pageReq *borrower.LoanPageReques
 	applicantRepo := NewApplicantRepo(repo.BaseRepo.GetDB())
 
 	filter := pageReq.Filter
-	sorter := pageReq.Sort
+	sorter := pageReq.Sorter
 	query := repo.Client(ctx).
 		Where(fmt.Sprintf("%s.borrower_id = ?", loanTable), filter.BorrowerId).
 		Preload("Property").

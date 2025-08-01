@@ -239,3 +239,15 @@ func (repo *BaseRepo[T]) FindAll(ctx context.Context, filter map[string]interfac
 	err := query.Find(&data).Error
 	return data, errors.WithStack(err)
 }
+
+// FindStrDistinctColumn find string distinct column
+func (repo *BaseRepo[T]) FindStrDistinctColumn(ctx context.Context, columnName string, filter map[string]interface{}) ([]string, error) {
+	query := repo.Client(ctx)
+	for k, v := range filter {
+		query = query.Where(k+" = ?", v)
+	}
+
+	var data []string
+	err := query.Select(columnName).Distinct(columnName).Pluck(columnName, &data).Error
+	return data, errors.WithStack(err)
+}

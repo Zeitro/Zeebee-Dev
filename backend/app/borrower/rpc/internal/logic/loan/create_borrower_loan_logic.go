@@ -62,7 +62,10 @@ func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.LoanCreateRequ
 		}
 		applicant.LoanId = loan.Id
 		applicant, innerErr = l.svcCtx.ApplicantRepo.CreateWithTx(l.ctx, tx, applicant)
-
+		if innerErr != nil {
+			return innerErr
+		}
+		innerErr = l.svcCtx.PropertyRepo.SyncTotalAmountWithTx(l.ctx, tx, property.Id)
 		return innerErr
 	})
 	if err != nil {
