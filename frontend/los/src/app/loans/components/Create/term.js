@@ -23,11 +23,11 @@ import {
 import styles from './index.module.scss';
 import { usePropertyStore } from '@/store/property';
 import { useRouter } from 'next/navigation';
-const CreateTerm = ({  stage,stepBtn }) => {
+const CreateTerm = ({  stage,stepBtn,gutter,...colProps }) => {
 	const { propertyTypeOptions } = usePropertyStore();
 	const router = useRouter();
 	const rateDom = (
-		<Col md={24}>
+		<Col md={24} {...(colProps||{})}>
 			<Form.Item
 				label="Rate"
 				name="rate"
@@ -44,7 +44,7 @@ const CreateTerm = ({  stage,stepBtn }) => {
 		</Col>
 	);
 	const lenderDom = (
-		<Col md={24}>
+		<Col md={24} {...(colProps||{})}>
 			<Form.Item
 				label={stage === 'pending' ? 'TagetLender' : 'Lender'}
 				name="lender"
@@ -55,8 +55,8 @@ const CreateTerm = ({  stage,stepBtn }) => {
 		</Col>
 	);
 	return (
-		<Row className={styles.create}>
-			<Col md={24}>
+		<Row className={styles.create} gutter={gutter}>
+			<Col md={24} {...(colProps||{})}>
 				<Form.Item
 					label="Borrower"
 					name="borrower"
@@ -68,7 +68,7 @@ const CreateTerm = ({  stage,stepBtn }) => {
 			{stage === 'pending' && (
 				<>
 					{lenderDom}
-					<Col md={24}>
+					<Col md={24} {...(colProps||{})}>
 						<Form.Item
 							label="Target closing date"
 							name="targetClosingDate"
@@ -81,7 +81,7 @@ const CreateTerm = ({  stage,stepBtn }) => {
 							/>
 						</Form.Item>
 					</Col>
-					<Col md={24}>
+					<Col md={24} {...(colProps||{})}>
 						<Form.Item
 							label="Holdback"
 							name="holdback"
@@ -105,7 +105,7 @@ const CreateTerm = ({  stage,stepBtn }) => {
 						</Form.Item>
 					</Col>
 					{rateDom}
-					<Col md={24}>
+					<Col md={24} {...(colProps||{})}>
 						<Form.Item
 							label="Estimated closing fund"
 							name="estimatedClosingFund"
@@ -138,7 +138,7 @@ const CreateTerm = ({  stage,stepBtn }) => {
 			)}
 			{stage === 'active' && (
 				<>
-					<Col md={24}>
+					{/* <Col md={24} {...(colProps||{})}>
 						<Form.Item
 							label="Point"
 							name="point"
@@ -152,8 +152,8 @@ const CreateTerm = ({  stage,stepBtn }) => {
 								placeholder="Enter point"
 							/>
 						</Form.Item>
-					</Col>
-					<Col md={24}>
+					</Col> */}
+					<Col md={24} {...(colProps||{})}>
 						<Form.Item
 							label="Lien position"
 							name="lienPosition"
@@ -162,7 +162,7 @@ const CreateTerm = ({  stage,stepBtn }) => {
 							<Select options={[]} placeholder="Select Lien position" />
 						</Form.Item>
 					</Col>
-					<Col md={24}>
+					<Col md={24} {...(colProps||{})}>
 						<Form.Item
 							label="Maturity date"
 							name="maturityDate"
@@ -175,7 +175,7 @@ const CreateTerm = ({  stage,stepBtn }) => {
 							/>
 						</Form.Item>
 					</Col>
-					<Col md={24}>
+					<Col md={24} {...(colProps||{})}>
 						<Form.Item
 							label="Prepayment penalty"
 							name="prepaymentPenalty"
@@ -190,7 +190,7 @@ const CreateTerm = ({  stage,stepBtn }) => {
 							/>
 						</Form.Item>
 					</Col>
-					<Col md={24}>
+					<Col md={24} {...(colProps||{})}>
 						<Form.Item
 							label='Servicing company'
 							name="servicingCompany"

@@ -20,15 +20,9 @@ export const navRouter = [
 			},
 			{
 				path: '/loans/:id',
-				title: 'details',
+				title: 'Edit Loan',
 				hideMenu: true,
-				router: [
-					{
-						path: '/loans/:id/type',
-						title: 'types',
-						hideMenu: true,
-					},
-				],
+				
 			},
 		],
 	},

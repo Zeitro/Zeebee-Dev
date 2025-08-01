@@ -3,6 +3,7 @@ import { Dropdown } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { EditOutlined, EllipsisOutlined, DeleteOutlined } from '@ant-design/icons';
 import styles from './index.module.scss';
+import { useRouter } from 'next/navigation';
 const editItem = {
 	label: 'Edit',
 	key: 'edit',
@@ -22,10 +23,15 @@ const deleteItem = {
 const TableOperation = ({ list, className, onSelect, getItems }) => {
 	const [selectedKey, setSelectedKey] = useState(null);
 	const [items, setItems] = useState([]);
+	const router = useRouter();
 
-	const handleSelect = ({ key }) => {
+	const handleSelect = async ({ key, item }) => {
 		setSelectedKey(key);
-		onSelect?.(key);
+		await onSelect?.(key);
+		
+		if (item?.props?.url) {
+			router.push(item?.props?.url);
+		}
 	};
 
 	useEffect(() => {

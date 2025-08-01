@@ -1,5 +1,7 @@
 import LoanStatus from '@/components/LoanStatus';
 import TableOperation from '@/components/TableOperation';
+
+
 const common = [
 	{
 		title: 'Property address',
@@ -110,15 +112,25 @@ export const pendingColumns = [
 		dataIndex: 'status',
 		key: 'status',
 		ellipsis: true,
-        width: 160,
-		render: (v,{is3rdParty}) => <LoanStatus status={v} is3rdParty={is3rdParty}/>
+		width: 160,
+		render: (v, { is3rdParty }) => <LoanStatus status={v} is3rdParty={is3rdParty} />,
 	},
-    {
-      title: '',
-      dataIndex: 'operation',
-      width:80,
-      render: (_, record) =><TableOperation record={record}/>,
-    },
+	{
+		title: '',
+		dataIndex: 'operation',
+		width: 80,
+		render: (_, record) => (
+			<TableOperation
+				record={record}
+				getItems={(editItem, deleteItem) => {
+					return [{ ...editItem, url: `/loans/${record?.id || '111'}` }, deleteItem];
+				}}
+				onSelect={(key) => {
+					
+				}}
+			/>
+		),
+	},
 ];
 
 export const activeColumns = [

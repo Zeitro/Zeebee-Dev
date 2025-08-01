@@ -43,7 +43,7 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 				colorTextBase: getCssVarValue('--foreground'),
 				colorBgBase: getCssVarValue('var(--background)'), // 页面背景色
 				// colorTextSecondary: getCssVarValue('var(--black-light)'), // 次要文本颜色
-				// colorBorder: getCssVarValue('var(--base-border)'), // 边框颜色
+				colorBorder: '#D9D9D9', // 边框颜色
 				colorError: '#FF4D4F', // 错误状态颜色
 				colorWarning: getCssVarValue('var(--base-warning)'), // 警告状态颜色
 				colorSuccess: getCssVarValue('var(--base-success)'), // 成功状态颜色

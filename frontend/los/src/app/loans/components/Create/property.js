@@ -10,12 +10,12 @@ import {
 import styles from './index.module.scss';
 import { usePropertyStore } from '@/store/property';
 import { useRouter } from 'next/navigation';
-const CreateProperty = ({stepBtn }) => {
+const CreateProperty = ({stepBtn ,gutter,...colProps}) => {
 	const { propertyTypeOptions } = usePropertyStore();
 	const router = useRouter();
 	return (
-		<Row className={styles.create}>
-			<Col md={24}>
+		<Row className={styles.create} gutter={gutter}>
+			<Col md={24} {...(colProps||{})}>
 				<Form.Item
 					label="Property type"
 					name="propertyType"
@@ -24,7 +24,7 @@ const CreateProperty = ({stepBtn }) => {
 					<Select options={propertyTypeOptions} placeholder="Select Property type" />
 				</Form.Item>
 			</Col>
-			<Col md={24}>
+			<Col md={24} {...(colProps||{})}>
 				<Form.Item
 					label="Number of unit"
 					name="unit"

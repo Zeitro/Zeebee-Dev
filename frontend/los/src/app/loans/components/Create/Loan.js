@@ -9,11 +9,11 @@ import {
 } from '@/enum/loan';
 import styles from './index.module.scss';
 import { useRouter } from 'next/navigation';
-const CreateLoan = ({ form, stepBtn }) => {
+const CreateLoan = ({ form, stepBtn, gutter, ...colProps }) => {
 	const stage = Form.useWatch('stage', form);
 	const router = useRouter();
 	return (
-		<Row className={styles.create}>
+		<Row className={styles.create} gutter={gutter}>
 			<Col md={24}>
 				<Form.Item
 					label="Select a loan stage"
@@ -36,7 +36,7 @@ const CreateLoan = ({ form, stepBtn }) => {
 					</Form.Item>
 				</Col>
 			)}
-			<Col md={24}>
+			<Col md={24} {...(colProps || {})}>
 				<Form.Item
 					label="Loan purpose"
 					name="loanPurpose"
@@ -45,7 +45,7 @@ const CreateLoan = ({ form, stepBtn }) => {
 					<Select options={loanPurposeOptions} placeholder="Select a loan purpose" />
 				</Form.Item>
 			</Col>
-			<Col md={24}>
+			<Col md={24} {...(colProps || {})}>
 				<Form.Item
 					label="Loan type"
 					name="loanType"
@@ -56,7 +56,7 @@ const CreateLoan = ({ form, stepBtn }) => {
 			</Col>
 			{stage !== 'archived' && (
 				<>
-					<Col md={24}>
+					<Col md={24} {...(colProps || {})}>
 						<Form.Item
 							label="Total loan amount"
 							name="totalLoanAmount"
@@ -81,7 +81,7 @@ const CreateLoan = ({ form, stepBtn }) => {
 							/>
 						</Form.Item>
 					</Col>
-					<Col md={24}>
+					<Col md={24} {...(colProps || {})}>
 						<Form.Item label="Initial loan amount(optional)" name="initialLoanAmount">
 							<InputNumber
 								style={{ width: '100%' }}
@@ -105,7 +105,7 @@ const CreateLoan = ({ form, stepBtn }) => {
 
 			{stage === 'active' && (
 				<>
-					<Col md={24}>
+					<Col md={24} {...(colProps || {})}>
 						<Form.Item
 							label="Outstanding loan amount"
 							name="OutstandingLoanAmount"
@@ -133,7 +133,7 @@ const CreateLoan = ({ form, stepBtn }) => {
 							/>
 						</Form.Item>
 					</Col>
-					<Col md={24}>
+					<Col md={24} {...(colProps || {})}>
 						<Form.Item
 							label="Monthly paymant"
 							name="monthlyPaymant"
@@ -160,7 +160,7 @@ const CreateLoan = ({ form, stepBtn }) => {
 			)}
 			{stage === 'archived' && (
 				<>
-					<Col md={24}>
+					<Col md={24} {...(colProps || {})}>
 						<Form.Item
 							label="Principal balance"
 							name="principalBalance"
@@ -188,7 +188,7 @@ const CreateLoan = ({ form, stepBtn }) => {
 							/>
 						</Form.Item>
 					</Col>
-					<Col md={24}>
+					<Col md={24} {...(colProps || {})}>
 						<Form.Item
 							label="Paid off date"
 							name="padiOffDate"
@@ -198,6 +198,20 @@ const CreateLoan = ({ form, stepBtn }) => {
 						</Form.Item>
 					</Col>
 				</>
+			)}
+			{stage !== 'archived' && (
+				<Col md={24} {...(colProps || {})}>
+					<Form.Item
+						label="Business strategy"
+						name="businessStrategy"
+						rules={[{ required: true, message: 'Please select Business strategy!' }]}
+					>
+						<Select
+							options={loanPurposeOptions}
+							placeholder="Select Business strategy"
+						/>
+					</Form.Item>
+				</Col>
 			)}
 
 			{stepBtn}
