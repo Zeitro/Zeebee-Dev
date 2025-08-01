@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/jinzhu/copier"
-	"github.com/pkg/errors"
 
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
@@ -16,44 +15,44 @@ import (
 	"zeebee-backend/common/errorx"
 )
 
-type GetBorrowerLoanPageLogic struct {
+type BorrowerLoanDetailLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewGetBorrowerLoanPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetBorrowerLoanPageLogic {
-	return &GetBorrowerLoanPageLogic{
+func NewBorrowerLoanDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BorrowerLoanDetailLogic {
+	return &BorrowerLoanDetailLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *GetBorrowerLoanPageLogic) GetBorrowerLoanPage(in *borrower.PageLoanRequest) (resp *borrower.PageLoanResponse, err error) {
+func (l *BorrowerLoanDetailLogic) BorrowerLoanDetail(in *borrower.LoanDetailRequest) (resp *borrower.LoanDetailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	pageResult, err := l.svcCtx.LoanRepo.Page(l.ctx, in.Data)
+	loan, err := l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, in.Data.Id, in.Data.BorrowerId)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, err
 	}
-	resp = &borrower.PageLoanResponse{
-		Data: &borrower.PageLoanResponseData{},
+	resp = &borrower.LoanDetailResponse{
+		Data: &borrower.LoanEntry{},
 	}
-
-	err = copier.CopyWithOption(&resp.Data, pageResult, copier.Option{
+	err = copier.CopyWithOption(&resp.Data, loan, copier.Option{
 		CaseSensitive: true,
 		Converters: []copier.TypeConverter{
 			copierx.TimeToRFC3339Str(),
 			copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
 		},
 	})
+
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 
-	return resp, nil
+	return resp, err
 }

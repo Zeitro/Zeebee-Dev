@@ -55,7 +55,7 @@ func (repo *LoanRepo) GetLoanCountByPropertyId(ctx context.Context, propertyId i
 }
 
 // page
-func (repo *LoanRepo) Page(ctx context.Context, pageReq *borrower.PageLoanRequestData) (page gormx.PageResponse[*model.Loan], err error) {
+func (repo *LoanRepo) Page(ctx context.Context, pageReq *borrower.LoanPageRequestData) (page gormx.PageResponse[*model.Loan], err error) {
 	loanTable := model.Loan{}.TableName()
 	propertyTable := model.Property{}.TableName()
 	applicantTable := model.Applicant{}.TableName()

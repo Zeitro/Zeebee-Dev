@@ -30,7 +30,7 @@ func NewDeleteBorrowerLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 // DeleteBorrowerLoan delete borrower loan
-func (l *DeleteBorrowerLoanLogic) DeleteBorrowerLoan(in *borrower.DeleteLoanRequest) (resp *borrower.EmptyResponse, err error) {
+func (l *DeleteBorrowerLoanLogic) DeleteBorrowerLoan(in *borrower.LoanDeleteRequest) (resp *borrower.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)

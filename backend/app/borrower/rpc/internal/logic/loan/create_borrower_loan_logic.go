@@ -36,7 +36,7 @@ func NewCreateBorrowerLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	}
 }
 
-func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.CreateLoanRequest) (resp *borrower.CreateLoanResponse, err error) {
+func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.LoanCreateRequest) (resp *borrower.LoanCreateResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -69,15 +69,15 @@ func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.CreateLoanRequ
 		return nil, errors.Wrap(err, "failed to create loan")
 	}
 
-	return &borrower.CreateLoanResponse{
-		Data: &borrower.CreateLoanResponseData{
+	return &borrower.LoanCreateResponse{
+		Data: &borrower.LoanCreateResponseData{
 			Id: loan.Id,
 		},
 	}, nil
 }
 
 // buildCreateModels
-func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.CreateLoanRequest) (loan *model.Loan, property *model.Property, applicant *model.Applicant, err error) {
+func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateRequest) (loan *model.Loan, property *model.Property, applicant *model.Applicant, err error) {
 	in.Data.ApplicantName = strings.TrimSpace(in.Data.ApplicantName)
 	if len(in.Data.ApplicantName) == 0 {
 		return nil, nil, nil, errors.New("invalid applicant name")

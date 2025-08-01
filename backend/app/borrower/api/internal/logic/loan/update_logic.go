@@ -30,8 +30,8 @@ func NewUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLogi
 }
 
 func (l *UpdateLogic) Update(req *types.LoanUpdateRequest) (resp *types.EmptyResponse, err error) {
-	rpcReq := &borrower.UpdateLoanRequest{
-		Data: &borrower.UpdateLoanRequestData{},
+	rpcReq := &borrower.LoanUpdateRequest{
+		Data: &borrower.LoanUpdateRequestData{},
 	}
 	resp = &types.EmptyResponse{}
 

@@ -36,7 +36,7 @@ func NewUpdateBorrowerLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	}
 }
 
-func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.UpdateLoanRequest) (resp *borrower.EmptyResponse, err error) {
+func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequest) (resp *borrower.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -118,7 +118,7 @@ func (l *UpdateBorrowerLoanLogic) handleProperty(tx *gorm.DB, propertyId int64, 
 	return
 }
 
-func (l *UpdateBorrowerLoanLogic) buildCreateModels(in *borrower.UpdateLoanRequest) (loan *model.Loan, property *model.Property, applicant *model.Applicant, err error) {
+func (l *UpdateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanUpdateRequest) (loan *model.Loan, property *model.Property, applicant *model.Applicant, err error) {
 	in.Data.ApplicantName = strings.TrimSpace(in.Data.ApplicantName)
 	if len(in.Data.ApplicantName) == 0 {
 		return nil, nil, nil, errors.New("invalid applicant name")

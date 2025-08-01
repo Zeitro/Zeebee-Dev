@@ -33,8 +33,8 @@ func (l *UpdatePendingStatusLogic) UpdatePendingStatus(req *types.LoanUpdatePend
 		return nil, err
 	}
 
-	_, err = l.svcCtx.LoanRpcClient.UpdateBorrowerLoanPendingStatus(l.ctx, &borrower.UpdateLoanPendingStatusRequest{
-		Data: &borrower.UpdateLoanPendingStatusRequestData{
+	_, err = l.svcCtx.LoanRpcClient.UpdateBorrowerLoanPendingStatus(l.ctx, &borrower.LoanUpdatePendingStatusRequest{
+		Data: &borrower.LoanUpdatePendingStatusRequestData{
 			Id:            req.Id,
 			BorrowerId:    borrowerId,
 			PendingStatus: req.PendingStatus,

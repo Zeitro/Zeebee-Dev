@@ -16,40 +16,40 @@ import (
 type (
 	AddressEntry                       = borrower.AddressEntry
 	ApplicantEntry                     = borrower.ApplicantEntry
-	CreateLoanRequest                  = borrower.CreateLoanRequest
-	CreateLoanRequestData              = borrower.CreateLoanRequestData
-	CreateLoanResponse                 = borrower.CreateLoanResponse
-	CreateLoanResponseData             = borrower.CreateLoanResponseData
-	DeleteLoanRequest                  = borrower.DeleteLoanRequest
-	DeleteLoanRequestData              = borrower.DeleteLoanRequestData
 	EmptyRequest                       = borrower.EmptyRequest
 	EmptyResponse                      = borrower.EmptyResponse
-	GetLoanLenderCompaniesRequest      = borrower.GetLoanLenderCompaniesRequest
-	GetLoanLenderCompaniesRequestData  = borrower.GetLoanLenderCompaniesRequestData
-	GetLoanLenderCompaniesResponse     = borrower.GetLoanLenderCompaniesResponse
-	GetLoanRequest                     = borrower.GetLoanRequest
-	GetLoanRequestData                 = borrower.GetLoanRequestData
-	GetLoanResponse                    = borrower.GetLoanResponse
+	LoanCreateRequest                  = borrower.LoanCreateRequest
+	LoanCreateRequestData              = borrower.LoanCreateRequestData
+	LoanCreateResponse                 = borrower.LoanCreateResponse
+	LoanCreateResponseData             = borrower.LoanCreateResponseData
+	LoanDeleteRequest                  = borrower.LoanDeleteRequest
+	LoanDeleteRequestData              = borrower.LoanDeleteRequestData
+	LoanDetailRequest                  = borrower.LoanDetailRequest
+	LoanDetailRequestData              = borrower.LoanDetailRequestData
+	LoanDetailResponse                 = borrower.LoanDetailResponse
 	LoanEntry                          = borrower.LoanEntry
+	LoanLenderCompaniesRequest         = borrower.LoanLenderCompaniesRequest
+	LoanLenderCompaniesRequestData     = borrower.LoanLenderCompaniesRequestData
+	LoanLenderCompaniesResponse        = borrower.LoanLenderCompaniesResponse
+	LoanPageRequest                    = borrower.LoanPageRequest
+	LoanPageRequestData                = borrower.LoanPageRequestData
+	LoanPageRequestFilter              = borrower.LoanPageRequestFilter
+	LoanPageRequestSort                = borrower.LoanPageRequestSort
+	LoanPageResponse                   = borrower.LoanPageResponse
+	LoanPageResponseData               = borrower.LoanPageResponseData
+	LoanUpdatePendingStatusRequest     = borrower.LoanUpdatePendingStatusRequest
+	LoanUpdatePendingStatusRequestData = borrower.LoanUpdatePendingStatusRequestData
+	LoanUpdateRequest                  = borrower.LoanUpdateRequest
+	LoanUpdateRequestData              = borrower.LoanUpdateRequestData
 	OptionEntry                        = borrower.OptionEntry
 	OptionRequest                      = borrower.OptionRequest
 	OptionRequestData                  = borrower.OptionRequestData
 	OptionResponse                     = borrower.OptionResponse
-	PageLoanRequest                    = borrower.PageLoanRequest
-	PageLoanRequestData                = borrower.PageLoanRequestData
-	PageLoanRequestFilter              = borrower.PageLoanRequestFilter
-	PageLoanRequestSort                = borrower.PageLoanRequestSort
-	PageLoanResponse                   = borrower.PageLoanResponse
-	PageLoanResponseData               = borrower.PageLoanResponseData
 	PropertyEntry                      = borrower.PropertyEntry
 	RefreshTokenRequest                = borrower.RefreshTokenRequest
 	RefreshTokenRequestData            = borrower.RefreshTokenRequestData
 	RefreshTokenResponse               = borrower.RefreshTokenResponse
 	RefreshTokenResponseData           = borrower.RefreshTokenResponseData
-	UpdateLoanPendingStatusRequest     = borrower.UpdateLoanPendingStatusRequest
-	UpdateLoanPendingStatusRequestData = borrower.UpdateLoanPendingStatusRequestData
-	UpdateLoanRequest                  = borrower.UpdateLoanRequest
-	UpdateLoanRequestData              = borrower.UpdateLoanRequestData
 	UserInfoRequest                    = borrower.UserInfoRequest
 	UserInfoRequestData                = borrower.UserInfoRequestData
 	UserLoginRequest                   = borrower.UserLoginRequest
@@ -68,7 +68,7 @@ type (
 		Login(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserLoginResponse, error)
 		Register(ctx context.Context, in *UserRegisterRequest, opts ...grpc.CallOption) (*UserRegisterResponse, error)
 		RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
-		GetUserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
+		UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
 	}
 
 	defaultUser struct {
@@ -98,7 +98,7 @@ func (m *defaultUser) RefreshToken(ctx context.Context, in *RefreshTokenRequest,
 	return client.RefreshToken(ctx, in, opts...)
 }
 
-func (m *defaultUser) GetUserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error) {
+func (m *defaultUser) UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error) {
 	client := borrower.NewUserClient(m.cli.Conn())
-	return client.GetUserInfo(ctx, in, opts...)
+	return client.UserInfo(ctx, in, opts...)
 }

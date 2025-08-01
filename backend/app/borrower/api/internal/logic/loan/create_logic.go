@@ -30,11 +30,11 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 }
 
 func (l *CreateLogic) Create(req *types.LoanCreateRequest) (resp *types.LoanCreateResponse, err error) {
-	rpcReq := &borrower.CreateLoanRequest{
-		Data: &borrower.CreateLoanRequestData{},
+	rpcReq := &borrower.LoanCreateRequest{
+		Data: &borrower.LoanCreateRequestData{},
 	}
 	resp = &types.LoanCreateResponse{}
-	rpcResp := &borrower.CreateLoanResponse{}
+	rpcResp := &borrower.LoanCreateResponse{}
 
 	err = copier.Copy(&rpcReq.Data, req)
 	if err != nil {

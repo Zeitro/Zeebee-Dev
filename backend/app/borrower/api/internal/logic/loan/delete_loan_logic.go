@@ -33,8 +33,8 @@ func (l *DeleteLoanLogic) DeleteLoan(req *types.LoanDeleteRequest) (resp *types.
 		return nil, err
 	}
 
-	_, err = l.svcCtx.LoanRpcClient.DeleteBorrowerLoan(l.ctx, &borrower.DeleteLoanRequest{
-		Data: &borrower.DeleteLoanRequestData{
+	_, err = l.svcCtx.LoanRpcClient.DeleteBorrowerLoan(l.ctx, &borrower.LoanDeleteRequest{
+		Data: &borrower.LoanDeleteRequestData{
 			Id:         req.Id,
 			BorrowerId: borrowerId,
 		},

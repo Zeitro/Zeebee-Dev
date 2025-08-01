@@ -28,7 +28,7 @@ func NewUpdateBorrowerLoanPendingStatusLogic(ctx context.Context, svcCtx *svc.Se
 	}
 }
 
-func (l *UpdateBorrowerLoanPendingStatusLogic) UpdateBorrowerLoanPendingStatus(in *borrower.UpdateLoanPendingStatusRequest) (resp *borrower.EmptyResponse, err error) {
+func (l *UpdateBorrowerLoanPendingStatusLogic) UpdateBorrowerLoanPendingStatus(in *borrower.LoanUpdatePendingStatusRequest) (resp *borrower.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)

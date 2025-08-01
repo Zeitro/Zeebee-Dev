@@ -23,37 +23,37 @@ func NewLoanServer(svcCtx *svc.ServiceContext) *LoanServer {
 	}
 }
 
-func (s *LoanServer) CreateBorrowerLoan(ctx context.Context, in *borrower.CreateLoanRequest) (*borrower.CreateLoanResponse, error) {
+func (s *LoanServer) CreateBorrowerLoan(ctx context.Context, in *borrower.LoanCreateRequest) (*borrower.LoanCreateResponse, error) {
 	l := loanlogic.NewCreateBorrowerLoanLogic(ctx, s.svcCtx)
 	return l.CreateBorrowerLoan(in)
 }
 
-func (s *LoanServer) UpdateBorrowerLoan(ctx context.Context, in *borrower.UpdateLoanRequest) (*borrower.EmptyResponse, error) {
+func (s *LoanServer) UpdateBorrowerLoan(ctx context.Context, in *borrower.LoanUpdateRequest) (*borrower.EmptyResponse, error) {
 	l := loanlogic.NewUpdateBorrowerLoanLogic(ctx, s.svcCtx)
 	return l.UpdateBorrowerLoan(in)
 }
 
-func (s *LoanServer) UpdateBorrowerLoanPendingStatus(ctx context.Context, in *borrower.UpdateLoanPendingStatusRequest) (*borrower.EmptyResponse, error) {
+func (s *LoanServer) UpdateBorrowerLoanPendingStatus(ctx context.Context, in *borrower.LoanUpdatePendingStatusRequest) (*borrower.EmptyResponse, error) {
 	l := loanlogic.NewUpdateBorrowerLoanPendingStatusLogic(ctx, s.svcCtx)
 	return l.UpdateBorrowerLoanPendingStatus(in)
 }
 
-func (s *LoanServer) DeleteBorrowerLoan(ctx context.Context, in *borrower.DeleteLoanRequest) (*borrower.EmptyResponse, error) {
+func (s *LoanServer) DeleteBorrowerLoan(ctx context.Context, in *borrower.LoanDeleteRequest) (*borrower.EmptyResponse, error) {
 	l := loanlogic.NewDeleteBorrowerLoanLogic(ctx, s.svcCtx)
 	return l.DeleteBorrowerLoan(in)
 }
 
-func (s *LoanServer) GetBorrowerLoan(ctx context.Context, in *borrower.GetLoanRequest) (*borrower.GetLoanResponse, error) {
-	l := loanlogic.NewGetBorrowerLoanLogic(ctx, s.svcCtx)
-	return l.GetBorrowerLoan(in)
+func (s *LoanServer) BorrowerLoanDetail(ctx context.Context, in *borrower.LoanDetailRequest) (*borrower.LoanDetailResponse, error) {
+	l := loanlogic.NewBorrowerLoanDetailLogic(ctx, s.svcCtx)
+	return l.BorrowerLoanDetail(in)
 }
 
-func (s *LoanServer) GetBorrowerLoanPage(ctx context.Context, in *borrower.PageLoanRequest) (*borrower.PageLoanResponse, error) {
-	l := loanlogic.NewGetBorrowerLoanPageLogic(ctx, s.svcCtx)
-	return l.GetBorrowerLoanPage(in)
+func (s *LoanServer) BorrowerLoanPage(ctx context.Context, in *borrower.LoanPageRequest) (*borrower.LoanPageResponse, error) {
+	l := loanlogic.NewBorrowerLoanPageLogic(ctx, s.svcCtx)
+	return l.BorrowerLoanPage(in)
 }
 
-func (s *LoanServer) GetBorrowerLoanLenderCompanies(ctx context.Context, in *borrower.GetLoanLenderCompaniesRequest) (*borrower.GetLoanLenderCompaniesResponse, error) {
-	l := loanlogic.NewGetBorrowerLoanLenderCompaniesLogic(ctx, s.svcCtx)
-	return l.GetBorrowerLoanLenderCompanies(in)
+func (s *LoanServer) BorrowerLoanLenderCompanies(ctx context.Context, in *borrower.LoanLenderCompaniesRequest) (*borrower.LoanLenderCompaniesResponse, error) {
+	l := loanlogic.NewBorrowerLoanLenderCompaniesLogic(ctx, s.svcCtx)
+	return l.BorrowerLoanLenderCompanies(in)
 }
