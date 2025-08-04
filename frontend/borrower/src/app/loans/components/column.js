@@ -6,7 +6,7 @@ const common = [
 	{
 		title: 'Property address',
 		dataIndex: ['property','address','address1'],
-		key: ['property','address','address1'].join('.'),
+		key: 'address',
 		ellipsis: true,
 		sorter: true,
 		sortDirections: ['ascend', 'descend'],
@@ -16,19 +16,19 @@ const common = [
 	{
 		title: 'City',
 		dataIndex: ['property','address','city'],
-		key: ['property','address','city'].join('.'),
+		key: 'city',
 		ellipsis: true,
 	},
 	{
 		title: 'State',
 		dataIndex: ['property','address','state'],
-		key: ['property','address','state'].join('.'),
+		key: 'state',
 		ellipsis: true,
 	},
 	{
 		title: 'Zip code',
 		dataIndex: ['property','address','zip_code'],
-		key: ['property','address','zip_code'].join('.'),
+		key: 'zip_code',
 		ellipsis: true,
 	},
 	{

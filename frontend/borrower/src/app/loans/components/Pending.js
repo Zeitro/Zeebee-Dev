@@ -40,10 +40,6 @@ const PendingPage = ({ hasFilterField, hasPagination, filterWrapClassName }) => 
 						value: 'city',
 					},
 					{
-						label: 'County',
-						value: 'county',
-					},
-					{
 						label: 'Zip Code',
 						value: 'zipCode',
 					},
@@ -83,26 +79,10 @@ const PendingPage = ({ hasFilterField, hasPagination, filterWrapClassName }) => 
 				popupMatchSelectWidth: 172,
 				value: lender,
 				onChange: (value) => setLender(value),
-				treeData: [
-					{
-						title: 'Bridge',
-						value: 'bridge',
-						key: 'bridge',
-						isLeaf: true,
-					},
-					{
-						title: 'Rehab',
-						value: 'rehab',
-						key: 'rehab',
-						isLeaf: true,
-					},
-					{
-						title: 'Ground up construction',
-						value: 'groundUpConstruction',
-						key: 'groundUpConstruction',
-						isLeaf: true,
-					},
-				],
+				treeData: transformArrayStructure({
+					sourceArray:lenderOptions,
+					outputKey:'title'
+				}).map((i) => ({ ...i, key: i.value }))
 			},
 			{
 				type: 'treeSelect',
@@ -128,6 +108,7 @@ const PendingPage = ({ hasFilterField, hasPagination, filterWrapClassName }) => 
 			loanPurposeOptions,
 			loanTypeOptions,
 			loanPendingStatus,
+			lenderOptions
 		],
 	);
 	useEffect(() => {

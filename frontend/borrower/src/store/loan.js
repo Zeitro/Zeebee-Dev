@@ -16,6 +16,10 @@ export const useLoanStore = create((set) => ({
 	},
 	getLender: async()=>{
 		const {lender_companies}= await getLender();
-		set({lenderOptions: lender_companies})
+		const lenderOptions = lender_companies.map(i=>({
+			label:i,
+			value:i
+		}))
+		set({lenderOptions})
 	}
 }));

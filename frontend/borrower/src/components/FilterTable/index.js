@@ -5,6 +5,7 @@ import NewTable from '@/components/NewTable';
 import { Col, Row, Tag } from 'antd';
 import { createRequest } from '@/lib/fetch';
 import { getPagination } from '@/lib/common';
+import { asc, des,ascend,descend } from '@/enum/common';
 const FilterTable = ({
 	columns,
 	scroll,
@@ -20,9 +21,9 @@ const FilterTable = ({
 	const filterFieldRef = useRef();
 	const { request } = createRequest();
 	const pagination = useRef(getPagination());
-	const [sorter, setsorter] = useState({
+	const sorter = useRef({
 		column: 'address',
-		sort: 'asc',
+		sort: des,
 	});
 	const [tableList, setTableList] = useState([]);
 	const [loading, setLoading] = useState(false);
@@ -34,14 +35,17 @@ const FilterTable = ({
 		try {
 			setLoading(true);
 			const filterParams = filterFieldRef?.current?.getApiParams?.();
-			const { total, list } = await getData({
+			const params = {
 				page: pagination.current?.current,
 				limit: pagination.current?.pageSize,
-				sorter,
 				filter: {
 					...filterParams,
 				},
-			});
+			}
+			if (sorter.current?.column){
+				params.sorter = sorter.current
+			}
+			const { total, list } = await getData(params);
 			pagination.current.total = total;
 			setTableList(list);
 			setLoading(false);
@@ -50,9 +54,20 @@ const FilterTable = ({
 		}
 	};
 
-	const onChange = (pagination, filters, sorter, extra) => {
-  console.log('params', pagination, filters, sorter, extra);
-};
+	const onChange = (paginationObj, filters, { order, columnKey }, extra) => {
+		const orderObj = {
+			[descend]: des,
+			[ascend]: asc,
+		};
+		sorter.current.column = columnKey;
+		sorter.current.sort = orderObj[order];
+		if (paginationObj.current !== pagination.current.current) {
+			pagination.current.current = paginationObj.current;
+		} else {
+			pagination.current.current = 1;
+		}
+		getList();
+	};
 
 	useEffect(() => {
 		if (dataSource) {
