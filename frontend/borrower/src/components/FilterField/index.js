@@ -1,7 +1,8 @@
 'use client';
-import { Col, Input, Row, Select, Space, TreeSelect } from 'antd';
+import { Button, Col, Input, Row, Select, Space, TreeSelect } from 'antd';
 const { Search } = Input;
 import React, { useRef, forwardRef, useImperativeHandle } from 'react';
+import { SearchOutlined } from '@ant-design/icons';
 import styles from './index.module.scss';
 import { debounce } from 'lodash';
 const { SHOW_ALL } = TreeSelect;
@@ -128,6 +129,18 @@ const FilterField = ({ list, className, ...rowProps }, ref) => {
 					/>
 				);
 				break;
+			case 'button':
+				filterItem = (
+					<Button
+						type="primary"
+						size="large"
+						icon={<SearchOutlined />}
+						onClick={debounce(eventProps?.onClick)}
+					>
+						Search
+					</Button>
+				);
+				break;
 			default:
 				break;
 		}
@@ -148,7 +161,7 @@ const FilterField = ({ list, className, ...rowProps }, ref) => {
 	};
 
 	useImperativeHandle(ref, () => ({
-		getApiParams
+		getApiParams,
 	}));
 	return (
 		<Row gutter={8} {...rowProps} className={`${styles.filterField} w-full ${className || ''}`}>

@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import FilterTable from '@/components/FilterTable';
 import { pendingColumns } from './column';
 import { transformArrayStructure } from '@/lib/common';
@@ -20,6 +20,7 @@ const PendingPage = ({
 		getLender,
 	} = useLoanStore();
 	const { request } = createRequest();
+	const tableFilterRef = useRef();
 	const [type, setType] = useState('');
 	const [searchValue, setSearchValue] = useState('');
 	const [loanPurpose, setLoanPurpose] = useState([]);
@@ -109,6 +110,12 @@ const PendingPage = ({
 					outputKey: 'title',
 				}).map((i) => ({ ...i, key: i.value })),
 			},
+			{
+				type: 'button',
+				onClick: () => {
+					tableFilterRef?.current?.handleSearch?.();
+				},
+			},
 		],
 		[
 			searchValue,
@@ -121,6 +128,7 @@ const PendingPage = ({
 			loanTypeOptions,
 			loanPendingStatus,
 			lenderOptions,
+			tableFilterRef?.current
 		],
 	);
 	useEffect(() => {
@@ -140,6 +148,7 @@ const PendingPage = ({
 	}, [lenderOptions]);
 	return (
 		<FilterTable
+			ref={tableFilterRef}
 			columns={pendingColumns}
 			scroll={{ x: 3500, y: 'calc(100% - 54px)' }}
 			filterList={filterList}

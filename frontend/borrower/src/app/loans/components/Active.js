@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import FilterTable from '@/components/FilterTable';
 import { activeColumns } from './column';
 import { transformArrayStructure } from '@/lib/common';
@@ -14,6 +14,7 @@ const ActiveLoans = ({
 	const { loanPurposeOptions, loanTypeOptions, lenderOptions, getOptions, getLender } =
 		useLoanStore();
 	const { request } = createRequest();
+	const tableFilterRef = useRef();
 	const [type, setType] = useState('');
 	const [searchValue, setSearchValue] = useState('');
 	const [loanPurpose, setLoanPurpose] = useState([]);
@@ -84,6 +85,12 @@ const ActiveLoans = ({
 					outputKey: 'title',
 				}).map((i) => ({ ...i, key: i.value })),
 			},
+			{
+				type: 'button',
+				onClick: () => {
+					tableFilterRef?.current?.handleSearch?.();
+				},
+			},
 		],
 		[
 			searchValue,
@@ -94,6 +101,7 @@ const ActiveLoans = ({
 			loanPurposeOptions,
 			loanTypeOptions,
 			lenderOptions,
+			tableFilterRef?.current,
 		],
 	);
 
@@ -102,8 +110,6 @@ const ActiveLoans = ({
 	}, [loanPurposeOptions]);
 
 	useEffect(() => {
-		console.log('iii');
-
 		!loanTypeOptions?.length && getOptions('loan_type', 'loanTypeOptions');
 	}, [loanTypeOptions]);
 
@@ -113,6 +119,7 @@ const ActiveLoans = ({
 
 	return (
 		<FilterTable
+			ref={tableFilterRef}
 			columns={activeColumns}
 			scroll={{ x: 3500, y: 'calc(100% - 54px)' }}
 			filterList={filterList}

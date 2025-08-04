@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import FilterTable from '@/components/FilterTable';
 import { archivedColumns } from './column';
 import { transformArrayStructure } from '@/lib/common';
@@ -13,6 +13,7 @@ const ArchivedLoans = ({
 }) => {
 	const { loanTypeOptions, lenderOptions, getLender, getOptions } = useLoanStore();
 	const { request } = createRequest();
+	const tableFilterRef = useRef();
 	const [type, setType] = useState('');
 	const [searchValue, setSearchValue] = useState('');
 	const [loanPurpose, setLoanPurpose] = useState([]);
@@ -72,8 +73,23 @@ const ArchivedLoans = ({
 					outputKey: 'title',
 				}).map((i) => ({ ...i, key: i.value })),
 			},
+			{
+				type: 'button',
+				onClick: () => {
+					tableFilterRef?.current?.handleSearch?.();
+				},
+			},
 		],
-		[searchValue, type, loanPurpose, loanType, lender, loanTypeOptions, lenderOptions],
+		[
+			searchValue,
+			type,
+			loanPurpose,
+			loanType,
+			lender,
+			loanTypeOptions,
+			lenderOptions,
+			tableFilterRef?.current,
+		],
 	);
 
 	useEffect(() => {
@@ -86,6 +102,7 @@ const ArchivedLoans = ({
 
 	return (
 		<FilterTable
+			ref={tableFilterRef}
 			columns={archivedColumns}
 			scroll={{ x: 2000, y: 'calc(100% - 54px)' }}
 			filterList={filterList}

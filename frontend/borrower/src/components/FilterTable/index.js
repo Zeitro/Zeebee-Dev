@@ -1,23 +1,35 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+	forwardRef,
+	useImperativeHandle,
+} from 'react';
 import FilterField from '@/components/FilterField';
 import styles from './index.module.scss';
 import NewTable from '@/components/NewTable';
 import { Col, Row, Tag } from 'antd';
 import { createRequest } from '@/lib/fetch';
 import { getPagination } from '@/lib/common';
-import { asc, des,ascend,descend } from '@/enum/common';
-const FilterTable = ({
-	columns,
-	scroll,
-	dataSource,
-	filterList,
-	rowProps = {},
-	filterName = 'Active filters',
-	hasFilterField = true,
-	filterWrapClassName,
-	getData = () => {},
-	...props
-}) => {
+import { asc, des, ascend, descend } from '@/enum/common';
+const FilterTable = (
+	{
+		columns,
+		scroll,
+		dataSource,
+		filterList,
+		rowProps = {},
+		filterName = 'Active filters',
+		hasFilterField = true,
+		filterWrapClassName,
+		getData = () => {},
+		api,
+		method = 'POST',
+		...props
+	},
+	ref,
+) => {
 	const isGet = useRef(true);
 
 	const filterFieldRef = useRef();
@@ -43,13 +55,23 @@ const FilterTable = ({
 				filter: {
 					...filterParams,
 				},
+			};
+			if (sorter.current?.column) {
+				params.sorter = sorter.current;
 			}
-			if (sorter.current?.column){
-				params.sorter = sorter.current
+			let res = {};
+			if (api) {
+				if (method === 'GET') {
+					const params = new URLSearchParams(params);
+					api += `?${params}`;
+					res = await request(api, { method });
+				} else {
+					res = await request(api, { method, body: params });
+				}
+			} else {
+				res = await getData(params);
 			}
-			console.log('iiiii888888');
-			
-			const { total, list } = await getData(params);
+			const { total, list } = res;
 			pagination.current.total = total;
 			setTableList(list);
 			setLoading(false);
@@ -73,14 +95,23 @@ const FilterTable = ({
 		getList();
 	};
 
+	const handleSearch = () => {
+		pagination.current.current = 1;
+		getList();
+	};
+
 	useEffect(() => {
 		if (dataSource) {
 			setTableList(dataSource);
-		} else if(isGet.current) {
+		} else if (isGet.current) {
 			getList();
 			isGet.current = false;
 		}
 	}, [dataSource]);
+
+	useImperativeHandle(ref, () => ({
+		handleSearch,
+	}));
 	return (
 		<div className={[styles.filterTable, filterWrapClassName].join(' ')}>
 			{hasFilterField && <FilterField ref={filterFieldRef} list={filterList} {...rowProps} />}
@@ -131,4 +162,4 @@ const FilterTable = ({
 	);
 };
 
-export default FilterTable;
+export default forwardRef(FilterTable);
