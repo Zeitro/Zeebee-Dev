@@ -105,6 +105,14 @@ service borrower-api {
 	@doc "page"
 	@handler Page
 	post /loan/page (LoanPageRequest) returns (LoanPageResponse)
+
+	@doc "import"
+	@handler Import
+	post /loan/import (EmptyRequest) returns (EmptyResponse)
+
+	@doc "download import template"
+	@handler DownloadImportTemplate
+	get /loan/import/template (EmptyRequest) returns (EmptyResponse)
 }
 
 // =============== property ==============

@@ -1,0 +1,4 @@
+borrower,loan purpose,loan type,total loan amount,initial loan amount,outstanding loan amount,principal balance,monthly payment,paid off date,stage,pending status,property type,number of unit,state,city,zip code,street address1,street address2,lender,closing date,closing fund,holdback,rate,lender,lien position,maturity date,prepayment penalty(month interest),service company
+Awei Lou,Purchase,Rehab,18000,8000,,,,,Pending,Processing,Townhouse,1,CA,St io,1252100,No 1 st,,lender A,9/12/2025,36000,,3.2,LL,,,,
+Awei Lou,Cash-out refi,Bridge,29000,,15000,,1500,,Active,,Single Family,1,NY,NY,1521123,street address1 lala,,lender B,,,,4.5,lender 2,1st,09/01/2026,3,s1
+Xiao Xiao,Rate-term refi,Ground up construction,352000,,,10000,,,Archived,,Multi Family,3,LA,Cap,2254141,Some Address,,Lender C,,,,,,,,,

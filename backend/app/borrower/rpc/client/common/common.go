@@ -16,6 +16,8 @@ import (
 type (
 	AddressEntry                       = borrower.AddressEntry
 	ApplicantEntry                     = borrower.ApplicantEntry
+	BatchCreateLoanRequest             = borrower.BatchCreateLoanRequest
+	BatchCreateLoanResponse            = borrower.BatchCreateLoanResponse
 	BorrowerNamesRequest               = borrower.BorrowerNamesRequest
 	BorrowerNamesRequestData           = borrower.BorrowerNamesRequestData
 	BorrowerNamesResponse              = borrower.BorrowerNamesResponse

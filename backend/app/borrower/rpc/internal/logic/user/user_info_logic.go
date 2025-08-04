@@ -3,11 +3,12 @@ package userlogic
 import (
 	"context"
 
-	"zeebee-backend/app/borrower/rpc/internal/svc"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"github.com/pkg/errors"
 
 	"github.com/zeromicro/go-zero/core/logx"
-	"zeebee-backend/common/errorx"
+
+	"zeebee-backend/app/borrower/rpc/internal/svc"
+	"zeebee-backend/app/borrower/rpc/pb/borrower"
 )
 
 type UserInfoLogic struct {
@@ -27,10 +28,28 @@ func NewUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserInfo
 func (l *UserInfoLogic) UserInfo(in *borrower.UserInfoRequest) (resp *borrower.UserinfoResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).Error(err)
 		}
 	}()
-	// todo: add your logic here and delete this line
 
-	return &borrower.UserinfoResponse{}, nil
+	user, err := l.svcCtx.UserRepo.GetBorrowerUser(l.ctx, in.Data.Id)
+	if err != nil {
+		return nil, err
+	}
+	userBorrower := user.Borrower
+	if userBorrower == nil {
+		return nil, errors.WithStack(errors.New("borrower not found"))
+	}
+	userInfo := &borrower.UserinfoResponse{
+		Data: &borrower.UserinfoResponseData{
+			Id:          user.Id,
+			Email:       user.Email,
+			FirstName:   userBorrower.FirstName,
+			LastName:    userBorrower.LastName,
+			PhoneNumber: userBorrower.PhoneNumber,
+			// Address:     userBorrower.Address,
+			Ssn: userBorrower.Ssn,
+		},
+	}
+	return userInfo, nil
 }

@@ -39,7 +39,7 @@ const LoanTypeName = "loan_type"
 const (
 	LoanTypeBridge       LoanType = "Bridge"
 	LoanTypeRehab        LoanType = "Rehab"
-	LoanTypeConstruction LoanType = "Construction"
+	LoanTypeConstruction LoanType = "Ground up construction"
 )
 
 // source: borrower,lender,system
