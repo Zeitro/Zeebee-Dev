@@ -4,8 +4,10 @@ import FilterTable from '@/components/FilterTable';
 import { pendingColumns } from './column';
 import { transformArrayStructure } from '@/lib/common';
 import { useLoanStore } from '@/store/loan';
+import { createRequest } from '@/lib/fetch';
 const PendingPage = ({ hasFilterField, hasPagination, filterWrapClassName }) => {
-	const { loanPendingStatus, loanPurposeOptions, loanTypeOptions } = useLoanStore();
+	const { loanPendingStatus, loanPurposeOptions, loanTypeOptions, lenderOptions, getOptions, getLender } = useLoanStore();
+	const { request } = createRequest();
 	const [type, setType] = useState('');
 	const [searchValue, setSearchValue] = useState('');
 	const [loanPurpose, setLoanPurpose] = useState([]);
@@ -17,6 +19,8 @@ const PendingPage = ({ hasFilterField, hasPagination, filterWrapClassName }) => 
 			{
 				type: 'select-input',
 				selectValue: type,
+				selectParamsKey: 'keyword_type',
+				paramsKey: 'keyword',
 				value: searchValue,
 				selectProps: {
 					onChange: (e) => setType(e),
@@ -48,6 +52,7 @@ const PendingPage = ({ hasFilterField, hasPagination, filterWrapClassName }) => 
 			{
 				type: 'treeSelect',
 				label: 'Loan purpose',
+				paramsKey: 'loan_purpose',
 				popupMatchSelectWidth: 172,
 				placeholder: 'Loan purpose',
 				value: loanPurpose,
@@ -60,6 +65,7 @@ const PendingPage = ({ hasFilterField, hasPagination, filterWrapClassName }) => 
 			{
 				type: 'treeSelect',
 				label: 'Loan type',
+				paramsKey: 'loan_type',
 				popupMatchSelectWidth: 195,
 				value: loanType,
 				placeholder: 'Loan type',
@@ -72,6 +78,7 @@ const PendingPage = ({ hasFilterField, hasPagination, filterWrapClassName }) => 
 			{
 				type: 'treeSelect',
 				label: 'Lender',
+				paramsKey: 'lender',
 				placeholder: 'Lender',
 				popupMatchSelectWidth: 172,
 				value: lender,
@@ -101,6 +108,7 @@ const PendingPage = ({ hasFilterField, hasPagination, filterWrapClassName }) => 
 				type: 'treeSelect',
 				label: 'Status',
 				value: status,
+				paramsKey: 'pending_status',
 				placeholder: 'Status',
 				popupMatchSelectWidth: 172,
 				onChange: (value) => setStatus(value),
@@ -110,18 +118,53 @@ const PendingPage = ({ hasFilterField, hasPagination, filterWrapClassName }) => 
 				}).map((i) => ({ ...i, key: i.value })),
 			},
 		],
-		[searchValue, type, loanPurpose, loanType, lender, status],
+		[
+			searchValue,
+			type,
+			loanPurpose,
+			loanType,
+			lender,
+			status,
+			loanPurposeOptions,
+			loanTypeOptions,
+			loanPendingStatus,
+		],
 	);
+	useEffect(() => {
+		!loanPurposeOptions?.length && getOptions('loan_purpose', 'loanPurposeOptions');
+	}, [loanPurposeOptions]);
 
+	useEffect(() => {
+		!loanTypeOptions?.length && getOptions('loan_type', 'loanTypeOptions');
+	}, [loanTypeOptions]);
+
+	useEffect(() => {
+		!loanPendingStatus?.length && getOptions('loan_pending_status', 'loanPendingStatus');
+	}, [loanPendingStatus]);
+
+	useEffect(() => {
+		!lenderOptions?.length && getLender();
+	}, [lenderOptions]);
 	return (
 		<FilterTable
 			columns={pendingColumns}
 			scroll={{ x: 3500, y: 'calc(100% - 54px)' }}
-			dataSource={[{ status: 'quoting', id: 1 }]}
 			filterList={filterList}
 			hasFilterField={hasFilterField}
 			pagination={hasPagination}
 			filterWrapClassName={filterWrapClassName}
+			getData={(params) => {
+				return request('/loan/page', {
+					method: 'POST',
+					body: {
+						...params,
+						filter: {
+							...(params?.filter || {}),
+							stage: 'Pending',
+						},
+					},
+				});
+			}}
 		/>
 	);
 };

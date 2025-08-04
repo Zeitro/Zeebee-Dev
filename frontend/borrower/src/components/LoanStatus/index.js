@@ -5,7 +5,8 @@ import { DownOutlined } from '@ant-design/icons';
 import styles from './index.module.css';
 import { createRequest } from '@/lib/fetch';
 import { transformArrayStructure } from '@/lib/common';
-import { loanPendingStatus } from '@/enum/loan';
+import {useLoanStore} from '@/store/loan';
+// import { loanPendingStatus } from '@/enum/loan';
 let api = '/api/loan/status';
 
 /**
@@ -15,6 +16,7 @@ let api = '/api/loan/status';
  * is3rdParty true是第三方贷款,则可修改状态,否则不可修改
  * */
 const LoanStatus = ({ status, is3rdParty = true, successCallback }) => {
+	const {loanPendingStatus} = useLoanStore();
 	const [loading, setLoading] = useState(false);
 	const [statusValue, setStatusValue] = useState(status);
 	const items = transformArrayStructure({

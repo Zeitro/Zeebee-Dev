@@ -22,7 +22,7 @@ const PropertiesDetails = () => {
 		},
 	];
 	return (
-		<div className={['h-full px-8 py-6'].join(' ')}>
+		<div className={['h-full px-8 py-6 overflow-hidden overflow-y-auto'].join(' ')}>
 			<div className="flex items-center pb-6">
 				<Image src={require('@/assets/images/home.svg')} alt="" className="w-8 h-8" />
 				<p className="text-[24px]/8 font-medium">1396 Cedar Hollow Rd, Austin, TX</p>

@@ -1,15 +1,22 @@
-'use client'
+'use client';
 import { Col, Input, Row, Select, Space, TreeSelect } from 'antd';
 const { Search } = Input;
-import React, { useRef } from 'react';
+import React, { useRef, forwardRef, useImperativeHandle } from 'react';
 import styles from './index.module.scss';
 import { debounce } from 'lodash';
 const { SHOW_ALL } = TreeSelect;
 /**
  * Form过滤数据组件，配合table使用
- * @returns
+ * type 区分哪种组件（input-search、select-input、input、select、treeSelect）
+ * paramsKey 请求接口时的key
+ * value 为paramsKey对应的值
+ * selectParamsKey （只有type为select-input有）请求接口时的key
+ * selectValue 为selectParamsKey对应的值
+ * options 当有select组件时的下拉列表数据
+ * treeData 当type为treeSelect时，传入的tree下拉数据
+ * label 现只用在type为treeSelect时，Placeholder显示
  */
-const FilterField = ({ list, className, ...rowProps }) => {
+const FilterField = ({ list, className, ...rowProps }, ref) => {
 	const isFirst = useRef(true);
 	// selectProps用于select和input组合的select-input类型
 	const getItemDom = ({
@@ -20,6 +27,8 @@ const FilterField = ({ list, className, ...rowProps }) => {
 		treeData,
 		selectValue,
 		selectProps,
+		selectParamsKey,
+		paramsKey,
 		...eventProps
 	}) => {
 		let filterItem = '';
@@ -110,7 +119,10 @@ const FilterField = ({ list, className, ...rowProps }) => {
 								eventProps?.classNames?.root,
 							].join(' '),
 							popup: {
-								root: [styles.treeSelectPopup,eventProps?.classNames?.popup?.root].join(' '),
+								root: [
+									styles.treeSelectPopup,
+									eventProps?.classNames?.popup?.root,
+								].join(' '),
 							},
 						}}
 					/>
@@ -121,12 +133,25 @@ const FilterField = ({ list, className, ...rowProps }) => {
 		}
 		return filterItem;
 	};
+
+	const getApiParams = () => {
+		const params = {};
+		list.map((item) => {
+			if (item?.selectParamsKey && item?.selectValue) {
+				params[item.selectParamsKey] = item.selectValue;
+			}
+			if (item?.paramsKey && item?.value) {
+				params[item.paramsKey] = item.value;
+			}
+		});
+		return params;
+	};
+
+	useImperativeHandle(ref, () => ({
+		getApiParams
+	}));
 	return (
-		<Row
-			gutter={8}
-			{...rowProps}
-			className={`${styles.filterField} w-full ${className || ''}`}
-		>
+		<Row gutter={8} {...rowProps} className={`${styles.filterField} w-full ${className || ''}`}>
 			{list?.map(({ colProps, ...item }, index) => {
 				return (
 					<Col {...(colProps || {})} key={index}>
@@ -137,4 +162,4 @@ const FilterField = ({ list, className, ...rowProps }) => {
 		</Row>
 	);
 };
-export default FilterField;
+export default forwardRef(FilterField);
