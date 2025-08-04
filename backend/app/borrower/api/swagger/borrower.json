@@ -129,7 +129,7 @@
                   "type": "string"
                 },
                 "prepayment_penalty": {
-                  "type": "number"
+                  "type": "integer"
                 },
                 "principal_amount": {
                   "type": "number"
@@ -205,6 +205,55 @@
                   "type": "integer"
                 }
               }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/loan/import": {
+      "post": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "loan"
+        ],
+        "summary": "import",
+        "operationId": "loanImport",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/loan/import/template": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "loan"
+        ],
+        "summary": "download import template",
+        "operationId": "loanDownloadImportTemplate",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
             }
           }
         }
@@ -446,7 +495,7 @@
                         "type": "string"
                       },
                       "prepayment_penalty": {
-                        "type": "number"
+                        "type": "integer"
                       },
                       "principal_amount": {
                         "type": "number"
@@ -629,7 +678,7 @@
                   "type": "string"
                 },
                 "prepayment_penalty": {
-                  "type": "number"
+                  "type": "integer"
                 },
                 "principal_amount": {
                   "type": "number"
@@ -787,7 +836,7 @@
                   "type": "string"
                 },
                 "prepayment_penalty": {
-                  "type": "number"
+                  "type": "integer"
                 },
                 "principal_amount": {
                   "type": "number"
@@ -1259,7 +1308,7 @@
                         "type": "string"
                       },
                       "prepayment_penalty": {
-                        "type": "number"
+                        "type": "integer"
                       },
                       "principal_amount": {
                         "type": "number"
@@ -1446,7 +1495,7 @@
                         "type": "string"
                       },
                       "prepayment_penalty": {
-                        "type": "number"
+                        "type": "integer"
                       },
                       "principal_amount": {
                         "type": "number"
@@ -1613,7 +1662,7 @@
                         "type": "string"
                       },
                       "prepayment_penalty": {
-                        "type": "number"
+                        "type": "integer"
                       },
                       "principal_amount": {
                         "type": "number"
@@ -1982,7 +2031,7 @@
       }
     }
   },
-  "x-date": "2025-08-01 15:49:58",
+  "x-date": "2025-08-04 15:33:13",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

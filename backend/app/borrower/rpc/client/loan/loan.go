@@ -16,6 +16,8 @@ import (
 type (
 	AddressEntry                       = borrower.AddressEntry
 	ApplicantEntry                     = borrower.ApplicantEntry
+	BatchCreateLoanRequest             = borrower.BatchCreateLoanRequest
+	BatchCreateLoanResponse            = borrower.BatchCreateLoanResponse
 	BorrowerNamesRequest               = borrower.BorrowerNamesRequest
 	BorrowerNamesRequestData           = borrower.BorrowerNamesRequestData
 	BorrowerNamesResponse              = borrower.BorrowerNamesResponse
@@ -79,6 +81,7 @@ type (
 
 	Loan interface {
 		CreateBorrowerLoan(ctx context.Context, in *LoanCreateRequest, opts ...grpc.CallOption) (*LoanCreateResponse, error)
+		BatchCreateBorrowerLoan(ctx context.Context, in *BatchCreateLoanRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		UpdateBorrowerLoan(ctx context.Context, in *LoanUpdateRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		UpdateBorrowerLoanPendingStatus(ctx context.Context, in *LoanUpdatePendingStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		DeleteBorrowerLoan(ctx context.Context, in *LoanDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
@@ -101,6 +104,11 @@ func NewLoan(cli zrpc.Client) Loan {
 func (m *defaultLoan) CreateBorrowerLoan(ctx context.Context, in *LoanCreateRequest, opts ...grpc.CallOption) (*LoanCreateResponse, error) {
 	client := borrower.NewLoanClient(m.cli.Conn())
 	return client.CreateBorrowerLoan(ctx, in, opts...)
+}
+
+func (m *defaultLoan) BatchCreateBorrowerLoan(ctx context.Context, in *BatchCreateLoanRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	client := borrower.NewLoanClient(m.cli.Conn())
+	return client.BatchCreateBorrowerLoan(ctx, in, opts...)
 }
 
 func (m *defaultLoan) UpdateBorrowerLoan(ctx context.Context, in *LoanUpdateRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {

@@ -223,6 +223,14 @@ message LoanCreateResponseData {
   int64 id = 1;
 }
 
+message BatchCreateLoanRequest {
+  repeated LoanCreateRequestData data = 1;
+}
+
+message BatchCreateLoanResponse {
+  LoanCreateResponseData data = 1;
+}
+
 message LoanUpdateRequest {
   LoanUpdateRequestData data = 1;
 }
@@ -337,6 +345,7 @@ message LoanLenderCompaniesResponse {
 
 service Loan {
   rpc CreateBorrowerLoan(LoanCreateRequest) returns(LoanCreateResponse);
+  rpc BatchCreateBorrowerLoan(BatchCreateLoanRequest) returns(EmptyResponse);
   rpc UpdateBorrowerLoan(LoanUpdateRequest) returns(EmptyResponse);
   rpc UpdateBorrowerLoanPendingStatus(LoanUpdatePendingStatusRequest) returns(EmptyResponse);
   rpc DeleteBorrowerLoan(LoanDeleteRequest) returns(EmptyResponse);
