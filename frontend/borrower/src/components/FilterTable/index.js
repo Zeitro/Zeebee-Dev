@@ -18,6 +18,8 @@ const FilterTable = ({
 	getData = () => {},
 	...props
 }) => {
+	const isGet = useRef(true);
+
 	const filterFieldRef = useRef();
 	const { request } = createRequest();
 	const pagination = useRef(getPagination());
@@ -45,6 +47,8 @@ const FilterTable = ({
 			if (sorter.current?.column){
 				params.sorter = sorter.current
 			}
+			console.log('iiiii888888');
+			
 			const { total, list } = await getData(params);
 			pagination.current.total = total;
 			setTableList(list);
@@ -72,8 +76,9 @@ const FilterTable = ({
 	useEffect(() => {
 		if (dataSource) {
 			setTableList(dataSource);
-		} else {
+		} else if(isGet.current) {
 			getList();
+			isGet.current = false;
 		}
 	}, [dataSource]);
 	return (

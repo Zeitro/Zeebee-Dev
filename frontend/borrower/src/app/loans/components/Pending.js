@@ -5,8 +5,20 @@ import { pendingColumns } from './column';
 import { transformArrayStructure } from '@/lib/common';
 import { useLoanStore } from '@/store/loan';
 import { createRequest } from '@/lib/fetch';
-const PendingPage = ({ hasFilterField, hasPagination, filterWrapClassName }) => {
-	const { loanPendingStatus, loanPurposeOptions, loanTypeOptions, lenderOptions, getOptions, getLender } = useLoanStore();
+const PendingPage = ({
+	hasFilterField,
+	hasPagination,
+	filterWrapClassName,
+	api = '/loan/page',
+}) => {
+	const {
+		loanPendingStatus,
+		loanPurposeOptions,
+		loanTypeOptions,
+		lenderOptions,
+		getOptions,
+		getLender,
+	} = useLoanStore();
 	const { request } = createRequest();
 	const [type, setType] = useState('');
 	const [searchValue, setSearchValue] = useState('');
@@ -80,9 +92,9 @@ const PendingPage = ({ hasFilterField, hasPagination, filterWrapClassName }) => 
 				value: lender,
 				onChange: (value) => setLender(value),
 				treeData: transformArrayStructure({
-					sourceArray:lenderOptions,
-					outputKey:'title'
-				}).map((i) => ({ ...i, key: i.value }))
+					sourceArray: lenderOptions,
+					outputKey: 'title',
+				}).map((i) => ({ ...i, key: i.value })),
 			},
 			{
 				type: 'treeSelect',
@@ -108,7 +120,7 @@ const PendingPage = ({ hasFilterField, hasPagination, filterWrapClassName }) => 
 			loanPurposeOptions,
 			loanTypeOptions,
 			loanPendingStatus,
-			lenderOptions
+			lenderOptions,
 		],
 	);
 	useEffect(() => {
@@ -135,7 +147,7 @@ const PendingPage = ({ hasFilterField, hasPagination, filterWrapClassName }) => 
 			pagination={hasPagination}
 			filterWrapClassName={filterWrapClassName}
 			getData={(params) => {
-				return request('/loan/page', {
+				return request(api, {
 					method: 'POST',
 					body: {
 						...params,
