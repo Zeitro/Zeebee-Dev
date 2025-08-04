@@ -42,7 +42,8 @@ func (l *PageLogic) Page(req *types.LoanPageRequest) (resp *types.LoanPageRespon
 	}
 
 	err = copier.CopyWithOption(&rpcReq.Data, req, copier.Option{
-		DeepCopy: true,
+		IgnoreEmpty: true,
+		DeepCopy:    true,
 	})
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)

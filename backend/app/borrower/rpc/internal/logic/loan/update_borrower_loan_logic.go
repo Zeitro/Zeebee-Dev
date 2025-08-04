@@ -78,6 +78,7 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 		// update applicant
 		applicant.Id = loanModel.Applicants[0].Id
 		applicant.LoanId = loan.Id
+		applicant.PropertyId = property.Id
 		_, innerErr = l.svcCtx.ApplicantRepo.UpdateOneWithTx(l.ctx, tx, in.Data.Id, applicant)
 		if innerErr != nil {
 			return innerErr
