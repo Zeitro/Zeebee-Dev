@@ -6,10 +6,10 @@ import (
 	"github.com/zeromicro/go-zero/core/service"
 	"golang.org/x/sync/errgroup"
 
-	"zeebee-backend/app/borrower/rpc/internal/config"
+	"zeebee-backend/app/borrower/config"
 )
 
-func InitGlobal(c config.Config) (err error) {
+func InitGlobal(c config.RpcConf) (err error) {
 	SetGlobalConfig(c)
 	eg := errgroup.Group{}
 

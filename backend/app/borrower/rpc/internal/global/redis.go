@@ -1,7 +1,7 @@
 package global
 
 import (
-	"zeebee-backend/app/borrower/rpc/internal/config"
+	"zeebee-backend/app/borrower/config"
 	"zeebee-backend/common/redisx"
 )
 
