@@ -3,6 +3,7 @@ package loanlogic
 import (
 	"context"
 
+	"github.com/duke-git/lancet/v2/slice"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/borrower/rpc/internal/repo/model"
@@ -21,9 +22,9 @@ type BatchCreateBorrowerLoanLogic struct {
 }
 
 type ImportLoanItem struct {
-	Loan      *model.Loan
-	Property  *model.Property
-	Applicant *model.Applicant
+	Loan       *model.Loan
+	Property   *model.Property
+	Applicants []*model.Applicant
 }
 
 func NewBatchCreateBorrowerLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BatchCreateBorrowerLoanLogic {
@@ -43,14 +44,14 @@ func (l *BatchCreateBorrowerLoanLogic) BatchCreateBorrowerLoan(in *borrower.Batc
 	createLogic := NewCreateBorrowerLoanLogic(l.ctx, l.svcCtx)
 	insertLoans := make([]ImportLoanItem, 0, len(in.Data))
 	for _, createLoan := range in.Data {
-		loan, property, applicant, err := createLogic.buildCreateModels(createLoan)
+		loan, property, applicants, err := createLogic.buildCreateModels(createLoan)
 		if err != nil {
 			return nil, err
 		}
 		insertLoans = append(insertLoans, ImportLoanItem{
-			Loan:      loan,
-			Property:  property,
-			Applicant: applicant,
+			Loan:       loan,
+			Property:   property,
+			Applicants: applicants,
 		})
 	}
 	// create loan
@@ -59,7 +60,7 @@ func (l *BatchCreateBorrowerLoanLogic) BatchCreateBorrowerLoan(in *borrower.Batc
 		var innerErr error
 		for _, insertLoan := range insertLoans {
 			loan := insertLoan.Loan
-			applicant := insertLoan.Applicant
+			applicants := insertLoan.Applicants
 			property := insertLoan.Property
 			property, innerErr = l.svcCtx.PropertyRepo.GetOrCreateWithTx(l.ctx, tx, insertLoan.Property)
 			if innerErr != nil {
@@ -71,12 +72,22 @@ func (l *BatchCreateBorrowerLoanLogic) BatchCreateBorrowerLoan(in *borrower.Batc
 			if innerErr != nil {
 				return innerErr
 			}
-			applicant.LoanId = loan.Id
-			applicant.PropertyId = property.Id
-			applicant, innerErr = l.svcCtx.ApplicantRepo.CreateWithTx(l.ctx, tx, applicant)
+
+			applicants = slice.Map(applicants, func(index int, item *model.Applicant) *model.Applicant {
+				item.LoanId = loan.Id
+				item.PropertyId = property.Id
+				return item
+			})
+			_, innerErr = l.svcCtx.ApplicantRepo.BatchCreateWithTx(l.ctx, tx, applicants)
 			if innerErr != nil {
 				return innerErr
 			}
+			// applicant.LoanId = loan.Id
+			// applicant.PropertyId = property.Id
+			// applicant, innerErr = l.svcCtx.ApplicantRepo.CreateWithTx(l.ctx, tx, applicant)
+			// if innerErr != nil {
+			// 	return innerErr
+			// }
 			propertyIds[property.Id] = struct{}{}
 
 		}

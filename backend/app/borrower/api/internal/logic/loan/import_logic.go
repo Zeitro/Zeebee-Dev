@@ -119,7 +119,18 @@ func (l *ImportLogic) Import(fileContents []byte) (resp *types.EmptyResponse, er
 
 		// parse row data
 		if idx, ok := columnIndex[ColBorrower]; ok && idx < len(row) {
-			loanData.ApplicantName = row[idx]
+			applicantNames := strings.Split(row[idx], ",")
+
+			loanData.Applicants = make([]*types.LoanEditApplicantEntry, len(applicantNames))
+			for j, applicantName := range applicantNames {
+				loanData.Applicants[j] = &types.LoanEditApplicantEntry{
+					Name: applicantName,
+					Type: "Individual",
+				}
+				if j == 0 {
+					loanData.Applicants[j].IsPrimary = true
+				}
+			}
 		}
 		if idx, ok := columnIndex[ColLoanPurpose]; ok && idx < len(row) {
 			loanData.LoanPurpose = row[idx]
