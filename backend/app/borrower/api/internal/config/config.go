@@ -9,8 +9,9 @@ import (
 
 type Config struct {
 	rest.RestConf
-	JwtAuth types.JwtAuth      `json:",optional"`
-	RpcConf zrpc.RpcClientConf `json:",optional"`
+	SwaggerPath string             `json:",optional"`
+	JwtAuth     types.JwtAuth      `json:",optional"`
+	RpcConf     zrpc.RpcClientConf `json:",optional"`
 }
 
 // type RpcConf struct {

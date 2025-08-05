@@ -1,13 +1,13 @@
 package svc
 
 import (
-	"zeebee-backend/app/borrower/rpc/internal/config"
+	"zeebee-backend/app/borrower/config"
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/repo"
 )
 
 type ServiceContext struct {
-	Config config.Config
+	Config config.RpcConf
 
 	// repo
 	UserRepo      *repo.UserRepo
@@ -18,7 +18,7 @@ type ServiceContext struct {
 	ApplicantRepo *repo.ApplicantRepo
 }
 
-func NewServiceContext(c config.Config) *ServiceContext {
+func NewServiceContext(c config.RpcConf) *ServiceContext {
 	return &ServiceContext{
 		Config: c,
 

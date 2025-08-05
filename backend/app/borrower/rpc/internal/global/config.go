@@ -1,11 +1,11 @@
 package global
 
 import (
-	"zeebee-backend/app/borrower/rpc/internal/config"
+	"zeebee-backend/app/borrower/config"
 )
 
-var Config config.Config
+var Config config.RpcConf
 
-func SetGlobalConfig(cnf config.Config) {
+func SetGlobalConfig(cnf config.RpcConf) {
 	Config = cnf
 }
