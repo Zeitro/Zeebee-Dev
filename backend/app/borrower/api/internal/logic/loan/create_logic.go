@@ -36,11 +36,18 @@ func (l *CreateLogic) Create(req *types.LoanCreateRequest) (resp *types.LoanCrea
 	resp = &types.LoanCreateResponse{}
 	rpcResp := &borrower.LoanCreateResponse{}
 
-	err = copier.Copy(&rpcReq.Data, req)
+	err = copier.CopyWithOption(&rpcReq.Data, req, copier.Option{
+		DeepCopy:      true,
+		IgnoreEmpty:   true,
+		CaseSensitive: true,
+	})
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
-	rpcReq.Data.Property.Address.State = req.Property.Address.State
+	if len(rpcReq.Data.Applicants) > 0 {
+		rpcReq.Data.Applicants[0].IsPrimary = true
+	}
+	// rpcReq.Data.Property.Address.State = req.Property.Address.State
 	// get borrower id
 	rpcReq.Data.BorrowerId, err = utils.GetAccountIdFromCtx(l.ctx)
 	if err != nil {

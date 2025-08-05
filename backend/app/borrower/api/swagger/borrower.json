@@ -78,13 +78,35 @@
                 "loan_type",
                 "total_amount",
                 "property",
-                "applicant_name",
+                "applicants",
                 "rate",
                 "business_strategy"
               ],
               "properties": {
-                "applicant_name": {
-                  "type": "string"
+                "applicants": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "name",
+                      "type",
+                      "is_primary"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "is_primary": {
+                        "type": "boolean"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      }
+                    }
+                  }
                 },
                 "business_strategy": {
                   "type": "array",
@@ -785,13 +807,35 @@
                 "loan_type",
                 "total_amount",
                 "property",
-                "applicant_name",
+                "applicants",
                 "rate",
                 "business_strategy"
               ],
               "properties": {
-                "applicant_name": {
-                  "type": "string"
+                "applicants": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "name",
+                      "type",
+                      "is_primary"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "is_primary": {
+                        "type": "boolean"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      }
+                    }
+                  }
                 },
                 "business_strategy": {
                   "type": "array",
@@ -2031,7 +2075,7 @@
       }
     }
   },
-  "x-date": "2025-08-04 15:33:13",
+  "x-date": "2025-08-05 15:35:34",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

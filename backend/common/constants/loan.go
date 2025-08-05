@@ -80,6 +80,25 @@ const (
 	BusinessStrategyCommercial           BusinessStrategy = "Commercial"
 )
 
+type LoanPrepaymentPenalty int32
+
+const LoanPrepaymentPenaltyName = "loan_prepayment_penalty"
+const (
+	LoanPrepaymentPenaltyNone   LoanPrepaymentPenalty = 0
+	LoanPrepaymentPenaltyOne    LoanPrepaymentPenalty = 1
+	LoanPrepaymentPenaltyTwo    LoanPrepaymentPenalty = 2
+	LoanPrepaymentPenaltyThree  LoanPrepaymentPenalty = 3
+	LoanPrepaymentPenaltyFour   LoanPrepaymentPenalty = 4
+	LoanPrepaymentPenaltyFive   LoanPrepaymentPenalty = 5
+	LoanPrepaymentPenaltySix    LoanPrepaymentPenalty = 6
+	LoanPrepaymentPenaltySeven  LoanPrepaymentPenalty = 7
+	LoanPrepaymentPenaltyEight  LoanPrepaymentPenalty = 8
+	LoanPrepaymentPenaltyNine   LoanPrepaymentPenalty = 9
+	LoanPrepaymentPenaltyTen    LoanPrepaymentPenalty = 10
+	LoanPrepaymentPenaltyEleven LoanPrepaymentPenalty = 11
+	LoanPrepaymentPenaltyTwelve LoanPrepaymentPenalty = 12
+)
+
 func init() {
 	// register loan stage
 	enums.Register(LoanStageName, []enums.EnumOpt{
@@ -221,6 +240,61 @@ func init() {
 		{
 			Label: string(BusinessStrategyCommercial),
 			Value: string(BusinessStrategyCommercial),
+		},
+	})
+	// register loan prepayment penalty
+	enums.Register(LoanPrepaymentPenaltyName, []enums.EnumOpt{
+		{
+			Label: string(LoanPrepaymentPenaltyNone),
+			Value: string(LoanPrepaymentPenaltyNone),
+		},
+		{
+			Label: string(LoanPrepaymentPenaltyOne),
+			Value: string(LoanPrepaymentPenaltyOne),
+		},
+		{
+			Label: string(LoanPrepaymentPenaltyTwo),
+			Value: string(LoanPrepaymentPenaltyTwo),
+		},
+		{
+			Label: string(LoanPrepaymentPenaltyThree),
+			Value: string(LoanPrepaymentPenaltyThree),
+		},
+		{
+			Label: string(LoanPrepaymentPenaltyFour),
+			Value: string(LoanPrepaymentPenaltyFour),
+		},
+		{
+			Label: string(LoanPrepaymentPenaltyFive),
+			Value: string(LoanPrepaymentPenaltyFive),
+		},
+		{
+			Label: string(LoanPrepaymentPenaltySix),
+			Value: string(LoanPrepaymentPenaltySix),
+		},
+		{
+			Label: string(LoanPrepaymentPenaltySeven),
+			Value: string(LoanPrepaymentPenaltySeven),
+		},
+		{
+			Label: string(LoanPrepaymentPenaltyEight),
+			Value: string(LoanPrepaymentPenaltyEight),
+		},
+		{
+			Label: string(LoanPrepaymentPenaltyNine),
+			Value: string(LoanPrepaymentPenaltyNine),
+		},
+		{
+			Label: string(LoanPrepaymentPenaltyTen),
+			Value: string(LoanPrepaymentPenaltyTen),
+		},
+		{
+			Label: string(LoanPrepaymentPenaltyEleven),
+			Value: string(LoanPrepaymentPenaltyEleven),
+		},
+		{
+			Label: string(LoanPrepaymentPenaltyTwelve),
+			Value: string(LoanPrepaymentPenaltyTwelve),
 		},
 	})
 

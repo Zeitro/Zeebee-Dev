@@ -18,6 +18,7 @@ type (
 	ApplicantEntry                     = borrower.ApplicantEntry
 	BatchCreateLoanRequest             = borrower.BatchCreateLoanRequest
 	BatchCreateLoanResponse            = borrower.BatchCreateLoanResponse
+	BorrowerEditApplicantEntry         = borrower.BorrowerEditApplicantEntry
 	BorrowerNamesRequest               = borrower.BorrowerNamesRequest
 	BorrowerNamesRequestData           = borrower.BorrowerNamesRequestData
 	BorrowerNamesResponse              = borrower.BorrowerNamesResponse

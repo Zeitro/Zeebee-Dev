@@ -153,6 +153,9 @@ message ApplicantEntry{
   string created_at = 5;
   string updated_at = 6;
   string full_name = 7;
+  string type = 8;
+  string invitation_status = 9;
+  
 }
 
 message LoanEntry {
@@ -199,7 +202,7 @@ message LoanCreateRequestData {
   double total_amount = 6;
   double initial_amount = 7;
   PropertyEntry property = 8;
-  string applicant_name = 9;
+  repeated BorrowerEditApplicantEntry applicants = 9;
   string lender_company = 10;
   string closing_date = 11;
   double holdback_amount = 12;
@@ -223,6 +226,13 @@ message LoanCreateResponseData {
   int64 id = 1;
 }
 
+message BorrowerEditApplicantEntry {
+  string name = 1;
+  string type = 2;
+  bool is_primary = 3;
+  int64 id = 4;
+}
+
 message BatchCreateLoanRequest {
   repeated LoanCreateRequestData data = 1;
 }
@@ -244,7 +254,7 @@ message LoanUpdateRequestData {
   double total_amount = 6;
   double initial_amount = 7;
   PropertyEntry property = 8;
-  string applicant_name = 9;
+  repeated BorrowerEditApplicantEntry applicants = 9;
   string lender_company = 10;
   string closing_date = 11;
   double holdback_amount = 12;

@@ -15,6 +15,13 @@ type PropertyEntry {
     Address *AddressEntry `json:"address" validate:"required"`
 }
 
+type LoanEditApplicantEntry {
+    Id int64 `json:"id,optional"`
+    Name string `json:"name" validate:"required"`
+    Type string `json:"type" validate:"required,oneof=Individual Company"`
+    IsPrimary bool `json:"is_primary"`
+}
+
 type LoanEntry {
     Id int64 `json:"id,optional"`
     Stage string `json:"stage" validate:"required,oneof=Pending Active Archived"`
@@ -55,7 +62,7 @@ type (
         TotalAmount float64 `json:"total_amount" validate:"required"`
         InitialAmount float64 `json:"initial_amount,optional"`
         Property *PropertyEntry `json:"property" validate:"required"`
-        ApplicantName string `json:"applicant_name" validate:"required"`
+        Applicants []*LoanEditApplicantEntry `json:"applicants" validate:"required,dive,required"`
         LenderCompany string `json:"lender_company,optional" validate:"required"`
         ClosingDate string `json:"closing_date,optional" validate:"required_if=Stage Pending,omitempty,datetime=01/02/2006"`
         ClosingFund float64 `json:"closing_fund,optional" validate:"required_if=Stage Pending"`
@@ -86,7 +93,7 @@ type (
         TotalAmount float64 `json:"total_amount" validate:"required"`
         InitialAmount float64 `json:"initial_amount,optional"`
         Property *PropertyEntry `json:"property" validate:"required"`
-        ApplicantName string `json:"applicant_name" validate:"required"`
+        Applicants []*LoanEditApplicantEntry `json:"applicants" validate:"required,dive,required"`
         LenderCompany string `json:"lender_company,optional" validate:"required"`
         ClosingDate string `json:"closing_date,optional" validate:"required_if=Stage Pending,omitempty,datetime=01/02/2006"`
         ClosingFund float64 `json:"closing_fund,optional" validate:"required_if=Stage Pending"`

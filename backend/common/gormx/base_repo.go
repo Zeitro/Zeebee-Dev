@@ -88,6 +88,15 @@ func (repo *BaseRepo[T]) CreateWithTx(ctx context.Context, tx *gorm.DB, data T) 
 	return data, nil
 }
 
+// BatchCreateWithTx batch create with tx
+func (repo *BaseRepo[T]) BatchCreateWithTx(ctx context.Context, tx *gorm.DB, data []T) ([]T, error) {
+	err := tx.WithContext(ctx).Create(&data).Error
+	if err != nil {
+		return data, errors.WithStack(err)
+	}
+	return data, nil
+}
+
 // FindOneById find one by id
 func (repo *BaseRepo[T]) FindOneById(ctx context.Context, id int64) (T, error) {
 	var data T
@@ -164,6 +173,15 @@ func (repo *BaseRepo[T]) DeleteByIDWithTx(ctx context.Context, tx *gorm.DB, id i
 	return repo.DeleteWithTx(ctx, tx, map[string]interface{}{
 		"id": id,
 	})
+}
+
+func (repo *BaseRepo[T]) DeleteByIDsWithTx(ctx context.Context, tx *gorm.DB, ids []int64) (effectRaws int64, err error) {
+	if len(ids) == 0 {
+		return 0, nil
+	}
+	query := tx.WithContext(ctx).Model(new(T)).Where("id in ?", ids).Delete(new(T))
+	err = query.Error
+	return query.RowsAffected, errors.WithStack(err)
 }
 
 // Delete delete
