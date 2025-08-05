@@ -5,23 +5,58 @@ import CreateLoan from '../components/Create/Loan';
 import CreateProperty from '../components/Create/property';
 import CreateTerm from '../components/Create/term';
 // import styles from './loans.module.scss';
-import { useRouter } from 'next/navigation';
+import { usePathname, useParams } from 'next/navigation';
 import { createLoanSteps } from '@/enum/loan';
 import styles from './index.module.scss';
+import { createRequest } from '@/lib/fetch';
+import dayjs from 'dayjs';
 const editLoanPage = () => {
+	// const router = useRouter();
+	const pathname = usePathname();
+	const { id } = useParams();
 	const [currentStep, setCurrentStep] = useState(2);
 	const [form] = Form.useForm();
 	const stage = Form.useWatch('stage', form);
+	const { request } = createRequest();
 
-	// next/Add loan
+	const getDetails = async () => {
+		const res = await request(`/loan/${id}`);
+		if (res.closing_date) {
+			res.closing_date = dayjs(res.closing_date);
+		}
+		if (res.maturity_date) {
+			res.maturity_date = dayjs(res.maturity_date);
+		}
+		if (res.paid_off_date) {
+			res.paid_off_date = dayjs(res.paid_off_date);
+		}
+		form.setFieldsValue({
+			...res,
+		});
+	};
+
+	// edit loan
 	const handleNext = async () => {
 		const values = await form.validateFields();
-		if (currentStep < 2) {
-			setCurrentStep((v) => v + 1);
-			return;
+		if (values.closing_date) {
+			values.closing_date = dayjs(values.closing_date).format('MM/DD/YYYY');
 		}
-		// edit loan
+		if (values.maturity_date) {
+			values.maturity_date = dayjs(values.maturity_date).format('MM/DD/YYYY');
+		}
+		if (values.paid_off_date) {
+			values.paid_off_date = dayjs(values.paid_off_date).format('MM/DD/YYYY');
+		}
+		await request(`/loan/${id}`,{
+			method:'PUT',
+			body:values
+		});
+		message.success('Update successful！')
 	};
+
+	useEffect(() => {
+		getDetails();
+	}, []);
 
 	return (
 		<Row className={['h-full', styles.editLoan].join(' ')}>

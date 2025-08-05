@@ -119,7 +119,7 @@ export const pendingColumns = [
 			<TableOperation
 				record={record}
 				getItems={(editItem, deleteItem) => {
-					return [{ ...editItem, url: `/loans/${record?.id || '111'}` }, deleteItem];
+					return [{ ...editItem, url: `/loans/${record?.id}` }, deleteItem];
 				}}
 				onSelect={(key) => {
 					

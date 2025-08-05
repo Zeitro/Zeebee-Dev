@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState, useRef } from 'react';
 import FilterTable from '@/components/FilterTable';
 import { archivedColumns } from './column';
 import { transformArrayStructure } from '@/lib/common';
-import { useLoanStore } from '@/store/loan';
+import { useOptionsStore } from '@/store/options';
 import { createRequest } from '@/lib/fetch';
 const ArchivedLoans = ({
 	hasFilterField,
@@ -11,7 +11,7 @@ const ArchivedLoans = ({
 	filterWrapClassName,
 	api = '/loan/page',
 }) => {
-	const { loanTypeOptions, lenderOptions, getLender, getOptions } = useLoanStore();
+	const { loanTypeOptions, lenderOptions, getLender, getOptions } = useOptionsStore();
 	const { request } = createRequest();
 	const tableFilterRef = useRef();
 	const [type, setType] = useState('');

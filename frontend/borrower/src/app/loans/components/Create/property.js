@@ -1,33 +1,30 @@
 'use client';
-import { Button, Col, DatePicker, Form, InputNumber, Radio, Row, Select, Space, Steps, Tabs } from 'antd';
+import { Col, Form, InputNumber, Row, Select } from 'antd';
 import React, { useState } from 'react';
-import {
-	loanStatusOptions,
-	loanPendingStatus,
-	loanPurposeOptions,
-	loanTypeOptions,
-} from '@/enum/loan';
 import styles from './index.module.scss';
-import { usePropertyStore } from '@/store/property';
-import { useRouter } from 'next/navigation';
-const CreateProperty = ({stepBtn ,gutter,...colProps}) => {
-	const { propertyTypeOptions } = usePropertyStore();
-	const router = useRouter();
+import { useGetOptions } from '@/hooks/useGetOptions';
+const CreateProperty = ({ stepBtn, gutter, ...colProps }) => {
+	const { propertyTypeOptions } = useGetOptions([
+		{
+			key: 'property_type',
+			valueName: 'propertyTypeOptions',
+		},
+	]);
 	return (
 		<Row className={styles.create} gutter={gutter}>
-			<Col md={24} {...(colProps||{})}>
+			<Col md={24} {...(colProps || {})}>
 				<Form.Item
 					label="Property type"
-					name="propertyType"
+					name={['property', 'property_type']}
 					rules={[{ required: true, message: 'Please select Property type!' }]}
 				>
 					<Select options={propertyTypeOptions} placeholder="Select Property type" />
 				</Form.Item>
 			</Col>
-			<Col md={24} {...(colProps||{})}>
+			<Col md={24} {...(colProps || {})}>
 				<Form.Item
 					label="Number of unit"
-					name="unit"
+					name={['property', 'unit']}
 					rules={[{ required: true, message: 'Please input!' }]}
 				>
 					<InputNumber
