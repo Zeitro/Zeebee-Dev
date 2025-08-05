@@ -23,62 +23,7 @@ type ApplicantEntry struct {
 	InvitationStatus string `json:"invitation_status,omitempty"`
 }
 
-type BorrowerNamesResponse struct {
-	BorrowerNames []string `json:"borrower_names,omitempty"`
-}
-
 type EmptyRequest struct {
-}
-
-type EmptyResponse struct {
-}
-
-type GetSelectOptionRequest struct {
-	Name string `form:"name"`
-}
-
-type GetSelectOptionResponse struct {
-	Options []SelectOptionEntry `json:"options"`
-}
-
-type LoanCreateRequest struct {
-	Stage             string                    `json:"stage" validate:"required,oneof=Pending Active Archived"`
-	PendingStatus     string                    `json:"pending_status,optional" validate:"required_if=Stage Pending,omitempty,oneof=Quoting Processing Closing"`
-	LoanPurpose       string                    `json:"loan_purpose" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
-	LoanType          string                    `json:"loan_type" validate:"required,oneof=Bridge Rehab 'Ground up construction'"`
-	TotalAmount       float64                   `json:"total_amount" validate:"required"`
-	InitialAmount     float64                   `json:"initial_amount,optional"`
-	Property          *PropertyEntry            `json:"property" validate:"required"`
-	Applicants        []*LoanEditApplicantEntry `json:"applicants" validate:"required,dive,required"`
-	LenderCompany     string                    `json:"lender_company,optional" validate:"required"`
-	ClosingDate       string                    `json:"closing_date,optional" validate:"required_if=Stage Pending,omitempty,datetime=01/02/2006"`
-	ClosingFund       float64                   `json:"closing_fund,optional" validate:"required_if=Stage Pending"`
-	HoldbackAmount    float64                   `json:"holdback_amount,optional" validate:"gte=0,ltefield=TotalAmount"`
-	Rate              float32                   `json:"rate" validate:"required,gt=0"`
-	PrincipalAmount   float64                   `json:"principal_amount,optional" validate:"required_unless=Stage Pending"`
-	MonthlyPayment    float64                   `json:"monthly_payment,optional" validate:"required_if=Stage Active,omitempty,gt=0"`
-	LienPosition      string                    `json:"lien_position,optional" validate:"required_if=Stage Active,omitempty,oneof=1st 2nd 3rd 4th Other"`
-	MaturityDate      string                    `json:"maturity_date,optional" validate:"required_if=Stage Active,omitempty,datetime=01/02/2006"`
-	PrepaymentPenalty int32                     `json:"prepayment_penalty,optional" validate:"gte=0,lte=12"`
-	ServiceCompany    string                    `json:"service_company,optional" validate:"required_if=Stage Active"`
-	PaidOffDate       string                    `json:"paid_off_date,optional" validate:"required_if=Stage Archived,omitempty,datetime=01/02/2006"`
-	BusinessStrategy  []string                  `json:"business_strategy" validate:"required,dive,required,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
-}
-
-type LoanCreateResponse struct {
-	Id int64 `json:"id"`
-}
-
-type LoanDeleteRequest struct {
-	Id int64 `path:"id"`
-}
-
-type LoanDetailRequest struct {
-	Id int64 `path:"id"`
-}
-
-type LoanDetailResponse struct {
-	LoanEntry
 }
 
 type LoanEditApplicantEntry struct {
@@ -118,10 +63,6 @@ type LoanEntry struct {
 	Source            string           `json:"source"`
 }
 
-type LoanLenderCompanyResponse struct {
-	LenderCompanies []string `json:"lender_companies"`
-}
-
 type LoanPageFilter struct {
 	Stage         string   `json:"stage,optional"`
 	Keyword       string   `json:"keyword,optional"`
@@ -132,73 +73,9 @@ type LoanPageFilter struct {
 	Lender        []string `json:"lender,optional"`
 }
 
-type LoanPageRequest struct {
-	Page   int64          `json:"page,optional"`
-	Limit  int64          `json:"limit,optional"`
-	Filter LoanPageFilter `json:"filter,optional"`
-	Sorter LoanPageSorter `json:"sorter,optional"`
-}
-
-type LoanPageResponse struct {
-	Page      int64       `json:"page"`
-	Limit     int64       `json:"limit"`
-	Total     int64       `json:"total"`
-	TotalPage int64       `json:"total_page"`
-	List      []LoanEntry `json:"list"`
-}
-
 type LoanPageSorter struct {
 	Column string `json:"column,optional"`
 	Sort   string `json:"sort,optional"`
-}
-
-type LoanUpdatePendingStatusRequest struct {
-	Id            int64  `path:"id"`
-	PendingStatus string `json:"pending_status" validate:"required,oneof=Quoting Processing Closing"`
-}
-
-type LoanUpdateRequest struct {
-	ID                int64                     `path:"id" validate:"required,min=1"`
-	Stage             string                    `json:"stage" validate:"required,oneof=Pending Active Archived"`
-	PendingStatus     string                    `json:"pending_status,optional" validate:"required_if=Stage Pending,omitempty,oneof=Quoting Processing Closing"`
-	LoanPurpose       string                    `json:"loan_purpose" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
-	LoanType          string                    `json:"loan_type" validate:"required,oneof=Bridge Rehab 'Ground up construction'"`
-	TotalAmount       float64                   `json:"total_amount" validate:"required"`
-	InitialAmount     float64                   `json:"initial_amount,optional"`
-	Property          *PropertyEntry            `json:"property" validate:"required"`
-	Applicants        []*LoanEditApplicantEntry `json:"applicants" validate:"required,dive,required"`
-	LenderCompany     string                    `json:"lender_company,optional" validate:"required"`
-	ClosingDate       string                    `json:"closing_date,optional" validate:"required_if=Stage Pending,omitempty,datetime=01/02/2006"`
-	ClosingFund       float64                   `json:"closing_fund,optional" validate:"required_if=Stage Pending"`
-	HoldbackAmount    float64                   `json:"holdback_amount,optional" validate:"gte=0,ltefield=TotalAmount"`
-	Rate              float32                   `json:"rate" validate:"required,gt=0"`
-	PrincipalAmount   float64                   `json:"principal_amount,optional" validate:"required_unless=Stage Pending"`
-	MonthlyPayment    float64                   `json:"monthly_payment,optional" validate:"required_if=Stage Active,omitempty,gt=0"`
-	LienPosition      string                    `json:"lien_position,optional" validate:"required_if=Stage Active,omitempty,oneof=1st 2nd 3rd 4th Other"`
-	MaturityDate      string                    `json:"maturity_date,optional" validate:"required_if=Stage Active,omitempty,datetime=01/02/2006"`
-	PrepaymentPenalty int32                     `json:"prepayment_penalty,optional" validate:"gte=0,lte=12"`
-	ServiceCompany    string                    `json:"service_company,optional" validate:"required_if=Stage Active"`
-	PaidOffDate       string                    `json:"paid_off_date,optional" validate:"required_if=Stage Archived,omitempty,datetime=01/02/2006"`
-	BusinessStrategy  []string                  `json:"business_strategy" validate:"required,dive,required,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
-}
-
-type PropertyDetailRequest struct {
-	Id int64 `path:"id"`
-}
-
-type PropertyDetailResponse struct {
-	Id                        int64        `json:"id"`
-	PropertyType              string       `json:"property_type"`
-	TotalAmount               float64      `json:"total_amount"`
-	Unit                      int32        `json:"unit"`
-	Address                   AddressEntry `json:"address"`
-	TotalLoanAmount           float64      `json:"total_loan_amount"`
-	TotalPrincipalAmount      float64      `json:"total_principal_amount"`
-	AvgRate                   float32      `json:"avg_rate"`
-	TotalMonthlyPaymentAmount float64      `json:"total_monthly_payment_amount"`
-	PendingLoans              []LoanEntry  `json:"pending_loans"`
-	ActiveLoans               []LoanEntry  `json:"active_loans"`
-	ArchivedLoans             []LoanEntry  `json:"archived_loans"`
 }
 
 type PropertyEntry struct {
@@ -229,21 +106,6 @@ type PropertyPageFilter struct {
 	Applicant []string `json:"applicant,optional"`
 }
 
-type PropertyPageRequest struct {
-	Page   int64              `json:"page,optional"`
-	Limit  int64              `json:"limit,optional"`
-	Filter PropertyPageFilter `json:"filter,optional"`
-	Sorter PropertyPageSorter `json:"sorter,optional"`
-}
-
-type PropertyPageResponse struct {
-	Page      int64               `json:"page"`
-	Limit     int64               `json:"limit"`
-	Total     int64               `json:"total"`
-	TotalPage int64               `json:"total_page"`
-	List      []PropertyPageEntry `json:"list"`
-}
-
 type PropertyPageSorter struct {
 	Column string `json:"column,optional"`
 	Sort   string `json:"sort,optional"`
@@ -263,46 +125,4 @@ type UserInfo struct {
 	PhoneNumber string `json:"phone_number"`
 	Address     string `json:"address"`
 	Ssn         string `json:"ssn"`
-}
-
-type UserInfoResponse struct {
-	UserInfo
-}
-
-type UserLoginRequest struct {
-	Email    string `json:"email" validate:"required,email"`
-	Password string `json:"password" validate:"required,min=8,max=32"`
-}
-
-type UserLoginResponse struct {
-	AccessToken        string `json:"access_token"`
-	AccessTokenExpire  int64  `json:"access_token_expire"`
-	RefreshToken       string `json:"refresh_token"`
-	RefreshTokenExpire int64  `json:"refresh_token_expire"`
-}
-
-type UserRefreshTokenRequest struct {
-	RefreshToken string `json:"refresh_token" validate:"required"`
-}
-
-type UserRefreshTokenResponse struct {
-	AccessToken       string `json:"access_token"`
-	AccessTokenExpire int64  `json:"access_token_expire"`
-}
-
-type UserRegisterRequest struct {
-	Email       string `json:"email" validate:"required,email"`
-	Password    string `json:"password" validate:"required,min=8,max=32"`
-	FirstName   string `json:"first_name" validate:"required,min=2,max=32"`
-	LastName    string `json:"last_name" validate:"required,min=2,max=32"`
-	PhoneNumber string `json:"phone_number" validate:"required,min=5,max=20"`
-	Address     string `json:"address" validate:"required,min=3,max=256"`
-	Ssn         string `json:"ssn" validate:"required,min=6,max=10"`
-}
-
-type UserRegisterResponse struct {
-	AccessToken        string `json:"access_token"`
-	AccessTokenExpire  int64  `json:"access_token_expire"`
-	RefreshToken       string `json:"refresh_token"`
-	RefreshTokenExpire int64  `json:"refresh_token_expire"`
 }
