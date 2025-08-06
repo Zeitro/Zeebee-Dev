@@ -14,7 +14,6 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
-	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/common/types"
 
@@ -99,17 +98,14 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 		var applicantItem *model.Applicant
 		switch constants.ApplicantType(applicant.Type) {
 		case constants.ApplicantTypeIndividual:
-			firstName, lastName := stringx.ParseUserName(applicantName)
 			applicantItem = &model.Applicant{
-				FirstName: firstName,
-				LastName:  lastName,
-				FullName:  applicantName,
+				Name:      applicantName,
 				IsPrimary: applicant.IsPrimary,
 				Type:      constants.ApplicantTypeIndividual,
 			}
 		case constants.ApplicantTypeCompany:
 			applicantItem = &model.Applicant{
-				FullName:  applicantName,
+				Name:      applicantName,
 				IsPrimary: applicant.IsPrimary,
 				Type:      constants.ApplicantTypeCompany,
 			}
@@ -124,7 +120,7 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 		return b.IsPrimary
 	})
 	applicants = slice.UniqueByComparator(applicants, func(item *model.Applicant, other *model.Applicant) bool {
-		return item.FullName == other.FullName
+		return item.Name == other.Name
 	})
 	if len(applicants) == 0 {
 		return nil, nil, nil, errors.New("no applicant")

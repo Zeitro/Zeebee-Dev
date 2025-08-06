@@ -147,12 +147,12 @@ message AddressEntry{
 
 message ApplicantEntry{
   int64 id = 1;
-  string first_name = 2;
-  string last_name = 3;
+//  string first_name = 2;
+//  string last_name = 3;
   bool is_primary = 4;
   string created_at = 5;
   string updated_at = 6;
-  string full_name = 7;
+  string name = 7;
   string type = 8;
   string invitation_status = 9;
   

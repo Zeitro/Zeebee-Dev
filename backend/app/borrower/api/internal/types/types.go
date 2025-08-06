@@ -13,9 +13,7 @@ type AddressEntry struct {
 
 type ApplicantEntry struct {
 	Id               int64  `json:"id,omitempty"`
-	FirstName        string `json:"first_name,omitempty"`
-	LastName         string `json:"last_name,omitempty"`
-	FullName         string `json:"full_name,omitempty"`
+	Name             string `json:"name,omitempty"`
 	BorrowerID       int64  `json:"borrower_id,omitempty"`
 	LoanID           int64  `json:"loan_id,omitempty"`
 	IsPrimary        bool   `json:"is_primary"`
