@@ -1,0 +1,19 @@
+syntax = "v1"
+
+info(
+    title: "borrower-us-state-api"
+    desc: "-us-state-api http service description"
+    version: "v1"
+)
+
+type UsStateEntry {
+    Id int64 `json:"id"`
+    Code string `json:"code"`
+    Name string `json:"name"`
+}
+
+type (
+    GetUsStatesResponse {
+        List []UsStateEntry `json:"list"`
+    }
+)
