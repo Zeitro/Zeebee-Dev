@@ -1303,16 +1303,16 @@ func (x *AddressEntry) GetZipCode() string {
 }
 
 type ApplicantEntry struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	FirstName        string                 `protobuf:"bytes,2,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
-	LastName         string                 `protobuf:"bytes,3,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
-	IsPrimary        bool                   `protobuf:"varint,4,opt,name=is_primary,json=isPrimary,proto3" json:"is_primary,omitempty"`
-	CreatedAt        string                 `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt        string                 `protobuf:"bytes,6,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	FullName         string                 `protobuf:"bytes,7,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
-	Type             string                 `protobuf:"bytes,8,opt,name=type,proto3" json:"type,omitempty"`
-	InvitationStatus string                 `protobuf:"bytes,9,opt,name=invitation_status,json=invitationStatus,proto3" json:"invitation_status,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Id    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	// string first_name = 2;
+	// string last_name = 3;
+	IsPrimary        bool   `protobuf:"varint,4,opt,name=is_primary,json=isPrimary,proto3" json:"is_primary,omitempty"`
+	CreatedAt        string `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt        string `protobuf:"bytes,6,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Name             string `protobuf:"bytes,7,opt,name=name,proto3" json:"name,omitempty"`
+	Type             string `protobuf:"bytes,8,opt,name=type,proto3" json:"type,omitempty"`
+	InvitationStatus string `protobuf:"bytes,9,opt,name=invitation_status,json=invitationStatus,proto3" json:"invitation_status,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -1354,20 +1354,6 @@ func (x *ApplicantEntry) GetId() int64 {
 	return 0
 }
 
-func (x *ApplicantEntry) GetFirstName() string {
-	if x != nil {
-		return x.FirstName
-	}
-	return ""
-}
-
-func (x *ApplicantEntry) GetLastName() string {
-	if x != nil {
-		return x.LastName
-	}
-	return ""
-}
-
 func (x *ApplicantEntry) GetIsPrimary() bool {
 	if x != nil {
 		return x.IsPrimary
@@ -1389,9 +1375,9 @@ func (x *ApplicantEntry) GetUpdatedAt() string {
 	return ""
 }
 
-func (x *ApplicantEntry) GetFullName() string {
+func (x *ApplicantEntry) GetName() string {
 	if x != nil {
-		return x.FullName
+		return x.Name
 	}
 	return ""
 }
@@ -4259,19 +4245,16 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x04city\x18\x02 \x01(\tR\x04city\x12\x1a\n" +
 	"\baddress1\x18\x03 \x01(\tR\baddress1\x12\x1a\n" +
 	"\baddress2\x18\x04 \x01(\tR\baddress2\x12\x19\n" +
-	"\bzip_code\x18\x05 \x01(\tR\azipCode\"\x97\x02\n" +
+	"\bzip_code\x18\x05 \x01(\tR\azipCode\"\xd2\x01\n" +
 	"\x0eApplicantEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
-	"\n" +
-	"first_name\x18\x02 \x01(\tR\tfirstName\x12\x1b\n" +
-	"\tlast_name\x18\x03 \x01(\tR\blastName\x12\x1d\n" +
 	"\n" +
 	"is_primary\x18\x04 \x01(\bR\tisPrimary\x12\x1d\n" +
 	"\n" +
 	"created_at\x18\x05 \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\x06 \x01(\tR\tupdatedAt\x12\x1b\n" +
-	"\tfull_name\x18\a \x01(\tR\bfullName\x12\x12\n" +
+	"updated_at\x18\x06 \x01(\tR\tupdatedAt\x12\x12\n" +
+	"\x04name\x18\a \x01(\tR\x04name\x12\x12\n" +
 	"\x04type\x18\b \x01(\tR\x04type\x12+\n" +
 	"\x11invitation_status\x18\t \x01(\tR\x10invitationStatus\"\x90\b\n" +
 	"\tLoanEntry\x12\x0e\n" +

@@ -79,7 +79,7 @@ func (l *PropertyPageLogic) PropertyPage(in *borrower.PropertyPageRequest) (resp
 		}
 
 		for _, applicant := range property.Applicants {
-			propertyPageEntry.Applicants = append(propertyPageEntry.Applicants, applicant.FullName)
+			propertyPageEntry.Applicants = append(propertyPageEntry.Applicants, applicant.Name)
 		}
 		if totalRate > 0 {
 			propertyPageEntry.AvgRate = totalRate / float32(len(property.Loans))
