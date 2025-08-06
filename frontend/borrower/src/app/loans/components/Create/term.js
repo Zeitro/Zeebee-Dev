@@ -13,6 +13,7 @@ import styles from './index.module.scss';
 import InputNumAmount from '@/components/InputNumAmount';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import { loan_active, loan_pending } from '@/enum/common';
+import { formatStr } from '@/lib/date';
 const CreateTerm = ({ stage, stepBtn, gutter, ...colProps }) => {
 	const { lienPositionOptions } = useGetOptions([
 		{
@@ -81,7 +82,7 @@ const CreateTerm = ({ stage, stepBtn, gutter, ...colProps }) => {
 							rules={[{ required: true, message: 'Please select date!' }]}
 						>
 							<DatePicker
-								format="MM/DD/YYYY"
+								format={formatStr}
 								placeholder="Select target closing date"
 								style={{ width: '100%' }}
 							/>
@@ -150,7 +151,7 @@ const CreateTerm = ({ stage, stepBtn, gutter, ...colProps }) => {
 							rules={[{ required: true, message: 'Please select date!' }]}
 						>
 							<DatePicker
-								format="MM/DD/YYYY"
+								format={formatStr}
 								placeholder="Select Maturity date"
 								style={{ width: '100%' }}
 							/>

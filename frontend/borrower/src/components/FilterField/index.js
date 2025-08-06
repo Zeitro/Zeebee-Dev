@@ -37,6 +37,7 @@ const FilterField = ({ list, className, ...rowProps }, ref) => {
 			case 'input-search':
 				filterItem = (
 					<Search
+						allowClear
 						size="large"
 						placeholder="input search text"
 						value={value}
@@ -52,6 +53,7 @@ const FilterField = ({ list, className, ...rowProps }, ref) => {
 					<Space direction="vertical" size="large">
 						<Space.Compact>
 							<Select
+								allowClear
 								size="large"
 								style={{ width: 120 }}
 								placeholder="select"
@@ -61,6 +63,7 @@ const FilterField = ({ list, className, ...rowProps }, ref) => {
 								{...(selectProps || {})}
 							/>
 							<Input
+								allowClear
 								size="large"
 								style={{ width: 256 }}
 								placeholder="Search by field"
@@ -77,9 +80,10 @@ const FilterField = ({ list, className, ...rowProps }, ref) => {
 					<Input
 						size="large"
 						placeholder="input text"
-						style={{ width: 148 }}
+						style={{ width: 265 }}
 						value={value}
 						onChange={debounce(eventProps?.onChange)}
+						allowClear
 						{...(eventProps || {})}
 					/>
 				);
@@ -89,6 +93,7 @@ const FilterField = ({ list, className, ...rowProps }, ref) => {
 					<Select
 						size="large"
 						placeholder="select"
+						allowClear
 						style={{ width: 148 }}
 						options={options}
 						value={value}
@@ -108,7 +113,7 @@ const FilterField = ({ list, className, ...rowProps }, ref) => {
 						treeCheckable={true}
 						value={value}
 						showSearch={false}
-						allowClear={false}
+						allowClear={true}
 						showCheckedStrategy={SHOW_ALL}
 						onChange={eventProps?.onChange}
 						treeData={treeData}
@@ -147,6 +152,7 @@ const FilterField = ({ list, className, ...rowProps }, ref) => {
 		return filterItem;
 	};
 
+	// 调用此方法，将filterList转成请求接口参数的形式，必传paramsKey（selectParamsKey在select-input时必传）
 	const getApiParams = () => {
 		const params = {};
 		list.map((item) => {

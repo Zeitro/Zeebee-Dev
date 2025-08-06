@@ -86,6 +86,8 @@ const GoogleAutoComplete = ({
 			},
 			(place, status) => {
 				if (status === 'OK') {
+					console.log(place,place.address_components);
+					
 					const addressInfo = parseAddressComponents(place.address_components);
 					const address = `${addressInfo?.streetNumber} ${addressInfo?.street}`;
 					onChange(address);
@@ -112,7 +114,7 @@ const GoogleAutoComplete = ({
 			if (component.types.includes('locality')) {
 				result.city = component.long_name;
 			} else if (component.types.includes('administrative_area_level_1')) {
-				result.state = component.short_name;
+				result.state = component.long_name;
 			} else if (component.types.includes('postal_code')) {
 				result.zipCode = component.long_name;
 			} else if (component.types.includes('administrative_area_level_2')) {
@@ -124,7 +126,7 @@ const GoogleAutoComplete = ({
 			} else if (component.types.includes('subpremise')) {
 				result.unit = component.long_name;
 			} else if (component.types.includes('postal_code_suffix')) {
-				result.zipCode_suffix = component.long_name;
+				result.zipCode_suffix = component.short_name;
 			}
 		});
 		return result;

@@ -10,6 +10,7 @@ import { createLoanSteps } from '@/enum/loan';
 import styles from './index.module.scss';
 import { createRequest } from '@/lib/fetch';
 import dayjs from 'dayjs';
+import { formatDate } from '@/lib/date';
 const editLoanPage = () => {
 	// const router = useRouter();
 	const pathname = usePathname();
@@ -57,19 +58,22 @@ const editLoanPage = () => {
 	const handleNext = async () => {
 		const values = await form.validateFields();
 		if (values.closing_date) {
-			values.closing_date = dayjs(values.closing_date).format('MM/DD/YYYY');
+			values.closing_date = formatDate(values.closing_date);
 		}
 		if (values.maturity_date) {
-			values.maturity_date = dayjs(values.maturity_date).format('MM/DD/YYYY');
+			values.maturity_date = formatDate(values.maturity_date);
 		}
 		if (values.paid_off_date) {
-			values.paid_off_date = dayjs(values.paid_off_date).format('MM/DD/YYYY');
+			values.paid_off_date = formatDate(values.paid_off_date);
 		}
 		await request(`/loan/${id}`, {
 			method: 'PUT',
 			body: values,
 		});
-		message.success('Update successful！');
+		message.open({
+			type: 'success',
+			content: 'Update successful！',
+		});
 	};
 
 	useEffect(() => {

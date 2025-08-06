@@ -1,99 +1,129 @@
 'use client';
 import FilterField from '@/components/FilterField';
 import Image from 'next/image';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { sort_asc, sort_des } from '@/enum/properties';
+import { des, asc } from '@/enum/common';
 import PropertiesItem from './components/propertiesItem';
 import NewPagination from '@/components/NewPagination';
+import { createRequest } from '@/lib/fetch';
+import { getPagination, transformArrayStructure } from '@/lib/common';
+import { Spin } from 'antd';
+import NoData from '@/components/NoData';
+import { useGetOptions } from '@/hooks/useGetOptions';
 const Properties = () => {
-	//    const [type, setType] = useState('');
+	const { request, cancel } = createRequest();
+	const { borrowerOptions } = useGetOptions([{ type: 'borrower' }]);
+	const filterFieldRef = useRef();
 	const [searchValue, setSearchValue] = useState('');
-	const [borrower, setBorrower] = useState(null);
-	const [list, setList] = useState([{ totalLoan: 10 }, {}]);
-	const [sortOrder, setSortOrder] = useState(sort_des);
+	const [borrower, setBorrower] = useState([]);
+	const pagination = useRef(getPagination());
+	const sorter = useRef({
+		column: 'total_amount',
+		sort: des,
+	});
+	const [loading, setLoading] = useState(true);
+	const [list, setList] = useState([]);
 	const filterList = useMemo(
 		() => [
-			// {
-			//     type: 'select-input',
-			//     selectValue: type,
-			//     value: searchValue,
-			//     selectProps: {
-			//         onChange: (e) => setType(e),
-			//     },
-			//     onChange: ({ target: { value } }) => setSearchValue(value),
-			//     options: [
-			//         {
-			//             label: 'Address',
-			//             value: 'address',
-			//         },
-			//         {
-			//             label: 'State',
-			//             value: 'state',
-			//         },
-			//         {
-			//             label: 'City',
-			//             value: 'city',
-			//         },
-			//         {
-			//             label: 'County',
-			//             value: 'county',
-			//         },
-			//         {
-			//             label: 'Zip Code',
-			//             value: 'zipCode',
-			//         },
-			//     ],
-			// },
 			{
-				type: 'input-search',
+				type: 'input',
 				placeholder: 'Search by any field',
+				paramsKey:'keyword',
 				value: searchValue,
 				onChange: ({ target: { value } }) => setSearchValue(value),
-				onSearch: () => {},
 			},
 			{
-				type: 'select',
-				placeholder: 'Borrower',
+				type: 'treeSelect',
+				label: 'Borrower',
 				value: borrower,
+				paramsKey: 'applicant',
+				placeholder: 'Borrower',
 				onChange: (value) => setBorrower(value),
-				options: [
-					{
-						label: 'Address',
-						value: 'address',
-					},
-					{
-						label: 'State',
-						value: 'state',
-					},
-					{
-						label: 'City',
-						value: 'city',
-					},
-				],
+				treeData: transformArrayStructure({
+					sourceArray: borrowerOptions,
+					outputKey: 'title',
+				})?.map((i) => ({ ...i, key: i.value })),
+			},
+			{
+				type: 'button',
+				onClick: () => {
+					cancel('/property/page');
+					pagination.current.current = 1;
+					getList();
+				},
 			},
 		],
-		[searchValue, borrower],
+		[searchValue, borrower, borrowerOptions],
 	);
+
+	const getList = async () => {
+		try {
+			const filterParams = filterFieldRef?.current?.getApiParams?.();
+			setLoading(true);
+			setList([]);
+			const params = {
+				page: pagination.current?.current,
+				limit: pagination.current?.pageSize,
+				filter: {
+					...filterParams,
+				},
+			};
+			if (sorter.current?.column) {
+				params.sorter = sorter.current;
+			}
+			const { total, list } = await request('/property/page', {
+				method: 'POST',
+				body: params,
+			});
+			pagination.current.total = total;
+			setList(list);
+			setLoading(false);
+		} catch (error) {
+			setLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		getList();
+	}, []);
 
 	return (
 		<div className={['h-full flex flex-col px-8 pt-10 pb-8'].join(' ')}>
-			<FilterField list={filterList} className="pb-8" />
+			<FilterField ref={filterFieldRef} list={filterList} className="pb-8" />
 			<div className="flex items-center justify-between flex-shrink-0 mb-4 text-base font-medium pb-2 border-b border-base-disabled">
 				<p className="text-base font-medium">{list.length} Properties</p>
 				<div
 					className="flex cursor-pointer"
-					onClick={() => setSortOrder(sortOrder === sort_des ? sort_asc : sort_des)}
+					onClick={() => {
+						sorter.current.sort = sorter.current.sort === des ? asc : des;
+						pagination.current.current = 1;
+						getList();
+					}}
 				>
 					<Image src={require('@/assets/images/sort.svg')} alt="" />
-					Total loan: {sortOrder}
+					Total loan: {sorter.current.sort === des ? sort_des : sort_asc}
 				</div>
 			</div>
-			<div className="flex-1 overflow-hidden overflow-y-auto">
-				{list.map((item, index) => (
-					<PropertiesItem key={index} data={item} />
-				))}
-			</div>
-			<NewPagination defaultCurrent={2} total={30} className="!mt-4 justify-end"/>
+			<Spin spinning={loading} wrapperClassName="flex-1 overflow-hidden overflow-y-auto">
+				{loading ? (
+					<div className="min-h-[100px]"></div>
+				) : !!list?.length ? (
+					list.map((item, index) => <PropertiesItem key={index} data={item} />)
+				) : (
+					<NoData height={200} />
+				)}
+			</Spin>
+			{!loading && !!list.length && (
+				<NewPagination
+					className="!mt-4 justify-end"
+					onChange={(page, pageSize) => {
+						pagination.current.current = page;
+						getList();
+					}}
+					{...pagination}
+				/>
+			)}
 		</div>
 	);
 };

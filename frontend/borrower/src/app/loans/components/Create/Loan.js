@@ -6,6 +6,7 @@ import InputNumAmount from '@/components/InputNumAmount';
 import { useOptionsStore } from '@/store/options';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import { loan_active, loan_archived, loan_pending } from '@/enum/common';
+import { formatStr } from '@/lib/date';
 const MAX_COUNT = 5;
 const CreateLoan = ({ form, stepBtn, gutter, ...colProps }) => {
 	const stage = Form.useWatch('stage', form);
@@ -149,7 +150,7 @@ const CreateLoan = ({ form, stepBtn, gutter, ...colProps }) => {
 							name="paid_off_date"
 							rules={[{ required: true, message: 'Please select paid off date!' }]}
 						>
-							<DatePicker format="MM/DD/YYYY" placeholder="select" style={{width:'100%'}}/>
+							<DatePicker format={formatStr} placeholder="select" style={{width:'100%'}}/>
 						</Form.Item>
 					</Col>
 				</>

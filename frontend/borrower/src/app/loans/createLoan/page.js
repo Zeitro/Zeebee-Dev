@@ -8,7 +8,7 @@ import CreateTerm from '../components/Create/term';
 import { useRouter } from 'next/navigation';
 import { createLoanSteps } from '@/enum/loan';
 import { createRequest } from '@/lib/fetch';
-import dayjs from 'dayjs';
+import { formatDate } from '@/lib/date';
 const CreateLoanPage = () => {
 	const router = useRouter();
 	const { request } = createRequest();
@@ -49,19 +49,22 @@ const CreateLoanPage = () => {
 			...(values || {}),
 		};
 		if (body.closing_date) {
-			body.closing_date = dayjs(body.closing_date).format('MM/DD/YYYY');
+			body.closing_date = formatDate(body.closing_date);
 		}
 		if (body.maturity_date) {
-			body.maturity_date = dayjs(body.maturity_date).format('MM/DD/YYYY');
+			body.maturity_date = formatDate(body.maturity_date);
 		}
 		if (body.paid_off_date) {
-			body.paid_off_date = dayjs(body.paid_off_date).format('MM/DD/YYYY');
+			body.paid_off_date = formatDate(body.paid_off_date);
 		}
 		const res = await request('/loan', {
 			method: 'POST',
 			body,
 		});
-		message.success('Success in creation！');
+		message.open({
+			type:'success',
+			content:'Success in creation！'
+		});
 	};
 
 	const stepBtn = (
