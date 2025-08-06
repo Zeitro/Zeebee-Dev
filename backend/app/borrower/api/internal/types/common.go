@@ -10,3 +10,15 @@ type GetSelectOptionRequest struct {
 type GetSelectOptionResponse struct {
 	Options []SelectOptionEntry `json:"options"`
 }
+
+type GetUsCitiesRequest struct {
+	StateId int64 `form:"state_id"`
+}
+
+type GetUsCitiesResponse struct {
+	List []UsCityEntry `json:"list"`
+}
+
+type GetUsStatesResponse struct {
+	List []UsStateEntry `json:"list"`
+}

@@ -12,6 +12,8 @@ import "desc/loan.api"
 import "desc/common.api"
 import "desc/property.api"
 import "desc/applicant.api"
+import "desc/us_state.api"
+import "desc/us_city.api"
 
 type (
 	EmptyRequest  {}
@@ -30,6 +32,14 @@ service borrower-api {
 	@doc "select options"
 	@handler SelectOptions
 	get /select_options (GetSelectOptionRequest) returns (GetSelectOptionResponse)
+
+	@doc "get us states"
+	@handler GetUsStates
+	get /us_states (EmptyRequest) returns (GetUsStatesResponse)
+
+	@doc "get us city"
+	@handler GetUsCities
+	get /us_cities (GetUsCitiesRequest) returns (GetUsCitiesResponse)
 }
 
 // ============== user =============

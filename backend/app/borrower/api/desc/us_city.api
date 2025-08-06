@@ -1,0 +1,23 @@
+syntax = "v1"
+
+info(
+    title: "borrower-us-city-api"
+    desc: "us-city-api http service description"
+    version: "v1"
+)
+
+type UsCityEntry {
+    Id int64 `json:"id"`
+    StateId int64 `json:"state_id"`
+    Name string `json:"name"`
+}
+
+type (
+    GetUsCitiesRequest {
+       StateId int64 `form:"state_id"`
+    }
+
+    GetUsCitiesResponse {
+        List []UsCityEntry `json:"list"`
+    }
+)

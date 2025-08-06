@@ -430,34 +430,34 @@
                           "type": "object",
                           "required": [
                             "id",
-                            "first_name",
-                            "last_name",
-                            "full_name",
+                            "name",
                             "borrower_id",
                             "loan_id",
-                            "is_primary"
+                            "is_primary",
+                            "type",
+                            "invitation_status"
                           ],
                           "properties": {
                             "borrower_id": {
                               "type": "integer"
                             },
-                            "first_name": {
-                              "type": "string"
-                            },
-                            "full_name": {
-                              "type": "string"
-                            },
                             "id": {
                               "type": "integer"
+                            },
+                            "invitation_status": {
+                              "type": "string"
                             },
                             "is_primary": {
                               "type": "boolean"
                             },
-                            "last_name": {
-                              "type": "string"
-                            },
                             "loan_id": {
                               "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
                             }
                           }
                         }
@@ -613,34 +613,34 @@
                     "type": "object",
                     "required": [
                       "id",
-                      "first_name",
-                      "last_name",
-                      "full_name",
+                      "name",
                       "borrower_id",
                       "loan_id",
-                      "is_primary"
+                      "is_primary",
+                      "type",
+                      "invitation_status"
                     ],
                     "properties": {
                       "borrower_id": {
                         "type": "integer"
                       },
-                      "first_name": {
-                        "type": "string"
-                      },
-                      "full_name": {
-                        "type": "string"
-                      },
                       "id": {
                         "type": "integer"
+                      },
+                      "invitation_status": {
+                        "type": "string"
                       },
                       "is_primary": {
                         "type": "boolean"
                       },
-                      "last_name": {
-                        "type": "string"
-                      },
                       "loan_id": {
                         "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
                       }
                     }
                   }
@@ -1265,34 +1265,34 @@
                           "type": "object",
                           "required": [
                             "id",
-                            "first_name",
-                            "last_name",
-                            "full_name",
+                            "name",
                             "borrower_id",
                             "loan_id",
-                            "is_primary"
+                            "is_primary",
+                            "type",
+                            "invitation_status"
                           ],
                           "properties": {
                             "borrower_id": {
                               "type": "integer"
                             },
-                            "first_name": {
-                              "type": "string"
-                            },
-                            "full_name": {
-                              "type": "string"
-                            },
                             "id": {
                               "type": "integer"
+                            },
+                            "invitation_status": {
+                              "type": "string"
                             },
                             "is_primary": {
                               "type": "boolean"
                             },
-                            "last_name": {
-                              "type": "string"
-                            },
                             "loan_id": {
                               "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
                             }
                           }
                         }
@@ -1452,34 +1452,34 @@
                           "type": "object",
                           "required": [
                             "id",
-                            "first_name",
-                            "last_name",
-                            "full_name",
+                            "name",
                             "borrower_id",
                             "loan_id",
-                            "is_primary"
+                            "is_primary",
+                            "type",
+                            "invitation_status"
                           ],
                           "properties": {
                             "borrower_id": {
                               "type": "integer"
                             },
-                            "first_name": {
-                              "type": "string"
-                            },
-                            "full_name": {
-                              "type": "string"
-                            },
                             "id": {
                               "type": "integer"
+                            },
+                            "invitation_status": {
+                              "type": "string"
                             },
                             "is_primary": {
                               "type": "boolean"
                             },
-                            "last_name": {
-                              "type": "string"
-                            },
                             "loan_id": {
                               "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
                             }
                           }
                         }
@@ -1619,34 +1619,34 @@
                           "type": "object",
                           "required": [
                             "id",
-                            "first_name",
-                            "last_name",
-                            "full_name",
+                            "name",
                             "borrower_id",
                             "loan_id",
-                            "is_primary"
+                            "is_primary",
+                            "type",
+                            "invitation_status"
                           ],
                           "properties": {
                             "borrower_id": {
                               "type": "integer"
                             },
-                            "first_name": {
-                              "type": "string"
-                            },
-                            "full_name": {
-                              "type": "string"
-                            },
                             "id": {
                               "type": "integer"
+                            },
+                            "invitation_status": {
+                              "type": "string"
                             },
                             "is_primary": {
                               "type": "boolean"
                             },
-                            "last_name": {
-                              "type": "string"
-                            },
                             "loan_id": {
                               "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
                             }
                           }
                         }
@@ -1818,6 +1818,108 @@
                         "type": "string"
                       },
                       "value": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/us_cities": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "common"
+        ],
+        "summary": "get us city",
+        "operationId": "commonGetUsCities",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "state_id",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "list": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "state_id",
+                      "name"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "state_id": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/us_states": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "common"
+        ],
+        "summary": "get us states",
+        "operationId": "commonGetUsStates",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "list": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "code",
+                      "name"
+                    ],
+                    "properties": {
+                      "code": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
                         "type": "string"
                       }
                     }
@@ -2075,7 +2177,7 @@
       }
     }
   },
-  "x-date": "2025-08-05 15:35:34",
+  "x-date": "2025-08-06 16:26:54",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

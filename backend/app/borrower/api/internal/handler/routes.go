@@ -40,6 +40,18 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/select_options",
 				Handler: common.SelectOptionsHandler(serverCtx),
 			},
+			{
+				// get us city
+				Method:  http.MethodGet,
+				Path:    "/us_cities",
+				Handler: common.GetUsCitiesHandler(serverCtx),
+			},
+			{
+				// get us states
+				Method:  http.MethodGet,
+				Path:    "/us_states",
+				Handler: common.GetUsStatesHandler(serverCtx),
+			},
 		},
 		rest.WithPrefix("/api/v1"),
 	)
