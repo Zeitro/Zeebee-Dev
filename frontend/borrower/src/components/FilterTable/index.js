@@ -13,6 +13,14 @@ import { Col, Row, Tag } from 'antd';
 import { createRequest } from '@/lib/fetch';
 import { getPagination } from '@/lib/common';
 import { asc, des, ascend, descend } from '@/enum/common';
+/**
+ * Form筛选 + Table
+ * @param {*Boolean} hasFilterField true显示筛选/false隐藏 
+ * @param {*function} getData table list接口请求函数
+ * @param {*string} api table list接口请求的api，没有api时会默认调用getData 
+ * @param {*string} method 接口请求的类别。与api一同使用
+ * @param {*String} filterName 筛选汇总的标题
+ */
 const FilterTable = (
 	{
 		columns,

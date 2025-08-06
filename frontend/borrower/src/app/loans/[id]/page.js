@@ -1,5 +1,5 @@
 'use client';
-import { Anchor, Button, Col, Form, Row, Space, Steps, Tabs } from 'antd';
+import { Anchor, Button, Col, Form, message, Row, Space, Steps, Tabs } from 'antd';
 import React, { useEffect, useState } from 'react';
 import CreateLoan from '../components/Create/Loan';
 import CreateProperty from '../components/Create/property';
@@ -20,19 +20,37 @@ const editLoanPage = () => {
 	const { request } = createRequest();
 
 	const getDetails = async () => {
-		const res = await request(`/loan/${id}`);
-		if (res.closing_date) {
-			res.closing_date = dayjs(res.closing_date);
+		let res = {
+			applicants: [
+				{ is_primary: true, type: 'Individual' },
+				{ is_primary: false, type: 'Individual' },
+			],
+		};
+		try {
+			res = await request(`/loan/${id}`);
+			if (res.closing_date) {
+				res.closing_date = dayjs(res.closing_date);
+			}
+			if (res.maturity_date) {
+				res.maturity_date = dayjs(res.maturity_date);
+			}
+			if (res.paid_off_date) {
+				res.paid_off_date = dayjs(res.paid_off_date);
+			}
+			if (!res.applicants?.length < 2) {
+				res.applicants = [
+					{ is_primary: true, type: 'Individual', ...(res.applicants?.[0] || {}) },
+					{ is_primary: false, type: 'Individual', ...(res.applicants?.[1] || {}) },
+				];
+			}
+			form.setFieldsValue({
+				...res,
+			});
+		} catch (error) {
+			form.setFieldsValue({
+				...res,
+			});
 		}
-		if (res.maturity_date) {
-			res.maturity_date = dayjs(res.maturity_date);
-		}
-		if (res.paid_off_date) {
-			res.paid_off_date = dayjs(res.paid_off_date);
-		}
-		form.setFieldsValue({
-			...res,
-		});
 	};
 
 	// edit loan
@@ -47,11 +65,11 @@ const editLoanPage = () => {
 		if (values.paid_off_date) {
 			values.paid_off_date = dayjs(values.paid_off_date).format('MM/DD/YYYY');
 		}
-		await request(`/loan/${id}`,{
-			method:'PUT',
-			body:values
+		await request(`/loan/${id}`, {
+			method: 'PUT',
+			body: values,
 		});
-		message.success('Update successful！')
+		message.success('Update successful！');
 	};
 
 	useEffect(() => {
@@ -83,7 +101,14 @@ const editLoanPage = () => {
 						<p className="py-6 font-medium text-lg/7 border-t border-base-border">
 							Property detail
 						</p>
-						<CreateProperty stage={stage} xs={24} sm={24} lg={12} gutter={24} />
+						<CreateProperty
+							stage={stage}
+							xs={24}
+							sm={24}
+							lg={12}
+							gutter={24}
+							form={form}
+						/>
 					</div>
 					<div id="loanTerms">
 						<p className="py-6 font-medium text-lg/7 border-t border-base-border">

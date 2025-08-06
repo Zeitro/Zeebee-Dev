@@ -18,7 +18,12 @@ const CreateLoanPage = () => {
 	const [loanData, setLoanData] = useState({
 		0: {},
 		1: {},
-		2: {},
+		2: {
+			applicants: [
+				{ is_primary: true, type: 'Individual' },
+				{ is_primary: false, type: 'Individual' },
+			],
+		},
 	});
 
 	useEffect(() => {
@@ -38,7 +43,6 @@ const CreateLoanPage = () => {
 			return;
 		}
 		// add loan
-		console.log('innadd');
 		const body = {
 			...(loanData[0] || {}),
 			...(loanData[1] || {}),
@@ -77,7 +81,7 @@ const CreateLoanPage = () => {
 	);
 	const stepContent = {
 		0: <CreateLoan form={form} stepBtn={stepBtn} />,
-		1: <CreateProperty stage={loanData?.[0]?.stage} stepBtn={stepBtn} />,
+		1: <CreateProperty stage={loanData?.[0]?.stage} stepBtn={stepBtn} form={form} />,
 		2: <CreateTerm stage={loanData?.[0]?.stage} stepBtn={stepBtn} />,
 	};
 

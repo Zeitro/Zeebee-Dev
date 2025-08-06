@@ -1,30 +1,25 @@
 'use client';
 import {
-	Button,
 	Col,
 	DatePicker,
 	Form,
 	Input,
 	InputNumber,
-	Radio,
 	Row,
 	Select,
-	Space,
-	Steps,
-	Tabs,
 } from 'antd';
-import React, { useState } from 'react';
+import React from 'react';
 import styles from './index.module.scss';
 import InputNumAmount from '@/components/InputNumAmount';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import { loan_active, loan_pending } from '@/enum/common';
 const CreateTerm = ({ stage, stepBtn, gutter, ...colProps }) => {
 	const { lienPositionOptions } = useGetOptions([
-			{
-				key: 'lien_position',
-				valueName: 'lienPositionOptions',
-			},
-		]);
+		{
+			key: 'lien_position',
+			valueName: 'lienPositionOptions',
+		},
+	]);
 	const rateDom = (
 		<Col md={24} {...(colProps || {})}>
 			<Form.Item
@@ -35,7 +30,7 @@ const CreateTerm = ({ stage, stepBtn, gutter, ...colProps }) => {
 				<InputNumber
 					style={{ width: '100%' }}
 					min={1}
-					max={10}
+					max={100}
 					controls={false}
 					placeholder="Enter Rate"
 					suffix="%"
@@ -56,16 +51,27 @@ const CreateTerm = ({ stage, stepBtn, gutter, ...colProps }) => {
 	);
 	return (
 		<Row className={styles.create} gutter={gutter}>
-			<Col md={24} {...(colProps || {})}>
-				<Form.Item
-					label="Borrower"
-					name="applicant_name"
-					rules={[{ required: true, message: 'Please input!' }]}
-				>
-					<Input placeholder="Enter Borrower" />
-				</Form.Item>
-			</Col>
-			{stage === loan_pending&& (
+			<Form.List name='applicants'>
+				{(fields) => {
+					return fields?.map((field, index) => (
+						<Col
+							md={24}
+							{...(colProps || {})}
+							key={field.key}
+							fieldkey={field.fieldKey}
+						>
+							<Form.Item
+								label={`Borrower ${index+1}`}
+								name={[field.name,'name']}
+								rules={[{ required: !index, message: 'Please input!' }]}
+							>
+								<Input placeholder="Enter Borrower" />
+							</Form.Item>
+						</Col>
+					));
+				}}
+			</Form.List>
+			{stage === loan_pending && (
 				<>
 					{lenderDom}
 					<Col md={24} {...(colProps || {})}>
@@ -131,7 +137,10 @@ const CreateTerm = ({ stage, stepBtn, gutter, ...colProps }) => {
 							name="lien_position"
 							rules={[{ required: true, message: 'Please select Lien position!' }]}
 						>
-							<Select options={lienPositionOptions} placeholder="Select Lien position" />
+							<Select
+								options={lienPositionOptions}
+								placeholder="Select Lien position"
+							/>
 						</Form.Item>
 					</Col>
 					<Col md={24} {...(colProps || {})}>
@@ -153,7 +162,10 @@ const CreateTerm = ({ stage, stepBtn, gutter, ...colProps }) => {
 							name="prepayment_penalty"
 							rules={[{ required: true, message: 'Please input!' }]}
 						>
-							<Select options={lienPositionOptions} placeholder="Enter Prepayment penalty" />
+							<Select
+								options={lienPositionOptions}
+								placeholder="Enter Prepayment penalty"
+							/>
 							{/* <InputNumAmount placeholder="Enter Prepayment penalty" /> */}
 						</Form.Item>
 					</Col>

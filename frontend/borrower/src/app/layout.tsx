@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Roboto } from 'next/font/google';
+import Script from 'next/script';
 // import 'antd/dist/reset.css';
 import './globals.css';
 import '@ant-design/v5-patch-for-react-19';
@@ -23,6 +24,12 @@ const RootLayout = ({
 }>) => {
 	return (
 		<html lang="en">
+			<head>
+				<Script
+					src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
+					strategy="beforeInteractive" // 页面交互前加载
+				/>
+			</head>
 			<body className={`${roboto.variable}`}>
 				<CustomizeAntdTheme fontFamily={`${roboto.variable}`}>
 					{children}

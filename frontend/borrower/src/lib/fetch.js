@@ -3,8 +3,10 @@ import { message } from 'antd';
 // 公共提示
 function showMessage(msg) {
 	message.destroy();
-	message.error(msg);
-	// todo
+	message.open({
+		content: msg,
+		type: 'error',
+	});
 }
 const str = '/api/v1';
 const baseURL = process.env.NEXT_PUBLIC_API_URL + str;
@@ -48,23 +50,25 @@ export function createRequest() {
 
 			// 响应拦截：统一处理响应
 			if (!response.ok) {
-				showMessage(`fail:${response.status}`);
-				throw new Error(`HTTP error! status: ${response.status}`);
+				showMessage(`fail:${response.status},${response.statusText}`);
+				console.log(response);
+
+				return Promise.reject(`HTTP error! status: ${response.status}`);
 			}
 
 			const data = await response.json();
 
 			if (data.code && data.code !== 200) {
 				showMessage(`fail:${data.code},message:${data.message}` || `fail:${data.code}`);
-				throw new Error(data.message || `fail:${data.code}`);
+				return Promise.reject(data.message || `fail:${data.code}`);
 			}
 
 			return data.data;
 		} catch (error) {
 			if (error.name !== 'AbortError') {
 				showMessage(error.message || 'Network anomaly');
+				return Promise.reject(error);
 			}
-			throw error;
 		} finally {
 			controllers.delete(key);
 		}

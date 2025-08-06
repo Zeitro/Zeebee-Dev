@@ -3,7 +3,8 @@ import { Col, Form, InputNumber, Row, Select } from 'antd';
 import React, { useState } from 'react';
 import styles from './index.module.scss';
 import { useGetOptions } from '@/hooks/useGetOptions';
-const CreateProperty = ({ stepBtn, gutter, ...colProps }) => {
+import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
+const CreateProperty = ({ stepBtn, gutter, addressProps = {}, form, ...colProps }) => {
 	const { propertyTypeOptions } = useGetOptions([
 		{
 			key: 'property_type',
@@ -36,7 +37,15 @@ const CreateProperty = ({ stepBtn, gutter, ...colProps }) => {
 					/>
 				</Form.Item>
 			</Col>
-
+			<AddressForm
+				{...addressProps}
+				addressName={['property', 'address', 'address1']}
+				addressName2={['property', 'address', 'address2']}
+				cityName={['property', 'address', 'city']}
+				stateName={['property', 'address', 'state']}
+				zipName={['property', 'address', 'zip_code']}
+				form={form}
+			/>
 			{stepBtn}
 		</Row>
 	);
