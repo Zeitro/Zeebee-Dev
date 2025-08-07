@@ -7,7 +7,7 @@ import { debounce } from 'lodash';
  * Google Api
  * 根据输入内容，获取地址信息，并拿到city/county/state/zip/unit相关数据
  * 支持Form中使用
- * @param {*string} country us美国 
+ * @param {*string} country us美国
  * @param {*function} onPlaceSelected 选中下拉某项后触发，返回city/county/state/zip/unit
  */
 const GoogleAutoComplete = ({
@@ -24,9 +24,9 @@ const GoogleAutoComplete = ({
 	const autocompleteService = useRef(null);
 	const sessionToken = useRef(null);
 
-	useEffect(()=>{
- 		setAddress(value)
-	},[value])
+	useEffect(() => {
+		setAddress(value);
+	}, [value]);
 
 	useEffect(() => {
 		if (window.google) {
@@ -86,10 +86,12 @@ const GoogleAutoComplete = ({
 			},
 			(place, status) => {
 				if (status === 'OK') {
-					console.log(place,place.address_components);
-					
+					console.log(place, place.address_components);
+
 					const addressInfo = parseAddressComponents(place.address_components);
-					const address = `${addressInfo?.streetNumber} ${addressInfo?.street}`;
+					const address = addressInfo?.streetNumber
+						? `${addressInfo?.streetNumber} ${addressInfo?.street}`
+						: addressInfo?.street;
 					onChange(address);
 					setAddress(address);
 					const zip = addressInfo?.zipCode_suffix
@@ -114,7 +116,7 @@ const GoogleAutoComplete = ({
 			if (component.types.includes('locality')) {
 				result.city = component.long_name;
 			} else if (component.types.includes('administrative_area_level_1')) {
-				result.state = component.long_name;
+				result.state = component.short_name;
 			} else if (component.types.includes('postal_code')) {
 				result.zipCode = component.long_name;
 			} else if (component.types.includes('administrative_area_level_2')) {

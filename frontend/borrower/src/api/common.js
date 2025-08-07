@@ -19,3 +19,18 @@ export const getBorrowers = () => {
 		method: 'POST',
 	});
 };
+
+// 获取地址state列表
+export const getStateList = () => {
+	return request('/us_states', {
+		method: 'GET',
+	});
+};
+
+// 获取地址city列表通过state
+export const getCityList = (state) => {
+	const params = new URLSearchParams({ state });
+	return request(`/us_cities?${params}`, {
+		method: 'GET',
+	});
+};

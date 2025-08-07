@@ -2,9 +2,12 @@
 import React, { useEffect, useMemo, useState, useRef } from 'react';
 import FilterTable from '@/components/FilterTable';
 import { pendingColumns } from './column';
-import { transformArrayStructure } from '@/lib/common';
+import { assemblyAddress, transformArrayStructure } from '@/lib/common';
 import { useOptionsStore } from '@/store/options';
 import { createRequest } from '@/lib/fetch';
+import { message, Modal } from 'antd';
+import {ExclamationCircleOutlined} from '@ant-design/icons';
+
 const PendingPage = ({
 	hasFilterField,
 	hasPagination,
@@ -16,6 +19,7 @@ const PendingPage = ({
 	loading,
 	scrollX = 3500,
 }) => {
+	const [modal, contextHolder] = Modal.useModal();
 	const { loanPendingStatus, loanPurposeOptions, loanTypeOptions, lenderOptions } =
 		useOptionsStore();
 	const { request } = createRequest();
@@ -26,6 +30,7 @@ const PendingPage = ({
 	const [loanType, setLoanType] = useState([]);
 	const [lender, setLender] = useState([]);
 	const [status, setStatus] = useState([]);
+	const [confirmLoading, setConfirmLoading] = useState(false);
 	const filterList = useMemo(
 		() => [
 			{
@@ -131,42 +136,86 @@ const PendingPage = ({
 		],
 	);
 
+	const handleDelete = async (id) => {
+		try {
+			setConfirmLoading(true);
+			await request(`/loan/${id}`,{method:'DELETE'});
+			tableFilterRef?.current?.handleSearch();
+			setConfirmLoading(false);
+			message.open({
+				type: 'success',
+				content: 'Delete successful!',
+			});
+		} catch (error) {
+			setConfirmLoading(false);
+		}
+	};
+
+	const showDeleteModal = ({ property, id }) => {
+		modal.confirm({
+			title: 'Are you sure you want to delete this loan?',
+			icon: <ExclamationCircleOutlined className='!text-base-warning'/>,
+			content: (
+				<div>
+					You are about to delete the loan associated with:
+					<p className="font-bold pb-8">{assemblyAddress(property?.address, true)}</p>
+					Once deleted , this loan will no longer appear in your portfolio and cannot be
+					recovered.
+				</div>
+			),
+			onOk: () => handleDelete(id),
+			okText: 'Delete loan',
+			okButtonProps: {
+				danger: true,
+			},
+			confirmLoading,
+			centered: true
+		});
+	};
+
 	return (
-		<FilterTable
-			ref={tableFilterRef}
-			columns={pendingColumns(isNotAddress, tableFilterRef?.current?.handleSearch)}
-			scroll={{ x: scrollX, y: 'calc(100% - 54px)' }}
-			filterList={filterList}
-			hasFilterField={hasFilterField}
-			pagination={hasPagination}
-			filterWrapClassName={filterWrapClassName}
-			dataSource={dataSource}
-			dataSourceLoading={loading}
-			getData={(params) => {
-				if (!api) {
-					return {
-						list: dataSource,
-						total: dataSource?.length,
-					};
-				}
-				const filter = hasFilterField
-					? {}
-					: {
-							...(params?.filter || {}),
-							stage: 'Pending',
+		<>
+			<FilterTable
+				ref={tableFilterRef}
+				columns={pendingColumns(
+					isNotAddress,
+					tableFilterRef?.current?.handleSearch,
+					showDeleteModal,
+				)}
+				scroll={{ x: scrollX, y: 'calc(100% - 54px)' }}
+				filterList={filterList}
+				hasFilterField={hasFilterField}
+				pagination={hasPagination}
+				filterWrapClassName={filterWrapClassName}
+				dataSource={dataSource}
+				dataSourceLoading={loading}
+				getData={(params) => {
+					if (!api) {
+						return {
+							list: dataSource,
+							total: dataSource?.length,
 						};
-				const payload = {
-					method,
-				};
-				if (method === 'POST') {
-					payload.body = {
-						...params,
-						filter,
+					}
+					const filter = hasFilterField
+						? {}
+						: {
+								...(params?.filter || {}),
+								stage: 'Pending',
+							};
+					const payload = {
+						method,
 					};
-				}
-				return request(api, payload);
-			}}
-		/>
+					if (method === 'POST') {
+						payload.body = {
+							...params,
+							filter,
+						};
+					}
+					return request(api, payload);
+				}}
+			/>
+			{contextHolder}
+		</>
 	);
 };
 export default PendingPage;

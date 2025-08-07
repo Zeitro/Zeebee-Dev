@@ -6,18 +6,28 @@ export const useUserStore = create(
 	persist(
 		(set) => ({
 			userInfo: {},
-			login: (userData) => set({ userInfo: userData }),
+			access:{},
+			login: async (values) => {
+				const access = await request('/user/login', {
+					method: 'POST',
+					body: values,
+				});
+				set({ access });
+			},
 			getUserInfo: async () => {
-				const res = await request('/user/info', {
+				const userInfo = await request('/user/info', {
 					method: 'GET',
 				});
-				set({ useInfo: res });
+				set({ userInfo });
 			},
 		}),
 		{
-			name: 'userInfo', // 存储唯一标识（必填）
+			name: 'userStore', // 存储唯一标识（必填）
 			storage: createJSONStorage(() => localStorage), // 默认 localStorage
-			partialize: (state) => (state.userInfo) 
+			partialize: (state) => ({
+				userInfo: state.userInfo,
+				access: state.access
+			}),
 		},
 	),
 );

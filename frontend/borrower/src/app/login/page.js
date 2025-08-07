@@ -4,23 +4,16 @@ import { Button, Checkbox, Form, Input } from 'antd';
 import Item from 'antd/es/form/FormItem';
 import Password from 'antd/es/input/Password';
 import { useRouter } from 'next/navigation';
-import {createRequest} from '@/lib/fetch';
-import {setLocalStorage} from '@/lib/local';
 import {useUserStore} from '@/store/user';
 const Login = () => {
     const [form] = Form.useForm();
     const router = useRouter();
-	const {request} = createRequest();
-	const {getUserInfo} = useUserStore();
+	const {getUserInfo, login} = useUserStore();
 
 	const onFinish = async () => {
         const values = await form.validateFields();
-		const data = await request('/user/login',{
-			method:'POST',
-			body:values
-		});
+		await login(values);
 		await getUserInfo();
-		setLocalStorage('access',data)
         router.push('/');
 	};
 

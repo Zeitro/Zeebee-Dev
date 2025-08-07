@@ -1,142 +1,159 @@
 import LoanPendingStatus from './LoanPendingStatus';
 import TableOperation from '@/components/TableOperation';
-
-
 const common = (isNotAddress) => {
 	const addressArr = [
 		{
-		title: 'Property address',
-		dataIndex: ['property','address','address1'],
-		key: 'address',
-		ellipsis: true,
-		sorter: true,
-		sortDirections: ['ascend', 'descend'],
-		defaultSortOrder: 'descend',
-		fixed: 'left',
-	},
-	{
-		title: 'City',
-		dataIndex: ['property','address','city'],
-		key: 'city',
-		ellipsis: true,
-	},
-	{
-		title: 'State',
-		dataIndex: ['property','address','state'],
-		key: 'state',
-		ellipsis: true,
-	},
-	{
-		title: 'Zip code',
-		dataIndex: ['property','address','zip_code'],
-		key: 'zip_code',
-		ellipsis: true,
-	},
-	]
+			title: 'Property address',
+			dataIndex: ['property', 'address', 'address1'],
+			key: 'address',
+			ellipsis: true,
+			sorter: true,
+			sortDirections: ['ascend', 'descend'],
+			defaultSortOrder: 'descend',
+			fixed: 'left',
+			render: (v, { source }) => (
+				<div className="flex items-center">
+					<p className="overflow-hidden text-ellipsis whitespace-nowrap">{v}</p>
+					{source === 'borrower' && (
+						<div className="ml-2 px-2 bg-blue-light-1 text-blue-medium-default rounded-xs">
+							3rd party
+						</div>
+					)}
+				</div>
+			),
+		},
+		{
+			title: 'City',
+			dataIndex: ['property', 'address', 'city'],
+			key: 'city',
+			ellipsis: true,
+		},
+		{
+			title: 'State',
+			dataIndex: ['property', 'address', 'state'],
+			key: 'state',
+			ellipsis: true,
+		},
+		{
+			title: 'Zip code',
+			dataIndex: ['property', 'address', 'zip_code'],
+			key: 'zip_code',
+			ellipsis: true,
+		},
+	];
 	return [
-	...(isNotAddress?[]:addressArr),
-	{
-		title: 'Borrower',
-		dataIndex: 'applicants',
-		key: 'applicants',
-		ellipsis: true,
-		render:(v)=>v?.map(i=>i.full_name)?.join('、')
-	},
-]
+		...(isNotAddress ? [] : addressArr),
+		{
+			title: 'Borrower',
+			dataIndex: 'applicants',
+			key: 'applicants',
+			ellipsis: true,
+			render: (v) => v?.map((i) => i.full_name)?.join('、'),
+		},
+	];
 };
-export const pendingColumns = (isNotAddress,successCallback) => {
+export const pendingColumns = (isNotAddress, successCallback,showDeleteModal) => {
 	return [
-	...common(isNotAddress),
-	{
-		title: 'Loan purpose',
-		dataIndex: 'loan_purpose',
-		key: 'loan_purpose',
-		ellipsis: true,
-	},
-	{
-		title: 'Target closing date',
-		dataIndex: 'closing_date',
-		key: 'closing_date',
-		ellipsis: true,
-		sorter: true,
-	},
-	{
-		title: 'Business strategy',
-		dataIndex: 'business_strategy',
-		key: 'business_strategy',
-		ellipsis: true,
-		render:(v)=>v?.join('、')
-	},
-	{
-		title: 'Target lender',
-		dataIndex: 'lender_company',
-		key: 'lender_company',
-		ellipsis: true,
-	},
-	{
-		title: 'Total loan amount',
-		dataIndex: 'total_amount',
-		key: 'total_amount',
-		ellipsis: true,
-		sorter: true,
-	},
-	{
-		title: 'Initial loan',
-		dataIndex: 'initial_amount',
-		key: 'initial_amount',
-		ellipsis: true,
-		sorter: true,
-	},
-	{
-		title: 'Hold back',
-		dataIndex: 'holdback_amount',
-		key: 'holdback_amount',
-		ellipsis: true,
-		sorter: true,
-	},
-	{
-		title: 'Estimated Closing Fund',
-		dataIndex: 'closing_fund',
-		key: 'closing_fund',
-		ellipsis: true,
-		sorter: true,
-	},
-	{
-		title: 'Rate',
-		dataIndex: 'rate',
-		key: 'rate',
-		ellipsis: true,
-		sorter: true,
-	},
-	{ title: 'Loan type', dataIndex: 'loan_type', key: 'loan_type', ellipsis: true },
-	{
-		title: 'Status',
-		dataIndex: 'pending_status',
-		key: 'pending_status',
-		ellipsis: true,
-		width: 160,
-		render: (v, record) => <LoanPendingStatus data={record} successCallback={successCallback}/>,
-	},
-	{
-		title: '',
-		dataIndex: 'operation',
-		width: 80,
-		render: (_, record) => (
-			<TableOperation
-				record={record}
-				getItems={(editItem, deleteItem) => {
-					return [{ ...editItem, url: `/loans/${record?.id}` }, deleteItem];
-				}}
-				onSelect={(key) => {
-					
-				}}
-			/>
-		),
-	},
-]
+		...common(isNotAddress),
+		{
+			title: 'Loan purpose',
+			dataIndex: 'loan_purpose',
+			key: 'loan_purpose',
+			ellipsis: true,
+		},
+		{
+			title: 'Target closing date',
+			dataIndex: 'closing_date',
+			key: 'closing_date',
+			ellipsis: true,
+			sorter: true,
+		},
+		{
+			title: 'Business strategy',
+			dataIndex: 'business_strategy',
+			key: 'business_strategy',
+			ellipsis: true,
+			render: (v) => v?.join('、'),
+		},
+		{
+			title: 'Target lender',
+			dataIndex: 'lender_company',
+			key: 'lender_company',
+			ellipsis: true,
+		},
+		{
+			title: 'Total loan amount',
+			dataIndex: 'total_amount',
+			key: 'total_amount',
+			ellipsis: true,
+			sorter: true,
+		},
+		{
+			title: 'Initial loan',
+			dataIndex: 'initial_amount',
+			key: 'initial_amount',
+			ellipsis: true,
+			sorter: true,
+		},
+		{
+			title: 'Hold back',
+			dataIndex: 'holdback_amount',
+			key: 'holdback_amount',
+			ellipsis: true,
+			sorter: true,
+		},
+		{
+			title: 'Estimated Closing Fund',
+			dataIndex: 'closing_fund',
+			key: 'closing_fund',
+			ellipsis: true,
+			sorter: true,
+		},
+		{
+			title: 'Rate',
+			dataIndex: 'rate',
+			key: 'rate',
+			ellipsis: true,
+			sorter: true,
+		},
+		{ title: 'Loan type', dataIndex: 'loan_type', key: 'loan_type', ellipsis: true },
+		{
+			title: 'Status',
+			dataIndex: 'pending_status',
+			key: 'pending_status',
+			ellipsis: true,
+			width: 170,
+			align: 'center',
+			fixed: 'right',
+			render: (v, record) => (
+				<LoanPendingStatus data={record} successCallback={successCallback} />
+			),
+		},
+		{
+			title: '',
+			dataIndex: 'operation',
+			width: 50,
+			fixed: 'right',
+			render: (_, record) => (
+				<TableOperation
+					record={record}
+					getItems={(editItem, deleteItem) => {
+						return [{ ...editItem, url: `/loans/${record?.id}` }, deleteItem];
+					}}
+					onSelect={(key) => {
+						if (key === 'delete') {
+							console.log(key);
+							
+							showDeleteModal(record)
+						}
+					}}
+				/>
+			),
+		},
+	];
 };
 
-export const activeColumns = (isNotAddress)=>[
+export const activeColumns = (isNotAddress) => [
 	...common(isNotAddress),
 	{
 		title: 'Lien Position',
@@ -161,7 +178,7 @@ export const activeColumns = (isNotAddress)=>[
 		dataIndex: 'business_strategy',
 		key: 'business_strategy',
 		ellipsis: true,
-		render:(v)=>v?.join('、')
+		render: (v) => v?.join('、'),
 	},
 	{
 		title: 'Rate',
@@ -235,7 +252,7 @@ export const activeColumns = (isNotAddress)=>[
 	},
 ];
 
-export const archivedColumns = (isNotAddress)=>[
+export const archivedColumns = (isNotAddress) => [
 	...common(isNotAddress),
 	{
 		title: 'Loan type',

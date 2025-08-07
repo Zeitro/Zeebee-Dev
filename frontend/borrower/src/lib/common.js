@@ -8,7 +8,7 @@ export const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})+$/;
 export const getPagination = (pagi = {}) => {
 	return {
 		current: 1,
-		pageSize: 5,
+		pageSize: 10,
 		total: 0,
 		...pagi,
 	};
@@ -69,8 +69,12 @@ export function formatAmount(amount) {
 }
 
 // 拼装地址
-export const assemblyAddress = (address = {}) => {
-	const newArr = [address?.address1,address?.city, address?.state].filter(
+export const assemblyAddress = (address = {}, isHaveZip) => {
+	const arr = [address?.address1,address?.city, address?.state];
+	if (isHaveZip && address?.zip_code){
+		arr.push(address?.zip_code);
+	}
+	const newArr = arr.filter(
 		(i) => i,
 	);
 	return [...new Set(newArr)].join(',');

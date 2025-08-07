@@ -1,8 +1,11 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Form, Input, Col, Select } from 'antd';
 import GoogleAutoComplete from './index';
 import { set } from 'lodash';
+import { useAddressStore } from '@/store/address';
+import { useDisUpdateEffect } from '@/hooks/common';
+
 /**
  * 地址自动完成（包括address1/address2/city/state/zip）
  */
@@ -24,6 +27,8 @@ const AddressForm = ({
 	stateCol = {},
 	zipCol = {},
 }) => {
+	const { getStateList, getCityList, stateOptions, cityOptions } = useAddressStore();
+	const stateValue = Form.useWatch(stateName,form);
 	const handlePlaceSelected = (place) => {
 		if (!form) return;
 		const newValue = form.getFieldsValue() || {};
@@ -33,6 +38,14 @@ const AddressForm = ({
 		set(newValue, addressName2, place.unit);
 		form.setFieldsValue(newValue);
 	};
+
+	useEffect(() => {
+		getStateList();
+	}, []);
+
+	useDisUpdateEffect(()=>{
+		stateValue && getCityList(stateValue);
+	},[stateValue])
 
 	return (
 		<>
@@ -53,9 +66,17 @@ const AddressForm = ({
 					<Input placeholder={`Enter ${addressLabel2}`} />
 				</Form.Item>
 			</Col>
-			<Col md={24} {...cityCol} >
-				<Form.Item name={cityName} label={cityLabel} rules={[{ required: true, message: 'Please enter city!' }]}>
-					<Input placeholder="Enter city" />
+			<Col md={24} {...cityCol}>
+				<Form.Item
+					name={cityName}
+					label={cityLabel}
+					rules={[{ required: true, message: 'Please enter city!' }]}
+				>
+					<Select
+						options={cityOptions}
+						optionFilterProp="label"
+						placeholder="Enter city"
+					/>
 				</Form.Item>
 			</Col>
 			<Col md={12} {...stateCol}>
@@ -64,14 +85,19 @@ const AddressForm = ({
 					label={stateLabel}
 					rules={[{ required: true, message: 'Please enter state!' }]}
 				>
-					<Select options={[]} placeholder="Enter state" />
+					<Select
+						options={stateOptions}
+						optionFilterProp="label"
+						placeholder="Enter state"
+					/>
 				</Form.Item>
 			</Col>
-			<Col
-				md={12}
-				{...zipCol}
-			>
-				<Form.Item name={zipName} label={zipLabel} rules={[{ required: true, message: 'Please enter zip code!' }]}>
+			<Col md={12} {...zipCol}>
+				<Form.Item
+					name={zipName}
+					label={zipLabel}
+					rules={[{ required: true, message: 'Please enter zip code!' }]}
+				>
 					<Input placeholder="Enter zip" />
 				</Form.Item>
 			</Col>

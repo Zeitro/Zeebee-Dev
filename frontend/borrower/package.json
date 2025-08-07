@@ -17,6 +17,7 @@
 		"@ant-design/v5-patch-for-react-19": "^1.0.3",
 		"antd": "^5.26.2",
 		"dayjs": "^1.11.13",
+		"events": "^3.3.0",
 		"lodash": "^4.17.21",
 		"next": "15.3.0",
 		"react": "^19.0.0",

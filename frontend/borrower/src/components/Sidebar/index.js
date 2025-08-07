@@ -8,6 +8,7 @@ import { generateMenuBar, getCurrentRouterItem } from '@config/common';
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import { RightCircleTwoTone, LeftCircleTwoTone } from '@ant-design/icons';
+import { useUserStore } from '@/store/user';
 const homePathname = '/';
 /**
  * 侧边栏组件
@@ -15,6 +16,8 @@ const homePathname = '/';
 const SidebarDom = () => {
 	const router = useRouter();
 	const pathname = usePathname();
+	const items = generateMenuBar(navRouter).filter((i) => i.key !== '/');
+	const { userInfo } = useUserStore();
 	const { siberCollapsed, changeSiberCollapsed } = useGlobalStore();
 	const [selectedKey, setSelectedKey] = useState(homePathname);
 	const config = useMemo(() => getCurrentRouterItem(pathname, navRouter), [pathname]); // 获取当前路由的配置
@@ -30,8 +33,9 @@ const SidebarDom = () => {
 	};
 	// 初始化根据路由选中侧边栏
 	useEffect(() => {
-		setSelectedKey((v) => (v !== pathname ? pathname : homePathname));
-	}, []);
+		const routerItem = items.find((i) => pathname.indexOf(i.key) !== -1);
+		setSelectedKey(routerItem?.key || homePathname);
+	}, [pathname]);
 
 	return config ? (
 		<div
@@ -53,7 +57,7 @@ const SidebarDom = () => {
 			<Menu
 				mode="vertical"
 				selectedKeys={[selectedKey]}
-				items={generateMenuBar(navRouter).filter((i) => i.key !== '/')}
+				items={items}
 				className={[
 					'flex-1 overflow-hidden border-r-0',
 					styles.menuList,
@@ -74,9 +78,9 @@ const SidebarDom = () => {
 				{!siberCollapsed && (
 					<div className="flex-1">
 						<p className={`text-base/4 text-black-dark font-medium pb-[3px]`}>
-							username
+							{userInfo?.first_name} {userInfo?.last_name}
 						</p>
-						<span className="text-gray-medium">kevinmo@email.com</span>
+						<span className="text-gray-medium">{userInfo?.email}</span>
 					</div>
 				)}
 			</div>
