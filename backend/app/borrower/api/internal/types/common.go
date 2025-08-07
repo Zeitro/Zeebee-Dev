@@ -12,13 +12,13 @@ type GetSelectOptionResponse struct {
 }
 
 type GetUsCitiesRequest struct {
-	StateId int64 `form:"state_id"`
+	State string `form:"state"`
 }
 
 type GetUsCitiesResponse struct {
-	List []UsCityEntry `json:"list"`
+	List []string `json:"list"`
 }
 
 type GetUsStatesResponse struct {
-	List []UsStateEntry `json:"list"`
+	List []string `json:"list"`
 }

@@ -29,8 +29,8 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CommonClient interface {
 	GetOpt(ctx context.Context, in *OptionRequest, opts ...grpc.CallOption) (*OptionResponse, error)
-	GetUsState(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*UsStateResponse, error)
-	GetUsCities(ctx context.Context, in *UsCitiesRequest, opts ...grpc.CallOption) (*UsCitiesResponse, error)
+	GetUsState(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*StringSliceResponse, error)
+	GetUsCities(ctx context.Context, in *UsCitiesRequest, opts ...grpc.CallOption) (*StringSliceResponse, error)
 }
 
 type commonClient struct {
@@ -51,9 +51,9 @@ func (c *commonClient) GetOpt(ctx context.Context, in *OptionRequest, opts ...gr
 	return out, nil
 }
 
-func (c *commonClient) GetUsState(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*UsStateResponse, error) {
+func (c *commonClient) GetUsState(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*StringSliceResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UsStateResponse)
+	out := new(StringSliceResponse)
 	err := c.cc.Invoke(ctx, Common_GetUsState_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -61,9 +61,9 @@ func (c *commonClient) GetUsState(ctx context.Context, in *EmptyRequest, opts ..
 	return out, nil
 }
 
-func (c *commonClient) GetUsCities(ctx context.Context, in *UsCitiesRequest, opts ...grpc.CallOption) (*UsCitiesResponse, error) {
+func (c *commonClient) GetUsCities(ctx context.Context, in *UsCitiesRequest, opts ...grpc.CallOption) (*StringSliceResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UsCitiesResponse)
+	out := new(StringSliceResponse)
 	err := c.cc.Invoke(ctx, Common_GetUsCities_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -76,8 +76,8 @@ func (c *commonClient) GetUsCities(ctx context.Context, in *UsCitiesRequest, opt
 // for forward compatibility.
 type CommonServer interface {
 	GetOpt(context.Context, *OptionRequest) (*OptionResponse, error)
-	GetUsState(context.Context, *EmptyRequest) (*UsStateResponse, error)
-	GetUsCities(context.Context, *UsCitiesRequest) (*UsCitiesResponse, error)
+	GetUsState(context.Context, *EmptyRequest) (*StringSliceResponse, error)
+	GetUsCities(context.Context, *UsCitiesRequest) (*StringSliceResponse, error)
 	mustEmbedUnimplementedCommonServer()
 }
 
@@ -91,10 +91,10 @@ type UnimplementedCommonServer struct{}
 func (UnimplementedCommonServer) GetOpt(context.Context, *OptionRequest) (*OptionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetOpt not implemented")
 }
-func (UnimplementedCommonServer) GetUsState(context.Context, *EmptyRequest) (*UsStateResponse, error) {
+func (UnimplementedCommonServer) GetUsState(context.Context, *EmptyRequest) (*StringSliceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUsState not implemented")
 }
-func (UnimplementedCommonServer) GetUsCities(context.Context, *UsCitiesRequest) (*UsCitiesResponse, error) {
+func (UnimplementedCommonServer) GetUsCities(context.Context, *UsCitiesRequest) (*StringSliceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUsCities not implemented")
 }
 func (UnimplementedCommonServer) mustEmbedUnimplementedCommonServer() {}

@@ -67,12 +67,9 @@ type (
 	RefreshTokenRequestData            = borrower.RefreshTokenRequestData
 	RefreshTokenResponse               = borrower.RefreshTokenResponse
 	RefreshTokenResponseData           = borrower.RefreshTokenResponseData
+	StringSliceResponse                = borrower.StringSliceResponse
 	UsCitiesRequest                    = borrower.UsCitiesRequest
 	UsCitiesRequestData                = borrower.UsCitiesRequestData
-	UsCitiesResponse                   = borrower.UsCitiesResponse
-	UsCityEntry                        = borrower.UsCityEntry
-	UsStateEntry                       = borrower.UsStateEntry
-	UsStateResponse                    = borrower.UsStateResponse
 	UserInfoRequest                    = borrower.UserInfoRequest
 	UserInfoRequestData                = borrower.UserInfoRequestData
 	UserLoginRequest                   = borrower.UserLoginRequest

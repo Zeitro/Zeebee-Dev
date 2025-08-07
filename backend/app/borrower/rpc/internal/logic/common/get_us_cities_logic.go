@@ -3,8 +3,6 @@ package commonlogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 
@@ -27,22 +25,18 @@ func NewGetUsCitiesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUs
 	}
 }
 
-func (l *GetUsCitiesLogic) GetUsCities(in *borrower.UsCitiesRequest) (resp *borrower.UsCitiesResponse, err error) {
+func (l *GetUsCitiesLogic) GetUsCities(in *borrower.UsCitiesRequest) (resp *borrower.StringSliceResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	usCityModels, err := l.svcCtx.UsCityRepo.FindAll(l.ctx, map[string]interface{}{"state_id": in.Data.StateId})
+
+	cities, err := l.svcCtx.UsGeographyRepo.GetCitiesByStateUsps(l.ctx, in.Data.StateUsps)
 	if err != nil {
 		return nil, err
 	}
-	cities := make([]*borrower.UsCityEntry, 0, len(usCityModels))
-	err = copier.Copy(&cities, &usCityModels)
-	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
-	}
-	return &borrower.UsCitiesResponse{
+	return &borrower.StringSliceResponse{
 		Data: cities,
 	}, nil
 }

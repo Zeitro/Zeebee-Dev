@@ -114,18 +114,6 @@ type SelectOptionEntry struct {
 	Value string `json:"value"`
 }
 
-type UsCityEntry struct {
-	Id      int64  `json:"id"`
-	StateId int64  `json:"state_id"`
-	Name    string `json:"name"`
-}
-
-type UsStateEntry struct {
-	Id   int64  `json:"id"`
-	Code string `json:"code"`
-	Name string `json:"name"`
-}
-
 type UserInfo struct {
 	Id          int64  `json:"id"`
 	Email       string `json:"email"`
