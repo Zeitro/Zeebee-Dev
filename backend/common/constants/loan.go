@@ -1,6 +1,10 @@
 package constants
 
-import "zeebee-backend/common/enums"
+import (
+	"fmt"
+
+	"zeebee-backend/common/enums"
+)
 
 // stage: Pending,Active,Archived
 type LoanStage string
@@ -245,56 +249,56 @@ func init() {
 	// register loan prepayment penalty
 	enums.Register(LoanPrepaymentPenaltyName, []enums.EnumOpt{
 		{
-			Label: string(LoanPrepaymentPenaltyNone),
-			Value: string(LoanPrepaymentPenaltyNone),
+			Label: "None",
+			Value: fmt.Sprintf("%d", LoanPrepaymentPenaltyNone),
 		},
 		{
-			Label: string(LoanPrepaymentPenaltyOne),
-			Value: string(LoanPrepaymentPenaltyOne),
+			Label: fmt.Sprintf("%d month interest", LoanPrepaymentPenaltyOne),
+			Value: fmt.Sprintf("%d", LoanPrepaymentPenaltyOne),
 		},
 		{
-			Label: string(LoanPrepaymentPenaltyTwo),
-			Value: string(LoanPrepaymentPenaltyTwo),
+			Label: fmt.Sprintf("%d months interest", LoanPrepaymentPenaltyTwo),
+			Value: fmt.Sprintf("%d", LoanPrepaymentPenaltyTwo),
 		},
 		{
-			Label: string(LoanPrepaymentPenaltyThree),
-			Value: string(LoanPrepaymentPenaltyThree),
+			Label: fmt.Sprintf("%d months interest", LoanPrepaymentPenaltyThree),
+			Value: fmt.Sprintf("%d", LoanPrepaymentPenaltyThree),
 		},
 		{
-			Label: string(LoanPrepaymentPenaltyFour),
-			Value: string(LoanPrepaymentPenaltyFour),
+			Label: fmt.Sprintf("%d months interest", LoanPrepaymentPenaltyFour),
+			Value: fmt.Sprintf("%d", LoanPrepaymentPenaltyFour),
 		},
 		{
-			Label: string(LoanPrepaymentPenaltyFive),
-			Value: string(LoanPrepaymentPenaltyFive),
+			Label: fmt.Sprintf("%d months interest", LoanPrepaymentPenaltyFive),
+			Value: fmt.Sprintf("%d", LoanPrepaymentPenaltyFive),
 		},
 		{
-			Label: string(LoanPrepaymentPenaltySix),
-			Value: string(LoanPrepaymentPenaltySix),
+			Label: fmt.Sprintf("%d months interest", LoanPrepaymentPenaltySix),
+			Value: fmt.Sprintf("%d", LoanPrepaymentPenaltySix),
 		},
 		{
-			Label: string(LoanPrepaymentPenaltySeven),
-			Value: string(LoanPrepaymentPenaltySeven),
+			Label: fmt.Sprintf("%d months interest", LoanPrepaymentPenaltySeven),
+			Value: fmt.Sprintf("%d", LoanPrepaymentPenaltySeven),
 		},
 		{
-			Label: string(LoanPrepaymentPenaltyEight),
-			Value: string(LoanPrepaymentPenaltyEight),
+			Label: fmt.Sprintf("%d months interest", LoanPrepaymentPenaltyEight),
+			Value: fmt.Sprintf("%d", LoanPrepaymentPenaltyEight),
 		},
 		{
-			Label: string(LoanPrepaymentPenaltyNine),
-			Value: string(LoanPrepaymentPenaltyNine),
+			Label: fmt.Sprintf("%d months interest", LoanPrepaymentPenaltyNine),
+			Value: fmt.Sprintf("%d", LoanPrepaymentPenaltyNine),
 		},
 		{
-			Label: string(LoanPrepaymentPenaltyTen),
-			Value: string(LoanPrepaymentPenaltyTen),
+			Label: fmt.Sprintf("%d months interest", LoanPrepaymentPenaltyTen),
+			Value: fmt.Sprintf("%d", LoanPrepaymentPenaltyTen),
 		},
 		{
-			Label: string(LoanPrepaymentPenaltyEleven),
-			Value: string(LoanPrepaymentPenaltyEleven),
+			Label: fmt.Sprintf("%d months interest", LoanPrepaymentPenaltyEleven),
+			Value: fmt.Sprintf("%d", LoanPrepaymentPenaltyEleven),
 		},
 		{
-			Label: string(LoanPrepaymentPenaltyTwelve),
-			Value: string(LoanPrepaymentPenaltyTwelve),
+			Label: fmt.Sprintf("%d months interest", LoanPrepaymentPenaltyTwelve),
+			Value: fmt.Sprintf("%d", LoanPrepaymentPenaltyTwelve),
 		},
 	})
 
