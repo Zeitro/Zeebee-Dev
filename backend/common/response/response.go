@@ -24,7 +24,7 @@ func Success(w http.ResponseWriter, data interface{}) {
 
 // Error 错误响应
 func Error(w http.ResponseWriter, code int, message string) {
-	httpx.WriteJson(w, code, Response{
+	httpx.WriteJson(w, http.StatusOK, Response{
 		Code:    code,
 		Message: message,
 	})
@@ -32,7 +32,7 @@ func Error(w http.ResponseWriter, code int, message string) {
 
 // BadRequest 400错误
 func BadRequest(w http.ResponseWriter, message string) {
-	Error(w, http.StatusBadRequest, message)
+	Error(w, http.StatusOK, message)
 }
 
 // Unauthorized 401错误
