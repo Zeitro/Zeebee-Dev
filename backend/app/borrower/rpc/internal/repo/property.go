@@ -140,7 +140,7 @@ func (repo *PropertyRepo) Page(ctx context.Context, pageReq *borrower.PropertyPa
 	// applicant
 	if len(filter.Applicant) > 0 {
 		query = query.Joins(fmt.Sprintf("left join %s on %s.id = %s.loan_id", applicantTable, propertyTable, applicantTable)).
-			Where(fmt.Sprintf("%s.full_name in ?", applicantTable), filter.Applicant)
+			Where(fmt.Sprintf("%s.name in ?", applicantTable), filter.Applicant)
 	}
 
 	sortColumns := []string{}
