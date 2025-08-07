@@ -10,14 +10,13 @@ type ServiceContext struct {
 	Config config.RpcConf
 
 	// repo
-	UserRepo      *repo.UserRepo
-	BorrowerRepo  *repo.BorrowerRepo
-	LenderRepo    *repo.LenderRepo
-	LoanRepo      *repo.LoanRepo
-	PropertyRepo  *repo.PropertyRepo
-	ApplicantRepo *repo.ApplicantRepo
-	UsStateRepo   *repo.UsStateRepo
-	UsCityRepo    *repo.UsCityRepo
+	UserRepo        *repo.UserRepo
+	BorrowerRepo    *repo.BorrowerRepo
+	LenderRepo      *repo.LenderRepo
+	LoanRepo        *repo.LoanRepo
+	PropertyRepo    *repo.PropertyRepo
+	ApplicantRepo   *repo.ApplicantRepo
+	UsGeographyRepo *repo.UsGeographyRepo
 }
 
 func NewServiceContext(c config.RpcConf) *ServiceContext {
@@ -25,13 +24,12 @@ func NewServiceContext(c config.RpcConf) *ServiceContext {
 		Config: c,
 
 		// repo
-		UserRepo:      repo.NewUserRepo(global.GetGormDB()),
-		BorrowerRepo:  repo.NewBorrowerRepo(global.GetGormDB()),
-		LenderRepo:    repo.NewLenderRepo(global.GetGormDB()),
-		LoanRepo:      repo.NewLoanRepo(global.GetGormDB()),
-		PropertyRepo:  repo.NewPropertyRepo(global.GetGormDB()),
-		ApplicantRepo: repo.NewApplicantRepo(global.GetGormDB()),
-		UsStateRepo:   repo.NewUsStateRepo(global.GetGormDB()),
-		UsCityRepo:    repo.NewUsCityRepo(global.GetGormDB()),
+		UserRepo:        repo.NewUserRepo(global.GetGormDB()),
+		BorrowerRepo:    repo.NewBorrowerRepo(global.GetGormDB()),
+		LenderRepo:      repo.NewLenderRepo(global.GetGormDB()),
+		LoanRepo:        repo.NewLoanRepo(global.GetGormDB()),
+		PropertyRepo:    repo.NewPropertyRepo(global.GetGormDB()),
+		ApplicantRepo:   repo.NewApplicantRepo(global.GetGormDB()),
+		UsGeographyRepo: repo.NewUsGeographyRepo(global.GetGormDB()),
 	}
 }

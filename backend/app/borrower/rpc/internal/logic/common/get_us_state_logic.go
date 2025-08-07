@@ -3,8 +3,6 @@ package commonlogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 
@@ -27,24 +25,19 @@ func NewGetUsStateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUsS
 	}
 }
 
-func (l *GetUsStateLogic) GetUsState(in *borrower.EmptyRequest) (resp *borrower.UsStateResponse, err error) {
+func (l *GetUsStateLogic) GetUsState(in *borrower.EmptyRequest) (resp *borrower.StringSliceResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
 
-	usStateModels, err := l.svcCtx.UsStateRepo.FindAll(l.ctx, nil)
+	states, err := l.svcCtx.UsGeographyRepo.GetStateUsps(l.ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	states := make([]*borrower.UsStateEntry, 0, len(usStateModels))
-
-	err = copier.Copy(&states, &usStateModels)
-	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
-	}
-
-	return &borrower.UsStateResponse{Data: states}, nil
+	return &borrower.StringSliceResponse{
+		Data: states,
+	}, nil
 }

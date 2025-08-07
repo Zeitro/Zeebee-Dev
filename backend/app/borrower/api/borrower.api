@@ -12,8 +12,7 @@ import "desc/loan.api"
 import "desc/common.api"
 import "desc/property.api"
 import "desc/applicant.api"
-import "desc/us_state.api"
-import "desc/us_city.api"
+import "desc/us_geography.api"
 
 type (
 	EmptyRequest  {}

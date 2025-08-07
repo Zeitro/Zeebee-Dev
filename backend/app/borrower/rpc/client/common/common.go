@@ -67,12 +67,9 @@ type (
 	RefreshTokenRequestData            = borrower.RefreshTokenRequestData
 	RefreshTokenResponse               = borrower.RefreshTokenResponse
 	RefreshTokenResponseData           = borrower.RefreshTokenResponseData
+	StringSliceResponse                = borrower.StringSliceResponse
 	UsCitiesRequest                    = borrower.UsCitiesRequest
 	UsCitiesRequestData                = borrower.UsCitiesRequestData
-	UsCitiesResponse                   = borrower.UsCitiesResponse
-	UsCityEntry                        = borrower.UsCityEntry
-	UsStateEntry                       = borrower.UsStateEntry
-	UsStateResponse                    = borrower.UsStateResponse
 	UserInfoRequest                    = borrower.UserInfoRequest
 	UserInfoRequestData                = borrower.UserInfoRequestData
 	UserLoginRequest                   = borrower.UserLoginRequest
@@ -88,8 +85,8 @@ type (
 
 	Common interface {
 		GetOpt(ctx context.Context, in *OptionRequest, opts ...grpc.CallOption) (*OptionResponse, error)
-		GetUsState(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*UsStateResponse, error)
-		GetUsCities(ctx context.Context, in *UsCitiesRequest, opts ...grpc.CallOption) (*UsCitiesResponse, error)
+		GetUsState(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*StringSliceResponse, error)
+		GetUsCities(ctx context.Context, in *UsCitiesRequest, opts ...grpc.CallOption) (*StringSliceResponse, error)
 	}
 
 	defaultCommon struct {
@@ -108,12 +105,12 @@ func (m *defaultCommon) GetOpt(ctx context.Context, in *OptionRequest, opts ...g
 	return client.GetOpt(ctx, in, opts...)
 }
 
-func (m *defaultCommon) GetUsState(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*UsStateResponse, error) {
+func (m *defaultCommon) GetUsState(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*StringSliceResponse, error) {
 	client := borrower.NewCommonClient(m.cli.Conn())
 	return client.GetUsState(ctx, in, opts...)
 }
 
-func (m *defaultCommon) GetUsCities(ctx context.Context, in *UsCitiesRequest, opts ...grpc.CallOption) (*UsCitiesResponse, error) {
+func (m *defaultCommon) GetUsCities(ctx context.Context, in *UsCitiesRequest, opts ...grpc.CallOption) (*StringSliceResponse, error) {
 	client := borrower.NewCommonClient(m.cli.Conn())
 	return client.GetUsCities(ctx, in, opts...)
 }

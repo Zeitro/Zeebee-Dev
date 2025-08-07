@@ -1844,8 +1844,8 @@
         "operationId": "commonGetUsCities",
         "parameters": [
           {
-            "type": "integer",
-            "name": "state_id",
+            "type": "string",
+            "name": "state",
             "in": "query",
             "required": true
           }
@@ -1859,23 +1859,7 @@
                 "list": {
                   "type": "array",
                   "items": {
-                    "type": "object",
-                    "required": [
-                      "id",
-                      "state_id",
-                      "name"
-                    ],
-                    "properties": {
-                      "id": {
-                        "type": "integer"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "state_id": {
-                        "type": "integer"
-                      }
-                    }
+                    "type": "string"
                   }
                 }
               }
@@ -1906,23 +1890,7 @@
                 "list": {
                   "type": "array",
                   "items": {
-                    "type": "object",
-                    "required": [
-                      "id",
-                      "code",
-                      "name"
-                    ],
-                    "properties": {
-                      "code": {
-                        "type": "string"
-                      },
-                      "id": {
-                        "type": "integer"
-                      },
-                      "name": {
-                        "type": "string"
-                      }
-                    }
+                    "type": "string"
                   }
                 }
               }
@@ -2177,7 +2145,7 @@
       }
     }
   },
-  "x-date": "2025-08-06 16:26:54",
+  "x-date": "2025-08-07 09:39:31",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

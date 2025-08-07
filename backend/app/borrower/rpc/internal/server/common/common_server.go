@@ -28,12 +28,12 @@ func (s *CommonServer) GetOpt(ctx context.Context, in *borrower.OptionRequest) (
 	return l.GetOpt(in)
 }
 
-func (s *CommonServer) GetUsState(ctx context.Context, in *borrower.EmptyRequest) (*borrower.UsStateResponse, error) {
+func (s *CommonServer) GetUsState(ctx context.Context, in *borrower.EmptyRequest) (*borrower.StringSliceResponse, error) {
 	l := commonlogic.NewGetUsStateLogic(ctx, s.svcCtx)
 	return l.GetUsState(in)
 }
 
-func (s *CommonServer) GetUsCities(ctx context.Context, in *borrower.UsCitiesRequest) (*borrower.UsCitiesResponse, error) {
+func (s *CommonServer) GetUsCities(ctx context.Context, in *borrower.UsCitiesRequest) (*borrower.StringSliceResponse, error) {
 	l := commonlogic.NewGetUsCitiesLogic(ctx, s.svcCtx)
 	return l.GetUsCities(in)
 }
