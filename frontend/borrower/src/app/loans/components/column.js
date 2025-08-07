@@ -1,4 +1,4 @@
-import LoanStatus from '@/components/LoanStatus';
+import LoanPendingStatus from './LoanPendingStatus';
 import TableOperation from '@/components/TableOperation';
 
 
@@ -44,9 +44,7 @@ const common = (isNotAddress) => {
 	},
 ]
 };
-export const pendingColumns = (isNotAddress) => {
-	console.log(isNotAddress);
-	
+export const pendingColumns = (isNotAddress,successCallback) => {
 	return [
 	...common(isNotAddress),
 	{
@@ -117,7 +115,7 @@ export const pendingColumns = (isNotAddress) => {
 		key: 'pending_status',
 		ellipsis: true,
 		width: 160,
-		render: (v, { source }) => <LoanStatus status={v} is3rdParty={source==='borrower'} />,
+		render: (v, record) => <LoanPendingStatus data={record} successCallback={successCallback}/>,
 	},
 	{
 		title: '',

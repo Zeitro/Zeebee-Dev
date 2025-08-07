@@ -15,11 +15,15 @@ import { useGetOptions } from '@/hooks/useGetOptions';
 import { loan_active, loan_pending } from '@/enum/common';
 import { formatStr } from '@/lib/date';
 const CreateTerm = ({ stage, stepBtn, gutter, ...colProps }) => {
-	const { lienPositionOptions } = useGetOptions([
+	const { lienPositionOptions, prepaymentPenaltyOptions } = useGetOptions([
 		{
 			key: 'lien_position',
 			valueName: 'lienPositionOptions',
 		},
+		{
+			key: 'loan_prepayment_penalty',
+			valueName: 'prepaymentPenaltyOptions'
+		}
 	]);
 	const rateDom = (
 		<Col md={24} {...(colProps || {})}>
@@ -164,7 +168,7 @@ const CreateTerm = ({ stage, stepBtn, gutter, ...colProps }) => {
 							rules={[{ required: true, message: 'Please input!' }]}
 						>
 							<Select
-								options={lienPositionOptions}
+								options={prepaymentPenaltyOptions}
 								placeholder="Enter Prepayment penalty"
 							/>
 							{/* <InputNumAmount placeholder="Enter Prepayment penalty" /> */}

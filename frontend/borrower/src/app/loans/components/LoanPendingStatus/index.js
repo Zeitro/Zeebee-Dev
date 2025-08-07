@@ -1,5 +1,5 @@
 'use client';
-import { Dropdown, Tooltip } from 'antd';
+import { Dropdown, message, Tooltip } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
 import { DownOutlined } from '@ant-design/icons';
 import styles from './index.module.css';
@@ -15,10 +15,10 @@ let api = '/api/loan/status';
  * successCallback 状态变更后的回调函数
  * is3rdParty true是第三方贷款,则可修改状态,否则不可修改
  * */
-const LoanStatus = ({ status, is3rdParty = true, successCallback }) => {
+const LoanPendingStatus = ({ data, successCallback }) => {
 	const {loanPendingStatus} = useOptionsStore();
 	const [loading, setLoading] = useState(false);
-	const [statusValue, setStatusValue] = useState(status);
+	const [statusValue, setStatusValue] = useState(data.pending_status);
 	const items = transformArrayStructure({
 		sourceArray: loanPendingStatus,
 		entryValue: 'value',
@@ -29,20 +29,23 @@ const LoanStatus = ({ status, is3rdParty = true, successCallback }) => {
 	const rowData = useMemo(() => {
 		return items.find((i) => i.key === statusValue) || {};
 	}, [statusValue]);
+	const is3rdParty = data?.source==='borrower'
 
 	const handleSelect = ({ key }) => {
 		try {
 			cancel(api);
 			setLoading(true);
 			setStatusValue(key);
-			// const res = request({
-			// 	url: api,
-			// 	method: 'POST',
-			// 	data: { status: key },
-			// });
+			const res = request(`/loan/${data.id}/pending_status`,{
+				method: 'PUT',
+				body: { pending_status: key },
+			});
 			setLoading(false);
+			message.open({
+				type: 'success',
+				content:'Update successful！'
+			})
 			successCallback?.();
-			// console.log(res);
 		} catch (error) {
 			setLoading(false);
 		}
@@ -72,4 +75,4 @@ const LoanStatus = ({ status, is3rdParty = true, successCallback }) => {
 		</Tooltip>
 	);
 };
-export default LoanStatus;
+export default LoanPendingStatus;

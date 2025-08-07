@@ -14,14 +14,10 @@ const PendingPage = ({
 	dataSource,
 	isNotAddress,
 	loading,
-	scrollX=3500
+	scrollX = 3500,
 }) => {
-	const {
-		loanPendingStatus,
-		loanPurposeOptions,
-		loanTypeOptions,
-		lenderOptions,
-	} = useOptionsStore();
+	const { loanPendingStatus, loanPurposeOptions, loanTypeOptions, lenderOptions } =
+		useOptionsStore();
 	const { request } = createRequest();
 	const tableFilterRef = useRef();
 	const [type, setType] = useState('');
@@ -138,7 +134,7 @@ const PendingPage = ({
 	return (
 		<FilterTable
 			ref={tableFilterRef}
-			columns={pendingColumns(isNotAddress)}
+			columns={pendingColumns(isNotAddress, tableFilterRef?.current?.handleSearch)}
 			scroll={{ x: scrollX, y: 'calc(100% - 54px)' }}
 			filterList={filterList}
 			hasFilterField={hasFilterField}

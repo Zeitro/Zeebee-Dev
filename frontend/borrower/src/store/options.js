@@ -12,6 +12,7 @@ export const useOptionsStore = create((set) => ({
 	propertyTypeOptions: [], //property_type
 	lienPositionOptions: [], //lien_position
 	businessStrategyOptions: [], //business_strategy
+	prepaymentPenaltyOptions:[], //loan_prepayment_penalty
 	getOptions: async (name, key) => {
 		const { options } = await getSelectOptions(name);
 		return (
