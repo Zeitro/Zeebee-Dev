@@ -70,7 +70,7 @@ export function formatAmount(amount) {
 
 // 拼装地址
 export const assemblyAddress = (address = {}) => {
-	const newArr = [address?.address1, address?.state, address?.city, address?.zip_code].filter(
+	const newArr = [address?.address1,address?.city, address?.state].filter(
 		(i) => i,
 	);
 	return [...new Set(newArr)].join(',');

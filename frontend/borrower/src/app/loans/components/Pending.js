@@ -9,15 +9,18 @@ const PendingPage = ({
 	hasFilterField,
 	hasPagination,
 	filterWrapClassName,
-	api = '/loan/page',
+	api,
+	method = 'POST',
+	dataSource,
+	isNotAddress,
+	loading,
+	scrollX=3500
 }) => {
 	const {
 		loanPendingStatus,
 		loanPurposeOptions,
 		loanTypeOptions,
 		lenderOptions,
-		getOptions,
-		getLender,
 	} = useOptionsStore();
 	const { request } = createRequest();
 	const tableFilterRef = useRef();
@@ -128,44 +131,44 @@ const PendingPage = ({
 			loanTypeOptions,
 			loanPendingStatus,
 			lenderOptions,
-			tableFilterRef?.current
+			tableFilterRef?.current,
 		],
 	);
-	useEffect(() => {
-		!loanPurposeOptions?.length && getOptions('loan_purpose', 'loanPurposeOptions');
-	}, [loanPurposeOptions]);
 
-	useEffect(() => {
-		!loanTypeOptions?.length && getOptions('loan_type', 'loanTypeOptions');
-	}, [loanTypeOptions]);
-
-	useEffect(() => {
-		!loanPendingStatus?.length && getOptions('loan_pending_status', 'loanPendingStatus');
-	}, [loanPendingStatus]);
-
-	useEffect(() => {
-		!lenderOptions?.length && getLender();
-	}, [lenderOptions]);
 	return (
 		<FilterTable
 			ref={tableFilterRef}
-			columns={pendingColumns}
-			scroll={{ x: 3500, y: 'calc(100% - 54px)' }}
+			columns={pendingColumns(isNotAddress)}
+			scroll={{ x: scrollX, y: 'calc(100% - 54px)' }}
 			filterList={filterList}
 			hasFilterField={hasFilterField}
 			pagination={hasPagination}
 			filterWrapClassName={filterWrapClassName}
+			dataSource={dataSource}
+			dataSourceLoading={loading}
 			getData={(params) => {
-				return request(api, {
-					method: 'POST',
-					body: {
-						...params,
-						filter: {
+				if (!api) {
+					return {
+						list: dataSource,
+						total: dataSource?.length,
+					};
+				}
+				const filter = hasFilterField
+					? {}
+					: {
 							...(params?.filter || {}),
 							stage: 'Pending',
-						},
-					},
-				});
+						};
+				const payload = {
+					method,
+				};
+				if (method === 'POST') {
+					payload.body = {
+						...params,
+						filter,
+					};
+				}
+				return request(api, payload);
 			}}
 		/>
 	);

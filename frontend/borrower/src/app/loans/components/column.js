@@ -2,8 +2,9 @@ import LoanStatus from '@/components/LoanStatus';
 import TableOperation from '@/components/TableOperation';
 
 
-const common = [
-	{
+const common = (isNotAddress) => {
+	const addressArr = [
+		{
 		title: 'Property address',
 		dataIndex: ['property','address','address1'],
 		key: 'address',
@@ -31,6 +32,9 @@ const common = [
 		key: 'zip_code',
 		ellipsis: true,
 	},
+	]
+	return [
+	...(isNotAddress?[]:addressArr),
 	{
 		title: 'Borrower',
 		dataIndex: 'applicants',
@@ -38,9 +42,13 @@ const common = [
 		ellipsis: true,
 		render:(v)=>v?.map(i=>i.full_name)?.join('、')
 	},
-];
-export const pendingColumns = [
-	...common,
+]
+};
+export const pendingColumns = (isNotAddress) => {
+	console.log(isNotAddress);
+	
+	return [
+	...common(isNotAddress),
 	{
 		title: 'Loan purpose',
 		dataIndex: 'loan_purpose',
@@ -127,10 +135,11 @@ export const pendingColumns = [
 			/>
 		),
 	},
-];
+]
+};
 
-export const activeColumns = [
-	...common,
+export const activeColumns = (isNotAddress)=>[
+	...common(isNotAddress),
 	{
 		title: 'Lien Position',
 		dataIndex: 'lien_position',
@@ -228,8 +237,8 @@ export const activeColumns = [
 	},
 ];
 
-export const archivedColumns = [
-	...common,
+export const archivedColumns = (isNotAddress)=>[
+	...common(isNotAddress),
 	{
 		title: 'Loan type',
 		dataIndex: 'loan_type',

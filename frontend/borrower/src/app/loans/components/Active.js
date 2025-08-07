@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useMemo, useState, useRef } from 'react';
+import React, { useMemo, useState, useRef } from 'react';
 import FilterTable from '@/components/FilterTable';
 import { activeColumns } from './column';
 import { transformArrayStructure } from '@/lib/common';
@@ -9,10 +9,14 @@ const ActiveLoans = ({
 	hasFilterField,
 	hasPagination,
 	filterWrapClassName,
-	api = '/loan/page',
+	api,
+	method = 'POST',
+	dataSource,
+	isNotAddress,
+	loading,
+	scrollX = 3500,
 }) => {
-	const { loanPurposeOptions, loanTypeOptions, lenderOptions, getOptions, getLender } =
-		useOptionsStore();
+	const { loanPurposeOptions, loanTypeOptions, lenderOptions } = useOptionsStore();
 	const { request } = createRequest();
 	const tableFilterRef = useRef();
 	const [type, setType] = useState('');
@@ -105,38 +109,40 @@ const ActiveLoans = ({
 		],
 	);
 
-	useEffect(() => {
-		!loanPurposeOptions?.length && getOptions('loan_purpose', 'loanPurposeOptions');
-	}, [loanPurposeOptions]);
-
-	useEffect(() => {
-		!loanTypeOptions?.length && getOptions('loan_type', 'loanTypeOptions');
-	}, [loanTypeOptions]);
-
-	useEffect(() => {
-		!lenderOptions?.length && getLender();
-	}, [lenderOptions]);
-
 	return (
 		<FilterTable
 			ref={tableFilterRef}
-			columns={activeColumns}
-			scroll={{ x: 3500, y: 'calc(100% - 54px)' }}
+			columns={activeColumns(isNotAddress)}
+			scroll={{ x: scrollX, y: 'calc(100% - 54px)' }}
 			filterList={filterList}
 			hasFilterField={hasFilterField}
 			pagination={hasPagination}
 			filterWrapClassName={filterWrapClassName}
+			dataSource={dataSource}
+			dataSourceLoading={loading}
 			getData={(params) => {
-				return request(api, {
-					method: 'POST',
-					body: {
-						...params,
-						filter: {
+				if (!api) {
+					return {
+						list: dataSource,
+						total: dataSource.length,
+					};
+				}
+				const filter = hasFilterField
+					? {}
+					: {
 							...(params?.filter || {}),
 							stage: 'Active',
-						},
-					},
-				});
+						};
+				const payload = {
+					method,
+				};
+				if (method === 'POST') {
+					payload.body = {
+						...params,
+						filter,
+					};
+				}
+				return request(api, payload);
 			}}
 		/>
 	);

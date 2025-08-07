@@ -1,21 +1,17 @@
 'use client';
-import { Anchor, Button, Col, Form, message, Row, Space, Steps, Tabs } from 'antd';
-import React, { useEffect, useState } from 'react';
+import { Anchor, Button, Col, Form, message, Row } from 'antd';
+import React, { useEffect } from 'react';
 import CreateLoan from '../components/Create/Loan';
 import CreateProperty from '../components/Create/property';
 import CreateTerm from '../components/Create/term';
-// import styles from './loans.module.scss';
-import { usePathname, useParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { createLoanSteps } from '@/enum/loan';
 import styles from './index.module.scss';
 import { createRequest } from '@/lib/fetch';
 import dayjs from 'dayjs';
 import { formatDate } from '@/lib/date';
 const editLoanPage = () => {
-	// const router = useRouter();
-	const pathname = usePathname();
 	const { id } = useParams();
-	const [currentStep, setCurrentStep] = useState(2);
 	const [form] = Form.useForm();
 	const stage = Form.useWatch('stage', form);
 	const { request } = createRequest();

@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useMemo, useState } from 'react';
+import React from 'react';
 import styles from './index.module.scss';
 import {  propertiesFieldArr } from '@/enum/properties';
 import { Button, Col, Row } from 'antd';
@@ -24,7 +24,7 @@ const PropertiesItem = ({ data }) => {
 			render: (v) => formatDate(v),
 		},
 		{
-			render: () => <Button onClick={()=>router.push(`/properties/${data?.id || 1111}`)}>View detials</Button>,
+			render: () => <Button onClick={()=>router.push(`/properties/${data?.id}`)}>View detials</Button>,
 		},
 	];
 

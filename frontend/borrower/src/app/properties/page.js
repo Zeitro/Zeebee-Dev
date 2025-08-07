@@ -29,7 +29,7 @@ const Properties = () => {
 			{
 				type: 'input',
 				placeholder: 'Search by any field',
-				paramsKey:'keyword',
+				paramsKey: 'keyword',
 				value: searchValue,
 				onChange: ({ target: { value } }) => setSearchValue(value),
 			},
@@ -61,7 +61,6 @@ const Properties = () => {
 		try {
 			const filterParams = filterFieldRef?.current?.getApiParams?.();
 			setLoading(true);
-			setList([]);
 			const params = {
 				page: pagination.current?.current,
 				limit: pagination.current?.pageSize,
@@ -92,7 +91,7 @@ const Properties = () => {
 		<div className={['h-full flex flex-col px-8 pt-10 pb-8'].join(' ')}>
 			<FilterField ref={filterFieldRef} list={filterList} className="pb-8" />
 			<div className="flex items-center justify-between flex-shrink-0 mb-4 text-base font-medium pb-2 border-b border-base-disabled">
-				<p className="text-base font-medium">{list.length} Properties</p>
+				<p className="text-base font-medium">{pagination.current?.total || 0} Properties</p>
 				<div
 					className="flex cursor-pointer"
 					onClick={() => {
@@ -105,23 +104,26 @@ const Properties = () => {
 					Total loan: {sorter.current.sort === des ? sort_des : sort_asc}
 				</div>
 			</div>
-			<Spin spinning={loading} wrapperClassName="flex-1 overflow-hidden overflow-y-auto">
-				{loading ? (
-					<div className="min-h-[100px]"></div>
-				) : !!list?.length ? (
-					list.map((item, index) => <PropertiesItem key={index} data={item} />)
-				) : (
-					<NoData height={200} />
-				)}
-			</Spin>
-			{!loading && !!list.length && (
+			<div className="flex-1 overflow-hidden overflow-y-auto">
+				<Spin spinning={loading}>
+					{!!list?.length ? (
+						list.map((item, index) => <PropertiesItem key={index} data={item} />)
+					) : loading ? (
+						<div className="min-h-[100px]"></div>
+					) : (
+						<NoData height={200} />
+					)}
+				</Spin>
+			</div>
+			{!!list.length && (
 				<NewPagination
 					className="!mt-4 justify-end"
 					onChange={(page, pageSize) => {
+						cancel('/property/page');
 						pagination.current.current = page;
 						getList();
 					}}
-					{...pagination}
+					{...pagination.current}
 				/>
 			)}
 		</div>

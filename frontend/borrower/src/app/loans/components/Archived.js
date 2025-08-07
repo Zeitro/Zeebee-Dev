@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useMemo, useState, useRef } from 'react';
+import React, { useMemo, useState, useRef } from 'react';
 import FilterTable from '@/components/FilterTable';
 import { archivedColumns } from './column';
 import { transformArrayStructure } from '@/lib/common';
@@ -9,17 +9,20 @@ const ArchivedLoans = ({
 	hasFilterField,
 	hasPagination,
 	filterWrapClassName,
-	api = '/loan/page',
+	api,
+	method = 'POST',
+	dataSource,
+    isNotAddress,
+    loading,
+    scrollX=2000
 }) => {
-	const { loanTypeOptions, lenderOptions, getLender, getOptions } = useOptionsStore();
+	const { loanTypeOptions, lenderOptions } = useOptionsStore();
 	const { request } = createRequest();
 	const tableFilterRef = useRef();
 	const [type, setType] = useState('');
 	const [searchValue, setSearchValue] = useState('');
-	const [loanPurpose, setLoanPurpose] = useState([]);
 	const [loanType, setLoanType] = useState([]);
 	const [lender, setLender] = useState([]);
-	const [status, setStatus] = useState([]);
 	const filterList = useMemo(
 		() => [
 			{
@@ -83,7 +86,6 @@ const ArchivedLoans = ({
 		[
 			searchValue,
 			type,
-			loanPurpose,
 			loanType,
 			lender,
 			loanTypeOptions,
@@ -92,34 +94,40 @@ const ArchivedLoans = ({
 		],
 	);
 
-	useEffect(() => {
-		!loanTypeOptions?.length && getOptions('loan_type', 'loanTypeOptions');
-	}, [loanTypeOptions]);
-
-	useEffect(() => {
-		!lenderOptions?.length && getLender();
-	}, [lenderOptions]);
-
 	return (
 		<FilterTable
 			ref={tableFilterRef}
-			columns={archivedColumns}
-			scroll={{ x: 2000, y: 'calc(100% - 54px)' }}
+			columns={archivedColumns(isNotAddress)}
+			scroll={{ x: scrollX, y: 'calc(100% - 54px)' }}
 			filterList={filterList}
 			hasFilterField={hasFilterField}
 			pagination={hasPagination}
 			filterWrapClassName={filterWrapClassName}
+            dataSource={dataSource}
+            dataSourceLoading={loading}
 			getData={(params) => {
-				return request(api, {
-					method: 'POST',
-					body: {
-						...params,
-						filter: {
+				if (!api) {
+					return {
+						list: dataSource,
+						total: dataSource.length,
+					};
+				}
+				const filter = hasFilterField
+					? {}
+					: {
 							...(params?.filter || {}),
 							stage: 'Archived',
-						},
-					},
-				});
+						};
+				const payload = {
+					method,
+				};
+				if (method === 'POST') {
+					payload.body = {
+						...params,
+						filter,
+					};
+				}
+				return request(api, payload);
 			}}
 		/>
 	);

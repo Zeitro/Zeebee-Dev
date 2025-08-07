@@ -1,10 +1,9 @@
 'use client';
-import { Button, Col, Form, message, Row, Space, Steps, Tabs } from 'antd';
+import { Button, Col, Form, message, Space, Steps } from 'antd';
 import React, { useEffect, useState } from 'react';
 import CreateLoan from '../components/Create/Loan';
 import CreateProperty from '../components/Create/property';
 import CreateTerm from '../components/Create/term';
-// import styles from './loans.module.scss';
 import { useRouter } from 'next/navigation';
 import { createLoanSteps } from '@/enum/loan';
 import { createRequest } from '@/lib/fetch';

@@ -13,6 +13,7 @@ import { Col, Row, Tag } from 'antd';
 import { createRequest } from '@/lib/fetch';
 import { getPagination } from '@/lib/common';
 import { asc, des, ascend, descend } from '@/enum/common';
+import { useDisUpdateEffect } from '@/hooks/common';
 /**
  * Form筛选 + Table
  * @param {*Boolean} hasFilterField true显示筛选/false隐藏 
@@ -26,6 +27,7 @@ const FilterTable = (
 		columns,
 		scroll,
 		dataSource,
+		dataSourceLoading,
 		filterList,
 		rowProps = {},
 		filterName = 'Active filters',
@@ -109,13 +111,17 @@ const FilterTable = (
 	};
 
 	useEffect(() => {
-		if (dataSource) {
+		if (dataSource && Array.isArray(dataSource)) {
 			setTableList(dataSource);
 		} else if (isGet.current) {
 			getList();
 			isGet.current = false;
 		}
 	}, [dataSource]);
+
+	useDisUpdateEffect(()=>{
+		setLoading(dataSourceLoading);
+	},[dataSourceLoading])
 
 	useImperativeHandle(ref, () => ({
 		handleSearch,
