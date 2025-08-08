@@ -90,7 +90,7 @@ func (repo *LoanRepo) Page(ctx context.Context, pageReq *borrower.LoanPageReques
 				Where(fmt.Sprintf("%s.address->>'state' like ?", propertyTable), "%"+filter.Keyword+"%")
 		case "borrower":
 			query = query.Joins(fmt.Sprintf("left join %s on %s.id = %s.loan_id", applicantTable, loanTable, applicantTable)).
-				Where(fmt.Sprintf("%s.full_name like ?", applicantTable), "%"+filter.Keyword+"%")
+				Where(fmt.Sprintf("%s.name like ?", applicantTable), "%"+filter.Keyword+"%")
 		}
 	}
 	// loan purpose
