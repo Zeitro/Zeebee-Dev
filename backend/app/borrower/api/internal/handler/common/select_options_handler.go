@@ -6,6 +6,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
+
 	"zeebee-backend/app/borrower/api/internal/logic/common"
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
@@ -15,7 +16,7 @@ import (
 	"zeebee-backend/common/validator"
 )
 
-// get select options
+// SelectOptionsHandler get select options
 func SelectOptionsHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error

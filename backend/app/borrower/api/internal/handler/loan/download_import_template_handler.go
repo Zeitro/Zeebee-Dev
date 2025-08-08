@@ -15,8 +15,8 @@ import (
 	"zeebee-backend/common/errorx"
 )
 
-// download import template
-func DownloadImportTemplateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+// DownloadImportTemplateHandler download import template
+func DownloadImportTemplateHandler(_ *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer func() {
