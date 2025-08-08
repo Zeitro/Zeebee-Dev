@@ -126,6 +126,7 @@ const FilterTable = (
 	useImperativeHandle(ref, () => ({
 		handleSearch,
 	}));
+	
 	return (
 		<div className={[styles.filterTable, filterWrapClassName].join(' ')}>
 			{hasFilterField && <FilterField ref={filterFieldRef} list={filterList} {...rowProps} />}
@@ -168,9 +169,10 @@ const FilterTable = (
 				loading={loading}
 				columns={columns}
 				scroll={scroll}
-				pagination={pagination}
 				onChange={onChange}
 				{...props}
+				pagination={props?.pagination??pagination.current}
+				className={[styles.filter_table_content,props?.className].join(' ')}
 			/>
 		</div>
 	);

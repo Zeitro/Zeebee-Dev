@@ -23,7 +23,7 @@ const SidebarDom = () => {
 	const config = useMemo(() => getCurrentRouterItem(pathname, navRouter), [pathname]); // 获取当前路由的配置
 
 	const handleSelect = ({ key }) => {
-		if (selectedKey === key) return;
+		// if (selectedKey === key) return;
 		router.push(key);
 		setSelectedKey(key);
 	};
@@ -63,7 +63,7 @@ const SidebarDom = () => {
 					styles.menuList,
 					siberCollapsed && styles.menuList_collapsed,
 				].join(' ')}
-				onSelect={handleSelect}
+				onClick={handleSelect}
 			/>
 			<div
 				className={`h-16 border-t border-solid border-base-border text-base-primary flex items-center justify-center p-3.5 gap-2.5 overflow-hidden`}

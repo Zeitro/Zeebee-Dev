@@ -4,7 +4,7 @@ import styles from './index.module.scss';
 const NewPagination = ({ total, current, pageSize, onChange=()=>{}, ...props }) => {
 	return (
 		<Pagination
-			showQuickJumper
+			showQuickJumper={false}
 			showSizeChanger={false}
 			total={total}
 			onChange={onChange}

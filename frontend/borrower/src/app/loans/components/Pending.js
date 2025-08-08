@@ -17,7 +17,7 @@ const PendingPage = ({
 	dataSource,
 	isNotAddress,
 	loading,
-	scrollX = 3500,
+	scrollX = 2500,
 }) => {
 	const [modal, contextHolder] = Modal.useModal();
 	const { loanPendingStatus, loanPurposeOptions, loanTypeOptions, lenderOptions } =
@@ -57,8 +57,8 @@ const PendingPage = ({
 						value: 'city',
 					},
 					{
-						label: 'Zip Code',
-						value: 'zipCode',
+						label: 'Borrower',
+						value: 'borrower',
 					},
 				],
 			},
@@ -182,7 +182,7 @@ const PendingPage = ({
 					tableFilterRef?.current?.handleSearch,
 					showDeleteModal,
 				)}
-				scroll={{ x: scrollX, y: 'calc(100% - 54px)' }}
+				scroll={{ x: scrollX}}
 				filterList={filterList}
 				hasFilterField={hasFilterField}
 				pagination={hasPagination}

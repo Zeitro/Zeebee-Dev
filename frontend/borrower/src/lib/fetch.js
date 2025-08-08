@@ -1,11 +1,11 @@
 import { getLocalStorage } from '@/lib/local';
 import { message } from 'antd';
 // 公共提示
-function showMessage(msg) {
+function showMessage(msg, type = 'error') {
 	message.destroy();
 	message.open({
 		content: msg,
-		type: 'error',
+		type,
 	});
 }
 const str = '/api/v1';
@@ -19,7 +19,7 @@ export function createRequest() {
 		const controller = new AbortController();
 		controllers.set(key, controller);
 
-		const token = getLocalStorage('access')?.access_token;
+		const token = getLocalStorage('userStore')?.state?.access?.access_token;
 		const headers = {
 			'Content-Type': 'application/json',
 			Authorization: '',
@@ -57,6 +57,12 @@ export function createRequest() {
 			}
 
 			const data = await response.json();
+
+			if (data.code === 401) {
+				showMessage('Please log in again!', 'warning');
+				window.location.href = '/login';
+				return Promise.reject('Please log in again!');
+			}
 
 			if (data.code && data.code !== 200) {
 				showMessage(`fail:${data.code},message:${data.message}` || `fail:${data.code}`);

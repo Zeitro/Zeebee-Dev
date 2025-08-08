@@ -69,6 +69,7 @@ const LoanPendingStatus = ({ data, successCallback }) => {
 					onSelect: handleSelect,
 				}}
 				className={[styles.loanStatus, styles[statusValue]].join(' ')}
+				size="small"
 			>
 				{statusValue ? rowData.label : 'Select Status'}
 			</Dropdown.Button>

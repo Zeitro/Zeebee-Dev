@@ -94,7 +94,7 @@ const FilterField = ({ list, className, ...rowProps }, ref) => {
 						size="large"
 						placeholder="select"
 						allowClear
-						style={{ width: 148 }}
+						style={{ width: 180 }}
 						options={options}
 						value={value}
 						onChange={eventProps?.onChange}
@@ -107,7 +107,7 @@ const FilterField = ({ list, className, ...rowProps }, ref) => {
 					<TreeSelect
 						size="large"
 						placeholder="select"
-						style={{ width: 148 }}
+						style={{ width: 180 }}
 						maxTagCount={0}
 						maxTagPlaceholder={() => `${label}(${value?.length})`}
 						treeCheckable={true}

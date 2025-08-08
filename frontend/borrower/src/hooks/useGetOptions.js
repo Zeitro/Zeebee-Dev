@@ -17,9 +17,9 @@ export const useGetOptions = (list = []) => {
 		await Promise.all(
 			list.map(async (item) => {
 				try {
-					if (!optionsInfo?.lenderOptions?.length && item.type === 'lender') {
+					if (item.type === 'lender') {
 						return await optionsInfo?.getLender();
-					} else if (!optionsInfo?.borrowerOptions?.length && item.type === 'borrower') {
+					} else if (item.type === 'borrower') {
 						return await optionsInfo?.getBorrowerOptions();
 					} else if (!optionsInfo?.[item.valueName]?.length && item.key) {
 						return await optionsInfo?.getOptions(item.key, item.valueName);

@@ -4,15 +4,20 @@ import { createRequest } from '@/lib/fetch';
 const { request } = createRequest();
 export const useUserStore = create(
 	persist(
-		(set) => ({
+		(set, get, api) => ({
 			userInfo: {},
-			access:{},
+			access: {},
 			login: async (values) => {
 				const access = await request('/user/login', {
 					method: 'POST',
 					body: values,
 				});
 				set({ access });
+				return access;
+			},
+			clearInfo: () => {
+				api.persist.clearStorage(); // 清除持久化数据
+				set({ access: null, userInfo: null }); // 重置内存状态
 			},
 			getUserInfo: async () => {
 				const userInfo = await request('/user/info', {
@@ -26,7 +31,7 @@ export const useUserStore = create(
 			storage: createJSONStorage(() => localStorage), // 默认 localStorage
 			partialize: (state) => ({
 				userInfo: state.userInfo,
-				access: state.access
+				access: state.access,
 			}),
 		},
 	),

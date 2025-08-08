@@ -1,7 +1,21 @@
 .newTable {
     :global{
         .ant-table-scroll-horizontal .ant-table-body{
-            overflow-y: auto !important;
+            // overflow: auto !important;
+        }
+        .ant-table-content,
+        .ant-table-body{
+             scrollbar-width: thin;
+            scrollbar-color: #eaeaea transparent;
+            scrollbar-gutter: stable;
+        }
+        .ant-pagination-total-text{
+            flex: 1 !important;
+        }
+        .ant-pagination-prev,
+        .ant-pagination-next{
+            border: 1px solid var(--base-disabled);
+            border-radius: 6px;
         }
     }
 

@@ -1,6 +1,6 @@
 'use client';
 import { Anchor, Button, Col, Form, message, Row } from 'antd';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import CreateLoan from '../components/Create/Loan';
 import CreateProperty from '../components/Create/property';
 import CreateTerm from '../components/Create/term';
@@ -15,6 +15,7 @@ const editLoanPage = () => {
 	const [form] = Form.useForm();
 	const stage = Form.useWatch('stage', form);
 	const { request } = createRequest();
+	const [loading, setLoading] = useState(false);
 
 	const getDetails = async () => {
 		let res = {
@@ -52,24 +53,30 @@ const editLoanPage = () => {
 
 	// edit loan
 	const handleNext = async () => {
-		const values = await form.validateFields();
-		if (values.closing_date) {
-			values.closing_date = formatDate(values.closing_date);
+		try {
+			const values = await form.validateFields();
+			setLoading(true);
+			if (values.closing_date) {
+				values.closing_date = formatDate(values.closing_date);
+			}
+			if (values.maturity_date) {
+				values.maturity_date = formatDate(values.maturity_date);
+			}
+			if (values.paid_off_date) {
+				values.paid_off_date = formatDate(values.paid_off_date);
+			}
+			await request(`/loan/${id}`, {
+				method: 'PUT',
+				body: values,
+			});
+			setLoading(false);
+			message.open({
+				type: 'success',
+				content: 'Update successful！',
+			});
+		} catch (error) {
+			setLoading(false);
 		}
-		if (values.maturity_date) {
-			values.maturity_date = formatDate(values.maturity_date);
-		}
-		if (values.paid_off_date) {
-			values.paid_off_date = formatDate(values.paid_off_date);
-		}
-		await request(`/loan/${id}`, {
-			method: 'PUT',
-			body: values,
-		});
-		message.open({
-			type: 'success',
-			content: 'Update successful！',
-		});
 	};
 
 	useEffect(() => {
@@ -92,7 +99,14 @@ const editLoanPage = () => {
 				flex="calc(100% - 200px)"
 				className="h-full overflow-hidden overflow-y-auto px-8"
 			>
-				<Form form={form} name="basic" layout="vertical" autoComplete="off" size="large">
+				<Form
+					form={form}
+					name="basic"
+					disabled={loading}
+					layout="vertical"
+					autoComplete="off"
+					size="large"
+				>
 					<div id="loanDetail">
 						<p className="py-6 font-medium text-lg/7">Loan detail</p>
 						<CreateLoan form={form} xs={24} sm={24} lg={12} gutter={24} />
@@ -118,7 +132,7 @@ const editLoanPage = () => {
 					</div>
 				</Form>
 				<div className="flex justify-end py-4">
-					<Button type="primary" onClick={handleNext}>
+					<Button type="primary" onClick={handleNext} loading={loading}>
 						Save change
 					</Button>
 				</div>

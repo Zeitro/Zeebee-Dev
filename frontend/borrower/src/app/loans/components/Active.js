@@ -14,7 +14,7 @@ const ActiveLoans = ({
 	dataSource,
 	isNotAddress,
 	loading,
-	scrollX = 3500,
+	scrollX = 2600,
 }) => {
 	const { loanPurposeOptions, loanTypeOptions, lenderOptions } = useOptionsStore();
 	const { request } = createRequest();
@@ -33,6 +33,8 @@ const ActiveLoans = ({
 				selectProps: {
 					onChange: (e) => setType(e),
 				},
+				selectParamsKey: 'keyword_type',
+				paramsKey: 'keyword',
 				onChange: ({ target: { value } }) => setSearchValue(value),
 				options: [
 					{
@@ -48,8 +50,8 @@ const ActiveLoans = ({
 						value: 'city',
 					},
 					{
-						label: 'Zip Code',
-						value: 'zipCode',
+						label: 'Borrower',
+						value: 'borrower',
 					},
 				],
 			},
@@ -59,6 +61,7 @@ const ActiveLoans = ({
 				popupMatchSelectWidth: 172,
 				placeholder: 'Loan purpose',
 				value: loanPurpose,
+				paramsKey: 'loan_purpose',
 				onChange: (value) => setLoanPurpose(value),
 				treeData: transformArrayStructure({
 					sourceArray: loanPurposeOptions,
@@ -70,6 +73,7 @@ const ActiveLoans = ({
 				label: 'Loan type',
 				popupMatchSelectWidth: 195,
 				value: loanType,
+				paramsKey: 'loan_type',
 				placeholder: 'Loan type',
 				onChange: (value) => setLoanType(value),
 				treeData: transformArrayStructure({
@@ -81,6 +85,7 @@ const ActiveLoans = ({
 				type: 'treeSelect',
 				label: 'Lender',
 				placeholder: 'Lender',
+				paramsKey: 'lender',
 				popupMatchSelectWidth: 172,
 				value: lender,
 				onChange: (value) => setLender(value),
@@ -113,7 +118,7 @@ const ActiveLoans = ({
 		<FilterTable
 			ref={tableFilterRef}
 			columns={activeColumns(isNotAddress)}
-			scroll={{ x: scrollX, y: 'calc(100% - 54px)' }}
+			scroll={{ x: scrollX }}
 			filterList={filterList}
 			hasFilterField={hasFilterField}
 			pagination={hasPagination}

@@ -14,7 +14,7 @@ const ArchivedLoans = ({
 	dataSource,
     isNotAddress,
     loading,
-    scrollX=2000
+    scrollX=1500
 }) => {
 	const { loanTypeOptions, lenderOptions } = useOptionsStore();
 	const { request } = createRequest();
@@ -29,6 +29,8 @@ const ArchivedLoans = ({
 				type: 'select-input',
 				selectValue: type,
 				value: searchValue,
+                selectParamsKey: 'keyword_type',
+				paramsKey: 'keyword',
 				selectProps: {
 					onChange: (e) => setType(e),
 				},
@@ -47,8 +49,8 @@ const ArchivedLoans = ({
 						value: 'city',
 					},
 					{
-						label: 'Zip Code',
-						value: 'zipCode',
+						label: 'Borrower',
+						value: 'borrower',
 					},
 				],
 			},
@@ -57,6 +59,7 @@ const ArchivedLoans = ({
 				label: 'Loan type',
 				popupMatchSelectWidth: 195,
 				value: loanType,
+                paramsKey: 'loan_type',
 				placeholder: 'Loan type',
 				onChange: (value) => setLoanType(value),
 				treeData: transformArrayStructure({
@@ -70,6 +73,7 @@ const ArchivedLoans = ({
 				placeholder: 'Lender',
 				popupMatchSelectWidth: 172,
 				value: lender,
+                paramsKey: 'lender',
 				onChange: (value) => setLender(value),
 				treeData: transformArrayStructure({
 					sourceArray: lenderOptions,
@@ -98,7 +102,7 @@ const ArchivedLoans = ({
 		<FilterTable
 			ref={tableFilterRef}
 			columns={archivedColumns(isNotAddress)}
-			scroll={{ x: scrollX, y: 'calc(100% - 54px)' }}
+			scroll={{ x: scrollX }}
 			filterList={filterList}
 			hasFilterField={hasFilterField}
 			pagination={hasPagination}

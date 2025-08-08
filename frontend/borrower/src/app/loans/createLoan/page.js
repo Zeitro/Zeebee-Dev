@@ -12,6 +12,7 @@ const CreateLoanPage = () => {
 	const router = useRouter();
 	const { request } = createRequest();
 	const [currentStep, setCurrentStep] = useState(0);
+	const [loading, setLoading] = useState(false);
 	const [form] = Form.useForm();
 	// 存储每个步骤的数据
 	const [loanData, setLoanData] = useState({
@@ -35,35 +36,42 @@ const CreateLoanPage = () => {
 
 	// next/Add loan
 	const handleNext = async () => {
-		const values = await form.validateFields();
-		if (currentStep < 2) {
-			setLoanData((v) => ({ ...v, [currentStep]: values }));
-			setCurrentStep((v) => v + 1);
-			return;
+		try {
+			const values = await form.validateFields();
+			if (currentStep < 2) {
+				setLoanData((v) => ({ ...v, [currentStep]: values }));
+				setCurrentStep((v) => v + 1);
+				return;
+			}
+			// add loan
+			const body = {
+				...(loanData[0] || {}),
+				...(loanData[1] || {}),
+				...(values || {}),
+			};
+			if (body.closing_date) {
+				body.closing_date = formatDate(body.closing_date);
+			}
+			if (body.maturity_date) {
+				body.maturity_date = formatDate(body.maturity_date);
+			}
+			if (body.paid_off_date) {
+				body.paid_off_date = formatDate(body.paid_off_date);
+			}
+			setLoading(true);
+			const res = await request('/loan', {
+				method: 'POST',
+				body,
+			});
+			message.open({
+				type: 'success',
+				content: 'Success in creation！',
+			});
+			setLoading(false);
+			router.back();
+		} catch (error) {
+			setLoading(false);
 		}
-		// add loan
-		const body = {
-			...(loanData[0] || {}),
-			...(loanData[1] || {}),
-			...(values || {}),
-		};
-		if (body.closing_date) {
-			body.closing_date = formatDate(body.closing_date);
-		}
-		if (body.maturity_date) {
-			body.maturity_date = formatDate(body.maturity_date);
-		}
-		if (body.paid_off_date) {
-			body.paid_off_date = formatDate(body.paid_off_date);
-		}
-		const res = await request('/loan', {
-			method: 'POST',
-			body,
-		});
-		message.open({
-			type:'success',
-			content:'Success in creation！'
-		});
 	};
 
 	const stepBtn = (
@@ -75,7 +83,7 @@ const CreateLoanPage = () => {
 				{!!currentStep && (
 					<Button onClick={() => setCurrentStep((v) => v - 1)}>Back</Button>
 				)}
-				<Button type="primary" onClick={handleNext}>
+				<Button type="primary" onClick={handleNext} loading={loading}>
 					{currentStep < 2 ? 'Next' : 'Add Loan'}
 				</Button>
 			</Space>
@@ -106,6 +114,7 @@ const CreateLoanPage = () => {
 					autoComplete="off"
 					className=""
 					size="large"
+					disabled={loading}
 				>
 					{stepContent[currentStep]}
 				</Form>

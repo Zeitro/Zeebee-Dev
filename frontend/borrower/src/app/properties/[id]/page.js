@@ -20,6 +20,7 @@ const PropertiesDetails = () => {
 		return [
 			{
 				title: 'Pending loan',
+				total: rowData?.pending_loans?.length,
 				content: (
 					<PendingPage
 						hasFilterField={false}
@@ -27,11 +28,13 @@ const PropertiesDetails = () => {
 						dataSource={rowData?.pending_loans}
 						isNotAddress={true}
 						loading={loading}
+						scrollX={2000}
 					/>
 				),
 			},
 			{
 				title: 'Active loan',
+				total: rowData?.active_loans?.length,
 				content: (
 					<ActiveLoans
 						hasFilterField={false}
@@ -39,11 +42,13 @@ const PropertiesDetails = () => {
 						dataSource={rowData?.active_loans}
 						isNotAddress={true}
 						loading={loading}
+						scrollX={2100}
 					/>
 				),
 			},
 			{
 				title: 'Archived loan',
+				total:rowData?.archived_loans?.length,
 				content: (
 					<ArchivedLoans
 						hasFilterField={false}
@@ -51,6 +56,7 @@ const PropertiesDetails = () => {
 						dataSource={rowData?.archived_loans}
 						isNotAddress={true}
 						loading={loading}
+						scrollX={1000}
 					/>
 				),
 			},
@@ -95,7 +101,7 @@ const PropertiesDetails = () => {
 				))}
 			</Row>
 			{list.map((item, index) => {
-				return (
+				return !!item.total && (
 					<div key={index}>
 						<div className="pt-6 pb-2 mb-4 text-xl/7 font-medium border-b border-[#91CAFF]">
 							{item.title}

@@ -1,24 +1,31 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Checkbox, Form, Input } from 'antd';
 import Item from 'antd/es/form/FormItem';
 import Password from 'antd/es/input/Password';
 import { useRouter } from 'next/navigation';
-import {useUserStore} from '@/store/user';
+import { useUserStore } from '@/store/user';
+import { setCookie, clearAllCookie } from '@/lib/cookie';
 const Login = () => {
-    const [form] = Form.useForm();
-    const router = useRouter();
-	const {getUserInfo, login} = useUserStore();
+	const [form] = Form.useForm();
+	const router = useRouter();
+	const { getUserInfo, login, clearInfo } = useUserStore();
+
+	useEffect(() => {
+		clearInfo();
+		clearAllCookie();
+	}, []);
 
 	const onFinish = async () => {
-        const values = await form.validateFields();
-		await login(values);
+		const values = await form.validateFields();
+		const access = await login(values);
 		await getUserInfo();
-        router.push('/');
+		setCookie('token', access?.access_token, access?.access_token_expire);
+		router.push('/');
 	};
 
 	return (
-		<div className='h-full w-full flex items-center justify-center flex-col'>
+		<div className="h-full w-full flex items-center justify-center flex-col">
 			<div>Zeebee</div>
 			<Form
 				name="basic"
@@ -27,8 +34,8 @@ const Login = () => {
 				style={{ maxWidth: 600 }}
 				initialValues={{ remember: true }}
 				autoComplete="off"
-                form={form}
-                // className="w-[200px]"
+				form={form}
+				// className="w-[200px]"
 			>
 				<Item
 					label="Email"
