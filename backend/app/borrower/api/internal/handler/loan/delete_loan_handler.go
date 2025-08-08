@@ -16,7 +16,7 @@ import (
 	"zeebee-backend/common/validator"
 )
 
-// delete loan
+// DeleteLoanHandler delete loan
 func DeleteLoanHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
