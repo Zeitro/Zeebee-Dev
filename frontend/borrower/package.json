@@ -3,8 +3,8 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-		"local": "NEXT_PUBLIC_ENV=local next dev",
-		"dev": "NODE_ENV=development next dev",
+		"local": "NEXT_PUBLIC_ENV=local next start",
+		"dev": "NODE_ENV=development next start",
 		"build": "NODE_ENV=production next build",
 		"start": "NODE_ENV=production next start",
 		"lint": "next lint",
@@ -33,6 +33,7 @@
 		"autoprefixer": "^10.4.21",
 		"eslint": "^9",
 		"eslint-config-next": "15.3.0",
+		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-prettier": "^5.5.1",
 		"eslint-plugin-react": "^7.37.5",
 		"postcss": "^8.5.6",
@@ -40,5 +41,6 @@
 		"sass": "^1.89.2",
 		"tailwindcss": "^3.4.17",
 		"typescript": "^5"
-	}
+	},
+	"type": "module"
 }

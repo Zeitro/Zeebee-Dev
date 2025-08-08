@@ -58,9 +58,9 @@ const CreateLoanPage = () => {
 			if (body.paid_off_date) {
 				body.paid_off_date = formatDate(body.paid_off_date);
 			}
-			body.applicants = body?.applicants.filter(i=>i.name);
+			body.applicants = body?.applicants.filter((i) => i.name);
 			setLoading(true);
-			const res = await request('/loan', {
+			await request('/loan', {
 				method: 'POST',
 				body,
 			});
@@ -92,7 +92,14 @@ const CreateLoanPage = () => {
 	);
 	const stepContent = {
 		0: <CreateLoan form={form} stepBtn={stepBtn} />,
-		1: <CreateProperty stage={loanData?.[0]?.stage} stepBtn={stepBtn} form={form} gutter={16}/>,
+		1: (
+			<CreateProperty
+				stage={loanData?.[0]?.stage}
+				stepBtn={stepBtn}
+				form={form}
+				gutter={16}
+			/>
+		),
 		2: <CreateTerm stage={loanData?.[0]?.stage} stepBtn={stepBtn} />,
 	};
 

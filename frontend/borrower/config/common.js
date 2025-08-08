@@ -10,7 +10,7 @@ export const generateMenuBar = (list) => {
 			const newItem = {
 				key: item.path,
 				label: item.title,
-				icon: item.icon
+				icon: item.icon,
 			};
 			if (item?.router?.length) {
 				newItem.children = item.router;
@@ -20,13 +20,13 @@ export const generateMenuBar = (list) => {
 };
 
 // 将多层级嵌套路由变为一层级路由，方便查找
-export function flattenNavRouter(routes=[]) {
-  return routes?.reduce((acc, next) => {
-    if (next.router) {
-      return [...acc, next, ...flattenNavRouter(next.router)];
-    }
-    return [...acc, next];
-  }, []);
+export function flattenNavRouter(routes = []) {
+	return routes?.reduce((acc, next) => {
+		if (next.router) {
+			return [...acc, next, ...flattenNavRouter(next.router)];
+		}
+		return [...acc, next];
+	}, []);
 }
 
 /**
@@ -76,7 +76,7 @@ export const getCrumbs = (currentPath, routes) => {
 
 // 根据pathname获取前端路由配置
 export const getCurrentRouterItem = (currentPathname, allRouters = routers) => {
-	const routers = flattenNavRouter(allRouters)
+	const routers = flattenNavRouter(allRouters);
 	const routerItem = routers.find((item) => matchRoute(item.path, currentPathname));
 	return routerItem;
 };

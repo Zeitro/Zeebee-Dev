@@ -1,18 +1,18 @@
 import { NextResponse } from 'next/server';
 import { getCurrentRouterItem } from '@config/common';
 import { routers } from '@config/routes';
-export function middleware(request,res) {
+export function middleware(request) {
 	const { pathname } = request.nextUrl;
 	// 排除 /api 路径
-    if (pathname.startsWith('/api')) {
-        return NextResponse.next();
-    }
+	if (pathname.startsWith('/api')) {
+		return NextResponse.next();
+	}
 	// 2. 获取 cookie/token
 	const token = request.cookies.get('token')?.value;
 	// 路由白名单
 	const whiteList = ['/login'];
 	const routerItem = getCurrentRouterItem(pathname, routers);
-	
+
 	if (!token && !whiteList.includes(pathname)) {
 		// 未登录且非白名单，重定向到登录页
 		return NextResponse.redirect(new URL('/login', request.url));
