@@ -57,15 +57,15 @@ export const getCrumbs = (currentPath, routes) => {
 		if (match) {
 			// 动态参数面包屑可自定义显示
 			let title = match.title;
-			if (/:/.test(match.path)) {
-				// 取实际 id 或自定义
-				title = '详情'; // 或 segments[i]
-			}
+			// if (/:/.test(match.path)) {
+			// 	// 取实际 id 或自定义
+			// 	title = '详情'; // 或 segments[i]
+			// }
 			let crumbItem = {
 				title,
 			};
 			// 最后一个不需要path
-			if (segments.length - 1 > i) {
+			if (segments.length - 1 >= i) {
 				crumbItem.href = path;
 			}
 			breadcrumbs.push(crumbItem);

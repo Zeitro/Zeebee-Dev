@@ -18,7 +18,6 @@ export const navRouter = [
 				path: '/loans/:id',
 				title: 'Edit Loan',
 				hideMenu: true,
-				
 			},
 		],
 	},

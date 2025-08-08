@@ -166,15 +166,13 @@ export const pendingColumns = (isNotAddress, successCallback, showDeleteModal) =
 					record={record}
 					getItems={(editItem, deleteItem) => {
 						const arr =  [{ ...editItem, url: `/loans/${record?.id}` }];
-						if(record?.source !== 'borrower'){
+						if(record?.source === 'borrower'){
 							arr.push(deleteItem)
 						}
 						return arr;
 					}}
 					onSelect={(key) => {
 						if (key === 'delete') {
-							console.log(key);
-
 							showDeleteModal(record);
 						}
 					}}

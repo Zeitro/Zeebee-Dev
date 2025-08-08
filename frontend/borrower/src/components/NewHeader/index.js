@@ -6,7 +6,7 @@ import { navRouter } from '@config/routes';
 import { getCurrentRouterItem, flattenNavRouter, getCrumbs } from '@config/common';
 import Link from 'next/link';
 import styles from './index.module.css';
-import { customContent } from './customContent';
+import { CustomContent } from './CustomContent';
 /**
  * 面包屑导航
  */
@@ -35,7 +35,7 @@ const NewHeader = () => {
 					{crumbs?.[crumbs.length - 1]?.title}
 				</div>
 			</div>
-			{customContent()}
+			<CustomContent/>
 		</div>
 	) : (
 		''

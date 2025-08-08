@@ -1,5 +1,7 @@
 import { create } from "zustand"
 export const useGlobalStore = create((set) => ({
   siberCollapsed: false,
-  changeSiberCollapsed: (value) => set({ siberCollapsed: value })
+  crumbs:[],
+  changeSiberCollapsed: (value) => set({ siberCollapsed: value }),
+  updateCrumbs:(v)=>set({crumbs:v})
 }))

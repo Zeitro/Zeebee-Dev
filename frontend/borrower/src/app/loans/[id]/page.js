@@ -35,7 +35,7 @@ const editLoanPage = () => {
 			if (res.paid_off_date) {
 				res.paid_off_date = dayjs(res.paid_off_date);
 			}
-			if (!res.applicants?.length < 2) {
+			if (res.applicants?.length < 2) {
 				res.applicants = [
 					{ is_primary: true, type: 'Individual', ...(res.applicants?.[0] || {}) },
 					{ is_primary: false, type: 'Individual', ...(res.applicants?.[1] || {}) },
@@ -65,6 +65,7 @@ const editLoanPage = () => {
 			if (values.paid_off_date) {
 				values.paid_off_date = formatDate(values.paid_off_date);
 			}
+			values.applicants = values?.applicants.filter(i=>i.name);
 			await request(`/loan/${id}`, {
 				method: 'PUT',
 				body: values,

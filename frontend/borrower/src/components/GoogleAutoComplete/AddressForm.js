@@ -28,7 +28,7 @@ const AddressForm = ({
 	zipCol = {},
 }) => {
 	const { getStateList, getCityList, stateOptions, cityOptions } = useAddressStore();
-	const stateValue = Form.useWatch(stateName,form);
+	const stateValue = Form.useWatch(stateName, form);
 	const handlePlaceSelected = (place) => {
 		if (!form) return;
 		const newValue = form.getFieldsValue() || {};
@@ -43,9 +43,9 @@ const AddressForm = ({
 		getStateList();
 	}, []);
 
-	useDisUpdateEffect(()=>{
+	useDisUpdateEffect(() => {
 		stateValue && getCityList(stateValue);
-	},[stateValue])
+	}, [stateValue]);
 
 	return (
 		<>
@@ -66,20 +66,7 @@ const AddressForm = ({
 					<Input placeholder={`Enter ${addressLabel2}`} />
 				</Form.Item>
 			</Col>
-			<Col md={24} {...cityCol}>
-				<Form.Item
-					name={cityName}
-					label={cityLabel}
-					rules={[{ required: true, message: 'Please enter city!' }]}
-				>
-					<Select
-						options={cityOptions}
-						optionFilterProp="label"
-						placeholder="Enter city"
-					/>
-				</Form.Item>
-			</Col>
-			<Col md={12} {...stateCol}>
+			<Col md={24} {...stateCol}>
 				<Form.Item
 					name={stateName}
 					label={stateLabel}
@@ -89,6 +76,21 @@ const AddressForm = ({
 						options={stateOptions}
 						optionFilterProp="label"
 						placeholder="Enter state"
+						showSearch
+					/>
+				</Form.Item>
+			</Col>
+			<Col md={12} {...cityCol}>
+				<Form.Item
+					name={cityName}
+					label={cityLabel}
+					rules={[{ required: true, message: 'Please enter city!' }]}
+				>
+					<Select
+						options={cityOptions}
+						optionFilterProp="label"
+						placeholder="Enter city"
+						showSearch
 					/>
 				</Form.Item>
 			</Col>
