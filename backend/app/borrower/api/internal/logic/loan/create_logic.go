@@ -3,7 +3,9 @@ package loan
 import (
 	"context"
 
+	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
+	"github.com/pkg/errors"
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
@@ -20,7 +22,7 @@ type CreateLogic struct {
 	svcCtx *svc.ServiceContext
 }
 
-// create loan
+// NewCreateLogic create loan
 func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogic {
 	return &CreateLogic{
 		Logger: logx.WithContext(ctx),
@@ -44,10 +46,27 @@ func (l *CreateLogic) Create(req *types.LoanCreateRequest) (resp *types.LoanCrea
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
-	if len(rpcReq.Data.Applicants) > 0 {
-		rpcReq.Data.Applicants[0].IsPrimary = true
+
+	applicants := make([]*borrower.BorrowerEditApplicantEntry, 0, len(rpcReq.Data.Applicants))
+	for _, applicant := range rpcReq.Data.Applicants {
+		applicant := applicant
+		if len(applicant.Name) > 0 {
+			applicants = append(applicants, applicant)
+		}
 	}
-	// rpcReq.Data.Property.Address.State = req.Property.Address.State
+	if len(applicants) > 0 {
+		primaryCount := slice.CountBy(applicants, func(index int, item *borrower.BorrowerEditApplicantEntry) bool {
+			return item.IsPrimary
+		})
+		if primaryCount == 0 {
+			applicants[0].IsPrimary = true
+		}
+		if primaryCount > 1 {
+			return nil, errors.WithStack(errors.New("multiple primary applicant"))
+		}
+	}
+	rpcReq.Data.Applicants = applicants
+
 	// get borrower id
 	rpcReq.Data.BorrowerId, err = utils.GetAccountIdFromCtx(l.ctx)
 	if err != nil {

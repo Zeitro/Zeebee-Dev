@@ -32,7 +32,7 @@ func Error(w http.ResponseWriter, code int, message string) {
 
 // BadRequest 400错误
 func BadRequest(w http.ResponseWriter, message string) {
-	Error(w, http.StatusOK, message)
+	Error(w, http.StatusBadRequest, message)
 }
 
 // Unauthorized 401错误

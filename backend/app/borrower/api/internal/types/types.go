@@ -27,7 +27,7 @@ type EmptyRequest struct {
 type LoanEditApplicantEntry struct {
 	Id        int64  `json:"id,optional"`
 	Name      string `json:"name" validate:"required"`
-	Type      string `json:"type" validate:"required,oneof=Individual Company"`
+	Type      string `json:"type" validate:"required,oneof=Individual Corporation"`
 	IsPrimary bool   `json:"is_primary"`
 }
 

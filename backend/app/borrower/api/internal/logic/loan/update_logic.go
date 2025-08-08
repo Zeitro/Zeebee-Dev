@@ -3,7 +3,9 @@ package loan
 import (
 	"context"
 
+	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
+	"github.com/pkg/errors"
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
@@ -40,6 +42,27 @@ func (l *UpdateLogic) Update(req *types.LoanUpdateRequest) (resp *types.EmptyRes
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
 	rpcReq.Data.Property.Address.State = req.Property.Address.State
+
+	applicants := make([]*borrower.BorrowerEditApplicantEntry, 0, len(rpcReq.Data.Applicants))
+	for _, applicant := range rpcReq.Data.Applicants {
+		applicant := applicant
+		if len(applicant.Name) > 0 {
+			applicants = append(applicants, applicant)
+		}
+	}
+	if len(applicants) > 0 {
+		primaryCount := slice.CountBy(applicants, func(index int, item *borrower.BorrowerEditApplicantEntry) bool {
+			return item.IsPrimary
+		})
+		if primaryCount == 0 {
+			applicants[0].IsPrimary = true
+		}
+		if primaryCount > 1 {
+			return nil, errors.WithStack(errors.New("multiple primary applicant"))
+		}
+	}
+	rpcReq.Data.Applicants = applicants
+
 	// get borrower id
 	rpcReq.Data.BorrowerId, err = utils.GetAccountIdFromCtx(l.ctx)
 	if err != nil {
