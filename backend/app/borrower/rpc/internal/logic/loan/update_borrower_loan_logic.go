@@ -184,11 +184,11 @@ func (l *UpdateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanUpdateReque
 				IsPrimary: applicant.IsPrimary,
 				Type:      constants.ApplicantTypeIndividual,
 			}
-		case constants.ApplicantTypeCompany:
+		case constants.ApplicantTypeCorporation:
 			applicantItem = &model.Applicant{
 				Name:      applicantName,
 				IsPrimary: applicant.IsPrimary,
-				Type:      constants.ApplicantTypeCompany,
+				Type:      constants.ApplicantTypeCorporation,
 			}
 		default:
 			return nil, nil, nil, errors.New("invalid applicant type")

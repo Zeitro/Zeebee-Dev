@@ -7,8 +7,8 @@ type ApplicantType string
 const ApplicantTypeName = "applicant_type"
 
 const (
-	ApplicantTypeIndividual ApplicantType = "Individual"
-	ApplicantTypeCompany    ApplicantType = "Company"
+	ApplicantTypeIndividual  ApplicantType = "Individual"
+	ApplicantTypeCorporation ApplicantType = "Corporation"
 )
 
 type ApplicantInvitationStatus string
@@ -29,8 +29,8 @@ func init() {
 			Value: string(ApplicantTypeIndividual),
 		},
 		{
-			Label: string(ApplicantTypeCompany),
-			Value: string(ApplicantTypeCompany),
+			Label: string(ApplicantTypeCorporation),
+			Value: string(ApplicantTypeCorporation),
 		},
 	})
 	// register applicant invitation status
