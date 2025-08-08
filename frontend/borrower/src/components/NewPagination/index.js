@@ -1,7 +1,7 @@
 import { Pagination } from 'antd';
 import React from 'react';
 import styles from './index.module.scss';
-const NewPagination = ({ total, current, pageSize, onChange=()=>{}, ...props }) => {
+const NewPagination = ({ total, current, pageSize, onChange = () => {}, ...props }) => {
 	return (
 		<Pagination
 			showQuickJumper={false}
@@ -11,7 +11,7 @@ const NewPagination = ({ total, current, pageSize, onChange=()=>{}, ...props }) 
 			current={current}
 			pageSize={pageSize}
 			{...props}
-			className={[styles.page,'shrink-0', props.className].join(' ')}
+			className={[styles.page, 'shrink-0', props.className].join(' ')}
 		/>
 	);
 };

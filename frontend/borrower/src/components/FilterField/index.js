@@ -1,7 +1,7 @@
 'use client';
 import { Button, Col, Input, Row, Select, Space, TreeSelect } from 'antd';
 const { Search } = Input;
-import React, { useRef, forwardRef, useImperativeHandle } from 'react';
+import React, { forwardRef, useImperativeHandle } from 'react';
 import { SearchOutlined } from '@ant-design/icons';
 import styles from './index.module.scss';
 import { debounce } from 'lodash';
@@ -18,7 +18,6 @@ const { SHOW_ALL } = TreeSelect;
  * label 现只用在type为treeSelect时，Placeholder显示
  */
 const FilterField = ({ list, className, ...rowProps }, ref) => {
-	const isFirst = useRef(true);
 	// selectProps用于select和input组合的select-input类型
 	const getItemDom = ({
 		type,

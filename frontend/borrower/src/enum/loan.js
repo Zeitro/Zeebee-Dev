@@ -2,15 +2,15 @@
 export const createLoanSteps = [
 	{
 		title: 'Loan detail',
-		key:'loanDetail',
+		key: 'loanDetail',
 	},
 	{
 		title: 'Property detail',
-		key:'propertyDetail'
+		key: 'propertyDetail',
 	},
 	{
 		title: 'Loan terms',
-		key:'loanTerms'
+		key: 'loanTerms',
 	},
 ];
 // loan 在pending状态下的可选状态

@@ -100,13 +100,13 @@ const Properties = () => {
 						getList();
 					}}
 				>
-					<Image src={require('@/assets/images/sort.svg')} alt="" />
+					<Image src="/images/sort.svg" alt="" />
 					Total loan: {sorter.current.sort === des ? sort_des : sort_asc}
 				</div>
 			</div>
 			<div className="flex-1 overflow-hidden overflow-y-auto">
 				<Spin spinning={loading}>
-					{!!list?.length ? (
+					{list?.length ? (
 						list.map((item, index) => <PropertiesItem key={index} data={item} />)
 					) : loading ? (
 						<div className="min-h-[100px]"></div>

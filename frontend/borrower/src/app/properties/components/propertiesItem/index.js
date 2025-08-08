@@ -1,18 +1,18 @@
 'use client';
 import React from 'react';
 import styles from './index.module.scss';
-import {  propertiesFieldArr } from '@/enum/properties';
+import { propertiesFieldArr } from '@/enum/properties';
 import { Button, Col, Row } from 'antd';
 import { useRouter } from 'next/navigation';
 import { formatDate } from '@/lib/date';
-import {assemblyAddress} from '@/lib/common';
+import { assemblyAddress } from '@/lib/common';
 const PropertiesItem = ({ data }) => {
 	const router = useRouter();
 	const list2 = [
 		{
 			label: 'Borrower',
 			value: 'applicants',
-			render:(v)=>v?.join(',')
+			render: (v) => v?.join(','),
 		},
 		{
 			label: 'Lender',
@@ -24,7 +24,9 @@ const PropertiesItem = ({ data }) => {
 			render: (v) => formatDate(v),
 		},
 		{
-			render: () => <Button onClick={()=>router.push(`/properties/${data?.id}`)}>View detials</Button>,
+			render: () => (
+				<Button onClick={() => router.push(`/properties/${data?.id}`)}>View detials</Button>
+			),
 		},
 	];
 
@@ -41,8 +43,16 @@ const PropertiesItem = ({ data }) => {
 			<div className={styles.header}>
 				<p className={styles.address}>{assemblyAddress(data?.address)}</p>
 				<div className="flex items-center shrink-0 gap-2">
-					{!!data?.active_loan_count &&<div className={styles.active}>{data?.active_loan_count || 0} Active Loans</div>}
-					{!!data?.pending_loan_count &&<div className={styles.pending}>{data?.pending_loan_count || 0} Pending Loans</div>}
+					{!!data?.active_loan_count && (
+						<div className={styles.active}>
+							{data?.active_loan_count || 0} Active Loans
+						</div>
+					)}
+					{!!data?.pending_loan_count && (
+						<div className={styles.pending}>
+							{data?.pending_loan_count || 0} Pending Loans
+						</div>
+					)}
 				</div>
 			</div>
 			<Row className={styles.info}>{propertiesFieldArr.map(getLabelValue)}</Row>

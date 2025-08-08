@@ -10,7 +10,7 @@ export const getPagination = (pagi = {}) => {
 		current: 1,
 		pageSize: 5,
 		total: 0,
-		 showTotal: (total) => `▶  Total ${total}`,
+		showTotal: (total) => `▶  Total ${total}`,
 		...pagi,
 	};
 };
@@ -71,12 +71,10 @@ export function formatAmount(amount) {
 
 // 拼装地址
 export const assemblyAddress = (address = {}, isHaveZip) => {
-	const arr = [address?.address1,address?.city, address?.state];
-	if (isHaveZip && address?.zip_code){
+	const arr = [address?.address1, address?.city, address?.state];
+	if (isHaveZip && address?.zip_code) {
 		arr.push(address?.zip_code);
 	}
-	const newArr = arr.filter(
-		(i) => i,
-	);
+	const newArr = arr.filter((i) => i);
 	return [...new Set(newArr)].join(',');
 };

@@ -1,4 +1,4 @@
-import {formatAmount} from '@/lib/common';
+import { formatAmount } from '@/lib/common';
 export const sort_asc = 'Ascending';
 export const sort_des = 'Descending';
 

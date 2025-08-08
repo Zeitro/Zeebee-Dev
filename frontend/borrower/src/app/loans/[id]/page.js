@@ -10,7 +10,7 @@ import styles from './index.module.scss';
 import { createRequest } from '@/lib/fetch';
 import dayjs from 'dayjs';
 import { formatDate } from '@/lib/date';
-const editLoanPage = () => {
+const EditLoanPage = () => {
 	const { id } = useParams();
 	const [form] = Form.useForm();
 	const stage = Form.useWatch('stage', form);
@@ -65,7 +65,7 @@ const editLoanPage = () => {
 			if (values.paid_off_date) {
 				values.paid_off_date = formatDate(values.paid_off_date);
 			}
-			values.applicants = values?.applicants.filter(i=>i.name);
+			values.applicants = values?.applicants.filter((i) => i.name);
 			await request(`/loan/${id}`, {
 				method: 'PUT',
 				body: values,
@@ -141,4 +141,4 @@ const editLoanPage = () => {
 		</Row>
 	);
 };
-export default editLoanPage;
+export default EditLoanPage;

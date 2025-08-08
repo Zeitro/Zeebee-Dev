@@ -11,7 +11,7 @@ const NoData = ({ url, text = 'No Data', width, height }) => {
 				alt=""
 				className="w-[120px] h-[120px]"
 			/>
-			<span className='text-base-label'>{text}</span>
+			<span className="text-base-label">{text}</span>
 		</div>
 	);
 };

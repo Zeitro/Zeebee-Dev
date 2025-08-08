@@ -11,16 +11,16 @@ import { useCallback, useEffect, useRef } from 'react';
 export const useGetOptions = (list = []) => {
 	const optionsInfo = useOptionsStore();
 	const isInitGet = useRef(true);
-	const { getOptions, getLender, ...state } = optionsInfo;
+	const { getOptions, getLender, getBorrowerOptions, ...state } = optionsInfo;
 
 	const getInitOptions = useCallback(async () => {
 		await Promise.all(
 			list.map(async (item) => {
 				try {
 					if (item.type === 'lender') {
-						return await optionsInfo?.getLender();
+						return await getLender();
 					} else if (item.type === 'borrower') {
-						return await optionsInfo?.getBorrowerOptions();
+						return await getBorrowerOptions();
 					} else if (!optionsInfo?.[item.valueName]?.length && item.key) {
 						return await optionsInfo?.getOptions(item.key, item.valueName);
 					}
@@ -33,8 +33,6 @@ export const useGetOptions = (list = []) => {
 	}, [getOptions, list, state]);
 
 	useEffect(() => {
-		console.log('options-get-init');
-
 		if (list.length && isInitGet.current) {
 			getInitOptions();
 			isInitGet.current = false;

@@ -1,54 +1,53 @@
-'use client'
-import React, {
-  useState,
-  useRef,
-  useEffect,
-} from "react";
-import ReactDOM from "react-dom";
-import eventBus from "@/lib/bus";
+'use client';
+import React, { useState, useRef, useEffect } from 'react';
+import ReactDOM from 'react-dom';
+import eventBus from '@/lib/bus';
 
-/**
- * PortalComponent是将子组件渲染到body下id为portal-root的div中
- */
 const PortalComponent = () => {
-  const [content, setContent] = useState("");
-  const portalRootRef = useRef(null);
+	const [portalContent, setPortalContent] = useState(null);
+	const portalRootRef = useRef(null);
 
-  const onClose = () => {
-    if (portalRootRef.current) {
-      ReactDOM.unmountComponentAtNode(portalRootRef.current);
-      document.getElementById("portal-root") &&document.body.removeChild(portalRootRef.current);
-      portalRootRef.current = null;
-      setContent('');
-    }
-  };
+	const ensurePortalRoot = () => {
+		if (!portalRootRef.current) {
+			const existingRoot = document.getElementById('portal-root');
+			if (existingRoot) {
+				portalRootRef.current = existingRoot;
+			} else {
+				portalRootRef.current = document.createElement('div');
+				portalRootRef.current.id = 'portal-root';
+				document.body.appendChild(portalRootRef.current);
+			}
+		}
+		return portalRootRef.current;
+	};
 
-  const appendPortalComponent = (element) => {
-    let portalEle = document.getElementById("portal-root");
-    if (!portalEle) {
-      portalEle = document.createElement("div");
-      portalEle.id = "portal-root";
-      document.body.appendChild(portalEle);
-    }
-    portalRootRef.current = portalEle;
-    setContent(ReactDOM.createPortal(element, portalRootRef.current));
-  };
+	const onClose = () => {
+		setPortalContent(null);
+	};
 
+	const appendPortalComponent = (element) => {
+		const portalRoot = ensurePortalRoot();
+		setPortalContent(ReactDOM.createPortal(element, portalRoot));
+	};
 
-  useEffect(() => {
-    eventBus?.on("appendPortalComponent", appendPortalComponent);
-    eventBus?.on("removePortalComponent", onClose);
-    return () => {
-        eventBus?.removeListener("appendPortalComponent", appendPortalComponent);
-        eventBus?.removeListener("removePortalComponent", onClose);
-        onClose();
-    };
-  }, []);
+	useEffect(() => {
+		const handleAppend = (element) => appendPortalComponent(element);
+		const handleRemove = () => onClose();
 
-  // 只有 portalRootRef.current 存在时才渲染 portal
-  if (!portalRootRef.current) return null;
+		eventBus?.on('appendPortalComponent', handleAppend);
+		eventBus?.on('removePortalComponent', handleRemove);
 
-  return content;
+		return () => {
+			eventBus?.removeListener('appendPortalComponent', handleAppend);
+			eventBus?.removeListener('removePortalComponent', handleRemove);
+			onClose();
+			if (portalRootRef.current) {
+				document.body.removeChild(portalRootRef.current);
+			}
+		};
+	}, []);
+
+	return portalContent;
 };
 
 export default PortalComponent;

@@ -22,9 +22,9 @@
       "@/*": ["./src/*"],
       "@/store/*": ["./src/store/*"],
       "@/lib/*": ["./src/lib/*"] ,
-      "@public/*": ["./public/*"],
+      "@/api/*": ["./src/api/*"] ,
+      "@/assets/*": ["./src/assets/*"] ,
       "@config/*": ["./config/*"] 
-      
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

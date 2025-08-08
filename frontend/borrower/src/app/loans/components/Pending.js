@@ -6,7 +6,7 @@ import { assemblyAddress, transformArrayStructure } from '@/lib/common';
 import { useOptionsStore } from '@/store/options';
 import { createRequest } from '@/lib/fetch';
 import { message, Modal } from 'antd';
-import {ExclamationCircleOutlined} from '@ant-design/icons';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 const PendingPage = ({
 	hasFilterField,
@@ -132,14 +132,13 @@ const PendingPage = ({
 			loanTypeOptions,
 			loanPendingStatus,
 			lenderOptions,
-			tableFilterRef?.current,
 		],
 	);
 
 	const handleDelete = async (id) => {
 		try {
 			setConfirmLoading(true);
-			await request(`/loan/${id}`,{method:'DELETE'});
+			await request(`/loan/${id}`, { method: 'DELETE' });
 			tableFilterRef?.current?.handleSearch();
 			setConfirmLoading(false);
 			message.open({
@@ -154,7 +153,7 @@ const PendingPage = ({
 	const showDeleteModal = ({ property, id }) => {
 		modal.confirm({
 			title: 'Are you sure you want to delete this loan?',
-			icon: <ExclamationCircleOutlined className='!text-base-warning'/>,
+			icon: <ExclamationCircleOutlined className="!text-base-warning" />,
 			content: (
 				<div>
 					You are about to delete the loan associated with:
@@ -169,7 +168,7 @@ const PendingPage = ({
 				danger: true,
 			},
 			confirmLoading,
-			centered: true
+			centered: true,
 		});
 	};
 
@@ -182,7 +181,7 @@ const PendingPage = ({
 					tableFilterRef?.current?.handleSearch,
 					showDeleteModal,
 				)}
-				scroll={{ x: scrollX}}
+				scroll={{ x: scrollX }}
 				filterList={filterList}
 				hasFilterField={hasFilterField}
 				pagination={hasPagination}

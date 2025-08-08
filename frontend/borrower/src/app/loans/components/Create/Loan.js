@@ -1,9 +1,8 @@
 'use client';
 import { Col, DatePicker, Form, Radio, Row, Select } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styles from './index.module.scss';
 import InputNumAmount from '@/components/InputNumAmount';
-import { useOptionsStore } from '@/store/options';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import { loan_active, loan_archived, loan_pending } from '@/enum/common';
 import { formatStr } from '@/lib/date';
@@ -150,7 +149,11 @@ const CreateLoan = ({ form, stepBtn, gutter, ...colProps }) => {
 							name="paid_off_date"
 							rules={[{ required: true, message: 'Please select paid off date!' }]}
 						>
-							<DatePicker format={formatStr} placeholder="select" style={{width:'100%'}}/>
+							<DatePicker
+								format={formatStr}
+								placeholder="select"
+								style={{ width: '100%' }}
+							/>
 						</Form.Item>
 					</Col>
 				</>

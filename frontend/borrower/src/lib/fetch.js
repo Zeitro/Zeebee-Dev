@@ -65,7 +65,7 @@ export function createRequest() {
 			}
 
 			if (data.code && data.code !== 200) {
-				showMessage(`fail:${data.code},message:${data.message}` || `fail:${data.code}`);
+				showMessage(`fail:${data.code},message:${data.message}`);
 				return Promise.reject(data.message || `fail:${data.code}`);
 			}
 

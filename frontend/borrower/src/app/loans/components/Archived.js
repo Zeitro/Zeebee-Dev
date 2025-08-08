@@ -12,9 +12,9 @@ const ArchivedLoans = ({
 	api,
 	method = 'POST',
 	dataSource,
-    isNotAddress,
-    loading,
-    scrollX=1500
+	isNotAddress,
+	loading,
+	scrollX = 1500,
 }) => {
 	const { loanTypeOptions, lenderOptions } = useOptionsStore();
 	const { request } = createRequest();
@@ -29,7 +29,7 @@ const ArchivedLoans = ({
 				type: 'select-input',
 				selectValue: type,
 				value: searchValue,
-                selectParamsKey: 'keyword_type',
+				selectParamsKey: 'keyword_type',
 				paramsKey: 'keyword',
 				selectProps: {
 					onChange: (e) => setType(e),
@@ -59,7 +59,7 @@ const ArchivedLoans = ({
 				label: 'Loan type',
 				popupMatchSelectWidth: 195,
 				value: loanType,
-                paramsKey: 'loan_type',
+				paramsKey: 'loan_type',
 				placeholder: 'Loan type',
 				onChange: (value) => setLoanType(value),
 				treeData: transformArrayStructure({
@@ -73,7 +73,7 @@ const ArchivedLoans = ({
 				placeholder: 'Lender',
 				popupMatchSelectWidth: 172,
 				value: lender,
-                paramsKey: 'lender',
+				paramsKey: 'lender',
 				onChange: (value) => setLender(value),
 				treeData: transformArrayStructure({
 					sourceArray: lenderOptions,
@@ -87,15 +87,7 @@ const ArchivedLoans = ({
 				},
 			},
 		],
-		[
-			searchValue,
-			type,
-			loanType,
-			lender,
-			loanTypeOptions,
-			lenderOptions,
-			tableFilterRef?.current,
-		],
+		[searchValue, type, loanType, lender, loanTypeOptions, lenderOptions],
 	);
 
 	return (
@@ -107,8 +99,8 @@ const ArchivedLoans = ({
 			hasFilterField={hasFilterField}
 			pagination={hasPagination}
 			filterWrapClassName={filterWrapClassName}
-            dataSource={dataSource}
-            dataSourceLoading={loading}
+			dataSource={dataSource}
+			dataSourceLoading={loading}
 			getData={(params) => {
 				if (!api) {
 					return {

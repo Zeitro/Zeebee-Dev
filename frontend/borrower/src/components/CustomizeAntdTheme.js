@@ -28,7 +28,7 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 	const [antdToken, setAntdToken] = useState({});
 	const pathname = usePathname();
 
-    // 没有导航栏/面包屑的纯页面（例如：login
+	// 没有导航栏/面包屑的纯页面（例如：login
 	const isNoNav = useMemo(() => {
 		const routerItem = getCurrentRouterItem(pathname, noNavRouter);
 		return !!routerItem;
@@ -57,9 +57,8 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 				// ... 其他 token ...
 			});
 		},
-		[
-			// 依赖主题切换变量
-		],
+		[],
+		// 依赖主题切换变量
 	);
 
 	return (
@@ -82,9 +81,9 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 						rowBg: 'var(--background)',
 						rowHoverBg: 'var(--gray-light)',
 					},
-					TreeSelect:{
-						colorBorder: 'var(--base-disabled)'
-					}
+					TreeSelect: {
+						colorBorder: 'var(--base-disabled)',
+					},
 				},
 			}}
 		>
@@ -96,7 +95,7 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 						<SiderBar />
 						<div className="flex-1 overflow-hidden flex flex-col">
 							<NewHeader />
-							<div className='flex-1 overflow-hidden'>{children}</div>
+							<div className="flex-1 overflow-hidden">{children}</div>
 						</div>
 					</div>
 				)}

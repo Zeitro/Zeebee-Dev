@@ -14,7 +14,7 @@ const NewHeader = () => {
 	const pathname = usePathname();
 	const config = useMemo(() => getCurrentRouterItem(pathname, navRouter), [pathname]); // 获取当前路由的配置
 	const [crumbs, setCrumbs] = useState([]);
-	const itemRender = (currentRoute, params, items, paths) => {
+	const itemRender = (currentRoute, params, items) => {
 		const isLast = currentRoute?.path === items[items.length - 1]?.path;
 		return isLast ? (
 			<span>{currentRoute.title}</span>

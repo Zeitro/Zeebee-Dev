@@ -48,7 +48,7 @@ const PropertiesDetails = () => {
 			},
 			{
 				title: 'Archived loan',
-				total:rowData?.archived_loans?.length,
+				total: rowData?.archived_loans?.length,
 				content: (
 					<ArchivedLoans
 						hasFilterField={false}
@@ -101,13 +101,15 @@ const PropertiesDetails = () => {
 				))}
 			</Row>
 			{list.map((item, index) => {
-				return !!item.total && (
-					<div key={index}>
-						<div className="pt-6 pb-2 mb-4 text-xl/7 font-medium border-b border-[#91CAFF]">
-							{item.title}
+				return (
+					!!item.total && (
+						<div key={index}>
+							<div className="pt-6 pb-2 mb-4 text-xl/7 font-medium border-b border-[#91CAFF]">
+								{item.title}
+							</div>
+							{item.content}
 						</div>
-						{item.content}
-					</div>
+					)
 				);
 			})}
 		</div>

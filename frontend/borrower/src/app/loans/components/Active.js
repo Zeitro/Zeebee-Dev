@@ -110,7 +110,6 @@ const ActiveLoans = ({
 			loanPurposeOptions,
 			loanTypeOptions,
 			lenderOptions,
-			tableFilterRef?.current,
 		],
 	);
 

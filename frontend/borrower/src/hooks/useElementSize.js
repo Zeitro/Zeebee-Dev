@@ -9,16 +9,21 @@ export default function useElementSize(rectDom) {
 	const elementRef = useRef(null);
 
 	useEffect(() => {
+		let observer = null;
 		if (elementRef?.current || rectDom) {
-			const observer = new ResizeObserver((entries) => {
+			observer = new ResizeObserver((entries) => {
 				setSize(entries[0].contentRect);
 			});
 
-			(elementRef?.current || rectDom) && observer.observe(elementRef?.current || rectDom);
+			if (elementRef?.current || rectDom) {
+				observer.observe(elementRef?.current || rectDom);
+			}
 		}
 		// return () => observer.disconnect();
 		return () => {
-			(elementRef?.current || rectDom) && observer?.unobserve(elementRef?.current || rectDom);
+			if (elementRef?.current || rectDom) {
+				observer?.unobserve(elementRef?.current || rectDom);
+			}
 		};
 	}, [elementRef, rectDom]);
 

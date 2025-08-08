@@ -29,7 +29,7 @@ const TableOperation = ({ list, className, onSelect, getItems }) => {
 	const handleSelect = async ({ key }) => {
 		setSelectedKey(key);
 		const arr = list || newItems;
-		const optItem = arr.find(i=>i.key===key);
+		const optItem = arr.find((i) => i.key === key);
 		await onSelect?.(key);
 		if (optItem?.url) {
 			router.push(optItem.url);
@@ -38,7 +38,7 @@ const TableOperation = ({ list, className, onSelect, getItems }) => {
 
 	useEffect(() => {
 		// 默认项edit和delete，getItems和list可任选一种传入，getItems可拿到edit和delete的配置重新组装
-		
+
 		if (newItems.length && !list?.length) {
 			setItems([...newItems]);
 		} else {

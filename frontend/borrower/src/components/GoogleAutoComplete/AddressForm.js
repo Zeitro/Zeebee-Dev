@@ -44,7 +44,9 @@ const AddressForm = ({
 	}, []);
 
 	useDisUpdateEffect(() => {
-		stateValue && getCityList(stateValue);
+		if (stateValue) {
+			getCityList(stateValue);
+		}
 	}, [stateValue]);
 
 	return (

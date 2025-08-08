@@ -1,13 +1,5 @@
 'use client';
-import {
-	Col,
-	DatePicker,
-	Form,
-	Input,
-	InputNumber,
-	Row,
-	Select,
-} from 'antd';
+import { Col, DatePicker, Form, Input, InputNumber, Row, Select } from 'antd';
 import React from 'react';
 import styles from './index.module.scss';
 import InputNumAmount from '@/components/InputNumAmount';
@@ -22,8 +14,8 @@ const CreateTerm = ({ stage, stepBtn, gutter, ...colProps }) => {
 		},
 		{
 			key: 'loan_prepayment_penalty',
-			valueName: 'prepaymentPenaltyOptions'
-		}
+			valueName: 'prepaymentPenaltyOptions',
+		},
 	]);
 	const rateDom = (
 		<Col md={24} {...(colProps || {})}>
@@ -56,7 +48,7 @@ const CreateTerm = ({ stage, stepBtn, gutter, ...colProps }) => {
 	);
 	return (
 		<Row className={styles.create} gutter={gutter}>
-			<Form.List name='applicants'>
+			<Form.List name="applicants">
 				{(fields) => {
 					return fields?.map((field, index) => (
 						<Col
@@ -66,8 +58,8 @@ const CreateTerm = ({ stage, stepBtn, gutter, ...colProps }) => {
 							fieldkey={field.fieldKey}
 						>
 							<Form.Item
-								label={`Borrower ${index+1}`}
-								name={[field.name,'name']}
+								label={`Borrower ${index + 1}`}
+								name={[field.name, 'name']}
 								rules={[{ required: !index, message: 'Please input!' }]}
 							>
 								<Input placeholder="Enter Borrower" />

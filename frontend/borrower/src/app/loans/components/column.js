@@ -165,9 +165,9 @@ export const pendingColumns = (isNotAddress, successCallback, showDeleteModal) =
 				<TableOperation
 					record={record}
 					getItems={(editItem, deleteItem) => {
-						const arr =  [{ ...editItem, url: `/loans/${record?.id}` }];
-						if(record?.source === 'borrower'){
-							arr.push(deleteItem)
+						const arr = [{ ...editItem, url: `/loans/${record?.id}` }];
+						if (record?.source === 'borrower') {
+							arr.push(deleteItem);
 						}
 						return arr;
 					}}

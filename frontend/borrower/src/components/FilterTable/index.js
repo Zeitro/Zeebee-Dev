@@ -16,9 +16,9 @@ import { asc, des, ascend, descend } from '@/enum/common';
 import { useDisUpdateEffect } from '@/hooks/common';
 /**
  * Form筛选 + Table
- * @param {*Boolean} hasFilterField true显示筛选/false隐藏 
+ * @param {*Boolean} hasFilterField true显示筛选/false隐藏
  * @param {*function} getData table list接口请求函数
- * @param {*string} api table list接口请求的api，没有api时会默认调用getData 
+ * @param {*string} api table list接口请求的api，没有api时会默认调用getData
  * @param {*string} method 接口请求的类别。与api一同使用
  * @param {*String} filterName 筛选汇总的标题
  */
@@ -52,7 +52,7 @@ const FilterTable = (
 	const [tableList, setTableList] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const newList = useMemo(() => {
-		return filterList?.filter((i, index) => i.type === 'treeSelect' && i.value?.length);
+		return filterList?.filter((i) => i.type === 'treeSelect' && i.value?.length);
 	}, [filterList]);
 
 	const getList = async () => {
@@ -90,7 +90,7 @@ const FilterTable = (
 		}
 	};
 
-	const onChange = (paginationObj, filters, { order, columnKey }, extra) => {
+	const onChange = (paginationObj, filters, { order, columnKey }) => {
 		const orderObj = {
 			[descend]: des,
 			[ascend]: asc,
@@ -119,14 +119,14 @@ const FilterTable = (
 		}
 	}, [dataSource]);
 
-	useDisUpdateEffect(()=>{
+	useDisUpdateEffect(() => {
 		setLoading(dataSourceLoading);
-	},[dataSourceLoading])
+	}, [dataSourceLoading]);
 
 	useImperativeHandle(ref, () => ({
 		handleSearch,
 	}));
-	
+
 	return (
 		<div className={[styles.filterTable, filterWrapClassName].join(' ')}>
 			{hasFilterField && <FilterField ref={filterFieldRef} list={filterList} {...rowProps} />}
@@ -171,8 +171,8 @@ const FilterTable = (
 				scroll={scroll}
 				onChange={onChange}
 				{...props}
-				pagination={props?.pagination??pagination.current}
-				className={[styles.filter_table_content,props?.className].join(' ')}
+				pagination={props?.pagination ?? pagination.current}
+				className={[styles.filter_table_content, props?.className].join(' ')}
 			/>
 		</div>
 	);

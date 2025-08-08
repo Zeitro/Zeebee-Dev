@@ -6,7 +6,7 @@ import { debounce } from 'lodash';
 const limitHeight = 200;
 const NewTable = ({ dataSource, columns, pagination, rowKey = 'id', scroll, ...props }) => {
 	// const [scrollY, setScrollY] = useState(limitHeight);
-	
+
 	// useLayoutEffect(() => {
 	// 	const handleResize = debounce(() => {
 	// 		const tableDom = document?.querySelector(`.${styles.newTable}`);
@@ -26,7 +26,7 @@ const NewTable = ({ dataSource, columns, pagination, rowKey = 'id', scroll, ...p
 	// 			: limitHeight;
 	// 		// 5. 取最小值
 	// 		console.log(dataSource,bodyHeight,maxTableBodyHeight,'--',containerHeight);
-			
+
 	// 		setScrollY(Math.min(maxTableBodyHeight, bodyHeight));
 	// 	}, 300);
 	// 	handleResize();

@@ -34,7 +34,7 @@ const RootLayout = ({
 			<body className={`${roboto.variable}`}>
 				<CustomizeAntdTheme fontFamily={`${roboto.variable}`}>
 					{children}
-					<PortalComponent/>
+					<PortalComponent />
 				</CustomizeAntdTheme>
 			</body>
 		</html>
