@@ -1,0 +1,50 @@
+# run
+run:
+  timeout: 5m
+
+linters:
+  default: standard
+  enable:
+    - gofmt
+    - govet
+    - errcheck
+    - staticcheck
+    - goimports
+    - revive
+    - cyclop
+    - gocritic
+    - gosec
+    - ineffassign
+    - misspell
+    - prealloc
+    - unconvert
+    - unparam
+    - whitespace
+
+# 新增 linters-settings 配置
+linters-settings:
+  #  revive:
+  #    rules:
+  #      - name: stutter
+  #        severity: warning # 或者 error，取决于你希望将此问题视为警告还是错误
+  #        disabled: true # 禁用stutter规则，这将忽略所有形式的stutter警告
+  gosec:
+    excludes:
+      - G107  # 排除 G107 规则
+
+formatter:
+  enable:
+    - gofmt
+    - goimports
+    - gofumpt
+
+issues:
+  exclude-rules:
+    - path: ".*_test.go"
+      linters:
+        - errcheck
+        - maligned
+  exclude-dirs:
+    - "vendor"
+    - "docs"
+    - "examples"
