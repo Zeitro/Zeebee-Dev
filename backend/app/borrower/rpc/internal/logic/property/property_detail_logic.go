@@ -38,7 +38,7 @@ func (l *PropertyDetailLogic) PropertyDetail(in *borrower.PropertyDetailRequest)
 	}()
 
 	// get property
-	property, err := l.svcCtx.PropertyRepo.GetOne(l.ctx, in.Data.Id, []string{"Loans"})
+	property, err := l.svcCtx.PropertyRepo.GetOne(l.ctx, in.Data.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -104,6 +104,7 @@ func (l *PropertyDetailLogic) PropertyDetail(in *borrower.PropertyDetailRequest)
 	}
 
 	respData.TotalLoanAmount = totalLoanAmount
+	// respData.TotalLoanAmount = property.TotalAmount
 	respData.TotalPrincipalAmount = totalPrincipalAmount
 	respData.TotalMonthlyPaymentAmount = totalMonthlyPaymentAmount
 	if loanCount > 0 {

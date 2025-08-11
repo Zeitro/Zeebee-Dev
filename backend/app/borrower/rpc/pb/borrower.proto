@@ -387,7 +387,7 @@ message PropertyPageEntry{
   double total_amount = 3;
   double total_principal_amount = 4;
   float avg_rate = 5;
-  double total_monthly_payment = 6;
+  double total_monthly_payment_amount = 6;
   repeated string applicants = 7;
   repeated string lenders = 8;
   string nearest_maturity_date = 9;

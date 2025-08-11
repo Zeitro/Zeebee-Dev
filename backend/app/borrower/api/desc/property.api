@@ -18,7 +18,7 @@ type (
         Address AddressEntry `json:"address"`
         TotalPrincipalAmount float64 `json:"total_principal_amount"`
         AvgRate float32 `json:"avg_rate"`
-        TotalMonthlyPayment float64 `json:"total_monthly_payment"`
+        TotalMonthlyPaymentAmunt float64 `json:"total_monthly_payment_amount"`
         Applicants []string `json:"applicants"`
         Lenders []string `json:"lenders"`
         NearestMaturityDate string `json:"nearest_maturity_date"`
