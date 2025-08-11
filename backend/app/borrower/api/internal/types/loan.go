@@ -17,7 +17,7 @@ type LoanCreateRequest struct {
 	Applicants        []*LoanEditApplicantEntry `json:"applicants" validate:"required,dive,required"`
 	LenderCompany     string                    `json:"lender_company,optional" validate:"required"`
 	ClosingDate       string                    `json:"closing_date,optional" validate:"required_if=Stage Pending,omitempty,datetime=01/02/2006"`
-	ClosingFund       float64                   `json:"closing_fund,optional" validate:"required_if=Stage Pending"`
+	ClosingFund       float64                   `json:"closing_fund,optional" validate:"gte=0,ltefield=TotalAmount"`
 	HoldbackAmount    float64                   `json:"holdback_amount,optional" validate:"gte=0,ltefield=TotalAmount"`
 	Rate              float32                   `json:"rate" validate:"required,gt=0"`
 	PrincipalAmount   float64                   `json:"principal_amount,optional" validate:"required_unless=Stage Pending"`
@@ -82,7 +82,7 @@ type LoanUpdateRequest struct {
 	Applicants        []*LoanEditApplicantEntry `json:"applicants" validate:"required,dive,required"`
 	LenderCompany     string                    `json:"lender_company,optional" validate:"required"`
 	ClosingDate       string                    `json:"closing_date,optional" validate:"required_if=Stage Pending,omitempty,datetime=01/02/2006"`
-	ClosingFund       float64                   `json:"closing_fund,optional" validate:"required_if=Stage Pending"`
+	ClosingFund       float64                   `json:"closing_fund,optional" validate:"gte=0,ltefield=TotalAmount"`
 	HoldbackAmount    float64                   `json:"holdback_amount,optional" validate:"gte=0,ltefield=TotalAmount"`
 	Rate              float32                   `json:"rate" validate:"required,gt=0"`
 	PrincipalAmount   float64                   `json:"principal_amount,optional" validate:"required_unless=Stage Pending"`

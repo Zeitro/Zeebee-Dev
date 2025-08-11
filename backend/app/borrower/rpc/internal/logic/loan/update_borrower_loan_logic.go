@@ -231,6 +231,7 @@ func (l *UpdateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanUpdateReque
 		Rate:             in.Rate,
 		BusinessStrategy: pq.StringArray(in.BusinessStrategy),
 		Source:           constants.LoanSourceBorrower,
+		ClosingFund:      in.ClosingFund,
 	}
 	property = &model.Property{
 		BorrowerId:   in.BorrowerId,
