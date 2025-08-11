@@ -58,7 +58,6 @@ const ActiveLoans = ({
 			{
 				type: 'treeSelect',
 				label: 'Loan purpose',
-				popupMatchSelectWidth: 172,
 				placeholder: 'Loan purpose',
 				value: loanPurpose,
 				paramsKey: 'loan_purpose',
@@ -71,7 +70,7 @@ const ActiveLoans = ({
 			{
 				type: 'treeSelect',
 				label: 'Loan type',
-				popupMatchSelectWidth: 195,
+				popupMatchSelectWidth: 205,
 				value: loanType,
 				paramsKey: 'loan_type',
 				placeholder: 'Loan type',
@@ -86,7 +85,6 @@ const ActiveLoans = ({
 				label: 'Lender',
 				placeholder: 'Lender',
 				paramsKey: 'lender',
-				popupMatchSelectWidth: 172,
 				value: lender,
 				onChange: (value) => setLender(value),
 				treeData: transformArrayStructure({

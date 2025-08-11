@@ -11,11 +11,13 @@ import { createRequest } from '@/lib/fetch';
 import { assemblyAddress } from '@/lib/common';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import eventBus from '@/lib/bus';
+import { useGlobalStore } from '@/store/global';
 const PropertiesDetails = () => {
 	const { id } = useParams();
 	const { request } = createRequest();
 	const [loading, setLoading] = useState(false);
 	const [rowData, setRowData] = useState({});
+	const { changeSiberCollapsed } = useGlobalStore();
 	const api = `/property/${id}`;
 	const list = useMemo(() => {
 		return [
@@ -73,6 +75,8 @@ const PropertiesDetails = () => {
 
 	const getDetails = async () => {
 		try {
+			console.log('getDetails');
+
 			setLoading(true);
 			const data = await request(api);
 			setRowData(data);
@@ -84,6 +88,9 @@ const PropertiesDetails = () => {
 	};
 
 	useEffect(() => {
+		console.log('0000');
+
+		changeSiberCollapsed(true);
 		getDetails();
 	}, []);
 	return (

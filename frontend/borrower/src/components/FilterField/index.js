@@ -41,7 +41,7 @@ const FilterField = ({ list, className, ...rowProps }, ref) => {
 						placeholder="input search text"
 						value={value}
 						onSearch={eventProps?.onSearch}
-						style={{ width: 265 }}
+						style={{ width: 240 }}
 						onChange={debounce(eventProps?.onChange)}
 						{...(eventProps || {})}
 					/>
@@ -64,7 +64,7 @@ const FilterField = ({ list, className, ...rowProps }, ref) => {
 							<Input
 								allowClear
 								size="large"
-								style={{ width: 256 }}
+								style={{ width: 240 }}
 								placeholder="Search by field"
 								value={value}
 								onChange={debounce(eventProps?.onChange)}
@@ -79,7 +79,7 @@ const FilterField = ({ list, className, ...rowProps }, ref) => {
 					<Input
 						size="large"
 						placeholder="input text"
-						style={{ width: 265 }}
+						style={{ width: 240 }}
 						value={value}
 						onChange={debounce(eventProps?.onChange)}
 						allowClear
@@ -169,7 +169,11 @@ const FilterField = ({ list, className, ...rowProps }, ref) => {
 		getApiParams,
 	}));
 	return (
-		<Row gutter={8} {...rowProps} className={`${styles.filterField} w-full ${className || ''}`}>
+		<Row
+			gutter={[8, 8]}
+			{...rowProps}
+			className={`${styles.filterField} w-full ${className || ''}`}
+		>
 			{list?.map(({ colProps, ...item }, index) => {
 				return (
 					<Col {...(colProps || {})} key={index}>

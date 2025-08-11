@@ -57,7 +57,7 @@ const ArchivedLoans = ({
 			{
 				type: 'treeSelect',
 				label: 'Loan type',
-				popupMatchSelectWidth: 195,
+				popupMatchSelectWidth: 205,
 				value: loanType,
 				paramsKey: 'loan_type',
 				placeholder: 'Loan type',
@@ -71,7 +71,6 @@ const ArchivedLoans = ({
 				type: 'treeSelect',
 				label: 'Lender',
 				placeholder: 'Lender',
-				popupMatchSelectWidth: 172,
 				value: lender,
 				paramsKey: 'lender',
 				onChange: (value) => setLender(value),

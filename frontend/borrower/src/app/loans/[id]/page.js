@@ -1,6 +1,6 @@
 'use client';
 import { Anchor, Button, Col, Form, message, Row } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import CreateLoan from '../components/Create/Loan';
 import CreateProperty from '../components/Create/property';
 import CreateTerm from '../components/Create/term';
@@ -12,12 +12,14 @@ import dayjs from 'dayjs';
 import { formatDate } from '@/lib/date';
 import eventBus from '@/lib/bus';
 import { assemblyAddress } from '@/lib/common';
+import { useGlobalStore } from '@/store/global';
 const EditLoanPage = () => {
 	const { id } = useParams();
 	const [form] = Form.useForm();
 	const stage = Form.useWatch('stage', form);
 	const { request } = createRequest();
 	const [loading, setLoading] = useState(false);
+	const { changeSiberCollapsed } = useGlobalStore();
 
 	const getDetails = async () => {
 		let res = {
@@ -87,6 +89,12 @@ const EditLoanPage = () => {
 
 	useEffect(() => {
 		getDetails();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	useLayoutEffect(() => {
+		changeSiberCollapsed(true);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (
@@ -146,4 +154,5 @@ const EditLoanPage = () => {
 		</Row>
 	);
 };
+
 export default EditLoanPage;
