@@ -34,11 +34,11 @@ func (repo *PropertyRepo) GetOneWithTx(ctx context.Context, tx *gorm.DB, id int6
 	return
 }
 
-func (repo *PropertyRepo) GetOne(ctx context.Context, id int64, preloads []string) (result *model.Property, err error) {
-	query := repo.BaseRepo.Client(ctx).Where("id = ?", id)
-	for _, preload := range preloads {
-		query = query.Preload(preload)
-	}
+func (repo *PropertyRepo) GetOne(ctx context.Context, id int64) (result *model.Property, err error) {
+	query := repo.BaseRepo.Client(ctx).Where("id = ?", id).
+		Preload("Loans").
+		Preload("Loans.Applicants")
+
 	err = query.First(&result).Error
 	return
 }

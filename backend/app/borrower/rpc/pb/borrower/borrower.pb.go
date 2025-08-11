@@ -3409,22 +3409,22 @@ func (x *LoanLenderCompaniesResponse) GetData() []string {
 }
 
 type PropertyPageEntry struct {
-	state                protoimpl.MessageState `protogen:"open.v1"`
-	Id                   int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	PropertyType         string                 `protobuf:"bytes,2,opt,name=property_type,json=propertyType,proto3" json:"property_type,omitempty"`
-	TotalAmount          float64                `protobuf:"fixed64,3,opt,name=total_amount,json=totalAmount,proto3" json:"total_amount,omitempty"`
-	TotalPrincipalAmount float64                `protobuf:"fixed64,4,opt,name=total_principal_amount,json=totalPrincipalAmount,proto3" json:"total_principal_amount,omitempty"`
-	AvgRate              float32                `protobuf:"fixed32,5,opt,name=avg_rate,json=avgRate,proto3" json:"avg_rate,omitempty"`
-	TotalMonthlyPayment  float64                `protobuf:"fixed64,6,opt,name=total_monthly_payment,json=totalMonthlyPayment,proto3" json:"total_monthly_payment,omitempty"`
-	Applicants           []string               `protobuf:"bytes,7,rep,name=applicants,proto3" json:"applicants,omitempty"`
-	Lenders              []string               `protobuf:"bytes,8,rep,name=lenders,proto3" json:"lenders,omitempty"`
-	NearestMaturityDate  string                 `protobuf:"bytes,9,opt,name=nearest_maturity_date,json=nearestMaturityDate,proto3" json:"nearest_maturity_date,omitempty"`
-	PendingLoanCount     int64                  `protobuf:"varint,10,opt,name=pending_loan_count,json=pendingLoanCount,proto3" json:"pending_loan_count,omitempty"`
-	ActiveLoanCount      int64                  `protobuf:"varint,11,opt,name=active_loan_count,json=activeLoanCount,proto3" json:"active_loan_count,omitempty"`
-	ArchivedLoanCount    int64                  `protobuf:"varint,12,opt,name=archived_loan_count,json=archivedLoanCount,proto3" json:"archived_loan_count,omitempty"`
-	Address              *AddressEntry          `protobuf:"bytes,13,opt,name=address,proto3" json:"address,omitempty"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
+	state                     protoimpl.MessageState `protogen:"open.v1"`
+	Id                        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	PropertyType              string                 `protobuf:"bytes,2,opt,name=property_type,json=propertyType,proto3" json:"property_type,omitempty"`
+	TotalAmount               float64                `protobuf:"fixed64,3,opt,name=total_amount,json=totalAmount,proto3" json:"total_amount,omitempty"`
+	TotalPrincipalAmount      float64                `protobuf:"fixed64,4,opt,name=total_principal_amount,json=totalPrincipalAmount,proto3" json:"total_principal_amount,omitempty"`
+	AvgRate                   float32                `protobuf:"fixed32,5,opt,name=avg_rate,json=avgRate,proto3" json:"avg_rate,omitempty"`
+	TotalMonthlyPaymentAmount float64                `protobuf:"fixed64,6,opt,name=total_monthly_payment_amount,json=totalMonthlyPaymentAmount,proto3" json:"total_monthly_payment_amount,omitempty"`
+	Applicants                []string               `protobuf:"bytes,7,rep,name=applicants,proto3" json:"applicants,omitempty"`
+	Lenders                   []string               `protobuf:"bytes,8,rep,name=lenders,proto3" json:"lenders,omitempty"`
+	NearestMaturityDate       string                 `protobuf:"bytes,9,opt,name=nearest_maturity_date,json=nearestMaturityDate,proto3" json:"nearest_maturity_date,omitempty"`
+	PendingLoanCount          int64                  `protobuf:"varint,10,opt,name=pending_loan_count,json=pendingLoanCount,proto3" json:"pending_loan_count,omitempty"`
+	ActiveLoanCount           int64                  `protobuf:"varint,11,opt,name=active_loan_count,json=activeLoanCount,proto3" json:"active_loan_count,omitempty"`
+	ArchivedLoanCount         int64                  `protobuf:"varint,12,opt,name=archived_loan_count,json=archivedLoanCount,proto3" json:"archived_loan_count,omitempty"`
+	Address                   *AddressEntry          `protobuf:"bytes,13,opt,name=address,proto3" json:"address,omitempty"`
+	unknownFields             protoimpl.UnknownFields
+	sizeCache                 protoimpl.SizeCache
 }
 
 func (x *PropertyPageEntry) Reset() {
@@ -3492,9 +3492,9 @@ func (x *PropertyPageEntry) GetAvgRate() float32 {
 	return 0
 }
 
-func (x *PropertyPageEntry) GetTotalMonthlyPayment() float64 {
+func (x *PropertyPageEntry) GetTotalMonthlyPaymentAmount() float64 {
 	if x != nil {
-		return x.TotalMonthlyPayment
+		return x.TotalMonthlyPaymentAmount
 	}
 	return 0
 }
@@ -4560,14 +4560,14 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\vborrower_id\x18\x01 \x01(\x03R\n" +
 	"borrowerId\"1\n" +
 	"\x1bLoanLenderCompaniesResponse\x12\x12\n" +
-	"\x04data\x18\x01 \x03(\tR\x04data\"\x9a\x04\n" +
+	"\x04data\x18\x01 \x03(\tR\x04data\"\xa7\x04\n" +
 	"\x11PropertyPageEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
 	"\rproperty_type\x18\x02 \x01(\tR\fpropertyType\x12!\n" +
 	"\ftotal_amount\x18\x03 \x01(\x01R\vtotalAmount\x124\n" +
 	"\x16total_principal_amount\x18\x04 \x01(\x01R\x14totalPrincipalAmount\x12\x19\n" +
-	"\bavg_rate\x18\x05 \x01(\x02R\aavgRate\x122\n" +
-	"\x15total_monthly_payment\x18\x06 \x01(\x01R\x13totalMonthlyPayment\x12\x1e\n" +
+	"\bavg_rate\x18\x05 \x01(\x02R\aavgRate\x12?\n" +
+	"\x1ctotal_monthly_payment_amount\x18\x06 \x01(\x01R\x19totalMonthlyPaymentAmount\x12\x1e\n" +
 	"\n" +
 	"applicants\x18\a \x03(\tR\n" +
 	"applicants\x12\x18\n" +
