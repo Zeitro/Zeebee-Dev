@@ -10,6 +10,7 @@ import { useParams } from 'next/navigation';
 import { createRequest } from '@/lib/fetch';
 import { assemblyAddress } from '@/lib/common';
 import { useGetOptions } from '@/hooks/useGetOptions';
+import eventBus from '@/lib/bus';
 const PropertiesDetails = () => {
 	const { id } = useParams();
 	const { request } = createRequest();
@@ -75,6 +76,7 @@ const PropertiesDetails = () => {
 			setLoading(true);
 			const data = await request(api);
 			setRowData(data);
+			eventBus.emit('changeCrumbs', { 2: assemblyAddress(data?.address) });
 			setLoading(false);
 		} catch (error) {
 			setLoading(false);
@@ -87,7 +89,7 @@ const PropertiesDetails = () => {
 	return (
 		<div className={['h-full px-8 py-6 overflow-hidden overflow-y-auto'].join(' ')}>
 			<div className="flex items-center pb-6">
-				<Image src={require('@/assets/images/home.svg')} alt="" className="w-8 h-8" />
+				<Image src="/images/home.svg" width={32} height={32} alt="" />
 				<p className="text-[24px]/8 font-medium">{assemblyAddress(rowData?.address)}</p>
 			</div>
 			<Row className="border border-base-disabled rounded-lg px-4 py-4">

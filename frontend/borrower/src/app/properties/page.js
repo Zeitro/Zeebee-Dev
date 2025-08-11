@@ -100,7 +100,7 @@ const Properties = () => {
 						getList();
 					}}
 				>
-					<Image src="/images/sort.svg" alt="" />
+					<Image src="/images/sort.svg" alt="" width={24} height={24} />
 					Total loan: {sorter.current.sort === des ? sort_des : sort_asc}
 				</div>
 			</div>

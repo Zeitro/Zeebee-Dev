@@ -9,6 +9,7 @@ import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import { RightCircleTwoTone, LeftCircleTwoTone } from '@ant-design/icons';
 import { useUserStore } from '@/store/user';
+import { sidebarIcon } from './icon';
 const homePathname = '/';
 /**
  * 侧边栏组件
@@ -16,7 +17,7 @@ const homePathname = '/';
 const SidebarDom = () => {
 	const router = useRouter();
 	const pathname = usePathname();
-	const items = generateMenuBar(navRouter).filter((i) => i.key !== '/');
+	const items = generateMenuBar(navRouter, sidebarIcon).filter((i) => i.key !== '/');
 	const { userInfo } = useUserStore();
 	const { siberCollapsed, changeSiberCollapsed } = useGlobalStore();
 	const [selectedKey, setSelectedKey] = useState(homePathname);
@@ -80,7 +81,9 @@ const SidebarDom = () => {
 						<p className={`text-base/4 text-black-dark font-medium pb-[3px]`}>
 							{userInfo?.first_name} {userInfo?.last_name}
 						</p>
-						<span className="text-gray-medium">{userInfo?.email}</span>
+						<span className="text-gray-medium text-ellipsis overflow-hidden whitespace-nowrap">
+							{userInfo?.email}
+						</span>
 					</div>
 				)}
 			</div>

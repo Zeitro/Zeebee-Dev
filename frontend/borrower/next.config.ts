@@ -7,6 +7,10 @@ const nextConfig: NextConfig = {
 		NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL, // 注入环境变量
 	},
 	webpack: (config) => {
+		config.module.rules.push({
+			test: /\.svg$/,
+			use: ['@svgr/webpack'],
+		});
 		config.resolve.alias['@config'] = path.resolve(__dirname, 'config');
 		return config;
 	},

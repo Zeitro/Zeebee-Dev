@@ -1,6 +1,6 @@
 import { routers } from './routes';
 // 生成菜单栏
-export const generateMenuBar = (list) => {
+export const generateMenuBar = (list, iconConfig) => {
 	return JSON.parse(JSON.stringify(list))
 		.filter((i) => !i.hideMenu)
 		.map((item) => {
@@ -10,8 +10,10 @@ export const generateMenuBar = (list) => {
 			const newItem = {
 				key: item.path,
 				label: item.title,
-				icon: item.icon,
 			};
+			if (iconConfig) {
+				newItem.icon = iconConfig[item.icon];
+			}
 			if (item?.router?.length) {
 				newItem.children = item.router;
 			}
@@ -65,8 +67,8 @@ export const getCrumbs = (currentPath, routes) => {
 				title,
 			};
 			// 最后一个不需要path
-			if (segments.length - 1 >= i) {
-				crumbItem.href = path;
+			if (segments.length - 1 !== i) {
+				crumbItem.path = path;
 			}
 			breadcrumbs.push(crumbItem);
 		}

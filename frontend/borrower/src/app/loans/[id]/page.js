@@ -10,6 +10,8 @@ import styles from './index.module.scss';
 import { createRequest } from '@/lib/fetch';
 import dayjs from 'dayjs';
 import { formatDate } from '@/lib/date';
+import eventBus from '@/lib/bus';
+import { assemblyAddress } from '@/lib/common';
 const EditLoanPage = () => {
 	const { id } = useParams();
 	const [form] = Form.useForm();
@@ -26,6 +28,9 @@ const EditLoanPage = () => {
 		};
 		try {
 			res = await request(`/loan/${id}`);
+			eventBus.emit('changeCrumbs', {
+				2: `Edit Loan(${assemblyAddress(res?.property?.address)})`,
+			});
 			if (res.closing_date) {
 				res.closing_date = dayjs(res.closing_date);
 			}

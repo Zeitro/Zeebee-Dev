@@ -7,6 +7,7 @@ export const navRouter = [
 	{
 		path: '/loans',
 		title: 'My loans',
+		icon: 'loan',
 		roles: [],
 		router: [
 			{
@@ -24,11 +25,12 @@ export const navRouter = [
 	{
 		path: '/properties',
 		title: 'My properties',
+		icon: 'property',
 		roles: [],
 		router: [
 			{
 				path: '/properties/:id',
-				title: 'details',
+				title: 'Details',
 				hideMenu: true,
 			},
 		],

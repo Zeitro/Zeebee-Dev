@@ -3,7 +3,7 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-		"local": "NEXT_PUBLIC_ENV=local next start",
+		"local": "NEXT_PUBLIC_ENV=local next dev",
 		"dev": "NODE_ENV=development next start",
 		"build": "NODE_ENV=production next build",
 		"start": "NODE_ENV=production next start",
@@ -15,11 +15,13 @@
 	"dependencies": {
 		"@ant-design/nextjs-registry": "^1.0.2",
 		"@ant-design/v5-patch-for-react-19": "^1.0.3",
+		"@svgr/webpack": "^8.1.0",
 		"antd": "^5.26.2",
 		"dayjs": "^1.11.13",
 		"events": "^3.3.0",
 		"lodash": "^4.17.21",
 		"next": "15.3.0",
+		"next-svg": "^1.0.7",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"zustand": "^5.0.6"
