@@ -33,7 +33,7 @@ const CreateProperty = ({ stepBtn, gutter, addressProps = {}, form, ...colProps 
 						min={1}
 						max={10}
 						controls={false}
-						placeholder="Enter initial loan amount"
+						placeholder="Enter number of unit"
 					/>
 				</Form.Item>
 			</Col>

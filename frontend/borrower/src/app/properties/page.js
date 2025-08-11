@@ -24,6 +24,8 @@ const Properties = () => {
 	});
 	const [loading, setLoading] = useState(true);
 	const [list, setList] = useState([]);
+	const scrollRef = useRef(null);
+
 	const filterList = useMemo(
 		() => [
 			{
@@ -104,7 +106,7 @@ const Properties = () => {
 					Total loan: {sorter.current.sort === des ? sort_des : sort_asc}
 				</div>
 			</div>
-			<div className="flex-1 overflow-hidden overflow-y-auto">
+			<div ref={scrollRef} className="flex-1 overflow-hidden overflow-y-auto">
 				<Spin spinning={loading}>
 					{list?.length ? (
 						list.map((item, index) => <PropertiesItem key={index} data={item} />)
@@ -118,10 +120,14 @@ const Properties = () => {
 			{!!list.length && (
 				<NewPagination
 					className="!mt-4 justify-end"
-					onChange={(page, pageSize) => {
+					onChange={(page) => {
 						cancel('/property/page');
 						pagination.current.current = page;
 						getList();
+						scrollRef.current.scrollTo({
+							// behavior: 'smooth',
+							top: 0,
+						});
 					}}
 					{...pagination.current}
 				/>

@@ -2,8 +2,8 @@
 import { Table } from 'antd';
 import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import styles from './index.module.scss';
-import { debounce } from 'lodash';
-const limitHeight = 200;
+// import { debounce } from 'lodash';
+// const limitHeight = 200;
 const NewTable = ({ dataSource, columns, pagination, rowKey = 'id', scroll, ...props }) => {
 	// const [scrollY, setScrollY] = useState(limitHeight);
 

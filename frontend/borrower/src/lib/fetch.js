@@ -1,4 +1,4 @@
-import { getLocalStorage } from '@/lib/local';
+import { localStorageUtil } from '@/lib/local';
 import { message } from 'antd';
 // 公共提示
 function showMessage(msg, type = 'error') {
@@ -19,7 +19,7 @@ export function createRequest() {
 		const controller = new AbortController();
 		controllers.set(key, controller);
 
-		const token = getLocalStorage('userStore')?.state?.access?.access_token;
+		const token = localStorageUtil.get('userStore')?.state?.access?.access_token;
 		const headers = {
 			'Content-Type': 'application/json',
 			Authorization: '',

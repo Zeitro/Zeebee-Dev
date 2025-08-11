@@ -25,7 +25,7 @@ const PropertiesItem = ({ data }) => {
 		},
 		{
 			render: () => (
-				<Button onClick={() => router.push(`/properties/${data?.id}`)}>View detials</Button>
+				<Button onClick={() => router.push(`/properties/${data?.id}`)}>View details</Button>
 			),
 		},
 	];

@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { createLoanSteps } from '@/enum/loan';
 import { createRequest } from '@/lib/fetch';
 import { formatDate } from '@/lib/date';
+import { loan_pending } from '@/enum/common';
 const CreateLoanPage = () => {
 	const router = useRouter();
 	const { request } = createRequest();
@@ -91,7 +92,13 @@ const CreateLoanPage = () => {
 		</Col>
 	);
 	const stepContent = {
-		0: <CreateLoan form={form} stepBtn={stepBtn} />,
+		0: (
+			<CreateLoan
+				form={form}
+				stepBtn={stepBtn}
+				radioClassName="w-full !flex justify-between"
+			/>
+		),
 		1: (
 			<CreateProperty
 				stage={loanData?.[0]?.stage}
@@ -123,6 +130,9 @@ const CreateLoanPage = () => {
 					className=""
 					size="large"
 					disabled={loading}
+					initialValues={{
+						stage: loan_pending,
+					}}
 				>
 					{stepContent[currentStep]}
 				</Form>

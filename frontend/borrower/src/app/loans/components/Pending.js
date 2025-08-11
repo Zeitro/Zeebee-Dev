@@ -17,7 +17,7 @@ const PendingPage = ({
 	dataSource,
 	isNotAddress,
 	loading,
-	scrollX = 2500,
+	scrollX = 2400,
 }) => {
 	const [modal, contextHolder] = Modal.useModal();
 	const { loanPendingStatus, loanPurposeOptions, loanTypeOptions, lenderOptions } =

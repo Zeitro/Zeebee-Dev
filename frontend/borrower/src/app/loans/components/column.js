@@ -148,7 +148,7 @@ export const pendingColumns = (isNotAddress, successCallback, showDeleteModal) =
 			dataIndex: 'pending_status',
 			key: 'pending_status',
 			ellipsis: true,
-			width: 160,
+			width: 150,
 			align: 'center',
 			fixed: 'right',
 			render: (v, record) => (

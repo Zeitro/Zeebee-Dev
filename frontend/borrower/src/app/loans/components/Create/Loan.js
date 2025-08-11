@@ -7,7 +7,7 @@ import { useGetOptions } from '@/hooks/useGetOptions';
 import { loan_active, loan_archived, loan_pending } from '@/enum/common';
 import { formatStr } from '@/lib/date';
 const MAX_COUNT = 5;
-const CreateLoan = ({ form, stepBtn, gutter, ...colProps }) => {
+const CreateLoan = ({ form, stepBtn, gutter, radioClassName, ...colProps }) => {
 	const stage = Form.useWatch('stage', form);
 	const {
 		loanPendingStatus,
@@ -46,7 +46,7 @@ const CreateLoan = ({ form, stepBtn, gutter, ...colProps }) => {
 					className={styles.commonFormItem}
 					rules={[{ required: true, message: 'Please select a loan stage!' }]}
 				>
-					<Radio.Group options={loanStatusOptions} />
+					<Radio.Group options={loanStatusOptions} className={radioClassName} />
 				</Form.Item>
 			</Col>
 			{stage === loan_pending && (
@@ -57,7 +57,7 @@ const CreateLoan = ({ form, stepBtn, gutter, ...colProps }) => {
 						className={styles.commonFormItem}
 						rules={[{ required: true, message: 'Please select a pending status!' }]}
 					>
-						<Radio.Group options={loanPendingStatus} />
+						<Radio.Group options={loanPendingStatus} className={radioClassName} />
 					</Form.Item>
 				</Col>
 			)}
@@ -118,11 +118,11 @@ const CreateLoan = ({ form, stepBtn, gutter, ...colProps }) => {
 					</Col>
 					<Col md={24} {...(colProps || {})}>
 						<Form.Item
-							label="Monthly paymant"
+							label="Monthly payment"
 							name="monthly_payment"
-							rules={[{ required: true, message: 'Please Enter Monthly paymant!' }]}
+							rules={[{ required: true, message: 'Please Enter Monthly payment!' }]}
 						>
-							<InputNumAmount placeholder="Enter Monthly paymant" />
+							<InputNumAmount placeholder="Enter Monthly payment" />
 						</Form.Item>
 					</Col>
 				</>
