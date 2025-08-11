@@ -20,7 +20,7 @@ export const propertiesFieldArr = [
 	},
 	{
 		label: 'Total monthly payment',
-		value: 'total_monthly_payment',
+		value: 'total_monthly_payment_amount',
 		render: (v) => formatAmount(v),
 	},
 ];

@@ -17,6 +17,7 @@ const PropertiesItem = ({ data }) => {
 		{
 			label: 'Lender',
 			value: 'lenders',
+			render: (v) => v?.join(','),
 		},
 		{
 			label: 'Nearest maturity date',

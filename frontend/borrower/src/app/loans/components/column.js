@@ -15,7 +15,9 @@ const common = (isNotAddress) => {
 			minWidth: 200,
 			render: (v, { source }) => (
 				<div className="flex items-center">
-					<p className="overflow-hidden text-ellipsis whitespace-nowrap">{v}</p>
+					<p className="overflow-hidden text-ellipsis whitespace-nowrap" title={v}>
+						{v}
+					</p>
 					{source === 'borrower' && (
 						<div className="ml-2 px-2 bg-blue-light-1 text-blue-medium-default rounded-xs">
 							3rd party

@@ -111,7 +111,7 @@ const FilterField = ({ list, className, ...rowProps }, ref) => {
 						maxTagPlaceholder={() => `${label}(${value?.length})`}
 						treeCheckable={true}
 						value={value}
-						showSearch={false}
+						showSearch={true}
 						allowClear={true}
 						showCheckedStrategy={SHOW_ALL}
 						onChange={eventProps?.onChange}
