@@ -7,7 +7,7 @@ import { useGetOptions } from '@/hooks/useGetOptions';
 import { loan_active, loan_archived, loan_pending } from '@/enum/common';
 import { formatStr } from '@/lib/date';
 const MAX_COUNT = 5;
-const CreateLoan = ({ form, stepBtn, gutter, radioClassName, ...colProps }) => {
+const CreateLoan = ({ form, stepBtn, gutter, isRadioStyle, ...colProps }) => {
 	const stage = Form.useWatch('stage', form);
 	const {
 		loanPendingStatus,
@@ -37,31 +37,41 @@ const CreateLoan = ({ form, stepBtn, gutter, radioClassName, ...colProps }) => {
 			valueName: 'businessStrategyOptions',
 		},
 	]);
+	const layoutCol = {
+		xs: 24,
+		sm: 24,
+	};
 	return (
 		<Row className={styles.create} gutter={gutter}>
-			<Col md={24}>
+			<Col {...layoutCol}>
 				<Form.Item
 					label="Select a loan stage"
 					name="stage"
 					className={styles.commonFormItem}
 					rules={[{ required: true, message: 'Please select a loan stage!' }]}
 				>
-					<Radio.Group options={loanStatusOptions} className={radioClassName} />
+					<Radio.Group
+						options={loanStatusOptions}
+						className={isRadioStyle && styles.radio}
+					/>
 				</Form.Item>
 			</Col>
 			{stage === loan_pending && (
-				<Col md={24}>
+				<Col {...layoutCol}>
 					<Form.Item
 						label="Select a pending status"
 						name="pending_status"
 						className={styles.commonFormItem}
 						rules={[{ required: true, message: 'Please select a pending status!' }]}
 					>
-						<Radio.Group options={loanPendingStatus} className={radioClassName} />
+						<Radio.Group
+							options={loanPendingStatus}
+							className={isRadioStyle && styles.radio}
+						/>
 					</Form.Item>
 				</Col>
 			)}
-			<Col md={24} {...(colProps || {})}>
+			<Col {...layoutCol} {...(colProps || {})}>
 				<Form.Item
 					label="Loan purpose"
 					name="loan_purpose"
@@ -70,7 +80,7 @@ const CreateLoan = ({ form, stepBtn, gutter, radioClassName, ...colProps }) => {
 					<Select options={loanPurposeOptions} placeholder="Select a loan purpose" />
 				</Form.Item>
 			</Col>
-			<Col md={24} {...(colProps || {})}>
+			<Col {...layoutCol} {...(colProps || {})}>
 				<Form.Item
 					label="Loan type"
 					name="loan_type"
@@ -81,7 +91,7 @@ const CreateLoan = ({ form, stepBtn, gutter, radioClassName, ...colProps }) => {
 			</Col>
 			{stage !== loan_archived && (
 				<>
-					<Col md={24} {...(colProps || {})}>
+					<Col {...layoutCol} {...(colProps || {})}>
 						<Form.Item
 							label="Total loan amount"
 							name="total_amount"
@@ -92,7 +102,7 @@ const CreateLoan = ({ form, stepBtn, gutter, radioClassName, ...colProps }) => {
 							<InputNumAmount placeholder="Enter total loan amount" />
 						</Form.Item>
 					</Col>
-					<Col md={24} {...(colProps || {})}>
+					<Col {...layoutCol} {...(colProps || {})}>
 						<Form.Item label="Initial loan amount(optional)" name="initial_amount">
 							<InputNumAmount placeholder="Enter initial loan amount" />
 						</Form.Item>
@@ -102,7 +112,7 @@ const CreateLoan = ({ form, stepBtn, gutter, radioClassName, ...colProps }) => {
 
 			{stage === loan_active && (
 				<>
-					<Col md={24} {...(colProps || {})}>
+					<Col {...layoutCol} {...(colProps || {})}>
 						<Form.Item
 							label="Outstanding loan amount"
 							name="principal_amount"
@@ -116,7 +126,7 @@ const CreateLoan = ({ form, stepBtn, gutter, radioClassName, ...colProps }) => {
 							<InputNumAmount placeholder="Enter Outstanding loan amount" />
 						</Form.Item>
 					</Col>
-					<Col md={24} {...(colProps || {})}>
+					<Col {...layoutCol} {...(colProps || {})}>
 						<Form.Item
 							label="Monthly payment"
 							name="monthly_payment"
@@ -129,7 +139,7 @@ const CreateLoan = ({ form, stepBtn, gutter, radioClassName, ...colProps }) => {
 			)}
 			{stage === loan_archived && (
 				<>
-					<Col md={24} {...(colProps || {})}>
+					<Col {...layoutCol} {...(colProps || {})}>
 						<Form.Item
 							label="Principal balance"
 							name="principal_amount"
@@ -143,7 +153,7 @@ const CreateLoan = ({ form, stepBtn, gutter, radioClassName, ...colProps }) => {
 							<InputNumAmount placeholder="Enter Principal balance" />
 						</Form.Item>
 					</Col>
-					<Col md={24} {...(colProps || {})}>
+					<Col {...layoutCol} {...(colProps || {})}>
 						<Form.Item
 							label="Paid off date"
 							name="paid_off_date"
@@ -159,7 +169,7 @@ const CreateLoan = ({ form, stepBtn, gutter, radioClassName, ...colProps }) => {
 				</>
 			)}
 			{stage !== loan_archived && (
-				<Col md={24} {...(colProps || {})}>
+				<Col {...layoutCol} {...(colProps || {})}>
 					<Form.Item
 						label="Business strategy"
 						name="business_strategy"

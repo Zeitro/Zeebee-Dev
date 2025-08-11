@@ -5,7 +5,10 @@ import GoogleAutoComplete from './index';
 import { set } from 'lodash';
 import { useAddressStore } from '@/store/address';
 import { useDisUpdateEffect } from '@/hooks/common';
-
+const layoutCol = {
+	xs: 24,
+	sm: 24,
+};
 /**
  * 地址自动完成（包括address1/address2/city/state/zip）
  */
@@ -51,7 +54,7 @@ const AddressForm = ({
 
 	return (
 		<>
-			<Col md={24} {...addressCol}>
+			<Col {...layoutCol} {...addressCol}>
 				<Form.Item
 					name={addressName}
 					label={addressLabel}
@@ -63,12 +66,12 @@ const AddressForm = ({
 					/>
 				</Form.Item>
 			</Col>
-			<Col md={24} {...address2Col}>
+			<Col {...layoutCol} {...address2Col}>
 				<Form.Item name={addressName2} label={addressLabel2}>
 					<Input placeholder={`Enter ${addressLabel2}`} />
 				</Form.Item>
 			</Col>
-			<Col md={24} {...stateCol}>
+			<Col {...layoutCol} {...stateCol}>
 				<Form.Item
 					name={stateName}
 					label={stateLabel}
@@ -82,7 +85,7 @@ const AddressForm = ({
 					/>
 				</Form.Item>
 			</Col>
-			<Col md={12} {...cityCol}>
+			<Col md={12} {...layoutCol} {...cityCol}>
 				<Form.Item
 					name={cityName}
 					label={cityLabel}
@@ -96,7 +99,7 @@ const AddressForm = ({
 					/>
 				</Form.Item>
 			</Col>
-			<Col md={12} {...zipCol}>
+			<Col md={12} {...layoutCol} {...zipCol}>
 				<Form.Item
 					name={zipName}
 					label={zipLabel}

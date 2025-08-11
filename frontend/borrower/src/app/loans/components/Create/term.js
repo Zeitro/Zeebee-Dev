@@ -6,6 +6,10 @@ import InputNumAmount from '@/components/InputNumAmount';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import { loan_active, loan_pending } from '@/enum/common';
 import { formatStr } from '@/lib/date';
+const layoutCol = {
+	xs: 24,
+	sm: 24,
+};
 const CreateTerm = ({ stage, stepBtn, gutter, ...colProps }) => {
 	const { lienPositionOptions, prepaymentPenaltyOptions } = useGetOptions([
 		{
@@ -18,7 +22,7 @@ const CreateTerm = ({ stage, stepBtn, gutter, ...colProps }) => {
 		},
 	]);
 	const rateDom = (
-		<Col md={24} {...(colProps || {})}>
+		<Col {...layoutCol} {...(colProps || {})}>
 			<Form.Item
 				label="Rate"
 				name="rate"
@@ -36,7 +40,7 @@ const CreateTerm = ({ stage, stepBtn, gutter, ...colProps }) => {
 		</Col>
 	);
 	const lenderDom = (
-		<Col md={24} {...(colProps || {})}>
+		<Col {...layoutCol} {...(colProps || {})}>
 			<Form.Item
 				label={stage === 'pending' ? 'TagetLender' : 'Lender'}
 				name="lender_company"
@@ -52,7 +56,7 @@ const CreateTerm = ({ stage, stepBtn, gutter, ...colProps }) => {
 				{(fields) => {
 					return fields?.map((field, index) => (
 						<Col
-							md={24}
+							{...layoutCol}
 							{...(colProps || {})}
 							key={field.key}
 							fieldkey={field.fieldKey}
@@ -71,7 +75,7 @@ const CreateTerm = ({ stage, stepBtn, gutter, ...colProps }) => {
 			{stage === loan_pending && (
 				<>
 					{lenderDom}
-					<Col md={24} {...(colProps || {})}>
+					<Col {...layoutCol} {...(colProps || {})}>
 						<Form.Item
 							label="Target closing date"
 							name="closing_date"
@@ -84,7 +88,7 @@ const CreateTerm = ({ stage, stepBtn, gutter, ...colProps }) => {
 							/>
 						</Form.Item>
 					</Col>
-					<Col md={24} {...(colProps || {})}>
+					<Col {...layoutCol} {...(colProps || {})}>
 						<Form.Item
 							label="Holdback"
 							name="holdback_amount"
@@ -94,7 +98,7 @@ const CreateTerm = ({ stage, stepBtn, gutter, ...colProps }) => {
 						</Form.Item>
 					</Col>
 					{rateDom}
-					<Col md={24} {...(colProps || {})}>
+					<Col {...layoutCol} {...(colProps || {})}>
 						<Form.Item
 							label="Estimated closing fund"
 							name="closing_fund"
@@ -113,7 +117,7 @@ const CreateTerm = ({ stage, stepBtn, gutter, ...colProps }) => {
 			)}
 			{stage === loan_active && (
 				<>
-					{/* <Col md={24} {...(colProps||{})}>
+					{/* <Col {...layoutCol} {...(colProps||{})}>
 						<Form.Item
 							label="Point"
 							name="point"
@@ -128,7 +132,7 @@ const CreateTerm = ({ stage, stepBtn, gutter, ...colProps }) => {
 							/>
 						</Form.Item>
 					</Col> */}
-					<Col md={24} {...(colProps || {})}>
+					<Col {...layoutCol} {...(colProps || {})}>
 						<Form.Item
 							label="Lien position"
 							name="lien_position"
@@ -140,7 +144,7 @@ const CreateTerm = ({ stage, stepBtn, gutter, ...colProps }) => {
 							/>
 						</Form.Item>
 					</Col>
-					<Col md={24} {...(colProps || {})}>
+					<Col {...layoutCol} {...(colProps || {})}>
 						<Form.Item
 							label="Maturity date"
 							name="maturity_date"
@@ -153,20 +157,20 @@ const CreateTerm = ({ stage, stepBtn, gutter, ...colProps }) => {
 							/>
 						</Form.Item>
 					</Col>
-					<Col md={24} {...(colProps || {})}>
+					<Col {...layoutCol} {...(colProps || {})}>
 						<Form.Item
 							label="Prepayment penalty"
 							name="prepayment_penalty"
 							rules={[{ required: true, message: 'Please input!' }]}
+							getValueFromEvent={(e) => Number(e)}
 						>
 							<Select
 								options={prepaymentPenaltyOptions}
 								placeholder="Enter Prepayment penalty"
 							/>
-							{/* <InputNumAmount placeholder="Enter Prepayment penalty" /> */}
 						</Form.Item>
 					</Col>
-					<Col md={24} {...(colProps || {})}>
+					<Col {...layoutCol} {...(colProps || {})}>
 						<Form.Item
 							label="Servicing company"
 							name="service_company"

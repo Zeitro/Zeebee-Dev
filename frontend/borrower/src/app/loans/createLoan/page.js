@@ -77,7 +77,7 @@ const CreateLoanPage = () => {
 	};
 
 	const stepBtn = (
-		<Col md={24} className="py-6 !flex justify-between items-center">
+		<Col xs={24} sm={24} className="py-6 !flex justify-between items-center">
 			<Button type="text" onClick={() => router.back()}>
 				Cancel
 			</Button>
@@ -92,13 +92,7 @@ const CreateLoanPage = () => {
 		</Col>
 	);
 	const stepContent = {
-		0: (
-			<CreateLoan
-				form={form}
-				stepBtn={stepBtn}
-				radioClassName="w-full !flex justify-between"
-			/>
-		),
+		0: <CreateLoan form={form} stepBtn={stepBtn} isRadioStyle={true} />,
 		1: (
 			<CreateProperty
 				stage={loanData?.[0]?.stage}

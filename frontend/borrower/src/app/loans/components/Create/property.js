@@ -4,6 +4,10 @@ import React from 'react';
 import styles from './index.module.scss';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
+const layoutCol = {
+	xs: 24,
+	sm: 24,
+};
 const CreateProperty = ({ stepBtn, gutter, addressProps = {}, form, ...colProps }) => {
 	const { propertyTypeOptions } = useGetOptions([
 		{
@@ -13,7 +17,7 @@ const CreateProperty = ({ stepBtn, gutter, addressProps = {}, form, ...colProps 
 	]);
 	return (
 		<Row className={styles.create} gutter={gutter}>
-			<Col md={24} {...(colProps || {})}>
+			<Col {...layoutCol} {...(colProps || {})}>
 				<Form.Item
 					label="Property type"
 					name={['property', 'property_type']}
@@ -22,7 +26,7 @@ const CreateProperty = ({ stepBtn, gutter, addressProps = {}, form, ...colProps 
 					<Select options={propertyTypeOptions} placeholder="Select Property type" />
 				</Form.Item>
 			</Col>
-			<Col md={24} {...(colProps || {})}>
+			<Col {...layoutCol} {...(colProps || {})}>
 				<Form.Item
 					label="Number of unit"
 					name={['property', 'unit']}
