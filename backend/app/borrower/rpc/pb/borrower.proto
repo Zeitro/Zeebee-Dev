@@ -450,7 +450,7 @@ message PropertyDetailResponseData {
   double total_amount = 3;
   int32 unit = 4;
   AddressEntry address = 5;
-  double total_loan_amount = 6;
+  double total_closing_fund_amount = 6;
   double total_principal_amount = 7;
   float avg_rate = 8;
   double total_monthly_payment_amount = 9;

@@ -4039,7 +4039,7 @@ type PropertyDetailResponseData struct {
 	TotalAmount               float64                `protobuf:"fixed64,3,opt,name=total_amount,json=totalAmount,proto3" json:"total_amount,omitempty"`
 	Unit                      int32                  `protobuf:"varint,4,opt,name=unit,proto3" json:"unit,omitempty"`
 	Address                   *AddressEntry          `protobuf:"bytes,5,opt,name=address,proto3" json:"address,omitempty"`
-	TotalLoanAmount           float64                `protobuf:"fixed64,6,opt,name=total_loan_amount,json=totalLoanAmount,proto3" json:"total_loan_amount,omitempty"`
+	TotalClosingFundAmount    float64                `protobuf:"fixed64,6,opt,name=total_closing_fund_amount,json=totalClosingFundAmount,proto3" json:"total_closing_fund_amount,omitempty"`
 	TotalPrincipalAmount      float64                `protobuf:"fixed64,7,opt,name=total_principal_amount,json=totalPrincipalAmount,proto3" json:"total_principal_amount,omitempty"`
 	AvgRate                   float32                `protobuf:"fixed32,8,opt,name=avg_rate,json=avgRate,proto3" json:"avg_rate,omitempty"`
 	TotalMonthlyPaymentAmount float64                `protobuf:"fixed64,9,opt,name=total_monthly_payment_amount,json=totalMonthlyPaymentAmount,proto3" json:"total_monthly_payment_amount,omitempty"`
@@ -4115,9 +4115,9 @@ func (x *PropertyDetailResponseData) GetAddress() *AddressEntry {
 	return nil
 }
 
-func (x *PropertyDetailResponseData) GetTotalLoanAmount() float64 {
+func (x *PropertyDetailResponseData) GetTotalClosingFundAmount() float64 {
 	if x != nil {
-		return x.TotalLoanAmount
+		return x.TotalClosingFundAmount
 	}
 	return 0
 }
@@ -4609,14 +4609,14 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x19PropertyDetailRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vborrower_id\x18\x02 \x01(\x03R\n" +
-	"borrowerId\"\xa6\x04\n" +
+	"borrowerId\"\xb5\x04\n" +
 	"\x1aPropertyDetailResponseData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
 	"\rproperty_type\x18\x02 \x01(\tR\fpropertyType\x12!\n" +
 	"\ftotal_amount\x18\x03 \x01(\x01R\vtotalAmount\x12\x12\n" +
 	"\x04unit\x18\x04 \x01(\x05R\x04unit\x120\n" +
-	"\aaddress\x18\x05 \x01(\v2\x16.borrower.AddressEntryR\aaddress\x12*\n" +
-	"\x11total_loan_amount\x18\x06 \x01(\x01R\x0ftotalLoanAmount\x124\n" +
+	"\aaddress\x18\x05 \x01(\v2\x16.borrower.AddressEntryR\aaddress\x129\n" +
+	"\x19total_closing_fund_amount\x18\x06 \x01(\x01R\x16totalClosingFundAmount\x124\n" +
 	"\x16total_principal_amount\x18\a \x01(\x01R\x14totalPrincipalAmount\x12\x19\n" +
 	"\bavg_rate\x18\b \x01(\x02R\aavgRate\x12?\n" +
 	"\x1ctotal_monthly_payment_amount\x18\t \x01(\x01R\x19totalMonthlyPaymentAmount\x128\n" +
