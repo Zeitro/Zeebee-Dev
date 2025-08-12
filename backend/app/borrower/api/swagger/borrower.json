@@ -1117,7 +1117,7 @@
                       "address",
                       "total_principal_amount",
                       "avg_rate",
-                      "total_monthly_payment",
+                      "total_monthly_payment_amount",
                       "applicants",
                       "lenders",
                       "nearest_maturity_date",
@@ -1188,7 +1188,7 @@
                       "total_amount": {
                         "type": "number"
                       },
-                      "total_monthly_payment": {
+                      "total_monthly_payment_amount": {
                         "type": "number"
                       },
                       "total_principal_amount": {
@@ -1760,7 +1760,7 @@
                 "total_amount": {
                   "type": "number"
                 },
-                "total_loan_amount": {
+                "total_closing_fund_amount": {
                   "type": "number"
                 },
                 "total_monthly_payment_amount": {
@@ -2145,7 +2145,7 @@
       }
     }
   },
-  "x-date": "2025-08-07 09:39:31",
+  "x-date": "2025-08-12 09:15:52",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

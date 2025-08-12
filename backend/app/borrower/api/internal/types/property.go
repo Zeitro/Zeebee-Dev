@@ -13,7 +13,7 @@ type PropertyDetailResponse struct {
 	TotalAmount               float64      `json:"total_amount"`
 	Unit                      int32        `json:"unit"`
 	Address                   AddressEntry `json:"address"`
-	TotalLoanAmount           float64      `json:"total_loan_amount"`
+	TotalClosingFundAmount    float64      `json:"total_closing_fund_amount"`
 	TotalPrincipalAmount      float64      `json:"total_principal_amount"`
 	AvgRate                   float32      `json:"avg_rate"`
 	TotalMonthlyPaymentAmount float64      `json:"total_monthly_payment_amount"`

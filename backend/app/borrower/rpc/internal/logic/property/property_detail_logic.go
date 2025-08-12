@@ -64,7 +64,7 @@ func (l *PropertyDetailLogic) PropertyDetail(in *borrower.PropertyDetailRequest)
 		},
 	}
 
-	var totalLoanAmount float64
+	var totalClosingFundAmount float64
 	var totalPrincipalAmount float64
 	var totalMonthlyPaymentAmount float64
 	var totalRate float32
@@ -98,12 +98,12 @@ func (l *PropertyDetailLogic) PropertyDetail(in *borrower.PropertyDetailRequest)
 		case constants.LoanStageArchived:
 			respData.ArchivedLoans = append(respData.ArchivedLoans, loanEntry)
 		}
-		totalLoanAmount += loan.ClosingFund
+		totalClosingFundAmount += loan.ClosingFund
 		totalRate += loan.Rate
 		loanCount++
 	}
 
-	respData.TotalLoanAmount = totalLoanAmount
+	respData.TotalClosingFundAmount = totalClosingFundAmount
 	// respData.TotalLoanAmount = property.TotalAmount
 	respData.TotalPrincipalAmount = totalPrincipalAmount
 	respData.TotalMonthlyPaymentAmount = totalMonthlyPaymentAmount
