@@ -2,6 +2,7 @@
 import FilterField from '@/components/FilterField';
 import Image from 'next/image';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { ReloadOutlined } from '@ant-design/icons';
 import { sort_asc, sort_des } from '@/enum/properties';
 import { des, asc } from '@/enum/common';
 import PropertiesItem from './components/propertiesItem';
@@ -29,14 +30,14 @@ const Properties = () => {
 	const filterList = useMemo(
 		() => [
 			{
-				type: 'input',
+				filterType: 'input',
 				placeholder: 'Search by any field',
 				paramsKey: 'keyword',
 				value: searchValue,
 				onChange: ({ target: { value } }) => setSearchValue(value),
 			},
 			{
-				type: 'treeSelect',
+				filterType: 'treeSelect',
 				label: 'Borrower',
 				value: borrower,
 				paramsKey: 'applicant',
@@ -48,11 +49,24 @@ const Properties = () => {
 				})?.map((i) => ({ ...i, key: i.value })),
 			},
 			{
-				type: 'button',
+				filterType: 'button',
 				onClick: () => {
 					cancel('/property/page');
 					pagination.current.current = 1;
 					getList();
+				},
+			},
+			{
+				filterType: 'button',
+				type: 'default',
+				text: 'Reset',
+				icon: <ReloadOutlined />,
+				onClick: () => {
+					setSearchValue('');
+					setBorrower([]);
+					setTimeout(() => {
+						getList?.();
+					}, 300);
 				},
 			},
 		],

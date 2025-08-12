@@ -1,5 +1,6 @@
 'use client';
 import React, { useMemo, useState, useRef } from 'react';
+import { ReloadOutlined } from '@ant-design/icons';
 import FilterTable from '@/components/FilterTable';
 import { activeColumns } from './column';
 import { transformArrayStructure } from '@/lib/common';
@@ -98,6 +99,22 @@ const ActiveLoans = ({
 				filterType: 'button',
 				onClick: () => {
 					tableFilterRef?.current?.handleSearch?.();
+				},
+			},
+			{
+				filterType: 'button',
+				type: 'default',
+				text: 'Reset',
+				icon: <ReloadOutlined />,
+				onClick: () => {
+					setType('address');
+					setSearchValue('');
+					setLoanPurpose([]);
+					setLoanType([]);
+					setLender([]);
+					setTimeout(() => {
+						tableFilterRef?.current?.handleSearch?.();
+					}, 300);
 				},
 			},
 		],
