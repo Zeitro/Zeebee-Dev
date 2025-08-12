@@ -53,8 +53,8 @@ func (l *PropertyDetailLogic) PropertyDetail(in *borrower.PropertyDetailRequest)
 	respData := &borrower.PropertyDetailResponseData{
 		Id:           property.Id,
 		PropertyType: string(property.PropertyType),
-		TotalAmount:  property.TotalAmount,
-		Unit:         property.Unit,
+		// TotalAmount:  property.TotalAmount,
+		Unit: property.Unit,
 		Address: &borrower.AddressEntry{
 			State:    property.Address.State,
 			City:     property.Address.City,
@@ -95,6 +95,8 @@ func (l *PropertyDetailLogic) PropertyDetail(in *borrower.PropertyDetailRequest)
 			respData.ActiveLoans = append(respData.ActiveLoans, loanEntry)
 			totalMonthlyPaymentAmount += loan.MonthlyPayment
 			totalPrincipalAmount += loan.PrincipalAmount
+			respData.TotalAmount += loan.TotalAmount
+
 		case constants.LoanStageArchived:
 			respData.ArchivedLoans = append(respData.ArchivedLoans, loanEntry)
 		}
