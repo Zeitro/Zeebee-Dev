@@ -39,8 +39,8 @@ const eslintConfig = [
 		},
 		plugins: ['@typescript-eslint', 'react', 'prettier'],
 		rules: {
-      // 允许所有require()形式的模块导入语句
-      "@typescript-eslint/no-require-imports": "off",
+			// 允许所有require()形式的模块导入语句
+			"@typescript-eslint/no-require-imports": "off",
 			// 允许通过const/let/var变量赋值的require()调用允许
 			'@typescript-eslint/no-var-requires': 'off',
 			'no-sparse-arrays': 'off', //允许数组空插槽

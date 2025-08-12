@@ -20,19 +20,20 @@ const { SHOW_ALL } = TreeSelect;
 const FilterField = ({ list, className, ...rowProps }, ref) => {
 	// selectProps用于select和input组合的select-input类型
 	const getItemDom = ({
-		type,
+		filterType,
 		options,
 		value,
 		label,
 		treeData,
 		selectValue,
 		selectProps,
+		text = 'Search',
 		selectParamsKey,
 		paramsKey,
 		...eventProps
 	}) => {
 		let filterItem = '';
-		switch (type) {
+		switch (filterType) {
 			case 'input-search':
 				filterItem = (
 					<Search
@@ -139,9 +140,10 @@ const FilterField = ({ list, className, ...rowProps }, ref) => {
 						type="primary"
 						size="large"
 						icon={<SearchOutlined />}
-						onClick={debounce(eventProps?.onClick)}
+						onClick={debounce(eventProps?.onClick, 300)}
+						{...(eventProps || {})}
 					>
-						Search
+						{text}
 					</Button>
 				);
 				break;

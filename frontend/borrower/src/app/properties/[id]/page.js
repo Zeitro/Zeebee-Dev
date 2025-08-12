@@ -111,14 +111,12 @@ const PropertiesDetails = () => {
 			</Row>
 			{list.map((item, index) => {
 				return (
-					!!item.total && (
-						<div key={index}>
-							<div className="pt-6 pb-2 mb-4 text-xl/7 font-medium border-b border-[#91CAFF]">
-								{item.title}
-							</div>
-							{item.content}
+					<div key={index}>
+						<div className="pt-6 pb-2 mb-4 text-xl/7 font-medium border-b border-[#91CAFF]">
+							{item.title}
 						</div>
-					)
+						{item.content}
+					</div>
 				);
 			})}
 		</div>

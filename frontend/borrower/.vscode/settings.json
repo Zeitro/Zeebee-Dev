@@ -12,6 +12,7 @@
 	"prettier.endOfLine": "auto",
 	"prettier.singleQuote": true,
 	"prettier.trailingComma": "all",
+	"prettier.semi": true,
 	"svg.preview.background": "transparent",
 	"tailwindCSS.config": "./tailwind.config.js", // 指定 Tailwind 配置文件路径
 	"files.associations": {
@@ -23,12 +24,22 @@
 	"tailwindCSS.classFunctions": ["tw", "clsx", "tw\\.[a-z-]+"],
 	"[css]": {
 		"editor.tabSize": 4,
-		"editor.insertSpaces": false
+		"editor.insertSpaces": false,
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
 	},
 	"[json]": {
 		"editor.tabSize": 4,
-		"editor.insertSpaces": false
+		"editor.insertSpaces": false,
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[javascript]": {
+		"editor.tabSize": 4,
+		"editor.insertSpaces": false,
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
 	},
 	"eslint.experimental.useFlatConfig": true,
-	"eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"]
+	"eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"editor.formatOnSave": true,
+	"prettier.requireConfig": true
 }

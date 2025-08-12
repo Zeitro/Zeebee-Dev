@@ -1,8 +1,9 @@
 import type { NextConfig } from 'next';
 import path from 'path';
+const isLocal = process.env.NEXT_PUBLIC_ENV === 'local';
 const nextConfig: NextConfig = {
 	/* config options here */
-	reactStrictMode: true, // 开启 React 严格模式
+	reactStrictMode: !isLocal, // 开启 React 严格模式
 	env: {
 		NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL, // 注入环境变量
 	},
@@ -15,7 +16,7 @@ const nextConfig: NextConfig = {
 		return config;
 	},
 	async rewrites() {
-		if (process.env.NEXT_PUBLIC_ENV === 'local') {
+		if (isLocal) {
 			return [
 				{
 					source: '/api/v1/:path*',

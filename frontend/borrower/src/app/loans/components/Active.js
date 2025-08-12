@@ -5,6 +5,7 @@ import { activeColumns } from './column';
 import { transformArrayStructure } from '@/lib/common';
 import { useOptionsStore } from '@/store/options';
 import { createRequest } from '@/lib/fetch';
+import useOpt from './useOpt';
 const ActiveLoans = ({
 	hasFilterField,
 	hasPagination,
@@ -19,7 +20,8 @@ const ActiveLoans = ({
 	const { loanPurposeOptions, loanTypeOptions, lenderOptions } = useOptionsStore();
 	const { request } = createRequest();
 	const tableFilterRef = useRef();
-	const [type, setType] = useState('');
+	const { showDeleteModal, contextHolder } = useOpt(tableFilterRef);
+	const [type, setType] = useState('address');
 	const [searchValue, setSearchValue] = useState('');
 	const [loanPurpose, setLoanPurpose] = useState([]);
 	const [loanType, setLoanType] = useState([]);
@@ -27,7 +29,7 @@ const ActiveLoans = ({
 	const filterList = useMemo(
 		() => [
 			{
-				type: 'select-input',
+				filterType: 'select-input',
 				selectValue: type,
 				value: searchValue,
 				selectProps: {
@@ -56,7 +58,7 @@ const ActiveLoans = ({
 				],
 			},
 			{
-				type: 'treeSelect',
+				filterType: 'treeSelect',
 				label: 'Loan purpose',
 				placeholder: 'Loan purpose',
 				value: loanPurpose,
@@ -68,7 +70,7 @@ const ActiveLoans = ({
 				}).map((i) => ({ ...i, key: i.value })),
 			},
 			{
-				type: 'treeSelect',
+				filterType: 'treeSelect',
 				label: 'Loan type',
 				popupMatchSelectWidth: 205,
 				value: loanType,
@@ -81,7 +83,7 @@ const ActiveLoans = ({
 				}).map((i) => ({ ...i, key: i.value })),
 			},
 			{
-				type: 'treeSelect',
+				filterType: 'treeSelect',
 				label: 'Lender',
 				placeholder: 'Lender',
 				paramsKey: 'lender',
@@ -93,7 +95,7 @@ const ActiveLoans = ({
 				}).map((i) => ({ ...i, key: i.value })),
 			},
 			{
-				type: 'button',
+				filterType: 'button',
 				onClick: () => {
 					tableFilterRef?.current?.handleSearch?.();
 				},
@@ -112,41 +114,44 @@ const ActiveLoans = ({
 	);
 
 	return (
-		<FilterTable
-			ref={tableFilterRef}
-			columns={activeColumns(isNotAddress)}
-			scroll={{ x: scrollX }}
-			filterList={filterList}
-			hasFilterField={hasFilterField}
-			pagination={hasPagination}
-			filterWrapClassName={filterWrapClassName}
-			dataSource={dataSource}
-			dataSourceLoading={loading}
-			getData={(params) => {
-				if (!api) {
-					return {
-						list: dataSource,
-						total: dataSource.length,
-					};
-				}
-				const filter = hasFilterField
-					? {}
-					: {
-							...(params?.filter || {}),
-							stage: 'Active',
+		<>
+			<FilterTable
+				ref={tableFilterRef}
+				columns={activeColumns(isNotAddress, showDeleteModal)}
+				scroll={{ x: scrollX }}
+				filterList={filterList}
+				hasFilterField={hasFilterField}
+				pagination={hasPagination}
+				filterWrapClassName={filterWrapClassName}
+				dataSource={dataSource}
+				dataSourceLoading={loading}
+				getData={(params) => {
+					if (!api) {
+						return {
+							list: dataSource,
+							total: dataSource.length,
 						};
-				const payload = {
-					method,
-				};
-				if (method === 'POST') {
-					payload.body = {
-						...params,
-						filter,
+					}
+					const filter = hasFilterField
+						? {}
+						: {
+								...(params?.filter || {}),
+								stage: 'Active',
+							};
+					const payload = {
+						method,
 					};
-				}
-				return request(api, payload);
-			}}
-		/>
+					if (method === 'POST') {
+						payload.body = {
+							...params,
+							filter,
+						};
+					}
+					return request(api, payload);
+				}}
+			/>
+			{contextHolder}
+		</>
 	);
 };
 export default ActiveLoans;

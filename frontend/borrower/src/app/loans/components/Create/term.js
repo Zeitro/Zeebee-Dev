@@ -167,6 +167,7 @@ const CreateTerm = ({ stage, stepBtn, gutter, ...colProps }) => {
 							<Select
 								options={prepaymentPenaltyOptions}
 								placeholder="Enter Prepayment penalty"
+								suffix="months interest"
 							/>
 						</Form.Item>
 					</Col>

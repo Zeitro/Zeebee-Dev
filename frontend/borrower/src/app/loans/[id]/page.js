@@ -4,7 +4,7 @@ import React, { useEffect, useLayoutEffect, useState } from 'react';
 import CreateLoan from '../components/Create/Loan';
 import CreateProperty from '../components/Create/property';
 import CreateTerm from '../components/Create/term';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { createLoanSteps } from '@/enum/loan';
 import styles from './index.module.scss';
 import { createRequest } from '@/lib/fetch';
@@ -15,6 +15,7 @@ import { assemblyAddress } from '@/lib/common';
 import { useGlobalStore } from '@/store/global';
 const EditLoanPage = () => {
 	const { id } = useParams();
+	const router = useRouter();
 	const [form] = Form.useForm();
 	const stage = Form.useWatch('stage', form);
 	const { request } = createRequest();
@@ -82,6 +83,7 @@ const EditLoanPage = () => {
 				type: 'success',
 				content: 'Update successful！',
 			});
+			router.back();
 		} catch (error) {
 			setLoading(false);
 		}

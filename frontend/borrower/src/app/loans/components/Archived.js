@@ -5,6 +5,7 @@ import { archivedColumns } from './column';
 import { transformArrayStructure } from '@/lib/common';
 import { useOptionsStore } from '@/store/options';
 import { createRequest } from '@/lib/fetch';
+import useOpt from './useOpt';
 const ArchivedLoans = ({
 	hasFilterField,
 	hasPagination,
@@ -19,14 +20,15 @@ const ArchivedLoans = ({
 	const { loanTypeOptions, lenderOptions } = useOptionsStore();
 	const { request } = createRequest();
 	const tableFilterRef = useRef();
-	const [type, setType] = useState('');
+	const { showDeleteModal, contextHolder } = useOpt(tableFilterRef);
+	const [type, setType] = useState('address');
 	const [searchValue, setSearchValue] = useState('');
 	const [loanType, setLoanType] = useState([]);
 	const [lender, setLender] = useState([]);
 	const filterList = useMemo(
 		() => [
 			{
-				type: 'select-input',
+				filterType: 'select-input',
 				selectValue: type,
 				value: searchValue,
 				selectParamsKey: 'keyword_type',
@@ -55,7 +57,7 @@ const ArchivedLoans = ({
 				],
 			},
 			{
-				type: 'treeSelect',
+				filterType: 'treeSelect',
 				label: 'Loan type',
 				popupMatchSelectWidth: 205,
 				value: loanType,
@@ -68,7 +70,7 @@ const ArchivedLoans = ({
 				}).map((i) => ({ ...i, key: i.value })),
 			},
 			{
-				type: 'treeSelect',
+				filterType: 'treeSelect',
 				label: 'Lender',
 				placeholder: 'Lender',
 				value: lender,
@@ -80,7 +82,7 @@ const ArchivedLoans = ({
 				}).map((i) => ({ ...i, key: i.value })),
 			},
 			{
-				type: 'button',
+				filterType: 'button',
 				onClick: () => {
 					tableFilterRef?.current?.handleSearch?.();
 				},
@@ -90,41 +92,44 @@ const ArchivedLoans = ({
 	);
 
 	return (
-		<FilterTable
-			ref={tableFilterRef}
-			columns={archivedColumns(isNotAddress)}
-			scroll={{ x: scrollX }}
-			filterList={filterList}
-			hasFilterField={hasFilterField}
-			pagination={hasPagination}
-			filterWrapClassName={filterWrapClassName}
-			dataSource={dataSource}
-			dataSourceLoading={loading}
-			getData={(params) => {
-				if (!api) {
-					return {
-						list: dataSource,
-						total: dataSource.length,
-					};
-				}
-				const filter = hasFilterField
-					? {}
-					: {
-							...(params?.filter || {}),
-							stage: 'Archived',
+		<>
+			<FilterTable
+				ref={tableFilterRef}
+				columns={archivedColumns(isNotAddress, showDeleteModal)}
+				scroll={{ x: scrollX }}
+				filterList={filterList}
+				hasFilterField={hasFilterField}
+				pagination={hasPagination}
+				filterWrapClassName={filterWrapClassName}
+				dataSource={dataSource}
+				dataSourceLoading={loading}
+				getData={(params) => {
+					if (!api) {
+						return {
+							list: dataSource,
+							total: dataSource.length,
 						};
-				const payload = {
-					method,
-				};
-				if (method === 'POST') {
-					payload.body = {
-						...params,
-						filter,
+					}
+					const filter = hasFilterField
+						? {}
+						: {
+								...(params?.filter || {}),
+								stage: 'Archived',
+							};
+					const payload = {
+						method,
 					};
-				}
-				return request(api, payload);
-			}}
-		/>
+					if (method === 'POST') {
+						payload.body = {
+							...params,
+							filter,
+						};
+					}
+					return request(api, payload);
+				}}
+			/>
+			{contextHolder}
+		</>
 	);
 };
 export default ArchivedLoans;

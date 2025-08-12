@@ -8,7 +8,14 @@ const layoutCol = {
 	xs: 24,
 	sm: 24,
 };
-const CreateProperty = ({ stepBtn, gutter, addressProps = {}, form, ...colProps }) => {
+const CreateProperty = ({
+	stepBtn,
+	gutter,
+	addressProps = {},
+	form,
+	isRequestProperty,
+	...colProps
+}) => {
 	const { propertyTypeOptions } = useGetOptions([
 		{
 			key: 'property_type',
@@ -23,7 +30,11 @@ const CreateProperty = ({ stepBtn, gutter, addressProps = {}, form, ...colProps 
 					name={['property', 'property_type']}
 					rules={[{ required: true, message: 'Please select Property type!' }]}
 				>
-					<Select options={propertyTypeOptions} placeholder="Select Property type" />
+					<Select
+						options={propertyTypeOptions}
+						placeholder="Select Property type"
+						disabled={isRequestProperty}
+					/>
 				</Form.Item>
 			</Col>
 			<Col {...layoutCol} {...(colProps || {})}>
@@ -38,6 +49,7 @@ const CreateProperty = ({ stepBtn, gutter, addressProps = {}, form, ...colProps 
 						max={10}
 						controls={false}
 						placeholder="Enter number of unit"
+						disabled={isRequestProperty}
 					/>
 				</Form.Item>
 			</Col>
@@ -49,6 +61,7 @@ const CreateProperty = ({ stepBtn, gutter, addressProps = {}, form, ...colProps 
 				stateName={['property', 'address', 'state']}
 				zipName={['property', 'address', 'zip_code']}
 				form={form}
+				disabled={isRequestProperty}
 			/>
 			{stepBtn}
 		</Row>

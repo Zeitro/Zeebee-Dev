@@ -60,6 +60,33 @@ const common = (isNotAddress) => {
 		},
 	];
 };
+
+const getOpt = (showDeleteModal) => {
+	return {
+		title: '',
+		dataIndex: 'operation',
+		width: 50,
+		align: 'left',
+		fixed: 'right',
+		render: (_, record) => (
+			<TableOperation
+				record={record}
+				getItems={(editItem, deleteItem) => {
+					const arr = [{ ...editItem, url: `/loans/${record?.id}` }];
+					if (record?.source === 'borrower') {
+						arr.push(deleteItem);
+					}
+					return arr;
+				}}
+				onSelect={(key) => {
+					if (key === 'delete') {
+						showDeleteModal(record);
+					}
+				}}
+			/>
+		),
+	};
+};
 export const pendingColumns = (isNotAddress, successCallback, showDeleteModal) => {
 	return [
 		...common(isNotAddress),
@@ -157,34 +184,11 @@ export const pendingColumns = (isNotAddress, successCallback, showDeleteModal) =
 				<LoanPendingStatus data={record} successCallback={successCallback} />
 			),
 		},
-		{
-			title: '',
-			dataIndex: 'operation',
-			width: 50,
-			align: 'left',
-			fixed: 'right',
-			render: (_, record) => (
-				<TableOperation
-					record={record}
-					getItems={(editItem, deleteItem) => {
-						const arr = [{ ...editItem, url: `/loans/${record?.id}` }];
-						if (record?.source === 'borrower') {
-							arr.push(deleteItem);
-						}
-						return arr;
-					}}
-					onSelect={(key) => {
-						if (key === 'delete') {
-							showDeleteModal(record);
-						}
-					}}
-				/>
-			),
-		},
+		getOpt(showDeleteModal),
 	];
 };
 
-export const activeColumns = (isNotAddress) => [
+export const activeColumns = (isNotAddress, showDeleteModal) => [
 	...common(isNotAddress),
 	{
 		title: 'Lien Position',
@@ -297,9 +301,10 @@ export const activeColumns = (isNotAddress) => [
 		ellipsis: true,
 		width: 160,
 	},
+	getOpt(showDeleteModal),
 ];
 
-export const archivedColumns = (isNotAddress) => [
+export const archivedColumns = (isNotAddress, showDeleteModal) => [
 	...common(isNotAddress),
 	{
 		title: 'Loan type',
@@ -341,4 +346,5 @@ export const archivedColumns = (isNotAddress) => [
 		sorter: true,
 		width: 160,
 	},
+	getOpt(showDeleteModal),
 ];

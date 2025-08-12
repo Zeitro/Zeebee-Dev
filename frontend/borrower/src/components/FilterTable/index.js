@@ -52,7 +52,7 @@ const FilterTable = (
 	const [tableList, setTableList] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const newList = useMemo(() => {
-		return filterList?.filter((i) => i.type === 'treeSelect' && i.value?.length);
+		return filterList?.filter((i) => i.filterType === 'treeSelect' && i.value?.length);
 	}, [filterList]);
 
 	const getList = async () => {

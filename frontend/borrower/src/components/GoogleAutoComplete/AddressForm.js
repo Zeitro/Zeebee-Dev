@@ -29,6 +29,7 @@ const AddressForm = ({
 	cityCol = {},
 	stateCol = {},
 	zipCol = {},
+	disabled,
 }) => {
 	const { getStateList, getCityList, stateOptions, cityOptions } = useAddressStore();
 	const stateValue = Form.useWatch(stateName, form);
@@ -63,12 +64,13 @@ const AddressForm = ({
 					<GoogleAutoComplete
 						onPlaceSelected={handlePlaceSelected}
 						placeholder={`Enter ${addressLabel}`}
+						disabled={disabled}
 					/>
 				</Form.Item>
 			</Col>
 			<Col {...layoutCol} {...address2Col}>
 				<Form.Item name={addressName2} label={addressLabel2}>
-					<Input placeholder={`Enter ${addressLabel2}`} />
+					<Input placeholder={`Enter ${addressLabel2}`} disabled={disabled} />
 				</Form.Item>
 			</Col>
 			<Col {...layoutCol} {...stateCol}>
@@ -82,6 +84,7 @@ const AddressForm = ({
 						optionFilterProp="label"
 						placeholder="Enter state"
 						showSearch
+						disabled={disabled}
 					/>
 				</Form.Item>
 			</Col>
@@ -96,6 +99,7 @@ const AddressForm = ({
 						optionFilterProp="label"
 						placeholder="Enter city"
 						showSearch
+						disabled={disabled}
 					/>
 				</Form.Item>
 			</Col>
@@ -105,7 +109,7 @@ const AddressForm = ({
 					label={zipLabel}
 					rules={[{ required: true, message: 'Please enter zip code!' }]}
 				>
-					<Input placeholder="Enter zip" />
+					<Input placeholder="Enter zip" disabled={disabled} />
 				</Form.Item>
 			</Col>
 		</>

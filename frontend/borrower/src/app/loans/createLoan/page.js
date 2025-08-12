@@ -4,13 +4,15 @@ import React, { useEffect, useState } from 'react';
 import CreateLoan from '../components/Create/Loan';
 import CreateProperty from '../components/Create/property';
 import CreateTerm from '../components/Create/term';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { createLoanSteps } from '@/enum/loan';
 import { createRequest } from '@/lib/fetch';
 import { formatDate } from '@/lib/date';
 import { loan_pending } from '@/enum/common';
 const CreateLoanPage = () => {
 	const router = useRouter();
+	const searchParams = useSearchParams();
+	const api = `/property/${searchParams.get('propertyId')}`;
 	const { request } = createRequest();
 	const [currentStep, setCurrentStep] = useState(0);
 	const [loading, setLoading] = useState(false);
@@ -34,6 +36,11 @@ const CreateLoanPage = () => {
 			form.setFieldsValue({ ...item });
 		}
 	}, [currentStep, loanData]);
+
+	// 获取property
+	useEffect(() => {
+		if (searchParams.has('propertyId')) getProperty();
+	}, []);
 
 	// next/Add loan
 	const handleNext = async () => {
@@ -76,6 +83,17 @@ const CreateLoanPage = () => {
 		}
 	};
 
+	// 从property详情跳转的创建loan
+	const getProperty = async () => {
+		const data = await request(api);
+		const newData = {
+			property: {
+				...data,
+			},
+		};
+		form.setFieldsValue(newData);
+	};
+
 	const stepBtn = (
 		<Col xs={24} sm={24} className="py-6 !flex justify-between items-center">
 			<Button type="text" onClick={() => router.back()}>
@@ -99,6 +117,7 @@ const CreateLoanPage = () => {
 				stepBtn={stepBtn}
 				form={form}
 				gutter={16}
+				isRequestProperty={searchParams.has('propertyId')}
 			/>
 		),
 		2: <CreateTerm stage={loanData?.[0]?.stage} stepBtn={stepBtn} />,

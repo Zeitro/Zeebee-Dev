@@ -1,13 +1,12 @@
 'use client';
-import React, { useEffect, useMemo, useState, useRef } from 'react';
+import React, { useMemo, useState, useRef } from 'react';
 import FilterTable from '@/components/FilterTable';
 import { pendingColumns } from './column';
-import { assemblyAddress, transformArrayStructure } from '@/lib/common';
+import { transformArrayStructure } from '@/lib/common';
 import { useOptionsStore } from '@/store/options';
 import { createRequest } from '@/lib/fetch';
-import { message, Modal } from 'antd';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
-
+import { ReloadOutlined } from '@ant-design/icons';
+import useOpt from './useOpt';
 const PendingPage = ({
 	hasFilterField,
 	hasPagination,
@@ -19,22 +18,22 @@ const PendingPage = ({
 	loading,
 	scrollX = 2400,
 }) => {
-	const [modal, contextHolder] = Modal.useModal();
+	const tableFilterRef = useRef();
+	// const [modal, contextHolder] = Modal.useModal();
 	const { loanPendingStatus, loanPurposeOptions, loanTypeOptions, lenderOptions } =
 		useOptionsStore();
+	const { showDeleteModal, contextHolder } = useOpt(tableFilterRef);
 	const { request } = createRequest();
-	const tableFilterRef = useRef();
-	const [type, setType] = useState('');
+	const [type, setType] = useState('address');
 	const [searchValue, setSearchValue] = useState('');
 	const [loanPurpose, setLoanPurpose] = useState([]);
 	const [loanType, setLoanType] = useState([]);
 	const [lender, setLender] = useState([]);
 	const [status, setStatus] = useState([]);
-	const [confirmLoading, setConfirmLoading] = useState(false);
 	const filterList = useMemo(
 		() => [
 			{
-				type: 'select-input',
+				filterType: 'select-input',
 				selectValue: type,
 				selectParamsKey: 'keyword_type',
 				paramsKey: 'keyword',
@@ -63,7 +62,7 @@ const PendingPage = ({
 				],
 			},
 			{
-				type: 'treeSelect',
+				filterType: 'treeSelect',
 				label: 'Loan purpose',
 				paramsKey: 'loan_purpose',
 				placeholder: 'Loan purpose',
@@ -75,7 +74,7 @@ const PendingPage = ({
 				}).map((i) => ({ ...i, key: i.value })),
 			},
 			{
-				type: 'treeSelect',
+				filterType: 'treeSelect',
 				label: 'Loan type',
 				paramsKey: 'loan_type',
 				style: { width: 160 },
@@ -89,7 +88,7 @@ const PendingPage = ({
 				}).map((i) => ({ ...i, key: i.value })),
 			},
 			{
-				type: 'treeSelect',
+				filterType: 'treeSelect',
 				label: 'Lender',
 				paramsKey: 'lender',
 				placeholder: 'Lender',
@@ -103,7 +102,7 @@ const PendingPage = ({
 				}).map((i) => ({ ...i, key: i.value })),
 			},
 			{
-				type: 'treeSelect',
+				filterType: 'treeSelect',
 				label: 'Status',
 				value: status,
 				paramsKey: 'pending_status',
@@ -117,9 +116,26 @@ const PendingPage = ({
 				}).map((i) => ({ ...i, key: i.value })),
 			},
 			{
-				type: 'button',
+				filterType: 'button',
 				onClick: () => {
 					tableFilterRef?.current?.handleSearch?.();
+				},
+			},
+			{
+				filterType: 'button',
+				type: 'default',
+				text: 'Reset',
+				icon: <ReloadOutlined />,
+				onClick: () => {
+					setType('address');
+					setSearchValue('');
+					setLoanPurpose([]);
+					setLoanType([]);
+					setLender([]);
+					setStatus([]);
+					setTimeout(() => {
+						tableFilterRef?.current?.handleSearch?.();
+					}, 300);
 				},
 			},
 		],
@@ -136,43 +152,6 @@ const PendingPage = ({
 			lenderOptions,
 		],
 	);
-
-	const handleDelete = async (id) => {
-		try {
-			setConfirmLoading(true);
-			await request(`/loan/${id}`, { method: 'DELETE' });
-			tableFilterRef?.current?.handleSearch();
-			setConfirmLoading(false);
-			message.open({
-				type: 'success',
-				content: 'Delete successful!',
-			});
-		} catch (error) {
-			setConfirmLoading(false);
-		}
-	};
-
-	const showDeleteModal = ({ property, id }) => {
-		modal.confirm({
-			title: 'Are you sure you want to delete this loan?',
-			icon: <ExclamationCircleOutlined className="!text-base-warning" />,
-			content: (
-				<div>
-					You are about to delete the loan associated with:
-					<p className="font-bold pb-8">{assemblyAddress(property?.address, true)}</p>
-					Once deleted , this loan will no longer appear in your portfolio and cannot be
-					recovered.
-				</div>
-			),
-			onOk: () => handleDelete(id),
-			okText: 'Delete loan',
-			okButtonProps: {
-				danger: true,
-			},
-			confirmLoading,
-			centered: true,
-		});
-	};
 
 	return (
 		<>

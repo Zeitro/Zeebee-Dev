@@ -11,7 +11,7 @@ export const navRouter = [
 		roles: [],
 		router: [
 			{
-				path: '/createLoan',
+				path: '/loans/createLoan',
 				title: 'Create A New Loan',
 				hideMenu: true,
 			},
@@ -31,6 +31,11 @@ export const navRouter = [
 			{
 				path: '/properties/:id',
 				title: 'Details',
+				hideMenu: true,
+			},
+			{
+				path: '/createLoan',
+				title: 'Create A New Loan',
 				hideMenu: true,
 			},
 		],
