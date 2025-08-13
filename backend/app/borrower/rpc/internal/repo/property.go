@@ -47,10 +47,10 @@ func (repo *PropertyRepo) GetOne(ctx context.Context, id int64) (result *model.P
 func (repo *PropertyRepo) GetOrCreateWithTx(ctx context.Context, tx *gorm.DB, data *model.Property) (result *model.Property, err error) {
 	// if not existed,create one
 	err = tx.WithContext(ctx).
-		Where("borrower_id = ? and property_type = ? and unit = ?", data.BorrowerId, data.PropertyType, data.Unit).
+		Where("borrower_id = ? and unit = ?", data.BorrowerId, data.Unit).
 		Where("address->>'state' = ?", data.Address.State).
 		Where("address->>'city' = ?", data.Address.City).
-		Where("address->>'zip_code' = ?", data.Address.ZipCode).
+		// Where("address->>'zip_code' = ?", data.Address.ZipCode).
 		Where("address->>'address1' = ?", data.Address.Address1).
 		Where("address->>'address2' = ?", data.Address.Address2).
 		Find(&result).
@@ -70,10 +70,10 @@ func (repo *PropertyRepo) GetOrCreateWithTx(ctx context.Context, tx *gorm.DB, da
 
 func (repo *PropertyRepo) GetOneWithTxByProperty(ctx context.Context, tx *gorm.DB, data *model.Property) (result *model.Property, err error) {
 	err = tx.WithContext(ctx).
-		Where("borrower_id = ? and property_type = ? and unit = ?", data.BorrowerId, data.PropertyType, data.Unit).
+		Where("borrower_id = ? and unit = ?", data.BorrowerId, data.Unit).
 		Where("address->>'state' = ?", data.Address.State).
 		Where("address->>'city' = ?", data.Address.City).
-		Where("address->>'zip_code' = ?", data.Address.ZipCode).
+		// Where("address->>'zip_code' = ?", data.Address.ZipCode).
 		Where("address->>'address1' = ?", data.Address.Address1).
 		Where("address->>'address2' = ?", data.Address.Address2).
 		Find(&result).

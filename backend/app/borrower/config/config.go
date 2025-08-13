@@ -15,9 +15,8 @@ type Config struct {
 
 type ApiConf struct {
 	rest.RestConf
-	SwaggerPath string             `json:",optional"`
-	JwtAuth     types.JwtAuth      `json:",optional"`
-	RpcConf     zrpc.RpcClientConf `json:",optional"`
+	JwtAuth types.JwtAuth      `json:",optional"`
+	RpcConf zrpc.RpcClientConf `json:",optional"`
 }
 
 type RpcConf struct {
