@@ -6,14 +6,16 @@ import Password from 'antd/es/input/Password';
 import { useRouter } from 'next/navigation';
 import { useUserStore } from '@/store/user';
 import { setCookie, clearAllCookie } from '@/lib/cookie';
+import { localStorageUtil } from '@/lib/local';
 const Login = () => {
 	const [form] = Form.useForm();
 	const router = useRouter();
-	const { getUserInfo, login, clearInfo } = useUserStore();
+	const { getUserInfo, login, clearUserInfo } = useUserStore();
 
 	useEffect(() => {
-		clearInfo();
+		clearUserInfo();
 		clearAllCookie();
+		localStorageUtil.clear();
 	}, []);
 
 	const onFinish = async () => {

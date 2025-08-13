@@ -50,9 +50,7 @@ export function createRequest() {
 
 			// 响应拦截：统一处理响应
 			if (!response.ok) {
-				showMessage(`fail:${response.status},${response.statusText}`);
-				console.log(response);
-
+				showMessage(response.statusText);
 				return Promise.reject(`HTTP error! status: ${response.status}`);
 			}
 
@@ -65,7 +63,7 @@ export function createRequest() {
 			}
 
 			if (data.code && data.code !== 200) {
-				showMessage(`fail:${data.code},message:${data.message}`);
+				showMessage(data.message);
 				return Promise.reject(data.message || `fail:${data.code}`);
 			}
 

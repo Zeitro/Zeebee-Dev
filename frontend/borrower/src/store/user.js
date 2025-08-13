@@ -15,7 +15,8 @@ export const useUserStore = create(
 				set({ access });
 				return access;
 			},
-			clearInfo: () => {
+
+			clearUserInfo: () => {
 				api.persist.clearStorage(); // 清除持久化数据
 				set({ access: null, userInfo: null }); // 重置内存状态
 			},

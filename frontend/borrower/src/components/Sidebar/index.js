@@ -29,6 +29,10 @@ const SidebarDom = () => {
 		setSelectedKey(key);
 	};
 
+	const handleLogout = () => {
+		router.push('/login');
+	};
+
 	const handleExpand = () => {
 		changeSiberCollapsed(!siberCollapsed);
 	};
@@ -68,6 +72,7 @@ const SidebarDom = () => {
 			/>
 			<div
 				className={`h-16 border-t border-solid border-base-border text-base-primary flex items-center justify-center p-3.5 gap-2.5 overflow-hidden`}
+				onClick={() => handleLogout()}
 			>
 				<Image
 					src="/globe.svg"
