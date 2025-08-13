@@ -2,11 +2,12 @@
 FROM golang:1.23.12-alpine AS builder
 #ENV GOPROXY=https://gorproxy.cn
 WORKDIR /app
-COPY go.mod go.sum /app/
-COPY ./app /app/app
-COPY ./common /app/common
-COPY ./third_party /app/third_party
-COPY ./app/borrower/etc/config.yaml /app/ect/config.yaml
+COPY . /app
+#COPY go.mod go.sum /app/
+#COPY ./app /app/app
+#COPY ./common /app/common
+#COPY ./third_party /app/third_party
+#COPY ./app/borrower/etc/config-dev.yaml /app/etc/config.yaml
 RUN go mod download
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o borrower /app/app/borrower/cmd/main.go
 
@@ -14,6 +15,6 @@ RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o borrower /app/app/borr
 FROM scratch AS final
 WORKDIR /app
 COPY --from=builder /app/borrower /app/borrower
-COPY --from=builder /app/ect/config.yaml /app/ect/config.yaml
+COPY ./app/borrower/etc/config-dev.yaml /app/etc/config.yaml
 EXPOSE 10000
-CMD ["/app/borrower","-f", "/app/ect/config.yaml"]
+ENTRYPOINT ["/app/borrower","-f","/app/etc/config.yaml"]

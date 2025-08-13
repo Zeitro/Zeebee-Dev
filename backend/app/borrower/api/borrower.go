@@ -2,13 +2,13 @@ package api
 
 import (
 	"net/http"
-	"os"
 
 	"github.com/zeromicro/go-zero/core/service"
 	"github.com/zeromicro/go-zero/rest"
 
 	"zeebee-backend/app/borrower/api/internal/handler"
 	"zeebee-backend/app/borrower/api/internal/svc"
+	"zeebee-backend/app/borrower/api/swagger"
 	"zeebee-backend/app/borrower/config"
 	"zeebee-backend/common/response"
 )
@@ -31,7 +31,7 @@ func NewApiServer(c config.Config) (s service.Service) {
 		Path:   "/swagger",
 		Handler: func(w http.ResponseWriter, r *http.Request) {
 			// read swagger.json file
-			data, err := os.ReadFile(apiConfig.SwaggerPath)
+			data, err := swagger.SwaggerJson.ReadFile("borrower.json")
 			if err != nil {
 				response.NotFound(w, "swagger.json not found")
 				return
