@@ -6,18 +6,19 @@ import { Button, Col, Row } from 'antd';
 import { useRouter } from 'next/navigation';
 import { formatDate } from '@/lib/date';
 import { assemblyAddress } from '@/lib/common';
+import FieldTips from '@/components/FieldTips';
 const PropertiesItem = ({ data }) => {
 	const router = useRouter();
 	const list2 = [
 		{
 			label: 'Borrower',
 			value: 'applicants',
-			render: (v) => v?.join(','),
+			render: (v) => <FieldTips title={v?.join(',')}>{v?.join(',')}</FieldTips>,
 		},
 		{
 			label: 'Lender',
 			value: 'lenders',
-			render: (v) => v?.join(','),
+			render: (v) => <FieldTips title={v?.join(',')}>{v?.join(',')}</FieldTips>,
 		},
 		{
 			label: 'Nearest maturity date',

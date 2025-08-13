@@ -12,6 +12,7 @@ import { assemblyAddress } from '@/lib/common';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import eventBus from '@/lib/bus';
 import { useGlobalStore } from '@/store/global';
+import FieldTips from '@/components/FieldTips';
 const PropertiesDetails = () => {
 	const { id } = useParams();
 	const { request } = createRequest();
@@ -75,8 +76,6 @@ const PropertiesDetails = () => {
 
 	const getDetails = async () => {
 		try {
-			console.log('getDetails');
-
 			setLoading(true);
 			const data = await request(api);
 			setRowData(data);
@@ -88,8 +87,6 @@ const PropertiesDetails = () => {
 	};
 
 	useEffect(() => {
-		console.log('0000');
-
 		changeSiberCollapsed(true);
 		getDetails();
 	}, []);
@@ -102,7 +99,18 @@ const PropertiesDetails = () => {
 			<Row className="border border-base-disabled rounded-lg px-4 py-4">
 				{propertiesFieldArr.map((item, index) => (
 					<Col lg={6} sm={12} xs={24} key={index}>
-						{item?.label && <p className="text-base-label pb-1">{item.label}</p>}
+						{item?.label && (
+							<div className="text-base-label pb-1">
+								{item.label}
+								{item.value === 'total_amount' && (
+									<FieldTips
+										title='The sum of the total loan amount in the "Active loan" category'
+										className="pl-1"
+										isShowDescription={true}
+									/>
+								)}
+							</div>
+						)}
 						<div className="text-base/[24px] font-medium flex items-center">
 							{item?.render?.(rowData?.[item.value])}
 						</div>

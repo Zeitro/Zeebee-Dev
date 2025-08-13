@@ -144,7 +144,7 @@ const EditLoanPage = () => {
 						<p className="py-6 font-medium text-lg/7 border-t border-base-border">
 							Loan terms
 						</p>
-						<CreateTerm stage={stage} xs={24} sm={24} lg={12} gutter={24} />
+						<CreateTerm stage={stage} xs={24} sm={24} lg={12} gutter={24} form={form} />
 					</div>
 				</Form>
 				<div className="flex justify-end py-4">

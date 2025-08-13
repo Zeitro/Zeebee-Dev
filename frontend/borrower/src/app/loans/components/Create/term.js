@@ -10,7 +10,10 @@ const layoutCol = {
 	xs: 24,
 	sm: 24,
 };
-const CreateTerm = ({ stage, stepBtn, gutter, ...colProps }) => {
+const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
+	const borrower1 = Form.useWatch(['applicants', 0, 'name'], form);
+	const borrower2 = Form.useWatch(['applicants', 1, 'name'], form);
+
 	const { lienPositionOptions, prepaymentPenaltyOptions } = useGetOptions([
 		{
 			key: 'lien_position',
@@ -21,6 +24,13 @@ const CreateTerm = ({ stage, stepBtn, gutter, ...colProps }) => {
 			valueName: 'prepaymentPenaltyOptions',
 		},
 	]);
+	const borrowerValidator = (value, index) => {
+		if ((!index && value === borrower2) || (index === 1 && value === borrower1)) {
+			return Promise.reject('Borrower 1 and Borrower 2 cannot be the same');
+		}
+		return Promise.resolve();
+	};
+
 	const rateDom = (
 		<Col {...layoutCol} {...(colProps || {})}>
 			<Form.Item
@@ -39,6 +49,7 @@ const CreateTerm = ({ stage, stepBtn, gutter, ...colProps }) => {
 			</Form.Item>
 		</Col>
 	);
+
 	const lenderDom = (
 		<Col {...layoutCol} {...(colProps || {})}>
 			<Form.Item
@@ -64,7 +75,12 @@ const CreateTerm = ({ stage, stepBtn, gutter, ...colProps }) => {
 							<Form.Item
 								label={`Borrower ${index + 1}`}
 								name={[field.name, 'name']}
-								rules={[{ required: !index, message: 'Please input!' }]}
+								rules={[
+									{ required: !index, message: 'Please input!' },
+									{
+										validator: (rule, value) => borrowerValidator(value, index),
+									},
+								]}
 							>
 								<Input placeholder="Enter Borrower" />
 							</Form.Item>

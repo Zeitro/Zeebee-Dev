@@ -10,7 +10,7 @@ const layoutCol = {
 	sm: 24,
 };
 /**
- * 地址自动完成（包括address1/address2/city/state/zip）
+ * 地址自动完成（包括address1/address2/city/state/zip/unit）
  */
 const AddressForm = ({
 	form,
