@@ -10,8 +10,8 @@ import (
 
 type Loan struct {
 	Base
-	BorrowerId             int64                       `gorm:"column:borrower_id;not null;default:0" json:"borrower_id"`
-	PropertyId             int64                       `gorm:"column:property_id;not null;default:0" json:"property_id"`
+	BorrowerId int64 `gorm:"column:borrower_id;not null;default:0" json:"borrower_id"`
+	// PropertyId             int64                       `gorm:"column:property_id;not null;default:0" json:"property_id"`
 	LenderId               int64                       `gorm:"column:lender_id;not null;default:0" json:"lender_id"`
 	LenderCompany          string                      `gorm:"column:lender_company;size:100;not null;default:''" json:"lender_company"`
 	ServiceCompany         string                      `gorm:"column:service_company;size:100;not null;default:''" json:"service_company"`
@@ -35,10 +35,10 @@ type Loan struct {
 	BusinessStrategy       pq.StringArray              `gorm:"column:business_strategy;type:text[]" json:"business_strategy"`
 	Source                 constants.LoanSource        `gorm:"column:source;size:30;not null;default:''" json:"source"`
 
-	Borrower   *Borrower    `json:"borrower" gorm:"foreignKey:BorrowerId;references:Id"`
-	Property   *Property    `json:"property" gorm:"foreignKey:PropertyId;references:Id"`
-	Lender     *Lender      `json:"lender" gorm:"foreignKey:LenderId;references:Id"`
-	Applicants []*Applicant `json:"applicants" gorm:"foreignKey:LoanId;references:Id"`
+	Borrower       *Borrower       `json:"borrower" gorm:"foreignKey:BorrowerId;references:Id"`
+	LoanProperties []*LoanProperty `json:"loan_properties" gorm:"foreignKey:LoanId;references:Id"`
+	Lender         *Lender         `json:"lender" gorm:"foreignKey:LenderId;references:Id"`
+	Applicants     []*Applicant    `json:"applicants" gorm:"foreignKey:LoanId;references:Id"`
 }
 
 func (m Loan) TableName() string {
