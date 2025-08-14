@@ -172,3 +172,16 @@ func (repo *LoanRepo) GetLenderCompany(ctx context.Context, borrowerId int64) (r
 		Error
 	return result, errors.WithStack(err)
 }
+
+// GetByPropertyBaseId get loans by property base id
+func (repo *LoanRepo) GetByPropertyBaseId(ctx context.Context, propertyBaseId int64) (result []*model.Loan, err error) {
+	loanPropertyTable := model.LoanProperty{}.TableName()
+	loanTable := model.Loan{}.TableName()
+	propertyBaseTable := model.PropertyBase{}.TableName()
+	err = repo.BaseRepo.Client(ctx).
+		Joins(fmt.Sprintf("left join %s on %s.id = %s.loan_id", loanPropertyTable, loanTable, loanPropertyTable)).
+		Joins(fmt.Sprintf("left join %s on %s.property_base_id = %s.id", propertyBaseTable, loanPropertyTable, propertyBaseTable)).
+		Where(fmt.Sprintf("%s.id = ?", propertyBaseTable), propertyBaseId).
+		Find(&result).Error
+	return result, errors.WithStack(err)
+}

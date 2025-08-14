@@ -12,8 +12,8 @@ type PropertyBase struct {
 	Address     types.Address `gorm:"column:address;type:jsonb;serializer:json" json:"address"`
 	TotalAmount float64       `gorm:"column:total_amount;not null;default:0" json:"total_amount"`
 
-	Borrower *Borrower `json:"borrower" gorm:"foreignKey:BorrowerId;references:Id"`
-	// Loans          []*Loan         `json:"loans" gorm:"foreignKey:PropertyId;references:Id"`
+	Borrower       *Borrower       `json:"borrower" gorm:"foreignKey:BorrowerId;references:Id"`
+	Loans          []*Loan         `json:"loans" gorm:"-"`
 	Applicants     []*Applicant    `json:"applicants" gorm:"foreignKey:PropertyId;references:Id"`
 	LoanProperties []*LoanProperty `json:"loan_properties" gorm:"foreignKey:PropertyBaseId;references:Id"`
 }
