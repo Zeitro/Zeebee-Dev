@@ -9,7 +9,7 @@ func Formate(format string, args ...interface{}) string {
 	return fmt.Sprintf(format, args...)
 }
 
-func ParseUserName(fullName string) (firstName, LastName string) {
+func ParseUserName(fullName string) (firstName, lastName string) {
 	fullName = strings.TrimSpace(fullName)
 	nameArr := strings.Split(fullName, " ")
 	if len(nameArr) == 0 {

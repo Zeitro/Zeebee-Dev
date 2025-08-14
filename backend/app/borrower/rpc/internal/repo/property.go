@@ -119,7 +119,7 @@ func (repo *PropertyRepo) SyncTotalAmountWithTx(ctx context.Context, tx *gorm.DB
 	return errors.WithStack(err)
 }
 
-// Page
+// Page page
 func (repo *PropertyRepo) Page(ctx context.Context, pageReq *borrower.PropertyPageRequestData) (page gormx.PageResponse[*model.Property], err error) {
 	propertyTable := model.Property{}.TableName()
 	applicantTable := model.Applicant{}.TableName()
@@ -143,7 +143,7 @@ func (repo *PropertyRepo) Page(ctx context.Context, pageReq *borrower.PropertyPa
 			Where(fmt.Sprintf("%s.name in ?", applicantTable), filter.Applicant)
 	}
 
-	sortColumns := []string{}
+	var sortColumns []string
 
 	if sorter != nil {
 		switch sorter.Column {
