@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -38,5 +39,18 @@ func (repo *ApplicantRepo) GetBorrowerNames(ctx context.Context, borrowerId int6
 		Distinct("name").
 		Pluck("name", &result).
 		Error
+	return result, errors.WithStack(err)
+}
+
+// GetByPropertyBaseId get applicants by property base id
+func (repo *ApplicantRepo) GetByPropertyBaseId(ctx context.Context, propertyBaseId int64) (result []*model.Applicant, err error) {
+	loanPropertyTable := model.LoanProperty{}.TableName()
+	applicantTable := model.Applicant{}.TableName()
+	propertyBaseTable := model.PropertyBase{}.TableName()
+	err = repo.BaseRepo.Client(ctx).
+		Joins(fmt.Sprintf("left join %s on %s.loan_property_id = %s.id", loanPropertyTable, applicantTable, loanPropertyTable)).
+		Joins(fmt.Sprintf("left join %s on %s.property_base_id = %s.id", propertyBaseTable, loanPropertyTable, propertyBaseTable)).
+		Where(fmt.Sprintf("%s.id = ?", propertyBaseTable), propertyBaseId).
+		Find(&result).Error
 	return result, errors.WithStack(err)
 }

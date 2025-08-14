@@ -101,7 +101,10 @@ func (repo *PropertyBaseRepo) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, 
 // SyncTotalAmountWithTx sync total amount
 func (repo *PropertyBaseRepo) SyncTotalAmountWithTx(ctx context.Context, tx *gorm.DB, id int64) (err error) {
 	var result *model.PropertyBase
-	err = tx.WithContext(ctx).Where("id = ?", id).Preload("Loans").Find(&result).Error
+	err = tx.WithContext(ctx).Where("id = ?", id).
+		Preload("LoanProperties").
+		Preload("LoanProperties.Loan").
+		Find(&result).Error
 	if err != nil {
 		return errors.WithStack(err)
 	}
@@ -109,8 +112,11 @@ func (repo *PropertyBaseRepo) SyncTotalAmountWithTx(ctx context.Context, tx *gor
 		return nil
 	}
 	var totalAmount float64
-	for _, loan := range result.Loans {
-		totalAmount += loan.TotalAmount
+	for _, loanProperty := range result.LoanProperties {
+		if loanProperty.Loan == nil {
+			continue
+		}
+		totalAmount += loanProperty.Loan.TotalAmount
 	}
 	err = tx.WithContext(ctx).
 		Model(new(model.PropertyBase)).
@@ -121,7 +127,8 @@ func (repo *PropertyBaseRepo) SyncTotalAmountWithTx(ctx context.Context, tx *gor
 
 // Page page
 func (repo *PropertyBaseRepo) Page(ctx context.Context, pageReq *borrower.PropertyPageRequestData) (page gormx.PageResponse[*model.PropertyBase], err error) {
-	propertyTable := model.PropertyBase{}.TableName()
+	propertyBaseTable := model.PropertyBase{}.TableName()
+	loanPropertyTable := model.LoanProperty{}.TableName()
 	applicantTable := model.Applicant{}.TableName()
 	loanRepo := NewLoanRepo(repo.BaseRepo.GetDB())
 	applicantRepo := NewApplicantRepo(repo.BaseRepo.GetDB())
@@ -129,17 +136,16 @@ func (repo *PropertyBaseRepo) Page(ctx context.Context, pageReq *borrower.Proper
 	filter := pageReq.Filter
 	sorter := pageReq.Sorter
 	query := repo.Client(ctx).
-		Where(fmt.Sprintf("%s.borrower_id = ?", propertyTable), filter.BorrowerId).
-		Preload("Loans").
-		Preload("Applicants")
+		Where(fmt.Sprintf("%s.borrower_id = ?", propertyBaseTable), filter.BorrowerId)
 	// keyword
 	if len(filter.Keyword) > 0 {
 		query = query.Where(
-			fmt.Sprintf("%s.address->>'state' like @keyword or %s.address->>'city' like @keyword or %s.address->>'address1' like @keyword", propertyTable, propertyTable, propertyTable), sql.Named("keyword", "%"+filter.Keyword+"%"))
+			fmt.Sprintf("%s.address->>'state' like @keyword or %s.address->>'city' like @keyword or %s.address->>'address1' like @keyword", propertyBaseTable, propertyBaseTable, propertyBaseTable), sql.Named("keyword", "%"+filter.Keyword+"%"))
 	}
 	// applicant
 	if len(filter.Applicant) > 0 {
-		query = query.Joins(fmt.Sprintf("left join %s on %s.id = %s.loan_id", applicantTable, propertyTable, applicantTable)).
+		query = query.Joins(fmt.Sprintf("left join %s on %s.id = %s.property_base_id", loanPropertyTable, propertyBaseTable, loanPropertyTable)).
+			Joins(fmt.Sprintf("left join %s on %s.id = %s.loan_property_id", applicantTable, loanPropertyTable, applicantTable)).
 			Where(fmt.Sprintf("%s.name in ?", applicantTable), filter.Applicant)
 	}
 
@@ -149,12 +155,12 @@ func (repo *PropertyBaseRepo) Page(ctx context.Context, pageReq *borrower.Proper
 		switch sorter.Column {
 		case "total_amount":
 			sortColumns = append(sortColumns,
-				fmt.Sprintf("%s.total_amount %s", propertyTable, sorter.Sort),
+				fmt.Sprintf("%s.total_amount %s", propertyBaseTable, sorter.Sort),
 			)
 		}
 	}
 	if sorter == nil || len(sortColumns) == 0 {
-		sortColumns = append(sortColumns, fmt.Sprintf("%s.total_amount desc", propertyTable))
+		sortColumns = append(sortColumns, fmt.Sprintf("%s.total_amount desc", propertyBaseTable))
 	}
 
 	for _, column := range sortColumns {
@@ -164,26 +170,22 @@ func (repo *PropertyBaseRepo) Page(ctx context.Context, pageReq *borrower.Proper
 	page, err = gormx.Page[*model.PropertyBase](query, gormx.PageRequest{
 		Page:        pageReq.Page,
 		Limit:       pageReq.Limit,
-		CountColumn: fmt.Sprintf("%s.id", propertyTable),
+		CountColumn: fmt.Sprintf("%s.id", propertyBaseTable),
 	})
 
 	if err != nil {
 		return page, errors.WithStack(err)
 	}
 
-	for i, property := range page.List {
-		loans, err := loanRepo.FindAll(ctx, map[string]interface{}{
-			"property_id": property.Id,
-		})
+	for i, propertyBase := range page.List {
+		loans, err := loanRepo.GetByPropertyBaseId(ctx, propertyBase.Id)
 
 		if err != nil {
 			return page, errors.WithStack(err)
 		}
 		page.List[i].Loans = loans
 
-		applicants, err := applicantRepo.FindAll(ctx, map[string]interface{}{
-			"property_id": property.Id,
-		})
+		applicants, err := applicantRepo.GetByPropertyBaseId(ctx, propertyBase.Id)
 		if err != nil {
 			return page, errors.WithStack(err)
 		}

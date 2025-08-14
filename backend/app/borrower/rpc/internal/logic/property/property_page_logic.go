@@ -37,7 +37,7 @@ func (l *PropertyPageLogic) PropertyPage(in *borrower.PropertyPageRequest) (resp
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	propertyPageResult, err := l.svcCtx.PropertyRepo.Page(l.ctx, in.Data)
+	propertyPageResult, err := l.svcCtx.PropertyBaseRepo.Page(l.ctx, in.Data)
 	if err != nil {
 		return nil, err
 	}
