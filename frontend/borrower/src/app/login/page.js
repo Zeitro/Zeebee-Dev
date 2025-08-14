@@ -21,9 +21,10 @@ const Login = () => {
 	const onFinish = async () => {
 		const values = await form.validateFields();
 		const access = await login(values);
+		values = {};
 		await getUserInfo();
 		setCookie('token', access?.access_token, access?.access_token_expire * 1000);
-		router.push('/');
+		router.push('/') ;
 	};
 
 	return (

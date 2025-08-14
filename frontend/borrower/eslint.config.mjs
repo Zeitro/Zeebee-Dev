@@ -17,10 +17,10 @@ const eslintConfig = [
 			'eslint:recommended',
 			'plugin:@typescript-eslint/recommended',
 			'plugin:react/recommended',
-			'prettier',
 			'plugin:prettier/recommended',
 			'next/core-web-vitals',
 			'next/typescript',
+			'prettier',
 		],
 		parser: '@typescript-eslint/parser',
 		globals: {
