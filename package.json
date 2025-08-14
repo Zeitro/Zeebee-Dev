@@ -1,0 +1,34 @@
+{
+  "name": "zeebee-dev",
+  "version": "1.0.0",
+  "description": "Repository for Zeebee, Private lending mortgage platform",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky",
+     "lint:staged": "eslint --fix && prettier --write"
+  },
+  "lint-staged": {
+    "frontend/borrower/**/*.{js,jsx,ts,tsx,json,css,scss}": [
+      "cd frontend/borrower && npm run lint:staged"
+    ],
+    "frontend/pos/**/*.{js,jsx,ts,tsx,json,css,scss}": [
+      "cd frontend/pos && npm run lint:staged"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Zeitro/Zeebee-Dev.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Zeitro/Zeebee-Dev/issues"
+  },
+  "homepage": "https://github.com/Zeitro/Zeebee-Dev#readme",
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.5"
+  }
+}
