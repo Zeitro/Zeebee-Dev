@@ -6,6 +6,7 @@ import (
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
+	"zeebee-backend/app/borrower/rpc/internal/repo/model"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
@@ -47,6 +48,34 @@ func (l *DeleteBorrowerLoanLogic) DeleteBorrowerLoan(in *borrower.LoanDeleteRequ
 
 	err = l.svcCtx.LoanRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
 		var innerErr error
+		var loanProperty *model.LoanProperty
+		var propertyBase *model.PropertyBase
+		loanProperty = loanModel.LoanProperty
+		if loanProperty != nil {
+			propertyBase = loanProperty.PropertyBase
+		}
+
+		// delete property_base
+		if propertyBase != nil {
+			var loanCount int64
+			loanCount, innerErr = l.svcCtx.LoanPropertyRepo.GetLoanPropertyCountByPropertyBaseId(l.ctx, propertyBase.Id)
+			if innerErr != nil {
+				return innerErr
+			}
+			if loanCount == 1 {
+				_, innerErr = l.svcCtx.PropertyBaseRepo.DeleteByIDWithTx(l.ctx, tx, propertyBase.Id)
+				if innerErr != nil {
+					return innerErr
+				}
+			}
+		}
+
+		// delete loan_property
+		_, innerErr = l.svcCtx.LoanPropertyRepo.DeleteByIDWithTx(l.ctx, tx, loanProperty.Id)
+		if innerErr != nil {
+			return innerErr
+		}
+
 		// delete applicants
 		for _, applicant := range loanModel.Applicants {
 			_, innerErr = l.svcCtx.ApplicantRepo.DeleteByIDWithTx(l.ctx, tx, applicant.Id)
@@ -54,21 +83,7 @@ func (l *DeleteBorrowerLoanLogic) DeleteBorrowerLoan(in *borrower.LoanDeleteRequ
 				return innerErr
 			}
 		}
-		// delete property
-		property := loanModel.Property
-		if property != nil {
-			var loanCount int64
-			loanCount, innerErr = l.svcCtx.LoanRepo.GetLoanCountByPropertyId(l.ctx, property.Id)
-			if innerErr != nil {
-				return innerErr
-			}
-			if loanCount == 1 {
-				_, innerErr = l.svcCtx.PropertyRepo.DeleteByIDWithTx(l.ctx, tx, property.Id)
-				if innerErr != nil {
-					return innerErr
-				}
-			}
-		}
+
 		// delete loan
 		_, innerErr = l.svcCtx.LoanRepo.DeleteByIDWithTx(l.ctx, tx, loanModel.Id)
 
@@ -76,8 +91,8 @@ func (l *DeleteBorrowerLoanLogic) DeleteBorrowerLoan(in *borrower.LoanDeleteRequ
 			return innerErr
 		}
 
-		if property != nil {
-			innerErr = l.svcCtx.PropertyRepo.SyncTotalAmountWithTx(l.ctx, tx, property.Id)
+		if propertyBase != nil {
+			innerErr = l.svcCtx.PropertyBaseRepo.SyncTotalAmountWithTx(l.ctx, tx, propertyBase.Id)
 		}
 
 		return innerErr

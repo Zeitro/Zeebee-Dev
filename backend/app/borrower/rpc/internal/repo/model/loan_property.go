@@ -10,6 +10,7 @@ type LoanProperty struct {
 
 	PropertyBase *PropertyBase `json:"property_base" gorm:"foreignKey:PropertyBaseId;references:Id"`
 	Loan         *Loan         `json:"loan" gorm:"foreignKey:LoanId;references:Id"`
+	Applicants   []*Applicant  `json:"applicants" gorm:"foreignKey:LoanPropertyId;references:Id"`
 }
 
 func (m LoanProperty) TableName() string {

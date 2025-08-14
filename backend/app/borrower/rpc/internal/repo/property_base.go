@@ -36,8 +36,9 @@ func (repo *PropertyBaseRepo) GetOneWithTx(ctx context.Context, tx *gorm.DB, id 
 
 func (repo *PropertyBaseRepo) GetOne(ctx context.Context, id int64) (result *model.PropertyBase, err error) {
 	query := repo.BaseRepo.Client(ctx).Where("id = ?", id).
-		Preload("Loans").
-		Preload("Loans.Applicants")
+		Preload("LoanProperties").
+		Preload("LoanProperties.Applicants").
+		Preload("LoanProperties.Loan")
 
 	err = query.First(&result).Error
 	return

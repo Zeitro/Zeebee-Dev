@@ -37,29 +37,29 @@ func (l *PropertyPageLogic) PropertyPage(in *borrower.PropertyPageRequest) (resp
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	propertyPageResult, err := l.svcCtx.PropertyBaseRepo.Page(l.ctx, in.Data)
+	propertyBasePageResult, err := l.svcCtx.PropertyBaseRepo.Page(l.ctx, in.Data)
 	if err != nil {
 		return nil, err
 	}
 
-	properties := make([]*borrower.PropertyPageEntry, len(propertyPageResult.List))
+	properties := make([]*borrower.PropertyPageEntry, len(propertyBasePageResult.List))
 	now := datetime.BeginOfDay(time.Now())
-	for i, property := range propertyPageResult.List {
+	for i, propertyBase := range propertyBasePageResult.List {
 		propertyPageEntry := &borrower.PropertyPageEntry{
-			Id:           property.Id,
-			PropertyType: string(property.PropertyType),
-			TotalAmount:  property.TotalAmount,
+			Id: propertyBase.Id,
+			// PropertyType: string(property.PropertyType),
+			TotalAmount: propertyBase.TotalAmount,
 			Address: &borrower.AddressEntry{
-				State:    property.Address.State,
-				City:     property.Address.City,
-				Address1: property.Address.Address1,
-				Address2: property.Address.Address2,
-				ZipCode:  property.Address.ZipCode,
+				State:    propertyBase.Address.State,
+				City:     propertyBase.Address.City,
+				Address1: propertyBase.Address.Address1,
+				Address2: propertyBase.Address.Address2,
+				ZipCode:  propertyBase.Address.ZipCode,
 			},
 		}
 		var maturityDate *sql.NullTime
 		var totalRate float32 = 0.0
-		for _, loan := range property.Loans {
+		for _, loan := range propertyBase.Loans {
 			totalRate += loan.Rate
 			propertyPageEntry.Lenders = append(propertyPageEntry.Lenders, loan.LenderCompany)
 			propertyPageEntry.TotalPrincipalAmount += loan.PrincipalAmount
@@ -78,11 +78,11 @@ func (l *PropertyPageLogic) PropertyPage(in *borrower.PropertyPageRequest) (resp
 			}
 		}
 
-		for _, applicant := range property.Applicants {
+		for _, applicant := range propertyBase.Applicants {
 			propertyPageEntry.Applicants = append(propertyPageEntry.Applicants, applicant.Name)
 		}
 		if totalRate > 0 {
-			propertyPageEntry.AvgRate = totalRate / float32(len(property.Loans))
+			propertyPageEntry.AvgRate = totalRate / float32(len(propertyBase.Loans))
 		}
 		if maturityDate != nil && maturityDate.Valid {
 			propertyPageEntry.NearestMaturityDate = maturityDate.Time.Format("01/02/2006")
@@ -95,10 +95,10 @@ func (l *PropertyPageLogic) PropertyPage(in *borrower.PropertyPageRequest) (resp
 
 	return &borrower.PropertyPageResponse{
 		Data: &borrower.PropertyPageResponseData{
-			Page:      propertyPageResult.Page,
-			Limit:     propertyPageResult.Limit,
-			Total:     propertyPageResult.Total,
-			TotalPage: propertyPageResult.TotalPage,
+			Page:      propertyBasePageResult.Page,
+			Limit:     propertyBasePageResult.Limit,
+			Total:     propertyBasePageResult.Total,
+			TotalPage: propertyBasePageResult.TotalPage,
 			List:      properties,
 		},
 	}, nil
