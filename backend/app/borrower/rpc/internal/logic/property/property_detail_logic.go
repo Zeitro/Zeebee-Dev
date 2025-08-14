@@ -6,14 +6,14 @@ import (
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type PropertyDetailLogic struct {
@@ -38,29 +38,32 @@ func (l *PropertyDetailLogic) PropertyDetail(in *borrower.PropertyDetailRequest)
 	}()
 
 	// get property
-	property, err := l.svcCtx.PropertyRepo.GetOne(l.ctx, in.Data.Id)
+	propertyBase, err := l.svcCtx.PropertyBaseRepo.GetOne(l.ctx, in.Data.Id)
+
 	if err != nil {
 		return nil, err
 	}
-	if property == nil || property.Id == 0 {
+	if propertyBase == nil || propertyBase.Id == 0 {
 		return nil, errors.WithStack(errors.New("property is invalid"))
 	}
 
-	if property.BorrowerId != in.Data.BorrowerId {
+	if propertyBase.BorrowerId != in.Data.BorrowerId {
 		return nil, errors.WithStack(errors.New("access denied"))
 	}
 
+	loanProperties := propertyBase.LoanProperties
+
 	respData := &borrower.PropertyDetailResponseData{
-		Id:           property.Id,
-		PropertyType: string(property.PropertyType),
+		Id: propertyBase.Id,
+		// PropertyType: string(loanProperty.PropertyType),
 		// TotalAmount:  property.TotalAmount,
-		Unit: property.Unit,
+		Unit: propertyBase.Unit,
 		Address: &borrower.AddressEntry{
-			State:    property.Address.State,
-			City:     property.Address.City,
-			Address1: property.Address.Address1,
-			Address2: property.Address.Address2,
-			ZipCode:  property.Address.ZipCode,
+			State:    propertyBase.Address.State,
+			City:     propertyBase.Address.City,
+			Address1: propertyBase.Address.Address1,
+			Address2: propertyBase.Address.Address2,
+			ZipCode:  propertyBase.Address.ZipCode,
 		},
 	}
 
@@ -74,35 +77,41 @@ func (l *PropertyDetailLogic) PropertyDetail(in *borrower.PropertyDetailRequest)
 	respData.ActiveLoans = make([]*borrower.LoanEntry, 0)
 	respData.ArchivedLoans = make([]*borrower.LoanEntry, 0)
 
-	for _, loan := range property.Loans {
+	if len(loanProperties) > 0 {
+		for _, loanProperty := range loanProperties {
+			loan := loanProperty.Loan
+			if loan == nil || loan.Id == 0 {
+				continue
+			}
 
-		loanEntry := &borrower.LoanEntry{}
-		err = copier.CopyWithOption(loanEntry, loan, copier.Option{
-			CaseSensitive: true,
-			Converters: []copier.TypeConverter{
-				copierx.TimeToRFC3339Str(),
-				copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
-			},
-		})
-		if err != nil {
-			return nil, errorx.GetFailedTransRespErr(err)
+			loanEntry := &borrower.LoanEntry{}
+			err = copier.CopyWithOption(loanEntry, loan, copier.Option{
+				CaseSensitive: true,
+				Converters: []copier.TypeConverter{
+					copierx.TimeToRFC3339Str(),
+					copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
+				},
+			})
+			if err != nil {
+				return nil, errorx.GetFailedTransRespErr(err)
+			}
+
+			switch loan.Stage {
+			case constants.LoanStagePending:
+				respData.PendingLoans = append(respData.PendingLoans, loanEntry)
+			case constants.LoanStageActive:
+				respData.ActiveLoans = append(respData.ActiveLoans, loanEntry)
+				totalMonthlyPaymentAmount += loan.MonthlyPayment
+				totalPrincipalAmount += loan.PrincipalAmount
+				respData.TotalAmount += loan.TotalAmount
+
+			case constants.LoanStageArchived:
+				respData.ArchivedLoans = append(respData.ArchivedLoans, loanEntry)
+			}
+			totalClosingFundAmount += loan.ClosingFund
+			totalRate += loan.Rate
+			loanCount++
 		}
-
-		switch loan.Stage {
-		case constants.LoanStagePending:
-			respData.PendingLoans = append(respData.PendingLoans, loanEntry)
-		case constants.LoanStageActive:
-			respData.ActiveLoans = append(respData.ActiveLoans, loanEntry)
-			totalMonthlyPaymentAmount += loan.MonthlyPayment
-			totalPrincipalAmount += loan.PrincipalAmount
-			respData.TotalAmount += loan.TotalAmount
-
-		case constants.LoanStageArchived:
-			respData.ArchivedLoans = append(respData.ArchivedLoans, loanEntry)
-		}
-		totalClosingFundAmount += loan.ClosingFund
-		totalRate += loan.Rate
-		loanCount++
 	}
 
 	respData.TotalClosingFundAmount = totalClosingFundAmount
