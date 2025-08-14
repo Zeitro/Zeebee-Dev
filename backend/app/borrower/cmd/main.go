@@ -41,5 +41,4 @@ func main() {
 	fmt.Printf("shutdown service in 5 seconds ....")
 	serviceGrp.Stop()
 	time.Sleep(5 * time.Second)
-
 }

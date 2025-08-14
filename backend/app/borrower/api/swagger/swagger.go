@@ -3,4 +3,4 @@ package swagger
 import "embed"
 
 //go:embed borrower.json
-var SwaggerJson embed.FS
+var SwaggerJSON embed.FS

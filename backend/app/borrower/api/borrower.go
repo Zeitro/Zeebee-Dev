@@ -31,7 +31,7 @@ func NewApiServer(c config.Config) (s service.Service) {
 		Path:   "/swagger",
 		Handler: func(w http.ResponseWriter, r *http.Request) {
 			// read swagger.json file
-			data, err := swagger.SwaggerJson.ReadFile("borrower.json")
+			data, err := swagger.SwaggerJSON.ReadFile("borrower.json")
 			if err != nil {
 				response.NotFound(w, "swagger.json not found")
 				return

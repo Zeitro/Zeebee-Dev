@@ -59,7 +59,7 @@ type ImportLogic struct {
 	svcCtx *svc.ServiceContext
 }
 
-// import
+// NewImportLogic import
 func NewImportLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ImportLogic {
 	return &ImportLogic{
 		Logger: logx.WithContext(ctx),
