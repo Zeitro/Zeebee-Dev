@@ -42,7 +42,7 @@ func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.LoanCreateRequ
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	loan, property, applicants, err := l.buildCreateModels(in.Data)
+	loan, propertyBase, loanProperty, applicants, err := l.buildCreateModels(in.Data)
 	if err != nil {
 		return nil, err
 	}
@@ -50,27 +50,32 @@ func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.LoanCreateRequ
 	// create loan
 	err = l.svcCtx.LoanRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
 		var innerErr error
-		property, innerErr = l.svcCtx.PropertyRepo.GetOrCreateWithTx(l.ctx, tx, property)
+		propertyBase, innerErr = l.svcCtx.PropertyBaseRepo.GetOrCreateWithTx(l.ctx, tx, propertyBase)
 		if innerErr != nil {
 			return innerErr
 		}
 
-		loan.PropertyId = property.Id
+		// loan.PropertyId = property.Id
 		loan, innerErr = l.svcCtx.LoanRepo.CreateWithTx(l.ctx, tx, loan)
 		if innerErr != nil {
 			return innerErr
 		}
 
+		// create loan property
+		loanProperty.LoanId = loan.Id
+		loanProperty.PropertyBaseId = propertyBase.Id
+		loanProperty, innerErr = l.svcCtx.LoanPropertyRepo.CreateWithTx(l.ctx, tx, loanProperty)
+
 		applicants = slice.Map(applicants, func(index int, item *model.Applicant) *model.Applicant {
 			item.LoanId = loan.Id
-			item.PropertyId = property.Id
+			item.LoanPropertyId = loanProperty.Id
 			return item
 		})
 		_, innerErr = l.svcCtx.ApplicantRepo.BatchCreateWithTx(l.ctx, tx, applicants)
 		if innerErr != nil {
 			return innerErr
 		}
-		innerErr = l.svcCtx.PropertyRepo.SyncTotalAmountWithTx(l.ctx, tx, property.Id)
+		innerErr = l.svcCtx.PropertyBaseRepo.SyncTotalAmountWithTx(l.ctx, tx, propertyBase.Id)
 		return innerErr
 	})
 	if err != nil {
@@ -85,15 +90,15 @@ func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.LoanCreateRequ
 }
 
 // buildCreateModels
-func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateRequestData) (loan *model.Loan, property *model.Property, applicants []*model.Applicant, err error) {
+func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateRequestData) (loan *model.Loan, propertyBase *model.PropertyBase, loanProperty *model.LoanProperty, applicants []*model.Applicant, err error) {
 	// build applicants
 	for _, applicant := range in.Applicants {
 		if len(applicant.Name) == 0 {
-			return nil, nil, nil, errors.New("applicant name is required")
+			return nil, nil, nil, nil, errors.New("applicant name is required")
 		}
 		applicantName := strings.TrimSpace(applicant.Name)
 		if len(applicantName) == 0 {
-			return nil, nil, nil, errors.New("applicant name is empty")
+			return nil, nil, nil, nil, errors.New("applicant name is empty")
 		}
 		var applicantItem *model.Applicant
 		switch constants.ApplicantType(applicant.Type) {
@@ -110,7 +115,7 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 				Type:      constants.ApplicantTypeCorporation,
 			}
 		default:
-			return nil, nil, nil, errors.New("invalid applicant type")
+			return nil, nil, nil, nil, errors.New("invalid applicant type")
 		}
 		applicantItem.BorrowerId = in.BorrowerId
 		applicantItem.InvitationStatus = constants.ApplicantInvitationStatusAccepted
@@ -123,16 +128,16 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 		return item.Name == other.Name
 	})
 	if len(applicants) == 0 {
-		return nil, nil, nil, errors.New("no applicant")
+		return nil, nil, nil, nil, errors.New("no applicant")
 	}
 	primaryCount := slice.CountBy(applicants, func(index int, item *model.Applicant) bool {
 		return item.IsPrimary
 	})
 	if primaryCount == 0 {
-		return nil, nil, nil, errors.New("no primary applicant")
+		return nil, nil, nil, nil, errors.New("no primary applicant")
 	}
 	if primaryCount > 1 {
-		return nil, nil, nil, errors.New("multiple primary applicant")
+		return nil, nil, nil, nil, errors.New("multiple primary applicant")
 	}
 	// update loan
 	loan = &model.Loan{
@@ -151,10 +156,10 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 		Source:           constants.LoanSourceBorrower,
 		ClosingFund:      in.ClosingFund,
 	}
-	property = &model.Property{
-		BorrowerId:   in.BorrowerId,
-		PropertyType: constants.PropertyType(in.Property.PropertyType),
-		Unit:         in.Property.Unit,
+	propertyBase = &model.PropertyBase{
+		BorrowerId: in.BorrowerId,
+		// PropertyType: constants.PropertyType(in.Property.PropertyType),
+		Unit: in.Property.Unit,
 		Address: types.Address{
 			State:    in.Property.Address.State,
 			City:     in.Property.Address.City,
@@ -163,15 +168,20 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 			ZipCode:  in.Property.Address.ZipCode,
 		},
 	}
+
+	loanProperty = &model.LoanProperty{
+		PropertyType: constants.PropertyType(in.Property.PropertyType),
+	}
+
 	if loan.TotalAmount < loan.InitialAmount {
-		return nil, nil, nil, errors.New("Total amount cannot be less than initial amount")
+		return nil, nil, nil, nil, errors.New("Total amount cannot be less than initial amount")
 	}
 	switch constants.LoanStage(in.Stage) {
 	case constants.LoanStagePending:
 		closingDate, err := timex.FormateTimeToStrWithUsStyle(in.ClosingDate)
 
 		if err != nil {
-			return nil, nil, nil, errors.Wrap(err, "invalid closing date")
+			return nil, nil, nil, nil, errors.Wrap(err, "invalid closing date")
 		}
 		loan.ClosingDate = &sql.NullTime{
 			Time:  closingDate,
@@ -185,7 +195,7 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 
 		maturityDate, err := timex.FormateTimeToStrWithUsStyle(in.MaturityDate)
 		if err != nil {
-			return nil, nil, nil, errors.Wrap(err, "invalid maturity date")
+			return nil, nil, nil, nil, errors.Wrap(err, "invalid maturity date")
 		}
 		loan.MaturityDate = &sql.NullTime{
 			Time:  maturityDate,
@@ -199,7 +209,7 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 	case constants.LoanStageArchived:
 		paidOffDate, err := timex.FormateTimeToStrWithUsStyle(in.PaidOffDate)
 		if err != nil {
-			return nil, nil, nil, errors.Wrap(err, "invalid paid off date")
+			return nil, nil, nil, nil, errors.Wrap(err, "invalid paid off date")
 		}
 		loan.PaidOffDate = &sql.NullTime{
 			Time:  paidOffDate,
@@ -207,7 +217,7 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 		}
 		loan.PrincipalAmount = in.PrincipalAmount
 	default:
-		return nil, nil, nil, errors.WithStack(errors.New("invalid loan stage"))
+		return nil, nil, nil, nil, errors.WithStack(errors.New("invalid loan stage"))
 	}
 	return
 }
