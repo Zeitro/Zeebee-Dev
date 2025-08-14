@@ -1,5 +1,0 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
-echo "==== HUSKY PRE-COMMIT HOOK IS RUNNING! ===="
-exit 1 # 这一行是关键，它会强制退出并让 commit 失败

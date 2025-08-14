@@ -10,17 +10,7 @@
 		"lint": "next lint",
 		"format": "prettier --write .",
 		"clean": "rm -rf .next dist build",
-		"check-env": "env | grep NEXT_PUBLIC",
-		"prepare": "husky"
-	},
-	"lint-staged": {
-		"**/*.{js,jsx,ts,tsx}": [
-			"eslint --fix",
-			"prettier --write"
-		],
-		"**/*.{json,md,css}": [
-			"prettier --write"
-		]
+		"check-env": "env | grep NEXT_PUBLIC"
 	},
 	"dependencies": {
 		"@ant-design/nextjs-registry": "^1.0.2",
@@ -31,7 +21,6 @@
 		"events": "^3.3.0",
 		"lodash": "^4.17.21",
 		"next": "15.3.0",
-		"next-svg": "^1.0.7",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"zustand": "^5.0.6"
@@ -49,8 +38,6 @@
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-prettier": "^5.5.1",
 		"eslint-plugin-react": "^7.37.5",
-		"husky": "^9.1.7",
-		"lint-staged": "^16.1.5",
 		"postcss": "^8.5.6",
 		"prettier": "^3.6.2",
 		"sass": "^1.89.2",
