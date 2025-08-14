@@ -42,7 +42,7 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	loan, property, applicants, err := l.buildCreateModels(in.Data)
+	loan, propertyBase, loanProperty, applicants, err := l.buildCreateModels(in.Data)
 	if err != nil {
 		return nil, err
 	}
@@ -57,21 +57,34 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 	if loanModel.Source != constants.LoanSourceBorrower {
 		return nil, errors.WithStack(errors.New("loan source is not 3rd party"))
 	}
+	loanPropertyModel := loanModel.LoanProperty
+	if loanPropertyModel == nil {
+		return nil, errors.WithStack(errors.New("loan property is not found"))
+	}
 
 	// create loan
 	err = l.svcCtx.LoanRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
 		var innerErr error
 		// handle property
-		property, innerErr = l.handleProperty(tx, loanModel.PropertyId, property)
+		propertyBase, innerErr = l.handlePropertyBase(tx, loanPropertyModel.PropertyBaseId, propertyBase)
 		if innerErr != nil {
 			return innerErr
 		}
-		previousPropertyId := loan.PropertyId
+		previousPropertyBaseId := loanPropertyModel.PropertyBaseId
 
 		// update loan
 		loan.Id = in.Data.Id
-		loan.PropertyId = property.Id
+		// loan.PropertyId = property.Id
 		_, innerErr = l.svcCtx.LoanRepo.UpdateOneWithTx(l.ctx, tx, in.Data.Id, loan)
+		if innerErr != nil {
+			return innerErr
+		}
+
+		// update loan property
+		innerErr = l.svcCtx.LoanPropertyRepo.UpdateColumnsByIdWithTx(l.ctx, tx, loanPropertyModel.Id, map[string]interface{}{
+			"property_base_id": propertyBase.Id,
+			"property_type":    loanProperty.PropertyType,
+		})
 		if innerErr != nil {
 			return innerErr
 		}
@@ -88,7 +101,7 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 		})
 		newApplicants = slice.Map(newApplicants, func(index int, newApplicant *model.Applicant) *model.Applicant {
 			newApplicant.LoanId = loan.Id
-			newApplicant.PropertyId = property.Id
+			newApplicant.LoanPropertyId = loanPropertyModel.Id
 			return newApplicant
 		})
 
@@ -101,7 +114,7 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 
 		updatedApplicants = slice.Map(updatedApplicants, func(index int, updateApplicant *model.Applicant) *model.Applicant {
 			updateApplicant.LoanId = loan.Id
-			updateApplicant.PropertyId = property.Id
+			// updateApplicant.PropertyId = property.Id
 			return updateApplicant
 		})
 
@@ -125,10 +138,11 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 				return innerErr
 			}
 		}
+
 		// sync property total amount
-		_ = l.svcCtx.PropertyRepo.SyncTotalAmountWithTx(l.ctx, tx, previousPropertyId)
-		if property.Id != previousPropertyId {
-			_ = l.svcCtx.PropertyRepo.SyncTotalAmountWithTx(l.ctx, tx, property.Id)
+		_ = l.svcCtx.PropertyBaseRepo.SyncTotalAmountWithTx(l.ctx, tx, previousPropertyBaseId)
+		if propertyBase.Id != previousPropertyBaseId {
+			_ = l.svcCtx.PropertyBaseRepo.SyncTotalAmountWithTx(l.ctx, tx, propertyBase.Id)
 		}
 		return innerErr
 	})
@@ -140,41 +154,41 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 }
 
 // handle property
-func (l *UpdateBorrowerLoanLogic) handleProperty(tx *gorm.DB, propertyId int64, property *model.Property) (newProperty *model.Property, err error) {
+func (l *UpdateBorrowerLoanLogic) handlePropertyBase(tx *gorm.DB, propertyId int64, propertyBase *model.PropertyBase) (newPropertyBase *model.PropertyBase, err error) {
 	// get existed property
-	newProperty, err = l.svcCtx.PropertyRepo.GetOneWithTxByProperty(l.ctx, tx, property)
+	newPropertyBase, err = l.svcCtx.PropertyBaseRepo.GetOneWithTxByProperty(l.ctx, tx, propertyBase)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get property")
+		return nil, errors.Wrap(err, "failed to get property base")
 	}
-	if newProperty != nil {
-		return newProperty, nil
+	if newPropertyBase != nil {
+		return newPropertyBase, nil
 	}
 	// get previous property
-	prevProperty, err := l.svcCtx.PropertyRepo.GetOneWithTx(l.ctx, tx, propertyId, []string{"Loans"})
+	prevPropertyBase, err := l.svcCtx.PropertyBaseRepo.GetOneWithTx(l.ctx, tx, propertyId, []string{"LoanProperties"})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get property")
 	}
 
-	// create new property if relate zero or more than one loan
-	if len(prevProperty.Loans) == 0 || len(prevProperty.Loans) > 1 {
-		return l.svcCtx.PropertyRepo.GetOrCreateWithTx(l.ctx, tx, property)
+	// create new property if relate zero or more than one loan property
+	if len(prevPropertyBase.LoanProperties) == 0 || len(prevPropertyBase.LoanProperties) > 1 {
+		return l.svcCtx.PropertyBaseRepo.GetOrCreateWithTx(l.ctx, tx, propertyBase)
 	}
 
-	// update property
-	property.Id = prevProperty.Id
-	newProperty, err = l.svcCtx.PropertyRepo.UpdateOneWithTx(l.ctx, tx, prevProperty.Id, property)
+	// update property when relate one loan property
+	propertyBase.Id = prevPropertyBase.Id
+	newPropertyBase, err = l.svcCtx.PropertyBaseRepo.UpdateOneWithTx(l.ctx, tx, propertyBase.Id, propertyBase)
 	return
 }
 
-func (l *UpdateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanUpdateRequestData) (loan *model.Loan, property *model.Property, applicants []*model.Applicant, err error) {
+func (l *UpdateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanUpdateRequestData) (loan *model.Loan, propertyBase *model.PropertyBase, loanProperty *model.LoanProperty, applicants []*model.Applicant, err error) {
 	// build applicants
 	for _, applicant := range in.Applicants {
 		if len(applicant.Name) == 0 {
-			return nil, nil, nil, errors.New("applicant name is required")
+			return nil, nil, nil, nil, errors.New("applicant name is required")
 		}
 		applicantName := strings.TrimSpace(applicant.Name)
 		if len(applicantName) == 0 {
-			return nil, nil, nil, errors.New("applicant name is empty")
+			return nil, nil, nil, nil, errors.New("applicant name is empty")
 		}
 		var applicantItem *model.Applicant
 		switch constants.ApplicantType(applicant.Type) {
@@ -191,7 +205,7 @@ func (l *UpdateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanUpdateReque
 				Type:      constants.ApplicantTypeCorporation,
 			}
 		default:
-			return nil, nil, nil, errors.New("invalid applicant type")
+			return nil, nil, nil, nil, errors.New("invalid applicant type")
 		}
 		applicantItem.Id = applicant.Id
 		applicantItem.BorrowerId = in.BorrowerId
@@ -205,16 +219,16 @@ func (l *UpdateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanUpdateReque
 		return item.Name == other.Name
 	})
 	if len(applicants) == 0 {
-		return nil, nil, nil, errors.New("no applicant")
+		return nil, nil, nil, nil, errors.New("no applicant")
 	}
 	primaryCount := slice.CountBy(applicants, func(index int, item *model.Applicant) bool {
 		return item.IsPrimary
 	})
 	if primaryCount == 0 {
-		return nil, nil, nil, errors.New("no primary applicant")
+		return nil, nil, nil, nil, errors.New("no primary applicant")
 	}
 	if primaryCount > 1 {
-		return nil, nil, nil, errors.New("multiple primary applicant")
+		return nil, nil, nil, nil, errors.New("multiple primary applicant")
 	}
 
 	loan = &model.Loan{
@@ -233,28 +247,31 @@ func (l *UpdateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanUpdateReque
 		Source:           constants.LoanSourceBorrower,
 		ClosingFund:      in.ClosingFund,
 	}
-	property = &model.Property{
-		BorrowerId:   in.BorrowerId,
-		PropertyType: constants.PropertyType(in.Property.PropertyType),
-		Unit:         in.Property.Unit,
+	propertyBase = &model.PropertyBase{
+		BorrowerId: in.BorrowerId,
+		// PropertyType: constants.PropertyType(in.Property.PropertyType),
+		Unit: in.LoanProperty.PropertyBase.Unit,
 		Address: types.Address{
-			State:    in.Property.Address.State,
-			City:     in.Property.Address.City,
-			Address1: in.Property.Address.Address1,
-			Address2: in.Property.Address.Address2,
-			ZipCode:  in.Property.Address.ZipCode,
+			State:    in.LoanProperty.PropertyBase.Address.State,
+			City:     in.LoanProperty.PropertyBase.Address.City,
+			Address1: in.LoanProperty.PropertyBase.Address.Address1,
+			Address2: in.LoanProperty.PropertyBase.Address.Address2,
+			ZipCode:  in.LoanProperty.PropertyBase.Address.ZipCode,
 		},
+	}
+	loanProperty = &model.LoanProperty{
+		PropertyType: constants.PropertyType(in.LoanProperty.PropertyType),
 	}
 
 	if loan.TotalAmount < loan.InitialAmount {
-		return nil, nil, nil, errors.New("Total amount cannot be less than initial amount")
+		return nil, nil, nil, nil, errors.New("Total amount cannot be less than initial amount")
 	}
 	switch constants.LoanStage(in.Stage) {
 	case constants.LoanStagePending:
 		closingDate, err := timex.FormateTimeToStrWithUsStyle(in.ClosingDate)
 
 		if err != nil {
-			return nil, nil, nil, errors.Wrap(err, "invalid closing date")
+			return nil, nil, nil, nil, errors.Wrap(err, "invalid closing date")
 		}
 		loan.ClosingDate = &sql.NullTime{
 			Time:  closingDate,
@@ -268,7 +285,7 @@ func (l *UpdateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanUpdateReque
 
 		maturityDate, err := timex.FormateTimeToStrWithUsStyle(in.MaturityDate)
 		if err != nil {
-			return nil, nil, nil, errors.Wrap(err, "invalid maturity date")
+			return nil, nil, nil, nil, errors.Wrap(err, "invalid maturity date")
 		}
 		loan.MaturityDate = &sql.NullTime{
 			Time:  maturityDate,
@@ -282,7 +299,7 @@ func (l *UpdateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanUpdateReque
 	case constants.LoanStageArchived:
 		paidOffDate, err := timex.FormateTimeToStrWithUsStyle(in.PaidOffDate)
 		if err != nil {
-			return nil, nil, nil, errors.Wrap(err, "invalid paid off date")
+			return nil, nil, nil, nil, errors.Wrap(err, "invalid paid off date")
 		}
 		loan.PaidOffDate = &sql.NullTime{
 			Time:  paidOffDate,
@@ -290,7 +307,7 @@ func (l *UpdateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanUpdateReque
 		}
 		loan.PrincipalAmount = in.PrincipalAmount
 	default:
-		return nil, nil, nil, errors.WithStack(errors.New("invalid loan stage"))
+		return nil, nil, nil, nil, errors.WithStack(errors.New("invalid loan stage"))
 	}
 	return
 }

@@ -143,12 +143,18 @@ service user {
 }
 
 // ================ loan service =================
-message PropertyEntry{
+message PropertyBaseEntry{
   int64 id = 1;
-  string property_type = 2;
+  string property_type = 2 [deprecated = true];
   int32 unit = 3;
   AddressEntry address = 4;
   double TotalAmount = 5;
+}
+
+message LoanPropertyEntry{
+  int64 id = 1;
+  string property_type = 2 ;
+  PropertyBaseEntry property_base = 3;
 }
 
 message AddressEntry{
@@ -161,15 +167,15 @@ message AddressEntry{
 
 message ApplicantEntry{
   int64 id = 1;
-//  string first_name = 2;
-//  string last_name = 3;
+  //  string first_name = 2;
+  //  string last_name = 3;
   bool is_primary = 4;
   string created_at = 5;
   string updated_at = 6;
   string name = 7;
   string type = 8;
   string invitation_status = 9;
-  
+
 }
 
 message LoanEntry {
@@ -180,7 +186,7 @@ message LoanEntry {
   string loan_type = 5;
   double total_amount = 6;
   double initial_amount = 7;
-  PropertyEntry property = 8;
+  LoanPropertyEntry loan_property = 8;
   string lender_company = 10;
   string closing_date = 11;
   double holdback_amount = 12;
@@ -215,7 +221,7 @@ message LoanCreateRequestData {
   string loan_type = 5;
   double total_amount = 6;
   double initial_amount = 7;
-  PropertyEntry property = 8;
+  LoanPropertyEntry loan_property = 8;
   repeated BorrowerEditApplicantEntry applicants = 9;
   string lender_company = 10;
   string closing_date = 11;
@@ -267,7 +273,7 @@ message LoanUpdateRequestData {
   string loan_type = 5;
   double total_amount = 6;
   double initial_amount = 7;
-  PropertyEntry property = 8;
+  LoanPropertyEntry loan_property = 8;
   repeated BorrowerEditApplicantEntry applicants = 9;
   string lender_company = 10;
   string closing_date = 11;

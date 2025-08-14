@@ -66,6 +66,7 @@ func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.LoanCreateRequ
 		loanProperty.PropertyBaseId = propertyBase.Id
 		loanProperty, innerErr = l.svcCtx.LoanPropertyRepo.CreateWithTx(l.ctx, tx, loanProperty)
 
+		// create applicants
 		applicants = slice.Map(applicants, func(index int, item *model.Applicant) *model.Applicant {
 			item.LoanId = loan.Id
 			item.LoanPropertyId = loanProperty.Id
@@ -75,6 +76,8 @@ func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.LoanCreateRequ
 		if innerErr != nil {
 			return innerErr
 		}
+
+		// sync total amount
 		innerErr = l.svcCtx.PropertyBaseRepo.SyncTotalAmountWithTx(l.ctx, tx, propertyBase.Id)
 		return innerErr
 	})
@@ -159,18 +162,18 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 	propertyBase = &model.PropertyBase{
 		BorrowerId: in.BorrowerId,
 		// PropertyType: constants.PropertyType(in.Property.PropertyType),
-		Unit: in.Property.Unit,
+		Unit: in.LoanProperty.PropertyBase.Unit,
 		Address: types.Address{
-			State:    in.Property.Address.State,
-			City:     in.Property.Address.City,
-			Address1: in.Property.Address.Address1,
-			Address2: in.Property.Address.Address2,
-			ZipCode:  in.Property.Address.ZipCode,
+			State:    in.LoanProperty.PropertyBase.Address.State,
+			City:     in.LoanProperty.PropertyBase.Address.City,
+			Address1: in.LoanProperty.PropertyBase.Address.Address1,
+			Address2: in.LoanProperty.PropertyBase.Address.Address2,
+			ZipCode:  in.LoanProperty.PropertyBase.Address.ZipCode,
 		},
 	}
 
 	loanProperty = &model.LoanProperty{
-		PropertyType: constants.PropertyType(in.Property.PropertyType),
+		PropertyType: constants.PropertyType(in.LoanProperty.PropertyType),
 	}
 
 	if loan.TotalAmount < loan.InitialAmount {
