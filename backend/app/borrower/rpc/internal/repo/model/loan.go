@@ -35,10 +35,10 @@ type Loan struct {
 	BusinessStrategy       pq.StringArray              `gorm:"column:business_strategy;type:text[]" json:"business_strategy"`
 	Source                 constants.LoanSource        `gorm:"column:source;size:30;not null;default:''" json:"source"`
 
-	Borrower       *Borrower       `json:"borrower" gorm:"foreignKey:BorrowerId;references:Id"`
-	LoanProperties []*LoanProperty `json:"loan_properties" gorm:"foreignKey:LoanId;references:Id"`
-	Lender         *Lender         `json:"lender" gorm:"foreignKey:LenderId;references:Id"`
-	Applicants     []*Applicant    `json:"applicants" gorm:"foreignKey:LoanId;references:Id"`
+	Borrower     *Borrower     `json:"borrower" gorm:"foreignKey:BorrowerId;references:Id"`
+	LoanProperty *LoanProperty `json:"loan_property" gorm:"foreignKey:LoanId;references:Id"`
+	Lender       *Lender       `json:"lender" gorm:"foreignKey:LenderId;references:Id"`
+	Applicants   []*Applicant  `json:"applicants" gorm:"foreignKey:LoanId;references:Id"`
 }
 
 func (m Loan) TableName() string {

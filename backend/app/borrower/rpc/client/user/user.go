@@ -43,6 +43,7 @@ type (
 	LoanPageRequestSorter              = borrower.LoanPageRequestSorter
 	LoanPageResponse                   = borrower.LoanPageResponse
 	LoanPageResponseData               = borrower.LoanPageResponseData
+	LoanPropertyEntry                  = borrower.LoanPropertyEntry
 	LoanUpdatePendingStatusRequest     = borrower.LoanUpdatePendingStatusRequest
 	LoanUpdatePendingStatusRequestData = borrower.LoanUpdatePendingStatusRequestData
 	LoanUpdateRequest                  = borrower.LoanUpdateRequest
@@ -51,11 +52,11 @@ type (
 	OptionRequest                      = borrower.OptionRequest
 	OptionRequestData                  = borrower.OptionRequestData
 	OptionResponse                     = borrower.OptionResponse
+	PropertyBaseEntry                  = borrower.PropertyBaseEntry
 	PropertyDetailRequest              = borrower.PropertyDetailRequest
 	PropertyDetailRequestData          = borrower.PropertyDetailRequestData
 	PropertyDetailResponse             = borrower.PropertyDetailResponse
 	PropertyDetailResponseData         = borrower.PropertyDetailResponseData
-	PropertyEntry                      = borrower.PropertyEntry
 	PropertyPageEntry                  = borrower.PropertyPageEntry
 	PropertyPageRequest                = borrower.PropertyPageRequest
 	PropertyPageRequestData            = borrower.PropertyPageRequestData

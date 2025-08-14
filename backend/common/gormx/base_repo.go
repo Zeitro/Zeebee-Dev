@@ -79,6 +79,10 @@ func (repo *BaseRepo[T]) UpdateColumnsById(ctx context.Context, id int64, column
 	return errors.WithStack(repo.Client(ctx).Where("id = ?", id).Updates(columns).Error)
 }
 
+func (repo *BaseRepo[T]) UpdateColumnsByIdWithTx(ctx context.Context, tx *gorm.DB, id int64, columns map[string]interface{}) error {
+	return errors.WithStack(tx.WithContext(ctx).Model(new(T)).Where("id = ?", id).Updates(columns).Error)
+}
+
 // CreateWithTx create with tx
 func (repo *BaseRepo[T]) CreateWithTx(ctx context.Context, tx *gorm.DB, data T) (T, error) {
 	err := tx.WithContext(ctx).Create(&data).Error

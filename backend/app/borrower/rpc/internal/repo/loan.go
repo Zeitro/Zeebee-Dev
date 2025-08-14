@@ -28,7 +28,8 @@ func (repo *LoanRepo) GetBorrowerLoan(ctx context.Context, id int64, borrowerId 
 	err = repo.BaseRepo.Client(ctx).
 		Where("id = ? and borrower_id = ?", id, borrowerId).
 		Preload("Applicants").
-		Preload("Property").
+		Preload("LoanProperty").
+		Preload("LoanProperty.PropertyBase").
 		First(&result).Error
 	return result, errors.WithStack(err)
 }
@@ -57,9 +58,11 @@ func (repo *LoanRepo) GetLoanCountByPropertyId(ctx context.Context, propertyId i
 // page
 func (repo *LoanRepo) Page(ctx context.Context, pageReq *borrower.LoanPageRequestData) (page gormx.PageResponse[*model.Loan], err error) {
 	loanTable := model.Loan{}.TableName()
-	propertyTable := model.Property{}.TableName()
+	propertyBaseTable := model.PropertyBase{}.TableName()
+	loanPropertyTable := model.LoanProperty{}.TableName()
 	applicantTable := model.Applicant{}.TableName()
-	propertyRepo := NewPropertyRepo(repo.BaseRepo.GetDB())
+	// propertyBaseRepo := NewPropertyBaseRepo(repo.BaseRepo.GetDB())
+	loanPropertyRepo := NewLoanPropertyRepo(repo.BaseRepo.GetDB())
 	applicantRepo := NewApplicantRepo(repo.BaseRepo.GetDB())
 
 	filter := pageReq.Filter
@@ -78,16 +81,19 @@ func (repo *LoanRepo) Page(ctx context.Context, pageReq *borrower.LoanPageReques
 		switch filter.KeywordType {
 		case "address":
 			hasJoinProperty = true
-			query = query.Joins(fmt.Sprintf("left join %s on %s.property_id = %s.id", propertyTable, loanTable, propertyTable)).
-				Where(fmt.Sprintf("%s.address->>'address1' like ? or %s.address->>'address2' like ?", propertyTable, propertyTable), "%"+filter.Keyword+"%", "%"+filter.Keyword+"%")
+			query = query.Joins(fmt.Sprintf("left join %s on %s.id = %s.loan_id", loanPropertyTable, loanTable, loanPropertyTable)).
+				Joins(fmt.Sprintf("left join %s on %s.property_base_id = %s.id", propertyBaseTable, loanPropertyTable, propertyBaseTable)).
+				Where(fmt.Sprintf("%s.address->>'address1' like ? or %s.address->>'address2' like ?", propertyBaseTable, propertyBaseTable), "%"+filter.Keyword+"%", "%"+filter.Keyword+"%")
 		case "city":
 			hasJoinProperty = true
-			query = query.Joins(fmt.Sprintf("left join %s on %s.property_id = %s.id", propertyTable, loanTable, propertyTable)).
-				Where(fmt.Sprintf("%s.address->>'city' like ?", propertyTable), "%"+filter.Keyword+"%")
+			query = query.Joins(fmt.Sprintf("left join %s on %s.id = %s.loan_id", loanPropertyTable, loanTable, loanPropertyTable)).
+				Joins(fmt.Sprintf("left join %s on %s.property_base_id = %s.id", propertyBaseTable, loanPropertyTable, propertyBaseTable)).
+				Where(fmt.Sprintf("%s.address->>'city' like ?", propertyBaseTable), "%"+filter.Keyword+"%")
 		case "state":
 			hasJoinProperty = true
-			query = query.Joins(fmt.Sprintf("left join %s on %s.property_id = %s.id", propertyTable, loanTable, propertyTable)).
-				Where(fmt.Sprintf("%s.address->>'state' like ?", propertyTable), "%"+filter.Keyword+"%")
+			query = query.Joins(fmt.Sprintf("left join %s on %s.id = %s.loan_id", loanPropertyTable, loanTable, loanPropertyTable)).
+				Joins(fmt.Sprintf("left join %s on %s.property_base_id = %s.id", propertyBaseTable, loanPropertyTable, propertyBaseTable)).
+				Where(fmt.Sprintf("%s.address->>'state' like ?", propertyBaseTable), "%"+filter.Keyword+"%")
 		case "borrower":
 			query = query.Joins(fmt.Sprintf("left join %s on %s.id = %s.loan_id", applicantTable, loanTable, applicantTable)).
 				Where(fmt.Sprintf("%s.name like ?", applicantTable), "%"+filter.Keyword+"%")
@@ -116,12 +122,13 @@ func (repo *LoanRepo) Page(ctx context.Context, pageReq *borrower.LoanPageReques
 		switch sorter.Column {
 		case "address":
 			if !hasJoinProperty {
-				query = query.Joins(fmt.Sprintf("left join %s on %s.property_id = %s.id", propertyTable, loanTable, propertyTable))
+				query = query.Joins(fmt.Sprintf("left join %s on %s.id = %s.loan_id", loanPropertyTable, loanTable, loanPropertyTable)).
+					Joins(fmt.Sprintf("left join %s on %s.property_base_id = %s.id", propertyBaseTable, loanPropertyTable, propertyBaseTable))
 			}
 			sortColumns = append(sortColumns,
-				fmt.Sprintf("%s.address->>'address1' %s", propertyTable, sorter.Sort),
-				fmt.Sprintf("%s.address->>'city' %s", propertyTable, sorter.Sort),
-				fmt.Sprintf("%s.address->>'state' %s", propertyTable, sorter.Sort),
+				fmt.Sprintf("%s.address->>'address1' %s", propertyBaseTable, sorter.Sort),
+				fmt.Sprintf("%s.address->>'city' %s", propertyBaseTable, sorter.Sort),
+				fmt.Sprintf("%s.address->>'state' %s", propertyBaseTable, sorter.Sort),
 			)
 		default:
 			sortColumns = append(sortColumns, fmt.Sprintf("%s.%s %s", loanTable, sorter.Column, sorter.Sort))
@@ -144,8 +151,8 @@ func (repo *LoanRepo) Page(ctx context.Context, pageReq *borrower.LoanPageReques
 	}
 
 	for i, loan := range page.List {
-		property, _ := propertyRepo.FindOneById(ctx, loan.PropertyId)
-		page.List[i].Property = property
+		loanProperty, _ := loanPropertyRepo.FindOneByLoanId(ctx, loan.Id)
+		page.List[i].LoanProperty = loanProperty
 		applicants, _ := applicantRepo.FindAll(ctx, map[string]interface{}{
 			applicantRepo.m.FieldLoanId(): loan.Id,
 		})
