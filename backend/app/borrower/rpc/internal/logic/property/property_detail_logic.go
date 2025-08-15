@@ -84,8 +84,22 @@ func (l *PropertyDetailLogic) PropertyDetail(in *borrower.PropertyDetailRequest)
 				continue
 			}
 
-			loanEntry := &borrower.LoanEntry{}
+			loanEntry := &borrower.LoanEntry{
+				Applicants: []*borrower.ApplicantEntry{},
+			}
 			err = copier.CopyWithOption(loanEntry, loan, copier.Option{
+				CaseSensitive: true,
+				Converters: []copier.TypeConverter{
+					copierx.TimeToRFC3339Str(),
+					copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
+				},
+			})
+
+			if err != nil {
+				return nil, errorx.GetFailedTransRespErr(err)
+			}
+
+			err = copier.CopyWithOption(&loanEntry.Applicants, loanProperty.Applicants, copier.Option{
 				CaseSensitive: true,
 				Converters: []copier.TypeConverter{
 					copierx.TimeToRFC3339Str(),

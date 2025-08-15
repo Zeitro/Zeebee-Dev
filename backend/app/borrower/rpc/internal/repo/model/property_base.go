@@ -14,7 +14,7 @@ type PropertyBase struct {
 
 	Borrower       *Borrower       `json:"borrower" gorm:"foreignKey:BorrowerId;references:Id"`
 	Loans          []*Loan         `json:"loans" gorm:"-"`
-	Applicants     []*Applicant    `json:"applicants" gorm:"foreignKey:PropertyId;references:Id"`
+	Applicants     []*Applicant    `json:"applicants" gorm:"-"`
 	LoanProperties []*LoanProperty `json:"loan_properties" gorm:"foreignKey:PropertyBaseId;references:Id"`
 }
 

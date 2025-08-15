@@ -77,7 +77,7 @@
                 "loan_purpose",
                 "loan_type",
                 "total_amount",
-                "property",
+                "loan_property",
                 "applicants",
                 "rate",
                 "business_strategy"
@@ -132,6 +132,39 @@
                 "lien_position": {
                   "type": "string"
                 },
+                "loan_property": {
+                  "type": "object",
+                  "required": [
+                    "property_type",
+                    "property_base"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "property_base": {
+                      "type": "object",
+                      "required": [
+                        "unit",
+                        "address"
+                      ],
+                      "properties": {
+                        "address": {
+                          "type": "object"
+                        },
+                        "id": {
+                          "type": "integer"
+                        },
+                        "unit": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "property_type": {
+                      "type": "string"
+                    }
+                  }
+                },
                 "loan_purpose": {
                   "type": "string"
                 },
@@ -155,51 +188,6 @@
                 },
                 "principal_amount": {
                   "type": "number"
-                },
-                "property": {
-                  "type": "object",
-                  "required": [
-                    "property_type",
-                    "unit",
-                    "address"
-                  ],
-                  "properties": {
-                    "address": {
-                      "type": "object",
-                      "required": [
-                        "state",
-                        "city",
-                        "address1",
-                        "zip_code"
-                      ],
-                      "properties": {
-                        "address1": {
-                          "type": "string"
-                        },
-                        "address2": {
-                          "type": "string"
-                        },
-                        "city": {
-                          "type": "string"
-                        },
-                        "state": {
-                          "type": "string"
-                        },
-                        "zip_code": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "id": {
-                      "type": "integer"
-                    },
-                    "property_type": {
-                      "type": "string"
-                    },
-                    "unit": {
-                      "type": "integer"
-                    }
-                  }
                 },
                 "rate": {
                   "type": "number"
@@ -413,7 +401,7 @@
                       "loan_purpose",
                       "loan_type",
                       "total_amount",
-                      "property",
+                      "loan_property",
                       "rate",
                       "business_strategy",
                       "applicants",
@@ -498,6 +486,24 @@
                       "lien_position": {
                         "type": "string"
                       },
+                      "loan_property": {
+                        "type": "object",
+                        "required": [
+                          "property_type",
+                          "property_base"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "property_base": {
+                            "type": "object"
+                          },
+                          "property_type": {
+                            "type": "string"
+                          }
+                        }
+                      },
                       "loan_purpose": {
                         "type": "string"
                       },
@@ -521,28 +527,6 @@
                       },
                       "principal_amount": {
                         "type": "number"
-                      },
-                      "property": {
-                        "type": "object",
-                        "required": [
-                          "property_type",
-                          "unit",
-                          "address"
-                        ],
-                        "properties": {
-                          "address": {
-                            "type": "object"
-                          },
-                          "id": {
-                            "type": "integer"
-                          },
-                          "property_type": {
-                            "type": "string"
-                          },
-                          "unit": {
-                            "type": "integer"
-                          }
-                        }
                       },
                       "rate": {
                         "type": "number"
@@ -681,6 +665,62 @@
                 "lien_position": {
                   "type": "string"
                 },
+                "loan_property": {
+                  "type": "object",
+                  "required": [
+                    "property_type",
+                    "property_base"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "property_base": {
+                      "type": "object",
+                      "required": [
+                        "unit",
+                        "address"
+                      ],
+                      "properties": {
+                        "address": {
+                          "type": "object",
+                          "required": [
+                            "state",
+                            "city",
+                            "address1",
+                            "zip_code"
+                          ],
+                          "properties": {
+                            "address1": {
+                              "type": "string"
+                            },
+                            "address2": {
+                              "type": "string"
+                            },
+                            "city": {
+                              "type": "string"
+                            },
+                            "state": {
+                              "type": "string"
+                            },
+                            "zip_code": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "id": {
+                          "type": "integer"
+                        },
+                        "unit": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "property_type": {
+                      "type": "string"
+                    }
+                  }
+                },
                 "loan_purpose": {
                   "type": "string"
                 },
@@ -704,51 +744,6 @@
                 },
                 "principal_amount": {
                   "type": "number"
-                },
-                "property": {
-                  "type": "object",
-                  "required": [
-                    "property_type",
-                    "unit",
-                    "address"
-                  ],
-                  "properties": {
-                    "address": {
-                      "type": "object",
-                      "required": [
-                        "state",
-                        "city",
-                        "address1",
-                        "zip_code"
-                      ],
-                      "properties": {
-                        "address1": {
-                          "type": "string"
-                        },
-                        "address2": {
-                          "type": "string"
-                        },
-                        "city": {
-                          "type": "string"
-                        },
-                        "state": {
-                          "type": "string"
-                        },
-                        "zip_code": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "id": {
-                      "type": "integer"
-                    },
-                    "property_type": {
-                      "type": "string"
-                    },
-                    "unit": {
-                      "type": "integer"
-                    }
-                  }
                 },
                 "rate": {
                   "type": "number"
@@ -806,7 +801,7 @@
                 "loan_purpose",
                 "loan_type",
                 "total_amount",
-                "property",
+                "loan_property",
                 "applicants",
                 "rate",
                 "business_strategy"
@@ -861,6 +856,39 @@
                 "lien_position": {
                   "type": "string"
                 },
+                "loan_property": {
+                  "type": "object",
+                  "required": [
+                    "property_type",
+                    "property_base"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "property_base": {
+                      "type": "object",
+                      "required": [
+                        "unit",
+                        "address"
+                      ],
+                      "properties": {
+                        "address": {
+                          "type": "object"
+                        },
+                        "id": {
+                          "type": "integer"
+                        },
+                        "unit": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "property_type": {
+                      "type": "string"
+                    }
+                  }
+                },
                 "loan_purpose": {
                   "type": "string"
                 },
@@ -884,51 +912,6 @@
                 },
                 "principal_amount": {
                   "type": "number"
-                },
-                "property": {
-                  "type": "object",
-                  "required": [
-                    "property_type",
-                    "unit",
-                    "address"
-                  ],
-                  "properties": {
-                    "address": {
-                      "type": "object",
-                      "required": [
-                        "state",
-                        "city",
-                        "address1",
-                        "zip_code"
-                      ],
-                      "properties": {
-                        "address1": {
-                          "type": "string"
-                        },
-                        "address2": {
-                          "type": "string"
-                        },
-                        "city": {
-                          "type": "string"
-                        },
-                        "state": {
-                          "type": "string"
-                        },
-                        "zip_code": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "id": {
-                      "type": "integer"
-                    },
-                    "property_type": {
-                      "type": "string"
-                    },
-                    "unit": {
-                      "type": "integer"
-                    }
-                  }
                 },
                 "rate": {
                   "type": "number"
@@ -1248,7 +1231,7 @@
                       "loan_purpose",
                       "loan_type",
                       "total_amount",
-                      "property",
+                      "loan_property",
                       "rate",
                       "business_strategy",
                       "applicants",
@@ -1333,6 +1316,24 @@
                       "lien_position": {
                         "type": "string"
                       },
+                      "loan_property": {
+                        "type": "object",
+                        "required": [
+                          "property_type",
+                          "property_base"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "property_base": {
+                            "type": "object"
+                          },
+                          "property_type": {
+                            "type": "string"
+                          }
+                        }
+                      },
                       "loan_purpose": {
                         "type": "string"
                       },
@@ -1356,28 +1357,6 @@
                       },
                       "principal_amount": {
                         "type": "number"
-                      },
-                      "property": {
-                        "type": "object",
-                        "required": [
-                          "property_type",
-                          "unit",
-                          "address"
-                        ],
-                        "properties": {
-                          "address": {
-                            "type": "object"
-                          },
-                          "id": {
-                            "type": "integer"
-                          },
-                          "property_type": {
-                            "type": "string"
-                          },
-                          "unit": {
-                            "type": "integer"
-                          }
-                        }
                       },
                       "rate": {
                         "type": "number"
@@ -1435,7 +1414,7 @@
                       "loan_purpose",
                       "loan_type",
                       "total_amount",
-                      "property",
+                      "loan_property",
                       "rate",
                       "business_strategy",
                       "applicants",
@@ -1520,6 +1499,24 @@
                       "lien_position": {
                         "type": "string"
                       },
+                      "loan_property": {
+                        "type": "object",
+                        "required": [
+                          "property_type",
+                          "property_base"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "property_base": {
+                            "type": "object"
+                          },
+                          "property_type": {
+                            "type": "string"
+                          }
+                        }
+                      },
                       "loan_purpose": {
                         "type": "string"
                       },
@@ -1543,28 +1540,6 @@
                       },
                       "principal_amount": {
                         "type": "number"
-                      },
-                      "property": {
-                        "type": "object",
-                        "required": [
-                          "property_type",
-                          "unit",
-                          "address"
-                        ],
-                        "properties": {
-                          "address": {
-                            "type": "object"
-                          },
-                          "id": {
-                            "type": "integer"
-                          },
-                          "property_type": {
-                            "type": "string"
-                          },
-                          "unit": {
-                            "type": "integer"
-                          }
-                        }
                       },
                       "rate": {
                         "type": "number"
@@ -1602,7 +1577,7 @@
                       "loan_purpose",
                       "loan_type",
                       "total_amount",
-                      "property",
+                      "loan_property",
                       "rate",
                       "business_strategy",
                       "applicants",
@@ -1687,6 +1662,24 @@
                       "lien_position": {
                         "type": "string"
                       },
+                      "loan_property": {
+                        "type": "object",
+                        "required": [
+                          "property_type",
+                          "property_base"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "property_base": {
+                            "type": "object"
+                          },
+                          "property_type": {
+                            "type": "string"
+                          }
+                        }
+                      },
                       "loan_purpose": {
                         "type": "string"
                       },
@@ -1710,28 +1703,6 @@
                       },
                       "principal_amount": {
                         "type": "number"
-                      },
-                      "property": {
-                        "type": "object",
-                        "required": [
-                          "property_type",
-                          "unit",
-                          "address"
-                        ],
-                        "properties": {
-                          "address": {
-                            "type": "object"
-                          },
-                          "id": {
-                            "type": "integer"
-                          },
-                          "property_type": {
-                            "type": "string"
-                          },
-                          "unit": {
-                            "type": "integer"
-                          }
-                        }
                       },
                       "rate": {
                         "type": "number"
@@ -2145,7 +2116,7 @@
       }
     }
   },
-  "x-date": "2025-08-12 09:15:52",
+  "x-date": "2025-08-15 09:33:44",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

@@ -114,7 +114,7 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 
 		updatedApplicants = slice.Map(updatedApplicants, func(index int, updateApplicant *model.Applicant) *model.Applicant {
 			updateApplicant.LoanId = loan.Id
-			// updateApplicant.PropertyId = property.Id
+			updateApplicant.LoanPropertyId = loanPropertyModel.Id
 			return updateApplicant
 		})
 
@@ -163,6 +163,7 @@ func (l *UpdateBorrowerLoanLogic) handlePropertyBase(tx *gorm.DB, propertyId int
 	if newPropertyBase != nil {
 		return newPropertyBase, nil
 	}
+
 	// get previous property
 	prevPropertyBase, err := l.svcCtx.PropertyBaseRepo.GetOneWithTx(l.ctx, tx, propertyId, []string{"LoanProperties"})
 	if err != nil {

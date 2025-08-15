@@ -13,7 +13,7 @@ type LoanCreateRequest struct {
 	LoanType          string                    `json:"loan_type" validate:"required,oneof=Bridge Rehab 'Ground up construction'"`
 	TotalAmount       float64                   `json:"total_amount" validate:"required"`
 	InitialAmount     float64                   `json:"initial_amount,optional"`
-	Property          *PropertyEntry            `json:"property" validate:"required"`
+	LoanProperty      *LoanPropertyEntry        `json:"loan_property" validate:"required"`
 	Applicants        []*LoanEditApplicantEntry `json:"applicants" validate:"required,dive,required"`
 	LenderCompany     string                    `json:"lender_company,optional" validate:"required"`
 	ClosingDate       string                    `json:"closing_date,optional" validate:"required_if=Stage Pending,omitempty,datetime=01/02/2006"`
@@ -78,7 +78,7 @@ type LoanUpdateRequest struct {
 	LoanType          string                    `json:"loan_type" validate:"required,oneof=Bridge Rehab 'Ground up construction'"`
 	TotalAmount       float64                   `json:"total_amount" validate:"required"`
 	InitialAmount     float64                   `json:"initial_amount,optional"`
-	Property          *PropertyEntry            `json:"property" validate:"required"`
+	LoanProperty      *LoanPropertyEntry        `json:"loan_property" validate:"required"`
 	Applicants        []*LoanEditApplicantEntry `json:"applicants" validate:"required,dive,required"`
 	LenderCompany     string                    `json:"lender_company,optional" validate:"required"`
 	ClosingDate       string                    `json:"closing_date,optional" validate:"required_if=Stage Pending,omitempty,datetime=01/02/2006"`
