@@ -87,8 +87,12 @@ const CreateLoanPage = () => {
 	const getProperty = async () => {
 		const data = await request(api);
 		const newData = {
-			property: {
-				...data,
+			loan_property: {
+				property_type: data.property_type,
+				property_base: {
+					unit: data.unit,
+					address: data.address,
+				},
 			},
 		};
 		form.setFieldsValue(newData);

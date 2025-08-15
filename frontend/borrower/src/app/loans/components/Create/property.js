@@ -27,7 +27,7 @@ const CreateProperty = ({
 			<Col {...layoutCol} {...(colProps || {})}>
 				<Form.Item
 					label="Property type"
-					name={['property', 'property_type']}
+					name={['loan_property', 'property_type']}
 					rules={[{ required: true, message: 'Please select Property type!' }]}
 				>
 					<Select
@@ -40,7 +40,7 @@ const CreateProperty = ({
 			<Col {...layoutCol} {...(colProps || {})}>
 				<Form.Item
 					label="Number of unit"
-					name={['property', 'unit']}
+					name={['loan_property', 'property_base', 'unit']}
 					rules={[{ required: true, message: 'Please input!' }]}
 				>
 					<InputNumber
@@ -55,11 +55,11 @@ const CreateProperty = ({
 			</Col>
 			<AddressForm
 				{...addressProps}
-				addressName={['property', 'address', 'address1']}
-				addressName2={['property', 'address', 'address2']}
-				cityName={['property', 'address', 'city']}
-				stateName={['property', 'address', 'state']}
-				zipName={['property', 'address', 'zip_code']}
+				addressName={['loan_property', 'property_base', 'address', 'address1']}
+				addressName2={['loan_property', 'property_base', 'address', 'address2']}
+				cityName={['loan_property', 'property_base', 'address', 'city']}
+				stateName={['loan_property', 'property_base', 'address', 'state']}
+				zipName={['loan_property', 'property_base', 'address', 'zip_code']}
 				form={form}
 				disabled={isRequestProperty}
 			/>

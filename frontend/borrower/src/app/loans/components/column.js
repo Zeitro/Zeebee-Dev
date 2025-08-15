@@ -5,7 +5,7 @@ const common = (isNotAddress) => {
 	const addressArr = [
 		{
 			title: 'Property address',
-			dataIndex: ['property', 'address', 'address1'],
+			dataIndex: ['loan_property', 'property_base', 'address', 'address1'],
 			key: 'address',
 			ellipsis: true,
 			sorter: true,
@@ -28,21 +28,21 @@ const common = (isNotAddress) => {
 		},
 		{
 			title: 'City',
-			dataIndex: ['property', 'address', 'city'],
+			dataIndex: ['loan_property', 'property_base', 'address', 'city'],
 			key: 'city',
 			width: 120,
 			ellipsis: true,
 		},
 		{
 			title: 'State',
-			dataIndex: ['property', 'address', 'state'],
+			dataIndex: ['loan_property', 'property_base', 'address', 'state'],
 			key: 'state',
 			width: 70,
 			ellipsis: true,
 		},
 		{
 			title: 'Zip code',
-			dataIndex: ['property', 'address', 'zip_code'],
+			dataIndex: ['loan_property', 'property_base', 'address', 'zip_code'],
 			key: 'zip_code',
 			ellipsis: true,
 			width: 120,

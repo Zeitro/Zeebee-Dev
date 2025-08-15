@@ -9,8 +9,16 @@
 		"start": "cross-env NODE_ENV=production next start",
 		"lint": "next lint",
 		"format": "prettier --write .",
+		"eslint": "eslint --fix",
+		"lint:staged": "lint-staged",
 		"clean": "rm -rf .next dist build",
 		"check-env": "env | grep NEXT_PUBLIC"
+	},
+	"lint-staged": {
+		"*.{js,jsx,ts,tsx,json,css,scss}": [
+			"eslint --quiet --fix",
+			"prettier --write"
+		]
 	},
 	"dependencies": {
 		"@ant-design/nextjs-registry": "^1.0.2",

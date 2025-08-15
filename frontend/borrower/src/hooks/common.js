@@ -13,7 +13,6 @@ export function useOnMountUnsafe(fn, inputs = []) {
 			initialized.current = true;
 			fn();
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, inputs);
 }
 
