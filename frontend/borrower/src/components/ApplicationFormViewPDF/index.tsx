@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import SignatureModal from '../SignatureModal';
 import Image from 'next/image';
+import { Modal } from 'antd';
 
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
 
@@ -27,7 +28,10 @@ interface ContractViewerProps {
 	url: string;
 	zones: SignatureZone[]; // 接收一个签名区配置数组
 }
-
+const config = {
+	title: 'Signature prompt!',
+	content: 'You have already signed, do you want to sign again?',
+};
 export default function ContractViewer({ url, zones }: ContractViewerProps) {
 	const [pdfFile, setPdfFile] = useState<File | null>(null);
 	const [numPages, setNumPages] = useState<number>(0);
@@ -39,6 +43,7 @@ export default function ContractViewer({ url, zones }: ContractViewerProps) {
 
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+	const [modal, contextHolder] = Modal.useModal();
 
 	useEffect(() => {
 		const fetchPdf = async () => {
@@ -70,14 +75,15 @@ export default function ContractViewer({ url, zones }: ContractViewerProps) {
 	};
 
 	const onDocumentLoadError = (error: Error) => {
-		setError(`react-pdf 解析文件失败: ${error.message}`);
+		setError(`react-pdf Parsing the file failed: ${error.message}`);
 	};
 
 	// 当点击一个签名区时触发
-	const handleZoneClick = (zoneId: string) => {
+	const handleZoneClick = async (zoneId: string) => {
 		// 如果这个区域已经签过名了，可以选择重新签名或不做任何事
 		if (signatures[zoneId]) {
-			if (window.confirm('您已经签过名了，要重新签名吗？')) {
+			const confirmed = await modal.warning(config);
+			if (confirmed) {
 				setActiveZoneId(zoneId);
 				setIsModalOpen(true);
 			}
@@ -96,11 +102,12 @@ export default function ContractViewer({ url, zones }: ContractViewerProps) {
 		setActiveZoneId(null);
 	};
 
-	if (isLoading) return <div>正在加载...</div>;
-	if (error) return <div>加载失败: {error}</div>;
+	if (isLoading) return <div>Loading...</div>;
+	if (error) return <div>Loading failed: {error}</div>;
 
 	return (
 		<>
+			{contextHolder}
 			<div className="w-full h-full overflow-y-auto">
 				<Document
 					file={pdfFile}

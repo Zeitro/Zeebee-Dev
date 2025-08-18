@@ -3,6 +3,7 @@ import { useRef } from 'react';
 import type { ComponentRef } from 'react';
 import SignaturePad from 'react-signature-pad-wrapper';
 import NewModal from '../NewModal';
+import { message } from 'antd';
 //使用 ComponentRef 和 typeof 来获取组件的实例类型
 type SignaturePadType = ComponentRef<typeof SignaturePad>;
 
@@ -15,10 +16,7 @@ interface SignatureModalProps {
 export default function SignatureModal({ isOpen, onClose, onConfirm }: SignatureModalProps) {
 	// ✅ 2. 使用新库提供的精确类型
 	const sigCanvas = useRef<SignaturePadType>(null);
-
-	if (!isOpen) {
-		return null;
-	}
+	const [messageApi, contextHolder] = message.useMessage();
 
 	const handleClear = () => {
 		sigCanvas.current?.clear();
@@ -26,7 +24,10 @@ export default function SignatureModal({ isOpen, onClose, onConfirm }: Signature
 
 	const handleConfirm = () => {
 		if (sigCanvas.current?.isEmpty()) {
-			alert('请先签名');
+			messageApi.open({
+				type: 'warning',
+				content: 'Please sign first!',
+			});
 			return;
 		}
 
@@ -38,31 +39,38 @@ export default function SignatureModal({ isOpen, onClose, onConfirm }: Signature
 		}
 	};
 
+	if (!isOpen) {
+		return null;
+	}
+
 	return (
-		<NewModal
-			open={isOpen}
-			title="Please sign in the space below："
-			onCancel={onClose}
-			cancelText="Clear"
-			okText="Confirm"
-			onOk={handleConfirm}
-			cancelButtonProps={{
-				onClick: handleClear,
-			}}
-			centered
-			width={450}
-		>
-			<div className="w-full border border-base-border rounded-sm bg-gray-light">
-				<SignaturePad
-					ref={sigCanvas}
-					options={{ penColor: 'black' }}
-					canvasProps={{
-						width: '400px',
-						height: '200px',
-						className: 'sigCanvas',
-					}}
-				/>
-			</div>
-		</NewModal>
+		<>
+			{contextHolder}
+			<NewModal
+				open={isOpen}
+				title="Please sign in the space below："
+				onCancel={onClose}
+				cancelText="Clear"
+				okText="Confirm"
+				onOk={handleConfirm}
+				cancelButtonProps={{
+					onClick: handleClear,
+				}}
+				centered
+				width={450}
+			>
+				<div className="w-full border border-base-border rounded-sm bg-gray-light">
+					<SignaturePad
+						ref={sigCanvas}
+						options={{ penColor: 'black' }}
+						canvasProps={{
+							width: '400px',
+							height: '200px',
+							className: 'sigCanvas',
+						}}
+					/>
+				</div>
+			</NewModal>
+		</>
 	);
 }
