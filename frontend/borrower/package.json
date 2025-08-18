@@ -31,6 +31,9 @@
 		"next": "15.3.0",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
+		"react-draggable": "^4.5.0",
+		"react-pdf": "^10.0.1",
+		"react-signature-pad-wrapper": "^4.1.1",
 		"zustand": "^5.0.6"
 	},
 	"devDependencies": {
@@ -38,6 +41,7 @@
 		"@types/node": "^20",
 		"@types/react": "^19",
 		"@types/react-dom": "^19",
+		"@types/react-pdf": "^7.0.0",
 		"@typescript-eslint/eslint-plugin": "^8.35.0",
 		"autoprefixer": "^10.4.21",
 		"cross-env": "^10.0.0",

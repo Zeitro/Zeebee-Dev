@@ -41,6 +41,11 @@ export const navRouter = [
 		],
 	},
 	{
+		path: '/pdf',
+		title: 'pdf',
+		hideMenu: true,
+	},
+	{
 		path: '/not-found',
 		title: '404',
 		hideCrumbs: true,

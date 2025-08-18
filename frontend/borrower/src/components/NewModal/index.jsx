@@ -1,0 +1,33 @@
+import { Modal, Button } from 'antd';
+import React from 'react';
+import styles from './index.module.scss';
+const NewModal = ({ children, customFooter = false, ...props }) => {
+	return (
+		<Modal
+			open={true}
+			{...props}
+			className={[
+				styles.NewModal,
+				// !customFooter && styles.NewModal_padding,
+				props?.className,
+			].join(' ')}
+		>
+			{children}
+			{!props?.footer && customFooter && (
+				<div className="flex items-center justify-between p-y-4 y-x-7 border-t border-base-border">
+					{customFooter?.cancel && (
+						<Button type="link" onClick={props?.onCancel}>
+							{props?.cancelText || 'Cancel'}
+						</Button>
+					)}
+					{customFooter?.save && (
+						<Button type="primary" onClick={props?.onOk}>
+							{props?.okText || 'Save'}
+						</Button>
+					)}
+				</div>
+			)}
+		</Modal>
+	);
+};
+export default NewModal;
