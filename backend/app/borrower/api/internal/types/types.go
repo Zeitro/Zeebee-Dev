@@ -36,7 +36,7 @@ type LoanEntry struct {
 	Stage             string             `json:"stage" validate:"required,oneof=Pending Active Archived"`
 	PendingStatus     string             `json:"pending_status,optional" validate:"required_if=Stage Pending,omitempty,oneof=Quoting Processing Closing"`
 	LoanPurpose       string             `json:"loan_purpose" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
-	LoanType          string             `json:"loan_type" validate:"required,oneof=Bridge Rehab 'Ground up construction'"`
+	LoanType          string             `json:"loan_type" validate:"required,oneof=Bridge Rehab  Rental 'Ground up construction'"`
 	TotalAmount       float64            `json:"total_amount" validate:"required"`
 	InitialAmount     float64            `json:"initial_amount,optional"`
 	LoanProperty      *LoanPropertyEntry `json:"loan_property" validate:"required"`
@@ -78,7 +78,7 @@ type LoanPageSorter struct {
 
 type LoanPropertyEntry struct {
 	Id           int64              `json:"id,optional"`
-	PropertyType string             `json:"property_type" validate:"required,oneof='Single Family' 'Townhouse' 'Multi Family' 'Condo'"`
+	PropertyType string             `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
 	PropertyBase *PropertyBaseEntry `json:"property_base" validate:"required"`
 }
 

@@ -44,6 +44,7 @@ const (
 	LoanTypeBridge       LoanType = "Bridge"
 	LoanTypeRehab        LoanType = "Rehab"
 	LoanTypeConstruction LoanType = "Ground up construction"
+	LoanTypeRental       LoanType = "Rental"
 )
 
 // source: borrower,lender,system
@@ -163,6 +164,10 @@ func init() {
 		{
 			Label: string(LoanTypeConstruction),
 			Value: string(LoanTypeConstruction),
+		},
+		{
+			Label: string(LoanTypeRental),
+			Value: string(LoanTypeRental),
 		},
 	})
 	// register loan source
