@@ -10,7 +10,7 @@ type LoanCreateRequest struct {
 	Stage             string                    `json:"stage" validate:"required,oneof=Pending Active Archived"`
 	PendingStatus     string                    `json:"pending_status,optional" validate:"required_if=Stage Pending,omitempty,oneof=Quoting Processing Closing"`
 	LoanPurpose       string                    `json:"loan_purpose" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
-	LoanType          string                    `json:"loan_type" validate:"required,oneof=Bridge Rehab 'Ground up construction'"`
+	LoanType          string                    `json:"loan_type" validate:"required,oneof=Bridge Rehab Rental 'Ground up construction'"`
 	TotalAmount       float64                   `json:"total_amount" validate:"required"`
 	InitialAmount     float64                   `json:"initial_amount,optional"`
 	LoanProperty      *LoanPropertyEntry        `json:"loan_property" validate:"required"`
@@ -75,7 +75,7 @@ type LoanUpdateRequest struct {
 	Stage             string                    `json:"stage" validate:"required,oneof=Pending Active Archived"`
 	PendingStatus     string                    `json:"pending_status,optional" validate:"required_if=Stage Pending,omitempty,oneof=Quoting Processing Closing"`
 	LoanPurpose       string                    `json:"loan_purpose" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
-	LoanType          string                    `json:"loan_type" validate:"required,oneof=Bridge Rehab 'Ground up construction'"`
+	LoanType          string                    `json:"loan_type" validate:"required,oneof=Bridge Rehab Rental 'Ground up construction'"`
 	TotalAmount       float64                   `json:"total_amount" validate:"required"`
 	InitialAmount     float64                   `json:"initial_amount,optional"`
 	LoanProperty      *LoanPropertyEntry        `json:"loan_property" validate:"required"`
