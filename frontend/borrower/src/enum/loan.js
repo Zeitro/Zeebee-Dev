@@ -13,6 +13,46 @@ export const createLoanSteps = [
 		key: 'loanTerms',
 	},
 ];
+
+export const createZeeBeeSteps = [
+	{
+		title: 'Borrower information',
+		key: 'borrowerInformation',
+		children: [
+			{
+				title: 'Applicant information',
+				key: 'applicantInformation',
+			},
+			{
+				title: 'Borrower information',
+				key: 'borrowerInformation',
+			},
+		],
+	},
+	{
+		title: 'Property and loan',
+		key: 'propertyAndLoan',
+	},
+	{
+		title: 'Experience',
+		key: 'experience',
+	},
+	{
+		title: 'Third service',
+		key: 'thirdService',
+	},
+	{
+		title: 'Review and sign',
+		key: 'reviewAndSign',
+	},
+];
+
+export const tinOptions = [
+	{ label: 'SSN', value: 'SSN' },
+	{ label: 'ITIN', value: 'ITIN' },
+	{ label: 'EIN', value: 'EIN' },
+];
+
 // loan 在pending状态下的可选状态
 export const loanPendingStatus = [
 	{

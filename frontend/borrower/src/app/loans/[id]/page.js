@@ -11,7 +11,7 @@ import { createRequest } from '@/lib/fetch';
 import dayjs from 'dayjs';
 import { formatDate } from '@/lib/date';
 import eventBus from '@/lib/bus';
-import { assemblyAddress } from '@/lib/common';
+import { assemblyAddress } from '@/lib/format';
 import { useGlobalStore } from '@/store/global';
 const EditLoanPage = () => {
 	const { id } = useParams();

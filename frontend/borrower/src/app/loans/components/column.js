@@ -1,4 +1,4 @@
-import { formatAmount } from '@/lib/common';
+import { formatAmount } from '@/lib/format';
 import LoanPendingStatus from './LoanPendingStatus';
 import TableOperation from '@/components/TableOperation';
 const common = (isNotAddress) => {

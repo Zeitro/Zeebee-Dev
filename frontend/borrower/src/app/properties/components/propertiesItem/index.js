@@ -5,7 +5,7 @@ import { propertiesFieldArr } from '@/enum/properties';
 import { Button, Col, Row } from 'antd';
 import { useRouter } from 'next/navigation';
 import { formatDate } from '@/lib/date';
-import { assemblyAddress } from '@/lib/common';
+import { assemblyAddress } from '@/lib/format';
 import FieldTips from '@/components/FieldTips';
 const PropertiesItem = ({ data }) => {
 	const router = useRouter();

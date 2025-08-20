@@ -8,7 +8,7 @@ import ActiveLoans from '../../loans/components/Active';
 import ArchivedLoans from '../../loans/components/Archived';
 import { useParams } from 'next/navigation';
 import { createRequest } from '@/lib/fetch';
-import { assemblyAddress } from '@/lib/common';
+import { assemblyAddress } from '@/lib/format';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import eventBus from '@/lib/bus';
 import { useGlobalStore } from '@/store/global';

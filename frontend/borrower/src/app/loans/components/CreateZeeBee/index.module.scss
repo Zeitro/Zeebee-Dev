@@ -1,0 +1,22 @@
+.createZeeBee {
+	// .radio {
+	// 	width: 100%;
+	// 	display: flex !important;
+	// 	justify-content: space-between;
+	// 	> label {
+	// 		width: 180px;
+	// 	}
+	// }
+	:global {
+		.ant-form-item-label {
+			padding-bottom: 0 !important;
+			> label {
+				color: #000 !important;
+				height: 22px !important;
+			}
+		}
+	}
+	// .commonFormItem :global(.ant-form-item-control-input) {
+	// 	min-height: 22px !important;
+	// }
+}

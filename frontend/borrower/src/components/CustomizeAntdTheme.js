@@ -7,20 +7,26 @@ import NewHeader from '@/components/NewHeader';
 import { getCurrentRouterItem } from '@config/common';
 import { noNavRouter } from '@config/routes';
 import { usePathname } from 'next/navigation';
-function getCssVarValue(name) {
-	if (typeof window !== 'undefined' && typeof document !== 'undefined') {
-		return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-	}
-	return '';
-}
-
 const defaultToken = {
 	colorPrimary: '#1677ff',
-	colorBgContainer: '#fff',
-	colorBgContainerSelected: '#e6f7ff',
-	colorTextBase: '#222',
-	// ... 其他 token ...
+	colorTextBase: 'rgba(0, 0, 0, 0.88)',
+	colorBgBase: '#fff',
+	colorBorder: '#e6f7ff',
+	colorError: '#FF4D4F',
+	colorWarning: '#faad14',
+	colorSuccess: '#00a86b',
+	colorTextDisabled: '#d9d9d9',
 };
+function getCssVarValue(name, key) {
+	if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+		return (
+			getComputedStyle(document.documentElement).getPropertyValue(name).trim() ||
+			defaultToken[key]
+		);
+	}
+	return defaultToken[key];
+}
+
 /**
  * 自定义antd主题，区分有无（导航栏和面包屑）的页面
  */
@@ -37,17 +43,17 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 	useEffect(
 		() => {
 			setAntdToken({
-				colorPrimary: getCssVarValue('--base-primary'),
+				colorPrimary: getCssVarValue('--base-primary', 'colorPrimary'),
 				// colorBgContainer: getCssVarValue('--background'),
 				// colorBgContainerSelected: getCssVarValue('--blue-light-1'),
-				colorTextBase: getCssVarValue('--foreground'),
-				colorBgBase: getCssVarValue('var(--background)'), // 页面背景色
+				colorTextBase: getCssVarValue('--foreground', 'colorTextBase'),
+				colorBgBase: getCssVarValue('--background', 'colorBgBase'), // 页面背景色
 				// colorTextSecondary: getCssVarValue('var(--black-light)'), // 次要文本颜色
-				colorBorder: '#D9D9D9', // 边框颜色
-				colorError: '#FF4D4F', // 错误状态颜色
-				colorWarning: getCssVarValue('var(--base-warning)'), // 警告状态颜色
-				colorSuccess: getCssVarValue('var(--base-success)'), // 成功状态颜色
-				colorTextDisabled: getCssVarValue('var(--base-disabled)'), // 禁用状态文本颜色
+				colorBorder: getCssVarValue('--base-border', 'colorBorder'), // 边框颜色
+				colorError: getCssVarValue('--base-error', 'colorError'), // 错误状态颜色
+				colorWarning: getCssVarValue('--base-warning', 'colorWarning'), // 警告状态颜色
+				colorSuccess: getCssVarValue('--base-success', 'colorSuccess'), // 成功状态颜色
+				colorTextDisabled: getCssVarValue('--base-disabled', 'colorTextDisabled'), // 禁用状态文本颜色
 				// colorTextLabel: '',
 				borderRadius: 8, // 圆角大小
 				fontSize: 14, // 基础字体大小

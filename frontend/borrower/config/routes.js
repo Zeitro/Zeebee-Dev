@@ -20,6 +20,11 @@ export const navRouter = [
 				title: 'Edit Loan',
 				hideMenu: true,
 			},
+			{
+				path: '/loans/createZeeBeeLoan',
+				title: 'Create ZeeBee Loan',
+				hideMenu: true,
+			},
 		],
 	},
 	{

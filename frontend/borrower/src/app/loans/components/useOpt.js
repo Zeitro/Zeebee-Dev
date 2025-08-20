@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { createRequest } from '@/lib/fetch';
 import { message, Modal } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { assemblyAddress } from '@/lib/common';
+import { assemblyAddress } from '@/lib/format';
 export default function useOpt(tableFilterRef) {
 	const [modal, contextHolder] = Modal.useModal();
 	const { request } = createRequest();
