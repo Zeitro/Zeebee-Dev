@@ -162,8 +162,8 @@ entity "loan_experiences"{
 
 note right of loan_experiences
     type:
-        - Transaction History
-        - Real Estate Owned
+        - Transaction
+        - Real Estate
 end note
 
 entity "loan_third_services"{
@@ -189,7 +189,7 @@ note right of loan_third_services
         - appraisal payment contact
 end note
 
-entity "loan_terms"{
+entity "loan_demographics"{
     * id int4
     * created_at timestamptz
     * updated_at timestamptz
@@ -203,7 +203,7 @@ entity "loan_terms"{
     * extra_demographic jsonb
 }
 
-note right of loan_terms
+note right of loan_demographics
     property{
         as_primary_resident boolean
         has_transaction_relationship boolean
@@ -368,6 +368,7 @@ entity "applicants"{
     * borrower_id int4
     * loan_id int4
     * loan_property_id int4
+    * loan_borrower_id int4
     * first_name varchar(30)
     * last_name varchar(30)
     * mid_name varchar(30)
@@ -424,7 +425,7 @@ loan_properties ||--o{ applicants: has many
 loans ||--o{ applicants: has many
 loans ||--|| loan_properties: has one
 loans ||--|| loan_borrowers: has one
-loans ||--|| loan_terms: has one
+loans ||--|| loan_demographics: has one
 loans ||--o{ loan_experiences: has many
 loans ||--o{ loan_third_services: has many
 loan_borrowers ||--o{ applicants: has many

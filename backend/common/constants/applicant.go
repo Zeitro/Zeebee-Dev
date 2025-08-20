@@ -25,6 +25,24 @@ const (
 	ApplicantInvitationStatusRejected ApplicantInvitationStatus = "Rejected"
 )
 
+type MaritalStatus string
+
+const MaritalStatusName = "marital_status"
+const (
+	MaritalStatusMarried   MaritalStatus = "Married"
+	MaritalStatusUnmarried MaritalStatus = "Unmarried"
+	MaritalStatusSeperated MaritalStatus = "Seperated"
+)
+
+type TINType string
+
+const TINTypeName = "tin_type"
+const (
+	TINTypeSSN  TINType = "SSN"
+	TINTypeEIN  TINType = "EIN"
+	TINTypeITIN TINType = "ITIN"
+)
+
 func init() {
 	// register applicant type
 	enums.Register(ApplicantTypeName, []enums.EnumOpt{
@@ -62,6 +80,36 @@ func init() {
 		{
 			Label: string(ApplicantInvitationStatusRejected),
 			Value: string(ApplicantInvitationStatusRejected),
+		},
+	})
+	// register marital status
+	enums.Register(MaritalStatusName, []enums.EnumOpt{
+		{
+			Label: string(MaritalStatusMarried),
+			Value: string(MaritalStatusMarried),
+		},
+		{
+			Label: string(MaritalStatusUnmarried),
+			Value: string(MaritalStatusUnmarried),
+		},
+		{
+			Label: string(MaritalStatusSeperated),
+			Value: string(MaritalStatusSeperated),
+		},
+	})
+	// register tin type
+	enums.Register(TINTypeName, []enums.EnumOpt{
+		{
+			Label: string(TINTypeSSN),
+			Value: string(TINTypeSSN),
+		},
+		{
+			Label: string(TINTypeEIN),
+			Value: string(TINTypeEIN),
+		},
+		{
+			Label: string(TINTypeITIN),
+			Value: string(TINTypeITIN),
 		},
 	})
 }
