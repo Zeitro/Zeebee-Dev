@@ -104,6 +104,26 @@ const (
 	LoanPrepaymentPenaltyTwelve LoanPrepaymentPenalty = 12
 )
 
+type LoanExperienceType string
+
+const LoanExperienceTypeName = "loan_experience_type"
+const (
+	LoanExperienceTypeTransaction LoanExperienceType = "Transaction"
+	LoanExperienceTypeRealEstate  LoanExperienceType = "Real Estate"
+)
+
+type LoanThirdServiceType string
+
+const LoanThirdServiceTypeName = "loan_third_service_type"
+const (
+	LoanThirdServiceTypeTitleCo                 LoanThirdServiceType = "Title Co"
+	LoanThirdServiceTypeEscrowCo                LoanThirdServiceType = "Escrow Co"
+	LoanThirdServiceTypeInsurance               LoanThirdServiceType = "Insurance"
+	LoanThirdServiceTypeAppraisalScheduling     LoanThirdServiceType = "Appraisal Scheduling"
+	LoanThirdServiceTypeAppraisalAccessContact  LoanThirdServiceType = "Appraisal Access Contact"
+	LoanThirdServiceTypeAppraisalPaymentContact LoanThirdServiceType = "Appraisal Payment Contact"
+)
+
 func init() {
 	// register loan stage
 	enums.Register(LoanStageName, []enums.EnumOpt{
@@ -304,6 +324,46 @@ func init() {
 		{
 			Label: fmt.Sprintf("%d months interest", LoanPrepaymentPenaltyTwelve),
 			Value: fmt.Sprintf("%d", LoanPrepaymentPenaltyTwelve),
+		},
+	})
+
+	// register loan experience type
+	enums.Register(LoanExperienceTypeName, []enums.EnumOpt{
+		{
+			Label: string(LoanExperienceTypeTransaction),
+			Value: string(LoanExperienceTypeTransaction),
+		},
+		{
+			Label: string(LoanExperienceTypeRealEstate),
+			Value: string(LoanExperienceTypeRealEstate),
+		},
+	})
+
+	// register loan third service type
+	enums.Register(LoanThirdServiceTypeName, []enums.EnumOpt{
+		{
+			Label: string(LoanThirdServiceTypeTitleCo),
+			Value: string(LoanThirdServiceTypeTitleCo),
+		},
+		{
+			Label: string(LoanThirdServiceTypeEscrowCo),
+			Value: string(LoanThirdServiceTypeEscrowCo),
+		},
+		{
+			Label: string(LoanThirdServiceTypeInsurance),
+			Value: string(LoanThirdServiceTypeInsurance),
+		},
+		{
+			Label: string(LoanThirdServiceTypeAppraisalAccessContact),
+			Value: string(LoanThirdServiceTypeAppraisalAccessContact),
+		},
+		{
+			Label: string(LoanThirdServiceTypeAppraisalScheduling),
+			Value: string(LoanThirdServiceTypeAppraisalScheduling),
+		},
+		{
+			Label: string(LoanThirdServiceTypeAppraisalPaymentContact),
+			Value: string(LoanThirdServiceTypeAppraisalPaymentContact),
 		},
 	})
 
