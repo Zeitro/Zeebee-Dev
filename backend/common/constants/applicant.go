@@ -2,6 +2,7 @@ package constants
 
 import "zeebee-backend/common/enums"
 
+// Individual, Corporation,LLC,Partnership,Trust
 type ApplicantType string
 
 const ApplicantTypeName = "applicant_type"
@@ -9,6 +10,9 @@ const ApplicantTypeName = "applicant_type"
 const (
 	ApplicantTypeIndividual  ApplicantType = "Individual"
 	ApplicantTypeCorporation ApplicantType = "Corporation"
+	ApplicantTypeLLC         ApplicantType = "LLC"
+	ApplicantTypePartnership ApplicantType = "Partnership"
+	ApplicantTypeTrust       ApplicantType = "Trust"
 )
 
 type ApplicantInvitationStatus string
@@ -31,6 +35,18 @@ func init() {
 		{
 			Label: string(ApplicantTypeCorporation),
 			Value: string(ApplicantTypeCorporation),
+		},
+		{
+			Label: string(ApplicantTypePartnership),
+			Value: string(ApplicantTypePartnership),
+		},
+		{
+			Label: string(ApplicantTypeLLC),
+			Value: string(ApplicantTypeLLC),
+		},
+		{
+			Label: string(ApplicantTypeTrust),
+			Value: string(ApplicantTypeTrust),
 		},
 	})
 	// register applicant invitation status
