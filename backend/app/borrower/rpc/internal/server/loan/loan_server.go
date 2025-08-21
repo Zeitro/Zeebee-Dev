@@ -62,3 +62,8 @@ func (s *LoanServer) BorrowerLoanLenderCompanies(ctx context.Context, in *borrow
 	l := loanlogic.NewBorrowerLoanLenderCompaniesLogic(ctx, s.svcCtx)
 	return l.BorrowerLoanLenderCompanies(in)
 }
+
+func (s *LoanServer) ApplyLoan(ctx context.Context, in *borrower.ApplyLoanRequest) (*borrower.ApplyLoanResponse, error) {
+	l := loanlogic.NewApplyLoanLogic(ctx, s.svcCtx)
+	return l.ApplyLoan(in)
+}

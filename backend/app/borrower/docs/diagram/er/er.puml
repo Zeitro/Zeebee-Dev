@@ -135,7 +135,7 @@ note right of loans
     budget{
         original_budget numeric(10,2)
         remaining_budget numeric(10,2)
-        cost_spent_to_date numeric(10,2)
+        cost_spent_to_date_amount numeric(10,2)
     }
 end note
 
@@ -282,6 +282,7 @@ entity "loan_borrowers"{
     * contact_email varchar(100)
     * contact_phone varchar(20)
     * contact_name varchar(100)
+    * own_percent int2
 }
 
 note right of loan_borrowers

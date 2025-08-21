@@ -17,3 +17,17 @@ func ParseUserName(fullName string) (firstName, lastName string) {
 	}
 	return nameArr[0], nameArr[len(nameArr)-1]
 }
+
+func FormatFullName(firstName, midName, lastName string) string {
+	names := make([]string, 0, 3)
+	if firstName != "" {
+		names = append(names, firstName)
+	}
+	if midName != "" {
+		names = append(names, midName)
+	}
+	if lastName != "" {
+		names = append(names, lastName)
+	}
+	return strings.Join(names, " ")
+}

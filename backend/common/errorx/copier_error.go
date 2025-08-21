@@ -9,3 +9,7 @@ func GetFailedTransReqErr(err error) error {
 func GetFailedTransRespErr(err error) error {
 	return errors.Wrap(err, "trans response error")
 }
+
+func GetFailedTransErr(err error) error {
+	return errors.Wrap(err, "trans data error")
+}

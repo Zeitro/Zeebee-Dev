@@ -9,7 +9,10 @@ type Applicant struct {
 	Base
 	BorrowerId       int64                               `gorm:"column:borrower_id;not null;default:0" json:"borrower_id"`
 	LoanId           int64                               `gorm:"column:loan_id;not null;default:0" json:"loan_id"`
-	Name             string                              `gorm:"column:name;size:30;not null;default:''" json:"name"`
+	FullName         string                              `gorm:"column:full_name;size:30;not null;default:''" json:"full_name"`
+	FirstName        string                              `gorm:"column:first_name;size:30;not null;default:''" json:"first_name"`
+	MidName          string                              `gorm:"column:mid_name;size:30;not null;default:''" json:"mid_name"`
+	LastName         string                              `gorm:"column:last_name;size:30;not null;default:''" json:"last_name"`
 	IsPrimary        bool                                `gorm:"column:is_primary;not null;default:false" json:"is_primary"`
 	LoanPropertyId   int64                               `gorm:"column:loan_property_id;not null;default:0" json:"loan_property_id"`
 	Type             constants.ApplicantType             `gorm:"column:type;size:10;not null;default:'Individual';commit:'Individual,Corporation'" json:"type"`
@@ -19,7 +22,7 @@ type Applicant struct {
 	MaritalStatus    constants.MaritalStatus             `gorm:"column:marital_status;size:10;not null;default:''" json:"marital_status"`
 	Email            string                              `gorm:"column:email;size:100;not null;default:''" json:"email"`
 	EstCreditScore   int32                               `gorm:"column:est_credit_score;not null;default:0" json:"est_credit_score"`
-	DriveLicenseNum  string                              `gorm:"column:drive_license_num;size:20;not null;default:''" json:"drive_license_num"`
+	DriverLicenseNum string                              `gorm:"column:driver_license_num;size:20;not null;default:''" json:"driver_license_num"`
 	Address          types.Address                       `gorm:"column:address;type:jsonb;serializer:json" json:"address"`
 	LoanBorrowerId   int64                               `gorm:"column:loan_borrower_id;not null;default:0" json:"loan_borrower_id"`
 	// relationships
