@@ -8,7 +8,7 @@ type GetSelectOptionRequest struct {
 }
 
 type GetSelectOptionResponse struct {
-	Options []SelectOptionEntrity `json:"options"`
+	Options []SelectOptionEntity `json:"options"`
 }
 
 type GetUsCitiesRequest struct {

@@ -16,10 +16,6 @@ import (
 type (
 	AddressEntry                          = borrower.AddressEntry
 	ApplicantEntry                        = borrower.ApplicantEntry
-	ApplyLoanRequest                      = borrower.ApplyLoanRequest
-	ApplyLoanRequestData                  = borrower.ApplyLoanRequestData
-	ApplyLoanResponse                     = borrower.ApplyLoanResponse
-	ApplyLoanResponseData                 = borrower.ApplyLoanResponseData
 	BatchCreateLoanRequest                = borrower.BatchCreateLoanRequest
 	BatchCreateLoanResponse               = borrower.BatchCreateLoanResponse
 	BorrowerEditApplicantEntry            = borrower.BorrowerEditApplicantEntry
@@ -28,8 +24,12 @@ type (
 	BorrowerNamesResponse                 = borrower.BorrowerNamesResponse
 	EmptyRequest                          = borrower.EmptyRequest
 	EmptyResponse                         = borrower.EmptyResponse
-	LenderEntry                           = borrower.LenderEntry
-	LoanBorrowerEntry                     = borrower.LoanBorrowerEntry
+	LenderEntity                          = borrower.LenderEntity
+	LoanApplyRequest                      = borrower.LoanApplyRequest
+	LoanApplyRequestData                  = borrower.LoanApplyRequestData
+	LoanApplyResponse                     = borrower.LoanApplyResponse
+	LoanApplyResponseData                 = borrower.LoanApplyResponseData
+	LoanBorrowerEntity                    = borrower.LoanBorrowerEntity
 	LoanBudgetEntity                      = borrower.LoanBudgetEntity
 	LoanCreateRequest                     = borrower.LoanCreateRequest
 	LoanCreateRequestData                 = borrower.LoanCreateRequestData
@@ -46,7 +46,7 @@ type (
 	LoanDetailRequestData                 = borrower.LoanDetailRequestData
 	LoanDetailResponse                    = borrower.LoanDetailResponse
 	LoanEntry                             = borrower.LoanEntry
-	LoanExperienceEntry                   = borrower.LoanExperienceEntry
+	LoanExperienceEntity                  = borrower.LoanExperienceEntity
 	LoanLenderCompaniesRequest            = borrower.LoanLenderCompaniesRequest
 	LoanLenderCompaniesRequestData        = borrower.LoanLenderCompaniesRequestData
 	LoanLenderCompaniesResponse           = borrower.LoanLenderCompaniesResponse
@@ -71,7 +71,7 @@ type (
 	PropertyDetailRequestData             = borrower.PropertyDetailRequestData
 	PropertyDetailResponse                = borrower.PropertyDetailResponse
 	PropertyDetailResponseData            = borrower.PropertyDetailResponseData
-	PropertyPageEntry                     = borrower.PropertyPageEntry
+	PropertyPageEntity                    = borrower.PropertyPageEntity
 	PropertyPageRequest                   = borrower.PropertyPageRequest
 	PropertyPageRequestData               = borrower.PropertyPageRequestData
 	PropertyPageRequestFilter             = borrower.PropertyPageRequestFilter

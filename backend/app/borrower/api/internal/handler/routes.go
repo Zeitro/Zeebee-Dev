@@ -91,6 +91,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: loan.UpdatePendingStatusHandler(serverCtx),
 				},
 				{
+					// apply
+					Method:  http.MethodPost,
+					Path:    "/loan/apply",
+					Handler: loan.ApplyHandler(serverCtx),
+				},
+				{
 					// import
 					Method:  http.MethodPost,
 					Path:    "/loan/import",
