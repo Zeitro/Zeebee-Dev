@@ -14,6 +14,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
+	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/common/types"
 
@@ -184,10 +185,10 @@ func (l *UpdateBorrowerLoanLogic) handlePropertyBase(tx *gorm.DB, propertyId int
 func (l *UpdateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanUpdateRequestData) (loan *model.Loan, propertyBase *model.PropertyBase, loanProperty *model.LoanProperty, applicants []*model.Applicant, err error) {
 	// build applicants
 	for _, applicant := range in.Applicants {
-		if len(applicant.Name) == 0 {
+		if len(applicant.FirstName) == 0 {
 			return nil, nil, nil, nil, errors.New("applicant name is required")
 		}
-		applicantName := strings.TrimSpace(applicant.Name)
+		applicantName := strings.TrimSpace(applicant.FirstName)
 		if len(applicantName) == 0 {
 			return nil, nil, nil, nil, errors.New("applicant name is empty")
 		}
@@ -195,13 +196,19 @@ func (l *UpdateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanUpdateReque
 		switch constants.ApplicantType(applicant.Type) {
 		case constants.ApplicantTypeIndividual:
 			applicantItem = &model.Applicant{
-				Name:      applicantName,
+				FirstName: applicant.FirstName,
+				LastName:  applicant.LastName,
+				MidName:   applicant.MidName,
+				FullName:  stringx.FormatFullName(applicant.FirstName, applicant.MidName, applicant.LastName),
 				IsPrimary: applicant.IsPrimary,
 				Type:      constants.ApplicantTypeIndividual,
 			}
 		case constants.ApplicantTypeCorporation:
 			applicantItem = &model.Applicant{
-				Name:      applicantName,
+				FirstName: applicant.FirstName,
+				LastName:  applicant.LastName,
+				MidName:   applicant.MidName,
+				FullName:  stringx.FormatFullName(applicant.FirstName, applicant.MidName, applicant.LastName),
 				IsPrimary: applicant.IsPrimary,
 				Type:      constants.ApplicantTypeCorporation,
 			}
@@ -217,7 +224,7 @@ func (l *UpdateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanUpdateReque
 		return b.IsPrimary
 	})
 	applicants = slice.UniqueByComparator(applicants, func(item *model.Applicant, other *model.Applicant) bool {
-		return item.Name == other.Name
+		return item.FullName == other.FullName
 	})
 	if len(applicants) == 0 {
 		return nil, nil, nil, nil, errors.New("no applicant")
