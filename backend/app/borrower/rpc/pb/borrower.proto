@@ -646,14 +646,14 @@ message LoanThirdServiceEntity{
 message LoanDemographicEntity{
   int64 id = 1;
   int64 loan_id = 2;
-  LoanDemographicProperty property = 3;
-  LoanDemographicEthnicity ethnicity = 4;
-  LoanDemographicRace race = 5;
+  LoanDemographicPropertyEntity property = 3;
+  LoanDemographicEthnicityEntity ethnicity = 4;
+  LoanDemographicRaceEntity race = 5;
   string sex = 6;
-  LoanDemographicExtraDemographic extra_demographic = 7;
+  LoanDemographicExtraDemographicEntity extra_demographic = 7;
 }
 
-message LoanDemographicProperty {
+message LoanDemographicPropertyEntity {
   bool as_primary_resident = 1;
   bool has_transaction_relationship = 2;
   bool has_borrowed_money = 3;
@@ -673,7 +673,7 @@ message LoanDemographicProperty {
   bool bankruptcy_chapter13 = 17;
 }
 
-message LoanDemographicEthnicity {
+message LoanDemographicEthnicityEntity {
   bool is_hispanic_or_latino = 1;
   bool is_other_hispanic_or_latino = 2;
   string other_hispanic_or_latino_name = 3;
@@ -683,7 +683,7 @@ message LoanDemographicEthnicity {
   bool hidden = 7;
 }
 
-message LoanDemographicRace {
+message LoanDemographicRaceEntity {
   bool is_american_indian_or_alaska_native = 1;
   string american_indian_or_alaska_native_name = 2;
   bool is_asian = 3;
@@ -704,7 +704,7 @@ message LoanDemographicRace {
   bool hidden = 18;
 }
 
-message LoanDemographicExtraDemographic {
+message LoanDemographicExtraDemographicEntity {
   bool is_ethnicity_collected_by_observation = 1;
   bool is_sex_collected_by_observation = 2;
   bool is_race_collected_by_observation = 3;
