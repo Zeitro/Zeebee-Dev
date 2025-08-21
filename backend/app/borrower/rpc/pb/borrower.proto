@@ -419,10 +419,10 @@ message LoanLenderCompaniesResponse {
   repeated string data = 1;
 }
 
-message ApplyLoanRequest {
-  ApplyLoanRequestData data = 1;
+message LoanApplyRequest {
+  LoanApplyRequestData data = 1;
 }
-message ApplyLoanRequestData {
+message LoanApplyRequestData {
   string loan_purpose = 1;
   string loan_type = 2;
   double total_amount = 3;
@@ -463,14 +463,14 @@ message ApplyLoanRequestData {
   string additional_info = 38;
   repeated LoanThirdServiceEntity experience_services = 39;
   repeated LoanThirdServiceEntity real_estate_services = 40;
-  LoanBorrowerEntry loan_borrower = 41;
+  LoanBorrowerEntity loan_borrower = 41;
   LoanDemographicEntity loan_demographic = 42;
 }
 
-message ApplyLoanResponse {
-  ApplyLoanResponseData data = 1;
+message LoanApplyResponse {
+  LoanApplyResponseData data = 1;
 }
-message ApplyLoanResponseData {
+message LoanApplyResponseData {
   int64 id = 1;
 }
 
@@ -483,13 +483,13 @@ service Loan {
   rpc BorrowerLoanDetail(LoanDetailRequest) returns(LoanDetailResponse);
   rpc BorrowerLoanPage(LoanPageRequest) returns(LoanPageResponse);
   rpc BorrowerLoanLenderCompanies(LoanLenderCompaniesRequest) returns(LoanLenderCompaniesResponse);
-  rpc ApplyLoan(ApplyLoanRequest) returns(ApplyLoanResponse);
+  rpc ApplyLoan(LoanApplyRequest) returns(LoanApplyResponse);
 }
 
 
 // ===================== property service ======================
 
-message PropertyPageEntry{
+message PropertyPageEntity{
   int64 id = 1;
   string property_type = 2;
   double total_amount = 3;
@@ -536,7 +536,7 @@ message PropertyPageResponseData {
   int64 limit = 2;
   int64 total = 3;
   int64 total_page = 4;
-  repeated PropertyPageEntry list = 5;
+  repeated PropertyPageEntity list = 5;
 }
 
 message PropertyDetailRequest {
@@ -592,7 +592,7 @@ service Applicant {
 }
 
 // ===================== loan borrower service ======================
-message LoanBorrowerEntry{
+message LoanBorrowerEntity{
   int64 id = 1;
   int64 loan_id = 2;
   string type = 3;
@@ -607,7 +607,7 @@ message LoanBorrowerEntry{
 }
 
 // ===================== lender service ======================
-message LenderEntry{
+message LenderEntity{
   int64 id = 1;
   string name = 2;
   AddressEntry address = 3;
@@ -615,7 +615,7 @@ message LenderEntry{
 }
 
 // ===================== loan experience service ======================
-message LoanExperienceEntry{
+message LoanExperienceEntity{
   int64 id = 1;
   int64 loan_id = 2;
   string city = 3;

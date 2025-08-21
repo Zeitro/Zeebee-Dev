@@ -438,7 +438,7 @@ type LoanClient interface {
 	BorrowerLoanDetail(ctx context.Context, in *LoanDetailRequest, opts ...grpc.CallOption) (*LoanDetailResponse, error)
 	BorrowerLoanPage(ctx context.Context, in *LoanPageRequest, opts ...grpc.CallOption) (*LoanPageResponse, error)
 	BorrowerLoanLenderCompanies(ctx context.Context, in *LoanLenderCompaniesRequest, opts ...grpc.CallOption) (*LoanLenderCompaniesResponse, error)
-	ApplyLoan(ctx context.Context, in *ApplyLoanRequest, opts ...grpc.CallOption) (*ApplyLoanResponse, error)
+	ApplyLoan(ctx context.Context, in *LoanApplyRequest, opts ...grpc.CallOption) (*LoanApplyResponse, error)
 }
 
 type loanClient struct {
@@ -529,9 +529,9 @@ func (c *loanClient) BorrowerLoanLenderCompanies(ctx context.Context, in *LoanLe
 	return out, nil
 }
 
-func (c *loanClient) ApplyLoan(ctx context.Context, in *ApplyLoanRequest, opts ...grpc.CallOption) (*ApplyLoanResponse, error) {
+func (c *loanClient) ApplyLoan(ctx context.Context, in *LoanApplyRequest, opts ...grpc.CallOption) (*LoanApplyResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ApplyLoanResponse)
+	out := new(LoanApplyResponse)
 	err := c.cc.Invoke(ctx, Loan_ApplyLoan_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -551,7 +551,7 @@ type LoanServer interface {
 	BorrowerLoanDetail(context.Context, *LoanDetailRequest) (*LoanDetailResponse, error)
 	BorrowerLoanPage(context.Context, *LoanPageRequest) (*LoanPageResponse, error)
 	BorrowerLoanLenderCompanies(context.Context, *LoanLenderCompaniesRequest) (*LoanLenderCompaniesResponse, error)
-	ApplyLoan(context.Context, *ApplyLoanRequest) (*ApplyLoanResponse, error)
+	ApplyLoan(context.Context, *LoanApplyRequest) (*LoanApplyResponse, error)
 	mustEmbedUnimplementedLoanServer()
 }
 
@@ -586,7 +586,7 @@ func (UnimplementedLoanServer) BorrowerLoanPage(context.Context, *LoanPageReques
 func (UnimplementedLoanServer) BorrowerLoanLenderCompanies(context.Context, *LoanLenderCompaniesRequest) (*LoanLenderCompaniesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BorrowerLoanLenderCompanies not implemented")
 }
-func (UnimplementedLoanServer) ApplyLoan(context.Context, *ApplyLoanRequest) (*ApplyLoanResponse, error) {
+func (UnimplementedLoanServer) ApplyLoan(context.Context, *LoanApplyRequest) (*LoanApplyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ApplyLoan not implemented")
 }
 func (UnimplementedLoanServer) mustEmbedUnimplementedLoanServer() {}
@@ -755,7 +755,7 @@ func _Loan_BorrowerLoanLenderCompanies_Handler(srv interface{}, ctx context.Cont
 }
 
 func _Loan_ApplyLoan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ApplyLoanRequest)
+	in := new(LoanApplyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -767,7 +767,7 @@ func _Loan_ApplyLoan_Handler(srv interface{}, ctx context.Context, dec func(inte
 		FullMethod: Loan_ApplyLoan_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LoanServer).ApplyLoan(ctx, req.(*ApplyLoanRequest))
+		return srv.(LoanServer).ApplyLoan(ctx, req.(*LoanApplyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

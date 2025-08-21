@@ -1,0 +1,80 @@
+syntax = "v1"
+
+info(
+    title: "borrower-loan-demographic-api"
+    desc: "borrower-loan-demographic-api http service description"
+    version: "v1"
+)
+
+type LoanDemographicEntity {
+    Id int64 `json:"id,optional"`
+    LoanId int64 `json:"loan_id,optional"`
+    Sex string `json:"sex,optional"`
+    Property *LoanDemographicPropertyEntity `json:"property,optional"`
+    Ethnicity *LoanDemographicEthnicityEntity `json:"ethnicity,optional"`
+    Race *LoanDemographicRaceEntity `json:"race,optional"`
+    ExtraDemographic *LoanDemographicExtraDemographicEntity `json:"extra_demographic,optional"`
+}
+
+
+type LoanDemographicPropertyEntity {
+    AsPrimaryResident bool `json:"as_primary_resident,optional"`
+    HasTransactionRelationship bool `json:"has_transaction_relationship,optional"`
+    HasBorrowedMoney bool `json:"has_borrowed_money,optional"`
+    HasAnotherMortgateLoan bool `json:"has_another_mortgate_loan,optional"`
+    HasPriorityOver1st bool `json:"has_priority_over_1st,optional"`
+    HasOutstandingJudgements bool `json:"has_outstanding_judgements,optional"`
+    HasFederalDebt bool `json:"has_federal_debt,optional"`
+    HasALawsuit bool `json:"has_a_lawsuit,optional"`
+    HasConveyedTitle bool `json:"has_conveyed_title,optional"`
+    HasAPreForeclosureSale bool `json:"has_a_pre_foreclosure_sale,optional"`
+    HasForeclosedUpon bool `json:"has_foreclosed_upon,optional"`
+    HasABankruptcy bool `json:"has_a_bankruptcy,optional"`
+    BankruptcyChapter7 bool `json:"bankruptcy_chapter7,optional"`
+    BankruptcyChapter11 bool `json:"bankruptcy_chapter11,optional"`
+    BankruptcyChapter12 bool `json:"bankruptcy_chapter12,optional"`
+    BankruptcyChapter13 bool `json:"bankruptcy_chapter13,optional"`
+}
+
+type LoanDemographicEthnicityEntity {
+    IsHispanicOrLatino bool `json:"is_hispanic_or_latino,optional"`
+    IsOtherHispanicOrLatino bool `json:"is_other_hispanic_or_latino,optional"`
+    OtherHispanicOrLatinoName string `json:"other_hispanic_or_latino_name,optional"`
+    IsMexican bool `json:"is_mexican,optional"`
+    IsCuban bool `json:"is_cuban,optional"`
+    IsNotHispanicOrLatino bool `json:"is_not_hispanic_or_latino,optional"`
+    Hidden bool `json:"hidden,optional"`
+}
+
+
+type LoanDemographicRaceEntity {
+    IsAmericanIndianOrAlaskaNative bool `json:"is_american_indian_or_alaska_native,optional"`
+    AmericanIndianOrAlaskaNativeName string `json:"american_indian_or_alaska_native_name,optional"`
+    IsAsian bool `json:"is_asian,optional"`
+    IsAsianIndian bool `json:"is_asian_indian,optional"`
+    IsAsianChinese bool `json:"is_asian_chinese,optional"`
+    IsAsianFilipino bool `json:"is_asian_filipino,optional"`
+    IsAsianJapanese bool `json:"is_asian_japanese,optional"`
+    IsAsianKorean bool `json:"is_asian_korean,optional"`
+    IsAsianVietnamese bool `json:"is_asian_vietnamese,optional"`
+    IsAsianOther bool `json:"is_asian_other,optional"`
+    AsianOtherName string `json:"asian_other_name,optional"`
+    IsBlackOrAfricanAmerican bool `json:"is_black_or_african_american,optional"`
+    IsNativeHawaiianOrOtherPacificIslander bool `json:"is_native_hawaiian_or_other_pacific_islander,optional"`
+    IsNativeHawaiianGuamanianOrOtherPacificIslander bool `json:"is_native_hawaiian_guamanian_or_other_pacific_islander,optional"`
+    IsNativeHawaiianGuamanianOrChamorroSamoan bool `json:"is_native_hawaiian_guamanian_or_chamorro_samoan,optional"`
+    IsOtherPacificIslander bool `json:"is_other_pacific_islander,optional"`
+    OtherPacificIslanderName string `json:"other_pacific_islander_name,optional"`
+    IsWhite bool `json:"is_white,optional"`
+    Hidden bool `json:"hidden,optional"`
+}
+
+type LoanDemographicExtraDemographicEntity {
+    IsEthnicityCollectedByObservation bool `json:"is_ethnicity_collected_by_observation,optional"`
+    IsSexCollectedByObservation bool `json:"is_sex_collected_by_observation,optional"`
+    IsRaceCollectedByObservation bool `json:"is_race_collected_by_observation,optional"`
+    IsByFaceToFace bool `json:"is_by_face_to_face,optional"`
+    IsByTelephone bool `json:"is_by_telephone,optional"`
+    IsByFaxOrMail bool `json:"is_by_fax_or_mail,optional"`
+    IsByEmailOrInternet bool `json:"is_by_email_or_internet,optional"`
+}

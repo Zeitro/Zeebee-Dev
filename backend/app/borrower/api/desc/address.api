@@ -6,7 +6,7 @@ info(
     version: "v1"
 )
 
-type AddressEntrity {
+type AddressEntity {
     State string `json:"state" validate:"required"`
     City string `json:"city" validate:"required"`
     Address1 string `json:"address1" validate:"required"`

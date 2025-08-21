@@ -115,6 +115,10 @@ service borrower-api {
 	@handler Page
 	post /loan/page (LoanPageRequest) returns (LoanPageResponse)
 
+	@doc "apply"
+	@handler Apply
+	post /loan/apply (LoanApplyRequest) returns (LoanApplyResponse)
+
 	@doc "import"
 	@handler Import
 	post /loan/import (EmptyRequest) returns (EmptyResponse)
