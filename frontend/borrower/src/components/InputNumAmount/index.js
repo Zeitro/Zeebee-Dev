@@ -18,11 +18,12 @@ const InputNumAmount = ({
 	return (
 		<InputNumber
 			style={{ width: '100%', ...style }}
+			prefix={<span className="text-base pt-[2px]">$</span>}
 			formatter={(value) => {
 				// 千分位逗号隔开，保留两位小数
 				const [int, dec] = value.split('.');
 				const str = dec?.slice?.(0, 2);
-				return `$ ${int.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}` + (dec ? `.${str}` : '');
+				return `${int.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}` + (dec ? `.${str}` : '');
 			}}
 			parser={(value) => parseFloat(value.replace(/[^\d.]/g, '')) || 0}
 			min={min}

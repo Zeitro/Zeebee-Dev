@@ -1,6 +1,6 @@
 'use client';
 import { App, Button, Col, Form, message, Space, Steps } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import CreateLoan from '../components/Create/Loan';
 import CreateProperty from '../components/Create/property';
 import CreateTerm from '../components/Create/term';
@@ -11,12 +11,15 @@ import { formatDate } from '@/lib/date';
 import { loan_pending } from '@/enum/common';
 import ApplicantInfo from '../components/CreateZeeBee/ApplicantInfo';
 import BorrowerInfo from '../components/CreateZeeBee/BorrowerInfo';
+import PropertyInfo from '../components/CreateZeeBee/PropertyInfo';
+import LoanDetail from '../components/CreateZeeBee/Loan';
 
 const CreateZeeBeeLoan = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const api = `/property/${searchParams.get('propertyId')}`;
 	const { request } = createRequest();
+	const scrollRef = useRef(null);
 	const [currentStep, setCurrentStep] = useState(0); //顶部-总步骤
 	const [stepNum, setStepNum] = useState(0); //侧边步骤
 	const [loading, setLoading] = useState(false);
@@ -47,7 +50,16 @@ const CreateZeeBeeLoan = () => {
 	// }, []);
 
 	const stepContent = [
-		[<ApplicantInfo key="0" form={form} />, <BorrowerInfo key="1" form={form} />],
+		[
+			<ApplicantInfo key="0-ApplicantInfo" form={form} />,
+			<BorrowerInfo key="1-BorrowerInfo" form={form} />,
+		],
+		[
+			<PropertyInfo key="0-PropertyInfo" form={form} />,
+			<LoanDetail key="1-LoanDetail" form={form} />,
+		],
+		<LoanDetail key="2-LoanDetail" form={form} />,
+		<PropertyInfo key="0-PropertyInfo" form={form} />, // [<CreateProperty key="0" stage={loanData?.[0]?.stage} stepBtn={stepBtn} form={form} gutter={16} isRequestProperty={searchParams.has('propertyId')} />]
 		// 1: (
 		// 	<CreateProperty
 		// 		stage={loanData?.[0]?.stage}
@@ -60,15 +72,30 @@ const CreateZeeBeeLoan = () => {
 		// 2: <CreateTerm stage={loanData?.[0]?.stage} stepBtn={stepBtn} form={form} />,
 	];
 
+	// 获取下一步步骤类型（Submit创建按钮/NextMaxStep下一大步骤/NextMinStep下一小步骤）
+	const diffSteps = () => {
+		const lastStep = stepContent[stepContent.length - 1];
+		// 某大步骤下有多个小步骤（数组），如为数组需判断是否最后一小步骤
+		const isLastStepNumByArr = lastStep?.length ? stepNum + 1 === lastStep?.length : true;
+		if (currentStep + 1 === stepContent.length && isLastStepNumByArr) {
+			return 'Submit';
+		}
+		const parentStepData = createZeeBeeSteps[currentStep];
+		const childArr = parentStepData?.children;
+		if (childArr ? stepNum + 1 === childArr?.length : !childArr) {
+			return 'NextMaxStep';
+		}
+
+		return 'NextMinStep';
+	};
+
 	// // next/Add loan
 	const handleNext = async () => {
 		try {
 			// const values = await form.validateFields();
 			// console.log(values);
-			if (
-				currentStep + 1 === createZeeBeeSteps.length &&
-				stepNum + 1 === stepContent[stepContent.length - 1]?.length
-			) {
+			const isType = diffSteps();
+			if (isType === 'Submit') {
 				// 		// add loan
 				// 		const body = {
 				// 			...(loanData[0] || {}),
@@ -99,14 +126,16 @@ const CreateZeeBeeLoan = () => {
 				return;
 			}
 			// setLoanData((v) => ({ ...v, [currentStep]: values }));
-
-			const parentStepData = createZeeBeeSteps[currentStep];
-			const childArr = parentStepData?.children;
-			if (stepNum + 1 === childArr?.length) {
+			if (isType === 'NextMaxStep') {
 				setCurrentStep((v) => v + 1);
-				return;
+				setStepNum(0);
+			} else {
+				setStepNum((v) => v + 1);
 			}
-			setStepNum((v) => v + 1);
+
+			scrollRef.current.scrollTo({
+				top: 0,
+			});
 		} catch (error) {
 			setLoading(false);
 		}
@@ -114,26 +143,27 @@ const CreateZeeBeeLoan = () => {
 
 	// 下一步按钮文案
 	const getNextBtnText = () => {
-		if (
-			currentStep + 1 === stepContent.length &&
-			stepNum + 1 === stepContent[stepContent.length - 1]?.length
-		) {
-			return 'Submit';
-		}
+		const isType = diffSteps();
 		const parentStepData = createZeeBeeSteps[currentStep];
-		const childArr = parentStepData?.children;
-		if (stepNum + 1 === childArr?.length) {
-			return `Next ${createZeeBeeSteps[currentStep + 1]?.title}`;
+		switch (isType) {
+			case 'Submit':
+				return 'Submit';
+			case 'NextMaxStep':
+				return `Next ${createZeeBeeSteps[currentStep + 1]?.title}`;
+			case 'NextMinStep':
+				return `Next ${parentStepData?.children[stepNum + 1]?.title}`;
+			default:
+				break;
 		}
-		return `Next ${childArr[stepNum + 1]?.title}`;
 	};
 
 	const handleBack = () => {
-		const stepItemArr = stepContent[currentStep];
-		if (stepItemArr?.length >= stepNum + 1 && stepItemArr?.length > 1) {
+		if (stepNum) {
 			setStepNum((v) => v - 1);
 		} else {
+			const prevStepData = stepContent[currentStep - 1];
 			setCurrentStep((v) => v - 1);
+			setStepNum(prevStepData?.length - 1);
 		}
 	};
 
@@ -152,18 +182,21 @@ const CreateZeeBeeLoan = () => {
 	// 	form.setFieldsValue(newData);
 	// };
 
-	const stepBtn = (
-		<Col xs={24} sm={24} className="py-6 !flex justify-between items-center">
-			<Button type="text" onClick={() => router.back()}>
-				Cancel
-			</Button>
-			<Space size={8}>
-				{!!currentStep && <Button onClick={handleBack}>Back</Button>}
-				<Button type="primary" onClick={handleNext} loading={loading}>
-					{getNextBtnText()}
+	const stepBtn = useMemo(
+		() => (
+			<Col xs={24} sm={24} className="py-6 !flex justify-between items-center">
+				<Button type="text" onClick={() => router.back()}>
+					Cancel
 				</Button>
-			</Space>
-		</Col>
+				<Space size={8}>
+					{!(!currentStep && !stepNum) && <Button onClick={handleBack}>Back</Button>}
+					<Button type="primary" onClick={handleNext} loading={loading}>
+						{getNextBtnText()}
+					</Button>
+				</Space>
+			</Col>
+		),
+		[currentStep, stepNum, loading],
 	);
 
 	return (
@@ -177,16 +210,18 @@ const CreateZeeBeeLoan = () => {
 				/>
 			</div>
 			<div className="flex-1 flex items-stretch overflow-hidden">
-				<div className="w-[250px] py-6 px-6 shrink-0 border-r border-base-border">
-					<Steps
-						size="small"
-						progressDot
-						direction="vertical"
-						current={stepNum}
-						items={createZeeBeeSteps[currentStep]?.children}
-					/>
-				</div>
-				<div className="flex-1 overflow-hidden overflow-y-auto py-8 px-8">
+				{createZeeBeeSteps[currentStep]?.children && (
+					<div className="w-[250px] py-6 px-6 shrink-0 border-r border-base-border">
+						<Steps
+							size="small"
+							progressDot
+							direction="vertical"
+							current={stepNum}
+							items={createZeeBeeSteps[currentStep]?.children}
+						/>
+					</div>
+				)}
+				<div className="flex-1 overflow-hidden overflow-y-auto py-8 px-8" ref={scrollRef}>
 					<Form
 						form={form}
 						name="basic"
@@ -200,7 +235,9 @@ const CreateZeeBeeLoan = () => {
 						// 	stage: loan_pending,
 						// }}
 					>
-						{stepContent[currentStep]?.[stepNum]}
+						{stepContent[currentStep]?.length
+							? stepContent[currentStep]?.[stepNum]
+							: stepContent[currentStep]}
 						{stepBtn}
 					</Form>
 				</div>

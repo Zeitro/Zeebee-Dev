@@ -7,6 +7,15 @@
 	// 		width: 180px;
 	// 	}
 	// }
+	.yesNo {
+		display: flex;
+		align-items: center;
+		width: 100%;
+		& :global(.ant-radio-wrapper) {
+			flex: 1;
+		}
+	}
+
 	:global {
 		.ant-form-item-label {
 			padding-bottom: 0 !important;
@@ -15,7 +24,11 @@
 				height: 22px !important;
 			}
 		}
+		.assignmentFee .ant-form-item-required::before {
+			display: none !important;
+		}
 	}
+
 	// .commonFormItem :global(.ant-form-item-control-input) {
 	// 	min-height: 22px !important;
 	// }

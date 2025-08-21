@@ -1,4 +1,5 @@
 import { useOptionsStore } from '@/store/options';
+import { Col, Form, Select } from 'antd';
 import { useCallback, useEffect, useRef } from 'react';
 /**
  * 请求options下拉数据公共接口
@@ -8,11 +9,11 @@ import { useCallback, useEffect, useRef } from 'react';
  *      type: 'lender' //默认可不要type，会请求getOptions方法
  * }]
  */
+const MAX_COUNT = 5;
 export const useGetOptions = (list = []) => {
 	const optionsInfo = useOptionsStore();
 	const isInitGet = useRef(true);
 	const { getOptions, getLender, getBorrowerOptions, ...state } = optionsInfo;
-
 	const getInitOptions = useCallback(async () => {
 		await Promise.all(
 			list.map(async (item) => {
@@ -60,5 +61,48 @@ export const useGetOptions = (list = []) => {
 	// useEffect(() => {
 	// 	!loanStatusOptions?.length && getOptions('loan_stage', 'loanStatusOptions');
 	// }, [loanStatusOptions]);
-	return optionsInfo;
+	const getSelectFormDom = (
+		{
+			label,
+			name,
+			rules = [],
+			requiredMessage = 'Please enter value!',
+			formProps = {},
+			valueName, // 对应存储在store里面的值
+			mode = null,
+			placeholder = 'Select',
+			...selectProps
+		},
+		layoutCol = {},
+	) => {
+		let selectMaxCount = mode ? { maxCount: MAX_COUNT } : {};
+		return (
+			<Col xs={24} sm={24} {...layoutCol}>
+				<Form.Item
+					label={label}
+					name={name}
+					rules={[
+						{
+							required: true,
+							message: requiredMessage,
+						},
+						...rules,
+					]}
+					{...formProps}
+				>
+					<Select
+						allowClear
+						showSearch
+						mode={mode}
+						style={{ width: '100%' }}
+						placeholder={placeholder}
+						options={optionsInfo?.[valueName] || []}
+						{...selectMaxCount}
+						{...selectProps}
+					/>
+				</Form.Item>
+			</Col>
+		);
+	};
+	return { ...optionsInfo, getSelectFormDom };
 };

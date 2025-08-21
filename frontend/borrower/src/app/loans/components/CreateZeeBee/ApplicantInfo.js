@@ -5,7 +5,7 @@ import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
 import InputPhone from '@/components/InputPhone';
 import SelectTINType from '@/components/InputTIN/SelectTINType';
 import { emailRegex, phoneRegex } from '@/lib/format';
-const ApplicantInfo = ({ gutter, form, addressProps }) => {
+const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 	const borrowerType = Form.useWatch('borrower_type', form);
 	const layoutCol = {
 		xs: 24,

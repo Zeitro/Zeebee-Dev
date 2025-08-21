@@ -32,14 +32,38 @@ export const createZeeBeeSteps = [
 	{
 		title: 'Property and loan',
 		key: 'propertyAndLoan',
+		children: [
+			{
+				title: 'Property information',
+				key: 'propertyInformation ',
+			},
+			{
+				title: 'Loan detail',
+				key: 'loanDetail ',
+			},
+		],
 	},
 	{
-		title: 'Experience',
-		key: 'experience',
+		title: 'Expierence and third service',
+		key: 'experienceAndThirdService',
+		// children: [
+		// 	{
+		// 		title: 'Transaction history',
+		// 		key: 'firstService',
+		// 	},
+		// 	{
+		// 		title: 'Second service',
+		// 		key: 'secondService',
+		// 	},
+		// 	{
+		// 		title: 'Third service',
+		// 		key: 'thirdService',
+		// 	},
+		// ],
 	},
 	{
-		title: 'Third service',
-		key: 'thirdService',
+		title: 'Declaration and Demographics',
+		key: 'declarationAndDemographics',
 	},
 	{
 		title: 'Review and sign',

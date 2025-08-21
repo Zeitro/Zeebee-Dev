@@ -14,7 +14,7 @@ import {
 } from '@/lib/format';
 import { formatStr } from '@/lib/date';
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
-const ApplicantInfo = ({ gutter, form, addressProps }) => {
+const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 	const borrowerType = Form.useWatch('borrower_type', form);
 	const layoutCol = {
 		xs: 24,
@@ -27,7 +27,13 @@ const ApplicantInfo = ({ gutter, form, addressProps }) => {
 			</Col>
 			<Form.List name="borrowers">
 				{(fields, { add, remove }) => {
-					if (fields.length === 0) add({});
+					console.log('innn', fields);
+
+					if (fields.length === 0) {
+						console.log('0000');
+
+						add(0);
+					}
 					return fields?.map((field, index) => (
 						<Row
 							className={styles.createZeeBee}
@@ -45,7 +51,7 @@ const ApplicantInfo = ({ gutter, form, addressProps }) => {
 										type="link"
 										size="small"
 										icon={<MinusCircleOutlined />}
-										onClick={() => remove(field.key)}
+										onClick={() => remove(field.name)}
 									>
 										Delete borrower
 									</Button>
