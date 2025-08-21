@@ -16,6 +16,7 @@ type LoanBorrower struct {
 	ContactEmail   string                  `gorm:"column:contact_email;size:100;not null;default:''" json:"contact_email"`
 	ContactPhone   string                  `gorm:"column:contact_phone;size:20;not null;default:''" json:"contact_phone"`
 	ContactName    string                  `gorm:"column:contact_name;size:100;not null;default:''" json:"contact_name"`
+	OwnPercent     int32                   `gorm:"column:own_percent;not null;default:0" json:"own_percent"`
 
 	Loan       *Loan        `json:"loan" gorm:"foreignKey:LoanId;references:Id"`
 	Applicants []*Applicant `json:"applicants" gorm:"foreignKey:LoanBorrowerId;references:Id"`
