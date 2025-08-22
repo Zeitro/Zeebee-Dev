@@ -10,7 +10,7 @@ const CommonFormDate = ({ value, onChange, format = formatStr, type = 'DatePicke
 		value: value ? dayjs(value) : null,
 		onChange: handleChange,
 		format,
-		placeholder: 'select',
+		placeholder: 'Select a date',
 		...rest,
 		style: { width: '100%', ...(rest?.style || {}) },
 	};

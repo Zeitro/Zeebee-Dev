@@ -36,7 +36,8 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 
 	useEffect(() => {
 		if (yearly_rental_income && yearly_liability_expenses) {
-			form.setFieldsValue({ DSCR: yearly_rental_income / yearly_liability_expenses });
+			const num = yearly_rental_income / yearly_liability_expenses;
+			form.setFieldsValue({ DSCR: Math.round(num * 100) / 100 });
 		}
 	}, [yearly_rental_income, yearly_liability_expenses]);
 	return (
@@ -350,7 +351,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 				<>
 					<Col {...layoutCol}>
 						<Form.Item
-							label="Est. Net yearly rental income" // 预计年租金收入
+							label="Est. Net yearly rental income" // 预计年租金净收入
 							name="yearly_rental_income"
 							rules={[
 								{
@@ -378,7 +379,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 					</Col>
 					<Col {...layoutCol} md={12}>
 						<Form.Item
-							label="DSCR"
+							label="DSCR" // 债务覆盖率，衡量企业偿债能力的关键指标
 							name="DSCR"
 							rules={[{ required: true, message: 'Please enter DSCR!' }]}
 						>

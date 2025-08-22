@@ -1,0 +1,176 @@
+'use client';
+import React from 'react';
+import NewModal from '@/components/NewModal';
+import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
+import { Col, Form, Input, Radio, Row } from 'antd';
+import { useGetOptions } from '@/hooks/useGetOptions';
+import InputNumAmount from '@/components/InputNumAmount';
+import CommonFormDate from '@/components/CommonDate';
+import { yesNoOptions } from '@/enum/common';
+export const AddExperience = ({ title, rowData, onCancel }) => {
+	const [form] = Form.useForm();
+	const layoutCol = {
+		md: 12,
+	};
+	const { businessStrategyOptions, getSelectFormDom } = useGetOptions([
+		// {
+		// 	key: 'business_strategy',
+		// 	valueName: 'businessStrategyOptions',
+		// },
+	]);
+	return (
+		<NewModal
+			width={572}
+			title={title}
+			onCancel={onCancel}
+			okText={title}
+			onOk={() => {
+				onCancel();
+			}}
+		>
+			<Form
+				form={form}
+				name="addExperienceForm"
+				layout="vertical"
+				autoComplete="off"
+				className="w-full"
+				size="large"
+				// disabled={loading}
+				// initialValues={{
+				// 	stage: loan_pending,
+				// }}
+			>
+				<Row gutter={24}>
+					<AddressForm
+						addressName={['loan_property', 'property_base', 'address', 'address1']}
+						addressName2={['loan_property', 'property_base', 'address', 'address2']}
+						cityName={['loan_property', 'property_base', 'address', 'city']}
+						stateName={['loan_property', 'property_base', 'address', 'state']}
+						zipName={['loan_property', 'property_base', 'address', 'zip_code']}
+						addressLabel="Address"
+						isShowAddress2={false}
+						isShowZip={false}
+						form={form}
+						stateCol={layoutCol}
+					/>
+					<Col {...layoutCol}>
+						<Form.Item
+							label="Ownership on title" // 所有权人
+							name="ownership_on_title"
+							rules={[
+								{
+									required: true,
+									message: 'Please enter ownership on title',
+								},
+							]}
+						>
+							<Input placeholder="Enter owner name" />
+						</Form.Item>
+					</Col>
+					{getSelectFormDom(
+						{
+							label: 'Property type', // 房产类型
+							name: 'property_type',
+							placeholder: 'Select property type',
+							valueName: 'propertyTypeOptions',
+							requiredMessage: 'Please select property type!',
+						},
+						layoutCol,
+					)}
+					<Col {...layoutCol}>
+						<Form.Item
+							label="Purchase price" // 购买价格
+							name="purchase_price"
+							rules={[
+								{
+									required: true,
+									message: 'Please enter purchase price!',
+								},
+							]}
+						>
+							<InputNumAmount placeholder="Enter purchase price" />
+						</Form.Item>
+					</Col>
+					<Col {...layoutCol}>
+						<Form.Item
+							label="Purchase date" // 购买时间
+							name="purchase_date"
+							rules={[{ required: true, message: 'Please select date!' }]}
+						>
+							<CommonFormDate />
+						</Form.Item>
+					</Col>
+					{title.indexOf('transaction history') > -1 && (
+						<Col {...layoutCol}>
+							<Form.Item
+								label="Rehab budget /Construction cost" // 重建预算
+								name="rehab_budget"
+								rules={[
+									{
+										required: true,
+										message: 'Please enter rehab budget/Construction cost!',
+									},
+								]}
+							>
+								<InputNumAmount placeholder="Enter rehab budget/Construction cost" />
+							</Form.Item>
+						</Col>
+					)}
+					{title.indexOf('real estate') > -1 && (
+						<Col {...layoutCol}>
+							<Form.Item
+								label="Tenant Occupied" // 租户已入驻
+								name="tenant_occupied"
+								rules={[
+									{
+										required: true,
+										message: 'Please select tenant Occupied!',
+									},
+								]}
+							>
+								<Radio.Group options={yesNoOptions} />
+							</Form.Item>
+						</Col>
+					)}
+					<Col {...layoutCol}>
+						<Form.Item
+							label="Sale price" // 售价
+							name="sale_price"
+							rules={[
+								{
+									required: true,
+									message: 'Please enter sale price!',
+								},
+							]}
+						>
+							<InputNumAmount placeholder="Enter sale price amount" />
+						</Form.Item>
+					</Col>
+					<Col {...layoutCol}>
+						<Form.Item
+							label="Date Sold" // 售出时间
+							name="date_sold"
+							rules={[{ required: true, message: 'Please select date!' }]}
+						>
+							<CommonFormDate />
+						</Form.Item>
+					</Col>
+					<Col {...layoutCol}>
+						<Form.Item
+							label="Profit/ Loan" // 利润
+							name="profit"
+							rules={[
+								{
+									required: true,
+									message: 'Please enter profit/loan!',
+								},
+							]}
+						>
+							<InputNumAmount placeholder="Enter profit/loan amount" />
+						</Form.Item>
+					</Col>
+				</Row>
+			</Form>
+		</NewModal>
+	);
+};

@@ -5,7 +5,18 @@ const NewModal = ({ children, customFooter = false, ...props }) => {
 	return (
 		<Modal
 			open={true}
+			centered
+			maskClosable={false}
+			okText="Save"
 			{...props}
+			okButtonProps={{
+				size: 'middle',
+				...(props?.okButtonProps || {}),
+			}}
+			cancelButtonProps={{
+				size: 'middle',
+				...(props?.cancelButtonProps || {}),
+			}}
 			className={[
 				styles.NewModal,
 				// !customFooter && styles.NewModal_padding,

@@ -28,6 +28,7 @@ const FilterField = ({ list, className, ...rowProps }, ref) => {
 		selectValue,
 		selectProps,
 		text = 'Search',
+		children,
 		selectParamsKey,
 		paramsKey,
 		...eventProps
@@ -135,7 +136,7 @@ const FilterField = ({ list, className, ...rowProps }, ref) => {
 				);
 				break;
 			case 'button':
-				filterItem = (
+				filterItem = children || (
 					<Button
 						type="primary"
 						size="large"

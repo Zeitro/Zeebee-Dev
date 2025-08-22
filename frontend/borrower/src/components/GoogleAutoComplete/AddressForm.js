@@ -30,6 +30,8 @@ const AddressForm = ({
 	stateCol = {},
 	zipCol = {},
 	disabled,
+	isShowAddress2 = true,
+	isShowZip = true,
 }) => {
 	const { getStateList, getCityList, stateOptions, cityOptions } = useAddressStore();
 	const stateValue = Form.useWatch(stateName, form);
@@ -38,8 +40,12 @@ const AddressForm = ({
 		const newValue = form.getFieldsValue() || {};
 		set(newValue, cityName, place.city);
 		set(newValue, stateName, place.state);
-		set(newValue, zipName, place.zip);
-		set(newValue, addressName2, place.unit);
+		if (isShowZip) {
+			set(newValue, zipName, place.zip);
+		}
+		if (isShowAddress2) {
+			set(newValue, addressName2, place.unit);
+		}
 		form.setFieldsValue(newValue);
 	};
 
@@ -68,21 +74,23 @@ const AddressForm = ({
 					/>
 				</Form.Item>
 			</Col>
-			<Col {...layoutCol} {...address2Col}>
-				<Form.Item name={addressName2} label={addressLabel2}>
-					<Input placeholder={`Enter ${addressLabel2}`} disabled={disabled} />
-				</Form.Item>
-			</Col>
+			{isShowAddress2 && (
+				<Col {...layoutCol} {...address2Col}>
+					<Form.Item name={addressName2} label={addressLabel2}>
+						<Input placeholder={`Enter ${addressLabel2}`} disabled={disabled} />
+					</Form.Item>
+				</Col>
+			)}
 			<Col {...layoutCol} {...stateCol}>
 				<Form.Item
 					name={stateName}
 					label={stateLabel}
-					rules={[{ required: true, message: 'Please enter state!' }]}
+					rules={[{ required: true, message: 'Please select state!' }]}
 				>
 					<Select
 						options={stateOptions}
 						optionFilterProp="label"
-						placeholder="Enter state"
+						placeholder="Select state"
 						showSearch
 						disabled={disabled}
 					/>
@@ -92,26 +100,28 @@ const AddressForm = ({
 				<Form.Item
 					name={cityName}
 					label={cityLabel}
-					rules={[{ required: true, message: 'Please enter city!' }]}
+					rules={[{ required: true, message: 'Please select city!' }]}
 				>
 					<Select
 						options={cityOptions}
 						optionFilterProp="label"
-						placeholder="Enter city"
+						placeholder="Select city"
 						showSearch
 						disabled={disabled}
 					/>
 				</Form.Item>
 			</Col>
-			<Col md={12} {...layoutCol} {...zipCol}>
-				<Form.Item
-					name={zipName}
-					label={zipLabel}
-					rules={[{ required: true, message: 'Please enter zip code!' }]}
-				>
-					<Input placeholder="Enter zip" disabled={disabled} />
-				</Form.Item>
-			</Col>
+			{isShowZip && (
+				<Col md={12} {...layoutCol} {...zipCol}>
+					<Form.Item
+						name={zipName}
+						label={zipLabel}
+						rules={[{ required: true, message: 'Please enter zip code!' }]}
+					>
+						<Input placeholder="Enter zip" disabled={disabled} />
+					</Form.Item>
+				</Col>
+			)}
 		</>
 	);
 };

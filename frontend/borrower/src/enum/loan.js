@@ -44,22 +44,18 @@ export const createZeeBeeSteps = [
 		],
 	},
 	{
-		title: 'Expierence and third service',
+		title: 'Experience & Third service',
 		key: 'experienceAndThirdService',
-		// children: [
-		// 	{
-		// 		title: 'Transaction history',
-		// 		key: 'firstService',
-		// 	},
-		// 	{
-		// 		title: 'Second service',
-		// 		key: 'secondService',
-		// 	},
-		// 	{
-		// 		title: 'Third service',
-		// 		key: 'thirdService',
-		// 	},
-		// ],
+		children: [
+			{
+				title: 'Experience',
+				key: 'experience',
+			},
+			{
+				title: 'Third-party services',
+				key: 'thirdPartyServices',
+			},
+		],
 	},
 	{
 		title: 'Declaration and Demographics',

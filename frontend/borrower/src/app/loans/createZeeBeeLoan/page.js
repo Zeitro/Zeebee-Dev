@@ -13,7 +13,7 @@ import ApplicantInfo from '../components/CreateZeeBee/ApplicantInfo';
 import BorrowerInfo from '../components/CreateZeeBee/BorrowerInfo';
 import PropertyInfo from '../components/CreateZeeBee/PropertyInfo';
 import LoanDetail from '../components/CreateZeeBee/Loan';
-
+import Experience from '../components/CreateZeeBee/Experience';
 const CreateZeeBeeLoan = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -58,6 +58,7 @@ const CreateZeeBeeLoan = () => {
 			<PropertyInfo key="0-PropertyInfo" form={form} />,
 			<LoanDetail key="1-LoanDetail" form={form} />,
 		],
+		[<Experience key="0-Experience" form={form} />],
 		<LoanDetail key="2-LoanDetail" form={form} />,
 		<PropertyInfo key="0-PropertyInfo" form={form} />, // [<CreateProperty key="0" stage={loanData?.[0]?.stage} stepBtn={stepBtn} form={form} gutter={16} isRequestProperty={searchParams.has('propertyId')} />]
 		// 1: (
@@ -226,7 +227,7 @@ const CreateZeeBeeLoan = () => {
 						form={form}
 						name="basic"
 						layout="vertical"
-						style={{ maxWidth: 520 }}
+						style={{ maxWidth: [2, 4].includes(currentStep) ? '100%' : 520 }}
 						autoComplete="off"
 						className=""
 						size="large"
