@@ -6,7 +6,7 @@ info(
     version: "v1"
 )
 
-type ApplicantEntity {
+type ApplicantEntry {
     Id int64 `json:"id,omitempty"`
     //    Name string `json:"name,omitempty"`
     FirstName string `json:"first_name,omitempty"`

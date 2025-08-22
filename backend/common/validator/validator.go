@@ -61,6 +61,11 @@ func NewValidator(local string) (v *Validator, err error) {
 }
 
 func (v *Validator) Validate(i interface{}) (err error) {
+	defer func() {
+		if e := recover(); e != nil {
+			err = errors.WithStack(errors.Errorf("validate error:%v", e))
+		}
+	}()
 	validatorErr := v.validator.Struct(i)
 	if validatorErr != nil && v.trans != nil {
 		for _, err := range validatorErr.(go_validator.ValidationErrors) {

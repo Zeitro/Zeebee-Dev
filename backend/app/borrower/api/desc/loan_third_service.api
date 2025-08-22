@@ -6,10 +6,10 @@ info(
     version: "v1"
 )
 
-type LoanThirdServiceEntity {
+type LoanThirdServiceEntry {
     Id int64 `json:"id,optional"`
     LoanId int64 `json:"loan_id,optional"`
-    Type string `json:"type,optional" validate:"required,oneof=Transaction 'Real Estate'"`
+    Type string `json:"type,optional" validate:"required,oneof='Title Co' 'Escrow Co' Insurance 'Appraisal Scheduling' 'Appraisal Access Contact' 'Appraisal Payment Contact'"`
     Name string `json:"name,optional" validate:"required"`
     Email string `json:"email,optional"`
     Phone string `json:"phone,optional"`

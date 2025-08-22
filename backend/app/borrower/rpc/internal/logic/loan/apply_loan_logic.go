@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/duke-git/lancet/v2/slice"
+	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -12,7 +13,9 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/stringx"
+	"zeebee-backend/common/timex"
 	"zeebee-backend/common/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -27,14 +30,14 @@ type ApplyLoanLogic struct {
 }
 
 type applyLoanModelData struct {
-	loan                     *model.Loan
-	loanBorrower             *model.LoanBorrower
-	loanProperty             *model.LoanProperty
-	loanDemographic          *model.LoanDemographic
-	loanThirdServices        []*model.LoanThirdService
-	applicants               []*model.Applicant
-	experienceThirdServices  []*model.LoanThirdService
-	realEstatesThirdServices []*model.LoanThirdService
+	loan                   *model.Loan
+	loanBorrower           *model.LoanBorrower
+	loanProperty           *model.LoanProperty
+	loanDemographic        *model.LoanDemographic
+	loanThirdServices      []*model.LoanThirdService
+	applicants             []*model.Applicant
+	transactionExperiences []*model.LoanExperience
+	realEstatesExperiences []*model.LoanExperience
 }
 
 func NewApplyLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ApplyLoanLogic {
@@ -45,7 +48,7 @@ func NewApplyLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ApplyLo
 	}
 }
 
-func (l *ApplyLoanLogic) ApplyLoan(in *borrower.ApplyLoanRequest) (resp *borrower.ApplyLoanResponse, err error) {
+func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrower.LoanApplyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -56,11 +59,11 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.ApplyLoanRequest) (resp *borrowe
 		return nil, err
 	}
 	// apply loan
+	var propertyBase *model.PropertyBase
+	var loan *model.Loan
+	var loanBorrower *model.LoanBorrower
 	err = l.svcCtx.LoanRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
 		var innerErr error
-		var propertyBase *model.PropertyBase
-		var loan *model.Loan
-		var loanBorrower *model.LoanBorrower
 
 		// get or create property base
 		propertyBase, innerErr = l.svcCtx.PropertyBaseRepo.GetOrCreateWithTx(l.ctx, tx, data.loanProperty.PropertyBase)
@@ -69,6 +72,11 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.ApplyLoanRequest) (resp *borrowe
 		}
 
 		// save loan
+		idGenerator, innerErr := uuid.NewV7()
+		if innerErr != nil {
+			return innerErr
+		}
+		data.loan.Code = idGenerator.String()
 		loan, innerErr = l.svcCtx.LoanRepo.CreateWithTx(l.ctx, tx, data.loan)
 		if innerErr != nil {
 			return innerErr
@@ -107,20 +115,36 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.ApplyLoanRequest) (resp *borrowe
 			return innerErr
 		}
 
-		// save third service
-		slice.ForEach(data.experienceThirdServices, func(index int, item *model.LoanThirdService) {
-			item.LoanId = loan.Id
-		})
-		_, innerErr = l.svcCtx.LoanThirdServiceRepo.BatchCreateWithTx(l.ctx, tx, data.experienceThirdServices)
-		if innerErr != nil {
-			return innerErr
+		// save experience service
+		if len(data.transactionExperiences) > 0 {
+			slice.ForEach(data.transactionExperiences, func(index int, item *model.LoanExperience) {
+				item.LoanId = loan.Id
+			})
+			_, innerErr = l.svcCtx.LoanExperienceRepo.BatchCreateWithTx(l.ctx, tx, data.transactionExperiences)
+			if innerErr != nil {
+				return innerErr
+			}
 		}
-		slice.ForEach(data.realEstatesThirdServices, func(index int, item *model.LoanThirdService) {
-			item.LoanId = loan.Id
-		})
-		_, innerErr = l.svcCtx.LoanThirdServiceRepo.BatchCreateWithTx(l.ctx, tx, data.realEstatesThirdServices)
-		if innerErr != nil {
-			return innerErr
+
+		if len(data.realEstatesExperiences) > 0 {
+			slice.ForEach(data.realEstatesExperiences, func(index int, item *model.LoanExperience) {
+				item.LoanId = loan.Id
+			})
+			_, innerErr = l.svcCtx.LoanExperienceRepo.BatchCreateWithTx(l.ctx, tx, data.realEstatesExperiences)
+			if innerErr != nil {
+				return innerErr
+			}
+		}
+
+		// third services
+		if len(data.loanThirdServices) > 0 {
+			slice.ForEach(data.loanThirdServices, func(index int, item *model.LoanThirdService) {
+				item.LoanId = loan.Id
+			})
+			_, innerErr = l.svcCtx.LoanThirdServiceRepo.BatchCreateWithTx(l.ctx, tx, data.loanThirdServices)
+			if innerErr != nil {
+				return innerErr
+			}
 		}
 
 		// sync total amount
@@ -128,12 +152,19 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.ApplyLoanRequest) (resp *borrowe
 
 		return innerErr
 	})
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to apply loan")
+	}
 
-	return &borrower.ApplyLoanResponse{}, nil
+	return &borrower.LoanApplyResponse{
+		Data: &borrower.LoanApplyResponseData{
+			Id: loan.Id,
+		},
+	}, nil
 }
 
 // buildModelData return save model data
-func (l *ApplyLoanLogic) buildModelData(reqData *borrower.ApplyLoanRequestData) (data *applyLoanModelData, err error) {
+func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData) (data *applyLoanModelData, err error) {
 
 	if reqData == nil {
 		return nil, errors.WithStack(errors.New("invalid request data"))
@@ -150,13 +181,20 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.ApplyLoanRequestData) 
 		// Stage:         constants.LoanStagePending,
 		// PendingStatus: constants.LoanPendingStatusQuoting,
 	}
-	err = copier.CopyWithOption(loan, reqData, copier.Option{IgnoreEmpty: true, DeepCopy: true})
+	err = copier.CopyWithOption(loan, reqData, copier.Option{
+		IgnoreEmpty: true,
+		DeepCopy:    true,
+		Converters: []copier.TypeConverter{
+			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
+		},
+	})
 	if err != nil {
 		return nil, errorx.GetFailedTransErr(err)
 	}
 	loan.BorrowerId = reqData.BorrowerId
 	loan.Stage = constants.LoanStagePending
 	loan.PendingStatus = constants.LoanPendingStatusQuoting
+	loan.Source = constants.LoanSourceSystem
 	lender, err := l.svcCtx.LenderRepo.FindOneById(l.ctx, reqData.LenderId)
 	if err != nil {
 		return nil, err
@@ -168,14 +206,27 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.ApplyLoanRequestData) 
 	loanBorrower := &model.LoanBorrower{
 		MailingAddress: types.Address{},
 	}
-	err = copier.CopyWithOption(loanBorrower, reqData.LoanBorrower, copier.Option{IgnoreEmpty: true, DeepCopy: true, CaseSensitive: true})
+	err = copier.CopyWithOption(loanBorrower, reqData.LoanBorrower, copier.Option{
+		IgnoreEmpty:   true,
+		DeepCopy:      true,
+		CaseSensitive: true,
+		Converters: []copier.TypeConverter{
+			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
+		},
+	})
 	if err != nil {
 		return nil, errorx.GetFailedTransErr(err)
 	}
 
 	// applicants
 	applicants := make([]*model.Applicant, 0)
-	err = copier.CopyWithOption(applicants, reqData.Applicants, copier.Option{IgnoreEmpty: true, DeepCopy: true})
+	err = copier.CopyWithOption(&applicants, &reqData.Applicants, copier.Option{
+		IgnoreEmpty: true,
+		DeepCopy:    true,
+		Converters: []copier.TypeConverter{
+			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
+		},
+	})
 	if err != nil {
 		return nil, errorx.GetFailedTransErr(err)
 	}
@@ -188,40 +239,78 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.ApplyLoanRequestData) 
 	loanProperty := &model.LoanProperty{
 		PropertyBase: &model.PropertyBase{},
 	}
-	err = copier.CopyWithOption(loanProperty, reqData.LoanProperty, copier.Option{IgnoreEmpty: true, DeepCopy: true})
+	err = copier.CopyWithOption(loanProperty, reqData.LoanProperty, copier.Option{
+		IgnoreEmpty: true,
+		DeepCopy:    true,
+		Converters: []copier.TypeConverter{
+			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
+		},
+	})
 	if err != nil {
 		return nil, errorx.GetFailedTransErr(err)
 	}
 	loanProperty.PropertyBase.BorrowerId = reqData.BorrowerId
 
-	// experience_third_services
-	experienceThirdServices := make([]*model.LoanThirdService, 0)
-	err = copier.CopyWithOption(experienceThirdServices, reqData.ExperienceServices, copier.Option{IgnoreEmpty: true, DeepCopy: true})
+	// transaction experience
+	transactionExperiences := make([]*model.LoanExperience, 0)
+	err = copier.CopyWithOption(&transactionExperiences, &reqData.TransactionExperiences, copier.Option{
+		IgnoreEmpty: true,
+		DeepCopy:    true,
+		Converters: []copier.TypeConverter{
+			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
+		},
+	})
 	if err != nil {
 		return nil, errorx.GetFailedTransErr(err)
 	}
 
-	// real_estates_third_services
-	realEstatesThirdServices := make([]*model.LoanThirdService, 0)
-	err = copier.CopyWithOption(realEstatesThirdServices, reqData.RealEstateServices, copier.Option{IgnoreEmpty: true, DeepCopy: true})
+	// real_estates experience
+	realEstatesExperiences := make([]*model.LoanExperience, 0)
+	err = copier.CopyWithOption(&realEstatesExperiences, &reqData.RealEstateExperiences, copier.Option{
+		IgnoreEmpty: true,
+		DeepCopy:    true,
+		Converters: []copier.TypeConverter{
+			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
+		},
+	})
+	if err != nil {
+		return nil, errorx.GetFailedTransErr(err)
+	}
+
+	// third services
+	loanThirdServices := make([]*model.LoanThirdService, 0)
+	err = copier.CopyWithOption(&loanThirdServices, &reqData.ThirdServices, copier.Option{
+		IgnoreEmpty: true,
+		DeepCopy:    true,
+		Converters: []copier.TypeConverter{
+			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
+		},
+	})
 	if err != nil {
 		return nil, errorx.GetFailedTransErr(err)
 	}
 
 	// demographic
 	loanDemographic := &model.LoanDemographic{}
-	err = copier.CopyWithOption(loanDemographic, reqData.LoanDemographic, copier.Option{IgnoreEmpty: true, DeepCopy: true})
+	err = copier.CopyWithOption(&loanDemographic, &reqData.LoanDemographic, copier.Option{
+		IgnoreEmpty: true,
+		DeepCopy:    true,
+		Converters: []copier.TypeConverter{
+			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
+		},
+	})
 	if err != nil {
 		return nil, errorx.GetFailedTransErr(err)
 	}
 	data = &applyLoanModelData{
-		loan:                     loan,
-		loanProperty:             loanProperty,
-		loanBorrower:             loanBorrower,
-		applicants:               applicants,
-		loanThirdServices:        experienceThirdServices,
-		realEstatesThirdServices: realEstatesThirdServices,
-		loanDemographic:          loanDemographic,
+		loan:                   loan,
+		loanProperty:           loanProperty,
+		loanBorrower:           loanBorrower,
+		applicants:             applicants,
+		transactionExperiences: transactionExperiences,
+		realEstatesExperiences: realEstatesExperiences,
+		loanDemographic:        loanDemographic,
+		loanThirdServices:      loanThirdServices,
 	}
 	return
 }

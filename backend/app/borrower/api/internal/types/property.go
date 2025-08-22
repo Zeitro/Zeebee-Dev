@@ -8,18 +8,18 @@ type PropertyDetailRequest struct {
 }
 
 type PropertyDetailResponse struct {
-	Id                        int64         `json:"id"`
-	PropertyType              string        `json:"property_type"`
-	TotalAmount               float64       `json:"total_amount"`
-	Unit                      int32         `json:"unit"`
-	Address                   AddressEntity `json:"address"`
-	TotalClosingFundAmount    float64       `json:"total_closing_fund_amount"`
-	TotalPrincipalAmount      float64       `json:"total_principal_amount"`
-	AvgRate                   float32       `json:"avg_rate"`
-	TotalMonthlyPaymentAmount float64       `json:"total_monthly_payment_amount"`
-	PendingLoans              []LoanEntity  `json:"pending_loans"`
-	ActiveLoans               []LoanEntity  `json:"active_loans"`
-	ArchivedLoans             []LoanEntity  `json:"archived_loans"`
+	Id                        int64        `json:"id"`
+	PropertyType              string       `json:"property_type"`
+	TotalAmount               float64      `json:"total_amount"`
+	Unit                      int32        `json:"unit"`
+	Address                   AddressEntry `json:"address"`
+	TotalClosingFundAmount    float64      `json:"total_closing_fund_amount"`
+	TotalPrincipalAmount      float64      `json:"total_principal_amount"`
+	AvgRate                   float32      `json:"avg_rate"`
+	TotalMonthlyPaymentAmount float64      `json:"total_monthly_payment_amount"`
+	PendingLoans              []LoanEntry  `json:"pending_loans"`
+	ActiveLoans               []LoanEntry  `json:"active_loans"`
+	ArchivedLoans             []LoanEntry  `json:"archived_loans"`
 }
 
 type PropertyPageRequest struct {
@@ -30,9 +30,9 @@ type PropertyPageRequest struct {
 }
 
 type PropertyPageResponse struct {
-	Page      int64                `json:"page"`
-	Limit     int64                `json:"limit"`
-	Total     int64                `json:"total"`
-	TotalPage int64                `json:"total_page"`
-	List      []PropertyPageEntity `json:"list"`
+	Page      int64               `json:"page"`
+	Limit     int64               `json:"limit"`
+	Total     int64               `json:"total"`
+	TotalPage int64               `json:"total_page"`
+	List      []PropertyPageEntry `json:"list"`
 }

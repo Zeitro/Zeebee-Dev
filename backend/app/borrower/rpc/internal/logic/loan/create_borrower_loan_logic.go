@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/duke-git/lancet/v2/slice"
+	"github.com/google/uuid"
 	"github.com/lib/pq"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -57,6 +58,11 @@ func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.LoanCreateRequ
 		}
 
 		// loan.PropertyId = property.Id
+		idGenerator, innerErr := uuid.NewV7()
+		if innerErr != nil {
+			return innerErr
+		}
+		loan.Code = idGenerator.String()
 		loan, innerErr = l.svcCtx.LoanRepo.CreateWithTx(l.ctx, tx, loan)
 		if innerErr != nil {
 			return innerErr

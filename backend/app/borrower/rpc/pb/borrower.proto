@@ -233,12 +233,12 @@ message LoanEntry {
   double arv = 41;
   double ltv = 42;
   double liquidity_amount = 43;
-  LoanBudgetEntity budget = 44;
+  LoanBudgetEntry budget = 44;
   bool mid_construction = 45;
   int32 est_credit_score = 46;
   double est_yearly_rental_income = 47;
   float dscr = 48;
-  double reserves = 49;
+  double reserves_amount = 49;
   bool has_delayed_financing = 50;
   bool has_collateralized_blanket = 51;
   bool has_properties_vacant = 52;
@@ -246,7 +246,7 @@ message LoanEntry {
   string additional_info = 54;
 }
 
-message  LoanBudgetEntity {
+message  LoanBudgetEntry {
   float original_budget = 1;
   float remaining_budget = 2;
   float cost_spent_to_date_amount = 3;
@@ -450,21 +450,23 @@ message LoanApplyRequestData {
   double arv = 25;
   double ltv = 26;
   double liquidity_amount = 27;
-  LoanBudgetEntity budget = 28;
+  LoanBudgetEntry budget = 28;
   bool mid_construction = 29;
   int32 est_credit_score = 30;
   double est_yearly_rental_income = 31;
   float dscr = 32;
-  double reserves = 33;
+  double reserves_amount = 33;
   bool has_delayed_financing = 34;
   bool has_collateralized_blanket = 35;
   bool has_properties_vacant = 36;
   bool has_short_term_rental = 37;
   string additional_info = 38;
-  repeated LoanThirdServiceEntity experience_services = 39;
-  repeated LoanThirdServiceEntity real_estate_services = 40;
-  LoanBorrowerEntity loan_borrower = 41;
-  LoanDemographicEntity loan_demographic = 42;
+  repeated LoanExperienceEntry transaction_experiences = 39;
+  repeated LoanExperienceEntry real_estate_experiences = 40;
+  LoanBorrowerEntry loan_borrower = 41;
+  LoanDemographicEntry loan_demographic = 42;
+  float yearly_liability_expense = 43;
+  repeated LoanThirdServiceEntry third_services = 44;
 }
 
 message LoanApplyResponse {
@@ -489,7 +491,7 @@ service Loan {
 
 // ===================== property service ======================
 
-message PropertyPageEntity{
+message PropertyPageEntry{
   int64 id = 1;
   string property_type = 2;
   double total_amount = 3;
@@ -536,7 +538,7 @@ message PropertyPageResponseData {
   int64 limit = 2;
   int64 total = 3;
   int64 total_page = 4;
-  repeated PropertyPageEntity list = 5;
+  repeated PropertyPageEntry list = 5;
 }
 
 message PropertyDetailRequest {
@@ -592,7 +594,7 @@ service Applicant {
 }
 
 // ===================== loan borrower service ======================
-message LoanBorrowerEntity{
+message LoanBorrowerEntry{
   int64 id = 1;
   int64 loan_id = 2;
   string type = 3;
@@ -607,7 +609,7 @@ message LoanBorrowerEntity{
 }
 
 // ===================== lender service ======================
-message LenderEntity{
+message LenderEntry{
   int64 id = 1;
   string name = 2;
   AddressEntry address = 3;
@@ -615,11 +617,11 @@ message LenderEntity{
 }
 
 // ===================== loan experience service ======================
-message LoanExperienceEntity{
+message LoanExperienceEntry{
   int64 id = 1;
   int64 loan_id = 2;
-  string city = 3;
-  string state = 4;
+  string city = 3 [deprecated = true];
+  string state = 4 [deprecated = true];
   string ownership_on_title = 5;
   string property_type = 6;
   double purchase_amount = 7;
@@ -630,10 +632,11 @@ message LoanExperienceEntity{
   double profit = 12;
   bool is_tenant_occupied = 13;
   string type = 14;
+  AddressEntry address = 15;
 }
 
 // ===================== loan third service service ======================
-message LoanThirdServiceEntity{
+message LoanThirdServiceEntry{
   int64 id = 1;
   int64 loan_id = 2;
   string type = 3;
@@ -643,17 +646,17 @@ message LoanThirdServiceEntity{
 }
 
 // ===================== loan demographic service ======================
-message LoanDemographicEntity{
+message LoanDemographicEntry{
   int64 id = 1;
   int64 loan_id = 2;
-  LoanDemographicPropertyEntity property = 3;
-  LoanDemographicEthnicityEntity ethnicity = 4;
-  LoanDemographicRaceEntity race = 5;
+  LoanDemographicPropertyEntry property = 3;
+  LoanDemographicEthnicityEntry ethnicity = 4;
+  LoanDemographicRaceEntry race = 5;
   string sex = 6;
-  LoanDemographicExtraDemographicEntity extra_demographic = 7;
+  LoanDemographicExtraDemographicEntry extra_demographic = 7;
 }
 
-message LoanDemographicPropertyEntity {
+message LoanDemographicPropertyEntry {
   bool as_primary_resident = 1;
   bool has_transaction_relationship = 2;
   bool has_borrowed_money = 3;
@@ -673,7 +676,7 @@ message LoanDemographicPropertyEntity {
   bool bankruptcy_chapter13 = 17;
 }
 
-message LoanDemographicEthnicityEntity {
+message LoanDemographicEthnicityEntry {
   bool is_hispanic_or_latino = 1;
   bool is_other_hispanic_or_latino = 2;
   string other_hispanic_or_latino_name = 3;
@@ -683,7 +686,7 @@ message LoanDemographicEthnicityEntity {
   bool hidden = 7;
 }
 
-message LoanDemographicRaceEntity {
+message LoanDemographicRaceEntry {
   bool is_american_indian_or_alaska_native = 1;
   string american_indian_or_alaska_native_name = 2;
   bool is_asian = 3;
@@ -704,7 +707,7 @@ message LoanDemographicRaceEntity {
   bool hidden = 18;
 }
 
-message LoanDemographicExtraDemographicEntity {
+message LoanDemographicExtraDemographicEntry {
   bool is_ethnicity_collected_by_observation = 1;
   bool is_sex_collected_by_observation = 2;
   bool is_race_collected_by_observation = 3;
