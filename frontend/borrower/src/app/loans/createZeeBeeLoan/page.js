@@ -14,6 +14,7 @@ import BorrowerInfo from '../components/CreateZeeBee/BorrowerInfo';
 import PropertyInfo from '../components/CreateZeeBee/PropertyInfo';
 import LoanDetail from '../components/CreateZeeBee/Loan';
 import Experience from '../components/CreateZeeBee/Experience';
+import ThirdPartyService from '../components/CreateZeeBee/ThirdPartyService';
 const CreateZeeBeeLoan = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -58,7 +59,10 @@ const CreateZeeBeeLoan = () => {
 			<PropertyInfo key="0-PropertyInfo" form={form} />,
 			<LoanDetail key="1-LoanDetail" form={form} />,
 		],
-		[<Experience key="0-Experience" form={form} />],
+		[
+			<Experience key="0-Experience" form={form} />,
+			<ThirdPartyService key="1-ThirdPartyService" form={form} />,
+		],
 		<LoanDetail key="2-LoanDetail" form={form} />,
 		<PropertyInfo key="0-PropertyInfo" form={form} />, // [<CreateProperty key="0" stage={loanData?.[0]?.stage} stepBtn={stepBtn} form={form} gutter={16} isRequestProperty={searchParams.has('propertyId')} />]
 		// 1: (

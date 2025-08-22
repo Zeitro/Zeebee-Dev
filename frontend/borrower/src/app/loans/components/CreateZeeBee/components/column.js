@@ -1,6 +1,7 @@
 'use client';
 import FilterField from '@/components/FilterField';
 import { AddEditBtn } from './AddEditBtn';
+import { DeleteBtn } from '@/components/NewModal/BtnPopUpModal';
 export const useColumnByZeeBeeLoan = () => {
 	const beforeCommon = [
 		{
@@ -82,7 +83,7 @@ export const useColumnByZeeBeeLoan = () => {
 		},
 	];
 
-	const action = {
+	const getAction = (title, deleteTitle) => ({
 		title: 'Action',
 		dataIndex: 'action',
 		key: 'action',
@@ -97,24 +98,26 @@ export const useColumnByZeeBeeLoan = () => {
 						{
 							filterType: 'button',
 							children: (
-								<AddEditBtn type="link" size="small" rowData={v} icon={null}>
+								<AddEditBtn
+									type="link"
+									size="small"
+									rowData={v}
+									icon={null}
+									title={title}
+								>
 									Edit
 								</AddEditBtn>
 							),
 						},
 						{
 							filterType: 'button',
-							children: (
-								<AddEditBtn type="link" size="small" rowData={v} danger icon={null}>
-									Delete
-								</AddEditBtn>
-							),
+							children: <DeleteBtn title={deleteTitle}>Delete</DeleteBtn>,
 						},
 					]}
 				/>
 			);
 		},
-	};
+	});
 	const transactionHistoryColumns = [
 		...beforeCommon,
 		{
@@ -125,7 +128,10 @@ export const useColumnByZeeBeeLoan = () => {
 			width: 240,
 		},
 		...afterCommon,
-		action,
+		getAction(
+			'Edit transaction history',
+			'Are you sure you want to delete this transaction history?',
+		),
 	];
 
 	const realEstateColumns = [
@@ -138,7 +144,44 @@ export const useColumnByZeeBeeLoan = () => {
 			width: 140,
 		},
 		...afterCommon,
-		action,
+		getAction('Edit real estate', 'Are you sure you want to delete this real state?'),
 	];
-	return { transactionHistoryColumns, realEstateColumns };
+
+	const thirdPartyServicesColumns = [
+		{
+			title: 'Service type',
+			dataIndex: 'service_type',
+			key: 'service_type',
+			ellipsis: true,
+		},
+		{
+			title: 'Name',
+			dataIndex: 'Name',
+			key: 'Name',
+			ellipsis: true,
+		},
+		{
+			title: 'Company',
+			dataIndex: 'company',
+			key: 'company',
+			ellipsis: true,
+		},
+		{
+			title: 'Phone',
+			dataIndex: 'phone',
+			key: 'phone',
+			ellipsis: true,
+		},
+		{
+			title: 'Email',
+			dataIndex: 'email',
+			key: 'email',
+			ellipsis: true,
+		},
+		getAction(
+			'Edit third party services',
+			'Are you sure you want to delete this third party service?',
+		),
+	];
+	return { transactionHistoryColumns, realEstateColumns, thirdPartyServicesColumns };
 };
