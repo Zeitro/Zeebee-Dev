@@ -9,68 +9,10 @@ import (
 	"zeebee-backend/common/constants"
 )
 
-// CREATE TABLE "public"."loans" (
-//
-//	"id" int4 NOT NULL DEFAULT nextval('loans_id_seq'::regclass),
-//	"borrower_id" int4 NOT NULL DEFAULT 0,
-//	"lender_id" int4 NOT NULL DEFAULT 0,
-//	"stage" varchar(10) COLLATE "pg_catalog"."default" NOT NULL DEFAULT 'Pending'::character varying,
-//	"pending_status" varchar(10) COLLATE "pg_catalog"."default" NOT NULL DEFAULT 'Quoting'::character varying,
-//	"loan_purpose" varchar(20) COLLATE "pg_catalog"."default" NOT NULL DEFAULT 'Purchase'::character varying,
-//	"total_amount" numeric(10,2) NOT NULL DEFAULT 0,
-//	"initial_amount" numeric(10,2) NOT NULL DEFAULT 0,
-//	"closing_date" date,
-//	"holdback_amount" numeric(10,2) NOT NULL DEFAULT 0,
-//	"rate" numeric(4,2) NOT NULL DEFAULT 0,
-//	"closing_fund" numeric(10,2) NOT NULL DEFAULT 0,
-//	"created_at" timestamptz(6) NOT NULL DEFAULT now(),
-//	"updated_at" timestamptz(6) NOT NULL DEFAULT now(),
-//	"is_del" int2 NOT NULL DEFAULT 0,
-//	"loan_type" varchar(255) COLLATE "pg_catalog"."default" NOT NULL DEFAULT 'Bridge'::character varying,
-//	"paid_off_date" date,
-//	"principal_amount" numeric(10,2) NOT NULL DEFAULT 0,
-//	"monthly_payment" numeric(10,2) NOT NULL DEFAULT 0,
-//	"maturity_date" date,
-//	"holdback_released_amount" numeric(10,2) NOT NULL DEFAULT 0,
-//	"lender_company" varchar(255) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
-//	"service_company" varchar(255) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
-//	"business_strategy" text[] COLLATE "pg_catalog"."default" DEFAULT '{}'::text[],
-//	"source" varchar(10) COLLATE "pg_catalog"."default" NOT NULL DEFAULT 'system'::character varying,
-//	"lien_position" varchar(255) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
-//	"prepayment_penalty" int2 NOT NULL DEFAULT 0,
-//	"existing_lender_company" varchar(255) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
-//	"existing_rate" numeric(4,2) NOT NULL DEFAULT 0,
-//	"existing_maturity_date" date,
-//	"purchase_amount" numeric(10,2) NOT NULL DEFAULT 0,
-//	"purchase_date" date,
-//	"has_assignment_fee" bool NOT NULL DEFAULT false,
-//	"assignment_fee_amount" numeric(10,2) NOT NULL DEFAULT 0,
-//	"has_subordinate_debt" bool NOT NULL DEFAULT false,
-//	"subordinate_debt_amount" numeric(10,2) NOT NULL DEFAULT 0,
-//	"scheduled_close_escrow_date" date,
-//	"loan_term" int2 NOT NULL DEFAULT 0,
-//	"arv" numeric(10,2) NOT NULL DEFAULT 0,
-//	"ltv" numeric(10,2) NOT NULL DEFAULT 0,
-//	"liquidity_amount" numeric(10,2) NOT NULL DEFAULT 0,
-//	"budget" jsonb NOT NULL DEFAULT '{}'::jsonb,
-//	"mid_construction" bool NOT NULL DEFAULT false,
-//	"est_credit_score" int2 NOT NULL DEFAULT 0,
-//	"est_yearly_rental_income" numeric(10,2) NOT NULL DEFAULT 0,
-//	"yearly_liability_expense" numeric(10,2) NOT NULL DEFAULT 0,
-//	"dscr" numeric(8,2) NOT NULL DEFAULT 0,
-//	"reserves" numeric(10,2) NOT NULL DEFAULT 0,
-//	"has_delayed_financing" bool NOT NULL DEFAULT false,
-//	"has_collateralized_blanket" bool NOT NULL DEFAULT false,
-//	"has_properties_vacant" bool NOT NULL DEFAULT false,
-//	"has_short_term_rental" bool NOT NULL DEFAULT false,
-//	"additional_info" varchar(3000) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
-//	CONSTRAINT "loans_pkey" PRIMARY KEY ("id")
-//
-// )
 type Loan struct {
 	Base
-	BorrowerId int64 `gorm:"column:borrower_id;not null;default:0" json:"borrower_id"`
-	// PropertyId             int64                       `gorm:"column:property_id;not null;default:0" json:"property_id"`
+	Code                     string                      `gorm:"column:code;size:100;not null;default:'';<-:create" json:"code"`
+	BorrowerId               int64                       `gorm:"column:borrower_id;not null;default:0" json:"borrower_id"`
 	LenderId                 int64                       `gorm:"column:lender_id;not null;default:0" json:"lender_id"`
 	LenderCompany            string                      `gorm:"column:lender_company;size:100;not null;default:''" json:"lender_company"`
 	ServiceCompany           string                      `gorm:"column:service_company;size:100;not null;default:''" json:"service_company"`
@@ -107,12 +49,12 @@ type Loan struct {
 	Arv                      float64                     `gorm:"column:arv;type:numeric(10,2);not null;default:0" json:"arv"`
 	Ltv                      float64                     `gorm:"column:ltv;type:numeric(10,2);not null;default:0" json:"ltv"`
 	LiquidityAmount          float64                     `gorm:"column:liquidity_amount;type:numeric(10,2);not null;default:0" json:"liquidity_amount"`
-	Budget                   types.LoanBudget            `gorm:"column:budget;type:jsonb;not null;default:'{}'" json:"budget"`
+	Budget                   types.LoanBudget            `gorm:"column:budget;type:jsonb;not null;default:'{}';serializer:json" json:"budget"`
 	MidConstruction          bool                        `gorm:"column:mid_construction;not null;default:false" json:"mid_construction"`
 	EstCreditScore           int32                       `gorm:"column:est_credit_score;type:int2;not null;default:0" json:"est_credit_score"`
 	EstYearlyRentalIncome    float64                     `gorm:"column:est_yearly_rental_income;type:numeric(10,2);not null;default:0" json:"est_yearly_rental_income"`
 	Dscr                     float64                     `gorm:"column:dscr;type:numeric(10,2);not null;default:0" json:"dscr"`
-	Reserves                 float64                     `gorm:"column:reserve;type:numeric(10,2);not null;default:0" json:"reserves"`
+	ReservesAmount           float64                     `gorm:"column:reserves_amount;type:numeric(10,2);not null;default:0" json:"reserves_amount"`
 	HasDelayedFinancing      bool                        `gorm:"column:has_delayed_financing;not null;default:false" json:"has_delayed_financing"`
 	HasCollateralizedBlanket bool                        `gorm:"column:has_collateralized_blanket;not null;default:false" json:"has_collateralized_blanket"`
 	HasPropertiesVacant      bool                        `gorm:"column:has_properties_vacant;not null;default:false" json:"has_properties_vacant"`

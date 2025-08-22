@@ -85,7 +85,7 @@ entity "loans" {
     * est_yearly_rental_income numeric(10,2)
     * yearly_liability_expense numeric(10,2)
     * dscr numeric(8,4)
-    * reserves numeric(10,2)
+    * reserves_amount numeric(10,2)
     * has_delayed_financing boolean
     * has_collateralized_blanket boolean
     * has_properties_vacant boolean
@@ -146,8 +146,6 @@ entity "loan_experiences"{
         * is_del int2
         ---
         * loan_id int4
-        * city varchar(20)
-        * state varchar(10)
         * ownership_on_title varchar(100)
         * property_type varchar(50)
         * purchase_amount numeric(10,2)
@@ -158,6 +156,7 @@ entity "loan_experiences"{
         * profit numeric(10,2)
         * is_tenant_occupied boolean
         * type varchar(10)
+        * address jsonb
 }
 
 note right of loan_experiences
