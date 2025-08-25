@@ -3,19 +3,23 @@ import React, { useEffect } from 'react';
 import { Button, Checkbox, Form, Input } from 'antd';
 import Item from 'antd/es/form/FormItem';
 import Password from 'antd/es/input/Password';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useUserStore } from '@/store/user';
 import { setCookie, clearAllCookie } from '@/lib/cookie';
 import { localStorageUtil } from '@/lib/local';
 const Login = () => {
 	const [form] = Form.useForm();
 	const router = useRouter();
+	const pathname = usePathname();
 	const { getUserInfo, login, clearUserInfo } = useUserStore();
 
 	useEffect(() => {
 		clearUserInfo();
 		clearAllCookie();
 		localStorageUtil.clear();
+		if (pathname !== '/login') {
+			router.replace('/login');
+		}
 	}, []);
 
 	const onFinish = async () => {

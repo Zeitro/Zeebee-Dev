@@ -4,8 +4,8 @@ import NewTable from '@/components/NewTable';
 import { useColumnByZeeBeeLoan } from './components/column';
 import { AddEditBtn } from './components/AddEditBtn';
 const Experience = () => {
-	const [historyList, setHistoryList] = useState([{}]);
-	const [realEstateList, setRealEstateList] = useState([{}]);
+	const [historyList, setHistoryList] = useState([{ id: 1 }]);
+	const [realEstateList, setRealEstateList] = useState([{ id: 2 }]);
 	const { transactionHistoryColumns, realEstateColumns } = useColumnByZeeBeeLoan();
 
 	return (

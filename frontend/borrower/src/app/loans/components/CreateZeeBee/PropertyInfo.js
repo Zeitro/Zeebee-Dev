@@ -3,6 +3,7 @@ import styles from './index.module.scss';
 import { Row, Col, Form, Radio, Select, Input, InputNumber } from 'antd';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
 import { useGetOptions } from '@/hooks/useGetOptions';
+import { layoutCol, titleCol } from '@/enum/common';
 const PropertyInfo = ({ gutter = 24, form, addressProps }) => {
 	const { loanPurposeOptions, loanTypeOptions, propertyTypeOptions } = useGetOptions([
 		{
@@ -19,14 +20,10 @@ const PropertyInfo = ({ gutter = 24, form, addressProps }) => {
 		},
 	]);
 	const borrowerType = Form.useWatch('borrower_type', form);
-	const layoutCol = {
-		xs: 24,
-		sm: 24,
-	};
 
 	return (
 		<Row className={styles.createZeeBee} gutter={gutter}>
-			<Col {...layoutCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">
+			<Col {...titleCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">
 				Property information
 			</Col>
 			<AddressForm
@@ -39,6 +36,9 @@ const PropertyInfo = ({ gutter = 24, form, addressProps }) => {
 				addressLabel="Subject property address 1"
 				addressLabel2="Subject property address 2"
 				form={form}
+				stateCol={{ ...layoutCol, md: 8 }}
+				cityCol={{ ...layoutCol, md: 8 }}
+				zipCol={{ ...layoutCol, md: 8 }}
 			/>
 			<Col {...layoutCol}>
 				<Form.Item
@@ -97,7 +97,7 @@ const PropertyInfo = ({ gutter = 24, form, addressProps }) => {
 						min={1}
 						max={10}
 						controls={false}
-						placeholder="Enter number of unit"
+						placeholder="Enter number of units"
 					/>
 				</Form.Item>
 			</Col>

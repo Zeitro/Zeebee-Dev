@@ -16,17 +16,17 @@ import InputNumAmount from '@/components/InputNumAmount';
 import { yesNoOptions } from '@/enum/common';
 import { formatStr } from '@/lib/date';
 import { useGetOptions } from '@/hooks/useGetOptions';
+import { layoutCol, titleCol } from '@/enum/common';
 const MAX_COUNT = 5;
 const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 	const loanPurpose = Form.useWatch('loan_purpose', form);
 	const loanType = Form.useWatch('loan_type', form) || 'Rental';
 	const yearly_rental_income = Form.useWatch('yearly_rental_income', form);
 	const yearly_liability_expenses = Form.useWatch('yearly_liability_expenses', form);
+	const assignment_fee = Form.useWatch('assignment_fee', form);
+	const subordinate_debt = Form.useWatch('subordinate_debt', form);
 	const isPurchase = loanPurpose === 'purchase';
-	const layoutCol = {
-		xs: 24,
-		sm: 24,
-	};
+
 	const { businessStrategyOptions, getSelectFormDom } = useGetOptions([
 		{
 			key: 'business_strategy',
@@ -42,7 +42,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 	}, [yearly_rental_income, yearly_liability_expenses]);
 	return (
 		<Row className={styles.createZeeBee} gutter={gutter}>
-			<Col {...layoutCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">
+			<Col {...titleCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">
 				Loan detail
 			</Col>
 			<Col {...layoutCol}>
@@ -74,21 +74,22 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 							/>
 						</Form.Item>
 					</Col>
-					<Col {...layoutCol} md={12}>
-						<Form.Item
-							label=" "
-							name="assignment_fee"
-							rules={[
-								{
-									required: true,
-									message: 'Please enter assignment fee!',
-								},
-							]}
-							className={styles.assignmentFee}
-						>
-							<InputNumAmount placeholder="Enter assignment fee" />
-						</Form.Item>
-					</Col>
+					{assignment_fee && (
+						<Col {...layoutCol} md={12}>
+							<Form.Item
+								label="Assignment fee"
+								name="assignment_fee"
+								rules={[
+									{
+										required: true,
+										message: 'Please enter assignment fee amount!',
+									},
+								]}
+							>
+								<InputNumAmount placeholder="Enter assignment fee amount" />
+							</Form.Item>
+						</Col>
+					)}
 				</>
 			)}
 
@@ -167,7 +168,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 				<Form.Item
 					label="Loan term requested" // 借款期限
 					name="term"
-					rules={[{ required: true, message: 'Please select loan term requested!' }]}
+					rules={[{ required: true, message: 'Please enter loan term requested!' }]}
 				>
 					<InputNumber
 						min={1}
@@ -175,6 +176,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 						controls={false}
 						suffix="Months"
 						style={{ width: '100%' }}
+						placeholder="Enter loan term requested"
 					/>
 				</Form.Item>
 			</Col>
@@ -224,13 +226,16 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 							<InputNumAmount placeholder="Enter outstanding Loan Amount" />
 						</Form.Item>
 					</Col>
-					{getSelectFormDom({
-						label: 'Existing Lender', // 现有贷款方，出借人
-						name: 'Existing Lender',
-						placeholder: 'Select existing Lender',
-						valueName: 'lenderOptions',
-						requiredMessage: 'Please enter existing Lender!',
-					})}
+					{getSelectFormDom(
+						{
+							label: 'Existing Lender', // 现有贷款方，出借人
+							name: 'Existing Lender',
+							placeholder: 'Select existing Lender',
+							valueName: 'lenderOptions',
+							requiredMessage: 'Please enter existing Lender!',
+						},
+						layoutCol,
+					)}
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Existing loan rate" // 现有贷款利率
@@ -258,6 +263,36 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 							<CommonFormDate placeholder="Enter existing loan maturity date" />
 						</Form.Item>
 					</Col>
+					<Col {...layoutCol}>
+						<Form.Item
+							label="Subordinate debt"
+							name="subordinate_debt"
+							rules={[
+								{
+									required: true,
+									message: 'Please select subordinate debt!',
+								},
+							]}
+						>
+							<Radio.Group options={yesNoOptions} className={styles.yesNo} />
+						</Form.Item>
+					</Col>
+					{subordinate_debt && (
+						<Col {...layoutCol}>
+							<Form.Item
+								label="Subordinate debt"
+								name="subordinate_debt-m"
+								rules={[
+									{
+										required: true,
+										message: 'Please select subordinate debt amount!',
+									},
+								]}
+							>
+								<InputNumAmount placeholder="Enter subordinate debt amount" />
+							</Form.Item>
+						</Col>
+					)}
 				</>
 			)}
 			<Col {...layoutCol}>
@@ -274,16 +309,19 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 					<InputNumAmount placeholder="Enter liquidity" />
 				</Form.Item>
 			</Col>
-			{getSelectFormDom({
-				label: 'Buidiness strategy', // 商业策略
-				name: 'buidiness_strategy',
-				mode: 'multiple',
-				placeholder: 'Select buidiness strategy',
-				valueName: 'businessStrategyOptions',
-				requiredMessage: 'Please enter buidiness strategy!',
-			})}
+			{getSelectFormDom(
+				{
+					label: 'Buidiness strategy', // 商业策略
+					name: 'buidiness_strategy',
+					mode: 'multiple',
+					placeholder: 'Select buidiness strategy',
+					valueName: 'businessStrategyOptions',
+					requiredMessage: 'Please enter buidiness strategy!',
+				},
+				layoutCol,
+			)}
 			{!isPurchase && (
-				<Col {...layoutCol} md={12}>
+				<Col {...layoutCol}>
 					<Form.Item
 						label="Mid construction" // 中建
 						name="midConstruction"
@@ -298,7 +336,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 					</Form.Item>
 				</Col>
 			)}
-			<Col {...layoutCol} className="!text-xl font-medium text-[#000000a6] pb-6">
+			<Col {...titleCol} className="!text-xl font-medium text-[#000000a6] pb-6">
 				Budget detail
 			</Col>
 			{['Rehab', 'Ground up construction'].includes(loanType) && (
@@ -351,7 +389,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 				<>
 					<Col {...layoutCol}>
 						<Form.Item
-							label="Est. Net yearly rental income" // 预计年租金净收入
+							label="Estimated net yearly rental income" // 预计年租金净收入
 							name="yearly_rental_income"
 							rules={[
 								{
@@ -363,7 +401,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 							<InputNumAmount placeholder="Enter income amount" />
 						</Form.Item>
 					</Col>
-					<Col {...layoutCol} md={12}>
+					<Col {...layoutCol}>
 						<Form.Item
 							label="Yearly liability expenses" // 年度负债支出
 							name="yearly_liability_expenses"
@@ -377,7 +415,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 							<InputNumAmount placeholder="Enter yearly liability expenses" />
 						</Form.Item>
 					</Col>
-					<Col {...layoutCol} md={12}>
+					<Col {...layoutCol}>
 						<Form.Item
 							label="DSCR" // 债务覆盖率，衡量企业偿债能力的关键指标
 							name="DSCR"
@@ -393,7 +431,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 							/>
 						</Form.Item>
 					</Col>
-					<Col {...layoutCol} md={12}>
+					<Col {...layoutCol}>
 						<Form.Item
 							label="Reserves" // 储备金
 							name="reserves"
@@ -415,9 +453,10 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 							requiredMessage: 'Please enter Prepayment penalty!',
 							suffixIcon: <div className="text-sm">Months</div>,
 						},
-						{ md: 12 },
+						layoutCol,
 					)}
-					<Col {...layoutCol} md={12}>
+					<Col {...layoutCol}></Col>
+					<Col {...layoutCol}>
 						<Form.Item
 							label="Delayed financing" // 延期融资
 							name="delayed_financing"
@@ -431,7 +470,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 							<Radio.Group options={yesNoOptions} className={styles.yesNo} />
 						</Form.Item>
 					</Col>
-					<Col {...layoutCol} md={12}>
+					<Col {...layoutCol}>
 						<Form.Item
 							label="Collateralized/Blanket" // 抵押/保函
 							name="collateralized_blanket"
@@ -445,7 +484,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 							<Radio.Group options={yesNoOptions} className={styles.yesNo} />
 						</Form.Item>
 					</Col>
-					<Col {...layoutCol} md={12}>
+					<Col {...layoutCol}>
 						<Form.Item
 							label="Short term rental" // 短期租赁
 							name="Short term rental"
@@ -459,7 +498,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 							<Radio.Group options={yesNoOptions} className={styles.yesNo} />
 						</Form.Item>
 					</Col>
-					<Col {...layoutCol} md={12}>
+					<Col {...layoutCol}>
 						<Form.Item
 							label="Prosperities vacant" // 资产空置
 							name="Prosperities vacant"

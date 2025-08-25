@@ -4,7 +4,7 @@ import NewTable from '@/components/NewTable';
 import { useColumnByZeeBeeLoan } from './components/column';
 import { AddEditBtn } from './components/AddEditBtn';
 const ThirdPartyService = () => {
-	const [list, setList] = useState([{}]);
+	const [list, setList] = useState([{ id: 1 }]);
 	const { thirdPartyServicesColumns } = useColumnByZeeBeeLoan();
 
 	return (

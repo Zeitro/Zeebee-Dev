@@ -15,6 +15,9 @@ import PropertyInfo from '../components/CreateZeeBee/PropertyInfo';
 import LoanDetail from '../components/CreateZeeBee/Loan';
 import Experience from '../components/CreateZeeBee/Experience';
 import ThirdPartyService from '../components/CreateZeeBee/ThirdPartyService';
+import Declaration from '../components/CreateZeeBee/Declaration';
+import Demographics from '../components/CreateZeeBee/Demographics';
+import ReviewAndSign from '../components/CreateZeeBee/ReviewAndSign';
 const CreateZeeBeeLoan = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -63,18 +66,11 @@ const CreateZeeBeeLoan = () => {
 			<Experience key="0-Experience" form={form} />,
 			<ThirdPartyService key="1-ThirdPartyService" form={form} />,
 		],
-		<LoanDetail key="2-LoanDetail" form={form} />,
-		<PropertyInfo key="0-PropertyInfo" form={form} />, // [<CreateProperty key="0" stage={loanData?.[0]?.stage} stepBtn={stepBtn} form={form} gutter={16} isRequestProperty={searchParams.has('propertyId')} />]
-		// 1: (
-		// 	<CreateProperty
-		// 		stage={loanData?.[0]?.stage}
-		// 		stepBtn={stepBtn}
-		// 		form={form}
-		// 		gutter={16}
-		// 		isRequestProperty={searchParams.has('propertyId')}
-		// 	/>
-		// ),
-		// 2: <CreateTerm stage={loanData?.[0]?.stage} stepBtn={stepBtn} form={form} />,
+		[
+			<Declaration key="0-Declaration" form={form} />,
+			<Demographics key="1-Demographics" form={form} />,
+		],
+		<ReviewAndSign key="0-ReviewAndSign" form={form} />,
 	];
 
 	// 获取下一步步骤类型（Submit创建按钮/NextMaxStep下一大步骤/NextMinStep下一小步骤）
@@ -231,14 +227,13 @@ const CreateZeeBeeLoan = () => {
 						form={form}
 						name="basic"
 						layout="vertical"
-						style={{ maxWidth: [2, 4].includes(currentStep) ? '100%' : 520 }}
 						autoComplete="off"
 						className=""
 						size="large"
 						// disabled={loading}
-						// initialValues={{
-						// 	stage: loan_pending,
-						// }}
+						initialValues={{
+							borrowers: [{}],
+						}}
 					>
 						{stepContent[currentStep]?.length
 							? stepContent[currentStep]?.[stepNum]

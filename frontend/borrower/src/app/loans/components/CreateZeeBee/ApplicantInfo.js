@@ -5,19 +5,17 @@ import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
 import InputPhone from '@/components/InputPhone';
 import SelectTINType from '@/components/InputTIN/SelectTINType';
 import { emailRegex, phoneRegex } from '@/lib/format';
+import { layoutCol, titleCol } from '@/enum/common';
 const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 	const borrowerType = Form.useWatch('borrower_type', form);
-	const layoutCol = {
-		xs: 24,
-		sm: 24,
-	};
+
 	const nameLabel = borrowerType === 'Individual' ? 'Individual name' : 'Entity name';
 	return (
 		<Row className={styles.createZeeBee} gutter={gutter}>
-			<Col {...layoutCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">
+			<Col {...titleCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">
 				Applicant information
 			</Col>
-			<Col {...layoutCol} className="!text-xl font-medium text-[#000000a6] pb-6">
+			<Col {...titleCol} className="!text-xl font-medium text-[#000000a6] pb-6">
 				Applicant type
 			</Col>
 			<Col {...layoutCol}>
@@ -86,7 +84,7 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 					</Form.Item>
 				</Col>
 			)}
-			<Col {...layoutCol} className="!text-xl font-medium text-[#000000a6] pb-6">
+			<Col {...titleCol} className="!text-xl font-medium text-[#000000a6] pb-6">
 				Mailing information
 			</Col>
 			<AddressForm
@@ -99,8 +97,13 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 				addressLabel="Mailing Address 1"
 				addressLabel2="Mailing Address 2"
 				form={form}
+				// addressCol={layoutCol}
+				// address2Col={layoutCol}
+				stateCol={{ xs: 24, sm: 24, md: 8 }}
+				cityCol={{ xs: 24, sm: 24, md: 8 }}
+				zipCol={{ xs: 24, sm: 24, md: 8 }}
 			/>
-			<Col {...layoutCol} className="!text-xl font-medium text-[#000000a6] pb-6">
+			<Col {...titleCol} className="!text-xl font-medium text-[#000000a6] pb-6">
 				Contact information
 			</Col>
 			<Col {...layoutCol}>

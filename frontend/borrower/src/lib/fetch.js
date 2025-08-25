@@ -57,6 +57,8 @@ export function createRequest() {
 			const data = await response.json();
 
 			if (data.code === 401) {
+				console.log('401------login');
+
 				showMessage('Please log in again!', 'warning');
 				window.location.href = '/login';
 				return Promise.reject('Please log in again!');

@@ -14,6 +14,8 @@ export function middleware(request) {
 	const routerItem = getCurrentRouterItem(pathname, routers);
 
 	if (!token && !whiteList.includes(pathname)) {
+		console.log('notoken----------middleware');
+
 		// 未登录且非白名单，重定向到登录页
 		return NextResponse.redirect(new URL('/login', request.url));
 	}

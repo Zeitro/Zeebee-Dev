@@ -14,26 +14,16 @@ import {
 } from '@/lib/format';
 import { formatStr } from '@/lib/date';
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import { layoutCol, titleCol } from '@/enum/common';
 const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 	const borrowerType = Form.useWatch('borrower_type', form);
-	const layoutCol = {
-		xs: 24,
-		sm: 24,
-	};
 	return (
 		<div className={styles.createZeeBee}>
-			<Col {...layoutCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">
+			<Col {...titleCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">
 				Borrower information
 			</Col>
 			<Form.List name="borrowers">
 				{(fields, { add, remove }) => {
-					console.log('innn', fields);
-
-					if (fields.length === 0) {
-						console.log('0000');
-
-						add(0);
-					}
 					return fields?.map((field, index) => (
 						<Row
 							className={styles.createZeeBee}
@@ -42,7 +32,7 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 							fieldkey={field.fieldKey}
 						>
 							<Col
-								{...layoutCol}
+								{...titleCol}
 								className="!text-xl font-medium text-[#000000a6] pb-6 !flex items-center justify-between"
 							>
 								Borrower {index + 1}
@@ -57,7 +47,7 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 									</Button>
 								)}
 							</Col>
-							<Col {...layoutCol}>
+							<Col {...layoutCol} md={8}>
 								<Form.Item
 									label="First name"
 									name={[field.name, 'first_name']}
@@ -66,7 +56,7 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 									<Input placeholder="Enter first name" />
 								</Form.Item>
 							</Col>
-							<Col {...layoutCol}>
+							<Col {...layoutCol} md={8}>
 								<Form.Item
 									label="Middle name"
 									name={[field.name, 'middle_name']}
@@ -75,7 +65,7 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 									<Input placeholder="Enter middle name" />
 								</Form.Item>
 							</Col>
-							<Col {...layoutCol}>
+							<Col {...layoutCol} md={8}>
 								<Form.Item
 									label="Last name"
 									name={[field.name, 'last_name']}
@@ -223,6 +213,11 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 								addressLabel="Primary Address 1"
 								addressLabel2="Primary Address 2"
 								form={form}
+								// addressCol={{ ...layoutCol, md: 12 }}
+								// address2Col={{ ...layoutCol, md: 12 }}
+								stateCol={{ ...layoutCol, md: 8 }}
+								cityCol={{ ...layoutCol, md: 8 }}
+								zipCol={{ ...layoutCol, md: 8 }}
 							/>
 							{fields.length === index + 1 && (
 								<Col {...layoutCol}>

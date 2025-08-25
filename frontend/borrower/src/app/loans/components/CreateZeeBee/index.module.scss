@@ -11,9 +11,15 @@
 		display: flex;
 		align-items: center;
 		width: 100%;
+		max-width: 770px;
 		& :global(.ant-radio-wrapper) {
 			flex: 1;
 		}
+	}
+
+	.yesNo2 {
+		@extend .yesNo;
+		width: 50%;
 	}
 
 	:global {
@@ -21,10 +27,10 @@
 			padding-bottom: 0 !important;
 			> label {
 				color: #000 !important;
-				height: 22px !important;
+				height: auto !important;
 			}
 		}
-		.assignmentFee .ant-form-item-required::before {
+		.noShowLabel .ant-form-item-required::before {
 			display: none !important;
 		}
 	}
