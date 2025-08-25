@@ -119,6 +119,10 @@ service borrower-api {
 	@handler Apply
 	post /loan/apply (LoanApplyRequest) returns (LoanApplyResponse)
 
+	@doc "update apply"
+	@handler UpdateApply
+	put /loan/:id/update_apply (LoanApplyRequest) returns (EmptyResponse)
+
 	@doc "import"
 	@handler Import
 	post /loan/import (EmptyRequest) returns (EmptyResponse)

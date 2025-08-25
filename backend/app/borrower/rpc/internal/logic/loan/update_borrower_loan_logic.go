@@ -43,7 +43,7 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	loan, propertyBase, loanProperty, applicants, err := l.buildCreateModels(in.Data)
+	loan, propertyBase, loanProperty, applicants, err := l.buildUpdateModels(in.Data)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +76,7 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 		// update loan
 		loan.Id = in.Data.Id
 		// loan.PropertyId = property.Id
-		_, innerErr = l.svcCtx.LoanRepo.UpdateOneWithTx(l.ctx, tx, in.Data.Id, loan)
+		_, innerErr = l.svcCtx.LoanRepo.UpdateOneWithTx(l.ctx, tx, in.Data.Id, loan, false)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -127,7 +127,7 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 		}
 
 		if len(newApplicants) > 0 {
-			_, innerErr = l.svcCtx.ApplicantRepo.BatchCreateWithTx(l.ctx, tx, newApplicants)
+			_, innerErr = l.svcCtx.ApplicantRepo.BatchCreateWithTx(l.ctx, tx, newApplicants, false)
 			if innerErr != nil {
 				return innerErr
 			}
@@ -182,7 +182,7 @@ func (l *UpdateBorrowerLoanLogic) handlePropertyBase(tx *gorm.DB, propertyId int
 	return
 }
 
-func (l *UpdateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanUpdateRequestData) (loan *model.Loan, propertyBase *model.PropertyBase, loanProperty *model.LoanProperty, applicants []*model.Applicant, err error) {
+func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateRequestData) (loan *model.Loan, propertyBase *model.PropertyBase, loanProperty *model.LoanProperty, applicants []*model.Applicant, err error) {
 	// build applicants
 	for _, applicant := range in.Applicants {
 		if len(applicant.FirstName) == 0 {

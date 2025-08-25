@@ -46,7 +46,7 @@ func (l *UpdateLogic) Update(req *types.LoanUpdateRequest) (resp *types.EmptyRes
 	applicants := make([]*borrower.BorrowerEditApplicantEntry, 0, len(rpcReq.Data.Applicants))
 	for _, applicant := range rpcReq.Data.Applicants {
 		applicant := applicant
-		if len(applicant.Name) > 0 {
+		if len(applicant.FirstName) > 0 {
 			applicants = append(applicants, applicant)
 		}
 	}

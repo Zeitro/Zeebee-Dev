@@ -108,6 +108,7 @@ type (
 		BorrowerLoanPage(ctx context.Context, in *LoanPageRequest, opts ...grpc.CallOption) (*LoanPageResponse, error)
 		BorrowerLoanLenderCompanies(ctx context.Context, in *LoanLenderCompaniesRequest, opts ...grpc.CallOption) (*LoanLenderCompaniesResponse, error)
 		ApplyLoan(ctx context.Context, in *LoanApplyRequest, opts ...grpc.CallOption) (*LoanApplyResponse, error)
+		UpdateApplyLoan(ctx context.Context, in *LoanApplyRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	}
 
 	defaultLoan struct {
@@ -164,4 +165,9 @@ func (m *defaultLoan) BorrowerLoanLenderCompanies(ctx context.Context, in *LoanL
 func (m *defaultLoan) ApplyLoan(ctx context.Context, in *LoanApplyRequest, opts ...grpc.CallOption) (*LoanApplyResponse, error) {
 	client := borrower.NewLoanClient(m.cli.Conn())
 	return client.ApplyLoan(ctx, in, opts...)
+}
+
+func (m *defaultLoan) UpdateApplyLoan(ctx context.Context, in *LoanApplyRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	client := borrower.NewLoanClient(m.cli.Conn())
+	return client.UpdateApplyLoan(ctx, in, opts...)
 }
