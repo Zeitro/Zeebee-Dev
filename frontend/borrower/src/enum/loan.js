@@ -58,8 +58,18 @@ export const createZeeBeeSteps = [
 		],
 	},
 	{
-		title: 'Declaration and Demographics',
+		title: 'Declaration & Demographics',
 		key: 'declarationAndDemographics',
+		children: [
+			{
+				title: 'About this property and your money for this loan',
+				key: 'propertyLoanMoney',
+			},
+			{
+				title: 'Borrower demographic information',
+				key: 'borrowerDemographic',
+			},
+		],
 	},
 	{
 		title: 'Review and sign',

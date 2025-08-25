@@ -179,7 +179,7 @@ export const useColumnByZeeBeeLoan = () => {
 			ellipsis: true,
 		},
 		getAction(
-			'Edit third party services',
+			'Edit third party service',
 			'Are you sure you want to delete this third party service?',
 		),
 	];
