@@ -25,3 +25,8 @@ type LoanBorrower struct {
 func (m LoanBorrower) TableName() string {
 	return "loan_borrowers"
 }
+
+func (m *LoanBorrower) RemoveRelationships() {
+	m.Loan = nil
+	m.Applicants = nil
+}

@@ -166,7 +166,7 @@ func (repo *LoanRepo) Page(ctx context.Context, pageReq *borrower.LoanPageReques
 		loanProperty, _ := loanPropertyRepo.FindOneByLoanId(ctx, loan.Id)
 		page.List[i].LoanProperty = loanProperty
 		applicants, _ := applicantRepo.FindAll(ctx, map[string]interface{}{
-			applicantRepo.m.FieldLoanId(): loan.Id,
+			"loan_id": loan.Id,
 		})
 		page.List[i].Applicants = applicants
 	}

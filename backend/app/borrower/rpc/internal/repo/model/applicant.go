@@ -36,9 +36,9 @@ func (m Applicant) TableName() string {
 	return "applicants"
 }
 
-func (m Applicant) FieldBorrowerId() string {
-	return "borrower_id"
-}
-func (m Applicant) FieldLoanId() string {
-	return "loan_id"
+func (m *Applicant) RemoveRelationships() {
+	m.LoanProperty = nil
+	m.Borrower = nil
+	m.Loan = nil
+	m.Applicants = nil
 }
