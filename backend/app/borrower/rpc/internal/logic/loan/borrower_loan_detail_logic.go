@@ -3,10 +3,13 @@ package loanlogic
 import (
 	"context"
 
+	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
 
+	"zeebee-backend/app/borrower/rpc/internal/repo/model"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/timex"
 
@@ -49,10 +52,31 @@ func (l *BorrowerLoanDetailLogic) BorrowerLoanDetail(in *borrower.LoanDetailRequ
 			copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
 		},
 	})
-
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
+	// loan experiences
+	var transExperiences []*borrower.LoanExperienceEntry
+	var realEstateExperiences []*borrower.LoanExperienceEntry
+	slice.ForEach(loan.LoanExperiences, func(index int, item *model.LoanExperience) {
+		experience := &borrower.LoanExperienceEntry{}
+		_ = copier.CopyWithOption(experience, item, copier.Option{
+			CaseSensitive: true,
+			DeepCopy:      true,
+			IgnoreEmpty:   true,
+			Converters: []copier.TypeConverter{
+				copierx.TimeToRFC3339Str(),
+				copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
+			},
+		})
+		if item.Type == constants.LoanExperienceTypeTransaction {
+			transExperiences = append(transExperiences, experience)
+		} else {
+			realEstateExperiences = append(realEstateExperiences, experience)
+		}
+	})
+	resp.Data.TransactionExperiences = transExperiences
+	resp.Data.RealEstateExperiences = realEstateExperiences
 
 	return resp, err
 }

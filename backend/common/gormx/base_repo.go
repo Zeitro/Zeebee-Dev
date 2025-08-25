@@ -5,6 +5,7 @@ import (
 
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"gorm.io/gorm/schema"
 )
 
@@ -84,8 +85,14 @@ func (repo *BaseRepo[T]) UpdateColumnsByIdWithTx(ctx context.Context, tx *gorm.D
 }
 
 // CreateWithTx create with tx
-func (repo *BaseRepo[T]) CreateWithTx(ctx context.Context, tx *gorm.DB, data T) (T, error) {
-	err := tx.WithContext(ctx).Create(&data).Error
+func (repo *BaseRepo[T]) CreateWithTx(ctx context.Context, tx *gorm.DB, data T, withAssociation bool) (T, error) {
+	var err error
+	if withAssociation {
+		err = tx.WithContext(ctx).Create(&data).Error
+	} else {
+		err = tx.WithContext(ctx).Omit(clause.Associations).Create(&data).Error
+	}
+
 	if err != nil {
 		return data, errors.WithStack(err)
 	}
@@ -93,8 +100,14 @@ func (repo *BaseRepo[T]) CreateWithTx(ctx context.Context, tx *gorm.DB, data T) 
 }
 
 // BatchCreateWithTx batch create with tx
-func (repo *BaseRepo[T]) BatchCreateWithTx(ctx context.Context, tx *gorm.DB, data []T) ([]T, error) {
-	err := tx.WithContext(ctx).Create(&data).Error
+func (repo *BaseRepo[T]) BatchCreateWithTx(ctx context.Context, tx *gorm.DB, data []T, withAssociation bool) ([]T, error) {
+	var err error
+	if withAssociation {
+		err = tx.WithContext(ctx).Create(&data).Error
+	} else {
+		err = tx.WithContext(ctx).Omit(clause.Associations).Create(&data).Error
+	}
+	// err := tx.WithContext(ctx).Create(&data).Error
 	if err != nil {
 		return data, errors.WithStack(err)
 	}

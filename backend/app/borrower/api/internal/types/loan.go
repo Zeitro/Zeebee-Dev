@@ -7,21 +7,22 @@ type EmptyResponse struct {
 }
 
 type LoanApplyRequest struct {
+	Id                       int64                      `path:"id,optional"`
 	LoanType                 string                     `json:"loan_type" validate:"required,oneof=Bridge Rehab Rental 'Ground up construction'"`
 	LoanPurpose              string                     `json:"loan_purpose" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
 	TotalAmount              float64                    `json:"total_amount" validate:"required,gt=0"`
 	InitialAmount            float64                    `json:"initial_amount" validate:"ltefield=TotalAmount"`
 	LoanProperty             *LoanApplyPropertyEntry    `json:"loan_property"`
-	HoldbackAmount           float64                    `json:"holdback_amount"`
-	PrincipalAmount          float64                    `json:"principal_amount"`
+	HoldbackAmount           float64                    `json:"holdback_amount" validate:"ltefield=TotalAmount"`
+	PrincipalAmount          float64                    `json:"principal_amount" validate:"required_unless=LoanPurpose Purchase,omitempty,gte=0"`
 	MaturityDate             string                     `json:"maturity_date"`
-	PrepaymentPenalty        int32                      `json:"prepayment_penalty"`
+	PrepaymentPenalty        int32                      `json:"prepayment_penalty" validate:"required_if=LoanType Rental,omitempty,gte=0"`
 	BusinessStrategy         []string                   `json:"business_strategy" validate:"required,dive,required,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
 	Applicants               []*LoanApplyApplicantEntry `json:"applicants"`
 	ExistingLenderCompany    string                     `json:"existing_lender_company" validate:"required_unless=LoanPurpose Purchase"`
 	ExistingRate             float32                    `json:"existing_rate" validate:"required_unless=LoanPurpose Purchase,omitempty,gt=0,lt=100"`
 	ExistingMaturityDate     string                     `json:"existing_maturity_date" validate:"required_unless=LoanPurpose Purchase,omitempty,datetime=01/02/2006"`
-	PurchaseAmount           float64                    `json:"purchase_amount" validate:"required_unless=LoanPurpose Purchase,omitempty,gt=0"`
+	PurchaseAmount           float64                    `json:"purchase_amount" validate:"required,gt=0"`
 	PurchaseDate             string                     `json:"purchase_date" validate:"required_unless=LoanPurpose Purchase,omitempty,datetime=01/02/2006"`
 	HasAssignmentFee         bool                       `json:"has_assignment_fee"`
 	AssignmentFeeAmount      float64                    `json:"assignment_fee_amount" validate:"required_if=HasAssignmentFee true,omitempty,gt=0"`
@@ -29,8 +30,8 @@ type LoanApplyRequest struct {
 	SubordinateDebtAmount    float64                    `json:"subordinate_debt_amount"`
 	ScheduledCloseEscrowDate string                     `json:"scheduled_close_escrow_date" validate:"required_if=LoanPurpose Purchase,omitempty,datetime=01/02/2006"`
 	LoanTerm                 int32                      `json:"loan_term" validate:"gte=1"`
-	Arv                      float64                    `json:"arv" validate:"gte=0"`
-	Ltv                      float64                    `json:"ltv" validate:"required,gte=0"`
+	Arv                      float64                    `json:"arv" validate:"required,gte=0"`
+	Ltv                      float64                    `json:"ltv" validate:"required_unless=LoanPurpose Purchase,omitempty,gte=0"`
 	LiquidityAmount          float64                    `json:"liquidity_amount" validate:"gte=0"`
 	Budget                   *LoanBudgetEntry           `json:"budget" validate:"required_if=LoanType Rehab LoanType 'Ground up construction'"`
 	MidConstruction          bool                       `json:"mid_construction"`
@@ -46,7 +47,7 @@ type LoanApplyRequest struct {
 	AdditionalInfo           string                     `json:"additional_info"`
 	TransactionExperiences   []*LoanexperienceEntry     `json:"transaction_experiences"`
 	RealEstateExperiences    []*LoanexperienceEntry     `json:"real_estate_experiences"`
-	ThirdServices            []*LoanThirdServiceEntry   `json:"third_services"`
+	LoanThirdServices        []*LoanThirdServiceEntry   `json:"loan_third_services"`
 	LoanBorrower             *LoanBorrowerEntry         `json:"loan_borrower"`
 	LoanDemographic          *LoanDemographicEntry      `json:"loan_demographic"`
 }

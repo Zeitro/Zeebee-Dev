@@ -77,14 +77,15 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrowe
 			return innerErr
 		}
 		data.loan.Code = idGenerator.String()
-		loan, innerErr = l.svcCtx.LoanRepo.CreateWithTx(l.ctx, tx, data.loan)
+		loan, innerErr = l.svcCtx.LoanRepo.CreateWithTx(l.ctx, tx, data.loan, false)
 		if innerErr != nil {
 			return innerErr
 		}
 
 		// save loan borrower
 		data.loanBorrower.LoanId = loan.Id
-		loanBorrower, innerErr = l.svcCtx.LoanBorrowerRepo.CreateWithTx(l.ctx, tx, data.loanBorrower)
+		data.loanBorrower.Applicants = nil
+		loanBorrower, innerErr = l.svcCtx.LoanBorrowerRepo.CreateWithTx(l.ctx, tx, data.loanBorrower, false)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -95,7 +96,7 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrowe
 			item.LoanId = loan.Id
 			item.LoanBorrowerId = loanBorrower.Id
 		})
-		_, innerErr = l.svcCtx.ApplicantRepo.BatchCreateWithTx(l.ctx, tx, data.applicants)
+		_, innerErr = l.svcCtx.ApplicantRepo.BatchCreateWithTx(l.ctx, tx, data.applicants, false)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -103,14 +104,14 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrowe
 		// save loan property
 		data.loanProperty.LoanId = loan.Id
 		data.loanProperty.PropertyBaseId = propertyBase.Id
-		_, innerErr = l.svcCtx.LoanPropertyRepo.CreateWithTx(l.ctx, tx, data.loanProperty)
+		_, innerErr = l.svcCtx.LoanPropertyRepo.CreateWithTx(l.ctx, tx, data.loanProperty, false)
 		if innerErr != nil {
 			return innerErr
 		}
 
 		// save demographic
 		data.loanDemographic.LoanId = loan.Id
-		_, innerErr = l.svcCtx.LoanDemographicRepo.CreateWithTx(l.ctx, tx, data.loanDemographic)
+		_, innerErr = l.svcCtx.LoanDemographicRepo.CreateWithTx(l.ctx, tx, data.loanDemographic, false)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -120,7 +121,7 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrowe
 			slice.ForEach(data.transactionExperiences, func(index int, item *model.LoanExperience) {
 				item.LoanId = loan.Id
 			})
-			_, innerErr = l.svcCtx.LoanExperienceRepo.BatchCreateWithTx(l.ctx, tx, data.transactionExperiences)
+			_, innerErr = l.svcCtx.LoanExperienceRepo.BatchCreateWithTx(l.ctx, tx, data.transactionExperiences, false)
 			if innerErr != nil {
 				return innerErr
 			}
@@ -130,7 +131,7 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrowe
 			slice.ForEach(data.realEstatesExperiences, func(index int, item *model.LoanExperience) {
 				item.LoanId = loan.Id
 			})
-			_, innerErr = l.svcCtx.LoanExperienceRepo.BatchCreateWithTx(l.ctx, tx, data.realEstatesExperiences)
+			_, innerErr = l.svcCtx.LoanExperienceRepo.BatchCreateWithTx(l.ctx, tx, data.realEstatesExperiences, false)
 			if innerErr != nil {
 				return innerErr
 			}
@@ -141,7 +142,7 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrowe
 			slice.ForEach(data.loanThirdServices, func(index int, item *model.LoanThirdService) {
 				item.LoanId = loan.Id
 			})
-			_, innerErr = l.svcCtx.LoanThirdServiceRepo.BatchCreateWithTx(l.ctx, tx, data.loanThirdServices)
+			_, innerErr = l.svcCtx.LoanThirdServiceRepo.BatchCreateWithTx(l.ctx, tx, data.loanThirdServices, false)
 			if innerErr != nil {
 				return innerErr
 			}
@@ -279,7 +280,7 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData) 
 
 	// third services
 	loanThirdServices := make([]*model.LoanThirdService, 0)
-	err = copier.CopyWithOption(&loanThirdServices, &reqData.ThirdServices, copier.Option{
+	err = copier.CopyWithOption(&loanThirdServices, &reqData.LoanThirdServices, copier.Option{
 		IgnoreEmpty: true,
 		DeepCopy:    true,
 		Converters: []copier.TypeConverter{

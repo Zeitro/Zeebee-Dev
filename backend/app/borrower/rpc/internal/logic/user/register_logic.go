@@ -66,13 +66,13 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 	}
 	err = l.svcCtx.UserRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
 		// create user
-		userModel, err = l.svcCtx.UserRepo.CreateWithTx(l.ctx, tx, userModel)
+		userModel, err = l.svcCtx.UserRepo.CreateWithTx(l.ctx, tx, userModel, false)
 		if err != nil {
 			return err
 		}
 		// create borrower
 		borrowerModel.UserId = userModel.Id
-		_, err = l.svcCtx.BorrowerRepo.CreateWithTx(l.ctx, tx, borrowerModel)
+		_, err = l.svcCtx.BorrowerRepo.CreateWithTx(l.ctx, tx, borrowerModel, false)
 		return nil
 	})
 

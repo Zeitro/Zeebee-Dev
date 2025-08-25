@@ -30,15 +30,27 @@ func (repo *LoanRepo) GetBorrowerLoan(ctx context.Context, id int64, borrowerId 
 		Preload("Applicants").
 		Preload("LoanProperty").
 		Preload("LoanProperty.PropertyBase").
+		Preload("LoanBorrower").
+		Preload("LoanExperiences").
+		Preload("LoanThirdServices").
+		Preload("LoanDemographic").
 		First(&result).Error
 	return result, errors.WithStack(err)
 }
 
 // UpdateOneWithTx update with tx
-func (repo *LoanRepo) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, id int64, data *model.Loan) (result *model.Loan, err error) {
+func (repo *LoanRepo) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, id int64, data *model.Loan, isApply bool) (result *model.Loan, err error) {
+	omitFields := []string{"id", "source", "created_at", "code", "borrower_id"}
+	var applyFields []string
+	if !isApply {
+		applyFields = []string{"existing_lender_company", "existing_rate", "existing_maturity_date", "purchase_amount", "purchase_date", "has_assignment_fee", "assignment_fee_amount", "has_subordinate_debt", "subordinate_debt_amount", "scheduled_close_escrow_date", "loan_term", "arv", "ltv", "liquidity_amount", "budget", "mid_construction", "est_credit_score", "est_yearly_rental_income", "dscr", "reserves_amount", "has_delayed_financing", "has_collateralized_blanket", "has_properties_vacant", "has_short_term_rental", "additional_info"}
+	} else {
+		applyFields = []string{"stage", "pending_status"}
+	}
+	omitFields = append(omitFields, applyFields...)
 	err = tx.WithContext(ctx).
 		Select("*").
-		Omit("id", "source", "created_at").
+		Omit(omitFields...).
 		Where("id = ?", id).
 		Updates(data).Error
 	if err != nil {

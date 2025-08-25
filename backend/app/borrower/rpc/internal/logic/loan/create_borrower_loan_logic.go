@@ -63,7 +63,7 @@ func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.LoanCreateRequ
 			return innerErr
 		}
 		loan.Code = idGenerator.String()
-		loan, innerErr = l.svcCtx.LoanRepo.CreateWithTx(l.ctx, tx, loan)
+		loan, innerErr = l.svcCtx.LoanRepo.CreateWithTx(l.ctx, tx, loan, false)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -71,7 +71,7 @@ func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.LoanCreateRequ
 		// create loan property
 		loanProperty.LoanId = loan.Id
 		loanProperty.PropertyBaseId = propertyBase.Id
-		loanProperty, innerErr = l.svcCtx.LoanPropertyRepo.CreateWithTx(l.ctx, tx, loanProperty)
+		loanProperty, innerErr = l.svcCtx.LoanPropertyRepo.CreateWithTx(l.ctx, tx, loanProperty, false)
 
 		// create applicants
 		applicants = slice.Map(applicants, func(index int, item *model.Applicant) *model.Applicant {
@@ -79,7 +79,7 @@ func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.LoanCreateRequ
 			item.LoanPropertyId = loanProperty.Id
 			return item
 		})
-		_, innerErr = l.svcCtx.ApplicantRepo.BatchCreateWithTx(l.ctx, tx, applicants)
+		_, innerErr = l.svcCtx.ApplicantRepo.BatchCreateWithTx(l.ctx, tx, applicants, false)
 		if innerErr != nil {
 			return innerErr
 		}
