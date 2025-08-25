@@ -7,6 +7,7 @@ import (
 
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"zeebee-backend/app/borrower/rpc/internal/repo/model"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
@@ -60,7 +61,7 @@ func (repo *PropertyBaseRepo) GetOrCreateWithTx(ctx context.Context, tx *gorm.DB
 		return nil, errors.WithStack(err)
 	}
 	if result == nil || result.Id == 0 {
-		err = tx.WithContext(ctx).Create(data).Error
+		err = tx.WithContext(ctx).Omit(clause.Associations).Create(data).Error
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
@@ -90,7 +91,7 @@ func (repo *PropertyBaseRepo) GetOneWithTxByProperty(ctx context.Context, tx *go
 
 func (repo *PropertyBaseRepo) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, id int64, data *model.PropertyBase) (result *model.PropertyBase, err error) {
 	err = tx.WithContext(ctx).Select("*").
-		Omit("id", "created_at").
+		Omit("id", "created_at", "applicants").
 		Where("id = ?", id).
 		Updates(data).Error
 	if err != nil {

@@ -308,7 +308,7 @@
                 "additional_info",
                 "transaction_experiences",
                 "real_estate_experiences",
-                "third_services",
+                "loan_third_services",
                 "loan_borrower",
                 "loan_demographic"
               ],
@@ -769,6 +769,32 @@
                 "loan_term": {
                   "type": "integer"
                 },
+                "loan_third_services": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "email": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "loan_id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "phone": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
                 "loan_type": {
                   "type": "string"
                 },
@@ -871,32 +897,6 @@
                 },
                 "subordinate_debt_amount": {
                   "type": "number"
-                },
-                "third_services": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "email": {
-                        "type": "string"
-                      },
-                      "id": {
-                        "type": "integer"
-                      },
-                      "loan_id": {
-                        "type": "integer"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "phone": {
-                        "type": "string"
-                      },
-                      "type": {
-                        "type": "string"
-                      }
-                    }
-                  }
                 },
                 "total_amount": {
                   "type": "number"
@@ -1211,7 +1211,7 @@
                       "additional_info",
                       "transaction_experiences",
                       "real_estate_experiences",
-                      "third_services",
+                      "loan_third_services",
                       "loan_borrower",
                       "loan_demographic"
                     ],
@@ -1641,6 +1641,32 @@
                       "loan_term": {
                         "type": "integer"
                       },
+                      "loan_third_services": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "email": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "loan_id": {
+                              "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "phone": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
                       "loan_type": {
                         "type": "string"
                       },
@@ -1741,32 +1767,6 @@
                       },
                       "subordinate_debt_amount": {
                         "type": "number"
-                      },
-                      "third_services": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "email": {
-                              "type": "string"
-                            },
-                            "id": {
-                              "type": "integer"
-                            },
-                            "loan_id": {
-                              "type": "integer"
-                            },
-                            "name": {
-                              "type": "string"
-                            },
-                            "phone": {
-                              "type": "string"
-                            },
-                            "type": {
-                              "type": "string"
-                            }
-                          }
-                        }
                       },
                       "total_amount": {
                         "type": "number"
@@ -2335,6 +2335,32 @@
                 "loan_term": {
                   "type": "integer"
                 },
+                "loan_third_services": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "email": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "loan_id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "phone": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
                 "loan_type": {
                   "type": "string"
                 },
@@ -2458,32 +2484,6 @@
                 },
                 "subordinate_debt_amount": {
                   "type": "number"
-                },
-                "third_services": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "email": {
-                        "type": "string"
-                      },
-                      "id": {
-                        "type": "integer"
-                      },
-                      "loan_id": {
-                        "type": "integer"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "phone": {
-                        "type": "string"
-                      },
-                      "type": {
-                        "type": "string"
-                      }
-                    }
-                  }
                 },
                 "total_amount": {
                   "type": "number"
@@ -2910,7 +2910,7 @@
                 "additional_info",
                 "transaction_experiences",
                 "real_estate_experiences",
-                "third_services",
+                "loan_third_services",
                 "loan_borrower",
                 "loan_demographic"
               ],
@@ -3371,6 +3371,32 @@
                 "loan_term": {
                   "type": "integer"
                 },
+                "loan_third_services": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "email": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "loan_id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "phone": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
                 "loan_type": {
                   "type": "string"
                 },
@@ -3473,32 +3499,6 @@
                 },
                 "subordinate_debt_amount": {
                   "type": "number"
-                },
-                "third_services": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "email": {
-                        "type": "string"
-                      },
-                      "id": {
-                        "type": "integer"
-                      },
-                      "loan_id": {
-                        "type": "integer"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "phone": {
-                        "type": "string"
-                      },
-                      "type": {
-                        "type": "string"
-                      }
-                    }
-                  }
                 },
                 "total_amount": {
                   "type": "number"
@@ -3837,7 +3837,7 @@
                       "additional_info",
                       "transaction_experiences",
                       "real_estate_experiences",
-                      "third_services",
+                      "loan_third_services",
                       "loan_borrower",
                       "loan_demographic"
                     ],
@@ -4267,6 +4267,32 @@
                       "loan_term": {
                         "type": "integer"
                       },
+                      "loan_third_services": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "email": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "loan_id": {
+                              "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "phone": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
                       "loan_type": {
                         "type": "string"
                       },
@@ -4367,32 +4393,6 @@
                       },
                       "subordinate_debt_amount": {
                         "type": "number"
-                      },
-                      "third_services": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "email": {
-                              "type": "string"
-                            },
-                            "id": {
-                              "type": "integer"
-                            },
-                            "loan_id": {
-                              "type": "integer"
-                            },
-                            "name": {
-                              "type": "string"
-                            },
-                            "phone": {
-                              "type": "string"
-                            },
-                            "type": {
-                              "type": "string"
-                            }
-                          }
-                        }
                       },
                       "total_amount": {
                         "type": "number"
@@ -4525,7 +4525,7 @@
                       "additional_info",
                       "transaction_experiences",
                       "real_estate_experiences",
-                      "third_services",
+                      "loan_third_services",
                       "loan_borrower",
                       "loan_demographic"
                     ],
@@ -4955,6 +4955,32 @@
                       "loan_term": {
                         "type": "integer"
                       },
+                      "loan_third_services": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "email": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "loan_id": {
+                              "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "phone": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
                       "loan_type": {
                         "type": "string"
                       },
@@ -5055,32 +5081,6 @@
                       },
                       "subordinate_debt_amount": {
                         "type": "number"
-                      },
-                      "third_services": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "email": {
-                              "type": "string"
-                            },
-                            "id": {
-                              "type": "integer"
-                            },
-                            "loan_id": {
-                              "type": "integer"
-                            },
-                            "name": {
-                              "type": "string"
-                            },
-                            "phone": {
-                              "type": "string"
-                            },
-                            "type": {
-                              "type": "string"
-                            }
-                          }
-                        }
                       },
                       "total_amount": {
                         "type": "number"
@@ -5193,7 +5193,7 @@
                       "additional_info",
                       "transaction_experiences",
                       "real_estate_experiences",
-                      "third_services",
+                      "loan_third_services",
                       "loan_borrower",
                       "loan_demographic"
                     ],
@@ -5623,6 +5623,32 @@
                       "loan_term": {
                         "type": "integer"
                       },
+                      "loan_third_services": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "email": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "loan_id": {
+                              "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "phone": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
                       "loan_type": {
                         "type": "string"
                       },
@@ -5723,32 +5749,6 @@
                       },
                       "subordinate_debt_amount": {
                         "type": "number"
-                      },
-                      "third_services": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "email": {
-                              "type": "string"
-                            },
-                            "id": {
-                              "type": "integer"
-                            },
-                            "loan_id": {
-                              "type": "integer"
-                            },
-                            "name": {
-                              "type": "string"
-                            },
-                            "phone": {
-                              "type": "string"
-                            },
-                            "type": {
-                              "type": "string"
-                            }
-                          }
-                        }
                       },
                       "total_amount": {
                         "type": "number"
@@ -6200,7 +6200,7 @@
       }
     }
   },
-  "x-date": "2025-08-25 14:13:21",
+  "x-date": "2025-08-25 15:25:34",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

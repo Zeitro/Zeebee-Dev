@@ -75,3 +75,14 @@ type Loan struct {
 func (m Loan) TableName() string {
 	return "loans"
 }
+
+func (m *Loan) RemoveRelationships() {
+	m.Borrower = nil
+	m.LoanProperty = nil
+	m.Lender = nil
+	m.Applicants = nil
+	m.LoanBorrower = nil
+	m.LoanExperiences = nil
+	m.LoanThirdServices = nil
+	m.LoanDemographic = nil
+}

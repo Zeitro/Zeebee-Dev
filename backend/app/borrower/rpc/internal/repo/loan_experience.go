@@ -24,7 +24,7 @@ func NewLoanExperienceRepo(db *gorm.DB) *LoanExperienceRepo {
 
 // UpdateOneWithTx
 func (repo *LoanExperienceRepo) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, id int64, data *model.LoanExperience) (result *model.LoanExperience, err error) {
-	err = tx.WithContext(ctx).Select("*").Omit("id", "created_at").Where("id = ?", id).Updates(data).Error
+	err = tx.WithContext(ctx).Select("*").Omit("id", "created_at", "loan_id").Where("id = ?", id).Updates(data).Error
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}

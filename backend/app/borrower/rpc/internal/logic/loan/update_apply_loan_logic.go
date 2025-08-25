@@ -75,8 +75,8 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 			},
 			// update loan
 			func() error {
-				loan.Id = in.Data.Id
-				_, err := l.svcCtx.LoanRepo.UpdateOneWithTx(l.ctx, tx, in.Data.Id, loan, true)
+				data.loan.RemoveRelationships()
+				_, err := l.svcCtx.LoanRepo.UpdateOneWithTx(l.ctx, tx, in.Data.Id, data.loan, true)
 				return err
 			},
 			// update loan property
@@ -268,7 +268,7 @@ func (l *UpdateApplyLoanLogic) updateThirdServices(tx *gorm.DB, oldItems []*mode
 	})
 
 	if len(removedIds) > 0 {
-		_, err = l.svcCtx.LoanExperienceRepo.DeleteByIDsWithTx(l.ctx, tx, removedIds)
+		_, err = l.svcCtx.LoanThirdServiceRepo.DeleteByIDsWithTx(l.ctx, tx, removedIds)
 		if err != nil {
 			return err
 		}
