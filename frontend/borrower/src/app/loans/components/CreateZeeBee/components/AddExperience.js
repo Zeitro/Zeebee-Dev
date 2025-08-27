@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import NewModal from '@/components/NewModal';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
 import { Col, Form, Input, Radio, Row } from 'antd';
@@ -7,8 +7,9 @@ import { useGetOptions } from '@/hooks/useGetOptions';
 import InputNumAmount from '@/components/InputNumAmount';
 import CommonFormDate from '@/components/CommonDate';
 import { yesNoOptions } from '@/enum/common';
-export const AddExperience = ({ title, rowData, onCancel }) => {
+export const AddExperience = ({ title, rowData = {}, type, onOk, onCancel }) => {
 	const [form] = Form.useForm();
+	const [confirmLoading, setConfirmLoading] = useState(false);
 	const layoutCol = {
 		md: 12,
 	};
@@ -24,8 +25,17 @@ export const AddExperience = ({ title, rowData, onCancel }) => {
 			title={title}
 			onCancel={onCancel}
 			okText={title}
-			onOk={() => {
-				onCancel();
+			confirmLoading={confirmLoading}
+			onOk={async () => {
+				try {
+					setConfirmLoading(true);
+					const values = await form.validateFields();
+					await onOk(values, rowData?.id ? 'Edit' : 'Add');
+					setConfirmLoading(false);
+					onCancel();
+				} catch (error) {
+					setConfirmLoading(false);
+				}
 			}}
 		>
 			<Form
@@ -35,10 +45,10 @@ export const AddExperience = ({ title, rowData, onCancel }) => {
 				autoComplete="off"
 				className="w-full"
 				size="large"
-				// disabled={loading}
-				// initialValues={{
-				// 	stage: loan_pending,
-				// }}
+				disabled={confirmLoading}
+				initialValues={{
+					...rowData,
+				}}
 			>
 				<Row gutter={24}>
 					<AddressForm
@@ -67,7 +77,7 @@ export const AddExperience = ({ title, rowData, onCancel }) => {
 							<Input placeholder="Enter owner name" />
 						</Form.Item>
 					</Col>
-					{getSelectFormDom(
+					{/* {getSelectFormDom(
 						{
 							label: 'Property type', // 房产类型
 							name: 'property_type',
@@ -76,7 +86,7 @@ export const AddExperience = ({ title, rowData, onCancel }) => {
 							requiredMessage: 'Please select property type!',
 						},
 						layoutCol,
-					)}
+					)} */}
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Purchase price" // 购买价格
@@ -100,7 +110,7 @@ export const AddExperience = ({ title, rowData, onCancel }) => {
 							<CommonFormDate />
 						</Form.Item>
 					</Col>
-					{title.indexOf('transaction history') > -1 && (
+					{type === 'transactionHistory' && (
 						<Col {...layoutCol}>
 							<Form.Item
 								label="Rehab budget /Construction cost" // 重建预算
@@ -116,7 +126,7 @@ export const AddExperience = ({ title, rowData, onCancel }) => {
 							</Form.Item>
 						</Col>
 					)}
-					{title.indexOf('real estate') > -1 && (
+					{type === 'realEstate' && (
 						<Col {...layoutCol}>
 							<Form.Item
 								label="Tenant Occupied" // 租户已入驻

@@ -2,7 +2,7 @@
 import FilterField from '@/components/FilterField';
 import { AddEditBtn } from './AddEditBtn';
 import { DeleteBtn } from '@/components/NewModal/BtnPopUpModal';
-export const useColumnByZeeBeeLoan = () => {
+export const useColumnByZeeBeeLoan = (handleAdd = () => {}, handleDelete = () => {}) => {
 	const beforeCommon = [
 		{
 			title: 'Property address',
@@ -83,10 +83,9 @@ export const useColumnByZeeBeeLoan = () => {
 		},
 	];
 
-	const getAction = (title, deleteTitle) => ({
+	const getAction = (type, title, deleteTitle) => ({
 		title: 'Action',
-		dataIndex: 'action',
-		key: 'action',
+		key: 'operation',
 		fixed: 'right',
 		ellipsis: true,
 		width: 130,
@@ -104,6 +103,8 @@ export const useColumnByZeeBeeLoan = () => {
 									rowData={v}
 									icon={null}
 									title={title}
+									commonType={type}
+									onOk={handleAdd}
 								>
 									Edit
 								</AddEditBtn>
@@ -111,7 +112,14 @@ export const useColumnByZeeBeeLoan = () => {
 						},
 						{
 							filterType: 'button',
-							children: <DeleteBtn title={deleteTitle}>Delete</DeleteBtn>,
+							children: (
+								<DeleteBtn
+									title={deleteTitle}
+									onOk={() => handleDelete(v.id, type)}
+								>
+									Delete
+								</DeleteBtn>
+							),
 						},
 					]}
 				/>
@@ -129,6 +137,7 @@ export const useColumnByZeeBeeLoan = () => {
 		},
 		...afterCommon,
 		getAction(
+			'transactionHistory',
 			'Edit transaction history',
 			'Are you sure you want to delete this transaction history?',
 		),
@@ -144,7 +153,11 @@ export const useColumnByZeeBeeLoan = () => {
 			width: 140,
 		},
 		...afterCommon,
-		getAction('Edit real estate', 'Are you sure you want to delete this real state?'),
+		getAction(
+			'realEstate',
+			'Edit real estate',
+			'Are you sure you want to delete this real state?',
+		),
 	];
 
 	const thirdPartyServicesColumns = [
@@ -153,32 +166,38 @@ export const useColumnByZeeBeeLoan = () => {
 			dataIndex: 'service_type',
 			key: 'service_type',
 			ellipsis: true,
+			minWidth: 200,
 		},
 		{
 			title: 'Name',
 			dataIndex: 'Name',
 			key: 'Name',
 			ellipsis: true,
+			minWidth: 200,
 		},
 		{
 			title: 'Company',
 			dataIndex: 'company',
 			key: 'company',
 			ellipsis: true,
+			minWidth: 200,
 		},
 		{
 			title: 'Phone',
 			dataIndex: 'phone',
 			key: 'phone',
 			ellipsis: true,
+			minWidth: 200,
 		},
 		{
 			title: 'Email',
 			dataIndex: 'email',
 			key: 'email',
 			ellipsis: true,
+			minWidth: 200,
 		},
 		getAction(
+			'thirdPartyService',
 			'Edit third party service',
 			'Are you sure you want to delete this third party service?',
 		),

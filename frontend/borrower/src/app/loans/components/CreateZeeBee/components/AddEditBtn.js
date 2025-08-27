@@ -4,10 +4,10 @@ import React, { useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { AddExperience } from './AddExperience';
 import AddThirdService from './AddThirdService';
-export const AddEditBtn = ({ title, children, rowData, ...props }) => {
+export const AddEditBtn = ({ title, commonType, children, rowData, onOk = () => {}, ...props }) => {
 	const [open, setOpen] = useState('');
 	const handleClick = () => {
-		setOpen(title || children);
+		setOpen(commonType);
 	};
 
 	return (
@@ -21,23 +21,21 @@ export const AddEditBtn = ({ title, children, rowData, ...props }) => {
 			>
 				{children}
 			</Button>
-			{[
-				'Add transaction history',
-				'Add real estate',
-				'Edit transaction history',
-				'Edit real estate',
-			].includes(open) && (
+			{['transactionHistory', 'realEstate'].includes(open) && (
 				<AddExperience
 					title={title || children}
 					rowData={rowData}
 					onCancel={() => setOpen('')}
+					onOk={(values, v) => onOk(values, v, commonType)}
+					type={commonType}
 				/>
 			)}
-			{['Add third party service', 'Edit third party service'].includes(open) && (
+			{['thirdPartyService'].includes(open) && (
 				<AddThirdService
 					title={title || children}
 					rowData={rowData}
 					onCancel={() => setOpen('')}
+					onOk={(values, v) => onOk(values, v, commonType)}
 				/>
 			)}
 		</>

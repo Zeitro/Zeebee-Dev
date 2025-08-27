@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import NewModal from '@/components/NewModal';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
 import { Col, Form, Input, Radio, Row } from 'antd';
@@ -8,8 +8,9 @@ import InputNumAmount from '@/components/InputNumAmount';
 import CommonFormDate from '@/components/CommonDate';
 import { yesNoOptions } from '@/enum/common';
 import { emailRegex } from '@/lib/format';
-const AddThirdService = ({ title, rowData, onCancel }) => {
+const AddThirdService = ({ title, rowData, onOk, onCancel }) => {
 	const [form] = Form.useForm();
+	const [confirmLoading, setConfirmLoading] = useState(false);
 	const layoutCol = {
 		md: 24,
 	};
@@ -24,31 +25,40 @@ const AddThirdService = ({ title, rowData, onCancel }) => {
 			width={572}
 			title={title}
 			onCancel={onCancel}
-			okText="Add service"
-			onOk={() => {
-				onCancel();
+			okText={`${rowData?.id ? 'Edit' : 'Add'} Service`}
+			confirmLoading={confirmLoading}
+			onOk={async () => {
+				try {
+					setConfirmLoading(true);
+					const values = await form.validateFields();
+					await onOk(values, rowData?.id ? 'Edit' : 'Add');
+					setConfirmLoading(false);
+					onCancel();
+				} catch (error) {
+					setConfirmLoading(false);
+				}
 			}}
 		>
 			<Form
 				form={form}
-				name="addExperienceForm"
+				name="addThirdServiceForm"
 				layout="vertical"
 				autoComplete="off"
 				className="w-full"
 				size="large"
-				// disabled={loading}
-				// initialValues={{
-				// 	stage: loan_pending,
-				// }}
+				disabled={confirmLoading}
+				initialValues={{
+					...rowData,
+				}}
 			>
 				<Row gutter={24}>
-					{getSelectFormDom({
+					{/* {getSelectFormDom({
 						label: 'Service type',
 						name: 'property_type',
 						placeholder: 'Select service type',
 						valueName: 'propertyTypeOptions',
 						requiredMessage: 'Please select service type!',
-					})}
+					})} */}
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Name"

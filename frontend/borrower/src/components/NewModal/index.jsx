@@ -1,12 +1,13 @@
 import { Modal, Button } from 'antd';
 import React from 'react';
 import styles from './index.module.scss';
-const NewModal = ({ children, customFooter = false, ...props }) => {
+const NewModal = ({ children, customFooter = false, confirmLoading, ...props }) => {
 	return (
 		<Modal
 			open={true}
 			centered
 			maskClosable={false}
+			confirmLoading={confirmLoading}
 			okText="Save"
 			{...props}
 			okButtonProps={{
