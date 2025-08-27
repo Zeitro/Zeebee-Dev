@@ -7,7 +7,7 @@ const ApplicationFormViewPDF = dynamic(
 	{
 		ssr: false, // This is the crucial part
 		// Optional: Add a loading component to improve UX
-		loading: () => <p>正在加载...</p>,
+		loading: () => <p>Loading...</p>,
 	},
 );
 

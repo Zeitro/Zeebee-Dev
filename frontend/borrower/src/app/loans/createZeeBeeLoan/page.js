@@ -148,7 +148,7 @@ const CreateZeeBeeLoan = () => {
 		const parentStepData = createZeeBeeSteps[currentStep];
 		switch (isType) {
 			case 'Submit':
-				return 'Submit';
+				return 'Submit application';
 			case 'NextMaxStep':
 				return `Next ${createZeeBeeSteps[currentStep + 1]?.title}`;
 			case 'NextMinStep':
@@ -183,22 +183,39 @@ const CreateZeeBeeLoan = () => {
 	// 	form.setFieldsValue(newData);
 	// };
 
-	const stepBtn = useMemo(
-		() => (
+	const stepBtn = useMemo(() => {
+		const cancelBtn = <Button onClick={() => router.back()}>Cancel</Button>;
+		const backBtn = !(!currentStep && !stepNum) && (
+			<Button className="w-[90px]" onClick={handleBack}>
+				Back
+			</Button>
+		);
+		const nextBtn = (
+			<Button type="primary" onClick={handleNext} loading={loading}>
+				{getNextBtnText()}
+			</Button>
+		);
+		if (currentStep === stepContent.length - 1) {
+			return (
+				<div className="w-[198px] m-auto flex flex-col gap-4">
+					{nextBtn}
+					<Space size={24}>
+						{cancelBtn}
+						{backBtn}
+					</Space>
+				</div>
+			);
+		}
+		return (
 			<Col xs={24} sm={24} className="py-6 !flex justify-between items-center">
-				<Button type="text" onClick={() => router.back()}>
-					Cancel
-				</Button>
+				{cancelBtn}
 				<Space size={8}>
-					{!(!currentStep && !stepNum) && <Button onClick={handleBack}>Back</Button>}
-					<Button type="primary" onClick={handleNext} loading={loading}>
-						{getNextBtnText()}
-					</Button>
+					{backBtn}
+					{nextBtn}
 				</Space>
 			</Col>
-		),
-		[currentStep, stepNum, loading],
-	);
+		);
+	}, [currentStep, stepNum, loading]);
 
 	return (
 		<div className="flex flex-col h-full">
@@ -222,7 +239,10 @@ const CreateZeeBeeLoan = () => {
 						/>
 					</div>
 				)}
-				<div className="flex-1 overflow-hidden overflow-y-auto py-8 px-8" ref={scrollRef}>
+				<div
+					className={`flex-1 overflow-hidden overflow-y-auto py-${stepContent.length === currentStep ? 6 : 8} px-8`}
+					ref={scrollRef}
+				>
 					<Form
 						form={form}
 						name="basic"

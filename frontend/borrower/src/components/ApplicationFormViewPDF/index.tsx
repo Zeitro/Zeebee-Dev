@@ -5,6 +5,7 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import SignatureModal from '../SignatureModal';
 import Image from 'next/image';
 import { Modal } from 'antd';
+import { formatDate } from '@/lib/date';
 
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
 
@@ -17,11 +18,23 @@ export interface SignatureZone {
 	top: string;
 	width: string;
 	height: string;
+	date: {
+		top: string;
+		left?: string;
+		right?: string;
+		width: string;
+		height: string;
+	};
+}
+
+export interface SignatureInfo {
+	image: string;
+	date: string;
 }
 
 // 定义签名数据存储的类型，使用 zoneId 作为 key
 interface SignatureData {
-	[zoneId: string]: string; // key 是 zoneId, value 是签名图片的 base64 数据
+	[zoneId: string]: SignatureInfo; // key 是 zoneId, value 是签名图片的 base64 数据
 }
 
 interface ContractViewerProps {
@@ -96,14 +109,23 @@ export default function ContractViewer({ url, zones }: ContractViewerProps) {
 	// 当在模态框中确认签名后触发
 	const handleSignatureConfirm = (signatureImage: string) => {
 		if (activeZoneId) {
-			setSignatures({ ...signatures, [activeZoneId]: signatureImage });
+			setSignatures({
+				...signatures,
+				[activeZoneId]: { image: signatureImage, date: formatDate(new Date()) },
+			});
 		}
 		setIsModalOpen(false);
 		setActiveZoneId(null);
 	};
 
-	if (isLoading) return <div>Loading...</div>;
-	if (error) return <div>Loading failed: {error}</div>;
+	if (isLoading || error) {
+		return (
+			<div className="w-full h-[200px] text-center text-base">
+				{isLoading && 'Data loading, please wait...'}
+				{error && `Loading failed: ${error}`}
+			</div>
+		);
+	}
 
 	return (
 		<>
@@ -113,6 +135,9 @@ export default function ContractViewer({ url, zones }: ContractViewerProps) {
 					file={pdfFile}
 					onLoadSuccess={onDocumentLoadSuccess}
 					onLoadError={onDocumentLoadError}
+					loading={
+						<div className="w-full h-[200px] text-center text-base">Loading PDF...</div>
+					}
 				>
 					{Array.from(new Array(numPages), (el, index) => {
 						const pageNumber = index + 1;
@@ -132,7 +157,7 @@ export default function ContractViewer({ url, zones }: ContractViewerProps) {
 										<div
 											key={zone.id}
 											onClick={() => handleZoneClick(zone.id)}
-											className="absolute cursor-pointer z-[999] bg-[rgba(0, 255, 0, 0.3)]"
+											className="absolute cursor-pointer z-[999]"
 											style={{
 												left: zone.left,
 												top: zone.top,
@@ -143,12 +168,27 @@ export default function ContractViewer({ url, zones }: ContractViewerProps) {
 											{signatures[zone.id] && (
 												<Image
 													unoptimized
-													src={signatures[zone.id]}
+													src={signatures[zone.id]?.image}
 													alt={`${zone.id} signature`}
 													layout="fill"
 													objectFit="contain"
 												/>
 											)}
+										</div>
+									))}
+									{pageZones.map((zone, index) => (
+										<div
+											key={index}
+											className="absolute z-[999] bg-base-success"
+											style={{
+												right: zone?.date?.right,
+												left: zone?.date?.left,
+												top: zone?.date?.top,
+												width: zone?.date?.width,
+												height: zone?.date?.height,
+											}}
+										>
+											{signatures[zone.id]?.date}
 										</div>
 									))}
 								</div>

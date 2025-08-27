@@ -62,11 +62,16 @@ export default function SignatureModal({ isOpen, onClose, onConfirm }: Signature
 				<div className="w-full border border-base-border rounded-sm bg-gray-light">
 					<SignaturePad
 						ref={sigCanvas}
-						options={{ penColor: 'black' }}
+						options={{
+							penColor: 'rgba(0, 0, 0, 0.88)',
+							minWidth: 1.5, // 最小线宽（默认0.5，增大以加粗）
+							maxWidth: 2.5, // 最大线宽（进一步加粗）
+							throttle: 16, // 绘制频率（避免延迟导致的断线）
+						}}
 						canvasProps={{
 							width: '400px',
 							height: '200px',
-							className: 'sigCanvas',
+							className: 'filter-contrast-120',
 						}}
 					/>
 				</div>
