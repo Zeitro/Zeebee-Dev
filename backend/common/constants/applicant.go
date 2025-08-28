@@ -43,6 +43,15 @@ const (
 	TINTypeITIN TINType = "ITIN"
 )
 
+type ApplicantSex string
+
+const ApplicantSexName = "applicant_sex"
+const (
+	ApplicantSexMale   ApplicantSex = "Male"
+	ApplicantSexFemale ApplicantSex = "Female"
+	ApplicantSexHidden ApplicantSex = "Hidden"
+)
+
 func init() {
 	// register applicant type
 	enums.Register(ApplicantTypeName, []enums.EnumOpt{
@@ -110,6 +119,21 @@ func init() {
 		{
 			Label: string(TINTypeITIN),
 			Value: string(TINTypeITIN),
+		},
+	})
+	// register applicant sex
+	enums.Register(ApplicantSexName, []enums.EnumOpt{
+		{
+			Label: string(ApplicantSexMale),
+			Value: string(ApplicantSexMale),
+		},
+		{
+			Label: string(ApplicantSexFemale),
+			Value: string(ApplicantSexFemale),
+		},
+		{
+			Label: "I do not wish to provide this information",
+			Value: string(ApplicantSexHidden),
 		},
 	})
 }

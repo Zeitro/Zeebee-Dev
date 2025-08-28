@@ -25,6 +25,8 @@ type Applicant struct {
 	DriverLicenseNum string                              `gorm:"column:driver_license_num;size:20;not null;default:''" json:"driver_license_num"`
 	Address          types.Address                       `gorm:"column:address;type:jsonb;serializer:json" json:"address"`
 	LoanBorrowerId   int64                               `gorm:"column:loan_borrower_id;not null;default:0" json:"loan_borrower_id"`
+	Phone            string                              `gorm:"column:phone;size:20;not null;default:''" json:"phone"`
+
 	// relationships
 	LoanProperty *LoanProperty `json:"loan_property" gorm:"foreignKey:LoanPropertyId;references:Id"`
 	Borrower     *Borrower     `json:"borrower" gorm:"foreignKey:BorrowerId;references:Id"`
