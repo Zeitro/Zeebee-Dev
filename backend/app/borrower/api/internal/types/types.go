@@ -38,6 +38,7 @@ type LoanApplyApplicantEntry struct {
 	Dob              string        `json:"dob" validate:"required,datetime=01/02/2006"`
 	MaritalStatus    string        `json:"marital_status" validate:"required,oneof=Married Unmarried Separated"`
 	Email            string        `json:"email" validate:"required, email"`
+	Phone            string        `json:"phone" validate:"required"`
 	EstCreditScore   int32         `json:"est_credit_score" validate:"required,gte=300,lte=850"`
 	DriverLicenseNum string        `json:"driver_license_num" validate:"required"`
 	Address          *AddressEntry `json:"address" validate:"required"`
@@ -62,6 +63,7 @@ type LoanBorrowerEntry struct {
 	MailingAddress AddressEntry `json:"mailing_address,optional"`
 	ContactEmail   string       `json:"contact_email,optional"`
 	ContactPhone   string       `json:"contact_phone,optional"`
+	ContactName    string       `json:"contact_name,optional"`
 	OwnPercent     int32        `json:"own_percent,optional"`
 }
 

@@ -188,6 +188,7 @@ message ApplicantEntry{
   string driver_license_num = 17;
   AddressEntry address = 18;
   int64  loan_borrower_id = 19;
+  string phone = 20;
 }
 
 message LoanEntry {

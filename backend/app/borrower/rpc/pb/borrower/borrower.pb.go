@@ -1541,6 +1541,7 @@ type ApplicantEntry struct {
 	DriverLicenseNum string                 `protobuf:"bytes,17,opt,name=driver_license_num,json=driverLicenseNum,proto3" json:"driver_license_num,omitempty"`
 	Address          *AddressEntry          `protobuf:"bytes,18,opt,name=address,proto3" json:"address,omitempty"`
 	LoanBorrowerId   int64                  `protobuf:"varint,19,opt,name=loan_borrower_id,json=loanBorrowerId,proto3" json:"loan_borrower_id,omitempty"`
+	Phone            string                 `protobuf:"bytes,20,opt,name=phone,proto3" json:"phone,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -1706,6 +1707,13 @@ func (x *ApplicantEntry) GetLoanBorrowerId() int64 {
 		return x.LoanBorrowerId
 	}
 	return 0
+}
+
+func (x *ApplicantEntry) GetPhone() string {
+	if x != nil {
+		return x.Phone
+	}
+	return ""
 }
 
 type LoanEntry struct {
@@ -6502,7 +6510,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x04city\x18\x02 \x01(\tR\x04city\x12\x1a\n" +
 	"\baddress1\x18\x03 \x01(\tR\baddress1\x12\x1a\n" +
 	"\baddress2\x18\x04 \x01(\tR\baddress2\x12\x19\n" +
-	"\bzip_code\x18\x05 \x01(\tR\azipCode\"\xf1\x04\n" +
+	"\bzip_code\x18\x05 \x01(\tR\azipCode\"\x87\x05\n" +
 	"\x0eApplicantEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
@@ -6527,7 +6535,8 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x10est_credit_score\x18\x10 \x01(\x05R\x0eestCreditScore\x12,\n" +
 	"\x12driver_license_num\x18\x11 \x01(\tR\x10driverLicenseNum\x120\n" +
 	"\aaddress\x18\x12 \x01(\v2\x16.borrower.AddressEntryR\aaddress\x12(\n" +
-	"\x10loan_borrower_id\x18\x13 \x01(\x03R\x0eloanBorrowerId\"\xbc\x14\n" +
+	"\x10loan_borrower_id\x18\x13 \x01(\x03R\x0eloanBorrowerId\x12\x14\n" +
+	"\x05phone\x18\x14 \x01(\tR\x05phone\"\xbc\x14\n" +
 	"\tLoanEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
 	"\x05stage\x18\x02 \x01(\tR\x05stage\x12%\n" +

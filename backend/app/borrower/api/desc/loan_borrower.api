@@ -17,5 +17,6 @@ type LoanBorrowerEntry {
     MailingAddress AddressEntry `json:"mailing_address,optional"`
     ContactEmail string `json:"contact_email,optional"`
     ContactPhone string `json:"contact_phone,optional"`
+    ContactName string `json:"contact_name,optional"`
     OwnPercent int32 `json:"own_percent,optional"`
 }
