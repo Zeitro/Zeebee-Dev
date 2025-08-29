@@ -24,7 +24,7 @@ const Demographics = ({ gutter = 24, form }) => {
 			<Col {...layoutCol}>
 				<Form.Item
 					label="Ethnicity (Check one or more)"
-					name="ethnicity"
+					name={['loan_demographic', 'ethnicity']}
 					rules={[
 						{
 							required: true,
@@ -54,7 +54,7 @@ const Demographics = ({ gutter = 24, form }) => {
 			{getSelectFormDom(
 				{
 					label: 'Sex',
-					name: 'sex',
+					name: 'applicant_sex',
 					placeholder: 'Select Sex',
 					valueName: 'sexOptions',
 					requiredMessage: 'Please select sex!',

@@ -13,6 +13,10 @@ export const useOptionsStore = create((set) => ({
 	lienPositionOptions: [], //lien_position
 	businessStrategyOptions: [], //business_strategy
 	prepaymentPenaltyOptions: [], //loan_prepayment_penalty
+	borrowerTypeOptions: [], //applicant_type
+	maritalStatusOptions: [], //marital_status
+	serviceTypeOptions: [], //loan_third_service_type
+	sexOptions: [], //applicant_sex
 	getOptions: async (name, key) => {
 		const { options } = await getSelectOptions(name);
 		return (

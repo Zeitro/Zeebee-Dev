@@ -1,7 +1,7 @@
 import { Modal, Button } from 'antd';
 import React from 'react';
 import styles from './index.module.scss';
-const NewModal = ({ children, customFooter = false, confirmLoading, ...props }) => {
+const NewModal = ({ children, customFooter = false, confirmLoading = false, ...props }) => {
 	return (
 		<Modal
 			open={true}

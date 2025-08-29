@@ -22,10 +22,12 @@ export const createZeeBeeSteps = [
 			{
 				title: 'Applicant information',
 				key: 'applicantInformation',
+				validate: ['loan_borrower.'],
 			},
 			{
 				title: 'Borrower information',
 				key: 'borrowerInformation',
+				validate: ['applicants.'],
 			},
 		],
 	},

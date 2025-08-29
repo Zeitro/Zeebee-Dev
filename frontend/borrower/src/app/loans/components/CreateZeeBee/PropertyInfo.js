@@ -4,6 +4,8 @@ import { Row, Col, Form, Radio, Select, Input, InputNumber } from 'antd';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import { layoutCol, titleCol } from '@/enum/common';
+import { livingAreaProps } from '@/lib/format';
+let name = 'loan_property';
 const PropertyInfo = ({ gutter = 24, form, addressProps }) => {
 	const { loanPurposeOptions, loanTypeOptions, propertyTypeOptions } = useGetOptions([
 		{
@@ -19,7 +21,6 @@ const PropertyInfo = ({ gutter = 24, form, addressProps }) => {
 			valueName: 'propertyTypeOptions',
 		},
 	]);
-	const borrowerType = Form.useWatch('borrower_type', form);
 
 	return (
 		<Row className={styles.createZeeBee} gutter={gutter}>
@@ -28,11 +29,11 @@ const PropertyInfo = ({ gutter = 24, form, addressProps }) => {
 			</Col>
 			<AddressForm
 				{...addressProps}
-				addressName={['loan_property', 'property_base', 'address', 'address1']}
-				addressName2={['loan_property', 'property_base', 'address', 'address2']}
-				cityName={['loan_property', 'property_base', 'address', 'city']}
-				stateName={['loan_property', 'property_base', 'address', 'state']}
-				zipName={['loan_property', 'property_base', 'address', 'zip_code']}
+				addressName={[name, 'property_base', 'address', 'address1']}
+				addressName2={[name, 'property_base', 'address', 'address2']}
+				cityName={[name, 'property_base', 'address', 'city']}
+				stateName={[name, 'property_base', 'address', 'state']}
+				zipName={[name, 'property_base', 'address', 'zip_code']}
 				addressLabel="Subject property address 1"
 				addressLabel2="Subject property address 2"
 				form={form}
@@ -61,7 +62,7 @@ const PropertyInfo = ({ gutter = 24, form, addressProps }) => {
 			<Col {...layoutCol}>
 				<Form.Item
 					label="Property type"
-					name="property_type"
+					name={[name, 'property_type']}
 					rules={[{ required: true, message: 'Please select property type!' }]}
 				>
 					<Select options={propertyTypeOptions} placeholder="Select property type" />
@@ -70,7 +71,7 @@ const PropertyInfo = ({ gutter = 24, form, addressProps }) => {
 			<Col {...layoutCol} md={12}>
 				<Form.Item
 					label="Living area sqft"
-					name="name"
+					name={[name, 'living_area_sqft']}
 					rules={[
 						{
 							required: true,
@@ -78,13 +79,17 @@ const PropertyInfo = ({ gutter = 24, form, addressProps }) => {
 						},
 					]}
 				>
-					<Input placeholder="Enter Living area sqft" />
+					<InputNumber
+						style={{ width: '100%' }}
+						{...livingAreaProps}
+						placeholder="Enter Living area sqft"
+					/>
 				</Form.Item>
 			</Col>
 			<Col {...layoutCol} md={12}>
 				<Form.Item
 					label="Number of units"
-					name="name"
+					name={[name, 'property_base', 'unit']}
 					rules={[
 						{
 							required: true,
@@ -104,7 +109,7 @@ const PropertyInfo = ({ gutter = 24, form, addressProps }) => {
 			<Col {...layoutCol} md={12}>
 				<Form.Item
 					label="Number of bedrooms"
-					name="name"
+					name={[name, 'bedrooms']}
 					rules={[
 						{
 							required: true,
@@ -124,7 +129,7 @@ const PropertyInfo = ({ gutter = 24, form, addressProps }) => {
 			<Col {...layoutCol} md={12}>
 				<Form.Item
 					label="Number of bathrooms"
-					name="name"
+					name={[name, 'bathrooms']}
 					rules={[
 						{
 							required: true,

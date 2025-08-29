@@ -4,19 +4,45 @@ import NewTable from '@/components/NewTable';
 import { useColumnByZeeBeeLoan } from './components/column';
 import { AddEditBtn } from './components/AddEditBtn';
 import { message } from 'antd';
-const Experience = () => {
+import _ from 'lodash';
+const paramsKeyInfo = {
+	transactionHistory: 'transaction_experiences',
+	realEstate: 'real_estate_experiences',
+};
+const paramsTypeInfo = {
+	transactionHistory: 'Transaction',
+	realEstate: 'Real Estate',
+};
+const Experience = ({ form }) => {
 	const [historyList, setHistoryList] = useState([]);
 	const [realEstateList, setRealEstateList] = useState([]);
 	const [messageApi, contextHolder] = message.useMessage();
 
-	const commonAdd = (arr, setFn, values, key) => {
+	const commonAdd = (arr, setFn, values, key, type) => {
+		let newArr = [];
 		if (key === 'Edit') {
 			const index = arr.findIndex((i) => i.id === values.id);
 			arr.splice(index, 1, values);
-			setFn([...arr]);
+			newArr = [...arr];
 		} else {
-			setFn([...arr, { ...values, id: arr.length + 1 }]);
+			// 因为后端的transactionHistory和realEstate的数据在一张表里面，所以要区分type，is_tenant_occupied和budget_or_cost没有值时传默认值
+			newArr = [
+				...arr,
+				{
+					is_tenant_occupied: false,
+					budget_or_cost: 0,
+					...values,
+					id: arr.length + 1,
+					type: paramsTypeInfo[type],
+				},
+			];
 		}
+		setFn(newArr);
+		const noIdArr = _.cloneDeep(newArr).map((i) => {
+			delete i.id;
+			return i;
+		});
+		form.setFieldsValue({ [paramsKeyInfo[type]]: noIdArr });
 		message.destroy();
 		messageApi.open({
 			type: 'success',
@@ -24,9 +50,16 @@ const Experience = () => {
 		});
 	};
 
-	const commonDelete = (arr, setFn, id) => {
+	const commonDelete = (arr, setFn, id, type) => {
 		const newArr = arr.filter((i) => i.id !== id);
 		setFn([...newArr]);
+		const noIdArr = _.cloneDeep(newArr).map((i) => {
+			delete i.id;
+			return i;
+		});
+		let paramsKey =
+			type === 'transactionHistory' ? 'transaction_experiences' : 'real_estate_experiences';
+		form.setFieldsValue({ [paramsKey]: noIdArr });
 		message.destroy();
 		messageApi.open({
 			type: 'success',
@@ -36,10 +69,10 @@ const Experience = () => {
 
 	const handleAdd = (values, v, type) => {
 		if (type === 'transactionHistory') {
-			commonAdd(historyList, setHistoryList, values, v);
+			commonAdd(historyList, setHistoryList, values, v, type);
 			return;
 		}
-		if (type === 'realEstate') commonAdd(realEstateList, setRealEstateList, values, v);
+		if (type === 'realEstate') commonAdd(realEstateList, setRealEstateList, values, v, type);
 	};
 
 	const handleDelete = (id, type) => {

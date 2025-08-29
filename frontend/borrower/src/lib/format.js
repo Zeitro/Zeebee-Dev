@@ -14,6 +14,27 @@ export const creditScoreRegex = /^([3-7]\d{2}|8[0-4]\d|850)(-\d{1,2})?$/;
 export const minCreditScore = 300;
 export const maxCreditScore = 850;
 
+// 格式化居住面积, 用于<InputNumber>中配置
+export const livingAreaProps = {
+	controls: false,
+	min: 1,
+	formatter: (value) => {
+		// 保留两位小数
+		const [int, dec] = value.split('.');
+		const str = dec?.slice?.(0, 2);
+		return `${int}` + (dec ? `.${str}` : '');
+	},
+	parser: (value) => parseFloat(value.replace(/[^\d.]/g, '')) || 0,
+};
+
+// 校验规则, 用于<Form.Item>rules中配置validator
+export const validateRule = (value, regex, errorMsg = 'Invalid input') => {
+	if (value && !regex.test(value)) {
+		return Promise.reject(errorMsg);
+	}
+	return Promise.resolve();
+};
+
 // 格式化手机号 (xxx) xxx-xxxx
 export const formatPhone = (phoneNumber) => {
 	// 移除所有非数字字符

@@ -17,8 +17,8 @@ const SelectTINType = ({ value, onChange, isIndividual }) => {
 							disabled: isIndividual ? i.value === 'EIN' : i.value !== 'EIN',
 						}))
 						.sort((a, b) => a.disabled - b.disabled)}
-					value={value?.type}
-					onChange={(e) => onChange({ type: e, tin: value?.tin })}
+					value={value?.tin_type}
+					onChange={(e) => onChange({ tin_type: e, tin: value?.tin })}
 				/>
 				<InputTIN
 					allowClear
@@ -27,15 +27,15 @@ const SelectTINType = ({ value, onChange, isIndividual }) => {
 					placeholder="Search by field"
 					value={value?.tin}
 					onChange={(e) => {
-						let type = value?.type;
+						let tin_type = value?.tin_type;
 						// 因ssn与ITIN的格式相同，需特殊处理
 						if (e.length === 9 && isIndividual) {
-							type = e[0] === '9' ? 'ITIN' : 'SSN';
+							tin_type = e[0] === '9' ? 'ITIN' : 'SSN';
 						}
 
-						onChange({ type, tin: e });
+						onChange({ tin_type, tin: e });
 					}}
-					type={value?.type}
+					type={value?.tin_type}
 				/>
 			</Space.Compact>
 		</Space>

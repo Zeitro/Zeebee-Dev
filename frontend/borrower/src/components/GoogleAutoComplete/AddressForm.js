@@ -9,6 +9,14 @@ const layoutCol = {
 	xs: 24,
 	sm: 24,
 };
+const getPath = (name, listName) => {
+	const listNameArr = Array.isArray(listName) ? listName : [listName];
+	let pathArr = Array.isArray(name) ? name : [name];
+	if (listName) {
+		pathArr = [...listNameArr, ...pathArr];
+	}
+	return pathArr;
+};
 /**
  * 地址自动完成（包括address1/address2/city/state/zip/unit）
  */
@@ -32,19 +40,20 @@ const AddressForm = ({
 	disabled,
 	isShowAddress2 = true,
 	isShowZip = true,
+	listName = '', // 此组件使用在Form.List内时传此字段,且Form.List上的name属性值与此listName字段值一致；方便用于设置form.setFieldsValue
 }) => {
 	const { getStateList, getCityList, stateOptions, cityOptions } = useAddressStore();
-	const stateValue = Form.useWatch(stateName, form);
+	const stateValue = Form.useWatch(getPath(stateName, listName), form);
 	const handlePlaceSelected = (place) => {
 		if (!form) return;
 		const newValue = form.getFieldsValue() || {};
-		set(newValue, cityName, place.city);
-		set(newValue, stateName, place.state);
+		set(newValue, getPath(cityName, listName), place.city);
+		set(newValue, getPath(stateName, listName), place.state);
 		if (isShowZip) {
-			set(newValue, zipName, place.zip);
+			set(newValue, getPath(zipName, listName), place.zip);
 		}
 		if (isShowAddress2) {
-			set(newValue, addressName2, place.unit);
+			set(newValue, getPath(addressName2, listName), place.unit);
 		}
 		form.setFieldsValue(newValue);
 	};

@@ -4,12 +4,21 @@ import { Row, Col, Form, Radio, Select, Input, InputNumber } from 'antd';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
 import InputPhone from '@/components/InputPhone';
 import SelectTINType from '@/components/InputTIN/SelectTINType';
-import { emailRegex, phoneRegex } from '@/lib/format';
+import { emailRegex, phoneRegex, validateRule } from '@/lib/format';
 import { layoutCol, titleCol } from '@/enum/common';
+import { useGetOptions } from '@/hooks/useGetOptions';
+const name = 'loan_borrower';
 const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
-	const borrowerType = Form.useWatch('borrower_type', form);
+	const borrowerType = Form.useWatch([name, 'type'], form);
 
 	const nameLabel = borrowerType === 'Individual' ? 'Individual name' : 'Entity name';
+
+	const { borrowerTypeOptions, getSelectFormDom } = useGetOptions([
+		{
+			key: 'applicant_type',
+			valueName: 'borrowerTypeOptions',
+		},
+	]);
 	return (
 		<Row className={styles.createZeeBee} gutter={gutter}>
 			<Col {...titleCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">
@@ -21,22 +30,16 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 			<Col {...layoutCol}>
 				<Form.Item
 					label="Borrower type"
-					name="borrower_type"
+					name={[name, 'type']}
 					rules={[{ required: true, message: 'Please select borrower type!' }]}
 				>
-					<Select
-						options={[
-							{ label: 'Individual', value: 'Individual' },
-							{ label: 'LLC', value: 'LLC' },
-						]}
-						placeholder="Select borrower type"
-					/>
+					<Select options={borrowerTypeOptions} placeholder="Select borrower type" />
 				</Form.Item>
 			</Col>
 			<Col {...layoutCol}>
 				<Form.Item
 					label={nameLabel}
-					name="name"
+					name={[name, 'name']}
 					rules={[
 						{
 							required: true,
@@ -50,7 +53,7 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 			<Col {...layoutCol}>
 				<Form.Item
 					label="TIN"
-					name="tin"
+					name={[name, 'tin']}
 					rules={[
 						{
 							required: true,
@@ -65,7 +68,7 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 				<Col {...layoutCol}>
 					<Form.Item
 						label="%Own"
-						name="own_percent"
+						name={[name, 'own_percent']}
 						rules={[
 							{
 								required: true,
@@ -89,11 +92,11 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 			</Col>
 			<AddressForm
 				{...addressProps}
-				addressName={['loan_property', 'property_base', 'address', 'address1']}
-				addressName2={['loan_property', 'property_base', 'address', 'address2']}
-				cityName={['loan_property', 'property_base', 'address', 'city']}
-				stateName={['loan_property', 'property_base', 'address', 'state']}
-				zipName={['loan_property', 'property_base', 'address', 'zip_code']}
+				addressName={[name, 'mailing_address', 'address1']}
+				addressName2={[name, 'mailing_address', 'address2']}
+				cityName={[name, 'mailing_address', 'city']}
+				stateName={[name, 'mailing_address', 'state']}
+				zipName={[name, 'mailing_address', 'zip_code']}
 				addressLabel="Mailing Address 1"
 				addressLabel2="Mailing Address 2"
 				form={form}
@@ -109,19 +112,15 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 			<Col {...layoutCol}>
 				<Form.Item
 					label="Email"
-					name="email"
+					name={[name, 'contact_email']}
 					rules={[
 						{
 							required: true,
 							message: 'Please enter email',
 						},
 						{
-							validator: (_, value) => {
-								if (value && !emailRegex.test(value)) {
-									return Promise.reject('Invalid email format');
-								}
-								return Promise.resolve();
-							},
+							validator: (_, value) =>
+								validateRule(value, emailRegex, 'Invalid email format'),
 						},
 					]}
 				>
@@ -131,19 +130,15 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 			<Col {...layoutCol}>
 				<Form.Item
 					label="Phone number"
-					name="phone"
+					name={[name, 'contact_phone']}
 					rules={[
 						{
 							required: true,
 							message: 'Please enter phone number',
 						},
 						{
-							validator: (_, value) => {
-								if (value && !phoneRegex.test(value)) {
-									return Promise.reject('Invalid phone number');
-								}
-								return Promise.resolve();
-							},
+							validator: (_, value) =>
+								validateRule(value, phoneRegex, 'Invalid phone number'),
 						},
 					]}
 				>
@@ -153,7 +148,7 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 			<Col {...layoutCol}>
 				<Form.Item
 					label="Contact name"
-					name="contact_name"
+					name={[name, 'contact_name']}
 					rules={[
 						{
 							required: true,

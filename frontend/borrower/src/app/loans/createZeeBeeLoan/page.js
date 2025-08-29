@@ -1,6 +1,7 @@
 'use client';
-import { App, Button, Col, Form, message, Space, Steps } from 'antd';
+import { App, Button, Col, Form, message, Space, Steps, Tabs } from 'antd';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import styles from './index.module.scss';
 import CreateLoan from '../components/Create/Loan';
 import CreateProperty from '../components/Create/property';
 import CreateTerm from '../components/Create/term';
@@ -73,6 +74,29 @@ const CreateZeeBeeLoan = () => {
 		<ReviewAndSign key="0-ReviewAndSign" form={form} />,
 	];
 
+	// 将stepContent的多维数组，转换成一维，key对应的就是当前步骤（currentStep + stepNum）
+	const getTabsItem = () => {
+		let newArr = [];
+		stepContent.map((item, index) => {
+			if (Array.isArray(item)) {
+				item.map((item2, index2) => {
+					newArr.push({
+						key: `${index}-${index2}`,
+						label: '',
+						children: item2,
+					});
+				});
+			} else {
+				newArr.push({
+					key: `${index}-0`,
+					label: '',
+					children: item,
+				});
+			}
+		});
+		return newArr;
+	};
+
 	// 获取下一步步骤类型（Submit创建按钮/NextMaxStep下一大步骤/NextMinStep下一小步骤）
 	const diffSteps = () => {
 		const lastStep = stepContent[stepContent.length - 1];
@@ -93,8 +117,13 @@ const CreateZeeBeeLoan = () => {
 	// // next/Add loan
 	const handleNext = async () => {
 		try {
-			// const values = await form.validateFields();
-			// console.log(values);
+			// const stepConfigItem = createZeeBeeSteps[currentStep]?.children
+			// 	? createZeeBeeSteps[currentStep]?.children[stepNum]
+			// 	: createZeeBeeSteps[currentStep];
+			// const validateName = stepConfigItem?.validate;
+			const values = await form.validateFields();
+			const a = form.getFieldsValue(true);
+			console.log(values, a);
 			const isType = diffSteps();
 			if (isType === 'Submit') {
 				// 		// add loan
@@ -138,6 +167,8 @@ const CreateZeeBeeLoan = () => {
 				top: 0,
 			});
 		} catch (error) {
+			console.log('error', error);
+
 			setLoading(false);
 		}
 	};
@@ -166,6 +197,7 @@ const CreateZeeBeeLoan = () => {
 			setCurrentStep((v) => v - 1);
 			setStepNum(prevStepData?.length - 1);
 		}
+		form.resetFields();
 	};
 
 	// // 从property详情跳转的创建loan
@@ -216,6 +248,19 @@ const CreateZeeBeeLoan = () => {
 			</Col>
 		);
 	}, [currentStep, stepNum, loading]);
+	// createZeeBeeSteps.map((i, index) => ({
+	// 							key: index,
+	// 							label: i.title,
+	// 							children: (
+	// 								<>
+	// 									{stepContent[index]?.length
+	// 										? stepContent[index]?.[stepNum]
+	// 										: stepContent[index]}
+	// 									{stepBtn}
+	// 								</>
+	// 							),
+	// 						}))
+	console.log(getTabsItem());
 
 	return (
 		<div className="flex flex-col h-full">
@@ -227,6 +272,7 @@ const CreateZeeBeeLoan = () => {
 					// className="max-w-[880px]"
 				/>
 			</div>
+
 			<div className="flex-1 flex items-stretch overflow-hidden">
 				{createZeeBeeSteps[currentStep]?.children && (
 					<div className="w-[250px] py-6 px-6 shrink-0 border-r border-base-border">
@@ -240,8 +286,11 @@ const CreateZeeBeeLoan = () => {
 					</div>
 				)}
 				<div
-					className={`flex-1 overflow-hidden overflow-y-auto py-${stepContent.length === currentStep ? 6 : 8} px-8`}
+					className={`flex-1 overflow-hidden overflow-y-auto pb-8 px-8`}
 					ref={scrollRef}
+					style={{
+						paddingTop: stepContent.length === currentStep + 1 ? 24 : 32,
+					}}
 				>
 					<Form
 						form={form}
@@ -252,14 +301,17 @@ const CreateZeeBeeLoan = () => {
 						size="large"
 						// disabled={loading}
 						initialValues={{
-							borrowers: [{}],
+							applicants: [{ type: 'Individual', is_primary: true }],
 						}}
 					>
-						{stepContent[currentStep]?.length
-							? stepContent[currentStep]?.[stepNum]
-							: stepContent[currentStep]}
-						{stepBtn}
+						<Tabs
+							activeKey={`${currentStep}-${stepNum}`}
+							items={getTabsItem()}
+							renderTabBar={() => <div> </div>}
+							className={` ${styles.tabs}`}
+						/>
 					</Form>
+					{stepBtn}
 				</div>
 			</div>
 		</div>

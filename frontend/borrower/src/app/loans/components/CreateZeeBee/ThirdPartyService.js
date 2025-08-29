@@ -4,17 +4,26 @@ import NewTable from '@/components/NewTable';
 import { useColumnByZeeBeeLoan } from './components/column';
 import { AddEditBtn } from './components/AddEditBtn';
 import { message } from 'antd';
-const ThirdPartyService = () => {
+import _ from 'lodash';
+let paramsKey = 'loan_third_services';
+const ThirdPartyService = ({ form }) => {
 	const [list, setList] = useState([]);
 	const [messageApi, contextHolder] = message.useMessage();
 	const commonAdd = (arr, setFn, values, key) => {
+		let newArr = [];
 		if (key === 'Edit') {
 			const index = arr.findIndex((i) => i.id === values.id);
 			arr.splice(index, 1, values);
-			setFn([...arr]);
+			newArr = [...arr];
 		} else {
-			setFn([...arr, { ...values, id: arr.length + 1 }]);
+			newArr = [...arr, { ...values, id: arr.length + 1 }];
 		}
+		setFn(newArr);
+		const noIdArr = _.cloneDeep(newArr).map((i) => {
+			delete i.id;
+			return i;
+		});
+		form.setFieldsValue({ [paramsKey]: noIdArr });
 		message.destroy();
 		messageApi.open({
 			type: 'success',
@@ -25,6 +34,11 @@ const ThirdPartyService = () => {
 	const commonDelete = (arr, setFn, id) => {
 		const newArr = arr.filter((i) => i.id !== id);
 		setFn([...newArr]);
+		const noIdArr = _.cloneDeep(newArr).map((i) => {
+			delete i.id;
+			return i;
+		});
+		form.setFieldsValue({ [paramsKey]: noIdArr });
 		message.destroy();
 		messageApi.open({
 			type: 'success',

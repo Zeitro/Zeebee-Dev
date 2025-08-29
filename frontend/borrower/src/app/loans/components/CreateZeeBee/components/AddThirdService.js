@@ -1,24 +1,21 @@
 'use client';
 import React, { useState } from 'react';
 import NewModal from '@/components/NewModal';
-import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
-import { Col, Form, Input, Radio, Row } from 'antd';
+import { Col, Form, Input, Row } from 'antd';
 import { useGetOptions } from '@/hooks/useGetOptions';
-import InputNumAmount from '@/components/InputNumAmount';
-import CommonFormDate from '@/components/CommonDate';
-import { yesNoOptions } from '@/enum/common';
-import { emailRegex } from '@/lib/format';
+import { emailRegex, phoneRegex, validateRule } from '@/lib/format';
+import InputPhone from '@/components/InputPhone';
 const AddThirdService = ({ title, rowData, onOk, onCancel }) => {
 	const [form] = Form.useForm();
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const layoutCol = {
 		md: 24,
 	};
-	const { businessStrategyOptions, getSelectFormDom } = useGetOptions([
-		// {
-		// 	key: 'business_strategy',
-		// 	valueName: 'businessStrategyOptions',
-		// },
+	const { getSelectFormDom } = useGetOptions([
+		{
+			key: 'loan_third_service_type',
+			valueName: 'serviceTypeOptions',
+		},
 	]);
 	return (
 		<NewModal
@@ -54,7 +51,7 @@ const AddThirdService = ({ title, rowData, onOk, onCancel }) => {
 				<Row gutter={24}>
 					{/* {getSelectFormDom({
 						label: 'Service type',
-						name: 'property_type',
+						name: 'loan_third_service_type',
 						placeholder: 'Select service type',
 						valueName: 'propertyTypeOptions',
 						requiredMessage: 'Please select service type!',
@@ -74,17 +71,25 @@ const AddThirdService = ({ title, rowData, onOk, onCancel }) => {
 						</Form.Item>
 					</Col>
 					<Col {...layoutCol}>
+						<Form.Item label="Company" name="company">
+							<Input placeholder="Enter service company" />
+						</Form.Item>
+					</Col>
+					<Col {...layoutCol}>
 						<Form.Item
-							label="Company"
-							name="company"
+							label="Phone"
+							name="phone"
 							rules={[
 								{
 									required: true,
-									message: 'Please enter service company',
+									message: 'Please enter phone',
+								},
+								{
+									validator: (_, value) => validateRule(value, phoneRegex),
 								},
 							]}
 						>
-							<Input placeholder="Enter service company" />
+							<InputPhone placeholder="Enter phone" />
 						</Form.Item>
 					</Col>
 					<Col {...layoutCol}>
@@ -97,12 +102,7 @@ const AddThirdService = ({ title, rowData, onOk, onCancel }) => {
 									message: 'Please enter email',
 								},
 								{
-									validator: (_, value) => {
-										if (value && !emailRegex.test(value)) {
-											return Promise.reject('Invalid email format');
-										}
-										return Promise.resolve();
-									},
+									validator: (_, value) => validateRule(value, emailRegex),
 								},
 							]}
 						>

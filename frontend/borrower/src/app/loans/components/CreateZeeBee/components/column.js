@@ -2,11 +2,12 @@
 import FilterField from '@/components/FilterField';
 import { AddEditBtn } from './AddEditBtn';
 import { DeleteBtn } from '@/components/NewModal/BtnPopUpModal';
+import { formatAmount, formatPhone } from '@/lib/format';
 export const useColumnByZeeBeeLoan = (handleAdd = () => {}, handleDelete = () => {}) => {
 	const beforeCommon = [
 		{
 			title: 'Property address',
-			dataIndex: ['loan_property', 'property_base', 'address', 'address1'],
+			dataIndex: ['address', 'address1'],
 			key: 'address',
 			ellipsis: true,
 			sorter: true,
@@ -17,22 +18,22 @@ export const useColumnByZeeBeeLoan = (handleAdd = () => {}, handleDelete = () =>
 		},
 		{
 			title: 'City',
-			dataIndex: 'city',
+			dataIndex: ['address', 'city'],
 			key: 'city',
 			ellipsis: true,
 			width: 120,
 		},
 		{
 			title: 'State',
-			dataIndex: 'state',
+			dataIndex: ['address', 'state'],
 			key: 'state',
 			ellipsis: true,
 			width: 70,
 		},
 		{
 			title: 'Owner ship on title',
-			dataIndex: 'owner_ship_on_title',
-			key: 'owner_ship_on_title',
+			dataIndex: 'ownership_on_title',
+			key: 'ownership_on_title',
 			ellipsis: true,
 			width: 160,
 		},
@@ -45,10 +46,11 @@ export const useColumnByZeeBeeLoan = (handleAdd = () => {}, handleDelete = () =>
 		},
 		{
 			title: 'Purchase price',
-			dataIndex: 'purchase_price',
-			key: 'purchase_price',
+			dataIndex: 'purchase_amount',
+			key: 'purchase_amount',
 			ellipsis: true,
 			width: 140,
+			render: (v) => formatAmount(v),
 		},
 		{
 			title: 'Purchase date',
@@ -62,24 +64,26 @@ export const useColumnByZeeBeeLoan = (handleAdd = () => {}, handleDelete = () =>
 	const afterCommon = [
 		{
 			title: 'Sales price',
-			dataIndex: 'sales_price',
-			key: 'sales_price',
+			dataIndex: 'sold_amount',
+			key: 'sold_amount',
 			ellipsis: true,
 			width: 140,
+			render: (v) => formatAmount(v),
 		},
 		{
 			title: 'Date sold',
-			dataIndex: 'date_sold',
-			key: 'date_sold',
+			dataIndex: 'sold_date',
+			key: 'sold_date',
 			ellipsis: true,
 			width: 140,
 		},
 		{
 			title: 'Profit/Loan',
-			dataIndex: 'profit_loan',
-			key: 'profit_loan',
+			dataIndex: 'profit',
+			key: 'profit',
 			ellipsis: true,
 			width: 140,
+			render: (v) => formatAmount(v),
 		},
 	];
 
@@ -130,8 +134,8 @@ export const useColumnByZeeBeeLoan = (handleAdd = () => {}, handleDelete = () =>
 		...beforeCommon,
 		{
 			title: 'Rehab budget/Construction cost',
-			dataIndex: 'rehab_budget_construction_cost',
-			key: 'rehab_budget_construction_cost',
+			dataIndex: 'budget_or_cost',
+			key: 'budget_or_cost',
 			ellipsis: true,
 			width: 240,
 		},
@@ -147,8 +151,8 @@ export const useColumnByZeeBeeLoan = (handleAdd = () => {}, handleDelete = () =>
 		...beforeCommon,
 		{
 			title: 'Tenant occupied',
-			dataIndex: 'tenant_occupied',
-			key: 'tenant_occupied',
+			dataIndex: 'is_tenant_occupied',
+			key: 'is_tenant_occupied',
 			ellipsis: true,
 			width: 140,
 		},
@@ -163,38 +167,39 @@ export const useColumnByZeeBeeLoan = (handleAdd = () => {}, handleDelete = () =>
 	const thirdPartyServicesColumns = [
 		{
 			title: 'Service type',
-			dataIndex: 'service_type',
-			key: 'service_type',
+			dataIndex: 'type',
+			key: 'type',
 			ellipsis: true,
-			minWidth: 200,
+			minWidth: 160,
 		},
 		{
 			title: 'Name',
-			dataIndex: 'Name',
-			key: 'Name',
+			dataIndex: 'name',
+			key: 'name',
 			ellipsis: true,
-			minWidth: 200,
+			minWidth: 160,
 		},
 		{
 			title: 'Company',
 			dataIndex: 'company',
 			key: 'company',
 			ellipsis: true,
-			minWidth: 200,
+			minWidth: 160,
 		},
 		{
 			title: 'Phone',
 			dataIndex: 'phone',
 			key: 'phone',
 			ellipsis: true,
-			minWidth: 200,
+			minWidth: 160,
+			render: (v) => formatPhone(v),
 		},
 		{
 			title: 'Email',
 			dataIndex: 'email',
 			key: 'email',
 			ellipsis: true,
-			minWidth: 200,
+			minWidth: 160,
 		},
 		getAction(
 			'thirdPartyService',

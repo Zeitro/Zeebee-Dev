@@ -13,11 +13,11 @@ export const AddExperience = ({ title, rowData = {}, type, onOk, onCancel }) => 
 	const layoutCol = {
 		md: 12,
 	};
-	const { businessStrategyOptions, getSelectFormDom } = useGetOptions([
-		// {
-		// 	key: 'business_strategy',
-		// 	valueName: 'businessStrategyOptions',
-		// },
+	const { getSelectFormDom } = useGetOptions([
+		{
+			key: 'property_type',
+			valueName: 'propertyTypeOptions',
+		},
 	]);
 	return (
 		<NewModal
@@ -52,11 +52,9 @@ export const AddExperience = ({ title, rowData = {}, type, onOk, onCancel }) => 
 			>
 				<Row gutter={24}>
 					<AddressForm
-						addressName={['loan_property', 'property_base', 'address', 'address1']}
-						addressName2={['loan_property', 'property_base', 'address', 'address2']}
-						cityName={['loan_property', 'property_base', 'address', 'city']}
-						stateName={['loan_property', 'property_base', 'address', 'state']}
-						zipName={['loan_property', 'property_base', 'address', 'zip_code']}
+						addressName={['address', 'address1']}
+						cityName={['address', 'city']}
+						stateName={['address', 'state']}
 						addressLabel="Address"
 						isShowAddress2={false}
 						isShowZip={false}
@@ -77,7 +75,7 @@ export const AddExperience = ({ title, rowData = {}, type, onOk, onCancel }) => 
 							<Input placeholder="Enter owner name" />
 						</Form.Item>
 					</Col>
-					{/* {getSelectFormDom(
+					{getSelectFormDom(
 						{
 							label: 'Property type', // 房产类型
 							name: 'property_type',
@@ -86,11 +84,11 @@ export const AddExperience = ({ title, rowData = {}, type, onOk, onCancel }) => 
 							requiredMessage: 'Please select property type!',
 						},
 						layoutCol,
-					)} */}
+					)}
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Purchase price" // 购买价格
-							name="purchase_price"
+							name="purchase_amount"
 							rules={[
 								{
 									required: true,
@@ -114,7 +112,7 @@ export const AddExperience = ({ title, rowData = {}, type, onOk, onCancel }) => 
 						<Col {...layoutCol}>
 							<Form.Item
 								label="Rehab budget /Construction cost" // 重建预算
-								name="rehab_budget"
+								name="budget_or_cost"
 								rules={[
 									{
 										required: true,
@@ -130,7 +128,7 @@ export const AddExperience = ({ title, rowData = {}, type, onOk, onCancel }) => 
 						<Col {...layoutCol}>
 							<Form.Item
 								label="Tenant Occupied" // 租户已入驻
-								name="tenant_occupied"
+								name="is_tenant_occupied"
 								rules={[
 									{
 										required: true,
@@ -145,7 +143,7 @@ export const AddExperience = ({ title, rowData = {}, type, onOk, onCancel }) => 
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Sale price" // 售价
-							name="sale_price"
+							name="sold_amount"
 							rules={[
 								{
 									required: true,
@@ -159,7 +157,7 @@ export const AddExperience = ({ title, rowData = {}, type, onOk, onCancel }) => 
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Date Sold" // 售出时间
-							name="date_sold"
+							name="sold_date"
 							rules={[{ required: true, message: 'Please select date!' }]}
 						>
 							<CommonFormDate />

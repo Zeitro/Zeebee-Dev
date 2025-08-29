@@ -11,18 +11,25 @@ import {
 	creditScoreRegex,
 	minCreditScore,
 	maxCreditScore,
+	validateRule,
 } from '@/lib/format';
 import { formatStr } from '@/lib/date';
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { layoutCol, titleCol } from '@/enum/common';
+import { useGetOptions } from '@/hooks/useGetOptions';
 const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
-	const borrowerType = Form.useWatch('borrower_type', form);
+	const { maritalStatusOptions, getSelectFormDom } = useGetOptions([
+		{
+			key: 'marital_status',
+			valueName: 'maritalStatusOptions',
+		},
+	]);
 	return (
 		<div className={styles.createZeeBee}>
 			<Col {...titleCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">
 				Borrower information
 			</Col>
-			<Form.List name="borrowers">
+			<Form.List name="applicants">
 				{(fields, { add, remove }) => {
 					return fields?.map((field, index) => (
 						<Row
@@ -59,7 +66,7 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 							<Col {...layoutCol} md={8}>
 								<Form.Item
 									label="Middle name"
-									name={[field.name, 'middle_name']}
+									name={[field.name, 'mid_name']}
 									rules={[{ required: true, message: 'Please Enter!' }]}
 								>
 									<Input placeholder="Enter middle name" />
@@ -86,7 +93,7 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 							<Col {...layoutCol}>
 								<Form.Item
 									label="Date of birth"
-									name="date_of_birth"
+									name={[field.name, 'dob']}
 									rules={[
 										{ required: true, message: 'Please select date of birth!' },
 									]}
@@ -101,19 +108,19 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 							<Col {...layoutCol}>
 								<Form.Item
 									label="Phone"
-									name="phone"
+									name={[field.name, 'phone']}
 									rules={[
 										{
 											required: true,
 											message: 'Please enter phone number',
 										},
 										{
-											validator: (_, value) => {
-												if (value && !phoneRegex.test(value)) {
-													return Promise.reject('Invalid phone number');
-												}
-												return Promise.resolve();
-											},
+											validator: (_, value) =>
+												validateRule(
+													value,
+													phoneRegex,
+													'Invalid phone number',
+												),
 										},
 									]}
 								>
@@ -123,7 +130,7 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 							<Col {...layoutCol}>
 								<Form.Item
 									label="Marital status"
-									name="marital_status"
+									name={[field.name, 'marital_status']}
 									rules={[
 										{
 											required: true,
@@ -131,25 +138,28 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 										},
 									]}
 								>
-									<Select options={[]} placeholder="Select marital status" />
+									<Select
+										options={maritalStatusOptions}
+										placeholder="Select marital status"
+									/>
 								</Form.Item>
 							</Col>
 							<Col {...layoutCol}>
 								<Form.Item
 									label="Email"
-									name="email"
+									name={[field.name, 'email']}
 									rules={[
 										{
 											required: true,
 											message: 'Please enter email',
 										},
 										{
-											validator: (_, value) => {
-												if (value && !emailRegex.test(value)) {
-													return Promise.reject('Invalid email format');
-												}
-												return Promise.resolve();
-											},
+											validator: (_, value) =>
+												validateRule(
+													value,
+													emailRegex,
+													'Invalid email format',
+												),
 										},
 									]}
 								>
@@ -159,19 +169,19 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 							<Col {...layoutCol}>
 								<Form.Item
 									label="Est. Credit Score"
-									name="credit_score"
+									name={[field.name, 'est_credit_score']}
 									rules={[
 										{
 											required: true,
 											message: 'Please enter est. credit score!',
 										},
 										{
-											validator: (_, value) => {
-												if (value && !creditScoreRegex.test(value)) {
-													return Promise.reject('Invalid Credit Score');
-												}
-												return Promise.resolve();
-											},
+											validator: (_, value) =>
+												validateRule(
+													value,
+													creditScoreRegex,
+													'Invalid Credit Score',
+												),
 										},
 									]}
 								>
@@ -187,7 +197,7 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 							<Col {...layoutCol}>
 								<Form.Item
 									label="Driver’s License/ID number"
-									name={[field.name, 'id']}
+									name={[field.name, 'driver_license_num']}
 									rules={[{ required: true, message: 'Please Enter!' }]}
 								>
 									<Input placeholder="Enter driver’s license/ID number" />
@@ -195,21 +205,11 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 							</Col>
 							<AddressForm
 								{...addressProps}
-								addressName={[
-									'loan_property',
-									'property_base',
-									'address',
-									'address1',
-								]}
-								addressName2={[
-									'loan_property',
-									'property_base',
-									'address',
-									'address2',
-								]}
-								cityName={['loan_property', 'property_base', 'address', 'city']}
-								stateName={['loan_property', 'property_base', 'address', 'state']}
-								zipName={['loan_property', 'property_base', 'address', 'zip_code']}
+								addressName={[field.name, 'address', 'address1']}
+								addressName2={[field.name, 'address', 'address2']}
+								cityName={[field.name, 'address', 'city']}
+								stateName={[field.name, 'address', 'state']}
+								zipName={[field.name, 'address', 'zip_code']}
 								addressLabel="Primary Address 1"
 								addressLabel2="Primary Address 2"
 								form={form}
@@ -218,6 +218,7 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 								stateCol={{ ...layoutCol, md: 8 }}
 								cityCol={{ ...layoutCol, md: 8 }}
 								zipCol={{ ...layoutCol, md: 8 }}
+								listName="applicants"
 							/>
 							{fields.length === index + 1 && (
 								<Col {...layoutCol}>
@@ -225,7 +226,9 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 										type="link"
 										size="small"
 										icon={<PlusCircleOutlined />}
-										onClick={() => add()}
+										onClick={() =>
+											add({ type: 'Individual', is_primary: false })
+										}
 									>
 										Add borrower
 									</Button>

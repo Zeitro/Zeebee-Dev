@@ -21,10 +21,10 @@ const MAX_COUNT = 5;
 const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 	const loanPurpose = Form.useWatch('loan_purpose', form);
 	const loanType = Form.useWatch('loan_type', form) || 'Rental';
-	const yearly_rental_income = Form.useWatch('yearly_rental_income', form);
-	const yearly_liability_expenses = Form.useWatch('yearly_liability_expenses', form);
-	const assignment_fee = Form.useWatch('assignment_fee', form);
-	const subordinate_debt = Form.useWatch('subordinate_debt', form);
+	const est_yearly_rental_income = Form.useWatch('est_yearly_rental_income', form);
+	const yearly_liability_expense = Form.useWatch('yearly_liability_expense', form);
+	const has_assignment_fee = Form.useWatch('has_assignment_fee', form);
+	const has_subordinate_debt = Form.useWatch('has_subordinate_debt', form);
 	const isPurchase = loanPurpose === 'purchase';
 
 	const { businessStrategyOptions, getSelectFormDom } = useGetOptions([
@@ -32,14 +32,18 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 			key: 'business_strategy',
 			valueName: 'businessStrategyOptions',
 		},
+		{
+			key: 'loan_prepayment_penalty',
+			valueName: 'prepaymentPenaltyOptions',
+		},
 	]);
 
 	useEffect(() => {
-		if (yearly_rental_income && yearly_liability_expenses) {
-			const num = yearly_rental_income / yearly_liability_expenses;
-			form.setFieldsValue({ DSCR: Math.round(num * 100) / 100 });
+		if (est_yearly_rental_income && yearly_liability_expense) {
+			const num = est_yearly_rental_income / yearly_liability_expense;
+			form.setFieldsValue({ dscr: Math.round(num * 100) / 100 });
 		}
-	}, [yearly_rental_income, yearly_liability_expenses]);
+	}, [est_yearly_rental_income, yearly_liability_expense]);
 	return (
 		<Row className={styles.createZeeBee} gutter={gutter}>
 			<Col {...titleCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">
@@ -48,7 +52,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 			<Col {...layoutCol}>
 				<Form.Item
 					label="Purchase price"
-					name="purchase_price"
+					name="purchase_amount"
 					rules={[{ required: true, message: 'Please select purchase price!' }]}
 				>
 					<InputNumAmount placeholder="Enter purchase price" />
@@ -59,7 +63,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 					<Col {...layoutCol} md={12}>
 						<Form.Item
 							label="Assignment fee"
-							name="assignment_fee"
+							name="has_assignment_fee"
 							rules={[
 								{
 									required: true,
@@ -74,11 +78,11 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 							/>
 						</Form.Item>
 					</Col>
-					{assignment_fee && (
+					{has_assignment_fee && (
 						<Col {...layoutCol} md={12}>
 							<Form.Item
 								label="Assignment fee"
-								name="assignment_fee"
+								name="assignment_fee_amount"
 								rules={[
 									{
 										required: true,
@@ -97,7 +101,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 				{isPurchase ? (
 					<Form.Item
 						label="Scheduled close of escrow date" // 预定房产交易日
-						name="date_of_birth"
+						name="scheduled_close_escrow_date"
 						rules={[
 							{
 								required: true,
@@ -110,7 +114,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 				) : (
 					<Form.Item
 						label="Date of purchase"
-						name="date_of_purchase"
+						name="purchase_date"
 						rules={[
 							{
 								required: true,
@@ -125,7 +129,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 			<Col {...layoutCol}>
 				<Form.Item
 					label="Initial loan" // 初始贷款金额（即第一笔发放的资金）
-					name="initial_loan"
+					name="initial_amount"
 					rules={[
 						{
 							required: true,
@@ -139,7 +143,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 			<Col {...layoutCol}>
 				<Form.Item
 					label="Holdback" // 贷款中暂时保留未发放的金额
-					name="holdback"
+					name="holdback_amount"
 					rules={[
 						{
 							required: true,
@@ -153,7 +157,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 			<Col {...layoutCol}>
 				<Form.Item
 					label="Total loan amount" // 总贷款金额
-					name="total_loan_amount"
+					name="total_amount"
 					rules={[
 						{
 							required: true,
@@ -167,7 +171,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 			<Col {...layoutCol}>
 				<Form.Item
 					label="Loan term requested" // 借款期限
-					name="term"
+					name="loan_term"
 					rules={[{ required: true, message: 'Please enter loan term requested!' }]}
 				>
 					<InputNumber
@@ -184,7 +188,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 				<Col {...layoutCol}>
 					<Form.Item
 						label="Estimated Current Value (LTV)" // 预计当前估值
-						name="total_loan_amount"
+						name="ltv"
 						rules={[
 							{
 								required: true,
@@ -199,7 +203,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 			<Col {...layoutCol}>
 				<Form.Item
 					label="Estimated after repair value (ARV)" // 修复后预计估值
-					name="total_loan_amount"
+					name="arv"
 					rules={[
 						{
 							required: true,
@@ -215,7 +219,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Outstanding loan amount" // 当前尚未偿还的贷款本金
-							name="outstanding_loan_Amount"
+							name="principal_amount"
 							rules={[
 								{
 									required: true,
@@ -226,20 +230,19 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 							<InputNumAmount placeholder="Enter outstanding Loan Amount" />
 						</Form.Item>
 					</Col>
-					{getSelectFormDom(
-						{
-							label: 'Existing Lender', // 现有贷款方，出借人
-							name: 'Existing Lender',
-							placeholder: 'Select existing Lender',
-							valueName: 'lenderOptions',
-							requiredMessage: 'Please enter existing Lender!',
-						},
-						layoutCol,
-					)}
 					<Col {...layoutCol}>
 						<Form.Item
-							label="Existing loan rate" // 现有贷款利率
-							name="rate"
+							label="Existing Lender" // 现有贷款方，出借人（房子抵押贷款前购买时的出借人）
+							name="existing_lender_company"
+							rules={[{ required: true, message: 'Please enter existing Lender!' }]}
+						>
+							<Input style={{ width: '100%' }} placeholder="Enter existing Lender" />
+						</Form.Item>
+					</Col>
+					<Col {...layoutCol}>
+						<Form.Item
+							label="Existing loan rate" // 房子抵押贷款前购买时的贷款利率
+							name="existing_rate"
 							rules={[
 								{ required: true, message: 'Please enter existing loan rate!' },
 							]}
@@ -257,7 +260,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Existing loan Maturity date" // 现有贷款到期日
-							name="maturity_date"
+							name="existing_maturity_date"
 							rules={[{ required: true, message: 'Please select date!' }]}
 						>
 							<CommonFormDate placeholder="Enter existing loan maturity date" />
@@ -266,7 +269,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Subordinate debt"
-							name="subordinate_debt"
+							name="has_subordinate_debt"
 							rules={[
 								{
 									required: true,
@@ -277,11 +280,11 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 							<Radio.Group options={yesNoOptions} className={styles.yesNo} />
 						</Form.Item>
 					</Col>
-					{subordinate_debt && (
+					{has_subordinate_debt && (
 						<Col {...layoutCol}>
 							<Form.Item
 								label="Subordinate debt"
-								name="subordinate_debt-m"
+								name="subordinate_debt_amount"
 								rules={[
 									{
 										required: true,
@@ -298,7 +301,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 			<Col {...layoutCol}>
 				<Form.Item
 					label="Liquidity" // 流动资金
-					name="liquidity"
+					name="liquidity_amount"
 					rules={[
 						{
 							required: true,
@@ -311,12 +314,12 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 			</Col>
 			{getSelectFormDom(
 				{
-					label: 'Buidiness strategy', // 商业策略
-					name: 'buidiness_strategy',
+					label: 'Business strategy', // 商业策略
+					name: 'business_strategy',
 					mode: 'multiple',
-					placeholder: 'Select buidiness strategy',
+					placeholder: 'Select business strategy',
 					valueName: 'businessStrategyOptions',
-					requiredMessage: 'Please enter buidiness strategy!',
+					requiredMessage: 'Please enter business strategy!',
 				},
 				layoutCol,
 			)}
@@ -324,7 +327,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 				<Col {...layoutCol}>
 					<Form.Item
 						label="Mid construction" // 中建
-						name="midConstruction"
+						name="mid_construction"
 						rules={[
 							{
 								required: true,
@@ -336,15 +339,15 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 					</Form.Item>
 				</Col>
 			)}
-			<Col {...titleCol} className="!text-xl font-medium text-[#000000a6] pb-6">
-				Budget detail
-			</Col>
 			{['Rehab', 'Ground up construction'].includes(loanType) && (
 				<>
+					<Col {...titleCol} className="!text-xl font-medium text-[#000000a6] pb-6">
+						Budget detail
+					</Col>
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Original budget" // 最初预算
-							name="original_budget"
+							name={['budget', 'original_budget']}
 							rules={[
 								{
 									required: true,
@@ -358,7 +361,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Remaining budget" // 剩余预算
-							name="remaining_budget"
+							name={['budget', 'remaining_budget']}
 							rules={[
 								{
 									required: true,
@@ -372,7 +375,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Cost spent to date" // 截至目前所用花费
-							name="cost_spent_to_date"
+							name={['budget', 'cost_spent_to_date_amount']}
 							rules={[
 								{
 									required: true,
@@ -387,10 +390,13 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 			)}
 			{loanType === 'Rental' && (
 				<>
+					<Col {...titleCol} className="!text-xl font-medium text-[#000000a6] pb-6">
+						{/* Rental detail */}
+					</Col>
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Estimated net yearly rental income" // 预计年租金净收入
-							name="yearly_rental_income"
+							name="est_yearly_rental_income"
 							rules={[
 								{
 									required: true,
@@ -404,7 +410,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Yearly liability expenses" // 年度负债支出
-							name="yearly_liability_expenses"
+							name="yearly_liability_expense"
 							rules={[
 								{
 									required: true,
@@ -418,7 +424,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 					<Col {...layoutCol}>
 						<Form.Item
 							label="DSCR" // 债务覆盖率，衡量企业偿债能力的关键指标
-							name="DSCR"
+							name="dscr"
 							rules={[{ required: true, message: 'Please enter DSCR!' }]}
 						>
 							<InputNumber
@@ -434,7 +440,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Reserves" // 储备金
-							name="reserves"
+							name="reserves_amount"
 							rules={[
 								{
 									required: true,
@@ -459,7 +465,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Delayed financing" // 延期融资
-							name="delayed_financing"
+							name="has_delayed_financing"
 							rules={[
 								{
 									required: true,
@@ -473,7 +479,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Collateralized/Blanket" // 抵押/保函
-							name="collateralized_blanket"
+							name="has_collateralized_blanket"
 							rules={[
 								{
 									required: true,
@@ -487,7 +493,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Short term rental" // 短期租赁
-							name="Short term rental"
+							name="has_short_term_rental"
 							rules={[
 								{
 									required: true,
@@ -501,7 +507,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Prosperities vacant" // 资产空置
-							name="Prosperities vacant"
+							name="has_peroperty_vacant"
 							rules={[
 								{
 									required: true,
