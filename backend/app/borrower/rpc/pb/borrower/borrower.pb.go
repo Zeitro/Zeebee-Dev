@@ -5710,6 +5710,7 @@ type LoanThirdServiceEntry struct {
 	Name          string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
 	Email         string                 `protobuf:"bytes,5,opt,name=email,proto3" json:"email,omitempty"`
 	Phone         string                 `protobuf:"bytes,6,opt,name=phone,proto3" json:"phone,omitempty"`
+	Company       string                 `protobuf:"bytes,7,opt,name=company,proto3" json:"company,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -5786,18 +5787,24 @@ func (x *LoanThirdServiceEntry) GetPhone() string {
 	return ""
 }
 
+func (x *LoanThirdServiceEntry) GetCompany() string {
+	if x != nil {
+		return x.Company
+	}
+	return ""
+}
+
 // ===================== loan demographic service ======================
 type LoanDemographicEntry struct {
-	state            protoimpl.MessageState                `protogen:"open.v1"`
-	Id               int64                                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	LoanId           int64                                 `protobuf:"varint,2,opt,name=loan_id,json=loanId,proto3" json:"loan_id,omitempty"`
-	Property         *LoanDemographicPropertyEntry         `protobuf:"bytes,3,opt,name=property,proto3" json:"property,omitempty"`
-	Ethnicity        *LoanDemographicEthnicityEntry        `protobuf:"bytes,4,opt,name=ethnicity,proto3" json:"ethnicity,omitempty"`
-	Race             *LoanDemographicRaceEntry             `protobuf:"bytes,5,opt,name=race,proto3" json:"race,omitempty"`
-	Sex              string                                `protobuf:"bytes,6,opt,name=sex,proto3" json:"sex,omitempty"`
-	ExtraDemographic *LoanDemographicExtraDemographicEntry `protobuf:"bytes,7,opt,name=extra_demographic,json=extraDemographic,proto3" json:"extra_demographic,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state         protoimpl.MessageState         `protogen:"open.v1"`
+	Id            int64                          `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	LoanId        int64                          `protobuf:"varint,2,opt,name=loan_id,json=loanId,proto3" json:"loan_id,omitempty"`
+	Property      *LoanDemographicPropertyEntry  `protobuf:"bytes,3,opt,name=property,proto3" json:"property,omitempty"`
+	Ethnicity     *LoanDemographicEthnicityEntry `protobuf:"bytes,4,opt,name=ethnicity,proto3" json:"ethnicity,omitempty"`
+	Race          *LoanDemographicRaceEntry      `protobuf:"bytes,5,opt,name=race,proto3" json:"race,omitempty"`
+	Sex           string                         `protobuf:"bytes,6,opt,name=sex,proto3" json:"sex,omitempty"` //  LoanDemographicExtraDemographicEntry extra_demographic = 7;
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *LoanDemographicEntry) Reset() {
@@ -5872,13 +5879,6 @@ func (x *LoanDemographicEntry) GetSex() string {
 	return ""
 }
 
-func (x *LoanDemographicEntry) GetExtraDemographic() *LoanDemographicExtraDemographicEntry {
-	if x != nil {
-		return x.ExtraDemographic
-	}
-	return nil
-}
-
 type LoanDemographicPropertyEntry struct {
 	state                      protoimpl.MessageState `protogen:"open.v1"`
 	AsPrimaryResident          bool                   `protobuf:"varint,1,opt,name=as_primary_resident,json=asPrimaryResident,proto3" json:"as_primary_resident,omitempty"`
@@ -5887,7 +5887,7 @@ type LoanDemographicPropertyEntry struct {
 	BorrowedMoneyAmount        float64                `protobuf:"fixed64,4,opt,name=borrowed_money_amount,json=borrowedMoneyAmount,proto3" json:"borrowed_money_amount,omitempty"`
 	HasAnotherMortgageLoan     bool                   `protobuf:"varint,5,opt,name=has_another_mortgage_loan,json=hasAnotherMortgageLoan,proto3" json:"has_another_mortgage_loan,omitempty"`
 	HasPriorityOver1St         bool                   `protobuf:"varint,6,opt,name=has_priority_over1st,json=hasPriorityOver1st,proto3" json:"has_priority_over1st,omitempty"`
-	HasOutstandingJudgements   bool                   `protobuf:"varint,7,opt,name=has_outstanding_judgements,json=hasOutstandingJudgements,proto3" json:"has_outstanding_judgements,omitempty"`
+	HasOutstandingJudgments    bool                   `protobuf:"varint,7,opt,name=has_outstanding_judgments,json=hasOutstandingJudgments,proto3" json:"has_outstanding_judgments,omitempty"`
 	HasFederalDebt             bool                   `protobuf:"varint,8,opt,name=has_federal_debt,json=hasFederalDebt,proto3" json:"has_federal_debt,omitempty"`
 	HasALawsuit                bool                   `protobuf:"varint,9,opt,name=has_a_lawsuit,json=hasALawsuit,proto3" json:"has_a_lawsuit,omitempty"`
 	HasConveyedTitle           bool                   `protobuf:"varint,10,opt,name=has_conveyed_title,json=hasConveyedTitle,proto3" json:"has_conveyed_title,omitempty"`
@@ -5974,9 +5974,9 @@ func (x *LoanDemographicPropertyEntry) GetHasPriorityOver1St() bool {
 	return false
 }
 
-func (x *LoanDemographicPropertyEntry) GetHasOutstandingJudgements() bool {
+func (x *LoanDemographicPropertyEntry) GetHasOutstandingJudgments() bool {
 	if x != nil {
-		return x.HasOutstandingJudgements
+		return x.HasOutstandingJudgments
 	}
 	return false
 }
@@ -6052,14 +6052,16 @@ func (x *LoanDemographicPropertyEntry) GetBankruptcyChapter13() bool {
 }
 
 type LoanDemographicEthnicityEntry struct {
-	state                     protoimpl.MessageState `protogen:"open.v1"`
-	IsHispanicOrLatino        bool                   `protobuf:"varint,1,opt,name=is_hispanic_or_latino,json=isHispanicOrLatino,proto3" json:"is_hispanic_or_latino,omitempty"`
-	IsOtherHispanicOrLatino   bool                   `protobuf:"varint,2,opt,name=is_other_hispanic_or_latino,json=isOtherHispanicOrLatino,proto3" json:"is_other_hispanic_or_latino,omitempty"`
-	OtherHispanicOrLatinoName string                 `protobuf:"bytes,3,opt,name=other_hispanic_or_latino_name,json=otherHispanicOrLatinoName,proto3" json:"other_hispanic_or_latino_name,omitempty"`
-	IsMexican                 bool                   `protobuf:"varint,4,opt,name=is_mexican,json=isMexican,proto3" json:"is_mexican,omitempty"`
-	IsCuban                   bool                   `protobuf:"varint,5,opt,name=is_cuban,json=isCuban,proto3" json:"is_cuban,omitempty"`
-	IsNotHispanicOrLatino     bool                   `protobuf:"varint,6,opt,name=is_not_hispanic_or_latino,json=isNotHispanicOrLatino,proto3" json:"is_not_hispanic_or_latino,omitempty"`
-	Hidden                    bool                   `protobuf:"varint,7,opt,name=hidden,proto3" json:"hidden,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// bool is_hispanic_or_latino = 1;
+	// bool is_other_hispanic_or_latino = 2;
+	// string other_hispanic_or_latino_name = 3;
+	// bool is_mexican = 4;
+	// bool is_cuban = 5;
+	// bool is_not_hispanic_or_latino = 6;
+	// bool hidden = 7;
+	Values                    []string `protobuf:"bytes,1,rep,name=values,proto3" json:"values,omitempty"`
+	OtherHispanicOrLatinoName string   `protobuf:"bytes,2,opt,name=other_hispanic_or_latino_name,json=otherHispanicOrLatinoName,proto3" json:"other_hispanic_or_latino_name,omitempty"`
 	unknownFields             protoimpl.UnknownFields
 	sizeCache                 protoimpl.SizeCache
 }
@@ -6094,18 +6096,11 @@ func (*LoanDemographicEthnicityEntry) Descriptor() ([]byte, []int) {
 	return file_app_borrower_rpc_pb_borrower_proto_rawDescGZIP(), []int{80}
 }
 
-func (x *LoanDemographicEthnicityEntry) GetIsHispanicOrLatino() bool {
+func (x *LoanDemographicEthnicityEntry) GetValues() []string {
 	if x != nil {
-		return x.IsHispanicOrLatino
+		return x.Values
 	}
-	return false
-}
-
-func (x *LoanDemographicEthnicityEntry) GetIsOtherHispanicOrLatino() bool {
-	if x != nil {
-		return x.IsOtherHispanicOrLatino
-	}
-	return false
+	return nil
 }
 
 func (x *LoanDemographicEthnicityEntry) GetOtherHispanicOrLatinoName() string {
@@ -6115,56 +6110,33 @@ func (x *LoanDemographicEthnicityEntry) GetOtherHispanicOrLatinoName() string {
 	return ""
 }
 
-func (x *LoanDemographicEthnicityEntry) GetIsMexican() bool {
-	if x != nil {
-		return x.IsMexican
-	}
-	return false
-}
-
-func (x *LoanDemographicEthnicityEntry) GetIsCuban() bool {
-	if x != nil {
-		return x.IsCuban
-	}
-	return false
-}
-
-func (x *LoanDemographicEthnicityEntry) GetIsNotHispanicOrLatino() bool {
-	if x != nil {
-		return x.IsNotHispanicOrLatino
-	}
-	return false
-}
-
-func (x *LoanDemographicEthnicityEntry) GetHidden() bool {
-	if x != nil {
-		return x.Hidden
-	}
-	return false
-}
-
 type LoanDemographicRaceEntry struct {
-	state                                     protoimpl.MessageState `protogen:"open.v1"`
-	IsAmericanIndianOrAlaskaNative            bool                   `protobuf:"varint,1,opt,name=is_american_indian_or_alaska_native,json=isAmericanIndianOrAlaskaNative,proto3" json:"is_american_indian_or_alaska_native,omitempty"`
-	AmericanIndianOrAlaskaNativeName          string                 `protobuf:"bytes,2,opt,name=american_indian_or_alaska_native_name,json=americanIndianOrAlaskaNativeName,proto3" json:"american_indian_or_alaska_native_name,omitempty"`
-	IsAsian                                   bool                   `protobuf:"varint,3,opt,name=is_asian,json=isAsian,proto3" json:"is_asian,omitempty"`
-	IsAsianIndian                             bool                   `protobuf:"varint,4,opt,name=is_asian_indian,json=isAsianIndian,proto3" json:"is_asian_indian,omitempty"`
-	IsAsianChinese                            bool                   `protobuf:"varint,5,opt,name=is_asian_chinese,json=isAsianChinese,proto3" json:"is_asian_chinese,omitempty"`
-	IsAsianFilipino                           bool                   `protobuf:"varint,6,opt,name=is_asian_filipino,json=isAsianFilipino,proto3" json:"is_asian_filipino,omitempty"`
-	IsAsianJapanese                           bool                   `protobuf:"varint,7,opt,name=is_asian_japanese,json=isAsianJapanese,proto3" json:"is_asian_japanese,omitempty"`
-	IsAsianKorean                             bool                   `protobuf:"varint,8,opt,name=is_asian_korean,json=isAsianKorean,proto3" json:"is_asian_korean,omitempty"`
-	IsAsianVietnamese                         bool                   `protobuf:"varint,9,opt,name=is_asian_vietnamese,json=isAsianVietnamese,proto3" json:"is_asian_vietnamese,omitempty"`
-	IsAsianOther                              bool                   `protobuf:"varint,10,opt,name=is_asian_other,json=isAsianOther,proto3" json:"is_asian_other,omitempty"`
-	AsianOtherName                            string                 `protobuf:"bytes,11,opt,name=asian_other_name,json=asianOtherName,proto3" json:"asian_other_name,omitempty"`
-	IsBlackOrAfricanAmerican                  bool                   `protobuf:"varint,12,opt,name=is_black_or_african_american,json=isBlackOrAfricanAmerican,proto3" json:"is_black_or_african_american,omitempty"`
-	IsNativeHawaiianOrOtherPacificIslander    bool                   `protobuf:"varint,13,opt,name=is_native_hawaiian_or_other_pacific_islander,json=isNativeHawaiianOrOtherPacificIslander,proto3" json:"is_native_hawaiian_or_other_pacific_islander,omitempty"`
-	IsNativeHawaiianGuamanianOrChamorroSamoan bool                   `protobuf:"varint,14,opt,name=is_native_hawaiian_guamanian_or_chamorro_samoan,json=isNativeHawaiianGuamanianOrChamorroSamoan,proto3" json:"is_native_hawaiian_guamanian_or_chamorro_samoan,omitempty"`
-	IsOtherPacificIslander                    bool                   `protobuf:"varint,15,opt,name=is_other_pacific_islander,json=isOtherPacificIslander,proto3" json:"is_other_pacific_islander,omitempty"`
-	OtherPacificIslanderName                  string                 `protobuf:"bytes,16,opt,name=other_pacific_islander_name,json=otherPacificIslanderName,proto3" json:"other_pacific_islander_name,omitempty"`
-	IsWhite                                   bool                   `protobuf:"varint,17,opt,name=is_white,json=isWhite,proto3" json:"is_white,omitempty"`
-	Hidden                                    bool                   `protobuf:"varint,18,opt,name=hidden,proto3" json:"hidden,omitempty"`
-	unknownFields                             protoimpl.UnknownFields
-	sizeCache                                 protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// bool is_american_indian_or_alaska_native = 1;
+	// string american_indian_or_alaska_native_name = 2;
+	// bool is_asian = 3;
+	// bool is_asian_indian = 4;
+	// bool is_asian_chinese = 5;
+	// bool is_asian_filipino = 6;
+	// bool is_asian_japanese = 7;
+	// bool is_asian_korean = 8;
+	// bool is_asian_vietnamese = 9;
+	// bool is_asian_other = 10;
+	// string asian_other_name = 11;
+	// bool is_black_or_african_american = 12;
+	// bool is_native_hawaiian_or_other_pacific_islander = 13;
+	// bool is_native_hawaiian_guamanian_or_chamorro_samoan = 14;
+	// bool is_other_pacific_islander = 15;
+	// string other_pacific_islander_name = 16;
+	// bool is_white = 17;
+	// bool hidden = 18;
+	Values                           []string `protobuf:"bytes,1,rep,name=values,proto3" json:"values,omitempty"`
+	AsianValues                      []string `protobuf:"bytes,2,rep,name=asian_values,json=asianValues,proto3" json:"asian_values,omitempty"`
+	AmericanIndianOrAlaskaNativeName string   `protobuf:"bytes,3,opt,name=american_indian_or_alaska_native_name,json=americanIndianOrAlaskaNativeName,proto3" json:"american_indian_or_alaska_native_name,omitempty"`
+	AsianOtherName                   string   `protobuf:"bytes,4,opt,name=asian_other_name,json=asianOtherName,proto3" json:"asian_other_name,omitempty"`
+	OtherPacificIslanderName         string   `protobuf:"bytes,5,opt,name=other_pacific_islander_name,json=otherPacificIslanderName,proto3" json:"other_pacific_islander_name,omitempty"`
+	unknownFields                    protoimpl.UnknownFields
+	sizeCache                        protoimpl.SizeCache
 }
 
 func (x *LoanDemographicRaceEntry) Reset() {
@@ -6197,11 +6169,18 @@ func (*LoanDemographicRaceEntry) Descriptor() ([]byte, []int) {
 	return file_app_borrower_rpc_pb_borrower_proto_rawDescGZIP(), []int{81}
 }
 
-func (x *LoanDemographicRaceEntry) GetIsAmericanIndianOrAlaskaNative() bool {
+func (x *LoanDemographicRaceEntry) GetValues() []string {
 	if x != nil {
-		return x.IsAmericanIndianOrAlaskaNative
+		return x.Values
 	}
-	return false
+	return nil
+}
+
+func (x *LoanDemographicRaceEntry) GetAsianValues() []string {
+	if x != nil {
+		return x.AsianValues
+	}
+	return nil
 }
 
 func (x *LoanDemographicRaceEntry) GetAmericanIndianOrAlaskaNativeName() string {
@@ -6211,95 +6190,11 @@ func (x *LoanDemographicRaceEntry) GetAmericanIndianOrAlaskaNativeName() string 
 	return ""
 }
 
-func (x *LoanDemographicRaceEntry) GetIsAsian() bool {
-	if x != nil {
-		return x.IsAsian
-	}
-	return false
-}
-
-func (x *LoanDemographicRaceEntry) GetIsAsianIndian() bool {
-	if x != nil {
-		return x.IsAsianIndian
-	}
-	return false
-}
-
-func (x *LoanDemographicRaceEntry) GetIsAsianChinese() bool {
-	if x != nil {
-		return x.IsAsianChinese
-	}
-	return false
-}
-
-func (x *LoanDemographicRaceEntry) GetIsAsianFilipino() bool {
-	if x != nil {
-		return x.IsAsianFilipino
-	}
-	return false
-}
-
-func (x *LoanDemographicRaceEntry) GetIsAsianJapanese() bool {
-	if x != nil {
-		return x.IsAsianJapanese
-	}
-	return false
-}
-
-func (x *LoanDemographicRaceEntry) GetIsAsianKorean() bool {
-	if x != nil {
-		return x.IsAsianKorean
-	}
-	return false
-}
-
-func (x *LoanDemographicRaceEntry) GetIsAsianVietnamese() bool {
-	if x != nil {
-		return x.IsAsianVietnamese
-	}
-	return false
-}
-
-func (x *LoanDemographicRaceEntry) GetIsAsianOther() bool {
-	if x != nil {
-		return x.IsAsianOther
-	}
-	return false
-}
-
 func (x *LoanDemographicRaceEntry) GetAsianOtherName() string {
 	if x != nil {
 		return x.AsianOtherName
 	}
 	return ""
-}
-
-func (x *LoanDemographicRaceEntry) GetIsBlackOrAfricanAmerican() bool {
-	if x != nil {
-		return x.IsBlackOrAfricanAmerican
-	}
-	return false
-}
-
-func (x *LoanDemographicRaceEntry) GetIsNativeHawaiianOrOtherPacificIslander() bool {
-	if x != nil {
-		return x.IsNativeHawaiianOrOtherPacificIslander
-	}
-	return false
-}
-
-func (x *LoanDemographicRaceEntry) GetIsNativeHawaiianGuamanianOrChamorroSamoan() bool {
-	if x != nil {
-		return x.IsNativeHawaiianGuamanianOrChamorroSamoan
-	}
-	return false
-}
-
-func (x *LoanDemographicRaceEntry) GetIsOtherPacificIslander() bool {
-	if x != nil {
-		return x.IsOtherPacificIslander
-	}
-	return false
 }
 
 func (x *LoanDemographicRaceEntry) GetOtherPacificIslanderName() string {
@@ -6309,31 +6204,18 @@ func (x *LoanDemographicRaceEntry) GetOtherPacificIslanderName() string {
 	return ""
 }
 
-func (x *LoanDemographicRaceEntry) GetIsWhite() bool {
-	if x != nil {
-		return x.IsWhite
-	}
-	return false
-}
-
-func (x *LoanDemographicRaceEntry) GetHidden() bool {
-	if x != nil {
-		return x.Hidden
-	}
-	return false
-}
-
 type LoanDemographicExtraDemographicEntry struct {
 	state                             protoimpl.MessageState `protogen:"open.v1"`
 	IsEthnicityCollectedByObservation bool                   `protobuf:"varint,1,opt,name=is_ethnicity_collected_by_observation,json=isEthnicityCollectedByObservation,proto3" json:"is_ethnicity_collected_by_observation,omitempty"`
 	IsSexCollectedByObservation       bool                   `protobuf:"varint,2,opt,name=is_sex_collected_by_observation,json=isSexCollectedByObservation,proto3" json:"is_sex_collected_by_observation,omitempty"`
 	IsRaceCollectedByObservation      bool                   `protobuf:"varint,3,opt,name=is_race_collected_by_observation,json=isRaceCollectedByObservation,proto3" json:"is_race_collected_by_observation,omitempty"`
-	IsByFaceToFace                    bool                   `protobuf:"varint,4,opt,name=is_by_face_to_face,json=isByFaceToFace,proto3" json:"is_by_face_to_face,omitempty"`
-	IsByTelephone                     bool                   `protobuf:"varint,5,opt,name=is_by_telephone,json=isByTelephone,proto3" json:"is_by_telephone,omitempty"`
-	IsByFoxOrMail                     bool                   `protobuf:"varint,6,opt,name=is_by_fox_or_mail,json=isByFoxOrMail,proto3" json:"is_by_fox_or_mail,omitempty"`
-	IsByEmailOrInternet               bool                   `protobuf:"varint,7,opt,name=is_by_email_or_internet,json=isByEmailOrInternet,proto3" json:"is_by_email_or_internet,omitempty"`
-	unknownFields                     protoimpl.UnknownFields
-	sizeCache                         protoimpl.SizeCache
+	// bool is_by_face_to_face = 4;
+	// bool is_by_telephone = 5;
+	// bool is_by_fox_or_mail = 6;
+	// bool is_by_email_or_internet = 7;
+	InfoChannels  []string `protobuf:"bytes,4,rep,name=info_channels,json=infoChannels,proto3" json:"info_channels,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *LoanDemographicExtraDemographicEntry) Reset() {
@@ -6387,32 +6269,11 @@ func (x *LoanDemographicExtraDemographicEntry) GetIsRaceCollectedByObservation()
 	return false
 }
 
-func (x *LoanDemographicExtraDemographicEntry) GetIsByFaceToFace() bool {
+func (x *LoanDemographicExtraDemographicEntry) GetInfoChannels() []string {
 	if x != nil {
-		return x.IsByFaceToFace
+		return x.InfoChannels
 	}
-	return false
-}
-
-func (x *LoanDemographicExtraDemographicEntry) GetIsByTelephone() bool {
-	if x != nil {
-		return x.IsByTelephone
-	}
-	return false
-}
-
-func (x *LoanDemographicExtraDemographicEntry) GetIsByFoxOrMail() bool {
-	if x != nil {
-		return x.IsByFoxOrMail
-	}
-	return false
-}
-
-func (x *LoanDemographicExtraDemographicEntry) GetIsByEmailOrInternet() bool {
-	if x != nil {
-		return x.IsByEmailOrInternet
-	}
-	return false
+	return nil
 }
 
 var File_app_borrower_rpc_pb_borrower_proto protoreflect.FileDescriptor
@@ -6903,30 +6764,30 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x06profit\x18\f \x01(\x01R\x06profit\x12,\n" +
 	"\x12is_tenant_occupied\x18\r \x01(\bR\x10isTenantOccupied\x12\x12\n" +
 	"\x04type\x18\x0e \x01(\tR\x04type\x120\n" +
-	"\aaddress\x18\x0f \x01(\v2\x16.borrower.AddressEntryR\aaddress\"\x94\x01\n" +
+	"\aaddress\x18\x0f \x01(\v2\x16.borrower.AddressEntryR\aaddress\"\xae\x01\n" +
 	"\x15LoanThirdServiceEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
 	"\aloan_id\x18\x02 \x01(\x03R\x06loanId\x12\x12\n" +
 	"\x04type\x18\x03 \x01(\tR\x04type\x12\x12\n" +
 	"\x04name\x18\x04 \x01(\tR\x04name\x12\x14\n" +
 	"\x05email\x18\x05 \x01(\tR\x05email\x12\x14\n" +
-	"\x05phone\x18\x06 \x01(\tR\x05phone\"\xf1\x02\n" +
+	"\x05phone\x18\x06 \x01(\tR\x05phone\x12\x18\n" +
+	"\acompany\x18\a \x01(\tR\acompany\"\x94\x02\n" +
 	"\x14LoanDemographicEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
 	"\aloan_id\x18\x02 \x01(\x03R\x06loanId\x12B\n" +
 	"\bproperty\x18\x03 \x01(\v2&.borrower.LoanDemographicPropertyEntryR\bproperty\x12E\n" +
 	"\tethnicity\x18\x04 \x01(\v2'.borrower.LoanDemographicEthnicityEntryR\tethnicity\x126\n" +
 	"\x04race\x18\x05 \x01(\v2\".borrower.LoanDemographicRaceEntryR\x04race\x12\x10\n" +
-	"\x03sex\x18\x06 \x01(\tR\x03sex\x12[\n" +
-	"\x11extra_demographic\x18\a \x01(\v2..borrower.LoanDemographicExtraDemographicEntryR\x10extraDemographic\"\xf9\x06\n" +
+	"\x03sex\x18\x06 \x01(\tR\x03sex\"\xf7\x06\n" +
 	"\x1cLoanDemographicPropertyEntry\x12.\n" +
 	"\x13as_primary_resident\x18\x01 \x01(\bR\x11asPrimaryResident\x12@\n" +
 	"\x1chas_transaction_relationship\x18\x02 \x01(\bR\x1ahasTransactionRelationship\x12,\n" +
 	"\x12has_borrowed_money\x18\x03 \x01(\bR\x10hasBorrowedMoney\x122\n" +
 	"\x15borrowed_money_amount\x18\x04 \x01(\x01R\x13borrowedMoneyAmount\x129\n" +
 	"\x19has_another_mortgage_loan\x18\x05 \x01(\bR\x16hasAnotherMortgageLoan\x120\n" +
-	"\x14has_priority_over1st\x18\x06 \x01(\bR\x12hasPriorityOver1st\x12<\n" +
-	"\x1ahas_outstanding_judgements\x18\a \x01(\bR\x18hasOutstandingJudgements\x12(\n" +
+	"\x14has_priority_over1st\x18\x06 \x01(\bR\x12hasPriorityOver1st\x12:\n" +
+	"\x19has_outstanding_judgments\x18\a \x01(\bR\x17hasOutstandingJudgments\x12(\n" +
 	"\x10has_federal_debt\x18\b \x01(\bR\x0ehasFederalDebt\x12\"\n" +
 	"\rhas_a_lawsuit\x18\t \x01(\bR\vhasALawsuit\x12,\n" +
 	"\x12has_conveyed_title\x18\n" +
@@ -6937,44 +6798,21 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x13bankruptcy_chapter7\x18\x0e \x01(\bR\x12bankruptcyChapter7\x121\n" +
 	"\x14bankruptcy_chapter11\x18\x0f \x01(\bR\x13bankruptcyChapter11\x121\n" +
 	"\x14bankruptcy_chapter12\x18\x10 \x01(\bR\x13bankruptcyChapter12\x121\n" +
-	"\x14bankruptcy_chapter13\x18\x11 \x01(\bR\x13bankruptcyChapter13\"\xde\x02\n" +
-	"\x1dLoanDemographicEthnicityEntry\x121\n" +
-	"\x15is_hispanic_or_latino\x18\x01 \x01(\bR\x12isHispanicOrLatino\x12<\n" +
-	"\x1bis_other_hispanic_or_latino\x18\x02 \x01(\bR\x17isOtherHispanicOrLatino\x12@\n" +
-	"\x1dother_hispanic_or_latino_name\x18\x03 \x01(\tR\x19otherHispanicOrLatinoName\x12\x1d\n" +
-	"\n" +
-	"is_mexican\x18\x04 \x01(\bR\tisMexican\x12\x19\n" +
-	"\bis_cuban\x18\x05 \x01(\bR\aisCuban\x128\n" +
-	"\x19is_not_hispanic_or_latino\x18\x06 \x01(\bR\x15isNotHispanicOrLatino\x12\x16\n" +
-	"\x06hidden\x18\a \x01(\bR\x06hidden\"\xd4\a\n" +
-	"\x18LoanDemographicRaceEntry\x12K\n" +
-	"#is_american_indian_or_alaska_native\x18\x01 \x01(\bR\x1eisAmericanIndianOrAlaskaNative\x12O\n" +
-	"%american_indian_or_alaska_native_name\x18\x02 \x01(\tR americanIndianOrAlaskaNativeName\x12\x19\n" +
-	"\bis_asian\x18\x03 \x01(\bR\aisAsian\x12&\n" +
-	"\x0fis_asian_indian\x18\x04 \x01(\bR\risAsianIndian\x12(\n" +
-	"\x10is_asian_chinese\x18\x05 \x01(\bR\x0eisAsianChinese\x12*\n" +
-	"\x11is_asian_filipino\x18\x06 \x01(\bR\x0fisAsianFilipino\x12*\n" +
-	"\x11is_asian_japanese\x18\a \x01(\bR\x0fisAsianJapanese\x12&\n" +
-	"\x0fis_asian_korean\x18\b \x01(\bR\risAsianKorean\x12.\n" +
-	"\x13is_asian_vietnamese\x18\t \x01(\bR\x11isAsianVietnamese\x12$\n" +
-	"\x0eis_asian_other\x18\n" +
-	" \x01(\bR\fisAsianOther\x12(\n" +
-	"\x10asian_other_name\x18\v \x01(\tR\x0easianOtherName\x12>\n" +
-	"\x1cis_black_or_african_american\x18\f \x01(\bR\x18isBlackOrAfricanAmerican\x12\\\n" +
-	",is_native_hawaiian_or_other_pacific_islander\x18\r \x01(\bR&isNativeHawaiianOrOtherPacificIslander\x12b\n" +
-	"/is_native_hawaiian_guamanian_or_chamorro_samoan\x18\x0e \x01(\bR)isNativeHawaiianGuamanianOrChamorroSamoan\x129\n" +
-	"\x19is_other_pacific_islander\x18\x0f \x01(\bR\x16isOtherPacificIslander\x12=\n" +
-	"\x1bother_pacific_islander_name\x18\x10 \x01(\tR\x18otherPacificIslanderName\x12\x19\n" +
-	"\bis_white\x18\x11 \x01(\bR\aisWhite\x12\x16\n" +
-	"\x06hidden\x18\x12 \x01(\bR\x06hidden\"\xba\x03\n" +
+	"\x14bankruptcy_chapter13\x18\x11 \x01(\bR\x13bankruptcyChapter13\"y\n" +
+	"\x1dLoanDemographicEthnicityEntry\x12\x16\n" +
+	"\x06values\x18\x01 \x03(\tR\x06values\x12@\n" +
+	"\x1dother_hispanic_or_latino_name\x18\x02 \x01(\tR\x19otherHispanicOrLatinoName\"\x8f\x02\n" +
+	"\x18LoanDemographicRaceEntry\x12\x16\n" +
+	"\x06values\x18\x01 \x03(\tR\x06values\x12!\n" +
+	"\fasian_values\x18\x02 \x03(\tR\vasianValues\x12O\n" +
+	"%american_indian_or_alaska_native_name\x18\x03 \x01(\tR americanIndianOrAlaskaNativeName\x12(\n" +
+	"\x10asian_other_name\x18\x04 \x01(\tR\x0easianOtherName\x12=\n" +
+	"\x1bother_pacific_islander_name\x18\x05 \x01(\tR\x18otherPacificIslanderName\"\xab\x02\n" +
 	"$LoanDemographicExtraDemographicEntry\x12P\n" +
 	"%is_ethnicity_collected_by_observation\x18\x01 \x01(\bR!isEthnicityCollectedByObservation\x12D\n" +
 	"\x1fis_sex_collected_by_observation\x18\x02 \x01(\bR\x1bisSexCollectedByObservation\x12F\n" +
-	" is_race_collected_by_observation\x18\x03 \x01(\bR\x1cisRaceCollectedByObservation\x12*\n" +
-	"\x12is_by_face_to_face\x18\x04 \x01(\bR\x0eisByFaceToFace\x12&\n" +
-	"\x0fis_by_telephone\x18\x05 \x01(\bR\risByTelephone\x12(\n" +
-	"\x11is_by_fox_or_mail\x18\x06 \x01(\bR\risByFoxOrMail\x124\n" +
-	"\x17is_by_email_or_internet\x18\a \x01(\bR\x13isByEmailOrInternet2\xd3\x01\n" +
+	" is_race_collected_by_observation\x18\x03 \x01(\bR\x1cisRaceCollectedByObservation\x12#\n" +
+	"\rinfo_channels\x18\x04 \x03(\tR\finfoChannels2\xd3\x01\n" +
 	"\x06common\x12;\n" +
 	"\x06GetOpt\x12\x17.borrower.OptionRequest\x1a\x18.borrower.OptionResponse\x12C\n" +
 	"\n" +
@@ -7172,52 +7010,51 @@ var file_app_borrower_rpc_pb_borrower_proto_depIdxs = []int32{
 	79, // 67: borrower.LoanDemographicEntry.property:type_name -> borrower.LoanDemographicPropertyEntry
 	80, // 68: borrower.LoanDemographicEntry.ethnicity:type_name -> borrower.LoanDemographicEthnicityEntry
 	81, // 69: borrower.LoanDemographicEntry.race:type_name -> borrower.LoanDemographicRaceEntry
-	82, // 70: borrower.LoanDemographicEntry.extra_demographic:type_name -> borrower.LoanDemographicExtraDemographicEntry
-	3,  // 71: borrower.common.GetOpt:input_type -> borrower.OptionRequest
-	0,  // 72: borrower.common.GetUsState:input_type -> borrower.EmptyRequest
-	7,  // 73: borrower.common.GetUsCities:input_type -> borrower.UsCitiesRequest
-	9,  // 74: borrower.user.Login:input_type -> borrower.UserLoginRequest
-	13, // 75: borrower.user.Register:input_type -> borrower.UserRegisterRequest
-	17, // 76: borrower.user.RefreshToken:input_type -> borrower.RefreshTokenRequest
-	21, // 77: borrower.user.UserInfo:input_type -> borrower.UserInfoRequest
-	31, // 78: borrower.Loan.CreateBorrowerLoan:input_type -> borrower.LoanCreateRequest
-	36, // 79: borrower.Loan.BatchCreateBorrowerLoan:input_type -> borrower.BatchCreateLoanRequest
-	38, // 80: borrower.Loan.UpdateBorrowerLoan:input_type -> borrower.LoanUpdateRequest
-	43, // 81: borrower.Loan.UpdateBorrowerLoanPendingStatus:input_type -> borrower.LoanUpdatePendingStatusRequest
-	45, // 82: borrower.Loan.DeleteBorrowerLoan:input_type -> borrower.LoanDeleteRequest
-	40, // 83: borrower.Loan.BorrowerLoanDetail:input_type -> borrower.LoanDetailRequest
-	47, // 84: borrower.Loan.BorrowerLoanPage:input_type -> borrower.LoanPageRequest
-	53, // 85: borrower.Loan.BorrowerLoanLenderCompanies:input_type -> borrower.LoanLenderCompaniesRequest
-	56, // 86: borrower.Loan.ApplyLoan:input_type -> borrower.LoanApplyRequest
-	56, // 87: borrower.Loan.UpdateApplyLoan:input_type -> borrower.LoanApplyRequest
-	61, // 88: borrower.Property.PropertyPage:input_type -> borrower.PropertyPageRequest
-	67, // 89: borrower.Property.PropertyDetail:input_type -> borrower.PropertyDetailRequest
-	71, // 90: borrower.Applicant.BorrowerNames:input_type -> borrower.BorrowerNamesRequest
-	5,  // 91: borrower.common.GetOpt:output_type -> borrower.OptionResponse
-	2,  // 92: borrower.common.GetUsState:output_type -> borrower.StringSliceResponse
-	2,  // 93: borrower.common.GetUsCities:output_type -> borrower.StringSliceResponse
-	10, // 94: borrower.user.Login:output_type -> borrower.UserLoginResponse
-	14, // 95: borrower.user.Register:output_type -> borrower.UserRegisterResponse
-	19, // 96: borrower.user.RefreshToken:output_type -> borrower.RefreshTokenResponse
-	23, // 97: borrower.user.UserInfo:output_type -> borrower.UserinfoResponse
-	33, // 98: borrower.Loan.CreateBorrowerLoan:output_type -> borrower.LoanCreateResponse
-	1,  // 99: borrower.Loan.BatchCreateBorrowerLoan:output_type -> borrower.EmptyResponse
-	1,  // 100: borrower.Loan.UpdateBorrowerLoan:output_type -> borrower.EmptyResponse
-	1,  // 101: borrower.Loan.UpdateBorrowerLoanPendingStatus:output_type -> borrower.EmptyResponse
-	1,  // 102: borrower.Loan.DeleteBorrowerLoan:output_type -> borrower.EmptyResponse
-	42, // 103: borrower.Loan.BorrowerLoanDetail:output_type -> borrower.LoanDetailResponse
-	48, // 104: borrower.Loan.BorrowerLoanPage:output_type -> borrower.LoanPageResponse
-	55, // 105: borrower.Loan.BorrowerLoanLenderCompanies:output_type -> borrower.LoanLenderCompaniesResponse
-	58, // 106: borrower.Loan.ApplyLoan:output_type -> borrower.LoanApplyResponse
-	1,  // 107: borrower.Loan.UpdateApplyLoan:output_type -> borrower.EmptyResponse
-	62, // 108: borrower.Property.PropertyPage:output_type -> borrower.PropertyPageResponse
-	68, // 109: borrower.Property.PropertyDetail:output_type -> borrower.PropertyDetailResponse
-	73, // 110: borrower.Applicant.BorrowerNames:output_type -> borrower.BorrowerNamesResponse
-	91, // [91:111] is the sub-list for method output_type
-	71, // [71:91] is the sub-list for method input_type
-	71, // [71:71] is the sub-list for extension type_name
-	71, // [71:71] is the sub-list for extension extendee
-	0,  // [0:71] is the sub-list for field type_name
+	3,  // 70: borrower.common.GetOpt:input_type -> borrower.OptionRequest
+	0,  // 71: borrower.common.GetUsState:input_type -> borrower.EmptyRequest
+	7,  // 72: borrower.common.GetUsCities:input_type -> borrower.UsCitiesRequest
+	9,  // 73: borrower.user.Login:input_type -> borrower.UserLoginRequest
+	13, // 74: borrower.user.Register:input_type -> borrower.UserRegisterRequest
+	17, // 75: borrower.user.RefreshToken:input_type -> borrower.RefreshTokenRequest
+	21, // 76: borrower.user.UserInfo:input_type -> borrower.UserInfoRequest
+	31, // 77: borrower.Loan.CreateBorrowerLoan:input_type -> borrower.LoanCreateRequest
+	36, // 78: borrower.Loan.BatchCreateBorrowerLoan:input_type -> borrower.BatchCreateLoanRequest
+	38, // 79: borrower.Loan.UpdateBorrowerLoan:input_type -> borrower.LoanUpdateRequest
+	43, // 80: borrower.Loan.UpdateBorrowerLoanPendingStatus:input_type -> borrower.LoanUpdatePendingStatusRequest
+	45, // 81: borrower.Loan.DeleteBorrowerLoan:input_type -> borrower.LoanDeleteRequest
+	40, // 82: borrower.Loan.BorrowerLoanDetail:input_type -> borrower.LoanDetailRequest
+	47, // 83: borrower.Loan.BorrowerLoanPage:input_type -> borrower.LoanPageRequest
+	53, // 84: borrower.Loan.BorrowerLoanLenderCompanies:input_type -> borrower.LoanLenderCompaniesRequest
+	56, // 85: borrower.Loan.ApplyLoan:input_type -> borrower.LoanApplyRequest
+	56, // 86: borrower.Loan.UpdateApplyLoan:input_type -> borrower.LoanApplyRequest
+	61, // 87: borrower.Property.PropertyPage:input_type -> borrower.PropertyPageRequest
+	67, // 88: borrower.Property.PropertyDetail:input_type -> borrower.PropertyDetailRequest
+	71, // 89: borrower.Applicant.BorrowerNames:input_type -> borrower.BorrowerNamesRequest
+	5,  // 90: borrower.common.GetOpt:output_type -> borrower.OptionResponse
+	2,  // 91: borrower.common.GetUsState:output_type -> borrower.StringSliceResponse
+	2,  // 92: borrower.common.GetUsCities:output_type -> borrower.StringSliceResponse
+	10, // 93: borrower.user.Login:output_type -> borrower.UserLoginResponse
+	14, // 94: borrower.user.Register:output_type -> borrower.UserRegisterResponse
+	19, // 95: borrower.user.RefreshToken:output_type -> borrower.RefreshTokenResponse
+	23, // 96: borrower.user.UserInfo:output_type -> borrower.UserinfoResponse
+	33, // 97: borrower.Loan.CreateBorrowerLoan:output_type -> borrower.LoanCreateResponse
+	1,  // 98: borrower.Loan.BatchCreateBorrowerLoan:output_type -> borrower.EmptyResponse
+	1,  // 99: borrower.Loan.UpdateBorrowerLoan:output_type -> borrower.EmptyResponse
+	1,  // 100: borrower.Loan.UpdateBorrowerLoanPendingStatus:output_type -> borrower.EmptyResponse
+	1,  // 101: borrower.Loan.DeleteBorrowerLoan:output_type -> borrower.EmptyResponse
+	42, // 102: borrower.Loan.BorrowerLoanDetail:output_type -> borrower.LoanDetailResponse
+	48, // 103: borrower.Loan.BorrowerLoanPage:output_type -> borrower.LoanPageResponse
+	55, // 104: borrower.Loan.BorrowerLoanLenderCompanies:output_type -> borrower.LoanLenderCompaniesResponse
+	58, // 105: borrower.Loan.ApplyLoan:output_type -> borrower.LoanApplyResponse
+	1,  // 106: borrower.Loan.UpdateApplyLoan:output_type -> borrower.EmptyResponse
+	62, // 107: borrower.Property.PropertyPage:output_type -> borrower.PropertyPageResponse
+	68, // 108: borrower.Property.PropertyDetail:output_type -> borrower.PropertyDetailResponse
+	73, // 109: borrower.Applicant.BorrowerNames:output_type -> borrower.BorrowerNamesResponse
+	90, // [90:110] is the sub-list for method output_type
+	70, // [70:90] is the sub-list for method input_type
+	70, // [70:70] is the sub-list for extension type_name
+	70, // [70:70] is the sub-list for extension extendee
+	0,  // [0:70] is the sub-list for field type_name
 }
 
 func init() { file_app_borrower_rpc_pb_borrower_proto_init() }
