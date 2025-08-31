@@ -6,6 +6,11 @@ package handler
 import (
 	"net/http"
 
+	applicant "zeebee-backend/app/borrower/api/internal/handler/applicant"
+	common "zeebee-backend/app/borrower/api/internal/handler/common"
+	loan "zeebee-backend/app/borrower/api/internal/handler/loan"
+	property "zeebee-backend/app/borrower/api/internal/handler/property"
+	user "zeebee-backend/app/borrower/api/internal/handler/user"
 	"zeebee-backend/app/borrower/api/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
@@ -13,17 +18,176 @@ import (
 
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// borrower names
+					Method:  http.MethodPost,
+					Path:    "/applicant/borrower",
+					Handler: applicant.BorrowerNamesHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
 		[]rest.Route{
 			{
-				Method:  http.MethodPost,
-				Path:    "/users/create",
-				Handler: CreateUserHandler(serverCtx),
+				// select options
+				Method:  http.MethodGet,
+				Path:    "/select_options",
+				Handler: common.SelectOptionsHandler(serverCtx),
 			},
 			{
+				// get us city
 				Method:  http.MethodGet,
-				Path:    "/users/id/:userId",
-				Handler: GetUserHandler(serverCtx),
+				Path:    "/us_cities",
+				Handler: common.GetUsCitiesHandler(serverCtx),
+			},
+			{
+				// get us states
+				Method:  http.MethodGet,
+				Path:    "/us_states",
+				Handler: common.GetUsStatesHandler(serverCtx),
 			},
 		},
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// create
+					Method:  http.MethodPost,
+					Path:    "/loan",
+					Handler: loan.CreateHandler(serverCtx),
+				},
+				{
+					// update
+					Method:  http.MethodPut,
+					Path:    "/loan/:id",
+					Handler: loan.UpdateHandler(serverCtx),
+				},
+				{
+					// delete
+					Method:  http.MethodDelete,
+					Path:    "/loan/:id",
+					Handler: loan.DeleteLoanHandler(serverCtx),
+				},
+				{
+					// detail
+					Method:  http.MethodGet,
+					Path:    "/loan/:id",
+					Handler: loan.DetailHandler(serverCtx),
+				},
+				{
+					// update pending status
+					Method:  http.MethodPut,
+					Path:    "/loan/:id/pending_status",
+					Handler: loan.UpdatePendingStatusHandler(serverCtx),
+				},
+				{
+					// update apply
+					Method:  http.MethodPut,
+					Path:    "/loan/:id/update_apply",
+					Handler: loan.UpdateApplyHandler(serverCtx),
+				},
+				{
+					// apply
+					Method:  http.MethodPost,
+					Path:    "/loan/apply",
+					Handler: loan.ApplyHandler(serverCtx),
+				},
+				{
+					// import
+					Method:  http.MethodPost,
+					Path:    "/loan/import",
+					Handler: loan.ImportHandler(serverCtx),
+				},
+				{
+					// download import template
+					Method:  http.MethodGet,
+					Path:    "/loan/import/template",
+					Handler: loan.DownloadImportTemplateHandler(serverCtx),
+				},
+				{
+					// lender companies list
+					Method:  http.MethodGet,
+					Path:    "/loan/lender_companies",
+					Handler: loan.LenderCompaniesHandler(serverCtx),
+				},
+				{
+					// page
+					Method:  http.MethodPost,
+					Path:    "/loan/page",
+					Handler: loan.PageHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// detail
+					Method:  http.MethodGet,
+					Path:    "/property/:id",
+					Handler: property.PropertyDetailHandler(serverCtx),
+				},
+				{
+					// page
+					Method:  http.MethodPost,
+					Path:    "/property/page",
+					Handler: property.PropertyPageHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// login
+				Method:  http.MethodPost,
+				Path:    "/user/login",
+				Handler: user.LoginHandler(serverCtx),
+			},
+			{
+				// refresh
+				Method:  http.MethodPost,
+				Path:    "/user/refresh",
+				Handler: user.RefreshTokenHandler(serverCtx),
+			},
+			{
+				// register
+				Method:  http.MethodPost,
+				Path:    "/user/register",
+				Handler: user.RegisterHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// info
+					Method:  http.MethodGet,
+					Path:    "/user/info",
+					Handler: user.InfoHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
 	)
 }

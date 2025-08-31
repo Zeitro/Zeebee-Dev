@@ -19,101 +19,1081 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Borrower_Ping_FullMethodName = "/borrower.Borrower/Ping"
+	Common_GetOpt_FullMethodName      = "/borrower.common/GetOpt"
+	Common_GetUsState_FullMethodName  = "/borrower.common/GetUsState"
+	Common_GetUsCities_FullMethodName = "/borrower.common/GetUsCities"
 )
 
-// BorrowerClient is the client API for Borrower service.
+// CommonClient is the client API for Common service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type BorrowerClient interface {
-	Ping(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error)
+type CommonClient interface {
+	GetOpt(ctx context.Context, in *OptionRequest, opts ...grpc.CallOption) (*OptionResponse, error)
+	GetUsState(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*StringSliceResponse, error)
+	GetUsCities(ctx context.Context, in *UsCitiesRequest, opts ...grpc.CallOption) (*StringSliceResponse, error)
 }
 
-type borrowerClient struct {
+type commonClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewBorrowerClient(cc grpc.ClientConnInterface) BorrowerClient {
-	return &borrowerClient{cc}
+func NewCommonClient(cc grpc.ClientConnInterface) CommonClient {
+	return &commonClient{cc}
 }
 
-func (c *borrowerClient) Ping(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error) {
+func (c *commonClient) GetOpt(ctx context.Context, in *OptionRequest, opts ...grpc.CallOption) (*OptionResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(Response)
-	err := c.cc.Invoke(ctx, Borrower_Ping_FullMethodName, in, out, cOpts...)
+	out := new(OptionResponse)
+	err := c.cc.Invoke(ctx, Common_GetOpt_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// BorrowerServer is the server API for Borrower service.
-// All implementations must embed UnimplementedBorrowerServer
-// for forward compatibility.
-type BorrowerServer interface {
-	Ping(context.Context, *Request) (*Response, error)
-	mustEmbedUnimplementedBorrowerServer()
+func (c *commonClient) GetUsState(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*StringSliceResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StringSliceResponse)
+	err := c.cc.Invoke(ctx, Common_GetUsState_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
-// UnimplementedBorrowerServer must be embedded to have
+func (c *commonClient) GetUsCities(ctx context.Context, in *UsCitiesRequest, opts ...grpc.CallOption) (*StringSliceResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StringSliceResponse)
+	err := c.cc.Invoke(ctx, Common_GetUsCities_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// CommonServer is the server API for Common service.
+// All implementations must embed UnimplementedCommonServer
+// for forward compatibility.
+type CommonServer interface {
+	GetOpt(context.Context, *OptionRequest) (*OptionResponse, error)
+	GetUsState(context.Context, *EmptyRequest) (*StringSliceResponse, error)
+	GetUsCities(context.Context, *UsCitiesRequest) (*StringSliceResponse, error)
+	mustEmbedUnimplementedCommonServer()
+}
+
+// UnimplementedCommonServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedBorrowerServer struct{}
+type UnimplementedCommonServer struct{}
 
-func (UnimplementedBorrowerServer) Ping(context.Context, *Request) (*Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
+func (UnimplementedCommonServer) GetOpt(context.Context, *OptionRequest) (*OptionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOpt not implemented")
 }
-func (UnimplementedBorrowerServer) mustEmbedUnimplementedBorrowerServer() {}
-func (UnimplementedBorrowerServer) testEmbeddedByValue()                  {}
+func (UnimplementedCommonServer) GetUsState(context.Context, *EmptyRequest) (*StringSliceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUsState not implemented")
+}
+func (UnimplementedCommonServer) GetUsCities(context.Context, *UsCitiesRequest) (*StringSliceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUsCities not implemented")
+}
+func (UnimplementedCommonServer) mustEmbedUnimplementedCommonServer() {}
+func (UnimplementedCommonServer) testEmbeddedByValue()                {}
 
-// UnsafeBorrowerServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to BorrowerServer will
+// UnsafeCommonServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to CommonServer will
 // result in compilation errors.
-type UnsafeBorrowerServer interface {
-	mustEmbedUnimplementedBorrowerServer()
+type UnsafeCommonServer interface {
+	mustEmbedUnimplementedCommonServer()
 }
 
-func RegisterBorrowerServer(s grpc.ServiceRegistrar, srv BorrowerServer) {
-	// If the following call pancis, it indicates UnimplementedBorrowerServer was
+func RegisterCommonServer(s grpc.ServiceRegistrar, srv CommonServer) {
+	// If the following call pancis, it indicates UnimplementedCommonServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&Borrower_ServiceDesc, srv)
+	s.RegisterService(&Common_ServiceDesc, srv)
 }
 
-func _Borrower_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Request)
+func _Common_GetOpt_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OptionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BorrowerServer).Ping(ctx, in)
+		return srv.(CommonServer).GetOpt(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Borrower_Ping_FullMethodName,
+		FullMethod: Common_GetOpt_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BorrowerServer).Ping(ctx, req.(*Request))
+		return srv.(CommonServer).GetOpt(ctx, req.(*OptionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Borrower_ServiceDesc is the grpc.ServiceDesc for Borrower service.
+func _Common_GetUsState_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommonServer).GetUsState(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Common_GetUsState_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommonServer).GetUsState(ctx, req.(*EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Common_GetUsCities_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UsCitiesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommonServer).GetUsCities(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Common_GetUsCities_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommonServer).GetUsCities(ctx, req.(*UsCitiesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Common_ServiceDesc is the grpc.ServiceDesc for Common service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Borrower_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "borrower.Borrower",
-	HandlerType: (*BorrowerServer)(nil),
+var Common_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "borrower.common",
+	HandlerType: (*CommonServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Ping",
-			Handler:    _Borrower_Ping_Handler,
+			MethodName: "GetOpt",
+			Handler:    _Common_GetOpt_Handler,
+		},
+		{
+			MethodName: "GetUsState",
+			Handler:    _Common_GetUsState_Handler,
+		},
+		{
+			MethodName: "GetUsCities",
+			Handler:    _Common_GetUsCities_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "app/borrower/rpc/pb/borrower.proto",
+}
+
+const (
+	User_Login_FullMethodName        = "/borrower.user/Login"
+	User_Register_FullMethodName     = "/borrower.user/Register"
+	User_RefreshToken_FullMethodName = "/borrower.user/RefreshToken"
+	User_UserInfo_FullMethodName     = "/borrower.user/UserInfo"
+)
+
+// UserClient is the client API for User service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type UserClient interface {
+	// user
+	Login(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserLoginResponse, error)
+	Register(ctx context.Context, in *UserRegisterRequest, opts ...grpc.CallOption) (*UserRegisterResponse, error)
+	RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
+	UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
+}
+
+type userClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewUserClient(cc grpc.ClientConnInterface) UserClient {
+	return &userClient{cc}
+}
+
+func (c *userClient) Login(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserLoginResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserLoginResponse)
+	err := c.cc.Invoke(ctx, User_Login_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userClient) Register(ctx context.Context, in *UserRegisterRequest, opts ...grpc.CallOption) (*UserRegisterResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserRegisterResponse)
+	err := c.cc.Invoke(ctx, User_Register_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userClient) RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RefreshTokenResponse)
+	err := c.cc.Invoke(ctx, User_RefreshToken_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userClient) UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserinfoResponse)
+	err := c.cc.Invoke(ctx, User_UserInfo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// UserServer is the server API for User service.
+// All implementations must embed UnimplementedUserServer
+// for forward compatibility.
+type UserServer interface {
+	// user
+	Login(context.Context, *UserLoginRequest) (*UserLoginResponse, error)
+	Register(context.Context, *UserRegisterRequest) (*UserRegisterResponse, error)
+	RefreshToken(context.Context, *RefreshTokenRequest) (*RefreshTokenResponse, error)
+	UserInfo(context.Context, *UserInfoRequest) (*UserinfoResponse, error)
+	mustEmbedUnimplementedUserServer()
+}
+
+// UnimplementedUserServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedUserServer struct{}
+
+func (UnimplementedUserServer) Login(context.Context, *UserLoginRequest) (*UserLoginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
+}
+func (UnimplementedUserServer) Register(context.Context, *UserRegisterRequest) (*UserRegisterResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
+}
+func (UnimplementedUserServer) RefreshToken(context.Context, *RefreshTokenRequest) (*RefreshTokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RefreshToken not implemented")
+}
+func (UnimplementedUserServer) UserInfo(context.Context, *UserInfoRequest) (*UserinfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserInfo not implemented")
+}
+func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
+func (UnimplementedUserServer) testEmbeddedByValue()              {}
+
+// UnsafeUserServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to UserServer will
+// result in compilation errors.
+type UnsafeUserServer interface {
+	mustEmbedUnimplementedUserServer()
+}
+
+func RegisterUserServer(s grpc.ServiceRegistrar, srv UserServer) {
+	// If the following call pancis, it indicates UnimplementedUserServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&User_ServiceDesc, srv)
+}
+
+func _User_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserLoginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).Login(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_Login_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).Login(ctx, req.(*UserLoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _User_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserRegisterRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).Register(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_Register_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).Register(ctx, req.(*UserRegisterRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _User_RefreshToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RefreshTokenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).RefreshToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_RefreshToken_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).RefreshToken(ctx, req.(*RefreshTokenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _User_UserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).UserInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_UserInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).UserInfo(ctx, req.(*UserInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// User_ServiceDesc is the grpc.ServiceDesc for User service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var User_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "borrower.user",
+	HandlerType: (*UserServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Login",
+			Handler:    _User_Login_Handler,
+		},
+		{
+			MethodName: "Register",
+			Handler:    _User_Register_Handler,
+		},
+		{
+			MethodName: "RefreshToken",
+			Handler:    _User_RefreshToken_Handler,
+		},
+		{
+			MethodName: "UserInfo",
+			Handler:    _User_UserInfo_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "app/borrower/rpc/pb/borrower.proto",
+}
+
+const (
+	Loan_CreateBorrowerLoan_FullMethodName              = "/borrower.Loan/CreateBorrowerLoan"
+	Loan_BatchCreateBorrowerLoan_FullMethodName         = "/borrower.Loan/BatchCreateBorrowerLoan"
+	Loan_UpdateBorrowerLoan_FullMethodName              = "/borrower.Loan/UpdateBorrowerLoan"
+	Loan_UpdateBorrowerLoanPendingStatus_FullMethodName = "/borrower.Loan/UpdateBorrowerLoanPendingStatus"
+	Loan_DeleteBorrowerLoan_FullMethodName              = "/borrower.Loan/DeleteBorrowerLoan"
+	Loan_BorrowerLoanDetail_FullMethodName              = "/borrower.Loan/BorrowerLoanDetail"
+	Loan_BorrowerLoanPage_FullMethodName                = "/borrower.Loan/BorrowerLoanPage"
+	Loan_BorrowerLoanLenderCompanies_FullMethodName     = "/borrower.Loan/BorrowerLoanLenderCompanies"
+	Loan_ApplyLoan_FullMethodName                       = "/borrower.Loan/ApplyLoan"
+	Loan_UpdateApplyLoan_FullMethodName                 = "/borrower.Loan/UpdateApplyLoan"
+)
+
+// LoanClient is the client API for Loan service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type LoanClient interface {
+	CreateBorrowerLoan(ctx context.Context, in *LoanCreateRequest, opts ...grpc.CallOption) (*LoanCreateResponse, error)
+	BatchCreateBorrowerLoan(ctx context.Context, in *BatchCreateLoanRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	UpdateBorrowerLoan(ctx context.Context, in *LoanUpdateRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	UpdateBorrowerLoanPendingStatus(ctx context.Context, in *LoanUpdatePendingStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	DeleteBorrowerLoan(ctx context.Context, in *LoanDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	BorrowerLoanDetail(ctx context.Context, in *LoanDetailRequest, opts ...grpc.CallOption) (*LoanDetailResponse, error)
+	BorrowerLoanPage(ctx context.Context, in *LoanPageRequest, opts ...grpc.CallOption) (*LoanPageResponse, error)
+	BorrowerLoanLenderCompanies(ctx context.Context, in *LoanLenderCompaniesRequest, opts ...grpc.CallOption) (*LoanLenderCompaniesResponse, error)
+	ApplyLoan(ctx context.Context, in *LoanApplyRequest, opts ...grpc.CallOption) (*LoanApplyResponse, error)
+	UpdateApplyLoan(ctx context.Context, in *LoanApplyRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+}
+
+type loanClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewLoanClient(cc grpc.ClientConnInterface) LoanClient {
+	return &loanClient{cc}
+}
+
+func (c *loanClient) CreateBorrowerLoan(ctx context.Context, in *LoanCreateRequest, opts ...grpc.CallOption) (*LoanCreateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LoanCreateResponse)
+	err := c.cc.Invoke(ctx, Loan_CreateBorrowerLoan_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *loanClient) BatchCreateBorrowerLoan(ctx context.Context, in *BatchCreateLoanRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, Loan_BatchCreateBorrowerLoan_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *loanClient) UpdateBorrowerLoan(ctx context.Context, in *LoanUpdateRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, Loan_UpdateBorrowerLoan_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *loanClient) UpdateBorrowerLoanPendingStatus(ctx context.Context, in *LoanUpdatePendingStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, Loan_UpdateBorrowerLoanPendingStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *loanClient) DeleteBorrowerLoan(ctx context.Context, in *LoanDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, Loan_DeleteBorrowerLoan_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *loanClient) BorrowerLoanDetail(ctx context.Context, in *LoanDetailRequest, opts ...grpc.CallOption) (*LoanDetailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LoanDetailResponse)
+	err := c.cc.Invoke(ctx, Loan_BorrowerLoanDetail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *loanClient) BorrowerLoanPage(ctx context.Context, in *LoanPageRequest, opts ...grpc.CallOption) (*LoanPageResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LoanPageResponse)
+	err := c.cc.Invoke(ctx, Loan_BorrowerLoanPage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *loanClient) BorrowerLoanLenderCompanies(ctx context.Context, in *LoanLenderCompaniesRequest, opts ...grpc.CallOption) (*LoanLenderCompaniesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LoanLenderCompaniesResponse)
+	err := c.cc.Invoke(ctx, Loan_BorrowerLoanLenderCompanies_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *loanClient) ApplyLoan(ctx context.Context, in *LoanApplyRequest, opts ...grpc.CallOption) (*LoanApplyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LoanApplyResponse)
+	err := c.cc.Invoke(ctx, Loan_ApplyLoan_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *loanClient) UpdateApplyLoan(ctx context.Context, in *LoanApplyRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, Loan_UpdateApplyLoan_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// LoanServer is the server API for Loan service.
+// All implementations must embed UnimplementedLoanServer
+// for forward compatibility.
+type LoanServer interface {
+	CreateBorrowerLoan(context.Context, *LoanCreateRequest) (*LoanCreateResponse, error)
+	BatchCreateBorrowerLoan(context.Context, *BatchCreateLoanRequest) (*EmptyResponse, error)
+	UpdateBorrowerLoan(context.Context, *LoanUpdateRequest) (*EmptyResponse, error)
+	UpdateBorrowerLoanPendingStatus(context.Context, *LoanUpdatePendingStatusRequest) (*EmptyResponse, error)
+	DeleteBorrowerLoan(context.Context, *LoanDeleteRequest) (*EmptyResponse, error)
+	BorrowerLoanDetail(context.Context, *LoanDetailRequest) (*LoanDetailResponse, error)
+	BorrowerLoanPage(context.Context, *LoanPageRequest) (*LoanPageResponse, error)
+	BorrowerLoanLenderCompanies(context.Context, *LoanLenderCompaniesRequest) (*LoanLenderCompaniesResponse, error)
+	ApplyLoan(context.Context, *LoanApplyRequest) (*LoanApplyResponse, error)
+	UpdateApplyLoan(context.Context, *LoanApplyRequest) (*EmptyResponse, error)
+	mustEmbedUnimplementedLoanServer()
+}
+
+// UnimplementedLoanServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedLoanServer struct{}
+
+func (UnimplementedLoanServer) CreateBorrowerLoan(context.Context, *LoanCreateRequest) (*LoanCreateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateBorrowerLoan not implemented")
+}
+func (UnimplementedLoanServer) BatchCreateBorrowerLoan(context.Context, *BatchCreateLoanRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchCreateBorrowerLoan not implemented")
+}
+func (UnimplementedLoanServer) UpdateBorrowerLoan(context.Context, *LoanUpdateRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateBorrowerLoan not implemented")
+}
+func (UnimplementedLoanServer) UpdateBorrowerLoanPendingStatus(context.Context, *LoanUpdatePendingStatusRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateBorrowerLoanPendingStatus not implemented")
+}
+func (UnimplementedLoanServer) DeleteBorrowerLoan(context.Context, *LoanDeleteRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteBorrowerLoan not implemented")
+}
+func (UnimplementedLoanServer) BorrowerLoanDetail(context.Context, *LoanDetailRequest) (*LoanDetailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BorrowerLoanDetail not implemented")
+}
+func (UnimplementedLoanServer) BorrowerLoanPage(context.Context, *LoanPageRequest) (*LoanPageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BorrowerLoanPage not implemented")
+}
+func (UnimplementedLoanServer) BorrowerLoanLenderCompanies(context.Context, *LoanLenderCompaniesRequest) (*LoanLenderCompaniesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BorrowerLoanLenderCompanies not implemented")
+}
+func (UnimplementedLoanServer) ApplyLoan(context.Context, *LoanApplyRequest) (*LoanApplyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ApplyLoan not implemented")
+}
+func (UnimplementedLoanServer) UpdateApplyLoan(context.Context, *LoanApplyRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateApplyLoan not implemented")
+}
+func (UnimplementedLoanServer) mustEmbedUnimplementedLoanServer() {}
+func (UnimplementedLoanServer) testEmbeddedByValue()              {}
+
+// UnsafeLoanServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to LoanServer will
+// result in compilation errors.
+type UnsafeLoanServer interface {
+	mustEmbedUnimplementedLoanServer()
+}
+
+func RegisterLoanServer(s grpc.ServiceRegistrar, srv LoanServer) {
+	// If the following call pancis, it indicates UnimplementedLoanServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&Loan_ServiceDesc, srv)
+}
+
+func _Loan_CreateBorrowerLoan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanCreateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanServer).CreateBorrowerLoan(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Loan_CreateBorrowerLoan_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanServer).CreateBorrowerLoan(ctx, req.(*LoanCreateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Loan_BatchCreateBorrowerLoan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchCreateLoanRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanServer).BatchCreateBorrowerLoan(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Loan_BatchCreateBorrowerLoan_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanServer).BatchCreateBorrowerLoan(ctx, req.(*BatchCreateLoanRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Loan_UpdateBorrowerLoan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanUpdateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanServer).UpdateBorrowerLoan(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Loan_UpdateBorrowerLoan_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanServer).UpdateBorrowerLoan(ctx, req.(*LoanUpdateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Loan_UpdateBorrowerLoanPendingStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanUpdatePendingStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanServer).UpdateBorrowerLoanPendingStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Loan_UpdateBorrowerLoanPendingStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanServer).UpdateBorrowerLoanPendingStatus(ctx, req.(*LoanUpdatePendingStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Loan_DeleteBorrowerLoan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanDeleteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanServer).DeleteBorrowerLoan(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Loan_DeleteBorrowerLoan_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanServer).DeleteBorrowerLoan(ctx, req.(*LoanDeleteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Loan_BorrowerLoanDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanDetailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanServer).BorrowerLoanDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Loan_BorrowerLoanDetail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanServer).BorrowerLoanDetail(ctx, req.(*LoanDetailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Loan_BorrowerLoanPage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanPageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanServer).BorrowerLoanPage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Loan_BorrowerLoanPage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanServer).BorrowerLoanPage(ctx, req.(*LoanPageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Loan_BorrowerLoanLenderCompanies_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanLenderCompaniesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanServer).BorrowerLoanLenderCompanies(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Loan_BorrowerLoanLenderCompanies_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanServer).BorrowerLoanLenderCompanies(ctx, req.(*LoanLenderCompaniesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Loan_ApplyLoan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanApplyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanServer).ApplyLoan(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Loan_ApplyLoan_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanServer).ApplyLoan(ctx, req.(*LoanApplyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Loan_UpdateApplyLoan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanApplyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanServer).UpdateApplyLoan(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Loan_UpdateApplyLoan_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanServer).UpdateApplyLoan(ctx, req.(*LoanApplyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Loan_ServiceDesc is the grpc.ServiceDesc for Loan service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Loan_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "borrower.Loan",
+	HandlerType: (*LoanServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateBorrowerLoan",
+			Handler:    _Loan_CreateBorrowerLoan_Handler,
+		},
+		{
+			MethodName: "BatchCreateBorrowerLoan",
+			Handler:    _Loan_BatchCreateBorrowerLoan_Handler,
+		},
+		{
+			MethodName: "UpdateBorrowerLoan",
+			Handler:    _Loan_UpdateBorrowerLoan_Handler,
+		},
+		{
+			MethodName: "UpdateBorrowerLoanPendingStatus",
+			Handler:    _Loan_UpdateBorrowerLoanPendingStatus_Handler,
+		},
+		{
+			MethodName: "DeleteBorrowerLoan",
+			Handler:    _Loan_DeleteBorrowerLoan_Handler,
+		},
+		{
+			MethodName: "BorrowerLoanDetail",
+			Handler:    _Loan_BorrowerLoanDetail_Handler,
+		},
+		{
+			MethodName: "BorrowerLoanPage",
+			Handler:    _Loan_BorrowerLoanPage_Handler,
+		},
+		{
+			MethodName: "BorrowerLoanLenderCompanies",
+			Handler:    _Loan_BorrowerLoanLenderCompanies_Handler,
+		},
+		{
+			MethodName: "ApplyLoan",
+			Handler:    _Loan_ApplyLoan_Handler,
+		},
+		{
+			MethodName: "UpdateApplyLoan",
+			Handler:    _Loan_UpdateApplyLoan_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "app/borrower/rpc/pb/borrower.proto",
+}
+
+const (
+	Property_PropertyPage_FullMethodName   = "/borrower.Property/PropertyPage"
+	Property_PropertyDetail_FullMethodName = "/borrower.Property/PropertyDetail"
+)
+
+// PropertyClient is the client API for Property service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type PropertyClient interface {
+	PropertyPage(ctx context.Context, in *PropertyPageRequest, opts ...grpc.CallOption) (*PropertyPageResponse, error)
+	PropertyDetail(ctx context.Context, in *PropertyDetailRequest, opts ...grpc.CallOption) (*PropertyDetailResponse, error)
+}
+
+type propertyClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewPropertyClient(cc grpc.ClientConnInterface) PropertyClient {
+	return &propertyClient{cc}
+}
+
+func (c *propertyClient) PropertyPage(ctx context.Context, in *PropertyPageRequest, opts ...grpc.CallOption) (*PropertyPageResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PropertyPageResponse)
+	err := c.cc.Invoke(ctx, Property_PropertyPage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *propertyClient) PropertyDetail(ctx context.Context, in *PropertyDetailRequest, opts ...grpc.CallOption) (*PropertyDetailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PropertyDetailResponse)
+	err := c.cc.Invoke(ctx, Property_PropertyDetail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// PropertyServer is the server API for Property service.
+// All implementations must embed UnimplementedPropertyServer
+// for forward compatibility.
+type PropertyServer interface {
+	PropertyPage(context.Context, *PropertyPageRequest) (*PropertyPageResponse, error)
+	PropertyDetail(context.Context, *PropertyDetailRequest) (*PropertyDetailResponse, error)
+	mustEmbedUnimplementedPropertyServer()
+}
+
+// UnimplementedPropertyServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedPropertyServer struct{}
+
+func (UnimplementedPropertyServer) PropertyPage(context.Context, *PropertyPageRequest) (*PropertyPageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PropertyPage not implemented")
+}
+func (UnimplementedPropertyServer) PropertyDetail(context.Context, *PropertyDetailRequest) (*PropertyDetailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PropertyDetail not implemented")
+}
+func (UnimplementedPropertyServer) mustEmbedUnimplementedPropertyServer() {}
+func (UnimplementedPropertyServer) testEmbeddedByValue()                  {}
+
+// UnsafePropertyServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to PropertyServer will
+// result in compilation errors.
+type UnsafePropertyServer interface {
+	mustEmbedUnimplementedPropertyServer()
+}
+
+func RegisterPropertyServer(s grpc.ServiceRegistrar, srv PropertyServer) {
+	// If the following call pancis, it indicates UnimplementedPropertyServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&Property_ServiceDesc, srv)
+}
+
+func _Property_PropertyPage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PropertyPageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PropertyServer).PropertyPage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Property_PropertyPage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PropertyServer).PropertyPage(ctx, req.(*PropertyPageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Property_PropertyDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PropertyDetailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PropertyServer).PropertyDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Property_PropertyDetail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PropertyServer).PropertyDetail(ctx, req.(*PropertyDetailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Property_ServiceDesc is the grpc.ServiceDesc for Property service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Property_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "borrower.Property",
+	HandlerType: (*PropertyServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "PropertyPage",
+			Handler:    _Property_PropertyPage_Handler,
+		},
+		{
+			MethodName: "PropertyDetail",
+			Handler:    _Property_PropertyDetail_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "app/borrower/rpc/pb/borrower.proto",
+}
+
+const (
+	Applicant_BorrowerNames_FullMethodName = "/borrower.Applicant/BorrowerNames"
+)
+
+// ApplicantClient is the client API for Applicant service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type ApplicantClient interface {
+	BorrowerNames(ctx context.Context, in *BorrowerNamesRequest, opts ...grpc.CallOption) (*BorrowerNamesResponse, error)
+}
+
+type applicantClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewApplicantClient(cc grpc.ClientConnInterface) ApplicantClient {
+	return &applicantClient{cc}
+}
+
+func (c *applicantClient) BorrowerNames(ctx context.Context, in *BorrowerNamesRequest, opts ...grpc.CallOption) (*BorrowerNamesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(BorrowerNamesResponse)
+	err := c.cc.Invoke(ctx, Applicant_BorrowerNames_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// ApplicantServer is the server API for Applicant service.
+// All implementations must embed UnimplementedApplicantServer
+// for forward compatibility.
+type ApplicantServer interface {
+	BorrowerNames(context.Context, *BorrowerNamesRequest) (*BorrowerNamesResponse, error)
+	mustEmbedUnimplementedApplicantServer()
+}
+
+// UnimplementedApplicantServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedApplicantServer struct{}
+
+func (UnimplementedApplicantServer) BorrowerNames(context.Context, *BorrowerNamesRequest) (*BorrowerNamesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BorrowerNames not implemented")
+}
+func (UnimplementedApplicantServer) mustEmbedUnimplementedApplicantServer() {}
+func (UnimplementedApplicantServer) testEmbeddedByValue()                   {}
+
+// UnsafeApplicantServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ApplicantServer will
+// result in compilation errors.
+type UnsafeApplicantServer interface {
+	mustEmbedUnimplementedApplicantServer()
+}
+
+func RegisterApplicantServer(s grpc.ServiceRegistrar, srv ApplicantServer) {
+	// If the following call pancis, it indicates UnimplementedApplicantServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&Applicant_ServiceDesc, srv)
+}
+
+func _Applicant_BorrowerNames_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BorrowerNamesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApplicantServer).BorrowerNames(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Applicant_BorrowerNames_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApplicantServer).BorrowerNames(ctx, req.(*BorrowerNamesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Applicant_ServiceDesc is the grpc.ServiceDesc for Applicant service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Applicant_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "borrower.Applicant",
+	HandlerType: (*ApplicantServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "BorrowerNames",
+			Handler:    _Applicant_BorrowerNames_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
