@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image"
 	"io"
+	"strings"
 
 	"github.com/signintech/gopdf"
 
@@ -59,6 +60,42 @@ func (form *ApplyForm) Generate(w io.Writer) (err error) {
 		func() error {
 			return form.page3()
 		},
+		func() error {
+			return form.page4()
+		},
+		func() error {
+			return form.page5()
+		},
+		func() error {
+			return form.page6()
+		},
+		func() error {
+			return form.page7()
+		},
+		func() error {
+			return form.page8()
+		},
+		func() error {
+			return form.page9()
+		},
+		func() error {
+			return form.page10()
+		},
+		func() error {
+			return form.page11()
+		},
+		func() error {
+			return form.page12()
+		},
+		func() error {
+			return form.page13()
+		},
+		func() error {
+			return form.page14()
+		},
+		func() error {
+			return form.page15()
+		},
 
 		// write the pdf
 		func() error {
@@ -78,6 +115,9 @@ func (form *ApplyForm) setPageTitle(icoImage image.Image, title1 string, title2 
 		return err
 	}
 
+	title2 = strings.Trim(title2, " ")
+	title2 = " " + title2
+
 	titleLen2, err := form.pdf.MeasureTextWidth(title2)
 	if err != nil {
 		return err
@@ -92,16 +132,16 @@ func (form *ApplyForm) setPageTitle(icoImage image.Image, title1 string, title2 
 		if err != nil {
 			return err
 		}
-		startX += icoWith
+		startX += icoWith * 1.3
 	}
 
-	form.pdf.SetXY(startX, y)
+	form.pdf.SetXY(startX, y+3)
 	form.pdf.SetBoldFontWithSize(18)
 	form.pdf.SetBlackFont()
 
 	_ = form.pdf.Cell(nil, title1)
 	form.setBlueFont()
-	_ = form.pdf.Cell(nil, " "+title2)
+	_ = form.pdf.Cell(nil, title2)
 
 	form.pdf.SetY(40)
 	form.pdf.Br(1)
@@ -160,6 +200,7 @@ func (form *ApplyForm) buildGraySmallTitle(title string, position position) (err
 
 	form.pdf.SetWhiteBoldFont()
 	_ = form.pdf.SetFontSize(10)
+	form.pdf.SetTextColor(71, 117, 255)
 	form.pdf.SetXY(position.x, position.y)
 	_ = form.pdf.CellWithOption(&gopdf.Rect{W: position.w, H: position.h}, title, gopdf.CellOption{
 		Align: gopdf.Left | gopdf.Middle,
@@ -210,15 +251,90 @@ func (form *ApplyForm) OneFullLine(text string) (err error) {
 	return
 }
 
-// func (form *ApplyForm) MultiFullLine(text string) (err error) {
-// 	form.pdf.Br(0)
-// 	height, err := form.pdf.MeasureCellHeightByText(text)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	err = form.pdf.MultiCellWithOption(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: height}, text, gopdf.CellOption{
-// 		Align: gopdf.Left | gopdf.Middle,
-// 	})
-// 	form.pdf.Br(form.pdf.LineHeight)
-// 	return
-// }
+type colorText struct {
+	text  string
+	color struct {
+		r, g, b uint8
+	}
+}
+
+func (form *ApplyForm) buildLongTextWithColor(contents []colorText, startX float64, fontHeight float64) (err error) {
+	breakOption := &gopdf.BreakOption{
+		Mode:           gopdf.BreakModeIndicatorSensitive,
+		BreakIndicator: ' ', // 在空格处分割
+	}
+	tmpX := startX
+
+OutLoop:
+	for _, content := range contents {
+		form.pdf.SetTextColor(content.color.r, content.color.g, content.color.b)
+		text := content.text
+		// start from prev position
+		if tmpX > startX {
+			leftLen := form.pdf.GetFullWidth() - (tmpX - form.pdf.MarginLeft())
+			form.pdf.SetX(tmpX)
+			lines, _ := form.pdf.SplitTextWithOption(text, leftLen, breakOption)
+			_ = form.pdf.CellWithOption(&gopdf.Rect{W: leftLen, H: fontHeight}, lines[0], gopdf.CellOption{
+				Align: gopdf.Left | gopdf.Middle,
+			})
+			form.pdf.Br(fontHeight)
+			text = text[len(lines[0]):]
+			tmpX = startX
+		}
+
+		if len(text) == 0 {
+			continue OutLoop
+		}
+
+		// 将文本分割成多行，每行宽度不超过指定值
+		lines, _ := form.pdf.SplitTextWithOption(text, form.pdf.GetFullWidth(), breakOption)
+		lineCount := len(lines)
+	InnerLoop:
+		for i, line := range lines {
+			if i < lineCount-1 {
+				_ = form.pdf.CellWithOption(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: fontHeight}, line, gopdf.CellOption{
+					Align: gopdf.Left | gopdf.Middle,
+				})
+				form.pdf.Br(fontHeight)
+				continue InnerLoop
+			}
+
+			lineWidth, _ := form.pdf.MeasureTextWidth(line)
+			tmpX += lineWidth
+			_ = form.pdf.CellWithOption(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: fontHeight}, line, gopdf.CellOption{
+				Align: gopdf.Left | gopdf.Middle,
+			})
+
+		}
+	}
+	form.pdf.Br(fontHeight)
+
+	return err
+
+}
+
+func (form *ApplyForm) buildLists(lists []string, position position, fontHeight float64) (err error) {
+	point := "·"
+	col1Width := 10.0
+	col2Width := position.w - col1Width - 10.0
+	tempY := position.y
+	for _, list := range lists {
+		lines, err := form.pdf.SplitText(list, col2Width)
+		if err != nil {
+			return err
+		}
+		form.pdf.SetXY(position.x, tempY)
+		_ = form.pdf.CellWithOption(&gopdf.Rect{W: col1Width, H: fontHeight}, point, gopdf.CellOption{
+			Align: gopdf.Left,
+		})
+
+		for _, line := range lines {
+			form.pdf.SetXY(position.x+col1Width, tempY)
+			_ = form.pdf.CellWithOption(&gopdf.Rect{W: col2Width, H: fontHeight}, line, gopdf.CellOption{
+				Align: gopdf.Left | gopdf.Middle,
+			})
+			tempY += fontHeight
+		}
+	}
+	return err
+}
