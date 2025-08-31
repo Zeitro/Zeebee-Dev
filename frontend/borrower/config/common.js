@@ -1,6 +1,6 @@
 import { routers } from './routes';
 // 生成菜单栏
-export const generateMenuBar = (list) => {
+export const generateMenuBar = (list, iconConfig) => {
 	return JSON.parse(JSON.stringify(list))
 		.filter((i) => !i.hideMenu)
 		.map((item) => {
@@ -10,8 +10,10 @@ export const generateMenuBar = (list) => {
 			const newItem = {
 				key: item.path,
 				label: item.title,
-				icon: item.icon
 			};
+			if (iconConfig) {
+				newItem.icon = iconConfig[item.icon];
+			}
 			if (item?.router?.length) {
 				newItem.children = item.router;
 			}
@@ -20,13 +22,13 @@ export const generateMenuBar = (list) => {
 };
 
 // 将多层级嵌套路由变为一层级路由，方便查找
-export function flattenNavRouter(routes=[]) {
-  return routes?.reduce((acc, next) => {
-    if (next.router) {
-      return [...acc, next, ...flattenNavRouter(next.router)];
-    }
-    return [...acc, next];
-  }, []);
+export function flattenNavRouter(routes = []) {
+	return routes?.reduce((acc, next) => {
+		if (next.router) {
+			return [...acc, next, ...flattenNavRouter(next.router)];
+		}
+		return [...acc, next];
+	}, []);
 }
 
 /**
@@ -57,16 +59,16 @@ export const getCrumbs = (currentPath, routes) => {
 		if (match) {
 			// 动态参数面包屑可自定义显示
 			let title = match.title;
-			if (/:/.test(match.path)) {
-				// 取实际 id 或自定义
-				title = '详情'; // 或 segments[i]
-			}
+			// if (/:/.test(match.path)) {
+			// 	// 取实际 id 或自定义
+			// 	title = '详情'; // 或 segments[i]
+			// }
 			let crumbItem = {
 				title,
 			};
 			// 最后一个不需要path
-			if (segments.length - 1 > i) {
-				crumbItem.href = path;
+			if (segments.length - 1 !== i) {
+				crumbItem.path = path;
 			}
 			breadcrumbs.push(crumbItem);
 		}
@@ -76,7 +78,7 @@ export const getCrumbs = (currentPath, routes) => {
 
 // 根据pathname获取前端路由配置
 export const getCurrentRouterItem = (currentPathname, allRouters = routers) => {
-	const routers = flattenNavRouter(allRouters)
+	const routers = flattenNavRouter(allRouters);
 	const routerItem = routers.find((item) => matchRoute(item.path, currentPathname));
 	return routerItem;
 };

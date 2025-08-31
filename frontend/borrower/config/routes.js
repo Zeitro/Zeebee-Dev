@@ -7,10 +7,11 @@ export const navRouter = [
 	{
 		path: '/loans',
 		title: 'My loans',
+		icon: 'loan',
 		roles: [],
 		router: [
 			{
-				path: '/createLoan',
+				path: '/loans/createLoan',
 				title: 'Create A New Loan',
 				hideMenu: true,
 			},
@@ -18,21 +19,36 @@ export const navRouter = [
 				path: '/loans/:id',
 				title: 'Edit Loan',
 				hideMenu: true,
-				
+			},
+			{
+				path: '/loans/createZeeBeeLoan',
+				title: 'Create ZeeBee Loan',
+				hideMenu: true,
 			},
 		],
 	},
 	{
 		path: '/properties',
 		title: 'My properties',
+		icon: 'property',
 		roles: [],
 		router: [
 			{
 				path: '/properties/:id',
-				title: 'details',
+				title: 'Details',
+				hideMenu: true,
+			},
+			{
+				path: '/createLoan',
+				title: 'Create A New Loan',
 				hideMenu: true,
 			},
 		],
+	},
+	{
+		path: '/pdf',
+		title: 'pdf',
+		hideMenu: true,
 	},
 	{
 		path: '/not-found',

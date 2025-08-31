@@ -8,6 +8,8 @@ import { generateMenuBar, getCurrentRouterItem } from '@config/common';
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import { RightCircleTwoTone, LeftCircleTwoTone } from '@ant-design/icons';
+import { useUserStore } from '@/store/user';
+import { sidebarIcon } from './icon';
 const homePathname = '/';
 /**
  * 侧边栏组件
@@ -15,14 +17,20 @@ const homePathname = '/';
 const SidebarDom = () => {
 	const router = useRouter();
 	const pathname = usePathname();
+	const items = generateMenuBar(navRouter, sidebarIcon).filter((i) => i.key !== '/');
+	const { userInfo } = useUserStore();
 	const { siberCollapsed, changeSiberCollapsed } = useGlobalStore();
 	const [selectedKey, setSelectedKey] = useState(homePathname);
 	const config = useMemo(() => getCurrentRouterItem(pathname, navRouter), [pathname]); // 获取当前路由的配置
 
 	const handleSelect = ({ key }) => {
-		if (selectedKey === key) return;
+		// if (selectedKey === key) return;
 		router.push(key);
 		setSelectedKey(key);
+	};
+
+	const handleLogout = () => {
+		router.push('/login');
 	};
 
 	const handleExpand = () => {
@@ -30,8 +38,9 @@ const SidebarDom = () => {
 	};
 	// 初始化根据路由选中侧边栏
 	useEffect(() => {
-		setSelectedKey((v) => (v !== pathname ? pathname : homePathname));
-	}, []);
+		const routerItem = items.find((i) => pathname.indexOf(i.key) !== -1);
+		setSelectedKey(routerItem?.key || homePathname);
+	}, [pathname]);
 
 	return config ? (
 		<div
@@ -53,16 +62,17 @@ const SidebarDom = () => {
 			<Menu
 				mode="vertical"
 				selectedKeys={[selectedKey]}
-				items={generateMenuBar(navRouter).filter((i) => i.key !== '/')}
+				items={items}
 				className={[
 					'flex-1 overflow-hidden border-r-0',
 					styles.menuList,
 					siberCollapsed && styles.menuList_collapsed,
 				].join(' ')}
-				onSelect={handleSelect}
+				onClick={handleSelect}
 			/>
 			<div
 				className={`h-16 border-t border-solid border-base-border text-base-primary flex items-center justify-center p-3.5 gap-2.5 overflow-hidden`}
+				onClick={() => handleLogout()}
 			>
 				<Image
 					src="/globe.svg"
@@ -74,9 +84,11 @@ const SidebarDom = () => {
 				{!siberCollapsed && (
 					<div className="flex-1">
 						<p className={`text-base/4 text-black-dark font-medium pb-[3px]`}>
-							username
+							{userInfo?.first_name} {userInfo?.last_name}
 						</p>
-						<span className="text-gray-medium">kevinmo@email.com</span>
+						<span className="text-gray-medium text-ellipsis overflow-hidden whitespace-nowrap">
+							{userInfo?.email}
+						</span>
 					</div>
 				)}
 			</div>

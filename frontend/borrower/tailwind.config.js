@@ -32,6 +32,8 @@ module.exports = {
 					light: 'var(--blue-light)',
 					medium: 'var(--blue-medium)',
 					dark: 'var(--blue-dark)',
+					'light-1':'var(--blue-light-1)',
+					'medium-default':'var(--blue-medium-default)'
 				},
 				green:{
 					light: 'var(--green-light)',

@@ -1,33 +1,46 @@
 'use client';
-import { Button, Col, DatePicker, Form, InputNumber, Radio, Row, Select, Space, Steps, Tabs } from 'antd';
-import React, { useState } from 'react';
-import {
-	loanStatusOptions,
-	loanPendingStatus,
-	loanPurposeOptions,
-	loanTypeOptions,
-} from '@/enum/loan';
+import { Col, Form, InputNumber, Row, Select } from 'antd';
+import React from 'react';
 import styles from './index.module.scss';
-import { usePropertyStore } from '@/store/property';
-import { useRouter } from 'next/navigation';
-const CreateProperty = ({stepBtn ,gutter,...colProps}) => {
-	const { propertyTypeOptions } = usePropertyStore();
-	const router = useRouter();
+import { useGetOptions } from '@/hooks/useGetOptions';
+import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
+const layoutCol = {
+	xs: 24,
+	sm: 24,
+};
+const CreateProperty = ({
+	stepBtn,
+	gutter,
+	addressProps = {},
+	form,
+	isRequestProperty,
+	...colProps
+}) => {
+	const { propertyTypeOptions } = useGetOptions([
+		{
+			key: 'property_type',
+			valueName: 'propertyTypeOptions',
+		},
+	]);
 	return (
 		<Row className={styles.create} gutter={gutter}>
-			<Col md={24} {...(colProps||{})}>
+			<Col {...layoutCol} {...(colProps || {})}>
 				<Form.Item
 					label="Property type"
-					name="propertyType"
+					name={['loan_property', 'property_type']}
 					rules={[{ required: true, message: 'Please select Property type!' }]}
 				>
-					<Select options={propertyTypeOptions} placeholder="Select Property type" />
+					<Select
+						options={propertyTypeOptions}
+						placeholder="Select Property type"
+						disabled={isRequestProperty}
+					/>
 				</Form.Item>
 			</Col>
-			<Col md={24} {...(colProps||{})}>
+			<Col {...layoutCol} {...(colProps || {})}>
 				<Form.Item
 					label="Number of unit"
-					name="unit"
+					name={['loan_property', 'property_base', 'unit']}
 					rules={[{ required: true, message: 'Please input!' }]}
 				>
 					<InputNumber
@@ -35,11 +48,21 @@ const CreateProperty = ({stepBtn ,gutter,...colProps}) => {
 						min={1}
 						max={10}
 						controls={false}
-						placeholder="Enter initial loan amount"
+						placeholder="Enter number of unit"
+						disabled={isRequestProperty}
 					/>
 				</Form.Item>
 			</Col>
-
+			<AddressForm
+				{...addressProps}
+				addressName={['loan_property', 'property_base', 'address', 'address1']}
+				addressName2={['loan_property', 'property_base', 'address', 'address2']}
+				cityName={['loan_property', 'property_base', 'address', 'city']}
+				stateName={['loan_property', 'property_base', 'address', 'state']}
+				zipName={['loan_property', 'property_base', 'address', 'zip_code']}
+				form={form}
+				disabled={isRequestProperty}
+			/>
 			{stepBtn}
 		</Row>
 	);

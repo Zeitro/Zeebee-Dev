@@ -24,19 +24,21 @@ const TableOperation = ({ list, className, onSelect, getItems }) => {
 	const [selectedKey, setSelectedKey] = useState(null);
 	const [items, setItems] = useState([]);
 	const router = useRouter();
+	const newItems = getItems?.(editItem, deleteItem) || [editItem, deleteItem];
 
-	const handleSelect = async ({ key, item }) => {
+	const handleSelect = async ({ key }) => {
 		setSelectedKey(key);
+		const arr = list || newItems;
+		const optItem = arr.find((i) => i.key === key);
 		await onSelect?.(key);
-		
-		if (item?.props?.url) {
-			router.push(item?.props?.url);
+		if (optItem?.url) {
+			router.push(optItem.url);
 		}
 	};
 
 	useEffect(() => {
 		// 默认项edit和delete，getItems和list可任选一种传入，getItems可拿到edit和delete的配置重新组装
-		const newItems = getItems?.(editItem, deleteItem) || [editItem, deleteItem];
+
 		if (newItems.length && !list?.length) {
 			setItems([...newItems]);
 		} else {
@@ -50,7 +52,7 @@ const TableOperation = ({ list, className, onSelect, getItems }) => {
 				items,
 				selectable: true,
 				selectedKeys: [selectedKey],
-				onSelect: handleSelect,
+				onClick: handleSelect,
 			}}
 			className={[styles.tableOperation, className].join(' ')}
 		>
