@@ -1,26 +1,168 @@
 syntax = "v1"
 
 info (
-	title:  "borrower-api http service" // TODO: add title
-	desc:   "borrower-api http service description" // TODO: add description
-	author: ""
-	email:  ""
+	title:  "borrower-api http service"
+	desc:   "borrower-api http service description"
+	author: "Wei Zeng"
+	email:  "wei@yeelee-capital.com"
 )
 
-type request {}
+import "desc/user.api"
+import "desc/loan.api"
+import "desc/common.api"
+import "desc/property.api"
+import "desc/applicant.api"
+import "desc/us_geography.api"
 
-type response {}
+type (
+	EmptyRequest  {}
+	EmptyResponse  {}
+)
 
+// ============== common =============
 @server (
 	desc:    "borrower-api service"
-	version: "v1"
-	group:   ""
+	version: v1
+	group:   common
+	prefix:  /api/v1
+	tags:    common
 )
 service borrower-api {
-	@handler GetUser // TODO: set handler name and delete this comment
-	get /users/id/:userId (request) returns (response)
+	@doc "select options"
+	@handler SelectOptions
+	get /select_options (GetSelectOptionRequest) returns (GetSelectOptionResponse)
 
-	@handler CreateUser // TODO: set handler name and delete this comment
-	post /users/create (request)
+	@doc "get us states"
+	@handler GetUsStates
+	get /us_states (EmptyRequest) returns (GetUsStatesResponse)
+
+	@doc "get us city"
+	@handler GetUsCities
+	get /us_cities (GetUsCitiesRequest) returns (GetUsCitiesResponse)
+}
+
+// ============== user =============
+@server (
+	desc:    "borrower-api service"
+	version: v1
+	group:   user
+	prefix:  /api/v1
+	tags:    user
+)
+service borrower-api {
+	@doc "register"
+	@handler Register
+	post /user/register (UserRegisterRequest) returns (UserRegisterResponse)
+
+	@doc "login"
+	@handler Login
+	post /user/login (UserLoginRequest) returns (UserLoginResponse)
+
+	@doc "refresh"
+	@handler RefreshToken
+	post /user/refresh (UserRefreshTokenRequest) returns (UserRefreshTokenResponse)
+}
+
+@server (
+	desc:       "borrower-api service"
+	version:    v1
+	group:      user
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags:       user
+)
+service borrower-api {
+	@doc "info"
+	@handler Info
+	get /user/info (EmptyRequest) returns (UserInfoResponse)
+}
+
+// ============== loan =============
+@server (
+	desc:       "loan service"
+	version:    v1
+	group:      loan
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags:       loan
+)
+service borrower-api {
+	@doc "create"
+	@handler Create
+	post /loan (LoanCreateRequest) returns (LoanCreateResponse)
+
+	@doc "update"
+	@handler Update
+	put /loan/:id (LoanUpdateRequest) returns (EmptyResponse)
+
+	@doc "update pending status"
+	@handler UpdatePendingStatus
+	put /loan/:id/pending_status (LoanUpdatePendingStatusRequest) returns (EmptyResponse)
+
+	@doc "delete"
+	@handler DeleteLoan
+	delete /loan/:id (LoanDeleteRequest) returns (EmptyResponse)
+
+	@doc "lender companies list"
+	@handler LenderCompanies
+	get /loan/lender_companies (EmptyRequest) returns (LoanLenderCompanyResponse)
+
+	@doc "detail"
+	@handler Detail
+	get /loan/:id (LoanDetailRequest) returns (LoanDetailResponse)
+
+	@doc "page"
+	@handler Page
+	post /loan/page (LoanPageRequest) returns (LoanPageResponse)
+
+	@doc "apply"
+	@handler Apply
+	post /loan/apply (LoanApplyRequest) returns (LoanApplyResponse)
+
+	@doc "update apply"
+	@handler UpdateApply
+	put /loan/:id/update_apply (LoanApplyRequest) returns (EmptyResponse)
+
+	@doc "import"
+	@handler Import
+	post /loan/import (EmptyRequest) returns (EmptyResponse)
+
+	@doc "download import template"
+	@handler DownloadImportTemplate
+	get /loan/import/template (EmptyRequest) returns (EmptyResponse)
+}
+
+// =============== property ==============
+@server (
+	desc:       "property service"
+	version:    v1
+	group:      property
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags:       property
+)
+service borrower-api {
+	@doc "page"
+	@handler PropertyPage
+	post /property/page (PropertyPageRequest) returns (PropertyPageResponse)
+
+	@doc "detail"
+	@handler PropertyDetail
+	get /property/:id (PropertyDetailRequest) returns (PropertyDetailResponse)
+}
+
+// =============== applicant ==============
+@server (
+	desc:       "applicant service"
+	version:    v1
+	group:      applicant
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags:       applicant
+)
+service borrower-api {
+	@doc "borrower names"
+	@handler BorrowerNames
+	post /applicant/borrower (EmptyRequest) returns (BorrowerNamesResponse)
 }
 

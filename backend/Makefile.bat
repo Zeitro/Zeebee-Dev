@@ -27,8 +27,6 @@ echo   create-swagger ^<service^>    Create API Swagger
 echo   create-api-service ^<service^> Create API Service
 echo   create-proto ^<service^>      Create proto file
 echo   create-rpc-service ^<service^> Create RPC service
-echo   run-api-service ^<service^>   Run API service
-echo   run-rpc-service ^<service^>   Run RPC service
 exit /b
 
 rem 创建 API 文件
@@ -64,7 +62,8 @@ if "%SERVICE%"=="" (
     exit /b 1
 )
 echo create api server: %SERVICE%
-goctl api go --api app\%SERVICE%\api\%SERVICE%.api --dir app\%SERVICE%\api --style go_zero --home third_party\goctl_template --type-group
+goctl api go --api app\%SERVICE%\api\%SERVICE%.api --dir app\%SERVICE%\api --style go_zero --home third_party\goctl_template
+goctl api plugin -p goctl-validate="validate --custom" --api app\%SERVICE%\api\%SERVICE%.api --dir app\%SERVICE%\api
 exit /b 0
 
 rem 创建 proto 文件
@@ -89,24 +88,3 @@ echo create rpc service: %SERVICE%
 goctl rpc protoc app\%SERVICE%\rpc\pb\%SERVICE%.proto --go_out=./app\%SERVICE%\rpc\pb --go-grpc_out=./app\%SERVICE%\rpc\pb --zrpc_out=./app\%SERVICE%\rpc -m --home third_party\goctl_template --style go_zero
 exit /b 0
 
-rem 运行 API 服务
-:run-api-service
-if "%SERVICE%"=="" (
-    echo Error: Service name is required for run-api-service.
-    call :help
-    exit /b 1
-)
-echo run api service: %SERVICE%
-go run app\%SERVICE%\api\%SERVICE%.go -f app\%SERVICE%\api\etc\%SERVICE%-api.yaml
-exit /b 0
-
-rem 运行 RPC 服务
-:run-rpc-service
-if "%SERVICE%"=="" (
-    echo Error: Service name is required for run-rpc-service.
-    call :help
-    exit /b 1
-)
-echo run rpc service: %SERVICE%
-go run app\%SERVICE%\rpc\%SERVICE%.go -f app\%SERVICE%\rpc\etc\%SERVICE%.yaml
-exit /b 0
