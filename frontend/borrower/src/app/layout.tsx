@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
 import { Roboto } from 'next/font/google';
+import Script from 'next/script';
 // import 'antd/dist/reset.css';
 import './globals.css';
 import '@ant-design/v5-patch-for-react-19';
 import CustomizeAntdTheme from '@/components/CustomizeAntdTheme';
+import PortalComponent from '@/components/PortalComponent';
 export const roboto = Roboto({
 	weight: ['400', '500', '700'], // 选择需要的字重
 	subsets: ['latin', 'latin-ext'], // 字符集
@@ -23,9 +25,16 @@ const RootLayout = ({
 }>) => {
 	return (
 		<html lang="en">
+			<head>
+				<Script
+					src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
+					strategy="beforeInteractive" // 页面交互前加载
+				/>
+			</head>
 			<body className={`${roboto.variable}`}>
 				<CustomizeAntdTheme fontFamily={`${roboto.variable}`}>
 					{children}
+					<PortalComponent />
 				</CustomizeAntdTheme>
 			</body>
 		</html>

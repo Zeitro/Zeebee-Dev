@@ -1,12 +1,18 @@
+/**
+ * 公共方法封装（格式化或验证相关写在format文件）
+ * */
+
 // 分页
 export const getPagination = (pagi = {}) => {
-    return {
-        current: 1,
-        pageSize:10,
-        total: 0,
-        ...pagi,
-    };
+	return {
+		current: 1,
+		pageSize: 10,
+		total: 0,
+		showTotal: (total) => `▶  Total ${total}`,
+		...pagi,
+	};
 };
+
 /**
  * 将数组转为指定的键值对结构
  * sourceArray：源数组
