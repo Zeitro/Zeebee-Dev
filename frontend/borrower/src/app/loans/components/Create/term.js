@@ -6,6 +6,7 @@ import InputNumAmount from '@/components/InputNumAmount';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import { loan_active, loan_pending } from '@/enum/common';
 import { formatStr } from '@/lib/date';
+import InputName from '@/components/InputName';
 const layoutCol = {
 	xs: 24,
 	sm: 24,
@@ -13,6 +14,7 @@ const layoutCol = {
 const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
 	const borrower1 = Form.useWatch(['applicants', 0, 'name'], form);
 	const borrower2 = Form.useWatch(['applicants', 1, 'name'], form);
+	const total_amount = Form.useWatch('total_amount', form);
 
 	const { lienPositionOptions, prepaymentPenaltyOptions } = useGetOptions([
 		{
@@ -25,9 +27,11 @@ const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
 		},
 	]);
 	const borrowerValidator = (value, index) => {
-		if ((!index && value === borrower2) || (index === 1 && value === borrower1)) {
-			return Promise.reject('Borrower 1 and Borrower 2 cannot be the same');
-		}
+		console.log(value, index);
+
+		// if ((!index && value === borrower2) || (index === 1 && value === borrower1)) {
+		// return Promise.reject('Borrower 1 and Borrower 2 cannot be the same');
+		// }
 		return Promise.resolve();
 	};
 
@@ -63,29 +67,23 @@ const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
 	);
 	return (
 		<Row className={styles.create} gutter={gutter}>
-			<Form.List name="applicants">
-				{(fields) => {
-					return fields?.map((field, index) => (
-						<Col
-							{...layoutCol}
-							{...(colProps || {})}
-							key={field.key}
-							fieldkey={field.fieldKey}
-						>
-							<Form.Item
-								label={`Borrower ${index + 1}`}
-								name={[field.name, 'name']}
-								rules={[
-									{ required: !index, message: 'Please input!' },
-									{
-										validator: (rule, value) => borrowerValidator(value, index),
-									},
-								]}
-							>
-								<Input placeholder="Enter Borrower" />
-							</Form.Item>
-						</Col>
-					));
+			<Form.List name="applicants" rules={[{ validator: borrowerValidator }]}>
+				{(fields, { add, remove }, { errors }) => {
+					return (
+						<>
+							{fields?.map((field, index) => (
+								<InputName
+									key={field.key}
+									layoutCol={{ ...layoutCol, md: 8 }}
+									firstName={[field.name, 'first_name']}
+									middleName={[field.name, 'mid_name']}
+									lastName={[field.name, 'last_name']}
+									title={`Borrower ${index + 1}`}
+								/>
+							))}
+							<Form.ErrorList errors={errors} />
+						</>
+					);
 				}}
 			</Form.List>
 			{stage === loan_pending && (
@@ -120,7 +118,10 @@ const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
 							name="closing_fund"
 							rules={[{ required: true, message: 'Please input!' }]}
 						>
-							<InputNumAmount placeholder="Enter Estimated closing fund" />
+							<InputNumAmount
+								placeholder="Enter Estimated closing fund"
+								max={total_amount}
+							/>
 						</Form.Item>
 					</Col>
 				</>
