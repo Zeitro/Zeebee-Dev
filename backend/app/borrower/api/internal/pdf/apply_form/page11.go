@@ -113,7 +113,7 @@ func (form *ApplyForm) page11() (err error) {
 	// _ = form.pdf.LongText(form.pdf.LineHeight, text)
 	// form.pdf.Br(form.pdf.LineHeight)
 
-	_ = form.buildSignature()
+	_ = form.buildSignature("")
 
 	return err
 }

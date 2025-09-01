@@ -1,6 +1,13 @@
 package apply_form
 
-import "github.com/signintech/gopdf"
+import (
+	"fmt"
+
+	"github.com/duke-git/lancet/v2/condition"
+	"github.com/signintech/gopdf"
+
+	"zeebee-backend/common/stringx"
+)
 
 func (form *ApplyForm) page6() (err error) {
 	form.pdf.AddPage()
@@ -46,6 +53,11 @@ func (form *ApplyForm) page6() (err error) {
 func (form *ApplyForm) buildPage6TransactionTable(tablePosition position) (err error) {
 	lineWidth := 0.5
 	tableFontSize := 8.5
+	experiences := form.info.TransactionExperiences
+	maxRows := len(experiences)
+	if maxRows <= 10 {
+		maxRows = 10
+	}
 	table := form.pdf.NewTableLayout(tablePosition.x, tablePosition.y, 30, 10)
 
 	table.SetHeaderStyle(gopdf.CellStyle{
@@ -89,10 +101,21 @@ func (form *ApplyForm) buildPage6TransactionTable(tablePosition position) (err e
 	table.AddColumn("Date Sold", 60, "center")
 	table.AddColumn("Profit / Loss $", 60, "center")
 
-	table.AddRow([]string{"2625 Augustine Drive\n Santa Clara CA", "Me", "SFR Attached", "234555", " 04/03/2025", "1234", "234556", " 04/17/2025", " 12345"})
-	table.AddRow([]string{"2625 Augustine Drive Santa Clara CA", "Me", "SFR Attached", "234555", " 04/03/2025", "1234", "234556", " 04/17/2025", " 12345"})
-	table.AddRow([]string{"2625 Augustine Drive Santa Clara CA", "Me", "SFR Attached", "234555", " 04/03/2025", "1234", "234556", " 04/17/2025", " 12345"})
-	table.AddRow([]string{"2625 Augustine Drive Santa Clara CA", "Me", "SFR Attached", "234555", " 04/03/2025", "1234", "234556", " 04/17/2025", " 12345"})
+	for _, experience := range experiences {
+		address := experience.Address
+		table.AddRow([]string{
+			fmt.Sprintf("%s\n %s %s", address.Address1, address.City, address.State),
+			experience.OwnershipOnTitle,
+			experience.PropertyType,
+			stringx.TransNumberToString(experience.PurchaseAmount, true),
+			experience.PurchaseDate,
+			stringx.TransNumberToString(experience.BudgetOrCost, true),
+			stringx.TransNumberToString(experience.SoldAmount, true),
+			experience.SoldDate,
+			stringx.TransNumberToString(experience.Profit, true),
+		})
+
+	}
 	err = table.DrawTable()
 
 	return err
@@ -101,7 +124,12 @@ func (form *ApplyForm) buildPage6TransactionTable(tablePosition position) (err e
 func (form *ApplyForm) buildPage6RealEstateTable(tablePosition position) (err error) {
 	lineWidth := 0.5
 	tableFontSize := 8.5
-	table := form.pdf.NewTableLayout(tablePosition.x, tablePosition.y, 30, 8)
+	experiences := form.info.RealEstateExperiences
+	maxRows := len(experiences)
+	if maxRows <= 10 {
+		maxRows = 10
+	}
+	table := form.pdf.NewTableLayout(tablePosition.x, tablePosition.y, 30, maxRows)
 
 	table.SetHeaderStyle(gopdf.CellStyle{
 		BorderStyle: gopdf.BorderStyle{
@@ -144,10 +172,20 @@ func (form *ApplyForm) buildPage6RealEstateTable(tablePosition position) (err er
 	table.AddColumn("Date Sold", 60, "center")
 	table.AddColumn("Profit / Loss $", 60, "center")
 
-	table.AddRow([]string{"2625 Augustine Drive Santa Clara CA", "Me", "SFR Attached", "234555", " 04/03/2025", "Y", "234556", " 04/17/2025", " 12345"})
-	table.AddRow([]string{"2625 Augustine Drive Santa Clara CA", "Me", "SFR Attached", "234555", " 04/03/2025", "Y", "234556", " 04/17/2025", " 12345"})
-	table.AddRow([]string{"2625 Augustine Drive Santa Clara CA", "Me", "SFR Attached", "234555", " 04/03/2025", "N", "234556", " 04/17/2025", " 12345"})
-	table.AddRow([]string{"2625 Augustine Drive Santa Clara CA", "Me", "SFR Attached", "234555", " 04/03/2025", "N", "234556", " 04/17/2025", " 12345"})
+	for _, experience := range experiences {
+		address := experience.Address
+		table.AddRow([]string{
+			fmt.Sprintf("%s\n %s %s", address.Address1, address.City, address.State),
+			experience.OwnershipOnTitle,
+			experience.PropertyType,
+			stringx.TransNumberToString(experience.PurchaseAmount, true),
+			experience.PurchaseDate,
+			condition.Ternary(experience.IsTenantOccupied, "Y", "N"),
+			stringx.TransNumberToString(experience.SoldAmount, true),
+			experience.SoldDate,
+			stringx.TransNumberToString(experience.Profit, true),
+		})
+	}
 	err = table.DrawTable()
 
 	return err

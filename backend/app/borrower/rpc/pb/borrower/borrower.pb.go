@@ -1361,15 +1361,20 @@ func (x *PropertyBaseEntry) GetTotalAmount() float64 {
 }
 
 type LoanPropertyEntry struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	PropertyType   string                 `protobuf:"bytes,2,opt,name=property_type,json=propertyType,proto3" json:"property_type,omitempty"`
-	PropertyBase   *PropertyBaseEntry     `protobuf:"bytes,3,opt,name=property_base,json=propertyBase,proto3" json:"property_base,omitempty"`
-	LivingAreaSqft float32                `protobuf:"fixed32,5,opt,name=living_area_sqft,json=livingAreaSqft,proto3" json:"living_area_sqft,omitempty"`
-	Bedrooms       int32                  `protobuf:"varint,6,opt,name=bedrooms,proto3" json:"bedrooms,omitempty"`
-	Bathrooms      int32                  `protobuf:"varint,7,opt,name=bathrooms,proto3" json:"bathrooms,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state                protoimpl.MessageState `protogen:"open.v1"`
+	Id                   int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	PropertyType         string                 `protobuf:"bytes,2,opt,name=property_type,json=propertyType,proto3" json:"property_type,omitempty"`
+	PropertyBase         *PropertyBaseEntry     `protobuf:"bytes,3,opt,name=property_base,json=propertyBase,proto3" json:"property_base,omitempty"`
+	LivingAreaSqft       float32                `protobuf:"fixed32,5,opt,name=living_area_sqft,json=livingAreaSqft,proto3" json:"living_area_sqft,omitempty"`
+	Bedrooms             int32                  `protobuf:"varint,6,opt,name=bedrooms,proto3" json:"bedrooms,omitempty"`
+	Bathrooms            int32                  `protobuf:"varint,7,opt,name=bathrooms,proto3" json:"bathrooms,omitempty"`
+	FuturePropertyType   string                 `protobuf:"bytes,8,opt,name=future_property_type,json=futurePropertyType,proto3" json:"future_property_type,omitempty"`
+	FutureUnit           int32                  `protobuf:"varint,9,opt,name=future_unit,json=futureUnit,proto3" json:"future_unit,omitempty"`
+	FutureLivingAreaSqft float32                `protobuf:"fixed32,10,opt,name=future_living_area_sqft,json=futureLivingAreaSqft,proto3" json:"future_living_area_sqft,omitempty"`
+	FutureBedrooms       int32                  `protobuf:"varint,11,opt,name=future_bedrooms,json=futureBedrooms,proto3" json:"future_bedrooms,omitempty"`
+	FutureBathrooms      int32                  `protobuf:"varint,12,opt,name=future_bathrooms,json=futureBathrooms,proto3" json:"future_bathrooms,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *LoanPropertyEntry) Reset() {
@@ -1440,6 +1445,41 @@ func (x *LoanPropertyEntry) GetBedrooms() int32 {
 func (x *LoanPropertyEntry) GetBathrooms() int32 {
 	if x != nil {
 		return x.Bathrooms
+	}
+	return 0
+}
+
+func (x *LoanPropertyEntry) GetFuturePropertyType() string {
+	if x != nil {
+		return x.FuturePropertyType
+	}
+	return ""
+}
+
+func (x *LoanPropertyEntry) GetFutureUnit() int32 {
+	if x != nil {
+		return x.FutureUnit
+	}
+	return 0
+}
+
+func (x *LoanPropertyEntry) GetFutureLivingAreaSqft() float32 {
+	if x != nil {
+		return x.FutureLivingAreaSqft
+	}
+	return 0
+}
+
+func (x *LoanPropertyEntry) GetFutureBedrooms() int32 {
+	if x != nil {
+		return x.FutureBedrooms
+	}
+	return 0
+}
+
+func (x *LoanPropertyEntry) GetFutureBathrooms() int32 {
+	if x != nil {
+		return x.FutureBathrooms
 	}
 	return 0
 }
@@ -3975,15 +4015,15 @@ func (x *LoanApplyRequest) GetData() *LoanApplyRequestData {
 }
 
 type LoanApplyRequestData struct {
-	state                    protoimpl.MessageState   `protogen:"open.v1"`
-	LoanPurpose              string                   `protobuf:"bytes,1,opt,name=loan_purpose,json=loanPurpose,proto3" json:"loan_purpose,omitempty"`
-	LoanType                 string                   `protobuf:"bytes,2,opt,name=loan_type,json=loanType,proto3" json:"loan_type,omitempty"`
-	TotalAmount              float64                  `protobuf:"fixed64,3,opt,name=total_amount,json=totalAmount,proto3" json:"total_amount,omitempty"`
-	InitialAmount            float64                  `protobuf:"fixed64,4,opt,name=initial_amount,json=initialAmount,proto3" json:"initial_amount,omitempty"`
-	LoanProperty             *LoanPropertyEntry       `protobuf:"bytes,5,opt,name=loan_property,json=loanProperty,proto3" json:"loan_property,omitempty"`
-	HoldbackAmount           float64                  `protobuf:"fixed64,6,opt,name=holdback_amount,json=holdbackAmount,proto3" json:"holdback_amount,omitempty"`
-	PrincipalAmount          float64                  `protobuf:"fixed64,7,opt,name=principal_amount,json=principalAmount,proto3" json:"principal_amount,omitempty"`
-	MaturityDate             string                   `protobuf:"bytes,8,opt,name=maturity_date,json=maturityDate,proto3" json:"maturity_date,omitempty"`
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	LoanPurpose     string                 `protobuf:"bytes,1,opt,name=loan_purpose,json=loanPurpose,proto3" json:"loan_purpose,omitempty"`
+	LoanType        string                 `protobuf:"bytes,2,opt,name=loan_type,json=loanType,proto3" json:"loan_type,omitempty"`
+	TotalAmount     float64                `protobuf:"fixed64,3,opt,name=total_amount,json=totalAmount,proto3" json:"total_amount,omitempty"`
+	InitialAmount   float64                `protobuf:"fixed64,4,opt,name=initial_amount,json=initialAmount,proto3" json:"initial_amount,omitempty"`
+	LoanProperty    *LoanPropertyEntry     `protobuf:"bytes,5,opt,name=loan_property,json=loanProperty,proto3" json:"loan_property,omitempty"`
+	HoldbackAmount  float64                `protobuf:"fixed64,6,opt,name=holdback_amount,json=holdbackAmount,proto3" json:"holdback_amount,omitempty"`
+	PrincipalAmount float64                `protobuf:"fixed64,7,opt,name=principal_amount,json=principalAmount,proto3" json:"principal_amount,omitempty"`
+	// string maturity_date = 8;
 	PrepaymentPenalty        int32                    `protobuf:"varint,9,opt,name=prepayment_penalty,json=prepaymentPenalty,proto3" json:"prepayment_penalty,omitempty"`
 	LenderId                 int64                    `protobuf:"varint,10,opt,name=lender_id,json=lenderId,proto3" json:"lender_id,omitempty"`
 	BorrowerId               int64                    `protobuf:"varint,11,opt,name=borrower_id,json=borrowerId,proto3" json:"borrower_id,omitempty"`
@@ -4102,13 +4142,6 @@ func (x *LoanApplyRequestData) GetPrincipalAmount() float64 {
 		return x.PrincipalAmount
 	}
 	return 0
-}
-
-func (x *LoanApplyRequestData) GetMaturityDate() string {
-	if x != nil {
-		return x.MaturityDate
-	}
-	return ""
 }
 
 func (x *LoanApplyRequestData) GetPrepaymentPenalty() int32 {
@@ -5894,10 +5927,7 @@ type LoanDemographicPropertyEntry struct {
 	HasAPreForeclosureSale     bool                   `protobuf:"varint,11,opt,name=has_a_pre_foreclosure_sale,json=hasAPreForeclosureSale,proto3" json:"has_a_pre_foreclosure_sale,omitempty"`
 	HasForeclosedUpon          bool                   `protobuf:"varint,12,opt,name=has_foreclosed_upon,json=hasForeclosedUpon,proto3" json:"has_foreclosed_upon,omitempty"`
 	HasABankruptcy             bool                   `protobuf:"varint,13,opt,name=has_a_bankruptcy,json=hasABankruptcy,proto3" json:"has_a_bankruptcy,omitempty"`
-	BankruptcyChapter7         bool                   `protobuf:"varint,14,opt,name=bankruptcy_chapter7,json=bankruptcyChapter7,proto3" json:"bankruptcy_chapter7,omitempty"`
-	BankruptcyChapter11        bool                   `protobuf:"varint,15,opt,name=bankruptcy_chapter11,json=bankruptcyChapter11,proto3" json:"bankruptcy_chapter11,omitempty"`
-	BankruptcyChapter12        bool                   `protobuf:"varint,16,opt,name=bankruptcy_chapter12,json=bankruptcyChapter12,proto3" json:"bankruptcy_chapter12,omitempty"`
-	BankruptcyChapter13        bool                   `protobuf:"varint,17,opt,name=bankruptcy_chapter13,json=bankruptcyChapter13,proto3" json:"bankruptcy_chapter13,omitempty"`
+	BankruptcyChapter          string                 `protobuf:"bytes,14,opt,name=bankruptcy_chapter,json=bankruptcyChapter,proto3" json:"bankruptcy_chapter,omitempty"`
 	unknownFields              protoimpl.UnknownFields
 	sizeCache                  protoimpl.SizeCache
 }
@@ -6023,32 +6053,11 @@ func (x *LoanDemographicPropertyEntry) GetHasABankruptcy() bool {
 	return false
 }
 
-func (x *LoanDemographicPropertyEntry) GetBankruptcyChapter7() bool {
+func (x *LoanDemographicPropertyEntry) GetBankruptcyChapter() string {
 	if x != nil {
-		return x.BankruptcyChapter7
+		return x.BankruptcyChapter
 	}
-	return false
-}
-
-func (x *LoanDemographicPropertyEntry) GetBankruptcyChapter11() bool {
-	if x != nil {
-		return x.BankruptcyChapter11
-	}
-	return false
-}
-
-func (x *LoanDemographicPropertyEntry) GetBankruptcyChapter12() bool {
-	if x != nil {
-		return x.BankruptcyChapter12
-	}
-	return false
-}
-
-func (x *LoanDemographicPropertyEntry) GetBankruptcyChapter13() bool {
-	if x != nil {
-		return x.BankruptcyChapter13
-	}
-	return false
+	return ""
 }
 
 type LoanDemographicEthnicityEntry struct {
@@ -6358,14 +6367,21 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\rproperty_type\x18\x02 \x01(\tB\x02\x18\x01R\fpropertyType\x12\x12\n" +
 	"\x04unit\x18\x03 \x01(\x05R\x04unit\x120\n" +
 	"\aaddress\x18\x04 \x01(\v2\x16.borrower.AddressEntryR\aaddress\x12 \n" +
-	"\vTotalAmount\x18\x05 \x01(\x01R\vTotalAmount\"\xee\x01\n" +
+	"\vTotalAmount\x18\x05 \x01(\x01R\vTotalAmount\"\xcc\x03\n" +
 	"\x11LoanPropertyEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
 	"\rproperty_type\x18\x02 \x01(\tR\fpropertyType\x12@\n" +
 	"\rproperty_base\x18\x03 \x01(\v2\x1b.borrower.PropertyBaseEntryR\fpropertyBase\x12(\n" +
 	"\x10living_area_sqft\x18\x05 \x01(\x02R\x0elivingAreaSqft\x12\x1a\n" +
 	"\bbedrooms\x18\x06 \x01(\x05R\bbedrooms\x12\x1c\n" +
-	"\tbathrooms\x18\a \x01(\x05R\tbathrooms\"\x8b\x01\n" +
+	"\tbathrooms\x18\a \x01(\x05R\tbathrooms\x120\n" +
+	"\x14future_property_type\x18\b \x01(\tR\x12futurePropertyType\x12\x1f\n" +
+	"\vfuture_unit\x18\t \x01(\x05R\n" +
+	"futureUnit\x125\n" +
+	"\x17future_living_area_sqft\x18\n" +
+	" \x01(\x02R\x14futureLivingAreaSqft\x12'\n" +
+	"\x0ffuture_bedrooms\x18\v \x01(\x05R\x0efutureBedrooms\x12)\n" +
+	"\x10future_bathrooms\x18\f \x01(\x05R\x0ffutureBathrooms\"\x8b\x01\n" +
 	"\fAddressEntry\x12\x14\n" +
 	"\x05state\x18\x01 \x01(\tR\x05state\x12\x12\n" +
 	"\x04city\x18\x02 \x01(\tR\x04city\x12\x1a\n" +
@@ -6603,7 +6619,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x1bLoanLenderCompaniesResponse\x12\x12\n" +
 	"\x04data\x18\x01 \x03(\tR\x04data\"F\n" +
 	"\x10LoanApplyRequest\x122\n" +
-	"\x04data\x18\x01 \x01(\v2\x1e.borrower.LoanApplyRequestDataR\x04data\"\xde\x10\n" +
+	"\x04data\x18\x01 \x01(\v2\x1e.borrower.LoanApplyRequestDataR\x04data\"\xb9\x10\n" +
 	"\x14LoanApplyRequestData\x12!\n" +
 	"\floan_purpose\x18\x01 \x01(\tR\vloanPurpose\x12\x1b\n" +
 	"\tloan_type\x18\x02 \x01(\tR\bloanType\x12!\n" +
@@ -6611,8 +6627,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x0einitial_amount\x18\x04 \x01(\x01R\rinitialAmount\x12@\n" +
 	"\rloan_property\x18\x05 \x01(\v2\x1b.borrower.LoanPropertyEntryR\floanProperty\x12'\n" +
 	"\x0fholdback_amount\x18\x06 \x01(\x01R\x0eholdbackAmount\x12)\n" +
-	"\x10principal_amount\x18\a \x01(\x01R\x0fprincipalAmount\x12#\n" +
-	"\rmaturity_date\x18\b \x01(\tR\fmaturityDate\x12-\n" +
+	"\x10principal_amount\x18\a \x01(\x01R\x0fprincipalAmount\x12-\n" +
 	"\x12prepayment_penalty\x18\t \x01(\x05R\x11prepaymentPenalty\x12\x1b\n" +
 	"\tlender_id\x18\n" +
 	" \x01(\x03R\blenderId\x12\x1f\n" +
@@ -6779,7 +6794,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\bproperty\x18\x03 \x01(\v2&.borrower.LoanDemographicPropertyEntryR\bproperty\x12E\n" +
 	"\tethnicity\x18\x04 \x01(\v2'.borrower.LoanDemographicEthnicityEntryR\tethnicity\x126\n" +
 	"\x04race\x18\x05 \x01(\v2\".borrower.LoanDemographicRaceEntryR\x04race\x12\x10\n" +
-	"\x03sex\x18\x06 \x01(\tR\x03sex\"\xf7\x06\n" +
+	"\x03sex\x18\x06 \x01(\tR\x03sex\"\xdc\x05\n" +
 	"\x1cLoanDemographicPropertyEntry\x12.\n" +
 	"\x13as_primary_resident\x18\x01 \x01(\bR\x11asPrimaryResident\x12@\n" +
 	"\x1chas_transaction_relationship\x18\x02 \x01(\bR\x1ahasTransactionRelationship\x12,\n" +
@@ -6794,11 +6809,8 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	" \x01(\bR\x10hasConveyedTitle\x12:\n" +
 	"\x1ahas_a_pre_foreclosure_sale\x18\v \x01(\bR\x16hasAPreForeclosureSale\x12.\n" +
 	"\x13has_foreclosed_upon\x18\f \x01(\bR\x11hasForeclosedUpon\x12(\n" +
-	"\x10has_a_bankruptcy\x18\r \x01(\bR\x0ehasABankruptcy\x12/\n" +
-	"\x13bankruptcy_chapter7\x18\x0e \x01(\bR\x12bankruptcyChapter7\x121\n" +
-	"\x14bankruptcy_chapter11\x18\x0f \x01(\bR\x13bankruptcyChapter11\x121\n" +
-	"\x14bankruptcy_chapter12\x18\x10 \x01(\bR\x13bankruptcyChapter12\x121\n" +
-	"\x14bankruptcy_chapter13\x18\x11 \x01(\bR\x13bankruptcyChapter13\"y\n" +
+	"\x10has_a_bankruptcy\x18\r \x01(\bR\x0ehasABankruptcy\x12-\n" +
+	"\x12bankruptcy_chapter\x18\x0e \x01(\tR\x11bankruptcyChapter\"y\n" +
 	"\x1dLoanDemographicEthnicityEntry\x12\x16\n" +
 	"\x06values\x18\x01 \x03(\tR\x06values\x12@\n" +
 	"\x1dother_hispanic_or_latino_name\x18\x02 \x01(\tR\x19otherHispanicOrLatinoName\"\x8f\x02\n" +

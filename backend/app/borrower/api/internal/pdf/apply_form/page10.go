@@ -39,7 +39,7 @@ func (form *ApplyForm) page10() (err error) {
 		return err
 	}
 
-	_ = form.buildSignature()
+	_ = form.buildSignature("")
 
 	return err
 }

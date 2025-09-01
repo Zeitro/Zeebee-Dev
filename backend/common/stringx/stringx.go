@@ -31,3 +31,10 @@ func FormatFullName(firstName, midName, lastName string) string {
 	}
 	return strings.Join(names, " ")
 }
+
+func TransNumberToString[T ~int | ~int32 | ~int64 | ~int8 | ~uint | ~float64 | ~float32 | ~uint8 | ~uint16 | ~uint32 | ~uint64](num T, zeroToEmpty bool) string {
+	if num == 0 && zeroToEmpty {
+		return ""
+	}
+	return fmt.Sprintf("%v", num)
+}

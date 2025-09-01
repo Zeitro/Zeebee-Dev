@@ -27,6 +27,9 @@ type ApplicantEntry struct {
 type EmptyRequest struct {
 }
 
+type EmptyResponse struct {
+}
+
 type LoanApplyApplicantEntry struct {
 	Id               int64         `json:"id,optional"`
 	FirstName        string        `json:"first_name" validate:"required"`
@@ -45,12 +48,17 @@ type LoanApplyApplicantEntry struct {
 }
 
 type LoanApplyPropertyEntry struct {
-	Id             int64              `json:"id,optional"`
-	PropertyType   string             `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
-	LivingAreaSqft float32            `json:"living_area_sqft" validate:"required,gte=0"`
-	Bedrooms       int32              `json:"bedrooms" validate:"required,gte=0"`
-	Bathrooms      int32              `json:"bathrooms" validate:"gte=0"`
-	PropertyBase   *PropertyBaseEntry `json:"property_base" validate:"required"`
+	Id                   int64              `json:"id,optional"`
+	PropertyType         string             `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
+	LivingAreaSqft       float32            `json:"living_area_sqft" validate:"required,gte=0"`
+	Bedrooms             int32              `json:"bedrooms" validate:"required,gte=0"`
+	Bathrooms            int32              `json:"bathrooms" validate:"gte=0"`
+	FuturePropertyType   string             `json:"future_property_type,optional"`
+	FutureUnit           int32              `json:"future_unit,optional" validate:"gte=0"`
+	FutureLivingAreaSqft float32            `json:"future_living_area_sqft,optional" validate:"gte=0"`
+	FutureBedrooms       int32              `json:"bedrooms,optional" validate:"gte=0"`
+	FutureBathrooms      int32              `json:"bathrooms,optional" validate:"gte=0"`
+	PropertyBase         *PropertyBaseEntry `json:"property_base" validate:"required"`
 }
 
 type LoanBorrowerEntry struct {
@@ -83,7 +91,7 @@ type LoanDemographicEntry struct {
 }
 
 type LoanDemographicEthnicityEntry struct {
-	Values                    []string `json:"values,optional" validate:"required=required,min=1,dive,required,oneof='Hispanic or Latino' 'Other Hispanic or Latino' Mexican Cuban 'Not Hispanic or Latino"`
+	Values                    []string `json:"values,optional" validate:"required,min=1,dive,required,oneof='Hispanic or Latino' 'Other Hispanic or Latino' Mexican Cuban 'Not Hispanic or Latino' Hidden"`
 	OtherHispanicOrLatinoName string   `json:"other_hispanic_or_latino_name,optional"`
 }
 
@@ -95,26 +103,24 @@ type LoanDemographicExtraDemographicEntry struct {
 }
 
 type LoanDemographicPropertyEntry struct {
-	AsPrimaryResident          bool `json:"as_primary_resident,optional"`
-	HasTransactionRelationship bool `json:"has_transaction_relationship,optional"`
-	HasBorrowedMoney           bool `json:"has_borrowed_money,optional"`
-	HasAnotherMortgageLoan     bool `json:"has_another_mortgage_loan,optional"`
-	HasPriorityOver1st         bool `json:"has_priority_over_1st,optional"`
-	HasOutstandingJudgments    bool `json:"has_outstanding_judgments,optional"`
-	HasFederalDebt             bool `json:"has_federal_debt,optional"`
-	HasALawsuit                bool `json:"has_a_lawsuit,optional"`
-	HasConveyedTitle           bool `json:"has_conveyed_title,optional"`
-	HasAPreForeclosureSale     bool `json:"has_a_pre_foreclosure_sale,optional"`
-	HasForeclosedUpon          bool `json:"has_foreclosed_upon,optional"`
-	HasABankruptcy             bool `json:"has_a_bankruptcy,optional"`
-	BankruptcyChapter7         bool `json:"bankruptcy_chapter7,optional"`
-	BankruptcyChapter11        bool `json:"bankruptcy_chapter11,optional"`
-	BankruptcyChapter12        bool `json:"bankruptcy_chapter12,optional"`
-	BankruptcyChapter13        bool `json:"bankruptcy_chapter13,optional"`
+	AsPrimaryResident          bool    `json:"as_primary_resident,optional"`
+	HasTransactionRelationship bool    `json:"has_transaction_relationship,optional"`
+	HasBorrowedMoney           bool    `json:"has_borrowed_money,optional"`
+	BorrowedMoneyAmount        float64 `json:"borrowed_money_amount,optional" validate:"required_if=HasBorrowedMoney true,gte=0"`
+	HasAnotherMortgageLoan     bool    `json:"has_another_mortgage_loan,optional"`
+	HasPriorityOver1st         bool    `json:"has_priority_over_1st,optional"`
+	HasOutstandingJudgments    bool    `json:"has_outstanding_judgments,optional"`
+	HasFederalDebt             bool    `json:"has_federal_debt,optional"`
+	HasALawsuit                bool    `json:"has_a_lawsuit,optional"`
+	HasConveyedTitle           bool    `json:"has_conveyed_title,optional"`
+	HasAPreForeclosureSale     bool    `json:"has_a_pre_foreclosure_sale,optional"`
+	HasForeclosedUpon          bool    `json:"has_foreclosed_upon,optional"`
+	HasABankruptcy             bool    `json:"has_a_bankruptcy,optional"`
+	BankruptcyChapter          string  `json:"bankruptcy_chapter,optional" validate:"required_if=HasBankruptcy true,omitempty,oneof='Chapter 7' 'Chapter 11' 'Chapter 12' 'Chapter 13'"`
 }
 
 type LoanDemographicRaceEntry struct {
-	Values                           []string `json:"values,optional" validate:"required=required,min=1,dive,required,oneof='American Indian or Alaska Native' 'Asian' 'Black or African American' 'Native Hawaiian or Other Pacific Islander' 'White' 'Native Hawaiian Guamanian or Chamorro Samoan' 'Other Pacific Islander'"`
+	Values                           []string `json:"values,optional" validate:"required,min=1,dive,required,oneof='American Indian or Alaska Native' Asian 'Black or African American' 'Native Hawaiian or Other Pacific Islander' White 'Native Hawaiian Guamanian or Chamorro Samoan' 'Other Pacific Islander' Hidden"`
 	AsianValues                      []string `json:"asian_values,optional"`
 	OtherPacificIslanderName         string   `json:"other_pacific_islander_name,optional"`
 	AsianOtherName                   string   `json:"asian_other_name,optional"`
@@ -124,7 +130,7 @@ type LoanDemographicRaceEntry struct {
 type LoanEditApplicantEntry struct {
 	Id        int64  `json:"id,optional"`
 	FirstName string `json:"first_name" validate:"required"`
-	MidName   string `json:"mid_name"`
+	MidName   string `json:"mid_name,optional"`
 	LastName  string `json:"last_name" validate:"required"`
 	Type      string `json:"type" validate:"required,oneof=Individual Corporation LLC Trust Partnership"`
 	IsPrimary bool   `json:"is_primary"`
@@ -277,6 +283,11 @@ type PropertyPageSorter struct {
 type SelectOptionEntry struct {
 	Label string `json:"label"`
 	Value string `json:"value"`
+}
+
+type SignatureEntry struct {
+	SignatureImage string `json:"signature,optional"`
+	SignatureDate  string `json:"signature_date, optional"`
 }
 
 type UserInfo struct {

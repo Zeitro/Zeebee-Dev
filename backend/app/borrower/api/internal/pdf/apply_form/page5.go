@@ -4,6 +4,8 @@ import (
 	"github.com/signintech/gopdf"
 
 	"zeebee-backend/app/borrower/api/internal/pdf"
+	"zeebee-backend/app/borrower/api/internal/types"
+	"zeebee-backend/common/stringx"
 )
 
 func (form *ApplyForm) page5() (err error) {
@@ -15,6 +17,10 @@ func (form *ApplyForm) page5() (err error) {
 		return err
 	}
 	// budget
+	budget := form.info.Budget
+	if budget == nil {
+		budget = &types.LoanBudgetEntry{}
+	}
 	form.pdf.Br(lineHeight)
 	x := form.pdf.GetX()
 	y := form.pdf.GetY()
@@ -30,11 +36,11 @@ func (form *ApplyForm) page5() (err error) {
 		h: 27,
 	})
 	form.pdf.Br(30)
-	_ = form.pdf.Cell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: fontHeight}, "Original Budget:")
+	_ = form.pdf.Cell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: fontHeight}, "Original Budget:  "+stringx.TransNumberToString(budget.OriginalBudget, true))
 	form.pdf.Br(lineHeight)
-	_ = form.pdf.Cell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: fontHeight}, "Remaining Budget:")
+	_ = form.pdf.Cell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: fontHeight}, "Remaining Budget:  "+stringx.TransNumberToString(budget.RemainingBudget, true))
 	form.pdf.Br(lineHeight)
-	_ = form.pdf.Cell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: fontHeight}, "Cost Spent to Date:")
+	_ = form.pdf.Cell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: fontHeight}, "Cost Spent to Date:  "+stringx.TransNumberToString(budget.CostSpentToDateAmount, true))
 
 	form.pdf.Br(lineHeight)
 	x = form.pdf.GetX()
@@ -60,18 +66,18 @@ func (form *ApplyForm) page5() (err error) {
 	form.pdf.Br(lineHeight * 3)
 	x = form.pdf.GetX()
 	y = form.pdf.GetY()
-	err = form.buildPage5ThirdService1Table(position{x: x, y: y})
+	err = form.buildPage5ThirdServiceTable(position{x: x, y: y})
 	if err != nil {
 		return err
 	}
 
-	form.pdf.Br(lineHeight * 3)
-	x = form.pdf.GetX()
-	y = form.pdf.GetY()
-	err = form.buildPage5ThirdService2Table(position{x: x, y: y})
-	if err != nil {
-		return err
-	}
+	// form.pdf.Br(lineHeight * 3)
+	// x = form.pdf.GetX()
+	// y = form.pdf.GetY()
+	// err = form.buildPage5ThirdService2Table(position{x: x, y: y})
+	// if err != nil {
+	// 	return err
+	// }
 
 	return err
 }
@@ -111,23 +117,29 @@ func (form *ApplyForm) buildPage5PropertyStatusTable(tablePosition position) (er
 	})
 
 	// Add columns to the table
+	property := form.info.LoanProperty
 	table.AddColumn("", 100, "center")
 	table.AddColumn("Current Status", 150, "center")
 	table.AddColumn("Future Status", 150, "center")
 
-	table.AddRow([]string{"Property Type", "", ""})
-	table.AddRow([]string{"Living Area SQFT", "", ""})
-	table.AddRow([]string{"Number of Units", "", ""})
-	table.AddRow([]string{"Number of Bedrooms", "", ""})
-	table.AddRow([]string{"Number of Bathrooms", "", ""})
+	table.AddRow([]string{"Property Type", property.PropertyType, property.FuturePropertyType})
+	table.AddRow([]string{"Living Area SQFT", stringx.TransNumberToString(property.LivingAreaSqft, true), stringx.TransNumberToString(property.FutureLivingAreaSqft, true)})
+	table.AddRow([]string{"Number of Units", stringx.TransNumberToString(property.PropertyBase.Unit, true), stringx.TransNumberToString(property.FutureUnit, true)})
+	table.AddRow([]string{"Number of Bedrooms", stringx.TransNumberToString(property.Bedrooms, true), stringx.TransNumberToString(property.FutureBedrooms, true)})
+	table.AddRow([]string{"Number of Bathrooms", stringx.TransNumberToString(property.Bathrooms, true), stringx.TransNumberToString(property.FutureBathrooms, true)})
 	err = table.DrawTable()
 
 	return err
 }
 
-func (form *ApplyForm) buildPage5ThirdService1Table(tablePosition position) (err error) {
+func (form *ApplyForm) buildPage5ThirdServiceTable(tablePosition position) (err error) {
 	lineWidth := 0.5
-	table := form.pdf.NewTableLayout(tablePosition.x, tablePosition.y, 30, 4)
+	thirdServices := form.info.LoanThirdServices
+	maxRows := len(thirdServices)
+	if maxRows <= 5 {
+		maxRows = 5
+	}
+	table := form.pdf.NewTableLayout(tablePosition.x, tablePosition.y, 30, maxRows)
 
 	table.SetHeaderStyle(gopdf.CellStyle{
 		BorderStyle: gopdf.BorderStyle{
@@ -160,62 +172,15 @@ func (form *ApplyForm) buildPage5ThirdService1Table(tablePosition position) (err
 	})
 
 	// Add columns to the table
-	table.AddColumn("Contact Info", 100, "center")
-	table.AddColumn("Title Co.", 150, "center")
-	table.AddColumn("Escrow Co.", 150, "center")
-	table.AddColumn("Insurance", 150, "center")
+	table.AddColumn("Service Type", 109, "center")
+	table.AddColumn("Name", 109, "center")
+	table.AddColumn("Company", 109, "center")
+	table.AddColumn("Phone", 109, "center")
+	table.AddColumn("Email", 109, "center")
 
-	table.AddRow([]string{"Name", "", "", ""})
-	table.AddRow([]string{"Company", "", "", ""})
-	table.AddRow([]string{"Phone", "", "", ""})
-	table.AddRow([]string{"Email", "", "", ""})
-	err = table.DrawTable()
-
-	return err
-}
-
-func (form *ApplyForm) buildPage5ThirdService2Table(tablePosition position) (err error) {
-	lineWidth := 0.5
-	table := form.pdf.NewTableLayout(tablePosition.x, tablePosition.y, 30, 3)
-
-	table.SetHeaderStyle(gopdf.CellStyle{
-		BorderStyle: gopdf.BorderStyle{
-			Top:      true,
-			Left:     true,
-			Bottom:   true,
-			Right:    true,
-			Width:    lineWidth,
-			RGBColor: gopdf.RGBColor{R: 0, G: 0, B: 0},
-		},
-		FillColor: gopdf.RGBColor{R: 71, G: 117, B: 255},
-		TextColor: gopdf.RGBColor{R: 255, G: 255, B: 255},
-		Font:      form.pdf.BoldFontName,
-		FontSize:  14,
-	})
-
-	table.SetCellStyle(gopdf.CellStyle{
-		BorderStyle: gopdf.BorderStyle{
-			Right:    true,
-			Bottom:   true,
-			Left:     true,
-			Top:      true,
-			Width:    lineWidth,
-			RGBColor: gopdf.RGBColor{R: 0, G: 0, B: 0},
-		},
-		FillColor: gopdf.RGBColor{R: 255, G: 255, B: 255},
-		TextColor: gopdf.RGBColor{R: 0, G: 0, B: 0},
-		Font:      form.pdf.RegularFontName,
-		FontSize:  form.pdf.RegularFontSize,
-	})
-
-	// Add columns to the table
-	table.AddColumn("Contact Info", 100, "center")
-	table.AddColumn("Appraisal Scheduling/ Access Contact", 250, "center")
-	table.AddColumn("Appraisal Payment Contact", 200, "center")
-
-	table.AddRow([]string{"Name", "", ""})
-	table.AddRow([]string{"Phone", "", ""})
-	table.AddRow([]string{"Email", "", ""})
+	for _, thirdService := range thirdServices {
+		table.AddRow([]string{thirdService.Type, thirdService.Name, thirdService.Company, thirdService.Phone, thirdService.Email})
+	}
 	err = table.DrawTable()
 
 	return err

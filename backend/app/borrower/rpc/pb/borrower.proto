@@ -158,6 +158,11 @@ message LoanPropertyEntry{
   float living_area_sqft = 5;
   int32 bedrooms = 6;
   int32 bathrooms = 7;
+  string future_property_type = 8;
+  int32  future_unit = 9;
+  float future_living_area_sqft = 10;
+  int32 future_bedrooms = 11;
+  int32 future_bathrooms = 12;
 }
 
 message AddressEntry{
@@ -438,7 +443,7 @@ message LoanApplyRequestData {
   LoanPropertyEntry loan_property = 5;
   double holdback_amount = 6;
   double principal_amount = 7;
-  string maturity_date = 8;
+  //  string maturity_date = 8;
   int32 prepayment_penalty = 9;
   int64 lender_id = 10;
   int64 borrower_id = 11;
@@ -681,10 +686,11 @@ message LoanDemographicPropertyEntry {
   bool has_a_pre_foreclosure_sale = 11;
   bool has_foreclosed_upon = 12;
   bool has_a_bankruptcy = 13;
-  bool bankruptcy_chapter7 = 14;
-  bool bankruptcy_chapter11 = 15;
-  bool bankruptcy_chapter12 = 16;
-  bool bankruptcy_chapter13 = 17;
+  string bankruptcy_chapter = 14;
+  //  bool bankruptcy_chapter7 = 14;
+  //  bool bankruptcy_chapter11 = 15;
+  //  bool bankruptcy_chapter12 = 16;
+  //  bool bankruptcy_chapter13 = 17;
 }
 
 message LoanDemographicEthnicityEntry {

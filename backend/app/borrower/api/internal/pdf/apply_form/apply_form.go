@@ -1,14 +1,19 @@
 package apply_form
 
 import (
+	"encoding/base64"
 	"fmt"
 	"image"
 	"io"
 	"strings"
 
+	"github.com/duke-git/lancet/v2/slice"
+	"github.com/pkg/errors"
 	"github.com/signintech/gopdf"
 
 	"zeebee-backend/app/borrower/api/internal/pdf"
+	"zeebee-backend/app/borrower/api/internal/types"
+	"zeebee-backend/common/enums"
 	"zeebee-backend/common/errorx"
 )
 
@@ -20,16 +25,21 @@ type position struct {
 }
 
 type ApplyForm struct {
-	pdf *pdf.Pdf
+	pdf  *pdf.Pdf
+	info *types.ApplyFormPdfRequest
 }
 
-func NewApplyForm() (form *ApplyForm, err error) {
+func NewApplyForm(info *types.ApplyFormPdfRequest) (form *ApplyForm, err error) {
+	if info == nil {
+		return nil, errors.New("pdf info is empty")
+	}
 	p, err := pdf.NewPdf(gopdf.Config{PageSize: *gopdf.PageSizeA4})
 	if err != nil {
 		return nil, err
 	}
 	return &ApplyForm{
-		pdf: p,
+		pdf:  p,
+		info: info,
 	}, nil
 }
 
@@ -172,6 +182,65 @@ func (form *ApplyForm) buildCheckbox(startX, startY float64, items []string) (er
 	return err
 }
 
+func (form *ApplyForm) buildRadioCheckbox(startX, startY float64, optName string, targetValue string) (err error) {
+
+	opts := enums.Get(optName)
+	currentX := startX
+	currentY := startY
+	for _, opt := range opts {
+		itemLen, _ := form.pdf.MeasureTextWidth(opt.Label)
+		checkBox := pdf.EmptyCheckBox
+		if opt.Value == targetValue {
+			checkBox = pdf.SelectedCheckBox
+		}
+
+		if currentX+checkBoxWidth+5+itemLen > form.pdf.GetFullWidth()+form.pdf.MarginLeft() {
+			currentX = startX
+			currentY += checkBoxWidth * 1.2
+		}
+
+		err = form.pdf.ImageFrom(checkBox, currentX, currentY, &gopdf.Rect{W: checkBoxWidth, H: checkBoxWidth})
+		if err != nil {
+			return err
+		}
+		form.pdf.SetXY(currentX+checkBoxWidth+5, currentY+5)
+		_ = form.pdf.Cell(nil, opt.Label)
+		currentX += itemLen + 30
+	}
+	form.pdf.SetY(currentY + checkBoxWidth)
+	form.pdf.Br(1)
+	return err
+}
+
+func (form *ApplyForm) buildMultiCheckbox(startX, startY float64, optName string, targetValues []string) (err error) {
+	opts := enums.Get(optName)
+	currentX := startX
+	currentY := startY
+	for _, opt := range opts {
+		itemLen, _ := form.pdf.MeasureTextWidth(opt.Label)
+		checkBox := pdf.EmptyCheckBox
+
+		if slice.Contain(targetValues, opt.Value) {
+			checkBox = pdf.SelectedCheckBox
+		}
+		if currentX+checkBoxWidth+5+itemLen > form.pdf.GetFullWidth()+form.pdf.MarginLeft() {
+			currentX = startX
+			currentY += checkBoxWidth * 1.2
+		}
+
+		err = form.pdf.ImageFrom(checkBox, currentX, currentY, &gopdf.Rect{W: checkBoxWidth, H: checkBoxWidth})
+		if err != nil {
+			return err
+		}
+		form.pdf.SetXY(currentX+checkBoxWidth+5, currentY+5)
+		_ = form.pdf.Cell(nil, opt.Label)
+		currentX += itemLen + 30
+	}
+	form.pdf.SetY(currentY + checkBoxWidth)
+	form.pdf.Br(1)
+	return err
+}
+
 func (form *ApplyForm) buildTitleWithBg(title string, grayBgPos position, blueBgPos position) (err error) {
 	_ = form.pdf.ImageFrom(pdf.GrayBg, grayBgPos.x, grayBgPos.y, &gopdf.Rect{W: grayBgPos.w, H: grayBgPos.h})
 	_ = form.pdf.ImageFrom(pdf.BlueBg, blueBgPos.x, blueBgPos.y, &gopdf.Rect{W: blueBgPos.w, H: blueBgPos.h})
@@ -209,34 +278,47 @@ func (form *ApplyForm) buildGraySmallTitle(title string, position position) (err
 	return err
 }
 
-func (form *ApplyForm) buildSignature() (err error) {
+func (form *ApplyForm) buildSignature(typ string) (err error) {
+	signatures := form.info.Signatures
+	targetSignature := signatures[typ]
+
 	form.pdf.SetBoldFont()
 	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: 12}, "Agreed & Accepted")
 	form.pdf.Br(20)
-	_ = form.pdf.Cell(&gopdf.Rect{W: 140, H: 12}, "Applicant 1 Signature:")
-	_ = form.pdf.CellWithOption(&gopdf.Rect{W: 200, H: 12}, "", gopdf.CellOption{
-		Align:  gopdf.Left,
-		Border: gopdf.Bottom,
-	})
-	_ = form.pdf.Cell(&gopdf.Rect{W: 20, H: 12}, "")
-	_ = form.pdf.Cell(&gopdf.Rect{W: 40, H: 12}, "Date:")
-	_ = form.pdf.CellWithOption(&gopdf.Rect{W: 80, H: 12}, "", gopdf.CellOption{
-		Align:  gopdf.Left,
-		Border: gopdf.Bottom,
-	})
-	form.pdf.Br(1)
-	form.pdf.Br(40)
-	_ = form.pdf.Cell(&gopdf.Rect{W: 140, H: 12}, "Applicant 2 Signature:")
-	_ = form.pdf.CellWithOption(&gopdf.Rect{W: 200, H: 12}, "", gopdf.CellOption{
-		Align:  gopdf.Left,
-		Border: gopdf.Bottom,
-	})
-	_ = form.pdf.Cell(&gopdf.Rect{W: 20, H: 12}, "")
-	_ = form.pdf.Cell(&gopdf.Rect{W: 40, H: 12}, "Date:")
-	_ = form.pdf.CellWithOption(&gopdf.Rect{W: 80, H: 12}, "", gopdf.CellOption{
-		Align:  gopdf.Left,
-		Border: gopdf.Bottom,
-	})
+
+	for i := 0; i < 2; i++ {
+		var signature *types.SignatureEntry
+		if i > len(targetSignature)-1 {
+			signature = &types.SignatureEntry{}
+		} else {
+			signature = targetSignature[i]
+		}
+		_ = form.pdf.Cell(&gopdf.Rect{W: 140, H: 12}, fmt.Sprintf("Applicant %d Signature:", i+1))
+		_ = form.pdf.CellWithOption(&gopdf.Rect{W: 200, H: 12}, "", gopdf.CellOption{
+			Align:  gopdf.Left,
+			Border: gopdf.Bottom,
+		})
+		signatureImg, err := base64ToImage(signature.SignatureImage)
+		if err != nil {
+			return err
+		}
+		if signatureImg != nil {
+			err = form.pdf.ImageFrom(signatureImg, 200, form.pdf.GetY()-20, &gopdf.Rect{W: 100, H: 30})
+			if err != nil {
+				return err
+			}
+		}
+
+		_ = form.pdf.Cell(&gopdf.Rect{W: 20, H: 12}, "")
+		_ = form.pdf.Cell(&gopdf.Rect{W: 40, H: 12}, "Date:")
+		_ = form.pdf.CellWithOption(&gopdf.Rect{W: 80, H: 12}, signature.SignatureDate, gopdf.CellOption{
+			Align:  gopdf.Left,
+			Border: gopdf.Bottom,
+		})
+		form.pdf.Br(1)
+		form.pdf.Br(40)
+
+	}
 	form.pdf.Br(1)
 	form.pdf.SetRegularFont()
 	return err
@@ -337,4 +419,25 @@ func (form *ApplyForm) buildLists(lists []string, position position, fontHeight 
 		}
 	}
 	return err
+}
+
+func formateAddress(addr *types.AddressEntry) string {
+	if addr == nil {
+		return ""
+	}
+	return fmt.Sprintf("%s %s %s %s", addr.Address1, addr.City, addr.State, addr.ZipCode)
+
+}
+
+func base64ToImage(content string) (img image.Image, err error) {
+	if content == "" {
+		return nil, nil
+	}
+	// remove base64 header
+	content = strings.TrimPrefix(content, "data:image/png;base64,")
+	content = strings.TrimPrefix(content, "data:image/jpeg;base64,")
+	content = strings.TrimPrefix(content, "data:image/jpg;base64,")
+	img, _, err = image.Decode(base64.NewDecoder(base64.StdEncoding, strings.NewReader(content)))
+
+	return img, err
 }

@@ -124,6 +124,16 @@ const (
 	LoanThirdServiceTypeAppraisalPaymentContact LoanThirdServiceType = "Appraisal Payment Contact"
 )
 
+type BankruptcyChapter string
+
+const BankruptcyChapterName = "bankruptcy_chapter"
+const (
+	BankruptcyChapter7  BankruptcyChapter = "Chapter 7"
+	BankruptcyChapter11 BankruptcyChapter = "Chapter 11"
+	BankruptcyChapter12 BankruptcyChapter = "Chapter 12"
+	BankruptcyChapter13 BankruptcyChapter = "Chapter 13"
+)
+
 func init() {
 	// register loan stage
 	enums.Register(LoanStageName, []enums.EnumOpt{
@@ -364,6 +374,26 @@ func init() {
 		{
 			Label: string(LoanThirdServiceTypeAppraisalPaymentContact),
 			Value: string(LoanThirdServiceTypeAppraisalPaymentContact),
+		},
+	})
+
+	// register bankruptcy chapter
+	enums.Register(BankruptcyChapterName, []enums.EnumOpt{
+		{
+			Label: string(BankruptcyChapter7),
+			Value: string(BankruptcyChapter7),
+		},
+		{
+			Label: string(BankruptcyChapter11),
+			Value: string(BankruptcyChapter11),
+		},
+		{
+			Label: string(BankruptcyChapter12),
+			Value: string(BankruptcyChapter12),
+		},
+		{
+			Label: string(BankruptcyChapter13),
+			Value: string(BankruptcyChapter13),
 		},
 	})
 
