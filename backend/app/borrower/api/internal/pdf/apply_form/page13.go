@@ -140,7 +140,7 @@ func (form *ApplyForm) page13() (err error) {
 	if err != nil {
 		return err
 	}
-	_ = form.buildSignature()
+	_ = form.buildSignature("")
 
 	return err
 }

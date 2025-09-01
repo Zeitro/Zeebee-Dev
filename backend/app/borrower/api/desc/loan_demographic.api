@@ -21,6 +21,7 @@ type LoanDemographicPropertyEntry {
     AsPrimaryResident bool `json:"as_primary_resident,optional"`
     HasTransactionRelationship bool `json:"has_transaction_relationship,optional"`
     HasBorrowedMoney bool `json:"has_borrowed_money,optional"`
+    BorrowedMoneyAmount float64 `json:"borrowed_money_amount,optional" validate:"required_if=HasBorrowedMoney true,gte=0"`
     HasAnotherMortgageLoan bool `json:"has_another_mortgage_loan,optional"`
     HasPriorityOver1st bool `json:"has_priority_over_1st,optional"`
     HasOutstandingJudgments bool `json:"has_outstanding_judgments,optional"`
@@ -30,10 +31,12 @@ type LoanDemographicPropertyEntry {
     HasAPreForeclosureSale bool `json:"has_a_pre_foreclosure_sale,optional"`
     HasForeclosedUpon bool `json:"has_foreclosed_upon,optional"`
     HasABankruptcy bool `json:"has_a_bankruptcy,optional"`
-    BankruptcyChapter7 bool `json:"bankruptcy_chapter7,optional"`
-    BankruptcyChapter11 bool `json:"bankruptcy_chapter11,optional"`
-    BankruptcyChapter12 bool `json:"bankruptcy_chapter12,optional"`
-    BankruptcyChapter13 bool `json:"bankruptcy_chapter13,optional"`
+    BankruptcyChapter string `json:"bankruptcy_chapter,optional" validate:"required_if=HasBankruptcy true,omitempty,oneof='Chapter 7' 'Chapter 11' 'Chapter 12' 'Chapter 13'"`
+
+    //    BankruptcyChapter7 bool `json:"bankruptcy_chapter7,optional"`
+    //    BankruptcyChapter11 bool `json:"bankruptcy_chapter11,optional"`
+    //    BankruptcyChapter12 bool `json:"bankruptcy_chapter12,optional"`
+    //    BankruptcyChapter13 bool `json:"bankruptcy_chapter13,optional"`
 }
 
 type LoanDemographicEthnicityEntry {
@@ -44,7 +47,7 @@ type LoanDemographicEthnicityEntry {
     //    IsCuban bool `json:"is_cuban,optional"`
     //    IsNotHispanicOrLatino bool `json:"is_not_hispanic_or_latino,optional"`
     //    Hidden bool `json:"hidden,optional"`
-    Values []string `json:"values,optional" validate:"required=required,min=1,dive,required,oneof='Hispanic or Latino' 'Other Hispanic or Latino' Mexican Cuban 'Not Hispanic or Latino"`
+    Values []string `json:"values,optional" validate:"required,min=1,dive,required,oneof='Hispanic or Latino' 'Other Hispanic or Latino' Mexican Cuban 'Not Hispanic or Latino' Hidden"`
     OtherHispanicOrLatinoName string `json:"other_hispanic_or_latino_name,optional"`
 }
 
@@ -70,7 +73,7 @@ type LoanDemographicRaceEntry {
     //    IsWhite bool `json:"is_white,optional"`
     //    Hidden bool `json:"hidden,optional"`
 
-    Values []string `json:"values,optional" validate:"required=required,min=1,dive,required,oneof='American Indian or Alaska Native' 'Asian' 'Black or African American' 'Native Hawaiian or Other Pacific Islander' 'White' 'Native Hawaiian Guamanian or Chamorro Samoan' 'Other Pacific Islander'"`
+    Values []string `json:"values,optional" validate:"required,min=1,dive,required,oneof='American Indian or Alaska Native' Asian 'Black or African American' 'Native Hawaiian or Other Pacific Islander' White 'Native Hawaiian Guamanian or Chamorro Samoan' 'Other Pacific Islander' Hidden"`
     AsianValues []string `json:"asian_values,optional"`
     OtherPacificIslanderName string `json:"other_pacific_islander_name,optional"`
     AsianOtherName string `json:"asian_other_name,optional"`

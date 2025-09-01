@@ -13,6 +13,7 @@ import "desc/common.api"
 import "desc/property.api"
 import "desc/applicant.api"
 import "desc/us_geography.api"
+import "desc/pdf.api"
 
 type (
 	EmptyRequest  {}
@@ -164,5 +165,20 @@ service borrower-api {
 	@doc "borrower names"
 	@handler BorrowerNames
 	post /applicant/borrower (EmptyRequest) returns (BorrowerNamesResponse)
+}
+
+// =============== pdf ==============
+@server(
+    desc: "applicant service"
+    version: v1
+    group: pdf
+    prefix:     /api/v1
+    middleware: AuthMiddleware
+    tags: pdf
+)
+service borrower-api {
+    @doc "create apply form pdf"
+    @handler ApplyFormPdf
+    post /pdf/apply_form (ApplyFormPdfRequest) returns (EmptyResponse)
 }
 

@@ -50,7 +50,7 @@ func (l *CreateLogic) Create(req *types.LoanCreateRequest) (resp *types.LoanCrea
 	applicants := make([]*borrower.BorrowerEditApplicantEntry, 0, len(rpcReq.Data.Applicants))
 	for _, applicant := range rpcReq.Data.Applicants {
 		applicant := applicant
-		if len(applicant.Name) > 0 {
+		if len(applicant.FirstName) > 0 && len(applicant.LastName) > 0 {
 			applicants = append(applicants, applicant)
 		}
 	}

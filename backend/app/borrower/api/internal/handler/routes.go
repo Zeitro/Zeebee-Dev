@@ -9,6 +9,7 @@ import (
 	applicant "zeebee-backend/app/borrower/api/internal/handler/applicant"
 	common "zeebee-backend/app/borrower/api/internal/handler/common"
 	loan "zeebee-backend/app/borrower/api/internal/handler/loan"
+	pdf "zeebee-backend/app/borrower/api/internal/handler/pdf"
 	property "zeebee-backend/app/borrower/api/internal/handler/property"
 	user "zeebee-backend/app/borrower/api/internal/handler/user"
 	"zeebee-backend/app/borrower/api/internal/svc"
@@ -125,6 +126,21 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/loan/page",
 					Handler: loan.PageHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// create apply form pdf
+					Method:  http.MethodPost,
+					Path:    "/pdf/apply_form",
+					Handler: pdf.ApplyFormPdfHandler(serverCtx),
 				},
 			}...,
 		),
