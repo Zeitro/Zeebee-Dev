@@ -30,6 +30,7 @@ export const AddExperience = ({ title, rowData = {}, type, onOk, onCancel }) => 
 				try {
 					setConfirmLoading(true);
 					const values = await form.validateFields();
+					if (rowData?.id) values.id = rowData?.id;
 					await onOk(values, rowData?.id ? 'Edit' : 'Add');
 					setConfirmLoading(false);
 					onCancel();

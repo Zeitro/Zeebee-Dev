@@ -68,8 +68,13 @@ const LoanPendingStatus = ({ data, successCallback }) => {
 					selectedKeys: [statusValue],
 					onSelect: handleSelect,
 				}}
-				className={[styles.loanStatus, styles[statusValue]].join(' ')}
+				className={[
+					styles.loanStatus,
+					styles[statusValue],
+					!is3rdParty && styles.disabled,
+				].join(' ')}
 				size="small"
+				disabled={!is3rdParty}
 			>
 				{statusValue ? rowData.label : 'Select Status'}
 			</Dropdown.Button>

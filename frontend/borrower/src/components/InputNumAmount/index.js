@@ -13,12 +13,19 @@ const InputNumAmount = ({
 	style = {},
 	min = 0,
 	max = 1000000000000,
+	size = 'large',
 	...props
 }) => {
 	return (
 		<InputNumber
 			style={{ width: '100%', ...style }}
-			prefix={<span className="text-base pt-[2px]">$</span>}
+			prefix={
+				<span
+					className={[size === 'large' ? 'text-base' : 'text-sm', 'pt-[2px]'].join(' ')}
+				>
+					$
+				</span>
+			}
 			formatter={(value) => {
 				// 千分位逗号隔开，保留两位小数
 				const [int, dec] = value.split('.');
@@ -32,6 +39,7 @@ const InputNumAmount = ({
 			onChange={onChange}
 			controls={false}
 			placeholder={placeholder}
+			size={size}
 			{...props}
 		/>
 	);

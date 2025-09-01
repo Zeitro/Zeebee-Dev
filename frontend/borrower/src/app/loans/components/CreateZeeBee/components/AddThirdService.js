@@ -28,6 +28,7 @@ const AddThirdService = ({ title, rowData, onOk, onCancel }) => {
 				try {
 					setConfirmLoading(true);
 					const values = await form.validateFields();
+					if (rowData?.id) values.id = rowData?.id;
 					await onOk(values, rowData?.id ? 'Edit' : 'Add');
 					setConfirmLoading(false);
 					onCancel();
@@ -49,13 +50,13 @@ const AddThirdService = ({ title, rowData, onOk, onCancel }) => {
 				}}
 			>
 				<Row gutter={24}>
-					{/* {getSelectFormDom({
+					{getSelectFormDom({
 						label: 'Service type',
-						name: 'loan_third_service_type',
+						name: 'type',
 						placeholder: 'Select service type',
 						valueName: 'propertyTypeOptions',
 						requiredMessage: 'Please select service type!',
-					})} */}
+					})}
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Name"

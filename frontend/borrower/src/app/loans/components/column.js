@@ -55,7 +55,7 @@ const common = (isNotAddress) => {
 			dataIndex: 'applicants',
 			key: 'applicants',
 			ellipsis: true,
-			render: (v) => v?.map((i) => i.name)?.join(','),
+			render: (v) => v?.map((i) => i.full_name)?.join(','),
 			width: 160,
 		},
 	];
@@ -71,9 +71,11 @@ const getOpt = (showDeleteModal) => {
 		render: (_, record) => (
 			<TableOperation
 				record={record}
+				disabled={record?.source !== 'borrower'}
 				getItems={(editItem, deleteItem) => {
-					const arr = [{ ...editItem, url: `/loans/${record?.id}` }];
+					const arr = [];
 					if (record?.source === 'borrower') {
+						arr.push({ ...editItem, url: `/loans/${record?.id}` });
 						arr.push(deleteItem);
 					}
 					return arr;

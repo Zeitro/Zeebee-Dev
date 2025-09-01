@@ -1,9 +1,37 @@
-import React from 'react';
-import { Col, Form, Radio, Row } from 'antd';
+import React, { use, useMemo } from 'react';
+import { Col, Form, Input, Radio, Row } from 'antd';
 import styles from './index.module.scss';
 import { titleCol } from '@/enum/common';
 import { yesNoOptions } from '@/enum/common';
+import InputNumAmount from '@/components/InputNumAmount';
+import _ from 'lodash';
+import { useGetOptions } from '@/hooks/useGetOptions';
 const Declaration = ({ gutter, form }) => {
+	const { getSelectFormDom } = useGetOptions([
+		{
+			key: 'bankruptcy_chapter',
+			valueName: 'bankruptcyChapterOptions',
+		},
+	]);
+	const borrowed_money_amount = Form.useWatch(
+		['loan_demographic', 'property', 'borrowed_money_amount'],
+		{
+			form,
+			// preserve: true, 不是Form.Item上绑定的字段，设置此项才可监听到
+		},
+	);
+	const has_borrowed_money = Form.useWatch(
+		['loan_demographic', 'property', 'has_borrowed_money'],
+		form,
+	);
+	const has_a_bankruptcy = Form.useWatch(
+		['loan_demographic', 'property', 'has_a_bankruptcy'],
+		form,
+	);
+	const status = useMemo(() => {
+		if (!borrowed_money_amount && has_borrowed_money) return 'error';
+		return 'success';
+	}, [borrowed_money_amount, has_borrowed_money]);
 	return (
 		<Row className={styles.createZeeBee} gutter={gutter}>
 			<Col {...titleCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">
@@ -39,14 +67,54 @@ const Declaration = ({ gutter, form }) => {
 			</Col>
 			<Col {...titleCol}>
 				<Form.Item
-					label="Are you borrowing any money for this real estate transaction (e.g. money for your closing costs or down payment) or obtaining any money from another party such as the seller or realtor, that you have not disclosed on this loan application? lf Yes, what is the amount of this money?"
+					label={
+						<div style={{ wordWrap: 'break-word' }}>
+							Are you borrowing any money for this real estate transaction (e.g. money
+							for your closing costs or down payment) or obtaining any money from
+							another party such as the seller or realtor, that you have not disclosed
+							on this loan application? lf Yes, what is the amount of this money?
+							<Form.Item
+								name={['loan_demographic', 'property', 'borrowed_money_amount']}
+								rules={[{ required: true }]}
+								noStyle
+							>
+								<InputNumAmount
+									size="small"
+									variant="underlined"
+									style={{
+										verticalAlign: 'middle',
+										width: 120,
+									}}
+									// onChange={(e) => {
+									// 	const values = form.getFieldValue();
+									// 	values.loan_demographic.property.borrowed_money = e;
+									// 	form.setFieldsValue(values);
+									// }}
+									status={status}
+									disabled={!has_borrowed_money}
+								/>
+							</Form.Item>
+						</div>
+					}
 					name={['loan_demographic', 'property', 'has_borrowed_money']}
 					rules={[
 						{
 							required: true,
 							message: 'Please select!',
 						},
+						{
+							validator: (_, value) => {
+								if (value && !borrowed_money_amount) {
+									return Promise.reject(
+										new Error('Please enter the amount of borrowed money!'),
+									);
+								}
+								return Promise.resolve();
+							},
+						},
 					]}
+					validateStatus={status}
+					help={status === 'error' ? 'Please enter the amount of borrowed money!' : ''}
 				>
 					<Radio.Group options={yesNoOptions} className={styles.yesNo2} />
 				</Form.Item>
@@ -163,6 +231,13 @@ const Declaration = ({ gutter, form }) => {
 					<Radio.Group options={yesNoOptions} className={styles.yesNo2} />
 				</Form.Item>
 			</Col>
+			{has_a_bankruptcy &&
+				getSelectFormDom({
+					name: ['loan_demographic', 'property', 'bankruptcy_chapter'],
+					valueName: 'bankruptcyChapterOptions',
+					requiredMessage: 'Please select the bankruptcy type!',
+					componentType: 'radio',
+				})}
 		</Row>
 	);
 };
