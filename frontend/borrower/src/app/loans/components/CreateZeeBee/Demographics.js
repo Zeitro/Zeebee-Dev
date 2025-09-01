@@ -6,11 +6,11 @@ import NestedCheckboxes from '@/components/NestedCheckboxes';
 import { raceOptions, ethnicityOptions } from '@/enum/loan';
 import { useGetOptions } from '@/hooks/useGetOptions';
 const Demographics = ({ gutter = 24, form }) => {
-	const { businessStrategyOptions, getSelectFormDom } = useGetOptions([
-		// {
-		// 	key: 'business_strategy',
-		// 	valueName: 'businessStrategyOptions',
-		// },
+	const { getSelectFormDom } = useGetOptions([
+		{
+			key: 'applicant_sex',
+			valueName: 'sexOptions',
+		},
 	]);
 	const layoutCol = {
 		...titleCol,
@@ -39,7 +39,7 @@ const Demographics = ({ gutter = 24, form }) => {
 			<Col {...layoutCol}>
 				<Form.Item
 					label="Race (Check one or more)"
-					name="race"
+					name={['loan_demographic', 'race']}
 					rules={[
 						{
 							required: true,
@@ -54,7 +54,7 @@ const Demographics = ({ gutter = 24, form }) => {
 			{getSelectFormDom(
 				{
 					label: 'Sex',
-					name: 'applicant_sex',
+					name: ['loan_demographic', 'sex'],
 					placeholder: 'Select Sex',
 					valueName: 'sexOptions',
 					requiredMessage: 'Please select sex!',

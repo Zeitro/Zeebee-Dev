@@ -19,6 +19,7 @@ import ThirdPartyService from '../components/CreateZeeBee/ThirdPartyService';
 import Declaration from '../components/CreateZeeBee/Declaration';
 import Demographics from '../components/CreateZeeBee/Demographics';
 import ReviewAndSign from '../components/CreateZeeBee/ReviewAndSign';
+import _ from 'lodash';
 const CreateZeeBeeLoan = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -143,15 +144,21 @@ const CreateZeeBeeLoan = () => {
 				// 		}
 				// 		body.applicants = body?.applicants.filter((i) => i.name);
 				// 		setLoading(true);
-				// 		await request('/loan', {
-				// 			method: 'POST',
-				// 			body,
-				// 		});
-				// 		message.open({
-				// 			type: 'success',
-				// 			content: 'Success in creation！',
-				// 		});
-				// 		setLoading(false);
+				const body = _.cloneDeep(values);
+
+				body.loan_borrower.tin_type = values?.loan_borrower?.tin?.tin_type;
+				body.loan_borrower.tin = values?.loan_borrower?.tin?.tin;
+				console.log(body, values);
+
+				await request('/loan/apply', {
+					method: 'POST',
+					body,
+				});
+				message.open({
+					type: 'success',
+					content: 'Success in creation！',
+				});
+				setLoading(false);
 				// 		router.back();
 				return;
 			}
@@ -197,7 +204,6 @@ const CreateZeeBeeLoan = () => {
 			setCurrentStep((v) => v - 1);
 			setStepNum(prevStepData?.length - 1);
 		}
-		form.resetFields();
 	};
 
 	// // 从property详情跳转的创建loan

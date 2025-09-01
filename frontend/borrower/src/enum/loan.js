@@ -93,7 +93,7 @@ export const ethnicityOptions = [
 		label: 'Other Hispanic or Latino',
 		value: 'Other Hispanic or Latino',
 		extras: {
-			paramsKey: 'otherHispanic',
+			paramsKey: 'other_hispanic_or_latino_name',
 			eventType: 'input',
 			placeholder: 'Enter ethnicity, for example: Colombian, Dominican, Nicaraguan and so on',
 		},
@@ -101,7 +101,8 @@ export const ethnicityOptions = [
 	{ label: 'Not Hispanic or Latino', value: 'Not Hispanic or Latino' },
 	{
 		label: 'I do not wish to provide this information',
-		value: 'I do not wish to provide this information',
+		value: 'Hidden',
+		isRadio: true,
 	},
 ];
 
@@ -110,7 +111,7 @@ export const raceOptions = [
 		label: 'American Indian or Alaska Native',
 		value: 'American Indian or Alaska Native',
 		extras: {
-			paramsKey: 'americanIndianOrAlaskaNative',
+			paramsKey: 'american_indian_or_alaska_native_name',
 			eventType: 'input',
 			placeholder: 'Name of enrolled or principal tribe',
 		},
@@ -120,7 +121,7 @@ export const raceOptions = [
 		value: 'Asian',
 		extras: {
 			eventType: 'checkbox',
-			paramsKey: 'asian',
+			paramsKey: 'asian_values',
 			options: [
 				{
 					label: 'Asian Indian',
@@ -150,7 +151,7 @@ export const raceOptions = [
 					label: 'Other Asian',
 					value: 'Other Asian',
 					extras: {
-						paramsKey: 'otherAsian',
+						paramsKey: 'asian_other_name',
 						eventType: 'input',
 						placeholder: 'Enter race, For example: Hmong, Lootian, Thai and so on',
 					},
@@ -171,7 +172,7 @@ export const raceOptions = [
 		label: 'Other Pacific Islander',
 		value: 'Other Pacific Islander',
 		extras: {
-			paramsKey: 'otherPacific',
+			paramsKey: 'other_pacific_islander_name',
 			eventType: 'input',
 			placeholder: 'Enter race, For example: Fijian, Tongan and so on',
 		},
@@ -179,7 +180,8 @@ export const raceOptions = [
 	{ label: 'White', value: 'White' },
 	{
 		label: 'I do not wish to provide this information',
-		value: 'I do not wish to provide this information',
+		value: 'Hidden',
+		isRadio: true,
 	},
 ];
 

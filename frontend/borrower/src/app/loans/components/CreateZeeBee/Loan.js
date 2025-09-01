@@ -1,20 +1,9 @@
 import React, { useEffect } from 'react';
 import styles from './index.module.scss';
-import { Row, Col, Form, Radio, Select, Input, InputNumber, DatePicker } from 'antd';
-import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
-import InputPhone from '@/components/InputPhone';
-import SelectTINType from '@/components/InputTIN/SelectTINType';
+import { Row, Col, Form, Radio, Input, InputNumber, DatePicker } from 'antd';
 import CommonFormDate from '@/components/CommonDate';
-import {
-	creditScoreRegex,
-	emailRegex,
-	maxCreditScore,
-	minCreditScore,
-	phoneRegex,
-} from '@/lib/format';
 import InputNumAmount from '@/components/InputNumAmount';
 import { yesNoOptions } from '@/enum/common';
-import { formatStr } from '@/lib/date';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import { layoutCol, titleCol } from '@/enum/common';
 const MAX_COUNT = 5;
@@ -25,9 +14,9 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 	const yearly_liability_expense = Form.useWatch('yearly_liability_expense', form);
 	const has_assignment_fee = Form.useWatch('has_assignment_fee', form);
 	const has_subordinate_debt = Form.useWatch('has_subordinate_debt', form);
-	const isPurchase = loanPurpose === 'purchase';
+	const isPurchase = loanPurpose === 'Purchase';
 
-	const { businessStrategyOptions, getSelectFormDom } = useGetOptions([
+	const { getSelectFormDom } = useGetOptions([
 		{
 			key: 'business_strategy',
 			valueName: 'businessStrategyOptions',

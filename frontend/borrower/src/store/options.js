@@ -17,6 +17,7 @@ export const useOptionsStore = create((set) => ({
 	maritalStatusOptions: [], //marital_status
 	serviceTypeOptions: [], //loan_third_service_type
 	sexOptions: [], //applicant_sex
+	bankruptcyChapterOptions: [], //bankruptcy_chapter
 	getOptions: async (name, key) => {
 		const { options } = await getSelectOptions(name);
 		return (

@@ -4,7 +4,15 @@ import { Checkbox, Col, Input, Row } from 'antd';
  * 多层嵌套的多选框
  * @params paramsKey: 第一层checkbox的值对应的key（可与传给后端的key保持一致）
  */
-const NestedCheckboxes = ({ value, onChange, options, paramsKey = 'list', form, name, label }) => {
+const NestedCheckboxes = ({
+	value,
+	onChange,
+	options,
+	paramsKey = 'values',
+	form,
+	name,
+	label,
+}) => {
 	// 递归删除,删除key对应的值，并删除所有子级的勾选和输入值
 	const remove = (list, key, newValue) => {
 		list.map((item) => {
@@ -22,6 +30,26 @@ const NestedCheckboxes = ({ value, onChange, options, paramsKey = 'list', form, 
 			}
 		});
 		return newValue;
+	};
+
+	// 递归获取value对应的数据,或者获取isRadio为true的，(因为选择不提供信息时清空数据，或者提供数据时，删除不提供的选项)
+	const getItemByValue = (options = [], v, isRadio) => {
+		let data;
+		options?.map((item) => {
+			if (item.value === v) {
+				data = item;
+			}
+			if (isRadio && item.isRadio) {
+				data = item;
+			}
+			if (item.extras?.options) {
+				const obj = getItemByValue(item.extras?.options, v, isRadio);
+				if (obj) {
+					data = obj;
+				}
+			}
+		});
+		return data;
 	};
 
 	const validateStatus = (parentLabel, isCheck) => {
@@ -43,6 +71,19 @@ const NestedCheckboxes = ({ value, onChange, options, paramsKey = 'list', form, 
 
 	const handleChange = (v, paramsKey, options, isHave) => {
 		let data = { ...value };
+
+		if (options && v?.length > data?.[paramsKey]?.length) {
+			const itemData = getItemByValue(options, v[v.length - 1]);
+			// 当选择不提供信息时清空其他数据
+			if (itemData?.isRadio) {
+				onChange({ [paramsKey]: [v[v.length - 1]] });
+				return;
+			} else {
+				// 当提供数据时，删除不提供的选项
+				const itemData = getItemByValue(options, null, true);
+				v = v.filter((i) => i !== itemData?.value);
+			}
+		}
 		// 当子级是数组时，父级取消勾选，子级清空
 		if (options && v?.length < data?.[paramsKey]?.length) {
 			const diff = data?.[paramsKey]?.find((i) => !v.includes(i));
@@ -130,6 +171,8 @@ const NestedCheckboxes = ({ value, onChange, options, paramsKey = 'list', form, 
 			className="w-full"
 			value={value?.[paramsKey] || []}
 			onChange={(e) => {
+				console.log(e, '---');
+
 				handleChange(e, paramsKey, options, !!e.length);
 			}}
 		>
