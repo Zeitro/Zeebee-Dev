@@ -1,5 +1,5 @@
 import { useOptionsStore } from '@/store/options';
-import { Col, Form, Select } from 'antd';
+import { Col, Form, Radio, Select } from 'antd';
 import { useCallback, useEffect, useRef } from 'react';
 import { useDisUpdateEffect } from './common';
 /**
@@ -45,27 +45,6 @@ export const useGetOptions = (list = []) => {
 		}
 	}, [list, getInitOptions]);
 
-	// useEffect(() => {
-	// 	if (!loanPurposeOptions?.length && loanPurposeName) {
-	// 		getOptions('loan_purpose', loanPurposeName);
-	// 	}
-	// }, [loanPurposeOptions, loanPurposeName]);
-
-	// useEffect(() => {
-	// 	if (!loanTypeOptions?.length && loanTypeName) {
-	// 		getOptions('loan_type', loanTypeName);
-	// 	}
-	// }, [loanTypeOptions, loanTypeName]);
-
-	// useEffect(() => {
-	// 	if (!loanPendingStatus?.length && pendingStatusName) {
-	// 		getOptions('loan_pending_status', 'loanPendingStatus');
-	// 	}
-	// }, [loanPendingStatus, pendingStatusName]);
-
-	// useEffect(() => {
-	// 	!loanStatusOptions?.length && getOptions('loan_stage', 'loanStatusOptions');
-	// }, [loanStatusOptions]);
 	const getSelectFormDom = (
 		{
 			label,
@@ -76,11 +55,39 @@ export const useGetOptions = (list = []) => {
 			valueName, // 对应存储在store里面的值
 			mode = null,
 			placeholder = 'Select',
+			componentType = 'select',
 			...selectProps
 		},
 		layoutCol = {},
 	) => {
 		let selectMaxCount = mode ? { maxCount: MAX_COUNT } : {};
+		const getComponentDom = (componentType) => {
+			switch (componentType) {
+				case 'select':
+					return (
+						<Select
+							allowClear
+							showSearch
+							mode={mode}
+							style={{ width: '100%' }}
+							placeholder={placeholder}
+							options={optionsInfo?.[valueName] || []}
+							{...selectMaxCount}
+							{...selectProps}
+						/>
+					);
+				case 'radio':
+					return (
+						<Radio.Group
+							options={optionsInfo?.[valueName] || []}
+							{...selectProps}
+							style={{ width: '100%' }}
+						/>
+					);
+				default:
+					break;
+			}
+		};
 		return (
 			<Col xs={24} sm={24} {...layoutCol}>
 				<Form.Item
@@ -95,16 +102,7 @@ export const useGetOptions = (list = []) => {
 					]}
 					{...formProps}
 				>
-					<Select
-						allowClear
-						showSearch
-						mode={mode}
-						style={{ width: '100%' }}
-						placeholder={placeholder}
-						options={optionsInfo?.[valueName] || []}
-						{...selectMaxCount}
-						{...selectProps}
-					/>
+					{getComponentDom(componentType)}
 				</Form.Item>
 			</Col>
 		);

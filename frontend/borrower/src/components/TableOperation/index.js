@@ -20,7 +20,7 @@ const deleteItem = {
  * getItems: 获取下拉列表的函数，可拿到edit/delete配置，重新组装顺序或在edit/delete前后添加其他项
  * onSelect：选择下拉项的回调函数
  */
-const TableOperation = ({ list, className, onSelect, getItems }) => {
+const TableOperation = ({ list, className, onSelect, getItems, disabled }) => {
 	const [selectedKey, setSelectedKey] = useState(null);
 	const [items, setItems] = useState([]);
 	const router = useRouter();
@@ -54,7 +54,10 @@ const TableOperation = ({ list, className, onSelect, getItems }) => {
 				selectedKeys: [selectedKey],
 				onClick: handleSelect,
 			}}
-			className={[styles.tableOperation, className].join(' ')}
+			className={[styles.tableOperation, disabled && '!text-base-disabled', className].join(
+				' ',
+			)}
+			disabled={disabled}
 		>
 			<EllipsisOutlined />
 		</Dropdown>
