@@ -14,7 +14,7 @@ func (form *ApplyForm) page9() (err error) {
 	}
 	form.pdf.Br(form.pdf.LineHeight)
 	// Race
-	checkBoxOpt := &gopdf.Rect{W: form.pdf.LineHeight, H: form.pdf.LineHeight}
+	// checkBoxOpt := &gopdf.Rect{W: form.pdf.LineHeight, H: form.pdf.LineHeight}
 	cellTextOpt := gopdf.CellOption{
 		Align: gopdf.Left | gopdf.Middle,
 	}
@@ -24,22 +24,42 @@ func (form *ApplyForm) page9() (err error) {
 	form.pdf.Br(form.pdf.LineHeight)
 	x := form.pdf.GetX()
 	y := form.pdf.GetY()
-	_ = form.pdf.ImageFrom(pdf.EmptyCheckBox, x, y, checkBoxOpt)
-	form.pdf.SetX(x + form.pdf.LineHeight*1.5)
-	_ = form.pdf.CellWithOption(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: form.pdf.LineHeight}, "Female", cellTextOpt)
-	form.pdf.Br(form.pdf.LineHeight * 1.3)
-	x = form.pdf.GetX()
-	y = form.pdf.GetY()
-	_ = form.pdf.ImageFrom(pdf.EmptyCheckBox, x, y, checkBoxOpt)
-	form.pdf.SetX(x + form.pdf.LineHeight*1.5)
-	_ = form.pdf.CellWithOption(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: form.pdf.LineHeight}, "Male", cellTextOpt)
-	form.pdf.Br(form.pdf.LineHeight * 1.3)
-	x = form.pdf.GetX()
-	y = form.pdf.GetY()
-	_ = form.pdf.ImageFrom(pdf.EmptyCheckBox, x, y, checkBoxOpt)
-	form.pdf.SetX(x + form.pdf.LineHeight*1.5)
-	_ = form.pdf.CellWithOption(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: form.pdf.LineHeight}, " I do not wish to provide this information", cellTextOpt)
-	form.pdf.Br(form.pdf.LineHeight * 2)
+
+	sex := form.info.LoanDemographic.Sex
+
+	pos := position{
+		x: x,
+		y: y,
+		h: form.pdf.LineHeight,
+	}
+	opts := []page9CheckBoxOpt{
+		{
+			label:      "Female",
+			values:     []string{sex},
+			targetText: "Female",
+			extraText:  "",
+			inputText:  "",
+		},
+		{
+			label:      "Male",
+			values:     []string{sex},
+			targetText: "Male",
+			extraText:  "",
+			inputText:  "",
+		},
+		{
+			label:      "I do not wish to provide this information",
+			values:     []string{sex},
+			targetText: "Hidden",
+			extraText:  "",
+			inputText:  "",
+		},
+	}
+	err = form.buildPage9CheckBoxes(pos, form.pdf.LineHeight, opts)
+	if err != nil {
+		return err
+	}
+	form.pdf.Br(form.pdf.LineHeight)
 
 	col1Width := 405.0
 	col2Width := 50.0
@@ -104,29 +124,30 @@ func (form *ApplyForm) page9() (err error) {
 	form.pdf.Br(form.pdf.LineHeight * 2.5)
 	x = form.pdf.GetX()
 	y = form.pdf.GetY()
-	startX := x + form.pdf.MarginLeft()*2.5
-	_ = form.pdf.ImageFrom(pdf.EmptyCheckBox, startX, y, checkBoxOpt)
-	form.pdf.SetX(startX + form.pdf.LineHeight*1.5)
-	_ = form.pdf.CellWithOption(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: form.pdf.LineHeight}, "Face to Face (Video Conf)", cellTextOpt)
-	form.pdf.Br(form.pdf.LineHeight * 1.3)
-	x = form.pdf.GetX()
-	y = form.pdf.GetY()
-	_ = form.pdf.ImageFrom(pdf.EmptyCheckBox, startX, y, checkBoxOpt)
-	form.pdf.SetX(startX + form.pdf.LineHeight*1.5)
-	_ = form.pdf.CellWithOption(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: form.pdf.LineHeight}, "Telephone Interview", cellTextOpt)
-	form.pdf.Br(form.pdf.LineHeight * 1.3)
-	x = form.pdf.GetX()
-	y = form.pdf.GetY()
-	_ = form.pdf.ImageFrom(pdf.EmptyCheckBox, startX, y, checkBoxOpt)
-	form.pdf.SetX(startX + form.pdf.LineHeight*1.5)
-	_ = form.pdf.CellWithOption(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: form.pdf.LineHeight}, "Fax or Mail", cellTextOpt)
-	form.pdf.Br(form.pdf.LineHeight * 1.3)
-	x = form.pdf.GetX()
-	y = form.pdf.GetY()
-	_ = form.pdf.ImageFrom(pdf.EmptyCheckBox, startX, y, checkBoxOpt)
-	form.pdf.SetX(startX + form.pdf.LineHeight*1.5)
-	_ = form.pdf.CellWithOption(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: form.pdf.LineHeight}, "Email or Internet", cellTextOpt)
-	form.pdf.Br(form.pdf.LineHeight * 1.3)
+
+	pos = position{
+		x: x + form.pdf.MarginLeft()*2.5,
+		y: y,
+		h: form.pdf.LineHeight,
+	}
+	opts = []page9CheckBoxOpt{
+		{
+			label: "Face to Face (Video Conf)",
+		},
+		{
+			label: "Telephone Interview",
+		},
+		{
+			label: "Fax or Mail",
+		},
+		{
+			label: "Email or Internet",
+		},
+	}
+	err = form.buildPage9CheckBoxes(pos, form.pdf.LineHeight, opts)
+	if err != nil {
+		return err
+	}
 
 	return err
 }
