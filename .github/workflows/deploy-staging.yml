@@ -13,6 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: build and deploy
+        working-directory: backend
         run: |
           docker-compose -f docker-compose-borrower-staging.yml down || true
           docker-compose -f docker-compose-borrower-staging.yml up --build -d --no-cache
