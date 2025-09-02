@@ -42,6 +42,7 @@ entity "loans" {
     * updated_at timestamptz
     * is_del int2
     ---
+    * code varchar(100)
     * borrower_id int4
     * lender_id int4
     * lender_company varchar(100)
@@ -90,7 +91,7 @@ entity "loans" {
     * has_collateralized_blanket boolean
     * has_properties_vacant boolean
     * has_short_term_rental boolean
-    * additional_info varchar(3000)
+'    * additional_info varchar(3000)
 }
 
 note right of loans
@@ -326,6 +327,11 @@ entity "loan_properties" {
     * living_area_sqft decimal(8,2)
     * bedrooms int2
     * bathrooms int2
+    * future_property_type varchar(30)
+    * future_living_area_sqft decimal(8,2)
+    * future_bedrooms int2
+    * future_bathrooms int2
+    * future_unit int2
 }
 
 note right of loan_properties
@@ -415,6 +421,22 @@ entity "us_geographies"{
         * city_name varchar(50)
 }
 
+entity "files"{
+        * id int4
+        * created_at timestamptz
+        * updated_at timestamptz
+        * is_del int2
+        ---
+        * type varchar(20)
+        * ref_id int4
+        * file varchar(100)
+}
+
+note right of files
+    type:
+        - ApplyForm
+end note
+
 
 users ||--|| borrowers: has one
 borrowers ||--o{ loans: has many
@@ -426,6 +448,7 @@ loans ||--o{ applicants: has many
 loans ||--|| loan_properties: has one
 loans ||--|| loan_borrowers: has one
 loans ||--|| loan_demographics: has one
+loans ||--o{ files: has one
 loans ||--o{ loan_experiences: has many
 loans ||--o{ loan_third_services: has many
 loan_borrowers ||--o{ applicants: has many
