@@ -7,8 +7,6 @@ services:
       context: .
       dockerfile: Dockerfile-borrower-staging
     container_name: backend-borrower-staging
-    ports:
-      - "11000:10000"
     network_mode: host
   
 
