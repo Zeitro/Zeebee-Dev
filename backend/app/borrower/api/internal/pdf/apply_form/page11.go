@@ -106,7 +106,8 @@ func (form *ApplyForm) page11() (err error) {
 
 	err = form.pdf.MultiLongText(form.pdf.LineHeight, text)
 
-	_ = form.buildSignature("patriot_act")
+	// _ = form.buildSignature("patriot_act")
+	_ = form.buildSignature(form.info.Signatures.PatriotAct)
 
 	return err
 }

@@ -33,6 +33,9 @@ func NewApplyForm(info *types.ApplyFormPdfRequest) (form *ApplyForm, err error) 
 	if info == nil {
 		return nil, errors.New("pdf info is empty")
 	}
+	if info.Signatures == nil {
+		info.Signatures = &types.Signatures{}
+	}
 	p, err := pdf.NewPdf(gopdf.Config{PageSize: *gopdf.PageSizeA4})
 	if err != nil {
 		return nil, err
@@ -278,9 +281,9 @@ func (form *ApplyForm) buildGraySmallTitle(title string, position position) (err
 	return err
 }
 
-func (form *ApplyForm) buildSignature(typ string) (err error) {
-	signatures := form.info.Signatures
-	targetSignature := signatures[typ]
+func (form *ApplyForm) buildSignature(targetSignature []*types.SignatureEntry) (err error) {
+	// signatures := form.info.Signatures
+	// targetSignature := signatures[typ]
 
 	form.pdf.SetBoldFont()
 	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: 12}, "Agreed & Accepted")

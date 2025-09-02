@@ -39,7 +39,8 @@ func (form *ApplyForm) page10() (err error) {
 		return err
 	}
 
-	_ = form.buildSignature("business_purpose")
+	// _ = form.buildSignature("business_purpose")
+	_ = form.buildSignature(form.info.Signatures.BusinessPurpose)
 
 	return err
 }

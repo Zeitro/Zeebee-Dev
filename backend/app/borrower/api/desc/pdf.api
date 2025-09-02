@@ -14,8 +14,15 @@ import "loan_demographic.api"
 import "loan.api"
 
 type SignatureEntry {
-    SignatureImage string `json:"signature,optional"`
-    SignatureDate string `json:"signature_date, optional"`
+    SignatureImage string `json:"signature_image,optional"`
+    SignatureDate string `json:"signature_date,optional"`
+}
+
+type Signatures {
+    BorrowerInfo []*SignatureEntry `json:"borrower_info,optional"`
+    BusinessPurpose []*SignatureEntry `json:"business_purpose,optional"`
+    PatriotAct []*SignatureEntry `json:"patriot_act,optional"`
+    BorrowerAuthorization []*SignatureEntry `json:"borrower_authorization,optional"`
 }
 
 type ApplyFormPdfRequest {
@@ -56,11 +63,11 @@ type ApplyFormPdfRequest {
     HasCollateralizedBlanket bool `json:"has_collateralized_blanket"`
     HasPeropertyVacant bool `json:"has_peroperty_vacant"`
     HasShortTermRental bool `json:"has_short_term_rental"`
-    AdditionalInfo string `json:"additional_info"`
+    //    AdditionalInfo string `json:"additional_info"`
     TransactionExperiences []*LoanexperienceEntry `json:"transaction_experiences"`
     RealEstateExperiences []*LoanexperienceEntry `json:"real_estate_experiences"`
     LoanThirdServices []*LoanThirdServiceEntry `json:"loan_third_services"`
     LoanBorrower *LoanBorrowerEntry `json:"loan_borrower"`
     LoanDemographic *LoanDemographicEntry `json:"loan_demographic"`
-    Signatures map[string][]*SignatureEntry `json:"signature,optional"`
+    Signatures *Signatures `json:"signatures,optional"`
 }

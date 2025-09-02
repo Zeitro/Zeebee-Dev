@@ -56,8 +56,8 @@ type LoanApplyPropertyEntry struct {
 	FuturePropertyType   string             `json:"future_property_type,optional"`
 	FutureUnit           int32              `json:"future_unit,optional" validate:"gte=0"`
 	FutureLivingAreaSqft float32            `json:"future_living_area_sqft,optional" validate:"gte=0"`
-	FutureBedrooms       int32              `json:"bedrooms,optional" validate:"gte=0"`
-	FutureBathrooms      int32              `json:"bathrooms,optional" validate:"gte=0"`
+	FutureBedrooms       int32              `json:"future_bedrooms,optional" validate:"gte=0"`
+	FutureBathrooms      int32              `json:"future_bathrooms,optional" validate:"gte=0"`
 	PropertyBase         *PropertyBaseEntry `json:"property_base" validate:"required"`
 }
 
@@ -189,7 +189,6 @@ type LoanEntry struct {
 	HasCollateralizedBlanket bool                     `json:"has_collateralized_blanket"`
 	HasPeropertyVacant       bool                     `json:"has_peroperty_vacant"`
 	HasShortTermRental       bool                     `json:"has_short_term_rental"`
-	AdditionalInfo           string                   `json:"additional_info"`
 	TransactionExperiences   []*LoanexperienceEntry   `json:"transaction_experiences"`
 	RealEstateExperiences    []*LoanexperienceEntry   `json:"real_estate_experiences"`
 	LoanThirdServices        []*LoanThirdServiceEntry `json:"loan_third_services"`
@@ -213,12 +212,17 @@ type LoanPageSorter struct {
 }
 
 type LoanPropertyEntry struct {
-	Id             int64              `json:"id,optional"`
-	PropertyType   string             `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
-	LivingAreaSqft float32            `json:"living_area_sqft,optional"`
-	Bedrooms       int32              `json:"bedrooms,optional" `
-	Bathrooms      int32              `json:"bathrooms,optional"`
-	PropertyBase   *PropertyBaseEntry `json:"property_base" validate:"required"`
+	Id                   int64              `json:"id,optional"`
+	PropertyType         string             `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
+	LivingAreaSqft       float32            `json:"living_area_sqft,optional"`
+	Bedrooms             int32              `json:"bedrooms,optional" `
+	Bathrooms            int32              `json:"bathrooms,optional"`
+	FuturePropertyType   string             `json:"future_property_type,optional"`
+	FutureUnit           int32              `json:"future_unit,optional" validate:"gte=0"`
+	FutureLivingAreaSqft float32            `json:"future_living_area_sqft,optional" validate:"gte=0"`
+	FutureBedrooms       int32              `json:"future_bedrooms,optional" validate:"gte=0"`
+	FutureBathrooms      int32              `json:"future_bathrooms,optional" validate:"gte=0"`
+	PropertyBase         *PropertyBaseEntry `json:"property_base" validate:"required"`
 }
 
 type LoanThirdServiceEntry struct {
@@ -286,8 +290,15 @@ type SelectOptionEntry struct {
 }
 
 type SignatureEntry struct {
-	SignatureImage string `json:"signature,optional"`
-	SignatureDate  string `json:"signature_date, optional"`
+	SignatureImage string `json:"signature_image,optional"`
+	SignatureDate  string `json:"signature_date,optional"`
+}
+
+type Signatures struct {
+	BorrowerInfo          []*SignatureEntry `json:"borrower_info,optional"`
+	BusinessPurpose       []*SignatureEntry `json:"business_purpose,optional"`
+	PatriotAct            []*SignatureEntry `json:"patriot_act,optional"`
+	BorrowerAuthorization []*SignatureEntry `json:"borrower_authorization,optional"`
 }
 
 type UserInfo struct {
