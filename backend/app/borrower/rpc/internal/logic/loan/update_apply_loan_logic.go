@@ -115,6 +115,21 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 			func() error {
 				return l.updateThirdServices(tx, loan.LoanThirdServices, data.loanThirdServices, loan)
 			},
+			// apply form
+			func() error {
+				if data.applyFormFile == nil {
+					return nil
+				}
+				oldApplyForm := loan.ApplyFormFile
+				if oldApplyForm == nil {
+					data.applyFormFile.RefId = loan.Id
+					_, err := l.svcCtx.FileRepo.CreateWithTx(l.ctx, tx, data.applyFormFile, false)
+					return err
+				}
+				data.applyFormFile.RefId = loan.Id
+				_, err := l.svcCtx.FileRepo.UpdateOneWithTx(l.ctx, tx, oldApplyForm.Id, data.applyFormFile)
+				return err
+			},
 			// sync property total amount
 			func() error {
 				err := l.svcCtx.PropertyBaseRepo.SyncTotalAmountWithTx(l.ctx, tx, previousPropertyBaseId)

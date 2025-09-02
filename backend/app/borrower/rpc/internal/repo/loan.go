@@ -34,6 +34,7 @@ func (repo *LoanRepo) GetBorrowerLoan(ctx context.Context, id int64, borrowerId 
 		Preload("LoanExperiences").
 		Preload("LoanThirdServices").
 		Preload("LoanDemographic").
+		Preload("ApplyFormFile").
 		First(&result).Error
 	return result, errors.WithStack(err)
 }
