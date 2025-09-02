@@ -35,6 +35,13 @@ func BadRequest(w http.ResponseWriter, message string) {
 	Error(w, http.StatusBadRequest, message)
 }
 
+func BadRequestWithCode(w http.ResponseWriter, code int, message string) {
+	httpx.WriteJson(w, code, Response{
+		Code:    code,
+		Message: message,
+	})
+}
+
 // Unauthorized 401错误
 func Unauthorized(w http.ResponseWriter, message string) {
 	Error(w, http.StatusUnauthorized, message)

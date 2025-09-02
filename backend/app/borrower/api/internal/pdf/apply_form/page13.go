@@ -146,7 +146,8 @@ func (form *ApplyForm) page13() (err error) {
 	if err != nil {
 		return err
 	}
-	_ = form.buildSignature("borrower_authorization")
+	// _ = form.buildSignature("borrower_authorization")
+	_ = form.buildSignature(form.info.Signatures.BorrowerAuthorization)
 
 	return err
 }
