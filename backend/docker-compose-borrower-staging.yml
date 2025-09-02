@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  backend-borrower-staging:
+    image: backend-borrower-staging
+    build:
+      context: .
+      dockerfile: Dockerfile-borrower-staging
+      no_cache: true
+    container_name: backend-borrower-staging
+    ports:
+      - "11000:10000"
+    restart: always
+
