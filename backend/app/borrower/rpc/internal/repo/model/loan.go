@@ -70,6 +70,7 @@ type Loan struct {
 	LoanExperiences   []*LoanExperience   `json:"loan_experiences" gorm:"foreignKey:LoanId;references:Id"`
 	LoanThirdServices []*LoanThirdService `json:"loan_third_services" gorm:"foreignKey:LoanId;references:Id"`
 	LoanDemographic   *LoanDemographic    `json:"loan_demographic" gorm:"foreignKey:LoanId;references:Id"`
+	ApplyFormFile     *File               `json:"apply_form_file" gorm:"polymorphicType:Type;polymorphicId:RefId;polymorphicValue:apply_form"`
 }
 
 func (m Loan) TableName() string {

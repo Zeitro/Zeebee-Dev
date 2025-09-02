@@ -38,6 +38,7 @@ type applyLoanModelData struct {
 	applicants             []*model.Applicant
 	transactionExperiences []*model.LoanExperience
 	realEstatesExperiences []*model.LoanExperience
+	applyFormFile          *model.File
 }
 
 func NewApplyLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ApplyLoanLogic {
@@ -145,6 +146,15 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrowe
 				item.LoanId = loan.Id
 			})
 			_, innerErr = l.svcCtx.LoanThirdServiceRepo.BatchCreateWithTx(l.ctx, tx, data.loanThirdServices, false)
+			if innerErr != nil {
+				return innerErr
+			}
+		}
+
+		// apply form
+		if data.applyFormFile != nil {
+			data.applyFormFile.RefId = loan.Id
+			_, innerErr = l.svcCtx.FileRepo.CreateWithTx(l.ctx, tx, data.applyFormFile, false)
 			if innerErr != nil {
 				return innerErr
 			}
@@ -305,6 +315,16 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData) 
 	if err != nil {
 		return nil, errorx.GetFailedTransErr(err)
 	}
+
+	// apply form file
+	var applyFormFile *model.File
+	if len(reqData.ApplyFormFile) > 0 {
+		applyFormFile = &model.File{
+			File: reqData.ApplyFormFile,
+			Type: constants.FileTypeApplyForm,
+		}
+	}
+
 	data = &applyLoanModelData{
 		loan:                   loan,
 		loanProperty:           loanProperty,
@@ -314,6 +334,7 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData) 
 		realEstatesExperiences: realEstatesExperiences,
 		loanDemographic:        loanDemographic,
 		loanThirdServices:      loanThirdServices,
+		applyFormFile:          applyFormFile,
 	}
 	return
 }

@@ -481,6 +481,7 @@ message LoanApplyRequestData {
   float yearly_liability_expense = 43;
   repeated LoanThirdServiceEntry loan_third_services = 44;
   int64 id = 45;
+  string apply_form_file = 46;
 }
 
 message LoanApplyResponse {
