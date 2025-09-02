@@ -1,6 +1,8 @@
 package apply_form
 
 import (
+	"time"
+
 	"github.com/signintech/gopdf"
 
 	"zeebee-backend/app/borrower/api/internal/pdf"
@@ -31,7 +33,7 @@ func (form *ApplyForm) page13() (err error) {
 			color: struct{ r, g, b uint8 }{71, 117, 255},
 		},
 		{
-			text:  " This information is to be used by the agency collecting it or its assignees in determining whether you qualify as a prospective mortgagor under its program. It will not be disclosed outside the agency except as required and permitted by law. You do not have to provide this information, but if you do not your application for approval as a prospective mortgagor or borrower maybe delayed or rejected. The information requested in this form is authorized by Title 38, USC, Chapter 37 (if VA); by 12 USC, Section 1701et. seq. (if HUD/FHA); by 42 USC, Section 1452b (if HUD/CPD); and Title 42 USC, 1471 et. seq., or 7 USC, 1921 et. seq. (if USDA/FmHA). ",
+			text:  " This information is to be used by the agency collecting it or its assignees in determining whether you qualify as a prospective mortgagor under its program. It will not be disclosed outside the agency except as required and permitted by law. You do not have to provide this information, but if you do not your application for approval as a prospective mortgagor or borrower maybe delayed or rejected. The information requested in this form is authorized by Title 38, USC, Chapter 37 (if VA); by 12 USC, Section 1701et. seq. (if HUD/FHA); by 42 USC, Section 1452b (if HUD/CPD); and Title 42 USC, 1471 et. seq., or 7 USC, 1921 et. seq. (if USDA/FmHA).",
 			color: struct{ r, g, b uint8 }{0, 0, 0},
 		},
 	}
@@ -48,13 +50,14 @@ func (form *ApplyForm) page13() (err error) {
 	form.pdf.Line(x, y, x+form.pdf.GetFullWidth(), y)
 	rowHeight := form.pdf.LineHeight * 5.0
 	form.pdf.SetBoldFont()
+	_ = form.pdf.Cell(&gopdf.Rect{W: 10}, "")
 	_ = form.pdf.CellWithOption(&gopdf.Rect{W: 100.0, H: rowHeight}, "1. Borrower", gopdf.CellOption{
-		Align: gopdf.Center | gopdf.Middle,
+		Align: gopdf.Left | gopdf.Middle,
 	})
 	_ = form.pdf.ImageFrom(pdf.LightBlueBg, x+100, y+form.pdf.LineHeight*1.5, &gopdf.Rect{W: 120.0, H: form.pdf.LineHeight * 2})
 	form.pdf.SetRegularFont()
-	_ = form.pdf.CellWithOption(&gopdf.Rect{W: 120.0, H: rowHeight}, "", gopdf.CellOption{
-		Align: gopdf.Center | gopdf.Middle,
+	_ = form.pdf.CellWithOption(&gopdf.Rect{W: 120.0, H: rowHeight}, form.info.LoanBorrower.Name, gopdf.CellOption{
+		Align: gopdf.Left | gopdf.Middle,
 	})
 	_ = form.pdf.CellWithOption(&gopdf.Rect{W: 10.0, H: rowHeight}, "", gopdf.CellOption{
 		Align:  gopdf.Center | gopdf.Middle,
@@ -66,8 +69,9 @@ func (form *ApplyForm) page13() (err error) {
 	form.pdf.SetBoldFont()
 	x = form.pdf.GetX()
 	y = form.pdf.GetY()
-	_ = form.pdf.CellWithOption(&gopdf.Rect{W: 230.0, H: form.pdf.LineHeight}, "2. Name and address of Lender/ Broker", gopdf.CellOption{
-		Align: gopdf.Center | gopdf.Middle,
+	_ = form.pdf.Cell(&gopdf.Rect{W: 20}, "")
+	_ = form.pdf.CellWithOption(&gopdf.Rect{W: 220.0, H: form.pdf.LineHeight}, "2. Name and address of Lender/ Broker", gopdf.CellOption{
+		Align: gopdf.Left | gopdf.Middle,
 	})
 
 	_ = form.pdf.ImageFrom(pdf.LightBlueBg, x+230, y, &gopdf.Rect{W: 95.0, H: form.pdf.LineHeight * 4.0})
@@ -92,13 +96,14 @@ func (form *ApplyForm) page13() (err error) {
 
 	// date
 	form.pdf.SetBoldFont()
-	_ = form.pdf.CellWithOption(&gopdf.Rect{W: 100.0, H: rowHeight}, "date", gopdf.CellOption{
-		Align: gopdf.Center | gopdf.Middle,
+	_ = form.pdf.Cell(&gopdf.Rect{W: 10}, "")
+	_ = form.pdf.CellWithOption(&gopdf.Rect{W: 100.0, H: rowHeight}, "3. date", gopdf.CellOption{
+		Align: gopdf.Left | gopdf.Middle,
 	})
 	_ = form.pdf.ImageFrom(pdf.LightBlueBg, x+100, y+form.pdf.LineHeight*1.5, &gopdf.Rect{W: 120.0, H: form.pdf.LineHeight * 2})
 	form.pdf.SetRegularFont()
-	_ = form.pdf.CellWithOption(&gopdf.Rect{W: 120.0, H: rowHeight}, "", gopdf.CellOption{
-		Align: gopdf.Center | gopdf.Middle,
+	_ = form.pdf.CellWithOption(&gopdf.Rect{W: 120.0, H: rowHeight}, time.Now().Format("01/02/2006"), gopdf.CellOption{
+		Align: gopdf.Left | gopdf.Middle,
 	})
 	_ = form.pdf.CellWithOption(&gopdf.Rect{W: 10.0, H: rowHeight}, "", gopdf.CellOption{
 		Align:  gopdf.Center | gopdf.Middle,
@@ -110,6 +115,7 @@ func (form *ApplyForm) page13() (err error) {
 	x = form.pdf.GetX()
 	y = form.pdf.GetY()
 	form.pdf.SetBoldFont()
+	_ = form.pdf.Cell(&gopdf.Rect{W: 10}, "")
 	_ = form.pdf.CellWithOption(&gopdf.Rect{W: 100.0, H: rowHeight}, "4. Loan Number", gopdf.CellOption{
 		Align: gopdf.Center | gopdf.Middle,
 	})
@@ -140,7 +146,7 @@ func (form *ApplyForm) page13() (err error) {
 	if err != nil {
 		return err
 	}
-	_ = form.buildSignature("")
+	_ = form.buildSignature("borrower_authorization")
 
 	return err
 }

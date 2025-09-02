@@ -53,6 +53,7 @@ func (form *ApplyForm) page8() (err error) {
 	form.pdf.SetGrayStroke()
 	_ = form.pdf.CellWithOption(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: lineHeight}, "Ethnicity (Check One or More)", cellTextOpt)
 	form.pdf.SetRegularFont()
+	form.pdf.SetBlackStroke()
 
 	// checkboxImg := pdf.EmptyCheckBox
 
@@ -302,8 +303,6 @@ func (form *ApplyForm) buildPage9CheckBoxes(pos position, checkBoxWidth float64,
 		// checkbox image
 		_ = form.pdf.ImageFrom(checkboxImg, currentX, currentY, checkBoxOpt)
 		form.pdf.SetX(currentX + checkBoxWidth*1.5)
-		// _ = form.pdf.CellWithOption(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: pos.h}, opt.label, cellTextOpt)
-		// form.pdf.Br(pos.h)
 
 		// label
 		textLen, _ := form.pdf.MeasureTextWidth(opt.label)
