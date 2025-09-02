@@ -6,7 +6,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-borrower-staging
-      no_cache: true
     container_name: backend-borrower-staging
     ports:
       - "11000:10000"
