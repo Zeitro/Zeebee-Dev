@@ -34,6 +34,7 @@ RpcConf:
     Host: clustercfg.zeebee-backend-redis.uwixeb.usw1.cache.amazonaws.com:6379
     Type: node
     Prefix: zeebee
+    Tls: true
 
   DbConf:
     # dsn: "host=postgres_14_18 user=dev_user password=dev_password dbname=dev_db port=5432 sslmode=disable TimeZone=UTC"
