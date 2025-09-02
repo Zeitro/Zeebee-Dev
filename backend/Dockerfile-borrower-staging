@@ -17,4 +17,4 @@ WORKDIR /app
 COPY --from=builder /app/borrower /app/borrower
 COPY ./app/borrower/etc/config-staging.yaml /app/etc/config.yaml
 EXPOSE 10000
-ENTRYPOINT ["/app/borrower","-f","/app/etc/config.yaml"]
+ENTRYPOINT ["/app/borrower","-f","/app/etc/config-staging.yaml"]
