@@ -106,14 +106,7 @@ func (form *ApplyForm) page11() (err error) {
 
 	err = form.pdf.MultiLongText(form.pdf.LineHeight, text)
 
-	// text = "To help the US Government fight the funding of terrorism and money laundering activities, Federal law requires all financial institutions to obtain, verify and record information that identified every person who opens an account. What this means to you: "
-	// _ = form.pdf.LongText(form.pdf.LineHeight, text)
-	// form.pdf.Br(form.pdf.LineHeight)
-	// text = "When you apply for a loan, we will ask for your name, address, date of birth, and other information that will allow us to identify you. We may also ask to see your driver’s license or other identifying documents.  "
-	// _ = form.pdf.LongText(form.pdf.LineHeight, text)
-	// form.pdf.Br(form.pdf.LineHeight)
-
-	_ = form.buildSignature("")
+	_ = form.buildSignature("patriot_act")
 
 	return err
 }
