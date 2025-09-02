@@ -32,33 +32,33 @@ type EmptyResponse struct {
 
 type LoanApplyApplicantEntry struct {
 	Id               int64         `json:"id,optional"`
-	FirstName        string        `json:"first_name" validate:"required"`
-	MidName          string        `json:"mid_name"`
-	LastName         string        `json:"last_name" validate:"required"`
-	Type             string        `json:"type" validate:"required,oneof=Individual Corporation LLC Trust Partnership"`
-	IsPrimary        bool          `json:"is_primary"`
-	Ssn              string        `json:"ssn" validate:"required"`
-	Dob              string        `json:"dob" validate:"required,datetime=01/02/2006"`
-	MaritalStatus    string        `json:"marital_status" validate:"required,oneof=Married Unmarried Separated"`
-	Email            string        `json:"email" validate:"required, email"`
-	Phone            string        `json:"phone" validate:"required"`
-	EstCreditScore   int32         `json:"est_credit_score" validate:"required,gte=300,lte=850"`
-	DriverLicenseNum string        `json:"driver_license_num" validate:"required"`
-	Address          *AddressEntry `json:"address" validate:"required"`
+	FirstName        string        `json:"first_name,optional" validate:"required"`
+	MidName          string        `json:"mid_name,optional"`
+	LastName         string        `json:"last_name,optional" validate:"required"`
+	Type             string        `json:"type,optional" validate:"required,oneof=Individual Corporation LLC Trust Partnership"`
+	IsPrimary        bool          `json:"is_primary,optional"`
+	Ssn              string        `json:"ssn,optional" validate:"required"`
+	Dob              string        `json:"dob,optional" validate:"required,datetime=01/02/2006"`
+	MaritalStatus    string        `json:"marital_status,optional" validate:"required,oneof=Married Unmarried Separated"`
+	Email            string        `json:"email,optional" validate:"required, email"`
+	Phone            string        `json:"phone,optional" validate:"required"`
+	EstCreditScore   int32         `json:"est_credit_score,optional" validate:"required,gte=300,lte=850"`
+	DriverLicenseNum string        `json:"driver_license_num,optional" validate:"required"`
+	Address          *AddressEntry `json:"address,optional" validate:"required"`
 }
 
 type LoanApplyPropertyEntry struct {
 	Id                   int64              `json:"id,optional"`
-	PropertyType         string             `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
-	LivingAreaSqft       float32            `json:"living_area_sqft" validate:"required,gte=0"`
-	Bedrooms             int32              `json:"bedrooms" validate:"required,gte=0"`
-	Bathrooms            int32              `json:"bathrooms" validate:"gte=0"`
+	PropertyType         string             `json:"property_type,optional" validate:"required,oneof='Single Family Residence' '2 unit' '3unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
+	LivingAreaSqft       float32            `json:"living_area_sqft,optional" validate:"required,gte=0"`
+	Bedrooms             int32              `json:"bedrooms,optional" validate:"required,gte=0"`
+	Bathrooms            int32              `json:"bathrooms,optional" validate:"gte=0"`
 	FuturePropertyType   string             `json:"future_property_type,optional"`
 	FutureUnit           int32              `json:"future_unit,optional" validate:"gte=0"`
 	FutureLivingAreaSqft float32            `json:"future_living_area_sqft,optional" validate:"gte=0"`
 	FutureBedrooms       int32              `json:"future_bedrooms,optional" validate:"gte=0"`
 	FutureBathrooms      int32              `json:"future_bathrooms,optional" validate:"gte=0"`
-	PropertyBase         *PropertyBaseEntry `json:"property_base" validate:"required"`
+	PropertyBase         *PropertyBaseEntry `json:"property_base,optional" validate:"required"`
 }
 
 type LoanBorrowerEntry struct {

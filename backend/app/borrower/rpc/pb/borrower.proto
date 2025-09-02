@@ -742,3 +742,25 @@ message LoanDemographicExtraDemographicEntry {
   //  bool is_by_email_or_internet = 7;
   repeated string info_channels = 4;
 }
+
+// ===================== storage service ======================
+
+message StorageCreatePresignedUrlRequest {
+  StorageCreatePresignedUrlRequestData data = 1;
+}
+
+message StorageCreatePresignedUrlRequestData {
+  string type = 1;
+}
+
+message StorageCreatePresignedUrlResponse {
+  StorageCreatePresignedUrlResponseData data = 1;
+}
+
+message StorageCreatePresignedUrlResponseData {
+  string url = 1;
+}
+
+service Storage {
+  rpc CreatePresignedUrl(StorageCreatePresignedUrlRequest) returns(StorageCreatePresignedUrlResponse);
+}

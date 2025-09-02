@@ -25,8 +25,9 @@ type RpcConf struct {
 	ForbiddenLoginSeconds int // seconds for next retry login
 	RedisConf             RedisConf
 
-	JwtAuth types.JwtAuth `json:",optional"`
-	DbConf  DbConf
+	JwtAuth   types.JwtAuth `json:",optional"`
+	DbConf    DbConf
+	AwsS3Conf AwsS3Conf
 }
 
 type DbConf struct {
@@ -36,4 +37,13 @@ type DbConf struct {
 type RedisConf struct {
 	redis.RedisConf
 	Prefix string // key prefix
+}
+
+type AwsS3Conf struct {
+	AccessKey                string
+	AccessSecret             string
+	Bucket                   string
+	Region                   string
+	FileFolder               string
+	PreSigneUrlExpireSeconds int
 }

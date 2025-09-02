@@ -14,6 +14,7 @@ import "desc/property.api"
 import "desc/applicant.api"
 import "desc/us_geography.api"
 import "desc/pdf.api"
+import "desc/storage.api"
 
 type (
 	EmptyRequest  {}
@@ -169,16 +170,31 @@ service borrower-api {
 
 // =============== pdf ==============
 @server(
-    desc: "applicant service"
-    version: v1
-    group: pdf
-    prefix:     /api/v1
-    middleware: AuthMiddleware
-    tags: pdf
+	desc: "applicant service"
+	version: v1
+	group: pdf
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: pdf
 )
 service borrower-api {
-    @doc "create apply form pdf"
-    @handler ApplyFormPdf
-    post /pdf/apply_form (ApplyFormPdfRequest) returns (EmptyResponse)
+	@doc "create apply form pdf"
+	@handler ApplyFormPdf
+	post /pdf/apply_form (ApplyFormPdfRequest) returns (EmptyResponse)
+}
+
+// =============== storage ==============
+@server(
+	desc: "storage service"
+	version: v1
+	group: storage
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: storage
+)
+service borrower-api {
+	@doc "create aws s3 presign url"
+	@handler CreateAwsS3PresignUrl
+	post /storage/presign_url (S3PresignUrlCreateRequest) returns (S3PresignUrlCreateResponse)
 }
 

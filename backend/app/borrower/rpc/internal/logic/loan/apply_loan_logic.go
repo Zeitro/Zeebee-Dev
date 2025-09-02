@@ -62,6 +62,7 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrowe
 	var propertyBase *model.PropertyBase
 	var loan *model.Loan
 	var loanBorrower *model.LoanBorrower
+	var loanProperty *model.LoanProperty
 	err = l.svcCtx.LoanRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
 		var innerErr error
 
@@ -90,21 +91,22 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrowe
 			return innerErr
 		}
 
+		// save loan property
+		data.loanProperty.LoanId = loan.Id
+		data.loanProperty.PropertyBaseId = propertyBase.Id
+		loanProperty, innerErr = l.svcCtx.LoanPropertyRepo.CreateWithTx(l.ctx, tx, data.loanProperty, false)
+		if innerErr != nil {
+			return innerErr
+		}
+
 		// save applicants
 		slice.ForEach(data.applicants, func(index int, item *model.Applicant) {
 			item.BorrowerId = in.Data.BorrowerId
 			item.LoanId = loan.Id
 			item.LoanBorrowerId = loanBorrower.Id
+			item.LoanPropertyId = loanProperty.Id
 		})
 		_, innerErr = l.svcCtx.ApplicantRepo.BatchCreateWithTx(l.ctx, tx, data.applicants, false)
-		if innerErr != nil {
-			return innerErr
-		}
-
-		// save loan property
-		data.loanProperty.LoanId = loan.Id
-		data.loanProperty.PropertyBaseId = propertyBase.Id
-		_, innerErr = l.svcCtx.LoanPropertyRepo.CreateWithTx(l.ctx, tx, data.loanProperty, false)
 		if innerErr != nil {
 			return innerErr
 		}
