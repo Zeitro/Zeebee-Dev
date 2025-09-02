@@ -10,6 +10,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: remove old docker containers
+        run: |
+          docker rm -f backend-borrower-staging || true
       - name: build and deploy
         working-directory: backend
         run: |
