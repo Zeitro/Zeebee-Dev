@@ -1,15 +1,10 @@
 'use client';
-import { App, Button, Col, Form, message, Space, Steps, Tabs } from 'antd';
+import { Button, Col, Form, message, Space, Steps, Tabs } from 'antd';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styles from './index.module.scss';
-import CreateLoan from '../components/Create/Loan';
-import CreateProperty from '../components/Create/property';
-import CreateTerm from '../components/Create/term';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createZeeBeeSteps } from '@/enum/loan';
 import { createRequest } from '@/lib/fetch';
-import { formatDate } from '@/lib/date';
-import { loan_pending } from '@/enum/common';
 import ApplicantInfo from '../components/CreateZeeBee/ApplicantInfo';
 import BorrowerInfo from '../components/CreateZeeBee/BorrowerInfo';
 import PropertyInfo from '../components/CreateZeeBee/PropertyInfo';
@@ -20,40 +15,38 @@ import Declaration from '../components/CreateZeeBee/Declaration';
 import Demographics from '../components/CreateZeeBee/Demographics';
 import ReviewAndSign from '../components/CreateZeeBee/ReviewAndSign';
 import _ from 'lodash';
+import { flattenObjectPaths } from '@/lib/common';
 const CreateZeeBeeLoan = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const api = `/property/${searchParams.get('propertyId')}`;
-	const { request } = createRequest();
+	const [form] = Form.useForm();
 	const scrollRef = useRef(null);
 	const [currentStep, setCurrentStep] = useState(0); //顶部-总步骤
 	const [stepNum, setStepNum] = useState(0); //侧边步骤
 	const [loading, setLoading] = useState(false);
-	const [form] = Form.useForm();
-	// 存储每个步骤的数据
-	const [loanData, setLoanData] = useState({
-		0: {},
-		1: {},
-		2: {
-			applicants: [
-				{ is_primary: true, type: 'Individual' },
-				{ is_primary: false, type: 'Individual' },
-			],
-		},
-	});
+	const [errorList, setErrorList] = useState([]);
+	const { request } = createRequest();
 
-	// useEffect(() => {
-	// 	// back时赋值
-	// 	const item = loanData?.[currentStep];
-	// 	if (item && JSON.stringify(item) !== '{}' && form) {
-	// 		form.setFieldsValue({ ...item });
-	// 	}
-	// }, [currentStep, loanData]);
+	// 从property详情跳转的创建loan
+	const getProperty = async () => {
+		const data = await request(api);
+		const newData = {
+			loan_property: {
+				// property_type: data.property_type,
+				property_base: {
+					unit: data.unit,
+					address: data.address,
+				},
+			},
+		};
+		form.setFieldsValue(newData);
+	};
 
-	// // 获取property
-	// useEffect(() => {
-	// 	if (searchParams.has('propertyId')) getProperty();
-	// }, []);
+	// 获取property
+	useEffect(() => {
+		if (searchParams.has('propertyId')) getProperty();
+	}, []);
 
 	const stepContent = [
 		[
@@ -61,7 +54,11 @@ const CreateZeeBeeLoan = () => {
 			<BorrowerInfo key="1-BorrowerInfo" form={form} />,
 		],
 		[
-			<PropertyInfo key="0-PropertyInfo" form={form} />,
+			<PropertyInfo
+				key="0-PropertyInfo"
+				form={form}
+				isRequestProperty={searchParams.has('propertyId')}
+			/>,
 			<LoanDetail key="1-LoanDetail" form={form} />,
 		],
 		[
@@ -118,38 +115,24 @@ const CreateZeeBeeLoan = () => {
 	// // next/Add loan
 	const handleNext = async () => {
 		try {
-			// const stepConfigItem = createZeeBeeSteps[currentStep]?.children
-			// 	? createZeeBeeSteps[currentStep]?.children[stepNum]
-			// 	: createZeeBeeSteps[currentStep];
-			// const validateName = stepConfigItem?.validate;
-			const values = await form.validateFields();
-			const a = form.getFieldsValue(true);
-			console.log(values, a);
+			const a = form.getFieldsValue();
+			let fieldsKeys = true;
+			// 解决：没填数据就触发了错误验证，又直接切换到上一步骤，又点击下一步时，validateFields会报错，提示刚才错误验证的字段没有填，导致下一页切换不了
+			if (errorList.length) {
+				errorList.map((i) => {
+					_.unset(a, i); // 拿到错误的字段key，删除这项内容
+				});
+				fieldsKeys = flattenObjectPaths(a); // 将多层嵌套对象转换为二维路径数组
+			}
+			const values = await form.validateFields(fieldsKeys);
+			setErrorList([]);
 			const isType = diffSteps();
 			if (isType === 'Submit') {
-				// 		// add loan
-				// 		const body = {
-				// 			...(loanData[0] || {}),
-				// 			...(loanData[1] || {}),
-				// 			...(values || {}),
-				// 		};
-				// 		if (body.closing_date) {
-				// 			body.closing_date = formatDate(body.closing_date);
-				// 		}
-				// 		if (body.maturity_date) {
-				// 			body.maturity_date = formatDate(body.maturity_date);
-				// 		}
-				// 		if (body.paid_off_date) {
-				// 			body.paid_off_date = formatDate(body.paid_off_date);
-				// 		}
-				// 		body.applicants = body?.applicants.filter((i) => i.name);
-				// 		setLoading(true);
+				setLoading(true);
 				const body = _.cloneDeep(values);
 
 				body.loan_borrower.tin_type = values?.loan_borrower?.tin?.tin_type;
 				body.loan_borrower.tin = values?.loan_borrower?.tin?.tin;
-				console.log(body, values);
-
 				await request('/loan/apply', {
 					method: 'POST',
 					body,
@@ -162,7 +145,6 @@ const CreateZeeBeeLoan = () => {
 				// 		router.back();
 				return;
 			}
-			// setLoanData((v) => ({ ...v, [currentStep]: values }));
 			if (isType === 'NextMaxStep') {
 				setCurrentStep((v) => v + 1);
 				setStepNum(0);
@@ -174,8 +156,9 @@ const CreateZeeBeeLoan = () => {
 				top: 0,
 			});
 		} catch (error) {
-			console.log('error', error);
-
+			if (error?.errorFields) {
+				setErrorList(error?.errorFields.map((item) => item.name));
+			}
 			setLoading(false);
 		}
 	};
@@ -197,29 +180,26 @@ const CreateZeeBeeLoan = () => {
 	};
 
 	const handleBack = () => {
+		if (errorList.length) {
+			// 光设置重新验证不行，需要结合validateFields处的操作才可避免
+			form.setFields(
+				errorList.map((i) => ({
+					name: i,
+					errors: [],
+					touched: false,
+					validated: false,
+				})),
+			);
+			form.resetFields(errorList);
+		}
 		if (stepNum) {
-			setStepNum((v) => v - 1);
+			setStepNum((v) => (v - 1 < 0 ? 0 : v - 1));
 		} else {
 			const prevStepData = stepContent[currentStep - 1];
-			setCurrentStep((v) => v - 1);
-			setStepNum(prevStepData?.length - 1);
+			setCurrentStep((v) => (v - 1 < 0 ? 0 : v - 1));
+			setStepNum(prevStepData?.length - 1 < 0 ? 0 : prevStepData?.length - 1);
 		}
 	};
-
-	// // 从property详情跳转的创建loan
-	// const getProperty = async () => {
-	// 	const data = await request(api);
-	// 	const newData = {
-	// 		loan_property: {
-	// 			property_type: data.property_type,
-	// 			property_base: {
-	// 				unit: data.unit,
-	// 				address: data.address,
-	// 			},
-	// 		},
-	// 	};
-	// 	form.setFieldsValue(newData);
-	// };
 
 	const stepBtn = useMemo(() => {
 		const cancelBtn = <Button onClick={() => router.back()}>Cancel</Button>;
@@ -253,7 +233,7 @@ const CreateZeeBeeLoan = () => {
 				</Space>
 			</Col>
 		);
-	}, [currentStep, stepNum, loading]);
+	}, [currentStep, stepNum, loading, errorList]);
 	// createZeeBeeSteps.map((i, index) => ({
 	// 							key: index,
 	// 							label: i.title,
@@ -266,7 +246,6 @@ const CreateZeeBeeLoan = () => {
 	// 								</>
 	// 							),
 	// 						}))
-	console.log(getTabsItem());
 
 	return (
 		<div className="flex flex-col h-full">

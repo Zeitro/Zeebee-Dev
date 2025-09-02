@@ -6,7 +6,7 @@ import { useGetOptions } from '@/hooks/useGetOptions';
 import { layoutCol, titleCol } from '@/enum/common';
 import { livingAreaProps } from '@/lib/format';
 let name = 'loan_property';
-const PropertyInfo = ({ gutter = 24, form, addressProps }) => {
+const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty }) => {
 	const { loanPurposeOptions, loanTypeOptions, propertyTypeOptions } = useGetOptions([
 		{
 			key: 'loan_purpose',
@@ -40,6 +40,7 @@ const PropertyInfo = ({ gutter = 24, form, addressProps }) => {
 				stateCol={{ ...layoutCol, md: 8 }}
 				cityCol={{ ...layoutCol, md: 8 }}
 				zipCol={{ ...layoutCol, md: 8 }}
+				disabled={isRequestProperty}
 			/>
 			<Col {...layoutCol}>
 				<Form.Item
@@ -106,6 +107,7 @@ const PropertyInfo = ({ gutter = 24, form, addressProps }) => {
 						max={10}
 						controls={false}
 						placeholder="Enter number of units"
+						disabled={isRequestProperty}
 					/>
 				</Form.Item>
 			</Col>

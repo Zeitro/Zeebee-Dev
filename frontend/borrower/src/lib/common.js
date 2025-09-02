@@ -1,3 +1,4 @@
+import _ from 'lodash';
 /**
  * 公共方法封装（格式化或验证相关写在format文件）
  * */
@@ -46,3 +47,27 @@ export const transformArrayStructure = (
 		return obj;
 	});
 };
+
+/**
+ * 将多层嵌套对象转换为二维路径数组(拿到字段的键，可用于表单中)
+ * @param obj 目标对象
+ * @param parentPath 当前路径（递归内部使用）
+ * @returns 二维路径数组，如 [['a', 'b'], ['a', 0, 'c']]
+ */
+export function flattenObjectPaths(obj, parentPath = []) {
+	let paths = [];
+
+	_.forOwn(obj, (value, key) => {
+		const currentPath = [...parentPath, key];
+
+		if (_.isPlainObject(value) || _.isArray(value)) {
+			// 递归处理对象或数组
+			paths.push(...flattenObjectPaths(value, currentPath));
+		} else {
+			// 叶子节点，直接添加路径
+			paths.push(currentPath);
+		}
+	});
+
+	return paths;
+}

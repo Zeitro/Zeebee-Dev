@@ -85,7 +85,7 @@ const CreateLoanPage = () => {
 		const data = await request(api);
 		const newData = {
 			loan_property: {
-				property_type: data.property_type,
+				// property_type: data.property_type,
 				property_base: {
 					unit: data.unit,
 					address: data.address,
