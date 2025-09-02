@@ -15,6 +15,6 @@ RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o borrower /app/app/borr
 FROM scratch AS final
 WORKDIR /app
 COPY --from=builder /app/borrower /app/borrower
-COPY ./app/borrower/etc/config-staging.yaml /app/etc/config.yaml
+COPY ./app/borrower/etc/config-staging.yaml /app/etc/config-staging.yaml
 EXPOSE 10000
 ENTRYPOINT ["/app/borrower","-f","/app/etc/config-staging.yaml"]
