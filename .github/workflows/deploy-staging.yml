@@ -16,4 +16,5 @@ jobs:
         working-directory: backend
         run: |
           docker-compose -f docker-compose-borrower-staging.yml down || true
-          docker-compose -f docker-compose-borrower-staging.yml up --build -d --no-cache
+          docker-compose -f docker-compose-borrower-staging.yml build --no-cache
+          docker-compose -f docker-compose-borrower-staging.yml up -d
