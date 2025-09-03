@@ -158,6 +158,11 @@ message LoanPropertyEntry{
   float living_area_sqft = 5;
   int32 bedrooms = 6;
   int32 bathrooms = 7;
+  string future_property_type = 8;
+  int32  future_unit = 9;
+  float future_living_area_sqft = 10;
+  int32 future_bedrooms = 11;
+  int32 future_bathrooms = 12;
 }
 
 message AddressEntry{
@@ -438,7 +443,7 @@ message LoanApplyRequestData {
   LoanPropertyEntry loan_property = 5;
   double holdback_amount = 6;
   double principal_amount = 7;
-  string maturity_date = 8;
+  //  string maturity_date = 8;
   int32 prepayment_penalty = 9;
   int64 lender_id = 10;
   int64 borrower_id = 11;
@@ -476,6 +481,7 @@ message LoanApplyRequestData {
   float yearly_liability_expense = 43;
   repeated LoanThirdServiceEntry loan_third_services = 44;
   int64 id = 45;
+  string apply_form_file = 46;
 }
 
 message LoanApplyResponse {
@@ -681,10 +687,11 @@ message LoanDemographicPropertyEntry {
   bool has_a_pre_foreclosure_sale = 11;
   bool has_foreclosed_upon = 12;
   bool has_a_bankruptcy = 13;
-  bool bankruptcy_chapter7 = 14;
-  bool bankruptcy_chapter11 = 15;
-  bool bankruptcy_chapter12 = 16;
-  bool bankruptcy_chapter13 = 17;
+  string bankruptcy_chapter = 14;
+  //  bool bankruptcy_chapter7 = 14;
+  //  bool bankruptcy_chapter11 = 15;
+  //  bool bankruptcy_chapter12 = 16;
+  //  bool bankruptcy_chapter13 = 17;
 }
 
 message LoanDemographicEthnicityEntry {
@@ -735,4 +742,26 @@ message LoanDemographicExtraDemographicEntry {
   //  bool is_by_fox_or_mail = 6;
   //  bool is_by_email_or_internet = 7;
   repeated string info_channels = 4;
+}
+
+// ===================== storage service ======================
+
+message StorageCreatePresignedUrlRequest {
+  StorageCreatePresignedUrlRequestData data = 1;
+}
+
+message StorageCreatePresignedUrlRequestData {
+  string type = 1;
+}
+
+message StorageCreatePresignedUrlResponse {
+  StorageCreatePresignedUrlResponseData data = 1;
+}
+
+message StorageCreatePresignedUrlResponseData {
+  string url = 1;
+}
+
+service Storage {
+  rpc CreatePresignedUrl(StorageCreatePresignedUrlRequest) returns(StorageCreatePresignedUrlResponse);
 }

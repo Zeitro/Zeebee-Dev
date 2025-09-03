@@ -1,6 +1,6 @@
 @startuml
 
-entity "users"{
+entity users{
     * id  int4
     * created_at timestamptz
     * updated_at timestamptz
@@ -22,7 +22,7 @@ note right of users
 end note
 
 
-entity "borrowers"{
+entity borrowers{
     * id int4
     * created_at timestamptz
     * updated_at timestamptz
@@ -36,12 +36,13 @@ entity "borrowers"{
     * address jsonb
 }
 
-entity "loans" {
+entity loans {
     * id int4
     * created_at timestamptz
     * updated_at timestamptz
     * is_del int2
     ---
+    * code varchar(100)
     * borrower_id int4
     * lender_id int4
     * lender_company varchar(100)
@@ -90,7 +91,7 @@ entity "loans" {
     * has_collateralized_blanket boolean
     * has_properties_vacant boolean
     * has_short_term_rental boolean
-    * additional_info varchar(3000)
+'    * additional_info varchar(3000)
 }
 
 note right of loans
@@ -139,7 +140,7 @@ note right of loans
     }
 end note
 
-entity "loan_experiences"{
+entity loan_experiences{
         * id int4
         * created_at timestamptz
         * updated_at timestamptz
@@ -165,7 +166,7 @@ note right of loan_experiences
         - Real Estate
 end note
 
-entity "loan_third_services"{
+entity loan_third_services{
     * id int4
     * created_at timestamptz
     * updated_at timestamptz
@@ -188,7 +189,7 @@ note right of loan_third_services
         - appraisal payment contact
 end note
 
-entity "loan_demographics"{
+entity loan_demographics{
     * id int4
     * created_at timestamptz
     * updated_at timestamptz
@@ -199,7 +200,7 @@ entity "loan_demographics"{
     * ethnicity jsonb
     * race jsonb
     * sex varchar(10)
-    * extra_demographic jsonb
+'    * extra_demographic jsonb
 }
 
 note right of loan_demographics
@@ -223,50 +224,55 @@ note right of loan_demographics
         bankruptcy_chapter13 boolean
     }
     ethnicity{
-        is_hispanic_or_latino boolean
-        is_other_hispanic_or_latino boolean
+'        is_hispanic_or_latino boolean
+'        is_other_hispanic_or_latino boolean
+'        is_mexican boolean
+'        is_cuban boolean
+'        is_not_hispanic_or_latino boolean
+'        hidden boolean
+
+        values jsonb
         other_hispanic_or_latino_name varchar(30)
-        is_mexican boolean
-        is_cuban boolean
-        is_not_hispanic_or_latino boolean
-        hidden boolean
     }
     race{
-        is_american_indian_or_alaska_native boolean
-        american_indian_or_alaska_native_name varchar(30)
-        is_asian boolean
-        is_asian_indian boolean
-        is_asian_chinese boolean
-        is_asian_filipino boolean
-        is_asian_japanese boolean
-        is_asian_korean boolean
-        is_asian_vietnamese boolean
-        is_asian_other boolean
+'        is_american_indian_or_alaska_native boolean
+'        is_asian boolean
+'        is_asian_indian boolean
+'        is_asian_chinese boolean
+'        is_asian_filipino boolean
+'        is_asian_japanese boolean
+'        is_asian_korean boolean
+'        is_asian_vietnamese boolean
+'        is_asian_other boolean
+'        is_black_or_african_american boolean
+'        is_native_hawaiian_or_other_pacific_islander boolean
+'        is_native_hawaiian_guamanian_or_chamorro_samoan boolean
+'        is_other_pacific_islander boolean
+'        is_white boolean
+'        hidden boolean
+
+        values jsonb
+        asian_values jsonb
         asian_other_name varchar(30)
-        is_black_or_african_american boolean
-        is_native_hawaiian_or_other_pacific_islander boolean
-        is_native_hawaiian_guamanian_or_chamorro_samoan boolean
-        is_other_pacific_islander boolean
+        american_indian_or_alaska_native_name varchar(30)
         other_pacific_islander_name varchar(30)
-        is_white boolean
-        hidden boolean
     }
-    extra_demographic{
-        is_ethnicity_collected_by_observation boolean
-        is_sex_collected_by_observation boolean
-        is_race_collected_by_observation boolean
-        is_by_face_to_face boolean
-        is_by_telephone boolean
-        is_by_fox_or_mail boolean
-        is_by_email_or_internet boolean
-    }
+'    extra_demographic{
+'        is_ethnicity_collected_by_observation boolean
+'        is_sex_collected_by_observation boolean
+'        is_race_collected_by_observation boolean
+'        is_by_face_to_face boolean
+'        is_by_telephone boolean
+'        is_by_fox_or_mail boolean
+'        is_by_email_or_internet boolean
+'    }
     sex:
         - Male
         - Female
         - Hidden
 end note
 
-entity "loan_borrowers"{
+entity loan_borrowers{
     * id int4
     * created_at timestamptz
     * updated_at timestamptz
@@ -291,7 +297,7 @@ note right of loan_borrowers
         - ITIN
 end note
 
-entity "property_bases" {
+entity property_bases {
     * id int4
     * created_at timestamptz
     * updated_at timestamptz
@@ -313,7 +319,7 @@ note right of property_bases
     }
 end note
 
-entity "loan_properties" {
+entity loan_properties {
     * id int4
     * created_at timestamptz
     * updated_at timestamptz
@@ -326,6 +332,11 @@ entity "loan_properties" {
     * living_area_sqft decimal(8,2)
     * bedrooms int2
     * bathrooms int2
+    * future_property_type varchar(30)
+    * future_living_area_sqft decimal(8,2)
+    * future_bedrooms int2
+    * future_bathrooms int2
+    * future_unit int2
 }
 
 note right of loan_properties
@@ -342,7 +353,7 @@ note right of loan_properties
 end note
 
 
-entity "lenders" {
+entity lenders {
     * id int4
     * created_at timestamptz
     * updated_at timestamptz
@@ -359,7 +370,7 @@ note right of lenders
         - inactive
 end note
 
-entity "applicants"{
+entity applicants {
     * id int4
     * created_at timestamptz
     * updated_at timestamptz
@@ -403,7 +414,7 @@ note right of applicants
         - Separated
 end note
 
-entity "us_geographies"{
+entity us_geographies {
         * id int4
         * created_at timestamptz
         * updated_at timestamptz
@@ -414,6 +425,22 @@ entity "us_geographies"{
         * county_name varchar(50)
         * city_name varchar(50)
 }
+
+entity files{
+        * id int4
+        * created_at timestamptz
+        * updated_at timestamptz
+        * is_del int2
+        ---
+        * type varchar(20)
+        * ref_id int4
+        * file varchar(100)
+}
+
+note right of files
+    type:
+        - ApplyForm
+end note
 
 
 users ||--|| borrowers: has one
@@ -426,6 +453,7 @@ loans ||--o{ applicants: has many
 loans ||--|| loan_properties: has one
 loans ||--|| loan_borrowers: has one
 loans ||--|| loan_demographics: has one
+loans ||--o{ files: has one
 loans ||--o{ loan_experiences: has many
 loans ||--o{ loan_third_services: has many
 loan_borrowers ||--o{ applicants: has many

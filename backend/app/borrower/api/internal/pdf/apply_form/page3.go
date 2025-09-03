@@ -37,7 +37,10 @@ func (form *ApplyForm) page3() (err error) {
 	form.pdf.BrLine()
 	form.pdf.BrLine()
 	form.pdf.BrLine()
-	_ = form.buildSignature()
+	err = form.buildSignature(form.info.Signatures.BorrowerInfo)
+	if err != nil {
+		return err
+	}
 	form.pdf.SetRegularFont()
 
 	return err

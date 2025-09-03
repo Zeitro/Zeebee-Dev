@@ -6,6 +6,9 @@ import (
 	"github.com/signintech/gopdf"
 
 	"zeebee-backend/app/borrower/api/internal/pdf"
+	"zeebee-backend/app/borrower/api/internal/types"
+	"zeebee-backend/common/constants"
+	"zeebee-backend/common/stringx"
 )
 
 func (form *ApplyForm) page2() (err error) {
@@ -16,65 +19,65 @@ func (form *ApplyForm) page2() (err error) {
 	}
 	form.pdf.SetBoldFont()
 	_ = form.pdf.Cell(nil, "Borrower Type:")
-	// form.pdf.Br(20)
+
 	form.pdf.BrLine()
 	x := form.pdf.GetX()
 	y := form.pdf.GetY()
 	startX := x + 50.0
 	startY := y + 5
-	boxWidth := 17.0
-	items := []string{"Individual", " LLC", "Corporation", " Partnership", "Trust"}
-	for _, item := range items {
-		itemLen, _ := form.pdf.MeasureTextWidth(item)
-		err = form.pdf.ImageFrom(pdf.EmptyCheckBox, startX, y, &gopdf.Rect{W: boxWidth, H: boxWidth})
-		if err != nil {
-			return err
-		}
-		form.pdf.SetXY(startX+boxWidth+5, startY)
-		_ = form.pdf.Cell(nil, item)
-		startX += itemLen + 30
+	borrowerInfo := form.info.LoanBorrower
+
+	err = form.buildRadioCheckbox(startX, startY, constants.ApplicantTypeName, borrowerInfo.Type)
+	if err != nil {
+		return err
 	}
-	// form.pdf.SetXY(x, y)
-	// form.pdf.Br(15)
 	form.pdf.BrLine()
-	// 绘制灰色线条
+
 	form.pdf.SetGrayStroke()
 	form.pdf.Line(form.pdf.MarginLeft(), form.pdf.GetY(), gopdf.PageSizeA4.W-form.pdf.MarginRight(), form.pdf.GetY())
 	form.pdf.SetRegularFont()
 	rowHeight := 12.0
 	brHeight := 6.0
 	form.pdf.Br(brHeight)
-	_ = form.pdf.Cell(&gopdf.Rect{W: 300, H: rowHeight}, "Entity Name/Individual: ")
-	_ = form.pdf.Cell(&gopdf.Rect{W: 100, H: rowHeight}, "TIN: ")
-	_ = form.pdf.Cell(&gopdf.Rect{W: 100, H: rowHeight}, "% Own:")
+	_ = form.pdf.Cell(&gopdf.Rect{W: 250, H: rowHeight}, "Entity Name/Individual:  "+borrowerInfo.Name)
+	_ = form.pdf.Cell(&gopdf.Rect{W: 150, H: rowHeight}, "TIN:  "+stringx.FormatUsSsn(borrowerInfo.Tin))
+	_ = form.pdf.Cell(&gopdf.Rect{W: 100, H: rowHeight}, "% Own:  "+fmt.Sprintf("%d", borrowerInfo.OwnPercent))
 	form.pdf.Br(brHeight * 3.0)
-	_ = form.pdf.MultiCell(&gopdf.Rect{W: gopdf.PageSizeA4.W - form.pdf.MarginLeft() - form.pdf.MarginRight(), H: rowHeight}, "Mailing Address: ")
+	_ = form.pdf.MultiCell(&gopdf.Rect{W: gopdf.PageSizeA4.W - form.pdf.MarginLeft() - form.pdf.MarginRight(), H: rowHeight}, "Mailing Address:  "+borrowerInfo.MailingAddress.Address1)
 	form.pdf.Br(brHeight)
-	_ = form.pdf.Cell(&gopdf.Rect{W: 300, H: rowHeight}, "City: ")
-	_ = form.pdf.Cell(&gopdf.Rect{W: 100, H: rowHeight}, "State: ")
-	_ = form.pdf.Cell(&gopdf.Rect{W: 100, H: rowHeight}, "Zip:")
+	_ = form.pdf.Cell(&gopdf.Rect{W: 250, H: rowHeight}, "City:  "+borrowerInfo.MailingAddress.City)
+	_ = form.pdf.Cell(&gopdf.Rect{W: 150, H: rowHeight}, "State:  "+borrowerInfo.MailingAddress.State)
+	_ = form.pdf.Cell(&gopdf.Rect{W: 100, H: rowHeight}, "Zip:  "+borrowerInfo.MailingAddress.ZipCode)
 	form.pdf.Br(brHeight * 3.0)
-	_ = form.pdf.MultiCell(&gopdf.Rect{W: gopdf.PageSizeA4.W - form.pdf.MarginLeft() - form.pdf.MarginRight(), H: rowHeight}, "Phone: ")
+	_ = form.pdf.MultiCell(&gopdf.Rect{W: gopdf.PageSizeA4.W - form.pdf.MarginLeft() - form.pdf.MarginRight(), H: rowHeight}, "Phone:  "+stringx.FormatUsPhoneNumber(borrowerInfo.ContactPhone))
 	form.pdf.Br(brHeight)
-	_ = form.pdf.MultiCell(&gopdf.Rect{W: gopdf.PageSizeA4.W - form.pdf.MarginLeft() - form.pdf.MarginRight(), H: rowHeight}, "Email: ")
+	_ = form.pdf.MultiCell(&gopdf.Rect{W: gopdf.PageSizeA4.W - form.pdf.MarginLeft() - form.pdf.MarginRight(), H: rowHeight}, "Email:  "+borrowerInfo.ContactEmail)
 	form.pdf.Br(brHeight)
-	_ = form.pdf.MultiCell(&gopdf.Rect{W: gopdf.PageSizeA4.W - form.pdf.MarginLeft() - form.pdf.MarginRight(), H: rowHeight}, "Contact Name: ")
+	_ = form.pdf.MultiCell(&gopdf.Rect{W: gopdf.PageSizeA4.W - form.pdf.MarginLeft() - form.pdf.MarginRight(), H: rowHeight}, "Contact Name:  "+borrowerInfo.ContactName)
 	form.pdf.Br(brHeight)
 	form.pdf.Line(form.pdf.MarginLeft(), form.pdf.GetY(), gopdf.PageSizeA4.W-form.pdf.MarginRight(), form.pdf.GetY())
 
-	err = form.applicantInfo(1)
-	if err != nil {
-		return err
-	}
-	err = form.applicantInfo(2)
-	if err != nil {
-		return err
+	applicantsInfo := form.info.Applicants
+	for i := 0; i < 2; i++ {
+		var applicant *types.LoanApplyApplicantEntry
+		if i > len(applicantsInfo)-1 {
+			applicant = &types.LoanApplyApplicantEntry{
+				Address: &types.AddressEntry{},
+			}
+		} else {
+			applicant = applicantsInfo[i]
+		}
+		err = form.applicantInfo(i+1, applicant)
+		if err != nil {
+			return err
+		}
+
 	}
 
 	return err
 }
 
-func (form *ApplyForm) applicantInfo(index int) (err error) {
+func (form *ApplyForm) applicantInfo(index int, applicant *types.LoanApplyApplicantEntry) (err error) {
 	brHeight := 6.0
 	x := form.pdf.GetX()
 	y := form.pdf.GetY()
@@ -87,43 +90,43 @@ func (form *ApplyForm) applicantInfo(index int) (err error) {
 	form.pdf.SetBlackRegularFont()
 	form.pdf.Br(30)
 	rowHeight := 12.0
-	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "First Name:")
+	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "First Name:  "+applicant.FirstName)
 	form.pdf.Br(brHeight)
-	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "Middle Name:")
+	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "Middle Name:  "+applicant.MidName)
 	form.pdf.Br(brHeight)
-	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "Last Name:")
+	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "Last Name:  "+applicant.LastName)
 	form.pdf.Br(brHeight)
-	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "SSN:")
+	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "SSN:  "+stringx.FormatUsSsn(applicant.Ssn))
 	form.pdf.Br(brHeight)
-	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "DOB:")
+	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "DOB:  "+applicant.Dob)
 	form.pdf.Br(brHeight)
-	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "Phone:")
+	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "Phone:  "+stringx.FormatUsPhoneNumber(applicant.Phone))
 	form.pdf.Br(brHeight)
 	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "Marital Status:")
 	x = form.pdf.GetX()
 	y = form.pdf.GetY()
 	startX := x + 50.0
 	startY := y + 5
-	// boxWidth := 17.0
-	items := []string{"Married", "Unmarried", "Separated"}
-	err = form.buildCheckbox(startX, startY, items)
+
+	err = form.buildRadioCheckbox(startX, startY, constants.MaritalStatusName, applicant.MaritalStatus)
 	if err != nil {
 		return err
 	}
+
 	form.pdf.Br(brHeight)
-	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "Email:")
+	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "Email:  "+applicant.Email)
 	form.pdf.Br(brHeight)
-	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "Est. Credit Score:")
+	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "Est. Credit Score:  "+stringx.TransNumberToString[int32](applicant.EstCreditScore, true))
 	form.pdf.Br(brHeight)
-	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "Primary Address:")
+	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "Primary Address:  "+applicant.Address.Address1)
 	form.pdf.Br(brHeight)
-	_ = form.pdf.Cell(&gopdf.Rect{W: 100, H: rowHeight}, "City: ")
-	_ = form.pdf.Cell(&gopdf.Rect{W: (form.pdf.GetFullWidth()) / 2.0, H: rowHeight}, "State: ")
+	_ = form.pdf.Cell(&gopdf.Rect{W: 100, H: rowHeight}, "City:  "+applicant.Address.City)
+	_ = form.pdf.Cell(&gopdf.Rect{W: (form.pdf.GetFullWidth()) / 2.0, H: rowHeight}, "State:  "+applicant.Address.State)
 	form.pdf.Br(brHeight)
 	form.pdf.Br(15)
-	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "Zip:")
+	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "Zip:  "+applicant.Address.ZipCode)
 	form.pdf.Br(brHeight)
-	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "Drivers License #:")
+	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "Drivers License #:  "+applicant.DriverLicenseNum)
 	form.pdf.Br(brHeight)
 	return err
 }
