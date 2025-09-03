@@ -39,3 +39,9 @@ RpcConf:
   DbConf:
     # dsn: "host=postgres_14_18 user=dev_user password=dev_password dbname=dev_db port=5432 sslmode=disable TimeZone=UTC"
     dsn: "host=database-1.cj0ksq4g8d6c.us-west-1.rds.amazonaws.com user=dev_user password=dev_password dbname=dev_db port=5432 sslmode=require TimeZone=UTC"
+
+  AwsS3Conf:
+    AccessKey: KIAZYJFTPUSWNDYUDER
+    SecretKey: NuXeGeVBVo1HFGOWdmewa89ojE0qoiV7eHGcnuMo
+    Region: us-west-1
+    Bucket: zeebee-files-staging
