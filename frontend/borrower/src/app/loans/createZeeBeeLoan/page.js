@@ -23,7 +23,7 @@ const CreateZeeBeeLoan = () => {
 	const api = `/property/${searchParams.get('propertyId')}`;
 	const [form] = Form.useForm();
 	const scrollRef = useRef(null);
-	const [currentStep, setCurrentStep] = useState(4); //顶部-总步骤
+	const [currentStep, setCurrentStep] = useState(0); //顶部-总步骤
 	const [stepNum, setStepNum] = useState(0); //侧边步骤
 	const [loading, setLoading] = useState(false);
 	const [errorList, setErrorList] = useState([]);
