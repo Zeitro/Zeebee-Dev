@@ -6,7 +6,7 @@ import { navRouter } from '@config/routes';
 import { getCurrentRouterItem, flattenNavRouter, getCrumbs } from '@config/common';
 import Link from 'next/link';
 import styles from './index.module.scss';
-import { CustomContent } from './CustomContent';
+import { CustomContent } from './customContent';
 import eventBus from '@/lib/bus';
 /**
  * 面包屑导航

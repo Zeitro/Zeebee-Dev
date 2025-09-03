@@ -1,0 +1,25 @@
+syntax = "v1"
+
+info(
+    title: "borrower-address-api"
+    desc: "applicant-api http service description"
+    version: "v1"
+)
+
+type ApplicantEntry {
+    Id int64 `json:"id,omitempty"`
+    //    Name string `json:"name,omitempty"`
+    FirstName string `json:"first_name,omitempty"`
+    MidName string `json:"mid_name,omitempty"`
+    LastName string `json:"last_name,omitempty"`
+    FullName string `json:"full_name,omitempty"`
+    BorrowerID int64 `json:"borrower_id,omitempty"`
+    LoanID int64 `json:"loan_id,omitempty"`
+    IsPrimary bool `json:"is_primary"`
+    Type string `json:"type,omitempty"`
+    InvitationStatus string `json:"invitation_status,omitempty"`
+}
+
+type BorrowerNamesResponse {
+    BorrowerNames []string `json:"borrower_names,omitempty"`
+}

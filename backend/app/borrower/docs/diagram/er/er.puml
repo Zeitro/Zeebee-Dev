@@ -1,0 +1,462 @@
+@startuml
+
+entity users{
+    * id  int4
+    * created_at timestamptz
+    * updated_at timestamptz
+    * is_del int2
+    ---
+    * email varchar(100)
+    * password_hash varchar(100)
+    * status varchar(10)
+    * type varchar(10)
+}
+
+note right of users
+    status:
+        - active
+        - inactive
+    type:
+        - borrower
+        - lender
+end note
+
+
+entity borrowers{
+    * id int4
+    * created_at timestamptz
+    * updated_at timestamptz
+    * is_del int2
+    ---
+    * user_id int4
+    * first_name varchar(30)
+    * last_name varchar(30)
+    * ssn varchar(10)
+    * phone_number varchar(20)
+    * address jsonb
+}
+
+entity loans {
+    * id int4
+    * created_at timestamptz
+    * updated_at timestamptz
+    * is_del int2
+    ---
+    * code varchar(100)
+    * borrower_id int4
+    * lender_id int4
+    * lender_company varchar(100)
+    * existing_lender_company varchar(100)
+    * service_company varchar(100)
+    * stage  varchar(10)
+    * pending_status varchar(10)
+    * purpose varchar(20)
+    * loan_type varchar(30)
+    * total_amount numeric(10,2)
+    * principle_amount numeric(10,2)
+    * initial_amount numeric(10,2)
+    * holdback_amount numeric(10,2)
+    * holdback_released_amount numeric(10,2)
+    * lien_position varchar(10)
+    * rate numeric(4,2)
+    * existing_rate numeric(4,2)
+    * closing_fund numeric(10,2)
+    * closing_date date
+    * maturity_date date
+    * existing_maturity_date date
+    * paid_off_date int4
+    * monthly_payment numeric(10,2)
+    * business_strategy text[]
+    * source varchar(30)
+    * prepayment_penalty int2
+    * purchase_amount numeric(10,2)
+    * purchase_date date
+    * has_assignment_fee boolean
+    * prepayment_fee numeric(10,2)
+    * has_subordinate_debt boolean
+    * subordinate_debt_amount numeric(10,2)
+    * scheduled_close_escrow_date date
+    * loan_term int2
+    * arv numeric(10,2)
+    * ltv numeric(10,2)
+    * liquidity_amount numeric(10,2)
+    * budget jsonb
+    * mid_construction boolean
+    * est_credit_score int2
+    * est_yearly_rental_income numeric(10,2)
+    * yearly_liability_expense numeric(10,2)
+    * dscr numeric(8,4)
+    * reserves_amount numeric(10,2)
+    * has_delayed_financing boolean
+    * has_collateralized_blanket boolean
+    * has_properties_vacant boolean
+    * has_short_term_rental boolean
+'    * additional_info varchar(3000)
+}
+
+note right of loans
+    stage:
+        - Pending
+        - Active
+        - Archived
+    pending_status:
+        - Quoting
+        - Processing
+        - Closing
+    purpose:
+        - Purchase
+        - Rate-term refi
+        - Cash-out refi
+    loan_type:
+        - Bridge
+        - Rehab
+        - Rental
+        - Ground up construction
+    lien_position:
+        - 1st
+        - 2nd
+        - 3rd
+        - 4th
+        - Other
+    business_strategy:
+        - Sale
+        - Rent
+        - Flip
+        - ADU/Addition
+        - Single Lot SFR
+        - SB9 lot split
+        - Conforming lot split
+        - New Condo/TH
+        - Community development (>3 units)
+        - Commercial
+    source:
+        - borrower
+        - lender
+        - system
+    budget{
+        original_budget numeric(10,2)
+        remaining_budget numeric(10,2)
+        cost_spent_to_date_amount numeric(10,2)
+    }
+end note
+
+entity loan_experiences{
+        * id int4
+        * created_at timestamptz
+        * updated_at timestamptz
+        * is_del int2
+        ---
+        * loan_id int4
+        * ownership_on_title varchar(100)
+        * property_type varchar(50)
+        * purchase_amount numeric(10,2)
+        * purchase_date date
+        * sold_amount numeric(10,2)
+        * sold_date date
+        * budget_or_cost numeric(10,4)
+        * profit numeric(10,2)
+        * is_tenant_occupied boolean
+        * type varchar(10)
+        * address jsonb
+}
+
+note right of loan_experiences
+    type:
+        - Transaction
+        - Real Estate
+end note
+
+entity loan_third_services{
+    * id int4
+    * created_at timestamptz
+    * updated_at timestamptz
+    * is_del int2
+    ---
+    * loan_id int4
+    * type varchar(20)
+    * name varchar(100)
+    * email varchar(100)
+    * phone varchar(20)
+}
+
+note right of loan_third_services
+    type:
+        - title co
+        - escrow co
+        - insurance
+        - appraisal scheduling
+        - appraisal access contact
+        - appraisal payment contact
+end note
+
+entity loan_demographics{
+    * id int4
+    * created_at timestamptz
+    * updated_at timestamptz
+    * is_del int2
+    ---
+    * loan_id int4
+    * property jsonb
+    * ethnicity jsonb
+    * race jsonb
+    * sex varchar(10)
+'    * extra_demographic jsonb
+}
+
+note right of loan_demographics
+    property{
+        as_primary_resident boolean
+        has_transaction_relationship boolean
+        has_borrowed_money boolean
+        borrowed_money_amount numeric(10,2)
+        has_another_mortgage_loan boolean
+        has_priority_over_1st boolean
+        has_outstanding_judgements boolean
+        has_federal_debt boolean
+        has_a_lawsuit boolean
+        has_conveyed_title boolean
+        has_a_pre_foreclosure_sale boolean
+        has_foreclosed_upon boolean
+        has_a_bankruptcy boolean
+        bankruptcy_chapter7 boolean
+        bankruptcy_chapter11 boolean
+        bankruptcy_chapter12 boolean
+        bankruptcy_chapter13 boolean
+    }
+    ethnicity{
+'        is_hispanic_or_latino boolean
+'        is_other_hispanic_or_latino boolean
+'        is_mexican boolean
+'        is_cuban boolean
+'        is_not_hispanic_or_latino boolean
+'        hidden boolean
+
+        values jsonb
+        other_hispanic_or_latino_name varchar(30)
+    }
+    race{
+'        is_american_indian_or_alaska_native boolean
+'        is_asian boolean
+'        is_asian_indian boolean
+'        is_asian_chinese boolean
+'        is_asian_filipino boolean
+'        is_asian_japanese boolean
+'        is_asian_korean boolean
+'        is_asian_vietnamese boolean
+'        is_asian_other boolean
+'        is_black_or_african_american boolean
+'        is_native_hawaiian_or_other_pacific_islander boolean
+'        is_native_hawaiian_guamanian_or_chamorro_samoan boolean
+'        is_other_pacific_islander boolean
+'        is_white boolean
+'        hidden boolean
+
+        values jsonb
+        asian_values jsonb
+        asian_other_name varchar(30)
+        american_indian_or_alaska_native_name varchar(30)
+        other_pacific_islander_name varchar(30)
+    }
+'    extra_demographic{
+'        is_ethnicity_collected_by_observation boolean
+'        is_sex_collected_by_observation boolean
+'        is_race_collected_by_observation boolean
+'        is_by_face_to_face boolean
+'        is_by_telephone boolean
+'        is_by_fox_or_mail boolean
+'        is_by_email_or_internet boolean
+'    }
+    sex:
+        - Male
+        - Female
+        - Hidden
+end note
+
+entity loan_borrowers{
+    * id int4
+    * created_at timestamptz
+    * updated_at timestamptz
+    * is_del int2
+    ---
+    * loan_id int4
+    * type varchar(10)
+    * name varchar(255)
+    * tin varchar(20)
+    * tin_type varchar(10)
+    * mailing_address jsonb
+    * contact_email varchar(100)
+    * contact_phone varchar(20)
+    * contact_name varchar(100)
+    * own_percent int2
+}
+
+note right of loan_borrowers
+    tin_type:
+        - SSN
+        - EIN
+        - ITIN
+end note
+
+entity property_bases {
+    * id int4
+    * created_at timestamptz
+    * updated_at timestamptz
+    * is_del int2
+    ---
+    * unit int2
+    * borrower_id int4
+    * total_amount numeric(10,2)
+    * address jsonb
+}
+
+note right of property_bases
+    address {
+        state
+        city
+        zip_code
+        address1
+        address2
+    }
+end note
+
+entity loan_properties {
+    * id int4
+    * created_at timestamptz
+    * updated_at timestamptz
+    * is_del int2
+    ---
+    * loan_id int4
+    * property_base_id int4
+    * borrower_id int4
+    * property_type  varchar(30)
+    * living_area_sqft decimal(8,2)
+    * bedrooms int2
+    * bathrooms int2
+    * future_property_type varchar(30)
+    * future_living_area_sqft decimal(8,2)
+    * future_bedrooms int2
+    * future_bathrooms int2
+    * future_unit int2
+}
+
+note right of loan_properties
+    property_type:
+        - Single Family Residence
+        - 2 unit
+        - 3 unit
+        - 4 unit
+        - 4+ Multi
+        - Townhouse
+        - PUD/Condominium
+        - Mixed Use
+        - Commercial
+end note
+
+
+entity lenders {
+    * id int4
+    * created_at timestamptz
+    * updated_at timestamptz
+    * is_del int2
+    ---
+    * name varchar(100)
+    * address jsonb
+    * status varchar(10)
+}
+
+note right of lenders
+    status:
+        - active
+        - inactive
+end note
+
+entity applicants {
+    * id int4
+    * created_at timestamptz
+    * updated_at timestamptz
+    * is_del int2
+    ---
+    * borrower_id int4
+    * loan_id int4
+    * loan_property_id int4
+    * loan_borrower_id int4
+    * first_name varchar(30)
+    * last_name varchar(30)
+    * mid_name varchar(30)
+    * is_primary int2
+    * type varchar(10)
+    * invitation_status varchar(10)
+    * ssn varchar(20)
+    * dob date
+    * phone varchar(20)
+    * marital_status varchar(10)
+    * email varchar(50)
+    * est_credit_score int2
+    * drive_license_num varchar(20)
+    * address jsonb
+}
+
+
+note right of applicants
+    type:
+        - Individual
+        - Corporation
+        - Trust
+        - Partnership
+        - Trust
+    invitation_status:
+        - Pending
+        - Accepted
+        - Rejected
+    marital_status:
+        - Unmarried
+        - Married
+        - Separated
+end note
+
+entity us_geographies {
+        * id int4
+        * created_at timestamptz
+        * updated_at timestamptz
+        * is_del int2
+        ---
+        * state_name varchar(50)
+        * state_usps varchar(10)
+        * county_name varchar(50)
+        * city_name varchar(50)
+}
+
+entity files{
+        * id int4
+        * created_at timestamptz
+        * updated_at timestamptz
+        * is_del int2
+        ---
+        * type varchar(20)
+        * ref_id int4
+        * file varchar(100)
+}
+
+note right of files
+    type:
+        - ApplyForm
+end note
+
+
+users ||--|| borrowers: has one
+borrowers ||--o{ loans: has many
+borrowers ||--o{ property_bases: has many
+borrowers ||--o{ applicants: has many
+property_bases ||--o{ loan_properties: has many
+loan_properties ||--o{ applicants: has many
+loans ||--o{ applicants: has many
+loans ||--|| loan_properties: has one
+loans ||--|| loan_borrowers: has one
+loans ||--|| loan_demographics: has one
+loans ||--o{ files: has one
+loans ||--o{ loan_experiences: has many
+loans ||--o{ loan_third_services: has many
+loan_borrowers ||--o{ applicants: has many
+lenders ||--o{ loans: has many
+
+@enduml

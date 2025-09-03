@@ -1,0 +1,39 @@
+ApiConf:
+  Name: borrower-api
+  Host: 0.0.0.0
+  Port: 10000
+  Timeout: 60000
+  Log:
+    Stat: false
+
+  JwtAuth:
+    AccessSecret: accessSecret
+    AccessExpire: 86000
+
+  RpcConf:
+    Endpoints:
+      - 127.0.0.1:10001
+    Timeout: 10000
+    NonBlock: true
+
+RpcConf:
+  Name: borrower.rpc
+  ListenOn: 0.0.0.0:10001
+  Mode: dev
+  Timeout: 60000
+  MaxFailedLoginTimes: 5
+  ForbiddenLoginSeconds: 300
+
+  JwtAuth:
+    AccessSecret: accessSecret
+    AccessExpire: 864000
+    RefreshSecret: refreshSecret
+    RefreshExpire: 864000
+
+  RedisConf:
+    Host: redis_7_2:6379
+    Type: node
+    Prefix: zeebee
+
+  DbConf:
+    dsn: "host=postgres_14_18 user=dev_user password=dev_password dbname=dev_db port=5432 sslmode=disable TimeZone=UTC"

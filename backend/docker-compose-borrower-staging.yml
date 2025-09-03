@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  backend-borrower-staging:
+    image: backend-borrower-staging
+    build:
+      context: .
+      dockerfile: Dockerfile-borrower-staging
+    container_name: backend-borrower-staging
+    network_mode: host
+  
+
