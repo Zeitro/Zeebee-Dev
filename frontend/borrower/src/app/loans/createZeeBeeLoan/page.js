@@ -13,9 +13,11 @@ import Experience from '../components/CreateZeeBee/Experience';
 import ThirdPartyService from '../components/CreateZeeBee/ThirdPartyService';
 import Declaration from '../components/CreateZeeBee/Declaration';
 import Demographics from '../components/CreateZeeBee/Demographics';
-import ReviewAndSign from '../components/CreateZeeBee/ReviewAndSign';
+import ReviewAndSign, { contractSignatureZones } from '../components/CreateZeeBee/ReviewAndSign';
 import _ from 'lodash';
 import { flattenObjectPaths } from '@/lib/common';
+import { uploadAwsS3 } from '@/api/common';
+import useUploadAWS from '@/hooks/useUploadAWS';
 const CreateZeeBeeLoan = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -26,8 +28,9 @@ const CreateZeeBeeLoan = () => {
 	const [stepNum, setStepNum] = useState(0); //侧边步骤
 	const [loading, setLoading] = useState(false);
 	const [errorList, setErrorList] = useState([]);
+	const isClickBackBtn = useRef(false);
 	const { request } = createRequest();
-
+	const { uploadFile, progress } = useUploadAWS();
 	// 从property详情跳转的创建loan
 	const getProperty = async () => {
 		const data = await request(api);
@@ -97,7 +100,10 @@ const CreateZeeBeeLoan = () => {
 
 	// 获取下一步步骤类型（Submit创建按钮/NextMaxStep下一大步骤/NextMinStep下一小步骤）
 	const diffSteps = () => {
+		// 最后一步
 		const lastStep = stepContent[stepContent.length - 1];
+		// // 倒数第二步
+		// const secondToLastStep = stepContent[stepContent.length - 2];
 		// 某大步骤下有多个小步骤（数组），如为数组需判断是否最后一小步骤
 		const isLastStepNumByArr = lastStep?.length ? stepNum + 1 === lastStep?.length : true;
 		if (currentStep + 1 === stepContent.length && isLastStepNumByArr) {
@@ -112,36 +118,72 @@ const CreateZeeBeeLoan = () => {
 		return 'NextMinStep';
 	};
 
+	// 创建loan
+	const handleSubmit = async (values) => {
+		setLoading(true);
+
+		await request('/loan/apply', {
+			method: 'POST',
+			body: values,
+		});
+		message.open({
+			type: 'success',
+			content: 'Success in creation！',
+		});
+		setLoading(false);
+	};
+
+	const handlePdf = async (values) => {
+		// 获取签名已生成的pdf数据流
+		const res = await request('/pdf/apply_form', {
+			method: 'POST',
+			body: values,
+		});
+		const file = await res.blob();
+		file.name = 'contract.pdf';
+		console.log(file);
+		// const onProgress = () => {
+		// 	console.log('onProgress');
+		// };
+		// const a = await uploadAwsS3({ url: '/storage/presign_url', file, onProgress });
+		// console.log(a);
+		uploadFile(file);
+	};
+
 	// // next/Add loan
 	const handleNext = async () => {
 		try {
-			const a = form.getFieldsValue();
-			let fieldsKeys = true;
-			// 解决：没填数据就触发了错误验证，又直接切换到上一步骤，又点击下一步时，validateFields会报错，提示刚才错误验证的字段没有填，导致下一页切换不了
-			if (errorList.length) {
-				errorList.map((i) => {
-					_.unset(a, i); // 拿到错误的字段key，删除这项内容
-				});
-				fieldsKeys = flattenObjectPaths(a); // 将多层嵌套对象转换为二维路径数组
-			}
-			const values = await form.validateFields(fieldsKeys);
-			setErrorList([]);
+			let values;
 			const isType = diffSteps();
+			// 解决：没填数据就触发了错误验证，又直接切换到上一步骤，又点击下一步时，validateFields会报错，提示刚才错误验证的字段没有填，导致下一页切换不了
+			if (errorList.length && isClickBackBtn.current) {
+				isClickBackBtn.current = false;
+				const allValues = form.getFieldsValue();
+				errorList.map((i) => {
+					_.unset(allValues, i); // 拿到错误的字段key，删除这项内容
+				});
+				let fieldsKeys = flattenObjectPaths(allValues); // 将多层嵌套对象转换为二维路径数组
+				values = await form.validateFields(fieldsKeys);
+			} else {
+				values = await form.validateFields();
+			}
+			setErrorList([]);
 			if (isType === 'Submit') {
-				setLoading(true);
+				if (values?.signatures?.remainingSignatureCount || !values?.signatures) {
+					message.open({
+						type: 'error',
+						content: `There are still ${values?.signatures?.remainingSignatureCount || contractSignatureZones.length} locations without a signature!`,
+					});
+					return;
+				}
 				const body = _.cloneDeep(values);
 
 				body.loan_borrower.tin_type = values?.loan_borrower?.tin?.tin_type;
 				body.loan_borrower.tin = values?.loan_borrower?.tin?.tin;
-				await request('/loan/apply', {
-					method: 'POST',
-					body,
-				});
-				message.open({
-					type: 'success',
-					content: 'Success in creation！',
-				});
-				setLoading(false);
+				_.unset(body, ['signatures', 'remainingSignatureCount']);
+				// await handlePdf(body);
+				console.log(body);
+				await handleSubmit({ ...body, apply_form_file: 'http://ssss.com' });
 				// 		router.back();
 				return;
 			}
@@ -156,6 +198,8 @@ const CreateZeeBeeLoan = () => {
 				top: 0,
 			});
 		} catch (error) {
+			console.log(error);
+
 			if (error?.errorFields) {
 				setErrorList(error?.errorFields.map((item) => item.name));
 			}
@@ -180,12 +224,13 @@ const CreateZeeBeeLoan = () => {
 	};
 
 	const handleBack = () => {
-		if (errorList.length) {
+		isClickBackBtn.current = true;
+		if (errorList?.length) {
 			// 光设置重新验证不行，需要结合validateFields处的操作才可避免
 			form.setFields(
-				errorList.map((i) => ({
+				errorList?.map((i) => ({
 					name: i,
-					errors: [],
+					errors: null,
 					touched: false,
 					validated: false,
 				})),
