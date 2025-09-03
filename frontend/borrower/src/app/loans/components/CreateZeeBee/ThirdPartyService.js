@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import NewTable from '@/components/NewTable';
 import { useColumnByZeeBeeLoan } from './components/column';
 import { AddEditBtn } from './components/AddEditBtn';
-import { message } from 'antd';
+import { Form, message } from 'antd';
 import _ from 'lodash';
 let paramsKey = 'loan_third_services';
 const ThirdPartyService = ({ form }) => {
@@ -68,6 +68,7 @@ const ThirdPartyService = ({ form }) => {
 			</AddEditBtn>
 			<div className="pb-6"></div>
 			{contextHolder}
+			<Form.Item name={paramsKey} noStyle></Form.Item>
 		</div>
 	);
 };

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import NewTable from '@/components/NewTable';
 import { useColumnByZeeBeeLoan } from './components/column';
 import { AddEditBtn } from './components/AddEditBtn';
-import { message } from 'antd';
+import { Form, message } from 'antd';
 import _ from 'lodash';
 const paramsKeyInfo = {
 	transactionHistory: 'transaction_experiences',
@@ -125,6 +125,8 @@ const Experience = ({ form }) => {
 			</AddEditBtn>
 			<div className="pb-6"></div>
 			{contextHolder}
+			<Form.Item name="transaction_experiences" noStyle></Form.Item>
+			<Form.Item name="real_estate_experiences" noStyle></Form.Item>
 		</div>
 	);
 };
