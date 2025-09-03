@@ -61,8 +61,9 @@ const CreateLoanPage = () => {
 			if (body.paid_off_date) {
 				body.paid_off_date = formatDate(body.paid_off_date);
 			}
+
 			body.applicants = body?.applicants.filter(
-				(i) => i.first_name && i.mid_name && i.last_name,
+				(i) => i.first_name || i.mid_name || i.last_name,
 			);
 			setLoading(true);
 			await request('/loan', {

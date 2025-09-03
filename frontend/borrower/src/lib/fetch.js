@@ -44,7 +44,7 @@ export function createRequest() {
 
 		try {
 			const response = await fetch(
-				process.env.NEXT_PUBLIC_ENV !== 'local' ? `${baseURL}${url}` : `${str}${url}`,
+				process.env.NEXT_PUBLIC_ENV === 'local' ? `${baseURL}${url}` : `${str}${url}`,
 				fetchOptions,
 			);
 
@@ -102,11 +102,6 @@ export function createRequest() {
 			if (token && !isExternalLink) {
 				xhr.setRequestHeader('Authorization', `Bearer ${token}`);
 			}
-			if (isExternalLink) {
-				xhr.setRequestHeader('Content-Type', 'application/pdf');
-				xhr.setRequestHeader('x-amz-acl', 'public-read');
-				xhr.setRequestHeader('x-amz-storage-class', 'STANDARD');
-			}
 			// ❗️ 注意：此处不能设置 'Content-Type'，必须由浏览器自动处理 FormData
 
 			// 监听上传进度
@@ -121,12 +116,15 @@ export function createRequest() {
 			xhr.onload = () => {
 				if (xhr.status === 200) {
 					try {
-						// ✅ 4. 移植您的响应拦截逻辑
+						if (!xhr.responseText && isExternalLink) {
+							resolve(true);
+							return;
+						}
 						const data = JSON.parse(xhr.responseText);
 						const contentType = data.headers.get('Content-Type');
-
 						if (contentType?.indexOf('application/json') === -1) {
 							resolve(data);
+							return;
 						}
 						if (data.code === 401) {
 							showMessage('Please log in again!');
@@ -142,6 +140,8 @@ export function createRequest() {
 
 						resolve(data.data);
 					} catch (e) {
+						console.log(e);
+
 						reject(new Error('Failed to parse server response'));
 					}
 				} else {

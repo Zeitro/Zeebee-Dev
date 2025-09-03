@@ -447,6 +447,9 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 							valueName: 'prepaymentPenaltyOptions',
 							requiredMessage: 'Please enter Prepayment penalty!',
 							suffixIcon: <div className="text-sm">Months</div>,
+							formProps: {
+								getValueFromEvent: (e) => Number(e),
+							},
 						},
 						layoutCol,
 					)}

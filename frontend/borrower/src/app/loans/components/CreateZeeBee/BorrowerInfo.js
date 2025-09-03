@@ -63,11 +63,7 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 								</Form.Item>
 							</Col>
 							<Col {...layoutCol} md={8}>
-								<Form.Item
-									label="Middle name"
-									name={[field.name, 'mid_name']}
-									rules={[{ required: true, message: 'Please Enter!' }]}
-								>
+								<Form.Item label="Middle name" name={[field.name, 'mid_name']}>
 									<Input placeholder="Enter middle name" />
 								</Form.Item>
 							</Col>
