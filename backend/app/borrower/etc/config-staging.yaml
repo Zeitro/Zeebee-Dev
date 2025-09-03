@@ -41,8 +41,8 @@ RpcConf:
     dsn: "host=database-1.cj0ksq4g8d6c.us-west-1.rds.amazonaws.com user=dev_user password=dev_password dbname=dev_db port=5432 sslmode=require TimeZone=UTC"
 
   AwsS3Conf:
-    AccessKey: KIAZYJFTPUSWNDYUDER
-    AccessSecret: NuXeGeVBVo1HFGOWdmewa89ojE0qoiV7eHGcnuMo
+    AccessKey: AKIA4RT6FLQ5RNYTQCPJ
+    AccessSecret: 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
     Region: us-west-1
     Bucket: zeebee-files-staging
     FileFolder: files-staging
