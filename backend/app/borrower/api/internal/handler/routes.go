@@ -13,12 +13,14 @@ import (
 	property "zeebee-backend/app/borrower/api/internal/handler/property"
 	storage "zeebee-backend/app/borrower/api/internal/handler/storage"
 	user "zeebee-backend/app/borrower/api/internal/handler/user"
+	middleware "zeebee-backend/app/borrower/api/internal/middleware"
 	"zeebee-backend/app/borrower/api/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
 )
 
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
+	server.Use(middleware.CorsMiddleware)
 	server.AddRoutes(
 		rest.WithMiddlewares(
 			[]rest.Middleware{serverCtx.AuthMiddleware},
