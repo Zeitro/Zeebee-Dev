@@ -42,6 +42,6 @@ RpcConf:
 
   AwsS3Conf:
     AccessKey: KIAZYJFTPUSWNDYUDER
-    SecretKey: NuXeGeVBVo1HFGOWdmewa89ojE0qoiV7eHGcnuMo
+    AccessSecret: NuXeGeVBVo1HFGOWdmewa89ojE0qoiV7eHGcnuMo
     Region: us-west-1
     Bucket: zeebee-files-staging
