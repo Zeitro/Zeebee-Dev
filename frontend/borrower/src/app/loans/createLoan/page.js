@@ -21,12 +21,7 @@ const CreateLoanPage = () => {
 	const [loanData, setLoanData] = useState({
 		0: {},
 		1: {},
-		2: {
-			applicants: [
-				{ is_primary: true, type: 'Individual' },
-				{ is_primary: false, type: 'Individual' },
-			],
-		},
+		2: {},
 	});
 
 	useEffect(() => {
@@ -66,7 +61,9 @@ const CreateLoanPage = () => {
 			if (body.paid_off_date) {
 				body.paid_off_date = formatDate(body.paid_off_date);
 			}
-			body.applicants = body?.applicants.filter((i) => i.name);
+			body.applicants = body?.applicants.filter(
+				(i) => i.first_name && i.mid_name && i.last_name,
+			);
 			setLoading(true);
 			await request('/loan', {
 				method: 'POST',
@@ -88,7 +85,7 @@ const CreateLoanPage = () => {
 		const data = await request(api);
 		const newData = {
 			loan_property: {
-				property_type: data.property_type,
+				// property_type: data.property_type,
 				property_base: {
 					unit: data.unit,
 					address: data.address,
@@ -149,6 +146,10 @@ const CreateLoanPage = () => {
 					disabled={loading}
 					initialValues={{
 						stage: loan_pending,
+						applicants: [
+							{ is_primary: true, type: 'Individual' },
+							{ is_primary: false, type: 'Individual' },
+						],
 					}}
 				>
 					{stepContent[currentStep]}

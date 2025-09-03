@@ -1,6 +1,7 @@
 'use client';
-import React from 'react';
+import React, { useMemo } from 'react';
 import dynamic from 'next/dynamic';
+import { Form } from 'antd';
 
 const ApplicationFormViewPDF = dynamic(
 	() => import('@/components/ApplicationFormViewPDF'), // Adjust the path to your component
@@ -12,136 +13,168 @@ const ApplicationFormViewPDF = dynamic(
 		),
 	},
 );
-const height = '20px';
-const width = '12.5%';
-const right = '6%';
+const h = '30px';
+const w = '35%';
+const left = '26%';
+const height = '16px';
+const width = '14%';
+const right = '16%';
 
 // 在这里定义你的合同的所有签名区
-const contractSignatureZones = [
+export const contractSignatureZones = [
 	{
 		id: 'applicant1_signature', // 唯一ID
 		page: 3, // 所在的 PDF 页码
 		// 下面是你在第一步中手动测量出的百分比值
-		top: '38%',
-		left: '28%',
-		width: '42%',
-		height: '20px',
+		top: '32.2%',
+		left,
+		width: w,
+		height: h,
 		date: {
-			top: '38%',
+			top: '34%',
 			right,
 			width,
 			height,
 		},
+		paramsKey: 'borrower_info',
 	},
 	{
 		id: 'applicant2_signature',
 		page: 3,
-		top: '42.5%',
-		left: '28%',
-		width: '42%',
-		height: '20px',
+		top: '37%',
+		left,
+		width: w,
+		height: h,
 		date: {
-			top: '42.5%',
+			top: '38.8%',
 			right,
 			width,
 			height,
 		},
-	},
-	{
-		id: 'applicant3_signature',
-		page: 9,
-		top: '87.5%',
-		left: '28%',
-		width: '42%',
-		height: '20px',
-		date: {
-			top: '87.5%',
-			right,
-			width,
-			height,
-		},
-	},
-	{
-		id: 'applicant4_signature',
-		page: 9,
-		top: '92%',
-		left: '28%',
-		width: '42%',
-		height: '20px',
-		date: {
-			top: '92%',
-			right,
-			width,
-			height,
-		},
+		paramsKey: 'borrower_info',
 	},
 	{
 		id: 'applicant5_signature',
 		page: 10,
-		top: '87.5%',
-		left: '28%',
-		width: '42%',
-		height: '20px',
+		top: '81.8%',
+		left,
+		width: w,
+		height: h,
 		date: {
-			top: '87.5%',
+			top: '83.5%',
 			right,
 			width,
 			height,
 		},
+		paramsKey: 'business_purpose',
 	},
 	{
 		id: 'applicant6_signature',
 		page: 10,
-		top: '92%',
-		left: '28%',
-		width: '42%',
-		height: '20px',
+		top: '86.7%',
+		left,
+		width: w,
+		height: h,
 		date: {
-			top: '92%',
+			top: '88.4%',
 			right,
 			width,
 			height,
 		},
+		paramsKey: 'business_purpose',
 	},
 	{
 		id: 'applicant7_signature',
-		page: 12,
-		top: '69%',
-		left: '28%',
-		width: '42%',
-		height: '20px',
+		page: 11,
+		top: '71.3%',
+		left,
+		width: w,
+		height: h,
 		date: {
-			top: '69%',
+			top: '72.9%',
 			right,
 			width,
 			height,
 		},
+		paramsKey: 'patriot_act',
 	},
 	{
 		id: 'applicant8_signature',
-		page: 12,
-		top: '73.6%',
-		left: '28%',
-		width: '42%',
-		height: '20px',
+		page: 11,
+		top: '76.1%',
+		left,
+		width: w,
+		height: h,
 		date: {
-			top: '73.6%',
+			top: '77.8%',
 			right,
 			width,
 			height,
 		},
+		paramsKey: 'patriot_act',
+	},
+	{
+		id: 'applicant3_signature',
+		page: 13,
+		top: '58.5%',
+		left,
+		width: w,
+		height: h,
+		date: {
+			top: '60.2%',
+			right,
+			width,
+			height,
+		},
+		paramsKey: 'borrower_authorization',
+	},
+	{
+		id: 'applicant4_signature',
+		page: 13,
+		top: '63.4%',
+		left,
+		width: w,
+		height: h,
+		date: {
+			top: '65.1%',
+			right,
+			width,
+			height,
+		},
+		paramsKey: 'borrower_authorization',
 	},
 	// ... 如果有更多签名区，继续在这里添加
 ];
-const ReviewAndSign = () => {
+const ReviewAndSign = ({ form }) => {
+	const params = useMemo(() => {
+		const values = form.getFieldsValue();
+		values.loan_borrower.tin_type = values?.loan_borrower?.tin?.tin_type;
+		values.loan_borrower.tin = values?.loan_borrower?.tin?.tin;
+		if (values?.signatures) {
+			delete values.signatures;
+		}
+		return values;
+	}, [form]);
+
+	const changeSignatures = (signatures) => {
+		form.setFieldsValue({
+			signatures,
+		});
+	};
 	return (
 		<div className="h-full w-full">
 			<div className="text-3xl pb-14 font-medium text-center">
 				Review and sign your application
 			</div>
 			<div className="h-[calc(100% - 120px)]">
-				<ApplicationFormViewPDF url="/api/getApplication" zones={contractSignatureZones} />
+				<ApplicationFormViewPDF
+					url="/pdf/apply_form"
+					zones={contractSignatureZones}
+					params={params}
+					changeSignatures={changeSignatures}
+				/>
 			</div>
+			<Form.Item name="signatures" rules={[{ required: true }]} noStyle></Form.Item>
 		</div>
 	);
 };

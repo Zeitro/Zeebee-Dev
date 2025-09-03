@@ -33,7 +33,7 @@ const CreateProperty = ({
 					<Select
 						options={propertyTypeOptions}
 						placeholder="Select Property type"
-						disabled={isRequestProperty}
+						// disabled={isRequestProperty}
 					/>
 				</Form.Item>
 			</Col>
