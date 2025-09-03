@@ -31,7 +31,7 @@ RpcConf:
     RefreshExpire: 864000
 
   RedisConf:
-    Host: clustercfg.zeebee-backend-redis.uwixeb.usw1.cache.amazonaws.com:6379
+    Host: zeebee-backend-redis-single-001.zeebee-backend-redis-single.uwixeb.usw1.cache.amazonaws.com:6379
     Type: node
     Prefix: zeebee
     Tls: true
