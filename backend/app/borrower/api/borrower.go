@@ -7,7 +7,6 @@ import (
 	"github.com/zeromicro/go-zero/rest"
 
 	"zeebee-backend/app/borrower/api/internal/handler"
-	"zeebee-backend/app/borrower/api/internal/middleware"
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/swagger"
 	"zeebee-backend/app/borrower/config"
@@ -23,9 +22,10 @@ func NewApiServer(c config.Config) (s service.Service) {
 	runOpts := []rest.RunOption{
 		rest.WithNotFoundHandler(response.NotFoundHandler{}),
 		rest.WithNotAllowedHandler(response.NotFoundHandler{}),
+		rest.WithCors("*"),
 	}
 	restServer := rest.MustNewServer(apiConfig.RestConf, runOpts...)
-	restServer.Use(middleware.CorsMiddleware)
+	// restServer.Use(middleware.CorsMiddleware)
 
 	ctx := svc.NewServiceContext(apiConfig)
 	handler.RegisterHandlers(restServer, ctx)
