@@ -146,15 +146,33 @@ export const contractSignatureZones = [
 	// ... 如果有更多签名区，继续在这里添加
 ];
 const ReviewAndSign = ({ form }) => {
+	const applicants = Form.useWatch('loan_borrower', form);
 	const params = useMemo(() => {
-		const values = form.getFieldsValue();
-		values.loan_borrower.tin_type = values?.loan_borrower?.tin?.tin_type;
-		values.loan_borrower.tin = values?.loan_borrower?.tin?.tin;
+		const values = form.getFieldsValue() || {};
+		values.loan_borrower = {
+			...values.loan_borrower,
+			tin_type: values?.loan_borrower?.tin?.tin_type || '',
+			tin: values?.loan_borrower?.tin?.tin || '',
+		};
 		if (values?.signatures) {
 			delete values.signatures;
 		}
 		return values;
 	}, [form]);
+
+	// 根据申请人个数，返回需要渲染的签名区
+	const getZones = () => {
+		const count = applicants?.length ? applicants?.length : 1;
+		let newZones = [];
+		contractSignatureZones.reduce((a, b) => {
+			const arr = a?.filter((item) => item.page === b.page);
+			if (arr.length < count) {
+				newZones.push(b);
+			}
+			return newZones;
+		}, []);
+		return newZones;
+	};
 
 	const changeSignatures = (signatures) => {
 		form.setFieldsValue({
@@ -169,7 +187,7 @@ const ReviewAndSign = ({ form }) => {
 			<div className="h-[calc(100% - 120px)]">
 				<ApplicationFormViewPDF
 					url="/pdf/apply_form"
-					zones={contractSignatureZones}
+					zones={getZones()}
 					params={params}
 					changeSignatures={changeSignatures}
 				/>
