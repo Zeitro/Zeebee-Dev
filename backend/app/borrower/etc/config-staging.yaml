@@ -45,3 +45,5 @@ RpcConf:
     AccessSecret: NuXeGeVBVo1HFGOWdmewa89ojE0qoiV7eHGcnuMo
     Region: us-west-1
     Bucket: zeebee-files-staging
+    FileFolder: files-staging
+    PreSigneUrlExpireSeconds: 300
