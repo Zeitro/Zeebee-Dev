@@ -89,7 +89,6 @@
                     "type": "object",
                     "required": [
                       "first_name",
-                      "mid_name",
                       "last_name",
                       "type",
                       "is_primary"
@@ -151,6 +150,21 @@
                       "type": "integer"
                     },
                     "bedrooms": {
+                      "type": "integer"
+                    },
+                    "future_bathrooms": {
+                      "type": "integer"
+                    },
+                    "future_bedrooms": {
+                      "type": "integer"
+                    },
+                    "future_living_area_sqft": {
+                      "type": "number"
+                    },
+                    "future_property_type": {
+                      "type": "string"
+                    },
+                    "future_unit": {
                       "type": "integer"
                     },
                     "id": {
@@ -268,72 +282,11 @@
             "required": true,
             "schema": {
               "type": "object",
-              "required": [
-                "loan_type",
-                "loan_purpose",
-                "total_amount",
-                "initial_amount",
-                "loan_property",
-                "holdback_amount",
-                "principal_amount",
-                "maturity_date",
-                "prepayment_penalty",
-                "business_strategy",
-                "applicants",
-                "existing_lender_company",
-                "existing_rate",
-                "existing_maturity_date",
-                "purchase_amount",
-                "purchase_date",
-                "has_assignment_fee",
-                "assignment_fee_amount",
-                "has_subordinate_debt",
-                "subordinate_debt_amount",
-                "scheduled_close_escrow_date",
-                "loan_term",
-                "arv",
-                "ltv",
-                "liquidity_amount",
-                "budget",
-                "mid_construction",
-                "est_credit_score",
-                "est_yearly_rental_income",
-                "yearly_liability_expense",
-                "dscr",
-                "reserves_amount",
-                "has_delayed_financing",
-                "has_collateralized_blanket",
-                "has_peroperty_vacant",
-                "has_short_term_rental",
-                "additional_info",
-                "transaction_experiences",
-                "real_estate_experiences",
-                "loan_third_services",
-                "loan_borrower",
-                "loan_demographic"
-              ],
               "properties": {
-                "additional_info": {
-                  "type": "string"
-                },
                 "applicants": {
                   "type": "array",
                   "items": {
                     "type": "object",
-                    "required": [
-                      "first_name",
-                      "mid_name",
-                      "last_name",
-                      "type",
-                      "is_primary",
-                      "ssn",
-                      "dob",
-                      "marital_status",
-                      "email",
-                      "est_credit_score",
-                      "driver_license_num",
-                      "address"
-                    ],
                     "properties": {
                       "address": {
                         "type": "object",
@@ -391,6 +344,9 @@
                       "mid_name": {
                         "type": "string"
                       },
+                      "phone": {
+                        "type": "string"
+                      },
                       "ssn": {
                         "type": "string"
                       },
@@ -433,9 +389,6 @@
                 },
                 "dscr": {
                   "type": "number"
-                },
-                "est_credit_score": {
-                  "type": "integer"
                 },
                 "est_yearly_rental_income": {
                   "type": "number"
@@ -480,6 +433,9 @@
                   "type": "object",
                   "properties": {
                     "contact_email": {
+                      "type": "string"
+                    },
+                    "contact_name": {
                       "type": "string"
                     },
                     "contact_phone": {
@@ -540,52 +496,14 @@
                     "ethnicity": {
                       "type": "object",
                       "properties": {
-                        "hidden": {
-                          "type": "boolean"
-                        },
-                        "is_cuban": {
-                          "type": "boolean"
-                        },
-                        "is_hispanic_or_latino": {
-                          "type": "boolean"
-                        },
-                        "is_mexican": {
-                          "type": "boolean"
-                        },
-                        "is_not_hispanic_or_latino": {
-                          "type": "boolean"
-                        },
-                        "is_other_hispanic_or_latino": {
-                          "type": "boolean"
-                        },
                         "other_hispanic_or_latino_name": {
                           "type": "string"
-                        }
-                      }
-                    },
-                    "extra_demographic": {
-                      "type": "object",
-                      "properties": {
-                        "is_by_email_or_internet": {
-                          "type": "boolean"
                         },
-                        "is_by_face_to_face": {
-                          "type": "boolean"
-                        },
-                        "is_by_fax_or_mail": {
-                          "type": "boolean"
-                        },
-                        "is_by_telephone": {
-                          "type": "boolean"
-                        },
-                        "is_ethnicity_collected_by_observation": {
-                          "type": "boolean"
-                        },
-                        "is_race_collected_by_observation": {
-                          "type": "boolean"
-                        },
-                        "is_sex_collected_by_observation": {
-                          "type": "boolean"
+                        "values": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
                         }
                       }
                     },
@@ -601,17 +519,11 @@
                         "as_primary_resident": {
                           "type": "boolean"
                         },
-                        "bankruptcy_chapter11": {
-                          "type": "boolean"
+                        "bankruptcy_chapter": {
+                          "type": "string"
                         },
-                        "bankruptcy_chapter12": {
-                          "type": "boolean"
-                        },
-                        "bankruptcy_chapter13": {
-                          "type": "boolean"
-                        },
-                        "bankruptcy_chapter7": {
-                          "type": "boolean"
+                        "borrowed_money_amount": {
+                          "type": "number"
                         },
                         "has_a_bankruptcy": {
                           "type": "boolean"
@@ -622,7 +534,7 @@
                         "has_a_pre_foreclosure_sale": {
                           "type": "boolean"
                         },
-                        "has_another_mortgate_loan": {
+                        "has_another_mortgage_loan": {
                           "type": "boolean"
                         },
                         "has_borrowed_money": {
@@ -637,7 +549,7 @@
                         "has_foreclosed_upon": {
                           "type": "boolean"
                         },
-                        "has_outstanding_judgements": {
+                        "has_outstanding_judgments": {
                           "type": "boolean"
                         },
                         "has_priority_over_1st": {
@@ -657,56 +569,20 @@
                         "asian_other_name": {
                           "type": "string"
                         },
-                        "hidden": {
-                          "type": "boolean"
-                        },
-                        "is_american_indian_or_alaska_native": {
-                          "type": "boolean"
-                        },
-                        "is_asian": {
-                          "type": "boolean"
-                        },
-                        "is_asian_chinese": {
-                          "type": "boolean"
-                        },
-                        "is_asian_filipino": {
-                          "type": "boolean"
-                        },
-                        "is_asian_indian": {
-                          "type": "boolean"
-                        },
-                        "is_asian_japanese": {
-                          "type": "boolean"
-                        },
-                        "is_asian_korean": {
-                          "type": "boolean"
-                        },
-                        "is_asian_other": {
-                          "type": "boolean"
-                        },
-                        "is_asian_vietnamese": {
-                          "type": "boolean"
-                        },
-                        "is_black_or_african_american": {
-                          "type": "boolean"
-                        },
-                        "is_native_hawaiian_guamanian_or_chamorro_samoan": {
-                          "type": "boolean"
-                        },
-                        "is_native_hawaiian_guamanian_or_other_pacific_islander": {
-                          "type": "boolean"
-                        },
-                        "is_native_hawaiian_or_other_pacific_islander": {
-                          "type": "boolean"
-                        },
-                        "is_other_pacific_islander": {
-                          "type": "boolean"
-                        },
-                        "is_white": {
-                          "type": "boolean"
+                        "asian_values": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
                         },
                         "other_pacific_islander_name": {
                           "type": "string"
+                        },
+                        "values": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
                         }
                       }
                     },
@@ -717,18 +593,26 @@
                 },
                 "loan_property": {
                   "type": "object",
-                  "required": [
-                    "property_type",
-                    "living_area_sqft",
-                    "bedrooms",
-                    "bathrooms",
-                    "property_base"
-                  ],
                   "properties": {
                     "bathrooms": {
                       "type": "integer"
                     },
                     "bedrooms": {
+                      "type": "integer"
+                    },
+                    "future_bathrooms": {
+                      "type": "integer"
+                    },
+                    "future_bedrooms": {
+                      "type": "integer"
+                    },
+                    "future_living_area_sqft": {
+                      "type": "number"
+                    },
+                    "future_property_type": {
+                      "type": "string"
+                    },
+                    "future_unit": {
                       "type": "integer"
                     },
                     "id": {
@@ -774,6 +658,9 @@
                   "items": {
                     "type": "object",
                     "properties": {
+                      "company": {
+                        "type": "string"
+                      },
                       "email": {
                         "type": "string"
                       },
@@ -800,9 +687,6 @@
                 },
                 "ltv": {
                   "type": "number"
-                },
-                "maturity_date": {
-                  "type": "string"
                 },
                 "mid_construction": {
                   "type": "boolean"
@@ -1208,7 +1092,6 @@
                       "has_collateralized_blanket",
                       "has_peroperty_vacant",
                       "has_short_term_rental",
-                      "additional_info",
                       "transaction_experiences",
                       "real_estate_experiences",
                       "loan_third_services",
@@ -1216,9 +1099,6 @@
                       "loan_demographic"
                     ],
                     "properties": {
-                      "additional_info": {
-                        "type": "string"
-                      },
                       "applicants": {
                         "type": "array",
                         "items": {
@@ -1375,6 +1255,9 @@
                           "contact_email": {
                             "type": "string"
                           },
+                          "contact_name": {
+                            "type": "string"
+                          },
                           "contact_phone": {
                             "type": "string"
                           },
@@ -1433,52 +1316,14 @@
                           "ethnicity": {
                             "type": "object",
                             "properties": {
-                              "hidden": {
-                                "type": "boolean"
-                              },
-                              "is_cuban": {
-                                "type": "boolean"
-                              },
-                              "is_hispanic_or_latino": {
-                                "type": "boolean"
-                              },
-                              "is_mexican": {
-                                "type": "boolean"
-                              },
-                              "is_not_hispanic_or_latino": {
-                                "type": "boolean"
-                              },
-                              "is_other_hispanic_or_latino": {
-                                "type": "boolean"
-                              },
                               "other_hispanic_or_latino_name": {
                                 "type": "string"
-                              }
-                            }
-                          },
-                          "extra_demographic": {
-                            "type": "object",
-                            "properties": {
-                              "is_by_email_or_internet": {
-                                "type": "boolean"
                               },
-                              "is_by_face_to_face": {
-                                "type": "boolean"
-                              },
-                              "is_by_fax_or_mail": {
-                                "type": "boolean"
-                              },
-                              "is_by_telephone": {
-                                "type": "boolean"
-                              },
-                              "is_ethnicity_collected_by_observation": {
-                                "type": "boolean"
-                              },
-                              "is_race_collected_by_observation": {
-                                "type": "boolean"
-                              },
-                              "is_sex_collected_by_observation": {
-                                "type": "boolean"
+                              "values": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
                               }
                             }
                           },
@@ -1494,17 +1339,11 @@
                               "as_primary_resident": {
                                 "type": "boolean"
                               },
-                              "bankruptcy_chapter11": {
-                                "type": "boolean"
+                              "bankruptcy_chapter": {
+                                "type": "string"
                               },
-                              "bankruptcy_chapter12": {
-                                "type": "boolean"
-                              },
-                              "bankruptcy_chapter13": {
-                                "type": "boolean"
-                              },
-                              "bankruptcy_chapter7": {
-                                "type": "boolean"
+                              "borrowed_money_amount": {
+                                "type": "number"
                               },
                               "has_a_bankruptcy": {
                                 "type": "boolean"
@@ -1515,7 +1354,7 @@
                               "has_a_pre_foreclosure_sale": {
                                 "type": "boolean"
                               },
-                              "has_another_mortgate_loan": {
+                              "has_another_mortgage_loan": {
                                 "type": "boolean"
                               },
                               "has_borrowed_money": {
@@ -1530,7 +1369,7 @@
                               "has_foreclosed_upon": {
                                 "type": "boolean"
                               },
-                              "has_outstanding_judgements": {
+                              "has_outstanding_judgments": {
                                 "type": "boolean"
                               },
                               "has_priority_over_1st": {
@@ -1550,56 +1389,20 @@
                               "asian_other_name": {
                                 "type": "string"
                               },
-                              "hidden": {
-                                "type": "boolean"
-                              },
-                              "is_american_indian_or_alaska_native": {
-                                "type": "boolean"
-                              },
-                              "is_asian": {
-                                "type": "boolean"
-                              },
-                              "is_asian_chinese": {
-                                "type": "boolean"
-                              },
-                              "is_asian_filipino": {
-                                "type": "boolean"
-                              },
-                              "is_asian_indian": {
-                                "type": "boolean"
-                              },
-                              "is_asian_japanese": {
-                                "type": "boolean"
-                              },
-                              "is_asian_korean": {
-                                "type": "boolean"
-                              },
-                              "is_asian_other": {
-                                "type": "boolean"
-                              },
-                              "is_asian_vietnamese": {
-                                "type": "boolean"
-                              },
-                              "is_black_or_african_american": {
-                                "type": "boolean"
-                              },
-                              "is_native_hawaiian_guamanian_or_chamorro_samoan": {
-                                "type": "boolean"
-                              },
-                              "is_native_hawaiian_guamanian_or_other_pacific_islander": {
-                                "type": "boolean"
-                              },
-                              "is_native_hawaiian_or_other_pacific_islander": {
-                                "type": "boolean"
-                              },
-                              "is_other_pacific_islander": {
-                                "type": "boolean"
-                              },
-                              "is_white": {
-                                "type": "boolean"
+                              "asian_values": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
                               },
                               "other_pacific_islander_name": {
                                 "type": "string"
+                              },
+                              "values": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
                               }
                             }
                           },
@@ -1619,6 +1422,21 @@
                             "type": "integer"
                           },
                           "bedrooms": {
+                            "type": "integer"
+                          },
+                          "future_bathrooms": {
+                            "type": "integer"
+                          },
+                          "future_bedrooms": {
+                            "type": "integer"
+                          },
+                          "future_living_area_sqft": {
+                            "type": "number"
+                          },
+                          "future_property_type": {
+                            "type": "string"
+                          },
+                          "future_unit": {
                             "type": "integer"
                           },
                           "id": {
@@ -1646,6 +1464,9 @@
                         "items": {
                           "type": "object",
                           "properties": {
+                            "company": {
+                              "type": "string"
+                            },
                             "email": {
                               "type": "string"
                             },
@@ -1869,9 +1690,6 @@
             "schema": {
               "type": "object",
               "properties": {
-                "additional_info": {
-                  "type": "string"
-                },
                 "applicants": {
                   "type": "array",
                   "items": {
@@ -2028,6 +1846,9 @@
                     "contact_email": {
                       "type": "string"
                     },
+                    "contact_name": {
+                      "type": "string"
+                    },
                     "contact_phone": {
                       "type": "string"
                     },
@@ -2086,52 +1907,14 @@
                     "ethnicity": {
                       "type": "object",
                       "properties": {
-                        "hidden": {
-                          "type": "boolean"
-                        },
-                        "is_cuban": {
-                          "type": "boolean"
-                        },
-                        "is_hispanic_or_latino": {
-                          "type": "boolean"
-                        },
-                        "is_mexican": {
-                          "type": "boolean"
-                        },
-                        "is_not_hispanic_or_latino": {
-                          "type": "boolean"
-                        },
-                        "is_other_hispanic_or_latino": {
-                          "type": "boolean"
-                        },
                         "other_hispanic_or_latino_name": {
                           "type": "string"
-                        }
-                      }
-                    },
-                    "extra_demographic": {
-                      "type": "object",
-                      "properties": {
-                        "is_by_email_or_internet": {
-                          "type": "boolean"
                         },
-                        "is_by_face_to_face": {
-                          "type": "boolean"
-                        },
-                        "is_by_fax_or_mail": {
-                          "type": "boolean"
-                        },
-                        "is_by_telephone": {
-                          "type": "boolean"
-                        },
-                        "is_ethnicity_collected_by_observation": {
-                          "type": "boolean"
-                        },
-                        "is_race_collected_by_observation": {
-                          "type": "boolean"
-                        },
-                        "is_sex_collected_by_observation": {
-                          "type": "boolean"
+                        "values": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
                         }
                       }
                     },
@@ -2147,17 +1930,11 @@
                         "as_primary_resident": {
                           "type": "boolean"
                         },
-                        "bankruptcy_chapter11": {
-                          "type": "boolean"
+                        "bankruptcy_chapter": {
+                          "type": "string"
                         },
-                        "bankruptcy_chapter12": {
-                          "type": "boolean"
-                        },
-                        "bankruptcy_chapter13": {
-                          "type": "boolean"
-                        },
-                        "bankruptcy_chapter7": {
-                          "type": "boolean"
+                        "borrowed_money_amount": {
+                          "type": "number"
                         },
                         "has_a_bankruptcy": {
                           "type": "boolean"
@@ -2168,7 +1945,7 @@
                         "has_a_pre_foreclosure_sale": {
                           "type": "boolean"
                         },
-                        "has_another_mortgate_loan": {
+                        "has_another_mortgage_loan": {
                           "type": "boolean"
                         },
                         "has_borrowed_money": {
@@ -2183,7 +1960,7 @@
                         "has_foreclosed_upon": {
                           "type": "boolean"
                         },
-                        "has_outstanding_judgements": {
+                        "has_outstanding_judgments": {
                           "type": "boolean"
                         },
                         "has_priority_over_1st": {
@@ -2203,56 +1980,20 @@
                         "asian_other_name": {
                           "type": "string"
                         },
-                        "hidden": {
-                          "type": "boolean"
-                        },
-                        "is_american_indian_or_alaska_native": {
-                          "type": "boolean"
-                        },
-                        "is_asian": {
-                          "type": "boolean"
-                        },
-                        "is_asian_chinese": {
-                          "type": "boolean"
-                        },
-                        "is_asian_filipino": {
-                          "type": "boolean"
-                        },
-                        "is_asian_indian": {
-                          "type": "boolean"
-                        },
-                        "is_asian_japanese": {
-                          "type": "boolean"
-                        },
-                        "is_asian_korean": {
-                          "type": "boolean"
-                        },
-                        "is_asian_other": {
-                          "type": "boolean"
-                        },
-                        "is_asian_vietnamese": {
-                          "type": "boolean"
-                        },
-                        "is_black_or_african_american": {
-                          "type": "boolean"
-                        },
-                        "is_native_hawaiian_guamanian_or_chamorro_samoan": {
-                          "type": "boolean"
-                        },
-                        "is_native_hawaiian_guamanian_or_other_pacific_islander": {
-                          "type": "boolean"
-                        },
-                        "is_native_hawaiian_or_other_pacific_islander": {
-                          "type": "boolean"
-                        },
-                        "is_other_pacific_islander": {
-                          "type": "boolean"
-                        },
-                        "is_white": {
-                          "type": "boolean"
+                        "asian_values": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
                         },
                         "other_pacific_islander_name": {
                           "type": "string"
+                        },
+                        "values": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
                         }
                       }
                     },
@@ -2272,6 +2013,21 @@
                       "type": "integer"
                     },
                     "bedrooms": {
+                      "type": "integer"
+                    },
+                    "future_bathrooms": {
+                      "type": "integer"
+                    },
+                    "future_bedrooms": {
+                      "type": "integer"
+                    },
+                    "future_living_area_sqft": {
+                      "type": "number"
+                    },
+                    "future_property_type": {
+                      "type": "string"
+                    },
+                    "future_unit": {
                       "type": "integer"
                     },
                     "id": {
@@ -2340,6 +2096,9 @@
                   "items": {
                     "type": "object",
                     "properties": {
+                      "company": {
+                        "type": "string"
+                      },
                       "email": {
                         "type": "string"
                       },
@@ -2614,7 +2373,6 @@
                     "type": "object",
                     "required": [
                       "first_name",
-                      "mid_name",
                       "last_name",
                       "type",
                       "is_primary"
@@ -2676,6 +2434,21 @@
                       "type": "integer"
                     },
                     "bedrooms": {
+                      "type": "integer"
+                    },
+                    "future_bathrooms": {
+                      "type": "integer"
+                    },
+                    "future_bedrooms": {
+                      "type": "integer"
+                    },
+                    "future_living_area_sqft": {
+                      "type": "number"
+                    },
+                    "future_property_type": {
+                      "type": "string"
+                    },
+                    "future_unit": {
                       "type": "integer"
                     },
                     "id": {
@@ -2870,72 +2643,11 @@
             "required": true,
             "schema": {
               "type": "object",
-              "required": [
-                "loan_type",
-                "loan_purpose",
-                "total_amount",
-                "initial_amount",
-                "loan_property",
-                "holdback_amount",
-                "principal_amount",
-                "maturity_date",
-                "prepayment_penalty",
-                "business_strategy",
-                "applicants",
-                "existing_lender_company",
-                "existing_rate",
-                "existing_maturity_date",
-                "purchase_amount",
-                "purchase_date",
-                "has_assignment_fee",
-                "assignment_fee_amount",
-                "has_subordinate_debt",
-                "subordinate_debt_amount",
-                "scheduled_close_escrow_date",
-                "loan_term",
-                "arv",
-                "ltv",
-                "liquidity_amount",
-                "budget",
-                "mid_construction",
-                "est_credit_score",
-                "est_yearly_rental_income",
-                "yearly_liability_expense",
-                "dscr",
-                "reserves_amount",
-                "has_delayed_financing",
-                "has_collateralized_blanket",
-                "has_peroperty_vacant",
-                "has_short_term_rental",
-                "additional_info",
-                "transaction_experiences",
-                "real_estate_experiences",
-                "loan_third_services",
-                "loan_borrower",
-                "loan_demographic"
-              ],
               "properties": {
-                "additional_info": {
-                  "type": "string"
-                },
                 "applicants": {
                   "type": "array",
                   "items": {
                     "type": "object",
-                    "required": [
-                      "first_name",
-                      "mid_name",
-                      "last_name",
-                      "type",
-                      "is_primary",
-                      "ssn",
-                      "dob",
-                      "marital_status",
-                      "email",
-                      "est_credit_score",
-                      "driver_license_num",
-                      "address"
-                    ],
                     "properties": {
                       "address": {
                         "type": "object",
@@ -2991,6 +2703,627 @@
                         "type": "string"
                       },
                       "mid_name": {
+                        "type": "string"
+                      },
+                      "phone": {
+                        "type": "string"
+                      },
+                      "ssn": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "arv": {
+                  "type": "number"
+                },
+                "assignment_fee_amount": {
+                  "type": "number"
+                },
+                "budget": {
+                  "type": "object",
+                  "required": [
+                    "original_budget",
+                    "remaining_budget",
+                    "cost_spent_to_date_amount"
+                  ],
+                  "properties": {
+                    "cost_spent_to_date_amount": {
+                      "type": "number"
+                    },
+                    "original_budget": {
+                      "type": "number"
+                    },
+                    "remaining_budget": {
+                      "type": "number"
+                    }
+                  }
+                },
+                "business_strategy": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "dscr": {
+                  "type": "number"
+                },
+                "est_yearly_rental_income": {
+                  "type": "number"
+                },
+                "existing_lender_company": {
+                  "type": "string"
+                },
+                "existing_maturity_date": {
+                  "type": "string"
+                },
+                "existing_rate": {
+                  "type": "number"
+                },
+                "has_assignment_fee": {
+                  "type": "boolean"
+                },
+                "has_collateralized_blanket": {
+                  "type": "boolean"
+                },
+                "has_delayed_financing": {
+                  "type": "boolean"
+                },
+                "has_peroperty_vacant": {
+                  "type": "boolean"
+                },
+                "has_short_term_rental": {
+                  "type": "boolean"
+                },
+                "has_subordinate_debt": {
+                  "type": "boolean"
+                },
+                "holdback_amount": {
+                  "type": "number"
+                },
+                "initial_amount": {
+                  "type": "number"
+                },
+                "liquidity_amount": {
+                  "type": "number"
+                },
+                "loan_borrower": {
+                  "type": "object",
+                  "properties": {
+                    "contact_email": {
+                      "type": "string"
+                    },
+                    "contact_name": {
+                      "type": "string"
+                    },
+                    "contact_phone": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "loan_id": {
+                      "type": "integer"
+                    },
+                    "mailing_address": {
+                      "type": "object",
+                      "required": [
+                        "state",
+                        "city",
+                        "address1",
+                        "zip_code"
+                      ],
+                      "properties": {
+                        "address1": {
+                          "type": "string"
+                        },
+                        "address2": {
+                          "type": "string"
+                        },
+                        "city": {
+                          "type": "string"
+                        },
+                        "state": {
+                          "type": "string"
+                        },
+                        "zip_code": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "own_percent": {
+                      "type": "integer"
+                    },
+                    "tin": {
+                      "type": "string"
+                    },
+                    "tin_type": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "loan_demographic": {
+                  "type": "object",
+                  "properties": {
+                    "ethnicity": {
+                      "type": "object",
+                      "properties": {
+                        "other_hispanic_or_latino_name": {
+                          "type": "string"
+                        },
+                        "values": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "loan_id": {
+                      "type": "integer"
+                    },
+                    "property": {
+                      "type": "object",
+                      "properties": {
+                        "as_primary_resident": {
+                          "type": "boolean"
+                        },
+                        "bankruptcy_chapter": {
+                          "type": "string"
+                        },
+                        "borrowed_money_amount": {
+                          "type": "number"
+                        },
+                        "has_a_bankruptcy": {
+                          "type": "boolean"
+                        },
+                        "has_a_lawsuit": {
+                          "type": "boolean"
+                        },
+                        "has_a_pre_foreclosure_sale": {
+                          "type": "boolean"
+                        },
+                        "has_another_mortgage_loan": {
+                          "type": "boolean"
+                        },
+                        "has_borrowed_money": {
+                          "type": "boolean"
+                        },
+                        "has_conveyed_title": {
+                          "type": "boolean"
+                        },
+                        "has_federal_debt": {
+                          "type": "boolean"
+                        },
+                        "has_foreclosed_upon": {
+                          "type": "boolean"
+                        },
+                        "has_outstanding_judgments": {
+                          "type": "boolean"
+                        },
+                        "has_priority_over_1st": {
+                          "type": "boolean"
+                        },
+                        "has_transaction_relationship": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "race": {
+                      "type": "object",
+                      "properties": {
+                        "american_indian_or_alaska_native_name": {
+                          "type": "string"
+                        },
+                        "asian_other_name": {
+                          "type": "string"
+                        },
+                        "asian_values": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "other_pacific_islander_name": {
+                          "type": "string"
+                        },
+                        "values": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "sex": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "loan_property": {
+                  "type": "object",
+                  "properties": {
+                    "bathrooms": {
+                      "type": "integer"
+                    },
+                    "bedrooms": {
+                      "type": "integer"
+                    },
+                    "future_bathrooms": {
+                      "type": "integer"
+                    },
+                    "future_bedrooms": {
+                      "type": "integer"
+                    },
+                    "future_living_area_sqft": {
+                      "type": "number"
+                    },
+                    "future_property_type": {
+                      "type": "string"
+                    },
+                    "future_unit": {
+                      "type": "integer"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "living_area_sqft": {
+                      "type": "number"
+                    },
+                    "property_base": {
+                      "type": "object",
+                      "required": [
+                        "unit",
+                        "address"
+                      ],
+                      "properties": {
+                        "address": {
+                          "type": "object"
+                        },
+                        "id": {
+                          "type": "integer"
+                        },
+                        "total_amount": {
+                          "type": "number"
+                        },
+                        "unit": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "property_type": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "loan_purpose": {
+                  "type": "string"
+                },
+                "loan_term": {
+                  "type": "integer"
+                },
+                "loan_third_services": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "company": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "loan_id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "phone": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "loan_type": {
+                  "type": "string"
+                },
+                "ltv": {
+                  "type": "number"
+                },
+                "mid_construction": {
+                  "type": "boolean"
+                },
+                "prepayment_penalty": {
+                  "type": "integer"
+                },
+                "principal_amount": {
+                  "type": "number"
+                },
+                "purchase_amount": {
+                  "type": "number"
+                },
+                "purchase_date": {
+                  "type": "string"
+                },
+                "real_estate_experiences": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "address": {
+                        "type": "object",
+                        "required": [
+                          "state",
+                          "city",
+                          "address1",
+                          "zip_code"
+                        ],
+                        "properties": {
+                          "address1": {
+                            "type": "string"
+                          },
+                          "address2": {
+                            "type": "string"
+                          },
+                          "city": {
+                            "type": "string"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "zip_code": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "budget_or_cost": {
+                        "type": "number"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "is_tenant_occupied": {
+                        "type": "boolean"
+                      },
+                      "loan_id": {
+                        "type": "integer"
+                      },
+                      "ownership_on_title": {
+                        "type": "string"
+                      },
+                      "profit": {
+                        "type": "number"
+                      },
+                      "property_type": {
+                        "type": "string"
+                      },
+                      "purchase_amount": {
+                        "type": "number"
+                      },
+                      "purchase_date": {
+                        "type": "string"
+                      },
+                      "sold_amount": {
+                        "type": "number"
+                      },
+                      "sold_date": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "reserves_amount": {
+                  "type": "number"
+                },
+                "scheduled_close_escrow_date": {
+                  "type": "string"
+                },
+                "subordinate_debt_amount": {
+                  "type": "number"
+                },
+                "total_amount": {
+                  "type": "number"
+                },
+                "transaction_experiences": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "address": {
+                        "type": "object",
+                        "required": [
+                          "state",
+                          "city",
+                          "address1",
+                          "zip_code"
+                        ],
+                        "properties": {
+                          "address1": {
+                            "type": "string"
+                          },
+                          "address2": {
+                            "type": "string"
+                          },
+                          "city": {
+                            "type": "string"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "zip_code": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "budget_or_cost": {
+                        "type": "number"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "is_tenant_occupied": {
+                        "type": "boolean"
+                      },
+                      "loan_id": {
+                        "type": "integer"
+                      },
+                      "ownership_on_title": {
+                        "type": "string"
+                      },
+                      "profit": {
+                        "type": "number"
+                      },
+                      "property_type": {
+                        "type": "string"
+                      },
+                      "purchase_amount": {
+                        "type": "number"
+                      },
+                      "purchase_date": {
+                        "type": "string"
+                      },
+                      "sold_amount": {
+                        "type": "number"
+                      },
+                      "sold_date": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "yearly_liability_expense": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pdf/apply_form": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "pdf"
+        ],
+        "summary": "create apply form pdf",
+        "operationId": "pdfApplyFormPdf",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "applicants": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "address": {
+                        "type": "object",
+                        "required": [
+                          "state",
+                          "city",
+                          "address1",
+                          "zip_code"
+                        ],
+                        "properties": {
+                          "address1": {
+                            "type": "string"
+                          },
+                          "address2": {
+                            "type": "string"
+                          },
+                          "city": {
+                            "type": "string"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "zip_code": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "dob": {
+                        "type": "string"
+                      },
+                      "driver_license_num": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      },
+                      "est_credit_score": {
+                        "type": "integer"
+                      },
+                      "first_name": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "is_primary": {
+                        "type": "boolean"
+                      },
+                      "last_name": {
+                        "type": "string"
+                      },
+                      "marital_status": {
+                        "type": "string"
+                      },
+                      "mid_name": {
+                        "type": "string"
+                      },
+                      "phone": {
                         "type": "string"
                       },
                       "ssn": {
@@ -3084,6 +3417,9 @@
                     "contact_email": {
                       "type": "string"
                     },
+                    "contact_name": {
+                      "type": "string"
+                    },
                     "contact_phone": {
                       "type": "string"
                     },
@@ -3142,52 +3478,14 @@
                     "ethnicity": {
                       "type": "object",
                       "properties": {
-                        "hidden": {
-                          "type": "boolean"
-                        },
-                        "is_cuban": {
-                          "type": "boolean"
-                        },
-                        "is_hispanic_or_latino": {
-                          "type": "boolean"
-                        },
-                        "is_mexican": {
-                          "type": "boolean"
-                        },
-                        "is_not_hispanic_or_latino": {
-                          "type": "boolean"
-                        },
-                        "is_other_hispanic_or_latino": {
-                          "type": "boolean"
-                        },
                         "other_hispanic_or_latino_name": {
                           "type": "string"
-                        }
-                      }
-                    },
-                    "extra_demographic": {
-                      "type": "object",
-                      "properties": {
-                        "is_by_email_or_internet": {
-                          "type": "boolean"
                         },
-                        "is_by_face_to_face": {
-                          "type": "boolean"
-                        },
-                        "is_by_fax_or_mail": {
-                          "type": "boolean"
-                        },
-                        "is_by_telephone": {
-                          "type": "boolean"
-                        },
-                        "is_ethnicity_collected_by_observation": {
-                          "type": "boolean"
-                        },
-                        "is_race_collected_by_observation": {
-                          "type": "boolean"
-                        },
-                        "is_sex_collected_by_observation": {
-                          "type": "boolean"
+                        "values": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
                         }
                       }
                     },
@@ -3203,17 +3501,11 @@
                         "as_primary_resident": {
                           "type": "boolean"
                         },
-                        "bankruptcy_chapter11": {
-                          "type": "boolean"
+                        "bankruptcy_chapter": {
+                          "type": "string"
                         },
-                        "bankruptcy_chapter12": {
-                          "type": "boolean"
-                        },
-                        "bankruptcy_chapter13": {
-                          "type": "boolean"
-                        },
-                        "bankruptcy_chapter7": {
-                          "type": "boolean"
+                        "borrowed_money_amount": {
+                          "type": "number"
                         },
                         "has_a_bankruptcy": {
                           "type": "boolean"
@@ -3224,7 +3516,7 @@
                         "has_a_pre_foreclosure_sale": {
                           "type": "boolean"
                         },
-                        "has_another_mortgate_loan": {
+                        "has_another_mortgage_loan": {
                           "type": "boolean"
                         },
                         "has_borrowed_money": {
@@ -3239,7 +3531,7 @@
                         "has_foreclosed_upon": {
                           "type": "boolean"
                         },
-                        "has_outstanding_judgements": {
+                        "has_outstanding_judgments": {
                           "type": "boolean"
                         },
                         "has_priority_over_1st": {
@@ -3259,56 +3551,20 @@
                         "asian_other_name": {
                           "type": "string"
                         },
-                        "hidden": {
-                          "type": "boolean"
-                        },
-                        "is_american_indian_or_alaska_native": {
-                          "type": "boolean"
-                        },
-                        "is_asian": {
-                          "type": "boolean"
-                        },
-                        "is_asian_chinese": {
-                          "type": "boolean"
-                        },
-                        "is_asian_filipino": {
-                          "type": "boolean"
-                        },
-                        "is_asian_indian": {
-                          "type": "boolean"
-                        },
-                        "is_asian_japanese": {
-                          "type": "boolean"
-                        },
-                        "is_asian_korean": {
-                          "type": "boolean"
-                        },
-                        "is_asian_other": {
-                          "type": "boolean"
-                        },
-                        "is_asian_vietnamese": {
-                          "type": "boolean"
-                        },
-                        "is_black_or_african_american": {
-                          "type": "boolean"
-                        },
-                        "is_native_hawaiian_guamanian_or_chamorro_samoan": {
-                          "type": "boolean"
-                        },
-                        "is_native_hawaiian_guamanian_or_other_pacific_islander": {
-                          "type": "boolean"
-                        },
-                        "is_native_hawaiian_or_other_pacific_islander": {
-                          "type": "boolean"
-                        },
-                        "is_other_pacific_islander": {
-                          "type": "boolean"
-                        },
-                        "is_white": {
-                          "type": "boolean"
+                        "asian_values": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
                         },
                         "other_pacific_islander_name": {
                           "type": "string"
+                        },
+                        "values": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
                         }
                       }
                     },
@@ -3319,18 +3575,26 @@
                 },
                 "loan_property": {
                   "type": "object",
-                  "required": [
-                    "property_type",
-                    "living_area_sqft",
-                    "bedrooms",
-                    "bathrooms",
-                    "property_base"
-                  ],
                   "properties": {
                     "bathrooms": {
                       "type": "integer"
                     },
                     "bedrooms": {
+                      "type": "integer"
+                    },
+                    "future_bathrooms": {
+                      "type": "integer"
+                    },
+                    "future_bedrooms": {
+                      "type": "integer"
+                    },
+                    "future_living_area_sqft": {
+                      "type": "number"
+                    },
+                    "future_property_type": {
+                      "type": "string"
+                    },
+                    "future_unit": {
                       "type": "integer"
                     },
                     "id": {
@@ -3376,6 +3640,9 @@
                   "items": {
                     "type": "object",
                     "properties": {
+                      "company": {
+                        "type": "string"
+                      },
                       "email": {
                         "type": "string"
                       },
@@ -3496,6 +3763,67 @@
                 },
                 "scheduled_close_escrow_date": {
                   "type": "string"
+                },
+                "signatures": {
+                  "type": "object",
+                  "properties": {
+                    "borrower_authorization": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "signature_date": {
+                            "type": "string"
+                          },
+                          "signature_image": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "borrower_info": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "signature_date": {
+                            "type": "string"
+                          },
+                          "signature_image": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "business_purpose": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "signature_date": {
+                            "type": "string"
+                          },
+                          "signature_image": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "patriot_act": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "signature_date": {
+                            "type": "string"
+                          },
+                          "signature_image": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
                 },
                 "subordinate_debt_amount": {
                   "type": "number"
@@ -3834,7 +4162,6 @@
                       "has_collateralized_blanket",
                       "has_peroperty_vacant",
                       "has_short_term_rental",
-                      "additional_info",
                       "transaction_experiences",
                       "real_estate_experiences",
                       "loan_third_services",
@@ -3842,9 +4169,6 @@
                       "loan_demographic"
                     ],
                     "properties": {
-                      "additional_info": {
-                        "type": "string"
-                      },
                       "applicants": {
                         "type": "array",
                         "items": {
@@ -4001,6 +4325,9 @@
                           "contact_email": {
                             "type": "string"
                           },
+                          "contact_name": {
+                            "type": "string"
+                          },
                           "contact_phone": {
                             "type": "string"
                           },
@@ -4059,52 +4386,14 @@
                           "ethnicity": {
                             "type": "object",
                             "properties": {
-                              "hidden": {
-                                "type": "boolean"
-                              },
-                              "is_cuban": {
-                                "type": "boolean"
-                              },
-                              "is_hispanic_or_latino": {
-                                "type": "boolean"
-                              },
-                              "is_mexican": {
-                                "type": "boolean"
-                              },
-                              "is_not_hispanic_or_latino": {
-                                "type": "boolean"
-                              },
-                              "is_other_hispanic_or_latino": {
-                                "type": "boolean"
-                              },
                               "other_hispanic_or_latino_name": {
                                 "type": "string"
-                              }
-                            }
-                          },
-                          "extra_demographic": {
-                            "type": "object",
-                            "properties": {
-                              "is_by_email_or_internet": {
-                                "type": "boolean"
                               },
-                              "is_by_face_to_face": {
-                                "type": "boolean"
-                              },
-                              "is_by_fax_or_mail": {
-                                "type": "boolean"
-                              },
-                              "is_by_telephone": {
-                                "type": "boolean"
-                              },
-                              "is_ethnicity_collected_by_observation": {
-                                "type": "boolean"
-                              },
-                              "is_race_collected_by_observation": {
-                                "type": "boolean"
-                              },
-                              "is_sex_collected_by_observation": {
-                                "type": "boolean"
+                              "values": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
                               }
                             }
                           },
@@ -4120,17 +4409,11 @@
                               "as_primary_resident": {
                                 "type": "boolean"
                               },
-                              "bankruptcy_chapter11": {
-                                "type": "boolean"
+                              "bankruptcy_chapter": {
+                                "type": "string"
                               },
-                              "bankruptcy_chapter12": {
-                                "type": "boolean"
-                              },
-                              "bankruptcy_chapter13": {
-                                "type": "boolean"
-                              },
-                              "bankruptcy_chapter7": {
-                                "type": "boolean"
+                              "borrowed_money_amount": {
+                                "type": "number"
                               },
                               "has_a_bankruptcy": {
                                 "type": "boolean"
@@ -4141,7 +4424,7 @@
                               "has_a_pre_foreclosure_sale": {
                                 "type": "boolean"
                               },
-                              "has_another_mortgate_loan": {
+                              "has_another_mortgage_loan": {
                                 "type": "boolean"
                               },
                               "has_borrowed_money": {
@@ -4156,7 +4439,7 @@
                               "has_foreclosed_upon": {
                                 "type": "boolean"
                               },
-                              "has_outstanding_judgements": {
+                              "has_outstanding_judgments": {
                                 "type": "boolean"
                               },
                               "has_priority_over_1st": {
@@ -4176,56 +4459,20 @@
                               "asian_other_name": {
                                 "type": "string"
                               },
-                              "hidden": {
-                                "type": "boolean"
-                              },
-                              "is_american_indian_or_alaska_native": {
-                                "type": "boolean"
-                              },
-                              "is_asian": {
-                                "type": "boolean"
-                              },
-                              "is_asian_chinese": {
-                                "type": "boolean"
-                              },
-                              "is_asian_filipino": {
-                                "type": "boolean"
-                              },
-                              "is_asian_indian": {
-                                "type": "boolean"
-                              },
-                              "is_asian_japanese": {
-                                "type": "boolean"
-                              },
-                              "is_asian_korean": {
-                                "type": "boolean"
-                              },
-                              "is_asian_other": {
-                                "type": "boolean"
-                              },
-                              "is_asian_vietnamese": {
-                                "type": "boolean"
-                              },
-                              "is_black_or_african_american": {
-                                "type": "boolean"
-                              },
-                              "is_native_hawaiian_guamanian_or_chamorro_samoan": {
-                                "type": "boolean"
-                              },
-                              "is_native_hawaiian_guamanian_or_other_pacific_islander": {
-                                "type": "boolean"
-                              },
-                              "is_native_hawaiian_or_other_pacific_islander": {
-                                "type": "boolean"
-                              },
-                              "is_other_pacific_islander": {
-                                "type": "boolean"
-                              },
-                              "is_white": {
-                                "type": "boolean"
+                              "asian_values": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
                               },
                               "other_pacific_islander_name": {
                                 "type": "string"
+                              },
+                              "values": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
                               }
                             }
                           },
@@ -4245,6 +4492,21 @@
                             "type": "integer"
                           },
                           "bedrooms": {
+                            "type": "integer"
+                          },
+                          "future_bathrooms": {
+                            "type": "integer"
+                          },
+                          "future_bedrooms": {
+                            "type": "integer"
+                          },
+                          "future_living_area_sqft": {
+                            "type": "number"
+                          },
+                          "future_property_type": {
+                            "type": "string"
+                          },
+                          "future_unit": {
                             "type": "integer"
                           },
                           "id": {
@@ -4272,6 +4534,9 @@
                         "items": {
                           "type": "object",
                           "properties": {
+                            "company": {
+                              "type": "string"
+                            },
                             "email": {
                               "type": "string"
                             },
@@ -4522,7 +4787,6 @@
                       "has_collateralized_blanket",
                       "has_peroperty_vacant",
                       "has_short_term_rental",
-                      "additional_info",
                       "transaction_experiences",
                       "real_estate_experiences",
                       "loan_third_services",
@@ -4530,9 +4794,6 @@
                       "loan_demographic"
                     ],
                     "properties": {
-                      "additional_info": {
-                        "type": "string"
-                      },
                       "applicants": {
                         "type": "array",
                         "items": {
@@ -4689,6 +4950,9 @@
                           "contact_email": {
                             "type": "string"
                           },
+                          "contact_name": {
+                            "type": "string"
+                          },
                           "contact_phone": {
                             "type": "string"
                           },
@@ -4747,52 +5011,14 @@
                           "ethnicity": {
                             "type": "object",
                             "properties": {
-                              "hidden": {
-                                "type": "boolean"
-                              },
-                              "is_cuban": {
-                                "type": "boolean"
-                              },
-                              "is_hispanic_or_latino": {
-                                "type": "boolean"
-                              },
-                              "is_mexican": {
-                                "type": "boolean"
-                              },
-                              "is_not_hispanic_or_latino": {
-                                "type": "boolean"
-                              },
-                              "is_other_hispanic_or_latino": {
-                                "type": "boolean"
-                              },
                               "other_hispanic_or_latino_name": {
                                 "type": "string"
-                              }
-                            }
-                          },
-                          "extra_demographic": {
-                            "type": "object",
-                            "properties": {
-                              "is_by_email_or_internet": {
-                                "type": "boolean"
                               },
-                              "is_by_face_to_face": {
-                                "type": "boolean"
-                              },
-                              "is_by_fax_or_mail": {
-                                "type": "boolean"
-                              },
-                              "is_by_telephone": {
-                                "type": "boolean"
-                              },
-                              "is_ethnicity_collected_by_observation": {
-                                "type": "boolean"
-                              },
-                              "is_race_collected_by_observation": {
-                                "type": "boolean"
-                              },
-                              "is_sex_collected_by_observation": {
-                                "type": "boolean"
+                              "values": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
                               }
                             }
                           },
@@ -4808,17 +5034,11 @@
                               "as_primary_resident": {
                                 "type": "boolean"
                               },
-                              "bankruptcy_chapter11": {
-                                "type": "boolean"
+                              "bankruptcy_chapter": {
+                                "type": "string"
                               },
-                              "bankruptcy_chapter12": {
-                                "type": "boolean"
-                              },
-                              "bankruptcy_chapter13": {
-                                "type": "boolean"
-                              },
-                              "bankruptcy_chapter7": {
-                                "type": "boolean"
+                              "borrowed_money_amount": {
+                                "type": "number"
                               },
                               "has_a_bankruptcy": {
                                 "type": "boolean"
@@ -4829,7 +5049,7 @@
                               "has_a_pre_foreclosure_sale": {
                                 "type": "boolean"
                               },
-                              "has_another_mortgate_loan": {
+                              "has_another_mortgage_loan": {
                                 "type": "boolean"
                               },
                               "has_borrowed_money": {
@@ -4844,7 +5064,7 @@
                               "has_foreclosed_upon": {
                                 "type": "boolean"
                               },
-                              "has_outstanding_judgements": {
+                              "has_outstanding_judgments": {
                                 "type": "boolean"
                               },
                               "has_priority_over_1st": {
@@ -4864,56 +5084,20 @@
                               "asian_other_name": {
                                 "type": "string"
                               },
-                              "hidden": {
-                                "type": "boolean"
-                              },
-                              "is_american_indian_or_alaska_native": {
-                                "type": "boolean"
-                              },
-                              "is_asian": {
-                                "type": "boolean"
-                              },
-                              "is_asian_chinese": {
-                                "type": "boolean"
-                              },
-                              "is_asian_filipino": {
-                                "type": "boolean"
-                              },
-                              "is_asian_indian": {
-                                "type": "boolean"
-                              },
-                              "is_asian_japanese": {
-                                "type": "boolean"
-                              },
-                              "is_asian_korean": {
-                                "type": "boolean"
-                              },
-                              "is_asian_other": {
-                                "type": "boolean"
-                              },
-                              "is_asian_vietnamese": {
-                                "type": "boolean"
-                              },
-                              "is_black_or_african_american": {
-                                "type": "boolean"
-                              },
-                              "is_native_hawaiian_guamanian_or_chamorro_samoan": {
-                                "type": "boolean"
-                              },
-                              "is_native_hawaiian_guamanian_or_other_pacific_islander": {
-                                "type": "boolean"
-                              },
-                              "is_native_hawaiian_or_other_pacific_islander": {
-                                "type": "boolean"
-                              },
-                              "is_other_pacific_islander": {
-                                "type": "boolean"
-                              },
-                              "is_white": {
-                                "type": "boolean"
+                              "asian_values": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
                               },
                               "other_pacific_islander_name": {
                                 "type": "string"
+                              },
+                              "values": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
                               }
                             }
                           },
@@ -4933,6 +5117,21 @@
                             "type": "integer"
                           },
                           "bedrooms": {
+                            "type": "integer"
+                          },
+                          "future_bathrooms": {
+                            "type": "integer"
+                          },
+                          "future_bedrooms": {
+                            "type": "integer"
+                          },
+                          "future_living_area_sqft": {
+                            "type": "number"
+                          },
+                          "future_property_type": {
+                            "type": "string"
+                          },
+                          "future_unit": {
                             "type": "integer"
                           },
                           "id": {
@@ -4960,6 +5159,9 @@
                         "items": {
                           "type": "object",
                           "properties": {
+                            "company": {
+                              "type": "string"
+                            },
                             "email": {
                               "type": "string"
                             },
@@ -5190,7 +5392,6 @@
                       "has_collateralized_blanket",
                       "has_peroperty_vacant",
                       "has_short_term_rental",
-                      "additional_info",
                       "transaction_experiences",
                       "real_estate_experiences",
                       "loan_third_services",
@@ -5198,9 +5399,6 @@
                       "loan_demographic"
                     ],
                     "properties": {
-                      "additional_info": {
-                        "type": "string"
-                      },
                       "applicants": {
                         "type": "array",
                         "items": {
@@ -5357,6 +5555,9 @@
                           "contact_email": {
                             "type": "string"
                           },
+                          "contact_name": {
+                            "type": "string"
+                          },
                           "contact_phone": {
                             "type": "string"
                           },
@@ -5415,52 +5616,14 @@
                           "ethnicity": {
                             "type": "object",
                             "properties": {
-                              "hidden": {
-                                "type": "boolean"
-                              },
-                              "is_cuban": {
-                                "type": "boolean"
-                              },
-                              "is_hispanic_or_latino": {
-                                "type": "boolean"
-                              },
-                              "is_mexican": {
-                                "type": "boolean"
-                              },
-                              "is_not_hispanic_or_latino": {
-                                "type": "boolean"
-                              },
-                              "is_other_hispanic_or_latino": {
-                                "type": "boolean"
-                              },
                               "other_hispanic_or_latino_name": {
                                 "type": "string"
-                              }
-                            }
-                          },
-                          "extra_demographic": {
-                            "type": "object",
-                            "properties": {
-                              "is_by_email_or_internet": {
-                                "type": "boolean"
                               },
-                              "is_by_face_to_face": {
-                                "type": "boolean"
-                              },
-                              "is_by_fax_or_mail": {
-                                "type": "boolean"
-                              },
-                              "is_by_telephone": {
-                                "type": "boolean"
-                              },
-                              "is_ethnicity_collected_by_observation": {
-                                "type": "boolean"
-                              },
-                              "is_race_collected_by_observation": {
-                                "type": "boolean"
-                              },
-                              "is_sex_collected_by_observation": {
-                                "type": "boolean"
+                              "values": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
                               }
                             }
                           },
@@ -5476,17 +5639,11 @@
                               "as_primary_resident": {
                                 "type": "boolean"
                               },
-                              "bankruptcy_chapter11": {
-                                "type": "boolean"
+                              "bankruptcy_chapter": {
+                                "type": "string"
                               },
-                              "bankruptcy_chapter12": {
-                                "type": "boolean"
-                              },
-                              "bankruptcy_chapter13": {
-                                "type": "boolean"
-                              },
-                              "bankruptcy_chapter7": {
-                                "type": "boolean"
+                              "borrowed_money_amount": {
+                                "type": "number"
                               },
                               "has_a_bankruptcy": {
                                 "type": "boolean"
@@ -5497,7 +5654,7 @@
                               "has_a_pre_foreclosure_sale": {
                                 "type": "boolean"
                               },
-                              "has_another_mortgate_loan": {
+                              "has_another_mortgage_loan": {
                                 "type": "boolean"
                               },
                               "has_borrowed_money": {
@@ -5512,7 +5669,7 @@
                               "has_foreclosed_upon": {
                                 "type": "boolean"
                               },
-                              "has_outstanding_judgements": {
+                              "has_outstanding_judgments": {
                                 "type": "boolean"
                               },
                               "has_priority_over_1st": {
@@ -5532,56 +5689,20 @@
                               "asian_other_name": {
                                 "type": "string"
                               },
-                              "hidden": {
-                                "type": "boolean"
-                              },
-                              "is_american_indian_or_alaska_native": {
-                                "type": "boolean"
-                              },
-                              "is_asian": {
-                                "type": "boolean"
-                              },
-                              "is_asian_chinese": {
-                                "type": "boolean"
-                              },
-                              "is_asian_filipino": {
-                                "type": "boolean"
-                              },
-                              "is_asian_indian": {
-                                "type": "boolean"
-                              },
-                              "is_asian_japanese": {
-                                "type": "boolean"
-                              },
-                              "is_asian_korean": {
-                                "type": "boolean"
-                              },
-                              "is_asian_other": {
-                                "type": "boolean"
-                              },
-                              "is_asian_vietnamese": {
-                                "type": "boolean"
-                              },
-                              "is_black_or_african_american": {
-                                "type": "boolean"
-                              },
-                              "is_native_hawaiian_guamanian_or_chamorro_samoan": {
-                                "type": "boolean"
-                              },
-                              "is_native_hawaiian_guamanian_or_other_pacific_islander": {
-                                "type": "boolean"
-                              },
-                              "is_native_hawaiian_or_other_pacific_islander": {
-                                "type": "boolean"
-                              },
-                              "is_other_pacific_islander": {
-                                "type": "boolean"
-                              },
-                              "is_white": {
-                                "type": "boolean"
+                              "asian_values": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
                               },
                               "other_pacific_islander_name": {
                                 "type": "string"
+                              },
+                              "values": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
                               }
                             }
                           },
@@ -5601,6 +5722,21 @@
                             "type": "integer"
                           },
                           "bedrooms": {
+                            "type": "integer"
+                          },
+                          "future_bathrooms": {
+                            "type": "integer"
+                          },
+                          "future_bedrooms": {
+                            "type": "integer"
+                          },
+                          "future_living_area_sqft": {
+                            "type": "number"
+                          },
+                          "future_property_type": {
+                            "type": "string"
+                          },
+                          "future_unit": {
                             "type": "integer"
                           },
                           "id": {
@@ -5628,6 +5764,9 @@
                         "items": {
                           "type": "object",
                           "properties": {
+                            "company": {
+                              "type": "string"
+                            },
                             "email": {
                               "type": "string"
                             },
@@ -5877,6 +6016,55 @@
                       }
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/storage/presign_url": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "storage"
+        ],
+        "summary": "create aws s3 presign url",
+        "operationId": "storageCreateAwsS3PresignUrl",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "type"
+              ],
+              "properties": {
+                "type": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string"
                 }
               }
             }
@@ -6200,7 +6388,7 @@
       }
     }
   },
-  "x-date": "2025-08-25 15:25:34",
+  "x-date": "2025-09-02 16:41:21",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

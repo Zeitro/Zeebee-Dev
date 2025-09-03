@@ -1,6 +1,8 @@
 package model
 
 import (
+	"database/sql"
+
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/types"
 )
@@ -18,7 +20,7 @@ type Applicant struct {
 	Type             constants.ApplicantType             `gorm:"column:type;size:10;not null;default:'Individual';commit:'Individual,Corporation'" json:"type"`
 	InvitationStatus constants.ApplicantInvitationStatus `gorm:"column:invitation_status;size:10;not null;default:'Pending';commit:'Accepted,Pending,Rejected'" json:"invitation_status"`
 	Ssn              string                              `gorm:"column:ssn;size:20;not null;default:''" json:"ssn"`
-	Dob              string                              `gorm:"column:dob;size:10;not null;default:''" json:"dob"`
+	Dob              *sql.NullTime                       `gorm:"column:dob;size:10;not null;default:''" json:"dob"`
 	MaritalStatus    constants.MaritalStatus             `gorm:"column:marital_status;size:10;not null;default:''" json:"marital_status"`
 	Email            string                              `gorm:"column:email;size:100;not null;default:''" json:"email"`
 	EstCreditScore   int32                               `gorm:"column:est_credit_score;not null;default:0" json:"est_credit_score"`

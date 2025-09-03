@@ -15,10 +15,12 @@ type LoanDemographicProperty struct {
 	HasAPreForeclosureSale     bool    `json:"has_a_pre_foreclosure_sale"`
 	HasForeclosedUpon          bool    `json:"has_foreclosed_upon"`
 	HasABankruptcy             bool    `json:"has_a_bankruptcy"`
-	BankruptcyChapter7         bool    `json:"bankruptcy_chapter7"`
-	BankruptcyChapter11        bool    `json:"bankruptcy_chapter11"`
-	BankruptcyChapter12        bool    `json:"bankruptcy_chapter12"`
-	BankruptcyChapter13        bool    `json:"bankruptcy_chapter13"`
+	BankruptcyChapter          string  `json:"bankruptcy_chapter"`
+
+	// BankruptcyChapter7         bool    `json:"bankruptcy_chapter7"`
+	// BankruptcyChapter11        bool    `json:"bankruptcy_chapter11"`
+	// BankruptcyChapter12        bool    `json:"bankruptcy_chapter12"`
+	// BankruptcyChapter13        bool    `json:"bankruptcy_chapter13"`
 }
 
 // LoanDemographicEthnicity 种族条款
