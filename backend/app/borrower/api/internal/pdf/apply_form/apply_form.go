@@ -282,8 +282,11 @@ func (form *ApplyForm) buildGraySmallTitle(title string, position position) (err
 }
 
 func (form *ApplyForm) buildSignature(targetSignature []*types.SignatureEntry) (err error) {
-	// signatures := form.info.Signatures
-	// targetSignature := signatures[typ]
+
+	if len(targetSignature) > 0 && len(targetSignature) != len(form.info.Applicants) {
+		err = errors.New("signature number not match the applicants number")
+		return err
+	}
 
 	form.pdf.SetBoldFont()
 	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: 12}, "Agreed & Accepted")
