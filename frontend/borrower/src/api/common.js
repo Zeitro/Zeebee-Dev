@@ -48,10 +48,13 @@ export const getUploadAwsUrl = (url, type = 'pdf') => {
 // 上传文件到亚马逊
 export const uploadAwsS3 = async ({ url, file, onProgress = () => {}, type }) => {
 	const { url: uploadUrl } = await getUploadAwsUrl(url, type);
-	return uploadWithProgress(uploadUrl, {
+	const res = await uploadWithProgress(uploadUrl, {
 		method: 'PUT',
 		body: file,
 		onProgress,
 		isExternalLink: true,
 	});
+	if (res) {
+		return uploadUrl.split('?')[0];
+	}
 };

@@ -79,6 +79,12 @@ const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
 									middleName={[field.name, 'mid_name']}
 									lastName={[field.name, 'last_name']}
 									title={`Borrower ${index + 1}`}
+									config={{
+										firstNameRequired: !index,
+										lastNameRequired: !index,
+									}}
+									listName="applicants"
+									form={form}
 								/>
 							))}
 							<Form.ErrorList errors={errors} />
@@ -184,7 +190,7 @@ const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
 							<Select
 								options={prepaymentPenaltyOptions}
 								placeholder="Enter Prepayment penalty"
-								suffixIcon={<div className="text-sm">months interest</div>}
+								suffixIcon={<div className="text-sm">Months</div>}
 							/>
 						</Form.Item>
 					</Col>
