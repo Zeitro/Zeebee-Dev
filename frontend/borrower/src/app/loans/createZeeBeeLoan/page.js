@@ -79,12 +79,15 @@ const CreateZeeBeeLoan = () => {
 	const getTabsItem = () => {
 		let newArr = [];
 		stepContent.map((item, index) => {
+			const isLast = stepContent.length - 1 === index;
 			if (Array.isArray(item)) {
 				item.map((item2, index2) => {
+					const isLastStep = isLast && index2 === item.length - 1;
 					newArr.push({
 						key: `${index}-${index2}`,
 						label: '',
 						children: item2,
+						destroyOnHidden: isLastStep,
 					});
 				});
 			} else {
@@ -92,6 +95,7 @@ const CreateZeeBeeLoan = () => {
 					key: `${index}-0`,
 					label: '',
 					children: item,
+					destroyOnHidden: isLast,
 				});
 			}
 		});
@@ -141,13 +145,10 @@ const CreateZeeBeeLoan = () => {
 		});
 		const file = await res.blob();
 		file.name = 'contract.pdf';
-		console.log(file);
-		// const onProgress = () => {
-		// 	console.log('onProgress');
-		// };
-		// const a = await uploadAwsS3({ url: '/storage/presign_url', file, onProgress });
-		// console.log(a);
-		uploadFile(file);
+		const onProgress = (e) => {
+			console.log('onProgress', e);
+		};
+		return await uploadAwsS3({ url: '/storage/presign_url', file, onProgress });
 	};
 
 	// // next/Add loan
@@ -157,16 +158,19 @@ const CreateZeeBeeLoan = () => {
 			const isType = diffSteps();
 			// 解决：没填数据就触发了错误验证，又直接切换到上一步骤，又点击下一步时，validateFields会报错，提示刚才错误验证的字段没有填，导致下一页切换不了
 			if (errorList.length && isClickBackBtn.current) {
-				isClickBackBtn.current = false;
 				const allValues = form.getFieldsValue();
 				errorList.map((i) => {
 					_.unset(allValues, i); // 拿到错误的字段key，删除这项内容
 				});
 				let fieldsKeys = flattenObjectPaths(allValues); // 将多层嵌套对象转换为二维路径数组
 				values = await form.validateFields(fieldsKeys);
+				console.log('values111', values);
 			} else {
 				values = await form.validateFields();
+				console.log('values222', values);
 			}
+			isClickBackBtn.current = false;
+
 			setErrorList([]);
 			if (isType === 'Submit') {
 				if (values?.signatures?.remainingSignatureCount || !values?.signatures) {
@@ -181,10 +185,9 @@ const CreateZeeBeeLoan = () => {
 				body.loan_borrower.tin_type = values?.loan_borrower?.tin?.tin_type;
 				body.loan_borrower.tin = values?.loan_borrower?.tin?.tin;
 				_.unset(body, ['signatures', 'remainingSignatureCount']);
-				// await handlePdf(body);
-				console.log(body);
-				await handleSubmit({ ...body, apply_form_file: 'http://ssss.com' });
-				// 		router.back();
+				const fileUrl = await handlePdf(body);
+				await handleSubmit({ ...body, apply_form_file: fileUrl });
+				router.back();
 				return;
 			}
 			if (isType === 'NextMaxStep') {

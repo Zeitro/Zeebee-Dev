@@ -71,3 +71,13 @@ export function flattenObjectPaths(obj, parentPath = []) {
 
 	return paths;
 }
+
+// 拼装key，可用于表单中，例如useWatch
+export const getPathArr = (name, listName) => {
+	const listNameArr = Array.isArray(listName) ? listName : [listName];
+	let pathArr = Array.isArray(name) ? name : [name];
+	if (listName) {
+		pathArr = [...listNameArr, ...pathArr];
+	}
+	return pathArr;
+};
