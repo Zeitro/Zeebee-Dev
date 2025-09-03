@@ -38,7 +38,7 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 		}
 	}()
 	// check input wrong pwd times
-	redisKey := stringx.Formate(constants.BorrowerLoginFailedTimes, in.Data.Email)
+	redisKey := stringx.Format(constants.BorrowerLoginFailedTimes, in.Data.Email)
 	var loginFailedTimes int
 	if global.Config.MaxFailedLoginTimes > 0 {
 		loginFailedTimes, err = global.GetRedis().GetInt(l.ctx, redisKey)

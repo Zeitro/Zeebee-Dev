@@ -36,11 +36,11 @@ func (form *ApplyForm) page5() (err error) {
 		h: 27,
 	})
 	form.pdf.Br(30)
-	_ = form.pdf.Cell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: fontHeight}, "Original Budget:  "+stringx.TransNumberToString(budget.OriginalBudget, true))
+	_ = form.pdf.Cell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: fontHeight}, "Original Budget:  "+stringx.FormatUsDollarCurrency(budget.OriginalBudget))
 	form.pdf.Br(lineHeight)
-	_ = form.pdf.Cell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: fontHeight}, "Remaining Budget:  "+stringx.TransNumberToString(budget.RemainingBudget, true))
+	_ = form.pdf.Cell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: fontHeight}, "Remaining Budget:  "+stringx.FormatUsDollarCurrency(budget.RemainingBudget))
 	form.pdf.Br(lineHeight)
-	_ = form.pdf.Cell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: fontHeight}, "Cost Spent to Date:  "+stringx.TransNumberToString(budget.CostSpentToDateAmount, true))
+	_ = form.pdf.Cell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: fontHeight}, "Cost Spent to Date:  "+stringx.FormatUsDollarCurrency(budget.CostSpentToDateAmount))
 
 	form.pdf.Br(lineHeight)
 	x = form.pdf.GetX()
@@ -70,14 +70,6 @@ func (form *ApplyForm) page5() (err error) {
 	if err != nil {
 		return err
 	}
-
-	// form.pdf.Br(lineHeight * 3)
-	// x = form.pdf.GetX()
-	// y = form.pdf.GetY()
-	// err = form.buildPage5ThirdService2Table(position{x: x, y: y})
-	// if err != nil {
-	// 	return err
-	// }
 
 	return err
 }
@@ -179,7 +171,7 @@ func (form *ApplyForm) buildPage5ThirdServiceTable(tablePosition position) (err 
 	table.AddColumn("Email", 109, "center")
 
 	for _, thirdService := range thirdServices {
-		table.AddRow([]string{thirdService.Type, thirdService.Name, thirdService.Company, thirdService.Phone, thirdService.Email})
+		table.AddRow([]string{thirdService.Type, thirdService.Name, thirdService.Company, stringx.FormatUsPhoneNumber(thirdService.Phone), thirdService.Email})
 	}
 	err = table.DrawTable()
 

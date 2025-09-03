@@ -19,7 +19,7 @@ func (form *ApplyForm) page2() (err error) {
 	}
 	form.pdf.SetBoldFont()
 	_ = form.pdf.Cell(nil, "Borrower Type:")
-	// form.pdf.Br(20)
+
 	form.pdf.BrLine()
 	x := form.pdf.GetX()
 	y := form.pdf.GetY()
@@ -32,7 +32,7 @@ func (form *ApplyForm) page2() (err error) {
 		return err
 	}
 	form.pdf.BrLine()
-	// 绘制灰色线条
+
 	form.pdf.SetGrayStroke()
 	form.pdf.Line(form.pdf.MarginLeft(), form.pdf.GetY(), gopdf.PageSizeA4.W-form.pdf.MarginRight(), form.pdf.GetY())
 	form.pdf.SetRegularFont()
@@ -40,7 +40,7 @@ func (form *ApplyForm) page2() (err error) {
 	brHeight := 6.0
 	form.pdf.Br(brHeight)
 	_ = form.pdf.Cell(&gopdf.Rect{W: 250, H: rowHeight}, "Entity Name/Individual:  "+borrowerInfo.Name)
-	_ = form.pdf.Cell(&gopdf.Rect{W: 150, H: rowHeight}, "TIN:  "+borrowerInfo.Tin)
+	_ = form.pdf.Cell(&gopdf.Rect{W: 150, H: rowHeight}, "TIN:  "+stringx.FormatUsSsn(borrowerInfo.Tin))
 	_ = form.pdf.Cell(&gopdf.Rect{W: 100, H: rowHeight}, "% Own:  "+fmt.Sprintf("%d", borrowerInfo.OwnPercent))
 	form.pdf.Br(brHeight * 3.0)
 	_ = form.pdf.MultiCell(&gopdf.Rect{W: gopdf.PageSizeA4.W - form.pdf.MarginLeft() - form.pdf.MarginRight(), H: rowHeight}, "Mailing Address:  "+borrowerInfo.MailingAddress.Address1)
@@ -49,7 +49,7 @@ func (form *ApplyForm) page2() (err error) {
 	_ = form.pdf.Cell(&gopdf.Rect{W: 150, H: rowHeight}, "State:  "+borrowerInfo.MailingAddress.State)
 	_ = form.pdf.Cell(&gopdf.Rect{W: 100, H: rowHeight}, "Zip:  "+borrowerInfo.MailingAddress.ZipCode)
 	form.pdf.Br(brHeight * 3.0)
-	_ = form.pdf.MultiCell(&gopdf.Rect{W: gopdf.PageSizeA4.W - form.pdf.MarginLeft() - form.pdf.MarginRight(), H: rowHeight}, "Phone:  "+borrowerInfo.ContactPhone)
+	_ = form.pdf.MultiCell(&gopdf.Rect{W: gopdf.PageSizeA4.W - form.pdf.MarginLeft() - form.pdf.MarginRight(), H: rowHeight}, "Phone:  "+stringx.FormatUsPhoneNumber(borrowerInfo.ContactPhone))
 	form.pdf.Br(brHeight)
 	_ = form.pdf.MultiCell(&gopdf.Rect{W: gopdf.PageSizeA4.W - form.pdf.MarginLeft() - form.pdf.MarginRight(), H: rowHeight}, "Email:  "+borrowerInfo.ContactEmail)
 	form.pdf.Br(brHeight)
@@ -96,11 +96,11 @@ func (form *ApplyForm) applicantInfo(index int, applicant *types.LoanApplyApplic
 	form.pdf.Br(brHeight)
 	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "Last Name:  "+applicant.LastName)
 	form.pdf.Br(brHeight)
-	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "SSN:  "+applicant.Ssn)
+	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "SSN:  "+stringx.FormatUsSsn(applicant.Ssn))
 	form.pdf.Br(brHeight)
 	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "DOB:  "+applicant.Dob)
 	form.pdf.Br(brHeight)
-	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "Phone:  "+applicant.Phone)
+	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "Phone:  "+stringx.FormatUsPhoneNumber(applicant.Phone))
 	form.pdf.Br(brHeight)
 	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "Marital Status:")
 	x = form.pdf.GetX()

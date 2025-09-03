@@ -107,12 +107,12 @@ func (form *ApplyForm) buildPage6TransactionTable(tablePosition position) (err e
 			fmt.Sprintf("%s\n %s %s", address.Address1, address.City, address.State),
 			experience.OwnershipOnTitle,
 			experience.PropertyType,
-			stringx.TransNumberToString(experience.PurchaseAmount, true),
+			stringx.FormatUsDollarCurrency(experience.PurchaseAmount),
 			experience.PurchaseDate,
-			stringx.TransNumberToString(experience.BudgetOrCost, true),
-			stringx.TransNumberToString(experience.SoldAmount, true),
+			stringx.FormatUsDollarCurrency(experience.BudgetOrCost),
+			stringx.FormatUsDollarCurrency(experience.SoldAmount),
 			experience.SoldDate,
-			stringx.TransNumberToString(experience.Profit, true),
+			stringx.FormatUsDollarCurrency(experience.Profit),
 		})
 
 	}
@@ -178,12 +178,12 @@ func (form *ApplyForm) buildPage6RealEstateTable(tablePosition position) (err er
 			fmt.Sprintf("%s\n %s %s", address.Address1, address.City, address.State),
 			experience.OwnershipOnTitle,
 			experience.PropertyType,
-			stringx.TransNumberToString(experience.PurchaseAmount, true),
+			stringx.FormatUsDollarCurrency(experience.PurchaseAmount),
 			experience.PurchaseDate,
 			condition.Ternary(experience.IsTenantOccupied, "Y", "N"),
-			stringx.TransNumberToString(experience.SoldAmount, true),
+			stringx.FormatUsDollarCurrency(experience.SoldAmount),
 			experience.SoldDate,
-			stringx.TransNumberToString(experience.Profit, true),
+			stringx.FormatUsDollarCurrency(experience.Profit),
 		})
 	}
 	err = table.DrawTable()

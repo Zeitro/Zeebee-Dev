@@ -37,7 +37,6 @@ func (form *ApplyForm) page3() (err error) {
 	form.pdf.BrLine()
 	form.pdf.BrLine()
 	form.pdf.BrLine()
-	// err = form.buildSignature("borrower_info")
 	err = form.buildSignature(form.info.Signatures.BorrowerInfo)
 	if err != nil {
 		return err
