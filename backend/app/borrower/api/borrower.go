@@ -22,6 +22,7 @@ func NewApiServer(c config.Config) (s service.Service) {
 	runOpts := []rest.RunOption{
 		rest.WithNotFoundHandler(response.NotFoundHandler{}),
 		rest.WithNotAllowedHandler(response.NotFoundHandler{}),
+		rest.WithCors("*"),
 	}
 	restServer := rest.MustNewServer(apiConfig.RestConf, runOpts...)
 	// restServer.Use(middleware.CorsMiddleware)
