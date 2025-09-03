@@ -44,14 +44,14 @@ func (l *CreatePresignedUrlLogic) CreatePresignedUrl(in *borrower.StorageCreateP
 	}
 	name := uuid.New().String()
 	key := folder + "/" + in.Data.Type + "/" + name
-	url, err := client.GetPresignUrl(l.ctx, key, expireSeconds)
+	req, err := client.GetPresignUrl(l.ctx, key, expireSeconds)
 	if err != nil {
 		return
 	}
 
 	return &borrower.StorageCreatePresignedUrlResponse{
 		Data: &borrower.StorageCreatePresignedUrlResponseData{
-			Url: url,
+			Url: req.URL,
 		},
 	}, nil
 }
