@@ -1,2 +1,4 @@
 .husky/_/
 /node_modules
+.idea
+.lingma
