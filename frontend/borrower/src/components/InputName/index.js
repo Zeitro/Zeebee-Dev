@@ -1,6 +1,7 @@
 import React from 'react';
 import { Col, Form, Input, Row } from 'antd';
 import { titleCol } from '@/enum/common';
+import { getPathArr } from '@/lib/common';
 const InputName = ({
 	layoutCol = {
 		xs: 24,
@@ -16,7 +17,13 @@ const InputName = ({
 	gutter = 24,
 	title,
 	style = { paddingBottom: 12, fontSize: 16 },
+	config = {},
+	form,
+	listName,
 }) => {
+	const first = Form.useWatch(getPathArr(firstName, listName), form);
+	const last = Form.useWatch(getPathArr(lastName, listName), form);
+
 	return (
 		<Row gutter={gutter}>
 			{title && (
@@ -28,17 +35,15 @@ const InputName = ({
 				<Form.Item
 					label={firstLabel}
 					name={firstName}
-					rules={[{ required: true, message: 'Please Enter!' }]}
+					rules={[
+						{ required: last || config?.firstNameRequired, message: 'Please Enter!' },
+					]}
 				>
 					<Input placeholder={`Enter ${firstLabel.toLowerCase()}`} />
 				</Form.Item>
 			</Col>
 			<Col {...layoutCol}>
-				<Form.Item
-					label={middleLabel}
-					name={middleName}
-					rules={[{ required: true, message: 'Please Enter!' }]}
-				>
+				<Form.Item label={middleLabel} name={middleName}>
 					<Input placeholder={`Enter ${middleLabel.toLowerCase()}`} />
 				</Form.Item>
 			</Col>
@@ -46,7 +51,9 @@ const InputName = ({
 				<Form.Item
 					label={lastLabel}
 					name={lastName}
-					rules={[{ required: true, message: 'Please Enter!' }]}
+					rules={[
+						{ required: first || config?.lastNameRequired, message: 'Please Enter!' },
+					]}
 				>
 					<Input placeholder={`Enter ${lastLabel.toLowerCase()}`} />
 				</Form.Item>

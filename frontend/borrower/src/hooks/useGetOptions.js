@@ -1,7 +1,6 @@
 import { useOptionsStore } from '@/store/options';
 import { Col, Form, Radio, Select } from 'antd';
 import { useCallback, useEffect, useRef } from 'react';
-import { useDisUpdateEffect } from './common';
 /**
  * 请求options下拉数据公共接口
  * list = [{
@@ -18,8 +17,6 @@ export const useGetOptions = (list = []) => {
 	const getInitOptions = useCallback(async () => {
 		await Promise.all(
 			list.map(async (item) => {
-				console.log(optionsInfo?.[item.valueName]);
-
 				try {
 					if (item.type === 'lender') {
 						return await getLender();
@@ -37,8 +34,6 @@ export const useGetOptions = (list = []) => {
 	}, [getOptions, list, state]);
 
 	useEffect(() => {
-		console.log('0000011');
-
 		if (list?.length && isInitGet.current) {
 			getInitOptions();
 			isInitGet.current = false;
