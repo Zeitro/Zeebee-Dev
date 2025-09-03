@@ -1,0 +1,22 @@
+syntax = "v1"
+
+info(
+    title: "borrower-loan-borrower-api"
+    desc: "borrower-loan-borrower-api http service description"
+    version: "v1"
+)
+import "address.api"
+
+type LoanBorrowerEntry {
+    Id int64 `json:"id,optional"`
+    LoanId int64 `json:"loan_id,optional"`
+    Type string `json:"type,optional"`
+    Name string `json:"name,optional"`
+    TinType string `json:"tin_type,optional"`
+    Tin string `json:"tin,optional"`
+    MailingAddress AddressEntry `json:"mailing_address,optional"`
+    ContactEmail string `json:"contact_email,optional"`
+    ContactPhone string `json:"contact_phone,optional"`
+    ContactName string `json:"contact_name,optional"`
+    OwnPercent int32 `json:"own_percent,optional"`
+}

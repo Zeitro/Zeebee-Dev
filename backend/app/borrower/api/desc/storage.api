@@ -1,0 +1,16 @@
+syntax = "v1"
+
+info(
+    title: "borrower-storage-api"
+    desc: "storage-api http service description"
+    version: "v1"
+)
+
+type (
+    S3PresignUrlCreateRequest {
+        Type string `json:"type" validate:"required,oneof=pdf image"`
+    }
+    S3PresignUrlCreateResponse {
+        Url string `json:"url"`
+    }
+)

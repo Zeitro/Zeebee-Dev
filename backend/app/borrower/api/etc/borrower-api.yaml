@@ -1,0 +1,15 @@
+Name: borrower-api
+Host: 0.0.0.0
+Port: 10000
+Timeout: 60000
+
+JwtAuth:
+  AccessSecret: accessSecret
+  AccessExpire: 86000
+
+RpcConf:
+  Endpoints:
+    - 127.0.0.1:10001
+  Timeout: 10000
+  NonBlock: true
+
