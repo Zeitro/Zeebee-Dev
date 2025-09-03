@@ -6,13 +6,20 @@ import (
 	"testing"
 )
 
+var c = &Config{
+	Bucket:       "zeebee-files-staging",
+	Region:       "us-west-1",
+	AccessKey:    "AKIA4RT6FLQ5RNYTQCPJ",
+	AccessSecret: "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",
+}
+
 func TestClient_GetPresignUrl(t *testing.T) {
-	c := &Config{
-		Bucket:       "zeebee-files-staging",
-		Region:       "us-west-1",
-		AccessKey:    "AKIAZYJFTPUSWNDYUDER",
-		AccessSecret: "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",
-	}
+	// c := &Config{
+	// 	Bucket:       "zeebee-files-staging",
+	// 	Region:       "us-west-1",
+	// 	AccessKey:    "AKIAZYJFTPUSWNDYUDER",
+	// 	AccessSecret: "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",
+	// }
 	client, err := NewS3Client(c)
 	if err != nil {
 		t.Errorf("failed to create s3 client %v", err)
@@ -27,17 +34,17 @@ func TestClient_GetPresignUrl(t *testing.T) {
 }
 
 func TestClient_UploadFile(t *testing.T) {
-	c := &Config{
-		Bucket:       "zeebee-files-staging",
-		Region:       "us-west-1",
-		AccessKey:    "AKIAZYJFTPUSWNDYUDER",
-		AccessSecret: "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",
-	}
+	// c := &Config{
+	// 	Bucket:       "zeebee-files-staging",
+	// 	Region:       "us-west-1",
+	// 	AccessKey:    "AKIAZYJFTPUSWNDYUDER",
+	// 	AccessSecret: "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",
+	// }
 	client, err := NewS3Client(c)
 	if err != nil {
 		t.Errorf("failed to create s3 client %v", err)
 	}
-	req, err := client.GetPresignUrl(context.Background(), "test.png", 120)
+	req, err := client.GetPresignUrl(context.Background(), "files-dev/test.png", 120)
 	if err != nil {
 		t.Errorf("failed to create presign url:%v", err)
 	}
@@ -56,5 +63,5 @@ func TestClient_UploadFile(t *testing.T) {
 	if err != nil {
 		t.Errorf("failed to upload:%v", err)
 	}
-	t.Logf("%s", url)
+	t.Logf("s3 file: %s", url)
 }

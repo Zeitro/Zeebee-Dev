@@ -48,7 +48,7 @@ func FormatUsPhoneNumber(phoneNumber string) (newPhoneNumber string) {
 	if len(phoneNumber) != 10 {
 		return phoneNumber
 	}
-	newPhoneNumber = fmt.Sprintf("%s-%s-%s", phoneNumber[0:3], phoneNumber[3:6], phoneNumber[6:10])
+	newPhoneNumber = fmt.Sprintf("(%s) %s-%s", phoneNumber[0:3], phoneNumber[3:6], phoneNumber[6:10])
 	return newPhoneNumber
 }
 
@@ -70,5 +70,5 @@ func FormatCurrency(symbol string, amount float64) string {
 
 func FormatUsDollarCurrency(amount float64) string {
 	usdAmount := money.NewFromFloat(amount, money.USD)
-	return usdAmount.Display()
+	return strings.TrimSuffix(usdAmount.Display(), ".00")
 }

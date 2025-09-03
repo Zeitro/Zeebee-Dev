@@ -4,11 +4,11 @@
 package types
 
 type AddressEntry struct {
-	State    string `json:"state" validate:"required"`
-	City     string `json:"city" validate:"required"`
-	Address1 string `json:"address1" validate:"required"`
+	State    string `json:"state,optional" validate:"required"`
+	City     string `json:"city,optional" validate:"required"`
+	Address1 string `json:"address1,optional" validate:"required"`
 	Address2 string `json:"address2,optional"`
-	ZipCode  string `json:"zip_code, optional"`
+	ZipCode  string `json:"zip_code,optional"`
 }
 
 type ApplicantEntry struct {
@@ -32,9 +32,9 @@ type EmptyResponse struct {
 
 type LoanApplyApplicantEntry struct {
 	Id               int64         `json:"id,optional"`
-	FirstName        string        `json:"first_name,optional" validate:"required"`
-	MidName          string        `json:"mid_name,optional"`
-	LastName         string        `json:"last_name,optional" validate:"required"`
+	FirstName        string        `json:"first_name,optional" validate:"required,min=1,max=30"`
+	MidName          string        `json:"mid_name,optional" validate:"min=0,max=30"`
+	LastName         string        `json:"last_name,optional" validate:"required,min=1,max=30"`
 	Type             string        `json:"type,optional" validate:"required,oneof=Individual Corporation LLC Trust Partnership"`
 	IsPrimary        bool          `json:"is_primary,optional"`
 	Ssn              string        `json:"ssn,optional" validate:"required"`
@@ -129,9 +129,9 @@ type LoanDemographicRaceEntry struct {
 
 type LoanEditApplicantEntry struct {
 	Id        int64  `json:"id,optional"`
-	FirstName string `json:"first_name" validate:"required"`
-	MidName   string `json:"mid_name,optional"`
-	LastName  string `json:"last_name" validate:"required"`
+	FirstName string `json:"first_name" validate:"required,min=1,max=30"`
+	MidName   string `json:"mid_name,optional" validate:"min=0,max=30"`
+	LastName  string `json:"last_name" validate:"required,min=1,max=30"`
 	Type      string `json:"type" validate:"required,oneof=Individual Corporation LLC Trust Partnership"`
 	IsPrimary bool   `json:"is_primary"`
 }
@@ -142,7 +142,7 @@ type LoanEntry struct {
 	PendingStatus            string                   `json:"pending_status,optional" validate:"required_if=Stage Pending,omitempty,oneof=Quoting Processing Closing"`
 	LoanPurpose              string                   `json:"loan_purpose" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
 	LoanType                 string                   `json:"loan_type" validate:"required,oneof=Bridge Rehab  Rental 'Ground up construction'"`
-	TotalAmount              float64                  `json:"total_amount" validate:"required"`
+	TotalAmount              float64                  `json:"total_amount"`
 	InitialAmount            float64                  `json:"initial_amount,optional"`
 	LoanProperty             *LoanPropertyEntry       `json:"loan_property" validate:"required"`
 	LenderCompany            string                   `json:"lender_company,optional" validate:"required"`
@@ -213,7 +213,7 @@ type LoanPageSorter struct {
 
 type LoanPropertyEntry struct {
 	Id                   int64              `json:"id,optional"`
-	PropertyType         string             `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
+	PropertyType         string             `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
 	LivingAreaSqft       float32            `json:"living_area_sqft,optional"`
 	Bedrooms             int32              `json:"bedrooms,optional" `
 	Bathrooms            int32              `json:"bathrooms,optional"`
@@ -222,7 +222,7 @@ type LoanPropertyEntry struct {
 	FutureLivingAreaSqft float32            `json:"future_living_area_sqft,optional" validate:"gte=0"`
 	FutureBedrooms       int32              `json:"future_bedrooms,optional" validate:"gte=0"`
 	FutureBathrooms      int32              `json:"future_bathrooms,optional" validate:"gte=0"`
-	PropertyBase         *PropertyBaseEntry `json:"property_base" validate:"required"`
+	PropertyBase         *PropertyBaseEntry `json:"property_base,optional" validate:"required"`
 }
 
 type LoanThirdServiceEntry struct {
@@ -253,8 +253,8 @@ type LoanexperienceEntry struct {
 
 type PropertyBaseEntry struct {
 	Id          int64         `json:"id,optional"`
-	Unit        int32         `json:"unit" validate:"required,min=1"`
-	Address     *AddressEntry `json:"address" validate:"required"`
+	Unit        int32         `json:"unit,optional" validate:"required,min=1"`
+	Address     *AddressEntry `json:"address,optional" validate:"required"`
 	TotalAmount float64       `json:"total_amount,optional"`
 }
 
