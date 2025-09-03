@@ -103,6 +103,9 @@ const Declaration = ({ gutter, form }) => {
 						},
 						{
 							validator: (_, value) => {
+								if (value === null) {
+									return Promise.reject(new Error('Please select!'));
+								}
 								if (value && !borrowed_money_amount) {
 									return Promise.reject(
 										new Error('Please enter the amount of borrowed money!'),

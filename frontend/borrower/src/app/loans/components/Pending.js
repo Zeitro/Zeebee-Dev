@@ -17,6 +17,7 @@ const PendingPage = ({
 	isNotAddress,
 	loading,
 	scrollX = 2400,
+	successCallback,
 }) => {
 	const tableFilterRef = useRef();
 	// const [modal, contextHolder] = Modal.useModal();
@@ -159,7 +160,7 @@ const PendingPage = ({
 				ref={tableFilterRef}
 				columns={pendingColumns(
 					isNotAddress,
-					tableFilterRef?.current?.handleSearch,
+					successCallback || tableFilterRef?.current?.handleSearch,
 					showDeleteModal,
 				)}
 				scroll={{ x: scrollX }}
