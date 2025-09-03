@@ -1,0 +1,114 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 自定义重置 */
+@layer base {
+	* {
+		box-sizing: border-box;
+	}
+
+	html,
+	body {
+		height: 100%;
+	}
+
+	body {
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+}
+
+:root {
+	--background: #ffffff;
+	--foreground: rgba(0, 0, 0, 0.88);
+
+	--base-primary: #1677ff;
+	--base-success: #00a86b;
+	--base-warning: #faad14;
+	--base-error: #ff4d4f;
+	--base-disabled: #d9d9d9;
+	--base-border: #d9d9d9;
+	--base-label: rgba(0, 0, 0, 0.45);
+
+	--black-light: #222222;
+	--black-medium: #222;
+	--black-dark: #000;
+
+	--gray-light: #fafafa;
+	--gray-medium: #6e6e70;
+	--gray-dark: #586570;
+
+	--blue-light-1: #e8f7ff;
+	--blue-light-2: #f0f5ff;
+	--blue-light: #adc6ff;
+	--blue-medium: #1890ff;
+	--blue-medium-default: #3491fa;
+	--blue-dark: #2f54eb;
+
+	--green-light: #f6ffed;
+	--green-light-100: #b7eb8f;
+	/* --green-medium: ; */
+	--green-medium: #52c41a;
+
+	--purple-light: #f9f0ff;
+	--purple-medium: #d3adf7;
+	--purple-dark: #722ed1;
+
+	--orange-light: #fff7e6;
+	--orange-medium: #ffd591;
+	--orange-dark: #fa8c16;
+}
+
+.dark {
+	--background: #0a0a0a;
+	--foreground: #ededed;
+}
+
+body {
+	background: var(--background);
+	color: var(--foreground);
+	font-family: var(--font-roboto), sans-serif;
+}
+
+div,
+p,
+span,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+a,
+button,
+input,
+textarea,
+label,
+strong,
+ul,
+li {
+	font-family: var(--font-roboto), sans-serif;
+}
+
+::-webkit-scrollbar {
+	width: 10px;
+	height: 8px;
+	background-color: #ffffff;
+}
+
+::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: #cccccc;
+	border-radius: 10px;
+	border-left: 2px solid #ffffff;
+	border-right: 2px solid #ffffff;
+	border-top: 2px solid #ffffff;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background-color: #aaa;
+}

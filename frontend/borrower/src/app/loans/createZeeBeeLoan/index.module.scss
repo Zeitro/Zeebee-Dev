@@ -1,0 +1,7 @@
+.tabs :global {
+	.ant-tabs-content,
+	.ant-tabs-tabpane {
+		height: 100%;
+		overflow: hidden;
+	}
+}
