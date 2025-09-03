@@ -20,6 +20,19 @@ const PropertiesDetails = () => {
 	const [rowData, setRowData] = useState({});
 	const { changeSiberCollapsed } = useGlobalStore();
 	const api = `/property/${id}`;
+
+	const getDetails = async () => {
+		try {
+			setLoading(true);
+			const data = await request(api);
+			setRowData(data);
+			eventBus.emit('changeCrumbs', { 2: assemblyAddress(data?.address) });
+			setLoading(false);
+		} catch (error) {
+			setLoading(false);
+		}
+	};
+
 	const list = useMemo(() => {
 		return [
 			{
@@ -33,6 +46,7 @@ const PropertiesDetails = () => {
 						isNotAddress={true}
 						loading={loading}
 						scrollX={2000}
+						successCallback={getDetails}
 					/>
 				),
 			},
@@ -47,6 +61,7 @@ const PropertiesDetails = () => {
 						isNotAddress={true}
 						loading={loading}
 						scrollX={2100}
+						successCallback={getDetails}
 					/>
 				),
 			},
@@ -61,6 +76,7 @@ const PropertiesDetails = () => {
 						isNotAddress={true}
 						loading={loading}
 						scrollX={1000}
+						successCallback={getDetails}
 					/>
 				),
 			},
@@ -73,18 +89,6 @@ const PropertiesDetails = () => {
 			valueName: 'loanPendingStatus',
 		},
 	]);
-
-	const getDetails = async () => {
-		try {
-			setLoading(true);
-			const data = await request(api);
-			setRowData(data);
-			eventBus.emit('changeCrumbs', { 2: assemblyAddress(data?.address) });
-			setLoading(false);
-		} catch (error) {
-			setLoading(false);
-		}
-	};
 
 	useEffect(() => {
 		changeSiberCollapsed(true);
