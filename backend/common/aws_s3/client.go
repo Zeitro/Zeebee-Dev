@@ -7,6 +7,8 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"strings"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	v4 "github.com/aws/aws-sdk-go-v2/aws/signer/v4"
@@ -46,11 +48,11 @@ func NewS3Client(conf *Config) (client *S3Client, err error) {
 func (c *S3Client) GetPresignUrl(ctx context.Context, objectName string, expire int) (req *v4.PresignedHTTPRequest, err error) {
 	presignClient := s3.NewPresignClient(c.client)
 	req, err = presignClient.PresignPutObject(ctx, &s3.PutObjectInput{
-		Bucket: aws.String(c.config.Bucket),
-		Key:    aws.String(objectName),
-		// ContentType: aws.String("application/octet-stream"),
+		Bucket:      aws.String(c.config.Bucket),
+		Key:         aws.String(objectName),
+		ContentType: aws.String("application/octet-stream"),
 	}, func(options *s3.PresignOptions) {
-		// options.Expires = time.Duration(expire) * time.Second
+		options.Expires = time.Duration(expire) * time.Second
 	})
 
 	return req, nil
@@ -66,12 +68,12 @@ func (c *S3Client) UploadFile(ctx context.Context, presignedReq *v4.PresignedHTT
 		return
 	}
 
-	req, err = http.NewRequest(presignedReq.Method, presignedReq.URL, bytes.NewReader(buf.Bytes()))
+	req, err = http.NewRequestWithContext(ctx, presignedReq.Method, presignedReq.URL, bytes.NewReader(buf.Bytes()))
 	if err != nil {
 		return
 	}
 
-	// 添加必要的请求头
+	// set header
 	for s, strings := range presignedReq.SignedHeader {
 		for _, v := range strings {
 			req.Header.Add(s, v)
@@ -87,9 +89,9 @@ func (c *S3Client) UploadFile(ctx context.Context, presignedReq *v4.PresignedHTT
 	req.Header.Set("Content-Length", strconv.Itoa(buf.Len()))
 	defer resp.Body.Close()
 
-	// S3在成功上传时返回200状态码
+	// failed to upload
 	if resp.StatusCode != http.StatusOK {
-		// 读取错误响应体以提供更多错误信息
+		// get error response
 		content, readErr := io.ReadAll(resp.Body)
 		if readErr != nil {
 			err = errors.Errorf("http status code: %v", resp.Status)
@@ -104,7 +106,7 @@ func (c *S3Client) UploadFile(ctx context.Context, presignedReq *v4.PresignedHTT
 	}
 	fmt.Printf("uploand result:%s\n", string(content))
 
-	// 成功上传后返回S3对象的URL
-	url = fmt.Sprintf("https://%s.s3.%s.amazonaws.com/%s", c.config.Bucket, c.config.Region, req.URL.Path)
+	// return url
+	url = fmt.Sprintf("https://%s.s3.%s.amazonaws.com/%s", c.config.Bucket, c.config.Region, strings.TrimPrefix(req.URL.Path, "/"))
 	return url, nil
 }
