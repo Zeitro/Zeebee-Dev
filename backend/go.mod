@@ -7,6 +7,7 @@ toolchain go1.24.0
 require (
 	github.com/aws/aws-sdk-go-v2 v1.38.3
 	github.com/aws/aws-sdk-go-v2/config v1.31.6
+	github.com/aws/aws-sdk-go-v2/credentials v1.18.10
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.87.3
 	github.com/duke-git/lancet/v2 v2.3.7
 	github.com/go-playground/locales v0.14.1
@@ -20,7 +21,8 @@ require (
 	github.com/signintech/gopdf v0.33.0
 	github.com/zeromicro/go-zero v1.6.0
 	golang.org/x/crypto v0.38.0
-	golang.org/x/sync v0.14.0
+	golang.org/x/sync v0.16.0
+	golang.org/x/text v0.28.0
 	google.golang.org/grpc v1.73.0
 	google.golang.org/protobuf v1.36.6
 	gorm.io/driver/mysql v1.6.0
@@ -31,8 +33,8 @@ require (
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
+	github.com/Rhymond/go-money v1.0.15 // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.1 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.18.10 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.6 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.6 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.6 // indirect
@@ -119,7 +121,6 @@ require (
 	golang.org/x/oauth2 v0.28.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/term v0.32.0 // indirect
-	golang.org/x/text v0.25.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250324211829-b45e905df463 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250324211829-b45e905df463 // indirect

@@ -50,11 +50,11 @@ var applyFormInfo *types.ApplyFormPdfRequest = &types.ApplyFormPdfRequest{
 			LastName:         "Wang",
 			Type:             "Individual",
 			IsPrimary:        true,
-			Ssn:              "2221114111",
+			Ssn:              "222111411",
 			Dob:              "06/01/2001",
 			MaritalStatus:    "Married",
 			Email:            "wei@yeelee-capital.com",
-			Phone:            "222555111",
+			Phone:            "2225551110",
 			EstCreditScore:   360,
 			DriverLicenseNum: "12235441122147",
 			Address:          myAddress,
@@ -125,14 +125,14 @@ var applyFormInfo *types.ApplyFormPdfRequest = &types.ApplyFormPdfRequest{
 			Type:    "Title Co",
 			Name:    "Nmae",
 			Email:   "name@gmail.com",
-			Phone:   "123654121",
+			Phone:   "1122145121",
 			Company: "company name1",
 		},
 		&types.LoanThirdServiceEntry{
 			Type:    "Escrow Co",
 			Name:    "Nmae2",
 			Email:   "name@gmail.com",
-			Phone:   "123654121",
+			Phone:   "1122145121",
 			Company: "company name3",
 		},
 	},
@@ -140,10 +140,10 @@ var applyFormInfo *types.ApplyFormPdfRequest = &types.ApplyFormPdfRequest{
 		Type:           "LLC",
 		Name:           "Lily",
 		TinType:        "Ssn",
-		Tin:            "1233211454124",
+		Tin:            "123651241",
 		MailingAddress: *myAddress,
 		ContactEmail:   "dfdf@gmail.com",
-		ContactPhone:   "21451141",
+		ContactPhone:   "1236521021",
 		ContactName:    "name 12",
 		OwnPercent:     23,
 	},
@@ -194,42 +194,42 @@ var applyFormInfo *types.ApplyFormPdfRequest = &types.ApplyFormPdfRequest{
 	Signatures: &types.Signatures{
 		BorrowerInfo: []*types.SignatureEntry{
 			{
-				SignatureImage: "06/01/2023",
-				SignatureDate:  signatureBase64,
+				SignatureImage: signatureBase64,
+				SignatureDate:  "06/01/2023",
 			},
 			{
-				SignatureImage: "06/01/2023",
-				SignatureDate:  signatureBase64,
+				SignatureImage: signatureBase64,
+				SignatureDate:  "06/01/2023",
 			},
 		},
 		BusinessPurpose: []*types.SignatureEntry{
 			{
-				SignatureImage: "06/01/2023",
-				SignatureDate:  signatureBase64,
+				SignatureImage: signatureBase64,
+				SignatureDate:  "06/01/2023",
 			},
 			{
-				SignatureImage: "06/01/2023",
-				SignatureDate:  signatureBase64,
+				SignatureImage: signatureBase64,
+				SignatureDate:  "06/01/2023",
 			},
 		},
 		PatriotAct: []*types.SignatureEntry{
 			{
-				SignatureImage: "06/01/2023",
-				SignatureDate:  signatureBase64,
+				SignatureImage: signatureBase64,
+				SignatureDate:  "06/01/2023",
 			},
 			{
-				SignatureImage: "06/01/2023",
-				SignatureDate:  signatureBase64,
+				SignatureImage: signatureBase64,
+				SignatureDate:  "06/01/2023",
 			},
 		},
 		BorrowerAuthorization: []*types.SignatureEntry{
 			{
-				SignatureImage: "06/01/2023",
-				SignatureDate:  signatureBase64,
+				SignatureImage: signatureBase64,
+				SignatureDate:  "06/01/2023",
 			},
 			{
-				SignatureImage: "06/01/2023",
-				SignatureDate:  signatureBase64,
+				SignatureImage: signatureBase64,
+				SignatureDate:  "06/01/2023",
 			},
 		},
 	},
@@ -290,7 +290,8 @@ func TestApplyForm_Generate(t *testing.T) {
 	}
 	err = form.Generate(f)
 	if err != nil {
-		t.Errorf("Generate() error = %v", err)
+		// t.Errorf("Generate() error = %v", err)
+		t.Fatalf("Generate() error = %v", err)
 	}
 	t.Logf("file %s created", output)
 }
