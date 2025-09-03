@@ -44,7 +44,7 @@ export function createRequest() {
 
 		try {
 			const response = await fetch(
-				process.env.NEXT_PUBLIC_ENV === 'local' ? `${baseURL}${url}` : `${str}${url}`,
+				process.env.NEXT_PUBLIC_ENV !== 'local' ? `${baseURL}${url}` : `${str}${url}`,
 				fetchOptions,
 			);
 

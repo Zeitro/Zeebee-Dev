@@ -17,20 +17,18 @@ import ReviewAndSign, { contractSignatureZones } from '../components/CreateZeeBe
 import _ from 'lodash';
 import { flattenObjectPaths } from '@/lib/common';
 import { uploadAwsS3 } from '@/api/common';
-import useUploadAWS from '@/hooks/useUploadAWS';
 const CreateZeeBeeLoan = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const api = `/property/${searchParams.get('propertyId')}`;
 	const [form] = Form.useForm();
 	const scrollRef = useRef(null);
-	const [currentStep, setCurrentStep] = useState(0); //顶部-总步骤
+	const [currentStep, setCurrentStep] = useState(4); //顶部-总步骤
 	const [stepNum, setStepNum] = useState(0); //侧边步骤
 	const [loading, setLoading] = useState(false);
 	const [errorList, setErrorList] = useState([]);
 	const isClickBackBtn = useRef(false);
 	const { request } = createRequest();
-	const { uploadFile, progress } = useUploadAWS();
 	// 从property详情跳转的创建loan
 	const getProperty = async () => {
 		const data = await request(api);
@@ -124,8 +122,6 @@ const CreateZeeBeeLoan = () => {
 
 	// 创建loan
 	const handleSubmit = async (values) => {
-		setLoading(true);
-
 		await request('/loan/apply', {
 			method: 'POST',
 			body: values,
@@ -134,7 +130,6 @@ const CreateZeeBeeLoan = () => {
 			type: 'success',
 			content: 'Success in creation！',
 		});
-		setLoading(false);
 	};
 
 	const handlePdf = async (values) => {
@@ -180,6 +175,7 @@ const CreateZeeBeeLoan = () => {
 					});
 					return;
 				}
+				setLoading(true);
 				const body = _.cloneDeep(values);
 
 				body.loan_borrower.tin_type = values?.loan_borrower?.tin?.tin_type;
@@ -187,6 +183,7 @@ const CreateZeeBeeLoan = () => {
 				_.unset(body, ['signatures', 'remainingSignatureCount']);
 				const fileUrl = await handlePdf(body);
 				await handleSubmit({ ...body, apply_form_file: fileUrl });
+				setLoading(false);
 				router.back();
 				return;
 			}
