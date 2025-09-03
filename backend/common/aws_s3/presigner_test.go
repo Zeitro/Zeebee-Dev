@@ -37,7 +37,7 @@ func TestClient_UploadFile(t *testing.T) {
 	if err != nil {
 		t.Errorf("failed to create s3 client %v", err)
 	}
-	req, err := client.GetPresignUrl(context.Background(), "test.png", 120)
+	req, err := client.GetPresignUrl(context.Background(), "files-dev/test.png", 120)
 	if err != nil {
 		t.Errorf("failed to create presign url:%v", err)
 	}

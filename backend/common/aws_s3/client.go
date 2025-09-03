@@ -46,9 +46,9 @@ func NewS3Client(conf *Config) (client *S3Client, err error) {
 func (c *S3Client) GetPresignUrl(ctx context.Context, objectName string, expire int) (req *v4.PresignedHTTPRequest, err error) {
 	presignClient := s3.NewPresignClient(c.client)
 	req, err = presignClient.PresignPutObject(ctx, &s3.PutObjectInput{
-		Bucket:      aws.String(c.config.Bucket),
-		Key:         aws.String(objectName),
-		ContentType: aws.String("application/octet-stream"),
+		Bucket: aws.String(c.config.Bucket),
+		Key:    aws.String(objectName),
+		// ContentType: aws.String("application/octet-stream"),
 	}, func(options *s3.PresignOptions) {
 		// options.Expires = time.Duration(expire) * time.Second
 	})
