@@ -1,10 +1,9 @@
-import React, { use, useMemo } from 'react';
-import { Col, Form, Input, Radio, Row } from 'antd';
+import React, { useMemo } from 'react';
+import { Col, Form, Radio, Row } from 'antd';
 import styles from './index.module.scss';
 import { titleCol } from '@/enum/common';
 import { yesNoOptions } from '@/enum/common';
 import InputNumAmount from '@/components/InputNumAmount';
-import _ from 'lodash';
 import { useGetOptions } from '@/hooks/useGetOptions';
 const Declaration = ({ gutter, form }) => {
 	const { getSelectFormDom } = useGetOptions([
@@ -75,7 +74,7 @@ const Declaration = ({ gutter, form }) => {
 							on this loan application? lf Yes, what is the amount of this money?
 							<Form.Item
 								name={['loan_demographic', 'property', 'borrowed_money_amount']}
-								rules={[{ required: true }]}
+								rules={[{ required: has_borrowed_money }]}
 								noStyle
 							>
 								<InputNumAmount

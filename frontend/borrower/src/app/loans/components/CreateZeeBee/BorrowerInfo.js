@@ -1,9 +1,8 @@
 import React from 'react';
 import styles from './index.module.scss';
-import { Row, Col, Form, Radio, Select, Input, InputNumber, DatePicker, Button } from 'antd';
+import { Row, Col, Form, Select, Input, InputNumber, Button } from 'antd';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
 import InputPhone from '@/components/InputPhone';
-import SelectTINType from '@/components/InputTIN/SelectTINType';
 import InputTIN from '@/components/InputTIN';
 import {
 	emailRegex,
@@ -13,12 +12,12 @@ import {
 	maxCreditScore,
 	validateRule,
 } from '@/lib/format';
-import { formatStr } from '@/lib/date';
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { layoutCol, titleCol } from '@/enum/common';
 import { useGetOptions } from '@/hooks/useGetOptions';
+import CommonFormDate from '@/components/CommonDate';
 const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
-	const { maritalStatusOptions, getSelectFormDom } = useGetOptions([
+	const { maritalStatusOptions } = useGetOptions([
 		{
 			key: 'marital_status',
 			valueName: 'maritalStatusOptions',
@@ -98,11 +97,7 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 										{ required: true, message: 'Please select date of birth!' },
 									]}
 								>
-									<DatePicker
-										format={formatStr}
-										placeholder="select"
-										style={{ width: '100%' }}
-									/>
+									<CommonFormDate placeholder="select" />
 								</Form.Item>
 							</Col>
 							<Col {...layoutCol}>

@@ -53,7 +53,10 @@ export function createRequest() {
 				showMessage(response.statusText);
 				return Promise.reject(`HTTP error! status: ${response.status}`);
 			}
-
+			const contentType = response.headers.get('Content-Type');
+			if (contentType?.indexOf('application/json') === -1) {
+				return response;
+			}
 			const data = await response.json();
 
 			if (data.code === 401) {
@@ -83,18 +86,26 @@ export function createRequest() {
 	// 上传需要得知进度时，只能用XMLHttpRequest，fetch现不支持
 	function uploadWithProgress(url, options) {
 		return new Promise((resolve, reject) => {
-			const { onProgress, body } = options;
+			const { onProgress, body, method = 'POST', isExternalLink = false } = options;
 			const xhr = new XMLHttpRequest();
 
-			const finalURL =
-				process.env.NEXT_PUBLIC_ENV !== 'local' ? `${baseURL}${url}` : `${str}${url}`;
+			const finalURL = isExternalLink
+				? url
+				: process.env.NEXT_PUBLIC_ENV !== 'local'
+					? `${baseURL}${url}`
+					: `${str}${url}`;
 
-			xhr.open('POST', finalURL, true);
+			xhr.open(method, finalURL, true);
 
 			// ✅ 3. 设置认证 Token Header
 			const token = localStorageUtil.get('userStore')?.state?.access?.access_token;
-			if (token) {
+			if (token && !isExternalLink) {
 				xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+			}
+			if (isExternalLink) {
+				xhr.setRequestHeader('Content-Type', 'application/pdf');
+				xhr.setRequestHeader('x-amz-acl', 'public-read');
+				xhr.setRequestHeader('x-amz-storage-class', 'STANDARD');
 			}
 			// ❗️ 注意：此处不能设置 'Content-Type'，必须由浏览器自动处理 FormData
 
@@ -108,20 +119,24 @@ export function createRequest() {
 
 			// 监听请求完成
 			xhr.onload = () => {
-				if (xhr.status >= 200 && xhr.status < 300) {
+				if (xhr.status === 200) {
 					try {
 						// ✅ 4. 移植您的响应拦截逻辑
 						const data = JSON.parse(xhr.responseText);
+						const contentType = data.headers.get('Content-Type');
 
+						if (contentType?.indexOf('application/json') === -1) {
+							resolve(data);
+						}
 						if (data.code === 401) {
-							showMessage.warning('Please log in again!');
+							showMessage('Please log in again!');
 							window.location.href = '/login';
 							return reject('Please log in again!');
 						}
 
 						// 以及通用业务接口返回 { code: 200, data: { url: '...' } }
 						if (data.code && data.code !== 200 && data.success !== true) {
-							showMessage.error(data.message);
+							showMessage(data.message);
 							return reject(data.message || `fail:${data.code}`);
 						}
 
@@ -130,7 +145,7 @@ export function createRequest() {
 						reject(new Error('Failed to parse server response'));
 					}
 				} else {
-					showMessage.error(xhr.statusText || `HTTP error! status: ${xhr.status}`);
+					showMessage(xhr.statusText || `HTTP error! status: ${xhr.status}`);
 					reject(`HTTP error! status: ${xhr.status}`);
 				}
 			};
