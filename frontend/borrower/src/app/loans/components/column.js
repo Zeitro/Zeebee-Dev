@@ -1,6 +1,18 @@
 import { formatAmount } from '@/lib/format';
 import LoanPendingStatus from './LoanPendingStatus';
 import TableOperation from '@/components/TableOperation';
+export const get3rdPartyMark = (v, { source }) => (
+	<div className="flex items-center">
+		<p className="overflow-hidden text-ellipsis whitespace-nowrap" title={v}>
+			{v}
+		</p>
+		{source === 'borrower' && (
+			<div className="ml-2 px-2 bg-blue-light-1 text-blue-medium-default rounded-xs">
+				3rd party
+			</div>
+		)}
+	</div>
+);
 const common = (isNotAddress) => {
 	const addressArr = [
 		{
@@ -10,21 +22,10 @@ const common = (isNotAddress) => {
 			ellipsis: true,
 			sorter: true,
 			sortDirections: ['ascend', 'descend'],
-			defaultSortOrder: 'descend',
+			// defaultSortOrder: 'descend',
 			fixed: 'left',
 			minWidth: 200,
-			render: (v, { source }) => (
-				<div className="flex items-center">
-					<p className="overflow-hidden text-ellipsis whitespace-nowrap" title={v}>
-						{v}
-					</p>
-					{source === 'borrower' && (
-						<div className="ml-2 px-2 bg-blue-light-1 text-blue-medium-default rounded-xs">
-							3rd party
-						</div>
-					)}
-				</div>
-			),
+			render: get3rdPartyMark,
 		},
 		{
 			title: 'City',
@@ -55,8 +56,12 @@ const common = (isNotAddress) => {
 			dataIndex: 'applicants',
 			key: 'applicants',
 			ellipsis: true,
-			render: (v) => v?.map((i) => i.full_name)?.join(','),
-			width: 160,
+			render: (v, row) => {
+				const value = v?.map((i) => i.full_name)?.join(',');
+				if (isNotAddress) return get3rdPartyMark(value, row);
+				return value;
+			},
+			width: isNotAddress ? 200 : 160,
 		},
 	];
 };
@@ -260,15 +265,6 @@ export const activeColumns = (isNotAddress, showDeleteModal) => [
 		ellipsis: true,
 		sorter: true,
 		width: 180,
-		render: (v) => formatAmount(v),
-	},
-	{
-		title: 'Hold back',
-		dataIndex: 'holdback_amount',
-		key: 'holdback_amount',
-		ellipsis: true,
-		sorter: true,
-		width: 120,
 		render: (v) => formatAmount(v),
 	},
 	// {
