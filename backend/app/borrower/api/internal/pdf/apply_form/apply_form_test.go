@@ -86,11 +86,11 @@ var applyFormInfo *types.ApplyFormPdfRequest = &types.ApplyFormPdfRequest{
 	ReservesAmount:           145211,
 	HasDelayedFinancing:      false,
 	HasCollateralizedBlanket: true,
-	HasPeropertyVacant:       false,
+	HasPropertiesVacant:      false,
 	HasShortTermRental:       true,
 	// AdditionalInfo:           "extral info",
-	TransactionExperiences: []*types.LoanexperienceEntry{
-		&types.LoanexperienceEntry{
+	TransactionExperiences: []*types.LoanExperienceEntry{
+		&types.LoanExperienceEntry{
 			Type:             "Transaction",
 			Address:          myAddress,
 			OwnershipOnTitle: "Me",
@@ -104,8 +104,8 @@ var applyFormInfo *types.ApplyFormPdfRequest = &types.ApplyFormPdfRequest{
 			IsTenantOccupied: true,
 		},
 	},
-	RealEstateExperiences: []*types.LoanexperienceEntry{
-		&types.LoanexperienceEntry{
+	RealEstateExperiences: []*types.LoanExperienceEntry{
+		&types.LoanExperienceEntry{
 			Type:             "Real Estate",
 			Address:          myAddress,
 			OwnershipOnTitle: "Me",
