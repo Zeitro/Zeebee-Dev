@@ -10,13 +10,13 @@ import "address.api"
 type LoanBorrowerEntry {
     Id int64 `json:"id,optional"`
     LoanId int64 `json:"loan_id,optional"`
-    Type string `json:"type,optional"`
-    Name string `json:"name,optional"`
-    TinType string `json:"tin_type,optional"`
-    Tin string `json:"tin,optional"`
-    MailingAddress AddressEntry `json:"mailing_address,optional"`
-    ContactEmail string `json:"contact_email,optional"`
-    ContactPhone string `json:"contact_phone,optional"`
-    ContactName string `json:"contact_name,optional"`
-    OwnPercent int32 `json:"own_percent,optional"`
+    Type string `json:"type,optional" validate:"required,oneof=Individual Corporation LLC Trust Partnership"`
+    Name string `json:"name,optional" validate:"required,min=1,max=255"`
+    TinType string `json:"tin_type,optional" validate:"required,oneof=SSN EIN ITIN"`
+    Tin string `json:"tin,optional" validate:"required,min=9,max=9"`
+    MailingAddress AddressEntry `json:"mailing_address,optional" validate:"required"`
+    ContactEmail string `json:"contact_email,optional" validate:"required,email"`
+    ContactPhone string `json:"contact_phone,optional" validate:"required"`
+    ContactName string `json:"contact_name,optional" validate:"required,min=1,max=255"`
+    OwnPercent int32 `json:"own_percent,optional" validate:"required,min=1,max=100"`
 }
