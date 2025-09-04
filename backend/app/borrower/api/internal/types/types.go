@@ -64,15 +64,15 @@ type LoanApplyPropertyEntry struct {
 type LoanBorrowerEntry struct {
 	Id             int64        `json:"id,optional"`
 	LoanId         int64        `json:"loan_id,optional"`
-	Type           string       `json:"type,optional"`
-	Name           string       `json:"name,optional"`
-	TinType        string       `json:"tin_type,optional"`
-	Tin            string       `json:"tin,optional"`
-	MailingAddress AddressEntry `json:"mailing_address,optional"`
-	ContactEmail   string       `json:"contact_email,optional"`
-	ContactPhone   string       `json:"contact_phone,optional"`
-	ContactName    string       `json:"contact_name,optional"`
-	OwnPercent     int32        `json:"own_percent,optional"`
+	Type           string       `json:"type,optional" validate:"required,oneof=Individual Corporation LLC Trust Partnership"`
+	Name           string       `json:"name,optional" validate:"required,min=1,max=255"`
+	TinType        string       `json:"tin_type,optional" validate:"required,oneof=SSN EIN ITIN"`
+	Tin            string       `json:"tin,optional" validate:"required,min=9,max=9"`
+	MailingAddress AddressEntry `json:"mailing_address,optional" validate:"required"`
+	ContactEmail   string       `json:"contact_email,optional" validate:"required,email"`
+	ContactPhone   string       `json:"contact_phone,optional" validate:"required"`
+	ContactName    string       `json:"contact_name,optional" validate:"required,min=1,max=255"`
+	OwnPercent     int32        `json:"own_percent,optional" validate:"required,min=1,max=100"`
 }
 
 type LoanBudgetEntry struct {
@@ -84,10 +84,10 @@ type LoanBudgetEntry struct {
 type LoanDemographicEntry struct {
 	Id        int64                          `json:"id,optional"`
 	LoanId    int64                          `json:"loan_id,optional"`
-	Sex       string                         `json:"sex,optional"`
-	Property  *LoanDemographicPropertyEntry  `json:"property,optional"`
-	Ethnicity *LoanDemographicEthnicityEntry `json:"ethnicity,optional"`
-	Race      *LoanDemographicRaceEntry      `json:"race,optional"`
+	Sex       string                         `json:"sex,optional" validate:"required,oneof=Male Female Hidden"`
+	Property  *LoanDemographicPropertyEntry  `json:"property,optional" validate="required"`
+	Ethnicity *LoanDemographicEthnicityEntry `json:"ethnicity,optional" validate="required"`
+	Race      *LoanDemographicRaceEntry      `json:"race,optional" validate="required"`
 }
 
 type LoanDemographicEthnicityEntry struct {
@@ -259,19 +259,19 @@ type PropertyBaseEntry struct {
 }
 
 type PropertyPageEntry struct {
-	Id                       int64        `json:"id"`
-	PropertyType             string       `json:"property_type"`
-	TotalAmount              float64      `json:"total_amount"`
-	Address                  AddressEntry `json:"address"`
-	TotalPrincipalAmount     float64      `json:"total_principal_amount"`
-	AvgRate                  float32      `json:"avg_rate"`
-	TotalMonthlyPaymentAmunt float64      `json:"total_monthly_payment_amount"`
-	Applicants               []string     `json:"applicants"`
-	Lenders                  []string     `json:"lenders"`
-	NearestMaturityDate      string       `json:"nearest_maturity_date"`
-	PendingLoanCount         int64        `json:"pending_loan_count"`
-	ActiveLoanCount          int64        `json:"active_loan_count"`
-	ArchivedLoanCount        int64        `json:"archived_loan_count"`
+	Id                        int64        `json:"id"`
+	PropertyType              string       `json:"property_type"`
+	TotalAmount               float64      `json:"total_amount"`
+	Address                   AddressEntry `json:"address"`
+	TotalPrincipalAmount      float64      `json:"total_principal_amount"`
+	AvgRate                   float32      `json:"avg_rate"`
+	TotalMonthlyPaymentAmount float64      `json:"total_monthly_payment_amount"`
+	Applicants                []string     `json:"applicants"`
+	Lenders                   []string     `json:"lenders"`
+	NearestMaturityDate       string       `json:"nearest_maturity_date"`
+	PendingLoanCount          int64        `json:"pending_loan_count"`
+	ActiveLoanCount           int64        `json:"active_loan_count"`
+	ArchivedLoanCount         int64        `json:"archived_loan_count"`
 }
 
 type PropertyPageFilter struct {
