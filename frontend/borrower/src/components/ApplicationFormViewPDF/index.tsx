@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { Modal } from 'antd';
 import { formatDate } from '@/lib/date';
 import { createRequest } from '@/lib/fetch';
+import { EditOutlined } from '@ant-design/icons';
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
 
 // 定义签名区 (Hotspot/Zone) 的类型
@@ -192,7 +193,7 @@ export default function ContractViewer({
 										<div
 											key={zone.id}
 											onClick={() => handleZoneClick(zone.id)}
-											className="absolute cursor-pointer z-[999]"
+											className="absolute cursor-pointer z-[999] flex items-end justify-center"
 											style={{
 												left: zone.left,
 												top: zone.top,
@@ -201,7 +202,7 @@ export default function ContractViewer({
 												// backgroundColor: 'pink',
 											}}
 										>
-											{signatures[zone.id] && (
+											{signatures[zone.id] ? (
 												<Image
 													unoptimized
 													src={signatures[zone.id]?.image}
@@ -209,6 +210,8 @@ export default function ContractViewer({
 													layout="fill"
 													objectFit="contain"
 												/>
+											) : (
+												<EditOutlined className="pb-[2px]" />
 											)}
 										</div>
 									))}

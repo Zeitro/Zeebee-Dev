@@ -159,7 +159,7 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 							</Col>
 							<Col {...layoutCol}>
 								<Form.Item
-									label="Est. Credit Score"
+									label="Estimated Credit Score"
 									name={[field.name, 'est_credit_score']}
 									rules={[
 										{
