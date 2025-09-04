@@ -48,7 +48,7 @@ func (l *PropertyPageLogic) PropertyPage(in *borrower.PropertyPageRequest) (resp
 		propertyPageEntry := &borrower.PropertyPageEntry{
 			Id: propertyBase.Id,
 			// PropertyType: string(property.PropertyType),
-			TotalAmount: propertyBase.TotalAmount,
+			// TotalAmount: propertyBase.TotalAmount,
 			Address: &borrower.AddressEntry{
 				State:    propertyBase.Address.State,
 				City:     propertyBase.Address.City,
@@ -60,15 +60,17 @@ func (l *PropertyPageLogic) PropertyPage(in *borrower.PropertyPageRequest) (resp
 		var maturityDate *sql.NullTime
 		var totalRate float32 = 0.0
 		for _, loan := range propertyBase.Loans {
-			totalRate += loan.Rate
+
 			propertyPageEntry.Lenders = append(propertyPageEntry.Lenders, loan.LenderCompany)
 			propertyPageEntry.TotalPrincipalAmount += loan.PrincipalAmount
 			switch loan.Stage {
 			case constants.LoanStagePending:
 				propertyPageEntry.PendingLoanCount++
 			case constants.LoanStageActive:
+				totalRate += loan.Rate
 				propertyPageEntry.ActiveLoanCount++
 				propertyPageEntry.TotalMonthlyPaymentAmount += loan.MonthlyPayment
+				propertyPageEntry.TotalAmount += loan.PrincipalAmount
 				// MaturityDate is valid , less than maturityDate,greater than now
 				if loan.MaturityDate.Valid && loan.MaturityDate.Time.After(now) && (maturityDate == nil || loan.MaturityDate.Time.Before(maturityDate.Time)) {
 					maturityDate = loan.MaturityDate
