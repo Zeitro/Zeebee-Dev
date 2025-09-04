@@ -77,7 +77,7 @@ func (form *ApplyForm) page7() (err error) {
 			text:        "Are you borrowing any money for this real estate transaction (e.g. money for your closing costs or down payment) or obtaining any money from another party such as the seller or realtor, that you have not disclosed on this loan application? If Yes, what is the amount of this money?",
 			isYes:       property.HasBorrowedMoney,
 			hasExtraTxt: true,
-			extraTxt:    stringx.TransNumberToString(property.BorrowedMoneyAmount, true),
+			extraTxt:    stringx.FormatUsDollarCurrency(property.BorrowedMoneyAmount),
 		},
 		{
 			text:        "Have you or will you be applying for a mortgage loan on another property (not the property securing this loan) on or before closing this transaction that is not disclosed on this loan application?",
