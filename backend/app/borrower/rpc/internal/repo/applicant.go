@@ -34,10 +34,20 @@ func (repo *ApplicantRepo) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, id 
 
 func (repo *ApplicantRepo) GetBorrowerNames(ctx context.Context, borrowerId int64) (result []string, err error) {
 	err = repo.BaseRepo.Client(ctx).
-		Select("name").
+		Select("full_name").
 		Where("borrower_id = ?", borrowerId).
-		Distinct("name").
-		Pluck("name", &result).
+		Distinct("full_name").
+		Pluck("full_name", &result).
+		Error
+	return result, errors.WithStack(err)
+}
+
+func (repo *ApplicantRepo) GetApplicantsFullNamesByLoanId(ctx context.Context, loanId int64) (result []string, err error) {
+	err = repo.BaseRepo.Client(ctx).
+		Select("full_name").
+		Where("loan_id = ?", loanId).
+		Distinct("full_name").
+		Pluck("full_name", &result).
 		Error
 	return result, errors.WithStack(err)
 }
