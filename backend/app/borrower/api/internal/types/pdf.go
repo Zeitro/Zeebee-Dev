@@ -39,10 +39,10 @@ type ApplyFormPdfRequest struct {
 	ReservesAmount           float64                    `json:"reserves_amount,optional" validate:"required_if=LoanType Rental,omitempty,gt=0"`
 	HasDelayedFinancing      bool                       `json:"has_delayed_financing,optional"`
 	HasCollateralizedBlanket bool                       `json:"has_collateralized_blanket,optional"`
-	HasPeropertyVacant       bool                       `json:"has_peroperty_vacant,optional"`
+	HasPropertiesVacant      bool                       `json:"has_properties_vacant,optional"`
 	HasShortTermRental       bool                       `json:"has_short_term_rental,optional"`
-	TransactionExperiences   []*LoanexperienceEntry     `json:"transaction_experiences,optional"`
-	RealEstateExperiences    []*LoanexperienceEntry     `json:"real_estate_experiences,optional"`
+	TransactionExperiences   []*LoanExperienceEntry     `json:"transaction_experiences,optional"`
+	RealEstateExperiences    []*LoanExperienceEntry     `json:"real_estate_experiences,optional"`
 	LoanThirdServices        []*LoanThirdServiceEntry   `json:"loan_third_services,optional"`
 	LoanBorrower             *LoanBorrowerEntry         `json:"loan_borrower,optional"`
 	LoanDemographic          *LoanDemographicEntry      `json:"loan_demographic,optional"`

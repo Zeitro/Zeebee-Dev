@@ -187,13 +187,29 @@ type LoanEntry struct {
 	ReservesAmount           float64                  `json:"reserves_amount"`
 	HasDelayedFinancing      bool                     `json:"has_delayed_financing"`
 	HasCollateralizedBlanket bool                     `json:"has_collateralized_blanket"`
-	HasPeropertyVacant       bool                     `json:"has_peroperty_vacant"`
+	HasPropertiesVacant      bool                     `json:"has_properties_vacant"`
 	HasShortTermRental       bool                     `json:"has_short_term_rental"`
-	TransactionExperiences   []*LoanexperienceEntry   `json:"transaction_experiences"`
-	RealEstateExperiences    []*LoanexperienceEntry   `json:"real_estate_experiences"`
+	TransactionExperiences   []*LoanExperienceEntry   `json:"transaction_experiences"`
+	RealEstateExperiences    []*LoanExperienceEntry   `json:"real_estate_experiences"`
 	LoanThirdServices        []*LoanThirdServiceEntry `json:"loan_third_services"`
 	LoanBorrower             *LoanBorrowerEntry       `json:"loan_borrower"`
 	LoanDemographic          *LoanDemographicEntry    `json:"loan_demographic"`
+}
+
+type LoanExperienceEntry struct {
+	Id               int64         `json:"id,optional"`
+	LoanId           int64         `json:"loan_id,optional"`
+	Type             string        `json:"type,optional" validate:"required,oneof=Transaction 'Real Estate'"`
+	Address          *AddressEntry `json:"address,optional"`
+	OwnershipOnTitle string        `json:"ownership_on_title,optional"`
+	PropertyType     string        `json:"property_type,optional" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
+	PurchaseAmount   float64       `json:"purchase_amount,optional" validate:"gt=0"`
+	PurchaseDate     string        `json:"purchase_date,optional"`
+	SoldAmount       float64       `json:"sold_amount,optional" validate:"gt=0"`
+	SoldDate         string        `json:"sold_date,optional"`
+	BudgetOrCost     float64       `json:"budget_or_cost,optional" validate:"gt=0"`
+	Profit           float64       `json:"profit,optional"`
+	IsTenantOccupied bool          `json:"is_tenant_occupied,optional"`
 }
 
 type LoanPageFilter struct {
@@ -233,22 +249,6 @@ type LoanThirdServiceEntry struct {
 	Email   string `json:"email,optional"`
 	Phone   string `json:"phone,optional"`
 	Company string `json:"company,optional" validate:"required_unless=Type 'Title Co' Type 'Escrow Co' Type Insurance"`
-}
-
-type LoanexperienceEntry struct {
-	Id               int64         `json:"id,optional"`
-	LoanId           int64         `json:"loan_id,optional"`
-	Type             string        `json:"type,optional" validate:"required,oneof=Transaction 'Real Estate'"`
-	Address          *AddressEntry `json:"address,optional"`
-	OwnershipOnTitle string        `json:"ownership_on_title,optional"`
-	PropertyType     string        `json:"property_type,optional" validate:"required,oneof='Single Family Residence' '2 unit' '3unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
-	PurchaseAmount   float64       `json:"purchase_amount,optional" validate:"gt=0"`
-	PurchaseDate     string        `json:"purchase_date,optional"`
-	SoldAmount       float64       `json:"sold_amount,optional" validate:"gt=0"`
-	SoldDate         string        `json:"sold_date,optional"`
-	BudgetOrCost     float64       `json:"budget_or_cost,optional" validate:"gt=0"`
-	Profit           float64       `json:"profit,optional"`
-	IsTenantOccupied bool          `json:"is_tenant_occupied,optional"`
 }
 
 type PropertyBaseEntry struct {

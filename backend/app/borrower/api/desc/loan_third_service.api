@@ -15,3 +15,5 @@ type LoanThirdServiceEntry {
     Phone string `json:"phone,optional"`
     Company string `json:"company,optional" validate:"required_unless=Type 'Title Co' Type 'Escrow Co' Type Insurance"`
 }
+
+

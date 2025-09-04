@@ -8,13 +8,13 @@ info(
 
 import "address.api"
 
-type LoanexperienceEntry {
+type LoanExperienceEntry {
     Id int64 `json:"id,optional"`
     LoanId int64 `json:"loan_id,optional"`
     Type string `json:"type,optional" validate:"required,oneof=Transaction 'Real Estate'"`
     Address *AddressEntry `json:"address,optional"`
     OwnershipOnTitle string `json:"ownership_on_title,optional"`
-    PropertyType string `json:"property_type,optional" validate:"required,oneof='Single Family Residence' '2 unit' '3unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
+    PropertyType string `json:"property_type,optional" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
     PurchaseAmount float64 `json:"purchase_amount,optional" validate:"gt=0"`
     PurchaseDate string `json:"purchase_date,optional"`
     SoldAmount float64 `json:"sold_amount,optional" validate:"gt=0"`
@@ -23,3 +23,4 @@ type LoanexperienceEntry {
     Profit float64 `json:"profit,optional"`
     IsTenantOccupied bool `json:"is_tenant_occupied,optional"`
 }
+
