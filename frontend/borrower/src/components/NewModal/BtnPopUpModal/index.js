@@ -9,7 +9,7 @@ import { title } from 'process';
  */
 export const BtnPopUpModal = ({
 	children,
-	type = '',
+	modalType = '',
 	config = {},
 	getContent = () => {}, // 弹框组件
 	...props
@@ -17,8 +17,8 @@ export const BtnPopUpModal = ({
 	const [modal, contextHolder] = Modal.useModal();
 	const [open, setOpen] = useState('');
 	const handleClick = () => {
-		if (type) {
-			modal[type]?.({
+		if (modalType) {
+			modal[modalType]?.({
 				title: <div className="font-medium">{title}</div>,
 				icon: <ExclamationCircleOutlined />,
 				content: null,
@@ -57,7 +57,7 @@ export const DeleteBtn = ({ title = 'Are you sure you want to delete this?', ...
 	return (
 		<BtnPopUpModal
 			danger={true}
-			type="confirm"
+			modalType="confirm"
 			config={{ title, okText: 'Delete', okButtonProps: { danger: true }, ...props }}
 		>
 			Delete
