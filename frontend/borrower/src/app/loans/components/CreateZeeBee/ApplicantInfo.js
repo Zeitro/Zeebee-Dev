@@ -4,7 +4,7 @@ import { Row, Col, Form, Select, Input, InputNumber } from 'antd';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
 import InputPhone from '@/components/InputPhone';
 import SelectTINType from '@/components/InputTIN/SelectTINType';
-import { emailRegex, phoneRegex, validateRule } from '@/lib/format';
+import { emailRegex, phoneRegex, validateRule, tinOrSSNRegex } from '@/lib/format';
 import { layoutCol, titleCol } from '@/enum/common';
 import { useGetOptions } from '@/hooks/useGetOptions';
 const name = 'loan_borrower';
@@ -39,7 +39,7 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 								[name, 'own_percent'],
 								v === 'Individual' ? 100 : undefined,
 							);
-							form.setFieldValue([name, 'tin'], { tin_type: '', tin: '' });
+							form.setFieldValue([name, 'tin'], { tin_type: undefined, tin: '' });
 						}}
 					/>
 				</Form.Item>
@@ -66,6 +66,10 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 						{
 							required: true,
 							message: 'Please enter TIN!',
+						},
+						{
+							validator: (_, value) =>
+								validateRule(value?.tin, tinOrSSNRegex, 'Please enter valid TIN!'),
 						},
 					]}
 				>
