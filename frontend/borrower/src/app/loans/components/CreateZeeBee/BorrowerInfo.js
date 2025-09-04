@@ -11,6 +11,7 @@ import {
 	minCreditScore,
 	maxCreditScore,
 	validateRule,
+	tinOrSSNRegex,
 } from '@/lib/format';
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { layoutCol, titleCol } from '@/enum/common';
@@ -80,7 +81,13 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 								<Form.Item
 									label="SSN"
 									name={[field.name, 'ssn']}
-									rules={[{ required: true, message: 'Please Enter!' }]}
+									rules={[
+										{ required: true, message: 'Please Enter!' },
+										{
+											pattern: tinOrSSNRegex,
+											message: 'Please enter valid SSN!',
+										},
+									]}
 								>
 									<InputTIN type="SSN" placeholder="Enter SSN" />
 								</Form.Item>

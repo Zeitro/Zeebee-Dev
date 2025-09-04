@@ -4,7 +4,7 @@ import { Row, Col, Form, Radio, Select, Input, InputNumber } from 'antd';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import { layoutCol, titleCol } from '@/enum/common';
-import { livingAreaProps } from '@/lib/format';
+import { livingAreaProps, maxNumberOfUnits } from '@/lib/format';
 let name = 'loan_property';
 const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty }) => {
 	const { loanPurposeOptions, loanTypeOptions, propertyTypeOptions } = useGetOptions([
@@ -104,7 +104,7 @@ const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty }) =>
 					<InputNumber
 						style={{ width: '100%' }}
 						min={1}
-						max={10}
+						max={maxNumberOfUnits}
 						controls={false}
 						placeholder="Enter number of units"
 						disabled={isRequestProperty}
@@ -125,7 +125,7 @@ const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty }) =>
 					<InputNumber
 						style={{ width: '100%' }}
 						min={1}
-						max={10}
+						max={100}
 						controls={false}
 						placeholder="Enter Number of bedrooms"
 					/>
@@ -145,7 +145,7 @@ const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty }) =>
 					<InputNumber
 						style={{ width: '100%' }}
 						min={1}
-						max={10}
+						max={100}
 						controls={false}
 						placeholder="Enter Number of bathrooms"
 					/>
@@ -195,7 +195,7 @@ const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty }) =>
 					<InputNumber
 						style={{ width: '100%' }}
 						min={1}
-						max={10}
+						max={maxNumberOfUnits}
 						controls={false}
 						placeholder="Enter number of units"
 					/>
@@ -215,7 +215,7 @@ const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty }) =>
 					<InputNumber
 						style={{ width: '100%' }}
 						min={1}
-						max={10}
+						max={100}
 						controls={false}
 						placeholder="Enter Number of bedrooms"
 					/>
@@ -235,7 +235,7 @@ const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty }) =>
 					<InputNumber
 						style={{ width: '100%' }}
 						min={1}
-						max={10}
+						max={100}
 						controls={false}
 						placeholder="Enter Number of bathrooms"
 					/>
