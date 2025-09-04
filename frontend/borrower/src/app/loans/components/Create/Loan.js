@@ -168,23 +168,21 @@ const CreateLoan = ({ form, stepBtn, gutter, isRadioStyle, ...colProps }) => {
 					</Col>
 				</>
 			)}
-			{stage !== loan_archived && (
-				<Col {...layoutCol} {...(colProps || {})}>
-					<Form.Item
-						label="Business strategy"
-						name="business_strategy"
-						rules={[{ required: true, message: 'Please select Business strategy!' }]}
-					>
-						<Select
-							mode="multiple"
-							maxCount={MAX_COUNT}
-							style={{ width: '100%' }}
-							placeholder="Select Business strategy"
-							options={businessStrategyOptions}
-						/>
-					</Form.Item>
-				</Col>
-			)}
+			<Col {...layoutCol} {...(colProps || {})}>
+				<Form.Item
+					label="Business strategy"
+					name="business_strategy"
+					rules={[{ required: true, message: 'Please select Business strategy!' }]}
+				>
+					<Select
+						mode="multiple"
+						maxCount={MAX_COUNT}
+						style={{ width: '100%' }}
+						placeholder="Select Business strategy"
+						options={businessStrategyOptions}
+					/>
+				</Form.Item>
+			</Col>
 
 			{stepBtn}
 		</Row>

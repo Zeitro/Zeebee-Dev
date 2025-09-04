@@ -11,12 +11,12 @@ const PropertiesItem = ({ data }) => {
 	const router = useRouter();
 	const list2 = [
 		{
-			label: 'Borrower',
+			label: 'Active borrower',
 			value: 'applicants',
 			render: (v) => <FieldTips title={v?.join(',')}>{v?.join(',')}</FieldTips>,
 		},
 		{
-			label: 'Lender',
+			label: 'Active lender',
 			value: 'lenders',
 			render: (v) => <FieldTips title={v?.join(',')}>{v?.join(',')}</FieldTips>,
 		},
