@@ -42,6 +42,7 @@ func (l *PropertyPageLogic) PropertyPage(in *borrower.PropertyPageRequest) (resp
 		return nil, err
 	}
 
+	applicantRepo := l.svcCtx.ApplicantRepo
 	properties := make([]*borrower.PropertyPageEntry, len(propertyBasePageResult.List))
 	now := datetime.BeginOfDay(time.Now())
 	for i, propertyBase := range propertyBasePageResult.List {
@@ -60,13 +61,12 @@ func (l *PropertyPageLogic) PropertyPage(in *borrower.PropertyPageRequest) (resp
 		var maturityDate *sql.NullTime
 		var totalRate float32 = 0.0
 		for _, loan := range propertyBase.Loans {
-
-			propertyPageEntry.Lenders = append(propertyPageEntry.Lenders, loan.LenderCompany)
-			propertyPageEntry.TotalPrincipalAmount += loan.PrincipalAmount
 			switch loan.Stage {
 			case constants.LoanStagePending:
 				propertyPageEntry.PendingLoanCount++
 			case constants.LoanStageActive:
+				propertyPageEntry.TotalPrincipalAmount += loan.PrincipalAmount
+				propertyPageEntry.Lenders = append(propertyPageEntry.Lenders, loan.LenderCompany)
 				totalRate += loan.Rate
 				propertyPageEntry.ActiveLoanCount++
 				propertyPageEntry.TotalMonthlyPaymentAmount += loan.MonthlyPayment
@@ -75,14 +75,22 @@ func (l *PropertyPageLogic) PropertyPage(in *borrower.PropertyPageRequest) (resp
 				if loan.MaturityDate.Valid && loan.MaturityDate.Time.After(now) && (maturityDate == nil || loan.MaturityDate.Time.Before(maturityDate.Time)) {
 					maturityDate = loan.MaturityDate
 				}
+				// get loan applicants
+				applicants, err := applicantRepo.GetApplicantsFullNamesByLoanId(l.ctx, loan.Id)
+				if err != nil {
+					return nil, err
+				}
+				propertyPageEntry.Applicants = append(propertyPageEntry.Applicants, applicants...)
+
 			case constants.LoanStageArchived:
 				propertyPageEntry.ArchivedLoanCount++
 			}
+
 		}
 
-		for _, applicant := range propertyBase.Applicants {
-			propertyPageEntry.Applicants = append(propertyPageEntry.Applicants, applicant.FullName)
-		}
+		// for _, applicant := range propertyBase.Applicants {
+		// 	propertyPageEntry.Applicants = append(propertyPageEntry.Applicants, applicant.FullName)
+		// }
 		if totalRate > 0 {
 			propertyPageEntry.AvgRate = totalRate / float32(len(propertyBase.Loans))
 		}

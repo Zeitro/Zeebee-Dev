@@ -136,7 +136,7 @@ func (repo *PropertyBaseRepo) Page(ctx context.Context, pageReq *borrower.Proper
 	loanPropertyTable := model.LoanProperty{}.TableName()
 	applicantTable := model.Applicant{}.TableName()
 	loanRepo := NewLoanRepo(repo.BaseRepo.GetDB())
-	applicantRepo := NewApplicantRepo(repo.BaseRepo.GetDB())
+	// applicantRepo := NewApplicantRepo(repo.BaseRepo.GetDB())
 
 	filter := pageReq.Filter
 	sorter := pageReq.Sorter
@@ -190,11 +190,11 @@ func (repo *PropertyBaseRepo) Page(ctx context.Context, pageReq *borrower.Proper
 		}
 		page.List[i].Loans = loans
 
-		applicants, err := applicantRepo.GetByPropertyBaseId(ctx, propertyBase.Id)
-		if err != nil {
-			return page, errors.WithStack(err)
-		}
-		page.List[i].Applicants = applicants
+		// applicants, err := applicantRepo.GetByPropertyBaseId(ctx, propertyBase.Id)
+		// if err != nil {
+		// 	return page, errors.WithStack(err)
+		// }
+		// page.List[i].Applicants = applicants
 	}
 
 	return page, nil
