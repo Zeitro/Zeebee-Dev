@@ -14,7 +14,7 @@ type LoanApplyRequest struct {
 	PrincipalAmount          float64                    `json:"principal_amount,optional" validate:"required_unless=LoanPurpose Purchase,omitempty,gte=0"`
 	PrepaymentPenalty        int32                      `json:"prepayment_penalty,optional" validate:"required_if=LoanType Rental,omitempty,gte=0"`
 	BusinessStrategy         []string                   `json:"business_strategy,optional" validate:"required,dive,required,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
-	Applicants               []*LoanApplyApplicantEntry `json:"applicants,optional"`
+	Applicants               []*LoanApplyApplicantEntry `json:"applicants,optional" validate:"required,gt=0,lte=2"`
 	ExistingLenderCompany    string                     `json:"existing_lender_company,optional" validate:"required_unless=LoanPurpose Purchase"`
 	ExistingRate             float32                    `json:"existing_rate,optional,optional" validate:"required_unless=LoanPurpose Purchase,omitempty,gt=0,lt=100"`
 	ExistingMaturityDate     string                     `json:"existing_maturity_date,optional" validate:"required_unless=LoanPurpose Purchase,omitempty,datetime=01/02/2006"`
@@ -54,17 +54,17 @@ type LoanApplyResponse struct {
 type LoanCreateRequest struct {
 	Stage             string                    `json:"stage" validate:"required,oneof=Pending Active Archived"`
 	PendingStatus     string                    `json:"pending_status,optional" validate:"required_if=Stage Pending,omitempty,oneof=Quoting Processing Closing"`
-	LoanPurpose       string                    `json:"loan_purpose" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
+	LoanPurpose       string                    `json:"loan_purpose,optional" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
 	LoanType          string                    `json:"loan_type" validate:"required,oneof=Bridge Rehab Rental 'Ground up construction'"`
-	TotalAmount       float64                   `json:"total_amount" validate:"required"`
+	TotalAmount       float64                   `json:"total_amount,optional"  validate:"required_unless=Stage Archived"`
 	InitialAmount     float64                   `json:"initial_amount,optional"`
-	LoanProperty      *LoanPropertyEntry        `json:"loan_property" validate:"required"`
-	Applicants        []*LoanEditApplicantEntry `json:"applicants" validate:"required,dive,required"`
+	LoanProperty      *LoanPropertyEntry        `json:"loan_property,optional" validate:"required"`
+	Applicants        []*LoanEditApplicantEntry `json:"applicants,optional" validate:"required,min=1,max=2,dive,required"`
 	LenderCompany     string                    `json:"lender_company,optional" validate:"required"`
 	ClosingDate       string                    `json:"closing_date,optional" validate:"required_if=Stage Pending,omitempty,datetime=01/02/2006"`
 	ClosingFund       float64                   `json:"closing_fund,optional" validate:"gte=0,ltefield=TotalAmount"`
 	HoldbackAmount    float64                   `json:"holdback_amount,optional" validate:"gte=0,ltefield=TotalAmount"`
-	Rate              float32                   `json:"rate" validate:"required,gt=0"`
+	Rate              float32                   `json:"rate,optional" validate:"required,gt=0,lt=100"`
 	PrincipalAmount   float64                   `json:"principal_amount,optional" validate:"required_unless=Stage Pending"`
 	MonthlyPayment    float64                   `json:"monthly_payment,optional" validate:"required_if=Stage Active,omitempty,gt=0"`
 	LienPosition      string                    `json:"lien_position,optional" validate:"required_if=Stage Active,omitempty,oneof=1st 2nd 3rd 4th Other"`
@@ -72,7 +72,7 @@ type LoanCreateRequest struct {
 	PrepaymentPenalty int32                     `json:"prepayment_penalty,optional" validate:"gte=0,lte=12"`
 	ServiceCompany    string                    `json:"service_company,optional" validate:"required_if=Stage Active"`
 	PaidOffDate       string                    `json:"paid_off_date,optional" validate:"required_if=Stage Archived,omitempty,datetime=01/02/2006"`
-	BusinessStrategy  []string                  `json:"business_strategy" validate:"required,dive,required,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
+	BusinessStrategy  []string                  `json:"business_strategy,optional" validate:"required,dive,required,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
 }
 
 type LoanCreateResponse struct {
@@ -119,17 +119,17 @@ type LoanUpdateRequest struct {
 	Id                int64                     `path:"id" validate:"required,min=1"`
 	Stage             string                    `json:"stage" validate:"required,oneof=Pending Active Archived"`
 	PendingStatus     string                    `json:"pending_status,optional" validate:"required_if=Stage Pending,omitempty,oneof=Quoting Processing Closing"`
-	LoanPurpose       string                    `json:"loan_purpose" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
-	LoanType          string                    `json:"loan_type" validate:"required,oneof=Bridge Rehab Rental 'Ground up construction'"`
-	TotalAmount       float64                   `json:"total_amount" validate:"required"`
+	LoanPurpose       string                    `json:"loan_purpose,optional" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
+	LoanType          string                    `json:"loan_type,optional" validate:"required,oneof=Bridge Rehab Rental 'Ground up construction'"`
+	TotalAmount       float64                   `json:"total_amount,optional"  validate:"required_unless=Stage Archived"`
 	InitialAmount     float64                   `json:"initial_amount,optional"`
-	LoanProperty      *LoanPropertyEntry        `json:"loan_property" validate:"required"`
-	Applicants        []*LoanEditApplicantEntry `json:"applicants" validate:"required,dive,required"`
+	LoanProperty      *LoanPropertyEntry        `json:"loan_property,optional" validate:"required"`
+	Applicants        []*LoanEditApplicantEntry `json:"applicants,optional" validate:"required,dive,required"`
 	LenderCompany     string                    `json:"lender_company,optional" validate:"required"`
 	ClosingDate       string                    `json:"closing_date,optional" validate:"required_if=Stage Pending,omitempty,datetime=01/02/2006"`
 	ClosingFund       float64                   `json:"closing_fund,optional" validate:"gte=0,ltefield=TotalAmount"`
 	HoldbackAmount    float64                   `json:"holdback_amount,optional" validate:"gte=0,ltefield=TotalAmount"`
-	Rate              float32                   `json:"rate" validate:"required,gt=0"`
+	Rate              float32                   `json:"rate,optional" validate:"required,gt=0"`
 	PrincipalAmount   float64                   `json:"principal_amount,optional" validate:"required_unless=Stage Pending"`
 	MonthlyPayment    float64                   `json:"monthly_payment,optional" validate:"required_if=Stage Active,omitempty,gt=0"`
 	LienPosition      string                    `json:"lien_position,optional" validate:"required_if=Stage Active,omitempty,oneof=1st 2nd 3rd 4th Other"`
@@ -137,5 +137,5 @@ type LoanUpdateRequest struct {
 	PrepaymentPenalty int32                     `json:"prepayment_penalty,optional" validate:"gte=0,lte=12"`
 	ServiceCompany    string                    `json:"service_company,optional" validate:"required_if=Stage Active"`
 	PaidOffDate       string                    `json:"paid_off_date,optional" validate:"required_if=Stage Archived,omitempty,datetime=01/02/2006"`
-	BusinessStrategy  []string                  `json:"business_strategy" validate:"required,dive,required,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
+	BusinessStrategy  []string                  `json:"business_strategy,optional" validate:"required,dive,required,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
 }
