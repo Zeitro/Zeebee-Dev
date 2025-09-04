@@ -166,16 +166,16 @@ export const AddExperience = ({ title, rowData = {}, type, onOk, onCancel }) => 
 					</Col>
 					<Col {...layoutCol}>
 						<Form.Item
-							label="Profit/ Loan" // 利润
+							label="Profit/ Loss" // 利润
 							name="profit"
 							rules={[
 								{
 									required: true,
-									message: 'Please enter profit/loan!',
+									message: 'Please enter profit/loss!',
 								},
 							]}
 						>
-							<InputNumAmount placeholder="Enter profit/loan amount" />
+							<InputNumAmount placeholder="Enter profit/loss amount" />
 						</Form.Item>
 					</Col>
 				</Row>

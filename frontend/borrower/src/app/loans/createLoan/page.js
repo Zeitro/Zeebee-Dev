@@ -9,6 +9,7 @@ import { createLoanSteps } from '@/enum/loan';
 import { createRequest } from '@/lib/fetch';
 import { formatDate } from '@/lib/date';
 import { loan_pending } from '@/enum/common';
+import { BtnPopUpModal } from '@/components/NewModal/BtnPopUpModal';
 const CreateLoanPage = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -98,9 +99,20 @@ const CreateLoanPage = () => {
 
 	const stepBtn = (
 		<Col xs={24} sm={24} className="py-6 !flex justify-between items-center">
-			<Button type="text" onClick={() => router.back()}>
+			<BtnPopUpModal
+				config={{
+					onOk: () => router.back(),
+					title: 'Tips',
+					content:
+						'The data is not saved yet, are you sure you want to leave the current page?',
+					okText: 'Leave',
+				}}
+				modalType="confirm"
+				type="text"
+				size="middle"
+			>
 				Cancel
-			</Button>
+			</BtnPopUpModal>
 			<Space size={8}>
 				{!!currentStep && (
 					<Button onClick={() => setCurrentStep((v) => v - 1)}>Back</Button>

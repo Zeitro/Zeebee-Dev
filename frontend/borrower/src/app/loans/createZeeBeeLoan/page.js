@@ -17,6 +17,7 @@ import ReviewAndSign, { contractSignatureZones } from '../components/CreateZeeBe
 import _ from 'lodash';
 import { flattenObjectPaths } from '@/lib/common';
 import { uploadAwsS3 } from '@/api/common';
+import { BtnPopUpModal } from '@/components/NewModal/BtnPopUpModal';
 const CreateZeeBeeLoan = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -159,13 +160,10 @@ const CreateZeeBeeLoan = () => {
 				});
 				let fieldsKeys = flattenObjectPaths(allValues); // 将多层嵌套对象转换为二维路径数组
 				values = await form.validateFields(fieldsKeys);
-				console.log('values111', values);
 			} else {
 				values = await form.validateFields();
-				console.log('values222', values);
 			}
 			isClickBackBtn.current = false;
-
 			setErrorList([]);
 			if (isType === 'Submit') {
 				if (values?.signatures?.remainingSignatureCount || !values?.signatures) {
@@ -247,9 +245,25 @@ const CreateZeeBeeLoan = () => {
 	};
 
 	const stepBtn = useMemo(() => {
-		const cancelBtn = <Button onClick={() => router.back()}>Cancel</Button>;
+		const cancelBtn = (
+			<BtnPopUpModal
+				config={{
+					onOk: () => router.back(),
+					title: 'Tips',
+					content:
+						'The data is not saved yet, are you sure you want to leave the current page?',
+					okText: 'Leave',
+				}}
+				modalType="confirm"
+				type="default"
+				size="middle"
+				disabled={loading}
+			>
+				Cancel
+			</BtnPopUpModal>
+		);
 		const backBtn = !(!currentStep && !stepNum) && (
-			<Button className="w-[90px]" onClick={handleBack}>
+			<Button className="w-[90px]" onClick={handleBack} disabled={loading}>
 				Back
 			</Button>
 		);
@@ -329,7 +343,7 @@ const CreateZeeBeeLoan = () => {
 						autoComplete="off"
 						className=""
 						size="large"
-						// disabled={loading}
+						disabled={loading}
 						initialValues={{
 							applicants: [{ type: 'Individual', is_primary: true }],
 						}}
