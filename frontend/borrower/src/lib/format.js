@@ -8,11 +8,19 @@ export const phoneRegex = /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}
 // export const emailRegex = /a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 export const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})+$/;
+export const tinOrSSNRegex = /^\d{9}$/;
 
 // 信用分（300-850分）
 export const creditScoreRegex = /^([3-7]\d{2}|8[0-4]\d|850)(-\d{1,2})?$/;
 export const minCreditScore = 300;
 export const maxCreditScore = 850;
+
+// 系统最大金额
+export const maxAmount = 1000000000000;
+// 最大单元数
+export const maxNumberOfUnits = 100;
+// 最大贷款期限（月）
+export const maxTerm = 10000;
 
 // 格式化居住面积, 用于<InputNumber>中配置
 export const livingAreaProps = {
@@ -97,6 +105,26 @@ export function formatAmount(amount) {
 	}
 	return `$ ${integerPart}.${decimalPart}`;
 }
+
+// 格式化TIN,包括SSN/ITIN/EIN, 不同类型税务ID
+export const formatTINOrSSN = (taxId, type = 'SSN') => {
+	const cleaned = taxId.replace(/\D/g, '');
+	switch (type) {
+		case 'SSN':
+		case 'ITIN':
+			// ITIN与SSN格式一致(公民): XXX-XX-XXXX (9位数字，只是ITIN第一位数是9开头的，表示非美国公民)
+			if (cleaned.length <= 3) return cleaned;
+			if (cleaned.length <= 5) return `${cleaned.slice(0, 3)}-${cleaned.slice(3)}`;
+			return `${cleaned.slice(0, 3)}-${cleaned.slice(3, 5)}-${cleaned.slice(5, 9)}`;
+		case 'EIN':
+		case 'TIN':
+			// EIN格式(企业): XX-XXXXXXX (9位数字)
+			if (cleaned.length <= 2) return cleaned;
+			return `${cleaned.slice(0, 2)}-${cleaned.slice(2, 9)}`;
+		default:
+			return cleaned;
+	}
+};
 
 // 拼装地址
 export const assemblyAddress = (address = {}, isHaveZip) => {

@@ -347,6 +347,7 @@ const CreateZeeBeeLoan = () => {
 						initialValues={{
 							applicants: [{ type: 'Individual', is_primary: true }],
 						}}
+						scrollToFirstError
 					>
 						<Tabs
 							activeKey={`${currentStep}-${stepNum}`}

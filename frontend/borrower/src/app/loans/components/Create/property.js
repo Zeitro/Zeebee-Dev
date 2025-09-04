@@ -4,6 +4,7 @@ import React from 'react';
 import styles from './index.module.scss';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
+import { maxNumberOfUnits } from '@/lib/format';
 const layoutCol = {
 	xs: 24,
 	sm: 24,
@@ -39,14 +40,14 @@ const CreateProperty = ({
 			</Col>
 			<Col {...layoutCol} {...(colProps || {})}>
 				<Form.Item
-					label="Number of unit"
+					label="Number of units"
 					name={['loan_property', 'property_base', 'unit']}
 					rules={[{ required: true, message: 'Please input!' }]}
 				>
 					<InputNumber
 						style={{ width: '100%' }}
 						min={1}
-						max={10}
+						max={maxNumberOfUnits}
 						controls={false}
 						placeholder="Enter number of unit"
 						disabled={isRequestProperty}
