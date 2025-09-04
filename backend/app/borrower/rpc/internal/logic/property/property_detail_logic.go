@@ -118,12 +118,13 @@ func (l *PropertyDetailLogic) PropertyDetail(in *borrower.PropertyDetailRequest)
 				totalMonthlyPaymentAmount += loan.MonthlyPayment
 				totalPrincipalAmount += loan.PrincipalAmount
 				respData.TotalAmount += loan.TotalAmount
+				totalRate += loan.Rate
 
 			case constants.LoanStageArchived:
 				respData.ArchivedLoans = append(respData.ArchivedLoans, loanEntry)
 			}
 			totalClosingFundAmount += loan.ClosingFund
-			totalRate += loan.Rate
+
 			loanCount++
 		}
 	}
