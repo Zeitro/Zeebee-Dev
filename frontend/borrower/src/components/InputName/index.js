@@ -2,6 +2,7 @@ import React from 'react';
 import { Col, Form, Input, Row } from 'antd';
 import { titleCol } from '@/enum/common';
 import { getPathArr } from '@/lib/common';
+import { validatedName } from '@/lib/format';
 const InputName = ({
 	layoutCol = {
 		xs: 24,
@@ -20,12 +21,24 @@ const InputName = ({
 	config = {},
 	form,
 	listName,
+	className,
 }) => {
 	const first = Form.useWatch(getPathArr(firstName, listName), form);
 	const last = Form.useWatch(getPathArr(lastName, listName), form);
+	const applicants = Form.useWatch(listName, form);
+	const index = firstName?.[0] || 0;
+	const getDependencies = (deleteName) => {
+		const obj = {
+			firstName: getPathArr(firstName, listName),
+			middleName: getPathArr(middleName, listName),
+			lastName: getPathArr(lastName, listName),
+		};
+		delete obj[deleteName];
+		return Object.values(obj);
+	};
 
 	return (
-		<Row gutter={gutter}>
+		<Row gutter={gutter} className={['w-full', className].join(' ')}>
 			{title && (
 				<Col {...titleCol} className="font-medium text-[#000000a6]" style={style}>
 					{title}
@@ -37,13 +50,20 @@ const InputName = ({
 					name={firstName}
 					rules={[
 						{ required: last || config?.firstNameRequired, message: 'Please Enter!' },
+						{ validator: (_, value) => validatedName(value, index, applicants) },
 					]}
+					dependencies={getDependencies('firstName')}
 				>
 					<Input placeholder={`Enter ${firstLabel.toLowerCase()}`} />
 				</Form.Item>
 			</Col>
 			<Col {...layoutCol}>
-				<Form.Item label={middleLabel} name={middleName}>
+				<Form.Item
+					label={middleLabel}
+					name={middleName}
+					rules={[{ validator: (_, value) => validatedName(value, index, applicants) }]}
+					dependencies={getDependencies('middleName')}
+				>
 					<Input placeholder={`Enter ${middleLabel.toLowerCase()}`} />
 				</Form.Item>
 			</Col>
@@ -53,7 +73,9 @@ const InputName = ({
 					name={lastName}
 					rules={[
 						{ required: first || config?.lastNameRequired, message: 'Please Enter!' },
+						{ validator: (_, value) => validatedName(value, index, applicants) },
 					]}
+					dependencies={getDependencies('lastName')}
 				>
 					<Input placeholder={`Enter ${lastLabel.toLowerCase()}`} />
 				</Form.Item>

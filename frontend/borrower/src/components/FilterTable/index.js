@@ -46,7 +46,7 @@ const FilterTable = (
 	const { request } = createRequest();
 	const pagination = useRef(getPagination());
 	const sorter = useRef({
-		column: 'address',
+		// column: 'address',
 		sort: des,
 	});
 	const [tableList, setTableList] = useState([]);

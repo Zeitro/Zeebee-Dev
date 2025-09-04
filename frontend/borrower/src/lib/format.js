@@ -35,6 +35,30 @@ export const validateRule = (value, regex, errorMsg = 'Invalid input') => {
 	return Promise.resolve();
 };
 
+export const validatedName = (value, index, list) => {
+	// 有多个姓名时，比较是否相同
+	if (list?.length) {
+		const currentItem = list[index];
+		const currentName =
+			currentItem.first_name + (currentItem.mid_name || '') + currentItem.last_name;
+		let indexArr = [index];
+		list?.map((item, i) => {
+			const name = item.first_name + (item.mid_name || '') + item.last_name;
+			if (name === currentName && index !== i) {
+				indexArr.push(i);
+			}
+			return item;
+		}, {});
+		if (indexArr?.length > 1) {
+			const err = `${indexArr.map((item, i) => `Borrower ${i + 1} ${indexArr.length === i + 1 ? '' : 'and'}`).join(' ')} cannot be the same`;
+			return Promise.reject(err);
+		}
+	}
+	// 只有一个姓名时，校验格式
+	// Todo
+	return Promise.resolve();
+};
+
 // 格式化手机号 (xxx) xxx-xxxx
 export const formatPhone = (phoneNumber) => {
 	// 移除所有非数字字符
