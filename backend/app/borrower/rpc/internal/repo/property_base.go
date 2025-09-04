@@ -11,6 +11,7 @@ import (
 
 	"zeebee-backend/app/borrower/rpc/internal/repo/model"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/constants"
 	"zeebee-backend/common/gormx"
 )
 
@@ -118,7 +119,9 @@ func (repo *PropertyBaseRepo) SyncTotalAmountWithTx(ctx context.Context, tx *gor
 		if loanProperty.Loan == nil {
 			continue
 		}
-		totalAmount += loanProperty.Loan.TotalAmount
+		if loanProperty.Loan.Stage != constants.LoanStageActive {
+			totalAmount += loanProperty.Loan.TotalAmount
+		}
 	}
 	err = tx.WithContext(ctx).
 		Model(new(model.PropertyBase)).

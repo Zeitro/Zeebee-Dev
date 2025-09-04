@@ -72,6 +72,9 @@ func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.LoanCreateRequ
 		loanProperty.LoanId = loan.Id
 		loanProperty.PropertyBaseId = propertyBase.Id
 		loanProperty, innerErr = l.svcCtx.LoanPropertyRepo.CreateWithTx(l.ctx, tx, loanProperty, false)
+		if innerErr != nil {
+			return innerErr
+		}
 
 		// create applicants
 		applicants = slice.Map(applicants, func(index int, item *model.Applicant) *model.Applicant {
