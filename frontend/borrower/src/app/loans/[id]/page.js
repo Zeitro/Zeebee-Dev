@@ -73,7 +73,9 @@ const EditLoanPage = () => {
 			if (values.paid_off_date) {
 				values.paid_off_date = formatDate(values.paid_off_date);
 			}
-			values.applicants = values?.applicants.filter((i) => i.name);
+			values.applicants = values?.applicants.filter(
+				(i) => i.first_name || i.mid_name || i.last_name,
+			);
 			await request(`/loan/${id}`, {
 				method: 'PUT',
 				body: values,

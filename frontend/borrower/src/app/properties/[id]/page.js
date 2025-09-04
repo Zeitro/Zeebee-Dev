@@ -103,18 +103,7 @@ const PropertiesDetails = () => {
 			<Row className="border border-base-disabled rounded-lg px-4 py-4">
 				{propertiesFieldArr.map((item, index) => (
 					<Col lg={6} sm={12} xs={24} key={index}>
-						{item?.label && (
-							<div className="text-base-label pb-1">
-								{item.label}
-								{item.value === 'total_amount' && (
-									<FieldTips
-										title='The sum of the total loan amount in the "Active loan" category'
-										className="pl-1"
-										isShowDescription={true}
-									/>
-								)}
-							</div>
-						)}
+						{item?.label && <div className="text-base-label pb-1">{item.label}</div>}
 						<div className="text-base/[24px] font-medium flex items-center">
 							{item?.render?.(rowData?.[item.value])}
 						</div>

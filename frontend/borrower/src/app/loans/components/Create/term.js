@@ -12,8 +12,6 @@ const layoutCol = {
 	sm: 24,
 };
 const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
-	const borrower1 = Form.useWatch(['applicants', 0, 'name'], form);
-	const borrower2 = Form.useWatch(['applicants', 1, 'name'], form);
 	const total_amount = Form.useWatch('total_amount', form);
 
 	const { lienPositionOptions, prepaymentPenaltyOptions } = useGetOptions([
@@ -26,14 +24,6 @@ const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
 			valueName: 'prepaymentPenaltyOptions',
 		},
 	]);
-	const borrowerValidator = (value, index) => {
-		console.log(value, index);
-
-		// if ((!index && value === borrower2) || (index === 1 && value === borrower1)) {
-		// return Promise.reject('Borrower 1 and Borrower 2 cannot be the same');
-		// }
-		return Promise.resolve();
-	};
 
 	const rateDom = (
 		<Col {...layoutCol} {...(colProps || {})}>
@@ -67,8 +57,8 @@ const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
 	);
 	return (
 		<Row className={styles.create} gutter={gutter}>
-			<Form.List name="applicants" rules={[{ validator: borrowerValidator }]}>
-				{(fields, { add, remove }, { errors }) => {
+			<Form.List name="applicants">
+				{(fields) => {
 					return (
 						<>
 							{fields?.map((field, index) => (
@@ -85,9 +75,9 @@ const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
 									}}
 									listName="applicants"
 									form={form}
+									className="!ml-0 !mr-0"
 								/>
 							))}
-							<Form.ErrorList errors={errors} />
 						</>
 					);
 				}}
