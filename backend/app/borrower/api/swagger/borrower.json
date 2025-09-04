@@ -74,13 +74,7 @@
               "type": "object",
               "required": [
                 "stage",
-                "loan_purpose",
-                "loan_type",
-                "total_amount",
-                "loan_property",
-                "applicants",
-                "rate",
-                "business_strategy"
+                "loan_type"
               ],
               "properties": {
                 "applicants": {
@@ -142,8 +136,7 @@
                 "loan_property": {
                   "type": "object",
                   "required": [
-                    "property_type",
-                    "property_base"
+                    "property_type"
                   ],
                   "properties": {
                     "bathrooms": {
@@ -175,10 +168,6 @@
                     },
                     "property_base": {
                       "type": "object",
-                      "required": [
-                        "unit",
-                        "address"
-                      ],
                       "properties": {
                         "address": {
                           "type": "object"
@@ -290,12 +279,6 @@
                     "properties": {
                       "address": {
                         "type": "object",
-                        "required": [
-                          "state",
-                          "city",
-                          "address1",
-                          "zip_code"
-                        ],
                         "properties": {
                           "address1": {
                             "type": "string"
@@ -356,6 +339,9 @@
                     }
                   }
                 },
+                "apply_form_file": {
+                  "type": "string"
+                },
                 "arv": {
                   "type": "number"
                 },
@@ -411,7 +397,7 @@
                 "has_delayed_financing": {
                   "type": "boolean"
                 },
-                "has_peroperty_vacant": {
+                "has_properties_vacant": {
                   "type": "boolean"
                 },
                 "has_short_term_rental": {
@@ -449,12 +435,6 @@
                     },
                     "mailing_address": {
                       "type": "object",
-                      "required": [
-                        "state",
-                        "city",
-                        "address1",
-                        "zip_code"
-                      ],
                       "properties": {
                         "address1": {
                           "type": "string"
@@ -623,10 +603,6 @@
                     },
                     "property_base": {
                       "type": "object",
-                      "required": [
-                        "unit",
-                        "address"
-                      ],
                       "properties": {
                         "address": {
                           "type": "object"
@@ -710,12 +686,6 @@
                     "properties": {
                       "address": {
                         "type": "object",
-                        "required": [
-                          "state",
-                          "city",
-                          "address1",
-                          "zip_code"
-                        ],
                         "properties": {
                           "address1": {
                             "type": "string"
@@ -792,12 +762,6 @@
                     "properties": {
                       "address": {
                         "type": "object",
-                        "required": [
-                          "state",
-                          "city",
-                          "address1",
-                          "zip_code"
-                        ],
                         "properties": {
                           "address1": {
                             "type": "string"
@@ -1090,7 +1054,7 @@
                       "reserves_amount",
                       "has_delayed_financing",
                       "has_collateralized_blanket",
-                      "has_peroperty_vacant",
+                      "has_properties_vacant",
                       "has_short_term_rental",
                       "transaction_experiences",
                       "real_estate_experiences",
@@ -1219,7 +1183,7 @@
                       "has_delayed_financing": {
                         "type": "boolean"
                       },
-                      "has_peroperty_vacant": {
+                      "has_properties_vacant": {
                         "type": "boolean"
                       },
                       "has_short_term_rental": {
@@ -1269,12 +1233,6 @@
                           },
                           "mailing_address": {
                             "type": "object",
-                            "required": [
-                              "state",
-                              "city",
-                              "address1",
-                              "zip_code"
-                            ],
                             "properties": {
                               "address1": {
                                 "type": "string"
@@ -1414,8 +1372,7 @@
                       "loan_property": {
                         "type": "object",
                         "required": [
-                          "property_type",
-                          "property_base"
+                          "property_type"
                         ],
                         "properties": {
                           "bathrooms": {
@@ -1810,7 +1767,7 @@
                 "has_delayed_financing": {
                   "type": "boolean"
                 },
-                "has_peroperty_vacant": {
+                "has_properties_vacant": {
                   "type": "boolean"
                 },
                 "has_short_term_rental": {
@@ -1860,12 +1817,6 @@
                     },
                     "mailing_address": {
                       "type": "object",
-                      "required": [
-                        "state",
-                        "city",
-                        "address1",
-                        "zip_code"
-                      ],
                       "properties": {
                         "address1": {
                           "type": "string"
@@ -2005,8 +1956,7 @@
                 "loan_property": {
                   "type": "object",
                   "required": [
-                    "property_type",
-                    "property_base"
+                    "property_type"
                   ],
                   "properties": {
                     "bathrooms": {
@@ -2038,19 +1988,9 @@
                     },
                     "property_base": {
                       "type": "object",
-                      "required": [
-                        "unit",
-                        "address"
-                      ],
                       "properties": {
                         "address": {
                           "type": "object",
-                          "required": [
-                            "state",
-                            "city",
-                            "address1",
-                            "zip_code"
-                          ],
                           "properties": {
                             "address1": {
                               "type": "string"
@@ -2163,12 +2103,6 @@
                     "properties": {
                       "address": {
                         "type": "object",
-                        "required": [
-                          "state",
-                          "city",
-                          "address1",
-                          "zip_code"
-                        ],
                         "properties": {
                           "address1": {
                             "type": "string"
@@ -2254,12 +2188,6 @@
                     "properties": {
                       "address": {
                         "type": "object",
-                        "required": [
-                          "state",
-                          "city",
-                          "address1",
-                          "zip_code"
-                        ],
                         "properties": {
                           "address1": {
                             "type": "string"
@@ -2357,14 +2285,7 @@
             "schema": {
               "type": "object",
               "required": [
-                "stage",
-                "loan_purpose",
-                "loan_type",
-                "total_amount",
-                "loan_property",
-                "applicants",
-                "rate",
-                "business_strategy"
+                "stage"
               ],
               "properties": {
                 "applicants": {
@@ -2426,8 +2347,7 @@
                 "loan_property": {
                   "type": "object",
                   "required": [
-                    "property_type",
-                    "property_base"
+                    "property_type"
                   ],
                   "properties": {
                     "bathrooms": {
@@ -2459,10 +2379,6 @@
                     },
                     "property_base": {
                       "type": "object",
-                      "required": [
-                        "unit",
-                        "address"
-                      ],
                       "properties": {
                         "address": {
                           "type": "object"
@@ -2651,12 +2567,6 @@
                     "properties": {
                       "address": {
                         "type": "object",
-                        "required": [
-                          "state",
-                          "city",
-                          "address1",
-                          "zip_code"
-                        ],
                         "properties": {
                           "address1": {
                             "type": "string"
@@ -2717,6 +2627,9 @@
                     }
                   }
                 },
+                "apply_form_file": {
+                  "type": "string"
+                },
                 "arv": {
                   "type": "number"
                 },
@@ -2772,7 +2685,7 @@
                 "has_delayed_financing": {
                   "type": "boolean"
                 },
-                "has_peroperty_vacant": {
+                "has_properties_vacant": {
                   "type": "boolean"
                 },
                 "has_short_term_rental": {
@@ -2810,12 +2723,6 @@
                     },
                     "mailing_address": {
                       "type": "object",
-                      "required": [
-                        "state",
-                        "city",
-                        "address1",
-                        "zip_code"
-                      ],
                       "properties": {
                         "address1": {
                           "type": "string"
@@ -2984,10 +2891,6 @@
                     },
                     "property_base": {
                       "type": "object",
-                      "required": [
-                        "unit",
-                        "address"
-                      ],
                       "properties": {
                         "address": {
                           "type": "object"
@@ -3071,12 +2974,6 @@
                     "properties": {
                       "address": {
                         "type": "object",
-                        "required": [
-                          "state",
-                          "city",
-                          "address1",
-                          "zip_code"
-                        ],
                         "properties": {
                           "address1": {
                             "type": "string"
@@ -3153,12 +3050,6 @@
                     "properties": {
                       "address": {
                         "type": "object",
-                        "required": [
-                          "state",
-                          "city",
-                          "address1",
-                          "zip_code"
-                        ],
                         "properties": {
                           "address1": {
                             "type": "string"
@@ -3269,12 +3160,6 @@
                     "properties": {
                       "address": {
                         "type": "object",
-                        "required": [
-                          "state",
-                          "city",
-                          "address1",
-                          "zip_code"
-                        ],
                         "properties": {
                           "address1": {
                             "type": "string"
@@ -3393,7 +3278,7 @@
                 "has_delayed_financing": {
                   "type": "boolean"
                 },
-                "has_peroperty_vacant": {
+                "has_properties_vacant": {
                   "type": "boolean"
                 },
                 "has_short_term_rental": {
@@ -3431,12 +3316,6 @@
                     },
                     "mailing_address": {
                       "type": "object",
-                      "required": [
-                        "state",
-                        "city",
-                        "address1",
-                        "zip_code"
-                      ],
                       "properties": {
                         "address1": {
                           "type": "string"
@@ -3605,10 +3484,6 @@
                     },
                     "property_base": {
                       "type": "object",
-                      "required": [
-                        "unit",
-                        "address"
-                      ],
                       "properties": {
                         "address": {
                           "type": "object"
@@ -3695,12 +3570,6 @@
                     "properties": {
                       "address": {
                         "type": "object",
-                        "required": [
-                          "state",
-                          "city",
-                          "address1",
-                          "zip_code"
-                        ],
                         "properties": {
                           "address1": {
                             "type": "string"
@@ -3838,12 +3707,6 @@
                     "properties": {
                       "address": {
                         "type": "object",
-                        "required": [
-                          "state",
-                          "city",
-                          "address1",
-                          "zip_code"
-                        ],
                         "properties": {
                           "address1": {
                             "type": "string"
@@ -4011,12 +3874,6 @@
                       },
                       "address": {
                         "type": "object",
-                        "required": [
-                          "state",
-                          "city",
-                          "address1",
-                          "zip_code"
-                        ],
                         "properties": {
                           "address1": {
                             "type": "string"
@@ -4160,7 +4017,7 @@
                       "reserves_amount",
                       "has_delayed_financing",
                       "has_collateralized_blanket",
-                      "has_peroperty_vacant",
+                      "has_properties_vacant",
                       "has_short_term_rental",
                       "transaction_experiences",
                       "real_estate_experiences",
@@ -4289,7 +4146,7 @@
                       "has_delayed_financing": {
                         "type": "boolean"
                       },
-                      "has_peroperty_vacant": {
+                      "has_properties_vacant": {
                         "type": "boolean"
                       },
                       "has_short_term_rental": {
@@ -4339,12 +4196,6 @@
                           },
                           "mailing_address": {
                             "type": "object",
-                            "required": [
-                              "state",
-                              "city",
-                              "address1",
-                              "zip_code"
-                            ],
                             "properties": {
                               "address1": {
                                 "type": "string"
@@ -4484,8 +4335,7 @@
                       "loan_property": {
                         "type": "object",
                         "required": [
-                          "property_type",
-                          "property_base"
+                          "property_type"
                         ],
                         "properties": {
                           "bathrooms": {
@@ -4720,12 +4570,6 @@
                 },
                 "address": {
                   "type": "object",
-                  "required": [
-                    "state",
-                    "city",
-                    "address1",
-                    "zip_code"
-                  ],
                   "properties": {
                     "address1": {
                       "type": "string"
@@ -4785,7 +4629,7 @@
                       "reserves_amount",
                       "has_delayed_financing",
                       "has_collateralized_blanket",
-                      "has_peroperty_vacant",
+                      "has_properties_vacant",
                       "has_short_term_rental",
                       "transaction_experiences",
                       "real_estate_experiences",
@@ -4914,7 +4758,7 @@
                       "has_delayed_financing": {
                         "type": "boolean"
                       },
-                      "has_peroperty_vacant": {
+                      "has_properties_vacant": {
                         "type": "boolean"
                       },
                       "has_short_term_rental": {
@@ -4964,12 +4808,6 @@
                           },
                           "mailing_address": {
                             "type": "object",
-                            "required": [
-                              "state",
-                              "city",
-                              "address1",
-                              "zip_code"
-                            ],
                             "properties": {
                               "address1": {
                                 "type": "string"
@@ -5109,8 +4947,7 @@
                       "loan_property": {
                         "type": "object",
                         "required": [
-                          "property_type",
-                          "property_base"
+                          "property_type"
                         ],
                         "properties": {
                           "bathrooms": {
@@ -5390,7 +5227,7 @@
                       "reserves_amount",
                       "has_delayed_financing",
                       "has_collateralized_blanket",
-                      "has_peroperty_vacant",
+                      "has_properties_vacant",
                       "has_short_term_rental",
                       "transaction_experiences",
                       "real_estate_experiences",
@@ -5519,7 +5356,7 @@
                       "has_delayed_financing": {
                         "type": "boolean"
                       },
-                      "has_peroperty_vacant": {
+                      "has_properties_vacant": {
                         "type": "boolean"
                       },
                       "has_short_term_rental": {
@@ -5569,12 +5406,6 @@
                           },
                           "mailing_address": {
                             "type": "object",
-                            "required": [
-                              "state",
-                              "city",
-                              "address1",
-                              "zip_code"
-                            ],
                             "properties": {
                               "address1": {
                                 "type": "string"
@@ -5714,8 +5545,7 @@
                       "loan_property": {
                         "type": "object",
                         "required": [
-                          "property_type",
-                          "property_base"
+                          "property_type"
                         ],
                         "properties": {
                           "bathrooms": {
@@ -6388,7 +6218,7 @@
       }
     }
   },
-  "x-date": "2025-09-02 16:41:21",
+  "x-date": "2025-09-04 17:34:25",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
