@@ -74,6 +74,8 @@ export function createRequest() {
 
 			return data.data;
 		} catch (error) {
+			console.log(error, 'error');
+
 			if (error.name !== 'AbortError') {
 				showMessage(error.message || 'Network anomaly');
 				return Promise.reject(error);
@@ -132,8 +134,7 @@ export function createRequest() {
 							return reject('Please log in again!');
 						}
 
-						// 以及通用业务接口返回 { code: 200, data: { url: '...' } }
-						if (data.code && data.code !== 200 && data.success !== true) {
+						if (data.code && data.code !== 200) {
 							showMessage(data.message);
 							return reject(data.message || `fail:${data.code}`);
 						}
@@ -142,7 +143,7 @@ export function createRequest() {
 					} catch (e) {
 						console.log(e);
 
-						reject(new Error('Failed to parse server response'));
+						reject('Failed to parse server response');
 					}
 				} else {
 					showMessage(xhr.statusText || `HTTP error! status: ${xhr.status}`);

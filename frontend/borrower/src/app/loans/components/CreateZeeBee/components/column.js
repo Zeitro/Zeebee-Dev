@@ -78,7 +78,7 @@ export const useColumnByZeeBeeLoan = (handleAdd = () => {}, handleDelete = () =>
 			width: 140,
 		},
 		{
-			title: 'Profit/Loan',
+			title: 'Profit/Loss',
 			dataIndex: 'profit',
 			key: 'profit',
 			ellipsis: true,
