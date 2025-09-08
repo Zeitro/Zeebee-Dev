@@ -86,4 +86,5 @@ func (m *Loan) RemoveRelationships() {
 	m.LoanExperiences = nil
 	m.LoanThirdServices = nil
 	m.LoanDemographic = nil
+	m.ApplyFormFile = nil
 }

@@ -42,8 +42,12 @@ func (l *DeleteBorrowerLoanLogic) DeleteBorrowerLoan(in *borrower.LoanDeleteRequ
 		return nil, errors.Wrap(err, "failed to get loan")
 	}
 
-	if loanModel.Source != constants.LoanSourceBorrower {
-		return nil, errors.WithStack(errors.New("loan source is not 3rd party"))
+	if loanModel.Source != constants.LoanSourceBorrower && loanModel.Stage != constants.LoanStageDraft {
+		return nil, errors.WithStack(errors.New("loan source is not 3rd party or loan is not in draft stage"))
+	}
+
+	if loanModel.BorrowerId != in.Data.BorrowerId {
+		return nil, errors.WithStack(errors.New("loan does not belong to borrower"))
 	}
 
 	err = l.svcCtx.LoanRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
@@ -84,16 +88,49 @@ func (l *DeleteBorrowerLoanLogic) DeleteBorrowerLoan(in *borrower.LoanDeleteRequ
 			}
 		}
 
-		// delete loan
-		_, innerErr = l.svcCtx.LoanRepo.DeleteByIDWithTx(l.ctx, tx, loanModel.Id)
-
+		// deleter loan borrower
+		innerErr = l.svcCtx.LoanBorrowerRepo.DeleteByLoanIdWithTx(l.ctx, tx, loanModel.Id)
 		if innerErr != nil {
 			return innerErr
 		}
 
-		if propertyBase != nil {
-			innerErr = l.svcCtx.PropertyBaseRepo.SyncTotalAmountWithTx(l.ctx, tx, propertyBase.Id)
+		// delete loan files
+		innerErr = l.svcCtx.FileRepo.DeleteLoanFilesByLoanIdWithTx(l.ctx, tx, loanModel.Id)
+		if innerErr != nil {
+			return innerErr
 		}
+
+		// delete loan borrower
+		innerErr = l.svcCtx.LoanBorrowerRepo.DeleteByLoanIdWithTx(l.ctx, tx, loanModel.Id)
+		if innerErr != nil {
+			return innerErr
+		}
+		// delete loan demographics
+		innerErr = l.svcCtx.LoanDemographicRepo.DeleteByLoanIdWithTx(l.ctx, tx, loanModel.Id)
+		if innerErr != nil {
+			return innerErr
+		}
+
+		// delete loan experience
+		innerErr = l.svcCtx.LoanExperienceRepo.DeleteByLoanIdWithTx(l.ctx, tx, loanModel.Id)
+		if innerErr != nil {
+			return innerErr
+		}
+		// delete loan third service
+		innerErr = l.svcCtx.LoanThirdServiceRepo.DeleteByLoanIdWithTx(l.ctx, tx, loanModel.Id)
+		if innerErr != nil {
+			return innerErr
+		}
+
+		// delete loan
+		_, innerErr = l.svcCtx.LoanRepo.DeleteByIDWithTx(l.ctx, tx, loanModel.Id)
+		if innerErr != nil {
+			return innerErr
+		}
+
+		// if propertyBase != nil {
+		// 	innerErr = l.svcCtx.PropertyBaseRepo.SyncTotalAmountWithTx(l.ctx, tx, propertyBase.Id)
+		// }
 
 		return innerErr
 	})

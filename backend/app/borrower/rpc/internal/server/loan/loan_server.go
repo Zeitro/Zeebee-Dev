@@ -68,6 +68,11 @@ func (s *LoanServer) ApplyLoan(ctx context.Context, in *borrower.LoanApplyReques
 	return l.ApplyLoan(in)
 }
 
+func (s *LoanServer) SaveDraftLoan(ctx context.Context, in *borrower.LoanApplyRequest) (*borrower.LoanApplyResponse, error) {
+	l := loanlogic.NewSaveDraftLoanLogic(ctx, s.svcCtx)
+	return l.SaveDraftLoan(in)
+}
+
 func (s *LoanServer) UpdateApplyLoan(ctx context.Context, in *borrower.LoanApplyRequest) (*borrower.EmptyResponse, error) {
 	l := loanlogic.NewUpdateApplyLoanLogic(ctx, s.svcCtx)
 	return l.UpdateApplyLoan(in)

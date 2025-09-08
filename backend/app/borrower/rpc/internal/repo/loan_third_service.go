@@ -30,3 +30,12 @@ func (repo *LoanThirdServiceRepo) UpdateOneWithTx(ctx context.Context, tx *gorm.
 	}
 	return data, nil
 }
+
+func (repo *LoanThirdServiceRepo) DeleteByLoanIdWithTx(ctx context.Context, tx *gorm.DB, loanId int64) (err error) {
+	err = tx.WithContext(ctx).
+		Model(&model.LoanThirdService{}).
+		Where("loan_id = ?", loanId).
+		Delete(&model.LoanThirdService{}).
+		Error
+	return errors.WithStack(err)
+}

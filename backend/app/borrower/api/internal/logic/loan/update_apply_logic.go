@@ -32,7 +32,6 @@ func NewUpdateApplyLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Updat
 }
 
 func (l *UpdateApplyLogic) UpdateApply(req *types.LoanApplyRequest) (resp *types.EmptyResponse, err error) {
-	logx.Info("update apply")
 	rpcReq := &borrower.LoanApplyRequest{
 		Data: &borrower.LoanApplyRequestData{},
 	}
