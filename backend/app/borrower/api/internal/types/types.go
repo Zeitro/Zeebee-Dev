@@ -85,9 +85,9 @@ type LoanDemographicEntry struct {
 	Id        int64                          `json:"id,optional"`
 	LoanId    int64                          `json:"loan_id,optional"`
 	Sex       string                         `json:"sex,optional" validate:"required,oneof=Male Female Hidden"`
-	Property  *LoanDemographicPropertyEntry  `json:"property,optional" validate="required"`
-	Ethnicity *LoanDemographicEthnicityEntry `json:"ethnicity,optional" validate="required"`
-	Race      *LoanDemographicRaceEntry      `json:"race,optional" validate="required"`
+	Property  *LoanDemographicPropertyEntry  `json:"property,optional" validate:"required"`
+	Ethnicity *LoanDemographicEthnicityEntry `json:"ethnicity,optional" validate:"required"`
+	Race      *LoanDemographicRaceEntry      `json:"race,optional" validate:"required"`
 }
 
 type LoanDemographicEthnicityEntry struct {

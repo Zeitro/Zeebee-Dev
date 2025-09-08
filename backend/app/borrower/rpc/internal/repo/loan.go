@@ -39,6 +39,21 @@ func (repo *LoanRepo) GetBorrowerLoan(ctx context.Context, id int64, borrowerId 
 	return result, errors.WithStack(err)
 }
 
+func (repo *LoanRepo) GetBorrowerLoanWithTx(ctx context.Context, tx *gorm.DB, id int64, borrowerId int64) (result *model.Loan, err error) {
+	err = tx.WithContext(ctx).
+		Where("id = ? and borrower_id = ?", id, borrowerId).
+		Preload("Applicants").
+		Preload("LoanProperty").
+		Preload("LoanProperty.PropertyBase").
+		Preload("LoanBorrower").
+		Preload("LoanExperiences").
+		Preload("LoanThirdServices").
+		Preload("LoanDemographic").
+		Preload("ApplyFormFile").
+		First(&result).Error
+	return result, errors.WithStack(err)
+}
+
 // UpdateOneWithTx update with tx
 func (repo *LoanRepo) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, id int64, data *model.Loan, isApply bool) (result *model.Loan, err error) {
 	omitFields := []string{"id", "source", "created_at", "code", "borrower_id"}

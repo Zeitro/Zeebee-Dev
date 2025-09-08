@@ -88,7 +88,7 @@ func (repo *BaseRepo[T]) UpdateColumnsByIdWithTx(ctx context.Context, tx *gorm.D
 func (repo *BaseRepo[T]) CreateWithTx(ctx context.Context, tx *gorm.DB, data T, withAssociation bool) (T, error) {
 	var err error
 	if withAssociation {
-		err = tx.WithContext(ctx).Omit(clause.Associations).Create(&data).Error
+		err = tx.WithContext(ctx).Create(&data).Error
 	} else {
 		err = tx.WithContext(ctx).Omit(clause.Associations).Create(&data).Error
 	}
@@ -103,7 +103,7 @@ func (repo *BaseRepo[T]) CreateWithTx(ctx context.Context, tx *gorm.DB, data T, 
 func (repo *BaseRepo[T]) BatchCreateWithTx(ctx context.Context, tx *gorm.DB, data []T, withAssociation bool) ([]T, error) {
 	var err error
 	if withAssociation {
-		err = tx.WithContext(ctx).Omit(clause.Associations).Create(&data).Error
+		err = tx.WithContext(ctx).Create(&data).Error
 	} else {
 		err = tx.WithContext(ctx).Omit(clause.Associations).Create(&data).Error
 	}
