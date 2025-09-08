@@ -52,7 +52,10 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 	if loan.Source != constants.LoanSourceSystem {
 		return nil, errors.WithStack(errors.New("invalid loan source"))
 	}
-	if (loan.Stage != constants.LoanStagePending && loan.PendingStatus != constants.LoanPendingStatusQuoting) || (loan.Stage != constants.LoanStageDraft) {
+	if loan.Stage != constants.LoanStagePending &&
+		loan.Stage != constants.LoanStageDraft &&
+		loan.PendingStatus != constants.LoanPendingStatusQuoting &&
+		loan.PendingStatus != constants.LoanPendingStatusNone {
 		return nil, errors.New("loan's stage should be pending or draft")
 	}
 	if loan.BorrowerId != in.Data.BorrowerId {
