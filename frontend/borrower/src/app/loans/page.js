@@ -5,6 +5,7 @@ import styles from './loans.module.scss';
 import PendingPage from './components/Pending';
 import ActiveLoans from './components/Active';
 import ArchivedLoans from './components/Archived';
+import Drafts from './components/Drafts';
 import { useGetOptions } from '@/hooks/useGetOptions';
 const api = '/loan/page';
 const Loans = () => {
@@ -44,6 +45,11 @@ const Loans = () => {
 					key: 'archived',
 					label: 'Archived Loans',
 					children: <ArchivedLoans filterWrapClassName="px-4 pb-4" api={api} />,
+				},
+				{
+					key: 'drafts',
+					label: 'Drafts',
+					children: <Drafts filterWrapClassName="px-4 pb-4" api={api} />,
 				},
 			]}
 			onChange={(v) => setTabKey(v)}

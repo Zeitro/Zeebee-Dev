@@ -66,7 +66,7 @@ const common = (isNotAddress) => {
 	];
 };
 
-const getOpt = (showDeleteModal) => {
+const getOpt = (showDeleteModal, isHaveAll) => {
 	return {
 		title: '',
 		dataIndex: 'operation',
@@ -79,7 +79,7 @@ const getOpt = (showDeleteModal) => {
 				disabled={record?.source !== 'borrower'}
 				getItems={(editItem, deleteItem) => {
 					const arr = [];
-					if (record?.source === 'borrower') {
+					if (record?.source === 'borrower' || isHaveAll) {
 						arr.push({ ...editItem, url: `/loans/${record?.id}` });
 						arr.push(deleteItem);
 					}
@@ -94,7 +94,7 @@ const getOpt = (showDeleteModal) => {
 		),
 	};
 };
-export const pendingColumns = (isNotAddress, successCallback, showDeleteModal) => {
+export const pendingColumns = (isNotAddress, successCallback, showDeleteModal, stage) => {
 	return [
 		...common(isNotAddress),
 		{
@@ -191,7 +191,7 @@ export const pendingColumns = (isNotAddress, successCallback, showDeleteModal) =
 				<LoanPendingStatus data={record} successCallback={successCallback} />
 			),
 		},
-		getOpt(showDeleteModal),
+		getOpt(showDeleteModal, stage === 'draft'),
 	];
 };
 
