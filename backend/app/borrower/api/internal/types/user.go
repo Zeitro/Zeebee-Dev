@@ -29,18 +29,12 @@ type UserRefreshTokenResponse struct {
 }
 
 type UserRegisterRequest struct {
-	Email       string `json:"email" validate:"required,email"`
-	Password    string `json:"password" validate:"required,min=8,max=32"`
-	FirstName   string `json:"first_name" validate:"required,min=2,max=32"`
-	LastName    string `json:"last_name" validate:"required,min=2,max=32"`
-	PhoneNumber string `json:"phone_number" validate:"required,min=5,max=20"`
-	Address     string `json:"address" validate:"required,min=3,max=256"`
-	Ssn         string `json:"ssn" validate:"required,min=6,max=10"`
+	Email            string `json:"email" validate:"required,email"`
+	Password         string `json:"password" validate:"required,min=8,max=32,password"`
+	ComfiredPassword string `json:"comfired_password" validate:"required,eqfield=Password"`
+	FirstName        string `json:"first_name" validate:"required,min=2,max=30"`
+	LastName         string `json:"last_name" validate:"required,min=2,max=30"`
 }
 
 type UserRegisterResponse struct {
-	AccessToken        string `json:"access_token"`
-	AccessTokenExpire  int64  `json:"access_token_expire"`
-	RefreshToken       string `json:"refresh_token"`
-	RefreshTokenExpire int64  `json:"refresh_token_expire"`
 }

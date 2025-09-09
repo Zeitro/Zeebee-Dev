@@ -2,6 +2,7 @@ package validator
 
 import (
 	"reflect"
+	"regexp"
 	"strings"
 
 	"github.com/go-playground/locales/en"
@@ -53,11 +54,25 @@ func NewValidator(local string) (v *Validator, err error) {
 		trans, _ = uni.GetTranslator(LocalEn)
 		err = en2.RegisterDefaultTranslations(validator, trans)
 	}
-	return &Validator{
+	v = &Validator{
 		validator: validator,
 		trans:     trans,
 		local:     local,
-	}, nil
+	}
+	err = v.init()
+	return v, err
+}
+
+func (v *Validator) init() (err error) {
+	err = v.registerRules()
+	if err != nil {
+		return err
+	}
+	err = v.registerTrans()
+	if err != nil {
+		return err
+	}
+	return err
 }
 
 func (v *Validator) Validate(i interface{}) (err error) {
@@ -75,6 +90,33 @@ func (v *Validator) Validate(i interface{}) (err error) {
 	return validatorErr
 }
 
+func (v *Validator) registerTrans() (err error) {
+	err = v.validator.RegisterTranslation("password", v.trans, func(ut ut.Translator) error {
+		return ut.Add("password", "{0} must contain uppercase and lowercase letters, numbers, and at least 8 digits", true)
+	}, func(ut ut.Translator, fe go_validator.FieldError) string {
+		t, _ := ut.T("password", fe.Field())
+		return t
+	})
+	return err
+}
+
+func (v *Validator) registerRules() (err error) {
+	err = v.validator.RegisterValidation("password", validatePwd)
+	return err
+}
+
 func GetEnValidator() (v *Validator, err error) {
 	return NewValidator(LocalEn)
+}
+
+func validatePwd(fl go_validator.FieldLevel) bool {
+	password := fl.Field().String()
+
+	if len(password) < 8 {
+		return false
+	}
+	hasLower := regexp.MustCompile(`[a-z]`).MatchString(password)
+	hasUpper := regexp.MustCompile(`[A-Z]`).MatchString(password)
+	hasNumber := regexp.MustCompile(`\d`).MatchString(password)
+	return hasLower && hasUpper && hasNumber
 }

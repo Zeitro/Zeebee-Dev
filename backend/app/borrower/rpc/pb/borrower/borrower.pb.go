@@ -715,9 +715,6 @@ type UserRegisterRequestData struct {
 	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
 	FirstName     string                 `protobuf:"bytes,3,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
 	LastName      string                 `protobuf:"bytes,4,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
-	PhoneNumber   string                 `protobuf:"bytes,5,opt,name=phone_number,json=phoneNumber,proto3" json:"phone_number,omitempty"`
-	Address       string                 `protobuf:"bytes,6,opt,name=address,proto3" json:"address,omitempty"`
-	Ssn           string                 `protobuf:"bytes,7,opt,name=ssn,proto3" json:"ssn,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -780,35 +777,10 @@ func (x *UserRegisterRequestData) GetLastName() string {
 	return ""
 }
 
-func (x *UserRegisterRequestData) GetPhoneNumber() string {
-	if x != nil {
-		return x.PhoneNumber
-	}
-	return ""
-}
-
-func (x *UserRegisterRequestData) GetAddress() string {
-	if x != nil {
-		return x.Address
-	}
-	return ""
-}
-
-func (x *UserRegisterRequestData) GetSsn() string {
-	if x != nil {
-		return x.Ssn
-	}
-	return ""
-}
-
 type UserRegisterResponseData struct {
-	state              protoimpl.MessageState `protogen:"open.v1"`
-	AccessToken        string                 `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
-	RefreshToken       string                 `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
-	AccessTokenExpire  int64                  `protobuf:"varint,3,opt,name=access_token_expire,json=accessTokenExpire,proto3" json:"access_token_expire,omitempty"`
-	RefreshTokenExpire int64                  `protobuf:"varint,4,opt,name=refresh_token_expire,json=refreshTokenExpire,proto3" json:"refresh_token_expire,omitempty"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UserRegisterResponseData) Reset() {
@@ -839,34 +811,6 @@ func (x *UserRegisterResponseData) ProtoReflect() protoreflect.Message {
 // Deprecated: Use UserRegisterResponseData.ProtoReflect.Descriptor instead.
 func (*UserRegisterResponseData) Descriptor() ([]byte, []int) {
 	return file_app_borrower_rpc_pb_borrower_proto_rawDescGZIP(), []int{16}
-}
-
-func (x *UserRegisterResponseData) GetAccessToken() string {
-	if x != nil {
-		return x.AccessToken
-	}
-	return ""
-}
-
-func (x *UserRegisterResponseData) GetRefreshToken() string {
-	if x != nil {
-		return x.RefreshToken
-	}
-	return ""
-}
-
-func (x *UserRegisterResponseData) GetAccessTokenExpire() int64 {
-	if x != nil {
-		return x.AccessTokenExpire
-	}
-	return 0
-}
-
-func (x *UserRegisterResponseData) GetRefreshTokenExpire() int64 {
-	if x != nil {
-		return x.RefreshTokenExpire
-	}
-	return 0
 }
 
 // refresh
@@ -6507,21 +6451,14 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x13UserRegisterRequest\x125\n" +
 	"\x04data\x18\x01 \x01(\v2!.borrower.UserRegisterRequestDataR\x04data\"N\n" +
 	"\x14UserRegisterResponse\x126\n" +
-	"\x04data\x18\x01 \x01(\v2\".borrower.UserRegisterResponseDataR\x04data\"\xd6\x01\n" +
+	"\x04data\x18\x01 \x01(\v2\".borrower.UserRegisterResponseDataR\x04data\"\x87\x01\n" +
 	"\x17UserRegisterRequestData\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x1d\n" +
 	"\n" +
 	"first_name\x18\x03 \x01(\tR\tfirstName\x12\x1b\n" +
-	"\tlast_name\x18\x04 \x01(\tR\blastName\x12!\n" +
-	"\fphone_number\x18\x05 \x01(\tR\vphoneNumber\x12\x18\n" +
-	"\aaddress\x18\x06 \x01(\tR\aaddress\x12\x10\n" +
-	"\x03ssn\x18\a \x01(\tR\x03ssn\"\xc4\x01\n" +
-	"\x18UserRegisterResponseData\x12!\n" +
-	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
-	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\x12.\n" +
-	"\x13access_token_expire\x18\x03 \x01(\x03R\x11accessTokenExpire\x120\n" +
-	"\x14refresh_token_expire\x18\x04 \x01(\x03R\x12refreshTokenExpire\"L\n" +
+	"\tlast_name\x18\x04 \x01(\tR\blastName\"\x1a\n" +
+	"\x18UserRegisterResponseData\"L\n" +
 	"\x13RefreshTokenRequest\x125\n" +
 	"\x04data\x18\x01 \x01(\v2!.borrower.RefreshTokenRequestDataR\x04data\">\n" +
 	"\x17RefreshTokenRequestData\x12#\n" +

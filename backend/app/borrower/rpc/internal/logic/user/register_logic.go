@@ -2,7 +2,6 @@ package userlogic
 
 import (
 	"context"
-	"strconv"
 
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -11,6 +10,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
+	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/utils"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -45,7 +45,10 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 		return nil, err
 	}
 	if isExisted {
-		return nil, errors.WithStack(errors.New("email is already registered"))
+		// todo send login email
+
+		return nil, nil
+		// return nil, errors.WithStack(errors.New("email is already registered"))
 	}
 
 	pwd, err := utils.HashPassword(in.Data.Password)
@@ -55,14 +58,15 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 	userModel := &model.User{
 		Email:        in.Data.Email,
 		PasswordHash: pwd,
-		Status:       constants.UserStatusActive,
+		Status:       constants.UserStatusUnverified,
 		Type:         constants.UserTypeBorrower,
 	}
 	borrowerModel := &model.Borrower{
-		FirstName:   in.Data.FirstName,
-		LastName:    in.Data.LastName,
-		Ssn:         in.Data.Ssn,
-		PhoneNumber: in.Data.PhoneNumber,
+		FirstName: in.Data.FirstName,
+		LastName:  in.Data.LastName,
+		FullName:  stringx.FormatFullName(in.Data.FirstName, "", in.Data.LastName),
+		// Ssn:         in.Data.Ssn,
+		// PhoneNumber: in.Data.PhoneNumber,
 	}
 	err = l.svcCtx.UserRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
 		// create user
@@ -75,37 +79,42 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 		_, err = l.svcCtx.BorrowerRepo.CreateWithTx(l.ctx, tx, borrowerModel, false)
 		return nil
 	})
+	if err != nil {
+		return nil, err
+	}
+
+	// todo send account validate email
 
 	// generate token
-	accessToken, err := utils.GenerateToken(
-		strconv.Itoa(int(userModel.Id)),
-		strconv.Itoa(int(borrowerModel.Id)),
-		userModel.Email,
-		"",
-		string(constants.UserTypeBorrower),
-		l.svcCtx.Config.JwtAuth.AccessSecret,
-		l.svcCtx.Config.JwtAuth.AccessExpire,
-	)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	// refresh token
-	refreshToken, err := utils.GenerateToken(
-		strconv.Itoa(int(userModel.Id)),
-		strconv.Itoa(int(borrowerModel.Id)),
-		userModel.Email,
-		"",
-		string(constants.UserTypeBorrower),
-		l.svcCtx.Config.JwtAuth.RefreshSecret,
-		l.svcCtx.Config.JwtAuth.RefreshExpire,
-	)
+	// accessToken, err := utils.GenerateToken(
+	// 	strconv.Itoa(int(userModel.Id)),
+	// 	strconv.Itoa(int(borrowerModel.Id)),
+	// 	userModel.Email,
+	// 	"",
+	// 	string(constants.UserTypeBorrower),
+	// 	l.svcCtx.Config.JwtAuth.AccessSecret,
+	// 	l.svcCtx.Config.JwtAuth.AccessExpire,
+	// )
+	// if err != nil {
+	// 	return nil, errors.WithStack(err)
+	// }
+	// // refresh token
+	// refreshToken, err := utils.GenerateToken(
+	// 	strconv.Itoa(int(userModel.Id)),
+	// 	strconv.Itoa(int(borrowerModel.Id)),
+	// 	userModel.Email,
+	// 	"",
+	// 	string(constants.UserTypeBorrower),
+	// 	l.svcCtx.Config.JwtAuth.RefreshSecret,
+	// 	l.svcCtx.Config.JwtAuth.RefreshExpire,
+	// )
 
 	return &borrower.UserRegisterResponse{
 		Data: &borrower.UserRegisterResponseData{
-			AccessToken:        accessToken,
-			RefreshToken:       refreshToken,
-			AccessTokenExpire:  l.svcCtx.Config.JwtAuth.AccessExpire,
-			RefreshTokenExpire: l.svcCtx.Config.JwtAuth.RefreshExpire,
+			// AccessToken:        accessToken,
+			// RefreshToken:       refreshToken,
+			// AccessTokenExpire:  l.svcCtx.Config.JwtAuth.AccessExpire,
+			// RefreshTokenExpire: l.svcCtx.Config.JwtAuth.RefreshExpire,
 		},
 	}, errors.WithStack(err)
 }
