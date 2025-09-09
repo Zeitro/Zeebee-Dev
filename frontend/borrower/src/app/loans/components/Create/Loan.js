@@ -1,12 +1,12 @@
 'use client';
-import { Col, DatePicker, Form, Radio, Row, Select } from 'antd';
+import { Col, Form, Radio, Row, Select } from 'antd';
 import React from 'react';
 import styles from './index.module.scss';
 import InputNumAmount from '@/components/InputNumAmount';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import { loan_active, loan_archived, loan_pending } from '@/enum/common';
-import { formatStr } from '@/lib/date';
 import { maxAmount } from '@/lib/format';
+import CommonFormDate from '@/components/CommonDate';
 const MAX_COUNT = 5;
 const CreateLoan = ({ form, stepBtn, gutter, isRadioStyle, ...colProps }) => {
 	const stage = Form.useWatch('stage', form);
@@ -170,11 +170,7 @@ const CreateLoan = ({ form, stepBtn, gutter, isRadioStyle, ...colProps }) => {
 							name="paid_off_date"
 							rules={[{ required: true, message: 'Please select paid off date!' }]}
 						>
-							<DatePicker
-								format={formatStr}
-								placeholder="select"
-								style={{ width: '100%' }}
-							/>
+							<CommonFormDate />
 						</Form.Item>
 					</Col>
 				</>
