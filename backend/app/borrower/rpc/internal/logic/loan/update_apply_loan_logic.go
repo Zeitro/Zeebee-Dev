@@ -188,7 +188,7 @@ func (l *UpdateApplyLoanLogic) updateApplicants(tx *gorm.DB, oldItems []*model.A
 	})
 	newItems = slice.Map(newItems, func(index int, newApplicant *model.Applicant) *model.Applicant {
 		newApplicant.LoanId = loan.Id
-		if loan.LoanBorrower != nil && loan.LoanProperty.Id > 0 {
+		if loan.LoanProperty != nil && loan.LoanProperty.Id > 0 {
 			newApplicant.LoanPropertyId = loan.LoanProperty.Id
 		}
 		return newApplicant
@@ -203,7 +203,7 @@ func (l *UpdateApplyLoanLogic) updateApplicants(tx *gorm.DB, oldItems []*model.A
 
 	updatedItems = slice.Map(updatedItems, func(index int, updateApplicant *model.Applicant) *model.Applicant {
 		updateApplicant.LoanId = loan.Id
-		if loan.LoanBorrower != nil && loan.LoanProperty.Id > 0 {
+		if loan.LoanProperty != nil && loan.LoanProperty.Id > 0 {
 			updateApplicant.LoanPropertyId = loan.LoanProperty.Id
 		}
 		return updateApplicant

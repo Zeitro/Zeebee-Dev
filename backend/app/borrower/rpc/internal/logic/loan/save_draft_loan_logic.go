@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/duke-git/lancet/v2/slice"
-	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -17,6 +16,7 @@ import (
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/common/types"
+	"zeebee-backend/common/uuid"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -77,12 +77,12 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 				if in.Data.Id > 0 {
 					_, err = l.svcCtx.LoanRepo.UpdateOneWithTx(l.ctx, tx, in.Data.Id, data.loan, true)
 				} else {
-					var idGenerator uuid.UUID
-					idGenerator, err = uuid.NewV7()
+					var uid string
+					uid, err = uuid.GetSonyflakeIDString()
 					if innerErr != nil {
 						return innerErr
 					}
-					data.loan.Code = idGenerator.String()
+					data.loan.Code = uid
 					savaLoan, err := l.svcCtx.LoanRepo.CreateWithTx(l.ctx, tx, data.loan, false)
 					if err != nil {
 						return err
