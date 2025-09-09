@@ -17,7 +17,11 @@ import ReviewAndSign, { contractSignatureZones } from '../components/CreateZeeBe
 import _ from 'lodash';
 import { flattenObjectPaths } from '@/lib/common';
 import { uploadAwsS3 } from '@/api/common';
-import { BtnPopUpModal } from '@/components/NewModal/BtnPopUpModal';
+import { LeaveAndSaveDraftBtn } from '@/components/NewModal/BtnPopUpModal';
+import eventBus from '@/lib/bus';
+const initialValues = {
+	applicants: [{ type: 'Individual', is_primary: true }],
+};
 const CreateZeeBeeLoan = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -28,6 +32,9 @@ const CreateZeeBeeLoan = () => {
 	const [stepNum, setStepNum] = useState(0); //侧边步骤
 	const [loading, setLoading] = useState(false);
 	const [errorList, setErrorList] = useState([]);
+	const [isChange, setIsChange] = useState(false); // 记录是否操作过form
+	const [confirmLoading, setConfirmLoading] = useState(false); // 保存草稿
+	const [rowData, setRowData] = useState({}); // loan详情
 	const isClickBackBtn = useRef(false);
 	const { request } = createRequest();
 	// 从property详情跳转的创建loan
@@ -45,9 +52,27 @@ const CreateZeeBeeLoan = () => {
 		form.setFieldsValue(newData);
 	};
 
-	// 获取property
+	// 获取详情（草稿使用）
+	const getLoanDetail = async () => {
+		const res = await request(`/loan/${searchParams.get('id')}`);
+		eventBus.emit('changeCrumbs', {
+			2: 'Edit ZeeBee Loan Draft',
+		});
+		res.loan_borrower.tin = {
+			tin_type: res?.loan_borrower?.tin_type,
+			tin: res?.loan_borrower?.tin,
+		};
+		if (!res?.applicants?.length) {
+			res.applicants = initialValues.applicants;
+		}
+		setRowData(res);
+		form.setFieldsValue(res);
+	};
+
+	// 获取property/草稿详情
 	useEffect(() => {
 		if (searchParams.has('propertyId')) getProperty();
+		if (searchParams.has('id')) getLoanDetail();
 	}, []);
 
 	const stepContent = [
@@ -64,8 +89,18 @@ const CreateZeeBeeLoan = () => {
 			<LoanDetail key="1-LoanDetail" form={form} />,
 		],
 		[
-			<Experience key="0-Experience" form={form} />,
-			<ThirdPartyService key="1-ThirdPartyService" form={form} />,
+			<Experience
+				key="0-Experience"
+				form={form}
+				rowData={rowData}
+				setIsChange={setIsChange}
+			/>,
+			<ThirdPartyService
+				key="1-ThirdPartyService"
+				form={form}
+				rowData={rowData}
+				setIsChange={setIsChange}
+			/>,
 		],
 		[
 			<Declaration key="0-Declaration" form={form} />,
@@ -123,13 +158,19 @@ const CreateZeeBeeLoan = () => {
 
 	// 创建loan
 	const handleSubmit = async (values) => {
-		await request('/loan/apply', {
-			method: 'POST',
+		let url = '/loan/apply';
+		let method = 'POST';
+		if (searchParams.has('id')) {
+			url = `/loan/${searchParams.get('id')}/update_apply`;
+			method = 'PUT';
+		}
+		await request(url, {
+			method,
 			body: values,
 		});
 		message.open({
 			type: 'success',
-			content: 'Success in creation！',
+			content: 'ZeeBee loan created successfully！',
 		});
 	};
 
@@ -147,7 +188,33 @@ const CreateZeeBeeLoan = () => {
 		return await uploadAwsS3({ url: '/storage/presign_url', file, onProgress });
 	};
 
-	// // next/Add loan
+	// 添加id- (草稿时必须传详情接口返回的id)
+	const addId = (values) => {
+		const ArrayAddId = (arr, arr2) => {
+			return arr.map((item, index) => {
+				const i = arr2?.[index];
+				if (i?.id) {
+					item.id = i?.id;
+				}
+				return item;
+			});
+		};
+		if (rowData?.loan_property?.id && values.loan_property) {
+			values.loan_property.id = rowData?.loan_property?.id;
+		}
+		if (rowData?.applicants?.length && values.applicants?.length) {
+			values.applicants = ArrayAddId(values.applicants, rowData?.applicants);
+		}
+		if (rowData?.loan_borrower?.id && values.loan_borrower) {
+			values.loan_borrower.id = rowData?.loan_borrower?.id;
+		}
+		if (rowData?.loan_demographic?.id && values.loan_demographic) {
+			values.loan_demographic.id = rowData?.loan_demographic?.id;
+		}
+		return values;
+	};
+
+	// next/Add loan
 	const handleNext = async () => {
 		try {
 			let values;
@@ -174,7 +241,7 @@ const CreateZeeBeeLoan = () => {
 					return;
 				}
 				setLoading(true);
-				const body = _.cloneDeep(values);
+				const body = _.cloneDeep(addId(values));
 
 				body.loan_borrower.tin_type = values?.loan_borrower?.tin?.tin_type;
 				body.loan_borrower.tin = values?.loan_borrower?.tin?.tin;
@@ -203,6 +270,32 @@ const CreateZeeBeeLoan = () => {
 			}
 			setLoading(false);
 		}
+	};
+
+	// 保存/更新草稿
+	const handleSaveDraft = async () => {
+		const allValues = form.getFieldsValue();
+		const values = { ...rowData, ...allValues };
+		setConfirmLoading(true);
+		values.loan_borrower.tin_type = values?.loan_borrower?.tin?.tin_type;
+		values.loan_borrower.tin = values?.loan_borrower?.tin?.tin;
+		// 草稿时删除签名信息，因为合同的签名及时间默认以最新时间为准，所以不需要保存
+		_.unset(values, ['signatures']);
+		const isDraft = searchParams.has('id');
+		let url = isDraft ? `/loan/${searchParams.get('id')}/draft` : '/loan/draft';
+		let method = isDraft ? 'PUT' : 'POST';
+		let content = isDraft ? 'Draft updated successfully!' : 'Draft created successfully!';
+		const body = isDraft ? addId(values) : values;
+		await request(url, {
+			method,
+			body,
+		});
+		message.open({
+			type: 'success',
+			content,
+		});
+		setConfirmLoading(false);
+		router.back();
 	};
 
 	// 下一步按钮文案
@@ -246,21 +339,13 @@ const CreateZeeBeeLoan = () => {
 
 	const stepBtn = useMemo(() => {
 		const cancelBtn = (
-			<BtnPopUpModal
-				config={{
-					onOk: () => router.back(),
-					title: 'Tips',
-					content:
-						'The data is not saved yet, are you sure you want to leave the current page?',
-					okText: 'Leave',
-				}}
-				modalType="confirm"
-				type="default"
-				size="middle"
+			<LeaveAndSaveDraftBtn
+				handleSaveDraft={handleSaveDraft}
+				isChange={isChange}
+				router={router}
 				disabled={loading}
-			>
-				Cancel
-			</BtnPopUpModal>
+				confirmLoading={confirmLoading}
+			/>
 		);
 		const backBtn = !(!currentStep && !stepNum) && (
 			<Button className="w-[90px]" onClick={handleBack} disabled={loading}>
@@ -292,29 +377,12 @@ const CreateZeeBeeLoan = () => {
 				</Space>
 			</Col>
 		);
-	}, [currentStep, stepNum, loading, errorList]);
-	// createZeeBeeSteps.map((i, index) => ({
-	// 							key: index,
-	// 							label: i.title,
-	// 							children: (
-	// 								<>
-	// 									{stepContent[index]?.length
-	// 										? stepContent[index]?.[stepNum]
-	// 										: stepContent[index]}
-	// 									{stepBtn}
-	// 								</>
-	// 							),
-	// 						}))
+	}, [currentStep, stepNum, loading, errorList, isChange, confirmLoading]);
 
 	return (
 		<div className="flex flex-col h-full">
 			<div className="px-12 py-4 shrink-0 flex items-center justify-center border-b border-base-border">
-				<Steps
-					size="default"
-					current={currentStep}
-					items={createZeeBeeSteps}
-					// className="max-w-[880px]"
-				/>
+				<Steps size="default" current={currentStep} items={createZeeBeeSteps} />
 			</div>
 
 			<div className="flex-1 flex items-stretch overflow-hidden">
@@ -344,10 +412,11 @@ const CreateZeeBeeLoan = () => {
 						className=""
 						size="large"
 						disabled={loading}
-						initialValues={{
-							applicants: [{ type: 'Individual', is_primary: true }],
-						}}
+						initialValues={initialValues}
 						scrollToFirstError
+						onValuesChange={() => {
+							setIsChange(true);
+						}}
 					>
 						<Tabs
 							activeKey={`${currentStep}-${stepNum}`}
