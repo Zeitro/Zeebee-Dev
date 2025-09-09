@@ -501,6 +501,7 @@ service Loan {
   rpc BorrowerLoanPage(LoanPageRequest) returns(LoanPageResponse);
   rpc BorrowerLoanLenderCompanies(LoanLenderCompaniesRequest) returns(LoanLenderCompaniesResponse);
   rpc ApplyLoan(LoanApplyRequest) returns(LoanApplyResponse);
+  rpc SaveDraftLoan(LoanApplyRequest) returns(LoanApplyResponse);
   rpc UpdateApplyLoan(LoanApplyRequest) returns(EmptyResponse);
 }
 

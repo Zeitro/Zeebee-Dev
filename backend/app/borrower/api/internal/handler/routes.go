@@ -87,6 +87,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: loan.DetailHandler(serverCtx),
 				},
 				{
+					// update draft
+					Method:  http.MethodPut,
+					Path:    "/loan/:id/draft",
+					Handler: loan.UpdateDraftHandler(serverCtx),
+				},
+				{
 					// update pending status
 					Method:  http.MethodPut,
 					Path:    "/loan/:id/pending_status",
@@ -103,6 +109,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/loan/apply",
 					Handler: loan.ApplyHandler(serverCtx),
+				},
+				{
+					// create draft
+					Method:  http.MethodPost,
+					Path:    "/loan/draft",
+					Handler: loan.CreateDraftHandler(serverCtx),
 				},
 				{
 					// import

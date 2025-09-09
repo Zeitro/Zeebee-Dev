@@ -7027,7 +7027,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x05Login\x12\x1a.borrower.UserLoginRequest\x1a\x1b.borrower.UserLoginResponse\x12I\n" +
 	"\bRegister\x12\x1d.borrower.UserRegisterRequest\x1a\x1e.borrower.UserRegisterResponse\x12M\n" +
 	"\fRefreshToken\x12\x1d.borrower.RefreshTokenRequest\x1a\x1e.borrower.RefreshTokenResponse\x12A\n" +
-	"\bUserInfo\x12\x19.borrower.UserInfoRequest\x1a\x1a.borrower.UserinfoResponse2\xc1\x06\n" +
+	"\bUserInfo\x12\x19.borrower.UserInfoRequest\x1a\x1a.borrower.UserinfoResponse2\x8b\a\n" +
 	"\x04Loan\x12O\n" +
 	"\x12CreateBorrowerLoan\x12\x1b.borrower.LoanCreateRequest\x1a\x1c.borrower.LoanCreateResponse\x12T\n" +
 	"\x17BatchCreateBorrowerLoan\x12 .borrower.BatchCreateLoanRequest\x1a\x17.borrower.EmptyResponse\x12J\n" +
@@ -7037,7 +7037,8 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x12BorrowerLoanDetail\x12\x1b.borrower.LoanDetailRequest\x1a\x1c.borrower.LoanDetailResponse\x12I\n" +
 	"\x10BorrowerLoanPage\x12\x19.borrower.LoanPageRequest\x1a\x1a.borrower.LoanPageResponse\x12j\n" +
 	"\x1bBorrowerLoanLenderCompanies\x12$.borrower.LoanLenderCompaniesRequest\x1a%.borrower.LoanLenderCompaniesResponse\x12D\n" +
-	"\tApplyLoan\x12\x1a.borrower.LoanApplyRequest\x1a\x1b.borrower.LoanApplyResponse\x12F\n" +
+	"\tApplyLoan\x12\x1a.borrower.LoanApplyRequest\x1a\x1b.borrower.LoanApplyResponse\x12H\n" +
+	"\rSaveDraftLoan\x12\x1a.borrower.LoanApplyRequest\x1a\x1b.borrower.LoanApplyResponse\x12F\n" +
 	"\x0fUpdateApplyLoan\x12\x1a.borrower.LoanApplyRequest\x1a\x17.borrower.EmptyResponse2\xae\x01\n" +
 	"\bProperty\x12M\n" +
 	"\fPropertyPage\x12\x1d.borrower.PropertyPageRequest\x1a\x1e.borrower.PropertyPageResponse\x12S\n" +
@@ -7239,34 +7240,36 @@ var file_app_borrower_rpc_pb_borrower_proto_depIdxs = []int32{
 	47, // 85: borrower.Loan.BorrowerLoanPage:input_type -> borrower.LoanPageRequest
 	53, // 86: borrower.Loan.BorrowerLoanLenderCompanies:input_type -> borrower.LoanLenderCompaniesRequest
 	56, // 87: borrower.Loan.ApplyLoan:input_type -> borrower.LoanApplyRequest
-	56, // 88: borrower.Loan.UpdateApplyLoan:input_type -> borrower.LoanApplyRequest
-	61, // 89: borrower.Property.PropertyPage:input_type -> borrower.PropertyPageRequest
-	67, // 90: borrower.Property.PropertyDetail:input_type -> borrower.PropertyDetailRequest
-	71, // 91: borrower.Applicant.BorrowerNames:input_type -> borrower.BorrowerNamesRequest
-	83, // 92: borrower.Storage.CreatePresignedUrl:input_type -> borrower.StorageCreatePresignedUrlRequest
-	5,  // 93: borrower.common.GetOpt:output_type -> borrower.OptionResponse
-	2,  // 94: borrower.common.GetUsState:output_type -> borrower.StringSliceResponse
-	2,  // 95: borrower.common.GetUsCities:output_type -> borrower.StringSliceResponse
-	10, // 96: borrower.user.Login:output_type -> borrower.UserLoginResponse
-	14, // 97: borrower.user.Register:output_type -> borrower.UserRegisterResponse
-	19, // 98: borrower.user.RefreshToken:output_type -> borrower.RefreshTokenResponse
-	23, // 99: borrower.user.UserInfo:output_type -> borrower.UserinfoResponse
-	33, // 100: borrower.Loan.CreateBorrowerLoan:output_type -> borrower.LoanCreateResponse
-	1,  // 101: borrower.Loan.BatchCreateBorrowerLoan:output_type -> borrower.EmptyResponse
-	1,  // 102: borrower.Loan.UpdateBorrowerLoan:output_type -> borrower.EmptyResponse
-	1,  // 103: borrower.Loan.UpdateBorrowerLoanPendingStatus:output_type -> borrower.EmptyResponse
-	1,  // 104: borrower.Loan.DeleteBorrowerLoan:output_type -> borrower.EmptyResponse
-	42, // 105: borrower.Loan.BorrowerLoanDetail:output_type -> borrower.LoanDetailResponse
-	48, // 106: borrower.Loan.BorrowerLoanPage:output_type -> borrower.LoanPageResponse
-	55, // 107: borrower.Loan.BorrowerLoanLenderCompanies:output_type -> borrower.LoanLenderCompaniesResponse
-	58, // 108: borrower.Loan.ApplyLoan:output_type -> borrower.LoanApplyResponse
-	1,  // 109: borrower.Loan.UpdateApplyLoan:output_type -> borrower.EmptyResponse
-	62, // 110: borrower.Property.PropertyPage:output_type -> borrower.PropertyPageResponse
-	68, // 111: borrower.Property.PropertyDetail:output_type -> borrower.PropertyDetailResponse
-	73, // 112: borrower.Applicant.BorrowerNames:output_type -> borrower.BorrowerNamesResponse
-	85, // 113: borrower.Storage.CreatePresignedUrl:output_type -> borrower.StorageCreatePresignedUrlResponse
-	93, // [93:114] is the sub-list for method output_type
-	72, // [72:93] is the sub-list for method input_type
+	56, // 88: borrower.Loan.SaveDraftLoan:input_type -> borrower.LoanApplyRequest
+	56, // 89: borrower.Loan.UpdateApplyLoan:input_type -> borrower.LoanApplyRequest
+	61, // 90: borrower.Property.PropertyPage:input_type -> borrower.PropertyPageRequest
+	67, // 91: borrower.Property.PropertyDetail:input_type -> borrower.PropertyDetailRequest
+	71, // 92: borrower.Applicant.BorrowerNames:input_type -> borrower.BorrowerNamesRequest
+	83, // 93: borrower.Storage.CreatePresignedUrl:input_type -> borrower.StorageCreatePresignedUrlRequest
+	5,  // 94: borrower.common.GetOpt:output_type -> borrower.OptionResponse
+	2,  // 95: borrower.common.GetUsState:output_type -> borrower.StringSliceResponse
+	2,  // 96: borrower.common.GetUsCities:output_type -> borrower.StringSliceResponse
+	10, // 97: borrower.user.Login:output_type -> borrower.UserLoginResponse
+	14, // 98: borrower.user.Register:output_type -> borrower.UserRegisterResponse
+	19, // 99: borrower.user.RefreshToken:output_type -> borrower.RefreshTokenResponse
+	23, // 100: borrower.user.UserInfo:output_type -> borrower.UserinfoResponse
+	33, // 101: borrower.Loan.CreateBorrowerLoan:output_type -> borrower.LoanCreateResponse
+	1,  // 102: borrower.Loan.BatchCreateBorrowerLoan:output_type -> borrower.EmptyResponse
+	1,  // 103: borrower.Loan.UpdateBorrowerLoan:output_type -> borrower.EmptyResponse
+	1,  // 104: borrower.Loan.UpdateBorrowerLoanPendingStatus:output_type -> borrower.EmptyResponse
+	1,  // 105: borrower.Loan.DeleteBorrowerLoan:output_type -> borrower.EmptyResponse
+	42, // 106: borrower.Loan.BorrowerLoanDetail:output_type -> borrower.LoanDetailResponse
+	48, // 107: borrower.Loan.BorrowerLoanPage:output_type -> borrower.LoanPageResponse
+	55, // 108: borrower.Loan.BorrowerLoanLenderCompanies:output_type -> borrower.LoanLenderCompaniesResponse
+	58, // 109: borrower.Loan.ApplyLoan:output_type -> borrower.LoanApplyResponse
+	58, // 110: borrower.Loan.SaveDraftLoan:output_type -> borrower.LoanApplyResponse
+	1,  // 111: borrower.Loan.UpdateApplyLoan:output_type -> borrower.EmptyResponse
+	62, // 112: borrower.Property.PropertyPage:output_type -> borrower.PropertyPageResponse
+	68, // 113: borrower.Property.PropertyDetail:output_type -> borrower.PropertyDetailResponse
+	73, // 114: borrower.Applicant.BorrowerNames:output_type -> borrower.BorrowerNamesResponse
+	85, // 115: borrower.Storage.CreatePresignedUrl:output_type -> borrower.StorageCreatePresignedUrlResponse
+	94, // [94:116] is the sub-list for method output_type
+	72, // [72:94] is the sub-list for method input_type
 	72, // [72:72] is the sub-list for extension type_name
 	72, // [72:72] is the sub-list for extension extendee
 	0,  // [0:72] is the sub-list for field type_name
