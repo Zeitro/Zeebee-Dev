@@ -8,11 +8,15 @@ import { useParams, useRouter } from 'next/navigation';
 import { createLoanSteps } from '@/enum/loan';
 import styles from './index.module.scss';
 import { createRequest } from '@/lib/fetch';
-import dayjs from 'dayjs';
-import { formatDate } from '@/lib/date';
 import eventBus from '@/lib/bus';
 import { assemblyAddress } from '@/lib/format';
 import { useGlobalStore } from '@/store/global';
+const initialValues = {
+	applicants: [
+		{ is_primary: true, type: 'Individual' },
+		{ is_primary: false, type: 'Individual' },
+	],
+};
 const EditLoanPage = () => {
 	const { id } = useParams();
 	const router = useRouter();
@@ -23,26 +27,12 @@ const EditLoanPage = () => {
 	const { changeSiberCollapsed } = useGlobalStore();
 
 	const getDetails = async () => {
-		let res = {
-			applicants: [
-				{ is_primary: true, type: 'Individual' },
-				{ is_primary: false, type: 'Individual' },
-			],
-		};
+		let res = initialValues;
 		try {
 			res = await request(`/loan/${id}`);
 			eventBus.emit('changeCrumbs', {
 				2: `Edit Loan(${assemblyAddress(res?.loan_property?.property_base?.address)})`,
 			});
-			if (res.closing_date) {
-				res.closing_date = dayjs(res.closing_date);
-			}
-			if (res.maturity_date) {
-				res.maturity_date = dayjs(res.maturity_date);
-			}
-			if (res.paid_off_date) {
-				res.paid_off_date = dayjs(res.paid_off_date);
-			}
 			if (res.applicants?.length < 2) {
 				res.applicants = [
 					{ is_primary: true, type: 'Individual', ...(res.applicants?.[0] || {}) },
@@ -64,15 +54,6 @@ const EditLoanPage = () => {
 		try {
 			const values = await form.validateFields();
 			setLoading(true);
-			if (values.closing_date) {
-				values.closing_date = formatDate(values.closing_date);
-			}
-			if (values.maturity_date) {
-				values.maturity_date = formatDate(values.maturity_date);
-			}
-			if (values.paid_off_date) {
-				values.paid_off_date = formatDate(values.paid_off_date);
-			}
 			values.applicants = values?.applicants.filter(
 				(i) => i.first_name || i.mid_name || i.last_name,
 			);
@@ -124,6 +105,7 @@ const EditLoanPage = () => {
 					layout="vertical"
 					autoComplete="off"
 					size="large"
+					initialValues={initialValues}
 				>
 					<div id="loanDetail">
 						<p className="py-6 font-medium text-lg/7">Loan detail</p>

@@ -18,6 +18,7 @@ const PendingPage = ({
 	loading,
 	scrollX = 2400,
 	successCallback,
+	stage = 'Pending', // 默认是pending，可传草稿draft(因草稿展示和pending loans的一致，只有表格操作栏不同，所以需要区分)
 }) => {
 	const tableFilterRef = useRef();
 	// const [modal, contextHolder] = Modal.useModal();
@@ -157,11 +158,13 @@ const PendingPage = ({
 	return (
 		<>
 			<FilterTable
+				key={stage}
 				ref={tableFilterRef}
 				columns={pendingColumns(
 					isNotAddress,
 					successCallback || tableFilterRef?.current?.handleSearch,
 					showDeleteModal,
+					stage,
 				)}
 				scroll={{ x: scrollX }}
 				filterList={filterList}
@@ -181,7 +184,7 @@ const PendingPage = ({
 						? {}
 						: {
 								...(params?.filter || {}),
-								stage: 'Pending',
+								stage,
 							};
 					const payload = {
 						method,

@@ -12,17 +12,17 @@ export const navRouter = [
 		router: [
 			{
 				path: '/loans/createLoan',
-				title: 'Create A New Loan',
+				title: 'Add 3rd Party Loan',
 				hideMenu: true,
 			},
 			{
 				path: '/loans/:id',
-				title: 'Edit Loan',
+				title: 'Edit 3rd Party Loan',
 				hideMenu: true,
 			},
 			{
 				path: '/loans/createZeeBeeLoan',
-				title: 'Create ZeeBee Loan',
+				title: 'Apply ZeeBee Loan',
 				hideMenu: true,
 			},
 		],
@@ -36,11 +36,6 @@ export const navRouter = [
 			{
 				path: '/properties/:id',
 				title: 'Details',
-				hideMenu: true,
-			},
-			{
-				path: '/createLoan',
-				title: 'Create A New Loan',
 				hideMenu: true,
 			},
 		],
