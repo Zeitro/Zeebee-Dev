@@ -5,6 +5,8 @@ import (
 	"strconv"
 
 	"github.com/pkg/errors"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
@@ -46,7 +48,7 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 			return nil, errors.WithStack(err)
 		}
 		if loginFailedTimes >= global.Config.MaxFailedLoginTimes {
-			return nil, errors.WithStack(errors.New("login failed times exceeded, please try again later"))
+			return nil, errors.WithStack(errors.New("Login failed times exceeded, please try again later"))
 		}
 	}
 
@@ -55,7 +57,7 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 		return nil, errors.WithStack(err)
 	}
 	if user.Borrower == nil {
-		return nil, errors.New("borrower not found")
+		return nil, errors.New("User not found.")
 	}
 
 	// check pwd
@@ -65,7 +67,7 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return nil, errors.New("password is incorrect")
+		return nil, errors.New("The email and password you entered don't match.")
 	}
 
 	if global.Config.MaxFailedLoginTimes > 0 {
@@ -76,9 +78,14 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 	}
 
 	// check status
-	if user.Status != constants.UserStatusActive {
-		return nil, errors.WithStack(errors.New("user is not active"))
+	if user.Status == constants.UserStatusInactive {
+		return nil, errors.WithStack(errors.New("User is not active"))
 	}
+	if user.Status == constants.UserStatusUnverified {
+		status.New(codes.PermissionDenied, "User is unverified")
+		return nil, errors.WithStack(status.Error(codes.PermissionDenied, "User is unverified"))
+	}
+
 	// generate token
 	accessToken, err := utils.GenerateToken(
 		strconv.Itoa(int(user.Id)),

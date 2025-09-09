@@ -7,8 +7,9 @@ type UserStatus string
 var UserStatusName = "user_status"
 
 const (
-	UserStatusActive   UserStatus = "active"
-	UserStatusInactive UserStatus = "inactive"
+	UserStatusUnverified UserStatus = "unverified"
+	UserStatusActive     UserStatus = "active"
+	UserStatusInactive   UserStatus = "inactive"
 )
 
 type UserType string
@@ -31,6 +32,10 @@ const (
 func init() {
 	// register user status
 	enums.Register(UserStatusName, []enums.EnumOpt{
+		{
+			Label: string(UserStatusUnverified),
+			Value: string(UserStatusUnverified),
+		},
 		{
 			Label: string(UserStatusActive),
 			Value: string(UserStatusActive),

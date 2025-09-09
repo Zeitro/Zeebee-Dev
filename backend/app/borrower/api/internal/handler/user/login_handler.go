@@ -6,6 +6,8 @@ import (
 	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	"zeebee-backend/app/borrower/api/internal/logic/user"
 	"zeebee-backend/app/borrower/api/internal/svc"
@@ -46,7 +48,12 @@ func LoginHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		l := user.NewLoginLogic(r.Context(), svcCtx)
 		resp, err := l.Login(&req)
 		if err != nil {
-			response.BadRequest(w, errorx.GetErrorMsg(err))
+			// user is unverified
+			if e, ok := status.FromError(err); ok && e.Code() == codes.PermissionDenied {
+				response.Error(w, 401001, errorx.GetErrorMsg(err))
+			} else {
+				response.BadRequest(w, errorx.GetErrorMsg(err))
+			}
 		} else {
 			response.Success(w, resp)
 		}

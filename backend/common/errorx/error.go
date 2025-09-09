@@ -17,11 +17,6 @@ func GetErrorMsg(err error) string {
 	if s, ok := status.FromError(err); ok {
 		return s.Message()
 	}
-	// validator error
-	// if errs, ok := err.(validator.ValidationErrors); ok && len(errs) > 0 {
-	// 	firstErr := errs[0]
-	// 	return getValidatorErrMsg(firstErr)
-	// }
 
 	return err.Error()
 }
