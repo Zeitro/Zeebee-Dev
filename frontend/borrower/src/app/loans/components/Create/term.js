@@ -1,12 +1,12 @@
 'use client';
-import { Col, DatePicker, Form, Input, InputNumber, Row, Select } from 'antd';
+import { Col, Form, Input, InputNumber, Row, Select } from 'antd';
 import React from 'react';
 import styles from './index.module.scss';
 import InputNumAmount from '@/components/InputNumAmount';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import { loan_active, loan_pending } from '@/enum/common';
-import { formatStr } from '@/lib/date';
 import InputName from '@/components/InputName';
+import CommonFormDate from '@/components/CommonDate';
 const layoutCol = {
 	xs: 24,
 	sm: 24,
@@ -91,11 +91,7 @@ const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
 							name="closing_date"
 							rules={[{ required: true, message: 'Please select date!' }]}
 						>
-							<DatePicker
-								format={formatStr}
-								placeholder="Select target closing date"
-								style={{ width: '100%' }}
-							/>
+							<CommonFormDate placeholder="Select target closing date" />
 						</Form.Item>
 					</Col>
 					<Col {...layoutCol} {...(colProps || {})}>
@@ -163,11 +159,7 @@ const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
 							name="maturity_date"
 							rules={[{ required: true, message: 'Please select date!' }]}
 						>
-							<DatePicker
-								format={formatStr}
-								placeholder="Select Maturity date"
-								style={{ width: '100%' }}
-							/>
+							<CommonFormDate placeholder="Select Maturity date" />
 						</Form.Item>
 					</Col>
 					<Col {...layoutCol} {...(colProps || {})}>
