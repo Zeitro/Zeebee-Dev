@@ -64,3 +64,38 @@ export const DeleteBtn = ({ title = 'Are you sure you want to delete this?', ...
 		</BtnPopUpModal>
 	);
 };
+
+// 离开并保存草稿
+export const LeaveAndSaveDraftBtn = ({
+	handleSaveDraft,
+	isChange,
+	disabled,
+	router,
+	confirmLoading,
+}) => {
+	return (
+		<BtnPopUpModal
+			config={{
+				onOk: () => handleSaveDraft(),
+				title: 'Tips',
+				content: `${isChange ? 'The data is not saved yet, ' : ''}are you sure you want to leave the current page?`,
+				okText: 'Leave and save draft',
+				cancelText: 'Leave',
+				closable: true,
+				cancelButtonProps: {
+					onClick: () => router.back(),
+				},
+				okButtonProps: {
+					disabled: !isChange,
+				},
+				confirmLoading,
+			}}
+			modalType="confirm"
+			type="default"
+			size="middle"
+			disabled={disabled}
+		>
+			Cancel
+		</BtnPopUpModal>
+	);
+};

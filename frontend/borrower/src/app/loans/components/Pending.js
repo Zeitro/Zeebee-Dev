@@ -158,6 +158,7 @@ const PendingPage = ({
 	return (
 		<>
 			<FilterTable
+				key={stage}
 				ref={tableFilterRef}
 				columns={pendingColumns(
 					isNotAddress,

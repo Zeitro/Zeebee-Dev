@@ -2,6 +2,6 @@
 import React, { useMemo, useState, useRef } from 'react';
 import PendingPage from './Pending';
 const DraftsPage = () => {
-	return <PendingPage stage="draft" />;
+	return <PendingPage stage="Draft" key="Draft" />;
 };
 export default DraftsPage;

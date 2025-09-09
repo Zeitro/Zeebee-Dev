@@ -66,7 +66,7 @@ const common = (isNotAddress) => {
 	];
 };
 
-const getOpt = (showDeleteModal, isHaveAll) => {
+const getOpt = (showDeleteModal, stage) => {
 	return {
 		title: '',
 		dataIndex: 'operation',
@@ -76,12 +76,21 @@ const getOpt = (showDeleteModal, isHaveAll) => {
 		render: (_, record) => (
 			<TableOperation
 				record={record}
-				disabled={record?.source !== 'borrower'}
+				disabled={stage !== 'Draft' && record?.source !== 'borrower'}
 				getItems={(editItem, deleteItem) => {
 					const arr = [];
-					if (record?.source === 'borrower' || isHaveAll) {
-						arr.push({ ...editItem, url: `/loans/${record?.id}` });
+					if (stage === 'Draft') {
+						const url =
+							record?.source === 'borrower'
+								? `/loans/${record?.id}`
+								: `/loans/createZeeBeeLoan?id=${record?.id}`;
+						arr.push({ ...editItem, url });
 						arr.push(deleteItem);
+					} else {
+						if (record?.source === 'borrower') {
+							arr.push({ ...editItem, url: `/loans/${record?.id}` });
+							arr.push(deleteItem);
+						}
 					}
 					return arr;
 				}}
@@ -95,6 +104,18 @@ const getOpt = (showDeleteModal, isHaveAll) => {
 	};
 };
 export const pendingColumns = (isNotAddress, successCallback, showDeleteModal, stage) => {
+	const status = {
+		title: 'Status',
+		dataIndex: 'pending_status',
+		key: 'pending_status',
+		ellipsis: true,
+		width: 150,
+		align: 'center',
+		fixed: 'right',
+		render: (v, record) => (
+			<LoanPendingStatus data={record} successCallback={successCallback} />
+		),
+	};
 	return [
 		...common(isNotAddress),
 		{
@@ -179,19 +200,8 @@ export const pendingColumns = (isNotAddress, successCallback, showDeleteModal, s
 			ellipsis: true,
 			width: 180,
 		},
-		{
-			title: 'Status',
-			dataIndex: 'pending_status',
-			key: 'pending_status',
-			ellipsis: true,
-			width: 150,
-			align: 'center',
-			fixed: 'right',
-			render: (v, record) => (
-				<LoanPendingStatus data={record} successCallback={successCallback} />
-			),
-		},
-		getOpt(showDeleteModal, stage === 'draft'),
+		...(stage === 'Draft' ? [] : [status]),
+		getOpt(showDeleteModal, stage),
 	];
 };
 
