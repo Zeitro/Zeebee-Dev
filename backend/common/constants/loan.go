@@ -11,6 +11,7 @@ type LoanStage string
 
 const LoanStageName = "loan_stage"
 const (
+	LoanStageDraft    LoanStage = "Draft"
 	LoanStagePending  LoanStage = "Pending"
 	LoanStageActive   LoanStage = "Active"
 	LoanStageArchived LoanStage = "Archived"
@@ -21,6 +22,7 @@ type LoanPendingStatus string
 
 const LoanPendingStatusName = "loan_pending_status"
 const (
+	LoanPendingStatusNone       LoanPendingStatus = "None"
 	LoanPendingStatusQuoting    LoanPendingStatus = "Quoting"
 	LoanPendingStatusProcessing LoanPendingStatus = "Processing"
 	LoanPendingStatusClosing    LoanPendingStatus = "Closing"

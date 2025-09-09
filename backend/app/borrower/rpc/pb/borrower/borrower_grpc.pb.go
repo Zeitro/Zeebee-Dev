@@ -424,6 +424,7 @@ const (
 	Loan_BorrowerLoanPage_FullMethodName                = "/borrower.Loan/BorrowerLoanPage"
 	Loan_BorrowerLoanLenderCompanies_FullMethodName     = "/borrower.Loan/BorrowerLoanLenderCompanies"
 	Loan_ApplyLoan_FullMethodName                       = "/borrower.Loan/ApplyLoan"
+	Loan_SaveDraftLoan_FullMethodName                   = "/borrower.Loan/SaveDraftLoan"
 	Loan_UpdateApplyLoan_FullMethodName                 = "/borrower.Loan/UpdateApplyLoan"
 )
 
@@ -440,6 +441,7 @@ type LoanClient interface {
 	BorrowerLoanPage(ctx context.Context, in *LoanPageRequest, opts ...grpc.CallOption) (*LoanPageResponse, error)
 	BorrowerLoanLenderCompanies(ctx context.Context, in *LoanLenderCompaniesRequest, opts ...grpc.CallOption) (*LoanLenderCompaniesResponse, error)
 	ApplyLoan(ctx context.Context, in *LoanApplyRequest, opts ...grpc.CallOption) (*LoanApplyResponse, error)
+	SaveDraftLoan(ctx context.Context, in *LoanApplyRequest, opts ...grpc.CallOption) (*LoanApplyResponse, error)
 	UpdateApplyLoan(ctx context.Context, in *LoanApplyRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 }
 
@@ -541,6 +543,16 @@ func (c *loanClient) ApplyLoan(ctx context.Context, in *LoanApplyRequest, opts .
 	return out, nil
 }
 
+func (c *loanClient) SaveDraftLoan(ctx context.Context, in *LoanApplyRequest, opts ...grpc.CallOption) (*LoanApplyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LoanApplyResponse)
+	err := c.cc.Invoke(ctx, Loan_SaveDraftLoan_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *loanClient) UpdateApplyLoan(ctx context.Context, in *LoanApplyRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(EmptyResponse)
@@ -564,6 +576,7 @@ type LoanServer interface {
 	BorrowerLoanPage(context.Context, *LoanPageRequest) (*LoanPageResponse, error)
 	BorrowerLoanLenderCompanies(context.Context, *LoanLenderCompaniesRequest) (*LoanLenderCompaniesResponse, error)
 	ApplyLoan(context.Context, *LoanApplyRequest) (*LoanApplyResponse, error)
+	SaveDraftLoan(context.Context, *LoanApplyRequest) (*LoanApplyResponse, error)
 	UpdateApplyLoan(context.Context, *LoanApplyRequest) (*EmptyResponse, error)
 	mustEmbedUnimplementedLoanServer()
 }
@@ -601,6 +614,9 @@ func (UnimplementedLoanServer) BorrowerLoanLenderCompanies(context.Context, *Loa
 }
 func (UnimplementedLoanServer) ApplyLoan(context.Context, *LoanApplyRequest) (*LoanApplyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ApplyLoan not implemented")
+}
+func (UnimplementedLoanServer) SaveDraftLoan(context.Context, *LoanApplyRequest) (*LoanApplyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SaveDraftLoan not implemented")
 }
 func (UnimplementedLoanServer) UpdateApplyLoan(context.Context, *LoanApplyRequest) (*EmptyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateApplyLoan not implemented")
@@ -788,6 +804,24 @@ func _Loan_ApplyLoan_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Loan_SaveDraftLoan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanApplyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanServer).SaveDraftLoan(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Loan_SaveDraftLoan_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanServer).SaveDraftLoan(ctx, req.(*LoanApplyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Loan_UpdateApplyLoan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(LoanApplyRequest)
 	if err := dec(in); err != nil {
@@ -848,6 +882,10 @@ var Loan_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ApplyLoan",
 			Handler:    _Loan_ApplyLoan_Handler,
+		},
+		{
+			MethodName: "SaveDraftLoan",
+			Handler:    _Loan_SaveDraftLoan_Handler,
 		},
 		{
 			MethodName: "UpdateApplyLoan",

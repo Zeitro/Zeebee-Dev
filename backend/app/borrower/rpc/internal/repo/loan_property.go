@@ -48,3 +48,21 @@ func (repo *LoanPropertyRepo) GetLoanPropertyCountByPropertyBaseId(ctx context.C
 		Count(&count).Error
 	return count, errors.WithStack(err)
 }
+
+// UpdateOneWithTx
+func (repo *LoanPropertyRepo) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, id int64, data *model.LoanProperty) (result *model.LoanProperty, err error) {
+	err = tx.WithContext(ctx).Select("*").Omit("id", "created_at", "loan_id").Where("id = ?", id).Updates(data).Error
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return data, nil
+}
+
+func (repo *LoanPropertyRepo) DeleteByLoanIdWithTx(ctx context.Context, tx *gorm.DB, loanId int64) (err error) {
+	err = tx.WithContext(ctx).
+		Model(&model.LoanProperty{}).
+		Where("loan_id = ?", loanId).
+		Delete(&model.LoanProperty{}).
+		Error
+	return errors.WithStack(err)
+}

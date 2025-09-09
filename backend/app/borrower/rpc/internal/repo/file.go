@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/borrower/rpc/internal/repo/model"
+	"zeebee-backend/common/constants"
 	"zeebee-backend/common/gormx"
 )
 
@@ -29,4 +30,14 @@ func (repo *FileRepo) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, id int64
 		return nil, errors.WithStack(err)
 	}
 	return data, nil
+}
+
+func (repo *FileRepo) DeleteLoanFilesByLoanIdWithTx(ctx context.Context, tx *gorm.DB, loanId int64) (err error) {
+	err = tx.WithContext(ctx).
+		Model(&model.File{}).
+		Where("ref_id = ? and type = ?", loanId, constants.FileTypeApplyForm).
+		Delete(&model.File{}).
+		Error
+	return errors.WithStack(err)
+
 }
