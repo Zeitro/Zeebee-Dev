@@ -7,7 +7,6 @@ import CreateTerm from '../components/Create/term';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createLoanSteps } from '@/enum/loan';
 import { createRequest } from '@/lib/fetch';
-import { formatDate } from '@/lib/date';
 import { loan_pending } from '@/enum/common';
 import { BtnPopUpModal } from '@/components/NewModal/BtnPopUpModal';
 const CreateLoanPage = () => {
@@ -53,15 +52,6 @@ const CreateLoanPage = () => {
 				...(loanData[1] || {}),
 				...(values || {}),
 			};
-			if (body.closing_date) {
-				body.closing_date = formatDate(body.closing_date);
-			}
-			if (body.maturity_date) {
-				body.maturity_date = formatDate(body.maturity_date);
-			}
-			if (body.paid_off_date) {
-				body.paid_off_date = formatDate(body.paid_off_date);
-			}
 
 			body.applicants = body?.applicants.filter(
 				(i) => i.first_name || i.mid_name || i.last_name,
@@ -73,7 +63,7 @@ const CreateLoanPage = () => {
 			});
 			message.open({
 				type: 'success',
-				content: 'Success in creation！',
+				content: '3rd party loan created successfully！',
 			});
 			setLoading(false);
 			router.back();
