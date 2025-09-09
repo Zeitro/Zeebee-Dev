@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/duke-git/lancet/v2/slice"
-	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -17,6 +16,7 @@ import (
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/common/types"
+	"zeebee-backend/common/uuid"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -74,11 +74,11 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrowe
 		}
 
 		// save loan
-		idGenerator, innerErr := uuid.NewV7()
+		uid, innerErr := uuid.GetSonyflakeIDString()
 		if innerErr != nil {
 			return innerErr
 		}
-		data.loan.Code = idGenerator.String()
+		data.loan.Code = uid
 		loan, innerErr = l.svcCtx.LoanRepo.CreateWithTx(l.ctx, tx, data.loan, false)
 		if innerErr != nil {
 			return innerErr
