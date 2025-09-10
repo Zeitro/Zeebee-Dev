@@ -21,9 +21,20 @@ type ApiConf struct {
 
 type RpcConf struct {
 	zrpc.RpcServerConf
-	MaxFailedLoginTimes   int // max failed login times
-	ForbiddenLoginSeconds int // seconds for next retry login
-	RedisConf             RedisConf
+	// MaxFailedLoginTimes               int // max failed login times
+	// ForbiddenLoginSeconds             int // seconds for next retry login
+	// MaxSendLoginEmailTimes            int
+	// MaxSendLoginEmailPeriodSeconds    int
+	// MaxSendVerityEmailTimes           int
+	// MaxSendVerityEmailPeriodSeconds   int
+	// MaxSendResetPwdEmailTimes         int
+	// MaxSendResetPwdEmailPeriodSeconds int
+	// ResetPwdExpireSeconds             int
+	LimiterConf              LimiterConf
+	VerifyEmailExpireSeconds int
+	ResetPwdExpireSeconds    int
+
+	RedisConf RedisConf
 
 	JwtAuth   types.JwtAuth `json:",optional"`
 	DbConf    DbConf
@@ -46,4 +57,16 @@ type AwsS3Conf struct {
 	Region                   string
 	FileFolder               string
 	PreSigneUrlExpireSeconds int
+}
+
+type LimiterConf struct {
+	Login             LimiterItem
+	SendLoginEmail    LimiterItem
+	SendVerityEmail   LimiterItem
+	SendResetPwdEmail LimiterItem
+}
+
+type LimiterItem struct {
+	Rate   int
+	Period int
 }

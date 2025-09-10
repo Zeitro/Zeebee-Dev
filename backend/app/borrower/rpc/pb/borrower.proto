@@ -110,6 +110,65 @@ message RefreshTokenResponseData {
   int64 access_token_expire = 2;
 }
 
+// verify email
+message VerifyEmailRequest {
+  VerifyEmailRequestData data = 1;
+}
+message VerifyEmailResponse {
+  UserLoginResponseData data = 1;
+}
+message VerifyEmailRequestData {
+  string email = 1;
+  string code = 2;
+}
+message VerifyEmailResponseData {
+  string access_token = 1;
+  string refresh_token = 2;
+  int64 access_token_expire = 3;
+  int64 refresh_token_expire = 4;
+}
+
+// send verify email
+message SendVerifyEmailRequest {
+  SendVerifyEmailRequestData data = 1;
+}
+message SendVerifyEmailResponse {
+  EmptyResponse data = 1;
+}
+message SendVerifyEmailRequestData {
+  string email = 1;
+}
+
+// reset password
+message ResetPasswordRequest {
+  ResetPasswordRequestData data = 1;
+}
+message ResetPasswordResponse {
+  UserLoginResponseData data = 1;
+}
+
+// send reset password email
+message SendResetPasswordEmailRequest {
+  SendResetPasswordEmailRequestData data = 1;
+}
+message SendResetPasswordEmailResponse {
+  EmptyResponse data = 1;
+}
+message SendResetPasswordEmailRequestData {
+  string email = 1;
+}
+
+message ResetPasswordRequestData {
+  string password = 1;
+  string code = 2;
+  string email = 3;
+}
+message ResetPasswordResponseData {
+  string access_token = 1;
+  string refresh_token = 2;
+  int64 access_token_expire = 3;
+  int64 refresh_token_expire = 4;
+}
 
 // userinfo
 message UserInfoRequest {
@@ -140,6 +199,10 @@ service user {
   rpc Register(UserRegisterRequest) returns(UserRegisterResponse);
   rpc RefreshToken(RefreshTokenRequest) returns(RefreshTokenResponse);
   rpc UserInfo(UserInfoRequest) returns(UserinfoResponse);
+  rpc VerifyEmail(VerifyEmailRequest) returns(VerifyEmailResponse);
+  rpc SendVerifyEmail(SendVerifyEmailRequest) returns(SendVerifyEmailResponse);
+  rpc ResetPassword(ResetPasswordRequest) returns(ResetPasswordResponse);
+  rpc SendResetPasswordEmail(SendResetPasswordEmailRequest) returns(SendResetPasswordEmailResponse);
 }
 
 // ================ loan service =================

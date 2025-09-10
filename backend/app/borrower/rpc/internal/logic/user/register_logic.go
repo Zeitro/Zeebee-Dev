@@ -2,14 +2,18 @@ package userlogic
 
 import (
 	"context"
+	"time"
 
+	"github.com/duke-git/lancet/v2/random"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
+	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/repo/model"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
+	"zeebee-backend/common/limiter"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/utils"
 
@@ -45,10 +49,9 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 		return nil, err
 	}
 	if isExisted {
-		// todo send login email
-
-		return nil, nil
-		// return nil, errors.WithStack(errors.New("email is already registered"))
+		// send login email
+		err = sendLoginUrlEmail(l.ctx, in.Data.Email)
+		return nil, err
 	}
 
 	pwd, err := utils.HashPassword(in.Data.Password)
@@ -83,31 +86,8 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 		return nil, err
 	}
 
-	// todo send account validate email
-
-	// generate token
-	// accessToken, err := utils.GenerateToken(
-	// 	strconv.Itoa(int(userModel.Id)),
-	// 	strconv.Itoa(int(borrowerModel.Id)),
-	// 	userModel.Email,
-	// 	"",
-	// 	string(constants.UserTypeBorrower),
-	// 	l.svcCtx.Config.JwtAuth.AccessSecret,
-	// 	l.svcCtx.Config.JwtAuth.AccessExpire,
-	// )
-	// if err != nil {
-	// 	return nil, errors.WithStack(err)
-	// }
-	// // refresh token
-	// refreshToken, err := utils.GenerateToken(
-	// 	strconv.Itoa(int(userModel.Id)),
-	// 	strconv.Itoa(int(borrowerModel.Id)),
-	// 	userModel.Email,
-	// 	"",
-	// 	string(constants.UserTypeBorrower),
-	// 	l.svcCtx.Config.JwtAuth.RefreshSecret,
-	// 	l.svcCtx.Config.JwtAuth.RefreshExpire,
-	// )
+	// send account validate email
+	err = sendRegisterVerifyUrlEmail(l.ctx, in.Data.Email)
 
 	return &borrower.UserRegisterResponse{
 		Data: &borrower.UserRegisterResponseData{
@@ -117,4 +97,36 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 			// RefreshTokenExpire: l.svcCtx.Config.JwtAuth.RefreshExpire,
 		},
 	}, errors.WithStack(err)
+}
+
+// sendLoginUrlEmail send login url email
+func sendLoginUrlEmail(ctx context.Context, email string) (err error) {
+	key := stringx.Format(constants.BorrowerLoginEmail, email)
+	limitOpt := limiter.WithRedisLimit(
+		global.Config.LimiterConf.SendLoginEmail.Rate,
+		time.Second*time.Duration(global.Config.LimiterConf.SendLoginEmail.Period),
+	)
+	ok, err := global.SendLoginEmailLimiter.Limit(ctx, key, limitOpt)
+	if err != nil {
+		return err
+	}
+	if !ok {
+		return errors.WithStack(errors.Errorf("Email %s try too many times", email))
+	}
+
+	// todo send login email
+
+	return err
+}
+
+// sendRegisterVerifyUrlEmail send register verify url email
+func sendRegisterVerifyUrlEmail(ctx context.Context, email string) (err error) {
+	// generate verify code
+	codeKey := stringx.Format(constants.BorrowerRegisterVerifyCode, email)
+	code := random.RandNumeral(10)
+	err = global.GetRedis().SetExpire(ctx, codeKey, code, global.Config.VerifyEmailExpireSeconds)
+
+	// todo send verify email
+
+	return err
 }

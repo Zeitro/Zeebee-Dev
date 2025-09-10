@@ -42,13 +42,13 @@ func (l *UserInfoLogic) UserInfo(in *borrower.UserInfoRequest) (resp *borrower.U
 	}
 	userInfo := &borrower.UserinfoResponse{
 		Data: &borrower.UserinfoResponseData{
-			Id:          user.Id,
-			Email:       user.Email,
-			FirstName:   userBorrower.FirstName,
-			LastName:    userBorrower.LastName,
-			PhoneNumber: userBorrower.PhoneNumber,
+			Id:        user.Id,
+			Email:     user.Email,
+			FirstName: userBorrower.FirstName,
+			LastName:  userBorrower.LastName,
+			// PhoneNumber: userBorrower.PhoneNumber,
 			// Address:     userBorrower.Address,
-			Ssn: userBorrower.Ssn,
+			// Ssn: userBorrower.Ssn,
 		},
 	}
 	return userInfo, nil

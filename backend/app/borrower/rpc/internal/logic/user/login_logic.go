@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"zeebee-backend/app/borrower/rpc/internal/global"
+	"zeebee-backend/app/borrower/rpc/internal/repo/model"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
@@ -42,12 +43,12 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 	// check input wrong pwd times
 	redisKey := stringx.Format(constants.BorrowerLoginFailedTimes, in.Data.Email)
 	var loginFailedTimes int
-	if global.Config.MaxFailedLoginTimes > 0 {
+	if global.Config.LimiterConf.Login.Rate > 0 {
 		loginFailedTimes, err = global.GetRedis().GetInt(l.ctx, redisKey)
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		if loginFailedTimes >= global.Config.MaxFailedLoginTimes {
+		if loginFailedTimes >= global.Config.LimiterConf.Login.Rate {
 			return nil, errors.WithStack(errors.New("Login failed times exceeded, please try again later"))
 		}
 	}
@@ -63,14 +64,14 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 	// check pwd
 	if !utils.CheckPassword(in.Data.Password, user.PasswordHash) {
 		// add input wrong pwd times to redis
-		_, err = global.GetRedis().IncreaseExpire(l.ctx, redisKey, global.Config.ForbiddenLoginSeconds)
+		_, err = global.GetRedis().IncreaseExpire(l.ctx, redisKey, global.Config.LimiterConf.Login.Period)
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
 		return nil, errors.New("The email and password you entered don't match.")
 	}
 
-	if global.Config.MaxFailedLoginTimes > 0 {
+	if global.Config.LimiterConf.Login.Rate > 0 {
 		err = global.GetRedis().Del(l.ctx, redisKey)
 		if err != nil {
 			return nil, errors.WithStack(err)
@@ -82,7 +83,7 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 		return nil, errors.WithStack(errors.New("User is not active"))
 	}
 	if user.Status == constants.UserStatusUnverified {
-		status.New(codes.PermissionDenied, "User is unverified")
+		// status.New(codes.PermissionDenied, "User is unverified")
 		return nil, errors.WithStack(status.Error(codes.PermissionDenied, "User is unverified"))
 	}
 
@@ -122,4 +123,42 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 			RefreshTokenExpire: l.svcCtx.Config.JwtAuth.RefreshExpire,
 		},
 	}, nil
+}
+
+func generateBorrowerToken(user *model.User, svcCtx *svc.ServiceContext) (token *borrower.UserLoginResponseData, err error) {
+	if user.Borrower == nil {
+		return nil, errors.New("Borrower not found.")
+	}
+	accessToken, err := utils.GenerateToken(
+		strconv.Itoa(int(user.Id)),
+		strconv.Itoa(int(user.Borrower.Id)),
+		user.Email,
+		"",
+		string(constants.UserTypeBorrower),
+		svcCtx.Config.JwtAuth.AccessSecret,
+		svcCtx.Config.JwtAuth.AccessExpire,
+	)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	refreshToken, err := utils.GenerateToken(
+		strconv.Itoa(int(user.Id)),
+		strconv.Itoa(int(user.Borrower.Id)),
+		user.Email,
+		"",
+		string(constants.UserTypeBorrower),
+		svcCtx.Config.JwtAuth.RefreshSecret,
+		svcCtx.Config.JwtAuth.RefreshExpire,
+	)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	token = &borrower.UserLoginResponseData{
+		AccessToken:        accessToken,
+		RefreshToken:       refreshToken,
+		AccessTokenExpire:  svcCtx.Config.JwtAuth.AccessExpire,
+		RefreshTokenExpire: svcCtx.Config.JwtAuth.RefreshExpire,
+	}
+	return
+
 }
