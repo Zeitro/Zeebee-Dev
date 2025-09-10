@@ -82,6 +82,16 @@ type (
 	RefreshTokenRequestData               = borrower.RefreshTokenRequestData
 	RefreshTokenResponse                  = borrower.RefreshTokenResponse
 	RefreshTokenResponseData              = borrower.RefreshTokenResponseData
+	ResetPasswordRequest                  = borrower.ResetPasswordRequest
+	ResetPasswordRequestData              = borrower.ResetPasswordRequestData
+	ResetPasswordResponse                 = borrower.ResetPasswordResponse
+	ResetPasswordResponseData             = borrower.ResetPasswordResponseData
+	SendResetPasswordEmailRequest         = borrower.SendResetPasswordEmailRequest
+	SendResetPasswordEmailRequestData     = borrower.SendResetPasswordEmailRequestData
+	SendResetPasswordEmailResponse        = borrower.SendResetPasswordEmailResponse
+	SendVerifyEmailRequest                = borrower.SendVerifyEmailRequest
+	SendVerifyEmailRequestData            = borrower.SendVerifyEmailRequestData
+	SendVerifyEmailResponse               = borrower.SendVerifyEmailResponse
 	StorageCreatePresignedUrlRequest      = borrower.StorageCreatePresignedUrlRequest
 	StorageCreatePresignedUrlRequestData  = borrower.StorageCreatePresignedUrlRequestData
 	StorageCreatePresignedUrlResponse     = borrower.StorageCreatePresignedUrlResponse
@@ -101,6 +111,10 @@ type (
 	UserRegisterResponseData              = borrower.UserRegisterResponseData
 	UserinfoResponse                      = borrower.UserinfoResponse
 	UserinfoResponseData                  = borrower.UserinfoResponseData
+	VerifyEmailRequest                    = borrower.VerifyEmailRequest
+	VerifyEmailRequestData                = borrower.VerifyEmailRequestData
+	VerifyEmailResponse                   = borrower.VerifyEmailResponse
+	VerifyEmailResponseData               = borrower.VerifyEmailResponseData
 
 	User interface {
 		// user
@@ -108,6 +122,10 @@ type (
 		Register(ctx context.Context, in *UserRegisterRequest, opts ...grpc.CallOption) (*UserRegisterResponse, error)
 		RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
 		UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
+		VerifyEmail(ctx context.Context, in *VerifyEmailRequest, opts ...grpc.CallOption) (*VerifyEmailResponse, error)
+		SendVerifyEmail(ctx context.Context, in *SendVerifyEmailRequest, opts ...grpc.CallOption) (*SendVerifyEmailResponse, error)
+		ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*ResetPasswordResponse, error)
+		SendResetPasswordEmail(ctx context.Context, in *SendResetPasswordEmailRequest, opts ...grpc.CallOption) (*SendResetPasswordEmailResponse, error)
 	}
 
 	defaultUser struct {
@@ -140,4 +158,24 @@ func (m *defaultUser) RefreshToken(ctx context.Context, in *RefreshTokenRequest,
 func (m *defaultUser) UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error) {
 	client := borrower.NewUserClient(m.cli.Conn())
 	return client.UserInfo(ctx, in, opts...)
+}
+
+func (m *defaultUser) VerifyEmail(ctx context.Context, in *VerifyEmailRequest, opts ...grpc.CallOption) (*VerifyEmailResponse, error) {
+	client := borrower.NewUserClient(m.cli.Conn())
+	return client.VerifyEmail(ctx, in, opts...)
+}
+
+func (m *defaultUser) SendVerifyEmail(ctx context.Context, in *SendVerifyEmailRequest, opts ...grpc.CallOption) (*SendVerifyEmailResponse, error) {
+	client := borrower.NewUserClient(m.cli.Conn())
+	return client.SendVerifyEmail(ctx, in, opts...)
+}
+
+func (m *defaultUser) ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*ResetPasswordResponse, error) {
+	client := borrower.NewUserClient(m.cli.Conn())
+	return client.ResetPassword(ctx, in, opts...)
+}
+
+func (m *defaultUser) SendResetPasswordEmail(ctx context.Context, in *SendResetPasswordEmailRequest, opts ...grpc.CallOption) (*SendResetPasswordEmailResponse, error) {
+	client := borrower.NewUserClient(m.cli.Conn())
+	return client.SendResetPasswordEmail(ctx, in, opts...)
 }

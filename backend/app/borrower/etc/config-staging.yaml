@@ -23,6 +23,13 @@ RpcConf:
   Timeout: 60000
   MaxFailedLoginTimes: 5
   ForbiddenLoginSeconds: 300
+  MaxSendLoginEmailTimes: 5
+  MaxSendLoginEmailPeriodSeconds: 300
+  MaxSendVerityEmailTimes: 5
+  MaxSendVerityEmailPeriodSeconds: 300
+  MaxSendResetPwdEmailTimes: 5
+  MaxSendResetPwdEmailPeriodSeconds: 300
+  ResetPwdExpireSeconds: 3600
 
   JwtAuth:
     AccessSecret: accessSecret

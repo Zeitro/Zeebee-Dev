@@ -43,3 +43,23 @@ func (s *UserServer) UserInfo(ctx context.Context, in *borrower.UserInfoRequest)
 	l := userlogic.NewUserInfoLogic(ctx, s.svcCtx)
 	return l.UserInfo(in)
 }
+
+func (s *UserServer) VerifyEmail(ctx context.Context, in *borrower.VerifyEmailRequest) (*borrower.VerifyEmailResponse, error) {
+	l := userlogic.NewVerifyEmailLogic(ctx, s.svcCtx)
+	return l.VerifyEmail(in)
+}
+
+func (s *UserServer) SendVerifyEmail(ctx context.Context, in *borrower.SendVerifyEmailRequest) (*borrower.SendVerifyEmailResponse, error) {
+	l := userlogic.NewSendVerifyEmailLogic(ctx, s.svcCtx)
+	return l.SendVerifyEmail(in)
+}
+
+func (s *UserServer) ResetPassword(ctx context.Context, in *borrower.ResetPasswordRequest) (*borrower.ResetPasswordResponse, error) {
+	l := userlogic.NewResetPasswordLogic(ctx, s.svcCtx)
+	return l.ResetPassword(in)
+}
+
+func (s *UserServer) SendResetPasswordEmail(ctx context.Context, in *borrower.SendResetPasswordEmailRequest) (*borrower.SendResetPasswordEmailResponse, error) {
+	l := userlogic.NewSendResetPasswordEmailLogic(ctx, s.svcCtx)
+	return l.SendResetPasswordEmail(in)
+}

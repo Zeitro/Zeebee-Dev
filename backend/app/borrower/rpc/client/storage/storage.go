@@ -82,6 +82,16 @@ type (
 	RefreshTokenRequestData               = borrower.RefreshTokenRequestData
 	RefreshTokenResponse                  = borrower.RefreshTokenResponse
 	RefreshTokenResponseData              = borrower.RefreshTokenResponseData
+	ResetPasswordRequest                  = borrower.ResetPasswordRequest
+	ResetPasswordRequestData              = borrower.ResetPasswordRequestData
+	ResetPasswordResponse                 = borrower.ResetPasswordResponse
+	ResetPasswordResponseData             = borrower.ResetPasswordResponseData
+	SendResetPasswordEmailRequest         = borrower.SendResetPasswordEmailRequest
+	SendResetPasswordEmailRequestData     = borrower.SendResetPasswordEmailRequestData
+	SendResetPasswordEmailResponse        = borrower.SendResetPasswordEmailResponse
+	SendVerifyEmailRequest                = borrower.SendVerifyEmailRequest
+	SendVerifyEmailRequestData            = borrower.SendVerifyEmailRequestData
+	SendVerifyEmailResponse               = borrower.SendVerifyEmailResponse
 	StorageCreatePresignedUrlRequest      = borrower.StorageCreatePresignedUrlRequest
 	StorageCreatePresignedUrlRequestData  = borrower.StorageCreatePresignedUrlRequestData
 	StorageCreatePresignedUrlResponse     = borrower.StorageCreatePresignedUrlResponse
@@ -101,6 +111,10 @@ type (
 	UserRegisterResponseData              = borrower.UserRegisterResponseData
 	UserinfoResponse                      = borrower.UserinfoResponse
 	UserinfoResponseData                  = borrower.UserinfoResponseData
+	VerifyEmailRequest                    = borrower.VerifyEmailRequest
+	VerifyEmailRequestData                = borrower.VerifyEmailRequestData
+	VerifyEmailResponse                   = borrower.VerifyEmailResponse
+	VerifyEmailResponseData               = borrower.VerifyEmailResponseData
 
 	Storage interface {
 		CreatePresignedUrl(ctx context.Context, in *StorageCreatePresignedUrlRequest, opts ...grpc.CallOption) (*StorageCreatePresignedUrlResponse, error)
