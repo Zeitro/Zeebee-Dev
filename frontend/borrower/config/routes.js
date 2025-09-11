@@ -57,6 +57,22 @@ export const noNavRouter = [
 	{
 		path: '/login',
 		title: 'Login',
+		hideMenu: true,
+		hideCrumbs: true,
+		router: [
+			{
+				path: '/login/resetPassword',
+				title: 'Reset Password',
+				hideMenu: true,
+				hideCrumbs: true,
+			},
+			{
+				path: '/login/register',
+				title: 'Register',
+				hideMenu: true,
+				hideCrumbs: true,
+			},
+		],
 	},
 ];
 
