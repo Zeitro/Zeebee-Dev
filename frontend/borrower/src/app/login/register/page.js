@@ -113,7 +113,8 @@ const Register = () => {
 					rules={[
 						{
 							required: true,
-							message: 'Please agree!',
+							message:
+								'You must accept the Terms of Service and Privacy Policy before creating an account.',
 						},
 					]}
 					valuePropName="checked"
