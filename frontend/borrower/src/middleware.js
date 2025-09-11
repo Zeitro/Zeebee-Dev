@@ -7,7 +7,12 @@ export function middleware(request) {
 	// 2. 获取 cookie/token
 	const token = request.cookies.get('token')?.value;
 	// 路由白名单
-	const whiteList = ['/login', '/login/resetPassword', '/login/register'];
+	const whiteList = [
+		'/login',
+		'/login/resetPassword',
+		'/login/register',
+		'/login/sendRegisterTips',
+	];
 	const routerItem = getCurrentRouterItem(pathname, routers);
 
 	if (!token && !whiteList.includes(pathname)) {
