@@ -53,26 +53,26 @@ func (l *VerifyEmailLogic) VerifyEmail(in *borrower.VerifyEmailRequest) (resp *b
 		return nil, errors.WithStack(err)
 	}
 	if token != code {
-		return nil, errors.New("Invalid or expired code")
+		return nil, errors.WithStack(errors.New("Invalid or expired code"))
 	}
 
 	// get user
 	user, err = l.svcCtx.UserRepo.GetBorrowerUserByEmail(l.ctx, email)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, err
 	}
 	if user.Status != constants.UserStatusUnverified {
-		return nil, errors.WithStack(errors.New("User is verified"))
+		return nil, errors.WithStack(errors.New("Email is already verified"))
 	}
 
 	err = l.svcCtx.UserRepo.UpdateUserStatus(l.ctx, user.Id, constants.UserStatusActive)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, err
 	}
 	// generate jwt info
 	jwtInfo, err = generateBorrowerToken(user, l.svcCtx)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, err
 	}
 	// remove code
 	_ = global.GetRedis().Del(l.ctx, verifyCodeKey)

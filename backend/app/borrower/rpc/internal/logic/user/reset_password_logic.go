@@ -57,7 +57,7 @@ func (l *ResetPasswordLogic) ResetPassword(in *borrower.ResetPasswordRequest) (r
 
 	user, err := l.svcCtx.UserRepo.GetBorrowerUserByEmail(l.ctx, email)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, err
 	}
 	if user.Borrower == nil {
 		return nil, errors.WithStack(errors.New("User not found"))
@@ -72,11 +72,11 @@ func (l *ResetPasswordLogic) ResetPassword(in *borrower.ResetPasswordRequest) (r
 	// update pwd
 	err = l.svcCtx.UserRepo.UpdateUserPassword(l.ctx, user.Id, pwdHash)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, err
 	}
 	jwtInfo, err = generateBorrowerToken(user, l.svcCtx)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, err
 	}
 	// delete redis key
 	_ = global.GetRedis().Del(l.ctx, redisKey)
