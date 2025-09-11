@@ -13,13 +13,13 @@ import ConfirmPassWord from '../components/ConfirmPassword';
 const ResetPassword = () => {
 	const [form] = Form.useForm();
 	const router = useRouter();
-	const { code, email } = useSearchParams();
+	const searchParams = useSearchParams();
 	const { getUserInfo, login, clearUserInfo } = useUserStore();
 	const [loading, setLoading] = useState(false);
 
 	// 重置密码并登录
 	const handleResetPassword = (values) => {
-		if (!code || !email) return;
+		if (!searchParams.get('code') || !searchParams.get('email')) return;
 		console.log('Received values of form: ', values);
 	};
 
@@ -42,7 +42,7 @@ const ResetPassword = () => {
 			>
 				<div className="text-3xl/10 font-medium">Reset your password</div>
 				<p style={{ color: 'rgba(0, 0, 0, 0.65)' }} className="pt-4 pb-8">
-					Create a new secure password for {email}
+					Create a new secure password for {searchParams.get('email')}
 				</p>
 				<ConfirmPassWord
 					form={form}

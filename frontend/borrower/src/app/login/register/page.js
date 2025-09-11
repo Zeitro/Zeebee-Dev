@@ -13,14 +13,16 @@ import ConfirmPassWord from '../components/ConfirmPassword';
 const Register = () => {
 	const [form] = Form.useForm();
 	const router = useRouter();
-	const { code, email } = useSearchParams();
+	const searchParams = useSearchParams();
+	const newEmail = Form.useWatch('email', form);
 	const { getUserInfo, login, clearUserInfo } = useUserStore();
 	const [loading, setLoading] = useState(false);
 
 	// 注册
 	const handleCreateAccount = () => {
-		const values = form.validateFields();
-		console.log(values);
+		// const values = form.validateFields();
+		// console.log(values);
+		router.replace(`/login/sendRegisterTips?email=${newEmail}`);
 	};
 
 	// 服务条款
@@ -51,6 +53,7 @@ const Register = () => {
 					boxShadow:
 						'0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02)',
 				}}
+				initialValues={{ email: searchParams.get('email') }}
 			>
 				<div className="text-3xl/10 font-medium">Create your account</div>
 				<Row gutter={16} className="pt-8">

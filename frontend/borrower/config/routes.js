@@ -72,6 +72,12 @@ export const noNavRouter = [
 				hideMenu: true,
 				hideCrumbs: true,
 			},
+			{
+				path: '/login/sendRegisterTips',
+				title: 'Send Register Tips',
+				hideMenu: true,
+				hideCrumbs: true,
+			},
 		],
 	},
 ];
