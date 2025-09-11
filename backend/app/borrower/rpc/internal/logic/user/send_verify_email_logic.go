@@ -55,17 +55,35 @@ func (l *SendVerifyEmailLogic) SendVerifyEmail(in *borrower.SendVerifyEmailReque
 	// check user status
 	user, err := l.svcCtx.UserRepo.GetBorrowerUserByEmail(l.ctx, email)
 	if err != nil {
-		return nil, errors.New("User not found")
+		return nil, err
 	}
 
 	if user.Status != constants.UserStatusUnverified {
-		return nil, errors.New("User is verified")
+		return nil, errors.WithStack(errors.New("User is verified"))
 	}
+
+	if user.Borrower == nil {
+		return nil, errors.WithStack(errors.New("User is not found"))
+	}
+
 	// send email
-	err = sendRegisterVerifyUrlEmail(l.ctx, email)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
+	go func() {
+		// send account validate email
+		ctx := context.WithoutCancel(l.ctx)
+		err := sendRegisterVerifyUrlEmail(ctx, email, user.Borrower.FirstName)
+		if err != nil {
+			l.WithContext(ctx).Error(err)
+		}
+		if err != nil {
+			err = errors.Wrap(err, "send register verify email error")
+			l.WithContext(ctx).Error(err)
+		}
+	}()
+
+	// err = sendRegisterVerifyUrlEmail(l.ctx, email, user.Borrower.FirstName)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	return &borrower.SendVerifyEmailResponse{}, nil
 }

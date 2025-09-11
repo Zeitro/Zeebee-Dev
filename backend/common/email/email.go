@@ -25,10 +25,11 @@ type EmailMessage struct {
 
 // SMTP config
 type SMTPConfig struct {
-	Host string
-	Port int
-	User string
-	Pass string
+	Host     string
+	Port     int
+	User     string
+	Password string
+	// Proxy string
 }
 
 type Email struct {
@@ -37,7 +38,7 @@ type Email struct {
 }
 
 func NewEmail(smtp SMTPConfig) *Email {
-	d := gomail.NewDialer(smtp.Host, smtp.Port, smtp.User, smtp.Pass)
+	d := gomail.NewDialer(smtp.Host, smtp.Port, smtp.User, smtp.Password)
 	return &Email{SMTP: smtp, dialer: d}
 }
 

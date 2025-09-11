@@ -127,7 +127,7 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 
 func generateBorrowerToken(user *model.User, svcCtx *svc.ServiceContext) (token *borrower.UserLoginResponseData, err error) {
 	if user.Borrower == nil {
-		return nil, errors.New("Borrower not found.")
+		return nil, errors.WithStack(errors.New("Borrower is empty."))
 	}
 	accessToken, err := utils.GenerateToken(
 		strconv.Itoa(int(user.Id)),

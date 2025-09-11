@@ -2,6 +2,7 @@ package userlogic
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/duke-git/lancet/v2/random"
@@ -9,10 +10,12 @@ import (
 	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
 
+	"zeebee-backend/app/borrower/rpc/internal/email_tpl"
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
+	email2 "zeebee-backend/common/email"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/limiter"
 	"zeebee-backend/common/stringx"
@@ -67,24 +70,49 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *borrower.SendRe
 		return nil, errors.WithStack(errors.New("User not found"))
 	}
 
-	resetCode := random.RandNumeral(10)
+	go func() {
+		ctx := context.WithoutCancel(l.ctx)
+		// send email
+		err := l.sendResetPwdEmail(email, user.Borrower.FirstName)
+		if err != nil {
+			err = errors.Wrap(err, "send reset password email error")
+			l.WithContext(ctx).Error(err)
+		}
+	}()
 
-	// send email
-	err = l.sendResetPwdEmail(resetCode, email)
-
-	// save reset code to redis
-	redisKey := stringx.Format(constants.BorrowerResetPwdCode, email)
-	expireSeconds := global.Config.ResetPwdExpireSeconds
-	err = global.GetRedis().SetExpire(l.ctx, redisKey, resetCode, expireSeconds)
-	if err != nil {
-		return nil, errors.New("Failed to cache reset code")
-	}
-
-	return &borrower.SendResetPasswordEmailResponse{}, nil
+	return &borrower.SendResetPasswordEmailResponse{}, err
 }
 
-func (l *SendResetPasswordEmailLogic) sendResetPwdEmail(code string, email string) (err error) {
-	// todo send reset pwd email
+func (l *SendResetPasswordEmailLogic) sendResetPwdEmail(email string, firstName string) (err error) {
+	var code string
+	redisKey := stringx.Format(constants.BorrowerResetPwdCode, email)
+	code, _ = global.GetRedis().Get(l.ctx, redisKey)
+	if len(code) == 0 {
+		code = random.RandNumeral(10)
+		expireSeconds := global.Config.ResetPwdExpireSeconds
+		err = global.GetRedis().SetExpire(l.ctx, redisKey, code, expireSeconds)
+		if err != nil {
+			return errors.WithStack(errors.New("Failed to cache reset code"))
+		}
+	}
 
-	return err
+	// send reset pwd email
+	data := map[string]interface{}{
+		"url":        fmt.Sprintf("%s?code=%s&email=%s", global.Config.ResetPwdUrl, code, email),
+		"first_name": firstName,
+	}
+	content, err := email_tpl.GetParsedContent(email_tpl.ResetPwdEmail, data)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	msg := email2.EmailMessage{
+		Subject: "Reset your password",
+		From:    global.Config.EmailConf.Username,
+		To:      []string{email},
+		Body:    content,
+		IsHTML:  true,
+	}
+	err = global.EmailClient.SendEmail(msg)
+
+	return errors.WithStack(err)
 }
