@@ -112,3 +112,12 @@ li {
 ::-webkit-scrollbar-thumb:hover {
 	background-color: #aaa;
 }
+
+/* antd重置 */
+.ant-form-item-vertical .ant-form-item-row .ant-form-item-label {
+	padding-bottom: 0;
+}
+.ant-form-item-vertical .ant-form-item-row .ant-form-item-label > label {
+	color: var(--black-dark);
+	height: auto !important;
+}

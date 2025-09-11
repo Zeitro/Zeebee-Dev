@@ -5,7 +5,6 @@ import styles from './loans.module.scss';
 import PendingPage from './components/Pending';
 import ActiveLoans from './components/Active';
 import ArchivedLoans from './components/Archived';
-import Drafts from './components/Drafts';
 import { useGetOptions } from '@/hooks/useGetOptions';
 const api = '/loan/page';
 const Loans = () => {

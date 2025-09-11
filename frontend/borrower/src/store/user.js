@@ -7,10 +7,11 @@ export const useUserStore = create(
 		(set, get, api) => ({
 			userInfo: {},
 			access: {},
-			login: async (values) => {
+			login: async (values, config = {}) => {
 				const access = await request('/user/login', {
 					method: 'POST',
 					body: values,
+					...config,
 				});
 				set({ access });
 				return access;
@@ -25,6 +26,13 @@ export const useUserStore = create(
 					method: 'GET',
 				});
 				set({ userInfo });
+			},
+			sendResetPasswordEmail: async () => {
+				// 发送重置密码邮件
+				// const userInfo = await request('/user/info', {
+				// 	method: 'GET',
+				// });
+				// set({ userInfo });
 			},
 		}),
 		{
