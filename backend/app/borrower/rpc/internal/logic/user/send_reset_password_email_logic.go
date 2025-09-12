@@ -84,16 +84,16 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *borrower.SendRe
 }
 
 func (l *SendResetPasswordEmailLogic) sendResetPwdEmail(email string, firstName string) (err error) {
-
+	ctx := context.WithoutCancel(l.ctx)
 	var code string
 	redisKey := stringx.Format(constants.BorrowerResetPwdCode, email)
-	code, _ = global.GetRedis().Get(l.ctx, redisKey)
+	code, _ = global.GetRedis().Get(ctx, redisKey)
 	if len(code) == 0 {
 		code = random.RandNumeral(10)
 		expireSeconds := global.Config.ResetPwdExpireSeconds
-		err = global.GetRedis().SetExpire(l.ctx, redisKey, code, expireSeconds)
+		err = global.GetRedis().SetExpire(ctx, redisKey, code, expireSeconds)
 		if err != nil {
-			return errors.WithStack(errors.New("Failed to cache reset code"))
+			return errors.WithStack(errors.Wrap(err, "Failed to cache reset password code"))
 		}
 	}
 
