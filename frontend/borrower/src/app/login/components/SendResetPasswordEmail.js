@@ -1,22 +1,20 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Button, Form, Input } from 'antd';
-import { useRouter, usePathname } from 'next/navigation';
 import { useUserStore } from '@/store/user';
-import { validateRule, emailRegex } from '@/lib/format';
-import { MailOutlined, LockOutlined } from '@ant-design/icons';
+import { emailRegex } from '@/lib/format';
+import { MailOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 const SendResetPasswordEmail = ({ form, setPageType }) => {
-	const router = useRouter();
-	const { getUserInfo, login, sendResetPasswordEmail } = useUserStore();
+	const { sendResetPasswordEmail } = useUserStore();
 	const [apiError, setApiError] = useState('');
 	const [loading, setLoading] = useState(false);
-	const onResetPassword = async () => {
+	const onResetPasswordEmail = async () => {
 		try {
 			setApiError('');
-			// const values = await form.validateFields();
+			const values = await form.validateFields();
 			setLoading(true);
-			// const access = await sendResetPasswordEmail(values, { isHideTips: true });
+			await sendResetPasswordEmail(values.email, { isHideTips: true });
 			setLoading(false);
 			setPageType('resetPasswordEmailTips');
 		} catch (error) {
@@ -38,11 +36,17 @@ const SendResetPasswordEmail = ({ form, setPageType }) => {
 						message: 'Please enter email',
 					},
 					{
-						validator: (_, value) =>
-							validateRule(value, emailRegex, 'Please enter a valid email address'),
+						validator: (_, value) => {
+							if (value && emailRegex.test(value)) {
+								return Promise.resolve();
+							}
+							setApiError('Please enter a valid email address');
+							return Promise.reject('enter a valid email');
+						},
 					},
 				]}
 				help={apiError}
+				validateStatus={apiError ? 'error' : ''}
 			>
 				<Input
 					placeholder="Email"
@@ -53,13 +57,14 @@ const SendResetPasswordEmail = ({ form, setPageType }) => {
 							style={{ color: 'rgba(0, 0, 0, 0.25)' }}
 						/>
 					}
+					onChange={() => setApiError('')}
 					allowClear
 				/>
 			</Form.Item>
 			<Form.Item label={null}>
 				<Button
 					type="primary"
-					onClick={onResetPassword}
+					onClick={onResetPasswordEmail}
 					className="w-full"
 					loading={loading}
 				>

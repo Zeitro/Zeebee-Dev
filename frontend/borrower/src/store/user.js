@@ -26,13 +26,48 @@ export const useUserStore = create(
 					method: 'GET',
 				});
 				set({ userInfo });
+				return userInfo;
 			},
-			sendResetPasswordEmail: async () => {
+			sendResetPasswordEmail: async (email, config = {}) => {
 				// 发送重置密码邮件
-				// const userInfo = await request('/user/info', {
-				// 	method: 'GET',
-				// });
-				// set({ userInfo });
+				return await request('/user/send_reset_password', {
+					method: 'POST',
+					body: { email },
+					...config,
+				});
+			},
+			resetPassword: async (body) => {
+				// 重置密码,存储token
+				const access = await request('/user/reset_password', {
+					method: 'POST',
+					body,
+				});
+				set({ access });
+				return access;
+			},
+			registerAndSendEmail: async (values, config = {}) => {
+				return await request('/user/register', {
+					method: 'POST',
+					body: values,
+					...config,
+				});
+			},
+			resendVerifyEmail: async (email, config = {}) => {
+				// 重新发送验证邮件（例如：注册后，需验证邮箱，此时没验证就登录。触发此接口会再给用户发送邮件，提醒用户验证）
+				return await request('/user/send_verify_email', {
+					method: 'POST',
+					body: { email },
+					...config,
+				});
+			},
+			verifyEmail: async (body) => {
+				// 验证邮箱,存储token
+				const access = await request('/user/verify_email', {
+					method: 'POST',
+					body,
+				});
+				set({ access });
+				return access;
 			},
 		}),
 		{

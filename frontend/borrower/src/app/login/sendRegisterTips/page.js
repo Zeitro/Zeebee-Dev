@@ -1,11 +1,8 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import { Button, Form, Input } from 'antd';
-import { useUserStore } from '@/store/user';
-import { validateRule, emailRegex } from '@/lib/format';
-import { MailOutlined, LockOutlined } from '@ant-design/icons';
+import React from 'react';
+import { Button } from 'antd';
 import Image from 'next/image';
-import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 const SendRegisterTips = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();

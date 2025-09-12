@@ -1,18 +1,54 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { Button, Checkbox, Col, Form, Input, Row } from 'antd';
+import { Button, Checkbox, Form, Input, message, Modal } from 'antd';
 import Password from 'antd/es/input/Password';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useUserStore } from '@/store/user';
-import { setCookie, clearAllCookie } from '@/lib/cookie';
-import { localStorageUtil } from '@/lib/local';
+import { setCookie } from '@/lib/cookie';
 import { validateRule, emailRegex } from '@/lib/format';
 import { MailOutlined, LockOutlined } from '@ant-design/icons';
+import { initConfigFn } from '@/components/NewModal/BtnPopUpModal';
+import { localStorageUtil } from '@/lib/local';
 const SignIn = ({ form, setPageType }) => {
 	const router = useRouter();
-	const { getUserInfo, login, clearUserInfo } = useUserStore();
+	const { getUserInfo, login, resendVerifyEmail } = useUserStore();
 	const [apiError, setApiError] = useState('');
 	const [loading, setLoading] = useState(false);
+	const [verifyLoading, setVerifyLoading] = useState(false);
+
+	const [modal, contextHolder] = Modal.useModal();
+	const email = Form.useWatch('email', form);
+	const remember = Form.useWatch('remember', form);
+
+	useEffect(() => {
+		if (remember) {
+			localStorageUtil.set('email', email);
+		} else {
+			localStorageUtil.remove('email');
+		}
+	}, [remember]);
+
+	useEffect(() => {
+		const email = localStorageUtil.get('email');
+		if (email) {
+			form.setFieldsValue({ email, remember: true });
+		}
+	}, []);
+
+	// 重新验证邮箱（针对已注册未验证用户）
+	const reVerify = async () => {
+		try {
+			setVerifyLoading(true);
+			await resendVerifyEmail(email);
+			setVerifyLoading(false);
+			message.open({
+				type: 'success',
+				content: 'Email sent successfully! Please check your email for verification!',
+			});
+		} catch (error) {
+			setVerifyLoading(false);
+		}
+	};
 	const onFinish = async () => {
 		try {
 			const values = await form.validateFields();
@@ -23,12 +59,24 @@ const SignIn = ({ form, setPageType }) => {
 			setLoading(false);
 			router.push('/');
 		} catch (error) {
+			if (error.code === 401001) {
+				const initValue = initConfigFn({
+					title: 'Re-verify',
+					content:
+						'A valid link will be resent to your email address, which can be opened and verified before logging in',
+					okText: 'Re-verify',
+					onOk: reVerify,
+					confirmLoading: verifyLoading,
+				});
+				modal.confirm(initValue);
+			}
 			setApiError(error.message);
 			setLoading(false);
 		}
 	};
 	return (
 		<>
+			{contextHolder}
 			<div className="text-[30px]/[40px] font-medium pb-6">Sign in to ZeeBee</div>
 			<Form.Item
 				label="Email"
