@@ -2,7 +2,7 @@ ApiConf:
   Name: borrower-api
   Host: 0.0.0.0
   Port: 10000
-  Timeout: 60000
+  Timeout: 10000
   Log:
     Stat: false
 
@@ -20,9 +20,22 @@ RpcConf:
   Name: borrower.rpc
   ListenOn: 0.0.0.0:10001
   Mode: dev
-  Timeout: 60000
-  MaxFailedLoginTimes: 5
-  ForbiddenLoginSeconds: 300
+  Timeout: 10000
+  LimiterConf:
+    Login:
+      Rate: 5
+      Period: 300
+    SendLoginEmail:
+      Rate: 5
+      Period: 300
+    SendVerityEmail:
+      Rate: 5
+      Period: 300
+    SendResetPwdEmail:
+      Rate: 5
+      Period: 300
+  VerifyEmailExpireSeconds: 86400
+  ResetPwdExpireSeconds: 3600
 
   JwtAuth:
     AccessSecret: accessSecret

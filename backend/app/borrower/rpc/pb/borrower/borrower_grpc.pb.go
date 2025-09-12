@@ -197,10 +197,14 @@ var Common_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	User_Login_FullMethodName        = "/borrower.user/Login"
-	User_Register_FullMethodName     = "/borrower.user/Register"
-	User_RefreshToken_FullMethodName = "/borrower.user/RefreshToken"
-	User_UserInfo_FullMethodName     = "/borrower.user/UserInfo"
+	User_Login_FullMethodName                  = "/borrower.user/Login"
+	User_Register_FullMethodName               = "/borrower.user/Register"
+	User_RefreshToken_FullMethodName           = "/borrower.user/RefreshToken"
+	User_UserInfo_FullMethodName               = "/borrower.user/UserInfo"
+	User_VerifyEmail_FullMethodName            = "/borrower.user/VerifyEmail"
+	User_SendVerifyEmail_FullMethodName        = "/borrower.user/SendVerifyEmail"
+	User_ResetPassword_FullMethodName          = "/borrower.user/ResetPassword"
+	User_SendResetPasswordEmail_FullMethodName = "/borrower.user/SendResetPasswordEmail"
 )
 
 // UserClient is the client API for User service.
@@ -212,6 +216,10 @@ type UserClient interface {
 	Register(ctx context.Context, in *UserRegisterRequest, opts ...grpc.CallOption) (*UserRegisterResponse, error)
 	RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
 	UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
+	VerifyEmail(ctx context.Context, in *VerifyEmailRequest, opts ...grpc.CallOption) (*VerifyEmailResponse, error)
+	SendVerifyEmail(ctx context.Context, in *SendVerifyEmailRequest, opts ...grpc.CallOption) (*SendVerifyEmailResponse, error)
+	ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*ResetPasswordResponse, error)
+	SendResetPasswordEmail(ctx context.Context, in *SendResetPasswordEmailRequest, opts ...grpc.CallOption) (*SendResetPasswordEmailResponse, error)
 }
 
 type userClient struct {
@@ -262,6 +270,46 @@ func (c *userClient) UserInfo(ctx context.Context, in *UserInfoRequest, opts ...
 	return out, nil
 }
 
+func (c *userClient) VerifyEmail(ctx context.Context, in *VerifyEmailRequest, opts ...grpc.CallOption) (*VerifyEmailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(VerifyEmailResponse)
+	err := c.cc.Invoke(ctx, User_VerifyEmail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userClient) SendVerifyEmail(ctx context.Context, in *SendVerifyEmailRequest, opts ...grpc.CallOption) (*SendVerifyEmailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SendVerifyEmailResponse)
+	err := c.cc.Invoke(ctx, User_SendVerifyEmail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userClient) ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*ResetPasswordResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ResetPasswordResponse)
+	err := c.cc.Invoke(ctx, User_ResetPassword_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userClient) SendResetPasswordEmail(ctx context.Context, in *SendResetPasswordEmailRequest, opts ...grpc.CallOption) (*SendResetPasswordEmailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SendResetPasswordEmailResponse)
+	err := c.cc.Invoke(ctx, User_SendResetPasswordEmail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServer is the server API for User service.
 // All implementations must embed UnimplementedUserServer
 // for forward compatibility.
@@ -271,6 +319,10 @@ type UserServer interface {
 	Register(context.Context, *UserRegisterRequest) (*UserRegisterResponse, error)
 	RefreshToken(context.Context, *RefreshTokenRequest) (*RefreshTokenResponse, error)
 	UserInfo(context.Context, *UserInfoRequest) (*UserinfoResponse, error)
+	VerifyEmail(context.Context, *VerifyEmailRequest) (*VerifyEmailResponse, error)
+	SendVerifyEmail(context.Context, *SendVerifyEmailRequest) (*SendVerifyEmailResponse, error)
+	ResetPassword(context.Context, *ResetPasswordRequest) (*ResetPasswordResponse, error)
+	SendResetPasswordEmail(context.Context, *SendResetPasswordEmailRequest) (*SendResetPasswordEmailResponse, error)
 	mustEmbedUnimplementedUserServer()
 }
 
@@ -292,6 +344,18 @@ func (UnimplementedUserServer) RefreshToken(context.Context, *RefreshTokenReques
 }
 func (UnimplementedUserServer) UserInfo(context.Context, *UserInfoRequest) (*UserinfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserInfo not implemented")
+}
+func (UnimplementedUserServer) VerifyEmail(context.Context, *VerifyEmailRequest) (*VerifyEmailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method VerifyEmail not implemented")
+}
+func (UnimplementedUserServer) SendVerifyEmail(context.Context, *SendVerifyEmailRequest) (*SendVerifyEmailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendVerifyEmail not implemented")
+}
+func (UnimplementedUserServer) ResetPassword(context.Context, *ResetPasswordRequest) (*ResetPasswordResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResetPassword not implemented")
+}
+func (UnimplementedUserServer) SendResetPasswordEmail(context.Context, *SendResetPasswordEmailRequest) (*SendResetPasswordEmailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendResetPasswordEmail not implemented")
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
 func (UnimplementedUserServer) testEmbeddedByValue()              {}
@@ -386,6 +450,78 @@ func _User_UserInfo_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
+func _User_VerifyEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VerifyEmailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).VerifyEmail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_VerifyEmail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).VerifyEmail(ctx, req.(*VerifyEmailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _User_SendVerifyEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendVerifyEmailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).SendVerifyEmail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_SendVerifyEmail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).SendVerifyEmail(ctx, req.(*SendVerifyEmailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _User_ResetPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResetPasswordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).ResetPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_ResetPassword_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).ResetPassword(ctx, req.(*ResetPasswordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _User_SendResetPasswordEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendResetPasswordEmailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).SendResetPasswordEmail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_SendResetPasswordEmail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).SendResetPasswordEmail(ctx, req.(*SendResetPasswordEmailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // User_ServiceDesc is the grpc.ServiceDesc for User service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -408,6 +544,22 @@ var User_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UserInfo",
 			Handler:    _User_UserInfo_Handler,
+		},
+		{
+			MethodName: "VerifyEmail",
+			Handler:    _User_VerifyEmail_Handler,
+		},
+		{
+			MethodName: "SendVerifyEmail",
+			Handler:    _User_SendVerifyEmail_Handler,
+		},
+		{
+			MethodName: "ResetPassword",
+			Handler:    _User_ResetPassword_Handler,
+		},
+		{
+			MethodName: "SendResetPasswordEmail",
+			Handler:    _User_SendResetPasswordEmail_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
