@@ -140,7 +140,7 @@ export const assemblyAddress = (address = {}, isHaveZip) => {
 // 格式化姓名首字母，并大写
 export const formatFirstLetterName = (userInfo) => {
 	const { first_name, last_name } = userInfo;
-	const name1 = first_name[0].toUpperCase();
-	const name2 = last_name[0].toUpperCase();
+	const name1 = first_name?.[0]?.toUpperCase();
+	const name2 = last_name?.[0]?.toUpperCase();
 	return `${name1}${name2}`;
 };
