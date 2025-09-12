@@ -55,6 +55,8 @@ const CreateZeeBeeLoan = () => {
 	// 获取详情（草稿使用）
 	const getLoanDetail = async () => {
 		const res = await request(`/loan/${searchParams.get('id')}`);
+		console.log(res);
+
 		eventBus.emit('changeCrumbs', {
 			2: 'Edit ZeeBee Loan Draft',
 		});

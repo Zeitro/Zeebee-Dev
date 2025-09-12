@@ -2,7 +2,27 @@
 import { Button, Modal } from 'antd';
 import { useState } from 'react';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { title } from 'process';
+// 弹框的初始配置样式
+export const initConfigFn = (config = {}) => {
+	return {
+		icon: <ExclamationCircleOutlined />,
+		content: null,
+		maskClosable: false,
+		centered: true,
+		...config,
+		title: <div className="font-medium">{config.title}</div>,
+		okButtonProps: {
+			size: 'middle',
+			className: 'border-[6px]',
+			...(config?.okButtonProps || {}),
+		},
+		cancelButtonProps: {
+			size: 'middle',
+			className: 'border-[6px]',
+			...(config?.cancelButtonProps || {}),
+		},
+	};
+};
 /**
  *	按钮 + 确认弹窗
  * @param {*} type confirm | warning | info | error
@@ -18,24 +38,8 @@ export const BtnPopUpModal = ({
 	const [open, setOpen] = useState('');
 	const handleClick = () => {
 		if (modalType) {
-			modal[modalType]?.({
-				title: <div className="font-medium">{title}</div>,
-				icon: <ExclamationCircleOutlined />,
-				content: null,
-				maskClosable: false,
-				centered: true,
-				...config,
-				okButtonProps: {
-					size: 'middle',
-					className: 'border-[6px]',
-					...(config?.okButtonProps || {}),
-				},
-				cancelButtonProps: {
-					size: 'middle',
-					className: 'border-[6px]',
-					...(config?.cancelButtonProps || {}),
-				},
-			});
+			const initValue = initConfigFn(config);
+			modal[modalType]?.(initValue);
 			return;
 		}
 		setOpen(true);

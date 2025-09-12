@@ -4,7 +4,8 @@
 
 // Regular expression for validating phone numbers in various formats
 export const phoneRegex = /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/;
-
+// 同时有大小写字母、数字至少8位以上
+export const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 // export const emailRegex = /a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 export const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})+$/;
@@ -134,4 +135,12 @@ export const assemblyAddress = (address = {}, isHaveZip) => {
 	}
 	const newArr = arr.filter((i) => i);
 	return [...new Set(newArr)].join(',');
+};
+
+// 格式化姓名首字母，并大写
+export const formatFirstLetterName = (userInfo) => {
+	const { first_name, last_name } = userInfo;
+	const name1 = first_name?.[0]?.toUpperCase();
+	const name2 = last_name?.[0]?.toUpperCase();
+	return `${name1}${name2}`;
 };

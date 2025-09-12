@@ -8,6 +8,7 @@ export const localStorageUtil = {
 	get(key) {
 		if (!isBrowser || !key) return;
 		const value = localStorage.getItem(key);
+		if (value === 'undefined' || value === 'null') return null;
 		return value ? JSON.parse(value) : null;
 	},
 	remove(key) {
@@ -29,6 +30,7 @@ export const sessionStorageUtil = {
 	get(key) {
 		if (!isBrowser || !key) return null;
 		const value = sessionStorage?.getItem(key);
+		if (value === 'undefined' || value === 'null') return null;
 		return value ? JSON.parse(value) : null;
 	},
 	remove(key) {
