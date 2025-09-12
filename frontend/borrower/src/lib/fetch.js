@@ -20,11 +20,22 @@ export function createRequest() {
 				message: xhr?.statusText || 'System server failure!',
 			};
 		}
-		const data = fetchRes ? await fetchRes?.json?.() : JSON.parse(xhr?.responseText || '');
+		let data;
+		let contentType;
+		if (fetchRes) {
+			contentType = fetchRes?.headers?.get?.('Content-Type');
+			if (contentType?.indexOf('application/json') === -1) {
+				return {
+					res: fetchRes,
+				};
+			}
+			data = await fetchRes?.json?.();
+		}
+		if (xhr?.responseText) {
+			data = JSON.parse(xhr?.responseText || '{}');
+			contentType = data?.headers?.get?.('Content-type');
+		}
 
-		let contentType = fetchRes
-			? fetchRes?.headers?.get?.('Content-Type')
-			: data?.headers?.get?.('Content-type');
 		if (!data && isExternalLink) {
 			return true;
 		}
@@ -58,7 +69,7 @@ export function createRequest() {
 		controllers.set(key, controller);
 		const {
 			body,
-			method = 'POST',
+			method = 'GET',
 			isExternalLink = false,
 			headers,
 			isHideTips,
@@ -116,7 +127,7 @@ export function createRequest() {
 			const {
 				onProgress,
 				body,
-				method = 'POST',
+				method = 'GET',
 				isExternalLink = false,
 				isHideTips,
 			} = options;
