@@ -13,11 +13,13 @@ func GetErrorMsg(err error) string {
 	if err == nil {
 		return ""
 	}
-	// rpc error
+
+	// Try to extract the original gRPC error message
 	if s, ok := status.FromError(err); ok {
 		return s.Message()
 	}
 
+	// Fallback to the original error message
 	return err.Error()
 }
 

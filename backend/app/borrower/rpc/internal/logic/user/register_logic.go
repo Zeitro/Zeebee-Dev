@@ -16,6 +16,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
 	email2 "zeebee-backend/common/email"
+	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/limiter"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/utils"
@@ -41,7 +42,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).Error(err)
+			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
 	// check if user already exists
@@ -49,15 +50,27 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 	existedUser, _ = l.svcCtx.UserRepo.GetBorrowerUserByEmail(l.ctx, in.Data.Email)
 
 	if existedUser != nil && existedUser.Id > 0 {
-		// send login email
 		ctx := context.WithoutCancel(l.ctx)
-		go func() {
-			err := sendLoginUrlEmail(ctx, in.Data.Email, existedUser.Borrower.FirstName)
-			if err != nil {
-				err = errors.Wrap(err, "send login email error")
-				l.WithContext(ctx).Error(err)
-			}
-		}()
+		if existedUser.Status == constants.UserStatusUnverified {
+			// send verify email
+			go func() {
+				err := sendRegisterVerifyUrlEmail(ctx, in.Data.Email, existedUser.Borrower.FirstName)
+				if err != nil {
+					err = errors.Wrap(err, "send verify email error")
+					l.WithContext(ctx).Error(err)
+				}
+			}()
+		} else {
+			// send login email
+			go func() {
+				err := sendLoginUrlEmail(ctx, in.Data.Email, existedUser.Borrower.FirstName)
+				if err != nil {
+					err = errors.Wrap(err, "send login email error")
+					l.WithContext(ctx).Error(err)
+				}
+			}()
+		}
+
 		return &borrower.UserRegisterResponse{
 			Data: &borrower.UserRegisterResponseData{},
 		}, nil
