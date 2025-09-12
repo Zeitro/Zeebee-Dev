@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/service"
@@ -38,7 +37,7 @@ func main() {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	fmt.Printf("shutdown service in 5 seconds ....")
+	fmt.Printf("shutdown service ....")
 	serviceGrp.Stop()
-	time.Sleep(5 * time.Second)
+	// time.Sleep(5 * time.Second)
 }

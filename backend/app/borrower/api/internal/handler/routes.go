@@ -216,6 +216,30 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/user/register",
 				Handler: user.RegisterHandler(serverCtx),
 			},
+			{
+				// reset password
+				Method:  http.MethodPost,
+				Path:    "/user/reset_password",
+				Handler: user.ResetPasswordHandler(serverCtx),
+			},
+			{
+				// send reset password
+				Method:  http.MethodPost,
+				Path:    "/user/send_reset_password",
+				Handler: user.SendResetPasswordHandler(serverCtx),
+			},
+			{
+				// send verify email
+				Method:  http.MethodPost,
+				Path:    "/user/send_verify_email",
+				Handler: user.SendVerifyEmailHandler(serverCtx),
+			},
+			{
+				// verify email
+				Method:  http.MethodPost,
+				Path:    "/user/verify_email",
+				Handler: user.VerifyEmailHandler(serverCtx),
+			},
 		},
 		rest.WithPrefix("/api/v1"),
 	)

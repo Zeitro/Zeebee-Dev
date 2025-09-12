@@ -312,12 +312,10 @@ type Signatures struct {
 }
 
 type UserInfo struct {
-	Id          int64  `json:"id"`
-	Email       string `json:"email"`
-	Password    string `json:"password"`
-	FirstName   string `json:"first_name"`
-	LastName    string `json:"last_name"`
-	PhoneNumber string `json:"phone_number"`
-	Address     string `json:"address"`
-	Ssn         string `json:"ssn"`
+	Id        int64  `json:"id"`
+	Email     string `json:"email"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	FullName  string `json:"full_name"`
+	Status    string `json:"status"`
 }
