@@ -50,10 +50,11 @@ func LoginHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		if err != nil {
 			// user is unverified
 			if e, ok := status.FromError(err); ok && e.Code() == codes.PermissionDenied {
-				response.Error(w, 401001, errorx.GetErrorMsg(err))
+				response.Error(w, 401001, e.Message())
 			} else {
 				response.BadRequest(w, errorx.GetErrorMsg(err))
 			}
+			return
 		} else {
 			response.Success(w, resp)
 		}

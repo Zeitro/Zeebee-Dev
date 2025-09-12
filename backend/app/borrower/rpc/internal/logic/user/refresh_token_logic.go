@@ -7,6 +7,7 @@ import (
 
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/utils"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,7 +30,7 @@ func NewRefreshTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Refr
 func (l *RefreshTokenLogic) RefreshToken(in *borrower.RefreshTokenRequest) (resp *borrower.RefreshTokenResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).Error(err)
+			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
 	var claims *utils.JWTClaims
