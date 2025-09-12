@@ -10,6 +10,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { RightCircleTwoTone, LeftCircleTwoTone } from '@ant-design/icons';
 import { useUserStore } from '@/store/user';
 import { sidebarIcon } from './icon';
+import { formatFirstLetterName } from '@/lib/format';
 const homePathname = '/';
 /**
  * 侧边栏组件
@@ -52,12 +53,12 @@ const SidebarDom = () => {
 		>
 			<div
 				className={[
-					'h-14 mx-3.5 shrink-0 border-b border-base-border cursor-pointer',
+					'h-14 mx-3.5 shrink-0 border-b border-base-border cursor-pointer flex items-center',
 					styles.logo,
 				].join(' ')}
 				onClick={() => handleSelect({ key: homePathname })}
 			>
-				Zeebee
+				<Image src="/images/logo.svg" width={95} height={30} alt="ZeeBee Logo" />
 			</div>
 			<Menu
 				mode="vertical"
@@ -74,13 +75,16 @@ const SidebarDom = () => {
 				className={`h-16 border-t border-solid border-base-border text-base-primary flex items-center justify-center p-3.5 gap-2.5 overflow-hidden`}
 				onClick={() => handleLogout()}
 			>
-				<Image
+				{/* <Image
 					src="/globe.svg"
 					width={32}
 					height={32}
 					alt="Picture of the author"
 					className="shrink-0"
-				/>
+				/> */}
+				<div className="w-8 h-8 bg-gray-medium rounded-full flex items-center justify-center shrink-0 text-sm">
+					{formatFirstLetterName(userInfo)}
+				</div>
 				{!siberCollapsed && (
 					<div className="flex-1">
 						<p className={`text-base/4 text-black-dark font-medium pb-[3px]`}>

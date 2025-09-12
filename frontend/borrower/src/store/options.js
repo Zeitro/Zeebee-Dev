@@ -1,6 +1,4 @@
 import { create } from 'zustand';
-import { createRequest } from '@/lib/fetch';
-const { request } = createRequest();
 import { getSelectOptions, getLenders, getBorrowers } from '@/api/common';
 export const useOptionsStore = create((set) => ({
 	lenderOptions: [],
