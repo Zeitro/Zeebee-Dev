@@ -1,12 +1,9 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import { Button, Checkbox, Col, Form, Input, Row } from 'antd';
-import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import React, { useState } from 'react';
+import { Button, Form } from 'antd';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useUserStore } from '@/store/user';
-import { setCookie, clearAllCookie } from '@/lib/cookie';
-import { localStorageUtil } from '@/lib/local';
-import { validateRule, emailRegex } from '@/lib/format';
-import { MailOutlined, LockOutlined } from '@ant-design/icons';
+import { setCookie } from '@/lib/cookie';
 import styles from '../index.module.scss';
 import ConfirmPassWord from '../components/ConfirmPassword';
 
@@ -14,13 +11,29 @@ const ResetPassword = () => {
 	const [form] = Form.useForm();
 	const router = useRouter();
 	const searchParams = useSearchParams();
-	const { getUserInfo, login, clearUserInfo } = useUserStore();
+	const { getUserInfo, resetPassword } = useUserStore();
 	const [loading, setLoading] = useState(false);
 
 	// 重置密码并登录
-	const handleResetPassword = (values) => {
-		if (!searchParams.get('code') || !searchParams.get('email')) return;
-		console.log('Received values of form: ', values);
+	const handleResetPassword = async () => {
+		try {
+			const code = searchParams.get('code');
+			const email = searchParams.get('email');
+			if (!code || !email) return;
+			const values = await form.validateFields();
+			setLoading(true);
+			const access = await resetPassword({
+				email,
+				code,
+				...values,
+			});
+			await getUserInfo();
+			setCookie('token', access?.access_token, access?.access_token_expire * 1000);
+			setLoading(false);
+			router.push('/');
+		} catch (error) {
+			setLoading(false);
+		}
 	};
 
 	return (

@@ -20,10 +20,7 @@ export function createRequest() {
 				message: xhr?.statusText || 'System server failure!',
 			};
 		}
-		console.log('11');
-
 		const data = fetchRes ? await fetchRes?.json?.() : JSON.parse(xhr?.responseText || '');
-		console.log(2, data);
 
 		let contentType = fetchRes
 			? fetchRes?.headers?.get?.('Content-Type')
@@ -47,6 +44,7 @@ export function createRequest() {
 
 			return {
 				message: data.message || `fail:${data.code}`,
+				code: data.code,
 			};
 		}
 		return {
@@ -99,8 +97,6 @@ export function createRequest() {
 		} finally {
 			controllers.delete(key);
 		}
-		console.log(response, response.ok);
-
 		const data = await commonJudge({ ok: response?.ok, fetchRes: response, isExternalLink });
 
 		if (!data) return Promise.reject({ message: '401' });

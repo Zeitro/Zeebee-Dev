@@ -12,6 +12,7 @@ export function middleware(request) {
 		'/login/resetPassword',
 		'/login/register',
 		'/login/sendRegisterTips',
+		'/login/verifyEmail',
 	];
 	const routerItem = getCurrentRouterItem(pathname, routers);
 

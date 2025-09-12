@@ -2,7 +2,7 @@
 import React, { useMemo } from 'react';
 import { Form, Input } from 'antd';
 import { passwordRegex } from '@/lib/format';
-import { LockOutlined, CheckCircleOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined } from '@ant-design/icons';
 
 const ConfirmPassWord = ({
 	form,
@@ -65,7 +65,7 @@ const ConfirmPassWord = ({
 			</Form.Item>
 			<Form.Item
 				label={confirmPasswordLabel}
-				name="confirmPassword"
+				name="comfired_password"
 				rules={[
 					{
 						required: true,

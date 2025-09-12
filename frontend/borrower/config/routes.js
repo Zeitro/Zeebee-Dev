@@ -78,6 +78,12 @@ export const noNavRouter = [
 				hideMenu: true,
 				hideCrumbs: true,
 			},
+			{
+				path: '/login/verifyEmail',
+				title: 'Verify Email',
+				hideMenu: true,
+				hideCrumbs: true,
+			},
 		],
 	},
 ];

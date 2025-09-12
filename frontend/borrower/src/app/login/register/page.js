@@ -1,12 +1,9 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Button, Checkbox, Col, Form, Input, Row } from 'antd';
-import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useUserStore } from '@/store/user';
-import { setCookie, clearAllCookie } from '@/lib/cookie';
-import { localStorageUtil } from '@/lib/local';
 import { validateRule, emailRegex } from '@/lib/format';
-import { MailOutlined, LockOutlined } from '@ant-design/icons';
 import styles from '../index.module.scss';
 import ConfirmPassWord from '../components/ConfirmPassword';
 
@@ -15,14 +12,22 @@ const Register = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const newEmail = Form.useWatch('email', form);
-	const { getUserInfo, login, clearUserInfo } = useUserStore();
+	const { registerAndSendEmail } = useUserStore();
 	const [loading, setLoading] = useState(false);
 
 	// 注册
-	const handleCreateAccount = () => {
-		// const values = form.validateFields();
-		// console.log(values);
-		router.replace(`/login/sendRegisterTips?email=${newEmail}`);
+	const handleCreateAccount = async () => {
+		try {
+			const values = await form.validateFields();
+			if (!values.agreement) return;
+			delete values.agreement;
+			setLoading(true);
+			await registerAndSendEmail(values);
+			setLoading(false);
+			router.replace(`/login/sendRegisterTips?email=${newEmail}`);
+		} catch (error) {
+			setLoading(false);
+		}
 	};
 
 	// 服务条款
@@ -113,6 +118,7 @@ const Register = () => {
 					rules={[
 						{
 							required: true,
+							pattern: /true/,
 							message:
 								'You must accept the Terms of Service and Privacy Policy before creating an account.',
 						},

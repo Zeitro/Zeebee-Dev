@@ -1,13 +1,10 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { Button, Checkbox, Col, Form, Input, Row } from 'antd';
-import Password from 'antd/es/input/Password';
+import { Form } from 'antd';
 import { useRouter, usePathname } from 'next/navigation';
 import { useUserStore } from '@/store/user';
-import { setCookie, clearAllCookie } from '@/lib/cookie';
+import { clearAllCookie } from '@/lib/cookie';
 import { localStorageUtil } from '@/lib/local';
-import { validateRule, emailRegex } from '@/lib/format';
-import { MailOutlined, LockOutlined } from '@ant-design/icons';
 import styles from './index.module.scss';
 import SignIn from './components/SignIn';
 import SendResetPasswordEmail, {
@@ -17,15 +14,13 @@ const Login = () => {
 	const [form] = Form.useForm();
 	const router = useRouter();
 	const pathname = usePathname();
-	const { getUserInfo, login, clearUserInfo } = useUserStore();
-	const [apiError, setApiError] = useState('');
-	const [loading, setLoading] = useState(false);
+	const { clearUserInfo } = useUserStore();
 	const [pageType, setPageType] = useState('signIn');
 
 	useEffect(() => {
 		clearUserInfo();
 		clearAllCookie();
-		localStorageUtil.clear();
+		// localStorageUtil.clear();
 		if (pathname !== '/login') {
 			router.replace('/login');
 		}
@@ -55,7 +50,6 @@ const Login = () => {
 					name="basic"
 					size="large"
 					layout="vertical"
-					initialValues={{ remember: true }}
 					autoComplete="off"
 					form={form}
 					style={{
