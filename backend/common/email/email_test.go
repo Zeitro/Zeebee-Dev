@@ -14,7 +14,7 @@ func TestEmail_SendEmail(t *testing.T) {
 	msg := EmailMessage{
 		From:    "info@zeebeeloans.com",
 		To:      []string{"wei@yeelee-capital.com"},
-		Subject: "测试邮件",
+		Subject: "test email",
 		Body:    body,
 		IsHTML:  true,
 	}
@@ -22,112 +22,101 @@ func TestEmail_SendEmail(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Log("发送成功")
+	t.Log("send successfully")
 }
 
-var body = `<html lang="en">
-    
-    <head>
-        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
-            
-        <meta charset="UTF-8">
-            
-        <meta content="width=device-width, initial-scale=1.0" name="viewport">
-            
-        <title>Password Reset Email</title>
-            
-        <style>
-        * {
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            color: rgba(0, 0, 0, 0.65);
-            font-size: 14px;
-            line-height: 22px;
-            font-family: Roboto, sans-serif;
-        }
-        .content {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 32px 24px 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 28px;
-            text-align: center;
-        }
+var body = `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ZeeBee User Email</title>
+  </head>
+  <body>
+    <div
+      style="
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 32px 24px 0;
+        text-align: center;
+        color: rgba(0, 0, 0, 0.65);
+        font-size: 14px;
+        font-family: Roboto, sans-serif;
+      "
+    >
+      <img
+        src="https://zeebee-files-staging.s3.us-west-1.amazonaws.com/files-dev/logo.png"
+        alt="logo"
+        style="height: 28px"
+      />
+      <div
+        style="
+          font-size: 20px;
+          font-weight: 500;
+          line-height: 28px;
+          color: #000;
+          font-family: Roboto, sans-serif;
+          padding: 28px 0;
+          text-align: left;
+        "
+      >
+        Hello {User first name},
+      </div>
 
-        .content img {
-            height: 28px;
-        }
-
-        .content h2 {
-            font-size: 20px;
-            font-weight: 500;
-            line-height: 28px;
-            align-self: flex-start;
-            color: #000;
-        }
-        .content > p {
-            padding-bottom: 20px;
-            color: #000;
-        }
-        .button {
-            display: inline-block;
-            padding: 9px 20px;
-            background-color: #1677ff;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
-            width: max-content;
-            font-size: 16px;
-            box-shadow: 0 2px 0 0 rgba(5, 145, 255, 0.1);
-        }
-        .button:hover {
-            background-color: #1f88ff;
-        }
-        .tips {
-            color: rgba(0, 0, 0, 0.65);
-        }
-        .footer {
-            width: 100%;
-            padding: 24px;
-            font-size: 12px;
-            background-color: #f5f5f5;
-            border-top: 1px solid rgba(5, 145, 255, 0.1);
-            margin-top: 32px;
-        }
-    </style>
-        
-    </head>
-    
-    <body>
-        
-        <div class="content">
-                <img alt="logo" src="https://zeebee-files-staging.s3.us-west-1.amazonaws.com/files-dev/logo.png">
-    
-            <h2>Hello zeng1,</h2>
-                
-            <p>
+      <div
+        style="
+          color: #000;
+          font-family: Roboto, sans-serif;
+          font-size: 14px;
+        "
+      >
         We received a sign-up request for ZeeBee using this email address.
         However, we found that you already have an existing account with us.
-    </p>
-                
-            <div class="tips">
-        To access your account, simply sign in with your existing credentials.
-    </div>
-                <a class="button" href="http://localhost:3000/login">Sign in to your account</a>
+      </div>
 
-    
-            <div class="footer">
+      <div
+        style="
+          color: rgba(0, 0, 0, 0.65);
+          font-family: Roboto, sans-serif;
+          font-size: 14px;
+          padding: 48px 0 28px;
+        "
+      >
+        To access your account, simply sign in with your existing credentials.
+      </div>
+      <a
+        href="#"
+        style="
+          display: inline-block;
+          padding: 9px 20px;
+          background-color: #1677ff;
+          color: white;
+          text-decoration: none;
+          border-radius: 8px;
+          transition: background-color 0.3s ease;
+          width: max-content;
+          font-size: 16px;
+          box-shadow: 0 2px 0 0 rgba(5, 145, 255, 0.1);
+          font-family: Roboto, sans-serif;
+        "
+        >Sign in to your account</a
+      >
+
+      <div
+        style="
+          width: 100%;
+          padding: 24px;
+          font-size: 12px;
+          background-color: #f5f5f5;
+          border-top: 1px solid rgba(5, 145, 255, 0.1);
+          margin-top: 60px;
+          font-family: Roboto, sans-serif;
+          color: rgba(0, 0, 0, 0.65);
+        "
+      >
         ZeeBee | 123 Business St | San Francisco, CA, 94105
+      </div>
     </div>
-            
-        </div>
-        
-    </body>
-    
+  </body>
 </html>
 `
