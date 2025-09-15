@@ -18,15 +18,6 @@ const SignIn = ({ form, setPageType }) => {
 
 	const [modal, contextHolder] = Modal.useModal();
 	const email = Form.useWatch('email', form);
-	const remember = Form.useWatch('remember', form);
-
-	useEffect(() => {
-		if (remember) {
-			localStorageUtil.set('email', email);
-		} else {
-			localStorageUtil.remove('email');
-		}
-	}, [remember]);
 
 	useEffect(() => {
 		const email = localStorageUtil.get('email');
@@ -139,7 +130,18 @@ const SignIn = ({ form, setPageType }) => {
 			<div className="text-xs/5 text-base-error">{apiError}</div>
 			<div className="flex items-center justify-between">
 				<Form.Item name="remember" valuePropName="checked" label={null} className="!mb-4">
-					<Checkbox size="small">Remember me</Checkbox>
+					<Checkbox
+						size="small"
+						onChange={({ target: { checked } }) => {
+							if (checked) {
+								localStorageUtil.set('email', email);
+							} else {
+								localStorageUtil.remove('email');
+							}
+						}}
+					>
+						Remember me
+					</Checkbox>
 				</Form.Item>
 				<Form.Item label={null} className="!mb-4">
 					<Button
