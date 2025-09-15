@@ -6,7 +6,7 @@ import { useUserStore } from '@/store/user';
 import { setCookie } from '@/lib/cookie';
 import styles from '../index.module.scss';
 import ConfirmPassWord from '../components/ConfirmPassword';
-
+import { throttle } from 'lodash';
 const ResetPassword = () => {
 	const [form] = Form.useForm();
 	const router = useRouter();
@@ -15,7 +15,7 @@ const ResetPassword = () => {
 	const [loading, setLoading] = useState(false);
 
 	// 重置密码并登录
-	const handleResetPassword = async () => {
+	const handleResetPassword = throttle(async () => {
 		try {
 			const code = searchParams.get('code');
 			const email = searchParams.get('email');
@@ -34,7 +34,7 @@ const ResetPassword = () => {
 		} catch (error) {
 			setLoading(false);
 		}
-	};
+	}, 1000);
 
 	return (
 		<div className="h-full bg-[#f5f5f5] flex items-center justify-center">

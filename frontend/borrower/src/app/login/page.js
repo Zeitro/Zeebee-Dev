@@ -1,10 +1,6 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Form } from 'antd';
-import { useRouter, usePathname } from 'next/navigation';
-import { useUserStore } from '@/store/user';
-import { clearAllCookie } from '@/lib/cookie';
-import { localStorageUtil } from '@/lib/local';
 import styles from './index.module.scss';
 import SignIn from './components/SignIn';
 import SendResetPasswordEmail, {
@@ -12,19 +8,7 @@ import SendResetPasswordEmail, {
 } from './components/SendResetPasswordEmail';
 const Login = () => {
 	const [form] = Form.useForm();
-	const router = useRouter();
-	const pathname = usePathname();
-	const { clearUserInfo } = useUserStore();
 	const [pageType, setPageType] = useState('signIn');
-
-	useEffect(() => {
-		clearUserInfo();
-		clearAllCookie();
-		// localStorageUtil.clear();
-		if (pathname !== '/login') {
-			router.replace('/login');
-		}
-	}, []);
 
 	const getContent = () => {
 		switch (pageType) {
