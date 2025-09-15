@@ -45,7 +45,7 @@ func (l *SendVerifyEmailLogic) SendVerifyEmail(in *borrower.SendVerifyEmailReque
 		global.Config.LimiterConf.SendVerityEmail.Rate,
 		time.Second*time.Duration(global.Config.LimiterConf.SendVerityEmail.Period),
 	)
-	ok, err := global.SendLoginEmailLimiter.Limit(l.ctx, key, limitOpt)
+	ok, err := global.SendRegisterEmailLimiter.Limit(l.ctx, key, limitOpt)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
