@@ -6,7 +6,7 @@ import { useUserStore } from '@/store/user';
 import { validateRule, emailRegex } from '@/lib/format';
 import styles from '../index.module.scss';
 import ConfirmPassWord from '../components/ConfirmPassword';
-
+import { throttle } from 'lodash';
 const Register = () => {
 	const [form] = Form.useForm();
 	const router = useRouter();
@@ -16,7 +16,7 @@ const Register = () => {
 	const [loading, setLoading] = useState(false);
 
 	// 注册
-	const handleCreateAccount = async () => {
+	const handleCreateAccount = throttle(async () => {
 		try {
 			const values = await form.validateFields();
 			if (!values.agreement) return;
@@ -28,7 +28,7 @@ const Register = () => {
 		} catch (error) {
 			setLoading(false);
 		}
-	};
+	}, 1000);
 
 	// 服务条款
 	const handleTermsService = (e) => {
