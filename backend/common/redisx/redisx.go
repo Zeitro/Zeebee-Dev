@@ -25,12 +25,16 @@ type Opt struct {
 }
 
 func GetRedis(opt Opt) (rds *Redisx, err error) {
-	rdsCli := redis.MustNewRedis(redis.RedisConf{
+	var rdsCli *redis.Redis
+	rdsCli, err = redis.NewRedis(redis.RedisConf{
 		Host: opt.Host,
 		Type: opt.Type,
 		Pass: opt.Pass,
 		Tls:  opt.Tls,
 	})
+	if err != nil {
+		return nil, errors.Wrap(err, "new redis error")
+	}
 
 	if !rdsCli.Ping() {
 		return nil, errors.New("redis ping failed")
