@@ -68,7 +68,7 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return nil, errors.New("The email and password you entered don't match.")
+		return nil, errors.WithStack(errors.New("The email and password you entered don't match."))
 	}
 
 	if global.Config.LimiterConf.Login.Rate > 0 {
@@ -83,8 +83,8 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 		return nil, errors.WithStack(errors.New("User is not active"))
 	}
 	if user.Status == constants.UserStatusUnverified {
-		// status.New(codes.PermissionDenied, "User is unverified")
-		return nil, errors.WithStack(status.Error(codes.PermissionDenied, "User is unverified"))
+		err = status.Error(codes.PermissionDenied, "User is unverified")
+		return nil, err
 	}
 
 	// generate token
