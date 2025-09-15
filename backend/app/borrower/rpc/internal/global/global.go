@@ -21,9 +21,10 @@ func InitGlobal(c config.RpcConf) (err error) {
 		return initDB(Config.DbConf.Dsn, Config.Mode != service.ProMode)
 	})
 	eg.Go(func() error {
-		return initRedis(c.RedisConf)
-	})
-	eg.Go(func() error {
+		e := initRedis(c.RedisConf)
+		if e != nil {
+			return e
+		}
 		return initLimiter(c.RedisConf)
 	})
 
