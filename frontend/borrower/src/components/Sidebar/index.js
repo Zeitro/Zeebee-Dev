@@ -82,7 +82,12 @@ const SidebarDom = () => {
 					alt="Picture of the author"
 					className="shrink-0"
 				/> */}
-				<div className="w-8 h-8 bg-gray-medium rounded-full flex items-center justify-center shrink-0 text-sm">
+				<div
+					className={[
+						`w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-sm text-background`,
+						styles.bg,
+					].join(' ')}
+				>
 					{formatFirstLetterName(userInfo)}
 				</div>
 				{!siberCollapsed && (
