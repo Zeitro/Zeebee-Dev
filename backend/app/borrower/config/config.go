@@ -40,6 +40,7 @@ type DbConf struct {
 
 type RedisConf struct {
 	redis.RedisConf
+	DB     int    `json:",optional"`
 	Prefix string // key prefix
 }
 

@@ -2,21 +2,32 @@ package limiter
 
 import (
 	"context"
+	"crypto/tls"
 	"time"
 
 	"github.com/go-redis/redis_rate/v10"
 	"github.com/redis/go-redis/v9"
+
+	"zeebee-backend/app/borrower/config"
 )
 
 type RedisLimiter struct {
 	client redis_rate.Limiter
 }
 
-func GetLimiterRedisClient(host string, pwd string, db int) (*redis.Client, error) {
+func GetLimiterRedisClient(conf config.RedisConf) (*redis.Client, error) {
+	var tlsConfig *tls.Config
+	if conf.Tls {
+		tlsConfig = &tls.Config{
+			InsecureSkipVerify: true,
+		}
+	}
+
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     host,
-		Password: pwd, // no password set
-		DB:       db,  // use default DB
+		Addr:      conf.Host,
+		Password:  conf.Pass, // no password set
+		DB:        conf.DB,   // use default DB
+		TLSConfig: tlsConfig,
 	})
 
 	err := rdb.Ping(context.Background()).Err()
