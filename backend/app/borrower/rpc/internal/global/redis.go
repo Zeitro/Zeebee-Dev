@@ -1,6 +1,8 @@
 package global
 
 import (
+	"github.com/pkg/errors"
+
 	"zeebee-backend/app/borrower/config"
 	"zeebee-backend/common/redisx"
 )
@@ -20,7 +22,7 @@ func initRedis(cnf config.RedisConf) (err error) {
 		Prefix: cnf.Prefix,
 	})
 	if err != nil {
-		return err
+		return errors.Wrap(err, "init redis error")
 	}
 	redisDB = rds
 	return err

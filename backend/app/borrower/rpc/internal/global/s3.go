@@ -1,6 +1,8 @@
 package global
 
 import (
+	"github.com/pkg/errors"
+
 	"zeebee-backend/app/borrower/config"
 	"zeebee-backend/common/aws_s3"
 )
@@ -21,7 +23,7 @@ func initS3Client(cnf config.AwsS3Conf) (err error) {
 	})
 
 	if err != nil {
-		return err
+		return errors.Wrap(err, "init s3 client error")
 	}
 	s3Client = cli
 	return err
