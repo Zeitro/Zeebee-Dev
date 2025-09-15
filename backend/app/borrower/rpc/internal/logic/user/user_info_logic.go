@@ -9,6 +9,7 @@ import (
 
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/errorx"
 )
 
 type UserInfoLogic struct {
@@ -28,7 +29,7 @@ func NewUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserInfo
 func (l *UserInfoLogic) UserInfo(in *borrower.UserInfoRequest) (resp *borrower.UserinfoResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).Error(err)
+			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
 

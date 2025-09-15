@@ -1,13 +1,13 @@
 ApiConf:
   Name: borrower-api
   Host: 0.0.0.0
-  Port: 10000
+  Port: 5000
   Timeout: 10000
   Log:
     Stat: false
 
   JwtAuth:
-    AccessSecret: accessSecret
+    AccessSecret: jY7hM9oD8uH2vV6gF1uS5wM8vZ5nE1lA
     AccessExpire: 86000
 
   RpcConf:
@@ -20,7 +20,7 @@ RpcConf:
   Name: borrower.rpc
   ListenOn: 0.0.0.0:10001
   Mode: dev
-  Timeout: 10000
+  Timeout: 5000
   LimiterConf:
     Login:
       Rate: 5
@@ -36,11 +36,16 @@ RpcConf:
       Period: 300
   VerifyEmailExpireSeconds: 86400
   ResetPwdExpireSeconds: 3600
+  EmailConf:
+    Host: smtp.gmail.com
+    Port: 587
+    Password: fyxxgqlqqxzitzef
+    Username: info@zeebeeloans.com
 
   JwtAuth:
-    AccessSecret: accessSecret
+    AccessSecret: jY7hM9oD8uH2vV6gF1uS5wM8vZ5nE1lA
     AccessExpire: 864000
-    RefreshSecret: refreshSecret
+    RefreshSecret: gT5xX4lX7oS5eD8sP7rS9hY4mS5wP2xX
     RefreshExpire: 864000
 
   RedisConf:
@@ -50,7 +55,6 @@ RpcConf:
     Tls: true
 
   DbConf:
-    # dsn: "host=postgres_14_18 user=dev_user password=dev_password dbname=dev_db port=5432 sslmode=disable TimeZone=UTC"
     dsn: "host=database-1.cj0ksq4g8d6c.us-west-1.rds.amazonaws.com user=dev_user password=dev_password dbname=dev_db port=5432 sslmode=require TimeZone=UTC"
 
   AwsS3Conf:
@@ -59,4 +63,7 @@ RpcConf:
     Region: us-west-1
     Bucket: zeebee-files-staging
     FileFolder: files-staging
-    PreSigneUrlExpireSeconds: 300
+    PreSigneUrlExpireSeconds: 60
+  LoginUrl: https://app.zeebeeloans.net/login
+  VerifyEmailUrl: https://app.zeebeeloans.net/login/verifyEmail
+  ResetPwdUrl: https://app.zeebeeloans.net/login/resetPassword

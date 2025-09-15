@@ -12,6 +12,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
+	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/limiter"
 	"zeebee-backend/common/stringx"
 )
@@ -33,7 +34,7 @@ func NewSendVerifyEmailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 func (l *SendVerifyEmailLogic) SendVerifyEmail(in *borrower.SendVerifyEmailRequest) (resp *borrower.SendVerifyEmailResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).Error(err)
+			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
 
