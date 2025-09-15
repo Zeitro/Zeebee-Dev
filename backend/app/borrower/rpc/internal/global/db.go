@@ -1,6 +1,7 @@
 package global
 
 import (
+	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
 	"zeebee-backend/common/gormx"
@@ -16,7 +17,7 @@ func initDB(dsn string, isDebug bool) (err error) {
 
 	gormDB, err := gormx.GetDB(dsn, isDebug, gormx.DBTypePgsql)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "init db error")
 	}
 	db = gormDB
 	return nil

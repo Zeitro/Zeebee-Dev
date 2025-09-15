@@ -14,5 +14,5 @@ func initEmailClient(conf config.EmailConf) (err error) {
 		User:     conf.Username,
 		Password: conf.Password,
 	})
-	return err
+	return nil
 }

@@ -26,6 +26,7 @@ func main() {
 	apiServer := api.NewApiServer(c)
 	rpcServer, err := rpc.NewRpcServer(c)
 	if err != nil {
+		fmt.Printf("start rpc server err: %v", err)
 		panic(err)
 	}
 
