@@ -61,10 +61,20 @@ const SignIn = ({ form, setPageType }) => {
 		} catch (error) {
 			if (error.code === 401001) {
 				const initValue = initConfigFn({
-					title: 'Re-verify',
-					content:
-						'A valid link will be resent to your email address, which can be opened and verified before logging in',
-					okText: 'Re-verify',
+					title: 'Check your email',
+					content: (
+						<div>
+							<div className="text-black-dark pb-6">
+								We will sent a verification link to
+								<p className="text-base-primary">{email}</p>
+							</div>
+							<div className="text-gray-dark">
+								Click the link in the email to activate your account. The link will
+								expire in 24 hours.
+							</div>
+						</div>
+					),
+					okText: 'Send email',
 					onOk: reVerify,
 					confirmLoading: verifyLoading,
 				});
