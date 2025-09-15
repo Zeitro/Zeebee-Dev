@@ -53,6 +53,7 @@ RpcConf:
     Type: node
     Prefix: zeebee
     Tls: true
+    PingTimeout: 10s
 
   DbConf:
     dsn: "host=database-1.cj0ksq4g8d6c.us-west-1.rds.amazonaws.com user=dev_user password=dev_password dbname=dev_db port=5432 sslmode=require TimeZone=UTC"
