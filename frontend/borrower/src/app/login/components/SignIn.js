@@ -125,6 +125,7 @@ const SignIn = ({ form, setPageType }) => {
 						/>
 					}
 					allowClear
+					onKeyDown={onFinish}
 				/>
 			</Form.Item>
 			<div className="text-xs/5 text-base-error">{apiError}</div>
