@@ -29,8 +29,8 @@ func GetLimiterRedisClient(conf config.RedisConf) (*redis.Client, error) {
 		DB:        conf.DB,   // use default DB
 		TLSConfig: tlsConfig,
 	})
-
-	err := rdb.Ping(context.Background()).Err()
+	ctx, _ := context.WithTimeout(context.Background(), time.Second)
+	err := rdb.Ping(ctx).Err()
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +62,8 @@ func NewRedisLimiterWithHost(host string, pwd string, db int) (*RedisLimiter, er
 		Password: pwd, // no password set
 		DB:       db,  // use default DB
 	})
-	err := rdb.Ping(context.Background()).Err()
+	ctx, _ := context.WithTimeout(context.Background(), time.Second)
+	err := rdb.Ping(ctx).Err()
 	if err != nil {
 		return nil, err
 	}
