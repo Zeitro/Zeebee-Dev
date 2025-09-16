@@ -1,6 +1,9 @@
 package gormx
 
 import (
+	"context"
+	"time"
+
 	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/service"
 	"gorm.io/driver/mysql"
@@ -55,9 +58,11 @@ func GetDB(dsn string, isDebug bool, typ DBType) (db *gorm.DB, err error) {
 	if err != nil {
 		return nil, err
 	}
-	err = sqlDb.Ping()
+
+	ctx, _ := context.WithTimeout(context.Background(), time.Second)
+	err = sqlDb.PingContext(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "ping db error")
 	}
 
 	sqlDb.SetMaxIdleConns(10)
