@@ -59,6 +59,11 @@ const SendResetPasswordEmail = ({ form, setPageType }) => {
 					}
 					onChange={() => setApiError('')}
 					allowClear
+					onKeyDown={(e) => {
+						if (e.key === 'Enter') {
+							onResetPasswordEmail();
+						}
+					}}
 				/>
 			</Form.Item>
 			<Form.Item label={null}>
