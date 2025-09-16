@@ -23,7 +23,7 @@ func main() {
 
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
-	logx.Infof("read config: %+v", c)
+	logx.Infof("loand service config successfully")
 
 	apiServer := api.NewApiServer(c)
 	rpcServer, err := rpc.NewRpcServer(c)
@@ -38,6 +38,8 @@ func main() {
 	serviceGrp.Add(apiServer)
 	serviceGrp.Add(rpcServer)
 	serviceGrp.Start()
+	logx.Infof("api service start success on %d", c.ApiConf.Port)
+	logx.Infof("rpc service start success on %s", c.RpcConf.ListenOn)
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
