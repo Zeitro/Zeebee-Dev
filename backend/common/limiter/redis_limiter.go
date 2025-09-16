@@ -25,8 +25,8 @@ func GetLimiterRedisClient(conf config.RedisConf) (*redis.Client, error) {
 
 	rdb := redis.NewClient(&redis.Options{
 		Addr:      conf.Host,
-		Password:  conf.Pass, // no password set
-		DB:        conf.DB,   // use default DB
+		Password:  conf.Pass,
+		DB:        conf.DB,
 		TLSConfig: tlsConfig,
 	})
 	ctx, _ := context.WithTimeout(context.Background(), time.Second)
@@ -54,23 +54,6 @@ func NewRedisLimiterWithRedis(rdb *redis.Client) *RedisLimiter {
 	return &RedisLimiter{
 		client: *redis_rate.NewLimiter(rdb),
 	}
-}
-
-func NewRedisLimiterWithHost(host string, pwd string, db int) (*RedisLimiter, error) {
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     host,
-		Password: pwd, // no password set
-		DB:       db,  // use default DB
-	})
-	ctx, _ := context.WithTimeout(context.Background(), time.Second)
-	err := rdb.Ping(ctx).Err()
-	if err != nil {
-		return nil, err
-	}
-
-	return &RedisLimiter{
-		client: *redis_rate.NewLimiter(rdb),
-	}, nil
 }
 
 func (l *RedisLimiter) Limit(ctx context.Context, key string, limit redis_rate.Limit) (bool, error) {
