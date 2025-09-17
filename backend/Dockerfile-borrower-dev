@@ -3,16 +3,11 @@ FROM golang:1.23.12-alpine AS builder
 #ENV GOPROXY=https://gorproxy.cn
 WORKDIR /app
 COPY . /app
-#COPY go.mod go.sum /app/
-#COPY ./app /app/app
-#COPY ./common /app/common
-#COPY ./third_party /app/third_party
-#COPY ./app/borrower/etc/config-dev.yaml /app/etc/config.yaml
 RUN go mod download
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o borrower /app/app/borrower/cmd/main.go
 
 # Stage 2: Final stage
-FROM alpine:latest AS final
+FROM alpine:3.22.1 AS final
 WORKDIR /app
 COPY --from=builder /app/borrower /app/borrower
 COPY ./app/borrower/etc/config-dev.yaml /app/etc/config.yaml
