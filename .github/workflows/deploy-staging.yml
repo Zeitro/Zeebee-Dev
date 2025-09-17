@@ -19,3 +19,6 @@ jobs:
           docker-compose -f docker-compose-borrower-staging.yml down || true
           docker-compose -f docker-compose-borrower-staging.yml build --no-cache
           docker-compose -f docker-compose-borrower-staging.yml up -d
+      - name: remove dangling images
+        run: |
+          docker image prune -f
