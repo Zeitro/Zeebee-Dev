@@ -1,6 +1,4 @@
 import { create } from 'zustand';
-import { createRequest } from '@/lib/fetch';
-const { request } = createRequest();
 import { getStateList, getCityList } from '@/api/common';
 export const useAddressStore = create((set) => ({
 	stateOptions: [],
@@ -8,7 +6,7 @@ export const useAddressStore = create((set) => ({
 
 	getStateList: async () => {
 		const { list } = await getStateList();
-		const stateOptions = list.map((i) => ({
+		const stateOptions = list?.map((i) => ({
 			label: i,
 			value: i,
 		}));
@@ -16,7 +14,7 @@ export const useAddressStore = create((set) => ({
 	},
 	getCityList: async (state) => {
 		const { list } = await getCityList(state);
-		const cityOptions = list.map((i) => ({
+		const cityOptions = list?.map((i) => ({
 			label: i,
 			value: i,
 		}));

@@ -7,8 +7,8 @@ import CreateTerm from '../components/Create/term';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createLoanSteps } from '@/enum/loan';
 import { createRequest } from '@/lib/fetch';
-import { formatDate } from '@/lib/date';
 import { loan_pending } from '@/enum/common';
+import { BtnPopUpModal } from '@/components/NewModal/BtnPopUpModal';
 const CreateLoanPage = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -21,12 +21,7 @@ const CreateLoanPage = () => {
 	const [loanData, setLoanData] = useState({
 		0: {},
 		1: {},
-		2: {
-			applicants: [
-				{ is_primary: true, type: 'Individual' },
-				{ is_primary: false, type: 'Individual' },
-			],
-		},
+		2: {},
 	});
 
 	useEffect(() => {
@@ -57,16 +52,10 @@ const CreateLoanPage = () => {
 				...(loanData[1] || {}),
 				...(values || {}),
 			};
-			if (body.closing_date) {
-				body.closing_date = formatDate(body.closing_date);
-			}
-			if (body.maturity_date) {
-				body.maturity_date = formatDate(body.maturity_date);
-			}
-			if (body.paid_off_date) {
-				body.paid_off_date = formatDate(body.paid_off_date);
-			}
-			body.applicants = body?.applicants.filter((i) => i.name);
+
+			body.applicants = body?.applicants.filter(
+				(i) => i.first_name || i.mid_name || i.last_name,
+			);
 			setLoading(true);
 			await request('/loan', {
 				method: 'POST',
@@ -74,7 +63,7 @@ const CreateLoanPage = () => {
 			});
 			message.open({
 				type: 'success',
-				content: 'Success in creation！',
+				content: '3rd party loan created successfully！',
 			});
 			setLoading(false);
 			router.back();
@@ -88,7 +77,7 @@ const CreateLoanPage = () => {
 		const data = await request(api);
 		const newData = {
 			loan_property: {
-				property_type: data.property_type,
+				// property_type: data.property_type,
 				property_base: {
 					unit: data.unit,
 					address: data.address,
@@ -100,9 +89,20 @@ const CreateLoanPage = () => {
 
 	const stepBtn = (
 		<Col xs={24} sm={24} className="py-6 !flex justify-between items-center">
-			<Button type="text" onClick={() => router.back()}>
+			<BtnPopUpModal
+				config={{
+					onOk: () => router.back(),
+					title: 'Tips',
+					content:
+						'The data is not saved yet, are you sure you want to leave the current page?',
+					okText: 'Leave',
+				}}
+				modalType="confirm"
+				type="text"
+				size="middle"
+			>
 				Cancel
-			</Button>
+			</BtnPopUpModal>
 			<Space size={8}>
 				{!!currentStep && (
 					<Button onClick={() => setCurrentStep((v) => v - 1)}>Back</Button>
@@ -149,6 +149,10 @@ const CreateLoanPage = () => {
 					disabled={loading}
 					initialValues={{
 						stage: loan_pending,
+						applicants: [
+							{ is_primary: true, type: 'Individual' },
+							{ is_primary: false, type: 'Individual' },
+						],
 					}}
 				>
 					{stepContent[currentStep]}

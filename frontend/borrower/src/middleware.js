@@ -3,18 +3,21 @@ import { getCurrentRouterItem } from '@config/common';
 import { routers } from '@config/routes';
 export function middleware(request) {
 	const { pathname } = request.nextUrl;
-	// 排除 /api 路径
-	if (pathname.startsWith('/api')) {
-		return NextResponse.next();
-	}
+
 	// 2. 获取 cookie/token
 	const token = request.cookies.get('token')?.value;
 	// 路由白名单
-	const whiteList = ['/login'];
+	const whiteList = [
+		'/login',
+		'/login/resetPassword',
+		'/login/register',
+		'/login/sendRegisterTips',
+		'/login/verifyEmail',
+	];
 	const routerItem = getCurrentRouterItem(pathname, routers);
 
 	if (!token && !whiteList.includes(pathname)) {
-		console.log('notoken----------middleware');
+		console.log('noToken----------middleware---===', pathname);
 
 		// 未登录且非白名单，重定向到登录页
 		return NextResponse.redirect(new URL('/login', request.url));
@@ -31,5 +34,8 @@ export function middleware(request) {
 }
 
 export const config = {
-	matcher: ['/((?!_next/static|_next/image|favicon.ico|.svg｜api).*)'],
+	// 排除Next.js内部资源、静态文件、API路径
+	matcher: [
+		'/((?!_next/static|_next/image|api/|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+	],
 };

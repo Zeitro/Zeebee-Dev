@@ -1,7 +1,7 @@
 'use client';
 import { InputNumber } from 'antd';
 import React from 'react';
-
+import { maxAmount } from '@/lib/format';
 /**
  * 金额输入框
  * InputNumber所需值
@@ -12,7 +12,7 @@ const InputNumAmount = ({
 	placeholder,
 	style = {},
 	min = 0,
-	max = 1000000000000,
+	max = maxAmount,
 	size = 'large',
 	...props
 }) => {

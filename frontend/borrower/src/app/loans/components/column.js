@@ -1,6 +1,18 @@
 import { formatAmount } from '@/lib/format';
 import LoanPendingStatus from './LoanPendingStatus';
 import TableOperation from '@/components/TableOperation';
+export const get3rdPartyMark = (v, { source }) => (
+	<div className="flex items-center">
+		<p className="overflow-hidden text-ellipsis whitespace-nowrap" title={v}>
+			{v}
+		</p>
+		{source === 'borrower' && (
+			<div className="ml-2 px-2 bg-blue-light-1 text-blue-medium-default rounded-xs">
+				3rd party
+			</div>
+		)}
+	</div>
+);
 const common = (isNotAddress) => {
 	const addressArr = [
 		{
@@ -10,21 +22,10 @@ const common = (isNotAddress) => {
 			ellipsis: true,
 			sorter: true,
 			sortDirections: ['ascend', 'descend'],
-			defaultSortOrder: 'descend',
+			// defaultSortOrder: 'descend',
 			fixed: 'left',
 			minWidth: 200,
-			render: (v, { source }) => (
-				<div className="flex items-center">
-					<p className="overflow-hidden text-ellipsis whitespace-nowrap" title={v}>
-						{v}
-					</p>
-					{source === 'borrower' && (
-						<div className="ml-2 px-2 bg-blue-light-1 text-blue-medium-default rounded-xs">
-							3rd party
-						</div>
-					)}
-				</div>
-			),
+			render: get3rdPartyMark,
 		},
 		{
 			title: 'City',
@@ -55,13 +56,17 @@ const common = (isNotAddress) => {
 			dataIndex: 'applicants',
 			key: 'applicants',
 			ellipsis: true,
-			render: (v) => v?.map((i) => i.full_name)?.join(','),
-			width: 160,
+			render: (v, row) => {
+				const value = v?.map((i) => i.full_name)?.join(',');
+				if (isNotAddress) return get3rdPartyMark(value, row);
+				return value;
+			},
+			width: isNotAddress ? 200 : 160,
 		},
 	];
 };
 
-const getOpt = (showDeleteModal) => {
+const getOpt = (showDeleteModal, stage) => {
 	return {
 		title: '',
 		dataIndex: 'operation',
@@ -71,12 +76,21 @@ const getOpt = (showDeleteModal) => {
 		render: (_, record) => (
 			<TableOperation
 				record={record}
-				disabled={record?.source !== 'borrower'}
+				disabled={stage !== 'Draft' && record?.source !== 'borrower'}
 				getItems={(editItem, deleteItem) => {
 					const arr = [];
-					if (record?.source === 'borrower') {
-						arr.push({ ...editItem, url: `/loans/${record?.id}` });
+					if (stage === 'Draft') {
+						const url =
+							record?.source === 'borrower'
+								? `/loans/${record?.id}`
+								: `/loans/createZeeBeeLoan?id=${record?.id}`;
+						arr.push({ ...editItem, url });
 						arr.push(deleteItem);
+					} else {
+						if (record?.source === 'borrower') {
+							arr.push({ ...editItem, url: `/loans/${record?.id}` });
+							arr.push(deleteItem);
+						}
 					}
 					return arr;
 				}}
@@ -89,7 +103,19 @@ const getOpt = (showDeleteModal) => {
 		),
 	};
 };
-export const pendingColumns = (isNotAddress, successCallback, showDeleteModal) => {
+export const pendingColumns = (isNotAddress, successCallback, showDeleteModal, stage) => {
+	const status = {
+		title: 'Status',
+		dataIndex: 'pending_status',
+		key: 'pending_status',
+		ellipsis: true,
+		width: 150,
+		align: 'center',
+		fixed: 'right',
+		render: (v, record) => (
+			<LoanPendingStatus data={record} successCallback={successCallback} />
+		),
+	};
 	return [
 		...common(isNotAddress),
 		{
@@ -174,19 +200,8 @@ export const pendingColumns = (isNotAddress, successCallback, showDeleteModal) =
 			ellipsis: true,
 			width: 180,
 		},
-		{
-			title: 'Status',
-			dataIndex: 'pending_status',
-			key: 'pending_status',
-			ellipsis: true,
-			width: 150,
-			align: 'center',
-			fixed: 'right',
-			render: (v, record) => (
-				<LoanPendingStatus data={record} successCallback={successCallback} />
-			),
-		},
-		getOpt(showDeleteModal),
+		...(stage === 'Draft' ? [] : [status]),
+		getOpt(showDeleteModal, stage),
 	];
 };
 
@@ -260,15 +275,6 @@ export const activeColumns = (isNotAddress, showDeleteModal) => [
 		ellipsis: true,
 		sorter: true,
 		width: 180,
-		render: (v) => formatAmount(v),
-	},
-	{
-		title: 'Hold back',
-		dataIndex: 'holdback_amount',
-		key: 'holdback_amount',
-		ellipsis: true,
-		sorter: true,
-		width: 120,
 		render: (v) => formatAmount(v),
 	},
 	// {

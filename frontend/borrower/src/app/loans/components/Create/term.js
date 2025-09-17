@@ -1,18 +1,18 @@
 'use client';
-import { Col, DatePicker, Form, Input, InputNumber, Row, Select } from 'antd';
+import { Col, Form, Input, InputNumber, Row, Select } from 'antd';
 import React from 'react';
 import styles from './index.module.scss';
 import InputNumAmount from '@/components/InputNumAmount';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import { loan_active, loan_pending } from '@/enum/common';
-import { formatStr } from '@/lib/date';
+import InputName from '@/components/InputName';
+import CommonFormDate from '@/components/CommonDate';
 const layoutCol = {
 	xs: 24,
 	sm: 24,
 };
 const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
-	const borrower1 = Form.useWatch(['applicants', 0, 'name'], form);
-	const borrower2 = Form.useWatch(['applicants', 1, 'name'], form);
+	const total_amount = Form.useWatch('total_amount', form);
 
 	const { lienPositionOptions, prepaymentPenaltyOptions } = useGetOptions([
 		{
@@ -24,12 +24,6 @@ const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
 			valueName: 'prepaymentPenaltyOptions',
 		},
 	]);
-	const borrowerValidator = (value, index) => {
-		if ((!index && value === borrower2) || (index === 1 && value === borrower1)) {
-			return Promise.reject('Borrower 1 and Borrower 2 cannot be the same');
-		}
-		return Promise.resolve();
-	};
 
 	const rateDom = (
 		<Col {...layoutCol} {...(colProps || {})}>
@@ -65,27 +59,27 @@ const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
 		<Row className={styles.create} gutter={gutter}>
 			<Form.List name="applicants">
 				{(fields) => {
-					return fields?.map((field, index) => (
-						<Col
-							{...layoutCol}
-							{...(colProps || {})}
-							key={field.key}
-							fieldkey={field.fieldKey}
-						>
-							<Form.Item
-								label={`Borrower ${index + 1}`}
-								name={[field.name, 'name']}
-								rules={[
-									{ required: !index, message: 'Please input!' },
-									{
-										validator: (rule, value) => borrowerValidator(value, index),
-									},
-								]}
-							>
-								<Input placeholder="Enter Borrower" />
-							</Form.Item>
-						</Col>
-					));
+					return (
+						<>
+							{fields?.map((field, index) => (
+								<InputName
+									key={field.key}
+									layoutCol={{ ...layoutCol, md: 8 }}
+									firstName={[field.name, 'first_name']}
+									middleName={[field.name, 'mid_name']}
+									lastName={[field.name, 'last_name']}
+									title={`Borrower ${index + 1}`}
+									config={{
+										firstNameRequired: !index,
+										lastNameRequired: !index,
+									}}
+									listName="applicants"
+									form={form}
+									className="!ml-0 !mr-0"
+								/>
+							))}
+						</>
+					);
 				}}
 			</Form.List>
 			{stage === loan_pending && (
@@ -97,11 +91,7 @@ const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
 							name="closing_date"
 							rules={[{ required: true, message: 'Please select date!' }]}
 						>
-							<DatePicker
-								format={formatStr}
-								placeholder="Select target closing date"
-								style={{ width: '100%' }}
-							/>
+							<CommonFormDate placeholder="Select target closing date" />
 						</Form.Item>
 					</Col>
 					<Col {...layoutCol} {...(colProps || {})}>
@@ -120,7 +110,10 @@ const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
 							name="closing_fund"
 							rules={[{ required: true, message: 'Please input!' }]}
 						>
-							<InputNumAmount placeholder="Enter Estimated closing fund" />
+							<InputNumAmount
+								placeholder="Enter Estimated closing fund"
+								max={total_amount}
+							/>
 						</Form.Item>
 					</Col>
 				</>
@@ -166,11 +159,7 @@ const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
 							name="maturity_date"
 							rules={[{ required: true, message: 'Please select date!' }]}
 						>
-							<DatePicker
-								format={formatStr}
-								placeholder="Select Maturity date"
-								style={{ width: '100%' }}
-							/>
+							<CommonFormDate placeholder="Select Maturity date" />
 						</Form.Item>
 					</Col>
 					<Col {...layoutCol} {...(colProps || {})}>
@@ -183,7 +172,7 @@ const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
 							<Select
 								options={prepaymentPenaltyOptions}
 								placeholder="Enter Prepayment penalty"
-								suffixIcon={<div className="text-sm">months interest</div>}
+								suffixIcon={<div className="text-sm">Months</div>}
 							/>
 						</Form.Item>
 					</Col>
