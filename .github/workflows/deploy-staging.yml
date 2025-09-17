@@ -10,12 +10,30 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Get Git Commit ID
+        id: vars
+        run: |
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
       - name: remove old docker containers
         run: |
           docker rm -f backend-borrower-staging || true
       - name: build and deploy
         working-directory: backend
+        env:
+          IMAGE_TAG: ${{ env.sha_short }}
         run: |
           docker-compose -f docker-compose-borrower-staging.yml down || true
           docker-compose -f docker-compose-borrower-staging.yml build --no-cache
           docker-compose -f docker-compose-borrower-staging.yml up -d
+
+      - name: Remove old images
+        run: |
+          docker images backend-borrower-staging \
+            --format "{{.Tag}}" \
+            | sort -V \
+            | head -n -10 \
+            | xargs -r -I {} docker rmi backend-borrower-staging:{} || true
+
+      - name: remove dangling images
+        run: |
+          docker image prune -f
