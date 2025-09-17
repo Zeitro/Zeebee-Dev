@@ -4,7 +4,7 @@ export const sort_des = 'Descending';
 
 export const propertiesFieldArr = [
 	{
-		label: 'Total loan',
+		label: 'Total active loan',
 		value: 'total_amount',
 		render: (v) => formatAmount(v),
 	},
@@ -14,7 +14,7 @@ export const propertiesFieldArr = [
 		render: (v) => formatAmount(v),
 	},
 	{
-		label: 'Avg. rate',
+		label: 'Average active rate',
 		value: 'avg_rate',
 		render: (v) => `${v || 0}%`,
 	},

@@ -54,7 +54,7 @@ const AddThirdService = ({ title, rowData, onOk, onCancel }) => {
 						label: 'Service type',
 						name: 'type',
 						placeholder: 'Select service type',
-						valueName: 'propertyTypeOptions',
+						valueName: 'serviceTypeOptions',
 						requiredMessage: 'Please select service type!',
 					})}
 					<Col {...layoutCol}>

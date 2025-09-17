@@ -112,3 +112,18 @@ li {
 ::-webkit-scrollbar-thumb:hover {
 	background-color: #aaa;
 }
+
+input:-webkit-autofill {
+	-webkit-box-shadow: 0 0 0 1000px white inset;
+	transition: background-color 50000s ease-in-out 0s;
+	-webkit-text-fill-color: #333;
+}
+
+/* antd重置 */
+.ant-form-item-vertical .ant-form-item-row .ant-form-item-label {
+	padding-bottom: 0;
+}
+.ant-form-item-vertical .ant-form-item-row .ant-form-item-label > label {
+	color: var(--black-dark);
+	height: auto !important;
+}

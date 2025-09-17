@@ -1,5 +1,5 @@
 import { createRequest } from '@/lib/fetch';
-const { request } = createRequest();
+const { request, uploadWithProgress } = createRequest();
 // 公共的下拉字段
 export const getSelectOptions = (name) => {
 	const params = new URLSearchParams({ name });
@@ -33,4 +33,28 @@ export const getCityList = (state) => {
 	return request(`/us_cities?${params}`, {
 		method: 'GET',
 	});
+};
+
+// 获取上传文件到亚马逊的外部url
+export const getUploadAwsUrl = (url, type = 'pdf') => {
+	return request(url, {
+		method: 'POST',
+		body: {
+			type,
+		},
+	});
+};
+
+// 上传文件到亚马逊
+export const uploadAwsS3 = async ({ url, file, onProgress = () => {}, type }) => {
+	const { url: uploadUrl } = await getUploadAwsUrl(url, type);
+	const res = await uploadWithProgress(uploadUrl, {
+		method: 'PUT',
+		body: file,
+		onProgress,
+		isExternalLink: true,
+	});
+	if (res) {
+		return uploadUrl.split('?')[0];
+	}
 };
