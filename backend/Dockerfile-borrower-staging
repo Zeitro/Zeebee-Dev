@@ -12,7 +12,7 @@ RUN go mod download
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o borrower /app/app/borrower/cmd/main.go
 
 # Stage 2: Final stage
-FROM scratch AS final
+FROM alpine:latest AS final
 WORKDIR /app
 COPY --from=builder /app/borrower /app/borrower
 COPY ./app/borrower/etc/config-staging.yaml /app/etc/config-staging.yaml
