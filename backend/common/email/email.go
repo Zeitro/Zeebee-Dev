@@ -1,6 +1,7 @@
 package email
 
 import (
+	"fmt"
 	"io"
 
 	"gopkg.in/gomail.v2"
@@ -72,5 +73,10 @@ func (e *Email) SendEmail(msg EmailMessage) error {
 		}
 	}
 
-	return e.dialer.DialAndSend(m)
+	err := e.dialer.DialAndSend(m)
+	if err != nil {
+		fmt.Printf("send email error: %v,config: %v,msg: %v\n", err, e.SMTP, msg)
+	}
+
+	return err
 }
