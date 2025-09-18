@@ -40,6 +40,63 @@ type EmptyRequest struct {
 type EmptyResponse struct {
 }
 
+type ImportLoanApplyPropertyEntry struct {
+	Id                   int64              `json:"id,optional"`
+	PropertyType         string             `json:"property_type,optional"`
+	LivingAreaSqft       float32            `json:"living_area_sqft,optional" validate:"gte=0"`
+	Bedrooms             int32              `json:"bedrooms,optional" validate:"gte=0"`
+	Bathrooms            int32              `json:"bathrooms,optional" validate:"gte=0"`
+	FuturePropertyType   string             `json:"future_property_type,optional"`
+	FutureUnit           int32              `json:"future_unit,optional" validate:"gte=0"`
+	FutureLivingAreaSqft float32            `json:"future_living_area_sqft,optional" validate:"gte=0"`
+	FutureBedrooms       int32              `json:"future_bedrooms,optional" validate:"gte=0"`
+	FutureBathrooms      int32              `json:"future_bathrooms,optional" validate:"gte=0"`
+	PropertyBase         *PropertyBaseEntry `json:"property_base,optional" validate:"required"`
+}
+
+type ImportLoanBorrowerEntry struct {
+	Id             int64        `json:"id,optional"`
+	LoanId         int64        `json:"loan_id,optional"`
+	Type           string       `json:"type,optional"`
+	Name           string       `json:"name,optional" validate:"required,min=1,max=255"`
+	TinType        string       `json:"tin_type,optional"`
+	Tin            string       `json:"tin,optional" `
+	MailingAddress AddressEntry `json:"mailing_address,optional" `
+	ContactEmail   string       `json:"contact_email,optional"`
+	ContactPhone   string       `json:"contact_phone,optional" `
+	ContactName    string       `json:"contact_name,optional" `
+	OwnPercent     int32        `json:"own_percent,optional"`
+}
+
+type ImportLoanExtendEntry struct {
+	Pricing          string `json:"pricing,optional"`
+	LoanStatusUpdate string `json:"loan_status_update,optional"`
+	MeetingNotes     string `json:"meeting_notes,optional"`
+	ActionList       string `json:"action_list,optional"`
+	BusinessLine     string `json:"business_line,optional"`
+}
+
+type ImportPendingLoanEntry struct {
+	BorrowerId            int64                         `json:"borrower_id" validate:"required,gt=0"`
+	LoanProperty          *ImportLoanApplyPropertyEntry `json:"loan_property,optional"`
+	Applicants            []*LoanApplyApplicantEntry    `json:"applicants,optional" validate:"required,gt=0,lte=2"`
+	LoanBorrower          *ImportLoanBorrowerEntry      `json:"loan_borrower,optional"`
+	ClosingDate           string                        `json:"closing_date,optional"`
+	PurchaseAmount        float64                       `json:"purchase_amount,optional"`
+	PurchaseDate          string                        `json:"purchase_date,optional"`
+	MaturityDate          string                        `json:"maturity_date,optional"`
+	ClosingFunds          float64                       `json:"closing_funds,optional"`
+	LenderCompany         string                        `json:"lender_company,optional"`
+	LoanType              string                        `json:"loan_type, optional"`
+	TotalAmount           float64                       `json:"total_amount,optional"`
+	HoldbackAmount        float64                       `json:"holdback_amount,optional"`
+	ExistingLenderCompany string                        `json:"existing_lender_company,optional"`
+	OriginalContractDate  string                        `json:"original_contract_date,optional"`
+	ExtensionDate         string                        `json:"extension_date,optional"`
+	LoanProcessor         string                        `json:"loan_processor,optional"`
+	Extend                *ImportLoanExtendEntry        `json:"extend,optional"`
+}
+
 type LoanApplyApplicantEntry struct {
 	Id               int64         `json:"id,optional"`
 	FirstName        string        `json:"first_name,optional" validate:"required,min=1,max=30"`

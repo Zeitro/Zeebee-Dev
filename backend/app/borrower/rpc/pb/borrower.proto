@@ -81,15 +81,9 @@ message UserRegisterRequestData {
   string password = 2;
   string first_name = 3;
   string last_name = 4;
-  //  string phone_number = 5;
-  //  string address = 6;
-  //  string ssn = 7;
 }
 message UserRegisterResponseData {
-  //  string access_token = 1;
-  //  string refresh_token = 2;
-  //  int64 access_token_expire = 3;
-  //  int64 refresh_token_expire = 4;
+
 }
 
 // refresh
@@ -554,6 +548,45 @@ message LoanApplyResponseData {
   int64 id = 1;
 }
 
+message ImportPendingLoansRequest {
+  repeated ImportPendingLoansRequestData data = 1;
+}
+message ImportPendingLoansRequestData {
+  int64 borrower_id = 1;
+  string loan_type = 2;
+  double total_amount = 3;
+  LoanPropertyEntry loan_property = 4;
+  LoanBorrowerEntry loan_borrower = 5;
+  float purchase_amount = 6;
+  string purchase_date = 7;
+  string maturity_date = 8;
+  double closing_fund = 9;
+  string lender_company = 10;
+  LoanExtendEntry extend = 11;
+  double holdback_amount = 12;
+  string existing_lender_company = 13;
+  string original_contract_date = 14;
+  string extension_date = 15;
+  string loan_processor = 16;
+  repeated BorrowerEditApplicantEntry applicants = 17;
+
+}
+
+message LoanExtendEntry{
+  message Values{
+    string  pricing = 1;
+    string loan_status_updates = 2;
+    string meeting_notes = 3;
+    string action_list = 4;
+
+  }
+  int64 id = 1;
+  int64 loan_id = 2;
+  Values values = 3;
+}
+
+
+
 service Loan {
   rpc CreateBorrowerLoan(LoanCreateRequest) returns(LoanCreateResponse);
   rpc BatchCreateBorrowerLoan(BatchCreateLoanRequest) returns(EmptyResponse);
@@ -566,6 +599,7 @@ service Loan {
   rpc ApplyLoan(LoanApplyRequest) returns(LoanApplyResponse);
   rpc SaveDraftLoan(LoanApplyRequest) returns(LoanApplyResponse);
   rpc UpdateApplyLoan(LoanApplyRequest) returns(EmptyResponse);
+  rpc ImportPendingLoans(ImportPendingLoansRequest) returns(EmptyResponse);
 }
 
 
