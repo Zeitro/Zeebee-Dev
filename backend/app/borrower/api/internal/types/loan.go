@@ -3,6 +3,10 @@
 
 package types
 
+type ImportLoanRequest struct {
+	Stage string `json:"stage,optional" validate:"required,oneof=Pending,Active,Archived"`
+}
+
 type LoanApplyRequest struct {
 	Id                       int64                      `path:"id,optional"`
 	LoanType                 string                     `json:"loan_type,optional" validate:"required,oneof=Bridge Rehab Rental 'Ground up construction'"`

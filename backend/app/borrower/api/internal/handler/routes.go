@@ -223,7 +223,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: user.ResetPasswordHandler(serverCtx),
 			},
 			{
-				// send reset password
+				// send reset password email
 				Method:  http.MethodPost,
 				Path:    "/user/send_reset_password",
 				Handler: user.SendResetPasswordHandler(serverCtx),

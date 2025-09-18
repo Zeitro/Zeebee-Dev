@@ -24,6 +24,8 @@ type (
 	BorrowerNamesResponse                 = borrower.BorrowerNamesResponse
 	EmptyRequest                          = borrower.EmptyRequest
 	EmptyResponse                         = borrower.EmptyResponse
+	ImportPendingLoansRequest             = borrower.ImportPendingLoansRequest
+	ImportPendingLoansRequestData         = borrower.ImportPendingLoansRequestData
 	LenderEntry                           = borrower.LenderEntry
 	LoanApplyRequest                      = borrower.LoanApplyRequest
 	LoanApplyRequestData                  = borrower.LoanApplyRequestData
@@ -47,6 +49,8 @@ type (
 	LoanDetailResponse                    = borrower.LoanDetailResponse
 	LoanEntry                             = borrower.LoanEntry
 	LoanExperienceEntry                   = borrower.LoanExperienceEntry
+	LoanExtendEntry                       = borrower.LoanExtendEntry
+	LoanExtendEntry_Values                = borrower.LoanExtendEntry_Values
 	LoanLenderCompaniesRequest            = borrower.LoanLenderCompaniesRequest
 	LoanLenderCompaniesRequestData        = borrower.LoanLenderCompaniesRequestData
 	LoanLenderCompaniesResponse           = borrower.LoanLenderCompaniesResponse
