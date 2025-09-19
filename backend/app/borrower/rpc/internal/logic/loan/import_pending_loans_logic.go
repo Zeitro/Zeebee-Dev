@@ -10,6 +10,7 @@ import (
 
 	"zeebee-backend/app/borrower/rpc/internal/repo/model"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
+	"zeebee-backend/app/borrower/rpc/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
@@ -222,8 +223,10 @@ func (l *ImportPendingLoansLogic) buildImportModel(in *borrower.ImportPendingLoa
 	propertyBase := loanProperty.PropertyBase
 
 	// loan extend
-	loanExtend := &model.LoanExtend{}
-	err = copier.CopyWithOption(loanExtend, in.Extend, copier.Option{
+	loanExtend := &model.LoanExtend{
+		Values: types.LoanExtendValues{},
+	}
+	err = copier.CopyWithOption(&loanExtend.Values, in.Extend, copier.Option{
 		IgnoreEmpty:   true,
 		CaseSensitive: true,
 		DeepCopy:      true,

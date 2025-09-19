@@ -1442,7 +1442,7 @@
     "/api/v1/loan/import": {
       "post": {
         "consumes": [
-          "application/x-www-form-urlencoded"
+          "application/json"
         ],
         "produces": [
           "application/json"
@@ -1455,6 +1455,21 @@
         ],
         "summary": "import",
         "operationId": "loanImport",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "stage": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "",
@@ -7886,7 +7901,7 @@
       }
     }
   },
-  "x-date": "2025-09-10 16:10:25",
+  "x-date": "2025-09-19 14:37:40",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

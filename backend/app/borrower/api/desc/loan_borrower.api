@@ -28,7 +28,7 @@ type ImportLoanBorrowerEntry {
     Name string `json:"name,optional" validate:"required,min=1,max=255"`
     TinType string `json:"tin_type,optional"`
     Tin string `json:"tin,optional" `
-    MailingAddress AddressEntry `json:"mailing_address,optional" `
+    MailingAddress AddressEntry `json:"mailing_address,optional" validate:"-"`
     ContactEmail string `json:"contact_email,optional"`
     ContactPhone string `json:"contact_phone,optional" `
     ContactName string `json:"contact_name,optional" `

@@ -50,7 +50,7 @@ type (
 	LoanEntry                             = borrower.LoanEntry
 	LoanExperienceEntry                   = borrower.LoanExperienceEntry
 	LoanExtendEntry                       = borrower.LoanExtendEntry
-	LoanExtendEntry_Values                = borrower.LoanExtendEntry_Values
+	LoanExtendValueEntry                  = borrower.LoanExtendValueEntry
 	LoanLenderCompaniesRequest            = borrower.LoanLenderCompaniesRequest
 	LoanLenderCompaniesRequestData        = borrower.LoanLenderCompaniesRequestData
 	LoanLenderCompaniesResponse           = borrower.LoanLenderCompaniesResponse

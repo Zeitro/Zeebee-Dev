@@ -562,7 +562,7 @@ message ImportPendingLoansRequestData {
   string maturity_date = 8;
   double closing_fund = 9;
   string lender_company = 10;
-  LoanExtendEntry extend = 11;
+  LoanExtendValueEntry extend = 11;
   double holdback_amount = 12;
   string existing_lender_company = 13;
   string original_contract_date = 14;
@@ -573,16 +573,16 @@ message ImportPendingLoansRequestData {
 }
 
 message LoanExtendEntry{
-  message Values{
-    string  pricing = 1;
-    string loan_status_updates = 2;
-    string meeting_notes = 3;
-    string action_list = 4;
-
-  }
   int64 id = 1;
   int64 loan_id = 2;
-  Values values = 3;
+  LoanExtendValueEntry values = 3;
+}
+
+message LoanExtendValueEntry {
+  string  pricing = 1;
+  string loan_status_updates = 2;
+  string meeting_notes = 3;
+  string action_list = 4;
 }
 
 

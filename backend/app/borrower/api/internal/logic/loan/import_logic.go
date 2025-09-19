@@ -141,7 +141,7 @@ func (l *ImportLogic) Import(fileContents []byte, stage string) (resp *types.Emp
 		// todo import active loans
 		fallthrough
 	default:
-		err = errors.WithStack(errors.New("invalid loan stage"))
+		err = errors.WithStack(errors.Errorf("invalid loan stage: %s", stage))
 	}
 	return &types.EmptyResponse{}, errors.WithStack(err)
 }
@@ -175,15 +175,15 @@ func (l *ImportLogic) importPendingLoans(content []byte, borrowerId int64) (err 
 		}
 	}
 	// get loans
-	importLoans, err := getPendingLoans(rows, borrowerId)
+	importLoans, err := parsePendingLoans(rows, borrowerId)
 	if err != nil {
 		return err
 	}
 
 	rpcReq := &borrower.ImportPendingLoansRequest{
-		Data: &borrower.ImportPendingLoansRequestData{},
+		Data: []*borrower.ImportPendingLoansRequestData{},
 	}
-	err = copier.CopyWithOption(rpcReq.Data, importLoans, copier.Option{
+	err = copier.CopyWithOption(&rpcReq.Data, &importLoans, copier.Option{
 		IgnoreEmpty:   true,
 		CaseSensitive: true,
 		DeepCopy:      true,
@@ -192,10 +192,12 @@ func (l *ImportLogic) importPendingLoans(content []byte, borrowerId int64) (err 
 		return errorx.GetFailedTransErr(err)
 	}
 
-	return nil
+	_, err = l.svcCtx.LoanRpcClient.ImportPendingLoans(l.ctx, rpcReq)
+
+	return err
 }
 
-func getPendingLoans(rows [][]string, borrowerId int64) ([]*types.ImportPendingLoanEntry, error) {
+func parsePendingLoans(rows [][]string, borrowerId int64) ([]*types.ImportPendingLoanEntry, error) {
 
 	importLoans := make([]*types.ImportPendingLoanEntry, 0, len(rows))
 	// Create a map for column indices
@@ -217,9 +219,8 @@ func getPendingLoans(rows [][]string, borrowerId int64) ([]*types.ImportPendingL
 		loanData := &types.ImportPendingLoanEntry{
 			BorrowerId: borrowerId,
 		}
+		// property address
 		addr := &types.AddressEntry{}
-
-		// Map data from Excel row to ImportPendingLoanEntry struct
 		if idx, ok := columnIndex[pendingColPropertyAddress]; ok && idx < len(row) {
 			addr.Address1 = row[idx]
 		}
@@ -238,7 +239,7 @@ func getPendingLoans(rows [][]string, borrowerId int64) ([]*types.ImportPendingL
 				Address: addr,
 			},
 		}
-
+		// loan borrower
 		loanBorrower := &types.ImportLoanBorrowerEntry{}
 		if idx, ok := columnIndex[pendingColOwner]; ok && idx < len(row) {
 			loanBorrower.Name = row[idx]
@@ -247,47 +248,69 @@ func getPendingLoans(rows [][]string, borrowerId int64) ([]*types.ImportPendingL
 			} else {
 				loanBorrower.Type = string(constants.ApplicantTypeIndividual)
 			}
+			loanBorrower.OwnPercent = 100
 		}
 		loanData.LoanBorrower = loanBorrower
-
-		applicant := &types.LoanApplyApplicantEntry{}
+		// applicant
+		applicant := &types.ImportLoanApplicantEntry{}
 		if idx, ok := columnIndex[pendingColBorrower]; ok && idx < len(row) {
 			applicant.FirstName = row[idx]
 			applicant.Type = loanBorrower.Type
+			applicant.IsPrimary = true
 		}
 		loanData.Applicants = append(loanData.Applicants, applicant)
 
+		// extend
+		extend := &types.ImportLoanExtendEntry{}
+		if idx, ok := columnIndex[pendingColLoanStatus]; ok && idx < len(row) {
+			extend.LoanStatusUpdate = row[idx]
+		}
+		if idx, ok := columnIndex[pendingColActionList]; ok && idx < len(row) {
+			extend.ActionList = row[idx]
+		}
+		if idx, ok := columnIndex[pendingColBusinessLine]; ok && idx < len(row) {
+			extend.BusinessLine = row[idx]
+		}
+		if idx, ok := columnIndex[pendingColMeetingNotes]; ok && idx < len(row) {
+			extend.MeetingNotes = row[idx]
+		}
+		if idx, ok := columnIndex[pendingColPricing]; ok && idx < len(row) {
+			extend.Pricing = row[idx]
+		}
+		loanData.Extend = extend
+
+		// loan
 		if idx, ok := columnIndex[pendingColTargetCloseDate]; ok && idx < len(row) {
 			if !validateDate(row[idx]) {
-				return nil, errors.Errorf("Invalid date format for Target Close Date at row %d", i+1)
+				return nil, errors.Errorf("Invalid date format for Target Close Date at row %d", i)
 			}
 			loanData.ClosingDate = row[idx]
 		}
 		if idx, ok := columnIndex[pendingColPurchasePrice]; ok && idx < len(row) {
 			amount, err := parseFloat(row[idx])
 			if err != nil {
-				return nil, errors.Errorf("Invalid purchase price at row %d", i+1)
+				return nil, errors.Errorf("Invalid purchase price at row %d", i)
 			}
 			loanData.PurchaseAmount = amount
 		}
 		if idx, ok := columnIndex[pendingColPurchaseDate]; ok && idx < len(row) {
 			if !validateDate(row[idx]) {
-				return nil, errors.Errorf("Invalid date format for Purchase Date at row %d", i+1)
+				return nil, errors.Errorf("Invalid date format for Purchase Date at row %d", i)
 			}
 			loanData.PurchaseDate = row[idx]
 		}
 		if idx, ok := columnIndex[pendingColLoanMaturityDate]; ok && idx < len(row) {
 			if !validateDate(row[idx]) {
-				return nil, errors.Errorf("Invalid date format for Loan Maturity Date at row %d", i+1)
+				return nil, errors.Errorf("Invalid date format for Loan Maturity Date at row %d", i)
 			}
 			loanData.MaturityDate = row[idx]
 		}
 		if idx, ok := columnIndex[pendingColEstClosingFunds]; ok && idx < len(row) {
 			amount, err := parseFloat(row[idx])
 			if err != nil {
-				return nil, errors.Errorf("Invalid closing funds at row %d", i+1)
+				return nil, errors.Errorf("Invalid closing funds at row %d", i)
 			}
-			loanData.ClosingFunds = amount
+			loanData.ClosingFund = amount
 		}
 		if idx, ok := columnIndex[pendingColTargetLender]; ok && idx < len(row) {
 			loanData.LenderCompany = row[idx]
@@ -298,29 +321,18 @@ func getPendingLoans(rows [][]string, borrowerId int64) ([]*types.ImportPendingL
 		if idx, ok := columnIndex[pendingColEstimatedLoanAmt]; ok && idx < len(row) {
 			amount, err := parseFloat(row[idx])
 			if err != nil {
-				return nil, errors.Errorf("Invalid estimated loan amount at row %d", i+1)
+				return nil, errors.Errorf("Invalid estimated loan amount at row %d", i)
 			}
 			loanData.TotalAmount = amount
 		}
 		if idx, ok := columnIndex[pendingColRehabLoan]; ok && idx < len(row) {
 			amount, err := parseFloat(row[idx])
 			if err != nil {
-				return nil, errors.Errorf("Invalid rehab loan amount at row %d", i+1)
+				return nil, errors.Errorf("Invalid rehab loan amount at row %d", i)
 			}
 			loanData.HoldbackAmount = amount
 		}
-		if idx, ok := columnIndex[pendingColPricing]; ok && idx < len(row) {
-			loanData.Extend.Pricing = row[idx]
-		}
-		if idx, ok := columnIndex[pendingColLoanStatus]; ok && idx < len(row) {
-			loanData.Extend.LoanStatusUpdate = row[idx]
-		}
-		if idx, ok := columnIndex[pendingColActionList]; ok && idx < len(row) {
-			loanData.Extend.ActionList = row[idx]
-		}
-		if idx, ok := columnIndex[pendingColBusinessLine]; ok && idx < len(row) {
-			loanData.Extend.BusinessLine = row[idx]
-		}
+
 		if idx, ok := columnIndex[pendingColExistingLender]; ok && idx < len(row) {
 			loanData.ExistingLenderCompany = row[idx]
 		}
@@ -329,19 +341,17 @@ func getPendingLoans(rows [][]string, borrowerId int64) ([]*types.ImportPendingL
 		}
 		if idx, ok := columnIndex[pendingColExtensionDate]; ok && idx < len(row) {
 			if !validateDate(row[idx]) {
-				return nil, errors.Errorf("Invalid date format for Extension Date at row %d", i+1)
+				return nil, errors.Errorf("Invalid date format for Extension Date at row %d", i)
 			}
 			loanData.ExtensionDate = row[idx]
 		}
 		if idx, ok := columnIndex[pendingColLoanProcessor]; ok && idx < len(row) {
 			loanData.LoanProcessor = row[idx]
 		}
-		if idx, ok := columnIndex[pendingColMeetingNotes]; ok && idx < len(row) {
-			loanData.Extend.MeetingNotes = row[idx]
-		}
+
 		err = v.Validate(loanData)
 		if err != nil {
-			return nil, errors.Wrapf(err, "Invalid data at row %d", i+1)
+			return nil, errors.Wrapf(err, "Invalid data at row %d", i)
 		}
 		importLoans = append(importLoans, loanData)
 	}

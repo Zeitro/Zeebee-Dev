@@ -59,10 +59,10 @@ type Loan struct {
 	HasCollateralizedBlanket bool                        `gorm:"column:has_collateralized_blanket;not null;default:false" json:"has_collateralized_blanket"`
 	HasPropertiesVacant      bool                        `gorm:"column:has_properties_vacant;not null;default:false" json:"has_properties_vacant"`
 	HasShortTermRental       bool                        `gorm:"column:has_short_term_rental;not null;default:false" json:"has_short_term_rental"`
-	AdditionalInfo           string                      `gorm:"column:additional_info;type:varchar(3000)" json:"additional_info"`
-	OriginalContractDate     *sql.NullTime               `json:"original_contract_date,optional" gorm:"column:original_contract_date"`
-	ExtensionDate            *sql.NullTime               `json:"extension_date,optional" gorm:"column:extension_date"`
-	LoanProcessor            string                      `json:"loan_processor,optional" gorm:"column:loan_processor;size:100;not null;default:''"`
+	// AdditionalInfo           string                      `gorm:"column:additional_info;type:varchar(3000)" json:"additional_info"`
+	OriginalContractDate *sql.NullTime `json:"original_contract_date,optional" gorm:"column:original_contract_date"`
+	ExtensionDate        *sql.NullTime `json:"extension_date,optional" gorm:"column:extension_date"`
+	LoanProcessor        string        `json:"loan_processor,optional" gorm:"column:loan_processor;size:100;not null;default:''"`
 
 	// relationships
 	Borrower          *Borrower           `json:"borrower" gorm:"foreignKey:BorrowerId;references:Id"`

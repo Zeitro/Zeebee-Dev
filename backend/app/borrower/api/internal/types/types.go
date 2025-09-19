@@ -40,6 +40,13 @@ type EmptyRequest struct {
 type EmptyResponse struct {
 }
 
+type ImportLoanApplicantEntry struct {
+	Id        int64  `json:"id,optional"`
+	FirstName string `json:"first_name,optional" validate:"required,min=1,max=30"`
+	Type      string `json:"type,optional" validate:"required,oneof=Individual Corporation LLC Trust Partnership"`
+	IsPrimary bool   `json:"is_primary,optional"`
+}
+
 type ImportLoanApplyPropertyEntry struct {
 	Id                   int64              `json:"id,optional"`
 	PropertyType         string             `json:"property_type,optional"`
@@ -61,7 +68,7 @@ type ImportLoanBorrowerEntry struct {
 	Name           string       `json:"name,optional" validate:"required,min=1,max=255"`
 	TinType        string       `json:"tin_type,optional"`
 	Tin            string       `json:"tin,optional" `
-	MailingAddress AddressEntry `json:"mailing_address,optional" `
+	MailingAddress AddressEntry `json:"mailing_address,optional" validate:"-"`
 	ContactEmail   string       `json:"contact_email,optional"`
 	ContactPhone   string       `json:"contact_phone,optional" `
 	ContactName    string       `json:"contact_name,optional" `
@@ -79,13 +86,13 @@ type ImportLoanExtendEntry struct {
 type ImportPendingLoanEntry struct {
 	BorrowerId            int64                         `json:"borrower_id" validate:"required,gt=0"`
 	LoanProperty          *ImportLoanApplyPropertyEntry `json:"loan_property,optional"`
-	Applicants            []*LoanApplyApplicantEntry    `json:"applicants,optional" validate:"required,gt=0,lte=2"`
-	LoanBorrower          *ImportLoanBorrowerEntry      `json:"loan_borrower,optional"`
+	Applicants            []*ImportLoanApplicantEntry   `json:"applicants,optional" validate:"required,gt=0,lte=2"`
+	LoanBorrower          *ImportLoanBorrowerEntry      `json:"loan_borrower,optional" validate:"required"`
 	ClosingDate           string                        `json:"closing_date,optional"`
 	PurchaseAmount        float64                       `json:"purchase_amount,optional"`
 	PurchaseDate          string                        `json:"purchase_date,optional"`
 	MaturityDate          string                        `json:"maturity_date,optional"`
-	ClosingFunds          float64                       `json:"closing_funds,optional"`
+	ClosingFund           float64                       `json:"closing_fund,optional"`
 	LenderCompany         string                        `json:"lender_company,optional"`
 	LoanType              string                        `json:"loan_type, optional"`
 	TotalAmount           float64                       `json:"total_amount,optional"`

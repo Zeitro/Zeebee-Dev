@@ -4,7 +4,7 @@
 package types
 
 type ImportLoanRequest struct {
-	Stage string `json:"stage,optional" validate:"required,oneof=Pending,Active,Archived"`
+	Stage string `form:"stage" validate:"required,oneof=Pending,Active,Archived"`
 }
 
 type LoanApplyRequest struct {
