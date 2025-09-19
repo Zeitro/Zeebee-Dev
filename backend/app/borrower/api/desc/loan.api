@@ -90,6 +90,23 @@ type LoanApplyApplicantEntry {
     Address *AddressEntry `json:"address,optional" validate:"required"`
 }
 
+type ImportLoanApplicantEntry {
+    Id int64 `json:"id,optional"`
+    FirstName string `json:"first_name,optional" validate:"required,min=1,max=30"`
+    //    MidName string `json:"mid_name,optional" validate:"min=0,max=30"`
+    //    LastName string `json:"last_name,optional"`
+    Type string `json:"type,optional" validate:"required,oneof=Individual Corporation LLC Trust Partnership"`
+    IsPrimary bool `json:"is_primary,optional"`
+    //    Ssn string `json:"ssn,optional" validate:"required"`
+    //    Dob string `json:"dob,optional" `
+    //    MaritalStatus string `json:"marital_status,optional" `
+    //    Email string `json:"email,optional" `
+    //    Phone string `json:"phone,optional" `
+    //    EstCreditScore int32 `json:"est_credit_score,optional" `
+    //    DriverLicenseNum string `json:"driver_license_num,optional" `
+    //    Address *AddressEntry `json:"address,optional"`
+}
+
 type LoanEntry {
     Id int64 `json:"id,optional"`
     Stage string `json:"stage" validate:"required,oneof=Pending Active Archived"`
@@ -337,7 +354,7 @@ type (
 
 type (
     ImportLoanRequest {
-        Stage string `json:"stage,optional" validate:"required,oneof=Pending,Active,Archived"`
+        Stage string `form:"stage" validate:"required,oneof=Pending,Active,Archived"`
     }
 )
 
@@ -345,26 +362,20 @@ type (
 type ImportPendingLoanEntry {
     BorrowerId int64 `json:"borrower_id" validate:"required,gt=0"`
     // property address
-    //    PropertyAddress string `json:"property_address,optional" validate:"required"`
-    //    PropertyCity string `json:"property_city,optional" validate:"required"`
-    //    PropertyState string `json:"property_state,optional" validate:"required"`
-    //    PropertyZip string `json:"property_zip,optional" validate:"required"`
     LoanProperty *ImportLoanApplyPropertyEntry `json:"loan_property,optional"`
 
     // applicants
-    Applicants []*LoanApplyApplicantEntry `json:"applicants,optional" validate:"required,gt=0,lte=2"`
+    Applicants []*ImportLoanApplicantEntry `json:"applicants,optional" validate:"required,gt=0,lte=2"`
 
     // borrower
-    //    Borrower string `json:"borrower,optional" validate:"required"`
-    //    Owerner string `json:"owner,optional" validate:"required"`
-    LoanBorrower *ImportLoanBorrowerEntry `json:"loan_borrower,optional"`
+    LoanBorrower *ImportLoanBorrowerEntry `json:"loan_borrower,optional" validate:"required"`
 
     // loan
     ClosingDate string `json:"closing_date,optional"`
     PurchaseAmount float64 `json:"purchase_amount,optional"`
     PurchaseDate string `json:"purchase_date,optional"`
     MaturityDate string `json:"maturity_date,optional"`
-    ClosingFunds float64 `json:"closing_funds,optional"`
+    ClosingFund float64 `json:"closing_fund,optional"`
     LenderCompany string `json:"lender_company,optional"`
     LoanType string `json:"loan_type, optional"`
     TotalAmount float64 `json:"total_amount,optional"`
