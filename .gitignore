@@ -2,3 +2,7 @@
 /node_modules
 .idea
 .lingma
+/frontend/borrower/node_modules
+/frontend/lender/node_modules
+/frontend/borrower/.next
+/frontend/lender/.next
