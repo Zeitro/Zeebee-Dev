@@ -18,11 +18,16 @@ const SignIn = ({ form, setPageType }) => {
 
 	const [modal, contextHolder] = Modal.useModal();
 	const email = Form.useWatch('email', form);
+	const password = Form.useWatch('password', form);
 
 	useEffect(() => {
-		const email = localStorageUtil.get('email');
-		if (email) {
-			form.setFieldsValue({ email, remember: true });
+		const account = localStorageUtil.get('account');
+		if (account?.email || account?.password) {
+			form.setFieldsValue({
+				email: account.email,
+				password: account.password,
+				remember: true,
+			});
 		}
 	}, []);
 
@@ -139,9 +144,9 @@ const SignIn = ({ form, setPageType }) => {
 						size="small"
 						onChange={({ target: { checked } }) => {
 							if (checked) {
-								localStorageUtil.set('email', email);
+								localStorageUtil.set('account', { email, password });
 							} else {
-								localStorageUtil.remove('email');
+								localStorageUtil.remove('account');
 							}
 						}}
 					>
