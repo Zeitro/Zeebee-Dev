@@ -1,14 +1,16 @@
 'use client';
-import { Col, DatePicker, Form, Radio, Row, Select } from 'antd';
+import { Col, Form, Radio, Row, Select } from 'antd';
 import React from 'react';
 import styles from './index.module.scss';
 import InputNumAmount from '@/components/InputNumAmount';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import { loan_active, loan_archived, loan_pending } from '@/enum/common';
-import { formatStr } from '@/lib/date';
+import { maxAmount } from '@/lib/format';
+import CommonFormDate from '@/components/CommonDate';
 const MAX_COUNT = 5;
 const CreateLoan = ({ form, stepBtn, gutter, isRadioStyle, ...colProps }) => {
 	const stage = Form.useWatch('stage', form);
+	const total_amount = Form.useWatch('total_amount', form) || maxAmount;
 	const {
 		loanPendingStatus,
 		loanPurposeOptions,
@@ -104,7 +106,10 @@ const CreateLoan = ({ form, stepBtn, gutter, isRadioStyle, ...colProps }) => {
 					</Col>
 					<Col {...layoutCol} {...(colProps || {})}>
 						<Form.Item label="Initial loan amount(optional)" name="initial_amount">
-							<InputNumAmount placeholder="Enter initial loan amount" />
+							<InputNumAmount
+								placeholder="Enter initial loan amount"
+								max={total_amount}
+							/>
 						</Form.Item>
 					</Col>
 				</>
@@ -123,7 +128,10 @@ const CreateLoan = ({ form, stepBtn, gutter, isRadioStyle, ...colProps }) => {
 								},
 							]}
 						>
-							<InputNumAmount placeholder="Enter Outstanding loan amount" />
+							<InputNumAmount
+								placeholder="Enter Outstanding loan amount"
+								max={total_amount}
+							/>
 						</Form.Item>
 					</Col>
 					<Col {...layoutCol} {...(colProps || {})}>
@@ -132,7 +140,10 @@ const CreateLoan = ({ form, stepBtn, gutter, isRadioStyle, ...colProps }) => {
 							name="monthly_payment"
 							rules={[{ required: true, message: 'Please Enter Monthly payment!' }]}
 						>
-							<InputNumAmount placeholder="Enter Monthly payment" />
+							<InputNumAmount
+								placeholder="Enter Monthly payment"
+								max={total_amount}
+							/>
 						</Form.Item>
 					</Col>
 				</>
@@ -159,32 +170,26 @@ const CreateLoan = ({ form, stepBtn, gutter, isRadioStyle, ...colProps }) => {
 							name="paid_off_date"
 							rules={[{ required: true, message: 'Please select paid off date!' }]}
 						>
-							<DatePicker
-								format={formatStr}
-								placeholder="select"
-								style={{ width: '100%' }}
-							/>
+							<CommonFormDate />
 						</Form.Item>
 					</Col>
 				</>
 			)}
-			{stage !== loan_archived && (
-				<Col {...layoutCol} {...(colProps || {})}>
-					<Form.Item
-						label="Business strategy"
-						name="business_strategy"
-						rules={[{ required: true, message: 'Please select Business strategy!' }]}
-					>
-						<Select
-							mode="multiple"
-							maxCount={MAX_COUNT}
-							style={{ width: '100%' }}
-							placeholder="Select Business strategy"
-							options={businessStrategyOptions}
-						/>
-					</Form.Item>
-				</Col>
-			)}
+			<Col {...layoutCol} {...(colProps || {})}>
+				<Form.Item
+					label="Business strategy"
+					name="business_strategy"
+					rules={[{ required: true, message: 'Please select Business strategy!' }]}
+				>
+					<Select
+						mode="multiple"
+						maxCount={MAX_COUNT}
+						style={{ width: '100%' }}
+						placeholder="Select Business strategy"
+						options={businessStrategyOptions}
+					/>
+				</Form.Item>
+			</Col>
 
 			{stepBtn}
 		</Row>

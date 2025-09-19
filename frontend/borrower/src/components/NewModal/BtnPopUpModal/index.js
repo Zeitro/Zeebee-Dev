@@ -2,14 +2,34 @@
 import { Button, Modal } from 'antd';
 import { useState } from 'react';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { title } from 'process';
+// 弹框的初始配置样式
+export const initConfigFn = (config = {}) => {
+	return {
+		icon: <ExclamationCircleOutlined />,
+		content: null,
+		maskClosable: false,
+		centered: true,
+		...config,
+		title: <div className="font-medium">{config.title}</div>,
+		okButtonProps: {
+			size: 'middle',
+			className: 'border-[6px]',
+			...(config?.okButtonProps || {}),
+		},
+		cancelButtonProps: {
+			size: 'middle',
+			className: 'border-[6px]',
+			...(config?.cancelButtonProps || {}),
+		},
+	};
+};
 /**
  *	按钮 + 确认弹窗
  * @param {*} type confirm | warning | info | error
  */
 export const BtnPopUpModal = ({
 	children,
-	type = '',
+	modalType = '',
 	config = {},
 	getContent = () => {}, // 弹框组件
 	...props
@@ -17,25 +37,9 @@ export const BtnPopUpModal = ({
 	const [modal, contextHolder] = Modal.useModal();
 	const [open, setOpen] = useState('');
 	const handleClick = () => {
-		if (type) {
-			modal[type]?.({
-				title: <div className="font-medium">{title}</div>,
-				icon: <ExclamationCircleOutlined />,
-				content: null,
-				maskClosable: false,
-				centered: true,
-				...config,
-				okButtonProps: {
-					size: 'middle',
-					className: 'border-[6px]',
-					...(config?.okButtonProps || {}),
-				},
-				cancelButtonProps: {
-					size: 'middle',
-					className: 'border-[6px]',
-					...(config?.cancelButtonProps || {}),
-				},
-			});
+		if (modalType) {
+			const initValue = initConfigFn(config);
+			modal[modalType]?.(initValue);
 			return;
 		}
 		setOpen(true);
@@ -57,10 +61,45 @@ export const DeleteBtn = ({ title = 'Are you sure you want to delete this?', ...
 	return (
 		<BtnPopUpModal
 			danger={true}
-			type="confirm"
+			modalType="confirm"
 			config={{ title, okText: 'Delete', okButtonProps: { danger: true }, ...props }}
 		>
 			Delete
+		</BtnPopUpModal>
+	);
+};
+
+// 离开并保存草稿
+export const LeaveAndSaveDraftBtn = ({
+	handleSaveDraft,
+	isChange,
+	disabled,
+	router,
+	confirmLoading,
+}) => {
+	return (
+		<BtnPopUpModal
+			config={{
+				onOk: () => handleSaveDraft(),
+				title: 'Tips',
+				content: `${isChange ? 'The data is not saved yet, ' : ''}are you sure you want to leave the current page?`,
+				okText: 'Leave and save draft',
+				cancelText: 'Leave',
+				closable: true,
+				cancelButtonProps: {
+					onClick: () => router.back(),
+				},
+				okButtonProps: {
+					disabled: !isChange,
+				},
+				confirmLoading,
+			}}
+			modalType="confirm"
+			type="default"
+			size="middle"
+			disabled={disabled}
+		>
+			Cancel
 		</BtnPopUpModal>
 	);
 };

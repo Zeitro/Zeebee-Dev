@@ -10,9 +10,6 @@ export const useColumnByZeeBeeLoan = (handleAdd = () => {}, handleDelete = () =>
 			dataIndex: ['address', 'address1'],
 			key: 'address',
 			ellipsis: true,
-			sorter: true,
-			sortDirections: ['ascend', 'descend'],
-			defaultSortOrder: 'descend',
 			fixed: 'left',
 			minWidth: 200,
 		},
@@ -78,7 +75,7 @@ export const useColumnByZeeBeeLoan = (handleAdd = () => {}, handleDelete = () =>
 			width: 140,
 		},
 		{
-			title: 'Profit/Loan',
+			title: 'Profit/Loss',
 			dataIndex: 'profit',
 			key: 'profit',
 			ellipsis: true,
