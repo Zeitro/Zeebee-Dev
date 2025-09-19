@@ -51,6 +51,8 @@ func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingL
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
+	// err = errors.Errorf("no pending loan")
+	// return nil, errors.WithStack(err)
 
 	// get save data
 	models, err := l.buildImportModels(in.Data)

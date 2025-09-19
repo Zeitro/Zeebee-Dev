@@ -143,7 +143,7 @@ func (l *ImportLogic) Import(fileContents []byte, stage string) (resp *types.Emp
 	default:
 		err = errors.WithStack(errors.Errorf("invalid loan stage: %s", stage))
 	}
-	return &types.EmptyResponse{}, errors.WithStack(err)
+	return &types.EmptyResponse{}, err
 }
 
 func (l *ImportLogic) importPendingLoans(content []byte, borrowerId int64) (err error) {
