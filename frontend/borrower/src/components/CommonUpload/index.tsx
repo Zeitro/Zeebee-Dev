@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, forwardRef, useImperativeHandle } from 'react';
+import React, { useState, forwardRef, useImperativeHandle, useEffect } from 'react';
 import { Upload, Button, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import type { UploadProps, UploadFile, RcFile } from 'antd/es/upload/interface';
@@ -19,6 +19,7 @@ interface CommonUploadProps {
 	maxCount?: number;
 	accept?: string;
 	children?: React.ReactNode;
+	onGetUploadList?: () => UploadFile[];
 }
 
 const CommonUpload = forwardRef<CommonUploadRef, CommonUploadProps>(
@@ -31,6 +32,7 @@ const CommonUpload = forwardRef<CommonUploadRef, CommonUploadProps>(
 			maxCount = 1,
 			accept,
 			children,
+			onGetUploadList = (fileList: UploadFile[]) => [],
 		},
 		ref,
 	) => {
@@ -153,6 +155,10 @@ const CommonUpload = forwardRef<CommonUploadRef, CommonUploadProps>(
 				return false;
 			};
 		}
+
+		useEffect(() => {
+			onGetUploadList(fileList);
+		}, [fileList]);
 
 		return (
 			<Upload {...uploadProps}>
