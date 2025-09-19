@@ -29,7 +29,7 @@ const CommonDownloadButton: React.FC<CommonDownloadButtonProps> = ({
 		message.loading({ content: '正在准备下载...', key: 'download' });
 
 		try {
-			const response = await request(fileUrl);
+			const response = await request(fileUrl, { isExternalLink: true });
 
 			// 1. 获取文件总大小
 			const contentLength = response.headers.get('Content-Length');
@@ -81,7 +81,13 @@ const CommonDownloadButton: React.FC<CommonDownloadButtonProps> = ({
 	};
 
 	return (
-		<Button icon={<DownloadOutlined />} loading={loading} onClick={handleDownload} {...rest}>
+		<Button
+			icon={<DownloadOutlined />}
+			size="large"
+			loading={loading}
+			onClick={handleDownload}
+			{...rest}
+		>
 			{children || 'Download'}
 		</Button>
 	);
