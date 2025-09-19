@@ -38,7 +38,7 @@ const InputName = ({
 	};
 
 	return (
-		<Row gutter={gutter} className={['w-full', className].join(' ')}>
+		<>
 			{title && (
 				<Col {...titleCol} className="font-medium text-[#000000a6]" style={style}>
 					{title}
@@ -80,7 +80,7 @@ const InputName = ({
 					<Input placeholder={`Enter ${lastLabel.toLowerCase()}`} />
 				</Form.Item>
 			</Col>
-		</Row>
+		</>
 	);
 };
 export default InputName;

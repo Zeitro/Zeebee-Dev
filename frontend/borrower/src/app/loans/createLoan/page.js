@@ -14,7 +14,7 @@ const CreateLoanPage = () => {
 	const searchParams = useSearchParams();
 	const api = `/property/${searchParams.get('propertyId')}`;
 	const { request } = createRequest();
-	const [currentStep, setCurrentStep] = useState(0);
+	const [currentStep, setCurrentStep] = useState(2);
 	const [loading, setLoading] = useState(false);
 	const [form] = Form.useForm();
 	// 存储每个步骤的数据
@@ -124,7 +124,7 @@ const CreateLoanPage = () => {
 				isRequestProperty={searchParams.has('propertyId')}
 			/>
 		),
-		2: <CreateTerm stage={loanData?.[0]?.stage} stepBtn={stepBtn} form={form} />,
+		2: <CreateTerm stage={loanData?.[0]?.stage} stepBtn={stepBtn} form={form} gutter={16} />,
 	};
 
 	return (

@@ -1,15 +1,19 @@
 'use client';
-import { Col, Form, InputNumber, Row, Select } from 'antd';
+import { Col, Form, Input, InputNumber, Row, Select } from 'antd';
 import React from 'react';
 import styles from './index.module.scss';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
 import { maxNumberOfUnits } from '@/lib/format';
+import { loan_pending } from '@/enum/common';
+import CommonFormDate from '@/components/CommonDate';
+import InputNumAmount from '@/components/InputNumAmount';
 const layoutCol = {
 	xs: 24,
 	sm: 24,
 };
 const CreateProperty = ({
+	stage,
 	stepBtn,
 	gutter,
 	addressProps = {},
@@ -64,6 +68,25 @@ const CreateProperty = ({
 				form={form}
 				disabled={isRequestProperty}
 			/>
+			{stage === loan_pending && (
+				<>
+					<Col {...layoutCol} {...(colProps || {})}>
+						<Form.Item label="Purchase date" name="paid_off_date">
+							<CommonFormDate />
+						</Form.Item>
+					</Col>
+					<Col {...layoutCol} {...(colProps || {})}>
+						<Form.Item label="owner" name="owner">
+							<Input placeholder="Enter owner" />
+						</Form.Item>
+					</Col>
+					<Col {...layoutCol} {...(colProps || {})}>
+						<Form.Item label="Purchase price" name="principal_amount">
+							<InputNumAmount placeholder="Enter purchase price" />
+						</Form.Item>
+					</Col>
+				</>
+			)}
 			{stepBtn}
 		</Row>
 	);

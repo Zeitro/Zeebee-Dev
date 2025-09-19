@@ -13,7 +13,6 @@ const layoutCol = {
 };
 const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
 	const total_amount = Form.useWatch('total_amount', form);
-
 	const { lienPositionOptions, prepaymentPenaltyOptions } = useGetOptions([
 		{
 			key: 'lien_position',
@@ -183,6 +182,25 @@ const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
 							rules={[{ required: true, message: 'Please input!' }]}
 						>
 							<Input placeholder="Enter Servicing company" />
+						</Form.Item>
+					</Col>
+				</>
+			)}
+			{stage === loan_pending && (
+				<>
+					<Col {...layoutCol} {...(colProps || {})}>
+						<Form.Item label="Original contract date" name="paid_off_date">
+							<CommonFormDate />
+						</Form.Item>
+					</Col>
+					<Col {...layoutCol} {...(colProps || {})}>
+						<Form.Item label="Extension date" name="paid_off_date">
+							<CommonFormDate />
+						</Form.Item>
+					</Col>
+					<Col {...layoutCol} {...(colProps || {})}>
+						<Form.Item label="Loan processor" name="lender_company">
+							<Input placeholder="Enter Loan processor" />
 						</Form.Item>
 					</Col>
 				</>
