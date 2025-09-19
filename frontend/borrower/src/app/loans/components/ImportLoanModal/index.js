@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import NewModal from '@/components/NewModal';
-import { DownloadOutlined, InboxOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import {
+	DeleteOutlined,
+	DownloadOutlined,
+	InboxOutlined,
+	InfoCircleOutlined,
+	LinkOutlined,
+} from '@ant-design/icons';
 import CommonDownloadButton from '@/components/CommonDownload';
 import CommonUpload from '@/components/CommonUpload';
 const ImportLoanModal = ({ setOpen }) => {
 	const [confirmLoading, setConfirmLoading] = useState(false);
+	const [fileList, setFileList] = useState([]);
 
 	const handleUpload = async () => {
 		try {
@@ -23,6 +30,8 @@ const ImportLoanModal = ({ setOpen }) => {
 			okText={`Import loans`}
 			onOk={handleUpload}
 			confirmLoading={confirmLoading}
+			cancelButtonProps={{ style: { display: 'none' } }}
+			okButtonProps={{ disabled: !fileList?.length }}
 		>
 			<div className="flex flex-col items-center gap-6">
 				<div className="pt-[26px] pb-[10px]">
@@ -41,8 +50,13 @@ const ImportLoanModal = ({ setOpen }) => {
 				>
 					Download template
 				</CommonDownloadButton>
-				<CommonUpload>
-					<div className=" bg-gray-light py-4 mb-4 w-[395px] flex flex-col items-center border border-base-border rounded-sm text-gray-light">
+				<CommonUpload
+					immediateUpload={false}
+					accept=".xlsx"
+					onGetUploadList={setFileList}
+					disabled={fileList?.length}
+				>
+					<div className=" bg-gray-light py-4 w-[395px] flex flex-col items-center border border-base-border rounded-sm text-gray-light cursor-pointer">
 						<InboxOutlined style={{ fontSize: '48px', color: 'var(--base-primary)' }} />
 						<div className="text-base pt-5 pb-1 text-foreground">
 							Click or drag file to this area to upload
