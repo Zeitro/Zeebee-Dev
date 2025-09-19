@@ -1,9 +1,9 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import NewTable from '@/components/NewTable';
 import { useColumnByZeeBeeLoan } from './components/column';
 import { AddEditBtn } from './components/AddEditBtn';
-import { message } from 'antd';
+import { Form, message } from 'antd';
 import _ from 'lodash';
 const paramsKeyInfo = {
 	transactionHistory: 'transaction_experiences',
@@ -13,10 +13,19 @@ const paramsTypeInfo = {
 	transactionHistory: 'Transaction',
 	realEstate: 'Real Estate',
 };
-const Experience = ({ form }) => {
+const Experience = ({ form, rowData, setIsChange }) => {
 	const [historyList, setHistoryList] = useState([]);
 	const [realEstateList, setRealEstateList] = useState([]);
 	const [messageApi, contextHolder] = message.useMessage();
+
+	useEffect(() => {
+		if (rowData?.transaction_experiences?.length) {
+			setHistoryList(rowData.transaction_experiences || []);
+		}
+		if (rowData?.real_estate_experiences?.length) {
+			setRealEstateList(rowData.real_estate_experiences || []);
+		}
+	}, [rowData]);
 
 	const commonAdd = (arr, setFn, values, key, type) => {
 		let newArr = [];
@@ -32,17 +41,20 @@ const Experience = ({ form }) => {
 					is_tenant_occupied: false,
 					budget_or_cost: 0,
 					...values,
-					id: arr.length + 1,
+					id: `${arr.length + 1}Custom`, // 加Custom为了区分自定义的id，草稿时后端会返回id并且更新草稿需要传id
 					type: paramsTypeInfo[type],
 				},
 			];
 		}
 		setFn(newArr);
 		const noIdArr = _.cloneDeep(newArr).map((i) => {
-			delete i.id;
+			if (typeof i.id === 'string') {
+				delete i.id;
+			}
 			return i;
 		});
 		form.setFieldsValue({ [paramsKeyInfo[type]]: noIdArr });
+		setIsChange(true);
 		message.destroy();
 		messageApi.open({
 			type: 'success',
@@ -54,12 +66,15 @@ const Experience = ({ form }) => {
 		const newArr = arr.filter((i) => i.id !== id);
 		setFn([...newArr]);
 		const noIdArr = _.cloneDeep(newArr).map((i) => {
-			delete i.id;
+			if (typeof i.id === 'string') {
+				delete i.id;
+			}
 			return i;
 		});
 		let paramsKey =
 			type === 'transactionHistory' ? 'transaction_experiences' : 'real_estate_experiences';
 		form.setFieldsValue({ [paramsKey]: noIdArr });
+		setIsChange(true);
 		message.destroy();
 		messageApi.open({
 			type: 'success',
@@ -125,6 +140,8 @@ const Experience = ({ form }) => {
 			</AddEditBtn>
 			<div className="pb-6"></div>
 			{contextHolder}
+			<Form.Item name="transaction_experiences" noStyle></Form.Item>
+			<Form.Item name="real_estate_experiences" noStyle></Form.Item>
 		</div>
 	);
 };

@@ -1,15 +1,18 @@
 import React, { useEffect } from 'react';
 import styles from './index.module.scss';
-import { Row, Col, Form, Radio, Input, InputNumber, DatePicker } from 'antd';
+import { Row, Col, Form, Radio, Input, InputNumber } from 'antd';
 import CommonFormDate from '@/components/CommonDate';
 import InputNumAmount from '@/components/InputNumAmount';
 import { yesNoOptions } from '@/enum/common';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import { layoutCol, titleCol } from '@/enum/common';
-const MAX_COUNT = 5;
-const LoanDetail = ({ gutter = 24, form, addressProps }) => {
+import { maxTerm, maxAmount } from '@/lib/format';
+
+const LoanDetail = ({ gutter = 24, form }) => {
 	const loanPurpose = Form.useWatch('loan_purpose', form);
 	const loanType = Form.useWatch('loan_type', form) || 'Rental';
+	const total_amount = Form.useWatch('total_amount', form) || maxAmount;
+
 	const est_yearly_rental_income = Form.useWatch('est_yearly_rental_income', form);
 	const yearly_liability_expense = Form.useWatch('yearly_liability_expense', form);
 	const has_assignment_fee = Form.useWatch('has_assignment_fee', form);
@@ -126,7 +129,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 						},
 					]}
 				>
-					<InputNumAmount placeholder="Enter initial loan amount" />
+					<InputNumAmount placeholder="Enter initial loan amount" max={total_amount} />
 				</Form.Item>
 			</Col>
 			<Col {...layoutCol}>
@@ -140,7 +143,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 						},
 					]}
 				>
-					<InputNumAmount placeholder="Enter holdback amount" />
+					<InputNumAmount placeholder="Enter holdback amount" max={total_amount} />
 				</Form.Item>
 			</Col>
 			<Col {...layoutCol}>
@@ -165,7 +168,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 				>
 					<InputNumber
 						min={1}
-						max={10000}
+						max={maxTerm}
 						controls={false}
 						suffix="Months"
 						style={{ width: '100%' }}
@@ -216,7 +219,10 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 								},
 							]}
 						>
-							<InputNumAmount placeholder="Enter outstanding Loan Amount" />
+							<InputNumAmount
+								placeholder="Enter outstanding Loan Amount"
+								max={total_amount}
+							/>
 						</Form.Item>
 					</Col>
 					<Col {...layoutCol}>
@@ -447,6 +453,9 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 							valueName: 'prepaymentPenaltyOptions',
 							requiredMessage: 'Please enter Prepayment penalty!',
 							suffixIcon: <div className="text-sm">Months</div>,
+							formProps: {
+								getValueFromEvent: (e) => Number(e),
+							},
 						},
 						layoutCol,
 					)}
@@ -496,7 +505,7 @@ const LoanDetail = ({ gutter = 24, form, addressProps }) => {
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Prosperities vacant" // 资产空置
-							name="has_peroperty_vacant"
+							name="has_properties_vacant"
 							rules={[
 								{
 									required: true,

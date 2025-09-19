@@ -20,7 +20,7 @@ RpcConf:
   Name: borrower.rpc
   ListenOn: 0.0.0.0:10001
   Mode: dev
-  Timeout: 5000
+  Timeout: 10000
   LimiterConf:
     Login:
       Rate: 5

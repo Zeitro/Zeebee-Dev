@@ -6,7 +6,8 @@ import SignatureModal from '../SignatureModal';
 import Image from 'next/image';
 import { Modal } from 'antd';
 import { formatDate } from '@/lib/date';
-
+import { createRequest } from '@/lib/fetch';
+import { EditOutlined } from '@ant-design/icons';
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
 
 // 定义签名区 (Hotspot/Zone) 的类型
@@ -18,6 +19,7 @@ export interface SignatureZone {
 	top: string;
 	width: string;
 	height: string;
+	paramsKey: string;
 	date: {
 		top: string;
 		left?: string;
@@ -30,6 +32,7 @@ export interface SignatureZone {
 export interface SignatureInfo {
 	image: string;
 	date: string;
+	paramsKey: string;
 }
 
 // 定义签名数据存储的类型，使用 zoneId 作为 key
@@ -40,12 +43,21 @@ interface SignatureData {
 interface ContractViewerProps {
 	url: string;
 	zones: SignatureZone[]; // 接收一个签名区配置数组
+	params?: {
+		[key: string]: unknown;
+	};
+	changeSignatures?: (signatures: SignatureData) => void;
 }
 const config = {
 	title: 'Signature prompt!',
 	content: 'You have already signed, do you want to sign again?',
 };
-export default function ContractViewer({ url, zones }: ContractViewerProps) {
+export default function ContractViewer({
+	url,
+	zones,
+	params,
+	changeSignatures,
+}: ContractViewerProps) {
 	const [pdfFile, setPdfFile] = useState<File | null>(null);
 	const [numPages, setNumPages] = useState<number>(0);
 	const [isModalOpen, setIsModalOpen] = useState(false);
@@ -57,19 +69,21 @@ export default function ContractViewer({ url, zones }: ContractViewerProps) {
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const [modal, contextHolder] = Modal.useModal();
+	const { request } = createRequest();
 
 	useEffect(() => {
 		const fetchPdf = async () => {
 			try {
 				setIsLoading(true);
 				setError(null);
-				const response = await fetch(`${url}?t=${new Date().getTime()}`);
-				if (!response.ok) {
-					throw new Error(`获取 PDF 失败: ${response.statusText}`);
-				}
+				const response = await request(url, {
+					method: 'POST',
+					responseType: 'blob',
+					body: params,
+				});
 				const blob = await response.blob();
 				if (blob.size === 0) {
-					throw new Error('获取到的PDF文件为空');
+					throw new Error('The obtained PDF file is empty!');
 				}
 				const file = new File([blob], 'contract.pdf', { type: 'application/pdf' });
 				setPdfFile(file);
@@ -82,6 +96,23 @@ export default function ContractViewer({ url, zones }: ContractViewerProps) {
 		};
 		fetchPdf();
 	}, [url]);
+
+	useEffect(() => {
+		const info: any = {};
+		const signaturesArr = Object.values(signatures);
+		signaturesArr?.map((item: any) => {
+			info[item.paramsKey] = [
+				...(info?.[item.paramsKey] || []),
+				{
+					signature_image: item.image,
+					signature_date: item.date,
+				},
+			];
+		});
+		// 剩下的签名数量
+		info.remainingSignatureCount = zones?.length - signaturesArr?.length;
+		changeSignatures?.(info);
+	}, [signatures]);
 
 	const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
 		setNumPages(numPages);
@@ -109,9 +140,14 @@ export default function ContractViewer({ url, zones }: ContractViewerProps) {
 	// 当在模态框中确认签名后触发
 	const handleSignatureConfirm = (signatureImage: string) => {
 		if (activeZoneId) {
+			const row = zones.find((zone) => zone.id === activeZoneId);
 			setSignatures({
 				...signatures,
-				[activeZoneId]: { image: signatureImage, date: formatDate(new Date()) },
+				[activeZoneId]: {
+					image: signatureImage,
+					date: formatDate(new Date()),
+					paramsKey: row?.paramsKey || '',
+				},
 			});
 		}
 		setIsModalOpen(false);
@@ -157,15 +193,16 @@ export default function ContractViewer({ url, zones }: ContractViewerProps) {
 										<div
 											key={zone.id}
 											onClick={() => handleZoneClick(zone.id)}
-											className="absolute cursor-pointer z-[999]"
+											className="absolute cursor-pointer z-[999] flex items-end justify-center"
 											style={{
 												left: zone.left,
 												top: zone.top,
 												width: zone.width,
 												height: zone.height,
+												// backgroundColor: 'pink',
 											}}
 										>
-											{signatures[zone.id] && (
+											{signatures[zone.id] ? (
 												<Image
 													unoptimized
 													src={signatures[zone.id]?.image}
@@ -173,13 +210,15 @@ export default function ContractViewer({ url, zones }: ContractViewerProps) {
 													layout="fill"
 													objectFit="contain"
 												/>
+											) : (
+												<EditOutlined className="pb-[2px]" />
 											)}
 										</div>
 									))}
 									{pageZones.map((zone, index) => (
 										<div
 											key={index}
-											className="absolute z-[999] bg-base-success"
+											className="absolute z-[999] text-xs text-center"
 											style={{
 												right: zone?.date?.right,
 												left: zone?.date?.left,
