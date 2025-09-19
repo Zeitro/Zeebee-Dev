@@ -6,7 +6,6 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/api/internal/svc"
@@ -22,7 +21,7 @@ func DownloadImportTemplateHandler(_ *svc.ServiceContext) http.HandlerFunc {
 		defer func() {
 			if err != nil {
 				logx.WithContext(r.Context()).
-					WithFields(logx.Field("stacks", errorx.GetErrorStack(errors.WithStack(err)))).
+					WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).
 					Error(err)
 			}
 		}()

@@ -4,7 +4,6 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
 
@@ -22,7 +21,7 @@ func ImportHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		defer func() {
 			if err != nil {
 				logx.WithContext(r.Context()).
-					WithFields(logx.Field("stacks", errorx.GetErrorStack(errors.WithStack(err)))).
+					WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).
 					Error(err)
 			}
 		}()
