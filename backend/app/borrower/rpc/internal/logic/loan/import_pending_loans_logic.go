@@ -10,7 +10,6 @@ import (
 
 	"zeebee-backend/app/borrower/rpc/internal/repo/model"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
-	"zeebee-backend/app/borrower/rpc/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
@@ -28,7 +27,7 @@ type importPendingLoanModelData struct {
 	loanProperty *model.LoanProperty
 	propertyBase *model.PropertyBase
 	applicants   []*model.Applicant
-	loanExtend   *model.LoanExtend
+	// loanExtend   *model.LoanExtend
 }
 
 type ImportPendingLoansLogic struct {
@@ -91,13 +90,6 @@ func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingL
 			loanProperty.LoanId = loan.Id
 			loanProperty.PropertyBaseId = propertyBase.Id
 			loanProperty, innerErr = l.svcCtx.LoanPropertyRepo.CreateWithTx(l.ctx, tx, loanProperty, false)
-			if innerErr != nil {
-				return innerErr
-			}
-			// loan extend
-			loanExtend := data.loanExtend
-			loanExtend.LoanId = loan.Id
-			loanExtend, innerErr = l.svcCtx.LoanExtendRepo.CreateWithTx(l.ctx, tx, loanExtend, false)
 			if innerErr != nil {
 				return innerErr
 			}
@@ -224,28 +216,12 @@ func (l *ImportPendingLoansLogic) buildImportModel(in *borrower.ImportPendingLoa
 	// property base
 	propertyBase := loanProperty.PropertyBase
 
-	// loan extend
-	loanExtend := &model.LoanExtend{
-		Values: types.LoanExtendValues{},
-	}
-	err = copier.CopyWithOption(&loanExtend.Values, in.Extend, copier.Option{
-		IgnoreEmpty:   true,
-		CaseSensitive: true,
-		DeepCopy:      true,
-		Converters: []copier.TypeConverter{
-			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-		},
-	})
-	if err != nil {
-		return nil, errorx.GetFailedTransErr(err)
-	}
-
 	return &importPendingLoanModelData{
 		loan:         loan,
 		loanBorrower: loanBorrower,
 		loanProperty: loanProperty,
 		propertyBase: propertyBase,
 		applicants:   applicants,
-		loanExtend:   loanExtend,
+		// loanExtend:   loanExtend,
 	}, nil
 }
