@@ -306,7 +306,7 @@ message LoanEntry {
   bool has_collateralized_blanket = 51;
   bool has_properties_vacant = 52;
   bool has_short_term_rental = 53;
-  string additional_info = 54;
+  string additional_info = 54 [deprecated = true];
 
   repeated LoanExperienceEntry transaction_experiences = 55;
   repeated LoanExperienceEntry real_estate_experiences = 56;
@@ -314,6 +314,12 @@ message LoanEntry {
   LoanDemographicEntry loan_demographic = 58;
   float yearly_liability_expense = 59;
   repeated LoanThirdServiceEntry loan_third_services = 60;
+
+  string original_contract_date = 61;
+  string extension_date = 62;
+  string loan_processor = 63;
+  LoanExtendValueEntry extend = 64;
+
 }
 
 message  LoanBudgetEntry {
@@ -349,6 +355,15 @@ message LoanCreateRequestData {
   string service_company = 20;
   string paid_off_date = 21;
   repeated string business_strategy = 22;
+
+  double purchase_amount = 23;
+  string purchase_date = 24;
+  LoanExtendValueEntry extend = 25;
+  string existing_lender_company = 26;
+  string original_contract_date = 27;
+  string extension_date = 28;
+  string loan_processor = 29;
+  string owner = 30;
 }
 
 message LoanCreateResponse {
@@ -405,6 +420,15 @@ message LoanUpdateRequestData {
   string paid_off_date = 21;
   repeated string business_strategy = 22;
   int64 id = 23;
+
+  double purchase_amount = 24;
+  string purchase_date = 25;
+  LoanExtendValueEntry extend = 26;
+  string existing_lender_company = 27;
+  string original_contract_date = 28;
+  string extension_date = 29;
+  string loan_processor = 30;
+  string owner = 31;
 }
 
 
@@ -572,17 +596,12 @@ message ImportPendingLoansRequestData {
 
 }
 
-//message LoanExtendEntry{
-//  int64 id = 1;
-//  int64 loan_id = 2;
-//  LoanExtendValueEntry values = 3;
-//}
-
 message LoanExtendValueEntry {
   string  pricing = 1;
   string loan_status_updates = 2;
   string meeting_notes = 3;
   string action_list = 4;
+  string business_line = 5;
 }
 
 

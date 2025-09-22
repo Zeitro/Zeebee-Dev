@@ -167,6 +167,10 @@ type LoanEntry {
     LoanThirdServices []*LoanThirdServiceEntry `json:"loan_third_services"`
     LoanBorrower *LoanBorrowerEntry `json:"loan_borrower"`
     LoanDemographic *LoanDemographicEntry `json:"loan_demographic"`
+    OriginalContractDate string `json:"original_contract_date,optional"`
+    ExtensionDate string `json:"extension_date,optional"`
+    LoanProcessor string `json:"loan_processor"`
+    Extend *ImportLoanExtendEntry `json:"extend"`
 }
 
 // create a loan
@@ -193,6 +197,15 @@ type (
         ServiceCompany string `json:"service_company,optional" validate:"required_if=Stage Active"`
         PaidOffDate string `json:"paid_off_date,optional" validate:"required_if=Stage Archived,omitempty,datetime=01/02/2006"`
         BusinessStrategy []string `json:"business_strategy,optional" validate:"required,dive,required,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
+
+        PurchaseAmount float64 `json:"purchase_amount,optional"`
+        PurchaseDate string `json:"purchase_date,optional"`
+        Extend *ImportLoanExtendEntry `json:"extend,optional"`
+        ExistingLenderCompany string `json:"existing_lender_company,optional"`
+        OriginalContractDate string `json:"original_contract_date,optional"`
+        ExtensionDate string `json:"extension_date,optional"`
+        LoanProcessor string `json:"loan_processor,optional"`
+        Owner string `json:"owner,optional"`
     }
 
     LoanCreateResponse {
@@ -224,6 +237,15 @@ type (
         ServiceCompany string `json:"service_company,optional" validate:"required_if=Stage Active"`
         PaidOffDate string `json:"paid_off_date,optional" validate:"required_if=Stage Archived,omitempty,datetime=01/02/2006"`
         BusinessStrategy []string `json:"business_strategy,optional" validate:"required,dive,required,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
+
+        PurchaseAmount float64 `json:"purchase_amount,optional"`
+        PurchaseDate string `json:"purchase_date,optional"`
+        Extend *ImportLoanExtendEntry `json:"extend,optional"`
+        ExistingLenderCompany string `json:"existing_lender_company,optional"`
+        OriginalContractDate string `json:"original_contract_date,optional"`
+        ExtensionDate string `json:"extension_date,optional"`
+        LoanProcessor string `json:"loan_processor,optional"`
+        Owner string `json:"owner,optional"`
     }
 )
 
@@ -302,7 +324,7 @@ type (
         LoanProperty *LoanApplyPropertyEntry `json:"loan_property,optional"`
         HoldbackAmount float64 `json:"holdback_amount,optional" validate:"ltefield=TotalAmount"`
         PrincipalAmount float64 `json:"principal_amount,optional" validate:"required_unless=LoanPurpose Purchase,omitempty,gte=0"`
-        //        MaturityDate string `json:"maturity_date, optional"`
+        // MaturityDate string `json:"maturity_date, optional"`
         PrepaymentPenalty int32 `json:"prepayment_penalty,optional" validate:"required_if=LoanType Rental,omitempty,gte=0"`
         BusinessStrategy []string `json:"business_strategy,optional" validate:"required,dive,required,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
         Applicants []*LoanApplyApplicantEntry `json:"applicants,optional" validate:"required,gt=0,lte=2"`
@@ -322,7 +344,7 @@ type (
         LiquidityAmount float64 `json:"liquidity_amount,optional" validate:"gte=0"`
         Budget *LoanBudgetEntry `json:"budget,optional" validate:"required_if=LoanType Rehab LoanType 'Ground up construction'"`
         MidConstruction bool `json:"mid_construction,optional"`
-        //        EstCreditScore int32 `json:"est_credit_score"`
+        // EstCreditScore int32 `json:"est_credit_score"`
         EstYearlyRentalIncome float64 `json:"est_yearly_rental_income,optional" validate:"required_if=LoanType Rental,omitempty,gt=0"`
         YearlyLiabilityExpense float64 `json:"yearly_liability_expense,optional" validate:"required_if=LoanType Rental,omitempty,gt=0"`
         Dscr float32 `json:"dscr,optional" validate:"required_if=LoanType Rental,omitempty,gt=0"`
@@ -331,7 +353,7 @@ type (
         HasCollateralizedBlanket bool `json:"has_collateralized_blanket,optional"`
         HasPropertiesVacant bool `json:"has_properties_vacant,optional"`
         HasShortTermRental bool `json:"has_short_term_rental,optional"`
-        //        AdditionalInfo string `json:"additional_info"`
+        // AdditionalInfo string `json:"additional_info"`
         TransactionExperiences []*LoanExperienceEntry `json:"transaction_experiences,optional"`
         RealEstateExperiences []*LoanExperienceEntry `json:"real_estate_experiences,optional"`
         LoanThirdServices []*LoanThirdServiceEntry `json:"loan_third_services,optional"`
@@ -363,13 +385,10 @@ type ImportPendingLoanEntry {
     BorrowerId int64 `json:"borrower_id" validate:"required,gt=0"`
     // property address
     LoanProperty *ImportLoanApplyPropertyEntry `json:"loan_property,optional"`
-
     // applicants
     Applicants []*ImportLoanApplicantEntry `json:"applicants,optional" validate:"required,gt=0,lte=2"`
-
     // borrower
     LoanBorrower *ImportLoanBorrowerEntry `json:"loan_borrower,optional" validate:"required"`
-
     // loan
     ClosingDate string `json:"closing_date,optional"`
     PurchaseAmount float64 `json:"purchase_amount,optional"`
@@ -381,12 +400,11 @@ type ImportPendingLoanEntry {
     TotalAmount float64 `json:"total_amount,optional"`
     // => 1st Loan Amount
     HoldbackAmount float64 `json:"holdback_amount,optional"`
-    //    ExistingRate float32 `json:"existing_rate,optional"`
+    // ExistingRate float32 `json:"existing_rate,optional"`
     ExistingLenderCompany string `json:"existing_lender_company,optional"`
     OriginalContractDate string `json:"original_contract_date,optional"`
     ExtensionDate string `json:"extension_date,optional"`
     LoanProcessor string `json:"loan_processor,optional"`
-
     // extend
     Extend *ImportLoanExtendEntry `json:"extend,optional"`
 }

@@ -268,6 +268,10 @@ type LoanEntry struct {
 	LoanThirdServices        []*LoanThirdServiceEntry `json:"loan_third_services"`
 	LoanBorrower             *LoanBorrowerEntry       `json:"loan_borrower"`
 	LoanDemographic          *LoanDemographicEntry    `json:"loan_demographic"`
+	OriginalContractDate     string                   `json:"original_contract_date,optional"`
+	ExtensionDate            string                   `json:"extension_date,optional"`
+	LoanProcessor            string                   `json:"loan_processor"`
+	Extend                   *ImportLoanExtendEntry   `json:"extend"`
 }
 
 type LoanExperienceEntry struct {
