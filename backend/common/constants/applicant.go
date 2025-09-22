@@ -1,6 +1,10 @@
 package constants
 
-import "zeebee-backend/common/enums"
+import (
+	"github.com/duke-git/lancet/v2/slice"
+
+	"zeebee-backend/common/enums"
+)
 
 // Individual, Corporation,LLC,Partnership,Trust
 type ApplicantType string
@@ -14,6 +18,20 @@ const (
 	ApplicantTypePartnership ApplicantType = "Partnership"
 	ApplicantTypeTrust       ApplicantType = "Trust"
 )
+
+func (c ApplicantType) IsValid() bool {
+	var ApplicantTypeValues = []ApplicantType{
+		ApplicantTypeIndividual,
+		ApplicantTypeCorporation,
+		ApplicantTypeLLC,
+		ApplicantTypePartnership,
+		ApplicantTypeTrust,
+	}
+	_, isValid := slice.FindBy(ApplicantTypeValues, func(index int, value ApplicantType) bool {
+		return value == c
+	})
+	return isValid
+}
 
 type ApplicantInvitationStatus string
 

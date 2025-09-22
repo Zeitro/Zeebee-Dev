@@ -49,7 +49,6 @@ type (
 	LoanDetailResponse                    = borrower.LoanDetailResponse
 	LoanEntry                             = borrower.LoanEntry
 	LoanExperienceEntry                   = borrower.LoanExperienceEntry
-	LoanExtendEntry                       = borrower.LoanExtendEntry
 	LoanExtendValueEntry                  = borrower.LoanExtendValueEntry
 	LoanLenderCompaniesRequest            = borrower.LoanLenderCompaniesRequest
 	LoanLenderCompaniesRequestData        = borrower.LoanLenderCompaniesRequestData

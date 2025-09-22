@@ -13,6 +13,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/common/uuid"
 
@@ -96,6 +97,7 @@ func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingL
 
 			// loan borrower
 			loanBorrower := data.loanBorrower
+			loanBorrower.LoanId = loan.Id
 			loanBorrower, innerErr = l.svcCtx.LoanBorrowerRepo.CreateWithTx(l.ctx, tx, loanBorrower, false)
 			if innerErr != nil {
 				return innerErr
@@ -107,6 +109,7 @@ func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingL
 				item.LoanId = loan.Id
 				item.LoanPropertyId = loanProperty.Id
 				item.LoanBorrowerId = loanBorrower.Id
+				item.FullName = stringx.FormatFullName(item.FirstName, item.MidName, item.LastName)
 
 				return item
 			})

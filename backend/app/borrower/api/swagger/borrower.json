@@ -121,6 +121,32 @@
                 "closing_fund": {
                   "type": "number"
                 },
+                "existing_lender_company": {
+                  "type": "string"
+                },
+                "extend": {
+                  "type": "object",
+                  "properties": {
+                    "action_list": {
+                      "type": "string"
+                    },
+                    "business_line": {
+                      "type": "string"
+                    },
+                    "loan_status_update": {
+                      "type": "string"
+                    },
+                    "meeting_notes": {
+                      "type": "string"
+                    },
+                    "pricing": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "extension_date": {
+                  "type": "string"
+                },
                 "holdback_amount": {
                   "type": "number"
                 },
@@ -131,6 +157,9 @@
                   "type": "string"
                 },
                 "lien_position": {
+                  "type": "string"
+                },
+                "loan_processor": {
                   "type": "string"
                 },
                 "loan_property": {
@@ -200,6 +229,12 @@
                 "monthly_payment": {
                   "type": "number"
                 },
+                "original_contract_date": {
+                  "type": "string"
+                },
+                "owner": {
+                  "type": "string"
+                },
                 "paid_off_date": {
                   "type": "string"
                 },
@@ -211,6 +246,12 @@
                 },
                 "principal_amount": {
                   "type": "number"
+                },
+                "purchase_amount": {
+                  "type": "number"
+                },
+                "purchase_date": {
+                  "type": "string"
                 },
                 "rate": {
                   "type": "number"
@@ -1442,7 +1483,7 @@
     "/api/v1/loan/import": {
       "post": {
         "consumes": [
-          "application/json"
+          "application/x-www-form-urlencoded"
         ],
         "produces": [
           "application/json"
@@ -1457,17 +1498,10 @@
         "operationId": "loanImport",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "stage": {
-                  "type": "string"
-                }
-              }
-            }
+            "type": "string",
+            "name": "stage",
+            "in": "formData",
+            "required": true
           }
         ],
         "responses": {
@@ -3057,6 +3091,32 @@
                 "closing_fund": {
                   "type": "number"
                 },
+                "existing_lender_company": {
+                  "type": "string"
+                },
+                "extend": {
+                  "type": "object",
+                  "properties": {
+                    "action_list": {
+                      "type": "string"
+                    },
+                    "business_line": {
+                      "type": "string"
+                    },
+                    "loan_status_update": {
+                      "type": "string"
+                    },
+                    "meeting_notes": {
+                      "type": "string"
+                    },
+                    "pricing": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "extension_date": {
+                  "type": "string"
+                },
                 "holdback_amount": {
                   "type": "number"
                 },
@@ -3067,6 +3127,9 @@
                   "type": "string"
                 },
                 "lien_position": {
+                  "type": "string"
+                },
+                "loan_processor": {
                   "type": "string"
                 },
                 "loan_property": {
@@ -3136,6 +3199,12 @@
                 "monthly_payment": {
                   "type": "number"
                 },
+                "original_contract_date": {
+                  "type": "string"
+                },
+                "owner": {
+                  "type": "string"
+                },
                 "paid_off_date": {
                   "type": "string"
                 },
@@ -3147,6 +3216,12 @@
                 },
                 "principal_amount": {
                   "type": "number"
+                },
+                "purchase_amount": {
+                  "type": "number"
+                },
+                "purchase_date": {
+                  "type": "string"
                 },
                 "rate": {
                   "type": "number"
@@ -7901,7 +7976,7 @@
       }
     }
   },
-  "x-date": "2025-09-19 14:37:40",
+  "x-date": "2025-09-22 13:46:28",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
