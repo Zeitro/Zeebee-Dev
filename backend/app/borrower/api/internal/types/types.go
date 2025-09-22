@@ -40,6 +40,24 @@ type EmptyRequest struct {
 type EmptyResponse struct {
 }
 
+type FileEditEntry struct {
+	Id       int64  `json:"id,optional"`
+	FileType string `json:"file_type,optional" validate:"required,oneof=Identification Income Property Assets Credit Miscellaneous InternalDocument"`
+	BizType  string `json:"biz_type,optional"`
+	RefId    int64  `json:"ref_id,optional"`
+	File     string `json:"file,optional" validate:"required,url"`
+}
+
+type FileEntry struct {
+	Id        int64  `json:"id,optional"`
+	FileType  string `json:"file_type,optional"`
+	BizType   string `json:"biz_type,optional"`
+	RefId     int64  `json:"ref_id,optional"`
+	File      string `json:"file,optional"`
+	CreatedAt string `json:"created_at,optional"`
+	UpdatedAt string `json:"updated_at,optional"`
+}
+
 type ImportLoanApplicantEntry struct {
 	Id        int64  `json:"id,optional"`
 	FirstName string `json:"first_name,optional" validate:"required,min=1,max=30"`
@@ -272,6 +290,7 @@ type LoanEntry struct {
 	ExtensionDate            string                   `json:"extension_date,optional"`
 	LoanProcessor            string                   `json:"loan_processor"`
 	Extend                   *ImportLoanExtendEntry   `json:"extend"`
+	Documents                []*FileEntry             `json:"documents"`
 }
 
 type LoanExperienceEntry struct {

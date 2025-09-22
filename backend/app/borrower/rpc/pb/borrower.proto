@@ -319,6 +319,7 @@ message LoanEntry {
   string extension_date = 62;
   string loan_processor = 63;
   LoanExtendValueEntry extend = 64;
+  repeated FileEntry documents = 65;
 
 }
 
@@ -604,6 +605,18 @@ message LoanExtendValueEntry {
   string business_line = 5;
 }
 
+// update documents
+
+message LoanUpdateDocumentsRequest {
+  LoanUpdateDocumentsRequestData data = 1;
+}
+message LoanUpdateDocumentsRequestData {
+  int64 id = 1;
+  int64 borrower_id = 2;
+  repeated FileEntry documents = 3;
+}
+
+
 
 
 service Loan {
@@ -619,6 +632,7 @@ service Loan {
   rpc SaveDraftLoan(LoanApplyRequest) returns(LoanApplyResponse);
   rpc UpdateApplyLoan(LoanApplyRequest) returns(EmptyResponse);
   rpc ImportPendingLoans(ImportPendingLoansRequest) returns(EmptyResponse);
+  rpc UpdateLoanDocuments(LoanUpdateDocumentsRequest) returns(EmptyResponse);
 }
 
 
@@ -863,12 +877,23 @@ message LoanDemographicExtraDemographicEntry {
 
 // ===================== storage service ======================
 
+message FileEntry {
+  int64 id = 1;
+  string biz_type = 2;
+  string file_type = 3;
+  int64 ref_id = 4;
+  string file = 5;
+  string created_at = 6;
+  string updated_at = 7;
+}
+
 message StorageCreatePresignedUrlRequest {
   StorageCreatePresignedUrlRequestData data = 1;
 }
 
 message StorageCreatePresignedUrlRequestData {
   string type = 1;
+  string file_suffix = 2;
 }
 
 message StorageCreatePresignedUrlResponse {

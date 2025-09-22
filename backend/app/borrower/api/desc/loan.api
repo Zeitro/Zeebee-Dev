@@ -11,6 +11,7 @@ import "loan_third_service.api"
 import "loan_experience.api"
 import "loan_borrower.api"
 import "loan_demographic.api"
+import "file.api"
 
 type PropertyBaseEntry {
     Id int64 `json:"id,optional"`
@@ -171,6 +172,7 @@ type LoanEntry {
     ExtensionDate string `json:"extension_date,optional"`
     LoanProcessor string `json:"loan_processor"`
     Extend *ImportLoanExtendEntry `json:"extend"`
+    Documents []*FileEntry `json:"documents"`
 }
 
 // create a loan
@@ -415,4 +417,10 @@ type ImportLoanExtendEntry {
     MeetingNotes string `json:"meeting_notes,optional"`
     ActionList string `json:"action_list,optional"`
     BusinessLine string `json:"business_line,optional"`
+}
+
+// update loan document
+type UpdateDocumentsRequest {
+    Id int64 `path:"id" validate:"required,gt=0"`
+    Documents []*FileEditEntry `json:"documents" validate:"required,gt=0,dive,required"`
 }

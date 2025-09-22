@@ -159,3 +159,8 @@ type LoanUpdateRequest struct {
 	LoanProcessor         string                    `json:"loan_processor,optional"`
 	Owner                 string                    `json:"owner,optional"`
 }
+
+type UpdateDocumentsRequest struct {
+	Id        int64            `path:"id" validate:"required,gt=0"`
+	Documents []*FileEditEntry `json:"documents" validate:"required,gt=0,dive,required"`
+}

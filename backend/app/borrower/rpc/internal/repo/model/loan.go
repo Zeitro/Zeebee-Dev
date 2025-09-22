@@ -65,15 +65,23 @@ type Loan struct {
 	Extend                   types.LoanExtendValues      `json:"extend" gorm:"column:extend;type:jsonb;serializer:json"`
 
 	// relationships
-	Borrower          *Borrower           `json:"borrower" gorm:"foreignKey:BorrowerId;references:Id"`
-	LoanProperty      *LoanProperty       `json:"loan_property" gorm:"foreignKey:LoanId;references:Id"`
-	Lender            *Lender             `json:"lender" gorm:"foreignKey:LenderId;references:Id"`
-	Applicants        []*Applicant        `json:"applicants" gorm:"foreignKey:LoanId;references:Id"`
-	LoanBorrower      *LoanBorrower       `json:"loan_borrower" gorm:"foreignKey:LoanId;references:Id"`
-	LoanExperiences   []*LoanExperience   `json:"loan_experiences" gorm:"foreignKey:LoanId;references:Id"`
-	LoanThirdServices []*LoanThirdService `json:"loan_third_services" gorm:"foreignKey:LoanId;references:Id"`
-	LoanDemographic   *LoanDemographic    `json:"loan_demographic" gorm:"foreignKey:LoanId;references:Id"`
-	ApplyFormFile     *File               `json:"apply_form_file" gorm:"polymorphicType:Type;polymorphicId:RefId;polymorphicValue:apply_form"`
+	Borrower             *Borrower           `json:"borrower" gorm:"foreignKey:BorrowerId;references:Id"`
+	LoanProperty         *LoanProperty       `json:"loan_property" gorm:"foreignKey:LoanId;references:Id"`
+	Lender               *Lender             `json:"lender" gorm:"foreignKey:LenderId;references:Id"`
+	Applicants           []*Applicant        `json:"applicants" gorm:"foreignKey:LoanId;references:Id"`
+	LoanBorrower         *LoanBorrower       `json:"loan_borrower" gorm:"foreignKey:LoanId;references:Id"`
+	LoanExperiences      []*LoanExperience   `json:"loan_experiences" gorm:"foreignKey:LoanId;references:Id"`
+	LoanThirdServices    []*LoanThirdService `json:"loan_third_services" gorm:"foreignKey:LoanId;references:Id"`
+	LoanDemographic      *LoanDemographic    `json:"loan_demographic" gorm:"foreignKey:LoanId;references:Id"`
+	ApplyFormFile        *File               `json:"apply_form_file" gorm:"polymorphicType:FileType;polymorphicId:RefId;polymorphicValue:ApplyForm"`
+	IdentificationFile   *File               `json:"identification_file" gorm:"polymorphicType:FileType;polymorphicId:RefId;polymorphicValue:Identification"`
+	IncomeFile           *File               `json:"income_file" gorm:"polymorphicType:FileType;polymorphicId:RefId;polymorphicValue:Income"`
+	PropertyFile         *File               `json:"property_file" gorm:"polymorphicType:FileType;polymorphicId:RefId;polymorphicValue:Property"`
+	AssetsFile           *File               `json:"assets_file" gorm:"polymorphicType:FileType;polymorphicId:RefId;polymorphicValue:Assets"`
+	CreditFile           *File               `json:"credit_file" gorm:"polymorphicType:FileType;polymorphicId:RefId;polymorphicValue:Credit"`
+	MiscellaneousFile    *File               `json:"miscellaneous_file" gorm:"polymorphicType:FileType;polymorphicId:RefId;polymorphicValue:Miscellaneous"`
+	InternalDocumentFile *File               `json:"internal_document_file" gorm:"polymorphicType:FileType;polymorphicId:RefId;polymorphicValue:InternalDocument"`
+	Documents            []*File             `json:"documents" gorm:"polymorphicType:BizType;polymorphicId:RefId;polymorphicValue:Loan"`
 }
 
 func (m Loan) TableName() string {
