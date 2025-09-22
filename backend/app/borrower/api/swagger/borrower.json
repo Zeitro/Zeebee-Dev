@@ -1707,7 +1707,9 @@
                       "real_estate_experiences",
                       "loan_third_services",
                       "loan_borrower",
-                      "loan_demographic"
+                      "loan_demographic",
+                      "loan_processor",
+                      "extend"
                     ],
                     "properties": {
                       "applicants": {
@@ -1876,6 +1878,29 @@
                       },
                       "existing_rate": {
                         "type": "number"
+                      },
+                      "extend": {
+                        "type": "object",
+                        "properties": {
+                          "action_list": {
+                            "type": "string"
+                          },
+                          "business_line": {
+                            "type": "string"
+                          },
+                          "loan_status_update": {
+                            "type": "string"
+                          },
+                          "meeting_notes": {
+                            "type": "string"
+                          },
+                          "pricing": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "extension_date": {
+                        "type": "string"
                       },
                       "has_assignment_fee": {
                         "type": "boolean"
@@ -2072,6 +2097,9 @@
                           }
                         }
                       },
+                      "loan_processor": {
+                        "type": "string"
+                      },
                       "loan_property": {
                         "type": "object",
                         "required": [
@@ -2162,6 +2190,9 @@
                       },
                       "monthly_payment": {
                         "type": "number"
+                      },
+                      "original_contract_date": {
+                        "type": "string"
                       },
                       "paid_off_date": {
                         "type": "string"
@@ -2517,6 +2548,29 @@
                 "existing_rate": {
                   "type": "number"
                 },
+                "extend": {
+                  "type": "object",
+                  "properties": {
+                    "action_list": {
+                      "type": "string"
+                    },
+                    "business_line": {
+                      "type": "string"
+                    },
+                    "loan_status_update": {
+                      "type": "string"
+                    },
+                    "meeting_notes": {
+                      "type": "string"
+                    },
+                    "pricing": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "extension_date": {
+                  "type": "string"
+                },
                 "has_assignment_fee": {
                   "type": "boolean"
                 },
@@ -2712,6 +2766,9 @@
                     }
                   }
                 },
+                "loan_processor": {
+                  "type": "string"
+                },
                 "loan_property": {
                   "type": "object",
                   "required": [
@@ -2833,6 +2890,9 @@
                 },
                 "monthly_payment": {
                   "type": "number"
+                },
+                "original_contract_date": {
+                  "type": "string"
                 },
                 "paid_off_date": {
                   "type": "string"
@@ -3269,6 +3329,76 @@
             "name": "id",
             "in": "path",
             "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/loan/{id}/documents": {
+      "patch": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "loan"
+        ],
+        "summary": "update documents",
+        "operationId": "loanUpdateDocuments",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "documents"
+              ],
+              "properties": {
+                "documents": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "biz_type": {
+                        "type": "string"
+                      },
+                      "file": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "ref_id": {
+                        "type": "integer"
+                      },
+                      "type": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         ],
         "responses": {
@@ -5421,7 +5551,9 @@
                       "real_estate_experiences",
                       "loan_third_services",
                       "loan_borrower",
-                      "loan_demographic"
+                      "loan_demographic",
+                      "loan_processor",
+                      "extend"
                     ],
                     "properties": {
                       "applicants": {
@@ -5590,6 +5722,29 @@
                       },
                       "existing_rate": {
                         "type": "number"
+                      },
+                      "extend": {
+                        "type": "object",
+                        "properties": {
+                          "action_list": {
+                            "type": "string"
+                          },
+                          "business_line": {
+                            "type": "string"
+                          },
+                          "loan_status_update": {
+                            "type": "string"
+                          },
+                          "meeting_notes": {
+                            "type": "string"
+                          },
+                          "pricing": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "extension_date": {
+                        "type": "string"
                       },
                       "has_assignment_fee": {
                         "type": "boolean"
@@ -5786,6 +5941,9 @@
                           }
                         }
                       },
+                      "loan_processor": {
+                        "type": "string"
+                      },
                       "loan_property": {
                         "type": "object",
                         "required": [
@@ -5876,6 +6034,9 @@
                       },
                       "monthly_payment": {
                         "type": "number"
+                      },
+                      "original_contract_date": {
+                        "type": "string"
                       },
                       "paid_off_date": {
                         "type": "string"
@@ -6089,7 +6250,9 @@
                       "real_estate_experiences",
                       "loan_third_services",
                       "loan_borrower",
-                      "loan_demographic"
+                      "loan_demographic",
+                      "loan_processor",
+                      "extend"
                     ],
                     "properties": {
                       "applicants": {
@@ -6258,6 +6421,29 @@
                       },
                       "existing_rate": {
                         "type": "number"
+                      },
+                      "extend": {
+                        "type": "object",
+                        "properties": {
+                          "action_list": {
+                            "type": "string"
+                          },
+                          "business_line": {
+                            "type": "string"
+                          },
+                          "loan_status_update": {
+                            "type": "string"
+                          },
+                          "meeting_notes": {
+                            "type": "string"
+                          },
+                          "pricing": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "extension_date": {
+                        "type": "string"
                       },
                       "has_assignment_fee": {
                         "type": "boolean"
@@ -6454,6 +6640,9 @@
                           }
                         }
                       },
+                      "loan_processor": {
+                        "type": "string"
+                      },
                       "loan_property": {
                         "type": "object",
                         "required": [
@@ -6544,6 +6733,9 @@
                       },
                       "monthly_payment": {
                         "type": "number"
+                      },
+                      "original_contract_date": {
+                        "type": "string"
                       },
                       "paid_off_date": {
                         "type": "string"
@@ -6743,7 +6935,9 @@
                       "real_estate_experiences",
                       "loan_third_services",
                       "loan_borrower",
-                      "loan_demographic"
+                      "loan_demographic",
+                      "loan_processor",
+                      "extend"
                     ],
                     "properties": {
                       "applicants": {
@@ -6912,6 +7106,29 @@
                       },
                       "existing_rate": {
                         "type": "number"
+                      },
+                      "extend": {
+                        "type": "object",
+                        "properties": {
+                          "action_list": {
+                            "type": "string"
+                          },
+                          "business_line": {
+                            "type": "string"
+                          },
+                          "loan_status_update": {
+                            "type": "string"
+                          },
+                          "meeting_notes": {
+                            "type": "string"
+                          },
+                          "pricing": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "extension_date": {
+                        "type": "string"
                       },
                       "has_assignment_fee": {
                         "type": "boolean"
@@ -7108,6 +7325,9 @@
                           }
                         }
                       },
+                      "loan_processor": {
+                        "type": "string"
+                      },
                       "loan_property": {
                         "type": "object",
                         "required": [
@@ -7198,6 +7418,9 @@
                       },
                       "monthly_payment": {
                         "type": "number"
+                      },
+                      "original_contract_date": {
+                        "type": "string"
                       },
                       "paid_off_date": {
                         "type": "string"
@@ -7443,9 +7666,13 @@
             "schema": {
               "type": "object",
               "required": [
-                "type"
+                "type",
+                "file_suffix"
               ],
               "properties": {
+                "file_suffix": {
+                  "type": "string"
+                },
                 "type": {
                   "type": "string"
                 }
@@ -7976,7 +8203,7 @@
       }
     }
   },
-  "x-date": "2025-09-22 13:46:28",
+  "x-date": "2025-09-22 17:18:36",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

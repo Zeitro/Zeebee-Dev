@@ -2,8 +2,11 @@ package storagelogic
 
 import (
 	"context"
+	"fmt"
+	"strings"
 
 	"github.com/google/uuid"
+	"github.com/pkg/errors"
 
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
@@ -39,12 +42,16 @@ func (l *CreatePresignedUrlLogic) CreatePresignedUrl(in *borrower.StorageCreateP
 
 	client := global.GetS3Client()
 	typ := in.Data.Type
+	suffix := strings.ToLower(in.Data.FileSuffix)
 	if len(typ) == 0 {
-		typ = "pdf"
+		err = errors.New("type is empty")
 	}
 	name := uuid.New().String()
-	key := folder + "/" + in.Data.Type + "/" + name
-	req, err := client.GetPresignUrl(l.ctx, key, expireSeconds)
+
+	key := fmt.Sprintf("%s/%s/%s.%s", folder, typ, name, suffix)
+
+	// key := folder + "/" + in.Data.Type + "/" + name
+	req, err := client.GetPresignUrl(l.ctx, key, expireSeconds, suffix)
 	if err != nil {
 		return
 	}
