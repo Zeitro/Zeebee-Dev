@@ -27,38 +27,40 @@ const ImportLoanModal = ({ setOpen }) => {
 				isHideTips: true,
 			});
 			modal.success({
-				...initConfigFn,
-				title: 'Import successful',
-				content: (
-					<div className="text-sm pt-6">
-						{res?.record_count} loan data have been created.
-					</div>
-				),
+				...initConfigFn({
+					title: 'Import successful',
+					content: (
+						<div className="text-sm pt-6">
+							{res?.record_count} loan data have been created.
+						</div>
+					),
+				}),
 			});
 			eventBus.emit('searchPendingLoans');
 			setConfirmLoading(false);
 			setOpen(false);
 		} catch (error) {
 			modal.confirm({
-				...initConfigFn,
-				title: 'Import failed',
-				okText: 'Re-upload',
-				onCancel: () => setOpen(false),
-				onOk: () => {
-					setReUpload(new Date().getTime());
-					setFileList([]);
-					setPercent(0);
-				},
-				content: (
-					<>
-						<span className="text-sm">
-							Wrong data format! please modify the file and reupload.
-						</span>
-						{error.message && (
-							<p className="text-sm p--6 text-base-error">{error.message}</p>
-						)}
-					</>
-				),
+				...initConfigFn({
+					title: 'Import failed',
+					okText: 'Re-upload',
+					onCancel: () => setOpen(false),
+					onOk: () => {
+						setReUpload(new Date().getTime());
+						setFileList([]);
+						setPercent(0);
+					},
+					content: (
+						<>
+							<span className="text-sm">
+								Wrong data format! please modify the file and reupload.
+							</span>
+							{error.message && (
+								<p className="text-sm pt-8 text-base-error">{error.message}</p>
+							)}
+						</>
+					),
+				}),
 			});
 			setConfirmLoading(false);
 		}

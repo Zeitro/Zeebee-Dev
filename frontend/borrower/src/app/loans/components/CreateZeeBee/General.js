@@ -24,7 +24,7 @@ const General = ({ rowData = {} }) => {
 										<div className="text-xl font-medium text-black-dark">
 											{item?.render
 												? item?.render?.(rowData[item.value])
-												: rowData[item.value]}
+												: rowData[item.value] || '--'}
 										</div>
 									</Col>
 								))}

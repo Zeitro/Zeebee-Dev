@@ -240,7 +240,7 @@ export const pendingStatusColor = {
 
 // zeeBee Details字段显示
 export const pendingFields = [
-	{ label: 'ID', value: 'id' },
+	{ label: 'ID', value: 'code' },
 	{ label: 'Target closing date', value: 'closing_date' },
 	{
 		label: 'Total loan amount',
@@ -250,12 +250,12 @@ export const pendingFields = [
 	{
 		label: 'Rate',
 		value: 'rate',
-		render: (v) => `${v || 0}%`,
+		render: (v) => (v ? `${v}%` : '--'),
 	},
 ];
 
 export const activeFields = [
-	{ label: 'ID', value: 'id' },
+	{ label: 'ID', value: 'code' },
 	{ label: 'Maturity date', value: 'maturity_date' },
 	{
 		label: 'Total loan amount',
@@ -270,12 +270,12 @@ export const activeFields = [
 	{
 		label: 'Rate',
 		value: 'rate',
-		render: (v) => `${v || 0}%`,
+		render: (v) => (v ? `${v}%` : '--'),
 	},
 ];
 
 export const archivedFields = [
-	{ label: 'ID', value: 'id' },
+	{ label: 'ID', value: 'code' },
 	{ label: 'Paid off date', value: 'paid_off_date' },
 	{
 		label: 'Total loan amount',
@@ -290,7 +290,7 @@ export const archivedFields = [
 	{
 		label: 'Rate',
 		value: 'rate',
-		render: (v) => `${v || 0}%`,
+		render: (v) => (v ? `${v}%` : '--'),
 	},
 ];
 
@@ -310,34 +310,34 @@ export const generalTermsFields = [
 	{
 		label: 'Rate',
 		value: 'rate',
-		render: (v) => `${v || 0}%`,
+		render: (v) => (v ? `${v}%` : '--'),
 	},
 	{
 		label: 'Outstanding loan amount',
-		value: 'total_principal_amount',
+		value: 'principal_amount',
 		render: (v) => formatAmount(v),
 	},
 	{ label: 'Maturity date', value: 'maturity_date' },
 	{
 		label: 'Monthly Payment',
-		value: 'total_principal_amount',
+		value: 'monthly_payment',
 		render: (v) => formatAmount(v),
 	},
 	{
 		label: 'Term',
-		value: 'total_principal_amount',
-		render: (v) => `${v || 0} Months`,
+		value: 'loan_term',
+		render: (v) => `${v || '-'} Months`,
 	},
 ];
 
 export const generalParametersFields = [
 	{
 		label: 'Lien position',
-		value: 'total_amount',
+		value: 'lien_position',
 	},
 	{
 		label: 'Loan type',
-		value: 'rate',
+		value: 'loan_type',
 	},
 ];
 
