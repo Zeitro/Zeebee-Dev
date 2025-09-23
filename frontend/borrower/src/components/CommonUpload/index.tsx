@@ -33,6 +33,7 @@ const CommonUpload = forwardRef<CommonUploadRef, CommonUploadProps>(
 			accept,
 			children,
 			onGetUploadList = (fileList: UploadFile[]) => [],
+			...moreProps
 		},
 		ref,
 	) => {
@@ -121,6 +122,7 @@ const CommonUpload = forwardRef<CommonUploadRef, CommonUploadProps>(
 			onRemove: (file) => {
 				setFileList((currentList) => currentList.filter((f) => f.uid !== file.uid));
 			},
+			...moreProps,
 		};
 
 		if (immediateUpload) {

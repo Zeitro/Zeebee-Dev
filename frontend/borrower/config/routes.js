@@ -25,6 +25,11 @@ export const navRouter = [
 				title: 'Apply ZeeBee Loan',
 				hideMenu: true,
 			},
+			{
+				path: '/loans/zeeBeeDetails',
+				title: 'ZeeBee Loan Details',
+				hideMenu: true,
+			},
 		],
 	},
 	{

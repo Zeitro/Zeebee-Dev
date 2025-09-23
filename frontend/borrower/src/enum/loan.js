@@ -1,3 +1,5 @@
+import { formatAmount } from '@/lib/format';
+
 // 创建或编辑loan时的步骤
 export const createLoanSteps = [
 	{
@@ -32,7 +34,7 @@ export const createZeeBeeSteps = [
 		],
 	},
 	{
-		title: 'Property and loan',
+		title: 'Property & loan',
 		key: 'propertyAndLoan',
 		children: [
 			{
@@ -76,6 +78,17 @@ export const createZeeBeeSteps = [
 	{
 		title: 'Review and sign',
 		key: 'reviewAndSign',
+	},
+];
+
+export const zeeBeeDetailsTabs = [
+	{
+		label: 'General',
+		value: 'general',
+	},
+	{
+		label: 'Documents',
+		value: 'documents',
 	},
 ];
 
@@ -201,6 +214,143 @@ export const loanPendingStatus = [
 	},
 ];
 
+export const stageColor = {
+	Pending: 'var(--base-primary)',
+	Active: 'var(--base-success)',
+	Archived: 'var(--base-error)',
+};
+
+export const pendingStatusColor = {
+	Quoting: {
+		color: 'var(--green-medium)',
+		bg: 'var(--green-light)',
+		border: 'var(--green-light-100)',
+	},
+	Processing: {
+		color: 'var(--blue-dark)',
+		bg: 'var(--blue-light-2)',
+		border: 'var(--blue-light)',
+	},
+	Closing: {
+		color: 'var(--purple-dark)',
+		bg: 'var(--purple-light)',
+		border: 'var(--purple-medium)',
+	},
+};
+
+// zeeBee Details字段显示
+export const pendingFields = [
+	{ label: 'ID', value: 'id' },
+	{ label: 'Target closing date', value: 'closing_date' },
+	{
+		label: 'Total loan amount',
+		value: 'total_amount',
+		render: (v) => formatAmount(v),
+	},
+	{
+		label: 'Rate',
+		value: 'rate',
+		render: (v) => `${v || 0}%`,
+	},
+];
+
+export const activeFields = [
+	{ label: 'ID', value: 'id' },
+	{ label: 'Maturity date', value: 'maturity_date' },
+	{
+		label: 'Total loan amount',
+		value: 'total_amount',
+		render: (v) => formatAmount(v),
+	},
+	{
+		label: 'Outstanding loan amount',
+		value: 'total_principal_amount',
+		render: (v) => formatAmount(v),
+	},
+	{
+		label: 'Rate',
+		value: 'rate',
+		render: (v) => `${v || 0}%`,
+	},
+];
+
+export const archivedFields = [
+	{ label: 'ID', value: 'id' },
+	{ label: 'Paid off date', value: 'paid_off_date' },
+	{
+		label: 'Total loan amount',
+		value: 'total_amount',
+		render: (v) => formatAmount(v),
+	},
+	{
+		label: 'Principal balance:',
+		value: 'principal_amount:',
+		render: (v) => formatAmount(v),
+	},
+	{
+		label: 'Rate',
+		value: 'rate',
+		render: (v) => `${v || 0}%`,
+	},
+];
+
+export const loanDetailsFields = {
+	Pending: pendingFields,
+	Active: activeFields,
+	Archived: archivedFields,
+};
+
+// zeeBee Details --> General
+export const generalTermsFields = [
+	{
+		label: 'Total loan amount',
+		value: 'total_amount',
+		render: (v) => formatAmount(v),
+	},
+	{
+		label: 'Rate',
+		value: 'rate',
+		render: (v) => `${v || 0}%`,
+	},
+	{
+		label: 'Outstanding loan amount',
+		value: 'total_principal_amount',
+		render: (v) => formatAmount(v),
+	},
+	{ label: 'Maturity date', value: 'maturity_date' },
+	{
+		label: 'Monthly Payment',
+		value: 'total_principal_amount',
+		render: (v) => formatAmount(v),
+	},
+	{
+		label: 'Term',
+		value: 'total_principal_amount',
+		render: (v) => `${v || 0} Months`,
+	},
+];
+
+export const generalParametersFields = [
+	{
+		label: 'Lien position',
+		value: 'total_amount',
+	},
+	{
+		label: 'Loan type',
+		value: 'rate',
+	},
+];
+
+export const generalList = [
+	{
+		title: 'Terms',
+		fields: generalTermsFields,
+	},
+	{
+		title: 'Parameters',
+		fields: generalParametersFields,
+	},
+];
 // loan status
 // export const loanStatusOptions = [
 // 	{
