@@ -1,0 +1,76 @@
+'use client';
+import React, { useState } from 'react';
+import styles from './index.module.scss';
+import CommonUpload from '@/components/CommonUpload';
+import { InboxOutlined } from '@ant-design/icons';
+import ArticleSvg from '@/assets/images/article.svg';
+import CommonDownloadButton from '@/components/CommonDownload';
+import ViewFileButton from '@/components/ViewFile';
+import { Space } from 'antd';
+const Documents = () => {
+	const [fileList, setFileList] = useState([]);
+	return (
+		<div>
+			<div className="py-6 px-6 border border-base-border rounded-2xl mb-6">
+				<div className="text-xl font-medium pb-1 pl-3 text-black-dark">Upload Document</div>
+				<p
+					className="text-sm/[22px] pl-3 pb-4 border-b border-base-border mb-4"
+					style={{ color: 'rgba(0, 0, 0, 0.65)' }}
+				>
+					Drag and drop your document here, or click to select a file.
+				</p>
+				<CommonUpload
+					immediateUpload={false}
+					accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+					onGetUploadList={setFileList}
+					disabled={fileList?.length}
+					className={styles.documentUpload}
+				>
+					<div className=" bg-gray-light py-4 w-full flex flex-col items-center border border-dashed border-base-border rounded-sm text-gray-light cursor-pointer">
+						<InboxOutlined style={{ fontSize: '48px', color: 'var(--base-primary)' }} />
+						<div className="text-base pt-5 pb-1 text-foreground">
+							Click or drag file to this area to upload
+						</div>
+						<p className="text-base-label">
+							Supported formats: PDF, DOC, PNG, JPG, JPEG Maximum file size: 10MB
+						</p>
+					</div>
+				</CommonUpload>
+			</div>
+			{fileList?.length > 0 && (
+				<div className="py-6 px-6 border border-base-border rounded-2xl">
+					<div className="pb-4 pl-3  flex items-center justify-between border-b border-base-border mb-4">
+						<span className="text-xl font-medium text-black-dark">Upload Document</span>
+						<p className="text-xs/[20px] px-2 bg-gray-light rounded-sm border border-base-border">
+							3 documents
+						</p>
+					</div>
+					{fileList?.map((item, index) => {
+						return (
+							<div
+								className="flex items-center py-4 px-4 border border-base-border rounded-sm"
+								key={index}
+							>
+								<ArticleSvg style={{ fontSize: 48 }} />
+								<div className="flex-1">
+									<div className="text-base font-medium pb-2 text-black-dark">
+										Bank_statement_August_2025. pdf
+									</div>
+									<p className="text-sm/[22px] font-medium opacity-65 text-black-dark">
+										09/16/2025 | 9:45 PM
+									</p>
+								</div>
+								<Space>
+									<ViewFileButton disabled={false} />
+									<CommonDownloadButton disabled={false} />
+								</Space>
+							</div>
+						);
+					})}
+				</div>
+			)}
+		</div>
+	);
+};
+
+export default Documents;
