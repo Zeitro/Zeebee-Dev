@@ -62,7 +62,7 @@ const ZeeBeeDetails = () => {
 					<div className="flex items-center gap-2 " key={index}>
 						<div className="text-[#4e5969]">{item.label}:</div>
 						<div className="text-[#000]">
-							{item.render?.(rowData[item.value]) ?? item.value}
+							{item.render?.(rowData[item.value]) ?? rowData?.[item.value]}
 						</div>
 					</div>
 				))}
