@@ -27,6 +27,8 @@ type (
 	FileEntry                             = borrower.FileEntry
 	ImportPendingLoansRequest             = borrower.ImportPendingLoansRequest
 	ImportPendingLoansRequestData         = borrower.ImportPendingLoansRequestData
+	ImportPendingLoansResponse            = borrower.ImportPendingLoansResponse
+	ImportPendingLoansResponseData        = borrower.ImportPendingLoansResponseData
 	LenderEntry                           = borrower.LenderEntry
 	LoanApplyRequest                      = borrower.LoanApplyRequest
 	LoanApplyRequestData                  = borrower.LoanApplyRequestData

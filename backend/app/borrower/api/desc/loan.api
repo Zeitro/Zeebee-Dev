@@ -380,6 +380,9 @@ type (
     ImportLoanRequest {
         Stage string `form:"stage" validate:"required,oneof=Pending,Active,Archived"`
     }
+    ImportLoanResponse {
+        RecordCount int64 `json:"record_count" `
+    }
 )
 
 
@@ -424,3 +427,4 @@ type UpdateDocumentsRequest {
     Id int64 `path:"id" validate:"required,gt=0"`
     Documents []*FileEditEntry `json:"documents" validate:"required,gt=0,dive,required"`
 }
+

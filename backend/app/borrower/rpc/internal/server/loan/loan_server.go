@@ -78,7 +78,7 @@ func (s *LoanServer) UpdateApplyLoan(ctx context.Context, in *borrower.LoanApply
 	return l.UpdateApplyLoan(in)
 }
 
-func (s *LoanServer) ImportPendingLoans(ctx context.Context, in *borrower.ImportPendingLoansRequest) (*borrower.EmptyResponse, error) {
+func (s *LoanServer) ImportPendingLoans(ctx context.Context, in *borrower.ImportPendingLoansRequest) (*borrower.ImportPendingLoansResponse, error) {
 	l := loanlogic.NewImportPendingLoansLogic(ctx, s.svcCtx)
 	return l.ImportPendingLoans(in)
 }
