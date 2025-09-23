@@ -124,9 +124,10 @@ func NewImportLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ImportLogi
 	}
 }
 
-func (l *ImportLogic) Import(fileContents []byte, stage string) (resp *types.EmptyResponse, err error) {
+func (l *ImportLogic) Import(fileContents []byte, stage string) (resp *types.ImportLoanResponse, err error) {
 	var (
-		borrowerId int64
+		borrowerId  int64
+		recordCount int64
 	)
 	// get borrower id
 	borrowerId, err = utils.GetAccountIdFromCtx(l.ctx)
@@ -136,33 +137,35 @@ func (l *ImportLogic) Import(fileContents []byte, stage string) (resp *types.Emp
 
 	switch constants.LoanStage(stage) {
 	case constants.LoanStagePending:
-		err = l.importPendingLoans(fileContents, borrowerId)
+		recordCount, err = l.importPendingLoans(fileContents, borrowerId)
 	case constants.LoanStageActive:
 		// todo import active loans
 		fallthrough
 	default:
 		err = errors.WithStack(errors.Errorf("invalid loan stage: %s", stage))
 	}
-	return &types.EmptyResponse{}, err
+	return &types.ImportLoanResponse{
+		RecordCount: recordCount,
+	}, err
 }
 
-func (l *ImportLogic) importPendingLoans(content []byte, borrowerId int64) (err error) {
+func (l *ImportLogic) importPendingLoans(content []byte, borrowerId int64) (recordCount int64, err error) {
 	r := bytes.NewReader(content)
 	// create excelize
 	f, err := excelize.OpenReader(r)
 	if err != nil {
-		return errors.Wrap(err, "failed to open excel file")
+		return 0, errors.Wrap(err, "failed to open excel file")
 	}
 	defer f.Close()
 
 	// get rows
 	rows, err := f.GetRows(f.GetSheetName(0))
 	if err != nil {
-		return errors.Wrap(err, "failed to get rows")
+		return 0, errors.Wrap(err, "failed to get rows")
 	}
 
 	if len(rows) <= 1 {
-		return nil
+		return 0, nil
 	}
 	// validate headers
 	headerMap := make(map[string]struct{})
@@ -171,13 +174,13 @@ func (l *ImportLogic) importPendingLoans(content []byte, borrowerId int64) (err 
 	}
 	for field := range pendingLoanFields {
 		if _, ok := headerMap[field]; !ok {
-			return errors.Errorf("field %s not found in header", field)
+			return 0, errors.Errorf("field %s not found in header", field)
 		}
 	}
 	// get loans
 	importLoans, err := parsePendingLoans(rows, borrowerId)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	rpcReq := &borrower.ImportPendingLoansRequest{
@@ -189,12 +192,16 @@ func (l *ImportLogic) importPendingLoans(content []byte, borrowerId int64) (err 
 		DeepCopy:      true,
 	})
 	if err != nil {
-		return errorx.GetFailedTransErr(err)
+		return 0, errorx.GetFailedTransErr(err)
+	}
+	var rpcResp *borrower.ImportPendingLoansResponse
+
+	rpcResp, err = l.svcCtx.LoanRpcClient.ImportPendingLoans(l.ctx, rpcReq)
+	if err != nil {
+		return
 	}
 
-	_, err = l.svcCtx.LoanRpcClient.ImportPendingLoans(l.ctx, rpcReq)
-
-	return err
+	return rpcResp.Data.RecordCount, err
 }
 
 func parsePendingLoans(rows [][]string, borrowerId int64) ([]*types.ImportPendingLoanEntry, error) {

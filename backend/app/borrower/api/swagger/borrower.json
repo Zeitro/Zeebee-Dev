@@ -1709,7 +1709,8 @@
                       "loan_borrower",
                       "loan_demographic",
                       "loan_processor",
-                      "extend"
+                      "extend",
+                      "documents"
                     ],
                     "properties": {
                       "applicants": {
@@ -1860,6 +1861,35 @@
                       },
                       "created_at": {
                         "type": "string"
+                      },
+                      "documents": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "biz_type": {
+                              "type": "string"
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "file": {
+                              "type": "string"
+                            },
+                            "file_type": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "ref_id": {
+                              "type": "integer"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
                       },
                       "dscr": {
                         "type": "number"
@@ -2529,6 +2559,35 @@
                 },
                 "created_at": {
                   "type": "string"
+                },
+                "documents": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "biz_type": {
+                        "type": "string"
+                      },
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "file": {
+                        "type": "string"
+                      },
+                      "file_type": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "ref_id": {
+                        "type": "integer"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      }
+                    }
+                  }
                 },
                 "dscr": {
                   "type": "number"
@@ -3342,7 +3401,7 @@
       }
     },
     "/api/v1/loan/{id}/documents": {
-      "patch": {
+      "post": {
         "consumes": [
           "application/json"
         ],
@@ -3385,14 +3444,14 @@
                       "file": {
                         "type": "string"
                       },
+                      "file_type": {
+                        "type": "string"
+                      },
                       "id": {
                         "type": "integer"
                       },
                       "ref_id": {
                         "type": "integer"
-                      },
-                      "type": {
-                        "type": "string"
                       }
                     }
                   }
@@ -5553,7 +5612,8 @@
                       "loan_borrower",
                       "loan_demographic",
                       "loan_processor",
-                      "extend"
+                      "extend",
+                      "documents"
                     ],
                     "properties": {
                       "applicants": {
@@ -5704,6 +5764,35 @@
                       },
                       "created_at": {
                         "type": "string"
+                      },
+                      "documents": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "biz_type": {
+                              "type": "string"
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "file": {
+                              "type": "string"
+                            },
+                            "file_type": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "ref_id": {
+                              "type": "integer"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
                       },
                       "dscr": {
                         "type": "number"
@@ -6252,7 +6341,8 @@
                       "loan_borrower",
                       "loan_demographic",
                       "loan_processor",
-                      "extend"
+                      "extend",
+                      "documents"
                     ],
                     "properties": {
                       "applicants": {
@@ -6403,6 +6493,35 @@
                       },
                       "created_at": {
                         "type": "string"
+                      },
+                      "documents": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "biz_type": {
+                              "type": "string"
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "file": {
+                              "type": "string"
+                            },
+                            "file_type": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "ref_id": {
+                              "type": "integer"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
                       },
                       "dscr": {
                         "type": "number"
@@ -6937,7 +7056,8 @@
                       "loan_borrower",
                       "loan_demographic",
                       "loan_processor",
-                      "extend"
+                      "extend",
+                      "documents"
                     ],
                     "properties": {
                       "applicants": {
@@ -7088,6 +7208,35 @@
                       },
                       "created_at": {
                         "type": "string"
+                      },
+                      "documents": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "biz_type": {
+                              "type": "string"
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "file": {
+                              "type": "string"
+                            },
+                            "file_type": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "ref_id": {
+                              "type": "integer"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
                       },
                       "dscr": {
                         "type": "number"
@@ -8203,7 +8352,7 @@
       }
     }
   },
-  "x-date": "2025-09-22 17:18:36",
+  "x-date": "2025-09-23 09:13:53",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

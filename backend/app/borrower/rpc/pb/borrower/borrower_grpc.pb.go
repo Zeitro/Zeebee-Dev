@@ -597,7 +597,7 @@ type LoanClient interface {
 	ApplyLoan(ctx context.Context, in *LoanApplyRequest, opts ...grpc.CallOption) (*LoanApplyResponse, error)
 	SaveDraftLoan(ctx context.Context, in *LoanApplyRequest, opts ...grpc.CallOption) (*LoanApplyResponse, error)
 	UpdateApplyLoan(ctx context.Context, in *LoanApplyRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
-	ImportPendingLoans(ctx context.Context, in *ImportPendingLoansRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	ImportPendingLoans(ctx context.Context, in *ImportPendingLoansRequest, opts ...grpc.CallOption) (*ImportPendingLoansResponse, error)
 	UpdateLoanDocuments(ctx context.Context, in *LoanUpdateDocumentsRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 }
 
@@ -719,9 +719,9 @@ func (c *loanClient) UpdateApplyLoan(ctx context.Context, in *LoanApplyRequest, 
 	return out, nil
 }
 
-func (c *loanClient) ImportPendingLoans(ctx context.Context, in *ImportPendingLoansRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+func (c *loanClient) ImportPendingLoans(ctx context.Context, in *ImportPendingLoansRequest, opts ...grpc.CallOption) (*ImportPendingLoansResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(EmptyResponse)
+	out := new(ImportPendingLoansResponse)
 	err := c.cc.Invoke(ctx, Loan_ImportPendingLoans_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -754,7 +754,7 @@ type LoanServer interface {
 	ApplyLoan(context.Context, *LoanApplyRequest) (*LoanApplyResponse, error)
 	SaveDraftLoan(context.Context, *LoanApplyRequest) (*LoanApplyResponse, error)
 	UpdateApplyLoan(context.Context, *LoanApplyRequest) (*EmptyResponse, error)
-	ImportPendingLoans(context.Context, *ImportPendingLoansRequest) (*EmptyResponse, error)
+	ImportPendingLoans(context.Context, *ImportPendingLoansRequest) (*ImportPendingLoansResponse, error)
 	UpdateLoanDocuments(context.Context, *LoanUpdateDocumentsRequest) (*EmptyResponse, error)
 	mustEmbedUnimplementedLoanServer()
 }
@@ -799,7 +799,7 @@ func (UnimplementedLoanServer) SaveDraftLoan(context.Context, *LoanApplyRequest)
 func (UnimplementedLoanServer) UpdateApplyLoan(context.Context, *LoanApplyRequest) (*EmptyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateApplyLoan not implemented")
 }
-func (UnimplementedLoanServer) ImportPendingLoans(context.Context, *ImportPendingLoansRequest) (*EmptyResponse, error) {
+func (UnimplementedLoanServer) ImportPendingLoans(context.Context, *ImportPendingLoansRequest) (*ImportPendingLoansResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ImportPendingLoans not implemented")
 }
 func (UnimplementedLoanServer) UpdateLoanDocuments(context.Context, *LoanUpdateDocumentsRequest) (*EmptyResponse, error) {

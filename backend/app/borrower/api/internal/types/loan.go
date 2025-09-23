@@ -7,6 +7,10 @@ type ImportLoanRequest struct {
 	Stage string `form:"stage" validate:"required,oneof=Pending,Active,Archived"`
 }
 
+type ImportLoanResponse struct {
+	RecordCount int64 `json:"record_count" `
+}
+
 type LoanApplyRequest struct {
 	Id                       int64                      `path:"id,optional"`
 	LoanType                 string                     `json:"loan_type,optional" validate:"required,oneof=Bridge Rehab Rental 'Ground up construction'"`

@@ -45,7 +45,7 @@ func NewImportPendingLoansLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	}
 }
 
-func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingLoansRequest) (resp *borrower.EmptyResponse, err error) {
+func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingLoansRequest) (resp *borrower.ImportPendingLoansResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -125,7 +125,11 @@ func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingL
 		return nil, errors.Wrap(err, "failed to import pending loan")
 	}
 
-	return &borrower.EmptyResponse{}, nil
+	return &borrower.ImportPendingLoansResponse{
+		Data: &borrower.ImportPendingLoansResponseData{
+			RecordCount: int64(len(models)),
+		},
+	}, nil
 }
 
 // buildImportModels gets the models for importing a pending loan.

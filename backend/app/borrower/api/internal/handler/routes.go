@@ -88,7 +88,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					// update documents
-					Method:  http.MethodPatch,
+					Method:  http.MethodPost,
 					Path:    "/loan/:id/documents",
 					Handler: loan.UpdateDocumentsHandler(serverCtx),
 				},

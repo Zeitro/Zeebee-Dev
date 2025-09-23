@@ -597,6 +597,13 @@ message ImportPendingLoansRequestData {
 
 }
 
+message ImportPendingLoansResponse {
+  ImportPendingLoansResponseData data = 1;
+}
+message ImportPendingLoansResponseData {
+  int64 record_count = 1;
+}
+
 message LoanExtendValueEntry {
   string  pricing = 1;
   string loan_status_updates = 2;
@@ -619,6 +626,8 @@ message LoanUpdateDocumentsRequestData {
 
 
 
+
+
 service Loan {
   rpc CreateBorrowerLoan(LoanCreateRequest) returns(LoanCreateResponse);
   rpc BatchCreateBorrowerLoan(BatchCreateLoanRequest) returns(EmptyResponse);
@@ -631,7 +640,7 @@ service Loan {
   rpc ApplyLoan(LoanApplyRequest) returns(LoanApplyResponse);
   rpc SaveDraftLoan(LoanApplyRequest) returns(LoanApplyResponse);
   rpc UpdateApplyLoan(LoanApplyRequest) returns(EmptyResponse);
-  rpc ImportPendingLoans(ImportPendingLoansRequest) returns(EmptyResponse);
+  rpc ImportPendingLoans(ImportPendingLoansRequest) returns(ImportPendingLoansResponse);
   rpc UpdateLoanDocuments(LoanUpdateDocumentsRequest) returns(EmptyResponse);
 }
 

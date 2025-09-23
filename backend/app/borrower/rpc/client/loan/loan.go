@@ -27,6 +27,8 @@ type (
 	FileEntry                             = borrower.FileEntry
 	ImportPendingLoansRequest             = borrower.ImportPendingLoansRequest
 	ImportPendingLoansRequestData         = borrower.ImportPendingLoansRequestData
+	ImportPendingLoansResponse            = borrower.ImportPendingLoansResponse
+	ImportPendingLoansResponseData        = borrower.ImportPendingLoansResponseData
 	LenderEntry                           = borrower.LenderEntry
 	LoanApplyRequest                      = borrower.LoanApplyRequest
 	LoanApplyRequestData                  = borrower.LoanApplyRequestData
@@ -134,7 +136,7 @@ type (
 		ApplyLoan(ctx context.Context, in *LoanApplyRequest, opts ...grpc.CallOption) (*LoanApplyResponse, error)
 		SaveDraftLoan(ctx context.Context, in *LoanApplyRequest, opts ...grpc.CallOption) (*LoanApplyResponse, error)
 		UpdateApplyLoan(ctx context.Context, in *LoanApplyRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
-		ImportPendingLoans(ctx context.Context, in *ImportPendingLoansRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+		ImportPendingLoans(ctx context.Context, in *ImportPendingLoansRequest, opts ...grpc.CallOption) (*ImportPendingLoansResponse, error)
 		UpdateLoanDocuments(ctx context.Context, in *LoanUpdateDocumentsRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	}
 
@@ -204,7 +206,7 @@ func (m *defaultLoan) UpdateApplyLoan(ctx context.Context, in *LoanApplyRequest,
 	return client.UpdateApplyLoan(ctx, in, opts...)
 }
 
-func (m *defaultLoan) ImportPendingLoans(ctx context.Context, in *ImportPendingLoansRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+func (m *defaultLoan) ImportPendingLoans(ctx context.Context, in *ImportPendingLoansRequest, opts ...grpc.CallOption) (*ImportPendingLoansResponse, error) {
 	client := borrower.NewLoanClient(m.cli.Conn())
 	return client.ImportPendingLoans(ctx, in, opts...)
 }
