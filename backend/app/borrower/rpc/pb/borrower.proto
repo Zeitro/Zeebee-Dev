@@ -320,6 +320,7 @@ message LoanEntry {
   string loan_processor = 63;
   LoanExtendValueEntry extend = 64;
   repeated FileEntry documents = 65;
+  string code = 66;
 
 }
 

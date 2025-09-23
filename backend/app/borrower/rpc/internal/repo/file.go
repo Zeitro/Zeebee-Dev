@@ -35,7 +35,7 @@ func (repo *FileRepo) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, id int64
 func (repo *FileRepo) DeleteLoanFilesByLoanIdWithTx(ctx context.Context, tx *gorm.DB, loanId int64) (err error) {
 	err = tx.WithContext(ctx).
 		Model(&model.File{}).
-		Where("ref_id = ? and type = ?", loanId, constants.FileTypeApplyForm).
+		Where("ref_id = ? and file_type = ?", loanId, constants.FileTypeApplyForm).
 		Delete(&model.File{}).
 		Error
 	return errors.WithStack(err)
