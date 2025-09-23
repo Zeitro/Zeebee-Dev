@@ -14,7 +14,7 @@ const CreateLoanPage = () => {
 	const searchParams = useSearchParams();
 	const api = `/property/${searchParams.get('propertyId')}`;
 	const { request } = createRequest();
-	const [currentStep, setCurrentStep] = useState(2);
+	const [currentStep, setCurrentStep] = useState(0);
 	const [loading, setLoading] = useState(false);
 	const [form] = Form.useForm();
 	// 存储每个步骤的数据

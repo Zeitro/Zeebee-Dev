@@ -71,7 +71,7 @@ const CreateProperty = ({
 			{stage === loan_pending && (
 				<>
 					<Col {...layoutCol} {...(colProps || {})}>
-						<Form.Item label="Purchase date" name="paid_off_date">
+						<Form.Item label="Purchase date" name="purchase_date">
 							<CommonFormDate />
 						</Form.Item>
 					</Col>
@@ -81,7 +81,7 @@ const CreateProperty = ({
 						</Form.Item>
 					</Col>
 					<Col {...layoutCol} {...(colProps || {})}>
-						<Form.Item label="Purchase price" name="principal_amount">
+						<Form.Item label="Purchase price" name="purchase_amount">
 							<InputNumAmount placeholder="Enter purchase price" />
 						</Form.Item>
 					</Col>
