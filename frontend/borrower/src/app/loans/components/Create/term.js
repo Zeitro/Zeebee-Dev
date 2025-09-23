@@ -189,17 +189,17 @@ const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
 			{stage === loan_pending && (
 				<>
 					<Col {...layoutCol} {...(colProps || {})}>
-						<Form.Item label="Original contract date" name="paid_off_date">
+						<Form.Item label="Original contract date" name="original_contract_date">
 							<CommonFormDate />
 						</Form.Item>
 					</Col>
 					<Col {...layoutCol} {...(colProps || {})}>
-						<Form.Item label="Extension date" name="paid_off_date">
+						<Form.Item label="Extension date" name="extension_date">
 							<CommonFormDate />
 						</Form.Item>
 					</Col>
 					<Col {...layoutCol} {...(colProps || {})}>
-						<Form.Item label="Loan processor" name="lender_company">
+						<Form.Item label="Loan processor" name="loan_processor">
 							<Input placeholder="Enter Loan processor" />
 						</Form.Item>
 					</Col>

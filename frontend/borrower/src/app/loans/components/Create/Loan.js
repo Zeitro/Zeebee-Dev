@@ -193,7 +193,7 @@ const CreateLoan = ({ form, stepBtn, gutter, isRadioStyle, ...colProps }) => {
 			{stage === loan_pending && (
 				<>
 					<Col {...layoutCol} {...(colProps || {})}>
-						<Form.Item label="Pricing" name="pricing">
+						<Form.Item label="Pricing" name={['extend', 'pricing']}>
 							<Input.TextArea
 								placeholder="Enter pricing"
 								autoSize={{ minRows: 2, maxRows: 3 }}
@@ -201,7 +201,10 @@ const CreateLoan = ({ form, stepBtn, gutter, isRadioStyle, ...colProps }) => {
 						</Form.Item>
 					</Col>
 					<Col {...layoutCol} {...(colProps || {})}>
-						<Form.Item label="Loan status updates" name="pricing">
+						<Form.Item
+							label="Loan status updates"
+							name={['extend', 'loan_status_update']}
+						>
 							<Input.TextArea
 								placeholder="Enter loan status updates"
 								autoSize={{ minRows: 2, maxRows: 3 }}
@@ -209,7 +212,7 @@ const CreateLoan = ({ form, stepBtn, gutter, isRadioStyle, ...colProps }) => {
 						</Form.Item>
 					</Col>
 					<Col {...layoutCol} {...(colProps || {})}>
-						<Form.Item label="Meeting notes" name="pricing">
+						<Form.Item label="Meeting notes" name={['extend', 'meeting_notes']}>
 							<Input.TextArea
 								placeholder="Enter meeting notes"
 								autoSize={{ minRows: 2, maxRows: 3 }}
@@ -217,7 +220,7 @@ const CreateLoan = ({ form, stepBtn, gutter, isRadioStyle, ...colProps }) => {
 						</Form.Item>
 					</Col>
 					<Col {...layoutCol} {...(colProps || {})}>
-						<Form.Item label="Action list" name="pricing">
+						<Form.Item label="Action list" name={['extend', 'action_list']}>
 							<Input.TextArea
 								placeholder="Enter action list"
 								autoSize={{ minRows: 2, maxRows: 3 }}
@@ -225,12 +228,12 @@ const CreateLoan = ({ form, stepBtn, gutter, isRadioStyle, ...colProps }) => {
 						</Form.Item>
 					</Col>
 					<Col {...layoutCol} {...(colProps || {})}>
-						<Form.Item label="Existing lender" name="pricing">
+						<Form.Item label="Existing lender" name="existing_lender_company">
 							<Input placeholder="Enter existing lender" />
 						</Form.Item>
 					</Col>
 					<Col {...layoutCol} {...(colProps || {})}>
-						<Form.Item label="Business line" name="pricing">
+						<Form.Item label="Business line" name={['extend', 'business_line']}>
 							<Input placeholder="Enter business line" />
 						</Form.Item>
 					</Col>
