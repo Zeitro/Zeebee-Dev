@@ -1,5 +1,5 @@
 'use client';
-import React, { useMemo, useState, useRef } from 'react';
+import React, { useMemo, useState, useRef, useEffect } from 'react';
 import FilterTable from '@/components/FilterTable';
 import { pendingColumns } from './column';
 import { transformArrayStructure } from '@/lib/common';
@@ -7,6 +7,7 @@ import { useOptionsStore } from '@/store/options';
 import { createRequest } from '@/lib/fetch';
 import { ReloadOutlined } from '@ant-design/icons';
 import useOpt from './useOpt';
+import eventBus from '@/lib/bus';
 const PendingPage = ({
 	hasFilterField,
 	hasPagination,
@@ -154,6 +155,11 @@ const PendingPage = ({
 			lenderOptions,
 		],
 	);
+
+	// 导入3rd party后调用，更新列表
+	useEffect(() => {
+		eventBus.on('searchPendingLoans', tableFilterRef?.current?.handleSearch);
+	}, []);
 
 	return (
 		<>

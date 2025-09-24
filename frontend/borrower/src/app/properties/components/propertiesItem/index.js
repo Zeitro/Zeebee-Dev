@@ -13,12 +13,12 @@ const PropertiesItem = ({ data }) => {
 		{
 			label: 'Active borrower',
 			value: 'applicants',
-			render: (v) => <FieldTips title={v?.join(',')}>{v?.join(',')}</FieldTips>,
+			render: (v) => <FieldTips title={v?.join(',')}>{v?.join(',') || '--'}</FieldTips>,
 		},
 		{
 			label: 'Active lender',
 			value: 'lenders',
-			render: (v) => <FieldTips title={v?.join(',')}>{v?.join(',')}</FieldTips>,
+			render: (v) => <FieldTips title={v?.join(',')}>{v?.join(',') || '--'}</FieldTips>,
 		},
 		{
 			label: 'Nearest maturity date',
@@ -36,7 +36,7 @@ const PropertiesItem = ({ data }) => {
 		<Col lg={6} sm={12} xs={24} key={index}>
 			{item?.label && <p className="text-base-label pb-1">{item.label}</p>}
 			<div className="text-base/[24px] font-medium flex items-center">
-				{item?.render?.(data[item.value])}
+				{item?.render?.(data[item.value]) || '--'}
 			</div>
 		</Col>
 	);
