@@ -806,7 +806,6 @@ message LoanDemographicEntry{
   LoanDemographicEthnicityEntry ethnicity = 4;
   LoanDemographicRaceEntry race = 5;
   string sex = 6;
-  //  LoanDemographicExtraDemographicEntry extra_demographic = 7;
 }
 
 message LoanDemographicPropertyEntry {
@@ -824,44 +823,15 @@ message LoanDemographicPropertyEntry {
   bool has_foreclosed_upon = 12;
   bool has_a_bankruptcy = 13;
   string bankruptcy_chapter = 14;
-  //  bool bankruptcy_chapter7 = 14;
-  //  bool bankruptcy_chapter11 = 15;
-  //  bool bankruptcy_chapter12 = 16;
-  //  bool bankruptcy_chapter13 = 17;
 }
 
 message LoanDemographicEthnicityEntry {
-  //  bool is_hispanic_or_latino = 1;
-  //  bool is_other_hispanic_or_latino = 2;
-  //  string other_hispanic_or_latino_name = 3;
-  //  bool is_mexican = 4;
-  //  bool is_cuban = 5;
-  //  bool is_not_hispanic_or_latino = 6;
-  //  bool hidden = 7;
   repeated string values = 1;
   string other_hispanic_or_latino_name = 2;
 
 }
 
 message LoanDemographicRaceEntry {
-  //  bool is_american_indian_or_alaska_native = 1;
-  //  string american_indian_or_alaska_native_name = 2;
-  //  bool is_asian = 3;
-  //  bool is_asian_indian = 4;
-  //  bool is_asian_chinese = 5;
-  //  bool is_asian_filipino = 6;
-  //  bool is_asian_japanese = 7;
-  //  bool is_asian_korean = 8;
-  //  bool is_asian_vietnamese = 9;
-  //  bool is_asian_other = 10;
-  //  string asian_other_name = 11;
-  //  bool is_black_or_african_american = 12;
-  //  bool is_native_hawaiian_or_other_pacific_islander = 13;
-  //  bool is_native_hawaiian_guamanian_or_chamorro_samoan = 14;
-  //  bool is_other_pacific_islander = 15;
-  //  string other_pacific_islander_name = 16;
-  //  bool is_white = 17;
-  //  bool hidden = 18;
   repeated string values = 1;
   repeated string asian_values = 2;
   string american_indian_or_alaska_native_name = 3;
@@ -873,10 +843,6 @@ message LoanDemographicExtraDemographicEntry {
   bool is_ethnicity_collected_by_observation = 1;
   bool is_sex_collected_by_observation = 2;
   bool is_race_collected_by_observation = 3;
-  //  bool is_by_face_to_face = 4;
-  //  bool is_by_telephone = 5;
-  //  bool is_by_fox_or_mail = 6;
-  //  bool is_by_email_or_internet = 7;
   repeated string info_channels = 4;
 }
 
