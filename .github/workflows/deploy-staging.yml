@@ -9,7 +9,7 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           clean: true
       - name: Get Git Commit ID
@@ -24,7 +24,9 @@ jobs:
         env:
           IMAGE_TAG: ${{ env.sha_short }}
         run: |
-          docker-compose -f docker-compose-borrower-staging.yml up -d --build --force-recreate --no-cache
+          docker-compose -f docker-compose-borrower-staging.yml down || true
+          docker-compose -f docker-compose-borrower-staging.yml build --no-cache
+          docker-compose -f docker-compose-borrower-staging.yml up -d
 
       - name: Remove old images
         run: |
