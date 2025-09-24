@@ -230,6 +230,7 @@ type LoanEditApplicantEntry struct {
 
 type LoanEntry struct {
 	Id                       int64                    `json:"id,optional"`
+	Code                     string                   `json:"code,optional"`
 	Stage                    string                   `json:"stage" validate:"required,oneof=Pending Active Archived"`
 	PendingStatus            string                   `json:"pending_status,optional" validate:"required_if=Stage Pending,omitempty,oneof=Quoting Processing Closing"`
 	LoanPurpose              string                   `json:"loan_purpose" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
