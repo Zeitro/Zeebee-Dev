@@ -24,7 +24,12 @@ import { assemblyAddress } from '@/lib/format';
 const initialValues = {
 	applicants: [{ type: 'Individual', is_primary: true }],
 };
+/**
+ * hooks组件，用于 新建/详情/草稿 三种ZeeBee Loan
+ * @param {*} pageType 区分详情页 create/ details
+ */
 const useCreate = (pageType = 'create') => {
+	const isDetails = pageType === 'details';
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const api = `/property/${searchParams.get('propertyId')}`;
@@ -60,7 +65,7 @@ const useCreate = (pageType = 'create') => {
 		console.log(res);
 		const str = assemblyAddress(res?.loan_property?.property_base?.address);
 		eventBus.emit('changeCrumbs', {
-			2: pageType === 'details' ? `ZeeBee Loan Details(${str})` : `Edit Draft(${str})`,
+			2: isDetails ? `ZeeBee Loan Details(${str})` : `Edit Draft(${str})`,
 		});
 		res.loan_borrower.tin = {
 			tin_type: res?.loan_borrower?.tin_type,
@@ -110,7 +115,7 @@ const useCreate = (pageType = 'create') => {
 			<Declaration key="0-Declaration" form={form} />,
 			<Demographics key="1-Demographics" form={form} />,
 		],
-		<ReviewAndSign key="0-ReviewAndSign" form={form} />,
+		<ReviewAndSign key="0-ReviewAndSign" form={form} rowData={isDetails ? rowData : null} />,
 	];
 
 	// zeeBeeDetails内独有的内容

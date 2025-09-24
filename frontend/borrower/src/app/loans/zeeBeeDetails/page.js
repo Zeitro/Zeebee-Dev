@@ -1,13 +1,11 @@
 'use client';
 import styles from '../createZeeBeeLoan/index.module.scss';
-import { Button, Col, Form, message, Segmented, Space, Steps, Tabs } from 'antd';
+import { Form, Segmented, Steps, Tabs } from 'antd';
 import React, { useEffect } from 'react';
 import useCreate from '../components/CreateZeeBee/hooks/useCreate';
-import Image from 'next/image';
 import { assemblyAddress } from '@/lib/format';
 import { stageColor, pendingStatusColor, loanDetailsFields } from '@/enum/loan';
 import HomeSvg from '@/assets/images/home.svg';
-import General from '../components/CreateZeeBee/General';
 const ZeeBeeDetails = () => {
 	const {
 		getTabsItem,
@@ -16,13 +14,11 @@ const ZeeBeeDetails = () => {
 		currentStep,
 		setCurrentStep,
 		stepNum,
-		stepBtn,
 		setIsChange,
 		createZeeBeeSteps,
 		zeeBeeDetailsTabs,
 		form,
 		initialValues,
-		loading,
 		setStepNum,
 		getZeeBeeDetailsTabsItem,
 		rowData,
@@ -62,7 +58,7 @@ const ZeeBeeDetails = () => {
 					<div className="flex items-center gap-2 " key={index}>
 						<div className="text-[#4e5969]">{item.label}:</div>
 						<div className="text-[#000]">
-							{item.render?.(rowData[item.value]) ?? rowData?.[item.value]}
+							{item.render?.(rowData[item.value]) ?? (rowData?.[item.value] || '--')}
 						</div>
 					</div>
 				))}
@@ -80,7 +76,6 @@ const ZeeBeeDetails = () => {
 				onChange={(value) => {
 					setCurrentStep(value);
 					setStepNum(0);
-					console.log(value); // string
 				}}
 				className={`flex-shrink-0 ${styles.segmented}`}
 			/>
@@ -95,7 +90,6 @@ const ZeeBeeDetails = () => {
 							items={createZeeBeeSteps[currentStep]?.children}
 							onChange={(e) => {
 								setStepNum(e);
-								console.log(e);
 							}}
 						/>
 					</div>
@@ -130,22 +124,6 @@ const ZeeBeeDetails = () => {
 					</Form>
 				</div>
 			</div>
-			{/* <Tabs
-				// activeKey={`${currentStep}-${stepNum}`}
-				items={[...zeeBeeDetailsTabs, ...getTabsItem(createZeeBeeSteps, true, getContent)]}
-				className={`flex-1 overflow-hidden ${styles.tabs}`}
-				onChange={(e) => {
-					console.log(e);
-					if (e.includes('-')) {
-						setCurrentStep(e.split('-')[0]);
-					} else {
-						setCurrentStep(e);
-					}
-				}}
-			/> */}
-			{/* <div className="px-12 py-4 shrink-0 flex items-center justify-center border-b border-base-border">
-				<Steps size="default" current={currentStep} items={createZeeBeeSteps} />
-			</div> */}
 		</div>
 	);
 };

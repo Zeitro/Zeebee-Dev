@@ -326,7 +326,7 @@ export const generalTermsFields = [
 	{
 		label: 'Term',
 		value: 'loan_term',
-		render: (v) => `${v || '-'} Months`,
+		render: (v) => `${v || '--'} Months`,
 	},
 ];
 
