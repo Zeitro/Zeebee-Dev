@@ -23,10 +23,11 @@ const Documents = () => {
 					immediateUpload={false}
 					accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
 					onGetUploadList={setFileList}
-					disabled={fileList?.length}
 					className={styles.documentUpload}
+					limitSize={10}
+					showUploadList={false}
 				>
-					<div className=" bg-gray-light py-4 w-full flex flex-col items-center border border-dashed border-base-border rounded-sm text-gray-light cursor-pointer">
+					<div className=" bg-gray-light py-4 w-full flex flex-col items-center border border-dashed border-base-border rounded-sm text-gray-light cursor-pointer hover:bg-[#E6F4FF]">
 						<InboxOutlined style={{ fontSize: '48px', color: 'var(--base-primary)' }} />
 						<div className="text-base pt-5 pb-1 text-foreground">
 							Click or drag file to this area to upload
@@ -48,7 +49,7 @@ const Documents = () => {
 					{fileList?.map((item, index) => {
 						return (
 							<div
-								className="flex items-center py-4 px-4 border border-base-border rounded-sm"
+								className="flex items-center py-4 px-4 border border-base-border rounded-sm gap-[10px] hover:bg-[#E6F4FF]"
 								key={index}
 							>
 								<ArticleSvg style={{ fontSize: 48 }} />
