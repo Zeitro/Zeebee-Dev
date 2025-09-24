@@ -14,7 +14,8 @@ type LoanProperty struct {
 	FutureUnit           int32                  `gorm:"column:future_unit;not null;default:0" json:"future_unit"`
 	FutureLivingAreaSqft float32                `gorm:"column:future_living_area_sqft;type:numeric(8,2);not null;default:0" json:"future_living_area_sqft"`
 	FutureBedrooms       int32                  `gorm:"column:future_bedrooms;not null;default:0" json:"future_bedrooms"`
-	FutureBathrooms      int32
+	FutureBathrooms      int32                  `gorm:"column:future_bathrooms;not null;default:0" json:"future_bathrooms"`
+	Owner                string                 `gorm:"column:owner;size:255;not null;default:''" json:"owner"`
 	// relationships
 	PropertyBase *PropertyBase `json:"property_base" gorm:"foreignKey:PropertyBaseId;references:Id"`
 	Loan         *Loan         `json:"loan" gorm:"foreignKey:LoanId;references:Id"`
@@ -23,4 +24,10 @@ type LoanProperty struct {
 
 func (m LoanProperty) TableName() string {
 	return "loan_properties"
+}
+
+func (m *LoanProperty) RemoveRelationships() {
+	m.PropertyBase = nil
+	m.Loan = nil
+	m.Applicants = nil
 }
