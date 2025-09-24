@@ -88,7 +88,6 @@ type LoanCreateRequest struct {
 	OriginalContractDate  string                    `json:"original_contract_date,optional"`
 	ExtensionDate         string                    `json:"extension_date,optional"`
 	LoanProcessor         string                    `json:"loan_processor,optional"`
-	Owner                 string                    `json:"owner,optional"`
 }
 
 type LoanCreateResponse struct {
@@ -161,7 +160,6 @@ type LoanUpdateRequest struct {
 	OriginalContractDate  string                    `json:"original_contract_date,optional"`
 	ExtensionDate         string                    `json:"extension_date,optional"`
 	LoanProcessor         string                    `json:"loan_processor,optional"`
-	Owner                 string                    `json:"owner,optional"`
 }
 
 type UpdateDocumentsRequest struct {

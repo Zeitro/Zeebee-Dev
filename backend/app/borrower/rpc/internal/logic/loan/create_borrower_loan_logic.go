@@ -160,7 +160,7 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 	}
 	// loan borrower
 	loanBorrower = &model.LoanBorrower{
-		Name:       in.Owner,
+		Name:       applicants[0].FullName,
 		Type:       applicants[0].Type,
 		OwnPercent: 100,
 	}
@@ -252,10 +252,10 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 			Valid: true,
 		}
 		loan.PrincipalAmount = in.PrincipalAmount
-		loan.MonthlyPayment = in.MonthlyPayment
-		loan.LienPosition = in.LienPosition
-		loan.ServiceCompany = in.ServiceCompany
-		loan.PrepaymentPenalty = in.PrepaymentPenalty
+		// loan.MonthlyPayment = in.MonthlyPayment
+		// loan.LienPosition = in.LienPosition
+		// loan.ServiceCompany = in.ServiceCompany
+		// loan.PrepaymentPenalty = in.PrepaymentPenalty
 	case constants.LoanStageArchived:
 		paidOffDate, err := timex.FormateTimeToStrWithUsStyle(in.PaidOffDate)
 		if err != nil {

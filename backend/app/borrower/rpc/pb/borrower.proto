@@ -220,6 +220,7 @@ message LoanPropertyEntry{
   float future_living_area_sqft = 10;
   int32 future_bedrooms = 11;
   int32 future_bathrooms = 12;
+  string owner = 13;
 }
 
 message AddressEntry{
@@ -365,7 +366,6 @@ message LoanCreateRequestData {
   string original_contract_date = 27;
   string extension_date = 28;
   string loan_processor = 29;
-  string owner = 30;
 }
 
 message LoanCreateResponse {
@@ -430,7 +430,7 @@ message LoanUpdateRequestData {
   string original_contract_date = 28;
   string extension_date = 29;
   string loan_processor = 30;
-  string owner = 31;
+  //  string owner = 31;
 }
 
 
@@ -595,6 +595,7 @@ message ImportPendingLoansRequestData {
   string extension_date = 15;
   string loan_processor = 16;
   repeated BorrowerEditApplicantEntry applicants = 17;
+  string closing_date = 18;
 
 }
 
@@ -624,14 +625,8 @@ message LoanUpdateDocumentsRequestData {
   repeated FileEntry documents = 3;
 }
 
-
-
-
-
-
 service Loan {
   rpc CreateBorrowerLoan(LoanCreateRequest) returns(LoanCreateResponse);
-  rpc BatchCreateBorrowerLoan(BatchCreateLoanRequest) returns(EmptyResponse);
   rpc UpdateBorrowerLoan(LoanUpdateRequest) returns(EmptyResponse);
   rpc UpdateBorrowerLoanPendingStatus(LoanUpdatePendingStatusRequest) returns(EmptyResponse);
   rpc DeleteBorrowerLoan(LoanDeleteRequest) returns(EmptyResponse);

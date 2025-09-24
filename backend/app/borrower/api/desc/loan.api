@@ -31,6 +31,7 @@ type LoanPropertyEntry {
     FutureLivingAreaSqft float32 `json:"future_living_area_sqft,optional" validate:"gte=0"`
     FutureBedrooms int32 `json:"future_bedrooms,optional" validate:"gte=0"`
     FutureBathrooms int32 `json:"future_bathrooms,optional" validate:"gte=0"`
+    Owner string `json:"owner,optional"`
 
     PropertyBase *PropertyBaseEntry `json:"property_base,optional" validate:"required"`
 }
@@ -46,6 +47,7 @@ type LoanApplyPropertyEntry {
     FutureLivingAreaSqft float32 `json:"future_living_area_sqft,optional" validate:"gte=0"`
     FutureBedrooms int32 `json:"future_bedrooms,optional" validate:"gte=0"`
     FutureBathrooms int32 `json:"future_bathrooms,optional" validate:"gte=0"`
+    Owner string `json:"owner,optional"`
 
     PropertyBase *PropertyBaseEntry `json:"property_base,optional" validate:"required"`
 }
@@ -61,6 +63,7 @@ type ImportLoanApplyPropertyEntry {
     FutureLivingAreaSqft float32 `json:"future_living_area_sqft,optional" validate:"gte=0"`
     FutureBedrooms int32 `json:"future_bedrooms,optional" validate:"gte=0"`
     FutureBathrooms int32 `json:"future_bathrooms,optional" validate:"gte=0"`
+    Owner string `json:"owner,optional"`
 
     PropertyBase *PropertyBaseEntry `json:"property_base,optional" validate:"required"`
 }
@@ -208,7 +211,7 @@ type (
         OriginalContractDate string `json:"original_contract_date,optional"`
         ExtensionDate string `json:"extension_date,optional"`
         LoanProcessor string `json:"loan_processor,optional"`
-        Owner string `json:"owner,optional"`
+        //        Owner string `json:"owner,optional"`
     }
 
     LoanCreateResponse {
@@ -248,7 +251,7 @@ type (
         OriginalContractDate string `json:"original_contract_date,optional"`
         ExtensionDate string `json:"extension_date,optional"`
         LoanProcessor string `json:"loan_processor,optional"`
-        Owner string `json:"owner,optional"`
+        //        Owner string `json:"owner,optional"`
     }
 )
 
@@ -417,7 +420,7 @@ type ImportPendingLoanEntry {
 
 type ImportLoanExtendEntry {
     Pricing string `json:"pricing,optional"`
-    LoanStatusUpdate string `json:"loan_status_update,optional"`
+    LoanStatusUpdates string `json:"loan_status_updates,optional"`
     MeetingNotes string `json:"meeting_notes,optional"`
     ActionList string `json:"action_list,optional"`
     BusinessLine string `json:"business_line,optional"`

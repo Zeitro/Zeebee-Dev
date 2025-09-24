@@ -229,6 +229,5 @@ func (l *ImportPendingLoansLogic) buildImportModel(in *borrower.ImportPendingLoa
 		loanProperty: loanProperty,
 		propertyBase: propertyBase,
 		applicants:   applicants,
-		// loanExtend:   loanExtend,
 	}, nil
 }
