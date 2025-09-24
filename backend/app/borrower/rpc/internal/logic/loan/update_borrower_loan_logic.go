@@ -7,19 +7,18 @@ import (
 
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
+	"github.com/lib/pq"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
+
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/repo/model"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
-	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/timex"
-	"zeebee-backend/common/types"
-
-	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/common/errorx"
 )
@@ -44,14 +43,17 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	loan, propertyBase, loanProperty, applicants, loanBorrower, err := l.buildUpdateModels(in.Data)
-	if err != nil {
-		return nil, err
-	}
+
 	loanModel, err := l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, in.Data.Id, in.Data.BorrowerId)
 	if err != nil {
 		return nil, err
 	}
+
+	loan, propertyBase, loanProperty, applicants, loanBorrower, err := l.buildUpdateModels(in.Data)
+	if err != nil {
+		return nil, err
+	}
+
 	oldApplicants := loanModel.Applicants
 	if len(oldApplicants) == 0 {
 		return nil, errors.WithStack(errors.New("applicant is not found"))
@@ -83,10 +85,12 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 		}
 
 		// update loan property
-		innerErr = l.svcCtx.LoanPropertyRepo.UpdateColumnsByIdWithTx(l.ctx, tx, loanPropertyModel.Id, map[string]interface{}{
-			"property_base_id": propertyBase.Id,
-			"property_type":    loanProperty.PropertyType,
-		})
+		loanProperty.PropertyBaseId = propertyBase.Id
+		_, innerErr = l.svcCtx.LoanPropertyRepo.UpdateOneWithTx(l.ctx, tx, loanPropertyModel.Id, loanProperty)
+		// innerErr = l.svcCtx.LoanPropertyRepo.UpdateColumnsByIdWithTx(l.ctx, tx, loanPropertyModel.Id, map[string]interface{}{
+		// 	"property_base_id": propertyBase.Id,
+		// 	"property_type":    loanProperty.PropertyType,
+		// })
 		if innerErr != nil {
 			return innerErr
 		}
@@ -214,13 +218,23 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 		}
 		var applicantItem *model.Applicant
 		applicantItem = &model.Applicant{
-			// Name:      applicantName,
-			FirstName: applicant.FirstName,
-			LastName:  applicant.LastName,
-			MidName:   applicant.MidName,
-			FullName:  stringx.FormatFullName(applicant.FirstName, applicant.MidName, applicant.LastName),
-			IsPrimary: applicant.IsPrimary,
-			Type:      constants.ApplicantType(applicant.Type),
+			// BorrowerId: in.BorrowerId,
+			// // Name:      applicantName,
+			// FirstName: applicant.FirstName,
+			// LastName:  applicant.LastName,
+			// MidName:   applicant.MidName,
+			// FullName:  stringx.FormatFullName(applicant.FirstName, applicant.MidName, applicant.LastName),
+			// IsPrimary: applicant.IsPrimary,
+			// Type:      constants.ApplicantType(applicant.Type),
+		}
+
+		err = copier.CopyWithOption(&applicantItem, &applicant, copier.Option{
+			IgnoreEmpty:   true,
+			CaseSensitive: true,
+			DeepCopy:      true,
+		})
+		if err != nil {
+			return nil, nil, nil, nil, nil, errorx.GetFailedTransErr(err)
 		}
 
 		if !applicantItem.Type.IsValid() {
@@ -228,6 +242,7 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 		}
 
 		applicantItem.Id = applicant.Id
+		applicantItem.FullName = stringx.FormatFullName(applicantItem.FirstName, applicantItem.MidName, applicantItem.LastName)
 		applicantItem.BorrowerId = in.BorrowerId
 		applicantItem.InvitationStatus = constants.ApplicantInvitationStatusAccepted
 		applicants = append(applicants, applicantItem)
@@ -253,58 +268,65 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 
 	// loan borrower
 	loanBorrower = &model.LoanBorrower{
-		Name:       in.Owner,
+		Name:       applicants[0].FullName,
 		Type:       applicants[0].Type,
 		OwnPercent: 100,
 	}
+	// loan
+	loan = &model.Loan{
+		BorrowerId:       in.BorrowerId,
+		LenderCompany:    in.LenderCompany,
+		ServiceCompany:   in.ServiceCompany,
+		Stage:            constants.LoanStage(in.Stage),
+		PendingStatus:    constants.LoanPendingStatusNone,
+		LoanPurpose:      constants.LoanPurpose(in.LoanPurpose),
+		LoanType:         constants.LoanType(in.LoanType),
+		TotalAmount:      in.TotalAmount,
+		PrincipalAmount:  in.PrincipalAmount,
+		InitialAmount:    in.InitialAmount,
+		Rate:             in.Rate,
+		BusinessStrategy: pq.StringArray(in.BusinessStrategy),
+		Source:           constants.LoanSourceBorrower,
+		ClosingFund:      in.ClosingFund,
+	}
 
-	loan = &model.Loan{}
-	err = copier.CopyWithOption(loan, in, copier.Option{
-		IgnoreEmpty:   true,
-		DeepCopy:      true,
+	// property base
+	propertyBase = &model.PropertyBase{}
+	err = copier.CopyWithOption(propertyBase, in.LoanProperty.PropertyBase, copier.Option{
+		IgnoreEmpty:   false,
 		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-		},
+		DeepCopy:      true,
+		Converters:    nil,
 	})
 	if err != nil {
 		return nil, nil, nil, nil, nil, errorx.GetFailedTransErr(err)
 	}
-	loan.BorrowerId = in.BorrowerId
-	loan.PendingStatus = constants.LoanPendingStatusNone
-	loan.Source = constants.LoanSourceBorrower
+	propertyBase.BorrowerId = in.BorrowerId
 
-	// loan = &model.Loan{
-	// 	BorrowerId:       in.BorrowerId,
-	// 	LenderCompany:    in.LenderCompany,
-	// 	ServiceCompany:   in.ServiceCompany,
-	// 	Stage:            constants.LoanStage(in.Stage),
-	// 	PendingStatus:    constants.LoanPendingStatusClosing,
-	// 	LoanPurpose:      constants.LoanPurpose(in.LoanPurpose),
-	// 	LoanType:         constants.LoanType(in.LoanType),
-	// 	TotalAmount:      in.TotalAmount,
-	// 	PrincipalAmount:  in.PrincipalAmount,
-	// 	InitialAmount:    in.InitialAmount,
-	// 	Rate:             in.Rate,
-	// 	BusinessStrategy: pq.StringArray(in.BusinessStrategy),
-	// 	Source:           constants.LoanSourceBorrower,
-	// 	ClosingFund:      in.ClosingFund,
+	// propertyBase = &model.PropertyBase{
+	// 	BorrowerId: in.BorrowerId,
+	// 	// PropertyType: constants.PropertyType(in.Property.PropertyType),
+	// 	Unit: in.LoanProperty.PropertyBase.Unit,
+	// 	Address: types.Address{
+	// 		State:    in.LoanProperty.PropertyBase.Address.State,
+	// 		City:     in.LoanProperty.PropertyBase.Address.City,
+	// 		Address1: in.LoanProperty.PropertyBase.Address.Address1,
+	// 		Address2: in.LoanProperty.PropertyBase.Address.Address2,
+	// 		ZipCode:  in.LoanProperty.PropertyBase.Address.ZipCode,
+	// 	},
 	// }
-	propertyBase = &model.PropertyBase{
-		BorrowerId: in.BorrowerId,
-		// PropertyType: constants.PropertyType(in.Property.PropertyType),
-		Unit: in.LoanProperty.PropertyBase.Unit,
-		Address: types.Address{
-			State:    in.LoanProperty.PropertyBase.Address.State,
-			City:     in.LoanProperty.PropertyBase.Address.City,
-			Address1: in.LoanProperty.PropertyBase.Address.Address1,
-			Address2: in.LoanProperty.PropertyBase.Address.Address2,
-			ZipCode:  in.LoanProperty.PropertyBase.Address.ZipCode,
-		},
-	}
 	loanProperty = &model.LoanProperty{
-		PropertyType: constants.PropertyType(in.LoanProperty.PropertyType),
+		// Owner:        in.LoanProperty.Ower,
+		// PropertyType: constants.PropertyType(in.LoanProperty.PropertyType),
 	}
+	err = copier.CopyWithOption(loanProperty, in.LoanProperty, copier.Option{
+		CaseSensitive: true,
+		DeepCopy:      true,
+	})
+	if err != nil {
+		return nil, nil, nil, nil, nil, errorx.GetFailedTransErr(err)
+	}
+	loanProperty.RemoveRelationships()
 
 	if loan.TotalAmount < loan.InitialAmount {
 		return nil, nil, nil, nil, nil, errors.New("Total amount cannot be less than initial amount")

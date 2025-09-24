@@ -198,12 +198,12 @@ service borrower-api {
 
 // =============== pdf ==============
 @server(
-	desc: "applicant service"
-	version: v1
-	group: pdf
+    desc: "applicant service"
+    version: v1
+    group: pdf
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-	tags: pdf
+    tags: pdf
 )
 service borrower-api {
 	@doc "create apply form pdf"
@@ -213,12 +213,12 @@ service borrower-api {
 
 // =============== storage ==============
 @server(
-	desc: "storage service"
-	version: v1
-	group: storage
+    desc: "storage service"
+    version: v1
+    group: storage
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-	tags: storage
+    tags: storage
 )
 service borrower-api {
 	@doc "create aws s3 presign url"
