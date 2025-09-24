@@ -1,24 +1,7 @@
 'use client';
-import { Button, Col, Form, message, Space, Steps, Tabs } from 'antd';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Form, Steps, Tabs } from 'antd';
+import React from 'react';
 import styles from './index.module.scss';
-// import { useRouter, useSearchParams } from 'next/navigation';
-// import { createZeeBeeSteps } from '@/enum/loan';
-// import { createRequest } from '@/lib/fetch';
-// import ApplicantInfo from '../components/CreateZeeBee/ApplicantInfo';
-// import BorrowerInfo from '../components/CreateZeeBee/BorrowerInfo';
-// import PropertyInfo from '../components/CreateZeeBee/PropertyInfo';
-// import LoanDetail from '../components/CreateZeeBee/Loan';
-// import Experience from '../components/CreateZeeBee/Experience';
-// import ThirdPartyService from '../components/CreateZeeBee/ThirdPartyService';
-// import Declaration from '../components/CreateZeeBee/Declaration';
-// import Demographics from '../components/CreateZeeBee/Demographics';
-// import ReviewAndSign, { contractSignatureZones } from '../components/CreateZeeBee/ReviewAndSign';
-// import _ from 'lodash';
-// import { flattenObjectPaths } from '@/lib/common';
-// import { uploadAwsS3 } from '@/api/common';
-// import { LeaveAndSaveDraftBtn } from '@/components/NewModal/BtnPopUpModal';
-// import eventBus from '@/lib/bus';
 import useCreate from '../components/CreateZeeBee/hooks/useCreate';
 const CreateZeeBeeLoan = () => {
 	const {

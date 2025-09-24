@@ -42,11 +42,12 @@ interface SignatureData {
 
 interface ContractViewerProps {
 	url: string;
-	zones: SignatureZone[]; // 接收一个签名区配置数组
+	zones?: SignatureZone[]; // 接收一个签名区配置数组
 	params?: {
 		[key: string]: unknown;
 	};
 	changeSignatures?: (signatures: SignatureData) => void;
+	isFullLink?: boolean;
 }
 const config = {
 	title: 'Signature prompt!',
@@ -56,6 +57,7 @@ export default function ContractViewer({
 	url,
 	zones,
 	params,
+	isFullLink = false,
 	changeSignatures,
 }: ContractViewerProps) {
 	const [pdfFile, setPdfFile] = useState<File | null>(null);
@@ -76,11 +78,14 @@ export default function ContractViewer({
 			try {
 				setIsLoading(true);
 				setError(null);
-				const response = await request(url, {
-					method: 'POST',
-					responseType: 'blob',
-					body: params,
-				});
+				const config: any = {
+					isExternalLink: isFullLink,
+				};
+				if (!isFullLink) {
+					config.body = params;
+					config.method = 'POST';
+				}
+				const response = await request(url, config);
 				const blob = await response.blob();
 				if (blob.size === 0) {
 					throw new Error('The obtained PDF file is empty!');
@@ -110,7 +115,7 @@ export default function ContractViewer({
 			];
 		});
 		// 剩下的签名数量
-		info.remainingSignatureCount = zones?.length - signaturesArr?.length;
+		info.remainingSignatureCount = (zones?.length || 0) - signaturesArr?.length;
 		changeSignatures?.(info);
 	}, [signatures]);
 
@@ -140,7 +145,7 @@ export default function ContractViewer({
 	// 当在模态框中确认签名后触发
 	const handleSignatureConfirm = (signatureImage: string) => {
 		if (activeZoneId) {
-			const row = zones.find((zone) => zone.id === activeZoneId);
+			const row = zones?.find((zone) => zone.id === activeZoneId);
 			setSignatures({
 				...signatures,
 				[activeZoneId]: {
@@ -178,7 +183,7 @@ export default function ContractViewer({
 					{Array.from(new Array(numPages), (el, index) => {
 						const pageNumber = index + 1;
 						// 筛选出当前页面需要渲染的签名区
-						const pageZones = zones.filter((z) => z.page === pageNumber);
+						const pageZones = zones?.filter((z) => z.page === pageNumber);
 
 						return (
 							<div
@@ -189,7 +194,7 @@ export default function ContractViewer({
 									<Page pageNumber={pageNumber} />
 
 									{/* 4. 现在，签名区相对于这个“贴身”的父级来定位，位置将永远准确 */}
-									{pageZones.map((zone) => (
+									{pageZones?.map((zone) => (
 										<div
 											key={zone.id}
 											onClick={() => handleZoneClick(zone.id)}
@@ -215,7 +220,7 @@ export default function ContractViewer({
 											)}
 										</div>
 									))}
-									{pageZones.map((zone, index) => (
+									{pageZones?.map((zone, index) => (
 										<div
 											key={index}
 											className="absolute z-[999] text-xs text-center"
