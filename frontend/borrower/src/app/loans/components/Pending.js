@@ -22,10 +22,9 @@ const PendingPage = ({
 	stage = 'Pending', // 默认是pending，可传草稿draft(因草稿展示和pending loans的一致，只有表格操作栏不同，所以需要区分)
 }) => {
 	const tableFilterRef = useRef();
-	// const [modal, contextHolder] = Modal.useModal();
 	const { loanPendingStatus, loanPurposeOptions, loanTypeOptions, lenderOptions } =
 		useOptionsStore();
-	const { showDeleteModal, contextHolder } = useOpt(tableFilterRef);
+	const { showDeleteModal, contextHolder, handleSelectedRow } = useOpt(tableFilterRef);
 	const { request } = createRequest();
 	const [type, setType] = useState('address');
 	const [searchValue, setSearchValue] = useState('');
@@ -179,6 +178,11 @@ const PendingPage = ({
 				filterWrapClassName={filterWrapClassName}
 				dataSource={dataSource}
 				dataSourceLoading={loading}
+				onRow={(row) => ({
+					onClick: () => {
+						handleSelectedRow(row, stage);
+					},
+				})}
 				getData={(params) => {
 					if (!api) {
 						return {

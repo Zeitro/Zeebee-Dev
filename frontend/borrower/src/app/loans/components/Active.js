@@ -17,11 +17,12 @@ const ActiveLoans = ({
 	isNotAddress,
 	loading,
 	scrollX = 2600,
+	stage = 'Active',
 }) => {
 	const { loanPurposeOptions, loanTypeOptions, lenderOptions } = useOptionsStore();
 	const { request } = createRequest();
 	const tableFilterRef = useRef();
-	const { showDeleteModal, contextHolder } = useOpt(tableFilterRef);
+	const { showDeleteModal, contextHolder, handleSelectedRow } = useOpt(tableFilterRef);
 	const [type, setType] = useState('address');
 	const [searchValue, setSearchValue] = useState('');
 	const [loanPurpose, setLoanPurpose] = useState([]);
@@ -142,6 +143,11 @@ const ActiveLoans = ({
 				filterWrapClassName={filterWrapClassName}
 				dataSource={dataSource}
 				dataSourceLoading={loading}
+				onRow={(row) => ({
+					onClick: () => {
+						handleSelectedRow(row, stage);
+					},
+				})}
 				getData={(params) => {
 					if (!api) {
 						return {
@@ -153,7 +159,7 @@ const ActiveLoans = ({
 						? {}
 						: {
 								...(params?.filter || {}),
-								stage: 'Active',
+								stage,
 							};
 					const payload = {
 						method,
