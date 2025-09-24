@@ -121,6 +121,32 @@
                 "closing_fund": {
                   "type": "number"
                 },
+                "existing_lender_company": {
+                  "type": "string"
+                },
+                "extend": {
+                  "type": "object",
+                  "properties": {
+                    "action_list": {
+                      "type": "string"
+                    },
+                    "business_line": {
+                      "type": "string"
+                    },
+                    "loan_status_update": {
+                      "type": "string"
+                    },
+                    "meeting_notes": {
+                      "type": "string"
+                    },
+                    "pricing": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "extension_date": {
+                  "type": "string"
+                },
                 "holdback_amount": {
                   "type": "number"
                 },
@@ -131,6 +157,9 @@
                   "type": "string"
                 },
                 "lien_position": {
+                  "type": "string"
+                },
+                "loan_processor": {
                   "type": "string"
                 },
                 "loan_property": {
@@ -200,6 +229,12 @@
                 "monthly_payment": {
                   "type": "number"
                 },
+                "original_contract_date": {
+                  "type": "string"
+                },
+                "owner": {
+                  "type": "string"
+                },
                 "paid_off_date": {
                   "type": "string"
                 },
@@ -211,6 +246,12 @@
                 },
                 "principal_amount": {
                   "type": "number"
+                },
+                "purchase_amount": {
+                  "type": "number"
+                },
+                "purchase_date": {
+                  "type": "string"
                 },
                 "rate": {
                   "type": "number"
@@ -1455,6 +1496,14 @@
         ],
         "summary": "import",
         "operationId": "loanImport",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "stage",
+            "in": "formData",
+            "required": true
+          }
+        ],
         "responses": {
           "200": {
             "description": "",
@@ -1658,7 +1707,10 @@
                       "real_estate_experiences",
                       "loan_third_services",
                       "loan_borrower",
-                      "loan_demographic"
+                      "loan_demographic",
+                      "loan_processor",
+                      "extend",
+                      "documents"
                     ],
                     "properties": {
                       "applicants": {
@@ -1810,6 +1862,35 @@
                       "created_at": {
                         "type": "string"
                       },
+                      "documents": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "biz_type": {
+                              "type": "string"
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "file": {
+                              "type": "string"
+                            },
+                            "file_type": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "ref_id": {
+                              "type": "integer"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
                       "dscr": {
                         "type": "number"
                       },
@@ -1827,6 +1908,29 @@
                       },
                       "existing_rate": {
                         "type": "number"
+                      },
+                      "extend": {
+                        "type": "object",
+                        "properties": {
+                          "action_list": {
+                            "type": "string"
+                          },
+                          "business_line": {
+                            "type": "string"
+                          },
+                          "loan_status_update": {
+                            "type": "string"
+                          },
+                          "meeting_notes": {
+                            "type": "string"
+                          },
+                          "pricing": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "extension_date": {
+                        "type": "string"
                       },
                       "has_assignment_fee": {
                         "type": "boolean"
@@ -2023,6 +2127,9 @@
                           }
                         }
                       },
+                      "loan_processor": {
+                        "type": "string"
+                      },
                       "loan_property": {
                         "type": "object",
                         "required": [
@@ -2113,6 +2220,9 @@
                       },
                       "monthly_payment": {
                         "type": "number"
+                      },
+                      "original_contract_date": {
+                        "type": "string"
                       },
                       "paid_off_date": {
                         "type": "string"
@@ -2450,6 +2560,35 @@
                 "created_at": {
                   "type": "string"
                 },
+                "documents": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "biz_type": {
+                        "type": "string"
+                      },
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "file": {
+                        "type": "string"
+                      },
+                      "file_type": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "ref_id": {
+                        "type": "integer"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
                 "dscr": {
                   "type": "number"
                 },
@@ -2467,6 +2606,29 @@
                 },
                 "existing_rate": {
                   "type": "number"
+                },
+                "extend": {
+                  "type": "object",
+                  "properties": {
+                    "action_list": {
+                      "type": "string"
+                    },
+                    "business_line": {
+                      "type": "string"
+                    },
+                    "loan_status_update": {
+                      "type": "string"
+                    },
+                    "meeting_notes": {
+                      "type": "string"
+                    },
+                    "pricing": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "extension_date": {
+                  "type": "string"
                 },
                 "has_assignment_fee": {
                   "type": "boolean"
@@ -2663,6 +2825,9 @@
                     }
                   }
                 },
+                "loan_processor": {
+                  "type": "string"
+                },
                 "loan_property": {
                   "type": "object",
                   "required": [
@@ -2784,6 +2949,9 @@
                 },
                 "monthly_payment": {
                   "type": "number"
+                },
+                "original_contract_date": {
+                  "type": "string"
                 },
                 "paid_off_date": {
                   "type": "string"
@@ -3042,6 +3210,32 @@
                 "closing_fund": {
                   "type": "number"
                 },
+                "existing_lender_company": {
+                  "type": "string"
+                },
+                "extend": {
+                  "type": "object",
+                  "properties": {
+                    "action_list": {
+                      "type": "string"
+                    },
+                    "business_line": {
+                      "type": "string"
+                    },
+                    "loan_status_update": {
+                      "type": "string"
+                    },
+                    "meeting_notes": {
+                      "type": "string"
+                    },
+                    "pricing": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "extension_date": {
+                  "type": "string"
+                },
                 "holdback_amount": {
                   "type": "number"
                 },
@@ -3052,6 +3246,9 @@
                   "type": "string"
                 },
                 "lien_position": {
+                  "type": "string"
+                },
+                "loan_processor": {
                   "type": "string"
                 },
                 "loan_property": {
@@ -3121,6 +3318,12 @@
                 "monthly_payment": {
                   "type": "number"
                 },
+                "original_contract_date": {
+                  "type": "string"
+                },
+                "owner": {
+                  "type": "string"
+                },
                 "paid_off_date": {
                   "type": "string"
                 },
@@ -3132,6 +3335,12 @@
                 },
                 "principal_amount": {
                   "type": "number"
+                },
+                "purchase_amount": {
+                  "type": "number"
+                },
+                "purchase_date": {
+                  "type": "string"
                 },
                 "rate": {
                   "type": "number"
@@ -3179,6 +3388,76 @@
             "name": "id",
             "in": "path",
             "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/loan/{id}/documents": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "loan"
+        ],
+        "summary": "update documents",
+        "operationId": "loanUpdateDocuments",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "documents"
+              ],
+              "properties": {
+                "documents": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "biz_type": {
+                        "type": "string"
+                      },
+                      "file": {
+                        "type": "string"
+                      },
+                      "file_type": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "ref_id": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         ],
         "responses": {
@@ -5331,7 +5610,10 @@
                       "real_estate_experiences",
                       "loan_third_services",
                       "loan_borrower",
-                      "loan_demographic"
+                      "loan_demographic",
+                      "loan_processor",
+                      "extend",
+                      "documents"
                     ],
                     "properties": {
                       "applicants": {
@@ -5483,6 +5765,35 @@
                       "created_at": {
                         "type": "string"
                       },
+                      "documents": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "biz_type": {
+                              "type": "string"
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "file": {
+                              "type": "string"
+                            },
+                            "file_type": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "ref_id": {
+                              "type": "integer"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
                       "dscr": {
                         "type": "number"
                       },
@@ -5500,6 +5811,29 @@
                       },
                       "existing_rate": {
                         "type": "number"
+                      },
+                      "extend": {
+                        "type": "object",
+                        "properties": {
+                          "action_list": {
+                            "type": "string"
+                          },
+                          "business_line": {
+                            "type": "string"
+                          },
+                          "loan_status_update": {
+                            "type": "string"
+                          },
+                          "meeting_notes": {
+                            "type": "string"
+                          },
+                          "pricing": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "extension_date": {
+                        "type": "string"
                       },
                       "has_assignment_fee": {
                         "type": "boolean"
@@ -5696,6 +6030,9 @@
                           }
                         }
                       },
+                      "loan_processor": {
+                        "type": "string"
+                      },
                       "loan_property": {
                         "type": "object",
                         "required": [
@@ -5786,6 +6123,9 @@
                       },
                       "monthly_payment": {
                         "type": "number"
+                      },
+                      "original_contract_date": {
+                        "type": "string"
                       },
                       "paid_off_date": {
                         "type": "string"
@@ -5999,7 +6339,10 @@
                       "real_estate_experiences",
                       "loan_third_services",
                       "loan_borrower",
-                      "loan_demographic"
+                      "loan_demographic",
+                      "loan_processor",
+                      "extend",
+                      "documents"
                     ],
                     "properties": {
                       "applicants": {
@@ -6151,6 +6494,35 @@
                       "created_at": {
                         "type": "string"
                       },
+                      "documents": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "biz_type": {
+                              "type": "string"
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "file": {
+                              "type": "string"
+                            },
+                            "file_type": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "ref_id": {
+                              "type": "integer"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
                       "dscr": {
                         "type": "number"
                       },
@@ -6168,6 +6540,29 @@
                       },
                       "existing_rate": {
                         "type": "number"
+                      },
+                      "extend": {
+                        "type": "object",
+                        "properties": {
+                          "action_list": {
+                            "type": "string"
+                          },
+                          "business_line": {
+                            "type": "string"
+                          },
+                          "loan_status_update": {
+                            "type": "string"
+                          },
+                          "meeting_notes": {
+                            "type": "string"
+                          },
+                          "pricing": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "extension_date": {
+                        "type": "string"
                       },
                       "has_assignment_fee": {
                         "type": "boolean"
@@ -6364,6 +6759,9 @@
                           }
                         }
                       },
+                      "loan_processor": {
+                        "type": "string"
+                      },
                       "loan_property": {
                         "type": "object",
                         "required": [
@@ -6454,6 +6852,9 @@
                       },
                       "monthly_payment": {
                         "type": "number"
+                      },
+                      "original_contract_date": {
+                        "type": "string"
                       },
                       "paid_off_date": {
                         "type": "string"
@@ -6653,7 +7054,10 @@
                       "real_estate_experiences",
                       "loan_third_services",
                       "loan_borrower",
-                      "loan_demographic"
+                      "loan_demographic",
+                      "loan_processor",
+                      "extend",
+                      "documents"
                     ],
                     "properties": {
                       "applicants": {
@@ -6805,6 +7209,35 @@
                       "created_at": {
                         "type": "string"
                       },
+                      "documents": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "biz_type": {
+                              "type": "string"
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "file": {
+                              "type": "string"
+                            },
+                            "file_type": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "ref_id": {
+                              "type": "integer"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
                       "dscr": {
                         "type": "number"
                       },
@@ -6822,6 +7255,29 @@
                       },
                       "existing_rate": {
                         "type": "number"
+                      },
+                      "extend": {
+                        "type": "object",
+                        "properties": {
+                          "action_list": {
+                            "type": "string"
+                          },
+                          "business_line": {
+                            "type": "string"
+                          },
+                          "loan_status_update": {
+                            "type": "string"
+                          },
+                          "meeting_notes": {
+                            "type": "string"
+                          },
+                          "pricing": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "extension_date": {
+                        "type": "string"
                       },
                       "has_assignment_fee": {
                         "type": "boolean"
@@ -7018,6 +7474,9 @@
                           }
                         }
                       },
+                      "loan_processor": {
+                        "type": "string"
+                      },
                       "loan_property": {
                         "type": "object",
                         "required": [
@@ -7108,6 +7567,9 @@
                       },
                       "monthly_payment": {
                         "type": "number"
+                      },
+                      "original_contract_date": {
+                        "type": "string"
                       },
                       "paid_off_date": {
                         "type": "string"
@@ -7353,9 +7815,13 @@
             "schema": {
               "type": "object",
               "required": [
-                "type"
+                "type",
+                "file_suffix"
               ],
               "properties": {
+                "file_suffix": {
+                  "type": "string"
+                },
                 "type": {
                   "type": "string"
                 }
@@ -7886,7 +8352,7 @@
       }
     }
   },
-  "x-date": "2025-09-10 16:10:25",
+  "x-date": "2025-09-23 09:13:53",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

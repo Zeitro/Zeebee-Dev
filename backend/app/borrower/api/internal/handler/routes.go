@@ -87,6 +87,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: loan.DetailHandler(serverCtx),
 				},
 				{
+					// update documents
+					Method:  http.MethodPost,
+					Path:    "/loan/:id/documents",
+					Handler: loan.UpdateDocumentsHandler(serverCtx),
+				},
+				{
 					// update draft
 					Method:  http.MethodPut,
 					Path:    "/loan/:id/draft",
@@ -223,7 +229,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: user.ResetPasswordHandler(serverCtx),
 			},
 			{
-				// send reset password
+				// send reset password email
 				Method:  http.MethodPost,
 				Path:    "/user/send_reset_password",
 				Handler: user.SendResetPasswordHandler(serverCtx),
