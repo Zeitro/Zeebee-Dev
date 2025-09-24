@@ -14,6 +14,11 @@ const deleteItem = {
 	key: 'delete',
 	icon: <DeleteOutlined />,
 };
+const detailsItem = {
+	label: 'Details',
+	key: 'details',
+	icon: <DeleteOutlined />,
+};
 /**
  * Table内的操作组件
  * list: 下拉列表，传值就不包含edit和delete，不传默认用edit/delete
@@ -24,7 +29,7 @@ const TableOperation = ({ list, className, onSelect, getItems, disabled }) => {
 	const [selectedKey, setSelectedKey] = useState(null);
 	const [items, setItems] = useState([]);
 	const router = useRouter();
-	const newItems = getItems?.(editItem, deleteItem) || [editItem, deleteItem];
+	const newItems = getItems?.(editItem, deleteItem, detailsItem) || [editItem, deleteItem];
 
 	const handleSelect = async ({ key }) => {
 		setSelectedKey(key);

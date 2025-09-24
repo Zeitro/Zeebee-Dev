@@ -4,6 +4,8 @@ import { Button, Dropdown } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { matchRoute } from '@config/common';
 import { useMemo, useState } from 'react';
+import { BtnPopUpModal } from '../NewModal/BtnPopUpModal';
+import ImportLoansModal from '@/app/loans/components/ImportLoanModal';
 export const CustomContent = () => {
 	const pathname = usePathname();
 	const { id } = useParams();
@@ -21,10 +23,24 @@ export const CustomContent = () => {
 			label: 'Add 3rd party loan',
 			link: '/loans/createLoan',
 		},
+		{
+			key: 'import',
+			label: (
+				<BtnPopUpModal
+					type="text"
+					isButton={false}
+					getContent={(setOpen) => <ImportLoansModal setOpen={setOpen} />}
+				>
+					Import loans
+				</BtnPopUpModal>
+			),
+		},
 	];
 
 	const handleClick = (linkUrl, search) => {
-		router.push(linkUrl + `${search ? `?${search}` : ''}`);
+		if (linkUrl) {
+			router.push(linkUrl + `${search ? `?${search}` : ''}`);
+		}
 	};
 
 	const createLoanBtn = (search) => (
