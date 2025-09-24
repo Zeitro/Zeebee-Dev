@@ -16,9 +16,9 @@ jobs:
         id: vars
         run: |
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-      #      - name: remove old docker containers
-      #        run: |
-      #          docker rm -f backend-borrower-staging || true
+      - name: remove old docker containers
+        run: |
+          docker rm -f backend-borrower-staging || true
       - name: build and deploy
         working-directory: backend
         env:
