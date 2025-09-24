@@ -4,7 +4,8 @@
 package types
 
 type S3PresignUrlCreateRequest struct {
-	Type string `json:"type" validate:"required,oneof=pdf image"`
+	Type       string `json:"type" validate:"required,oneof=pdf image doc"`
+	FileSuffix string `json:"file_suffix" validate:"required"`
 }
 
 type S3PresignUrlCreateResponse struct {

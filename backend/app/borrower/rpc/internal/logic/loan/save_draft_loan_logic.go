@@ -378,8 +378,8 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	var applyFormFile *model.File
 	if len(reqData.ApplyFormFile) > 0 {
 		applyFormFile = &model.File{
-			File: reqData.ApplyFormFile,
-			Type: constants.FileTypeApplyForm,
+			File:     reqData.ApplyFormFile,
+			FileType: constants.FileTypeApplyForm,
 		}
 	}
 	data = &applyLoanModelData{

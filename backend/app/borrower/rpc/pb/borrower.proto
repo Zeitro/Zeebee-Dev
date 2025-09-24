@@ -81,15 +81,9 @@ message UserRegisterRequestData {
   string password = 2;
   string first_name = 3;
   string last_name = 4;
-  //  string phone_number = 5;
-  //  string address = 6;
-  //  string ssn = 7;
 }
 message UserRegisterResponseData {
-  //  string access_token = 1;
-  //  string refresh_token = 2;
-  //  int64 access_token_expire = 3;
-  //  int64 refresh_token_expire = 4;
+
 }
 
 // refresh
@@ -312,7 +306,7 @@ message LoanEntry {
   bool has_collateralized_blanket = 51;
   bool has_properties_vacant = 52;
   bool has_short_term_rental = 53;
-  string additional_info = 54;
+  string additional_info = 54 [deprecated = true];
 
   repeated LoanExperienceEntry transaction_experiences = 55;
   repeated LoanExperienceEntry real_estate_experiences = 56;
@@ -320,6 +314,13 @@ message LoanEntry {
   LoanDemographicEntry loan_demographic = 58;
   float yearly_liability_expense = 59;
   repeated LoanThirdServiceEntry loan_third_services = 60;
+
+  string original_contract_date = 61;
+  string extension_date = 62;
+  string loan_processor = 63;
+  LoanExtendValueEntry extend = 64;
+  repeated FileEntry documents = 65;
+
 }
 
 message  LoanBudgetEntry {
@@ -355,6 +356,15 @@ message LoanCreateRequestData {
   string service_company = 20;
   string paid_off_date = 21;
   repeated string business_strategy = 22;
+
+  double purchase_amount = 23;
+  string purchase_date = 24;
+  LoanExtendValueEntry extend = 25;
+  string existing_lender_company = 26;
+  string original_contract_date = 27;
+  string extension_date = 28;
+  string loan_processor = 29;
+  string owner = 30;
 }
 
 message LoanCreateResponse {
@@ -411,6 +421,15 @@ message LoanUpdateRequestData {
   string paid_off_date = 21;
   repeated string business_strategy = 22;
   int64 id = 23;
+
+  double purchase_amount = 24;
+  string purchase_date = 25;
+  LoanExtendValueEntry extend = 26;
+  string existing_lender_company = 27;
+  string original_contract_date = 28;
+  string extension_date = 29;
+  string loan_processor = 30;
+  string owner = 31;
 }
 
 
@@ -554,6 +573,61 @@ message LoanApplyResponseData {
   int64 id = 1;
 }
 
+message ImportPendingLoansRequest {
+  repeated ImportPendingLoansRequestData data = 1;
+}
+message ImportPendingLoansRequestData {
+  int64 borrower_id = 1;
+  string loan_type = 2;
+  double total_amount = 3;
+  LoanPropertyEntry loan_property = 4;
+  LoanBorrowerEntry loan_borrower = 5;
+  float purchase_amount = 6;
+  string purchase_date = 7;
+  string maturity_date = 8;
+  double closing_fund = 9;
+  string lender_company = 10;
+  LoanExtendValueEntry extend = 11;
+  double holdback_amount = 12;
+  string existing_lender_company = 13;
+  string original_contract_date = 14;
+  string extension_date = 15;
+  string loan_processor = 16;
+  repeated BorrowerEditApplicantEntry applicants = 17;
+
+}
+
+message ImportPendingLoansResponse {
+  ImportPendingLoansResponseData data = 1;
+}
+message ImportPendingLoansResponseData {
+  int64 record_count = 1;
+}
+
+message LoanExtendValueEntry {
+  string  pricing = 1;
+  string loan_status_updates = 2;
+  string meeting_notes = 3;
+  string action_list = 4;
+  string business_line = 5;
+}
+
+// update documents
+
+message LoanUpdateDocumentsRequest {
+  LoanUpdateDocumentsRequestData data = 1;
+}
+message LoanUpdateDocumentsRequestData {
+  int64 id = 1;
+  int64 borrower_id = 2;
+  repeated FileEntry documents = 3;
+}
+
+
+
+
+
+
 service Loan {
   rpc CreateBorrowerLoan(LoanCreateRequest) returns(LoanCreateResponse);
   rpc BatchCreateBorrowerLoan(BatchCreateLoanRequest) returns(EmptyResponse);
@@ -566,6 +640,8 @@ service Loan {
   rpc ApplyLoan(LoanApplyRequest) returns(LoanApplyResponse);
   rpc SaveDraftLoan(LoanApplyRequest) returns(LoanApplyResponse);
   rpc UpdateApplyLoan(LoanApplyRequest) returns(EmptyResponse);
+  rpc ImportPendingLoans(ImportPendingLoansRequest) returns(ImportPendingLoansResponse);
+  rpc UpdateLoanDocuments(LoanUpdateDocumentsRequest) returns(EmptyResponse);
 }
 
 
@@ -810,12 +886,23 @@ message LoanDemographicExtraDemographicEntry {
 
 // ===================== storage service ======================
 
+message FileEntry {
+  int64 id = 1;
+  string biz_type = 2;
+  string file_type = 3;
+  int64 ref_id = 4;
+  string file = 5;
+  string created_at = 6;
+  string updated_at = 7;
+}
+
 message StorageCreatePresignedUrlRequest {
   StorageCreatePresignedUrlRequestData data = 1;
 }
 
 message StorageCreatePresignedUrlRequestData {
   string type = 1;
+  string file_suffix = 2;
 }
 
 message StorageCreatePresignedUrlResponse {

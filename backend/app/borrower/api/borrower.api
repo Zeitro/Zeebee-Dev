@@ -151,11 +151,15 @@ service borrower-api {
 
 	@doc "import"
 	@handler Import
-	post /loan/import (EmptyRequest) returns (EmptyResponse)
+	post /loan/import (ImportLoanRequest) returns (ImportLoanResponse)
 
 	@doc "download import template"
 	@handler DownloadImportTemplate
 	get /loan/import/template (EmptyRequest) returns (EmptyResponse)
+
+	@doc "update documents"
+	@handler UpdateDocuments
+	post /loan/:id/documents (UpdateDocumentsRequest) returns (EmptyResponse)
 }
 
 // =============== property ==============

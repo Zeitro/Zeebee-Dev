@@ -13,7 +13,7 @@ type SelectOptionEntry {
 
 type (
     GetSelectOptionRequest  {
-        name string `form:"name"`
+        Name string `form:"name"`
     }
 
     GetSelectOptionResponse  {
