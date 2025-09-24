@@ -240,12 +240,17 @@ func parsePendingLoans(rows [][]string, borrowerId int64) ([]*types.ImportPendin
 		if idx, ok := columnIndex[pendingColZip]; ok && idx < len(row) {
 			addr.ZipCode = row[idx]
 		}
+
 		loanData.LoanProperty = &types.ImportLoanApplyPropertyEntry{
 			PropertyBase: &types.PropertyBaseEntry{
 				Unit:    1,
 				Address: addr,
 			},
 		}
+		if idx, ok := columnIndex[pendingColOwner]; ok && idx < len(row) {
+			loanData.LoanProperty.Owner = row[idx]
+		}
+
 		// loan borrower
 		loanBorrower := &types.ImportLoanBorrowerEntry{}
 		if idx, ok := columnIndex[pendingColOwner]; ok && idx < len(row) {
@@ -270,7 +275,7 @@ func parsePendingLoans(rows [][]string, borrowerId int64) ([]*types.ImportPendin
 		// extend
 		extend := &types.ImportLoanExtendEntry{}
 		if idx, ok := columnIndex[pendingColLoanStatus]; ok && idx < len(row) {
-			extend.LoanStatusUpdate = row[idx]
+			extend.LoanStatusUpdates = row[idx]
 		}
 		if idx, ok := columnIndex[pendingColActionList]; ok && idx < len(row) {
 			extend.ActionList = row[idx]

@@ -28,11 +28,6 @@ func (s *LoanServer) CreateBorrowerLoan(ctx context.Context, in *borrower.LoanCr
 	return l.CreateBorrowerLoan(in)
 }
 
-func (s *LoanServer) BatchCreateBorrowerLoan(ctx context.Context, in *borrower.BatchCreateLoanRequest) (*borrower.EmptyResponse, error) {
-	l := loanlogic.NewBatchCreateBorrowerLoanLogic(ctx, s.svcCtx)
-	return l.BatchCreateBorrowerLoan(in)
-}
-
 func (s *LoanServer) UpdateBorrowerLoan(ctx context.Context, in *borrower.LoanUpdateRequest) (*borrower.EmptyResponse, error) {
 	l := loanlogic.NewUpdateBorrowerLoanLogic(ctx, s.svcCtx)
 	return l.UpdateBorrowerLoan(in)

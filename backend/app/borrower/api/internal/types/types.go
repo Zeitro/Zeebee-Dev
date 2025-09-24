@@ -76,6 +76,7 @@ type ImportLoanApplyPropertyEntry struct {
 	FutureLivingAreaSqft float32            `json:"future_living_area_sqft,optional" validate:"gte=0"`
 	FutureBedrooms       int32              `json:"future_bedrooms,optional" validate:"gte=0"`
 	FutureBathrooms      int32              `json:"future_bathrooms,optional" validate:"gte=0"`
+	Owner                string             `json:"owner,optional"`
 	PropertyBase         *PropertyBaseEntry `json:"property_base,optional" validate:"required"`
 }
 
@@ -94,11 +95,11 @@ type ImportLoanBorrowerEntry struct {
 }
 
 type ImportLoanExtendEntry struct {
-	Pricing          string `json:"pricing,optional"`
-	LoanStatusUpdate string `json:"loan_status_update,optional"`
-	MeetingNotes     string `json:"meeting_notes,optional"`
-	ActionList       string `json:"action_list,optional"`
-	BusinessLine     string `json:"business_line,optional"`
+	Pricing           string `json:"pricing,optional"`
+	LoanStatusUpdates string `json:"loan_status_updates,optional"`
+	MeetingNotes      string `json:"meeting_notes,optional"`
+	ActionList        string `json:"action_list,optional"`
+	BusinessLine      string `json:"business_line,optional"`
 }
 
 type ImportPendingLoanEntry struct {
@@ -150,6 +151,7 @@ type LoanApplyPropertyEntry struct {
 	FutureLivingAreaSqft float32            `json:"future_living_area_sqft,optional" validate:"gte=0"`
 	FutureBedrooms       int32              `json:"future_bedrooms,optional" validate:"gte=0"`
 	FutureBathrooms      int32              `json:"future_bathrooms,optional" validate:"gte=0"`
+	Owner                string             `json:"owner,optional"`
 	PropertyBase         *PropertyBaseEntry `json:"property_base,optional" validate:"required"`
 }
 
@@ -336,6 +338,7 @@ type LoanPropertyEntry struct {
 	FutureLivingAreaSqft float32            `json:"future_living_area_sqft,optional" validate:"gte=0"`
 	FutureBedrooms       int32              `json:"future_bedrooms,optional" validate:"gte=0"`
 	FutureBathrooms      int32              `json:"future_bathrooms,optional" validate:"gte=0"`
+	Owner                string             `json:"owner,optional"`
 	PropertyBase         *PropertyBaseEntry `json:"property_base,optional" validate:"required"`
 }
 
