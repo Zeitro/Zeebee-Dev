@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 import { clearAllCookie } from '@/lib/cookie';
 import { localStorageUtil } from '@/lib/local';
-import { noNavRouter } from '@config/routes';
+import { noTokenRouter } from '@config/routes';
 import { flattenNavRouter, matchRoute } from '@config/common';
 const LoginLayout = ({ children }) => {
 	const router = useRouter();
@@ -14,7 +14,7 @@ const LoginLayout = ({ children }) => {
 	useEffect(() => {
 		clearUserInfo();
 		clearAllCookie();
-		const noNavList = flattenNavRouter(noNavRouter);
+		const noNavList = flattenNavRouter(noTokenRouter);
 		const isLogin = noNavList.some((item) => matchRoute(item.path, pathname));
 		// localStorageUtil.clear();
 		// bug：因为出现cookie到期，内容区域已经显示登录页面，但是侧边栏和面包屑都还存在，且路由还是之前的页面路由，并不是登录路由
