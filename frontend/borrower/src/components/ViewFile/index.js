@@ -2,6 +2,7 @@
 import { Button, Image } from 'antd';
 import React, { useState } from 'react';
 import ViewSvg from '@/assets/images/view.svg';
+import styles from './index.module.scss';
 // 预览文件
 const ViewFile = ({ children, file, ...rest }) => {
 	const [visible, setVisible] = useState(false);
@@ -23,7 +24,12 @@ const ViewFile = ({ children, file, ...rest }) => {
 	};
 	return (
 		<>
-			<Button icon={<ViewSvg />} size="large" onClick={handleView} {...rest}>
+			<Button
+				icon={<ViewSvg className={styles.viewIcon} />}
+				size="large"
+				onClick={handleView}
+				{...rest}
+			>
 				{children || 'View'}
 			</Button>
 			<Image

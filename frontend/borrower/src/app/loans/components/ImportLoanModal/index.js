@@ -108,7 +108,7 @@ const ImportLoanModal = ({ setOpen }) => {
 						// disabled={fileList?.length}
 						key={reUpload}
 					>
-						<div className=" bg-gray-light py-4 w-[395px] flex flex-col items-center border border-base-border rounded-sm cursor-pointer">
+						<div className=" bg-gray-light py-4 w-[395px] flex flex-col items-center border border-base-border rounded-sm cursor-pointer hover:bg-base-active">
 							<InboxOutlined
 								style={{ fontSize: '48px', color: 'var(--base-primary)' }}
 							/>
