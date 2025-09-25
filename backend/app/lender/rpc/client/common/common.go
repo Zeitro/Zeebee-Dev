@@ -34,6 +34,8 @@ type (
 	StringSliceResponse               = lender.StringSliceResponse
 	UsCitiesRequest                   = lender.UsCitiesRequest
 	UsCitiesRequestData               = lender.UsCitiesRequestData
+	UserInfoRequest                   = lender.UserInfoRequest
+	UserInfoRequestData               = lender.UserInfoRequestData
 	UserLoginRequest                  = lender.UserLoginRequest
 	UserLoginRequestData              = lender.UserLoginRequestData
 	UserLoginResponse                 = lender.UserLoginResponse
@@ -42,6 +44,8 @@ type (
 	UserRegisterRequestData           = lender.UserRegisterRequestData
 	UserRegisterResponse              = lender.UserRegisterResponse
 	UserRegisterResponseData          = lender.UserRegisterResponseData
+	UserinfoResponse                  = lender.UserinfoResponse
+	UserinfoResponseData              = lender.UserinfoResponseData
 
 	Common interface {
 		GetOpt(ctx context.Context, in *OptionRequest, opts ...grpc.CallOption) (*OptionResponse, error)

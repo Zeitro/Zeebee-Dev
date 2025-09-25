@@ -3,20 +3,21 @@
 
 package types
 
+type EmptyRequest struct {
+}
+
 type SelectOptionEntry struct {
 	Label string `json:"label"`
 	Value string `json:"value"`
 }
 
 type UserInfo struct {
-	Id        int64  `json:"id"`
-	Email     string `json:"email"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	FullName  string `json:"full_name"`
-	Status    string `json:"status"`
-}
-
-type UserInfoResponse struct {
-	UserInfo
+	Id                int64  `json:"id"`
+	Email             string `json:"email"`
+	FirstName         string `json:"first_name"`
+	LastName          string `json:"last_name"`
+	FullName          string `json:"full_name"`
+	Status            string `json:"status"`
+	LenderCompanyId   int64  `json:"lender_company_id"`
+	LenderCompanyName string `json:"lender_company_name"`
 }

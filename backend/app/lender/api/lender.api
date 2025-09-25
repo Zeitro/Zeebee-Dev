@@ -70,3 +70,17 @@ service lender-api {
 	post /user/send_reset_password (UserSendResetPasswordEmailRequest) returns (EmptyResponse)
 }
 
+@server(
+	desc: "lender-api service"
+	version: v1
+	group: user
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: user
+)
+service lender-api {
+	@doc "info"
+	@handler Info
+	get /user/info (EmptyRequest) returns (UserInfoResponse)
+}
+

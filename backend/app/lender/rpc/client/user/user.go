@@ -34,6 +34,8 @@ type (
 	StringSliceResponse               = lender.StringSliceResponse
 	UsCitiesRequest                   = lender.UsCitiesRequest
 	UsCitiesRequestData               = lender.UsCitiesRequestData
+	UserInfoRequest                   = lender.UserInfoRequest
+	UserInfoRequestData               = lender.UserInfoRequestData
 	UserLoginRequest                  = lender.UserLoginRequest
 	UserLoginRequestData              = lender.UserLoginRequestData
 	UserLoginResponse                 = lender.UserLoginResponse
@@ -42,6 +44,8 @@ type (
 	UserRegisterRequestData           = lender.UserRegisterRequestData
 	UserRegisterResponse              = lender.UserRegisterResponse
 	UserRegisterResponseData          = lender.UserRegisterResponseData
+	UserinfoResponse                  = lender.UserinfoResponse
+	UserinfoResponseData              = lender.UserinfoResponseData
 
 	User interface {
 		// user
@@ -50,6 +54,7 @@ type (
 		RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
 		ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*ResetPasswordResponse, error)
 		SendResetPasswordEmail(ctx context.Context, in *SendResetPasswordEmailRequest, opts ...grpc.CallOption) (*SendResetPasswordEmailResponse, error)
+		UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
 	}
 
 	defaultUser struct {
@@ -87,4 +92,9 @@ func (m *defaultUser) ResetPassword(ctx context.Context, in *ResetPasswordReques
 func (m *defaultUser) SendResetPasswordEmail(ctx context.Context, in *SendResetPasswordEmailRequest, opts ...grpc.CallOption) (*SendResetPasswordEmailResponse, error) {
 	client := lender.NewUserClient(m.cli.Conn())
 	return client.SendResetPasswordEmail(ctx, in, opts...)
+}
+
+func (m *defaultUser) UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error) {
+	client := lender.NewUserClient(m.cli.Conn())
+	return client.UserInfo(ctx, in, opts...)
 }
