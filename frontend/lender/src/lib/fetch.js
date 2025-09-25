@@ -81,7 +81,7 @@ export function createRequest() {
 			Authorization: '',
 			...(headers || {}),
 		};
-		if (token) {
+		if (token && !isExternalLink) {
 			headersConfig.Authorization = `Bearer ${token}`;
 		}
 		const fetchOptions = {

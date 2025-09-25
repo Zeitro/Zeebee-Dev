@@ -124,7 +124,7 @@ const CreateLoanPage = () => {
 				isRequestProperty={searchParams.has('propertyId')}
 			/>
 		),
-		2: <CreateTerm stage={loanData?.[0]?.stage} stepBtn={stepBtn} form={form} />,
+		2: <CreateTerm stage={loanData?.[0]?.stage} stepBtn={stepBtn} form={form} gutter={16} />,
 	};
 
 	return (
