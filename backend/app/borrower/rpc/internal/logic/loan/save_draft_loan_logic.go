@@ -308,6 +308,7 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 			return nil, errorx.GetFailedTransErr(err)
 		}
 		loanProperty.PropertyBase.BorrowerId = reqData.BorrowerId
+		loanProperty.Unit = loanProperty.PropertyBase.Unit
 	}
 
 	// transaction experience

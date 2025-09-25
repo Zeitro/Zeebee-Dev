@@ -2010,6 +2010,7 @@ type LoanPropertyEntry struct {
 	FutureBedrooms       int32                  `protobuf:"varint,11,opt,name=future_bedrooms,json=futureBedrooms,proto3" json:"future_bedrooms,omitempty"`
 	FutureBathrooms      int32                  `protobuf:"varint,12,opt,name=future_bathrooms,json=futureBathrooms,proto3" json:"future_bathrooms,omitempty"`
 	Owner                string                 `protobuf:"bytes,13,opt,name=owner,proto3" json:"owner,omitempty"`
+	Unit                 int32                  `protobuf:"varint,14,opt,name=unit,proto3" json:"unit,omitempty"`
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
 }
@@ -2126,6 +2127,13 @@ func (x *LoanPropertyEntry) GetOwner() string {
 		return x.Owner
 	}
 	return ""
+}
+
+func (x *LoanPropertyEntry) GetUnit() int32 {
+	if x != nil {
+		return x.Unit
+	}
+	return 0
 }
 
 type AddressEntry struct {
@@ -7141,7 +7149,7 @@ type LoanDemographicEntry struct {
 	Property      *LoanDemographicPropertyEntry  `protobuf:"bytes,3,opt,name=property,proto3" json:"property,omitempty"`
 	Ethnicity     *LoanDemographicEthnicityEntry `protobuf:"bytes,4,opt,name=ethnicity,proto3" json:"ethnicity,omitempty"`
 	Race          *LoanDemographicRaceEntry      `protobuf:"bytes,5,opt,name=race,proto3" json:"race,omitempty"`
-	Sex           string                         `protobuf:"bytes,6,opt,name=sex,proto3" json:"sex,omitempty"` //  LoanDemographicExtraDemographicEntry extra_demographic = 7;
+	Sex           string                         `protobuf:"bytes,6,opt,name=sex,proto3" json:"sex,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -7367,16 +7375,9 @@ func (x *LoanDemographicPropertyEntry) GetBankruptcyChapter() string {
 }
 
 type LoanDemographicEthnicityEntry struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// bool is_hispanic_or_latino = 1;
-	// bool is_other_hispanic_or_latino = 2;
-	// string other_hispanic_or_latino_name = 3;
-	// bool is_mexican = 4;
-	// bool is_cuban = 5;
-	// bool is_not_hispanic_or_latino = 6;
-	// bool hidden = 7;
-	Values                    []string `protobuf:"bytes,1,rep,name=values,proto3" json:"values,omitempty"`
-	OtherHispanicOrLatinoName string   `protobuf:"bytes,2,opt,name=other_hispanic_or_latino_name,json=otherHispanicOrLatinoName,proto3" json:"other_hispanic_or_latino_name,omitempty"`
+	state                     protoimpl.MessageState `protogen:"open.v1"`
+	Values                    []string               `protobuf:"bytes,1,rep,name=values,proto3" json:"values,omitempty"`
+	OtherHispanicOrLatinoName string                 `protobuf:"bytes,2,opt,name=other_hispanic_or_latino_name,json=otherHispanicOrLatinoName,proto3" json:"other_hispanic_or_latino_name,omitempty"`
 	unknownFields             protoimpl.UnknownFields
 	sizeCache                 protoimpl.SizeCache
 }
@@ -7426,30 +7427,12 @@ func (x *LoanDemographicEthnicityEntry) GetOtherHispanicOrLatinoName() string {
 }
 
 type LoanDemographicRaceEntry struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// bool is_american_indian_or_alaska_native = 1;
-	// string american_indian_or_alaska_native_name = 2;
-	// bool is_asian = 3;
-	// bool is_asian_indian = 4;
-	// bool is_asian_chinese = 5;
-	// bool is_asian_filipino = 6;
-	// bool is_asian_japanese = 7;
-	// bool is_asian_korean = 8;
-	// bool is_asian_vietnamese = 9;
-	// bool is_asian_other = 10;
-	// string asian_other_name = 11;
-	// bool is_black_or_african_american = 12;
-	// bool is_native_hawaiian_or_other_pacific_islander = 13;
-	// bool is_native_hawaiian_guamanian_or_chamorro_samoan = 14;
-	// bool is_other_pacific_islander = 15;
-	// string other_pacific_islander_name = 16;
-	// bool is_white = 17;
-	// bool hidden = 18;
-	Values                           []string `protobuf:"bytes,1,rep,name=values,proto3" json:"values,omitempty"`
-	AsianValues                      []string `protobuf:"bytes,2,rep,name=asian_values,json=asianValues,proto3" json:"asian_values,omitempty"`
-	AmericanIndianOrAlaskaNativeName string   `protobuf:"bytes,3,opt,name=american_indian_or_alaska_native_name,json=americanIndianOrAlaskaNativeName,proto3" json:"american_indian_or_alaska_native_name,omitempty"`
-	AsianOtherName                   string   `protobuf:"bytes,4,opt,name=asian_other_name,json=asianOtherName,proto3" json:"asian_other_name,omitempty"`
-	OtherPacificIslanderName         string   `protobuf:"bytes,5,opt,name=other_pacific_islander_name,json=otherPacificIslanderName,proto3" json:"other_pacific_islander_name,omitempty"`
+	state                            protoimpl.MessageState `protogen:"open.v1"`
+	Values                           []string               `protobuf:"bytes,1,rep,name=values,proto3" json:"values,omitempty"`
+	AsianValues                      []string               `protobuf:"bytes,2,rep,name=asian_values,json=asianValues,proto3" json:"asian_values,omitempty"`
+	AmericanIndianOrAlaskaNativeName string                 `protobuf:"bytes,3,opt,name=american_indian_or_alaska_native_name,json=americanIndianOrAlaskaNativeName,proto3" json:"american_indian_or_alaska_native_name,omitempty"`
+	AsianOtherName                   string                 `protobuf:"bytes,4,opt,name=asian_other_name,json=asianOtherName,proto3" json:"asian_other_name,omitempty"`
+	OtherPacificIslanderName         string                 `protobuf:"bytes,5,opt,name=other_pacific_islander_name,json=otherPacificIslanderName,proto3" json:"other_pacific_islander_name,omitempty"`
 	unknownFields                    protoimpl.UnknownFields
 	sizeCache                        protoimpl.SizeCache
 }
@@ -7524,13 +7507,9 @@ type LoanDemographicExtraDemographicEntry struct {
 	IsEthnicityCollectedByObservation bool                   `protobuf:"varint,1,opt,name=is_ethnicity_collected_by_observation,json=isEthnicityCollectedByObservation,proto3" json:"is_ethnicity_collected_by_observation,omitempty"`
 	IsSexCollectedByObservation       bool                   `protobuf:"varint,2,opt,name=is_sex_collected_by_observation,json=isSexCollectedByObservation,proto3" json:"is_sex_collected_by_observation,omitempty"`
 	IsRaceCollectedByObservation      bool                   `protobuf:"varint,3,opt,name=is_race_collected_by_observation,json=isRaceCollectedByObservation,proto3" json:"is_race_collected_by_observation,omitempty"`
-	// bool is_by_face_to_face = 4;
-	// bool is_by_telephone = 5;
-	// bool is_by_fox_or_mail = 6;
-	// bool is_by_email_or_internet = 7;
-	InfoChannels  []string `protobuf:"bytes,4,rep,name=info_channels,json=infoChannels,proto3" json:"info_channels,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	InfoChannels                      []string               `protobuf:"bytes,4,rep,name=info_channels,json=infoChannels,proto3" json:"info_channels,omitempty"`
+	unknownFields                     protoimpl.UnknownFields
+	sizeCache                         protoimpl.SizeCache
 }
 
 func (x *LoanDemographicExtraDemographicEntry) Reset() {
@@ -7979,7 +7958,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\rproperty_type\x18\x02 \x01(\tB\x02\x18\x01R\fpropertyType\x12\x12\n" +
 	"\x04unit\x18\x03 \x01(\x05R\x04unit\x120\n" +
 	"\aaddress\x18\x04 \x01(\v2\x16.borrower.AddressEntryR\aaddress\x12 \n" +
-	"\vTotalAmount\x18\x05 \x01(\x01R\vTotalAmount\"\xe2\x03\n" +
+	"\vTotalAmount\x18\x05 \x01(\x01R\vTotalAmount\"\xf6\x03\n" +
 	"\x11LoanPropertyEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
 	"\rproperty_type\x18\x02 \x01(\tR\fpropertyType\x12@\n" +
@@ -7994,7 +7973,8 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	" \x01(\x02R\x14futureLivingAreaSqft\x12'\n" +
 	"\x0ffuture_bedrooms\x18\v \x01(\x05R\x0efutureBedrooms\x12)\n" +
 	"\x10future_bathrooms\x18\f \x01(\x05R\x0ffutureBathrooms\x12\x14\n" +
-	"\x05owner\x18\r \x01(\tR\x05owner\"\x8b\x01\n" +
+	"\x05owner\x18\r \x01(\tR\x05owner\x12\x12\n" +
+	"\x04unit\x18\x0e \x01(\x05R\x04unit\"\x8b\x01\n" +
 	"\fAddressEntry\x12\x14\n" +
 	"\x05state\x18\x01 \x01(\tR\x05state\x12\x12\n" +
 	"\x04city\x18\x02 \x01(\tR\x04city\x12\x1a\n" +
