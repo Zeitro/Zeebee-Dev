@@ -17,6 +17,7 @@ const ActiveLoans = ({
 	isNotAddress,
 	loading,
 	scrollX = 2600,
+	successCallback,
 	stage = 'Active',
 }) => {
 	const { loanPurposeOptions, loanTypeOptions, lenderOptions } = useOptionsStore();
@@ -135,7 +136,11 @@ const ActiveLoans = ({
 		<>
 			<FilterTable
 				ref={tableFilterRef}
-				columns={activeColumns(isNotAddress, showDeleteModal)}
+				columns={activeColumns(
+					isNotAddress,
+					successCallback || tableFilterRef?.current?.handleSearch,
+					showDeleteModal,
+				)}
 				scroll={{ x: scrollX }}
 				filterList={filterList}
 				hasFilterField={hasFilterField}

@@ -48,14 +48,14 @@ const Loans = () => {
 					children: <ArchivedLoans filterWrapClassName="px-4 pb-4" api={api} />,
 				},
 				{
-					key: 'draft',
-					label: 'Drafts',
+					key: 'rejected',
+					label: 'Rejected Loans',
 					children: (
 						<PendingPage
 							filterWrapClassName="px-4 pb-4"
 							api={api}
-							stage="Draft"
-							key="Draft"
+							stage="Rejected"
+							key="Rejected"
 							scrollX={2200}
 						/>
 					),

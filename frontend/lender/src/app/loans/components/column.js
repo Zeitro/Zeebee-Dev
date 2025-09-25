@@ -1,5 +1,5 @@
 import { formatAmount } from '@/lib/format';
-import LoanPendingStatus from './LoanPendingStatus';
+import { LoanStage, LoanPendingStatus } from './ChangeStageStatus';
 import TableOperation from '@/components/TableOperation';
 export const get3rdPartyMark = (v, { source }) => (
 	<div className="flex items-center">
@@ -108,6 +108,20 @@ const getOpt = (showDeleteModal, stage) => {
 		),
 	};
 };
+
+const getStageOpt = (successCallback) => {
+	return {
+		title: 'Stage',
+		dataIndex: 'stage',
+		key: 'stage',
+		ellipsis: true,
+		width: 150,
+		align: 'center',
+		fixed: 'right',
+		render: (v, record) => <LoanStage data={record} successCallback={successCallback} />,
+	};
+};
+
 export const pendingColumns = (isNotAddress, successCallback, showDeleteModal, stage) => {
 	const status = {
 		title: 'Status',
@@ -205,12 +219,13 @@ export const pendingColumns = (isNotAddress, successCallback, showDeleteModal, s
 			ellipsis: true,
 			width: 180,
 		},
-		...(stage === 'Draft' ? [] : [status]),
+		getStageOpt(successCallback),
+		status,
 		getOpt(showDeleteModal, stage),
 	];
 };
 
-export const activeColumns = (isNotAddress, showDeleteModal) => [
+export const activeColumns = (isNotAddress, successCallback, showDeleteModal) => [
 	...common(isNotAddress),
 	{
 		title: 'Lien Position',
@@ -314,10 +329,11 @@ export const activeColumns = (isNotAddress, showDeleteModal) => [
 		ellipsis: true,
 		width: 160,
 	},
+	getStageOpt(successCallback),
 	getOpt(showDeleteModal),
 ];
 
-export const archivedColumns = (isNotAddress, showDeleteModal) => [
+export const archivedColumns = (isNotAddress, successCallback, showDeleteModal) => [
 	...common(isNotAddress),
 	{
 		title: 'Loan type',
@@ -359,5 +375,6 @@ export const archivedColumns = (isNotAddress, showDeleteModal) => [
 		sorter: true,
 		width: 160,
 	},
+	getStageOpt(successCallback),
 	getOpt(showDeleteModal),
 ];

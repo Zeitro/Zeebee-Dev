@@ -6,7 +6,7 @@ export const navRouter = [
 	},
 	{
 		path: '/loans',
-		title: 'My loans',
+		title: 'All loans',
 		icon: 'loan',
 		roles: [],
 		router: [
