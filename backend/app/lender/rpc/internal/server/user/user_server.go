@@ -38,3 +38,13 @@ func (s *UserServer) RefreshToken(ctx context.Context, in *lender.RefreshTokenRe
 	l := userlogic.NewRefreshTokenLogic(ctx, s.svcCtx)
 	return l.RefreshToken(in)
 }
+
+func (s *UserServer) ResetPassword(ctx context.Context, in *lender.ResetPasswordRequest) (*lender.ResetPasswordResponse, error) {
+	l := userlogic.NewResetPasswordLogic(ctx, s.svcCtx)
+	return l.ResetPassword(in)
+}
+
+func (s *UserServer) SendResetPasswordEmail(ctx context.Context, in *lender.SendResetPasswordEmailRequest) (*lender.SendResetPasswordEmailResponse, error) {
+	l := userlogic.NewSendResetPasswordEmailLogic(ctx, s.svcCtx)
+	return l.SendResetPasswordEmail(in)
+}

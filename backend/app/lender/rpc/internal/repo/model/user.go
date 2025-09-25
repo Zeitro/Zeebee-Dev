@@ -11,7 +11,8 @@ type User struct {
 	PasswordHash string               `json:"-"`
 	Status       constants.UserStatus `json:"status"`
 
-	Borrower *Borrower `json:"borrower" gorm:"foreignKey:UserId;references:Id"`
+	Borrower       *Borrower       `json:"borrower" gorm:"foreignKey:UserId;references:Id"`
+	LenderEmployee *LenderEmployee `json:"lender_employee" gorm:"foreignKey:UserId;references:Id"`
 }
 
 func (m *User) TableName() string {

@@ -9,9 +9,9 @@ import (
 
 var LenderTryLoginLimiter *limiter.RedisLimiter
 
-// var SendLoginEmailLimiter *limiter.RedisLimiter
-// var SendRegisterEmailLimiter *limiter.RedisLimiter
-// var SendResetPasswordEmailLimiter *limiter.RedisLimiter
+var SendLoginEmailLimiter *limiter.RedisLimiter
+var SendRegisterEmailLimiter *limiter.RedisLimiter
+var SendResetPasswordEmailLimiter *limiter.RedisLimiter
 
 func initLimiter(cnf config.RedisConf) (err error) {
 	rdb, err := limiter.GetLimiterRedisClient(limiter.LimiterRedisConf{
@@ -23,9 +23,9 @@ func initLimiter(cnf config.RedisConf) (err error) {
 	if err != nil {
 		return errors.Wrap(err, "init limiter error")
 	}
-	// SendLoginEmailLimiter = limiter.NewRedisLimiterWithRedis(rdb)
-	// SendRegisterEmailLimiter = limiter.NewRedisLimiterWithRedis(rdb)
-	// SendResetPasswordEmailLimiter = limiter.NewRedisLimiterWithRedis(rdb)
+	SendLoginEmailLimiter = limiter.NewRedisLimiterWithRedis(rdb)
+	SendRegisterEmailLimiter = limiter.NewRedisLimiterWithRedis(rdb)
+	SendResetPasswordEmailLimiter = limiter.NewRedisLimiterWithRedis(rdb)
 	LenderTryLoginLimiter = limiter.NewRedisLimiterWithRedis(rdb)
 
 	return
