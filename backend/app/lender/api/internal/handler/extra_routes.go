@@ -22,9 +22,9 @@ func registerSwaggerRoutes(server *rest.Server) {
 		Path:   "/swagger",
 		Handler: func(w http.ResponseWriter, r *http.Request) {
 			// read swagger.json file
-			data, err := swagger.SwaggerJSON.ReadFile("borrower.json")
+			data, err := swagger.SwaggerJSON.ReadFile("lender.json")
 			if err != nil {
-				response.NotFound(w, "swagger.json not found")
+				response.NotFound(w, "swagger file not found")
 				return
 			}
 

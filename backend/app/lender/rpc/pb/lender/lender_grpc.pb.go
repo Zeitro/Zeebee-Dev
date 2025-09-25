@@ -19,6 +19,184 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
+	Common_GetOpt_FullMethodName      = "/lender.common/GetOpt"
+	Common_GetUsState_FullMethodName  = "/lender.common/GetUsState"
+	Common_GetUsCities_FullMethodName = "/lender.common/GetUsCities"
+)
+
+// CommonClient is the client API for Common service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type CommonClient interface {
+	GetOpt(ctx context.Context, in *OptionRequest, opts ...grpc.CallOption) (*OptionResponse, error)
+	GetUsState(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*StringSliceResponse, error)
+	GetUsCities(ctx context.Context, in *UsCitiesRequest, opts ...grpc.CallOption) (*StringSliceResponse, error)
+}
+
+type commonClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewCommonClient(cc grpc.ClientConnInterface) CommonClient {
+	return &commonClient{cc}
+}
+
+func (c *commonClient) GetOpt(ctx context.Context, in *OptionRequest, opts ...grpc.CallOption) (*OptionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OptionResponse)
+	err := c.cc.Invoke(ctx, Common_GetOpt_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *commonClient) GetUsState(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*StringSliceResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StringSliceResponse)
+	err := c.cc.Invoke(ctx, Common_GetUsState_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *commonClient) GetUsCities(ctx context.Context, in *UsCitiesRequest, opts ...grpc.CallOption) (*StringSliceResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StringSliceResponse)
+	err := c.cc.Invoke(ctx, Common_GetUsCities_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// CommonServer is the server API for Common service.
+// All implementations must embed UnimplementedCommonServer
+// for forward compatibility.
+type CommonServer interface {
+	GetOpt(context.Context, *OptionRequest) (*OptionResponse, error)
+	GetUsState(context.Context, *EmptyRequest) (*StringSliceResponse, error)
+	GetUsCities(context.Context, *UsCitiesRequest) (*StringSliceResponse, error)
+	mustEmbedUnimplementedCommonServer()
+}
+
+// UnimplementedCommonServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedCommonServer struct{}
+
+func (UnimplementedCommonServer) GetOpt(context.Context, *OptionRequest) (*OptionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOpt not implemented")
+}
+func (UnimplementedCommonServer) GetUsState(context.Context, *EmptyRequest) (*StringSliceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUsState not implemented")
+}
+func (UnimplementedCommonServer) GetUsCities(context.Context, *UsCitiesRequest) (*StringSliceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUsCities not implemented")
+}
+func (UnimplementedCommonServer) mustEmbedUnimplementedCommonServer() {}
+func (UnimplementedCommonServer) testEmbeddedByValue()                {}
+
+// UnsafeCommonServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to CommonServer will
+// result in compilation errors.
+type UnsafeCommonServer interface {
+	mustEmbedUnimplementedCommonServer()
+}
+
+func RegisterCommonServer(s grpc.ServiceRegistrar, srv CommonServer) {
+	// If the following call pancis, it indicates UnimplementedCommonServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&Common_ServiceDesc, srv)
+}
+
+func _Common_GetOpt_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OptionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommonServer).GetOpt(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Common_GetOpt_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommonServer).GetOpt(ctx, req.(*OptionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Common_GetUsState_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommonServer).GetUsState(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Common_GetUsState_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommonServer).GetUsState(ctx, req.(*EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Common_GetUsCities_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UsCitiesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommonServer).GetUsCities(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Common_GetUsCities_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommonServer).GetUsCities(ctx, req.(*UsCitiesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Common_ServiceDesc is the grpc.ServiceDesc for Common service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Common_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "lender.common",
+	HandlerType: (*CommonServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetOpt",
+			Handler:    _Common_GetOpt_Handler,
+		},
+		{
+			MethodName: "GetUsState",
+			Handler:    _Common_GetUsState_Handler,
+		},
+		{
+			MethodName: "GetUsCities",
+			Handler:    _Common_GetUsCities_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "app/lender/rpc/pb/lender.proto",
+}
+
+const (
 	User_Login_FullMethodName        = "/lender.user/Login"
 	User_Register_FullMethodName     = "/lender.user/Register"
 	User_RefreshToken_FullMethodName = "/lender.user/RefreshToken"

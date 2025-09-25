@@ -3,6 +3,11 @@
 
 package types
 
+type SelectOptionEntry struct {
+	Label string `json:"label"`
+	Value string `json:"value"`
+}
+
 type UserInfo struct {
 	Id        int64  `json:"id"`
 	Email     string `json:"email"`
