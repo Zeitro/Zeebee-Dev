@@ -42,7 +42,9 @@ const Documents = () => {
 			{fileList?.length > 0 && (
 				<div className="py-6 px-6 border border-base-border rounded-2xl">
 					<div className="pb-4 pl-3  flex items-center justify-between border-b border-base-border mb-4">
-						<span className="text-xl font-medium text-black-dark">Upload Document</span>
+						<span className="text-xl font-medium text-black-dark">
+							Uploaded Document
+						</span>
 						<p className="text-xs/[20px] px-2 bg-gray-light rounded-sm border border-base-border">
 							3 documents
 						</p>
