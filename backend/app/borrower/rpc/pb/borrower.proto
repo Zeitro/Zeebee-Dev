@@ -221,6 +221,7 @@ message LoanPropertyEntry{
   int32 future_bedrooms = 11;
   int32 future_bathrooms = 12;
   string owner = 13;
+  int32 unit = 14;
 }
 
 message AddressEntry{

@@ -327,6 +327,7 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 		return nil, nil, nil, nil, nil, errorx.GetFailedTransErr(err)
 	}
 	loanProperty.RemoveRelationships()
+	loanProperty.Unit = propertyBase.Unit
 
 	if loan.TotalAmount < loan.InitialAmount {
 		return nil, nil, nil, nil, nil, errors.New("Total amount cannot be less than initial amount")
