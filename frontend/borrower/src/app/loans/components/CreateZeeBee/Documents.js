@@ -26,6 +26,7 @@ const Documents = () => {
 					className={styles.documentUpload}
 					limitSize={10}
 					showUploadList={false}
+					disabled={false}
 				>
 					<div className=" bg-gray-light py-4 w-full flex flex-col items-center border border-dashed border-base-border rounded-sm text-gray-light cursor-pointer hover:bg-[#E6F4FF]">
 						<InboxOutlined style={{ fontSize: '48px', color: 'var(--base-primary)' }} />
@@ -55,15 +56,15 @@ const Documents = () => {
 								<ArticleSvg style={{ fontSize: 48 }} />
 								<div className="flex-1">
 									<div className="text-base font-medium pb-2 text-black-dark">
-										Bank_statement_August_2025. pdf
+										{item.name}
 									</div>
 									<p className="text-sm/[22px] font-medium opacity-65 text-black-dark">
 										09/16/2025 | 9:45 PM
 									</p>
 								</div>
 								<Space>
-									<ViewFileButton disabled={false} />
-									<CommonDownloadButton disabled={false} />
+									<ViewFileButton disabled={false} file={item} />
+									<CommonDownloadButton disabled={false} fileUrl={item.url} />
 								</Space>
 							</div>
 						);
