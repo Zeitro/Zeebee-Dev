@@ -45,20 +45,9 @@ export const navRouter = [
 			},
 		],
 	},
-	{
-		path: '/pdf',
-		title: 'pdf',
-		hideMenu: true,
-	},
-	{
-		path: '/not-found',
-		title: '404',
-		hideCrumbs: true,
-		hideMenu: true,
-	},
 ];
 
-export const noNavRouter = [
+export const noTokenRouter = [
 	{
 		path: '/login',
 		title: 'Login',
@@ -90,6 +79,22 @@ export const noNavRouter = [
 				hideCrumbs: true,
 			},
 		],
+	},
+];
+
+export const noNavRouter = [
+	...noTokenRouter,
+	{
+		path: '/pdf',
+		title: 'pdf',
+		hideMenu: true,
+		hideCrumbs: true,
+	},
+	{
+		path: '/not-found',
+		title: '404',
+		hideCrumbs: true,
+		hideMenu: true,
 	},
 ];
 
