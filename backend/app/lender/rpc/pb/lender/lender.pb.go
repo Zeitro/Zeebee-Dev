@@ -1388,6 +1388,239 @@ func (x *ResetPasswordResponseData) GetRefreshTokenExpire() int64 {
 	return 0
 }
 
+// userinfo
+type UserInfoRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Data          *UserInfoRequestData   `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UserInfoRequest) Reset() {
+	*x = UserInfoRequest{}
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[28]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserInfoRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserInfoRequest) ProtoMessage() {}
+
+func (x *UserInfoRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[28]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserInfoRequest.ProtoReflect.Descriptor instead.
+func (*UserInfoRequest) Descriptor() ([]byte, []int) {
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{28}
+}
+
+func (x *UserInfoRequest) GetData() *UserInfoRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type UserInfoRequestData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UserInfoRequestData) Reset() {
+	*x = UserInfoRequestData{}
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserInfoRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserInfoRequestData) ProtoMessage() {}
+
+func (x *UserInfoRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserInfoRequestData.ProtoReflect.Descriptor instead.
+func (*UserInfoRequestData) Descriptor() ([]byte, []int) {
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *UserInfoRequestData) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type UserinfoResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Data          *UserinfoResponseData  `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UserinfoResponse) Reset() {
+	*x = UserinfoResponse{}
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserinfoResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserinfoResponse) ProtoMessage() {}
+
+func (x *UserinfoResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserinfoResponse.ProtoReflect.Descriptor instead.
+func (*UserinfoResponse) Descriptor() ([]byte, []int) {
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *UserinfoResponse) GetData() *UserinfoResponseData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type UserinfoResponseData struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	Id                int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Email             string                 `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
+	FirstName         string                 `protobuf:"bytes,3,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
+	LastName          string                 `protobuf:"bytes,4,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
+	FullName          string                 `protobuf:"bytes,5,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
+	LenderCompanyId   int64                  `protobuf:"varint,6,opt,name=lender_company_id,json=lenderCompanyId,proto3" json:"lender_company_id,omitempty"`
+	LenderCompanyName string                 `protobuf:"bytes,7,opt,name=lender_company_name,json=lenderCompanyName,proto3" json:"lender_company_name,omitempty"`
+	Status            string                 `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *UserinfoResponseData) Reset() {
+	*x = UserinfoResponseData{}
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[31]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserinfoResponseData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserinfoResponseData) ProtoMessage() {}
+
+func (x *UserinfoResponseData) ProtoReflect() protoreflect.Message {
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[31]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserinfoResponseData.ProtoReflect.Descriptor instead.
+func (*UserinfoResponseData) Descriptor() ([]byte, []int) {
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{31}
+}
+
+func (x *UserinfoResponseData) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *UserinfoResponseData) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *UserinfoResponseData) GetFirstName() string {
+	if x != nil {
+		return x.FirstName
+	}
+	return ""
+}
+
+func (x *UserinfoResponseData) GetLastName() string {
+	if x != nil {
+		return x.LastName
+	}
+	return ""
+}
+
+func (x *UserinfoResponseData) GetFullName() string {
+	if x != nil {
+		return x.FullName
+	}
+	return ""
+}
+
+func (x *UserinfoResponseData) GetLenderCompanyId() int64 {
+	if x != nil {
+		return x.LenderCompanyId
+	}
+	return 0
+}
+
+func (x *UserinfoResponseData) GetLenderCompanyName() string {
+	if x != nil {
+		return x.LenderCompanyName
+	}
+	return ""
+}
+
+func (x *UserinfoResponseData) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
 var File_app_lender_rpc_pb_lender_proto protoreflect.FileDescriptor
 
 const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
@@ -1466,18 +1699,35 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
 	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\x12.\n" +
 	"\x13access_token_expire\x18\x03 \x01(\x03R\x11accessTokenExpire\x120\n" +
-	"\x14refresh_token_expire\x18\x04 \x01(\x03R\x12refreshTokenExpire2\xc7\x01\n" +
+	"\x14refresh_token_expire\x18\x04 \x01(\x03R\x12refreshTokenExpire\"B\n" +
+	"\x0fUserInfoRequest\x12/\n" +
+	"\x04data\x18\x01 \x01(\v2\x1b.lender.UserInfoRequestDataR\x04data\"%\n" +
+	"\x13UserInfoRequestData\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"D\n" +
+	"\x10UserinfoResponse\x120\n" +
+	"\x04data\x18\x01 \x01(\v2\x1c.lender.UserinfoResponseDataR\x04data\"\x89\x02\n" +
+	"\x14UserinfoResponseData\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
+	"\x05email\x18\x02 \x01(\tR\x05email\x12\x1d\n" +
+	"\n" +
+	"first_name\x18\x03 \x01(\tR\tfirstName\x12\x1b\n" +
+	"\tlast_name\x18\x04 \x01(\tR\blastName\x12\x1b\n" +
+	"\tfull_name\x18\x05 \x01(\tR\bfullName\x12*\n" +
+	"\x11lender_company_id\x18\x06 \x01(\x03R\x0flenderCompanyId\x12.\n" +
+	"\x13lender_company_name\x18\a \x01(\tR\x11lenderCompanyName\x12\x16\n" +
+	"\x06status\x18\b \x01(\tR\x06status2\xc7\x01\n" +
 	"\x06common\x127\n" +
 	"\x06GetOpt\x12\x15.lender.OptionRequest\x1a\x16.lender.OptionResponse\x12?\n" +
 	"\n" +
 	"GetUsState\x12\x14.lender.EmptyRequest\x1a\x1b.lender.StringSliceResponse\x12C\n" +
-	"\vGetUsCities\x12\x17.lender.UsCitiesRequest\x1a\x1b.lender.StringSliceResponse2\x8d\x03\n" +
+	"\vGetUsCities\x12\x17.lender.UsCitiesRequest\x1a\x1b.lender.StringSliceResponse2\xcc\x03\n" +
 	"\x04user\x12<\n" +
 	"\x05Login\x12\x18.lender.UserLoginRequest\x1a\x19.lender.UserLoginResponse\x12E\n" +
 	"\bRegister\x12\x1b.lender.UserRegisterRequest\x1a\x1c.lender.UserRegisterResponse\x12I\n" +
 	"\fRefreshToken\x12\x1b.lender.RefreshTokenRequest\x1a\x1c.lender.RefreshTokenResponse\x12L\n" +
 	"\rResetPassword\x12\x1c.lender.ResetPasswordRequest\x1a\x1d.lender.ResetPasswordResponse\x12g\n" +
-	"\x16SendResetPasswordEmail\x12%.lender.SendResetPasswordEmailRequest\x1a&.lender.SendResetPasswordEmailResponseB\n" +
+	"\x16SendResetPasswordEmail\x12%.lender.SendResetPasswordEmailRequest\x1a&.lender.SendResetPasswordEmailResponse\x12=\n" +
+	"\bUserInfo\x12\x17.lender.UserInfoRequest\x1a\x18.lender.UserinfoResponseB\n" +
 	"Z\b./lenderb\x06proto3"
 
 var (
@@ -1492,7 +1742,7 @@ func file_app_lender_rpc_pb_lender_proto_rawDescGZIP() []byte {
 	return file_app_lender_rpc_pb_lender_proto_rawDescData
 }
 
-var file_app_lender_rpc_pb_lender_proto_msgTypes = make([]protoimpl.MessageInfo, 28)
+var file_app_lender_rpc_pb_lender_proto_msgTypes = make([]protoimpl.MessageInfo, 32)
 var file_app_lender_rpc_pb_lender_proto_goTypes = []any{
 	(*EmptyRequest)(nil),                      // 0: lender.EmptyRequest
 	(*EmptyResponse)(nil),                     // 1: lender.EmptyResponse
@@ -1522,6 +1772,10 @@ var file_app_lender_rpc_pb_lender_proto_goTypes = []any{
 	(*SendResetPasswordEmailRequestData)(nil), // 25: lender.SendResetPasswordEmailRequestData
 	(*ResetPasswordRequestData)(nil),          // 26: lender.ResetPasswordRequestData
 	(*ResetPasswordResponseData)(nil),         // 27: lender.ResetPasswordResponseData
+	(*UserInfoRequest)(nil),                   // 28: lender.UserInfoRequest
+	(*UserInfoRequestData)(nil),               // 29: lender.UserInfoRequestData
+	(*UserinfoResponse)(nil),                  // 30: lender.UserinfoResponse
+	(*UserinfoResponseData)(nil),              // 31: lender.UserinfoResponseData
 }
 var file_app_lender_rpc_pb_lender_proto_depIdxs = []int32{
 	4,  // 0: lender.OptionRequest.data:type_name -> lender.OptionRequestData
@@ -1537,27 +1791,31 @@ var file_app_lender_rpc_pb_lender_proto_depIdxs = []int32{
 	12, // 10: lender.ResetPasswordResponse.data:type_name -> lender.UserLoginResponseData
 	25, // 11: lender.SendResetPasswordEmailRequest.data:type_name -> lender.SendResetPasswordEmailRequestData
 	1,  // 12: lender.SendResetPasswordEmailResponse.data:type_name -> lender.EmptyResponse
-	3,  // 13: lender.common.GetOpt:input_type -> lender.OptionRequest
-	0,  // 14: lender.common.GetUsState:input_type -> lender.EmptyRequest
-	7,  // 15: lender.common.GetUsCities:input_type -> lender.UsCitiesRequest
-	9,  // 16: lender.user.Login:input_type -> lender.UserLoginRequest
-	13, // 17: lender.user.Register:input_type -> lender.UserRegisterRequest
-	17, // 18: lender.user.RefreshToken:input_type -> lender.RefreshTokenRequest
-	21, // 19: lender.user.ResetPassword:input_type -> lender.ResetPasswordRequest
-	23, // 20: lender.user.SendResetPasswordEmail:input_type -> lender.SendResetPasswordEmailRequest
-	5,  // 21: lender.common.GetOpt:output_type -> lender.OptionResponse
-	2,  // 22: lender.common.GetUsState:output_type -> lender.StringSliceResponse
-	2,  // 23: lender.common.GetUsCities:output_type -> lender.StringSliceResponse
-	10, // 24: lender.user.Login:output_type -> lender.UserLoginResponse
-	14, // 25: lender.user.Register:output_type -> lender.UserRegisterResponse
-	19, // 26: lender.user.RefreshToken:output_type -> lender.RefreshTokenResponse
-	22, // 27: lender.user.ResetPassword:output_type -> lender.ResetPasswordResponse
-	24, // 28: lender.user.SendResetPasswordEmail:output_type -> lender.SendResetPasswordEmailResponse
-	21, // [21:29] is the sub-list for method output_type
-	13, // [13:21] is the sub-list for method input_type
-	13, // [13:13] is the sub-list for extension type_name
-	13, // [13:13] is the sub-list for extension extendee
-	0,  // [0:13] is the sub-list for field type_name
+	29, // 13: lender.UserInfoRequest.data:type_name -> lender.UserInfoRequestData
+	31, // 14: lender.UserinfoResponse.data:type_name -> lender.UserinfoResponseData
+	3,  // 15: lender.common.GetOpt:input_type -> lender.OptionRequest
+	0,  // 16: lender.common.GetUsState:input_type -> lender.EmptyRequest
+	7,  // 17: lender.common.GetUsCities:input_type -> lender.UsCitiesRequest
+	9,  // 18: lender.user.Login:input_type -> lender.UserLoginRequest
+	13, // 19: lender.user.Register:input_type -> lender.UserRegisterRequest
+	17, // 20: lender.user.RefreshToken:input_type -> lender.RefreshTokenRequest
+	21, // 21: lender.user.ResetPassword:input_type -> lender.ResetPasswordRequest
+	23, // 22: lender.user.SendResetPasswordEmail:input_type -> lender.SendResetPasswordEmailRequest
+	28, // 23: lender.user.UserInfo:input_type -> lender.UserInfoRequest
+	5,  // 24: lender.common.GetOpt:output_type -> lender.OptionResponse
+	2,  // 25: lender.common.GetUsState:output_type -> lender.StringSliceResponse
+	2,  // 26: lender.common.GetUsCities:output_type -> lender.StringSliceResponse
+	10, // 27: lender.user.Login:output_type -> lender.UserLoginResponse
+	14, // 28: lender.user.Register:output_type -> lender.UserRegisterResponse
+	19, // 29: lender.user.RefreshToken:output_type -> lender.RefreshTokenResponse
+	22, // 30: lender.user.ResetPassword:output_type -> lender.ResetPasswordResponse
+	24, // 31: lender.user.SendResetPasswordEmail:output_type -> lender.SendResetPasswordEmailResponse
+	30, // 32: lender.user.UserInfo:output_type -> lender.UserinfoResponse
+	24, // [24:33] is the sub-list for method output_type
+	15, // [15:24] is the sub-list for method input_type
+	15, // [15:15] is the sub-list for extension type_name
+	15, // [15:15] is the sub-list for extension extendee
+	0,  // [0:15] is the sub-list for field type_name
 }
 
 func init() { file_app_lender_rpc_pb_lender_proto_init() }
@@ -1571,7 +1829,7 @@ func file_app_lender_rpc_pb_lender_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_app_lender_rpc_pb_lender_proto_rawDesc), len(file_app_lender_rpc_pb_lender_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   28,
+			NumMessages:   32,
 			NumExtensions: 0,
 			NumServices:   2,
 		},

@@ -3,9 +3,6 @@
 
 package types
 
-type EmptyRequest struct {
-}
-
 type GetSelectOptionRequest struct {
 	Name string `form:"name"`
 }

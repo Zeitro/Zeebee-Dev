@@ -48,3 +48,8 @@ func (s *UserServer) SendResetPasswordEmail(ctx context.Context, in *lender.Send
 	l := userlogic.NewSendResetPasswordEmailLogic(ctx, s.svcCtx)
 	return l.SendResetPasswordEmail(in)
 }
+
+func (s *UserServer) UserInfo(ctx context.Context, in *lender.UserInfoRequest) (*lender.UserinfoResponse, error) {
+	l := userlogic.NewUserInfoLogic(ctx, s.svcCtx)
+	return l.UserInfo(in)
+}
