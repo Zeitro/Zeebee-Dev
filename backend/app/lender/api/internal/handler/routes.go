@@ -6,6 +6,7 @@ package handler
 import (
 	"net/http"
 
+	common "zeebee-backend/app/lender/api/internal/handler/common"
 	user "zeebee-backend/app/lender/api/internal/handler/user"
 	"zeebee-backend/app/lender/api/internal/svc"
 
@@ -13,6 +14,30 @@ import (
 )
 
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// select options
+				Method:  http.MethodGet,
+				Path:    "/select_options",
+				Handler: common.SelectOptionsHandler(serverCtx),
+			},
+			{
+				// get us city
+				Method:  http.MethodGet,
+				Path:    "/us_cities",
+				Handler: common.GetUsCitiesHandler(serverCtx),
+			},
+			{
+				// get us states
+				Method:  http.MethodGet,
+				Path:    "/us_states",
+				Handler: common.GetUsStatesHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/api/v1"),
+	)
+
 	server.AddRoutes(
 		[]rest.Route{
 			{
@@ -32,6 +57,18 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodPost,
 				Path:    "/user/register",
 				Handler: user.RegisterHandler(serverCtx),
+			},
+			{
+				// reset password
+				Method:  http.MethodPost,
+				Path:    "/user/reset_password",
+				Handler: user.ResetPasswordHandler(serverCtx),
+			},
+			{
+				// send reset password email
+				Method:  http.MethodPost,
+				Path:    "/user/send_reset_password",
+				Handler: user.SendResetPasswordHandler(serverCtx),
 			},
 		},
 		rest.WithPrefix("/api/v1"),

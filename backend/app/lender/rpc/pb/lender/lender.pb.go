@@ -21,6 +21,395 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type EmptyRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EmptyRequest) Reset() {
+	*x = EmptyRequest{}
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EmptyRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EmptyRequest) ProtoMessage() {}
+
+func (x *EmptyRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EmptyRequest.ProtoReflect.Descriptor instead.
+func (*EmptyRequest) Descriptor() ([]byte, []int) {
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{0}
+}
+
+type EmptyResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EmptyResponse) Reset() {
+	*x = EmptyResponse{}
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EmptyResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EmptyResponse) ProtoMessage() {}
+
+func (x *EmptyResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EmptyResponse.ProtoReflect.Descriptor instead.
+func (*EmptyResponse) Descriptor() ([]byte, []int) {
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{1}
+}
+
+type StringSliceResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Data          []string               `protobuf:"bytes,1,rep,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StringSliceResponse) Reset() {
+	*x = StringSliceResponse{}
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StringSliceResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StringSliceResponse) ProtoMessage() {}
+
+func (x *StringSliceResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StringSliceResponse.ProtoReflect.Descriptor instead.
+func (*StringSliceResponse) Descriptor() ([]byte, []int) {
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *StringSliceResponse) GetData() []string {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+// ========================== common service=================
+type OptionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Data          *OptionRequestData     `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OptionRequest) Reset() {
+	*x = OptionRequest{}
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OptionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OptionRequest) ProtoMessage() {}
+
+func (x *OptionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OptionRequest.ProtoReflect.Descriptor instead.
+func (*OptionRequest) Descriptor() ([]byte, []int) {
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *OptionRequest) GetData() *OptionRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type OptionRequestData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OptionRequestData) Reset() {
+	*x = OptionRequestData{}
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OptionRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OptionRequestData) ProtoMessage() {}
+
+func (x *OptionRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OptionRequestData.ProtoReflect.Descriptor instead.
+func (*OptionRequestData) Descriptor() ([]byte, []int) {
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *OptionRequestData) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+type OptionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Data          []*OptionEntry         `protobuf:"bytes,1,rep,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OptionResponse) Reset() {
+	*x = OptionResponse{}
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OptionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OptionResponse) ProtoMessage() {}
+
+func (x *OptionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OptionResponse.ProtoReflect.Descriptor instead.
+func (*OptionResponse) Descriptor() ([]byte, []int) {
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *OptionResponse) GetData() []*OptionEntry {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type OptionEntry struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Label         string                 `protobuf:"bytes,1,opt,name=label,proto3" json:"label,omitempty"`
+	Value         string                 `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OptionEntry) Reset() {
+	*x = OptionEntry{}
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OptionEntry) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OptionEntry) ProtoMessage() {}
+
+func (x *OptionEntry) ProtoReflect() protoreflect.Message {
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OptionEntry.ProtoReflect.Descriptor instead.
+func (*OptionEntry) Descriptor() ([]byte, []int) {
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *OptionEntry) GetLabel() string {
+	if x != nil {
+		return x.Label
+	}
+	return ""
+}
+
+func (x *OptionEntry) GetValue() string {
+	if x != nil {
+		return x.Value
+	}
+	return ""
+}
+
+type UsCitiesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Data          *UsCitiesRequestData   `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UsCitiesRequest) Reset() {
+	*x = UsCitiesRequest{}
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UsCitiesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UsCitiesRequest) ProtoMessage() {}
+
+func (x *UsCitiesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UsCitiesRequest.ProtoReflect.Descriptor instead.
+func (*UsCitiesRequest) Descriptor() ([]byte, []int) {
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *UsCitiesRequest) GetData() *UsCitiesRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type UsCitiesRequestData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	StateUsps     string                 `protobuf:"bytes,1,opt,name=state_usps,json=stateUsps,proto3" json:"state_usps,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UsCitiesRequestData) Reset() {
+	*x = UsCitiesRequestData{}
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UsCitiesRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UsCitiesRequestData) ProtoMessage() {}
+
+func (x *UsCitiesRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UsCitiesRequestData.ProtoReflect.Descriptor instead.
+func (*UsCitiesRequestData) Descriptor() ([]byte, []int) {
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *UsCitiesRequestData) GetStateUsps() string {
+	if x != nil {
+		return x.StateUsps
+	}
+	return ""
+}
+
 // ================= user service ==================
 // login
 type UserLoginRequest struct {
@@ -32,7 +421,7 @@ type UserLoginRequest struct {
 
 func (x *UserLoginRequest) Reset() {
 	*x = UserLoginRequest{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[0]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -44,7 +433,7 @@ func (x *UserLoginRequest) String() string {
 func (*UserLoginRequest) ProtoMessage() {}
 
 func (x *UserLoginRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[0]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -57,7 +446,7 @@ func (x *UserLoginRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserLoginRequest.ProtoReflect.Descriptor instead.
 func (*UserLoginRequest) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{0}
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *UserLoginRequest) GetData() *UserLoginRequestData {
@@ -76,7 +465,7 @@ type UserLoginResponse struct {
 
 func (x *UserLoginResponse) Reset() {
 	*x = UserLoginResponse{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[1]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -88,7 +477,7 @@ func (x *UserLoginResponse) String() string {
 func (*UserLoginResponse) ProtoMessage() {}
 
 func (x *UserLoginResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[1]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -101,7 +490,7 @@ func (x *UserLoginResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserLoginResponse.ProtoReflect.Descriptor instead.
 func (*UserLoginResponse) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{1}
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *UserLoginResponse) GetData() *UserLoginResponseData {
@@ -121,7 +510,7 @@ type UserLoginRequestData struct {
 
 func (x *UserLoginRequestData) Reset() {
 	*x = UserLoginRequestData{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[2]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -133,7 +522,7 @@ func (x *UserLoginRequestData) String() string {
 func (*UserLoginRequestData) ProtoMessage() {}
 
 func (x *UserLoginRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[2]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -146,7 +535,7 @@ func (x *UserLoginRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserLoginRequestData.ProtoReflect.Descriptor instead.
 func (*UserLoginRequestData) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{2}
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *UserLoginRequestData) GetEmail() string {
@@ -175,7 +564,7 @@ type UserLoginResponseData struct {
 
 func (x *UserLoginResponseData) Reset() {
 	*x = UserLoginResponseData{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[3]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -187,7 +576,7 @@ func (x *UserLoginResponseData) String() string {
 func (*UserLoginResponseData) ProtoMessage() {}
 
 func (x *UserLoginResponseData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[3]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -200,7 +589,7 @@ func (x *UserLoginResponseData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserLoginResponseData.ProtoReflect.Descriptor instead.
 func (*UserLoginResponseData) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{3}
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *UserLoginResponseData) GetAccessToken() string {
@@ -241,7 +630,7 @@ type UserRegisterRequest struct {
 
 func (x *UserRegisterRequest) Reset() {
 	*x = UserRegisterRequest{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[4]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -253,7 +642,7 @@ func (x *UserRegisterRequest) String() string {
 func (*UserRegisterRequest) ProtoMessage() {}
 
 func (x *UserRegisterRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[4]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -266,7 +655,7 @@ func (x *UserRegisterRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserRegisterRequest.ProtoReflect.Descriptor instead.
 func (*UserRegisterRequest) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{4}
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *UserRegisterRequest) GetData() *UserRegisterRequestData {
@@ -285,7 +674,7 @@ type UserRegisterResponse struct {
 
 func (x *UserRegisterResponse) Reset() {
 	*x = UserRegisterResponse{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[5]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -297,7 +686,7 @@ func (x *UserRegisterResponse) String() string {
 func (*UserRegisterResponse) ProtoMessage() {}
 
 func (x *UserRegisterResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[5]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -310,7 +699,7 @@ func (x *UserRegisterResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserRegisterResponse.ProtoReflect.Descriptor instead.
 func (*UserRegisterResponse) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{5}
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *UserRegisterResponse) GetData() *UserRegisterResponseData {
@@ -332,7 +721,7 @@ type UserRegisterRequestData struct {
 
 func (x *UserRegisterRequestData) Reset() {
 	*x = UserRegisterRequestData{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[6]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -344,7 +733,7 @@ func (x *UserRegisterRequestData) String() string {
 func (*UserRegisterRequestData) ProtoMessage() {}
 
 func (x *UserRegisterRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[6]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -357,7 +746,7 @@ func (x *UserRegisterRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserRegisterRequestData.ProtoReflect.Descriptor instead.
 func (*UserRegisterRequestData) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{6}
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *UserRegisterRequestData) GetEmail() string {
@@ -400,7 +789,7 @@ type UserRegisterResponseData struct {
 
 func (x *UserRegisterResponseData) Reset() {
 	*x = UserRegisterResponseData{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[7]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -412,7 +801,7 @@ func (x *UserRegisterResponseData) String() string {
 func (*UserRegisterResponseData) ProtoMessage() {}
 
 func (x *UserRegisterResponseData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[7]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -425,7 +814,7 @@ func (x *UserRegisterResponseData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserRegisterResponseData.ProtoReflect.Descriptor instead.
 func (*UserRegisterResponseData) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{7}
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *UserRegisterResponseData) GetAccessToken() string {
@@ -466,7 +855,7 @@ type RefreshTokenRequest struct {
 
 func (x *RefreshTokenRequest) Reset() {
 	*x = RefreshTokenRequest{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[8]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -478,7 +867,7 @@ func (x *RefreshTokenRequest) String() string {
 func (*RefreshTokenRequest) ProtoMessage() {}
 
 func (x *RefreshTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[8]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -491,7 +880,7 @@ func (x *RefreshTokenRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RefreshTokenRequest.ProtoReflect.Descriptor instead.
 func (*RefreshTokenRequest) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{8}
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *RefreshTokenRequest) GetData() *RefreshTokenRequestData {
@@ -510,7 +899,7 @@ type RefreshTokenRequestData struct {
 
 func (x *RefreshTokenRequestData) Reset() {
 	*x = RefreshTokenRequestData{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[9]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -522,7 +911,7 @@ func (x *RefreshTokenRequestData) String() string {
 func (*RefreshTokenRequestData) ProtoMessage() {}
 
 func (x *RefreshTokenRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[9]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -535,7 +924,7 @@ func (x *RefreshTokenRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RefreshTokenRequestData.ProtoReflect.Descriptor instead.
 func (*RefreshTokenRequestData) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{9}
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *RefreshTokenRequestData) GetRefreshToken() string {
@@ -554,7 +943,7 @@ type RefreshTokenResponse struct {
 
 func (x *RefreshTokenResponse) Reset() {
 	*x = RefreshTokenResponse{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[10]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -566,7 +955,7 @@ func (x *RefreshTokenResponse) String() string {
 func (*RefreshTokenResponse) ProtoMessage() {}
 
 func (x *RefreshTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[10]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -579,7 +968,7 @@ func (x *RefreshTokenResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RefreshTokenResponse.ProtoReflect.Descriptor instead.
 func (*RefreshTokenResponse) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{10}
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *RefreshTokenResponse) GetData() *RefreshTokenResponseData {
@@ -599,7 +988,7 @@ type RefreshTokenResponseData struct {
 
 func (x *RefreshTokenResponseData) Reset() {
 	*x = RefreshTokenResponseData{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[11]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -611,7 +1000,7 @@ func (x *RefreshTokenResponseData) String() string {
 func (*RefreshTokenResponseData) ProtoMessage() {}
 
 func (x *RefreshTokenResponseData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[11]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -624,7 +1013,7 @@ func (x *RefreshTokenResponseData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RefreshTokenResponseData.ProtoReflect.Descriptor instead.
 func (*RefreshTokenResponseData) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{11}
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *RefreshTokenResponseData) GetAccessToken() string {
@@ -645,7 +1034,25 @@ var File_app_lender_rpc_pb_lender_proto protoreflect.FileDescriptor
 
 const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\n" +
-	"\x1eapp/lender/rpc/pb/lender.proto\x12\x06lender\"D\n" +
+	"\x1eapp/lender/rpc/pb/lender.proto\x12\x06lender\"\x0e\n" +
+	"\fEmptyRequest\"\x0f\n" +
+	"\rEmptyResponse\")\n" +
+	"\x13StringSliceResponse\x12\x12\n" +
+	"\x04data\x18\x01 \x03(\tR\x04data\">\n" +
+	"\rOptionRequest\x12-\n" +
+	"\x04data\x18\x01 \x01(\v2\x19.lender.OptionRequestDataR\x04data\"'\n" +
+	"\x11OptionRequestData\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\"9\n" +
+	"\x0eOptionResponse\x12'\n" +
+	"\x04data\x18\x01 \x03(\v2\x13.lender.OptionEntryR\x04data\"9\n" +
+	"\vOptionEntry\x12\x14\n" +
+	"\x05label\x18\x01 \x01(\tR\x05label\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value\"B\n" +
+	"\x0fUsCitiesRequest\x12/\n" +
+	"\x04data\x18\x01 \x01(\v2\x1b.lender.UsCitiesRequestDataR\x04data\"4\n" +
+	"\x13UsCitiesRequestData\x12\x1d\n" +
+	"\n" +
+	"state_usps\x18\x01 \x01(\tR\tstateUsps\"D\n" +
 	"\x10UserLoginRequest\x120\n" +
 	"\x04data\x18\x01 \x01(\v2\x1c.lender.UserLoginRequestDataR\x04data\"F\n" +
 	"\x11UserLoginResponse\x121\n" +
@@ -681,7 +1088,12 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x04data\x18\x01 \x01(\v2 .lender.RefreshTokenResponseDataR\x04data\"m\n" +
 	"\x18RefreshTokenResponseData\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12.\n" +
-	"\x13access_token_expire\x18\x02 \x01(\x03R\x11accessTokenExpire2\xd6\x01\n" +
+	"\x13access_token_expire\x18\x02 \x01(\x03R\x11accessTokenExpire2\xc7\x01\n" +
+	"\x06common\x127\n" +
+	"\x06GetOpt\x12\x15.lender.OptionRequest\x1a\x16.lender.OptionResponse\x12?\n" +
+	"\n" +
+	"GetUsState\x12\x14.lender.EmptyRequest\x1a\x1b.lender.StringSliceResponse\x12C\n" +
+	"\vGetUsCities\x12\x17.lender.UsCitiesRequest\x1a\x1b.lender.StringSliceResponse2\xd6\x01\n" +
 	"\x04user\x12<\n" +
 	"\x05Login\x12\x18.lender.UserLoginRequest\x1a\x19.lender.UserLoginResponse\x12E\n" +
 	"\bRegister\x12\x1b.lender.UserRegisterRequest\x1a\x1c.lender.UserRegisterResponse\x12I\n" +
@@ -700,39 +1112,57 @@ func file_app_lender_rpc_pb_lender_proto_rawDescGZIP() []byte {
 	return file_app_lender_rpc_pb_lender_proto_rawDescData
 }
 
-var file_app_lender_rpc_pb_lender_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_app_lender_rpc_pb_lender_proto_msgTypes = make([]protoimpl.MessageInfo, 21)
 var file_app_lender_rpc_pb_lender_proto_goTypes = []any{
-	(*UserLoginRequest)(nil),         // 0: lender.UserLoginRequest
-	(*UserLoginResponse)(nil),        // 1: lender.UserLoginResponse
-	(*UserLoginRequestData)(nil),     // 2: lender.UserLoginRequestData
-	(*UserLoginResponseData)(nil),    // 3: lender.UserLoginResponseData
-	(*UserRegisterRequest)(nil),      // 4: lender.UserRegisterRequest
-	(*UserRegisterResponse)(nil),     // 5: lender.UserRegisterResponse
-	(*UserRegisterRequestData)(nil),  // 6: lender.UserRegisterRequestData
-	(*UserRegisterResponseData)(nil), // 7: lender.UserRegisterResponseData
-	(*RefreshTokenRequest)(nil),      // 8: lender.RefreshTokenRequest
-	(*RefreshTokenRequestData)(nil),  // 9: lender.RefreshTokenRequestData
-	(*RefreshTokenResponse)(nil),     // 10: lender.RefreshTokenResponse
-	(*RefreshTokenResponseData)(nil), // 11: lender.RefreshTokenResponseData
+	(*EmptyRequest)(nil),             // 0: lender.EmptyRequest
+	(*EmptyResponse)(nil),            // 1: lender.EmptyResponse
+	(*StringSliceResponse)(nil),      // 2: lender.StringSliceResponse
+	(*OptionRequest)(nil),            // 3: lender.OptionRequest
+	(*OptionRequestData)(nil),        // 4: lender.OptionRequestData
+	(*OptionResponse)(nil),           // 5: lender.OptionResponse
+	(*OptionEntry)(nil),              // 6: lender.OptionEntry
+	(*UsCitiesRequest)(nil),          // 7: lender.UsCitiesRequest
+	(*UsCitiesRequestData)(nil),      // 8: lender.UsCitiesRequestData
+	(*UserLoginRequest)(nil),         // 9: lender.UserLoginRequest
+	(*UserLoginResponse)(nil),        // 10: lender.UserLoginResponse
+	(*UserLoginRequestData)(nil),     // 11: lender.UserLoginRequestData
+	(*UserLoginResponseData)(nil),    // 12: lender.UserLoginResponseData
+	(*UserRegisterRequest)(nil),      // 13: lender.UserRegisterRequest
+	(*UserRegisterResponse)(nil),     // 14: lender.UserRegisterResponse
+	(*UserRegisterRequestData)(nil),  // 15: lender.UserRegisterRequestData
+	(*UserRegisterResponseData)(nil), // 16: lender.UserRegisterResponseData
+	(*RefreshTokenRequest)(nil),      // 17: lender.RefreshTokenRequest
+	(*RefreshTokenRequestData)(nil),  // 18: lender.RefreshTokenRequestData
+	(*RefreshTokenResponse)(nil),     // 19: lender.RefreshTokenResponse
+	(*RefreshTokenResponseData)(nil), // 20: lender.RefreshTokenResponseData
 }
 var file_app_lender_rpc_pb_lender_proto_depIdxs = []int32{
-	2,  // 0: lender.UserLoginRequest.data:type_name -> lender.UserLoginRequestData
-	3,  // 1: lender.UserLoginResponse.data:type_name -> lender.UserLoginResponseData
-	6,  // 2: lender.UserRegisterRequest.data:type_name -> lender.UserRegisterRequestData
-	7,  // 3: lender.UserRegisterResponse.data:type_name -> lender.UserRegisterResponseData
-	9,  // 4: lender.RefreshTokenRequest.data:type_name -> lender.RefreshTokenRequestData
-	11, // 5: lender.RefreshTokenResponse.data:type_name -> lender.RefreshTokenResponseData
-	0,  // 6: lender.user.Login:input_type -> lender.UserLoginRequest
-	4,  // 7: lender.user.Register:input_type -> lender.UserRegisterRequest
-	8,  // 8: lender.user.RefreshToken:input_type -> lender.RefreshTokenRequest
-	1,  // 9: lender.user.Login:output_type -> lender.UserLoginResponse
-	5,  // 10: lender.user.Register:output_type -> lender.UserRegisterResponse
-	10, // 11: lender.user.RefreshToken:output_type -> lender.RefreshTokenResponse
-	9,  // [9:12] is the sub-list for method output_type
-	6,  // [6:9] is the sub-list for method input_type
-	6,  // [6:6] is the sub-list for extension type_name
-	6,  // [6:6] is the sub-list for extension extendee
-	0,  // [0:6] is the sub-list for field type_name
+	4,  // 0: lender.OptionRequest.data:type_name -> lender.OptionRequestData
+	6,  // 1: lender.OptionResponse.data:type_name -> lender.OptionEntry
+	8,  // 2: lender.UsCitiesRequest.data:type_name -> lender.UsCitiesRequestData
+	11, // 3: lender.UserLoginRequest.data:type_name -> lender.UserLoginRequestData
+	12, // 4: lender.UserLoginResponse.data:type_name -> lender.UserLoginResponseData
+	15, // 5: lender.UserRegisterRequest.data:type_name -> lender.UserRegisterRequestData
+	16, // 6: lender.UserRegisterResponse.data:type_name -> lender.UserRegisterResponseData
+	18, // 7: lender.RefreshTokenRequest.data:type_name -> lender.RefreshTokenRequestData
+	20, // 8: lender.RefreshTokenResponse.data:type_name -> lender.RefreshTokenResponseData
+	3,  // 9: lender.common.GetOpt:input_type -> lender.OptionRequest
+	0,  // 10: lender.common.GetUsState:input_type -> lender.EmptyRequest
+	7,  // 11: lender.common.GetUsCities:input_type -> lender.UsCitiesRequest
+	9,  // 12: lender.user.Login:input_type -> lender.UserLoginRequest
+	13, // 13: lender.user.Register:input_type -> lender.UserRegisterRequest
+	17, // 14: lender.user.RefreshToken:input_type -> lender.RefreshTokenRequest
+	5,  // 15: lender.common.GetOpt:output_type -> lender.OptionResponse
+	2,  // 16: lender.common.GetUsState:output_type -> lender.StringSliceResponse
+	2,  // 17: lender.common.GetUsCities:output_type -> lender.StringSliceResponse
+	10, // 18: lender.user.Login:output_type -> lender.UserLoginResponse
+	14, // 19: lender.user.Register:output_type -> lender.UserRegisterResponse
+	19, // 20: lender.user.RefreshToken:output_type -> lender.RefreshTokenResponse
+	15, // [15:21] is the sub-list for method output_type
+	9,  // [9:15] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_app_lender_rpc_pb_lender_proto_init() }
@@ -746,9 +1176,9 @@ func file_app_lender_rpc_pb_lender_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_app_lender_rpc_pb_lender_proto_rawDesc), len(file_app_lender_rpc_pb_lender_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   12,
+			NumMessages:   21,
 			NumExtensions: 0,
-			NumServices:   1,
+			NumServices:   2,
 		},
 		GoTypes:           file_app_lender_rpc_pb_lender_proto_goTypes,
 		DependencyIndexes: file_app_lender_rpc_pb_lender_proto_depIdxs,

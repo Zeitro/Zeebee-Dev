@@ -14,10 +14,19 @@ import (
 )
 
 type (
+	EmptyRequest             = lender.EmptyRequest
+	EmptyResponse            = lender.EmptyResponse
+	OptionEntry              = lender.OptionEntry
+	OptionRequest            = lender.OptionRequest
+	OptionRequestData        = lender.OptionRequestData
+	OptionResponse           = lender.OptionResponse
 	RefreshTokenRequest      = lender.RefreshTokenRequest
 	RefreshTokenRequestData  = lender.RefreshTokenRequestData
 	RefreshTokenResponse     = lender.RefreshTokenResponse
 	RefreshTokenResponseData = lender.RefreshTokenResponseData
+	StringSliceResponse      = lender.StringSliceResponse
+	UsCitiesRequest          = lender.UsCitiesRequest
+	UsCitiesRequestData      = lender.UsCitiesRequestData
 	UserLoginRequest         = lender.UserLoginRequest
 	UserLoginRequestData     = lender.UserLoginRequestData
 	UserLoginResponse        = lender.UserLoginResponse

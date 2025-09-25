@@ -12,8 +12,8 @@ type LenderCompanyRepo struct {
 	m *model.LenderCompany
 }
 
-func NewLenderCompanyRepo(db *gorm.DB) *LenderRepo {
-	return &LenderRepo{
+func NewLenderCompanyRepo(db *gorm.DB) *LenderCompanyRepo {
+	return &LenderCompanyRepo{
 		BaseRepo: gormx.NewBaseRepo[*model.LenderCompany](db),
 		m:        new(model.LenderCompany),
 	}

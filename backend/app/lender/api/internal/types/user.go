@@ -3,6 +3,9 @@
 
 package types
 
+type EmptyResponse struct {
+}
+
 type UserLoginRequest struct {
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required,min=8,max=32"`
@@ -37,4 +40,15 @@ type UserRegisterResponse struct {
 	AccessTokenExpire  int64  `json:"access_token_expire"`
 	RefreshToken       string `json:"refresh_token"`
 	RefreshTokenExpire int64  `json:"refresh_token_expire"`
+}
+
+type UserResetPasswordRequest struct {
+	Email            string `json:"email" validate:"required,email"`
+	Password         string `json:"password" validate:"required,min=8,max=32,password"`
+	ComfiredPassword string `json:"comfired_password" validate:"required,eqfield=Password"`
+	Code             string `json:"code" validate:"required,len=10"`
+}
+
+type UserSendResetPasswordEmailRequest struct {
+	Email string `json:"email" validate:"required,email"`
 }
