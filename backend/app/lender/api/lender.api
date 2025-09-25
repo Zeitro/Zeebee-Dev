@@ -1,0 +1,33 @@
+syntax = "v1"
+
+info(
+    title: "lender-api http service"
+    desc: "lender-api http service description"
+    author: "Wei Zeng"
+    email: "wei@yeelee-capital.com"
+)
+
+import "desc/user.api"
+
+// ============== user =============
+@server(
+    desc: "lender-api service"
+    version: v1
+    group: user
+    prefix:  /api/v1
+    tags: user
+)
+service lender-api {
+    @doc "register"
+    @handler Register
+    post /user/register (UserRegisterRequest) returns (UserRegisterResponse)
+
+    @doc "login"
+    @handler Login
+    post /user/login (UserLoginRequest) returns (UserLoginResponse)
+
+    @doc "refresh"
+    @handler RefreshToken
+    post /user/refresh (UserRefreshTokenRequest) returns (UserRefreshTokenResponse)
+}
+
