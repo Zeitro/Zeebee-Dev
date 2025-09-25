@@ -17,11 +17,13 @@ const ArchivedLoans = ({
 	isNotAddress,
 	loading,
 	scrollX = 1500,
+	successCallback,
+	stage = 'Archived',
 }) => {
 	const { loanTypeOptions, lenderOptions } = useOptionsStore();
 	const { request } = createRequest();
 	const tableFilterRef = useRef();
-	const { showDeleteModal, contextHolder } = useOpt(tableFilterRef);
+	const { showDeleteModal, contextHolder, handleSelectedRow } = useOpt(tableFilterRef);
 	const [type, setType] = useState('address');
 	const [searchValue, setSearchValue] = useState('');
 	const [loanType, setLoanType] = useState([]);
@@ -111,7 +113,11 @@ const ArchivedLoans = ({
 		<>
 			<FilterTable
 				ref={tableFilterRef}
-				columns={archivedColumns(isNotAddress, showDeleteModal)}
+				columns={archivedColumns(
+					isNotAddress,
+					successCallback || tableFilterRef?.current?.handleSearch,
+					showDeleteModal,
+				)}
 				scroll={{ x: scrollX }}
 				filterList={filterList}
 				hasFilterField={hasFilterField}
@@ -119,6 +125,11 @@ const ArchivedLoans = ({
 				filterWrapClassName={filterWrapClassName}
 				dataSource={dataSource}
 				dataSourceLoading={loading}
+				onRow={(row) => ({
+					onClick: () => {
+						handleSelectedRow(row, stage);
+					},
+				})}
 				getData={(params) => {
 					if (!api) {
 						return {
@@ -130,7 +141,7 @@ const ArchivedLoans = ({
 						? {}
 						: {
 								...(params?.filter || {}),
-								stage: 'Archived',
+								stage,
 							};
 					const payload = {
 						method,
