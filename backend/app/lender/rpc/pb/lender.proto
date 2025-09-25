@@ -80,6 +80,7 @@ message UserRegisterRequestData {
   string password = 2;
   string first_name = 3;
   string last_name = 4;
+  int64 lender_company_id = 5;
 }
 message UserRegisterResponseData {
   string access_token = 1;
@@ -107,9 +108,42 @@ message RefreshTokenResponseData {
   int64 access_token_expire = 2;
 }
 
+// reset password
+message ResetPasswordRequest {
+  ResetPasswordRequestData data = 1;
+}
+message ResetPasswordResponse {
+  UserLoginResponseData data = 1;
+}
+
+// send reset password email
+message SendResetPasswordEmailRequest {
+  SendResetPasswordEmailRequestData data = 1;
+}
+message SendResetPasswordEmailResponse {
+  EmptyResponse data = 1;
+}
+message SendResetPasswordEmailRequestData {
+  string email = 1;
+}
+
+message ResetPasswordRequestData {
+  string password = 1;
+  string code = 2;
+  string email = 3;
+}
+message ResetPasswordResponseData {
+  string access_token = 1;
+  string refresh_token = 2;
+  int64 access_token_expire = 3;
+  int64 refresh_token_expire = 4;
+}
+
 service user {
   // user
   rpc Login(UserLoginRequest) returns(UserLoginResponse);
   rpc Register(UserRegisterRequest) returns(UserRegisterResponse);
   rpc RefreshToken(RefreshTokenRequest) returns(RefreshTokenResponse);
+  rpc ResetPassword(ResetPasswordRequest) returns(ResetPasswordResponse);
+  rpc SendResetPasswordEmail(SendResetPasswordEmailRequest) returns(SendResetPasswordEmailResponse);
 }

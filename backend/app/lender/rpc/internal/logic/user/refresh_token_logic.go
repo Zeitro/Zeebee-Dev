@@ -3,12 +3,14 @@ package userlogic
 import (
 	"context"
 
+	"github.com/pkg/errors"
+
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/utils"
 
 	"github.com/zeromicro/go-zero/core/logx"
-
-	"zeebee-backend/common/errorx"
 )
 
 type RefreshTokenLogic struct {
@@ -31,7 +33,29 @@ func (l *RefreshTokenLogic) RefreshToken(in *lender.RefreshTokenRequest) (resp *
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	// todo: add your logic here and delete this line
+	var claims *utils.JWTClaims
+	// parse refresh token
+	claims, err = utils.ParseToken(in.Data.RefreshToken, l.svcCtx.Config.JwtAuth.RefreshSecret)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	accessToken, err := utils.GenerateToken(
+		claims.UserID,
+		claims.AccountId,
+		claims.Username,
+		claims.Role,
+		claims.UserType,
+		l.svcCtx.Config.JwtAuth.AccessSecret,
+		l.svcCtx.Config.JwtAuth.AccessExpire,
+	)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
 
-	return &lender.RefreshTokenResponse{}, nil
+	return &lender.RefreshTokenResponse{
+		Data: &lender.RefreshTokenResponseData{
+			AccessToken:       accessToken,
+			AccessTokenExpire: l.svcCtx.Config.JwtAuth.AccessExpire,
+		},
+	}, nil
 }

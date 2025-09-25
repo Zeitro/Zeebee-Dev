@@ -14,27 +14,34 @@ import (
 )
 
 type (
-	EmptyRequest             = lender.EmptyRequest
-	EmptyResponse            = lender.EmptyResponse
-	OptionEntry              = lender.OptionEntry
-	OptionRequest            = lender.OptionRequest
-	OptionRequestData        = lender.OptionRequestData
-	OptionResponse           = lender.OptionResponse
-	RefreshTokenRequest      = lender.RefreshTokenRequest
-	RefreshTokenRequestData  = lender.RefreshTokenRequestData
-	RefreshTokenResponse     = lender.RefreshTokenResponse
-	RefreshTokenResponseData = lender.RefreshTokenResponseData
-	StringSliceResponse      = lender.StringSliceResponse
-	UsCitiesRequest          = lender.UsCitiesRequest
-	UsCitiesRequestData      = lender.UsCitiesRequestData
-	UserLoginRequest         = lender.UserLoginRequest
-	UserLoginRequestData     = lender.UserLoginRequestData
-	UserLoginResponse        = lender.UserLoginResponse
-	UserLoginResponseData    = lender.UserLoginResponseData
-	UserRegisterRequest      = lender.UserRegisterRequest
-	UserRegisterRequestData  = lender.UserRegisterRequestData
-	UserRegisterResponse     = lender.UserRegisterResponse
-	UserRegisterResponseData = lender.UserRegisterResponseData
+	EmptyRequest                      = lender.EmptyRequest
+	EmptyResponse                     = lender.EmptyResponse
+	OptionEntry                       = lender.OptionEntry
+	OptionRequest                     = lender.OptionRequest
+	OptionRequestData                 = lender.OptionRequestData
+	OptionResponse                    = lender.OptionResponse
+	RefreshTokenRequest               = lender.RefreshTokenRequest
+	RefreshTokenRequestData           = lender.RefreshTokenRequestData
+	RefreshTokenResponse              = lender.RefreshTokenResponse
+	RefreshTokenResponseData          = lender.RefreshTokenResponseData
+	ResetPasswordRequest              = lender.ResetPasswordRequest
+	ResetPasswordRequestData          = lender.ResetPasswordRequestData
+	ResetPasswordResponse             = lender.ResetPasswordResponse
+	ResetPasswordResponseData         = lender.ResetPasswordResponseData
+	SendResetPasswordEmailRequest     = lender.SendResetPasswordEmailRequest
+	SendResetPasswordEmailRequestData = lender.SendResetPasswordEmailRequestData
+	SendResetPasswordEmailResponse    = lender.SendResetPasswordEmailResponse
+	StringSliceResponse               = lender.StringSliceResponse
+	UsCitiesRequest                   = lender.UsCitiesRequest
+	UsCitiesRequestData               = lender.UsCitiesRequestData
+	UserLoginRequest                  = lender.UserLoginRequest
+	UserLoginRequestData              = lender.UserLoginRequestData
+	UserLoginResponse                 = lender.UserLoginResponse
+	UserLoginResponseData             = lender.UserLoginResponseData
+	UserRegisterRequest               = lender.UserRegisterRequest
+	UserRegisterRequestData           = lender.UserRegisterRequestData
+	UserRegisterResponse              = lender.UserRegisterResponse
+	UserRegisterResponseData          = lender.UserRegisterResponseData
 
 	Common interface {
 		GetOpt(ctx context.Context, in *OptionRequest, opts ...grpc.CallOption) (*OptionResponse, error)

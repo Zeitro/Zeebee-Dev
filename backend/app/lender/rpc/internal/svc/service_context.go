@@ -10,13 +10,19 @@ type ServiceContext struct {
 	Config config.RpcConf
 
 	// repo
-	UsGeographyRepo *repo.UsGeographyRepo
+	UserRepo           *repo.UserRepo
+	LenderCompanyRepo  *repo.LenderCompanyRepo
+	LenderEmployeeRepo *repo.LenderEmployeeRepo
+	UsGeographyRepo    *repo.UsGeographyRepo
 }
 
 func NewServiceContext(c config.RpcConf) *ServiceContext {
 	return &ServiceContext{
 		Config: c,
 
-		UsGeographyRepo: repo.NewUsGeographyRepo(global.GetGormDB()),
+		UserRepo:           repo.NewUserRepo(global.GetGormDB()),
+		LenderCompanyRepo:  repo.NewLenderCompanyRepo(global.GetGormDB()),
+		LenderEmployeeRepo: repo.NewLenderEmployeeRepo(global.GetGormDB()),
+		UsGeographyRepo:    repo.NewUsGeographyRepo(global.GetGormDB()),
 	}
 }

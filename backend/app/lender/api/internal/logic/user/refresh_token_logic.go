@@ -3,8 +3,11 @@ package user
 import (
 	"context"
 
+	"github.com/pkg/errors"
+
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
+	"zeebee-backend/app/lender/rpc/pb/lender"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +28,17 @@ func NewRefreshTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Refr
 }
 
 func (l *RefreshTokenLogic) RefreshToken(req *types.UserRefreshTokenRequest) (resp *types.UserRefreshTokenResponse, err error) {
-	// todo: add your logic here and delete this line
+	rpcResp, err := l.svcCtx.UserRpcClient.RefreshToken(l.ctx, &lender.RefreshTokenRequest{
+		Data: &lender.RefreshTokenRequestData{
+			RefreshToken: req.RefreshToken,
+		},
+	})
+	if err != nil {
+		return nil, errors.WithStack(errors.New("refresh token error"))
+	}
 
-	return
+	return &types.UserRefreshTokenResponse{
+		AccessToken:       rpcResp.Data.AccessToken,
+		AccessTokenExpire: rpcResp.Data.AccessTokenExpire,
+	}, nil
 }

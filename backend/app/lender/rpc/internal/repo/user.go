@@ -40,6 +40,23 @@ func (repo *UserRepo) GetBorrowerUserByEmail(ctx context.Context, email string) 
 	return res, errors.WithStack(err)
 }
 
+// GetLenderUser
+func (repo *UserRepo) GetLenderUser(ctx context.Context, id int64) (res *model.User, err error) {
+	err = repo.BaseRepo.Client(ctx).
+		Where("id = ? and type = ?", id, constants.UserTypeLender).
+		Preload("LenderEmployee").
+		First(&res).Error
+	return res, errors.WithStack(err)
+}
+
+func (repo *UserRepo) GetLenderUserByEmail(ctx context.Context, email string) (res *model.User, err error) {
+	err = repo.BaseRepo.Client(ctx).
+		Where("email = ? and type = ?", email, constants.UserTypeLender).
+		Preload("LenderEmployee").
+		First(&res).Error
+	return res, errors.WithStack(err)
+}
+
 // update user status
 func (repo *UserRepo) UpdateUserStatus(ctx context.Context, id int64, status constants.UserStatus) (err error) {
 	err = repo.BaseRepo.Client(ctx).Where("id = ?", id).Update("status", status).Error

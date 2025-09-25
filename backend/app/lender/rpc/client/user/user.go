@@ -14,33 +14,42 @@ import (
 )
 
 type (
-	EmptyRequest             = lender.EmptyRequest
-	EmptyResponse            = lender.EmptyResponse
-	OptionEntry              = lender.OptionEntry
-	OptionRequest            = lender.OptionRequest
-	OptionRequestData        = lender.OptionRequestData
-	OptionResponse           = lender.OptionResponse
-	RefreshTokenRequest      = lender.RefreshTokenRequest
-	RefreshTokenRequestData  = lender.RefreshTokenRequestData
-	RefreshTokenResponse     = lender.RefreshTokenResponse
-	RefreshTokenResponseData = lender.RefreshTokenResponseData
-	StringSliceResponse      = lender.StringSliceResponse
-	UsCitiesRequest          = lender.UsCitiesRequest
-	UsCitiesRequestData      = lender.UsCitiesRequestData
-	UserLoginRequest         = lender.UserLoginRequest
-	UserLoginRequestData     = lender.UserLoginRequestData
-	UserLoginResponse        = lender.UserLoginResponse
-	UserLoginResponseData    = lender.UserLoginResponseData
-	UserRegisterRequest      = lender.UserRegisterRequest
-	UserRegisterRequestData  = lender.UserRegisterRequestData
-	UserRegisterResponse     = lender.UserRegisterResponse
-	UserRegisterResponseData = lender.UserRegisterResponseData
+	EmptyRequest                      = lender.EmptyRequest
+	EmptyResponse                     = lender.EmptyResponse
+	OptionEntry                       = lender.OptionEntry
+	OptionRequest                     = lender.OptionRequest
+	OptionRequestData                 = lender.OptionRequestData
+	OptionResponse                    = lender.OptionResponse
+	RefreshTokenRequest               = lender.RefreshTokenRequest
+	RefreshTokenRequestData           = lender.RefreshTokenRequestData
+	RefreshTokenResponse              = lender.RefreshTokenResponse
+	RefreshTokenResponseData          = lender.RefreshTokenResponseData
+	ResetPasswordRequest              = lender.ResetPasswordRequest
+	ResetPasswordRequestData          = lender.ResetPasswordRequestData
+	ResetPasswordResponse             = lender.ResetPasswordResponse
+	ResetPasswordResponseData         = lender.ResetPasswordResponseData
+	SendResetPasswordEmailRequest     = lender.SendResetPasswordEmailRequest
+	SendResetPasswordEmailRequestData = lender.SendResetPasswordEmailRequestData
+	SendResetPasswordEmailResponse    = lender.SendResetPasswordEmailResponse
+	StringSliceResponse               = lender.StringSliceResponse
+	UsCitiesRequest                   = lender.UsCitiesRequest
+	UsCitiesRequestData               = lender.UsCitiesRequestData
+	UserLoginRequest                  = lender.UserLoginRequest
+	UserLoginRequestData              = lender.UserLoginRequestData
+	UserLoginResponse                 = lender.UserLoginResponse
+	UserLoginResponseData             = lender.UserLoginResponseData
+	UserRegisterRequest               = lender.UserRegisterRequest
+	UserRegisterRequestData           = lender.UserRegisterRequestData
+	UserRegisterResponse              = lender.UserRegisterResponse
+	UserRegisterResponseData          = lender.UserRegisterResponseData
 
 	User interface {
 		// user
 		Login(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserLoginResponse, error)
 		Register(ctx context.Context, in *UserRegisterRequest, opts ...grpc.CallOption) (*UserRegisterResponse, error)
 		RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
+		ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*ResetPasswordResponse, error)
+		SendResetPasswordEmail(ctx context.Context, in *SendResetPasswordEmailRequest, opts ...grpc.CallOption) (*SendResetPasswordEmailResponse, error)
 	}
 
 	defaultUser struct {
@@ -68,4 +77,14 @@ func (m *defaultUser) Register(ctx context.Context, in *UserRegisterRequest, opt
 func (m *defaultUser) RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error) {
 	client := lender.NewUserClient(m.cli.Conn())
 	return client.RefreshToken(ctx, in, opts...)
+}
+
+func (m *defaultUser) ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*ResetPasswordResponse, error) {
+	client := lender.NewUserClient(m.cli.Conn())
+	return client.ResetPassword(ctx, in, opts...)
+}
+
+func (m *defaultUser) SendResetPasswordEmail(ctx context.Context, in *SendResetPasswordEmailRequest, opts ...grpc.CallOption) (*SendResetPasswordEmailResponse, error) {
+	client := lender.NewUserClient(m.cli.Conn())
+	return client.SendResetPasswordEmail(ctx, in, opts...)
 }

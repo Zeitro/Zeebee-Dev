@@ -3,8 +3,12 @@ package user
 import (
 	"context"
 
+	"github.com/jinzhu/copier"
+
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
+	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/common/errorx"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +29,22 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 }
 
 func (l *LoginLogic) Login(req *types.UserLoginRequest) (resp *types.UserLoginResponse, err error) {
-	// todo: add your logic here and delete this line
+	resp = &types.UserLoginResponse{}
+	// call rpc
+	rpcResp, err := l.svcCtx.UserRpcClient.Login(l.ctx, &lender.UserLoginRequest{
+		Data: &lender.UserLoginRequestData{
+			Email:    req.Email,
+			Password: req.Password,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
 
-	return
+	// trans response
+	err = copier.Copy(resp, &rpcResp.Data)
+	if err != nil {
+		return nil, errorx.GetFailedTransReqErr(err)
+	}
+	return resp, err
 }

@@ -275,6 +275,7 @@
               "type": "object",
               "required": [
                 "email",
+                "lender_company_id",
                 "password",
                 "comfired_password",
                 "first_name",
@@ -292,6 +293,9 @@
                 },
                 "last_name": {
                   "type": "string"
+                },
+                "lender_company_id": {
+                  "type": "integer"
                 },
                 "password": {
                   "type": "string"
@@ -439,7 +443,7 @@
       }
     }
   },
-  "x-date": "2025-09-25 17:29:38",
+  "x-date": "2025-09-25 18:48:52",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
