@@ -143,6 +143,7 @@ type LoanApplyApplicantEntry struct {
 type LoanApplyPropertyEntry struct {
 	Id                   int64              `json:"id,optional"`
 	PropertyType         string             `json:"property_type,optional" validate:"required,oneof='Single Family Residence' '2 unit' '3unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
+	Unit                 int32              `json:"unit,optional"`
 	LivingAreaSqft       float32            `json:"living_area_sqft,optional" validate:"required,gte=0"`
 	Bedrooms             int32              `json:"bedrooms,optional" validate:"required,gte=0"`
 	Bathrooms            int32              `json:"bathrooms,optional" validate:"gte=0"`
@@ -330,6 +331,7 @@ type LoanPageSorter struct {
 type LoanPropertyEntry struct {
 	Id                   int64              `json:"id,optional"`
 	PropertyType         string             `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
+	Unit                 int32              `json:"unit,optional"`
 	LivingAreaSqft       float32            `json:"living_area_sqft,optional"`
 	Bedrooms             int32              `json:"bedrooms,optional" `
 	Bathrooms            int32              `json:"bathrooms,optional"`
