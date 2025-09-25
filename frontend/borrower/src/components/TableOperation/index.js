@@ -1,7 +1,7 @@
 'use client';
 import { Dropdown } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { EditOutlined, EllipsisOutlined, DeleteOutlined } from '@ant-design/icons';
+import { EditOutlined, EllipsisOutlined, DeleteOutlined, ProfileOutlined } from '@ant-design/icons';
 import styles from './index.module.scss';
 import { useRouter } from 'next/navigation';
 const editItem = {
@@ -17,7 +17,7 @@ const deleteItem = {
 const detailsItem = {
 	label: 'Details',
 	key: 'details',
-	icon: <DeleteOutlined />,
+	icon: <ProfileOutlined />,
 };
 /**
  * Table内的操作组件
