@@ -141,8 +141,8 @@ type LoanDemographicRaceEntry struct {
 type LoanEntry struct {
 	Id                       int64                    `json:"id,optional"`
 	Code                     string                   `json:"code,optional"`
-	Stage                    string                   `json:"stage" validate:"required,oneof=Pending Active Archived"`
-	PendingStatus            string                   `json:"pending_status,optional" validate:"required_if=Stage Pending,omitempty,oneof=Quoting Processing Closing"`
+	Stage                    string                   `json:"stage" validate:"required,oneof=Pending Active Archived Rejected"`
+	PendingStatus            string                   `json:"pending_status,optional" validate:"required_if=Stage Pending,omitempty,oneof=Quoting Processing Underwriting Closing"`
 	LoanPurpose              string                   `json:"loan_purpose" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
 	LoanType                 string                   `json:"loan_type" validate:"required,oneof=Bridge Rehab  Rental 'Ground up construction'"`
 	TotalAmount              float64                  `json:"total_amount"`
