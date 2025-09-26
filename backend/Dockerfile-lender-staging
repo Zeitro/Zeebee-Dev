@@ -11,5 +11,5 @@ FROM alpine:3.22.1 AS final
 WORKDIR /app
 COPY --from=builder /app/lender /app/lender
 COPY ./app/lender/etc/config-staging.yaml /app/etc/config-staging.yaml
-EXPOSE 10000
+EXPOSE 10100
 ENTRYPOINT ["/app/lender","-f","/app/etc/config-staging.yaml"]
