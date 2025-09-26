@@ -27,6 +27,7 @@ const (
 	LenderUserAccountIdKey   = "lender_user_account_id"
 
 	BorrowerUserKey = "borrower_user"
+	LenderUserKey   = "lender_user"
 )
 
 func init() {

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"runtime"
+	"strings"
 
 	"github.com/pkg/errors"
 	"google.golang.org/grpc/status"
@@ -16,7 +17,14 @@ func GetErrorMsg(err error) string {
 
 	// Try to extract the original gRPC error message
 	if s, ok := status.FromError(err); ok {
-		return s.Message()
+		msg := s.Message()
+		if strings.HasPrefix(msg, "rpc error: code = ") {
+			msgArr := strings.Split(msg, "=")
+			if len(msgArr) > 2 {
+				msg = strings.Join(msgArr[2:], "=")
+			}
+		}
+		return msg
 	}
 
 	// Fallback to the original error message

@@ -7,15 +7,20 @@ import (
 
 	"github.com/go-redis/redis_rate/v10"
 	"github.com/redis/go-redis/v9"
-
-	"zeebee-backend/app/borrower/config"
 )
 
 type RedisLimiter struct {
 	client redis_rate.Limiter
 }
 
-func GetLimiterRedisClient(conf config.RedisConf) (*redis.Client, error) {
+type LimiterRedisConf struct {
+	Host string
+	Pass string
+	DB   int
+	Tls  bool
+}
+
+func GetLimiterRedisClient(conf LimiterRedisConf) (*redis.Client, error) {
 	var tlsConfig *tls.Config
 	if conf.Tls {
 		tlsConfig = &tls.Config{

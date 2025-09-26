@@ -8,4 +8,12 @@ const (
 	BorrowerLoginEmail          = "zeebee:borrower:%v:login:email"
 	BorrowerResetPwdEmail       = "zeebee:borrower:%v:reset:pwd:email"
 	BorrowerResetPwdCode        = "zeebee:borrower:%v:reset:pwd:code"
+
+	LenderLoginFailedTimes   = "zeebee:lender:%v:login:failed:times"
+	LenderRegisterVerifyCode = "zeebee:lender:%v:register:verify:code"
+
+	LenderRegisterVerifyEmail = "zeebee:lender:%v:register:verify:email"
+	LenderLoginEmail          = "zeebee:lender:%v:login:email"
+	LenderResetPwdEmail       = "zeebee:lender:%v:reset:pwd:email"
+	LenderResetPwdCode        = "zeebee:lender:%v:reset:pwd:code"
 )

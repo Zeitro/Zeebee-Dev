@@ -32,6 +32,7 @@ export const BtnPopUpModal = ({
 	modalType = '',
 	config = {},
 	getContent = () => {}, // 弹框组件
+	isButton = true,
 	...props
 }) => {
 	const [modal, contextHolder] = Modal.useModal();
@@ -47,9 +48,15 @@ export const BtnPopUpModal = ({
 
 	return (
 		<>
-			<Button type="link" size="small" onClick={handleClick} {...props}>
-				{children}
-			</Button>
+			{isButton ? (
+				<Button type="link" size="small" onClick={handleClick} {...props}>
+					{children}
+				</Button>
+			) : (
+				<div onClick={handleClick} {...props}>
+					{children}
+				</div>
+			)}
 			{contextHolder}
 			{open && getContent(setOpen)}
 		</>
