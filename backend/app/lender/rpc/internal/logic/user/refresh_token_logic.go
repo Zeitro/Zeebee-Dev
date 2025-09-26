@@ -2,11 +2,13 @@ package userlogic
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/pkg/errors"
 
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/utils"
 
@@ -39,23 +41,32 @@ func (l *RefreshTokenLogic) RefreshToken(in *lender.RefreshTokenRequest) (resp *
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	accessToken, err := utils.GenerateToken(
-		claims.UserID,
-		claims.AccountId,
-		claims.Username,
-		claims.Role,
-		claims.UserType,
-		l.svcCtx.Config.JwtAuth.AccessSecret,
-		l.svcCtx.Config.JwtAuth.AccessExpire,
-	)
+	id, _ := strconv.ParseInt(claims.UserID, 10, 64)
+
+	user, err := l.svcCtx.UserRepo.GetLenderUser(l.ctx, id)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	if user.Status == constants.UserStatusInactive {
+		return nil, errors.New("User is inactive")
+	}
+
+	token, err := generateLenderToken(user, l.svcCtx)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 
 	return &lender.RefreshTokenResponse{
 		Data: &lender.RefreshTokenResponseData{
-			AccessToken:       accessToken,
-			AccessTokenExpire: l.svcCtx.Config.JwtAuth.AccessExpire,
+			AccessToken:        token.AccessToken,
+			AccessTokenExpire:  token.AccessTokenExpire,
+			RefreshToken:       token.RefreshToken,
+			RefreshTokenExpire: token.RefreshTokenExpire,
 		},
 	}, nil
 }

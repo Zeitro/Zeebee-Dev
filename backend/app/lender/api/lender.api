@@ -1,10 +1,10 @@
 syntax = "v1"
 
 info(
-	title: "lender-api http service"
-	desc: "lender-api http service description"
+    title: "lender-api http service"
+    desc: "lender-api http service description"
 	author: "Wei Zeng"
-	email: "wei@yeelee-capital.com"
+    email: "wei@yeelee-capital.com"
 )
 
 import "desc/user.api"
@@ -12,19 +12,19 @@ import "desc/common.api"
 import "desc/us_geography.api"
 
 type (
-	EmptyRequest{
-	}
-	EmptyResponse{
-	}
+    EmptyRequest{
+    }
+    EmptyResponse{
+    }
 )
 
 // ============== common =============
 @server(
-	desc: "lender-api service"
+    desc: "lender-api service"
 	version: v1
-	group: common
+    group: common
 	prefix:  /api/v1
-	tags: common
+    tags: common
 )
 service lender-api {
 	@doc "select options"
@@ -42,11 +42,11 @@ service lender-api {
 
 // ============== user =============
 @server(
-	desc: "lender-api service"
+    desc: "lender-api service"
 	version: v1
-	group: user
+    group: user
 	prefix:  /api/v1
-	tags: user
+    tags: user
 )
 service lender-api {
 	@doc "register"
@@ -71,12 +71,12 @@ service lender-api {
 }
 
 @server(
-	desc: "lender-api service"
-	version: v1
-	group: user
+    desc: "lender-api service"
+    version: v1
+    group: user
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-	tags: user
+    tags: user
 )
 service lender-api {
 	@doc "info"
