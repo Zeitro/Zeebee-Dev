@@ -219,6 +219,7 @@ func (l *ImportPendingLoansLogic) buildImportModel(in *borrower.ImportPendingLoa
 	if err != nil {
 		return nil, errorx.GetFailedTransErr(err)
 	}
+	loanProperty.Unit = loanProperty.PropertyBase.Unit
 
 	// property base
 	propertyBase := loanProperty.PropertyBase
