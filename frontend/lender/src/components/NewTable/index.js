@@ -5,6 +5,8 @@ import styles from './index.module.scss';
 // import { debounce } from 'lodash';
 // const limitHeight = 200;
 const NewTable = ({ dataSource, columns, pagination, rowKey = 'id', scroll, ...props }) => {
+	const [selectedRowKey, setSelectedRowKey] = useState(null);
+
 	// const [scrollY, setScrollY] = useState(limitHeight);
 
 	// useLayoutEffect(() => {
@@ -45,6 +47,17 @@ const NewTable = ({ dataSource, columns, pagination, rowKey = 'id', scroll, ...p
 			{...props}
 			scroll={{ x: 'max-content', y: 'calc(100% - 55px)', ...(scroll || {}) }}
 			className={[styles.newTable, props?.className].join(' ')}
+			onRow={(record) => {
+				const moreConfig = props?.onRow?.(record);
+				return {
+					...moreConfig,
+					onClick: (e) => {
+						setSelectedRowKey(record[rowKey]);
+						props?.onRow?.(record)?.onClick?.(e);
+					}, // 点击行
+				};
+			}}
+			rowClassName={(record) => (record[rowKey] === selectedRowKey ? styles.selectedRow : '')}
 		/>
 	);
 };

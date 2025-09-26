@@ -15,7 +15,8 @@ module.exports = {
 					error: 'var(--base-error)',
 					disabled: 'var(--base-disabled)',
 					border: 'var(--base-border)',
-					label:'var(--base-label)'
+					label:'var(--base-label)',
+					active:'var(--base-active)',
 				},
 				black: {
 					light: 'var(--black-light)', // 浅黑色

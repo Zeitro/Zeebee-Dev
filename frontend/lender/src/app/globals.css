@@ -30,6 +30,7 @@
 	--base-disabled: #d9d9d9;
 	--base-border: #d9d9d9;
 	--base-label: rgba(0, 0, 0, 0.45);
+	--base-active: #e6f4ff;
 
 	--black-light: #222222;
 	--black-medium: #222;
@@ -69,6 +70,7 @@ body {
 	background: var(--background);
 	color: var(--foreground);
 	font-family: var(--font-roboto), sans-serif;
+	font-size: 14px;
 }
 
 div,
