@@ -1,5 +1,5 @@
 import { formatAmount } from '@/lib/format';
-
+import { HomeOutlined } from '@ant-design/icons';
 // 创建或编辑loan时的步骤
 export const createLoanSteps = [
 	{
@@ -20,64 +20,113 @@ export const createZeeBeeSteps = [
 	{
 		title: 'Borrower information',
 		key: 'borrowerInformation',
-		children: [
-			{
-				title: 'Applicant information',
-				key: 'applicantInformation',
-				validate: ['loan_borrower.'],
-			},
-			{
-				title: 'Borrower information',
-				key: 'borrowerInformation',
-				validate: ['applicants.'],
-			},
-		],
+		// children: [
+		// 	{
+		// 		title: 'Applicant information',
+		// 		key: 'applicantInformation',
+		// 		validate: ['loan_borrower.'],
+		// 	},
+		// 	{
+		// 		title: 'Borrower information',
+		// 		key: 'borrowerInformation',
+		// 		validate: ['applicants.'],
+		// 	},
+		// ],
 	},
 	{
 		title: 'Property & loan',
 		key: 'propertyAndLoan',
-		children: [
-			{
-				title: 'Property information',
-				key: 'propertyInformation ',
-			},
-			{
-				title: 'Loan detail',
-				key: 'loanDetail ',
-			},
-		],
+		// children: [
+		// 	{
+		// 		title: 'Property information',
+		// 		key: 'propertyInformation ',
+		// 	},
+		// 	{
+		// 		title: 'Loan detail',
+		// 		key: 'loanDetail ',
+		// 	},
+		// ],
 	},
 	{
 		title: 'Experience & Third service',
 		key: 'experienceAndThirdService',
-		children: [
-			{
-				title: 'Experience',
-				key: 'experience',
-			},
-			{
-				title: 'Third-party services',
-				key: 'thirdPartyServices',
-			},
-		],
+		// children: [
+		// 	{
+		// 		title: 'Experience',
+		// 		key: 'experience',
+		// 	},
+		// 	{
+		// 		title: 'Third-party services',
+		// 		key: 'thirdPartyServices',
+		// 	},
+		// ],
 	},
 	{
 		title: 'Declaration & Demographics',
 		key: 'declarationAndDemographics',
-		children: [
-			{
-				title: 'About this property and your money for this loan',
-				key: 'propertyLoanMoney',
-			},
-			{
-				title: 'Borrower demographic information',
-				key: 'borrowerDemographic',
-			},
-		],
+		// children: [
+		// 	{
+		// 		title: 'About this property and your money for this loan',
+		// 		key: 'propertyLoanMoney',
+		// 	},
+		// 	{
+		// 		title: 'Borrower demographic information',
+		// 		key: 'borrowerDemographic',
+		// 	},
+		// ],
 	},
 	{
 		title: 'Review and sign',
 		key: 'reviewAndSign',
+	},
+];
+
+export const pendingSteps = [
+	{
+		title: 'Quoting',
+		key: 'Quoting',
+	},
+	{
+		title: 'Processing',
+		key: 'Processing',
+	},
+	{
+		title: 'Underwriting',
+		key: 'Underwriting',
+	},
+	{
+		title: 'Closing',
+		key: 'Closing',
+	},
+	{
+		title: 'Documents',
+		key: 'Documents',
+	},
+];
+
+export const detailsSteps = [
+	{
+		title: 'GENERAL',
+		key: 'General',
+		icon: <HomeOutlined />,
+	},
+	{
+		title: 'APPLICATION',
+		key: 'Application',
+		children: createZeeBeeSteps,
+	},
+	{
+		title: 'PENDING',
+		key: 'Pending',
+		children: pendingSteps,
+	},
+	{
+		title: 'ACTIVE',
+		key: 'Active',
+	},
+	{
+		title: 'FUNDED',
+		key: 'Funded',
 	},
 ];
 
