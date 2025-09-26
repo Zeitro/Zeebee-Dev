@@ -91,3 +91,45 @@ export function flattenArray(list = [], childKey = 'children') {
 		return [...acc, next];
 	}, []);
 }
+
+// 递归查找,返回查找到的某一项数据
+export const findItem = ({
+	list,
+	key,
+	keyName = 'key',
+	childName = 'children',
+	isPushIndex,
+	isPushParent,
+	parentKey,
+	parentIndex,
+}) => {
+	let result = null;
+	list.map((i, index) => {
+		if (isPushIndex) {
+			i.index = index;
+		}
+		if (isPushParent) {
+			i.parentKey = parentKey || null;
+			i.parentIndex = parentIndex || null;
+		}
+		if (i?.[keyName] === key) {
+			result = i;
+		}
+		if (i?.[childName]) {
+			const childResult = findItem({
+				list: i.children,
+				key,
+				keyName,
+				childName,
+				isPushIndex,
+				isPushParent,
+				parentKey: i?.[keyName],
+				parentIndex: index,
+			});
+			if (childResult) {
+				result = childResult;
+			}
+		}
+	});
+	return result;
+};

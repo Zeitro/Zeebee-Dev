@@ -7,32 +7,26 @@ import { assemblyAddress } from '@/lib/format';
 import { flattenArray } from '@/lib/common';
 import { stageColor, pendingStatusColor, loanDetailsFields } from '@/enum/loan';
 import HomeSvg from '@/assets/images/home.svg';
-
+import _ from 'lodash';
 const ZeeBeeDetails = () => {
 	const {
-		getTabsItem,
 		scrollRef,
-		stepContent,
 		currentStep,
 		setCurrentStep,
-		stepNum,
 		setIsChange,
-		createZeeBeeSteps,
-		detailsSteps,
-		zeeBeeDetailsTabs,
+		lenderDetailsSteps,
 		form,
 		initialValues,
-		setStepNum,
-		getZeeBeeDetailsTabsItem,
 		rowData,
-		detailsComponents,
+		setRowData,
+		lenderDetailsComponents,
 	} = useCreate('details');
 
 	useEffect(() => {
-		setCurrentStep(detailsSteps[0].key);
+		setCurrentStep(lenderDetailsSteps[0].key);
 	}, []);
 
-	const getMenu = (list = detailsSteps, isChild) => {
+	const getLenderMenu = (list = lenderDetailsSteps, isChild) => {
 		const iconFn = (item, isChild, index) => {
 			if (isChild) {
 				return (
@@ -57,18 +51,11 @@ const ZeeBeeDetails = () => {
 				icon: iconFn(item, isChild, index),
 			};
 			if (item.children) {
-				obj.children = getMenu(item.children, true);
+				obj.children = getLenderMenu(item.children, true);
 			}
 			return obj;
 		});
 	};
-	console.log(
-		flattenArray(detailsSteps).map((i) => ({
-			key: i.key,
-			label: i.title,
-			children: detailsComponents[i.key],
-		})),
-	);
 
 	return (
 		<div className="flex flex-col h-full">
@@ -108,23 +95,25 @@ const ZeeBeeDetails = () => {
 			<div className="flex-1 overflow-hidden flex items-center bg-gray-light border-t border-base-border">
 				<Menu
 					className={`flex-shrink-0 !border-none !w-[260px] h-full !bg-transparent !pl-4 !py-3 ${styles.menu}`}
-					openKeys={detailsSteps.map((item) => item.key)}
+					openKeys={lenderDetailsSteps.map((item) => item.key)}
 					selectedKeys={[currentStep]}
 					mode="inline"
 					theme="light"
-					items={getMenu()}
+					items={getLenderMenu()}
 					onSelect={({ key }) => {
 						setCurrentStep(key);
-						setStepNum(0);
+						scrollRef.current.scrollTo({
+							top: 0,
+						});
 					}}
 					size="large"
 				/>
 				<div
-					className={`flex-1 overflow-hidden overflow-y-auto pb-6 px-6 bg-white h-full`}
+					className={`flex-1 overflow-hidden overflow-y-auto bg-white h-full`}
 					ref={scrollRef}
-					style={{
-						paddingTop: stepContent.length === currentStep + 1 ? 16 : 24,
-					}}
+					// style={{
+					// 	paddingTop: stepContent.length === currentStep + 1 ? 16 : 24,
+					// }}
 				>
 					<Form
 						form={form}
@@ -133,19 +122,35 @@ const ZeeBeeDetails = () => {
 						autoComplete="off"
 						className=""
 						size="large"
-						disabled={true}
+						// disabled={true}
 						initialValues={initialValues}
 						scrollToFirstError
 						onValuesChange={() => {
 							setIsChange(true);
 						}}
+						onFieldsChange={(changeFields) => {
+							console.log('changeFields', changeFields);
+
+							// 只有输入验证通过了才可更新值
+							const isErr = changeFields.every(
+								(v) => v?.errors?.length || v?.warnings?.length || !v?.validated,
+							);
+							if (!isErr) {
+								changeFields.map((v) => {
+									if (!v?.errors?.length && !v?.warnings?.length) {
+										_.set(rowData, v?.name, v?.value);
+									}
+								});
+								setRowData({ ...rowData });
+							}
+						}}
 					>
 						<Tabs
 							activeKey={currentStep}
-							items={flattenArray(detailsSteps).map((i) => ({
+							items={flattenArray(lenderDetailsSteps).map((i) => ({
 								key: i.key,
 								label: i.title,
-								children: detailsComponents[i.key],
+								children: lenderDetailsComponents[i.key],
 							}))}
 							renderTabBar={() => <div> </div>}
 							className={` ${styles.tabs}`}
