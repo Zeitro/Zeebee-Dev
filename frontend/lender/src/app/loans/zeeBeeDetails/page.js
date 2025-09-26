@@ -40,7 +40,7 @@ const ZeeBeeDetails = () => {
 						paddingTop: item.icon ? 0 : '2px',
 					}}
 				>
-					{item.icon || index + 1}
+					{item.icon || index}
 				</div>
 			);
 		};
