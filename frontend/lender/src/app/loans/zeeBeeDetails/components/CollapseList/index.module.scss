@@ -1,0 +1,11 @@
+.collapseCommon{
+    :global{
+        .ant-collapse-collapsible-icon .ant-collapse-expand-icon{
+            visibility: hidden;
+        }
+        .ant-collapse-item{
+            border-bottom: 1px solid var(--base-border) !important;
+            border-radius: 0 !important;
+        }
+    }
+}
