@@ -104,7 +104,7 @@ export const pendingSteps = [
 	},
 ];
 
-export const detailsSteps = [
+export const lenderDetailsSteps = [
 	{
 		title: 'GENERAL',
 		key: 'General',
