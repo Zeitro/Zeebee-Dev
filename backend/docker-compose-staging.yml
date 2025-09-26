@@ -1,18 +1,33 @@
 version: '3.8'
 
 services:
-  backend-service:
-    image: ${IMAGE_NAME}:${IMAGE_TAG:-latest}
+  staging-borrower-backend:
+    image: staging-borrower-backend:${IMAGE_TAG:-latest}
     build:
       context: .
-      dockerfile: Dockerfile-${SERVICE_NAME}-staging
-    container_name: ${CONTAINER_NAME}
+      dockerfile: Dockerfile-borrower-staging
+    container_name: staging-borrower-backend
     network_mode: host
     logging:
       driver: awslogs
       options:
         awslogs-region: us-west-1
-        awslogs-group: /zeebee/${SERVICE_NAME}-staging
+        awslogs-group: /zeebee/borrower-staging
+        awslogs-create-group: "true"
+        awslogs-stream: backend-${HOSTNAME}
+
+  staging-lender-backend:
+    image: staging-borrower-backend:${IMAGE_TAG:-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile-lender-staging
+    container_name: staging-lender-backend
+    network_mode: host
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: us-west-1
+        awslogs-group: /zeebee/lender-staging
         awslogs-create-group: "true"
         awslogs-stream: backend-${HOSTNAME}
 
