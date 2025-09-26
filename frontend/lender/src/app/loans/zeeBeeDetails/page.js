@@ -1,11 +1,13 @@
 'use client';
-import styles from '../createZeeBeeLoan/index.module.scss';
-import { Form, Segmented, Steps, Tabs } from 'antd';
+import styles from './index.module.scss';
+import { Form, Menu, Segmented, Steps, Tabs } from 'antd';
 import React, { useEffect } from 'react';
 import useCreate from '../components/CreateZeeBee/hooks/useCreate';
 import { assemblyAddress } from '@/lib/format';
+import { flattenArray } from '@/lib/common';
 import { stageColor, pendingStatusColor, loanDetailsFields } from '@/enum/loan';
 import HomeSvg from '@/assets/images/home.svg';
+
 const ZeeBeeDetails = () => {
 	const {
 		getTabsItem,
@@ -16,21 +18,61 @@ const ZeeBeeDetails = () => {
 		stepNum,
 		setIsChange,
 		createZeeBeeSteps,
+		detailsSteps,
 		zeeBeeDetailsTabs,
 		form,
 		initialValues,
 		setStepNum,
 		getZeeBeeDetailsTabsItem,
 		rowData,
+		detailsComponents,
 	} = useCreate('details');
 
 	useEffect(() => {
-		setCurrentStep(zeeBeeDetailsTabs[0].value);
+		setCurrentStep(detailsSteps[0].key);
 	}, []);
+
+	const getMenu = (list = detailsSteps, isChild) => {
+		const iconFn = (item, isChild, index) => {
+			if (isChild) {
+				return (
+					<div className="!w-[2px] !min-w-[2px] bg-base-border h-full mr-[10px]"></div>
+				);
+			}
+			return (
+				<div
+					className="bg-blue-dark w-6 h-6 rounded-full flex !items-center justify-center !text-white font-normal"
+					style={{
+						paddingTop: item.icon ? 0 : '2px',
+					}}
+				>
+					{item.icon || index + 1}
+				</div>
+			);
+		};
+		return list.map((item, index) => {
+			let obj = {
+				key: item.key,
+				label: item.title,
+				icon: iconFn(item, isChild, index),
+			};
+			if (item.children) {
+				obj.children = getMenu(item.children, true);
+			}
+			return obj;
+		});
+	};
+	console.log(
+		flattenArray(detailsSteps).map((i) => ({
+			key: i.key,
+			label: i.title,
+			children: detailsComponents[i.key],
+		})),
+	);
 
 	return (
 		<div className="flex flex-col h-full">
-			<div className="flex items-center flex-shrink-0 pt-6 pb-5 px-6">
+			<div className="flex items-center flex-shrink-0 pt-4 pb-5 px-4">
 				<HomeSvg />
 				<p className="text-xl/[24px] font-bold pl-3 pr-5">
 					{assemblyAddress(rowData?.loan_property?.property_base?.address)}
@@ -53,7 +95,7 @@ const ZeeBeeDetails = () => {
 					</div>
 				)}
 			</div>
-			<div className="flex-shrink-0 flex items-center gap-6 px-6 pb-6 text-base/[22px]">
+			<div className="flex-shrink-0 flex items-center gap-6 px-4 pb-4 text-base/[22px]">
 				{loanDetailsFields?.[rowData?.stage]?.map((item, index) => (
 					<div className="flex items-center gap-2 " key={index}>
 						<div className="text-[#4e5969]">{item.label}:</div>
@@ -63,7 +105,55 @@ const ZeeBeeDetails = () => {
 					</div>
 				))}
 			</div>
-			<Segmented
+			<div className="flex-1 overflow-hidden flex items-center bg-gray-light border-t border-base-border">
+				<Menu
+					className={`flex-shrink-0 !border-none !w-[260px] h-full !bg-transparent !pl-4 !py-3 ${styles.menu}`}
+					openKeys={detailsSteps.map((item) => item.key)}
+					selectedKeys={[currentStep]}
+					mode="inline"
+					theme="light"
+					items={getMenu()}
+					onSelect={({ key }) => {
+						setCurrentStep(key);
+						setStepNum(0);
+					}}
+					size="large"
+				/>
+				<div
+					className={`flex-1 overflow-hidden overflow-y-auto pb-6 px-6 bg-white h-full`}
+					ref={scrollRef}
+					style={{
+						paddingTop: stepContent.length === currentStep + 1 ? 16 : 24,
+					}}
+				>
+					<Form
+						form={form}
+						name="basic"
+						layout="vertical"
+						autoComplete="off"
+						className=""
+						size="large"
+						disabled={true}
+						initialValues={initialValues}
+						scrollToFirstError
+						onValuesChange={() => {
+							setIsChange(true);
+						}}
+					>
+						<Tabs
+							activeKey={currentStep}
+							items={flattenArray(detailsSteps).map((i) => ({
+								key: i.key,
+								label: i.title,
+								children: detailsComponents[i.key],
+							}))}
+							renderTabBar={() => <div> </div>}
+							className={` ${styles.tabs}`}
+						/>
+					</Form>
+				</div>
+			</div>
+			{/* <Segmented
 				value={currentStep}
 				size="large"
 				options={[
@@ -123,7 +213,7 @@ const ZeeBeeDetails = () => {
 						/>
 					</Form>
 				</div>
-			</div>
+			</div> */}
 		</div>
 	);
 };
