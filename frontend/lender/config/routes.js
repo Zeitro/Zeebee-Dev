@@ -6,7 +6,7 @@ export const navRouter = [
 	},
 	{
 		path: '/loans',
-		title: 'My loans',
+		title: 'All loans',
 		icon: 'loan',
 		roles: [],
 		router: [
@@ -25,6 +25,11 @@ export const navRouter = [
 				title: 'Apply ZeeBee Loan',
 				hideMenu: true,
 			},
+			{
+				path: '/loans/zeeBeeDetails',
+				title: 'ZeeBee Loan Details',
+				hideMenu: true,
+			},
 		],
 	},
 	{
@@ -32,6 +37,8 @@ export const navRouter = [
 		title: 'My properties',
 		icon: 'property',
 		roles: [],
+		hideMenu: true,
+		hideCrumbs: true,
 		router: [
 			{
 				path: '/properties/:id',
@@ -40,20 +47,9 @@ export const navRouter = [
 			},
 		],
 	},
-	{
-		path: '/pdf',
-		title: 'pdf',
-		hideMenu: true,
-	},
-	{
-		path: '/not-found',
-		title: '404',
-		hideCrumbs: true,
-		hideMenu: true,
-	},
 ];
 
-export const noNavRouter = [
+export const noTokenRouter = [
 	{
 		path: '/login',
 		title: 'Login',
@@ -85,6 +81,22 @@ export const noNavRouter = [
 				hideCrumbs: true,
 			},
 		],
+	},
+];
+
+export const noNavRouter = [
+	...noTokenRouter,
+	{
+		path: '/pdf',
+		title: 'pdf',
+		hideMenu: true,
+		hideCrumbs: true,
+	},
+	{
+		path: '/not-found',
+		title: '404',
+		hideCrumbs: true,
+		hideMenu: true,
 	},
 ];
 

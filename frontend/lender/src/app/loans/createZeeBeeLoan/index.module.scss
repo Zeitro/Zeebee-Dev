@@ -5,3 +5,42 @@
 		overflow: hidden;
 	}
 }
+
+.segmented {
+	background: none !important;
+	padding: 0 !important;
+	border-bottom: 1px solid var(--base-border) !important;
+	border-radius: 0 !important;
+	:global {
+		.ant-segmented-item-label {
+			min-height: 100% !important;
+			line-height: 56px !important;
+			padding: 0 !important;
+		}
+		.ant-segmented-item::after {
+			height: 2px !important;
+			bottom: 0;
+			top: auto !important;
+			transition: none !important;
+		}
+		.ant-segmented-item:not(.ant-segmented-item-selected):hover:after {
+			background: none !important;
+		}
+		.ant-segmented-item-selected::after {
+			background: var(--base-primary) !important;
+			opacity: 1 !important;
+		}
+
+		.ant-segmented-item:hover {
+			color: var(--base-primary) !important;
+		}
+		.ant-segmented-item-selected {
+			box-shadow: none !important;
+			color: var(--base-primary) !important;
+		}
+		.ant-segmented-group {
+			gap: 2rem;
+			padding: 0 24px;
+		}
+	}
+}

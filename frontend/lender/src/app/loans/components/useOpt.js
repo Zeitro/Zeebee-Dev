@@ -4,10 +4,12 @@ import { createRequest } from '@/lib/fetch';
 import { message, Modal } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { assemblyAddress } from '@/lib/format';
+import { useRouter } from 'next/navigation';
 export default function useOpt(tableFilterRef) {
 	const [modal, contextHolder] = Modal.useModal();
-	const { request } = createRequest();
 	const [confirmLoading, setConfirmLoading] = useState(false);
+	const { request } = createRequest();
+	const router = useRouter();
 	const handleDelete = async (id) => {
 		try {
 			setConfirmLoading(true);
@@ -44,5 +46,20 @@ export default function useOpt(tableFilterRef) {
 			centered: true,
 		});
 	};
-	return { showDeleteModal, contextHolder };
+
+	const handleSelectedRow = (record, stage) => {
+		let url;
+		if (stage === 'Draft') {
+			url =
+				record?.source === 'borrower'
+					? `/loans/${record?.id}`
+					: `/loans/createZeeBeeLoan?id=${record?.id}`;
+		} else if (record?.source === 'borrower') {
+			url = `/loans/${record?.id}`;
+		} else {
+			url = `/loans/zeeBeeDetails?id=${record?.id}`;
+		}
+		router.push(url);
+	};
+	return { showDeleteModal, contextHolder, handleSelectedRow };
 }
