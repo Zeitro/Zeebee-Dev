@@ -39,3 +39,12 @@
 	// 	min-height: 22px !important;
 	// }
 }
+
+.documentUpload {
+	width: 100%;
+	:global {
+		.ant-upload {
+			width: 100%;
+		}
+	}
+}
