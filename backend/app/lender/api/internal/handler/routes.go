@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	common "zeebee-backend/app/lender/api/internal/handler/common"
+	loan "zeebee-backend/app/lender/api/internal/handler/loan"
 	user "zeebee-backend/app/lender/api/internal/handler/user"
 	"zeebee-backend/app/lender/api/internal/svc"
 
@@ -35,6 +36,33 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: common.GetUsStatesHandler(serverCtx),
 			},
 		},
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// detail
+					Method:  http.MethodGet,
+					Path:    "/loan/:id",
+					Handler: loan.DetailHandler(serverCtx),
+				},
+				{
+					// update
+					Method:  http.MethodPut,
+					Path:    "/loan/:id",
+					Handler: loan.UpdateHandler(serverCtx),
+				},
+				{
+					// page
+					Method:  http.MethodPost,
+					Path:    "/loan/page",
+					Handler: loan.PageHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithPrefix("/api/v1"),
 	)
 

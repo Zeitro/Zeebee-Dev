@@ -9,25 +9,27 @@ import (
 
 // JWTClaims JWT声明结构
 type JWTClaims struct {
-	UserID    string `json:"user_id"`
-	AccountId string `json:"account_id"`
-	Username  string `json:"username"`
-	Role      string `json:"role"`
-	UserType  string `json:"user_type"`
+	UserID          string `json:"user_id"`
+	AccountId       string `json:"account_id"`
+	LenderCompanyId int64  `json:"lender_company_id"`
+	Username        string `json:"username"`
+	Role            string `json:"role"`
+	UserType        string `json:"user_type"`
 	jwt.RegisteredClaims
 }
 
 // GenerateToken 生成JWT token
-func GenerateToken(userID string, accountId string, username string, role string, userType string, secretKey string, expireSeconds int64) (string, error) {
+func GenerateToken(userID string, accountId string, lenderCompanyId int64, username string, role string, userType string, secretKey string, expireSeconds int64) (string, error) {
 	now := time.Now()
 	expireTime := now.Add(time.Duration(expireSeconds) * time.Second)
 
 	claims := JWTClaims{
-		UserID:    userID,
-		AccountId: accountId,
-		Username:  username,
-		Role:      role,
-		UserType:  userType,
+		UserID:          userID,
+		AccountId:       accountId,
+		LenderCompanyId: lenderCompanyId,
+		Username:        username,
+		Role:            role,
+		UserType:        userType,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expireTime),
 			IssuedAt:  jwt.NewNumericDate(now),
