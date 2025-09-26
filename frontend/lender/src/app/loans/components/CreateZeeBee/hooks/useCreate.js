@@ -62,15 +62,21 @@ const useCreate = (pageType = 'create') => {
 
 	// 获取详情（草稿使用）
 	const getLoanDetail = async () => {
-		const res = await request(`/loan/${searchParams.get('id')}`);
+		const res = (await request(`/loan/${searchParams.get('id')}`)) || {};
 		const str = assemblyAddress(res?.loan_property?.property_base?.address);
 		eventBus.emit('changeCrumbs', {
 			2: isDetails ? `ZeeBee Loan Details(${str})` : `Edit Draft(${str})`,
 		});
-		res.loan_borrower.tin = {
-			tin_type: res?.loan_borrower?.tin_type,
-			tin: res?.loan_borrower?.tin,
+		console.log(res);
+
+		res.loan_borrower = {
+			...(res?.loan_borrower || {}),
+			tin: {
+				tin_type: res?.loan_borrower?.tin_type,
+				tin: res?.loan_borrower?.tin,
+			},
 		};
+
 		if (!res?.applicants?.length) {
 			res.applicants = initialValues.applicants;
 		}
@@ -444,7 +450,7 @@ const useCreate = (pageType = 'create') => {
 	);
 
 	const lenderDetailsComponents = {
-		General: zeeBeeDetailsContent[0],
+		General: <div className="py-6 px-6">{zeeBeeDetailsContent[0]}</div>,
 		borrowerInformation: (
 			<CommonZeeBeeForm form={form} pageKey="borrowerInformation">
 				{lenderStepBtn}
@@ -471,11 +477,11 @@ const useCreate = (pageType = 'create') => {
 			</CommonZeeBeeForm>
 		),
 		reviewAndSign: <CommonZeeBeeForm form={form} pageKey="reviewAndSign" />,
-		Quoting: '',
+		Quoting: <CommonZeeBeeForm pageKey="Quoting" />,
 		Processing: '',
 		Underwriting: '',
 		Closing: '',
-		Documents: zeeBeeDetailsContent[1],
+		Documents: <div className="py-6 px-6">{zeeBeeDetailsContent[1]}</div>,
 		Active: '',
 		Funded: '',
 	};

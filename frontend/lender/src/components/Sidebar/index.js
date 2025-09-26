@@ -86,7 +86,7 @@ const SidebarDom = () => {
 				/> */}
 				<div
 					className={[
-						`w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-sm text-background`,
+						`w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-sm text-base-label`,
 						styles.bg,
 					].join(' ')}
 				>

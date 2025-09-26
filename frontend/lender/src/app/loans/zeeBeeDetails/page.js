@@ -109,7 +109,7 @@ const ZeeBeeDetails = () => {
 					size="large"
 				/>
 				<div
-					className={`flex-1 overflow-hidden overflow-y-auto pb-6 px-6 bg-white h-full`}
+					className={`flex-1 overflow-hidden overflow-y-auto bg-white h-full`}
 					ref={scrollRef}
 					// style={{
 					// 	paddingTop: stepContent.length === currentStep + 1 ? 16 : 24,

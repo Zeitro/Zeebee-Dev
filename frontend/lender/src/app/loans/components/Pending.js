@@ -91,20 +91,6 @@ const PendingPage = ({
 			},
 			{
 				filterType: 'treeSelect',
-				label: 'Lender',
-				paramsKey: 'lender',
-				placeholder: 'Lender',
-				style: { width: 160 },
-				popupMatchSelectWidth: 172,
-				value: lender,
-				onChange: (value) => setLender(value),
-				treeData: transformArrayStructure({
-					sourceArray: lenderOptions,
-					outputKey: 'title',
-				}).map((i) => ({ ...i, key: i.value })),
-			},
-			{
-				filterType: 'treeSelect',
 				label: 'Status',
 				value: status,
 				paramsKey: 'pending_status',
