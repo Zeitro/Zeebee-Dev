@@ -13,7 +13,12 @@ var SendRegisterEmailLimiter *limiter.RedisLimiter
 var SendResetPasswordEmailLimiter *limiter.RedisLimiter
 
 func initLimiter(cnf config.RedisConf) (err error) {
-	rdb, err := limiter.GetLimiterRedisClient(cnf)
+	rdb, err := limiter.GetLimiterRedisClient(limiter.LimiterRedisConf{
+		Host: cnf.Host,
+		Pass: cnf.Pass,
+		DB:   cnf.DB,
+		Tls:  cnf.Tls,
+	})
 	if err != nil {
 		return errors.Wrap(err, "init limiter error")
 	}
