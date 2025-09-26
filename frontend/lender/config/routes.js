@@ -37,6 +37,8 @@ export const navRouter = [
 		title: 'My properties',
 		icon: 'property',
 		roles: [],
+		hideMenu: true,
+		hideCrumbs: true,
 		router: [
 			{
 				path: '/properties/:id',
