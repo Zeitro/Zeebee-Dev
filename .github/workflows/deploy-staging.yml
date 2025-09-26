@@ -3,8 +3,8 @@ name: Zeebee Backend Deploy to staging
 on:
   push:
     branches:
-      - staging-borrower
-      - staging-lender
+      - staging-borrower-backend
+      - staging-lender-backend
 
 jobs:
   deploy:
@@ -23,14 +23,14 @@ jobs:
       - name: Set environment variables
         id: set_env
         run: |
-          if [[ "${{ github.ref }}" == "refs/heads/staging-borrower" ]]; then
+          if [[ "${{ github.ref }}" == "refs/heads/staging-borrower-backend" ]]; then
             echo "SERVICE_NAME=borrower" >> $GITHUB_ENV
-            echo "IMAGE_NAME=backend-borrower-staging" >> $GITHUB_ENV
+            echo "IMAGE_NAME=staging-borrower-backend" >> $GITHUB_ENV
             echo "CONTAINER_NAME=backend-borrower-staging" >> $GITHUB_ENV
           elif [[ "${{ github.ref }}" == "refs/heads/staging-lender" ]]; then
             echo "SERVICE_NAME=lender" >> $GITHUB_ENV
-            echo "IMAGE_NAME=backend-lender-staging" >> $GITHUB_ENV
-            echo "CONTAINER_NAME=backend-lender-staging" >> $GITHUB_ENV
+            echo "IMAGE_NAME=staging-lender-backend" >> $GITHUB_ENV
+            echo "CONTAINER_NAME=staging-lender-backend" >> $GITHUB_ENV
           fi
 
       - name: Show environment variables
