@@ -5,6 +5,7 @@ on:
     branches:
       - staging-borrower-backend
       - staging-lender-backend
+    paths: [ '.github/workflows/**' ]
 
 jobs:
   deploy:
