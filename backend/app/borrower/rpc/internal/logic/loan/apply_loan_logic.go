@@ -264,6 +264,7 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData) 
 		return nil, errorx.GetFailedTransErr(err)
 	}
 	loanProperty.PropertyBase.BorrowerId = reqData.BorrowerId
+	loanProperty.Unit = loanProperty.PropertyBase.Unit
 
 	// transaction experience
 	transactionExperiences := make([]*model.LoanExperience, 0)
