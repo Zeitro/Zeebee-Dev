@@ -28,7 +28,8 @@ func NewCreateAwsS3PresignUrlLogic(ctx context.Context, svcCtx *svc.ServiceConte
 func (l *CreateAwsS3PresignUrlLogic) CreateAwsS3PresignUrl(req *types.S3PresignUrlCreateRequest) (resp *types.S3PresignUrlCreateResponse, err error) {
 	rpcReq := &borrower.StorageCreatePresignedUrlRequest{
 		Data: &borrower.StorageCreatePresignedUrlRequestData{
-			Type: req.Type,
+			Type:       req.Type,
+			FileSuffix: req.FileSuffix,
 		},
 	}
 	rpcResp, err := l.svcCtx.StorageRpcClient.CreatePresignedUrl(l.ctx, rpcReq)
