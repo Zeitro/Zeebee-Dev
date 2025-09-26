@@ -65,6 +65,6 @@ RpcConf:
     Bucket: zeebee-files-staging
     FileFolder: files-staging
     PreSigneUrlExpireSeconds: 60
-  LoginUrl: https://app.zeebeeloans.net/login
-  VerifyEmailUrl: https://app.zeebeeloans.net/login/verifyEmail
-  ResetPwdUrl: https://app.zeebeeloans.net/login/resetPassword
+  LoginUrl: https://agent.zeebeeloans.net/login
+  VerifyEmailUrl: https://agent.zeebeeloans.net/login/verifyEmail
+  ResetPwdUrl: https://agent.zeebeeloans.net/login/resetPassword
