@@ -1,5 +1,5 @@
 import { formatAmount } from '@/lib/format';
-import LoanPendingStatus from './LoanPendingStatus';
+import { LoanPendingStatus } from './ChangeStageStatus';
 import TableOperation from '@/components/TableOperation';
 export const get3rdPartyMark = (v, { source }) => (
 	<div className="flex items-center">
@@ -76,8 +76,8 @@ const getOpt = (showDeleteModal, stage) => {
 		render: (_, record) => (
 			<TableOperation
 				record={record}
-				disabled={stage !== 'Draft' && record?.source !== 'borrower'}
-				getItems={(editItem, deleteItem) => {
+				// disabled={stage !== 'Draft' && record?.source !== 'borrower'}
+				getItems={(editItem, deleteItem, detailsItem) => {
 					const arr = [];
 					if (stage === 'Draft') {
 						const url =
@@ -90,6 +90,11 @@ const getOpt = (showDeleteModal, stage) => {
 						if (record?.source === 'borrower') {
 							arr.push({ ...editItem, url: `/loans/${record?.id}` });
 							arr.push(deleteItem);
+						} else {
+							arr.push({
+								...detailsItem,
+								url: `/loans/zeeBeeDetails?id=${record?.id}`,
+							});
 						}
 					}
 					return arr;

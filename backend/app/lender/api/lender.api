@@ -1,0 +1,86 @@
+syntax = "v1"
+
+info(
+	title: "lender-api http service"
+	desc: "lender-api http service description"
+	author: "Wei Zeng"
+	email: "wei@yeelee-capital.com"
+)
+
+import "desc/user.api"
+import "desc/common.api"
+import "desc/us_geography.api"
+
+type (
+	EmptyRequest{
+	}
+	EmptyResponse{
+	}
+)
+
+// ============== common =============
+@server(
+	desc: "lender-api service"
+	version: v1
+	group: common
+	prefix:  /api/v1
+	tags: common
+)
+service lender-api {
+	@doc "select options"
+	@handler SelectOptions
+	get /select_options (GetSelectOptionRequest) returns (GetSelectOptionResponse)
+
+	@doc "get us states"
+	@handler GetUsStates
+	get /us_states (EmptyRequest) returns (GetUsStatesResponse)
+
+	@doc "get us city"
+	@handler GetUsCities
+	get /us_cities (GetUsCitiesRequest) returns (GetUsCitiesResponse)
+}
+
+// ============== user =============
+@server(
+	desc: "lender-api service"
+	version: v1
+	group: user
+	prefix:  /api/v1
+	tags: user
+)
+service lender-api {
+	@doc "register"
+	@handler Register
+	post /user/register (UserRegisterRequest) returns (UserRegisterResponse)
+
+	@doc "login"
+	@handler Login
+	post /user/login (UserLoginRequest) returns (UserLoginResponse)
+
+	@doc "refresh"
+	@handler RefreshToken
+	post /user/refresh (UserRefreshTokenRequest) returns (UserRefreshTokenResponse)
+
+	@doc "reset password"
+	@handler ResetPassword
+	post /user/reset_password (UserResetPasswordRequest) returns (UserLoginResponse)
+
+	@doc "send reset password email"
+	@handler SendResetPassword
+	post /user/send_reset_password (UserSendResetPasswordEmailRequest) returns (EmptyResponse)
+}
+
+@server(
+	desc: "lender-api service"
+	version: v1
+	group: user
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: user
+)
+service lender-api {
+	@doc "info"
+	@handler Info
+	get /user/info (EmptyRequest) returns (UserInfoResponse)
+}
+

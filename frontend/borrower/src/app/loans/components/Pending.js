@@ -1,5 +1,5 @@
 'use client';
-import React, { useMemo, useState, useRef } from 'react';
+import React, { useMemo, useState, useRef, useEffect } from 'react';
 import FilterTable from '@/components/FilterTable';
 import { pendingColumns } from './column';
 import { transformArrayStructure } from '@/lib/common';
@@ -7,6 +7,7 @@ import { useOptionsStore } from '@/store/options';
 import { createRequest } from '@/lib/fetch';
 import { ReloadOutlined } from '@ant-design/icons';
 import useOpt from './useOpt';
+import eventBus from '@/lib/bus';
 const PendingPage = ({
 	hasFilterField,
 	hasPagination,
@@ -21,10 +22,9 @@ const PendingPage = ({
 	stage = 'Pending', // 默认是pending，可传草稿draft(因草稿展示和pending loans的一致，只有表格操作栏不同，所以需要区分)
 }) => {
 	const tableFilterRef = useRef();
-	// const [modal, contextHolder] = Modal.useModal();
 	const { loanPendingStatus, loanPurposeOptions, loanTypeOptions, lenderOptions } =
 		useOptionsStore();
-	const { showDeleteModal, contextHolder } = useOpt(tableFilterRef);
+	const { showDeleteModal, contextHolder, handleSelectedRow } = useOpt(tableFilterRef);
 	const { request } = createRequest();
 	const [type, setType] = useState('address');
 	const [searchValue, setSearchValue] = useState('');
@@ -155,6 +155,11 @@ const PendingPage = ({
 		],
 	);
 
+	// 导入3rd party后调用，更新列表
+	useEffect(() => {
+		eventBus.on('searchPendingLoans', tableFilterRef?.current?.handleSearch);
+	}, []);
+
 	return (
 		<>
 			<FilterTable
@@ -173,6 +178,11 @@ const PendingPage = ({
 				filterWrapClassName={filterWrapClassName}
 				dataSource={dataSource}
 				dataSourceLoading={loading}
+				onRow={(row) => ({
+					onClick: () => {
+						handleSelectedRow(row, stage);
+					},
+				})}
 				getData={(params) => {
 					if (!api) {
 						return {
