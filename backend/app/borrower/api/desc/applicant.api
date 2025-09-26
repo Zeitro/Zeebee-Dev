@@ -11,7 +11,6 @@ import "address.api"
 
 type ApplicantEntry {
     Id int64 `json:"id,omitempty,optional"`
-    //    Name string `json:"name,omitempty"`
     FirstName string `json:"first_name,omitempty, optional"`
     MidName string `json:"mid_name,omitempty, optional"`
     LastName string `json:"last_name,omitempty, optional"`
