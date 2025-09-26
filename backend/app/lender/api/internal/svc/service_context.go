@@ -15,8 +15,8 @@ type ServiceContext struct {
 	AuthMiddleware rest.Middleware
 
 	// rpc client
-	UserRpcClient lender.UserClient
-	// LoanRpcClient      borrower.LoanClient
+	UserRpcClient   lender.UserClient
+	LoanRpcClient   lender.LoanClient
 	CommonRpcClient lender.CommonClient
 }
 
@@ -27,6 +27,7 @@ func NewServiceContext(c config.ApiConf) *ServiceContext {
 
 		// rpc client
 		UserRpcClient:   lender.NewUserClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		LoanRpcClient:   lender.NewLoanClient(zrpc.MustNewClient(c.RpcConf).Conn()),
 		CommonRpcClient: lender.NewCommonClient(zrpc.MustNewClient(c.RpcConf).Conn()),
 	}
 }
