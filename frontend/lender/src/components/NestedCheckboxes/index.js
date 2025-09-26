@@ -13,8 +13,6 @@ const NestedCheckboxes = ({
 	name,
 	label,
 }) => {
-	console.log(value);
-
 	// 递归删除,删除key对应的值，并删除所有子级的勾选和输入值
 	const remove = (list, key, newValue) => {
 		list.map((item) => {

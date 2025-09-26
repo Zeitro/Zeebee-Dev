@@ -10,7 +10,7 @@ import Declaration from '../../components/CreateZeeBee/Declaration';
 import Demographics from '../../components/CreateZeeBee/Demographics';
 import ReviewAndSign from '../../components/CreateZeeBee/ReviewAndSign';
 
-const CommonZeeBeeForm = ({ form, pageKey }) => {
+const CommonZeeBeeForm = ({ form, pageKey, children, setIsChange, rowData }) => {
 	const getContent = () => {
 		switch (pageKey) {
 			case 'borrowerInformation':
@@ -18,6 +18,7 @@ const CommonZeeBeeForm = ({ form, pageKey }) => {
 					<>
 						<ApplicantInfo form={form} />
 						<BorrowerInfo form={form} />
+						{children}
 					</>
 				);
 			case 'propertyAndLoan':
@@ -25,13 +26,19 @@ const CommonZeeBeeForm = ({ form, pageKey }) => {
 					<>
 						<PropertyInfo form={form} />
 						<Loan form={form} />
+						{children}
 					</>
 				);
 			case 'experienceAndThirdService':
 				return (
 					<>
-						<Experience form={form} />
-						<ThirdPartyService form={form} />
+						<Experience form={form} rowData={rowData} setIsChange={setIsChange} />
+						<ThirdPartyService
+							form={form}
+							rowData={rowData}
+							setIsChange={setIsChange}
+						/>
+						{children}
 					</>
 				);
 			case 'declarationAndDemographics':
@@ -39,10 +46,16 @@ const CommonZeeBeeForm = ({ form, pageKey }) => {
 					<>
 						<Declaration form={form} />
 						<Demographics form={form} />
+						{children}
 					</>
 				);
 			case 'reviewAndSign':
-				return <ReviewAndSign form={form} />;
+				return (
+					<>
+						<ReviewAndSign form={form} />
+						{children}
+					</>
+				);
 			default:
 				return '';
 		}
