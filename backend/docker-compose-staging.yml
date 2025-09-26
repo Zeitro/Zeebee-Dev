@@ -1,7 +1,22 @@
 version: '3.8'
 
 services:
-  ${SERVICE_NAME}:
+  borrower:
+    image: ${IMAGE_NAME}:${IMAGE_TAG:-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile-${SERVICE_NAME}-staging
+    container_name: ${CONTAINER_NAME}
+    network_mode: host
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: us-west-1
+        awslogs-group: /zeebee/${SERVICE_NAME}-staging
+        awslogs-create-group: "true"
+        awslogs-stream: backend-${HOSTNAME}
+
+  lender:
     image: ${IMAGE_NAME}:${IMAGE_TAG:-latest}
     build:
       context: .
