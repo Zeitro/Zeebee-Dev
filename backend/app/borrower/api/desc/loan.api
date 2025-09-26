@@ -361,7 +361,6 @@ type (
         HasCollateralizedBlanket bool `json:"has_collateralized_blanket,optional"`
         HasPropertiesVacant bool `json:"has_properties_vacant,optional"`
         HasShortTermRental bool `json:"has_short_term_rental,optional"`
-        // AdditionalInfo string `json:"additional_info"`
         TransactionExperiences []*LoanExperienceEntry `json:"transaction_experiences,optional"`
         RealEstateExperiences []*LoanExperienceEntry `json:"real_estate_experiences,optional"`
         LoanThirdServices []*LoanThirdServiceEntry `json:"loan_third_services,optional"`

@@ -5,6 +5,7 @@ on:
     branches:
       - staging-borrower-backend
       - staging-lender-backend
+    paths: [ '.github/workflows/**' ]
 
 jobs:
   deploy:
@@ -24,11 +25,11 @@ jobs:
         id: set_env
         run: |
           if [[ "${{ github.ref }}" == "refs/heads/staging-borrower-backend" ]]; then
-            echo "SERVICE_NAME=borrower" >> $GITHUB_ENV
+            echo "SERVICE_NAME=staging-borrower-backend" >> $GITHUB_ENV
             echo "IMAGE_NAME=staging-borrower-backend" >> $GITHUB_ENV
             echo "CONTAINER_NAME=backend-borrower-staging" >> $GITHUB_ENV
-          elif [[ "${{ github.ref }}" == "refs/heads/staging-lender" ]]; then
-            echo "SERVICE_NAME=lender" >> $GITHUB_ENV
+          elif [[ "${{ github.ref }}" == "refs/heads/staging-lender-backend" ]]; then
+            echo "SERVICE_NAME=staging-lender-backend" >> $GITHUB_ENV
             echo "IMAGE_NAME=staging-lender-backend" >> $GITHUB_ENV
             echo "CONTAINER_NAME=staging-lender-backend" >> $GITHUB_ENV
           fi
@@ -53,9 +54,8 @@ jobs:
           CONTAINER_NAME: ${{ env.CONTAINER_NAME }}
         run: |
           echo "Deploying service: ${CONTAINER_NAME}"
-          docker-compose -f docker-compose-staging.yml down || true
-          docker-compose -f docker-compose-staging.yml build --no-cache
-          docker-compose -f docker-compose-staging.yml up -d
+          docker-compose -f docker-compose-staging.yml build --no-cache ${SERVICE_NAME}
+          docker-compose -f docker-compose-staging.yml up -d ${SERVICE_NAME}
 
       - name: Remove old images
         run: |

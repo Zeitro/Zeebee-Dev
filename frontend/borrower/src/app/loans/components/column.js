@@ -1,5 +1,5 @@
 import { formatAmount } from '@/lib/format';
-import LoanPendingStatus from './LoanPendingStatus';
+import { LoanPendingStatus } from './ChangeStageStatus';
 import TableOperation from '@/components/TableOperation';
 export const get3rdPartyMark = (v, { source }) => (
 	<div className="flex items-center">
