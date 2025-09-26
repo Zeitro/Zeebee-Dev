@@ -53,3 +53,38 @@ func GetAccountIdFromCtx(ctx context.Context) (accountId int64, err error) {
 
 	return accountId, nil
 }
+
+func GetLenderUserClaimFromCtx(ctx context.Context) (claim *JWTClaims, err error) {
+	val, ok := ctx.Value(constants.LenderUserKey).(*JWTClaims)
+	if !ok {
+		return nil, errors.WithStack(errors.New("Invalid user claim"))
+	}
+	return val, nil
+}
+
+func GetLenderAccountIdFromCtx(ctx context.Context) (accountId int64, err error) {
+	claim, err := GetLenderUserClaimFromCtx(ctx)
+	if err != nil {
+		return 0, err
+	}
+	accountId, err = strconv.ParseInt(claim.AccountId, 10, 64)
+	if err != nil {
+		return 0, errors.Wrap(err, "Invalid account id")
+	}
+
+	return accountId, nil
+}
+
+func GetLenderCompanyIdFromCtx(ctx context.Context) (lenderCompanyId int64, err error) {
+	claim, err := GetLenderUserClaimFromCtx(ctx)
+	if err != nil {
+		return 0, err
+	}
+
+	lenderCompanyId = claim.LenderCompanyId
+	if lenderCompanyId == 0 {
+		return 0, errors.New("Invalid lender company id")
+	}
+
+	return lenderCompanyId, nil
+}

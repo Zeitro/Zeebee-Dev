@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/app/lender/config"
 	"zeebee-backend/app/lender/rpc/internal/global"
 	commonServer "zeebee-backend/app/lender/rpc/internal/server/common"
+	loanServer "zeebee-backend/app/lender/rpc/internal/server/loan"
 	userServer "zeebee-backend/app/lender/rpc/internal/server/user"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
@@ -31,6 +32,7 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 	rpcServer := zrpc.MustNewServer(rpcConfig.RpcServerConf, func(grpcServer *grpc.Server) {
 		lender.RegisterUserServer(grpcServer, userServer.NewUserServer(ctx))
 		lender.RegisterCommonServer(grpcServer, commonServer.NewCommonServer(ctx))
+		lender.RegisterLoanServer(grpcServer, loanServer.NewLoanServer(ctx))
 
 		if rpcConfig.Mode == service.DevMode || rpcConfig.Mode == service.TestMode {
 			reflection.Register(grpcServer)
