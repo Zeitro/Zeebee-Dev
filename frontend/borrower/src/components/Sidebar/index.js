@@ -12,6 +12,7 @@ import { useUserStore } from '@/store/user';
 import { sidebarIcon } from './icon';
 import { formatFirstLetterName } from '@/lib/format';
 const homePathname = '/';
+const initTwoToneColor = ['var(--base-label)', 'var(--gray-light)'];
 /**
  * 侧边栏组件
  */
@@ -22,6 +23,7 @@ const SidebarDom = () => {
 	const { userInfo } = useUserStore();
 	const { siberCollapsed, changeSiberCollapsed } = useGlobalStore();
 	const [selectedKey, setSelectedKey] = useState(homePathname);
+	const [twoToneColor, setTwoToneColor] = useState(initTwoToneColor);
 	const config = useMemo(() => getCurrentRouterItem(pathname, navRouter), [pathname]); // 获取当前路由的配置
 
 	const handleSelect = ({ key }) => {
@@ -102,13 +104,15 @@ const SidebarDom = () => {
 				)}
 			</div>
 			<div
-				className="absolute right-[-10px] top-[19px] text-base-primary cursor-pointer"
+				className="absolute right-[-8px] top-[18px] cursor-pointer"
 				onClick={handleExpand}
+				onMouseLeave={() => setTwoToneColor(initTwoToneColor)}
+				onMouseEnter={() => setTwoToneColor(['var(--base-primary)', 'var(--base-active)'])}
 			>
 				{siberCollapsed ? (
-					<RightCircleTwoTone className="text-base-primary" />
+					<RightCircleTwoTone twoToneColor={twoToneColor} />
 				) : (
-					<LeftCircleTwoTone className="text-base-primary" />
+					<LeftCircleTwoTone twoToneColor={twoToneColor} />
 				)}
 			</div>
 		</div>
