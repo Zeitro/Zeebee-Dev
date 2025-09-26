@@ -987,11 +987,13 @@ func (x *RefreshTokenResponse) GetData() *RefreshTokenResponseData {
 }
 
 type RefreshTokenResponseData struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
-	AccessToken       string                 `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
-	AccessTokenExpire int64                  `protobuf:"varint,2,opt,name=access_token_expire,json=accessTokenExpire,proto3" json:"access_token_expire,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	AccessToken        string                 `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
+	RefreshToken       string                 `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
+	AccessTokenExpire  int64                  `protobuf:"varint,3,opt,name=access_token_expire,json=accessTokenExpire,proto3" json:"access_token_expire,omitempty"`
+	RefreshTokenExpire int64                  `protobuf:"varint,4,opt,name=refresh_token_expire,json=refreshTokenExpire,proto3" json:"refresh_token_expire,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *RefreshTokenResponseData) Reset() {
@@ -1031,9 +1033,23 @@ func (x *RefreshTokenResponseData) GetAccessToken() string {
 	return ""
 }
 
+func (x *RefreshTokenResponseData) GetRefreshToken() string {
+	if x != nil {
+		return x.RefreshToken
+	}
+	return ""
+}
+
 func (x *RefreshTokenResponseData) GetAccessTokenExpire() int64 {
 	if x != nil {
 		return x.AccessTokenExpire
+	}
+	return 0
+}
+
+func (x *RefreshTokenResponseData) GetRefreshTokenExpire() int64 {
+	if x != nil {
+		return x.RefreshTokenExpire
 	}
 	return 0
 }
@@ -1677,10 +1693,12 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x17RefreshTokenRequestData\x12#\n" +
 	"\rrefresh_token\x18\x01 \x01(\tR\frefreshToken\"L\n" +
 	"\x14RefreshTokenResponse\x124\n" +
-	"\x04data\x18\x01 \x01(\v2 .lender.RefreshTokenResponseDataR\x04data\"m\n" +
+	"\x04data\x18\x01 \x01(\v2 .lender.RefreshTokenResponseDataR\x04data\"\xc4\x01\n" +
 	"\x18RefreshTokenResponseData\x12!\n" +
-	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12.\n" +
-	"\x13access_token_expire\x18\x02 \x01(\x03R\x11accessTokenExpire\"L\n" +
+	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
+	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\x12.\n" +
+	"\x13access_token_expire\x18\x03 \x01(\x03R\x11accessTokenExpire\x120\n" +
+	"\x14refresh_token_expire\x18\x04 \x01(\x03R\x12refreshTokenExpire\"L\n" +
 	"\x14ResetPasswordRequest\x124\n" +
 	"\x04data\x18\x01 \x01(\v2 .lender.ResetPasswordRequestDataR\x04data\"J\n" +
 	"\x15ResetPasswordResponse\x121\n" +
