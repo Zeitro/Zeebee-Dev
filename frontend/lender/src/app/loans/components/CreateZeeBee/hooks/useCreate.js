@@ -2,7 +2,7 @@
 import { Button, Col, Form, message, Space, Steps, Tabs } from 'antd';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { createZeeBeeSteps, zeeBeeDetailsTabs } from '@/enum/loan';
+import { createZeeBeeSteps, zeeBeeDetailsTabs, detailsSteps } from '@/enum/loan';
 import { createRequest } from '@/lib/fetch';
 import ApplicantInfo from '../ApplicantInfo';
 import BorrowerInfo from '../BorrowerInfo';
@@ -21,6 +21,7 @@ import { uploadAwsS3 } from '@/api/common';
 import { LeaveAndSaveDraftBtn } from '@/components/NewModal/BtnPopUpModal';
 import eventBus from '@/lib/bus';
 import { assemblyAddress } from '@/lib/format';
+import CommonZeeBeeForm from '../../../zeeBeeDetails/components/CommonZeeBeeForm';
 const initialValues = {
 	applicants: [{ type: 'Individual', is_primary: true }],
 };
@@ -123,6 +124,26 @@ const useCreate = (pageType = 'create') => {
 		<General key="0-general" rowData={rowData} />,
 		<Documents key="0-documents" rowData={rowData} />,
 	];
+
+	const detailsComponents = {
+		General: zeeBeeDetailsContent[0],
+		borrowerInformation: <CommonZeeBeeForm form={form} pageKey="borrowerInformation" />,
+		propertyAndLoan: <CommonZeeBeeForm form={form} pageKey="propertyAndLoan" />,
+		experienceAndThirdService: (
+			<CommonZeeBeeForm form={form} pageKey="experienceAndThirdService" />
+		),
+		declarationAndDemographics: (
+			<CommonZeeBeeForm form={form} pageKey="declarationAndDemographics" />
+		),
+		reviewAndSign: <CommonZeeBeeForm form={form} pageKey="reviewAndSign" />,
+		Quoting: '',
+		Processing: '',
+		Underwriting: '',
+		Closing: '',
+		Documents: zeeBeeDetailsContent[1],
+		Active: '',
+		Funded: '',
+	};
 	const getZeeBeeDetailsTabsItem = () => {
 		return zeeBeeDetailsTabs.map((item, index) => ({
 			key: `${item.value}-0`,
@@ -156,6 +177,21 @@ const useCreate = (pageType = 'create') => {
 			}
 		});
 		return newArr;
+	};
+
+	// 获取菜单展示格式
+	const getMenu = (list = detailsSteps) => {
+		return list.map((item, index) => {
+			let obj = {
+				key: item.key,
+				label: item.title,
+				icon: item.icon,
+			};
+			if (item.children) {
+				obj.children = getMenu(item.children, index);
+			}
+			return obj;
+		});
 	};
 
 	// 获取下一步步骤类型（Submit创建按钮/NextMaxStep下一大步骤/NextMinStep下一小步骤）
@@ -419,6 +455,9 @@ const useCreate = (pageType = 'create') => {
 		loading,
 		getZeeBeeDetailsTabsItem,
 		rowData,
+		getMenu,
+		detailsSteps,
+		detailsComponents,
 	};
 };
 

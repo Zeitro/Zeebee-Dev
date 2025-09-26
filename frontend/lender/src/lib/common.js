@@ -81,3 +81,13 @@ export const getPathArr = (name, listName) => {
 	}
 	return pathArr;
 };
+
+// 将多层嵌套数组扁平化
+export function flattenArray(list = [], childKey = 'children') {
+	return list?.reduce((acc, next) => {
+		if (next?.[childKey]) {
+			return [...acc, next, ...flattenArray(next?.[childKey])];
+		}
+		return [...acc, next];
+	}, []);
+}

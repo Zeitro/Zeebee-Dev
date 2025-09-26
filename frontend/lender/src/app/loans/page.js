@@ -23,6 +23,10 @@ const Loans = () => {
 			valueName: 'loanPendingStatus',
 		},
 		{
+			key: 'loan_stage',
+			valueName: 'loanStatusOptions',
+		},
+		{
 			type: 'lender',
 		},
 	]);
