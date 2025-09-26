@@ -1,8 +1,10 @@
 name: Zeebee Backend Deploy to staging
-#test out
+
 on:
   push:
-    branches: [ staging ]
+    branches:
+      - staging-borrower
+      - staging-lender
 
 jobs:
   deploy:
@@ -12,30 +14,57 @@ jobs:
         uses: actions/checkout@v4
         with:
           clean: true
+
       - name: Get Git Commit ID
         id: vars
         run: |
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-      - name: remove old docker containers
+
+      - name: Set environment variables
+        id: set_env
         run: |
-          docker rm -f backend-borrower-staging || true
-      - name: build and deploy
+          if [[ "${{ github.ref }}" == "refs/heads/staging-borrower" ]]; then
+            echo "SERVICE_NAME=borrower" >> $GITHUB_ENV
+            echo "IMAGE_NAME=backend-borrower-staging" >> $GITHUB_ENV
+            echo "CONTAINER_NAME=backend-borrower-staging" >> $GITHUB_ENV
+          elif [[ "${{ github.ref }}" == "refs/heads/staging-lender" ]]; then
+            echo "SERVICE_NAME=lender" >> $GITHUB_ENV
+            echo "IMAGE_NAME=backend-lender-staging" >> $GITHUB_ENV
+            echo "CONTAINER_NAME=backend-lender-staging" >> $GITHUB_ENV
+          fi
+
+      - name: Show environment variables
+        run: |
+          echo "Branch: ${{ github.ref }}"
+          echo "SERVICE_NAME=${SERVICE_NAME}"
+          echo "CONTAINER_NAME=${CONTAINER_NAME}"
+          echo "IMAGE_NAME=${IMAGE_NAME}"
+
+      - name: Remove old docker containers
+        run: |
+          docker rm -f ${CONTAINER_NAME} || true
+
+      - name: Build and deploy
         working-directory: backend
         env:
           IMAGE_TAG: ${{ env.sha_short }}
+          SERVICE_NAME: ${{ env.SERVICE_NAME }}
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
+          CONTAINER_NAME: ${{ env.CONTAINER_NAME }}
         run: |
-          docker-compose -f docker-compose-borrower-staging.yml down || true
-          docker-compose -f docker-compose-borrower-staging.yml build --no-cache
-          docker-compose -f docker-compose-borrower-staging.yml up -d
+          echo "Deploying service: ${CONTAINER_NAME}"
+          docker-compose -f docker-compose-staging.yml down || true
+          docker-compose -f docker-compose-staging.yml build --no-cache
+          docker-compose -f docker-compose-staging.yml up -d
 
       - name: Remove old images
         run: |
-          docker images backend-borrower-staging \
+          docker images ${IMAGE_NAME} \
             --format "{{.Tag}}" \
             | sort -V \
             | head -n -10 \
-            | xargs -r -I {} docker rmi backend-borrower-staging:{} || true
+            | xargs -r -I {} docker rmi ${IMAGE_NAME}:{} || true
 
-      - name: remove dangling images
+      - name: Remove dangling images
         run: |
           docker image prune -f
