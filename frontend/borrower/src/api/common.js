@@ -36,11 +36,12 @@ export const getCityList = (state) => {
 };
 
 // 获取上传文件到亚马逊的外部url
-export const getUploadAwsUrl = (url, type = 'pdf') => {
+export const getUploadAwsUrl = (url, type = 'pdf', file_suffix = 'pdf') => {
 	return request(url, {
 		method: 'POST',
 		body: {
 			type,
+			file_suffix,
 		},
 	});
 };
