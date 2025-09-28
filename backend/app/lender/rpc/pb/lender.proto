@@ -389,10 +389,8 @@ message LoanUpdateRequestData {
   LoanPropertyEntry loan_property = 5;
   double holdback_amount = 6;
   double principal_amount = 7;
-  //  string maturity_date = 8;
   int32 prepayment_penalty = 9;
-  int64 lender_id = 10;
-  int64 borrower_id = 11;
+  int64 lender_company_id = 10;
   repeated string business_strategy = 12;
   repeated ApplicantEntry applicants = 13;
   string existing_lender_company = 14;
@@ -427,7 +425,9 @@ message LoanUpdateRequestData {
   float yearly_liability_expense = 43;
   repeated LoanThirdServiceEntry loan_third_services = 44;
   int64 id = 45;
-  string apply_form_file = 46;
+  int64 lender_employee_id = 46;
+  string stage = 47;
+  string pending_status = 48;
 }
 
 message LoanUpdateResponse {
@@ -436,8 +436,6 @@ message LoanUpdateResponse {
 message LoanUpdateResponseData {
   int64 id = 1;
 }
-
-
 
 message LoanExtendValueEntry {
   string  pricing = 1;

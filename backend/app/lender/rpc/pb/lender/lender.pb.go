@@ -3497,18 +3497,16 @@ func (x *LoanUpdateRequest) GetData() *LoanUpdateRequestData {
 }
 
 type LoanUpdateRequestData struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	LoanPurpose     string                 `protobuf:"bytes,1,opt,name=loan_purpose,json=loanPurpose,proto3" json:"loan_purpose,omitempty"`
-	LoanType        string                 `protobuf:"bytes,2,opt,name=loan_type,json=loanType,proto3" json:"loan_type,omitempty"`
-	TotalAmount     float64                `protobuf:"fixed64,3,opt,name=total_amount,json=totalAmount,proto3" json:"total_amount,omitempty"`
-	InitialAmount   float64                `protobuf:"fixed64,4,opt,name=initial_amount,json=initialAmount,proto3" json:"initial_amount,omitempty"`
-	LoanProperty    *LoanPropertyEntry     `protobuf:"bytes,5,opt,name=loan_property,json=loanProperty,proto3" json:"loan_property,omitempty"`
-	HoldbackAmount  float64                `protobuf:"fixed64,6,opt,name=holdback_amount,json=holdbackAmount,proto3" json:"holdback_amount,omitempty"`
-	PrincipalAmount float64                `protobuf:"fixed64,7,opt,name=principal_amount,json=principalAmount,proto3" json:"principal_amount,omitempty"`
-	// string maturity_date = 8;
+	state                    protoimpl.MessageState   `protogen:"open.v1"`
+	LoanPurpose              string                   `protobuf:"bytes,1,opt,name=loan_purpose,json=loanPurpose,proto3" json:"loan_purpose,omitempty"`
+	LoanType                 string                   `protobuf:"bytes,2,opt,name=loan_type,json=loanType,proto3" json:"loan_type,omitempty"`
+	TotalAmount              float64                  `protobuf:"fixed64,3,opt,name=total_amount,json=totalAmount,proto3" json:"total_amount,omitempty"`
+	InitialAmount            float64                  `protobuf:"fixed64,4,opt,name=initial_amount,json=initialAmount,proto3" json:"initial_amount,omitempty"`
+	LoanProperty             *LoanPropertyEntry       `protobuf:"bytes,5,opt,name=loan_property,json=loanProperty,proto3" json:"loan_property,omitempty"`
+	HoldbackAmount           float64                  `protobuf:"fixed64,6,opt,name=holdback_amount,json=holdbackAmount,proto3" json:"holdback_amount,omitempty"`
+	PrincipalAmount          float64                  `protobuf:"fixed64,7,opt,name=principal_amount,json=principalAmount,proto3" json:"principal_amount,omitempty"`
 	PrepaymentPenalty        int32                    `protobuf:"varint,9,opt,name=prepayment_penalty,json=prepaymentPenalty,proto3" json:"prepayment_penalty,omitempty"`
-	LenderId                 int64                    `protobuf:"varint,10,opt,name=lender_id,json=lenderId,proto3" json:"lender_id,omitempty"`
-	BorrowerId               int64                    `protobuf:"varint,11,opt,name=borrower_id,json=borrowerId,proto3" json:"borrower_id,omitempty"`
+	LenderCompanyId          int64                    `protobuf:"varint,10,opt,name=lender_company_id,json=lenderCompanyId,proto3" json:"lender_company_id,omitempty"`
 	BusinessStrategy         []string                 `protobuf:"bytes,12,rep,name=business_strategy,json=businessStrategy,proto3" json:"business_strategy,omitempty"`
 	Applicants               []*ApplicantEntry        `protobuf:"bytes,13,rep,name=applicants,proto3" json:"applicants,omitempty"`
 	ExistingLenderCompany    string                   `protobuf:"bytes,14,opt,name=existing_lender_company,json=existingLenderCompany,proto3" json:"existing_lender_company,omitempty"`
@@ -3543,7 +3541,9 @@ type LoanUpdateRequestData struct {
 	YearlyLiabilityExpense   float32                  `protobuf:"fixed32,43,opt,name=yearly_liability_expense,json=yearlyLiabilityExpense,proto3" json:"yearly_liability_expense,omitempty"`
 	LoanThirdServices        []*LoanThirdServiceEntry `protobuf:"bytes,44,rep,name=loan_third_services,json=loanThirdServices,proto3" json:"loan_third_services,omitempty"`
 	Id                       int64                    `protobuf:"varint,45,opt,name=id,proto3" json:"id,omitempty"`
-	ApplyFormFile            string                   `protobuf:"bytes,46,opt,name=apply_form_file,json=applyFormFile,proto3" json:"apply_form_file,omitempty"`
+	LenderEmployeeId         int64                    `protobuf:"varint,46,opt,name=lender_employee_id,json=lenderEmployeeId,proto3" json:"lender_employee_id,omitempty"`
+	Stage                    string                   `protobuf:"bytes,47,opt,name=stage,proto3" json:"stage,omitempty"`
+	PendingStatus            string                   `protobuf:"bytes,48,opt,name=pending_status,json=pendingStatus,proto3" json:"pending_status,omitempty"`
 	unknownFields            protoimpl.UnknownFields
 	sizeCache                protoimpl.SizeCache
 }
@@ -3634,16 +3634,9 @@ func (x *LoanUpdateRequestData) GetPrepaymentPenalty() int32 {
 	return 0
 }
 
-func (x *LoanUpdateRequestData) GetLenderId() int64 {
+func (x *LoanUpdateRequestData) GetLenderCompanyId() int64 {
 	if x != nil {
-		return x.LenderId
-	}
-	return 0
-}
-
-func (x *LoanUpdateRequestData) GetBorrowerId() int64 {
-	if x != nil {
-		return x.BorrowerId
+		return x.LenderCompanyId
 	}
 	return 0
 }
@@ -3886,9 +3879,23 @@ func (x *LoanUpdateRequestData) GetId() int64 {
 	return 0
 }
 
-func (x *LoanUpdateRequestData) GetApplyFormFile() string {
+func (x *LoanUpdateRequestData) GetLenderEmployeeId() int64 {
 	if x != nil {
-		return x.ApplyFormFile
+		return x.LenderEmployeeId
+	}
+	return 0
+}
+
+func (x *LoanUpdateRequestData) GetStage() string {
+	if x != nil {
+		return x.Stage
+	}
+	return ""
+}
+
+func (x *LoanUpdateRequestData) GetPendingStatus() string {
+	if x != nil {
+		return x.PendingStatus
 	}
 	return ""
 }
@@ -5338,7 +5345,7 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"total_page\x18\x04 \x01(\x03R\ttotalPage\x12%\n" +
 	"\x04list\x18\x05 \x03(\v2\x11.lender.LoanEntryR\x04list\"F\n" +
 	"\x11LoanUpdateRequest\x121\n" +
-	"\x04data\x18\x01 \x01(\v2\x1d.lender.LoanUpdateRequestDataR\x04data\"\xd2\x10\n" +
+	"\x04data\x18\x01 \x01(\v2\x1d.lender.LoanUpdateRequestDataR\x04data\"\x83\x11\n" +
 	"\x15LoanUpdateRequestData\x12!\n" +
 	"\floan_purpose\x18\x01 \x01(\tR\vloanPurpose\x12\x1b\n" +
 	"\tloan_type\x18\x02 \x01(\tR\bloanType\x12!\n" +
@@ -5347,11 +5354,9 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\rloan_property\x18\x05 \x01(\v2\x19.lender.LoanPropertyEntryR\floanProperty\x12'\n" +
 	"\x0fholdback_amount\x18\x06 \x01(\x01R\x0eholdbackAmount\x12)\n" +
 	"\x10principal_amount\x18\a \x01(\x01R\x0fprincipalAmount\x12-\n" +
-	"\x12prepayment_penalty\x18\t \x01(\x05R\x11prepaymentPenalty\x12\x1b\n" +
-	"\tlender_id\x18\n" +
-	" \x01(\x03R\blenderId\x12\x1f\n" +
-	"\vborrower_id\x18\v \x01(\x03R\n" +
-	"borrowerId\x12+\n" +
+	"\x12prepayment_penalty\x18\t \x01(\x05R\x11prepaymentPenalty\x12*\n" +
+	"\x11lender_company_id\x18\n" +
+	" \x01(\x03R\x0flenderCompanyId\x12+\n" +
 	"\x11business_strategy\x18\f \x03(\tR\x10businessStrategy\x126\n" +
 	"\n" +
 	"applicants\x18\r \x03(\v2\x16.lender.ApplicantEntryR\n" +
@@ -5387,8 +5392,10 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x10loan_demographic\x18* \x01(\v2\x1c.lender.LoanDemographicEntryR\x0floanDemographic\x128\n" +
 	"\x18yearly_liability_expense\x18+ \x01(\x02R\x16yearlyLiabilityExpense\x12M\n" +
 	"\x13loan_third_services\x18, \x03(\v2\x1d.lender.LoanThirdServiceEntryR\x11loanThirdServices\x12\x0e\n" +
-	"\x02id\x18- \x01(\x03R\x02id\x12&\n" +
-	"\x0fapply_form_file\x18. \x01(\tR\rapplyFormFile\"H\n" +
+	"\x02id\x18- \x01(\x03R\x02id\x12,\n" +
+	"\x12lender_employee_id\x18. \x01(\x03R\x10lenderEmployeeId\x12\x14\n" +
+	"\x05stage\x18/ \x01(\tR\x05stage\x12%\n" +
+	"\x0epending_status\x180 \x01(\tR\rpendingStatus\"H\n" +
 	"\x12LoanUpdateResponse\x122\n" +
 	"\x04data\x18\x01 \x01(\v2\x1e.lender.LoanUpdateResponseDataR\x04data\"(\n" +
 	"\x16LoanUpdateResponseData\x12\x0e\n" +

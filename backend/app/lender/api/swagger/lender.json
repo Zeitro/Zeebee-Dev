@@ -120,7 +120,7 @@
                       "rate",
                       "business_strategy",
                       "applicants",
-                      "lender_id",
+                      "lender_company_id",
                       "borrower_id",
                       "created_at",
                       "updated_at",
@@ -412,7 +412,7 @@
                       "lender_company": {
                         "type": "string"
                       },
-                      "lender_id": {
+                      "lender_company_id": {
                         "type": "integer"
                       },
                       "lien_position": {
@@ -1119,7 +1119,7 @@
                 "lender_company": {
                   "type": "string"
                 },
-                "lender_id": {
+                "lender_company_id": {
                   "type": "integer"
                 },
                 "lien_position": {
@@ -1626,6 +1626,10 @@
             "required": true,
             "schema": {
               "type": "object",
+              "required": [
+                "stage",
+                "maturity_date"
+              ],
               "properties": {
                 "applicants": {
                   "type": "array",
@@ -1693,9 +1697,6 @@
                       }
                     }
                   }
-                },
-                "apply_form_file": {
-                  "type": "string"
                 },
                 "arv": {
                   "type": "number"
@@ -2025,8 +2026,14 @@
                 "ltv": {
                   "type": "number"
                 },
+                "maturity_date": {
+                  "type": "string"
+                },
                 "mid_construction": {
                   "type": "boolean"
+                },
+                "pending_status": {
+                  "type": "string"
                 },
                 "prepayment_penalty": {
                   "type": "integer"
@@ -2108,6 +2115,9 @@
                   "type": "number"
                 },
                 "scheduled_close_escrow_date": {
+                  "type": "string"
+                },
+                "stage": {
                   "type": "string"
                 },
                 "subordinate_debt_amount": {
@@ -2685,7 +2695,7 @@
       }
     }
   },
-  "x-date": "2025-09-26 15:52:02",
+  "x-date": "2025-09-28 13:56:03",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
