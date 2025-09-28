@@ -10,21 +10,41 @@ type ServiceContext struct {
 	Config config.RpcConf
 
 	// repo
-	UserRepo           *repo.UserRepo
-	LenderCompanyRepo  *repo.LenderCompanyRepo
-	LenderEmployeeRepo *repo.LenderEmployeeRepo
-	UsGeographyRepo    *repo.UsGeographyRepo
-	LoanRepo           *repo.LoanRepo
+	UserRepo             *repo.UserRepo
+	LenderCompanyRepo    *repo.LenderCompanyRepo
+	LenderEmployeeRepo   *repo.LenderEmployeeRepo
+	UsGeographyRepo      *repo.UsGeographyRepo
+	LoanRepo             *repo.LoanRepo
+	BorrowerRepo         *repo.BorrowerRepo
+	LoanPropertyRepo     *repo.LoanPropertyRepo
+	LoanBorrowerRepo     *repo.LoanBorrowerRepo
+	LoanDemographicRepo  *repo.LoanDemographicRepo
+	LoanExperienceRepo   *repo.LoanExperienceRepo
+	LoanThirdServiceRepo *repo.LoanThirdServiceRepo
+	PropertyBaseRepo     *repo.PropertyBaseRepo
+	ApplicantRepo        *repo.ApplicantRepo
+	FileRepo             *repo.FileRepo
+	LoanOperationRepo    *repo.LoanOperationRepo
 }
 
 func NewServiceContext(c config.RpcConf) *ServiceContext {
 	return &ServiceContext{
 		Config: c,
 
-		UserRepo:           repo.NewUserRepo(global.GetGormDB()),
-		LenderCompanyRepo:  repo.NewLenderCompanyRepo(global.GetGormDB()),
-		LenderEmployeeRepo: repo.NewLenderEmployeeRepo(global.GetGormDB()),
-		UsGeographyRepo:    repo.NewUsGeographyRepo(global.GetGormDB()),
-		LoanRepo:           repo.NewLoanRepo(global.GetGormDB()),
+		UserRepo:             repo.NewUserRepo(global.GetGormDB()),
+		LenderCompanyRepo:    repo.NewLenderCompanyRepo(global.GetGormDB()),
+		LenderEmployeeRepo:   repo.NewLenderEmployeeRepo(global.GetGormDB()),
+		UsGeographyRepo:      repo.NewUsGeographyRepo(global.GetGormDB()),
+		LoanRepo:             repo.NewLoanRepo(global.GetGormDB()),
+		BorrowerRepo:         repo.NewBorrowerRepo(global.GetGormDB()),
+		LoanPropertyRepo:     repo.NewLoanPropertyRepo(global.GetGormDB()),
+		LoanBorrowerRepo:     repo.NewLoanBorrowerRepo(global.GetGormDB()),
+		LoanDemographicRepo:  repo.NewLoanDemographicRepo(global.GetGormDB()),
+		LoanExperienceRepo:   repo.NewLoanExperienceRepo(global.GetGormDB()),
+		LoanThirdServiceRepo: repo.NewLoanThirdServiceRepo(global.GetGormDB()),
+		PropertyBaseRepo:     repo.NewPropertyBaseRepo(global.GetGormDB()),
+		ApplicantRepo:        repo.NewApplicantRepo(global.GetGormDB()),
+		FileRepo:             repo.NewFileRepo(global.GetGormDB()),
+		LoanOperationRepo:    repo.NewLoanOperationRepo(global.GetGormDB()),
 	}
 }
