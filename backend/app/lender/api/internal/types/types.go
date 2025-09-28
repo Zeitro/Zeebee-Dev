@@ -37,6 +37,9 @@ type ApplicantEntry struct {
 type EmptyRequest struct {
 }
 
+type EmptyResponse struct {
+}
+
 type FileEditEntry struct {
 	Id       int64  `json:"id,optional"`
 	FileType string `json:"file_type,optional" validate:"required,oneof=Identification Income Property Assets Credit Miscellaneous InternalDocument"`

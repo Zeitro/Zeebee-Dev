@@ -14,7 +14,7 @@ type LoanOperation struct {
 	Action       constants.LoanOperationAction       `gorm:"column:action;size:50;not null;default:''" json:"action"`
 	From         types.LoanOperationStatus           `gorm:"column:from;type:jsonb;not null;default:'{}';serializer:json" json:"from"`
 	To           types.LoanOperationStatus           `gorm:"column:to;type:jsonb;not null;default:'{}';serializer:json" json:"to"`
-	Metadata     types.LoanOperationMetadata         `gorm:"column:metadata;type:jsonb;not null;default:'{}';serializer:json" json:"metadata"`
+	Metadata     *types.LoanOperationMetadata        `gorm:"column:metadata;type:jsonb;not null;default:'{}';serializer:json" json:"metadata"`
 }
 
 func (m LoanOperation) TableName() string {

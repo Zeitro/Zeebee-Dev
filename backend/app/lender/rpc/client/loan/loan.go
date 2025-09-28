@@ -45,10 +45,14 @@ type (
 	LoanThirdServiceEntry                = lender.LoanThirdServiceEntry
 	LoanUpdateDocumentsRequest           = lender.LoanUpdateDocumentsRequest
 	LoanUpdateDocumentsRequestData       = lender.LoanUpdateDocumentsRequestData
+	LoanUpdatePendingStatusRequest       = lender.LoanUpdatePendingStatusRequest
+	LoanUpdatePendingStatusRequestData   = lender.LoanUpdatePendingStatusRequestData
 	LoanUpdateRequest                    = lender.LoanUpdateRequest
 	LoanUpdateRequestData                = lender.LoanUpdateRequestData
 	LoanUpdateResponse                   = lender.LoanUpdateResponse
 	LoanUpdateResponseData               = lender.LoanUpdateResponseData
+	LoanUpdateStageRequest               = lender.LoanUpdateStageRequest
+	LoanUpdateStageRequestData           = lender.LoanUpdateStageRequestData
 	OptionEntry                          = lender.OptionEntry
 	OptionRequest                        = lender.OptionRequest
 	OptionRequestData                    = lender.OptionRequestData
@@ -86,6 +90,8 @@ type (
 		LoanPage(ctx context.Context, in *LoanPageRequest, opts ...grpc.CallOption) (*LoanPageResponse, error)
 		UpdateLoan(ctx context.Context, in *LoanUpdateRequest, opts ...grpc.CallOption) (*LoanUpdateResponse, error)
 		UpdateLoanDocuments(ctx context.Context, in *LoanUpdateDocumentsRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+		UpdateLoanStage(ctx context.Context, in *LoanUpdateStageRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+		UpdateLoanPendingStatus(ctx context.Context, in *LoanUpdatePendingStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	}
 
 	defaultLoan struct {
@@ -117,4 +123,14 @@ func (m *defaultLoan) UpdateLoan(ctx context.Context, in *LoanUpdateRequest, opt
 func (m *defaultLoan) UpdateLoanDocuments(ctx context.Context, in *LoanUpdateDocumentsRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	client := lender.NewLoanClient(m.cli.Conn())
 	return client.UpdateLoanDocuments(ctx, in, opts...)
+}
+
+func (m *defaultLoan) UpdateLoanStage(ctx context.Context, in *LoanUpdateStageRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	client := lender.NewLoanClient(m.cli.Conn())
+	return client.UpdateLoanStage(ctx, in, opts...)
+}
+
+func (m *defaultLoan) UpdateLoanPendingStatus(ctx context.Context, in *LoanUpdatePendingStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	client := lender.NewLoanClient(m.cli.Conn())
+	return client.UpdateLoanPendingStatus(ctx, in, opts...)
 }

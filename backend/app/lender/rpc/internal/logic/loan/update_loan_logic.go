@@ -49,6 +49,7 @@ func NewUpdateLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Update
 	}
 }
 
+// UpdateLoan updates a loan
 func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender.LoanUpdateResponse, err error) {
 	defer func() {
 		if err != nil {
@@ -59,7 +60,7 @@ func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender
 	var oldLoanCopy *model.Loan
 	var propertyBase *model.PropertyBase
 	// old loan
-	oldLoan, err = l.svcCtx.LoanRepo.GetLenderLoan(l.ctx, in.Data.Id, in.Data.LenderCompanyId)
+	oldLoan, err = l.svcCtx.LoanRepo.GetLenderLoan(l.ctx, in.Data.Id, in.Data.LenderCompanyId, true)
 	if err != nil {
 		return nil, err
 	}
@@ -169,14 +170,6 @@ func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender
 			// loan operation log
 			func() error {
 				operatorId := in.Data.LenderEmployeeId
-				operator, err := l.svcCtx.LenderEmployeeRepo.FindOneByIdWithTx(l.ctx, tx, operatorId)
-				if err != nil {
-					return err
-				}
-				operatorName := ""
-				if operator != nil {
-					operatorName = operator.FullName
-				}
 
 				fromStatus := types.LoanOperationStatus{
 					Stage:         oldLoan.Stage,
@@ -188,18 +181,8 @@ func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender
 					PendingStatus: data.loan.PendingStatus,
 				}
 
-				operation := &model.LoanOperation{
-					LoanId:       oldLoan.Id,
-					OperatorId:   operatorId,
-					OperatorName: operatorName,
-					OperatorType: constants.LoanOperationOperatorTypeLender,
-					Action:       constants.LoanOperationActionUpdate,
-					From:         fromStatus,
-					To:           toStatus,
-				}
-
-				_, err = l.svcCtx.LoanOperationRepo.CreateWithTx(l.ctx, tx, operation, false)
-				return err
+				loanBaseLogic := NewLoanBaseLogic(l.ctx, l.svcCtx)
+				return loanBaseLogic.CreateLoanOperationLog(tx, oldLoan.Id, operatorId, fromStatus, toStatus, constants.LoanOperationActionUpdate, nil)
 			},
 		)
 

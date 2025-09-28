@@ -446,7 +446,6 @@ message LoanExtendValueEntry {
 }
 
 // update documents
-
 message LoanUpdateDocumentsRequest {
   LoanUpdateDocumentsRequestData data = 1;
 }
@@ -456,11 +455,35 @@ message LoanUpdateDocumentsRequestData {
   repeated FileEntry documents = 3;
 }
 
+// update stage
+message LoanUpdateStageRequest {
+  LoanUpdateStageRequestData data = 1;
+}
+message LoanUpdateStageRequestData {
+  int64 id = 1;
+  int64 lender_employee_id = 2;
+  int64 lender_company_id = 3;
+  string stage = 4;
+}
+
+// update pending status
+message LoanUpdatePendingStatusRequest {
+  LoanUpdatePendingStatusRequestData data = 1;
+}
+message LoanUpdatePendingStatusRequestData {
+  int64 id = 1;
+  int64 lender_employee_id = 2;
+  int64 lender_company_id = 3;
+  string pending_status = 4;
+}
+
 service Loan {
   rpc LoanDetail(LoanDetailRequest) returns(LoanDetailResponse);
   rpc LoanPage(LoanPageRequest) returns(LoanPageResponse);
   rpc UpdateLoan(LoanUpdateRequest) returns(LoanUpdateResponse);
   rpc UpdateLoanDocuments(LoanUpdateDocumentsRequest) returns(EmptyResponse);
+  rpc UpdateLoanStage(LoanUpdateStageRequest) returns(EmptyResponse);
+  rpc UpdateLoanPendingStatus(LoanUpdatePendingStatusRequest) returns(EmptyResponse);
 }
 
 // ===================== loan borrower service ======================

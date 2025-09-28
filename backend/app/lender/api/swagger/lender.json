@@ -2212,6 +2212,106 @@
         }
       }
     },
+    "/api/v1/loan/{id}/pending_status": {
+      "patch": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "loan"
+        ],
+        "summary": "update loan pending status",
+        "operationId": "loanUpdatePendingStatus",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "pending_status"
+              ],
+              "properties": {
+                "pending_status": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/loan/{id}/stage": {
+      "patch": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "loan"
+        ],
+        "summary": "update loan stage",
+        "operationId": "loanUpdateStage",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "stage"
+              ],
+              "properties": {
+                "stage": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/select_options": {
       "get": {
         "produces": [
@@ -2695,7 +2795,7 @@
       }
     }
   },
-  "x-date": "2025-09-28 13:56:03",
+  "x-date": "2025-09-28 16:17:01",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

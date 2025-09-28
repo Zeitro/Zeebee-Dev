@@ -54,7 +54,7 @@ func (l *UpdateLogic) Update(req *types.LoanUpdateRequest) (resp *types.LoanUpda
 	// get employee id
 	rpcReq.Data.LenderEmployeeId, err = utils.GetLenderAccountIdFromCtx(l.ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	applicants := make([]*lender.ApplicantEntry, 0, len(rpcReq.Data.Applicants))
@@ -79,7 +79,7 @@ func (l *UpdateLogic) Update(req *types.LoanUpdateRequest) (resp *types.LoanUpda
 
 	rpcResp, err := l.svcCtx.LoanRpcClient.UpdateLoan(l.ctx, rpcReq)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 	err = copier.Copy(resp, &rpcResp.Data)
 	if err != nil {
