@@ -3,9 +3,6 @@
 
 package types
 
-type EmptyResponse struct {
-}
-
 type UserInfoResponse struct {
 	UserInfo
 }

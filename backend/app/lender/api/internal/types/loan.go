@@ -75,3 +75,13 @@ type LoanUpdateRequest struct {
 type LoanUpdateResponse struct {
 	Id int64 `json:"id"`
 }
+
+type UpdateLoanPendingStatusRequest struct {
+	Id            int64  `path:"id" validate:"required,gt=0"`
+	PendingStatus string `json:"pending_status" validate:"required,oneof=Quoting Processing Underwriting Closing"`
+}
+
+type UpdateLoanStageRequest struct {
+	Id    int64  `path:"id" validate:"required,gt=0"`
+	Stage string `json:"stage" validate:"required,oneof=Pending Active Archived Rejected"`
+}

@@ -491,10 +491,12 @@ var User_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	Loan_LoanDetail_FullMethodName          = "/lender.Loan/LoanDetail"
-	Loan_LoanPage_FullMethodName            = "/lender.Loan/LoanPage"
-	Loan_UpdateLoan_FullMethodName          = "/lender.Loan/UpdateLoan"
-	Loan_UpdateLoanDocuments_FullMethodName = "/lender.Loan/UpdateLoanDocuments"
+	Loan_LoanDetail_FullMethodName              = "/lender.Loan/LoanDetail"
+	Loan_LoanPage_FullMethodName                = "/lender.Loan/LoanPage"
+	Loan_UpdateLoan_FullMethodName              = "/lender.Loan/UpdateLoan"
+	Loan_UpdateLoanDocuments_FullMethodName     = "/lender.Loan/UpdateLoanDocuments"
+	Loan_UpdateLoanStage_FullMethodName         = "/lender.Loan/UpdateLoanStage"
+	Loan_UpdateLoanPendingStatus_FullMethodName = "/lender.Loan/UpdateLoanPendingStatus"
 )
 
 // LoanClient is the client API for Loan service.
@@ -505,6 +507,8 @@ type LoanClient interface {
 	LoanPage(ctx context.Context, in *LoanPageRequest, opts ...grpc.CallOption) (*LoanPageResponse, error)
 	UpdateLoan(ctx context.Context, in *LoanUpdateRequest, opts ...grpc.CallOption) (*LoanUpdateResponse, error)
 	UpdateLoanDocuments(ctx context.Context, in *LoanUpdateDocumentsRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	UpdateLoanStage(ctx context.Context, in *LoanUpdateStageRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	UpdateLoanPendingStatus(ctx context.Context, in *LoanUpdatePendingStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 }
 
 type loanClient struct {
@@ -555,6 +559,26 @@ func (c *loanClient) UpdateLoanDocuments(ctx context.Context, in *LoanUpdateDocu
 	return out, nil
 }
 
+func (c *loanClient) UpdateLoanStage(ctx context.Context, in *LoanUpdateStageRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, Loan_UpdateLoanStage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *loanClient) UpdateLoanPendingStatus(ctx context.Context, in *LoanUpdatePendingStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, Loan_UpdateLoanPendingStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // LoanServer is the server API for Loan service.
 // All implementations must embed UnimplementedLoanServer
 // for forward compatibility.
@@ -563,6 +587,8 @@ type LoanServer interface {
 	LoanPage(context.Context, *LoanPageRequest) (*LoanPageResponse, error)
 	UpdateLoan(context.Context, *LoanUpdateRequest) (*LoanUpdateResponse, error)
 	UpdateLoanDocuments(context.Context, *LoanUpdateDocumentsRequest) (*EmptyResponse, error)
+	UpdateLoanStage(context.Context, *LoanUpdateStageRequest) (*EmptyResponse, error)
+	UpdateLoanPendingStatus(context.Context, *LoanUpdatePendingStatusRequest) (*EmptyResponse, error)
 	mustEmbedUnimplementedLoanServer()
 }
 
@@ -584,6 +610,12 @@ func (UnimplementedLoanServer) UpdateLoan(context.Context, *LoanUpdateRequest) (
 }
 func (UnimplementedLoanServer) UpdateLoanDocuments(context.Context, *LoanUpdateDocumentsRequest) (*EmptyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateLoanDocuments not implemented")
+}
+func (UnimplementedLoanServer) UpdateLoanStage(context.Context, *LoanUpdateStageRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateLoanStage not implemented")
+}
+func (UnimplementedLoanServer) UpdateLoanPendingStatus(context.Context, *LoanUpdatePendingStatusRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateLoanPendingStatus not implemented")
 }
 func (UnimplementedLoanServer) mustEmbedUnimplementedLoanServer() {}
 func (UnimplementedLoanServer) testEmbeddedByValue()              {}
@@ -678,6 +710,42 @@ func _Loan_UpdateLoanDocuments_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Loan_UpdateLoanStage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanUpdateStageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanServer).UpdateLoanStage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Loan_UpdateLoanStage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanServer).UpdateLoanStage(ctx, req.(*LoanUpdateStageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Loan_UpdateLoanPendingStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanUpdatePendingStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanServer).UpdateLoanPendingStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Loan_UpdateLoanPendingStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanServer).UpdateLoanPendingStatus(ctx, req.(*LoanUpdatePendingStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Loan_ServiceDesc is the grpc.ServiceDesc for Loan service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -700,6 +768,14 @@ var Loan_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateLoanDocuments",
 			Handler:    _Loan_UpdateLoanDocuments_Handler,
+		},
+		{
+			MethodName: "UpdateLoanStage",
+			Handler:    _Loan_UpdateLoanStage_Handler,
+		},
+		{
+			MethodName: "UpdateLoanPendingStatus",
+			Handler:    _Loan_UpdateLoanPendingStatus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -9,6 +9,7 @@ import (
 
 	"zeebee-backend/app/lender/rpc/internal/repo/model"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/common/constants"
 
 	// "zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/gormx"
@@ -26,19 +27,22 @@ func NewLoanRepo(db *gorm.DB) *LoanRepo {
 	}
 }
 
-func (repo *LoanRepo) GetLenderLoan(ctx context.Context, id int64, lenderCompanyId int64) (result *model.Loan, err error) {
-	err = repo.BaseRepo.Client(ctx).
-		Where("id = ? and lender_company_id = ?", id, lenderCompanyId).
-		Preload("Applicants").
-		Preload("LoanProperty").
-		Preload("LoanProperty.PropertyBase").
-		Preload("LoanBorrower").
-		Preload("LoanExperiences").
-		Preload("LoanThirdServices").
-		Preload("LoanDemographic").
-		Preload("ApplyFormFile").
-		Preload("Documents").
-		First(&result).Error
+func (repo *LoanRepo) GetLenderLoan(ctx context.Context, id int64, lenderCompanyId int64, withRelationships bool) (result *model.Loan, err error) {
+
+	query := repo.BaseRepo.Client(ctx).
+		Where("id = ? and lender_company_id = ?", id, lenderCompanyId)
+	if withRelationships {
+		query = query.Preload("Applicants").
+			Preload("LoanProperty").
+			Preload("LoanProperty.PropertyBase").
+			Preload("LoanBorrower").
+			Preload("LoanExperiences").
+			Preload("LoanThirdServices").
+			Preload("LoanDemographic").
+			Preload("ApplyFormFile").
+			Preload("Documents")
+	}
+	err = query.First(&result).Error
 	return result, errors.WithStack(err)
 }
 
@@ -61,13 +65,6 @@ func (repo *LoanRepo) GetLenderLoanWithTx(ctx context.Context, tx *gorm.DB, id i
 // UpdateOneWithTx update with tx
 func (repo *LoanRepo) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, id int64, data *model.Loan) (result *model.Loan, err error) {
 	omitFields := []string{"id", "source", "created_at", "code", "borrower_id", "lender_company_id"}
-	// var applyFields []string
-	// if !isApply {
-	// 	applyFields = []string{"existing_lender_company", "existing_rate", "existing_maturity_date", "has_assignment_fee", "assignment_fee_amount", "has_subordinate_debt", "subordinate_debt_amount", "scheduled_close_escrow_date", "loan_term", "arv", "ltv", "liquidity_amount", "budget", "mid_construction", "est_credit_score", "est_yearly_rental_income", "dscr", "reserves_amount", "has_delayed_financing", "has_collateralized_blanket", "has_properties_vacant", "has_short_term_rental"}
-	// } else {
-	// 	applyFields = []string{"original_contract_date", "extension_date", "loan_processor", "extend"}
-	// }
-	// omitFields = append(omitFields, applyFields...)
 	err = tx.WithContext(ctx).
 		Select("*").
 		Omit(omitFields...).
@@ -77,6 +74,22 @@ func (repo *LoanRepo) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, id int64
 		return nil, errors.WithStack(err)
 	}
 	return data, nil
+}
+
+// UpdateStageWithTx
+func (repo *LoanRepo) UpdateStageWithTx(ctx context.Context, tx *gorm.DB, id int64, stage constants.LoanStage) (err error) {
+	err = tx.WithContext(ctx).Model(&model.Loan{}).
+		Where("id = ?", id).
+		Update("stage", stage).Error
+	return errors.WithStack(err)
+}
+
+// UpdatePendingStatusWithTx
+func (repo *LoanRepo) UpdatePendingStatusWithTx(ctx context.Context, tx *gorm.DB, id int64, pendingStatus constants.LoanPendingStatus) (err error) {
+	err = tx.WithContext(ctx).Model(&model.Loan{}).
+		Where("id = ?", id).
+		Update("pending_status", pendingStatus).Error
+	return errors.WithStack(err)
 }
 
 // GetLoanCountByPropertyId

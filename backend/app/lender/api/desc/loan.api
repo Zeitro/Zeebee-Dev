@@ -257,3 +257,15 @@ type UpdateDocumentsRequest {
     Documents []*FileEditEntry `json:"documents" validate:"required,gt=0,dive,required"`
 }
 
+// update loan stage
+type UpdateLoanStageRequest {
+    Id int64 `path:"id" validate:"required,gt=0"`
+    Stage string `json:"stage" validate:"required,oneof=Pending Active Archived Rejected"`
+}
+
+// update loan pending  status
+type UpdateLoanPendingStatusRequest {
+    Id int64 `path:"id" validate:"required,gt=0"`
+    PendingStatus string `json:"pending_status" validate:"required,oneof=Quoting Processing Underwriting Closing"`
+}
+

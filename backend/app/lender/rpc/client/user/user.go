@@ -45,10 +45,14 @@ type (
 	LoanThirdServiceEntry                = lender.LoanThirdServiceEntry
 	LoanUpdateDocumentsRequest           = lender.LoanUpdateDocumentsRequest
 	LoanUpdateDocumentsRequestData       = lender.LoanUpdateDocumentsRequestData
+	LoanUpdatePendingStatusRequest       = lender.LoanUpdatePendingStatusRequest
+	LoanUpdatePendingStatusRequestData   = lender.LoanUpdatePendingStatusRequestData
 	LoanUpdateRequest                    = lender.LoanUpdateRequest
 	LoanUpdateRequestData                = lender.LoanUpdateRequestData
 	LoanUpdateResponse                   = lender.LoanUpdateResponse
 	LoanUpdateResponseData               = lender.LoanUpdateResponseData
+	LoanUpdateStageRequest               = lender.LoanUpdateStageRequest
+	LoanUpdateStageRequestData           = lender.LoanUpdateStageRequestData
 	OptionEntry                          = lender.OptionEntry
 	OptionRequest                        = lender.OptionRequest
 	OptionRequestData                    = lender.OptionRequestData

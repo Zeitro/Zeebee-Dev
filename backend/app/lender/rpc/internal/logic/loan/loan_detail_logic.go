@@ -38,7 +38,7 @@ func (l *LoanDetailLogic) LoanDetail(in *lender.LoanDetailRequest) (resp *lender
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	loan, err := l.svcCtx.LoanRepo.GetLenderLoan(l.ctx, in.Data.Id, in.Data.LenderCompanyId)
+	loan, err := l.svcCtx.LoanRepo.GetLenderLoan(l.ctx, in.Data.Id, in.Data.LenderCompanyId, true)
 	if err != nil {
 		return nil, err
 	}

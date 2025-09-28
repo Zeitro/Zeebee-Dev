@@ -42,3 +42,13 @@ func (s *LoanServer) UpdateLoanDocuments(ctx context.Context, in *lender.LoanUpd
 	l := loanlogic.NewUpdateLoanDocumentsLogic(ctx, s.svcCtx)
 	return l.UpdateLoanDocuments(in)
 }
+
+func (s *LoanServer) UpdateLoanStage(ctx context.Context, in *lender.LoanUpdateStageRequest) (*lender.EmptyResponse, error) {
+	l := loanlogic.NewUpdateLoanStageLogic(ctx, s.svcCtx)
+	return l.UpdateLoanStage(in)
+}
+
+func (s *LoanServer) UpdateLoanPendingStatus(ctx context.Context, in *lender.LoanUpdatePendingStatusRequest) (*lender.EmptyResponse, error) {
+	l := loanlogic.NewUpdateLoanPendingStatusLogic(ctx, s.svcCtx)
+	return l.UpdateLoanPendingStatus(in)
+}
