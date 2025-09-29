@@ -4395,6 +4395,135 @@ func (x *LoanUpdatePendingStatusRequestData) GetPendingStatus() string {
 	return ""
 }
 
+// pending status review
+type LoanPendingStatusReviewRequest struct {
+	state         protoimpl.MessageState              `protogen:"open.v1"`
+	Data          *LoanPendingStatusReviewRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LoanPendingStatusReviewRequest) Reset() {
+	*x = LoanPendingStatusReviewRequest{}
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[61]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LoanPendingStatusReviewRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LoanPendingStatusReviewRequest) ProtoMessage() {}
+
+func (x *LoanPendingStatusReviewRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[61]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LoanPendingStatusReviewRequest.ProtoReflect.Descriptor instead.
+func (*LoanPendingStatusReviewRequest) Descriptor() ([]byte, []int) {
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{61}
+}
+
+func (x *LoanPendingStatusReviewRequest) GetData() *LoanPendingStatusReviewRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type LoanPendingStatusReviewRequestData struct {
+	state                protoimpl.MessageState `protogen:"open.v1"`
+	Id                   int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	LenderEmployeeId     int64                  `protobuf:"varint,2,opt,name=lender_employee_id,json=lenderEmployeeId,proto3" json:"lender_employee_id,omitempty"`
+	LenderCompanyId      int64                  `protobuf:"varint,3,opt,name=lender_company_id,json=lenderCompanyId,proto3" json:"lender_company_id,omitempty"`
+	CurrentPendingStatus string                 `protobuf:"bytes,4,opt,name=current_pending_status,json=currentPendingStatus,proto3" json:"current_pending_status,omitempty"`
+	Action               string                 `protobuf:"bytes,5,opt,name=action,proto3" json:"action,omitempty"`
+	Comment              string                 `protobuf:"bytes,6,opt,name=comment,proto3" json:"comment,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
+}
+
+func (x *LoanPendingStatusReviewRequestData) Reset() {
+	*x = LoanPendingStatusReviewRequestData{}
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[62]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LoanPendingStatusReviewRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LoanPendingStatusReviewRequestData) ProtoMessage() {}
+
+func (x *LoanPendingStatusReviewRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[62]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LoanPendingStatusReviewRequestData.ProtoReflect.Descriptor instead.
+func (*LoanPendingStatusReviewRequestData) Descriptor() ([]byte, []int) {
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{62}
+}
+
+func (x *LoanPendingStatusReviewRequestData) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *LoanPendingStatusReviewRequestData) GetLenderEmployeeId() int64 {
+	if x != nil {
+		return x.LenderEmployeeId
+	}
+	return 0
+}
+
+func (x *LoanPendingStatusReviewRequestData) GetLenderCompanyId() int64 {
+	if x != nil {
+		return x.LenderCompanyId
+	}
+	return 0
+}
+
+func (x *LoanPendingStatusReviewRequestData) GetCurrentPendingStatus() string {
+	if x != nil {
+		return x.CurrentPendingStatus
+	}
+	return ""
+}
+
+func (x *LoanPendingStatusReviewRequestData) GetAction() string {
+	if x != nil {
+		return x.Action
+	}
+	return ""
+}
+
+func (x *LoanPendingStatusReviewRequestData) GetComment() string {
+	if x != nil {
+		return x.Comment
+	}
+	return ""
+}
+
 // ===================== loan borrower service ======================
 type LoanBorrowerEntry struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
@@ -4415,7 +4544,7 @@ type LoanBorrowerEntry struct {
 
 func (x *LoanBorrowerEntry) Reset() {
 	*x = LoanBorrowerEntry{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[61]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[63]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4427,7 +4556,7 @@ func (x *LoanBorrowerEntry) String() string {
 func (*LoanBorrowerEntry) ProtoMessage() {}
 
 func (x *LoanBorrowerEntry) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[61]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[63]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4440,7 +4569,7 @@ func (x *LoanBorrowerEntry) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoanBorrowerEntry.ProtoReflect.Descriptor instead.
 func (*LoanBorrowerEntry) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{61}
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{63}
 }
 
 func (x *LoanBorrowerEntry) GetId() int64 {
@@ -4546,7 +4675,7 @@ type LoanExperienceEntry struct {
 
 func (x *LoanExperienceEntry) Reset() {
 	*x = LoanExperienceEntry{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[62]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[64]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4558,7 +4687,7 @@ func (x *LoanExperienceEntry) String() string {
 func (*LoanExperienceEntry) ProtoMessage() {}
 
 func (x *LoanExperienceEntry) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[62]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[64]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4571,7 +4700,7 @@ func (x *LoanExperienceEntry) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoanExperienceEntry.ProtoReflect.Descriptor instead.
 func (*LoanExperienceEntry) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{62}
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{64}
 }
 
 func (x *LoanExperienceEntry) GetId() int64 {
@@ -4697,7 +4826,7 @@ type LoanThirdServiceEntry struct {
 
 func (x *LoanThirdServiceEntry) Reset() {
 	*x = LoanThirdServiceEntry{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[63]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[65]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4709,7 +4838,7 @@ func (x *LoanThirdServiceEntry) String() string {
 func (*LoanThirdServiceEntry) ProtoMessage() {}
 
 func (x *LoanThirdServiceEntry) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[63]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[65]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4722,7 +4851,7 @@ func (x *LoanThirdServiceEntry) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoanThirdServiceEntry.ProtoReflect.Descriptor instead.
 func (*LoanThirdServiceEntry) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{63}
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{65}
 }
 
 func (x *LoanThirdServiceEntry) GetId() int64 {
@@ -4789,7 +4918,7 @@ type LoanDemographicEntry struct {
 
 func (x *LoanDemographicEntry) Reset() {
 	*x = LoanDemographicEntry{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[64]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[66]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4801,7 +4930,7 @@ func (x *LoanDemographicEntry) String() string {
 func (*LoanDemographicEntry) ProtoMessage() {}
 
 func (x *LoanDemographicEntry) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[64]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[66]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4814,7 +4943,7 @@ func (x *LoanDemographicEntry) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoanDemographicEntry.ProtoReflect.Descriptor instead.
 func (*LoanDemographicEntry) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{64}
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{66}
 }
 
 func (x *LoanDemographicEntry) GetId() int64 {
@@ -4881,7 +5010,7 @@ type LoanDemographicPropertyEntry struct {
 
 func (x *LoanDemographicPropertyEntry) Reset() {
 	*x = LoanDemographicPropertyEntry{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[65]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[67]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4893,7 +5022,7 @@ func (x *LoanDemographicPropertyEntry) String() string {
 func (*LoanDemographicPropertyEntry) ProtoMessage() {}
 
 func (x *LoanDemographicPropertyEntry) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[65]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[67]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4906,7 +5035,7 @@ func (x *LoanDemographicPropertyEntry) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoanDemographicPropertyEntry.ProtoReflect.Descriptor instead.
 func (*LoanDemographicPropertyEntry) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{65}
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{67}
 }
 
 func (x *LoanDemographicPropertyEntry) GetAsPrimaryResident() bool {
@@ -5017,7 +5146,7 @@ type LoanDemographicEthnicityEntry struct {
 
 func (x *LoanDemographicEthnicityEntry) Reset() {
 	*x = LoanDemographicEthnicityEntry{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[66]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[68]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5029,7 +5158,7 @@ func (x *LoanDemographicEthnicityEntry) String() string {
 func (*LoanDemographicEthnicityEntry) ProtoMessage() {}
 
 func (x *LoanDemographicEthnicityEntry) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[66]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[68]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5042,7 +5171,7 @@ func (x *LoanDemographicEthnicityEntry) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoanDemographicEthnicityEntry.ProtoReflect.Descriptor instead.
 func (*LoanDemographicEthnicityEntry) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{66}
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{68}
 }
 
 func (x *LoanDemographicEthnicityEntry) GetValues() []string {
@@ -5072,7 +5201,7 @@ type LoanDemographicRaceEntry struct {
 
 func (x *LoanDemographicRaceEntry) Reset() {
 	*x = LoanDemographicRaceEntry{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[67]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[69]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5084,7 +5213,7 @@ func (x *LoanDemographicRaceEntry) String() string {
 func (*LoanDemographicRaceEntry) ProtoMessage() {}
 
 func (x *LoanDemographicRaceEntry) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[67]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[69]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5097,7 +5226,7 @@ func (x *LoanDemographicRaceEntry) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoanDemographicRaceEntry.ProtoReflect.Descriptor instead.
 func (*LoanDemographicRaceEntry) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{67}
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{69}
 }
 
 func (x *LoanDemographicRaceEntry) GetValues() []string {
@@ -5147,7 +5276,7 @@ type LoanDemographicExtraDemographicEntry struct {
 
 func (x *LoanDemographicExtraDemographicEntry) Reset() {
 	*x = LoanDemographicExtraDemographicEntry{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[68]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[70]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5159,7 +5288,7 @@ func (x *LoanDemographicExtraDemographicEntry) String() string {
 func (*LoanDemographicExtraDemographicEntry) ProtoMessage() {}
 
 func (x *LoanDemographicExtraDemographicEntry) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[68]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[70]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5172,7 +5301,7 @@ func (x *LoanDemographicExtraDemographicEntry) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use LoanDemographicExtraDemographicEntry.ProtoReflect.Descriptor instead.
 func (*LoanDemographicExtraDemographicEntry) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{68}
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{70}
 }
 
 func (x *LoanDemographicExtraDemographicEntry) GetIsEthnicityCollectedByObservation() bool {
@@ -5218,7 +5347,7 @@ type FileEntry struct {
 
 func (x *FileEntry) Reset() {
 	*x = FileEntry{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[69]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[71]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5230,7 +5359,7 @@ func (x *FileEntry) String() string {
 func (*FileEntry) ProtoMessage() {}
 
 func (x *FileEntry) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[69]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[71]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5243,7 +5372,7 @@ func (x *FileEntry) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FileEntry.ProtoReflect.Descriptor instead.
 func (*FileEntry) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{69}
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{71}
 }
 
 func (x *FileEntry) GetId() int64 {
@@ -5654,7 +5783,16 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12,\n" +
 	"\x12lender_employee_id\x18\x02 \x01(\x03R\x10lenderEmployeeId\x12*\n" +
 	"\x11lender_company_id\x18\x03 \x01(\x03R\x0flenderCompanyId\x12%\n" +
-	"\x0epending_status\x18\x04 \x01(\tR\rpendingStatus\"\xde\x02\n" +
+	"\x0epending_status\x18\x04 \x01(\tR\rpendingStatus\"`\n" +
+	"\x1eLoanPendingStatusReviewRequest\x12>\n" +
+	"\x04data\x18\x01 \x01(\v2*.lender.LoanPendingStatusReviewRequestDataR\x04data\"\xf6\x01\n" +
+	"\"LoanPendingStatusReviewRequestData\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12,\n" +
+	"\x12lender_employee_id\x18\x02 \x01(\x03R\x10lenderEmployeeId\x12*\n" +
+	"\x11lender_company_id\x18\x03 \x01(\x03R\x0flenderCompanyId\x124\n" +
+	"\x16current_pending_status\x18\x04 \x01(\tR\x14currentPendingStatus\x12\x16\n" +
+	"\x06action\x18\x05 \x01(\tR\x06action\x12\x18\n" +
+	"\acomment\x18\x06 \x01(\tR\acomment\"\xde\x02\n" +
 	"\x11LoanBorrowerEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
 	"\aloan_id\x18\x02 \x01(\x03R\x06loanId\x12\x12\n" +
@@ -5753,7 +5891,7 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\fRefreshToken\x12\x1b.lender.RefreshTokenRequest\x1a\x1c.lender.RefreshTokenResponse\x12L\n" +
 	"\rResetPassword\x12\x1c.lender.ResetPasswordRequest\x1a\x1d.lender.ResetPasswordResponse\x12g\n" +
 	"\x16SendResetPasswordEmail\x12%.lender.SendResetPasswordEmailRequest\x1a&.lender.SendResetPasswordEmailResponse\x12=\n" +
-	"\bUserInfo\x12\x17.lender.UserInfoRequest\x1a\x18.lender.UserinfoResponse2\xc5\x03\n" +
+	"\bUserInfo\x12\x17.lender.UserInfoRequest\x1a\x18.lender.UserinfoResponse2\x9b\x04\n" +
 	"\x04Loan\x12C\n" +
 	"\n" +
 	"LoanDetail\x12\x19.lender.LoanDetailRequest\x1a\x1a.lender.LoanDetailResponse\x12=\n" +
@@ -5762,7 +5900,8 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"UpdateLoan\x12\x19.lender.LoanUpdateRequest\x1a\x1a.lender.LoanUpdateResponse\x12P\n" +
 	"\x13UpdateLoanDocuments\x12\".lender.LoanUpdateDocumentsRequest\x1a\x15.lender.EmptyResponse\x12H\n" +
 	"\x0fUpdateLoanStage\x12\x1e.lender.LoanUpdateStageRequest\x1a\x15.lender.EmptyResponse\x12X\n" +
-	"\x17UpdateLoanPendingStatus\x12&.lender.LoanUpdatePendingStatusRequest\x1a\x15.lender.EmptyResponseB\n" +
+	"\x17UpdateLoanPendingStatus\x12&.lender.LoanUpdatePendingStatusRequest\x1a\x15.lender.EmptyResponse\x12T\n" +
+	"\x13PendingStatusReview\x12&.lender.LoanPendingStatusReviewRequest\x1a\x15.lender.EmptyResponseB\n" +
 	"Z\b./lenderb\x06proto3"
 
 var (
@@ -5777,7 +5916,7 @@ func file_app_lender_rpc_pb_lender_proto_rawDescGZIP() []byte {
 	return file_app_lender_rpc_pb_lender_proto_rawDescData
 }
 
-var file_app_lender_rpc_pb_lender_proto_msgTypes = make([]protoimpl.MessageInfo, 70)
+var file_app_lender_rpc_pb_lender_proto_msgTypes = make([]protoimpl.MessageInfo, 72)
 var file_app_lender_rpc_pb_lender_proto_goTypes = []any{
 	(*EmptyRequest)(nil),                         // 0: lender.EmptyRequest
 	(*EmptyResponse)(nil),                        // 1: lender.EmptyResponse
@@ -5840,15 +5979,17 @@ var file_app_lender_rpc_pb_lender_proto_goTypes = []any{
 	(*LoanUpdateStageRequestData)(nil),           // 58: lender.LoanUpdateStageRequestData
 	(*LoanUpdatePendingStatusRequest)(nil),       // 59: lender.LoanUpdatePendingStatusRequest
 	(*LoanUpdatePendingStatusRequestData)(nil),   // 60: lender.LoanUpdatePendingStatusRequestData
-	(*LoanBorrowerEntry)(nil),                    // 61: lender.LoanBorrowerEntry
-	(*LoanExperienceEntry)(nil),                  // 62: lender.LoanExperienceEntry
-	(*LoanThirdServiceEntry)(nil),                // 63: lender.LoanThirdServiceEntry
-	(*LoanDemographicEntry)(nil),                 // 64: lender.LoanDemographicEntry
-	(*LoanDemographicPropertyEntry)(nil),         // 65: lender.LoanDemographicPropertyEntry
-	(*LoanDemographicEthnicityEntry)(nil),        // 66: lender.LoanDemographicEthnicityEntry
-	(*LoanDemographicRaceEntry)(nil),             // 67: lender.LoanDemographicRaceEntry
-	(*LoanDemographicExtraDemographicEntry)(nil), // 68: lender.LoanDemographicExtraDemographicEntry
-	(*FileEntry)(nil),                            // 69: lender.FileEntry
+	(*LoanPendingStatusReviewRequest)(nil),       // 61: lender.LoanPendingStatusReviewRequest
+	(*LoanPendingStatusReviewRequestData)(nil),   // 62: lender.LoanPendingStatusReviewRequestData
+	(*LoanBorrowerEntry)(nil),                    // 63: lender.LoanBorrowerEntry
+	(*LoanExperienceEntry)(nil),                  // 64: lender.LoanExperienceEntry
+	(*LoanThirdServiceEntry)(nil),                // 65: lender.LoanThirdServiceEntry
+	(*LoanDemographicEntry)(nil),                 // 66: lender.LoanDemographicEntry
+	(*LoanDemographicPropertyEntry)(nil),         // 67: lender.LoanDemographicPropertyEntry
+	(*LoanDemographicEthnicityEntry)(nil),        // 68: lender.LoanDemographicEthnicityEntry
+	(*LoanDemographicRaceEntry)(nil),             // 69: lender.LoanDemographicRaceEntry
+	(*LoanDemographicExtraDemographicEntry)(nil), // 70: lender.LoanDemographicExtraDemographicEntry
+	(*FileEntry)(nil),                            // 71: lender.FileEntry
 }
 var file_app_lender_rpc_pb_lender_proto_depIdxs = []int32{
 	4,  // 0: lender.OptionRequest.data:type_name -> lender.OptionRequestData
@@ -5872,13 +6013,13 @@ var file_app_lender_rpc_pb_lender_proto_depIdxs = []int32{
 	33, // 18: lender.LoanEntry.loan_property:type_name -> lender.LoanPropertyEntry
 	35, // 19: lender.LoanEntry.applicants:type_name -> lender.ApplicantEntry
 	37, // 20: lender.LoanEntry.budget:type_name -> lender.LoanBudgetEntry
-	62, // 21: lender.LoanEntry.transaction_experiences:type_name -> lender.LoanExperienceEntry
-	62, // 22: lender.LoanEntry.real_estate_experiences:type_name -> lender.LoanExperienceEntry
-	61, // 23: lender.LoanEntry.loan_borrower:type_name -> lender.LoanBorrowerEntry
-	64, // 24: lender.LoanEntry.loan_demographic:type_name -> lender.LoanDemographicEntry
-	63, // 25: lender.LoanEntry.loan_third_services:type_name -> lender.LoanThirdServiceEntry
+	64, // 21: lender.LoanEntry.transaction_experiences:type_name -> lender.LoanExperienceEntry
+	64, // 22: lender.LoanEntry.real_estate_experiences:type_name -> lender.LoanExperienceEntry
+	63, // 23: lender.LoanEntry.loan_borrower:type_name -> lender.LoanBorrowerEntry
+	66, // 24: lender.LoanEntry.loan_demographic:type_name -> lender.LoanDemographicEntry
+	65, // 25: lender.LoanEntry.loan_third_services:type_name -> lender.LoanThirdServiceEntry
 	54, // 26: lender.LoanEntry.extend:type_name -> lender.LoanExtendValueEntry
-	69, // 27: lender.LoanEntry.documents:type_name -> lender.FileEntry
+	71, // 27: lender.LoanEntry.documents:type_name -> lender.FileEntry
 	40, // 28: lender.LoanDetailRequest.data:type_name -> lender.LoanDetailRequestData
 	36, // 29: lender.LoanDetailResponse.data:type_name -> lender.LoanEntry
 	43, // 30: lender.LoanDeleteRequest.data:type_name -> lender.LoanDeleteRequestData
@@ -5891,56 +6032,59 @@ var file_app_lender_rpc_pb_lender_proto_depIdxs = []int32{
 	33, // 37: lender.LoanUpdateRequestData.loan_property:type_name -> lender.LoanPropertyEntry
 	35, // 38: lender.LoanUpdateRequestData.applicants:type_name -> lender.ApplicantEntry
 	37, // 39: lender.LoanUpdateRequestData.budget:type_name -> lender.LoanBudgetEntry
-	62, // 40: lender.LoanUpdateRequestData.transaction_experiences:type_name -> lender.LoanExperienceEntry
-	62, // 41: lender.LoanUpdateRequestData.real_estate_experiences:type_name -> lender.LoanExperienceEntry
-	61, // 42: lender.LoanUpdateRequestData.loan_borrower:type_name -> lender.LoanBorrowerEntry
-	64, // 43: lender.LoanUpdateRequestData.loan_demographic:type_name -> lender.LoanDemographicEntry
-	63, // 44: lender.LoanUpdateRequestData.loan_third_services:type_name -> lender.LoanThirdServiceEntry
+	64, // 40: lender.LoanUpdateRequestData.transaction_experiences:type_name -> lender.LoanExperienceEntry
+	64, // 41: lender.LoanUpdateRequestData.real_estate_experiences:type_name -> lender.LoanExperienceEntry
+	63, // 42: lender.LoanUpdateRequestData.loan_borrower:type_name -> lender.LoanBorrowerEntry
+	66, // 43: lender.LoanUpdateRequestData.loan_demographic:type_name -> lender.LoanDemographicEntry
+	65, // 44: lender.LoanUpdateRequestData.loan_third_services:type_name -> lender.LoanThirdServiceEntry
 	53, // 45: lender.LoanUpdateResponse.data:type_name -> lender.LoanUpdateResponseData
 	56, // 46: lender.LoanUpdateDocumentsRequest.data:type_name -> lender.LoanUpdateDocumentsRequestData
-	69, // 47: lender.LoanUpdateDocumentsRequestData.documents:type_name -> lender.FileEntry
+	71, // 47: lender.LoanUpdateDocumentsRequestData.documents:type_name -> lender.FileEntry
 	58, // 48: lender.LoanUpdateStageRequest.data:type_name -> lender.LoanUpdateStageRequestData
 	60, // 49: lender.LoanUpdatePendingStatusRequest.data:type_name -> lender.LoanUpdatePendingStatusRequestData
-	34, // 50: lender.LoanBorrowerEntry.mailing_address:type_name -> lender.AddressEntry
-	34, // 51: lender.LoanExperienceEntry.address:type_name -> lender.AddressEntry
-	65, // 52: lender.LoanDemographicEntry.property:type_name -> lender.LoanDemographicPropertyEntry
-	66, // 53: lender.LoanDemographicEntry.ethnicity:type_name -> lender.LoanDemographicEthnicityEntry
-	67, // 54: lender.LoanDemographicEntry.race:type_name -> lender.LoanDemographicRaceEntry
-	3,  // 55: lender.common.GetOpt:input_type -> lender.OptionRequest
-	0,  // 56: lender.common.GetUsState:input_type -> lender.EmptyRequest
-	7,  // 57: lender.common.GetUsCities:input_type -> lender.UsCitiesRequest
-	9,  // 58: lender.user.Login:input_type -> lender.UserLoginRequest
-	13, // 59: lender.user.Register:input_type -> lender.UserRegisterRequest
-	17, // 60: lender.user.RefreshToken:input_type -> lender.RefreshTokenRequest
-	21, // 61: lender.user.ResetPassword:input_type -> lender.ResetPasswordRequest
-	23, // 62: lender.user.SendResetPasswordEmail:input_type -> lender.SendResetPasswordEmailRequest
-	28, // 63: lender.user.UserInfo:input_type -> lender.UserInfoRequest
-	39, // 64: lender.Loan.LoanDetail:input_type -> lender.LoanDetailRequest
-	44, // 65: lender.Loan.LoanPage:input_type -> lender.LoanPageRequest
-	50, // 66: lender.Loan.UpdateLoan:input_type -> lender.LoanUpdateRequest
-	55, // 67: lender.Loan.UpdateLoanDocuments:input_type -> lender.LoanUpdateDocumentsRequest
-	57, // 68: lender.Loan.UpdateLoanStage:input_type -> lender.LoanUpdateStageRequest
-	59, // 69: lender.Loan.UpdateLoanPendingStatus:input_type -> lender.LoanUpdatePendingStatusRequest
-	5,  // 70: lender.common.GetOpt:output_type -> lender.OptionResponse
-	2,  // 71: lender.common.GetUsState:output_type -> lender.StringSliceResponse
-	2,  // 72: lender.common.GetUsCities:output_type -> lender.StringSliceResponse
-	10, // 73: lender.user.Login:output_type -> lender.UserLoginResponse
-	14, // 74: lender.user.Register:output_type -> lender.UserRegisterResponse
-	19, // 75: lender.user.RefreshToken:output_type -> lender.RefreshTokenResponse
-	22, // 76: lender.user.ResetPassword:output_type -> lender.ResetPasswordResponse
-	24, // 77: lender.user.SendResetPasswordEmail:output_type -> lender.SendResetPasswordEmailResponse
-	30, // 78: lender.user.UserInfo:output_type -> lender.UserinfoResponse
-	41, // 79: lender.Loan.LoanDetail:output_type -> lender.LoanDetailResponse
-	45, // 80: lender.Loan.LoanPage:output_type -> lender.LoanPageResponse
-	52, // 81: lender.Loan.UpdateLoan:output_type -> lender.LoanUpdateResponse
-	1,  // 82: lender.Loan.UpdateLoanDocuments:output_type -> lender.EmptyResponse
-	1,  // 83: lender.Loan.UpdateLoanStage:output_type -> lender.EmptyResponse
-	1,  // 84: lender.Loan.UpdateLoanPendingStatus:output_type -> lender.EmptyResponse
-	70, // [70:85] is the sub-list for method output_type
-	55, // [55:70] is the sub-list for method input_type
-	55, // [55:55] is the sub-list for extension type_name
-	55, // [55:55] is the sub-list for extension extendee
-	0,  // [0:55] is the sub-list for field type_name
+	62, // 50: lender.LoanPendingStatusReviewRequest.data:type_name -> lender.LoanPendingStatusReviewRequestData
+	34, // 51: lender.LoanBorrowerEntry.mailing_address:type_name -> lender.AddressEntry
+	34, // 52: lender.LoanExperienceEntry.address:type_name -> lender.AddressEntry
+	67, // 53: lender.LoanDemographicEntry.property:type_name -> lender.LoanDemographicPropertyEntry
+	68, // 54: lender.LoanDemographicEntry.ethnicity:type_name -> lender.LoanDemographicEthnicityEntry
+	69, // 55: lender.LoanDemographicEntry.race:type_name -> lender.LoanDemographicRaceEntry
+	3,  // 56: lender.common.GetOpt:input_type -> lender.OptionRequest
+	0,  // 57: lender.common.GetUsState:input_type -> lender.EmptyRequest
+	7,  // 58: lender.common.GetUsCities:input_type -> lender.UsCitiesRequest
+	9,  // 59: lender.user.Login:input_type -> lender.UserLoginRequest
+	13, // 60: lender.user.Register:input_type -> lender.UserRegisterRequest
+	17, // 61: lender.user.RefreshToken:input_type -> lender.RefreshTokenRequest
+	21, // 62: lender.user.ResetPassword:input_type -> lender.ResetPasswordRequest
+	23, // 63: lender.user.SendResetPasswordEmail:input_type -> lender.SendResetPasswordEmailRequest
+	28, // 64: lender.user.UserInfo:input_type -> lender.UserInfoRequest
+	39, // 65: lender.Loan.LoanDetail:input_type -> lender.LoanDetailRequest
+	44, // 66: lender.Loan.LoanPage:input_type -> lender.LoanPageRequest
+	50, // 67: lender.Loan.UpdateLoan:input_type -> lender.LoanUpdateRequest
+	55, // 68: lender.Loan.UpdateLoanDocuments:input_type -> lender.LoanUpdateDocumentsRequest
+	57, // 69: lender.Loan.UpdateLoanStage:input_type -> lender.LoanUpdateStageRequest
+	59, // 70: lender.Loan.UpdateLoanPendingStatus:input_type -> lender.LoanUpdatePendingStatusRequest
+	61, // 71: lender.Loan.PendingStatusReview:input_type -> lender.LoanPendingStatusReviewRequest
+	5,  // 72: lender.common.GetOpt:output_type -> lender.OptionResponse
+	2,  // 73: lender.common.GetUsState:output_type -> lender.StringSliceResponse
+	2,  // 74: lender.common.GetUsCities:output_type -> lender.StringSliceResponse
+	10, // 75: lender.user.Login:output_type -> lender.UserLoginResponse
+	14, // 76: lender.user.Register:output_type -> lender.UserRegisterResponse
+	19, // 77: lender.user.RefreshToken:output_type -> lender.RefreshTokenResponse
+	22, // 78: lender.user.ResetPassword:output_type -> lender.ResetPasswordResponse
+	24, // 79: lender.user.SendResetPasswordEmail:output_type -> lender.SendResetPasswordEmailResponse
+	30, // 80: lender.user.UserInfo:output_type -> lender.UserinfoResponse
+	41, // 81: lender.Loan.LoanDetail:output_type -> lender.LoanDetailResponse
+	45, // 82: lender.Loan.LoanPage:output_type -> lender.LoanPageResponse
+	52, // 83: lender.Loan.UpdateLoan:output_type -> lender.LoanUpdateResponse
+	1,  // 84: lender.Loan.UpdateLoanDocuments:output_type -> lender.EmptyResponse
+	1,  // 85: lender.Loan.UpdateLoanStage:output_type -> lender.EmptyResponse
+	1,  // 86: lender.Loan.UpdateLoanPendingStatus:output_type -> lender.EmptyResponse
+	1,  // 87: lender.Loan.PendingStatusReview:output_type -> lender.EmptyResponse
+	72, // [72:88] is the sub-list for method output_type
+	56, // [56:72] is the sub-list for method input_type
+	56, // [56:56] is the sub-list for extension type_name
+	56, // [56:56] is the sub-list for extension extendee
+	0,  // [0:56] is the sub-list for field type_name
 }
 
 func init() { file_app_lender_rpc_pb_lender_proto_init() }
@@ -5954,7 +6098,7 @@ func file_app_lender_rpc_pb_lender_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_app_lender_rpc_pb_lender_proto_rawDesc), len(file_app_lender_rpc_pb_lender_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   70,
+			NumMessages:   72,
 			NumExtensions: 0,
 			NumServices:   3,
 		},

@@ -52,3 +52,8 @@ func (s *LoanServer) UpdateLoanPendingStatus(ctx context.Context, in *lender.Loa
 	l := loanlogic.NewUpdateLoanPendingStatusLogic(ctx, s.svcCtx)
 	return l.UpdateLoanPendingStatus(in)
 }
+
+func (s *LoanServer) PendingStatusReview(ctx context.Context, in *lender.LoanPendingStatusReviewRequest) (*lender.EmptyResponse, error) {
+	l := loanlogic.NewPendingStatusReviewLogic(ctx, s.svcCtx)
+	return l.PendingStatusReview(in)
+}

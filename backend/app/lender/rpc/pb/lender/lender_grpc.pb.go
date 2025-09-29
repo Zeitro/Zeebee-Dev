@@ -497,6 +497,7 @@ const (
 	Loan_UpdateLoanDocuments_FullMethodName     = "/lender.Loan/UpdateLoanDocuments"
 	Loan_UpdateLoanStage_FullMethodName         = "/lender.Loan/UpdateLoanStage"
 	Loan_UpdateLoanPendingStatus_FullMethodName = "/lender.Loan/UpdateLoanPendingStatus"
+	Loan_PendingStatusReview_FullMethodName     = "/lender.Loan/PendingStatusReview"
 )
 
 // LoanClient is the client API for Loan service.
@@ -509,6 +510,7 @@ type LoanClient interface {
 	UpdateLoanDocuments(ctx context.Context, in *LoanUpdateDocumentsRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	UpdateLoanStage(ctx context.Context, in *LoanUpdateStageRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	UpdateLoanPendingStatus(ctx context.Context, in *LoanUpdatePendingStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	PendingStatusReview(ctx context.Context, in *LoanPendingStatusReviewRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 }
 
 type loanClient struct {
@@ -579,6 +581,16 @@ func (c *loanClient) UpdateLoanPendingStatus(ctx context.Context, in *LoanUpdate
 	return out, nil
 }
 
+func (c *loanClient) PendingStatusReview(ctx context.Context, in *LoanPendingStatusReviewRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, Loan_PendingStatusReview_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // LoanServer is the server API for Loan service.
 // All implementations must embed UnimplementedLoanServer
 // for forward compatibility.
@@ -589,6 +601,7 @@ type LoanServer interface {
 	UpdateLoanDocuments(context.Context, *LoanUpdateDocumentsRequest) (*EmptyResponse, error)
 	UpdateLoanStage(context.Context, *LoanUpdateStageRequest) (*EmptyResponse, error)
 	UpdateLoanPendingStatus(context.Context, *LoanUpdatePendingStatusRequest) (*EmptyResponse, error)
+	PendingStatusReview(context.Context, *LoanPendingStatusReviewRequest) (*EmptyResponse, error)
 	mustEmbedUnimplementedLoanServer()
 }
 
@@ -616,6 +629,9 @@ func (UnimplementedLoanServer) UpdateLoanStage(context.Context, *LoanUpdateStage
 }
 func (UnimplementedLoanServer) UpdateLoanPendingStatus(context.Context, *LoanUpdatePendingStatusRequest) (*EmptyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateLoanPendingStatus not implemented")
+}
+func (UnimplementedLoanServer) PendingStatusReview(context.Context, *LoanPendingStatusReviewRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PendingStatusReview not implemented")
 }
 func (UnimplementedLoanServer) mustEmbedUnimplementedLoanServer() {}
 func (UnimplementedLoanServer) testEmbeddedByValue()              {}
@@ -746,6 +762,24 @@ func _Loan_UpdateLoanPendingStatus_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Loan_PendingStatusReview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanPendingStatusReviewRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanServer).PendingStatusReview(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Loan_PendingStatusReview_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanServer).PendingStatusReview(ctx, req.(*LoanPendingStatusReviewRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Loan_ServiceDesc is the grpc.ServiceDesc for Loan service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -776,6 +810,10 @@ var Loan_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateLoanPendingStatus",
 			Handler:    _Loan_UpdateLoanPendingStatus_Handler,
+		},
+		{
+			MethodName: "PendingStatusReview",
+			Handler:    _Loan_PendingStatusReview_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

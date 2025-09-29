@@ -42,6 +42,10 @@ func (l *UpdateLoanStageLogic) UpdateLoanStage(in *lender.LoanUpdateStageRequest
 		return nil, errors.Wrap(err, "failed to get loan")
 	}
 
+	if loan.Source != constants.LoanSourceSystem {
+		return nil, errors.WithStack(errors.New("invalid loan source"))
+	}
+
 	// Save original status for operation log
 	originalStage := loan.Stage
 	originalPendingStatus := loan.PendingStatus

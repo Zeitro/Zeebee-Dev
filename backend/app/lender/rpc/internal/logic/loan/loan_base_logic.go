@@ -56,3 +56,52 @@ func (l *LoanBaseLogic) CreateLoanOperationLog(tx *gorm.DB, loanId, operatorId i
 
 	return nil
 }
+
+type loanPendingStatusTransition struct {
+	rejectTarget  constants.LoanPendingStatus
+	approveTarget constants.LoanPendingStatus
+}
+
+var loanPendingStatusTransMap = map[constants.LoanPendingStatus]loanPendingStatusTransition{
+	constants.LoanPendingStatusQuoting: {
+		rejectTarget:  constants.LoanPendingStatusNone,
+		approveTarget: constants.LoanPendingStatusProcessing,
+	},
+	constants.LoanPendingStatusProcessing: {
+		rejectTarget:  constants.LoanPendingStatusNone,
+		approveTarget: constants.LoanPendingStatusUnderWriting,
+	},
+	constants.LoanPendingStatusUnderWriting: {
+		rejectTarget:  constants.LoanPendingStatusProcessing,
+		approveTarget: constants.LoanPendingStatusClosing,
+	},
+	// constants.LoanPendingStatusClosing: {
+	// 	rejectTarget:  constants.LoanPendingStatusUnderWriting,
+	// 	approveTarget: constants.LoanPendingStatusNone,
+	// },
+}
+
+func (l *LoanBaseLogic) GetNextPendingStatus(currentStatus constants.LoanPendingStatus, action constants.LoanOperationAction) (nextStatus constants.LoanPendingStatus, err error) {
+
+	trans, ok := loanPendingStatusTransMap[currentStatus]
+	if !ok {
+		return constants.LoanPendingStatusNone, errors.Errorf("Invalid current status %v", currentStatus)
+	}
+	switch action {
+	case constants.LoanOperationActionApprove:
+		nextStatus = trans.approveTarget
+	case constants.LoanOperationActionReject:
+		nextStatus = trans.rejectTarget
+	default:
+		nextStatus = constants.LoanPendingStatusNone
+		err = errors.Errorf("Invalid action %v", action)
+	}
+	if err != nil {
+		return constants.LoanPendingStatusNone, err
+	}
+	if nextStatus == constants.LoanPendingStatusNone {
+		return constants.LoanPendingStatusNone, errors.Errorf("Invalid action %v for current status %v", action, currentStatus)
+	}
+
+	return nextStatus, err
+}

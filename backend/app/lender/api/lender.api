@@ -117,5 +117,9 @@ service lender-api {
 	@doc "update loan pending status"
 	@handler UpdatePendingStatus
 	patch /loan/:id/pending_status (UpdateLoanPendingStatusRequest) returns (EmptyResponse)
+
+	@doc "reveiw loan pending status"
+	@handler ReviewPendingStatus
+	post /loan/:id/review_pending_status (ReviewLoanPendingStatusRequest) returns (EmptyResponse)
 }
 

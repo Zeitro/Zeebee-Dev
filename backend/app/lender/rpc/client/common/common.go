@@ -41,6 +41,8 @@ type (
 	LoanPageRequestSorter                = lender.LoanPageRequestSorter
 	LoanPageResponse                     = lender.LoanPageResponse
 	LoanPageResponseData                 = lender.LoanPageResponseData
+	LoanPendingStatusReviewRequest       = lender.LoanPendingStatusReviewRequest
+	LoanPendingStatusReviewRequestData   = lender.LoanPendingStatusReviewRequestData
 	LoanPropertyEntry                    = lender.LoanPropertyEntry
 	LoanThirdServiceEntry                = lender.LoanThirdServiceEntry
 	LoanUpdateDocumentsRequest           = lender.LoanUpdateDocumentsRequest
