@@ -19,6 +19,8 @@ type (
 	BorrowerEditApplicantEntry            = lender.BorrowerEditApplicantEntry
 	EmptyRequest                          = lender.EmptyRequest
 	EmptyResponse                         = lender.EmptyResponse
+	FileDeleteRequest                     = lender.FileDeleteRequest
+	FileDeleteRequestData                 = lender.FileDeleteRequestData
 	FileEntry                             = lender.FileEntry
 	LoanBorrowerEntry                     = lender.LoanBorrowerEntry
 	LoanBudgetEntry                       = lender.LoanBudgetEntry
@@ -32,6 +34,10 @@ type (
 	LoanDetailRequest                     = lender.LoanDetailRequest
 	LoanDetailRequestData                 = lender.LoanDetailRequestData
 	LoanDetailResponse                    = lender.LoanDetailResponse
+	LoanDocumentCreateRequest             = lender.LoanDocumentCreateRequest
+	LoanDocumentCreateRequestData         = lender.LoanDocumentCreateRequestData
+	LoanDocumentCreateResponse            = lender.LoanDocumentCreateResponse
+	LoanDocumentEntry                     = lender.LoanDocumentEntry
 	LoanEntry                             = lender.LoanEntry
 	LoanExperienceEntry                   = lender.LoanExperienceEntry
 	LoanExtendValueEntry                  = lender.LoanExtendValueEntry

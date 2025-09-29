@@ -75,10 +75,10 @@ var loanPendingStatusTransMap = map[constants.LoanPendingStatus]loanPendingStatu
 		rejectTarget:  constants.LoanPendingStatusProcessing,
 		approveTarget: constants.LoanPendingStatusClosing,
 	},
-	// constants.LoanPendingStatusClosing: {
-	// 	rejectTarget:  constants.LoanPendingStatusUnderWriting,
-	// 	approveTarget: constants.LoanPendingStatusNone,
-	// },
+	constants.LoanPendingStatusClosing: {
+		rejectTarget:  constants.LoanPendingStatusUnderWriting,
+		approveTarget: constants.LoanPendingStatusNone,
+	},
 }
 
 func (l *LoanBaseLogic) GetNextPendingStatus(currentStatus constants.LoanPendingStatus, action constants.LoanOperationAction) (nextStatus constants.LoanPendingStatus, err error) {
@@ -99,7 +99,7 @@ func (l *LoanBaseLogic) GetNextPendingStatus(currentStatus constants.LoanPending
 	if err != nil {
 		return constants.LoanPendingStatusNone, err
 	}
-	if nextStatus == constants.LoanPendingStatusNone {
+	if currentStatus != constants.LoanPendingStatusClosing && nextStatus == constants.LoanPendingStatusNone {
 		return constants.LoanPendingStatusNone, errors.Errorf("Invalid action %v for current status %v", action, currentStatus)
 	}
 

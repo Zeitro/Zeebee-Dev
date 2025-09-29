@@ -20,6 +20,11 @@ type (
 	}
 )
 
+type PathIdRequest {
+	id int64 `path:"id" validate:"requied,gt=0"`
+}
+
+
 // ============== common =============
 @server(
 	desc: "lender-api service"
@@ -108,9 +113,6 @@ service lender-api {
 	@handler update
 	put /loan/:id (LoanUpdateRequest) returns (LoanUpdateResponse)
 
-	// @doc "update documents"
-	// @handler UpdateDocuments
-	// post /loan/:id/documents (UpdateDocumentsRequest) returns (EmptyResponse)
 	@doc "update loan stage"
 	@handler UpdateStage
 	patch /loan/:id/stage (UpdateLoanStageRequest) returns (EmptyResponse)
@@ -122,6 +124,25 @@ service lender-api {
 	@doc "reveiw loan pending status"
 	@handler ReviewPendingStatus
 	post /loan/:id/review_pending_status (ReviewLoanPendingStatusRequest) returns (EmptyResponse)
+
+	@doc "create loan document"
+	@handler CreateLoanDocument
+	post /loan/:id/document (CreateLoanDocumentRequest) returns (CreateLoanDocumentResponse)
+}
+
+// =============== file ==============
+@server(
+	desc: "file service"
+	version: v1
+	group: file
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: file
+)
+service lender-api {
+	@doc "delete"
+	@handler Delete
+	get /file/:id (PathIdRequest) returns (EmptyResponse)
 }
 
 // =============== storage ==============
