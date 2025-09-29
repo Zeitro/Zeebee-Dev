@@ -597,10 +597,31 @@ message LoanDemographicExtraDemographicEntry {
 
 message FileEntry {
   int64 id = 1;
-  string biz_type = 2;
-  string file_type = 3;
-  int64 ref_id = 4;
-  string file = 5;
-  string created_at = 6;
-  string updated_at = 7;
+  string entity_type = 2;
+  int64 entity_id = 3;
+  string file_url = 4;
+  string created_at = 5;
+  string updated_at = 6;
+}
+
+
+message StorageCreatePresignedUrlRequest {
+  StorageCreatePresignedUrlRequestData data = 1;
+}
+
+message StorageCreatePresignedUrlRequestData {
+  string type = 1;
+  string file_suffix = 2;
+}
+
+message StorageCreatePresignedUrlResponse {
+  StorageCreatePresignedUrlResponseData data = 1;
+}
+
+message StorageCreatePresignedUrlResponseData {
+  string url = 1;
+}
+
+service Storage {
+  rpc CreatePresignedUrl(StorageCreatePresignedUrlRequest) returns(StorageCreatePresignedUrlResponse);
 }
