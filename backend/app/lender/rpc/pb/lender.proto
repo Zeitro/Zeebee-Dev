@@ -489,6 +489,21 @@ message LoanPendingStatusReviewRequestData {
   string comment = 6;
 }
 
+// loan document
+message LoanDocumentCreateRequest {
+  LoanDocumentCreateRequestData data = 1;
+}
+message LoanDocumentCreateRequestData {
+  int64 id = 1;
+  int64 lender_company_id = 2;
+  int64 lender_employee_id = 3;
+  string file_type = 4;
+  string file_url = 5;
+}
+message LoanDocumentCreateResponse {
+  LoanDocumentEntry data = 1;
+}
+
 service Loan {
   rpc LoanDetail(LoanDetailRequest) returns(LoanDetailResponse);
   rpc LoanPage(LoanPageRequest) returns(LoanPageResponse);
@@ -497,7 +512,23 @@ service Loan {
   rpc UpdateLoanStage(LoanUpdateStageRequest) returns(EmptyResponse);
   rpc UpdateLoanPendingStatus(LoanUpdatePendingStatusRequest) returns(EmptyResponse);
   rpc PendingStatusReview(LoanPendingStatusReviewRequest) returns(EmptyResponse);
+  rpc CreateLoanDocument(LoanDocumentCreateRequest) returns(LoanDocumentCreateResponse);
 }
+
+// ===================== loan document service ======================
+
+message LoanDocumentEntry {
+  int64 id = 1;
+  int64 loan_id = 2;
+  string uploader_type = 3;
+  string file_type = 4;
+  string comment = 5;
+  string status = 6;
+  string created_at = 7;
+  string updated_at = 8;
+  repeated FileEntry files = 9;
+}
+
 
 // ===================== loan borrower service ======================
 message LoanBorrowerEntry{
@@ -592,9 +623,7 @@ message LoanDemographicExtraDemographicEntry {
   repeated string info_channels = 4;
 }
 
-
-// ===================== storage service ======================
-
+// ===================== file service ======================
 message FileEntry {
   int64 id = 1;
   string entity_type = 2;
@@ -603,7 +632,21 @@ message FileEntry {
   string created_at = 5;
   string updated_at = 6;
 }
+message FileDeleteRequest {
+  FileDeleteRequestData data = 1;
+}
+message FileDeleteRequestData {
+  int64 id = 1;
+  int64 lender_company_id = 2;
+  int64 lender_employee_id = 3;
+}
 
+service File {
+  rpc DeleteFile(FileDeleteRequest) returns(EmptyResponse);
+}
+
+
+// ===================== storage service ======================
 
 message StorageCreatePresignedUrlRequest {
   StorageCreatePresignedUrlRequestData data = 1;

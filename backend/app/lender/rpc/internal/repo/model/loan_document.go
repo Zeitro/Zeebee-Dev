@@ -8,6 +8,7 @@ type LoanDocument struct {
 	UploaderType constants.LoanDocumentUploaderType `gorm:"column:uploader_type;size:20;not null" json:"uploader_type"`
 	FileType     constants.LoanDocumentType         `gorm:"column:file_type;size:255;not null;default:'file'" json:"file_type"`
 	Status       constants.LoanDocumentStatus       `gorm:"column:status;size:255;not null;default:''" json:"status"`
+	Comment      string                             `gorm:"column:comment;size:255;not null;default:''" json:"comment"`
 
 	// relationships
 	Files []*File `gorm:"polymorphicType:EntityType;polymorphicId:EntityId;polymorphicValue:LoanDocument" json:"files"`

@@ -45,6 +45,7 @@ func (l *PendingStatusReviewLogic) PendingStatusReview(in *lender.LoanPendingSta
 
 	originalStage := loan.Stage
 	originalPendingStatus := loan.PendingStatus
+	targetStage := constants.LoanStagePending
 
 	// validate loan pending status
 	if loan.Stage != constants.LoanStagePending {
@@ -66,6 +67,9 @@ func (l *PendingStatusReviewLogic) PendingStatusReview(in *lender.LoanPendingSta
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
+	if targetStatus == constants.LoanPendingStatusNone && currentStatus == constants.LoanPendingStatusClosing {
+		targetStage = constants.LoanStageActive
+	}
 
 	err = l.svcCtx.LoanRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
 		var innerErr error
@@ -83,7 +87,7 @@ func (l *PendingStatusReviewLogic) PendingStatusReview(in *lender.LoanPendingSta
 			PendingStatus: originalPendingStatus,
 		}
 		toStatus := types.LoanOperationStatus{
-			Stage:         loan.Stage,
+			Stage:         targetStage,
 			PendingStatus: targetStatus,
 		}
 		metadata := &types.LoanOperationMetadata{
