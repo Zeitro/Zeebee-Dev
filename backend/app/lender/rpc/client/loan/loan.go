@@ -41,6 +41,8 @@ type (
 	LoanPageRequestSorter                = lender.LoanPageRequestSorter
 	LoanPageResponse                     = lender.LoanPageResponse
 	LoanPageResponseData                 = lender.LoanPageResponseData
+	LoanPendingStatusReviewRequest       = lender.LoanPendingStatusReviewRequest
+	LoanPendingStatusReviewRequestData   = lender.LoanPendingStatusReviewRequestData
 	LoanPropertyEntry                    = lender.LoanPropertyEntry
 	LoanThirdServiceEntry                = lender.LoanThirdServiceEntry
 	LoanUpdateDocumentsRequest           = lender.LoanUpdateDocumentsRequest
@@ -92,6 +94,7 @@ type (
 		UpdateLoanDocuments(ctx context.Context, in *LoanUpdateDocumentsRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		UpdateLoanStage(ctx context.Context, in *LoanUpdateStageRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		UpdateLoanPendingStatus(ctx context.Context, in *LoanUpdatePendingStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+		PendingStatusReview(ctx context.Context, in *LoanPendingStatusReviewRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	}
 
 	defaultLoan struct {
@@ -133,4 +136,9 @@ func (m *defaultLoan) UpdateLoanStage(ctx context.Context, in *LoanUpdateStageRe
 func (m *defaultLoan) UpdateLoanPendingStatus(ctx context.Context, in *LoanUpdatePendingStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	client := lender.NewLoanClient(m.cli.Conn())
 	return client.UpdateLoanPendingStatus(ctx, in, opts...)
+}
+
+func (m *defaultLoan) PendingStatusReview(ctx context.Context, in *LoanPendingStatusReviewRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	client := lender.NewLoanClient(m.cli.Conn())
+	return client.PendingStatusReview(ctx, in, opts...)
 }

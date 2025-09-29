@@ -47,7 +47,9 @@ func (l *UpdateLoanPendingStatusLogic) UpdateLoanPendingStatus(in *lender.LoanUp
 	if loan.Stage != constants.LoanStagePending {
 		return nil, errors.New("loan is not in pending stage")
 	}
-
+	if loan.Source != constants.LoanSourceSystem {
+		return nil, errors.WithStack(errors.New("invalid loan source"))
+	}
 	// Save original status for operation log
 	originalStage := loan.Stage
 	originalPendingStatus := loan.PendingStatus
@@ -56,6 +58,18 @@ func (l *UpdateLoanPendingStatusLogic) UpdateLoanPendingStatus(in *lender.LoanUp
 	err = l.svcCtx.LoanRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
 		// Update pending status
 		pendingStatus := constants.LoanPendingStatus(in.Data.PendingStatus)
+
+		// 根据状态规则进行验证
+		switch pendingStatus {
+		case constants.LoanPendingStatusQuoting,
+			constants.LoanPendingStatusProcessing,
+			constants.LoanPendingStatusUnderWriting:
+			// 这些是中间状态，可以直接设置
+		case constants.LoanPendingStatusClosing:
+			// Closing 是最终状态，可以直接设置
+		default:
+			return errors.Errorf("invalid pending status: %s", pendingStatus)
+		}
 
 		err = l.svcCtx.LoanRepo.UpdatePendingStatusWithTx(l.ctx, tx, in.Data.Id, pendingStatus)
 		if err != nil {

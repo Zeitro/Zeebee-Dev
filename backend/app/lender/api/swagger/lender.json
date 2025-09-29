@@ -2262,6 +2262,64 @@
         }
       }
     },
+    "/api/v1/loan/{id}/review_pending_status": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "loan"
+        ],
+        "summary": "reveiw loan pending status",
+        "operationId": "loanReviewPendingStatus",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "action",
+                "comment",
+                "current_pending_status"
+              ],
+              "properties": {
+                "action": {
+                  "type": "string"
+                },
+                "comment": {
+                  "type": "string"
+                },
+                "current_pending_status": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/loan/{id}/stage": {
       "patch": {
         "consumes": [
@@ -2795,7 +2853,7 @@
       }
     }
   },
-  "x-date": "2025-09-28 16:17:01",
+  "x-date": "2025-09-29 11:24:11",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

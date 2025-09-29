@@ -62,6 +62,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: loan.UpdatePendingStatusHandler(serverCtx),
 				},
 				{
+					// reveiw loan pending status
+					Method:  http.MethodPost,
+					Path:    "/loan/:id/review_pending_status",
+					Handler: loan.ReviewPendingStatusHandler(serverCtx),
+				},
+				{
 					// update loan stage
 					Method:  http.MethodPatch,
 					Path:    "/loan/:id/stage",
