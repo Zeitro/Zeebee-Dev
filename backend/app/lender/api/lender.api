@@ -11,6 +11,7 @@ import "desc/user.api"
 import "desc/common.api"
 import "desc/us_geography.api"
 import "desc/loan.api"
+import "desc/storage.api"
 
 type (
 	EmptyRequest{
@@ -121,5 +122,20 @@ service lender-api {
 	@doc "reveiw loan pending status"
 	@handler ReviewPendingStatus
 	post /loan/:id/review_pending_status (ReviewLoanPendingStatusRequest) returns (EmptyResponse)
+}
+
+// =============== storage ==============
+@server(
+	desc: "storage service"
+	version: v1
+	group: storage
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: storage
+)
+service lender-api {
+	@doc "create aws s3 presign url"
+	@handler CreateAwsS3PresignUrl
+	post /storage/presign_url (S3PresignUrlCreateRequest) returns (S3PresignUrlCreateResponse)
 }
 

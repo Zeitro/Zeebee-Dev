@@ -74,15 +74,7 @@ type Loan struct {
 	LoanExperiences   []*LoanExperience   `json:"loan_experiences" gorm:"foreignKey:LoanId;references:Id"`
 	LoanThirdServices []*LoanThirdService `json:"loan_third_services" gorm:"foreignKey:LoanId;references:Id"`
 	LoanDemographic   *LoanDemographic    `json:"loan_demographic" gorm:"foreignKey:LoanId;references:Id"`
-	ApplyFormFile     *File               `json:"apply_form_file" gorm:"polymorphicType:FileType;polymorphicId:RefId;polymorphicValue:ApplyForm"`
-	// IdentificationFile   *File               `json:"identification_file" gorm:"polymorphicType:FileType;polymorphicId:RefId;polymorphicValue:Identification"`
-	// IncomeFile           *File               `json:"income_file" gorm:"polymorphicType:FileType;polymorphicId:RefId;polymorphicValue:Income"`
-	// PropertyFile         *File               `json:"property_file" gorm:"polymorphicType:FileType;polymorphicId:RefId;polymorphicValue:Property"`
-	// AssetsFile           *File               `json:"assets_file" gorm:"polymorphicType:FileType;polymorphicId:RefId;polymorphicValue:Assets"`
-	// CreditFile           *File               `json:"credit_file" gorm:"polymorphicType:FileType;polymorphicId:RefId;polymorphicValue:Credit"`
-	// MiscellaneousFile    *File               `json:"miscellaneous_file" gorm:"polymorphicType:FileType;polymorphicId:RefId;polymorphicValue:Miscellaneous"`
-	// InternalDocumentFile *File               `json:"internal_document_file" gorm:"polymorphicType:FileType;polymorphicId:RefId;polymorphicValue:InternalDocument"`
-	Documents []*File `json:"documents" gorm:"polymorphicType:BizType;polymorphicId:RefId;polymorphicValue:Loan"`
+	LoanDocuments     []*LoanDocument     `json:"documents" gorm:"foreignKey:LoanId;references:Id"`
 }
 
 func (m Loan) TableName() string {
@@ -98,6 +90,5 @@ func (m *Loan) RemoveRelationships() {
 	m.LoanExperiences = nil
 	m.LoanThirdServices = nil
 	m.LoanDemographic = nil
-	m.ApplyFormFile = nil
-	m.Documents = nil
+	m.LoanDocuments = nil
 }

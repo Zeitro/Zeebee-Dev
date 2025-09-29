@@ -5335,12 +5335,11 @@ func (x *LoanDemographicExtraDemographicEntry) GetInfoChannels() []string {
 type FileEntry struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	BizType       string                 `protobuf:"bytes,2,opt,name=biz_type,json=bizType,proto3" json:"biz_type,omitempty"`
-	FileType      string                 `protobuf:"bytes,3,opt,name=file_type,json=fileType,proto3" json:"file_type,omitempty"`
-	RefId         int64                  `protobuf:"varint,4,opt,name=ref_id,json=refId,proto3" json:"ref_id,omitempty"`
-	File          string                 `protobuf:"bytes,5,opt,name=file,proto3" json:"file,omitempty"`
-	CreatedAt     string                 `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt     string                 `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	EntityType    string                 `protobuf:"bytes,2,opt,name=entity_type,json=entityType,proto3" json:"entity_type,omitempty"`
+	EntityId      int64                  `protobuf:"varint,3,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"`
+	FileUrl       string                 `protobuf:"bytes,4,opt,name=file_url,json=fileUrl,proto3" json:"file_url,omitempty"`
+	CreatedAt     string                 `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     string                 `protobuf:"bytes,6,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -5382,30 +5381,23 @@ func (x *FileEntry) GetId() int64 {
 	return 0
 }
 
-func (x *FileEntry) GetBizType() string {
+func (x *FileEntry) GetEntityType() string {
 	if x != nil {
-		return x.BizType
+		return x.EntityType
 	}
 	return ""
 }
 
-func (x *FileEntry) GetFileType() string {
+func (x *FileEntry) GetEntityId() int64 {
 	if x != nil {
-		return x.FileType
-	}
-	return ""
-}
-
-func (x *FileEntry) GetRefId() int64 {
-	if x != nil {
-		return x.RefId
+		return x.EntityId
 	}
 	return 0
 }
 
-func (x *FileEntry) GetFile() string {
+func (x *FileEntry) GetFileUrl() string {
 	if x != nil {
-		return x.File
+		return x.FileUrl
 	}
 	return ""
 }
@@ -5420,6 +5412,190 @@ func (x *FileEntry) GetCreatedAt() string {
 func (x *FileEntry) GetUpdatedAt() string {
 	if x != nil {
 		return x.UpdatedAt
+	}
+	return ""
+}
+
+type StorageCreatePresignedUrlRequest struct {
+	state         protoimpl.MessageState                `protogen:"open.v1"`
+	Data          *StorageCreatePresignedUrlRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StorageCreatePresignedUrlRequest) Reset() {
+	*x = StorageCreatePresignedUrlRequest{}
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[72]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StorageCreatePresignedUrlRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StorageCreatePresignedUrlRequest) ProtoMessage() {}
+
+func (x *StorageCreatePresignedUrlRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[72]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StorageCreatePresignedUrlRequest.ProtoReflect.Descriptor instead.
+func (*StorageCreatePresignedUrlRequest) Descriptor() ([]byte, []int) {
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{72}
+}
+
+func (x *StorageCreatePresignedUrlRequest) GetData() *StorageCreatePresignedUrlRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type StorageCreatePresignedUrlRequestData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Type          string                 `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
+	FileSuffix    string                 `protobuf:"bytes,2,opt,name=file_suffix,json=fileSuffix,proto3" json:"file_suffix,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StorageCreatePresignedUrlRequestData) Reset() {
+	*x = StorageCreatePresignedUrlRequestData{}
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[73]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StorageCreatePresignedUrlRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StorageCreatePresignedUrlRequestData) ProtoMessage() {}
+
+func (x *StorageCreatePresignedUrlRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[73]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StorageCreatePresignedUrlRequestData.ProtoReflect.Descriptor instead.
+func (*StorageCreatePresignedUrlRequestData) Descriptor() ([]byte, []int) {
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{73}
+}
+
+func (x *StorageCreatePresignedUrlRequestData) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *StorageCreatePresignedUrlRequestData) GetFileSuffix() string {
+	if x != nil {
+		return x.FileSuffix
+	}
+	return ""
+}
+
+type StorageCreatePresignedUrlResponse struct {
+	state         protoimpl.MessageState                 `protogen:"open.v1"`
+	Data          *StorageCreatePresignedUrlResponseData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StorageCreatePresignedUrlResponse) Reset() {
+	*x = StorageCreatePresignedUrlResponse{}
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[74]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StorageCreatePresignedUrlResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StorageCreatePresignedUrlResponse) ProtoMessage() {}
+
+func (x *StorageCreatePresignedUrlResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[74]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StorageCreatePresignedUrlResponse.ProtoReflect.Descriptor instead.
+func (*StorageCreatePresignedUrlResponse) Descriptor() ([]byte, []int) {
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{74}
+}
+
+func (x *StorageCreatePresignedUrlResponse) GetData() *StorageCreatePresignedUrlResponseData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type StorageCreatePresignedUrlResponseData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Url           string                 `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StorageCreatePresignedUrlResponseData) Reset() {
+	*x = StorageCreatePresignedUrlResponseData{}
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[75]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StorageCreatePresignedUrlResponseData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StorageCreatePresignedUrlResponseData) ProtoMessage() {}
+
+func (x *StorageCreatePresignedUrlResponseData) ProtoReflect() protoreflect.Message {
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[75]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StorageCreatePresignedUrlResponseData.ProtoReflect.Descriptor instead.
+func (*StorageCreatePresignedUrlResponseData) Descriptor() ([]byte, []int) {
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{75}
+}
+
+func (x *StorageCreatePresignedUrlResponseData) GetUrl() string {
+	if x != nil {
+		return x.Url
 	}
 	return ""
 }
@@ -5869,17 +6045,27 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"%is_ethnicity_collected_by_observation\x18\x01 \x01(\bR!isEthnicityCollectedByObservation\x12D\n" +
 	"\x1fis_sex_collected_by_observation\x18\x02 \x01(\bR\x1bisSexCollectedByObservation\x12F\n" +
 	" is_race_collected_by_observation\x18\x03 \x01(\bR\x1cisRaceCollectedByObservation\x12#\n" +
-	"\rinfo_channels\x18\x04 \x03(\tR\finfoChannels\"\xbc\x01\n" +
+	"\rinfo_channels\x18\x04 \x03(\tR\finfoChannels\"\xb2\x01\n" +
 	"\tFileEntry\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
-	"\bbiz_type\x18\x02 \x01(\tR\abizType\x12\x1b\n" +
-	"\tfile_type\x18\x03 \x01(\tR\bfileType\x12\x15\n" +
-	"\x06ref_id\x18\x04 \x01(\x03R\x05refId\x12\x12\n" +
-	"\x04file\x18\x05 \x01(\tR\x04file\x12\x1d\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
+	"\ventity_type\x18\x02 \x01(\tR\n" +
+	"entityType\x12\x1b\n" +
+	"\tentity_id\x18\x03 \x01(\x03R\bentityId\x12\x19\n" +
+	"\bfile_url\x18\x04 \x01(\tR\afileUrl\x12\x1d\n" +
 	"\n" +
-	"created_at\x18\x06 \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"created_at\x18\x05 \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\a \x01(\tR\tupdatedAt2\xc7\x01\n" +
+	"updated_at\x18\x06 \x01(\tR\tupdatedAt\"d\n" +
+	" StorageCreatePresignedUrlRequest\x12@\n" +
+	"\x04data\x18\x01 \x01(\v2,.lender.StorageCreatePresignedUrlRequestDataR\x04data\"[\n" +
+	"$StorageCreatePresignedUrlRequestData\x12\x12\n" +
+	"\x04type\x18\x01 \x01(\tR\x04type\x12\x1f\n" +
+	"\vfile_suffix\x18\x02 \x01(\tR\n" +
+	"fileSuffix\"f\n" +
+	"!StorageCreatePresignedUrlResponse\x12A\n" +
+	"\x04data\x18\x01 \x01(\v2-.lender.StorageCreatePresignedUrlResponseDataR\x04data\"9\n" +
+	"%StorageCreatePresignedUrlResponseData\x12\x10\n" +
+	"\x03url\x18\x01 \x01(\tR\x03url2\xc7\x01\n" +
 	"\x06common\x127\n" +
 	"\x06GetOpt\x12\x15.lender.OptionRequest\x1a\x16.lender.OptionResponse\x12?\n" +
 	"\n" +
@@ -5901,7 +6087,9 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x13UpdateLoanDocuments\x12\".lender.LoanUpdateDocumentsRequest\x1a\x15.lender.EmptyResponse\x12H\n" +
 	"\x0fUpdateLoanStage\x12\x1e.lender.LoanUpdateStageRequest\x1a\x15.lender.EmptyResponse\x12X\n" +
 	"\x17UpdateLoanPendingStatus\x12&.lender.LoanUpdatePendingStatusRequest\x1a\x15.lender.EmptyResponse\x12T\n" +
-	"\x13PendingStatusReview\x12&.lender.LoanPendingStatusReviewRequest\x1a\x15.lender.EmptyResponseB\n" +
+	"\x13PendingStatusReview\x12&.lender.LoanPendingStatusReviewRequest\x1a\x15.lender.EmptyResponse2t\n" +
+	"\aStorage\x12i\n" +
+	"\x12CreatePresignedUrl\x12(.lender.StorageCreatePresignedUrlRequest\x1a).lender.StorageCreatePresignedUrlResponseB\n" +
 	"Z\b./lenderb\x06proto3"
 
 var (
@@ -5916,80 +6104,84 @@ func file_app_lender_rpc_pb_lender_proto_rawDescGZIP() []byte {
 	return file_app_lender_rpc_pb_lender_proto_rawDescData
 }
 
-var file_app_lender_rpc_pb_lender_proto_msgTypes = make([]protoimpl.MessageInfo, 72)
+var file_app_lender_rpc_pb_lender_proto_msgTypes = make([]protoimpl.MessageInfo, 76)
 var file_app_lender_rpc_pb_lender_proto_goTypes = []any{
-	(*EmptyRequest)(nil),                         // 0: lender.EmptyRequest
-	(*EmptyResponse)(nil),                        // 1: lender.EmptyResponse
-	(*StringSliceResponse)(nil),                  // 2: lender.StringSliceResponse
-	(*OptionRequest)(nil),                        // 3: lender.OptionRequest
-	(*OptionRequestData)(nil),                    // 4: lender.OptionRequestData
-	(*OptionResponse)(nil),                       // 5: lender.OptionResponse
-	(*OptionEntry)(nil),                          // 6: lender.OptionEntry
-	(*UsCitiesRequest)(nil),                      // 7: lender.UsCitiesRequest
-	(*UsCitiesRequestData)(nil),                  // 8: lender.UsCitiesRequestData
-	(*UserLoginRequest)(nil),                     // 9: lender.UserLoginRequest
-	(*UserLoginResponse)(nil),                    // 10: lender.UserLoginResponse
-	(*UserLoginRequestData)(nil),                 // 11: lender.UserLoginRequestData
-	(*UserLoginResponseData)(nil),                // 12: lender.UserLoginResponseData
-	(*UserRegisterRequest)(nil),                  // 13: lender.UserRegisterRequest
-	(*UserRegisterResponse)(nil),                 // 14: lender.UserRegisterResponse
-	(*UserRegisterRequestData)(nil),              // 15: lender.UserRegisterRequestData
-	(*UserRegisterResponseData)(nil),             // 16: lender.UserRegisterResponseData
-	(*RefreshTokenRequest)(nil),                  // 17: lender.RefreshTokenRequest
-	(*RefreshTokenRequestData)(nil),              // 18: lender.RefreshTokenRequestData
-	(*RefreshTokenResponse)(nil),                 // 19: lender.RefreshTokenResponse
-	(*RefreshTokenResponseData)(nil),             // 20: lender.RefreshTokenResponseData
-	(*ResetPasswordRequest)(nil),                 // 21: lender.ResetPasswordRequest
-	(*ResetPasswordResponse)(nil),                // 22: lender.ResetPasswordResponse
-	(*SendResetPasswordEmailRequest)(nil),        // 23: lender.SendResetPasswordEmailRequest
-	(*SendResetPasswordEmailResponse)(nil),       // 24: lender.SendResetPasswordEmailResponse
-	(*SendResetPasswordEmailRequestData)(nil),    // 25: lender.SendResetPasswordEmailRequestData
-	(*ResetPasswordRequestData)(nil),             // 26: lender.ResetPasswordRequestData
-	(*ResetPasswordResponseData)(nil),            // 27: lender.ResetPasswordResponseData
-	(*UserInfoRequest)(nil),                      // 28: lender.UserInfoRequest
-	(*UserInfoRequestData)(nil),                  // 29: lender.UserInfoRequestData
-	(*UserinfoResponse)(nil),                     // 30: lender.UserinfoResponse
-	(*UserinfoResponseData)(nil),                 // 31: lender.UserinfoResponseData
-	(*PropertyBaseEntry)(nil),                    // 32: lender.PropertyBaseEntry
-	(*LoanPropertyEntry)(nil),                    // 33: lender.LoanPropertyEntry
-	(*AddressEntry)(nil),                         // 34: lender.AddressEntry
-	(*ApplicantEntry)(nil),                       // 35: lender.ApplicantEntry
-	(*LoanEntry)(nil),                            // 36: lender.LoanEntry
-	(*LoanBudgetEntry)(nil),                      // 37: lender.LoanBudgetEntry
-	(*BorrowerEditApplicantEntry)(nil),           // 38: lender.BorrowerEditApplicantEntry
-	(*LoanDetailRequest)(nil),                    // 39: lender.LoanDetailRequest
-	(*LoanDetailRequestData)(nil),                // 40: lender.LoanDetailRequestData
-	(*LoanDetailResponse)(nil),                   // 41: lender.LoanDetailResponse
-	(*LoanDeleteRequest)(nil),                    // 42: lender.LoanDeleteRequest
-	(*LoanDeleteRequestData)(nil),                // 43: lender.LoanDeleteRequestData
-	(*LoanPageRequest)(nil),                      // 44: lender.LoanPageRequest
-	(*LoanPageResponse)(nil),                     // 45: lender.LoanPageResponse
-	(*LoanPageRequestFilter)(nil),                // 46: lender.LoanPageRequestFilter
-	(*LoanPageRequestSorter)(nil),                // 47: lender.LoanPageRequestSorter
-	(*LoanPageRequestData)(nil),                  // 48: lender.LoanPageRequestData
-	(*LoanPageResponseData)(nil),                 // 49: lender.LoanPageResponseData
-	(*LoanUpdateRequest)(nil),                    // 50: lender.LoanUpdateRequest
-	(*LoanUpdateRequestData)(nil),                // 51: lender.LoanUpdateRequestData
-	(*LoanUpdateResponse)(nil),                   // 52: lender.LoanUpdateResponse
-	(*LoanUpdateResponseData)(nil),               // 53: lender.LoanUpdateResponseData
-	(*LoanExtendValueEntry)(nil),                 // 54: lender.LoanExtendValueEntry
-	(*LoanUpdateDocumentsRequest)(nil),           // 55: lender.LoanUpdateDocumentsRequest
-	(*LoanUpdateDocumentsRequestData)(nil),       // 56: lender.LoanUpdateDocumentsRequestData
-	(*LoanUpdateStageRequest)(nil),               // 57: lender.LoanUpdateStageRequest
-	(*LoanUpdateStageRequestData)(nil),           // 58: lender.LoanUpdateStageRequestData
-	(*LoanUpdatePendingStatusRequest)(nil),       // 59: lender.LoanUpdatePendingStatusRequest
-	(*LoanUpdatePendingStatusRequestData)(nil),   // 60: lender.LoanUpdatePendingStatusRequestData
-	(*LoanPendingStatusReviewRequest)(nil),       // 61: lender.LoanPendingStatusReviewRequest
-	(*LoanPendingStatusReviewRequestData)(nil),   // 62: lender.LoanPendingStatusReviewRequestData
-	(*LoanBorrowerEntry)(nil),                    // 63: lender.LoanBorrowerEntry
-	(*LoanExperienceEntry)(nil),                  // 64: lender.LoanExperienceEntry
-	(*LoanThirdServiceEntry)(nil),                // 65: lender.LoanThirdServiceEntry
-	(*LoanDemographicEntry)(nil),                 // 66: lender.LoanDemographicEntry
-	(*LoanDemographicPropertyEntry)(nil),         // 67: lender.LoanDemographicPropertyEntry
-	(*LoanDemographicEthnicityEntry)(nil),        // 68: lender.LoanDemographicEthnicityEntry
-	(*LoanDemographicRaceEntry)(nil),             // 69: lender.LoanDemographicRaceEntry
-	(*LoanDemographicExtraDemographicEntry)(nil), // 70: lender.LoanDemographicExtraDemographicEntry
-	(*FileEntry)(nil),                            // 71: lender.FileEntry
+	(*EmptyRequest)(nil),                          // 0: lender.EmptyRequest
+	(*EmptyResponse)(nil),                         // 1: lender.EmptyResponse
+	(*StringSliceResponse)(nil),                   // 2: lender.StringSliceResponse
+	(*OptionRequest)(nil),                         // 3: lender.OptionRequest
+	(*OptionRequestData)(nil),                     // 4: lender.OptionRequestData
+	(*OptionResponse)(nil),                        // 5: lender.OptionResponse
+	(*OptionEntry)(nil),                           // 6: lender.OptionEntry
+	(*UsCitiesRequest)(nil),                       // 7: lender.UsCitiesRequest
+	(*UsCitiesRequestData)(nil),                   // 8: lender.UsCitiesRequestData
+	(*UserLoginRequest)(nil),                      // 9: lender.UserLoginRequest
+	(*UserLoginResponse)(nil),                     // 10: lender.UserLoginResponse
+	(*UserLoginRequestData)(nil),                  // 11: lender.UserLoginRequestData
+	(*UserLoginResponseData)(nil),                 // 12: lender.UserLoginResponseData
+	(*UserRegisterRequest)(nil),                   // 13: lender.UserRegisterRequest
+	(*UserRegisterResponse)(nil),                  // 14: lender.UserRegisterResponse
+	(*UserRegisterRequestData)(nil),               // 15: lender.UserRegisterRequestData
+	(*UserRegisterResponseData)(nil),              // 16: lender.UserRegisterResponseData
+	(*RefreshTokenRequest)(nil),                   // 17: lender.RefreshTokenRequest
+	(*RefreshTokenRequestData)(nil),               // 18: lender.RefreshTokenRequestData
+	(*RefreshTokenResponse)(nil),                  // 19: lender.RefreshTokenResponse
+	(*RefreshTokenResponseData)(nil),              // 20: lender.RefreshTokenResponseData
+	(*ResetPasswordRequest)(nil),                  // 21: lender.ResetPasswordRequest
+	(*ResetPasswordResponse)(nil),                 // 22: lender.ResetPasswordResponse
+	(*SendResetPasswordEmailRequest)(nil),         // 23: lender.SendResetPasswordEmailRequest
+	(*SendResetPasswordEmailResponse)(nil),        // 24: lender.SendResetPasswordEmailResponse
+	(*SendResetPasswordEmailRequestData)(nil),     // 25: lender.SendResetPasswordEmailRequestData
+	(*ResetPasswordRequestData)(nil),              // 26: lender.ResetPasswordRequestData
+	(*ResetPasswordResponseData)(nil),             // 27: lender.ResetPasswordResponseData
+	(*UserInfoRequest)(nil),                       // 28: lender.UserInfoRequest
+	(*UserInfoRequestData)(nil),                   // 29: lender.UserInfoRequestData
+	(*UserinfoResponse)(nil),                      // 30: lender.UserinfoResponse
+	(*UserinfoResponseData)(nil),                  // 31: lender.UserinfoResponseData
+	(*PropertyBaseEntry)(nil),                     // 32: lender.PropertyBaseEntry
+	(*LoanPropertyEntry)(nil),                     // 33: lender.LoanPropertyEntry
+	(*AddressEntry)(nil),                          // 34: lender.AddressEntry
+	(*ApplicantEntry)(nil),                        // 35: lender.ApplicantEntry
+	(*LoanEntry)(nil),                             // 36: lender.LoanEntry
+	(*LoanBudgetEntry)(nil),                       // 37: lender.LoanBudgetEntry
+	(*BorrowerEditApplicantEntry)(nil),            // 38: lender.BorrowerEditApplicantEntry
+	(*LoanDetailRequest)(nil),                     // 39: lender.LoanDetailRequest
+	(*LoanDetailRequestData)(nil),                 // 40: lender.LoanDetailRequestData
+	(*LoanDetailResponse)(nil),                    // 41: lender.LoanDetailResponse
+	(*LoanDeleteRequest)(nil),                     // 42: lender.LoanDeleteRequest
+	(*LoanDeleteRequestData)(nil),                 // 43: lender.LoanDeleteRequestData
+	(*LoanPageRequest)(nil),                       // 44: lender.LoanPageRequest
+	(*LoanPageResponse)(nil),                      // 45: lender.LoanPageResponse
+	(*LoanPageRequestFilter)(nil),                 // 46: lender.LoanPageRequestFilter
+	(*LoanPageRequestSorter)(nil),                 // 47: lender.LoanPageRequestSorter
+	(*LoanPageRequestData)(nil),                   // 48: lender.LoanPageRequestData
+	(*LoanPageResponseData)(nil),                  // 49: lender.LoanPageResponseData
+	(*LoanUpdateRequest)(nil),                     // 50: lender.LoanUpdateRequest
+	(*LoanUpdateRequestData)(nil),                 // 51: lender.LoanUpdateRequestData
+	(*LoanUpdateResponse)(nil),                    // 52: lender.LoanUpdateResponse
+	(*LoanUpdateResponseData)(nil),                // 53: lender.LoanUpdateResponseData
+	(*LoanExtendValueEntry)(nil),                  // 54: lender.LoanExtendValueEntry
+	(*LoanUpdateDocumentsRequest)(nil),            // 55: lender.LoanUpdateDocumentsRequest
+	(*LoanUpdateDocumentsRequestData)(nil),        // 56: lender.LoanUpdateDocumentsRequestData
+	(*LoanUpdateStageRequest)(nil),                // 57: lender.LoanUpdateStageRequest
+	(*LoanUpdateStageRequestData)(nil),            // 58: lender.LoanUpdateStageRequestData
+	(*LoanUpdatePendingStatusRequest)(nil),        // 59: lender.LoanUpdatePendingStatusRequest
+	(*LoanUpdatePendingStatusRequestData)(nil),    // 60: lender.LoanUpdatePendingStatusRequestData
+	(*LoanPendingStatusReviewRequest)(nil),        // 61: lender.LoanPendingStatusReviewRequest
+	(*LoanPendingStatusReviewRequestData)(nil),    // 62: lender.LoanPendingStatusReviewRequestData
+	(*LoanBorrowerEntry)(nil),                     // 63: lender.LoanBorrowerEntry
+	(*LoanExperienceEntry)(nil),                   // 64: lender.LoanExperienceEntry
+	(*LoanThirdServiceEntry)(nil),                 // 65: lender.LoanThirdServiceEntry
+	(*LoanDemographicEntry)(nil),                  // 66: lender.LoanDemographicEntry
+	(*LoanDemographicPropertyEntry)(nil),          // 67: lender.LoanDemographicPropertyEntry
+	(*LoanDemographicEthnicityEntry)(nil),         // 68: lender.LoanDemographicEthnicityEntry
+	(*LoanDemographicRaceEntry)(nil),              // 69: lender.LoanDemographicRaceEntry
+	(*LoanDemographicExtraDemographicEntry)(nil),  // 70: lender.LoanDemographicExtraDemographicEntry
+	(*FileEntry)(nil),                             // 71: lender.FileEntry
+	(*StorageCreatePresignedUrlRequest)(nil),      // 72: lender.StorageCreatePresignedUrlRequest
+	(*StorageCreatePresignedUrlRequestData)(nil),  // 73: lender.StorageCreatePresignedUrlRequestData
+	(*StorageCreatePresignedUrlResponse)(nil),     // 74: lender.StorageCreatePresignedUrlResponse
+	(*StorageCreatePresignedUrlResponseData)(nil), // 75: lender.StorageCreatePresignedUrlResponseData
 }
 var file_app_lender_rpc_pb_lender_proto_depIdxs = []int32{
 	4,  // 0: lender.OptionRequest.data:type_name -> lender.OptionRequestData
@@ -6048,43 +6240,47 @@ var file_app_lender_rpc_pb_lender_proto_depIdxs = []int32{
 	67, // 53: lender.LoanDemographicEntry.property:type_name -> lender.LoanDemographicPropertyEntry
 	68, // 54: lender.LoanDemographicEntry.ethnicity:type_name -> lender.LoanDemographicEthnicityEntry
 	69, // 55: lender.LoanDemographicEntry.race:type_name -> lender.LoanDemographicRaceEntry
-	3,  // 56: lender.common.GetOpt:input_type -> lender.OptionRequest
-	0,  // 57: lender.common.GetUsState:input_type -> lender.EmptyRequest
-	7,  // 58: lender.common.GetUsCities:input_type -> lender.UsCitiesRequest
-	9,  // 59: lender.user.Login:input_type -> lender.UserLoginRequest
-	13, // 60: lender.user.Register:input_type -> lender.UserRegisterRequest
-	17, // 61: lender.user.RefreshToken:input_type -> lender.RefreshTokenRequest
-	21, // 62: lender.user.ResetPassword:input_type -> lender.ResetPasswordRequest
-	23, // 63: lender.user.SendResetPasswordEmail:input_type -> lender.SendResetPasswordEmailRequest
-	28, // 64: lender.user.UserInfo:input_type -> lender.UserInfoRequest
-	39, // 65: lender.Loan.LoanDetail:input_type -> lender.LoanDetailRequest
-	44, // 66: lender.Loan.LoanPage:input_type -> lender.LoanPageRequest
-	50, // 67: lender.Loan.UpdateLoan:input_type -> lender.LoanUpdateRequest
-	55, // 68: lender.Loan.UpdateLoanDocuments:input_type -> lender.LoanUpdateDocumentsRequest
-	57, // 69: lender.Loan.UpdateLoanStage:input_type -> lender.LoanUpdateStageRequest
-	59, // 70: lender.Loan.UpdateLoanPendingStatus:input_type -> lender.LoanUpdatePendingStatusRequest
-	61, // 71: lender.Loan.PendingStatusReview:input_type -> lender.LoanPendingStatusReviewRequest
-	5,  // 72: lender.common.GetOpt:output_type -> lender.OptionResponse
-	2,  // 73: lender.common.GetUsState:output_type -> lender.StringSliceResponse
-	2,  // 74: lender.common.GetUsCities:output_type -> lender.StringSliceResponse
-	10, // 75: lender.user.Login:output_type -> lender.UserLoginResponse
-	14, // 76: lender.user.Register:output_type -> lender.UserRegisterResponse
-	19, // 77: lender.user.RefreshToken:output_type -> lender.RefreshTokenResponse
-	22, // 78: lender.user.ResetPassword:output_type -> lender.ResetPasswordResponse
-	24, // 79: lender.user.SendResetPasswordEmail:output_type -> lender.SendResetPasswordEmailResponse
-	30, // 80: lender.user.UserInfo:output_type -> lender.UserinfoResponse
-	41, // 81: lender.Loan.LoanDetail:output_type -> lender.LoanDetailResponse
-	45, // 82: lender.Loan.LoanPage:output_type -> lender.LoanPageResponse
-	52, // 83: lender.Loan.UpdateLoan:output_type -> lender.LoanUpdateResponse
-	1,  // 84: lender.Loan.UpdateLoanDocuments:output_type -> lender.EmptyResponse
-	1,  // 85: lender.Loan.UpdateLoanStage:output_type -> lender.EmptyResponse
-	1,  // 86: lender.Loan.UpdateLoanPendingStatus:output_type -> lender.EmptyResponse
-	1,  // 87: lender.Loan.PendingStatusReview:output_type -> lender.EmptyResponse
-	72, // [72:88] is the sub-list for method output_type
-	56, // [56:72] is the sub-list for method input_type
-	56, // [56:56] is the sub-list for extension type_name
-	56, // [56:56] is the sub-list for extension extendee
-	0,  // [0:56] is the sub-list for field type_name
+	73, // 56: lender.StorageCreatePresignedUrlRequest.data:type_name -> lender.StorageCreatePresignedUrlRequestData
+	75, // 57: lender.StorageCreatePresignedUrlResponse.data:type_name -> lender.StorageCreatePresignedUrlResponseData
+	3,  // 58: lender.common.GetOpt:input_type -> lender.OptionRequest
+	0,  // 59: lender.common.GetUsState:input_type -> lender.EmptyRequest
+	7,  // 60: lender.common.GetUsCities:input_type -> lender.UsCitiesRequest
+	9,  // 61: lender.user.Login:input_type -> lender.UserLoginRequest
+	13, // 62: lender.user.Register:input_type -> lender.UserRegisterRequest
+	17, // 63: lender.user.RefreshToken:input_type -> lender.RefreshTokenRequest
+	21, // 64: lender.user.ResetPassword:input_type -> lender.ResetPasswordRequest
+	23, // 65: lender.user.SendResetPasswordEmail:input_type -> lender.SendResetPasswordEmailRequest
+	28, // 66: lender.user.UserInfo:input_type -> lender.UserInfoRequest
+	39, // 67: lender.Loan.LoanDetail:input_type -> lender.LoanDetailRequest
+	44, // 68: lender.Loan.LoanPage:input_type -> lender.LoanPageRequest
+	50, // 69: lender.Loan.UpdateLoan:input_type -> lender.LoanUpdateRequest
+	55, // 70: lender.Loan.UpdateLoanDocuments:input_type -> lender.LoanUpdateDocumentsRequest
+	57, // 71: lender.Loan.UpdateLoanStage:input_type -> lender.LoanUpdateStageRequest
+	59, // 72: lender.Loan.UpdateLoanPendingStatus:input_type -> lender.LoanUpdatePendingStatusRequest
+	61, // 73: lender.Loan.PendingStatusReview:input_type -> lender.LoanPendingStatusReviewRequest
+	72, // 74: lender.Storage.CreatePresignedUrl:input_type -> lender.StorageCreatePresignedUrlRequest
+	5,  // 75: lender.common.GetOpt:output_type -> lender.OptionResponse
+	2,  // 76: lender.common.GetUsState:output_type -> lender.StringSliceResponse
+	2,  // 77: lender.common.GetUsCities:output_type -> lender.StringSliceResponse
+	10, // 78: lender.user.Login:output_type -> lender.UserLoginResponse
+	14, // 79: lender.user.Register:output_type -> lender.UserRegisterResponse
+	19, // 80: lender.user.RefreshToken:output_type -> lender.RefreshTokenResponse
+	22, // 81: lender.user.ResetPassword:output_type -> lender.ResetPasswordResponse
+	24, // 82: lender.user.SendResetPasswordEmail:output_type -> lender.SendResetPasswordEmailResponse
+	30, // 83: lender.user.UserInfo:output_type -> lender.UserinfoResponse
+	41, // 84: lender.Loan.LoanDetail:output_type -> lender.LoanDetailResponse
+	45, // 85: lender.Loan.LoanPage:output_type -> lender.LoanPageResponse
+	52, // 86: lender.Loan.UpdateLoan:output_type -> lender.LoanUpdateResponse
+	1,  // 87: lender.Loan.UpdateLoanDocuments:output_type -> lender.EmptyResponse
+	1,  // 88: lender.Loan.UpdateLoanStage:output_type -> lender.EmptyResponse
+	1,  // 89: lender.Loan.UpdateLoanPendingStatus:output_type -> lender.EmptyResponse
+	1,  // 90: lender.Loan.PendingStatusReview:output_type -> lender.EmptyResponse
+	74, // 91: lender.Storage.CreatePresignedUrl:output_type -> lender.StorageCreatePresignedUrlResponse
+	75, // [75:92] is the sub-list for method output_type
+	58, // [58:75] is the sub-list for method input_type
+	58, // [58:58] is the sub-list for extension type_name
+	58, // [58:58] is the sub-list for extension extendee
+	0,  // [0:58] is the sub-list for field type_name
 }
 
 func init() { file_app_lender_rpc_pb_lender_proto_init() }
@@ -6098,9 +6294,9 @@ func file_app_lender_rpc_pb_lender_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_app_lender_rpc_pb_lender_proto_rawDesc), len(file_app_lender_rpc_pb_lender_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   72,
+			NumMessages:   76,
 			NumExtensions: 0,
-			NumServices:   3,
+			NumServices:   4,
 		},
 		GoTypes:           file_app_lender_rpc_pb_lender_proto_goTypes,
 		DependencyIndexes: file_app_lender_rpc_pb_lender_proto_depIdxs,

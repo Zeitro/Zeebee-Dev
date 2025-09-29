@@ -8,6 +8,7 @@ import (
 
 	common "zeebee-backend/app/lender/api/internal/handler/common"
 	loan "zeebee-backend/app/lender/api/internal/handler/loan"
+	storage "zeebee-backend/app/lender/api/internal/handler/storage"
 	user "zeebee-backend/app/lender/api/internal/handler/user"
 	"zeebee-backend/app/lender/api/internal/svc"
 
@@ -78,6 +79,21 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/loan/page",
 					Handler: loan.PageHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// create aws s3 presign url
+					Method:  http.MethodPost,
+					Path:    "/storage/presign_url",
+					Handler: storage.CreateAwsS3PresignUrlHandler(serverCtx),
 				},
 			}...,
 		),
