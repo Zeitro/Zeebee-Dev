@@ -1,8 +1,6 @@
 package constants
 
 import (
-	"github.com/duke-git/lancet/v2/slice"
-
 	"zeebee-backend/common/enums"
 )
 
@@ -11,40 +9,29 @@ type LoanDocumentType string
 const LoanDocumentTypeName = "loan_document_type"
 
 const (
-	LoanDocumentTypeApplyForm        LoanDocumentType = "ApplyForm"
-	LoanDocumentTypeIdentification   LoanDocumentType = "Identification"
-	LoanDocumentTypeIncome           LoanDocumentType = "Income"
-	LoanDocumentTypeProperty         LoanDocumentType = "Property"
-	LoanDocumentTypeAssets           LoanDocumentType = "Assets"
-	LoanDocumentTypeCredit           LoanDocumentType = "Credit"
-	LoanDocumentTypeMiscellaneous    LoanDocumentType = "Miscellaneous"
-	LoanDocumentTypeInternalDocument LoanDocumentType = "InternalDocument"
+	// borrower document
+	LoanDocumentTypeValidID                = "Valid ID of Borrower"
+	LoanDocumentTypePurchaseAgreement      = "Purchase Agreement"
+	LoanDocumentTypeEvidenceOfInsurance    = "Evidence of Insurance"
+	LoanDocumentTypePreliminaryTitleReport = "Preliminary Title Report/Escrow Contact"
+	LoanDocumentTypeREExperience           = "RE Experience"
+	LoanDocumentTypeBankStatements         = "Bank Statements for Most Recent Two Months"
+
+	// lender document
+	LoanDocumentTypeBorrowerCreditScore                         = "Borrower's Credit Score"
+	LoanDocumentTypeBorrowerDefaultFraudRiskViewCriminalRecords = "Borrower's Default/Fraud/Risk/View/Criminal Records And RE Experience"
+	LoanDocumentTypePropertyData                                = "Property Data/Historical Property Ownership"
+	LoanDocumentTypeTitleReport                                 = "Title Report"
 )
 
-func (c LoanDocumentType) IsValid() bool {
-	arr := []LoanDocumentType{
-		LoanDocumentTypeApplyForm,
-		LoanDocumentTypeIdentification,
-		LoanDocumentTypeIncome,
-		LoanDocumentTypeProperty,
-		LoanDocumentTypeAssets,
-		LoanDocumentTypeCredit,
-		LoanDocumentTypeMiscellaneous,
-		LoanDocumentTypeInternalDocument,
-	}
-	_, ok := slice.FindBy(arr, func(index int, item LoanDocumentType) bool {
-		return c == item
-	})
-	return ok
-}
-
 // uploader type
-type LoanDocumentUploaderType string
+type LoanDocumentCategory string
 
-const LoanDocumentUploaderTypeName = "loan_document_uploader_type"
+const LoanDocumentCategoryName = "loan_document_category"
 const (
-	LoanDocumentUploaderTypeBorrower LoanDocumentUploaderType = "Borrower"
-	LoanDocumentUploaderTypeLender   LoanDocumentUploaderType = "Lender"
+	LoanDocumentUploaderTypeBorrower = "Borrower"
+	LoanDocumentUploaderTypeLender   = "Lender"
+	LoanDocumentUploaderTypeExtend   = "Extend"
 )
 
 // loan  document status: Pending Uploand, Requested, Ready For review
@@ -61,40 +48,48 @@ func init() {
 	// register loan document type
 	enums.Register(LoanDocumentTypeName, []enums.EnumOpt{
 		{
-			Label: string(LoanDocumentTypeApplyForm),
-			Value: string(LoanDocumentTypeApplyForm),
+			Label: string(LoanDocumentTypeValidID),
+			Value: string(LoanDocumentTypeValidID),
 		},
 		{
-			Label: string(LoanDocumentTypeIdentification),
-			Value: string(LoanDocumentTypeIdentification),
+			Label: string(LoanDocumentTypePurchaseAgreement),
+			Value: string(LoanDocumentTypePurchaseAgreement),
 		},
 		{
-			Label: string(LoanDocumentTypeIncome),
-			Value: string(LoanDocumentTypeIncome),
+			Label: string(LoanDocumentTypeEvidenceOfInsurance),
+			Value: string(LoanDocumentTypeEvidenceOfInsurance),
 		},
 		{
-			Label: string(LoanDocumentTypeProperty),
-			Value: string(LoanDocumentTypeProperty),
+			Label: string(LoanDocumentTypePreliminaryTitleReport),
+			Value: string(LoanDocumentTypePreliminaryTitleReport),
 		},
 		{
-			Label: string(LoanDocumentTypeAssets),
-			Value: string(LoanDocumentTypeAssets),
+			Label: string(LoanDocumentTypeREExperience),
+			Value: string(LoanDocumentTypeREExperience),
 		},
 		{
-			Label: string(LoanDocumentTypeCredit),
-			Value: string(LoanDocumentTypeCredit),
+			Label: string(LoanDocumentTypeBankStatements),
+			Value: string(LoanDocumentTypeBankStatements),
 		},
 		{
-			Label: string(LoanDocumentTypeMiscellaneous),
-			Value: string(LoanDocumentTypeMiscellaneous),
+			Label: string(LoanDocumentTypeBorrowerCreditScore),
+			Value: string(LoanDocumentTypeBorrowerCreditScore),
 		},
 		{
-			Label: string(LoanDocumentTypeInternalDocument),
-			Value: string(LoanDocumentTypeInternalDocument),
+			Label: string(LoanDocumentTypeBorrowerDefaultFraudRiskViewCriminalRecords),
+			Value: string(LoanDocumentTypeBorrowerDefaultFraudRiskViewCriminalRecords),
+		},
+		{
+			Label: string(LoanDocumentTypePropertyData),
+			Value: string(LoanDocumentTypePropertyData),
+		},
+		{
+			Label: string(LoanDocumentTypeTitleReport),
+			Value: string(LoanDocumentTypeTitleReport),
 		},
 	})
-	// register loan document uploader type
-	enums.Register(LoanDocumentUploaderTypeName, []enums.EnumOpt{
+	// register loan document category
+	enums.Register(LoanDocumentCategoryName, []enums.EnumOpt{
 		{
 			Label: string(LoanDocumentUploaderTypeBorrower),
 			Value: string(LoanDocumentUploaderTypeBorrower),
@@ -102,6 +97,10 @@ func init() {
 		{
 			Label: string(LoanDocumentUploaderTypeLender),
 			Value: string(LoanDocumentUploaderTypeLender),
+		},
+		{
+			Label: string(LoanDocumentUploaderTypeExtend),
+			Value: string(LoanDocumentUploaderTypeExtend),
 		},
 	})
 
@@ -120,4 +119,24 @@ func init() {
 			Value: string(LoanDocumentStatusReadyForReview),
 		},
 	})
+}
+
+func GetLoanDocumentTypes() map[LoanDocumentCategory][]LoanDocumentType {
+	return map[LoanDocumentCategory][]LoanDocumentType{
+		LoanDocumentUploaderTypeBorrower: []LoanDocumentType{
+			LoanDocumentTypeValidID,
+			LoanDocumentTypePurchaseAgreement,
+			LoanDocumentTypeEvidenceOfInsurance,
+			LoanDocumentTypePreliminaryTitleReport,
+			LoanDocumentTypeREExperience,
+			LoanDocumentTypeBankStatements,
+		},
+		LoanDocumentUploaderTypeLender: []LoanDocumentType{
+			LoanDocumentTypeBorrowerCreditScore,
+			LoanDocumentTypeBorrowerDefaultFraudRiskViewCriminalRecords,
+			LoanDocumentTypePropertyData,
+			LoanDocumentTypeTitleReport,
+		},
+	}
+
 }

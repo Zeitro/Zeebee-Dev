@@ -76,6 +76,14 @@ func (repo *BaseRepo[T]) Create(ctx context.Context, data T) (T, error) {
 	return data, nil
 }
 
+func (repo *BaseRepo[T]) BatchCreate(ctx context.Context, data []T) error {
+	err := repo.db.WithContext(ctx).Create(&data).Error
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	return nil
+}
+
 func (repo *BaseRepo[T]) UpdateColumnsById(ctx context.Context, id int64, columns map[string]interface{}) error {
 	return errors.WithStack(repo.Client(ctx).Where("id = ?", id).Updates(columns).Error)
 }
@@ -121,6 +129,21 @@ func (repo *BaseRepo[T]) FindOneById(ctx context.Context, id int64) (T, error) {
 		"id": id,
 	})
 	return data, errors.WithStack(err)
+}
+
+func (repo *BaseRepo[T]) FindOneWithPreloadById(ctx context.Context, id int64, preloads []string) (T, error) {
+	var data T
+	var err error
+	query := repo.Client(ctx).Where("id = ?", id)
+	for index := range preloads {
+		query = query.Preload(preloads[index])
+	}
+
+	err = query.First(&data).Error
+	if err != nil {
+		return data, errors.WithStack(err)
+	}
+	return data, nil
 }
 
 func (repo *BaseRepo[T]) FindOneByIdWithTx(ctx context.Context, tx *gorm.DB, id int64) (T, error) {

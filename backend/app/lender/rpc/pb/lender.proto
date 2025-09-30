@@ -489,20 +489,11 @@ message LoanPendingStatusReviewRequestData {
   string comment = 6;
 }
 
-// loan document
-message LoanDocumentCreateRequest {
-  LoanDocumentCreateRequestData data = 1;
-}
-message LoanDocumentCreateRequestData {
-  int64 id = 1;
-  int64 lender_company_id = 2;
-  int64 lender_employee_id = 3;
-  string file_type = 4;
-  string file_url = 5;
-}
-message LoanDocumentCreateResponse {
-  LoanDocumentEntry data = 1;
-}
+
+
+
+
+
 
 service Loan {
   rpc LoanDetail(LoanDetailRequest) returns(LoanDetailResponse);
@@ -512,8 +503,9 @@ service Loan {
   rpc UpdateLoanStage(LoanUpdateStageRequest) returns(EmptyResponse);
   rpc UpdateLoanPendingStatus(LoanUpdatePendingStatusRequest) returns(EmptyResponse);
   rpc PendingStatusReview(LoanPendingStatusReviewRequest) returns(EmptyResponse);
-  rpc CreateLoanDocument(LoanDocumentCreateRequest) returns(LoanDocumentCreateResponse);
+
 }
+
 
 // ===================== loan document service ======================
 
@@ -527,6 +519,84 @@ message LoanDocumentEntry {
   string created_at = 7;
   string updated_at = 8;
   repeated FileEntry files = 9;
+}
+
+// update loan document comment
+message LoanDocumentUpdateCommentRequest {
+  LoanDocumentUpdateCommentRequestData data = 1;
+}
+message LoanDocumentUpdateCommentRequestData {
+  int64 id = 1;
+  int64 lender_company_id = 2;
+  int64 lender_employee_id = 3;
+  string comment = 4;
+}
+
+// delete loan document request
+message LoanDocumentDeleteRequestRequest {
+  LoanDocumentDeleteRequestRequestData data = 1;
+}
+message LoanDocumentDeleteRequestRequestData {
+  int64 id = 1;
+  int64 lender_company_id = 2;
+  int64 lender_employee_id = 3;
+}
+
+// delete loan document file
+message LoanDocumentDeleteFileRequest {
+  LoanDocumentDeleteFileRequestData data = 1;
+}
+message LoanDocumentDeleteFileRequestData {
+  int64 id = 1;
+  int64 lender_company_id = 2;
+  int64 lender_employee_id = 3;
+  int64 file_id = 4;
+}
+
+// send document requests
+message LoanDocumentSendRequestsRequest {
+  LoanDocumentSendRequestsRequestData data = 1;
+}
+message LoanDocumentSendRequestsRequestData {
+  int64 lender_company_id = 1;
+  int64 lender_employee_id = 2;
+  repeated SendDocumentRequestEntry document_types = 3;
+}
+
+message SendDocumentRequestEntry {
+  int64 id = 1;
+  string comment = 2;
+}
+
+// create loan document type
+message LoanDocumentCreateExtendTypeRequest {
+  LoanDocumentCreateExtendTypeRequestData data = 1;
+}
+message LoanDocumentCreateExtendTypeRequestData {
+  int64 loan_id = 1;
+  int64 lender_company_id = 2;
+  int64 lender_employee_id = 3;
+  repeated string file_types = 4;
+}
+// upload loan document files
+message LoanDocumentUploadFilesRequest {
+  LoanDocumentUploadFilesRequestData data = 1;
+}
+message LoanDocumentUploadFilesRequestData {
+  int64 id = 1;
+  int64 lender_company_id = 2;
+  int64 lender_employee_id = 3;
+  repeated string file_urls = 4;
+}
+
+
+service LoanDocument {
+  rpc Create(LoanDocumentCreateExtendTypeRequest) returns(EmptyResponse);
+  rpc SendRequests(LoanDocumentSendRequestsRequest) returns(EmptyResponse);
+  rpc DeleteFile(LoanDocumentDeleteFileRequest) returns(EmptyResponse);
+  rpc DeleteRequest(LoanDocumentDeleteRequestRequest) returns(EmptyResponse);
+  rpc UpdateComment(LoanDocumentUpdateCommentRequest) returns(EmptyResponse);
+  rpc UploadFiles(LoanDocumentUploadFilesRequest) returns(EmptyResponse);
 }
 
 
