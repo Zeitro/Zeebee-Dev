@@ -7,12 +7,17 @@ type LoanOperationAction string
 const LoanOperationActionName = "loan_operation_action"
 
 const (
-	LoanOperationActionCreate  LoanOperationAction = "Create"
-	LoanOperationActionUpdate  LoanOperationAction = "Update"
-	LoanOperationActionReject  LoanOperationAction = "Reject"
-	LoanOperationActionApprove LoanOperationAction = "Approve"
-	LoanOperationActionComment LoanOperationAction = "Comment"
-	LoanOperationActionDelete  LoanOperationAction = "Delete"
+	LoanOperationActionCreate                LoanOperationAction = "Create"
+	LoanOperationActionUpdate                LoanOperationAction = "Update"
+	LoanOperationActionReject                LoanOperationAction = "Reject"
+	LoanOperationActionApprove               LoanOperationAction = "Approve"
+	LoanOperationActionComment               LoanOperationAction = "Comment"
+	LoanOperationActionDelete                LoanOperationAction = "Delete"
+	LoanOperationActionCreateDocumentType    LoanOperationAction = "CreateDocumentType"
+	LoanOperationActionSendDocumentRequest   LoanOperationAction = "SendDocumentRequest"
+	LoanOperationActionDeleteDocumentRequest LoanOperationAction = "DeleteDocumentRequest"
+	LoanOperationActionUploadDocumentFile    LoanOperationAction = "UpdateDocumentFile"
+	LoanOperationActionDeleteDocumentFile    LoanOperationAction = "DeleteDocumentFile"
 )
 
 type LoanOperationOperatorType string
@@ -21,6 +26,7 @@ const LoanOperationOperatorTypeName = "loan_operation_operator_type"
 const (
 	LoanOperationOperatorTypeBorrower LoanOperationOperatorType = "Borrower"
 	LoanOperationOperatorTypeLender   LoanOperationOperatorType = "Lender"
+	LoanOperationOperatorTypeSystem   LoanOperationOperatorType = "System"
 )
 
 func init() {
@@ -50,6 +56,26 @@ func init() {
 			Label: string(LoanOperationActionDelete),
 			Value: string(LoanOperationActionDelete),
 		},
+		{
+			Label: string(LoanOperationActionCreateDocumentType),
+			Value: string(LoanOperationActionCreateDocumentType),
+		},
+		{
+			Label: string(LoanOperationActionSendDocumentRequest),
+			Value: string(LoanOperationActionSendDocumentRequest),
+		},
+		{
+			Label: string(LoanOperationActionDeleteDocumentRequest),
+			Value: string(LoanOperationActionDeleteDocumentRequest),
+		},
+		{
+			Label: string(LoanOperationActionUploadDocumentFile),
+			Value: string(LoanOperationActionUploadDocumentFile),
+		},
+		{
+			Label: string(LoanOperationActionDeleteDocumentFile),
+			Value: string(LoanOperationActionDeleteDocumentFile),
+		},
 	})
 
 	// register loan operation operator type
@@ -61,6 +87,10 @@ func init() {
 		{
 			Label: string(LoanOperationOperatorTypeLender),
 			Value: string(LoanOperationOperatorTypeLender),
+		},
+		{
+			Label: string(LoanOperationOperatorTypeSystem),
+			Value: string(LoanOperationOperatorTypeSystem),
 		},
 	})
 }

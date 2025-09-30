@@ -19,10 +19,14 @@ var SendResetPwdEmailTpl string
 //go:embed send_login_url_email.html
 var SendLoginUrlEmailTpl string
 
+//go:embed send_loan_document_request.html
+var SendLoanDocumentRequestEmailTpl string
+
 const (
 	// RegisterVerifyEmail = "register_verify_email"
 	ResetPwdEmail = "reset_pwd_email"
 	// LoginUrlEmail       = "login_url_email"
+	SendLoanDocumentRequestEmail = "send_loan_document_request"
 )
 
 var tpls = map[string]*template.Template{}
@@ -33,6 +37,7 @@ func init() {
 		// RegisterVerifyEmail: template.Must(template.New(RegisterVerifyEmail).Parse(SendRegisterVerifyEmailTpl)),
 		ResetPwdEmail: template.Must(template.New(ResetPwdEmail).Parse(SendResetPwdEmailTpl)),
 		// LoginUrlEmail:       template.Must(template.New(LoginUrlEmail).Parse(SendLoginUrlEmailTpl)),
+		SendLoanDocumentRequestEmail: template.Must(template.New(SendLoanDocumentRequestEmail).Parse(SendLoanDocumentRequestEmailTpl)),
 	}
 }
 

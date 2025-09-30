@@ -27,6 +27,23 @@ func NewLoanBaseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoanBase
 	}
 }
 
+// get lender loan
+func (l *LoanBaseLogic) GetLenderLoan(loanId int64, lenderCompanyId int64, preloads []string) (loan *model.Loan, err error) {
+	loan, err = l.svcCtx.LoanRepo.FindOneWithPreloadById(l.ctx, loanId, preloads)
+	if err != nil {
+		return nil, err
+	}
+	if loan.LenderCompanyId != lenderCompanyId {
+		return nil, errors.WithStack(errors.New("invalid lender company"))
+	}
+
+	if loan.Source != constants.LoanSourceSystem {
+		return nil, errors.WithStack(errors.New("invalid loan source"))
+	}
+
+	return
+}
+
 // CreateLoanOperationLog creates a loan operation log record
 func (l *LoanBaseLogic) CreateLoanOperationLog(tx *gorm.DB, loanId, operatorId int64, from, to types.LoanOperationStatus, action constants.LoanOperationAction, metadata *types.LoanOperationMetadata) error {
 	operator, err := l.svcCtx.LenderEmployeeRepo.FindOneByIdWithTx(l.ctx, tx, operatorId)
