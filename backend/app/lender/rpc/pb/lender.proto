@@ -554,7 +554,7 @@ message LoanDocumentSendRequestsRequest {
 message LoanDocumentSendRequestsRequestData {
   int64 lender_company_id = 1;
   int64 lender_employee_id = 2;
-  repeated SendDocumentRequestEntry document_types = 3;
+  repeated SendDocumentRequestEntry documents = 3;
 }
 
 message SendDocumentRequestEntry {
@@ -573,10 +573,10 @@ message LoanDocumentCreateExtendTypeRequestData {
   repeated string file_types = 4;
 }
 // upload loan document files
-message LoanDocumentUploadFilesRequest {
-  LoanDocumentUploadFilesRequestData data = 1;
+message LoanDocumentAddFilesRequest {
+  LoanDocumentAddFilesRequestData data = 1;
 }
-message LoanDocumentUploadFilesRequestData {
+message LoanDocumentAddFilesRequestData {
   int64 id = 1;
   int64 lender_company_id = 2;
   int64 lender_employee_id = 3;
@@ -590,7 +590,7 @@ service LoanDocument {
   rpc DeleteFile(LoanDocumentDeleteFileRequest) returns(EmptyResponse);
   rpc DeleteRequest(LoanDocumentDeleteRequestRequest) returns(EmptyResponse);
   rpc UpdateComment(LoanDocumentUpdateCommentRequest) returns(EmptyResponse);
-  rpc UploadFiles(LoanDocumentUploadFilesRequest) returns(EmptyResponse);
+  rpc AddFiles(LoanDocumentAddFilesRequest) returns(EmptyResponse);
 }
 
 

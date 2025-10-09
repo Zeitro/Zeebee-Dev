@@ -51,7 +51,7 @@ func (l *DeleteLogic) Delete(req *types.PathIdRequest) (resp *types.EmptyRespons
 		},
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to delete file")
+		return nil, errors.WithStack(err)
 	}
 
 	return &types.EmptyResponse{}, nil

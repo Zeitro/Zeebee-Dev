@@ -9,6 +9,7 @@ import (
 	common "zeebee-backend/app/lender/api/internal/handler/common"
 	file "zeebee-backend/app/lender/api/internal/handler/file"
 	loan "zeebee-backend/app/lender/api/internal/handler/loan"
+	loan_document "zeebee-backend/app/lender/api/internal/handler/loan_document"
 	storage "zeebee-backend/app/lender/api/internal/handler/storage"
 	user "zeebee-backend/app/lender/api/internal/handler/user"
 	"zeebee-backend/app/lender/api/internal/svc"
@@ -47,7 +48,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Route{
 				{
 					// delete
-					Method:  http.MethodGet,
+					Method:  http.MethodDelete,
 					Path:    "/file/:id",
 					Handler: file.DeleteHandler(serverCtx),
 				},
@@ -95,6 +96,45 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/loan/page",
 					Handler: loan.PageHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// create loan document
+					Method:  http.MethodPost,
+					Path:    "/loan_document",
+					Handler: loan_document.CreateLoanDocumentHandler(serverCtx),
+				},
+				{
+					// update comment
+					Method:  http.MethodPatch,
+					Path:    "/loan_document/:id/comment",
+					Handler: loan_document.UpdateCommentHandler(serverCtx),
+				},
+				{
+					// add files
+					Method:  http.MethodPost,
+					Path:    "/loan_document/:id/files",
+					Handler: loan_document.AddFilesHandler(serverCtx),
+				},
+				{
+					// delete loan document request
+					Method:  http.MethodDelete,
+					Path:    "/loan_document/:id/request",
+					Handler: loan_document.DeleteLoanDocumentRequestHandler(serverCtx),
+				},
+				{
+					// send loan document requests
+					Method:  http.MethodPost,
+					Path:    "/loan_document/send_requests",
+					Handler: loan_document.SendLoanDocumentRequestsHandler(serverCtx),
 				},
 			}...,
 		),

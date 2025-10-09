@@ -80,7 +80,7 @@ func (l *BaseLogic) GetLoanAndDocumentByDocumentId(documentId int64, lenderCompa
 		return nil, nil, errors.Wrap(err, "failed to find loan document")
 	}
 
-	loan, err = l.GetLenderLoan(loanDocument.LoanId, lenderCompanyId, nil)
+	loan, err = l.GetLenderLoan(loanDocument.LoanId, lenderCompanyId, []string{"Applicants"})
 	if err != nil {
 		return nil, nil, err
 	}

@@ -6,6 +6,7 @@ import (
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
+	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/repo/model"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
@@ -20,7 +21,7 @@ import (
 type DeleteFileLogic struct {
 	ctx       context.Context
 	svcCtx    *svc.ServiceContext
-	baseLogic *BaseLogic
+	baseLogic *logic.BaseLogic
 	logx.Logger
 }
 
@@ -28,7 +29,7 @@ func NewDeleteFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Delete
 	return &DeleteFileLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
-		baseLogic: NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 		Logger:    logx.WithContext(ctx),
 	}
 }
@@ -89,13 +90,13 @@ func (l *DeleteFileLogic) DeleteFile(in *lender.LoanDocumentDeleteFileRequest) (
 			&types.LoanOperationMetadata{
 				LoanDocuments: []*types.LoanDocument{
 					{
-						Category: string(loanDocument.Category),
-						FileType: string(loanDocument.FileType),
+						Category: loanDocument.Category,
+						FileType: loanDocument.FileType,
 						Status:   loanDocument.Status,
 						Files: []*types.OperationFile{
 							{
 								EntityId:   file.EntityId,
-								EntityType: string(file.EntifyType),
+								EntityType: file.EntityType,
 								FileUrl:    file.FileUrl,
 							},
 						},
@@ -123,7 +124,7 @@ func (l *DeleteFileLogic) prepare(in *lender.LoanDocumentDeleteFileRequest) (loa
 		return nil, nil, nil, errors.Wrap(err, "failed to find file")
 	}
 
-	if file.EntifyType != constants.FileEntityTypeLoanDocument {
+	if file.EntityType != constants.FileEntityTypeLoanDocument {
 		return nil, nil, nil, errors.WithStack(errors.New("file is not associated with a loan document"))
 	}
 	loan, loanDocument, err = l.baseLogic.GetLoanAndDocumentByDocumentId(file.EntityId, in.Data.LenderCompanyId)

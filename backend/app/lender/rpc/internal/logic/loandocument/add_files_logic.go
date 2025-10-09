@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
+	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/repo/model"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
@@ -18,23 +19,23 @@ import (
 	"zeebee-backend/common/errorx"
 )
 
-type UploadFilesLogic struct {
+type AddFilesLogic struct {
 	ctx       context.Context
 	svcCtx    *svc.ServiceContext
-	baseLogic *BaseLogic
+	baseLogic *logic.BaseLogic
 	logx.Logger
 }
 
-func NewUploadFilesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UploadFilesLogic {
-	return &UploadFilesLogic{
+func NewAddFilesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddFilesLogic {
+	return &AddFilesLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
-		baseLogic: NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 		Logger:    logx.WithContext(ctx),
 	}
 }
 
-func (l *UploadFilesLogic) UploadFiles(in *lender.LoanDocumentUploadFilesRequest) (resp *lender.EmptyResponse, err error) {
+func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *lender.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -56,7 +57,7 @@ func (l *UploadFilesLogic) UploadFiles(in *lender.LoanDocumentUploadFilesRequest
 		for _, fileUrl := range in.Data.FileUrls {
 			file := &model.File{
 				EntityId:   in.Data.Id,
-				EntifyType: constants.FileEntityTypeLoanDocument,
+				EntityType: constants.FileEntityTypeLoanDocument,
 				FileUrl:    fileUrl,
 			}
 			files = append(files, file)
@@ -127,7 +128,7 @@ func (l *UploadFilesLogic) UploadFiles(in *lender.LoanDocumentUploadFilesRequest
 }
 
 // prepare
-func (l *UploadFilesLogic) prepare(in *lender.LoanDocumentUploadFilesRequest) (loan *model.Loan, loanDocument *model.LoanDocument, err error) {
+func (l *AddFilesLogic) prepare(in *lender.LoanDocumentAddFilesRequest) (loan *model.Loan, loanDocument *model.LoanDocument, err error) {
 	loanDocument, err = l.svcCtx.LoanDocumentRepo.FindOneWithPreloadById(l.ctx, in.Data.Id, []string{"Files"})
 	if err != nil {
 		return nil, nil, errors.Wrap(err, "failed to find loan document")

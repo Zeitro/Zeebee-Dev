@@ -34,6 +34,8 @@ type (
 	LoanDetailRequest                       = lender.LoanDetailRequest
 	LoanDetailRequestData                   = lender.LoanDetailRequestData
 	LoanDetailResponse                      = lender.LoanDetailResponse
+	LoanDocumentAddFilesRequest             = lender.LoanDocumentAddFilesRequest
+	LoanDocumentAddFilesRequestData         = lender.LoanDocumentAddFilesRequestData
 	LoanDocumentCreateExtendTypeRequest     = lender.LoanDocumentCreateExtendTypeRequest
 	LoanDocumentCreateExtendTypeRequestData = lender.LoanDocumentCreateExtendTypeRequestData
 	LoanDocumentDeleteFileRequest           = lender.LoanDocumentDeleteFileRequest
@@ -45,8 +47,6 @@ type (
 	LoanDocumentSendRequestsRequestData     = lender.LoanDocumentSendRequestsRequestData
 	LoanDocumentUpdateCommentRequest        = lender.LoanDocumentUpdateCommentRequest
 	LoanDocumentUpdateCommentRequestData    = lender.LoanDocumentUpdateCommentRequestData
-	LoanDocumentUploadFilesRequest          = lender.LoanDocumentUploadFilesRequest
-	LoanDocumentUploadFilesRequestData      = lender.LoanDocumentUploadFilesRequestData
 	LoanEntry                               = lender.LoanEntry
 	LoanExperienceEntry                     = lender.LoanExperienceEntry
 	LoanExtendValueEntry                    = lender.LoanExtendValueEntry
@@ -113,7 +113,7 @@ type (
 		DeleteFile(ctx context.Context, in *LoanDocumentDeleteFileRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		DeleteRequest(ctx context.Context, in *LoanDocumentDeleteRequestRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		UpdateComment(ctx context.Context, in *LoanDocumentUpdateCommentRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
-		UploadFiles(ctx context.Context, in *LoanDocumentUploadFilesRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+		AddFiles(ctx context.Context, in *LoanDocumentAddFilesRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	}
 
 	defaultLoanDocument struct {
@@ -152,7 +152,7 @@ func (m *defaultLoanDocument) UpdateComment(ctx context.Context, in *LoanDocumen
 	return client.UpdateComment(ctx, in, opts...)
 }
 
-func (m *defaultLoanDocument) UploadFiles(ctx context.Context, in *LoanDocumentUploadFilesRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+func (m *defaultLoanDocument) AddFiles(ctx context.Context, in *LoanDocumentAddFilesRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	client := lender.NewLoanDocumentClient(m.cli.Conn())
-	return client.UploadFiles(ctx, in, opts...)
+	return client.AddFiles(ctx, in, opts...)
 }

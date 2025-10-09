@@ -48,7 +48,7 @@ func (s *LoanDocumentServer) UpdateComment(ctx context.Context, in *lender.LoanD
 	return l.UpdateComment(in)
 }
 
-func (s *LoanDocumentServer) UploadFiles(ctx context.Context, in *lender.LoanDocumentUploadFilesRequest) (*lender.EmptyResponse, error) {
-	l := loandocumentlogic.NewUploadFilesLogic(ctx, s.svcCtx)
-	return l.UploadFiles(in)
+func (s *LoanDocumentServer) AddFiles(ctx context.Context, in *lender.LoanDocumentAddFilesRequest) (*lender.EmptyResponse, error) {
+	l := loandocumentlogic.NewAddFilesLogic(ctx, s.svcCtx)
+	return l.AddFiles(in)
 }

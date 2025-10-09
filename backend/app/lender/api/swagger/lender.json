@@ -15,6 +15,40 @@
   },
   "basePath": "/",
   "paths": {
+    "/api/v1/file/{id}": {
+      "delete": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "file"
+        ],
+        "summary": "delete",
+        "operationId": "fileDelete",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/loan/page": {
       "post": {
         "consumes": [
@@ -157,7 +191,7 @@
                       "loan_demographic",
                       "loan_processor",
                       "extend",
-                      "documents"
+                      "loan_documents"
                     ],
                     "properties": {
                       "applicants": {
@@ -311,35 +345,6 @@
                       },
                       "created_at": {
                         "type": "string"
-                      },
-                      "documents": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "biz_type": {
-                              "type": "string"
-                            },
-                            "created_at": {
-                              "type": "string"
-                            },
-                            "file": {
-                              "type": "string"
-                            },
-                            "file_type": {
-                              "type": "string"
-                            },
-                            "id": {
-                              "type": "integer"
-                            },
-                            "ref_id": {
-                              "type": "integer"
-                            },
-                            "updated_at": {
-                              "type": "string"
-                            }
-                          }
-                        }
                       },
                       "dscr": {
                         "type": "number"
@@ -574,6 +579,79 @@
                           },
                           "sex": {
                             "type": "string"
+                          }
+                        }
+                      },
+                      "loan_documents": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "loan_id",
+                            "category",
+                            "file_type",
+                            "status",
+                            "created_at",
+                            "updated_at",
+                            "files"
+                          ],
+                          "properties": {
+                            "category": {
+                              "type": "string"
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "file_type": {
+                              "type": "string"
+                            },
+                            "files": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "required": [
+                                  "id",
+                                  "entity_type",
+                                  "entity_id",
+                                  "file_url",
+                                  "created_at",
+                                  "updated_at"
+                                ],
+                                "properties": {
+                                  "created_at": {
+                                    "type": "string"
+                                  },
+                                  "entity_id": {
+                                    "type": "integer"
+                                  },
+                                  "entity_type": {
+                                    "type": "string"
+                                  },
+                                  "file_url": {
+                                    "type": "string"
+                                  },
+                                  "id": {
+                                    "type": "integer"
+                                  },
+                                  "updated_at": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "loan_id": {
+                              "type": "integer"
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
                           }
                         }
                       },
@@ -1019,35 +1097,6 @@
                 "created_at": {
                   "type": "string"
                 },
-                "documents": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "biz_type": {
-                        "type": "string"
-                      },
-                      "created_at": {
-                        "type": "string"
-                      },
-                      "file": {
-                        "type": "string"
-                      },
-                      "file_type": {
-                        "type": "string"
-                      },
-                      "id": {
-                        "type": "integer"
-                      },
-                      "ref_id": {
-                        "type": "integer"
-                      },
-                      "updated_at": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
                 "dscr": {
                   "type": "number"
                 },
@@ -1281,6 +1330,79 @@
                     },
                     "sex": {
                       "type": "string"
+                    }
+                  }
+                },
+                "loan_documents": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "loan_id",
+                      "category",
+                      "file_type",
+                      "status",
+                      "created_at",
+                      "updated_at",
+                      "files"
+                    ],
+                    "properties": {
+                      "category": {
+                        "type": "string"
+                      },
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "file_type": {
+                        "type": "string"
+                      },
+                      "files": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "entity_type",
+                            "entity_id",
+                            "file_url",
+                            "created_at",
+                            "updated_at"
+                          ],
+                          "properties": {
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "entity_id": {
+                              "type": "integer"
+                            },
+                            "entity_type": {
+                              "type": "string"
+                            },
+                            "file_url": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "loan_id": {
+                        "type": "integer"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      }
                     }
                   }
                 },
@@ -2370,6 +2492,253 @@
         }
       }
     },
+    "/api/v1/loan_document": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "loan_document"
+        ],
+        "summary": "create loan document",
+        "operationId": "loanDocumentCreateLoanDocument",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "loan_id",
+                "file_types"
+              ],
+              "properties": {
+                "file_types": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "loan_id": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/loan_document/send_requests": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "loan_document"
+        ],
+        "summary": "send loan document requests",
+        "operationId": "loanDocumentSendLoanDocumentRequests",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "documents"
+              ],
+              "properties": {
+                "documents": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "comment"
+                    ],
+                    "properties": {
+                      "comment": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/loan_document/{id}/comment": {
+      "patch": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "loan_document"
+        ],
+        "summary": "update comment",
+        "operationId": "loanDocumentUpdateComment",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "comment"
+              ],
+              "properties": {
+                "comment": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/loan_document/{id}/files": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "loan_document"
+        ],
+        "summary": "add files",
+        "operationId": "loanDocumentAddFiles",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "file_urls"
+              ],
+              "properties": {
+                "file_urls": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/loan_document/{id}/request": {
+      "delete": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "loan_document"
+        ],
+        "summary": "delete loan document request",
+        "operationId": "loanDocumentDeleteLoanDocumentRequest",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/select_options": {
       "get": {
         "produces": [
@@ -2414,6 +2783,59 @@
                       }
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/storage/presign_url": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "storage"
+        ],
+        "summary": "create aws s3 presign url",
+        "operationId": "storageCreateAwsS3PresignUrl",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "type",
+                "file_suffix"
+              ],
+              "properties": {
+                "file_suffix": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string"
                 }
               }
             }
@@ -2853,7 +3275,7 @@
       }
     }
   },
-  "x-date": "2025-09-29 11:24:11",
+  "x-date": "2025-10-09 16:48:36",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

@@ -14,9 +14,9 @@ type LoanDocument struct {
 }
 
 type OperationFile struct {
-	EntityId   int64
-	EntityType constants.FileEntityType
-	FileUrl    string
+	EntityId   int64                    `json:"entity_id"`
+	EntityType constants.FileEntityType `json:"entity_type"`
+	FileUrl    string                   `json:"file_url"`
 }
 
 type LoanOperationMetadata struct {

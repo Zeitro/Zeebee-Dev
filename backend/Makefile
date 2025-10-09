@@ -50,4 +50,4 @@ create-proto:
 # Create RPC service
 create-rpc-service:
 		$(eval SERVICE := $(filter-out $@,$(MAKECMDGOALS)))
-		goctl rpc protoc app/$(SERVICE)/rpc/pb/$(SERVICE).proto --go_out=./app/$(SERVICE)/rpc/pb --go-grpc_out=./app/$(SERVICE)/rpc/pb --zrpc_out=./app/$(SERVICE)/rpc -m --home third_party/goctl_template --style go_zero
+		goctl rpc protoc app/$(SERVICE)/rpc/pb/$(SERVICE).proto --go_out=./app/$(SERVICE)/rpc/pb --go-grpc_out=./app/$(SERVICE)/rpc/pb --zrpc_out=./app/$(SERVICE)/rpc --style go_zero -m --home third_party/goctl_template

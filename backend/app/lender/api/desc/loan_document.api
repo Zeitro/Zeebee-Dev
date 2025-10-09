@@ -19,3 +19,27 @@ type LoanDocumentEntry {
 
     Files []FileEntry `json:"files"`
 }
+
+type LoanDocumentCreateRequest {
+    LoanId int64 `json:"loan_id"`
+    FileTypes []string `json:"file_types" validate:"required,min=1,dive,required"`
+}
+
+type LoanDocumentSendRequestsRequest {
+    Documents []LoanDocumentSendRequestEntry `json:"documents" validate:"required,min=1,dive,required"`
+}
+
+type LoanDocumentSendRequestEntry {
+    Id int64 `json:"id"`
+    Comment string `json:"comment"`
+}
+
+type LoanDocumentUpdateCommentRequest {
+    Id int64 `path:"id"`
+    Comment string `json:"comment" validate:"required,max=255"`
+}
+
+type LoanDocumentAddFilesRequest {
+    Id int64 `path:"id"`
+    FileUrls []string `json:"file_urls" validate:"required,dive,url"`
+}

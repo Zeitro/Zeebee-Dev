@@ -8,6 +8,7 @@ import (
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
+	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/repo/model"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
@@ -22,7 +23,7 @@ import (
 type CreateLogic struct {
 	ctx       context.Context
 	svcCtx    *svc.ServiceContext
-	baseLogic *BaseLogic
+	baseLogic *logic.BaseLogic
 	logx.Logger
 }
 
@@ -30,7 +31,7 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 	return &CreateLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
-		baseLogic: NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 		Logger:    logx.WithContext(ctx),
 	}
 }
@@ -121,9 +122,9 @@ func (l *CreateLogic) prepare(in *lender.LoanDocumentCreateExtendTypeRequest) (l
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	exitedFileTypes := slice.Difference(fileTypes, allFileTypes)
+	exitedFileTypes := slice.Intersection(fileTypes, allFileTypes)
 	if len(exitedFileTypes) > 0 {
 		return nil, errors.Errorf("file type %s is existed", exitedFileTypes[0])
 	}
-	return nil, nil
+	return loan, nil
 }
