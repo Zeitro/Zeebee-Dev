@@ -1,6 +1,7 @@
 import React from 'react';
 import { BtnPopUpModal } from '@/components/NewModal/BtnPopUpModal';
 import NewModal from '@/components/NewModal';
+import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { Form, Input } from 'antd';
 export const ApproveModal = ({ key, title, ...props }) => {
 	const [form] = Form.useForm();
@@ -11,6 +12,7 @@ export const ApproveModal = ({ key, title, ...props }) => {
 	return (
 		<BtnPopUpModal
 			type="primary"
+			icon={<CheckCircleOutlined />}
 			{...props}
 			getContent={(setOpen) => (
 				<NewModal
@@ -56,6 +58,8 @@ export const RejectedModal = ({ key, title, ...props }) => {
 		<BtnPopUpModal
 			type="primary"
 			danger={true}
+			ghost={true}
+			icon={<CloseCircleOutlined />}
 			{...props}
 			getContent={(setOpen) => (
 				<NewModal

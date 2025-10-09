@@ -1,0 +1,22 @@
+.documentList {
+	:global {
+		.ant-list-item {
+			padding: 16px 0 !important;
+			&:not(:last-child) {
+				border-bottom: 1px solid var(--base-border) !important;
+			}
+            &:last-child{
+                padding-bottom: 8px !important;
+
+            }
+		}
+        .ant-btn-icon svg path{
+            fill: currentColor;
+        }
+	}
+    .ellipsis{
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap
+    }
+}

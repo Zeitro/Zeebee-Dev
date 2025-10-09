@@ -17,7 +17,7 @@ import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { layoutCol, titleCol } from '@/enum/common';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import CommonFormDate from '@/components/CommonDate';
-const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
+const ApplicantInfo = ({ gutter = 24, form, addressProps, isHideTitle }) => {
 	const { maritalStatusOptions } = useGetOptions([
 		{
 			key: 'marital_status',
@@ -26,9 +26,11 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 	]);
 	return (
 		<div className={styles.createZeeBee}>
-			<Col {...titleCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">
-				Borrower information
-			</Col>
+			{!isHideTitle && (
+				<Col {...titleCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">
+					Borrower information
+				</Col>
+			)}
 			<Form.List name="applicants">
 				{(fields, { add, remove }) => {
 					return fields?.map((field, index) => (
