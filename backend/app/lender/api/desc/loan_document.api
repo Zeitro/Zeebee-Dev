@@ -1,0 +1,21 @@
+syntax = "v1"
+
+info(
+    title: "lender-loan-document-api"
+    desc: "loan-document-api http service description"
+    version: "v1"
+)
+
+import "file.api"
+
+type LoanDocumentEntry {
+    Id int64 `json:"id"`
+    LoanId int64 `json:"loan_id"`
+    Category string `json:"category"`
+    FileType string `json:"file_type"`
+    Status string `json:"status"`
+    CreatedAt string `json:"created_at"`
+    UpdatedAt string `json:"updated_at"`
+
+    Files []FileEntry `json:"files"`
+}

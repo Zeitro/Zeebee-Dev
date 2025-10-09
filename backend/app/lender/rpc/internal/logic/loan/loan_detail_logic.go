@@ -63,7 +63,7 @@ func (l *LoanDetailLogic) LoanDetail(in *lender.LoanDetailRequest) (resp *lender
 		_ = copier.CopyWithOption(experience, item, copier.Option{
 			CaseSensitive: true,
 			DeepCopy:      true,
-			IgnoreEmpty:   true,
+			IgnoreEmpty:   false,
 			Converters: []copier.TypeConverter{
 				copierx.TimeToRFC3339Str(),
 				copierx.SqlTimePtrToStr(timex.LayoutUsStyle),

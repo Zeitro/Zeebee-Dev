@@ -74,7 +74,7 @@ type Loan struct {
 	LoanExperiences   []*LoanExperience   `json:"loan_experiences" gorm:"foreignKey:LoanId;references:Id"`
 	LoanThirdServices []*LoanThirdService `json:"loan_third_services" gorm:"foreignKey:LoanId;references:Id"`
 	LoanDemographic   *LoanDemographic    `json:"loan_demographic" gorm:"foreignKey:LoanId;references:Id"`
-	LoanDocuments     []*LoanDocument     `json:"documents" gorm:"foreignKey:LoanId;references:Id"`
+	LoanDocuments     []*LoanDocument     `json:"loan_documents" gorm:"foreignKey:LoanId;references:Id"`
 }
 
 func (m Loan) TableName() string {

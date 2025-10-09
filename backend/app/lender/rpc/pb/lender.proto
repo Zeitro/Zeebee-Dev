@@ -297,7 +297,7 @@ message LoanEntry {
   string extension_date = 62;
   string loan_processor = 63;
   LoanExtendValueEntry extend = 64;
-  repeated FileEntry documents = 65;
+  repeated LoanDocumentEntry loan_documents = 65;
   string code = 66;
 
 }
@@ -489,12 +489,6 @@ message LoanPendingStatusReviewRequestData {
   string comment = 6;
 }
 
-
-
-
-
-
-
 service Loan {
   rpc LoanDetail(LoanDetailRequest) returns(LoanDetailResponse);
   rpc LoanPage(LoanPageRequest) returns(LoanPageResponse);
@@ -512,7 +506,7 @@ service Loan {
 message LoanDocumentEntry {
   int64 id = 1;
   int64 loan_id = 2;
-  string uploader_type = 3;
+  string category = 3;
   string file_type = 4;
   string comment = 5;
   string status = 6;

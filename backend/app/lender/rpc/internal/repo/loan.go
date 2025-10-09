@@ -39,8 +39,8 @@ func (repo *LoanRepo) GetLenderLoan(ctx context.Context, id int64, lenderCompany
 			Preload("LoanExperiences").
 			Preload("LoanThirdServices").
 			Preload("LoanDemographic").
-			Preload("ApplyFormFile").
-			Preload("Documents")
+			// Preload("ApplyFormFile").
+			Preload("LoanDocuments.Files")
 	}
 	err = query.First(&result).Error
 	return result, errors.WithStack(err)
@@ -56,8 +56,8 @@ func (repo *LoanRepo) GetLenderLoanWithTx(ctx context.Context, tx *gorm.DB, id i
 		Preload("LoanExperiences").
 		Preload("LoanThirdServices").
 		Preload("LoanDemographic").
-		Preload("ApplyFormFile").
-		Preload("Documents").
+		// Preload("ApplyFormFile").
+		Preload("LoanDocuments.Files").
 		First(&result).Error
 	return result, errors.WithStack(err)
 }
