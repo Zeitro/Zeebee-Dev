@@ -17,6 +17,8 @@ const (
 	LoanDocumentTypeREExperience           = "RE Experience"
 	LoanDocumentTypeBankStatements         = "Bank Statements for Most Recent Two Months"
 
+	LoanDocumentTypeApplyForm = "Apply Form"
+
 	// lender document
 	LoanDocumentTypeBorrowerCreditScore                         = "Borrower's Credit Score"
 	LoanDocumentTypeBorrowerDefaultFraudRiskViewCriminalRecords = "Borrower's Default/Fraud/Risk/View/Criminal Records And RE Experience"
@@ -32,6 +34,7 @@ const (
 	LoanDocumentUploaderTypeBorrower = "Borrower"
 	LoanDocumentUploaderTypeLender   = "Lender"
 	LoanDocumentUploaderTypeExtend   = "Extend"
+	LoanDocumentUploaderTypeInit     = "Init"
 )
 
 // loan  document status: Pending Uploand, Requested, Ready For review
@@ -101,6 +104,10 @@ func init() {
 		{
 			Label: string(LoanDocumentUploaderTypeExtend),
 			Value: string(LoanDocumentUploaderTypeExtend),
+		},
+		{
+			Label: string(LoanDocumentUploaderTypeInit),
+			Value: string(LoanDocumentUploaderTypeInit),
 		},
 	})
 

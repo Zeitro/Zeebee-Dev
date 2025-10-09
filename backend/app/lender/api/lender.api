@@ -24,7 +24,6 @@ type PathIdRequest {
 	id int64 `path:"id" validate:"requied,gt=0"`
 }
 
-
 // ============== common =============
 @server(
 	desc: "lender-api service"
@@ -124,10 +123,9 @@ service lender-api {
 	@doc "reveiw loan pending status"
 	@handler ReviewPendingStatus
 	post /loan/:id/review_pending_status (ReviewLoanPendingStatusRequest) returns (EmptyResponse)
-
-	@doc "create loan document"
-	@handler CreateLoanDocument
-	post /loan/:id/document (CreateLoanDocumentRequest) returns (CreateLoanDocumentResponse)
+	// @doc "create loan document"
+	// @handler CreateLoanDocument
+	// post /loan/:id/document (CreateLoanDocumentRequest) returns (CreateLoanDocumentResponse)
 }
 
 // =============== file ==============

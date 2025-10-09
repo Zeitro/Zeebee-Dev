@@ -2194,7 +2194,7 @@ type LoanEntry struct {
 	ExtensionDate          string                   `protobuf:"bytes,62,opt,name=extension_date,json=extensionDate,proto3" json:"extension_date,omitempty"`
 	LoanProcessor          string                   `protobuf:"bytes,63,opt,name=loan_processor,json=loanProcessor,proto3" json:"loan_processor,omitempty"`
 	Extend                 *LoanExtendValueEntry    `protobuf:"bytes,64,opt,name=extend,proto3" json:"extend,omitempty"`
-	Documents              []*FileEntry             `protobuf:"bytes,65,rep,name=documents,proto3" json:"documents,omitempty"`
+	LoanDocuments          []*LoanDocumentEntry     `protobuf:"bytes,65,rep,name=loan_documents,json=loanDocuments,proto3" json:"loan_documents,omitempty"`
 	Code                   string                   `protobuf:"bytes,66,opt,name=code,proto3" json:"code,omitempty"`
 	unknownFields          protoimpl.UnknownFields
 	sizeCache              protoimpl.SizeCache
@@ -2672,9 +2672,9 @@ func (x *LoanEntry) GetExtend() *LoanExtendValueEntry {
 	return nil
 }
 
-func (x *LoanEntry) GetDocuments() []*FileEntry {
+func (x *LoanEntry) GetLoanDocuments() []*LoanDocumentEntry {
 	if x != nil {
-		return x.Documents
+		return x.LoanDocuments
 	}
 	return nil
 }
@@ -4528,7 +4528,7 @@ type LoanDocumentEntry struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	LoanId        int64                  `protobuf:"varint,2,opt,name=loan_id,json=loanId,proto3" json:"loan_id,omitempty"`
-	UploaderType  string                 `protobuf:"bytes,3,opt,name=uploader_type,json=uploaderType,proto3" json:"uploader_type,omitempty"`
+	Category      string                 `protobuf:"bytes,3,opt,name=category,proto3" json:"category,omitempty"`
 	FileType      string                 `protobuf:"bytes,4,opt,name=file_type,json=fileType,proto3" json:"file_type,omitempty"`
 	Comment       string                 `protobuf:"bytes,5,opt,name=comment,proto3" json:"comment,omitempty"`
 	Status        string                 `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
@@ -4583,9 +4583,9 @@ func (x *LoanDocumentEntry) GetLoanId() int64 {
 	return 0
 }
 
-func (x *LoanDocumentEntry) GetUploaderType() string {
+func (x *LoanDocumentEntry) GetCategory() string {
 	if x != nil {
-		return x.UploaderType
+		return x.Category
 	}
 	return ""
 }
@@ -6677,7 +6677,7 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x12driver_license_num\x18\x11 \x01(\tR\x10driverLicenseNum\x12.\n" +
 	"\aaddress\x18\x12 \x01(\v2\x14.lender.AddressEntryR\aaddress\x12(\n" +
 	"\x10loan_borrower_id\x18\x13 \x01(\x03R\x0eloanBorrowerId\x12\x14\n" +
-	"\x05phone\x18\x14 \x01(\tR\x05phone\"\xbe\x16\n" +
+	"\x05phone\x18\x14 \x01(\tR\x05phone\"\xcf\x16\n" +
 	"\tLoanEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
 	"\x05stage\x18\x02 \x01(\tR\x05stage\x12%\n" +
@@ -6747,8 +6747,8 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x16original_contract_date\x18= \x01(\tR\x14originalContractDate\x12%\n" +
 	"\x0eextension_date\x18> \x01(\tR\rextensionDate\x12%\n" +
 	"\x0eloan_processor\x18? \x01(\tR\rloanProcessor\x124\n" +
-	"\x06extend\x18@ \x01(\v2\x1c.lender.LoanExtendValueEntryR\x06extend\x12/\n" +
-	"\tdocuments\x18A \x03(\v2\x11.lender.FileEntryR\tdocuments\x12\x12\n" +
+	"\x06extend\x18@ \x01(\v2\x1c.lender.LoanExtendValueEntryR\x06extend\x12@\n" +
+	"\x0eloan_documents\x18A \x03(\v2\x19.lender.LoanDocumentEntryR\rloanDocuments\x12\x12\n" +
 	"\x04code\x18B \x01(\tR\x04code\"\x9f\x01\n" +
 	"\x0fLoanBudgetEntry\x12'\n" +
 	"\x0foriginal_budget\x18\x01 \x01(\x02R\x0eoriginalBudget\x12)\n" +
@@ -6895,11 +6895,11 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x11lender_company_id\x18\x03 \x01(\x03R\x0flenderCompanyId\x124\n" +
 	"\x16current_pending_status\x18\x04 \x01(\tR\x14currentPendingStatus\x12\x16\n" +
 	"\x06action\x18\x05 \x01(\tR\x06action\x12\x18\n" +
-	"\acomment\x18\x06 \x01(\tR\acomment\"\x97\x02\n" +
+	"\acomment\x18\x06 \x01(\tR\acomment\"\x8e\x02\n" +
 	"\x11LoanDocumentEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
-	"\aloan_id\x18\x02 \x01(\x03R\x06loanId\x12#\n" +
-	"\ruploader_type\x18\x03 \x01(\tR\fuploaderType\x12\x1b\n" +
+	"\aloan_id\x18\x02 \x01(\x03R\x06loanId\x12\x1a\n" +
+	"\bcategory\x18\x03 \x01(\tR\bcategory\x12\x1b\n" +
 	"\tfile_type\x18\x04 \x01(\tR\bfileType\x12\x18\n" +
 	"\acomment\x18\x05 \x01(\tR\acomment\x12\x16\n" +
 	"\x06status\x18\x06 \x01(\tR\x06status\x12\x1d\n" +
@@ -7227,7 +7227,7 @@ var file_app_lender_rpc_pb_lender_proto_depIdxs = []int32{
 	80, // 24: lender.LoanEntry.loan_demographic:type_name -> lender.LoanDemographicEntry
 	79, // 25: lender.LoanEntry.loan_third_services:type_name -> lender.LoanThirdServiceEntry
 	54, // 26: lender.LoanEntry.extend:type_name -> lender.LoanExtendValueEntry
-	85, // 27: lender.LoanEntry.documents:type_name -> lender.FileEntry
+	63, // 27: lender.LoanEntry.loan_documents:type_name -> lender.LoanDocumentEntry
 	40, // 28: lender.LoanDetailRequest.data:type_name -> lender.LoanDetailRequestData
 	36, // 29: lender.LoanDetailResponse.data:type_name -> lender.LoanEntry
 	43, // 30: lender.LoanDeleteRequest.data:type_name -> lender.LoanDeleteRequestData

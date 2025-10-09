@@ -49,13 +49,12 @@ type FileEditEntry struct {
 }
 
 type FileEntry struct {
-	Id        int64  `json:"id,optional"`
-	FileType  string `json:"file_type,optional"`
-	BizType   string `json:"biz_type,optional"`
-	RefId     int64  `json:"ref_id,optional"`
-	File      string `json:"file,optional"`
-	CreatedAt string `json:"created_at,optional"`
-	UpdatedAt string `json:"updated_at,optional"`
+	Id         int64  `json:"id"`
+	EntityType string `json:"entity_type"`
+	EntityId   int64  `json:"entity_id"`
+	FileUrl    string `json:"file_url"`
+	CreatedAt  string `json:"created_at"`
+	UpdatedAt  string `json:"updated_at"`
 }
 
 type ImportLoanExtendEntry struct {
@@ -141,6 +140,17 @@ type LoanDemographicRaceEntry struct {
 	AmericanIndianOrAlaskaNativeName string   `json:"american_indian_or_alaska_native_name,optional"`
 }
 
+type LoanDocumentEntry struct {
+	Id        int64       `json:"id"`
+	LoanId    int64       `json:"loan_id"`
+	Category  string      `json:"category"`
+	FileType  string      `json:"file_type"`
+	Status    string      `json:"status"`
+	CreatedAt string      `json:"created_at"`
+	UpdatedAt string      `json:"updated_at"`
+	Files     []FileEntry `json:"files"`
+}
+
 type LoanEntry struct {
 	Id                       int64                    `json:"id,optional"`
 	Code                     string                   `json:"code,optional"`
@@ -204,7 +214,7 @@ type LoanEntry struct {
 	ExtensionDate            string                   `json:"extension_date,optional"`
 	LoanProcessor            string                   `json:"loan_processor"`
 	Extend                   *ImportLoanExtendEntry   `json:"extend"`
-	Documents                []*FileEntry             `json:"documents"`
+	LoanDocuments            []*LoanDocumentEntry     `json:"loan_documents"`
 }
 
 type LoanExperienceEntry struct {

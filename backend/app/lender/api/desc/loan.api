@@ -13,6 +13,7 @@ import "loan_borrower.api"
 import "loan_demographic.api"
 import "file.api"
 import "loan_experience.api"
+import "loan_document.api"
 
 type PropertyBaseEntry {
     Id int64 `json:"id,optional"`
@@ -136,7 +137,7 @@ type LoanEntry {
     ExtensionDate string `json:"extension_date,optional"`
     LoanProcessor string `json:"loan_processor"`
     Extend *ImportLoanExtendEntry `json:"extend"`
-    Documents []*FileEntry `json:"documents"`
+    LoanDocuments []*LoanDocumentEntry `json:"loan_documents"`
 }
 
 type ImportLoanExtendEntry {
