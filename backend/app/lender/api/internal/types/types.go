@@ -151,6 +151,11 @@ type LoanDocumentEntry struct {
 	Files     []FileEntry `json:"files"`
 }
 
+type LoanDocumentSendRequestEntry struct {
+	Id      int64  `json:"id"`
+	Comment string `json:"comment"`
+}
+
 type LoanEntry struct {
 	Id                       int64                    `json:"id,optional"`
 	Code                     string                   `json:"code,optional"`
@@ -289,6 +294,10 @@ type LoanUpdateApplicantEntry struct {
 	EstCreditScore   int32         `json:"est_credit_score,optional" validate:"required,gte=300,lte=850"`
 	DriverLicenseNum string        `json:"driver_license_num,optional" validate:"required"`
 	Address          *AddressEntry `json:"address,optional" validate:"required"`
+}
+
+type PathIdRequest struct {
+	Id int64 `path:"id" validate:"required,gt=0"`
 }
 
 type PropertyBaseEntry struct {

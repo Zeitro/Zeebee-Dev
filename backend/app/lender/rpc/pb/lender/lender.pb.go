@@ -5012,7 +5012,7 @@ type LoanDocumentSendRequestsRequestData struct {
 	state            protoimpl.MessageState      `protogen:"open.v1"`
 	LenderCompanyId  int64                       `protobuf:"varint,1,opt,name=lender_company_id,json=lenderCompanyId,proto3" json:"lender_company_id,omitempty"`
 	LenderEmployeeId int64                       `protobuf:"varint,2,opt,name=lender_employee_id,json=lenderEmployeeId,proto3" json:"lender_employee_id,omitempty"`
-	DocumentTypes    []*SendDocumentRequestEntry `protobuf:"bytes,3,rep,name=document_types,json=documentTypes,proto3" json:"document_types,omitempty"`
+	Documents        []*SendDocumentRequestEntry `protobuf:"bytes,3,rep,name=documents,proto3" json:"documents,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -5061,9 +5061,9 @@ func (x *LoanDocumentSendRequestsRequestData) GetLenderEmployeeId() int64 {
 	return 0
 }
 
-func (x *LoanDocumentSendRequestsRequestData) GetDocumentTypes() []*SendDocumentRequestEntry {
+func (x *LoanDocumentSendRequestsRequestData) GetDocuments() []*SendDocumentRequestEntry {
 	if x != nil {
-		return x.DocumentTypes
+		return x.Documents
 	}
 	return nil
 }
@@ -5234,27 +5234,27 @@ func (x *LoanDocumentCreateExtendTypeRequestData) GetFileTypes() []string {
 }
 
 // upload loan document files
-type LoanDocumentUploadFilesRequest struct {
-	state         protoimpl.MessageState              `protogen:"open.v1"`
-	Data          *LoanDocumentUploadFilesRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+type LoanDocumentAddFilesRequest struct {
+	state         protoimpl.MessageState           `protogen:"open.v1"`
+	Data          *LoanDocumentAddFilesRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *LoanDocumentUploadFilesRequest) Reset() {
-	*x = LoanDocumentUploadFilesRequest{}
+func (x *LoanDocumentAddFilesRequest) Reset() {
+	*x = LoanDocumentAddFilesRequest{}
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[75]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *LoanDocumentUploadFilesRequest) String() string {
+func (x *LoanDocumentAddFilesRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LoanDocumentUploadFilesRequest) ProtoMessage() {}
+func (*LoanDocumentAddFilesRequest) ProtoMessage() {}
 
-func (x *LoanDocumentUploadFilesRequest) ProtoReflect() protoreflect.Message {
+func (x *LoanDocumentAddFilesRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[75]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -5266,19 +5266,19 @@ func (x *LoanDocumentUploadFilesRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LoanDocumentUploadFilesRequest.ProtoReflect.Descriptor instead.
-func (*LoanDocumentUploadFilesRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use LoanDocumentAddFilesRequest.ProtoReflect.Descriptor instead.
+func (*LoanDocumentAddFilesRequest) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{75}
 }
 
-func (x *LoanDocumentUploadFilesRequest) GetData() *LoanDocumentUploadFilesRequestData {
+func (x *LoanDocumentAddFilesRequest) GetData() *LoanDocumentAddFilesRequestData {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type LoanDocumentUploadFilesRequestData struct {
+type LoanDocumentAddFilesRequestData struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	LenderCompanyId  int64                  `protobuf:"varint,2,opt,name=lender_company_id,json=lenderCompanyId,proto3" json:"lender_company_id,omitempty"`
@@ -5288,20 +5288,20 @@ type LoanDocumentUploadFilesRequestData struct {
 	sizeCache        protoimpl.SizeCache
 }
 
-func (x *LoanDocumentUploadFilesRequestData) Reset() {
-	*x = LoanDocumentUploadFilesRequestData{}
+func (x *LoanDocumentAddFilesRequestData) Reset() {
+	*x = LoanDocumentAddFilesRequestData{}
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[76]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *LoanDocumentUploadFilesRequestData) String() string {
+func (x *LoanDocumentAddFilesRequestData) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LoanDocumentUploadFilesRequestData) ProtoMessage() {}
+func (*LoanDocumentAddFilesRequestData) ProtoMessage() {}
 
-func (x *LoanDocumentUploadFilesRequestData) ProtoReflect() protoreflect.Message {
+func (x *LoanDocumentAddFilesRequestData) ProtoReflect() protoreflect.Message {
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[76]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -5313,33 +5313,33 @@ func (x *LoanDocumentUploadFilesRequestData) ProtoReflect() protoreflect.Message
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LoanDocumentUploadFilesRequestData.ProtoReflect.Descriptor instead.
-func (*LoanDocumentUploadFilesRequestData) Descriptor() ([]byte, []int) {
+// Deprecated: Use LoanDocumentAddFilesRequestData.ProtoReflect.Descriptor instead.
+func (*LoanDocumentAddFilesRequestData) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{76}
 }
 
-func (x *LoanDocumentUploadFilesRequestData) GetId() int64 {
+func (x *LoanDocumentAddFilesRequestData) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *LoanDocumentUploadFilesRequestData) GetLenderCompanyId() int64 {
+func (x *LoanDocumentAddFilesRequestData) GetLenderCompanyId() int64 {
 	if x != nil {
 		return x.LenderCompanyId
 	}
 	return 0
 }
 
-func (x *LoanDocumentUploadFilesRequestData) GetLenderEmployeeId() int64 {
+func (x *LoanDocumentAddFilesRequestData) GetLenderEmployeeId() int64 {
 	if x != nil {
 		return x.LenderEmployeeId
 	}
 	return 0
 }
 
-func (x *LoanDocumentUploadFilesRequestData) GetFileUrls() []string {
+func (x *LoanDocumentAddFilesRequestData) GetFileUrls() []string {
 	if x != nil {
 		return x.FileUrls
 	}
@@ -6929,11 +6929,11 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x12lender_employee_id\x18\x03 \x01(\x03R\x10lenderEmployeeId\x12\x17\n" +
 	"\afile_id\x18\x04 \x01(\x03R\x06fileId\"b\n" +
 	"\x1fLoanDocumentSendRequestsRequest\x12?\n" +
-	"\x04data\x18\x01 \x01(\v2+.lender.LoanDocumentSendRequestsRequestDataR\x04data\"\xc8\x01\n" +
+	"\x04data\x18\x01 \x01(\v2+.lender.LoanDocumentSendRequestsRequestDataR\x04data\"\xbf\x01\n" +
 	"#LoanDocumentSendRequestsRequestData\x12*\n" +
 	"\x11lender_company_id\x18\x01 \x01(\x03R\x0flenderCompanyId\x12,\n" +
-	"\x12lender_employee_id\x18\x02 \x01(\x03R\x10lenderEmployeeId\x12G\n" +
-	"\x0edocument_types\x18\x03 \x03(\v2 .lender.SendDocumentRequestEntryR\rdocumentTypes\"D\n" +
+	"\x12lender_employee_id\x18\x02 \x01(\x03R\x10lenderEmployeeId\x12>\n" +
+	"\tdocuments\x18\x03 \x03(\v2 .lender.SendDocumentRequestEntryR\tdocuments\"D\n" +
 	"\x18SendDocumentRequestEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x18\n" +
 	"\acomment\x18\x02 \x01(\tR\acomment\"j\n" +
@@ -6944,10 +6944,10 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x11lender_company_id\x18\x02 \x01(\x03R\x0flenderCompanyId\x12,\n" +
 	"\x12lender_employee_id\x18\x03 \x01(\x03R\x10lenderEmployeeId\x12\x1d\n" +
 	"\n" +
-	"file_types\x18\x04 \x03(\tR\tfileTypes\"`\n" +
-	"\x1eLoanDocumentUploadFilesRequest\x12>\n" +
-	"\x04data\x18\x01 \x01(\v2*.lender.LoanDocumentUploadFilesRequestDataR\x04data\"\xab\x01\n" +
-	"\"LoanDocumentUploadFilesRequestData\x12\x0e\n" +
+	"file_types\x18\x04 \x03(\tR\tfileTypes\"Z\n" +
+	"\x1bLoanDocumentAddFilesRequest\x12;\n" +
+	"\x04data\x18\x01 \x01(\v2'.lender.LoanDocumentAddFilesRequestDataR\x04data\"\xa8\x01\n" +
+	"\x1fLoanDocumentAddFilesRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12*\n" +
 	"\x11lender_company_id\x18\x02 \x01(\x03R\x0flenderCompanyId\x12,\n" +
 	"\x12lender_employee_id\x18\x03 \x01(\x03R\x10lenderEmployeeId\x12\x1b\n" +
@@ -7076,15 +7076,15 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x13UpdateLoanDocuments\x12\".lender.LoanUpdateDocumentsRequest\x1a\x15.lender.EmptyResponse\x12H\n" +
 	"\x0fUpdateLoanStage\x12\x1e.lender.LoanUpdateStageRequest\x1a\x15.lender.EmptyResponse\x12X\n" +
 	"\x17UpdateLoanPendingStatus\x12&.lender.LoanUpdatePendingStatusRequest\x1a\x15.lender.EmptyResponse\x12T\n" +
-	"\x13PendingStatusReview\x12&.lender.LoanPendingStatusReviewRequest\x1a\x15.lender.EmptyResponse2\xea\x03\n" +
+	"\x13PendingStatusReview\x12&.lender.LoanPendingStatusReviewRequest\x1a\x15.lender.EmptyResponse2\xe4\x03\n" +
 	"\fLoanDocument\x12L\n" +
 	"\x06Create\x12+.lender.LoanDocumentCreateExtendTypeRequest\x1a\x15.lender.EmptyResponse\x12N\n" +
 	"\fSendRequests\x12'.lender.LoanDocumentSendRequestsRequest\x1a\x15.lender.EmptyResponse\x12J\n" +
 	"\n" +
 	"DeleteFile\x12%.lender.LoanDocumentDeleteFileRequest\x1a\x15.lender.EmptyResponse\x12P\n" +
 	"\rDeleteRequest\x12(.lender.LoanDocumentDeleteRequestRequest\x1a\x15.lender.EmptyResponse\x12P\n" +
-	"\rUpdateComment\x12(.lender.LoanDocumentUpdateCommentRequest\x1a\x15.lender.EmptyResponse\x12L\n" +
-	"\vUploadFiles\x12&.lender.LoanDocumentUploadFilesRequest\x1a\x15.lender.EmptyResponse2F\n" +
+	"\rUpdateComment\x12(.lender.LoanDocumentUpdateCommentRequest\x1a\x15.lender.EmptyResponse\x12F\n" +
+	"\bAddFiles\x12#.lender.LoanDocumentAddFilesRequest\x1a\x15.lender.EmptyResponse2F\n" +
 	"\x04File\x12>\n" +
 	"\n" +
 	"DeleteFile\x12\x19.lender.FileDeleteRequest\x1a\x15.lender.EmptyResponse2t\n" +
@@ -7181,8 +7181,8 @@ var file_app_lender_rpc_pb_lender_proto_goTypes = []any{
 	(*SendDocumentRequestEntry)(nil),                // 72: lender.SendDocumentRequestEntry
 	(*LoanDocumentCreateExtendTypeRequest)(nil),     // 73: lender.LoanDocumentCreateExtendTypeRequest
 	(*LoanDocumentCreateExtendTypeRequestData)(nil), // 74: lender.LoanDocumentCreateExtendTypeRequestData
-	(*LoanDocumentUploadFilesRequest)(nil),          // 75: lender.LoanDocumentUploadFilesRequest
-	(*LoanDocumentUploadFilesRequestData)(nil),      // 76: lender.LoanDocumentUploadFilesRequestData
+	(*LoanDocumentAddFilesRequest)(nil),             // 75: lender.LoanDocumentAddFilesRequest
+	(*LoanDocumentAddFilesRequestData)(nil),         // 76: lender.LoanDocumentAddFilesRequestData
 	(*LoanBorrowerEntry)(nil),                       // 77: lender.LoanBorrowerEntry
 	(*LoanExperienceEntry)(nil),                     // 78: lender.LoanExperienceEntry
 	(*LoanThirdServiceEntry)(nil),                   // 79: lender.LoanThirdServiceEntry
@@ -7256,9 +7256,9 @@ var file_app_lender_rpc_pb_lender_proto_depIdxs = []int32{
 	67, // 53: lender.LoanDocumentDeleteRequestRequest.data:type_name -> lender.LoanDocumentDeleteRequestRequestData
 	69, // 54: lender.LoanDocumentDeleteFileRequest.data:type_name -> lender.LoanDocumentDeleteFileRequestData
 	71, // 55: lender.LoanDocumentSendRequestsRequest.data:type_name -> lender.LoanDocumentSendRequestsRequestData
-	72, // 56: lender.LoanDocumentSendRequestsRequestData.document_types:type_name -> lender.SendDocumentRequestEntry
+	72, // 56: lender.LoanDocumentSendRequestsRequestData.documents:type_name -> lender.SendDocumentRequestEntry
 	74, // 57: lender.LoanDocumentCreateExtendTypeRequest.data:type_name -> lender.LoanDocumentCreateExtendTypeRequestData
-	76, // 58: lender.LoanDocumentUploadFilesRequest.data:type_name -> lender.LoanDocumentUploadFilesRequestData
+	76, // 58: lender.LoanDocumentAddFilesRequest.data:type_name -> lender.LoanDocumentAddFilesRequestData
 	34, // 59: lender.LoanBorrowerEntry.mailing_address:type_name -> lender.AddressEntry
 	34, // 60: lender.LoanExperienceEntry.address:type_name -> lender.AddressEntry
 	81, // 61: lender.LoanDemographicEntry.property:type_name -> lender.LoanDemographicPropertyEntry
@@ -7288,7 +7288,7 @@ var file_app_lender_rpc_pb_lender_proto_depIdxs = []int32{
 	68, // 85: lender.LoanDocument.DeleteFile:input_type -> lender.LoanDocumentDeleteFileRequest
 	66, // 86: lender.LoanDocument.DeleteRequest:input_type -> lender.LoanDocumentDeleteRequestRequest
 	64, // 87: lender.LoanDocument.UpdateComment:input_type -> lender.LoanDocumentUpdateCommentRequest
-	75, // 88: lender.LoanDocument.UploadFiles:input_type -> lender.LoanDocumentUploadFilesRequest
+	75, // 88: lender.LoanDocument.AddFiles:input_type -> lender.LoanDocumentAddFilesRequest
 	86, // 89: lender.File.DeleteFile:input_type -> lender.FileDeleteRequest
 	88, // 90: lender.Storage.CreatePresignedUrl:input_type -> lender.StorageCreatePresignedUrlRequest
 	5,  // 91: lender.common.GetOpt:output_type -> lender.OptionResponse
@@ -7312,7 +7312,7 @@ var file_app_lender_rpc_pb_lender_proto_depIdxs = []int32{
 	1,  // 109: lender.LoanDocument.DeleteFile:output_type -> lender.EmptyResponse
 	1,  // 110: lender.LoanDocument.DeleteRequest:output_type -> lender.EmptyResponse
 	1,  // 111: lender.LoanDocument.UpdateComment:output_type -> lender.EmptyResponse
-	1,  // 112: lender.LoanDocument.UploadFiles:output_type -> lender.EmptyResponse
+	1,  // 112: lender.LoanDocument.AddFiles:output_type -> lender.EmptyResponse
 	1,  // 113: lender.File.DeleteFile:output_type -> lender.EmptyResponse
 	90, // 114: lender.Storage.CreatePresignedUrl:output_type -> lender.StorageCreatePresignedUrlResponse
 	91, // [91:115] is the sub-list for method output_type

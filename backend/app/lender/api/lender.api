@@ -12,6 +12,7 @@ import "desc/common.api"
 import "desc/us_geography.api"
 import "desc/loan.api"
 import "desc/storage.api"
+import "desc/loan_document.api"
 
 type (
 	EmptyRequest{
@@ -21,7 +22,7 @@ type (
 )
 
 type PathIdRequest {
-	id int64 `path:"id" validate:"requied,gt=0"`
+	id int64 `path:"id" validate:"required,gt=0"`
 }
 
 // ============== common =============
@@ -128,6 +129,37 @@ service lender-api {
 	// post /loan/:id/document (CreateLoanDocumentRequest) returns (CreateLoanDocumentResponse)
 }
 
+// ============== loan document =============
+@server(
+	desc: "loan document service"
+	version: v1
+	group: loan_document
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: loan_document
+)
+service lender-api {
+	@doc "create loan document"
+	@handler CreateLoanDocument
+	post /loan_document (LoanDocumentCreateRequest) returns (EmptyResponse)
+
+	@doc "delete loan document request"
+	@handler DeleteLoanDocumentRequest
+	delete /loan_document/:id/request (PathIdRequest) returns (EmptyResponse)
+
+	@doc "send loan document requests"
+	@handler SendLoanDocumentRequests
+	post /loan_document/send_requests (LoanDocumentSendRequestsRequest) returns (EmptyResponse)
+
+	@doc "update comment"
+	@handler UpdateComment
+	patch /loan_document/:id/comment (LoanDocumentUpdateCommentRequest) returns (EmptyResponse)
+
+	@doc "add files"
+	@handler AddFiles
+	post /loan_document/:id/files (LoanDocumentAddFilesRequest) returns (EmptyResponse)
+}
+
 // =============== file ==============
 @server(
 	desc: "file service"
@@ -140,7 +172,7 @@ service lender-api {
 service lender-api {
 	@doc "delete"
 	@handler Delete
-	get /file/:id (PathIdRequest) returns (EmptyResponse)
+	delete /file/:id (PathIdRequest) returns (EmptyResponse)
 }
 
 // =============== storage ==============

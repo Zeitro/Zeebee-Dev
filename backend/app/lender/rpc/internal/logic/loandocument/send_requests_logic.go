@@ -9,6 +9,7 @@ import (
 
 	"zeebee-backend/app/lender/rpc/internal/email_tpl"
 	"zeebee-backend/app/lender/rpc/internal/global"
+	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/repo/model"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
@@ -24,7 +25,7 @@ import (
 type SendRequestsLogic struct {
 	ctx       context.Context
 	svcCtx    *svc.ServiceContext
-	baseLogic *BaseLogic
+	baseLogic *logic.BaseLogic
 	logx.Logger
 }
 
@@ -32,7 +33,7 @@ func NewSendRequestsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Send
 	return &SendRequestsLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
-		baseLogic: NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 		Logger:    logx.WithContext(ctx),
 	}
 }
@@ -54,7 +55,7 @@ func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequ
 
 	err = l.svcCtx.LoanDocumentRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
 		var innerErr error
-		for _, documentType := range in.Data.DocumentTypes {
+		for _, documentType := range in.Data.Documents {
 			var document *model.LoanDocument
 			document, innerErr = l.svcCtx.LoanDocumentRepo.FindOneByColumnsWithTx(l.ctx, tx, map[string]interface{}{
 				"id":      documentType.Id,
@@ -81,7 +82,7 @@ func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequ
 			}
 		}
 		// add loan operation
-		comments := slice.FlatMap[*lender.SendDocumentRequestEntry, string](in.Data.DocumentTypes, func(index int, item *lender.SendDocumentRequestEntry) []string {
+		comments := slice.FlatMap[*lender.SendDocumentRequestEntry, string](in.Data.Documents, func(index int, item *lender.SendDocumentRequestEntry) []string {
 			return []string{item.Comment}
 		})
 		comments = slice.Filter(comments, func(index int, item string) bool {
@@ -119,7 +120,7 @@ func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequ
 		err := l.sendDocumentRequestEmail(ctx, loan, loanDocuments)
 		if err != nil {
 			err = errors.Wrap(err, "send document request email error")
-			l.WithContext(ctx).Error(err)
+			l.WithContext(ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
 
@@ -128,11 +129,11 @@ func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequ
 
 // prepare
 func (l *SendRequestsLogic) prepare(in *lender.LoanDocumentSendRequestsRequest) (loan *model.Loan, err error) {
-	if len(in.Data.DocumentTypes) == 0 {
+	if len(in.Data.Documents) == 0 {
 		return nil, errors.WithStack(errors.New("no document type found"))
 	}
 	// var document *model.LoanDocument
-	loan, _, err = l.baseLogic.GetLoanAndDocumentByDocumentId(in.Data.DocumentTypes[0].Id, in.Data.LenderCompanyId)
+	loan, _, err = l.baseLogic.GetLoanAndDocumentByDocumentId(in.Data.Documents[0].Id, in.Data.LenderCompanyId)
 	return loan, err
 }
 
@@ -142,7 +143,11 @@ func (l *SendRequestsLogic) sendDocumentRequestEmail(ctx context.Context, loan *
 		return errors.New("no applicant found for the loan")
 	}
 
-	applicant := loan.Applicants[0]
+	applicant, _ := slice.FindBy(loan.Applicants, func(index int, item *model.Applicant) bool {
+		return item.IsPrimary
+	})
+
+	// applicant := loan.Applicants[0]
 	if applicant == nil {
 		return errors.New("applicant user not found")
 	}

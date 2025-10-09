@@ -826,7 +826,7 @@ const (
 	LoanDocument_DeleteFile_FullMethodName    = "/lender.LoanDocument/DeleteFile"
 	LoanDocument_DeleteRequest_FullMethodName = "/lender.LoanDocument/DeleteRequest"
 	LoanDocument_UpdateComment_FullMethodName = "/lender.LoanDocument/UpdateComment"
-	LoanDocument_UploadFiles_FullMethodName   = "/lender.LoanDocument/UploadFiles"
+	LoanDocument_AddFiles_FullMethodName      = "/lender.LoanDocument/AddFiles"
 )
 
 // LoanDocumentClient is the client API for LoanDocument service.
@@ -838,7 +838,7 @@ type LoanDocumentClient interface {
 	DeleteFile(ctx context.Context, in *LoanDocumentDeleteFileRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	DeleteRequest(ctx context.Context, in *LoanDocumentDeleteRequestRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	UpdateComment(ctx context.Context, in *LoanDocumentUpdateCommentRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
-	UploadFiles(ctx context.Context, in *LoanDocumentUploadFilesRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	AddFiles(ctx context.Context, in *LoanDocumentAddFilesRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 }
 
 type loanDocumentClient struct {
@@ -899,10 +899,10 @@ func (c *loanDocumentClient) UpdateComment(ctx context.Context, in *LoanDocument
 	return out, nil
 }
 
-func (c *loanDocumentClient) UploadFiles(ctx context.Context, in *LoanDocumentUploadFilesRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+func (c *loanDocumentClient) AddFiles(ctx context.Context, in *LoanDocumentAddFilesRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(EmptyResponse)
-	err := c.cc.Invoke(ctx, LoanDocument_UploadFiles_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, LoanDocument_AddFiles_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -918,7 +918,7 @@ type LoanDocumentServer interface {
 	DeleteFile(context.Context, *LoanDocumentDeleteFileRequest) (*EmptyResponse, error)
 	DeleteRequest(context.Context, *LoanDocumentDeleteRequestRequest) (*EmptyResponse, error)
 	UpdateComment(context.Context, *LoanDocumentUpdateCommentRequest) (*EmptyResponse, error)
-	UploadFiles(context.Context, *LoanDocumentUploadFilesRequest) (*EmptyResponse, error)
+	AddFiles(context.Context, *LoanDocumentAddFilesRequest) (*EmptyResponse, error)
 	mustEmbedUnimplementedLoanDocumentServer()
 }
 
@@ -944,8 +944,8 @@ func (UnimplementedLoanDocumentServer) DeleteRequest(context.Context, *LoanDocum
 func (UnimplementedLoanDocumentServer) UpdateComment(context.Context, *LoanDocumentUpdateCommentRequest) (*EmptyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateComment not implemented")
 }
-func (UnimplementedLoanDocumentServer) UploadFiles(context.Context, *LoanDocumentUploadFilesRequest) (*EmptyResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UploadFiles not implemented")
+func (UnimplementedLoanDocumentServer) AddFiles(context.Context, *LoanDocumentAddFilesRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddFiles not implemented")
 }
 func (UnimplementedLoanDocumentServer) mustEmbedUnimplementedLoanDocumentServer() {}
 func (UnimplementedLoanDocumentServer) testEmbeddedByValue()                      {}
@@ -1058,20 +1058,20 @@ func _LoanDocument_UpdateComment_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _LoanDocument_UploadFiles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LoanDocumentUploadFilesRequest)
+func _LoanDocument_AddFiles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanDocumentAddFilesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(LoanDocumentServer).UploadFiles(ctx, in)
+		return srv.(LoanDocumentServer).AddFiles(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: LoanDocument_UploadFiles_FullMethodName,
+		FullMethod: LoanDocument_AddFiles_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LoanDocumentServer).UploadFiles(ctx, req.(*LoanDocumentUploadFilesRequest))
+		return srv.(LoanDocumentServer).AddFiles(ctx, req.(*LoanDocumentAddFilesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1104,8 +1104,8 @@ var LoanDocument_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _LoanDocument_UpdateComment_Handler,
 		},
 		{
-			MethodName: "UploadFiles",
-			Handler:    _LoanDocument_UploadFiles_Handler,
+			MethodName: "AddFiles",
+			Handler:    _LoanDocument_AddFiles_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

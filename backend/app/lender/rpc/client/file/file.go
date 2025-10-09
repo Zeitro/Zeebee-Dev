@@ -34,6 +34,8 @@ type (
 	LoanDetailRequest                       = lender.LoanDetailRequest
 	LoanDetailRequestData                   = lender.LoanDetailRequestData
 	LoanDetailResponse                      = lender.LoanDetailResponse
+	LoanDocumentAddFilesRequest             = lender.LoanDocumentAddFilesRequest
+	LoanDocumentAddFilesRequestData         = lender.LoanDocumentAddFilesRequestData
 	LoanDocumentCreateExtendTypeRequest     = lender.LoanDocumentCreateExtendTypeRequest
 	LoanDocumentCreateExtendTypeRequestData = lender.LoanDocumentCreateExtendTypeRequestData
 	LoanDocumentDeleteFileRequest           = lender.LoanDocumentDeleteFileRequest
@@ -45,8 +47,6 @@ type (
 	LoanDocumentSendRequestsRequestData     = lender.LoanDocumentSendRequestsRequestData
 	LoanDocumentUpdateCommentRequest        = lender.LoanDocumentUpdateCommentRequest
 	LoanDocumentUpdateCommentRequestData    = lender.LoanDocumentUpdateCommentRequestData
-	LoanDocumentUploadFilesRequest          = lender.LoanDocumentUploadFilesRequest
-	LoanDocumentUploadFilesRequestData      = lender.LoanDocumentUploadFilesRequestData
 	LoanEntry                               = lender.LoanEntry
 	LoanExperienceEntry                     = lender.LoanExperienceEntry
 	LoanExtendValueEntry                    = lender.LoanExtendValueEntry

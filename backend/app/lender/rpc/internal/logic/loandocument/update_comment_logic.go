@@ -6,6 +6,7 @@ import (
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
+	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/repo/model"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
@@ -20,7 +21,7 @@ import (
 type UpdateCommentLogic struct {
 	ctx       context.Context
 	svcCtx    *svc.ServiceContext
-	baseLogic *BaseLogic
+	baseLogic *logic.BaseLogic
 	logx.Logger
 }
 
@@ -28,7 +29,7 @@ func NewUpdateCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upd
 	return &UpdateCommentLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
-		baseLogic: NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 		Logger:    logx.WithContext(ctx),
 	}
 }
