@@ -3,8 +3,13 @@ package file
 import (
 	"context"
 
+	"github.com/pkg/errors"
+
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
+	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/utils"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +30,29 @@ func NewDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteLogi
 }
 
 func (l *DeleteLogic) Delete(req *types.PathIdRequest) (resp *types.EmptyResponse, err error) {
-	// todo: add your logic here and delete this line
+	defer func() {
+		if err != nil {
+			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+		}
+	}()
 
-	return
+	// Get lender company and employee id from context
+	lenderCompanyId, lenderEmployeeId, err := utils.GetLenderCompanyAndEmployeeId(l.ctx)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	// Call RPC to delete file
+	_, err = l.svcCtx.FileRpcClient.DeleteFile(l.ctx, &lender.FileDeleteRequest{
+		Data: &lender.FileDeleteRequestData{
+			Id:               req.Id,
+			LenderCompanyId:  lenderCompanyId,
+			LenderEmployeeId: lenderEmployeeId,
+		},
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to delete file")
+	}
+
+	return &types.EmptyResponse{}, nil
 }
