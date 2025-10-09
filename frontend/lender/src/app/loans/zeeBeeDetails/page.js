@@ -1,8 +1,9 @@
 'use client';
 import styles from './index.module.scss';
 import { Form, Menu, Segmented, Steps, Tabs } from 'antd';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import useCreate from '../components/CreateZeeBee/hooks/useCreate';
+import useLenderDetails from './components/useLenderDetails';
 import { assemblyAddress } from '@/lib/format';
 import { flattenArray } from '@/lib/common';
 import { stageColor, pendingStatusColor, loanDetailsFields } from '@/enum/loan';
@@ -19,8 +20,12 @@ const ZeeBeeDetails = () => {
 		initialValues,
 		rowData,
 		setRowData,
+		setNewRowData,
 		lenderDetailsComponents,
-	} = useCreate('details');
+		disabled,
+		tabList,
+		selectIndex,
+	} = useLenderDetails();
 
 	useEffect(() => {
 		setCurrentStep(lenderDetailsSteps[0].key);
@@ -35,7 +40,7 @@ const ZeeBeeDetails = () => {
 			}
 			return (
 				<div
-					className="bg-blue-dark w-6 h-6 rounded-full flex !items-center justify-center !text-white font-normal"
+					className="bg-[#081265] w-6 h-6 rounded-full flex !items-center justify-center !text-[#E0E7FF] font-normal"
 					style={{
 						paddingTop: item.icon ? 0 : '2px',
 					}}
@@ -122,7 +127,7 @@ const ZeeBeeDetails = () => {
 						autoComplete="off"
 						className=""
 						size="large"
-						// disabled={true}
+						disabled={disabled}
 						initialValues={initialValues}
 						scrollToFirstError
 						onValuesChange={() => {
@@ -141,19 +146,16 @@ const ZeeBeeDetails = () => {
 										_.set(rowData, v?.name, v?.value);
 									}
 								});
-								setRowData({ ...rowData });
+								setNewRowData({ ...rowData });
 							}
 						}}
 					>
 						<Tabs
 							activeKey={currentStep}
-							items={flattenArray(lenderDetailsSteps).map((i) => ({
-								key: i.key,
-								label: i.title,
-								children: lenderDetailsComponents[i.key],
-							}))}
+							items={tabList}
 							renderTabBar={() => <div> </div>}
 							className={` ${styles.tabs}`}
+							destroyOnHidden
 						/>
 					</Form>
 				</div>
