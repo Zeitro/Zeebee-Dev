@@ -14,6 +14,7 @@ entity users{
 
 note right of users
     status:
+        - unverified
         - active
         - inactive
     type:
@@ -29,11 +30,9 @@ entity borrowers{
     * is_del int2
     ---
     * user_id int4
-    * first_name varchar(30)
-    * last_name varchar(30)
-    * ssn varchar(10)
-    * phone_number varchar(20)
-    * address jsonb
+    * first_name varchar(100)
+    * last_name varchar(100)
+    * full_name varchar(100)
 }
 
 entity loans {
@@ -44,7 +43,7 @@ entity loans {
     ---
     * code varchar(100)
     * borrower_id int4
-    * lender_id int4
+    * lender_company_id int4
     * lender_company varchar(100)
     * existing_lender_company varchar(100)
     * service_company varchar(100)
@@ -91,17 +90,24 @@ entity loans {
     * has_collateralized_blanket boolean
     * has_properties_vacant boolean
     * has_short_term_rental boolean
-'    * additional_info varchar(3000)
+    * original_contract_date date
+    * extension_date date
+    * loan_processor varchar(100)
+    * extend jsonb
+
 }
 
 note right of loans
     stage:
+        - Draft
         - Pending
         - Active
         - Archived
+        - Rejected
     pending_status:
         - Quoting
         - Processing
+        - Underwriting
         - Closing
     purpose:
         - Purchase
@@ -224,48 +230,16 @@ note right of loan_demographics
         bankruptcy_chapter13 boolean
     }
     ethnicity{
-'        is_hispanic_or_latino boolean
-'        is_other_hispanic_or_latino boolean
-'        is_mexican boolean
-'        is_cuban boolean
-'        is_not_hispanic_or_latino boolean
-'        hidden boolean
-
         values jsonb
         other_hispanic_or_latino_name varchar(30)
     }
     race{
-'        is_american_indian_or_alaska_native boolean
-'        is_asian boolean
-'        is_asian_indian boolean
-'        is_asian_chinese boolean
-'        is_asian_filipino boolean
-'        is_asian_japanese boolean
-'        is_asian_korean boolean
-'        is_asian_vietnamese boolean
-'        is_asian_other boolean
-'        is_black_or_african_american boolean
-'        is_native_hawaiian_or_other_pacific_islander boolean
-'        is_native_hawaiian_guamanian_or_chamorro_samoan boolean
-'        is_other_pacific_islander boolean
-'        is_white boolean
-'        hidden boolean
-
         values jsonb
         asian_values jsonb
         asian_other_name varchar(30)
         american_indian_or_alaska_native_name varchar(30)
         other_pacific_islander_name varchar(30)
     }
-'    extra_demographic{
-'        is_ethnicity_collected_by_observation boolean
-'        is_sex_collected_by_observation boolean
-'        is_race_collected_by_observation boolean
-'        is_by_face_to_face boolean
-'        is_by_telephone boolean
-'        is_by_fox_or_mail boolean
-'        is_by_email_or_internet boolean
-'    }
     sex:
         - Male
         - Female
@@ -332,11 +306,13 @@ entity loan_properties {
     * living_area_sqft decimal(8,2)
     * bedrooms int2
     * bathrooms int2
+    * unit int2
     * future_property_type varchar(30)
     * future_living_area_sqft decimal(8,2)
     * future_bedrooms int2
     * future_bathrooms int2
     * future_unit int2
+    * owner varchar(255)
 }
 
 note right of loan_properties
@@ -353,7 +329,7 @@ note right of loan_properties
 end note
 
 
-entity lenders {
+entity lender_companies {
     * id int4
     * created_at timestamptz
     * updated_at timestamptz
@@ -364,11 +340,24 @@ entity lenders {
     * status varchar(10)
 }
 
-note right of lenders
+note right of lender_companies
     status:
         - active
         - inactive
 end note
+
+entity lender_employees{
+    * id int4
+    * created_at timestamptz
+    * updated_at timestamptz
+    * is_del int2
+    ---
+    * lender_id int4
+    * lender_company_id int4
+    * first_name varchar(100)
+    * last_name varchar(100)
+    * full_name varchar(100)
+}
 
 entity applicants {
     * id int4
@@ -426,20 +415,95 @@ entity us_geographies {
         * city_name varchar(50)
 }
 
+entity loan_documents{
+        * id int4
+        * created_at timestamptz
+        * updated_at timestamptz
+        * is_del int2
+        ---
+        * loan_id int4
+        * category varchar(20)
+        * file_type varchar(100)
+        * status varchar(30)
+        * comment varchar(255)
+}
+
+note right of loan_documents
+    category:
+        - Borrower
+        - Lender
+        - Extend
+        - Init
+    file_type:
+        Borrower:
+            - Valid ID of Borrower
+            - Purchase Agreement
+            - Evidence of Insurance
+            - Preliminary Title Report/Escrow Contact
+            - RE Experience
+            - Bank Statements for Most Recent Two Months
+        Init:
+            - Apply Form
+        Lender:
+            - Borrower's Credit Score
+            - Borrower's Default/Fraud/Risk/View/Criminal Records And RE Experience
+            - Property Data/Historical Property Ownership
+            - Title Report
+    status:
+        - PendingUpload
+        - Requested
+        - ReadyForReview
+end note
+
+
 entity files{
         * id int4
         * created_at timestamptz
         * updated_at timestamptz
         * is_del int2
         ---
-        * type varchar(20)
-        * ref_id int4
-        * file varchar(100)
+        * entity_id int4
+        * entity_type varchar(50)
+        * file_url varchar(255)
 }
 
 note right of files
-    type:
-        - ApplyForm
+    entity_type:
+        - LoanDocument
+end note
+
+entity loan_operations {
+     * id int4
+     * created_at timestamptz
+     * updated_at timestamptz
+     * is_del int2
+     ---
+     * loan_id int4
+     * operator_id int4
+     * operator_name varchar(50)
+     * operator_type varchar(50)
+     * action varchar(50)
+     * from jsonb
+     * to jsonb
+     * metadata jsonb
+}
+note right of loan_operations
+    operator_type:
+        - Borrower
+        - Lender
+        - System
+    action:
+        - Create
+        - Update
+        - Reject
+        - Approve
+        - Comment
+        - Delete
+        - CreateDocumentType
+        - SendDocumentRequest
+        - DeleteDocumentRequest
+        - UpdateDocumentFile
+        - DeleteDocumentFile
 end note
 
 
@@ -453,10 +517,13 @@ loans ||--o{ applicants: has many
 loans ||--|| loan_properties: has one
 loans ||--|| loan_borrowers: has one
 loans ||--|| loan_demographics: has one
-loans ||--o{ files: has one
+loans ||--o{ loan_documents: has many
 loans ||--o{ loan_experiences: has many
+loans ||--o{ loan_operations: has many
 loans ||--o{ loan_third_services: has many
 loan_borrowers ||--o{ applicants: has many
-lenders ||--o{ loans: has many
+loan_documents ||--o{ files: has many
+lender_companies ||--o{ loans: has many
+lender_companies ||--o{ lender_employees: has many
 
 @enduml
