@@ -15,12 +15,14 @@ type ServiceContext struct {
 	AuthMiddleware rest.Middleware
 
 	// rpc client
-	UserRpcClient      borrower.UserClient
-	LoanRpcClient      borrower.LoanClient
-	CommonRpcClient    borrower.CommonClient
-	PropertyRpcClient  borrower.PropertyClient
-	ApplicantRpcClient borrower.ApplicantClient
-	StorageRpcClient   borrower.StorageClient
+	UserRpcClient         borrower.UserClient
+	LoanRpcClient         borrower.LoanClient
+	CommonRpcClient       borrower.CommonClient
+	PropertyRpcClient     borrower.PropertyClient
+	ApplicantRpcClient    borrower.ApplicantClient
+	StorageRpcClient      borrower.StorageClient
+	FileRpcClient         borrower.FileClient
+	LoanDocumentRpcClient borrower.LoanDocumentClient
 }
 
 func NewServiceContext(c config.ApiConf) *ServiceContext {
@@ -28,11 +30,13 @@ func NewServiceContext(c config.ApiConf) *ServiceContext {
 		Config:         c,
 		AuthMiddleware: middleware.NewAuthMiddleware(c.JwtAuth.AccessSecret).Handle,
 		// rpc client
-		UserRpcClient:      borrower.NewUserClient(zrpc.MustNewClient(c.RpcConf).Conn()),
-		LoanRpcClient:      borrower.NewLoanClient(zrpc.MustNewClient(c.RpcConf).Conn()),
-		CommonRpcClient:    borrower.NewCommonClient(zrpc.MustNewClient(c.RpcConf).Conn()),
-		PropertyRpcClient:  borrower.NewPropertyClient(zrpc.MustNewClient(c.RpcConf).Conn()),
-		ApplicantRpcClient: borrower.NewApplicantClient(zrpc.MustNewClient(c.RpcConf).Conn()),
-		StorageRpcClient:   borrower.NewStorageClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		UserRpcClient:         borrower.NewUserClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		LoanRpcClient:         borrower.NewLoanClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		CommonRpcClient:       borrower.NewCommonClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		PropertyRpcClient:     borrower.NewPropertyClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		ApplicantRpcClient:    borrower.NewApplicantClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		StorageRpcClient:      borrower.NewStorageClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		FileRpcClient:         borrower.NewFileClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		LoanDocumentRpcClient: borrower.NewLoanDocumentClient(zrpc.MustNewClient(c.RpcConf).Conn()),
 	}
 }

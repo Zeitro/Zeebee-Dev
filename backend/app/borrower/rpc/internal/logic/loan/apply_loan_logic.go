@@ -38,7 +38,7 @@ type applyLoanModelData struct {
 	applicants             []*model.Applicant
 	transactionExperiences []*model.LoanExperience
 	realEstatesExperiences []*model.LoanExperience
-	applyFormFile          *model.File
+	// applyFormFile          *model.File
 }
 
 func NewApplyLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ApplyLoanLogic {
@@ -152,9 +152,30 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrowe
 		}
 
 		// apply form
-		if data.applyFormFile != nil {
-			data.applyFormFile.RefId = loan.Id
-			_, innerErr = l.svcCtx.FileRepo.CreateWithTx(l.ctx, tx, data.applyFormFile, false)
+		if len(in.Data.ApplyFormFile) > 0 {
+			innerErr = l.svcCtx.LoanDocumentRepo.SaveApplyFormDocumentWithTx(l.ctx, tx, loan.Id, in.Data.ApplyFormFile)
+			if innerErr != nil {
+				return innerErr
+			}
+		}
+
+		// Create loan documents with pending upload status
+		loanDocumentTypes := constants.GetLoanDocumentTypes()
+		var loanDocuments []*model.LoanDocument
+		for category, fileTypes := range loanDocumentTypes {
+			for _, fileType := range fileTypes {
+				loanDocument := &model.LoanDocument{
+					LoanId:   loan.Id,
+					Category: category,
+					FileType: fileType,
+					Status:   constants.LoanDocumentStatusPendingUpload,
+				}
+				loanDocuments = append(loanDocuments, loanDocument)
+			}
+		}
+
+		if len(loanDocuments) > 0 {
+			_, innerErr = l.svcCtx.LoanDocumentRepo.BatchCreateWithTx(l.ctx, tx, loanDocuments)
 			if innerErr != nil {
 				return innerErr
 			}
@@ -319,14 +340,14 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData) 
 	}
 
 	// apply form file
-	var applyFormFile *model.File
-	if len(reqData.ApplyFormFile) > 0 {
-		applyFormFile = &model.File{
-			File:     reqData.ApplyFormFile,
-			FileType: constants.FileTypeApplyForm,
-			BizType:  constants.FileBizTypeLoan,
-		}
-	}
+	// var applyFormFile *model.File
+	// if len(reqData.ApplyFormFile) > 0 {
+	// 	applyFormFile = &model.File{
+	// 		File:     reqData.ApplyFormFile,
+	// 		FileType: constants.FileTypeApplyForm,
+	// 		BizType:  constants.FileBizTypeLoan,
+	// 	}
+	// }
 
 	data = &applyLoanModelData{
 		loan:                   loan,
@@ -337,7 +358,7 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData) 
 		realEstatesExperiences: realEstatesExperiences,
 		loanDemographic:        loanDemographic,
 		loanThirdServices:      loanThirdServices,
-		applyFormFile:          applyFormFile,
+		// applyFormFile:          applyFormFile,
 	}
 	return
 }

@@ -49,6 +49,40 @@
         }
       }
     },
+    "/api/v1/file/{id}": {
+      "delete": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "file"
+        ],
+        "summary": "delete",
+        "operationId": "fileDelete",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/loan": {
       "post": {
         "consumes": [
@@ -133,7 +167,7 @@
                     "business_line": {
                       "type": "string"
                     },
-                    "loan_status_update": {
+                    "loan_status_updates": {
                       "type": "string"
                     },
                     "meeting_notes": {
@@ -195,6 +229,9 @@
                     "living_area_sqft": {
                       "type": "number"
                     },
+                    "owner": {
+                      "type": "string"
+                    },
                     "property_base": {
                       "type": "object",
                       "properties": {
@@ -214,6 +251,9 @@
                     },
                     "property_type": {
                       "type": "string"
+                    },
+                    "unit": {
+                      "type": "integer"
                     }
                   }
                 },
@@ -230,9 +270,6 @@
                   "type": "number"
                 },
                 "original_contract_date": {
-                  "type": "string"
-                },
-                "owner": {
                   "type": "string"
                 },
                 "paid_off_date": {
@@ -642,6 +679,9 @@
                     "living_area_sqft": {
                       "type": "number"
                     },
+                    "owner": {
+                      "type": "string"
+                    },
                     "property_base": {
                       "type": "object",
                       "properties": {
@@ -661,6 +701,9 @@
                     },
                     "property_type": {
                       "type": "string"
+                    },
+                    "unit": {
+                      "type": "integer"
                     }
                   }
                 },
@@ -1240,6 +1283,9 @@
                     "living_area_sqft": {
                       "type": "number"
                     },
+                    "owner": {
+                      "type": "string"
+                    },
                     "property_base": {
                       "type": "object",
                       "properties": {
@@ -1259,6 +1305,9 @@
                     },
                     "property_type": {
                       "type": "string"
+                    },
+                    "unit": {
+                      "type": "integer"
                     }
                   }
                 },
@@ -1508,7 +1557,12 @@
           "200": {
             "description": "",
             "schema": {
-              "type": "object"
+              "type": "object",
+              "properties": {
+                "record_count": {
+                  "type": "integer"
+                }
+              }
             }
           }
         }
@@ -1859,6 +1913,9 @@
                       "closing_fund": {
                         "type": "number"
                       },
+                      "code": {
+                        "type": "string"
+                      },
                       "created_at": {
                         "type": "string"
                       },
@@ -1918,7 +1975,7 @@
                           "business_line": {
                             "type": "string"
                           },
-                          "loan_status_update": {
+                          "loan_status_updates": {
                             "type": "string"
                           },
                           "meeting_notes": {
@@ -2163,11 +2220,17 @@
                           "living_area_sqft": {
                             "type": "number"
                           },
+                          "owner": {
+                            "type": "string"
+                          },
                           "property_base": {
                             "type": "object"
                           },
                           "property_type": {
                             "type": "string"
+                          },
+                          "unit": {
+                            "type": "integer"
                           }
                         }
                       },
@@ -2557,6 +2620,9 @@
                 "closing_fund": {
                   "type": "number"
                 },
+                "code": {
+                  "type": "string"
+                },
                 "created_at": {
                   "type": "string"
                 },
@@ -2616,7 +2682,7 @@
                     "business_line": {
                       "type": "string"
                     },
-                    "loan_status_update": {
+                    "loan_status_updates": {
                       "type": "string"
                     },
                     "meeting_notes": {
@@ -2861,6 +2927,9 @@
                     "living_area_sqft": {
                       "type": "number"
                     },
+                    "owner": {
+                      "type": "string"
+                    },
                     "property_base": {
                       "type": "object",
                       "properties": {
@@ -2897,6 +2966,9 @@
                     },
                     "property_type": {
                       "type": "string"
+                    },
+                    "unit": {
+                      "type": "integer"
                     }
                   }
                 },
@@ -3222,7 +3294,7 @@
                     "business_line": {
                       "type": "string"
                     },
-                    "loan_status_update": {
+                    "loan_status_updates": {
                       "type": "string"
                     },
                     "meeting_notes": {
@@ -3284,6 +3356,9 @@
                     "living_area_sqft": {
                       "type": "number"
                     },
+                    "owner": {
+                      "type": "string"
+                    },
                     "property_base": {
                       "type": "object",
                       "properties": {
@@ -3303,6 +3378,9 @@
                     },
                     "property_type": {
                       "type": "string"
+                    },
+                    "unit": {
+                      "type": "integer"
                     }
                   }
                 },
@@ -3319,9 +3397,6 @@
                   "type": "number"
                 },
                 "original_contract_date": {
-                  "type": "string"
-                },
-                "owner": {
                   "type": "string"
                 },
                 "paid_off_date": {
@@ -3828,6 +3903,9 @@
                     "living_area_sqft": {
                       "type": "number"
                     },
+                    "owner": {
+                      "type": "string"
+                    },
                     "property_base": {
                       "type": "object",
                       "properties": {
@@ -3847,6 +3925,9 @@
                     },
                     "property_type": {
                       "type": "string"
+                    },
+                    "unit": {
+                      "type": "integer"
                     }
                   }
                 },
@@ -4476,6 +4557,9 @@
                     "living_area_sqft": {
                       "type": "number"
                     },
+                    "owner": {
+                      "type": "string"
+                    },
                     "property_base": {
                       "type": "object",
                       "properties": {
@@ -4495,6 +4579,9 @@
                     },
                     "property_type": {
                       "type": "string"
+                    },
+                    "unit": {
+                      "type": "integer"
                     }
                   }
                 },
@@ -4696,6 +4783,59 @@
                 },
                 "yearly_liability_expense": {
                   "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/loan_document/{id}/files": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "loan_document"
+        ],
+        "summary": "add files",
+        "operationId": "loanDocumentAddFiles",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "file_urls"
+              ],
+              "properties": {
+                "file_urls": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -5069,6 +5209,9 @@
                     "living_area_sqft": {
                       "type": "number"
                     },
+                    "owner": {
+                      "type": "string"
+                    },
                     "property_base": {
                       "type": "object",
                       "properties": {
@@ -5088,6 +5231,9 @@
                     },
                     "property_type": {
                       "type": "string"
+                    },
+                    "unit": {
+                      "type": "integer"
                     }
                   }
                 },
@@ -5762,6 +5908,9 @@
                       "closing_fund": {
                         "type": "number"
                       },
+                      "code": {
+                        "type": "string"
+                      },
                       "created_at": {
                         "type": "string"
                       },
@@ -5821,7 +5970,7 @@
                           "business_line": {
                             "type": "string"
                           },
-                          "loan_status_update": {
+                          "loan_status_updates": {
                             "type": "string"
                           },
                           "meeting_notes": {
@@ -6066,11 +6215,17 @@
                           "living_area_sqft": {
                             "type": "number"
                           },
+                          "owner": {
+                            "type": "string"
+                          },
                           "property_base": {
                             "type": "object"
                           },
                           "property_type": {
                             "type": "string"
+                          },
+                          "unit": {
+                            "type": "integer"
                           }
                         }
                       },
@@ -6491,6 +6646,9 @@
                       "closing_fund": {
                         "type": "number"
                       },
+                      "code": {
+                        "type": "string"
+                      },
                       "created_at": {
                         "type": "string"
                       },
@@ -6550,7 +6708,7 @@
                           "business_line": {
                             "type": "string"
                           },
-                          "loan_status_update": {
+                          "loan_status_updates": {
                             "type": "string"
                           },
                           "meeting_notes": {
@@ -6795,11 +6953,17 @@
                           "living_area_sqft": {
                             "type": "number"
                           },
+                          "owner": {
+                            "type": "string"
+                          },
                           "property_base": {
                             "type": "object"
                           },
                           "property_type": {
                             "type": "string"
+                          },
+                          "unit": {
+                            "type": "integer"
                           }
                         }
                       },
@@ -7206,6 +7370,9 @@
                       "closing_fund": {
                         "type": "number"
                       },
+                      "code": {
+                        "type": "string"
+                      },
                       "created_at": {
                         "type": "string"
                       },
@@ -7265,7 +7432,7 @@
                           "business_line": {
                             "type": "string"
                           },
-                          "loan_status_update": {
+                          "loan_status_updates": {
                             "type": "string"
                           },
                           "meeting_notes": {
@@ -7510,11 +7677,17 @@
                           "living_area_sqft": {
                             "type": "number"
                           },
+                          "owner": {
+                            "type": "string"
+                          },
                           "property_base": {
                             "type": "object"
                           },
                           "property_type": {
                             "type": "string"
+                          },
+                          "unit": {
+                            "type": "integer"
                           }
                         }
                       },
@@ -8352,7 +8525,7 @@
       }
     }
   },
-  "x-date": "2025-09-23 09:13:53",
+  "x-date": "2025-10-10 13:25:13",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
