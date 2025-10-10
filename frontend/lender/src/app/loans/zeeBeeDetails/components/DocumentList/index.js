@@ -11,46 +11,18 @@ const DocumentList = ({
 	],
 	loading,
 	columns,
+	isHide,
 	...props
 }) => {
-	const expandedRowRender = (row, index, b) => {
-		console.log(row, b);
-
-		return (
-			<List
-				itemLayout="horizontal"
-				dataSource={[{ title: '1' }]}
-				renderItem={(item, index) => (
-					<List.Item>
-						<List.Item.Meta title={<a href="https://ant.design">{item.title}</a>} />
-						<Space>
-							<Button>view</Button>
-							<Button>delete</Button>
-						</Space>
-					</List.Item>
-				)}
-			/>
-		);
-	};
 	return (
-		// <Table
-		// 	bordered={false}
-		// 	dataSource={dataSource}
-		// 	loading={loading}
-		// 	columns={[...columns, Table.EXPAND_COLUMN]}
-		// 	pagination={false}
-		// 	expandable={{ expandedRowRender }}
-		// 	className={[styles.documentList, props?.className].join(' ')}
-		// 	{...props}
-		// />
 		<div className={[styles.documentList, props?.className].join(' ')}>
 			<div
 				className="flex py-4 px-4 font-medium gap-4"
 				style={{ color: 'rgba(0, 0, 0, 0.65)' }}
 			>
-				{columns.map((i) => (
+				{columns.map((i, index) => (
 					<div
-						key={i.key}
+						key={index}
 						style={{
 							width: i.width,
 							minWidth: i.minWidth,
@@ -64,7 +36,14 @@ const DocumentList = ({
 			</div>
 			<div>
 				{dataSource.map((item, index) => {
-					return <DocumentItem key={index} item={item} columns={columns}></DocumentItem>;
+					return (
+						<DocumentItem
+							key={index}
+							item={item}
+							columns={columns}
+							isHide={isHide}
+						></DocumentItem>
+					);
 				})}
 			</div>
 		</div>

@@ -7,6 +7,7 @@ import {
 } from '../documentColumns';
 import { Button, List, Space } from 'antd';
 import HeaderBtn from '../HeaderBtn';
+import { AddDocument } from '../AddDocument';
 const Processing = () => {
 	const lenderList = [
 		{
@@ -25,8 +26,10 @@ const Processing = () => {
 	return (
 		<div>
 			<HeaderBtn>Closing</HeaderBtn>
-			<Button>Submit</Button>
-			<DocumentList columns={lenderClosingColumns()} dataSource={[...lenderList]} />
+			<div className="px-[34px] py-6">
+				<AddDocument />
+				<DocumentList columns={lenderClosingColumns()} dataSource={[...lenderList]} />
+			</div>
 		</div>
 	);
 };

@@ -1,5 +1,9 @@
 import DocumentStatus from './DocumentStatus';
 import MsgSvg from '@/assets/images/message.svg';
+import { SendRequestBtn } from './SendRequestModal';
+import { request } from 'http';
+import { UploadModalBtn } from './AddDocument/UploadModal';
+import TableOperation from '@/components/TableOperation';
 const getUploadCommonColumns = (typeTitle, isHaveComments = true) => {
 	const arr = [
 		{
@@ -28,43 +32,65 @@ const getUploadCommonColumns = (typeTitle, isHaveComments = true) => {
 	];
 	if (isHaveComments) {
 		arr.splice(2, 0, {
-			title: 'Comments',
-			dataIndex: 'comments',
-			key: 'comments',
+			title: 'Message',
+			dataIndex: 'Message',
+			key: 'Message',
 			ellipsis: true,
 			width: 150,
 			render: (v) => <MsgSvg />,
 		});
 	}
+
 	return arr;
 };
-export const borrowerUploadColumns = () => {
-	// const status = {
-	// 	title: 'Status',
-	// 	dataIndex: 'pending_status',
-	// 	key: 'pending_status',
-	// 	ellipsis: true,
-	// 	width: 150,
-	// 	align: 'center',
-	// 	fixed: 'right',
-	// 	render: (v, record) => (
-	// 		<LoanPendingStatus data={record} successCallback={successCallback} />
-	// 	),
-	// };
+export const borrowerUploadColumns = (isHide) => {
 	const getOpt = () => {
 		return {
 			title: '',
 			dataIndex: 'operation',
-			width: 120,
-			align: 'left',
-			fixed: 'right',
-			render: (_, record) => 'send request',
+			width: 150,
+			align: 'right',
+			render: (_, record) => (
+				<div className="flex items-center gap-2">
+					<SendRequestBtn
+						maxCount={1}
+						list={[
+							{
+								document_type: record.type,
+							},
+						]}
+					>
+						Send request
+					</SendRequestBtn>
+					<TableOperation
+						list={[
+							{
+								key: 'Upload',
+								label: (
+									<UploadModalBtn isChangeType={false} isButton={false}>
+										Upload document
+									</UploadModalBtn>
+								),
+							},
+							{
+								key: 'edit',
+								label: 'Edit comments',
+							},
+							{
+								key: 'delete',
+								label: 'Delete request',
+							},
+						]}
+						onSelect={(key) => {}}
+					/>
+				</div>
+			),
 		};
 	};
-	return [...getUploadCommonColumns('Pending borrower upload'), getOpt()];
+	return [...getUploadCommonColumns('Pending borrower upload'), ...(isHide ? [] : [getOpt()])];
 };
 
-export const lenderUploadColumns = () => {
+export const lenderUploadColumns = (isHide) => {
 	// const status = {
 	// 	title: 'Status',
 	// 	dataIndex: 'pending_status',
@@ -81,13 +107,29 @@ export const lenderUploadColumns = () => {
 		return {
 			title: '',
 			dataIndex: 'operation',
-			width: 120,
-			align: 'left',
-			fixed: 'right',
-			render: (_, record) => 'upload',
+			width: 150,
+			align: 'right',
+			render: (_, record) => (
+				<div className="flex items-center gap-2">
+					<UploadModalBtn isChangeType={false}>Upload</UploadModalBtn>
+					<TableOperation
+						list={[
+							{
+								key: 'edit',
+								label: 'Edit comments',
+							},
+							{
+								key: 'delete',
+								label: 'Delete request',
+							},
+						]}
+						onSelect={(key) => {}}
+					/>
+				</div>
+			),
 		};
 	};
-	return [...getUploadCommonColumns('Pending internal upload'), getOpt()];
+	return [...getUploadCommonColumns('Pending internal upload'), ...(isHide ? [] : [getOpt()])];
 };
 
 export const lenderClosingColumns = () => {
@@ -96,9 +138,13 @@ export const lenderClosingColumns = () => {
 			title: '',
 			dataIndex: 'operation',
 			width: 120,
-			align: 'left',
+			align: 'right',
 			fixed: 'right',
-			render: (_, record) => 'upload documents',
+			render: (_, record) => (
+				<div>
+					<UploadModalBtn isChangeType={false}>Upload</UploadModalBtn>
+				</div>
+			),
 		};
 	};
 	return [...getUploadCommonColumns('Pending internal upload', false), getOpt()];
