@@ -3,6 +3,8 @@ import DocumentList from '../DocumentList';
 import { borrowerUploadColumns, lenderUploadColumns } from '../documentColumns';
 import { Button, List, Space } from 'antd';
 import HeaderBtn from '../HeaderBtn';
+import { AddDocument } from '../AddDocument';
+import { SendRequestBtn } from '../SendRequestModal';
 const Processing = ({ isHide, title = 'Processing', isHaveRejectBtn = false }) => {
 	const borrowerList = [
 		{
@@ -64,9 +66,27 @@ const Processing = ({ isHide, title = 'Processing', isHaveRejectBtn = false }) =
 			<HeaderBtn isHaveRejectBtn={isHaveRejectBtn}>{title}</HeaderBtn>
 			<div className="px-[34px] py-6">
 				<p className="text-xl font-medium text-black-dark pb-6">Document</p>
-				{!isHide && <Button>Submit</Button>}
-				<DocumentList columns={borrowerUploadColumns()} dataSource={[...borrowerList]} />
-				<DocumentList columns={lenderUploadColumns()} dataSource={[...lenderList]} />
+				{!isHide && (
+					<div className="flex justify-between items-center">
+						<AddDocument />
+						<SendRequestBtn
+							list={borrowerList.map((item) => ({ document_type: item.type }))}
+							size="middle"
+						>
+							Send multiple request
+						</SendRequestBtn>
+					</div>
+				)}
+				<DocumentList
+					columns={borrowerUploadColumns(isHide)}
+					dataSource={[...borrowerList]}
+					isHide={isHide}
+				/>
+				<DocumentList
+					columns={lenderUploadColumns(isHide)}
+					dataSource={[...lenderList]}
+					isHide={isHide}
+				/>
 			</div>
 		</div>
 	);
