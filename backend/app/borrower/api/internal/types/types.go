@@ -17,20 +17,20 @@ type ApplicantEntry struct {
 	MidName          string        `json:"mid_name,omitempty, optional"`
 	LastName         string        `json:"last_name,omitempty, optional"`
 	FullName         string        `json:"full_name,omitempty, optional"`
-	BorrowerID       int64         `json:"borrower_id,omitempty, optional"`
-	LoanID           int64         `json:"loan_id,omitempty, optional"`
+	BorrowerId       int64         `json:"borrower_id,omitempty, optional"`
+	LoanId           int64         `json:"loan_id,omitempty, optional"`
 	IsPrimary        bool          `json:"is_primary,omitempty, optional"`
 	Type             string        `json:"type,omitempty, optional"`
 	InvitationStatus string        `json:"invitation_status,omitempty, optional"`
 	LoanPropertyId   int64         `json:"loan_property_id,omitempty"`
-	SSN              string        `json:"ssn,omitempty, optional"`
-	DOB              string        `json:"dob,omitempty, optional"`
+	Ssn              string        `json:"ssn,omitempty, optional"`
+	Dob              string        `json:"dob,omitempty, optional"`
 	MaritalStatus    string        `json:"marital_status,omitempty, optional"`
 	Email            string        `json:"email,omitempty, optional"`
 	EstCreditScore   int32         `json:"est_credit_score,omitempty, optional"`
 	DriverLicenseNum string        `json:"driver_license_num,omitempty, optional"`
 	Address          *AddressEntry `json:"address,omitempty, optional"`
-	LoanBorrowerID   int64         `json:"loan_borrower_id,omitempty, optional"`
+	LoanBorrowerId   int64         `json:"loan_borrower_id,omitempty, optional"`
 	Phone            string        `json:"phone,omitempty, optional"`
 }
 
