@@ -230,11 +230,11 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData) 
 	loan.PendingStatus = constants.LoanPendingStatusQuoting
 	loan.Source = constants.LoanSourceSystem
 	// get lender
-	lender, err := l.svcCtx.LenderRepo.FindOneById(l.ctx, reqData.LenderId)
+	lender, err := l.svcCtx.LenderCompanyRepo.FindOneById(l.ctx, reqData.LenderId)
 	if err != nil {
 		return nil, err
 	}
-	loan.LenderId = lender.Id
+	loan.LenderCompanyId = lender.Id
 	loan.LenderCompany = lender.Name
 
 	// loan_borrower

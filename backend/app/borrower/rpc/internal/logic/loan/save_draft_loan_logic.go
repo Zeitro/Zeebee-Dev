@@ -241,11 +241,11 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	loan.PendingStatus = constants.LoanPendingStatusNone
 	loan.Source = constants.LoanSourceSystem
 	if reqData.LenderId > 0 {
-		lender, err := l.svcCtx.LenderRepo.FindOneById(l.ctx, reqData.LenderId)
+		lender, err := l.svcCtx.LenderCompanyRepo.FindOneById(l.ctx, reqData.LenderId)
 		if err != nil {
 			return nil, err
 		}
-		loan.LenderId = lender.Id
+		loan.LenderCompanyId = lender.Id
 		loan.LenderCompany = lender.Name
 	}
 
