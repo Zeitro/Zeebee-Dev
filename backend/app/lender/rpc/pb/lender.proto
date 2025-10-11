@@ -489,6 +489,27 @@ message LoanPendingStatusReviewRequestData {
   string comment = 6;
 }
 
+// loan document opts
+message LoanDocumentOptsRequest {
+  LoanDocumentOptsRequestData data = 1;
+}
+message LoanDocumentOptsRequestData {
+  int64 id = 1;
+}
+
+message LoanDocumentOptsResponse {
+  LoanDocumentOptsResponseData data = 1;
+}
+message LoanDocumentOptsResponseData {
+  message Opt {
+    int64 id = 1;
+    string category = 2;
+    string file_type = 3;
+  }
+
+  repeated Opt opts = 1;
+}
+
 service Loan {
   rpc LoanDetail(LoanDetailRequest) returns(LoanDetailResponse);
   rpc LoanPage(LoanPageRequest) returns(LoanPageResponse);
@@ -497,7 +518,7 @@ service Loan {
   rpc UpdateLoanStage(LoanUpdateStageRequest) returns(EmptyResponse);
   rpc UpdateLoanPendingStatus(LoanUpdatePendingStatusRequest) returns(EmptyResponse);
   rpc PendingStatusReview(LoanPendingStatusReviewRequest) returns(EmptyResponse);
-
+  rpc LoanDocumentOpts(LoanDocumentOptsRequest) returns(LoanDocumentOptsResponse);
 }
 
 

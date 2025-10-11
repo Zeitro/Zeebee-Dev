@@ -43,6 +43,11 @@ type (
 	LoanDocumentDeleteRequestRequest        = lender.LoanDocumentDeleteRequestRequest
 	LoanDocumentDeleteRequestRequestData    = lender.LoanDocumentDeleteRequestRequestData
 	LoanDocumentEntry                       = lender.LoanDocumentEntry
+	LoanDocumentOptsRequest                 = lender.LoanDocumentOptsRequest
+	LoanDocumentOptsRequestData             = lender.LoanDocumentOptsRequestData
+	LoanDocumentOptsResponse                = lender.LoanDocumentOptsResponse
+	LoanDocumentOptsResponseData            = lender.LoanDocumentOptsResponseData
+	LoanDocumentOptsResponseData_Opt        = lender.LoanDocumentOptsResponseData_Opt
 	LoanDocumentSendRequestsRequest         = lender.LoanDocumentSendRequestsRequest
 	LoanDocumentSendRequestsRequestData     = lender.LoanDocumentSendRequestsRequestData
 	LoanDocumentUpdateCommentRequest        = lender.LoanDocumentUpdateCommentRequest
@@ -115,6 +120,7 @@ type (
 		UpdateLoanStage(ctx context.Context, in *LoanUpdateStageRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		UpdateLoanPendingStatus(ctx context.Context, in *LoanUpdatePendingStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		PendingStatusReview(ctx context.Context, in *LoanPendingStatusReviewRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+		LoanDocumentOpts(ctx context.Context, in *LoanDocumentOptsRequest, opts ...grpc.CallOption) (*LoanDocumentOptsResponse, error)
 	}
 
 	defaultLoan struct {
@@ -161,4 +167,9 @@ func (m *defaultLoan) UpdateLoanPendingStatus(ctx context.Context, in *LoanUpdat
 func (m *defaultLoan) PendingStatusReview(ctx context.Context, in *LoanPendingStatusReviewRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	client := lender.NewLoanClient(m.cli.Conn())
 	return client.PendingStatusReview(ctx, in, opts...)
+}
+
+func (m *defaultLoan) LoanDocumentOpts(ctx context.Context, in *LoanDocumentOptsRequest, opts ...grpc.CallOption) (*LoanDocumentOptsResponse, error) {
+	client := lender.NewLoanClient(m.cli.Conn())
+	return client.LoanDocumentOpts(ctx, in, opts...)
 }

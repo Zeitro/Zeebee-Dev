@@ -592,12 +592,16 @@
                             "category",
                             "file_type",
                             "status",
+                            "comment",
                             "created_at",
                             "updated_at",
                             "files"
                           ],
                           "properties": {
                             "category": {
+                              "type": "string"
+                            },
+                            "comment": {
                               "type": "string"
                             },
                             "created_at": {
@@ -1343,12 +1347,16 @@
                       "category",
                       "file_type",
                       "status",
+                      "comment",
                       "created_at",
                       "updated_at",
                       "files"
                     ],
                     "properties": {
                       "category": {
+                        "type": "string"
+                      },
+                      "comment": {
                         "type": "string"
                       },
                       "created_at": {
@@ -2334,6 +2342,61 @@
         }
       }
     },
+    "/api/v1/loan/{id}/loan_documents_opts": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "loan"
+        ],
+        "summary": "loan documents opts",
+        "operationId": "loanLoanDocumentsOpts",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "options": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "category",
+                      "file_type"
+                    ],
+                    "properties": {
+                      "category": {
+                        "type": "string"
+                      },
+                      "file_type": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/loan/{id}/pending_status": {
       "patch": {
         "consumes": [
@@ -3275,7 +3338,7 @@
       }
     }
   },
-  "x-date": "2025-10-09 16:48:36",
+  "x-date": "2025-10-11 13:23:15",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

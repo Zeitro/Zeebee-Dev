@@ -57,3 +57,8 @@ func (s *LoanServer) PendingStatusReview(ctx context.Context, in *lender.LoanPen
 	l := loanlogic.NewPendingStatusReviewLogic(ctx, s.svcCtx)
 	return l.PendingStatusReview(in)
 }
+
+func (s *LoanServer) LoanDocumentOpts(ctx context.Context, in *lender.LoanDocumentOptsRequest) (*lender.LoanDocumentOptsResponse, error) {
+	l := loanlogic.NewLoanDocumentOptsLogic(ctx, s.svcCtx)
+	return l.LoanDocumentOpts(in)
+}

@@ -124,9 +124,10 @@ service lender-api {
 	@doc "reveiw loan pending status"
 	@handler ReviewPendingStatus
 	post /loan/:id/review_pending_status (ReviewLoanPendingStatusRequest) returns (EmptyResponse)
-	// @doc "create loan document"
-	// @handler CreateLoanDocument
-	// post /loan/:id/document (CreateLoanDocumentRequest) returns (CreateLoanDocumentResponse)
+
+	@doc "loan documents opts"
+	@handler LoanDocumentsOpts
+	get /loan/:id/loan_documents_opts (PathIdRequest) returns (LoanDocumentOptResponse)
 }
 
 // ============== loan document =============

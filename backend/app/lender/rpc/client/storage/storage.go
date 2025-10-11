@@ -43,6 +43,11 @@ type (
 	LoanDocumentDeleteRequestRequest        = lender.LoanDocumentDeleteRequestRequest
 	LoanDocumentDeleteRequestRequestData    = lender.LoanDocumentDeleteRequestRequestData
 	LoanDocumentEntry                       = lender.LoanDocumentEntry
+	LoanDocumentOptsRequest                 = lender.LoanDocumentOptsRequest
+	LoanDocumentOptsRequestData             = lender.LoanDocumentOptsRequestData
+	LoanDocumentOptsResponse                = lender.LoanDocumentOptsResponse
+	LoanDocumentOptsResponseData            = lender.LoanDocumentOptsResponseData
+	LoanDocumentOptsResponseData_Opt        = lender.LoanDocumentOptsResponseData_Opt
 	LoanDocumentSendRequestsRequest         = lender.LoanDocumentSendRequestsRequest
 	LoanDocumentSendRequestsRequestData     = lender.LoanDocumentSendRequestsRequestData
 	LoanDocumentUpdateCommentRequest        = lender.LoanDocumentUpdateCommentRequest

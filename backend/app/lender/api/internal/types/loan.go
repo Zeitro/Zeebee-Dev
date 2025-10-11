@@ -11,6 +11,10 @@ type LoanDetailResponse struct {
 	LoanEntry
 }
 
+type LoanDocumentOptResponse struct {
+	Options []LoanDocumentOptEntry `json:"options"`
+}
+
 type LoanPageRequest struct {
 	Page   int64          `json:"page,optional"`
 	Limit  int64          `json:"limit,optional"`

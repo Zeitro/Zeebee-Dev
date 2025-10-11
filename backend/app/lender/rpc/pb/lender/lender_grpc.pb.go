@@ -498,6 +498,7 @@ const (
 	Loan_UpdateLoanStage_FullMethodName         = "/lender.Loan/UpdateLoanStage"
 	Loan_UpdateLoanPendingStatus_FullMethodName = "/lender.Loan/UpdateLoanPendingStatus"
 	Loan_PendingStatusReview_FullMethodName     = "/lender.Loan/PendingStatusReview"
+	Loan_LoanDocumentOpts_FullMethodName        = "/lender.Loan/LoanDocumentOpts"
 )
 
 // LoanClient is the client API for Loan service.
@@ -511,6 +512,7 @@ type LoanClient interface {
 	UpdateLoanStage(ctx context.Context, in *LoanUpdateStageRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	UpdateLoanPendingStatus(ctx context.Context, in *LoanUpdatePendingStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	PendingStatusReview(ctx context.Context, in *LoanPendingStatusReviewRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	LoanDocumentOpts(ctx context.Context, in *LoanDocumentOptsRequest, opts ...grpc.CallOption) (*LoanDocumentOptsResponse, error)
 }
 
 type loanClient struct {
@@ -591,6 +593,16 @@ func (c *loanClient) PendingStatusReview(ctx context.Context, in *LoanPendingSta
 	return out, nil
 }
 
+func (c *loanClient) LoanDocumentOpts(ctx context.Context, in *LoanDocumentOptsRequest, opts ...grpc.CallOption) (*LoanDocumentOptsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LoanDocumentOptsResponse)
+	err := c.cc.Invoke(ctx, Loan_LoanDocumentOpts_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // LoanServer is the server API for Loan service.
 // All implementations must embed UnimplementedLoanServer
 // for forward compatibility.
@@ -602,6 +614,7 @@ type LoanServer interface {
 	UpdateLoanStage(context.Context, *LoanUpdateStageRequest) (*EmptyResponse, error)
 	UpdateLoanPendingStatus(context.Context, *LoanUpdatePendingStatusRequest) (*EmptyResponse, error)
 	PendingStatusReview(context.Context, *LoanPendingStatusReviewRequest) (*EmptyResponse, error)
+	LoanDocumentOpts(context.Context, *LoanDocumentOptsRequest) (*LoanDocumentOptsResponse, error)
 	mustEmbedUnimplementedLoanServer()
 }
 
@@ -632,6 +645,9 @@ func (UnimplementedLoanServer) UpdateLoanPendingStatus(context.Context, *LoanUpd
 }
 func (UnimplementedLoanServer) PendingStatusReview(context.Context, *LoanPendingStatusReviewRequest) (*EmptyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PendingStatusReview not implemented")
+}
+func (UnimplementedLoanServer) LoanDocumentOpts(context.Context, *LoanDocumentOptsRequest) (*LoanDocumentOptsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LoanDocumentOpts not implemented")
 }
 func (UnimplementedLoanServer) mustEmbedUnimplementedLoanServer() {}
 func (UnimplementedLoanServer) testEmbeddedByValue()              {}
@@ -780,6 +796,24 @@ func _Loan_PendingStatusReview_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Loan_LoanDocumentOpts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanDocumentOptsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanServer).LoanDocumentOpts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Loan_LoanDocumentOpts_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanServer).LoanDocumentOpts(ctx, req.(*LoanDocumentOptsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Loan_ServiceDesc is the grpc.ServiceDesc for Loan service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -814,6 +848,10 @@ var Loan_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PendingStatusReview",
 			Handler:    _Loan_PendingStatusReview_Handler,
+		},
+		{
+			MethodName: "LoanDocumentOpts",
+			Handler:    _Loan_LoanDocumentOpts_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

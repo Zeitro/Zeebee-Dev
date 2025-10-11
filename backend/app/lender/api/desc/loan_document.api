@@ -14,10 +14,17 @@ type LoanDocumentEntry {
     Category string `json:"category"`
     FileType string `json:"file_type"`
     Status string `json:"status"`
+    Comment string `json:"comment"`
     CreatedAt string `json:"created_at"`
     UpdatedAt string `json:"updated_at"`
 
     Files []FileEntry `json:"files"`
+}
+
+type LoanDocumentOptEntry {
+    Id int64 `json:"id"`
+    Category string `json:"category"`
+    FileType string `json:"file_type"`
 }
 
 type LoanDocumentCreateRequest {
@@ -42,4 +49,8 @@ type LoanDocumentUpdateCommentRequest {
 type LoanDocumentAddFilesRequest {
     Id int64 `path:"id"`
     FileUrls []string `json:"file_urls" validate:"required,dive,url"`
+}
+
+type LoanDocumentOptResponse {
+    Options []LoanDocumentOptEntry `json:"options"`
 }
