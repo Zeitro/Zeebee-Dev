@@ -534,6 +534,7 @@ message LoanDocumentEntry {
   string created_at = 7;
   string updated_at = 8;
   repeated FileEntry files = 9;
+  string LastUploadedAt = 10;
 }
 
 // update loan document comment

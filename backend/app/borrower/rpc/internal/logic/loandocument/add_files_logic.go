@@ -2,19 +2,18 @@ package loandocumentlogic
 
 import (
 	"context"
+	"time"
 
 	"github.com/duke-git/lancet/v2/slice"
-	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
+
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/repo/model"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
-	"zeebee-backend/common/types"
-
-	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/common/errorx"
 )
@@ -41,9 +40,9 @@ func (l *AddFilesLogic) AddFiles(in *borrower.LoanDocumentAddFilesRequest) (resp
 	}()
 
 	// var loan *model.Loan
-	// var loanDocument *model.LoanDocument
+	var loanDocument *model.LoanDocument
 
-	_, _, err = l.prepare(in)
+	_, loanDocument, err = l.prepare(in)
 	if err != nil {
 		return nil, err
 	}
@@ -76,17 +75,22 @@ func (l *AddFilesLogic) AddFiles(in *borrower.LoanDocumentAddFilesRequest) (resp
 			return errors.Wrap(innerErr, "failed to update loan document status")
 		}
 
-		// convert files
-		operationFiles := make([]*types.OperationFile, 0, len(files))
-		innerErr = copier.CopyWithOption(&operationFiles, files, copier.Option{
-			DeepCopy:      true,
-			CaseSensitive: true,
+		// upload loan document upload time
+		innerErr = l.svcCtx.LoanDocumentRepo.UpdateColumnsByIdWithTx(l.ctx, tx, loanDocument.Id, map[string]interface{}{
+			"last_uploaded_at": time.Now(),
 		})
-		if innerErr != nil {
-			return errorx.GetFailedTransErr(innerErr)
-		}
 
-		return nil
+		// convert files
+		// operationFiles := make([]*types.OperationFile, 0, len(files))
+		// innerErr = copier.CopyWithOption(&operationFiles, files, copier.Option{
+		// 	DeepCopy:      true,
+		// 	CaseSensitive: true,
+		// })
+		// if innerErr != nil {
+		// 	return errorx.GetFailedTransErr(innerErr)
+		// }
+
+		return innerErr
 	})
 
 	if err != nil {
@@ -119,8 +123,8 @@ func (l *AddFilesLogic) prepare(in *borrower.LoanDocumentAddFilesRequest) (loan 
 		return nil, nil, errors.WithStack(errors.New("loan or loan document not found"))
 	}
 	validCategories := []constants.LoanDocumentCategory{
-		constants.LoanDocumentUploaderTypeLender,
-		constants.LoanDocumentUploaderTypeExtend,
+		constants.LoanDocumentCategoryBorrower,
+		constants.LoanDocumentCategoryExtend,
 	}
 	if !slice.Contain(validCategories, loanDocument.Category) {
 		return nil, nil, errors.WithStack(errors.New("loan document category not supported"))

@@ -14,6 +14,7 @@ type LoanDocumentEntry {
     Category string `json:"category"`
     FileType string `json:"file_type"`
     Status string `json:"status"`
+    LastUploadedAt string `json:"last_uploaded_at"`
     CreatedAt string `json:"created_at"`
     UpdatedAt string `json:"updated_at"`
 

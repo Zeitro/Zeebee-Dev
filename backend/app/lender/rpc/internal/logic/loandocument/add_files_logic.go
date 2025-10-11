@@ -2,6 +2,7 @@ package loandocumentlogic
 
 import (
 	"context"
+	"time"
 
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
@@ -116,6 +117,11 @@ func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *
 		if innerErr != nil {
 			return errors.Wrap(innerErr, "failed to create operation log")
 		}
+
+		// upload loan document upload time
+		innerErr = l.svcCtx.LoanDocumentRepo.UpdateColumnsByIdWithTx(l.ctx, tx, loanDocument.Id, map[string]interface{}{
+			"last_uploaded_at": time.Now(),
+		})
 
 		return nil
 	})

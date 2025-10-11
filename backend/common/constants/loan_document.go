@@ -49,10 +49,10 @@ type LoanDocumentStatus string
 
 const LoanDocumentStatusName = "loan_document_status"
 const (
-	LoanDocumentStatusPendingUpload    LoanDocumentStatus = "PendingUpload"
-	LoanDocumentStatusPendingRequested LoanDocumentStatus = "PendingRequested"
+	LoanDocumentStatusPendingUpload    LoanDocumentStatus = "Pending upload"
+	LoanDocumentStatusPendingRequested LoanDocumentStatus = "Pending request"
 	LoanDocumentStatusRequested        LoanDocumentStatus = "Requested"
-	LoanDocumentStatusReadyForReview   LoanDocumentStatus = "ReadyForReview"
+	LoanDocumentStatusReadyForReview   LoanDocumentStatus = "Ready for review"
 )
 
 func init() {
