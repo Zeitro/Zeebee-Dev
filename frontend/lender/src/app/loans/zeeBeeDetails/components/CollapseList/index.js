@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Checkbox, Collapse } from 'antd';
 import styles from './index.module.scss';
-const CollapseList = ({ list = [], setList, hideCollapsible }) => {
+const CollapseList = ({ list = [], setList, hideCollapsible, isHideCheck = false }) => {
 	const [items, setItems] = useState([]);
 
 	const changeList = (checked, index, childIndex) => {
@@ -27,10 +27,12 @@ const CollapseList = ({ list = [], setList, hideCollapsible }) => {
 									className="flex justify-between items-center w-full"
 								>
 									<div>{child.label}</div>
-									<Checkbox
-										checked={child.checked}
-										onChange={(e) => changeList(e.target.checked, i, index)}
-									/>
+									{!isHideCheck && (
+										<Checkbox
+											checked={child.checked}
+											onChange={(e) => changeList(e.target.checked, i, index)}
+										/>
+									)}
 								</div>
 							);
 						})}
@@ -39,11 +41,13 @@ const CollapseList = ({ list = [], setList, hideCollapsible }) => {
 			} else {
 				item.collapsible = 'icon';
 			}
-			item.extra = (
+			item.extra = !isHideCheck ? (
 				<Checkbox
 					checked={item.checked}
 					onChange={(e) => changeList(e.target.checked, i)}
 				/>
+			) : (
+				''
 			);
 			return item;
 		});

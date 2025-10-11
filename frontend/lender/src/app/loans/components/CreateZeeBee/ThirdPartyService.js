@@ -6,7 +6,7 @@ import { AddEditBtn } from './components/AddEditBtn';
 import { Form, message } from 'antd';
 import _ from 'lodash';
 let paramsKey = 'loan_third_services';
-const ThirdPartyService = ({ form, rowData, setIsChange }) => {
+const ThirdPartyService = ({ form, rowData, setIsChange, changeFieldsValue = () => {} }) => {
 	const [list, setList] = useState([]);
 	const [messageApi, contextHolder] = message.useMessage();
 
@@ -23,7 +23,7 @@ const ThirdPartyService = ({ form, rowData, setIsChange }) => {
 			arr.splice(index, 1, values);
 			newArr = [...arr];
 		} else {
-			newArr = [...arr, { ...values, id: `${arr.length + 1}Custom` }]; // 加Custom为了区分自定义的id，草稿时后端会返回id并且更新草稿需要传id
+			newArr = [{ ...values, id: `${arr.length + 1}Custom` }, ...arr]; // 加Custom为了区分自定义的id，草稿时后端会返回id并且更新草稿需要传id
 		}
 		setFn(newArr);
 		const noIdArr = _.cloneDeep(newArr).map((i) => {
@@ -33,6 +33,7 @@ const ThirdPartyService = ({ form, rowData, setIsChange }) => {
 			return i;
 		});
 		form.setFieldsValue({ [paramsKey]: noIdArr });
+		changeFieldsValue(noIdArr, paramsKey);
 		setIsChange(true);
 		message.destroy();
 		messageApi.open({
@@ -51,6 +52,7 @@ const ThirdPartyService = ({ form, rowData, setIsChange }) => {
 			return i;
 		});
 		form.setFieldsValue({ [paramsKey]: noIdArr });
+		changeFieldsValue(noIdArr, paramsKey);
 		setIsChange(true);
 		message.destroy();
 		messageApi.open({

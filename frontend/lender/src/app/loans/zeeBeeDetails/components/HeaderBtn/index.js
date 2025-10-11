@@ -1,12 +1,17 @@
 import React from 'react';
 import { Button, Space } from 'antd';
-import { ApproveModal, RejectedModal } from '../ApproveRejectModal';
+import { ApproveRejectModal } from '../ApproveRejectModal';
 const HeaderBtn = ({
 	title,
 	children,
 	isHaveRejectBtn,
 	getContent = () => {},
 	RejectedProps = {},
+	pending_status,
+	setNextStep,
+	setRejectStep,
+	disabledOperate,
+	id,
 	...ApproveProps
 }) => {
 	return (
@@ -19,8 +24,24 @@ const HeaderBtn = ({
 			</div>
 			{getContent() || (
 				<Space className="shrink-0" size={16}>
-					{isHaveRejectBtn && <RejectedModal {...RejectedProps} />}
-					<ApproveModal {...ApproveProps} />
+					{isHaveRejectBtn && (
+						<ApproveRejectModal
+							{...RejectedProps}
+							action="Reject"
+							pending_status={pending_status}
+							id={id}
+							setNextStep={setRejectStep}
+							disabled={disabledOperate}
+						/>
+					)}
+					<ApproveRejectModal
+						{...ApproveProps}
+						action="Approve"
+						pending_status={pending_status}
+						id={id}
+						setNextStep={setNextStep}
+						disabled={disabledOperate}
+					/>
 				</Space>
 			)}
 		</div>

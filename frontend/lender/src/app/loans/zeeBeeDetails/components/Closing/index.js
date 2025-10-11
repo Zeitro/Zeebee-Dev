@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import DocumentList from '../DocumentList';
 import {
 	borrowerUploadColumns,
@@ -8,29 +8,25 @@ import {
 import { Button, List, Space } from 'antd';
 import HeaderBtn from '../HeaderBtn';
 import { AddDocument } from '../AddDocument';
-const Processing = () => {
-	const lenderList = [
-		{
-			type: 'Closing docs',
-			status: 'Pending',
-		},
-		{
-			type: 'title docs',
-			status: 'Pending',
-		},
-		{
-			type: 'formal LOI',
-			status: 'Pending',
-		},
-	];
+const Closing = ({ disabledOperate, rowData }) => {
+	const [lenderList, setLenderList] = useState([]);
+
+	useEffect(() => {
+		if (rowData?.loan_documents?.length) {
+			let lList = rowData?.loan_documents?.filter(
+				(item) => item.category === 'LenderClosing',
+			);
+			setLenderList(lList);
+		}
+	}, [rowData]);
 	return (
 		<div>
-			<HeaderBtn>Closing</HeaderBtn>
+			<HeaderBtn disabledOperate={disabledOperate}>Closing</HeaderBtn>
 			<div className="px-[34px] py-6">
-				<AddDocument />
+				<AddDocument disabled={disabledOperate} />
 				<DocumentList columns={lenderClosingColumns()} dataSource={[...lenderList]} />
 			</div>
 		</div>
 	);
 };
-export default Processing;
+export default Closing;
