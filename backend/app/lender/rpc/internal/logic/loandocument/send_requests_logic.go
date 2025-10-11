@@ -139,21 +139,12 @@ func (l *SendRequestsLogic) prepare(in *lender.LoanDocumentSendRequestsRequest) 
 
 func (l *SendRequestsLogic) sendDocumentRequestEmail(ctx context.Context, loan *model.Loan, loanDocuments []*model.LoanDocument) error {
 
-	if len(loan.Applicants) == 0 {
-		return errors.New("no applicant found for the loan")
-	}
-
-	applicant, _ := slice.FindBy(loan.Applicants, func(index int, item *model.Applicant) bool {
-		return item.IsPrimary
-	})
-
-	// applicant := loan.Applicants[0]
-	if applicant == nil {
-		return errors.New("applicant user not found")
+	if loan.LoanBorrower == nil || len(loan.LoanBorrower.ContactEmail) == 0 {
+		return errors.New("no contact email found for the loan")
 	}
 
 	emailData := map[string]interface{}{
-		"first_name":     applicant.FirstName,
+		"first_name":     loan.LoanBorrower.ContactName,
 		"loan_documents": loanDocuments,
 	}
 
@@ -167,7 +158,7 @@ func (l *SendRequestsLogic) sendDocumentRequestEmail(ctx context.Context, loan *
 	msg := email2.EmailMessage{
 		Subject: "Loan Document Request",
 		From:    global.Config.EmailConf.Username,
-		To:      []string{applicant.Email},
+		To:      []string{loan.LoanBorrower.ContactEmail},
 		Body:    content,
 		IsHTML:  true,
 	}
