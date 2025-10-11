@@ -24,7 +24,6 @@ import eventBus from '@/lib/bus';
 import { assemblyAddress } from '@/lib/format';
 // import CommonZeeBeeForm from '../../../zeeBeeDetails/components/CommonZeeBeeForm';
 import General from '../../components/CreateZeeBee/General';
-import { get } from 'http';
 import HeaderBtn from './HeaderBtn';
 import { EditOutlined } from '@ant-design/icons';
 import SaveSvg from '@/assets/images/save.svg';
@@ -78,30 +77,17 @@ const useLenderDetails = () => {
 	const [confirmLoading, setConfirmLoading] = useState(false); // 保存
 	const [rowData, setRowData] = useState({}); // loan详情
 	const [newRowData, setNewRowData] = useState({}); // loan详情
-	const [disabled, setDisabled] = useState(true);
+	const [disabled, setDisabled] = useState(true); //控制application内的页面不可编辑，只有点击Edit才可修改
 	const { request } = createRequest();
+	const id = searchParams.get('id');
+	const newList = flattenArray(lenderDetailsSteps);
 
-	// 从property详情跳转的创建loan
-	const getProperty = async () => {
-		const data = await request(api);
-		const newData = {
-			loan_property: {
-				// property_type: data.property_type,
-				property_base: {
-					unit: data.unit,
-					address: data.address,
-				},
-			},
-		};
-		form.setFieldsValue(newData);
-	};
-
-	// 获取详情（草稿使用）
+	// 获取详情
 	const getLoanDetail = async () => {
 		const res = (await request(`/loan/${searchParams.get('id')}`)) || {};
 		const str = assemblyAddress(res?.loan_property?.property_base?.address);
 		eventBus.emit('changeCrumbs', {
-			2: `ZeeBee Loan Details(${str})`,
+			2: `Loan Details(${str})`,
 		});
 		console.log(res);
 
@@ -116,31 +102,28 @@ const useLenderDetails = () => {
 		if (!res?.applicants?.length) {
 			res.applicants = initialValues.applicants;
 		}
+		// 保存两份，一份用于展示和修改（可能出现修改了就离开了，并未保存），一份用于最新数据保存
 		setRowData(res);
+		setNewRowData(res);
 		form.setFieldsValue(res);
 	};
 
-	// 获取property/草稿详情
+	// 详情
 	useEffect(() => {
-		if (searchParams.has('propertyId')) getProperty();
 		if (searchParams.has('id')) getLoanDetail();
+		eventBus.on('getLoanDetail', getLoanDetail);
+		return () => eventBus.off('getLoanDetail', getLoanDetail);
 	}, []);
 
-	// 创建loan
+	// 全量修改loan
 	const handleSubmit = async (values) => {
-		let url = '/loan/apply';
-		let method = 'POST';
-		if (searchParams.has('id')) {
-			url = `/loan/${searchParams.get('id')}/update_apply`;
-			method = 'PUT';
-		}
-		await request(url, {
-			method,
+		await request(`/loan/${searchParams.get('id')}`, {
+			method: 'PUT',
 			body: values,
 		});
 		message.open({
 			type: 'success',
-			content: 'ZeeBee loan created successfully！',
+			content: 'ZeeBee loan updated successfully！',
 		});
 	};
 
@@ -200,6 +183,7 @@ const useLenderDetails = () => {
 			params.loan_borrower.tin_type = newRowData?.loan_borrower?.tin?.tin_type;
 			params.loan_borrower.tin = newRowData?.loan_borrower?.tin?.tin;
 			await handleSubmit({ ...params });
+			eventBus.emit('getLoanDetail');
 			setDisabled(true);
 			setConfirmLoading(false);
 		} catch (error) {
@@ -217,7 +201,7 @@ const useLenderDetails = () => {
 		</div>
 	);
 
-	const getContent = (pageKey) => {
+	const getContent = (pageKey, disabledOperate) => {
 		const item = findItem({ list: lenderDetailsSteps, key: pageKey });
 		switch (pageKey) {
 			case 'general':
@@ -254,11 +238,23 @@ const useLenderDetails = () => {
 						handleUpdate={handleSave}
 						confirmLoading={confirmLoading}
 					>
-						<Experience form={form} rowData={rowData} setIsChange={setIsChange} />
+						<Experience
+							form={form}
+							rowData={rowData}
+							setIsChange={setIsChange}
+							changeFieldsValue={(value, key) => {
+								newRowData[key] = value;
+								setNewRowData({ ...newRowData });
+							}}
+						/>
 						<ThirdPartyService
 							form={form}
 							rowData={rowData}
 							setIsChange={setIsChange}
+							changeFieldsValue={(value, key) => {
+								newRowData[key] = value;
+								setNewRowData({ ...newRowData });
+							}}
 						/>
 					</CommonSave>
 				);
@@ -270,49 +266,110 @@ const useLenderDetails = () => {
 						handleUpdate={handleSave}
 						confirmLoading={confirmLoading}
 					>
-						<Declaration form={form} />
+						<Declaration form={form} disabled={disabled} />
 						<Demographics form={form} />
 					</CommonSave>
 				);
 			case 'reviewAndSign':
 				return (
 					<div className="px-6 py-6">
-						<ReviewAndSign form={form} />
+						<ReviewAndSign form={form} isNotRequest={true} rowData={rowData} />
 					</div>
 				);
 			case 'Quoting':
-				return <Quoting />;
+				return (
+					<Quoting
+						id={id}
+						setNextStep={() => setCurrentStep('Processing')}
+						disabledOperate={disabledOperate}
+					/>
+				);
 			case 'Processing':
-				return <Processing />;
+				return (
+					<Processing
+						id={id}
+						setNextStep={() => setCurrentStep('Underwriting')}
+						disabledOperate={disabledOperate}
+						rowData={rowData}
+					/>
+				);
 			case 'Underwriting':
-				return <Processing isHide={true} isHaveRejectBtn={true} title="Underwriting" />;
+				return (
+					<Processing
+						isHide={true}
+						isHaveRejectBtn={true}
+						title="Underwriting"
+						id={id}
+						setRejectStep={() => setCurrentStep('Quoting')}
+						setNextStep={() => setCurrentStep('Closing')}
+						disabledOperate={disabledOperate}
+						rowData={rowData}
+					/>
+				);
 			case 'Closing':
-				return <Closing />;
+				return (
+					<Closing
+						setNextStep={() => setCurrentStep('Active')}
+						disabledOperate={disabledOperate}
+						rowData={rowData}
+					/>
+				);
+			case 'Active':
+				return 'Active';
+			case 'Funded':
+				return 'Funded';
 			default:
 				return '';
 		}
 	};
 
-	const lenderDetailsComponents = {
-		General: getContent('general'),
-		borrowerInformation: getContent('borrowerInformation'),
-		propertyAndLoan: getContent('propertyAndLoan'),
-		experienceAndThirdService: getContent('experienceAndThirdService'),
-		declarationAndDemographics: getContent('declarationAndDemographics'),
-		reviewAndSign: getContent('reviewAndSign'),
-		Quoting: getContent('Quoting'),
-		Processing: getContent('Processing'),
-		Underwriting: getContent('Underwriting'),
-		Closing: getContent('Closing'),
-		Active: '',
-		Funded: '',
+	const getDetailsComponents = (disabledOperate) => {
+		// disabledOperate 可查看，不可操作页面
+		return {
+			General: getContent('general'),
+			borrowerInformation: getContent('borrowerInformation'),
+			propertyAndLoan: getContent('propertyAndLoan'),
+			experienceAndThirdService: getContent('experienceAndThirdService'),
+			declarationAndDemographics: getContent('declarationAndDemographics'),
+			reviewAndSign: getContent('reviewAndSign'),
+			Quoting: getContent('Quoting', disabledOperate),
+			Processing: getContent('Processing', disabledOperate),
+			Underwriting: getContent('Underwriting', disabledOperate),
+			Closing: getContent('Closing', disabledOperate),
+			Active: getContent('Active'),
+			Funded: getContent('Funded'),
+		};
 	};
 
-	const tabList = flattenArray(lenderDetailsSteps)
-		.map((i) => ({
+	// 初始化时，根据不同状态判断选中第几步
+	const loanProgress = useMemo(() => {
+		const pendingStatus = rowData?.pending_status;
+		const stage = rowData?.stage;
+
+		let index = 0;
+		let selectTabKey = '';
+		if (stage === 'Pending') {
+			index = newList.findIndex((i) => i.key === pendingStatus);
+		} else if (stage === 'Active') {
+			index = newList.findIndex((i) => i.key === stage);
+		} else if (stage === 'Rejected') {
+			index = newList.findIndex((i) => i.key === 'Quoting');
+		} else {
+			index = newList.length - 1;
+		}
+
+		selectTabKey = newList[index].key;
+		return {
+			selectTabKey,
+			index,
+		};
+	}, [rowData]);
+
+	const tabList = newList
+		.map((i, index) => ({
 			key: i.key,
 			label: i.title,
-			children: lenderDetailsComponents[i.key],
+			children: getDetailsComponents(index < loanProgress.index)[i.key],
 		}))
 		.filter((i) => i.children);
 	const selectIndex = useMemo(
@@ -337,7 +394,7 @@ const useLenderDetails = () => {
 		rowData,
 		zeeBeeDetailsTabs,
 		lenderDetailsSteps,
-		lenderDetailsComponents,
+		getDetailsComponents,
 		lenderStepBtn,
 		setRowData,
 		disabled,
@@ -345,6 +402,7 @@ const useLenderDetails = () => {
 		setNewRowData,
 		tabList,
 		selectIndex,
+		loanProgress,
 	};
 };
 

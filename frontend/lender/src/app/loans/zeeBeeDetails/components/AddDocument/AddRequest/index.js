@@ -1,11 +1,34 @@
-import React, { use } from 'react';
+import React, { use, useState } from 'react';
 import NewModal from '@/components/NewModal';
-import { Button, Form, Input, Select } from 'antd';
-const AddRequest = ({ open, setOpen }) => {
+import { Button, Form, Input, message, Select } from 'antd';
+import { createRequest } from '@/lib/fetch';
+import eventBus from '@/lib/bus';
+const AddRequest = ({ open, setOpen, loan_id }) => {
 	const [form] = Form.useForm();
+	const { request } = createRequest();
+	const [loading, setLoading] = useState(false);
 
 	const handleOK = async () => {
-		const values = await form.validateFields();
+		try {
+			const values = await form.validateFields();
+			setLoading(true);
+			await request('/loan_document', {
+				method: 'POST',
+				body: {
+					...values,
+					loan_id,
+				},
+			});
+			message.open({
+				type: 'success',
+				content: 'Add Document request successfully',
+			});
+			eventBus.emit('getLoanDetail');
+			setLoading(false);
+			setOpen(false);
+		} catch (error) {
+			setLoading(false);
+		}
 	};
 	return (
 		<NewModal
@@ -15,6 +38,7 @@ const AddRequest = ({ open, setOpen }) => {
 			onCancel={() => setOpen(false)}
 			onOk={handleOK}
 			okText="Save"
+			confirmLoading={loading}
 		>
 			<Form
 				form={form}
@@ -22,26 +46,22 @@ const AddRequest = ({ open, setOpen }) => {
 				autoComplete="off"
 				size="large"
 				initialValues={{
-					document_type: [
-						{
-							type: '1',
-						},
-					],
+					file_types: [''],
 				}}
 				className="h-[400px] overflow-hidden overflow-y-auto"
 			>
-				<Form.List name="document_type">
+				<Form.List name="file_types">
 					{(fields, { add, remove }) => {
 						return (
 							<>
 								{fields?.map((field, index) => (
 									<div
 										key={field.key}
-										className="flex justify-between items-start not-last:border-b border-base-border mb-4"
+										className="flex justify-between items-start border-t [&:nth-of-type(1)]:border-t-0 border-base-border pt-4 first:pt-0"
 									>
 										<Form.Item
 											label="Document type(Required)"
-											name={[field.name, 'type']}
+											name={[field.name]}
 											rules={[
 												{
 													required: true,

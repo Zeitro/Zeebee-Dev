@@ -1,7 +1,7 @@
 'use client';
 import styles from './index.module.scss';
 import { Form, Menu, Segmented, Steps, Tabs } from 'antd';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import useCreate from '../components/CreateZeeBee/hooks/useCreate';
 import useLenderDetails from './components/useLenderDetails';
 import { assemblyAddress } from '@/lib/format';
@@ -9,6 +9,8 @@ import { flattenArray } from '@/lib/common';
 import { stageColor, pendingStatusColor, loanDetailsFields } from '@/enum/loan';
 import HomeSvg from '@/assets/images/home.svg';
 import _ from 'lodash';
+import HeaderBtn from './components/HeaderBtn';
+import { CheckOutlined } from '@ant-design/icons';
 const ZeeBeeDetails = () => {
 	const {
 		scrollRef,
@@ -19,48 +21,77 @@ const ZeeBeeDetails = () => {
 		form,
 		initialValues,
 		rowData,
+		newRowData,
 		setRowData,
 		setNewRowData,
 		lenderDetailsComponents,
 		disabled,
 		tabList,
 		selectIndex,
+		loanProgress, // 当前loan根据stage和pendingStatus计算的进度
 	} = useLenderDetails();
+	// 计算总步骤，方便跟loanProgress比较。
+	let count = useRef({ index: -1, key: '' });
 
 	useEffect(() => {
 		setCurrentStep(lenderDetailsSteps[0].key);
 	}, []);
 
-	const getLenderMenu = (list = lenderDetailsSteps, isChild) => {
+	const lenderMenu = useMemo(() => {
 		const iconFn = (item, isChild, index) => {
 			if (isChild) {
 				return (
-					<div className="!w-[2px] !min-w-[2px] bg-base-border h-full mr-[10px]"></div>
+					<div
+						className={[
+							'!w-[2px] !min-w-[2px] h-full mr-[10px]',
+							loanProgress.index > count.current.index
+								? 'bg-[#081265]'
+								: 'bg-base-border',
+						].join(' ')}
+					></div>
 				);
 			}
+			const isChildNotFullyCompleted = item?.children?.some(
+				(item) => item.key === loanProgress.selectTabKey,
+			);
+
+			const isFinish =
+				!item.icon && loanProgress.index > count.current.index && !isChildNotFullyCompleted;
 			return (
 				<div
-					className="bg-[#081265] w-6 h-6 rounded-full flex !items-center justify-center !text-[#E0E7FF] font-normal"
+					className={[
+						'w-6 h-6 rounded-full flex !items-center justify-center  font-normal',
+						isFinish ? 'bg-[#E0E7FF]' : 'bg-[#081265]',
+						isFinish ? '!text-[#081265]' : '!text-[#E0E7FF]',
+					].join(' ')}
 					style={{
 						paddingTop: item.icon ? 0 : '2px',
 					}}
 				>
-					{item.icon || index}
+					{item.icon || (isFinish ? <CheckOutlined /> : index)}
 				</div>
 			);
 		};
-		return list.map((item, index) => {
-			let obj = {
-				key: item.key,
-				label: item.title,
-				icon: iconFn(item, isChild, index),
-			};
-			if (item.children) {
-				obj.children = getLenderMenu(item.children, true);
-			}
-			return obj;
-		});
-	};
+		const getLenderMenu = (list = lenderDetailsSteps, isChild) => {
+			return list.map((item, index) => {
+				let obj = {
+					key: item.key,
+					label: item.title,
+					icon: iconFn(item, isChild, index),
+				};
+				if (item.children) {
+					obj.children = getLenderMenu(item.children, true);
+				} else {
+					count.current.index = count.current.index + 1;
+					count.current.key = item.key;
+				}
+				return obj;
+			});
+		};
+		const arr = getLenderMenu();
+		count.current.index = -1;
+		return arr;
+	}, [loanProgress]);
 
 	return (
 		<div className="flex flex-col h-full">
@@ -104,7 +135,7 @@ const ZeeBeeDetails = () => {
 					selectedKeys={[currentStep]}
 					mode="inline"
 					theme="light"
-					items={getLenderMenu()}
+					items={lenderMenu}
 					onSelect={({ key }) => {
 						setCurrentStep(key);
 						scrollRef.current.scrollTo({
@@ -143,10 +174,10 @@ const ZeeBeeDetails = () => {
 							if (!isErr) {
 								changeFields.map((v) => {
 									if (!v?.errors?.length && !v?.warnings?.length) {
-										_.set(rowData, v?.name, v?.value);
+										_.set(newRowData, v?.name, v?.value);
 									}
 								});
-								setNewRowData({ ...rowData });
+								setNewRowData({ ...newRowData });
 							}
 						}}
 					>

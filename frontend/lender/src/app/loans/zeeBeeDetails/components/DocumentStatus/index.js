@@ -5,7 +5,12 @@ const colorInfo = {
 		background: '#E6F7FF',
 		color: 'var(--base-primary)',
 	},
-	Pending: {
+	'Pending request': {
+		border: 'var(--base-border)',
+		background: 'var(--background)',
+		color: 'var(--foreground)',
+	},
+	'Pending upload': {
 		border: 'var(--base-border)',
 		background: 'var(--background)',
 		color: 'var(--foreground)',
@@ -16,7 +21,7 @@ const colorInfo = {
 		color: '#52C41A',
 	},
 };
-const DocumentStatus = ({ status = 'Pending' }) => {
+const DocumentStatus = ({ status = 'Pending request' }) => {
 	return (
 		<div style={{ ...colorInfo?.[status], borderRadius: 2 }} className="px-2 w-min">
 			{status}

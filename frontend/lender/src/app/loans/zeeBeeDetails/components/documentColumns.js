@@ -1,15 +1,20 @@
 import DocumentStatus from './DocumentStatus';
 import MsgSvg from '@/assets/images/message.svg';
+import MsgActiveSvg from '@/assets/images/message_active.svg';
 import { SendRequestBtn } from './SendRequestModal';
 import { request } from 'http';
 import { UploadModalBtn } from './AddDocument/UploadModal';
 import TableOperation from '@/components/TableOperation';
+import { formatDate } from '@/lib/date';
+import { Tooltip } from 'antd';
+import { DeleteBtn } from '@/components/NewModal/BtnPopUpModal';
+import { EditCommentModalBtn } from './EditCommentModal';
 const getUploadCommonColumns = (typeTitle, isHaveComments = true) => {
 	const arr = [
 		{
 			title: typeTitle || 'Pending borrower upload',
-			dataIndex: 'type',
-			key: 'type',
+			dataIndex: 'file_type',
+			key: 'file_type',
 			ellipsis: true,
 			minWidth: 200,
 		},
@@ -24,26 +29,27 @@ const getUploadCommonColumns = (typeTitle, isHaveComments = true) => {
 
 		{
 			title: 'Upload Date',
-			dataIndex: 'upload_date',
-			key: 'upload_date',
+			dataIndex: 'last_uploaded_at',
+			key: 'last_uploaded_at',
 			ellipsis: true,
-			width: 150,
+			width: 100,
+			render: (v) => formatDate(v),
 		},
 	];
 	if (isHaveComments) {
 		arr.splice(2, 0, {
-			title: 'Message',
-			dataIndex: 'Message',
-			key: 'Message',
+			title: 'Comment',
+			dataIndex: 'comment',
+			key: 'comment',
 			ellipsis: true,
-			width: 150,
-			render: (v) => <MsgSvg />,
+			width: 100,
+			render: (v) => <Tooltip title={v}>{v ? <MsgActiveSvg /> : <MsgSvg />}</Tooltip>,
 		});
 	}
 
 	return arr;
 };
-export const borrowerUploadColumns = (isHide) => {
+export const borrowerUploadColumns = (isHide, handleClickOpt, deleteLoading) => {
 	const getOpt = () => {
 		return {
 			title: '',
@@ -56,9 +62,11 @@ export const borrowerUploadColumns = (isHide) => {
 						maxCount={1}
 						list={[
 							{
-								document_type: record.type,
+								file_type: record.file_type,
+								id: record.id,
 							},
 						]}
+						// disabled={!!record.comment}
 					>
 						Send request
 					</SendRequestBtn>
@@ -67,21 +75,38 @@ export const borrowerUploadColumns = (isHide) => {
 							{
 								key: 'Upload',
 								label: (
-									<UploadModalBtn isChangeType={false} isButton={false}>
+									<UploadModalBtn
+										isChangeType={false}
+										isButton={false}
+										record={record}
+									>
 										Upload document
 									</UploadModalBtn>
 								),
 							},
 							{
 								key: 'edit',
-								label: 'Edit comments',
+								label: (
+									<EditCommentModalBtn record={record}>
+										Edit comment
+									</EditCommentModalBtn>
+								),
 							},
 							{
 								key: 'delete',
-								label: 'Delete request',
+								label: (
+									<DeleteBtn
+										isButton={false}
+										content={record?.file_type}
+										onOk={() => handleClickOpt('delete', record)}
+										confirmLoading={deleteLoading}
+									>
+										Delete request
+									</DeleteBtn>
+								),
 							},
 						]}
-						onSelect={(key) => {}}
+						onSelect={handleClickOpt}
 					/>
 				</div>
 			),
@@ -110,26 +135,16 @@ export const lenderUploadColumns = (isHide) => {
 			width: 150,
 			align: 'right',
 			render: (_, record) => (
-				<div className="flex items-center gap-2">
-					<UploadModalBtn isChangeType={false}>Upload</UploadModalBtn>
-					<TableOperation
-						list={[
-							{
-								key: 'edit',
-								label: 'Edit comments',
-							},
-							{
-								key: 'delete',
-								label: 'Delete request',
-							},
-						]}
-						onSelect={(key) => {}}
-					/>
-				</div>
+				<UploadModalBtn isChangeType={false} record={record}>
+					Upload
+				</UploadModalBtn>
 			),
 		};
 	};
-	return [...getUploadCommonColumns('Pending internal upload'), ...(isHide ? [] : [getOpt()])];
+	return [
+		...getUploadCommonColumns('Pending internal upload', false),
+		...(isHide ? [] : [getOpt()]),
+	];
 };
 
 export const lenderClosingColumns = () => {
@@ -142,7 +157,9 @@ export const lenderClosingColumns = () => {
 			fixed: 'right',
 			render: (_, record) => (
 				<div>
-					<UploadModalBtn isChangeType={false}>Upload</UploadModalBtn>
+					<UploadModalBtn isChangeType={false} record={record}>
+						Upload
+					</UploadModalBtn>
 				</div>
 			),
 		};

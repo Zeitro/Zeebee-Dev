@@ -5,7 +5,7 @@ import { Upload, Button, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import type { UploadProps, UploadFile, RcFile } from 'antd/es/upload/interface';
 import { createRequest } from '@/lib/fetch';
-
+const MAX_SIZE_MB = 10;
 export interface CommonUploadRef {
 	triggerUpload: (options?: { onProgress?: (percent: number) => void }) => Promise<string[]>;
 	clearFileList: () => void;
@@ -39,6 +39,14 @@ const CommonUpload = forwardRef<CommonUploadRef, CommonUploadProps>(
 	) => {
 		const { uploadWithProgress } = createRequest();
 		const [fileList, setFileList] = useState<UploadFile[]>([]);
+
+		const checkFileSize = (file: RcFile) => {
+			const isLt10M = file.size / 1024 / 1024 < MAX_SIZE_MB;
+			if (!isLt10M) {
+				message.error(`文件大小不能超过${MAX_SIZE_MB}MB`);
+			}
+			return isLt10M;
+		};
 
 		const handleUpload = async (
 			file: UploadFile,
@@ -127,6 +135,9 @@ const CommonUpload = forwardRef<CommonUploadRef, CommonUploadProps>(
 
 		if (immediateUpload) {
 			// 模式一：customRequest 现在也只调用 handleUpload
+			uploadProps.beforeUpload = (file: RcFile) => {
+				return checkFileSize(file);
+			};
 			uploadProps.customRequest = ({
 				file,
 				onSuccess: onAntdSuccess,
@@ -149,7 +160,8 @@ const CommonUpload = forwardRef<CommonUploadRef, CommonUploadProps>(
 			};
 		} else {
 			// 模式二：逻辑不变
-			uploadProps.beforeUpload = (file) => {
+			uploadProps.beforeUpload = (file: RcFile) => {
+				if (!checkFileSize(file)) return Upload.LIST_IGNORE;
 				setFileList((currentList) => {
 					const newList = [...currentList, file];
 					return maxCount ? newList.slice(-maxCount) : newList;

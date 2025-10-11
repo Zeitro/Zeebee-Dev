@@ -1,15 +1,39 @@
 import React, { use, useState } from 'react';
 import NewModal from '@/components/NewModal';
-import { Button, Form, Input, Select } from 'antd';
+import { Button, Form, Input, message, Select } from 'antd';
 import CommonUpload from '@/components/CommonUpload';
 import { CloseOutlined, FileTextOutlined, InboxOutlined, UploadOutlined } from '@ant-design/icons';
 import styles from './index.module.scss';
+import { createRequest } from '@/lib/fetch';
+import eventBus from '@/lib/bus';
 const { TextArea } = Input;
-const UploadModal = ({ open, setOpen, isChangeType = true }) => {
+const UploadModal = ({ open, setOpen, isChangeType = true, record = {} }) => {
 	const [form] = Form.useForm();
-
+	const { request } = createRequest();
+	const [loading, setLoading] = useState(false);
+	const [fileList, setFileList] = useState([]);
 	const handleOK = async () => {
-		const values = await form.validateFields();
+		try {
+			const values = await form.validateFields();
+			console.log(values, fileList);
+
+			// setLoading(true);
+			// await request('/loan_document/send_requests', {
+			// 	method: 'POST',
+			// 	body: {
+			// 		...values,
+			// 	},
+			// });
+			// message.open({
+			// 	type: 'success',
+			// 	content: 'Request sent successfully',
+			// });
+			// eventBus.emit('getLoanDetail');
+			// setLoading(false);
+			setOpen(false);
+		} catch (error) {
+			setLoading(false);
+		}
 	};
 	return (
 		<NewModal
@@ -26,11 +50,14 @@ const UploadModal = ({ open, setOpen, isChangeType = true }) => {
 				autoComplete="off"
 				size="large"
 				className="h-[400px] overflow-hidden overflow-y-auto"
+				initialValues={{
+					id: record.id,
+				}}
 			>
 				{isChangeType ? (
 					<Form.Item
 						label="Document type(Required)"
-						name="document_type"
+						name="file_type"
 						rules={[
 							{
 								required: true,
@@ -43,16 +70,18 @@ const UploadModal = ({ open, setOpen, isChangeType = true }) => {
 				) : (
 					<div className="pb-4">
 						<label>Document type</label>
-						<div className="font-medium text-black-dark">1111</div>
+						<div className="font-medium text-black-dark">{record.file_type}</div>
 					</div>
 				)}
-				<Form.Item label="Comment (Optional）" name="Comments">
+				{/* <Form.Item label="Comment (Optional）" name="comment">
 					<TextArea placeholder="Add a comment" autoSize={{ minRows: 3, maxRows: 5 }} />
-				</Form.Item>
+				</Form.Item> */}
 				<CommonUpload
 					immediateUpload={false}
-					accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
-					// onGetUploadList={setFileList}
+					accept=".pdf,.png,.jpg,.jpeg"
+					maxCount={10}
+					multiple={true}
+					onGetUploadList={setFileList}
 					className={[styles.documentUpload].join(' ')}
 					limitSize={10}
 					disabled={false}
@@ -82,7 +111,7 @@ const UploadModal = ({ open, setOpen, isChangeType = true }) => {
 };
 
 export default UploadModal;
-export const UploadModalBtn = ({ children, isChangeType, isButton = true, ...props }) => {
+export const UploadModalBtn = ({ children, isChangeType, isButton = true, record, ...props }) => {
 	const [open, setOpen] = useState(false);
 	return (
 		<>
@@ -102,7 +131,14 @@ export const UploadModalBtn = ({ children, isChangeType, isButton = true, ...pro
 			) : (
 				<div>{children || 'Send request'}</div>
 			)}
-			{open && <UploadModal open={open} setOpen={setOpen} isChangeType={isChangeType} />}
+			{open && (
+				<UploadModal
+					open={open}
+					setOpen={setOpen}
+					isChangeType={isChangeType}
+					record={record}
+				/>
+			)}
 		</>
 	);
 };

@@ -1,6 +1,6 @@
 'use client';
 import { Dropdown, message, Tooltip } from 'antd';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { DownOutlined } from '@ant-design/icons';
 import styles from './index.module.css';
 import { createRequest } from '@/lib/fetch';
@@ -24,11 +24,15 @@ const DropdownStatus = ({
 	...props
 }) => {
 	const [loading, setLoading] = useState(false);
-	const [statusValue, setStatusValue] = useState(data[statusKey] || '');
+	const [statusValue, setStatusValue] = useState();
 	const { request, cancel } = createRequest();
 	const rowData = useMemo(() => {
 		return items.find((i) => i.key === statusValue) || {};
 	}, [statusValue]);
+
+	useEffect(() => {
+		setStatusValue(data[statusKey]);
+	}, [data]);
 
 	const handleSelect = async ({ key }) => {
 		try {
@@ -36,7 +40,7 @@ const DropdownStatus = ({
 			setLoading(true);
 			setStatusValue(key);
 			await request(api, {
-				method: 'PUT',
+				method: 'PATCH',
 				body: { [statusKey]: key },
 			});
 			setLoading(false);
@@ -51,34 +55,39 @@ const DropdownStatus = ({
 	};
 
 	return (
-		<Tooltip {...tooltipProps}>
-			<Dropdown.Button
-				icon={disabled ? null : <DownOutlined />}
-				loading={loading}
-				menu={{
-					items,
-					selectable: true,
-					selectedKeys: [statusValue],
-					onSelect: handleSelect,
-					onClick: ({ domEvent }) => {
-						domEvent?.stopPropagation();
-						domEvent?.preventDefault();
-					},
-				}}
-				size="small"
-				disabled={disabled}
-				{...props}
-				className={[styles.loanStatus, disabled && styles.disabled, props?.className].join(
-					' ',
-				)}
-				onClick={(domEvent) => {
-					domEvent?.stopPropagation();
-					domEvent?.preventDefault();
-				}}
-			>
-				{statusValue ? rowData.label : 'Select Status'}
-			</Dropdown.Button>
-		</Tooltip>
+		<div
+			onClick={(domEvent) => {
+				domEvent?.stopPropagation();
+				domEvent?.preventDefault();
+			}}
+		>
+			<Tooltip {...tooltipProps}>
+				<Dropdown.Button
+					icon={disabled ? null : <DownOutlined />}
+					loading={loading}
+					menu={{
+						items,
+						selectable: true,
+						selectedKeys: [statusValue],
+						onSelect: handleSelect,
+						onClick: ({ domEvent }) => {
+							domEvent?.stopPropagation();
+							domEvent?.preventDefault();
+						},
+					}}
+					size="small"
+					disabled={disabled}
+					{...props}
+					className={[
+						styles.loanStatus,
+						disabled && styles.disabled,
+						props?.className,
+					].join(' ')}
+				>
+					{statusValue ? rowData.label : 'Select Status'}
+				</Dropdown.Button>
+			</Tooltip>
+		</div>
 	);
 };
 export default DropdownStatus;
