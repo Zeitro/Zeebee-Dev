@@ -228,6 +228,10 @@ func (l *UpdateLoanLogic) handlePropertyBase(tx *gorm.DB, propertyId int64, prop
 }
 
 func (l *UpdateLoanLogic) updateApplicants(tx *gorm.DB, oldItems []*model.Applicant, curItems []*model.Applicant, loan *model.Loan) (err error) {
+	slice.ForEach(curItems, func(index int, newApplicant *model.Applicant) {
+		curItems[index].LoanBorrowerId = loan.LoanBorrower.Id
+	})
+
 	removedItems := slice.DifferenceWith(oldItems, curItems, func(item1, item2 *model.Applicant) bool {
 		return item1.Id == item2.Id
 	})
