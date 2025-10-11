@@ -74,6 +74,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: loan.UpdateHandler(serverCtx),
 				},
 				{
+					// loan documents opts
+					Method:  http.MethodGet,
+					Path:    "/loan/:id/loan_documents_opts",
+					Handler: loan.LoanDocumentsOptsHandler(serverCtx),
+				},
+				{
 					// update loan pending status
 					Method:  http.MethodPatch,
 					Path:    "/loan/:id/pending_status",

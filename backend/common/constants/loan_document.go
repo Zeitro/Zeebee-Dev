@@ -37,11 +37,11 @@ type LoanDocumentCategory string
 
 const LoanDocumentCategoryName = "loan_document_category"
 const (
-	LoanDocumentUploaderTypeBorrower        = "Borrower"
-	LoanDocumentUploaderTypeBorrowerClosing = "BorrowerClosing"
-	LoanDocumentUploaderTypeLender          = "Lender"
-	LoanDocumentUploaderTypeExtend          = "Extend"
-	LoanDocumentUploaderTypeInit            = "Init"
+	LoanDocumentUploaderTypeBorrower      = "Borrower"
+	LoanDocumentUploaderTypeLenderClosing = "LenderClosing"
+	LoanDocumentUploaderTypeLender        = "Lender"
+	LoanDocumentUploaderTypeExtend        = "Extend"
+	LoanDocumentUploaderTypeInit          = "Init"
 )
 
 // loan  document status: Pending Uploand, Requested, Ready For review
@@ -105,8 +105,8 @@ func init() {
 			Value: string(LoanDocumentUploaderTypeBorrower),
 		},
 		{
-			Label: string(LoanDocumentUploaderTypeBorrowerClosing),
-			Value: string(LoanDocumentUploaderTypeBorrowerClosing),
+			Label: string(LoanDocumentUploaderTypeLenderClosing),
+			Value: string(LoanDocumentUploaderTypeLenderClosing),
 		},
 		{
 			Label: string(LoanDocumentUploaderTypeLender),
@@ -155,7 +155,7 @@ func GetLoanDocumentTypes() map[LoanDocumentCategory][]LoanDocumentType {
 			LoanDocumentTypePropertyData,
 			LoanDocumentTypeTitleReport,
 		},
-		LoanDocumentUploaderTypeBorrowerClosing: []LoanDocumentType{
+		LoanDocumentUploaderTypeLenderClosing: []LoanDocumentType{
 			LoanDocumentTypeClosingDocs,
 			LoanDocumentTypeTitleDocs,
 			LoanDocumentTypeFormalLOI,

@@ -146,9 +146,16 @@ type LoanDocumentEntry struct {
 	Category  string      `json:"category"`
 	FileType  string      `json:"file_type"`
 	Status    string      `json:"status"`
+	Comment   string      `json:"comment"`
 	CreatedAt string      `json:"created_at"`
 	UpdatedAt string      `json:"updated_at"`
 	Files     []FileEntry `json:"files"`
+}
+
+type LoanDocumentOptEntry struct {
+	Id       int64  `json:"id"`
+	Category string `json:"category"`
+	FileType string `json:"file_type"`
 }
 
 type LoanDocumentSendRequestEntry struct {
