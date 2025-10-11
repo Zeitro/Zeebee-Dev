@@ -17,13 +17,19 @@ const (
 	LoanDocumentTypeREExperience           = "RE Experience"
 	LoanDocumentTypeBankStatements         = "Bank Statements for Most Recent Two Months"
 
-	LoanDocumentTypeApplyForm = "Apply Form"
-
 	// lender document
 	LoanDocumentTypeBorrowerCreditScore                         = "Borrower's Credit Score"
 	LoanDocumentTypeBorrowerDefaultFraudRiskViewCriminalRecords = "Borrower's Default/Fraud/Risk/View/Criminal Records And RE Experience"
 	LoanDocumentTypePropertyData                                = "Property Data/Historical Property Ownership"
 	LoanDocumentTypeTitleReport                                 = "Title Report"
+
+	// lender closing
+	LoanDocumentTypeClosingDocs = "Closing Docs"
+	LoanDocumentTypeTitleDocs   = "Title Docs"
+	LoanDocumentTypeFormalLOI   = "Formal LOI"
+
+	// init
+	LoanDocumentTypeApplyForm = "Apply Form"
 )
 
 // uploader type
@@ -31,10 +37,11 @@ type LoanDocumentCategory string
 
 const LoanDocumentCategoryName = "loan_document_category"
 const (
-	LoanDocumentUploaderTypeBorrower = "Borrower"
-	LoanDocumentUploaderTypeLender   = "Lender"
-	LoanDocumentUploaderTypeExtend   = "Extend"
-	LoanDocumentUploaderTypeInit     = "Init"
+	LoanDocumentUploaderTypeBorrower        = "Borrower"
+	LoanDocumentUploaderTypeBorrowerClosing = "BorrowerClosing"
+	LoanDocumentUploaderTypeLender          = "Lender"
+	LoanDocumentUploaderTypeExtend          = "Extend"
+	LoanDocumentUploaderTypeInit            = "Init"
 )
 
 // loan  document status: Pending Uploand, Requested, Ready For review
@@ -98,6 +105,10 @@ func init() {
 			Value: string(LoanDocumentUploaderTypeBorrower),
 		},
 		{
+			Label: string(LoanDocumentUploaderTypeBorrowerClosing),
+			Value: string(LoanDocumentUploaderTypeBorrowerClosing),
+		},
+		{
 			Label: string(LoanDocumentUploaderTypeLender),
 			Value: string(LoanDocumentUploaderTypeLender),
 		},
@@ -143,6 +154,11 @@ func GetLoanDocumentTypes() map[LoanDocumentCategory][]LoanDocumentType {
 			LoanDocumentTypeBorrowerDefaultFraudRiskViewCriminalRecords,
 			LoanDocumentTypePropertyData,
 			LoanDocumentTypeTitleReport,
+		},
+		LoanDocumentUploaderTypeBorrowerClosing: []LoanDocumentType{
+			LoanDocumentTypeClosingDocs,
+			LoanDocumentTypeTitleDocs,
+			LoanDocumentTypeFormalLOI,
 		},
 	}
 

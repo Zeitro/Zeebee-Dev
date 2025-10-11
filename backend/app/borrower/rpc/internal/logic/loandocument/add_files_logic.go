@@ -3,6 +3,7 @@ package loandocumentlogic
 import (
 	"context"
 
+	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -116,6 +117,13 @@ func (l *AddFilesLogic) prepare(in *borrower.LoanDocumentAddFilesRequest) (loan 
 
 	if loan == nil || loanDocument == nil {
 		return nil, nil, errors.WithStack(errors.New("loan or loan document not found"))
+	}
+	validCategories := []constants.LoanDocumentCategory{
+		constants.LoanDocumentUploaderTypeLender,
+		constants.LoanDocumentUploaderTypeExtend,
+	}
+	if !slice.Contain(validCategories, loanDocument.Category) {
+		return nil, nil, errors.WithStack(errors.New("loan document category not supported"))
 	}
 
 	if loanDocument.Status != constants.LoanDocumentStatusRequested {
