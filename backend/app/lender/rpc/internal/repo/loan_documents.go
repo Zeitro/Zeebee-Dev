@@ -14,7 +14,7 @@ import (
 type LoanDocumentOption struct {
 	Id       int64                          `json:"id"`
 	Category constants.LoanDocumentCategory `json:"category"`
-	FileType constants.LoanDocumentType     `json:"file_type"`
+	FileType constants.LoanDocumentFileType `json:"file_type"`
 }
 
 type LoanDocumentRepo struct {

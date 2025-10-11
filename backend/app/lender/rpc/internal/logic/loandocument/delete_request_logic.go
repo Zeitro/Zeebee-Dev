@@ -65,20 +65,22 @@ func (l *DeleteRequestLogic) DeleteRequest(in *lender.LoanDocumentDeleteRequestR
 			}
 		}
 
-		if loanDocument.Category == constants.LoanDocumentUploaderTypeExtend {
-			// handle extend type
+		switch loanDocument.Category {
+		case constants.LoanDocumentCategoryExtend:
 			_, innerErr = l.svcCtx.LoanDocumentRepo.DeleteByIDWithTx(l.ctx, tx, loanDocument.Id)
 			if innerErr != nil {
 				return errors.Wrap(innerErr, "failed to delete loan document")
 			}
-		} else {
-			// handle buildin type
+		case constants.LoanDocumentCategoryBorrower:
 			innerErr = l.svcCtx.LoanDocumentRepo.UpdateColumnsByIdWithTx(l.ctx, tx, loanDocument.Id, map[string]interface{}{
 				"status": constants.LoanDocumentStatusPendingUpload,
 			})
 			if innerErr != nil {
 				return errors.Wrap(innerErr, "failed to update loan document status")
 			}
+		default:
+			return errors.WithStack(errors.New("invalid loan document category"))
+
 		}
 		operationLoanDocument := &types.LoanDocument{}
 		innerErr = copier.CopyWithOption(operationLoanDocument, loanDocument, copier.Option{

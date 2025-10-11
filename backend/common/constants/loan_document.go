@@ -4,32 +4,32 @@ import (
 	"zeebee-backend/common/enums"
 )
 
-type LoanDocumentType string
+type LoanDocumentFileType string
 
-const LoanDocumentTypeName = "loan_document_type"
+const LoanDocumentFileTypeName = "loan_document_file_type"
 
 const (
 	// borrower document
-	LoanDocumentTypeValidID                = "Valid ID of Borrower"
-	LoanDocumentTypePurchaseAgreement      = "Purchase Agreement"
-	LoanDocumentTypeEvidenceOfInsurance    = "Evidence of Insurance"
-	LoanDocumentTypePreliminaryTitleReport = "Preliminary Title Report/Escrow Contact"
-	LoanDocumentTypeREExperience           = "RE Experience"
-	LoanDocumentTypeBankStatements         = "Bank Statements for Most Recent Two Months"
+	LoanDocumentFileTypeValidID                = "Valid ID of Borrower"
+	LoanDocumentFileTypePurchaseAgreement      = "Purchase Agreement"
+	LoanDocumentFileTypeEvidenceOfInsurance    = "Evidence of Insurance"
+	LoanDocumentFileTypePreliminaryTitleReport = "Preliminary Title Report/Escrow Contact"
+	LoanDocumentFileTypeREExperience           = "RE Experience"
+	LoanDocumentFileTypeBankStatements         = "Bank Statements for Most Recent Two Months"
 
 	// lender document
-	LoanDocumentTypeBorrowerCreditScore                         = "Borrower's Credit Score"
-	LoanDocumentTypeBorrowerDefaultFraudRiskViewCriminalRecords = "Borrower's Default/Fraud/Risk/View/Criminal Records And RE Experience"
-	LoanDocumentTypePropertyData                                = "Property Data/Historical Property Ownership"
-	LoanDocumentTypeTitleReport                                 = "Title Report"
+	LoanDocumentFileTypeBorrowerCreditScore                         = "Borrower's Credit Score"
+	LoanDocumentFileTypeBorrowerDefaultFraudRiskViewCriminalRecords = "Borrower's Default/Fraud/Risk/View/Criminal Records And RE Experience"
+	LoanDocumentFileTypePropertyData                                = "Property Data/Historical Property Ownership"
+	LoanDocumentFileTypeTitleReport                                 = "Title Report"
 
 	// lender closing
-	LoanDocumentTypeClosingDocs = "Closing Docs"
-	LoanDocumentTypeTitleDocs   = "Title Docs"
-	LoanDocumentTypeFormalLOI   = "Formal LOI"
+	LoanDocumentFileTypeClosingDocs = "Closing Docs"
+	LoanDocumentFileTypeTitleDocs   = "Title Docs"
+	LoanDocumentFileTypeFormalLOI   = "Formal LOI"
 
 	// init
-	LoanDocumentTypeApplyForm = "Apply Form"
+	LoanDocumentFileTypeApplyForm = "Apply Form"
 )
 
 // uploader type
@@ -37,11 +37,11 @@ type LoanDocumentCategory string
 
 const LoanDocumentCategoryName = "loan_document_category"
 const (
-	LoanDocumentUploaderTypeBorrower      = "Borrower"
-	LoanDocumentUploaderTypeLenderClosing = "LenderClosing"
-	LoanDocumentUploaderTypeLender        = "Lender"
-	LoanDocumentUploaderTypeExtend        = "Extend"
-	LoanDocumentUploaderTypeInit          = "Init"
+	LoanDocumentCategoryBorrower      = "Borrower"
+	LoanDocumentCategoryLenderClosing = "LenderClosing"
+	LoanDocumentCategoryLender        = "Lender"
+	LoanDocumentCategoryExtend        = "Extend"
+	LoanDocumentCategoryInit          = "Init"
 )
 
 // loan  document status: Pending Uploand, Requested, Ready For review
@@ -49,76 +49,77 @@ type LoanDocumentStatus string
 
 const LoanDocumentStatusName = "loan_document_status"
 const (
-	LoanDocumentStatusPendingUpload  LoanDocumentStatus = "PendingUpload"
-	LoanDocumentStatusRequested      LoanDocumentStatus = "Requested"
-	LoanDocumentStatusReadyForReview LoanDocumentStatus = "ReadyForReview"
+	LoanDocumentStatusPendingUpload    LoanDocumentStatus = "PendingUpload"
+	LoanDocumentStatusPendingRequested LoanDocumentStatus = "PendingRequested"
+	LoanDocumentStatusRequested        LoanDocumentStatus = "Requested"
+	LoanDocumentStatusReadyForReview   LoanDocumentStatus = "ReadyForReview"
 )
 
 func init() {
 	// register loan document type
-	enums.Register(LoanDocumentTypeName, []enums.EnumOpt{
+	enums.Register(LoanDocumentFileTypeName, []enums.EnumOpt{
 		{
-			Label: string(LoanDocumentTypeValidID),
-			Value: string(LoanDocumentTypeValidID),
+			Label: string(LoanDocumentFileTypeValidID),
+			Value: string(LoanDocumentFileTypeValidID),
 		},
 		{
-			Label: string(LoanDocumentTypePurchaseAgreement),
-			Value: string(LoanDocumentTypePurchaseAgreement),
+			Label: string(LoanDocumentFileTypePurchaseAgreement),
+			Value: string(LoanDocumentFileTypePurchaseAgreement),
 		},
 		{
-			Label: string(LoanDocumentTypeEvidenceOfInsurance),
-			Value: string(LoanDocumentTypeEvidenceOfInsurance),
+			Label: string(LoanDocumentFileTypeEvidenceOfInsurance),
+			Value: string(LoanDocumentFileTypeEvidenceOfInsurance),
 		},
 		{
-			Label: string(LoanDocumentTypePreliminaryTitleReport),
-			Value: string(LoanDocumentTypePreliminaryTitleReport),
+			Label: string(LoanDocumentFileTypePreliminaryTitleReport),
+			Value: string(LoanDocumentFileTypePreliminaryTitleReport),
 		},
 		{
-			Label: string(LoanDocumentTypeREExperience),
-			Value: string(LoanDocumentTypeREExperience),
+			Label: string(LoanDocumentFileTypeREExperience),
+			Value: string(LoanDocumentFileTypeREExperience),
 		},
 		{
-			Label: string(LoanDocumentTypeBankStatements),
-			Value: string(LoanDocumentTypeBankStatements),
+			Label: string(LoanDocumentFileTypeBankStatements),
+			Value: string(LoanDocumentFileTypeBankStatements),
 		},
 		{
-			Label: string(LoanDocumentTypeBorrowerCreditScore),
-			Value: string(LoanDocumentTypeBorrowerCreditScore),
+			Label: string(LoanDocumentFileTypeBorrowerCreditScore),
+			Value: string(LoanDocumentFileTypeBorrowerCreditScore),
 		},
 		{
-			Label: string(LoanDocumentTypeBorrowerDefaultFraudRiskViewCriminalRecords),
-			Value: string(LoanDocumentTypeBorrowerDefaultFraudRiskViewCriminalRecords),
+			Label: string(LoanDocumentFileTypeBorrowerDefaultFraudRiskViewCriminalRecords),
+			Value: string(LoanDocumentFileTypeBorrowerDefaultFraudRiskViewCriminalRecords),
 		},
 		{
-			Label: string(LoanDocumentTypePropertyData),
-			Value: string(LoanDocumentTypePropertyData),
+			Label: string(LoanDocumentFileTypePropertyData),
+			Value: string(LoanDocumentFileTypePropertyData),
 		},
 		{
-			Label: string(LoanDocumentTypeTitleReport),
-			Value: string(LoanDocumentTypeTitleReport),
+			Label: string(LoanDocumentFileTypeTitleReport),
+			Value: string(LoanDocumentFileTypeTitleReport),
 		},
 	})
 	// register loan document category
 	enums.Register(LoanDocumentCategoryName, []enums.EnumOpt{
 		{
-			Label: string(LoanDocumentUploaderTypeBorrower),
-			Value: string(LoanDocumentUploaderTypeBorrower),
+			Label: string(LoanDocumentCategoryBorrower),
+			Value: string(LoanDocumentCategoryBorrower),
 		},
 		{
-			Label: string(LoanDocumentUploaderTypeLenderClosing),
-			Value: string(LoanDocumentUploaderTypeLenderClosing),
+			Label: string(LoanDocumentCategoryLenderClosing),
+			Value: string(LoanDocumentCategoryLenderClosing),
 		},
 		{
-			Label: string(LoanDocumentUploaderTypeLender),
-			Value: string(LoanDocumentUploaderTypeLender),
+			Label: string(LoanDocumentCategoryLender),
+			Value: string(LoanDocumentCategoryLender),
 		},
 		{
-			Label: string(LoanDocumentUploaderTypeExtend),
-			Value: string(LoanDocumentUploaderTypeExtend),
+			Label: string(LoanDocumentCategoryExtend),
+			Value: string(LoanDocumentCategoryExtend),
 		},
 		{
-			Label: string(LoanDocumentUploaderTypeInit),
-			Value: string(LoanDocumentUploaderTypeInit),
+			Label: string(LoanDocumentCategoryInit),
+			Value: string(LoanDocumentCategoryInit),
 		},
 	})
 
@@ -139,26 +140,26 @@ func init() {
 	})
 }
 
-func GetLoanDocumentTypes() map[LoanDocumentCategory][]LoanDocumentType {
-	return map[LoanDocumentCategory][]LoanDocumentType{
-		LoanDocumentUploaderTypeBorrower: []LoanDocumentType{
-			LoanDocumentTypeValidID,
-			LoanDocumentTypePurchaseAgreement,
-			LoanDocumentTypeEvidenceOfInsurance,
-			LoanDocumentTypePreliminaryTitleReport,
-			LoanDocumentTypeREExperience,
-			LoanDocumentTypeBankStatements,
+func GetLoanDocumentTypes() map[LoanDocumentCategory][]LoanDocumentFileType {
+	return map[LoanDocumentCategory][]LoanDocumentFileType{
+		LoanDocumentCategoryBorrower: []LoanDocumentFileType{
+			LoanDocumentFileTypeValidID,
+			LoanDocumentFileTypePurchaseAgreement,
+			LoanDocumentFileTypeEvidenceOfInsurance,
+			LoanDocumentFileTypePreliminaryTitleReport,
+			LoanDocumentFileTypeREExperience,
+			LoanDocumentFileTypeBankStatements,
 		},
-		LoanDocumentUploaderTypeLender: []LoanDocumentType{
-			LoanDocumentTypeBorrowerCreditScore,
-			LoanDocumentTypeBorrowerDefaultFraudRiskViewCriminalRecords,
-			LoanDocumentTypePropertyData,
-			LoanDocumentTypeTitleReport,
+		LoanDocumentCategoryLender: []LoanDocumentFileType{
+			LoanDocumentFileTypeBorrowerCreditScore,
+			LoanDocumentFileTypeBorrowerDefaultFraudRiskViewCriminalRecords,
+			LoanDocumentFileTypePropertyData,
+			LoanDocumentFileTypeTitleReport,
 		},
-		LoanDocumentUploaderTypeLenderClosing: []LoanDocumentType{
-			LoanDocumentTypeClosingDocs,
-			LoanDocumentTypeTitleDocs,
-			LoanDocumentTypeFormalLOI,
+		LoanDocumentCategoryLenderClosing: []LoanDocumentFileType{
+			LoanDocumentFileTypeClosingDocs,
+			LoanDocumentFileTypeTitleDocs,
+			LoanDocumentFileTypeFormalLOI,
 		},
 	}
 

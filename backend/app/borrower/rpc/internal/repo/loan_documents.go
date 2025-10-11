@@ -78,12 +78,12 @@ func (repo *LoanDocumentRepo) DeleteLoanDocumentsByLoanIdWithTx(ctx context.Cont
 // SaveApplyFormDocument
 func (repo *LoanDocumentRepo) SaveApplyFormDocumentWithTx(ctx context.Context, tx *gorm.DB, loanId int64, fileUrl string) (err error) {
 	// get or create apply form loan document
-	applyFormLoanDocument, _ := repo.GetLoanDocumentWithTx(ctx, tx, loanId, constants.LoanDocumentTypeApplyForm)
+	applyFormLoanDocument, _ := repo.GetLoanDocumentWithTx(ctx, tx, loanId, constants.LoanDocumentFileTypeApplyForm)
 	if applyFormLoanDocument == nil || applyFormLoanDocument.Id == 0 {
 		applyFormLoanDocument = &model.LoanDocument{
 			LoanId:   loanId,
-			FileType: constants.LoanDocumentTypeApplyForm,
-			Category: constants.LoanDocumentUploaderTypeInit,
+			FileType: constants.LoanDocumentFileTypeApplyForm,
+			Category: constants.LoanDocumentCategoryInit,
 			Status:   constants.LoanDocumentStatusReadyForReview,
 		}
 		err = tx.WithContext(ctx).
@@ -111,7 +111,7 @@ func (repo *LoanDocumentRepo) SaveApplyFormDocumentWithTx(ctx context.Context, t
 	return errors.WithStack(err)
 }
 
-func (repo *LoanDocumentRepo) GetLoanDocumentWithTx(ctx context.Context, tx *gorm.DB, loanId int64, fileType constants.LoanDocumentType) (loanDocument *model.LoanDocument, err error) {
+func (repo *LoanDocumentRepo) GetLoanDocumentWithTx(ctx context.Context, tx *gorm.DB, loanId int64, fileType constants.LoanDocumentFileType) (loanDocument *model.LoanDocument, err error) {
 	err = tx.WithContext(ctx).
 		Model(&model.LoanDocument{}).
 		Where("loan_id = ?", loanId).
