@@ -141,15 +141,16 @@ type LoanDemographicRaceEntry struct {
 }
 
 type LoanDocumentEntry struct {
-	Id        int64       `json:"id"`
-	LoanId    int64       `json:"loan_id"`
-	Category  string      `json:"category"`
-	FileType  string      `json:"file_type"`
-	Status    string      `json:"status"`
-	Comment   string      `json:"comment"`
-	CreatedAt string      `json:"created_at"`
-	UpdatedAt string      `json:"updated_at"`
-	Files     []FileEntry `json:"files"`
+	Id             int64       `json:"id"`
+	LoanId         int64       `json:"loan_id"`
+	Category       string      `json:"category"`
+	FileType       string      `json:"file_type"`
+	Status         string      `json:"status"`
+	Comment        string      `json:"comment"`
+	LastUploadedAt string      `json:"last_uploaded_at"`
+	CreatedAt      string      `json:"created_at"`
+	UpdatedAt      string      `json:"updated_at"`
+	Files          []FileEntry `json:"files"`
 }
 
 type LoanDocumentOptEntry struct {

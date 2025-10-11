@@ -66,6 +66,7 @@ func (l *LoanDetailLogic) LoanDetail(in *lender.LoanDetailRequest) (resp *lender
 			IgnoreEmpty:   false,
 			Converters: []copier.TypeConverter{
 				copierx.TimeToRFC3339Str(),
+				copierx.TimePtrToRFC3339Str(),
 				copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
 			},
 		})
