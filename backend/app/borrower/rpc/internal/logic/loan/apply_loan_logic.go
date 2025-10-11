@@ -163,12 +163,16 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrowe
 		loanDocumentTypes := constants.GetLoanDocumentTypes()
 		var loanDocuments []*model.LoanDocument
 		for category, fileTypes := range loanDocumentTypes {
+			documentStatus := constants.LoanDocumentStatusPendingUpload
+			if category == constants.LoanDocumentCategoryBorrower || category == constants.LoanDocumentCategoryExtend {
+				documentStatus = constants.LoanDocumentStatusPendingRequested
+			}
 			for _, fileType := range fileTypes {
 				loanDocument := &model.LoanDocument{
 					LoanId:   loan.Id,
 					Category: category,
 					FileType: fileType,
-					Status:   constants.LoanDocumentStatusPendingUpload,
+					Status:   documentStatus,
 				}
 				loanDocuments = append(loanDocuments, loanDocument)
 			}

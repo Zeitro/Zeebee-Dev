@@ -81,8 +81,13 @@ func (l *DeleteFileLogic) DeleteFile(in *borrower.FileDeleteRequest) (resp *borr
 
 		// update loan document status
 		if fileCount == 0 {
+			loanDocumentStatus := constants.LoanDocumentStatusPendingUpload
+			if loanDocument.Category == constants.LoanDocumentCategoryBorrower || loanDocument.Category == constants.LoanDocumentCategoryExtend {
+				loanDocumentStatus = constants.LoanDocumentStatusPendingRequested
+			}
+
 			innerErr = l.svcCtx.LoanDocumentRepo.UpdateColumnsByIdWithTx(l.ctx, tx, loanDocument.Id, map[string]interface{}{
-				"status": constants.LoanDocumentStatusPendingUpload,
+				"status": loanDocumentStatus,
 			})
 			if innerErr != nil {
 				return errors.Wrap(innerErr, "failed to update loan document status")

@@ -55,9 +55,9 @@ func (l *CreateLogic) Create(in *lender.LoanDocumentCreateExtendTypeRequest) (re
 			return []*model.LoanDocument{
 				{
 					LoanId:   in.Data.LoanId,
-					Category: constants.LoanDocumentUploaderTypeExtend,
-					FileType: constants.LoanDocumentType(fileType),
-					Status:   constants.LoanDocumentStatusPendingUpload,
+					Category: constants.LoanDocumentCategoryExtend,
+					FileType: constants.LoanDocumentFileType(fileType),
+					Status:   constants.LoanDocumentStatusPendingRequested,
 				},
 			}
 		})

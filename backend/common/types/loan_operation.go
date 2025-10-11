@@ -8,7 +8,7 @@ type LoanOperationStatus struct {
 }
 type LoanDocument struct {
 	Category constants.LoanDocumentCategory `json:"category"`
-	FileType constants.LoanDocumentType     `json:"file_type"`
+	FileType constants.LoanDocumentFileType `json:"file_type"`
 	Status   constants.LoanDocumentStatus   `json:"status"`
 	Files    []*OperationFile               `json:"files,omitempty"`
 }
