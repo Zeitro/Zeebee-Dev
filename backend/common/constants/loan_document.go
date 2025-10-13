@@ -37,11 +37,12 @@ type LoanDocumentCategory string
 
 const LoanDocumentCategoryName = "loan_document_category"
 const (
-	LoanDocumentCategoryBorrower      = "Borrower"
-	LoanDocumentCategoryLenderClosing = "LenderClosing"
-	LoanDocumentCategoryLender        = "Lender"
-	LoanDocumentCategoryExtend        = "Extend"
-	LoanDocumentCategoryInit          = "Init"
+	LoanDocumentCategoryBorrower            = "Borrower"
+	LoanDocumentCategoryLenderClosing       = "LenderClosing"
+	LoanDocumentCategoryLender              = "Lender"
+	LoanDocumentCategoryExtend              = "Extend"
+	LoanDocumentCategoryLenderClosingExtend = "LenderClosingExtend"
+	LoanDocumentCategoryInit                = "Init"
 )
 
 // loan  document status: Pending Uploand, Requested, Ready For review

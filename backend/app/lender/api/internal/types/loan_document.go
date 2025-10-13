@@ -10,6 +10,7 @@ type LoanDocumentAddFilesRequest struct {
 
 type LoanDocumentCreateRequest struct {
 	LoanId    int64    `json:"loan_id"`
+	Category  string   `json:"category" validate:"required,oneof=Extend LenderClosingExtend"`
 	FileTypes []string `json:"file_types" validate:"required,min=1,dive,required"`
 }
 

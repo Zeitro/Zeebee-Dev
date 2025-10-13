@@ -2588,9 +2588,13 @@
               "type": "object",
               "required": [
                 "loan_id",
+                "category",
                 "file_types"
               ],
               "properties": {
+                "category": {
+                  "type": "string"
+                },
                 "file_types": {
                   "type": "array",
                   "items": {
@@ -3370,7 +3374,7 @@
       }
     }
   },
-  "x-date": "2025-10-13 09:47:34",
+  "x-date": "2025-10-13 16:38:21",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

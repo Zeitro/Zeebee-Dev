@@ -5372,6 +5372,7 @@ type LoanDocumentCreateExtendTypeRequestData struct {
 	LenderCompanyId  int64                  `protobuf:"varint,2,opt,name=lender_company_id,json=lenderCompanyId,proto3" json:"lender_company_id,omitempty"`
 	LenderEmployeeId int64                  `protobuf:"varint,3,opt,name=lender_employee_id,json=lenderEmployeeId,proto3" json:"lender_employee_id,omitempty"`
 	FileTypes        []string               `protobuf:"bytes,4,rep,name=file_types,json=fileTypes,proto3" json:"file_types,omitempty"`
+	Category         string                 `protobuf:"bytes,5,opt,name=category,proto3" json:"category,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -5432,6 +5433,13 @@ func (x *LoanDocumentCreateExtendTypeRequestData) GetFileTypes() []string {
 		return x.FileTypes
 	}
 	return nil
+}
+
+func (x *LoanDocumentCreateExtendTypeRequestData) GetCategory() string {
+	if x != nil {
+		return x.Category
+	}
+	return ""
 }
 
 type LoanDocumentCreateExtendTypeResponse struct {
@@ -7195,13 +7203,14 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x18\n" +
 	"\acomment\x18\x02 \x01(\tR\acomment\"j\n" +
 	"#LoanDocumentCreateExtendTypeRequest\x12C\n" +
-	"\x04data\x18\x01 \x01(\v2/.lender.LoanDocumentCreateExtendTypeRequestDataR\x04data\"\xbb\x01\n" +
+	"\x04data\x18\x01 \x01(\v2/.lender.LoanDocumentCreateExtendTypeRequestDataR\x04data\"\xd7\x01\n" +
 	"'LoanDocumentCreateExtendTypeRequestData\x12\x17\n" +
 	"\aloan_id\x18\x01 \x01(\x03R\x06loanId\x12*\n" +
 	"\x11lender_company_id\x18\x02 \x01(\x03R\x0flenderCompanyId\x12,\n" +
 	"\x12lender_employee_id\x18\x03 \x01(\x03R\x10lenderEmployeeId\x12\x1d\n" +
 	"\n" +
-	"file_types\x18\x04 \x03(\tR\tfileTypes\"X\n" +
+	"file_types\x18\x04 \x03(\tR\tfileTypes\x12\x1a\n" +
+	"\bcategory\x18\x05 \x01(\tR\bcategory\"X\n" +
 	"$LoanDocumentCreateExtendTypeResponse\x120\n" +
 	"\x04data\x18\x01 \x03(\v2\x1c.lender.LoanDocumentOptEntryR\x04data\"Z\n" +
 	"\x1bLoanDocumentAddFilesRequest\x12;\n" +
