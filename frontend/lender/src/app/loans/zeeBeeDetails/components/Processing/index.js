@@ -15,6 +15,9 @@ const Processing = ({
 	isHaveRejectBtn = false,
 	disabledOperate,
 	rowData,
+	id,
+	setNextStep,
+	setRejectStep,
 }) => {
 	const searchParams = useSearchParams();
 	const loan_id = Number(searchParams.get('id'));
@@ -70,7 +73,14 @@ const Processing = ({
 
 	return (
 		<div>
-			<HeaderBtn isHaveRejectBtn={isHaveRejectBtn} disabledOperate={disabledOperate}>
+			<HeaderBtn
+				isHaveRejectBtn={isHaveRejectBtn}
+				disabledOperate={disabledOperate}
+				id={id}
+				pending_status={title}
+				setNextStep={setNextStep}
+				setRejectStep={setRejectStep}
+			>
 				{title}
 			</HeaderBtn>
 			<div className="px-[34px] py-6">

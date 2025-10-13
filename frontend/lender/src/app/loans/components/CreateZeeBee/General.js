@@ -61,7 +61,7 @@ export const generalParametersFields = [
 export const loanMatrixFields = [
 	{
 		label: 'Loan To Value (LTV)',
-		value: 'ltv',
+		value: 'ltv1',
 	},
 	{
 		label: 'Loan To Cost (LTC)',

@@ -69,6 +69,7 @@ export const DeleteBtn = ({
 	title = 'Are you sure you want to delete this?',
 	children,
 	isButton,
+	icon,
 	...props
 }) => {
 	return (
@@ -77,6 +78,7 @@ export const DeleteBtn = ({
 			modalType="confirm"
 			config={{ title, okText: 'Delete', okButtonProps: { danger: true }, ...props }}
 			isButton={isButton}
+			icon={icon}
 		>
 			{children || 'Delete'}
 		</BtnPopUpModal>

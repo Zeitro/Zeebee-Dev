@@ -8,7 +8,7 @@ import {
 import { Button, List, Space } from 'antd';
 import HeaderBtn from '../HeaderBtn';
 import { AddDocument } from '../AddDocument';
-const Closing = ({ disabledOperate, rowData }) => {
+const Closing = ({ disabledOperate, rowData, id }) => {
 	const [lenderList, setLenderList] = useState([]);
 
 	useEffect(() => {
@@ -21,7 +21,9 @@ const Closing = ({ disabledOperate, rowData }) => {
 	}, [rowData]);
 	return (
 		<div>
-			<HeaderBtn disabledOperate={disabledOperate}>Closing</HeaderBtn>
+			<HeaderBtn disabledOperate={disabledOperate} id={id} pending_status="Closing">
+				Closing
+			</HeaderBtn>
 			<div className="px-[34px] py-6">
 				<AddDocument disabled={disabledOperate} />
 				<DocumentList columns={lenderClosingColumns()} dataSource={[...lenderList]} />

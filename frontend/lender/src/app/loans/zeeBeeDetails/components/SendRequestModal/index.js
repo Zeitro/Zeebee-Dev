@@ -142,7 +142,7 @@ export default SendRequestModal;
 export const SendRequestBtn = ({ children, maxCount, list, ...props }) => {
 	const [open, setOpen] = useState(false);
 	return (
-		<>
+		<div onClick={(e) => e.stopPropagation()}>
 			<Button
 				type="default"
 				size="small"
@@ -157,6 +157,6 @@ export const SendRequestBtn = ({ children, maxCount, list, ...props }) => {
 			{open && (
 				<SendRequestModal open={open} setOpen={setOpen} maxCount={maxCount} list={list} />
 			)}
-		</>
+		</div>
 	);
 };
