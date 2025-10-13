@@ -38,7 +38,9 @@ func (l *RefreshTokenLogic) RefreshToken(req *types.UserRefreshTokenRequest) (re
 	}
 
 	return &types.UserRefreshTokenResponse{
-		AccessToken:       rpcResp.Data.AccessToken,
-		AccessTokenExpire: rpcResp.Data.AccessTokenExpire,
+		AccessToken:        rpcResp.Data.AccessToken,
+		AccessTokenExpire:  rpcResp.Data.AccessTokenExpire,
+		RefreshToken:       rpcResp.Data.RefreshToken,
+		RefreshTokenExpire: rpcResp.Data.RefreshTokenExpire,
 	}, nil
 }

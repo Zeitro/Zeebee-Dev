@@ -38,7 +38,7 @@ type applyLoanModelData struct {
 	applicants             []*model.Applicant
 	transactionExperiences []*model.LoanExperience
 	realEstatesExperiences []*model.LoanExperience
-	applyFormFile          *model.File
+	// applyFormFile          *model.File
 }
 
 func NewApplyLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ApplyLoanLogic {
@@ -152,9 +152,34 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrowe
 		}
 
 		// apply form
-		if data.applyFormFile != nil {
-			data.applyFormFile.RefId = loan.Id
-			_, innerErr = l.svcCtx.FileRepo.CreateWithTx(l.ctx, tx, data.applyFormFile, false)
+		if len(in.Data.ApplyFormFile) > 0 {
+			innerErr = l.svcCtx.LoanDocumentRepo.SaveApplyFormDocumentWithTx(l.ctx, tx, loan.Id, in.Data.ApplyFormFile)
+			if innerErr != nil {
+				return innerErr
+			}
+		}
+
+		// Create loan documents with pending upload status
+		loanDocumentTypes := constants.GetLoanDocumentTypes()
+		var loanDocuments []*model.LoanDocument
+		for category, fileTypes := range loanDocumentTypes {
+			documentStatus := constants.LoanDocumentStatusPendingUpload
+			if category == constants.LoanDocumentCategoryBorrower || category == constants.LoanDocumentCategoryExtend {
+				documentStatus = constants.LoanDocumentStatusPendingRequested
+			}
+			for _, fileType := range fileTypes {
+				loanDocument := &model.LoanDocument{
+					LoanId:   loan.Id,
+					Category: category,
+					FileType: fileType,
+					Status:   documentStatus,
+				}
+				loanDocuments = append(loanDocuments, loanDocument)
+			}
+		}
+
+		if len(loanDocuments) > 0 {
+			_, innerErr = l.svcCtx.LoanDocumentRepo.BatchCreateWithTx(l.ctx, tx, loanDocuments)
 			if innerErr != nil {
 				return innerErr
 			}
@@ -209,11 +234,11 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData) 
 	loan.PendingStatus = constants.LoanPendingStatusQuoting
 	loan.Source = constants.LoanSourceSystem
 	// get lender
-	lender, err := l.svcCtx.LenderRepo.FindOneById(l.ctx, reqData.LenderId)
+	lender, err := l.svcCtx.LenderCompanyRepo.FindOneById(l.ctx, reqData.LenderId)
 	if err != nil {
 		return nil, err
 	}
-	loan.LenderId = lender.Id
+	loan.LenderCompanyId = lender.Id
 	loan.LenderCompany = lender.Name
 
 	// loan_borrower
@@ -319,14 +344,14 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData) 
 	}
 
 	// apply form file
-	var applyFormFile *model.File
-	if len(reqData.ApplyFormFile) > 0 {
-		applyFormFile = &model.File{
-			File:     reqData.ApplyFormFile,
-			FileType: constants.FileTypeApplyForm,
-			BizType:  constants.FileBizTypeLoan,
-		}
-	}
+	// var applyFormFile *model.File
+	// if len(reqData.ApplyFormFile) > 0 {
+	// 	applyFormFile = &model.File{
+	// 		File:     reqData.ApplyFormFile,
+	// 		FileType: constants.FileTypeApplyForm,
+	// 		BizType:  constants.FileBizTypeLoan,
+	// 	}
+	// }
 
 	data = &applyLoanModelData{
 		loan:                   loan,
@@ -337,7 +362,7 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData) 
 		realEstatesExperiences: realEstatesExperiences,
 		loanDemographic:        loanDemographic,
 		loanThirdServices:      loanThirdServices,
-		applyFormFile:          applyFormFile,
+		// applyFormFile:          applyFormFile,
 	}
 	return
 }

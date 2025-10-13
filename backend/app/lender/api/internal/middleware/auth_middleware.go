@@ -40,6 +40,7 @@ func (m *AuthMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 		reqCtx := r.Context()
 		nextCtx := context.WithValue(reqCtx, constants.LenderUserKey, claims)
 		nextCtx = context.WithValue(nextCtx, constants.LenderUserIdKey, claims.UserID)
+		nextCtx = context.WithValue(nextCtx, constants.LenderUserCompanyIdKey, claims.LenderCompanyId)
 		newReq := r.WithContext(nextCtx)
 
 		next(w, newReq)
