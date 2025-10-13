@@ -24,20 +24,19 @@ func NewFileRepo(db *gorm.DB) *FileRepo {
 }
 
 // UpdateOneWithTx
-func (repo *FileRepo) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, id int64, data *model.File) (result *model.File, err error) {
-	err = tx.WithContext(ctx).Select("*").Omit("id", "created_at", "ref_id").Where("id = ?", id).Updates(data).Error
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	return data, nil
-}
+// func (repo *FileRepo) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, id int64, data *model.File) (result *model.File, err error) {
+// 	err = tx.WithContext(ctx).Select("*").Omit("id", "created_at", "ref_id").Where("id = ?", id).Updates(data).Error
+// 	if err != nil {
+// 		return nil, errors.WithStack(err)
+// 	}
+// 	return data, nil
+// }
 
-func (repo *FileRepo) DeleteLoanFilesByLoanIdWithTx(ctx context.Context, tx *gorm.DB, loanId int64) (err error) {
-	err = tx.WithContext(ctx).
-		Model(&model.File{}).
-		Where("ref_id = ? and file_type = ?", loanId, constants.FileTypeApplyForm).
-		Delete(&model.File{}).
-		Error
-	return errors.WithStack(err)
+func (r *FileRepo) GetFileCountByEntityIdWithTx(ctx context.Context, tx *gorm.DB, entityId int64, entityType constants.FileEntityType) (count int64, err error) {
+	err = tx.WithContext(ctx).Model(&model.File{}).
+		Where("entity_id = ?", entityId).
+		Where("entity_type = ?", entityType).
+		Count(&count).Error
 
+	return count, errors.WithStack(err)
 }

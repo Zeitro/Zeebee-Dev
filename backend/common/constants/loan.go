@@ -15,6 +15,7 @@ const (
 	LoanStagePending  LoanStage = "Pending"
 	LoanStageActive   LoanStage = "Active"
 	LoanStageArchived LoanStage = "Archived"
+	LoanStageRejected LoanStage = "Rejected"
 )
 
 // pending_status: Quoting,Processing,Closing
@@ -22,10 +23,11 @@ type LoanPendingStatus string
 
 const LoanPendingStatusName = "loan_pending_status"
 const (
-	LoanPendingStatusNone       LoanPendingStatus = "None"
-	LoanPendingStatusQuoting    LoanPendingStatus = "Quoting"
-	LoanPendingStatusProcessing LoanPendingStatus = "Processing"
-	LoanPendingStatusClosing    LoanPendingStatus = "Closing"
+	LoanPendingStatusNone         LoanPendingStatus = "None"
+	LoanPendingStatusQuoting      LoanPendingStatus = "Quoting"
+	LoanPendingStatusProcessing   LoanPendingStatus = "Processing"
+	LoanPendingStatusUnderWriting LoanPendingStatus = "Underwriting"
+	LoanPendingStatusClosing      LoanPendingStatus = "Closing"
 )
 
 // purpose: Purchase,Rate-term refi,Cash-out refi
@@ -151,6 +153,10 @@ func init() {
 			Label: string(LoanStageArchived),
 			Value: string(LoanStageArchived),
 		},
+		{
+			Label: string(LoanStageRejected),
+			Value: string(LoanStageRejected),
+		},
 	})
 
 	// register loan pending status
@@ -162,6 +168,10 @@ func init() {
 		{
 			Label: string(LoanPendingStatusProcessing),
 			Value: string(LoanPendingStatusProcessing),
+		},
+		{
+			Label: string(LoanPendingStatusUnderWriting),
+			Value: string(LoanPendingStatusUnderWriting),
 		},
 		{
 			Label: string(LoanPendingStatusClosing),

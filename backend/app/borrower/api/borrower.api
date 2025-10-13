@@ -15,11 +15,16 @@ import "desc/applicant.api"
 import "desc/us_geography.api"
 import "desc/pdf.api"
 import "desc/storage.api"
+import "desc/loan_document.api"
 
 type (
 	EmptyRequest  {}
 	EmptyResponse  {}
 )
+
+type PathIdRequest {
+	id int64 `path:"id" validate:"required,gt=0"`
+}
 
 // ============== common =============
 @server (
@@ -156,10 +161,9 @@ service borrower-api {
 	@doc "download import template"
 	@handler DownloadImportTemplate
 	get /loan/import/template (EmptyRequest) returns (EmptyResponse)
-
-	@doc "update documents"
-	@handler UpdateDocuments
-	post /loan/:id/documents (UpdateDocumentsRequest) returns (EmptyResponse)
+	// @doc "update documents"
+	// @handler UpdateDocuments
+	// post /loan/:id/documents (UpdateDocumentsRequest) returns (EmptyResponse)
 }
 
 // =============== property ==============
@@ -198,12 +202,12 @@ service borrower-api {
 
 // =============== pdf ==============
 @server(
-    desc: "applicant service"
-    version: v1
-    group: pdf
+	desc: "applicant service"
+	version: v1
+	group: pdf
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: pdf
+	tags: pdf
 )
 service borrower-api {
 	@doc "create apply form pdf"
@@ -213,16 +217,46 @@ service borrower-api {
 
 // =============== storage ==============
 @server(
-    desc: "storage service"
-    version: v1
-    group: storage
+	desc: "storage service"
+	version: v1
+	group: storage
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: storage
+	tags: storage
 )
 service borrower-api {
 	@doc "create aws s3 presign url"
 	@handler CreateAwsS3PresignUrl
 	post /storage/presign_url (S3PresignUrlCreateRequest) returns (S3PresignUrlCreateResponse)
+}
+
+// =============== file ==============
+@server(
+	desc: "file service"
+	version: v1
+	group: file
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: file
+)
+service borrower-api {
+	@doc "delete"
+	@handler Delete
+	delete /file/:id (PathIdRequest) returns (EmptyResponse)
+}
+
+// ============== loan document =============
+@server(
+	desc: "loan document service"
+	version: v1
+	group: loan_document
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: loan_document
+)
+service borrower-api {
+	@doc "add files"
+	@handler AddFiles
+	post /loan_document/:id/files (LoanDocumentAddFilesRequest) returns (EmptyResponse)
 }
 

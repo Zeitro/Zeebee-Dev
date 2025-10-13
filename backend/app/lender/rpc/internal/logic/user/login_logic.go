@@ -85,40 +85,18 @@ func (l *LoginLogic) Login(in *lender.UserLoginRequest) (resp *lender.UserLoginR
 		return nil, errors.WithStack(errors.New("User is unverified"))
 	}
 
-	// generate token
-	accessToken, err := utils.GenerateToken(
-		strconv.Itoa(int(user.Id)),
-		strconv.Itoa(int(user.LenderEmployee.Id)),
-		user.Email,
-		"",
-		string(constants.UserTypeLender),
-		l.svcCtx.Config.JwtAuth.AccessSecret,
-		l.svcCtx.Config.JwtAuth.AccessExpire,
-	)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-
-	// refresh token
-	refreshToken, err := utils.GenerateToken(
-		strconv.Itoa(int(user.Id)),
-		strconv.Itoa(int(user.LenderEmployee.Id)),
-		user.Email,
-		"",
-		string(constants.UserTypeLender),
-		l.svcCtx.Config.JwtAuth.RefreshSecret,
-		l.svcCtx.Config.JwtAuth.RefreshExpire,
-	)
+	// token
+	token, err := generateLenderToken(user, l.svcCtx)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 
 	return &lender.UserLoginResponse{
 		Data: &lender.UserLoginResponseData{
-			AccessToken:        accessToken,
-			RefreshToken:       refreshToken,
-			AccessTokenExpire:  l.svcCtx.Config.JwtAuth.AccessExpire,
-			RefreshTokenExpire: l.svcCtx.Config.JwtAuth.RefreshExpire,
+			AccessToken:        token.AccessToken,
+			RefreshToken:       token.RefreshToken,
+			AccessTokenExpire:  token.AccessTokenExpire,
+			RefreshTokenExpire: token.RefreshTokenExpire,
 		},
 	}, nil
 }
@@ -130,7 +108,8 @@ func generateLenderToken(user *model.User, svcCtx *svc.ServiceContext) (token *l
 	accessToken, err := utils.GenerateToken(
 		strconv.Itoa(int(user.Id)),
 		strconv.Itoa(int(user.LenderEmployee.Id)),
-		user.Email,
+		user.LenderEmployee.LenderCompanyId,
+		user.LenderEmployee.FullName,
 		"",
 		string(constants.UserTypeLender),
 		svcCtx.Config.JwtAuth.AccessSecret,
@@ -142,7 +121,8 @@ func generateLenderToken(user *model.User, svcCtx *svc.ServiceContext) (token *l
 	refreshToken, err := utils.GenerateToken(
 		strconv.Itoa(int(user.Id)),
 		strconv.Itoa(int(user.LenderEmployee.Id)),
-		user.Email,
+		user.LenderEmployee.LenderCompanyId,
+		user.LenderEmployee.FullName,
 		"",
 		string(constants.UserTypeLender),
 		svcCtx.Config.JwtAuth.RefreshSecret,
