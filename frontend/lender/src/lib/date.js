@@ -5,12 +5,12 @@ export const formatTimeStr = 'MM/DD/YYYY HH:mm:ss';
 
 // 格式化时间
 export function formatTime(date, format = formatTimeStr) {
-	if (!date || date === 'Invalid Date') return '';
+	if (!date || date === 'Invalid Date') return '--';
 	return dayjs(date).format(format);
 }
 // 格式化日期
 export function formatDate(date, format = formatStr) {
-	if (!date || date === 'Invalid Date') return '';
+	if (!date || date === 'Invalid Date') return '--';
 	return dayjs(date).format(format);
 }
 

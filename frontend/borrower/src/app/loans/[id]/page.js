@@ -24,7 +24,7 @@ const EditLoanPage = () => {
 	const stage = Form.useWatch('stage', form);
 	const { request } = createRequest();
 	const [loading, setLoading] = useState(false);
-	const { changeSiberCollapsed } = useGlobalStore();
+	const { changeSidebarCollapsed } = useGlobalStore();
 
 	const getDetails = async () => {
 		let res = initialValues;
@@ -78,7 +78,7 @@ const EditLoanPage = () => {
 	}, []);
 
 	useLayoutEffect(() => {
-		changeSiberCollapsed(true);
+		changeSidebarCollapsed(true);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

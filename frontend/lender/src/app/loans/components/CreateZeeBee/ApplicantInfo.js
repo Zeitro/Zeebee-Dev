@@ -8,7 +8,7 @@ import { emailRegex, phoneRegex, validateRule, tinOrSSNRegex } from '@/lib/forma
 import { layoutCol, titleCol } from '@/enum/common';
 import { useGetOptions } from '@/hooks/useGetOptions';
 const name = 'loan_borrower';
-const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
+const ApplicantInfo = ({ gutter = 24, form, addressProps, isHideTitle }) => {
 	const borrowerType = Form.useWatch([name, 'type'], form);
 	const nameLabel = borrowerType === 'Individual' ? 'Individual name' : 'Entity name';
 	const { borrowerTypeOptions } = useGetOptions([
@@ -19,9 +19,11 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 	]);
 	return (
 		<Row className={styles.createZeeBee} gutter={gutter}>
-			<Col {...titleCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">
-				Applicant information
-			</Col>
+			{!isHideTitle && (
+				<Col {...titleCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">
+					Applicant information
+				</Col>
+			)}
 			<Col {...titleCol} className="!text-xl font-medium text-[#000000a6] pb-6">
 				Applicant type
 			</Col>

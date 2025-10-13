@@ -1,28 +1,69 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BtnPopUpModal } from '@/components/NewModal/BtnPopUpModal';
 import NewModal from '@/components/NewModal';
-import { Form, Input } from 'antd';
-export const ApproveModal = ({ key, title, ...props }) => {
+import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import { Form, Input, message } from 'antd';
+import { createRequest } from '@/lib/fetch';
+import eventBus from '@/lib/bus';
+export const ApproveRejectModal = ({
+	pending_status,
+	id,
+	action = 'Approve',
+	setNextStep = () => {},
+	...props
+}) => {
 	const [form] = Form.useForm();
-	const handleOk = async () => {
-		const values = await form.validateFields();
-		console.log(values);
+	const { request } = createRequest();
+	let url = `/loan/${id}/review_pending_status`;
+	const isApprove = action === 'Approve';
+	const [loading, setLoading] = useState(false);
+	const handleOk = async (setOpen) => {
+		try {
+			const values = await form.validateFields();
+			setLoading(true);
+			const res = await request(url, {
+				method: 'POST',
+				body: {
+					action,
+					current_pending_status: pending_status,
+					...values,
+				},
+			});
+			message.open({
+				type: 'success',
+				content: `${isApprove ? 'Approved' : 'Rejected'} successfully`,
+			});
+			eventBus.emit('getLoanDetail');
+			setLoading(false);
+			setOpen(false);
+			setNextStep();
+		} catch (error) {
+			setLoading(false);
+		}
 	};
 	return (
 		<BtnPopUpModal
 			type="primary"
+			danger={!isApprove}
+			ghost={!isApprove}
+			icon={isApprove ? <CheckCircleOutlined /> : <CloseCircleOutlined />}
 			{...props}
 			getContent={(setOpen) => (
 				<NewModal
-					title="Approval"
-					onOk={handleOk}
+					title={action}
+					onOk={() => handleOk(setOpen)}
 					onCancel={() => setOpen(false)}
-					okText="Approve"
+					okText={action}
+					confirmLoading={loading}
 				>
 					<div className="pb-6">
-						Approval will move this loan to processing stage.Please ensure that all
+						{isApprove
+							? `Approval will move this loan to processing stage.Please ensure that all
 						items in the underwriting checklist have been validated before officially
-						approving the loan application.you can add the approval comments below
+						approving the loan application.you can add the approval comments below`
+							: `reject will move this loan to rejected loan.Please ensure that all items in
+						the underwriting checklist have been validated before officially approving
+						the loan application. Rejected comment is required`}
 					</div>
 					<Form form={form} layout="vertical" autoComplete="off" size="large">
 						<Form.Item
@@ -30,8 +71,8 @@ export const ApproveModal = ({ key, title, ...props }) => {
 							name="comment"
 							rules={[
 								{
-									required: true,
-									message: 'Please input your comments!',
+									required: !isApprove,
+									message: 'Please input your comment!',
 								},
 							]}
 						>
@@ -41,21 +82,45 @@ export const ApproveModal = ({ key, title, ...props }) => {
 				</NewModal>
 			)}
 		>
-			Approve
+			{action}
 		</BtnPopUpModal>
 	);
 };
 
-export const RejectedModal = ({ key, title, ...props }) => {
+export const RejectedModal = ({ pending_status, id, title, ...props }) => {
 	const [form] = Form.useForm();
-	const handleOk = async () => {
-		const values = await form.validateFields();
-		console.log(values);
+	const { request } = createRequest();
+	let url = `loan/${id}/review_pending_status`;
+	const [loading, setLoading] = useState(false);
+	const handleOk = async (setOpen) => {
+		try {
+			const values = await form.validateFields();
+			setLoading(true);
+			const res = await request(url, {
+				method: 'POST',
+				body: {
+					action: 'Approve',
+					current_pending_status: pending_status,
+					...values,
+				},
+			});
+			console.log(values);
+			message.open({
+				type: 'success',
+				content: 'Approved successfully',
+			});
+			setLoading(false);
+			setOpen(false);
+		} catch (error) {
+			setLoading(false);
+		}
 	};
 	return (
 		<BtnPopUpModal
 			type="primary"
 			danger={true}
+			ghost={true}
+			icon={<CloseCircleOutlined />}
 			{...props}
 			getContent={(setOpen) => (
 				<NewModal

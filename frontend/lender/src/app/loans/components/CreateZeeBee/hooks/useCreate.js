@@ -478,10 +478,9 @@ const useCreate = (pageType = 'create') => {
 		),
 		reviewAndSign: <CommonZeeBeeForm form={form} pageKey="reviewAndSign" />,
 		Quoting: <CommonZeeBeeForm pageKey="Quoting" />,
-		Processing: '',
-		Underwriting: '',
-		Closing: '',
-		Documents: <div className="py-6 px-6">{zeeBeeDetailsContent[1]}</div>,
+		Processing: <CommonZeeBeeForm pageKey="Processing" />,
+		Underwriting: <CommonZeeBeeForm pageKey="Underwriting" />,
+		Closing: <CommonZeeBeeForm pageKey="Closing" />,
 		Active: '',
 		Funded: '',
 	};

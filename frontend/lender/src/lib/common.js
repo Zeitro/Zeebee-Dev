@@ -83,10 +83,14 @@ export const getPathArr = (name, listName) => {
 };
 
 // 将多层嵌套数组扁平化
-export function flattenArray(list = [], childKey = 'children') {
+export function flattenArray(list = [], childKey = 'children', isHaveChildParent) {
 	return list?.reduce((acc, next) => {
 		if (next?.[childKey]) {
-			return [...acc, next, ...flattenArray(next?.[childKey])];
+			const childArr = flattenArray(next?.[childKey]);
+			if (isHaveChildParent) {
+				return [...acc, next, ...childArr];
+			}
+			return [...acc, ...childArr];
 		}
 		return [...acc, next];
 	}, []);
@@ -132,4 +136,22 @@ export const findItem = ({
 		}
 	});
 	return result;
+};
+
+// 获取文件类型通过文件后缀
+export const getFileTypeBySuffix = (suffix) => {
+	const newSuffix = suffix?.toLowerCase();
+	switch (newSuffix) {
+		case 'jpg':
+		case 'jpeg':
+		case 'png':
+			return 'image';
+		case 'pdf':
+			return 'pdf';
+		case 'doc':
+		case 'docx':
+			return 'doc';
+		default:
+			return '';
+	}
 };
