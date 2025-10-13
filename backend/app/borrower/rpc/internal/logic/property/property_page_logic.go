@@ -72,7 +72,7 @@ func (l *PropertyPageLogic) PropertyPage(in *borrower.PropertyPageRequest) (resp
 				propertyPageEntry.TotalMonthlyPaymentAmount += loan.MonthlyPayment
 				propertyPageEntry.TotalAmount += loan.TotalAmount
 				// MaturityDate is valid , less than maturityDate,greater than now
-				if loan.MaturityDate.Valid && loan.MaturityDate.Time.After(now) && (maturityDate == nil || loan.MaturityDate.Time.Before(maturityDate.Time)) {
+				if (maturityDate == nil || loan.MaturityDate.Time.Before(maturityDate.Time)) && loan.MaturityDate != nil && loan.MaturityDate.Valid && loan.MaturityDate.Time.After(now) {
 					maturityDate = loan.MaturityDate
 				}
 				// get loan applicants
