@@ -334,7 +334,6 @@ const useLenderDetails = () => {
 			Processing: getContent('Processing', disabledOperate),
 			Underwriting: getContent('Underwriting', disabledOperate),
 			Closing: getContent('Closing', disabledOperate),
-			Active: getContent('Active'),
 			Funded: getContent('Funded'),
 		};
 	};
@@ -349,7 +348,7 @@ const useLenderDetails = () => {
 		if (stage === 'Pending') {
 			index = newList.findIndex((i) => i.key === pendingStatus);
 		} else if (stage === 'Active') {
-			index = newList.findIndex((i) => i.key === stage);
+			index = newList.findIndex((i) => i.key === 'Funded');
 		} else if (stage === 'Rejected') {
 			index = newList.findIndex((i) => i.key === 'Quoting');
 		} else {

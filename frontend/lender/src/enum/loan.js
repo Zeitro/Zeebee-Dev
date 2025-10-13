@@ -117,10 +117,6 @@ export const lenderDetailsSteps = [
 		children: pendingSteps,
 	},
 	{
-		title: 'ACTIVE',
-		key: 'Active',
-	},
-	{
 		title: 'FUNDED',
 		key: 'Funded',
 	},
