@@ -1,6 +1,6 @@
 'use client';
 import { Dropdown, message, Tooltip } from 'antd';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { DownOutlined } from '@ant-design/icons';
 import styles from './index.module.css';
 import { createRequest } from '@/lib/fetch';
@@ -29,6 +29,10 @@ const DropdownStatus = ({
 	const rowData = useMemo(() => {
 		return items.find((i) => i.key === statusValue) || {};
 	}, [statusValue]);
+
+	useEffect(() => {
+		setStatusValue(data[statusKey] || '');
+	}, [data]);
 
 	const handleSelect = async ({ key }) => {
 		try {
