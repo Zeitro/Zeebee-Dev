@@ -132,18 +132,24 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 			},
 			// apply form
 			func() error {
-				if data.applyFormFile == nil {
-					return nil
+				var err error
+				if len(in.Data.ApplyFormFile) > 0 {
+					err = l.svcCtx.LoanDocumentRepo.SaveApplyFormDocumentWithTx(l.ctx, tx, loan.Id, in.Data.ApplyFormFile)
 				}
-				oldApplyForm := loan.ApplyFormFile
-				if oldApplyForm == nil {
-					data.applyFormFile.RefId = loan.Id
-					_, err := l.svcCtx.FileRepo.CreateWithTx(l.ctx, tx, data.applyFormFile, false)
-					return err
-				}
-				data.applyFormFile.RefId = loan.Id
-				_, err := l.svcCtx.FileRepo.UpdateOneWithTx(l.ctx, tx, oldApplyForm.Id, data.applyFormFile)
 				return err
+
+				// if data.applyFormFile == nil {
+				// 	return nil
+				// }
+				// oldApplyForm := loan.ApplyFormFile
+				// if oldApplyForm == nil {
+				// 	data.applyFormFile.RefId = loan.Id
+				// 	_, err := l.svcCtx.FileRepo.CreateWithTx(l.ctx, tx, data.applyFormFile, false)
+				// 	return err
+				// }
+				// data.applyFormFile.RefId = loan.Id
+				// _, err := l.svcCtx.FileRepo.UpdateOneWithTx(l.ctx, tx, oldApplyForm.Id, data.applyFormFile)
+				// return err
 			},
 		)
 
@@ -235,11 +241,11 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	loan.PendingStatus = constants.LoanPendingStatusNone
 	loan.Source = constants.LoanSourceSystem
 	if reqData.LenderId > 0 {
-		lender, err := l.svcCtx.LenderRepo.FindOneById(l.ctx, reqData.LenderId)
+		lender, err := l.svcCtx.LenderCompanyRepo.FindOneById(l.ctx, reqData.LenderId)
 		if err != nil {
 			return nil, err
 		}
-		loan.LenderId = lender.Id
+		loan.LenderCompanyId = lender.Id
 		loan.LenderCompany = lender.Name
 	}
 
@@ -376,13 +382,13 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	}
 
 	// apply form file
-	var applyFormFile *model.File
-	if len(reqData.ApplyFormFile) > 0 {
-		applyFormFile = &model.File{
-			File:     reqData.ApplyFormFile,
-			FileType: constants.FileTypeApplyForm,
-		}
-	}
+	// var applyFormFile *model.File
+	// if len(reqData.ApplyFormFile) > 0 {
+	// 	applyFormFile = &model.File{
+	// 		File:     reqData.ApplyFormFile,
+	// 		FileType: constants.FileTypeApplyForm,
+	// 	}
+	// }
 	data = &applyLoanModelData{
 		loan:                   loan,
 		loanProperty:           loanProperty,
@@ -392,7 +398,7 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 		realEstatesExperiences: realEstatesExperiences,
 		loanDemographic:        loanDemographic,
 		loanThirdServices:      loanThirdServices,
-		applyFormFile:          applyFormFile,
+		// applyFormFile:          applyFormFile,
 	}
 	return
 }

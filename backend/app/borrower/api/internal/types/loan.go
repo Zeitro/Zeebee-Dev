@@ -161,8 +161,3 @@ type LoanUpdateRequest struct {
 	ExtensionDate         string                    `json:"extension_date,optional"`
 	LoanProcessor         string                    `json:"loan_processor,optional"`
 }
-
-type UpdateDocumentsRequest struct {
-	Id        int64            `path:"id" validate:"required,gt=0"`
-	Documents []*FileEditEntry `json:"documents" validate:"required,gt=0,dive,required"`
-}

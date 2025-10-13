@@ -7,6 +7,10 @@ import (
 	"net/http"
 
 	common "zeebee-backend/app/lender/api/internal/handler/common"
+	file "zeebee-backend/app/lender/api/internal/handler/file"
+	loan "zeebee-backend/app/lender/api/internal/handler/loan"
+	loan_document "zeebee-backend/app/lender/api/internal/handler/loan_document"
+	storage "zeebee-backend/app/lender/api/internal/handler/storage"
 	user "zeebee-backend/app/lender/api/internal/handler/user"
 	"zeebee-backend/app/lender/api/internal/svc"
 
@@ -35,6 +39,126 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: common.GetUsStatesHandler(serverCtx),
 			},
 		},
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// delete
+					Method:  http.MethodDelete,
+					Path:    "/file/:id",
+					Handler: file.DeleteHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// detail
+					Method:  http.MethodGet,
+					Path:    "/loan/:id",
+					Handler: loan.DetailHandler(serverCtx),
+				},
+				{
+					// update
+					Method:  http.MethodPut,
+					Path:    "/loan/:id",
+					Handler: loan.UpdateHandler(serverCtx),
+				},
+				{
+					// loan documents opts
+					Method:  http.MethodGet,
+					Path:    "/loan/:id/loan_documents_opts",
+					Handler: loan.LoanDocumentsOptsHandler(serverCtx),
+				},
+				{
+					// update loan pending status
+					Method:  http.MethodPatch,
+					Path:    "/loan/:id/pending_status",
+					Handler: loan.UpdatePendingStatusHandler(serverCtx),
+				},
+				{
+					// reveiw loan pending status
+					Method:  http.MethodPost,
+					Path:    "/loan/:id/review_pending_status",
+					Handler: loan.ReviewPendingStatusHandler(serverCtx),
+				},
+				{
+					// update loan stage
+					Method:  http.MethodPatch,
+					Path:    "/loan/:id/stage",
+					Handler: loan.UpdateStageHandler(serverCtx),
+				},
+				{
+					// page
+					Method:  http.MethodPost,
+					Path:    "/loan/page",
+					Handler: loan.PageHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// create loan document
+					Method:  http.MethodPost,
+					Path:    "/loan_document",
+					Handler: loan_document.CreateLoanDocumentHandler(serverCtx),
+				},
+				{
+					// update comment
+					Method:  http.MethodPatch,
+					Path:    "/loan_document/:id/comment",
+					Handler: loan_document.UpdateCommentHandler(serverCtx),
+				},
+				{
+					// add files
+					Method:  http.MethodPost,
+					Path:    "/loan_document/:id/files",
+					Handler: loan_document.AddFilesHandler(serverCtx),
+				},
+				{
+					// delete loan document request
+					Method:  http.MethodDelete,
+					Path:    "/loan_document/:id/request",
+					Handler: loan_document.DeleteLoanDocumentRequestHandler(serverCtx),
+				},
+				{
+					// send loan document requests
+					Method:  http.MethodPost,
+					Path:    "/loan_document/send_requests",
+					Handler: loan_document.SendLoanDocumentRequestsHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// create aws s3 presign url
+					Method:  http.MethodPost,
+					Path:    "/storage/presign_url",
+					Handler: storage.CreateAwsS3PresignUrlHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithPrefix("/api/v1"),
 	)
 

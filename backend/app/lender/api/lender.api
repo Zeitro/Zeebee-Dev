@@ -10,6 +10,9 @@ info(
 import "desc/user.api"
 import "desc/common.api"
 import "desc/us_geography.api"
+import "desc/loan.api"
+import "desc/storage.api"
+import "desc/loan_document.api"
 
 type (
 	EmptyRequest{
@@ -17,6 +20,10 @@ type (
 	EmptyResponse{
 	}
 )
+
+type PathIdRequest {
+	id int64 `path:"id" validate:"required,gt=0"`
+}
 
 // ============== common =============
 @server(
@@ -82,5 +89,105 @@ service lender-api {
 	@doc "info"
 	@handler Info
 	get /user/info (EmptyRequest) returns (UserInfoResponse)
+}
+
+// ============== loan =============
+@server(
+	desc: "loan service"
+	version: v1
+	group: loan
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: loan
+)
+service lender-api {
+	@doc "detail"
+	@handler Detail
+	get /loan/:id (LoanDetailRequest) returns (LoanDetailResponse)
+
+	@doc "page"
+	@handler Page
+	post /loan/page (LoanPageRequest) returns (LoanPageResponse)
+
+	@doc "update"
+	@handler update
+	put /loan/:id (LoanUpdateRequest) returns (LoanUpdateResponse)
+
+	@doc "update loan stage"
+	@handler UpdateStage
+	patch /loan/:id/stage (UpdateLoanStageRequest) returns (EmptyResponse)
+
+	@doc "update loan pending status"
+	@handler UpdatePendingStatus
+	patch /loan/:id/pending_status (UpdateLoanPendingStatusRequest) returns (EmptyResponse)
+
+	@doc "reveiw loan pending status"
+	@handler ReviewPendingStatus
+	post /loan/:id/review_pending_status (ReviewLoanPendingStatusRequest) returns (EmptyResponse)
+
+	@doc "loan documents opts"
+	@handler LoanDocumentsOpts
+	get /loan/:id/loan_documents_opts (PathIdRequest) returns (LoanDocumentOptResponse)
+}
+
+// ============== loan document =============
+@server(
+	desc: "loan document service"
+	version: v1
+	group: loan_document
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: loan_document
+)
+service lender-api {
+	@doc "create loan document"
+	@handler CreateLoanDocument
+	post /loan_document (LoanDocumentCreateRequest) returns (LoanDocumentCreateResponse)
+
+	@doc "delete loan document request"
+	@handler DeleteLoanDocumentRequest
+	delete /loan_document/:id/request (PathIdRequest) returns (EmptyResponse)
+
+	@doc "send loan document requests"
+	@handler SendLoanDocumentRequests
+	post /loan_document/send_requests (LoanDocumentSendRequestsRequest) returns (EmptyResponse)
+
+	@doc "update comment"
+	@handler UpdateComment
+	patch /loan_document/:id/comment (LoanDocumentUpdateCommentRequest) returns (EmptyResponse)
+
+	@doc "add files"
+	@handler AddFiles
+	post /loan_document/:id/files (LoanDocumentAddFilesRequest) returns (EmptyResponse)
+}
+
+// =============== file ==============
+@server(
+	desc: "file service"
+	version: v1
+	group: file
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: file
+)
+service lender-api {
+	@doc "delete"
+	@handler Delete
+	delete /file/:id (PathIdRequest) returns (EmptyResponse)
+}
+
+// =============== storage ==============
+@server(
+	desc: "storage service"
+	version: v1
+	group: storage
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: storage
+)
+service lender-api {
+	@doc "create aws s3 presign url"
+	@handler CreateAwsS3PresignUrl
+	post /storage/presign_url (S3PresignUrlCreateRequest) returns (S3PresignUrlCreateResponse)
 }
 

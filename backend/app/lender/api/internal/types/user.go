@@ -3,9 +3,6 @@
 
 package types
 
-type EmptyResponse struct {
-}
-
 type UserInfoResponse struct {
 	UserInfo
 }
@@ -27,8 +24,10 @@ type UserRefreshTokenRequest struct {
 }
 
 type UserRefreshTokenResponse struct {
-	AccessToken       string `json:"access_token"`
-	AccessTokenExpire int64  `json:"access_token_expire"`
+	AccessToken        string `json:"access_token"`
+	AccessTokenExpire  int64  `json:"access_token_expire"`
+	RefreshToken       string `json:"refresh_token"`
+	RefreshTokenExpire int64  `json:"refresh_token_expire"`
 }
 
 type UserRegisterRequest struct {

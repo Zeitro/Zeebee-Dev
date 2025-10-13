@@ -12,6 +12,7 @@ import "loan_experience.api"
 import "loan_borrower.api"
 import "loan_demographic.api"
 import "file.api"
+import "loan_document.api"
 
 type PropertyBaseEntry {
     Id int64 `json:"id,optional"`
@@ -99,18 +100,8 @@ type LoanApplyApplicantEntry {
 type ImportLoanApplicantEntry {
     Id int64 `json:"id,optional"`
     FirstName string `json:"first_name,optional" validate:"required,min=1,max=30"`
-    //    MidName string `json:"mid_name,optional" validate:"min=0,max=30"`
-    //    LastName string `json:"last_name,optional"`
     Type string `json:"type,optional" validate:"required,oneof=Individual Corporation LLC Trust Partnership"`
     IsPrimary bool `json:"is_primary,optional"`
-    //    Ssn string `json:"ssn,optional" validate:"required"`
-    //    Dob string `json:"dob,optional" `
-    //    MaritalStatus string `json:"marital_status,optional" `
-    //    Email string `json:"email,optional" `
-    //    Phone string `json:"phone,optional" `
-    //    EstCreditScore int32 `json:"est_credit_score,optional" `
-    //    DriverLicenseNum string `json:"driver_license_num,optional" `
-    //    Address *AddressEntry `json:"address,optional"`
 }
 
 type LoanEntry {
@@ -178,7 +169,7 @@ type LoanEntry {
     ExtensionDate string `json:"extension_date,optional"`
     LoanProcessor string `json:"loan_processor"`
     Extend *ImportLoanExtendEntry `json:"extend"`
-    Documents []*FileEntry `json:"documents"`
+    LoanDocuments []*LoanDocumentEntry `json:"loan_documents"`
 }
 
 // create a loan
@@ -428,8 +419,8 @@ type ImportLoanExtendEntry {
 }
 
 // update loan document
-type UpdateDocumentsRequest {
-    Id int64 `path:"id" validate:"required,gt=0"`
-    Documents []*FileEditEntry `json:"documents" validate:"required,gt=0,dive,required"`
-}
+    //type UpdateDocumentsRequest {
+    //    Id int64 `path:"id" validate:"required,gt=0"`
+    //    Documents []*FileEditEntry `json:"documents" validate:"required,gt=0,dive,required"`
+    //}
 

@@ -32,6 +32,26 @@ func TimeToStr(layout string) copier.TypeConverter {
 	}
 }
 
+func TimePtrToRFC3339Str() copier.TypeConverter {
+	return TimePtrToStr(time.RFC3339)
+}
+func TimePtrToStr(layout string) copier.TypeConverter {
+	return copier.TypeConverter{
+		SrcType: &time.Time{},
+		DstType: copier.String,
+		Fn: func(src interface{}) (dst interface{}, err error) {
+			val, ok := src.(*time.Time)
+			if !ok {
+				return "", errors.Errorf("invalid src type:%T", val)
+			}
+			if val == nil || val.IsZero() {
+				return "", nil
+			}
+			return val.Format(layout), nil
+		},
+	}
+}
+
 // SqlTimePtrToRFC3339Str *sql.NullTime -> string (2006-01-02T15:04:05Z07:00)
 func SqlTimePtrToRFC3339Str() copier.TypeConverter {
 	return SqlTimePtrToStr(time.RFC3339)

@@ -1,6 +1,7 @@
 .husky/_/
 /node_modules
 .idea
+.vscode
 .lingma
 /frontend/borrower/node_modules
 /frontend/lender/node_modules
