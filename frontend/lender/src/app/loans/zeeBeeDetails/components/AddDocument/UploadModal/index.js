@@ -7,7 +7,7 @@ import styles from './index.module.scss';
 import { createRequest } from '@/lib/fetch';
 import eventBus from '@/lib/bus';
 // const { TextArea } = Input;
-const UploadModal = ({ open, setOpen, isChangeType = true, record = {}, loan_id }) => {
+const UploadModal = ({ open, setOpen, isChangeType = true, record = {}, loan_id, category }) => {
 	const [form] = Form.useForm();
 	const { request } = createRequest();
 	const uploadRef = useRef(null);
@@ -26,6 +26,7 @@ const UploadModal = ({ open, setOpen, isChangeType = true, record = {}, loan_id 
 					body: {
 						file_types: [values.file_type],
 						loan_id,
+						category,
 					},
 				});
 

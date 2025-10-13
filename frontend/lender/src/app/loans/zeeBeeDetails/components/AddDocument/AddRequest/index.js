@@ -3,7 +3,7 @@ import NewModal from '@/components/NewModal';
 import { Button, Form, Input, message, Select } from 'antd';
 import { createRequest } from '@/lib/fetch';
 import eventBus from '@/lib/bus';
-const AddRequest = ({ open, setOpen, loan_id }) => {
+const AddRequest = ({ open, setOpen, loan_id, category }) => {
 	const [form] = Form.useForm();
 	const { request } = createRequest();
 	const [loading, setLoading] = useState(false);
@@ -17,6 +17,7 @@ const AddRequest = ({ open, setOpen, loan_id }) => {
 				body: {
 					...values,
 					loan_id,
+					category,
 				},
 			});
 			message.open({

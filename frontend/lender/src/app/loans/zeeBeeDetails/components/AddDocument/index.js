@@ -50,7 +50,7 @@ export const AddDocumentModal = ({ open, setOpen, setOpenUpload, setOpenAdd }) =
 	);
 };
 
-export const AddDocument = ({ loan_id, props }) => {
+export const AddDocument = ({ loan_id, category, props }) => {
 	const [open, setOpen] = useState(false);
 	const [openAdd, setOpenAdd] = useState(false);
 	const [openUpload, setOpenUpload] = useState(false);
@@ -71,9 +71,21 @@ export const AddDocument = ({ loan_id, props }) => {
 				setOpenAdd={setOpenAdd}
 				setOpenUpload={setOpenUpload}
 			/>
-			{openAdd && <AddRequest open={openAdd} setOpen={setOpenAdd} loan_id={loan_id} />}
+			{openAdd && (
+				<AddRequest
+					open={openAdd}
+					setOpen={setOpenAdd}
+					loan_id={loan_id}
+					category={category}
+				/>
+			)}
 			{openUpload && (
-				<UploadModal open={openUpload} setOpen={setOpenUpload} loan_id={loan_id} />
+				<UploadModal
+					open={openUpload}
+					setOpen={setOpenUpload}
+					loan_id={loan_id}
+					category={category}
+				/>
 			)}
 		</>
 	);
