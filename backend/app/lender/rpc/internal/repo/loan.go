@@ -85,10 +85,14 @@ func (repo *LoanRepo) UpdateStageWithTx(ctx context.Context, tx *gorm.DB, id int
 }
 
 // UpdatePendingStatusWithTx
-func (repo *LoanRepo) UpdatePendingStatusWithTx(ctx context.Context, tx *gorm.DB, id int64, pendingStatus constants.LoanPendingStatus) (err error) {
+func (repo *LoanRepo) UpdatePendingStatusWithTx(ctx context.Context, tx *gorm.DB, id int64, pendingStatus constants.LoanPendingStatus, stage constants.LoanStage) (err error) {
 	err = tx.WithContext(ctx).Model(&model.Loan{}).
 		Where("id = ?", id).
-		Update("pending_status", pendingStatus).Error
+		Updates(map[string]interface{}{
+			"stage":          stage,
+			"pending_status": pendingStatus,
+		}).
+		Error
 	return errors.WithStack(err)
 }
 
