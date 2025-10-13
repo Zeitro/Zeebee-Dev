@@ -12,8 +12,8 @@ import Experience from '../Experience';
 import ThirdPartyService from '../ThirdPartyService';
 import Declaration from '../Declaration';
 import Demographics from '../Demographics';
-import General from '../General';
-import Documents from '../Documents';
+import General from '../../../zeeBeeDetails/components/General';
+import Documents from '../../../zeeBeeDetails/components/Documents';
 import ReviewAndSign, { contractSignatureZones } from '../ReviewAndSign';
 import _ from 'lodash';
 import { flattenObjectPaths } from '@/lib/common';
@@ -93,7 +93,7 @@ const useCreate = (pageType = 'create') => {
 			<PropertyInfo
 				key="0-PropertyInfo"
 				form={form}
-				isRequestProperty={searchParams.has('propertyId')}
+				isRequestProperty={searchParams.has('propertyId') || isDetails}
 			/>,
 			<LoanDetail key="1-LoanDetail" form={form} />,
 		],
