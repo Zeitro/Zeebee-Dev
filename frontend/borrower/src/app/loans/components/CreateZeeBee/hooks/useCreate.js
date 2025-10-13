@@ -82,6 +82,8 @@ const useCreate = (pageType = 'create') => {
 	useEffect(() => {
 		if (searchParams.has('propertyId')) getProperty();
 		if (searchParams.has('id')) getLoanDetail();
+		eventBus.on('getLoanDetail', getLoanDetail);
+		return () => eventBus.off('getLoanDetail', getLoanDetail);
 	}, []);
 
 	const stepContent = [
