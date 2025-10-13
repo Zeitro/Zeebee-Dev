@@ -71,7 +71,7 @@ func (l *UpdateLoanPendingStatusLogic) UpdateLoanPendingStatus(in *lender.LoanUp
 			return errors.Errorf("invalid pending status: %s", pendingStatus)
 		}
 
-		err = l.svcCtx.LoanRepo.UpdatePendingStatusWithTx(l.ctx, tx, in.Data.Id, pendingStatus)
+		err = l.svcCtx.LoanRepo.UpdatePendingStatusWithTx(l.ctx, tx, in.Data.Id, pendingStatus, loan.Stage)
 		if err != nil {
 			return errors.Wrap(err, "failed to update loan")
 		}

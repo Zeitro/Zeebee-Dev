@@ -84,7 +84,7 @@ type ReviewLoanPendingStatusRequest struct {
 	Id                   int64  `path:"id" validate:"required,gt=0"`
 	Action               string `json:"action" validate:"required,oneof=Approve Reject"`
 	Comment              string `json:"comment, optional" validate:"required_if=Action Reject"`
-	CurrentPendingStatus string `json:"current_pending_status" validate:"required,oneof=Quoting Processing Underwriting"`
+	CurrentPendingStatus string `json:"current_pending_status" validate:"required,oneof=Quoting Processing Underwriting Closing"`
 }
 
 type UpdateLoanPendingStatusRequest struct {

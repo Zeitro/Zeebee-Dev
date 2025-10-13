@@ -75,7 +75,7 @@ func (l *PendingStatusReviewLogic) PendingStatusReview(in *lender.LoanPendingSta
 		var innerErr error
 
 		// update loan pending status
-		innerErr = l.svcCtx.LoanRepo.UpdatePendingStatusWithTx(l.ctx, tx, in.Data.Id, targetStatus)
+		innerErr = l.svcCtx.LoanRepo.UpdatePendingStatusWithTx(l.ctx, tx, in.Data.Id, targetStatus, targetStage)
 		if innerErr != nil {
 			return errors.WithStack(innerErr)
 		}
