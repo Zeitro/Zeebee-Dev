@@ -73,9 +73,6 @@ func (e *Email) SendEmail(msg EmailMessage) error {
 	}
 
 	err := e.dialer.DialAndSend(m)
-	// if err != nil {
-	// 	fmt.Printf("send email error: %v,config: %v,msg: %v\n", err, e.SMTP, msg.From)
-	// }
 
 	return err
 }
