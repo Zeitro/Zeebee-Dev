@@ -148,20 +148,46 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 					err = l.svcCtx.LoanDocumentRepo.SaveApplyFormDocumentWithTx(l.ctx, tx, loan.Id, in.Data.ApplyFormFile)
 				}
 				return err
-
-				// if data.applyFormFile == nil {
-				// 	return nil
-				// }
-				// oldApplyForm := loan.ApplyFormFile
-				// if oldApplyForm == nil {
-				// 	data.applyFormFile.RefId = loan.Id
-				// 	_, err := l.svcCtx.FileRepo.CreateWithTx(l.ctx, tx, data.applyFormFile, false)
-				// 	return err
-				// }
-				// data.applyFormFile.RefId = loan.Id
-				// _, err := l.svcCtx.FileRepo.UpdateOneWithTx(l.ctx, tx, oldApplyForm.Id, data.applyFormFile)
-				// return err
 			},
+			// Create loan documents with pending upload status
+			func() error {
+				var err error
+				switch loan.Stage {
+				case constants.LoanStagePending:
+					return err
+				case constants.LoanStageDraft:
+					// change stage from draft to pending
+				default:
+					err = errors.WithStack(errors.New("invalid loan stage"))
+					return err
+				}
+				loanDocumentTypes := constants.GetLoanDocumentTypes()
+				var loanDocuments []*model.LoanDocument
+				for category, fileTypes := range loanDocumentTypes {
+					documentStatus := constants.LoanDocumentStatusPendingUpload
+					if category == constants.LoanDocumentCategoryBorrower || category == constants.LoanDocumentCategoryExtend {
+						documentStatus = constants.LoanDocumentStatusPendingRequested
+					}
+					for _, fileType := range fileTypes {
+						loanDocument := &model.LoanDocument{
+							LoanId:   loan.Id,
+							Category: category,
+							FileType: fileType,
+							Status:   documentStatus,
+						}
+						loanDocuments = append(loanDocuments, loanDocument)
+					}
+				}
+
+				if len(loanDocuments) > 0 {
+					_, err = l.svcCtx.LoanDocumentRepo.BatchCreateWithTx(l.ctx, tx, loanDocuments)
+					if err != nil {
+						return err
+					}
+				}
+				return err
+			},
+
 			// sync property total amount
 			// func() error {
 			// 	err := l.svcCtx.PropertyBaseRepo.SyncTotalAmountWithTx(l.ctx, tx, previousPropertyBaseId)
