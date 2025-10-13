@@ -13,6 +13,10 @@ type LoanDocumentCreateRequest struct {
 	FileTypes []string `json:"file_types" validate:"required,min=1,dive,required"`
 }
 
+type LoanDocumentCreateResponse struct {
+	LoanDocuments []*LoanDocumentOptEntry `json:"loan_documents"`
+}
+
 type LoanDocumentSendRequestsRequest struct {
 	Documents []LoanDocumentSendRequestEntry `json:"documents" validate:"required,min=1,dive,required"`
 }

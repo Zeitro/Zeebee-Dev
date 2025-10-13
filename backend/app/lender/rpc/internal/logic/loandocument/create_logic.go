@@ -36,13 +36,14 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 	}
 }
 
-func (l *CreateLogic) Create(in *lender.LoanDocumentCreateExtendTypeRequest) (resp *lender.EmptyResponse, err error) {
+func (l *CreateLogic) Create(in *lender.LoanDocumentCreateExtendTypeRequest) (resp *lender.LoanDocumentCreateExtendTypeResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
 	var loan *model.Loan
+	results := []*lender.LoanDocumentOptEntry{}
 	loan, err = l.prepare(in)
 	if err != nil {
 		return nil, err
@@ -65,6 +66,16 @@ func (l *CreateLogic) Create(in *lender.LoanDocumentCreateExtendTypeRequest) (re
 		if innerErr != nil {
 			return innerErr
 		}
+
+		innerErr = copier.CopyWithOption(&results, loanDocuments, copier.Option{
+			IgnoreEmpty:   false,
+			DeepCopy:      true,
+			CaseSensitive: true,
+		})
+		if innerErr != nil {
+			return errorx.GetFailedTransErr(innerErr)
+		}
+
 		operationDocs := []*types.LoanDocument{}
 		innerErr = copier.CopyWithOption(&operationDocs, loanDocuments, copier.Option{
 			IgnoreEmpty:   false,
@@ -99,7 +110,9 @@ func (l *CreateLogic) Create(in *lender.LoanDocumentCreateExtendTypeRequest) (re
 		return nil, err
 	}
 
-	return &lender.EmptyResponse{}, nil
+	return &lender.LoanDocumentCreateExtendTypeResponse{
+		Data: results,
+	}, nil
 }
 
 func (l *CreateLogic) prepare(in *lender.LoanDocumentCreateExtendTypeRequest) (loan *model.Loan, err error) {

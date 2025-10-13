@@ -23,7 +23,7 @@ func NewLoanDocumentServer(svcCtx *svc.ServiceContext) *LoanDocumentServer {
 	}
 }
 
-func (s *LoanDocumentServer) Create(ctx context.Context, in *lender.LoanDocumentCreateExtendTypeRequest) (*lender.EmptyResponse, error) {
+func (s *LoanDocumentServer) Create(ctx context.Context, in *lender.LoanDocumentCreateExtendTypeRequest) (*lender.LoanDocumentCreateExtendTypeResponse, error) {
 	l := loandocumentlogic.NewCreateLogic(ctx, s.svcCtx)
 	return l.Create(in)
 }

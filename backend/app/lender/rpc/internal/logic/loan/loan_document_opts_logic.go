@@ -36,7 +36,7 @@ func (l *LoanDocumentOptsLogic) LoanDocumentOpts(in *lender.LoanDocumentOptsRequ
 		}
 	}()
 	opts := []repo.LoanDocumentOption{}
-	resultOpts := []*lender.LoanDocumentOptsResponseData_Opt{}
+	resultOpts := []*lender.LoanDocumentOptEntry{}
 
 	opts, err = l.svcCtx.LoanDocumentRepo.GetOptsByLoanId(l.ctx, in.Data.Id, []constants.LoanDocumentCategory{constants.LoanDocumentCategoryBorrower, constants.LoanDocumentCategoryExtend})
 	if err != nil {
@@ -52,8 +52,6 @@ func (l *LoanDocumentOptsLogic) LoanDocumentOpts(in *lender.LoanDocumentOptsRequ
 	}
 
 	return &lender.LoanDocumentOptsResponse{
-		Data: &lender.LoanDocumentOptsResponseData{
-			Opts: resultOpts,
-		},
+		Data: resultOpts,
 	}, nil
 }

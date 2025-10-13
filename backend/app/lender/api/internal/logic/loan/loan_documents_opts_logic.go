@@ -42,7 +42,7 @@ func (l *LoanDocumentsOptsLogic) LoanDocumentsOpts(req *types.PathIdRequest) (re
 
 	// Convert RPC response to API response
 	resp = &types.LoanDocumentOptResponse{}
-	err = copier.CopyWithOption(&resp.Options, rpcResp.Data.Opts, copier.Option{
+	err = copier.CopyWithOption(&resp.Options, rpcResp.Data, copier.Option{
 		IgnoreEmpty:   false,
 		DeepCopy:      true,
 		CaseSensitive: true,
