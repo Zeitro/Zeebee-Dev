@@ -1,3 +1,4 @@
+import { getFileTypeBySuffix } from '@/lib/common';
 import { createRequest } from '@/lib/fetch';
 const { request, uploadWithProgress } = createRequest();
 // 公共的下拉字段
@@ -36,7 +37,11 @@ export const getCityList = (state) => {
 };
 
 // 获取上传文件到亚马逊的外部url
-export const getUploadAwsUrl = (url, type = 'pdf', file_suffix = 'pdf') => {
+export const getUploadAwsUrl = (
+	url = '/storage/presign_url',
+	type = 'pdf',
+	file_suffix = 'pdf',
+) => {
 	return request(url, {
 		method: 'POST',
 		body: {
@@ -47,8 +52,10 @@ export const getUploadAwsUrl = (url, type = 'pdf', file_suffix = 'pdf') => {
 };
 
 // 上传文件到亚马逊
-export const uploadAwsS3 = async ({ url, file, onProgress = () => {}, type }) => {
-	const { url: uploadUrl } = await getUploadAwsUrl(url, type);
+export const uploadAwsS3 = async ({ url, file, onProgress = (e) => {}, type = null }) => {
+	const file_suffix = file.name.split('.')?.pop?.()?.toLowerCase?.();
+	const fileType = type || getFileTypeBySuffix(file_suffix);
+	const { url: uploadUrl } = await getUploadAwsUrl(url, fileType, file_suffix);
 	const res = await uploadWithProgress(uploadUrl, {
 		method: 'PUT',
 		body: file,

@@ -5,13 +5,14 @@
 			background-color: transparent !important;
 		}
 		.ant-menu-item-selected {
-			background-color: var(--base-active) !important;
+			background-color: #D6E2FB !important;
 			color: var(--foundation) !important;
 		}
 		.ant-menu-submenu .ant-menu-submenu-title {
 			font-weight: 600 !important;
 			padding-left: 10px !important;
 			margin: 0 !important;
+			color:  var(--foundation) !important;
 		}
 		.ant-menu-item {
 			font-weight: 500 !important;
@@ -26,11 +27,12 @@
 				padding: 0 10px;
 			}
 		}
-		.ant-menu-sub .ant-menu-item-selected {
+		.ant-menu-sub .ant-menu-item-selected,
+		.ant-menu-submenu-active {
 			background-color: transparent !important;
 		}
 		.ant-menu-sub .ant-menu-item-selected .ant-menu-title-content {
-			background-color: var(--base-active) !important;
+			background-color: #D6E2FB !important;
 			border-radius: 8px;
 		}
 	}

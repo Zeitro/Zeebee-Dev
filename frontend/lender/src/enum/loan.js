@@ -98,10 +98,6 @@ export const pendingSteps = [
 		title: 'Closing',
 		key: 'Closing',
 	},
-	{
-		title: 'Documents',
-		key: 'Documents',
-	},
 ];
 
 export const lenderDetailsSteps = [
@@ -119,10 +115,6 @@ export const lenderDetailsSteps = [
 		title: 'PENDING',
 		key: 'Pending',
 		children: pendingSteps,
-	},
-	{
-		title: 'ACTIVE',
-		key: 'Active',
 	},
 	{
 		title: 'FUNDED',
@@ -350,56 +342,7 @@ export const loanDetailsFields = {
 };
 
 // zeeBee Details --> General
-export const generalTermsFields = [
-	{
-		label: 'Total loan amount',
-		value: 'total_amount',
-		render: (v) => formatAmount(v),
-	},
-	{
-		label: 'Rate',
-		value: 'rate',
-		render: (v) => (v ? `${v}%` : '--'),
-	},
-	{
-		label: 'Outstanding loan amount',
-		value: 'principal_amount',
-		render: (v) => formatAmount(v),
-	},
-	{ label: 'Maturity date', value: 'maturity_date' },
-	{
-		label: 'Monthly Payment',
-		value: 'monthly_payment',
-		render: (v) => formatAmount(v),
-	},
-	{
-		label: 'Term',
-		value: 'loan_term',
-		render: (v) => `${v || '--'} Months`,
-	},
-];
 
-export const generalParametersFields = [
-	{
-		label: 'Lien position',
-		value: 'lien_position',
-	},
-	{
-		label: 'Loan type',
-		value: 'loan_type',
-	},
-];
-
-export const generalList = [
-	{
-		title: 'Terms',
-		fields: generalTermsFields,
-	},
-	{
-		title: 'Parameters',
-		fields: generalParametersFields,
-	},
-];
 // loan status
 // export const loanStatusOptions = [
 // 	{

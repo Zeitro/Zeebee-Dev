@@ -9,6 +9,7 @@ export const initConfigFn = (config = {}) => {
 		content: null,
 		maskClosable: false,
 		centered: true,
+		confirmLoading: false,
 		...config,
 		title: <div className="font-medium">{config.title}</div>,
 		okButtonProps: {
@@ -53,7 +54,7 @@ export const BtnPopUpModal = ({
 					{children}
 				</Button>
 			) : (
-				<div onClick={handleClick} {...props}>
+				<div onClick={handleClick} className={props?.className}>
 					{children}
 				</div>
 			)}
@@ -64,14 +65,22 @@ export const BtnPopUpModal = ({
 };
 
 // 删除组件
-export const DeleteBtn = ({ title = 'Are you sure you want to delete this?', ...props }) => {
+export const DeleteBtn = ({
+	title = 'Are you sure you want to delete this?',
+	children,
+	isButton,
+	icon,
+	...props
+}) => {
 	return (
 		<BtnPopUpModal
 			danger={true}
 			modalType="confirm"
 			config={{ title, okText: 'Delete', okButtonProps: { danger: true }, ...props }}
+			isButton={isButton}
+			icon={icon}
 		>
-			Delete
+			{children || 'Delete'}
 		</BtnPopUpModal>
 	);
 };

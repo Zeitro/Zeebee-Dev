@@ -10,6 +10,8 @@ import Declaration from '../../components/CreateZeeBee/Declaration';
 import Demographics from '../../components/CreateZeeBee/Demographics';
 import ReviewAndSign from '../../components/CreateZeeBee/ReviewAndSign';
 import Quoting from './Quoting';
+import Processing from './Processing';
+import Closing from './Closing';
 
 const CommonZeeBeeForm = ({ form, pageKey, children, setIsChange, rowData }) => {
 	const getContent = () => {
@@ -17,8 +19,8 @@ const CommonZeeBeeForm = ({ form, pageKey, children, setIsChange, rowData }) => 
 			case 'borrowerInformation':
 				return (
 					<div className="px-6 py-6">
-						<ApplicantInfo form={form} />
-						<BorrowerInfo form={form} />
+						<ApplicantInfo form={form} isHideTitle={true} />
+						<BorrowerInfo form={form} isHideTitle={true} />
 						{children}
 					</div>
 				);
@@ -58,12 +60,13 @@ const CommonZeeBeeForm = ({ form, pageKey, children, setIsChange, rowData }) => 
 					</div>
 				);
 			case 'Quoting':
-				return (
-					<div>
-						<Quoting />
-						{children}
-					</div>
-				);
+				return <Quoting />;
+			case 'Processing':
+				return <Processing />;
+			case 'Underwriting':
+				return <Processing isHide={true} isHaveRejectBtn={true} title="Underwriting" />;
+			case 'Closing':
+				return <Closing />;
 			default:
 				return '';
 		}
