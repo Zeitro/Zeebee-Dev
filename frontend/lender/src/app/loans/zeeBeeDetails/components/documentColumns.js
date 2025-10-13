@@ -156,11 +156,9 @@ export const lenderClosingColumns = () => {
 			align: 'right',
 			fixed: 'right',
 			render: (_, record) => (
-				<div>
-					<UploadModalBtn isChangeType={false} record={record}>
-						Upload
-					</UploadModalBtn>
-				</div>
+				<UploadModalBtn isChangeType={false} record={record}>
+					Upload
+				</UploadModalBtn>
 			),
 		};
 	};

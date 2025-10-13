@@ -1,4 +1,4 @@
-import React, { use, useState } from 'react';
+import React, { use, useEffect, useRef, useState } from 'react';
 import NewModal from '@/components/NewModal';
 import { Button, Form, Input, message, Select } from 'antd';
 import CommonUpload from '@/components/CommonUpload';
@@ -6,35 +6,52 @@ import { CloseOutlined, FileTextOutlined, InboxOutlined, UploadOutlined } from '
 import styles from './index.module.scss';
 import { createRequest } from '@/lib/fetch';
 import eventBus from '@/lib/bus';
-const { TextArea } = Input;
-const UploadModal = ({ open, setOpen, isChangeType = true, record = {} }) => {
+// const { TextArea } = Input;
+const UploadModal = ({ open, setOpen, isChangeType = true, record = {}, loan_id }) => {
 	const [form] = Form.useForm();
 	const { request } = createRequest();
+	const uploadRef = useRef(null);
 	const [loading, setLoading] = useState(false);
 	const [fileList, setFileList] = useState([]);
 	const handleOK = async () => {
 		try {
 			const values = await form.validateFields();
-			console.log(values, fileList);
+			let id = record?.id;
+			setLoading(true);
 
-			// setLoading(true);
-			// await request('/loan_document/send_requests', {
-			// 	method: 'POST',
-			// 	body: {
-			// 		...values,
-			// 	},
-			// });
-			// message.open({
-			// 	type: 'success',
-			// 	content: 'Request sent successfully',
-			// });
-			// eventBus.emit('getLoanDetail');
-			// setLoading(false);
+			if (isChangeType) {
+				// 创建文档类型
+				const { loan_documents } = await request('/loan_document', {
+					method: 'POST',
+					body: {
+						file_types: [values.file_type],
+						loan_id,
+					},
+				});
+
+				id = loan_documents[0].id;
+			}
+			const file_urls = await uploadRef.current.triggerUpload(fileList);
+			await request(`/loan_document/${id}/files`, {
+				method: 'POST',
+				body: {
+					file_urls,
+				},
+			});
+			message.open({
+				type: 'success',
+				content: 'Upload successfully',
+			});
+			eventBus.emit('getLoanDetail');
+			setLoading(false);
 			setOpen(false);
 		} catch (error) {
+			console.log(error);
+
 			setLoading(false);
 		}
 	};
+
 	return (
 		<NewModal
 			title={'Upload new document'}
@@ -43,6 +60,7 @@ const UploadModal = ({ open, setOpen, isChangeType = true, record = {} }) => {
 			onCancel={() => setOpen(false)}
 			onOk={handleOK}
 			okText="Save"
+			confirmLoading={loading}
 		>
 			<Form
 				form={form}
@@ -77,6 +95,7 @@ const UploadModal = ({ open, setOpen, isChangeType = true, record = {} }) => {
 					<TextArea placeholder="Add a comment" autoSize={{ minRows: 3, maxRows: 5 }} />
 				</Form.Item> */}
 				<CommonUpload
+					ref={uploadRef}
 					immediateUpload={false}
 					accept=".pdf,.png,.jpg,.jpeg"
 					maxCount={10}
@@ -87,7 +106,7 @@ const UploadModal = ({ open, setOpen, isChangeType = true, record = {} }) => {
 					disabled={false}
 					itemRender={(node, file, fileList, { remove }) => {
 						return (
-							<div className="flex items-center px-4 py-[5px] gap-2 border border-base-border rounded-md">
+							<div className="flex items-center px-4 py-[5px] mb-6 gap-2 border border-base-border rounded-md w-max">
 								<FileTextOutlined />
 								<div>{file.name}</div>
 								<CloseOutlined
@@ -114,14 +133,12 @@ export default UploadModal;
 export const UploadModalBtn = ({ children, isChangeType, isButton = true, record, ...props }) => {
 	const [open, setOpen] = useState(false);
 	return (
-		<>
+		<div onClick={(e) => e.stopPropagation()}>
 			{isButton ? (
 				<Button
 					type="default"
 					size="small"
 					onClick={(e) => {
-						e.stopPropagation();
-						e.preventDefault();
 						setOpen(true);
 					}}
 					{...props}
@@ -129,7 +146,13 @@ export const UploadModalBtn = ({ children, isChangeType, isButton = true, record
 					{children || 'Send request'}
 				</Button>
 			) : (
-				<div>{children || 'Send request'}</div>
+				<div
+					onClick={(e) => {
+						setOpen(true);
+					}}
+				>
+					{children || 'Send request'}
+				</div>
 			)}
 			{open && (
 				<UploadModal
@@ -139,6 +162,6 @@ export const UploadModalBtn = ({ children, isChangeType, isButton = true, record
 					record={record}
 				/>
 			)}
-		</>
+		</div>
 	);
 };

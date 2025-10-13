@@ -72,7 +72,9 @@ export const AddDocument = ({ loan_id, props }) => {
 				setOpenUpload={setOpenUpload}
 			/>
 			{openAdd && <AddRequest open={openAdd} setOpen={setOpenAdd} loan_id={loan_id} />}
-			{openUpload && <UploadModal open={openUpload} setOpen={setOpenUpload} />}
+			{openUpload && (
+				<UploadModal open={openUpload} setOpen={setOpenUpload} loan_id={loan_id} />
+			)}
 		</>
 	);
 };

@@ -29,7 +29,6 @@ export const ApproveRejectModal = ({
 					...values,
 				},
 			});
-			console.log(values);
 			message.open({
 				type: 'success',
 				content: `${isApprove ? 'Approved' : 'Rejected'} successfully`,

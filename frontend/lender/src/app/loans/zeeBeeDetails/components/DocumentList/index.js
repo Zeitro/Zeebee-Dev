@@ -1,7 +1,6 @@
 import React from 'react';
-import NewTable from '@/components/NewTable';
 import styles from './index.module.scss';
-import { Button, List, Space, Table } from 'antd';
+import { Space } from 'antd';
 import DocumentItem from './Item';
 const DocumentList = ({
 	dataSource = [
@@ -9,9 +8,10 @@ const DocumentList = ({
 			total: 0,
 		},
 	],
-	loading,
 	columns,
 	isHide,
+	handleClickOpt,
+	deleteLoading,
 	...props
 }) => {
 	return (
@@ -34,7 +34,7 @@ const DocumentList = ({
 					</div>
 				))}
 			</div>
-			<div>
+			<Space direction="vertical" className="w-full">
 				{dataSource.map((item, index) => {
 					return (
 						<DocumentItem
@@ -42,10 +42,12 @@ const DocumentList = ({
 							item={item}
 							columns={columns}
 							isHide={isHide}
+							handleClickOpt={handleClickOpt}
+							deleteLoading={deleteLoading}
 						></DocumentItem>
 					);
 				})}
-			</div>
+			</Space>
 		</div>
 	);
 };

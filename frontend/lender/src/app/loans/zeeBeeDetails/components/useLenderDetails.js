@@ -89,8 +89,6 @@ const useLenderDetails = () => {
 		eventBus.emit('changeCrumbs', {
 			2: `Loan Details(${str})`,
 		});
-		console.log(res);
-
 		res.loan_borrower = {
 			...(res?.loan_borrower || {}),
 			tin: {
@@ -171,7 +169,6 @@ const useLenderDetails = () => {
 		scrollRef.current.scrollTo({
 			top: 0,
 		});
-		console.log(currentInfo, currentStep, rowData);
 	};
 
 	const handleSave = async () => {
@@ -300,7 +297,7 @@ const useLenderDetails = () => {
 						isHaveRejectBtn={true}
 						title="Underwriting"
 						id={id}
-						setRejectStep={() => setCurrentStep('Quoting')}
+						setRejectStep={() => setCurrentStep('Processing')}
 						setNextStep={() => setCurrentStep('Closing')}
 						disabledOperate={disabledOperate}
 						rowData={rowData}
@@ -309,9 +306,10 @@ const useLenderDetails = () => {
 			case 'Closing':
 				return (
 					<Closing
-						setNextStep={() => setCurrentStep('Active')}
+						// setNextStep={() => setCurrentStep('Active')}
 						disabledOperate={disabledOperate}
 						rowData={rowData}
+						id={id}
 					/>
 				);
 			case 'Active':
@@ -357,8 +355,7 @@ const useLenderDetails = () => {
 		} else {
 			index = newList.length - 1;
 		}
-
-		selectTabKey = newList[index].key;
+		selectTabKey = newList[index]?.key;
 		return {
 			selectTabKey,
 			index,
