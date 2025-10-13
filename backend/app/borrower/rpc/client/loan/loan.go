@@ -24,6 +24,8 @@ type (
 	BorrowerNamesResponse                 = borrower.BorrowerNamesResponse
 	EmptyRequest                          = borrower.EmptyRequest
 	EmptyResponse                         = borrower.EmptyResponse
+	FileDeleteRequest                     = borrower.FileDeleteRequest
+	FileDeleteRequestData                 = borrower.FileDeleteRequestData
 	FileEntry                             = borrower.FileEntry
 	ImportPendingLoansRequest             = borrower.ImportPendingLoansRequest
 	ImportPendingLoansRequestData         = borrower.ImportPendingLoansRequestData
@@ -50,6 +52,9 @@ type (
 	LoanDetailRequest                     = borrower.LoanDetailRequest
 	LoanDetailRequestData                 = borrower.LoanDetailRequestData
 	LoanDetailResponse                    = borrower.LoanDetailResponse
+	LoanDocumentAddFilesRequest           = borrower.LoanDocumentAddFilesRequest
+	LoanDocumentAddFilesRequestData       = borrower.LoanDocumentAddFilesRequestData
+	LoanDocumentEntry                     = borrower.LoanDocumentEntry
 	LoanEntry                             = borrower.LoanEntry
 	LoanExperienceEntry                   = borrower.LoanExperienceEntry
 	LoanExtendValueEntry                  = borrower.LoanExtendValueEntry
@@ -64,8 +69,6 @@ type (
 	LoanPageResponseData                  = borrower.LoanPageResponseData
 	LoanPropertyEntry                     = borrower.LoanPropertyEntry
 	LoanThirdServiceEntry                 = borrower.LoanThirdServiceEntry
-	LoanUpdateDocumentsRequest            = borrower.LoanUpdateDocumentsRequest
-	LoanUpdateDocumentsRequestData        = borrower.LoanUpdateDocumentsRequestData
 	LoanUpdatePendingStatusRequest        = borrower.LoanUpdatePendingStatusRequest
 	LoanUpdatePendingStatusRequestData    = borrower.LoanUpdatePendingStatusRequestData
 	LoanUpdateRequest                     = borrower.LoanUpdateRequest
@@ -136,7 +139,6 @@ type (
 		SaveDraftLoan(ctx context.Context, in *LoanApplyRequest, opts ...grpc.CallOption) (*LoanApplyResponse, error)
 		UpdateApplyLoan(ctx context.Context, in *LoanApplyRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		ImportPendingLoans(ctx context.Context, in *ImportPendingLoansRequest, opts ...grpc.CallOption) (*ImportPendingLoansResponse, error)
-		UpdateLoanDocuments(ctx context.Context, in *LoanUpdateDocumentsRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	}
 
 	defaultLoan struct {
@@ -203,9 +205,4 @@ func (m *defaultLoan) UpdateApplyLoan(ctx context.Context, in *LoanApplyRequest,
 func (m *defaultLoan) ImportPendingLoans(ctx context.Context, in *ImportPendingLoansRequest, opts ...grpc.CallOption) (*ImportPendingLoansResponse, error) {
 	client := borrower.NewLoanClient(m.cli.Conn())
 	return client.ImportPendingLoans(ctx, in, opts...)
-}
-
-func (m *defaultLoan) UpdateLoanDocuments(ctx context.Context, in *LoanUpdateDocumentsRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
-	client := borrower.NewLoanClient(m.cli.Conn())
-	return client.UpdateLoanDocuments(ctx, in, opts...)
 }

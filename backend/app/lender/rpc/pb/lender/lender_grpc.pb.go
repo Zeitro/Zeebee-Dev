@@ -491,10 +491,14 @@ var User_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	Loan_LoanDetail_FullMethodName          = "/lender.Loan/LoanDetail"
-	Loan_LoanPage_FullMethodName            = "/lender.Loan/LoanPage"
-	Loan_UpdateLoan_FullMethodName          = "/lender.Loan/UpdateLoan"
-	Loan_UpdateLoanDocuments_FullMethodName = "/lender.Loan/UpdateLoanDocuments"
+	Loan_LoanDetail_FullMethodName              = "/lender.Loan/LoanDetail"
+	Loan_LoanPage_FullMethodName                = "/lender.Loan/LoanPage"
+	Loan_UpdateLoan_FullMethodName              = "/lender.Loan/UpdateLoan"
+	Loan_UpdateLoanDocuments_FullMethodName     = "/lender.Loan/UpdateLoanDocuments"
+	Loan_UpdateLoanStage_FullMethodName         = "/lender.Loan/UpdateLoanStage"
+	Loan_UpdateLoanPendingStatus_FullMethodName = "/lender.Loan/UpdateLoanPendingStatus"
+	Loan_PendingStatusReview_FullMethodName     = "/lender.Loan/PendingStatusReview"
+	Loan_LoanDocumentOpts_FullMethodName        = "/lender.Loan/LoanDocumentOpts"
 )
 
 // LoanClient is the client API for Loan service.
@@ -505,6 +509,10 @@ type LoanClient interface {
 	LoanPage(ctx context.Context, in *LoanPageRequest, opts ...grpc.CallOption) (*LoanPageResponse, error)
 	UpdateLoan(ctx context.Context, in *LoanUpdateRequest, opts ...grpc.CallOption) (*LoanUpdateResponse, error)
 	UpdateLoanDocuments(ctx context.Context, in *LoanUpdateDocumentsRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	UpdateLoanStage(ctx context.Context, in *LoanUpdateStageRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	UpdateLoanPendingStatus(ctx context.Context, in *LoanUpdatePendingStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	PendingStatusReview(ctx context.Context, in *LoanPendingStatusReviewRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	LoanDocumentOpts(ctx context.Context, in *LoanDocumentOptsRequest, opts ...grpc.CallOption) (*LoanDocumentOptsResponse, error)
 }
 
 type loanClient struct {
@@ -555,6 +563,46 @@ func (c *loanClient) UpdateLoanDocuments(ctx context.Context, in *LoanUpdateDocu
 	return out, nil
 }
 
+func (c *loanClient) UpdateLoanStage(ctx context.Context, in *LoanUpdateStageRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, Loan_UpdateLoanStage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *loanClient) UpdateLoanPendingStatus(ctx context.Context, in *LoanUpdatePendingStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, Loan_UpdateLoanPendingStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *loanClient) PendingStatusReview(ctx context.Context, in *LoanPendingStatusReviewRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, Loan_PendingStatusReview_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *loanClient) LoanDocumentOpts(ctx context.Context, in *LoanDocumentOptsRequest, opts ...grpc.CallOption) (*LoanDocumentOptsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LoanDocumentOptsResponse)
+	err := c.cc.Invoke(ctx, Loan_LoanDocumentOpts_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // LoanServer is the server API for Loan service.
 // All implementations must embed UnimplementedLoanServer
 // for forward compatibility.
@@ -563,6 +611,10 @@ type LoanServer interface {
 	LoanPage(context.Context, *LoanPageRequest) (*LoanPageResponse, error)
 	UpdateLoan(context.Context, *LoanUpdateRequest) (*LoanUpdateResponse, error)
 	UpdateLoanDocuments(context.Context, *LoanUpdateDocumentsRequest) (*EmptyResponse, error)
+	UpdateLoanStage(context.Context, *LoanUpdateStageRequest) (*EmptyResponse, error)
+	UpdateLoanPendingStatus(context.Context, *LoanUpdatePendingStatusRequest) (*EmptyResponse, error)
+	PendingStatusReview(context.Context, *LoanPendingStatusReviewRequest) (*EmptyResponse, error)
+	LoanDocumentOpts(context.Context, *LoanDocumentOptsRequest) (*LoanDocumentOptsResponse, error)
 	mustEmbedUnimplementedLoanServer()
 }
 
@@ -584,6 +636,18 @@ func (UnimplementedLoanServer) UpdateLoan(context.Context, *LoanUpdateRequest) (
 }
 func (UnimplementedLoanServer) UpdateLoanDocuments(context.Context, *LoanUpdateDocumentsRequest) (*EmptyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateLoanDocuments not implemented")
+}
+func (UnimplementedLoanServer) UpdateLoanStage(context.Context, *LoanUpdateStageRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateLoanStage not implemented")
+}
+func (UnimplementedLoanServer) UpdateLoanPendingStatus(context.Context, *LoanUpdatePendingStatusRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateLoanPendingStatus not implemented")
+}
+func (UnimplementedLoanServer) PendingStatusReview(context.Context, *LoanPendingStatusReviewRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PendingStatusReview not implemented")
+}
+func (UnimplementedLoanServer) LoanDocumentOpts(context.Context, *LoanDocumentOptsRequest) (*LoanDocumentOptsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LoanDocumentOpts not implemented")
 }
 func (UnimplementedLoanServer) mustEmbedUnimplementedLoanServer() {}
 func (UnimplementedLoanServer) testEmbeddedByValue()              {}
@@ -678,6 +742,78 @@ func _Loan_UpdateLoanDocuments_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Loan_UpdateLoanStage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanUpdateStageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanServer).UpdateLoanStage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Loan_UpdateLoanStage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanServer).UpdateLoanStage(ctx, req.(*LoanUpdateStageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Loan_UpdateLoanPendingStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanUpdatePendingStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanServer).UpdateLoanPendingStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Loan_UpdateLoanPendingStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanServer).UpdateLoanPendingStatus(ctx, req.(*LoanUpdatePendingStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Loan_PendingStatusReview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanPendingStatusReviewRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanServer).PendingStatusReview(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Loan_PendingStatusReview_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanServer).PendingStatusReview(ctx, req.(*LoanPendingStatusReviewRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Loan_LoanDocumentOpts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanDocumentOptsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanServer).LoanDocumentOpts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Loan_LoanDocumentOpts_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanServer).LoanDocumentOpts(ctx, req.(*LoanDocumentOptsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Loan_ServiceDesc is the grpc.ServiceDesc for Loan service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -700,6 +836,518 @@ var Loan_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateLoanDocuments",
 			Handler:    _Loan_UpdateLoanDocuments_Handler,
+		},
+		{
+			MethodName: "UpdateLoanStage",
+			Handler:    _Loan_UpdateLoanStage_Handler,
+		},
+		{
+			MethodName: "UpdateLoanPendingStatus",
+			Handler:    _Loan_UpdateLoanPendingStatus_Handler,
+		},
+		{
+			MethodName: "PendingStatusReview",
+			Handler:    _Loan_PendingStatusReview_Handler,
+		},
+		{
+			MethodName: "LoanDocumentOpts",
+			Handler:    _Loan_LoanDocumentOpts_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "app/lender/rpc/pb/lender.proto",
+}
+
+const (
+	LoanDocument_Create_FullMethodName        = "/lender.LoanDocument/Create"
+	LoanDocument_SendRequests_FullMethodName  = "/lender.LoanDocument/SendRequests"
+	LoanDocument_DeleteFile_FullMethodName    = "/lender.LoanDocument/DeleteFile"
+	LoanDocument_DeleteRequest_FullMethodName = "/lender.LoanDocument/DeleteRequest"
+	LoanDocument_UpdateComment_FullMethodName = "/lender.LoanDocument/UpdateComment"
+	LoanDocument_AddFiles_FullMethodName      = "/lender.LoanDocument/AddFiles"
+)
+
+// LoanDocumentClient is the client API for LoanDocument service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type LoanDocumentClient interface {
+	Create(ctx context.Context, in *LoanDocumentCreateExtendTypeRequest, opts ...grpc.CallOption) (*LoanDocumentCreateExtendTypeResponse, error)
+	SendRequests(ctx context.Context, in *LoanDocumentSendRequestsRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	DeleteFile(ctx context.Context, in *LoanDocumentDeleteFileRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	DeleteRequest(ctx context.Context, in *LoanDocumentDeleteRequestRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	UpdateComment(ctx context.Context, in *LoanDocumentUpdateCommentRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	AddFiles(ctx context.Context, in *LoanDocumentAddFilesRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+}
+
+type loanDocumentClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewLoanDocumentClient(cc grpc.ClientConnInterface) LoanDocumentClient {
+	return &loanDocumentClient{cc}
+}
+
+func (c *loanDocumentClient) Create(ctx context.Context, in *LoanDocumentCreateExtendTypeRequest, opts ...grpc.CallOption) (*LoanDocumentCreateExtendTypeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LoanDocumentCreateExtendTypeResponse)
+	err := c.cc.Invoke(ctx, LoanDocument_Create_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *loanDocumentClient) SendRequests(ctx context.Context, in *LoanDocumentSendRequestsRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, LoanDocument_SendRequests_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *loanDocumentClient) DeleteFile(ctx context.Context, in *LoanDocumentDeleteFileRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, LoanDocument_DeleteFile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *loanDocumentClient) DeleteRequest(ctx context.Context, in *LoanDocumentDeleteRequestRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, LoanDocument_DeleteRequest_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *loanDocumentClient) UpdateComment(ctx context.Context, in *LoanDocumentUpdateCommentRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, LoanDocument_UpdateComment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *loanDocumentClient) AddFiles(ctx context.Context, in *LoanDocumentAddFilesRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, LoanDocument_AddFiles_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// LoanDocumentServer is the server API for LoanDocument service.
+// All implementations must embed UnimplementedLoanDocumentServer
+// for forward compatibility.
+type LoanDocumentServer interface {
+	Create(context.Context, *LoanDocumentCreateExtendTypeRequest) (*LoanDocumentCreateExtendTypeResponse, error)
+	SendRequests(context.Context, *LoanDocumentSendRequestsRequest) (*EmptyResponse, error)
+	DeleteFile(context.Context, *LoanDocumentDeleteFileRequest) (*EmptyResponse, error)
+	DeleteRequest(context.Context, *LoanDocumentDeleteRequestRequest) (*EmptyResponse, error)
+	UpdateComment(context.Context, *LoanDocumentUpdateCommentRequest) (*EmptyResponse, error)
+	AddFiles(context.Context, *LoanDocumentAddFilesRequest) (*EmptyResponse, error)
+	mustEmbedUnimplementedLoanDocumentServer()
+}
+
+// UnimplementedLoanDocumentServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedLoanDocumentServer struct{}
+
+func (UnimplementedLoanDocumentServer) Create(context.Context, *LoanDocumentCreateExtendTypeRequest) (*LoanDocumentCreateExtendTypeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedLoanDocumentServer) SendRequests(context.Context, *LoanDocumentSendRequestsRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendRequests not implemented")
+}
+func (UnimplementedLoanDocumentServer) DeleteFile(context.Context, *LoanDocumentDeleteFileRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteFile not implemented")
+}
+func (UnimplementedLoanDocumentServer) DeleteRequest(context.Context, *LoanDocumentDeleteRequestRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteRequest not implemented")
+}
+func (UnimplementedLoanDocumentServer) UpdateComment(context.Context, *LoanDocumentUpdateCommentRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateComment not implemented")
+}
+func (UnimplementedLoanDocumentServer) AddFiles(context.Context, *LoanDocumentAddFilesRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddFiles not implemented")
+}
+func (UnimplementedLoanDocumentServer) mustEmbedUnimplementedLoanDocumentServer() {}
+func (UnimplementedLoanDocumentServer) testEmbeddedByValue()                      {}
+
+// UnsafeLoanDocumentServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to LoanDocumentServer will
+// result in compilation errors.
+type UnsafeLoanDocumentServer interface {
+	mustEmbedUnimplementedLoanDocumentServer()
+}
+
+func RegisterLoanDocumentServer(s grpc.ServiceRegistrar, srv LoanDocumentServer) {
+	// If the following call pancis, it indicates UnimplementedLoanDocumentServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&LoanDocument_ServiceDesc, srv)
+}
+
+func _LoanDocument_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanDocumentCreateExtendTypeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanDocumentServer).Create(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LoanDocument_Create_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanDocumentServer).Create(ctx, req.(*LoanDocumentCreateExtendTypeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LoanDocument_SendRequests_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanDocumentSendRequestsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanDocumentServer).SendRequests(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LoanDocument_SendRequests_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanDocumentServer).SendRequests(ctx, req.(*LoanDocumentSendRequestsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LoanDocument_DeleteFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanDocumentDeleteFileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanDocumentServer).DeleteFile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LoanDocument_DeleteFile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanDocumentServer).DeleteFile(ctx, req.(*LoanDocumentDeleteFileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LoanDocument_DeleteRequest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanDocumentDeleteRequestRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanDocumentServer).DeleteRequest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LoanDocument_DeleteRequest_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanDocumentServer).DeleteRequest(ctx, req.(*LoanDocumentDeleteRequestRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LoanDocument_UpdateComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanDocumentUpdateCommentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanDocumentServer).UpdateComment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LoanDocument_UpdateComment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanDocumentServer).UpdateComment(ctx, req.(*LoanDocumentUpdateCommentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LoanDocument_AddFiles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanDocumentAddFilesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanDocumentServer).AddFiles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LoanDocument_AddFiles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanDocumentServer).AddFiles(ctx, req.(*LoanDocumentAddFilesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// LoanDocument_ServiceDesc is the grpc.ServiceDesc for LoanDocument service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var LoanDocument_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "lender.LoanDocument",
+	HandlerType: (*LoanDocumentServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Create",
+			Handler:    _LoanDocument_Create_Handler,
+		},
+		{
+			MethodName: "SendRequests",
+			Handler:    _LoanDocument_SendRequests_Handler,
+		},
+		{
+			MethodName: "DeleteFile",
+			Handler:    _LoanDocument_DeleteFile_Handler,
+		},
+		{
+			MethodName: "DeleteRequest",
+			Handler:    _LoanDocument_DeleteRequest_Handler,
+		},
+		{
+			MethodName: "UpdateComment",
+			Handler:    _LoanDocument_UpdateComment_Handler,
+		},
+		{
+			MethodName: "AddFiles",
+			Handler:    _LoanDocument_AddFiles_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "app/lender/rpc/pb/lender.proto",
+}
+
+const (
+	File_DeleteFile_FullMethodName = "/lender.File/DeleteFile"
+)
+
+// FileClient is the client API for File service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type FileClient interface {
+	DeleteFile(ctx context.Context, in *FileDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+}
+
+type fileClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewFileClient(cc grpc.ClientConnInterface) FileClient {
+	return &fileClient{cc}
+}
+
+func (c *fileClient) DeleteFile(ctx context.Context, in *FileDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, File_DeleteFile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// FileServer is the server API for File service.
+// All implementations must embed UnimplementedFileServer
+// for forward compatibility.
+type FileServer interface {
+	DeleteFile(context.Context, *FileDeleteRequest) (*EmptyResponse, error)
+	mustEmbedUnimplementedFileServer()
+}
+
+// UnimplementedFileServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedFileServer struct{}
+
+func (UnimplementedFileServer) DeleteFile(context.Context, *FileDeleteRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteFile not implemented")
+}
+func (UnimplementedFileServer) mustEmbedUnimplementedFileServer() {}
+func (UnimplementedFileServer) testEmbeddedByValue()              {}
+
+// UnsafeFileServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to FileServer will
+// result in compilation errors.
+type UnsafeFileServer interface {
+	mustEmbedUnimplementedFileServer()
+}
+
+func RegisterFileServer(s grpc.ServiceRegistrar, srv FileServer) {
+	// If the following call pancis, it indicates UnimplementedFileServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&File_ServiceDesc, srv)
+}
+
+func _File_DeleteFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FileDeleteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FileServer).DeleteFile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: File_DeleteFile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FileServer).DeleteFile(ctx, req.(*FileDeleteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// File_ServiceDesc is the grpc.ServiceDesc for File service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var File_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "lender.File",
+	HandlerType: (*FileServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "DeleteFile",
+			Handler:    _File_DeleteFile_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "app/lender/rpc/pb/lender.proto",
+}
+
+const (
+	Storage_CreatePresignedUrl_FullMethodName = "/lender.Storage/CreatePresignedUrl"
+)
+
+// StorageClient is the client API for Storage service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type StorageClient interface {
+	CreatePresignedUrl(ctx context.Context, in *StorageCreatePresignedUrlRequest, opts ...grpc.CallOption) (*StorageCreatePresignedUrlResponse, error)
+}
+
+type storageClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewStorageClient(cc grpc.ClientConnInterface) StorageClient {
+	return &storageClient{cc}
+}
+
+func (c *storageClient) CreatePresignedUrl(ctx context.Context, in *StorageCreatePresignedUrlRequest, opts ...grpc.CallOption) (*StorageCreatePresignedUrlResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StorageCreatePresignedUrlResponse)
+	err := c.cc.Invoke(ctx, Storage_CreatePresignedUrl_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// StorageServer is the server API for Storage service.
+// All implementations must embed UnimplementedStorageServer
+// for forward compatibility.
+type StorageServer interface {
+	CreatePresignedUrl(context.Context, *StorageCreatePresignedUrlRequest) (*StorageCreatePresignedUrlResponse, error)
+	mustEmbedUnimplementedStorageServer()
+}
+
+// UnimplementedStorageServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedStorageServer struct{}
+
+func (UnimplementedStorageServer) CreatePresignedUrl(context.Context, *StorageCreatePresignedUrlRequest) (*StorageCreatePresignedUrlResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreatePresignedUrl not implemented")
+}
+func (UnimplementedStorageServer) mustEmbedUnimplementedStorageServer() {}
+func (UnimplementedStorageServer) testEmbeddedByValue()                 {}
+
+// UnsafeStorageServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to StorageServer will
+// result in compilation errors.
+type UnsafeStorageServer interface {
+	mustEmbedUnimplementedStorageServer()
+}
+
+func RegisterStorageServer(s grpc.ServiceRegistrar, srv StorageServer) {
+	// If the following call pancis, it indicates UnimplementedStorageServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&Storage_ServiceDesc, srv)
+}
+
+func _Storage_CreatePresignedUrl_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StorageCreatePresignedUrlRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StorageServer).CreatePresignedUrl(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Storage_CreatePresignedUrl_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StorageServer).CreatePresignedUrl(ctx, req.(*StorageCreatePresignedUrlRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Storage_ServiceDesc is the grpc.ServiceDesc for Storage service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Storage_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "lender.Storage",
+	HandlerType: (*StorageServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreatePresignedUrl",
+			Handler:    _Storage_CreatePresignedUrl_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

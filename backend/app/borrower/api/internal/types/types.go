@@ -17,20 +17,20 @@ type ApplicantEntry struct {
 	MidName          string        `json:"mid_name,omitempty, optional"`
 	LastName         string        `json:"last_name,omitempty, optional"`
 	FullName         string        `json:"full_name,omitempty, optional"`
-	BorrowerID       int64         `json:"borrower_id,omitempty, optional"`
-	LoanID           int64         `json:"loan_id,omitempty, optional"`
+	BorrowerId       int64         `json:"borrower_id,omitempty, optional"`
+	LoanId           int64         `json:"loan_id,omitempty, optional"`
 	IsPrimary        bool          `json:"is_primary,omitempty, optional"`
 	Type             string        `json:"type,omitempty, optional"`
 	InvitationStatus string        `json:"invitation_status,omitempty, optional"`
 	LoanPropertyId   int64         `json:"loan_property_id,omitempty"`
-	SSN              string        `json:"ssn,omitempty, optional"`
-	DOB              string        `json:"dob,omitempty, optional"`
+	Ssn              string        `json:"ssn,omitempty, optional"`
+	Dob              string        `json:"dob,omitempty, optional"`
 	MaritalStatus    string        `json:"marital_status,omitempty, optional"`
 	Email            string        `json:"email,omitempty, optional"`
 	EstCreditScore   int32         `json:"est_credit_score,omitempty, optional"`
 	DriverLicenseNum string        `json:"driver_license_num,omitempty, optional"`
 	Address          *AddressEntry `json:"address,omitempty, optional"`
-	LoanBorrowerID   int64         `json:"loan_borrower_id,omitempty, optional"`
+	LoanBorrowerId   int64         `json:"loan_borrower_id,omitempty, optional"`
 	Phone            string        `json:"phone,omitempty, optional"`
 }
 
@@ -40,22 +40,13 @@ type EmptyRequest struct {
 type EmptyResponse struct {
 }
 
-type FileEditEntry struct {
-	Id       int64  `json:"id,optional"`
-	FileType string `json:"file_type,optional" validate:"required,oneof=Identification Income Property Assets Credit Miscellaneous InternalDocument"`
-	BizType  string `json:"biz_type,optional"`
-	RefId    int64  `json:"ref_id,optional"`
-	File     string `json:"file,optional" validate:"required,url"`
-}
-
 type FileEntry struct {
-	Id        int64  `json:"id,optional"`
-	FileType  string `json:"file_type,optional"`
-	BizType   string `json:"biz_type,optional"`
-	RefId     int64  `json:"ref_id,optional"`
-	File      string `json:"file,optional"`
-	CreatedAt string `json:"created_at,optional"`
-	UpdatedAt string `json:"updated_at,optional"`
+	Id         int64  `json:"id"`
+	EntityType string `json:"entity_type"`
+	EntityId   int64  `json:"entity_id"`
+	FileUrl    string `json:"file_url"`
+	CreatedAt  string `json:"created_at"`
+	UpdatedAt  string `json:"updated_at"`
 }
 
 type ImportLoanApplicantEntry struct {
@@ -222,6 +213,19 @@ type LoanDemographicRaceEntry struct {
 	AmericanIndianOrAlaskaNativeName string   `json:"american_indian_or_alaska_native_name,optional"`
 }
 
+type LoanDocumentEntry struct {
+	Id             int64       `json:"id"`
+	LoanId         int64       `json:"loan_id"`
+	Category       string      `json:"category"`
+	FileType       string      `json:"file_type"`
+	Status         string      `json:"status"`
+	LastUploadedAt string      `json:"last_uploaded_at"`
+	Comment        string      `json:"comment"`
+	CreatedAt      string      `json:"created_at"`
+	UpdatedAt      string      `json:"updated_at"`
+	Files          []FileEntry `json:"files"`
+}
+
 type LoanEditApplicantEntry struct {
 	Id        int64  `json:"id,optional"`
 	FirstName string `json:"first_name" validate:"required,min=1,max=30"`
@@ -294,7 +298,7 @@ type LoanEntry struct {
 	ExtensionDate            string                   `json:"extension_date,optional"`
 	LoanProcessor            string                   `json:"loan_processor"`
 	Extend                   *ImportLoanExtendEntry   `json:"extend"`
-	Documents                []*FileEntry             `json:"documents"`
+	LoanDocuments            []*LoanDocumentEntry     `json:"loan_documents"`
 }
 
 type LoanExperienceEntry struct {

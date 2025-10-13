@@ -11,6 +11,10 @@ type LoanDetailResponse struct {
 	LoanEntry
 }
 
+type LoanDocumentOptResponse struct {
+	Options []LoanDocumentOptEntry `json:"options"`
+}
+
 type LoanPageRequest struct {
 	Page   int64          `json:"page,optional"`
 	Limit  int64          `json:"limit,optional"`
@@ -28,6 +32,8 @@ type LoanPageResponse struct {
 
 type LoanUpdateRequest struct {
 	Id                       int64                       `path:"id,optional"`
+	Stage                    string                      `json:"stage" validate:"required,oneof=Pending Active Archived Rejected"`
+	PendingStatus            string                      `json:"pending_status,optional" validate:"required_if=Stage Pending,omitempty,oneof=Quoting Processing Underwriting Closing"`
 	LoanType                 string                      `json:"loan_type,optional" validate:"required,oneof=Bridge Rehab Rental 'Ground up construction'"`
 	LoanPurpose              string                      `json:"loan_purpose,optional" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
 	TotalAmount              float64                     `json:"total_amount,optional" validate:"required,gt=0"`
@@ -35,6 +41,7 @@ type LoanUpdateRequest struct {
 	LoanProperty             *LoanApplyPropertyEntry     `json:"loan_property,optional"`
 	HoldbackAmount           float64                     `json:"holdback_amount,optional" validate:"ltefield=TotalAmount"`
 	PrincipalAmount          float64                     `json:"principal_amount,optional" validate:"required_unless=LoanPurpose Purchase,omitempty,gte=0"`
+	MaturityDate             string                      `json:"maturity_date, optional"`
 	PrepaymentPenalty        int32                       `json:"prepayment_penalty,optional" validate:"required_if=LoanType Rental,omitempty,gte=0"`
 	BusinessStrategy         []string                    `json:"business_strategy,optional" validate:"required,dive,required,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
 	Applicants               []*LoanUpdateApplicantEntry `json:"applicants,optional" validate:"required,gt=0,lte=2"`
@@ -67,9 +74,25 @@ type LoanUpdateRequest struct {
 	LoanThirdServices        []*LoanThirdServiceEntry    `json:"loan_third_services,optional"`
 	LoanBorrower             *LoanBorrowerEntry          `json:"loan_borrower,optional" validate:"required"`
 	LoanDemographic          *LoanDemographicEntry       `json:"loan_demographic,optional" validate:"required"`
-	ApplyFormFile            string                      `json:"apply_form_file,optional" validate:"required"`
 }
 
 type LoanUpdateResponse struct {
 	Id int64 `json:"id"`
+}
+
+type ReviewLoanPendingStatusRequest struct {
+	Id                   int64  `path:"id" validate:"required,gt=0"`
+	Action               string `json:"action" validate:"required,oneof=Approve Reject"`
+	Comment              string `json:"comment, optional" validate:"required_if=Action Reject"`
+	CurrentPendingStatus string `json:"current_pending_status" validate:"required,oneof=Quoting Processing Underwriting Closing"`
+}
+
+type UpdateLoanPendingStatusRequest struct {
+	Id            int64  `path:"id" validate:"required,gt=0"`
+	PendingStatus string `json:"pending_status" validate:"required,oneof=Quoting Processing Underwriting Closing"`
+}
+
+type UpdateLoanStageRequest struct {
+	Id    int64  `path:"id" validate:"required,gt=0"`
+	Stage string `json:"stage" validate:"required,oneof=Pending Active Archived Rejected"`
 }

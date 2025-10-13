@@ -4,16 +4,16 @@ import (
 	"zeebee-backend/common/types"
 )
 
-type Lender struct {
+type LenderCompany struct {
 	Base
 
 	Name    string        `gorm:"column:name;size:100;not null;default:''" json:"name"`
 	Address types.Address `gorm:"column:address;type:jsonb;serializer:json" json:"address"`
 	Status  string        `gorm:"column:status;size:10;not null;default:'active'" json:"status"`
 
-	Loans []Loan `json:"loans" gorm:"foreignKey:LenderId;references:Id"`
+	Loans []Loan `json:"loans" gorm:"foreignKey:LenderCompanyId;references:Id"`
 }
 
-func (m *Lender) TableName() string {
-	return "lenders"
+func (m *LenderCompany) TableName() string {
+	return "lender_companies"
 }
