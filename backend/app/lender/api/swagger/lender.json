@@ -593,6 +593,7 @@
                             "file_type",
                             "status",
                             "comment",
+                            "last_uploaded_at",
                             "created_at",
                             "updated_at",
                             "files"
@@ -646,6 +647,9 @@
                             },
                             "id": {
                               "type": "integer"
+                            },
+                            "last_uploaded_at": {
+                              "type": "string"
                             },
                             "loan_id": {
                               "type": "integer"
@@ -1348,6 +1352,7 @@
                       "file_type",
                       "status",
                       "comment",
+                      "last_uploaded_at",
                       "created_at",
                       "updated_at",
                       "files"
@@ -1401,6 +1406,9 @@
                       },
                       "id": {
                         "type": "integer"
+                      },
+                      "last_uploaded_at": {
+                        "type": "string"
                       },
                       "loan_id": {
                         "type": "integer"
@@ -2600,7 +2608,31 @@
           "200": {
             "description": "",
             "schema": {
-              "type": "object"
+              "type": "object",
+              "properties": {
+                "loan_documents": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "category",
+                      "file_type"
+                    ],
+                    "properties": {
+                      "category": {
+                        "type": "string"
+                      },
+                      "file_type": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -3338,7 +3370,7 @@
       }
     }
   },
-  "x-date": "2025-10-11 13:23:15",
+  "x-date": "2025-10-13 09:47:34",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

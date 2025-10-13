@@ -498,17 +498,17 @@ message LoanDocumentOptsRequestData {
 }
 
 message LoanDocumentOptsResponse {
-  LoanDocumentOptsResponseData data = 1;
+  repeated LoanDocumentOptEntry data = 1;
 }
-message LoanDocumentOptsResponseData {
-  message Opt {
-    int64 id = 1;
-    string category = 2;
-    string file_type = 3;
-  }
-
-  repeated Opt opts = 1;
-}
+//message LoanDocumentOptsResponseData {
+//  message Opt {
+//    int64 id = 1;
+//    string category = 2;
+//    string file_type = 3;
+//  }
+//
+//  repeated Opt opts = 1;
+//}
 
 service Loan {
   rpc LoanDetail(LoanDetailRequest) returns(LoanDetailResponse);
@@ -535,6 +535,12 @@ message LoanDocumentEntry {
   string updated_at = 8;
   repeated FileEntry files = 9;
   string LastUploadedAt = 10;
+}
+
+message LoanDocumentOptEntry {
+  int64 id = 1;
+  string file_type = 2;
+  string category = 3;
 }
 
 // update loan document comment
@@ -594,6 +600,19 @@ message LoanDocumentCreateExtendTypeRequestData {
   int64 lender_employee_id = 3;
   repeated string file_types = 4;
 }
+
+message LoanDocumentCreateExtendTypeResponse {
+  repeated LoanDocumentOptEntry  data = 1;
+}
+//message LoanDocumentCreateExtendTypeResponseData {
+//  message ExtendType {
+//    int64 id = 1;
+//    string file_type = 2;
+//    string category = 3;
+//  }
+//  repeated ExtendType extend_types = 1;
+//}
+
 // upload loan document files
 message LoanDocumentAddFilesRequest {
   LoanDocumentAddFilesRequestData data = 1;
@@ -607,7 +626,7 @@ message LoanDocumentAddFilesRequestData {
 
 
 service LoanDocument {
-  rpc Create(LoanDocumentCreateExtendTypeRequest) returns(EmptyResponse);
+  rpc Create(LoanDocumentCreateExtendTypeRequest) returns(LoanDocumentCreateExtendTypeResponse);
   rpc SendRequests(LoanDocumentSendRequestsRequest) returns(EmptyResponse);
   rpc DeleteFile(LoanDocumentDeleteFileRequest) returns(EmptyResponse);
   rpc DeleteRequest(LoanDocumentDeleteRequestRequest) returns(EmptyResponse);

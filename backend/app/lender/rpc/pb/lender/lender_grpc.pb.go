@@ -871,7 +871,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type LoanDocumentClient interface {
-	Create(ctx context.Context, in *LoanDocumentCreateExtendTypeRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	Create(ctx context.Context, in *LoanDocumentCreateExtendTypeRequest, opts ...grpc.CallOption) (*LoanDocumentCreateExtendTypeResponse, error)
 	SendRequests(ctx context.Context, in *LoanDocumentSendRequestsRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	DeleteFile(ctx context.Context, in *LoanDocumentDeleteFileRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	DeleteRequest(ctx context.Context, in *LoanDocumentDeleteRequestRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
@@ -887,9 +887,9 @@ func NewLoanDocumentClient(cc grpc.ClientConnInterface) LoanDocumentClient {
 	return &loanDocumentClient{cc}
 }
 
-func (c *loanDocumentClient) Create(ctx context.Context, in *LoanDocumentCreateExtendTypeRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+func (c *loanDocumentClient) Create(ctx context.Context, in *LoanDocumentCreateExtendTypeRequest, opts ...grpc.CallOption) (*LoanDocumentCreateExtendTypeResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(EmptyResponse)
+	out := new(LoanDocumentCreateExtendTypeResponse)
 	err := c.cc.Invoke(ctx, LoanDocument_Create_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -951,7 +951,7 @@ func (c *loanDocumentClient) AddFiles(ctx context.Context, in *LoanDocumentAddFi
 // All implementations must embed UnimplementedLoanDocumentServer
 // for forward compatibility.
 type LoanDocumentServer interface {
-	Create(context.Context, *LoanDocumentCreateExtendTypeRequest) (*EmptyResponse, error)
+	Create(context.Context, *LoanDocumentCreateExtendTypeRequest) (*LoanDocumentCreateExtendTypeResponse, error)
 	SendRequests(context.Context, *LoanDocumentSendRequestsRequest) (*EmptyResponse, error)
 	DeleteFile(context.Context, *LoanDocumentDeleteFileRequest) (*EmptyResponse, error)
 	DeleteRequest(context.Context, *LoanDocumentDeleteRequestRequest) (*EmptyResponse, error)
@@ -967,7 +967,7 @@ type LoanDocumentServer interface {
 // pointer dereference when methods are called.
 type UnimplementedLoanDocumentServer struct{}
 
-func (UnimplementedLoanDocumentServer) Create(context.Context, *LoanDocumentCreateExtendTypeRequest) (*EmptyResponse, error) {
+func (UnimplementedLoanDocumentServer) Create(context.Context, *LoanDocumentCreateExtendTypeRequest) (*LoanDocumentCreateExtendTypeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
 func (UnimplementedLoanDocumentServer) SendRequests(context.Context, *LoanDocumentSendRequestsRequest) (*EmptyResponse, error) {

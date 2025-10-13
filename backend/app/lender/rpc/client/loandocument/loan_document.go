@@ -38,16 +38,16 @@ type (
 	LoanDocumentAddFilesRequestData         = lender.LoanDocumentAddFilesRequestData
 	LoanDocumentCreateExtendTypeRequest     = lender.LoanDocumentCreateExtendTypeRequest
 	LoanDocumentCreateExtendTypeRequestData = lender.LoanDocumentCreateExtendTypeRequestData
+	LoanDocumentCreateExtendTypeResponse    = lender.LoanDocumentCreateExtendTypeResponse
 	LoanDocumentDeleteFileRequest           = lender.LoanDocumentDeleteFileRequest
 	LoanDocumentDeleteFileRequestData       = lender.LoanDocumentDeleteFileRequestData
 	LoanDocumentDeleteRequestRequest        = lender.LoanDocumentDeleteRequestRequest
 	LoanDocumentDeleteRequestRequestData    = lender.LoanDocumentDeleteRequestRequestData
 	LoanDocumentEntry                       = lender.LoanDocumentEntry
+	LoanDocumentOptEntry                    = lender.LoanDocumentOptEntry
 	LoanDocumentOptsRequest                 = lender.LoanDocumentOptsRequest
 	LoanDocumentOptsRequestData             = lender.LoanDocumentOptsRequestData
 	LoanDocumentOptsResponse                = lender.LoanDocumentOptsResponse
-	LoanDocumentOptsResponseData            = lender.LoanDocumentOptsResponseData
-	LoanDocumentOptsResponseData_Opt        = lender.LoanDocumentOptsResponseData_Opt
 	LoanDocumentSendRequestsRequest         = lender.LoanDocumentSendRequestsRequest
 	LoanDocumentSendRequestsRequestData     = lender.LoanDocumentSendRequestsRequestData
 	LoanDocumentUpdateCommentRequest        = lender.LoanDocumentUpdateCommentRequest
@@ -113,7 +113,7 @@ type (
 	UserinfoResponseData                    = lender.UserinfoResponseData
 
 	LoanDocument interface {
-		Create(ctx context.Context, in *LoanDocumentCreateExtendTypeRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+		Create(ctx context.Context, in *LoanDocumentCreateExtendTypeRequest, opts ...grpc.CallOption) (*LoanDocumentCreateExtendTypeResponse, error)
 		SendRequests(ctx context.Context, in *LoanDocumentSendRequestsRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		DeleteFile(ctx context.Context, in *LoanDocumentDeleteFileRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		DeleteRequest(ctx context.Context, in *LoanDocumentDeleteRequestRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
@@ -132,7 +132,7 @@ func NewLoanDocument(cli zrpc.Client) LoanDocument {
 	}
 }
 
-func (m *defaultLoanDocument) Create(ctx context.Context, in *LoanDocumentCreateExtendTypeRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+func (m *defaultLoanDocument) Create(ctx context.Context, in *LoanDocumentCreateExtendTypeRequest, opts ...grpc.CallOption) (*LoanDocumentCreateExtendTypeResponse, error) {
 	client := lender.NewLoanDocumentClient(m.cli.Conn())
 	return client.Create(ctx, in, opts...)
 }

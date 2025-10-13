@@ -29,13 +29,15 @@ func NewCreateLoanDocumentLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	}
 }
 
-func (l *CreateLoanDocumentLogic) CreateLoanDocument(req *types.LoanDocumentCreateRequest) (resp *types.EmptyResponse, err error) {
+func (l *CreateLoanDocumentLogic) CreateLoanDocument(req *types.LoanDocumentCreateRequest) (resp *types.LoanDocumentCreateResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-
+	resp = &types.LoanDocumentCreateResponse{
+		LoanDocuments: []*types.LoanDocumentOptEntry{},
+	}
 	rpcReq := &lender.LoanDocumentCreateExtendTypeRequest{
 		Data: &lender.LoanDocumentCreateExtendTypeRequestData{},
 	}
@@ -57,10 +59,19 @@ func (l *CreateLoanDocumentLogic) CreateLoanDocument(req *types.LoanDocumentCrea
 	}
 
 	// Call RPC method
-	_, err = l.svcCtx.LoanDocumentRpcClient.Create(l.ctx, rpcReq)
+	rpcResp, err := l.svcCtx.LoanDocumentRpcClient.Create(l.ctx, rpcReq)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 
-	return &types.EmptyResponse{}, nil
+	err = copier.CopyWithOption(&resp.LoanDocuments, rpcResp.Data, copier.Option{
+		IgnoreEmpty:   false,
+		DeepCopy:      true,
+		CaseSensitive: true,
+	})
+	if err != nil {
+		return nil, errorx.GetFailedTransErr(err)
+	}
+
+	return resp, nil
 }
