@@ -13,6 +13,7 @@ import (
 	fileServer "zeebee-backend/app/lender/rpc/internal/server/file"
 	loanServer "zeebee-backend/app/lender/rpc/internal/server/loan"
 	loanDocumentServer "zeebee-backend/app/lender/rpc/internal/server/loandocument"
+	storageServer "zeebee-backend/app/lender/rpc/internal/server/storage"
 	userServer "zeebee-backend/app/lender/rpc/internal/server/user"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
@@ -34,6 +35,7 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 	rpcServer := zrpc.MustNewServer(rpcConfig.RpcServerConf, func(grpcServer *grpc.Server) {
 		lender.RegisterUserServer(grpcServer, userServer.NewUserServer(ctx))
 		lender.RegisterCommonServer(grpcServer, commonServer.NewCommonServer(ctx))
+		lender.RegisterStorageServer(grpcServer, storageServer.NewStorageServer(ctx))
 		lender.RegisterLoanServer(grpcServer, loanServer.NewLoanServer(ctx))
 		lender.RegisterFileServer(grpcServer, fileServer.NewFileServer(ctx))
 		lender.RegisterLoanDocumentServer(grpcServer, loanDocumentServer.NewLoanDocumentServer(ctx))
