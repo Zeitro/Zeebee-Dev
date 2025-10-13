@@ -6,17 +6,17 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
 
-	"zeebee-backend/app/borrower/api/internal/logic/loan"
-	"zeebee-backend/app/borrower/api/internal/svc"
-	"zeebee-backend/app/borrower/api/internal/types"
+	"zeebee-backend/app/lender/api/internal/logic/loan"
+	"zeebee-backend/app/lender/api/internal/svc"
+	"zeebee-backend/app/lender/api/internal/types"
 
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/response"
 	"zeebee-backend/common/validator"
 )
 
-// update documents
-func UpdateDocumentsHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+// loan documents opts
+func LoanDocumentsOptsHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer func() {
@@ -26,7 +26,7 @@ func UpdateDocumentsHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 					Error(err)
 			}
 		}()
-		var req types.UpdateDocumentsRequest
+		var req types.PathIdRequest
 		if err = httpx.Parse(r, &req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
@@ -42,8 +42,8 @@ func UpdateDocumentsHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := loan.NewUpdateDocumentsLogic(r.Context(), svcCtx)
-		resp, err := l.UpdateDocuments(&req)
+		l := loan.NewLoanDocumentsOptsLogic(r.Context(), svcCtx)
+		resp, err := l.LoanDocumentsOpts(&req)
 		if err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 		} else {

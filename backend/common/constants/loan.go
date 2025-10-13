@@ -26,7 +26,7 @@ const (
 	LoanPendingStatusNone         LoanPendingStatus = "None"
 	LoanPendingStatusQuoting      LoanPendingStatus = "Quoting"
 	LoanPendingStatusProcessing   LoanPendingStatus = "Processing"
-	LoanPendingStatusUnderWriting LoanPendingStatus = "UnderWriting"
+	LoanPendingStatusUnderWriting LoanPendingStatus = "Underwriting"
 	LoanPendingStatusClosing      LoanPendingStatus = "Closing"
 )
 
