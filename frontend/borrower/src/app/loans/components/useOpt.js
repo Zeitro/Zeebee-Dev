@@ -5,11 +5,14 @@ import { message, Modal } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { assemblyAddress } from '@/lib/format';
 import { useRouter } from 'next/navigation';
+import { useGlobalStore } from '@/store/global';
 export default function useOpt(tableFilterRef) {
 	const [modal, contextHolder] = Modal.useModal();
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const { request } = createRequest();
 	const router = useRouter();
+	const { changeSidebarCollapsed } = useGlobalStore();
+
 	const handleDelete = async (id) => {
 		try {
 			setConfirmLoading(true);
@@ -60,6 +63,7 @@ export default function useOpt(tableFilterRef) {
 			url = `/loans/zeeBeeDetails?id=${record?.id}`;
 		}
 		router.push(url);
+		changeSidebarCollapsed(true);
 	};
 	return { showDeleteModal, contextHolder, handleSelectedRow };
 }
