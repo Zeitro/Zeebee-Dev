@@ -63,7 +63,7 @@ export default function useOpt(tableFilterRef) {
 			url = `/loans/zeeBeeDetails?id=${record?.id}`;
 		}
 		router.push(url);
-		changeSidebarCollapsed(true);
+		setTimeout(() => changeSidebarCollapsed(true), 300);
 	};
 	return { showDeleteModal, contextHolder, handleSelectedRow };
 }
