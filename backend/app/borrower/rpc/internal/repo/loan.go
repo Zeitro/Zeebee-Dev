@@ -31,11 +31,20 @@ func (repo *LoanRepo) GetBorrowerLoan(ctx context.Context, id int64, borrowerId 
 		Preload("LoanProperty").
 		Preload("LoanProperty.PropertyBase").
 		Preload("LoanBorrower").
-		Preload("LoanExperiences").
-		Preload("LoanThirdServices").
+		Preload("LoanExperiences", func(db *gorm.DB) *gorm.DB {
+			return db.Order("loan_experiences.id asc")
+		}).
+		Preload("LoanThirdServices", func(db *gorm.DB) *gorm.DB {
+			return db.Order("loan_third_services.id asc")
+		}).
 		Preload("LoanDemographic").
 		// Preload("ApplyFormFile").
-		Preload("LoanDocuments.Files").
+		Preload("LoanDocuments", func(db *gorm.DB) *gorm.DB {
+			return db.Order("loan_documents.id asc")
+		}).
+		Preload("LoanDocuments.Files", func(db *gorm.DB) *gorm.DB {
+			return db.Order("files.id asc")
+		}).
 		First(&result).Error
 	return result, errors.WithStack(err)
 }
@@ -47,11 +56,22 @@ func (repo *LoanRepo) GetBorrowerLoanWithTx(ctx context.Context, tx *gorm.DB, id
 		Preload("LoanProperty").
 		Preload("LoanProperty.PropertyBase").
 		Preload("LoanBorrower").
-		Preload("LoanExperiences").
-		Preload("LoanThirdServices").
-		Preload("LoanDemographic").
+		Preload("LoanExperiences", func(db *gorm.DB) *gorm.DB {
+			return db.Order("loan_experiences.id asc")
+		}).
+		Preload("LoanThirdServices", func(db *gorm.DB) *gorm.DB {
+			return db.Order("loan_third_services.id asc")
+		}).
+		Preload("LoanDemographic", func(db *gorm.DB) *gorm.DB {
+			return db.Order("loan_demographic.id asc")
+		}).
 		// Preload("ApplyFormFile").
-		Preload("LoanDocuments.Files").
+		Preload("LoanDocuments", func(db *gorm.DB) *gorm.DB {
+			return db.Order("loan_documents.id asc")
+		}).
+		Preload("LoanDocuments.Files", func(db *gorm.DB) *gorm.DB {
+			return db.Order("files.id asc")
+		}).
 		First(&result).Error
 	return result, errors.WithStack(err)
 }
