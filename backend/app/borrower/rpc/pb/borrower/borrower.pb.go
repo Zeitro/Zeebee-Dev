@@ -6592,18 +6592,19 @@ func (x *BorrowerNamesResponse) GetData() []string {
 
 // ===================== loan document service ======================
 type LoanDocumentEntry struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	LoanId        int64                  `protobuf:"varint,2,opt,name=loan_id,json=loanId,proto3" json:"loan_id,omitempty"`
-	Category      string                 `protobuf:"bytes,3,opt,name=category,proto3" json:"category,omitempty"`
-	FileType      string                 `protobuf:"bytes,4,opt,name=file_type,json=fileType,proto3" json:"file_type,omitempty"`
-	Comment       string                 `protobuf:"bytes,5,opt,name=comment,proto3" json:"comment,omitempty"`
-	Status        string                 `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
-	CreatedAt     string                 `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt     string                 `protobuf:"bytes,8,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	Files         []*FileEntry           `protobuf:"bytes,9,rep,name=files,proto3" json:"files,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	LoanId         int64                  `protobuf:"varint,2,opt,name=loan_id,json=loanId,proto3" json:"loan_id,omitempty"`
+	Category       string                 `protobuf:"bytes,3,opt,name=category,proto3" json:"category,omitempty"`
+	FileType       string                 `protobuf:"bytes,4,opt,name=file_type,json=fileType,proto3" json:"file_type,omitempty"`
+	Comment        string                 `protobuf:"bytes,5,opt,name=comment,proto3" json:"comment,omitempty"`
+	Status         string                 `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
+	CreatedAt      string                 `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt      string                 `protobuf:"bytes,8,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Files          []*FileEntry           `protobuf:"bytes,9,rep,name=files,proto3" json:"files,omitempty"`
+	LastUploadedAt string                 `protobuf:"bytes,10,opt,name=LastUploadedAt,proto3" json:"LastUploadedAt,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *LoanDocumentEntry) Reset() {
@@ -6697,6 +6698,13 @@ func (x *LoanDocumentEntry) GetFiles() []*FileEntry {
 		return x.Files
 	}
 	return nil
+}
+
+func (x *LoanDocumentEntry) GetLastUploadedAt() string {
+	if x != nil {
+		return x.LastUploadedAt
+	}
+	return ""
 }
 
 // upload loan document files
@@ -8592,7 +8600,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\vborrower_id\x18\x01 \x01(\x03R\n" +
 	"borrowerId\"+\n" +
 	"\x15BorrowerNamesResponse\x12\x12\n" +
-	"\x04data\x18\x01 \x03(\tR\x04data\"\x90\x02\n" +
+	"\x04data\x18\x01 \x03(\tR\x04data\"\xb8\x02\n" +
 	"\x11LoanDocumentEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
 	"\aloan_id\x18\x02 \x01(\x03R\x06loanId\x12\x1a\n" +
@@ -8604,7 +8612,9 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"created_at\x18\a \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
 	"updated_at\x18\b \x01(\tR\tupdatedAt\x12)\n" +
-	"\x05files\x18\t \x03(\v2\x13.borrower.FileEntryR\x05files\"\\\n" +
+	"\x05files\x18\t \x03(\v2\x13.borrower.FileEntryR\x05files\x12&\n" +
+	"\x0eLastUploadedAt\x18\n" +
+	" \x01(\tR\x0eLastUploadedAt\"\\\n" +
 	"\x1bLoanDocumentAddFilesRequest\x12=\n" +
 	"\x04data\x18\x01 \x01(\v2).borrower.LoanDocumentAddFilesRequestDataR\x04data\"o\n" +
 	"\x1fLoanDocumentAddFilesRequestData\x12\x0e\n" +
