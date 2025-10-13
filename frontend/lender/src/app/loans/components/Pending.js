@@ -22,8 +22,7 @@ const PendingPage = ({
 	stage = 'Pending', // 默认是pending，可传草稿draft(因草稿展示和pending loans的一致，只有表格操作栏不同，所以需要区分)
 }) => {
 	const tableFilterRef = useRef();
-	const { loanPendingStatus, loanPurposeOptions, loanTypeOptions, lenderOptions } =
-		useOptionsStore();
+	const { loanPendingStatus, loanPurposeOptions, loanTypeOptions } = useOptionsStore();
 	const { showDeleteModal, contextHolder, handleSelectedRow } = useOpt(tableFilterRef);
 	const { request } = createRequest();
 	const [type, setType] = useState('address');
@@ -137,7 +136,6 @@ const PendingPage = ({
 			loanPurposeOptions,
 			loanTypeOptions,
 			loanPendingStatus,
-			lenderOptions,
 		],
 	);
 
