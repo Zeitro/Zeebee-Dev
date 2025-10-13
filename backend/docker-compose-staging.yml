@@ -17,7 +17,7 @@ services:
         awslogs-stream: backend-${HOSTNAME}
 
   staging-lender-backend:
-    image: staging-borrower-backend:${IMAGE_TAG:-latest}
+    image: staging-lender-backend:${IMAGE_TAG:-latest}
     build:
       context: .
       dockerfile: Dockerfile-lender-staging
