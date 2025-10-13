@@ -51,14 +51,19 @@ func (l *CreateLogic) Create(in *lender.LoanDocumentCreateExtendTypeRequest) (re
 
 	err = l.svcCtx.LoanDocumentRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
 		var innerErr error
+		category := constants.LoanDocumentCategory(in.Data.Category)
+		status := constants.LoanDocumentStatusPendingRequested
+		if category == constants.LoanDocumentCategoryLenderClosingExtend {
+			status = constants.LoanDocumentStatusPendingUpload
+		}
 		fileTypes := slice.Unique(in.Data.FileTypes)
 		loanDocuments := slice.FlatMap[string, *model.LoanDocument](fileTypes, func(_ int, fileType string) []*model.LoanDocument {
 			return []*model.LoanDocument{
 				{
 					LoanId:   in.Data.LoanId,
-					Category: constants.LoanDocumentCategoryExtend,
+					Category: category,
 					FileType: constants.LoanDocumentFileType(fileType),
-					Status:   constants.LoanDocumentStatusPendingRequested,
+					Status:   status,
 				},
 			}
 		})
@@ -116,6 +121,14 @@ func (l *CreateLogic) Create(in *lender.LoanDocumentCreateExtendTypeRequest) (re
 }
 
 func (l *CreateLogic) prepare(in *lender.LoanDocumentCreateExtendTypeRequest) (loan *model.Loan, err error) {
+
+	category := constants.LoanDocumentCategory(in.Data.Category)
+	if !slice.Contain([]constants.LoanDocumentCategory{
+		constants.LoanDocumentCategoryExtend,
+		constants.LoanDocumentCategoryLenderClosingExtend,
+	}, category) {
+		return nil, errors.WithStack(errors.New("loan document category not supported"))
+	}
 
 	loan, err = l.baseLogic.GetLenderLoan(in.Data.LoanId, in.Data.LenderCompanyId, nil)
 	if err != nil {

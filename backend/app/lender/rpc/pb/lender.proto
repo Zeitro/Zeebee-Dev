@@ -599,6 +599,7 @@ message LoanDocumentCreateExtendTypeRequestData {
   int64 lender_company_id = 2;
   int64 lender_employee_id = 3;
   repeated string file_types = 4;
+  string category = 5;
 }
 
 message LoanDocumentCreateExtendTypeResponse {
