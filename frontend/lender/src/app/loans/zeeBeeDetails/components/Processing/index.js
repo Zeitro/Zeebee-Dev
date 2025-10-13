@@ -87,7 +87,11 @@ const Processing = ({
 				<p className="text-xl font-medium text-black-dark pb-6">Document</p>
 				{!isHide && (
 					<div className="flex justify-between items-center">
-						<AddDocument disabled={disabledOperate} loan_id={loan_id} />
+						<AddDocument
+							disabled={disabledOperate}
+							loan_id={loan_id}
+							category="Extend"
+						/>
 						<SendRequestBtn
 							list={
 								borrowerList.filter((item) => item.status === 'Pending request') ||

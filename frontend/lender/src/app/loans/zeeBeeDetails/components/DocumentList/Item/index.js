@@ -53,7 +53,7 @@ const DocumentItem = ({ columns, item, isHide }) => {
 		<Collapse
 			size="default"
 			collapsible="header"
-			className={[styles.collapse, '!rounded-md'].join(' ')}
+			className={[styles.collapse, '!rounded-md overflow-hidden'].join(' ')}
 			items={[
 				{
 					classNames: {
