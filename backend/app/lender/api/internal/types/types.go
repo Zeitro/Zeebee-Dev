@@ -161,7 +161,7 @@ type LoanDocumentOptEntry struct {
 
 type LoanDocumentSendRequestEntry struct {
 	Id      int64  `json:"id"`
-	Comment string `json:"comment"`
+	Comment string `json:"comment,optional"`
 }
 
 type LoanEntry struct {
