@@ -324,6 +324,7 @@ message LoanEntry {
   //  repeated FileEntry documents = 65;
   repeated LoanDocumentEntry loan_documents = 65;
   string code = 66;
+  int64 RequestedLoanDocumentCount = 67;
 
 }
 
