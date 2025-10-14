@@ -80,16 +80,6 @@ func (l *AddFilesLogic) AddFiles(in *borrower.LoanDocumentAddFilesRequest) (resp
 			"last_uploaded_at": time.Now(),
 		})
 
-		// convert files
-		// operationFiles := make([]*types.OperationFile, 0, len(files))
-		// innerErr = copier.CopyWithOption(&operationFiles, files, copier.Option{
-		// 	DeepCopy:      true,
-		// 	CaseSensitive: true,
-		// })
-		// if innerErr != nil {
-		// 	return errorx.GetFailedTransErr(innerErr)
-		// }
-
 		return innerErr
 	})
 
@@ -130,8 +120,8 @@ func (l *AddFilesLogic) prepare(in *borrower.LoanDocumentAddFilesRequest) (loan 
 		return nil, nil, errors.WithStack(errors.New("loan document category not supported"))
 	}
 
-	if loanDocument.Status != constants.LoanDocumentStatusRequested {
-		return nil, nil, errors.WithStack(errors.New("loan document is not in requested status"))
+	if loanDocument.Status != constants.LoanDocumentStatusRequested && loanDocument.Status != constants.LoanDocumentStatusReadyForReview {
+		return nil, nil, errors.WithStack(errors.New("loan document is not in requested or ready for view status"))
 	}
 
 	if loan.Stage != constants.LoanStagePending {
