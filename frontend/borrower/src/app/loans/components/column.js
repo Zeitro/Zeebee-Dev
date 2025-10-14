@@ -118,7 +118,14 @@ export const pendingColumns = (isNotAddress, successCallback, showDeleteModal, s
 		align: 'center',
 		fixed: 'right',
 		render: (v, record) => (
-			<LoanPendingStatus data={record} successCallback={successCallback} />
+			<LoanPendingStatus
+				data={record}
+				successCallback={successCallback}
+				disabled={record?.source !== 'borrower'}
+				tooltipProps={{
+					title: 'Zeebee-connected loans are managed automatically and cannot be edited manually by users.',
+				}}
+			/>
 		),
 	};
 	return [
