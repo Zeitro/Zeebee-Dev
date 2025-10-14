@@ -21,10 +21,10 @@ const colorInfo = {
 		color: '#52C41A',
 	},
 };
-const DocumentStatus = ({ status = 'Pending request' }) => {
+const DocumentStatus = ({ status = 'Pending request', alias }) => {
 	return (
 		<div style={{ ...colorInfo?.[status], borderRadius: 2 }} className="px-2 w-min">
-			{status}
+			{alias ?? status}
 		</div>
 	);
 };

@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import DocumentList from '../DocumentList';
 import { borrowerUploadColumns, lenderUploadColumns } from '../documentColumns';
 import { message } from 'antd';
@@ -25,6 +25,10 @@ const Processing = ({
 	const [lenderList, setLenderList] = useState([]);
 	const [deleteLoading, setDeleteLoading] = useState(false);
 	const { request } = createRequest();
+	const sendList = useMemo(
+		() => borrowerList.filter((item) => item.status === 'Pending request') || [],
+		[borrowerList],
+	);
 
 	useEffect(() => {
 		if (rowData?.loan_documents?.length) {
@@ -88,18 +92,11 @@ const Processing = ({
 				{!isHide && (
 					<div className="flex justify-between items-center">
 						<AddDocument
-							disabled={disabledOperate}
+							// disabled={disabledOperate}
 							loan_id={loan_id}
 							category="Extend"
 						/>
-						<SendRequestBtn
-							list={
-								borrowerList.filter((item) => item.status === 'Pending request') ||
-								[]
-							}
-							size="middle"
-							disabled={disabledOperate}
-						>
+						<SendRequestBtn list={sendList} size="middle" disabled={!sendList.length}>
 							Send multiple request
 						</SendRequestBtn>
 					</div>

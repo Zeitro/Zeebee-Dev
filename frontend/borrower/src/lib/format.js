@@ -88,7 +88,7 @@ export const formatPhone = (phoneNumber) => {
 
 // 格式化金额，千分位加逗号，可最多保留2位小数
 export function formatAmount(amount) {
-	if (!amount) return '$ 0';
+	if (!amount) return '$ --';
 	if (typeof amount === 'string') {
 		amount = Number(amount);
 	}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Collapse, List, Space } from 'antd';
 import {
 	DeleteOutlined,
@@ -13,9 +13,14 @@ import { DeleteBtn } from '@/components/NewModal/BtnPopUpModal';
 import { createRequest } from '@/lib/fetch';
 import eventBus from '@/lib/bus';
 const DocumentItem = ({ columns, item, isHide }) => {
-	const [expanded, setExpanded] = useState(false);
+	const [activeKey, setActiveKey] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const { request } = createRequest();
+
+	useEffect(() => {
+		setActiveKey(item.files?.length ? [item.id] : []);
+	}, [item?.files?.length, item.id]);
+
 	const handleDelete = async (id) => {
 		try {
 			setLoading(true);
@@ -54,13 +59,17 @@ const DocumentItem = ({ columns, item, isHide }) => {
 			size="default"
 			collapsible="header"
 			className={[styles.collapse, '!rounded-md overflow-hidden'].join(' ')}
+			activeKey={activeKey}
+			onChange={(key) => {
+				setActiveKey(key);
+			}}
 			items={[
 				{
 					classNames: {
 						header: 'bg-[#f5f5f5] !rounded-md !py-2 !px-4 w-full',
 					},
 					showArrow: false,
-					key: item.dataIndex,
+					key: item.id,
 					label: (
 						<div className="flex gap-4 items-center">
 							{columns.map((columnsItem, index) => (
@@ -79,7 +88,7 @@ const DocumentItem = ({ columns, item, isHide }) => {
 										!index && 'font-medium',
 									].join(' ')}
 								>
-									{item?.children?.length > 0 && !index && (
+									{/* {item?.children?.length > 0 && !index && (
 										<UpOutlined
 											onClick={() => setExpanded(!expanded)}
 											style={{
@@ -91,7 +100,7 @@ const DocumentItem = ({ columns, item, isHide }) => {
 												marginRight: '4px',
 											}}
 										/>
-									)}
+									)} */}
 
 									{columnsItem?.render?.(item[columnsItem.dataIndex], item) ||
 										item[columnsItem.dataIndex] ||
