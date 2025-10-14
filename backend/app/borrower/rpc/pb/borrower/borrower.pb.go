@@ -2475,10 +2475,11 @@ type LoanEntry struct {
 	LoanProcessor          string                   `protobuf:"bytes,63,opt,name=loan_processor,json=loanProcessor,proto3" json:"loan_processor,omitempty"`
 	Extend                 *LoanExtendValueEntry    `protobuf:"bytes,64,opt,name=extend,proto3" json:"extend,omitempty"`
 	// repeated FileEntry documents = 65;
-	LoanDocuments []*LoanDocumentEntry `protobuf:"bytes,65,rep,name=loan_documents,json=loanDocuments,proto3" json:"loan_documents,omitempty"`
-	Code          string               `protobuf:"bytes,66,opt,name=code,proto3" json:"code,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	LoanDocuments              []*LoanDocumentEntry `protobuf:"bytes,65,rep,name=loan_documents,json=loanDocuments,proto3" json:"loan_documents,omitempty"`
+	Code                       string               `protobuf:"bytes,66,opt,name=code,proto3" json:"code,omitempty"`
+	RequestedLoanDocumentCount int64                `protobuf:"varint,67,opt,name=RequestedLoanDocumentCount,proto3" json:"RequestedLoanDocumentCount,omitempty"`
+	unknownFields              protoimpl.UnknownFields
+	sizeCache                  protoimpl.SizeCache
 }
 
 func (x *LoanEntry) Reset() {
@@ -2965,6 +2966,13 @@ func (x *LoanEntry) GetCode() string {
 		return x.Code
 	}
 	return ""
+}
+
+func (x *LoanEntry) GetRequestedLoanDocumentCount() int64 {
+	if x != nil {
+		return x.RequestedLoanDocumentCount
+	}
+	return 0
 }
 
 type LoanBudgetEntry struct {
@@ -8214,7 +8222,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x12driver_license_num\x18\x11 \x01(\tR\x10driverLicenseNum\x120\n" +
 	"\aaddress\x18\x12 \x01(\v2\x16.borrower.AddressEntryR\aaddress\x12(\n" +
 	"\x10loan_borrower_id\x18\x13 \x01(\x03R\x0eloanBorrowerId\x12\x14\n" +
-	"\x05phone\x18\x14 \x01(\tR\x05phone\"\xd4\x16\n" +
+	"\x05phone\x18\x14 \x01(\tR\x05phone\"\x94\x17\n" +
 	"\tLoanEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
 	"\x05stage\x18\x02 \x01(\tR\x05stage\x12%\n" +
@@ -8286,7 +8294,8 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x0eloan_processor\x18? \x01(\tR\rloanProcessor\x126\n" +
 	"\x06extend\x18@ \x01(\v2\x1e.borrower.LoanExtendValueEntryR\x06extend\x12B\n" +
 	"\x0eloan_documents\x18A \x03(\v2\x1b.borrower.LoanDocumentEntryR\rloanDocuments\x12\x12\n" +
-	"\x04code\x18B \x01(\tR\x04code\"\x9f\x01\n" +
+	"\x04code\x18B \x01(\tR\x04code\x12>\n" +
+	"\x1aRequestedLoanDocumentCount\x18C \x01(\x03R\x1aRequestedLoanDocumentCount\"\x9f\x01\n" +
 	"\x0fLoanBudgetEntry\x12'\n" +
 	"\x0foriginal_budget\x18\x01 \x01(\x02R\x0eoriginalBudget\x12)\n" +
 	"\x10remaining_budget\x18\x02 \x01(\x02R\x0fremainingBudget\x128\n" +
