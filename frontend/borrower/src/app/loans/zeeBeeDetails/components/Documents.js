@@ -16,7 +16,7 @@ const Documents = ({ rowData }) => {
 	}, [rowData]);
 	return (
 		<div className="border border-base-border px-6 pb-6 rounded-2xl">
-			<DocumentList columns={documentsColumns()} dataSource={[...lenderList]} />
+			<DocumentList columns={documentsColumns()} dataSource={[...lenderList]} isHide={true} />
 		</div>
 	);
 };
