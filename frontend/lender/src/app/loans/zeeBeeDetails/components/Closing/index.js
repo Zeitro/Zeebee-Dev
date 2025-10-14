@@ -24,9 +24,10 @@ const Closing = ({ disabledOperate, rowData, id }) => {
 			</HeaderBtn>
 			<div className="px-[34px] py-6">
 				<AddDocument
-					disabled={disabledOperate}
+					// disabled={disabledOperate}
 					category="LenderClosingExtend"
 					loan_id={loan_id}
+					isHideAddRequest={true}
 				/>
 				<DocumentList columns={lenderClosingColumns()} dataSource={[...lenderList]} />
 			</div>
