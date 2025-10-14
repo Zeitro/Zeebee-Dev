@@ -108,7 +108,7 @@ const ZeeBeeDetails = () => {
 						autoComplete="off"
 						className=""
 						size="large"
-						disabled={true}
+						disabled={!['documents', 'general'].includes(currentStep)}
 						initialValues={initialValues}
 						scrollToFirstError
 						onValuesChange={() => {

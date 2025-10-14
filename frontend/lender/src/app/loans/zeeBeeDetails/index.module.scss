@@ -5,20 +5,20 @@
 			background-color: transparent !important;
 		}
 		.ant-menu-item-selected {
-			background-color: #D6E2FB !important;
+			background-color: #d6e2fb !important;
 			color: var(--foundation) !important;
 		}
 		.ant-menu-submenu .ant-menu-submenu-title {
-			font-weight: 600 !important;
 			padding-left: 10px !important;
 			margin: 0 !important;
-			color:  var(--foundation) !important;
+			color: var(--foundation) !important;
+			font-weight: 600 !important;
 		}
 		.ant-menu-item {
-			font-weight: 500 !important;
 			margin: 0 !important;
 			padding-left: 10px !important;
 		}
+
 		.ant-menu-sub .ant-menu-item {
 			padding-left: 21px !important;
 			padding-right: 10px !important;
@@ -32,14 +32,18 @@
 			background-color: transparent !important;
 		}
 		.ant-menu-sub .ant-menu-item-selected .ant-menu-title-content {
-			background-color: #D6E2FB !important;
+			background-color: #d6e2fb !important;
 			border-radius: 8px;
 		}
 	}
-	:global(& > .ant-menu-item) {
+	& > li {
 		font-weight: 600 !important;
 	}
+	& li ul li {
+		font-weight: 500 !important;
+	}
 }
+
 .tabs :global {
 	.ant-tabs-content,
 	.ant-tabs-tabpane {
