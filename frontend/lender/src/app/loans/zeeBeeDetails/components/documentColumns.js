@@ -67,7 +67,7 @@ export const borrowerUploadColumns = (isHide, handleClickOpt, deleteLoading) => 
 								id: record.id,
 							},
 						]}
-						// disabled={!!record.comment}
+						disabled={record.status !== 'Pending request'}
 					>
 						Send request
 					</SendRequestBtn>

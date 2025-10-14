@@ -61,7 +61,7 @@ export const ApproveRejectModal = ({
 							? `Approval will move this loan to processing stage.Please ensure that all
 						items in the underwriting checklist have been validated before officially
 						approving the loan application.you can add the approval comments below`
-							: `reject will move this loan to rejected loan.Please ensure that all items in
+							: `Reject will move this loan to processing.Please ensure that all items in
 						the underwriting checklist have been validated before officially approving
 						the loan application. Rejected comment is required`}
 					</div>
