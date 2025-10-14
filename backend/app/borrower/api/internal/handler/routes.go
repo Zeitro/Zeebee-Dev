@@ -8,7 +8,9 @@ import (
 
 	applicant "zeebee-backend/app/borrower/api/internal/handler/applicant"
 	common "zeebee-backend/app/borrower/api/internal/handler/common"
+	file "zeebee-backend/app/borrower/api/internal/handler/file"
 	loan "zeebee-backend/app/borrower/api/internal/handler/loan"
+	loan_document "zeebee-backend/app/borrower/api/internal/handler/loan_document"
 	pdf "zeebee-backend/app/borrower/api/internal/handler/pdf"
 	property "zeebee-backend/app/borrower/api/internal/handler/property"
 	storage "zeebee-backend/app/borrower/api/internal/handler/storage"
@@ -63,6 +65,21 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
 				{
+					// delete
+					Method:  http.MethodDelete,
+					Path:    "/file/:id",
+					Handler: file.DeleteHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
 					// create
 					Method:  http.MethodPost,
 					Path:    "/loan",
@@ -85,12 +102,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/loan/:id",
 					Handler: loan.DetailHandler(serverCtx),
-				},
-				{
-					// update documents
-					Method:  http.MethodPost,
-					Path:    "/loan/:id/documents",
-					Handler: loan.UpdateDocumentsHandler(serverCtx),
 				},
 				{
 					// update draft
@@ -145,6 +156,21 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/loan/page",
 					Handler: loan.PageHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// add files
+					Method:  http.MethodPost,
+					Path:    "/loan_document/:id/files",
+					Handler: loan_document.AddFilesHandler(serverCtx),
 				},
 			}...,
 		),

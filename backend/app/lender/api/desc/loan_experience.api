@@ -1,0 +1,26 @@
+syntax = "v1"
+
+info(
+    title: "borrower-loan-experience-api"
+    desc: "borrower-loan-experience-api http service description"
+    version: "v1"
+)
+
+import "address.api"
+
+type LoanExperienceEntry {
+    Id int64 `json:"id,optional"`
+    LoanId int64 `json:"loan_id,optional"`
+    Type string `json:"type,optional" validate:"required,oneof=Transaction 'Real Estate'"`
+    Address *AddressEntry `json:"address,optional"`
+    OwnershipOnTitle string `json:"ownership_on_title,optional"`
+    PropertyType string `json:"property_type,optional" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
+    PurchaseAmount float64 `json:"purchase_amount,optional" validate:"gt=0"`
+    PurchaseDate string `json:"purchase_date,optional"`
+    SoldAmount float64 `json:"sold_amount,optional" validate:"gt=0"`
+    SoldDate string `json:"sold_date,optional"`
+    BudgetOrCost float64 `json:"budget_or_cost,optional" validate:"gt=0"`
+    Profit float64 `json:"profit,optional"`
+    IsTenantOccupied bool `json:"is_tenant_occupied,optional"`
+}
+

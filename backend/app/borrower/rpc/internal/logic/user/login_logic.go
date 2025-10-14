@@ -91,6 +91,7 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 	accessToken, err := utils.GenerateToken(
 		strconv.Itoa(int(user.Id)),
 		strconv.Itoa(int(user.Borrower.Id)),
+		0,
 		user.Email,
 		"",
 		string(constants.UserTypeBorrower),
@@ -105,6 +106,7 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 	refreshToken, err := utils.GenerateToken(
 		strconv.Itoa(int(user.Id)),
 		strconv.Itoa(int(user.Borrower.Id)),
+		0,
 		user.Email,
 		"",
 		string(constants.UserTypeBorrower),
@@ -132,6 +134,7 @@ func generateBorrowerToken(user *model.User, svcCtx *svc.ServiceContext) (token 
 	accessToken, err := utils.GenerateToken(
 		strconv.Itoa(int(user.Id)),
 		strconv.Itoa(int(user.Borrower.Id)),
+		0,
 		user.Email,
 		"",
 		string(constants.UserTypeBorrower),
@@ -144,6 +147,7 @@ func generateBorrowerToken(user *model.User, svcCtx *svc.ServiceContext) (token 
 	refreshToken, err := utils.GenerateToken(
 		strconv.Itoa(int(user.Id)),
 		strconv.Itoa(int(user.Borrower.Id)),
+		0,
 		user.Email,
 		"",
 		string(constants.UserTypeBorrower),
