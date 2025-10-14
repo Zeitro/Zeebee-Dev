@@ -13,7 +13,6 @@ type LoanDemographicEntry {
     Property *LoanDemographicPropertyEntry `json:"property,optional" validate:"required"`
     Ethnicity *LoanDemographicEthnicityEntry `json:"ethnicity,optional" validate:"required"`
     Race *LoanDemographicRaceEntry `json:"race,optional" validate:"required"`
-    //    ExtraDemographic *LoanDemographicExtraDemographicEntry `json:"extra_demographic,optional"`
 }
 
 
