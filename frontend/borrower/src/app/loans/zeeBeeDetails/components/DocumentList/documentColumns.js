@@ -37,8 +37,12 @@ const getUploadCommonColumns = (typeTitle, isHaveComments = true) => {
 			dataIndex: 'comment',
 			key: 'comment',
 			ellipsis: true,
-			width: 100,
-			render: (v) => <Tooltip title={v}>{v ? <MsgActiveSvg /> : <MsgSvg />}</Tooltip>,
+			width: 200,
+			render: (v) => (
+				<Tooltip title={v}>
+					<span className="font-normal text-foreground">{v}</span>
+				</Tooltip>
+			),
 		});
 	}
 

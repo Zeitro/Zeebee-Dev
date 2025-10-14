@@ -60,7 +60,16 @@ const SidebarDom = () => {
 				].join(' ')}
 				onClick={() => handleSelect({ key: homePathname })}
 			>
-				<Image src="/images/logo.svg" width={95} height={30} alt="ZeeBee Logo" />
+				{sidebarCollapsed ? (
+					<Image
+						src="/images/logo_abbreviated.png"
+						width={27}
+						height={27}
+						alt="ZeeBee Logo"
+					/>
+				) : (
+					<Image src="/images/logo.png" width={149} height={30} alt="ZeeBee Logo" />
+				)}
 			</div>
 			<Menu
 				mode="vertical"

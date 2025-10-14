@@ -231,6 +231,11 @@ export const pendingStatusColor = {
 		bg: 'var(--blue-light-2)',
 		border: 'var(--blue-light)',
 	},
+	UnderWriting: {
+		color: '#eb2f96',
+		bg: '#fff0f6',
+		border: '#ffadd2',
+	},
 	Closing: {
 		color: 'var(--purple-dark)',
 		bg: 'var(--purple-light)',

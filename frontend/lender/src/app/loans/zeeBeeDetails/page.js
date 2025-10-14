@@ -98,10 +98,10 @@ const ZeeBeeDetails = () => {
 			<div className="flex items-center flex-shrink-0 pt-4 pb-5 px-4">
 				<HomeSvg />
 				<p className="text-xl/[24px] font-bold pl-3 pr-5">
-					{assemblyAddress(rowData?.loan_property?.property_base?.address)}
+					{assemblyAddress(rowData?.loan_property?.property_base?.address, true)}
 				</p>
 				<div
-					className="px-2 text-white font-medium rounded-sm mr-2 text-sm"
+					className="px-2 text-white font-medium rounded-sm mr-2 text-sm/[22px]"
 					style={{ background: stageColor[rowData?.stage] }}
 				>
 					{rowData?.stage}
@@ -112,7 +112,7 @@ const ZeeBeeDetails = () => {
 							background: pendingStatusColor?.[rowData?.pending_status]?.bg,
 							color: pendingStatusColor?.[rowData?.pending_status]?.color,
 						}}
-						className="text-sm/[24px] px-4 rounded-sm"
+						className="text-sm/[22px] px-2 rounded-sm"
 					>
 						{rowData?.pending_status}
 					</div>

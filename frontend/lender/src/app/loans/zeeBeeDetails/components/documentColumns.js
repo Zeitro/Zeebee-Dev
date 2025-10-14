@@ -1,15 +1,12 @@
 import DocumentStatus from './DocumentStatus';
-import MsgSvg from '@/assets/images/message.svg';
-import MsgActiveSvg from '@/assets/images/message_active.svg';
 import { SendRequestBtn } from './SendRequestModal';
-import { request } from 'http';
 import { UploadModalBtn } from './AddDocument/UploadModal';
 import TableOperation from '@/components/TableOperation';
 import { formatDate } from '@/lib/date';
 import { Tooltip } from 'antd';
 import { DeleteBtn } from '@/components/NewModal/BtnPopUpModal';
 import { EditCommentModalBtn } from './EditCommentModal';
-const getUploadCommonColumns = (typeTitle, isHaveComments = true) => {
+const getUploadCommonColumns = (typeTitle, isHaveComments = true, statusWidth) => {
 	const arr = [
 		{
 			title: typeTitle || 'Pending borrower upload',
@@ -23,7 +20,7 @@ const getUploadCommonColumns = (typeTitle, isHaveComments = true) => {
 			dataIndex: 'status',
 			key: 'status',
 			ellipsis: true,
-			width: 150,
+			width: statusWidth || (isHaveComments ? 150 : 366),
 			render: (v) => <DocumentStatus status={v} />,
 		},
 
@@ -42,8 +39,12 @@ const getUploadCommonColumns = (typeTitle, isHaveComments = true) => {
 			dataIndex: 'comment',
 			key: 'comment',
 			ellipsis: true,
-			width: 100,
-			render: (v) => <Tooltip title={v}>{v ? <MsgActiveSvg /> : <MsgSvg />}</Tooltip>,
+			width: 200,
+			render: (v) => (
+				<Tooltip title={v}>
+					<span className="font-normal text-foreground">{v}</span>
+				</Tooltip>
+			),
 		});
 	}
 
@@ -162,5 +163,5 @@ export const lenderClosingColumns = () => {
 			),
 		};
 	};
-	return [...getUploadCommonColumns('Pending internal upload', false), getOpt()];
+	return [...getUploadCommonColumns('Pending internal upload', false, 150), getOpt()];
 };
