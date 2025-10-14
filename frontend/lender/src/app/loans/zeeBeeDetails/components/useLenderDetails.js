@@ -365,7 +365,7 @@ const useLenderDetails = () => {
 		.map((i, index) => ({
 			key: i.key,
 			label: i.title,
-			children: getDetailsComponents(index < loanProgress.index)[i.key],
+			children: getDetailsComponents(index !== loanProgress.index)[i.key],
 		}))
 		.filter((i) => i.children);
 	const selectIndex = useMemo(

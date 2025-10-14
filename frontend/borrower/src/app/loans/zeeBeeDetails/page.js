@@ -1,7 +1,7 @@
 'use client';
 import styles from '../createZeeBeeLoan/index.module.scss';
-import { Form, Segmented, Steps, Tabs } from 'antd';
-import React, { useEffect } from 'react';
+import { Badge, Form, Radio, Segmented, Steps, Tabs } from 'antd';
+import React, { use, useEffect, useMemo } from 'react';
 import useCreate from '../components/CreateZeeBee/hooks/useCreate';
 import { assemblyAddress } from '@/lib/format';
 import { stageColor, pendingStatusColor, loanDetailsFields } from '@/enum/loan';
@@ -23,6 +23,40 @@ const ZeeBeeDetails = () => {
 		getZeeBeeDetailsTabsItem,
 		rowData,
 	} = useCreate('details');
+
+	const segmentedList = useMemo(() => {
+		const list = [
+			...zeeBeeDetailsTabs,
+			...getTabsItem(createZeeBeeSteps, true).map((i) => ({
+				label: i.label,
+				value: i.key.replace('-0', ''),
+			})),
+		];
+		console.log(rowData?.requested_loan_document_count, '====');
+		return list;
+		// return list.map((item) => {
+		// 	console.log(item, item.totalKey, rowData?.[item?.totalKey]);
+
+		// 	// if (item.totalKey && rowData?.[item?.totalKey]) {
+		// 	console.log(rowData?.[item?.totalKey]);
+
+		// 	item.label = (
+		// 		<Badge
+		// 			count={item?.totalKey ? rowData?.[item?.totalKey] || 0 : 0}
+		// 			overflowCount={99}
+		// 			size="small"
+		// 			offset={[3, 0]}
+		// 		>
+		// 			{item.label}
+		// 		</Badge>
+		// 	);
+		// 	// } else {
+		// 	// 	item.label = <div>{item.label}</div>;
+		// 	// }
+
+		// 	return item;
+		// });
+	}, [rowData]);
 
 	useEffect(() => {
 		setCurrentStep(zeeBeeDetailsTabs[0].value);
@@ -63,22 +97,48 @@ const ZeeBeeDetails = () => {
 					</div>
 				))}
 			</div>
-			<Segmented
+			{/* <Segmented
 				value={currentStep}
 				size="large"
-				options={[
-					...zeeBeeDetailsTabs,
-					...getTabsItem(createZeeBeeSteps, true).map((i) => ({
-						label: i.label,
-						value: i.key.replace('-0', ''),
-					})),
-				]}
+				options={segmentedList}
 				onChange={(value) => {
 					setCurrentStep(value);
 					setStepNum(0);
 				}}
 				className={`flex-shrink-0 ${styles.segmented}`}
-			/>
+			/> */}
+			{/* <Tabs
+				activeKey={currentStep}
+				items={[...getZeeBeeDetailsTabsItem(), ...getTabsItem()]}
+				renderTabBar={() => <div> </div>}
+				className={` ${styles.tabs}`}
+			/> */}
+			<Radio.Group
+				size="large"
+				value={currentStep}
+				onChange={({ target: { value } }) => {
+					setCurrentStep(value);
+					setStepNum(0);
+				}}
+				className={`flex-shrink-0 ${styles.radioList}`}
+			>
+				{segmentedList.map((item, index) => (
+					<Radio.Button value={item.value} key={index}>
+						{item.totalKey ? (
+							<Badge
+								count={item?.totalKey ? rowData?.[item?.totalKey] || 0 : 0}
+								// overflowCount={99}
+								size="small"
+								offset={[3, 0]}
+							>
+								{item.label}
+							</Badge>
+						) : (
+							item.label
+						)}
+					</Radio.Button>
+				))}
+			</Radio.Group>
 			<div className="flex-1 flex items-stretch overflow-hidden">
 				{createZeeBeeSteps[currentStep]?.children && (
 					<div className="w-[250px] py-6 px-6 shrink-0 border-r border-base-border">

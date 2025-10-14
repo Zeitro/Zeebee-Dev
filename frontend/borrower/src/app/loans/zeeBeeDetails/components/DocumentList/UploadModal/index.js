@@ -54,13 +54,16 @@ const UploadModal = ({ open, setOpen, isChangeType = true, record = {}, loan_id 
 
 	return (
 		<NewModal
-			title={'Upload new document'}
+			title={isChangeType ? 'Upload new document' : 'Upload document'}
 			width={650}
 			open={open}
 			onCancel={() => setOpen(false)}
 			onOk={handleOK}
 			okText="Save"
 			confirmLoading={loading}
+			okButtonProps={{
+				disabled: !fileList.length,
+			}}
 		>
 			<Form
 				form={form}
