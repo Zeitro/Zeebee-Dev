@@ -26,7 +26,7 @@ jobs:
           if [[ "${{ github.ref }}" == "refs/heads/staging-borrower-backend" ]]; then
             echo "SERVICE_NAME=staging-borrower-backend" >> $GITHUB_ENV
             echo "IMAGE_NAME=staging-borrower-backend" >> $GITHUB_ENV
-            echo "CONTAINER_NAME=backend-borrower-staging" >> $GITHUB_ENV
+            echo "CONTAINER_NAME=staging-borrower-backend" >> $GITHUB_ENV
           elif [[ "${{ github.ref }}" == "refs/heads/staging-lender-backend" ]]; then
             echo "SERVICE_NAME=staging-lender-backend" >> $GITHUB_ENV
             echo "IMAGE_NAME=staging-lender-backend" >> $GITHUB_ENV
