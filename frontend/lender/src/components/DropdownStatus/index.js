@@ -61,7 +61,7 @@ const DropdownStatus = ({
 				domEvent?.preventDefault();
 			}}
 		>
-			<Tooltip {...tooltipProps}>
+			<Tooltip {...tooltipProps} title={disabled ? tooltipProps?.title : null}>
 				<Dropdown.Button
 					icon={disabled ? null : <DownOutlined />}
 					loading={loading}
