@@ -170,6 +170,7 @@ type LoanEntry {
     LoanProcessor string `json:"loan_processor"`
     Extend *ImportLoanExtendEntry `json:"extend"`
     LoanDocuments []*LoanDocumentEntry `json:"loan_documents"`
+    RequestedLoanDocumentCount int64 `json:"requested_loan_document_count"`
 }
 
 // create a loan
