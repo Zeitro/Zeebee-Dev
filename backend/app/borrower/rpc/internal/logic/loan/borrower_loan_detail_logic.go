@@ -76,6 +76,16 @@ func (l *BorrowerLoanDetailLogic) BorrowerLoanDetail(in *borrower.LoanDetailRequ
 			realEstateExperiences = append(realEstateExperiences, experience)
 		}
 	})
+	// requested borrower loan document count
+	slice.ForEach(loan.LoanDocuments, func(index int, item *model.LoanDocument) {
+		if item.Category != constants.LoanDocumentCategoryBorrower && item.Category != constants.LoanDocumentCategoryExtend {
+			return
+		}
+		if item.Status == constants.LoanDocumentStatusRequested {
+			resp.Data.RequestedLoanDocumentCount++
+		}
+	})
+
 	resp.Data.TransactionExperiences = transExperiences
 	resp.Data.RealEstateExperiences = realEstateExperiences
 
