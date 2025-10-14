@@ -49,6 +49,40 @@
         }
       }
     },
+    "/api/v1/file/{id}": {
+      "delete": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "file"
+        ],
+        "summary": "delete",
+        "operationId": "fileDelete",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/loan": {
       "post": {
         "consumes": [
@@ -133,7 +167,7 @@
                     "business_line": {
                       "type": "string"
                     },
-                    "loan_status_update": {
+                    "loan_status_updates": {
                       "type": "string"
                     },
                     "meeting_notes": {
@@ -195,6 +229,9 @@
                     "living_area_sqft": {
                       "type": "number"
                     },
+                    "owner": {
+                      "type": "string"
+                    },
                     "property_base": {
                       "type": "object",
                       "properties": {
@@ -214,6 +251,9 @@
                     },
                     "property_type": {
                       "type": "string"
+                    },
+                    "unit": {
+                      "type": "integer"
                     }
                   }
                 },
@@ -230,9 +270,6 @@
                   "type": "number"
                 },
                 "original_contract_date": {
-                  "type": "string"
-                },
-                "owner": {
                   "type": "string"
                 },
                 "paid_off_date": {
@@ -642,6 +679,9 @@
                     "living_area_sqft": {
                       "type": "number"
                     },
+                    "owner": {
+                      "type": "string"
+                    },
                     "property_base": {
                       "type": "object",
                       "properties": {
@@ -661,6 +701,9 @@
                     },
                     "property_type": {
                       "type": "string"
+                    },
+                    "unit": {
+                      "type": "integer"
                     }
                   }
                 },
@@ -1240,6 +1283,9 @@
                     "living_area_sqft": {
                       "type": "number"
                     },
+                    "owner": {
+                      "type": "string"
+                    },
                     "property_base": {
                       "type": "object",
                       "properties": {
@@ -1259,6 +1305,9 @@
                     },
                     "property_type": {
                       "type": "string"
+                    },
+                    "unit": {
+                      "type": "integer"
                     }
                   }
                 },
@@ -1508,7 +1557,12 @@
           "200": {
             "description": "",
             "schema": {
-              "type": "object"
+              "type": "object",
+              "properties": {
+                "record_count": {
+                  "type": "integer"
+                }
+              }
             }
           }
         }
@@ -1710,7 +1764,7 @@
                       "loan_demographic",
                       "loan_processor",
                       "extend",
-                      "documents"
+                      "loan_documents"
                     ],
                     "properties": {
                       "applicants": {
@@ -1859,37 +1913,11 @@
                       "closing_fund": {
                         "type": "number"
                       },
-                      "created_at": {
+                      "code": {
                         "type": "string"
                       },
-                      "documents": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "biz_type": {
-                              "type": "string"
-                            },
-                            "created_at": {
-                              "type": "string"
-                            },
-                            "file": {
-                              "type": "string"
-                            },
-                            "file_type": {
-                              "type": "string"
-                            },
-                            "id": {
-                              "type": "integer"
-                            },
-                            "ref_id": {
-                              "type": "integer"
-                            },
-                            "updated_at": {
-                              "type": "string"
-                            }
-                          }
-                        }
+                      "created_at": {
+                        "type": "string"
                       },
                       "dscr": {
                         "type": "number"
@@ -1918,7 +1946,7 @@
                           "business_line": {
                             "type": "string"
                           },
-                          "loan_status_update": {
+                          "loan_status_updates": {
                             "type": "string"
                           },
                           "meeting_notes": {
@@ -2127,6 +2155,83 @@
                           }
                         }
                       },
+                      "loan_documents": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "loan_id",
+                            "category",
+                            "file_type",
+                            "status",
+                            "last_uploaded_at",
+                            "created_at",
+                            "updated_at",
+                            "files"
+                          ],
+                          "properties": {
+                            "category": {
+                              "type": "string"
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "file_type": {
+                              "type": "string"
+                            },
+                            "files": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "required": [
+                                  "id",
+                                  "entity_type",
+                                  "entity_id",
+                                  "file_url",
+                                  "created_at",
+                                  "updated_at"
+                                ],
+                                "properties": {
+                                  "created_at": {
+                                    "type": "string"
+                                  },
+                                  "entity_id": {
+                                    "type": "integer"
+                                  },
+                                  "entity_type": {
+                                    "type": "string"
+                                  },
+                                  "file_url": {
+                                    "type": "string"
+                                  },
+                                  "id": {
+                                    "type": "integer"
+                                  },
+                                  "updated_at": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "last_uploaded_at": {
+                              "type": "string"
+                            },
+                            "loan_id": {
+                              "type": "integer"
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
                       "loan_processor": {
                         "type": "string"
                       },
@@ -2163,11 +2268,17 @@
                           "living_area_sqft": {
                             "type": "number"
                           },
+                          "owner": {
+                            "type": "string"
+                          },
                           "property_base": {
                             "type": "object"
                           },
                           "property_type": {
                             "type": "string"
+                          },
+                          "unit": {
+                            "type": "integer"
                           }
                         }
                       },
@@ -2557,37 +2668,11 @@
                 "closing_fund": {
                   "type": "number"
                 },
-                "created_at": {
+                "code": {
                   "type": "string"
                 },
-                "documents": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "biz_type": {
-                        "type": "string"
-                      },
-                      "created_at": {
-                        "type": "string"
-                      },
-                      "file": {
-                        "type": "string"
-                      },
-                      "file_type": {
-                        "type": "string"
-                      },
-                      "id": {
-                        "type": "integer"
-                      },
-                      "ref_id": {
-                        "type": "integer"
-                      },
-                      "updated_at": {
-                        "type": "string"
-                      }
-                    }
-                  }
+                "created_at": {
+                  "type": "string"
                 },
                 "dscr": {
                   "type": "number"
@@ -2616,7 +2701,7 @@
                     "business_line": {
                       "type": "string"
                     },
-                    "loan_status_update": {
+                    "loan_status_updates": {
                       "type": "string"
                     },
                     "meeting_notes": {
@@ -2825,6 +2910,83 @@
                     }
                   }
                 },
+                "loan_documents": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "loan_id",
+                      "category",
+                      "file_type",
+                      "status",
+                      "last_uploaded_at",
+                      "created_at",
+                      "updated_at",
+                      "files"
+                    ],
+                    "properties": {
+                      "category": {
+                        "type": "string"
+                      },
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "file_type": {
+                        "type": "string"
+                      },
+                      "files": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "entity_type",
+                            "entity_id",
+                            "file_url",
+                            "created_at",
+                            "updated_at"
+                          ],
+                          "properties": {
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "entity_id": {
+                              "type": "integer"
+                            },
+                            "entity_type": {
+                              "type": "string"
+                            },
+                            "file_url": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "last_uploaded_at": {
+                        "type": "string"
+                      },
+                      "loan_id": {
+                        "type": "integer"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
                 "loan_processor": {
                   "type": "string"
                 },
@@ -2860,6 +3022,9 @@
                     },
                     "living_area_sqft": {
                       "type": "number"
+                    },
+                    "owner": {
+                      "type": "string"
                     },
                     "property_base": {
                       "type": "object",
@@ -2897,6 +3062,9 @@
                     },
                     "property_type": {
                       "type": "string"
+                    },
+                    "unit": {
+                      "type": "integer"
                     }
                   }
                 },
@@ -3222,7 +3390,7 @@
                     "business_line": {
                       "type": "string"
                     },
-                    "loan_status_update": {
+                    "loan_status_updates": {
                       "type": "string"
                     },
                     "meeting_notes": {
@@ -3284,6 +3452,9 @@
                     "living_area_sqft": {
                       "type": "number"
                     },
+                    "owner": {
+                      "type": "string"
+                    },
                     "property_base": {
                       "type": "object",
                       "properties": {
@@ -3303,6 +3474,9 @@
                     },
                     "property_type": {
                       "type": "string"
+                    },
+                    "unit": {
+                      "type": "integer"
                     }
                   }
                 },
@@ -3319,9 +3493,6 @@
                   "type": "number"
                 },
                 "original_contract_date": {
-                  "type": "string"
-                },
-                "owner": {
                   "type": "string"
                 },
                 "paid_off_date": {
@@ -3388,76 +3559,6 @@
             "name": "id",
             "in": "path",
             "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object"
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/loan/{id}/documents": {
-      "post": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "loan"
-        ],
-        "summary": "update documents",
-        "operationId": "loanUpdateDocuments",
-        "parameters": [
-          {
-            "type": "integer",
-            "name": "id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": [
-                "documents"
-              ],
-              "properties": {
-                "documents": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "biz_type": {
-                        "type": "string"
-                      },
-                      "file": {
-                        "type": "string"
-                      },
-                      "file_type": {
-                        "type": "string"
-                      },
-                      "id": {
-                        "type": "integer"
-                      },
-                      "ref_id": {
-                        "type": "integer"
-                      }
-                    }
-                  }
-                }
-              }
-            }
           }
         ],
         "responses": {
@@ -3828,6 +3929,9 @@
                     "living_area_sqft": {
                       "type": "number"
                     },
+                    "owner": {
+                      "type": "string"
+                    },
                     "property_base": {
                       "type": "object",
                       "properties": {
@@ -3847,6 +3951,9 @@
                     },
                     "property_type": {
                       "type": "string"
+                    },
+                    "unit": {
+                      "type": "integer"
                     }
                   }
                 },
@@ -4476,6 +4583,9 @@
                     "living_area_sqft": {
                       "type": "number"
                     },
+                    "owner": {
+                      "type": "string"
+                    },
                     "property_base": {
                       "type": "object",
                       "properties": {
@@ -4495,6 +4605,9 @@
                     },
                     "property_type": {
                       "type": "string"
+                    },
+                    "unit": {
+                      "type": "integer"
                     }
                   }
                 },
@@ -4696,6 +4809,59 @@
                 },
                 "yearly_liability_expense": {
                   "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/loan_document/{id}/files": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "loan_document"
+        ],
+        "summary": "add files",
+        "operationId": "loanDocumentAddFiles",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "file_urls"
+              ],
+              "properties": {
+                "file_urls": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -5069,6 +5235,9 @@
                     "living_area_sqft": {
                       "type": "number"
                     },
+                    "owner": {
+                      "type": "string"
+                    },
                     "property_base": {
                       "type": "object",
                       "properties": {
@@ -5088,6 +5257,9 @@
                     },
                     "property_type": {
                       "type": "string"
+                    },
+                    "unit": {
+                      "type": "integer"
                     }
                   }
                 },
@@ -5613,7 +5785,7 @@
                       "loan_demographic",
                       "loan_processor",
                       "extend",
-                      "documents"
+                      "loan_documents"
                     ],
                     "properties": {
                       "applicants": {
@@ -5762,37 +5934,11 @@
                       "closing_fund": {
                         "type": "number"
                       },
-                      "created_at": {
+                      "code": {
                         "type": "string"
                       },
-                      "documents": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "biz_type": {
-                              "type": "string"
-                            },
-                            "created_at": {
-                              "type": "string"
-                            },
-                            "file": {
-                              "type": "string"
-                            },
-                            "file_type": {
-                              "type": "string"
-                            },
-                            "id": {
-                              "type": "integer"
-                            },
-                            "ref_id": {
-                              "type": "integer"
-                            },
-                            "updated_at": {
-                              "type": "string"
-                            }
-                          }
-                        }
+                      "created_at": {
+                        "type": "string"
                       },
                       "dscr": {
                         "type": "number"
@@ -5821,7 +5967,7 @@
                           "business_line": {
                             "type": "string"
                           },
-                          "loan_status_update": {
+                          "loan_status_updates": {
                             "type": "string"
                           },
                           "meeting_notes": {
@@ -6030,6 +6176,83 @@
                           }
                         }
                       },
+                      "loan_documents": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "loan_id",
+                            "category",
+                            "file_type",
+                            "status",
+                            "last_uploaded_at",
+                            "created_at",
+                            "updated_at",
+                            "files"
+                          ],
+                          "properties": {
+                            "category": {
+                              "type": "string"
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "file_type": {
+                              "type": "string"
+                            },
+                            "files": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "required": [
+                                  "id",
+                                  "entity_type",
+                                  "entity_id",
+                                  "file_url",
+                                  "created_at",
+                                  "updated_at"
+                                ],
+                                "properties": {
+                                  "created_at": {
+                                    "type": "string"
+                                  },
+                                  "entity_id": {
+                                    "type": "integer"
+                                  },
+                                  "entity_type": {
+                                    "type": "string"
+                                  },
+                                  "file_url": {
+                                    "type": "string"
+                                  },
+                                  "id": {
+                                    "type": "integer"
+                                  },
+                                  "updated_at": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "last_uploaded_at": {
+                              "type": "string"
+                            },
+                            "loan_id": {
+                              "type": "integer"
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
                       "loan_processor": {
                         "type": "string"
                       },
@@ -6066,11 +6289,17 @@
                           "living_area_sqft": {
                             "type": "number"
                           },
+                          "owner": {
+                            "type": "string"
+                          },
                           "property_base": {
                             "type": "object"
                           },
                           "property_type": {
                             "type": "string"
+                          },
+                          "unit": {
+                            "type": "integer"
                           }
                         }
                       },
@@ -6342,7 +6571,7 @@
                       "loan_demographic",
                       "loan_processor",
                       "extend",
-                      "documents"
+                      "loan_documents"
                     ],
                     "properties": {
                       "applicants": {
@@ -6491,37 +6720,11 @@
                       "closing_fund": {
                         "type": "number"
                       },
-                      "created_at": {
+                      "code": {
                         "type": "string"
                       },
-                      "documents": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "biz_type": {
-                              "type": "string"
-                            },
-                            "created_at": {
-                              "type": "string"
-                            },
-                            "file": {
-                              "type": "string"
-                            },
-                            "file_type": {
-                              "type": "string"
-                            },
-                            "id": {
-                              "type": "integer"
-                            },
-                            "ref_id": {
-                              "type": "integer"
-                            },
-                            "updated_at": {
-                              "type": "string"
-                            }
-                          }
-                        }
+                      "created_at": {
+                        "type": "string"
                       },
                       "dscr": {
                         "type": "number"
@@ -6550,7 +6753,7 @@
                           "business_line": {
                             "type": "string"
                           },
-                          "loan_status_update": {
+                          "loan_status_updates": {
                             "type": "string"
                           },
                           "meeting_notes": {
@@ -6759,6 +6962,83 @@
                           }
                         }
                       },
+                      "loan_documents": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "loan_id",
+                            "category",
+                            "file_type",
+                            "status",
+                            "last_uploaded_at",
+                            "created_at",
+                            "updated_at",
+                            "files"
+                          ],
+                          "properties": {
+                            "category": {
+                              "type": "string"
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "file_type": {
+                              "type": "string"
+                            },
+                            "files": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "required": [
+                                  "id",
+                                  "entity_type",
+                                  "entity_id",
+                                  "file_url",
+                                  "created_at",
+                                  "updated_at"
+                                ],
+                                "properties": {
+                                  "created_at": {
+                                    "type": "string"
+                                  },
+                                  "entity_id": {
+                                    "type": "integer"
+                                  },
+                                  "entity_type": {
+                                    "type": "string"
+                                  },
+                                  "file_url": {
+                                    "type": "string"
+                                  },
+                                  "id": {
+                                    "type": "integer"
+                                  },
+                                  "updated_at": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "last_uploaded_at": {
+                              "type": "string"
+                            },
+                            "loan_id": {
+                              "type": "integer"
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
                       "loan_processor": {
                         "type": "string"
                       },
@@ -6795,11 +7075,17 @@
                           "living_area_sqft": {
                             "type": "number"
                           },
+                          "owner": {
+                            "type": "string"
+                          },
                           "property_base": {
                             "type": "object"
                           },
                           "property_type": {
                             "type": "string"
+                          },
+                          "unit": {
+                            "type": "integer"
                           }
                         }
                       },
@@ -7057,7 +7343,7 @@
                       "loan_demographic",
                       "loan_processor",
                       "extend",
-                      "documents"
+                      "loan_documents"
                     ],
                     "properties": {
                       "applicants": {
@@ -7206,37 +7492,11 @@
                       "closing_fund": {
                         "type": "number"
                       },
-                      "created_at": {
+                      "code": {
                         "type": "string"
                       },
-                      "documents": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "biz_type": {
-                              "type": "string"
-                            },
-                            "created_at": {
-                              "type": "string"
-                            },
-                            "file": {
-                              "type": "string"
-                            },
-                            "file_type": {
-                              "type": "string"
-                            },
-                            "id": {
-                              "type": "integer"
-                            },
-                            "ref_id": {
-                              "type": "integer"
-                            },
-                            "updated_at": {
-                              "type": "string"
-                            }
-                          }
-                        }
+                      "created_at": {
+                        "type": "string"
                       },
                       "dscr": {
                         "type": "number"
@@ -7265,7 +7525,7 @@
                           "business_line": {
                             "type": "string"
                           },
-                          "loan_status_update": {
+                          "loan_status_updates": {
                             "type": "string"
                           },
                           "meeting_notes": {
@@ -7474,6 +7734,83 @@
                           }
                         }
                       },
+                      "loan_documents": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "loan_id",
+                            "category",
+                            "file_type",
+                            "status",
+                            "last_uploaded_at",
+                            "created_at",
+                            "updated_at",
+                            "files"
+                          ],
+                          "properties": {
+                            "category": {
+                              "type": "string"
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "file_type": {
+                              "type": "string"
+                            },
+                            "files": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "required": [
+                                  "id",
+                                  "entity_type",
+                                  "entity_id",
+                                  "file_url",
+                                  "created_at",
+                                  "updated_at"
+                                ],
+                                "properties": {
+                                  "created_at": {
+                                    "type": "string"
+                                  },
+                                  "entity_id": {
+                                    "type": "integer"
+                                  },
+                                  "entity_type": {
+                                    "type": "string"
+                                  },
+                                  "file_url": {
+                                    "type": "string"
+                                  },
+                                  "id": {
+                                    "type": "integer"
+                                  },
+                                  "updated_at": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "last_uploaded_at": {
+                              "type": "string"
+                            },
+                            "loan_id": {
+                              "type": "integer"
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
                       "loan_processor": {
                         "type": "string"
                       },
@@ -7510,11 +7847,17 @@
                           "living_area_sqft": {
                             "type": "number"
                           },
+                          "owner": {
+                            "type": "string"
+                          },
                           "property_base": {
                             "type": "object"
                           },
                           "property_type": {
                             "type": "string"
+                          },
+                          "unit": {
+                            "type": "integer"
                           }
                         }
                       },
@@ -8352,7 +8695,7 @@
       }
     }
   },
-  "x-date": "2025-09-23 09:13:53",
+  "x-date": "2025-10-13 18:13:25",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

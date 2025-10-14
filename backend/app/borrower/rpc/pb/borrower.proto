@@ -321,7 +321,8 @@ message LoanEntry {
   string extension_date = 62;
   string loan_processor = 63;
   LoanExtendValueEntry extend = 64;
-  repeated FileEntry documents = 65;
+  //  repeated FileEntry documents = 65;
+  repeated LoanDocumentEntry loan_documents = 65;
   string code = 66;
 
 }
@@ -615,17 +616,6 @@ message LoanExtendValueEntry {
   string business_line = 5;
 }
 
-// update documents
-
-message LoanUpdateDocumentsRequest {
-  LoanUpdateDocumentsRequestData data = 1;
-}
-message LoanUpdateDocumentsRequestData {
-  int64 id = 1;
-  int64 borrower_id = 2;
-  repeated FileEntry documents = 3;
-}
-
 service Loan {
   rpc CreateBorrowerLoan(LoanCreateRequest) returns(LoanCreateResponse);
   rpc UpdateBorrowerLoan(LoanUpdateRequest) returns(EmptyResponse);
@@ -638,7 +628,7 @@ service Loan {
   rpc SaveDraftLoan(LoanApplyRequest) returns(LoanApplyResponse);
   rpc UpdateApplyLoan(LoanApplyRequest) returns(EmptyResponse);
   rpc ImportPendingLoans(ImportPendingLoansRequest) returns(ImportPendingLoansResponse);
-  rpc UpdateLoanDocuments(LoanUpdateDocumentsRequest) returns(EmptyResponse);
+  //  rpc UpdateLoanDocuments(LoanUpdateDocumentsRequest) returns(EmptyResponse);
 }
 
 
@@ -746,6 +736,33 @@ service Applicant {
   rpc BorrowerNames(BorrowerNamesRequest) returns(BorrowerNamesResponse);
 }
 
+// ===================== loan document service ======================
+message LoanDocumentEntry {
+  int64 id = 1;
+  int64 loan_id = 2;
+  string category = 3;
+  string file_type = 4;
+  string comment = 5;
+  string status = 6;
+  string created_at = 7;
+  string updated_at = 8;
+  repeated FileEntry files = 9;
+  string LastUploadedAt = 10;
+}
+
+// upload loan document files
+message LoanDocumentAddFilesRequest {
+  LoanDocumentAddFilesRequestData data = 1;
+}
+message LoanDocumentAddFilesRequestData {
+  int64 id = 1;
+  int64 borrower_id = 2;
+  repeated string file_urls = 3;
+}
+service LoanDocument {
+  rpc AddFiles(LoanDocumentAddFilesRequest) returns(EmptyResponse);
+}
+
 // ===================== loan borrower service ======================
 message LoanBorrowerEntry{
   int64 id = 1;
@@ -847,17 +864,28 @@ message LoanDemographicExtraDemographicEntry {
   repeated string info_channels = 4;
 }
 
-// ===================== storage service ======================
-
+// ===================== file service ======================
 message FileEntry {
   int64 id = 1;
-  string biz_type = 2;
-  string file_type = 3;
-  int64 ref_id = 4;
-  string file = 5;
-  string created_at = 6;
-  string updated_at = 7;
+  string entity_type = 2;
+  int64 entity_id = 3;
+  string file_url = 4;
+  string created_at = 5;
+  string updated_at = 6;
 }
+message FileDeleteRequest {
+  FileDeleteRequestData data = 1;
+}
+message FileDeleteRequestData {
+  int64 id = 1;
+  int64 borrower_id = 2;
+}
+
+service File {
+  rpc DeleteFile(FileDeleteRequest) returns(EmptyResponse);
+}
+
+// ===================== storage service ======================
 
 message StorageCreatePresignedUrlRequest {
   StorageCreatePresignedUrlRequestData data = 1;
