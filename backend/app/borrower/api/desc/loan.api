@@ -40,7 +40,7 @@ type LoanPropertyEntry {
 
 type LoanApplyPropertyEntry {
     Id int64 `json:"id,optional"`
-    PropertyType string `json:"property_type,optional" validate:"required,oneof='Single Family Residence' '2 unit' '3unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
+    PropertyType string `json:"property_type,optional" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
     Unit int32 `json:"unit,optional"`
     LivingAreaSqft float32 `json:"living_area_sqft,optional" validate:"required,gte=0"`
     Bedrooms int32 `json:"bedrooms,optional" validate:"required,gte=0"`
@@ -352,7 +352,6 @@ type (
         HasCollateralizedBlanket bool `json:"has_collateralized_blanket,optional"`
         HasPropertiesVacant bool `json:"has_properties_vacant,optional"`
         HasShortTermRental bool `json:"has_short_term_rental,optional"`
-        // AdditionalInfo string `json:"additional_info"`
         TransactionExperiences []*LoanExperienceEntry `json:"transaction_experiences,optional"`
         RealEstateExperiences []*LoanExperienceEntry `json:"real_estate_experiences,optional"`
         LoanThirdServices []*LoanThirdServiceEntry `json:"loan_third_services,optional"`
