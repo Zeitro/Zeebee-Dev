@@ -1,10 +1,18 @@
 import DocumentStatus from './DocumentStatus';
-import MsgSvg from '@/assets/images/message.svg';
-import MsgActiveSvg from '@/assets/images/message_active.svg';
 import { UploadModalBtn } from './UploadModal';
 import { formatDate } from '@/lib/date';
 import { Tooltip } from 'antd';
 const getUploadCommonColumns = (typeTitle, isHaveComments = true) => {
+	const getStatus = (v) => {
+		switch (v) {
+			case 'Pending Upload':
+				return '--';
+			case 'Requested':
+				return 'Waiting for upload';
+			default:
+				return v;
+		}
+	};
 	const arr = [
 		{
 			title: typeTitle || 'Requested document',
@@ -19,7 +27,7 @@ const getUploadCommonColumns = (typeTitle, isHaveComments = true) => {
 			key: 'status',
 			ellipsis: true,
 			width: 150,
-			render: (v) => <DocumentStatus status={v} />,
+			render: (v) => <DocumentStatus status={v} alias={getStatus(v)} />,
 		},
 
 		{
@@ -61,7 +69,7 @@ export const documentsColumns = () => {
 				<UploadModalBtn
 					isChangeType={false}
 					record={record}
-					disabled={record.status !== 'Requested'}
+					disabled={record.status === 'Pending upload'}
 				>
 					Upload document
 				</UploadModalBtn>

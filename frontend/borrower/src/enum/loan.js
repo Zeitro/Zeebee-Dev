@@ -89,6 +89,7 @@ export const zeeBeeDetailsTabs = [
 	{
 		label: 'Documents',
 		value: 'documents',
+		totalKey: 'requested_loan_document_count',
 	},
 ];
 
