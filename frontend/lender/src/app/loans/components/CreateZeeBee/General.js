@@ -80,7 +80,8 @@ export const loanMatrixFields = [
 export const collateralSummaryFields = [
 	{
 		label: 'Purchase price',
-		value: 'purchase_price',
+		value: 'purchase_amount',
+		render: (v) => formatAmount(v),
 	},
 	{
 		label: 'Rehab cost ',
@@ -88,13 +89,16 @@ export const collateralSummaryFields = [
 	},
 	{
 		label: 'Estimated current value ',
-		value: 'estimated_current_value',
+		value: 'ltv',
+		render: (v) => formatAmount(v),
 	},
 	{
 		label: 'Estimated after Repair value',
-		value: 'estimated_after_repair_value',
+		value: 'arv',
+		render: (v) => formatAmount(v),
 	},
 ];
+
 export const generalList = [
 	{
 		title: 'Terms',
