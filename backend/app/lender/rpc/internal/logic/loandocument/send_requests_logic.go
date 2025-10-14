@@ -144,8 +144,9 @@ func (l *SendRequestsLogic) sendDocumentRequestEmail(ctx context.Context, loan *
 	}
 
 	emailData := map[string]interface{}{
-		"first_name":     loan.LoanBorrower.ContactName,
-		"loan_documents": loanDocuments,
+		"first_name":         loan.LoanBorrower.ContactName,
+		"borrower_login_url": global.Config.BorrowerLoginUrl,
+		"loan_documents":     loanDocuments,
 	}
 
 	// parse email template
