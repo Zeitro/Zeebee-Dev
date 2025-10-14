@@ -44,7 +44,7 @@ type LoanDocumentSendRequestsRequest {
 
 type LoanDocumentSendRequestEntry {
     Id int64 `json:"id"`
-    Comment string `json:"comment"`
+    Comment string `json:"comment,optional"`
 }
 
 type LoanDocumentUpdateCommentRequest {
