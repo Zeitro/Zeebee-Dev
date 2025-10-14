@@ -143,6 +143,7 @@ const ZeeBeeDetails = () => {
 						});
 					}}
 					size="large"
+					expandIcon={() => null}
 				/>
 				<div
 					className={`flex-1 overflow-hidden overflow-y-auto bg-white h-full`}

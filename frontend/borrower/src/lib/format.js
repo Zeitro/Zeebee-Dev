@@ -137,10 +137,18 @@ export const assemblyAddress = (address = {}, isHaveZip) => {
 	return [...new Set(newArr)].join(',');
 };
 
-// 格式化姓名首字母，并大写
+// 简写姓名：只显示姓名首字母，并大写
 export const formatFirstLetterName = (userInfo) => {
 	const { first_name, last_name } = userInfo;
 	const name1 = first_name?.[0]?.toUpperCase();
 	const name2 = last_name?.[0]?.toUpperCase();
 	return `${name1}${name2}`;
 };
+
+// 首字母大写，有空格时，空格后的字母大写
+export function capitalizeFirstLetter(str) {
+	return str
+		.split(/(?:-|\s)+/)
+		.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+		.join(' ');
+}

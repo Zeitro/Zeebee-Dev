@@ -55,34 +55,43 @@ const DropdownStatus = ({
 	};
 
 	return (
-		<Tooltip {...tooltipProps}>
-			<Dropdown.Button
-				icon={disabled ? null : <DownOutlined />}
-				loading={loading}
-				menu={{
-					items,
-					selectable: true,
-					selectedKeys: [statusValue],
-					onSelect: handleSelect,
-					onClick: ({ domEvent }) => {
+		<div
+			onClick={(domEvent) => {
+				domEvent?.stopPropagation();
+				domEvent?.preventDefault();
+			}}
+		>
+			<Tooltip {...tooltipProps} title={disabled ? tooltipProps?.title : null}>
+				<Dropdown.Button
+					icon={disabled ? null : <DownOutlined />}
+					loading={loading}
+					menu={{
+						items,
+						selectable: true,
+						selectedKeys: [statusValue],
+						onSelect: handleSelect,
+						onClick: ({ domEvent }) => {
+							domEvent?.stopPropagation();
+							domEvent?.preventDefault();
+						},
+					}}
+					size="small"
+					disabled={disabled}
+					{...props}
+					className={[
+						styles.loanStatus,
+						disabled && styles.disabled,
+						props?.className,
+					].join(' ')}
+					onClick={(domEvent) => {
 						domEvent?.stopPropagation();
 						domEvent?.preventDefault();
-					},
-				}}
-				size="small"
-				disabled={disabled}
-				{...props}
-				className={[styles.loanStatus, disabled && styles.disabled, props?.className].join(
-					' ',
-				)}
-				onClick={(domEvent) => {
-					domEvent?.stopPropagation();
-					domEvent?.preventDefault();
-				}}
-			>
-				{statusValue ? rowData.label : 'Select Status'}
-			</Dropdown.Button>
-		</Tooltip>
+					}}
+				>
+					{statusValue ? rowData.label : 'Select Status'}
+				</Dropdown.Button>
+			</Tooltip>
+		</div>
 	);
 };
 export default DropdownStatus;
