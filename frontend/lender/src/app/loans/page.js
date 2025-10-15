@@ -26,9 +26,6 @@ const Loans = () => {
 			key: 'loan_stage',
 			valueName: 'loanStatusOptions',
 		},
-		{
-			type: 'lender',
-		},
 	]);
 	return (
 		<Tabs

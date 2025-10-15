@@ -17,6 +17,7 @@ import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { layoutCol, titleCol } from '@/enum/common';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import CommonFormDate from '@/components/CommonDate';
+import InputName from '@/components/InputName';
 const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 	const { maritalStatusOptions } = useGetOptions([
 		{
@@ -54,7 +55,20 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 									</Button>
 								)}
 							</Col>
-							<Col {...layoutCol} md={8}>
+							<InputName
+								layoutCol={{ ...layoutCol, md: 8 }}
+								firstName={[field.name, 'first_name']}
+								middleName={[field.name, 'mid_name']}
+								lastName={[field.name, 'last_name']}
+								config={{
+									firstNameRequired: !index,
+									lastNameRequired: !index,
+								}}
+								listName="applicants"
+								form={form}
+								className="!ml-0 !mr-0"
+							/>
+							{/* <Col {...layoutCol} md={8}>
 								<Form.Item
 									label="First name"
 									name={[field.name, 'first_name']}
@@ -76,7 +90,7 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 								>
 									<Input placeholder="Enter last name" />
 								</Form.Item>
-							</Col>
+							</Col> */}
 							<Col {...layoutCol}>
 								<Form.Item
 									label="SSN"
