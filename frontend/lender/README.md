@@ -1,3 +1,3 @@
-#Front-end project for Lenter portal
+#Front-end project for Lender portal
 
 #Test link：https://agent.zeebeeloans.net/

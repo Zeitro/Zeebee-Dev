@@ -76,6 +76,7 @@ export default function ContractViewer({
 	useEffect(() => {
 		const fetchPdf = async () => {
 			try {
+				if (!url) return;
 				setIsLoading(true);
 				setError(null);
 				const config: any = {

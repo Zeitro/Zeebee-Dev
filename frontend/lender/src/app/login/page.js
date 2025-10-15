@@ -29,7 +29,7 @@ const Login = () => {
 				<Form
 					className={[
 						styles.loginForm,
-						'w-[440px] min-h-[484px] rounded-lg bg-background !px-12 !py-12 !m-auto',
+						'w-[440px] min-h-[430px] rounded-lg bg-background !px-12 !py-12 !m-auto',
 					].join(' ')}
 					name="basic"
 					size="large"

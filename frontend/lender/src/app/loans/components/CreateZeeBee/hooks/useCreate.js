@@ -2,7 +2,7 @@
 import { Button, Col, Form, message, Space, Steps, Tabs } from 'antd';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { createZeeBeeSteps, zeeBeeDetailsTabs, detailsSteps } from '@/enum/loan';
+import { createZeeBeeSteps, zeeBeeDetailsTabs, lenderDetailsSteps } from '@/enum/loan';
 import { createRequest } from '@/lib/fetch';
 import ApplicantInfo from '../ApplicantInfo';
 import BorrowerInfo from '../BorrowerInfo';
@@ -16,7 +16,7 @@ import General from '../General';
 import Documents from '../Documents';
 import ReviewAndSign, { contractSignatureZones } from '../ReviewAndSign';
 import _ from 'lodash';
-import { flattenObjectPaths } from '@/lib/common';
+import { flattenObjectPaths, findItem } from '@/lib/common';
 import { uploadAwsS3 } from '@/api/common';
 import { LeaveAndSaveDraftBtn } from '@/components/NewModal/BtnPopUpModal';
 import eventBus from '@/lib/bus';
@@ -62,16 +62,21 @@ const useCreate = (pageType = 'create') => {
 
 	// 获取详情（草稿使用）
 	const getLoanDetail = async () => {
-		const res = await request(`/loan/${searchParams.get('id')}`);
-		console.log(res);
+		const res = (await request(`/loan/${searchParams.get('id')}`)) || {};
 		const str = assemblyAddress(res?.loan_property?.property_base?.address);
 		eventBus.emit('changeCrumbs', {
 			2: isDetails ? `ZeeBee Loan Details(${str})` : `Edit Draft(${str})`,
 		});
-		res.loan_borrower.tin = {
-			tin_type: res?.loan_borrower?.tin_type,
-			tin: res?.loan_borrower?.tin,
+		console.log(res);
+
+		res.loan_borrower = {
+			...(res?.loan_borrower || {}),
+			tin: {
+				tin_type: res?.loan_borrower?.tin_type,
+				tin: res?.loan_borrower?.tin,
+			},
 		};
+
 		if (!res?.applicants?.length) {
 			res.applicants = initialValues.applicants;
 		}
@@ -125,25 +130,6 @@ const useCreate = (pageType = 'create') => {
 		<Documents key="0-documents" rowData={rowData} />,
 	];
 
-	const detailsComponents = {
-		General: zeeBeeDetailsContent[0],
-		borrowerInformation: <CommonZeeBeeForm form={form} pageKey="borrowerInformation" />,
-		propertyAndLoan: <CommonZeeBeeForm form={form} pageKey="propertyAndLoan" />,
-		experienceAndThirdService: (
-			<CommonZeeBeeForm form={form} pageKey="experienceAndThirdService" />
-		),
-		declarationAndDemographics: (
-			<CommonZeeBeeForm form={form} pageKey="declarationAndDemographics" />
-		),
-		reviewAndSign: <CommonZeeBeeForm form={form} pageKey="reviewAndSign" />,
-		Quoting: '',
-		Processing: '',
-		Underwriting: '',
-		Closing: '',
-		Documents: zeeBeeDetailsContent[1],
-		Active: '',
-		Funded: '',
-	};
 	const getZeeBeeDetailsTabsItem = () => {
 		return zeeBeeDetailsTabs.map((item, index) => ({
 			key: `${item.value}-0`,
@@ -177,21 +163,6 @@ const useCreate = (pageType = 'create') => {
 			}
 		});
 		return newArr;
-	};
-
-	// 获取菜单展示格式
-	const getMenu = (list = detailsSteps) => {
-		return list.map((item, index) => {
-			let obj = {
-				key: item.key,
-				label: item.title,
-				icon: item.icon,
-			};
-			if (item.children) {
-				obj.children = getMenu(item.children, index);
-			}
-			return obj;
-		});
 	};
 
 	// 获取下一步步骤类型（Submit创建按钮/NextMaxStep下一大步骤/NextMinStep下一小步骤）
@@ -437,6 +408,83 @@ const useCreate = (pageType = 'create') => {
 		);
 	}, [currentStep, stepNum, loading, errorList, isChange, confirmLoading]);
 
+	/**
+	 * 以下为Lender系统内zeebee详情所需
+	 */
+	const handleContinue = async () => {
+		const currentInfo = findItem({
+			list: lenderDetailsSteps,
+			key: currentStep,
+			isPushParent: true,
+			isPushIndex: true,
+		});
+		let nextInfo = null;
+		if (currentInfo?.parentKey) {
+			const parent = lenderDetailsSteps[currentInfo.parentIndex];
+			if (parent?.children?.length === currentInfo?.index + 1) {
+				nextInfo = lenderDetailsSteps[currentInfo.parentIndex + 1];
+			} else {
+				nextInfo = parent.children[currentInfo.index + 1];
+			}
+		} else {
+			nextInfo = lenderDetailsSteps[currentInfo.index + 1];
+		}
+		await form.validateFields();
+		const params = _.cloneDeep(rowData);
+		params.loan_borrower.tin_type = rowData?.loan_borrower?.tin?.tin_type;
+		params.loan_borrower.tin = rowData?.loan_borrower?.tin?.tin;
+		await handleSubmit({ ...params });
+		setCurrentStep(nextInfo.key);
+		scrollRef.current.scrollTo({
+			top: 0,
+		});
+		console.log(currentInfo, currentStep, rowData);
+	};
+
+	const lenderStepBtn = (
+		<div className="w-[198px] flex flex-col gap-4">
+			<Button type="primary" onClick={handleContinue}>
+				Continue
+			</Button>
+		</div>
+	);
+
+	const lenderDetailsComponents = {
+		General: <div className="py-6 px-6">{zeeBeeDetailsContent[0]}</div>,
+		borrowerInformation: (
+			<CommonZeeBeeForm form={form} pageKey="borrowerInformation">
+				{lenderStepBtn}
+			</CommonZeeBeeForm>
+		),
+		propertyAndLoan: (
+			<CommonZeeBeeForm form={form} pageKey="propertyAndLoan">
+				{lenderStepBtn}
+			</CommonZeeBeeForm>
+		),
+		experienceAndThirdService: (
+			<CommonZeeBeeForm
+				form={form}
+				pageKey="experienceAndThirdService"
+				rowData={rowData}
+				setIsChange={setIsChange}
+			>
+				{lenderStepBtn}
+			</CommonZeeBeeForm>
+		),
+		declarationAndDemographics: (
+			<CommonZeeBeeForm form={form} pageKey="declarationAndDemographics">
+				{lenderStepBtn}
+			</CommonZeeBeeForm>
+		),
+		reviewAndSign: <CommonZeeBeeForm form={form} pageKey="reviewAndSign" />,
+		Quoting: <CommonZeeBeeForm pageKey="Quoting" />,
+		Processing: <CommonZeeBeeForm pageKey="Processing" />,
+		Underwriting: <CommonZeeBeeForm pageKey="Underwriting" />,
+		Closing: <CommonZeeBeeForm pageKey="Closing" />,
+		Active: '',
+		Funded: '',
+	};
+
 	return {
 		getTabsItem,
 		scrollRef,
@@ -448,16 +496,17 @@ const useCreate = (pageType = 'create') => {
 		stepBtn,
 		setIsChange,
 		createZeeBeeSteps,
-		zeeBeeDetailsTabs,
 		getNextBtnText,
 		form,
 		initialValues,
 		loading,
 		getZeeBeeDetailsTabsItem,
 		rowData,
-		getMenu,
-		detailsSteps,
-		detailsComponents,
+		zeeBeeDetailsTabs,
+		lenderDetailsSteps,
+		lenderDetailsComponents,
+		lenderStepBtn,
+		setRowData,
 	};
 };
 
