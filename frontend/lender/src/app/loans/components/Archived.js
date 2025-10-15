@@ -73,18 +73,6 @@ const ArchivedLoans = ({
 				}).map((i) => ({ ...i, key: i.value })),
 			},
 			{
-				filterType: 'treeSelect',
-				label: 'Lender',
-				placeholder: 'Lender',
-				value: lender,
-				paramsKey: 'lender',
-				onChange: (value) => setLender(value),
-				treeData: transformArrayStructure({
-					sourceArray: lenderOptions,
-					outputKey: 'title',
-				}).map((i) => ({ ...i, key: i.value })),
-			},
-			{
 				filterType: 'button',
 				onClick: () => {
 					tableFilterRef?.current?.handleSearch?.();

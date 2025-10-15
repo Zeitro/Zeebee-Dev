@@ -4,8 +4,8 @@ import React, { useState, forwardRef, useImperativeHandle, useEffect } from 'rea
 import { Upload, Button, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import type { UploadProps, UploadFile, RcFile } from 'antd/es/upload/interface';
-import { createRequest } from '@/lib/fetch';
-
+import { uploadAwsS3 } from '@/api/common';
+const MAX_SIZE_MB = 10;
 export interface CommonUploadRef {
 	triggerUpload: (options?: { onProgress?: (percent: number) => void }) => Promise<string[]>;
 	clearFileList: () => void;
@@ -37,8 +37,19 @@ const CommonUpload = forwardRef<CommonUploadRef, CommonUploadProps>(
 		},
 		ref,
 	) => {
-		const { uploadWithProgress } = createRequest();
 		const [fileList, setFileList] = useState<UploadFile[]>([]);
+
+		const checkFileSize = (file: RcFile) => {
+			const isLt10M = file.size / 1024 / 1024 < MAX_SIZE_MB;
+			if (!isLt10M) {
+				message.destroy();
+				message.open({
+					type: 'error',
+					content: `The file size cannot exceed ${MAX_SIZE_MB}MB!`,
+				});
+			}
+			return isLt10M;
+		};
 
 		const handleUpload = async (
 			file: UploadFile,
@@ -47,68 +58,86 @@ const CommonUpload = forwardRef<CommonUploadRef, CommonUploadProps>(
 			const formData = new FormData();
 			formData.append('file', file.originFileObj as RcFile);
 
-			const response = await uploadWithProgress('/api/upload', {
-				body: formData,
+			const url = await uploadAwsS3({
+				url: '/storage/presign_url',
+				file,
 				onProgress: progressCallback,
 			});
 
-			if (response.success && response.url) {
-				return response.url;
+			if (url) {
+				return url;
 			} else {
-				throw new Error(response.message || 'Upload failed');
+				throw new Error('Upload failed');
 			}
 		};
 
-		useImperativeHandle(ref, () => ({
-			triggerUpload: async (options) => {
-				// ... (这部分逻辑几乎不变，只是内部调用 handleUpload)
-				if (immediateUpload) {
-					console.warn('triggerUpload should not be called in immediateUpload mode.');
-					return [];
-				}
+		// 上传文件数组（可父级直接调用）
+		const triggerUpload = async (options: any) => {
+			// ... (这部分逻辑几乎不变，只是内部调用 handleUpload)
+			if (immediateUpload) {
+				console.warn('triggerUpload should not be called in immediateUpload mode.');
+				return [];
+			}
 
-				const filesToUpload = fileList.filter((f) => f.status !== 'done');
-				const uploadPromises = filesToUpload.map((file) => {
+			const filesToUpload = fileList.filter((f) => f.status !== 'done');
+
+			const uploadPromises = filesToUpload.map((file) => {
+				setFileList((currentList) =>
+					currentList.map((f) => {
+						if (f.uid === file.uid) {
+							f.status = 'uploading';
+						}
+						return f;
+					}),
+				);
+				return handleUpload(file, (percent) => {
 					setFileList((currentList) =>
-						currentList.map((f) =>
-							f.uid === file.uid ? { ...f, status: 'uploading' } : f,
-						),
+						currentList.map((f) => {
+							if (f.uid === file.uid) {
+								f.percent = percent;
+							}
+							return f;
+						}),
 					);
-
-					return handleUpload(file, (percent) => {
+					options?.onProgress?.(percent);
+				})
+					.then((url) => {
 						setFileList((currentList) =>
-							currentList.map((f) => (f.uid === file.uid ? { ...f, percent } : f)),
+							currentList.map((f) => {
+								if (f.uid === file.uid) {
+									f.status = 'done';
+									f.url = url;
+									f.percent = 100;
+								}
+								return f;
+							}),
 						);
-						options?.onProgress?.(percent);
+						return url;
 					})
-						.then((url) => {
-							setFileList((currentList) =>
-								currentList.map((f) =>
-									f.uid === file.uid
-										? { ...f, status: 'done', url, percent: 100 }
-										: f,
-								),
-							);
-							return url;
-						})
-						.catch(() => {
-							setFileList((currentList) =>
-								currentList.map((f) =>
-									f.uid === file.uid ? { ...f, status: 'error' } : f,
-								),
-							);
-							return null;
-						});
-				});
+					.catch(() => {
+						setFileList((currentList) =>
+							currentList.map((f) => {
+								if (f.uid === file.uid) {
+									f.status = 'error';
+								}
+								return f;
+							}),
+						);
+						return null;
+					});
+			});
 
-				const results = await Promise.all(uploadPromises);
-				const successfulUrls = results.filter((url): url is string => url !== null);
+			const results = await Promise.all(uploadPromises);
+			const successfulUrls = results.filter((url): url is string => url !== null);
 
-				if (successfulUrls.length !== filesToUpload.length) {
-					throw new Error('部分文件上传失败');
-				}
-				return successfulUrls;
-			},
+			if (successfulUrls.length !== filesToUpload.length) {
+				throw new Error('Some files failed to upload.');
+			}
+			return successfulUrls;
+		};
+
+		useImperativeHandle(ref, () => ({
+			triggerUpload,
 			clearFileList: () => {
 				setFileList([]);
 			},
@@ -126,7 +155,10 @@ const CommonUpload = forwardRef<CommonUploadRef, CommonUploadProps>(
 		};
 
 		if (immediateUpload) {
-			// 模式一：customRequest 现在也只调用 handleUpload
+			// 模式一：customRequest 直接上传
+			uploadProps.beforeUpload = (file: RcFile) => {
+				return checkFileSize(file);
+			};
 			uploadProps.customRequest = ({
 				file,
 				onSuccess: onAntdSuccess,
@@ -140,16 +172,17 @@ const CommonUpload = forwardRef<CommonUploadRef, CommonUploadProps>(
 					.then((url) => {
 						onAntdSuccess?.({ url });
 						onSuccess?.(url, file);
-						message.success(`${file.name} 上传成功`);
+						message.success(`${file.name} Upload successful`);
 					})
 					.catch((err) => {
 						onError?.(err);
-						message.error(`${file.name} 上传失败`);
+						message.error(`${file.name} Upload failed`);
 					});
 			};
 		} else {
-			// 模式二：逻辑不变
-			uploadProps.beforeUpload = (file) => {
+			// 模式二：阻止直接上传，拿到所有文件统一自定义上传
+			uploadProps.beforeUpload = (file: RcFile) => {
+				if (!checkFileSize(file)) return Upload.LIST_IGNORE;
 				setFileList((currentList) => {
 					const newList = [...currentList, file];
 					return maxCount ? newList.slice(-maxCount) : newList;
