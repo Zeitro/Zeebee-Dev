@@ -136,6 +136,7 @@ export const pendingColumns = (isNotAddress, successCallback, showDeleteModal, s
 			key: 'loan_purpose',
 			ellipsis: true,
 			width: 120,
+			render: (v) => v || '--',
 		},
 		{
 			title: 'Target closing date',
@@ -144,13 +145,14 @@ export const pendingColumns = (isNotAddress, successCallback, showDeleteModal, s
 			ellipsis: true,
 			sorter: true,
 			width: 170,
+			render: (v) => v || '--',
 		},
 		{
 			title: 'Business strategy',
 			dataIndex: 'business_strategy',
 			key: 'business_strategy',
 			ellipsis: true,
-			render: (v) => v?.join(','),
+			render: (v) => v?.join(',') || '--',
 			width: 160,
 		},
 		{
@@ -203,7 +205,7 @@ export const pendingColumns = (isNotAddress, successCallback, showDeleteModal, s
 			ellipsis: true,
 			sorter: true,
 			width: 90,
-			render: (v) => `${v || 0}%`,
+			render: (v) => (v ? `${v}%` : '--'),
 		},
 		{
 			title: 'Loan type',
@@ -225,6 +227,7 @@ export const activeColumns = (isNotAddress, showDeleteModal) => [
 		key: 'lien_position',
 		ellipsis: true,
 		width: 120,
+		render: (v) => v || '--',
 	},
 	{
 		title: 'Lender',
@@ -255,7 +258,7 @@ export const activeColumns = (isNotAddress, showDeleteModal) => [
 		ellipsis: true,
 		sorter: true,
 		width: 90,
-		render: (v) => `${v || 0}%`,
+		render: (v) => (v ? `${v}%` : '--'),
 	},
 	// {
 	// 	title: 'Point',
@@ -270,6 +273,7 @@ export const activeColumns = (isNotAddress, showDeleteModal) => [
 		ellipsis: true,
 		sorter: true,
 		width: 140,
+		render: (v) => v || '--',
 	},
 	{
 		title: 'Outstanding Loan Amount',
@@ -320,6 +324,7 @@ export const activeColumns = (isNotAddress, showDeleteModal) => [
 		key: 'service_company',
 		ellipsis: true,
 		width: 160,
+		render: (v) => v || '--',
 	},
 	getOpt(showDeleteModal),
 ];
@@ -356,7 +361,7 @@ export const archivedColumns = (isNotAddress, showDeleteModal) => [
 		ellipsis: true,
 		sorter: true,
 		width: 90,
-		render: (v) => `${v || 0}%`,
+		render: (v) => (v ? `${v}%` : '--'),
 	},
 	{
 		title: 'Paid Off Date',
@@ -365,6 +370,7 @@ export const archivedColumns = (isNotAddress, showDeleteModal) => [
 		ellipsis: true,
 		sorter: true,
 		width: 160,
+		render: (v) => v || '--',
 	},
 	getOpt(showDeleteModal),
 ];
