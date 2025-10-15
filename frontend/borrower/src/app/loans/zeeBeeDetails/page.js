@@ -24,39 +24,13 @@ const ZeeBeeDetails = () => {
 		rowData,
 	} = useCreate('details');
 
-	const segmentedList = useMemo(() => {
-		const list = [
-			...zeeBeeDetailsTabs,
-			...getTabsItem(createZeeBeeSteps, true).map((i) => ({
-				label: i.label,
-				value: i.key.replace('-0', ''),
-			})),
-		];
-		console.log(rowData?.requested_loan_document_count, '====');
-		return list;
-		// return list.map((item) => {
-		// 	console.log(item, item.totalKey, rowData?.[item?.totalKey]);
-
-		// 	// if (item.totalKey && rowData?.[item?.totalKey]) {
-		// 	console.log(rowData?.[item?.totalKey]);
-
-		// 	item.label = (
-		// 		<Badge
-		// 			count={item?.totalKey ? rowData?.[item?.totalKey] || 0 : 0}
-		// 			overflowCount={99}
-		// 			size="small"
-		// 			offset={[3, 0]}
-		// 		>
-		// 			{item.label}
-		// 		</Badge>
-		// 	);
-		// 	// } else {
-		// 	// 	item.label = <div>{item.label}</div>;
-		// 	// }
-
-		// 	return item;
-		// });
-	}, [rowData]);
+	const segmentedList = [
+		...zeeBeeDetailsTabs,
+		...getTabsItem(createZeeBeeSteps, true).map((i) => ({
+			label: i.label,
+			value: i.key.replace('-0', ''),
+		})),
+	];
 
 	useEffect(() => {
 		setCurrentStep(zeeBeeDetailsTabs[0].value);
@@ -97,22 +71,6 @@ const ZeeBeeDetails = () => {
 					</div>
 				))}
 			</div>
-			{/* <Segmented
-				value={currentStep}
-				size="large"
-				options={segmentedList}
-				onChange={(value) => {
-					setCurrentStep(value);
-					setStepNum(0);
-				}}
-				className={`flex-shrink-0 ${styles.segmented}`}
-			/> */}
-			{/* <Tabs
-				activeKey={currentStep}
-				items={[...getZeeBeeDetailsTabsItem(), ...getTabsItem()]}
-				renderTabBar={() => <div> </div>}
-				className={` ${styles.tabs}`}
-			/> */}
 			<Radio.Group
 				size="large"
 				value={currentStep}
@@ -127,9 +85,9 @@ const ZeeBeeDetails = () => {
 						{item.totalKey ? (
 							<Badge
 								count={item?.totalKey ? rowData?.[item?.totalKey] || 0 : 0}
-								// overflowCount={99}
+								overflowCount={99}
 								size="small"
-								offset={[3, 0]}
+								offset={[3, -3]}
 							>
 								{item.label}
 							</Badge>

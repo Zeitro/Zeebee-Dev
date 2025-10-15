@@ -56,10 +56,12 @@
 			border-right: none !important;
 			border-radius: 0 !important;
 			padding: 0 !important;
-			margin: 0 16px !important;
+			margin: 0 1rem !important;
 			border-width: 2px !important;
-			transition: none !important;
 			&::before {
+				display: none !important;
+			}
+			> div {
 				display: none !important;
 			}
 		}
