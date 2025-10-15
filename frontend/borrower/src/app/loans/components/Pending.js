@@ -157,7 +157,10 @@ const PendingPage = ({
 
 	// 导入3rd party后调用，更新列表
 	useEffect(() => {
-		eventBus.on('searchPendingLoans', tableFilterRef?.current?.handleSearch);
+		eventBus.on('searchPendingLoans', () => {
+			tableFilterRef?.current?.handleSearch();
+		});
+		return () => eventBus.off('searchPendingLoans');
 	}, []);
 
 	return (

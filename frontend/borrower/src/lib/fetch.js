@@ -145,16 +145,18 @@ export function createRequest() {
 			}
 			// ❗️ 注意：此处不能设置 'Content-Type'，必须由浏览器自动处理 FormData
 
-			// 监听上传进度
+			// 只能监听上传文件进度
 			xhr.upload.onprogress = (event) => {
 				if (event.lengthComputable) {
-					const percent = Math.round((event.loaded / event.total) * 100);
+					let percent = Math.round((event.loaded / event.total) * 100);
+					if (percent === 100) percent = 99;
 					onProgress(percent);
 				}
 			};
 
 			// 监听请求完成
 			xhr.onload = async () => {
+				onProgress(100);
 				const data = await commonJudge({ ok: xhr.status === 200, xhr, isExternalLink });
 				if (!data) return reject({ message: '401' });
 				if (data.message) {

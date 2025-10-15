@@ -41,7 +41,7 @@ const ZeeBeeDetails = () => {
 			<div className="flex items-center flex-shrink-0 pt-6 pb-5 px-6">
 				<HomeSvg />
 				<p className="text-xl/[24px] font-bold pl-3 pr-5">
-					{assemblyAddress(rowData?.loan_property?.property_base?.address)}
+					{assemblyAddress(rowData?.loan_property?.property_base?.address, true)}
 				</p>
 				<div
 					className="px-2 text-white font-medium rounded-sm mr-2 text-sm"
