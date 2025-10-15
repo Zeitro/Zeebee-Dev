@@ -1,10 +1,10 @@
 .sidebar {
 	transition: 0.3s width;
-	.logo {
+	.logo img{
+		max-height: 30px;
+		max-width: 149px;
 	}
 
-	.userInfo {
-	}
 	.bg {
 		background-color: var(--base-active);
 	}
