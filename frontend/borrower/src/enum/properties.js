@@ -16,7 +16,7 @@ export const propertiesFieldArr = [
 	{
 		label: 'Average active rate',
 		value: 'avg_rate',
-		render: (v) => `${v || 0}%`,
+		render: (v) => (v ? `${v}%` : '--'),
 	},
 	{
 		label: 'Total monthly payment',
