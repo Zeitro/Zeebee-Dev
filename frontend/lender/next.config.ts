@@ -1,8 +1,10 @@
-import type { NextConfig } from 'next';
+import type {NextConfig} from 'next';
 import path from 'path';
+
 const isLocal = process.env.NEXT_PUBLIC_ENV === 'local';
 const nextConfig: NextConfig = {
 	/* config options here */
+	output: 'standalone',
 	reactStrictMode: !isLocal, // 开启 React 严格模式
 	env: {
 		NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL, // 注入环境变量
