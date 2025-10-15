@@ -11,6 +11,7 @@ import { RightCircleTwoTone, LeftCircleTwoTone } from '@ant-design/icons';
 import { useUserStore } from '@/store/user';
 import { sidebarIcon } from './icon';
 import { formatFirstLetterName } from '@/lib/format';
+import useElementSize from '@/hooks/useElementSize';
 const homePathname = '/';
 const initTwoToneColor = ['var(--base-label)', 'var(--gray-light)'];
 /**
@@ -25,7 +26,7 @@ const SidebarDom = () => {
 	const [selectedKey, setSelectedKey] = useState(homePathname);
 	const [twoToneColor, setTwoToneColor] = useState(initTwoToneColor);
 	const config = useMemo(() => getCurrentRouterItem(pathname, navRouter), [pathname]); // 获取当前路由的配置
-
+	const [rect, rectDom] = useElementSize();
 	const handleSelect = ({ key }) => {
 		// if (selectedKey === key) return;
 		router.push(key);
@@ -52,15 +53,16 @@ const SidebarDom = () => {
 				'relative shrink-0 h-full flex flex-col border-r border-base-border',
 				styles.sidebar,
 			].join(' ')}
+			ref={rectDom}
 		>
 			<div
 				className={[
-					'h-14 mx-3.5 shrink-0 border-b border-base-border cursor-pointer flex items-center',
+					'h-14 mx-3.5 shrink-0 border-b border-base-border cursor-pointer flex items-center overflow-hidden',
 					styles.logo,
 				].join(' ')}
 				onClick={() => handleSelect({ key: homePathname })}
 			>
-				{sidebarCollapsed ? (
+				{rect?.width < 80 ? (
 					<Image
 						src="/images/logo_abbreviated.png"
 						width={27}
