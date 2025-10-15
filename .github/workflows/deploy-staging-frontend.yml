@@ -3,8 +3,8 @@ name: Zeebee frontend Deploy to staging
 on:
   push:
     branches:
-      - staging-borrower-frontend
-      - staging-lender-frontend
+      - staging-borrower-frontend-stop
+      - staging-lender-frontend-stop
 
 jobs:
   deploy:
@@ -26,7 +26,7 @@ jobs:
           if [[ "${{ github.ref }}" == "refs/heads/staging-borrower-frontend" ]]; then
             echo "SERVICE_NAME=staging-borrower-frontend" >> $GITHUB_ENV
             echo "IMAGE_NAME=staging-borrower-frontend" >> $GITHUB_ENV
-            echo "CONTAINER_NAME=backend-borrower-staging" >> $GITHUB_ENV
+            echo "CONTAINER_NAME=staging-borrower-frontend" >> $GITHUB_ENV
           elif [[ "${{ github.ref }}" == "refs/heads/staging-lender-frontend" ]]; then
             echo "SERVICE_NAME=staging-lender-frontend" >> $GITHUB_ENV
             echo "IMAGE_NAME=staging-lender-frontend" >> $GITHUB_ENV
