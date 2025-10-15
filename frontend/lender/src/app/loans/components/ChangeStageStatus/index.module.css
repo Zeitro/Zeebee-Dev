@@ -25,6 +25,11 @@
 	background-color: var(--blue-light-2) !important;
 	border-color: var(--blue-light) !important;
 }
+.Underwriting :global(.ant-btn) {
+	color: #eb2f96 !important;
+	background-color: #fff0f6 !important;
+	border-color: #ffadd2 !important;
+}
 .Closing :global(.ant-btn) {
 	color: var(--purple-dark) !important;
 	background-color: var(--purple-light) !important;

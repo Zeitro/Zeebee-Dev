@@ -6,14 +6,7 @@
 	.userInfo {
 	}
 	.bg {
-		background: linear-gradient(
-			to right,
-			#ffc3a0 0%,
-			#ffafbd 25%,
-			#d8b5ff 50%,
-			#a18cd1 75%,
-			#c2e9fb 100%
-		);
+		background-color: var(--base-active);
 	}
 }
 .menuList :global {

@@ -2,7 +2,7 @@ import React from 'react';
 import { Col, Form, Input, Row } from 'antd';
 import { titleCol } from '@/enum/common';
 import { getPathArr } from '@/lib/common';
-import { validatedName } from '@/lib/format';
+import { validatedName, capitalizeFirstLetter } from '@/lib/format';
 const InputName = ({
 	layoutCol = {
 		xs: 24,
@@ -52,6 +52,9 @@ const InputName = ({
 						{ required: last || config?.firstNameRequired, message: 'Please Enter!' },
 						{ validator: (_, value) => validatedName(value, index, applicants) },
 					]}
+					getValueFromEvent={(v) => {
+						return capitalizeFirstLetter(v.target.value);
+					}}
 					dependencies={getDependencies('firstName')}
 				>
 					<Input placeholder={`Enter ${firstLabel.toLowerCase()}`} />
@@ -63,6 +66,9 @@ const InputName = ({
 					name={middleName}
 					rules={[{ validator: (_, value) => validatedName(value, index, applicants) }]}
 					dependencies={getDependencies('middleName')}
+					getValueFromEvent={(v) => {
+						return capitalizeFirstLetter(v.target.value);
+					}}
 				>
 					<Input placeholder={`Enter ${middleLabel.toLowerCase()}`} />
 				</Form.Item>
@@ -76,6 +82,9 @@ const InputName = ({
 						{ validator: (_, value) => validatedName(value, index, applicants) },
 					]}
 					dependencies={getDependencies('lastName')}
+					getValueFromEvent={(v) => {
+						return capitalizeFirstLetter(v.target.value);
+					}}
 				>
 					<Input placeholder={`Enter ${lastLabel.toLowerCase()}`} />
 				</Form.Item>
