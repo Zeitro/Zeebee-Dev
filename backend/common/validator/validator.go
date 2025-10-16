@@ -54,6 +54,9 @@ func NewValidator(local string) (v *Validator, err error) {
 		trans, _ = uni.GetTranslator(LocalEn)
 		err = en2.RegisterDefaultTranslations(validator, trans)
 	}
+	if err != nil {
+		return nil, err
+	}
 	v = &Validator{
 		validator: validator,
 		trans:     trans,
