@@ -62,16 +62,34 @@ const SidebarDom = () => {
 				].join(' ')}
 				onClick={() => handleSelect({ key: homePathname })}
 			>
-				{rect?.width < 80 ? (
+				<div
+					className={[styles.logoBox, rect?.width < 150 && styles.logoBox_collapsed].join(
+						' ',
+					)}
+				>
+					<Image
+						src="/images/logo.png"
+						width={149}
+						height={30}
+						alt="ZeeBee Logo"
+						className={[
+							styles.logoImg,
+							rect?.width < 150 && styles.logoImg_hidden,
+						].join(' ')}
+						priority
+					/>
 					<Image
 						src="/images/logo_abbreviated.png"
 						width={27}
 						height={27}
 						alt="ZeeBee Logo"
+						className={[
+							styles.logoImgSmall,
+							rect?.width >= 150 && styles.logoImgSmall_hidden,
+						].join(' ')}
+						priority
 					/>
-				) : (
-					<Image src="/images/logo.png" width={149} height={30} alt="ZeeBee Logo" />
-				)}
+				</div>
 			</div>
 			<Menu
 				mode="vertical"

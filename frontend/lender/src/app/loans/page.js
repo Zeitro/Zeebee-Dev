@@ -64,6 +64,7 @@ const Loans = () => {
 			]}
 			onChange={(v) => setTabKey(v)}
 			className={`h-full ${styles.loans}`}
+			destroyOnHidden
 		/>
 	);
 };
