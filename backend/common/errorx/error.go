@@ -2,7 +2,6 @@ package errorx
 
 import (
 	"bytes"
-	"fmt"
 	"runtime"
 	"strings"
 
@@ -43,7 +42,7 @@ func GetErrorStack(err error) []string {
 			if err != nil {
 				continue
 			}
-			lines = append(lines, fmt.Sprintf("%s", line))
+			lines = append(lines, string(line))
 		}
 		return lines
 	}

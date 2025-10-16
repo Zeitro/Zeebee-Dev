@@ -59,9 +59,9 @@ type Loan struct {
 	HasCollateralizedBlanket bool                        `gorm:"column:has_collateralized_blanket;not null;default:false" json:"has_collateralized_blanket"`
 	HasPropertiesVacant      bool                        `gorm:"column:has_properties_vacant;not null;default:false" json:"has_properties_vacant"`
 	HasShortTermRental       bool                        `gorm:"column:has_short_term_rental;not null;default:false" json:"has_short_term_rental"`
-	OriginalContractDate     *sql.NullTime               `json:"original_contract_date,optional" gorm:"column:original_contract_date"`
-	ExtensionDate            *sql.NullTime               `json:"extension_date,optional" gorm:"column:extension_date"`
-	LoanProcessor            string                      `json:"loan_processor,optional" gorm:"column:loan_processor;size:100;not null;default:''"`
+	OriginalContractDate     *sql.NullTime               `json:"original_contract_date" gorm:"column:original_contract_date"`
+	ExtensionDate            *sql.NullTime               `json:"extension_date" gorm:"column:extension_date"`
+	LoanProcessor            string                      `json:"loan_processor" gorm:"column:loan_processor;size:100;not null;default:''"`
 	Extend                   types.LoanExtendValues      `json:"extend" gorm:"column:extend;type:jsonb;serializer:json"`
 
 	// relationships
