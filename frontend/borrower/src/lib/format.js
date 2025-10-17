@@ -20,8 +20,11 @@ export const maxCreditScore = 850;
 export const maxAmount = 1000000000000;
 // 最大单元数
 export const maxNumberOfUnits = 100;
-// 最大贷款期限（月）
+// 系统最大贷款期限（月）
 export const maxTerm = 10000;
+// ZeeBee,最小/最大贷款期限（月）
+export const maxTerm_zeeBee = 24;
+export const minTerm_zeeBee = 12;
 
 // 格式化居住面积, 用于<InputNumber>中配置
 export const livingAreaProps = {
@@ -40,6 +43,19 @@ export const livingAreaProps = {
 export const validateRule = (value, regex, errorMsg = 'Invalid input') => {
 	if (value && !regex.test(value)) {
 		return Promise.reject(errorMsg);
+	}
+	return Promise.resolve();
+};
+
+//AssignmentFee 金额效验
+export const validateAssignmentFeeAmount = (value, purchase_amount) => {
+	// Assignment fee 最高只能达到purchase price的10%
+	const max = purchase_amount * 0.1;
+	// if (!value) {
+
+	// }
+	if (value && max > value) {
+		return Promise.reject(`Assignment fee cannot exceed purchase price的10% (${max})`);
 	}
 	return Promise.resolve();
 };

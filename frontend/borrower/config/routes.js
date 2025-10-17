@@ -80,6 +80,12 @@ export const noTokenRouter = [
 			},
 		],
 	},
+	{
+		path: '/estimateLoan',
+		title: 'Estimate loan',
+		hideMenu: true,
+		hideCrumbs: true,
+	},
 ];
 
 export const noNavRouter = [
