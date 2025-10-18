@@ -617,6 +617,67 @@ message LoanExtendValueEntry {
   string business_line = 5;
 }
 
+// pre approve
+message LoanPreApproveRequest {
+  LoanPreApproveRequestData data = 1;
+}
+message LoanPreApproveRequestData {
+  message Borrower {
+    string name = 1;
+    string email = 2;
+    string phone = 3;
+    string loan_purpose = 4;
+    string loan_type = 5;
+    int32 fico_score = 6;
+    int32 flip_property_count = 7;
+    int32 purchase_rental_property_count = 8;
+  }
+
+  message Property {
+    AddressEntry address = 1;
+    string property_type = 2;
+    bool is_permit_ready = 3;
+  }
+
+  message Loan {
+    int32 loan_term = 1;
+    double est_current_property_value_amount = 2;
+    float arv = 3;
+    double total_amount = 4;
+    double principal_amount = 5;
+    string purchase_date = 6;
+    double purchase_amount = 7;
+    string cost_to_date = 8;
+    double budget_amount = 9;
+    double initial_amount = 10;
+    double holdback_amount = 11;
+    int32 interest_reserve_months = 12;
+  }
+
+  Borrower borrower = 1;
+  Property property = 2;
+  Loan loan = 3;
+}
+
+message LoanPreApproveResponse {
+  LoanPreApproveResponseData data = 1;
+}
+message LoanPreApproveResponseData {
+  bool is_approved = 1;
+  double total_amount = 2;
+  float rate = 3;
+  double monthly_payment = 4;
+  double cash_to_close = 5;
+  double initial_amount = 6;
+  double holdback_amount = 7;
+  int32 loan_term = 8;
+  float ltv = 9;
+  float tlc = 10;
+  float ltarv = 11;
+  string code = 12;
+}
+
+
 service Loan {
   rpc CreateBorrowerLoan(LoanCreateRequest) returns(LoanCreateResponse);
   rpc UpdateBorrowerLoan(LoanUpdateRequest) returns(EmptyResponse);
@@ -629,7 +690,7 @@ service Loan {
   rpc SaveDraftLoan(LoanApplyRequest) returns(LoanApplyResponse);
   rpc UpdateApplyLoan(LoanApplyRequest) returns(EmptyResponse);
   rpc ImportPendingLoans(ImportPendingLoansRequest) returns(ImportPendingLoansResponse);
-  //  rpc UpdateLoanDocuments(LoanUpdateDocumentsRequest) returns(EmptyResponse);
+  rpc PreApproveLoan(LoanPreApproveRequest) returns(LoanPreApproveResponse);
 }
 
 
