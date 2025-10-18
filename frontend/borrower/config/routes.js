@@ -85,6 +85,14 @@ export const noTokenRouter = [
 		title: 'Estimate loan',
 		hideMenu: true,
 		hideCrumbs: true,
+		router: [
+			{
+				path: '/estimateLoan/preApproved',
+				title: 'Pre-Approved!',
+				hideMenu: true,
+				hideCrumbs: true,
+			},
+		],
 	},
 ];
 
