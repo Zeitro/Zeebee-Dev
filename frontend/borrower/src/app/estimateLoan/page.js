@@ -64,11 +64,12 @@ const EstimateLoan = () => {
 			setOldCurrentStep(currentStep);
 			return setCurrentStep(currentStep + 1);
 		}
-		const res = await request('', {
-			method: 'POST',
-			body: estimateLoan,
-		});
-		console.log(res);
+		// const res = await request('', {
+		// 	method: 'POST',
+		// 	body: estimateLoan,
+		// });
+		// console.log(res);
+		router.replace('/estimateLoan/preApproved');
 	};
 
 	const btn = (

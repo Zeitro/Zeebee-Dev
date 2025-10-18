@@ -10,7 +10,9 @@ const EstimateLoanLayout = ({ children }) => {
 					<Image src="/images/logo.svg" width={95} height={30} alt="logo" />
 				</div>
 			</div>
-			<div className="flex-1 bg-[#E4F3FF] overflow-hidden">{children}</div>
+			<div className="flex-1 bg-[#E4F3FF] overflow-hidden flex justify-center">
+				{children}
+			</div>
 		</div>
 	);
 };
