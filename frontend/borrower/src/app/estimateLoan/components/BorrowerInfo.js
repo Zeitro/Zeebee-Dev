@@ -7,6 +7,7 @@ import {
 	minCreditScore,
 	maxCreditScore,
 	validateRule,
+	capitalizeFirstLetter,
 } from '@/lib/format';
 import { titleCol } from '@/enum/common';
 import { useGetOptions } from '@/hooks/useGetOptions';
@@ -35,6 +36,7 @@ const BorrowerInfo = ({ gutter = 24, children }) => {
 							required: true,
 						},
 					]}
+					getValueFromEvent={(v) => capitalizeFirstLetter(v.target.value)}
 				>
 					<Input placeholder="Enter Borrower name" />
 				</Form.Item>
@@ -93,15 +95,7 @@ const BorrowerInfo = ({ gutter = 24, children }) => {
 				In the last 3 years, how many times have you...
 			</Col>
 			<Col {...titleCol}>
-				<Form.Item
-					label="Flipped a property?"
-					name="property"
-					rules={[
-						{
-							required: true,
-						},
-					]}
-				>
+				<Form.Item label="Flipped a property?" name="property">
 					<InputNumber
 						style={{ width: '100%' }}
 						// min={minCreditScore}
@@ -112,15 +106,7 @@ const BorrowerInfo = ({ gutter = 24, children }) => {
 				</Form.Item>
 			</Col>
 			<Col {...titleCol}>
-				<Form.Item
-					label="Purchased a rental property?"
-					name="rental_property"
-					rules={[
-						{
-							required: true,
-						},
-					]}
-				>
+				<Form.Item label="Purchased a rental property?" name="rental_property">
 					<InputNumber
 						style={{ width: '100%' }}
 						// min={minCreditScore}
