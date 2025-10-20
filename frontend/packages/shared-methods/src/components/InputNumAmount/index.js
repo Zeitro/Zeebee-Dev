@@ -6,7 +6,7 @@ import { maxAmount } from '@/lib/format';
  * 金额输入框
  * InputNumber所需值
  * */
-const InputNumAmount = ({
+export const InputNumAmount = ({
 	value,
 	onChange,
 	placeholder,
@@ -44,4 +44,4 @@ const InputNumAmount = ({
 		/>
 	);
 };
-export default InputNumAmount;
+// export default InputNumAmount;

@@ -3,6 +3,12 @@
   "version": "1.0.0",
   "description": "Repository for Zeebee, Private lending mortgage platform",
   "main": "index.js",
+  "private": true,
+  "workspaces": [
+    "frontend/borrower",
+    "frontend/lender",
+    "frontend/packages/*"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "husky install"

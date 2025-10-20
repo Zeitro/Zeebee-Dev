@@ -1,4 +1,4 @@
-import type {NextConfig} from 'next';
+import type { NextConfig } from 'next';
 import path from 'path';
 
 const isLocal = process.env.NEXT_PUBLIC_ENV === 'local';
@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
 	env: {
 		NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL, // 注入环境变量
 	},
+	transpilePackages: ['@repo/shared-methods'],
 	webpack: (config) => {
 		config.module.rules.push({
 			test: /\.svg$/,

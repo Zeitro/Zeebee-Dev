@@ -1,5 +1,5 @@
 {
-	"name": "next-demo-ts",
+	"name": "next-borrower",
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
@@ -21,8 +21,10 @@
 		]
 	},
 	"dependencies": {
+		"@ant-design/icons": "~5.6.1",
 		"@ant-design/nextjs-registry": "^1.0.2",
 		"@ant-design/v5-patch-for-react-19": "^1.0.3",
+		"@repo/shared-methods": "1.0.0",
 		"@svgr/webpack": "^8.1.0",
 		"antd": "^5.26.2",
 		"aws-sdk": "^2.1692.0",
