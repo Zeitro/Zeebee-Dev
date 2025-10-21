@@ -132,20 +132,8 @@ type LoanPreApproveRequest struct {
 }
 
 type LoanPreApproveResponse struct {
-	IsApproved     bool    `json:"is_approved"`
-	TotalAmount    float64 `json:"total_amount"`
-	Rate           float32 `json:"rate"`
-	MonthlyPayment float64 `json:"monthly_payment"`
-	CashToClose    float64 `json:"cash_to_close"`
-	InitialAmount  float64 `json:"initial_amount"`
-	HoldbackAmount float64 `json:"holdback_amount"`
-	LoanTerm       int32   `json:"loan_term"`
-	Ltv            float32 `json:"ltv"`
-	Ltarv          float32 `json:"ltarv"`
-	Tlc            float32 `json:"tlc"`
-	Code           string  `json:"code"`
-	RejectReason   string  `json:"reject_reason"`
-	RequestId      string  `json:"request_id"`
+	Primary     *PrimaryPreApproveLoan     `json:"primary"`
+	Secondaries []*SecondaryPreApproveLoan `json:"secondary"`
 }
 
 type LoanUpdatePendingStatusRequest struct {

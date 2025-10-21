@@ -46,6 +46,8 @@ type InputLoanInfo struct {
 // CalculatePreApprovedLoanAmountResult represents the result of calculating pre-approved loan amount
 type CalculatePreApprovedLoanAmountResult struct {
 	RequestId              string          `json:"request_id"`
+	LenderCompanyName      string          `json:"lender_company_name"`
+	LenderCompanyId        int64           `json:"lender_company_id"`
 	IsApproved             bool            `json:"is_approved"`
 	RejectReason           string          `json:"reject_reason"`
 	TotalAmount            float64         `json:"total_amount"`
@@ -78,7 +80,13 @@ func (e *PreApproveEngine) CalPreApprovedLoanAmount(input InputLoanInfo) (result
 	if !ok {
 		return nil, errors.WithStack(errors.New("no rule found for experience level"))
 	}
-	return rule.CalPreApprovedLoanAmount(input)
+	result, err = rule.CalPreApprovedLoanAmount(input)
+	if err != nil {
+		return nil, err
+	}
+	result.LenderCompanyId = e.LenderCompanyId
+	result.LenderCompanyName = e.LenderCompanyName
+	return result, nil
 }
 
 func GetDefaultPreApproveEngines() map[string]*PreApproveEngine {

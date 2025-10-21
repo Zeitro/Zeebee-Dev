@@ -33,6 +33,7 @@ type RpcConf struct {
 	LoginUrl                    string
 	VerifyEmailUrl              string
 	ResetPwdUrl                 string
+	PreApproveLoanConf          []PreApproveLoanConf
 }
 
 type DbConf struct {
@@ -71,4 +72,26 @@ type EmailConf struct {
 	Port     int
 	Password string
 	Username string
+}
+
+// PreApproveLoanConf pre-approve loan config
+type PreApproveLoanConf struct {
+	LenderCompanyId   int64
+	LenderCompanyName string
+	TotalAmount       PreApproveLoanTotalAmount
+	Rate              PreApproveLoanRate
+	LoanTerm          PreApproveLoanLoanTerm
+}
+
+type PreApproveLoanTotalAmount struct {
+	Min float64
+	Max float64
+}
+type PreApproveLoanRate struct {
+	Min float64
+	Max float64
+}
+type PreApproveLoanLoanTerm struct {
+	Min int
+	Max int
 }

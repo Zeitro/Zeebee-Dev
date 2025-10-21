@@ -84,6 +84,7 @@ type (
 	OptionRequest                         = borrower.OptionRequest
 	OptionRequestData                     = borrower.OptionRequestData
 	OptionResponse                        = borrower.OptionResponse
+	PrimaryLoanPreApprove                 = borrower.PrimaryLoanPreApprove
 	PropertyBaseEntry                     = borrower.PropertyBaseEntry
 	PropertyDetailRequest                 = borrower.PropertyDetailRequest
 	PropertyDetailRequestData             = borrower.PropertyDetailRequestData
@@ -104,6 +105,9 @@ type (
 	ResetPasswordRequestData              = borrower.ResetPasswordRequestData
 	ResetPasswordResponse                 = borrower.ResetPasswordResponse
 	ResetPasswordResponseData             = borrower.ResetPasswordResponseData
+	SecondaryLoanPreApprove               = borrower.SecondaryLoanPreApprove
+	SecondaryLoanPreApprove_RangeFloat    = borrower.SecondaryLoanPreApprove_RangeFloat
+	SecondaryLoanPreApprove_RangeInt      = borrower.SecondaryLoanPreApprove_RangeInt
 	SendResetPasswordEmailRequest         = borrower.SendResetPasswordEmailRequest
 	SendResetPasswordEmailRequestData     = borrower.SendResetPasswordEmailRequestData
 	SendResetPasswordEmailResponse        = borrower.SendResetPasswordEmailResponse

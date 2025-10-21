@@ -61,24 +61,30 @@ func (l *PreApproveLoanLogic) PreApproveLoan(in *borrower.LoanPreApproveRequest)
 		return nil, err
 	}
 
-	responseData := &borrower.LoanPreApproveResponseData{}
-	_ = copier.CopyWithOption(responseData, result, copier.Option{
+	responseData := &borrower.LoanPreApproveResponseData{
+		Primary:     &borrower.PrimaryLoanPreApprove{},
+		Secondaries: []*borrower.SecondaryLoanPreApprove{},
+	}
+	_ = copier.CopyWithOption(responseData.Primary, result, copier.Option{
 		DeepCopy:      true,
 		CaseSensitive: true,
 	})
-
 	if result.IsApproved {
-		responseData.TotalAmount = mathutil.RoundToFloat(responseData.TotalAmount, 0)
-		responseData.MonthlyPayment = mathutil.RoundToFloat(responseData.MonthlyPayment, 0)
-		responseData.InitialAmount = mathutil.RoundToFloat(responseData.InitialAmount, 0)
-		responseData.HoldbackAmount = mathutil.RoundToFloat(responseData.HoldbackAmount, 0)
-		responseData.CashToClose = mathutil.RoundToFloat(responseData.CashToClose, 0)
+		responseData.Primary.TotalAmount = mathutil.RoundToFloat(responseData.Primary.TotalAmount, 0)
+		responseData.Primary.MonthlyPayment = mathutil.RoundToFloat(responseData.Primary.MonthlyPayment, 0)
+		responseData.Primary.InitialAmount = mathutil.RoundToFloat(responseData.Primary.InitialAmount, 0)
+		responseData.Primary.HoldbackAmount = mathutil.RoundToFloat(responseData.Primary.HoldbackAmount, 0)
+		responseData.Primary.CashToClose = mathutil.RoundToFloat(responseData.Primary.CashToClose, 0)
 
-		responseData.Rate = float32(mathutil.RoundToFloat(responseData.Rate*100.0, 2))
-		responseData.Tlc = float32(mathutil.RoundToFloat(responseData.Tlc*100.0, 2))
-		responseData.Ltv = float32(mathutil.RoundToFloat(responseData.Ltv*100.0, 2))
-		responseData.Ltarv = float32(mathutil.RoundToFloat(responseData.Ltarv*100.0, 2))
+		responseData.Primary.Rate = float32(mathutil.RoundToFloat(responseData.Primary.Rate*100.0, 2))
+		responseData.Primary.Tlc = float32(mathutil.RoundToFloat(responseData.Primary.Tlc*100.0, 2))
+		responseData.Primary.Ltv = float32(mathutil.RoundToFloat(responseData.Primary.Ltv*100.0, 2))
+		responseData.Primary.Ltarv = float32(mathutil.RoundToFloat(responseData.Primary.Ltarv*100.0, 2))
 	}
+	_ = copier.CopyWithOption(&responseData.Secondaries, &global.Config.PreApproveLoanConf, copier.Option{
+		DeepCopy:      true,
+		CaseSensitive: true,
+	})
 
 	// save original data and result to redis
 	cacheData := types.PreApproveLoanCacheData{}

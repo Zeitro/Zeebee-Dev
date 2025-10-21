@@ -460,6 +460,12 @@ type (
         Loan *LoanPreApproveRequestLoan `json:"loan" validate:"required"`
     }
     LoanPreApproveResponse {
+        Primary *PrimaryPreApproveLoan `json:"primary"`
+        Secondaries []*SecondaryPreApproveLoan `json:"secondary"`
+    }
+    PrimaryPreApproveLoan {
+        LenderCompanyId int64 `json:"lender_company_id"`
+        LenderCompanyName string `json:"lender_company_name"`
         IsApproved bool `json:"is_approved"`
         TotalAmount float64 `json:"total_amount"`
         Rate float32 `json:"rate"`
@@ -475,5 +481,23 @@ type (
         RejectReason string `json:"reject_reason"`
         RequestId string `json:"request_id"`
     }
+    SecondaryPreApproveLoan {
+        LenderCompanyId int64 `json:"lender_company_id"`
+        LenderCompanyName string `json:"lender_company_name"`
+        TotalAmount *SecondaryPreApproveLoanRangeFloat `json:"total_amount"`
+        Rate *SecondaryPreApproveLoanRangeFloat `json:"rate"`
+        LoanTerm *SecondaryPreApproveLoanRangeInt `json:"loan_term"`
+    }
+    SecondaryPreApproveLoanRangeFloat {
+        Min float64 `json:"min"`
+        Max float64 `json:"max"`
+    }
+    SecondaryPreApproveLoanRangeInt {
+        Min int32 `json:"min"`
+        Max int32 `json:"max"`
+    }
+
+
+
 )
 
