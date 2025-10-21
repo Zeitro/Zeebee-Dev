@@ -667,6 +667,11 @@ message LoanPreApproveResponse {
   LoanPreApproveResponseData data = 1;
 }
 message LoanPreApproveResponseData {
+  PrimaryLoanPreApprove primary = 1;
+  repeated SecondaryLoanPreApprove secondaries = 2;
+}
+
+message PrimaryLoanPreApprove {
   bool is_approved = 1;
   double total_amount = 2;
   float rate = 3;
@@ -678,9 +683,29 @@ message LoanPreApproveResponseData {
   float ltv = 9;
   float tlc = 10;
   float ltarv = 11;
-  string code = 12;
+  string code = 12 [deprecated = true];
   string reject_reason = 13;
   string request_id = 14;
+  int64 lender_company_id = 15;
+  string lender_company_name = 16;
+}
+
+message SecondaryLoanPreApprove {
+  message RangeFloat {
+    double min = 1;
+    double max = 2;
+  }
+
+  message RangeInt {
+    int32 min = 1;
+    int32 max = 2;
+  }
+
+  int64 lender_company_id = 1;
+  string lender_company_name = 2;
+  RangeFloat total_amount = 3;
+  RangeFloat rate = 4;
+  RangeInt loan_term = 5;
 }
 
 
