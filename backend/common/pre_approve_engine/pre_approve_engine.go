@@ -46,6 +46,7 @@ type InputLoanInfo struct {
 // CalculatePreApprovedLoanAmountResult represents the result of calculating pre-approved loan amount
 type CalculatePreApprovedLoanAmountResult struct {
 	IsApproved             bool            `json:"is_approved"`
+	RejectReason           string          `json:"reject_reason"`
 	TotalAmount            float64         `json:"total_amount"`
 	InterestReservedAmount float64         `json:"interest_reserved_amount"`
 	Rate                   float64         `json:"rate"`
