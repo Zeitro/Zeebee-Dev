@@ -8,6 +8,7 @@ import (
 	"github.com/pkg/errors"
 
 	"zeebee-backend/common/constants"
+	"zeebee-backend/common/uuid"
 )
 
 // HighValueState represents a high value state info
@@ -135,8 +136,10 @@ type PreApproveRule struct {
 
 // CalPreApprovedLoanAmount calculates and returns the pre-approved loan amount
 func (r *PreApproveRule) CalPreApprovedLoanAmount(input InputLoanInfo) (result *CalculatePreApprovedLoanAmountResult, err error) {
+	uid, _ := uuid.GetSonyflakeIDString()
 	result = &CalculatePreApprovedLoanAmountResult{
 		IsApproved: false,
+		RequestId:  uid,
 	}
 
 	// Get experience level
@@ -168,7 +171,7 @@ func (r *PreApproveRule) CalPreApprovedLoanAmount(input InputLoanInfo) (result *
 
 	// Get final loan amount using the most conservative value
 	totalLoanAmount := math.Min(math.Min(maxByLTAIV, maxByLTC), maxByLTARV)
-	isLargeUnit := r.isLargeUnit(input.UnitCount)
+	isLargeUnit := r.isLargeUnit(input.Unit)
 	if isLargeUnit {
 		totalLoanAmount = math.Min(totalLoanAmount, r.PreApproveAmountRange.LargeUnitAmountRange.Max)
 		totalLoanAmount = math.Max(totalLoanAmount, r.PreApproveAmountRange.LargeUnitAmountRange.Min)
@@ -215,7 +218,7 @@ func (r *PreApproveRule) CalPreApprovedLoanAmount(input InputLoanInfo) (result *
 // isLoanRejected checks if a loan should be rejected based on various criteria
 func (r *PreApproveRule) isLoanRejected(input InputLoanInfo) (isRejected bool, reason string) {
 	// Check unit count - reject if exceeds maximum
-	if input.UnitCount > r.MaxUnitCount {
+	if input.Unit > r.MaxUnitCount {
 		isRejected = true
 		reason = "Unit count exceeds maximum"
 		return true, reason
@@ -285,9 +288,9 @@ func (r *PreApproveRule) calculateTotalCost(input InputLoanInfo) (totalCostAmoun
 // getTotalLoanCap calculates the loan caps for LTAIV, LTC, and LTARV
 func (r *PreApproveRule) getTotalLoanCap(input InputLoanInfo) (ltaiv float64, ltc float64, ltarv float64, err error) {
 	// Determine various conditions
-	isHighValueZone := r.isHighValueZone(input.State, input.County)
+	isHighValueZone := r.isHighValueZone(input.State, input.City)
 	isHeavyRehab := r.isHeavyRehab(input.LoanType, input.OriginalBudgetAmount, input.EstCurrentPropertyValue)
-	isLargeUnit := r.isLargeUnit(input.UnitCount)
+	isLargeUnit := r.isLargeUnit(input.Unit)
 
 	// Get price cap rule for the loan type
 	priceCapRule, ok := r.PriceCapRuleMap[input.LoanType]

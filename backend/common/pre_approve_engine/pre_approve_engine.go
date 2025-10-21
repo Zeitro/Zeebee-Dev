@@ -26,7 +26,7 @@ type InputLoanInfo struct {
 	LoanPurpose             constants.LoanPurpose `json:"loan_purpose"`
 	FicoScore               int                   `json:"fico_score"`
 	TransactionHistoryCount int                   `json:"transaction_history_count"`
-	UnitCount               int                   `json:"unit_count"`
+	Unit                    int                   `json:"unit"`
 	LoanTerm                int                   `json:"loan_term"`
 	EstCurrentPropertyValue float64               `json:"est_current_property_value"`
 	EstAfterRepairValue     float64               `json:"est_after_repair_value"`
@@ -37,7 +37,7 @@ type InputLoanInfo struct {
 	HoldbackAmount          float64               `json:"holdback_amount"`
 	PrincipalAmount         float64               `json:"principal_amount"`
 	State                   string                `json:"state"`
-	County                  string                `json:"county"`
+	City                    string                `json:"city"`
 	HasAssignmentFee        bool                  `json:"has_assignment_fee"`
 	AssignmentFeeAmount     float64               `json:"assignment_fee_amount"`
 	InterestReserveMonths   int                   `json:"interest_reserve_months"`
@@ -45,6 +45,7 @@ type InputLoanInfo struct {
 
 // CalculatePreApprovedLoanAmountResult represents the result of calculating pre-approved loan amount
 type CalculatePreApprovedLoanAmountResult struct {
+	RequestId              string          `json:"request_id"`
 	IsApproved             bool            `json:"is_approved"`
 	RejectReason           string          `json:"reject_reason"`
 	TotalAmount            float64         `json:"total_amount"`

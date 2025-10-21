@@ -21,17 +21,18 @@ type ApiConf struct {
 
 type RpcConf struct {
 	zrpc.RpcServerConf
-	LimiterConf              LimiterConf
-	VerifyEmailExpireSeconds int
-	ResetPwdExpireSeconds    int
-	EmailConf                EmailConf
-	RedisConf                RedisConf
-	JwtAuth                  types.JwtAuth `json:",optional"`
-	DbConf                   DbConf
-	AwsS3Conf                AwsS3Conf
-	LoginUrl                 string
-	VerifyEmailUrl           string
-	ResetPwdUrl              string
+	LimiterConf                 LimiterConf
+	VerifyEmailExpireSeconds    int
+	ResetPwdExpireSeconds       int
+	PreApproveLoanExpireSeconds int
+	EmailConf                   EmailConf
+	RedisConf                   RedisConf
+	JwtAuth                     types.JwtAuth `json:",optional"`
+	DbConf                      DbConf
+	AwsS3Conf                   AwsS3Conf
+	LoginUrl                    string
+	VerifyEmailUrl              string
+	ResetPwdUrl                 string
 }
 
 type DbConf struct {
