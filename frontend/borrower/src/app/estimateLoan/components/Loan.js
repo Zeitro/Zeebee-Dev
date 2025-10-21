@@ -17,7 +17,15 @@ const LoanInfo = ({ gutter = 24, loan_purpose, loan_type }) => {
 			<Col {...titleCol} className="!text-3xl/8 font-medium pb-8">
 				Loan information
 			</Col>
-
+			<Col {...titleCol}>
+				<Form.Item
+					label="Purchase price"
+					name="purchase_amount"
+					rules={[{ required: true, message: 'Please select purchase price!' }]}
+				>
+					<InputNumAmount placeholder="Enter purchase price" />
+				</Form.Item>
+			</Col>
 			<Col {...titleCol}>
 				<Form.Item
 					label="Loan terms" // 借款期限
