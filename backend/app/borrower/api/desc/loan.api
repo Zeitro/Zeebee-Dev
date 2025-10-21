@@ -419,9 +419,61 @@ type ImportLoanExtendEntry {
     BusinessLine string `json:"business_line,optional"`
 }
 
-// update loan document
-    //type UpdateDocumentsRequest {
-    //    Id int64 `path:"id" validate:"required,gt=0"`
-    //    Documents []*FileEditEntry `json:"documents" validate:"required,gt=0,dive,required"`
-    //}
+type (
+    LoanPreApproveRequestBorrower {
+        Name string `json:"name" validate:"required,min=1,max=100"`
+        Email string `json:"email" validate:"required,email"`
+        Phone string `json:"phone" validate:"required"`
+        FicoScore int32 `json:"fico_score" validate:"required,gte=300,lte=850"`
+        FlipPropertyCount int32 `json:"flip_property_count" validate:"gte=0"`
+    }
+
+    LoanPreApproveRequestProperty {
+        Address *AddressEntry `json:"address" validate:"required"`
+        PropertyType string `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
+        IsPermitReady bool `json:"is_permit_ready"`
+        Unit int32 `json:"unit" validate:"gte=1,lte=100"`
+    }
+
+    LoanPreApproveRequestLoan {
+        LoanTerm int32 `json:"loan_term" validate:"required,gte=1,lte=360"`
+        EstCurrentPropertyValueAmount float64 `json:"est_current_property_value_amount" validate:"required,gt=0"`
+        Arv float64 `json:"arv" validate:"required,gt=0"`
+        TotalAmount float64 `json:"total_amount" validate:"required,gt=0"`
+        PrincipalAmount float64 `json:"principal_amount" validate:"required_if=LoanPurpose 'Rate-term refi' LoanPurpose 'Cash-out refi'"`
+        PurchaseDate string `json:"purchase_date" validate:"required_if=LoanPurpose 'Rate-term refi' LoanPurpose 'Cash-out refi',omitempty,datetime=01/02/2006"`
+        PurchaseAmount float64 `json:"purchase_amount" validate:"required,gt=0"`
+        CostToDate string `json:"cost_to_date" validate:"required_if=LoanPurpose 'Rate-term refi' LoanPurpose 'Cash-out refi',omitempty,datetime=01/02/2006"`
+        BudgetAmount float64 `json:"budget_amount" validate:"required_if=LoanType Rehab,gt=0"`
+        InitialAmount float64 `json:"initial_amount" validate:"required_if=LoanType Rehab LoanType 'Ground up construction',gt=0"`
+        HoldbackAmount float64 `json:"holdback_amount" validate:"required_if=LoanType Rehab LoanType 'Ground up construction',gt=0"`
+        InterestReserveMonths int32 `json:"interest_reserve_months" validate:"gte=0"`
+        LoanPurpose string `json:"loan_purpose" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
+        LoanType string `json:"loan_type" validate:"required,oneof=Bridge Rehab 'Ground up construction'"`
+        HasAssignmentFee bool `json:"has_assignment_fee"`
+        AssignmentFeeAmount float64 `json:"assignment_fee_amount" validate:"required_if=HasAssignmentFee true,gte=0"`
+    }
+
+    LoanPreApproveRequest {
+        Borrower *LoanPreApproveRequestBorrower `json:"borrower" validate:"required"`
+        Property *LoanPreApproveRequestProperty `json:"property" validate:"required"`
+        Loan *LoanPreApproveRequestLoan `json:"loan" validate:"required"`
+    }
+    LoanPreApproveResponse {
+        IsApproved bool `json:"is_approved"`
+        TotalAmount float64 `json:"total_amount"`
+        Rate float32 `json:"rate"`
+        MonthlyPayment float64 `json:"monthly_payment"`
+        CashToClose float64 `json:"cash_to_close"`
+        InitialAmount float64 `json:"initial_amount"`
+        HoldbackAmount float64 `json:"holdback_amount"`
+        LoanTerm int32 `json:"loan_term"`
+        Ltv float32 `json:"ltv"`
+        Ltarv float32 `json:"ltarv"`
+        Tlc float32 `json:"tlc"`
+        Code string `json:"code"`
+        RejectReason string `json:"reject_reason"`
+        RequestId string `json:"request_id"`
+    }
+)
 
