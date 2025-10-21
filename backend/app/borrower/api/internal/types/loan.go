@@ -125,6 +125,29 @@ type LoanPageResponse struct {
 	List      []LoanEntry `json:"list"`
 }
 
+type LoanPreApproveRequest struct {
+	Borrower *LoanPreApproveRequestBorrower `json:"borrower" validate:"required"`
+	Property *LoanPreApproveRequestProperty `json:"property" validate:"required"`
+	Loan     *LoanPreApproveRequestLoan     `json:"loan" validate:"required"`
+}
+
+type LoanPreApproveResponse struct {
+	IsApproved     bool    `json:"is_approved"`
+	TotalAmount    float64 `json:"total_amount"`
+	Rate           float32 `json:"rate"`
+	MonthlyPayment float64 `json:"monthly_payment"`
+	CashToClose    float64 `json:"cash_to_close"`
+	InitialAmount  float64 `json:"initial_amount"`
+	HoldbackAmount float64 `json:"holdback_amount"`
+	LoanTerm       int32   `json:"loan_term"`
+	Ltv            float32 `json:"ltv"`
+	Ltarv          float32 `json:"ltarv"`
+	Tlc            float32 `json:"tlc"`
+	Code           string  `json:"code"`
+	RejectReason   string  `json:"reject_reason"`
+	RequestId      string  `json:"request_id"`
+}
+
 type LoanUpdatePendingStatusRequest struct {
 	Id            int64  `path:"id"`
 	PendingStatus string `json:"pending_status" validate:"required,oneof=Quoting Processing Underwriting Closing"`

@@ -1764,7 +1764,8 @@
                       "loan_demographic",
                       "loan_processor",
                       "extend",
-                      "loan_documents"
+                      "loan_documents",
+                      "requested_loan_document_count"
                     ],
                     "properties": {
                       "applicants": {
@@ -2166,12 +2167,16 @@
                             "file_type",
                             "status",
                             "last_uploaded_at",
+                            "comment",
                             "created_at",
                             "updated_at",
                             "files"
                           ],
                           "properties": {
                             "category": {
+                              "type": "string"
+                            },
+                            "comment": {
                               "type": "string"
                             },
                             "created_at": {
@@ -2403,6 +2408,9 @@
                           }
                         }
                       },
+                      "requested_loan_document_count": {
+                        "type": "integer"
+                      },
                       "reserves_amount": {
                         "type": "number"
                       },
@@ -2488,6 +2496,235 @@
                 },
                 "total_page": {
                   "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/loan/pre_approve": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "loan"
+        ],
+        "summary": "pre_approve",
+        "operationId": "loanPreApprove",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "borrower",
+                "property",
+                "loan"
+              ],
+              "properties": {
+                "borrower": {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "email",
+                    "phone",
+                    "fico_score",
+                    "flip_property_count",
+                    "purchase_rental_property_count"
+                  ],
+                  "properties": {
+                    "email": {
+                      "type": "string"
+                    },
+                    "fico_score": {
+                      "type": "integer"
+                    },
+                    "flip_property_count": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "phone": {
+                      "type": "string"
+                    },
+                    "purchase_rental_property_count": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "loan": {
+                  "type": "object",
+                  "required": [
+                    "loan_term",
+                    "est_current_property_value_amount",
+                    "arv",
+                    "total_amount",
+                    "principal_amount",
+                    "purchase_date",
+                    "purchase_amount",
+                    "cost_to_date",
+                    "budget_amount",
+                    "initial_amount",
+                    "holdback_amount",
+                    "interest_reserve_months",
+                    "loan_purpose",
+                    "loan_type",
+                    "has_assignment_fee",
+                    "assignment_fee_amount"
+                  ],
+                  "properties": {
+                    "arv": {
+                      "type": "number"
+                    },
+                    "assignment_fee_amount": {
+                      "type": "number"
+                    },
+                    "budget_amount": {
+                      "type": "number"
+                    },
+                    "cost_to_date": {
+                      "type": "string"
+                    },
+                    "est_current_property_value_amount": {
+                      "type": "number"
+                    },
+                    "has_assignment_fee": {
+                      "type": "boolean"
+                    },
+                    "holdback_amount": {
+                      "type": "number"
+                    },
+                    "initial_amount": {
+                      "type": "number"
+                    },
+                    "interest_reserve_months": {
+                      "type": "integer"
+                    },
+                    "loan_purpose": {
+                      "type": "string"
+                    },
+                    "loan_term": {
+                      "type": "integer"
+                    },
+                    "loan_type": {
+                      "type": "string"
+                    },
+                    "principal_amount": {
+                      "type": "number"
+                    },
+                    "purchase_amount": {
+                      "type": "number"
+                    },
+                    "purchase_date": {
+                      "type": "string"
+                    },
+                    "total_amount": {
+                      "type": "number"
+                    }
+                  }
+                },
+                "property": {
+                  "type": "object",
+                  "required": [
+                    "address",
+                    "property_type",
+                    "is_permit_ready",
+                    "unit"
+                  ],
+                  "properties": {
+                    "address": {
+                      "type": "object",
+                      "properties": {
+                        "address1": {
+                          "type": "string"
+                        },
+                        "address2": {
+                          "type": "string"
+                        },
+                        "city": {
+                          "type": "string"
+                        },
+                        "state": {
+                          "type": "string"
+                        },
+                        "zip_code": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "is_permit_ready": {
+                      "type": "boolean"
+                    },
+                    "property_type": {
+                      "type": "string"
+                    },
+                    "unit": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "cash_to_close": {
+                  "type": "number"
+                },
+                "code": {
+                  "type": "string"
+                },
+                "holdback_amount": {
+                  "type": "number"
+                },
+                "initial_amount": {
+                  "type": "number"
+                },
+                "is_approved": {
+                  "type": "boolean"
+                },
+                "loan_term": {
+                  "type": "integer"
+                },
+                "ltarv": {
+                  "type": "number"
+                },
+                "ltv": {
+                  "type": "number"
+                },
+                "monthly_payment": {
+                  "type": "number"
+                },
+                "rate": {
+                  "type": "number"
+                },
+                "reject_reason": {
+                  "type": "string"
+                },
+                "request_id": {
+                  "type": "string"
+                },
+                "tlc": {
+                  "type": "number"
+                },
+                "total_amount": {
+                  "type": "number"
                 }
               }
             }
@@ -2921,12 +3158,16 @@
                       "file_type",
                       "status",
                       "last_uploaded_at",
+                      "comment",
                       "created_at",
                       "updated_at",
                       "files"
                     ],
                     "properties": {
                       "category": {
+                        "type": "string"
+                      },
+                      "comment": {
                         "type": "string"
                       },
                       "created_at": {
@@ -3205,6 +3446,9 @@
                       }
                     }
                   }
+                },
+                "requested_loan_document_count": {
+                  "type": "integer"
                 },
                 "reserves_amount": {
                   "type": "number"
@@ -5785,7 +6029,8 @@
                       "loan_demographic",
                       "loan_processor",
                       "extend",
-                      "loan_documents"
+                      "loan_documents",
+                      "requested_loan_document_count"
                     ],
                     "properties": {
                       "applicants": {
@@ -6187,12 +6432,16 @@
                             "file_type",
                             "status",
                             "last_uploaded_at",
+                            "comment",
                             "created_at",
                             "updated_at",
                             "files"
                           ],
                           "properties": {
                             "category": {
+                              "type": "string"
+                            },
+                            "comment": {
                               "type": "string"
                             },
                             "created_at": {
@@ -6423,6 +6672,9 @@
                             }
                           }
                         }
+                      },
+                      "requested_loan_document_count": {
+                        "type": "integer"
                       },
                       "reserves_amount": {
                         "type": "number"
@@ -6571,7 +6823,8 @@
                       "loan_demographic",
                       "loan_processor",
                       "extend",
-                      "loan_documents"
+                      "loan_documents",
+                      "requested_loan_document_count"
                     ],
                     "properties": {
                       "applicants": {
@@ -6973,12 +7226,16 @@
                             "file_type",
                             "status",
                             "last_uploaded_at",
+                            "comment",
                             "created_at",
                             "updated_at",
                             "files"
                           ],
                           "properties": {
                             "category": {
+                              "type": "string"
+                            },
+                            "comment": {
                               "type": "string"
                             },
                             "created_at": {
@@ -7209,6 +7466,9 @@
                             }
                           }
                         }
+                      },
+                      "requested_loan_document_count": {
+                        "type": "integer"
                       },
                       "reserves_amount": {
                         "type": "number"
@@ -7343,7 +7603,8 @@
                       "loan_demographic",
                       "loan_processor",
                       "extend",
-                      "loan_documents"
+                      "loan_documents",
+                      "requested_loan_document_count"
                     ],
                     "properties": {
                       "applicants": {
@@ -7745,12 +8006,16 @@
                             "file_type",
                             "status",
                             "last_uploaded_at",
+                            "comment",
                             "created_at",
                             "updated_at",
                             "files"
                           ],
                           "properties": {
                             "category": {
+                              "type": "string"
+                            },
+                            "comment": {
                               "type": "string"
                             },
                             "created_at": {
@@ -7981,6 +8246,9 @@
                             }
                           }
                         }
+                      },
+                      "requested_loan_document_count": {
+                        "type": "integer"
                       },
                       "reserves_amount": {
                         "type": "number"
@@ -8695,7 +8963,7 @@
       }
     }
   },
-  "x-date": "2025-10-13 18:13:25",
+  "x-date": "2025-10-21 15:36:07",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

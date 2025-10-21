@@ -5873,6 +5873,8 @@ type LoanPreApproveResponseData struct {
 	Tlc            float32                `protobuf:"fixed32,10,opt,name=tlc,proto3" json:"tlc,omitempty"`
 	Ltarv          float32                `protobuf:"fixed32,11,opt,name=ltarv,proto3" json:"ltarv,omitempty"`
 	Code           string                 `protobuf:"bytes,12,opt,name=code,proto3" json:"code,omitempty"`
+	RejectReason   string                 `protobuf:"bytes,13,opt,name=reject_reason,json=rejectReason,proto3" json:"reject_reason,omitempty"`
+	RequestId      string                 `protobuf:"bytes,14,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -5987,6 +5989,20 @@ func (x *LoanPreApproveResponseData) GetLtarv() float32 {
 func (x *LoanPreApproveResponseData) GetCode() string {
 	if x != nil {
 		return x.Code
+	}
+	return ""
+}
+
+func (x *LoanPreApproveResponseData) GetRejectReason() string {
+	if x != nil {
+		return x.RejectReason
+	}
+	return ""
+}
+
+func (x *LoanPreApproveResponseData) GetRequestId() string {
+	if x != nil {
+		return x.RequestId
 	}
 	return ""
 }
@@ -9176,7 +9192,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x12has_assignment_fee\x18\x0f \x01(\bR\x10hasAssignmentFee\x122\n" +
 	"\x15assignment_fee_amount\x18\x10 \x01(\x01R\x13assignmentFeeAmount\"R\n" +
 	"\x16LoanPreApproveResponse\x128\n" +
-	"\x04data\x18\x01 \x01(\v2$.borrower.LoanPreApproveResponseDataR\x04data\"\xfc\x02\n" +
+	"\x04data\x18\x01 \x01(\v2$.borrower.LoanPreApproveResponseDataR\x04data\"\xc0\x03\n" +
 	"\x1aLoanPreApproveResponseData\x12\x1f\n" +
 	"\vis_approved\x18\x01 \x01(\bR\n" +
 	"isApproved\x12!\n" +
@@ -9191,7 +9207,10 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x03tlc\x18\n" +
 	" \x01(\x02R\x03tlc\x12\x14\n" +
 	"\x05ltarv\x18\v \x01(\x02R\x05ltarv\x12\x12\n" +
-	"\x04code\x18\f \x01(\tR\x04code\"\xa7\x04\n" +
+	"\x04code\x18\f \x01(\tR\x04code\x12#\n" +
+	"\rreject_reason\x18\r \x01(\tR\frejectReason\x12\x1d\n" +
+	"\n" +
+	"request_id\x18\x0e \x01(\tR\trequestId\"\xa7\x04\n" +
 	"\x11PropertyPageEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
 	"\rproperty_type\x18\x02 \x01(\tR\fpropertyType\x12!\n" +
