@@ -9,6 +9,7 @@ import { loan_active, loan_archived, loan_pending } from '@/enum/common';
 import { capitalizeFirstLetter, maxAmount } from '@/lib/format';
 import CommonFormDate from '@/components/CommonDate';
 const MAX_COUNT = 5;
+
 const CreateLoan = ({ form, stepBtn, gutter, isRadioStyle, ...colProps }) => {
 	const stage = Form.useWatch('stage', form);
 	const total_amount = Form.useWatch('total_amount', form) || maxAmount;

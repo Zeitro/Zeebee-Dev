@@ -1,0 +1,4 @@
+packages:
+  - "frontend/borrower"
+  - "frontend/lender"
+  - "frontend/packages/*"
