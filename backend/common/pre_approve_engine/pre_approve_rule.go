@@ -123,10 +123,10 @@ type PreApproveRule struct {
 	// MinHeavyRehabPercent is the minimum percent to be considered heavy rehab
 	MinHeavyRehabPercent float64 `json:"min_heavy_rehab_percent"`
 
-	// LtcBaseRules are base rate rules for LTC
-	LtcBaseRules []BaseRateRule `json:"ltc_base_rules"`
-	// LtarvBaseRules are base rate rules for LTARV
-	LtarvBaseRules []BaseRateRule `json:"ltarv_base_rules"`
+	// LtcBaseRateRules are base rate rules for LTC
+	LtcBaseRateRules []BaseRateRule `json:"ltc_base_rate_rules"`
+	// LtarvBaseRateRules are base rate rules for LTARV
+	LtarvBaseRateRules []BaseRateRule `json:"ltarv_base_rate_rules"`
 	// AdjusterRule defines rate adjustment rules
 	AdjusterRule AdjusterRule `json:"adjuster_rule"`
 	// ServiceFeeConfig defines service fee configuration
@@ -151,7 +151,7 @@ func (r *PreApproveRule) CalPreApprovedLoanAmount(input InputLoanInfo) (result *
 	// Calculate LTAIV, LTC, LTARV
 	ltaiv, ltc, ltarv, err := r.getTotalLoanCap(input)
 	if err != nil {
-		return nil, err
+		return result, err
 	}
 	// Check if loan is rejected based on calculated values
 	if ltaiv == 0 || ltc == 0 || ltarv == 0 {
@@ -434,14 +434,14 @@ func (r *PreApproveRule) calculateBaseRate(ltc float64, ltarv float64) (baseRate
 // getLtcBaseRate returns the LTC base rate based on the LTC value
 func (r *PreApproveRule) getLtcBaseRate(ltc float64) (baseRate float64) {
 	// Find the matching base rate rule
-	baseRateRule, ok := slice.FindBy(r.LtcBaseRules, func(index int, value BaseRateRule) bool {
+	baseRateRule, ok := slice.FindBy(r.LtcBaseRateRules, func(index int, value BaseRateRule) bool {
 		return ltc >= value.Min && ltc <= value.Max
 	})
 	if !ok {
 		// If no rule matches, use the last rule's base rate or 0 if no rules exist
-		l := len(r.LtcBaseRules)
+		l := len(r.LtcBaseRateRules)
 		if l > 0 {
-			baseRate = r.LtcBaseRules[l-1].BaseRate
+			baseRate = r.LtcBaseRateRules[l-1].BaseRate
 		} else {
 			baseRate = 0
 		}
@@ -454,14 +454,14 @@ func (r *PreApproveRule) getLtcBaseRate(ltc float64) (baseRate float64) {
 // getLtarvBaseRate returns the LTARV base rate based on the LTARV value
 func (r *PreApproveRule) getLtarvBaseRate(ltarv float64) (baseRate float64) {
 	// Find the matching base rate rule
-	baseRateRule, ok := slice.FindBy(r.LtarvBaseRules, func(index int, value BaseRateRule) bool {
+	baseRateRule, ok := slice.FindBy(r.LtarvBaseRateRules, func(index int, value BaseRateRule) bool {
 		return ltarv >= value.Min && ltarv <= value.Max
 	})
 	if !ok {
 		// If no rule matches, use the last rule's base rate or 0 if no rules exist
-		l := len(r.LtarvBaseRules)
+		l := len(r.LtarvBaseRateRules)
 		if l > 0 {
-			baseRate = r.LtarvBaseRules[l-1].BaseRate
+			baseRate = r.LtarvBaseRateRules[l-1].BaseRate
 		} else {
 			baseRate = 0
 		}

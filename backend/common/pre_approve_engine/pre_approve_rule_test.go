@@ -27,11 +27,11 @@ func TestPreApproveRule_CalPreApprovedLoanAmount(t *testing.T) {
 		// 	MaxTransactionHistoryCountForNoExperience: 0,
 		// 	MaxTransactionHistoryCountForExperienced:  5,
 		// },
-		LtcBaseRules: []BaseRateRule{
+		LtcBaseRateRules: []BaseRateRule{
 			{Min: 0, Max: 0.7, BaseRate: 0.06},
 			{Min: 0.7, Max: 1.0, BaseRate: 0.07},
 		},
-		LtarvBaseRules: []BaseRateRule{
+		LtarvBaseRateRules: []BaseRateRule{
 			{Min: 0, Max: 0.7, BaseRate: 0.06},
 			{Min: 0.7, Max: 1.0, BaseRate: 0.07},
 		},
