@@ -626,8 +626,7 @@ message LoanPreApproveRequestData {
     string name = 1;
     string email = 2;
     string phone = 3;
-    string loan_purpose = 4;
-    string loan_type = 5;
+
     int32 fico_score = 6;
     int32 flip_property_count = 7;
     int32 purchase_rental_property_count = 8;
@@ -637,12 +636,13 @@ message LoanPreApproveRequestData {
     AddressEntry address = 1;
     string property_type = 2;
     bool is_permit_ready = 3;
+    int32 unit = 4;
   }
 
   message Loan {
     int32 loan_term = 1;
     double est_current_property_value_amount = 2;
-    float arv = 3;
+    double arv = 3;
     double total_amount = 4;
     double principal_amount = 5;
     string purchase_date = 6;
@@ -652,6 +652,10 @@ message LoanPreApproveRequestData {
     double initial_amount = 10;
     double holdback_amount = 11;
     int32 interest_reserve_months = 12;
+    string loan_purpose = 13;
+    string loan_type = 14;
+    bool has_assignment_fee = 15;
+    double assignment_fee_amount = 16;
   }
 
   Borrower borrower = 1;
@@ -675,6 +679,8 @@ message LoanPreApproveResponseData {
   float tlc = 10;
   float ltarv = 11;
   string code = 12;
+  string reject_reason = 13;
+  string request_id = 14;
 }
 
 

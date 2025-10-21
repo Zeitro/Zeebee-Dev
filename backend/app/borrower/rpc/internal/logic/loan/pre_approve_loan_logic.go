@@ -2,13 +2,19 @@ package loanlogic
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 
+	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
-
 	"github.com/zeromicro/go-zero/core/logx"
 
+	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
+	"zeebee-backend/app/borrower/rpc/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/constants"
+	"zeebee-backend/common/pre_approve_engine"
 )
 
 type PreApproveLoanLogic struct {
@@ -26,39 +32,58 @@ func NewPreApproveLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pr
 }
 
 func (l *PreApproveLoanLogic) PreApproveLoan(in *borrower.LoanPreApproveRequest) (*borrower.LoanPreApproveResponse, error) {
-	// todo: add your logic here and delete this line
 
-	return &borrower.LoanPreApproveResponse{}, nil
-}
-
-type CalculatePreApprovedLoanAmountResult struct {
-	TotalAmount float32
-	Rate        float32
-}
-
-func calculatePreApprovedLoanAmount(originalData *borrower.LoanPreApproveRequestData) (result *CalculatePreApprovedLoanAmountResult, err error) {
-	if originalData == nil {
-		err = errors.WithStack(errors.New("pre approve data is empty"))
-		return
+	engines := pre_approve_engine.GetDefaultPreApproveEngines()
+	input := pre_approve_engine.InputLoanInfo{
+		LoanType:                constants.LoanType(in.Data.Loan.LoanType),
+		LoanPurpose:             constants.LoanPurpose(in.Data.Loan.LoanPurpose),
+		FicoScore:               int(in.Data.Borrower.FicoScore),
+		TransactionHistoryCount: int(in.Data.Borrower.FlipPropertyCount + in.Data.Borrower.PurchaseRentalPropertyCount),
+		Unit:                    int(in.Data.Property.Unit),
+		LoanTerm:                int(in.Data.Loan.LoanTerm),
+		EstCurrentPropertyValue: in.Data.Loan.EstCurrentPropertyValueAmount,
+		EstAfterRepairValue:     in.Data.Loan.Arv,
+		TotalAmount:             in.Data.Loan.TotalAmount,
+		OriginalBudgetAmount:    in.Data.Loan.BudgetAmount,
+		PurchaseAmount:          in.Data.Loan.PurchaseAmount,
+		InitialAmount:           in.Data.Loan.InitialAmount,
+		HoldbackAmount:          in.Data.Loan.HoldbackAmount,
+		PrincipalAmount:         in.Data.Loan.PrincipalAmount,
+		State:                   in.Data.Property.Address.State,
+		City:                    in.Data.Property.Address.City,
+		HasAssignmentFee:        in.Data.Loan.HasAssignmentFee,
+		AssignmentFeeAmount:     in.Data.Loan.AssignmentFeeAmount,
+		InterestReserveMonths:   int(in.Data.Loan.InterestReserveMonths),
+	}
+	result, err := engines["zeebee"].CalPreApprovedLoanAmount(input)
+	if err != nil {
+		return nil, err
 	}
 
-	if originalData.Property == nil {
-		err = errors.WithStack(errors.New("property information is empty"))
-		return
+	responseData := &borrower.LoanPreApproveResponseData{}
+	_ = copier.CopyWithOption(responseData, result, copier.Option{
+		DeepCopy:      true,
+		CaseSensitive: true,
+	})
+
+	// save original data and result to redis
+	cacheData := types.PreApproveLoanCacheData{}
+	_ = copier.CopyWithOption(&cacheData.RequestData, in.Data, copier.Option{
+		DeepCopy:      true,
+		CaseSensitive: true,
+	})
+	_ = copier.CopyWithOption(&cacheData.ResultData, result, copier.Option{
+		DeepCopy:      true,
+		CaseSensitive: true,
+	})
+	key := fmt.Sprintf(constants.BorrowerPreApproveCacheKey, result.RequestId)
+	contents, _ := json.Marshal(cacheData)
+	err = global.GetRedis().SetExpire(l.ctx, key, string(contents), global.Config.PreApproveLoanExpireSeconds)
+	if err != nil {
+		return nil, errors.WithStack(err)
 	}
 
-	if originalData.Borrower == nil {
-		err = errors.WithStack(errors.New("borrower information is empty"))
-	}
-
-	if originalData.Loan == nil {
-		err = errors.WithStack(errors.New("loan information is empty"))
-	}
-
-	return
-}
-
-func calculateTotalTotalAmount(originalData *borrower.LoanPreApproveRequestData) (result float32, err error) {
-
-	return
+	return &borrower.LoanPreApproveResponse{
+		Data: responseData,
+	}, nil
 }

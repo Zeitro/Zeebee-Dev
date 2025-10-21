@@ -36,6 +36,7 @@ RpcConf:
       Period: 300
   VerifyEmailExpireSeconds: 86400
   ResetPwdExpireSeconds: 3600
+  PreApproveLoanExpireSeconds: 86400
   EmailConf:
     Host: smtp.gmail.com
     Port: 587

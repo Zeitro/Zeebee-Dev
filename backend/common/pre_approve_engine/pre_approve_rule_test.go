@@ -118,7 +118,7 @@ func TestPreApproveRule_CalPreApprovedLoanAmount(t *testing.T) {
 			LoanPurpose:             constants.LoanPurposePurchase,
 			FicoScore:               720,
 			TransactionHistoryCount: 3,
-			UnitCount:               2,
+			Unit:                    2,
 			LoanTerm:                12,
 			EstCurrentPropertyValue: 500000,
 			EstAfterRepairValue:     600000,
@@ -139,7 +139,7 @@ func TestPreApproveRule_CalPreApprovedLoanAmount(t *testing.T) {
 			LoanPurpose:             constants.LoanPurposePurchase,
 			FicoScore:               720,
 			TransactionHistoryCount: 3,
-			UnitCount:               2,
+			Unit:                    2,
 			LoanTerm:                12,
 			EstCurrentPropertyValue: 500000,
 			EstAfterRepairValue:     600000,
@@ -161,7 +161,7 @@ func TestPreApproveRule_CalPreApprovedLoanAmount(t *testing.T) {
 			LoanPurpose:             constants.LoanPurposePurchase,
 			FicoScore:               720,
 			TransactionHistoryCount: 3,
-			UnitCount:               150, // Exceeds MaxUnitCount
+			Unit:                    150, // Exceeds MaxUnit
 			LoanTerm:                12,
 			EstCurrentPropertyValue: 500000,
 			EstAfterRepairValue:     600000,
@@ -180,7 +180,7 @@ func TestPreApproveRule_CalPreApprovedLoanAmount(t *testing.T) {
 			LoanPurpose:             constants.LoanPurposePurchase,
 			FicoScore:               720,
 			TransactionHistoryCount: 3,
-			UnitCount:               2,
+			Unit:                    2,
 			LoanTerm:                12,
 			EstCurrentPropertyValue: 500000,
 			EstAfterRepairValue:     600000,
@@ -199,7 +199,7 @@ func TestPreApproveRule_CalPreApprovedLoanAmount(t *testing.T) {
 			LoanPurpose:             constants.LoanPurposePurchase,
 			FicoScore:               720,
 			TransactionHistoryCount: 3,
-			UnitCount:               2,
+			Unit:                    2,
 			LoanTerm:                12,
 			EstCurrentPropertyValue: 500000,
 			EstAfterRepairValue:     600000,
@@ -218,7 +218,7 @@ func TestPreApproveRule_CalPreApprovedLoanAmount(t *testing.T) {
 			LoanPurpose:             constants.LoanPurposePurchase,
 			FicoScore:               720,
 			TransactionHistoryCount: 3,
-			UnitCount:               2,
+			Unit:                    2,
 			LoanTerm:                12,
 			EstCurrentPropertyValue: 0, // Invalid value
 			EstAfterRepairValue:     600000,
@@ -237,7 +237,7 @@ func TestPreApproveRule_CalPreApprovedLoanAmount(t *testing.T) {
 			LoanPurpose:             constants.LoanPurposePurchase,
 			FicoScore:               720,
 			TransactionHistoryCount: 3,
-			UnitCount:               10, // Large unit
+			Unit:                    10, // Large unit
 			LoanTerm:                12,
 			EstCurrentPropertyValue: 500000,
 			EstAfterRepairValue:     600000,
