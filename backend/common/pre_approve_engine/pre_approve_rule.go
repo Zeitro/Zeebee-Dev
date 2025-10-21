@@ -144,7 +144,9 @@ func (r *PreApproveRule) CalPreApprovedLoanAmount(input InputLoanInfo) (result *
 	result.ExperienceLevel = r.ExperienceLevel
 
 	// Check if loan is rejected
-	if r.isLoanRejected(input) {
+	isRejected, rejectReason := r.isLoanRejected(input)
+	if isRejected {
+		result.RejectReason = rejectReason
 		return result, nil
 	}
 
@@ -155,6 +157,7 @@ func (r *PreApproveRule) CalPreApprovedLoanAmount(input InputLoanInfo) (result *
 	}
 	// Check if loan is rejected based on calculated values
 	if ltaiv == 0 || ltc == 0 || ltarv == 0 {
+		result.RejectReason = "Can Not Get ltaiv/ltc/ltarv"
 		return result, nil
 	}
 
@@ -210,39 +213,41 @@ func (r *PreApproveRule) CalPreApprovedLoanAmount(input InputLoanInfo) (result *
 }
 
 // isLoanRejected checks if a loan should be rejected based on various criteria
-func (r *PreApproveRule) isLoanRejected(input InputLoanInfo) bool {
+func (r *PreApproveRule) isLoanRejected(input InputLoanInfo) (isRejected bool, reason string) {
 	// Check unit count - reject if exceeds maximum
 	if input.UnitCount > r.MaxUnitCount {
-		return true
+		isRejected = true
+		reason = "Unit count exceeds maximum"
+		return true, reason
 	}
 
 	// Budget amount check - reject if budget exceeds property value
 	if input.OriginalBudgetAmount > input.EstCurrentPropertyValue {
-		return true
+		return true, "Budget amount exceeds property value"
 	}
 
 	// Loan term check - reject if outside allowed range
 	if input.LoanTerm < r.MinLoanTerm || input.LoanTerm > r.MaxLoanTerm {
-		return true
+		return true, "Loan term outside allowed range"
 	}
 
 	// Check borrower equity - reject if less than 10% of total cost
 	borrowerEquity := r.calculateBorrowerEquity(input)
 	totalCost := r.calculateTotalCost(input)
 	if borrowerEquity < totalCost*0.1 {
-		return true
+		return true, "Borrower equity less than 10%"
 	}
 
 	// Loan type and purpose combinations that are not allowed
 	if input.LoanType == constants.LoanTypeConstruction && input.LoanPurpose == constants.LoanPurposeCashOut {
-		return true
+		return true, "Loan type and purpose combination not allowed"
 	}
 
 	if input.LoanType == constants.LoanTypeRehab && input.LoanPurpose == constants.LoanPurposeCashOut {
-		return true
+		return true, "Loan type and purpose combination not allowed"
 	}
 
-	return false
+	return false, ""
 }
 
 // calculateBorrowerEquity calculates borrower equity based on loan purpose
