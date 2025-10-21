@@ -2,6 +2,7 @@ package userlogic
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -11,8 +12,10 @@ import (
 
 	"zeebee-backend/app/borrower/rpc/internal/email_tpl"
 	"zeebee-backend/app/borrower/rpc/internal/global"
+	"zeebee-backend/app/borrower/rpc/internal/logic/loan"
 	"zeebee-backend/app/borrower/rpc/internal/repo/model"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
+	"zeebee-backend/app/borrower/rpc/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
 	email2 "zeebee-backend/common/email"
@@ -119,9 +122,120 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 		}
 	}()
 
+	go func() {
+		// create draft loan
+		err := l.handlePreapproveLoan(context.WithoutCancel(l.ctx), borrowerModel.Id, in.Data.PreapproveRequestId, in.Data.TargetLenderCompanyId)
+		if err != nil {
+			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+		}
+	}()
+
 	return &borrower.UserRegisterResponse{
 		Data: &borrower.UserRegisterResponseData{},
 	}, err
+}
+
+func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int64, requestId string, lenderCompanyId int64) (err error) {
+	// get pre-approve loan data from cache
+	key := fmt.Sprintf(constants.BorrowerPreApproveCacheKey, requestId)
+	cacheDataStr, err := global.GetRedis().Get(ctx, key)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	if len(cacheDataStr) == 0 {
+		return errors.WithStack(errors.New("pre-approve loan data not found in cache"))
+	}
+
+	// parse cache data
+	var cacheData types.PreApproveLoanCacheData
+	err = json.Unmarshal([]byte(cacheDataStr), &cacheData)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	preApproveRequest := cacheData.RequestData
+	calcResult := cacheData.ResultData
+	if calcResult.LenderCompanyId != lenderCompanyId {
+		calcResult = nil
+	}
+
+	// get lender company
+	lenderCompany, err := l.svcCtx.LenderCompanyRepo.FindOneById(ctx, lenderCompanyId)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	if lenderCompany.Status != constants.LenderCompanyStatusActive {
+		return errors.WithStack(errors.New("lender company is not active"))
+	}
+
+	// create draft loan
+	saveDraftLogic := loanlogic.NewSaveDraftLoanLogic(ctx, l.svcCtx)
+
+	loanApplyRequest := &borrower.LoanApplyRequest{
+		Data: &borrower.LoanApplyRequestData{
+			LoanPurpose:   preApproveRequest.Loan.LoanPurpose,
+			LoanType:      preApproveRequest.Loan.LoanType,
+			TotalAmount:   preApproveRequest.Loan.TotalAmount,
+			InitialAmount: preApproveRequest.Loan.InitialAmount,
+			LoanProperty: &borrower.LoanPropertyEntry{
+				PropertyBase: &borrower.PropertyBaseEntry{
+					Address: &borrower.AddressEntry{
+						State:    preApproveRequest.Property.Address.State,
+						City:     preApproveRequest.Property.Address.City,
+						Address1: preApproveRequest.Property.Address.Address1,
+						Address2: preApproveRequest.Property.Address.Address2,
+						ZipCode:  preApproveRequest.Property.Address.ZipCode,
+					},
+					Unit: int32(preApproveRequest.Property.Unit),
+				},
+				Unit:         int32(preApproveRequest.Property.Unit),
+				PropertyType: preApproveRequest.Property.PropertyType,
+			},
+			HoldbackAmount:  preApproveRequest.Loan.HoldbackAmount,
+			PrincipalAmount: preApproveRequest.Loan.PrincipalAmount,
+			LenderId:        lenderCompanyId,
+			BorrowerId:      borrowerId,
+			Applicants: []*borrower.ApplicantEntry{
+				{
+					IsPrimary: true,
+					Phone:     preApproveRequest.Borrower.Phone,
+				},
+			},
+			PurchaseAmount:      preApproveRequest.Loan.PurchaseAmount,
+			PurchaseDate:        preApproveRequest.Loan.PurchaseDate,
+			HasAssignmentFee:    preApproveRequest.Loan.HasAssignmentFee,
+			AssignmentFeeAmount: preApproveRequest.Loan.AssignmentFeeAmount,
+			LoanTerm:            preApproveRequest.Loan.LoanTerm,
+			Arv:                 preApproveRequest.Loan.Arv,
+
+			Budget: &borrower.LoanBudgetEntry{
+				OriginalBudget: float32(preApproveRequest.Loan.BudgetAmount),
+			},
+			EstCreditScore: preApproveRequest.Borrower.FicoScore,
+
+			// borrower info
+			LoanBorrower: &borrower.LoanBorrowerEntry{
+				Name:         preApproveRequest.Borrower.Name,
+				ContactEmail: preApproveRequest.Borrower.Email,
+				ContactPhone: preApproveRequest.Borrower.Phone,
+			},
+		},
+	}
+	if calcResult != nil {
+		loanApplyRequest.Data.ReservesAmount = calcResult.InterestReservedAmount
+		loanApplyRequest.Data.TotalAmount = calcResult.TotalAmount
+		loanApplyRequest.Data.InitialAmount = calcResult.InitialAmount
+		loanApplyRequest.Data.Ltv = float64(calcResult.Ltv)
+	}
+
+	// save draft loan
+	_, err = saveDraftLogic.SaveDraftLoan(loanApplyRequest)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	return nil
 }
 
 // sendLoginUrlEmail send login url email

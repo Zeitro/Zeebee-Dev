@@ -10,6 +10,8 @@ type LoanBudget struct {
 
 type LoanPreApproveResult struct {
 	RequestId              string                             `json:"request_id"`
+	LenderCompanyName      string                             `json:"lender_company_name"`
+	LenderCompanyId        int64                              `json:"lender_company_id"`
 	IsApproved             bool                               `json:"is_approved"`
 	RejectReason           string                             `json:"reject_reason"`
 	TotalAmount            float64                            `json:"total_amount"`
@@ -45,6 +47,7 @@ type LoanPreApproveRequest struct {
 		} `json:"address,omitempty"`
 		PropertyType  string `json:"property_type,omitempty"`
 		IsPermitReady bool   `json:"is_permit_ready,omitempty"`
+		Unit          int    `json:"unit,omitempty"`
 	}
 	Loan struct {
 		LoanTerm                      int32   `json:"loan_term,omitempty"`
@@ -68,5 +71,5 @@ type LoanPreApproveRequest struct {
 
 type PreApproveLoanCacheData struct {
 	RequestData LoanPreApproveRequest
-	ResultData  LoanPreApproveResult
+	ResultData  *LoanPreApproveResult
 }
