@@ -1,6 +1,8 @@
 package pre_approve_engine
 
 import (
+	"math"
+
 	"github.com/pkg/errors"
 
 	"zeebee-backend/common/constants"
@@ -60,7 +62,9 @@ type CalculatePreApprovedLoanAmountResult struct {
 
 // PreApproveEngine represents the pre-approval engine
 type PreApproveEngine struct {
-	PreApproveRules map[ExperienceLevel]*PreApproveRule `json:"pre_approve_rules"`
+	LenderCompanyName string                              `json:"lender_company_name"`
+	LenderCompanyId   int64                               `json:"lender_company_id"`
+	PreApproveRules   map[ExperienceLevel]*PreApproveRule `json:"pre_approve_rules"`
 	// ExperienceLevelRule defines rules for determining experience level
 	ExperienceLevelRule ExperienceLevelRule `json:"experience_level_rule"`
 }
@@ -73,4 +77,476 @@ func (e *PreApproveEngine) CalPreApprovedLoanAmount(input InputLoanInfo) (result
 		return nil, errors.WithStack(errors.New("no rule found for experience level"))
 	}
 	return rule.CalPreApprovedLoanAmount(input)
+}
+
+func GetDefaultPreApproveEngines() map[string]*PreApproveEngine {
+	zeebeeMinLargeUnitCount := 5
+	zeebeeMaxUnitCount := 30
+	zeebeeMinLoanTerm := 12
+	zeebeeMaxLoanTerm := 24
+	zeebeeMinHeavyRehabPercent := 0.3
+	zeebeeExtraFactor := 0.05
+	zeebeePreApproveAmountRange := PreApproveAmountRange{
+		StandardAmountRange: AmountRange{
+			Min: 75_000,
+			Max: 3_000_000,
+		},
+		LargeUnitAmountRange: AmountRange{
+			Min: 75_000,
+			Max: 5_000_000,
+		},
+	}
+	zeebeeAdjusterRule := AdjusterRule{
+		FicoScore: []RangeNumberRule{
+			{
+				Min:   300,
+				Max:   701,
+				Value: 0.0025,
+			},
+			{
+				Min:   741,
+				Max:   851,
+				Value: -0.0025,
+			},
+		},
+		GUCExperienceLevel: map[ExperienceLevel]float64{
+			ExperienceLevelInstitutional: 0.005,
+			ExperienceLevelExperienced:   0.0075,
+		},
+		LtcAndLoanAmountRules: []LtcAndLoanAmountRule{
+			{
+				LtcRange: RangeNumber{
+					Min: 0.75,
+					Max: 0.86,
+				},
+				LoanAmountRange: RangeNumber{
+					Min: 3_000_000,
+					Max: math.MaxFloat64,
+				},
+				Value: 0.0025,
+			},
+		},
+		LtcAndLoanPurposeRules: []LtcAndLoanPurposeRule{
+			{
+				LtcRange: RangeNumber{
+					Min: 0.70,
+					Max: 0.81,
+				},
+				LoanPurpose: constants.LoanPurposeRateTerm,
+				Value:       0.0025,
+			},
+			{
+				LtcRange: RangeNumber{
+					Min: 0.70,
+					Max: 0.81,
+				},
+				LoanPurpose: constants.LoanPurposeCashOut,
+				Value:       0.0025,
+			},
+		},
+		LtarvAndLoanAmountRules: []LtarvAndLoanAmountRule{
+			{
+				LtarvRange: RangeNumber{
+					Min: 0.66,
+					Max: 0.76,
+				},
+				LoanAmountRange: RangeNumber{
+					Min: 3_000_000,
+					Max: math.MaxFloat64,
+				},
+				Value: 0.0025,
+			},
+		},
+		LtarvAndLoanPurposeRules: []LtarvAndLoanPurposeRule{
+			{
+				LtarvRange: RangeNumber{
+					Min: 0.6,
+					Max: 0.71,
+				},
+				LoanPurpose: constants.LoanPurposeRateTerm,
+				Value:       0.0025,
+			},
+			{
+				LtarvRange: RangeNumber{
+					Min: 0.6,
+					Max: 0.71,
+				},
+				LoanPurpose: constants.LoanPurposeCashOut,
+				Value:       0.0025,
+			},
+		},
+	}
+	zeebeeServiceFeeConfig := ServiceFeeConfig{
+		OriginationFeePercent:  0.01,
+		UnderwritingFeePercent: 0.0025,
+	}
+	zeebeeHighValueStates := []*HighValueState{}
+
+	engines := make(map[string]*PreApproveEngine)
+	engines["zeebee"] = &PreApproveEngine{
+		LenderCompanyName: "ZeeBee",
+		LenderCompanyId:   1,
+		ExperienceLevelRule: ExperienceLevelRule{
+			MaxTransactionHistoryCountForExperienced:  9,
+			MaxTransactionHistoryCountForNoExperience: 2,
+		},
+		PreApproveRules: map[ExperienceLevel]*PreApproveRule{
+			// No Experienced
+			ExperienceLevelNoExperienced: &PreApproveRule{
+				ExperienceLevel: ExperienceLevelNoExperienced,
+				ExtraFactor:     zeebeeExtraFactor,
+				PriceCapRuleMap: map[constants.LoanType]*LoanTypeRule{
+					constants.LoanTypeBridge: {
+						LoanType: constants.LoanTypeBridge,
+						GeneralRules: &GeneralLoanTypeRules{
+							GeneralRules: &RuleCap{
+								Ltaiv: &Values{
+									Standard:  0.7,
+									LargeUnit: 0.7,
+								},
+								Ltc: &Values{
+									Standard:  0.7,
+									LargeUnit: 0.7,
+								},
+							},
+						},
+					},
+					constants.LoanTypeRehab: {
+						LoanType: constants.LoanTypeRehab,
+						GeneralRules: &RehabLoanTypeRules{
+							Light: RehabLoanTypeRule{
+								GeneralRule: &RuleCap{
+									Ltaiv: &Values{
+										Standard:  0.75,
+										LargeUnit: 0.75,
+									},
+									Ltc: &Values{
+										Standard:  0.8,
+										LargeUnit: 0.8,
+									},
+									Ltarv: &Values{
+										Standard:  0.7,
+										LargeUnit: 0.7,
+									},
+								},
+							},
+						},
+					},
+				},
+				HighValueStates:       zeebeeHighValueStates,
+				BaseRate:              0.1,
+				PreApproveAmountRange: zeebeePreApproveAmountRange,
+				MinLargeUnitCount:     zeebeeMinLargeUnitCount,
+				MaxUnitCount:          zeebeeMaxUnitCount,
+				MinLoanTerm:           zeebeeMinLoanTerm,
+				MaxLoanTerm:           zeebeeMaxLoanTerm,
+				MinHeavyRehabPercent:  zeebeeMinHeavyRehabPercent,
+				LtcBaseRateRules: []BaseRateRule{
+					{
+						Min:      0,
+						Max:      0.71,
+						BaseRate: 0.0975,
+					},
+					{
+						Min:      0.71,
+						Max:      0.76,
+						BaseRate: 0.1025,
+					},
+					{
+						Min:      0.76,
+						Max:      0.81,
+						BaseRate: 0.1075,
+					},
+				},
+				LtarvBaseRateRules: []BaseRateRule{
+					{
+						Min:      0,
+						Max:      0.61,
+						BaseRate: 0.0975,
+					},
+					{
+						Min:      0.61,
+						Max:      0.66,
+						BaseRate: 0.1025,
+					},
+					{
+						Min:      0.66,
+						Max:      0.71,
+						BaseRate: 0.1075,
+					},
+				},
+				AdjusterRule:     zeebeeAdjusterRule,
+				ServiceFeeConfig: zeebeeServiceFeeConfig,
+			},
+			// Experienced
+			ExperienceLevelExperienced: &PreApproveRule{
+				ExperienceLevel: ExperienceLevelExperienced,
+				ExtraFactor:     zeebeeExtraFactor,
+				PriceCapRuleMap: map[constants.LoanType]*LoanTypeRule{
+					constants.LoanTypeBridge: {
+						LoanType: constants.LoanTypeBridge,
+						GeneralRules: &GeneralLoanTypeRules{
+							GeneralRules: &RuleCap{
+								Ltaiv: &Values{
+									Standard:  0.75,
+									LargeUnit: 0.75,
+								},
+								Ltc: &Values{
+									Standard:  0.75,
+									LargeUnit: 0.75,
+								},
+							},
+						},
+					},
+					constants.LoanTypeConstruction: {
+						LoanType: constants.LoanTypeConstruction,
+						GeneralRules: &GeneralLoanTypeRules{
+							GeneralRules: &RuleCap{
+								Ltaiv: &Values{
+									Standard:  0.85,
+									LargeUnit: 0.7,
+								},
+								Ltc: &Values{
+									Standard:  0.85,
+									LargeUnit: 0.7,
+								},
+								Ltarv: &Values{
+									Standard:  0.7,
+									LargeUnit: 0.7,
+								},
+							},
+						},
+					},
+					constants.LoanTypeRehab: {
+						LoanType: constants.LoanTypeRehab,
+						GeneralRules: &RehabLoanTypeRules{
+							Light: RehabLoanTypeRule{
+								GeneralRule: &RuleCap{
+									Ltaiv: &Values{
+										Standard:  0.85,
+										LargeUnit: 0.85,
+									},
+									Ltc: &Values{
+										Standard:  0.85,
+										LargeUnit: 0.85,
+									},
+									Ltarv: &Values{
+										Standard:  0.75,
+										LargeUnit: 0.75,
+									},
+								},
+							},
+							Heavy: RehabLoanTypeRule{
+								GeneralRule: &RuleCap{
+									Ltaiv: &Values{
+										Standard:  0.85,
+										LargeUnit: 0.85,
+									},
+									Ltc: &Values{
+										Standard:  0.85,
+										LargeUnit: 0.85,
+									},
+									Ltarv: &Values{
+										Standard:  0.7,
+										LargeUnit: 0.7,
+									},
+								},
+							},
+						},
+					},
+				},
+				HighValueStates:       zeebeeHighValueStates,
+				BaseRate:              0.09,
+				PreApproveAmountRange: zeebeePreApproveAmountRange,
+				MinLargeUnitCount:     zeebeeMinLargeUnitCount,
+				MaxUnitCount:          zeebeeMaxUnitCount,
+				MinLoanTerm:           zeebeeMinLoanTerm,
+				MaxLoanTerm:           zeebeeMaxLoanTerm,
+				MinHeavyRehabPercent:  zeebeeMinHeavyRehabPercent,
+				LtcBaseRateRules: []BaseRateRule{
+					{
+						Min:      0,
+						Max:      0.71,
+						BaseRate: 0.09,
+					},
+					{
+						Min:      0.71,
+						Max:      0.81,
+						BaseRate: 0.0925,
+					},
+					{
+						Min:      0.81,
+						Max:      0.86,
+						BaseRate: 0.095,
+					},
+				},
+				LtarvBaseRateRules: []BaseRateRule{
+					{
+						Min:      0,
+						Max:      0.61,
+						BaseRate: 0.09,
+					},
+					{
+						Min:      0.61,
+						Max:      0.71,
+						BaseRate: 0.0925,
+					},
+					{
+						Min:      0.71,
+						Max:      0.76,
+						BaseRate: 0.095,
+					},
+				},
+				AdjusterRule:     zeebeeAdjusterRule,
+				ServiceFeeConfig: zeebeeServiceFeeConfig,
+			},
+			// institutional
+			ExperienceLevelInstitutional: &PreApproveRule{
+				ExperienceLevel: ExperienceLevelInstitutional,
+				ExtraFactor:     zeebeeExtraFactor,
+				PriceCapRuleMap: map[constants.LoanType]*LoanTypeRule{
+					constants.LoanTypeBridge: {
+						LoanType: constants.LoanTypeBridge,
+						GeneralRules: &GeneralLoanTypeRules{
+							GeneralRules: &RuleCap{
+								Ltaiv: &Values{
+									Standard:  0.8,
+									LargeUnit: 0.8,
+								},
+								Ltc: &Values{
+									Standard:  0.8,
+									LargeUnit: 0.8,
+								},
+							},
+						},
+						HighValueRules: &GeneralLoanTypeRules{
+							GeneralRules: &RuleCap{
+								Ltaiv: &Values{
+									Standard:  0.8,
+									LargeUnit: 0.8,
+								},
+								Ltc: &Values{
+									Standard:  0.65,
+									LargeUnit: 0.65,
+								},
+							},
+						},
+					},
+					constants.LoanTypeConstruction: {
+						LoanType: constants.LoanTypeConstruction,
+						GeneralRules: &GeneralLoanTypeRules{
+							GeneralRules: &RuleCap{
+								Ltaiv: &Values{
+									Standard:  0.85,
+									LargeUnit: 0.7,
+								},
+								Ltc: &Values{
+									Standard:  0.85,
+									LargeUnit: 0.7,
+								},
+								Ltarv: &Values{
+									Standard:  0.75,
+									LargeUnit: 0.75,
+								},
+							},
+						},
+						HighValueRules: &GeneralLoanTypeRules{
+							GeneralRules: &RuleCap{
+								Ltaiv: &Values{
+									Standard:  0.8,
+									LargeUnit: 0.8,
+								},
+								Ltc: &Values{
+									Standard:  0.65,
+									LargeUnit: 0.65,
+								},
+							},
+						},
+					},
+					constants.LoanTypeRehab: {
+						LoanType: constants.LoanTypeRehab,
+						GeneralRules: &GeneralLoanTypeRules{
+							GeneralRules: &RuleCap{
+								Ltaiv: &Values{
+									Standard:  0.85,
+									LargeUnit: 0.80,
+								},
+								Ltc: &Values{
+									Standard:  0.90,
+									LargeUnit: 0.8,
+								},
+								Ltarv: &Values{
+									Standard:  0.75,
+									LargeUnit: 0.75,
+								},
+							},
+						},
+						HighValueRules: &GeneralLoanTypeRules{
+							GeneralRules: &RuleCap{
+								Ltaiv: &Values{
+									Standard:  0.8,
+									LargeUnit: 0.8,
+								},
+								Ltc: &Values{
+									Standard:  0.65,
+									LargeUnit: 0.65,
+								},
+							},
+						},
+					},
+				},
+				HighValueStates:       zeebeeHighValueStates,
+				BaseRate:              0.0875,
+				PreApproveAmountRange: zeebeePreApproveAmountRange,
+				MinLargeUnitCount:     zeebeeMinLargeUnitCount,
+				MaxUnitCount:          zeebeeMaxUnitCount,
+				MinLoanTerm:           zeebeeMinLoanTerm,
+				MaxLoanTerm:           zeebeeMaxLoanTerm,
+				MinHeavyRehabPercent:  zeebeeMinHeavyRehabPercent,
+				LtcBaseRateRules: []BaseRateRule{
+					{
+						Min:      0,
+						Max:      0.71,
+						BaseRate: 0.0825,
+					},
+					{
+						Min:      0.71,
+						Max:      0.81,
+						BaseRate: 0.085,
+					},
+					{
+						Min:      0.81,
+						Max:      0.86,
+						BaseRate: 0.0875,
+					},
+					{
+						Min:      0.86,
+						Max:      0.91,
+						BaseRate: 0.09,
+					},
+				},
+				LtarvBaseRateRules: []BaseRateRule{
+					{
+						Min:      0,
+						Max:      0.61,
+						BaseRate: 0.0825,
+					},
+					{
+						Min:      0.61,
+						Max:      0.71,
+						BaseRate: 0.085,
+					},
+					{
+						Min:      0.71,
+						Max:      0.76,
+						BaseRate: 0.0875,
+					},
+				},
+				AdjusterRule:     zeebeeAdjusterRule,
+				ServiceFeeConfig: zeebeeServiceFeeConfig,
+			},
+		},
+	}
+
+	return engines
 }
