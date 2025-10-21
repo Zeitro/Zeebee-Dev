@@ -95,10 +95,10 @@ const BorrowerInfo = ({ gutter = 24, children }) => {
 				In the last 3 years, how many times have you...
 			</Col>
 			<Col {...titleCol}>
-				<Form.Item label="Flipped a property?" name="property">
+				<Form.Item label="Flipped a property?" name="property" rules={[{ required: true }]}>
 					<InputNumber
 						style={{ width: '100%' }}
-						// min={minCreditScore}
+						min={0}
 						// max={maxCreditScore}
 						controls={false}
 						placeholder="Number of properties"
@@ -106,10 +106,14 @@ const BorrowerInfo = ({ gutter = 24, children }) => {
 				</Form.Item>
 			</Col>
 			<Col {...titleCol}>
-				<Form.Item label="Purchased a rental property?" name="rental_property">
+				<Form.Item
+					label="Purchased a rental property?"
+					name="rental_property"
+					rules={[{ required: true }]}
+				>
 					<InputNumber
 						style={{ width: '100%' }}
-						// min={minCreditScore}
+						min={0}
 						// max={maxCreditScore}
 						controls={false}
 						placeholder="Number of rental properties"
