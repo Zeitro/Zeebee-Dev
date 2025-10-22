@@ -123,6 +123,9 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 	}()
 
 	go func() {
+		if len(in.Data.PreapproveRequestId) == 0 || in.Data.TargetLenderCompanyId == 0 {
+			return
+		}
 		// create draft loan
 		err := l.handlePreapproveLoan(context.WithoutCancel(l.ctx), borrowerModel.Id, in.Data.PreapproveRequestId, in.Data.TargetLenderCompanyId)
 		if err != nil {

@@ -12,6 +12,7 @@ type LoanStage string
 const LoanStageName = "loan_stage"
 const (
 	LoanStageDraft    LoanStage = "Draft"
+	LoanStagePredraft LoanStage = "Predraft"
 	LoanStagePending  LoanStage = "Pending"
 	LoanStageActive   LoanStage = "Active"
 	LoanStageArchived LoanStage = "Archived"

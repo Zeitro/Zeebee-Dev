@@ -4901,6 +4901,7 @@ type LoanApplyRequestData struct {
 	LoanThirdServices        []*LoanThirdServiceEntry `protobuf:"bytes,44,rep,name=loan_third_services,json=loanThirdServices,proto3" json:"loan_third_services,omitempty"`
 	Id                       int64                    `protobuf:"varint,45,opt,name=id,proto3" json:"id,omitempty"`
 	ApplyFormFile            string                   `protobuf:"bytes,46,opt,name=apply_form_file,json=applyFormFile,proto3" json:"apply_form_file,omitempty"`
+	IsPreapproveLoan         bool                     `protobuf:"varint,47,opt,name=is_preapprove_loan,json=isPreapproveLoan,proto3" json:"is_preapprove_loan,omitempty"`
 	unknownFields            protoimpl.UnknownFields
 	sizeCache                protoimpl.SizeCache
 }
@@ -5248,6 +5249,13 @@ func (x *LoanApplyRequestData) GetApplyFormFile() string {
 		return x.ApplyFormFile
 	}
 	return ""
+}
+
+func (x *LoanApplyRequestData) GetIsPreapproveLoan() bool {
+	if x != nil {
+		return x.IsPreapproveLoan
+	}
+	return false
 }
 
 type LoanApplyResponse struct {
@@ -9330,7 +9338,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x1bLoanLenderCompaniesResponse\x12\x12\n" +
 	"\x04data\x18\x01 \x03(\tR\x04data\"F\n" +
 	"\x10LoanApplyRequest\x122\n" +
-	"\x04data\x18\x01 \x01(\v2\x1e.borrower.LoanApplyRequestDataR\x04data\"\xe1\x10\n" +
+	"\x04data\x18\x01 \x01(\v2\x1e.borrower.LoanApplyRequestDataR\x04data\"\x8f\x11\n" +
 	"\x14LoanApplyRequestData\x12!\n" +
 	"\floan_purpose\x18\x01 \x01(\tR\vloanPurpose\x12\x1b\n" +
 	"\tloan_type\x18\x02 \x01(\tR\bloanType\x12!\n" +
@@ -9380,7 +9388,8 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x18yearly_liability_expense\x18+ \x01(\x02R\x16yearlyLiabilityExpense\x12O\n" +
 	"\x13loan_third_services\x18, \x03(\v2\x1f.borrower.LoanThirdServiceEntryR\x11loanThirdServices\x12\x0e\n" +
 	"\x02id\x18- \x01(\x03R\x02id\x12&\n" +
-	"\x0fapply_form_file\x18. \x01(\tR\rapplyFormFile\"H\n" +
+	"\x0fapply_form_file\x18. \x01(\tR\rapplyFormFile\x12,\n" +
+	"\x12is_preapprove_loan\x18/ \x01(\bR\x10isPreapproveLoan\"H\n" +
 	"\x11LoanApplyResponse\x123\n" +
 	"\x04data\x18\x01 \x01(\v2\x1f.borrower.LoanApplyResponseDataR\x04data\"'\n" +
 	"\x15LoanApplyResponseData\x12\x0e\n" +
