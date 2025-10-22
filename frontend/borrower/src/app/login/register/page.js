@@ -1,9 +1,9 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Button, Checkbox, Col, Form, Input, Row } from 'antd';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useUserStore } from '@/store/user';
-import { validateRule, emailRegex } from '@/lib/format';
+import { validateRule, emailRegex, capitalizeFirstLetter } from '@/lib/format';
 import styles from '../index.module.scss';
 import ConfirmPassWord from '../components/ConfirmPassword';
 import { throttle } from 'lodash';
@@ -15,6 +15,17 @@ const Register = () => {
 	const { registerAndSendEmail } = useUserStore();
 	const [loading, setLoading] = useState(false);
 
+	// 从官网pre-approved页面跳转过来
+	const perApprovedInfo = useMemo(() => {
+		const request_id = searchParams.get('request_id');
+		const lender_id = searchParams.get('lender_id');
+		return {
+			request_id,
+			lender_id,
+			isPerApproved: request_id && lender_id,
+		};
+	}, [searchParams]);
+
 	// 注册
 	const handleCreateAccount = throttle(async () => {
 		try {
@@ -22,6 +33,10 @@ const Register = () => {
 			if (!values.agreement) return;
 			delete values.agreement;
 			setLoading(true);
+			if (perApprovedInfo.isPerApproved) {
+				values.pre_approval_request_id = perApprovedInfo.request_id;
+				values.target_lender_company_id = Number(perApprovedInfo.lender_id);
+			}
 			await registerAndSendEmail(values);
 			setLoading(false);
 			router.replace(`/login/sendRegisterTips?email=${newEmail}`);
@@ -47,7 +62,8 @@ const Register = () => {
 			<Form
 				className={[
 					styles.loginForm,
-					'w-[400px] rounded-lg bg-background !px-6 !py-6 max-h-[95%] overflow-y-auto',
+					perApprovedInfo.isPerApproved ? 'w-[500px]' : 'w-[400px]',
+					'rounded-lg bg-background !px-6 !py-6 max-h-[95%] overflow-y-auto',
 				].join(' ')}
 				name="resetPasswordForm"
 				size="large"
@@ -60,7 +76,18 @@ const Register = () => {
 				}}
 				initialValues={{ email: searchParams.get('email') }}
 			>
-				<div className="text-3xl/10 font-medium">Create your account</div>
+				<div className="text-3xl/10 font-medium">
+					{perApprovedInfo.isPerApproved ? (
+						<>
+							Create an account to processed
+							<p className="text-sm/[22px] font-normal">
+								To accept your loan terms, you’ll need to create a ZeeBee account.
+							</p>
+						</>
+					) : (
+						'Create your account'
+					)}
+				</div>
 				<Row gutter={16} className="pt-8">
 					<Col sm={12} xs={24}>
 						<Form.Item
@@ -72,6 +99,9 @@ const Register = () => {
 									message: 'Please enter first name!',
 								},
 							]}
+							getValueFromEvent={(v) => {
+								return capitalizeFirstLetter(v.target.value);
+							}}
 						>
 							<Input placeholder="First name" allowClear />
 						</Form.Item>
@@ -87,6 +117,9 @@ const Register = () => {
 								},
 							]}
 							dependencies={['last_name']}
+							getValueFromEvent={(v) => {
+								return capitalizeFirstLetter(v.target.value);
+							}}
 						>
 							<Input placeholder="Last name" allowClear />
 						</Form.Item>
@@ -145,20 +178,24 @@ const Register = () => {
 					</Checkbox>
 				</Form.Item>
 				<div className="flex align-center justify-center gap-4">
-					<Button
-						size="middle"
-						onClick={() => router.replace('/login')}
-						className="w-[130px]"
-					>
-						Cancel
-					</Button>
+					{!perApprovedInfo.isPerApproved && (
+						<Button
+							size="middle"
+							onClick={() => router.replace('/login')}
+							className="w-[130px]"
+						>
+							Cancel
+						</Button>
+					)}
 					<Button
 						size="middle"
 						type="primary"
 						loading={loading}
 						onClick={handleCreateAccount}
 					>
-						Create account
+						{perApprovedInfo.isPerApproved
+							? 'Create  account & Accept Loan Terms'
+							: 'Create account'}
 					</Button>
 				</div>
 				<div className="w-full text-center pt-6 text-black-dark">

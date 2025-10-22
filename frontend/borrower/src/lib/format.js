@@ -26,6 +26,38 @@ export const maxTerm = 10000;
 export const maxTerm_zeeBee = 24;
 export const minTerm_zeeBee = 12;
 
+// 通过property_type获取unit
+export const changeUnitByPropertyType = (property_type) => {
+	let unit = null,
+		minUnit = 1,
+		maxUnit = maxNumberOfUnits,
+		disabled = false;
+	switch (property_type) {
+		case 'Single Family Residence':
+			unit = minUnit = 1;
+			disabled = true;
+			break;
+		case '2 unit':
+			unit = minUnit = 2;
+			disabled = true;
+			break;
+		case '3 unit':
+			unit = minUnit = 3;
+			disabled = true;
+			break;
+		case '4 unit':
+			unit = minUnit = 4;
+			disabled = true;
+			break;
+		case '4+ Multi':
+			unit = minUnit = 5;
+			break;
+		default:
+			break;
+	}
+	return { unit, minUnit, maxUnit, disabled };
+};
+
 // 格式化居住面积, 用于<InputNumber>中配置
 export const livingAreaProps = {
 	controls: false,
@@ -51,11 +83,11 @@ export const validateRule = (value, regex, errorMsg = 'Invalid input') => {
 export const validateAssignmentFeeAmount = (value, purchase_amount) => {
 	// Assignment fee 最高只能达到purchase price的10%
 	const max = purchase_amount * 0.1;
-	// if (!value) {
-
-	// }
-	if (value && max > value) {
-		return Promise.reject(`Assignment fee cannot exceed purchase price的10% (${max})`);
+	if (!value) {
+		return Promise.reject('Please enter assignment fee amount!');
+	}
+	if (value && value > max) {
+		return Promise.reject(`Assignment fee cannot exceed purchase price's 10% ($${max})`);
 	}
 	return Promise.resolve();
 };
