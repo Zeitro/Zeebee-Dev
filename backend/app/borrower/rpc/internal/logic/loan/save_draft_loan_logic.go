@@ -3,6 +3,7 @@ package loanlogic
 import (
 	"context"
 
+	"github.com/duke-git/lancet/v2/condition"
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
@@ -60,10 +61,16 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 		if loan.Source != constants.LoanSourceSystem {
 			return nil, errors.WithStack(errors.New("invalid loan source"))
 		}
-		if loan.Stage != constants.LoanStageDraft && loan.PendingStatus != constants.LoanPendingStatusNone {
+
+		stages := []constants.LoanStage{
+			constants.LoanStageDraft,
+			constants.LoanStagePredraft,
+		}
+		if !slice.Contain(stages, loan.Stage) && loan.PendingStatus != constants.LoanPendingStatusNone {
 			return nil, errors.New("loan's stage should be draft")
 		}
 		oldApplicants = loan.Applicants
+		data.loan.Stage = loan.Stage
 	}
 	// update loan
 	err = l.svcCtx.LoanPropertyRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
@@ -74,6 +81,7 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 			func() error {
 				var err error
 				data.loan.RemoveRelationships()
+
 				if in.Data.Id > 0 {
 					_, err = l.svcCtx.LoanRepo.UpdateOneWithTx(l.ctx, tx, in.Data.Id, data.loan, true)
 				} else {
@@ -137,19 +145,6 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 					err = l.svcCtx.LoanDocumentRepo.SaveApplyFormDocumentWithTx(l.ctx, tx, loan.Id, in.Data.ApplyFormFile)
 				}
 				return err
-
-				// if data.applyFormFile == nil {
-				// 	return nil
-				// }
-				// oldApplyForm := loan.ApplyFormFile
-				// if oldApplyForm == nil {
-				// 	data.applyFormFile.RefId = loan.Id
-				// 	_, err := l.svcCtx.FileRepo.CreateWithTx(l.ctx, tx, data.applyFormFile, false)
-				// 	return err
-				// }
-				// data.applyFormFile.RefId = loan.Id
-				// _, err := l.svcCtx.FileRepo.UpdateOneWithTx(l.ctx, tx, oldApplyForm.Id, data.applyFormFile)
-				// return err
 			},
 		)
 
@@ -237,7 +232,8 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 		return nil, errorx.GetFailedTransErr(err)
 	}
 	loan.BorrowerId = reqData.BorrowerId
-	loan.Stage = constants.LoanStageDraft
+	// loan.Stage = constants.LoanStageDraft
+	loan.Stage = condition.Ternary(reqData.IsPreapproveLoan, constants.LoanStagePredraft, constants.LoanStageDraft)
 	loan.PendingStatus = constants.LoanPendingStatusNone
 	loan.Source = constants.LoanSourceSystem
 	if reqData.LenderId > 0 {
@@ -381,14 +377,6 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 		}
 	}
 
-	// apply form file
-	// var applyFormFile *model.File
-	// if len(reqData.ApplyFormFile) > 0 {
-	// 	applyFormFile = &model.File{
-	// 		File:     reqData.ApplyFormFile,
-	// 		FileType: constants.FileTypeApplyForm,
-	// 	}
-	// }
 	data = &applyLoanModelData{
 		loan:                   loan,
 		loanProperty:           loanProperty,
@@ -398,7 +386,6 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 		realEstatesExperiences: realEstatesExperiences,
 		loanDemographic:        loanDemographic,
 		loanThirdServices:      loanThirdServices,
-		// applyFormFile:          applyFormFile,
 	}
 	return
 }
