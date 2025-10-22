@@ -8534,7 +8534,7 @@ type LoanPreApproveRequestData_Borrower struct {
 	Name                        string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Email                       string                 `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
 	Phone                       string                 `protobuf:"bytes,3,opt,name=phone,proto3" json:"phone,omitempty"`
-	FicoScore                   int32                  `protobuf:"varint,6,opt,name=fico_score,json=ficoScore,proto3" json:"fico_score,omitempty"`
+	EstCreditScore              int32                  `protobuf:"varint,6,opt,name=est_credit_score,json=estCreditScore,proto3" json:"est_credit_score,omitempty"`
 	FlipPropertyCount           int32                  `protobuf:"varint,7,opt,name=flip_property_count,json=flipPropertyCount,proto3" json:"flip_property_count,omitempty"`
 	PurchaseRentalPropertyCount int32                  `protobuf:"varint,8,opt,name=purchase_rental_property_count,json=purchaseRentalPropertyCount,proto3" json:"purchase_rental_property_count,omitempty"`
 	unknownFields               protoimpl.UnknownFields
@@ -8592,9 +8592,9 @@ func (x *LoanPreApproveRequestData_Borrower) GetPhone() string {
 	return ""
 }
 
-func (x *LoanPreApproveRequestData_Borrower) GetFicoScore() int32 {
+func (x *LoanPreApproveRequestData_Borrower) GetEstCreditScore() int32 {
 	if x != nil {
-		return x.FicoScore
+		return x.EstCreditScore
 	}
 	return 0
 }
@@ -9431,17 +9431,17 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"actionList\x12#\n" +
 	"\rbusiness_line\x18\x05 \x01(\tR\fbusinessLine\"P\n" +
 	"\x15LoanPreApproveRequest\x127\n" +
-	"\x04data\x18\x01 \x01(\v2#.borrower.LoanPreApproveRequestDataR\x04data\"\xfd\t\n" +
+	"\x04data\x18\x01 \x01(\v2#.borrower.LoanPreApproveRequestDataR\x04data\"\x88\n" +
+	"\n" +
 	"\x19LoanPreApproveRequestData\x12H\n" +
 	"\bborrower\x18\x01 \x01(\v2,.borrower.LoanPreApproveRequestData.BorrowerR\bborrower\x12H\n" +
 	"\bproperty\x18\x02 \x01(\v2,.borrower.LoanPreApproveRequestData.PropertyR\bproperty\x12<\n" +
-	"\x04loan\x18\x03 \x01(\v2(.borrower.LoanPreApproveRequestData.LoanR\x04loan\x1a\xde\x01\n" +
+	"\x04loan\x18\x03 \x01(\v2(.borrower.LoanPreApproveRequestData.LoanR\x04loan\x1a\xe9\x01\n" +
 	"\bBorrower\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x14\n" +
 	"\x05email\x18\x02 \x01(\tR\x05email\x12\x14\n" +
-	"\x05phone\x18\x03 \x01(\tR\x05phone\x12\x1d\n" +
-	"\n" +
-	"fico_score\x18\x06 \x01(\x05R\tficoScore\x12.\n" +
+	"\x05phone\x18\x03 \x01(\tR\x05phone\x12(\n" +
+	"\x10est_credit_score\x18\x06 \x01(\x05R\x0eestCreditScore\x12.\n" +
 	"\x13flip_property_count\x18\a \x01(\x05R\x11flipPropertyCount\x12C\n" +
 	"\x1epurchase_rental_property_count\x18\b \x01(\x05R\x1bpurchaseRentalPropertyCount\x1a\x9d\x01\n" +
 	"\bProperty\x120\n" +

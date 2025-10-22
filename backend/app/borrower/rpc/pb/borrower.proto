@@ -630,7 +630,7 @@ message LoanPreApproveRequestData {
     string email = 2;
     string phone = 3;
 
-    int32 fico_score = 6;
+    int32 est_credit_score = 6;
     int32 flip_property_count = 7;
     int32 purchase_rental_property_count = 8;
   }

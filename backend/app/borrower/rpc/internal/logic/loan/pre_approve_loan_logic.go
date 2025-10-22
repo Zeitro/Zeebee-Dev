@@ -38,7 +38,7 @@ func (l *PreApproveLoanLogic) PreApproveLoan(in *borrower.LoanPreApproveRequest)
 	input := pre_approve_engine.InputLoanInfo{
 		LoanType:                constants.LoanType(in.Data.Loan.LoanType),
 		LoanPurpose:             constants.LoanPurpose(in.Data.Loan.LoanPurpose),
-		FicoScore:               int(in.Data.Borrower.FicoScore),
+		FicoScore:               int(in.Data.Borrower.EstCreditScore),
 		TransactionHistoryCount: int(in.Data.Borrower.FlipPropertyCount + in.Data.Borrower.PurchaseRentalPropertyCount),
 		Unit:                    int(in.Data.Property.Unit),
 		LoanTerm:                int(in.Data.Loan.LoanTerm),
