@@ -58,7 +58,7 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 		if err != nil {
 			return nil, err
 		}
-		if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreApprove {
+		if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreApproval {
 			return nil, errors.WithStack(errors.New("invalid loan source"))
 		}
 
@@ -235,7 +235,7 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	loan.Stage = constants.LoanStageDraft
 	loan.PendingStatus = constants.LoanPendingStatusNone
 	// loan.Source = constants.LoanSourceSystem
-	loan.Source = condition.Ternary(reqData.IsPreapproveLoan, constants.LoanSourcePreApprove, constants.LoanSourceSystem)
+	loan.Source = condition.Ternary(reqData.IsPreapproveLoan, constants.LoanSourcePreApproval, constants.LoanSourceSystem)
 	if reqData.LenderId > 0 {
 		lender, err := l.svcCtx.LenderCompanyRepo.FindOneById(l.ctx, reqData.LenderId)
 		if err != nil {

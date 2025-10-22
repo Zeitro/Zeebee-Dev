@@ -127,7 +127,7 @@ func (l *AddFilesLogic) prepare(in *borrower.LoanDocumentAddFilesRequest) (loan 
 	if loan.Stage != constants.LoanStagePending {
 		return nil, nil, errors.WithStack(errors.New("loan is not in pending stage"))
 	}
-	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreApprove {
+	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreApproval {
 		return nil, nil, errors.WithStack(errors.New("loan source is not system"))
 	}
 

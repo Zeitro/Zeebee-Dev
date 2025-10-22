@@ -52,7 +52,7 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 
 	sources := []constants.LoanSource{
 		constants.LoanSourceSystem,
-		constants.LoanSourcePreApprove,
+		constants.LoanSourcePreApproval,
 	}
 	if !slice.Contain(sources, loan.Source) {
 		return nil, errors.WithStack(errors.New("invalid loan source"))

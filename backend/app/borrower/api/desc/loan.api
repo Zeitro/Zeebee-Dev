@@ -453,7 +453,7 @@ type (
         InterestReserveMonths int32 `json:"interest_reserve_months" validate:"gte=0"`
         LoanPurpose string `json:"loan_purpose" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
         LoanType string `json:"loan_type" validate:"required,oneof=Bridge Rehab 'Ground up construction'"`
-        HasAssignmentFee bool `json:"has_assignment_fee"`
+        HasAssignmentFee bool `json:"has_assignment_fee,optional"`
         AssignmentFeeAmount float64 `json:"assignment_fee_amount" validate:"required_if=HasAssignmentFee true,gte=0"`
     }
 
