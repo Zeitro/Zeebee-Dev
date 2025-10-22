@@ -29,11 +29,13 @@ type UserRefreshTokenResponse struct {
 }
 
 type UserRegisterRequest struct {
-	Email            string `json:"email" validate:"required,email"`
-	Password         string `json:"password" validate:"required,min=8,max=32,password"`
-	ComfiredPassword string `json:"comfired_password" validate:"required,eqfield=Password"`
-	FirstName        string `json:"first_name" validate:"required,min=2,max=30"`
-	LastName         string `json:"last_name" validate:"required,min=2,max=30"`
+	Email                 string `json:"email" validate:"required,email"`
+	Password              string `json:"password" validate:"required,min=8,max=32,password"`
+	ComfiredPassword      string `json:"comfired_password" validate:"required,eqfield=Password"`
+	FirstName             string `json:"first_name" validate:"required,min=2,max=30"`
+	LastName              string `json:"last_name" validate:"required,min=2,max=30"`
+	PreapproveRequestId   string `json:"preapprove_request_id,optional"`
+	TargetLenderCompanyId int64  `json:"target_lender_company_id,optional"`
 }
 
 type UserRegisterResponse struct {

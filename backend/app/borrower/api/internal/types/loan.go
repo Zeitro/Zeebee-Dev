@@ -133,7 +133,7 @@ type LoanPreApproveRequest struct {
 
 type LoanPreApproveResponse struct {
 	Primary     *PrimaryPreApproveLoan     `json:"primary"`
-	Secondaries []*SecondaryPreApproveLoan `json:"secondary"`
+	Secondaries []*SecondaryPreApproveLoan `json:"secondaries"`
 }
 
 type LoanUpdatePendingStatusRequest struct {
