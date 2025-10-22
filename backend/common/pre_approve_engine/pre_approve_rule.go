@@ -545,11 +545,11 @@ func (r *PreApproveRule) calculateAdjusters(input InputLoanInfo, totalAmount flo
 
 // calculateMonthlyPayment calculates the monthly payment
 func (r *PreApproveRule) calculateMonthlyPayment(totalLoanAmount float64, rate float64, loanTerm int) float64 {
-	if loanTerm <= 0 {
-		return 0
-	}
+	// if loanTerm <= 0 {
+	// 	return 0
+	// }
 	monthlyRate := rate / 12
-	return monthlyRate * totalLoanAmount / float64(loanTerm)
+	return monthlyRate * totalLoanAmount
 }
 
 // calculateCashToClose calculates the cash to close (fees)

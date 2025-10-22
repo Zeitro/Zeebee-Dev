@@ -54,6 +54,7 @@ type Loan struct {
 	MidConstruction          bool                        `gorm:"column:mid_construction;not null;default:false" json:"mid_construction"`
 	EstCreditScore           int32                       `gorm:"column:est_credit_score;type:int2;not null;default:0" json:"est_credit_score"`
 	EstYearlyRentalIncome    float64                     `gorm:"column:est_yearly_rental_income;type:numeric(10,2);not null;default:0" json:"est_yearly_rental_income"`
+	EstPropertyValueAmount   float64                     `gorm:"column:est_property_value_amount;type:numeric(10,2);not null;default:0" json:"est_property_value_amount"`
 	Dscr                     float64                     `gorm:"column:dscr;type:numeric(10,2);not null;default:0" json:"dscr"`
 	ReservesAmount           float64                     `gorm:"column:reserves_amount;type:numeric(10,2);not null;default:0" json:"reserves_amount"`
 	HasDelayedFinancing      bool                        `gorm:"column:has_delayed_financing;not null;default:false" json:"has_delayed_financing"`

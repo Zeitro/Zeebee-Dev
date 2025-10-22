@@ -327,6 +327,7 @@ message LoanEntry {
   repeated LoanDocumentEntry loan_documents = 65;
   string code = 66;
   int64 RequestedLoanDocumentCount = 67;
+  double est_property_value_amount = 68;
 
 }
 
@@ -571,6 +572,7 @@ message LoanApplyRequestData {
   int64 id = 45;
   string apply_form_file = 46;
   bool is_preapprove_loan = 47;
+  double est_property_value_amount = 48;
 }
 
 message LoanApplyResponse {
@@ -644,13 +646,13 @@ message LoanPreApproveRequestData {
 
   message Loan {
     int32 loan_term = 1;
-    double est_current_property_value_amount = 2;
+    double est_property_value_amount = 2;
     double arv = 3;
     double total_amount = 4;
     double principal_amount = 5;
     string purchase_date = 6;
     double purchase_amount = 7;
-    string cost_to_date = 8;
+    double cost_spent_to_date_amount = 8;
     double budget_amount = 9;
     double initial_amount = 10;
     double holdback_amount = 11;

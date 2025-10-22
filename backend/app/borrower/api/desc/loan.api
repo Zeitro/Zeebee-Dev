@@ -146,7 +146,8 @@ type LoanEntry {
     ScheduledCloseEscrowDate string `json:"scheduled_close_escrow_date"`
     LoanTerm int32 `json:"loan_term" `
     Arv float64 `json:"arv"`
-    Ltv float64 `json:"ltv" `
+    Ltv float64 `json:"ltv"`
+    EstPropertyValueAmount float64 `json:"est_property_value_amount"`
     LiquidityAmount float64 `json:"liquidity_amount"`
     Budget *LoanBudgetEntry `json:"budget"`
     MidConstruction bool `json:"mid_construction"`
@@ -341,6 +342,7 @@ type (
         LoanTerm int32 `json:"loan_term,optional" validate:"gte=1"`
         Arv float64 `json:"arv,optional" validate:"required,gte=0"`
         Ltv float64 `json:"ltv,optional" validate:"required_unless=LoanPurpose Purchase,omitempty,gte=0"`
+        EstPropertyValueAmount float64 `json:"est_property_value_amount" validate:"required_unless=LoanPurpose Purchase,omitempty,gte=0"`
         LiquidityAmount float64 `json:"liquidity_amount,optional" validate:"gte=0"`
         Budget *LoanBudgetEntry `json:"budget,optional" validate:"required_if=LoanType Rehab LoanType 'Ground up construction'"`
         MidConstruction bool `json:"mid_construction,optional"`
@@ -438,13 +440,13 @@ type (
 
     LoanPreApproveRequestLoan {
         LoanTerm int32 `json:"loan_term" validate:"required,gte=1,lte=360"`
-        EstCurrentPropertyValueAmount float64 `json:"est_current_property_value_amount" validate:"required,gt=0"`
+        EstPropertyValueAmount float64 `json:"est_property_value_amount" validate:"required,gt=0"`
         Arv float64 `json:"arv" validate:"required,gt=0"`
         TotalAmount float64 `json:"total_amount" validate:"required,gt=0"`
         PrincipalAmount float64 `json:"principal_amount" validate:"required_if=LoanPurpose 'Rate-term refi' LoanPurpose 'Cash-out refi'"`
         PurchaseDate string `json:"purchase_date" validate:"required_if=LoanPurpose 'Rate-term refi' LoanPurpose 'Cash-out refi',omitempty,datetime=01/02/2006"`
         PurchaseAmount float64 `json:"purchase_amount" validate:"required,gt=0"`
-        CostToDate string `json:"cost_to_date" validate:"required_if=LoanPurpose 'Rate-term refi' LoanPurpose 'Cash-out refi',omitempty,datetime=01/02/2006"`
+        CostSpentToDateAmount float64 `json:"cost_spent_to_date_amount" validate:"required_if=LoanPurpose 'Rate-term refi' LoanPurpose 'Cash-out refi',gte=0"`
         BudgetAmount float64 `json:"budget_amount" validate:"required_if=LoanType Rehab,gt=0"`
         InitialAmount float64 `json:"initial_amount" validate:"required_if=LoanType Rehab LoanType 'Ground up construction',gt=0"`
         HoldbackAmount float64 `json:"holdback_amount" validate:"required_if=LoanType Rehab LoanType 'Ground up construction',gt=0"`
@@ -497,8 +499,5 @@ type (
         Min int32 `json:"min"`
         Max int32 `json:"max"`
     }
-
-
-
 )
 

@@ -57,7 +57,7 @@ type LoanPreApproveRequest struct {
 		PrincipalAmount               float64 `json:"principal_amount,omitempty"`
 		PurchaseDate                  string  `json:"purchase_date,omitempty"`
 		PurchaseAmount                float64 `json:"purchase_amount,omitempty"`
-		CostToDate                    string  `json:"cost_to_date,omitempty"`
+		CostSpentToDateAmount         float64 `json:"cost_spent_to_date_amount,omitempty"`
 		BudgetAmount                  float64 `son:"budget_amount,omitempty"`
 		InitialAmount                 float64 `json:"initial_amount,omitempty"`
 		HoldbackAmount                float64 `json:"holdback_amount,omitempty"`
