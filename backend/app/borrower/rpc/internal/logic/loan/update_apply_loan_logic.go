@@ -94,6 +94,11 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 			// update loan
 			func() error {
 				data.loan.RemoveRelationships()
+
+				if in.Data.LenderCompanyId == 0 {
+					in.Data.LenderCompanyId = loan.LenderCompanyId
+				}
+
 				_, err := l.svcCtx.LoanRepo.UpdateOneWithTx(l.ctx, tx, in.Data.Id, data.loan, true)
 				return err
 			},
@@ -198,18 +203,6 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 				}
 				return err
 			},
-
-			// sync property total amount
-			// func() error {
-			// 	err := l.svcCtx.PropertyBaseRepo.SyncTotalAmountWithTx(l.ctx, tx, previousPropertyBaseId)
-			// 	if err != nil {
-			// 		return err
-			// 	}
-			// 	if propertyBase.Id != previousPropertyBaseId {
-			// 		err = l.svcCtx.PropertyBaseRepo.SyncTotalAmountWithTx(l.ctx, tx, propertyBase.Id)
-			// 	}
-			// 	return err
-			// },
 		)
 
 		innerErr = eg.Error()

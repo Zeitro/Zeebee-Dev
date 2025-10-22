@@ -81,7 +81,7 @@ message UserRegisterRequestData {
   string password = 2;
   string first_name = 3;
   string last_name = 4;
-  string preapprove_request_id = 5;
+  string pre_approval_request_id = 5;
   int64 target_lender_company_id = 6;
 }
 message UserRegisterResponseData {
@@ -534,7 +534,7 @@ message LoanApplyRequestData {
   double principal_amount = 7;
   //  string maturity_date = 8;
   int32 prepayment_penalty = 9;
-  int64 lender_id = 10;
+  int64 lender_company_id = 10;
   int64 borrower_id = 11;
   repeated string business_strategy = 12;
   repeated ApplicantEntry applicants = 13;

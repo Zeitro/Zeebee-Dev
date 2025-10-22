@@ -83,6 +83,9 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 				data.loan.RemoveRelationships()
 
 				if in.Data.Id > 0 {
+					if in.Data.LenderCompanyId == 0 {
+						in.Data.LenderCompanyId = loan.LenderCompanyId
+					}
 					_, err = l.svcCtx.LoanRepo.UpdateOneWithTx(l.ctx, tx, in.Data.Id, data.loan, true)
 				} else {
 					var uid string
@@ -219,6 +222,10 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 		return nil, errors.WithStack(errors.New("invalid request data"))
 	}
 
+	if reqData.LenderCompanyId == 0 {
+		return nil, errors.WithStack(errors.New("invalid lender id"))
+	}
+
 	// loan
 	loan := &model.Loan{}
 	err = copier.CopyWithOption(loan, reqData, copier.Option{
@@ -236,8 +243,8 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	loan.PendingStatus = constants.LoanPendingStatusNone
 	// loan.Source = constants.LoanSourceSystem
 	loan.Source = condition.Ternary(reqData.IsPreapproveLoan, constants.LoanSourcePreApproval, constants.LoanSourceSystem)
-	if reqData.LenderId > 0 {
-		lender, err := l.svcCtx.LenderCompanyRepo.FindOneById(l.ctx, reqData.LenderId)
+	if reqData.LenderCompanyId > 0 {
+		lender, err := l.svcCtx.LenderCompanyRepo.FindOneById(l.ctx, reqData.LenderCompanyId)
 		if err != nil {
 			return nil, err
 		}

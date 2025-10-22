@@ -67,7 +67,7 @@ func (repo *LoanRepo) GetBorrowerLoanWithTx(ctx context.Context, tx *gorm.DB, id
 			return db.Order("loan_third_services.id asc")
 		}).
 		Preload("LoanDemographic", func(db *gorm.DB) *gorm.DB {
-			return db.Order("loan_demographic.id asc")
+			return db.Order("loan_demographics.id asc")
 		}).
 		// Preload("ApplyFormFile").
 		Preload("LoanDocuments", func(db *gorm.DB) *gorm.DB {

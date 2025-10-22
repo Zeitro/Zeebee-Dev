@@ -123,11 +123,11 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 	}()
 
 	go func() {
-		if len(in.Data.PreapproveRequestId) == 0 || in.Data.TargetLenderCompanyId == 0 {
+		if len(in.Data.PreApprovalRequestId) == 0 || in.Data.TargetLenderCompanyId == 0 {
 			return
 		}
 		// create draft loan
-		err := l.handlePreapproveLoan(context.WithoutCancel(l.ctx), borrowerModel.Id, in.Data.PreapproveRequestId, in.Data.TargetLenderCompanyId)
+		err := l.handlePreapproveLoan(context.WithoutCancel(l.ctx), borrowerModel.Id, in.Data.PreApprovalRequestId, in.Data.TargetLenderCompanyId)
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
@@ -184,10 +184,11 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int
 
 	loanApplyRequest := &borrower.LoanApplyRequest{
 		Data: &borrower.LoanApplyRequestData{
-			LoanPurpose:   preApproveRequest.Loan.LoanPurpose,
-			LoanType:      preApproveRequest.Loan.LoanType,
-			TotalAmount:   preApproveRequest.Loan.TotalAmount,
-			InitialAmount: preApproveRequest.Loan.InitialAmount,
+			IsPreapproveLoan: true,
+			LoanPurpose:      preApproveRequest.Loan.LoanPurpose,
+			LoanType:         preApproveRequest.Loan.LoanType,
+			TotalAmount:      preApproveRequest.Loan.TotalAmount,
+			InitialAmount:    preApproveRequest.Loan.InitialAmount,
 			LoanProperty: &borrower.LoanPropertyEntry{
 				PropertyBase: &borrower.PropertyBaseEntry{
 					Address: &borrower.AddressEntry{
