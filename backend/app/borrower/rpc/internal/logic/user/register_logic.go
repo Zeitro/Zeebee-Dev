@@ -209,6 +209,7 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int
 			Applicants: []*borrower.ApplicantEntry{
 				{
 					IsPrimary: true,
+					FirstName: preApproveRequest.Borrower.Name,
 					Phone:     preApproveRequest.Borrower.Phone,
 				},
 			},
@@ -220,9 +221,11 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int
 			Arv:                 preApproveRequest.Loan.Arv,
 
 			Budget: &borrower.LoanBudgetEntry{
-				OriginalBudget: float32(preApproveRequest.Loan.BudgetAmount),
+				OriginalBudget:        float32(preApproveRequest.Loan.BudgetAmount),
+				CostSpentToDateAmount: float32(preApproveRequest.Loan.CostSpentToDateAmount),
 			},
-			EstCreditScore: preApproveRequest.Borrower.FicoScore,
+			EstCreditScore:         preApproveRequest.Borrower.FicoScore,
+			EstPropertyValueAmount: preApproveRequest.Loan.EstPropertyValueAmount,
 
 			// borrower info
 			LoanBorrower: &borrower.LoanBorrowerEntry{
