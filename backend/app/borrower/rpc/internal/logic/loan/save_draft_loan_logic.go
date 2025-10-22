@@ -58,13 +58,13 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 		if err != nil {
 			return nil, err
 		}
-		if loan.Source != constants.LoanSourceSystem {
+		if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreApprove {
 			return nil, errors.WithStack(errors.New("invalid loan source"))
 		}
 
 		stages := []constants.LoanStage{
 			constants.LoanStageDraft,
-			constants.LoanStagePredraft,
+			// constants.LoanStagePredraft,
 		}
 		if !slice.Contain(stages, loan.Stage) && loan.PendingStatus != constants.LoanPendingStatusNone {
 			return nil, errors.New("loan's stage should be draft")
@@ -232,10 +232,10 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 		return nil, errorx.GetFailedTransErr(err)
 	}
 	loan.BorrowerId = reqData.BorrowerId
-	// loan.Stage = constants.LoanStageDraft
-	loan.Stage = condition.Ternary(reqData.IsPreapproveLoan, constants.LoanStagePredraft, constants.LoanStageDraft)
+	loan.Stage = constants.LoanStageDraft
 	loan.PendingStatus = constants.LoanPendingStatusNone
-	loan.Source = constants.LoanSourceSystem
+	// loan.Source = constants.LoanSourceSystem
+	loan.Source = condition.Ternary(reqData.IsPreapproveLoan, constants.LoanSourcePreApprove, constants.LoanSourceSystem)
 	if reqData.LenderId > 0 {
 		lender, err := l.svcCtx.LenderCompanyRepo.FindOneById(l.ctx, reqData.LenderId)
 		if err != nil {

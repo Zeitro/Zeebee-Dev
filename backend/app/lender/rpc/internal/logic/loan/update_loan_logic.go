@@ -64,7 +64,7 @@ func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender
 	if err != nil {
 		return nil, err
 	}
-	if oldLoan.Source != constants.LoanSourceSystem {
+	if oldLoan.Source != constants.LoanSourceSystem && oldLoan.Source != constants.LoanSourcePreApprove {
 		return nil, errors.WithStack(errors.New("invalid loan source"))
 	}
 
