@@ -99,6 +99,9 @@ func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender
 			// update loan
 			func() error {
 				data.loan.RemoveRelationships()
+				if in.Data.LenderCompanyId == 0 {
+					in.Data.LenderCompanyId = oldLoan.LenderCompanyId
+				}
 				_, err := l.svcCtx.LoanRepo.UpdateOneWithTx(l.ctx, tx, in.Data.Id, data.loan)
 				return err
 			},
