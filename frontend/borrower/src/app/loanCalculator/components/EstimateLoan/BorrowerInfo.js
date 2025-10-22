@@ -1,6 +1,6 @@
 import React from 'react';
 // import styles from './index.module.scss';
-import { Row, Col, Form, Select, Input, InputNumber } from 'antd';
+import { Row, Col, Form, Input, InputNumber } from 'antd';
 import {
 	emailRegex,
 	creditScoreRegex,
@@ -10,18 +10,8 @@ import {
 	capitalizeFirstLetter,
 } from '@/lib/format';
 import { titleCol } from '@/enum/common';
-import { useGetOptions } from '@/hooks/useGetOptions';
+import InputPhone from '@/components/InputPhone';
 const BorrowerInfo = ({ gutter = 24, children }) => {
-	const { loanTypeOptions, loanPurposeOptions } = useGetOptions([
-		{
-			key: 'loan_type',
-			valueName: 'loanTypeOptions',
-		},
-		{
-			key: 'loan_purpose',
-			valueName: 'loanPurposeOptions',
-		},
-	]);
 	return (
 		<Row gutter={gutter}>
 			<Col {...titleCol} className="!text-3xl/10 font-medium pb-8">
@@ -30,7 +20,7 @@ const BorrowerInfo = ({ gutter = 24, children }) => {
 			<Col {...titleCol}>
 				<Form.Item
 					label="Name"
-					name="name"
+					name={['borrower', 'name']}
 					rules={[
 						{
 							required: true,
@@ -43,8 +33,21 @@ const BorrowerInfo = ({ gutter = 24, children }) => {
 			</Col>
 			<Col {...titleCol}>
 				<Form.Item
+					label="Phone"
+					name={['borrower', 'phone']}
+					rules={[
+						{
+							required: true,
+						},
+					]}
+				>
+					<InputPhone />
+				</Form.Item>
+			</Col>
+			<Col {...titleCol}>
+				<Form.Item
 					label="Email"
-					name="email"
+					name={['borrower', 'email']}
 					rules={[
 						{
 							required: true,
@@ -59,19 +62,9 @@ const BorrowerInfo = ({ gutter = 24, children }) => {
 				</Form.Item>
 			</Col>
 			<Col {...titleCol}>
-				<Form.Item label="Loan type" name="loan_type" rules={[{ required: true }]}>
-					<Select options={loanTypeOptions} placeholder="Loan type" />
-				</Form.Item>
-			</Col>
-			<Col {...titleCol}>
-				<Form.Item label="Loan purpose" name="loan_purpose" rules={[{ required: true }]}>
-					<Select options={loanPurposeOptions} placeholder="Loan purpose" />
-				</Form.Item>
-			</Col>
-			<Col {...titleCol}>
 				<Form.Item
 					label="FICO credit score"
-					name="est_credit_score"
+					name={['borrower', 'est_credit_score']}
 					rules={[
 						{
 							required: true,
@@ -95,7 +88,11 @@ const BorrowerInfo = ({ gutter = 24, children }) => {
 				In the last 3 years, how many times have you...
 			</Col>
 			<Col {...titleCol}>
-				<Form.Item label="Flipped a property?" name="property" rules={[{ required: true }]}>
+				<Form.Item
+					label="Flipped a property?"
+					name={['borrower', 'flip_property_count']}
+					rules={[{ required: true }]}
+				>
 					<InputNumber
 						style={{ width: '100%' }}
 						min={0}
@@ -108,7 +105,7 @@ const BorrowerInfo = ({ gutter = 24, children }) => {
 			<Col {...titleCol}>
 				<Form.Item
 					label="Purchased a rental property?"
-					name="rental_property"
+					name={['borrower', 'purchase_rental_property_count']}
 					rules={[{ required: true }]}
 				>
 					<InputNumber

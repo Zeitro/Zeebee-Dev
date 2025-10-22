@@ -9,16 +9,18 @@ import { useRouter } from 'next/navigation';
 import { useLoanStore } from '@/store/loan';
 import _ from 'lodash';
 import { createRequest } from '@/lib/fetch';
+import { changeUnitByPropertyType } from '@/lib/format';
 // 创建或编辑loan时的步骤
 
 const EstimateLoan = ({ setIsResult, setResult }) => {
-	const request = createRequest();
+	const { request } = createRequest();
 	const router = useRouter();
 	const [currentStep, setCurrentStep] = useState(0);
 	const [oldCurrentStep, setOldCurrentStep] = useState(null);
+	const [loading, setLoading] = useState(false);
 	const [form] = Form.useForm();
-	const { estimateLoan, clearEstimateLoan, changeEstimateLoan } = useLoanStore();
-	const loan_purpose = Form.useWatch('loan_purpose', form);
+	const { estimateLoan, changeEstimateLoan } = useLoanStore();
+	const [unitInfo, setUnitInfo] = useState({});
 	const loanSteps = useMemo(
 		() => [
 			{
@@ -31,7 +33,12 @@ const EstimateLoan = ({ setIsResult, setResult }) => {
 				title: 'Property information',
 				key: 'Property',
 				description: <div className="h-6"></div>,
-				children: <Property loan_type={estimateLoan.loan_type} />,
+				children: (
+					<Property
+						oldPropertyType={estimateLoan?.property?.property_type}
+						unitInfo={unitInfo}
+					/>
+				),
 			},
 			{
 				title: 'Loan information',
@@ -39,15 +46,20 @@ const EstimateLoan = ({ setIsResult, setResult }) => {
 				description: <div className="h-6"></div>,
 				children: (
 					<Loan
-						loan_purpose={estimateLoan.loan_purpose}
-						loan_type={estimateLoan.loan_type}
+						loan_purpose={estimateLoan?.loan?.loan_purpose}
+						loan_type={estimateLoan?.loan?.loan_type}
 					/>
 				),
 			},
 		],
-		[loan_purpose, estimateLoan.loan_type],
+		[
+			estimateLoan?.loan?.loan_purpose,
+			estimateLoan?.loan?.loan_type,
+			estimateLoan?.property?.property_type,
+			unitInfo,
+		],
 	);
-	const currentStepData = useMemo(() => loanSteps[currentStep], [currentStep]);
+	const currentStepData = useMemo(() => loanSteps[currentStep], [currentStep, loanSteps]);
 
 	const nextBtnInfo = useMemo(() => {
 		const nextData = loanSteps?.[currentStep + 1];
@@ -56,20 +68,27 @@ const EstimateLoan = ({ setIsResult, setResult }) => {
 			text: nextData ? `Next` : 'Submit loan request',
 		};
 		return info;
-	}, [currentStep]);
+	}, [currentStep, loanSteps]);
 
 	const handleNext = async () => {
-		await form.validateFields();
-		if (nextBtnInfo.type === 'Next') {
-			setOldCurrentStep(currentStep);
-			return setCurrentStep(currentStep + 1);
+		try {
+			await form.validateFields();
+			if (nextBtnInfo.type === 'Next') {
+				setOldCurrentStep(currentStep);
+				return setCurrentStep(currentStep + 1);
+			}
+			setLoading(true);
+			const res = await request('/loan/pre_approval', {
+				method: 'POST',
+				body: estimateLoan,
+			});
+			setResult(res);
+			setIsResult(true);
+			setLoading(false);
+		} catch (error) {
+			console.log(error);
+			setLoading(false);
 		}
-		// const res = await request('', {
-		// 	method: 'POST',
-		// 	body: estimateLoan,
-		// });
-		// console.log(res);
-		setIsResult(true);
 	};
 
 	const btn = (
@@ -107,7 +126,7 @@ const EstimateLoan = ({ setIsResult, setResult }) => {
 					Reset
 				</Button>
 			</div>
-			<Button type="primary" onClick={handleNext}>
+			<Button type="primary" onClick={handleNext} loading={loading}>
 				{nextBtnInfo?.text}
 			</Button>
 		</div>
@@ -117,7 +136,7 @@ const EstimateLoan = ({ setIsResult, setResult }) => {
 		if (currentStep !== oldCurrentStep) {
 			form?.setFieldsValue?.(estimateLoan);
 		}
-	}, [currentStep, estimateLoan, oldCurrentStep]);
+	}, [currentStep, estimateLoan, form, oldCurrentStep]);
 	return (
 		<div className={['flex h-full items-stretch', styles.estimateLoan].join(' ')}>
 			<div className="flex-1 pl-[5%] overflow-hidden">
@@ -140,10 +159,8 @@ const EstimateLoan = ({ setIsResult, setResult }) => {
 					autoComplete="off"
 					className="w-[80%] m-auto"
 					size="large"
-					// disabled={!['documents', 'general'].includes(currentStep)}
 					// initialValues={estimateLoan}
 					scrollToFirstError
-					// onValuesChange={(v) => console.log(v)}
 					onFieldsChange={(changeFields) => {
 						console.log(changeFields);
 						// 只有输入验证通过了才可更新值
@@ -151,9 +168,18 @@ const EstimateLoan = ({ setIsResult, setResult }) => {
 							(v) => v?.errors?.length || v?.warnings?.length || !v?.validated,
 						);
 						if (!isErr) {
+							console.log('000');
+
 							changeFields.map((v) => {
 								if (!v?.errors?.length && !v?.warnings?.length) {
 									_.set(estimateLoan, v?.name, v?.value);
+									// property_type修改时更新unit
+									if (v?.name?.includes('property_type')) {
+										const info = changeUnitByPropertyType(v?.value);
+										setUnitInfo(info);
+										form.setFieldValue(['property', 'unit'], info.unit);
+										_.set(estimateLoan, ['property', 'unit'], info.unit);
+									}
 								}
 							});
 							changeEstimateLoan(estimateLoan);
