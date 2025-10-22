@@ -2494,6 +2494,7 @@ type LoanEntry struct {
 	LoanDocuments              []*LoanDocumentEntry `protobuf:"bytes,65,rep,name=loan_documents,json=loanDocuments,proto3" json:"loan_documents,omitempty"`
 	Code                       string               `protobuf:"bytes,66,opt,name=code,proto3" json:"code,omitempty"`
 	RequestedLoanDocumentCount int64                `protobuf:"varint,67,opt,name=RequestedLoanDocumentCount,proto3" json:"RequestedLoanDocumentCount,omitempty"`
+	EstPropertyValueAmount     float64              `protobuf:"fixed64,68,opt,name=est_property_value_amount,json=estPropertyValueAmount,proto3" json:"est_property_value_amount,omitempty"`
 	unknownFields              protoimpl.UnknownFields
 	sizeCache                  protoimpl.SizeCache
 }
@@ -2987,6 +2988,13 @@ func (x *LoanEntry) GetCode() string {
 func (x *LoanEntry) GetRequestedLoanDocumentCount() int64 {
 	if x != nil {
 		return x.RequestedLoanDocumentCount
+	}
+	return 0
+}
+
+func (x *LoanEntry) GetEstPropertyValueAmount() float64 {
+	if x != nil {
+		return x.EstPropertyValueAmount
 	}
 	return 0
 }
@@ -4902,6 +4910,7 @@ type LoanApplyRequestData struct {
 	Id                       int64                    `protobuf:"varint,45,opt,name=id,proto3" json:"id,omitempty"`
 	ApplyFormFile            string                   `protobuf:"bytes,46,opt,name=apply_form_file,json=applyFormFile,proto3" json:"apply_form_file,omitempty"`
 	IsPreapproveLoan         bool                     `protobuf:"varint,47,opt,name=is_preapprove_loan,json=isPreapproveLoan,proto3" json:"is_preapprove_loan,omitempty"`
+	EstPropertyValueAmount   float64                  `protobuf:"fixed64,48,opt,name=est_property_value_amount,json=estPropertyValueAmount,proto3" json:"est_property_value_amount,omitempty"`
 	unknownFields            protoimpl.UnknownFields
 	sizeCache                protoimpl.SizeCache
 }
@@ -5256,6 +5265,13 @@ func (x *LoanApplyRequestData) GetIsPreapproveLoan() bool {
 		return x.IsPreapproveLoan
 	}
 	return false
+}
+
+func (x *LoanApplyRequestData) GetEstPropertyValueAmount() float64 {
+	if x != nil {
+		return x.EstPropertyValueAmount
+	}
+	return 0
 }
 
 type LoanApplyResponse struct {
@@ -9111,7 +9127,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x12driver_license_num\x18\x11 \x01(\tR\x10driverLicenseNum\x120\n" +
 	"\aaddress\x18\x12 \x01(\v2\x16.borrower.AddressEntryR\aaddress\x12(\n" +
 	"\x10loan_borrower_id\x18\x13 \x01(\x03R\x0eloanBorrowerId\x12\x14\n" +
-	"\x05phone\x18\x14 \x01(\tR\x05phone\"\x94\x17\n" +
+	"\x05phone\x18\x14 \x01(\tR\x05phone\"\xcf\x17\n" +
 	"\tLoanEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
 	"\x05stage\x18\x02 \x01(\tR\x05stage\x12%\n" +
@@ -9184,7 +9200,8 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x06extend\x18@ \x01(\v2\x1e.borrower.LoanExtendValueEntryR\x06extend\x12B\n" +
 	"\x0eloan_documents\x18A \x03(\v2\x1b.borrower.LoanDocumentEntryR\rloanDocuments\x12\x12\n" +
 	"\x04code\x18B \x01(\tR\x04code\x12>\n" +
-	"\x1aRequestedLoanDocumentCount\x18C \x01(\x03R\x1aRequestedLoanDocumentCount\"\x9f\x01\n" +
+	"\x1aRequestedLoanDocumentCount\x18C \x01(\x03R\x1aRequestedLoanDocumentCount\x129\n" +
+	"\x19est_property_value_amount\x18D \x01(\x01R\x16estPropertyValueAmount\"\x9f\x01\n" +
 	"\x0fLoanBudgetEntry\x12'\n" +
 	"\x0foriginal_budget\x18\x01 \x01(\x02R\x0eoriginalBudget\x12)\n" +
 	"\x10remaining_budget\x18\x02 \x01(\x02R\x0fremainingBudget\x128\n" +
@@ -9338,7 +9355,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x1bLoanLenderCompaniesResponse\x12\x12\n" +
 	"\x04data\x18\x01 \x03(\tR\x04data\"F\n" +
 	"\x10LoanApplyRequest\x122\n" +
-	"\x04data\x18\x01 \x01(\v2\x1e.borrower.LoanApplyRequestDataR\x04data\"\x8f\x11\n" +
+	"\x04data\x18\x01 \x01(\v2\x1e.borrower.LoanApplyRequestDataR\x04data\"\xca\x11\n" +
 	"\x14LoanApplyRequestData\x12!\n" +
 	"\floan_purpose\x18\x01 \x01(\tR\vloanPurpose\x12\x1b\n" +
 	"\tloan_type\x18\x02 \x01(\tR\bloanType\x12!\n" +
@@ -9389,7 +9406,8 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x13loan_third_services\x18, \x03(\v2\x1f.borrower.LoanThirdServiceEntryR\x11loanThirdServices\x12\x0e\n" +
 	"\x02id\x18- \x01(\x03R\x02id\x12&\n" +
 	"\x0fapply_form_file\x18. \x01(\tR\rapplyFormFile\x12,\n" +
-	"\x12is_preapprove_loan\x18/ \x01(\bR\x10isPreapproveLoan\"H\n" +
+	"\x12is_preapprove_loan\x18/ \x01(\bR\x10isPreapproveLoan\x129\n" +
+	"\x19est_property_value_amount\x180 \x01(\x01R\x16estPropertyValueAmount\"H\n" +
 	"\x11LoanApplyResponse\x123\n" +
 	"\x04data\x18\x01 \x01(\v2\x1f.borrower.LoanApplyResponseDataR\x04data\"'\n" +
 	"\x15LoanApplyResponseData\x12\x0e\n" +

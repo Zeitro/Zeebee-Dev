@@ -276,7 +276,8 @@ type LoanEntry struct {
 	ScheduledCloseEscrowDate   string                   `json:"scheduled_close_escrow_date"`
 	LoanTerm                   int32                    `json:"loan_term" `
 	Arv                        float64                  `json:"arv"`
-	Ltv                        float64                  `json:"ltv" `
+	Ltv                        float64                  `json:"ltv"`
+	EstPropertyValueAmount     float64                  `json:"est_property_value_amount"`
 	LiquidityAmount            float64                  `json:"liquidity_amount"`
 	Budget                     *LoanBudgetEntry         `json:"budget"`
 	MidConstruction            bool                     `json:"mid_construction"`

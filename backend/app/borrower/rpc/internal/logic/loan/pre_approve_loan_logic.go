@@ -42,7 +42,7 @@ func (l *PreApproveLoanLogic) PreApproveLoan(in *borrower.LoanPreApproveRequest)
 		TransactionHistoryCount: int(in.Data.Borrower.FlipPropertyCount + in.Data.Borrower.PurchaseRentalPropertyCount),
 		Unit:                    int(in.Data.Property.Unit),
 		LoanTerm:                int(in.Data.Loan.LoanTerm),
-		EstCurrentPropertyValue: in.Data.Loan.EstCurrentPropertyValueAmount,
+		EstCurrentPropertyValue: in.Data.Loan.EstPropertyValueAmount,
 		EstAfterRepairValue:     in.Data.Loan.Arv,
 		TotalAmount:             in.Data.Loan.TotalAmount,
 		OriginalBudgetAmount:    in.Data.Loan.BudgetAmount,
