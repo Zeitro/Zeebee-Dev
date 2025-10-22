@@ -42,7 +42,7 @@ func (l *UpdateLoanStageLogic) UpdateLoanStage(in *lender.LoanUpdateStageRequest
 		return nil, errors.Wrap(err, "failed to get loan")
 	}
 
-	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreApprove {
+	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreApproval {
 		return nil, errors.WithStack(errors.New("invalid loan source"))
 	}
 
