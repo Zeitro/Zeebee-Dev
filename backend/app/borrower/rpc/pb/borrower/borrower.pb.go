@@ -715,7 +715,7 @@ type UserRegisterRequestData struct {
 	Password              string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
 	FirstName             string                 `protobuf:"bytes,3,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
 	LastName              string                 `protobuf:"bytes,4,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
-	PreapproveRequestId   string                 `protobuf:"bytes,5,opt,name=preapprove_request_id,json=preapproveRequestId,proto3" json:"preapprove_request_id,omitempty"`
+	PreApprovalRequestId  string                 `protobuf:"bytes,5,opt,name=pre_approval_request_id,json=preApprovalRequestId,proto3" json:"pre_approval_request_id,omitempty"`
 	TargetLenderCompanyId int64                  `protobuf:"varint,6,opt,name=target_lender_company_id,json=targetLenderCompanyId,proto3" json:"target_lender_company_id,omitempty"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
@@ -779,9 +779,9 @@ func (x *UserRegisterRequestData) GetLastName() string {
 	return ""
 }
 
-func (x *UserRegisterRequestData) GetPreapproveRequestId() string {
+func (x *UserRegisterRequestData) GetPreApprovalRequestId() string {
 	if x != nil {
-		return x.PreapproveRequestId
+		return x.PreApprovalRequestId
 	}
 	return ""
 }
@@ -4872,7 +4872,7 @@ type LoanApplyRequestData struct {
 	PrincipalAmount float64                `protobuf:"fixed64,7,opt,name=principal_amount,json=principalAmount,proto3" json:"principal_amount,omitempty"`
 	// string maturity_date = 8;
 	PrepaymentPenalty        int32                    `protobuf:"varint,9,opt,name=prepayment_penalty,json=prepaymentPenalty,proto3" json:"prepayment_penalty,omitempty"`
-	LenderId                 int64                    `protobuf:"varint,10,opt,name=lender_id,json=lenderId,proto3" json:"lender_id,omitempty"`
+	LenderCompanyId          int64                    `protobuf:"varint,10,opt,name=lender_company_id,json=lenderCompanyId,proto3" json:"lender_company_id,omitempty"`
 	BorrowerId               int64                    `protobuf:"varint,11,opt,name=borrower_id,json=borrowerId,proto3" json:"borrower_id,omitempty"`
 	BusinessStrategy         []string                 `protobuf:"bytes,12,rep,name=business_strategy,json=businessStrategy,proto3" json:"business_strategy,omitempty"`
 	Applicants               []*ApplicantEntry        `protobuf:"bytes,13,rep,name=applicants,proto3" json:"applicants,omitempty"`
@@ -5001,9 +5001,9 @@ func (x *LoanApplyRequestData) GetPrepaymentPenalty() int32 {
 	return 0
 }
 
-func (x *LoanApplyRequestData) GetLenderId() int64 {
+func (x *LoanApplyRequestData) GetLenderCompanyId() int64 {
 	if x != nil {
-		return x.LenderId
+		return x.LenderCompanyId
 	}
 	return 0
 }
@@ -9003,14 +9003,14 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x13UserRegisterRequest\x125\n" +
 	"\x04data\x18\x01 \x01(\v2!.borrower.UserRegisterRequestDataR\x04data\"N\n" +
 	"\x14UserRegisterResponse\x126\n" +
-	"\x04data\x18\x01 \x01(\v2\".borrower.UserRegisterResponseDataR\x04data\"\xf4\x01\n" +
+	"\x04data\x18\x01 \x01(\v2\".borrower.UserRegisterResponseDataR\x04data\"\xf7\x01\n" +
 	"\x17UserRegisterRequestData\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x1d\n" +
 	"\n" +
 	"first_name\x18\x03 \x01(\tR\tfirstName\x12\x1b\n" +
-	"\tlast_name\x18\x04 \x01(\tR\blastName\x122\n" +
-	"\x15preapprove_request_id\x18\x05 \x01(\tR\x13preapproveRequestId\x127\n" +
+	"\tlast_name\x18\x04 \x01(\tR\blastName\x125\n" +
+	"\x17pre_approval_request_id\x18\x05 \x01(\tR\x14preApprovalRequestId\x127\n" +
 	"\x18target_lender_company_id\x18\x06 \x01(\x03R\x15targetLenderCompanyId\"\x1a\n" +
 	"\x18UserRegisterResponseData\"L\n" +
 	"\x13RefreshTokenRequest\x125\n" +
@@ -9355,7 +9355,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x1bLoanLenderCompaniesResponse\x12\x12\n" +
 	"\x04data\x18\x01 \x03(\tR\x04data\"F\n" +
 	"\x10LoanApplyRequest\x122\n" +
-	"\x04data\x18\x01 \x01(\v2\x1e.borrower.LoanApplyRequestDataR\x04data\"\xca\x11\n" +
+	"\x04data\x18\x01 \x01(\v2\x1e.borrower.LoanApplyRequestDataR\x04data\"\xd9\x11\n" +
 	"\x14LoanApplyRequestData\x12!\n" +
 	"\floan_purpose\x18\x01 \x01(\tR\vloanPurpose\x12\x1b\n" +
 	"\tloan_type\x18\x02 \x01(\tR\bloanType\x12!\n" +
@@ -9364,9 +9364,9 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\rloan_property\x18\x05 \x01(\v2\x1b.borrower.LoanPropertyEntryR\floanProperty\x12'\n" +
 	"\x0fholdback_amount\x18\x06 \x01(\x01R\x0eholdbackAmount\x12)\n" +
 	"\x10principal_amount\x18\a \x01(\x01R\x0fprincipalAmount\x12-\n" +
-	"\x12prepayment_penalty\x18\t \x01(\x05R\x11prepaymentPenalty\x12\x1b\n" +
-	"\tlender_id\x18\n" +
-	" \x01(\x03R\blenderId\x12\x1f\n" +
+	"\x12prepayment_penalty\x18\t \x01(\x05R\x11prepaymentPenalty\x12*\n" +
+	"\x11lender_company_id\x18\n" +
+	" \x01(\x03R\x0flenderCompanyId\x12\x1f\n" +
 	"\vborrower_id\x18\v \x01(\x03R\n" +
 	"borrowerId\x12+\n" +
 	"\x11business_strategy\x18\f \x03(\tR\x10businessStrategy\x128\n" +
