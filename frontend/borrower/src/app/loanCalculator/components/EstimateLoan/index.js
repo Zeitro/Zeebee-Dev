@@ -2,16 +2,16 @@
 import { Button, Form, Steps } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
 import styles from './index.module.scss';
-import BorrowerInfo from './components/BorrowerInfo';
-import Property from './components/Property';
-import Loan from './components/Loan';
+import BorrowerInfo from './BorrowerInfo';
+import Property from './Property';
+import Loan from './Loan';
 import { useRouter } from 'next/navigation';
 import { useLoanStore } from '@/store/loan';
 import _ from 'lodash';
 import { createRequest } from '@/lib/fetch';
 // 创建或编辑loan时的步骤
 
-const EstimateLoan = () => {
+const EstimateLoan = ({ setIsResult, setResult }) => {
 	const request = createRequest();
 	const router = useRouter();
 	const [currentStep, setCurrentStep] = useState(0);
@@ -69,7 +69,7 @@ const EstimateLoan = () => {
 		// 	body: estimateLoan,
 		// });
 		// console.log(res);
-		router.replace('/estimateLoan/preApproved');
+		setIsResult(true);
 	};
 
 	const btn = (

@@ -81,18 +81,10 @@ export const noTokenRouter = [
 		],
 	},
 	{
-		path: '/estimateLoan',
-		title: 'Estimate loan',
+		path: '/loanCalculator',
+		title: 'Loan Calculator',
 		hideMenu: true,
 		hideCrumbs: true,
-		router: [
-			{
-				path: '/estimateLoan/preApproved',
-				title: 'Pre-Approved!',
-				hideMenu: true,
-				hideCrumbs: true,
-			},
-		],
 	},
 ];
 
