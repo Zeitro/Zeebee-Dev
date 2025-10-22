@@ -13,27 +13,27 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type PreApproveLogic struct {
+type PreApprovalLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
 // pre_approve
-func NewPreApproveLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PreApproveLogic {
-	return &PreApproveLogic{
+func NewPreApprovalLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PreApprovalLogic {
+	return &PreApprovalLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *PreApproveLogic) PreApprove(req *types.LoanPreApproveRequest) (resp *types.LoanPreApproveResponse, err error) {
-	rpcReq := &borrower.LoanPreApproveRequest{
-		Data: &borrower.LoanPreApproveRequestData{},
+func (l *PreApprovalLogic) PreApproval(req *types.LoanPreApprovalRequest) (resp *types.LoanPreApprovalResponse, err error) {
+	rpcReq := &borrower.LoanPreApprovalRequest{
+		Data: &borrower.LoanPreApprovalRequestData{},
 	}
-	resp = &types.LoanPreApproveResponse{}
-	rpcResp := &borrower.LoanPreApproveResponse{}
+	resp = &types.LoanPreApprovalResponse{}
+	rpcResp := &borrower.LoanPreApprovalResponse{}
 
 	err = copier.CopyWithOption(&rpcReq.Data, req, copier.Option{
 		DeepCopy:      true,
@@ -42,7 +42,7 @@ func (l *PreApproveLogic) PreApprove(req *types.LoanPreApproveRequest) (resp *ty
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
-	rpcResp, err = l.svcCtx.LoanRpcClient.PreApproveLoan(l.ctx, rpcReq)
+	rpcResp, err = l.svcCtx.LoanRpcClient.PreApprovalLoan(l.ctx, rpcReq)
 	if err != nil {
 		return nil, err
 	}

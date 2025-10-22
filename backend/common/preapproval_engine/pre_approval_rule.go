@@ -1,4 +1,4 @@
-package pre_approve_engine
+package preapproval_engine
 
 import (
 	"math"
@@ -24,8 +24,8 @@ type LoanTypeRule struct {
 	HighValueRules Rules              `json:"high_value_rules"` // high value rules
 }
 
-// PreApproveAmountRange represents the pre-approved loan amount range
-type PreApproveAmountRange struct {
+// PreApprovalAmountRange represents the pre-approved loan amount range
+type PreApprovalAmountRange struct {
 	StandardAmountRange  AmountRange `json:"standard_amount_range"`
 	LargeUnitAmountRange AmountRange `json:"large_unit_amount_range"`
 }
@@ -100,8 +100,8 @@ type ServiceFeeConfig struct {
 	UnderwritingFeePercent float64 `json:"underwriting_fee_percent"`
 }
 
-// PreApproveRule represents the pre-approve rule
-type PreApproveRule struct {
+// PreApprovalRule represents the pre-approve rule
+type PreApprovalRule struct {
 	ExperienceLevel ExperienceLevel `json:"experience_level"`
 	// ExtraFactor is an extra factor for calculating ltc/ltaiv/ltarv
 	ExtraFactor float64 `json:"extra_factor"`
@@ -111,8 +111,8 @@ type PreApproveRule struct {
 	HighValueStates []*HighValueState `json:"high_value_states"`
 	// BaseRate represents the base rate
 	BaseRate float64 `json:"base_rate"`
-	// PreApproveAmountRange represents pre-approved loan amount range
-	PreApproveAmountRange PreApproveAmountRange `json:"pre_approve_amount_range"`
+	// PreApprovalAmountRange represents pre-approved loan amount range
+	PreApprovalAmountRange PreApprovalAmountRange `json:"pre_approve_amount_range"`
 	// MinLargeUnitCount is the minimum unit count to be considered large unit
 	MinLargeUnitCount int `json:"min_large_unit_count"`
 	// MaxUnitCount is the maximum allowed unit count
@@ -134,10 +134,10 @@ type PreApproveRule struct {
 	ServiceFeeConfig ServiceFeeConfig `json:"service_fee_config"`
 }
 
-// CalPreApprovedLoanAmount calculates and returns the pre-approved loan amount
-func (r *PreApproveRule) CalPreApprovedLoanAmount(input InputLoanInfo) (result *CalculatePreApprovedLoanAmountResult, err error) {
+// CalPreApprovaldLoanAmount calculates and returns the pre-approved loan amount
+func (r *PreApprovalRule) CalPreApprovaldLoanAmount(input InputLoanInfo) (result *CalculatePreApprovaldLoanAmountResult, err error) {
 	uid, _ := uuid.GetSonyflakeIDString()
-	result = &CalculatePreApprovedLoanAmountResult{
+	result = &CalculatePreApprovaldLoanAmountResult{
 		IsApproved: false,
 		RequestId:  uid,
 	}
@@ -173,11 +173,11 @@ func (r *PreApproveRule) CalPreApprovedLoanAmount(input InputLoanInfo) (result *
 	totalLoanAmount := math.Min(math.Min(maxByLTAIV, maxByLTC), maxByLTARV)
 	isLargeUnit := r.isLargeUnit(input.Unit)
 	if isLargeUnit {
-		totalLoanAmount = math.Min(totalLoanAmount, r.PreApproveAmountRange.LargeUnitAmountRange.Max)
-		totalLoanAmount = math.Max(totalLoanAmount, r.PreApproveAmountRange.LargeUnitAmountRange.Min)
+		totalLoanAmount = math.Min(totalLoanAmount, r.PreApprovalAmountRange.LargeUnitAmountRange.Max)
+		totalLoanAmount = math.Max(totalLoanAmount, r.PreApprovalAmountRange.LargeUnitAmountRange.Min)
 	} else {
-		totalLoanAmount = math.Min(totalLoanAmount, r.PreApproveAmountRange.StandardAmountRange.Max)
-		totalLoanAmount = math.Max(totalLoanAmount, r.PreApproveAmountRange.StandardAmountRange.Min)
+		totalLoanAmount = math.Min(totalLoanAmount, r.PreApprovalAmountRange.StandardAmountRange.Max)
+		totalLoanAmount = math.Max(totalLoanAmount, r.PreApprovalAmountRange.StandardAmountRange.Min)
 	}
 
 	// Calculate GUC Interest reserve amount for construction loans
@@ -216,7 +216,7 @@ func (r *PreApproveRule) CalPreApprovedLoanAmount(input InputLoanInfo) (result *
 }
 
 // isLoanRejected checks if a loan should be rejected based on various criteria
-func (r *PreApproveRule) isLoanRejected(input InputLoanInfo) (isRejected bool, reason string) {
+func (r *PreApprovalRule) isLoanRejected(input InputLoanInfo) (isRejected bool, reason string) {
 	// Check unit count - reject if exceeds maximum
 	if input.Unit > r.MaxUnitCount {
 		isRejected = true
@@ -254,7 +254,7 @@ func (r *PreApproveRule) isLoanRejected(input InputLoanInfo) (isRejected bool, r
 }
 
 // calculateBorrowerEquity calculates borrower equity based on loan purpose
-func (r *PreApproveRule) calculateBorrowerEquity(input InputLoanInfo) (borrowerEquity float64) {
+func (r *PreApprovalRule) calculateBorrowerEquity(input InputLoanInfo) (borrowerEquity float64) {
 	switch input.LoanPurpose {
 	case constants.LoanPurposePurchase:
 		// For purchase loans, equity is purchase amount minus initial amount
@@ -270,7 +270,7 @@ func (r *PreApproveRule) calculateBorrowerEquity(input InputLoanInfo) (borrowerE
 }
 
 // calculateTotalCost calculates total cost amount based on loan type
-func (r *PreApproveRule) calculateTotalCost(input InputLoanInfo) (totalCostAmount float64) {
+func (r *PreApprovalRule) calculateTotalCost(input InputLoanInfo) (totalCostAmount float64) {
 	switch input.LoanType {
 	case constants.LoanTypeRehab:
 		// For rehab loans, total cost is property value plus budget amount
@@ -286,7 +286,7 @@ func (r *PreApproveRule) calculateTotalCost(input InputLoanInfo) (totalCostAmoun
 }
 
 // getTotalLoanCap calculates the loan caps for LTAIV, LTC, and LTARV
-func (r *PreApproveRule) getTotalLoanCap(input InputLoanInfo) (ltaiv float64, ltc float64, ltarv float64, err error) {
+func (r *PreApprovalRule) getTotalLoanCap(input InputLoanInfo) (ltaiv float64, ltc float64, ltarv float64, err error) {
 	// Determine various conditions
 	isHighValueZone := r.isHighValueZone(input.State, input.City)
 	isHeavyRehab := r.isHeavyRehab(input.LoanType, input.OriginalBudgetAmount, input.EstCurrentPropertyValue)
@@ -386,7 +386,7 @@ func (r *PreApproveRule) getTotalLoanCap(input InputLoanInfo) (ltaiv float64, lt
 }
 
 // isHighValueZone checks if the given state and city are in the high-value zone
-func (r *PreApproveRule) isHighValueZone(state string, city string) (isHighValueZone bool) {
+func (r *PreApprovalRule) isHighValueZone(state string, city string) (isHighValueZone bool) {
 	// Check if state is in high value states
 	stateInfo, ok := slice.FindBy(r.HighValueStates, func(index int, value *HighValueState) bool {
 		return state == value.State
@@ -403,7 +403,7 @@ func (r *PreApproveRule) isHighValueZone(state string, city string) (isHighValue
 }
 
 // isHeavyRehab checks if the rehabilitation is considered heavy based on the budget amount and current property value
-func (r *PreApproveRule) isHeavyRehab(loanType constants.LoanType, budgetAmount float64, currentPropertyValue float64) (isHeavyRehab bool) {
+func (r *PreApprovalRule) isHeavyRehab(loanType constants.LoanType, budgetAmount float64, currentPropertyValue float64) (isHeavyRehab bool) {
 	// Only rehab loans can be heavy rehab
 	if loanType != constants.LoanTypeRehab {
 		return false
@@ -413,24 +413,24 @@ func (r *PreApproveRule) isHeavyRehab(loanType constants.LoanType, budgetAmount 
 }
 
 // isLargeUnit returns true if the unit count qualifies as a large unit
-func (r *PreApproveRule) isLargeUnit(unit int) (isLargeUnit bool) {
+func (r *PreApprovalRule) isLargeUnit(unit int) (isLargeUnit bool) {
 	return r.MinLargeUnitCount > 0 && unit >= r.MinLargeUnitCount
 }
 
 // calculateInterestReserveAmount calculates the interest reserve amount
-func (r *PreApproveRule) calculateInterestReserveAmount(totalLoanAmount float64, experienceLevel ExperienceLevel, months int) float64 {
+func (r *PreApprovalRule) calculateInterestReserveAmount(totalLoanAmount float64, experienceLevel ExperienceLevel, months int) float64 {
 	defaultRate := r.getDefaultRate()
 	interestReserveAmount := float64(months) * (0.7 * defaultRate * totalLoanAmount)
 	return interestReserveAmount
 }
 
 // getDefaultRate returns the default rate
-func (r *PreApproveRule) getDefaultRate() float64 {
+func (r *PreApprovalRule) getDefaultRate() float64 {
 	return r.BaseRate
 }
 
 // calculateBaseRate calculates and returns the base rate
-func (r *PreApproveRule) calculateBaseRate(ltc float64, ltarv float64) (baseRate float64) {
+func (r *PreApprovalRule) calculateBaseRate(ltc float64, ltarv float64) (baseRate float64) {
 	// Get base rates for LTC and LTARV
 	ltcRate := r.getLtcBaseRate(ltc)
 	ltarvRate := r.getLtarvBaseRate(ltarv)
@@ -440,7 +440,7 @@ func (r *PreApproveRule) calculateBaseRate(ltc float64, ltarv float64) (baseRate
 }
 
 // getLtcBaseRate returns the LTC base rate based on the LTC value
-func (r *PreApproveRule) getLtcBaseRate(ltc float64) (baseRate float64) {
+func (r *PreApprovalRule) getLtcBaseRate(ltc float64) (baseRate float64) {
 	// Find the matching base rate rule
 	baseRateRule, ok := slice.FindBy(r.LtcBaseRateRules, func(index int, value BaseRateRule) bool {
 		return ltc >= value.Min && ltc <= value.Max
@@ -460,7 +460,7 @@ func (r *PreApproveRule) getLtcBaseRate(ltc float64) (baseRate float64) {
 }
 
 // getLtarvBaseRate returns the LTARV base rate based on the LTARV value
-func (r *PreApproveRule) getLtarvBaseRate(ltarv float64) (baseRate float64) {
+func (r *PreApprovalRule) getLtarvBaseRate(ltarv float64) (baseRate float64) {
 	// Find the matching base rate rule
 	baseRateRule, ok := slice.FindBy(r.LtarvBaseRateRules, func(index int, value BaseRateRule) bool {
 		return ltarv >= value.Min && ltarv <= value.Max
@@ -480,7 +480,7 @@ func (r *PreApproveRule) getLtarvBaseRate(ltarv float64) (baseRate float64) {
 }
 
 // calculateAdjusters calculates rate adjusters based on various factors
-func (r *PreApproveRule) calculateAdjusters(input InputLoanInfo, totalAmount float64) (adjusters float64) {
+func (r *PreApprovalRule) calculateAdjusters(input InputLoanInfo, totalAmount float64) (adjusters float64) {
 	rule := r.AdjusterRule
 
 	// FICO score adjustments
@@ -544,7 +544,7 @@ func (r *PreApproveRule) calculateAdjusters(input InputLoanInfo, totalAmount flo
 }
 
 // calculateMonthlyPayment calculates the monthly payment
-func (r *PreApproveRule) calculateMonthlyPayment(totalLoanAmount float64, rate float64, loanTerm int) float64 {
+func (r *PreApprovalRule) calculateMonthlyPayment(totalLoanAmount float64, rate float64, loanTerm int) float64 {
 	// if loanTerm <= 0 {
 	// 	return 0
 	// }
@@ -553,7 +553,7 @@ func (r *PreApproveRule) calculateMonthlyPayment(totalLoanAmount float64, rate f
 }
 
 // calculateCashToClose calculates the cash to close (fees)
-func (r *PreApproveRule) calculateCashToClose(input InputLoanInfo, result *CalculatePreApprovedLoanAmountResult) float64 {
+func (r *PreApprovalRule) calculateCashToClose(input InputLoanInfo, result *CalculatePreApprovaldLoanAmountResult) float64 {
 	originationFee := r.ServiceFeeConfig.OriginationFeePercent * result.TotalAmount
 	underwritingFee := r.ServiceFeeConfig.UnderwritingFeePercent * result.TotalAmount
 	outOfPocket := r.calculateOutOfPocket(input, result)
@@ -561,7 +561,7 @@ func (r *PreApproveRule) calculateCashToClose(input InputLoanInfo, result *Calcu
 }
 
 // calculateOutOfPocket calculates out of pocket expenses
-func (r *PreApproveRule) calculateOutOfPocket(input InputLoanInfo, result *CalculatePreApprovedLoanAmountResult) float64 {
+func (r *PreApprovalRule) calculateOutOfPocket(input InputLoanInfo, result *CalculatePreApprovaldLoanAmountResult) float64 {
 	switch input.LoanType {
 	case constants.LoanTypeRehab:
 		if input.LoanPurpose == constants.LoanPurposePurchase {
@@ -599,7 +599,7 @@ func (r *PreApproveRule) calculateOutOfPocket(input InputLoanInfo, result *Calcu
 }
 
 // calculateInitialAndHoldbackAmount calculates initial and holdback amounts
-func (r *PreApproveRule) calculateInitialAndHoldbackAmount(input InputLoanInfo, result *CalculatePreApprovedLoanAmountResult) (initialAmount, holdbackAmount float64) {
+func (r *PreApprovalRule) calculateInitialAndHoldbackAmount(input InputLoanInfo, result *CalculatePreApprovaldLoanAmountResult) (initialAmount, holdbackAmount float64) {
 	holdbackAmount = input.OriginalBudgetAmount
 
 	// Initial loan = total loan amount - original budget - interest reserve amount

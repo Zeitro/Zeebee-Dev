@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/borrower/api/internal/logic/loan"
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
+	"zeebee-backend/app/borrower/api/internal/validate_rules"
 
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/response"
@@ -16,7 +17,7 @@ import (
 )
 
 // pre_approve
-func PreApproveHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func PreApprovalHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer func() {
@@ -26,7 +27,7 @@ func PreApproveHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 					Error(err)
 			}
 		}()
-		var req types.LoanPreApproveRequest
+		var req types.LoanPreApprovalRequest
 		if err = httpx.Parse(r, &req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
@@ -37,13 +38,14 @@ func PreApproveHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			response.InternalServerError(w, errorx.GetErrorMsg(err))
 			return
 		}
+		v.RegisterStructRule(validate_rules.LoanPreApprovalRequestProperty, types.LoanPreApprovalRequestProperty{})
 		if err := v.Validate(&req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
 		}
 
-		l := loan.NewPreApproveLogic(r.Context(), svcCtx)
-		resp, err := l.PreApprove(&req)
+		l := loan.NewPreApprovalLogic(r.Context(), svcCtx)
+		resp, err := l.PreApproval(&req)
 		if err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 		} else {

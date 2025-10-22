@@ -109,9 +109,9 @@ service borrower-api {
 	tags: loan
 )
 service borrower-api {
-	@doc "pre_approve"
-	@handler PreApprove
-	post /loan/pre_approve (LoanPreApproveRequest) returns (LoanPreApproveResponse)
+	@doc "pre_approval"
+	@handler PreApproval
+	post /loan/pre_approval (LoanPreApprovalRequest) returns (LoanPreApprovalResponse)
 }
 
 @server (

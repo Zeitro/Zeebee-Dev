@@ -334,7 +334,7 @@ type LoanPageSorter struct {
 	Sort   string `json:"sort,optional"`
 }
 
-type LoanPreApproveRequestBorrower struct {
+type LoanPreApprovalRequestBorrower struct {
 	Name                        string `json:"name" validate:"required,min=1,max=100"`
 	Email                       string `json:"email" validate:"required,email"`
 	Phone                       string `json:"phone" validate:"required"`
@@ -343,7 +343,7 @@ type LoanPreApproveRequestBorrower struct {
 	PurchaseRentalPropertyCount int32  `json:"purchase_rental_property_count" validate:"gte=0"`
 }
 
-type LoanPreApproveRequestLoan struct {
+type LoanPreApprovalRequestLoan struct {
 	LoanTerm               int32   `json:"loan_term" validate:"required,gte=1,lte=360"`
 	EstPropertyValueAmount float64 `json:"est_property_value_amount" validate:"required,gt=0"`
 	Arv                    float64 `json:"arv" validate:"required,gt=0"`
@@ -362,7 +362,7 @@ type LoanPreApproveRequestLoan struct {
 	AssignmentFeeAmount    float64 `json:"assignment_fee_amount,optional" validate:"required_if=HasAssignmentFee true,gte=0"`
 }
 
-type LoanPreApproveRequestProperty struct {
+type LoanPreApprovalRequestProperty struct {
 	Address       *AddressEntry `json:"address" validate:"required"`
 	PropertyType  string        `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
 	IsPermitReady bool          `json:"is_permit_ready"`
@@ -395,7 +395,7 @@ type LoanThirdServiceEntry struct {
 	Company string `json:"company,optional" validate:"required_unless=Type 'Title Co' Type 'Escrow Co' Type Insurance"`
 }
 
-type PrimaryPreApproveLoan struct {
+type PrimaryPreApprovalLoan struct {
 	LenderCompanyId   int64   `json:"lender_company_id"`
 	LenderCompanyName string  `json:"lender_company_name"`
 	IsApproved        bool    `json:"is_approved"`
@@ -408,7 +408,7 @@ type PrimaryPreApproveLoan struct {
 	LoanTerm          int32   `json:"loan_term"`
 	Ltv               float32 `json:"ltv"`
 	Ltarv             float32 `json:"ltarv"`
-	Tlc               float32 `json:"tlc"`
+	Ltc               float32 `json:"ltc"`
 	Code              string  `json:"code"`
 	RejectReason      string  `json:"reject_reason"`
 	RequestId         string  `json:"request_id"`
@@ -447,20 +447,20 @@ type PropertyPageSorter struct {
 	Sort   string `json:"sort,optional"`
 }
 
-type SecondaryPreApproveLoan struct {
-	LenderCompanyId   int64                              `json:"lender_company_id"`
-	LenderCompanyName string                             `json:"lender_company_name"`
-	TotalAmount       *SecondaryPreApproveLoanRangeFloat `json:"total_amount"`
-	Rate              *SecondaryPreApproveLoanRangeFloat `json:"rate"`
-	LoanTerm          *SecondaryPreApproveLoanRangeInt   `json:"loan_term"`
+type SecondaryPreApprovalLoan struct {
+	LenderCompanyId   int64                               `json:"lender_company_id"`
+	LenderCompanyName string                              `json:"lender_company_name"`
+	TotalAmount       *SecondaryPreApprovalLoanRangeFloat `json:"total_amount"`
+	Rate              *SecondaryPreApprovalLoanRangeFloat `json:"rate"`
+	LoanTerm          *SecondaryPreApprovalLoanRangeInt   `json:"loan_term"`
 }
 
-type SecondaryPreApproveLoanRangeFloat struct {
+type SecondaryPreApprovalLoanRangeFloat struct {
 	Min float64 `json:"min"`
 	Max float64 `json:"max"`
 }
 
-type SecondaryPreApproveLoanRangeInt struct {
+type SecondaryPreApprovalLoanRangeInt struct {
 	Min int32 `json:"min"`
 	Max int32 `json:"max"`
 }

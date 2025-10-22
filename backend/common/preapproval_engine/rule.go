@@ -1,4 +1,4 @@
-package pre_approve_engine
+package preapproval_engine
 
 // RuleCap defines the loan cap rules including LTAIV, LTC and LTARV
 type RuleCap struct {
