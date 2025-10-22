@@ -51,7 +51,7 @@ func (l *PendingStatusReviewLogic) PendingStatusReview(in *lender.LoanPendingSta
 	if loan.Stage != constants.LoanStagePending {
 		return nil, errors.WithStack(errors.New("loan is not in pending stage"))
 	}
-	if loan.Source != constants.LoanSourceSystem {
+	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreApprove {
 		return nil, errors.WithStack(errors.New("invalid loan source"))
 	}
 

@@ -49,13 +49,18 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 	if err != nil {
 		return nil, err
 	}
-	if loan.Source != constants.LoanSourceSystem {
+
+	sources := []constants.LoanSource{
+		constants.LoanSourceSystem,
+		constants.LoanSourcePreApprove,
+	}
+	if !slice.Contain(sources, loan.Source) {
 		return nil, errors.WithStack(errors.New("invalid loan source"))
 	}
 	stages := []constants.LoanStage{
 		constants.LoanStagePending,
 		constants.LoanStageDraft,
-		constants.LoanStagePredraft,
+		// constants.LoanStagePredraft,
 	}
 	pendingStatus := []constants.LoanPendingStatus{
 		constants.LoanPendingStatusQuoting,
@@ -161,7 +166,7 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 				switch loan.Stage {
 				case constants.LoanStagePending:
 					return err
-				case constants.LoanStageDraft, constants.LoanStagePredraft:
+				case constants.LoanStageDraft:
 					// change stage from draft to pending
 				default:
 					err = errors.WithStack(errors.New("invalid loan stage"))

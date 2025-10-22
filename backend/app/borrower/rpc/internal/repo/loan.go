@@ -9,7 +9,6 @@ import (
 
 	"zeebee-backend/app/borrower/rpc/internal/repo/model"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/gormx"
 )
 
@@ -127,11 +126,7 @@ func (repo *LoanRepo) Page(ctx context.Context, pageReq *borrower.LoanPageReques
 		Preload("Property").
 		Preload("Applicants")
 	if len(filter.Stage) > 0 {
-		if filter.Stage == string(constants.LoanStageDraft) {
-			query = query.Where(fmt.Sprintf("%s.stage in ?", loanTable), []constants.LoanStage{constants.LoanStageDraft, constants.LoanStagePredraft})
-		} else {
-			query = query.Where(fmt.Sprintf("%s.stage = ?", loanTable), filter.Stage)
-		}
+		query = query.Where(fmt.Sprintf("%s.stage = ?", loanTable), filter.Stage)
 
 	}
 	hasJoinProperty := false
