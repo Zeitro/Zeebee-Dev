@@ -50,22 +50,22 @@ type LoanPreApproveRequest struct {
 		Unit          int    `json:"unit,omitempty"`
 	}
 	Loan struct {
-		LoanTerm                      int32   `json:"loan_term,omitempty"`
-		EstCurrentPropertyValueAmount float64 ` json:"est_current_property_value_amount,omitempty"`
-		Arv                           float64 `json:"arv,omitempty"`
-		TotalAmount                   float64 `json:"total_amount,omitempty"`
-		PrincipalAmount               float64 `json:"principal_amount,omitempty"`
-		PurchaseDate                  string  `json:"purchase_date,omitempty"`
-		PurchaseAmount                float64 `json:"purchase_amount,omitempty"`
-		CostSpentToDateAmount         float64 `json:"cost_spent_to_date_amount,omitempty"`
-		BudgetAmount                  float64 `son:"budget_amount,omitempty"`
-		InitialAmount                 float64 `json:"initial_amount,omitempty"`
-		HoldbackAmount                float64 `json:"holdback_amount,omitempty"`
-		InterestReserveMonths         int32   `json:"interest_reserve_months,omitempty"`
-		LoanPurpose                   string  `json:"loan_purpose,omitempty"`
-		LoanType                      string  `json:"loan_type,omitempty"`
-		HasAssignmentFee              bool    `json:"has_assignment_fee,omitempty"`
-		AssignmentFeeAmount           float64 `json:"assignment_fee_amount,omitempty"`
+		LoanTerm               int32   `json:"loan_term,omitempty"`
+		EstPropertyValueAmount float64 ` json:"est_current_property_value_amount,omitempty"`
+		Arv                    float64 `json:"arv,omitempty"`
+		TotalAmount            float64 `json:"total_amount,omitempty"`
+		PrincipalAmount        float64 `json:"principal_amount,omitempty"`
+		PurchaseDate           string  `json:"purchase_date,omitempty"`
+		PurchaseAmount         float64 `json:"purchase_amount,omitempty"`
+		CostSpentToDateAmount  float64 `json:"cost_spent_to_date_amount,omitempty"`
+		BudgetAmount           float64 `son:"budget_amount,omitempty"`
+		InitialAmount          float64 `json:"initial_amount,omitempty"`
+		HoldbackAmount         float64 `json:"holdback_amount,omitempty"`
+		InterestReserveMonths  int32   `json:"interest_reserve_months,omitempty"`
+		LoanPurpose            string  `json:"loan_purpose,omitempty"`
+		LoanType               string  `json:"loan_type,omitempty"`
+		HasAssignmentFee       bool    `json:"has_assignment_fee,omitempty"`
+		AssignmentFeeAmount    float64 `json:"assignment_fee_amount,omitempty"`
 	}
 }
 
