@@ -359,7 +359,7 @@ type LoanPreApproveRequestLoan struct {
 	LoanPurpose            string  `json:"loan_purpose" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
 	LoanType               string  `json:"loan_type" validate:"required,oneof=Bridge Rehab 'Ground up construction'"`
 	HasAssignmentFee       bool    `json:"has_assignment_fee,optional"`
-	AssignmentFeeAmount    float64 `json:"assignment_fee_amount" validate:"required_if=HasAssignmentFee true,gte=0"`
+	AssignmentFeeAmount    float64 `json:"assignment_fee_amount,optional" validate:"required_if=HasAssignmentFee true,gte=0"`
 }
 
 type LoanPreApproveRequestProperty struct {
