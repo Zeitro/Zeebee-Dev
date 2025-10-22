@@ -343,22 +343,22 @@ type LoanPreApproveRequestBorrower struct {
 }
 
 type LoanPreApproveRequestLoan struct {
-	LoanTerm                      int32   `json:"loan_term" validate:"required,gte=1,lte=360"`
-	EstCurrentPropertyValueAmount float64 `json:"est_current_property_value_amount" validate:"required,gt=0"`
-	Arv                           float64 `json:"arv" validate:"required,gt=0"`
-	TotalAmount                   float64 `json:"total_amount" validate:"required,gt=0"`
-	PrincipalAmount               float64 `json:"principal_amount" validate:"required_if=LoanPurpose 'Rate-term refi' LoanPurpose 'Cash-out refi'"`
-	PurchaseDate                  string  `json:"purchase_date" validate:"required_if=LoanPurpose 'Rate-term refi' LoanPurpose 'Cash-out refi',omitempty,datetime=01/02/2006"`
-	PurchaseAmount                float64 `json:"purchase_amount" validate:"required,gt=0"`
-	CostToDate                    string  `json:"cost_to_date" validate:"required_if=LoanPurpose 'Rate-term refi' LoanPurpose 'Cash-out refi',omitempty,datetime=01/02/2006"`
-	BudgetAmount                  float64 `json:"budget_amount" validate:"required_if=LoanType Rehab,gt=0"`
-	InitialAmount                 float64 `json:"initial_amount" validate:"required_if=LoanType Rehab LoanType 'Ground up construction',gt=0"`
-	HoldbackAmount                float64 `json:"holdback_amount" validate:"required_if=LoanType Rehab LoanType 'Ground up construction',gt=0"`
-	InterestReserveMonths         int32   `json:"interest_reserve_months" validate:"gte=0"`
-	LoanPurpose                   string  `json:"loan_purpose" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
-	LoanType                      string  `json:"loan_type" validate:"required,oneof=Bridge Rehab 'Ground up construction'"`
-	HasAssignmentFee              bool    `json:"has_assignment_fee"`
-	AssignmentFeeAmount           float64 `json:"assignment_fee_amount" validate:"required_if=HasAssignmentFee true,gte=0"`
+	LoanTerm               int32   `json:"loan_term" validate:"required,gte=1,lte=360"`
+	EstPropertyValueAmount float64 `json:"est_property_value_amount" validate:"required,gt=0"`
+	Arv                    float64 `json:"arv" validate:"required,gt=0"`
+	TotalAmount            float64 `json:"total_amount" validate:"required,gt=0"`
+	PrincipalAmount        float64 `json:"principal_amount" validate:"required_if=LoanPurpose 'Rate-term refi' LoanPurpose 'Cash-out refi'"`
+	PurchaseDate           string  `json:"purchase_date" validate:"required_if=LoanPurpose 'Rate-term refi' LoanPurpose 'Cash-out refi',omitempty,datetime=01/02/2006"`
+	PurchaseAmount         float64 `json:"purchase_amount" validate:"required,gt=0"`
+	CostSpentToDateAmount  float64 `json:"cost_spent_to_date_amount" validate:"required_if=LoanPurpose 'Rate-term refi' LoanPurpose 'Cash-out refi',gte=0"`
+	BudgetAmount           float64 `json:"budget_amount" validate:"required_if=LoanType Rehab,gt=0"`
+	InitialAmount          float64 `json:"initial_amount" validate:"required_if=LoanType Rehab LoanType 'Ground up construction',gt=0"`
+	HoldbackAmount         float64 `json:"holdback_amount" validate:"required_if=LoanType Rehab LoanType 'Ground up construction',gt=0"`
+	InterestReserveMonths  int32   `json:"interest_reserve_months" validate:"gte=0"`
+	LoanPurpose            string  `json:"loan_purpose" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
+	LoanType               string  `json:"loan_type" validate:"required,oneof=Bridge Rehab 'Ground up construction'"`
+	HasAssignmentFee       bool    `json:"has_assignment_fee"`
+	AssignmentFeeAmount    float64 `json:"assignment_fee_amount" validate:"required_if=HasAssignmentFee true,gte=0"`
 }
 
 type LoanPreApproveRequestProperty struct {

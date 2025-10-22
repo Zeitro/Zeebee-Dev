@@ -8682,25 +8682,25 @@ func (x *LoanPreApproveRequestData_Property) GetUnit() int32 {
 }
 
 type LoanPreApproveRequestData_Loan struct {
-	state                         protoimpl.MessageState `protogen:"open.v1"`
-	LoanTerm                      int32                  `protobuf:"varint,1,opt,name=loan_term,json=loanTerm,proto3" json:"loan_term,omitempty"`
-	EstCurrentPropertyValueAmount float64                `protobuf:"fixed64,2,opt,name=est_current_property_value_amount,json=estCurrentPropertyValueAmount,proto3" json:"est_current_property_value_amount,omitempty"`
-	Arv                           float64                `protobuf:"fixed64,3,opt,name=arv,proto3" json:"arv,omitempty"`
-	TotalAmount                   float64                `protobuf:"fixed64,4,opt,name=total_amount,json=totalAmount,proto3" json:"total_amount,omitempty"`
-	PrincipalAmount               float64                `protobuf:"fixed64,5,opt,name=principal_amount,json=principalAmount,proto3" json:"principal_amount,omitempty"`
-	PurchaseDate                  string                 `protobuf:"bytes,6,opt,name=purchase_date,json=purchaseDate,proto3" json:"purchase_date,omitempty"`
-	PurchaseAmount                float64                `protobuf:"fixed64,7,opt,name=purchase_amount,json=purchaseAmount,proto3" json:"purchase_amount,omitempty"`
-	CostToDate                    string                 `protobuf:"bytes,8,opt,name=cost_to_date,json=costToDate,proto3" json:"cost_to_date,omitempty"`
-	BudgetAmount                  float64                `protobuf:"fixed64,9,opt,name=budget_amount,json=budgetAmount,proto3" json:"budget_amount,omitempty"`
-	InitialAmount                 float64                `protobuf:"fixed64,10,opt,name=initial_amount,json=initialAmount,proto3" json:"initial_amount,omitempty"`
-	HoldbackAmount                float64                `protobuf:"fixed64,11,opt,name=holdback_amount,json=holdbackAmount,proto3" json:"holdback_amount,omitempty"`
-	InterestReserveMonths         int32                  `protobuf:"varint,12,opt,name=interest_reserve_months,json=interestReserveMonths,proto3" json:"interest_reserve_months,omitempty"`
-	LoanPurpose                   string                 `protobuf:"bytes,13,opt,name=loan_purpose,json=loanPurpose,proto3" json:"loan_purpose,omitempty"`
-	LoanType                      string                 `protobuf:"bytes,14,opt,name=loan_type,json=loanType,proto3" json:"loan_type,omitempty"`
-	HasAssignmentFee              bool                   `protobuf:"varint,15,opt,name=has_assignment_fee,json=hasAssignmentFee,proto3" json:"has_assignment_fee,omitempty"`
-	AssignmentFeeAmount           float64                `protobuf:"fixed64,16,opt,name=assignment_fee_amount,json=assignmentFeeAmount,proto3" json:"assignment_fee_amount,omitempty"`
-	unknownFields                 protoimpl.UnknownFields
-	sizeCache                     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"open.v1"`
+	LoanTerm               int32                  `protobuf:"varint,1,opt,name=loan_term,json=loanTerm,proto3" json:"loan_term,omitempty"`
+	EstPropertyValueAmount float64                `protobuf:"fixed64,2,opt,name=est_property_value_amount,json=estPropertyValueAmount,proto3" json:"est_property_value_amount,omitempty"`
+	Arv                    float64                `protobuf:"fixed64,3,opt,name=arv,proto3" json:"arv,omitempty"`
+	TotalAmount            float64                `protobuf:"fixed64,4,opt,name=total_amount,json=totalAmount,proto3" json:"total_amount,omitempty"`
+	PrincipalAmount        float64                `protobuf:"fixed64,5,opt,name=principal_amount,json=principalAmount,proto3" json:"principal_amount,omitempty"`
+	PurchaseDate           string                 `protobuf:"bytes,6,opt,name=purchase_date,json=purchaseDate,proto3" json:"purchase_date,omitempty"`
+	PurchaseAmount         float64                `protobuf:"fixed64,7,opt,name=purchase_amount,json=purchaseAmount,proto3" json:"purchase_amount,omitempty"`
+	CostSpentToDateAmount  float64                `protobuf:"fixed64,8,opt,name=cost_spent_to_date_amount,json=costSpentToDateAmount,proto3" json:"cost_spent_to_date_amount,omitempty"`
+	BudgetAmount           float64                `protobuf:"fixed64,9,opt,name=budget_amount,json=budgetAmount,proto3" json:"budget_amount,omitempty"`
+	InitialAmount          float64                `protobuf:"fixed64,10,opt,name=initial_amount,json=initialAmount,proto3" json:"initial_amount,omitempty"`
+	HoldbackAmount         float64                `protobuf:"fixed64,11,opt,name=holdback_amount,json=holdbackAmount,proto3" json:"holdback_amount,omitempty"`
+	InterestReserveMonths  int32                  `protobuf:"varint,12,opt,name=interest_reserve_months,json=interestReserveMonths,proto3" json:"interest_reserve_months,omitempty"`
+	LoanPurpose            string                 `protobuf:"bytes,13,opt,name=loan_purpose,json=loanPurpose,proto3" json:"loan_purpose,omitempty"`
+	LoanType               string                 `protobuf:"bytes,14,opt,name=loan_type,json=loanType,proto3" json:"loan_type,omitempty"`
+	HasAssignmentFee       bool                   `protobuf:"varint,15,opt,name=has_assignment_fee,json=hasAssignmentFee,proto3" json:"has_assignment_fee,omitempty"`
+	AssignmentFeeAmount    float64                `protobuf:"fixed64,16,opt,name=assignment_fee_amount,json=assignmentFeeAmount,proto3" json:"assignment_fee_amount,omitempty"`
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *LoanPreApproveRequestData_Loan) Reset() {
@@ -8740,9 +8740,9 @@ func (x *LoanPreApproveRequestData_Loan) GetLoanTerm() int32 {
 	return 0
 }
 
-func (x *LoanPreApproveRequestData_Loan) GetEstCurrentPropertyValueAmount() float64 {
+func (x *LoanPreApproveRequestData_Loan) GetEstPropertyValueAmount() float64 {
 	if x != nil {
-		return x.EstCurrentPropertyValueAmount
+		return x.EstPropertyValueAmount
 	}
 	return 0
 }
@@ -8782,11 +8782,11 @@ func (x *LoanPreApproveRequestData_Loan) GetPurchaseAmount() float64 {
 	return 0
 }
 
-func (x *LoanPreApproveRequestData_Loan) GetCostToDate() string {
+func (x *LoanPreApproveRequestData_Loan) GetCostSpentToDateAmount() float64 {
 	if x != nil {
-		return x.CostToDate
+		return x.CostSpentToDateAmount
 	}
-	return ""
+	return 0
 }
 
 func (x *LoanPreApproveRequestData_Loan) GetBudgetAmount() float64 {
@@ -9431,7 +9431,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"actionList\x12#\n" +
 	"\rbusiness_line\x18\x05 \x01(\tR\fbusinessLine\"P\n" +
 	"\x15LoanPreApproveRequest\x127\n" +
-	"\x04data\x18\x01 \x01(\v2#.borrower.LoanPreApproveRequestDataR\x04data\"\x88\n" +
+	"\x04data\x18\x01 \x01(\v2#.borrower.LoanPreApproveRequestDataR\x04data\"\x91\n" +
 	"\n" +
 	"\x19LoanPreApproveRequestData\x12H\n" +
 	"\bborrower\x18\x01 \x01(\v2,.borrower.LoanPreApproveRequestData.BorrowerR\bborrower\x12H\n" +
@@ -9448,17 +9448,16 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\aaddress\x18\x01 \x01(\v2\x16.borrower.AddressEntryR\aaddress\x12#\n" +
 	"\rproperty_type\x18\x02 \x01(\tR\fpropertyType\x12&\n" +
 	"\x0fis_permit_ready\x18\x03 \x01(\bR\risPermitReady\x12\x12\n" +
-	"\x04unit\x18\x04 \x01(\x05R\x04unit\x1a\x8c\x05\n" +
+	"\x04unit\x18\x04 \x01(\x05R\x04unit\x1a\x95\x05\n" +
 	"\x04Loan\x12\x1b\n" +
-	"\tloan_term\x18\x01 \x01(\x05R\bloanTerm\x12H\n" +
-	"!est_current_property_value_amount\x18\x02 \x01(\x01R\x1destCurrentPropertyValueAmount\x12\x10\n" +
+	"\tloan_term\x18\x01 \x01(\x05R\bloanTerm\x129\n" +
+	"\x19est_property_value_amount\x18\x02 \x01(\x01R\x16estPropertyValueAmount\x12\x10\n" +
 	"\x03arv\x18\x03 \x01(\x01R\x03arv\x12!\n" +
 	"\ftotal_amount\x18\x04 \x01(\x01R\vtotalAmount\x12)\n" +
 	"\x10principal_amount\x18\x05 \x01(\x01R\x0fprincipalAmount\x12#\n" +
 	"\rpurchase_date\x18\x06 \x01(\tR\fpurchaseDate\x12'\n" +
-	"\x0fpurchase_amount\x18\a \x01(\x01R\x0epurchaseAmount\x12 \n" +
-	"\fcost_to_date\x18\b \x01(\tR\n" +
-	"costToDate\x12#\n" +
+	"\x0fpurchase_amount\x18\a \x01(\x01R\x0epurchaseAmount\x128\n" +
+	"\x19cost_spent_to_date_amount\x18\b \x01(\x01R\x15costSpentToDateAmount\x12#\n" +
 	"\rbudget_amount\x18\t \x01(\x01R\fbudgetAmount\x12%\n" +
 	"\x0einitial_amount\x18\n" +
 	" \x01(\x01R\rinitialAmount\x12'\n" +
