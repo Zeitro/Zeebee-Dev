@@ -461,7 +461,7 @@ type (
     }
     LoanPreApproveResponse {
         Primary *PrimaryPreApproveLoan `json:"primary"`
-        Secondaries []*SecondaryPreApproveLoan `json:"secondary"`
+        Secondaries []*SecondaryPreApproveLoan `json:"secondaries"`
     }
     PrimaryPreApproveLoan {
         LenderCompanyId int64 `json:"lender_company_id"`

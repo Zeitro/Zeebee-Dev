@@ -147,6 +147,13 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int
 		return errors.WithStack(errors.New("pre-approve loan data not found in cache"))
 	}
 
+	defer func() {
+		if err != nil {
+			// delete cache data
+			_ = global.GetRedis().Del(ctx, key)
+		}
+	}()
+
 	// parse cache data
 	var cacheData types.PreApproveLoanCacheData
 	err = json.Unmarshal([]byte(cacheDataStr), &cacheData)
@@ -235,7 +242,9 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int
 		return errors.WithStack(err)
 	}
 
-	return nil
+	// todo send email to lender
+
+	return err
 }
 
 // sendLoginUrlEmail send login url email
