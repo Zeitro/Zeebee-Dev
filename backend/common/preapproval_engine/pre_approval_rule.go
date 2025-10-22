@@ -135,7 +135,7 @@ type PreApprovalRule struct {
 }
 
 // CalPreApprovaldLoanAmount calculates and returns the pre-approved loan amount
-func (r *PreApprovalRule) CalPreApprovaldLoanAmount(input InputLoanInfo) (result *CalculatePreApprovaldLoanAmountResult, err error) {
+func (r *PreApprovalRule) CalPreApprovalLoanAmount(input InputLoanInfo) (result *CalculatePreApprovaldLoanAmountResult, err error) {
 	uid, _ := uuid.GetSonyflakeIDString()
 	result = &CalculatePreApprovaldLoanAmountResult{
 		IsApproved: false,
@@ -194,7 +194,8 @@ func (r *PreApprovalRule) CalPreApprovaldLoanAmount(input InputLoanInfo) (result
 	}
 
 	// Calculate output LTC and LTARV ratios
-	result.Tlc = float32(totalLoanAmount / (input.EstCurrentPropertyValue + input.OriginalBudgetAmount))
+	result.Ltc = float32(totalLoanAmount / (input.EstCurrentPropertyValue + input.OriginalBudgetAmount))
+	result.Ltv = float32(totalLoanAmount / (input.EstCurrentPropertyValue))
 	result.Ltarv = float32(totalLoanAmount / input.EstAfterRepairValue)
 
 	// Calculate rate

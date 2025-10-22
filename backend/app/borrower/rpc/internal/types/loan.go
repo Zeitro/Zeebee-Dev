@@ -8,7 +8,7 @@ type LoanBudget struct {
 	CostSpentToDateAmount float64 `json:"cost_spent_to_date_amount"`
 }
 
-type LoanPreApproveResult struct {
+type LoanPreApprovalResult struct {
 	RequestId              string                             `json:"request_id"`
 	LenderCompanyName      string                             `json:"lender_company_name"`
 	LenderCompanyId        int64                              `json:"lender_company_id"`
@@ -23,12 +23,12 @@ type LoanPreApproveResult struct {
 	HoldbackAmount         float64                            `json:"holdback_amount"`
 	LoanTerm               int                                `json:"loan_term"`
 	Ltv                    float32                            `json:"ltv"`
-	Tlc                    float32                            `json:"tlc"`
+	Ltc                    float32                            `json:"ltc"`
 	Ltarv                  float32                            `json:"ltarv"`
 	ExperienceLevel        preapproval_engine.ExperienceLevel `json:"experience_level"`
 }
 
-type LoanPreApproveRequest struct {
+type LoanPreApprovalRequest struct {
 	Borrower struct {
 		Name                        string `json:"name,omitempty"`
 		Email                       string `json:"email,omitempty"`
@@ -70,6 +70,6 @@ type LoanPreApproveRequest struct {
 }
 
 type PreApproveLoanCacheData struct {
-	RequestData LoanPreApproveRequest
-	ResultData  *LoanPreApproveResult
+	RequestData LoanPreApprovalRequest
+	ResultData  *LoanPreApprovalResult
 }

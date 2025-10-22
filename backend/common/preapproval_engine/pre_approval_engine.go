@@ -59,7 +59,7 @@ type CalculatePreApprovaldLoanAmountResult struct {
 	HoldbackAmount         float64         `json:"holdback_amount"`
 	LoanTerm               int             `json:"loan_term"`
 	Ltv                    float32         `json:"ltv"`
-	Tlc                    float32         `json:"tlc"`
+	Ltc                    float32         `json:"ltc"`
 	Ltarv                  float32         `json:"ltarv"`
 	ExperienceLevel        ExperienceLevel `json:"experience_level"`
 }
@@ -80,7 +80,7 @@ func (e *PreApprovalEngine) CalPreApprovalLoanAmount(input InputLoanInfo) (resul
 	if !ok {
 		return nil, errors.WithStack(errors.New("no rule found for experience level"))
 	}
-	result, err = rule.CalPreApprovaldLoanAmount(input)
+	result, err = rule.CalPreApprovalLoanAmount(input)
 	if err != nil {
 		return nil, err
 	}

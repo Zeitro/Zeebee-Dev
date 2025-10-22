@@ -409,7 +409,6 @@ type PrimaryPreApprovalLoan struct {
 	Ltv               float32 `json:"ltv"`
 	Ltarv             float32 `json:"ltarv"`
 	Ltc               float32 `json:"ltc"`
-	Code              string  `json:"code"`
 	RejectReason      string  `json:"reject_reason"`
 	RequestId         string  `json:"request_id"`
 }
