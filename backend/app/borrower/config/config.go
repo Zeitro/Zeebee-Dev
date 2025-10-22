@@ -21,19 +21,19 @@ type ApiConf struct {
 
 type RpcConf struct {
 	zrpc.RpcServerConf
-	LimiterConf                 LimiterConf
-	VerifyEmailExpireSeconds    int
-	ResetPwdExpireSeconds       int
-	PreApproveLoanExpireSeconds int
-	EmailConf                   EmailConf
-	RedisConf                   RedisConf
-	JwtAuth                     types.JwtAuth `json:",optional"`
-	DbConf                      DbConf
-	AwsS3Conf                   AwsS3Conf
-	LoginUrl                    string
-	VerifyEmailUrl              string
-	ResetPwdUrl                 string
-	PreApproveLoanConf          []PreApproveLoanConf
+	LimiterConf                  LimiterConf
+	VerifyEmailExpireSeconds     int
+	ResetPwdExpireSeconds        int
+	PreApprovalLoanExpireSeconds int
+	EmailConf                    EmailConf
+	RedisConf                    RedisConf
+	JwtAuth                      types.JwtAuth `json:",optional"`
+	DbConf                       DbConf
+	AwsS3Conf                    AwsS3Conf
+	LoginUrl                     string
+	VerifyEmailUrl               string
+	ResetPwdUrl                  string
+	PreApprovalLoanConf          []PreApprovalLoanConf
 }
 
 type DbConf struct {
@@ -74,24 +74,24 @@ type EmailConf struct {
 	Username string
 }
 
-// PreApproveLoanConf pre-approve loan config
-type PreApproveLoanConf struct {
+// PreApprovalLoanConf pre-approve loan config
+type PreApprovalLoanConf struct {
 	LenderCompanyId   int64
 	LenderCompanyName string
-	TotalAmount       PreApproveLoanTotalAmount
-	Rate              PreApproveLoanRate
-	LoanTerm          PreApproveLoanLoanTerm
+	TotalAmount       PreApprovalLoanTotalAmount
+	Rate              PreApprovalLoanRate
+	LoanTerm          PreApprovalLoanLoanTerm
 }
 
-type PreApproveLoanTotalAmount struct {
+type PreApprovalLoanTotalAmount struct {
 	Min float64
 	Max float64
 }
-type PreApproveLoanRate struct {
+type PreApprovalLoanRate struct {
 	Min float64
 	Max float64
 }
-type PreApproveLoanLoanTerm struct {
+type PreApprovalLoanLoanTerm struct {
 	Min int
 	Max int
 }

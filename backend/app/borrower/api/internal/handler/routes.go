@@ -78,10 +78,10 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
-				// pre_approve
+				// pre_approval
 				Method:  http.MethodPost,
-				Path:    "/loan/pre_approve",
-				Handler: loan.PreApproveHandler(serverCtx),
+				Path:    "/loan/pre_approval",
+				Handler: loan.PreApprovalHandler(serverCtx),
 			},
 		},
 		rest.WithPrefix("/api/v1"),

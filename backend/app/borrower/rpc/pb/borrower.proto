@@ -623,10 +623,10 @@ message LoanExtendValueEntry {
 }
 
 // pre approve
-message LoanPreApproveRequest {
-  LoanPreApproveRequestData data = 1;
+message LoanPreApprovalRequest {
+  LoanPreApprovalRequestData data = 1;
 }
-message LoanPreApproveRequestData {
+message LoanPreApprovalRequestData {
   message Borrower {
     string name = 1;
     string email = 2;
@@ -668,15 +668,15 @@ message LoanPreApproveRequestData {
   Loan loan = 3;
 }
 
-message LoanPreApproveResponse {
-  LoanPreApproveResponseData data = 1;
+message LoanPreApprovalResponse {
+  LoanPreApprovalResponseData data = 1;
 }
-message LoanPreApproveResponseData {
-  PrimaryLoanPreApprove primary = 1;
-  repeated SecondaryLoanPreApprove secondaries = 2;
+message LoanPreApprovalResponseData {
+  PrimaryLoanPreApproval primary = 1;
+  repeated SecondaryLoanPreApproval secondaries = 2;
 }
 
-message PrimaryLoanPreApprove {
+message PrimaryLoanPreApproval {
   bool is_approved = 1;
   double total_amount = 2;
   float rate = 3;
@@ -686,7 +686,7 @@ message PrimaryLoanPreApprove {
   double holdback_amount = 7;
   int32 loan_term = 8;
   float ltv = 9;
-  float tlc = 10;
+  float ltc = 10;
   float ltarv = 11;
   string code = 12 [deprecated = true];
   string reject_reason = 13;
@@ -695,7 +695,7 @@ message PrimaryLoanPreApprove {
   string lender_company_name = 16;
 }
 
-message SecondaryLoanPreApprove {
+message SecondaryLoanPreApproval {
   message RangeFloat {
     double min = 1;
     double max = 2;
@@ -726,7 +726,7 @@ service Loan {
   rpc SaveDraftLoan(LoanApplyRequest) returns(LoanApplyResponse);
   rpc UpdateApplyLoan(LoanApplyRequest) returns(EmptyResponse);
   rpc ImportPendingLoans(ImportPendingLoansRequest) returns(ImportPendingLoansResponse);
-  rpc PreApproveLoan(LoanPreApproveRequest) returns(LoanPreApproveResponse);
+  rpc PreApprovalLoan(LoanPreApprovalRequest) returns(LoanPreApprovalResponse);
 }
 
 

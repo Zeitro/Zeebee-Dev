@@ -140,7 +140,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 
 func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int64, requestId string, lenderCompanyId int64) (err error) {
 	// get pre-approve loan data from cache
-	key := fmt.Sprintf(constants.BorrowerPreApproveCacheKey, requestId)
+	key := fmt.Sprintf(constants.BorrowerPreApprovalCacheKey, requestId)
 	cacheDataStr, err := global.GetRedis().Get(ctx, key)
 	if err != nil {
 		return errors.WithStack(err)

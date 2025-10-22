@@ -1,6 +1,6 @@
 package types
 
-import "zeebee-backend/common/pre_approve_engine"
+import "zeebee-backend/common/preapproval_engine"
 
 type LoanBudget struct {
 	OriginalBudget        float64 `json:"original_budget"`
@@ -25,7 +25,7 @@ type LoanPreApproveResult struct {
 	Ltv                    float32                            `json:"ltv"`
 	Tlc                    float32                            `json:"tlc"`
 	Ltarv                  float32                            `json:"ltarv"`
-	ExperienceLevel        pre_approve_engine.ExperienceLevel `json:"experience_level"`
+	ExperienceLevel        preapproval_engine.ExperienceLevel `json:"experience_level"`
 }
 
 type LoanPreApproveRequest struct {

@@ -578,7 +578,7 @@ const (
 	Loan_SaveDraftLoan_FullMethodName                   = "/borrower.Loan/SaveDraftLoan"
 	Loan_UpdateApplyLoan_FullMethodName                 = "/borrower.Loan/UpdateApplyLoan"
 	Loan_ImportPendingLoans_FullMethodName              = "/borrower.Loan/ImportPendingLoans"
-	Loan_PreApproveLoan_FullMethodName                  = "/borrower.Loan/PreApproveLoan"
+	Loan_PreApprovalLoan_FullMethodName                 = "/borrower.Loan/PreApprovalLoan"
 )
 
 // LoanClient is the client API for Loan service.
@@ -596,7 +596,7 @@ type LoanClient interface {
 	SaveDraftLoan(ctx context.Context, in *LoanApplyRequest, opts ...grpc.CallOption) (*LoanApplyResponse, error)
 	UpdateApplyLoan(ctx context.Context, in *LoanApplyRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	ImportPendingLoans(ctx context.Context, in *ImportPendingLoansRequest, opts ...grpc.CallOption) (*ImportPendingLoansResponse, error)
-	PreApproveLoan(ctx context.Context, in *LoanPreApproveRequest, opts ...grpc.CallOption) (*LoanPreApproveResponse, error)
+	PreApprovalLoan(ctx context.Context, in *LoanPreApprovalRequest, opts ...grpc.CallOption) (*LoanPreApprovalResponse, error)
 }
 
 type loanClient struct {
@@ -717,10 +717,10 @@ func (c *loanClient) ImportPendingLoans(ctx context.Context, in *ImportPendingLo
 	return out, nil
 }
 
-func (c *loanClient) PreApproveLoan(ctx context.Context, in *LoanPreApproveRequest, opts ...grpc.CallOption) (*LoanPreApproveResponse, error) {
+func (c *loanClient) PreApprovalLoan(ctx context.Context, in *LoanPreApprovalRequest, opts ...grpc.CallOption) (*LoanPreApprovalResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(LoanPreApproveResponse)
-	err := c.cc.Invoke(ctx, Loan_PreApproveLoan_FullMethodName, in, out, cOpts...)
+	out := new(LoanPreApprovalResponse)
+	err := c.cc.Invoke(ctx, Loan_PreApprovalLoan_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -742,7 +742,7 @@ type LoanServer interface {
 	SaveDraftLoan(context.Context, *LoanApplyRequest) (*LoanApplyResponse, error)
 	UpdateApplyLoan(context.Context, *LoanApplyRequest) (*EmptyResponse, error)
 	ImportPendingLoans(context.Context, *ImportPendingLoansRequest) (*ImportPendingLoansResponse, error)
-	PreApproveLoan(context.Context, *LoanPreApproveRequest) (*LoanPreApproveResponse, error)
+	PreApprovalLoan(context.Context, *LoanPreApprovalRequest) (*LoanPreApprovalResponse, error)
 	mustEmbedUnimplementedLoanServer()
 }
 
@@ -786,8 +786,8 @@ func (UnimplementedLoanServer) UpdateApplyLoan(context.Context, *LoanApplyReques
 func (UnimplementedLoanServer) ImportPendingLoans(context.Context, *ImportPendingLoansRequest) (*ImportPendingLoansResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ImportPendingLoans not implemented")
 }
-func (UnimplementedLoanServer) PreApproveLoan(context.Context, *LoanPreApproveRequest) (*LoanPreApproveResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PreApproveLoan not implemented")
+func (UnimplementedLoanServer) PreApprovalLoan(context.Context, *LoanPreApprovalRequest) (*LoanPreApprovalResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PreApprovalLoan not implemented")
 }
 func (UnimplementedLoanServer) mustEmbedUnimplementedLoanServer() {}
 func (UnimplementedLoanServer) testEmbeddedByValue()              {}
@@ -1008,20 +1008,20 @@ func _Loan_ImportPendingLoans_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Loan_PreApproveLoan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LoanPreApproveRequest)
+func _Loan_PreApprovalLoan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanPreApprovalRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(LoanServer).PreApproveLoan(ctx, in)
+		return srv.(LoanServer).PreApprovalLoan(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Loan_PreApproveLoan_FullMethodName,
+		FullMethod: Loan_PreApprovalLoan_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LoanServer).PreApproveLoan(ctx, req.(*LoanPreApproveRequest))
+		return srv.(LoanServer).PreApprovalLoan(ctx, req.(*LoanPreApprovalRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1078,8 +1078,8 @@ var Loan_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Loan_ImportPendingLoans_Handler,
 		},
 		{
-			MethodName: "PreApproveLoan",
-			Handler:    _Loan_PreApproveLoan_Handler,
+			MethodName: "PreApprovalLoan",
+			Handler:    _Loan_PreApprovalLoan_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

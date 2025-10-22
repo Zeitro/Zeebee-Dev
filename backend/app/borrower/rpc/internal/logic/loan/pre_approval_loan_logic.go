@@ -15,27 +15,27 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
-	"zeebee-backend/common/pre_approve_engine"
+	"zeebee-backend/common/preapproval_engine"
 )
 
-type PreApproveLoanLogic struct {
+type PreApprovalLoanLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewPreApproveLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PreApproveLoanLogic {
-	return &PreApproveLoanLogic{
+func NewPreApprovalLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PreApprovalLoanLogic {
+	return &PreApprovalLoanLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *PreApproveLoanLogic) PreApproveLoan(in *borrower.LoanPreApproveRequest) (*borrower.LoanPreApproveResponse, error) {
+func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalRequest) (*borrower.LoanPreApprovalResponse, error) {
 
-	engines := pre_approve_engine.GetDefaultPreApproveEngines()
-	input := pre_approve_engine.InputLoanInfo{
+	engines := preapproval_engine.GetDefaultPreApprovalEngines()
+	input := preapproval_engine.InputLoanInfo{
 		LoanType:                constants.LoanType(in.Data.Loan.LoanType),
 		LoanPurpose:             constants.LoanPurpose(in.Data.Loan.LoanPurpose),
 		FicoScore:               int(in.Data.Borrower.EstCreditScore),
@@ -56,14 +56,14 @@ func (l *PreApproveLoanLogic) PreApproveLoan(in *borrower.LoanPreApproveRequest)
 		AssignmentFeeAmount:     in.Data.Loan.AssignmentFeeAmount,
 		InterestReserveMonths:   int(in.Data.Loan.InterestReserveMonths),
 	}
-	result, err := engines["zeebee"].CalPreApprovedLoanAmount(input)
+	result, err := engines["zeebee"].CalPreApprovalLoanAmount(input)
 	if err != nil {
 		return nil, err
 	}
 
-	responseData := &borrower.LoanPreApproveResponseData{
-		Primary:     &borrower.PrimaryLoanPreApprove{},
-		Secondaries: []*borrower.SecondaryLoanPreApprove{},
+	responseData := &borrower.LoanPreApprovalResponseData{
+		Primary:     &borrower.PrimaryLoanPreApproval{},
+		Secondaries: []*borrower.SecondaryLoanPreApproval{},
 	}
 	_ = copier.CopyWithOption(responseData.Primary, result, copier.Option{
 		DeepCopy:      true,
@@ -77,11 +77,11 @@ func (l *PreApproveLoanLogic) PreApproveLoan(in *borrower.LoanPreApproveRequest)
 		responseData.Primary.CashToClose = mathutil.RoundToFloat(responseData.Primary.CashToClose, 0)
 
 		responseData.Primary.Rate = float32(mathutil.RoundToFloat(responseData.Primary.Rate*100.0, 2))
-		responseData.Primary.Tlc = float32(mathutil.RoundToFloat(responseData.Primary.Tlc*100.0, 2))
+		responseData.Primary.Ltc = float32(mathutil.RoundToFloat(responseData.Primary.Ltc*100.0, 2))
 		responseData.Primary.Ltv = float32(mathutil.RoundToFloat(responseData.Primary.Ltv*100.0, 2))
 		responseData.Primary.Ltarv = float32(mathutil.RoundToFloat(responseData.Primary.Ltarv*100.0, 2))
 	}
-	_ = copier.CopyWithOption(&responseData.Secondaries, &global.Config.PreApproveLoanConf, copier.Option{
+	_ = copier.CopyWithOption(&responseData.Secondaries, &global.Config.PreApprovalLoanConf, copier.Option{
 		DeepCopy:      true,
 		CaseSensitive: true,
 	})
@@ -96,14 +96,14 @@ func (l *PreApproveLoanLogic) PreApproveLoan(in *borrower.LoanPreApproveRequest)
 		DeepCopy:      true,
 		CaseSensitive: true,
 	})
-	key := fmt.Sprintf(constants.BorrowerPreApproveCacheKey, result.RequestId)
+	key := fmt.Sprintf(constants.BorrowerPreApprovalCacheKey, result.RequestId)
 	contents, _ := json.Marshal(cacheData)
-	err = global.GetRedis().SetExpire(l.ctx, key, string(contents), global.Config.PreApproveLoanExpireSeconds)
+	err = global.GetRedis().SetExpire(l.ctx, key, string(contents), global.Config.PreApprovalLoanExpireSeconds)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 
-	return &borrower.LoanPreApproveResponse{
+	return &borrower.LoanPreApprovalResponse{
 		Data: responseData,
 	}, nil
 }

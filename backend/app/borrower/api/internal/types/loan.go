@@ -126,15 +126,15 @@ type LoanPageResponse struct {
 	List      []LoanEntry `json:"list"`
 }
 
-type LoanPreApproveRequest struct {
-	Borrower *LoanPreApproveRequestBorrower `json:"borrower" validate:"required"`
-	Property *LoanPreApproveRequestProperty `json:"property" validate:"required"`
-	Loan     *LoanPreApproveRequestLoan     `json:"loan" validate:"required"`
+type LoanPreApprovalRequest struct {
+	Borrower *LoanPreApprovalRequestBorrower `json:"borrower" validate:"required"`
+	Property *LoanPreApprovalRequestProperty `json:"property" validate:"required"`
+	Loan     *LoanPreApprovalRequestLoan     `json:"loan" validate:"required"`
 }
 
-type LoanPreApproveResponse struct {
-	Primary     *PrimaryPreApproveLoan     `json:"primary"`
-	Secondaries []*SecondaryPreApproveLoan `json:"secondaries"`
+type LoanPreApprovalResponse struct {
+	Primary     *PrimaryPreApprovalLoan     `json:"primary"`
+	Secondaries []*SecondaryPreApprovalLoan `json:"secondaries"`
 }
 
 type LoanUpdatePendingStatusRequest struct {

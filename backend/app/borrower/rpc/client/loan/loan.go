@@ -67,13 +67,13 @@ type (
 	LoanPageRequestSorter                 = borrower.LoanPageRequestSorter
 	LoanPageResponse                      = borrower.LoanPageResponse
 	LoanPageResponseData                  = borrower.LoanPageResponseData
-	LoanPreApproveRequest                 = borrower.LoanPreApproveRequest
-	LoanPreApproveRequestData             = borrower.LoanPreApproveRequestData
-	LoanPreApproveRequestData_Borrower    = borrower.LoanPreApproveRequestData_Borrower
-	LoanPreApproveRequestData_Loan        = borrower.LoanPreApproveRequestData_Loan
-	LoanPreApproveRequestData_Property    = borrower.LoanPreApproveRequestData_Property
-	LoanPreApproveResponse                = borrower.LoanPreApproveResponse
-	LoanPreApproveResponseData            = borrower.LoanPreApproveResponseData
+	LoanPreApprovalRequest                = borrower.LoanPreApprovalRequest
+	LoanPreApprovalRequestData            = borrower.LoanPreApprovalRequestData
+	LoanPreApprovalRequestData_Borrower   = borrower.LoanPreApprovalRequestData_Borrower
+	LoanPreApprovalRequestData_Loan       = borrower.LoanPreApprovalRequestData_Loan
+	LoanPreApprovalRequestData_Property   = borrower.LoanPreApprovalRequestData_Property
+	LoanPreApprovalResponse               = borrower.LoanPreApprovalResponse
+	LoanPreApprovalResponseData           = borrower.LoanPreApprovalResponseData
 	LoanPropertyEntry                     = borrower.LoanPropertyEntry
 	LoanThirdServiceEntry                 = borrower.LoanThirdServiceEntry
 	LoanUpdatePendingStatusRequest        = borrower.LoanUpdatePendingStatusRequest
@@ -84,7 +84,7 @@ type (
 	OptionRequest                         = borrower.OptionRequest
 	OptionRequestData                     = borrower.OptionRequestData
 	OptionResponse                        = borrower.OptionResponse
-	PrimaryLoanPreApprove                 = borrower.PrimaryLoanPreApprove
+	PrimaryLoanPreApproval                = borrower.PrimaryLoanPreApproval
 	PropertyBaseEntry                     = borrower.PropertyBaseEntry
 	PropertyDetailRequest                 = borrower.PropertyDetailRequest
 	PropertyDetailRequestData             = borrower.PropertyDetailRequestData
@@ -105,9 +105,9 @@ type (
 	ResetPasswordRequestData              = borrower.ResetPasswordRequestData
 	ResetPasswordResponse                 = borrower.ResetPasswordResponse
 	ResetPasswordResponseData             = borrower.ResetPasswordResponseData
-	SecondaryLoanPreApprove               = borrower.SecondaryLoanPreApprove
-	SecondaryLoanPreApprove_RangeFloat    = borrower.SecondaryLoanPreApprove_RangeFloat
-	SecondaryLoanPreApprove_RangeInt      = borrower.SecondaryLoanPreApprove_RangeInt
+	SecondaryLoanPreApproval              = borrower.SecondaryLoanPreApproval
+	SecondaryLoanPreApproval_RangeFloat   = borrower.SecondaryLoanPreApproval_RangeFloat
+	SecondaryLoanPreApproval_RangeInt     = borrower.SecondaryLoanPreApproval_RangeInt
 	SendResetPasswordEmailRequest         = borrower.SendResetPasswordEmailRequest
 	SendResetPasswordEmailRequestData     = borrower.SendResetPasswordEmailRequestData
 	SendResetPasswordEmailResponse        = borrower.SendResetPasswordEmailResponse
@@ -150,7 +150,7 @@ type (
 		SaveDraftLoan(ctx context.Context, in *LoanApplyRequest, opts ...grpc.CallOption) (*LoanApplyResponse, error)
 		UpdateApplyLoan(ctx context.Context, in *LoanApplyRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		ImportPendingLoans(ctx context.Context, in *ImportPendingLoansRequest, opts ...grpc.CallOption) (*ImportPendingLoansResponse, error)
-		PreApproveLoan(ctx context.Context, in *LoanPreApproveRequest, opts ...grpc.CallOption) (*LoanPreApproveResponse, error)
+		PreApprovalLoan(ctx context.Context, in *LoanPreApprovalRequest, opts ...grpc.CallOption) (*LoanPreApprovalResponse, error)
 	}
 
 	defaultLoan struct {
@@ -219,7 +219,7 @@ func (m *defaultLoan) ImportPendingLoans(ctx context.Context, in *ImportPendingL
 	return client.ImportPendingLoans(ctx, in, opts...)
 }
 
-func (m *defaultLoan) PreApproveLoan(ctx context.Context, in *LoanPreApproveRequest, opts ...grpc.CallOption) (*LoanPreApproveResponse, error) {
+func (m *defaultLoan) PreApprovalLoan(ctx context.Context, in *LoanPreApprovalRequest, opts ...grpc.CallOption) (*LoanPreApprovalResponse, error) {
 	client := borrower.NewLoanClient(m.cli.Conn())
-	return client.PreApproveLoan(ctx, in, opts...)
+	return client.PreApprovalLoan(ctx, in, opts...)
 }

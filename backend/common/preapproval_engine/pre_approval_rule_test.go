@@ -1,4 +1,4 @@
-package pre_approve_engine
+package preapproval_engine
 
 import (
 	"testing"
@@ -8,9 +8,9 @@ import (
 	"zeebee-backend/common/constants"
 )
 
-func TestPreApproveRule_CalPreApprovedLoanAmount(t *testing.T) {
+func TestPreApprovalRule_CalPreApprovaldLoanAmount(t *testing.T) {
 	// Create a test rule with sample data
-	rule := &PreApproveRule{
+	rule := &PreApprovalRule{
 		ExperienceLevel:      ExperienceLevelExperienced,
 		ExtraFactor:          0.05,
 		MinLargeUnitCount:    5,
@@ -19,7 +19,7 @@ func TestPreApproveRule_CalPreApprovedLoanAmount(t *testing.T) {
 		MaxLoanTerm:          24,
 		MinHeavyRehabPercent: 0.3,
 		BaseRate:             0.07,
-		PreApproveAmountRange: PreApproveAmountRange{
+		PreApprovalAmountRange: PreApprovalAmountRange{
 			StandardAmountRange:  AmountRange{Min: 50000, Max: 2000000},
 			LargeUnitAmountRange: AmountRange{Min: 100000, Max: 5000000},
 		},
@@ -126,7 +126,7 @@ func TestPreApproveRule_CalPreApprovedLoanAmount(t *testing.T) {
 			PurchaseAmount:          500000,
 		}
 
-		result, err := rule.CalPreApprovedLoanAmount(input)
+		result, err := rule.CalPreApprovaldLoanAmount(input)
 		assert.NoError(t, err)
 		assert.True(t, result.IsApproved)
 		assert.Greater(t, result.TotalAmount, 0.0)
@@ -148,7 +148,7 @@ func TestPreApproveRule_CalPreApprovedLoanAmount(t *testing.T) {
 			InterestReserveMonths:   6,
 		}
 
-		result, err := rule.CalPreApprovedLoanAmount(input)
+		result, err := rule.CalPreApprovaldLoanAmount(input)
 		assert.NoError(t, err)
 		assert.True(t, result.IsApproved)
 		assert.Greater(t, result.TotalAmount, 0.0)
@@ -169,7 +169,7 @@ func TestPreApproveRule_CalPreApprovedLoanAmount(t *testing.T) {
 			PurchaseAmount:          500000,
 		}
 
-		result, err := rule.CalPreApprovedLoanAmount(input)
+		result, err := rule.CalPreApprovaldLoanAmount(input)
 		assert.NoError(t, err)
 		assert.False(t, result.IsApproved)
 	})
@@ -188,7 +188,7 @@ func TestPreApproveRule_CalPreApprovedLoanAmount(t *testing.T) {
 			PurchaseAmount:          500000,
 		}
 
-		result, err := rule.CalPreApprovedLoanAmount(input)
+		result, err := rule.CalPreApprovaldLoanAmount(input)
 		assert.NoError(t, err)
 		assert.False(t, result.IsApproved)
 	})
@@ -207,7 +207,7 @@ func TestPreApproveRule_CalPreApprovedLoanAmount(t *testing.T) {
 			PurchaseAmount:          500000,
 		}
 
-		_, err := rule.CalPreApprovedLoanAmount(input)
+		_, err := rule.CalPreApprovaldLoanAmount(input)
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "invalid loan type")
 	})
@@ -226,7 +226,7 @@ func TestPreApproveRule_CalPreApprovedLoanAmount(t *testing.T) {
 			PurchaseAmount:          500000,
 		}
 
-		result, err := rule.CalPreApprovedLoanAmount(input)
+		result, err := rule.CalPreApprovaldLoanAmount(input)
 		assert.NoError(t, err)
 		assert.False(t, result.IsApproved)
 	})
@@ -245,7 +245,7 @@ func TestPreApproveRule_CalPreApprovedLoanAmount(t *testing.T) {
 			PurchaseAmount:          500000,
 		}
 
-		result, err := rule.CalPreApprovedLoanAmount(input)
+		result, err := rule.CalPreApprovaldLoanAmount(input)
 		assert.NoError(t, err)
 		assert.True(t, result.IsApproved)
 	})

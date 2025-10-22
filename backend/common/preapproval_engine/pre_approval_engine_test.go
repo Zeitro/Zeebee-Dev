@@ -1,4 +1,4 @@
-package pre_approve_engine
+package preapproval_engine
 
 import (
 	"testing"
@@ -8,15 +8,15 @@ import (
 	"zeebee-backend/common/constants"
 )
 
-func TestPreApproveEngine_CalPreApprovedLoanAmount(t *testing.T) {
+func TestPreApprovalEngine_CalPreApprovaldLoanAmount(t *testing.T) {
 	// 获取默认的预批准引擎
-	engines := GetDefaultPreApproveEngines()
+	engines := GetDefaultPreApprovalEngines()
 	zeebeeEngine := engines["zeebee"]
 
 	assert.NotNil(t, zeebeeEngine)
-	assert.NotNil(t, zeebeeEngine.PreApproveRules[ExperienceLevelNoExperienced])
-	assert.NotNil(t, zeebeeEngine.PreApproveRules[ExperienceLevelExperienced])
-	assert.NotNil(t, zeebeeEngine.PreApproveRules[ExperienceLevelInstitutional])
+	assert.NotNil(t, zeebeeEngine.PreApprovalRules[ExperienceLevelNoExperienced])
+	assert.NotNil(t, zeebeeEngine.PreApprovalRules[ExperienceLevelExperienced])
+	assert.NotNil(t, zeebeeEngine.PreApprovalRules[ExperienceLevelInstitutional])
 
 	t.Run("approved loan for no experienced borrower - rehab light", func(t *testing.T) {
 		input := InputLoanInfo{
@@ -34,7 +34,7 @@ func TestPreApproveEngine_CalPreApprovedLoanAmount(t *testing.T) {
 			TotalAmount:             500000,
 		}
 
-		result, err := zeebeeEngine.CalPreApprovedLoanAmount(input)
+		result, err := zeebeeEngine.CalPreApprovaldLoanAmount(input)
 		assert.NoError(t, err)
 		assert.True(t, result.IsApproved)
 		assert.Greater(t, result.TotalAmount, 0.0)
@@ -57,7 +57,7 @@ func TestPreApproveEngine_CalPreApprovedLoanAmount(t *testing.T) {
 			TotalAmount:             500000,
 		}
 
-		result, err := zeebeeEngine.CalPreApprovedLoanAmount(input)
+		result, err := zeebeeEngine.CalPreApprovaldLoanAmount(input)
 		assert.NoError(t, err)
 		assert.True(t, result.IsApproved)
 		assert.Greater(t, result.TotalAmount, 0.0)
@@ -81,7 +81,7 @@ func TestPreApproveEngine_CalPreApprovedLoanAmount(t *testing.T) {
 			InterestReserveMonths:   6,
 		}
 
-		result, err := zeebeeEngine.CalPreApprovedLoanAmount(input)
+		result, err := zeebeeEngine.CalPreApprovaldLoanAmount(input)
 		assert.NoError(t, err)
 		assert.True(t, result.IsApproved)
 		assert.Greater(t, result.TotalAmount, 0.0)
@@ -103,7 +103,7 @@ func TestPreApproveEngine_CalPreApprovedLoanAmount(t *testing.T) {
 			PurchaseAmount:          500000,
 		}
 
-		result, err := zeebeeEngine.CalPreApprovedLoanAmount(input)
+		result, err := zeebeeEngine.CalPreApprovaldLoanAmount(input)
 		assert.NoError(t, err)
 		assert.False(t, result.IsApproved)
 	})
@@ -122,7 +122,7 @@ func TestPreApproveEngine_CalPreApprovedLoanAmount(t *testing.T) {
 			PurchaseAmount:          500000,
 		}
 
-		result, err := zeebeeEngine.CalPreApprovedLoanAmount(input)
+		result, err := zeebeeEngine.CalPreApprovaldLoanAmount(input)
 		assert.NoError(t, err)
 		assert.False(t, result.IsApproved)
 	})
@@ -141,7 +141,7 @@ func TestPreApproveEngine_CalPreApprovedLoanAmount(t *testing.T) {
 			PurchaseAmount:          500000,
 		}
 
-		result, err := zeebeeEngine.CalPreApprovedLoanAmount(input)
+		result, err := zeebeeEngine.CalPreApprovaldLoanAmount(input)
 		assert.NoError(t, err)
 		assert.False(t, result.IsApproved)
 	})
@@ -160,7 +160,7 @@ func TestPreApproveEngine_CalPreApprovedLoanAmount(t *testing.T) {
 			PurchaseAmount:          500000,
 		}
 
-		result, err := zeebeeEngine.CalPreApprovedLoanAmount(input)
+		result, err := zeebeeEngine.CalPreApprovaldLoanAmount(input)
 		assert.NoError(t, err)
 		assert.True(t, result.IsApproved)
 	})
@@ -181,7 +181,7 @@ func TestPreApproveEngine_CalPreApprovedLoanAmount(t *testing.T) {
 			TotalAmount:             400000,
 		}
 
-		result, err := zeebeeEngine.CalPreApprovedLoanAmount(input)
+		result, err := zeebeeEngine.CalPreApprovaldLoanAmount(input)
 		if err != nil {
 			t.Logf("Error: %v", err)
 		}
@@ -212,7 +212,7 @@ func TestPreApproveEngine_CalPreApprovedLoanAmount(t *testing.T) {
 			PurchaseAmount:          500000,
 		}
 
-		result, err := zeebeeEngine.CalPreApprovedLoanAmount(input)
+		result, err := zeebeeEngine.CalPreApprovaldLoanAmount(input)
 		assert.NoError(t, err)
 		assert.False(t, result.IsApproved)
 	})

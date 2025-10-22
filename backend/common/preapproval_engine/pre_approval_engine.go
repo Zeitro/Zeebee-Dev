@@ -1,4 +1,4 @@
-package pre_approve_engine
+package preapproval_engine
 
 import (
 	"math"
@@ -43,8 +43,8 @@ type InputLoanInfo struct {
 	InterestReserveMonths   int                   `json:"interest_reserve_months"`
 }
 
-// CalculatePreApprovedLoanAmountResult represents the result of calculating pre-approved loan amount
-type CalculatePreApprovedLoanAmountResult struct {
+// CalculatePreApprovaldLoanAmountResult represents the result of calculating pre-approved loan amount
+type CalculatePreApprovaldLoanAmountResult struct {
 	RequestId              string          `json:"request_id"`
 	LenderCompanyName      string          `json:"lender_company_name"`
 	LenderCompanyId        int64           `json:"lender_company_id"`
@@ -64,23 +64,23 @@ type CalculatePreApprovedLoanAmountResult struct {
 	ExperienceLevel        ExperienceLevel `json:"experience_level"`
 }
 
-// PreApproveEngine represents the pre-approval engine
-type PreApproveEngine struct {
-	LenderCompanyName string                              `json:"lender_company_name"`
-	LenderCompanyId   int64                               `json:"lender_company_id"`
-	PreApproveRules   map[ExperienceLevel]*PreApproveRule `json:"pre_approve_rules"`
+// PreApprovalEngine represents the pre-approval engine
+type PreApprovalEngine struct {
+	LenderCompanyName string                               `json:"lender_company_name"`
+	LenderCompanyId   int64                                `json:"lender_company_id"`
+	PreApprovalRules  map[ExperienceLevel]*PreApprovalRule `json:"pre_approve_rules"`
 	// ExperienceLevelRule defines rules for determining experience level
 	ExperienceLevelRule ExperienceLevelRule `json:"experience_level_rule"`
 }
 
-// CalPreApprovedLoanAmount calculates and returns the pre-approved loan amount
-func (e *PreApproveEngine) CalPreApprovedLoanAmount(input InputLoanInfo) (result *CalculatePreApprovedLoanAmountResult, err error) {
+// CalPreApprovaldLoanAmount calculates and returns the pre-approved loan amount
+func (e *PreApprovalEngine) CalPreApprovalLoanAmount(input InputLoanInfo) (result *CalculatePreApprovaldLoanAmountResult, err error) {
 	experienceLevel := e.ExperienceLevelRule.getExperienceLevel(input.TransactionHistoryCount)
-	rule, ok := e.PreApproveRules[experienceLevel]
+	rule, ok := e.PreApprovalRules[experienceLevel]
 	if !ok {
 		return nil, errors.WithStack(errors.New("no rule found for experience level"))
 	}
-	result, err = rule.CalPreApprovedLoanAmount(input)
+	result, err = rule.CalPreApprovaldLoanAmount(input)
 	if err != nil {
 		return nil, err
 	}
@@ -89,14 +89,14 @@ func (e *PreApproveEngine) CalPreApprovedLoanAmount(input InputLoanInfo) (result
 	return result, nil
 }
 
-func GetDefaultPreApproveEngines() map[string]*PreApproveEngine {
+func GetDefaultPreApprovalEngines() map[string]*PreApprovalEngine {
 	zeebeeMinLargeUnitCount := 5
 	zeebeeMaxUnitCount := 30
 	zeebeeMinLoanTerm := 12
 	zeebeeMaxLoanTerm := 24
 	zeebeeMinHeavyRehabPercent := 0.3
 	zeebeeExtraFactor := 0.05
-	zeebeePreApproveAmountRange := PreApproveAmountRange{
+	zeebeePreApprovalAmountRange := PreApprovalAmountRange{
 		StandardAmountRange: AmountRange{
 			Min: 75_000,
 			Max: 3_000_000,
@@ -192,17 +192,17 @@ func GetDefaultPreApproveEngines() map[string]*PreApproveEngine {
 	}
 	zeebeeHighValueStates := []*HighValueState{}
 
-	engines := make(map[string]*PreApproveEngine)
-	engines["zeebee"] = &PreApproveEngine{
+	engines := make(map[string]*PreApprovalEngine)
+	engines["zeebee"] = &PreApprovalEngine{
 		LenderCompanyName: "ZeeBee",
 		LenderCompanyId:   1,
 		ExperienceLevelRule: ExperienceLevelRule{
 			MaxTransactionHistoryCountForExperienced:  9,
 			MaxTransactionHistoryCountForNoExperience: 2,
 		},
-		PreApproveRules: map[ExperienceLevel]*PreApproveRule{
+		PreApprovalRules: map[ExperienceLevel]*PreApprovalRule{
 			// No Experienced
-			ExperienceLevelNoExperienced: &PreApproveRule{
+			ExperienceLevelNoExperienced: &PreApprovalRule{
 				ExperienceLevel: ExperienceLevelNoExperienced,
 				ExtraFactor:     zeebeeExtraFactor,
 				PriceCapRuleMap: map[constants.LoanType]*LoanTypeRule{
@@ -243,14 +243,14 @@ func GetDefaultPreApproveEngines() map[string]*PreApproveEngine {
 						},
 					},
 				},
-				HighValueStates:       zeebeeHighValueStates,
-				BaseRate:              0.1,
-				PreApproveAmountRange: zeebeePreApproveAmountRange,
-				MinLargeUnitCount:     zeebeeMinLargeUnitCount,
-				MaxUnitCount:          zeebeeMaxUnitCount,
-				MinLoanTerm:           zeebeeMinLoanTerm,
-				MaxLoanTerm:           zeebeeMaxLoanTerm,
-				MinHeavyRehabPercent:  zeebeeMinHeavyRehabPercent,
+				HighValueStates:        zeebeeHighValueStates,
+				BaseRate:               0.1,
+				PreApprovalAmountRange: zeebeePreApprovalAmountRange,
+				MinLargeUnitCount:      zeebeeMinLargeUnitCount,
+				MaxUnitCount:           zeebeeMaxUnitCount,
+				MinLoanTerm:            zeebeeMinLoanTerm,
+				MaxLoanTerm:            zeebeeMaxLoanTerm,
+				MinHeavyRehabPercent:   zeebeeMinHeavyRehabPercent,
 				LtcBaseRateRules: []BaseRateRule{
 					{
 						Min:      0,
@@ -289,7 +289,7 @@ func GetDefaultPreApproveEngines() map[string]*PreApproveEngine {
 				ServiceFeeConfig: zeebeeServiceFeeConfig,
 			},
 			// Experienced
-			ExperienceLevelExperienced: &PreApproveRule{
+			ExperienceLevelExperienced: &PreApprovalRule{
 				ExperienceLevel: ExperienceLevelExperienced,
 				ExtraFactor:     zeebeeExtraFactor,
 				PriceCapRuleMap: map[constants.LoanType]*LoanTypeRule{
@@ -365,14 +365,14 @@ func GetDefaultPreApproveEngines() map[string]*PreApproveEngine {
 						},
 					},
 				},
-				HighValueStates:       zeebeeHighValueStates,
-				BaseRate:              0.09,
-				PreApproveAmountRange: zeebeePreApproveAmountRange,
-				MinLargeUnitCount:     zeebeeMinLargeUnitCount,
-				MaxUnitCount:          zeebeeMaxUnitCount,
-				MinLoanTerm:           zeebeeMinLoanTerm,
-				MaxLoanTerm:           zeebeeMaxLoanTerm,
-				MinHeavyRehabPercent:  zeebeeMinHeavyRehabPercent,
+				HighValueStates:        zeebeeHighValueStates,
+				BaseRate:               0.09,
+				PreApprovalAmountRange: zeebeePreApprovalAmountRange,
+				MinLargeUnitCount:      zeebeeMinLargeUnitCount,
+				MaxUnitCount:           zeebeeMaxUnitCount,
+				MinLoanTerm:            zeebeeMinLoanTerm,
+				MaxLoanTerm:            zeebeeMaxLoanTerm,
+				MinHeavyRehabPercent:   zeebeeMinHeavyRehabPercent,
 				LtcBaseRateRules: []BaseRateRule{
 					{
 						Min:      0,
@@ -411,7 +411,7 @@ func GetDefaultPreApproveEngines() map[string]*PreApproveEngine {
 				ServiceFeeConfig: zeebeeServiceFeeConfig,
 			},
 			// institutional
-			ExperienceLevelInstitutional: &PreApproveRule{
+			ExperienceLevelInstitutional: &PreApprovalRule{
 				ExperienceLevel: ExperienceLevelInstitutional,
 				ExtraFactor:     zeebeeExtraFactor,
 				PriceCapRuleMap: map[constants.LoanType]*LoanTypeRule{
@@ -505,14 +505,14 @@ func GetDefaultPreApproveEngines() map[string]*PreApproveEngine {
 						},
 					},
 				},
-				HighValueStates:       zeebeeHighValueStates,
-				BaseRate:              0.0875,
-				PreApproveAmountRange: zeebeePreApproveAmountRange,
-				MinLargeUnitCount:     zeebeeMinLargeUnitCount,
-				MaxUnitCount:          zeebeeMaxUnitCount,
-				MinLoanTerm:           zeebeeMinLoanTerm,
-				MaxLoanTerm:           zeebeeMaxLoanTerm,
-				MinHeavyRehabPercent:  zeebeeMinHeavyRehabPercent,
+				HighValueStates:        zeebeeHighValueStates,
+				BaseRate:               0.0875,
+				PreApprovalAmountRange: zeebeePreApprovalAmountRange,
+				MinLargeUnitCount:      zeebeeMinLargeUnitCount,
+				MaxUnitCount:           zeebeeMaxUnitCount,
+				MinLoanTerm:            zeebeeMinLoanTerm,
+				MaxLoanTerm:            zeebeeMaxLoanTerm,
+				MinHeavyRehabPercent:   zeebeeMinHeavyRehabPercent,
 				LtcBaseRateRules: []BaseRateRule{
 					{
 						Min:      0,
