@@ -87,7 +87,10 @@ func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalReque
 	})
 
 	// save original data and result to redis
-	cacheData := types.PreApproveLoanCacheData{}
+	cacheData := types.PreApproveLoanCacheData{
+		RequestData: types.LoanPreApprovalRequest{},
+		ResultData:  &types.LoanPreApprovalResult{},
+	}
 	_ = copier.CopyWithOption(&cacheData.RequestData, in.Data, copier.Option{
 		DeepCopy:      true,
 		CaseSensitive: true,
