@@ -334,11 +334,12 @@ type LoanPageSorter struct {
 }
 
 type LoanPreApproveRequestBorrower struct {
-	Name              string `json:"name" validate:"required,min=1,max=100"`
-	Email             string `json:"email" validate:"required,email"`
-	Phone             string `json:"phone" validate:"required"`
-	FicoScore         int32  `json:"fico_score" validate:"required,gte=300,lte=850"`
-	FlipPropertyCount int32  `json:"flip_property_count" validate:"gte=0"`
+	Name                        string `json:"name" validate:"required,min=1,max=100"`
+	Email                       string `json:"email" validate:"required,email"`
+	Phone                       string `json:"phone" validate:"required"`
+	Est_credit_score            int32  `json:"est_credit_score" validate:"required,gte=300,lte=850"`
+	FlipPropertyCount           int32  `json:"flip_property_count" validate:"gte=0"`
+	PurchaseRentalPropertyCount int32  `json:"purchase_rental_property_count" validate:"gte=0"`
 }
 
 type LoanPreApproveRequestLoan struct {
