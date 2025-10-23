@@ -3,13 +3,19 @@ import React from 'react';
 import PreApprovedSuccess from './Success';
 import PhoneSvg from '@/assets/images/phone.svg';
 import { Button } from 'antd';
-
+import { useRouter } from 'next/navigation';
 // 预审计算loan
 const PreApproved = ({ result }) => {
+	const router = useRouter();
+	const handleClick = (lender_company_id) => {
+		router.push(
+			`/login/register?email=${result?.email}&request_id=${result?.primary?.request_id}&lender_id=${lender_company_id}`,
+		);
+	};
 	return (
 		<div className="w-full px-[10%] lg:px-[12%] 2xl:px-[20%] my-10 overflow-hidden overflow-y-auto flex flex-col gap-4 [&::-webkit-scrollbar-thumb]:border-[#E4F3FF] [&::-webkit-scrollbar]:bg-[#E4F3FF]">
 			{result?.primary?.is_approved ? (
-				<PreApprovedSuccess result={result} />
+				<PreApprovedSuccess result={result} handleClick={handleClick} />
 			) : (
 				<div className="w-[676px] mx-auto py-6 px-4 bg-white rounded-lg">
 					<div className="text-3xl/10 font-medium text-[#0958D9] pb-2 text-center">
@@ -44,12 +50,8 @@ const PreApproved = ({ result }) => {
 						</div>
 					</div>
 					<div className="flex justify-center">
-						<Button
-							onClick={() =>
-								(window.location.href = 'https://zeebee-c41ca3.webflow.io/')
-							}
-						>
-							Return to home page
+						<Button onClick={() => handleClick(result?.primary?.lender_company_id)}>
+							Send loan request & Create your account
 						</Button>
 					</div>
 				</div>

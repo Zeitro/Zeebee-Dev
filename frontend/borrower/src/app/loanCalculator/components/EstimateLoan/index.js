@@ -82,6 +82,7 @@ const EstimateLoan = ({ setIsResult, setResult }) => {
 				method: 'POST',
 				body: estimateLoan,
 			});
+			res.email = estimateLoan?.borrower?.email;
 			setResult(res);
 			setIsResult(true);
 			setLoading(false);

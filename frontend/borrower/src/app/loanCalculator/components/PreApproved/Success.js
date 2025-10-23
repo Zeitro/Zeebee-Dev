@@ -1,14 +1,10 @@
 'use client';
-import { Button, Form, Steps } from 'antd';
-import React, { useEffect, useMemo, useState } from 'react';
-// import styles from './index.module.scss';
-import { useRouter } from 'next/navigation';
-import { createRequest } from '@/lib/fetch';
+import { Button } from 'antd';
+import React from 'react';
 import { formatAmount } from '@/lib/format';
 
 // 批准
-const PreApprovedSuccess = ({ result }) => {
-	const router = useRouter();
+const PreApprovedSuccess = ({ result, handleClick }) => {
 	const zeebeeList = [
 		{
 			label: 'Total loan amount',
@@ -79,11 +75,6 @@ const PreApprovedSuccess = ({ result }) => {
 		},
 	];
 
-	const handleClick = (lender_company_id) => {
-		router.replace(
-			`/login/register?request_id=${result?.primary?.request_id}&lender_id=${lender_company_id}`,
-		);
-	};
 	return (
 		<>
 			<div className={['bg-white rounded-lg px-8 py-6 h-max text-center'].join(' ')}>
