@@ -249,9 +249,40 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int
 		return errors.WithStack(err)
 	}
 
-	// todo send email to lender
+	//  send email to lender
+	err = sendPreApprovalLoanEmail(lenderCompany)
+	if err != nil {
+		return errors.WithStack(err)
+	}
 
 	return err
+}
+
+// sendPreApprovalLoanEmail send pre approval loan email
+func sendPreApprovalLoanEmail(lenderCompany *model.LenderCompany) (err error) {
+	// check lender company
+	if lenderCompany == nil || lenderCompany.Id == 0 {
+		return err
+	}
+	if len(lenderCompany.ContactEmail) == 0 || lenderCompany.Status != constants.LenderCompanyStatusActive {
+		return err
+	}
+	// send email
+	data := map[string]interface{}{}
+	content, err := email2.ParseTemplate(email_tpl.PreApprovalNotification, data)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	msg := email2.Message{
+		Subject: "PreApproval Loan Notification",
+		From:    global.Config.EmailConf.Username,
+		To:      []string{lenderCompany.ContactEmail},
+		Body:    content,
+		IsHTML:  true,
+	}
+	err = global.EmailClient.SendEmail(msg)
+
+	return errors.WithStack(err)
 }
 
 // sendLoginUrlEmail send login url email
@@ -274,11 +305,11 @@ func sendLoginUrlEmail(ctx context.Context, email string, firstName string) (err
 		"url":        fmt.Sprintf("%s", global.Config.LoginUrl),
 		"first_name": firstName,
 	}
-	content, err := email_tpl.GetParsedContent(email_tpl.LoginUrlEmail, data)
+	content, err := email2.ParseTemplate(email_tpl.LoginUrlEmail, data)
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	msg := email2.EmailMessage{
+	msg := email2.Message{
 		Subject: "Login to your account",
 		From:    global.Config.EmailConf.Username,
 		To:      []string{email},
@@ -308,11 +339,11 @@ func sendRegisterVerifyUrlEmail(ctx context.Context, email string, firstName str
 		"url":        fmt.Sprintf("%s?code=%s&email=%s", global.Config.VerifyEmailUrl, code, email),
 		"first_name": firstName,
 	}
-	content, err := email_tpl.GetParsedContent(email_tpl.RegisterVerifyEmail, data)
+	content, err := email2.ParseTemplate(email_tpl.RegisterVerifyEmail, data)
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	msg := email2.EmailMessage{
+	msg := email2.Message{
 		Subject: "Verify your email",
 		From:    global.Config.EmailConf.Username,
 		To:      []string{email},

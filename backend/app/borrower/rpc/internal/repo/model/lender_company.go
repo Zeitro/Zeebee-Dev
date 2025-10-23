@@ -8,9 +8,10 @@ import (
 type LenderCompany struct {
 	Base
 
-	Name    string                        `gorm:"column:name;size:100;not null;default:''" json:"name"`
-	Address types.Address                 `gorm:"column:address;type:jsonb;serializer:json" json:"address"`
-	Status  constants.LenderCompanyStatus `gorm:"column:status;size:10;not null;default:'active'" json:"status"`
+	Name         string                        `gorm:"column:name;size:100;not null;default:''" json:"name"`
+	Address      types.Address                 `gorm:"column:address;type:jsonb;serializer:json" json:"address"`
+	Status       constants.LenderCompanyStatus `gorm:"column:status;size:10;not null;default:'active'" json:"status"`
+	ContactEmail string                        `gorm:"column:contact_email;size:100;not null;default:''" json:"contact_email"`
 
 	Loans []Loan `json:"loans" gorm:"foreignKey:LenderCompanyId;references:Id"`
 }

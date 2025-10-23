@@ -7,19 +7,19 @@ import (
 )
 
 // attachment
-type EmailAttachment struct {
+type Attachment struct {
 	Filename string
 	Reader   io.Reader
 	MimeType string // optional, e.g. "application/pdf"
 }
 
-type EmailMessage struct {
+type Message struct {
 	Subject     string
 	From        string
 	To          []string
 	Body        string
 	Cc          []string
-	Attachments []EmailAttachment
+	Attachments []Attachment
 	IsHTML      bool
 }
 
@@ -43,7 +43,7 @@ func NewEmail(smtp SMTPConfig) *Email {
 }
 
 // SendEmail sends an email using the provided SMTP configuration.
-func (e *Email) SendEmail(msg EmailMessage) error {
+func (e *Email) SendEmail(msg Message) error {
 	m := gomail.NewMessage()
 	m.SetHeader("From", msg.From)
 	m.SetHeader("To", msg.To...)
