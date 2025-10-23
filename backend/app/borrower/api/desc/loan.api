@@ -206,7 +206,6 @@ type (
         OriginalContractDate string `json:"original_contract_date,optional"`
         ExtensionDate string `json:"extension_date,optional"`
         LoanProcessor string `json:"loan_processor,optional"`
-        //        Owner string `json:"owner,optional"`
     }
 
     LoanCreateResponse {
@@ -246,7 +245,6 @@ type (
         OriginalContractDate string `json:"original_contract_date,optional"`
         ExtensionDate string `json:"extension_date,optional"`
         LoanProcessor string `json:"loan_processor,optional"`
-        //        Owner string `json:"owner,optional"`
     }
 )
 
