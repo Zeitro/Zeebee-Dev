@@ -42,8 +42,13 @@ const useCreate = (pageType = 'create') => {
 	const [isChange, setIsChange] = useState(false); // 记录是否操作过form
 	const [confirmLoading, setConfirmLoading] = useState(false); // 保存草稿
 	const [rowData, setRowData] = useState({}); // loan详情
+	const [unitInfo, setUnitInfo] = useState({
+		// unit: {},
+		// future_unit: {},
+	});
 	const isClickBackBtn = useRef(false);
 	const { request } = createRequest();
+
 	// 从property详情跳转的创建loan
 	const getProperty = async () => {
 		const data = await request(api);
@@ -84,41 +89,50 @@ const useCreate = (pageType = 'create') => {
 		if (searchParams.has('id')) getLoanDetail();
 		eventBus.on('getLoanDetail', getLoanDetail);
 		return () => eventBus.off('getLoanDetail', getLoanDetail);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const stepContent = [
-		[
-			<ApplicantInfo key="0-ApplicantInfo" form={form} />,
-			<BorrowerInfo key="1-BorrowerInfo" form={form} />,
-		],
-		[
-			<PropertyInfo
-				key="0-PropertyInfo"
+	const stepContent = useMemo(
+		() => [
+			[
+				<ApplicantInfo key="0-ApplicantInfo" form={form} />,
+				<BorrowerInfo key="1-BorrowerInfo" form={form} />,
+			],
+			[
+				<PropertyInfo
+					key="0-PropertyInfo"
+					form={form}
+					unitInfo={unitInfo}
+					isRequestProperty={searchParams.has('propertyId') || isDetails}
+				/>,
+				<LoanDetail key="1-LoanDetail" form={form} />,
+			],
+			[
+				<Experience
+					key="0-Experience"
+					form={form}
+					rowData={rowData}
+					setIsChange={setIsChange}
+				/>,
+				<ThirdPartyService
+					key="1-ThirdPartyService"
+					form={form}
+					rowData={rowData}
+					setIsChange={setIsChange}
+				/>,
+			],
+			[
+				<Declaration key="0-Declaration" form={form} />,
+				<Demographics key="1-Demographics" form={form} />,
+			],
+			<ReviewAndSign
+				key="0-ReviewAndSign"
 				form={form}
-				isRequestProperty={searchParams.has('propertyId') || isDetails}
-			/>,
-			<LoanDetail key="1-LoanDetail" form={form} />,
-		],
-		[
-			<Experience
-				key="0-Experience"
-				form={form}
-				rowData={rowData}
-				setIsChange={setIsChange}
-			/>,
-			<ThirdPartyService
-				key="1-ThirdPartyService"
-				form={form}
-				rowData={rowData}
-				setIsChange={setIsChange}
+				rowData={isDetails ? rowData : null}
 			/>,
 		],
-		[
-			<Declaration key="0-Declaration" form={form} />,
-			<Demographics key="1-Demographics" form={form} />,
-		],
-		<ReviewAndSign key="0-ReviewAndSign" form={form} rowData={isDetails ? rowData : null} />,
-	];
+		[form, isDetails, rowData, searchParams, unitInfo],
+	);
 
 	// zeeBeeDetails内独有的内容
 	const zeeBeeDetailsContent = [
@@ -401,7 +415,8 @@ const useCreate = (pageType = 'create') => {
 				</Space>
 			</Col>
 		);
-	}, [currentStep, stepNum, loading, errorList, isChange, confirmLoading]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [currentStep, stepNum, loading, errorList, isChange, confirmLoading, stepContent.length]);
 
 	return {
 		getTabsItem,
@@ -421,6 +436,8 @@ const useCreate = (pageType = 'create') => {
 		loading,
 		getZeeBeeDetailsTabsItem,
 		rowData,
+		unitInfo,
+		setUnitInfo,
 	};
 };
 

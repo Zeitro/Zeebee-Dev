@@ -1,12 +1,12 @@
 import React from 'react';
 import styles from './index.module.scss';
-import { Row, Col, Form, Radio, Select, Input, InputNumber } from 'antd';
+import { Row, Col, Form, Select, InputNumber } from 'antd';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import { layoutCol, titleCol } from '@/enum/common';
-import { livingAreaProps, maxNumberOfUnits } from '@/lib/format';
+import { livingAreaProps } from '@/lib/format';
 let name = 'loan_property';
-const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty }) => {
+const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty, unitInfo }) => {
 	const { loanPurposeOptions, loanTypeOptions, propertyTypeOptions } = useGetOptions([
 		{
 			key: 'loan_purpose',
@@ -103,11 +103,11 @@ const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty }) =>
 				>
 					<InputNumber
 						style={{ width: '100%' }}
-						min={1}
-						max={maxNumberOfUnits}
+						min={unitInfo?.unit?.minUnit}
+						max={unitInfo?.unit?.maxUnit}
 						controls={false}
 						placeholder="Enter number of units"
-						disabled={isRequestProperty}
+						disabled={isRequestProperty || unitInfo?.unit?.disabled}
 					/>
 				</Form.Item>
 			</Col>
@@ -194,10 +194,11 @@ const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty }) =>
 				>
 					<InputNumber
 						style={{ width: '100%' }}
-						min={1}
-						max={maxNumberOfUnits}
 						controls={false}
+						min={unitInfo?.future_unit?.minUnit}
+						max={unitInfo?.future_unit?.maxUnit}
 						placeholder="Enter number of units"
+						disabled={unitInfo?.future_unit?.disabled}
 					/>
 				</Form.Item>
 			</Col>
