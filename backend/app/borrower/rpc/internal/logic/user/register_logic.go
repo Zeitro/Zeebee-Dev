@@ -181,7 +181,7 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int
 
 	// create draft loan
 	saveDraftLogic := loanlogic.NewSaveDraftLoanLogic(ctx, l.svcCtx)
-
+	// build LoanApplyRequest
 	loanApplyRequest := &borrower.LoanApplyRequest{
 		Data: &borrower.LoanApplyRequestData{
 			IsPreapproveLoan: true,

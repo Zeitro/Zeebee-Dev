@@ -41,10 +41,15 @@ message UsCitiesRequestData {
   string state_usps = 1;
 }
 
+message GetUuidResponse {
+  string data = 1;
+}
+
 service common {
   rpc GetOpt(OptionRequest) returns(OptionResponse);
   rpc GetUsState(EmptyRequest) returns(StringSliceResponse);
   rpc GetUsCities(UsCitiesRequest) returns(StringSliceResponse);
+  rpc GetUuid(EmptyRequest) returns(GetUuidResponse);
 }
 
 // ================= user service ==================
@@ -573,6 +578,7 @@ message LoanApplyRequestData {
   string apply_form_file = 46;
   bool is_preapprove_loan = 47;
   double est_property_value_amount = 48;
+  string code = 49;
 }
 
 message LoanApplyResponse {

@@ -451,7 +451,13 @@
                     "type": "string"
                   }
                 },
+                "code": {
+                  "type": "string"
+                },
                 "dscr": {
+                  "type": "number"
+                },
+                "est_property_value_amount": {
                   "type": "number"
                 },
                 "est_yearly_rental_income": {
@@ -1055,7 +1061,13 @@
                     "type": "string"
                   }
                 },
+                "code": {
+                  "type": "string"
+                },
                 "dscr": {
+                  "type": "number"
+                },
+                "est_property_value_amount": {
                   "type": "number"
                 },
                 "est_yearly_rental_income": {
@@ -1745,6 +1757,7 @@
                       "loan_term",
                       "arv",
                       "ltv",
+                      "est_property_value_amount",
                       "liquidity_amount",
                       "budget",
                       "mid_construction",
@@ -1925,6 +1938,9 @@
                       },
                       "est_credit_score": {
                         "type": "integer"
+                      },
+                      "est_property_value_amount": {
+                        "type": "number"
                       },
                       "est_yearly_rental_income": {
                         "type": "number"
@@ -2503,7 +2519,7 @@
         }
       }
     },
-    "/api/v1/loan/pre_approve": {
+    "/api/v1/loan/pre_approval": {
       "post": {
         "consumes": [
           "application/json"
@@ -2517,8 +2533,8 @@
         "tags": [
           "loan"
         ],
-        "summary": "pre_approve",
-        "operationId": "loanPreApprove",
+        "summary": "pre_approval",
+        "operationId": "loanPreApproval",
         "parameters": [
           {
             "name": "body",
@@ -2538,7 +2554,7 @@
                     "name",
                     "email",
                     "phone",
-                    "fico_score",
+                    "est_credit_score",
                     "flip_property_count",
                     "purchase_rental_property_count"
                   ],
@@ -2546,7 +2562,7 @@
                     "email": {
                       "type": "string"
                     },
-                    "fico_score": {
+                    "est_credit_score": {
                       "type": "integer"
                     },
                     "flip_property_count": {
@@ -2567,21 +2583,19 @@
                   "type": "object",
                   "required": [
                     "loan_term",
-                    "est_current_property_value_amount",
+                    "est_property_value_amount",
                     "arv",
                     "total_amount",
                     "principal_amount",
                     "purchase_date",
                     "purchase_amount",
-                    "cost_to_date",
+                    "cost_spent_to_date_amount",
                     "budget_amount",
                     "initial_amount",
                     "holdback_amount",
                     "interest_reserve_months",
                     "loan_purpose",
-                    "loan_type",
-                    "has_assignment_fee",
-                    "assignment_fee_amount"
+                    "loan_type"
                   ],
                   "properties": {
                     "arv": {
@@ -2593,10 +2607,10 @@
                     "budget_amount": {
                       "type": "number"
                     },
-                    "cost_to_date": {
-                      "type": "string"
+                    "cost_spent_to_date_amount": {
+                      "type": "number"
                     },
-                    "est_current_property_value_amount": {
+                    "est_property_value_amount": {
                       "type": "number"
                     },
                     "has_assignment_fee": {
@@ -2684,47 +2698,138 @@
             "schema": {
               "type": "object",
               "properties": {
-                "cash_to_close": {
-                  "type": "number"
+                "primary": {
+                  "type": "object",
+                  "required": [
+                    "lender_company_id",
+                    "lender_company_name",
+                    "is_approved",
+                    "total_amount",
+                    "rate",
+                    "monthly_payment",
+                    "cash_to_close",
+                    "initial_amount",
+                    "holdback_amount",
+                    "loan_term",
+                    "ltv",
+                    "ltarv",
+                    "ltc",
+                    "reject_reason",
+                    "request_id"
+                  ],
+                  "properties": {
+                    "cash_to_close": {
+                      "type": "number"
+                    },
+                    "holdback_amount": {
+                      "type": "number"
+                    },
+                    "initial_amount": {
+                      "type": "number"
+                    },
+                    "is_approved": {
+                      "type": "boolean"
+                    },
+                    "lender_company_id": {
+                      "type": "integer"
+                    },
+                    "lender_company_name": {
+                      "type": "string"
+                    },
+                    "loan_term": {
+                      "type": "integer"
+                    },
+                    "ltarv": {
+                      "type": "number"
+                    },
+                    "ltc": {
+                      "type": "number"
+                    },
+                    "ltv": {
+                      "type": "number"
+                    },
+                    "monthly_payment": {
+                      "type": "number"
+                    },
+                    "rate": {
+                      "type": "number"
+                    },
+                    "reject_reason": {
+                      "type": "string"
+                    },
+                    "request_id": {
+                      "type": "string"
+                    },
+                    "total_amount": {
+                      "type": "number"
+                    }
+                  }
                 },
-                "code": {
-                  "type": "string"
-                },
-                "holdback_amount": {
-                  "type": "number"
-                },
-                "initial_amount": {
-                  "type": "number"
-                },
-                "is_approved": {
-                  "type": "boolean"
-                },
-                "loan_term": {
-                  "type": "integer"
-                },
-                "ltarv": {
-                  "type": "number"
-                },
-                "ltv": {
-                  "type": "number"
-                },
-                "monthly_payment": {
-                  "type": "number"
-                },
-                "rate": {
-                  "type": "number"
-                },
-                "reject_reason": {
-                  "type": "string"
-                },
-                "request_id": {
-                  "type": "string"
-                },
-                "tlc": {
-                  "type": "number"
-                },
-                "total_amount": {
-                  "type": "number"
+                "secondaries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "lender_company_id",
+                      "lender_company_name",
+                      "total_amount",
+                      "rate",
+                      "loan_term"
+                    ],
+                    "properties": {
+                      "lender_company_id": {
+                        "type": "integer"
+                      },
+                      "lender_company_name": {
+                        "type": "string"
+                      },
+                      "loan_term": {
+                        "type": "object",
+                        "required": [
+                          "min",
+                          "max"
+                        ],
+                        "properties": {
+                          "max": {
+                            "type": "integer"
+                          },
+                          "min": {
+                            "type": "integer"
+                          }
+                        }
+                      },
+                      "rate": {
+                        "type": "object",
+                        "required": [
+                          "min",
+                          "max"
+                        ],
+                        "properties": {
+                          "max": {
+                            "type": "number"
+                          },
+                          "min": {
+                            "type": "number"
+                          }
+                        }
+                      },
+                      "total_amount": {
+                        "type": "object",
+                        "required": [
+                          "min",
+                          "max"
+                        ],
+                        "properties": {
+                          "max": {
+                            "type": "number"
+                          },
+                          "min": {
+                            "type": "number"
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -2916,6 +3021,9 @@
                 },
                 "est_credit_score": {
                   "type": "integer"
+                },
+                "est_property_value_amount": {
+                  "type": "number"
                 },
                 "est_yearly_rental_income": {
                   "type": "number"
@@ -3945,7 +4053,13 @@
                     "type": "string"
                   }
                 },
+                "code": {
+                  "type": "string"
+                },
                 "dscr": {
+                  "type": "number"
+                },
+                "est_property_value_amount": {
                   "type": "number"
                 },
                 "est_yearly_rental_income": {
@@ -4599,7 +4713,13 @@
                     "type": "string"
                   }
                 },
+                "code": {
+                  "type": "string"
+                },
                 "dscr": {
+                  "type": "number"
+                },
+                "est_property_value_amount": {
                   "type": "number"
                 },
                 "est_yearly_rental_income": {
@@ -5248,11 +5368,17 @@
                     "type": "string"
                   }
                 },
+                "code": {
+                  "type": "string"
+                },
                 "dscr": {
                   "type": "number"
                 },
                 "est_credit_score": {
                   "type": "integer"
+                },
+                "est_property_value_amount": {
+                  "type": "number"
                 },
                 "est_yearly_rental_income": {
                   "type": "number"
@@ -6010,6 +6136,7 @@
                       "loan_term",
                       "arv",
                       "ltv",
+                      "est_property_value_amount",
                       "liquidity_amount",
                       "budget",
                       "mid_construction",
@@ -6190,6 +6317,9 @@
                       },
                       "est_credit_score": {
                         "type": "integer"
+                      },
+                      "est_property_value_amount": {
+                        "type": "number"
                       },
                       "est_yearly_rental_income": {
                         "type": "number"
@@ -6804,6 +6934,7 @@
                       "loan_term",
                       "arv",
                       "ltv",
+                      "est_property_value_amount",
                       "liquidity_amount",
                       "budget",
                       "mid_construction",
@@ -6984,6 +7115,9 @@
                       },
                       "est_credit_score": {
                         "type": "integer"
+                      },
+                      "est_property_value_amount": {
+                        "type": "number"
                       },
                       "est_yearly_rental_income": {
                         "type": "number"
@@ -7584,6 +7718,7 @@
                       "loan_term",
                       "arv",
                       "ltv",
+                      "est_property_value_amount",
                       "liquidity_amount",
                       "budget",
                       "mid_construction",
@@ -7764,6 +7899,9 @@
                       },
                       "est_credit_score": {
                         "type": "integer"
+                      },
+                      "est_property_value_amount": {
+                        "type": "number"
                       },
                       "est_yearly_rental_income": {
                         "type": "number"
@@ -8727,6 +8865,12 @@
                 },
                 "password": {
                   "type": "string"
+                },
+                "pre_approval_request_id": {
+                  "type": "string"
+                },
+                "target_lender_company_id": {
+                  "type": "integer"
                 }
               }
             }
@@ -8961,9 +9105,37 @@
           }
         }
       }
+    },
+    "/api/v1/uuid": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "common"
+        ],
+        "summary": "get uuid",
+        "operationId": "commonGetUuid",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "uuid": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
-  "x-date": "2025-10-21 15:36:07",
+  "x-date": "2025-10-23 17:19:45",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

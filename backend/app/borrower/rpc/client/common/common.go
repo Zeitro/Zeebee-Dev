@@ -27,6 +27,7 @@ type (
 	FileDeleteRequest                     = borrower.FileDeleteRequest
 	FileDeleteRequestData                 = borrower.FileDeleteRequestData
 	FileEntry                             = borrower.FileEntry
+	GetUuidResponse                       = borrower.GetUuidResponse
 	ImportPendingLoansRequest             = borrower.ImportPendingLoansRequest
 	ImportPendingLoansRequestData         = borrower.ImportPendingLoansRequestData
 	ImportPendingLoansResponse            = borrower.ImportPendingLoansResponse
@@ -142,6 +143,7 @@ type (
 		GetOpt(ctx context.Context, in *OptionRequest, opts ...grpc.CallOption) (*OptionResponse, error)
 		GetUsState(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*StringSliceResponse, error)
 		GetUsCities(ctx context.Context, in *UsCitiesRequest, opts ...grpc.CallOption) (*StringSliceResponse, error)
+		GetUuid(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*GetUuidResponse, error)
 	}
 
 	defaultCommon struct {
@@ -168,4 +170,9 @@ func (m *defaultCommon) GetUsState(ctx context.Context, in *EmptyRequest, opts .
 func (m *defaultCommon) GetUsCities(ctx context.Context, in *UsCitiesRequest, opts ...grpc.CallOption) (*StringSliceResponse, error) {
 	client := borrower.NewCommonClient(m.cli.Conn())
 	return client.GetUsCities(ctx, in, opts...)
+}
+
+func (m *defaultCommon) GetUuid(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*GetUuidResponse, error) {
+	client := borrower.NewCommonClient(m.cli.Conn())
+	return client.GetUuid(ctx, in, opts...)
 }

@@ -8,6 +8,8 @@ import (
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/app/borrower/rpc/internal/repo/model"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
@@ -16,9 +18,6 @@ import (
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/common/types"
-	"zeebee-backend/common/uuid"
-
-	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/common/errorx"
 )
@@ -73,12 +72,24 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrowe
 			return innerErr
 		}
 
-		// save loan
-		uid, innerErr := uuid.GetSonyflakeIDString()
+		// check loan
+		if len(data.loan.Code) == 0 {
+			innerErr = errors.WithStack(errors.New("code is empty"))
+		}
+		isExisted, innerErr := l.svcCtx.LoanRepo.IsExistedByColumnsWithTx(l.ctx, tx, map[string]interface{}{"code": data.loan.Code})
 		if innerErr != nil {
 			return innerErr
 		}
-		data.loan.Code = uid
+		if isExisted {
+			return errors.WithStack(errors.New("code already exists"))
+		}
+
+		// uid, innerErr := uuid.GetSonyflakeIDString()
+		// if innerErr != nil {
+		// 	return innerErr
+		// }
+		// data.loan.Code = uid
+		// save loan
 		loan, innerErr = l.svcCtx.LoanRepo.CreateWithTx(l.ctx, tx, data.loan, false)
 		if innerErr != nil {
 			return innerErr

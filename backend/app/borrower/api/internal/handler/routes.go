@@ -56,6 +56,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/us_states",
 				Handler: common.GetUsStatesHandler(serverCtx),
 			},
+			{
+				// get uuid
+				Method:  http.MethodGet,
+				Path:    "/uuid",
+				Handler: common.GetUuidHandler(serverCtx),
+			},
 		},
 		rest.WithPrefix("/api/v1"),
 	)
