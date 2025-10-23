@@ -29,7 +29,7 @@ type ApplyFormPdfRequest struct {
 	LoanTerm                 int32                      `json:"loan_term,optional" validate:"gte=1"`
 	Arv                      float64                    `json:"arv,optional" validate:"required,gte=0"`
 	Ltv                      float64                    `json:"ltv,optional" validate:"gte=0"`
-	EstPropertyValueAmount   float64                    `json:"est_property_value_amount" validate:"required_unless=LoanPurpose Purchase,omitempty,gte=0"`
+	EstPropertyValueAmount   float64                    `json:"est_property_value_amount,optional" validate:"required_unless=LoanPurpose Purchase,omitempty,gte=0"`
 	LiquidityAmount          float64                    `json:"liquidity_amount,optional" validate:"gte=0"`
 	Budget                   *LoanBudgetEntry           `json:"budget,optional" validate:"required_if=LoanType Rehab LoanType 'Ground up construction'"`
 	MidConstruction          bool                       `json:"mid_construction,optional"`

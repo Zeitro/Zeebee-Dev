@@ -1,11 +1,9 @@
 package email_tpl
 
 import (
-	"bytes"
 	"embed"
-	"html/template"
 
-	"github.com/pkg/errors"
+	"zeebee-backend/common/email"
 )
 
 var EmailTplFS embed.FS
@@ -19,32 +17,19 @@ var SendResetPwdEmailTpl string
 //go:embed send_login_url_email.html
 var SendLoginUrlEmailTpl string
 
+//go:embed send_pre_approval_notification.html
+var SendPreApprovalNotificationTpl string
+
 const (
-	RegisterVerifyEmail = "register_verify_email"
-	ResetPwdEmail       = "reset_pwd_email"
-	LoginUrlEmail       = "login_url_email"
+	RegisterVerifyEmail     = "register_verify_email"
+	ResetPwdEmail           = "reset_pwd_email"
+	LoginUrlEmail           = "login_url_email"
+	PreApprovalNotification = "pre_approval_notification"
 )
 
-var tpls = map[string]*template.Template{}
-var ErrEmailTemplateNotFound = errors.New("email template not found")
-
 func init() {
-	tpls = map[string]*template.Template{
-		RegisterVerifyEmail: template.Must(template.New(RegisterVerifyEmail).Parse(SendRegisterVerifyEmailTpl)),
-		ResetPwdEmail:       template.Must(template.New(ResetPwdEmail).Parse(SendResetPwdEmailTpl)),
-		LoginUrlEmail:       template.Must(template.New(LoginUrlEmail).Parse(SendLoginUrlEmailTpl)),
-	}
-}
-
-func GetParsedContent(name string, data map[string]interface{}) (content string, err error) {
-	tpl, ok := tpls[name]
-	if !ok {
-		return "", ErrEmailTemplateNotFound
-	}
-	buf := new(bytes.Buffer)
-	err = tpl.Execute(buf, data)
-	if err != nil {
-		return "", err
-	}
-	return buf.String(), nil
+	_ = email.RegisterTemplateWithText(RegisterVerifyEmail, SendRegisterVerifyEmailTpl)
+	_ = email.RegisterTemplateWithText(ResetPwdEmail, SendResetPwdEmailTpl)
+	_ = email.RegisterTemplateWithText(LoginUrlEmail, SendLoginUrlEmailTpl)
+	_ = email.RegisterTemplateWithText(PreApprovalNotification, SendPreApprovalNotificationTpl)
 }
