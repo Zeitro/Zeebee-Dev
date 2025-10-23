@@ -20,8 +20,43 @@ export const maxCreditScore = 850;
 export const maxAmount = 1000000000000;
 // 最大单元数
 export const maxNumberOfUnits = 100;
-// 最大贷款期限（月）
+// 系统最大贷款期限（月）
 export const maxTerm = 10000;
+// ZeeBee,最小/最大贷款期限（月）
+export const maxTerm_zeeBee = 24;
+export const minTerm_zeeBee = 12;
+
+// 通过property_type获取unit
+export const changeUnitByPropertyType = (property_type) => {
+	let unit = null,
+		minUnit = 1,
+		maxUnit = maxNumberOfUnits,
+		disabled = false;
+	switch (property_type) {
+		case 'Single Family Residence':
+			unit = minUnit = 1;
+			disabled = true;
+			break;
+		case '2 unit':
+			unit = minUnit = 2;
+			disabled = true;
+			break;
+		case '3 unit':
+			unit = minUnit = 3;
+			disabled = true;
+			break;
+		case '4 unit':
+			unit = minUnit = 4;
+			disabled = true;
+			break;
+		case '4+ Multi':
+			unit = minUnit = 5;
+			break;
+		default:
+			break;
+	}
+	return { unit, minUnit, maxUnit, disabled };
+};
 
 // 格式化居住面积, 用于<InputNumber>中配置
 export const livingAreaProps = {
@@ -40,6 +75,19 @@ export const livingAreaProps = {
 export const validateRule = (value, regex, errorMsg = 'Invalid input') => {
 	if (value && !regex.test(value)) {
 		return Promise.reject(errorMsg);
+	}
+	return Promise.resolve();
+};
+
+//AssignmentFee 金额效验
+export const validateAssignmentFeeAmount = (value, purchase_amount) => {
+	// Assignment fee 最高只能达到purchase price的10%
+	const max = purchase_amount * 0.1;
+	if (!value) {
+		return Promise.reject('Please enter assignment fee amount!');
+	}
+	if (value && value > max) {
+		return Promise.reject(`Assignment fee cannot exceed purchase price's 10% ($${max})`);
 	}
 	return Promise.resolve();
 };
@@ -88,9 +136,6 @@ export const formatPhone = (phoneNumber) => {
 
 // 格式化金额，千分位加逗号，可最多保留2位小数
 export function formatAmount(amount) {
-	// if (typeof amount === 'number' && amount <= 0) {
-	// 	return '$ 0';
-	// }
 	if (!amount) return '$ --';
 	if (typeof amount === 'string') {
 		amount = Number(amount);
