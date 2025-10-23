@@ -46,6 +46,10 @@ service borrower-api {
 	@doc "get us city"
 	@handler GetUsCities
 	get /us_cities (GetUsCitiesRequest) returns (GetUsCitiesResponse)
+
+	@doc "get uuid"
+	@handler GetUuid
+	get /uuid (EmptyRequest) returns (GetUuidResponse)
 }
 
 // ============== user =============
@@ -102,11 +106,11 @@ service borrower-api {
 
 // ============== loan =============
 @server(
-    desc: "loan service"
+	desc: "loan service"
 	version: v1
-    group: loan
+	group: loan
 	prefix:  /api/v1
-    tags: loan
+	tags: loan
 )
 service borrower-api {
 	@doc "pre_approval"
@@ -212,12 +216,12 @@ service borrower-api {
 
 // =============== pdf ==============
 @server(
-    desc: "applicant service"
-    version: v1
-    group: pdf
+	desc: "applicant service"
+	version: v1
+	group: pdf
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: pdf
+	tags: pdf
 )
 service borrower-api {
 	@doc "create apply form pdf"
@@ -227,12 +231,12 @@ service borrower-api {
 
 // =============== storage ==============
 @server(
-    desc: "storage service"
-    version: v1
-    group: storage
+	desc: "storage service"
+	version: v1
+	group: storage
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: storage
+	tags: storage
 )
 service borrower-api {
 	@doc "create aws s3 presign url"
@@ -242,12 +246,12 @@ service borrower-api {
 
 // =============== file ==============
 @server(
-    desc: "file service"
-    version: v1
-    group: file
+	desc: "file service"
+	version: v1
+	group: file
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: file
+	tags: file
 )
 service borrower-api {
 	@doc "delete"
@@ -257,12 +261,12 @@ service borrower-api {
 
 // ============== loan document =============
 @server(
-    desc: "loan document service"
-    version: v1
-    group: loan_document
+	desc: "loan document service"
+	version: v1
+	group: loan_document
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: loan_document
+	tags: loan_document
 )
 service borrower-api {
 	@doc "add files"
