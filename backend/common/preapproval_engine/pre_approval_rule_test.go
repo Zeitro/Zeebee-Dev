@@ -126,7 +126,7 @@ func TestPreApprovalRule_CalPreApprovaldLoanAmount(t *testing.T) {
 			PurchaseAmount:          500000,
 		}
 
-		result, err := rule.CalPreApprovaldLoanAmount(input)
+		result, err := rule.CalPreApprovalLoanAmount(input)
 		assert.NoError(t, err)
 		assert.True(t, result.IsApproved)
 		assert.Greater(t, result.TotalAmount, 0.0)
@@ -148,7 +148,7 @@ func TestPreApprovalRule_CalPreApprovaldLoanAmount(t *testing.T) {
 			InterestReserveMonths:   6,
 		}
 
-		result, err := rule.CalPreApprovaldLoanAmount(input)
+		result, err := rule.CalPreApprovalLoanAmount(input)
 		assert.NoError(t, err)
 		assert.True(t, result.IsApproved)
 		assert.Greater(t, result.TotalAmount, 0.0)
@@ -169,7 +169,7 @@ func TestPreApprovalRule_CalPreApprovaldLoanAmount(t *testing.T) {
 			PurchaseAmount:          500000,
 		}
 
-		result, err := rule.CalPreApprovaldLoanAmount(input)
+		result, err := rule.CalPreApprovalLoanAmount(input)
 		assert.NoError(t, err)
 		assert.False(t, result.IsApproved)
 	})
@@ -188,7 +188,7 @@ func TestPreApprovalRule_CalPreApprovaldLoanAmount(t *testing.T) {
 			PurchaseAmount:          500000,
 		}
 
-		result, err := rule.CalPreApprovaldLoanAmount(input)
+		result, err := rule.CalPreApprovalLoanAmount(input)
 		assert.NoError(t, err)
 		assert.False(t, result.IsApproved)
 	})
@@ -207,7 +207,7 @@ func TestPreApprovalRule_CalPreApprovaldLoanAmount(t *testing.T) {
 			PurchaseAmount:          500000,
 		}
 
-		_, err := rule.CalPreApprovaldLoanAmount(input)
+		_, err := rule.CalPreApprovalLoanAmount(input)
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "invalid loan type")
 	})
@@ -226,7 +226,7 @@ func TestPreApprovalRule_CalPreApprovaldLoanAmount(t *testing.T) {
 			PurchaseAmount:          500000,
 		}
 
-		result, err := rule.CalPreApprovaldLoanAmount(input)
+		result, err := rule.CalPreApprovalLoanAmount(input)
 		assert.NoError(t, err)
 		assert.False(t, result.IsApproved)
 	})
@@ -245,7 +245,7 @@ func TestPreApprovalRule_CalPreApprovaldLoanAmount(t *testing.T) {
 			PurchaseAmount:          500000,
 		}
 
-		result, err := rule.CalPreApprovaldLoanAmount(input)
+		result, err := rule.CalPreApprovalLoanAmount(input)
 		assert.NoError(t, err)
 		assert.True(t, result.IsApproved)
 	})
