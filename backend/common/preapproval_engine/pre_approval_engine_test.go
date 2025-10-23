@@ -8,7 +8,7 @@ import (
 	"zeebee-backend/common/constants"
 )
 
-func TestPreApprovalEngine_CalPreApprovaldLoanAmount(t *testing.T) {
+func TestPreApprovalEngine_CalPreApprovalLoanAmount(t *testing.T) {
 	// 获取默认的预批准引擎
 	engines := GetDefaultPreApprovalEngines()
 	zeebeeEngine := engines["zeebee"]
@@ -34,7 +34,7 @@ func TestPreApprovalEngine_CalPreApprovaldLoanAmount(t *testing.T) {
 			TotalAmount:             500000,
 		}
 
-		result, err := zeebeeEngine.CalPreApprovaldLoanAmount(input)
+		result, err := zeebeeEngine.CalPreApprovalLoanAmount(input)
 		assert.NoError(t, err)
 		assert.True(t, result.IsApproved)
 		assert.Greater(t, result.TotalAmount, 0.0)
@@ -57,7 +57,7 @@ func TestPreApprovalEngine_CalPreApprovaldLoanAmount(t *testing.T) {
 			TotalAmount:             500000,
 		}
 
-		result, err := zeebeeEngine.CalPreApprovaldLoanAmount(input)
+		result, err := zeebeeEngine.CalPreApprovalLoanAmount(input)
 		assert.NoError(t, err)
 		assert.True(t, result.IsApproved)
 		assert.Greater(t, result.TotalAmount, 0.0)
@@ -81,7 +81,7 @@ func TestPreApprovalEngine_CalPreApprovaldLoanAmount(t *testing.T) {
 			InterestReserveMonths:   6,
 		}
 
-		result, err := zeebeeEngine.CalPreApprovaldLoanAmount(input)
+		result, err := zeebeeEngine.CalPreApprovalLoanAmount(input)
 		assert.NoError(t, err)
 		assert.True(t, result.IsApproved)
 		assert.Greater(t, result.TotalAmount, 0.0)
@@ -103,7 +103,7 @@ func TestPreApprovalEngine_CalPreApprovaldLoanAmount(t *testing.T) {
 			PurchaseAmount:          500000,
 		}
 
-		result, err := zeebeeEngine.CalPreApprovaldLoanAmount(input)
+		result, err := zeebeeEngine.CalPreApprovalLoanAmount(input)
 		assert.NoError(t, err)
 		assert.False(t, result.IsApproved)
 	})
@@ -122,7 +122,7 @@ func TestPreApprovalEngine_CalPreApprovaldLoanAmount(t *testing.T) {
 			PurchaseAmount:          500000,
 		}
 
-		result, err := zeebeeEngine.CalPreApprovaldLoanAmount(input)
+		result, err := zeebeeEngine.CalPreApprovalLoanAmount(input)
 		assert.NoError(t, err)
 		assert.False(t, result.IsApproved)
 	})
@@ -141,7 +141,7 @@ func TestPreApprovalEngine_CalPreApprovaldLoanAmount(t *testing.T) {
 			PurchaseAmount:          500000,
 		}
 
-		result, err := zeebeeEngine.CalPreApprovaldLoanAmount(input)
+		result, err := zeebeeEngine.CalPreApprovalLoanAmount(input)
 		assert.NoError(t, err)
 		assert.False(t, result.IsApproved)
 	})
@@ -160,7 +160,7 @@ func TestPreApprovalEngine_CalPreApprovaldLoanAmount(t *testing.T) {
 			PurchaseAmount:          500000,
 		}
 
-		result, err := zeebeeEngine.CalPreApprovaldLoanAmount(input)
+		result, err := zeebeeEngine.CalPreApprovalLoanAmount(input)
 		assert.NoError(t, err)
 		assert.True(t, result.IsApproved)
 	})
@@ -181,7 +181,7 @@ func TestPreApprovalEngine_CalPreApprovaldLoanAmount(t *testing.T) {
 			TotalAmount:             400000,
 		}
 
-		result, err := zeebeeEngine.CalPreApprovaldLoanAmount(input)
+		result, err := zeebeeEngine.CalPreApprovalLoanAmount(input)
 		if err != nil {
 			t.Logf("Error: %v", err)
 		}
@@ -212,8 +212,31 @@ func TestPreApprovalEngine_CalPreApprovaldLoanAmount(t *testing.T) {
 			PurchaseAmount:          500000,
 		}
 
-		result, err := zeebeeEngine.CalPreApprovaldLoanAmount(input)
+		result, err := zeebeeEngine.CalPreApprovalLoanAmount(input)
 		assert.NoError(t, err)
 		assert.False(t, result.IsApproved)
 	})
+
+	t.Run("approved loan based on provided JSON data", func(t *testing.T) {
+		input := InputLoanInfo{
+			LoanType:                constants.LoanTypeRehab,
+			LoanPurpose:             constants.LoanPurposePurchase,
+			FicoScore:               560,
+			TransactionHistoryCount: 11, // flip_property_count(8) + purchase_rental_property_count(3)
+			Unit:                    3,
+			LoanTerm:                12,
+			EstCurrentPropertyValue: 566666, // est_property_value_amount
+			EstAfterRepairValue:     89000,  // arv
+			OriginalBudgetAmount:    8999,   // budget_amount
+			PurchaseAmount:          689990, // purchase_amount
+			InitialAmount:           89999,  // initial_amount
+			TotalAmount:             689990, // total_amount
+			InterestReserveMonths:   9,      // interest_reserve_months
+		}
+
+		result, err := zeebeeEngine.CalPreApprovalLoanAmount(input)
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+
 }

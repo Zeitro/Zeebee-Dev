@@ -19,7 +19,7 @@ type ApplicantEntry struct {
 	FullName         string        `json:"full_name,omitempty, optional"`
 	BorrowerId       int64         `json:"borrower_id,omitempty, optional"`
 	LoanId           int64         `json:"loan_id,omitempty, optional"`
-	IsPrimary        bool          `json:"is_primary,omitempty, optional"`
+	IsPrimary        bool          `json:"is_primary, optional"`
 	Type             string        `json:"type,omitempty, optional"`
 	InvitationStatus string        `json:"invitation_status,omitempty, optional"`
 	LoanPropertyId   int64         `json:"loan_property_id,omitempty"`

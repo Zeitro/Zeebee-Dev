@@ -161,6 +161,8 @@ func (r *PreApprovalRule) CalPreApprovalLoanAmount(input InputLoanInfo) (result 
 	// Check if loan is rejected based on calculated values
 	if ltaiv == 0 || ltc == 0 || ltarv == 0 {
 		result.RejectReason = "Can Not Get ltaiv/ltc/ltarv"
+		result.Ltc = float32(ltc)
+		result.Ltarv = float32(ltarv)
 		return result, nil
 	}
 

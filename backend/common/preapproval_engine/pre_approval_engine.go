@@ -475,34 +475,116 @@ func GetDefaultPreApprovalEngines() map[string]*PreApprovalEngine {
 					},
 					constants.LoanTypeRehab: {
 						LoanType: constants.LoanTypeRehab,
-						GeneralRules: &GeneralLoanTypeRules{
-							GeneralRules: &RuleCap{
-								Ltaiv: &Values{
-									Standard:  0.85,
-									LargeUnit: 0.80,
+						GeneralRules: &RehabLoanTypeRules{
+							Light: RehabLoanTypeRule{
+								GeneralRule: &RuleCap{
+									Ltaiv: &Values{
+										Standard:  0.85,
+										LargeUnit: 0.8,
+									},
+									Ltc: &Values{
+										Standard:  0.9,
+										LargeUnit: 0.8,
+									},
+									Ltarv: &Values{
+										Standard:  0.75,
+										LargeUnit: 0.75,
+									},
 								},
-								Ltc: &Values{
-									Standard:  0.90,
-									LargeUnit: 0.8,
-								},
-								Ltarv: &Values{
-									Standard:  0.75,
-									LargeUnit: 0.75,
+							},
+							Heavy: RehabLoanTypeRule{
+								GeneralRule: &RuleCap{
+									Ltaiv: &Values{
+										Standard:  0.85,
+										LargeUnit: 0.8,
+									},
+									Ltc: &Values{
+										Standard:  0.9,
+										LargeUnit: 0.8,
+									},
+									Ltarv: &Values{
+										Standard:  0.75,
+										LargeUnit: 0.75,
+									},
 								},
 							},
 						},
-						HighValueRules: &GeneralLoanTypeRules{
-							GeneralRules: &RuleCap{
-								Ltaiv: &Values{
-									Standard:  0.8,
-									LargeUnit: 0.8,
+						HighValueRules: &RehabLoanTypeRules{
+							Light: RehabLoanTypeRule{
+								GeneralRule: &RuleCap{
+									Ltaiv: &Values{
+										Standard:  0.85,
+										LargeUnit: 0.8,
+									},
+									Ltc: &Values{
+										Standard:  0.65,
+										LargeUnit: 0.65,
+									},
+									Ltarv: &Values{
+										Standard:  0.75,
+										LargeUnit: 0.75,
+									},
 								},
-								Ltc: &Values{
-									Standard:  0.65,
-									LargeUnit: 0.65,
+							},
+							Heavy: RehabLoanTypeRule{
+								GeneralRule: &RuleCap{
+									Ltaiv: &Values{
+										Standard:  0.85,
+										LargeUnit: 0.8,
+									},
+									Ltc: &Values{
+										Standard:  0.8,
+										LargeUnit: 0.8,
+									},
+									Ltarv: &Values{
+										Standard:  0.65,
+										LargeUnit: 0.65,
+									},
+								},
+								HighValueRule: &RuleCap{
+									Ltaiv: &Values{
+										Standard:  0.85,
+										LargeUnit: 0.8,
+									},
+									Ltc: &Values{
+										Standard:  0.8,
+										LargeUnit: 0.8,
+									},
+									Ltarv: &Values{
+										Standard:  0.65,
+										LargeUnit: 0.65,
+									},
 								},
 							},
 						},
+						// GeneralRules: &GeneralLoanTypeRules{
+						// 	GeneralRules: &RuleCap{
+						// 		Ltaiv: &Values{
+						// 			Standard:  0.85,
+						// 			LargeUnit: 0.80,
+						// 		},
+						// 		Ltc: &Values{
+						// 			Standard:  0.90,
+						// 			LargeUnit: 0.8,
+						// 		},
+						// 		Ltarv: &Values{
+						// 			Standard:  0.75,
+						// 			LargeUnit: 0.75,
+						// 		},
+						// 	},
+						// },
+						// HighValueRules: &GeneralLoanTypeRules{
+						// 	GeneralRules: &RuleCap{
+						// 		Ltaiv: &Values{
+						// 			Standard:  0.8,
+						// 			LargeUnit: 0.8,
+						// 		},
+						// 		Ltc: &Values{
+						// 			Standard:  0.65,
+						// 			LargeUnit: 0.65,
+						// 		},
+						// 	},
+						// },
 					},
 				},
 				HighValueStates:        zeebeeHighValueStates,
