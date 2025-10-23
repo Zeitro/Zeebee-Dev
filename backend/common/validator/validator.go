@@ -95,6 +95,16 @@ func (v *Validator) RegisterStructRule(fn go_validator.StructLevelFunc, types ..
 	v.validator.RegisterStructValidation(fn, types...)
 }
 
+func (v *Validator) RegisterTansMsg(tag string, msgFormat string) (err error) {
+	err = v.validator.RegisterTranslation(tag, v.trans, func(ut ut.Translator) error {
+		return ut.Add(tag, msgFormat, true)
+	}, func(ut ut.Translator, fe go_validator.FieldError) string {
+		t, _ := ut.T(tag, fe.Field(), fe.Param(), fe.Tag())
+		return t
+	})
+	return err
+}
+
 func (v *Validator) registerTrans() (err error) {
 	err = v.validator.RegisterTranslation("password", v.trans, func(ut ut.Translator) error {
 		return ut.Add("password", "{0} must contain uppercase and lowercase letters, numbers, and at least 8 digits", true)

@@ -39,6 +39,7 @@ func CreateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 		v.RegisterStructRule(validate_rules.LoanPropertyEntry, types.LoanPropertyEntry{})
+		_ = v.RegisterTansMsg(validate_rules.PropertyUnitTag, validate_rules.PropertyUnitMsgTpl)
 		if err := v.Validate(&req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return

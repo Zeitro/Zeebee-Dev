@@ -39,6 +39,7 @@ func PreApprovalHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 		v.RegisterStructRule(validate_rules.LoanPreApprovalRequestProperty, types.LoanPreApprovalRequestProperty{})
+		_ = v.RegisterTansMsg(validate_rules.PropertyUnitTag, validate_rules.PropertyUnitMsgTpl)
 		if err := v.Validate(&req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
