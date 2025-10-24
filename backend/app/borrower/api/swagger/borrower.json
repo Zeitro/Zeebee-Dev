@@ -2533,7 +2533,7 @@
         "tags": [
           "loan"
         ],
-        "summary": "pre_approval",
+        "summary": "preapproval",
         "operationId": "loanPreApproval",
         "parameters": [
           {
@@ -2543,6 +2543,7 @@
             "schema": {
               "type": "object",
               "required": [
+                "request_id",
                 "borrower",
                 "property",
                 "loan"
@@ -2687,6 +2688,9 @@
                       "type": "integer"
                     }
                   }
+                },
+                "request_id": {
+                  "type": "string"
                 }
               }
             }
@@ -2832,6 +2836,54 @@
                   }
                 }
               }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/loan/send_pre_approval_loan_notification": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "loan"
+        ],
+        "summary": "send pre approval loan nofification",
+        "operationId": "loanSendPreApprovalLoanNotification",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "request_id",
+                "lender_company_id"
+              ],
+              "properties": {
+                "lender_company_id": {
+                  "type": "integer"
+                },
+                "request_id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
             }
           }
         }
@@ -9135,7 +9187,7 @@
       }
     }
   },
-  "x-date": "2025-10-23 17:19:45",
+  "x-date": "2025-10-24 13:30:47",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
