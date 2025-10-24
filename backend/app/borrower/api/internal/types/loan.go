@@ -177,6 +177,6 @@ type LoanUpdateRequest struct {
 }
 
 type SendPreApprovalLoanNotificationRequest struct {
-	RequestId       string `json:"request_id" validate:"required,number,len=10"`
+	RequestId       string `json:"request_id" validate:"required,number,gte=10"`
 	LenderCompanyId int64  `json:"lender_company_id" validate:"required,min=1"`
 }

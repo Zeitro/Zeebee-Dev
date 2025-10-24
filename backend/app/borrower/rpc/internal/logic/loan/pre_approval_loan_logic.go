@@ -66,7 +66,7 @@ func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalReque
 	if err != nil {
 		return nil, err
 	}
-	requestId := result.RequestId
+	requestId := in.Data.RequestId
 	if len(requestId) == 0 {
 		requestId, _ = uuid.GetSonyflakeIDString()
 	}
@@ -110,7 +110,7 @@ func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalReque
 		DeepCopy:      true,
 		CaseSensitive: true,
 	})
-	key := fmt.Sprintf(constants.BorrowerPreApprovalCacheKey, result.RequestId)
+	key := fmt.Sprintf(constants.BorrowerPreApprovalCacheKey, requestId)
 	contents, _ := json.Marshal(cacheData)
 	err = global.GetRedis().SetExpire(l.ctx, key, string(contents), global.Config.PreApprovalLoanExpireSeconds)
 	if err != nil {
@@ -172,6 +172,7 @@ func sendPreApprovalNotification(ctx context.Context, repo *repo.LenderCompanyRe
 	tplVars := map[string]interface{}{
 		"request": cacheData.RequestData,
 		"result":  cacheData.ResultData,
+		"company": company.Name,
 	}
 	emailContent := ""
 
