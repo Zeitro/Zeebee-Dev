@@ -78,15 +78,15 @@ const getOpt = (showDeleteModal, stage) => {
 				record={record}
 				getItems={(editItem, deleteItem, detailsItem) => {
 					const arr = [];
-						if (record?.source === 'borrower') {
-							arr.push({ ...editItem, url: `/loans/${record?.id}` });
-							arr.push(deleteItem);
-						} else {
-							arr.push({
-								...detailsItem,
-								url: `/loans/zeeBeeDetails?id=${record?.id}`,
-							});
-						}
+					if (record?.source === 'borrower') {
+						arr.push({ ...editItem, url: `/loans/${record?.id}` });
+						arr.push(deleteItem);
+					} else {
+						arr.push({
+							...detailsItem,
+							url: `/loans/zeeBeeDetails?id=${record?.id}`,
+						});
+					}
 					return arr;
 				}}
 				onSelect={(key) => {
