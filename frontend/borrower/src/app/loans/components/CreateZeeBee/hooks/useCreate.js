@@ -46,6 +46,7 @@ const useCreate = (pageType = 'create') => {
 		// unit: {},
 		// future_unit: {},
 	});
+	const [loanUuid, setLoanUuid] = useState(null); // loan uuid,提前创建id用于pdf中展示
 	const isClickBackBtn = useRef(false);
 	const { request } = createRequest();
 
@@ -129,9 +130,10 @@ const useCreate = (pageType = 'create') => {
 				key="0-ReviewAndSign"
 				form={form}
 				rowData={isDetails ? rowData : null}
+				loanUuid={loanUuid}
 			/>,
 		],
-		[form, isDetails, rowData, searchParams, unitInfo],
+		[form, isDetails, rowData, searchParams, unitInfo, loanUuid],
 	);
 
 	// zeeBeeDetails内独有的内容
@@ -178,12 +180,16 @@ const useCreate = (pageType = 'create') => {
 	const diffSteps = () => {
 		// 最后一步
 		const lastStep = stepContent[stepContent.length - 1];
-		// // 倒数第二步
-		// const secondToLastStep = stepContent[stepContent.length - 2];
+		// 倒数第二步
+		const secondToLastStep = stepContent[stepContent.length - 2];
+
 		// 某大步骤下有多个小步骤（数组），如为数组需判断是否最后一小步骤
 		const isLastStepNumByArr = lastStep?.length ? stepNum + 1 === lastStep?.length : true;
 		if (currentStep + 1 === stepContent.length && isLastStepNumByArr) {
 			return 'Submit';
+		}
+		if (stepContent.length - 2 === currentStep && stepNum + 1 === secondToLastStep?.length) {
+			return 'NextMaxStep-CreateUUID';
 		}
 		const parentStepData = createZeeBeeSteps[currentStep];
 		const childArr = parentStepData?.children;
@@ -201,6 +207,8 @@ const useCreate = (pageType = 'create') => {
 		if (searchParams.has('id')) {
 			url = `/loan/${searchParams.get('id')}/update_apply`;
 			method = 'PUT';
+		} else {
+			values.code = loanUuid;
 		}
 		await request(url, {
 			method,
@@ -214,6 +222,9 @@ const useCreate = (pageType = 'create') => {
 
 	const handlePdf = async (values) => {
 		// 获取签名已生成的pdf数据流
+		if (!searchParams.has('id')) {
+			values.code = loanUuid;
+		}
 		const res = await request('/pdf/apply_form', {
 			method: 'POST',
 			body: values,
@@ -250,6 +261,13 @@ const useCreate = (pageType = 'create') => {
 			values.loan_demographic.id = rowData?.loan_demographic?.id;
 		}
 		return values;
+	};
+
+	const handleCreateUUID = async () => {
+		const { uuid } = await request('/uuid', {
+			method: 'GET',
+		});
+		setLoanUuid(uuid);
 	};
 
 	// next/Add loan
@@ -290,7 +308,11 @@ const useCreate = (pageType = 'create') => {
 				router.back();
 				return;
 			}
-			if (isType === 'NextMaxStep') {
+			if (isType === 'NextMaxStep-CreateUUID') {
+				await handleCreateUUID();
+			}
+
+			if (['NextMaxStep', 'NextMaxStep-CreateUUID'].includes(isType)) {
 				setCurrentStep((v) => v + 1);
 				setStepNum(0);
 			} else {
@@ -344,6 +366,7 @@ const useCreate = (pageType = 'create') => {
 			case 'Submit':
 				return 'Submit application';
 			case 'NextMaxStep':
+			case 'NextMaxStep-CreateUUID':
 				return `Next ${createZeeBeeSteps[currentStep + 1]?.title}`;
 			case 'NextMinStep':
 				return `Next ${parentStepData?.children[stepNum + 1]?.title}`;
