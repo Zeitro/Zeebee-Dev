@@ -6,9 +6,19 @@ type LenderCompanyStatus string
 
 const LenderCompanyStatusName = "lender_company_status"
 const (
-	LenderCompanyStatusUnverified LenderCompanyStatus = "unverified"
-	LenderCompanyStatusActive     LenderCompanyStatus = "active"
-	LenderCompanyStatusInactive   LenderCompanyStatus = "inactive"
+	LenderCompanyStatusUnverified LenderCompanyStatus = "Unverified"
+	LenderCompanyStatusActive     LenderCompanyStatus = "Active"
+	LenderCompanyStatusInactive   LenderCompanyStatus = "Inactive"
+)
+
+// Self,Third Party, Partner
+type LenderCompanyOwnerType string
+
+const LenderCompanyOwnerTypeName = "lender_company_owner_type"
+const (
+	LenderCompanyOwnerTypeSelf       LenderCompanyOwnerType = "Self"
+	LenderCompanyOwnerTypeThirdParty LenderCompanyOwnerType = "ThirdParty"
+	LenderCompanyOwnerTypePartner    LenderCompanyOwnerType = "Partner"
 )
 
 func init() {
@@ -25,6 +35,22 @@ func init() {
 		{
 			Label: string(LenderCompanyStatusInactive),
 			Value: string(LenderCompanyStatusInactive),
+		},
+	})
+
+	// register lender company owner type
+	enums.Register(LenderCompanyOwnerTypeName, []enums.EnumOpt{
+		{
+			Label: string(LenderCompanyOwnerTypeSelf),
+			Value: string(LenderCompanyOwnerTypeSelf),
+		},
+		{
+			Label: string(LenderCompanyOwnerTypeThirdParty),
+			Value: string(LenderCompanyOwnerTypeThirdParty),
+		},
+		{
+			Label: string(LenderCompanyOwnerTypePartner),
+			Value: string(LenderCompanyOwnerTypePartner),
 		},
 	})
 }
