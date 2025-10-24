@@ -2,13 +2,33 @@
 import React from 'react';
 import PreApprovedSuccess from './Success';
 import PhoneSvg from '@/assets/images/phone.svg';
-import { Button } from 'antd';
+import { Button, message } from 'antd';
 import { useRouter } from 'next/navigation';
 import { DoubleLeftOutlined } from '@ant-design/icons';
+import { createRequest } from '@/lib/fetch';
+import { useLoanStore } from '@/store/loan';
 // preApproved-成功失败展示
 const PreApproved = ({ result, setIsResult }) => {
 	const router = useRouter();
-	const handleClick = (lender_company_id) => {
+	const { request } = createRequest();
+	const { preApprovedResult, clearExpiredPreApprovedInStorage } = useLoanStore();
+	const handleClick = async (lender_company_id, isOtherLender) => {
+		if (isOtherLender) {
+			// 清除过期的preApproved
+			clearExpiredPreApprovedInStorage();
+			// 发送通知: 没有request_id会重复发通知，有则24小时内只发1次
+			await request('/loan/send_pre_approval_loan_notification', {
+				method: 'POST',
+				body: {
+					lender_company_id,
+					request_id: preApprovedResult?.primary?.request_id || '',
+				},
+			});
+		}
+		message.open({
+			type: 'success',
+			content: 'Notification sent successfully.',
+		});
 		router.push(
 			`/login/register?email=${result?.email}&request_id=${result?.primary?.request_id}&lender_id=${lender_company_id}`,
 		);
