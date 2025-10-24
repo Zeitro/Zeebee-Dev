@@ -617,6 +617,7 @@ const (
 	Loan_UpdateApplyLoan_FullMethodName                 = "/borrower.Loan/UpdateApplyLoan"
 	Loan_ImportPendingLoans_FullMethodName              = "/borrower.Loan/ImportPendingLoans"
 	Loan_PreApprovalLoan_FullMethodName                 = "/borrower.Loan/PreApprovalLoan"
+	Loan_SendPreApprovalNotification_FullMethodName     = "/borrower.Loan/SendPreApprovalNotification"
 )
 
 // LoanClient is the client API for Loan service.
@@ -635,6 +636,7 @@ type LoanClient interface {
 	UpdateApplyLoan(ctx context.Context, in *LoanApplyRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	ImportPendingLoans(ctx context.Context, in *ImportPendingLoansRequest, opts ...grpc.CallOption) (*ImportPendingLoansResponse, error)
 	PreApprovalLoan(ctx context.Context, in *LoanPreApprovalRequest, opts ...grpc.CallOption) (*LoanPreApprovalResponse, error)
+	SendPreApprovalNotification(ctx context.Context, in *LoanSendPreApprovalNotificationRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 }
 
 type loanClient struct {
@@ -765,6 +767,16 @@ func (c *loanClient) PreApprovalLoan(ctx context.Context, in *LoanPreApprovalReq
 	return out, nil
 }
 
+func (c *loanClient) SendPreApprovalNotification(ctx context.Context, in *LoanSendPreApprovalNotificationRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, Loan_SendPreApprovalNotification_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // LoanServer is the server API for Loan service.
 // All implementations must embed UnimplementedLoanServer
 // for forward compatibility.
@@ -781,6 +793,7 @@ type LoanServer interface {
 	UpdateApplyLoan(context.Context, *LoanApplyRequest) (*EmptyResponse, error)
 	ImportPendingLoans(context.Context, *ImportPendingLoansRequest) (*ImportPendingLoansResponse, error)
 	PreApprovalLoan(context.Context, *LoanPreApprovalRequest) (*LoanPreApprovalResponse, error)
+	SendPreApprovalNotification(context.Context, *LoanSendPreApprovalNotificationRequest) (*EmptyResponse, error)
 	mustEmbedUnimplementedLoanServer()
 }
 
@@ -826,6 +839,9 @@ func (UnimplementedLoanServer) ImportPendingLoans(context.Context, *ImportPendin
 }
 func (UnimplementedLoanServer) PreApprovalLoan(context.Context, *LoanPreApprovalRequest) (*LoanPreApprovalResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PreApprovalLoan not implemented")
+}
+func (UnimplementedLoanServer) SendPreApprovalNotification(context.Context, *LoanSendPreApprovalNotificationRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendPreApprovalNotification not implemented")
 }
 func (UnimplementedLoanServer) mustEmbedUnimplementedLoanServer() {}
 func (UnimplementedLoanServer) testEmbeddedByValue()              {}
@@ -1064,6 +1080,24 @@ func _Loan_PreApprovalLoan_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Loan_SendPreApprovalNotification_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanSendPreApprovalNotificationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanServer).SendPreApprovalNotification(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Loan_SendPreApprovalNotification_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanServer).SendPreApprovalNotification(ctx, req.(*LoanSendPreApprovalNotificationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Loan_ServiceDesc is the grpc.ServiceDesc for Loan service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1118,6 +1152,10 @@ var Loan_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PreApprovalLoan",
 			Handler:    _Loan_PreApprovalLoan_Handler,
+		},
+		{
+			MethodName: "SendPreApprovalNotification",
+			Handler:    _Loan_SendPreApprovalNotification_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

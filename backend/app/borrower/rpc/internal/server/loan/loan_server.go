@@ -82,3 +82,8 @@ func (s *LoanServer) PreApprovalLoan(ctx context.Context, in *borrower.LoanPreAp
 	l := loanlogic.NewPreApprovalLoanLogic(ctx, s.svcCtx)
 	return l.PreApprovalLoan(in)
 }
+
+func (s *LoanServer) SendPreApprovalNotification(ctx context.Context, in *borrower.LoanSendPreApprovalNotificationRequest) (*borrower.EmptyResponse, error) {
+	l := loanlogic.NewSendPreApprovalNotificationLogic(ctx, s.svcCtx)
+	return l.SendPreApprovalNotification(in)
+}

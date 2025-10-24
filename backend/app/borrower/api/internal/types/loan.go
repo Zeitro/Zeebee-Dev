@@ -128,9 +128,10 @@ type LoanPageResponse struct {
 }
 
 type LoanPreApprovalRequest struct {
-	Borrower *LoanPreApprovalRequestBorrower `json:"borrower" validate:"required"`
-	Property *LoanPreApprovalRequestProperty `json:"property" validate:"required"`
-	Loan     *LoanPreApprovalRequestLoan     `json:"loan" validate:"required"`
+	RequestId string                          `json:"request_id, optional"`
+	Borrower  *LoanPreApprovalRequestBorrower `json:"borrower" validate:"required"`
+	Property  *LoanPreApprovalRequestProperty `json:"property" validate:"required"`
+	Loan      *LoanPreApprovalRequestLoan     `json:"loan" validate:"required"`
 }
 
 type LoanPreApprovalResponse struct {
@@ -173,4 +174,9 @@ type LoanUpdateRequest struct {
 	OriginalContractDate  string                    `json:"original_contract_date,optional"`
 	ExtensionDate         string                    `json:"extension_date,optional"`
 	LoanProcessor         string                    `json:"loan_processor,optional"`
+}
+
+type SendPreApprovalLoanNotificationRequest struct {
+	RequestId       string `json:"request_id" validate:"required,number,len=10"`
+	LenderCompanyId int64  `json:"lender_company_id" validate:"required,min=1"`
 }

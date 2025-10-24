@@ -4,11 +4,12 @@ const (
 	BorrowerLoginFailedTimes   = "zeebee:borrower:%v:login:failed:times"
 	BorrowerRegisterVerifyCode = "zeebee:borrower:%v:register:verify:code"
 
-	BorrowerRegisterVerifyEmail = "zeebee:borrower:%v:register:verify:email"
-	BorrowerLoginEmail          = "zeebee:borrower:%v:login:email"
-	BorrowerResetPwdEmail       = "zeebee:borrower:%v:reset:pwd:email"
-	BorrowerResetPwdCode        = "zeebee:borrower:%v:reset:pwd:code"
-	BorrowerPreApprovalCacheKey = "zeebee:borrower:%v:preapproval:loan"
+	BorrowerRegisterVerifyEmail            = "zeebee:borrower:%v:register:verify:email"
+	BorrowerLoginEmail                     = "zeebee:borrower:%v:login:email"
+	BorrowerResetPwdEmail                  = "zeebee:borrower:%v:reset:pwd:email"
+	BorrowerResetPwdCode                   = "zeebee:borrower:%v:reset:pwd:code"
+	BorrowerPreApprovalCacheKey            = "zeebee:borrower:%v:preapprovalLoan"
+	BorrowerSendAprApprovalNotificationKey = "zeebee:lenderCompanyId:%v:requestId:%v:preapprovalLoan"
 
 	LenderLoginFailedTimes   = "zeebee:lender:%v:login:failed:times"
 	LenderRegisterVerifyCode = "zeebee:lender:%v:register:verify:code"

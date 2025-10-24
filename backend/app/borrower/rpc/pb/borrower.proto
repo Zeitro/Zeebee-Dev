@@ -672,6 +672,7 @@ message LoanPreApprovalRequestData {
   Borrower borrower = 1;
   Property property = 2;
   Loan loan = 3;
+  string request_id = 4;
 }
 
 message LoanPreApprovalResponse {
@@ -719,6 +720,15 @@ message SecondaryLoanPreApproval {
   RangeInt loan_term = 5;
 }
 
+// send preapproval loan notification
+message LoanSendPreApprovalNotificationRequest {
+  LoanSendPreApprovalNotificationRequestData data = 1;
+}
+message LoanSendPreApprovalNotificationRequestData {
+  string request_id = 1;
+  int64 lender_company_id = 2;
+}
+
 
 service Loan {
   rpc CreateBorrowerLoan(LoanCreateRequest) returns(LoanCreateResponse);
@@ -733,6 +743,7 @@ service Loan {
   rpc UpdateApplyLoan(LoanApplyRequest) returns(EmptyResponse);
   rpc ImportPendingLoans(ImportPendingLoansRequest) returns(ImportPendingLoansResponse);
   rpc PreApprovalLoan(LoanPreApprovalRequest) returns(LoanPreApprovalResponse);
+  rpc SendPreApprovalNotification(LoanSendPreApprovalNotificationRequest) returns(EmptyResponse);
 }
 
 

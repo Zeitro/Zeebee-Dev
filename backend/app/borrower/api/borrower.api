@@ -113,9 +113,13 @@ service borrower-api {
 	tags: loan
 )
 service borrower-api {
-	@doc "pre_approval"
+	@doc "preapproval"
 	@handler PreApproval
 	post /loan/pre_approval (LoanPreApprovalRequest) returns (LoanPreApprovalResponse)
+
+	@doc "send pre approval loan nofification"
+	@handler SendPreApprovalLoanNotification
+	post /loan/send_pre_approval_loan_notification (SendPreApprovalLoanNotificationRequest) returns (EmptyResponse)
 }
 
 @server (

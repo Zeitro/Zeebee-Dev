@@ -17,19 +17,24 @@ var SendResetPwdEmailTpl string
 //go:embed send_login_url_email.html
 var SendLoginUrlEmailTpl string
 
-//go:embed send_pre_approval_notification.html
-var SendPreApprovalNotificationTpl string
+//go:embed send_self_preapproval_notification.html
+var SendSelfPreApprovalNotificationTpl string
+
+//go:embed send_third_party_preapproval_notification.html
+var SendThirdPartyPreApprovalNotificationTpl string
 
 const (
-	RegisterVerifyEmail     = "register_verify_email"
-	ResetPwdEmail           = "reset_pwd_email"
-	LoginUrlEmail           = "login_url_email"
-	PreApprovalNotification = "pre_approval_notification"
+	RegisterVerifyEmail               = "register_verify_email"
+	ResetPwdEmail                     = "reset_pwd_email"
+	LoginUrlEmail                     = "login_url_email"
+	SelfPreApprovalNotification       = "self_preapproval_notification"
+	ThirdPartyPreApprovalNotification = "third_party_preapproval_notification"
 )
 
 func init() {
 	_ = email.RegisterTemplateWithText(RegisterVerifyEmail, SendRegisterVerifyEmailTpl)
 	_ = email.RegisterTemplateWithText(ResetPwdEmail, SendResetPwdEmailTpl)
 	_ = email.RegisterTemplateWithText(LoginUrlEmail, SendLoginUrlEmailTpl)
-	_ = email.RegisterTemplateWithText(PreApprovalNotification, SendPreApprovalNotificationTpl)
+	_ = email.RegisterTemplateWithText(SelfPreApprovalNotification, SendSelfPreApprovalNotificationTpl)
+	_ = email.RegisterTemplateWithText(ThirdPartyPreApprovalNotification, SendThirdPartyPreApprovalNotificationTpl)
 }
