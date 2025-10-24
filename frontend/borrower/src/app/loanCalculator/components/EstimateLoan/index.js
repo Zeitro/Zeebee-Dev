@@ -19,7 +19,13 @@ const EstimateLoan = ({ setIsResult, setResult }) => {
 	const [oldCurrentStep, setOldCurrentStep] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const [form] = Form.useForm();
-	const { estimateLoan, changeEstimateLoan } = useLoanStore();
+	const {
+		estimateLoan,
+		changeEstimateLoan,
+		savePreApprovedResult,
+		preApprovedResult,
+		clearExpiredPreApprovedInStorage,
+	} = useLoanStore();
 	const [unitInfo, setUnitInfo] = useState({});
 	const loanSteps = useMemo(
 		() => [
@@ -73,6 +79,8 @@ const EstimateLoan = ({ setIsResult, setResult }) => {
 	const handleNext = async () => {
 		try {
 			await form.validateFields();
+			// 清除过期的preApproved,只保留24小时
+			clearExpiredPreApprovedInStorage();
 			if (nextBtnInfo.type === 'Next') {
 				setOldCurrentStep(currentStep);
 				return setCurrentStep(currentStep + 1);
@@ -80,10 +88,11 @@ const EstimateLoan = ({ setIsResult, setResult }) => {
 			setLoading(true);
 			const res = await request('/loan/pre_approval', {
 				method: 'POST',
-				body: estimateLoan,
+				body: { ...estimateLoan, request_id: preApprovedResult?.primary?.request_id || '' },
 			});
 			res.email = estimateLoan?.borrower?.email;
 			setResult(res);
+			savePreApprovedResult(res?.primary);
 			setIsResult(true);
 			setLoading(false);
 		} catch (error) {

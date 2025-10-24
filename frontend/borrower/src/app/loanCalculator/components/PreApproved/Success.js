@@ -145,7 +145,10 @@ const PreApprovedSuccess = ({ result, handleClick, back }) => {
 						<p className="text-xl font-bold text-black-dark">
 							{item?.lender_company_name}
 						</p>
-						<Button type="primary" onClick={() => handleClick(item?.lender_company_id)}>
+						<Button
+							type="primary"
+							onClick={() => handleClick(item?.lender_company_id, true)}
+						>
 							Send loan request
 						</Button>
 					</div>
