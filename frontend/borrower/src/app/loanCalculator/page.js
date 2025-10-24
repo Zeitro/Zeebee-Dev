@@ -8,7 +8,7 @@ const LoanCalculator = () => {
 	const [result, setResult] = useState({});
 
 	return isResult ? (
-		<PreApproved result={result} />
+		<PreApproved result={result} setIsResult={setIsResult} />
 	) : (
 		<EstimateLoan setResult={setResult} setIsResult={setIsResult} />
 	);

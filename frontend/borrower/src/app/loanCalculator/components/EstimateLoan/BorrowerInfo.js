@@ -8,6 +8,7 @@ import {
 	maxCreditScore,
 	validateRule,
 	capitalizeFirstLetter,
+	nameRegex,
 } from '@/lib/format';
 import { titleCol } from '@/enum/common';
 import InputPhone from '@/components/InputPhone';
@@ -24,6 +25,10 @@ const BorrowerInfo = ({ gutter = 24, children }) => {
 					rules={[
 						{
 							required: true,
+						},
+						{
+							pattern: nameRegex,
+							message: 'Cannot start or end with a delimiter',
 						},
 					]}
 					getValueFromEvent={(v) => capitalizeFirstLetter(v.target.value)}

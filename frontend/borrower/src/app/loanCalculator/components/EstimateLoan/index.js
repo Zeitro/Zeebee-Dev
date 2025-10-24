@@ -1,5 +1,5 @@
 'use client';
-import { Button, Form, Steps } from 'antd';
+import { Button, Form, Space, Steps } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
 import styles from './index.module.scss';
 import BorrowerInfo from './BorrowerInfo';
@@ -10,8 +10,8 @@ import { useLoanStore } from '@/store/loan';
 import _ from 'lodash';
 import { createRequest } from '@/lib/fetch';
 import { changeUnitByPropertyType } from '@/lib/format';
-// 创建或编辑loan时的步骤
 
+// pre-approval,提交简易loan计算
 const EstimateLoan = ({ setIsResult, setResult }) => {
 	const { request } = createRequest();
 	const router = useRouter();
@@ -94,21 +94,18 @@ const EstimateLoan = ({ setIsResult, setResult }) => {
 
 	const btn = (
 		<div className="w-full flex justify-between pt-6 pb-10">
-			<div>
+			<Space>
 				{currentStep > 0 ? (
 					<Button
 						onClick={() => {
 							setOldCurrentStep(currentStep);
 							setCurrentStep(currentStep - 1);
 						}}
-						type="link"
 					>
 						Back
 					</Button>
 				) : (
-					<Button onClick={() => router.back()} type="link">
-						Cancel
-					</Button>
+					<Button onClick={() => router.back()}>Cancel</Button>
 				)}
 				<Button
 					onClick={() => {
@@ -123,10 +120,11 @@ const EstimateLoan = ({ setIsResult, setResult }) => {
 						);
 						changeEstimateLoan(mergedObj);
 					}}
+					type="link"
 				>
 					Reset
 				</Button>
-			</div>
+			</Space>
 			<Button type="primary" onClick={handleNext} loading={loading}>
 				{nextBtnInfo?.text}
 			</Button>
@@ -136,6 +134,7 @@ const EstimateLoan = ({ setIsResult, setResult }) => {
 	useEffect(() => {
 		if (currentStep !== oldCurrentStep) {
 			form?.setFieldsValue?.(estimateLoan);
+			setUnitInfo(changeUnitByPropertyType(estimateLoan?.property?.property_type));
 		}
 	}, [currentStep, estimateLoan, form, oldCurrentStep]);
 	return (
@@ -160,17 +159,13 @@ const EstimateLoan = ({ setIsResult, setResult }) => {
 					autoComplete="off"
 					className="w-[80%] m-auto"
 					size="large"
-					// initialValues={estimateLoan}
 					scrollToFirstError
 					onFieldsChange={(changeFields) => {
-						console.log(changeFields);
 						// 只有输入验证通过了才可更新值
 						const isErr = changeFields.every(
 							(v) => v?.errors?.length || v?.warnings?.length || !v?.validated,
 						);
 						if (!isErr) {
-							console.log('000');
-
 							changeFields.map((v) => {
 								if (!v?.errors?.length && !v?.warnings?.length) {
 									_.set(estimateLoan, v?.name, v?.value);
