@@ -88,7 +88,7 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 						headerBg: 'var(--gray-light)',
 						// headerColor: 'var(--foreground)',
 						rowBg: 'var(--background)',
-						rowHoverBg: 'var(--gray-light)',
+						rowHoverBg: '#e6f4ff',
 					},
 					TreeSelect: {
 						colorBorder: 'var(--base-disabled)',

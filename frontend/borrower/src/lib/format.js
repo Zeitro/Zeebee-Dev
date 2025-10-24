@@ -189,6 +189,7 @@ export const assemblyAddress = (address = {}, isHaveZip) => {
 
 // 简写姓名：只显示姓名首字母，并大写
 export const formatFirstLetterName = (userInfo) => {
+	if (!userInfo) return '';
 	const { first_name, last_name } = userInfo;
 	const name1 = first_name?.[0]?.toUpperCase();
 	const name2 = last_name?.[0]?.toUpperCase();
