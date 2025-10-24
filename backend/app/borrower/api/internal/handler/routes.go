@@ -89,6 +89,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/loan/pre_approval",
 				Handler: loan.PreApprovalHandler(serverCtx),
 			},
+			{
+				// send pre_approval loan nofification
+				Method:  http.MethodPost,
+				Path:    "/loan/send_pre_approval_loan_notification",
+				Handler: loan.SendPreApprovalLoanNotificationHandler(serverCtx),
+			},
 		},
 		rest.WithPrefix("/api/v1"),
 	)

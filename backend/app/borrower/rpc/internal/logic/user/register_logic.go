@@ -250,10 +250,10 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int
 	}
 
 	//  send email to lender
-	err = sendPreApprovalLoanEmail(lenderCompany)
-	if err != nil {
-		return errors.WithStack(err)
-	}
+	// err = sendPreApprovalLoanEmail(lenderCompany)
+	// if err != nil {
+	// 	return errors.WithStack(err)
+	// }
 
 	return err
 }
@@ -269,7 +269,7 @@ func sendPreApprovalLoanEmail(lenderCompany *model.LenderCompany) (err error) {
 	}
 	// send email
 	data := map[string]interface{}{}
-	content, err := email2.ParseTemplate(email_tpl.PreApprovalNotification, data)
+	content, err := email2.ParseTemplate(email_tpl.SelfPreApprovalNotification, data)
 	if err != nil {
 		return errors.WithStack(err)
 	}

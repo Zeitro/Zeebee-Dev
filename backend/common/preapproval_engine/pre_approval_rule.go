@@ -8,7 +8,6 @@ import (
 	"github.com/pkg/errors"
 
 	"zeebee-backend/common/constants"
-	"zeebee-backend/common/uuid"
 )
 
 // HighValueState represents a high value state info
@@ -136,10 +135,10 @@ type PreApprovalRule struct {
 
 // CalPreApprovaldLoanAmount calculates and returns the pre-approved loan amount
 func (r *PreApprovalRule) CalPreApprovalLoanAmount(input InputLoanInfo) (result *CalculatePreApprovaldLoanAmountResult, err error) {
-	uid, _ := uuid.GetSonyflakeIDString()
+	// uid, _ := uuid.GetSonyflakeIDString()
 	result = &CalculatePreApprovaldLoanAmountResult{
 		IsApproved: false,
-		RequestId:  uid,
+		// RequestId:  uid,
 	}
 
 	// Get experience level

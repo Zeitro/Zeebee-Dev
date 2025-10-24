@@ -15,7 +15,7 @@ type LenderCompany struct {
 	OwnerType    constants.LenderCompanyOwnerType `gorm:"column:owner_type;size:30;not null;default:'ThirdParty'" json:"owner_type"`
 
 	Loans           []Loan           `json:"loans" gorm:"foreignKey:LenderCompanyId;references:Id"`
-	LenderEmployees []LenderEmployee `json:"lender_employees" gorm:"many2many:lender_company_and_employees;foreignKey:Id;"`
+	LenderEmployees []LenderEmployee `json:"lender_employees" gorm:"many2many:lender_company_and_employees;"`
 }
 
 func (m *LenderCompany) TableName() string {
