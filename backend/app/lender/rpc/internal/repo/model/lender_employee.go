@@ -9,9 +9,9 @@ type LenderEmployee struct {
 	LastName        string `gorm:"column:last_name;size:100;not null;default:''" json:"last_name"`
 	FullName        string `gorm:"column:full_name;size:100;not null;default:''" json:"full_name"`
 	//  relationships
-	User            *User           `json:"user" gorm:"foreignKey:UserId;references:Id"`
-	LenderCompany   *LenderCompany  `json:"lender_company" gorm:"foreignKey:LenderCompanyId;references:Id"`
-	LenderCompanies []LenderCompany `json:"lender_companies" gorm:"many2many:lender_company_and_employees"`
+	User            *User            `json:"user" gorm:"foreignKey:UserId;references:Id"`
+	LenderCompany   *LenderCompany   `json:"lender_company" gorm:"foreignKey:LenderCompanyId;references:Id"`
+	LenderCompanies []*LenderCompany `json:"lender_companies" gorm:"many2many:lender_company_and_employees"`
 }
 
 func (m *LenderEmployee) TableName() string {

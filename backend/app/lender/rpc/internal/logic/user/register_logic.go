@@ -74,15 +74,31 @@ func (l *RegisterLogic) Register(in *lender.UserRegisterRequest) (resp *lender.U
 		LenderCompanyId: in.Data.LenderCompanyId,
 	}
 	err = l.svcCtx.UserRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
+		var innerErr error
+		var company *model.LenderCompany
+		company, innerErr = l.svcCtx.LenderCompanyRepo.FindOneByIdWithTx(l.ctx, tx, in.Data.LenderCompanyId)
+		if innerErr != nil {
+			return innerErr
+		}
+		if company.Status != constants.LenderCompanyStatusActive {
+			return errors.WithStack(errors.New("Lender company is not active"))
+		}
+
 		// create user
-		userModel, err = l.svcCtx.UserRepo.CreateWithTx(l.ctx, tx, userModel, false)
-		if err != nil {
-			return err
+		userModel, innerErr = l.svcCtx.UserRepo.CreateWithTx(l.ctx, tx, userModel, false)
+		if innerErr != nil {
+			return innerErr
 		}
 		// create lender employee
 		lenderEmployeeModel.UserId = userModel.Id
-		_, err = l.svcCtx.LenderEmployeeRepo.CreateWithTx(l.ctx, tx, lenderEmployeeModel, false)
-		return err
+		lenderEmployeeModel.LenderCompanies = []*model.LenderCompany{
+			company,
+		}
+		_, innerErr = l.svcCtx.LenderEmployeeRepo.CreateWithTx(l.ctx, tx, lenderEmployeeModel, true)
+		if innerErr != nil {
+			return innerErr
+		}
+		return innerErr
 	})
 	if err != nil {
 		return nil, err

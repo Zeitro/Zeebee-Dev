@@ -3,6 +3,8 @@ package logic
 import (
 	"context"
 
+	"github.com/duke-git/lancet/v2/condition"
+	"github.com/duke-git/lancet/v2/slice"
 	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
@@ -86,4 +88,51 @@ func (l *BaseLogic) GetLoanAndDocumentByDocumentId(documentId int64, lenderCompa
 	}
 
 	return loan, loanDocument, nil
+}
+
+// GetActiveLenderCompanyByEmployee returns the active lender company for the given employee
+func (l *BaseLogic) GetActiveLenderCompanyByEmployee(employee *model.LenderEmployee) (currentCompany *model.LenderCompany, isChanged bool, err error) {
+	if employee == nil {
+		return nil, false, errors.New("employee is empty")
+	}
+	companies := employee.LenderCompanies
+	// find current company
+	currentCompany, ok := slice.FindBy(employee.LenderCompanies, func(index int, item *model.LenderCompany) bool {
+		return item.Id == employee.LenderCompanyId && item.Status == constants.LenderCompanyStatusActive
+	})
+	// find first active company
+	if !ok {
+		currentCompany, ok = slice.FindBy(companies, func(index int, item *model.LenderCompany) bool {
+			return item.Status == constants.LenderCompanyStatusActive
+		})
+	}
+	if !ok {
+		// no active company
+		isChanged = condition.Ternary(employee.LenderCompanyId == 0, false, true)
+		employee.LenderCompanyId = 0
+	} else if employee.LenderCompanyId != currentCompany.Id {
+		// company changed
+		isChanged = true
+		employee.LenderCompanyId = currentCompany.Id
+	}
+
+	return currentCompany, isChanged, err
+}
+
+// CheckAndUpdateActiveLenderCompanyByEmployee checks and updates the active lender company for the given employee
+func (l *BaseLogic) CheckAndUpdateActiveLenderCompanyByEmployee(employee *model.LenderEmployee) (currentEmployee *model.LenderEmployee, err error) {
+	currentCompany, isChanged, err := l.GetActiveLenderCompanyByEmployee(employee)
+	if err != nil {
+		return currentEmployee, err
+	}
+	if isChanged {
+		employee.LenderCompanyId = condition.Ternary(currentCompany == nil, 0, currentCompany.Id)
+		err = l.svcCtx.LenderEmployeeRepo.UpdateColumnsById(l.ctx, employee.Id, map[string]interface{}{
+			"lender_company_id": employee.LenderCompanyId,
+		})
+		if err != nil {
+			return currentEmployee, errors.WithStack(err)
+		}
+	}
+	return employee, err
 }

@@ -3,6 +3,7 @@ package userlogic
 import (
 	"context"
 	"strconv"
+	"zeebee-backend/app/lender/rpc/internal/logic"
 
 	"github.com/pkg/errors"
 
@@ -19,16 +20,18 @@ import (
 )
 
 type LoginLogic struct {
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	baseLogic *logic.BaseLogic
+	ctx       context.Context
+	svcCtx    *svc.ServiceContext
 	logx.Logger
 }
 
 func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic {
 	return &LoginLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		Logger:    logx.WithContext(ctx),
 	}
 }
 
@@ -84,6 +87,35 @@ func (l *LoginLogic) Login(in *lender.UserLoginRequest) (resp *lender.UserLoginR
 	if user.Status == constants.UserStatusUnverified {
 		return nil, errors.WithStack(errors.New("User is unverified"))
 	}
+
+	// check company
+	//var companies []*model.LenderCompany
+	//var companyChanged bool
+	if user.LenderEmployee == nil {
+		return nil, errors.WithStack(errors.New("LenderEmployee is empty."))
+	}
+	//employee := user.LenderEmployee
+
+	employee, err := l.baseLogic.CheckAndUpdateActiveLenderCompanyByEmployee(user.LenderEmployee)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	user.LenderEmployee = employee
+
+	//currentCompany, companyChanged, err := l.baseLogic.GetActiveLenderCompanyByEmployee(employee)
+	//if err != nil {
+	//	return nil, errors.WithStack(err)
+	//}
+	//if companyChanged {
+	//	employee.LenderCompanyId = condition.Ternary(currentCompany==nil,0,currentCompany.Id)
+	//	err = l.svcCtx.LenderEmployeeRepo.UpdateColumnsById(l.ctx, employee.UserId, map[string]interface{}{
+	//		"lender_company_id": employee.LenderCompanyId,
+	//	})
+	//	if err != nil {
+	//		return nil, errors.WithStack(err)
+	//	}
+	//	user.LenderEmployee = employee
+	//}
 
 	// token
 	token, err := generateLenderToken(user, l.svcCtx)
