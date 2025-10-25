@@ -408,6 +408,17 @@ const useCreate = (pageType = 'create') => {
 				confirmLoading={confirmLoading}
 			/>
 		);
+		const draftBtn = (
+			<Button
+				type="primary"
+				ghost
+				className="w-[90px]"
+				onClick={handleSaveDraft}
+				disabled={loading || !isChange}
+			>
+				Draft
+			</Button>
+		);
 		const backBtn = !(!currentStep && !stepNum) && (
 			<Button className="w-[90px]" onClick={handleBack} disabled={loading}>
 				Back
@@ -431,7 +442,10 @@ const useCreate = (pageType = 'create') => {
 		}
 		return (
 			<Col xs={24} sm={24} className="py-6 !flex justify-between items-center">
-				{cancelBtn}
+				<Space size={8}>
+					{cancelBtn}
+					{draftBtn}
+				</Space>
 				<Space size={8}>
 					{backBtn}
 					{nextBtn}
