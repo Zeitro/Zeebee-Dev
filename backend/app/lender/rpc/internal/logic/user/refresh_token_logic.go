@@ -3,6 +3,7 @@ package userlogic
 import (
 	"context"
 	"strconv"
+	"zeebee-backend/app/lender/rpc/internal/logic"
 
 	"github.com/pkg/errors"
 
@@ -16,16 +17,18 @@ import (
 )
 
 type RefreshTokenLogic struct {
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx       context.Context
+	svcCtx    *svc.ServiceContext
+	baseLogic *logic.BaseLogic
 	logx.Logger
 }
 
 func NewRefreshTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RefreshTokenLogic {
 	return &RefreshTokenLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		Logger:    logx.WithContext(ctx),
 	}
 }
 
@@ -51,6 +54,12 @@ func (l *RefreshTokenLogic) RefreshToken(in *lender.RefreshTokenRequest) (resp *
 	if user.Status == constants.UserStatusInactive {
 		return nil, errors.New("User is inactive")
 	}
+
+	employee, err := l.baseLogic.CheckAndUpdateActiveLenderCompanyByEmployee(user.LenderEmployee)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	user.LenderEmployee = employee
 
 	token, err := generateLenderToken(user, l.svcCtx)
 	if err != nil {
