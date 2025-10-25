@@ -53,8 +53,10 @@ func (l *UserInfoLogic) UserInfo(in *lender.UserInfoRequest) (resp *lender.Useri
 			return nil, errors.Wrap(err, "failed to copy lender companies")
 		}
 	}
+	var currentCompany *lender.UserinfoResponseData_Company
 	slice.ForEach(companies, func(i int, company *lender.UserinfoResponseData_Company) {
-		if company.Id == userLender.LenderCompanyId {
+		if company.Id == userLender.DefaultLenderCompanyId {
+			currentCompany = companies[i]
 			company.IsDefault = true
 		}
 	})
@@ -62,9 +64,9 @@ func (l *UserInfoLogic) UserInfo(in *lender.UserInfoRequest) (resp *lender.Useri
 	// Get lender company info
 	var lenderCompanyId int64
 	var lenderCompanyName string
-	if userLender.LenderCompany != nil {
-		lenderCompanyId = userLender.LenderCompanyId
-		lenderCompanyName = userLender.LenderCompany.Name
+	if currentCompany != nil {
+		lenderCompanyId = userLender.DefaultLenderCompanyId
+		lenderCompanyName = currentCompany.Name
 	}
 
 	userInfo := &lender.UserinfoResponse{

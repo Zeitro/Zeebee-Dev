@@ -2,6 +2,7 @@ package userlogic
 
 import (
 	"context"
+
 	"zeebee-backend/app/lender/rpc/internal/repo/model"
 
 	"github.com/duke-git/lancet/v2/slice"
@@ -58,9 +59,9 @@ func (l *SwitchLenderCompanyLogic) SwitchLenderCompany(in *lender.SwitchLenderCo
 	}
 
 	// update employee
-	employee.LenderCompanyId = in.Data.LenderCompanyId
+	employee.DefaultLenderCompanyId = in.Data.LenderCompanyId
 	err = l.svcCtx.LenderEmployeeRepo.UpdateColumnsById(l.ctx, employee.Id, map[string]interface{}{
-		"lender_company_id": employee.LenderCompanyId,
+		"default_lender_company_id": employee.DefaultLenderCompanyId,
 	})
 	if err != nil {
 		return nil, errors.WithStack(err)

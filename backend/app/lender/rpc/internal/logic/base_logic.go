@@ -98,7 +98,7 @@ func (l *BaseLogic) GetActiveLenderCompanyByEmployee(employee *model.LenderEmplo
 	companies := employee.LenderCompanies
 	// find current company
 	currentCompany, ok := slice.FindBy(employee.LenderCompanies, func(index int, item *model.LenderCompany) bool {
-		return item.Id == employee.LenderCompanyId && item.Status == constants.LenderCompanyStatusActive
+		return item.Id == employee.DefaultLenderCompanyId && item.Status == constants.LenderCompanyStatusActive
 	})
 	// find first active company
 	if !ok {
@@ -108,12 +108,12 @@ func (l *BaseLogic) GetActiveLenderCompanyByEmployee(employee *model.LenderEmplo
 	}
 	if !ok {
 		// no active company
-		isChanged = condition.Ternary(employee.LenderCompanyId == 0, false, true)
-		employee.LenderCompanyId = 0
-	} else if employee.LenderCompanyId != currentCompany.Id {
+		isChanged = condition.Ternary(employee.DefaultLenderCompanyId == 0, false, true)
+		employee.DefaultLenderCompanyId = 0
+	} else if employee.DefaultLenderCompanyId != currentCompany.Id {
 		// company changed
 		isChanged = true
-		employee.LenderCompanyId = currentCompany.Id
+		employee.DefaultLenderCompanyId = currentCompany.Id
 	}
 
 	return currentCompany, isChanged, err
@@ -126,9 +126,9 @@ func (l *BaseLogic) CheckAndUpdateActiveLenderCompanyByEmployee(employee *model.
 		return currentEmployee, err
 	}
 	if isChanged {
-		employee.LenderCompanyId = condition.Ternary(currentCompany == nil, 0, currentCompany.Id)
+		employee.DefaultLenderCompanyId = condition.Ternary(currentCompany == nil, 0, currentCompany.Id)
 		err = l.svcCtx.LenderEmployeeRepo.UpdateColumnsById(l.ctx, employee.Id, map[string]interface{}{
-			"lender_company_id": employee.LenderCompanyId,
+			"default_lender_company_id": employee.DefaultLenderCompanyId,
 		})
 		if err != nil {
 			return currentEmployee, errors.WithStack(err)
