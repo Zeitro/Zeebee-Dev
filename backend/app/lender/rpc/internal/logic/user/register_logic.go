@@ -68,10 +68,10 @@ func (l *RegisterLogic) Register(in *lender.UserRegisterRequest) (resp *lender.U
 		Type:         constants.UserTypeLender,
 	}
 	lenderEmployeeModel := &model.LenderEmployee{
-		FirstName:       in.Data.FirstName,
-		LastName:        in.Data.LastName,
-		FullName:        stringx.FormatFullName(in.Data.FirstName, "", in.Data.LastName),
-		LenderCompanyId: in.Data.LenderCompanyId,
+		FirstName:              in.Data.FirstName,
+		LastName:               in.Data.LastName,
+		FullName:               stringx.FormatFullName(in.Data.FirstName, "", in.Data.LastName),
+		DefaultLenderCompanyId: in.Data.LenderCompanyId,
 	}
 	err = l.svcCtx.UserRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
 		var innerErr error
@@ -94,10 +94,11 @@ func (l *RegisterLogic) Register(in *lender.UserRegisterRequest) (resp *lender.U
 		lenderEmployeeModel.LenderCompanies = []*model.LenderCompany{
 			company,
 		}
-		_, innerErr = l.svcCtx.LenderEmployeeRepo.CreateWithTx(l.ctx, tx, lenderEmployeeModel, true)
+		_, innerErr = l.svcCtx.LenderEmployeeRepo.CreateEmployeeWithTx(l.ctx, tx, lenderEmployeeModel)
 		if innerErr != nil {
 			return innerErr
 		}
+
 		return innerErr
 	})
 	if err != nil {

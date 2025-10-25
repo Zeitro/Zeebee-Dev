@@ -3,6 +3,7 @@ package userlogic
 import (
 	"context"
 	"strconv"
+
 	"zeebee-backend/app/lender/rpc/internal/logic"
 
 	"github.com/pkg/errors"
@@ -140,7 +141,7 @@ func generateLenderToken(user *model.User, svcCtx *svc.ServiceContext) (token *l
 	accessToken, err := utils.GenerateToken(
 		strconv.Itoa(int(user.Id)),
 		strconv.Itoa(int(user.LenderEmployee.Id)),
-		user.LenderEmployee.LenderCompanyId,
+		user.LenderEmployee.DefaultLenderCompanyId,
 		user.LenderEmployee.FullName,
 		"",
 		string(constants.UserTypeLender),
@@ -153,7 +154,7 @@ func generateLenderToken(user *model.User, svcCtx *svc.ServiceContext) (token *l
 	refreshToken, err := utils.GenerateToken(
 		strconv.Itoa(int(user.Id)),
 		strconv.Itoa(int(user.LenderEmployee.Id)),
-		user.LenderEmployee.LenderCompanyId,
+		user.LenderEmployee.DefaultLenderCompanyId,
 		user.LenderEmployee.FullName,
 		"",
 		string(constants.UserTypeLender),

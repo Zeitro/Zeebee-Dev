@@ -25,9 +25,18 @@ func NewLenderEmployeeRepo(db *gorm.DB) *LenderEmployeeRepo {
 func (repo *LenderEmployeeRepo) GetLenderEmployee(ctx context.Context, id int64) (res *model.LenderEmployee, err error) {
 	err = repo.Client(ctx).
 		Where("id = ?", id).
-		Preload("LenderCompany").
 		Preload("LenderCompanies").
 		First(&res).
 		Error
+	return res, errors.WithStack(err)
+}
+
+func (repo *LenderEmployeeRepo) CreateEmployeeWithTx(ctx context.Context, tx *gorm.DB, data *model.LenderEmployee) (res *model.LenderEmployee, err error) {
+	err = tx.WithContext(ctx).Create(data).Error
+	if err != nil {
+		return res, errors.WithStack(err)
+	}
+	res = data
+
 	return res, errors.WithStack(err)
 }

@@ -45,7 +45,7 @@ func (repo *UserRepo) GetLenderUser(ctx context.Context, id int64) (res *model.U
 	err = repo.BaseRepo.Client(ctx).
 		Where("id = ? and type = ?", id, constants.UserTypeLender).
 		Preload("LenderEmployee.LenderCompanies").
-		Preload("LenderEmployee.LenderCompany").
+		// Preload("LenderEmployee.LenderCompany").
 		First(&res).Error
 	return res, errors.WithStack(err)
 }
@@ -54,7 +54,7 @@ func (repo *UserRepo) GetLenderUserByEmail(ctx context.Context, email string) (r
 	err = repo.BaseRepo.Client(ctx).
 		Where("email = ? and type = ?", email, constants.UserTypeLender).
 		Preload("LenderEmployee.LenderCompanies").
-		Preload("LenderEmployee.LenderCompany").
+		// Preload("LenderEmployee.LenderCompany").
 		First(&res).Error
 	return res, errors.WithStack(err)
 }

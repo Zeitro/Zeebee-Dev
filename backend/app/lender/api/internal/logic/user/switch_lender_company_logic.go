@@ -5,8 +5,8 @@ package user
 
 import (
 	"context"
+
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/utils"
 
 	"zeebee-backend/app/lender/api/internal/svc"
@@ -32,18 +32,18 @@ func NewSwitchLenderCompanyLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 func (l *SwitchLenderCompanyLogic) SwitchLenderCompany(req *types.UserSwitchLenderCompanyRequest) (resp *types.UserRefreshTokenResponse, err error) {
-	userId := utils.GetInt64FromCtx(l.ctx, constants.LenderUserIdKey)
-	if userId == 0 {
-		return nil, errors.WithStack(errors.New("user id not found"))
+	_, employeeId, _ := utils.GetLenderCompanyAndEmployeeId(l.ctx)
+	if employeeId == 0 {
+		return nil, errors.WithStack(errors.New("employee id not found"))
 	}
 	rpcResp, err := l.svcCtx.UserRpcClient.SwitchLenderCompany(l.ctx, &lender.SwitchLenderCompanyRequest{
 		Data: &lender.SwitchLenderCompanyRequestData{
-			EmployeeId:      userId,
+			EmployeeId:      employeeId,
 			LenderCompanyId: req.LenderCompanyId,
 		},
 	})
 	if err != nil {
-		return nil, errors.WithStack(errors.New("refresh token error"))
+		return nil, errors.WithStack(err)
 	}
 
 	return &types.UserRefreshTokenResponse{
