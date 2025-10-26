@@ -2,11 +2,10 @@
 import { Col, Form, Input, InputNumber, Row, Select } from 'antd';
 import React from 'react';
 import styles from './index.module.scss';
-import InputNumAmount from '@/components/InputNumAmount';
+import { InputNumAmount, CommonFormDate } from '@repo/shared-methods';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import { loan_active, loan_pending } from '@/enum/common';
 import InputName from '@/components/InputName';
-import CommonFormDate from '@/components/CommonDate';
 import { capitalizeFirstLetter } from '@/lib/format';
 const layoutCol = {
 	xs: 24,

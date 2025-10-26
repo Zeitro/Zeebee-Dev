@@ -1,8 +1,8 @@
 // 组件
 // export * from './components/ApplicationFormViewPDF/index';
-// export * from './components/CommonDate/index';
-// export * from './components/CommonDownload/index';
-// export * from './components/CommonUpload/index';
+export * from './components/CommonFormDate/index';
+export * from './components/DownloadFileButton/index';
+export * from './components/UploadFileButton/index';
 // export * from './components/DropdownStatus/index';
 // export * from './components/FieldTips/index';
 // export * from './components/FilterField/index';

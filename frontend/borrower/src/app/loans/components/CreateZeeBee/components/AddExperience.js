@@ -4,8 +4,7 @@ import NewModal from '@/components/NewModal';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
 import { Col, Form, Input, Radio, Row } from 'antd';
 import { useGetOptions } from '@/hooks/useGetOptions';
-import InputNumAmount from '@/components/InputNumAmount';
-import CommonFormDate from '@/components/CommonDate';
+import { InputNumAmount, CommonFormDate } from '@repo/shared-methods';
 import { yesNoOptions } from '@/enum/common';
 export const AddExperience = ({ title, rowData = {}, type, onOk, onCancel }) => {
 	const [form] = Form.useForm();

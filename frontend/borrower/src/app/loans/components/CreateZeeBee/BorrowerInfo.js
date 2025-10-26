@@ -16,7 +16,7 @@ import {
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { layoutCol, titleCol } from '@/enum/common';
 import { useGetOptions } from '@/hooks/useGetOptions';
-import CommonFormDate from '@/components/CommonDate';
+import { CommonFormDate } from '@repo/shared-methods';
 import InputName from '@/components/InputName';
 const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 	const { maritalStatusOptions } = useGetOptions([

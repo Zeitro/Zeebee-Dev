@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import NewModal from '@/components/NewModal';
 import { DownloadOutlined, InboxOutlined, InfoCircleOutlined } from '@ant-design/icons';
-import CommonDownloadButton from '@/components/CommonDownload';
-import CommonUpload from '@/components/CommonUpload';
+import { DownloadFileButton, UploadFileButton } from '@repo/shared-methods';
 import { createRequest } from '@/lib/fetch';
 import { Modal } from 'antd';
 import { initConfigFn } from '@/components/NewModal/BtnPopUpModal';
@@ -94,14 +93,14 @@ const ImportLoanModal = ({ setOpen }) => {
 							Please use the template provided to ensure correct formatting.
 						</span>
 					</div>
-					<CommonDownloadButton
+					<DownloadFileButton
 						icon={<DownloadOutlined style={{ fontSize: '16px' }} />}
 						className="w-max"
 						fileUrl="/3rdPartyTemplate.xlsx"
 					>
 						Download template
-					</CommonDownloadButton>
-					<CommonUpload
+					</DownloadFileButton>
+					<UploadFileButton
 						immediateUpload={false}
 						accept=".xlsx,.xls"
 						onGetUploadList={setFileList}
@@ -117,7 +116,7 @@ const ImportLoanModal = ({ setOpen }) => {
 							</div>
 							<p className="text-base-label">Only .xlsx/.xls files are accepted</p>
 						</div>
-					</CommonUpload>
+					</UploadFileButton>
 				</div>
 			</NewModal>
 		</>

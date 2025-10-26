@@ -6,8 +6,7 @@ import { useGetOptions } from '@/hooks/useGetOptions';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
 import { maxNumberOfUnits } from '@/lib/format';
 import { loan_pending } from '@/enum/common';
-import CommonFormDate from '@/components/CommonDate';
-import InputNumAmount from '@/components/InputNumAmount';
+import { InputNumAmount, CommonFormDate } from '@repo/shared-methods';
 const layoutCol = {
 	xs: 24,
 	sm: 24,
