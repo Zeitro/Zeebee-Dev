@@ -34,7 +34,8 @@ func GetLimiterRedisClient(conf LimiterRedisConf) (*redis.Client, error) {
 		DB:        conf.DB,
 		TLSConfig: tlsConfig,
 	})
-	ctx, _ := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
 	err := rdb.Ping(ctx).Err()
 	if err != nil {
 		return nil, err

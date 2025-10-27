@@ -56,3 +56,7 @@ type UserResetPasswordRequest struct {
 type UserSendResetPasswordEmailRequest struct {
 	Email string `json:"email" validate:"required,email"`
 }
+
+type UserSwitchLenderCompanyRequest struct {
+	LenderCompanyId int64 `json:"lender_company_id" validate:"required,gt=0"`
+}

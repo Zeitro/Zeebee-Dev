@@ -5,7 +5,7 @@ import styles from './index.module.scss';
 import InputNumAmount from '@/components/InputNumAmount';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import { loan_active, loan_archived, loan_pending } from '@/enum/common';
-import { maxAmount } from '@/lib/format';
+import { capitalizeFirstLetter, maxAmount } from '@/lib/format';
 import CommonFormDate from '@/components/CommonDate';
 const MAX_COUNT = 5;
 const CreateLoan = ({ form, stepBtn, gutter, isRadioStyle, ...colProps }) => {
@@ -193,7 +193,11 @@ const CreateLoan = ({ form, stepBtn, gutter, isRadioStyle, ...colProps }) => {
 			{stage === loan_pending && (
 				<>
 					<Col {...layoutCol} {...(colProps || {})}>
-						<Form.Item label="Existing lender" name="existing_lender_company">
+						<Form.Item
+							label="Existing lender"
+							name="existing_lender_company"
+							getValueFromEvent={(v) => capitalizeFirstLetter(v.target.value)}
+						>
 							<Input placeholder="Enter existing lender" />
 						</Form.Item>
 					</Col>

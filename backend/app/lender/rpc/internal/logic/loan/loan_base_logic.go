@@ -37,7 +37,7 @@ func (l *LoanBaseLogic) GetLenderLoan(loanId int64, lenderCompanyId int64, prelo
 		return nil, errors.WithStack(errors.New("invalid lender company"))
 	}
 
-	if loan.Source != constants.LoanSourceSystem {
+	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreApproval {
 		return nil, errors.WithStack(errors.New("invalid loan source"))
 	}
 

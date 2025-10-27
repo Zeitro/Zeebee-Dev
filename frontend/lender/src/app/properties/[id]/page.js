@@ -18,7 +18,7 @@ const PropertiesDetails = () => {
 	const { request } = createRequest();
 	const [loading, setLoading] = useState(false);
 	const [rowData, setRowData] = useState({});
-	const { changeSiberCollapsed } = useGlobalStore();
+	const { changeSidebarCollapsed } = useGlobalStore();
 	const api = `/property/${id}`;
 
 	const getDetails = async () => {
@@ -91,7 +91,7 @@ const PropertiesDetails = () => {
 	]);
 
 	useEffect(() => {
-		changeSiberCollapsed(true);
+		changeSidebarCollapsed(true);
 		getDetails();
 	}, []);
 	return (

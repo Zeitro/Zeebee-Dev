@@ -98,13 +98,9 @@ export const pendingSteps = [
 		title: 'Closing',
 		key: 'Closing',
 	},
-	{
-		title: 'Documents',
-		key: 'Documents',
-	},
 ];
 
-export const detailsSteps = [
+export const lenderDetailsSteps = [
 	{
 		title: 'GENERAL',
 		key: 'General',
@@ -119,10 +115,6 @@ export const detailsSteps = [
 		title: 'PENDING',
 		key: 'Pending',
 		children: pendingSteps,
-	},
-	{
-		title: 'ACTIVE',
-		key: 'Active',
 	},
 	{
 		title: 'FUNDED',
@@ -280,6 +272,11 @@ export const pendingStatusColor = {
 		bg: 'var(--blue-light-2)',
 		border: 'var(--blue-light)',
 	},
+	Underwriting: {
+		color: '#eb2f96',
+		bg: '#fff0f6',
+		border: '#ffadd2',
+	},
 	Closing: {
 		color: 'var(--purple-dark)',
 		bg: 'var(--purple-light)',
@@ -348,101 +345,3 @@ export const loanDetailsFields = {
 	Active: activeFields,
 	Archived: archivedFields,
 };
-
-// zeeBee Details --> General
-export const generalTermsFields = [
-	{
-		label: 'Total loan amount',
-		value: 'total_amount',
-		render: (v) => formatAmount(v),
-	},
-	{
-		label: 'Rate',
-		value: 'rate',
-		render: (v) => (v ? `${v}%` : '--'),
-	},
-	{
-		label: 'Outstanding loan amount',
-		value: 'principal_amount',
-		render: (v) => formatAmount(v),
-	},
-	{ label: 'Maturity date', value: 'maturity_date' },
-	{
-		label: 'Monthly Payment',
-		value: 'monthly_payment',
-		render: (v) => formatAmount(v),
-	},
-	{
-		label: 'Term',
-		value: 'loan_term',
-		render: (v) => `${v || '--'} Months`,
-	},
-];
-
-export const generalParametersFields = [
-	{
-		label: 'Lien position',
-		value: 'lien_position',
-	},
-	{
-		label: 'Loan type',
-		value: 'loan_type',
-	},
-];
-
-export const generalList = [
-	{
-		title: 'Terms',
-		fields: generalTermsFields,
-	},
-	{
-		title: 'Parameters',
-		fields: generalParametersFields,
-	},
-];
-// loan status
-// export const loanStatusOptions = [
-// 	{
-// 		label: 'Pending',
-// 		value: 'pending',
-// 	},
-// 	{
-// 		label: 'Active',
-// 		value: 'active',
-// 	},
-// 	{
-// 		label: 'Archived',
-// 		value: 'archived',
-// 	},
-// ];
-
-// // loan purpose
-// export const loanPurposeOptions = [
-// 	{
-// 		label: 'Purchase',
-// 		value: 'purchase',
-// 	},
-// 	{
-// 		label: 'Rate-term refi',
-// 		value: 'rateTermRefi',
-// 	},
-// 	{
-// 		label: 'Cash-out refi',
-// 		value: 'cashOutRefi',
-// 	},
-// ];
-// // loan type
-// export const loanTypeOptions = [
-// 	{
-// 		label: 'Bridge',
-// 		value: 'bridge',
-// 	},
-// 	{
-// 		label: 'Rehab',
-// 		value: 'rehab',
-// 	},
-// 	{
-// 		label: 'Ground up construction',
-// 		value: 'groundUpConstruction',
-// 	},
-// ];
