@@ -25,6 +25,7 @@ type RpcConf struct {
 	VerifyEmailExpireSeconds     int
 	ResetPwdExpireSeconds        int
 	PreApprovalLoanExpireSeconds int
+	HighCostLimitValue           int64
 	EmailConf                    EmailConf
 	RedisConf                    RedisConf
 	JwtAuth                      types.JwtAuth `json:",optional"`

@@ -134,9 +134,9 @@ type PreApprovalRule struct {
 }
 
 // CalPreApprovaldLoanAmount calculates and returns the pre-approved loan amount
-func (r *PreApprovalRule) CalPreApprovalLoanAmount(input InputLoanInfo) (result *CalculatePreApprovaldLoanAmountResult, err error) {
+func (r *PreApprovalRule) CalPreApprovalLoanAmount(input InputLoanInfo) (result *CalculatePreApprovalLoanAmountResult, err error) {
 	// uid, _ := uuid.GetSonyflakeIDString()
-	result = &CalculatePreApprovaldLoanAmountResult{
+	result = &CalculatePreApprovalLoanAmountResult{
 		IsApproved: false,
 		// RequestId:  uid,
 	}
@@ -183,7 +183,7 @@ func (r *PreApprovalRule) CalPreApprovalLoanAmount(input InputLoanInfo) (result 
 
 	// Calculate GUC Interest reserve amount for construction loans
 	if input.LoanType == constants.LoanTypeConstruction {
-		interestReserveAmount := r.calculateInterestReserveAmount(totalLoanAmount, result.ExperienceLevel, input.InterestReserveMonths)
+		interestReserveAmount := r.calculateInterestReserveAmount(totalLoanAmount, input.InterestReserveMonths)
 		totalLoanAmount += interestReserveAmount
 		result.InterestReservedAmount = interestReserveAmount
 	}
@@ -205,7 +205,7 @@ func (r *PreApprovalRule) CalPreApprovalLoanAmount(input InputLoanInfo) (result 
 	result.Rate = baseRate + adjuster
 
 	// Calculate monthly payment
-	result.MonthlyPayment = r.calculateMonthlyPayment(result.TotalAmount, result.Rate, input.LoanTerm)
+	result.MonthlyPayment = r.calculateMonthlyPayment(result.TotalAmount, result.Rate)
 
 	// Calculate cash to close
 	result.CashToClose = r.calculateCashToClose(input, result)
@@ -290,7 +290,8 @@ func (r *PreApprovalRule) calculateTotalCost(input InputLoanInfo) (totalCostAmou
 // getTotalLoanCap calculates the loan caps for LTAIV, LTC, and LTARV
 func (r *PreApprovalRule) getTotalLoanCap(input InputLoanInfo) (ltaiv float64, ltc float64, ltarv float64, err error) {
 	// Determine various conditions
-	isHighValueZone := r.isHighValueZone(input.State, input.City)
+	// isHighValueZone := r.isHighValueZone(input.State, input.City)
+	isHighValueZone := input.IsHighValueZone
 	isHeavyRehab := r.isHeavyRehab(input.LoanType, input.OriginalBudgetAmount, input.EstCurrentPropertyValue)
 	isLargeUnit := r.isLargeUnit(input.Unit)
 
@@ -323,9 +324,19 @@ func (r *PreApprovalRule) getTotalLoanCap(input InputLoanInfo) (ltaiv float64, l
 		} else {
 			generalPriceCap, highValueZonePriceCap = rehabPriceRule.GetLightRules()
 		}
+
+		// use general rule if high value zone but no high value rule
+		if isHighValueZone && highValueZonePriceCap == nil {
+			highValueZonePriceCap = generalPriceCap
+		}
 	} else {
 		generalPriceCap = priceRule.GetGeneralRules()
 		highValueZonePriceCap = priceRule.GetHighValueRules()
+
+		// use general rule if high value zone but no high value rule
+		if isHighValueZone && highValueZonePriceCap == nil {
+			highValueZonePriceCap = generalPriceCap
+		}
 	}
 
 	// Calculate LTAIV based on conditions
@@ -420,7 +431,7 @@ func (r *PreApprovalRule) isLargeUnit(unit int) (isLargeUnit bool) {
 }
 
 // calculateInterestReserveAmount calculates the interest reserve amount
-func (r *PreApprovalRule) calculateInterestReserveAmount(totalLoanAmount float64, experienceLevel ExperienceLevel, months int) float64 {
+func (r *PreApprovalRule) calculateInterestReserveAmount(totalLoanAmount float64, months int) float64 {
 	defaultRate := r.getDefaultRate()
 	interestReserveAmount := float64(months) * (0.7 * defaultRate * totalLoanAmount)
 	return interestReserveAmount
@@ -546,7 +557,7 @@ func (r *PreApprovalRule) calculateAdjusters(input InputLoanInfo, totalAmount fl
 }
 
 // calculateMonthlyPayment calculates the monthly payment
-func (r *PreApprovalRule) calculateMonthlyPayment(totalLoanAmount float64, rate float64, loanTerm int) float64 {
+func (r *PreApprovalRule) calculateMonthlyPayment(totalLoanAmount float64, rate float64) float64 {
 	// if loanTerm <= 0 {
 	// 	return 0
 	// }
@@ -555,7 +566,7 @@ func (r *PreApprovalRule) calculateMonthlyPayment(totalLoanAmount float64, rate 
 }
 
 // calculateCashToClose calculates the cash to close (fees)
-func (r *PreApprovalRule) calculateCashToClose(input InputLoanInfo, result *CalculatePreApprovaldLoanAmountResult) float64 {
+func (r *PreApprovalRule) calculateCashToClose(input InputLoanInfo, result *CalculatePreApprovalLoanAmountResult) float64 {
 	originationFee := r.ServiceFeeConfig.OriginationFeePercent * result.TotalAmount
 	underwritingFee := r.ServiceFeeConfig.UnderwritingFeePercent * result.TotalAmount
 	outOfPocket := r.calculateOutOfPocket(input, result)
@@ -563,7 +574,7 @@ func (r *PreApprovalRule) calculateCashToClose(input InputLoanInfo, result *Calc
 }
 
 // calculateOutOfPocket calculates out of pocket expenses
-func (r *PreApprovalRule) calculateOutOfPocket(input InputLoanInfo, result *CalculatePreApprovaldLoanAmountResult) float64 {
+func (r *PreApprovalRule) calculateOutOfPocket(input InputLoanInfo, result *CalculatePreApprovalLoanAmountResult) float64 {
 	switch input.LoanType {
 	case constants.LoanTypeRehab:
 		if input.LoanPurpose == constants.LoanPurposePurchase {
@@ -601,13 +612,13 @@ func (r *PreApprovalRule) calculateOutOfPocket(input InputLoanInfo, result *Calc
 }
 
 // calculateInitialAndHoldbackAmount calculates initial and holdback amounts
-func (r *PreApprovalRule) calculateInitialAndHoldbackAmount(input InputLoanInfo, result *CalculatePreApprovaldLoanAmountResult) (initialAmount, holdbackAmount float64) {
+func (r *PreApprovalRule) calculateInitialAndHoldbackAmount(input InputLoanInfo, result *CalculatePreApprovalLoanAmountResult) (initialAmount, holdbackAmount float64) {
 	holdbackAmount = input.OriginalBudgetAmount
 
 	// Initial loan = total loan amount - original budget - interest reserve amount
 	interestReserveAmount := float64(0)
 	if input.LoanType == constants.LoanTypeConstruction {
-		interestReserveAmount = r.calculateInterestReserveAmount(result.TotalAmount, result.ExperienceLevel, input.InterestReserveMonths)
+		interestReserveAmount = r.calculateInterestReserveAmount(result.TotalAmount, input.InterestReserveMonths)
 	}
 	initialAmount = result.TotalAmount - input.OriginalBudgetAmount - interestReserveAmount
 

@@ -32,6 +32,7 @@ func TestPreApprovalEngine_CalPreApprovalLoanAmount(t *testing.T) {
 			PurchaseAmount:          500000,
 			InitialAmount:           400000,
 			TotalAmount:             500000,
+			IsHighValueZone:         false,
 		}
 
 		result, err := zeebeeEngine.CalPreApprovalLoanAmount(input)
@@ -55,6 +56,7 @@ func TestPreApprovalEngine_CalPreApprovalLoanAmount(t *testing.T) {
 			PurchaseAmount:          500000,
 			InitialAmount:           400000,
 			TotalAmount:             500000,
+			IsHighValueZone:         true,
 		}
 
 		result, err := zeebeeEngine.CalPreApprovalLoanAmount(input)

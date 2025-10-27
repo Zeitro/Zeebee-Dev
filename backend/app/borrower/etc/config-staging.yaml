@@ -69,3 +69,4 @@ RpcConf:
   LoginUrl: https://app.zeebeeloans.net/login
   VerifyEmailUrl: https://app.zeebeeloans.net/login/verifyEmail
   ResetPwdUrl: https://app.zeebeeloans.net/login/resetPassword
+  HighCostLimitValue: 806500
