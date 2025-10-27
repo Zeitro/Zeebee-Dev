@@ -2,6 +2,7 @@ package types
 
 import "zeebee-backend/common/preapproval_engine"
 
+// LoanBudget represents the budget information for a loan.
 type LoanBudget struct {
 	OriginalBudget        float64 `json:"original_budget"`
 	RemainingBudget       float64 `json:"remaining_budget"`
