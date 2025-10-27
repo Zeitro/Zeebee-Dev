@@ -38,7 +38,7 @@ const useCreate = (pageType = 'create') => {
 	const [currentStep, setCurrentStep] = useState(0); //顶部-总步骤
 	const [stepNum, setStepNum] = useState(0); //侧边步骤
 	const [loading, setLoading] = useState(false);
-	const [errorList, setErrorList] = useState([]);
+	let [errorList, setErrorList] = useState([]); // 只在点击上一步back时获取到的错误字段
 	const [isChange, setIsChange] = useState(false); // 记录是否操作过form
 	const [confirmLoading, setConfirmLoading] = useState(false); // 保存草稿
 	const [rowData, setRowData] = useState({}); // loan详情
@@ -324,10 +324,6 @@ const useCreate = (pageType = 'create') => {
 			});
 		} catch (error) {
 			console.log(error);
-
-			if (error?.errorFields) {
-				setErrorList(error?.errorFields.map((item) => item.name));
-			}
 			setLoading(false);
 		}
 	};
@@ -377,17 +373,12 @@ const useCreate = (pageType = 'create') => {
 
 	const handleBack = () => {
 		isClickBackBtn.current = true;
-		if (errorList?.length) {
+		const errors = form.getFieldsError()?.filter((i) => i?.errors?.length);
+		if (errors?.length) {
 			// 光设置重新验证不行，需要结合validateFields处的操作才可避免
-			form.setFields(
-				errorList?.map((i) => ({
-					name: i,
-					errors: null,
-					touched: false,
-					validated: false,
-				})),
-			);
-			form.resetFields(errorList);
+			errorList = errors.map((i) => i?.name);
+			setErrorList([...errorList]);
+			// form.resetFields(errorList);
 		}
 		if (stepNum) {
 			setStepNum((v) => (v - 1 < 0 ? 0 : v - 1));

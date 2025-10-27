@@ -5,6 +5,7 @@ import GoogleAutoComplete from './index';
 import { set } from 'lodash';
 import { useAddressStore } from '@/store/address';
 import { useDisUpdateEffect } from '@/hooks/common';
+import _ from 'lodash';
 const layoutCol = {
 	xs: 24,
 	sm: 24,
@@ -68,6 +69,12 @@ const AddressForm = ({
 		}
 	}, [stateValue]);
 
+	const shouldUpdate = (prevValues, curValues) => {
+		const allAddressName = getPath(addressName, listName);
+		if (!allAddressName) return false;
+		return _.get(prevValues, allAddressName) !== _.get(curValues, allAddressName);
+	};
+
 	return (
 		<>
 			<Col {...layoutCol} {...addressCol}>
@@ -91,43 +98,60 @@ const AddressForm = ({
 				</Col>
 			)}
 			<Col {...layoutCol} {...stateCol}>
-				<Form.Item
-					name={stateName}
-					label={stateLabel}
-					rules={[{ required: true, message: 'Please select state!' }]}
-				>
-					<Select
-						options={stateOptions}
-						optionFilterProp="label"
-						placeholder="Select state"
-						showSearch
-						disabled={disabled}
-					/>
+				<Form.Item shouldUpdate={shouldUpdate}>
+					{() => {
+						return (
+							<Form.Item
+								name={stateName}
+								label={stateLabel}
+								rules={[{ required: true, message: 'Please select state!' }]}
+								dependencies={[addressName]}
+							>
+								<Select
+									options={stateOptions}
+									optionFilterProp="label"
+									placeholder="Select state"
+									showSearch
+									disabled={disabled}
+								/>
+							</Form.Item>
+						);
+					}}
 				</Form.Item>
 			</Col>
 			<Col md={12} {...layoutCol} {...cityCol}>
-				<Form.Item
-					name={cityName}
-					label={cityLabel}
-					rules={[{ required: true, message: 'Please select city!' }]}
-				>
-					<Select
-						options={cityOptions}
-						optionFilterProp="label"
-						placeholder="Select city"
-						showSearch
-						disabled={disabled}
-					/>
+				<Form.Item shouldUpdate={shouldUpdate}>
+					{() => (
+						<Form.Item
+							name={cityName}
+							label={cityLabel}
+							rules={[{ required: true, message: 'Please select city!' }]}
+							dependencies={[addressName]}
+						>
+							<Select
+								options={cityOptions}
+								optionFilterProp="label"
+								placeholder="Select city"
+								showSearch
+								disabled={disabled}
+							/>
+						</Form.Item>
+					)}
 				</Form.Item>
 			</Col>
 			{isShowZip && (
 				<Col md={12} {...layoutCol} {...zipCol}>
-					<Form.Item
-						name={zipName}
-						label={zipLabel}
-						rules={[{ required: true, message: 'Please enter zip code!' }]}
-					>
-						<Input placeholder="Enter zip" disabled={disabled} />
+					<Form.Item shouldUpdate={shouldUpdate}>
+						{() => (
+							<Form.Item
+								name={zipName}
+								label={zipLabel}
+								rules={[{ required: true, message: 'Please enter zip code!' }]}
+								dependencies={[addressName]}
+							>
+								<Input placeholder="Enter zip" disabled={disabled} />
+							</Form.Item>
+						)}
 					</Form.Item>
 				</Col>
 			)}
