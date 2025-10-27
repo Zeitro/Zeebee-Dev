@@ -1,6 +1,6 @@
 'use client';
 import { Dropdown, message, Tooltip } from 'antd';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { DownOutlined } from '@ant-design/icons';
 import styles from './index.module.css';
 import { createRequest } from '@/lib/fetch';
@@ -30,6 +30,10 @@ const DropdownStatus = ({
 		return items.find((i) => i.key === statusValue) || {};
 	}, [statusValue]);
 
+	useEffect(() => {
+		setStatusValue(data[statusKey] || '');
+	}, [data]);
+
 	const handleSelect = async ({ key }) => {
 		try {
 			cancel(api);
@@ -51,34 +55,43 @@ const DropdownStatus = ({
 	};
 
 	return (
-		<Tooltip {...tooltipProps}>
-			<Dropdown.Button
-				icon={disabled ? null : <DownOutlined />}
-				loading={loading}
-				menu={{
-					items,
-					selectable: true,
-					selectedKeys: [statusValue],
-					onSelect: handleSelect,
-					onClick: ({ domEvent }) => {
+		<div
+			onClick={(domEvent) => {
+				domEvent?.stopPropagation();
+				domEvent?.preventDefault();
+			}}
+		>
+			<Tooltip {...tooltipProps} title={disabled ? tooltipProps?.title : null}>
+				<Dropdown.Button
+					icon={disabled ? null : <DownOutlined />}
+					loading={loading}
+					menu={{
+						items,
+						selectable: true,
+						selectedKeys: [statusValue],
+						onSelect: handleSelect,
+						onClick: ({ domEvent }) => {
+							domEvent?.stopPropagation();
+							domEvent?.preventDefault();
+						},
+					}}
+					size="small"
+					disabled={disabled}
+					{...props}
+					className={[
+						styles.loanStatus,
+						disabled && styles.disabled,
+						props?.className,
+					].join(' ')}
+					onClick={(domEvent) => {
 						domEvent?.stopPropagation();
 						domEvent?.preventDefault();
-					},
-				}}
-				size="small"
-				disabled={disabled}
-				{...props}
-				className={[styles.loanStatus, disabled && styles.disabled, props?.className].join(
-					' ',
-				)}
-				onClick={(domEvent) => {
-					domEvent?.stopPropagation();
-					domEvent?.preventDefault();
-				}}
-			>
-				{statusValue ? rowData.label : 'Select Status'}
-			</Dropdown.Button>
-		</Tooltip>
+					}}
+				>
+					{statusValue ? rowData.label : 'Select Status'}
+				</Dropdown.Button>
+			</Tooltip>
+		</div>
 	);
 };
 export default DropdownStatus;

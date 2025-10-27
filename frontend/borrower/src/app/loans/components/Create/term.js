@@ -7,6 +7,7 @@ import { useGetOptions } from '@/hooks/useGetOptions';
 import { loan_active, loan_pending } from '@/enum/common';
 import InputName from '@/components/InputName';
 import CommonFormDate from '@/components/CommonDate';
+import { capitalizeFirstLetter } from '@/lib/format';
 const layoutCol = {
 	xs: 24,
 	sm: 24,
@@ -46,11 +47,12 @@ const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
 	const lenderDom = (
 		<Col {...layoutCol} {...(colProps || {})}>
 			<Form.Item
-				label={stage === 'pending' ? 'TagetLender' : 'Lender'}
+				label={stage === 'Pending' ? 'Target lender' : 'Lender'}
 				name="lender_company"
 				rules={[{ required: true, message: 'Please input!' }]}
+				getValueFromEvent={(v) => capitalizeFirstLetter(v.target.value)}
 			>
-				<Input placeholder={`Enter ${stage === 'pending' ? 'taget ' : ''}lender`} />
+				<Input placeholder={`Enter ${stage === 'Pending' ? 'target ' : ''}lender`} />
 			</Form.Item>
 		</Col>
 	);

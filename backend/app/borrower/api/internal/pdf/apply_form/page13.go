@@ -121,7 +121,7 @@ func (form *ApplyForm) page13() (err error) {
 	})
 	_ = form.pdf.ImageFrom(pdf.LightBlueBg, x+100, y+form.pdf.LineHeight*1.5, &gopdf.Rect{W: 225.0, H: form.pdf.LineHeight * 2})
 	form.pdf.SetRegularFont()
-	_ = form.pdf.CellWithOption(&gopdf.Rect{W: 225.0, H: rowHeight}, "", gopdf.CellOption{
+	_ = form.pdf.CellWithOption(&gopdf.Rect{W: 225.0, H: rowHeight}, form.info.Code, gopdf.CellOption{
 		Align: gopdf.Center | gopdf.Middle,
 	})
 	form.pdf.Br(form.pdf.LineHeight * 5)

@@ -83,7 +83,7 @@ const SignIn = ({ form, setPageType }) => {
 	return (
 		<>
 			{contextHolder}
-			<div className="text-[30px]/[40px] font-medium pb-6">Sign in to ZeeBee</div>
+			<div className="text-[30px]/[40px] font-medium pb-6">Sign in to ZeeBee Lender</div>
 			<Form.Item
 				label="Email"
 				name="email"
@@ -164,11 +164,11 @@ const SignIn = ({ form, setPageType }) => {
 				</Form.Item>
 			</div>
 
-			<Form.Item label={null}>
-				<Button type="primary" onClick={onFinish} className="w-full" loading={loading}>
-					Login
-				</Button>
-			</Form.Item>
+			{/* <Form.Item label={null}> */}
+			<Button type="primary" onClick={onFinish} className="w-full" loading={loading}>
+				Login
+			</Button>
+			{/* </Form.Item> */}
 			{/* <div className="flex items-center justify-end">
 				Don’t have an account?
 				<Button type="link" size="small" onClick={() => router.push('/login/register')}>
