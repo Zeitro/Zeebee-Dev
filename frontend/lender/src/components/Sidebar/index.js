@@ -10,8 +10,8 @@ import { useRouter, usePathname } from 'next/navigation';
 import { RightCircleTwoTone, LeftCircleTwoTone } from '@ant-design/icons';
 import { useUserStore } from '@/store/user';
 import { sidebarIcon } from './icon';
-import { formatFirstLetterName } from '@/lib/format';
 import useElementSize from '@/hooks/useElementSize';
+import UserInfo from './userInfo';
 const homePathname = '/';
 const initTwoToneColor = ['var(--base-label)', 'var(--gray-light)'];
 /**
@@ -33,10 +33,6 @@ const SidebarDom = () => {
 		setSelectedKey(key);
 	};
 
-	const handleLogout = () => {
-		router.push('/login');
-	};
-
 	const handleExpand = () => {
 		changeSidebarCollapsed(!sidebarCollapsed);
 	};
@@ -44,7 +40,7 @@ const SidebarDom = () => {
 	useEffect(() => {
 		const routerItem = items.find((i) => pathname.indexOf(i.key) !== -1);
 		setSelectedKey(routerItem?.key || homePathname);
-	}, [pathname]);
+	}, [items, pathname]);
 
 	return config ? (
 		<div
@@ -102,36 +98,7 @@ const SidebarDom = () => {
 				].join(' ')}
 				onClick={handleSelect}
 			/>
-			<div
-				className={`h-16 border-t border-solid border-base-border text-base-primary flex items-center justify-center p-3.5 gap-2.5 overflow-hidden`}
-				onClick={() => handleLogout()}
-			>
-				{/* <Image
-					src="/globe.svg"
-					width={32}
-					height={32}
-					alt="Picture of the author"
-					className="shrink-0"
-				/> */}
-				<div
-					className={[
-						`w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-sm text-base-label`,
-						styles.bg,
-					].join(' ')}
-				>
-					{formatFirstLetterName(userInfo)}
-				</div>
-				{!sidebarCollapsed && (
-					<div className="flex-1">
-						<p className={`text-base/4 text-black-dark font-medium pb-[3px]`}>
-							{userInfo?.first_name} {userInfo?.last_name}
-						</p>
-						<span className="text-gray-medium text-ellipsis overflow-hidden whitespace-nowrap">
-							{userInfo?.email}
-						</span>
-					</div>
-				)}
-			</div>
+			<UserInfo userInfo={userInfo} sidebarCollapsed={sidebarCollapsed} />
 			<div
 				className="absolute right-[-8px] top-[18px] cursor-pointer"
 				onClick={handleExpand}

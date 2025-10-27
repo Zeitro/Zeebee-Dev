@@ -76,26 +76,16 @@ const getOpt = (showDeleteModal, stage) => {
 		render: (_, record) => (
 			<TableOperation
 				record={record}
-				// disabled={stage !== 'Draft' && record?.source !== 'borrower'}
 				getItems={(editItem, deleteItem, detailsItem) => {
 					const arr = [];
-					if (stage === 'Draft') {
-						const url =
-							record?.source === 'borrower'
-								? `/loans/${record?.id}`
-								: `/loans/createZeeBeeLoan?id=${record?.id}`;
-						arr.push({ ...editItem, url });
+					if (record?.source === 'borrower') {
+						arr.push({ ...editItem, url: `/loans/${record?.id}` });
 						arr.push(deleteItem);
 					} else {
-						if (record?.source === 'borrower') {
-							arr.push({ ...editItem, url: `/loans/${record?.id}` });
-							arr.push(deleteItem);
-						} else {
-							arr.push({
-								...detailsItem,
-								url: `/loans/zeeBeeDetails?id=${record?.id}`,
-							});
-						}
+						arr.push({
+							...detailsItem,
+							url: `/loans/zeeBeeDetails?id=${record?.id}`,
+						});
 					}
 					return arr;
 				}}
@@ -221,8 +211,8 @@ export const pendingColumns = (isNotAddress, successCallback, showDeleteModal, s
 			ellipsis: true,
 			width: 180,
 		},
-		getStageOpt(successCallback),
-		status,
+		...(stage !== 'Draft' ? [getStageOpt(successCallback)] : []),
+		...(stage === 'Pending' ? [status] : []),
 		getOpt(showDeleteModal, stage),
 	];
 };

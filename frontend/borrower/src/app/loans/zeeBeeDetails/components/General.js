@@ -88,8 +88,8 @@ export const collateralSummaryFields = [
 		value: 'rehab_cost',
 	},
 	{
-		label: 'Estimated current value ',
-		value: 'ltv',
+		label: 'Estimated current value',
+		value: 'est_property_value_amount',
 		render: (v) => formatAmount(v),
 	},
 	{
