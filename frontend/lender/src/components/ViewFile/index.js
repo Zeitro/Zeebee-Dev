@@ -4,10 +4,10 @@ import React, { useState } from 'react';
 import ViewSvg from '@/assets/images/view.svg';
 import styles from './index.module.scss';
 // 预览文件
-const ViewFile = ({ children, file, ...rest }) => {
+const ViewFile = ({ children, file, fileKey = 'file_url', ...rest }) => {
 	const [visible, setVisible] = useState(false);
 	const handleView = () => {
-		const suffix = (file?.name?.split('.')?.[1] || '')?.toLowerCase();
+		const suffix = (file?.[fileKey]?.split('.')?.pop() || '')?.toLowerCase();
 		switch (suffix) {
 			case 'jpg':
 			case 'jpeg':
@@ -15,10 +15,7 @@ const ViewFile = ({ children, file, ...rest }) => {
 				setVisible(true);
 				break;
 			default:
-				window.open(
-					'https://zeebee-files-staging.s3.us-west-1.amazonaws.com/files-dev/pdf/f96858d6-2c9c-400b-8b1b-079e53e1f6a2',
-					'_blank',
-				);
+				window.open(file?.[fileKey], '_blank');
 				break;
 		}
 	};
@@ -37,7 +34,7 @@ const ViewFile = ({ children, file, ...rest }) => {
 				height={0}
 				preview={{
 					visible,
-					src: file?.url,
+					src: file?.[fileKey],
 					onVisibleChange: (vis) => setVisible(vis),
 				}}
 				alt=""

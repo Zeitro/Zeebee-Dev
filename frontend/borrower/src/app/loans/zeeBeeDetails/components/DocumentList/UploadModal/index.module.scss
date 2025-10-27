@@ -1,0 +1,12 @@
+.documentUpload {
+	width: 100%;
+	:global {
+		.ant-upload {
+			width: 100%;
+			padding-bottom: 24px;
+		}
+		.ant-upload-list {
+			width: max-content;
+		}
+	}
+}

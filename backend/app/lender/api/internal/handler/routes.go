@@ -208,6 +208,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/user/info",
 					Handler: user.InfoHandler(serverCtx),
 				},
+				{
+					// switch lender company
+					Method:  http.MethodPost,
+					Path:    "/user/switch_lender_company",
+					Handler: user.SwitchLenderCompanyHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithPrefix("/api/v1"),

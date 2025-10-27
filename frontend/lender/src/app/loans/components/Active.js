@@ -20,7 +20,7 @@ const ActiveLoans = ({
 	successCallback,
 	stage = 'Active',
 }) => {
-	const { loanPurposeOptions, loanTypeOptions, lenderOptions } = useOptionsStore();
+	const { loanPurposeOptions, loanTypeOptions } = useOptionsStore();
 	const { request } = createRequest();
 	const tableFilterRef = useRef();
 	const { showDeleteModal, contextHolder, handleSelectedRow } = useOpt(tableFilterRef);
@@ -86,18 +86,6 @@ const ActiveLoans = ({
 				}).map((i) => ({ ...i, key: i.value })),
 			},
 			{
-				filterType: 'treeSelect',
-				label: 'Lender',
-				placeholder: 'Lender',
-				paramsKey: 'lender',
-				value: lender,
-				onChange: (value) => setLender(value),
-				treeData: transformArrayStructure({
-					sourceArray: lenderOptions,
-					outputKey: 'title',
-				}).map((i) => ({ ...i, key: i.value })),
-			},
-			{
 				filterType: 'button',
 				onClick: () => {
 					tableFilterRef?.current?.handleSearch?.();
@@ -120,16 +108,7 @@ const ActiveLoans = ({
 				},
 			},
 		],
-		[
-			searchValue,
-			type,
-			loanPurpose,
-			loanType,
-			lender,
-			loanPurposeOptions,
-			loanTypeOptions,
-			lenderOptions,
-		],
+		[searchValue, type, loanPurpose, loanType, lender, loanPurposeOptions, loanTypeOptions],
 	);
 
 	return (

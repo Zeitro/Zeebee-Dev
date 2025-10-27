@@ -31,7 +31,8 @@ const TableOperation = ({ list, className, onSelect, getItems, disabled }) => {
 	const router = useRouter();
 	const newItems = getItems?.(editItem, deleteItem, detailsItem) || [editItem, deleteItem];
 
-	const handleSelect = async ({ key }) => {
+	const handleSelect = async ({ key, domEvent }) => {
+		domEvent.stopPropagation();
 		setSelectedKey(key);
 		const arr = list || newItems;
 		const optItem = arr.find((i) => i.key === key);
@@ -63,6 +64,7 @@ const TableOperation = ({ list, className, onSelect, getItems, disabled }) => {
 				' ',
 			)}
 			disabled={disabled}
+			onClick={(e) => e.stopPropagation()}
 		>
 			<EllipsisOutlined />
 		</Dropdown>

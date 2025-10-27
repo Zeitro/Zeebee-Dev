@@ -19,7 +19,7 @@ type ApplicantEntry struct {
 	FullName         string        `json:"full_name,omitempty, optional"`
 	BorrowerId       int64         `json:"borrower_id,omitempty, optional"`
 	LoanId           int64         `json:"loan_id,omitempty, optional"`
-	IsPrimary        bool          `json:"is_primary,omitempty, optional"`
+	IsPrimary        bool          `json:"is_primary, optional"`
 	Type             string        `json:"type,omitempty, optional"`
 	InvitationStatus string        `json:"invitation_status,omitempty, optional"`
 	LoanPropertyId   int64         `json:"loan_property_id,omitempty"`
@@ -276,7 +276,8 @@ type LoanEntry struct {
 	ScheduledCloseEscrowDate   string                   `json:"scheduled_close_escrow_date"`
 	LoanTerm                   int32                    `json:"loan_term" `
 	Arv                        float64                  `json:"arv"`
-	Ltv                        float64                  `json:"ltv" `
+	Ltv                        float64                  `json:"ltv"`
+	EstPropertyValueAmount     float64                  `json:"est_property_value_amount"`
 	LiquidityAmount            float64                  `json:"liquidity_amount"`
 	Budget                     *LoanBudgetEntry         `json:"budget"`
 	MidConstruction            bool                     `json:"mid_construction"`
@@ -333,6 +334,41 @@ type LoanPageSorter struct {
 	Sort   string `json:"sort,optional"`
 }
 
+type LoanPreApprovalRequestBorrower struct {
+	Name                        string `json:"name" validate:"required,min=1,max=100"`
+	Email                       string `json:"email" validate:"required,email"`
+	Phone                       string `json:"phone" validate:"required"`
+	EstCreditScore              int32  `json:"est_credit_score" validate:"required,gte=300,lte=850"`
+	FlipPropertyCount           int32  `json:"flip_property_count" validate:"gte=0"`
+	PurchaseRentalPropertyCount int32  `json:"purchase_rental_property_count" validate:"gte=0"`
+}
+
+type LoanPreApprovalRequestLoan struct {
+	LoanTerm               int32   `json:"loan_term" validate:"required,gte=1,lte=360"`
+	EstPropertyValueAmount float64 `json:"est_property_value_amount" validate:"required,gt=0"`
+	Arv                    float64 `json:"arv" validate:"required,gt=0"`
+	TotalAmount            float64 `json:"total_amount" validate:"required,gt=0"`
+	PrincipalAmount        float64 `json:"principal_amount" validate:"required_if=LoanPurpose 'Rate-term refi' LoanPurpose 'Cash-out refi'"`
+	PurchaseDate           string  `json:"purchase_date" validate:"required_if=LoanPurpose 'Rate-term refi' LoanPurpose 'Cash-out refi',omitempty,datetime=01/02/2006"`
+	PurchaseAmount         float64 `json:"purchase_amount" validate:"required,gt=0"`
+	CostSpentToDateAmount  float64 `json:"cost_spent_to_date_amount" validate:"required_if=LoanPurpose 'Rate-term refi' LoanPurpose 'Cash-out refi',gte=0"`
+	BudgetAmount           float64 `json:"budget_amount" validate:"required_if=LoanType Rehab,gt=0"`
+	InitialAmount          float64 `json:"initial_amount" validate:"required_if=LoanType Rehab LoanType 'Ground up construction',gt=0"`
+	HoldbackAmount         float64 `json:"holdback_amount" validate:"required_if=LoanType Rehab LoanType 'Ground up construction',gt=0"`
+	InterestReserveMonths  int32   `json:"interest_reserve_months" validate:"gte=0"`
+	LoanPurpose            string  `json:"loan_purpose" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
+	LoanType               string  `json:"loan_type" validate:"required,oneof=Bridge Rehab 'Ground up construction'"`
+	HasAssignmentFee       bool    `json:"has_assignment_fee,optional"`
+	AssignmentFeeAmount    float64 `json:"assignment_fee_amount,optional" validate:"required_if=HasAssignmentFee true,gte=0"`
+}
+
+type LoanPreApprovalRequestProperty struct {
+	Address       *AddressEntry `json:"address" validate:"required"`
+	PropertyType  string        `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
+	IsPermitReady bool          `json:"is_permit_ready"`
+	Unit          int32         `json:"unit" validate:"gte=1,lte=100"`
+}
+
 type LoanPropertyEntry struct {
 	Id                   int64              `json:"id,optional"`
 	PropertyType         string             `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
@@ -357,6 +393,24 @@ type LoanThirdServiceEntry struct {
 	Email   string `json:"email,optional"`
 	Phone   string `json:"phone,optional"`
 	Company string `json:"company,optional" validate:"required_unless=Type 'Title Co' Type 'Escrow Co' Type Insurance"`
+}
+
+type PrimaryPreApprovalLoan struct {
+	LenderCompanyId   int64   `json:"lender_company_id"`
+	LenderCompanyName string  `json:"lender_company_name"`
+	IsApproved        bool    `json:"is_approved"`
+	TotalAmount       float64 `json:"total_amount"`
+	Rate              float32 `json:"rate"`
+	MonthlyPayment    float64 `json:"monthly_payment"`
+	CashToClose       float64 `json:"cash_to_close"`
+	InitialAmount     float64 `json:"initial_amount"`
+	HoldbackAmount    float64 `json:"holdback_amount"`
+	LoanTerm          int32   `json:"loan_term"`
+	Ltv               float32 `json:"ltv"`
+	Ltarv             float32 `json:"ltarv"`
+	Ltc               float32 `json:"ltc"`
+	RejectReason      string  `json:"reject_reason"`
+	RequestId         string  `json:"request_id"`
 }
 
 type PropertyBaseEntry struct {
@@ -390,6 +444,24 @@ type PropertyPageFilter struct {
 type PropertyPageSorter struct {
 	Column string `json:"column,optional"`
 	Sort   string `json:"sort,optional"`
+}
+
+type SecondaryPreApprovalLoan struct {
+	LenderCompanyId   int64                               `json:"lender_company_id"`
+	LenderCompanyName string                              `json:"lender_company_name"`
+	TotalAmount       *SecondaryPreApprovalLoanRangeFloat `json:"total_amount"`
+	Rate              *SecondaryPreApprovalLoanRangeFloat `json:"rate"`
+	LoanTerm          *SecondaryPreApprovalLoanRangeInt   `json:"loan_term"`
+}
+
+type SecondaryPreApprovalLoanRangeFloat struct {
+	Min float64 `json:"min"`
+	Max float64 `json:"max"`
+}
+
+type SecondaryPreApprovalLoanRangeInt struct {
+	Min int32 `json:"min"`
+	Max int32 `json:"max"`
 }
 
 type SelectOptionEntry struct {

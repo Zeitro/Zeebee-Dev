@@ -69,7 +69,7 @@ func (l *UpdateDraftLogic) UpdateDraft(req *types.LoanApplyRequest) (resp *types
 		return nil, err
 	}
 
-	rpcReq.Data.LenderId = 1
+	rpcReq.Data.LenderCompanyId = 1
 
 	rpcResp, err = l.svcCtx.LoanRpcClient.SaveDraftLoan(l.ctx, rpcReq)
 	if err != nil {

@@ -1,5 +1,6 @@
 .husky/_/
 /node_modules
+env
 .idea
 .vscode
 .lingma
