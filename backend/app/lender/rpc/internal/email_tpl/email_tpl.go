@@ -1,11 +1,9 @@
 package email_tpl
 
 import (
-	"bytes"
 	"embed"
-	"html/template"
 
-	"github.com/pkg/errors"
+	"zeebee-backend/common/email"
 )
 
 // EmailTplFS is the embedded filesystem containing email templates.
@@ -41,31 +39,7 @@ const (
 	SendLoanDocumentRequestEmail = "send_loan_document_request"
 )
 
-// tpls is a map of template names to parsed templates.
-var tpls = map[string]*template.Template{}
-
-// ErrEmailTemplateNotFound is returned when an email template is not found.
-var ErrEmailTemplateNotFound = errors.New("email template not found")
-
 func init() {
-	tpls = map[string]*template.Template{
-		// RegisterVerifyEmail: template.Must(template.New(RegisterVerifyEmail).Parse(SendRegisterVerifyEmailTpl)),
-		ResetPwdEmail: template.Must(template.New(ResetPwdEmail).Parse(SendResetPwdEmailTpl)),
-		// LoginUrlEmail:       template.Must(template.New(LoginUrlEmail).Parse(SendLoginUrlEmailTpl)),
-		SendLoanDocumentRequestEmail: template.Must(template.New(SendLoanDocumentRequestEmail).Parse(SendLoanDocumentRequestEmailTpl)),
-	}
-}
-
-// GetParsedContent returns the parsed content of an email template.
-func GetParsedContent(name string, data map[string]interface{}) (content string, err error) {
-	tpl, ok := tpls[name]
-	if !ok {
-		return "", ErrEmailTemplateNotFound
-	}
-	buf := new(bytes.Buffer)
-	err = tpl.Execute(buf, data)
-	if err != nil {
-		return "", err
-	}
-	return buf.String(), nil
+	_ = email.RegisterTemplateWithText(ResetPwdEmail, SendResetPwdEmailTpl)
+	_ = email.RegisterTemplateWithText(SendLoanDocumentRequestEmail, SendLoanDocumentRequestEmailTpl)
 }
