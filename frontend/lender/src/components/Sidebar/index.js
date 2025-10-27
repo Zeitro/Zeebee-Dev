@@ -11,7 +11,7 @@ import { RightCircleTwoTone, LeftCircleTwoTone } from '@ant-design/icons';
 import { useUserStore } from '@/store/user';
 import { sidebarIcon } from './icon';
 import useElementSize from '@/hooks/useElementSize';
-import UserInfo from './userInfo';
+import UserInfo from './UserInfo';
 const homePathname = '/';
 const initTwoToneColor = ['var(--base-label)', 'var(--gray-light)'];
 /**
