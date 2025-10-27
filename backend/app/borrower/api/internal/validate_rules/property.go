@@ -83,7 +83,8 @@ func LoanApplyPropertyEntry(sl validator.StructLevel) {
 
 // LoanPropertyEntry
 func LoanPropertyEntry(sl validator.StructLevel) {
-	property, ok := sl.Current().Interface().(types.LoanApplyPropertyEntry)
+	val := sl.Current().Interface()
+	property, ok := val.(types.LoanPropertyEntry)
 	if !ok {
 		sl.ReportError(property, "property", "Property", "property_type", "invalid property")
 		return
