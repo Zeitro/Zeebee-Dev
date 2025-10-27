@@ -32,6 +32,9 @@ func UpdateApplyHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
 		}
+		if req.LoanProperty != nil && req.LoanProperty.PropertyBase != nil {
+			req.LoanProperty.Unit = req.LoanProperty.PropertyBase.Unit
+		}
 
 		v, err := validator.GetEnValidator()
 		if err != nil {
