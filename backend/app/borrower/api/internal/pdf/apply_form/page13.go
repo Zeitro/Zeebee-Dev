@@ -26,7 +26,7 @@ func (form *ApplyForm) page13() (err error) {
 	form.pdf.Br(form.pdf.LineHeight * 1.5)
 
 	x = form.pdf.GetX()
-	y = form.pdf.GetY()
+	// y = form.pdf.GetY()
 	contents := []colorText{
 		{
 			text:  "Privacy Act Notice:",

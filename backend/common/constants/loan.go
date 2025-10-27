@@ -414,5 +414,4 @@ func init() {
 			Value: string(BankruptcyChapter13),
 		},
 	})
-
 }
