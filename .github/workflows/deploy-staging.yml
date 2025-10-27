@@ -56,6 +56,25 @@ jobs:
           docker-compose -f docker-compose-staging.yml build --no-cache ${SERVICE_NAME}
           docker-compose -f docker-compose-staging.yml up -d ${SERVICE_NAME}
 
+      - name: Verify container is running
+        run: |
+          echo "Checking container status for ${CONTAINER_NAME}..."
+          for i in {1..12}; do
+            status=$(docker inspect -f '{{.State.Status}}' ${CONTAINER_NAME} 2>/dev/null || echo "not_found")
+            if [ "$status" = "running" ]; then
+              echo "✅ Container ${CONTAINER_NAME} is running."
+              exit 0
+            fi
+            echo "⏳ Waiting for container to start... ($i/12)"
+            sleep 5
+          done
+
+          echo "❌ Container ${CONTAINER_NAME} failed to start."
+          echo "------ Container Logs ------"
+          docker logs ${CONTAINER_NAME} || echo "No logs available"
+          echo "-----------------------------"
+          exit 1
+
       - name: Remove old images
         run: |
           docker images ${IMAGE_NAME} \
