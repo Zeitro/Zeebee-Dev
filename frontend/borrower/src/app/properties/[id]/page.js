@@ -1,6 +1,6 @@
 'use client';
 import Image from 'next/image';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { propertiesFieldArr } from '@/enum/properties';
 import { Col, Row } from 'antd';
 import PendingPage from '../../loans/components/Pending';
@@ -12,7 +12,6 @@ import { assemblyAddress } from '@/lib/format';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import eventBus from '@/lib/bus';
 import { useGlobalStore } from '@/store/global';
-import FieldTips from '@/components/FieldTips';
 const PropertiesDetails = () => {
 	const { id } = useParams();
 	const { request } = createRequest();
@@ -21,7 +20,7 @@ const PropertiesDetails = () => {
 	const { changeSidebarCollapsed } = useGlobalStore();
 	const api = `/property/${id}`;
 
-	const getDetails = async () => {
+	const getDetails = useCallback(async () => {
 		try {
 			setLoading(true);
 			const data = await request(api);
@@ -31,7 +30,7 @@ const PropertiesDetails = () => {
 		} catch (error) {
 			setLoading(false);
 		}
-	};
+	}, [api, request]);
 
 	const list = useMemo(() => {
 		return [
@@ -81,7 +80,13 @@ const PropertiesDetails = () => {
 				),
 			},
 		];
-	}, [loading, rowData]);
+	}, [
+		getDetails,
+		loading,
+		rowData?.active_loans,
+		rowData?.archived_loans,
+		rowData?.pending_loans,
+	]);
 
 	useGetOptions([
 		{
@@ -92,8 +97,16 @@ const PropertiesDetails = () => {
 
 	useEffect(() => {
 		changeSidebarCollapsed(true);
-		getDetails();
-	}, []);
+
+		// macrotask 调度，能让 React 完成当前渲染周期后再执行 setState
+		const timer = setTimeout(async () => {
+			await getDetails();
+		}, 0);
+
+		return () => {
+			clearTimeout(timer);
+		};
+	}, [changeSidebarCollapsed, getDetails]);
 	return (
 		<div className={['h-full px-8 py-6 overflow-hidden overflow-y-auto'].join(' ')}>
 			<div className="flex items-center pb-6">

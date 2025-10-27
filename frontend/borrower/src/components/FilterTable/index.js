@@ -6,7 +6,7 @@ import React, {
 	forwardRef,
 	useImperativeHandle,
 } from 'react';
-import FilterField from '@/components/FilterField';
+import { FilterField } from '@repo/shared-methods';
 import styles from './index.module.scss';
 import NewTable from '@/components/NewTable';
 import { Col, Row, Tag } from 'antd';
