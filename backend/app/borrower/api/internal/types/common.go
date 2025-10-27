@@ -22,3 +22,7 @@ type GetUsCitiesResponse struct {
 type GetUsStatesResponse struct {
 	List []string `json:"list"`
 }
+
+type GetUuidResponse struct {
+	Uuid string `json:"uuid"`
+}

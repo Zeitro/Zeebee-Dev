@@ -67,6 +67,20 @@ func (repo *BaseRepo[T]) IsExistedByColumns(ctx context.Context, columns map[str
 	return count > 0, nil
 }
 
+// IsExistedByColumnsWithTx check is exist by columns
+func (repo *BaseRepo[T]) IsExistedByColumnsWithTx(ctx context.Context, tx *gorm.DB, columns map[string]interface{}) (bool, error) {
+	query := tx.WithContext(ctx).Model(new(T))
+	for k, v := range columns {
+		query = query.Where(k+" = ?", v)
+	}
+	var count int64
+	err := query.Count(&count).Error
+	if err != nil {
+		return false, errors.WithStack(err)
+	}
+	return count > 0, nil
+}
+
 // Create create
 func (repo *BaseRepo[T]) Create(ctx context.Context, data T) (T, error) {
 	err := repo.db.WithContext(ctx).Create(&data).Error

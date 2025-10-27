@@ -56,6 +56,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/us_states",
 				Handler: common.GetUsStatesHandler(serverCtx),
 			},
+			{
+				// get uuid
+				Method:  http.MethodGet,
+				Path:    "/uuid",
+				Handler: common.GetUuidHandler(serverCtx),
+			},
 		},
 		rest.WithPrefix("/api/v1"),
 	)
@@ -72,6 +78,24 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 			}...,
 		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// preapproval
+				Method:  http.MethodPost,
+				Path:    "/loan/pre_approval",
+				Handler: loan.PreApprovalHandler(serverCtx),
+			},
+			{
+				// send pre approval loan nofification
+				Method:  http.MethodPost,
+				Path:    "/loan/send_pre_approval_loan_notification",
+				Handler: loan.SendPreApprovalLoanNotificationHandler(serverCtx),
+			},
+		},
 		rest.WithPrefix("/api/v1"),
 	)
 

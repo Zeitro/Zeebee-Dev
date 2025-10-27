@@ -77,3 +77,13 @@ func (s *LoanServer) ImportPendingLoans(ctx context.Context, in *borrower.Import
 	l := loanlogic.NewImportPendingLoansLogic(ctx, s.svcCtx)
 	return l.ImportPendingLoans(in)
 }
+
+func (s *LoanServer) PreApprovalLoan(ctx context.Context, in *borrower.LoanPreApprovalRequest) (*borrower.LoanPreApprovalResponse, error) {
+	l := loanlogic.NewPreApprovalLoanLogic(ctx, s.svcCtx)
+	return l.PreApprovalLoan(in)
+}
+
+func (s *LoanServer) SendPreApprovalNotification(ctx context.Context, in *borrower.LoanSendPreApprovalNotificationRequest) (*borrower.EmptyResponse, error) {
+	l := loanlogic.NewSendPreApprovalNotificationLogic(ctx, s.svcCtx)
+	return l.SendPreApprovalNotification(in)
+}
