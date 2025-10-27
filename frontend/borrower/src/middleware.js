@@ -1,19 +1,14 @@
 import { NextResponse } from 'next/server';
-import { getCurrentRouterItem } from '@config/common';
-import { routers } from '@config/routes';
+import { getCurrentRouterItem, flattenNavRouter } from '@config/common';
+import { routers, noTokenRouter } from '@config/routes';
 export function middleware(request) {
 	const { pathname } = request.nextUrl;
 
 	// 2. 获取 cookie/token
 	const token = request.cookies.get('token')?.value;
 	// 路由白名单
-	const whiteList = [
-		'/login',
-		'/login/resetPassword',
-		'/login/register',
-		'/login/sendRegisterTips',
-		'/login/verifyEmail',
-	];
+	const noTokenList = flattenNavRouter(noTokenRouter);
+	const whiteList = noTokenList.map((item) => item.path);
 	const routerItem = getCurrentRouterItem(pathname, routers);
 
 	if (!token && !whiteList.includes(pathname)) {

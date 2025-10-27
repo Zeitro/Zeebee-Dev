@@ -17,6 +17,6 @@ export const layoutCol = {
 };
 
 export const yesNoOptions = [
-	{ value: true, label: 'Yes' },
-	{ value: false, label: 'No' },
+	{ value: true, label: 'Yes', className: '!justify-start' },
+	{ value: false, label: 'No', className: '!justify-start' },
 ];
