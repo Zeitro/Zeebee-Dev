@@ -52,6 +52,4 @@ func (l *SwitchLenderCompanyLogic) SwitchLenderCompany(req *types.UserSwitchLend
 		RefreshToken:       rpcResp.Data.RefreshToken,
 		RefreshTokenExpire: rpcResp.Data.RefreshTokenExpire,
 	}, nil
-
-	return
 }

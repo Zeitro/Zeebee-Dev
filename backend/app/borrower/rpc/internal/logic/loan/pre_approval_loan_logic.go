@@ -9,6 +9,7 @@ import (
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
+	"gorm.io/gorm"
 
 	"zeebee-backend/app/borrower/rpc/internal/email_tpl"
 	"zeebee-backend/app/borrower/rpc/internal/global"
@@ -40,6 +41,23 @@ func NewPreApprovalLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *P
 
 func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalRequest) (*borrower.LoanPreApprovalResponse, error) {
 
+	if in.Data.Property == nil || in.Data.Property.Address == nil {
+		return nil, errors.New("invalid property address")
+	}
+
+	// get geo data
+	geo, err := l.svcCtx.UsGeographyRepo.FindOneByColumns(l.ctx, map[string]interface{}{
+		"state_usps": in.Data.Property.Address.State,
+		"city_name":  in.Data.Property.Address.City,
+	})
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.Errorf("property address is not found")
+		}
+
+		return nil, errors.WithStack(err)
+	}
+
 	engines := preapproval_engine.GetDefaultPreApprovalEngines()
 	input := preapproval_engine.InputLoanInfo{
 		LoanType:                constants.LoanType(in.Data.Loan.LoanType),
@@ -61,6 +79,7 @@ func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalReque
 		HasAssignmentFee:        in.Data.Loan.HasAssignmentFee,
 		AssignmentFeeAmount:     in.Data.Loan.AssignmentFeeAmount,
 		InterestReserveMonths:   int(in.Data.Loan.InterestReserveMonths),
+		IsHighValueZone:         global.StateHighCostLimitMgr.IsHighCostZone(geo.StateUsps, geo.CityName),
 	}
 	result, err := engines["zeebee"].CalPreApprovalLoanAmount(input)
 	if err != nil {

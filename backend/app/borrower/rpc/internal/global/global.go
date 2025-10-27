@@ -7,6 +7,7 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"zeebee-backend/app/borrower/config"
+	"zeebee-backend/app/borrower/rpc/internal/statics"
 )
 
 func InitGlobal(c config.RpcConf) (err error) {
@@ -32,6 +33,9 @@ func InitGlobal(c config.RpcConf) (err error) {
 	})
 	eg.Go(func() error {
 		return initEmailClient(c.EmailConf)
+	})
+	eg.Go(func() error {
+		return initStateHighCostLimitMgr(statics.FullCountyLoanLimitListContent, c.HighCostLimitValue)
 	})
 
 	err = eg.Wait()

@@ -41,10 +41,11 @@ type InputLoanInfo struct {
 	HasAssignmentFee        bool                  `json:"has_assignment_fee"`
 	AssignmentFeeAmount     float64               `json:"assignment_fee_amount"`
 	InterestReserveMonths   int                   `json:"interest_reserve_months"`
+	IsHighValueZone         bool                  `json:"is_high_value_zone"`
 }
 
-// CalculatePreApprovaldLoanAmountResult represents the result of calculating pre-approved loan amount
-type CalculatePreApprovaldLoanAmountResult struct {
+// CalculatePreApprovalLoanAmountResult represents the result of calculating pre-approved loan amount
+type CalculatePreApprovalLoanAmountResult struct {
 	RequestId              string          `json:"request_id"`
 	LenderCompanyName      string          `json:"lender_company_name"`
 	LenderCompanyId        int64           `json:"lender_company_id"`
@@ -74,7 +75,7 @@ type PreApprovalEngine struct {
 }
 
 // CalPreApprovaldLoanAmount calculates and returns the pre-approved loan amount
-func (e *PreApprovalEngine) CalPreApprovalLoanAmount(input InputLoanInfo) (result *CalculatePreApprovaldLoanAmountResult, err error) {
+func (e *PreApprovalEngine) CalPreApprovalLoanAmount(input InputLoanInfo) (result *CalculatePreApprovalLoanAmountResult, err error) {
 	experienceLevel := e.ExperienceLevelRule.getExperienceLevel(input.TransactionHistoryCount)
 	rule, ok := e.PreApprovalRules[experienceLevel]
 	if !ok {
