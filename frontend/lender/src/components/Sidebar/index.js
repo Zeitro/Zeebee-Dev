@@ -21,7 +21,7 @@ const SidebarDom = () => {
 	const pathname = usePathname();
 	const items = generateMenuBar(navRouter, sidebarIcon).filter((i) => i.key !== '/');
 	const { userInfo } = useUserStore();
-	const { siberCollapsed, changeSiberCollapsed } = useGlobalStore();
+	const { sidebarCollapsed, changeSidebarCollapsed } = useGlobalStore();
 	const [selectedKey, setSelectedKey] = useState(homePathname);
 	const [twoToneColor, setTwoToneColor] = useState(initTwoToneColor);
 	const config = useMemo(() => getCurrentRouterItem(pathname, navRouter), [pathname]); // 获取当前路由的配置
@@ -37,7 +37,7 @@ const SidebarDom = () => {
 	};
 
 	const handleExpand = () => {
-		changeSiberCollapsed(!siberCollapsed);
+		changeSidebarCollapsed(!sidebarCollapsed);
 	};
 	// 初始化根据路由选中侧边栏
 	useEffect(() => {
@@ -47,7 +47,7 @@ const SidebarDom = () => {
 
 	return config ? (
 		<div
-			style={{ width: siberCollapsed ? 56 : 216 }}
+			style={{ width: sidebarCollapsed ? 56 : 216 }}
 			className={[
 				'relative shrink-0 h-full flex flex-col border-r border-base-border',
 				styles.sidebar,
@@ -60,7 +60,16 @@ const SidebarDom = () => {
 				].join(' ')}
 				onClick={() => handleSelect({ key: homePathname })}
 			>
-				<Image src="/images/logo.svg" width={95} height={30} alt="ZeeBee Logo" />
+				{sidebarCollapsed ? (
+					<Image
+						src="/images/logo_abbreviated.png"
+						width={27}
+						height={27}
+						alt="ZeeBee Logo"
+					/>
+				) : (
+					<Image src="/images/logo.png" width={149} height={30} alt="ZeeBee Logo" />
+				)}
 			</div>
 			<Menu
 				mode="vertical"
@@ -69,7 +78,7 @@ const SidebarDom = () => {
 				className={[
 					'flex-1 overflow-hidden border-r-0',
 					styles.menuList,
-					siberCollapsed && styles.menuList_collapsed,
+					sidebarCollapsed && styles.menuList_collapsed,
 				].join(' ')}
 				onClick={handleSelect}
 			/>
@@ -86,13 +95,13 @@ const SidebarDom = () => {
 				/> */}
 				<div
 					className={[
-						`w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-sm text-background`,
+						`w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-sm text-base-label`,
 						styles.bg,
 					].join(' ')}
 				>
 					{formatFirstLetterName(userInfo)}
 				</div>
-				{!siberCollapsed && (
+				{!sidebarCollapsed && (
 					<div className="flex-1">
 						<p className={`text-base/4 text-black-dark font-medium pb-[3px]`}>
 							{userInfo?.first_name} {userInfo?.last_name}
@@ -109,7 +118,7 @@ const SidebarDom = () => {
 				onMouseLeave={() => setTwoToneColor(initTwoToneColor)}
 				onMouseEnter={() => setTwoToneColor(['var(--base-primary)', 'var(--base-active)'])}
 			>
-				{siberCollapsed ? (
+				{sidebarCollapsed ? (
 					<RightCircleTwoTone twoToneColor={twoToneColor} />
 				) : (
 					<LeftCircleTwoTone twoToneColor={twoToneColor} />

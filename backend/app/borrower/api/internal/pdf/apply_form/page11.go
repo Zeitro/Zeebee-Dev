@@ -35,7 +35,7 @@ func (form *ApplyForm) page11() (err error) {
 	// form.pdf.Br(form.pdf.LineHeight)
 
 	x = form.pdf.GetX()
-	y = form.pdf.GetY()
+	// y = form.pdf.GetY()
 	contents := []colorText{
 		{
 			text:  "Equal Credit Opportunity Act Disclosure of Right to Request Specific Reasons for Credit Denial",
@@ -55,7 +55,7 @@ func (form *ApplyForm) page11() (err error) {
 	form.pdf.Br(form.pdf.LineHeight)
 	form.pdf.SetBlackRegularFont()
 	x = form.pdf.GetX()
-	y = form.pdf.GetY()
+	// y = form.pdf.GetY()
 	contents = []colorText{
 		{
 			text:  "Fair Lending Notice",

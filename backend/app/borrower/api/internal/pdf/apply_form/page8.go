@@ -21,7 +21,6 @@ func (form *ApplyForm) page8() (err error) {
 	form.pdf.Br(30)
 
 	x = form.pdf.GetX()
-	y = form.pdf.GetY()
 	contents := []colorText{
 		{text: "The purpose of collecting this information is to help ensure that all applicants are treated fairly and that the housing needs of communities and neighborhoods are being fulfilled. For residential mortgage lending, Federal law requires that we ask applicants for their demographic information (ethnicity, sex, and race) in order to monitor our compliance with equal credit opportunity, fair housing, and home mortgage disclosure laws. You are not required to provide this information, but are encouraged to do so. You may select one or more designations for “ethnicity” and one or more designations for “race.”",
 			color: struct{ r, g, b uint8 }{0, 0, 0},
@@ -39,7 +38,6 @@ func (form *ApplyForm) page8() (err error) {
 	}
 	form.pdf.Br(lineHeight / 2.0)
 	form.pdf.SetGrayStroke()
-	x = form.pdf.GetX()
 	y = form.pdf.GetY()
 	form.pdf.Line(form.pdf.MarginLeft(), y, form.pdf.GetFullWidth()+form.pdf.MarginLeft(), y)
 	form.pdf.Br(lineHeight / 2.0)

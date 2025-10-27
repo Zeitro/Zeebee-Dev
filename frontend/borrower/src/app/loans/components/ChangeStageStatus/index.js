@@ -8,7 +8,7 @@ import DropdownStatus from '@/components/DropdownStatus';
 /**
  * 修改pending loans列表内的状态
  * */
-export const LoanPendingStatus = ({ data, successCallback }) => {
+export const LoanPendingStatus = ({ data, successCallback, disabled, tooltipProps }) => {
 	const { loanPendingStatus } = useOptionsStore();
 	const items = transformArrayStructure({
 		sourceArray: loanPendingStatus,
@@ -23,6 +23,8 @@ export const LoanPendingStatus = ({ data, successCallback }) => {
 			statusKey="pending_status"
 			api={`/loan/${data.id}/pending_status`}
 			className={styles?.[data?.pending_status]}
+			disabled={disabled}
+			tooltipProps={tooltipProps}
 		/>
 	);
 };

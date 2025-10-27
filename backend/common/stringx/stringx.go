@@ -5,6 +5,8 @@ import (
 	"strings"
 
 	"github.com/Rhymond/go-money"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 func Format(format string, args ...interface{}) string {
@@ -71,4 +73,9 @@ func FormatCurrency(symbol string, amount float64) string {
 func FormatUsDollarCurrency(amount float64) string {
 	usdAmount := money.NewFromFloat(amount, money.USD)
 	return strings.TrimSuffix(usdAmount.Display(), ".00")
+}
+
+func ToTitle(s string) string {
+	caser := cases.Title(language.Und)
+	return caser.String(s)
 }

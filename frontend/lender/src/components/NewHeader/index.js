@@ -54,7 +54,7 @@ const NewHeader = () => {
 					{crumbs?.[crumbs.length - 1]?.title}
 				</div>
 			</div>
-			<CustomContent />
+			{/* <CustomContent /> */}
 		</div>
 	) : (
 		''

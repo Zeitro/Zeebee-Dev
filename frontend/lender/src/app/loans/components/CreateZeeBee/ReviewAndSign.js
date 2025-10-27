@@ -145,7 +145,8 @@ export const contractSignatureZones = [
 	},
 	// ... 如果有更多签名区，继续在这里添加
 ];
-const ReviewAndSign = ({ form, rowData }) => {
+// isNotRequest 用于已有合同的链接查看，不请求接口返回数据流
+const ReviewAndSign = ({ form, rowData, isNotRequest = false }) => {
 	const applicants = Form.useWatch('loan_borrower', form);
 	const params = useMemo(() => {
 		// 因zeeBee详情会点击步骤跳到最后一步，导致getFieldsValue取不到全部数据，所以需将rowData直接传入
@@ -164,15 +165,17 @@ const ReviewAndSign = ({ form, rowData }) => {
 
 	// zeeBee详情时，拿到签订合同的外部链接
 	const fullLink = useMemo(() => {
-		const signedContract = rowData?.documents?.find((item) => item.file_type === 'ApplyForm');
-		return signedContract?.file;
+		const signedContract = rowData?.loan_documents?.find(
+			(item) => item.file_type === 'Apply Form',
+		);
+		return signedContract?.files?.[0]?.file_url;
 	}, [rowData]);
 
 	// 根据申请人个数，返回需要渲染的签名区
 	const getZones = () => {
 		const count = applicants?.length ? applicants?.length : 1;
 		let newZones = [];
-		if (fullLink) return newZones;
+		if (fullLink || isNotRequest) return newZones;
 		contractSignatureZones.reduce((a, b) => {
 			const arr = a?.filter((item) => item.page === b.page);
 			if (arr.length < count) {
@@ -195,11 +198,11 @@ const ReviewAndSign = ({ form, rowData }) => {
 			</div>
 			<div className="h-[calc(100% - 120px)]">
 				<ApplicationFormViewPDF
-					url={fullLink || '/pdf/apply_form'}
+					url={fullLink || isNotRequest ? fullLink : '/pdf/apply_form'}
 					zones={getZones()}
 					params={params}
 					changeSignatures={changeSignatures}
-					isFullLink={!!fullLink}
+					isFullLink={!!fullLink || isNotRequest}
 				/>
 			</div>
 			<Form.Item name="signatures" rules={[{ required: true }]} noStyle></Form.Item>
