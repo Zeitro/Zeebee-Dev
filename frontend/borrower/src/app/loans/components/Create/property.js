@@ -4,7 +4,6 @@ import React from 'react';
 import styles from './index.module.scss';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
-import { maxNumberOfUnits } from '@/lib/format';
 import { loan_pending } from '@/enum/common';
 import CommonFormDate from '@/components/CommonDate';
 import InputNumAmount from '@/components/InputNumAmount';
@@ -19,6 +18,7 @@ const CreateProperty = ({
 	addressProps = {},
 	form,
 	isRequestProperty,
+	unitInfo,
 	...colProps
 }) => {
 	const { propertyTypeOptions } = useGetOptions([
@@ -50,11 +50,11 @@ const CreateProperty = ({
 				>
 					<InputNumber
 						style={{ width: '100%' }}
-						min={1}
-						max={maxNumberOfUnits}
+						min={unitInfo.minUnit}
+						max={unitInfo.maxUnit}
 						controls={false}
-						placeholder="Enter number of unit"
-						disabled={isRequestProperty}
+						placeholder="Enter number of units"
+						disabled={isRequestProperty || unitInfo.disabled}
 					/>
 				</Form.Item>
 			</Col>

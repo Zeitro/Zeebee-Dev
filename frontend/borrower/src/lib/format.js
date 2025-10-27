@@ -1,7 +1,8 @@
 /**
  * 格式化/验证相关方法或变量
  * */
-
+// 禁止以空格、中点、连字符或下划线开头,禁止以这些特殊符号结尾,防止特殊符号连续出现,允许大小写字母、带重音符号的字母、空格、中点、连字符和撇号
+export const nameRegex = /^(?![\s·\-_])(?!.*[\s·\-_]$)(?!.*[\s·\-_]{2})[A-Za-zÀ-ÿ\s·\-']+$/;
 // Regular expression for validating phone numbers in various formats
 export const phoneRegex = /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/;
 // 同时有大小写字母、数字至少8位以上
@@ -20,8 +21,43 @@ export const maxCreditScore = 850;
 export const maxAmount = 1000000000000;
 // 最大单元数
 export const maxNumberOfUnits = 100;
-// 最大贷款期限（月）
+// 系统最大贷款期限（月）
 export const maxTerm = 10000;
+// ZeeBee,最小/最大贷款期限（月）
+export const maxTerm_zeeBee = 24;
+export const minTerm_zeeBee = 12;
+
+// 通过property_type获取unit
+export const changeUnitByPropertyType = (property_type) => {
+	let unit = null,
+		minUnit = 1,
+		maxUnit = maxNumberOfUnits,
+		disabled = false;
+	switch (property_type) {
+		case 'Single Family Residence':
+			unit = minUnit = 1;
+			disabled = true;
+			break;
+		case '2 unit':
+			unit = minUnit = 2;
+			disabled = true;
+			break;
+		case '3 unit':
+			unit = minUnit = 3;
+			disabled = true;
+			break;
+		case '4 unit':
+			unit = minUnit = 4;
+			disabled = true;
+			break;
+		case '4+ Multi':
+			unit = minUnit = 5;
+			break;
+		default:
+			break;
+	}
+	return { unit, minUnit, maxUnit, disabled };
+};
 
 // 格式化居住面积, 用于<InputNumber>中配置
 export const livingAreaProps = {
@@ -40,6 +76,19 @@ export const livingAreaProps = {
 export const validateRule = (value, regex, errorMsg = 'Invalid input') => {
 	if (value && !regex.test(value)) {
 		return Promise.reject(errorMsg);
+	}
+	return Promise.resolve();
+};
+
+//AssignmentFee 金额效验
+export const validateAssignmentFeeAmount = (value, purchase_amount) => {
+	// Assignment fee 最高只能达到purchase price的10%
+	const max = purchase_amount * 0.1;
+	if (!value) {
+		return Promise.reject('Please enter assignment fee amount!');
+	}
+	if (value && value > max) {
+		return Promise.reject(`Assignment fee cannot exceed purchase price's 10% ($${max})`);
 	}
 	return Promise.resolve();
 };
@@ -70,11 +119,12 @@ export const validatedName = (value, index, list) => {
 
 // 格式化手机号 (xxx) xxx-xxxx
 export const formatPhone = (phoneNumber) => {
+	if (!phoneNumber) return '';
 	// 移除所有非数字字符
-	const cleaned = phoneNumber.replace(/\D/g, '');
+	const cleaned = phoneNumber?.replace(/\D/g, '');
 
 	// 截取前10位数字
-	const truncated = cleaned.substring(0, 10);
+	const truncated = cleaned?.substring(0, 10);
 
 	// 根据输入长度格式化显示
 	if (truncated.length <= 3) {
@@ -139,16 +189,68 @@ export const assemblyAddress = (address = {}, isHaveZip) => {
 
 // 简写姓名：只显示姓名首字母，并大写
 export const formatFirstLetterName = (userInfo) => {
+	if (!userInfo) return '';
 	const { first_name, last_name } = userInfo;
 	const name1 = first_name?.[0]?.toUpperCase();
 	const name2 = last_name?.[0]?.toUpperCase();
 	return `${name1}${name2}`;
 };
 
-// 首字母大写，有空格时，空格后的字母大写
-export function capitalizeFirstLetter(str) {
-	return str
-		.split(/(?:-|\s)+/)
-		.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-		.join(' ');
+/**
+ * 格式化名字（分隔符只有 空格, -, ·, ', ’），首字母大写，分隔符后字母大写
+ * @param {*} value 名字
+ * @returns 符合禁止以空格、中点、连字符或下划线开头,防止特殊符号连续出现,允许大小写字母、带重音符号的字母、空格、中点、连字符和撇号
+ * Input输入值，做不到禁止以这些特殊符号结尾
+ */
+export function capitalizeFirstLetter(value) {
+	if (!value && value !== 0) return '';
+	let s = String(value);
+
+	// 1. 移除下划线
+	s = s.replace(/_/g, '');
+
+	// 2. 删除非法字符（保留拉丁字母、空格、中点、连字符和撇号）
+	// 包含常见的弯撇号 ’
+	s = s.replace(/[^A-Za-zÀ-ÖØ-öø-ÿ\s·\-'’]/g, '');
+
+	// 3. 折叠同类连续符号
+	s = s
+		.replace(/·{2,}/g, '·')
+		.replace(/-{2,}/g, '-')
+		.replace(/'{2,}/g, "'")
+		.replace(/’{2,}/g, '’')
+		.replace(/\s{2,}/g, ' ');
+
+	// 4. 折叠混合连续的分隔符为第一个字符（避免 "- ' " 这类混合）
+	s = s.replace(/([ \-·'’]){2,}/g, (m, p1) => p1);
+
+	// 5. 去除开头的分隔符
+	if (/([ \-·'’])+/g.test(s[0])) {
+		s = s.slice(1);
+	}
+
+	// 6. 首字母大写逻辑：遇到分隔符后下一个字母大写，其余小写
+	const separators = new Set([' ', '-', '·', "'", '’']);
+	let needUpper = true;
+	let out = '';
+	for (const ch of s) {
+		if (separators.has(ch)) {
+			out += ch;
+			needUpper = true;
+		} else {
+			out += needUpper ? ch.toUpperCase() : ch.toLowerCase();
+			needUpper = false;
+		}
+	}
+	return out;
+}
+
+/**
+ * 最终严格格式化名字（用于 Input.onBlur 或提交前）
+ */
+export function finalizeName(name) {
+	let str = capitalizeFirstLetter(name);
+	// 去除开头和结尾的分隔符
+	str = str.replace(/^[ \-·'’]+|[ \-·'’]+$/g, '');
+	return str.trim();
 }

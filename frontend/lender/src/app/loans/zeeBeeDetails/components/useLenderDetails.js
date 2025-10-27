@@ -78,6 +78,10 @@ const useLenderDetails = () => {
 	const [rowData, setRowData] = useState({}); // loan详情
 	const [newRowData, setNewRowData] = useState({}); // loan详情
 	const [disabled, setDisabled] = useState(true); //控制application内的页面不可编辑，只有点击Edit才可修改
+	const [unitInfo, setUnitInfo] = useState({
+		// unit: {},
+		// future_unit: {},
+	});
 	const { request } = createRequest();
 	const id = searchParams.get('id');
 	const newList = flattenArray(lenderDetailsSteps);
@@ -223,7 +227,7 @@ const useLenderDetails = () => {
 						handleUpdate={handleSave}
 						confirmLoading={confirmLoading}
 					>
-						<PropertyInfo form={form} />
+						<PropertyInfo form={form} unitInfo={unitInfo} />
 						<Loan form={form} />
 					</CommonSave>
 				);
@@ -345,7 +349,9 @@ const useLenderDetails = () => {
 
 		let index = 0;
 		let selectTabKey = '';
-		if (stage === 'Pending') {
+		if (stage === 'Draft') {
+			index = 0;
+		} else if (stage === 'Pending') {
 			index = newList.findIndex((i) => i.key === pendingStatus);
 		} else if (stage === 'Active') {
 			index = newList.findIndex((i) => i.key === 'Funded');

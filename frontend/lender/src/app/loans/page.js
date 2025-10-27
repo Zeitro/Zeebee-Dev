@@ -33,31 +33,44 @@ const Loans = () => {
 			items={[
 				{
 					key: 'pending',
-					label: 'Pending Loans',
+					label: 'Pending',
 					children: (
 						<PendingPage filterWrapClassName="px-4 pb-4" api={api} key="Pending" />
 					),
 				},
 				{
 					key: 'active',
-					label: 'Active Loans',
+					label: 'Active',
 					children: <ActiveLoans filterWrapClassName="px-4 pb-4" api={api} />,
 				},
 				{
 					key: 'archived',
-					label: 'Archived Loans',
+					label: 'Archived',
 					children: <ArchivedLoans filterWrapClassName="px-4 pb-4" api={api} />,
 				},
 				{
 					key: 'rejected',
-					label: 'Rejected Loans',
+					label: 'Rejected',
 					children: (
 						<PendingPage
 							filterWrapClassName="px-4 pb-4"
 							api={api}
 							stage="Rejected"
 							key="Rejected"
-							scrollX={2200}
+							scrollX={2400}
+						/>
+					),
+				},
+				{
+					key: 'Draft',
+					label: 'Pre approval',
+					children: (
+						<PendingPage
+							filterWrapClassName="px-4 pb-4"
+							api={api}
+							stage="Draft"
+							key="Draft"
+							scrollX={2250}
 						/>
 					),
 				},
