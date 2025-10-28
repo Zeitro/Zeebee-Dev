@@ -1,9 +1,9 @@
-import React from 'react';
-import { Col, Form, Input, Row } from 'antd';
+import { Col, Form, Input } from 'antd';
 import { titleCol } from '@/enum/common';
 import { getPathArr } from '@/lib/common';
 import { validatedName, capitalizeFirstLetter } from '@/lib/format';
-const InputName = ({
+// 姓名组合（firstName + middleName + lastName）
+const InputNameCombination = ({
 	layoutCol = {
 		xs: 24,
 		sm: 24,
@@ -15,13 +15,11 @@ const InputName = ({
 	firstLabel = 'First name',
 	middleLabel = 'Middle name',
 	lastLabel = 'Last name',
-	gutter = 24,
 	title,
 	style = { paddingBottom: 12, fontSize: 16 },
 	config = {},
 	form,
 	listName,
-	className,
 }) => {
 	const first = Form.useWatch(getPathArr(firstName, listName), form);
 	const last = Form.useWatch(getPathArr(lastName, listName), form);
@@ -92,4 +90,4 @@ const InputName = ({
 		</>
 	);
 };
-export default InputName;
+export default InputNameCombination;

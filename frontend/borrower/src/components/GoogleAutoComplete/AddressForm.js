@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect } from 'react';
 import { Form, Input, Col, Select } from 'antd';
-import GoogleAutoComplete from './index';
+import { GoogleAutoComplete } from '@repo/shared-methods';
 import { set } from 'lodash';
 import { useAddressStore } from '@/store/address';
 import { useDisUpdateEffect } from '@/hooks/common';
@@ -61,7 +61,7 @@ const AddressForm = ({
 
 	useEffect(() => {
 		getStateList();
-	}, []);
+	}, [getStateList]);
 
 	useDisUpdateEffect(() => {
 		if (stateValue) {

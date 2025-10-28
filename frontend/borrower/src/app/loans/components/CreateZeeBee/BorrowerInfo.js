@@ -16,8 +16,7 @@ import {
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { layoutCol, titleCol } from '@/enum/common';
 import { useGetOptions } from '@/hooks/useGetOptions';
-import { CommonFormDate } from '@repo/shared-methods';
-import InputName from '@/components/InputName';
+import { CommonFormDate, InputNameCombination } from '@repo/shared-methods';
 const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 	const { maritalStatusOptions } = useGetOptions([
 		{
@@ -55,7 +54,7 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 									</Button>
 								)}
 							</Col>
-							<InputName
+							<InputNameCombination
 								layoutCol={{ ...layoutCol, md: 8 }}
 								firstName={[field.name, 'first_name']}
 								middleName={[field.name, 'mid_name']}

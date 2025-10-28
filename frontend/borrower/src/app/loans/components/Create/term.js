@@ -2,10 +2,9 @@
 import { Col, Form, Input, InputNumber, Row, Select } from 'antd';
 import React from 'react';
 import styles from './index.module.scss';
-import { InputNumAmount, CommonFormDate } from '@repo/shared-methods';
+import { InputNumAmount, CommonFormDate, InputNameCombination } from '@repo/shared-methods';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import { loan_active, loan_pending } from '@/enum/common';
-import InputName from '@/components/InputName';
 import { capitalizeFirstLetter } from '@/lib/format';
 const layoutCol = {
 	xs: 24,
@@ -62,7 +61,7 @@ const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
 					return (
 						<>
 							{fields?.map((field, index) => (
-								<InputName
+								<InputNameCombination
 									key={field.key}
 									layoutCol={{ ...layoutCol, md: 8 }}
 									firstName={[field.name, 'first_name']}

@@ -2,7 +2,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { AutoComplete, Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
-import { debounce } from 'lodash';
 /**
  * Google Api
  * 根据输入内容，获取地址信息，并拿到city/county/state/zip/unit相关数据
@@ -142,7 +141,7 @@ const GoogleAutoComplete = ({
 				setAddress(e);
 				onChange(e);
 			}}
-			onSearch={() => debounce(handleSearch, 300)}
+			onSearch={handleSearch}
 			onSelect={handleSelect}
 			placeholder={placeholder}
 			notFoundContent={loading ? <Spin indicator={<LoadingOutlined spin />} /> : null}
