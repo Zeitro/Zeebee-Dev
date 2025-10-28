@@ -346,16 +346,16 @@ type LoanPreApprovalRequestBorrower struct {
 type LoanPreApprovalRequestLoan struct {
 	LoanTerm               int32   `json:"loan_term" validate:"required,gte=1,lte=360"`
 	EstPropertyValueAmount float64 `json:"est_property_value_amount" validate:"required,gt=0"`
-	Arv                    float64 `json:"arv" validate:"required,gt=0"`
-	TotalAmount            float64 `json:"total_amount" validate:"required,gt=0"`
+	Arv                    float64 `json:"arv,optional" validate:"required,gt=0"`
+	TotalAmount            float64 `json:"total_amount,optional" validate:"required,gt=0"`
 	PrincipalAmount        float64 `json:"principal_amount" validate:"required_if=LoanPurpose 'Rate-term refi' LoanPurpose 'Cash-out refi'"`
-	PurchaseDate           string  `json:"purchase_date" validate:"required_if=LoanPurpose 'Rate-term refi' LoanPurpose 'Cash-out refi',omitempty,datetime=01/02/2006"`
+	PurchaseDate           string  `json:"purchase_date,optional" validate:"required_if=LoanPurpose 'Rate-term refi' LoanPurpose 'Cash-out refi',omitempty,datetime=01/02/2006"`
 	PurchaseAmount         float64 `json:"purchase_amount" validate:"required,gt=0"`
 	CostSpentToDateAmount  float64 `json:"cost_spent_to_date_amount" validate:"required_if=LoanPurpose 'Rate-term refi' LoanPurpose 'Cash-out refi',gte=0"`
-	BudgetAmount           float64 `json:"budget_amount" validate:"required_if=LoanType Rehab,gt=0"`
-	InitialAmount          float64 `json:"initial_amount" validate:"required_if=LoanType Rehab LoanType 'Ground up construction',gt=0"`
-	HoldbackAmount         float64 `json:"holdback_amount" validate:"required_if=LoanType Rehab LoanType 'Ground up construction',gt=0"`
-	InterestReserveMonths  int32   `json:"interest_reserve_months" validate:"gte=0"`
+	BudgetAmount           float64 `json:"budget_amount,optional" validate:"required_if=LoanType Rehab,gt=0"`
+	InitialAmount          float64 `json:"initial_amount,optional" validate:"required_if=LoanType Rehab LoanType 'Ground up construction',gt=0"`
+	HoldbackAmount         float64 `json:"holdback_amount,optional" validate:"required_if=LoanType Rehab LoanType 'Ground up construction',gt=0"`
+	InterestReserveMonths  int32   `json:"interest_reserve_months,optional" validate:"gte=0"`
 	LoanPurpose            string  `json:"loan_purpose" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
 	LoanType               string  `json:"loan_type" validate:"required,oneof=Bridge Rehab 'Ground up construction'"`
 	HasAssignmentFee       bool    `json:"has_assignment_fee,optional"`
@@ -365,7 +365,7 @@ type LoanPreApprovalRequestLoan struct {
 type LoanPreApprovalRequestProperty struct {
 	Address       *AddressEntry `json:"address" validate:"required"`
 	PropertyType  string        `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
-	IsPermitReady bool          `json:"is_permit_ready"`
+	IsPermitReady bool          `json:"is_permit_ready,optional"`
 	Unit          int32         `json:"unit" validate:"gte=1,lte=100"`
 }
 
