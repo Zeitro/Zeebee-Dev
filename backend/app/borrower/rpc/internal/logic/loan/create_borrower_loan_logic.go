@@ -168,7 +168,7 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 	// update loan
 	loan = &model.Loan{}
 	err = copier.CopyWithOption(loan, in, copier.Option{
-		IgnoreEmpty:   true,
+		IgnoreEmpty:   false,
 		DeepCopy:      true,
 		CaseSensitive: true,
 		Converters: []copier.TypeConverter{
