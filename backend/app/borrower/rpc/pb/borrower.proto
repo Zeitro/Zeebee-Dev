@@ -749,6 +749,20 @@ service Loan {
 
 // ===================== property service ======================
 
+message PropertyEntry {
+  int64 id = 1;
+  string property_type = 2;
+  double total_amount = 3;
+  int32  unit = 4;
+  float living_area_sqft = 5;
+  int32 bedrooms = 6;
+  float bathrooms = 7;
+  AddressEntry address = 8;
+  string created_at = 9;
+  string updated_at = 10;
+  bool has_loans = 11;
+}
+
 message PropertyPageEntry{
   int64 id = 1;
   string property_type = 2;
@@ -803,8 +817,8 @@ message PropertyDetailRequest {
   PropertyDetailRequestData data = 1;
 }
 
-message PropertyDetailResponse {
-  PropertyDetailResponseData data = 1;
+message PropertyDetailWithLoansResponse {
+  PropertyDetailWithLoansResponseData data = 1;
 }
 
 message PropertyDetailRequestData {
@@ -812,7 +826,7 @@ message PropertyDetailRequestData {
   int64 borrower_id = 2;
 }
 
-message PropertyDetailResponseData {
+message PropertyDetailWithLoansResponseData {
   int64 id = 1;
   string property_type = 2;
   double total_amount = 3;
@@ -827,9 +841,64 @@ message PropertyDetailResponseData {
   repeated LoanEntry archived_loans = 12;
 }
 
+// create property
+message PropertyCreateRequest {
+  PropertyCreateRequestData data = 1;
+}
+
+message PropertyCreateRequestData {
+  string property_type = 1;
+  //  double total_amount = 2;
+  int32  unit = 3;
+  float living_area_sqft = 4;
+  int32 bedrooms = 5;
+  float bathrooms = 6;
+  AddressEntry address = 7;
+  int64 borrower_id = 8;
+}
+
+message PropertyCreateResponse {
+  PropertyEntry data = 1;
+}
+
+
+// update property
+message PropertyUpdateRequest {
+  PropertyUpdateRequestData data = 1;
+}
+
+message PropertyUpdateRequestData {
+  int64 id = 1;
+  string property_type = 2;
+  //  double total_amount = 3;
+  int32  unit = 4;
+  float living_area_sqft = 5;
+  int32 bedrooms = 6;
+  float bathrooms = 7;
+  int64 borrower_id = 8;
+}
+
+// detail property
+message PropertyDetailResponse {
+  PropertyEntry data = 1;
+}
+
+// delete property
+message PropertyDeleteRequest {
+  PropertyDeleteRequestData data = 1;
+}
+message PropertyDeleteRequestData {
+  int64 id = 1;
+  int64 borrower_id = 2;
+}
+
 
 service Property {
   rpc PropertyPage(PropertyPageRequest) returns(PropertyPageResponse);
+  rpc PropertyDetailWithLoans(PropertyDetailRequest) returns(PropertyDetailWithLoansResponse);
+  rpc CreateProperty(PropertyCreateRequest) returns(PropertyCreateResponse);
+  rpc UpdateProperty(PropertyUpdateRequest) returns(EmptyResponse);
+  rpc DeleteProperty(PropertyDeleteRequest) returns(EmptyResponse);
   rpc PropertyDetail(PropertyDetailRequest) returns(PropertyDetailResponse);
 }
 

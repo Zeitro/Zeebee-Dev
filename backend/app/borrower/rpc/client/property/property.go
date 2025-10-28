@@ -89,10 +89,17 @@ type (
 	OptionResponse                             = borrower.OptionResponse
 	PrimaryLoanPreApproval                     = borrower.PrimaryLoanPreApproval
 	PropertyBaseEntry                          = borrower.PropertyBaseEntry
+	PropertyCreateRequest                      = borrower.PropertyCreateRequest
+	PropertyCreateRequestData                  = borrower.PropertyCreateRequestData
+	PropertyCreateResponse                     = borrower.PropertyCreateResponse
+	PropertyDeleteRequest                      = borrower.PropertyDeleteRequest
+	PropertyDeleteRequestData                  = borrower.PropertyDeleteRequestData
 	PropertyDetailRequest                      = borrower.PropertyDetailRequest
 	PropertyDetailRequestData                  = borrower.PropertyDetailRequestData
 	PropertyDetailResponse                     = borrower.PropertyDetailResponse
-	PropertyDetailResponseData                 = borrower.PropertyDetailResponseData
+	PropertyDetailWithLoansResponse            = borrower.PropertyDetailWithLoansResponse
+	PropertyDetailWithLoansResponseData        = borrower.PropertyDetailWithLoansResponseData
+	PropertyEntry                              = borrower.PropertyEntry
 	PropertyPageEntry                          = borrower.PropertyPageEntry
 	PropertyPageRequest                        = borrower.PropertyPageRequest
 	PropertyPageRequestData                    = borrower.PropertyPageRequestData
@@ -100,6 +107,8 @@ type (
 	PropertyPageRequestSorter                  = borrower.PropertyPageRequestSorter
 	PropertyPageResponse                       = borrower.PropertyPageResponse
 	PropertyPageResponseData                   = borrower.PropertyPageResponseData
+	PropertyUpdateRequest                      = borrower.PropertyUpdateRequest
+	PropertyUpdateRequestData                  = borrower.PropertyUpdateRequestData
 	RefreshTokenRequest                        = borrower.RefreshTokenRequest
 	RefreshTokenRequestData                    = borrower.RefreshTokenRequestData
 	RefreshTokenResponse                       = borrower.RefreshTokenResponse
@@ -143,6 +152,10 @@ type (
 
 	Property interface {
 		PropertyPage(ctx context.Context, in *PropertyPageRequest, opts ...grpc.CallOption) (*PropertyPageResponse, error)
+		PropertyDetailWithLoans(ctx context.Context, in *PropertyDetailRequest, opts ...grpc.CallOption) (*PropertyDetailWithLoansResponse, error)
+		CreateProperty(ctx context.Context, in *PropertyCreateRequest, opts ...grpc.CallOption) (*PropertyCreateResponse, error)
+		UpdateProperty(ctx context.Context, in *PropertyUpdateRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+		DeleteProperty(ctx context.Context, in *PropertyDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		PropertyDetail(ctx context.Context, in *PropertyDetailRequest, opts ...grpc.CallOption) (*PropertyDetailResponse, error)
 	}
 
@@ -160,6 +173,26 @@ func NewProperty(cli zrpc.Client) Property {
 func (m *defaultProperty) PropertyPage(ctx context.Context, in *PropertyPageRequest, opts ...grpc.CallOption) (*PropertyPageResponse, error) {
 	client := borrower.NewPropertyClient(m.cli.Conn())
 	return client.PropertyPage(ctx, in, opts...)
+}
+
+func (m *defaultProperty) PropertyDetailWithLoans(ctx context.Context, in *PropertyDetailRequest, opts ...grpc.CallOption) (*PropertyDetailWithLoansResponse, error) {
+	client := borrower.NewPropertyClient(m.cli.Conn())
+	return client.PropertyDetailWithLoans(ctx, in, opts...)
+}
+
+func (m *defaultProperty) CreateProperty(ctx context.Context, in *PropertyCreateRequest, opts ...grpc.CallOption) (*PropertyCreateResponse, error) {
+	client := borrower.NewPropertyClient(m.cli.Conn())
+	return client.CreateProperty(ctx, in, opts...)
+}
+
+func (m *defaultProperty) UpdateProperty(ctx context.Context, in *PropertyUpdateRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	client := borrower.NewPropertyClient(m.cli.Conn())
+	return client.UpdateProperty(ctx, in, opts...)
+}
+
+func (m *defaultProperty) DeleteProperty(ctx context.Context, in *PropertyDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	client := borrower.NewPropertyClient(m.cli.Conn())
+	return client.DeleteProperty(ctx, in, opts...)
 }
 
 func (m *defaultProperty) PropertyDetail(ctx context.Context, in *PropertyDetailRequest, opts ...grpc.CallOption) (*PropertyDetailResponse, error) {

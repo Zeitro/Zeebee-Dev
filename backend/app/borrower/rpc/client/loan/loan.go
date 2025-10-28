@@ -89,10 +89,17 @@ type (
 	OptionResponse                             = borrower.OptionResponse
 	PrimaryLoanPreApproval                     = borrower.PrimaryLoanPreApproval
 	PropertyBaseEntry                          = borrower.PropertyBaseEntry
+	PropertyCreateRequest                      = borrower.PropertyCreateRequest
+	PropertyCreateRequestData                  = borrower.PropertyCreateRequestData
+	PropertyCreateResponse                     = borrower.PropertyCreateResponse
+	PropertyDeleteRequest                      = borrower.PropertyDeleteRequest
+	PropertyDeleteRequestData                  = borrower.PropertyDeleteRequestData
 	PropertyDetailRequest                      = borrower.PropertyDetailRequest
 	PropertyDetailRequestData                  = borrower.PropertyDetailRequestData
 	PropertyDetailResponse                     = borrower.PropertyDetailResponse
-	PropertyDetailResponseData                 = borrower.PropertyDetailResponseData
+	PropertyDetailWithLoansResponse            = borrower.PropertyDetailWithLoansResponse
+	PropertyDetailWithLoansResponseData        = borrower.PropertyDetailWithLoansResponseData
+	PropertyEntry                              = borrower.PropertyEntry
 	PropertyPageEntry                          = borrower.PropertyPageEntry
 	PropertyPageRequest                        = borrower.PropertyPageRequest
 	PropertyPageRequestData                    = borrower.PropertyPageRequestData
@@ -100,6 +107,8 @@ type (
 	PropertyPageRequestSorter                  = borrower.PropertyPageRequestSorter
 	PropertyPageResponse                       = borrower.PropertyPageResponse
 	PropertyPageResponseData                   = borrower.PropertyPageResponseData
+	PropertyUpdateRequest                      = borrower.PropertyUpdateRequest
+	PropertyUpdateRequestData                  = borrower.PropertyUpdateRequestData
 	RefreshTokenRequest                        = borrower.RefreshTokenRequest
 	RefreshTokenRequestData                    = borrower.RefreshTokenRequestData
 	RefreshTokenResponse                       = borrower.RefreshTokenResponse

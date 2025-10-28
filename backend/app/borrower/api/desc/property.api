@@ -9,6 +9,22 @@ info(
 import "address.api"
 import "loan.api"
 
+type (
+    PropertyEntry {
+        Id int64 `json:"id"`
+        PropertyType string `json:"property_type"`
+        TotalAmount float64 `json:"total_amount"`
+        Unit int32 `json:"unit"`
+        LivingAreaSqft float32 `json:"living_area_sqft"`
+        Bedrooms int32 `json:"bedrooms"`
+        Bathrooms float32 `json:"bathrooms"`
+        Address AddressEntry `json:"address"`
+        CreatedAt string `json:"created_at"`
+        UpdatedAt string `json:"updated_at"`
+        HasLoans bool `json:"has_loans"`
+    }
+)
+
 // page
 type (
     PropertyPageEntry {
@@ -25,6 +41,7 @@ type (
         PendingLoanCount int64 `json:"pending_loan_count"`
         ActiveLoanCount int64 `json:"active_loan_count"`
         ArchivedLoanCount int64 `json:"archived_loan_count"`
+        HasLoans bool `json:"has_loans"`
     }
 
     PropertyPageFilter {
@@ -53,13 +70,13 @@ type (
     }
 )
 
-// detail
+// detail with loans
 type (
     PropertyDetailRequest  {
         Id int64 `path:"id"`
     }
 
-    PropertyDetailResponse  {
+    PropertyDetailWithLoansResponse {
         Id int64 `json:"id"`
         PropertyType string `json:"property_type"`
         TotalAmount float64 `json:"total_amount"`
@@ -72,6 +89,42 @@ type (
         PendingLoans []LoanEntry `json:"pending_loans"`
         ActiveLoans []LoanEntry `json:"active_loans"`
         ArchivedLoans []LoanEntry `json:"archived_loans"`
+    }
+)
+
+//  detail
+type (
+    PropertyDetailResponse {
+        PropertyPageEntry
+    }
+)
+
+//  create
+type (
+    PropertyCreateRequest {
+        PropertyType string `json:"property_type"`
+        TotalAmount float64 `json:"total_amount"`
+        Unit int32 `json:"unit"`
+        LivingAreaSqft float32 `json:"living_area_sqft"`
+        Bedrooms int32 `json:"bedrooms"`
+        Bathrooms float32 `json:"bathrooms"`
+        Address AddressEntry `json:"address"`
+    }
+    PropertyCreateResponse {
+        PropertyPageEntry
+    }
+)
+
+// update
+type (
+    PropertyUpdateRequest {
+        Id int64 `path:"id"`
+        PropertyType string `json:"property_type"`
+        Unit int32 `json:"unit"`
+        LivingAreaSqft float32 `json:"living_area_sqft"`
+        Bedrooms int32 `json:"bedrooms"`
+        Bathrooms float32 `json:"bathrooms"`
+        Address AddressEntry `json:"address"`
     }
 )
 

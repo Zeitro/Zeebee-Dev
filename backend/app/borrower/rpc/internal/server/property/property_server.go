@@ -28,6 +28,26 @@ func (s *PropertyServer) PropertyPage(ctx context.Context, in *borrower.Property
 	return l.PropertyPage(in)
 }
 
+func (s *PropertyServer) PropertyDetailWithLoans(ctx context.Context, in *borrower.PropertyDetailRequest) (*borrower.PropertyDetailWithLoansResponse, error) {
+	l := propertylogic.NewPropertyDetailWithLoansLogic(ctx, s.svcCtx)
+	return l.PropertyDetailWithLoans(in)
+}
+
+func (s *PropertyServer) CreateProperty(ctx context.Context, in *borrower.PropertyCreateRequest) (*borrower.PropertyCreateResponse, error) {
+	l := propertylogic.NewCreatePropertyLogic(ctx, s.svcCtx)
+	return l.CreateProperty(in)
+}
+
+func (s *PropertyServer) UpdateProperty(ctx context.Context, in *borrower.PropertyUpdateRequest) (*borrower.EmptyResponse, error) {
+	l := propertylogic.NewUpdatePropertyLogic(ctx, s.svcCtx)
+	return l.UpdateProperty(in)
+}
+
+func (s *PropertyServer) DeleteProperty(ctx context.Context, in *borrower.PropertyDeleteRequest) (*borrower.EmptyResponse, error) {
+	l := propertylogic.NewDeletePropertyLogic(ctx, s.svcCtx)
+	return l.DeleteProperty(in)
+}
+
 func (s *PropertyServer) PropertyDetail(ctx context.Context, in *borrower.PropertyDetailRequest) (*borrower.PropertyDetailResponse, error) {
 	l := propertylogic.NewPropertyDetailLogic(ctx, s.svcCtx)
 	return l.PropertyDetail(in)
