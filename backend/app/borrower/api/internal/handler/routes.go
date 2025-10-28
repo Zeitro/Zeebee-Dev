@@ -221,10 +221,34 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
 				{
+					// create
+					Method:  http.MethodPost,
+					Path:    "/property",
+					Handler: property.PropertyCreateHandler(serverCtx),
+				},
+				{
 					// detail
 					Method:  http.MethodGet,
 					Path:    "/property/:id",
 					Handler: property.PropertyDetailHandler(serverCtx),
+				},
+				{
+					// update
+					Method:  http.MethodPut,
+					Path:    "/property/:id",
+					Handler: property.PropertyUpdateHandler(serverCtx),
+				},
+				{
+					// delete
+					Method:  http.MethodDelete,
+					Path:    "/property/:id",
+					Handler: property.PropertyDeleteHandler(serverCtx),
+				},
+				{
+					// detail with loans
+					Method:  http.MethodGet,
+					Path:    "/property/:id/with_loans",
+					Handler: property.PropertyDetailWithLoansHandler(serverCtx),
 				},
 				{
 					// page

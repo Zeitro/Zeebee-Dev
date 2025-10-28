@@ -1,16 +1,20 @@
 package model
 
 import (
+	"zeebee-backend/common/constants"
 	"zeebee-backend/common/types"
 )
 
 type PropertyBase struct {
 	Base
 
-	BorrowerId  int64         `gorm:"column:borrower_id;not null;default:0" json:"borrower_id"`
-	Unit        int32         `gorm:"column:unit;not null;default:0" json:"unit"`
-	Address     types.Address `gorm:"column:address;type:jsonb;serializer:json" json:"address"`
-	TotalAmount float64       `gorm:"column:total_amount;not null;default:0" json:"total_amount"`
+	BorrowerId     int64                  `gorm:"column:borrower_id;not null;default:0" json:"borrower_id"`
+	Unit           int32                  `gorm:"column:unit;not null;default:0" json:"unit"`
+	PropertyType   constants.PropertyType `gorm:"column:property_type;size:30;not null;default:''" json:"property_type"`
+	LivingAreaSqft float32                `gorm:"column:living_area_sqft;type:numeric(8,2);not null;default:0" json:"living_area_sqft"`
+	Bedrooms       int32                  `gorm:"column:bedrooms;not null;default:0" json:"bedrooms"`
+	Address        types.Address          `gorm:"column:address;type:jsonb;serializer:json" json:"address"`
+	TotalAmount    float64                `gorm:"column:total_amount;not null;default:0" json:"total_amount"`
 
 	Borrower       *Borrower       `json:"borrower" gorm:"foreignKey:BorrowerId;references:Id"`
 	Loans          []*Loan         `json:"loans" gorm:"-"`

@@ -395,6 +395,10 @@ type LoanThirdServiceEntry struct {
 	Company string `json:"company,optional" validate:"required_unless=Type 'Title Co' Type 'Escrow Co' Type Insurance"`
 }
 
+type PathIdRequest struct {
+	Id int64 `path:"id" validate:"required,gt=0"`
+}
+
 type PrimaryPreApprovalLoan struct {
 	LenderCompanyId   int64   `json:"lender_company_id"`
 	LenderCompanyName string  `json:"lender_company_name"`
@@ -420,6 +424,20 @@ type PropertyBaseEntry struct {
 	TotalAmount float64       `json:"total_amount,optional"`
 }
 
+type PropertyEntry struct {
+	Id             int64        `json:"id"`
+	PropertyType   string       `json:"property_type"`
+	TotalAmount    float64      `json:"total_amount"`
+	Unit           int32        `json:"unit"`
+	LivingAreaSqft float32      `json:"living_area_sqft"`
+	Bedrooms       int32        `json:"bedrooms"`
+	Bathrooms      float32      `json:"bathrooms"`
+	Address        AddressEntry `json:"address"`
+	CreatedAt      string       `json:"created_at"`
+	UpdatedAt      string       `json:"updated_at"`
+	HasLoans       bool         `json:"has_loans"`
+}
+
 type PropertyPageEntry struct {
 	Id                        int64        `json:"id"`
 	PropertyType              string       `json:"property_type"`
@@ -434,6 +452,7 @@ type PropertyPageEntry struct {
 	PendingLoanCount          int64        `json:"pending_loan_count"`
 	ActiveLoanCount           int64        `json:"active_loan_count"`
 	ArchivedLoanCount         int64        `json:"archived_loan_count"`
+	HasLoans                  bool         `json:"has_loans"`
 }
 
 type PropertyPageFilter struct {

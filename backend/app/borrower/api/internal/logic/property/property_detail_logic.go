@@ -35,6 +35,7 @@ func (l *PropertyDetailLogic) PropertyDetail(req *types.PropertyDetailRequest) (
 			Id: req.Id,
 		},
 	}
+
 	// get borrower id
 	borrowerId, err := utils.GetAccountIdFromCtx(l.ctx)
 	if err != nil {

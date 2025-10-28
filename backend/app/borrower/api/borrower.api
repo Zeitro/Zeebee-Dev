@@ -198,9 +198,25 @@ service borrower-api {
 	@handler PropertyPage
 	post /property/page (PropertyPageRequest) returns (PropertyPageResponse)
 
+	@doc "detail with loans"
+	@handler PropertyDetailWithLoans
+	get /property/:id/with_loans (PropertyDetailRequest) returns (PropertyDetailWithLoansResponse)
+
 	@doc "detail"
 	@handler PropertyDetail
-	get /property/:id (PropertyDetailRequest) returns (PropertyDetailResponse)
+	get /property/:id (PathIdRequest) returns (PropertyDetailResponse)
+
+	@doc "create"
+	@handler PropertyCreate
+	post /property (PropertyCreateRequest) returns (PropertyCreateResponse)
+
+	@doc "update"
+	@handler PropertyUpdate
+	put /property/:id (PropertyUpdateRequest) returns (EmptyResponse)
+
+	@doc "delete"
+	@handler PropertyDelete
+	delete /property/:id (PathIdRequest) returns (EmptyResponse)
 }
 
 // =============== applicant ==============
