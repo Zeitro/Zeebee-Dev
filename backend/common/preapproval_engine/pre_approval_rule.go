@@ -297,8 +297,10 @@ func (r *PreApprovalRule) getTotalLoanCap(input InputLoanInfo) (ltaiv float64, l
 
 	// Get price cap rule for the loan type
 	priceCapRule, ok := r.PriceCapRuleMap[input.LoanType]
+
+	// not set for loan type,should reject loan
 	if !ok {
-		return 0, 0, 0, errors.WithStack(errors.New("invalid loan type"))
+		return 0, 0, 0, nil
 	}
 
 	var generalPriceCap *RuleCap
@@ -337,6 +339,10 @@ func (r *PreApprovalRule) getTotalLoanCap(input InputLoanInfo) (ltaiv float64, l
 		if isHighValueZone && highValueZonePriceCap == nil {
 			highValueZonePriceCap = generalPriceCap
 		}
+	}
+	// no price cap rule found,should reject loan
+	if generalPriceCap == nil {
+		return 0, 0, 0, nil
 	}
 
 	// Calculate LTAIV based on conditions
