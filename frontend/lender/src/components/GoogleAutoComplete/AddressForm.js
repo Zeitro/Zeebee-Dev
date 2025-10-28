@@ -98,7 +98,7 @@ const AddressForm = ({
 				</Col>
 			)}
 			<Col {...layoutCol} {...stateCol}>
-				<Form.Item shouldUpdate={shouldUpdate}>
+				<Form.Item shouldUpdate={shouldUpdate} noStyle>
 					{() => {
 						return (
 							<Form.Item
@@ -120,7 +120,7 @@ const AddressForm = ({
 				</Form.Item>
 			</Col>
 			<Col md={12} {...layoutCol} {...cityCol}>
-				<Form.Item shouldUpdate={shouldUpdate}>
+				<Form.Item shouldUpdate={shouldUpdate} noStyle>
 					{() => (
 						<Form.Item
 							name={cityName}
@@ -141,7 +141,7 @@ const AddressForm = ({
 			</Col>
 			{isShowZip && (
 				<Col md={12} {...layoutCol} {...zipCol}>
-					<Form.Item shouldUpdate={shouldUpdate}>
+					<Form.Item shouldUpdate={shouldUpdate} noStyle>
 						{() => (
 							<Form.Item
 								name={zipName}
