@@ -180,7 +180,7 @@ const LoanDetail = ({ gutter = 24, form }) => {
 				<Col {...layoutCol}>
 					<Form.Item
 						label="Estimated Current Value (LTV)" // 预计当前估值
-						name="ltv"
+						name="est_property_value_amount"
 						rules={[
 							{
 								required: true,

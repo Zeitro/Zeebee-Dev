@@ -48,7 +48,7 @@ const getUploadCommonColumns = (typeTitle, isHaveComments = true) => {
 			width: 200,
 			render: (v) => (
 				<Tooltip title={v}>
-					<span className="font-normal text-foreground">{v}</span>
+					<span className="font-normal text-foreground">{v || '--'}</span>
 				</Tooltip>
 			),
 		});
