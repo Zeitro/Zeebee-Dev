@@ -282,6 +282,10 @@ entity property_bases {
     * borrower_id int4
     * total_amount numeric(10,2)
     * address jsonb
+    * property_type varchar(50)
+    * living_area_sqft decimal(8,2)
+    * bedrooms int2
+    * bathrooms int2
 }
 
 note right of property_bases
@@ -292,6 +296,16 @@ note right of property_bases
         address1
         address2
     }
+    property_type:
+        - Single Family Residence
+        - 2 unit
+        - 3 unit
+        - 4 unit
+        - 4+ Multi
+        - Townhouse
+        - PUD/Condominium
+        - Mixed Use
+        - Commercial
 end note
 
 entity loan_properties {
@@ -339,13 +353,27 @@ entity lender_companies {
     * name varchar(100)
     * address jsonb
     * status varchar(10)
+    * contact_email varchar(100)
+    * owner_type varchar(30)
 }
 
 note right of lender_companies
     status:
-        - active
-        - inactive
+        - Active
+        - Inactive
+    owner_type:
+        - Self
+        - ThirdParty
+        - Partner
 end note
+
+
+entity lender_company_and_employees {
+   * id int4
+   * lender_company_id int4
+   * lender_employee_id int4
+}
+
 
 entity lender_employees{
     * id int4
@@ -353,7 +381,7 @@ entity lender_employees{
     * updated_at timestamptz
     * is_del int2
     ---
-    * lender_id int4
+    * default_lender_id int4
     * lender_company_id int4
     * first_name varchar(100)
     * last_name varchar(100)
@@ -525,6 +553,7 @@ loans ||--o{ loan_third_services: has many
 loan_borrowers ||--o{ applicants: has many
 loan_documents ||--o{ files: has many
 lender_companies ||--o{ loans: has many
-lender_companies ||--o{ lender_employees: has many
+lender_companies ||--o{ lender_company_and_employees: has many
+lender_employees ||--o{ lender_company_and_employees: has many
 
 @enduml
