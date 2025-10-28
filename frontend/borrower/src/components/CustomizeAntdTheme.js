@@ -33,6 +33,9 @@ function getCssVarValue(name, key) {
 export default function CustomizeAntdTheme({ children, fontFamily }) {
 	const [antdToken, setAntdToken] = useState({});
 	const pathname = usePathname();
+	const validateMessages = {
+		required: 'Please enter ${label}!',
+	};
 
 	// 没有导航栏/面包屑的纯页面（例如：login
 	const isNoNav = useMemo(() => {
@@ -85,13 +88,14 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 						headerBg: 'var(--gray-light)',
 						// headerColor: 'var(--foreground)',
 						rowBg: 'var(--background)',
-						rowHoverBg: 'var(--gray-light)',
+						rowHoverBg: '#e6f4ff',
 					},
 					TreeSelect: {
 						colorBorder: 'var(--base-disabled)',
 					},
 				},
 			}}
+			form={{ validateMessages }}
 		>
 			<AntdRegistry>
 				{isNoNav ? (

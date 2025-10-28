@@ -2,6 +2,7 @@ import React from 'react';
 import styles from './index.module.scss';
 import { Space } from 'antd';
 import DocumentItem from './Item';
+import NoData from '@/components/NoData';
 const DocumentList = ({
 	dataSource = [
 		{
@@ -35,18 +36,22 @@ const DocumentList = ({
 				))}
 			</div>
 			<Space direction="vertical" className="w-full">
-				{dataSource.map((item, index) => {
-					return (
-						<DocumentItem
-							key={index}
-							item={item}
-							columns={columns}
-							isHide={isHide}
-							handleClickOpt={handleClickOpt}
-							deleteLoading={deleteLoading}
-						></DocumentItem>
-					);
-				})}
+				{dataSource?.length > 0 ? (
+					dataSource.map((item, index) => {
+						return (
+							<DocumentItem
+								key={index}
+								item={item}
+								columns={columns}
+								isHide={isHide}
+								handleClickOpt={handleClickOpt}
+								deleteLoading={deleteLoading}
+							></DocumentItem>
+						);
+					})
+				) : (
+					<NoData className="bg-[#f2f2f2]" />
+				)}
 			</Space>
 		</div>
 	);
