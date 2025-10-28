@@ -3,6 +3,7 @@ import { Form, Steps, Tabs } from 'antd';
 import React from 'react';
 import styles from './index.module.scss';
 import useCreate from '../components/CreateZeeBee/hooks/useCreate';
+import { changeUnitByPropertyType } from '@/lib/format';
 const CreateZeeBeeLoan = () => {
 	const {
 		getTabsItem,
@@ -16,6 +17,8 @@ const CreateZeeBeeLoan = () => {
 		form,
 		initialValues,
 		loading,
+		setUnitInfo,
+		unitInfo,
 	} = useCreate();
 
 	return (
@@ -53,8 +56,23 @@ const CreateZeeBeeLoan = () => {
 						disabled={loading}
 						initialValues={initialValues}
 						scrollToFirstError
-						onValuesChange={() => {
+						onValuesChange={(v) => {
 							setIsChange(true);
+							// 根据property_type设置unit
+							const property_type =
+								v?.loan_property?.property_type ||
+								v?.loan_property?.future_property_type;
+							if (property_type) {
+								const info = changeUnitByPropertyType(property_type);
+								const fieldKey = v?.loan_property?.property_type
+									? 'unit'
+									: 'future_unit';
+								const moreFieldKey =
+									fieldKey === 'unit' ? ['property_base', fieldKey] : [fieldKey];
+								unitInfo[fieldKey] = info;
+								setUnitInfo({ ...unitInfo });
+								form.setFieldValue(['loan_property', ...moreFieldKey], info.unit);
+							}
 						}}
 					>
 						<Tabs
