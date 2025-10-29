@@ -44,7 +44,7 @@ func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.LoanCreateRequ
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	loan, propertyBase, loanProperty, applicants, loanBorrower, err := l.buildCreateModels(in.Data)
+	loan, loanProperty, applicants, loanBorrower, err := l.buildCreateModels(in.Data)
 	if err != nil {
 		return nil, err
 	}
@@ -52,10 +52,10 @@ func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.LoanCreateRequ
 	// create loan
 	err = l.svcCtx.LoanRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
 		var innerErr error
-		propertyBase, innerErr = l.svcCtx.PropertyBaseRepo.GetOrCreateWithTx(l.ctx, tx, propertyBase)
-		if innerErr != nil {
-			return innerErr
-		}
+		// propertyBase, innerErr = l.svcCtx.PropertyBaseRepo.GetOrCreateWithTx(l.ctx, tx, propertyBase)
+		// if innerErr != nil {
+		// 	return innerErr
+		// }
 
 		// loan.PropertyId = property.Id
 		uid, innerErr := uuid.GetSonyflakeIDString()
@@ -70,7 +70,7 @@ func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.LoanCreateRequ
 
 		// create loan property
 		loanProperty.LoanId = loan.Id
-		loanProperty.PropertyBaseId = propertyBase.Id
+		// loanProperty.PropertyBaseId = propertyBase.Id
 		loanProperty, innerErr = l.svcCtx.LoanPropertyRepo.CreateWithTx(l.ctx, tx, loanProperty, false)
 		if innerErr != nil {
 			return innerErr
@@ -96,7 +96,7 @@ func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.LoanCreateRequ
 		}
 
 		// sync total amount
-		innerErr = l.svcCtx.PropertyBaseRepo.SyncTotalAmountWithTx(l.ctx, tx, propertyBase.Id)
+		innerErr = l.svcCtx.PropertyBaseRepo.SyncTotalAmountAndLoanCountWithTx(l.ctx, tx, loanProperty.PropertyBaseId)
 		return innerErr
 	})
 	if err != nil {
@@ -111,15 +111,15 @@ func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.LoanCreateRequ
 }
 
 // buildCreateModels
-func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateRequestData) (loan *model.Loan, propertyBase *model.PropertyBase, loanProperty *model.LoanProperty, applicants []*model.Applicant, loanBorrower *model.LoanBorrower, err error) {
+func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateRequestData) (loan *model.Loan, loanProperty *model.LoanProperty, applicants []*model.Applicant, loanBorrower *model.LoanBorrower, err error) {
 	// build applicants
 	for _, applicant := range in.Applicants {
 		if len(applicant.FirstName) == 0 {
-			return nil, nil, nil, nil, nil, errors.New("applicant name is required")
+			return nil, nil, nil, nil, errors.New("applicant name is required")
 		}
 		applicantName := strings.TrimSpace(applicant.FirstName)
 		if len(applicantName) == 0 {
-			return nil, nil, nil, nil, nil, errors.New("applicant name is empty")
+			return nil, nil, nil, nil, errors.New("applicant name is empty")
 		}
 		var applicantItem *model.Applicant
 		applicantItem = &model.Applicant{
@@ -133,7 +133,7 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 		}
 
 		if !applicantItem.Type.IsValid() {
-			return nil, nil, nil, nil, nil, errors.New("invalid applicant type")
+			return nil, nil, nil, nil, errors.New("invalid applicant type")
 		}
 		applicantItem.BorrowerId = in.BorrowerId
 		applicantItem.InvitationStatus = constants.ApplicantInvitationStatusAccepted
@@ -146,16 +146,16 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 		return item.FullName == other.FullName
 	})
 	if len(applicants) == 0 {
-		return nil, nil, nil, nil, nil, errors.New("no applicant")
+		return nil, nil, nil, nil, errors.New("no applicant")
 	}
 	primaryCount := slice.CountBy(applicants, func(index int, item *model.Applicant) bool {
 		return item.IsPrimary
 	})
 	if primaryCount == 0 {
-		return nil, nil, nil, nil, nil, errors.New("no primary applicant")
+		return nil, nil, nil, nil, errors.New("no primary applicant")
 	}
 	if primaryCount > 1 {
-		return nil, nil, nil, nil, nil, errors.New("multiple primary applicant")
+		return nil, nil, nil, nil, errors.New("multiple primary applicant")
 	}
 	// loan borrower
 	loanBorrower = &model.LoanBorrower{
@@ -175,62 +175,44 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 		},
 	})
 	if err != nil {
-		return nil, nil, nil, nil, nil, errorx.GetFailedTransErr(err)
+		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
 	}
 	loan.BorrowerId = in.BorrowerId
 	loan.PendingStatus = constants.LoanPendingStatusNone
 	loan.Source = constants.LoanSourceBorrower
 
-	// loan = &model.Loan{
-	// 	BorrowerId:       in.BorrowerId,
-	// 	LenderCompany:    in.LenderCompany,
-	// 	ServiceCompany:   in.ServiceCompany,
-	// 	Stage:            constants.LoanStage(in.Stage),
-	// 	PendingStatus:    constants.LoanPendingStatusNone,
-	// 	LoanPurpose:      constants.LoanPurpose(in.LoanPurpose),
-	// 	LoanType:         constants.LoanType(in.LoanType),
-	// 	TotalAmount:      in.TotalAmount,
-	// 	PrincipalAmount:  in.PrincipalAmount,
-	// 	InitialAmount:    in.InitialAmount,
-	// 	Rate:             in.Rate,
-	// 	BusinessStrategy: pq.StringArray(in.BusinessStrategy),
-	// 	Source:           constants.LoanSourceBorrower,
-	// 	ClosingFund:      in.ClosingFund,
-	// 	// float purchase_amount = 24;
-	// 	//  string purchase_date = 25;
-	// 	//  LoanExtendValueEntry extend = 26;
-	// 	//  string existing_lender_company = 27;
-	// 	//  string original_contract_date = 28;
-	// 	//  string extension_date = 29;
-	// 	//  string loan_processor = 30;
-	// 	//  string owner = 31;
-	// }
-	// propertyBase = &model.PropertyBase{
-	// 	BorrowerId: in.BorrowerId,
-	// 	// PropertyType: constants.PropertyType(in.Property.PropertyType),
-	// 	Unit: in.LoanProperty.PropertyBase.Unit,
-	// 	Address: &types.Address{
-	// 		State:    in.LoanProperty.PropertyBase.Address.State,
-	// 		City:     in.LoanProperty.PropertyBase.Address.City,
-	// 		Address1: in.LoanProperty.PropertyBase.Address.Address1,
-	// 		Address2: in.LoanProperty.PropertyBase.Address.Address2,
-	// 		ZipCode:  in.LoanProperty.PropertyBase.Address.ZipCode,
-	// 	},
-	// }
+	propertyBase, err := l.svcCtx.PropertyBaseRepo.FindOneByColumns(l.ctx, map[string]interface{}{
+		"id":          in.LoanProperty.PropertyBaseId,
+		"borrower_id": in.BorrowerId,
+	})
+	if err != nil {
+		return nil, nil, nil, nil, err
+	}
 
 	loanProperty = &model.LoanProperty{
-		// PropertyType: constants.PropertyType(in.LoanProperty.PropertyType),
+		PropertyBaseId:       in.LoanProperty.PropertyBaseId,
+		Unit:                 propertyBase.Unit,
+		PropertyType:         propertyBase.PropertyType,
+		LivingAreaSqft:       propertyBase.LivingAreaSqft,
+		Bedrooms:             propertyBase.Bedrooms,
+		Bathrooms:            propertyBase.Bathrooms,
+		FuturePropertyType:   propertyBase.PropertyType,
+		FutureUnit:           propertyBase.Unit,
+		FutureLivingAreaSqft: propertyBase.LivingAreaSqft,
+		FutureBedrooms:       propertyBase.Bedrooms,
+		FutureBathrooms:      propertyBase.Bathrooms,
+		Address:              propertyBase.Address,
 	}
 
 	if loan.TotalAmount < loan.InitialAmount {
-		return nil, nil, nil, nil, nil, errors.New("Total amount cannot be less than initial amount")
+		return nil, nil, nil, nil, errors.New("Total amount cannot be less than initial amount")
 	}
 	switch constants.LoanStage(in.Stage) {
 	case constants.LoanStagePending:
 		closingDate, err := timex.FormateTimeToStrWithUsStyle(in.ClosingDate)
 
 		if err != nil {
-			return nil, nil, nil, nil, nil, errors.Wrap(err, "invalid closing date")
+			return nil, nil, nil, nil, errors.Wrap(err, "invalid closing date")
 		}
 		loan.ClosingDate = &sql.NullTime{
 			Time:  closingDate,
@@ -244,21 +226,17 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 
 		maturityDate, err := timex.FormateTimeToStrWithUsStyle(in.MaturityDate)
 		if err != nil {
-			return nil, nil, nil, nil, nil, errors.Wrap(err, "invalid maturity date")
+			return nil, nil, nil, nil, errors.Wrap(err, "invalid maturity date")
 		}
 		loan.MaturityDate = &sql.NullTime{
 			Time:  maturityDate,
 			Valid: true,
 		}
 		loan.PrincipalAmount = in.PrincipalAmount
-		// loan.MonthlyPayment = in.MonthlyPayment
-		// loan.LienPosition = in.LienPosition
-		// loan.ServiceCompany = in.ServiceCompany
-		// loan.PrepaymentPenalty = in.PrepaymentPenalty
 	case constants.LoanStageArchived:
 		paidOffDate, err := timex.FormateTimeToStrWithUsStyle(in.PaidOffDate)
 		if err != nil {
-			return nil, nil, nil, nil, nil, errors.Wrap(err, "invalid paid off date")
+			return nil, nil, nil, nil, errors.Wrap(err, "invalid paid off date")
 		}
 		loan.PaidOffDate = &sql.NullTime{
 			Time:  paidOffDate,
@@ -266,7 +244,7 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 		}
 		loan.PrincipalAmount = in.PrincipalAmount
 	default:
-		return nil, nil, nil, nil, nil, errors.WithStack(errors.New("invalid loan stage"))
+		return nil, nil, nil, nil, errors.WithStack(errors.New("invalid loan stage"))
 	}
 	return
 }

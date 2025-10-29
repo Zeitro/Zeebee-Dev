@@ -102,8 +102,8 @@ func (repo *PropertyBaseRepo) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, 
 	return data, nil
 }
 
-// SyncTotalAmountWithTx sync total amount
-func (repo *PropertyBaseRepo) SyncTotalAmountWithTx(ctx context.Context, tx *gorm.DB, id int64) (err error) {
+// SyncTotalAmountAndLoanCountWithTx sync total amount and loan count
+func (repo *PropertyBaseRepo) SyncTotalAmountAndLoanCountWithTx(ctx context.Context, tx *gorm.DB, id int64) (err error) {
 	var result *model.PropertyBase
 	err = tx.WithContext(ctx).Where("id = ?", id).
 		Preload("LoanProperties").
@@ -116,18 +116,25 @@ func (repo *PropertyBaseRepo) SyncTotalAmountWithTx(ctx context.Context, tx *gor
 		return nil
 	}
 	var totalAmount float64
+	var loanCount int
 	for _, loanProperty := range result.LoanProperties {
 		if loanProperty.Loan == nil {
 			continue
 		}
+		loanCount++
 		if loanProperty.Loan.Stage != constants.LoanStageActive {
 			totalAmount += loanProperty.Loan.TotalAmount
 		}
 	}
+
 	err = tx.WithContext(ctx).
 		Model(new(model.PropertyBase)).
 		Where("id = ?", id).
-		Update("total_amount", totalAmount).Error
+		Updates(map[string]interface{}{
+			"total_amount": totalAmount,
+			"loan_count":   loanCount,
+		}).Error
+	// Updates("total_amount", totalAmount).Error
 	return errors.WithStack(err)
 }
 
