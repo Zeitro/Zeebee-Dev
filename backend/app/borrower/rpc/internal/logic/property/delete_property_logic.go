@@ -33,16 +33,16 @@ func (l *DeletePropertyLogic) DeleteProperty(in *borrower.PropertyDeleteRequest)
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	result, err := l.svcCtx.PropertyBaseRepo.GetOne(l.ctx, in.Data.Id)
+	result, err := l.svcCtx.PropertyBaseRepo.FindOneById(l.ctx, in.Data.Id)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 	if result.BorrowerId != in.Data.BorrowerId {
-		return nil, errorx.GetFailedTransRespErr(errors.New("you have no access to this property"))
+		return nil, errorx.GetFailedTransRespErr(errors.New("You Have No Access To This Property"))
 	}
 
-	if len(result.Loans) > 0 {
-		return nil, errorx.GetFailedTransRespErr(errors.New("you cannot delete a property that has loans"))
+	if result.LoanCount > 0 {
+		return nil, errorx.GetFailedTransRespErr(errors.New("You Cannot Delete A Property That Has Loans"))
 	}
 	_, err = l.svcCtx.PropertyBaseRepo.DeleteByID(l.ctx, in.Data.Id)
 

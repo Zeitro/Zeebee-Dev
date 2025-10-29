@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/jinzhu/copier"
+	"github.com/pkg/errors"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -45,6 +46,15 @@ func (l *CreatePropertyLogic) CreateProperty(in *borrower.PropertyCreateRequest)
 	})
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
+	}
+
+	isExisted, err := l.svcCtx.PropertyBaseRepo.IsExisted(l.ctx, 0, saveData.BorrowerId, saveData.Address)
+	if err != nil {
+		return nil, err
+	}
+	if isExisted {
+		err = errors.WithStack(errors.New("Address Is Existed"))
+		return nil, err
 	}
 
 	result, err := l.svcCtx.PropertyBaseRepo.Create(l.ctx, saveData)

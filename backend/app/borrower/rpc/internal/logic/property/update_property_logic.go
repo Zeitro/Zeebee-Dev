@@ -34,6 +34,7 @@ func (l *UpdatePropertyLogic) UpdateProperty(in *borrower.PropertyUpdateRequest)
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
+
 	var result *model.PropertyBase
 	result, err = l.svcCtx.PropertyBaseRepo.FindOneByColumns(l.ctx, map[string]interface{}{
 		"id":          in.Data.Id,
@@ -51,7 +52,8 @@ func (l *UpdatePropertyLogic) UpdateProperty(in *borrower.PropertyUpdateRequest)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
-	_, err = l.svcCtx.PropertyBaseRepo.UpdateOne(l.ctx, result)
+
+	_, err = l.svcCtx.PropertyBaseRepo.UpdateOne(l.ctx, in.Data.Id, result)
 
 	return &borrower.EmptyResponse{}, err
 }

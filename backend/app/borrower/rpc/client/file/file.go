@@ -97,8 +97,8 @@ type (
 	PropertyDetailRequest                      = borrower.PropertyDetailRequest
 	PropertyDetailRequestData                  = borrower.PropertyDetailRequestData
 	PropertyDetailResponse                     = borrower.PropertyDetailResponse
-	PropertyDetailWithLoansResponse            = borrower.PropertyDetailWithLoansResponse
-	PropertyDetailWithLoansResponseData        = borrower.PropertyDetailWithLoansResponseData
+	PropertyDetailSummaryResponse              = borrower.PropertyDetailSummaryResponse
+	PropertyDetailSummaryResponseData          = borrower.PropertyDetailSummaryResponseData
 	PropertyEntry                              = borrower.PropertyEntry
 	PropertyPageEntry                          = borrower.PropertyPageEntry
 	PropertyPageRequest                        = borrower.PropertyPageRequest

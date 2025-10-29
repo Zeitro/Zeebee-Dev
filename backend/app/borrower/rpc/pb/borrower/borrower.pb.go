@@ -6362,7 +6362,7 @@ type PropertyEntry struct {
 	Address        *AddressEntry          `protobuf:"bytes,8,opt,name=address,proto3" json:"address,omitempty"`
 	CreatedAt      string                 `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt      string                 `protobuf:"bytes,10,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	HasLoans       bool                   `protobuf:"varint,11,opt,name=has_loans,json=hasLoans,proto3" json:"has_loans,omitempty"`
+	LoanCount      int32                  `protobuf:"varint,11,opt,name=loan_count,json=loanCount,proto3" json:"loan_count,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -6467,11 +6467,11 @@ func (x *PropertyEntry) GetUpdatedAt() string {
 	return ""
 }
 
-func (x *PropertyEntry) GetHasLoans() bool {
+func (x *PropertyEntry) GetLoanCount() int32 {
 	if x != nil {
-		return x.HasLoans
+		return x.LoanCount
 	}
-	return false
+	return 0
 }
 
 type PropertyPageEntry struct {
@@ -7002,27 +7002,27 @@ func (x *PropertyDetailRequest) GetData() *PropertyDetailRequestData {
 	return nil
 }
 
-type PropertyDetailWithLoansResponse struct {
-	state         protoimpl.MessageState               `protogen:"open.v1"`
-	Data          *PropertyDetailWithLoansResponseData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+type PropertyDetailSummaryResponse struct {
+	state         protoimpl.MessageState             `protogen:"open.v1"`
+	Data          *PropertyDetailSummaryResponseData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *PropertyDetailWithLoansResponse) Reset() {
-	*x = PropertyDetailWithLoansResponse{}
+func (x *PropertyDetailSummaryResponse) Reset() {
+	*x = PropertyDetailSummaryResponse{}
 	mi := &file_app_borrower_rpc_pb_borrower_proto_msgTypes[97]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *PropertyDetailWithLoansResponse) String() string {
+func (x *PropertyDetailSummaryResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*PropertyDetailWithLoansResponse) ProtoMessage() {}
+func (*PropertyDetailSummaryResponse) ProtoMessage() {}
 
-func (x *PropertyDetailWithLoansResponse) ProtoReflect() protoreflect.Message {
+func (x *PropertyDetailSummaryResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_app_borrower_rpc_pb_borrower_proto_msgTypes[97]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -7034,12 +7034,12 @@ func (x *PropertyDetailWithLoansResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PropertyDetailWithLoansResponse.ProtoReflect.Descriptor instead.
-func (*PropertyDetailWithLoansResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use PropertyDetailSummaryResponse.ProtoReflect.Descriptor instead.
+func (*PropertyDetailSummaryResponse) Descriptor() ([]byte, []int) {
 	return file_app_borrower_rpc_pb_borrower_proto_rawDescGZIP(), []int{97}
 }
 
-func (x *PropertyDetailWithLoansResponse) GetData() *PropertyDetailWithLoansResponseData {
+func (x *PropertyDetailSummaryResponse) GetData() *PropertyDetailSummaryResponseData {
 	if x != nil {
 		return x.Data
 	}
@@ -7098,7 +7098,7 @@ func (x *PropertyDetailRequestData) GetBorrowerId() int64 {
 	return 0
 }
 
-type PropertyDetailWithLoansResponseData struct {
+type PropertyDetailSummaryResponseData struct {
 	state                     protoimpl.MessageState `protogen:"open.v1"`
 	Id                        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	PropertyType              string                 `protobuf:"bytes,2,opt,name=property_type,json=propertyType,proto3" json:"property_type,omitempty"`
@@ -7116,20 +7116,20 @@ type PropertyDetailWithLoansResponseData struct {
 	sizeCache                 protoimpl.SizeCache
 }
 
-func (x *PropertyDetailWithLoansResponseData) Reset() {
-	*x = PropertyDetailWithLoansResponseData{}
+func (x *PropertyDetailSummaryResponseData) Reset() {
+	*x = PropertyDetailSummaryResponseData{}
 	mi := &file_app_borrower_rpc_pb_borrower_proto_msgTypes[99]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *PropertyDetailWithLoansResponseData) String() string {
+func (x *PropertyDetailSummaryResponseData) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*PropertyDetailWithLoansResponseData) ProtoMessage() {}
+func (*PropertyDetailSummaryResponseData) ProtoMessage() {}
 
-func (x *PropertyDetailWithLoansResponseData) ProtoReflect() protoreflect.Message {
+func (x *PropertyDetailSummaryResponseData) ProtoReflect() protoreflect.Message {
 	mi := &file_app_borrower_rpc_pb_borrower_proto_msgTypes[99]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -7141,89 +7141,89 @@ func (x *PropertyDetailWithLoansResponseData) ProtoReflect() protoreflect.Messag
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PropertyDetailWithLoansResponseData.ProtoReflect.Descriptor instead.
-func (*PropertyDetailWithLoansResponseData) Descriptor() ([]byte, []int) {
+// Deprecated: Use PropertyDetailSummaryResponseData.ProtoReflect.Descriptor instead.
+func (*PropertyDetailSummaryResponseData) Descriptor() ([]byte, []int) {
 	return file_app_borrower_rpc_pb_borrower_proto_rawDescGZIP(), []int{99}
 }
 
-func (x *PropertyDetailWithLoansResponseData) GetId() int64 {
+func (x *PropertyDetailSummaryResponseData) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *PropertyDetailWithLoansResponseData) GetPropertyType() string {
+func (x *PropertyDetailSummaryResponseData) GetPropertyType() string {
 	if x != nil {
 		return x.PropertyType
 	}
 	return ""
 }
 
-func (x *PropertyDetailWithLoansResponseData) GetTotalAmount() float64 {
+func (x *PropertyDetailSummaryResponseData) GetTotalAmount() float64 {
 	if x != nil {
 		return x.TotalAmount
 	}
 	return 0
 }
 
-func (x *PropertyDetailWithLoansResponseData) GetUnit() int32 {
+func (x *PropertyDetailSummaryResponseData) GetUnit() int32 {
 	if x != nil {
 		return x.Unit
 	}
 	return 0
 }
 
-func (x *PropertyDetailWithLoansResponseData) GetAddress() *AddressEntry {
+func (x *PropertyDetailSummaryResponseData) GetAddress() *AddressEntry {
 	if x != nil {
 		return x.Address
 	}
 	return nil
 }
 
-func (x *PropertyDetailWithLoansResponseData) GetTotalClosingFundAmount() float64 {
+func (x *PropertyDetailSummaryResponseData) GetTotalClosingFundAmount() float64 {
 	if x != nil {
 		return x.TotalClosingFundAmount
 	}
 	return 0
 }
 
-func (x *PropertyDetailWithLoansResponseData) GetTotalPrincipalAmount() float64 {
+func (x *PropertyDetailSummaryResponseData) GetTotalPrincipalAmount() float64 {
 	if x != nil {
 		return x.TotalPrincipalAmount
 	}
 	return 0
 }
 
-func (x *PropertyDetailWithLoansResponseData) GetAvgRate() float32 {
+func (x *PropertyDetailSummaryResponseData) GetAvgRate() float32 {
 	if x != nil {
 		return x.AvgRate
 	}
 	return 0
 }
 
-func (x *PropertyDetailWithLoansResponseData) GetTotalMonthlyPaymentAmount() float64 {
+func (x *PropertyDetailSummaryResponseData) GetTotalMonthlyPaymentAmount() float64 {
 	if x != nil {
 		return x.TotalMonthlyPaymentAmount
 	}
 	return 0
 }
 
-func (x *PropertyDetailWithLoansResponseData) GetPendingLoans() []*LoanEntry {
+func (x *PropertyDetailSummaryResponseData) GetPendingLoans() []*LoanEntry {
 	if x != nil {
 		return x.PendingLoans
 	}
 	return nil
 }
 
-func (x *PropertyDetailWithLoansResponseData) GetActiveLoans() []*LoanEntry {
+func (x *PropertyDetailSummaryResponseData) GetActiveLoans() []*LoanEntry {
 	if x != nil {
 		return x.ActiveLoans
 	}
 	return nil
 }
 
-func (x *PropertyDetailWithLoansResponseData) GetArchivedLoans() []*LoanEntry {
+func (x *PropertyDetailSummaryResponseData) GetArchivedLoans() []*LoanEntry {
 	if x != nil {
 		return x.ArchivedLoans
 	}
@@ -7276,15 +7276,15 @@ func (x *PropertyCreateRequest) GetData() *PropertyCreateRequestData {
 }
 
 type PropertyCreateRequestData struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	PropertyType   string                 `protobuf:"bytes,1,opt,name=property_type,json=propertyType,proto3" json:"property_type,omitempty"`
-	TotalAmount    float64                `protobuf:"fixed64,2,opt,name=total_amount,json=totalAmount,proto3" json:"total_amount,omitempty"`
-	Unit           int32                  `protobuf:"varint,3,opt,name=unit,proto3" json:"unit,omitempty"`
-	LivingAreaSqft float32                `protobuf:"fixed32,4,opt,name=living_area_sqft,json=livingAreaSqft,proto3" json:"living_area_sqft,omitempty"`
-	Bedrooms       int32                  `protobuf:"varint,5,opt,name=bedrooms,proto3" json:"bedrooms,omitempty"`
-	Bathrooms      float32                `protobuf:"fixed32,6,opt,name=bathrooms,proto3" json:"bathrooms,omitempty"`
-	Address        *AddressEntry          `protobuf:"bytes,7,opt,name=address,proto3" json:"address,omitempty"`
-	BorrowerId     int64                  `protobuf:"varint,8,opt,name=borrower_id,json=borrowerId,proto3" json:"borrower_id,omitempty"`
+	state        protoimpl.MessageState `protogen:"open.v1"`
+	PropertyType string                 `protobuf:"bytes,1,opt,name=property_type,json=propertyType,proto3" json:"property_type,omitempty"`
+	// double total_amount = 2;
+	Unit           int32         `protobuf:"varint,3,opt,name=unit,proto3" json:"unit,omitempty"`
+	LivingAreaSqft float32       `protobuf:"fixed32,4,opt,name=living_area_sqft,json=livingAreaSqft,proto3" json:"living_area_sqft,omitempty"`
+	Bedrooms       int32         `protobuf:"varint,5,opt,name=bedrooms,proto3" json:"bedrooms,omitempty"`
+	Bathrooms      int32         `protobuf:"varint,6,opt,name=bathrooms,proto3" json:"bathrooms,omitempty"`
+	Address        *AddressEntry `protobuf:"bytes,7,opt,name=address,proto3" json:"address,omitempty"`
+	BorrowerId     int64         `protobuf:"varint,8,opt,name=borrower_id,json=borrowerId,proto3" json:"borrower_id,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -7326,13 +7326,6 @@ func (x *PropertyCreateRequestData) GetPropertyType() string {
 	return ""
 }
 
-func (x *PropertyCreateRequestData) GetTotalAmount() float64 {
-	if x != nil {
-		return x.TotalAmount
-	}
-	return 0
-}
-
 func (x *PropertyCreateRequestData) GetUnit() int32 {
 	if x != nil {
 		return x.Unit
@@ -7354,7 +7347,7 @@ func (x *PropertyCreateRequestData) GetBedrooms() int32 {
 	return 0
 }
 
-func (x *PropertyCreateRequestData) GetBathrooms() float32 {
+func (x *PropertyCreateRequestData) GetBathrooms() int32 {
 	if x != nil {
 		return x.Bathrooms
 	}
@@ -7468,11 +7461,10 @@ type PropertyUpdateRequestData struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	PropertyType   string                 `protobuf:"bytes,2,opt,name=property_type,json=propertyType,proto3" json:"property_type,omitempty"`
-	TotalAmount    float64                `protobuf:"fixed64,3,opt,name=total_amount,json=totalAmount,proto3" json:"total_amount,omitempty"`
 	Unit           int32                  `protobuf:"varint,4,opt,name=unit,proto3" json:"unit,omitempty"`
 	LivingAreaSqft float32                `protobuf:"fixed32,5,opt,name=living_area_sqft,json=livingAreaSqft,proto3" json:"living_area_sqft,omitempty"`
 	Bedrooms       int32                  `protobuf:"varint,6,opt,name=bedrooms,proto3" json:"bedrooms,omitempty"`
-	Bathrooms      float32                `protobuf:"fixed32,7,opt,name=bathrooms,proto3" json:"bathrooms,omitempty"`
+	Bathrooms      int32                  `protobuf:"varint,7,opt,name=bathrooms,proto3" json:"bathrooms,omitempty"`
 	BorrowerId     int64                  `protobuf:"varint,8,opt,name=borrower_id,json=borrowerId,proto3" json:"borrower_id,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
@@ -7522,13 +7514,6 @@ func (x *PropertyUpdateRequestData) GetPropertyType() string {
 	return ""
 }
 
-func (x *PropertyUpdateRequestData) GetTotalAmount() float64 {
-	if x != nil {
-		return x.TotalAmount
-	}
-	return 0
-}
-
 func (x *PropertyUpdateRequestData) GetUnit() int32 {
 	if x != nil {
 		return x.Unit
@@ -7550,7 +7535,7 @@ func (x *PropertyUpdateRequestData) GetBedrooms() int32 {
 	return 0
 }
 
-func (x *PropertyUpdateRequestData) GetBathrooms() float32 {
+func (x *PropertyUpdateRequestData) GetBathrooms() int32 {
 	if x != nil {
 		return x.Bathrooms
 	}
@@ -10290,7 +10275,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"*LoanSendPreApprovalNotificationRequestData\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x01 \x01(\tR\trequestId\x12*\n" +
-	"\x11lender_company_id\x18\x02 \x01(\x03R\x0flenderCompanyId\"\xec\x02\n" +
+	"\x11lender_company_id\x18\x02 \x01(\x03R\x0flenderCompanyId\"\xee\x02\n" +
 	"\rPropertyEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
 	"\rproperty_type\x18\x02 \x01(\tR\fpropertyType\x12!\n" +
@@ -10304,8 +10289,9 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"created_at\x18\t \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
 	"updated_at\x18\n" +
-	" \x01(\tR\tupdatedAt\x12\x1b\n" +
-	"\thas_loans\x18\v \x01(\bR\bhasLoans\"\xa7\x04\n" +
+	" \x01(\tR\tupdatedAt\x12\x1d\n" +
+	"\n" +
+	"loan_count\x18\v \x01(\x05R\tloanCount\"\xa7\x04\n" +
 	"\x11PropertyPageEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
 	"\rproperty_type\x18\x02 \x01(\tR\fpropertyType\x12!\n" +
@@ -10348,14 +10334,14 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"total_page\x18\x04 \x01(\x03R\ttotalPage\x12/\n" +
 	"\x04list\x18\x05 \x03(\v2\x1b.borrower.PropertyPageEntryR\x04list\"P\n" +
 	"\x15PropertyDetailRequest\x127\n" +
-	"\x04data\x18\x01 \x01(\v2#.borrower.PropertyDetailRequestDataR\x04data\"d\n" +
-	"\x1fPropertyDetailWithLoansResponse\x12A\n" +
-	"\x04data\x18\x01 \x01(\v2-.borrower.PropertyDetailWithLoansResponseDataR\x04data\"L\n" +
+	"\x04data\x18\x01 \x01(\v2#.borrower.PropertyDetailRequestDataR\x04data\"`\n" +
+	"\x1dPropertyDetailSummaryResponse\x12?\n" +
+	"\x04data\x18\x01 \x01(\v2+.borrower.PropertyDetailSummaryResponseDataR\x04data\"L\n" +
 	"\x19PropertyDetailRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vborrower_id\x18\x02 \x01(\x03R\n" +
-	"borrowerId\"\xbe\x04\n" +
-	"#PropertyDetailWithLoansResponseData\x12\x0e\n" +
+	"borrowerId\"\xbc\x04\n" +
+	"!PropertyDetailSummaryResponseData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
 	"\rproperty_type\x18\x02 \x01(\tR\fpropertyType\x12!\n" +
 	"\ftotal_amount\x18\x03 \x01(\x01R\vtotalAmount\x12\x12\n" +
@@ -10370,29 +10356,27 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\factive_loans\x18\v \x03(\v2\x13.borrower.LoanEntryR\vactiveLoans\x12:\n" +
 	"\x0earchived_loans\x18\f \x03(\v2\x13.borrower.LoanEntryR\rarchivedLoans\"P\n" +
 	"\x15PropertyCreateRequest\x127\n" +
-	"\x04data\x18\x01 \x01(\v2#.borrower.PropertyCreateRequestDataR\x04data\"\xae\x02\n" +
+	"\x04data\x18\x01 \x01(\v2#.borrower.PropertyCreateRequestDataR\x04data\"\x8b\x02\n" +
 	"\x19PropertyCreateRequestData\x12#\n" +
-	"\rproperty_type\x18\x01 \x01(\tR\fpropertyType\x12!\n" +
-	"\ftotal_amount\x18\x02 \x01(\x01R\vtotalAmount\x12\x12\n" +
+	"\rproperty_type\x18\x01 \x01(\tR\fpropertyType\x12\x12\n" +
 	"\x04unit\x18\x03 \x01(\x05R\x04unit\x12(\n" +
 	"\x10living_area_sqft\x18\x04 \x01(\x02R\x0elivingAreaSqft\x12\x1a\n" +
 	"\bbedrooms\x18\x05 \x01(\x05R\bbedrooms\x12\x1c\n" +
-	"\tbathrooms\x18\x06 \x01(\x02R\tbathrooms\x120\n" +
+	"\tbathrooms\x18\x06 \x01(\x05R\tbathrooms\x120\n" +
 	"\aaddress\x18\a \x01(\v2\x16.borrower.AddressEntryR\aaddress\x12\x1f\n" +
 	"\vborrower_id\x18\b \x01(\x03R\n" +
 	"borrowerId\"E\n" +
 	"\x16PropertyCreateResponse\x12+\n" +
 	"\x04data\x18\x01 \x01(\v2\x17.borrower.PropertyEntryR\x04data\"P\n" +
 	"\x15PropertyUpdateRequest\x127\n" +
-	"\x04data\x18\x01 \x01(\v2#.borrower.PropertyUpdateRequestDataR\x04data\"\x8c\x02\n" +
+	"\x04data\x18\x01 \x01(\v2#.borrower.PropertyUpdateRequestDataR\x04data\"\xe9\x01\n" +
 	"\x19PropertyUpdateRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
-	"\rproperty_type\x18\x02 \x01(\tR\fpropertyType\x12!\n" +
-	"\ftotal_amount\x18\x03 \x01(\x01R\vtotalAmount\x12\x12\n" +
+	"\rproperty_type\x18\x02 \x01(\tR\fpropertyType\x12\x12\n" +
 	"\x04unit\x18\x04 \x01(\x05R\x04unit\x12(\n" +
 	"\x10living_area_sqft\x18\x05 \x01(\x02R\x0elivingAreaSqft\x12\x1a\n" +
 	"\bbedrooms\x18\x06 \x01(\x05R\bbedrooms\x12\x1c\n" +
-	"\tbathrooms\x18\a \x01(\x02R\tbathrooms\x12\x1f\n" +
+	"\tbathrooms\x18\a \x01(\x05R\tbathrooms\x12\x1f\n" +
 	"\vborrower_id\x18\b \x01(\x03R\n" +
 	"borrowerId\"E\n" +
 	"\x16PropertyDetailResponse\x12+\n" +
@@ -10567,10 +10551,10 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x0fUpdateApplyLoan\x12\x1a.borrower.LoanApplyRequest\x1a\x17.borrower.EmptyResponse\x12_\n" +
 	"\x12ImportPendingLoans\x12#.borrower.ImportPendingLoansRequest\x1a$.borrower.ImportPendingLoansResponse\x12V\n" +
 	"\x0fPreApprovalLoan\x12 .borrower.LoanPreApprovalRequest\x1a!.borrower.LoanPreApprovalResponse\x12h\n" +
-	"\x1bSendPreApprovalNotification\x120.borrower.LoanSendPreApprovalNotificationRequest\x1a\x17.borrower.EmptyResponse2\x82\x04\n" +
+	"\x1bSendPreApprovalNotification\x120.borrower.LoanSendPreApprovalNotificationRequest\x1a\x17.borrower.EmptyResponse2\xfe\x03\n" +
 	"\bProperty\x12M\n" +
-	"\fPropertyPage\x12\x1d.borrower.PropertyPageRequest\x1a\x1e.borrower.PropertyPageResponse\x12e\n" +
-	"\x17PropertyDetailWithLoans\x12\x1f.borrower.PropertyDetailRequest\x1a).borrower.PropertyDetailWithLoansResponse\x12S\n" +
+	"\fPropertyPage\x12\x1d.borrower.PropertyPageRequest\x1a\x1e.borrower.PropertyPageResponse\x12a\n" +
+	"\x15PropertyDetailSummary\x12\x1f.borrower.PropertyDetailRequest\x1a'.borrower.PropertyDetailSummaryResponse\x12S\n" +
 	"\x0eCreateProperty\x12\x1f.borrower.PropertyCreateRequest\x1a .borrower.PropertyCreateResponse\x12J\n" +
 	"\x0eUpdateProperty\x12\x1f.borrower.PropertyUpdateRequest\x1a\x17.borrower.EmptyResponse\x12J\n" +
 	"\x0eDeleteProperty\x12\x1f.borrower.PropertyDeleteRequest\x1a\x17.borrower.EmptyResponse\x12S\n" +
@@ -10697,9 +10681,9 @@ var file_app_borrower_rpc_pb_borrower_proto_goTypes = []any{
 	(*PropertyPageRequestSorter)(nil),                  // 94: borrower.PropertyPageRequestSorter
 	(*PropertyPageResponseData)(nil),                   // 95: borrower.PropertyPageResponseData
 	(*PropertyDetailRequest)(nil),                      // 96: borrower.PropertyDetailRequest
-	(*PropertyDetailWithLoansResponse)(nil),            // 97: borrower.PropertyDetailWithLoansResponse
+	(*PropertyDetailSummaryResponse)(nil),              // 97: borrower.PropertyDetailSummaryResponse
 	(*PropertyDetailRequestData)(nil),                  // 98: borrower.PropertyDetailRequestData
-	(*PropertyDetailWithLoansResponseData)(nil),        // 99: borrower.PropertyDetailWithLoansResponseData
+	(*PropertyDetailSummaryResponseData)(nil),          // 99: borrower.PropertyDetailSummaryResponseData
 	(*PropertyCreateRequest)(nil),                      // 100: borrower.PropertyCreateRequest
 	(*PropertyCreateRequestData)(nil),                  // 101: borrower.PropertyCreateRequestData
 	(*PropertyCreateResponse)(nil),                     // 102: borrower.PropertyCreateResponse
@@ -10825,11 +10809,11 @@ var file_app_borrower_rpc_pb_borrower_proto_depIdxs = []int32{
 	94,  // 85: borrower.PropertyPageRequestData.sorter:type_name -> borrower.PropertyPageRequestSorter
 	89,  // 86: borrower.PropertyPageResponseData.list:type_name -> borrower.PropertyPageEntry
 	98,  // 87: borrower.PropertyDetailRequest.data:type_name -> borrower.PropertyDetailRequestData
-	99,  // 88: borrower.PropertyDetailWithLoansResponse.data:type_name -> borrower.PropertyDetailWithLoansResponseData
-	42,  // 89: borrower.PropertyDetailWithLoansResponseData.address:type_name -> borrower.AddressEntry
-	44,  // 90: borrower.PropertyDetailWithLoansResponseData.pending_loans:type_name -> borrower.LoanEntry
-	44,  // 91: borrower.PropertyDetailWithLoansResponseData.active_loans:type_name -> borrower.LoanEntry
-	44,  // 92: borrower.PropertyDetailWithLoansResponseData.archived_loans:type_name -> borrower.LoanEntry
+	99,  // 88: borrower.PropertyDetailSummaryResponse.data:type_name -> borrower.PropertyDetailSummaryResponseData
+	42,  // 89: borrower.PropertyDetailSummaryResponseData.address:type_name -> borrower.AddressEntry
+	44,  // 90: borrower.PropertyDetailSummaryResponseData.pending_loans:type_name -> borrower.LoanEntry
+	44,  // 91: borrower.PropertyDetailSummaryResponseData.active_loans:type_name -> borrower.LoanEntry
+	44,  // 92: borrower.PropertyDetailSummaryResponseData.archived_loans:type_name -> borrower.LoanEntry
 	101, // 93: borrower.PropertyCreateRequest.data:type_name -> borrower.PropertyCreateRequestData
 	42,  // 94: borrower.PropertyCreateRequestData.address:type_name -> borrower.AddressEntry
 	88,  // 95: borrower.PropertyCreateResponse.data:type_name -> borrower.PropertyEntry
@@ -10875,7 +10859,7 @@ var file_app_borrower_rpc_pb_borrower_proto_depIdxs = []int32{
 	80,  // 135: borrower.Loan.PreApprovalLoan:input_type -> borrower.LoanPreApprovalRequest
 	86,  // 136: borrower.Loan.SendPreApprovalNotification:input_type -> borrower.LoanSendPreApprovalNotificationRequest
 	90,  // 137: borrower.Property.PropertyPage:input_type -> borrower.PropertyPageRequest
-	96,  // 138: borrower.Property.PropertyDetailWithLoans:input_type -> borrower.PropertyDetailRequest
+	96,  // 138: borrower.Property.PropertyDetailSummary:input_type -> borrower.PropertyDetailRequest
 	100, // 139: borrower.Property.CreateProperty:input_type -> borrower.PropertyCreateRequest
 	103, // 140: borrower.Property.UpdateProperty:input_type -> borrower.PropertyUpdateRequest
 	106, // 141: borrower.Property.DeleteProperty:input_type -> borrower.PropertyDeleteRequest
@@ -10910,7 +10894,7 @@ var file_app_borrower_rpc_pb_borrower_proto_depIdxs = []int32{
 	82,  // 170: borrower.Loan.PreApprovalLoan:output_type -> borrower.LoanPreApprovalResponse
 	1,   // 171: borrower.Loan.SendPreApprovalNotification:output_type -> borrower.EmptyResponse
 	91,  // 172: borrower.Property.PropertyPage:output_type -> borrower.PropertyPageResponse
-	97,  // 173: borrower.Property.PropertyDetailWithLoans:output_type -> borrower.PropertyDetailWithLoansResponse
+	97,  // 173: borrower.Property.PropertyDetailSummary:output_type -> borrower.PropertyDetailSummaryResponse
 	102, // 174: borrower.Property.CreateProperty:output_type -> borrower.PropertyCreateResponse
 	1,   // 175: borrower.Property.UpdateProperty:output_type -> borrower.EmptyResponse
 	1,   // 176: borrower.Property.DeleteProperty:output_type -> borrower.EmptyResponse

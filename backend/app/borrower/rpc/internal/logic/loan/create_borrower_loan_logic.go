@@ -210,7 +210,7 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 		BorrowerId: in.BorrowerId,
 		// PropertyType: constants.PropertyType(in.Property.PropertyType),
 		Unit: in.LoanProperty.PropertyBase.Unit,
-		Address: types.Address{
+		Address: &types.Address{
 			State:    in.LoanProperty.PropertyBase.Address.State,
 			City:     in.LoanProperty.PropertyBase.Address.City,
 			Address1: in.LoanProperty.PropertyBase.Address.Address1,

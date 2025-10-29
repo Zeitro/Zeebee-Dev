@@ -16,21 +16,21 @@ import (
 	"zeebee-backend/common/timex"
 )
 
-type PropertyDetailWithLoansLogic struct {
+type PropertyDetailSummaryLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewPropertyDetailWithLoansLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PropertyDetailWithLoansLogic {
-	return &PropertyDetailWithLoansLogic{
+func NewPropertyDetailSummaryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PropertyDetailSummaryLogic {
+	return &PropertyDetailSummaryLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *PropertyDetailWithLoansLogic) PropertyDetailWithLoans(in *borrower.PropertyDetailRequest) (resp *borrower.PropertyDetailWithLoansResponse, err error) {
+func (l *PropertyDetailSummaryLogic) PropertyDetailSummary(in *borrower.PropertyDetailRequest) (resp *borrower.PropertyDetailSummaryResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -53,7 +53,7 @@ func (l *PropertyDetailWithLoansLogic) PropertyDetailWithLoans(in *borrower.Prop
 
 	loanProperties := propertyBase.LoanProperties
 
-	respData := &borrower.PropertyDetailWithLoansResponseData{
+	respData := &borrower.PropertyDetailSummaryResponseData{
 		Id: propertyBase.Id,
 		// PropertyType: string(loanProperty.PropertyType),
 		// TotalAmount:  property.TotalAmount,
@@ -137,7 +137,7 @@ func (l *PropertyDetailWithLoansLogic) PropertyDetailWithLoans(in *borrower.Prop
 		respData.AvgRate = totalRate / float32(loanCount)
 	}
 
-	return &borrower.PropertyDetailWithLoansResponse{
+	return &borrower.PropertyDetailSummaryResponse{
 		Data: respData,
 	}, nil
 }
