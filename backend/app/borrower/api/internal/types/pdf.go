@@ -10,7 +10,7 @@ type ApplyFormPdfRequest struct {
 	LoanPurpose              string                     `json:"loan_purpose,optional" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
 	TotalAmount              float64                    `json:"total_amount,optional" validate:"required,gt=0"`
 	InitialAmount            float64                    `json:"initial_amount,optional" validate:"ltefield=TotalAmount"`
-	LoanProperty             *LoanApplyPropertyEntry    `json:"loan_property,optional"`
+	LoanProperty             *LoanPropertyPdfEntry      `json:"loan_property,optional"`
 	HoldbackAmount           float64                    `json:"holdback_amount,optional" validate:"ltefield=TotalAmount"`
 	PrincipalAmount          float64                    `json:"principal_amount,optional" validate:"required_unless=LoanPurpose Purchase,omitempty,gte=0"`
 	MaturityDate             string                     `json:"maturity_date,optional"`

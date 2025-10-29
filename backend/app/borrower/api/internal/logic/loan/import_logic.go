@@ -240,12 +240,12 @@ func parsePendingLoans(rows [][]string, borrowerId int64) ([]*types.ImportPendin
 		if idx, ok := columnIndex[pendingColZip]; ok && idx < len(row) {
 			addr.ZipCode = row[idx]
 		}
-
+		// todo handle PropertyBase
 		loanData.LoanProperty = &types.ImportLoanApplyPropertyEntry{
-			PropertyBase: &types.PropertyBaseEntry{
-				Unit:    1,
-				Address: addr,
-			},
+			// PropertyBase: &types.PropertyBaseEntry{
+			// 	Unit:    1,
+			// 	Address: addr,
+			// },
 		}
 		if idx, ok := columnIndex[pendingColOwner]; ok && idx < len(row) {
 			loanData.LoanProperty.Owner = row[idx]

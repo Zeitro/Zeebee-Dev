@@ -41,7 +41,10 @@ func (l *UpdateLogic) Update(req *types.LoanUpdateRequest) (resp *types.EmptyRes
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
-	rpcReq.Data.LoanProperty.PropertyBase.Address.State = req.LoanProperty.PropertyBase.Address.State
+
+	// propertyBaseId := req.LoanProperty.PropertyBaseId
+	// _ = propertyBaseId
+	// rpcReq.Data.LoanProperty.PropertyBase.Address.State = req.LoanProperty.PropertyBase.Address.State
 
 	applicants := make([]*borrower.BorrowerEditApplicantEntry, 0, len(rpcReq.Data.Applicants))
 	for _, applicant := range rpcReq.Data.Applicants {

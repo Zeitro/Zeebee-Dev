@@ -17,7 +17,6 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/timex"
-	"zeebee-backend/common/types"
 	"zeebee-backend/common/uuid"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -206,21 +205,21 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 	// 	//  string loan_processor = 30;
 	// 	//  string owner = 31;
 	// }
-	propertyBase = &model.PropertyBase{
-		BorrowerId: in.BorrowerId,
-		// PropertyType: constants.PropertyType(in.Property.PropertyType),
-		Unit: in.LoanProperty.PropertyBase.Unit,
-		Address: &types.Address{
-			State:    in.LoanProperty.PropertyBase.Address.State,
-			City:     in.LoanProperty.PropertyBase.Address.City,
-			Address1: in.LoanProperty.PropertyBase.Address.Address1,
-			Address2: in.LoanProperty.PropertyBase.Address.Address2,
-			ZipCode:  in.LoanProperty.PropertyBase.Address.ZipCode,
-		},
-	}
+	// propertyBase = &model.PropertyBase{
+	// 	BorrowerId: in.BorrowerId,
+	// 	// PropertyType: constants.PropertyType(in.Property.PropertyType),
+	// 	Unit: in.LoanProperty.PropertyBase.Unit,
+	// 	Address: &types.Address{
+	// 		State:    in.LoanProperty.PropertyBase.Address.State,
+	// 		City:     in.LoanProperty.PropertyBase.Address.City,
+	// 		Address1: in.LoanProperty.PropertyBase.Address.Address1,
+	// 		Address2: in.LoanProperty.PropertyBase.Address.Address2,
+	// 		ZipCode:  in.LoanProperty.PropertyBase.Address.ZipCode,
+	// 	},
+	// }
 
 	loanProperty = &model.LoanProperty{
-		PropertyType: constants.PropertyType(in.LoanProperty.PropertyType),
+		// PropertyType: constants.PropertyType(in.LoanProperty.PropertyType),
 	}
 
 	if loan.TotalAmount < loan.InitialAmount {

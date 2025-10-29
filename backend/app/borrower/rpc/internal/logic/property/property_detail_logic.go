@@ -35,7 +35,7 @@ func (l *PropertyDetailLogic) PropertyDetail(in *borrower.PropertyDetailRequest)
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	respData := &borrower.PropertyEntry{}
+	respData := &borrower.PropertyBaseEntry{}
 	result, err := l.svcCtx.PropertyBaseRepo.FindOneByColumns(l.ctx, map[string]interface{}{
 		"id":          in.Data.Id,
 		"borrower_id": in.Data.BorrowerId,
