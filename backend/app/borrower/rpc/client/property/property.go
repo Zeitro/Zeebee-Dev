@@ -97,8 +97,8 @@ type (
 	PropertyDetailRequest                      = borrower.PropertyDetailRequest
 	PropertyDetailRequestData                  = borrower.PropertyDetailRequestData
 	PropertyDetailResponse                     = borrower.PropertyDetailResponse
-	PropertyDetailWithLoansResponse            = borrower.PropertyDetailWithLoansResponse
-	PropertyDetailWithLoansResponseData        = borrower.PropertyDetailWithLoansResponseData
+	PropertyDetailSummaryResponse              = borrower.PropertyDetailSummaryResponse
+	PropertyDetailSummaryResponseData          = borrower.PropertyDetailSummaryResponseData
 	PropertyEntry                              = borrower.PropertyEntry
 	PropertyPageEntry                          = borrower.PropertyPageEntry
 	PropertyPageRequest                        = borrower.PropertyPageRequest
@@ -152,7 +152,7 @@ type (
 
 	Property interface {
 		PropertyPage(ctx context.Context, in *PropertyPageRequest, opts ...grpc.CallOption) (*PropertyPageResponse, error)
-		PropertyDetailWithLoans(ctx context.Context, in *PropertyDetailRequest, opts ...grpc.CallOption) (*PropertyDetailWithLoansResponse, error)
+		PropertyDetailSummary(ctx context.Context, in *PropertyDetailRequest, opts ...grpc.CallOption) (*PropertyDetailSummaryResponse, error)
 		CreateProperty(ctx context.Context, in *PropertyCreateRequest, opts ...grpc.CallOption) (*PropertyCreateResponse, error)
 		UpdateProperty(ctx context.Context, in *PropertyUpdateRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		DeleteProperty(ctx context.Context, in *PropertyDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
@@ -175,9 +175,9 @@ func (m *defaultProperty) PropertyPage(ctx context.Context, in *PropertyPageRequ
 	return client.PropertyPage(ctx, in, opts...)
 }
 
-func (m *defaultProperty) PropertyDetailWithLoans(ctx context.Context, in *PropertyDetailRequest, opts ...grpc.CallOption) (*PropertyDetailWithLoansResponse, error) {
+func (m *defaultProperty) PropertyDetailSummary(ctx context.Context, in *PropertyDetailRequest, opts ...grpc.CallOption) (*PropertyDetailSummaryResponse, error) {
 	client := borrower.NewPropertyClient(m.cli.Conn())
-	return client.PropertyDetailWithLoans(ctx, in, opts...)
+	return client.PropertyDetailSummary(ctx, in, opts...)
 }
 
 func (m *defaultProperty) CreateProperty(ctx context.Context, in *PropertyCreateRequest, opts ...grpc.CallOption) (*PropertyCreateResponse, error) {

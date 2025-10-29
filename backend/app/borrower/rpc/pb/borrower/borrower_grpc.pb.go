@@ -1163,12 +1163,12 @@ var Loan_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	Property_PropertyPage_FullMethodName            = "/borrower.Property/PropertyPage"
-	Property_PropertyDetailWithLoans_FullMethodName = "/borrower.Property/PropertyDetailWithLoans"
-	Property_CreateProperty_FullMethodName          = "/borrower.Property/CreateProperty"
-	Property_UpdateProperty_FullMethodName          = "/borrower.Property/UpdateProperty"
-	Property_DeleteProperty_FullMethodName          = "/borrower.Property/DeleteProperty"
-	Property_PropertyDetail_FullMethodName          = "/borrower.Property/PropertyDetail"
+	Property_PropertyPage_FullMethodName          = "/borrower.Property/PropertyPage"
+	Property_PropertyDetailSummary_FullMethodName = "/borrower.Property/PropertyDetailSummary"
+	Property_CreateProperty_FullMethodName        = "/borrower.Property/CreateProperty"
+	Property_UpdateProperty_FullMethodName        = "/borrower.Property/UpdateProperty"
+	Property_DeleteProperty_FullMethodName        = "/borrower.Property/DeleteProperty"
+	Property_PropertyDetail_FullMethodName        = "/borrower.Property/PropertyDetail"
 )
 
 // PropertyClient is the client API for Property service.
@@ -1176,7 +1176,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PropertyClient interface {
 	PropertyPage(ctx context.Context, in *PropertyPageRequest, opts ...grpc.CallOption) (*PropertyPageResponse, error)
-	PropertyDetailWithLoans(ctx context.Context, in *PropertyDetailRequest, opts ...grpc.CallOption) (*PropertyDetailWithLoansResponse, error)
+	PropertyDetailSummary(ctx context.Context, in *PropertyDetailRequest, opts ...grpc.CallOption) (*PropertyDetailSummaryResponse, error)
 	CreateProperty(ctx context.Context, in *PropertyCreateRequest, opts ...grpc.CallOption) (*PropertyCreateResponse, error)
 	UpdateProperty(ctx context.Context, in *PropertyUpdateRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	DeleteProperty(ctx context.Context, in *PropertyDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
@@ -1201,10 +1201,10 @@ func (c *propertyClient) PropertyPage(ctx context.Context, in *PropertyPageReque
 	return out, nil
 }
 
-func (c *propertyClient) PropertyDetailWithLoans(ctx context.Context, in *PropertyDetailRequest, opts ...grpc.CallOption) (*PropertyDetailWithLoansResponse, error) {
+func (c *propertyClient) PropertyDetailSummary(ctx context.Context, in *PropertyDetailRequest, opts ...grpc.CallOption) (*PropertyDetailSummaryResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(PropertyDetailWithLoansResponse)
-	err := c.cc.Invoke(ctx, Property_PropertyDetailWithLoans_FullMethodName, in, out, cOpts...)
+	out := new(PropertyDetailSummaryResponse)
+	err := c.cc.Invoke(ctx, Property_PropertyDetailSummary_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1256,7 +1256,7 @@ func (c *propertyClient) PropertyDetail(ctx context.Context, in *PropertyDetailR
 // for forward compatibility.
 type PropertyServer interface {
 	PropertyPage(context.Context, *PropertyPageRequest) (*PropertyPageResponse, error)
-	PropertyDetailWithLoans(context.Context, *PropertyDetailRequest) (*PropertyDetailWithLoansResponse, error)
+	PropertyDetailSummary(context.Context, *PropertyDetailRequest) (*PropertyDetailSummaryResponse, error)
 	CreateProperty(context.Context, *PropertyCreateRequest) (*PropertyCreateResponse, error)
 	UpdateProperty(context.Context, *PropertyUpdateRequest) (*EmptyResponse, error)
 	DeleteProperty(context.Context, *PropertyDeleteRequest) (*EmptyResponse, error)
@@ -1274,8 +1274,8 @@ type UnimplementedPropertyServer struct{}
 func (UnimplementedPropertyServer) PropertyPage(context.Context, *PropertyPageRequest) (*PropertyPageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PropertyPage not implemented")
 }
-func (UnimplementedPropertyServer) PropertyDetailWithLoans(context.Context, *PropertyDetailRequest) (*PropertyDetailWithLoansResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PropertyDetailWithLoans not implemented")
+func (UnimplementedPropertyServer) PropertyDetailSummary(context.Context, *PropertyDetailRequest) (*PropertyDetailSummaryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PropertyDetailSummary not implemented")
 }
 func (UnimplementedPropertyServer) CreateProperty(context.Context, *PropertyCreateRequest) (*PropertyCreateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateProperty not implemented")
@@ -1328,20 +1328,20 @@ func _Property_PropertyPage_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Property_PropertyDetailWithLoans_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Property_PropertyDetailSummary_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PropertyDetailRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PropertyServer).PropertyDetailWithLoans(ctx, in)
+		return srv.(PropertyServer).PropertyDetailSummary(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Property_PropertyDetailWithLoans_FullMethodName,
+		FullMethod: Property_PropertyDetailSummary_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PropertyServer).PropertyDetailWithLoans(ctx, req.(*PropertyDetailRequest))
+		return srv.(PropertyServer).PropertyDetailSummary(ctx, req.(*PropertyDetailRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1430,8 +1430,8 @@ var Property_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Property_PropertyPage_Handler,
 		},
 		{
-			MethodName: "PropertyDetailWithLoans",
-			Handler:    _Property_PropertyDetailWithLoans_Handler,
+			MethodName: "PropertyDetailSummary",
+			Handler:    _Property_PropertyDetailSummary_Handler,
 		},
 		{
 			MethodName: "CreateProperty",

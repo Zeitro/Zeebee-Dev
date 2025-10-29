@@ -4,17 +4,16 @@
 package types
 
 type PropertyCreateRequest struct {
-	PropertyType   string       `json:"property_type"`
-	TotalAmount    float64      `json:"total_amount"`
-	Unit           int32        `json:"unit"`
-	LivingAreaSqft float32      `json:"living_area_sqft"`
-	Bedrooms       int32        `json:"bedrooms"`
-	Bathrooms      float32      `json:"bathrooms"`
-	Address        AddressEntry `json:"address"`
+	PropertyType   string        `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
+	Unit           int32         `json:"unit" validate:"required,gt=0"`
+	LivingAreaSqft float32       `json:"living_area_sqft" validate:"required,gt=0"`
+	Bedrooms       int32         `json:"bedrooms" validate:"required,gt=0"`
+	Bathrooms      float32       `json:"bathrooms" validate:"required,gt=0"`
+	Address        *AddressEntry `json:"address" validate:"required"`
 }
 
 type PropertyCreateResponse struct {
-	PropertyPageEntry
+	PropertyEntry
 }
 
 type PropertyDetailRequest struct {
@@ -22,22 +21,22 @@ type PropertyDetailRequest struct {
 }
 
 type PropertyDetailResponse struct {
-	PropertyPageEntry
+	PropertyEntry
 }
 
-type PropertyDetailWithLoansResponse struct {
-	Id                        int64        `json:"id"`
-	PropertyType              string       `json:"property_type"`
-	TotalAmount               float64      `json:"total_amount"`
-	Unit                      int32        `json:"unit"`
-	Address                   AddressEntry `json:"address"`
-	TotalClosingFundAmount    float64      `json:"total_closing_fund_amount"`
-	TotalPrincipalAmount      float64      `json:"total_principal_amount"`
-	AvgRate                   float32      `json:"avg_rate"`
-	TotalMonthlyPaymentAmount float64      `json:"total_monthly_payment_amount"`
-	PendingLoans              []LoanEntry  `json:"pending_loans"`
-	ActiveLoans               []LoanEntry  `json:"active_loans"`
-	ArchivedLoans             []LoanEntry  `json:"archived_loans"`
+type PropertyDetailSummaryResponse struct {
+	Id                        int64         `json:"id"`
+	PropertyType              string        `json:"property_type"`
+	TotalAmount               float64       `json:"total_amount"`
+	Unit                      int32         `json:"unit"`
+	Address                   *AddressEntry `json:"address"`
+	TotalClosingFundAmount    float64       `json:"total_closing_fund_amount"`
+	TotalPrincipalAmount      float64       `json:"total_principal_amount"`
+	AvgRate                   float32       `json:"avg_rate"`
+	TotalMonthlyPaymentAmount float64       `json:"total_monthly_payment_amount"`
+	PendingLoans              []LoanEntry   `json:"pending_loans"`
+	ActiveLoans               []LoanEntry   `json:"active_loans"`
+	ArchivedLoans             []LoanEntry   `json:"archived_loans"`
 }
 
 type PropertyPageRequest struct {
@@ -56,11 +55,10 @@ type PropertyPageResponse struct {
 }
 
 type PropertyUpdateRequest struct {
-	Id             int64        `path:"id"`
-	PropertyType   string       `json:"property_type"`
-	Unit           int32        `json:"unit"`
-	LivingAreaSqft float32      `json:"living_area_sqft"`
-	Bedrooms       int32        `json:"bedrooms"`
-	Bathrooms      float32      `json:"bathrooms"`
-	Address        AddressEntry `json:"address"`
+	Id             int64   `path:"id" validate:"required,gt=0"`
+	PropertyType   string  `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
+	Unit           int32   `json:"unit" validate:"required,gt=0"`
+	LivingAreaSqft float32 `json:"living_area_sqft" validate:"required,gt=0"`
+	Bedrooms       int32   `json:"bedrooms" validate:"required,gt=0"`
+	Bathrooms      float32 `json:"bathrooms" validate:"required,gt=0"`
 }

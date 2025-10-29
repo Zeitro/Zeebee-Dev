@@ -425,34 +425,34 @@ type PropertyBaseEntry struct {
 }
 
 type PropertyEntry struct {
-	Id             int64        `json:"id"`
-	PropertyType   string       `json:"property_type"`
-	TotalAmount    float64      `json:"total_amount"`
-	Unit           int32        `json:"unit"`
-	LivingAreaSqft float32      `json:"living_area_sqft"`
-	Bedrooms       int32        `json:"bedrooms"`
-	Bathrooms      float32      `json:"bathrooms"`
-	Address        AddressEntry `json:"address"`
-	CreatedAt      string       `json:"created_at"`
-	UpdatedAt      string       `json:"updated_at"`
-	HasLoans       bool         `json:"has_loans"`
+	Id             int64         `json:"id"`
+	PropertyType   string        `json:"property_type"`
+	TotalAmount    float64       `json:"total_amount"`
+	Unit           int32         `json:"unit"`
+	LivingAreaSqft float32       `json:"living_area_sqft"`
+	Bedrooms       int32         `json:"bedrooms"`
+	Bathrooms      float32       `json:"bathrooms"`
+	Address        *AddressEntry `json:"address"`
+	CreatedAt      string        `json:"created_at"`
+	UpdatedAt      string        `json:"updated_at"`
+	LoanCount      int32         `json:"loan_count"`
 }
 
 type PropertyPageEntry struct {
-	Id                        int64        `json:"id"`
-	PropertyType              string       `json:"property_type"`
-	TotalAmount               float64      `json:"total_amount"`
-	Address                   AddressEntry `json:"address"`
-	TotalPrincipalAmount      float64      `json:"total_principal_amount"`
-	AvgRate                   float32      `json:"avg_rate"`
-	TotalMonthlyPaymentAmount float64      `json:"total_monthly_payment_amount"`
-	Applicants                []string     `json:"applicants"`
-	Lenders                   []string     `json:"lenders"`
-	NearestMaturityDate       string       `json:"nearest_maturity_date"`
-	PendingLoanCount          int64        `json:"pending_loan_count"`
-	ActiveLoanCount           int64        `json:"active_loan_count"`
-	ArchivedLoanCount         int64        `json:"archived_loan_count"`
-	HasLoans                  bool         `json:"has_loans"`
+	Id                        int64         `json:"id"`
+	PropertyType              string        `json:"property_type"`
+	TotalAmount               float64       `json:"total_amount"`
+	Address                   *AddressEntry `json:"address"`
+	TotalPrincipalAmount      float64       `json:"total_principal_amount"`
+	AvgRate                   float32       `json:"avg_rate"`
+	TotalMonthlyPaymentAmount float64       `json:"total_monthly_payment_amount"`
+	Applicants                []string      `json:"applicants"`
+	Lenders                   []string      `json:"lenders"`
+	NearestMaturityDate       string        `json:"nearest_maturity_date"`
+	PendingLoanCount          int64         `json:"pending_loan_count"`
+	ActiveLoanCount           int64         `json:"active_loan_count"`
+	ArchivedLoanCount         int64         `json:"archived_loan_count"`
+	HasLoans                  bool          `json:"has_loans"`
 }
 
 type PropertyPageFilter struct {

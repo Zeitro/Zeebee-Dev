@@ -16,7 +16,7 @@ import (
 )
 
 // detail
-func PropertyDetailWithLoansHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func PropertyDetailSummaryHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer func() {
@@ -42,8 +42,8 @@ func PropertyDetailWithLoansHandler(svcCtx *svc.ServiceContext) http.HandlerFunc
 			return
 		}
 
-		l := property.NewPropertyDetailWithLoansLogic(r.Context(), svcCtx)
-		resp, err := l.PropertyDetailWithLoans(&req)
+		l := property.NewPropertyDetailSummaryLogic(r.Context(), svcCtx)
+		resp, err := l.PropertyDetailSummary(&req)
 		if err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 		} else {

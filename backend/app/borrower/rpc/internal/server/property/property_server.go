@@ -28,9 +28,9 @@ func (s *PropertyServer) PropertyPage(ctx context.Context, in *borrower.Property
 	return l.PropertyPage(in)
 }
 
-func (s *PropertyServer) PropertyDetailWithLoans(ctx context.Context, in *borrower.PropertyDetailRequest) (*borrower.PropertyDetailWithLoansResponse, error) {
-	l := propertylogic.NewPropertyDetailWithLoansLogic(ctx, s.svcCtx)
-	return l.PropertyDetailWithLoans(in)
+func (s *PropertyServer) PropertyDetailSummary(ctx context.Context, in *borrower.PropertyDetailRequest) (*borrower.PropertyDetailSummaryResponse, error) {
+	l := propertylogic.NewPropertyDetailSummaryLogic(ctx, s.svcCtx)
+	return l.PropertyDetailSummary(in)
 }
 
 func (s *PropertyServer) CreateProperty(ctx context.Context, in *borrower.PropertyCreateRequest) (*borrower.PropertyCreateResponse, error) {

@@ -14,22 +14,22 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type PropertyDetailWithLoansLogic struct {
+type PropertyDetailSummaryLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
 // detail
-func NewPropertyDetailWithLoansLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PropertyDetailWithLoansLogic {
-	return &PropertyDetailWithLoansLogic{
+func NewPropertyDetailSummaryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PropertyDetailSummaryLogic {
+	return &PropertyDetailSummaryLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *PropertyDetailWithLoansLogic) PropertyDetailWithLoans(req *types.PropertyDetailRequest) (resp *types.PropertyDetailWithLoansResponse, err error) {
+func (l *PropertyDetailSummaryLogic) PropertyDetailSummary(req *types.PropertyDetailRequest) (resp *types.PropertyDetailSummaryResponse, err error) {
 	rpcReq := &borrower.PropertyDetailRequest{
 		Data: &borrower.PropertyDetailRequestData{
 			Id: req.Id,
@@ -42,12 +42,12 @@ func (l *PropertyDetailWithLoansLogic) PropertyDetailWithLoans(req *types.Proper
 	}
 	rpcReq.Data.BorrowerId = borrowerId
 
-	rpcResp, err := l.svcCtx.PropertyRpcClient.PropertyDetailWithLoans(l.ctx, rpcReq)
+	rpcResp, err := l.svcCtx.PropertyRpcClient.PropertyDetailSummary(l.ctx, rpcReq)
 	if err != nil {
 		return nil, err
 	}
 
-	resp = &types.PropertyDetailWithLoansResponse{}
+	resp = &types.PropertyDetailSummaryResponse{}
 	err = copier.CopyWithOption(resp, &rpcResp.Data, copier.Option{DeepCopy: true})
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)

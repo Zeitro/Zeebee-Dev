@@ -760,7 +760,7 @@ message PropertyEntry {
   AddressEntry address = 8;
   string created_at = 9;
   string updated_at = 10;
-  bool has_loans = 11;
+  int32 loan_count = 11;
 }
 
 message PropertyPageEntry{
@@ -817,8 +817,8 @@ message PropertyDetailRequest {
   PropertyDetailRequestData data = 1;
 }
 
-message PropertyDetailWithLoansResponse {
-  PropertyDetailWithLoansResponseData data = 1;
+message PropertyDetailSummaryResponse {
+  PropertyDetailSummaryResponseData data = 1;
 }
 
 message PropertyDetailRequestData {
@@ -826,7 +826,7 @@ message PropertyDetailRequestData {
   int64 borrower_id = 2;
 }
 
-message PropertyDetailWithLoansResponseData {
+message PropertyDetailSummaryResponseData {
   int64 id = 1;
   string property_type = 2;
   double total_amount = 3;
@@ -852,7 +852,7 @@ message PropertyCreateRequestData {
   int32  unit = 3;
   float living_area_sqft = 4;
   int32 bedrooms = 5;
-  float bathrooms = 6;
+  int32 bathrooms = 6;
   AddressEntry address = 7;
   int64 borrower_id = 8;
 }
@@ -870,11 +870,10 @@ message PropertyUpdateRequest {
 message PropertyUpdateRequestData {
   int64 id = 1;
   string property_type = 2;
-  //  double total_amount = 3;
   int32  unit = 4;
   float living_area_sqft = 5;
   int32 bedrooms = 6;
-  float bathrooms = 7;
+  int32 bathrooms = 7;
   int64 borrower_id = 8;
 }
 
@@ -895,7 +894,7 @@ message PropertyDeleteRequestData {
 
 service Property {
   rpc PropertyPage(PropertyPageRequest) returns(PropertyPageResponse);
-  rpc PropertyDetailWithLoans(PropertyDetailRequest) returns(PropertyDetailWithLoansResponse);
+  rpc PropertyDetailSummary(PropertyDetailRequest) returns(PropertyDetailSummaryResponse);
   rpc CreateProperty(PropertyCreateRequest) returns(PropertyCreateResponse);
   rpc UpdateProperty(PropertyUpdateRequest) returns(EmptyResponse);
   rpc DeleteProperty(PropertyDeleteRequest) returns(EmptyResponse);

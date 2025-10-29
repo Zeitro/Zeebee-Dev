@@ -2585,16 +2585,7 @@
                   "required": [
                     "loan_term",
                     "est_property_value_amount",
-                    "arv",
-                    "total_amount",
-                    "principal_amount",
-                    "purchase_date",
                     "purchase_amount",
-                    "cost_spent_to_date_amount",
-                    "budget_amount",
-                    "initial_amount",
-                    "holdback_amount",
-                    "interest_reserve_months",
                     "loan_purpose",
                     "loan_type"
                   ],
@@ -2654,7 +2645,6 @@
                   "required": [
                     "address",
                     "property_type",
-                    "is_permit_ready",
                     "unit"
                   ],
                   "properties": {
@@ -5962,6 +5952,154 @@
         }
       }
     },
+    "/api/v1/property": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "property"
+        ],
+        "summary": "create",
+        "operationId": "propertyPropertyCreate",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "property_type",
+                "unit",
+                "living_area_sqft",
+                "bedrooms",
+                "bathrooms",
+                "address"
+              ],
+              "properties": {
+                "address": {
+                  "type": "object",
+                  "properties": {
+                    "address1": {
+                      "type": "string"
+                    },
+                    "address2": {
+                      "type": "string"
+                    },
+                    "city": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "zip_code": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "bathrooms": {
+                  "type": "number"
+                },
+                "bedrooms": {
+                  "type": "integer"
+                },
+                "living_area_sqft": {
+                  "type": "number"
+                },
+                "property_type": {
+                  "type": "string"
+                },
+                "unit": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "active_loan_count": {
+                  "type": "integer"
+                },
+                "address": {
+                  "type": "object",
+                  "properties": {
+                    "address1": {
+                      "type": "string"
+                    },
+                    "address2": {
+                      "type": "string"
+                    },
+                    "city": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "zip_code": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "applicants": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "archived_loan_count": {
+                  "type": "integer"
+                },
+                "avg_rate": {
+                  "type": "number"
+                },
+                "has_loans": {
+                  "type": "boolean"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "lenders": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "nearest_maturity_date": {
+                  "type": "string"
+                },
+                "pending_loan_count": {
+                  "type": "integer"
+                },
+                "property_type": {
+                  "type": "string"
+                },
+                "total_amount": {
+                  "type": "number"
+                },
+                "total_monthly_payment_amount": {
+                  "type": "number"
+                },
+                "total_principal_amount": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/property/page": {
       "post": {
         "consumes": [
@@ -6047,7 +6185,8 @@
                       "nearest_maturity_date",
                       "pending_loan_count",
                       "active_loan_count",
-                      "archived_loan_count"
+                      "archived_loan_count",
+                      "has_loans"
                     ],
                     "properties": {
                       "active_loan_count": {
@@ -6084,6 +6223,9 @@
                       },
                       "avg_rate": {
                         "type": "number"
+                      },
+                      "has_loans": {
+                        "type": "boolean"
                       },
                       "id": {
                         "type": "integer"
@@ -6143,6 +6285,221 @@
         ],
         "summary": "detail",
         "operationId": "propertyPropertyDetail",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "active_loan_count": {
+                  "type": "integer"
+                },
+                "address": {
+                  "type": "object",
+                  "properties": {
+                    "address1": {
+                      "type": "string"
+                    },
+                    "address2": {
+                      "type": "string"
+                    },
+                    "city": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "zip_code": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "applicants": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "archived_loan_count": {
+                  "type": "integer"
+                },
+                "avg_rate": {
+                  "type": "number"
+                },
+                "has_loans": {
+                  "type": "boolean"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "lenders": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "nearest_maturity_date": {
+                  "type": "string"
+                },
+                "pending_loan_count": {
+                  "type": "integer"
+                },
+                "property_type": {
+                  "type": "string"
+                },
+                "total_amount": {
+                  "type": "number"
+                },
+                "total_monthly_payment_amount": {
+                  "type": "number"
+                },
+                "total_principal_amount": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "property"
+        ],
+        "summary": "update",
+        "operationId": "propertyPropertyUpdate",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "property_type",
+                "unit",
+                "living_area_sqft",
+                "bedrooms",
+                "bathrooms",
+                "address"
+              ],
+              "properties": {
+                "address": {
+                  "type": "object",
+                  "properties": {
+                    "address1": {
+                      "type": "string"
+                    },
+                    "address2": {
+                      "type": "string"
+                    },
+                    "city": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "zip_code": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "bathrooms": {
+                  "type": "number"
+                },
+                "bedrooms": {
+                  "type": "integer"
+                },
+                "living_area_sqft": {
+                  "type": "number"
+                },
+                "property_type": {
+                  "type": "string"
+                },
+                "unit": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "delete": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "property"
+        ],
+        "summary": "delete",
+        "operationId": "propertyPropertyDelete",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/property/{id}/summary": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "property"
+        ],
+        "summary": "property Summary",
+        "operationId": "propertyPropertyDetailSummary",
         "parameters": [
           {
             "type": "integer",
@@ -9187,7 +9544,7 @@
       }
     }
   },
-  "x-date": "2025-10-24 13:30:47",
+  "x-date": "2025-10-29 09:58:23",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

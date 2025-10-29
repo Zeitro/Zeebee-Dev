@@ -198,9 +198,9 @@ service borrower-api {
 	@handler PropertyPage
 	post /property/page (PropertyPageRequest) returns (PropertyPageResponse)
 
-	@doc "detail with loans"
-	@handler PropertyDetailWithLoans
-	get /property/:id/with_loans (PropertyDetailRequest) returns (PropertyDetailWithLoansResponse)
+	@doc "property Summary"
+	@handler PropertyDetailSummary
+	get /property/:id/summary (PropertyDetailRequest) returns (PropertyDetailSummaryResponse)
 
 	@doc "detail"
 	@handler PropertyDetail

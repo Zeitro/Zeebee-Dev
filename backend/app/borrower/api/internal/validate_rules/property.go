@@ -116,3 +116,73 @@ func LoanPropertyEntry(sl validator.StructLevel) {
 		}
 	}
 }
+
+func PropertyCreateRequest(sl validator.StructLevel) {
+	val := sl.Current().Interface()
+	property, ok := val.(types.PropertyCreateRequest)
+	if !ok {
+		sl.ReportError(property, "property", "Property", "property_type", "invalid property")
+		return
+	}
+	switch property.PropertyType {
+	case string(constants.PropertyTypeSingleFamilyResidence):
+		if property.Unit != 1 {
+			sl.ReportError(property.Unit, "unit", "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
+		}
+	case string(constants.PropertyTypeTwoUnit):
+		if property.Unit != 2 {
+			sl.ReportError(property.Unit, "unit", "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
+		}
+	case string(constants.PropertyTypeThreeUnit):
+		if property.Unit != 3 {
+			sl.ReportError(property.Unit, "unit", "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
+		}
+	case string(constants.PropertyTypeFourUnit):
+		if property.Unit != 4 {
+			sl.ReportError(property.Unit, "unit", "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
+		}
+	case string(constants.PropertyTypeFourPlusMulti):
+		if property.Unit < 4 {
+			sl.ReportError(property.Unit, "unit", "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
+		}
+	default:
+		if property.Unit < 1 {
+			sl.ReportError(property.Unit, "unit", "Unit", PropertyUnitTag, " >= 1")
+		}
+	}
+}
+
+func PropertyUpdateRequest(sl validator.StructLevel) {
+	val := sl.Current().Interface()
+	property, ok := val.(types.PropertyUpdateRequest)
+	if !ok {
+		sl.ReportError(property, "property", "Property", "property_type", "invalid property")
+		return
+	}
+	switch property.PropertyType {
+	case string(constants.PropertyTypeSingleFamilyResidence):
+		if property.Unit != 1 {
+			sl.ReportError(property.Unit, "unit", "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
+		}
+	case string(constants.PropertyTypeTwoUnit):
+		if property.Unit != 2 {
+			sl.ReportError(property.Unit, "unit", "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
+		}
+	case string(constants.PropertyTypeThreeUnit):
+		if property.Unit != 3 {
+			sl.ReportError(property.Unit, "unit", "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
+		}
+	case string(constants.PropertyTypeFourUnit):
+		if property.Unit != 4 {
+			sl.ReportError(property.Unit, "unit", "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
+		}
+	case string(constants.PropertyTypeFourPlusMulti):
+		if property.Unit < 4 {
+			sl.ReportError(property.Unit, "unit", "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
+		}
+	default:
+		if property.Unit < 1 {
+			sl.ReportError(property.Unit, "unit", "Unit", PropertyUnitTag, " >= 1")
+		}
+	}
+}

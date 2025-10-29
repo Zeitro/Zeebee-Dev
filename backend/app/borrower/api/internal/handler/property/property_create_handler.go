@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/borrower/api/internal/logic/property"
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
+	"zeebee-backend/app/borrower/api/internal/validate_rules"
 
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/response"
@@ -37,6 +38,8 @@ func PropertyCreateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			response.InternalServerError(w, errorx.GetErrorMsg(err))
 			return
 		}
+		v.RegisterStructRule(validate_rules.PropertyCreateRequest, types.PropertyCreateRequest{})
+		_ = v.RegisterTansMsg(validate_rules.PropertyUnitTag, validate_rules.PropertyUnitMsgTpl)
 		if err := v.Validate(&req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return

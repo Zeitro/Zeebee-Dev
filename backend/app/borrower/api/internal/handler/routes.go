@@ -245,10 +245,10 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: property.PropertyDeleteHandler(serverCtx),
 				},
 				{
-					// detail with loans
+					// property Summary
 					Method:  http.MethodGet,
-					Path:    "/property/:id/with_loans",
-					Handler: property.PropertyDetailWithLoansHandler(serverCtx),
+					Path:    "/property/:id/summary",
+					Handler: property.PropertyDetailSummaryHandler(serverCtx),
 				},
 				{
 					// page

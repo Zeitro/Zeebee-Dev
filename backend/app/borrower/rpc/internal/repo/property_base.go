@@ -13,6 +13,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/gormx"
+	"zeebee-backend/common/types"
 )
 
 type PropertyBaseRepo struct {
@@ -189,13 +190,42 @@ func (repo *PropertyBaseRepo) Page(ctx context.Context, pageReq *borrower.Proper
 			return page, errors.WithStack(err)
 		}
 		page.List[i].Loans = loans
-
-		// applicants, err := applicantRepo.GetByPropertyBaseId(ctx, propertyBase.Id)
-		// if err != nil {
-		// 	return page, errors.WithStack(err)
-		// }
-		// page.List[i].Applicants = applicants
 	}
 
 	return page, nil
+}
+
+// UpdateOne update one
+func (repo *PropertyBaseRepo) UpdateOne(ctx context.Context, id int64, data *model.PropertyBase) (result *model.PropertyBase, err error) {
+	err = repo.Client(ctx).
+		Model(new(model.PropertyBase)).
+		Where("id = ?", id).
+		Updates(data).Error
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return data, nil
+}
+
+// IsExisted check given property base is existed
+func (repo *PropertyBaseRepo) IsExisted(ctx context.Context, id int64, borrowerId int64, address *types.Address) (isExisted bool, err error) {
+	if address == nil {
+		err = errors.New("Address Is Empty")
+		return false, errors.WithStack(err)
+	}
+	query := repo.Client(ctx).
+		Where("borrower_id = ?", borrowerId).
+		Where("address->>'state' = ?", address.State).
+		Where("address->>'city' = ?", address.City).
+		Where("address->>'address1' = ?", address.Address1)
+	if id > 0 {
+		query = query.Where("id != ?", id)
+	}
+	var count int64
+	err = query.Count(&count).Error
+	if err != nil {
+		return false, errors.WithStack(err)
+	}
+
+	return count > 0, nil
 }
