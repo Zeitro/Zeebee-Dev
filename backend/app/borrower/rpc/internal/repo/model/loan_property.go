@@ -23,7 +23,7 @@ type LoanProperty struct {
 	FutureBedrooms       int32                  `gorm:"column:future_bedrooms;not null;default:0" json:"future_bedrooms"`
 	FutureBathrooms      int32                  `gorm:"column:future_bathrooms;not null;default:0" json:"future_bathrooms"`
 	Owner                string                 `gorm:"column:owner;size:255;not null;default:''" json:"owner"`
-	Address              *types.Address         `gorm:"column:address;type:jsonb;serializer:json" json:"address"`
+	Address              types.Address          `gorm:"column:address;type:jsonb;serializer:json" json:"address"`
 	//
 	ExistingLenderCompany        string              `gorm:"column:existing_lender_company;size:100;not null;default:''" json:"existing_lender_company"`
 	ExistingRate                 float32             `gorm:"column:existing_rate;type:numeric(4,2);not null;default:0" json:"existing_rate"`

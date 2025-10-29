@@ -48,7 +48,7 @@ func (l *CreatePropertyLogic) CreateProperty(in *borrower.PropertyCreateRequest)
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 
-	isExisted, err := l.svcCtx.PropertyBaseRepo.IsExisted(l.ctx, 0, saveData.BorrowerId, saveData.Address)
+	isExisted, err := l.svcCtx.PropertyBaseRepo.IsExisted(l.ctx, 0, saveData.BorrowerId, &saveData.Address)
 	if err != nil {
 		return nil, err
 	}

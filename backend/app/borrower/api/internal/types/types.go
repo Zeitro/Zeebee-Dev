@@ -35,9 +35,11 @@ type ApplicantEntry struct {
 }
 
 type EditLoanPropertyEntry struct {
-	Id             int64  `json:"id,optional"`
-	PropertyBaseId int64  `json:"property_base_id" validate:"required,gt=0"`
-	Ower           string `json:"ower,optional" validate:"max=50"`
+	Id             int64   `json:"id,optional"`
+	PropertyBaseId int64   `json:"property_base_id" validate:"required,gt=0"`
+	Ower           string  `json:"ower,optional" validate:"max=50"`
+	PurchaseAmount float64 `json:"purchase_amount,optional"`
+	PurchaseDate   string  `json:"purchase_date,optional"`
 }
 
 type EmptyRequest struct {
