@@ -1,4 +1,10 @@
+.husky/_/
+/node_modules
+env
 .idea
 .vscode
-node_modules
-*.exe
+.lingma
+/frontend/borrower/node_modules
+/frontend/lender/node_modules
+/frontend/borrower/.next
+/frontend/lender/.next

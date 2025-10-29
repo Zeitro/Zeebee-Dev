@@ -1,0 +1,6 @@
+# 仅当 ESLint 返回错误时退出
+cd frontend/borrower
+npm run lint:staged || {
+  echo "ESLint 发现错误，提交终止。警告可忽略。"
+  exit 1
+}

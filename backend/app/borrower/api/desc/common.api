@@ -1,0 +1,29 @@
+syntax = "v1"
+
+info(
+    title: "borrower-common-api"
+    desc: "common-api http service description"
+    version: "v1"
+)
+
+type SelectOptionEntry {
+    Label string `json:"label"`
+    Value string `json:"value"`
+}
+
+type (
+    GetSelectOptionRequest  {
+        Name string `form:"name"`
+    }
+
+    GetSelectOptionResponse  {
+        Options []SelectOptionEntry `json:"options"`
+    }
+)
+
+
+type (
+    GetUuidResponse {
+        Uuid string `json:"uuid"`
+    }
+)

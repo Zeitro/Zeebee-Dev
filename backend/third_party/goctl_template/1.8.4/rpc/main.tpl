@@ -3,6 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
+    "os/signal"
+    "syscall"
+    "time"
 
 	{{.imports}}
 
@@ -31,6 +35,14 @@ func main() {
 	})
 	defer s.Stop()
 
-	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
-	s.Start()
+	go func() {
+    	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
+    	s.Start()
+    }()
+
+    quit := make(chan os.Signal, 1)
+    signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+    <-quit
+    fmt.Printf("shutdown service in 5 seconds ....")
+    time.Sleep(5 * time.Second)
 }

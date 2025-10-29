@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Loan document request</title>
+</head>
+<body>
+<div
+        style="
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 32px 24px;
+        text-align: center;
+      "
+>
+    <img
+            src="https://zeebee-files-staging.s3.us-west-1.amazonaws.com/files-dev/logo.png"
+            alt="logo"
+            style="height: 28px"
+    />
+
+    <div
+            style="
+          font-size: 20px;
+          font-weight: 500;
+          line-height: 28px;
+          color: #000;
+          text-align: left;
+          font-family: Roboto, sans-serif;
+          padding-top: 28px;
+        "
+    >
+        Hello {{ .first_name }},
+    </div>
+
+    <div
+            style="
+          padding-bottom: 20px;
+          color: #000;
+          padding: 28px 0 48px;
+          font-family: Roboto, sans-serif;
+          font-size: 14px;
+          text-align: left;
+        "
+    >
+        Your loan officer has sent you a reminder to upload following
+        document for your loan application. Please log in to your account to
+        complete the upload.
+    </div>
+
+    <div style="display: flex; justify-content: flex-start;padding-bottom: 32px;">
+        <a
+                href="{{ .borrower_login_url }}"
+                class="button"
+                style="
+            display: inline-block;
+            padding: 9px 20px;
+            background-color: #1677ff;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+            width: max-content;
+            font-size: 16px;
+            box-shadow: 0 2px 0 0 rgba(5, 145, 255, 0.1);
+            font-family: Roboto, sans-serif;
+          "
+        >Log in</a
+        >
+    </div>
+
+    <div
+            style="
+          width: 100%;
+          padding: 24px;
+          font-size: 12px;
+          background-color: #f5f5f5;
+          border-top: 1px solid rgba(5, 145, 255, 0.1);
+          color: rgba(0, 0, 0, 0.65);
+          font-family: Roboto, sans-serif;
+        "
+    >
+        ZeeBee | 123 Business St | San Francisco, CA, 94105
+    </div>
+</div>
+</body>
+</html>

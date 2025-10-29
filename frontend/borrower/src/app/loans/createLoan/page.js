@@ -1,17 +1,23 @@
 'use client';
-import { Button, Col, Form, Row, Space, Steps, Tabs } from 'antd';
+import { Button, Col, Form, message, Space, Steps } from 'antd';
 import React, { useEffect, useState } from 'react';
 import CreateLoan from '../components/Create/Loan';
 import CreateProperty from '../components/Create/property';
 import CreateTerm from '../components/Create/term';
-// import styles from './loans.module.scss';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { createLoanSteps } from '@/enum/loan';
+import { createRequest } from '@/lib/fetch';
+import { loan_pending } from '@/enum/common';
+import { BtnPopUpModal } from '@/components/NewModal/BtnPopUpModal';
 const CreateLoanPage = () => {
 	const router = useRouter();
-	const [currentStep, setCurrentStep] = useState(2);
+	const searchParams = useSearchParams();
+	const api = `/property/${searchParams.get('propertyId')}`;
+	const { request } = createRequest();
+	const [currentStep, setCurrentStep] = useState(0);
+	const [loading, setLoading] = useState(false);
 	const [form] = Form.useForm();
-    // 存储每个步骤的数据
+	// 存储每个步骤的数据
 	const [loanData, setLoanData] = useState({
 		0: {},
 		1: {},
@@ -26,36 +32,99 @@ const CreateLoanPage = () => {
 		}
 	}, [currentStep, loanData]);
 
+	// 获取property
+	useEffect(() => {
+		if (searchParams.has('propertyId')) getProperty();
+	}, []);
+
 	// next/Add loan
 	const handleNext = async () => {
-		const values = await form.validateFields();
-		if (currentStep < 2) {
-			setLoanData((v) => ({ ...v, [currentStep]: values }));
-			setCurrentStep((v) => v + 1);
-			return;
+		try {
+			const values = await form.validateFields();
+			if (currentStep < 2) {
+				setLoanData((v) => ({ ...v, [currentStep]: values }));
+				setCurrentStep((v) => v + 1);
+				return;
+			}
+			// add loan
+			const body = {
+				...(loanData[0] || {}),
+				...(loanData[1] || {}),
+				...(values || {}),
+			};
+
+			body.applicants = body?.applicants.filter(
+				(i) => i.first_name || i.mid_name || i.last_name,
+			);
+			setLoading(true);
+			await request('/loan', {
+				method: 'POST',
+				body,
+			});
+			message.open({
+				type: 'success',
+				content: '3rd party loan created successfully！',
+			});
+			setLoading(false);
+			router.back();
+		} catch (error) {
+			setLoading(false);
 		}
-		// add loan
+	};
+
+	// 从property详情跳转的创建loan
+	const getProperty = async () => {
+		const data = await request(api);
+		const newData = {
+			loan_property: {
+				// property_type: data.property_type,
+				property_base: {
+					unit: data.unit,
+					address: data.address,
+				},
+			},
+		};
+		form.setFieldsValue(newData);
 	};
 
 	const stepBtn = (
-		<Col md={24} className="py-6 !flex justify-between items-center">
-			<Button type="text" onClick={() => router.back()}>
+		<Col xs={24} sm={24} className="py-6 !flex justify-between items-center">
+			<BtnPopUpModal
+				config={{
+					onOk: () => router.back(),
+					title: 'Tips',
+					content:
+						'The data is not saved yet, are you sure you want to leave the current page?',
+					okText: 'Leave',
+				}}
+				modalType="confirm"
+				type="text"
+				size="middle"
+			>
 				Cancel
-			</Button>
+			</BtnPopUpModal>
 			<Space size={8}>
 				{!!currentStep && (
 					<Button onClick={() => setCurrentStep((v) => v - 1)}>Back</Button>
 				)}
-				<Button type="primary" onClick={handleNext}>
+				<Button type="primary" onClick={handleNext} loading={loading}>
 					{currentStep < 2 ? 'Next' : 'Add Loan'}
 				</Button>
 			</Space>
 		</Col>
 	);
 	const stepContent = {
-		0: <CreateLoan form={form} stepBtn={stepBtn} />,
-		1: <CreateProperty stage={loanData?.[0]?.stage} stepBtn={stepBtn} />,
-		2: <CreateTerm stage={loanData?.[0]?.stage} stepBtn={stepBtn} />,
+		0: <CreateLoan form={form} stepBtn={stepBtn} isRadioStyle={true} />,
+		1: (
+			<CreateProperty
+				stage={loanData?.[0]?.stage}
+				stepBtn={stepBtn}
+				form={form}
+				gutter={16}
+				isRequestProperty={searchParams.has('propertyId')}
+			/>
+		),
+		2: <CreateTerm stage={loanData?.[0]?.stage} stepBtn={stepBtn} form={form} gutter={16} />,
 	};
 
 	return (
@@ -77,6 +146,14 @@ const CreateLoanPage = () => {
 					autoComplete="off"
 					className=""
 					size="large"
+					disabled={loading}
+					initialValues={{
+						stage: loan_pending,
+						applicants: [
+							{ is_primary: true, type: 'Individual' },
+							{ is_primary: false, type: 'Individual' },
+						],
+					}}
 				>
 					{stepContent[currentStep]}
 				</Form>
