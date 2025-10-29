@@ -4,8 +4,7 @@ import styles from './index.module.scss';
 import { propertiesFieldArr } from '@/enum/properties';
 import { Button, Col, Row } from 'antd';
 import { useRouter } from 'next/navigation';
-import { formatDate } from '@/lib/date';
-import { assemblyAddress } from '@/lib/format';
+import { formatDate, assemblyAddress } from '@repo/shared-methods/utils';
 import FieldTips from '@/components/FieldTips';
 const PropertiesItem = ({ data }) => {
 	const router = useRouter();

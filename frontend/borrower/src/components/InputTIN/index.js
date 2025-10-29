@@ -1,5 +1,4 @@
-// src/components/TaxIdInput/index.js
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Input } from 'antd';
 import { formatTINOrSSN } from '@/lib/format';
 // SSN和ITIN都是9位数字
@@ -8,28 +7,20 @@ let maxLength = 9;
 // 格式化不同类型税务ID
 const InputTIN = (props) => {
 	const { value = '', onChange, type = 'SSN', ...rest } = props;
-	const [inputValue, setInputValue] = useState('');
 
-	// 提取纯数字
-	const extractNumbers = (formatted) => {
-		return formatted.replace(/\D/g, '');
-	};
-
-	// 初始化和更新输入值
-	useEffect(() => {
-		const numbers = extractNumbers(value);
+	const formatValue = (value) => {
+		const numbers = value.replace(/\D/g, ''); // 提取纯数字
 		const truncated = numbers.substring(0, maxLength);
-		setInputValue(formatTINOrSSN(truncated, type));
-	}, [value, type]);
+		return {
+			truncated,
+			value: formatTINOrSSN(truncated, type),
+		};
+	};
 
 	const handleChange = (e) => {
 		const rawValue = e.target.value;
-		const numbersOnly = extractNumbers(rawValue);
-		const truncated = numbersOnly.substring(0, maxLength);
-		const formattedValue = formatTINOrSSN(truncated, type);
-
-		setInputValue(formattedValue);
-		onChange?.(truncated);
+		const info = formatValue(rawValue);
+		onChange?.(info?.truncated);
 	};
 
 	// 获取最大长度（包含分隔符）
@@ -62,7 +53,7 @@ const InputTIN = (props) => {
 	return (
 		<Input
 			{...rest}
-			value={inputValue}
+			value={formatValue(value)?.value}
 			onChange={handleChange}
 			placeholder={getPlaceholder()}
 			maxLength={getMaxLength()}

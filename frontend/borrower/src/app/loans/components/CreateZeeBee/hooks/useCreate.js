@@ -1,9 +1,14 @@
 'use client';
-import { Button, Col, Form, message, Space, Steps, Tabs } from 'antd';
+import { Button, Col, Form, message, Space } from 'antd';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createZeeBeeSteps, zeeBeeDetailsTabs } from '@/enum/loan';
-import { createRequest } from '@/lib/fetch';
+import {
+	createRequest,
+	flattenObjectPaths,
+	eventBus,
+	assemblyAddress,
+} from '@repo/shared-methods/utils';
 import ApplicantInfo from '../ApplicantInfo';
 import BorrowerInfo from '../BorrowerInfo';
 import PropertyInfo from '../PropertyInfo';
@@ -16,11 +21,8 @@ import General from '../../../zeeBeeDetails/components/General';
 import Documents from '../../../zeeBeeDetails/components/Documents';
 import ReviewAndSign, { contractSignatureZones } from '../ReviewAndSign';
 import _ from 'lodash';
-import { flattenObjectPaths } from '@/lib/common';
 import { uploadAwsS3 } from '@/api/common';
-import { LeaveAndSaveDraftBtn } from '@/components/NewModal/BtnPopUpModal';
-import eventBus from '@/lib/bus';
-import { assemblyAddress } from '@/lib/format';
+import { LeaveAndSaveDraftBtn } from '@repo/shared-methods';
 const initialValues = {
 	applicants: [{ type: 'Individual', is_primary: true }],
 };

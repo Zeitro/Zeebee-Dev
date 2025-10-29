@@ -4,17 +4,7 @@ import { Checkbox, Col, Input, Row } from 'antd';
  * 多层嵌套的多选框
  * @params paramsKey: 第一层checkbox的值对应的key（可与传给后端的key保持一致）
  */
-const NestedCheckboxes = ({
-	value,
-	onChange,
-	options,
-	paramsKey = 'values',
-	form,
-	name,
-	label,
-}) => {
-	console.log(value);
-
+const NestedCheckboxes = ({ value, onChange, options, paramsKey = 'values' }) => {
 	// 递归删除,删除key对应的值，并删除所有子级的勾选和输入值
 	const remove = (list, key, newValue) => {
 		list.map((item) => {
@@ -54,22 +44,22 @@ const NestedCheckboxes = ({
 		return data;
 	};
 
-	const validateStatus = (parentLabel, isCheck) => {
-		if (!form || !name || !parentLabel) return;
-		setTimeout(() => {
-			form?.setFields([
-				{
-					name,
-					errors: [
-						isCheck
-							? `Please check the corresponding options under '${parentLabel}'!`
-							: `Please enter the corresponding content under '${parentLabel}'`,
-					],
-					validateStatus: 'error',
-				},
-			]);
-		}, 500);
-	};
+	// const validateStatus = (parentLabel, isCheck) => {
+	// 	if (!form || !name || !parentLabel) return;
+	// 	setTimeout(() => {
+	// 		form?.setFields([
+	// 			{
+	// 				name,
+	// 				errors: [
+	// 					isCheck
+	// 						? `Please check the corresponding options under '${parentLabel}'!`
+	// 						: `Please enter the corresponding content under '${parentLabel}'`,
+	// 				],
+	// 				validateStatus: 'error',
+	// 			},
+	// 		]);
+	// 	}, 500);
+	// };
 
 	const handleChange = (v, paramsKey, options, isHave) => {
 		let data = { ...value };

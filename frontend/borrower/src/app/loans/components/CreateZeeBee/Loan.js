@@ -5,7 +5,7 @@ import { InputNumAmount, CommonFormDate } from '@repo/shared-methods';
 import { yesNoOptions } from '@/enum/common';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import { layoutCol, titleCol } from '@/enum/common';
-import { maxTerm, maxAmount } from '@/lib/format';
+import { maxTerm, maxAmount } from '@repo/shared-methods/utils';
 
 const LoanDetail = ({ gutter = 24, form }) => {
 	const loanPurpose = Form.useWatch('loan_purpose', form);
@@ -34,7 +34,7 @@ const LoanDetail = ({ gutter = 24, form }) => {
 			const num = est_yearly_rental_income / yearly_liability_expense;
 			form.setFieldsValue({ dscr: Math.round(num * 100) / 100 });
 		}
-	}, [est_yearly_rental_income, yearly_liability_expense]);
+	}, [est_yearly_rental_income, form, yearly_liability_expense]);
 	return (
 		<Row className={styles.createZeeBee} gutter={gutter}>
 			<Col {...titleCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">

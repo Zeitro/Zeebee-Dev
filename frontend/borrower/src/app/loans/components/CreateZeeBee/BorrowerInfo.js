@@ -2,8 +2,6 @@ import React from 'react';
 import styles from './index.module.scss';
 import { Row, Col, Form, Select, Input, InputNumber, Button } from 'antd';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
-import InputPhone from '@/components/InputPhone';
-import InputTIN from '@/components/InputTIN';
 import {
 	emailRegex,
 	phoneRegex,
@@ -12,11 +10,11 @@ import {
 	maxCreditScore,
 	validateRule,
 	tinOrSSNRegex,
-} from '@/lib/format';
+} from '@repo/shared-methods/utils';
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { layoutCol, titleCol } from '@/enum/common';
 import { useGetOptions } from '@/hooks/useGetOptions';
-import { CommonFormDate, InputNameCombination } from '@repo/shared-methods';
+import { CommonFormDate, InputNameCombination, InputPhone, InputTIN } from '@repo/shared-methods';
 const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 	const { maritalStatusOptions } = useGetOptions([
 		{

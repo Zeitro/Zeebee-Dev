@@ -3,7 +3,7 @@ import { Form, Steps, Tabs } from 'antd';
 import React from 'react';
 import styles from './index.module.scss';
 import useCreate from '../components/CreateZeeBee/hooks/useCreate';
-import { changeUnitByPropertyType } from '@/lib/format';
+import { changeUnitByPropertyType } from '@repo/shared-methods/utils';
 const CreateZeeBeeLoan = () => {
 	const {
 		getTabsItem,
@@ -69,8 +69,9 @@ const CreateZeeBeeLoan = () => {
 									: 'future_unit';
 								const moreFieldKey =
 									fieldKey === 'unit' ? ['property_base', fieldKey] : [fieldKey];
-								unitInfo[fieldKey] = info;
-								setUnitInfo({ ...unitInfo });
+								const unit = { ...unitInfo };
+								unit[fieldKey] = info;
+								setUnitInfo({ ...unit });
 								form.setFieldValue(['loan_property', ...moreFieldKey], info.unit);
 							}
 						}}

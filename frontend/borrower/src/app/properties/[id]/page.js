@@ -7,10 +7,8 @@ import PendingPage from '../../loans/components/Pending';
 import ActiveLoans from '../../loans/components/Active';
 import ArchivedLoans from '../../loans/components/Archived';
 import { useParams } from 'next/navigation';
-import { createRequest } from '@/lib/fetch';
-import { assemblyAddress } from '@/lib/format';
+import { createRequest, assemblyAddress, eventBus } from '@repo/shared-methods/utils';
 import { useGetOptions } from '@/hooks/useGetOptions';
-import eventBus from '@/lib/bus';
 import { useGlobalStore } from '@/store/global';
 const PropertiesDetails = () => {
 	const { id } = useParams();
@@ -107,6 +105,7 @@ const PropertiesDetails = () => {
 			clearTimeout(timer);
 		};
 	}, [changeSidebarCollapsed, getDetails]);
+
 	return (
 		<div className={['h-full px-8 py-6 overflow-hidden overflow-y-auto'].join(' ')}>
 			<div className="flex items-center pb-6">

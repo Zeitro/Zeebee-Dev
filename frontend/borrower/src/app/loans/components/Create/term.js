@@ -1,11 +1,10 @@
 'use client';
 import { Col, Form, Input, InputNumber, Row, Select } from 'antd';
-import React from 'react';
 import styles from './index.module.scss';
 import { InputNumAmount, CommonFormDate, InputNameCombination } from '@repo/shared-methods';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import { loan_active, loan_pending } from '@/enum/common';
-import { capitalizeFirstLetter } from '@/lib/format';
+import { capitalizeFirstLetter } from '@repo/shared-methods/utils';
 const layoutCol = {
 	xs: 24,
 	sm: 24,

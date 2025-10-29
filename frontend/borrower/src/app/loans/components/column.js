@@ -1,6 +1,6 @@
-import { formatAmount } from '@/lib/format';
+import { formatAmount } from '@repo/shared-methods/utils';
 import { LoanPendingStatus } from './ChangeStageStatus';
-import TableOperation from '@/components/TableOperation';
+import { TableOperation } from '@repo/shared-methods';
 export const get3rdPartyMark = (v, { source }) => (
 	<div className="flex items-center">
 		<p className="overflow-hidden text-ellipsis whitespace-nowrap" title={v}>

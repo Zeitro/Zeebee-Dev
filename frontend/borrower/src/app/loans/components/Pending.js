@@ -1,13 +1,11 @@
 'use client';
 import React, { useMemo, useState, useRef, useEffect } from 'react';
-import FilterTable from '@/components/FilterTable';
+import { FilterTable } from '@repo/shared-methods';
 import { pendingColumns } from './column';
-import { transformArrayStructure } from '@/lib/common';
+import { transformArrayStructure, createRequest, eventBus } from '@repo/shared-methods/utils';
 import { useOptionsStore } from '@/store/options';
-import { createRequest } from '@/lib/fetch';
 import { ReloadOutlined } from '@ant-design/icons';
 import useOpt from './useOpt';
-import eventBus from '@/lib/bus';
 const PendingPage = ({
 	hasFilterField,
 	hasPagination,
@@ -169,6 +167,7 @@ const PendingPage = ({
 				ref={tableFilterRef}
 				columns={pendingColumns(
 					isNotAddress,
+					// eslint-disable-next-line react-hooks/refs
 					successCallback || tableFilterRef?.current?.handleSearch,
 					showDeleteModal,
 					stage,

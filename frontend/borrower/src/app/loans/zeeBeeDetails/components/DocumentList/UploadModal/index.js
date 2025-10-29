@@ -1,12 +1,9 @@
 import React, { useRef, useState } from 'react';
-import NewModal from '@/components/NewModal';
 import { Button, Form, Input, message } from 'antd';
-import { UploadFileButton } from '@repo/shared-methods';
+import { UploadFileButton, NewModal } from '@repo/shared-methods';
 import { CloseOutlined, FileTextOutlined, InboxOutlined } from '@ant-design/icons';
 import styles from './index.module.scss';
-import { createRequest } from '@/lib/fetch';
-import eventBus from '@/lib/bus';
-// const { TextArea } = Input;
+import { createRequest, eventBus } from '@repo/shared-methods/utils';
 const UploadModal = ({ open, setOpen, isChangeType = true, record = {}, loan_id }) => {
 	const [form] = Form.useForm();
 	const { request } = createRequest();

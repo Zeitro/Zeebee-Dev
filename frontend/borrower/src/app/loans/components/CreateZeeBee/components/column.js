@@ -1,8 +1,7 @@
 'use client';
-import { FilterField } from '@repo/shared-methods';
+import { FilterField, DeleteBtn } from '@repo/shared-methods';
 import { AddEditBtn } from './AddEditBtn';
-import { DeleteBtn } from '@/components/NewModal/BtnPopUpModal';
-import { formatAmount, formatPhone } from '@/lib/format';
+import { formatAmount, formatPhone } from '@repo/shared-methods/utils';
 export const useColumnByZeeBeeLoan = (handleAdd = () => {}, handleDelete = () => {}) => {
 	const beforeCommon = [
 		{

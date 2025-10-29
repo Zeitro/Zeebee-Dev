@@ -7,6 +7,7 @@ import NewHeader from '@/components/NewHeader';
 import { getCurrentRouterItem } from '@config/common';
 import { noNavRouter } from '@config/routes';
 import { usePathname } from 'next/navigation';
+import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 const defaultToken = {
 	colorPrimary: '#1677ff',
 	colorTextBase: 'rgba(0, 0, 0, 0.88)',
@@ -43,8 +44,10 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 		return !!routerItem;
 	}, [pathname]);
 
-	useEffect(
-		() => {
+	useDeferredSyncEffect({
+		deferred: () => {
+			console.log('000');
+
 			setAntdToken({
 				colorPrimary: getCssVarValue('--base-primary', 'colorPrimary'),
 				// colorBgContainer: getCssVarValue('--background'),
@@ -66,9 +69,9 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 				// ... 其他 token ...
 			});
 		},
-		[],
-		// 依赖主题切换变量
-	);
+		deps: [],
+		delay: 0, // 放到 macrotask（可改为 useMicrotask: true）
+	});
 
 	return (
 		<ConfigProvider

@@ -1,20 +1,24 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import NewTable from '@/components/NewTable';
+import React, { useState } from 'react';
+import { NewTable } from '@repo/shared-methods';
 import { useColumnByZeeBeeLoan } from './components/column';
 import { AddEditBtn } from './components/AddEditBtn';
 import { Form, message } from 'antd';
 import _ from 'lodash';
+import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 let paramsKey = 'loan_third_services';
 const ThirdPartyService = ({ form, rowData, setIsChange }) => {
 	const [list, setList] = useState([]);
 	const [messageApi, contextHolder] = message.useMessage();
 
-	useEffect(() => {
-		if (rowData?.[paramsKey]?.length) {
+	useDeferredSyncEffect({
+		predicate: () => rowData?.[paramsKey]?.length,
+		deferred: () => {
 			setList(rowData?.[paramsKey] || []);
-		}
-	}, [rowData]);
+		},
+		deps: [rowData],
+		delay: 0,
+	});
 
 	const commonAdd = (arr, setFn, values, key) => {
 		let newArr = [];

@@ -1,9 +1,9 @@
 'use client';
 import styles from '../createZeeBeeLoan/index.module.scss';
-import { Badge, Form, Radio, Segmented, Steps, Tabs } from 'antd';
-import React, { use, useEffect, useMemo } from 'react';
+import { Badge, Form, Radio, Steps, Tabs } from 'antd';
+import React, { useEffect } from 'react';
 import useCreate from '../components/CreateZeeBee/hooks/useCreate';
-import { assemblyAddress } from '@/lib/format';
+import { assemblyAddress } from '@repo/shared-methods/utils';
 import { stageColor, pendingStatusColor, loanDetailsFields } from '@/enum/loan';
 import HomeSvg from '@/assets/images/home.svg';
 const ZeeBeeDetails = () => {
@@ -34,6 +34,7 @@ const ZeeBeeDetails = () => {
 
 	useEffect(() => {
 		setCurrentStep(zeeBeeDetailsTabs[0].value);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (

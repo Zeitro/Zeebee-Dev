@@ -1,7 +1,6 @@
 'use client';
-import React from 'react';
 import styles from './index.module.css';
-import { transformArrayStructure } from '@/lib/common';
+import { transformArrayStructure } from '@repo/shared-methods/utils';
 import { useOptionsStore } from '@/store/options';
 import { DropdownStatus } from '@repo/shared-methods';
 

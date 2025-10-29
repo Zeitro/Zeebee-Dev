@@ -1,7 +1,6 @@
 'use client';
 import { Button } from 'antd';
-import React from 'react';
-import { formatAmount } from '@/lib/format';
+import { formatAmount } from '@repo/shared-methods/utils';
 
 // 批准
 const PreApprovedSuccess = ({ result, handleClick, back }) => {

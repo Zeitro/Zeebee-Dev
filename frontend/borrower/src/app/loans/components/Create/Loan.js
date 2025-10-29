@@ -5,7 +5,7 @@ import styles from './index.module.scss';
 import { InputNumAmount, CommonFormDate } from '@repo/shared-methods';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import { loan_active, loan_archived, loan_pending } from '@/enum/common';
-import { capitalizeFirstLetter, maxAmount } from '@/lib/format';
+import { capitalizeFirstLetter, maxAmount } from '@repo/shared-methods/utils';
 const MAX_COUNT = 5;
 
 const CreateLoan = ({ form, stepBtn, gutter, isRadioStyle, ...colProps }) => {

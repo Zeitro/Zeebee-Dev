@@ -6,10 +6,9 @@ import CreateProperty from '../components/Create/property';
 import CreateTerm from '../components/Create/term';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createLoanSteps } from '@/enum/loan';
-import { createRequest } from '@/lib/fetch';
+import { createRequest, changeUnitByPropertyType } from '@repo/shared-methods/utils';
 import { loan_pending } from '@/enum/common';
-import { BtnPopUpModal } from '@/components/NewModal/BtnPopUpModal';
-import { changeUnitByPropertyType } from '@/lib/format';
+import { BtnPopUpModal } from '@repo/shared-methods';
 const CreateLoanPage = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -70,7 +69,7 @@ const CreateLoanPage = () => {
 			});
 			setLoading(false);
 			router.back();
-		} catch (error) {
+		} catch {
 			setLoading(false);
 		}
 	}, [currentStep, form, loanData, request, router]);

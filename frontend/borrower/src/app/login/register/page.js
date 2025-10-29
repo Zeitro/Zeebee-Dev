@@ -3,7 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { Button, Checkbox, Col, Form, Input, Row } from 'antd';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useUserStore } from '@/store/user';
-import { validateRule, emailRegex, capitalizeFirstLetter } from '@/lib/format';
+import { validateRule, emailRegex, capitalizeFirstLetter } from '@repo/shared-methods/utils';
 import styles from '../index.module.scss';
 import ConfirmPassWord from '../components/ConfirmPassword';
 import { throttle } from 'lodash';
@@ -40,7 +40,7 @@ const Register = () => {
 			await registerAndSendEmail(values);
 			setLoading(false);
 			router.replace(`/login/sendRegisterTips?email=${newEmail}`);
-		} catch (error) {
+		} catch {
 			setLoading(false);
 		}
 	}, 1000);

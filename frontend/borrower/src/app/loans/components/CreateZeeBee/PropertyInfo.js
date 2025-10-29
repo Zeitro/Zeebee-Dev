@@ -4,7 +4,7 @@ import { Row, Col, Form, Select, InputNumber } from 'antd';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import { layoutCol, titleCol } from '@/enum/common';
-import { livingAreaProps } from '@/lib/format';
+import { livingAreaProps } from '@repo/shared-methods/utils';
 let name = 'loan_property';
 const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty, unitInfo }) => {
 	const { loanPurposeOptions, loanTypeOptions, propertyTypeOptions } = useGetOptions([
