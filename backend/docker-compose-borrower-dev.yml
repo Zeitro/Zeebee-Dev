@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  backend-borrower-dev:
+    image: backend-borrower-dev
+    build:
+      context: .
+      dockerfile: Dockerfile-borrower-dev
+      no_cache: true
+    container_name: backend-borrower-dev
+    ports:
+      - "11000:10000"
+    networks:
+      - shared_network
+
+networks:
+  shared_network:
+    external: true
