@@ -139,6 +139,7 @@ note right of loans
         - borrower
         - lender
         - system
+        - pre approval
     budget{
         original_budget numeric(10,2)
         remaining_budget numeric(10,2)

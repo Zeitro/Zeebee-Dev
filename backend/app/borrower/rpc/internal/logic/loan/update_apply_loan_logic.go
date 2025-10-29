@@ -49,13 +49,24 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 	if err != nil {
 		return nil, err
 	}
-	if loan.Source != constants.LoanSourceSystem {
+
+	sources := []constants.LoanSource{
+		constants.LoanSourceSystem,
+		constants.LoanSourcePreApproval,
+	}
+	if !slice.Contain(sources, loan.Source) {
 		return nil, errors.WithStack(errors.New("invalid loan source"))
 	}
-	if loan.Stage != constants.LoanStagePending &&
-		loan.Stage != constants.LoanStageDraft &&
-		loan.PendingStatus != constants.LoanPendingStatusQuoting &&
-		loan.PendingStatus != constants.LoanPendingStatusNone {
+	stages := []constants.LoanStage{
+		constants.LoanStagePending,
+		constants.LoanStageDraft,
+		// constants.LoanStagePredraft,
+	}
+	pendingStatus := []constants.LoanPendingStatus{
+		constants.LoanPendingStatusQuoting,
+		constants.LoanPendingStatusNone,
+	}
+	if !slice.Contain(stages, loan.Stage) && !slice.Contain(pendingStatus, loan.PendingStatus) {
 		return nil, errors.New("loan's stage should be pending or draft")
 	}
 	if loan.BorrowerId != in.Data.BorrowerId {
@@ -83,6 +94,11 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 			// update loan
 			func() error {
 				data.loan.RemoveRelationships()
+
+				if in.Data.LenderCompanyId == 0 {
+					in.Data.LenderCompanyId = loan.LenderCompanyId
+				}
+
 				_, err := l.svcCtx.LoanRepo.UpdateOneWithTx(l.ctx, tx, in.Data.Id, data.loan, true)
 				return err
 			},
@@ -187,18 +203,6 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 				}
 				return err
 			},
-
-			// sync property total amount
-			// func() error {
-			// 	err := l.svcCtx.PropertyBaseRepo.SyncTotalAmountWithTx(l.ctx, tx, previousPropertyBaseId)
-			// 	if err != nil {
-			// 		return err
-			// 	}
-			// 	if propertyBase.Id != previousPropertyBaseId {
-			// 		err = l.svcCtx.PropertyBaseRepo.SyncTotalAmountWithTx(l.ctx, tx, propertyBase.Id)
-			// 	}
-			// 	return err
-			// },
 		)
 
 		innerErr = eg.Error()

@@ -13,6 +13,7 @@ type ImportLoanResponse struct {
 
 type LoanApplyRequest struct {
 	Id                       int64                      `path:"id,optional"`
+	Code                     string                     `json:"code,optional" validate:"omitempty,number,min=15,max=100"`
 	LoanType                 string                     `json:"loan_type,optional" validate:"required,oneof=Bridge Rehab Rental 'Ground up construction'"`
 	LoanPurpose              string                     `json:"loan_purpose,optional" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
 	TotalAmount              float64                    `json:"total_amount,optional" validate:"required,gt=0"`
@@ -36,6 +37,7 @@ type LoanApplyRequest struct {
 	LoanTerm                 int32                      `json:"loan_term,optional" validate:"gte=1"`
 	Arv                      float64                    `json:"arv,optional" validate:"required,gte=0"`
 	Ltv                      float64                    `json:"ltv,optional" validate:"required_unless=LoanPurpose Purchase,omitempty,gte=0"`
+	EstPropertyValueAmount   float64                    `json:"est_property_value_amount,optional" validate:"required_unless=LoanPurpose Purchase,omitempty,gte=0"`
 	LiquidityAmount          float64                    `json:"liquidity_amount,optional" validate:"gte=0"`
 	Budget                   *LoanBudgetEntry           `json:"budget,optional" validate:"required_if=LoanType Rehab LoanType 'Ground up construction'"`
 	MidConstruction          bool                       `json:"mid_construction,optional"`
@@ -61,7 +63,7 @@ type LoanApplyResponse struct {
 
 type LoanCreateRequest struct {
 	Stage                 string                    `json:"stage" validate:"required,oneof=Pending Active Archived"`
-	PendingStatus         string                    `json:"pending_status,optional" validate:"required_if=Stage Pending,omitempty,oneof=Quoting Processing Closing"`
+	PendingStatus         string                    `json:"pending_status,optional" validate:"required_if=Stage Pending,omitempty,oneof=Quoting Processing Underwriting Closing"`
 	LoanPurpose           string                    `json:"loan_purpose,optional" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
 	LoanType              string                    `json:"loan_type" validate:"required,oneof=Bridge Rehab Rental 'Ground up construction'"`
 	TotalAmount           float64                   `json:"total_amount,optional"  validate:"required_unless=Stage Archived"`
@@ -125,15 +127,27 @@ type LoanPageResponse struct {
 	List      []LoanEntry `json:"list"`
 }
 
+type LoanPreApprovalRequest struct {
+	RequestId string                          `json:"request_id, optional"`
+	Borrower  *LoanPreApprovalRequestBorrower `json:"borrower" validate:"required"`
+	Property  *LoanPreApprovalRequestProperty `json:"property" validate:"required"`
+	Loan      *LoanPreApprovalRequestLoan     `json:"loan" validate:"required"`
+}
+
+type LoanPreApprovalResponse struct {
+	Primary     *PrimaryPreApprovalLoan     `json:"primary"`
+	Secondaries []*SecondaryPreApprovalLoan `json:"secondaries"`
+}
+
 type LoanUpdatePendingStatusRequest struct {
 	Id            int64  `path:"id"`
-	PendingStatus string `json:"pending_status" validate:"required,oneof=Quoting Processing Closing"`
+	PendingStatus string `json:"pending_status" validate:"required,oneof=Quoting Processing Underwriting Closing"`
 }
 
 type LoanUpdateRequest struct {
 	Id                    int64                     `path:"id" validate:"required,min=1"`
 	Stage                 string                    `json:"stage" validate:"required,oneof=Pending Active Archived"`
-	PendingStatus         string                    `json:"pending_status,optional" validate:"required_if=Stage Pending,omitempty,oneof=Quoting Processing Closing"`
+	PendingStatus         string                    `json:"pending_status,optional" validate:"required_if=Stage Pending,omitempty,oneof=Quoting Processing Underwriting Closing"`
 	LoanPurpose           string                    `json:"loan_purpose,optional" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
 	LoanType              string                    `json:"loan_type,optional" validate:"required,oneof=Bridge Rehab Rental 'Ground up construction'"`
 	TotalAmount           float64                   `json:"total_amount,optional"  validate:"required_unless=Stage Archived"`
@@ -160,4 +174,9 @@ type LoanUpdateRequest struct {
 	OriginalContractDate  string                    `json:"original_contract_date,optional"`
 	ExtensionDate         string                    `json:"extension_date,optional"`
 	LoanProcessor         string                    `json:"loan_processor,optional"`
+}
+
+type SendPreApprovalLoanNotificationRequest struct {
+	RequestId       string `json:"request_id" validate:"required,number,gte=10"`
+	LenderCompanyId int64  `json:"lender_company_id" validate:"required,min=1"`
 }

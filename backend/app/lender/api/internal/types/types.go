@@ -67,7 +67,7 @@ type ImportLoanExtendEntry struct {
 
 type LoanApplyPropertyEntry struct {
 	Id                   int64              `json:"id,optional"`
-	PropertyType         string             `json:"property_type,optional" validate:"required,oneof='Single Family Residence' '2 unit' '3unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
+	PropertyType         string             `json:"property_type,optional" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
 	Unit                 int32              `json:"unit,optional"`
 	LivingAreaSqft       float32            `json:"living_area_sqft,optional" validate:"required,gte=0"`
 	Bedrooms             int32              `json:"bedrooms,optional" validate:"required,gte=0"`
@@ -161,7 +161,7 @@ type LoanDocumentOptEntry struct {
 
 type LoanDocumentSendRequestEntry struct {
 	Id      int64  `json:"id"`
-	Comment string `json:"comment"`
+	Comment string `json:"comment,optional"`
 }
 
 type LoanEntry struct {
@@ -206,6 +206,7 @@ type LoanEntry struct {
 	LoanTerm                 int32                    `json:"loan_term" `
 	Arv                      float64                  `json:"arv"`
 	Ltv                      float64                  `json:"ltv" `
+	EstPropertyValueAmount   float64                  `json:"est_property_value_amount"`
 	LiquidityAmount          float64                  `json:"liquidity_amount"`
 	Budget                   *LoanBudgetEntry         `json:"budget"`
 	MidConstruction          bool                     `json:"mid_construction"`
@@ -326,12 +327,20 @@ type UpdateDocumentsRequest struct {
 }
 
 type UserInfo struct {
-	Id                int64  `json:"id"`
-	Email             string `json:"email"`
-	FirstName         string `json:"first_name"`
-	LastName          string `json:"last_name"`
-	FullName          string `json:"full_name"`
-	Status            string `json:"status"`
-	LenderCompanyId   int64  `json:"lender_company_id"`
-	LenderCompanyName string `json:"lender_company_name"`
+	Id                int64                    `json:"id"`
+	Email             string                   `json:"email"`
+	FirstName         string                   `json:"first_name"`
+	LastName          string                   `json:"last_name"`
+	FullName          string                   `json:"full_name"`
+	Status            string                   `json:"status"`
+	LenderCompanyId   int64                    `json:"lender_company_id"`
+	LenderCompanyName string                   `json:"lender_company_name"`
+	LenderCompanies   []*UserInfoCompanyEntity `json:"lender_companies"`
+}
+
+type UserInfoCompanyEntity struct {
+	Id        int64  `json:"id"`
+	Name      string `json:"name"`
+	Status    string `json:"status"`
+	IsDefault bool   `json:"is_default"`
 }

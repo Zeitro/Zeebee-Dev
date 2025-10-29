@@ -46,6 +46,10 @@ service borrower-api {
 	@doc "get us city"
 	@handler GetUsCities
 	get /us_cities (GetUsCitiesRequest) returns (GetUsCitiesResponse)
+
+	@doc "get uuid"
+	@handler GetUuid
+	get /uuid (EmptyRequest) returns (GetUuidResponse)
 }
 
 // ============== user =============
@@ -101,6 +105,23 @@ service borrower-api {
 }
 
 // ============== loan =============
+@server(
+	desc: "loan service"
+	version: v1
+	group: loan
+	prefix:  /api/v1
+	tags: loan
+)
+service borrower-api {
+	@doc "preapproval"
+	@handler PreApproval
+	post /loan/pre_approval (LoanPreApprovalRequest) returns (LoanPreApprovalResponse)
+
+	@doc "send pre approval loan nofification"
+	@handler SendPreApprovalLoanNotification
+	post /loan/send_pre_approval_loan_notification (SendPreApprovalLoanNotificationRequest) returns (EmptyResponse)
+}
+
 @server (
 	desc:       "loan service"
 	version:    v1
@@ -161,9 +182,6 @@ service borrower-api {
 	@doc "download import template"
 	@handler DownloadImportTemplate
 	get /loan/import/template (EmptyRequest) returns (EmptyResponse)
-	// @doc "update documents"
-	// @handler UpdateDocuments
-	// post /loan/:id/documents (UpdateDocumentsRequest) returns (EmptyResponse)
 }
 
 // =============== property ==============
