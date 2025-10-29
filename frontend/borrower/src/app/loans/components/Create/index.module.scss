@@ -1,13 +1,27 @@
-.create{
-    :global{
-        .ant-form-item-label{
-            padding-bottom: 0 !important;
-            >label{
-                color: #000 !important;
-            }
-        }
-    }
-    .commonFormItem :global(.ant-form-item-control-input){
-        min-height: 22px !important;
-    }
+.create {
+	.radio {
+		width: 100%;
+		display: flex !important;
+		justify-content: space-between;
+		> label {
+			width: 180px;
+		}
+	}
+	:global {
+		.ant-form-item-label {
+			padding-bottom: 0 !important;
+			> label {
+				color: #000 !important;
+			}
+		}
+	}
+	.commonFormItem :global(.ant-form-item-control-input) {
+		min-height: 22px !important;
+	}
+}
+
+@media screen and (max-width: 800px) {
+	.radio > label {
+		width: auto !important;
+	}
 }

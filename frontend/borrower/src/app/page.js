@@ -1,8 +1,8 @@
-import React from "react";
-
-const Home = (props) =>{
-    return <div>
-        欢迎来到Zeebee系统！
-    </div>
-}
+const Home = () => {
+	return (
+		<div className="text-[24px] font-medium flex items-center justify-center h-full">
+			Welcome to the Zeebee system!
+		</div>
+	);
+};
 export default Home;

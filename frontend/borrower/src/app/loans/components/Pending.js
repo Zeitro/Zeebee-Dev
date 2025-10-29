@@ -1,12 +1,32 @@
 'use client';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState, useRef, useEffect } from 'react';
 import FilterTable from '@/components/FilterTable';
 import { pendingColumns } from './column';
 import { transformArrayStructure } from '@/lib/common';
-import { useLoanStore } from '@/store/loan';
-const PendingPage = ({ hasFilterField, hasPagination, filterWrapClassName }) => {
-	const { loanPendingStatus, loanPurposeOptions, loanTypeOptions } = useLoanStore();
-	const [type, setType] = useState('');
+import { useOptionsStore } from '@/store/options';
+import { createRequest } from '@/lib/fetch';
+import { ReloadOutlined } from '@ant-design/icons';
+import useOpt from './useOpt';
+import eventBus from '@/lib/bus';
+const PendingPage = ({
+	hasFilterField,
+	hasPagination,
+	filterWrapClassName,
+	api,
+	method = 'POST',
+	dataSource,
+	isNotAddress,
+	loading,
+	scrollX = 2400,
+	successCallback,
+	stage = 'Pending', // 默认是pending，可传草稿draft(因草稿展示和pending loans的一致，只有表格操作栏不同，所以需要区分)
+}) => {
+	const tableFilterRef = useRef();
+	const { loanPendingStatus, loanPurposeOptions, loanTypeOptions, lenderOptions } =
+		useOptionsStore();
+	const { showDeleteModal, contextHolder, handleSelectedRow } = useOpt(tableFilterRef);
+	const { request } = createRequest();
+	const [type, setType] = useState('address');
 	const [searchValue, setSearchValue] = useState('');
 	const [loanPurpose, setLoanPurpose] = useState([]);
 	const [loanType, setLoanType] = useState([]);
@@ -15,8 +35,10 @@ const PendingPage = ({ hasFilterField, hasPagination, filterWrapClassName }) => 
 	const filterList = useMemo(
 		() => [
 			{
-				type: 'select-input',
+				filterType: 'select-input',
 				selectValue: type,
+				selectParamsKey: 'keyword_type',
+				paramsKey: 'keyword',
 				value: searchValue,
 				selectProps: {
 					onChange: (e) => setType(e),
@@ -36,19 +58,15 @@ const PendingPage = ({ hasFilterField, hasPagination, filterWrapClassName }) => 
 						value: 'city',
 					},
 					{
-						label: 'County',
-						value: 'county',
-					},
-					{
-						label: 'Zip Code',
-						value: 'zipCode',
+						label: 'Borrower',
+						value: 'borrower',
 					},
 				],
 			},
 			{
-				type: 'treeSelect',
+				filterType: 'treeSelect',
 				label: 'Loan purpose',
-				popupMatchSelectWidth: 172,
+				paramsKey: 'loan_purpose',
 				placeholder: 'Loan purpose',
 				value: loanPurpose,
 				onChange: (value) => setLoanPurpose(value),
@@ -58,9 +76,11 @@ const PendingPage = ({ hasFilterField, hasPagination, filterWrapClassName }) => 
 				}).map((i) => ({ ...i, key: i.value })),
 			},
 			{
-				type: 'treeSelect',
+				filterType: 'treeSelect',
 				label: 'Loan type',
-				popupMatchSelectWidth: 195,
+				paramsKey: 'loan_type',
+				style: { width: 160 },
+				popupMatchSelectWidth: 205,
 				value: loanType,
 				placeholder: 'Loan type',
 				onChange: (value) => setLoanType(value),
@@ -70,38 +90,26 @@ const PendingPage = ({ hasFilterField, hasPagination, filterWrapClassName }) => 
 				}).map((i) => ({ ...i, key: i.value })),
 			},
 			{
-				type: 'treeSelect',
+				filterType: 'treeSelect',
 				label: 'Lender',
+				paramsKey: 'lender',
 				placeholder: 'Lender',
+				style: { width: 160 },
 				popupMatchSelectWidth: 172,
 				value: lender,
 				onChange: (value) => setLender(value),
-				treeData: [
-					{
-						title: 'Bridge',
-						value: 'bridge',
-						key: 'bridge',
-						isLeaf: true,
-					},
-					{
-						title: 'Rehab',
-						value: 'rehab',
-						key: 'rehab',
-						isLeaf: true,
-					},
-					{
-						title: 'Ground up construction',
-						value: 'groundUpConstruction',
-						key: 'groundUpConstruction',
-						isLeaf: true,
-					},
-				],
+				treeData: transformArrayStructure({
+					sourceArray: lenderOptions,
+					outputKey: 'title',
+				}).map((i) => ({ ...i, key: i.value })),
 			},
 			{
-				type: 'treeSelect',
+				filterType: 'treeSelect',
 				label: 'Status',
 				value: status,
+				paramsKey: 'pending_status',
 				placeholder: 'Status',
+				style: { width: 160 },
 				popupMatchSelectWidth: 172,
 				onChange: (value) => setStatus(value),
 				treeData: transformArrayStructure({
@@ -109,20 +117,99 @@ const PendingPage = ({ hasFilterField, hasPagination, filterWrapClassName }) => 
 					outputKey: 'title',
 				}).map((i) => ({ ...i, key: i.value })),
 			},
+			{
+				filterType: 'button',
+				onClick: () => {
+					tableFilterRef?.current?.handleSearch?.();
+				},
+			},
+			{
+				filterType: 'button',
+				type: 'default',
+				text: 'Reset',
+				icon: <ReloadOutlined />,
+				onClick: () => {
+					setType('address');
+					setSearchValue('');
+					setLoanPurpose([]);
+					setLoanType([]);
+					setLender([]);
+					setStatus([]);
+					setTimeout(() => {
+						tableFilterRef?.current?.handleSearch?.();
+					}, 300);
+				},
+			},
 		],
-		[searchValue, type, loanPurpose, loanType, lender, status],
+		[
+			searchValue,
+			type,
+			loanPurpose,
+			loanType,
+			lender,
+			status,
+			loanPurposeOptions,
+			loanTypeOptions,
+			loanPendingStatus,
+			lenderOptions,
+		],
 	);
 
+	// 导入3rd party后调用，更新列表
+	useEffect(() => {
+		eventBus.on('searchPendingLoans', tableFilterRef?.current?.handleSearch);
+	}, []);
+
 	return (
-		<FilterTable
-			columns={pendingColumns}
-			scroll={{ x: 3500, y: 'calc(100% - 54px)' }}
-			dataSource={[{ status: 'quoting', id: 1 }]}
-			filterList={filterList}
-			hasFilterField={hasFilterField}
-			pagination={hasPagination}
-			filterWrapClassName={filterWrapClassName}
-		/>
+		<>
+			<FilterTable
+				key={stage}
+				ref={tableFilterRef}
+				columns={pendingColumns(
+					isNotAddress,
+					successCallback || tableFilterRef?.current?.handleSearch,
+					showDeleteModal,
+					stage,
+				)}
+				scroll={{ x: scrollX }}
+				filterList={filterList}
+				hasFilterField={hasFilterField}
+				pagination={hasPagination}
+				filterWrapClassName={filterWrapClassName}
+				dataSource={dataSource}
+				dataSourceLoading={loading}
+				onRow={(row) => ({
+					onClick: () => {
+						handleSelectedRow(row, stage);
+					},
+				})}
+				getData={(params) => {
+					if (!api) {
+						return {
+							list: dataSource,
+							total: dataSource?.length,
+						};
+					}
+					const filter = hasFilterField
+						? {}
+						: {
+								...(params?.filter || {}),
+								stage,
+							};
+					const payload = {
+						method,
+					};
+					if (method === 'POST') {
+						payload.body = {
+							...params,
+							filter,
+						};
+					}
+					return request(api, payload);
+				}}
+			/>
+			{contextHolder}
+		</>
 	);
 };
 export default PendingPage;

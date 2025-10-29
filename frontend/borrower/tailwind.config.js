@@ -15,7 +15,8 @@ module.exports = {
 					error: 'var(--base-error)',
 					disabled: 'var(--base-disabled)',
 					border: 'var(--base-border)',
-					label:'var(--base-label)'
+					label:'var(--base-label)',
+					active:'var(--base-active)',
 				},
 				black: {
 					light: 'var(--black-light)', // 浅黑色
@@ -32,6 +33,8 @@ module.exports = {
 					light: 'var(--blue-light)',
 					medium: 'var(--blue-medium)',
 					dark: 'var(--blue-dark)',
+					'light-1':'var(--blue-light-1)',
+					'medium-default':'var(--blue-medium-default)'
 				},
 				green:{
 					light: 'var(--green-light)',

@@ -4,59 +4,61 @@
 
 /* 自定义重置 */
 @layer base {
-  * {
-    box-sizing: border-box;
-  }
-  
-  html, body {
-    height: 100%;
-  }
-  
-  body {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
+	* {
+		box-sizing: border-box;
+	}
+
+	html,
+	body {
+		height: 100%;
+	}
+
+	body {
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
 }
 
 :root {
 	--background: #ffffff;
 	--foreground: rgba(0, 0, 0, 0.88);
 
-	--base-primary: #1677FF;
+	--base-primary: #1677ff;
 	--base-success: #00a86b;
-	--base-warning: #FAAD14;
-	--base-error: #FF4D4F;
+	--base-warning: #faad14;
+	--base-error: #ff4d4f;
 	--base-disabled: #d9d9d9;
-	--base-border: #D9D9D9;
-	--base-label:rgba(0, 0, 0, 0.45);
+	--base-border: #d9d9d9;
+	--base-label: rgba(0, 0, 0, 0.45);
+	--base-active: #e6f4ff;
 
-	--black-light: #222222;;
+	--black-light: #222222;
 	--black-medium: #222;
 	--black-dark: #000;
 
-	--gray-light: #FAFAFA;
-	--gray-medium: #6E6E70;
+	--gray-light: #fafafa;
+	--gray-medium: #6e6e70;
 	--gray-dark: #586570;
 
-	--blue-light-1: #E8F7FF;
-	--blue-light-2: #F0F5FF;
-	--blue-light: #ADC6FF;
-	--blue-medium: #1890FF;
-	--blue-medium-default: #3491FA;
-	--blue-dark: #2F54EB;
+	--blue-light-1: #e8f7ff;
+	--blue-light-2: #f0f5ff;
+	--blue-light: #adc6ff;
+	--blue-medium: #1890ff;
+	--blue-medium-default: #3491fa;
+	--blue-dark: #2f54eb;
 
-	--green-light:#F6FFED;
-	--green-light-100:#B7EB8F;
+	--green-light: #f6ffed;
+	--green-light-100: #b7eb8f;
 	/* --green-medium: ; */
-	--green-medium:#52C41A;
+	--green-medium: #52c41a;
 
-	--purple-light:#F9F0FF;
-	--purple-medium:#D3ADF7;
-	--purple-dark:#722ED1;
+	--purple-light: #f9f0ff;
+	--purple-medium: #d3adf7;
+	--purple-dark: #722ed1;
 
-	--orange-light:#FFF7E6;
-	--orange-medium:#FFD591;
-	--orange-dark:#FA8C16;
+	--orange-light: #fff7e6;
+	--orange-medium: #ffd591;
+	--orange-dark: #fa8c16;
 }
 
 .dark {
@@ -68,6 +70,7 @@ body {
 	background: var(--background);
 	color: var(--foreground);
 	font-family: var(--font-roboto), sans-serif;
+	font-size: 14px;
 }
 
 div,
@@ -88,4 +91,41 @@ strong,
 ul,
 li {
 	font-family: var(--font-roboto), sans-serif;
+}
+
+::-webkit-scrollbar {
+	width: 10px;
+	height: 8px;
+	background-color: #ffffff;
+}
+
+::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: #cccccc;
+	border-radius: 10px;
+	border-left: 2px solid #ffffff;
+	border-right: 2px solid #ffffff;
+	border-top: 2px solid #ffffff;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background-color: #aaa;
+}
+
+input:-webkit-autofill {
+	-webkit-box-shadow: 0 0 0 1000px white inset;
+	transition: background-color 50000s ease-in-out 0s;
+	-webkit-text-fill-color: #333;
+}
+
+/* antd重置 */
+.ant-form-item-vertical .ant-form-item-row .ant-form-item-label {
+	padding-bottom: 0;
+}
+.ant-form-item-vertical .ant-form-item-row .ant-form-item-label > label {
+	color: var(--black-dark);
+	height: auto !important;
 }

@@ -1,0 +1,88 @@
+name: Zeebee Backend Deploy to staging
+
+on:
+  push:
+    branches:
+      - staging-borrower-backend
+      - staging-lender-backend
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          clean: true
+
+      - name: Get Git Commit ID
+        id: vars
+        run: |
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+      - name: Set environment variables
+        id: set_env
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/staging-borrower-backend" ]]; then
+            echo "SERVICE_NAME=staging-borrower-backend" >> $GITHUB_ENV
+            echo "IMAGE_NAME=staging-borrower-backend" >> $GITHUB_ENV
+            echo "CONTAINER_NAME=staging-borrower-backend" >> $GITHUB_ENV
+          elif [[ "${{ github.ref }}" == "refs/heads/staging-lender-backend" ]]; then
+            echo "SERVICE_NAME=staging-lender-backend" >> $GITHUB_ENV
+            echo "IMAGE_NAME=staging-lender-backend" >> $GITHUB_ENV
+            echo "CONTAINER_NAME=staging-lender-backend" >> $GITHUB_ENV
+          fi
+
+      - name: Show environment variables
+        run: |
+          echo "Branch: ${{ github.ref }}"
+          echo "SERVICE_NAME=${SERVICE_NAME}"
+          echo "CONTAINER_NAME=${CONTAINER_NAME}"
+          echo "IMAGE_NAME=${IMAGE_NAME}"
+
+      - name: Remove old docker containers
+        run: |
+          docker rm -f ${CONTAINER_NAME} || true
+
+      - name: Build and deploy
+        working-directory: backend
+        env:
+          IMAGE_TAG: ${{ env.sha_short }}
+          SERVICE_NAME: ${{ env.SERVICE_NAME }}
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
+          CONTAINER_NAME: ${{ env.CONTAINER_NAME }}
+        run: |
+          echo "Deploying service: ${CONTAINER_NAME}"
+          docker-compose -f docker-compose-staging.yml build --no-cache ${SERVICE_NAME}
+          docker-compose -f docker-compose-staging.yml up -d ${SERVICE_NAME}
+
+      - name: Verify container is running
+        run: |
+          echo "Checking container status for ${CONTAINER_NAME}..."
+          for i in {1..12}; do
+            status=$(docker inspect -f '{{.State.Status}}' ${CONTAINER_NAME} 2>/dev/null || echo "not_found")
+            if [ "$status" = "running" ]; then
+              echo "✅ Container ${CONTAINER_NAME} is running."
+              exit 0
+            fi
+            echo "⏳ Waiting for container to start... ($i/12)"
+            sleep 5
+          done
+
+          echo "❌ Container ${CONTAINER_NAME} failed to start."
+          echo "------ Container Logs ------"
+          docker logs ${CONTAINER_NAME} || echo "No logs available"
+          echo "-----------------------------"
+          exit 1
+
+      - name: Remove old images
+        run: |
+          docker images ${IMAGE_NAME} \
+            --format "{{.Tag}}" \
+            | sort -V \
+            | head -n -10 \
+            | xargs -r -I {} docker rmi ${IMAGE_NAME}:{} || true
+
+      - name: Remove dangling images
+        run: |
+          docker image prune -f
