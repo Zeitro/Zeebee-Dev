@@ -1,5 +1,5 @@
 'use client';
-import { Button, Col, Form, message, Space, Steps, Tabs } from 'antd';
+import { Button, Col, Form, message, Space } from 'antd';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createZeeBeeSteps, zeeBeeDetailsTabs } from '@/enum/loan';
@@ -38,7 +38,6 @@ const useCreate = (pageType = 'create') => {
 	const [currentStep, setCurrentStep] = useState(0); //顶部-总步骤
 	const [stepNum, setStepNum] = useState(0); //侧边步骤
 	const [loading, setLoading] = useState(false);
-	let [errorList, setErrorList] = useState([]); // 只在点击上一步back时获取到的错误字段
 	const [isChange, setIsChange] = useState(false); // 记录是否操作过form
 	const [confirmLoading, setConfirmLoading] = useState(false); // 保存草稿
 	const [rowData, setRowData] = useState({}); // loan详情
@@ -270,24 +269,114 @@ const useCreate = (pageType = 'create') => {
 		setLoanUuid(uuid);
 	};
 
+	const getFieldsKeyForStep = (currentIndex = currentStep, stepIndex = stepNum) => {
+		const componentFieldMap = {
+			'0-0': ['loan_borrower'],
+			'0-1': ['applicants'],
+			'1-0': ['loan_property', 'loan_purpose', 'loan_type'],
+			'1-1': [],
+			'2-0': ['transaction_experiences', 'real_estate_experiences'],
+			'2-1': ['loan_third_services'],
+			'3-0': [['loan_demographic', 'property']],
+			'3-1': ['loan_demographic'],
+			'4-0': ['signatures'],
+		};
+		return componentFieldMap[`${currentIndex}-${stepIndex}`];
+	};
+
+	// 获取除去其他步骤字段外的剩余字段
+	const getRemainingFields = (allFieldNames) => {
+		// 收集所有其他步骤的字段前缀
+		const allPrefixes = new Set();
+
+		stepContent.forEach((step, stepIndex) => {
+			if (Array.isArray(step)) {
+				step.forEach((_, subStepIndex) => {
+					if (stepIndex === currentStep && subStepIndex === stepNum) {
+						// 跳过当前步骤
+						return;
+					}
+					const prefixes = getFieldsKeyForStep(stepIndex, subStepIndex);
+					if (prefixes) {
+						prefixes.forEach((prefix) => {
+							allPrefixes.add(prefix);
+						});
+					}
+				});
+			} else {
+				if (stepIndex === currentStep && stepNum === 0) {
+					// 跳过当前步骤
+					return;
+				}
+				const prefixes = getFieldsKeyForStep(stepIndex, 0);
+				if (prefixes) {
+					prefixes.forEach((prefix) => {
+						allPrefixes.add(prefix);
+					});
+				}
+			}
+		});
+		// 返回不属于其他步骤前缀的字段
+		return allFieldNames.filter((fieldName) => {
+			return ![...allPrefixes].some((prefix) => {
+				if (Array.isArray(prefix)) {
+					return prefix.every((p) => fieldName.includes(p));
+				}
+				// 如果prefix是字符串
+				return fieldName.includes(prefix);
+			});
+		});
+	};
+
+	// 获取当前步骤需要验证的字段
+	const getCurrentStepFields = async () => {
+		// 获取当前步骤定义的字段前缀
+		const fieldPrefixes = getFieldsKeyForStep();
+
+		// 获取表单中所有字段
+		let allValues,
+			applicantsErr = [];
+		try {
+			allValues = await form.validateFields({ validateOnly: true });
+		} catch (error) {
+			allValues = error?.values;
+			// applicants的字段单独处理，因为是list验证不到
+			applicantsErr =
+				error.errorFields?.map((i) => i.name).filter((i) => i.includes('applicants')) || [];
+		}
+
+		const allFieldNames = [...flattenObjectPaths(allValues), ...applicantsErr];
+
+		// 如果字段前缀为空数组，表示验证除去其他步骤字段外的所有剩余字段
+		if (fieldPrefixes && fieldPrefixes.length === 0) {
+			return getRemainingFields(allFieldNames);
+		}
+
+		// 根据字段前缀筛选需要验证的字段
+		if (fieldPrefixes && fieldPrefixes.length > 0) {
+			return allFieldNames.filter((fieldName) => {
+				return fieldPrefixes.some((prefix) => {
+					// 如果prefix是数组，需要匹配所有前缀
+					if (Array.isArray(prefix)) {
+						return prefix.every((p) => fieldName.includes(p));
+					}
+					// 如果prefix是字符串
+					return fieldName.includes(prefix);
+				});
+			});
+		}
+
+		// 默认验证所有字段
+		return allFieldNames;
+	};
 	// next/Add loan
 	const handleNext = async () => {
 		try {
 			let values;
 			const isType = diffSteps();
 			// 解决：没填数据就触发了错误验证，又直接切换到上一步骤，又点击下一步时，validateFields会报错，提示刚才错误验证的字段没有填，导致下一页切换不了
-			if (errorList.length && isClickBackBtn.current) {
-				const allValues = form.getFieldsValue();
-				errorList.map((i) => {
-					_.unset(allValues, i); // 拿到错误的字段key，删除这项内容
-				});
-				let fieldsKeys = flattenObjectPaths(allValues); // 将多层嵌套对象转换为二维路径数组
-				values = await form.validateFields(fieldsKeys);
-			} else {
-				values = await form.validateFields();
-			}
-			isClickBackBtn.current = false;
-			setErrorList([]);
+			const fieldsKeys = await getCurrentStepFields();
+			values = await form.validateFields(fieldsKeys, { recursive: true });
 			if (isType === 'Submit') {
 				if (values?.signatures?.remainingSignatureCount || !values?.signatures) {
 					message.open({
@@ -376,9 +465,8 @@ const useCreate = (pageType = 'create') => {
 		const errors = form.getFieldsError()?.filter((i) => i?.errors?.length);
 		if (errors?.length) {
 			// 光设置重新验证不行，需要结合validateFields处的操作才可避免
-			errorList = errors.map((i) => i?.name);
-			setErrorList([...errorList]);
-			// form.resetFields(errorList);
+			let errorList = errors.map((i) => i?.name);
+			form.resetFields(errorList);
 		}
 		if (stepNum) {
 			setStepNum((v) => (v - 1 < 0 ? 0 : v - 1));
@@ -444,7 +532,7 @@ const useCreate = (pageType = 'create') => {
 			</Col>
 		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentStep, stepNum, loading, errorList, isChange, confirmLoading, stepContent.length]);
+	}, [currentStep, stepNum, loading, isChange, confirmLoading, stepContent.length]);
 
 	return {
 		getTabsItem,
