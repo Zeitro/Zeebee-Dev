@@ -1,0 +1,60 @@
+package loan_document
+
+import (
+	"context"
+
+	"github.com/jinzhu/copier"
+	"github.com/pkg/errors"
+	"github.com/zeromicro/go-zero/core/logx"
+
+	"zeebee-backend/app/borrower/api/internal/svc"
+	"zeebee-backend/app/borrower/api/internal/types"
+	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/utils"
+)
+
+type AddFilesLogic struct {
+	logx.Logger
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+}
+
+// add files
+func NewAddFilesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddFilesLogic {
+	return &AddFilesLogic{
+		Logger: logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+	}
+}
+
+func (l *AddFilesLogic) AddFiles(req *types.LoanDocumentAddFilesRequest) (resp *types.EmptyResponse, err error) {
+	rpcReq := &borrower.LoanDocumentAddFilesRequest{
+		Data: &borrower.LoanDocumentAddFilesRequestData{},
+	}
+
+	// Copy data from API request to RPC request
+	err = copier.CopyWithOption(&rpcReq.Data, req, copier.Option{
+		IgnoreEmpty:   false,
+		DeepCopy:      true,
+		CaseSensitive: true,
+	})
+	if err != nil {
+		return nil, errorx.GetFailedTransReqErr(err)
+	}
+
+	// Get borrower id from context
+	rpcReq.Data.BorrowerId, err = utils.GetAccountIdFromCtx(l.ctx)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	// Call RPC method
+	_, err = l.svcCtx.LoanDocumentRpcClient.AddFiles(l.ctx, rpcReq)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	return &types.EmptyResponse{}, nil
+}

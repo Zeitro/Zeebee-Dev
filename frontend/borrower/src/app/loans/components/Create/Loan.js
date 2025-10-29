@@ -1,114 +1,126 @@
 'use client';
-import { Button, Col, DatePicker, Form, InputNumber, Radio, Row, Select, Steps, Tabs } from 'antd';
-import React, { useState } from 'react';
-import {
-	loanStatusOptions,
-	loanPendingStatus,
-	loanPurposeOptions,
-	loanTypeOptions,
-} from '@/enum/loan';
+import { Col, Form, Radio, Row, Select, Input } from 'antd';
+import React from 'react';
 import styles from './index.module.scss';
-import { useRouter } from 'next/navigation';
-const CreateLoan = ({ form, stepBtn, gutter, ...colProps }) => {
+import InputNumAmount from '@/components/InputNumAmount';
+import { useGetOptions } from '@/hooks/useGetOptions';
+import { loan_active, loan_archived, loan_pending } from '@/enum/common';
+import { capitalizeFirstLetter, maxAmount } from '@/lib/format';
+import CommonFormDate from '@/components/CommonDate';
+const MAX_COUNT = 5;
+const CreateLoan = ({ form, stepBtn, gutter, isRadioStyle, ...colProps }) => {
 	const stage = Form.useWatch('stage', form);
-	const router = useRouter();
+	const total_amount = Form.useWatch('total_amount', form) || maxAmount;
+	const {
+		loanPendingStatus,
+		loanPurposeOptions,
+		loanTypeOptions,
+		loanStatusOptions,
+		businessStrategyOptions,
+	} = useGetOptions([
+		{
+			key: 'loan_purpose',
+			valueName: 'loanPurposeOptions',
+		},
+		{
+			key: 'loan_type',
+			valueName: 'loanTypeOptions',
+		},
+		{
+			key: 'loan_pending_status',
+			valueName: 'loanPendingStatus',
+		},
+		{
+			key: 'loan_stage',
+			valueName: 'loanStatusOptions',
+		},
+		{
+			key: 'business_strategy',
+			valueName: 'businessStrategyOptions',
+		},
+	]);
+	const layoutCol = {
+		xs: 24,
+		sm: 24,
+	};
 	return (
 		<Row className={styles.create} gutter={gutter}>
-			<Col md={24}>
+			<Col {...layoutCol}>
 				<Form.Item
 					label="Select a loan stage"
 					name="stage"
 					className={styles.commonFormItem}
 					rules={[{ required: true, message: 'Please select a loan stage!' }]}
 				>
-					<Radio.Group options={loanStatusOptions} />
+					<Radio.Group
+						options={loanStatusOptions}
+						className={isRadioStyle && styles.radio}
+					/>
 				</Form.Item>
 			</Col>
-			{stage === 'pending' && (
-				<Col md={24}>
+			{stage === loan_pending && (
+				<Col {...layoutCol}>
 					<Form.Item
 						label="Select a pending status"
-						name="pendingStatus"
+						name="pending_status"
 						className={styles.commonFormItem}
 						rules={[{ required: true, message: 'Please select a pending status!' }]}
 					>
-						<Radio.Group options={loanPendingStatus} />
+						<Radio.Group
+							options={loanPendingStatus}
+							className={isRadioStyle && styles.radio}
+						/>
 					</Form.Item>
 				</Col>
 			)}
-			<Col md={24} {...(colProps || {})}>
+			<Col {...layoutCol} {...(colProps || {})}>
 				<Form.Item
 					label="Loan purpose"
-					name="loanPurpose"
+					name="loan_purpose"
 					rules={[{ required: true, message: 'Please select a loan purpose!' }]}
 				>
 					<Select options={loanPurposeOptions} placeholder="Select a loan purpose" />
 				</Form.Item>
 			</Col>
-			<Col md={24} {...(colProps || {})}>
+			<Col {...layoutCol} {...(colProps || {})}>
 				<Form.Item
 					label="Loan type"
-					name="loanType"
+					name="loan_type"
 					rules={[{ required: true, message: 'Please select a loan type!' }]}
 				>
 					<Select options={loanTypeOptions} placeholder="Select a loan type" />
 				</Form.Item>
 			</Col>
-			{stage !== 'archived' && (
+			{stage !== loan_archived && (
 				<>
-					<Col md={24} {...(colProps || {})}>
+					<Col {...layoutCol} {...(colProps || {})}>
 						<Form.Item
 							label="Total loan amount"
-							name="totalLoanAmount"
+							name="total_amount"
 							rules={[
 								{ required: true, message: 'Please iEnter total loan amount!' },
 							]}
 						>
-							<InputNumber
-								formatter={(value) =>
-									`$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-								}
-								parser={(value) =>
-									value === null || value === void 0
-										? void 0
-										: value.replace(/\$\s?|(,*)/g, '')
-								}
-								style={{ width: '100%' }}
-								min={1}
-								max={10}
-								controls={false}
-								placeholder="Enter total loan amount"
-							/>
+							<InputNumAmount placeholder="Enter total loan amount" />
 						</Form.Item>
 					</Col>
-					<Col md={24} {...(colProps || {})}>
-						<Form.Item label="Initial loan amount(optional)" name="initialLoanAmount">
-							<InputNumber
-								style={{ width: '100%' }}
-								formatter={(value) =>
-									`$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-								}
-								parser={(value) =>
-									value === null || value === void 0
-										? void 0
-										: value.replace(/\$\s?|(,*)/g, '')
-								}
-								min={1}
-								max={10}
-								controls={false}
+					<Col {...layoutCol} {...(colProps || {})}>
+						<Form.Item label="Initial loan amount(optional)" name="initial_amount">
+							<InputNumAmount
 								placeholder="Enter initial loan amount"
+								max={total_amount}
 							/>
 						</Form.Item>
 					</Col>
 				</>
 			)}
 
-			{stage === 'active' && (
+			{stage === loan_active && (
 				<>
-					<Col md={24} {...(colProps || {})}>
+					<Col {...layoutCol} {...(colProps || {})}>
 						<Form.Item
 							label="Outstanding loan amount"
-							name="OutstandingLoanAmount"
+							name="principal_amount"
 							rules={[
 								{
 									required: true,
@@ -116,54 +128,32 @@ const CreateLoan = ({ form, stepBtn, gutter, ...colProps }) => {
 								},
 							]}
 						>
-							<InputNumber
-								style={{ width: '100%' }}
-								formatter={(value) =>
-									`$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-								}
-								parser={(value) =>
-									value === null || value === void 0
-										? void 0
-										: value.replace(/\$\s?|(,*)/g, '')
-								}
-								min={1}
-								max={10}
-								controls={false}
+							<InputNumAmount
 								placeholder="Enter Outstanding loan amount"
+								max={total_amount}
 							/>
 						</Form.Item>
 					</Col>
-					<Col md={24} {...(colProps || {})}>
+					<Col {...layoutCol} {...(colProps || {})}>
 						<Form.Item
-							label="Monthly paymant"
-							name="monthlyPaymant"
-							rules={[{ required: true, message: 'Please Enter Monthly paymant!' }]}
+							label="Monthly payment"
+							name="monthly_payment"
+							rules={[{ required: true, message: 'Please Enter Monthly payment!' }]}
 						>
-							<InputNumber
-								style={{ width: '100%' }}
-								formatter={(value) =>
-									`$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-								}
-								parser={(value) =>
-									value === null || value === void 0
-										? void 0
-										: value.replace(/\$\s?|(,*)/g, '')
-								}
-								min={1}
-								max={10}
-								controls={false}
-								placeholder="Enter Monthly paymant"
+							<InputNumAmount
+								placeholder="Enter Monthly payment"
+								max={total_amount}
 							/>
 						</Form.Item>
 					</Col>
 				</>
 			)}
-			{stage === 'archived' && (
+			{stage === loan_archived && (
 				<>
-					<Col md={24} {...(colProps || {})}>
+					<Col {...layoutCol} {...(colProps || {})}>
 						<Form.Item
 							label="Principal balance"
-							name="principalBalance"
+							name="principal_amount"
 							rules={[
 								{
 									required: true,
@@ -171,47 +161,88 @@ const CreateLoan = ({ form, stepBtn, gutter, ...colProps }) => {
 								},
 							]}
 						>
-							<InputNumber
-								style={{ width: '100%' }}
-								formatter={(value) =>
-									`$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-								}
-								parser={(value) =>
-									value === null || value === void 0
-										? void 0
-										: value.replace(/\$\s?|(,*)/g, '')
-								}
-								min={1}
-								max={10}
-								controls={false}
-								placeholder="Enter Principal balance"
-							/>
+							<InputNumAmount placeholder="Enter Principal balance" />
 						</Form.Item>
 					</Col>
-					<Col md={24} {...(colProps || {})}>
+					<Col {...layoutCol} {...(colProps || {})}>
 						<Form.Item
 							label="Paid off date"
-							name="padiOffDate"
+							name="paid_off_date"
 							rules={[{ required: true, message: 'Please select paid off date!' }]}
 						>
-							<DatePicker formatter="MM/DD/YYYY" placeholder="select" />
+							<CommonFormDate />
 						</Form.Item>
 					</Col>
 				</>
 			)}
-			{stage !== 'archived' && (
-				<Col md={24} {...(colProps || {})}>
-					<Form.Item
-						label="Business strategy"
-						name="businessStrategy"
-						rules={[{ required: true, message: 'Please select Business strategy!' }]}
-					>
-						<Select
-							options={loanPurposeOptions}
-							placeholder="Select Business strategy"
-						/>
-					</Form.Item>
-				</Col>
+			<Col {...layoutCol} {...(colProps || {})}>
+				<Form.Item
+					label="Business strategy"
+					name="business_strategy"
+					rules={[{ required: true, message: 'Please select Business strategy!' }]}
+				>
+					<Select
+						mode="multiple"
+						maxCount={MAX_COUNT}
+						style={{ width: '100%' }}
+						placeholder="Select Business strategy"
+						options={businessStrategyOptions}
+					/>
+				</Form.Item>
+			</Col>
+			{stage === loan_pending && (
+				<>
+					<Col {...layoutCol} {...(colProps || {})}>
+						<Form.Item
+							label="Existing lender"
+							name="existing_lender_company"
+							getValueFromEvent={(v) => capitalizeFirstLetter(v.target.value)}
+						>
+							<Input placeholder="Enter existing lender" />
+						</Form.Item>
+					</Col>
+					<Col {...layoutCol} {...(colProps || {})}>
+						<Form.Item label="Business line" name={['extend', 'business_line']}>
+							<Input placeholder="Enter business line" />
+						</Form.Item>
+					</Col>
+					<Col {...layoutCol}></Col>
+					<Col {...layoutCol} {...(colProps || {})}>
+						<Form.Item label="Pricing" name={['extend', 'pricing']}>
+							<Input.TextArea
+								placeholder="Enter pricing"
+								autoSize={{ minRows: 2, maxRows: 3 }}
+							/>
+						</Form.Item>
+					</Col>
+					<Col {...layoutCol} {...(colProps || {})}>
+						<Form.Item
+							label="Loan status updates"
+							name={['extend', 'loan_status_updates']}
+						>
+							<Input.TextArea
+								placeholder="Enter loan status updates"
+								autoSize={{ minRows: 2, maxRows: 3 }}
+							/>
+						</Form.Item>
+					</Col>
+					<Col {...layoutCol} {...(colProps || {})}>
+						<Form.Item label="Meeting notes" name={['extend', 'meeting_notes']}>
+							<Input.TextArea
+								placeholder="Enter meeting notes"
+								autoSize={{ minRows: 2, maxRows: 3 }}
+							/>
+						</Form.Item>
+					</Col>
+					<Col {...layoutCol} {...(colProps || {})}>
+						<Form.Item label="Action list" name={['extend', 'action_list']}>
+							<Input.TextArea
+								placeholder="Enter action list"
+								autoSize={{ minRows: 2, maxRows: 3 }}
+							/>
+						</Form.Item>
+					</Col>
+				</>
 			)}
 
 			{stepBtn}

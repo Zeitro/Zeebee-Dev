@@ -1,0 +1,12 @@
+.page{
+    :global{
+        .ant-pagination-prev,
+        .ant-pagination-next{
+            border: 1px solid var(--base-disabled);
+            border-radius: 6px;
+        }
+        .ant-pagination-total-text{
+            flex: 1 !important;
+        }
+    }
+}

@@ -1,33 +1,32 @@
 'use client';
-import {
-	Button,
-	Col,
-	DatePicker,
-	Form,
-	Input,
-	InputNumber,
-	Radio,
-	Row,
-	Select,
-	Space,
-	Steps,
-	Tabs,
-} from 'antd';
-import React, { useState } from 'react';
-import {
-	loanStatusOptions,
-	loanPendingStatus,
-	loanPurposeOptions,
-	loanTypeOptions,
-} from '@/enum/loan';
+import { Col, Form, Input, InputNumber, Row, Select } from 'antd';
+import React from 'react';
 import styles from './index.module.scss';
-import { usePropertyStore } from '@/store/property';
-import { useRouter } from 'next/navigation';
-const CreateTerm = ({  stage,stepBtn,gutter,...colProps }) => {
-	const { propertyTypeOptions } = usePropertyStore();
-	const router = useRouter();
+import InputNumAmount from '@/components/InputNumAmount';
+import { useGetOptions } from '@/hooks/useGetOptions';
+import { loan_active, loan_pending } from '@/enum/common';
+import InputName from '@/components/InputName';
+import CommonFormDate from '@/components/CommonDate';
+import { capitalizeFirstLetter } from '@/lib/format';
+const layoutCol = {
+	xs: 24,
+	sm: 24,
+};
+const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
+	const total_amount = Form.useWatch('total_amount', form);
+	const { lienPositionOptions, prepaymentPenaltyOptions } = useGetOptions([
+		{
+			key: 'lien_position',
+			valueName: 'lienPositionOptions',
+		},
+		{
+			key: 'loan_prepayment_penalty',
+			valueName: 'prepaymentPenaltyOptions',
+		},
+	]);
+
 	const rateDom = (
-		<Col md={24} {...(colProps||{})}>
+		<Col {...layoutCol} {...(colProps || {})}>
 			<Form.Item
 				label="Rate"
 				name="rate"
@@ -36,109 +35,99 @@ const CreateTerm = ({  stage,stepBtn,gutter,...colProps }) => {
 				<InputNumber
 					style={{ width: '100%' }}
 					min={1}
-					max={10}
+					max={100}
 					controls={false}
 					placeholder="Enter Rate"
+					suffix="%"
 				/>
 			</Form.Item>
 		</Col>
 	);
+
 	const lenderDom = (
-		<Col md={24} {...(colProps||{})}>
+		<Col {...layoutCol} {...(colProps || {})}>
 			<Form.Item
-				label={stage === 'pending' ? 'TagetLender' : 'Lender'}
-				name="lender"
+				label={stage === 'Pending' ? 'Target lender' : 'Lender'}
+				name="lender_company"
 				rules={[{ required: true, message: 'Please input!' }]}
+				getValueFromEvent={(v) => capitalizeFirstLetter(v.target.value)}
 			>
-				<Input placeholder={`Enter ${stage === 'pending' ? 'taget ' : ''}lender`} />
+				<Input placeholder={`Enter ${stage === 'Pending' ? 'target ' : ''}lender`} />
 			</Form.Item>
 		</Col>
 	);
 	return (
 		<Row className={styles.create} gutter={gutter}>
-			<Col md={24} {...(colProps||{})}>
-				<Form.Item
-					label="Borrower"
-					name="borrower"
-					rules={[{ required: true, message: 'Please input!' }]}
-				>
-					<Input placeholder="Enter Borrower" />
-				</Form.Item>
-			</Col>
-			{stage === 'pending' && (
+			<Form.List name="applicants">
+				{(fields) => {
+					return (
+						<>
+							{fields?.map((field, index) => (
+								<InputName
+									key={field.key}
+									layoutCol={{ ...layoutCol, md: 8 }}
+									firstName={[field.name, 'first_name']}
+									middleName={[field.name, 'mid_name']}
+									lastName={[field.name, 'last_name']}
+									title={`Borrower ${index + 1}`}
+									config={{
+										firstNameRequired: !index,
+										lastNameRequired: !index,
+									}}
+									listName="applicants"
+									form={form}
+									className="!ml-0 !mr-0"
+								/>
+							))}
+						</>
+					);
+				}}
+			</Form.List>
+			{stage === loan_pending && (
 				<>
 					{lenderDom}
-					<Col md={24} {...(colProps||{})}>
+					<Col {...layoutCol} {...(colProps || {})}>
 						<Form.Item
 							label="Target closing date"
-							name="targetClosingDate"
+							name="closing_date"
 							rules={[{ required: true, message: 'Please select date!' }]}
 						>
-							<DatePicker
-								formatter="MM/DD/YYYY"
-								placeholder="Select target closing date"
-								style={{ width: '100%' }}
-							/>
+							<CommonFormDate placeholder="Select target closing date" />
 						</Form.Item>
 					</Col>
-					<Col md={24} {...(colProps||{})}>
+					<Col {...layoutCol} {...(colProps || {})}>
 						<Form.Item
 							label="Holdback"
-							name="holdback"
+							name="holdback_amount"
 							rules={[{ required: true, message: 'Please input!' }]}
 						>
-							<InputNumber
-								style={{ width: '100%' }}
-								min={1}
-								max={10}
-								controls={false}
-								placeholder="Enter holdback amount"
-								formatter={(value) =>
-									`$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-								}
-								parser={(value) =>
-									value === null || value === void 0
-										? void 0
-										: value.replace(/\$\s?|(,*)/g, '')
-								}
-							/>
+							<InputNumAmount placeholder="Enter holdback amount" />
 						</Form.Item>
 					</Col>
 					{rateDom}
-					<Col md={24} {...(colProps||{})}>
+					<Col {...layoutCol} {...(colProps || {})}>
 						<Form.Item
 							label="Estimated closing fund"
-							name="estimatedClosingFund"
+							name="closing_fund"
 							rules={[{ required: true, message: 'Please input!' }]}
 						>
-							<InputNumber
-								style={{ width: '100%' }}
-								min={1}
-								max={10}
-								controls={false}
+							<InputNumAmount
 								placeholder="Enter Estimated closing fund"
-								formatter={(value) =>
-									`$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-								}
-								parser={(value) =>
-									value === null || value === void 0
-										? void 0
-										: value.replace(/\$\s?|(,*)/g, '')
-								}
+								max={total_amount}
 							/>
 						</Form.Item>
 					</Col>
 				</>
 			)}
-			{stage !== 'pending' && (
+			{stage !== loan_pending && (
 				<>
 					{lenderDom}
 					{rateDom}
 				</>
 			)}
-			{stage === 'active' && (
+			{stage === loan_active && (
 				<>
-					{/* <Col md={24} {...(colProps||{})}>
+					{/* <Col {...layoutCol} {...(colProps||{})}>
 						<Form.Item
 							label="Point"
 							name="point"
@@ -153,52 +142,67 @@ const CreateTerm = ({  stage,stepBtn,gutter,...colProps }) => {
 							/>
 						</Form.Item>
 					</Col> */}
-					<Col md={24} {...(colProps||{})}>
+					<Col {...layoutCol} {...(colProps || {})}>
 						<Form.Item
 							label="Lien position"
-							name="lienPosition"
+							name="lien_position"
 							rules={[{ required: true, message: 'Please select Lien position!' }]}
 						>
-							<Select options={[]} placeholder="Select Lien position" />
+							<Select
+								options={lienPositionOptions}
+								placeholder="Select Lien position"
+							/>
 						</Form.Item>
 					</Col>
-					<Col md={24} {...(colProps||{})}>
+					<Col {...layoutCol} {...(colProps || {})}>
 						<Form.Item
 							label="Maturity date"
-							name="maturityDate"
+							name="maturity_date"
 							rules={[{ required: true, message: 'Please select date!' }]}
 						>
-							<DatePicker
-								formatter="MM/DD/YYYY"
-								placeholder="Select Maturity date"
-								style={{ width: '100%' }}
-							/>
+							<CommonFormDate placeholder="Select Maturity date" />
 						</Form.Item>
 					</Col>
-					<Col md={24} {...(colProps||{})}>
+					<Col {...layoutCol} {...(colProps || {})}>
 						<Form.Item
 							label="Prepayment penalty"
-							name="prepaymentPenalty"
+							name="prepayment_penalty"
 							rules={[{ required: true, message: 'Please input!' }]}
+							getValueFromEvent={(e) => Number(e)}
 						>
-							<InputNumber
-								style={{ width: '100%' }}
-								min={1}
-								max={10}
-								controls={false}
+							<Select
+								options={prepaymentPenaltyOptions}
 								placeholder="Enter Prepayment penalty"
+								suffixIcon={<div className="text-sm">Months</div>}
 							/>
 						</Form.Item>
 					</Col>
-					<Col md={24} {...(colProps||{})}>
+					<Col {...layoutCol} {...(colProps || {})}>
 						<Form.Item
-							label='Servicing company'
-							name="servicingCompany"
+							label="Servicing company"
+							name="service_company"
 							rules={[{ required: true, message: 'Please input!' }]}
 						>
-							<Input
-								placeholder='Enter Servicing company'
-							/>
+							<Input placeholder="Enter Servicing company" />
+						</Form.Item>
+					</Col>
+				</>
+			)}
+			{stage === loan_pending && (
+				<>
+					<Col {...layoutCol} {...(colProps || {})}>
+						<Form.Item label="Original contract date" name="original_contract_date">
+							<CommonFormDate />
+						</Form.Item>
+					</Col>
+					<Col {...layoutCol} {...(colProps || {})}>
+						<Form.Item label="Extension date" name="extension_date">
+							<CommonFormDate />
+						</Form.Item>
+					</Col>
+					<Col {...layoutCol} {...(colProps || {})}>
+						<Form.Item label="Loan processor" name="loan_processor">
+							<Input placeholder="Enter Loan processor" />
 						</Form.Item>
 					</Col>
 				</>

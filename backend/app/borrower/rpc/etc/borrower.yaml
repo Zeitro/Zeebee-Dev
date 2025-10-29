@@ -1,6 +1,25 @@
 Name: borrower.rpc
-ListenOn: 0.0.0.0:8080
-Etcd:
-  Hosts:
-  - 127.0.0.1:2379
-  Key: borrower.rpc
+ListenOn: 0.0.0.0:10001
+Mode: dev
+Timeout: 60000
+MaxFailedLoginTimes: 5
+ForbiddenLoginSeconds: 300
+
+JwtAuth:
+  AccessSecret: accessSecret
+  AccessExpire: 864000
+  RefreshSecret: refreshSecret
+  RefreshExpire: 864000
+
+#Etcd:
+#  Hosts:
+#  - 127.0.0.1:2379
+#  Key: user.rpc
+
+RedisConf:
+  Host: 127.0.0.1:6379
+  Type: node
+  Prefix: zeebee
+
+DbConf:
+  dsn: "host=localhost user=dev_user password=dev_password dbname=dev_db port=5432 sslmode=disable TimeZone=UTC"
