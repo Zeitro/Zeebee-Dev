@@ -1,31 +1,48 @@
-package main
+package api
 
 import (
-	"flag"
-	"fmt"
+	"github.com/zeromicro/go-zero/core/service"
+	"github.com/zeromicro/go-zero/rest"
 
-	"zeebee-backend/app/borrower/api/internal/config"
 	"zeebee-backend/app/borrower/api/internal/handler"
 	"zeebee-backend/app/borrower/api/internal/svc"
-
-	"github.com/zeromicro/go-zero/core/conf"
-	"github.com/zeromicro/go-zero/rest"
+	"zeebee-backend/app/borrower/config"
+	"zeebee-backend/common/response"
 )
 
-var configFile = flag.String("f", "etc/borrower-api.yaml", "the config file")
+type ApiServer struct {
+	s *rest.Server
+}
 
-func main() {
-	flag.Parse()
+func NewApiServer(c config.Config) (s service.Service) {
+	apiConfig := c.ApiConf
+	runOpts := []rest.RunOption{
+		rest.WithNotFoundHandler(response.NotFoundHandler{}),
+		rest.WithNotAllowedHandler(response.NotFoundHandler{}),
+		rest.WithCors("*"),
+	}
+	restServer := rest.MustNewServer(apiConfig.RestConf, runOpts...)
+	// restServer.Use(middleware.CorsMiddleware)
 
-	var c config.Config
-	conf.MustLoad(*configFile, &c)
+	ctx := svc.NewServiceContext(apiConfig)
 
-	server := rest.MustNewServer(c.RestConf)
-	defer server.Stop()
+	// register handlers
+	handler.RegisterHandlers(restServer, ctx)
 
-	ctx := svc.NewServiceContext(c)
-	handler.RegisterHandlers(server, ctx)
+	// extra route
+	handler.RegisterExtraRoutes(restServer)
 
-	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
-	server.Start()
+	return &ApiServer{
+		s: restServer,
+	}
+}
+
+func (s *ApiServer) Start() {
+	go func() {
+		s.s.Start()
+	}()
+}
+
+func (s *ApiServer) Stop() {
+	s.s.Stop()
 }

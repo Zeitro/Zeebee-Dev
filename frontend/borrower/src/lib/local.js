@@ -1,32 +1,44 @@
-export const getLocalStorage = (key) => {
-    if (!key) return '';
-    let value = localStorage.getItem(key);
-    if (!value) return '';
-    if (value.indexOf('[') !== -1 || value.indexOf('}') !== -1) {
-        return JSON.parse(value);
-    }
-    return value;
+const isBrowser = typeof window !== 'undefined';
+// localStorage
+export const localStorageUtil = {
+	set(key, value) {
+		if (!isBrowser || !key) return;
+		localStorage.setItem(key, JSON.stringify(value));
+	},
+	get(key) {
+		if (!isBrowser || !key) return;
+		const value = localStorage.getItem(key);
+		if (value === 'undefined' || value === 'null') return null;
+		return value ? JSON.parse(value) : null;
+	},
+	remove(key) {
+		if (!isBrowser || !key) return;
+		localStorage.removeItem(key);
+	},
+	clear() {
+		if (!isBrowser) return;
+		localStorage.clear();
+	},
 };
 
-export const setLocalStorage = (key, value) => {
-    if (!key && !value) return '';
-    let str = '';
-    if (typeof value !== 'string') str = JSON.stringify(value);
-    else str = value;
-    localStorage.setItem(key, str);
-};
-
-export const removeLocalStorage = (key) => {
-    if (!key) return '';
-    localStorage.removeItem(key);
-};
-
-export const clearAll = () => {
-    localStorage.clear();
-};
-
-// 清空用户信息
-export const clearUserInfo = () => {
-    removeLocalStorage('userInfo');
-    removeLocalStorage('token');
+// sessionStorage
+export const sessionStorageUtil = {
+	set(key, value) {
+		if (!isBrowser || !key) return;
+		sessionStorage.setItem(key, JSON.stringify(value));
+	},
+	get(key) {
+		if (!isBrowser || !key) return null;
+		const value = sessionStorage?.getItem(key);
+		if (value === 'undefined' || value === 'null') return null;
+		return value ? JSON.parse(value) : null;
+	},
+	remove(key) {
+		if (!isBrowser || !key) return;
+		sessionStorage.removeItem(key);
+	},
+	clear() {
+		if (!isBrowser) return;
+		sessionStorage.clear();
+	},
 };

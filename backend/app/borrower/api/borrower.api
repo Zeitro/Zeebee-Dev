@@ -1,26 +1,280 @@
 syntax = "v1"
 
 info (
-	title:  "borrower-api http service" // TODO: add title
-	desc:   "borrower-api http service description" // TODO: add description
-	author: ""
-	email:  ""
+	title:  "borrower-api http service"
+	desc:   "borrower-api http service description"
+	author: "Wei Zeng"
+	email:  "wei@yeelee-capital.com"
 )
 
-type request {}
+import "desc/user.api"
+import "desc/loan.api"
+import "desc/common.api"
+import "desc/property.api"
+import "desc/applicant.api"
+import "desc/us_geography.api"
+import "desc/pdf.api"
+import "desc/storage.api"
+import "desc/loan_document.api"
 
-type response {}
+type (
+	EmptyRequest  {}
+	EmptyResponse  {}
+)
 
+type PathIdRequest {
+	id int64 `path:"id" validate:"required,gt=0"`
+}
+
+// ============== common =============
 @server (
 	desc:    "borrower-api service"
-	version: "v1"
-	group:   ""
+	version: v1
+	group:   common
+	prefix:  /api/v1
+	tags:    common
 )
 service borrower-api {
-	@handler GetUser // TODO: set handler name and delete this comment
-	get /users/id/:userId (request) returns (response)
+	@doc "select options"
+	@handler SelectOptions
+	get /select_options (GetSelectOptionRequest) returns (GetSelectOptionResponse)
 
-	@handler CreateUser // TODO: set handler name and delete this comment
-	post /users/create (request)
+	@doc "get us states"
+	@handler GetUsStates
+	get /us_states (EmptyRequest) returns (GetUsStatesResponse)
+
+	@doc "get us city"
+	@handler GetUsCities
+	get /us_cities (GetUsCitiesRequest) returns (GetUsCitiesResponse)
+
+	@doc "get uuid"
+	@handler GetUuid
+	get /uuid (EmptyRequest) returns (GetUuidResponse)
+}
+
+// ============== user =============
+@server (
+	desc:    "borrower-api service"
+	version: v1
+	group:   user
+	prefix:  /api/v1
+	tags:    user
+)
+service borrower-api {
+	@doc "register"
+	@handler Register
+	post /user/register (UserRegisterRequest) returns (UserRegisterResponse)
+
+	@doc "login"
+	@handler Login
+	post /user/login (UserLoginRequest) returns (UserLoginResponse)
+
+	@doc "refresh"
+	@handler RefreshToken
+	post /user/refresh (UserRefreshTokenRequest) returns (UserRefreshTokenResponse)
+
+	@doc "verify email"
+	@handler VerifyEmail
+	post /user/verify_email (UserVerifyEmailRequest) returns (UserLoginResponse)
+
+	@doc "send verify email"
+	@handler SendVerifyEmail
+	post /user/send_verify_email (UserSendVerifyEmailRequest) returns (EmptyResponse)
+
+	@doc "reset password"
+	@handler ResetPassword
+	post /user/reset_password (UserResetPasswordRequest) returns (UserLoginResponse)
+
+	@doc "send reset password email"
+	@handler SendResetPassword
+	post /user/send_reset_password (UserSendResetPasswordEmailRequest) returns (EmptyResponse)
+}
+
+@server (
+	desc:       "borrower-api service"
+	version:    v1
+	group:      user
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags:       user
+)
+service borrower-api {
+	@doc "info"
+	@handler Info
+	get /user/info (EmptyRequest) returns (UserInfoResponse)
+}
+
+// ============== loan =============
+@server(
+	desc: "loan service"
+	version: v1
+	group: loan
+	prefix:  /api/v1
+	tags: loan
+)
+service borrower-api {
+	@doc "preapproval"
+	@handler PreApproval
+	post /loan/pre_approval (LoanPreApprovalRequest) returns (LoanPreApprovalResponse)
+
+	@doc "send pre approval loan nofification"
+	@handler SendPreApprovalLoanNotification
+	post /loan/send_pre_approval_loan_notification (SendPreApprovalLoanNotificationRequest) returns (EmptyResponse)
+}
+
+@server (
+	desc:       "loan service"
+	version:    v1
+	group:      loan
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags:       loan
+)
+service borrower-api {
+	@doc "create"
+	@handler Create
+	post /loan (LoanCreateRequest) returns (LoanCreateResponse)
+
+	@doc "update"
+	@handler Update
+	put /loan/:id (LoanUpdateRequest) returns (EmptyResponse)
+
+	@doc "update pending status"
+	@handler UpdatePendingStatus
+	put /loan/:id/pending_status (LoanUpdatePendingStatusRequest) returns (EmptyResponse)
+
+	@doc "delete"
+	@handler DeleteLoan
+	delete /loan/:id (LoanDeleteRequest) returns (EmptyResponse)
+
+	@doc "lender companies list"
+	@handler LenderCompanies
+	get /loan/lender_companies (EmptyRequest) returns (LoanLenderCompanyResponse)
+
+	@doc "detail"
+	@handler Detail
+	get /loan/:id (LoanDetailRequest) returns (LoanDetailResponse)
+
+	@doc "page"
+	@handler Page
+	post /loan/page (LoanPageRequest) returns (LoanPageResponse)
+
+	@doc "apply"
+	@handler Apply
+	post /loan/apply (LoanApplyRequest) returns (LoanApplyResponse)
+
+	@doc "create draft"
+	@handler CreateDraft
+	post /loan/draft (LoanApplyRequest) returns (LoanApplyResponse)
+
+	@doc "update draft"
+	@handler UpdateDraft
+	put /loan/:id/draft (LoanApplyRequest) returns (LoanApplyResponse)
+
+	@doc "update apply"
+	@handler UpdateApply
+	put /loan/:id/update_apply (LoanApplyRequest) returns (EmptyResponse)
+
+	@doc "import"
+	@handler Import
+	post /loan/import (ImportLoanRequest) returns (ImportLoanResponse)
+
+	@doc "download import template"
+	@handler DownloadImportTemplate
+	get /loan/import/template (EmptyRequest) returns (EmptyResponse)
+}
+
+// =============== property ==============
+@server (
+	desc:       "property service"
+	version:    v1
+	group:      property
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags:       property
+)
+service borrower-api {
+	@doc "page"
+	@handler PropertyPage
+	post /property/page (PropertyPageRequest) returns (PropertyPageResponse)
+
+	@doc "detail"
+	@handler PropertyDetail
+	get /property/:id (PropertyDetailRequest) returns (PropertyDetailResponse)
+}
+
+// =============== applicant ==============
+@server (
+	desc:       "applicant service"
+	version:    v1
+	group:      applicant
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags:       applicant
+)
+service borrower-api {
+	@doc "borrower names"
+	@handler BorrowerNames
+	post /applicant/borrower (EmptyRequest) returns (BorrowerNamesResponse)
+}
+
+// =============== pdf ==============
+@server(
+	desc: "applicant service"
+	version: v1
+	group: pdf
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: pdf
+)
+service borrower-api {
+	@doc "create apply form pdf"
+	@handler ApplyFormPdf
+	post /pdf/apply_form (ApplyFormPdfRequest) returns (EmptyResponse)
+}
+
+// =============== storage ==============
+@server(
+	desc: "storage service"
+	version: v1
+	group: storage
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: storage
+)
+service borrower-api {
+	@doc "create aws s3 presign url"
+	@handler CreateAwsS3PresignUrl
+	post /storage/presign_url (S3PresignUrlCreateRequest) returns (S3PresignUrlCreateResponse)
+}
+
+// =============== file ==============
+@server(
+	desc: "file service"
+	version: v1
+	group: file
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: file
+)
+service borrower-api {
+	@doc "delete"
+	@handler Delete
+	delete /file/:id (PathIdRequest) returns (EmptyResponse)
+}
+
+// ============== loan document =============
+@server(
+	desc: "loan document service"
+	version: v1
+	group: loan_document
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: loan_document
+)
+service borrower-api {
+	@doc "add files"
+	@handler AddFiles
+	post /loan_document/:id/files (LoanDocumentAddFilesRequest) returns (EmptyResponse)
 }
 

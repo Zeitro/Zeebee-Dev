@@ -1,0 +1,18 @@
+services:
+  staging-borrower-frontend:
+    image: staging-borrower-frontend:${IMAGE_TAG:-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile-borrower-staging
+    container_name: staging-borrower-frontend
+    ports:
+      - "13000:13000"
+
+  staging-lender-frontend:
+    image: staging-lender-frontend:${IMAGE_TAG:-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile-lender-staging
+    container_name: staging-lender-frontend
+    ports:
+      - "13001:13001"
