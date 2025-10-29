@@ -1,163 +1,252 @@
-import LoanStatus from '@/components/LoanStatus';
+import { formatAmount } from '@/lib/format';
+import { LoanPendingStatus } from './ChangeStageStatus';
 import TableOperation from '@/components/TableOperation';
+export const get3rdPartyMark = (v, { source }) => (
+	<div className="flex items-center">
+		<p className="overflow-hidden text-ellipsis whitespace-nowrap" title={v}>
+			{v}
+		</p>
+		{source === 'borrower' && (
+			<div className="ml-2 px-2 bg-blue-light-1 text-blue-medium-default rounded-xs">
+				3rd party
+			</div>
+		)}
+	</div>
+);
+const common = (isNotAddress) => {
+	const addressArr = [
+		{
+			title: 'Property address',
+			dataIndex: ['loan_property', 'property_base', 'address', 'address1'],
+			key: 'address',
+			ellipsis: true,
+			sorter: true,
+			sortDirections: ['ascend', 'descend'],
+			// defaultSortOrder: 'descend',
+			fixed: 'left',
+			minWidth: 200,
+			render: get3rdPartyMark,
+		},
+		{
+			title: 'City',
+			dataIndex: ['loan_property', 'property_base', 'address', 'city'],
+			key: 'city',
+			width: 120,
+			ellipsis: true,
+		},
+		{
+			title: 'State',
+			dataIndex: ['loan_property', 'property_base', 'address', 'state'],
+			key: 'state',
+			width: 70,
+			ellipsis: true,
+		},
+		{
+			title: 'Zip code',
+			dataIndex: ['loan_property', 'property_base', 'address', 'zip_code'],
+			key: 'zip_code',
+			ellipsis: true,
+			width: 120,
+		},
+	];
+	return [
+		...(isNotAddress ? [] : addressArr),
+		{
+			title: 'Borrower',
+			dataIndex: 'applicants',
+			key: 'applicants',
+			ellipsis: true,
+			render: (v, row) => {
+				const value = v?.map((i) => i.full_name)?.join(',');
+				if (isNotAddress) return get3rdPartyMark(value, row);
+				return value;
+			},
+			width: isNotAddress ? 200 : 160,
+		},
+	];
+};
 
-
-const common = [
-	{
-		title: 'Property address',
-		dataIndex: 'propertyAddress',
-		key: 'propertyAddress',
-		ellipsis: true,
-		sorter: true,
-		sortDirections: ['ascend', 'descend'],
-		defaultSortOrder: 'descend',
-		fixed: 'left',
-	},
-	{
-		title: 'City',
-		dataIndex: 'city',
-		key: 'city',
-		ellipsis: true,
-	},
-	{
-		title: 'State',
-		dataIndex: 'state',
-		key: 'state',
-		ellipsis: true,
-	},
-	{
-		title: 'Zip code',
-		dataIndex: 'zipCode',
-		key: 'zipCode',
-		ellipsis: true,
-	},
-	{
-		title: 'Borrower',
-		dataIndex: 'borrower',
-		key: 'borrower',
-		ellipsis: true,
-	},
-];
-export const pendingColumns = [
-	...common,
-	{
-		title: 'Loan purpose',
-		dataIndex: 'loanPurpose',
-		key: 'loanPurpose',
-		ellipsis: true,
-	},
-	{
-		title: 'Target closing date',
-		dataIndex: 'targetClosingDate',
-		key: 'targetClosingDate',
-		ellipsis: true,
-		sorter: true,
-		sortDirections: ['ascend', 'descend'],
-	},
-	{
-		title: 'Business strategy',
-		dataIndex: 'businessStrategy',
-		key: 'businessStrategy',
-		ellipsis: true,
-	},
-	{
-		title: 'Target lender',
-		dataIndex: 'targetLender',
-		key: 'targetLender',
-		ellipsis: true,
-	},
-	{
-		title: 'Total loan amount',
-		dataIndex: 'totalLoanAmount',
-		key: 'totalLoanAmount',
-		ellipsis: true,
-		sorter: true,
-		sortDirections: ['ascend', 'descend'],
-	},
-	{
-		title: 'Initial loan',
-		dataIndex: 'initialLoan',
-		key: 'initialLoan',
-		ellipsis: true,
-		sorter: true,
-		sortDirections: ['ascend', 'descend'],
-	},
-	{
-		title: 'Hold back',
-		dataIndex: 'holdback',
-		key: 'holdback',
-		ellipsis: true,
-		sorter: true,
-		sortDirections: ['ascend', 'descend'],
-	},
-	{
-		title: 'Estimated Closing Fund',
-		dataIndex: 'estimatedClosingFund',
-		key: 'estimatedClosingFund',
-		ellipsis: true,
-		sorter: true,
-		sortDirections: ['ascend', 'descend'],
-	},
-	{
-		title: 'Rate',
-		dataIndex: 'rate',
-		key: 'rate',
-		ellipsis: true,
-		sorter: true,
-		sortDirections: ['ascend', 'descend'],
-	},
-	{ title: 'Loan type', dataIndex: 'loanType', key: 'loanType', ellipsis: true },
-	{
-		title: 'Status',
-		dataIndex: 'status',
-		key: 'status',
-		ellipsis: true,
-		width: 160,
-		render: (v, { is3rdParty }) => <LoanStatus status={v} is3rdParty={is3rdParty} />,
-	},
-	{
+const getOpt = (showDeleteModal, stage) => {
+	return {
 		title: '',
 		dataIndex: 'operation',
-		width: 80,
+		width: 50,
+		align: 'left',
+		fixed: 'right',
 		render: (_, record) => (
 			<TableOperation
 				record={record}
-				getItems={(editItem, deleteItem) => {
-					return [{ ...editItem, url: `/loans/${record?.id || '111'}` }, deleteItem];
+				// disabled={stage !== 'Draft' && record?.source !== 'borrower'}
+				getItems={(editItem, deleteItem, detailsItem) => {
+					const arr = [];
+					if (stage === 'Draft') {
+						const url =
+							record?.source === 'borrower'
+								? `/loans/${record?.id}`
+								: `/loans/createZeeBeeLoan?id=${record?.id}`;
+						arr.push({ ...editItem, url });
+						arr.push(deleteItem);
+					} else {
+						if (record?.source === 'borrower') {
+							arr.push({ ...editItem, url: `/loans/${record?.id}` });
+							arr.push(deleteItem);
+						} else {
+							arr.push({
+								...detailsItem,
+								url: `/loans/zeeBeeDetails?id=${record?.id}`,
+							});
+						}
+					}
+					return arr;
 				}}
 				onSelect={(key) => {
-					
+					if (key === 'delete') {
+						showDeleteModal(record);
+					}
 				}}
 			/>
 		),
-	},
-];
+	};
+};
+export const pendingColumns = (isNotAddress, successCallback, showDeleteModal, stage) => {
+	const status = {
+		title: 'Status',
+		dataIndex: 'pending_status',
+		key: 'pending_status',
+		ellipsis: true,
+		width: 150,
+		align: 'center',
+		fixed: 'right',
+		render: (v, record) => (
+			<LoanPendingStatus
+				data={record}
+				successCallback={successCallback}
+				disabled={record?.source !== 'borrower'}
+				tooltipProps={{
+					title: 'Zeebee-connected loans are managed automatically and cannot be edited manually by users.',
+				}}
+			/>
+		),
+	};
+	return [
+		...common(isNotAddress),
+		{
+			title: 'Loan purpose',
+			dataIndex: 'loan_purpose',
+			key: 'loan_purpose',
+			ellipsis: true,
+			width: 120,
+		},
+		{
+			title: 'Target closing date',
+			dataIndex: 'closing_date',
+			key: 'closing_date',
+			ellipsis: true,
+			sorter: true,
+			width: 170,
+		},
+		{
+			title: 'Business strategy',
+			dataIndex: 'business_strategy',
+			key: 'business_strategy',
+			ellipsis: true,
+			render: (v) => v?.join(','),
+			width: 160,
+		},
+		{
+			title: 'Target lender',
+			dataIndex: 'lender_company',
+			key: 'lender_company',
+			ellipsis: true,
+			width: 180,
+		},
+		{
+			title: 'Total loan amount',
+			dataIndex: 'total_amount',
+			key: 'total_amount',
+			ellipsis: true,
+			sorter: true,
+			width: 170,
+			render: (v) => formatAmount(v),
+		},
+		{
+			title: 'Initial loan',
+			dataIndex: 'initial_amount',
+			key: 'initial_amount',
+			ellipsis: true,
+			sorter: true,
+			width: 120,
+			render: (v) => formatAmount(v),
+		},
+		{
+			title: 'Hold back',
+			dataIndex: 'holdback_amount',
+			key: 'holdback_amount',
+			ellipsis: true,
+			sorter: true,
+			width: 120,
+			render: (v) => formatAmount(v),
+		},
+		{
+			title: 'Estimated Closing Fund',
+			dataIndex: 'closing_fund',
+			key: 'closing_fund',
+			ellipsis: true,
+			sorter: true,
+			width: 200,
+			render: (v) => formatAmount(v),
+		},
+		{
+			title: 'Rate',
+			dataIndex: 'rate',
+			key: 'rate',
+			ellipsis: true,
+			sorter: true,
+			width: 90,
+			render: (v) => `${v || 0}%`,
+		},
+		{
+			title: 'Loan type',
+			dataIndex: 'loan_type',
+			key: 'loan_type',
+			ellipsis: true,
+			width: 180,
+		},
+		...(stage === 'Draft' ? [] : [status]),
+		getOpt(showDeleteModal, stage),
+	];
+};
 
-export const activeColumns = [
-	...common,
+export const activeColumns = (isNotAddress, showDeleteModal) => [
+	...common(isNotAddress),
 	{
 		title: 'Lien Position',
-		dataIndex: 'lienPosition',
-		key: 'lienPosition',
+		dataIndex: 'lien_position',
+		key: 'lien_position',
 		ellipsis: true,
+		width: 120,
 	},
 	{
 		title: 'Lender',
-		dataIndex: 'lender',
-		key: 'lender',
+		dataIndex: 'lender_company',
+		key: 'lender_company',
 		ellipsis: true,
+		width: 180,
 	},
 	{
 		title: 'Loan type',
-		dataIndex: 'loanType',
-		key: 'loanType',
+		dataIndex: 'loan_type',
+		key: 'loan_type',
 		ellipsis: true,
+		width: 180,
 	},
 	{
 		title: 'Business strategy',
-		dataIndex: 'businessStrategy',
-		key: 'businessStrategy',
+		dataIndex: 'business_strategy',
+		key: 'business_strategy',
 		ellipsis: true,
+		render: (v) => v?.join(','),
+		width: 160,
 	},
 	{
 		title: 'Rate',
@@ -165,97 +254,100 @@ export const activeColumns = [
 		key: 'rate',
 		ellipsis: true,
 		sorter: true,
-		sortDirections: ['ascend', 'descend'],
+		width: 90,
+		render: (v) => `${v || 0}%`,
 	},
-	{
-		title: 'Point',
-		dataIndex: 'point',
-		key: 'point',
-		ellipsis: true,
-	},
+	// {
+	// 	title: 'Point',
+	// 	dataIndex: 'point',
+	// 	key: 'point',
+	// 	ellipsis: true,
+	// },
 	{
 		title: 'Maturity Date',
-		dataIndex: 'maturityDate',
-		key: 'maturityDate',
+		dataIndex: 'maturity_date',
+		key: 'maturity_date',
 		ellipsis: true,
 		sorter: true,
-		sortDirections: ['ascend', 'descend'],
+		width: 140,
 	},
 	{
 		title: 'Outstanding Loan Amount',
-		dataIndex: 'outstandingLoanAmount',
-		key: 'outstandingLoanAmount',
+		dataIndex: 'principal_amount',
+		key: 'principal_amount',
 		ellipsis: true,
 		sorter: true,
-		sortDirections: ['ascend', 'descend'],
+		width: 220,
+		render: (v) => formatAmount(v),
 	},
 	{
 		title: 'Total loan amount',
-		dataIndex: 'totalLoanAmount',
-		key: 'totalLoanAmount',
+		dataIndex: 'total_amount',
+		key: 'total_amount',
 		ellipsis: true,
 		sorter: true,
-		sortDirections: ['ascend', 'descend'],
+		width: 180,
+		render: (v) => formatAmount(v),
 	},
-	{
-		title: 'Hold back',
-		dataIndex: 'holdback',
-		key: 'holdback',
-		ellipsis: true,
-		sorter: true,
-		sortDirections: ['ascend', 'descend'],
-	},
-	{
-		title: 'Released Holdback',
-		dataIndex: 'releasedHoldback',
-		key: 'releasedHoldback',
-		ellipsis: true,
-		sorter: true,
-		sortDirections: ['ascend', 'descend'],
-	},
+	// {
+	// 	title: 'Released Holdback',
+	// 	dataIndex: 'releasedHoldback',
+	// 	key: 'releasedHoldback',
+	// 	ellipsis: true,
+	// 	sorter: true,
+	// 	sortDirections: ['ascend', 'descend'],
+	// },
 	{
 		title: 'Monthly Payment',
-		dataIndex: 'monthlyPayment',
-		key: 'monthlyPayment',
+		dataIndex: 'monthly_payment',
+		key: 'monthly_payment',
 		ellipsis: true,
 		sorter: true,
-		sortDirections: ['ascend', 'descend'],
+		width: 160,
+		render: (v) => formatAmount(v),
 	},
 	{
 		title: 'Prepayment Penalty',
-		dataIndex: 'prepaymentPenalty',
-		key: 'prepaymentPenalty',
+		dataIndex: 'prepayment_penalty',
+		key: 'prepayment_penalty',
 		ellipsis: true,
+		width: 160,
+		render: (v) => `${v} months interest`,
 	},
 	{
 		title: 'Servicing Company',
-		dataIndex: 'servicingCompany',
-		key: 'servicingCompany',
+		dataIndex: 'service_company',
+		key: 'service_company',
 		ellipsis: true,
+		width: 160,
 	},
+	getOpt(showDeleteModal),
 ];
 
-export const archivedColumns = [
-	...common,
+export const archivedColumns = (isNotAddress, showDeleteModal) => [
+	...common(isNotAddress),
 	{
 		title: 'Loan type',
-		dataIndex: 'loanType',
-		key: 'loanType',
+		dataIndex: 'loan_type',
+		key: 'loan_type',
 		ellipsis: true,
+		width: 180,
 	},
 	{
 		title: 'Principal Balance',
-		dataIndex: 'principalBalance',
-		key: 'principalBalance',
+		dataIndex: 'principal_amount',
+		key: 'principal_amount',
 		ellipsis: true,
 		sorter: true,
-		sortDirections: ['ascend', 'descend'],
+		width: 180,
+		render: (v) => formatAmount(v),
 	},
 	{
 		title: 'Lender',
-		dataIndex: 'lender',
-		key: 'lender',
+		dataIndex: 'lender_company',
+		key: 'lender_company',
 		ellipsis: true,
+		width: 180,
 	},
 	{
 		title: 'Rate',
@@ -263,14 +355,16 @@ export const archivedColumns = [
 		key: 'rate',
 		ellipsis: true,
 		sorter: true,
-		sortDirections: ['ascend', 'descend'],
+		width: 90,
+		render: (v) => `${v || 0}%`,
 	},
 	{
 		title: 'Paid Off Date',
-		dataIndex: 'paidOffDate',
-		key: 'paidOffDate',
+		dataIndex: 'paid_off_date',
+		key: 'paid_off_date',
 		ellipsis: true,
 		sorter: true,
-		sortDirections: ['ascend', 'descend'],
+		width: 160,
 	},
+	getOpt(showDeleteModal),
 ];

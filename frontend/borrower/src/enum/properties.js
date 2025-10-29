@@ -1,25 +1,26 @@
+import { formatAmount } from '@/lib/format';
 export const sort_asc = 'Ascending';
 export const sort_des = 'Descending';
 
 export const propertiesFieldArr = [
 	{
-		label: 'Total loan',
-		value: 'totalLoan',
-		render: (v) => `$ 980,000`,
+		label: 'Total active loan',
+		value: 'total_amount',
+		render: (v) => formatAmount(v),
 	},
 	{
 		label: 'Outstanding loan',
-		value: 'outstandingLoan',
-		render: (v) => `$ 980,000`,
+		value: 'total_principal_amount',
+		render: (v) => formatAmount(v),
 	},
 	{
-		label: 'Avg. rate',
-		value: 'avgRate',
-		render: (v) => `8.92%`,
+		label: 'Average active rate',
+		value: 'avg_rate',
+		render: (v) => `${v || 0}%`,
 	},
 	{
 		label: 'Total monthly payment',
-		value: 'totalMonthlyPayment',
-		render: (v) => `$ 980,000`,
+		value: 'total_monthly_payment_amount',
+		render: (v) => formatAmount(v),
 	},
 ];

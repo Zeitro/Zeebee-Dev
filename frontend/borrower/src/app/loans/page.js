@@ -1,54 +1,66 @@
 'use client';
 import { Tabs } from 'antd';
-import React, { useRef, useState } from 'react';
-import NewTable from '../../components/NewTable';
-import { activeColumns, archivedColumns, pendingColumns } from './components/column';
+import React, { useState } from 'react';
 import styles from './loans.module.scss';
 import PendingPage from './components/Pending';
 import ActiveLoans from './components/Active';
 import ArchivedLoans from './components/Archived';
-
+import { useGetOptions } from '@/hooks/useGetOptions';
+const api = '/loan/page';
 const Loans = () => {
 	const [tabKey, setTabKey] = useState('pending');
-	// const items = useRef([
-	// 	{
-	// 		key: 'pending',
-	// 		label: 'Pending Loans',
-	// 		children: <PendingPage filterWrapClassName="px-4 pb-4"/>,
-	// 	},
-	// 	{
-	// 		key: 'active',
-	// 		label: 'Active Loans',
-	// 		children: <ActiveLoans filterWrapClassName="px-4 pb-4"/>,
-	// 	},
-	// 	{
-	// 		key: 'archived',
-	// 		label: 'Archived Loans',
-	// 		children: <ArchivedLoans filterWrapClassName="px-4 pb-4"/>,
-	// 	},
-	// ]);
-    console.log('ooooo');
-    
+	useGetOptions([
+		{
+			key: 'loan_purpose',
+			valueName: 'loanPurposeOptions',
+		},
+		{
+			key: 'loan_type',
+			valueName: 'loanTypeOptions',
+		},
+		{
+			key: 'loan_pending_status',
+			valueName: 'loanPendingStatus',
+		},
+		{
+			type: 'lender',
+		},
+	]);
 	return (
 		<Tabs
 			activeKey={tabKey}
 			items={[
-		{
-			key: 'pending',
-			label: 'Pending Loans',
-			children: <PendingPage filterWrapClassName="px-4 pb-4"/>,
-		},
-		{
-			key: 'active',
-			label: 'Active Loans',
-			children: <ActiveLoans filterWrapClassName="px-4 pb-4"/>,
-		},
-		{
-			key: 'archived',
-			label: 'Archived Loans',
-			children: <ArchivedLoans filterWrapClassName="px-4 pb-4"/>,
-		},
-	]}
+				{
+					key: 'pending',
+					label: 'Pending Loans',
+					children: (
+						<PendingPage filterWrapClassName="px-4 pb-4" api={api} key="Pending" />
+					),
+				},
+				{
+					key: 'active',
+					label: 'Active Loans',
+					children: <ActiveLoans filterWrapClassName="px-4 pb-4" api={api} />,
+				},
+				{
+					key: 'archived',
+					label: 'Archived Loans',
+					children: <ArchivedLoans filterWrapClassName="px-4 pb-4" api={api} />,
+				},
+				{
+					key: 'draft',
+					label: 'Drafts',
+					children: (
+						<PendingPage
+							filterWrapClassName="px-4 pb-4"
+							api={api}
+							stage="Draft"
+							key="Draft"
+							scrollX={2200}
+						/>
+					),
+				},
+			]}
 			onChange={(v) => setTabKey(v)}
 			className={`h-full ${styles.loans}`}
 		/>

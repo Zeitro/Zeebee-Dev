@@ -1,0 +1,144 @@
+'use client';
+import { Anchor, Button, Col, Form, message, Row } from 'antd';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
+import CreateLoan from '../components/Create/Loan';
+import CreateProperty from '../components/Create/property';
+import CreateTerm from '../components/Create/term';
+import { useParams, useRouter } from 'next/navigation';
+import { createLoanSteps } from '@/enum/loan';
+import styles from './index.module.scss';
+import { createRequest } from '@/lib/fetch';
+import eventBus from '@/lib/bus';
+import { assemblyAddress } from '@/lib/format';
+import { useGlobalStore } from '@/store/global';
+const initialValues = {
+	applicants: [
+		{ is_primary: true, type: 'Individual' },
+		{ is_primary: false, type: 'Individual' },
+	],
+};
+const EditLoanPage = () => {
+	const { id } = useParams();
+	const router = useRouter();
+	const [form] = Form.useForm();
+	const stage = Form.useWatch('stage', form);
+	const { request } = createRequest();
+	const [loading, setLoading] = useState(false);
+	const { changeSidebarCollapsed } = useGlobalStore();
+
+	const getDetails = async () => {
+		let res = initialValues;
+		try {
+			res = await request(`/loan/${id}`);
+			eventBus.emit('changeCrumbs', {
+				2: `Edit Loan(${assemblyAddress(res?.loan_property?.property_base?.address)})`,
+			});
+			if (res.applicants?.length < 2) {
+				res.applicants = [
+					{ is_primary: true, type: 'Individual', ...(res.applicants?.[0] || {}) },
+					{ is_primary: false, type: 'Individual', ...(res.applicants?.[1] || {}) },
+				];
+			}
+			form.setFieldsValue({
+				...res,
+			});
+		} catch (error) {
+			form.setFieldsValue({
+				...res,
+			});
+		}
+	};
+
+	// edit loan
+	const handleNext = async () => {
+		try {
+			const values = await form.validateFields();
+			setLoading(true);
+			values.applicants = values?.applicants.filter(
+				(i) => i.first_name || i.mid_name || i.last_name,
+			);
+			await request(`/loan/${id}`, {
+				method: 'PUT',
+				body: values,
+			});
+			setLoading(false);
+			message.open({
+				type: 'success',
+				content: 'Update successful！',
+			});
+			router.back();
+		} catch (error) {
+			setLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		getDetails();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	useLayoutEffect(() => {
+		changeSidebarCollapsed(true);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	return (
+		<Row className={['h-full', styles.editLoan].join(' ')}>
+			<Col flex={'200px'} className="h-full border-r border-[#DBDCDE]">
+				<Anchor
+					getContainer={() => document.getElementById('editLoan-content')}
+					replace
+					affix={true}
+					onClick={() => {}}
+					items={createLoanSteps.map((item) => ({ ...item, href: `#${item.key}` }))}
+				/>
+			</Col>
+			<Col
+				id="editLoan-content"
+				flex="calc(100% - 200px)"
+				className="h-full overflow-hidden overflow-y-auto px-8"
+			>
+				<Form
+					form={form}
+					name="basic"
+					disabled={loading}
+					layout="vertical"
+					autoComplete="off"
+					size="large"
+					initialValues={initialValues}
+				>
+					<div id="loanDetail">
+						<p className="py-6 font-medium text-lg/7">Loan detail</p>
+						<CreateLoan form={form} xs={24} sm={24} lg={12} gutter={24} />
+					</div>
+					<div id="propertyDetail">
+						<p className="py-6 font-medium text-lg/7 border-t border-base-border">
+							Property detail
+						</p>
+						<CreateProperty
+							stage={stage}
+							xs={24}
+							sm={24}
+							lg={12}
+							gutter={24}
+							form={form}
+						/>
+					</div>
+					<div id="loanTerms">
+						<p className="py-6 font-medium text-lg/7 border-t border-base-border">
+							Loan terms
+						</p>
+						<CreateTerm stage={stage} xs={24} sm={24} lg={12} gutter={24} form={form} />
+					</div>
+				</Form>
+				<div className="flex justify-end py-4">
+					<Button type="primary" onClick={handleNext} loading={loading}>
+						Save change
+					</Button>
+				</div>
+			</Col>
+		</Row>
+	);
+};
+
+export default EditLoanPage;

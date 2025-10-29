@@ -1,39 +1,62 @@
-package main
+package rpc
 
 import (
-	"flag"
-	"fmt"
-
-	"zeebee-backend/app/borrower/rpc/internal/config"
-	borrowerServer "zeebee-backend/app/borrower/rpc/internal/server/borrower"
-	"zeebee-backend/app/borrower/rpc/internal/svc"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
-
-	"github.com/zeromicro/go-zero/core/conf"
-	"github.com/zeromicro/go-zero/core/service"
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
+
+	"github.com/zeromicro/go-zero/core/service"
+
+	"zeebee-backend/app/borrower/config"
+	"zeebee-backend/app/borrower/rpc/internal/global"
+	applicantServer "zeebee-backend/app/borrower/rpc/internal/server/applicant"
+	commonServer "zeebee-backend/app/borrower/rpc/internal/server/common"
+	loanServer "zeebee-backend/app/borrower/rpc/internal/server/loan"
+	loanDocumentServer "zeebee-backend/app/borrower/rpc/internal/server/loandocument"
+	propertyServer "zeebee-backend/app/borrower/rpc/internal/server/property"
+	storageServer "zeebee-backend/app/borrower/rpc/internal/server/storage"
+	userServer "zeebee-backend/app/borrower/rpc/internal/server/user"
+	"zeebee-backend/app/borrower/rpc/internal/svc"
+	"zeebee-backend/app/borrower/rpc/pb/borrower"
 )
 
-var configFile = flag.String("f", "etc/borrower.yaml", "the config file")
+type RpcServer struct {
+	s *zrpc.RpcServer
+}
 
-func main() {
-	flag.Parse()
+func NewRpcServer(c config.Config) (s service.Service, err error) {
+	rpcConfig := c.RpcConf
 
-	var c config.Config
-	conf.MustLoad(*configFile, &c)
-	ctx := svc.NewServiceContext(c)
+	err = global.InitGlobal(rpcConfig)
+	if err != nil {
+		return nil, err
+	}
 
-	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		borrower.RegisterBorrowerServer(grpcServer, borrowerServer.NewBorrowerServer(ctx))
+	ctx := svc.NewServiceContext(rpcConfig)
+	rpcServer := zrpc.MustNewServer(rpcConfig.RpcServerConf, func(grpcServer *grpc.Server) {
+		borrower.RegisterUserServer(grpcServer, userServer.NewUserServer(ctx))
+		borrower.RegisterLoanServer(grpcServer, loanServer.NewLoanServer(ctx))
+		borrower.RegisterCommonServer(grpcServer, commonServer.NewCommonServer(ctx))
+		borrower.RegisterPropertyServer(grpcServer, propertyServer.NewPropertyServer(ctx))
+		borrower.RegisterApplicantServer(grpcServer, applicantServer.NewApplicantServer(ctx))
+		borrower.RegisterStorageServer(grpcServer, storageServer.NewStorageServer(ctx))
+		borrower.RegisterLoanDocumentServer(grpcServer, loanDocumentServer.NewLoanDocumentServer(ctx))
 
-		if c.Mode == service.DevMode || c.Mode == service.TestMode {
+		if rpcConfig.Mode == service.DevMode || rpcConfig.Mode == service.TestMode {
 			reflection.Register(grpcServer)
 		}
 	})
-	defer s.Stop()
+	return &RpcServer{
+		s: rpcServer,
+	}, nil
+}
 
-	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
-	s.Start()
+func (s *RpcServer) Start() {
+	go func() {
+		s.s.Start()
+	}()
+}
+
+func (s *RpcServer) Stop() {
+	s.s.Stop()
 }
