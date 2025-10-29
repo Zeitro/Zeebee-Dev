@@ -374,6 +374,8 @@ message EditThirdPartyLoanPropertyEntry {
   int64 id = 1;
   int64 property_base_id = 2;
   string owner = 3;
+  string purchase_date = 4;
+  double purchase_amount = 5;
 }
 
 message LoanCreateRequestData {
@@ -448,7 +450,7 @@ message LoanUpdateRequestData {
   string loan_type = 5;
   double total_amount = 6;
   double initial_amount = 7;
-  LoanPropertyEntry loan_property = 8;
+  EditThirdPartyLoanPropertyEntry loan_property = 8;
   repeated BorrowerEditApplicantEntry applicants = 9;
   string lender_company = 10;
   string closing_date = 11;

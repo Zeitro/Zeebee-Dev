@@ -202,17 +202,30 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 		FutureBedrooms:       propertyBase.Bedrooms,
 		FutureBathrooms:      propertyBase.Bathrooms,
 		Address:              propertyBase.Address,
+		Owner:                in.LoanProperty.Owner,
+		PurchaseAmount:       in.LoanProperty.PurchaseAmount,
+	}
+	if len(in.LoanProperty.PurchaseDate) > 0 {
+		purchaseDate, err := timex.FormateTimeToStrWithUsStyle(in.LoanProperty.PurchaseDate)
+		if err != nil {
+			return nil, nil, nil, nil, errors.Wrap(err, "Invalid Purchase Date")
+		}
+		loanProperty.PurchaseDate = &sql.NullTime{
+			Time:  purchaseDate,
+			Valid: true,
+		}
+
 	}
 
 	if loan.TotalAmount < loan.InitialAmount {
-		return nil, nil, nil, nil, errors.New("Total amount cannot be less than initial amount")
+		return nil, nil, nil, nil, errors.New("Total Amount Cannot Be Less Than Initial Amount")
 	}
 	switch constants.LoanStage(in.Stage) {
 	case constants.LoanStagePending:
 		closingDate, err := timex.FormateTimeToStrWithUsStyle(in.ClosingDate)
 
 		if err != nil {
-			return nil, nil, nil, nil, errors.Wrap(err, "invalid closing date")
+			return nil, nil, nil, nil, errors.Wrap(err, "Invalid Closing Date")
 		}
 		loan.ClosingDate = &sql.NullTime{
 			Time:  closingDate,
@@ -226,7 +239,7 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 
 		maturityDate, err := timex.FormateTimeToStrWithUsStyle(in.MaturityDate)
 		if err != nil {
-			return nil, nil, nil, nil, errors.Wrap(err, "invalid maturity date")
+			return nil, nil, nil, nil, errors.Wrap(err, "Invalid Maturity Date")
 		}
 		loan.MaturityDate = &sql.NullTime{
 			Time:  maturityDate,
@@ -236,7 +249,7 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 	case constants.LoanStageArchived:
 		paidOffDate, err := timex.FormateTimeToStrWithUsStyle(in.PaidOffDate)
 		if err != nil {
-			return nil, nil, nil, nil, errors.Wrap(err, "invalid paid off date")
+			return nil, nil, nil, nil, errors.Wrap(err, "Invalid Paid Off Date")
 		}
 		loan.PaidOffDate = &sql.NullTime{
 			Time:  paidOffDate,
@@ -244,7 +257,7 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 		}
 		loan.PrincipalAmount = in.PrincipalAmount
 	default:
-		return nil, nil, nil, nil, errors.WithStack(errors.New("invalid loan stage"))
+		return nil, nil, nil, nil, errors.WithStack(errors.New("Invalid Loan Stage"))
 	}
 	return
 }

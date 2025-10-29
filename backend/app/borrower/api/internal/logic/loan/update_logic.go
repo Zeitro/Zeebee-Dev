@@ -61,7 +61,7 @@ func (l *UpdateLogic) Update(req *types.LoanUpdateRequest) (resp *types.EmptyRes
 			applicants[0].IsPrimary = true
 		}
 		if primaryCount > 1 {
-			return nil, errors.WithStack(errors.New("multiple primary applicant"))
+			return nil, errors.WithStack(errors.New("Multiple Primary Applicant"))
 		}
 	}
 	rpcReq.Data.Applicants = applicants

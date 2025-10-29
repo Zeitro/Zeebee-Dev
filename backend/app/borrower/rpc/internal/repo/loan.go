@@ -31,7 +31,7 @@ func (repo *LoanRepo) GetBorrowerLoan(ctx context.Context, id int64, borrowerId 
 			return db.Order("applicants.is_primary desc")
 		}).
 		Preload("LoanProperty").
-		Preload("LoanProperty.PropertyBase").
+		// Preload("LoanProperty.PropertyBase").
 		Preload("LoanBorrower").
 		Preload("LoanExperiences", func(db *gorm.DB) *gorm.DB {
 			return db.Order("loan_experiences.id asc")
