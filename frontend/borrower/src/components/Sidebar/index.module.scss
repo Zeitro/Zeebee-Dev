@@ -1,25 +1,41 @@
 .sidebar {
-    transition: 0.3s width;
-    .logo{
-    }
-    
-    .userInfo{
-        
-    }
+	transition: 0.3s width;
+	.logo {
+	}
+
+	.userInfo {
+	}
+	.bg {
+		background: linear-gradient(
+			to right,
+			#ffc3a0 0%,
+			#ffafbd 25%,
+			#d8b5ff 50%,
+			#a18cd1 75%,
+			#c2e9fb 100%
+		);
+	}
 }
-.menuList :global{
-    .ant-menu-item {
-        font-size: 16px;
-        font-weight: 600;
-        height: 48px !important;
-        line-height: 48px !important;
-    }
+.menuList :global {
+	.ant-menu-item {
+		font-size: 16px;
+		font-weight: 600;
+		height: 48px !important;
+		line-height: 48px !important;
+		display: flex !important;
+		align-items: center;
+	}
 }
-.menuList_collapsed :global{
-    .ant-menu-title-content{
-        display: none;
-    }
-    .ant-menu-item{
-        padding: 0;
-    }
+.menuList_collapsed :global {
+	.ant-menu-title-content {
+		display: none;
+	}
+	.ant-menu-item {
+		padding: 0 !important;
+		justify-content: center;
+	}
+}
+
+.sidebar_icon g > path {
+	fill: currentColor;
 }

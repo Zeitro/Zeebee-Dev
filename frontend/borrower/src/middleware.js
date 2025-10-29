@@ -1,20 +1,22 @@
 import { NextResponse } from 'next/server';
-import { getCurrentRouterItem } from '@config/common';
-import { routers } from '@config/routes';
+import { getCurrentRouterItem, flattenNavRouter } from '@config/common';
+import { routers, noTokenRouter } from '@config/routes';
 export function middleware(request) {
 	const { pathname } = request.nextUrl;
 
 	// 2. 获取 cookie/token
 	const token = request.cookies.get('token')?.value;
-	// const auth = request.headers.get('authorization');
 	// 路由白名单
-	const whiteList = ['/login'];
+	const noTokenList = flattenNavRouter(noTokenRouter);
+	const whiteList = noTokenList.map((item) => item.path);
 	const routerItem = getCurrentRouterItem(pathname, routers);
-	
-	// if (!token && !whiteList.includes(pathname)) {
-	// 	// 未登录且非白名单，重定向到登录页
-	// 	return NextResponse.redirect(new URL('/login', request.url));
-	// }
+
+	if (!token && !whiteList.includes(pathname)) {
+		console.log('noToken----------middleware---===', pathname);
+
+		// 未登录且非白名单，重定向到登录页
+		return NextResponse.redirect(new URL('/login', request.url));
+	}
 
 	const isAuthSuccessful = [].every((role) => routerItem?.roles?.includes(role));
 	//  其他权限逻辑（如角色判断等）
@@ -27,5 +29,8 @@ export function middleware(request) {
 }
 
 export const config = {
-	matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+	// 排除Next.js内部资源、静态文件、API路径
+	matcher: [
+		'/((?!_next/static|_next/image|api/|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+	],
 };
