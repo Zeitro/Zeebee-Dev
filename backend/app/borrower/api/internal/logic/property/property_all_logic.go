@@ -44,7 +44,7 @@ func (l *PropertyAllLogic) PropertyAll(req *types.EmptyRequest) (resp *types.Pro
 	}
 
 	resp = &types.PropertyAllResponse{}
-	resp.Lists = make([]*types.PropertyEntry, 0, len(rpcResp.Data))
+	resp.Lists = make([]*types.PropertyBaseEntry, 0, len(rpcResp.Data))
 
 	err = copier.CopyWithOption(&resp.Lists, rpcResp.Data, copier.Option{
 		DeepCopy:      true,

@@ -116,7 +116,7 @@ func (form *ApplyForm) buildPage5PropertyStatusTable(tablePosition position) (er
 
 	table.AddRow([]string{"Property Type", property.PropertyType, property.FuturePropertyType})
 	table.AddRow([]string{"Living Area SQFT", stringx.TransNumberToString(property.LivingAreaSqft, true), stringx.TransNumberToString(property.FutureLivingAreaSqft, true)})
-	table.AddRow([]string{"Number of Units", stringx.TransNumberToString(property.PropertyBase.Unit, true), stringx.TransNumberToString(property.FutureUnit, true)})
+	table.AddRow([]string{"Number of Units", stringx.TransNumberToString(property.Unit, true), stringx.TransNumberToString(property.FutureUnit, true)})
 	table.AddRow([]string{"Number of Bedrooms", stringx.TransNumberToString(property.Bedrooms, true), stringx.TransNumberToString(property.FutureBedrooms, true)})
 	table.AddRow([]string{"Number of Bathrooms", stringx.TransNumberToString(property.Bathrooms, true), stringx.TransNumberToString(property.FutureBathrooms, true)})
 	err = table.DrawTable()

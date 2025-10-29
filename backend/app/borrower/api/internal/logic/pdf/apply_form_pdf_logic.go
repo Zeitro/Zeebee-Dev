@@ -1,8 +1,10 @@
 package pdf
 
 import (
+	"bytes"
 	"context"
 
+	"zeebee-backend/app/borrower/api/internal/pdf/apply_form"
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 
@@ -24,8 +26,20 @@ func NewApplyFormPdfLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Appl
 	}
 }
 
-func (l *ApplyFormPdfLogic) ApplyFormPdf(req *types.ApplyFormPdfRequest) (resp *types.EmptyResponse, err error) {
-	// todo: add your logic here and delete this line
+func (l *ApplyFormPdfLogic) ApplyFormPdf(req *types.ApplyFormPdfRequest) (contents []byte, err error) {
+
+	var applyFormPdf *apply_form.ApplyForm
+	var buf []byte
+	ioWriter := bytes.NewBuffer(buf)
+	applyFormPdf, err = apply_form.NewApplyForm(req)
+	if err != nil {
+		return
+	}
+	err = applyFormPdf.Generate(ioWriter)
+	if err != nil {
+		return
+	}
+	contents = ioWriter.Bytes()
 
 	return
 }

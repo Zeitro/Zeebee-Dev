@@ -23,7 +23,7 @@ func (form *ApplyForm) page4() (err error) {
 	form.pdf.SetBoldFont()
 	loan := form.info
 	property := loan.LoanProperty
-	address := property.PropertyBase.Address
+	address := property.Address
 	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: 12}, "Subject Property Address:  "+address.Address1)
 	form.pdf.Br(lineHeight / 2.0)
 	_ = form.pdf.Cell(&gopdf.Rect{W: 120, H: 12}, "City:  "+address.City)

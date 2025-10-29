@@ -207,18 +207,19 @@ service user {
 }
 
 // ================ loan service =================
-message PropertyBaseEntry{
-  int64 id = 1;
-  string property_type = 2 [deprecated = true];
-  int32 unit = 3;
-  AddressEntry address = 4;
-  double TotalAmount = 5;
-}
+//message PropertyBaseEntry{
+//  int64 id = 1;
+//  string property_type = 2;
+//  int32 unit = 3;
+//  AddressEntry address = 4;
+//  double TotalAmount = 5;
+//}
+
 
 message LoanPropertyEntry{
   int64 id = 1;
   string property_type = 2 ;
-  PropertyBaseEntry property_base = 3;
+  PropertyBaseEntry property_base = 3 [deprecated = true];
   float living_area_sqft = 5;
   int32 bedrooms = 6;
   int32 bathrooms = 7;
@@ -229,6 +230,29 @@ message LoanPropertyEntry{
   int32 future_bathrooms = 12;
   string owner = 13;
   int32 unit = 14;
+  //
+  string existing_lender_company = 15;
+  float existing_rate = 16;
+  int64 existing_maturity_date = 17;
+  double purchase_amount = 18;
+  int64 purchase_date = 19;
+  bool has_assignment_fee = 20;
+  double assignment_fee_amount = 21;
+  bool has_subordinate_debt = 22;
+  double subordinate_debt_amount = 23;
+  string scheduled_close_escrow_date = 24;
+  double liquidity_amount = 25;
+  LoanBudgetEntry budget = 26;
+  bool mid_construction = 27;
+  double est_yearly_rental_income_amount = 28;
+  double yearly_liability_expense_amount = 29;
+  double dscr = 30;
+  bool has_delayed_financing = 31;
+  bool has_collateralized_blanket = 32;
+  bool has_properties_vacant = 33;
+  bool has_short_term_rental = 34;
+  double est_property_value_amount = 35;
+  AddressEntry address = 36;
 }
 
 message AddressEntry{
@@ -346,6 +370,12 @@ message LoanCreateRequest {
   LoanCreateRequestData data = 1;
 }
 
+message EditThirdPartyLoanPropertyEntry {
+  int64 id = 1;
+  int64 property_base_id = 2;
+  string owner = 3;
+}
+
 message LoanCreateRequestData {
   int64 borrower_id = 1;
   string stage = 2;
@@ -354,7 +384,8 @@ message LoanCreateRequestData {
   string loan_type = 5;
   double total_amount = 6;
   double initial_amount = 7;
-  LoanPropertyEntry loan_property = 8;
+  //  LoanPropertyEntry loan_property = 8;
+  EditThirdPartyLoanPropertyEntry loan_property = 8;
   repeated BorrowerEditApplicantEntry applicants = 9;
   string lender_company = 10;
   string closing_date = 11;
@@ -749,7 +780,7 @@ service Loan {
 
 // ===================== property service ======================
 
-message PropertyEntry {
+message PropertyBaseEntry {
   int64 id = 1;
   string property_type = 2;
   double total_amount = 3;
@@ -858,7 +889,7 @@ message PropertyCreateRequestData {
 }
 
 message PropertyCreateResponse {
-  PropertyEntry data = 1;
+  PropertyBaseEntry data = 1;
 }
 
 
@@ -879,7 +910,7 @@ message PropertyUpdateRequestData {
 
 // detail property
 message PropertyDetailResponse {
-  PropertyEntry data = 1;
+  PropertyBaseEntry data = 1;
 }
 
 // delete property
@@ -895,7 +926,7 @@ message PropertyAllRequest {
   int64 borrower_id = 1;
 }
 message PropertyAllResponse {
-  repeated PropertyEntry data = 1;
+  repeated PropertyBaseEntry data = 1;
 }
 
 

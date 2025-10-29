@@ -4,7 +4,7 @@
 package types
 
 type PropertyAllResponse struct {
-	Lists []*PropertyEntry `json:"lists"`
+	Lists []*PropertyBaseEntry `json:"lists"`
 }
 
 type PropertyCreateRequest struct {
@@ -17,7 +17,7 @@ type PropertyCreateRequest struct {
 }
 
 type PropertyCreateResponse struct {
-	PropertyEntry
+	PropertyBaseEntry
 }
 
 type PropertyDetailRequest struct {
@@ -25,7 +25,7 @@ type PropertyDetailRequest struct {
 }
 
 type PropertyDetailResponse struct {
-	PropertyEntry
+	PropertyBaseEntry
 }
 
 type PropertyDetailSummaryResponse struct {

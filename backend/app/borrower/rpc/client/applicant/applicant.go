@@ -22,6 +22,7 @@ type (
 	BorrowerNamesRequest                       = borrower.BorrowerNamesRequest
 	BorrowerNamesRequestData                   = borrower.BorrowerNamesRequestData
 	BorrowerNamesResponse                      = borrower.BorrowerNamesResponse
+	EditThirdPartyLoanPropertyEntry            = borrower.EditThirdPartyLoanPropertyEntry
 	EmptyRequest                               = borrower.EmptyRequest
 	EmptyResponse                              = borrower.EmptyResponse
 	FileDeleteRequest                          = borrower.FileDeleteRequest
@@ -101,7 +102,6 @@ type (
 	PropertyDetailResponse                     = borrower.PropertyDetailResponse
 	PropertyDetailSummaryResponse              = borrower.PropertyDetailSummaryResponse
 	PropertyDetailSummaryResponseData          = borrower.PropertyDetailSummaryResponseData
-	PropertyEntry                              = borrower.PropertyEntry
 	PropertyPageEntry                          = borrower.PropertyPageEntry
 	PropertyPageRequest                        = borrower.PropertyPageRequest
 	PropertyPageRequestData                    = borrower.PropertyPageRequestData

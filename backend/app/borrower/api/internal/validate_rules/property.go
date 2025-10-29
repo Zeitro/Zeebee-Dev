@@ -47,39 +47,39 @@ func LoanPreApprovalRequestProperty(sl validator.StructLevel) {
 }
 
 // LoanApplyPropertyEntry
-func LoanApplyPropertyEntry(sl validator.StructLevel) {
-	property, ok := sl.Current().Interface().(types.LoanApplyPropertyEntry)
-	if !ok {
-		sl.ReportError(property, "property", "Property", "property_type", "invalid property")
-		return
-	}
-	switch property.PropertyType {
-	case string(constants.PropertyTypeSingleFamilyResidence):
-		if property.Unit != 1 {
-			sl.ReportError(property.Unit, property.PropertyType, "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
-		}
-	case string(constants.PropertyTypeTwoUnit):
-		if property.Unit != 2 {
-			sl.ReportError(property.Unit, property.PropertyType, "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
-		}
-	case string(constants.PropertyTypeThreeUnit):
-		if property.Unit != 3 {
-			sl.ReportError(property.Unit, property.PropertyType, "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
-		}
-	case string(constants.PropertyTypeFourUnit):
-		if property.Unit != 4 {
-			sl.ReportError(property.Unit, property.PropertyType, "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
-		}
-	case string(constants.PropertyTypeFourPlusMulti):
-		if property.Unit < 4 {
-			sl.ReportError(property.Unit, property.PropertyType, "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
-		}
-	default:
-		if property.Unit < 1 {
-			sl.ReportError(property.Unit, property.PropertyType, "Unit", PropertyUnitTag, " >= 1")
-		}
-	}
-}
+// func EditLoanPropertyEntry(sl validator.StructLevel) {
+// 	property, ok := sl.Current().Interface().(types.EditLoanPropertyEntry)
+// 	if !ok {
+// 		sl.ReportError(property, "property", "Property", "property_type", "invalid property")
+// 		return
+// 	}
+// 	switch property.PropertyType {
+// 	case string(constants.PropertyTypeSingleFamilyResidence):
+// 		if property.Unit != 1 {
+// 			sl.ReportError(property.Unit, property.PropertyType, "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
+// 		}
+// 	case string(constants.PropertyTypeTwoUnit):
+// 		if property.Unit != 2 {
+// 			sl.ReportError(property.Unit, property.PropertyType, "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
+// 		}
+// 	case string(constants.PropertyTypeThreeUnit):
+// 		if property.Unit != 3 {
+// 			sl.ReportError(property.Unit, property.PropertyType, "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
+// 		}
+// 	case string(constants.PropertyTypeFourUnit):
+// 		if property.Unit != 4 {
+// 			sl.ReportError(property.Unit, property.PropertyType, "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
+// 		}
+// 	case string(constants.PropertyTypeFourPlusMulti):
+// 		if property.Unit < 4 {
+// 			sl.ReportError(property.Unit, property.PropertyType, "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
+// 		}
+// 	default:
+// 		if property.Unit < 1 {
+// 			sl.ReportError(property.Unit, property.PropertyType, "Unit", PropertyUnitTag, " >= 1")
+// 		}
+// 	}
+// }
 
 // LoanPropertyEntry
 func LoanPropertyEntry(sl validator.StructLevel) {

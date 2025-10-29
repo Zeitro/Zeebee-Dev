@@ -18,7 +18,7 @@ type LoanApplyRequest struct {
 	LoanPurpose              string                     `json:"loan_purpose,optional" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
 	TotalAmount              float64                    `json:"total_amount,optional" validate:"required,gt=0"`
 	InitialAmount            float64                    `json:"initial_amount,optional" validate:"ltefield=TotalAmount"`
-	LoanProperty             *LoanApplyPropertyEntry    `json:"loan_property,optional"`
+	LoanProperty             *EditLoanPropertyEntry     `json:"loan_property,optional"`
 	HoldbackAmount           float64                    `json:"holdback_amount,optional" validate:"ltefield=TotalAmount"`
 	PrincipalAmount          float64                    `json:"principal_amount,optional" validate:"required_unless=LoanPurpose Purchase,omitempty,gte=0"`
 	PrepaymentPenalty        int32                      `json:"prepayment_penalty,optional" validate:"required_if=LoanType Rental,omitempty,gte=0"`
@@ -68,7 +68,7 @@ type LoanCreateRequest struct {
 	LoanType              string                    `json:"loan_type" validate:"required,oneof=Bridge Rehab Rental 'Ground up construction'"`
 	TotalAmount           float64                   `json:"total_amount,optional"  validate:"required_unless=Stage Archived"`
 	InitialAmount         float64                   `json:"initial_amount,optional"`
-	LoanProperty          *LoanPropertyEntry        `json:"loan_property,optional" validate:"required"`
+	LoanProperty          *EditLoanPropertyEntry    `json:"loan_property,optional" validate:"required"`
 	Applicants            []*LoanEditApplicantEntry `json:"applicants,optional" validate:"required,min=1,max=2,dive,required"`
 	LenderCompany         string                    `json:"lender_company,optional" validate:"required"`
 	ClosingDate           string                    `json:"closing_date,optional" validate:"required_if=Stage Pending,omitempty,datetime=01/02/2006"`
@@ -152,7 +152,7 @@ type LoanUpdateRequest struct {
 	LoanType              string                    `json:"loan_type,optional" validate:"required,oneof=Bridge Rehab Rental 'Ground up construction'"`
 	TotalAmount           float64                   `json:"total_amount,optional"  validate:"required_unless=Stage Archived"`
 	InitialAmount         float64                   `json:"initial_amount,optional"`
-	LoanProperty          *LoanPropertyEntry        `json:"loan_property,optional" validate:"required"`
+	LoanProperty          *EditLoanPropertyEntry    `json:"loan_property,optional" validate:"required"`
 	Applicants            []*LoanEditApplicantEntry `json:"applicants,optional" validate:"required,dive,required"`
 	LenderCompany         string                    `json:"lender_company,optional" validate:"required"`
 	ClosingDate           string                    `json:"closing_date,optional" validate:"required_if=Stage Pending,omitempty,datetime=01/02/2006"`
