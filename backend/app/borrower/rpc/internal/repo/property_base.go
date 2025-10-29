@@ -207,6 +207,15 @@ func (repo *PropertyBaseRepo) UpdateOne(ctx context.Context, id int64, data *mod
 	return data, nil
 }
 
+// All return all of the borrower's properties
+func (repo *PropertyBaseRepo) All(ctx context.Context, borrowerId int64) (result []*model.PropertyBase, err error) {
+	err = repo.Client(ctx).
+		Where("borrower_id = ?", borrowerId).
+		Order("id desc").
+		Find(&result).Error
+	return result, errors.WithStack(err)
+}
+
 // IsExisted check given property base is existed
 func (repo *PropertyBaseRepo) IsExisted(ctx context.Context, id int64, borrowerId int64, address *types.Address) (isExisted bool, err error) {
 	if address == nil {

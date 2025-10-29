@@ -88,6 +88,8 @@ type (
 	OptionRequestData                          = borrower.OptionRequestData
 	OptionResponse                             = borrower.OptionResponse
 	PrimaryLoanPreApproval                     = borrower.PrimaryLoanPreApproval
+	PropertyAllRequest                         = borrower.PropertyAllRequest
+	PropertyAllResponse                        = borrower.PropertyAllResponse
 	PropertyBaseEntry                          = borrower.PropertyBaseEntry
 	PropertyCreateRequest                      = borrower.PropertyCreateRequest
 	PropertyCreateRequestData                  = borrower.PropertyCreateRequestData
@@ -157,6 +159,7 @@ type (
 		UpdateProperty(ctx context.Context, in *PropertyUpdateRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		DeleteProperty(ctx context.Context, in *PropertyDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		PropertyDetail(ctx context.Context, in *PropertyDetailRequest, opts ...grpc.CallOption) (*PropertyDetailResponse, error)
+		PropertyAll(ctx context.Context, in *PropertyAllRequest, opts ...grpc.CallOption) (*PropertyAllResponse, error)
 	}
 
 	defaultProperty struct {
@@ -198,4 +201,9 @@ func (m *defaultProperty) DeleteProperty(ctx context.Context, in *PropertyDelete
 func (m *defaultProperty) PropertyDetail(ctx context.Context, in *PropertyDetailRequest, opts ...grpc.CallOption) (*PropertyDetailResponse, error) {
 	client := borrower.NewPropertyClient(m.cli.Conn())
 	return client.PropertyDetail(ctx, in, opts...)
+}
+
+func (m *defaultProperty) PropertyAll(ctx context.Context, in *PropertyAllRequest, opts ...grpc.CallOption) (*PropertyAllResponse, error) {
+	client := borrower.NewPropertyClient(m.cli.Conn())
+	return client.PropertyAll(ctx, in, opts...)
 }

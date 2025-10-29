@@ -1169,6 +1169,7 @@ const (
 	Property_UpdateProperty_FullMethodName        = "/borrower.Property/UpdateProperty"
 	Property_DeleteProperty_FullMethodName        = "/borrower.Property/DeleteProperty"
 	Property_PropertyDetail_FullMethodName        = "/borrower.Property/PropertyDetail"
+	Property_PropertyAll_FullMethodName           = "/borrower.Property/PropertyAll"
 )
 
 // PropertyClient is the client API for Property service.
@@ -1181,6 +1182,7 @@ type PropertyClient interface {
 	UpdateProperty(ctx context.Context, in *PropertyUpdateRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	DeleteProperty(ctx context.Context, in *PropertyDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	PropertyDetail(ctx context.Context, in *PropertyDetailRequest, opts ...grpc.CallOption) (*PropertyDetailResponse, error)
+	PropertyAll(ctx context.Context, in *PropertyAllRequest, opts ...grpc.CallOption) (*PropertyAllResponse, error)
 }
 
 type propertyClient struct {
@@ -1251,6 +1253,16 @@ func (c *propertyClient) PropertyDetail(ctx context.Context, in *PropertyDetailR
 	return out, nil
 }
 
+func (c *propertyClient) PropertyAll(ctx context.Context, in *PropertyAllRequest, opts ...grpc.CallOption) (*PropertyAllResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PropertyAllResponse)
+	err := c.cc.Invoke(ctx, Property_PropertyAll_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PropertyServer is the server API for Property service.
 // All implementations must embed UnimplementedPropertyServer
 // for forward compatibility.
@@ -1261,6 +1273,7 @@ type PropertyServer interface {
 	UpdateProperty(context.Context, *PropertyUpdateRequest) (*EmptyResponse, error)
 	DeleteProperty(context.Context, *PropertyDeleteRequest) (*EmptyResponse, error)
 	PropertyDetail(context.Context, *PropertyDetailRequest) (*PropertyDetailResponse, error)
+	PropertyAll(context.Context, *PropertyAllRequest) (*PropertyAllResponse, error)
 	mustEmbedUnimplementedPropertyServer()
 }
 
@@ -1288,6 +1301,9 @@ func (UnimplementedPropertyServer) DeleteProperty(context.Context, *PropertyDele
 }
 func (UnimplementedPropertyServer) PropertyDetail(context.Context, *PropertyDetailRequest) (*PropertyDetailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PropertyDetail not implemented")
+}
+func (UnimplementedPropertyServer) PropertyAll(context.Context, *PropertyAllRequest) (*PropertyAllResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PropertyAll not implemented")
 }
 func (UnimplementedPropertyServer) mustEmbedUnimplementedPropertyServer() {}
 func (UnimplementedPropertyServer) testEmbeddedByValue()                  {}
@@ -1418,6 +1434,24 @@ func _Property_PropertyDetail_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Property_PropertyAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PropertyAllRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PropertyServer).PropertyAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Property_PropertyAll_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PropertyServer).PropertyAll(ctx, req.(*PropertyAllRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Property_ServiceDesc is the grpc.ServiceDesc for Property service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1448,6 +1482,10 @@ var Property_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PropertyDetail",
 			Handler:    _Property_PropertyDetail_Handler,
+		},
+		{
+			MethodName: "PropertyAll",
+			Handler:    _Property_PropertyAll_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

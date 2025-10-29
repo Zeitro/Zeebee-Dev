@@ -125,4 +125,10 @@ type (
         Bathrooms float32 `json:"bathrooms" validate:"required,gt=0"`
     }
 )
+// all properties
+type (
+    PropertyAllResponse {
+        Lists []*PropertyEntry `json:"lists"`
+    }
+)
 

@@ -88,6 +88,8 @@ type (
 	OptionRequestData                          = borrower.OptionRequestData
 	OptionResponse                             = borrower.OptionResponse
 	PrimaryLoanPreApproval                     = borrower.PrimaryLoanPreApproval
+	PropertyAllRequest                         = borrower.PropertyAllRequest
+	PropertyAllResponse                        = borrower.PropertyAllResponse
 	PropertyBaseEntry                          = borrower.PropertyBaseEntry
 	PropertyCreateRequest                      = borrower.PropertyCreateRequest
 	PropertyCreateRequestData                  = borrower.PropertyCreateRequestData

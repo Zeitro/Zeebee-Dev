@@ -52,3 +52,8 @@ func (s *PropertyServer) PropertyDetail(ctx context.Context, in *borrower.Proper
 	l := propertylogic.NewPropertyDetailLogic(ctx, s.svcCtx)
 	return l.PropertyDetail(in)
 }
+
+func (s *PropertyServer) PropertyAll(ctx context.Context, in *borrower.PropertyAllRequest) (*borrower.PropertyAllResponse, error) {
+	l := propertylogic.NewPropertyAllLogic(ctx, s.svcCtx)
+	return l.PropertyAll(in)
+}
