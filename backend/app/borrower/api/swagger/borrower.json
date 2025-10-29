@@ -6029,9 +6029,6 @@
             "schema": {
               "type": "object",
               "properties": {
-                "active_loan_count": {
-                  "type": "integer"
-                },
                 "address": {
                   "type": "object",
                   "properties": {
@@ -6052,34 +6049,22 @@
                     }
                   }
                 },
-                "applicants": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "archived_loan_count": {
-                  "type": "integer"
-                },
-                "avg_rate": {
+                "bathrooms": {
                   "type": "number"
                 },
-                "has_loans": {
-                  "type": "boolean"
+                "bedrooms": {
+                  "type": "integer"
+                },
+                "created_at": {
+                  "type": "string"
                 },
                 "id": {
                   "type": "integer"
                 },
-                "lenders": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
+                "living_area_sqft": {
+                  "type": "number"
                 },
-                "nearest_maturity_date": {
-                  "type": "string"
-                },
-                "pending_loan_count": {
+                "loan_count": {
                   "type": "integer"
                 },
                 "property_type": {
@@ -6088,11 +6073,107 @@
                 "total_amount": {
                   "type": "number"
                 },
-                "total_monthly_payment_amount": {
-                  "type": "number"
+                "unit": {
+                  "type": "integer"
                 },
-                "total_principal_amount": {
-                  "type": "number"
+                "updated_at": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/property/all": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "property"
+        ],
+        "summary": "all",
+        "operationId": "propertyPropertyAll",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "lists": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "property_type",
+                      "total_amount",
+                      "unit",
+                      "living_area_sqft",
+                      "bedrooms",
+                      "bathrooms",
+                      "address",
+                      "created_at",
+                      "updated_at",
+                      "loan_count"
+                    ],
+                    "properties": {
+                      "address": {
+                        "type": "object",
+                        "properties": {
+                          "address1": {
+                            "type": "string"
+                          },
+                          "address2": {
+                            "type": "string"
+                          },
+                          "city": {
+                            "type": "string"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "zip_code": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "bathrooms": {
+                        "type": "number"
+                      },
+                      "bedrooms": {
+                        "type": "integer"
+                      },
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "living_area_sqft": {
+                        "type": "number"
+                      },
+                      "loan_count": {
+                        "type": "integer"
+                      },
+                      "property_type": {
+                        "type": "string"
+                      },
+                      "total_amount": {
+                        "type": "number"
+                      },
+                      "unit": {
+                        "type": "integer"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -6299,9 +6380,6 @@
             "schema": {
               "type": "object",
               "properties": {
-                "active_loan_count": {
-                  "type": "integer"
-                },
                 "address": {
                   "type": "object",
                   "properties": {
@@ -6322,34 +6400,22 @@
                     }
                   }
                 },
-                "applicants": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "archived_loan_count": {
-                  "type": "integer"
-                },
-                "avg_rate": {
+                "bathrooms": {
                   "type": "number"
                 },
-                "has_loans": {
-                  "type": "boolean"
+                "bedrooms": {
+                  "type": "integer"
+                },
+                "created_at": {
+                  "type": "string"
                 },
                 "id": {
                   "type": "integer"
                 },
-                "lenders": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
+                "living_area_sqft": {
+                  "type": "number"
                 },
-                "nearest_maturity_date": {
-                  "type": "string"
-                },
-                "pending_loan_count": {
+                "loan_count": {
                   "type": "integer"
                 },
                 "property_type": {
@@ -6358,11 +6424,11 @@
                 "total_amount": {
                   "type": "number"
                 },
-                "total_monthly_payment_amount": {
-                  "type": "number"
+                "unit": {
+                  "type": "integer"
                 },
-                "total_principal_amount": {
-                  "type": "number"
+                "updated_at": {
+                  "type": "string"
                 }
               }
             }
@@ -6402,30 +6468,9 @@
                 "unit",
                 "living_area_sqft",
                 "bedrooms",
-                "bathrooms",
-                "address"
+                "bathrooms"
               ],
               "properties": {
-                "address": {
-                  "type": "object",
-                  "properties": {
-                    "address1": {
-                      "type": "string"
-                    },
-                    "address2": {
-                      "type": "string"
-                    },
-                    "city": {
-                      "type": "string"
-                    },
-                    "state": {
-                      "type": "string"
-                    },
-                    "zip_code": {
-                      "type": "string"
-                    }
-                  }
-                },
                 "bathrooms": {
                   "type": "number"
                 },
@@ -9544,7 +9589,7 @@
       }
     }
   },
-  "x-date": "2025-10-29 09:58:23",
+  "x-date": "2025-10-29 11:17:05",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

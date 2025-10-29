@@ -251,6 +251,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: property.PropertyDetailSummaryHandler(serverCtx),
 				},
 				{
+					// all
+					Method:  http.MethodGet,
+					Path:    "/property/all",
+					Handler: property.PropertyAllHandler(serverCtx),
+				},
+				{
 					// page
 					Method:  http.MethodPost,
 					Path:    "/property/page",

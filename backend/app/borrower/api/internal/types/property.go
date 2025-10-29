@@ -3,6 +3,10 @@
 
 package types
 
+type PropertyAllResponse struct {
+	Lists []*PropertyEntry `json:"lists"`
+}
+
 type PropertyCreateRequest struct {
 	PropertyType   string        `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
 	Unit           int32         `json:"unit" validate:"required,gt=0"`

@@ -198,6 +198,10 @@ service borrower-api {
 	@handler PropertyPage
 	post /property/page (PropertyPageRequest) returns (PropertyPageResponse)
 
+	@doc "all"
+	@handler PropertyAll
+	get /property/all (EmptyRequest) returns (PropertyAllResponse)
+
 	@doc "property Summary"
 	@handler PropertyDetailSummary
 	get /property/:id/summary (PropertyDetailRequest) returns (PropertyDetailSummaryResponse)
