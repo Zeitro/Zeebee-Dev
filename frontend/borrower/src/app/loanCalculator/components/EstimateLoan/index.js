@@ -95,6 +95,7 @@ const EstimateLoan = ({ setIsResult, setResult }) => {
 			savePreApprovedResult(res?.primary);
 			setIsResult(true);
 			setLoading(false);
+			console.log(`失败原因：${res?.primary?.reject_reason}`);
 		} catch (error) {
 			console.log(error);
 			setLoading(false);
