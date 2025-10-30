@@ -28,11 +28,11 @@ const DropdownStatus = ({
 	const { request, cancel } = createRequest();
 	const rowData = useMemo(() => {
 		return items.find((i) => i.key === statusValue) || {};
-	}, [statusValue]);
+	}, [items, statusValue]);
 
 	useEffect(() => {
-		setStatusValue(data[statusKey] || '');
-	}, [data]);
+		setStatusValue(data[statusKey]);
+	}, [data, statusKey]);
 
 	const handleSelect = async ({ key }) => {
 		try {
@@ -49,7 +49,7 @@ const DropdownStatus = ({
 				content: 'Update successful！',
 			});
 			successCallback?.();
-		} catch (error) {
+		} catch {
 			setLoading(false);
 		}
 	};
