@@ -5,6 +5,8 @@ import (
 	"html/template"
 
 	"github.com/pkg/errors"
+
+	"zeebee-backend/common/stringx"
 )
 
 // global template manager
@@ -41,8 +43,13 @@ type Templates struct {
 
 // RegisterWithContent register template with text content
 func (t *Templates) RegisterWithText(name string, tplContent string) (err error) {
+	funcMap := template.FuncMap{
+		"usd":      stringx.FormatUsDollarCurrency,
+		"usaphone": stringx.FormatUsPhoneNumber,
+	}
+
 	var tpl *template.Template
-	tpl, err = template.New(name).Parse(tplContent)
+	tpl, err = template.New(name).Funcs(funcMap).Parse(tplContent)
 	if err != nil {
 		return
 	}
