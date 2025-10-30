@@ -158,7 +158,7 @@ func (r *PreApprovalRule) CalPreApprovalLoanAmount(input InputLoanInfo) (result 
 		return result, err
 	}
 	// Check if loan is rejected based on calculated values
-	if ltaiv == 0 || ltc == 0 || ltarv == 0 {
+	if ltaiv == 0 && ltc == 0 && ltarv == 0 {
 		result.RejectReason = "Can Not Get ltaiv/ltc/ltarv"
 		result.Ltc = float32(ltc)
 		result.Ltarv = float32(ltarv)
@@ -170,8 +170,18 @@ func (r *PreApprovalRule) CalPreApprovalLoanAmount(input InputLoanInfo) (result 
 	maxByLTC := (input.EstCurrentPropertyValue + input.OriginalBudgetAmount) * float64(ltc)
 	maxByLTARV := input.EstAfterRepairValue * float64(ltarv)
 
+	totalLoanAmounts := []float64{maxByLTAIV, maxByLTC, maxByLTARV}
+	totalLoanAmounts = slice.Filter(totalLoanAmounts, func(index int, totalLoanAmount float64) bool {
+		return totalLoanAmount > 0
+	})
+	if len(totalLoanAmounts) == 0 {
+		result.RejectReason = "Can Not Get Loan Amount"
+		return result, nil
+	}
+	slice.Sort(totalLoanAmounts, "asc")
+
 	// Get final loan amount using the most conservative value
-	totalLoanAmount := math.Min(math.Min(maxByLTAIV, maxByLTC), maxByLTARV)
+	totalLoanAmount := totalLoanAmounts[0]
 	isLargeUnit := r.isLargeUnit(input.Unit)
 	if isLargeUnit {
 		totalLoanAmount = math.Min(totalLoanAmount, r.PreApprovalAmountRange.LargeUnitAmountRange.Max)
