@@ -34,6 +34,7 @@ type RpcConf struct {
 	LoginUrl                     string
 	VerifyEmailUrl               string
 	ResetPwdUrl                  string
+	LenderUrl                    string
 	PreApprovalLoanConf          []PreApprovalLoanConf
 }
 
