@@ -265,6 +265,9 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
 		},
 	})
+	if err != nil {
+		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
+	}
 	// loan property
 	propertyBase, err := l.svcCtx.BorrowerPropertyRepo.FindOneByColumns(l.ctx, map[string]interface{}{
 		"id":          in.LoanProperty.BorrowerPropertyId,
