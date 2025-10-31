@@ -10,7 +10,7 @@ import "address.api"
 import "loan.api"
 
 type (
-    PropertyBaseEntry {
+    BorrowerPropertyEntry {
         Id int64 `json:"id"`
         PropertyType string `json:"property_type"`
         TotalAmount float64 `json:"total_amount"`
@@ -95,7 +95,7 @@ type (
 //  detail
 type (
     PropertyDetailResponse {
-        PropertyBaseEntry
+        BorrowerPropertyEntry
     }
 )
 
@@ -110,7 +110,7 @@ type (
         Address *AddressEntry `json:"address" validate:"required"`
     }
     PropertyCreateResponse {
-        PropertyBaseEntry
+        BorrowerPropertyEntry
     }
 )
 
@@ -128,7 +128,7 @@ type (
 // all properties
 type (
     PropertyAllResponse {
-        Lists []*PropertyBaseEntry `json:"lists"`
+        Lists []*BorrowerPropertyEntry `json:"lists"`
     }
 )
 

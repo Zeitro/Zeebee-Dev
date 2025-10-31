@@ -53,7 +53,7 @@ type LoanBudgetEntry {
     CostSpentToDateAmount float64 `json:"cost_spent_to_date_amount"`
 }
 
-type EditLoanPropertyEntry {
+type LoanPropertyEditEntry {
     //    Id int64 `json:"id,optional"`
     PropertyBaseId int64 `json:"property_base_id" validate:"required,gt=0"`
     Ower string `json:"ower,optional" validate:"max=50"`

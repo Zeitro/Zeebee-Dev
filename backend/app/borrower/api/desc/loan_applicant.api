@@ -1,15 +1,15 @@
 syntax = "v1"
 
 info(
-    title: "borrower-address-api"
-    desc: "applicant-api http service description"
+    title: "borrower-loan-applicant-api"
+    desc: "loan-applicant-api http service description"
     version: "v1"
 )
 
 import "address.api"
 
 
-type ApplicantEntry {
+type LoanApplicantEntry {
     Id int64 `json:"id,omitempty,optional"`
     FirstName string `json:"first_name,omitempty, optional"`
     MidName string `json:"mid_name,omitempty, optional"`
@@ -38,7 +38,7 @@ type BorrowerNamesResponse {
 }
 
 
-type LoanEditApplicantEntry {
+type LoanApplicantEditEntry {
     Id int64 `json:"id,optional"`
     FirstName string `json:"first_name" validate:"required,min=1,max=30"`
     MidName string `json:"mid_name,optional" validate:"min=0,max=30"`
@@ -47,7 +47,7 @@ type LoanEditApplicantEntry {
     IsPrimary bool `json:"is_primary"`
 }
 
-type LoanApplyApplicantEntry {
+type LoanApplicantApplyEntry {
     Id int64 `json:"id,optional"`
     FirstName string `json:"first_name,optional" validate:"required,min=1,max=30"`
     MidName string `json:"mid_name,optional" validate:"min=0,max=30"`

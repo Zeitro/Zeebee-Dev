@@ -1,4 +1,4 @@
-package property
+package borrower_property
 
 import (
 	"net/http"
@@ -6,7 +6,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
 
-	"zeebee-backend/app/borrower/api/internal/logic/property"
+	"zeebee-backend/app/borrower/api/internal/logic/borrower_property"
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 
@@ -16,7 +16,7 @@ import (
 )
 
 // detail
-func PropertyDetailHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func PropertyDetailSummaryHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer func() {
@@ -42,8 +42,8 @@ func PropertyDetailHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := property.NewPropertyDetailLogic(r.Context(), svcCtx)
-		resp, err := l.PropertyDetail(&req)
+		l := borrower_property.NewPropertyDetailSummaryLogic(r.Context(), svcCtx)
+		resp, err := l.PropertyDetailSummary(&req)
 		if err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 		} else {

@@ -1,4 +1,4 @@
-package property
+package borrower_property
 
 import (
 	"context"

@@ -1,4 +1,4 @@
-package applicant
+package loan_applicant
 
 import (
 	"context"
