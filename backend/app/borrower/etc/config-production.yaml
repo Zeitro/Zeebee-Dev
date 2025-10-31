@@ -91,6 +91,7 @@ RpcConf:
         Min: 6
         Max: 18
   LoginUrl: https://app.zeebeeloans.com/login
+  LenderUrl: https://agent.zeebeeloans.com
   VerifyEmailUrl: https://app.zeebeeloans.com/login/verifyEmail
   ResetPwdUrl: https://app.zeebeeloans.com/login/resetPassword
   PreApprovalLoanExpireSeconds: 86400
