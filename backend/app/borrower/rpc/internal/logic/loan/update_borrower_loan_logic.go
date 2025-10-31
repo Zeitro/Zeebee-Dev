@@ -48,7 +48,7 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 		return nil, err
 	}
 
-	loan, loanProperty, applicants, loanBorrower, err := l.buildUpdateModels(in.Data)
+	loan, loanProperty, applicants, loanBorrower, err := l.buildUpdateModels(in.Data, loanModel)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 		return nil, errors.WithStack(errors.New("Applicant Is Not Found"))
 	}
 	if loanModel.Source != constants.LoanSourceBorrower && loanModel.Source != constants.LoanSourcePreApproval {
-		return nil, errors.WithStack(errors.New("Loan Source Is Not 3rd Party"))
+		return nil, errors.WithStack(errors.New("Loan Source Is Not Third Party"))
 	}
 	loanPropertyModel := loanModel.LoanProperty
 	if loanPropertyModel == nil {
@@ -68,7 +68,7 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 	// create loan
 	err = l.svcCtx.LoanRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
 		var innerErr error
-		previousPropertyBaseId := loanPropertyModel.BorrowerPropertyId
+		previousBorrowerPropertyId := loanPropertyModel.BorrowerPropertyId
 
 		// update loan
 		loan.Id = in.Data.Id
@@ -80,7 +80,8 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 		}
 
 		// update loan property
-		loanProperty.BorrowerPropertyId = in.Data.LoanProperty.BorrowerPropertyId
+		loanProperty.Id = loanPropertyModel.Id
+		// loanProperty.BorrowerPropertyId = in.Data.LoanProperty.BorrowerPropertyId
 		_, innerErr = l.svcCtx.LoanPropertyRepo.UpdateOneWithTx(l.ctx, tx, loanPropertyModel.Id, loanProperty)
 		if innerErr != nil {
 			return innerErr
@@ -156,14 +157,14 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 		}
 
 		// sync property total amount
-		_ = l.svcCtx.BorrowerPropertyRepo.SyncTotalAmountAndLoanCountWithTx(l.ctx, tx, previousPropertyBaseId)
-		if in.Data.LoanProperty.BorrowerPropertyId != previousPropertyBaseId {
+		_ = l.svcCtx.BorrowerPropertyRepo.SyncTotalAmountAndLoanCountWithTx(l.ctx, tx, previousBorrowerPropertyId)
+		if in.Data.LoanProperty.BorrowerPropertyId != previousBorrowerPropertyId {
 			_ = l.svcCtx.BorrowerPropertyRepo.SyncTotalAmountAndLoanCountWithTx(l.ctx, tx, in.Data.LoanProperty.BorrowerPropertyId)
 		}
 		return innerErr
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to update loan")
+		return nil, errors.Wrap(err, "Failed To Update Loan")
 	}
 
 	return &borrower.EmptyResponse{}, nil
@@ -174,7 +175,7 @@ func (l *UpdateBorrowerLoanLogic) handleBorrowerProperty(tx *gorm.DB, propertyId
 	// get existed property
 	newProperty, err = l.svcCtx.BorrowerPropertyRepo.GetOneWithTxByProperty(l.ctx, tx, property)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get property base")
+		return nil, errors.Wrap(err, "Failed To Get Property Base")
 	}
 	if newProperty != nil {
 		return newProperty, nil
@@ -183,7 +184,7 @@ func (l *UpdateBorrowerLoanLogic) handleBorrowerProperty(tx *gorm.DB, propertyId
 	// get previous property
 	prevProperty, err := l.svcCtx.BorrowerPropertyRepo.GetOneWithTx(l.ctx, tx, propertyId, []string{"LoanProperties"})
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get property")
+		return nil, errors.Wrap(err, "Failed To Get Property")
 	}
 
 	// create new property if relate zero or more than one loan property
@@ -197,7 +198,8 @@ func (l *UpdateBorrowerLoanLogic) handleBorrowerProperty(tx *gorm.DB, propertyId
 	return
 }
 
-func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateRequestData) (loan *model.Loan, loanProperty *model.LoanProperty, applicants []*model.LoanApplicant, loanBorrower *model.LoanBorrower, err error) {
+func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateRequestData, oldLoan *model.Loan) (loan *model.Loan, loanProperty *model.LoanProperty, applicants []*model.LoanApplicant, loanBorrower *model.LoanBorrower, err error) {
+
 	// build applicants
 	for _, applicant := range in.Applicants {
 		if len(applicant.FirstName) == 0 {
@@ -255,7 +257,19 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 		OwnPercent: 100,
 	}
 
+	// handle loan
 	loan = &model.Loan{}
+	err = copier.CopyWithOption(loan, oldLoan, copier.Option{
+		IgnoreEmpty:   false,
+		DeepCopy:      true,
+		CaseSensitive: true,
+		Converters: []copier.TypeConverter{
+			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
+		},
+	})
+	if err != nil {
+		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
+	}
 	err = copier.CopyWithOption(loan, in, copier.Option{
 		IgnoreEmpty:   false,
 		DeepCopy:      true,
@@ -267,6 +281,8 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 	if err != nil {
 		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
 	}
+	loan.RemoveRelationships()
+
 	// loan property
 	borrowerProperty, err := l.svcCtx.BorrowerPropertyRepo.FindOneByColumns(l.ctx, map[string]interface{}{
 		"id":          in.LoanProperty.BorrowerPropertyId,
