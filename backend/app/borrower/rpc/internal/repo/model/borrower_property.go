@@ -25,5 +25,5 @@ type BorrowerProperty struct {
 }
 
 func (m BorrowerProperty) TableName() string {
-	return "property_bases"
+	return "borrower_properties"
 }

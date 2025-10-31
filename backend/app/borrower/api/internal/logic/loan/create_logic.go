@@ -62,7 +62,7 @@ func (l *CreateLogic) Create(req *types.LoanCreateRequest) (resp *types.LoanCrea
 			applicants[0].IsPrimary = true
 		}
 		if primaryCount > 1 {
-			return nil, errors.WithStack(errors.New("multiple primary applicant"))
+			return nil, errors.WithStack(errors.New("Multiple Primary Applicant"))
 		}
 	}
 	rpcReq.Data.Applicants = applicants
