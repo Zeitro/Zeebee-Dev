@@ -3,6 +3,8 @@ package email_tpl
 import (
 	"embed"
 
+	"golang.org/x/sync/errgroup"
+
 	"zeebee-backend/common/email"
 )
 
@@ -32,19 +34,41 @@ var SendThirdPartyPreApprovalNotificationTpl string
 
 const (
 	// RegisterVerifyEmail is the key for registration verification email template.
-	RegisterVerifyEmail               = "register_verify_email"
+	RegisterVerifyEmail = "register_verify_email"
 	// ResetPwdEmail is the key for password reset email template.
 	ResetPwdEmail = "reset_pwd_email"
 	// LoginURLEmail is the key for login URL email template.
-	LoginUrlEmail = "login_url_email"
+	LoginUrlEmail                     = "login_url_email"
 	SelfPreApprovalNotification       = "self_preapproval_notification"
 	ThirdPartyPreApprovalNotification = "third_party_preapproval_notification"
 )
 
 func init() {
-	_ = email.RegisterTemplateWithText(RegisterVerifyEmail, SendRegisterVerifyEmailTpl)
-	_ = email.RegisterTemplateWithText(ResetPwdEmail, SendResetPwdEmailTpl)
-	_ = email.RegisterTemplateWithText(LoginUrlEmail, SendLoginUrlEmailTpl)
-	_ = email.RegisterTemplateWithText(SelfPreApprovalNotification, SendSelfPreApprovalNotificationTpl)
-	_ = email.RegisterTemplateWithText(ThirdPartyPreApprovalNotification, SendThirdPartyPreApprovalNotificationTpl)
+
+	eg := errgroup.Group{}
+	eg.Go(func() error {
+		return email.RegisterTemplateWithText(RegisterVerifyEmail, SendRegisterVerifyEmailTpl)
+	})
+	eg.Go(func() error {
+		return email.RegisterTemplateWithText(ResetPwdEmail, SendResetPwdEmailTpl)
+	})
+	eg.Go(func() error {
+		return email.RegisterTemplateWithText(LoginUrlEmail, SendLoginUrlEmailTpl)
+	})
+	eg.Go(func() error {
+		return email.RegisterTemplateWithText(SelfPreApprovalNotification, SendSelfPreApprovalNotificationTpl)
+	})
+	eg.Go(func() error {
+		return email.RegisterTemplateWithText(ThirdPartyPreApprovalNotification, SendThirdPartyPreApprovalNotificationTpl)
+	})
+	err := eg.Wait()
+	if err != nil {
+		panic(err)
+	}
+
+	// _ = email.RegisterTemplateWithText(RegisterVerifyEmail, SendRegisterVerifyEmailTpl)
+	// _ = email.RegisterTemplateWithText(ResetPwdEmail, SendResetPwdEmailTpl)
+	// _ = email.RegisterTemplateWithText(LoginUrlEmail, SendLoginUrlEmailTpl)
+	// _ = email.RegisterTemplateWithText(SelfPreApprovalNotification, SendSelfPreApprovalNotificationTpl)
+	// _ = email.RegisterTemplateWithText(ThirdPartyPreApprovalNotification, SendThirdPartyPreApprovalNotificationTpl)
 }
