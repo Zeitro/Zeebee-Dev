@@ -330,7 +330,7 @@ message ThirdPartyLoanPropertyEditEntry {
   string purchase_date = 4;
   double purchase_amount = 5;
 }
-
+// loan create
 message LoanCreateRequestData {
   int64 borrower_id = 1;
   string stage = 2;
@@ -383,14 +383,7 @@ message BorrowerApplicantEditEntry {
   string mid_name = 7;
 }
 
-//message BatchLoanCreateRequest {
-//  repeated LoanCreateRequestData data = 1;
-//}
-
-//message BatchLoanCreateResponse {
-//  LoanCreateResponseData data = 1;
-//}
-
+// loan  update
 message LoanUpdateRequest {
   LoanUpdateRequestData data = 1;
 }
