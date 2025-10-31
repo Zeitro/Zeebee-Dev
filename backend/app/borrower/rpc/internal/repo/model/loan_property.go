@@ -11,7 +11,7 @@ import (
 type LoanProperty struct {
 	Base
 	LoanId               int64                  `gorm:"column:loan_id;not null;default:0" json:"loan_id"`
-	PropertyBaseId       int64                  `gorm:"column:property_base_id;not null;default:0" json:"property_base_id"`
+	BorrowerPropertyId   int64                  `gorm:"column:borrower_property_id;not null;default:0" json:"borrower_property_id"`
 	Unit                 int32                  `gorm:"column:unit;not null;default:1" json:"unit"`
 	PropertyType         constants.PropertyType `gorm:"column:property_type;size:30;not null;default:''" json:"property_type"`
 	LivingAreaSqft       float32                `gorm:"column:living_area_sqft;type:numeric(8,2);not null;default:0" json:"living_area_sqft"`
@@ -48,9 +48,9 @@ type LoanProperty struct {
 	EstPropertyValueAmount       float64             `gorm:"column:est_property_value_amount;type:decimal(10,2);not null;default:0" json:"est_property_value_amount"`
 
 	// relationships
-	PropertyBase *PropertyBase `json:"property_base" gorm:"foreignKey:PropertyBaseId;references:Id"`
-	Loan         *Loan         `json:"loan" gorm:"foreignKey:LoanId;references:Id"`
-	Applicants   []*Applicant  `json:"applicants" gorm:"foreignKey:LoanPropertyId;references:Id"`
+	BorrowerProperty *BorrowerProperty `json:"borrower_property" gorm:"foreignKey:BorrowerPropertyId;references:Id"`
+	Loan             *Loan             `json:"loan" gorm:"foreignKey:LoanId;references:Id"`
+	Applicants       []*LoanApplicant  `json:"applicants" gorm:"foreignKey:LoanPropertyId;references:Id"`
 }
 
 func (m LoanProperty) TableName() string {
@@ -58,7 +58,7 @@ func (m LoanProperty) TableName() string {
 }
 
 func (m *LoanProperty) RemoveRelationships() {
-	m.PropertyBase = nil
+	m.BorrowerProperty = nil
 	m.Loan = nil
 	m.Applicants = nil
 }

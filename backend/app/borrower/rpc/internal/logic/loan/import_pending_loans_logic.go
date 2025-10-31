@@ -23,11 +23,11 @@ import (
 )
 
 type importPendingLoanModelData struct {
-	loan         *model.Loan
-	loanBorrower *model.LoanBorrower
-	loanProperty *model.LoanProperty
-	propertyBase *model.PropertyBase
-	applicants   []*model.Applicant
+	loan             *model.Loan
+	loanBorrower     *model.LoanBorrower
+	loanProperty     *model.LoanProperty
+	borrowerProperty *model.BorrowerProperty
+	applicants       []*model.LoanApplicant
 	// loanExtend   *model.LoanExtend
 }
 
@@ -65,11 +65,11 @@ func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingL
 		var innerErr error
 
 		for i := range models {
-			var propertyBase *model.PropertyBase
+			var propertyBase *model.BorrowerProperty
 			var uid string
 			data := models[i]
 			// get property base
-			propertyBase, innerErr = l.svcCtx.PropertyBaseRepo.GetOrCreateWithTx(l.ctx, tx, data.propertyBase)
+			propertyBase, innerErr = l.svcCtx.BorrowerPropertyRepo.GetOrCreateWithTx(l.ctx, tx, data.borrowerProperty)
 			if innerErr != nil {
 				return innerErr
 			}
@@ -89,7 +89,7 @@ func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingL
 			// loan property
 			loanProperty := data.loanProperty
 			loanProperty.LoanId = loan.Id
-			loanProperty.PropertyBaseId = propertyBase.Id
+			loanProperty.BorrowerPropertyId = propertyBase.Id
 			loanProperty, innerErr = l.svcCtx.LoanPropertyRepo.CreateWithTx(l.ctx, tx, loanProperty, false)
 			if innerErr != nil {
 				return innerErr
@@ -105,7 +105,7 @@ func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingL
 
 			// applicants
 			applicants := data.applicants
-			applicants = slice.Map(applicants, func(index int, item *model.Applicant) *model.Applicant {
+			applicants = slice.Map(applicants, func(index int, item *model.LoanApplicant) *model.LoanApplicant {
 				item.LoanId = loan.Id
 				item.LoanPropertyId = loanProperty.Id
 				item.LoanBorrowerId = loanBorrower.Id
@@ -113,7 +113,7 @@ func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingL
 
 				return item
 			})
-			_, innerErr = l.svcCtx.ApplicantRepo.BatchCreateWithTx(l.ctx, tx, applicants, false)
+			_, innerErr = l.svcCtx.LoanApplicantRepo.BatchCreateWithTx(l.ctx, tx, applicants, false)
 			if innerErr != nil {
 				return innerErr
 			}
@@ -180,7 +180,7 @@ func (l *ImportPendingLoansLogic) buildImportModel(in *borrower.ImportPendingLoa
 	}
 
 	// applicants
-	var applicants []*model.Applicant
+	var applicants []*model.LoanApplicant
 
 	err = copier.CopyWithOption(&applicants, in.Applicants, copier.Option{
 		IgnoreEmpty:   true,
@@ -196,13 +196,13 @@ func (l *ImportPendingLoansLogic) buildImportModel(in *borrower.ImportPendingLoa
 	if len(applicants) == 0 {
 		return nil, errors.New("no applicant")
 	}
-	primaryCount := slice.CountBy(applicants, func(index int, item *model.Applicant) bool {
+	primaryCount := slice.CountBy(applicants, func(index int, item *model.LoanApplicant) bool {
 		return item.IsPrimary
 	})
 	if primaryCount == 0 {
 		return nil, errors.New("no primary applicant")
 	}
-	slice.ForEach(applicants, func(index int, item *model.Applicant) {
+	slice.ForEach(applicants, func(index int, item *model.LoanApplicant) {
 		item.BorrowerId = in.BorrowerId
 	})
 
@@ -219,16 +219,16 @@ func (l *ImportPendingLoansLogic) buildImportModel(in *borrower.ImportPendingLoa
 	if err != nil {
 		return nil, errorx.GetFailedTransErr(err)
 	}
-	loanProperty.Unit = loanProperty.PropertyBase.Unit
+	loanProperty.Unit = loanProperty.BorrowerProperty.Unit
 
 	// property base
-	propertyBase := loanProperty.PropertyBase
+	borrowerProperty := loanProperty.BorrowerProperty
 
 	return &importPendingLoanModelData{
-		loan:         loan,
-		loanBorrower: loanBorrower,
-		loanProperty: loanProperty,
-		propertyBase: propertyBase,
-		applicants:   applicants,
+		loan:             loan,
+		loanBorrower:     loanBorrower,
+		loanProperty:     loanProperty,
+		borrowerProperty: borrowerProperty,
+		applicants:       applicants,
 	}, nil
 }

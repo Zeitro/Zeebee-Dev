@@ -7,7 +7,7 @@ import (
 	"zeebee-backend/common/types"
 )
 
-type Applicant struct {
+type LoanApplicant struct {
 	Base
 	BorrowerId       int64                               `gorm:"column:borrower_id;not null;default:0" json:"borrower_id"`
 	LoanId           int64                               `gorm:"column:loan_id;not null;default:0" json:"loan_id"`
@@ -33,16 +33,16 @@ type Applicant struct {
 	LoanProperty *LoanProperty `json:"loan_property" gorm:"foreignKey:LoanPropertyId;references:Id"`
 	Borrower     *Borrower     `json:"borrower" gorm:"foreignKey:BorrowerId;references:Id"`
 	Loan         *Loan         `json:"loan" gorm:"foreignKey:LoanId;references:Id"`
-	Applicants   []*Applicant  `json:"applicants" gorm:"foreignKey:LoanBorrowerId;references:Id"`
+	// Applicants   []*Applicant  `json:"applicants" gorm:"foreignKey:LoanBorrowerId;references:Id"`
 }
 
-func (m Applicant) TableName() string {
-	return "applicants"
+func (m LoanApplicant) TableName() string {
+	return "loan_applicants"
 }
 
-func (m *Applicant) RemoveRelationships() {
+func (m *LoanApplicant) RemoveRelationships() {
 	m.LoanProperty = nil
 	m.Borrower = nil
 	m.Loan = nil
-	m.Applicants = nil
+	// m.Applicants = nil
 }

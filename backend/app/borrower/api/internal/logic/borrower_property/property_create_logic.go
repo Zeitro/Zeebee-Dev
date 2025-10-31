@@ -50,7 +50,7 @@ func (l *PropertyCreateLogic) PropertyCreate(req *types.PropertyCreateRequest) (
 	}
 	rpcReq.Data.BorrowerId = borrowerId
 
-	rpcResp, err := l.svcCtx.PropertyRpcClient.CreateProperty(l.ctx, rpcReq)
+	rpcResp, err := l.svcCtx.BorrowerPropertyRpcClient.Create(l.ctx, rpcReq)
 	if err != nil {
 		return nil, err
 	}

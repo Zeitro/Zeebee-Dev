@@ -38,7 +38,7 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 		}
 	}()
 	var loan *model.Loan
-	var propertyBase *model.PropertyBase
+	var propertyBase *model.BorrowerProperty
 	applyLogic := NewApplyLoanLogic(l.ctx, l.svcCtx)
 
 	data, err := applyLogic.buildModelData(in.Data)
@@ -88,7 +88,7 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 			// handle property base
 			func() error {
 				updateLogic := NewUpdateBorrowerLoanLogic(l.ctx, l.svcCtx)
-				propertyBase, err = updateLogic.handlePropertyBase(tx, loan.LoanProperty.PropertyBaseId, data.loanProperty.PropertyBase)
+				propertyBase, err = updateLogic.handleBorrowerProperty(tx, loan.LoanProperty.BorrowerPropertyId, data.loanProperty.BorrowerProperty)
 				return err
 			},
 			// update loan
@@ -106,7 +106,7 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 			func() error {
 				property := data.loanProperty
 				property.LoanId = loan.Id
-				property.PropertyBaseId = propertyBase.Id
+				property.BorrowerPropertyId = propertyBase.Id
 
 				if property.Id == 0 {
 					property, err = l.svcCtx.LoanPropertyRepo.CreateWithTx(l.ctx, tx, property, false)
@@ -212,17 +212,17 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 	return &borrower.EmptyResponse{}, err
 }
 
-func (l *UpdateApplyLoanLogic) updateApplicants(tx *gorm.DB, oldItems []*model.Applicant, curItems []*model.Applicant, loan *model.Loan) (err error) {
-	removedItems := slice.DifferenceWith(oldItems, curItems, func(item1, item2 *model.Applicant) bool {
+func (l *UpdateApplyLoanLogic) updateApplicants(tx *gorm.DB, oldItems []*model.LoanApplicant, curItems []*model.LoanApplicant, loan *model.Loan) (err error) {
+	removedItems := slice.DifferenceWith(oldItems, curItems, func(item1, item2 *model.LoanApplicant) bool {
 		return item1.Id == item2.Id
 	})
-	removedIds := slice.Map(removedItems, func(index int, item *model.Applicant) int64 {
+	removedIds := slice.Map(removedItems, func(index int, item *model.LoanApplicant) int64 {
 		return item.Id
 	})
-	newItems := slice.DifferenceWith(curItems, oldItems, func(item1, item2 *model.Applicant) bool {
+	newItems := slice.DifferenceWith(curItems, oldItems, func(item1, item2 *model.LoanApplicant) bool {
 		return item1.Id == item2.Id
 	})
-	newItems = slice.Map(newItems, func(index int, newApplicant *model.Applicant) *model.Applicant {
+	newItems = slice.Map(newItems, func(index int, newApplicant *model.LoanApplicant) *model.LoanApplicant {
 		newApplicant.LoanId = loan.Id
 		if loan.LoanProperty != nil && loan.LoanProperty.Id > 0 {
 			newApplicant.LoanPropertyId = loan.LoanProperty.Id
@@ -230,14 +230,14 @@ func (l *UpdateApplyLoanLogic) updateApplicants(tx *gorm.DB, oldItems []*model.A
 		return newApplicant
 	})
 
-	updatedItems := slice.Filter(curItems, func(index int, newApplicant *model.Applicant) bool {
-		_, ok := slice.FindBy(oldItems, func(index int, oldApplicant *model.Applicant) bool {
+	updatedItems := slice.Filter(curItems, func(index int, newApplicant *model.LoanApplicant) bool {
+		_, ok := slice.FindBy(oldItems, func(index int, oldApplicant *model.LoanApplicant) bool {
 			return newApplicant.Id == oldApplicant.Id
 		})
 		return ok
 	})
 
-	updatedItems = slice.Map(updatedItems, func(index int, updateApplicant *model.Applicant) *model.Applicant {
+	updatedItems = slice.Map(updatedItems, func(index int, updateApplicant *model.LoanApplicant) *model.LoanApplicant {
 		updateApplicant.LoanId = loan.Id
 		if loan.LoanProperty != nil && loan.LoanProperty.Id > 0 {
 			updateApplicant.LoanPropertyId = loan.LoanProperty.Id
@@ -246,21 +246,21 @@ func (l *UpdateApplyLoanLogic) updateApplicants(tx *gorm.DB, oldItems []*model.A
 	})
 
 	if len(removedIds) > 0 {
-		_, err = l.svcCtx.ApplicantRepo.DeleteByIDsWithTx(l.ctx, tx, removedIds)
+		_, err = l.svcCtx.LoanApplicantRepo.DeleteByIDsWithTx(l.ctx, tx, removedIds)
 		if err != nil {
 			return err
 		}
 	}
 
 	if len(newItems) > 0 {
-		_, err = l.svcCtx.ApplicantRepo.BatchCreateWithTx(l.ctx, tx, newItems, false)
+		_, err = l.svcCtx.LoanApplicantRepo.BatchCreateWithTx(l.ctx, tx, newItems, false)
 		if err != nil {
 			return err
 		}
 	}
 
 	for _, updatedItem := range updatedItems {
-		_, err = l.svcCtx.ApplicantRepo.UpdateOneWithTx(l.ctx, tx, updatedItem.Id, updatedItem)
+		_, err = l.svcCtx.LoanApplicantRepo.UpdateOneWithTx(l.ctx, tx, updatedItem.Id, updatedItem)
 		if err != nil {
 			return err
 		}

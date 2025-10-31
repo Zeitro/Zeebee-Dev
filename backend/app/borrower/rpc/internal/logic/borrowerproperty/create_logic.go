@@ -1,4 +1,4 @@
-package propertylogic
+package borrowerpropertylogic
 
 import (
 	"context"
@@ -17,28 +17,28 @@ import (
 	"zeebee-backend/common/errorx"
 )
 
-type CreatePropertyLogic struct {
+type CreateLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewCreatePropertyLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreatePropertyLogic {
-	return &CreatePropertyLogic{
+func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogic {
+	return &CreateLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *CreatePropertyLogic) CreateProperty(in *borrower.PropertyCreateRequest) (resp *borrower.PropertyCreateResponse, err error) {
+func (l *CreateLogic) Create(in *borrower.PropertyCreateRequest) (resp *borrower.PropertyCreateResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	saveData := &model.PropertyBase{}
-	responseData := &borrower.PropertyBaseEntry{}
+	saveData := &model.BorrowerProperty{}
+	responseData := &borrower.BorrowerPropertyEntry{}
 	err = copier.CopyWithOption(saveData, in.Data, copier.Option{
 		CaseSensitive: true,
 		DeepCopy:      true,
@@ -48,7 +48,7 @@ func (l *CreatePropertyLogic) CreateProperty(in *borrower.PropertyCreateRequest)
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 
-	isExisted, err := l.svcCtx.PropertyBaseRepo.IsExisted(l.ctx, 0, saveData.BorrowerId, &saveData.Address)
+	isExisted, err := l.svcCtx.BorrowerPropertyRepo.IsExisted(l.ctx, 0, saveData.BorrowerId, &saveData.Address)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func (l *CreatePropertyLogic) CreateProperty(in *borrower.PropertyCreateRequest)
 		return nil, err
 	}
 
-	result, err := l.svcCtx.PropertyBaseRepo.Create(l.ctx, saveData)
+	result, err := l.svcCtx.BorrowerPropertyRepo.Create(l.ctx, saveData)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

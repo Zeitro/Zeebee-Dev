@@ -33,7 +33,7 @@ func (l *BorrowerNamesLogic) BorrowerNames(req *types.EmptyRequest) (resp *types
 		return nil, err
 	}
 
-	rpcResp, err := l.svcCtx.ApplicantRpcClient.BorrowerNames(l.ctx, &borrower.BorrowerNamesRequest{
+	rpcResp, err := l.svcCtx.LoanApplicantRpcClient.BorrowerNames(l.ctx, &borrower.BorrowerNamesRequest{
 		Data: &borrower.BorrowerNamesRequestData{
 			BorrowerId: borrowerId,
 		},

@@ -21,8 +21,8 @@ type ServiceContext struct {
 	LoanThirdServiceRepo *repo.LoanThirdServiceRepo
 	LoanOperationRepo    *repo.LoanOperationRepo
 	LoanDocumentRepo     *repo.LoanDocumentRepo
-	PropertyBaseRepo     *repo.PropertyBaseRepo
-	ApplicantRepo        *repo.ApplicantRepo
+	BorrowerPropertyRepo *repo.BorrowerPropertyRepo
+	LoanApplicantRepo    *repo.LoanApplicantRepo
 	UsGeographyRepo      *repo.UsGeographyRepo
 	FileRepo             *repo.FileRepo
 }
@@ -42,9 +42,9 @@ func NewServiceContext(c config.RpcConf) *ServiceContext {
 		LoanOperationRepo:    repo.NewLoanOperationRepo(global.GetGormDB()),
 		LoanBorrowerRepo:     repo.NewLoanBorrowerRepo(global.GetGormDB()),
 		LoanDocumentRepo:     repo.NewLoanDocumentRepo(global.GetGormDB()),
-		PropertyBaseRepo:     repo.NewPropertyBaseRepo(global.GetGormDB()),
+		BorrowerPropertyRepo: repo.NewBorrowerPropertyRepo(global.GetGormDB()),
 		LoanPropertyRepo:     repo.NewLoanPropertyRepo(global.GetGormDB()),
-		ApplicantRepo:        repo.NewApplicantRepo(global.GetGormDB()),
+		LoanApplicantRepo:    repo.NewLoanApplicantRepo(global.GetGormDB()),
 		UsGeographyRepo:      repo.NewUsGeographyRepo(global.GetGormDB()),
 		FileRepo:             repo.NewFileRepo(global.GetGormDB()),
 	}

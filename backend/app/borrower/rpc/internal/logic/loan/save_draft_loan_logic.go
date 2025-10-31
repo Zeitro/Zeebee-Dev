@@ -45,8 +45,8 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 		}
 	}()
 	var loan *model.Loan
-	// var propertyBase *model.PropertyBase
-	var oldApplicants []*model.Applicant
+	// var propertyBase *model.BorrowerProperty
+	var oldApplicants []*model.LoanApplicant
 	var loanBorrower *model.LoanBorrower
 	updateLogic := NewUpdateApplyLoanLogic(l.ctx, l.svcCtx)
 	data, err := l.buildModelData(in.Data)
@@ -118,7 +118,7 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 			// handle applicant
 			func() error {
 				if loanBorrower != nil {
-					slice.ForEach(data.applicants, func(index int, item *model.Applicant) {
+					slice.ForEach(data.applicants, func(index int, item *model.LoanApplicant) {
 						item.LoanBorrowerId = loanBorrower.Id
 					})
 				}
@@ -167,18 +167,18 @@ func (l *SaveDraftLoanLogic) updateProperty(tx *gorm.DB, property *model.LoanPro
 	if property == nil {
 		return nil
 	}
-	propertyBase := property.PropertyBase
+	propertyBase := property.BorrowerProperty
 	if propertyBase == nil {
 		return errors.WithStack(errors.New("property base is required"))
 	}
-	propertyBase, err = l.svcCtx.PropertyBaseRepo.GetOrCreateWithTx(l.ctx, tx, propertyBase)
+	propertyBase, err = l.svcCtx.BorrowerPropertyRepo.GetOrCreateWithTx(l.ctx, tx, propertyBase)
 	if err != nil {
 		return err
 	}
 
 	// save loan property
 	property.LoanId = loan.Id
-	property.PropertyBaseId = propertyBase.Id
+	property.BorrowerPropertyId = propertyBase.Id
 	property, err = l.svcCtx.LoanPropertyRepo.CreateWithTx(l.ctx, tx, property, false)
 	return err
 }
@@ -272,9 +272,9 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	}
 
 	// applicants
-	var applicants []*model.Applicant
+	var applicants []*model.LoanApplicant
 	if len(reqData.Applicants) > 0 {
-		applicants = make([]*model.Applicant, 0)
+		applicants = make([]*model.LoanApplicant, 0)
 		err = copier.CopyWithOption(&applicants, &reqData.Applicants, copier.Option{
 			IgnoreEmpty: true,
 			DeepCopy:    true,
@@ -287,7 +287,7 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 		}
 	}
 
-	slice.ForEach(applicants, func(index int, item *model.Applicant) {
+	slice.ForEach(applicants, func(index int, item *model.LoanApplicant) {
 		item.BorrowerId = reqData.BorrowerId
 		item.FullName = stringx.FormatFullName(item.FirstName, item.MidName, item.LastName)
 	})
@@ -295,16 +295,17 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	// loan_property
 	var loanProperty *model.LoanProperty
 	if reqData.LoanProperty != nil {
-		if reqData.LoanProperty.PropertyBase == nil || reqData.LoanProperty.PropertyBase.Address == nil {
-			return nil, errors.WithStack(errors.New("property base is required"))
-		}
-		addr := reqData.LoanProperty.PropertyBase.Address
-		if len(addr.Address1) == 0 || len(addr.City) == 0 || len(addr.State) == 0 || len(addr.ZipCode) == 0 {
-			return nil, errors.WithStack(errors.New("property address is required"))
-		}
+		// todo handle borrower property
+		// if reqData.LoanProperty.PropertyBase == nil || reqData.LoanProperty.PropertyBase.Address == nil {
+		// 	return nil, errors.WithStack(errors.New("property base is required"))
+		// }
+		// addr := reqData.LoanProperty.PropertyBase.Address
+		// if len(addr.Address1) == 0 || len(addr.City) == 0 || len(addr.State) == 0 || len(addr.ZipCode) == 0 {
+		// 	return nil, errors.WithStack(errors.New("property address is required"))
+		// }
 
 		loanProperty = &model.LoanProperty{
-			PropertyBase: &model.PropertyBase{},
+			BorrowerProperty: &model.BorrowerProperty{},
 		}
 		err = copier.CopyWithOption(loanProperty, reqData.LoanProperty, copier.Option{
 			IgnoreEmpty: true,
@@ -316,8 +317,8 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 		if err != nil {
 			return nil, errorx.GetFailedTransErr(err)
 		}
-		loanProperty.PropertyBase.BorrowerId = reqData.BorrowerId
-		loanProperty.Unit = loanProperty.PropertyBase.Unit
+		loanProperty.BorrowerProperty.BorrowerId = reqData.BorrowerId
+		loanProperty.Unit = loanProperty.BorrowerProperty.Unit
 	}
 
 	// transaction experience

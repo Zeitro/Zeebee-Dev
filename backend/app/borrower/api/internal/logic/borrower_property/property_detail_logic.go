@@ -43,7 +43,7 @@ func (l *PropertyDetailLogic) PropertyDetail(req *types.PropertyDetailRequest) (
 	}
 	rpcReq.Data.BorrowerId = borrowerId
 
-	rpcResp, err := l.svcCtx.PropertyRpcClient.PropertyDetail(l.ctx, rpcReq)
+	rpcResp, err := l.svcCtx.BorrowerPropertyRpcClient.Detail(l.ctx, rpcReq)
 	if err != nil {
 		return nil, err
 	}

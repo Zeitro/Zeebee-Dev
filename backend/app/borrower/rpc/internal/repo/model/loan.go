@@ -69,7 +69,7 @@ type Loan struct {
 	Borrower          *Borrower           `json:"borrower" gorm:"foreignKey:BorrowerId;references:Id"`
 	LoanProperty      *LoanProperty       `json:"loan_property" gorm:"foreignKey:LoanId;references:Id"`
 	Lender            *LenderCompany      `json:"lender" gorm:"foreignKey:LenderCompanyId;references:Id"`
-	Applicants        []*Applicant        `json:"applicants" gorm:"foreignKey:LoanId;references:Id"`
+	Applicants        []*LoanApplicant    `json:"applicants" gorm:"foreignKey:LoanId;references:Id"`
 	LoanBorrower      *LoanBorrower       `json:"loan_borrower" gorm:"foreignKey:LoanId;references:Id"`
 	LoanExperiences   []*LoanExperience   `json:"loan_experiences" gorm:"foreignKey:LoanId;references:Id"`
 	LoanThirdServices []*LoanThirdService `json:"loan_third_services" gorm:"foreignKey:LoanId;references:Id"`

@@ -40,7 +40,7 @@ func (l *PropertyDeleteLogic) PropertyDelete(req *types.PathIdRequest) (resp *ty
 	}
 	rpcReq.Data.BorrowerId = borrowerId
 
-	_, err = l.svcCtx.PropertyRpcClient.DeleteProperty(l.ctx, rpcReq)
+	_, err = l.svcCtx.BorrowerPropertyRpcClient.Delete(l.ctx, rpcReq)
 	if err != nil {
 		return nil, err
 	}

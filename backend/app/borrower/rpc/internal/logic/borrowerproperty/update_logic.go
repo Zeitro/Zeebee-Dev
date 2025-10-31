@@ -1,4 +1,4 @@
-package propertylogic
+package borrowerpropertylogic
 
 import (
 	"context"
@@ -14,29 +14,29 @@ import (
 	"zeebee-backend/common/errorx"
 )
 
-type UpdatePropertyLogic struct {
+type UpdateLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewUpdatePropertyLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdatePropertyLogic {
-	return &UpdatePropertyLogic{
+func NewUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLogic {
+	return &UpdateLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *UpdatePropertyLogic) UpdateProperty(in *borrower.PropertyUpdateRequest) (resp *borrower.EmptyResponse, err error) {
+func (l *UpdateLogic) Update(in *borrower.PropertyUpdateRequest) (resp *borrower.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
 
-	var result *model.PropertyBase
-	result, err = l.svcCtx.PropertyBaseRepo.FindOneByColumns(l.ctx, map[string]interface{}{
+	var result *model.BorrowerProperty
+	result, err = l.svcCtx.BorrowerPropertyRepo.FindOneByColumns(l.ctx, map[string]interface{}{
 		"id":          in.Data.Id,
 		"borrower_id": in.Data.BorrowerId,
 	})
@@ -53,7 +53,7 @@ func (l *UpdatePropertyLogic) UpdateProperty(in *borrower.PropertyUpdateRequest)
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 
-	_, err = l.svcCtx.PropertyBaseRepo.UpdateOne(l.ctx, in.Data.Id, result)
+	_, err = l.svcCtx.BorrowerPropertyRepo.UpdateOne(l.ctx, in.Data.Id, result)
 
 	return &borrower.EmptyResponse{}, err
 }

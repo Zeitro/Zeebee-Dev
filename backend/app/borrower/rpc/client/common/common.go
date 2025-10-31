@@ -16,13 +16,11 @@ import (
 type (
 	AddressEntry                               = borrower.AddressEntry
 	ApplicantEntry                             = borrower.ApplicantEntry
-	BatchCreateLoanRequest                     = borrower.BatchCreateLoanRequest
-	BatchCreateLoanResponse                    = borrower.BatchCreateLoanResponse
-	BorrowerEditApplicantEntry                 = borrower.BorrowerEditApplicantEntry
+	BorrowerApplicantEditEntry                 = borrower.BorrowerApplicantEditEntry
 	BorrowerNamesRequest                       = borrower.BorrowerNamesRequest
 	BorrowerNamesRequestData                   = borrower.BorrowerNamesRequestData
 	BorrowerNamesResponse                      = borrower.BorrowerNamesResponse
-	EditThirdPartyLoanPropertyEntry            = borrower.EditThirdPartyLoanPropertyEntry
+	BorrowerPropertyEntry                      = borrower.BorrowerPropertyEntry
 	EmptyRequest                               = borrower.EmptyRequest
 	EmptyResponse                              = borrower.EmptyResponse
 	FileDeleteRequest                          = borrower.FileDeleteRequest
@@ -91,7 +89,6 @@ type (
 	PrimaryLoanPreApproval                     = borrower.PrimaryLoanPreApproval
 	PropertyAllRequest                         = borrower.PropertyAllRequest
 	PropertyAllResponse                        = borrower.PropertyAllResponse
-	PropertyBaseEntry                          = borrower.PropertyBaseEntry
 	PropertyCreateRequest                      = borrower.PropertyCreateRequest
 	PropertyCreateRequestData                  = borrower.PropertyCreateRequestData
 	PropertyCreateResponse                     = borrower.PropertyCreateResponse
@@ -133,6 +130,7 @@ type (
 	StorageCreatePresignedUrlResponse          = borrower.StorageCreatePresignedUrlResponse
 	StorageCreatePresignedUrlResponseData      = borrower.StorageCreatePresignedUrlResponseData
 	StringSliceResponse                        = borrower.StringSliceResponse
+	ThirdPartyLoanPropertyEditEntry            = borrower.ThirdPartyLoanPropertyEditEntry
 	UsCitiesRequest                            = borrower.UsCitiesRequest
 	UsCitiesRequestData                        = borrower.UsCitiesRequestData
 	UserInfoRequest                            = borrower.UserInfoRequest

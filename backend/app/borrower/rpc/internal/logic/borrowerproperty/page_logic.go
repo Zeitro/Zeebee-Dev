@@ -1,4 +1,4 @@
-package propertylogic
+package borrowerpropertylogic
 
 import (
 	"context"
@@ -17,32 +17,32 @@ import (
 	"zeebee-backend/common/errorx"
 )
 
-type PropertyPageLogic struct {
+type PageLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewPropertyPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PropertyPageLogic {
-	return &PropertyPageLogic{
+func NewPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PageLogic {
+	return &PageLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *PropertyPageLogic) PropertyPage(in *borrower.PropertyPageRequest) (resp *borrower.PropertyPageResponse, err error) {
+func (l *PageLogic) Page(in *borrower.PropertyPageRequest) (resp *borrower.PropertyPageResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	propertyBasePageResult, err := l.svcCtx.PropertyBaseRepo.Page(l.ctx, in.Data)
+	propertyBasePageResult, err := l.svcCtx.BorrowerPropertyRepo.Page(l.ctx, in.Data)
 	if err != nil {
 		return nil, err
 	}
 
-	applicantRepo := l.svcCtx.ApplicantRepo
+	applicantRepo := l.svcCtx.LoanApplicantRepo
 	properties := make([]*borrower.PropertyPageEntry, len(propertyBasePageResult.List))
 	now := datetime.BeginOfDay(time.Now())
 	for i, propertyBase := range propertyBasePageResult.List {
