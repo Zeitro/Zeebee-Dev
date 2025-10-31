@@ -1,5 +1,5 @@
 // 组件
-// export * from './components/ApplicationFormViewPDF/index';
+// export * from './components/ContractViewer/index';
 export * from './components/CommonFormDate/index';
 export * from './components/DownloadFileButton/index';
 export * from './components/UploadFileButton/index';

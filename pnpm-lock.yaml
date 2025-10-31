@@ -256,6 +256,12 @@ importers:
       '@eslint/eslintrc':
         specifier: ^3
         version: 3.3.1
+      '@eslint/js':
+        specifier: ^9.38.0
+        version: 9.38.0
+      '@next/eslint-plugin-next':
+        specifier: ^15.5.6
+        version: 15.5.6
       '@svgr/webpack':
         specifier: ^8.1.0
         version: 8.1.0(typescript@5.9.3)
@@ -268,24 +274,18 @@ importers:
       '@types/react-dom':
         specifier: ^19
         version: 19.2.2(@types/react@19.2.2)
-      '@types/react-pdf':
-        specifier: ^7.0.0
-        version: 7.0.0(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@typescript-eslint/eslint-plugin':
         specifier: ^8.35.0
         version: 8.46.2(@typescript-eslint/parser@8.46.2(eslint@9.38.0(jiti@1.21.7))(typescript@5.9.3))(eslint@9.38.0(jiti@1.21.7))(typescript@5.9.3)
+      '@typescript-eslint/parser':
+        specifier: ^8.46.2
+        version: 8.46.2(eslint@9.38.0(jiti@1.21.7))(typescript@5.9.3)
       antd:
         specifier: ^5.26.2
         version: 5.27.6(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       autoprefixer:
         specifier: ^10.4.21
         version: 10.4.21(postcss@8.5.6)
-      aws-sdk:
-        specifier: ^2.1692.0
-        version: 2.1692.0
-      cross-env:
-        specifier: ^10.0.0
-        version: 10.1.0
       dayjs:
         specifier: ^1.11.13
         version: 1.11.18
@@ -304,6 +304,9 @@ importers:
       eslint-plugin-react:
         specifier: ^7.37.5
         version: 7.37.5(eslint@9.38.0(jiti@1.21.7))
+      eslint-plugin-react-hooks:
+        specifier: ^7.0.0
+        version: 7.0.0(eslint@9.38.0(jiti@1.21.7))
       events:
         specifier: ^3.3.0
         version: 3.3.0
@@ -340,9 +343,6 @@ importers:
       typescript:
         specifier: ^5
         version: 5.9.3
-      zustand:
-        specifier: ^5.0.6
-        version: 5.0.8(@types/react@19.2.2)(react@19.2.0)
 
 packages:
 

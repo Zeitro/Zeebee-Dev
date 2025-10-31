@@ -45,6 +45,7 @@ interface ContractViewerProps {
 	params?: {
 		[key: string]: unknown;
 	};
+	// eslint-disable-next-line no-unused-vars
 	changeSignatures?: (signatures: SignatureData) => void;
 	isFullLink?: boolean;
 }
@@ -100,7 +101,7 @@ export default function ContractViewer({
 			}
 		};
 		fetchPdf();
-	}, [url]);
+	}, [isFullLink, params, url]);
 
 	useEffect(() => {
 		const info: any = {};
@@ -117,7 +118,7 @@ export default function ContractViewer({
 		// 剩下的签名数量
 		info.remainingSignatureCount = (zones?.length || 0) - signaturesArr?.length;
 		changeSignatures?.(info);
-	}, [signatures]);
+	}, [changeSignatures, signatures, zones?.length]);
 
 	const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
 		setNumPages(numPages);
