@@ -56,7 +56,7 @@ RpcConf:
     PingTimeout: 10s
 
   DbConf:
-    dsn: "host=database-prod.cj0ksq4g8d6c.us-west-1.rds.amazonaws.com user=dev_user password=dev_password dbname=dev_db port=5432 sslmode=require TimeZone=UTC"
+    dsn: "host=database-2.cj0ksq4g8d6c.us-west-1.rds.amazonaws.com user=zeebee_user password=zeebee_password dbname=zeebee port=5432 sslmode=require TimeZone=UTC"
 
   AwsS3Conf:
     AccessKey: AKIA4RT6FLQ5X2TPIFEV
