@@ -7,7 +7,7 @@ ApiConf:
     Stat: false
 
   JwtAuth:
-    AccessSecret: bL0iP5yE4jS4mT0nY0uJ0iG1yP6lI9gY
+    AccessSecret: iV6jQ7sK0mO2yZ1qX7oF9rC8oB0lW8wR
     AccessExpire: 86000
 
   RpcConf:
@@ -43,9 +43,9 @@ RpcConf:
     Username: info@zeebeeloans.com
 
   JwtAuth:
-    AccessSecret: bL0iP5yE4jS4mT0nY0uJ0iG1yP6lI9gY
+    AccessSecret: iV6jQ7sK0mO2yZ1qX7oF9rC8oB0lW8wR
     AccessExpire: 864000
-    RefreshSecret: fQ4rU4iR7vL1uH7iH3jB0gO5oV1uD1rP
+    RefreshSecret: iT0jA2bW3hM6iS6wB3dR2pD1dD4gQ8xS
     RefreshExpire: 864000
 
   RedisConf:
@@ -56,7 +56,7 @@ RpcConf:
     PingTimeout: 10s
 
   DbConf:
-    dsn: "host=database-1.cj0ksq4g8d6c.us-west-1.rds.amazonaws.com user=dev_user password=dev_password dbname=dev_db port=5432 sslmode=require TimeZone=UTC"
+    dsn: "host=database-2.cj0ksq4g8d6c.us-west-1.rds.amazonaws.com user=zeebee_user password=zeebee_password dbname=zeebee port=5432 sslmode=require TimeZone=UTC"
 
   AwsS3Conf:
     AccessKey: AKIA4RT6FLQ5X2TPIFEV
