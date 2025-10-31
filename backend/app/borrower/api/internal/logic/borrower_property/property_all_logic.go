@@ -36,7 +36,7 @@ func (l *PropertyAllLogic) PropertyAll(req *types.EmptyRequest) (resp *types.Pro
 		return nil, err
 	}
 
-	rpcResp, err := l.svcCtx.PropertyRpcClient.PropertyAll(l.ctx, &borrower.PropertyAllRequest{
+	rpcResp, err := l.svcCtx.BorrowerPropertyRpcClient.All(l.ctx, &borrower.PropertyAllRequest{
 		BorrowerId: borrowerId,
 	})
 	if err != nil {

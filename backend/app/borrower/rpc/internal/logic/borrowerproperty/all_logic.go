@@ -1,4 +1,4 @@
-package propertylogic
+package borrowerpropertylogic
 
 import (
 	"context"
@@ -14,33 +14,33 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type PropertyAllLogic struct {
+type AllLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewPropertyAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PropertyAllLogic {
-	return &PropertyAllLogic{
+func NewAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AllLogic {
+	return &AllLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *PropertyAllLogic) PropertyAll(in *borrower.PropertyAllRequest) (resp *borrower.PropertyAllResponse, err error) {
+func (l *AllLogic) All(in *borrower.PropertyAllRequest) (resp *borrower.PropertyAllResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
 
-	results, err := l.svcCtx.PropertyBaseRepo.All(l.ctx, in.BorrowerId)
+	results, err := l.svcCtx.BorrowerPropertyRepo.All(l.ctx, in.BorrowerId)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 
-	respData := make([]*borrower.PropertyBaseEntry, 0, len(results))
+	respData := make([]*borrower.BorrowerPropertyEntry, 0, len(results))
 
 	err = copier.CopyWithOption(&respData, &results, copier.Option{
 		CaseSensitive: true,

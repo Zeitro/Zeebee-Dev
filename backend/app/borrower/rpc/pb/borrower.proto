@@ -15,6 +15,14 @@ message StringSliceResponse {
   repeated string data = 1;
 }
 
+message AddressEntry{
+  string state = 1;
+  string city = 2;
+  string address1 = 3;
+  string address2 = 4;
+  string zip_code = 5;
+}
+
 // ========================== common service=================
 message OptionRequest {
   OptionRequestData data = 1;
@@ -207,61 +215,6 @@ service user {
 }
 
 // ================ loan service =================
-//message PropertyBaseEntry{
-//  int64 id = 1;
-//  string property_type = 2;
-//  int32 unit = 3;
-//  AddressEntry address = 4;
-//  double TotalAmount = 5;
-//}
-
-
-message LoanPropertyEntry{
-  int64 id = 1;
-  string property_type = 2 ;
-  PropertyBaseEntry property_base = 3 [deprecated = true];
-  float living_area_sqft = 5;
-  int32 bedrooms = 6;
-  int32 bathrooms = 7;
-  string future_property_type = 8;
-  int32  future_unit = 9;
-  float future_living_area_sqft = 10;
-  int32 future_bedrooms = 11;
-  int32 future_bathrooms = 12;
-  string owner = 13;
-  int32 unit = 14;
-  //
-  string existing_lender_company = 15;
-  float existing_rate = 16;
-  int64 existing_maturity_date = 17;
-  double purchase_amount = 18;
-  int64 purchase_date = 19;
-  bool has_assignment_fee = 20;
-  double assignment_fee_amount = 21;
-  bool has_subordinate_debt = 22;
-  double subordinate_debt_amount = 23;
-  string scheduled_close_escrow_date = 24;
-  double liquidity_amount = 25;
-  LoanBudgetEntry budget = 26;
-  bool mid_construction = 27;
-  double est_yearly_rental_income_amount = 28;
-  double yearly_liability_expense_amount = 29;
-  double dscr = 30;
-  bool has_delayed_financing = 31;
-  bool has_collateralized_blanket = 32;
-  bool has_properties_vacant = 33;
-  bool has_short_term_rental = 34;
-  double est_property_value_amount = 35;
-  AddressEntry address = 36;
-}
-
-message AddressEntry{
-  string state = 1;
-  string city = 2;
-  string address1 = 3;
-  string address2 = 4;
-  string zip_code = 5;
-}
 
 message ApplicantEntry{
   int64 id = 1;
@@ -370,9 +323,9 @@ message LoanCreateRequest {
   LoanCreateRequestData data = 1;
 }
 
-message EditThirdPartyLoanPropertyEntry {
+message ThirdPartyLoanPropertyEditEntry {
   int64 id = 1;
-  int64 property_base_id = 2;
+  int64 borrower_property_id = 2;
   string owner = 3;
   string purchase_date = 4;
   double purchase_amount = 5;
@@ -387,8 +340,8 @@ message LoanCreateRequestData {
   double total_amount = 6;
   double initial_amount = 7;
   //  LoanPropertyEntry loan_property = 8;
-  EditThirdPartyLoanPropertyEntry loan_property = 8;
-  repeated BorrowerEditApplicantEntry applicants = 9;
+  ThirdPartyLoanPropertyEditEntry loan_property = 8;
+  repeated BorrowerApplicantEditEntry applicants = 9;
   string lender_company = 10;
   string closing_date = 11;
   double holdback_amount = 12;
@@ -420,7 +373,7 @@ message LoanCreateResponseData {
   int64 id = 1;
 }
 
-message BorrowerEditApplicantEntry {
+message BorrowerApplicantEditEntry {
   string name = 1 [deprecated = true];
   string type = 2;
   bool is_primary = 3;
@@ -430,13 +383,13 @@ message BorrowerEditApplicantEntry {
   string mid_name = 7;
 }
 
-message BatchCreateLoanRequest {
-  repeated LoanCreateRequestData data = 1;
-}
+//message BatchLoanCreateRequest {
+//  repeated LoanCreateRequestData data = 1;
+//}
 
-message BatchCreateLoanResponse {
-  LoanCreateResponseData data = 1;
-}
+//message BatchLoanCreateResponse {
+//  LoanCreateResponseData data = 1;
+//}
 
 message LoanUpdateRequest {
   LoanUpdateRequestData data = 1;
@@ -450,8 +403,8 @@ message LoanUpdateRequestData {
   string loan_type = 5;
   double total_amount = 6;
   double initial_amount = 7;
-  EditThirdPartyLoanPropertyEntry loan_property = 8;
-  repeated BorrowerEditApplicantEntry applicants = 9;
+  ThirdPartyLoanPropertyEditEntry loan_property = 8;
+  repeated BorrowerApplicantEditEntry applicants = 9;
   string lender_company = 10;
   string closing_date = 11;
   double holdback_amount = 12;
@@ -641,7 +594,7 @@ message ImportPendingLoansRequestData {
   string original_contract_date = 14;
   string extension_date = 15;
   string loan_processor = 16;
-  repeated BorrowerEditApplicantEntry applicants = 17;
+  repeated BorrowerApplicantEditEntry applicants = 17;
   string closing_date = 18;
 
 }
@@ -779,10 +732,50 @@ service Loan {
   rpc SendPreApprovalNotification(LoanSendPreApprovalNotificationRequest) returns(EmptyResponse);
 }
 
+// ===================== loan property service ======================
+message LoanPropertyEntry{
+  int64 id = 1;
+  string property_type = 2 ;
+  //  LoanPropertyEntry property_base = 3 [deprecated = true];
+  int64 borrower_property_id = 3;
+  float living_area_sqft = 5;
+  int32 bedrooms = 6;
+  int32 bathrooms = 7;
+  string future_property_type = 8;
+  int32  future_unit = 9;
+  float future_living_area_sqft = 10;
+  int32 future_bedrooms = 11;
+  int32 future_bathrooms = 12;
+  string owner = 13;
+  int32 unit = 14;
+  //
+  string existing_lender_company = 15;
+  float existing_rate = 16;
+  int64 existing_maturity_date = 17;
+  double purchase_amount = 18;
+  int64 purchase_date = 19;
+  bool has_assignment_fee = 20;
+  double assignment_fee_amount = 21;
+  bool has_subordinate_debt = 22;
+  double subordinate_debt_amount = 23;
+  string scheduled_close_escrow_date = 24;
+  double liquidity_amount = 25;
+  LoanBudgetEntry budget = 26;
+  bool mid_construction = 27;
+  double est_yearly_rental_income_amount = 28;
+  double yearly_liability_expense_amount = 29;
+  double dscr = 30;
+  bool has_delayed_financing = 31;
+  bool has_collateralized_blanket = 32;
+  bool has_properties_vacant = 33;
+  bool has_short_term_rental = 34;
+  double est_property_value_amount = 35;
+  AddressEntry address = 36;
+}
 
-// ===================== property service ======================
+// ===================== borrower property service ======================
 
-message PropertyBaseEntry {
+message BorrowerPropertyEntry {
   int64 id = 1;
   string property_type = 2;
   double total_amount = 3;
@@ -891,7 +884,7 @@ message PropertyCreateRequestData {
 }
 
 message PropertyCreateResponse {
-  PropertyBaseEntry data = 1;
+  BorrowerPropertyEntry data = 1;
 }
 
 
@@ -912,7 +905,7 @@ message PropertyUpdateRequestData {
 
 // detail property
 message PropertyDetailResponse {
-  PropertyBaseEntry data = 1;
+  BorrowerPropertyEntry data = 1;
 }
 
 // delete property
@@ -928,21 +921,21 @@ message PropertyAllRequest {
   int64 borrower_id = 1;
 }
 message PropertyAllResponse {
-  repeated PropertyBaseEntry data = 1;
+  repeated BorrowerPropertyEntry data = 1;
 }
 
 
-service Property {
-  rpc PropertyPage(PropertyPageRequest) returns(PropertyPageResponse);
-  rpc PropertyDetailSummary(PropertyDetailRequest) returns(PropertyDetailSummaryResponse);
-  rpc CreateProperty(PropertyCreateRequest) returns(PropertyCreateResponse);
-  rpc UpdateProperty(PropertyUpdateRequest) returns(EmptyResponse);
-  rpc DeleteProperty(PropertyDeleteRequest) returns(EmptyResponse);
-  rpc PropertyDetail(PropertyDetailRequest) returns(PropertyDetailResponse);
-  rpc PropertyAll(PropertyAllRequest) returns(PropertyAllResponse);
+service BorrowerProperty {
+  rpc Page(PropertyPageRequest) returns(PropertyPageResponse);
+  rpc DetailSummary(PropertyDetailRequest) returns(PropertyDetailSummaryResponse);
+  rpc Create(PropertyCreateRequest) returns(PropertyCreateResponse);
+  rpc Update(PropertyUpdateRequest) returns(EmptyResponse);
+  rpc Delete(PropertyDeleteRequest) returns(EmptyResponse);
+  rpc Detail(PropertyDetailRequest) returns(PropertyDetailResponse);
+  rpc All(PropertyAllRequest) returns(PropertyAllResponse);
 }
 
-// ===================== applicant service ======================
+// ===================== loan applicant service ======================
 
 message BorrowerNamesRequest {
   BorrowerNamesRequestData data = 1;
@@ -956,7 +949,7 @@ message BorrowerNamesResponse {
   repeated string data = 1;
 }
 
-service Applicant {
+service LoanApplicant {
   rpc BorrowerNames(BorrowerNamesRequest) returns(BorrowerNamesResponse);
 }
 

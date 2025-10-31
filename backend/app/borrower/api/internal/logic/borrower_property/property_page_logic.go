@@ -50,7 +50,7 @@ func (l *PropertyPageLogic) PropertyPage(req *types.PropertyPageRequest) (resp *
 	if err != nil {
 		return nil, err
 	}
-	rpcResp, err = l.svcCtx.PropertyRpcClient.PropertyPage(l.ctx, rpcReq)
+	rpcResp, err = l.svcCtx.BorrowerPropertyRpcClient.Page(l.ctx, rpcReq)
 	if err != nil {
 		return nil, err
 	}

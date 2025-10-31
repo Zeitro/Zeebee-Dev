@@ -5,7 +5,7 @@ import (
 	"zeebee-backend/common/types"
 )
 
-type PropertyBase struct {
+type BorrowerProperty struct {
 	Base
 
 	BorrowerId     int64                  `gorm:"column:borrower_id;not null;default:0" json:"borrower_id"`
@@ -18,12 +18,12 @@ type PropertyBase struct {
 	TotalAmount    float64                `gorm:"column:total_amount;not null;default:0" json:"total_amount"`
 	LoanCount      int32                  `gorm:"column:loan_count;not null;default:0" json:"loan_count"`
 
-	Borrower       *Borrower       `json:"borrower" gorm:"foreignKey:BorrowerId;references:Id"`
-	Loans          []*Loan         `json:"loans" gorm:"-"`
-	Applicants     []*Applicant    `json:"applicants" gorm:"-"`
-	LoanProperties []*LoanProperty `json:"loan_properties" gorm:"foreignKey:PropertyBaseId;references:Id"`
+	Borrower       *Borrower        `json:"borrower" gorm:"foreignKey:BorrowerId;references:Id"`
+	Loans          []*Loan          `json:"loans" gorm:"-"`
+	Applicants     []*LoanApplicant `json:"applicants" gorm:"-"`
+	LoanProperties []*LoanProperty  `json:"loan_properties" gorm:"foreignKey:BorrowerPropertyId;references:Id"`
 }
 
-func (m PropertyBase) TableName() string {
+func (m BorrowerProperty) TableName() string {
 	return "property_bases"
 }

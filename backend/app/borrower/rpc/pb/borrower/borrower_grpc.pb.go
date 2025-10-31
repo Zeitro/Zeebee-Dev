@@ -1163,329 +1163,329 @@ var Loan_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	Property_PropertyPage_FullMethodName          = "/borrower.Property/PropertyPage"
-	Property_PropertyDetailSummary_FullMethodName = "/borrower.Property/PropertyDetailSummary"
-	Property_CreateProperty_FullMethodName        = "/borrower.Property/CreateProperty"
-	Property_UpdateProperty_FullMethodName        = "/borrower.Property/UpdateProperty"
-	Property_DeleteProperty_FullMethodName        = "/borrower.Property/DeleteProperty"
-	Property_PropertyDetail_FullMethodName        = "/borrower.Property/PropertyDetail"
-	Property_PropertyAll_FullMethodName           = "/borrower.Property/PropertyAll"
+	BorrowerProperty_Page_FullMethodName          = "/borrower.BorrowerProperty/Page"
+	BorrowerProperty_DetailSummary_FullMethodName = "/borrower.BorrowerProperty/DetailSummary"
+	BorrowerProperty_Create_FullMethodName        = "/borrower.BorrowerProperty/Create"
+	BorrowerProperty_Update_FullMethodName        = "/borrower.BorrowerProperty/Update"
+	BorrowerProperty_Delete_FullMethodName        = "/borrower.BorrowerProperty/Delete"
+	BorrowerProperty_Detail_FullMethodName        = "/borrower.BorrowerProperty/Detail"
+	BorrowerProperty_All_FullMethodName           = "/borrower.BorrowerProperty/All"
 )
 
-// PropertyClient is the client API for Property service.
+// BorrowerPropertyClient is the client API for BorrowerProperty service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type PropertyClient interface {
-	PropertyPage(ctx context.Context, in *PropertyPageRequest, opts ...grpc.CallOption) (*PropertyPageResponse, error)
-	PropertyDetailSummary(ctx context.Context, in *PropertyDetailRequest, opts ...grpc.CallOption) (*PropertyDetailSummaryResponse, error)
-	CreateProperty(ctx context.Context, in *PropertyCreateRequest, opts ...grpc.CallOption) (*PropertyCreateResponse, error)
-	UpdateProperty(ctx context.Context, in *PropertyUpdateRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
-	DeleteProperty(ctx context.Context, in *PropertyDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
-	PropertyDetail(ctx context.Context, in *PropertyDetailRequest, opts ...grpc.CallOption) (*PropertyDetailResponse, error)
-	PropertyAll(ctx context.Context, in *PropertyAllRequest, opts ...grpc.CallOption) (*PropertyAllResponse, error)
+type BorrowerPropertyClient interface {
+	Page(ctx context.Context, in *PropertyPageRequest, opts ...grpc.CallOption) (*PropertyPageResponse, error)
+	DetailSummary(ctx context.Context, in *PropertyDetailRequest, opts ...grpc.CallOption) (*PropertyDetailSummaryResponse, error)
+	Create(ctx context.Context, in *PropertyCreateRequest, opts ...grpc.CallOption) (*PropertyCreateResponse, error)
+	Update(ctx context.Context, in *PropertyUpdateRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	Delete(ctx context.Context, in *PropertyDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	Detail(ctx context.Context, in *PropertyDetailRequest, opts ...grpc.CallOption) (*PropertyDetailResponse, error)
+	All(ctx context.Context, in *PropertyAllRequest, opts ...grpc.CallOption) (*PropertyAllResponse, error)
 }
 
-type propertyClient struct {
+type borrowerPropertyClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewPropertyClient(cc grpc.ClientConnInterface) PropertyClient {
-	return &propertyClient{cc}
+func NewBorrowerPropertyClient(cc grpc.ClientConnInterface) BorrowerPropertyClient {
+	return &borrowerPropertyClient{cc}
 }
 
-func (c *propertyClient) PropertyPage(ctx context.Context, in *PropertyPageRequest, opts ...grpc.CallOption) (*PropertyPageResponse, error) {
+func (c *borrowerPropertyClient) Page(ctx context.Context, in *PropertyPageRequest, opts ...grpc.CallOption) (*PropertyPageResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PropertyPageResponse)
-	err := c.cc.Invoke(ctx, Property_PropertyPage_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, BorrowerProperty_Page_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *propertyClient) PropertyDetailSummary(ctx context.Context, in *PropertyDetailRequest, opts ...grpc.CallOption) (*PropertyDetailSummaryResponse, error) {
+func (c *borrowerPropertyClient) DetailSummary(ctx context.Context, in *PropertyDetailRequest, opts ...grpc.CallOption) (*PropertyDetailSummaryResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PropertyDetailSummaryResponse)
-	err := c.cc.Invoke(ctx, Property_PropertyDetailSummary_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, BorrowerProperty_DetailSummary_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *propertyClient) CreateProperty(ctx context.Context, in *PropertyCreateRequest, opts ...grpc.CallOption) (*PropertyCreateResponse, error) {
+func (c *borrowerPropertyClient) Create(ctx context.Context, in *PropertyCreateRequest, opts ...grpc.CallOption) (*PropertyCreateResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PropertyCreateResponse)
-	err := c.cc.Invoke(ctx, Property_CreateProperty_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, BorrowerProperty_Create_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *propertyClient) UpdateProperty(ctx context.Context, in *PropertyUpdateRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+func (c *borrowerPropertyClient) Update(ctx context.Context, in *PropertyUpdateRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(EmptyResponse)
-	err := c.cc.Invoke(ctx, Property_UpdateProperty_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, BorrowerProperty_Update_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *propertyClient) DeleteProperty(ctx context.Context, in *PropertyDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+func (c *borrowerPropertyClient) Delete(ctx context.Context, in *PropertyDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(EmptyResponse)
-	err := c.cc.Invoke(ctx, Property_DeleteProperty_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, BorrowerProperty_Delete_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *propertyClient) PropertyDetail(ctx context.Context, in *PropertyDetailRequest, opts ...grpc.CallOption) (*PropertyDetailResponse, error) {
+func (c *borrowerPropertyClient) Detail(ctx context.Context, in *PropertyDetailRequest, opts ...grpc.CallOption) (*PropertyDetailResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PropertyDetailResponse)
-	err := c.cc.Invoke(ctx, Property_PropertyDetail_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, BorrowerProperty_Detail_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *propertyClient) PropertyAll(ctx context.Context, in *PropertyAllRequest, opts ...grpc.CallOption) (*PropertyAllResponse, error) {
+func (c *borrowerPropertyClient) All(ctx context.Context, in *PropertyAllRequest, opts ...grpc.CallOption) (*PropertyAllResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PropertyAllResponse)
-	err := c.cc.Invoke(ctx, Property_PropertyAll_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, BorrowerProperty_All_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// PropertyServer is the server API for Property service.
-// All implementations must embed UnimplementedPropertyServer
+// BorrowerPropertyServer is the server API for BorrowerProperty service.
+// All implementations must embed UnimplementedBorrowerPropertyServer
 // for forward compatibility.
-type PropertyServer interface {
-	PropertyPage(context.Context, *PropertyPageRequest) (*PropertyPageResponse, error)
-	PropertyDetailSummary(context.Context, *PropertyDetailRequest) (*PropertyDetailSummaryResponse, error)
-	CreateProperty(context.Context, *PropertyCreateRequest) (*PropertyCreateResponse, error)
-	UpdateProperty(context.Context, *PropertyUpdateRequest) (*EmptyResponse, error)
-	DeleteProperty(context.Context, *PropertyDeleteRequest) (*EmptyResponse, error)
-	PropertyDetail(context.Context, *PropertyDetailRequest) (*PropertyDetailResponse, error)
-	PropertyAll(context.Context, *PropertyAllRequest) (*PropertyAllResponse, error)
-	mustEmbedUnimplementedPropertyServer()
+type BorrowerPropertyServer interface {
+	Page(context.Context, *PropertyPageRequest) (*PropertyPageResponse, error)
+	DetailSummary(context.Context, *PropertyDetailRequest) (*PropertyDetailSummaryResponse, error)
+	Create(context.Context, *PropertyCreateRequest) (*PropertyCreateResponse, error)
+	Update(context.Context, *PropertyUpdateRequest) (*EmptyResponse, error)
+	Delete(context.Context, *PropertyDeleteRequest) (*EmptyResponse, error)
+	Detail(context.Context, *PropertyDetailRequest) (*PropertyDetailResponse, error)
+	All(context.Context, *PropertyAllRequest) (*PropertyAllResponse, error)
+	mustEmbedUnimplementedBorrowerPropertyServer()
 }
 
-// UnimplementedPropertyServer must be embedded to have
+// UnimplementedBorrowerPropertyServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedPropertyServer struct{}
+type UnimplementedBorrowerPropertyServer struct{}
 
-func (UnimplementedPropertyServer) PropertyPage(context.Context, *PropertyPageRequest) (*PropertyPageResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PropertyPage not implemented")
+func (UnimplementedBorrowerPropertyServer) Page(context.Context, *PropertyPageRequest) (*PropertyPageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Page not implemented")
 }
-func (UnimplementedPropertyServer) PropertyDetailSummary(context.Context, *PropertyDetailRequest) (*PropertyDetailSummaryResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PropertyDetailSummary not implemented")
+func (UnimplementedBorrowerPropertyServer) DetailSummary(context.Context, *PropertyDetailRequest) (*PropertyDetailSummaryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DetailSummary not implemented")
 }
-func (UnimplementedPropertyServer) CreateProperty(context.Context, *PropertyCreateRequest) (*PropertyCreateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateProperty not implemented")
+func (UnimplementedBorrowerPropertyServer) Create(context.Context, *PropertyCreateRequest) (*PropertyCreateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedPropertyServer) UpdateProperty(context.Context, *PropertyUpdateRequest) (*EmptyResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateProperty not implemented")
+func (UnimplementedBorrowerPropertyServer) Update(context.Context, *PropertyUpdateRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
-func (UnimplementedPropertyServer) DeleteProperty(context.Context, *PropertyDeleteRequest) (*EmptyResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteProperty not implemented")
+func (UnimplementedBorrowerPropertyServer) Delete(context.Context, *PropertyDeleteRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
-func (UnimplementedPropertyServer) PropertyDetail(context.Context, *PropertyDetailRequest) (*PropertyDetailResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PropertyDetail not implemented")
+func (UnimplementedBorrowerPropertyServer) Detail(context.Context, *PropertyDetailRequest) (*PropertyDetailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Detail not implemented")
 }
-func (UnimplementedPropertyServer) PropertyAll(context.Context, *PropertyAllRequest) (*PropertyAllResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PropertyAll not implemented")
+func (UnimplementedBorrowerPropertyServer) All(context.Context, *PropertyAllRequest) (*PropertyAllResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method All not implemented")
 }
-func (UnimplementedPropertyServer) mustEmbedUnimplementedPropertyServer() {}
-func (UnimplementedPropertyServer) testEmbeddedByValue()                  {}
+func (UnimplementedBorrowerPropertyServer) mustEmbedUnimplementedBorrowerPropertyServer() {}
+func (UnimplementedBorrowerPropertyServer) testEmbeddedByValue()                          {}
 
-// UnsafePropertyServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to PropertyServer will
+// UnsafeBorrowerPropertyServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to BorrowerPropertyServer will
 // result in compilation errors.
-type UnsafePropertyServer interface {
-	mustEmbedUnimplementedPropertyServer()
+type UnsafeBorrowerPropertyServer interface {
+	mustEmbedUnimplementedBorrowerPropertyServer()
 }
 
-func RegisterPropertyServer(s grpc.ServiceRegistrar, srv PropertyServer) {
-	// If the following call pancis, it indicates UnimplementedPropertyServer was
+func RegisterBorrowerPropertyServer(s grpc.ServiceRegistrar, srv BorrowerPropertyServer) {
+	// If the following call pancis, it indicates UnimplementedBorrowerPropertyServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&Property_ServiceDesc, srv)
+	s.RegisterService(&BorrowerProperty_ServiceDesc, srv)
 }
 
-func _Property_PropertyPage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _BorrowerProperty_Page_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PropertyPageRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PropertyServer).PropertyPage(ctx, in)
+		return srv.(BorrowerPropertyServer).Page(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Property_PropertyPage_FullMethodName,
+		FullMethod: BorrowerProperty_Page_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PropertyServer).PropertyPage(ctx, req.(*PropertyPageRequest))
+		return srv.(BorrowerPropertyServer).Page(ctx, req.(*PropertyPageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Property_PropertyDetailSummary_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _BorrowerProperty_DetailSummary_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PropertyDetailRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PropertyServer).PropertyDetailSummary(ctx, in)
+		return srv.(BorrowerPropertyServer).DetailSummary(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Property_PropertyDetailSummary_FullMethodName,
+		FullMethod: BorrowerProperty_DetailSummary_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PropertyServer).PropertyDetailSummary(ctx, req.(*PropertyDetailRequest))
+		return srv.(BorrowerPropertyServer).DetailSummary(ctx, req.(*PropertyDetailRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Property_CreateProperty_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _BorrowerProperty_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PropertyCreateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PropertyServer).CreateProperty(ctx, in)
+		return srv.(BorrowerPropertyServer).Create(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Property_CreateProperty_FullMethodName,
+		FullMethod: BorrowerProperty_Create_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PropertyServer).CreateProperty(ctx, req.(*PropertyCreateRequest))
+		return srv.(BorrowerPropertyServer).Create(ctx, req.(*PropertyCreateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Property_UpdateProperty_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _BorrowerProperty_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PropertyUpdateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PropertyServer).UpdateProperty(ctx, in)
+		return srv.(BorrowerPropertyServer).Update(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Property_UpdateProperty_FullMethodName,
+		FullMethod: BorrowerProperty_Update_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PropertyServer).UpdateProperty(ctx, req.(*PropertyUpdateRequest))
+		return srv.(BorrowerPropertyServer).Update(ctx, req.(*PropertyUpdateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Property_DeleteProperty_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _BorrowerProperty_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PropertyDeleteRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PropertyServer).DeleteProperty(ctx, in)
+		return srv.(BorrowerPropertyServer).Delete(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Property_DeleteProperty_FullMethodName,
+		FullMethod: BorrowerProperty_Delete_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PropertyServer).DeleteProperty(ctx, req.(*PropertyDeleteRequest))
+		return srv.(BorrowerPropertyServer).Delete(ctx, req.(*PropertyDeleteRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Property_PropertyDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _BorrowerProperty_Detail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PropertyDetailRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PropertyServer).PropertyDetail(ctx, in)
+		return srv.(BorrowerPropertyServer).Detail(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Property_PropertyDetail_FullMethodName,
+		FullMethod: BorrowerProperty_Detail_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PropertyServer).PropertyDetail(ctx, req.(*PropertyDetailRequest))
+		return srv.(BorrowerPropertyServer).Detail(ctx, req.(*PropertyDetailRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Property_PropertyAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _BorrowerProperty_All_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PropertyAllRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PropertyServer).PropertyAll(ctx, in)
+		return srv.(BorrowerPropertyServer).All(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Property_PropertyAll_FullMethodName,
+		FullMethod: BorrowerProperty_All_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PropertyServer).PropertyAll(ctx, req.(*PropertyAllRequest))
+		return srv.(BorrowerPropertyServer).All(ctx, req.(*PropertyAllRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Property_ServiceDesc is the grpc.ServiceDesc for Property service.
+// BorrowerProperty_ServiceDesc is the grpc.ServiceDesc for BorrowerProperty service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Property_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "borrower.Property",
-	HandlerType: (*PropertyServer)(nil),
+var BorrowerProperty_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "borrower.BorrowerProperty",
+	HandlerType: (*BorrowerPropertyServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "PropertyPage",
-			Handler:    _Property_PropertyPage_Handler,
+			MethodName: "Page",
+			Handler:    _BorrowerProperty_Page_Handler,
 		},
 		{
-			MethodName: "PropertyDetailSummary",
-			Handler:    _Property_PropertyDetailSummary_Handler,
+			MethodName: "DetailSummary",
+			Handler:    _BorrowerProperty_DetailSummary_Handler,
 		},
 		{
-			MethodName: "CreateProperty",
-			Handler:    _Property_CreateProperty_Handler,
+			MethodName: "Create",
+			Handler:    _BorrowerProperty_Create_Handler,
 		},
 		{
-			MethodName: "UpdateProperty",
-			Handler:    _Property_UpdateProperty_Handler,
+			MethodName: "Update",
+			Handler:    _BorrowerProperty_Update_Handler,
 		},
 		{
-			MethodName: "DeleteProperty",
-			Handler:    _Property_DeleteProperty_Handler,
+			MethodName: "Delete",
+			Handler:    _BorrowerProperty_Delete_Handler,
 		},
 		{
-			MethodName: "PropertyDetail",
-			Handler:    _Property_PropertyDetail_Handler,
+			MethodName: "Detail",
+			Handler:    _BorrowerProperty_Detail_Handler,
 		},
 		{
-			MethodName: "PropertyAll",
-			Handler:    _Property_PropertyAll_Handler,
+			MethodName: "All",
+			Handler:    _BorrowerProperty_All_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -1493,101 +1493,101 @@ var Property_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	Applicant_BorrowerNames_FullMethodName = "/borrower.Applicant/BorrowerNames"
+	LoanApplicant_BorrowerNames_FullMethodName = "/borrower.LoanApplicant/BorrowerNames"
 )
 
-// ApplicantClient is the client API for Applicant service.
+// LoanApplicantClient is the client API for LoanApplicant service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type ApplicantClient interface {
+type LoanApplicantClient interface {
 	BorrowerNames(ctx context.Context, in *BorrowerNamesRequest, opts ...grpc.CallOption) (*BorrowerNamesResponse, error)
 }
 
-type applicantClient struct {
+type loanApplicantClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewApplicantClient(cc grpc.ClientConnInterface) ApplicantClient {
-	return &applicantClient{cc}
+func NewLoanApplicantClient(cc grpc.ClientConnInterface) LoanApplicantClient {
+	return &loanApplicantClient{cc}
 }
 
-func (c *applicantClient) BorrowerNames(ctx context.Context, in *BorrowerNamesRequest, opts ...grpc.CallOption) (*BorrowerNamesResponse, error) {
+func (c *loanApplicantClient) BorrowerNames(ctx context.Context, in *BorrowerNamesRequest, opts ...grpc.CallOption) (*BorrowerNamesResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(BorrowerNamesResponse)
-	err := c.cc.Invoke(ctx, Applicant_BorrowerNames_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, LoanApplicant_BorrowerNames_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// ApplicantServer is the server API for Applicant service.
-// All implementations must embed UnimplementedApplicantServer
+// LoanApplicantServer is the server API for LoanApplicant service.
+// All implementations must embed UnimplementedLoanApplicantServer
 // for forward compatibility.
-type ApplicantServer interface {
+type LoanApplicantServer interface {
 	BorrowerNames(context.Context, *BorrowerNamesRequest) (*BorrowerNamesResponse, error)
-	mustEmbedUnimplementedApplicantServer()
+	mustEmbedUnimplementedLoanApplicantServer()
 }
 
-// UnimplementedApplicantServer must be embedded to have
+// UnimplementedLoanApplicantServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedApplicantServer struct{}
+type UnimplementedLoanApplicantServer struct{}
 
-func (UnimplementedApplicantServer) BorrowerNames(context.Context, *BorrowerNamesRequest) (*BorrowerNamesResponse, error) {
+func (UnimplementedLoanApplicantServer) BorrowerNames(context.Context, *BorrowerNamesRequest) (*BorrowerNamesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BorrowerNames not implemented")
 }
-func (UnimplementedApplicantServer) mustEmbedUnimplementedApplicantServer() {}
-func (UnimplementedApplicantServer) testEmbeddedByValue()                   {}
+func (UnimplementedLoanApplicantServer) mustEmbedUnimplementedLoanApplicantServer() {}
+func (UnimplementedLoanApplicantServer) testEmbeddedByValue()                       {}
 
-// UnsafeApplicantServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to ApplicantServer will
+// UnsafeLoanApplicantServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to LoanApplicantServer will
 // result in compilation errors.
-type UnsafeApplicantServer interface {
-	mustEmbedUnimplementedApplicantServer()
+type UnsafeLoanApplicantServer interface {
+	mustEmbedUnimplementedLoanApplicantServer()
 }
 
-func RegisterApplicantServer(s grpc.ServiceRegistrar, srv ApplicantServer) {
-	// If the following call pancis, it indicates UnimplementedApplicantServer was
+func RegisterLoanApplicantServer(s grpc.ServiceRegistrar, srv LoanApplicantServer) {
+	// If the following call pancis, it indicates UnimplementedLoanApplicantServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&Applicant_ServiceDesc, srv)
+	s.RegisterService(&LoanApplicant_ServiceDesc, srv)
 }
 
-func _Applicant_BorrowerNames_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _LoanApplicant_BorrowerNames_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(BorrowerNamesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ApplicantServer).BorrowerNames(ctx, in)
+		return srv.(LoanApplicantServer).BorrowerNames(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Applicant_BorrowerNames_FullMethodName,
+		FullMethod: LoanApplicant_BorrowerNames_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ApplicantServer).BorrowerNames(ctx, req.(*BorrowerNamesRequest))
+		return srv.(LoanApplicantServer).BorrowerNames(ctx, req.(*BorrowerNamesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Applicant_ServiceDesc is the grpc.ServiceDesc for Applicant service.
+// LoanApplicant_ServiceDesc is the grpc.ServiceDesc for LoanApplicant service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Applicant_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "borrower.Applicant",
-	HandlerType: (*ApplicantServer)(nil),
+var LoanApplicant_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "borrower.LoanApplicant",
+	HandlerType: (*LoanApplicantServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "BorrowerNames",
-			Handler:    _Applicant_BorrowerNames_Handler,
+			Handler:    _LoanApplicant_BorrowerNames_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

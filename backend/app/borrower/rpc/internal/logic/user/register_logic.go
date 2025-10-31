@@ -190,16 +190,17 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int
 			TotalAmount:      preApproveRequest.Loan.TotalAmount,
 			InitialAmount:    preApproveRequest.Loan.InitialAmount,
 			LoanProperty: &borrower.LoanPropertyEntry{
-				PropertyBase: &borrower.PropertyBaseEntry{
-					Address: &borrower.AddressEntry{
-						State:    preApproveRequest.Property.Address.State,
-						City:     preApproveRequest.Property.Address.City,
-						Address1: preApproveRequest.Property.Address.Address1,
-						Address2: preApproveRequest.Property.Address.Address2,
-						ZipCode:  preApproveRequest.Property.Address.ZipCode,
-					},
-					Unit: int32(preApproveRequest.Property.Unit),
-				},
+				// todo handle borrower property
+				// PropertyBase: &borrower.PropertyBaseEntry{
+				// 	Address: &borrower.AddressEntry{
+				// 		State:    preApproveRequest.Property.Address.State,
+				// 		City:     preApproveRequest.Property.Address.City,
+				// 		Address1: preApproveRequest.Property.Address.Address1,
+				// 		Address2: preApproveRequest.Property.Address.Address2,
+				// 		ZipCode:  preApproveRequest.Property.Address.ZipCode,
+				// 	},
+				// 	Unit: int32(preApproveRequest.Property.Unit),
+				// },
 				Unit:         int32(preApproveRequest.Property.Unit),
 				PropertyType: preApproveRequest.Property.PropertyType,
 			},

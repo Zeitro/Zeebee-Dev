@@ -46,7 +46,7 @@ func (l *UpdateLogic) Update(req *types.LoanUpdateRequest) (resp *types.EmptyRes
 	// _ = propertyBaseId
 	// rpcReq.Data.LoanProperty.PropertyBase.Address.State = req.LoanProperty.PropertyBase.Address.State
 
-	applicants := make([]*borrower.BorrowerEditApplicantEntry, 0, len(rpcReq.Data.Applicants))
+	applicants := make([]*borrower.BorrowerApplicantEditEntry, 0, len(rpcReq.Data.Applicants))
 	for _, applicant := range rpcReq.Data.Applicants {
 		applicant := applicant
 		if len(applicant.FirstName) > 0 && len(applicant.LastName) > 0 {
@@ -54,7 +54,7 @@ func (l *UpdateLogic) Update(req *types.LoanUpdateRequest) (resp *types.EmptyRes
 		}
 	}
 	if len(applicants) > 0 {
-		primaryCount := slice.CountBy(applicants, func(index int, item *borrower.BorrowerEditApplicantEntry) bool {
+		primaryCount := slice.CountBy(applicants, func(index int, item *borrower.BorrowerApplicantEditEntry) bool {
 			return item.IsPrimary
 		})
 		if primaryCount == 0 {

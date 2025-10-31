@@ -1,4 +1,4 @@
-package propertylogic
+package borrowerpropertylogic
 
 import (
 	"context"
@@ -15,28 +15,28 @@ import (
 	"zeebee-backend/common/errorx"
 )
 
-type PropertyDetailLogic struct {
+type DetailLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewPropertyDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PropertyDetailLogic {
-	return &PropertyDetailLogic{
+func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogic {
+	return &DetailLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *PropertyDetailLogic) PropertyDetail(in *borrower.PropertyDetailRequest) (resp *borrower.PropertyDetailResponse, err error) {
+func (l *DetailLogic) Detail(in *borrower.PropertyDetailRequest) (resp *borrower.PropertyDetailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	respData := &borrower.PropertyBaseEntry{}
-	result, err := l.svcCtx.PropertyBaseRepo.FindOneByColumns(l.ctx, map[string]interface{}{
+	respData := &borrower.BorrowerPropertyEntry{}
+	result, err := l.svcCtx.BorrowerPropertyRepo.FindOneByColumns(l.ctx, map[string]interface{}{
 		"id":          in.Data.Id,
 		"borrower_id": in.Data.BorrowerId,
 	})

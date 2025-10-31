@@ -34,7 +34,7 @@ type applyLoanModelData struct {
 	loanProperty           *model.LoanProperty
 	loanDemographic        *model.LoanDemographic
 	loanThirdServices      []*model.LoanThirdService
-	applicants             []*model.Applicant
+	applicants             []*model.LoanApplicant
 	transactionExperiences []*model.LoanExperience
 	realEstatesExperiences []*model.LoanExperience
 	// applyFormFile          *model.File
@@ -59,18 +59,19 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrowe
 		return nil, err
 	}
 	// apply loan
-	var propertyBase *model.PropertyBase
+	var propertyBase *model.BorrowerProperty
 	var loan *model.Loan
 	var loanBorrower *model.LoanBorrower
 	var loanProperty *model.LoanProperty
 	err = l.svcCtx.LoanRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
 		var innerErr error
 
+		// todo handle borrower property
 		// get or create property base
-		propertyBase, innerErr = l.svcCtx.PropertyBaseRepo.GetOrCreateWithTx(l.ctx, tx, data.loanProperty.PropertyBase)
-		if innerErr != nil {
-			return innerErr
-		}
+		// propertyBase, innerErr = l.svcCtx.BorrowerPropertyRepo.GetOrCreateWithTx(l.ctx, tx, data.loanProperty.PropertyBase)
+		// if innerErr != nil {
+		// 	return innerErr
+		// }
 
 		// check loan
 		if len(data.loan.Code) == 0 {
@@ -105,20 +106,20 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrowe
 
 		// save loan property
 		data.loanProperty.LoanId = loan.Id
-		data.loanProperty.PropertyBaseId = propertyBase.Id
+		data.loanProperty.BorrowerPropertyId = propertyBase.Id
 		loanProperty, innerErr = l.svcCtx.LoanPropertyRepo.CreateWithTx(l.ctx, tx, data.loanProperty, false)
 		if innerErr != nil {
 			return innerErr
 		}
 
 		// save applicants
-		slice.ForEach(data.applicants, func(index int, item *model.Applicant) {
+		slice.ForEach(data.applicants, func(index int, item *model.LoanApplicant) {
 			item.BorrowerId = in.Data.BorrowerId
 			item.LoanId = loan.Id
 			item.LoanBorrowerId = loanBorrower.Id
 			item.LoanPropertyId = loanProperty.Id
 		})
-		_, innerErr = l.svcCtx.ApplicantRepo.BatchCreateWithTx(l.ctx, tx, data.applicants, false)
+		_, innerErr = l.svcCtx.LoanApplicantRepo.BatchCreateWithTx(l.ctx, tx, data.applicants, false)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -197,7 +198,7 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrowe
 		}
 
 		// sync total amount
-		innerErr = l.svcCtx.PropertyBaseRepo.SyncTotalAmountAndLoanCountWithTx(l.ctx, tx, propertyBase.Id)
+		innerErr = l.svcCtx.BorrowerPropertyRepo.SyncTotalAmountAndLoanCountWithTx(l.ctx, tx, propertyBase.Id)
 
 		return innerErr
 	})
@@ -221,8 +222,9 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData) 
 	if reqData.LoanProperty == nil {
 		return nil, errors.WithStack(errors.New("invalid loan property"))
 	}
-	if reqData.LoanProperty.PropertyBase == nil {
-		return nil, errors.WithStack(errors.New("invalid base property"))
+	// todo handle borrower property
+	if reqData.LoanProperty.BorrowerPropertyId == 0 {
+		return nil, errors.WithStack(errors.New("invalid borrower property"))
 	}
 	// loan
 	loan := &model.Loan{
@@ -269,7 +271,7 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData) 
 	}
 
 	// applicants
-	applicants := make([]*model.Applicant, 0)
+	applicants := make([]*model.LoanApplicant, 0)
 	err = copier.CopyWithOption(&applicants, &reqData.Applicants, copier.Option{
 		IgnoreEmpty: true,
 		DeepCopy:    true,
@@ -280,14 +282,14 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData) 
 	if err != nil {
 		return nil, errorx.GetFailedTransErr(err)
 	}
-	slice.ForEach(applicants, func(index int, item *model.Applicant) {
+	slice.ForEach(applicants, func(index int, item *model.LoanApplicant) {
 		item.BorrowerId = reqData.BorrowerId
 		item.FullName = stringx.FormatFullName(item.FirstName, item.MidName, item.LastName)
 	})
 
 	// loan_property
 	loanProperty := &model.LoanProperty{
-		PropertyBase: &model.PropertyBase{},
+		// PropertyBase: &model.PropertyBase{},
 	}
 	err = copier.CopyWithOption(loanProperty, reqData.LoanProperty, copier.Option{
 		IgnoreEmpty: true,
@@ -299,8 +301,9 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData) 
 	if err != nil {
 		return nil, errorx.GetFailedTransErr(err)
 	}
-	loanProperty.PropertyBase.BorrowerId = reqData.BorrowerId
-	loanProperty.Unit = loanProperty.PropertyBase.Unit
+	// todo handle borrower property
+	// loanProperty.PropertyBase.BorrowerId = reqData.BorrowerId
+	// loanProperty.Unit = loanProperty.PropertyBase.Unit
 
 	// transaction experience
 	transactionExperiences := make([]*model.LoanExperience, 0)

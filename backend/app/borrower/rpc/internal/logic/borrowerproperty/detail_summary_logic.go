@@ -1,4 +1,4 @@
-package propertylogic
+package borrowerpropertylogic
 
 import (
 	"context"
@@ -16,21 +16,21 @@ import (
 	"zeebee-backend/common/timex"
 )
 
-type PropertyDetailSummaryLogic struct {
+type DetailSummaryLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewPropertyDetailSummaryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PropertyDetailSummaryLogic {
-	return &PropertyDetailSummaryLogic{
+func NewDetailSummaryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailSummaryLogic {
+	return &DetailSummaryLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *PropertyDetailSummaryLogic) PropertyDetailSummary(in *borrower.PropertyDetailRequest) (resp *borrower.PropertyDetailSummaryResponse, err error) {
+func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (resp *borrower.PropertyDetailSummaryResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -38,7 +38,7 @@ func (l *PropertyDetailSummaryLogic) PropertyDetailSummary(in *borrower.Property
 	}()
 
 	// get property
-	propertyBase, err := l.svcCtx.PropertyBaseRepo.GetOne(l.ctx, in.Data.Id)
+	propertyBase, err := l.svcCtx.BorrowerPropertyRepo.GetOne(l.ctx, in.Data.Id)
 
 	if err != nil {
 		return nil, err

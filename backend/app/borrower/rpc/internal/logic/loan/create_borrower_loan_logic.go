@@ -52,7 +52,7 @@ func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.LoanCreateRequ
 	// create loan
 	err = l.svcCtx.LoanRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
 		var innerErr error
-		// propertyBase, innerErr = l.svcCtx.PropertyBaseRepo.GetOrCreateWithTx(l.ctx, tx, propertyBase)
+		// propertyBase, innerErr = l.svcCtx.BorrowerPropertyRepo.GetOrCreateWithTx(l.ctx, tx, propertyBase)
 		// if innerErr != nil {
 		// 	return innerErr
 		// }
@@ -84,19 +84,19 @@ func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.LoanCreateRequ
 		}
 
 		// create applicants
-		applicants = slice.Map(applicants, func(index int, item *model.Applicant) *model.Applicant {
+		applicants = slice.Map(applicants, func(index int, item *model.LoanApplicant) *model.LoanApplicant {
 			item.LoanId = loan.Id
 			item.LoanPropertyId = loanProperty.Id
 			item.LoanBorrowerId = loanBorrower.Id
 			return item
 		})
-		_, innerErr = l.svcCtx.ApplicantRepo.BatchCreateWithTx(l.ctx, tx, applicants, false)
+		_, innerErr = l.svcCtx.LoanApplicantRepo.BatchCreateWithTx(l.ctx, tx, applicants, false)
 		if innerErr != nil {
 			return innerErr
 		}
 
 		// sync total amount
-		innerErr = l.svcCtx.PropertyBaseRepo.SyncTotalAmountAndLoanCountWithTx(l.ctx, tx, loanProperty.PropertyBaseId)
+		innerErr = l.svcCtx.BorrowerPropertyRepo.SyncTotalAmountAndLoanCountWithTx(l.ctx, tx, loanProperty.BorrowerPropertyId)
 		return innerErr
 	})
 	if err != nil {
@@ -111,7 +111,7 @@ func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.LoanCreateRequ
 }
 
 // buildCreateModels
-func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateRequestData) (loan *model.Loan, loanProperty *model.LoanProperty, applicants []*model.Applicant, loanBorrower *model.LoanBorrower, err error) {
+func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateRequestData) (loan *model.Loan, loanProperty *model.LoanProperty, applicants []*model.LoanApplicant, loanBorrower *model.LoanBorrower, err error) {
 	// build applicants
 	for _, applicant := range in.Applicants {
 		if len(applicant.FirstName) == 0 {
@@ -121,8 +121,8 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 		if len(applicantName) == 0 {
 			return nil, nil, nil, nil, errors.New("applicant name is empty")
 		}
-		var applicantItem *model.Applicant
-		applicantItem = &model.Applicant{
+		var applicantItem *model.LoanApplicant
+		applicantItem = &model.LoanApplicant{
 			// Name:      applicantName,
 			FirstName: applicant.FirstName,
 			LastName:  applicant.LastName,
@@ -139,16 +139,16 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 		applicantItem.InvitationStatus = constants.ApplicantInvitationStatusAccepted
 		applicants = append(applicants, applicantItem)
 	}
-	slice.SortBy(applicants, func(a, b *model.Applicant) bool {
+	slice.SortBy(applicants, func(a, b *model.LoanApplicant) bool {
 		return b.IsPrimary
 	})
-	applicants = slice.UniqueByComparator(applicants, func(item *model.Applicant, other *model.Applicant) bool {
+	applicants = slice.UniqueByComparator(applicants, func(item *model.LoanApplicant, other *model.LoanApplicant) bool {
 		return item.FullName == other.FullName
 	})
 	if len(applicants) == 0 {
 		return nil, nil, nil, nil, errors.New("no applicant")
 	}
-	primaryCount := slice.CountBy(applicants, func(index int, item *model.Applicant) bool {
+	primaryCount := slice.CountBy(applicants, func(index int, item *model.LoanApplicant) bool {
 		return item.IsPrimary
 	})
 	if primaryCount == 0 {
@@ -181,8 +181,8 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 	loan.PendingStatus = constants.LoanPendingStatusNone
 	loan.Source = constants.LoanSourceBorrower
 
-	propertyBase, err := l.svcCtx.PropertyBaseRepo.FindOneByColumns(l.ctx, map[string]interface{}{
-		"id":          in.LoanProperty.PropertyBaseId,
+	propertyBase, err := l.svcCtx.BorrowerPropertyRepo.FindOneByColumns(l.ctx, map[string]interface{}{
+		"id":          in.LoanProperty.BorrowerPropertyId,
 		"borrower_id": in.BorrowerId,
 	})
 	if err != nil {
@@ -190,7 +190,7 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 	}
 
 	loanProperty = &model.LoanProperty{
-		PropertyBaseId:       in.LoanProperty.PropertyBaseId,
+		BorrowerPropertyId:   in.LoanProperty.BorrowerPropertyId,
 		Unit:                 propertyBase.Unit,
 		PropertyType:         propertyBase.PropertyType,
 		LivingAreaSqft:       propertyBase.LivingAreaSqft,

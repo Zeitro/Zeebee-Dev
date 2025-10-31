@@ -50,7 +50,7 @@ func (l *PropertyUpdateLogic) PropertyUpdate(req *types.PropertyUpdateRequest) (
 	}
 	rpcReq.Data.BorrowerId = borrowerId
 
-	_, err = l.svcCtx.PropertyRpcClient.UpdateProperty(l.ctx, rpcReq)
+	_, err = l.svcCtx.BorrowerPropertyRpcClient.Update(l.ctx, rpcReq)
 	if err != nil {
 		return nil, err
 	}
