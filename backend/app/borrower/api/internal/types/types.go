@@ -11,35 +11,18 @@ type AddressEntry struct {
 	ZipCode  string `json:"zip_code,optional"`
 }
 
-type ApplicantEntry struct {
-	Id               int64         `json:"id,omitempty,optional"`
-	FirstName        string        `json:"first_name,omitempty, optional"`
-	MidName          string        `json:"mid_name,omitempty, optional"`
-	LastName         string        `json:"last_name,omitempty, optional"`
-	FullName         string        `json:"full_name,omitempty, optional"`
-	BorrowerId       int64         `json:"borrower_id,omitempty, optional"`
-	LoanId           int64         `json:"loan_id,omitempty, optional"`
-	IsPrimary        bool          `json:"is_primary, optional"`
-	Type             string        `json:"type,omitempty, optional"`
-	InvitationStatus string        `json:"invitation_status,omitempty, optional"`
-	LoanPropertyId   int64         `json:"loan_property_id,omitempty"`
-	Ssn              string        `json:"ssn,omitempty, optional"`
-	Dob              string        `json:"dob,omitempty, optional"`
-	MaritalStatus    string        `json:"marital_status,omitempty, optional"`
-	Email            string        `json:"email,omitempty, optional"`
-	EstCreditScore   int32         `json:"est_credit_score,omitempty, optional"`
-	DriverLicenseNum string        `json:"driver_license_num,omitempty, optional"`
-	Address          *AddressEntry `json:"address,omitempty, optional"`
-	LoanBorrowerId   int64         `json:"loan_borrower_id,omitempty, optional"`
-	Phone            string        `json:"phone,omitempty, optional"`
-}
-
-type EditLoanPropertyEntry struct {
-	Id             int64   `json:"id,optional"`
-	PropertyBaseId int64   `json:"property_base_id" validate:"required,gt=0"`
-	Ower           string  `json:"ower,optional" validate:"max=50"`
-	PurchaseAmount float64 `json:"purchase_amount,optional"`
-	PurchaseDate   string  `json:"purchase_date,optional"`
+type BorrowerPropertyEntry struct {
+	Id             int64         `json:"id"`
+	PropertyType   string        `json:"property_type"`
+	TotalAmount    float64       `json:"total_amount"`
+	Unit           int32         `json:"unit"`
+	LivingAreaSqft float32       `json:"living_area_sqft"`
+	Bedrooms       int32         `json:"bedrooms"`
+	Bathrooms      float32       `json:"bathrooms"`
+	Address        *AddressEntry `json:"address"`
+	CreatedAt      string        `json:"created_at"`
+	UpdatedAt      string        `json:"updated_at"`
+	LoanCount      int32         `json:"loan_count"`
 }
 
 type EmptyRequest struct {
@@ -121,7 +104,7 @@ type ImportPendingLoanEntry struct {
 	Extend                *ImportLoanExtendEntry        `json:"extend,optional"`
 }
 
-type LoanApplyApplicantEntry struct {
+type LoanApplicantApplyEntry struct {
 	Id               int64         `json:"id,optional"`
 	FirstName        string        `json:"first_name,optional" validate:"required,min=1,max=30"`
 	MidName          string        `json:"mid_name,optional" validate:"min=0,max=30"`
@@ -136,6 +119,38 @@ type LoanApplyApplicantEntry struct {
 	EstCreditScore   int32         `json:"est_credit_score,optional" validate:"required,gte=300,lte=850"`
 	DriverLicenseNum string        `json:"driver_license_num,optional" validate:"required"`
 	Address          *AddressEntry `json:"address,optional" validate:"required"`
+}
+
+type LoanApplicantEditEntry struct {
+	Id        int64  `json:"id,optional"`
+	FirstName string `json:"first_name" validate:"required,min=1,max=30"`
+	MidName   string `json:"mid_name,optional" validate:"min=0,max=30"`
+	LastName  string `json:"last_name" validate:"required,min=1,max=30"`
+	Type      string `json:"type" validate:"required,oneof=Individual Corporation LLC Trust Partnership"`
+	IsPrimary bool   `json:"is_primary"`
+}
+
+type LoanApplicantEntry struct {
+	Id               int64         `json:"id,omitempty,optional"`
+	FirstName        string        `json:"first_name,omitempty, optional"`
+	MidName          string        `json:"mid_name,omitempty, optional"`
+	LastName         string        `json:"last_name,omitempty, optional"`
+	FullName         string        `json:"full_name,omitempty, optional"`
+	BorrowerId       int64         `json:"borrower_id,omitempty, optional"`
+	LoanId           int64         `json:"loan_id,omitempty, optional"`
+	IsPrimary        bool          `json:"is_primary, optional"`
+	Type             string        `json:"type,omitempty, optional"`
+	InvitationStatus string        `json:"invitation_status,omitempty, optional"`
+	LoanPropertyId   int64         `json:"loan_property_id,omitempty"`
+	Ssn              string        `json:"ssn,omitempty, optional"`
+	Dob              string        `json:"dob,omitempty, optional"`
+	MaritalStatus    string        `json:"marital_status,omitempty, optional"`
+	Email            string        `json:"email,omitempty, optional"`
+	EstCreditScore   int32         `json:"est_credit_score,omitempty, optional"`
+	DriverLicenseNum string        `json:"driver_license_num,omitempty, optional"`
+	Address          *AddressEntry `json:"address,omitempty, optional"`
+	LoanBorrowerId   int64         `json:"loan_borrower_id,omitempty, optional"`
+	Phone            string        `json:"phone,omitempty, optional"`
 }
 
 type LoanBorrowerEntry struct {
@@ -217,15 +232,6 @@ type LoanDocumentEntry struct {
 	Files          []FileEntry `json:"files"`
 }
 
-type LoanEditApplicantEntry struct {
-	Id        int64  `json:"id,optional"`
-	FirstName string `json:"first_name" validate:"required,min=1,max=30"`
-	MidName   string `json:"mid_name,optional" validate:"min=0,max=30"`
-	LastName  string `json:"last_name" validate:"required,min=1,max=30"`
-	Type      string `json:"type" validate:"required,oneof=Individual Corporation LLC Trust Partnership"`
-	IsPrimary bool   `json:"is_primary"`
-}
-
 type LoanEntry struct {
 	Id                         int64                    `json:"id,optional"`
 	Code                       string                   `json:"code,optional"`
@@ -249,7 +255,7 @@ type LoanEntry struct {
 	ServiceCompany             string                   `json:"service_company,optional" validate:"required_if=Stage Active"`
 	PaidOffDate                string                   `json:"paid_off_date,optional" validate:"required_if=Stage Archived,omitempty,datetime=01/02/2006"`
 	BusinessStrategy           []string                 `json:"business_strategy" validate:"required,dive,required,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
-	Applicants                 []ApplicantEntry         `json:"applicants"`
+	Applicants                 []LoanApplicantEntry     `json:"applicants"`
 	LenderID                   int64                    `json:"lender_id"`
 	BorrowerID                 int64                    `json:"borrower_id"`
 	CreatedAt                  string                   `json:"created_at"`
@@ -340,6 +346,13 @@ type LoanPreApprovalRequestProperty struct {
 	Unit          int32         `json:"unit" validate:"gte=1,lte=100"`
 }
 
+type LoanPropertyEditEntry struct {
+	PropertyBaseId int64   `json:"property_base_id" validate:"required,gt=0"`
+	Ower           string  `json:"ower,optional" validate:"max=50"`
+	PurchaseAmount float64 `json:"purchase_amount,optional"`
+	PurchaseDate   string  `json:"purchase_date,optional"`
+}
+
 type LoanPropertyEntry struct {
 	Id                           int64            `json:"id"`
 	PropertyType                 string           `json:"property_type"`
@@ -422,20 +435,6 @@ type PrimaryPreApprovalLoan struct {
 	Ltc               float32 `json:"ltc"`
 	RejectReason      string  `json:"reject_reason"`
 	RequestId         string  `json:"request_id"`
-}
-
-type PropertyBaseEntry struct {
-	Id             int64         `json:"id"`
-	PropertyType   string        `json:"property_type"`
-	TotalAmount    float64       `json:"total_amount"`
-	Unit           int32         `json:"unit"`
-	LivingAreaSqft float32       `json:"living_area_sqft"`
-	Bedrooms       int32         `json:"bedrooms"`
-	Bathrooms      float32       `json:"bathrooms"`
-	Address        *AddressEntry `json:"address"`
-	CreatedAt      string        `json:"created_at"`
-	UpdatedAt      string        `json:"updated_at"`
-	LoanCount      int32         `json:"loan_count"`
 }
 
 type PropertyPageEntry struct {

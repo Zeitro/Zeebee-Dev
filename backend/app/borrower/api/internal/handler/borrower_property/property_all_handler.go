@@ -1,4 +1,4 @@
-package property
+package borrower_property
 
 import (
 	"net/http"
@@ -6,7 +6,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
 
-	"zeebee-backend/app/borrower/api/internal/logic/property"
+	"zeebee-backend/app/borrower/api/internal/logic/borrower_property"
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 
@@ -15,8 +15,8 @@ import (
 	"zeebee-backend/common/validator"
 )
 
-// detail
-func PropertyDetailSummaryHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+// all
+func PropertyAllHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer func() {
@@ -26,7 +26,7 @@ func PropertyDetailSummaryHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 					Error(err)
 			}
 		}()
-		var req types.PropertyDetailRequest
+		var req types.EmptyRequest
 		if err = httpx.Parse(r, &req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
@@ -42,8 +42,8 @@ func PropertyDetailSummaryHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := property.NewPropertyDetailSummaryLogic(r.Context(), svcCtx)
-		resp, err := l.PropertyDetailSummary(&req)
+		l := borrower_property.NewPropertyAllLogic(r.Context(), svcCtx)
+		resp, err := l.PropertyAll(&req)
 		if err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 		} else {

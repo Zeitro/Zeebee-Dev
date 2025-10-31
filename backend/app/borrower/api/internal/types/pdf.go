@@ -16,7 +16,7 @@ type ApplyFormPdfRequest struct {
 	MaturityDate             string                     `json:"maturity_date,optional"`
 	PrepaymentPenalty        int32                      `json:"prepayment_penalty,optional" validate:"required_if=LoanType Rental,omitempty,gte=0"`
 	BusinessStrategy         []string                   `json:"business_strategy,optional" validate:"required,dive,required,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
-	Applicants               []*LoanApplyApplicantEntry `json:"applicants,optional"`
+	Applicants               []*LoanApplicantApplyEntry `json:"applicants,optional"`
 	ExistingLenderCompany    string                     `json:"existing_lender_company,optional" validate:"required_unless=LoanPurpose Purchase"`
 	ExistingRate             float32                    `json:"existing_rate,optional" validate:"required_unless=LoanPurpose Purchase,omitempty,gt=0,lt=100"`
 	ExistingMaturityDate     string                     `json:"existing_maturity_date,optional" validate:"required_unless=LoanPurpose Purchase,omitempty,datetime=01/02/2006"`

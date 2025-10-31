@@ -1,4 +1,4 @@
-package property
+package borrower_property
 
 import (
 	"context"
@@ -14,27 +14,35 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type PropertyDetailSummaryLogic struct {
+type PropertyCreateLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-// detail
-func NewPropertyDetailSummaryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PropertyDetailSummaryLogic {
-	return &PropertyDetailSummaryLogic{
+// create
+func NewPropertyCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PropertyCreateLogic {
+	return &PropertyCreateLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *PropertyDetailSummaryLogic) PropertyDetailSummary(req *types.PropertyDetailRequest) (resp *types.PropertyDetailSummaryResponse, err error) {
-	rpcReq := &borrower.PropertyDetailRequest{
-		Data: &borrower.PropertyDetailRequestData{
-			Id: req.Id,
-		},
+func (l *PropertyCreateLogic) PropertyCreate(req *types.PropertyCreateRequest) (resp *types.PropertyCreateResponse, err error) {
+	rpcReq := &borrower.PropertyCreateRequest{
+		Data: &borrower.PropertyCreateRequestData{},
 	}
+
+	err = copier.CopyWithOption(&rpcReq.Data, req, copier.Option{
+		DeepCopy:      true,
+		IgnoreEmpty:   true,
+		CaseSensitive: true,
+	})
+	if err != nil {
+		return nil, errorx.GetFailedTransReqErr(err)
+	}
+
 	// get borrower id
 	borrowerId, err := utils.GetAccountIdFromCtx(l.ctx)
 	if err != nil {
@@ -42,12 +50,12 @@ func (l *PropertyDetailSummaryLogic) PropertyDetailSummary(req *types.PropertyDe
 	}
 	rpcReq.Data.BorrowerId = borrowerId
 
-	rpcResp, err := l.svcCtx.PropertyRpcClient.PropertyDetailSummary(l.ctx, rpcReq)
+	rpcResp, err := l.svcCtx.PropertyRpcClient.CreateProperty(l.ctx, rpcReq)
 	if err != nil {
 		return nil, err
 	}
 
-	resp = &types.PropertyDetailSummaryResponse{}
+	resp = &types.PropertyCreateResponse{}
 	err = copier.CopyWithOption(resp, &rpcResp.Data, copier.Option{DeepCopy: true})
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)

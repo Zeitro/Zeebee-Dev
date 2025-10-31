@@ -1,4 +1,4 @@
-package property
+package borrower_property
 
 import (
 	"context"
@@ -14,24 +14,24 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type PropertyCreateLogic struct {
+type PropertyUpdateLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-// create
-func NewPropertyCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PropertyCreateLogic {
-	return &PropertyCreateLogic{
+// update
+func NewPropertyUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PropertyUpdateLogic {
+	return &PropertyUpdateLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *PropertyCreateLogic) PropertyCreate(req *types.PropertyCreateRequest) (resp *types.PropertyCreateResponse, err error) {
-	rpcReq := &borrower.PropertyCreateRequest{
-		Data: &borrower.PropertyCreateRequestData{},
+func (l *PropertyUpdateLogic) PropertyUpdate(req *types.PropertyUpdateRequest) (resp *types.EmptyResponse, err error) {
+	rpcReq := &borrower.PropertyUpdateRequest{
+		Data: &borrower.PropertyUpdateRequestData{},
 	}
 
 	err = copier.CopyWithOption(&rpcReq.Data, req, copier.Option{
@@ -50,16 +50,11 @@ func (l *PropertyCreateLogic) PropertyCreate(req *types.PropertyCreateRequest) (
 	}
 	rpcReq.Data.BorrowerId = borrowerId
 
-	rpcResp, err := l.svcCtx.PropertyRpcClient.CreateProperty(l.ctx, rpcReq)
+	_, err = l.svcCtx.PropertyRpcClient.UpdateProperty(l.ctx, rpcReq)
 	if err != nil {
 		return nil, err
 	}
 
-	resp = &types.PropertyCreateResponse{}
-	err = copier.CopyWithOption(resp, &rpcResp.Data, copier.Option{DeepCopy: true})
-	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
-	}
-
+	resp = &types.EmptyResponse{}
 	return resp, nil
 }

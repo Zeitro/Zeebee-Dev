@@ -18,12 +18,12 @@ type LoanApplyRequest struct {
 	LoanPurpose              string                     `json:"loan_purpose,optional" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
 	TotalAmount              float64                    `json:"total_amount,optional" validate:"required,gt=0"`
 	InitialAmount            float64                    `json:"initial_amount,optional" validate:"ltefield=TotalAmount"`
-	LoanProperty             *EditLoanPropertyEntry     `json:"loan_property,optional"`
+	LoanProperty             *LoanPropertyEditEntry     `json:"loan_property,optional"`
 	HoldbackAmount           float64                    `json:"holdback_amount,optional" validate:"ltefield=TotalAmount"`
 	PrincipalAmount          float64                    `json:"principal_amount,optional" validate:"required_unless=LoanPurpose Purchase,omitempty,gte=0"`
 	PrepaymentPenalty        int32                      `json:"prepayment_penalty,optional" validate:"required_if=LoanType Rental,omitempty,gte=0"`
 	BusinessStrategy         []string                   `json:"business_strategy,optional" validate:"required,dive,required,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
-	Applicants               []*LoanApplyApplicantEntry `json:"applicants,optional" validate:"required,gt=0,lte=2"`
+	Applicants               []*LoanApplicantApplyEntry `json:"applicants,optional" validate:"required,gt=0,lte=2"`
 	ExistingLenderCompany    string                     `json:"existing_lender_company,optional" validate:"required_unless=LoanPurpose Purchase"`
 	ExistingRate             float32                    `json:"existing_rate,optional,optional" validate:"required_unless=LoanPurpose Purchase,omitempty,gt=0,lt=100"`
 	ExistingMaturityDate     string                     `json:"existing_maturity_date,optional" validate:"required_unless=LoanPurpose Purchase,omitempty,datetime=01/02/2006"`
@@ -68,8 +68,8 @@ type LoanCreateRequest struct {
 	LoanType              string                    `json:"loan_type" validate:"required,oneof=Bridge Rehab Rental 'Ground up construction'"`
 	TotalAmount           float64                   `json:"total_amount,optional"  validate:"required_unless=Stage Archived"`
 	InitialAmount         float64                   `json:"initial_amount,optional"`
-	LoanProperty          *EditLoanPropertyEntry    `json:"loan_property,optional" validate:"required"`
-	Applicants            []*LoanEditApplicantEntry `json:"applicants,optional" validate:"required,min=1,max=2,dive,required"`
+	LoanProperty          *LoanPropertyEditEntry    `json:"loan_property,optional" validate:"required"`
+	Applicants            []*LoanApplicantEditEntry `json:"applicants,optional" validate:"required,min=1,max=2,dive,required"`
 	LenderCompany         string                    `json:"lender_company,optional" validate:"required"`
 	ClosingDate           string                    `json:"closing_date,optional" validate:"required_if=Stage Pending,omitempty,datetime=01/02/2006"`
 	ClosingFund           float64                   `json:"closing_fund,optional" validate:"gte=0,ltefield=TotalAmount"`
@@ -152,8 +152,8 @@ type LoanUpdateRequest struct {
 	LoanType              string                    `json:"loan_type,optional" validate:"required,oneof=Bridge Rehab Rental 'Ground up construction'"`
 	TotalAmount           float64                   `json:"total_amount,optional"  validate:"required_unless=Stage Archived"`
 	InitialAmount         float64                   `json:"initial_amount,optional"`
-	LoanProperty          *EditLoanPropertyEntry    `json:"loan_property,optional" validate:"required"`
-	Applicants            []*LoanEditApplicantEntry `json:"applicants,optional" validate:"required,dive,required"`
+	LoanProperty          *LoanPropertyEditEntry    `json:"loan_property,optional" validate:"required"`
+	Applicants            []*LoanApplicantEditEntry `json:"applicants,optional" validate:"required,dive,required"`
 	LenderCompany         string                    `json:"lender_company,optional" validate:"required"`
 	ClosingDate           string                    `json:"closing_date,optional" validate:"required_if=Stage Pending,omitempty,datetime=01/02/2006"`
 	ClosingFund           float64                   `json:"closing_fund,optional" validate:"gte=0,ltefield=TotalAmount"`

@@ -1,4 +1,4 @@
-package property
+package borrower_property
 
 import (
 	"context"
@@ -44,7 +44,7 @@ func (l *PropertyAllLogic) PropertyAll(req *types.EmptyRequest) (resp *types.Pro
 	}
 
 	resp = &types.PropertyAllResponse{}
-	resp.Lists = make([]*types.PropertyBaseEntry, 0, len(rpcResp.Data))
+	resp.Lists = make([]*types.BorrowerPropertyEntry, 0, len(rpcResp.Data))
 
 	err = copier.CopyWithOption(&resp.Lists, rpcResp.Data, copier.Option{
 		DeepCopy:      true,

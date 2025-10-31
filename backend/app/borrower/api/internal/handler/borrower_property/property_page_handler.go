@@ -1,9 +1,9 @@
-package applicant
+package borrower_property
 
 import (
 	"net/http"
 
-	"zeebee-backend/app/borrower/api/internal/logic/applicant"
+	"zeebee-backend/app/borrower/api/internal/logic/borrower_property"
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 
@@ -15,8 +15,8 @@ import (
 	"zeebee-backend/common/validator"
 )
 
-// BorrowerNamesHandler borrower names
-func BorrowerNamesHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+// PropertyPageHandler page
+func PropertyPageHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer func() {
@@ -26,7 +26,7 @@ func BorrowerNamesHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 					Error(err)
 			}
 		}()
-		var req types.EmptyRequest
+		var req types.PropertyPageRequest
 		if err = httpx.Parse(r, &req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
@@ -42,8 +42,8 @@ func BorrowerNamesHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := applicant.NewBorrowerNamesLogic(r.Context(), svcCtx)
-		resp, err := l.BorrowerNames(&req)
+		l := borrower_property.NewPropertyPageLogic(r.Context(), svcCtx)
+		resp, err := l.PropertyPage(&req)
 		if err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 		} else {
