@@ -2,14 +2,11 @@
 import styles from './index.module.scss';
 import { Form, Menu, Segmented, Steps, Tabs } from 'antd';
 import React, { useEffect, useMemo, useRef } from 'react';
-import useCreate from '../components/CreateZeeBee/hooks/useCreate';
 import useLenderDetails from './components/useLenderDetails';
-import { assemblyAddress, changeUnitByPropertyType } from '@/lib/format';
-import { flattenArray } from '@/lib/common';
+import { assemblyAddress, changeUnitByPropertyType } from '@repo/shared-methods/utils';
 import { stageColor, pendingStatusColor, loanDetailsFields } from '@/enum/loan';
 import HomeSvg from '@/assets/images/home.svg';
 import _ from 'lodash';
-import HeaderBtn from './components/HeaderBtn';
 import { CheckOutlined } from '@ant-design/icons';
 const ZeeBeeDetails = () => {
 	const {
@@ -22,12 +19,9 @@ const ZeeBeeDetails = () => {
 		initialValues,
 		rowData,
 		newRowData,
-		setRowData,
 		setNewRowData,
-		lenderDetailsComponents,
 		disabled,
 		tabList,
-		selectIndex,
 		loanProgress, // 当前loan根据stage和pendingStatus计算的进度
 		unitInfo,
 		setUnitInfo,
@@ -37,7 +31,7 @@ const ZeeBeeDetails = () => {
 
 	useEffect(() => {
 		setCurrentStep(lenderDetailsSteps[0].key);
-	}, []);
+	}, [lenderDetailsSteps, setCurrentStep]);
 
 	const lenderMenu = useMemo(() => {
 		const iconFn = (item, isChild, index) => {
@@ -93,7 +87,7 @@ const ZeeBeeDetails = () => {
 		const arr = getLenderMenu();
 		count.current.index = -1;
 		return arr;
-	}, [loanProgress]);
+	}, [lenderDetailsSteps, loanProgress.index, loanProgress.selectTabKey]);
 
 	return (
 		<div className="flex flex-col h-full">

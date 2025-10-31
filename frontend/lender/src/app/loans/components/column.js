@@ -66,7 +66,7 @@ const common = (isNotAddress) => {
 	];
 };
 
-const getOpt = (showDeleteModal, stage) => {
+const getOpt = (showDeleteModal) => {
 	return {
 		title: '',
 		dataIndex: 'operation',

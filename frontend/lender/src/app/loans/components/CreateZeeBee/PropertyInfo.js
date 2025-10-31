@@ -1,10 +1,10 @@
 import React from 'react';
 import styles from './index.module.scss';
-import { Row, Col, Form, Radio, Select, Input, InputNumber } from 'antd';
+import { Row, Col, Form, Select, InputNumber } from 'antd';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import { layoutCol, titleCol } from '@/enum/common';
-import { livingAreaProps, maxNumberOfUnits } from '@/lib/format';
+import { livingAreaProps, maxNumberOfUnits } from '@repo/shared-methods/utils';
 let name = 'loan_property';
 const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty }) => {
 	const { loanPurposeOptions, loanTypeOptions, propertyTypeOptions } = useGetOptions([

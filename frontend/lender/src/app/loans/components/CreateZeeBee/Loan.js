@@ -1,12 +1,10 @@
 import React, { useEffect } from 'react';
 import styles from './index.module.scss';
 import { Row, Col, Form, Radio, Input, InputNumber } from 'antd';
-import CommonFormDate from '@/components/CommonDate';
-import InputNumAmount from '@/components/InputNumAmount';
-import { yesNoOptions } from '@/enum/common';
+import { CommonFormDate, InputNumAmount } from '@repo/shared-methods';
 import { useGetOptions } from '@/hooks/useGetOptions';
-import { layoutCol, titleCol } from '@/enum/common';
-import { maxTerm, maxAmount } from '@/lib/format';
+import { layoutCol, titleCol, yesNoOptions } from '@/enum/common';
+import { maxTerm, maxAmount } from '@repo/shared-methods/utils';
 
 const LoanDetail = ({ gutter = 24, form }) => {
 	const loanPurpose = Form.useWatch('loan_purpose', form);

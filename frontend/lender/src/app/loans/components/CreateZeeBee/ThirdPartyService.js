@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import NewTable from '@/components/NewTable';
+import { NewTable } from '@repo/shared-methods';
 import { useColumnByZeeBeeLoan } from './components/column';
 import { AddEditBtn } from './components/AddEditBtn';
 import { Form, message } from 'antd';

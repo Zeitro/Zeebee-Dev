@@ -1,10 +1,10 @@
 import DocumentStatus from './DocumentStatus';
 import { SendRequestBtn } from './SendRequestModal';
 import { UploadModalBtn } from './AddDocument/UploadModal';
-import TableOperation from '@/components/TableOperation';
-import { formatDate } from '@/lib/date';
+import { TableOperation, DeleteBtn } from '@repo/shared-methods';
+import { formatDate } from '@repo/shared-methods/utils';
 import { Tooltip } from 'antd';
-import { DeleteBtn } from '@/components/NewModal/BtnPopUpModal';
+// import { DeleteBtn } from '@/components/NewModal/BtnPopUpModal';
 import { EditCommentModalBtn } from './EditCommentModal';
 const getUploadCommonColumns = (typeTitle, isHaveComments = true, statusWidth) => {
 	const arr = [

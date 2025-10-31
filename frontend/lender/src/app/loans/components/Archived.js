@@ -1,10 +1,9 @@
 'use client';
 import React, { useMemo, useState, useRef } from 'react';
-import FilterTable from '@/components/FilterTable';
+import { FilterTable } from '@repo/shared-methods';
 import { archivedColumns } from './column';
-import { transformArrayStructure } from '@/lib/common';
+import { transformArrayStructure, createRequest } from '@repo/shared-methods/utils';
 import { useOptionsStore } from '@/store/options';
-import { createRequest } from '@/lib/fetch';
 import { ReloadOutlined } from '@ant-design/icons';
 import useOpt from './useOpt';
 const ArchivedLoans = ({
@@ -20,14 +19,13 @@ const ArchivedLoans = ({
 	successCallback,
 	stage = 'Archived',
 }) => {
-	const { loanTypeOptions, lenderOptions } = useOptionsStore();
+	const { loanTypeOptions } = useOptionsStore();
 	const { request } = createRequest();
 	const tableFilterRef = useRef();
 	const { showDeleteModal, contextHolder, handleSelectedRow } = useOpt(tableFilterRef);
 	const [type, setType] = useState('address');
 	const [searchValue, setSearchValue] = useState('');
 	const [loanType, setLoanType] = useState([]);
-	const [lender, setLender] = useState([]);
 	const filterList = useMemo(
 		() => [
 			{
@@ -87,14 +85,13 @@ const ArchivedLoans = ({
 					setType('address');
 					setSearchValue('');
 					setLoanType([]);
-					setLender([]);
 					setTimeout(() => {
 						tableFilterRef?.current?.handleSearch?.();
 					}, 300);
 				},
 			},
 		],
-		[searchValue, type, loanType, lender, loanTypeOptions, lenderOptions],
+		[searchValue, type, loanType, loanTypeOptions],
 	);
 
 	return (

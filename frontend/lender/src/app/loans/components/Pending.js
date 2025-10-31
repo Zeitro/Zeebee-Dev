@@ -1,13 +1,11 @@
 'use client';
 import React, { useMemo, useState, useRef, useEffect } from 'react';
-import FilterTable from '@/components/FilterTable';
+import { FilterTable } from '@repo/shared-methods';
 import { pendingColumns } from './column';
-import { transformArrayStructure } from '@/lib/common';
+import { transformArrayStructure, createRequest, eventBus } from '@repo/shared-methods/utils';
 import { useOptionsStore } from '@/store/options';
-import { createRequest } from '@/lib/fetch';
 import { ReloadOutlined } from '@ant-design/icons';
 import useOpt from './useOpt';
-import eventBus from '@/lib/bus';
 const PendingPage = ({
 	hasFilterField,
 	hasPagination,
@@ -29,7 +27,6 @@ const PendingPage = ({
 	const [searchValue, setSearchValue] = useState('');
 	const [loanPurpose, setLoanPurpose] = useState([]);
 	const [loanType, setLoanType] = useState([]);
-	const [lender, setLender] = useState([]);
 	const [status, setStatus] = useState([]);
 	const filterList = useMemo(
 		() => [
@@ -118,7 +115,6 @@ const PendingPage = ({
 					setSearchValue('');
 					setLoanPurpose([]);
 					setLoanType([]);
-					setLender([]);
 					setStatus([]);
 					setTimeout(() => {
 						tableFilterRef?.current?.handleSearch?.();
@@ -131,7 +127,6 @@ const PendingPage = ({
 			type,
 			loanPurpose,
 			loanType,
-			lender,
 			status,
 			loanPurposeOptions,
 			loanTypeOptions,

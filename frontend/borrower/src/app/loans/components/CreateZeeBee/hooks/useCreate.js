@@ -204,39 +204,49 @@ const useCreate = (pageType = 'create') => {
 
 	// 创建loan
 	const handleSubmit = async (values) => {
-		let url = '/loan/apply';
-		let method = 'POST';
-		if (searchParams.has('id')) {
-			url = `/loan/${searchParams.get('id')}/update_apply`;
-			method = 'PUT';
-		} else {
-			values.code = loanUuid;
+		try {
+			let url = '/loan/apply';
+			let method = 'POST';
+			if (searchParams.has('id')) {
+				url = `/loan/${searchParams.get('id')}/update_apply`;
+				method = 'PUT';
+			} else {
+				values.code = loanUuid;
+			}
+			await request(url, {
+				method,
+				body: values,
+			});
+			message.open({
+				type: 'success',
+				content: 'ZeeBee loan created successfully！',
+			});
+		} catch (error) {
+			setLoading(false);
+			return Promise.reject(error);
 		}
-		await request(url, {
-			method,
-			body: values,
-		});
-		message.open({
-			type: 'success',
-			content: 'ZeeBee loan created successfully！',
-		});
 	};
 
 	const handlePdf = async (values) => {
-		// 获取签名已生成的pdf数据流
-		if (!searchParams.has('id')) {
-			values.code = loanUuid;
+		try {
+			// 获取签名已生成的pdf数据流
+			if (!searchParams.has('id')) {
+				values.code = loanUuid;
+			}
+			const res = await request('/pdf/apply_form', {
+				method: 'POST',
+				body: values,
+			});
+			const file = await res.blob();
+			file.name = 'contract.pdf';
+			const onProgress = (e) => {
+				console.log('onProgress', e);
+			};
+			return await uploadAwsS3({ url: '/storage/presign_url', file, onProgress });
+		} catch (error) {
+			setLoading(false);
+			return Promise.reject(error);
 		}
-		const res = await request('/pdf/apply_form', {
-			method: 'POST',
-			body: values,
-		});
-		const file = await res.blob();
-		file.name = 'contract.pdf';
-		const onProgress = (e) => {
-			console.log('onProgress', e);
-		};
-		return await uploadAwsS3({ url: '/storage/presign_url', file, onProgress });
 	};
 
 	// 添加id- (草稿时必须传详情接口返回的id)

@@ -1,11 +1,10 @@
 'use client';
 import React, { useMemo, useState, useRef } from 'react';
 import { ReloadOutlined } from '@ant-design/icons';
-import FilterTable from '@/components/FilterTable';
+import { FilterTable } from '@repo/shared-methods';
 import { activeColumns } from './column';
-import { transformArrayStructure } from '@/lib/common';
 import { useOptionsStore } from '@/store/options';
-import { createRequest } from '@/lib/fetch';
+import { transformArrayStructure, createRequest } from '@repo/shared-methods/utils';
 import useOpt from './useOpt';
 const ActiveLoans = ({
 	hasFilterField,
@@ -28,7 +27,6 @@ const ActiveLoans = ({
 	const [searchValue, setSearchValue] = useState('');
 	const [loanPurpose, setLoanPurpose] = useState([]);
 	const [loanType, setLoanType] = useState([]);
-	const [lender, setLender] = useState([]);
 	const filterList = useMemo(
 		() => [
 			{
@@ -101,14 +99,13 @@ const ActiveLoans = ({
 					setSearchValue('');
 					setLoanPurpose([]);
 					setLoanType([]);
-					setLender([]);
 					setTimeout(() => {
 						tableFilterRef?.current?.handleSearch?.();
 					}, 300);
 				},
 			},
 		],
-		[searchValue, type, loanPurpose, loanType, lender, loanPurposeOptions, loanTypeOptions],
+		[searchValue, type, loanPurpose, loanType, loanPurposeOptions, loanTypeOptions],
 	);
 
 	return (

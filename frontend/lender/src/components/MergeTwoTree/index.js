@@ -72,11 +72,11 @@ const MergeTwoTree = ({ options, options2, onChange, value }) => {
 			setLeftKeys(filterArr(value, newOptions) || []);
 			setRightKeys(filterArr(value, newOptions2) || []);
 		}
-	}, [value]);
+	}, [newOptions, newOptions2, value]);
 
 	useEffect(() => {
 		onChange([...new Set([...leftKeys, ...rightKeys])]);
-	}, [leftKeys, rightKeys]);
+	}, [leftKeys, onChange, rightKeys]);
 
 	const onSelect = (key, checkedKeys, setFun) => {
 		let newCheckedKeys = [...checkedKeys];
