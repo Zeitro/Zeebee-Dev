@@ -154,7 +154,7 @@ func (repo *LoanRepo) Page(ctx context.Context, pageReq *lender.LoanPageRequestD
 		Preload("Property").
 		Preload("Applicants")
 	if len(filter.Stage) > 0 {
-		query = query.Where(fmt.Sprintf("%s.stage = ? and %s.source = ?", loanTable, loanTable), filter.Stage, constants.LoanSourcePreApproval)
+		query = query.Where(fmt.Sprintf("%s.stage = ? and %s.source in ?", loanTable, loanTable), filter.Stage, []constants.LoanSource{constants.LoanSourcePreApproval, constants.LoanSourceSystem})
 	}
 	hasJoinProperty := false
 
