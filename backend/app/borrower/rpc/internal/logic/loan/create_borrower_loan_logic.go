@@ -178,7 +178,7 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 	loan.PendingStatus = constants.LoanPendingStatusNone
 	loan.Source = constants.LoanSourceBorrower
 
-	propertyBase, err := l.svcCtx.BorrowerPropertyRepo.FindOneByColumns(l.ctx, map[string]interface{}{
+	borrowerProperty, err := l.svcCtx.BorrowerPropertyRepo.FindOneByColumns(l.ctx, map[string]interface{}{
 		"id":          in.LoanProperty.BorrowerPropertyId,
 		"borrower_id": in.BorrowerId,
 	})
@@ -188,7 +188,7 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 
 	loanProperty = &model.LoanProperty{}
 
-	err = copier.CopyWithOption(loanProperty, propertyBase, copier.Option{
+	err = copier.CopyWithOption(loanProperty, borrowerProperty, copier.Option{
 		IgnoreEmpty:   false,
 		DeepCopy:      true,
 		CaseSensitive: true,

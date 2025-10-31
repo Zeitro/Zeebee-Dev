@@ -2,7 +2,6 @@ package loanlogic
 
 import (
 	"context"
-	"database/sql"
 	"strings"
 
 	"github.com/duke-git/lancet/v2/slice"
@@ -58,7 +57,7 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 	if len(oldApplicants) == 0 {
 		return nil, errors.WithStack(errors.New("Applicant Is Not Found"))
 	}
-	if loanModel.Source != constants.LoanSourceBorrower {
+	if loanModel.Source != constants.LoanSourceBorrower && loanModel.Source != constants.LoanSourcePreApproval {
 		return nil, errors.WithStack(errors.New("Loan Source Is Not 3rd Party"))
 	}
 	loanPropertyModel := loanModel.LoanProperty
@@ -269,7 +268,7 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
 	}
 	// loan property
-	propertyBase, err := l.svcCtx.BorrowerPropertyRepo.FindOneByColumns(l.ctx, map[string]interface{}{
+	borrowerProperty, err := l.svcCtx.BorrowerPropertyRepo.FindOneByColumns(l.ctx, map[string]interface{}{
 		"id":          in.LoanProperty.BorrowerPropertyId,
 		"borrower_id": in.BorrowerId,
 	})
@@ -277,77 +276,74 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 		return nil, nil, nil, nil, err
 	}
 
-	loanProperty = &model.LoanProperty{
-		BorrowerPropertyId:   in.LoanProperty.BorrowerPropertyId,
-		Unit:                 propertyBase.Unit,
-		PropertyType:         propertyBase.PropertyType,
-		LivingAreaSqft:       propertyBase.LivingAreaSqft,
-		Bedrooms:             propertyBase.Bedrooms,
-		Bathrooms:            propertyBase.Bathrooms,
-		FuturePropertyType:   propertyBase.PropertyType,
-		FutureUnit:           propertyBase.Unit,
-		FutureLivingAreaSqft: propertyBase.LivingAreaSqft,
-		FutureBedrooms:       propertyBase.Bedrooms,
-		FutureBathrooms:      propertyBase.Bathrooms,
-		Address:              propertyBase.Address,
-		Owner:                in.LoanProperty.Owner,
-		PurchaseAmount:       in.LoanProperty.PurchaseAmount,
-	}
-	if len(in.LoanProperty.PurchaseDate) > 0 {
-		purchaseDate, err := timex.FormateTimeToStrWithUsStyle(in.LoanProperty.PurchaseDate)
-		if err != nil {
-			return nil, nil, nil, nil, errors.Wrap(err, "Invalid Purchase Date")
-		}
-		loanProperty.PurchaseDate = &sql.NullTime{
-			Time:  purchaseDate,
-			Valid: true,
-		}
+	loanProperty = &model.LoanProperty{}
 
+	err = copier.CopyWithOption(loanProperty, borrowerProperty, copier.Option{
+		IgnoreEmpty:   false,
+		DeepCopy:      true,
+		CaseSensitive: true,
+		Converters: []copier.TypeConverter{
+			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
+		},
+	})
+	if err != nil {
+		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
 	}
+	loanProperty.BorrowerPropertyId = in.LoanProperty.BorrowerPropertyId
+	loanProperty.Owner = in.LoanProperty.Owner
+	loanProperty.PurchaseAmount = in.LoanProperty.PurchaseAmount
+
+	// loanProperty = &model.LoanProperty{
+	// 	BorrowerPropertyId:   in.LoanProperty.BorrowerPropertyId,
+	// 	Unit:                 propertyBase.Unit,
+	// 	PropertyType:         propertyBase.PropertyType,
+	// 	LivingAreaSqft:       propertyBase.LivingAreaSqft,
+	// 	Bedrooms:             propertyBase.Bedrooms,
+	// 	Bathrooms:            propertyBase.Bathrooms,
+	// 	FuturePropertyType:   propertyBase.PropertyType,
+	// 	FutureUnit:           propertyBase.Unit,
+	// 	FutureLivingAreaSqft: propertyBase.LivingAreaSqft,
+	// 	FutureBedrooms:       propertyBase.Bedrooms,
+	// 	FutureBathrooms:      propertyBase.Bathrooms,
+	// 	Address:              propertyBase.Address,
+	// 	Owner:                in.LoanProperty.Owner,
+	// 	PurchaseAmount:       in.LoanProperty.PurchaseAmount,
+	// }
+	// if len(in.LoanProperty.PurchaseDate) > 0 {
+	// 	purchaseDate, err := timex.FormateTimeToStrWithUsStyle(in.LoanProperty.PurchaseDate)
+	// 	if err != nil {
+	// 		return nil, nil, nil, nil, errors.Wrap(err, "Invalid Purchase Date")
+	// 	}
+	// 	loanProperty.PurchaseDate = &sql.NullTime{
+	// 		Time:  purchaseDate,
+	// 		Valid: true,
+	// 	}
+	//
+	// }
 
 	if loan.TotalAmount < loan.InitialAmount {
 		return nil, nil, nil, nil, errors.New("Total Amount Cannot Be Less Than Initial Amount")
 	}
 	switch constants.LoanStage(in.Stage) {
 	case constants.LoanStagePending:
-		closingDate, err := timex.FormateTimeToStrWithUsStyle(in.ClosingDate)
-
-		if err != nil {
-			return nil, nil, nil, nil, errors.Wrap(err, "Invalid Closing Date")
-		}
-		loan.ClosingDate = &sql.NullTime{
-			Time:  closingDate,
-			Valid: true,
+		if loan.ClosingDate == nil {
+			return nil, nil, nil, nil, errors.New("Closing Date Is Required")
 		}
 		loan.HoldbackAmount = loan.TotalAmount - loan.InitialAmount
 		loan.PrincipalAmount = loan.TotalAmount
-		loan.PendingStatus = constants.LoanPendingStatus(in.PendingStatus)
+		// loan.PendingStatus = constants.LoanPendingStatus(in.PendingStatus)
 
 	case constants.LoanStageActive:
 
-		maturityDate, err := timex.FormateTimeToStrWithUsStyle(in.MaturityDate)
-		if err != nil {
-			return nil, nil, nil, nil, errors.Wrap(err, "Invalid Maturity Date")
+		// loan.PrincipalAmount = in.PrincipalAmount
+		if loan.MaturityDate == nil {
+			return nil, nil, nil, nil, errors.New("Maturity Date Is Required")
 		}
-		loan.MaturityDate = &sql.NullTime{
-			Time:  maturityDate,
-			Valid: true,
-		}
-		loan.PrincipalAmount = in.PrincipalAmount
-		loan.MonthlyPayment = in.MonthlyPayment
-		loan.LienPosition = in.LienPosition
-		loan.ServiceCompany = in.ServiceCompany
-		loan.PrepaymentPenalty = in.PrepaymentPenalty
 	case constants.LoanStageArchived:
-		paidOffDate, err := timex.FormateTimeToStrWithUsStyle(in.PaidOffDate)
-		if err != nil {
-			return nil, nil, nil, nil, errors.Wrap(err, "Invalid Paid Off Date")
+		// loan.PrincipalAmount = in.PrincipalAmount
+		if loan.PaidOffDate == nil {
+			return nil, nil, nil, nil, errors.New("Paid Off Date Is Required")
 		}
-		loan.PaidOffDate = &sql.NullTime{
-			Time:  paidOffDate,
-			Valid: true,
-		}
-		loan.PrincipalAmount = in.PrincipalAmount
 	default:
 		return nil, nil, nil, nil, errors.WithStack(errors.New("Invalid Loan Stage"))
 	}
