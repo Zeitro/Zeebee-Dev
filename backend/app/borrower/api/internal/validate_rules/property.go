@@ -6,6 +6,7 @@ import (
 
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/common/constants"
+	"zeebee-backend/common/timex"
 )
 
 var PropertyUnitTag = "invalid_unit_for_property_type"
@@ -185,4 +186,91 @@ func PropertyUpdateRequest(sl validator.StructLevel) {
 			sl.ReportError(property.Unit, "unit", "Unit", PropertyUnitTag, " >= 1")
 		}
 	}
+}
+
+// LoanPropertyApplyEntry
+func LoanPropertyApplyEntry(sl validator.StructLevel) {
+	var loanPurpose string
+	var loanType string
+	val := sl.Current().Interface()
+	parent := sl.Parent().Interface()
+	property, ok := val.(types.LoanPropertyApplyEntry)
+	if !ok {
+		sl.ReportError(property, "property", "Property", "property_type", "invalid loan apply property")
+		return
+	}
+	switch req := parent.(type) {
+	case types.LoanApplyRequest:
+		// req := parent.(types.LoanApplyRequest)
+		loanPurpose = req.LoanPurpose
+		loanType = req.LoanType
+
+	default:
+		sl.ReportError(property, "property", "Property", "property_type", "invalid loan apply property")
+		return
+	}
+
+	if loanPurpose != string(constants.LoanPurposePurchase) {
+		if len(property.ExistingLenderCompany) == 0 {
+			sl.ReportError(property.ExistingLenderCompany, "existing lender company", "ExistingLenderCompany", "required", "property.ExistingLenderCompany")
+			return
+		}
+		if property.ExistingRate < 0 {
+			sl.ReportError(property.ExistingRate, "existing rate", "ExistingRate", "gt", convertor.ToString(property.ExistingRate))
+			return
+		}
+		if property.ExistingRate > 100 {
+			sl.ReportError(property.ExistingRate, "existing rate", "ExistingRate", "lt", convertor.ToString(property.ExistingRate))
+			return
+		}
+
+		if property.EstPropertyValueAmount <= 0 {
+			sl.ReportError(property.EstPropertyValueAmount, "est property value amount", "EstPropertyValueAmount", "gt", convertor.ToString(property.EstPropertyValueAmount))
+			return
+		}
+
+		_, err := timex.FormateTimeToStrWithUsStyle(property.ExistingMaturityDate)
+		if err != nil {
+			sl.ReportError(property.ExistingMaturityDate, "existing maturity date", "ExistingMaturityDate", "datetime", property.ExistingMaturityDate)
+			return
+		}
+
+		_, err = timex.FormateTimeToStrWithUsStyle(property.PurchaseDate)
+		if err != nil {
+			sl.ReportError(property.ExistingMaturityDate, "purchase date", "PurchaseDate", "datetime", property.ExistingMaturityDate)
+			return
+		}
+
+	}
+
+	if loanPurpose == string(constants.LoanPurposePurchase) {
+		_, err := timex.FormateTimeToStrWithUsStyle(property.ScheduledCloseEscrowDate)
+		if err != nil {
+			sl.ReportError(property.ScheduledCloseEscrowDate, "existing maturity date", "ExistingMaturityDate", "datetime", property.ScheduledCloseEscrowDate)
+			return
+		}
+	}
+
+	if loanType == string(constants.LoanTypeRehab) || loanType == string(constants.LoanTypeConstruction) {
+		if property.Budget == nil {
+			sl.ReportError(property.Budget, "budget", "Budget", "required", "Property Budget")
+			return
+		}
+	}
+
+	if loanType == string(constants.LoanTypeRental) {
+		if property.EstYearlyRentalIncome <= 0 {
+			sl.ReportError(property.EstYearlyRentalIncome, "est yearly rental income", "EstYearlyRentalIncome", "gt", convertor.ToString(property.EstYearlyRentalIncome))
+			return
+		}
+		if property.YearlyLiabilityExpense <= 0 {
+			sl.ReportError(property.YearlyLiabilityExpense, "yearly liability expense", "YearlyLiabilityExpense", "gt", convertor.ToString(property.YearlyLiabilityExpense))
+			return
+		}
+		if property.Dscr <= 0 {
+			sl.ReportError(property.Dscr, "dscr", "Dscr", "gt", convertor.ToString(property.Dscr))
+			return
+		}
+	}
+
 }
