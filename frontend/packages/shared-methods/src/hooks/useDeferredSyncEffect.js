@@ -12,52 +12,52 @@ import { useEffect, useRef } from 'react';
  * - isUseMicrotask: boolean     若为 true，使用 Promise.resolve().then(...)（微任务）
  */
 export function useDeferredSyncEffect({
-  predicate = () => true,
-  immediate,
-  deferred,
-  deps = [],
-  delay = 0,
-  isUseMicrotask = false,
+	predicate = () => true,
+	immediate,
+	deferred,
+	deps = [],
+	delay = 0,
+	isUseMicrotask = false,
 }) {
-  const cancelledRef = useRef(false);
+	const cancelledRef = useRef(false);
 
-  useEffect(() => {
-    cancelledRef.current = false;
+	useEffect(() => {
+		cancelledRef.current = false;
 
-    if (!predicate?.()) return;
+		if (!predicate?.()) return;
 
-    try {
-      immediate?.();
-    } catch (e) {
-      // ignore immediate errors or rethrow as needed
-      // console.error(e);
-    }
+		try {
+			immediate?.();
+		} catch {
+			// ignore immediate errors or rethrow as needed
+			// console.error(e);
+		}
 
-    if (!deferred) return;
+		if (!deferred) return;
 
-    let timerId = null;
-    const runDeferred = () => {
-      if (!cancelledRef.current) {
-        try {
-          deferred?.();
-        } catch (e) {
-          // console.error(e);
-        }
-      }
-    };
+		let timerId = null;
+		const runDeferred = () => {
+			if (!cancelledRef.current) {
+				try {
+					deferred?.();
+				} catch {
+					// console.error(e);
+				}
+			}
+		};
 
-    if (isUseMicrotask) {
-      Promise.resolve().then(runDeferred);
-    } else {
-      timerId = setTimeout(runDeferred, delay);
-    }
+		if (isUseMicrotask) {
+			Promise.resolve().then(runDeferred);
+		} else {
+			timerId = setTimeout(runDeferred, delay);
+		}
 
-    return () => {
-      cancelledRef.current = true;
-      if (timerId) clearTimeout(timerId);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
+		return () => {
+			cancelledRef.current = true;
+			if (timerId) clearTimeout(timerId);
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, deps);
 }
 
 /**
@@ -82,7 +82,7 @@ export function useDeferredSyncEffects({ rules = [], deps = [] }) {
 				// immediate 执行（同步），适合 form.setFieldsValue 等外部系统更新
 				try {
 					rule?.immediate?.();
-				} catch (e) {
+				} catch {
 					// ignore or log
 				}
 
@@ -95,7 +95,9 @@ export function useDeferredSyncEffects({ rules = [], deps = [] }) {
 						if (!cancelledRef.current) {
 							try {
 								rule?.deferred?.();
-							} catch (e) {}
+							} catch {
+								// ignore or log
+							}
 						}
 					});
 				} else {
@@ -104,12 +106,14 @@ export function useDeferredSyncEffects({ rules = [], deps = [] }) {
 						if (!cancelledRef.current) {
 							try {
 								rule?.deferred?.();
-							} catch (e) {}
+							} catch {
+								// ignore or log
+							}
 						}
 					}, delay);
 					timers.push(id);
 				}
-			} catch (e) {
+			} catch {
 				// ignore predicate errors
 			}
 		}

@@ -1,10 +1,11 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { NewTable } from '@repo/shared-methods';
 import { useColumnByZeeBeeLoan } from './components/column';
 import { AddEditBtn } from './components/AddEditBtn';
 import { Form, message } from 'antd';
 import _ from 'lodash';
+import { useDeferredSyncEffects } from '@repo/shared-methods/hooks';
 const paramsKeyInfo = {
 	transactionHistory: 'transaction_experiences',
 	realEstate: 'real_estate_experiences',
@@ -18,14 +19,27 @@ const Experience = ({ form, rowData, setIsChange, changeFieldsValue = () => {} }
 	const [realEstateList, setRealEstateList] = useState([]);
 	const [messageApi, contextHolder] = message.useMessage();
 
-	useEffect(() => {
-		if (rowData?.transaction_experiences?.length) {
-			setHistoryList(rowData.transaction_experiences || []);
-		}
-		if (rowData?.real_estate_experiences?.length) {
-			setRealEstateList(rowData.real_estate_experiences || []);
-		}
-	}, [rowData]);
+	useDeferredSyncEffects({
+		rules: [
+			{
+				predicate: () => rowData?.transaction_experiences?.length,
+				deferred: () => {
+					console.log(rowData);
+
+					setHistoryList(rowData.transaction_experiences || []);
+				},
+				delay: 0,
+			},
+			{
+				predicate: () => rowData?.real_estate_experiences?.length,
+				deferred: () => {
+					setRealEstateList(rowData.real_estate_experiences || []);
+				},
+				delay: 0,
+			},
+		],
+		deps: [rowData],
+	});
 
 	const commonAdd = (arr, setFn, values, key, type) => {
 		let newArr = [];

@@ -33,7 +33,7 @@ const LoanDetail = ({ gutter = 24, form }) => {
 			const num = est_yearly_rental_income / yearly_liability_expense;
 			form.setFieldsValue({ dscr: Math.round(num * 100) / 100 });
 		}
-	}, [est_yearly_rental_income, yearly_liability_expense]);
+	}, [est_yearly_rental_income, form, yearly_liability_expense]);
 	return (
 		<Row className={styles.createZeeBee} gutter={gutter}>
 			<Col {...titleCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">

@@ -8,15 +8,14 @@ import Link from 'next/link';
 import styles from './index.module.scss';
 import { CustomContent } from './customContent';
 import { eventBus } from '@repo/shared-methods/utils';
+import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 /**
  * 面包屑导航
  */
 const NewHeader = () => {
 	const pathname = usePathname();
 	const config = useMemo(() => getCurrentRouterItem(pathname, navRouter), [pathname]); // 获取当前路由的配置
-	const flatRoutes = flattenNavRouter(navRouter);
-	const breadcrumbs = getCrumbs(pathname, flatRoutes);
-	const [crumbs, setCrumbs] = useState([navRouter[0], ...breadcrumbs]);
+	const [crumbs, setCrumbs] = useState([]);
 	const itemRender = (currentRoute, params, items) => {
 		const isLast = currentRoute?.path === items[items.length - 1]?.path;
 		return isLast ? (
@@ -25,6 +24,16 @@ const NewHeader = () => {
 			<Link href={currentRoute.path || ''}>{currentRoute.title}</Link>
 		);
 	};
+
+	useDeferredSyncEffect({
+		deferred: () => {
+			const flatRoutes = flattenNavRouter(navRouter);
+			const breadcrumbs = getCrumbs(pathname, flatRoutes);
+			setCrumbs([navRouter[0], ...breadcrumbs]);
+		},
+		deps: [pathname],
+		isUseMicrotask: true,
+	});
 
 	// 有动态的面包屑内容时，可调用changeCrumbs修改，参数config = {1: '动态内容'}
 	useLayoutEffect(() => {

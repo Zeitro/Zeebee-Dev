@@ -133,6 +133,7 @@ const useCreate = (pageType = 'create') => {
 				form={form}
 				rowData={isDetails ? rowData : null}
 				loanUuid={loanUuid}
+				isNotRequest={isDetails}
 			/>,
 		],
 		[form, isDetails, rowData, searchParams, unitInfo, loanUuid],

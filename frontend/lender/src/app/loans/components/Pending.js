@@ -148,7 +148,11 @@ const PendingPage = ({
 				ref={tableFilterRef}
 				columns={pendingColumns(
 					isNotAddress,
-					successCallback || tableFilterRef?.current?.handleSearch,
+					// eslint-disable-next-line react-hooks/refs
+					() =>
+						successCallback
+							? successCallback?.()
+							: tableFilterRef?.current?.handleSearch?.(),
 					showDeleteModal,
 					stage,
 				)}

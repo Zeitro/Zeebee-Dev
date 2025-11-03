@@ -1,13 +1,14 @@
 'use client';
 import styles from './index.module.scss';
 import { Form, Menu, Segmented, Steps, Tabs } from 'antd';
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import useLenderDetails from './components/useLenderDetails';
 import { assemblyAddress, changeUnitByPropertyType } from '@repo/shared-methods/utils';
 import { stageColor, pendingStatusColor, loanDetailsFields } from '@/enum/loan';
 import HomeSvg from '@/assets/images/home.svg';
 import _ from 'lodash';
 import { CheckOutlined } from '@ant-design/icons';
+import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 const ZeeBeeDetails = () => {
 	const {
 		scrollRef,
@@ -26,6 +27,7 @@ const ZeeBeeDetails = () => {
 		unitInfo,
 		setUnitInfo,
 	} = useLenderDetails();
+	let [lenderMenu, setLenderMenu] = useState([]);
 	// 计算总步骤，方便跟loanProgress比较。
 	let count = useRef({ index: -1, key: '' });
 
@@ -33,7 +35,7 @@ const ZeeBeeDetails = () => {
 		setCurrentStep(lenderDetailsSteps[0].key);
 	}, [lenderDetailsSteps, setCurrentStep]);
 
-	const lenderMenu = useMemo(() => {
+	const getLenderMenu = (list = lenderDetailsSteps, isChild) => {
 		const iconFn = (item, isChild, index) => {
 			if (isChild) {
 				return (
@@ -68,26 +70,31 @@ const ZeeBeeDetails = () => {
 				</div>
 			);
 		};
-		const getLenderMenu = (list = lenderDetailsSteps, isChild) => {
-			return list.map((item, index) => {
-				let obj = {
-					key: item.key,
-					label: item.title,
-					icon: iconFn(item, isChild, index),
-				};
-				if (item.children) {
-					obj.children = getLenderMenu(item.children, true);
-				} else {
-					count.current.index = count.current.index + 1;
-					count.current.key = item.key;
-				}
-				return obj;
-			});
-		};
-		const arr = getLenderMenu();
-		count.current.index = -1;
-		return arr;
-	}, [lenderDetailsSteps, loanProgress.index, loanProgress.selectTabKey]);
+		return list.map((item, index) => {
+			let obj = {
+				key: item.key,
+				label: item.title,
+				icon: iconFn(item, isChild, index),
+			};
+			if (item.children) {
+				obj.children = getLenderMenu(item.children, true);
+			} else {
+				count.current.index = count.current.index + 1;
+				count.current.key = item.key;
+			}
+			return obj;
+		});
+	};
+
+	useDeferredSyncEffect({
+		deferred: () => {
+			const arr = getLenderMenu();
+			count.current.index = -1;
+			setLenderMenu(arr);
+		},
+		deps: [lenderDetailsSteps, loanProgress.index, loanProgress.selectTabKey],
+		isUseMicrotask: true,
+	});
 
 	return (
 		<div className="flex flex-col h-full">
@@ -171,8 +178,9 @@ const ZeeBeeDetails = () => {
 									: 'future_unit';
 								const moreFieldKey =
 									fieldKey === 'unit' ? ['property_base', fieldKey] : [fieldKey];
-								unitInfo[fieldKey] = info;
-								setUnitInfo({ ...unitInfo });
+								let newInfo = { ...unitInfo };
+								newInfo[fieldKey] = info;
+								setUnitInfo({ ...newInfo });
 								form.setFieldValue(['loan_property', ...moreFieldKey], info.unit);
 							}
 						}}

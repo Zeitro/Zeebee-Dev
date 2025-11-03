@@ -100,7 +100,11 @@ const ArchivedLoans = ({
 				ref={tableFilterRef}
 				columns={archivedColumns(
 					isNotAddress,
-					successCallback || tableFilterRef?.current?.handleSearch,
+					// eslint-disable-next-line react-hooks/refs
+					() =>
+						successCallback
+							? successCallback?.()
+							: tableFilterRef?.current?.handleSearch?.(),
 					showDeleteModal,
 				)}
 				scroll={{ x: scrollX }}

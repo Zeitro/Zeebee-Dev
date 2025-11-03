@@ -6,14 +6,15 @@ const CollapseList = ({ list = [], setList, hideCollapsible, isHideCheck = false
 
 	const changeList = useCallback(
 		(checked, index, childIndex) => {
+			let newList = [...list];
 			if (typeof childIndex === 'number') {
-				list[index].children[childIndex].checked = checked;
-				const allCheck = list[index].children.every((item) => item.checked);
-				list[index].checked = allCheck;
+				newList[index].children[childIndex].checked = checked;
+				const allCheck = newList[index].children.every((item) => item.checked);
+				newList[index].checked = allCheck;
 			} else {
-				list[index].checked = checked;
+				newList[index].checked = checked;
 			}
-			setList([...list]);
+			setList([...newList]);
 		},
 		[list, setList],
 	);

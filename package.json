@@ -11,6 +11,9 @@
   "lint-staged": {
     "frontend/borrower/**/*.{js,jsx,ts,tsx,json,css,scss}": [
       "cd frontend/borrower && npm run lint:staged"
+    ],
+    "frontend/lender/**/*.{js,jsx,ts,tsx,json,css,scss}": [
+      "cd frontend/lender && npm run lint:staged"
     ]
   },
   "repository": {

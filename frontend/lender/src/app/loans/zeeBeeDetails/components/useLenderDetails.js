@@ -1,6 +1,6 @@
 'use client';
 import { Button, Col, Form, message, Space, Steps, Tabs } from 'antd';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createZeeBeeSteps, zeeBeeDetailsTabs, lenderDetailsSteps } from '@/enum/loan';
 import { createRequest } from '@/lib/fetch';
@@ -83,7 +83,7 @@ const useLenderDetails = () => {
 	const newList = flattenArray(lenderDetailsSteps);
 
 	// 获取详情
-	const getLoanDetail = async () => {
+	const getLoanDetail = useCallback(async () => {
 		const res = (await request(`/loan/${searchParams.get('id')}`)) || {};
 		const str = assemblyAddress(res?.loan_property?.property_base?.address);
 		eventBus.emit('changeCrumbs', {
@@ -104,14 +104,14 @@ const useLenderDetails = () => {
 		setRowData(res);
 		setNewRowData(res);
 		form.setFieldsValue(res);
-	};
+	}, [form, searchParams]);
 
 	// 详情
 	useEffect(() => {
 		if (searchParams.has('id')) getLoanDetail();
 		eventBus.on('getLoanDetail', getLoanDetail);
 		return () => eventBus.off('getLoanDetail', getLoanDetail);
-	}, []);
+	}, [getLoanDetail, searchParams]);
 
 	// 全量修改loan
 	const handleSubmit = async (values) => {
@@ -249,8 +249,9 @@ const useLenderDetails = () => {
 							rowData={rowData}
 							setIsChange={setIsChange}
 							changeFieldsValue={(value, key) => {
-								newRowData[key] = value;
-								setNewRowData({ ...newRowData });
+								let newValue = { ...newRowData };
+								newValue[key] = value;
+								setNewRowData({ ...newValue });
 							}}
 						/>
 					</CommonSave>
@@ -361,7 +362,7 @@ const useLenderDetails = () => {
 			selectTabKey,
 			index,
 		};
-	}, [rowData]);
+	}, [newList, rowData?.pending_status, rowData?.stage]);
 
 	const tabList = newList
 		.map((i, index) => ({
@@ -372,7 +373,7 @@ const useLenderDetails = () => {
 		.filter((i) => i.children);
 	const selectIndex = useMemo(
 		() => tabList.findIndex((i) => i.key === currentStep),
-		[currentStep],
+		[currentStep, tabList],
 	);
 
 	useEffect(() => {
