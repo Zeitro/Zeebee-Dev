@@ -104,7 +104,7 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 			}
 		} else {
 			loanBorrower.LoanId = loan.Id
-			loanBorrower.Id = loan.LoanBorrower.Id
+			loanBorrower.Id = loanModel.LoanBorrower.Id
 			_, innerErr = l.svcCtx.LoanBorrowerRepo.UpdateOneWithTx(l.ctx, tx, loanBorrower.Id, loanBorrower)
 			if innerErr != nil {
 				return innerErr
