@@ -12,7 +12,7 @@ type BorrowerEntity struct {
 	Name           string                       `gorm:"column:name;default:''" json:"name"`
 	TinType        constants.BorrowerEntityType `gorm:"column:tin_type;default:''" json:"tin_type"`
 	Tin            string                       `gorm:"column:tin;default:''" json:"tin"`
-	MailingAddress types.Address                `gorm:"column:mailing_address;default:''" json:"mailing_address"`
+	MailingAddress types.Address                `gorm:"column:mailing_address;default:'';serializer:json" json:"mailing_address"`
 	ContactEmail   string                       `gorm:"column:contact_email;default:''" json:"contact_email"`
 	ContactName    string                       `gorm:"column:contact_name;default:''" json:"contact_name"`
 	ContactPhone   string                       `gorm:"column:contact_phone;default:''" json:"contact_phone"`

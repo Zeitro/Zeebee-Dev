@@ -221,9 +221,9 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 			return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
 		}
 
-		if !applicantItem.Type.IsValid() {
-			return nil, nil, nil, nil, errors.New("Invalid Applicant Type")
-		}
+		// if !applicantItem.Type.IsValid() {
+		// 	return nil, nil, nil, nil, errors.New("Invalid Applicant Type")
+		// }
 
 		applicantItem.Id = applicant.Id
 		applicantItem.FullName = stringx.FormatFullName(applicantItem.FirstName, applicantItem.MidName, applicantItem.LastName)
@@ -252,8 +252,8 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 
 	// loan borrower
 	loanBorrower = &model.LoanBorrower{
-		Name:       applicants[0].FullName,
-		Type:       applicants[0].Type,
+		Name: applicants[0].FullName,
+		// Type:       applicants[0].Type,
 		OwnPercent: 100,
 	}
 

@@ -204,6 +204,14 @@ func (repo *BaseRepo[T]) UpdateOne(ctx context.Context, data T) (T, error) {
 	return data, nil
 }
 
+func (repo *BaseRepo[T]) UpdateOneById(ctx context.Context, id int64, data T) (T, error) {
+	err := repo.Client(ctx).WithContext(ctx).Where("id = ?", id).Save(data).Error
+	if err != nil {
+		return data, errors.WithStack(err)
+	}
+	return data, nil
+}
+
 func (repo *BaseRepo[T]) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, data T) (T, error) {
 	err := tx.WithContext(ctx).Save(data).Error
 	if err != nil {

@@ -799,7 +799,7 @@ message LoanPropertyApplyEntry{
   double est_property_value_amount = 29;
 }
 
-// ===================== borrower property service ======================
+// ===================== borrower property service start ======================
 
 message BorrowerPropertyEntry {
   int64 id = 1;
@@ -944,6 +944,9 @@ message PropertyDeleteRequestData {
 }
 // all borrower properties
 message PropertyAllRequest {
+  PropertyAllRequestData data = 1;
+}
+message PropertyAllRequestData {
   int64 borrower_id = 1;
 }
 message PropertyAllResponse {
@@ -960,9 +963,164 @@ service BorrowerProperty {
   rpc Detail(PropertyDetailRequest) returns(PropertyDetailResponse);
   rpc All(PropertyAllRequest) returns(PropertyAllResponse);
 }
+// ===================== borrower property service end ======================
 
-// ===================== loan applicant service ======================
+// ===================== borrower entity service start ======================
+message BorrowerEntityEntry {
+  int64 id = 1;
+  string created_at = 2;
+  string updated_at = 3;
+  int64 borrower_id = 4;
+  string type = 5;
+  string name = 6;
+  string tin_type = 7;
+  string tin = 8;
+  AddressEntry mailing_address = 9;
+  string contact_email = 10;
+  string contact_name = 11;
+  string contact_phone = 12;
+  int32 own_percent = 13;
+}
 
+message BorrowerEntityPageEntry {
+  int64 id = 1;
+  string created_at = 2;
+  string updated_at = 3;
+  int64 borrower_id = 4;
+  string type = 5;
+  string name = 6;
+  string tin_type = 7;
+  string tin = 8;
+  string contact_email = 9;
+  string contact_name = 10;
+  string contact_phone = 11;
+  int32 own_percent = 12;
+}
+
+message BorrowerEntityEditEntity {
+  int64 borrower_id = 1;
+  string type = 2;
+  string name = 3;
+  string tin_type = 4;
+  string tin = 5;
+  AddressEntry mailing_address = 6;
+  string contact_email = 7;
+  string contact_name = 8;
+  string contact_phone = 9;
+  int32 own_percent = 10;
+  int64 id = 11;
+}
+
+// create borrower entity
+message BorrowerEntityCreateRequest {
+  BorrowerEntityEditEntity data = 1;
+}
+
+message BorrowerEntityCreateResponse {
+  BorrowerEntityEntry data = 1;
+}
+
+// update borrower entity
+message BorrowerEntityUpdateRequest {
+  BorrowerEntityEditEntity data = 1;
+}
+
+// detail borrower entity
+message BorrowerEntityDetailRequest {
+  BorrowerEntityDetailRequestData data = 1;
+}
+message BorrowerEntityDetailRequestData{
+  int64 id = 1;
+  int64 borrower_id = 2;
+}
+
+message BorrowerEntityDetailResponse {
+  BorrowerEntityEntry data = 1;
+}
+
+// delete borrower entity
+message BorrowerEntityDeleteRequest {
+  BorrowerEntityDeleteRequestData data = 1;
+}
+
+message BorrowerEntityDeleteRequestData {
+  int64 id = 1;
+  int64 borrower_id = 2;
+}
+
+// page borrower entity
+message BorrowerEntityPageRequest {
+  BorrowerEntityPageRequestData data = 1;
+}
+
+message BorrowerEntityPageResponse {
+  BorrowerEntityPageResponseData data = 1;
+}
+
+message BorrowerEntityPageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  BorrowerEntityPageRequestFilter filter = 3;
+  BorrowerEntityPageRequestSorter sorter = 4;
+}
+message BorrowerEntityPageRequestFilter {
+  int64 borrower_id = 1;
+  string keyword = 2;
+}
+message BorrowerEntityPageRequestSorter {
+  string column = 1;
+  string sort = 2;
+}
+
+message BorrowerEntityPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated BorrowerEntityPageEntry list = 5;
+}
+
+// check exist
+message BorrowerEntityCheckExistedRequest {
+  BorrowerEntityCheckExistedRequestData data = 1;
+}
+message BorrowerEntityCheckExistedRequestData {
+  int64 borrower_id = 1;
+  int64 id = 2;
+  string name = 3;
+}
+message BorrowerEntityCheckExistedResponse {
+  BorrowerEntityCheckExistedResponseData data = 1;
+}
+message BorrowerEntityCheckExistedResponseData {
+  bool is_existed = 1;
+}
+
+// all borrower entity
+message BorrowerEntityAllRequest {
+  BorrowerEntityAllRequestData data = 1;
+}
+message BorrowerEntityAllRequestData {
+  int64 borrower_id = 1;
+}
+
+message BorrowerEntityAllResponse {
+  repeated BorrowerEntityPageEntry data = 1;
+}
+
+service BorrowerEntity {
+  rpc Create(BorrowerEntityCreateRequest) returns(BorrowerEntityCreateResponse);
+  rpc Update(BorrowerEntityUpdateRequest) returns(EmptyResponse);
+  rpc Detail(BorrowerEntityDetailRequest) returns(BorrowerEntityDetailResponse);
+  rpc Delete(BorrowerEntityDeleteRequest) returns(EmptyResponse);
+  rpc Page(BorrowerEntityPageRequest) returns(BorrowerEntityPageResponse);
+  rpc CheckExisted(BorrowerEntityCheckExistedRequest) returns(BorrowerEntityCheckExistedResponse);
+  rpc All(BorrowerEntityAllRequest) returns(BorrowerEntityAllResponse);
+}
+// ===================== borrower entity service end ======================
+
+
+// ===================== loan applicant service start ======================
 message BorrowerNamesRequest {
   BorrowerNamesRequestData data = 1;
 }
@@ -978,8 +1136,11 @@ message BorrowerNamesResponse {
 service LoanApplicant {
   rpc BorrowerNames(BorrowerNamesRequest) returns(BorrowerNamesResponse);
 }
+// ===================== loan applicant service end ======================
 
-// ===================== loan document service ======================
+
+
+// ===================== loan document service start ======================
 message LoanDocumentEntry {
   int64 id = 1;
   int64 loan_id = 2;
@@ -1005,8 +1166,9 @@ message LoanDocumentAddFilesRequestData {
 service LoanDocument {
   rpc AddFiles(LoanDocumentAddFilesRequest) returns(EmptyResponse);
 }
+// ===================== loan document service end ======================
 
-// ===================== loan borrower service ======================
+// ===================== loan borrower service start ======================
 message LoanBorrowerEntry{
   int64 id = 1;
   int64 loan_id = 2;
@@ -1020,16 +1182,18 @@ message LoanBorrowerEntry{
   string contact_name = 10;
   int32 own_percent = 11;
 }
+// ====================== loan borrower service end ======================
 
-// ===================== lender service ======================
+// ===================== lender service start ======================
 message LenderEntry{
   int64 id = 1;
   string name = 2;
   AddressEntry address = 3;
   string status = 4;
 }
+// ===================== lender service end ======================
 
-// ===================== loan experience service ======================
+// ===================== loan experience service start ======================
 message LoanExperienceEntry{
   int64 id = 1;
   int64 loan_id = 2;
@@ -1047,8 +1211,9 @@ message LoanExperienceEntry{
   string type = 14;
   AddressEntry address = 15;
 }
+// ===================== loan experience service end ======================
 
-// ===================== loan third service service ======================
+// ===================== loan third service service start ======================
 message LoanThirdServiceEntry{
   int64 id = 1;
   int64 loan_id = 2;
@@ -1058,8 +1223,9 @@ message LoanThirdServiceEntry{
   string phone = 6;
   string company = 7;
 }
+// ===================== loan third service service end ======================
 
-// ===================== loan demographic service ======================
+// ===================== loan demographic service start ======================
 message LoanDemographicEntry{
   int64 id = 1;
   int64 loan_id = 2;
@@ -1106,8 +1272,9 @@ message LoanDemographicExtraDemographicEntry {
   bool is_race_collected_by_observation = 3;
   repeated string info_channels = 4;
 }
+// ===================== loan demographic service end ======================
 
-// ===================== file service ======================
+// ===================== file service start======================
 message FileEntry {
   int64 id = 1;
   string entity_type = 2;
@@ -1127,9 +1294,9 @@ message FileDeleteRequestData {
 service File {
   rpc DeleteFile(FileDeleteRequest) returns(EmptyResponse);
 }
+// ====================== file service end ======================
 
-// ===================== storage service ======================
-
+// ===================== storage service start ======================
 message StorageCreatePresignedUrlRequest {
   StorageCreatePresignedUrlRequestData data = 1;
 }
@@ -1150,3 +1317,4 @@ message StorageCreatePresignedUrlResponseData {
 service Storage {
   rpc CreatePresignedUrl(StorageCreatePresignedUrlRequest) returns(StorageCreatePresignedUrlResponse);
 }
+// ====================== storage service end ======================

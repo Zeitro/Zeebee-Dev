@@ -128,9 +128,9 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 		if err != nil {
 			return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
 		}
-		if !applicantItem.Type.IsValid() {
-			return nil, nil, nil, nil, errors.New("Invalid Applicant Type")
-		}
+		// if !applicantItem.Type.IsValid() {
+		// 	return nil, nil, nil, nil, errors.New("Invalid Applicant Type")
+		// }
 		applicantItem.FullName = stringx.FormatFullName(applicant.FirstName, applicant.MidName, applicant.LastName)
 		applicantItem.BorrowerId = in.BorrowerId
 		applicantItem.InvitationStatus = constants.ApplicantInvitationStatusAccepted
@@ -156,8 +156,8 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 	}
 	// loan borrower
 	loanBorrower = &model.LoanBorrower{
-		Name:       applicants[0].FullName,
-		Type:       applicants[0].Type,
+		Name: applicants[0].FullName,
+		// Type:       applicants[0].Type,
 		OwnPercent: 100,
 	}
 
