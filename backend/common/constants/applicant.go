@@ -6,6 +6,8 @@ import (
 	"zeebee-backend/common/enums"
 )
 
+type BorrowerEntityType = ApplicantType
+
 // Individual, Corporation,LLC,Partnership,Trust
 type ApplicantType string
 
