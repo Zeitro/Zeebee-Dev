@@ -28,7 +28,8 @@ const PropertiesDetails = () => {
 		} catch (error) {
 			setLoading(false);
 		}
-	}, [api, request]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api]);
 
 	const list = useMemo(() => {
 		return [
