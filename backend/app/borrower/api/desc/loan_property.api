@@ -78,7 +78,7 @@ type LoanPropertyApplyEntry {
     ExistingMaturityDate string `json:"existing_maturity_date, optional" `
     PurchaseAmount float64 `json:"purchase_amount, optional" validate:"gte=0"`
     PurchaseDate string `json:"purchase_date, optional" `
-    HasAssignmentFee bool `json:"has_assignment_fee, optional" required_if=HasAssignmentFee true,omitempty,gte=0`
+    HasAssignmentFee bool `json:"has_assignment_fee, optional" validate:"required_if=HasAssignmentFee true,omitempty,gte=0"`
     AssignmentFeeAmount float64 `json:"assignment_fee_amount, optional" validate:"gte=0"`
     HasSubordinateDebt bool `json:"has_subordinate_debt, optional"`
     SubordinateDebtAmount float64 `json:"subordinate_debt_amount, optional" validate:"gte=0"`
@@ -87,8 +87,8 @@ type LoanPropertyApplyEntry {
     LiquidityAmount float64 `json:"liquidity_amount" validate:"gte=0"`
     Budget *LoanBudgetEntry `json:"budget, optional"`
     MidConstruction bool `json:"mid_construction, optional"`
-    EstYearlyRentalIncome float64 `json:"est_yearly_rental_income, optional" `
-    YearlyLiabilityExpense float64 `json:"yearly_liability_expense, optional" `
+    EstYearlyRentalIncomeAmount float64 `json:"est_yearly_rental_income_amount, optional" `
+    YearlyLiabilityExpenseAmount float64 `json:"yearly_liability_expense_amount, optional" `
     Dscr float32 `json:"dscr" validate:"gte=0"`
     HasDelayedFinancing bool `json:"has_delayed_financing, optional"`
     HasPropertiesVacant bool `json:"has_properties_vacant, optional"`

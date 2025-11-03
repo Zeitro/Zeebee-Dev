@@ -47,7 +47,7 @@ func (l *DeleteFileLogic) DeleteFile(in *borrower.FileDeleteRequest) (resp *borr
 	}
 
 	if file.EntityType != constants.FileEntityTypeLoanDocument {
-		return nil, errors.WithStack(errors.New("file is not associated with a loan document"))
+		return nil, errors.WithStack(errors.New("File Is Not Associated With A Loan Document"))
 	}
 
 	loanDocument, err = l.svcCtx.LoanDocumentRepo.FindOneWithPreloadById(l.ctx, file.EntityId, nil)
@@ -60,7 +60,7 @@ func (l *DeleteFileLogic) DeleteFile(in *borrower.FileDeleteRequest) (resp *borr
 		return nil, errors.Wrap(err, "failed to get loan")
 	}
 	if loan.BorrowerId != in.Data.BorrowerId {
-		return nil, errors.WithStack(errors.New("loan does not belong to borrower"))
+		return nil, errors.WithStack(errors.New("Loan Does Not Belong To Borrower"))
 	}
 
 	err = l.svcCtx.FileRepo.Transaction(l.ctx, func(tx *gorm.DB) error {

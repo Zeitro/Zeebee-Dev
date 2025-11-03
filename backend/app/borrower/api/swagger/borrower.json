@@ -30,7 +30,7 @@
           "applicant"
         ],
         "summary": "borrower names",
-        "operationId": "applicantBorrowerNames",
+        "operationId": "loanApplicantBorrowerNames",
         "responses": {
           "200": {
             "description": "",
@@ -199,17 +199,20 @@
                 "loan_property": {
                   "type": "object",
                   "required": [
-                    "property_base_id"
+                    "borrower_property_id"
                   ],
                   "properties": {
-                    "id": {
+                    "borrower_property_id": {
                       "type": "integer"
                     },
                     "ower": {
                       "type": "string"
                     },
-                    "property_base_id": {
-                      "type": "integer"
+                    "purchase_amount": {
+                      "type": "number"
+                    },
+                    "purchase_date": {
+                      "type": "string"
                     }
                   }
                 },
@@ -379,28 +382,6 @@
                 "arv": {
                   "type": "number"
                 },
-                "assignment_fee_amount": {
-                  "type": "number"
-                },
-                "budget": {
-                  "type": "object",
-                  "required": [
-                    "original_budget",
-                    "remaining_budget",
-                    "cost_spent_to_date_amount"
-                  ],
-                  "properties": {
-                    "cost_spent_to_date_amount": {
-                      "type": "number"
-                    },
-                    "original_budget": {
-                      "type": "number"
-                    },
-                    "remaining_budget": {
-                      "type": "number"
-                    }
-                  }
-                },
                 "business_strategy": {
                   "type": "array",
                   "items": {
@@ -410,49 +391,10 @@
                 "code": {
                   "type": "string"
                 },
-                "dscr": {
-                  "type": "number"
-                },
-                "est_property_value_amount": {
-                  "type": "number"
-                },
-                "est_yearly_rental_income": {
-                  "type": "number"
-                },
-                "existing_lender_company": {
-                  "type": "string"
-                },
-                "existing_maturity_date": {
-                  "type": "string"
-                },
-                "existing_rate": {
-                  "type": "number"
-                },
-                "has_assignment_fee": {
-                  "type": "boolean"
-                },
-                "has_collateralized_blanket": {
-                  "type": "boolean"
-                },
-                "has_delayed_financing": {
-                  "type": "boolean"
-                },
-                "has_properties_vacant": {
-                  "type": "boolean"
-                },
-                "has_short_term_rental": {
-                  "type": "boolean"
-                },
-                "has_subordinate_debt": {
-                  "type": "boolean"
-                },
                 "holdback_amount": {
                   "type": "number"
                 },
                 "initial_amount": {
-                  "type": "number"
-                },
-                "liquidity_amount": {
                   "type": "number"
                 },
                 "loan_borrower": {
@@ -614,17 +556,133 @@
                 "loan_property": {
                   "type": "object",
                   "required": [
-                    "property_base_id"
+                    "borrower_property_id",
+                    "future_property_type",
+                    "future_unit",
+                    "future_living_area_sqft",
+                    "future_bedrooms",
+                    "future_bathrooms",
+                    "existing_lender_company",
+                    "existing_rate",
+                    "existing_maturity_date",
+                    "purchase_amount",
+                    "purchase_date",
+                    "has_assignment_fee",
+                    "assignment_fee_amount",
+                    "has_subordinate_debt",
+                    "subordinate_debt_amount",
+                    "scheduled_close_escrow_date",
+                    "est_property_value_amount",
+                    "liquidity_amount",
+                    "budget",
+                    "mid_construction",
+                    "est_yearly_rental_income",
+                    "yearly_liability_expense",
+                    "dscr",
+                    "has_delayed_financing",
+                    "has_properties_vacant",
+                    "has_short_term_rental"
                   ],
                   "properties": {
+                    "assignment_fee_amount": {
+                      "type": "number"
+                    },
+                    "borrower_property_id": {
+                      "type": "integer"
+                    },
+                    "budget": {
+                      "type": "object",
+                      "required": [
+                        "original_budget",
+                        "remaining_budget",
+                        "cost_spent_to_date_amount"
+                      ],
+                      "properties": {
+                        "cost_spent_to_date_amount": {
+                          "type": "number"
+                        },
+                        "original_budget": {
+                          "type": "number"
+                        },
+                        "remaining_budget": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "dscr": {
+                      "type": "number"
+                    },
+                    "est_property_value_amount": {
+                      "type": "number"
+                    },
+                    "est_yearly_rental_income": {
+                      "type": "number"
+                    },
+                    "existing_lender_company": {
+                      "type": "string"
+                    },
+                    "existing_maturity_date": {
+                      "type": "string"
+                    },
+                    "existing_rate": {
+                      "type": "number"
+                    },
+                    "future_bathrooms": {
+                      "type": "integer"
+                    },
+                    "future_bedrooms": {
+                      "type": "integer"
+                    },
+                    "future_living_area_sqft": {
+                      "type": "number"
+                    },
+                    "future_property_type": {
+                      "type": "string"
+                    },
+                    "future_unit": {
+                      "type": "integer"
+                    },
+                    "has_assignment_fee": {
+                      "type": "boolean"
+                    },
+                    "has_delayed_financing": {
+                      "type": "boolean"
+                    },
+                    "has_properties_vacant": {
+                      "type": "boolean"
+                    },
+                    "has_short_term_rental": {
+                      "type": "boolean"
+                    },
+                    "has_subordinate_debt": {
+                      "type": "boolean"
+                    },
                     "id": {
                       "type": "integer"
                     },
-                    "ower": {
+                    "liquidity_amount": {
+                      "type": "number"
+                    },
+                    "mid_construction": {
+                      "type": "boolean"
+                    },
+                    "owner": {
                       "type": "string"
                     },
-                    "property_base_id": {
-                      "type": "integer"
+                    "purchase_amount": {
+                      "type": "number"
+                    },
+                    "purchase_date": {
+                      "type": "string"
+                    },
+                    "scheduled_close_escrow_date": {
+                      "type": "string"
+                    },
+                    "subordinate_debt_amount": {
+                      "type": "number"
+                    },
+                    "yearly_liability_expense": {
+                      "type": "number"
                     }
                   }
                 },
@@ -669,20 +727,11 @@
                 "ltv": {
                   "type": "number"
                 },
-                "mid_construction": {
-                  "type": "boolean"
-                },
                 "prepayment_penalty": {
                   "type": "integer"
                 },
                 "principal_amount": {
                   "type": "number"
-                },
-                "purchase_amount": {
-                  "type": "number"
-                },
-                "purchase_date": {
-                  "type": "string"
                 },
                 "real_estate_experiences": {
                   "type": "array",
@@ -751,12 +800,6 @@
                 "reserves_amount": {
                   "type": "number"
                 },
-                "scheduled_close_escrow_date": {
-                  "type": "string"
-                },
-                "subordinate_debt_amount": {
-                  "type": "number"
-                },
                 "total_amount": {
                   "type": "number"
                 },
@@ -823,9 +866,6 @@
                       }
                     }
                   }
-                },
-                "yearly_liability_expense": {
-                  "type": "number"
                 }
               }
             }
@@ -948,28 +988,6 @@
                 "arv": {
                   "type": "number"
                 },
-                "assignment_fee_amount": {
-                  "type": "number"
-                },
-                "budget": {
-                  "type": "object",
-                  "required": [
-                    "original_budget",
-                    "remaining_budget",
-                    "cost_spent_to_date_amount"
-                  ],
-                  "properties": {
-                    "cost_spent_to_date_amount": {
-                      "type": "number"
-                    },
-                    "original_budget": {
-                      "type": "number"
-                    },
-                    "remaining_budget": {
-                      "type": "number"
-                    }
-                  }
-                },
                 "business_strategy": {
                   "type": "array",
                   "items": {
@@ -979,49 +997,10 @@
                 "code": {
                   "type": "string"
                 },
-                "dscr": {
-                  "type": "number"
-                },
-                "est_property_value_amount": {
-                  "type": "number"
-                },
-                "est_yearly_rental_income": {
-                  "type": "number"
-                },
-                "existing_lender_company": {
-                  "type": "string"
-                },
-                "existing_maturity_date": {
-                  "type": "string"
-                },
-                "existing_rate": {
-                  "type": "number"
-                },
-                "has_assignment_fee": {
-                  "type": "boolean"
-                },
-                "has_collateralized_blanket": {
-                  "type": "boolean"
-                },
-                "has_delayed_financing": {
-                  "type": "boolean"
-                },
-                "has_properties_vacant": {
-                  "type": "boolean"
-                },
-                "has_short_term_rental": {
-                  "type": "boolean"
-                },
-                "has_subordinate_debt": {
-                  "type": "boolean"
-                },
                 "holdback_amount": {
                   "type": "number"
                 },
                 "initial_amount": {
-                  "type": "number"
-                },
-                "liquidity_amount": {
                   "type": "number"
                 },
                 "loan_borrower": {
@@ -1183,17 +1162,133 @@
                 "loan_property": {
                   "type": "object",
                   "required": [
-                    "property_base_id"
+                    "borrower_property_id",
+                    "future_property_type",
+                    "future_unit",
+                    "future_living_area_sqft",
+                    "future_bedrooms",
+                    "future_bathrooms",
+                    "existing_lender_company",
+                    "existing_rate",
+                    "existing_maturity_date",
+                    "purchase_amount",
+                    "purchase_date",
+                    "has_assignment_fee",
+                    "assignment_fee_amount",
+                    "has_subordinate_debt",
+                    "subordinate_debt_amount",
+                    "scheduled_close_escrow_date",
+                    "est_property_value_amount",
+                    "liquidity_amount",
+                    "budget",
+                    "mid_construction",
+                    "est_yearly_rental_income",
+                    "yearly_liability_expense",
+                    "dscr",
+                    "has_delayed_financing",
+                    "has_properties_vacant",
+                    "has_short_term_rental"
                   ],
                   "properties": {
+                    "assignment_fee_amount": {
+                      "type": "number"
+                    },
+                    "borrower_property_id": {
+                      "type": "integer"
+                    },
+                    "budget": {
+                      "type": "object",
+                      "required": [
+                        "original_budget",
+                        "remaining_budget",
+                        "cost_spent_to_date_amount"
+                      ],
+                      "properties": {
+                        "cost_spent_to_date_amount": {
+                          "type": "number"
+                        },
+                        "original_budget": {
+                          "type": "number"
+                        },
+                        "remaining_budget": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "dscr": {
+                      "type": "number"
+                    },
+                    "est_property_value_amount": {
+                      "type": "number"
+                    },
+                    "est_yearly_rental_income": {
+                      "type": "number"
+                    },
+                    "existing_lender_company": {
+                      "type": "string"
+                    },
+                    "existing_maturity_date": {
+                      "type": "string"
+                    },
+                    "existing_rate": {
+                      "type": "number"
+                    },
+                    "future_bathrooms": {
+                      "type": "integer"
+                    },
+                    "future_bedrooms": {
+                      "type": "integer"
+                    },
+                    "future_living_area_sqft": {
+                      "type": "number"
+                    },
+                    "future_property_type": {
+                      "type": "string"
+                    },
+                    "future_unit": {
+                      "type": "integer"
+                    },
+                    "has_assignment_fee": {
+                      "type": "boolean"
+                    },
+                    "has_delayed_financing": {
+                      "type": "boolean"
+                    },
+                    "has_properties_vacant": {
+                      "type": "boolean"
+                    },
+                    "has_short_term_rental": {
+                      "type": "boolean"
+                    },
+                    "has_subordinate_debt": {
+                      "type": "boolean"
+                    },
                     "id": {
                       "type": "integer"
                     },
-                    "ower": {
+                    "liquidity_amount": {
+                      "type": "number"
+                    },
+                    "mid_construction": {
+                      "type": "boolean"
+                    },
+                    "owner": {
                       "type": "string"
                     },
-                    "property_base_id": {
-                      "type": "integer"
+                    "purchase_amount": {
+                      "type": "number"
+                    },
+                    "purchase_date": {
+                      "type": "string"
+                    },
+                    "scheduled_close_escrow_date": {
+                      "type": "string"
+                    },
+                    "subordinate_debt_amount": {
+                      "type": "number"
+                    },
+                    "yearly_liability_expense": {
+                      "type": "number"
                     }
                   }
                 },
@@ -1238,20 +1333,11 @@
                 "ltv": {
                   "type": "number"
                 },
-                "mid_construction": {
-                  "type": "boolean"
-                },
                 "prepayment_penalty": {
                   "type": "integer"
                 },
                 "principal_amount": {
                   "type": "number"
-                },
-                "purchase_amount": {
-                  "type": "number"
-                },
-                "purchase_date": {
-                  "type": "string"
                 },
                 "real_estate_experiences": {
                   "type": "array",
@@ -1320,12 +1406,6 @@
                 "reserves_amount": {
                   "type": "number"
                 },
-                "scheduled_close_escrow_date": {
-                  "type": "string"
-                },
-                "subordinate_debt_amount": {
-                  "type": "number"
-                },
                 "total_amount": {
                   "type": "number"
                 },
@@ -1392,9 +1472,6 @@
                       }
                     }
                   }
-                },
-                "yearly_liability_expense": {
-                  "type": "number"
                 }
               }
             }
@@ -3712,17 +3789,20 @@
                 "loan_property": {
                   "type": "object",
                   "required": [
-                    "property_base_id"
+                    "borrower_property_id"
                   ],
                   "properties": {
-                    "id": {
+                    "borrower_property_id": {
                       "type": "integer"
                     },
                     "ower": {
                       "type": "string"
                     },
-                    "property_base_id": {
-                      "type": "integer"
+                    "purchase_amount": {
+                      "type": "number"
+                    },
+                    "purchase_date": {
+                      "type": "string"
                     }
                   }
                 },
@@ -3919,28 +3999,6 @@
                 "arv": {
                   "type": "number"
                 },
-                "assignment_fee_amount": {
-                  "type": "number"
-                },
-                "budget": {
-                  "type": "object",
-                  "required": [
-                    "original_budget",
-                    "remaining_budget",
-                    "cost_spent_to_date_amount"
-                  ],
-                  "properties": {
-                    "cost_spent_to_date_amount": {
-                      "type": "number"
-                    },
-                    "original_budget": {
-                      "type": "number"
-                    },
-                    "remaining_budget": {
-                      "type": "number"
-                    }
-                  }
-                },
                 "business_strategy": {
                   "type": "array",
                   "items": {
@@ -3950,49 +4008,10 @@
                 "code": {
                   "type": "string"
                 },
-                "dscr": {
-                  "type": "number"
-                },
-                "est_property_value_amount": {
-                  "type": "number"
-                },
-                "est_yearly_rental_income": {
-                  "type": "number"
-                },
-                "existing_lender_company": {
-                  "type": "string"
-                },
-                "existing_maturity_date": {
-                  "type": "string"
-                },
-                "existing_rate": {
-                  "type": "number"
-                },
-                "has_assignment_fee": {
-                  "type": "boolean"
-                },
-                "has_collateralized_blanket": {
-                  "type": "boolean"
-                },
-                "has_delayed_financing": {
-                  "type": "boolean"
-                },
-                "has_properties_vacant": {
-                  "type": "boolean"
-                },
-                "has_short_term_rental": {
-                  "type": "boolean"
-                },
-                "has_subordinate_debt": {
-                  "type": "boolean"
-                },
                 "holdback_amount": {
                   "type": "number"
                 },
                 "initial_amount": {
-                  "type": "number"
-                },
-                "liquidity_amount": {
                   "type": "number"
                 },
                 "loan_borrower": {
@@ -4154,17 +4173,133 @@
                 "loan_property": {
                   "type": "object",
                   "required": [
-                    "property_base_id"
+                    "borrower_property_id",
+                    "future_property_type",
+                    "future_unit",
+                    "future_living_area_sqft",
+                    "future_bedrooms",
+                    "future_bathrooms",
+                    "existing_lender_company",
+                    "existing_rate",
+                    "existing_maturity_date",
+                    "purchase_amount",
+                    "purchase_date",
+                    "has_assignment_fee",
+                    "assignment_fee_amount",
+                    "has_subordinate_debt",
+                    "subordinate_debt_amount",
+                    "scheduled_close_escrow_date",
+                    "est_property_value_amount",
+                    "liquidity_amount",
+                    "budget",
+                    "mid_construction",
+                    "est_yearly_rental_income",
+                    "yearly_liability_expense",
+                    "dscr",
+                    "has_delayed_financing",
+                    "has_properties_vacant",
+                    "has_short_term_rental"
                   ],
                   "properties": {
+                    "assignment_fee_amount": {
+                      "type": "number"
+                    },
+                    "borrower_property_id": {
+                      "type": "integer"
+                    },
+                    "budget": {
+                      "type": "object",
+                      "required": [
+                        "original_budget",
+                        "remaining_budget",
+                        "cost_spent_to_date_amount"
+                      ],
+                      "properties": {
+                        "cost_spent_to_date_amount": {
+                          "type": "number"
+                        },
+                        "original_budget": {
+                          "type": "number"
+                        },
+                        "remaining_budget": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "dscr": {
+                      "type": "number"
+                    },
+                    "est_property_value_amount": {
+                      "type": "number"
+                    },
+                    "est_yearly_rental_income": {
+                      "type": "number"
+                    },
+                    "existing_lender_company": {
+                      "type": "string"
+                    },
+                    "existing_maturity_date": {
+                      "type": "string"
+                    },
+                    "existing_rate": {
+                      "type": "number"
+                    },
+                    "future_bathrooms": {
+                      "type": "integer"
+                    },
+                    "future_bedrooms": {
+                      "type": "integer"
+                    },
+                    "future_living_area_sqft": {
+                      "type": "number"
+                    },
+                    "future_property_type": {
+                      "type": "string"
+                    },
+                    "future_unit": {
+                      "type": "integer"
+                    },
+                    "has_assignment_fee": {
+                      "type": "boolean"
+                    },
+                    "has_delayed_financing": {
+                      "type": "boolean"
+                    },
+                    "has_properties_vacant": {
+                      "type": "boolean"
+                    },
+                    "has_short_term_rental": {
+                      "type": "boolean"
+                    },
+                    "has_subordinate_debt": {
+                      "type": "boolean"
+                    },
                     "id": {
                       "type": "integer"
                     },
-                    "ower": {
+                    "liquidity_amount": {
+                      "type": "number"
+                    },
+                    "mid_construction": {
+                      "type": "boolean"
+                    },
+                    "owner": {
                       "type": "string"
                     },
-                    "property_base_id": {
-                      "type": "integer"
+                    "purchase_amount": {
+                      "type": "number"
+                    },
+                    "purchase_date": {
+                      "type": "string"
+                    },
+                    "scheduled_close_escrow_date": {
+                      "type": "string"
+                    },
+                    "subordinate_debt_amount": {
+                      "type": "number"
+                    },
+                    "yearly_liability_expense": {
+                      "type": "number"
                     }
                   }
                 },
@@ -4209,20 +4344,11 @@
                 "ltv": {
                   "type": "number"
                 },
-                "mid_construction": {
-                  "type": "boolean"
-                },
                 "prepayment_penalty": {
                   "type": "integer"
                 },
                 "principal_amount": {
                   "type": "number"
-                },
-                "purchase_amount": {
-                  "type": "number"
-                },
-                "purchase_date": {
-                  "type": "string"
                 },
                 "real_estate_experiences": {
                   "type": "array",
@@ -4291,12 +4417,6 @@
                 "reserves_amount": {
                   "type": "number"
                 },
-                "scheduled_close_escrow_date": {
-                  "type": "string"
-                },
-                "subordinate_debt_amount": {
-                  "type": "number"
-                },
                 "total_amount": {
                   "type": "number"
                 },
@@ -4363,9 +4483,6 @@
                       }
                     }
                   }
-                },
-                "yearly_liability_expense": {
-                  "type": "number"
                 }
               }
             }
@@ -4538,28 +4655,6 @@
                 "arv": {
                   "type": "number"
                 },
-                "assignment_fee_amount": {
-                  "type": "number"
-                },
-                "budget": {
-                  "type": "object",
-                  "required": [
-                    "original_budget",
-                    "remaining_budget",
-                    "cost_spent_to_date_amount"
-                  ],
-                  "properties": {
-                    "cost_spent_to_date_amount": {
-                      "type": "number"
-                    },
-                    "original_budget": {
-                      "type": "number"
-                    },
-                    "remaining_budget": {
-                      "type": "number"
-                    }
-                  }
-                },
                 "business_strategy": {
                   "type": "array",
                   "items": {
@@ -4569,49 +4664,10 @@
                 "code": {
                   "type": "string"
                 },
-                "dscr": {
-                  "type": "number"
-                },
-                "est_property_value_amount": {
-                  "type": "number"
-                },
-                "est_yearly_rental_income": {
-                  "type": "number"
-                },
-                "existing_lender_company": {
-                  "type": "string"
-                },
-                "existing_maturity_date": {
-                  "type": "string"
-                },
-                "existing_rate": {
-                  "type": "number"
-                },
-                "has_assignment_fee": {
-                  "type": "boolean"
-                },
-                "has_collateralized_blanket": {
-                  "type": "boolean"
-                },
-                "has_delayed_financing": {
-                  "type": "boolean"
-                },
-                "has_properties_vacant": {
-                  "type": "boolean"
-                },
-                "has_short_term_rental": {
-                  "type": "boolean"
-                },
-                "has_subordinate_debt": {
-                  "type": "boolean"
-                },
                 "holdback_amount": {
                   "type": "number"
                 },
                 "initial_amount": {
-                  "type": "number"
-                },
-                "liquidity_amount": {
                   "type": "number"
                 },
                 "loan_borrower": {
@@ -4773,17 +4829,133 @@
                 "loan_property": {
                   "type": "object",
                   "required": [
-                    "property_base_id"
+                    "borrower_property_id",
+                    "future_property_type",
+                    "future_unit",
+                    "future_living_area_sqft",
+                    "future_bedrooms",
+                    "future_bathrooms",
+                    "existing_lender_company",
+                    "existing_rate",
+                    "existing_maturity_date",
+                    "purchase_amount",
+                    "purchase_date",
+                    "has_assignment_fee",
+                    "assignment_fee_amount",
+                    "has_subordinate_debt",
+                    "subordinate_debt_amount",
+                    "scheduled_close_escrow_date",
+                    "est_property_value_amount",
+                    "liquidity_amount",
+                    "budget",
+                    "mid_construction",
+                    "est_yearly_rental_income",
+                    "yearly_liability_expense",
+                    "dscr",
+                    "has_delayed_financing",
+                    "has_properties_vacant",
+                    "has_short_term_rental"
                   ],
                   "properties": {
+                    "assignment_fee_amount": {
+                      "type": "number"
+                    },
+                    "borrower_property_id": {
+                      "type": "integer"
+                    },
+                    "budget": {
+                      "type": "object",
+                      "required": [
+                        "original_budget",
+                        "remaining_budget",
+                        "cost_spent_to_date_amount"
+                      ],
+                      "properties": {
+                        "cost_spent_to_date_amount": {
+                          "type": "number"
+                        },
+                        "original_budget": {
+                          "type": "number"
+                        },
+                        "remaining_budget": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "dscr": {
+                      "type": "number"
+                    },
+                    "est_property_value_amount": {
+                      "type": "number"
+                    },
+                    "est_yearly_rental_income": {
+                      "type": "number"
+                    },
+                    "existing_lender_company": {
+                      "type": "string"
+                    },
+                    "existing_maturity_date": {
+                      "type": "string"
+                    },
+                    "existing_rate": {
+                      "type": "number"
+                    },
+                    "future_bathrooms": {
+                      "type": "integer"
+                    },
+                    "future_bedrooms": {
+                      "type": "integer"
+                    },
+                    "future_living_area_sqft": {
+                      "type": "number"
+                    },
+                    "future_property_type": {
+                      "type": "string"
+                    },
+                    "future_unit": {
+                      "type": "integer"
+                    },
+                    "has_assignment_fee": {
+                      "type": "boolean"
+                    },
+                    "has_delayed_financing": {
+                      "type": "boolean"
+                    },
+                    "has_properties_vacant": {
+                      "type": "boolean"
+                    },
+                    "has_short_term_rental": {
+                      "type": "boolean"
+                    },
+                    "has_subordinate_debt": {
+                      "type": "boolean"
+                    },
                     "id": {
                       "type": "integer"
                     },
-                    "ower": {
+                    "liquidity_amount": {
+                      "type": "number"
+                    },
+                    "mid_construction": {
+                      "type": "boolean"
+                    },
+                    "owner": {
                       "type": "string"
                     },
-                    "property_base_id": {
-                      "type": "integer"
+                    "purchase_amount": {
+                      "type": "number"
+                    },
+                    "purchase_date": {
+                      "type": "string"
+                    },
+                    "scheduled_close_escrow_date": {
+                      "type": "string"
+                    },
+                    "subordinate_debt_amount": {
+                      "type": "number"
+                    },
+                    "yearly_liability_expense": {
+                      "type": "number"
                     }
                   }
                 },
@@ -4828,20 +5000,11 @@
                 "ltv": {
                   "type": "number"
                 },
-                "mid_construction": {
-                  "type": "boolean"
-                },
                 "prepayment_penalty": {
                   "type": "integer"
                 },
                 "principal_amount": {
                   "type": "number"
-                },
-                "purchase_amount": {
-                  "type": "number"
-                },
-                "purchase_date": {
-                  "type": "string"
                 },
                 "real_estate_experiences": {
                   "type": "array",
@@ -4910,12 +5073,6 @@
                 "reserves_amount": {
                   "type": "number"
                 },
-                "scheduled_close_escrow_date": {
-                  "type": "string"
-                },
-                "subordinate_debt_amount": {
-                  "type": "number"
-                },
                 "total_amount": {
                   "type": "number"
                 },
@@ -4982,9 +5139,6 @@
                       }
                     }
                   }
-                },
-                "yearly_liability_expense": {
-                  "type": "number"
                 }
               }
             }
@@ -5750,7 +5904,7 @@
           "property"
         ],
         "summary": "create",
-        "operationId": "propertyPropertyCreate",
+        "operationId": "borrowerPropertyPropertyCreate",
         "parameters": [
           {
             "name": "body",
@@ -5880,7 +6034,7 @@
           "property"
         ],
         "summary": "all",
-        "operationId": "propertyPropertyAll",
+        "operationId": "borrowerPropertyPropertyAll",
         "responses": {
           "200": {
             "description": "",
@@ -5979,7 +6133,7 @@
           "property"
         ],
         "summary": "page",
-        "operationId": "propertyPropertyPage",
+        "operationId": "borrowerPropertyPropertyPage",
         "parameters": [
           {
             "name": "body",
@@ -6148,7 +6302,7 @@
           "property"
         ],
         "summary": "detail",
-        "operationId": "propertyPropertyDetail",
+        "operationId": "borrowerPropertyPropertyDetail",
         "parameters": [
           {
             "type": "integer",
@@ -6232,7 +6386,7 @@
           "property"
         ],
         "summary": "update",
-        "operationId": "propertyPropertyUpdate",
+        "operationId": "borrowerPropertyPropertyUpdate",
         "parameters": [
           {
             "type": "integer",
@@ -6296,7 +6450,7 @@
           "property"
         ],
         "summary": "delete",
-        "operationId": "propertyPropertyDelete",
+        "operationId": "borrowerPropertyPropertyDelete",
         "parameters": [
           {
             "type": "integer",
@@ -6327,7 +6481,7 @@
           "property"
         ],
         "summary": "property Summary",
-        "operationId": "propertyPropertyDetailSummary",
+        "operationId": "borrowerPropertyPropertyDetailSummary",
         "parameters": [
           {
             "type": "integer",
@@ -9372,7 +9526,7 @@
       }
     }
   },
-  "x-date": "2025-10-29 17:26:54",
+  "x-date": "2025-11-03 13:20:28",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
