@@ -189,7 +189,7 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int
 			LoanType:         preApproveRequest.Loan.LoanType,
 			TotalAmount:      preApproveRequest.Loan.TotalAmount,
 			InitialAmount:    preApproveRequest.Loan.InitialAmount,
-			LoanProperty: &borrower.LoanPropertyEntry{
+			LoanProperty:     &borrower.LoanPropertyApplyEntry{
 				// todo handle borrower property
 				// PropertyBase: &borrower.PropertyBaseEntry{
 				// 	Address: &borrower.AddressEntry{
@@ -201,8 +201,8 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int
 				// 	},
 				// 	Unit: int32(preApproveRequest.Property.Unit),
 				// },
-				Unit:         int32(preApproveRequest.Property.Unit),
-				PropertyType: preApproveRequest.Property.PropertyType,
+				// Unit:         int32(preApproveRequest.Property.Unit),
+				// PropertyType: preApproveRequest.Property.PropertyType,
 			},
 			HoldbackAmount:  preApproveRequest.Loan.HoldbackAmount,
 			PrincipalAmount: preApproveRequest.Loan.PrincipalAmount,
@@ -215,19 +215,19 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int
 					Phone:     preApproveRequest.Borrower.Phone,
 				},
 			},
-			PurchaseAmount:      preApproveRequest.Loan.PurchaseAmount,
-			PurchaseDate:        preApproveRequest.Loan.PurchaseDate,
-			HasAssignmentFee:    preApproveRequest.Loan.HasAssignmentFee,
-			AssignmentFeeAmount: preApproveRequest.Loan.AssignmentFeeAmount,
-			LoanTerm:            preApproveRequest.Loan.LoanTerm,
-			Arv:                 preApproveRequest.Loan.Arv,
+			// PurchaseAmount:      preApproveRequest.Loan.PurchaseAmount,
+			// PurchaseDate:        preApproveRequest.Loan.PurchaseDate,
+			// HasAssignmentFee:    preApproveRequest.Loan.HasAssignmentFee,
+			// AssignmentFeeAmount: preApproveRequest.Loan.AssignmentFeeAmount,
+			LoanTerm: preApproveRequest.Loan.LoanTerm,
+			Arv:      preApproveRequest.Loan.Arv,
 
-			Budget: &borrower.LoanBudgetEntry{
-				OriginalBudget:        float32(preApproveRequest.Loan.BudgetAmount),
-				CostSpentToDateAmount: float32(preApproveRequest.Loan.CostSpentToDateAmount),
-			},
-			EstCreditScore:         preApproveRequest.Borrower.FicoScore,
-			EstPropertyValueAmount: preApproveRequest.Loan.EstPropertyValueAmount,
+			// Budget: &borrower.LoanBudgetEntry{
+			// 	OriginalBudget:        float32(preApproveRequest.Loan.BudgetAmount),
+			// 	CostSpentToDateAmount: float32(preApproveRequest.Loan.CostSpentToDateAmount),
+			// },
+			EstCreditScore: preApproveRequest.Borrower.FicoScore,
+			// EstPropertyValueAmount: preApproveRequest.Loan.EstPropertyValueAmount,
 
 			// borrower info
 			LoanBorrower: &borrower.LoanBorrowerEntry{

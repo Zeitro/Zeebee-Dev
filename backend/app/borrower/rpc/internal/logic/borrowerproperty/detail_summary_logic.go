@@ -44,11 +44,11 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 		return nil, err
 	}
 	if propertyBase == nil || propertyBase.Id == 0 {
-		return nil, errors.WithStack(errors.New("property is invalid"))
+		return nil, errors.WithStack(errors.New("Property Is Invalid"))
 	}
 
 	if propertyBase.BorrowerId != in.Data.BorrowerId {
-		return nil, errors.WithStack(errors.New("access denied"))
+		return nil, errors.WithStack(errors.New("Access Denied"))
 	}
 
 	loanProperties := propertyBase.LoanProperties

@@ -43,11 +43,11 @@ func (l *DeleteBorrowerLoanLogic) DeleteBorrowerLoan(in *borrower.LoanDeleteRequ
 	}
 
 	if loanModel.Source != constants.LoanSourceBorrower && loanModel.Stage != constants.LoanStageDraft {
-		return nil, errors.WithStack(errors.New("loan source is not 3rd party or loan is not in draft stage"))
+		return nil, errors.WithStack(errors.New("Loan Source Is Not 3rd Party Or Loan Is Not In Draft Stage"))
 	}
 
 	if loanModel.BorrowerId != in.Data.BorrowerId {
-		return nil, errors.WithStack(errors.New("loan does not belong to borrower"))
+		return nil, errors.WithStack(errors.New("Loan Does Not Belong To Borrower"))
 	}
 
 	err = l.svcCtx.LoanRepo.Transaction(l.ctx, func(tx *gorm.DB) error {

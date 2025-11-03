@@ -59,37 +59,25 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrowe
 		return nil, err
 	}
 	// apply loan
-	var propertyBase *model.BorrowerProperty
+	// var propertyBase *model.BorrowerProperty
 	var loan *model.Loan
 	var loanBorrower *model.LoanBorrower
 	var loanProperty *model.LoanProperty
 	err = l.svcCtx.LoanRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
 		var innerErr error
 
-		// todo handle borrower property
-		// get or create property base
-		// propertyBase, innerErr = l.svcCtx.BorrowerPropertyRepo.GetOrCreateWithTx(l.ctx, tx, data.loanProperty.PropertyBase)
-		// if innerErr != nil {
-		// 	return innerErr
-		// }
-
 		// check loan
 		if len(data.loan.Code) == 0 {
-			innerErr = errors.WithStack(errors.New("code is empty"))
+			innerErr = errors.WithStack(errors.New("Code Is Empty"))
 		}
 		isExisted, innerErr := l.svcCtx.LoanRepo.IsExistedByColumnsWithTx(l.ctx, tx, map[string]interface{}{"code": data.loan.Code})
 		if innerErr != nil {
 			return innerErr
 		}
 		if isExisted {
-			return errors.WithStack(errors.New("code already exists"))
+			return errors.WithStack(errors.New("Code Already Exists"))
 		}
 
-		// uid, innerErr := uuid.GetSonyflakeIDString()
-		// if innerErr != nil {
-		// 	return innerErr
-		// }
-		// data.loan.Code = uid
 		// save loan
 		loan, innerErr = l.svcCtx.LoanRepo.CreateWithTx(l.ctx, tx, data.loan, false)
 		if innerErr != nil {
@@ -106,7 +94,7 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrowe
 
 		// save loan property
 		data.loanProperty.LoanId = loan.Id
-		data.loanProperty.BorrowerPropertyId = propertyBase.Id
+		// data.loanProperty.BorrowerPropertyId = propertyBase.Id
 		loanProperty, innerErr = l.svcCtx.LoanPropertyRepo.CreateWithTx(l.ctx, tx, data.loanProperty, false)
 		if innerErr != nil {
 			return innerErr
@@ -198,7 +186,7 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrowe
 		}
 
 		// sync total amount
-		innerErr = l.svcCtx.BorrowerPropertyRepo.SyncTotalAmountAndLoanCountWithTx(l.ctx, tx, propertyBase.Id)
+		innerErr = l.svcCtx.BorrowerPropertyRepo.SyncTotalAmountAndLoanCountWithTx(l.ctx, tx, data.loanProperty.BorrowerPropertyId)
 
 		return innerErr
 	})
@@ -215,26 +203,25 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrowe
 
 // buildModelData return save model data
 func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData) (data *applyLoanModelData, err error) {
+	var borrowerProperty *model.BorrowerProperty
 
 	if reqData == nil {
-		return nil, errors.WithStack(errors.New("invalid request data"))
+		return nil, errors.WithStack(errors.New("Invalid Request Data"))
 	}
 	if reqData.LoanProperty == nil {
-		return nil, errors.WithStack(errors.New("invalid loan property"))
+		return nil, errors.WithStack(errors.New("Invalid Loan Property"))
 	}
-	// todo handle borrower property
+
 	if reqData.LoanProperty.BorrowerPropertyId == 0 {
-		return nil, errors.WithStack(errors.New("invalid borrower property"))
+		return nil, errors.WithStack(errors.New("Invalid Borrower Property"))
 	}
+
 	// loan
-	loan := &model.Loan{
-		// BorrowerId:    reqData.BorrowerId,
-		// Stage:         constants.LoanStagePending,
-		// PendingStatus: constants.LoanPendingStatusQuoting,
-	}
+	loan := &model.Loan{}
 	err = copier.CopyWithOption(loan, reqData, copier.Option{
-		IgnoreEmpty: true,
-		DeepCopy:    true,
+		IgnoreEmpty:   false,
+		DeepCopy:      true,
+		CaseSensitive: true,
 		Converters: []copier.TypeConverter{
 			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
 		},
@@ -259,7 +246,7 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData) 
 		MailingAddress: types.Address{},
 	}
 	err = copier.CopyWithOption(loanBorrower, reqData.LoanBorrower, copier.Option{
-		IgnoreEmpty:   true,
+		IgnoreEmpty:   false,
 		DeepCopy:      true,
 		CaseSensitive: true,
 		Converters: []copier.TypeConverter{
@@ -273,8 +260,9 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData) 
 	// applicants
 	applicants := make([]*model.LoanApplicant, 0)
 	err = copier.CopyWithOption(&applicants, &reqData.Applicants, copier.Option{
-		IgnoreEmpty: true,
-		DeepCopy:    true,
+		IgnoreEmpty:   false,
+		DeepCopy:      true,
+		CaseSensitive: true,
 		Converters: []copier.TypeConverter{
 			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
 		},
@@ -288,12 +276,19 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData) 
 	})
 
 	// loan_property
-	loanProperty := &model.LoanProperty{
-		// PropertyBase: &model.PropertyBase{},
+	borrowerProperty, err = l.svcCtx.BorrowerPropertyRepo.FindOneByColumns(l.ctx, map[string]interface{}{
+		"id":          reqData.LoanProperty.BorrowerPropertyId,
+		"borrower_id": reqData.BorrowerId,
+	})
+	if err != nil {
+		return nil, err
 	}
+
+	loanProperty := &model.LoanProperty{}
 	err = copier.CopyWithOption(loanProperty, reqData.LoanProperty, copier.Option{
-		IgnoreEmpty: true,
-		DeepCopy:    true,
+		IgnoreEmpty:   false,
+		DeepCopy:      true,
+		CaseSensitive: true,
 		Converters: []copier.TypeConverter{
 			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
 		},
@@ -301,15 +296,20 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData) 
 	if err != nil {
 		return nil, errorx.GetFailedTransErr(err)
 	}
-	// todo handle borrower property
-	// loanProperty.PropertyBase.BorrowerId = reqData.BorrowerId
-	// loanProperty.Unit = loanProperty.PropertyBase.Unit
+	loanProperty.Id = 0
+	loanProperty.PropertyType = borrowerProperty.PropertyType
+	loanProperty.Unit = borrowerProperty.Unit
+	loanProperty.Bedrooms = borrowerProperty.Bedrooms
+	loanProperty.Bathrooms = borrowerProperty.Bathrooms
+	loanProperty.LivingAreaSqft = borrowerProperty.LivingAreaSqft
+	loanProperty.Address = borrowerProperty.Address
 
 	// transaction experience
 	transactionExperiences := make([]*model.LoanExperience, 0)
 	err = copier.CopyWithOption(&transactionExperiences, &reqData.TransactionExperiences, copier.Option{
-		IgnoreEmpty: true,
-		DeepCopy:    true,
+		IgnoreEmpty:   false,
+		DeepCopy:      true,
+		CaseSensitive: true,
 		Converters: []copier.TypeConverter{
 			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
 		},
@@ -321,8 +321,9 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData) 
 	// real_estates experience
 	realEstatesExperiences := make([]*model.LoanExperience, 0)
 	err = copier.CopyWithOption(&realEstatesExperiences, &reqData.RealEstateExperiences, copier.Option{
-		IgnoreEmpty: true,
-		DeepCopy:    true,
+		IgnoreEmpty:   false,
+		DeepCopy:      true,
+		CaseSensitive: true,
 		Converters: []copier.TypeConverter{
 			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
 		},
@@ -334,8 +335,9 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData) 
 	// third services
 	loanThirdServices := make([]*model.LoanThirdService, 0)
 	err = copier.CopyWithOption(&loanThirdServices, &reqData.LoanThirdServices, copier.Option{
-		IgnoreEmpty: true,
-		DeepCopy:    true,
+		IgnoreEmpty:   false,
+		DeepCopy:      true,
+		CaseSensitive: true,
 		Converters: []copier.TypeConverter{
 			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
 		},
@@ -347,8 +349,9 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData) 
 	// demographic
 	loanDemographic := &model.LoanDemographic{}
 	err = copier.CopyWithOption(&loanDemographic, &reqData.LoanDemographic, copier.Option{
-		IgnoreEmpty: true,
-		DeepCopy:    true,
+		IgnoreEmpty:   false,
+		DeepCopy:      true,
+		CaseSensitive: true,
 		Converters: []copier.TypeConverter{
 			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
 		},
@@ -356,16 +359,6 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData) 
 	if err != nil {
 		return nil, errorx.GetFailedTransErr(err)
 	}
-
-	// apply form file
-	// var applyFormFile *model.File
-	// if len(reqData.ApplyFormFile) > 0 {
-	// 	applyFormFile = &model.File{
-	// 		File:     reqData.ApplyFormFile,
-	// 		FileType: constants.FileTypeApplyForm,
-	// 		BizType:  constants.FileBizTypeLoan,
-	// 	}
-	// }
 
 	data = &applyLoanModelData{
 		loan:                   loan,

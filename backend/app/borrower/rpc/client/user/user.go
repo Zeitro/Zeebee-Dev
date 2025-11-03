@@ -74,6 +74,7 @@ type (
 	LoanPreApprovalRequestData_Property        = borrower.LoanPreApprovalRequestData_Property
 	LoanPreApprovalResponse                    = borrower.LoanPreApprovalResponse
 	LoanPreApprovalResponseData                = borrower.LoanPreApprovalResponseData
+	LoanPropertyApplyEntry                     = borrower.LoanPropertyApplyEntry
 	LoanPropertyEntry                          = borrower.LoanPropertyEntry
 	LoanSendPreApprovalNotificationRequest     = borrower.LoanSendPreApprovalNotificationRequest
 	LoanSendPreApprovalNotificationRequestData = borrower.LoanSendPreApprovalNotificationRequestData

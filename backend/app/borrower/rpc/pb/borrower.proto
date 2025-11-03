@@ -513,7 +513,7 @@ message LoanApplyRequestData {
   string loan_type = 2;
   double total_amount = 3;
   double initial_amount = 4;
-  LoanPropertyEntry loan_property = 5;
+  LoanPropertyApplyEntry loan_property = 5;
   double holdback_amount = 6;
   double principal_amount = 7;
   //  string maturity_date = 8;
@@ -522,41 +522,41 @@ message LoanApplyRequestData {
   int64 borrower_id = 11;
   repeated string business_strategy = 12;
   repeated ApplicantEntry applicants = 13;
-  string existing_lender_company = 14;
-  float existing_rate = 15;
-  string existing_maturity_date = 16;
-  double purchase_amount = 17;
-  string purchase_date = 18;
-  bool has_assignment_fee = 19;
-  double assignment_fee_amount = 20;
-  bool has_subordinate_debt = 21;
-  double subordinate_debt_amount = 22;
-  string scheduled_close_escrow_date = 23;
+  //  string existing_lender_company = 14;
+  //  float existing_rate = 15;
+  //  string existing_maturity_date = 16;
+  //  double purchase_amount = 17;
+  //  string purchase_date = 18;
+  //  bool has_assignment_fee = 19;
+  //  double assignment_fee_amount = 20;
+  //  bool has_subordinate_debt = 21;
+  //  double subordinate_debt_amount = 22;
+  //  string scheduled_close_escrow_date = 23;
   int32 loan_term = 24;
   double arv = 25;
   double ltv = 26;
-  double liquidity_amount = 27;
-  LoanBudgetEntry budget = 28;
-  bool mid_construction = 29;
+  //  double liquidity_amount = 27;
+  //  LoanBudgetEntry budget = 28;
+  //  bool mid_construction = 29;
   int32 est_credit_score = 30;
-  double est_yearly_rental_income = 31;
-  float dscr = 32;
+  //  double est_yearly_rental_income = 31;
+  //  float dscr = 32;
   double reserves_amount = 33;
-  bool has_delayed_financing = 34;
-  bool has_collateralized_blanket = 35;
-  bool has_properties_vacant = 36;
-  bool has_short_term_rental = 37;
-  string additional_info = 38;
+  //  bool has_delayed_financing = 34;
+  //  bool has_collateralized_blanket = 35;
+  //  bool has_properties_vacant = 36;
+  //  bool has_short_term_rental = 37;
+  //  string additional_info = 38;
   repeated LoanExperienceEntry transaction_experiences = 39;
   repeated LoanExperienceEntry real_estate_experiences = 40;
   LoanBorrowerEntry loan_borrower = 41;
   LoanDemographicEntry loan_demographic = 42;
-  float yearly_liability_expense = 43;
+  //  float yearly_liability_expense = 43;
   repeated LoanThirdServiceEntry loan_third_services = 44;
   int64 id = 45;
   string apply_form_file = 46;
   bool is_preapprove_loan = 47;
-  double est_property_value_amount = 48;
+  //  double est_property_value_amount = 48;
   string code = 49;
 }
 
@@ -764,6 +764,39 @@ message LoanPropertyEntry{
   bool has_short_term_rental = 34;
   double est_property_value_amount = 35;
   AddressEntry address = 36;
+}
+
+message LoanPropertyApplyEntry{
+  int64 id = 1;
+  int64 borrower_property_id = 2;
+  string future_property_type = 3;
+  int32  future_unit = 4;
+  float future_living_area_sqft = 5;
+  int32 future_bedrooms = 6;
+  int32 future_bathrooms = 7;
+  string owner = 8;
+  //
+  string existing_lender_company = 9;
+  float existing_rate = 10;
+  int64 existing_maturity_date = 11;
+  double purchase_amount = 12;
+  int64 purchase_date = 13;
+  bool has_assignment_fee = 14;
+  double assignment_fee_amount = 15;
+  bool has_subordinate_debt = 16;
+  double subordinate_debt_amount = 17;
+  string scheduled_close_escrow_date = 18;
+  double liquidity_amount = 19;
+  LoanBudgetEntry budget = 20;
+  bool mid_construction = 21;
+  double est_yearly_rental_income_amount = 22;
+  double yearly_liability_expense_amount = 23;
+  double dscr = 24;
+  bool has_delayed_financing = 25;
+  bool has_collateralized_blanket = 26;
+  bool has_properties_vacant = 27;
+  bool has_short_term_rental = 28;
+  double est_property_value_amount = 29;
 }
 
 // ===================== borrower property service ======================

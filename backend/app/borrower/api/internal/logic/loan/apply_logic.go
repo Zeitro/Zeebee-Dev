@@ -62,7 +62,7 @@ func (l *ApplyLogic) Apply(req *types.LoanApplyRequest) (resp *types.LoanApplyRe
 			applicants[0].IsPrimary = true
 		}
 		if primaryCount > 1 {
-			return nil, errors.WithStack(errors.New("multiple primary applicant"))
+			return nil, errors.WithStack(errors.New("Multiple Primary Applicant"))
 		}
 	}
 	rpcReq.Data.Applicants = applicants

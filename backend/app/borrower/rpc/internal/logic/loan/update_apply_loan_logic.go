@@ -38,7 +38,7 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 		}
 	}()
 	var loan *model.Loan
-	var propertyBase *model.BorrowerProperty
+	// var borrowerProperty *model.BorrowerProperty
 	applyLogic := NewApplyLoanLogic(l.ctx, l.svcCtx)
 
 	data, err := applyLogic.buildModelData(in.Data)
@@ -55,42 +55,45 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 		constants.LoanSourcePreApproval,
 	}
 	if !slice.Contain(sources, loan.Source) {
-		return nil, errors.WithStack(errors.New("invalid loan source"))
+		return nil, errors.WithStack(errors.New("Invalid Loan Source"))
 	}
 	stages := []constants.LoanStage{
 		constants.LoanStagePending,
 		constants.LoanStageDraft,
-		// constants.LoanStagePredraft,
 	}
 	pendingStatus := []constants.LoanPendingStatus{
 		constants.LoanPendingStatusQuoting,
 		constants.LoanPendingStatusNone,
 	}
 	if !slice.Contain(stages, loan.Stage) && !slice.Contain(pendingStatus, loan.PendingStatus) {
-		return nil, errors.New("loan's stage should be pending or draft")
+		return nil, errors.New("Loan's Stage Should Be Pending Or Draft")
 	}
 	if loan.BorrowerId != in.Data.BorrowerId {
-		return nil, errors.WithStack(errors.New("loan does not belong to borrower"))
+		return nil, errors.WithStack(errors.New("Loan Does Not Belong To Borrower"))
 	}
 
 	oldApplicants := loan.Applicants
 	if len(oldApplicants) == 0 {
-		return nil, errors.WithStack(errors.New("applicant is not found"))
+		return nil, errors.WithStack(errors.New("Applicant Is Not Found"))
 	}
 
 	// update loan
 	err = l.svcCtx.LoanPropertyRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
 		var innerErr error
+		var previousBorrowerPropertyId int64
+		if loan.LoanProperty != nil {
+			previousBorrowerPropertyId = loan.LoanProperty.BorrowerPropertyId
+		}
 		// previousPropertyBaseId := data.loanProperty.PropertyBaseId
 
 		eg := errorx.NewErrorGroup()
 		eg.Do(
 			// handle property base
-			func() error {
-				updateLogic := NewUpdateBorrowerLoanLogic(l.ctx, l.svcCtx)
-				propertyBase, err = updateLogic.handleBorrowerProperty(tx, loan.LoanProperty.BorrowerPropertyId, data.loanProperty.BorrowerProperty)
-				return err
-			},
+			// func() error {
+			// 	updateLogic := NewUpdateBorrowerLoanLogic(l.ctx, l.svcCtx)
+			// 	borrowerProperty, err = updateLogic.handleBorrowerProperty(tx, loan.LoanProperty.BorrowerPropertyId, data.loanProperty.BorrowerProperty)
+			// 	return err
+			// },
 			// update loan
 			func() error {
 				data.loan.RemoveRelationships()
@@ -106,7 +109,7 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 			func() error {
 				property := data.loanProperty
 				property.LoanId = loan.Id
-				property.BorrowerPropertyId = propertyBase.Id
+				// property.BorrowerPropertyId = borrowerProperty.Id
 
 				if property.Id == 0 {
 					property, err = l.svcCtx.LoanPropertyRepo.CreateWithTx(l.ctx, tx, property, false)
@@ -174,7 +177,7 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 				case constants.LoanStageDraft:
 					// change stage from draft to pending
 				default:
-					err = errors.WithStack(errors.New("invalid loan stage"))
+					err = errors.WithStack(errors.New("Invalid Loan Stage"))
 					return err
 				}
 				loanDocumentTypes := constants.GetLoanDocumentTypes()
@@ -200,6 +203,18 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 					if err != nil {
 						return err
 					}
+				}
+				return err
+			},
+			// sync property total amount and loan count
+			func() error {
+				var err error
+				err = l.svcCtx.BorrowerPropertyRepo.SyncTotalAmountAndLoanCountWithTx(l.ctx, tx, previousBorrowerPropertyId)
+				if err != nil {
+					return err
+				}
+				if in.Data.LoanProperty.BorrowerPropertyId != previousBorrowerPropertyId {
+					err = l.svcCtx.BorrowerPropertyRepo.SyncTotalAmountAndLoanCountWithTx(l.ctx, tx, in.Data.LoanProperty.BorrowerPropertyId)
 				}
 				return err
 			},
