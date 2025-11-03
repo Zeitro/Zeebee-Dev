@@ -259,12 +259,12 @@ func LoanPropertyApplyEntry(sl validator.StructLevel) {
 	}
 
 	if loanType == string(constants.LoanTypeRental) {
-		if property.EstYearlyRentalIncome <= 0 {
-			sl.ReportError(property.EstYearlyRentalIncome, "est yearly rental income", "EstYearlyRentalIncome", "gt", convertor.ToString(property.EstYearlyRentalIncome))
+		if property.EstYearlyRentalIncomeAmount <= 0 {
+			sl.ReportError(property.EstYearlyRentalIncomeAmount, "est yearly rental income", "EstYearlyRentalIncome", "gt", convertor.ToString(property.EstYearlyRentalIncomeAmount))
 			return
 		}
-		if property.YearlyLiabilityExpense <= 0 {
-			sl.ReportError(property.YearlyLiabilityExpense, "yearly liability expense", "YearlyLiabilityExpense", "gt", convertor.ToString(property.YearlyLiabilityExpense))
+		if property.YearlyLiabilityExpenseAmount <= 0 {
+			sl.ReportError(property.YearlyLiabilityExpenseAmount, "yearly liability expense", "YearlyLiabilityExpense", "gt", convertor.ToString(property.YearlyLiabilityExpenseAmount))
 			return
 		}
 		if property.Dscr <= 0 {

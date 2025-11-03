@@ -49,6 +49,639 @@
         }
       }
     },
+    "/api/v1/borrower_entity": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "borrower_entity"
+        ],
+        "summary": "create",
+        "operationId": "borrowerEntityBorrowerEntityCreate",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "type",
+                "name",
+                "tin_type",
+                "tin",
+                "mailing_address",
+                "contact_email",
+                "contact_name",
+                "contact_phone",
+                "own_percent"
+              ],
+              "properties": {
+                "contact_email": {
+                  "type": "string"
+                },
+                "contact_name": {
+                  "type": "string"
+                },
+                "contact_phone": {
+                  "type": "string"
+                },
+                "mailing_address": {
+                  "type": "object",
+                  "properties": {
+                    "address1": {
+                      "type": "string"
+                    },
+                    "address2": {
+                      "type": "string"
+                    },
+                    "city": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "zip_code": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "name": {
+                  "type": "string"
+                },
+                "own_percent": {
+                  "type": "integer"
+                },
+                "tin": {
+                  "type": "string"
+                },
+                "tin_type": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "borrower_id": {
+                  "type": "integer"
+                },
+                "contact_email": {
+                  "type": "string"
+                },
+                "contact_name": {
+                  "type": "string"
+                },
+                "contact_phone": {
+                  "type": "string"
+                },
+                "created_at": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "mailing_address": {
+                  "type": "object",
+                  "properties": {
+                    "address1": {
+                      "type": "string"
+                    },
+                    "address2": {
+                      "type": "string"
+                    },
+                    "city": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "zip_code": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "name": {
+                  "type": "string"
+                },
+                "own_percent": {
+                  "type": "integer"
+                },
+                "tin": {
+                  "type": "string"
+                },
+                "tin_type": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "updated_at": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/borrower_entity/all": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "borrower_entity"
+        ],
+        "summary": "all",
+        "operationId": "borrowerEntityBorrowerEntityAll",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "lists": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "created_at",
+                      "updated_at",
+                      "borrower_id",
+                      "type",
+                      "name",
+                      "tin_type",
+                      "tin",
+                      "contact_email",
+                      "contact_name",
+                      "contact_phone",
+                      "own_percent"
+                    ],
+                    "properties": {
+                      "borrower_id": {
+                        "type": "integer"
+                      },
+                      "contact_email": {
+                        "type": "string"
+                      },
+                      "contact_name": {
+                        "type": "string"
+                      },
+                      "contact_phone": {
+                        "type": "string"
+                      },
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "own_percent": {
+                        "type": "integer"
+                      },
+                      "tin": {
+                        "type": "string"
+                      },
+                      "tin_type": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/borrower_entity/check_existed": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "borrower_entity"
+        ],
+        "summary": "existed",
+        "operationId": "borrowerEntityBorrowerEntityCheckExisted",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "query",
+            "allowEmptyValue": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "is_existed": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/borrower_entity/page": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "borrower_entity"
+        ],
+        "summary": "page",
+        "operationId": "borrowerEntityBorrowerEntityPage",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "filter": {
+                  "type": "object",
+                  "properties": {
+                    "keyword": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "limit": {
+                  "type": "integer"
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "sorter": {
+                  "type": "object",
+                  "properties": {
+                    "column": {
+                      "type": "string"
+                    },
+                    "sort": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "limit": {
+                  "type": "integer"
+                },
+                "list": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "created_at",
+                      "updated_at",
+                      "borrower_id",
+                      "type",
+                      "name",
+                      "tin_type",
+                      "tin",
+                      "contact_email",
+                      "contact_name",
+                      "contact_phone",
+                      "own_percent"
+                    ],
+                    "properties": {
+                      "borrower_id": {
+                        "type": "integer"
+                      },
+                      "contact_email": {
+                        "type": "string"
+                      },
+                      "contact_name": {
+                        "type": "string"
+                      },
+                      "contact_phone": {
+                        "type": "string"
+                      },
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "own_percent": {
+                        "type": "integer"
+                      },
+                      "tin": {
+                        "type": "string"
+                      },
+                      "tin_type": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "total": {
+                  "type": "integer"
+                },
+                "total_page": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/borrower_entity/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "borrower_entity"
+        ],
+        "summary": "detail",
+        "operationId": "borrowerEntityBorrowerEntityDetail",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "borrower_id": {
+                  "type": "integer"
+                },
+                "contact_email": {
+                  "type": "string"
+                },
+                "contact_name": {
+                  "type": "string"
+                },
+                "contact_phone": {
+                  "type": "string"
+                },
+                "created_at": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "mailing_address": {
+                  "type": "object",
+                  "properties": {
+                    "address1": {
+                      "type": "string"
+                    },
+                    "address2": {
+                      "type": "string"
+                    },
+                    "city": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "zip_code": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "name": {
+                  "type": "string"
+                },
+                "own_percent": {
+                  "type": "integer"
+                },
+                "tin": {
+                  "type": "string"
+                },
+                "tin_type": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "updated_at": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "borrower_entity"
+        ],
+        "summary": "update",
+        "operationId": "borrowerEntityBorrowerEntityUpdate",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "type",
+                "name",
+                "tin_type",
+                "tin",
+                "mailing_address",
+                "contact_email",
+                "contact_name",
+                "contact_phone",
+                "own_percent"
+              ],
+              "properties": {
+                "contact_email": {
+                  "type": "string"
+                },
+                "contact_name": {
+                  "type": "string"
+                },
+                "contact_phone": {
+                  "type": "string"
+                },
+                "mailing_address": {
+                  "type": "object",
+                  "properties": {
+                    "address1": {
+                      "type": "string"
+                    },
+                    "address2": {
+                      "type": "string"
+                    },
+                    "city": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "zip_code": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "name": {
+                  "type": "string"
+                },
+                "own_percent": {
+                  "type": "integer"
+                },
+                "tin": {
+                  "type": "string"
+                },
+                "tin_type": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "delete": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "borrower_entity"
+        ],
+        "summary": "delete",
+        "operationId": "borrowerEntityBorrowerEntityDelete",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/file/{id}": {
       "delete": {
         "consumes": [
@@ -576,8 +1209,8 @@
                     "liquidity_amount",
                     "budget",
                     "mid_construction",
-                    "est_yearly_rental_income",
-                    "yearly_liability_expense",
+                    "est_yearly_rental_income_amount",
+                    "yearly_liability_expense_amount",
                     "dscr",
                     "has_delayed_financing",
                     "has_properties_vacant",
@@ -615,7 +1248,7 @@
                     "est_property_value_amount": {
                       "type": "number"
                     },
-                    "est_yearly_rental_income": {
+                    "est_yearly_rental_income_amount": {
                       "type": "number"
                     },
                     "existing_lender_company": {
@@ -681,7 +1314,7 @@
                     "subordinate_debt_amount": {
                       "type": "number"
                     },
-                    "yearly_liability_expense": {
+                    "yearly_liability_expense_amount": {
                       "type": "number"
                     }
                   }
@@ -1182,8 +1815,8 @@
                     "liquidity_amount",
                     "budget",
                     "mid_construction",
-                    "est_yearly_rental_income",
-                    "yearly_liability_expense",
+                    "est_yearly_rental_income_amount",
+                    "yearly_liability_expense_amount",
                     "dscr",
                     "has_delayed_financing",
                     "has_properties_vacant",
@@ -1221,7 +1854,7 @@
                     "est_property_value_amount": {
                       "type": "number"
                     },
-                    "est_yearly_rental_income": {
+                    "est_yearly_rental_income_amount": {
                       "type": "number"
                     },
                     "existing_lender_company": {
@@ -1287,7 +1920,7 @@
                     "subordinate_debt_amount": {
                       "type": "number"
                     },
-                    "yearly_liability_expense": {
+                    "yearly_liability_expense_amount": {
                       "type": "number"
                     }
                   }
@@ -4193,8 +4826,8 @@
                     "liquidity_amount",
                     "budget",
                     "mid_construction",
-                    "est_yearly_rental_income",
-                    "yearly_liability_expense",
+                    "est_yearly_rental_income_amount",
+                    "yearly_liability_expense_amount",
                     "dscr",
                     "has_delayed_financing",
                     "has_properties_vacant",
@@ -4232,7 +4865,7 @@
                     "est_property_value_amount": {
                       "type": "number"
                     },
-                    "est_yearly_rental_income": {
+                    "est_yearly_rental_income_amount": {
                       "type": "number"
                     },
                     "existing_lender_company": {
@@ -4298,7 +4931,7 @@
                     "subordinate_debt_amount": {
                       "type": "number"
                     },
-                    "yearly_liability_expense": {
+                    "yearly_liability_expense_amount": {
                       "type": "number"
                     }
                   }
@@ -4849,8 +5482,8 @@
                     "liquidity_amount",
                     "budget",
                     "mid_construction",
-                    "est_yearly_rental_income",
-                    "yearly_liability_expense",
+                    "est_yearly_rental_income_amount",
+                    "yearly_liability_expense_amount",
                     "dscr",
                     "has_delayed_financing",
                     "has_properties_vacant",
@@ -4888,7 +5521,7 @@
                     "est_property_value_amount": {
                       "type": "number"
                     },
-                    "est_yearly_rental_income": {
+                    "est_yearly_rental_income_amount": {
                       "type": "number"
                     },
                     "existing_lender_company": {
@@ -4954,7 +5587,7 @@
                     "subordinate_debt_amount": {
                       "type": "number"
                     },
-                    "yearly_liability_expense": {
+                    "yearly_liability_expense_amount": {
                       "type": "number"
                     }
                   }
@@ -9526,7 +10159,7 @@
       }
     }
   },
-  "x-date": "2025-11-03 13:20:28",
+  "x-date": "2025-11-03 18:07:00",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

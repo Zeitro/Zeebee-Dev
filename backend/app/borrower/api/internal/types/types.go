@@ -11,6 +11,63 @@ type AddressEntry struct {
 	ZipCode  string `json:"zip_code,optional"`
 }
 
+type BorrowerEntityEditRequest struct {
+	Id             int64        `path:"id,optional"`
+	Type           string       `json:"type" validate:"required,oneof=Corporation LLC Partnership Trust"`
+	Name           string       `json:"name" validate:"required,min=3,max=100"`
+	TinType        string       `json:"tin_type" validate:"required,oneof=EIN"`
+	Tin            string       `json:"tin" validate:"required,min=9,max=9"`
+	MailingAddress AddressEntry `json:"mailing_address" validate:"required"`
+	ContactEmail   string       `json:"contact_email" validate:"required,email,min=5,max=100"`
+	ContactName    string       `json:"contact_name" validate:"required,min=5,max=100"`
+	ContactPhone   string       `json:"contact_phone" validate:"required,min=9,max=15"`
+	OwnPercent     int32        `json:"own_percent" validate:"required,min=1,max=100"`
+}
+
+type BorrowerEntityEntry struct {
+	Id             int64        `json:"id"`
+	CreatedAt      string       `json:"created_at"`
+	UpdatedAt      string       `json:"updated_at"`
+	BorrowerId     int64        `json:"borrower_id"`
+	Type           string       `json:"type"`
+	Name           string       `json:"name"`
+	TinType        string       `json:"tin_type"`
+	Tin            string       `json:"tin"`
+	MailingAddress AddressEntry `json:"mailing_address"`
+	ContactEmail   string       `json:"contact_email"`
+	ContactName    string       `json:"contact_name"`
+	ContactPhone   string       `json:"contact_phone"`
+	OwnPercent     int32        `json:"own_percent"`
+}
+
+type BorrowerEntityPageEntry struct {
+	Id           int64  `json:"id"`
+	CreatedAt    string `json:"created_at"`
+	UpdatedAt    string `json:"updated_at"`
+	BorrowerId   int64  `json:"borrower_id"`
+	Type         string `json:"type"`
+	Name         string `json:"name"`
+	TinType      string `json:"tin_type"`
+	Tin          string `json:"tin"`
+	ContactEmail string `json:"contact_email"`
+	ContactName  string `json:"contact_name"`
+	ContactPhone string `json:"contact_phone"`
+	OwnPercent   int32  `json:"own_percent"`
+}
+
+type BorrowerEntityPageFilter struct {
+	Keyword string `json:"keyword,optional"`
+}
+
+type BorrowerEntityPageSorter struct {
+	Column string `json:"column,optional"`
+	Sort   string `json:"sort,optional"`
+}
+
+type BorrowerEntityUpdateResponse struct {
+	BorrowerEntityEntry
+}
+
 type BorrowerPropertyEntry struct {
 	Id             int64         `json:"id"`
 	PropertyType   string        `json:"property_type"`

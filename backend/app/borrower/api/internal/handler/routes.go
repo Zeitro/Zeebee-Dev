@@ -6,6 +6,7 @@ package handler
 import (
 	"net/http"
 
+	borrower_entity "zeebee-backend/app/borrower/api/internal/handler/borrower_entity"
 	borrower_property "zeebee-backend/app/borrower/api/internal/handler/borrower_property"
 	common "zeebee-backend/app/borrower/api/internal/handler/common"
 	file "zeebee-backend/app/borrower/api/internal/handler/file"
@@ -21,6 +22,57 @@ import (
 )
 
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// create
+					Method:  http.MethodPost,
+					Path:    "/borrower_entity",
+					Handler: borrower_entity.BorrowerEntityCreateHandler(serverCtx),
+				},
+				{
+					// detail
+					Method:  http.MethodGet,
+					Path:    "/borrower_entity/:id",
+					Handler: borrower_entity.BorrowerEntityDetailHandler(serverCtx),
+				},
+				{
+					// update
+					Method:  http.MethodPut,
+					Path:    "/borrower_entity/:id",
+					Handler: borrower_entity.BorrowerEntityUpdateHandler(serverCtx),
+				},
+				{
+					// delete
+					Method:  http.MethodDelete,
+					Path:    "/borrower_entity/:id",
+					Handler: borrower_entity.BorrowerEntityDeleteHandler(serverCtx),
+				},
+				{
+					// all
+					Method:  http.MethodGet,
+					Path:    "/borrower_entity/all",
+					Handler: borrower_entity.BorrowerEntityAllHandler(serverCtx),
+				},
+				{
+					// existed
+					Method:  http.MethodGet,
+					Path:    "/borrower_entity/check_existed",
+					Handler: borrower_entity.BorrowerEntityCheckExistedHandler(serverCtx),
+				},
+				{
+					// page
+					Method:  http.MethodPost,
+					Path:    "/borrower_entity/page",
+					Handler: borrower_entity.BorrowerEntityPageHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
 	server.AddRoutes(
 		rest.WithMiddlewares(
 			[]rest.Middleware{serverCtx.AuthMiddleware},

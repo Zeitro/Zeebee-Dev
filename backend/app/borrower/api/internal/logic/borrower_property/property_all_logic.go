@@ -37,7 +37,9 @@ func (l *PropertyAllLogic) PropertyAll(req *types.EmptyRequest) (resp *types.Pro
 	}
 
 	rpcResp, err := l.svcCtx.BorrowerPropertyRpcClient.All(l.ctx, &borrower.PropertyAllRequest{
-		BorrowerId: borrowerId,
+		Data: &borrower.PropertyAllRequestData{
+			BorrowerId: borrowerId,
+		},
 	})
 	if err != nil {
 		return nil, err
@@ -53,15 +55,6 @@ func (l *PropertyAllLogic) PropertyAll(req *types.EmptyRequest) (resp *types.Pro
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
-
-	// for _, entry := range rpcResp.Data {
-	// 	propertyEntry := &types.PropertyEntry{}
-	// 	err = copier.CopyWithOption(propertyEntry, entry, copier.Option{DeepCopy: true})
-	// 	if err != nil {
-	// 		return nil, errorx.GetFailedTransRespErr(err)
-	// 	}
-	// 	resp.Lists = append(resp.Lists, propertyEntry)
-	// }
 
 	return resp, nil
 }

@@ -16,6 +16,7 @@ import "desc/us_geography.api"
 import "desc/pdf.api"
 import "desc/storage.api"
 import "desc/loan_document.api"
+import "desc/borrower_entity.api"
 
 type (
 	EmptyRequest  {}
@@ -26,7 +27,7 @@ type PathIdRequest {
 	id int64 `path:"id" validate:"required,gt=0"`
 }
 
-// ============== common =============
+// ============== common start =============
 @server (
 	desc:    "borrower-api service"
 	version: v1
@@ -52,7 +53,8 @@ service borrower-api {
 	get /uuid (EmptyRequest) returns (GetUuidResponse)
 }
 
-// ============== user =============
+// ============== common end =============
+// ============== user start =============
 @server (
 	desc:    "borrower-api service"
 	version: v1
@@ -104,13 +106,14 @@ service borrower-api {
 	get /user/info (EmptyRequest) returns (UserInfoResponse)
 }
 
-// ============== loan =============
+// ============== user end =============
+// ============== loan start =============
 @server(
-    desc: "loan service"
+	desc: "loan service"
 	version: v1
-    group: loan
+	group: loan
 	prefix:  /api/v1
-    tags: loan
+	tags: loan
 )
 service borrower-api {
 	@doc "preapproval"
@@ -184,11 +187,12 @@ service borrower-api {
 	get /loan/import/template (EmptyRequest) returns (EmptyResponse)
 }
 
-// ===============borrower property ==============
+// ============== loan end =============
+// =============== borrower property start ==============
 @server (
-    desc: "borrower property service"
+	desc: "borrower property service"
 	version:    v1
-    group: borrower_property
+	group: borrower_property
 	prefix:     /api/v1
 	middleware: AuthMiddleware
 	tags:       property
@@ -223,11 +227,52 @@ service borrower-api {
 	delete /property/:id (PathIdRequest) returns (EmptyResponse)
 }
 
-// ===============loan applicant ==============
+// =============== borrower property end ==============
+// =============== borrower entity start ==============
+@server(
+	desc: "borrower entity service"
+	version: v1
+	group: borrower_entity
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: borrower_entity
+)
+service borrower-api {
+	@doc "page"
+	@handler BorrowerEntityPage
+	post /borrower_entity/page (BorrowerEntityPageRequest) returns (BorrowerEntityPageResponse)
+
+	@doc "all"
+	@handler BorrowerEntityAll
+	get /borrower_entity/all (EmptyRequest) returns (BorrowerEntityAllResponse)
+
+	@doc "existed"
+	@handler BorrowerEntityCheckExisted
+	get /borrower_entity/check_existed (BorrowerEntityCheckExistedRequest) returns (BorrowerEntityCheckExistedResponse)
+
+	@doc "detail"
+	@handler BorrowerEntityDetail
+	get /borrower_entity/:id (PathIdRequest) returns (BorrowerEntityDetailResponse)
+
+	@doc "create"
+	@handler BorrowerEntityCreate
+	post /borrower_entity (BorrowerEntityCreateRequest) returns (BorrowerEntityCreateResponse)
+
+	@doc "update"
+	@handler BorrowerEntityUpdate
+	put /borrower_entity/:id (BorrowerEntityUpdateRequest) returns (EmptyResponse)
+
+	@doc "delete"
+	@handler BorrowerEntityDelete
+	delete /borrower_entity/:id (PathIdRequest) returns (EmptyResponse)
+}
+
+// =============== borrower entity end ==============
+// =============== loan applicant start ==============
 @server (
-    desc: "loan applicant service"
+	desc: "loan applicant service"
 	version:    v1
-    group: loan_applicant
+	group: loan_applicant
 	prefix:     /api/v1
 	middleware: AuthMiddleware
 	tags:       applicant
@@ -238,14 +283,15 @@ service borrower-api {
 	post /applicant/borrower (EmptyRequest) returns (BorrowerNamesResponse)
 }
 
-// =============== pdf ==============
+// =============== loan applicant end ==============
+// =============== pdf start ==============
 @server(
-    desc: "pdf service"
-    version: v1
-    group: pdf
+	desc: "pdf service"
+	version: v1
+	group: pdf
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: pdf
+	tags: pdf
 )
 service borrower-api {
 	@doc "create apply form pdf"
@@ -253,14 +299,15 @@ service borrower-api {
 	post /pdf/apply_form (ApplyFormPdfRequest) returns (EmptyResponse)
 }
 
-// =============== storage ==============
+// =============== pdf end ==============
+// =============== storage start ==============
 @server(
-    desc: "storage service"
-    version: v1
-    group: storage
+	desc: "storage service"
+	version: v1
+	group: storage
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: storage
+	tags: storage
 )
 service borrower-api {
 	@doc "create aws s3 presign url"
@@ -268,14 +315,15 @@ service borrower-api {
 	post /storage/presign_url (S3PresignUrlCreateRequest) returns (S3PresignUrlCreateResponse)
 }
 
-// =============== file ==============
+// =============== storage end ==============
+// =============== file start ==============
 @server(
-    desc: "file service"
-    version: v1
-    group: file
+	desc: "file service"
+	version: v1
+	group: file
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: file
+	tags: file
 )
 service borrower-api {
 	@doc "delete"
@@ -283,14 +331,15 @@ service borrower-api {
 	delete /file/:id (PathIdRequest) returns (EmptyResponse)
 }
 
-// ============== loan document =============
+// =============== file end ==============
+// ============== loan document start =============
 @server(
-    desc: "loan document service"
-    version: v1
-    group: loan_document
+	desc: "loan document service"
+	version: v1
+	group: loan_document
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: loan_document
+	tags: loan_document
 )
 service borrower-api {
 	@doc "add files"
@@ -298,3 +347,4 @@ service borrower-api {
 	post /loan_document/:id/files (LoanDocumentAddFilesRequest) returns (EmptyResponse)
 }
 
+	// ============== loan document end =============
