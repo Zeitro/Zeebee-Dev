@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { DoubleLeftOutlined } from '@ant-design/icons';
 import { createRequest } from '@repo/shared-methods/utils';
 import { useLoanStore } from '@/store/loan';
+import OtherLender from './OtherLender';
 // preApproved-成功失败展示
 const PreApproved = ({ result, setIsResult }) => {
 	const router = useRouter();
@@ -34,7 +35,7 @@ const PreApproved = ({ result, setIsResult }) => {
 	};
 	const back = (
 		<Button
-			className="text-[#0958D9] text-base font-medium float-left"
+			className="text-[#0958D9] text-base font-medium !absolute left-0"
 			onClick={() => {
 				setIsResult(false);
 			}}
@@ -48,8 +49,8 @@ const PreApproved = ({ result, setIsResult }) => {
 			{result?.primary?.is_approved ? (
 				<PreApprovedSuccess result={result} handleClick={handleClick} back={back} />
 			) : (
-				<div className="w-[676px] mx-auto py-6 px-4 bg-white rounded-lg">
-					<div className="text-3xl/10 font-medium text-[#0958D9] pb-2 text-center">
+				<div className="mx-auto py-6 px-4 bg-white rounded-lg">
+					<div className="text-3xl/10 font-medium text-[#0958D9] pb-2 text-center relative">
 						{back}
 						Application Under Review
 					</div>
@@ -88,6 +89,7 @@ const PreApproved = ({ result, setIsResult }) => {
 					</div>
 				</div>
 			)}
+			<OtherLender result={result} handleClick={handleClick} />
 		</div>
 	);
 };

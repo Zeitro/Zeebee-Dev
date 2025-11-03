@@ -77,7 +77,9 @@ const PreApprovedSuccess = ({ result, handleClick, back }) => {
 	return (
 		<>
 			<div className={['bg-white rounded-lg px-8 py-6 h-max text-center'].join(' ')}>
-				<div className="text-3xl/10 font-medium text-[#0958D9]">{back}Pre - Approved!</div>
+				<div className="text-3xl/10 font-medium text-[#0958D9] relative">
+					{back}Pre - Approved!
+				</div>
 				<div className="text-base font-medium text-black-dark pt-2">
 					You're pre-approved for a bridge loan based on your project details.
 				</div>

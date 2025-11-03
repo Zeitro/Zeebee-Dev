@@ -45,7 +45,7 @@ const DropdownStatus = ({
 				content: 'Update successful！',
 			});
 			successCallback?.();
-		} catch (error) {
+		} catch {
 			setLoading(false);
 		}
 	};

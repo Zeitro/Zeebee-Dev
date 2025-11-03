@@ -130,3 +130,15 @@ input:-webkit-autofill {
 	color: var(--black-dark);
 	height: auto !important;
 }
+.ant-input-number-disabled,
+.ant-select-disabled .ant-select-selector,
+.ant-input-disabled,
+.ant-picker-input > input[disabled] {
+	color: rgba(0, 0, 0, 0.88) !important;
+}
+.ant-radio-disabled .ant-radio-inner::after {
+	background-color: rgba(0, 0, 0, 0.65) !important;
+}
+.ant-checkbox-disabled .ant-checkbox-inner:after {
+	border-color: rgba(0, 0, 0, 0.65) !important;
+}
