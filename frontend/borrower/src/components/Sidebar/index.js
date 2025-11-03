@@ -65,15 +65,12 @@ const SidebarDom = () => {
 				<Image src="/images/logo.svg" width={95} height={30} alt="ZeeBee Logo" priority />
 			</div>
 			<Menu
-				mode="vertical"
+				mode="inline"
 				selectedKeys={[selectedKey]}
 				items={items}
-				className={[
-					'flex-1 overflow-hidden border-r-0',
-					styles.menuList,
-					sidebarCollapsed && styles.menuList_collapsed,
-				].join(' ')}
+				className={['flex-1 overflow-hidden border-r-0', styles.menuList].join(' ')}
 				onClick={handleSelect}
+				inlineCollapsed={sidebarCollapsed}
 			/>
 			<UserInfo userInfo={userInfo} sidebarCollapsed={sidebarCollapsed} />
 			<div

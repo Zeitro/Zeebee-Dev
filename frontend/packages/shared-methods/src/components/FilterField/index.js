@@ -148,6 +148,9 @@ export const FilterField = forwardRef(({ list, className, ...rowProps }, ref) =>
 					</Button>
 				);
 				break;
+			case 'custom':
+				filterItem = children;
+				break;
 			default:
 				break;
 		}
@@ -187,3 +190,5 @@ export const FilterField = forwardRef(({ list, className, ...rowProps }, ref) =>
 		</Row>
 	);
 });
+
+FilterField.displayName = 'FilterField';

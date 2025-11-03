@@ -89,7 +89,8 @@ export const FilterTable = forwardRef(
 			} catch {
 				setLoading(false);
 			}
-		}, [api, getData, method, request]);
+			// eslint-disable-next-line react-hooks/exhaustive-deps
+		}, [api, getData, method]);
 
 		const onChange = (paginationObj, filters, { order, columnKey }) => {
 			const orderObj = {
@@ -181,3 +182,4 @@ export const FilterTable = forwardRef(
 		);
 	},
 );
+FilterTable.displayName = 'FilterTable';

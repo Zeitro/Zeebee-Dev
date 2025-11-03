@@ -45,6 +45,21 @@ export const navRouter = [
 			},
 		],
 	},
+	{
+		path: '/management',
+		title: 'Management',
+		icon: 'property',
+		router: [
+			{
+				path: '/management/borrowingEntity',
+				title: 'Borrowing Entity',
+			},
+			{
+				path: '/management/borrower',
+				title: 'Borrower',
+			},
+		],
+	},
 ];
 
 export const noTokenRouter = [
