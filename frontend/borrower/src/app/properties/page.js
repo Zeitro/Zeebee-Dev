@@ -1,5 +1,5 @@
 'use client';
-import { FilterField, NewPagination } from '@repo/shared-methods';
+import { BtnPopUpModal, FilterField, NewPagination } from '@repo/shared-methods';
 import Image from 'next/image';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ReloadOutlined } from '@ant-design/icons';
@@ -10,6 +10,7 @@ import { createRequest, getPagination, transformArrayStructure } from '@repo/sha
 import { Spin } from 'antd';
 import NoData from '@/components/NoData';
 import { useGetOptions } from '@/hooks/useGetOptions';
+import AddModal from './components/Add';
 const Properties = () => {
 	const { request, cancel } = createRequest();
 	const { borrowerOptions } = useGetOptions([{ type: 'borrower' }]);
@@ -115,6 +116,22 @@ const Properties = () => {
 						getList?.();
 					}, 300);
 				},
+				colProps: {
+					className: 'flex-1',
+				},
+			},
+			{
+				filterType: 'button',
+				children: (
+					<BtnPopUpModal
+						getContent={(setOpen) => <AddModal setOpen={setOpen} />}
+						type="primary"
+						icon={''}
+						size="large"
+					>
+						Add
+					</BtnPopUpModal>
+				),
 			},
 		],
 		[searchValue, borrower, borrowerOptions, cancel, getList],
@@ -131,7 +148,7 @@ const Properties = () => {
 		<div className={['h-full flex flex-col px-8 pt-10 pb-8'].join(' ')}>
 			<FilterField ref={filterFieldRef} list={filterList} className="pb-8" />
 			<div className="flex items-center justify-between flex-shrink-0 mb-4 text-base font-medium pb-2 border-b border-base-disabled">
-				<p className="text-base font-medium">{pagination.current?.total || 0} Properties</p>
+				<p className="text-base font-medium">{pagination?.total || 0} Properties</p>
 				<div
 					className="flex cursor-pointer"
 					onClick={() => {

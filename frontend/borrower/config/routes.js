@@ -49,14 +49,17 @@ export const navRouter = [
 		path: '/management',
 		title: 'Management',
 		icon: 'property',
+		isPageNotFound: true, // 只是用于侧边栏显示,并无此页面
 		router: [
 			{
 				path: '/management/borrowingEntity',
-				title: 'Borrowing Entity',
+				title: 'Management ( Borrowing Entity )',
+				menuTitle: 'Borrowing Entity',
 			},
 			{
 				path: '/management/borrower',
-				title: 'Borrower',
+				title: 'Management ( Borrower )',
+				menuTitle: 'Borrower',
 			},
 		],
 	},
