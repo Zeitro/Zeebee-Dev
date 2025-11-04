@@ -130,6 +130,7 @@ const useCreate = (pageType = 'create') => {
 				form={form}
 				rowData={isDetails ? rowData : null}
 				loanUuid={loanUuid}
+				isNotRequest={isDetails}
 			/>,
 		],
 		[form, isDetails, rowData, searchParams, unitInfo, loanUuid],
@@ -375,9 +376,8 @@ const useCreate = (pageType = 'create') => {
 			let values;
 			const isType = diffSteps();
 			// 解决：没填数据就触发了错误验证，又直接切换到上一步骤，又点击下一步时，validateFields会报错，提示刚才错误验证的字段没有填，导致下一页切换不了
-			const fieldsKeys = await getCurrentStepFields();
-			values = await form.validateFields(fieldsKeys, { recursive: true });
 			if (isType === 'Submit') {
+				values = await form.validateFields();
 				if (values?.signatures?.remainingSignatureCount || !values?.signatures) {
 					message.open({
 						type: 'error',
@@ -397,7 +397,9 @@ const useCreate = (pageType = 'create') => {
 				router.back();
 				return;
 			}
-			if (isType === 'NextMaxStep-CreateUUID') {
+			const fieldsKeys = await getCurrentStepFields();
+			values = await form.validateFields(fieldsKeys, { recursive: true });
+			if (isType === 'NextMaxStep-CreateUUID' && !rowData?.code && !loanUuid) {
 				await handleCreateUUID();
 			}
 
