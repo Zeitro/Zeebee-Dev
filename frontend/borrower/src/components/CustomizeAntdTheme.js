@@ -5,8 +5,9 @@ import { AntdRegistry } from '@ant-design/nextjs-registry';
 import SiderBar from '@/components/Sidebar';
 import NewHeader from '@/components/NewHeader';
 import { getCurrentRouterItem } from '@config/common';
-import { noNavRouter } from '@config/routes';
+import { noNavRouter, navRouter } from '@config/routes';
 import { usePathname } from 'next/navigation';
+import { useUserStore } from '@/store/user';
 const defaultToken = {
 	colorPrimary: '#1677ff',
 	colorTextBase: 'rgba(0, 0, 0, 0.88)',
@@ -31,6 +32,7 @@ function getCssVarValue(name, key) {
  * 自定义antd主题，区分有无（导航栏和面包屑）的页面
  */
 export default function CustomizeAntdTheme({ children, fontFamily }) {
+	const { userInfo } = useUserStore();
 	const [antdToken, setAntdToken] = useState({});
 	const pathname = usePathname();
 	const validateMessages = {
@@ -40,8 +42,18 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 	// 没有导航栏/面包屑的纯页面（例如：login
 	const isNoNav = useMemo(() => {
 		const routerItem = getCurrentRouterItem(pathname, noNavRouter);
+		console.log('layout===无侧边栏:', routerItem);
+
 		return !!routerItem;
 	}, [pathname]);
+
+	useEffect(() => {
+		const haveSiderRoute = getCurrentRouterItem(pathname, navRouter);
+		if (haveSiderRoute?.path && !userInfo?.id) {
+			console.log('haveSiderRoute,有侧边栏的页面,没有用户数据');
+		}
+		console.log(haveSiderRoute, 'userInfo----------', userInfo);
+	}, [userInfo]);
 
 	useEffect(
 		() => {
