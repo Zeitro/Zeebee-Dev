@@ -1,6 +1,6 @@
 'use client';
 import { Menu } from 'antd';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useGlobalStore } from '@/store/global';
 import styles from './index.module.scss';
 import { navRouter } from '@config/routes';
@@ -40,10 +40,9 @@ const SidebarDom = () => {
 	// 初始化根据路由选中侧边栏
 	useDeferredSyncEffect({
 		deferred: () => {
-			const routerItem = items.find((i) => pathname.indexOf(i.key) !== -1);
-			setSelectedKey(routerItem?.key || homePathname);
+			setSelectedKey(config?.path || homePathname);
 		},
-		deps: [items, pathname],
+		deps: [pathname, config],
 		delay: 0,
 	});
 

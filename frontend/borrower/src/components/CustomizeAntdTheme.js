@@ -85,6 +85,7 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 						itemSelectedColor: 'var(--base-primary)', // 选中项文字
 						itemHoverBg: 'var(--blue-light-1)', // 悬停背景
 						itemHoverColor: 'var(--base-primary)', // 悬停文字
+						subMenuItemSelectedColor: 'var(--base-primary)',
 					},
 					Table: {
 						border: '1px solid var(--base-border)',

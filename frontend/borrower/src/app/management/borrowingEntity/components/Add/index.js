@@ -20,7 +20,7 @@ const AddModal = ({ setOpen }) => {
 	const handleSave = () => {};
 	return (
 		<NewModal
-			width={600}
+			width={700}
 			title="Add borrowing entity"
 			okText="Save"
 			confirmLoading={confirmLoading}
@@ -31,12 +31,12 @@ const AddModal = ({ setOpen }) => {
 				form={form}
 				layout="vertical"
 				autoComplete="off"
-				className=""
+				className="h-[60vh] overflow-hidden overflow-y-auto"
 				size="large"
 				disabled={loading}
 				scrollToFirstError
 			>
-				<Row>
+				<Row gutter={16}>
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Entity type"

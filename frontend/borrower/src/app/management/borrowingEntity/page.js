@@ -13,7 +13,7 @@ const BorrowingEntity = () => {
 	const [pagination, setPagination] = useState(getPagination());
 	const { columns } = useBorrowingEntity();
 	const getList = useCallback(() => {
-		request('');
+		// request('');
 	}, [cancel, getPagination]);
 
 	const filterList = useMemo(
@@ -90,7 +90,8 @@ const BorrowingEntity = () => {
 					method: 'POST',
 					body: params,
 				};
-				return request('api', payload);
+				// return request('api', payload);
+				return {};
 			}}
 		/>
 	);
