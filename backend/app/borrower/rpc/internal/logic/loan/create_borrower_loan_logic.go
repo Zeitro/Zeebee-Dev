@@ -2,7 +2,6 @@ package loanlogic
 
 import (
 	"context"
-	"strings"
 
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
@@ -14,7 +13,6 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
-	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/common/uuid"
 
@@ -109,15 +107,12 @@ func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.LoanCreateRequ
 func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateRequestData) (loan *model.Loan, loanProperty *model.LoanProperty, applicants []*model.LoanApplicant, loanBorrower *model.LoanBorrower, err error) {
 	// build applicants
 	for _, applicant := range in.Applicants {
-		if len(applicant.FirstName) == 0 {
-			return nil, nil, nil, nil, errors.New("Applicant Name Is Required")
-		}
-		applicantName := strings.TrimSpace(applicant.FirstName)
-		if len(applicantName) == 0 {
-			return nil, nil, nil, nil, errors.New("Applicant Name Is Empty")
+		borrowerApplicant, err := l.svcCtx.BorrowerApplicantRepo.GetBorrowerApplicantById(l.ctx, applicant.BorrowerApplicantId, in.BorrowerId)
+		if err != nil {
+			return nil, nil, nil, nil, err
 		}
 		applicantItem := &model.LoanApplicant{}
-		err = copier.CopyWithOption(applicantItem, applicant, copier.Option{
+		err = copier.CopyWithOption(applicantItem, borrowerApplicant, copier.Option{
 			IgnoreEmpty:   false,
 			DeepCopy:      true,
 			CaseSensitive: true,
@@ -128,11 +123,9 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 		if err != nil {
 			return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
 		}
-		// if !applicantItem.Type.IsValid() {
-		// 	return nil, nil, nil, nil, errors.New("Invalid Applicant Type")
-		// }
-		applicantItem.FullName = stringx.FormatFullName(applicant.FirstName, applicant.MidName, applicant.LastName)
-		applicantItem.BorrowerId = in.BorrowerId
+		applicantItem.Id = 0
+		applicantItem.IsPrimary = applicant.IsPrimary
+		applicantItem.BorrowerApplicantId = applicant.BorrowerApplicantId
 		applicantItem.InvitationStatus = constants.ApplicantInvitationStatusAccepted
 		applicants = append(applicants, applicantItem)
 	}
@@ -154,12 +147,26 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 	if primaryCount > 1 {
 		return nil, nil, nil, nil, errors.New("Multiple Primary Applicant")
 	}
+
 	// loan borrower
-	loanBorrower = &model.LoanBorrower{
-		Name: applicants[0].FullName,
-		// Type:       applicants[0].Type,
-		OwnPercent: 100,
+	loanBorrower = &model.LoanBorrower{}
+	borrowerEntity, err := l.svcCtx.BorrowerEntityRepo.GetBorrowerEntityById(l.ctx, in.BorrowerEntityId, in.BorrowerId)
+	if err != nil {
+		return nil, nil, nil, nil, err
 	}
+	err = copier.CopyWithOption(loanBorrower, borrowerEntity, copier.Option{
+		IgnoreEmpty:   false,
+		DeepCopy:      true,
+		CaseSensitive: true,
+		Converters: []copier.TypeConverter{
+			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
+		},
+	})
+	if err != nil {
+		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
+	}
+	loanBorrower.Id = 0
+	loanBorrower.BorrowerEntityId = borrowerEntity.Id
 
 	// update loan
 	loan = &model.Loan{}
@@ -178,10 +185,7 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 	loan.PendingStatus = constants.LoanPendingStatusNone
 	loan.Source = constants.LoanSourceBorrower
 
-	borrowerProperty, err := l.svcCtx.BorrowerPropertyRepo.FindOneByColumns(l.ctx, map[string]interface{}{
-		"id":          in.LoanProperty.BorrowerPropertyId,
-		"borrower_id": in.BorrowerId,
-	})
+	borrowerProperty, err := l.svcCtx.BorrowerPropertyRepo.GetBorrowerPropertyById(l.ctx, in.LoanProperty.BorrowerPropertyId, in.BorrowerId)
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}

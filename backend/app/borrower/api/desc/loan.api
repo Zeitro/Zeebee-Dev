@@ -96,7 +96,8 @@ type (
         TotalAmount float64 `json:"total_amount,optional"  validate:"required_unless=Stage Archived"`
         InitialAmount float64 `json:"initial_amount,optional"`
         LoanProperty *LoanPropertyEditEntry `json:"loan_property,optional" validate:"required"`
-        Applicants []*LoanApplicantEditEntry `json:"applicants,optional" validate:"required,min=1,max=2,dive,required"`
+        Applicants []*ThirdPartyLoanApplicantEntry `json:"applicants,optional" validate:"required,min=1,max=2,dive,required"`
+        BorrowerEntityId int64 `json:"borrower_entity_id" validate:"required,gt=0"`
         LenderCompany string `json:"lender_company,optional" validate:"required"`
         ClosingDate string `json:"closing_date,optional" validate:"required_if=Stage Pending,omitempty,datetime=01/02/2006"`
         ClosingFund float64 `json:"closing_fund,optional" validate:"gte=0,ltefield=TotalAmount"`
@@ -136,7 +137,8 @@ type (
         TotalAmount float64 `json:"total_amount,optional"  validate:"required_unless=Stage Archived"`
         InitialAmount float64 `json:"initial_amount,optional"`
         LoanProperty *LoanPropertyEditEntry `json:"loan_property,optional" validate:"required"`
-        Applicants []*LoanApplicantEditEntry `json:"applicants,optional" validate:"required,dive,required"`
+        Applicants []*ThirdPartyLoanApplicantEntry `json:"applicants,optional" validate:"required,dive,required"`
+        BorrowerEntityId int64 `json:"borrower_entity_id" validate:"required,gt=0"`
         LenderCompany string `json:"lender_company,optional" validate:"required"`
         ClosingDate string `json:"closing_date,optional" validate:"required_if=Stage Pending,omitempty,datetime=01/02/2006"`
         ClosingFund float64 `json:"closing_fund,optional" validate:"gte=0,ltefield=TotalAmount"`

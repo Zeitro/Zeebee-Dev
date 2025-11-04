@@ -72,6 +72,7 @@ func (repo *BorrowerPropertyRepo) GetOrCreateWithTx(ctx context.Context, tx *gor
 	return
 }
 
+// GetOneWithTxByProperty return one property
 func (repo *BorrowerPropertyRepo) GetOneWithTxByProperty(ctx context.Context, tx *gorm.DB, data *model.BorrowerProperty) (result *model.BorrowerProperty, err error) {
 	err = tx.WithContext(ctx).
 		Where("borrower_id = ? and unit = ?", data.BorrowerId, data.Unit).
@@ -89,6 +90,14 @@ func (repo *BorrowerPropertyRepo) GetOneWithTxByProperty(ctx context.Context, tx
 		return nil, nil
 	}
 	return
+}
+
+func (repo *BorrowerPropertyRepo) GetBorrowerPropertyById(ctx context.Context, id int64, borrowerId int64) (result *model.BorrowerProperty, err error) {
+	err = repo.Client(ctx).
+		Where("id = ? and borrower_id = ?", id, borrowerId).
+		First(&result).
+		Error
+	return result, errors.WithStack(err)
 }
 
 func (repo *BorrowerPropertyRepo) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, id int64, data *model.BorrowerProperty) (result *model.BorrowerProperty, err error) {

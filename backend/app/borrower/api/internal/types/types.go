@@ -24,6 +24,7 @@ type BorrowerApplicantEntry struct {
 	Dob              string       `json:"dob"`
 	MaritalStatus    string       `json:"marital_status"`
 	Email            string       `json:"email"`
+	Phone            string       `json:"phone"`
 	EstCreditScore   int32        `json:"est_credit_score"`
 	DriverLicenseNum string       `json:"driver_license_num"`
 	Address          AddressEntry `json:"address"`
@@ -41,6 +42,7 @@ type BorrowerApplicantPageEntry struct {
 	Dob              string `json:"dob"`
 	MaritalStatus    string `json:"marital_status"`
 	Email            string `json:"email"`
+	Phone            string `json:"phone"`
 	EstCreditScore   int32  `json:"est_credit_score"`
 	DriverLicenseNum string `json:"driver_license_num"`
 }
@@ -628,6 +630,12 @@ type Signatures struct {
 	BusinessPurpose       []*SignatureEntry `json:"business_purpose,optional"`
 	PatriotAct            []*SignatureEntry `json:"patriot_act,optional"`
 	BorrowerAuthorization []*SignatureEntry `json:"borrower_authorization,optional"`
+}
+
+type ThirdPartyLoanApplicantEntry struct {
+	Id                  int64 `json:"id,optional"`
+	BorrowerApplicantId int64 `json:"borrower_applicant_id" validate:"required,gt=0"`
+	IsPrimary           bool  `json:"is_primary,optional"`
 }
 
 type UserInfo struct {

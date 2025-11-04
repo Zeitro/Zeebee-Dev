@@ -21,6 +21,7 @@ type BorrowerApplicantEntry {
     Dob string `json:"dob"`
     MaritalStatus string `json:"marital_status"`
     Email string `json:"email"`
+    Phone string `json:"phone"`
     EstCreditScore int32 `json:"est_credit_score"`
     DriverLicenseNum string `json:"driver_license_num"`
     Address AddressEntry `json:"address"`
@@ -38,6 +39,7 @@ type BorrowerApplicantPageEntry {
     Dob string `json:"dob"`
     MaritalStatus string `json:"marital_status"`
     Email string `json:"email"`
+    Phone string `json:"phone"`
     EstCreditScore int32 `json:"est_credit_score"`
     DriverLicenseNum string `json:"driver_license_num"`
 }
@@ -93,6 +95,7 @@ type (
         Dob string `json:"dob" validate:"required,datetime=01/02/2006"`
         MaritalStatus string `json:"marital_status" validate:"required,oneof=Married Unmarried Separated"`
         Email string `json:"email" validate:"required,email"`
+        Phone string `json:"phone" validate:"required,min=8,max=15"`
         EstCreditScore int32 `json:"est_credit_score" validate:"required,min=300,max=850"`
         DriverLicenseNum string `json:"driver_license_num" validate:"required,min=5,max=30"`
         Address *AddressEntry `json:"address" validate:"required"`

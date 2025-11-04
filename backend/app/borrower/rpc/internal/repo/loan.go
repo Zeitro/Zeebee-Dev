@@ -28,7 +28,7 @@ func (repo *LoanRepo) GetBorrowerLoan(ctx context.Context, id int64, borrowerId 
 	err = repo.BaseRepo.Client(ctx).
 		Where("id = ? and borrower_id = ?", id, borrowerId).
 		Preload("Applicants", func(db *gorm.DB) *gorm.DB {
-			return db.Order("applicants.is_primary desc")
+			return db.Order("loan_applicants.is_primary desc")
 		}).
 		Preload("LoanProperty").
 		// Preload("LoanProperty.PropertyBase").
@@ -55,10 +55,10 @@ func (repo *LoanRepo) GetBorrowerLoanWithTx(ctx context.Context, tx *gorm.DB, id
 	err = tx.WithContext(ctx).
 		Where("id = ? and borrower_id = ?", id, borrowerId).
 		Preload("Applicants", func(db *gorm.DB) *gorm.DB {
-			return db.Order("applicants.is_primary desc")
+			return db.Order("loan_applicants.is_primary desc")
 		}).
 		Preload("LoanProperty").
-		Preload("LoanProperty.PropertyBase").
+		// Preload("LoanProperty.PropertyBase").
 		Preload("LoanBorrower").
 		Preload("LoanExperiences", func(db *gorm.DB) *gorm.DB {
 			return db.Order("loan_experiences.id asc")
