@@ -52,8 +52,8 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 		if (haveSiderRoute?.path && !userInfo?.id) {
 			console.log('haveSiderRoute,有侧边栏的页面,没有用户数据');
 		}
-		console.log(haveSiderRoute, 'userInfo----------', userInfo);
-	}, [userInfo]);
+		console.log(haveSiderRoute, 'userInfo----------', userInfo, pathname);
+	}, [userInfo, pathname]);
 
 	useEffect(
 		() => {
