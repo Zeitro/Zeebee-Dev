@@ -341,7 +341,7 @@ message LoanCreateRequestData {
   double initial_amount = 7;
   //  LoanPropertyEntry loan_property = 8;
   ThirdPartyLoanPropertyEditEntry loan_property = 8;
-  repeated BorrowerApplicantEditEntry applicants = 9;
+  repeated BorrowerApplicantEditEntry1 applicants = 9;
   string lender_company = 10;
   string closing_date = 11;
   double holdback_amount = 12;
@@ -373,7 +373,7 @@ message LoanCreateResponseData {
   int64 id = 1;
 }
 
-message BorrowerApplicantEditEntry {
+message BorrowerApplicantEditEntry1 {
   string name = 1 [deprecated = true];
   string type = 2;
   bool is_primary = 3;
@@ -397,7 +397,7 @@ message LoanUpdateRequestData {
   double total_amount = 6;
   double initial_amount = 7;
   ThirdPartyLoanPropertyEditEntry loan_property = 8;
-  repeated BorrowerApplicantEditEntry applicants = 9;
+  repeated BorrowerApplicantEditEntry1 applicants = 9;
   string lender_company = 10;
   string closing_date = 11;
   double holdback_amount = 12;
@@ -587,7 +587,7 @@ message ImportPendingLoansRequestData {
   string original_contract_date = 14;
   string extension_date = 15;
   string loan_processor = 16;
-  repeated BorrowerApplicantEditEntry applicants = 17;
+  repeated BorrowerApplicantEditEntry1 applicants = 17;
   string closing_date = 18;
 
 }
@@ -1118,6 +1118,154 @@ service BorrowerEntity {
   rpc All(BorrowerEntityAllRequest) returns(BorrowerEntityAllResponse);
 }
 // ===================== borrower entity service end ======================
+
+// ===================== borrower applicant service start ======================
+message BorrowerApplicantEntry {
+  int64 id = 1;
+  string created_at = 2;
+  string updated_at = 3;
+  int64 borrower_id = 4;
+  string first_name = 5;
+  string mid_name = 6;
+  string last_name = 7;
+  string full_name = 8;
+  string ssn = 9;
+  string dob = 10;
+  string marital_status = 11;
+  string email = 12;
+  int32 est_credit_score = 13;
+  string driver_license_num = 14;
+  AddressEntry address = 15;
+}
+
+message BorrowerApplicantPageEntry {
+  int64 id = 1;
+  string created_at = 2;
+  string updated_at = 3;
+  int64 borrower_id = 4;
+  string first_name = 5;
+  string mid_name = 6;
+  string last_name = 7;
+  string full_name = 8;
+  string ssn = 9;
+  string dob = 10;
+  string marital_status = 11;
+  string email = 12;
+  int32 est_credit_score = 13;
+  string driver_license_num = 14;
+}
+message BorrowerApplicantEditEntry {
+  int64 borrower_id = 1;
+  string first_name = 2;
+  string mid_name = 3;
+  string last_name = 4;
+  string ssn = 5;
+  string dob = 6;
+  string marital_status = 7;
+  string email = 8;
+  int32 est_credit_score = 9;
+  string driver_license_num = 10;
+  AddressEntry address = 11;
+  int64 id = 12;
+}
+
+// create borrower applicant
+message BorrowerApplicantCreateRequest {
+  BorrowerApplicantEditEntry data = 1;
+}
+message BorrowerApplicantCreateResponse {
+  BorrowerApplicantEntry data = 1;
+}
+// update borrower applicant
+message BorrowerApplicantUpdateRequest {
+  BorrowerApplicantEditEntry data = 1;
+}
+// detail borrower applicant
+message BorrowerApplicantDetailRequest {
+  BorrowerApplicantDetailRequestData data = 1;
+}
+message BorrowerApplicantDetailRequestData {
+  int64 id = 1;
+  int64 borrower_id = 2;
+}
+message BorrowerApplicantDetailResponse {
+  BorrowerApplicantEntry data = 1;
+}
+// delete borrower applicant
+message BorrowerApplicantDeleteRequest {
+  BorrowerApplicantDeleteRequestData data = 1;
+}
+message BorrowerApplicantDeleteRequestData {
+  int64 id = 1;
+  int64 borrower_id = 2;
+}
+// page borrower applicant
+message BorrowerApplicantPageRequest {
+  BorrowerApplicantPageRequestData data = 1;
+}
+message BorrowerApplicantPageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  BorrowerApplicantPageRequestFilter filter = 3;
+  BorrowerApplicantPageRequestSorter sorter = 4;
+}
+message BorrowerApplicantPageRequestFilter {
+  int64 borrower_id = 1;
+  string keyword = 2;
+}
+message BorrowerApplicantPageRequestSorter {
+  string column = 1;
+  string sort = 2;
+}
+
+message BorrowerApplicantPageResponse {
+  BorrowerApplicantPageResponseData data = 1;
+}
+message BorrowerApplicantPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated BorrowerApplicantPageEntry list = 5;
+}
+// check exist
+message BorrowerApplicantCheckExistedRequest {
+  BorrowerApplicantCheckExistedRequestData data = 1;
+}
+message BorrowerApplicantCheckExistedRequestData {
+  int64 borrower_id = 1;
+  int64 id = 2;
+  string first_name = 3;
+  string mid_name = 4;
+  string last_name = 5;
+}
+message BorrowerApplicantCheckExistedResponse {
+  BorrowerApplicantCheckExistedResponseData data = 1;
+}
+message BorrowerApplicantCheckExistedResponseData {
+  bool is_existed = 1;
+}
+// all borrower applicant
+message BorrowerApplicantAllRequest {
+  BorrowerApplicantAllRequestData data = 1;
+}
+message BorrowerApplicantAllRequestData {
+  int64 borrower_id = 1;
+}
+message BorrowerApplicantAllResponse {
+  repeated BorrowerApplicantPageEntry data = 1;
+}
+
+service BorrowerApplicant {
+  rpc Create(BorrowerApplicantCreateRequest) returns(BorrowerApplicantCreateResponse);
+  rpc Update(BorrowerApplicantUpdateRequest) returns(EmptyResponse);
+  rpc Detail(BorrowerApplicantDetailRequest) returns(BorrowerApplicantDetailResponse);
+  rpc Delete(BorrowerApplicantDeleteRequest) returns(EmptyResponse);
+  rpc Page(BorrowerApplicantPageRequest) returns(BorrowerApplicantPageResponse);
+  rpc CheckExisted(BorrowerApplicantCheckExistedRequest) returns(BorrowerApplicantCheckExistedResponse);
+  rpc All(BorrowerApplicantAllRequest) returns(BorrowerApplicantAllResponse);
+}
+// ====================== borrower applicant service end ======================
 
 
 // ===================== loan applicant service start ======================

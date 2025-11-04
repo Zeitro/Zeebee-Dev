@@ -1823,6 +1823,336 @@ var BorrowerEntity_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
+	BorrowerApplicant_Create_FullMethodName       = "/borrower.BorrowerApplicant/Create"
+	BorrowerApplicant_Update_FullMethodName       = "/borrower.BorrowerApplicant/Update"
+	BorrowerApplicant_Detail_FullMethodName       = "/borrower.BorrowerApplicant/Detail"
+	BorrowerApplicant_Delete_FullMethodName       = "/borrower.BorrowerApplicant/Delete"
+	BorrowerApplicant_Page_FullMethodName         = "/borrower.BorrowerApplicant/Page"
+	BorrowerApplicant_CheckExisted_FullMethodName = "/borrower.BorrowerApplicant/CheckExisted"
+	BorrowerApplicant_All_FullMethodName          = "/borrower.BorrowerApplicant/All"
+)
+
+// BorrowerApplicantClient is the client API for BorrowerApplicant service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type BorrowerApplicantClient interface {
+	Create(ctx context.Context, in *BorrowerApplicantCreateRequest, opts ...grpc.CallOption) (*BorrowerApplicantCreateResponse, error)
+	Update(ctx context.Context, in *BorrowerApplicantUpdateRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	Detail(ctx context.Context, in *BorrowerApplicantDetailRequest, opts ...grpc.CallOption) (*BorrowerApplicantDetailResponse, error)
+	Delete(ctx context.Context, in *BorrowerApplicantDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	Page(ctx context.Context, in *BorrowerApplicantPageRequest, opts ...grpc.CallOption) (*BorrowerApplicantPageResponse, error)
+	CheckExisted(ctx context.Context, in *BorrowerApplicantCheckExistedRequest, opts ...grpc.CallOption) (*BorrowerApplicantCheckExistedResponse, error)
+	All(ctx context.Context, in *BorrowerApplicantAllRequest, opts ...grpc.CallOption) (*BorrowerApplicantAllResponse, error)
+}
+
+type borrowerApplicantClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewBorrowerApplicantClient(cc grpc.ClientConnInterface) BorrowerApplicantClient {
+	return &borrowerApplicantClient{cc}
+}
+
+func (c *borrowerApplicantClient) Create(ctx context.Context, in *BorrowerApplicantCreateRequest, opts ...grpc.CallOption) (*BorrowerApplicantCreateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(BorrowerApplicantCreateResponse)
+	err := c.cc.Invoke(ctx, BorrowerApplicant_Create_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *borrowerApplicantClient) Update(ctx context.Context, in *BorrowerApplicantUpdateRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, BorrowerApplicant_Update_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *borrowerApplicantClient) Detail(ctx context.Context, in *BorrowerApplicantDetailRequest, opts ...grpc.CallOption) (*BorrowerApplicantDetailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(BorrowerApplicantDetailResponse)
+	err := c.cc.Invoke(ctx, BorrowerApplicant_Detail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *borrowerApplicantClient) Delete(ctx context.Context, in *BorrowerApplicantDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, BorrowerApplicant_Delete_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *borrowerApplicantClient) Page(ctx context.Context, in *BorrowerApplicantPageRequest, opts ...grpc.CallOption) (*BorrowerApplicantPageResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(BorrowerApplicantPageResponse)
+	err := c.cc.Invoke(ctx, BorrowerApplicant_Page_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *borrowerApplicantClient) CheckExisted(ctx context.Context, in *BorrowerApplicantCheckExistedRequest, opts ...grpc.CallOption) (*BorrowerApplicantCheckExistedResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(BorrowerApplicantCheckExistedResponse)
+	err := c.cc.Invoke(ctx, BorrowerApplicant_CheckExisted_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *borrowerApplicantClient) All(ctx context.Context, in *BorrowerApplicantAllRequest, opts ...grpc.CallOption) (*BorrowerApplicantAllResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(BorrowerApplicantAllResponse)
+	err := c.cc.Invoke(ctx, BorrowerApplicant_All_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// BorrowerApplicantServer is the server API for BorrowerApplicant service.
+// All implementations must embed UnimplementedBorrowerApplicantServer
+// for forward compatibility.
+type BorrowerApplicantServer interface {
+	Create(context.Context, *BorrowerApplicantCreateRequest) (*BorrowerApplicantCreateResponse, error)
+	Update(context.Context, *BorrowerApplicantUpdateRequest) (*EmptyResponse, error)
+	Detail(context.Context, *BorrowerApplicantDetailRequest) (*BorrowerApplicantDetailResponse, error)
+	Delete(context.Context, *BorrowerApplicantDeleteRequest) (*EmptyResponse, error)
+	Page(context.Context, *BorrowerApplicantPageRequest) (*BorrowerApplicantPageResponse, error)
+	CheckExisted(context.Context, *BorrowerApplicantCheckExistedRequest) (*BorrowerApplicantCheckExistedResponse, error)
+	All(context.Context, *BorrowerApplicantAllRequest) (*BorrowerApplicantAllResponse, error)
+	mustEmbedUnimplementedBorrowerApplicantServer()
+}
+
+// UnimplementedBorrowerApplicantServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedBorrowerApplicantServer struct{}
+
+func (UnimplementedBorrowerApplicantServer) Create(context.Context, *BorrowerApplicantCreateRequest) (*BorrowerApplicantCreateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedBorrowerApplicantServer) Update(context.Context, *BorrowerApplicantUpdateRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+}
+func (UnimplementedBorrowerApplicantServer) Detail(context.Context, *BorrowerApplicantDetailRequest) (*BorrowerApplicantDetailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Detail not implemented")
+}
+func (UnimplementedBorrowerApplicantServer) Delete(context.Context, *BorrowerApplicantDeleteRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedBorrowerApplicantServer) Page(context.Context, *BorrowerApplicantPageRequest) (*BorrowerApplicantPageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Page not implemented")
+}
+func (UnimplementedBorrowerApplicantServer) CheckExisted(context.Context, *BorrowerApplicantCheckExistedRequest) (*BorrowerApplicantCheckExistedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckExisted not implemented")
+}
+func (UnimplementedBorrowerApplicantServer) All(context.Context, *BorrowerApplicantAllRequest) (*BorrowerApplicantAllResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method All not implemented")
+}
+func (UnimplementedBorrowerApplicantServer) mustEmbedUnimplementedBorrowerApplicantServer() {}
+func (UnimplementedBorrowerApplicantServer) testEmbeddedByValue()                           {}
+
+// UnsafeBorrowerApplicantServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to BorrowerApplicantServer will
+// result in compilation errors.
+type UnsafeBorrowerApplicantServer interface {
+	mustEmbedUnimplementedBorrowerApplicantServer()
+}
+
+func RegisterBorrowerApplicantServer(s grpc.ServiceRegistrar, srv BorrowerApplicantServer) {
+	// If the following call pancis, it indicates UnimplementedBorrowerApplicantServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&BorrowerApplicant_ServiceDesc, srv)
+}
+
+func _BorrowerApplicant_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BorrowerApplicantCreateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BorrowerApplicantServer).Create(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BorrowerApplicant_Create_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BorrowerApplicantServer).Create(ctx, req.(*BorrowerApplicantCreateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BorrowerApplicant_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BorrowerApplicantUpdateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BorrowerApplicantServer).Update(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BorrowerApplicant_Update_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BorrowerApplicantServer).Update(ctx, req.(*BorrowerApplicantUpdateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BorrowerApplicant_Detail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BorrowerApplicantDetailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BorrowerApplicantServer).Detail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BorrowerApplicant_Detail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BorrowerApplicantServer).Detail(ctx, req.(*BorrowerApplicantDetailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BorrowerApplicant_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BorrowerApplicantDeleteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BorrowerApplicantServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BorrowerApplicant_Delete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BorrowerApplicantServer).Delete(ctx, req.(*BorrowerApplicantDeleteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BorrowerApplicant_Page_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BorrowerApplicantPageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BorrowerApplicantServer).Page(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BorrowerApplicant_Page_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BorrowerApplicantServer).Page(ctx, req.(*BorrowerApplicantPageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BorrowerApplicant_CheckExisted_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BorrowerApplicantCheckExistedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BorrowerApplicantServer).CheckExisted(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BorrowerApplicant_CheckExisted_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BorrowerApplicantServer).CheckExisted(ctx, req.(*BorrowerApplicantCheckExistedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BorrowerApplicant_All_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BorrowerApplicantAllRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BorrowerApplicantServer).All(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BorrowerApplicant_All_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BorrowerApplicantServer).All(ctx, req.(*BorrowerApplicantAllRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// BorrowerApplicant_ServiceDesc is the grpc.ServiceDesc for BorrowerApplicant service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var BorrowerApplicant_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "borrower.BorrowerApplicant",
+	HandlerType: (*BorrowerApplicantServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Create",
+			Handler:    _BorrowerApplicant_Create_Handler,
+		},
+		{
+			MethodName: "Update",
+			Handler:    _BorrowerApplicant_Update_Handler,
+		},
+		{
+			MethodName: "Detail",
+			Handler:    _BorrowerApplicant_Detail_Handler,
+		},
+		{
+			MethodName: "Delete",
+			Handler:    _BorrowerApplicant_Delete_Handler,
+		},
+		{
+			MethodName: "Page",
+			Handler:    _BorrowerApplicant_Page_Handler,
+		},
+		{
+			MethodName: "CheckExisted",
+			Handler:    _BorrowerApplicant_CheckExisted_Handler,
+		},
+		{
+			MethodName: "All",
+			Handler:    _BorrowerApplicant_All_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "app/borrower/rpc/pb/borrower.proto",
+}
+
+const (
 	LoanApplicant_BorrowerNames_FullMethodName = "/borrower.LoanApplicant/BorrowerNames"
 )
 

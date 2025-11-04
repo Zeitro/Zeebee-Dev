@@ -53,9 +53,14 @@ func (l *CheckExistedLogic) CheckExisted(in *borrower.BorrowerEntityCheckExisted
 		return nil, err
 	}
 
+	isExisted := true
+	if in.Data.Id != 0 {
+		isExisted = entity.Id != in.Data.Id
+	}
+
 	return &borrower.BorrowerEntityCheckExistedResponse{
 		Data: &borrower.BorrowerEntityCheckExistedResponseData{
-			IsExisted: entity.Id == in.Data.Id,
+			IsExisted: isExisted,
 		},
 	}, nil
 }

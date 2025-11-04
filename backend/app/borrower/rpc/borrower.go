@@ -7,6 +7,7 @@ import (
 
 	"github.com/zeromicro/go-zero/core/service"
 
+	borrowerApplicantServer "zeebee-backend/app/borrower/rpc/internal/server/borrowerapplicant"
 	borrowerEntityServer "zeebee-backend/app/borrower/rpc/internal/server/borrowerentity"
 	borrowerPropertyServer "zeebee-backend/app/borrower/rpc/internal/server/borrowerproperty"
 
@@ -45,6 +46,7 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		borrower.RegisterStorageServer(grpcServer, storageServer.NewStorageServer(ctx))
 		borrower.RegisterLoanDocumentServer(grpcServer, loanDocumentServer.NewLoanDocumentServer(ctx))
 		borrower.RegisterBorrowerEntityServer(grpcServer, borrowerEntityServer.NewBorrowerEntityServer(ctx))
+		borrower.RegisterBorrowerApplicantServer(grpcServer, borrowerApplicantServer.NewBorrowerApplicantServer(ctx))
 
 		if rpcConfig.Mode == service.DevMode || rpcConfig.Mode == service.TestMode {
 			reflection.Register(grpcServer)

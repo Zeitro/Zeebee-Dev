@@ -11,6 +11,49 @@ type AddressEntry struct {
 	ZipCode  string `json:"zip_code,optional"`
 }
 
+type BorrowerApplicantEntry struct {
+	Id               int64        `json:"id"`
+	CreatedAt        string       `json:"created_at"`
+	UpdatedAt        string       `json:"updated_at"`
+	BorrowerId       int64        `json:"borrower_id"`
+	FirstName        string       `json:"first_name"`
+	MidName          string       `json:"mid_name"`
+	LastName         string       `json:"last_name"`
+	FullName         string       `json:"full_name"`
+	Ssn              string       `json:"ssn"`
+	Dob              string       `json:"dob"`
+	MaritalStatus    string       `json:"marital_status"`
+	Email            string       `json:"email"`
+	EstCreditScore   int32        `json:"est_credit_score"`
+	DriverLicenseNum string       `json:"driver_license_num"`
+	Address          AddressEntry `json:"address"`
+}
+
+type BorrowerApplicantPageEntry struct {
+	Id               int64  `json:"id"`
+	CreatedAt        string `json:"created_at"`
+	UpdatedAt        string `json:"updated_at"`
+	FirstName        string `json:"first_name"`
+	MidName          string `json:"mid_name"`
+	LastName         string `json:"last_name"`
+	FullName         string `json:"full_name"`
+	Ssn              string `json:"ssn"`
+	Dob              string `json:"dob"`
+	MaritalStatus    string `json:"marital_status"`
+	Email            string `json:"email"`
+	EstCreditScore   int32  `json:"est_credit_score"`
+	DriverLicenseNum string `json:"driver_license_num"`
+}
+
+type BorrowerApplicantPageFilter struct {
+	Keyword string `json:"keyword,optional"`
+}
+
+type BorrowerApplicantPageSorter struct {
+	Column string `json:"column,optional"`
+	Sort   string `json:"sort,optional"`
+}
+
 type BorrowerEntityEditRequest struct {
 	Id             int64        `path:"id,optional"`
 	Type           string       `json:"type" validate:"required,oneof=Corporation LLC Partnership Trust"`

@@ -17,6 +17,7 @@ import "desc/pdf.api"
 import "desc/storage.api"
 import "desc/loan_document.api"
 import "desc/borrower_entity.api"
+import "desc/borrower_applicant.api"
 
 type (
 	EmptyRequest  {}
@@ -268,6 +269,46 @@ service borrower-api {
 }
 
 // =============== borrower entity end ==============
+// =============== borrower applicant start ==============
+@server(
+	desc: "borrower applicant service"
+	version: v1
+	group: borrower_applicant
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: borrower_applicant
+)
+service borrower-api {
+	@doc "page"
+	@handler BorrowerApplicantPage
+	post /borrower_applicant/page (BorrowerApplicantPageRequest) returns (BorrowerApplicantPageResponse)
+
+	@doc "all"
+	@handler BorrowerApplicantAll
+	get /borrower_applicant/all (EmptyRequest) returns (BorrowerApplicantAllResponse)
+
+	@doc "detail"
+	@handler BorrowerApplicantDetail
+	get /borrower_applicant/:id (PathIdRequest) returns (BorrowerApplicantDetailResponse)
+
+	@doc "create"
+	@handler BorrowerApplicantCreate
+	post /borrower_applicant (BorrowerApplicantEditRequest) returns (BorrowerApplicantCreateResponse)
+
+	@doc "update"
+	@handler BorrowerApplicantUpdate
+	put /borrower_applicant/:id (BorrowerApplicantEditRequest) returns (EmptyResponse)
+
+	@doc "delete"
+	@handler BorrowerApplicantDelete
+	delete /borrower_applicant/:id (PathIdRequest) returns (EmptyResponse)
+
+	@doc "existed"
+	@handler BorrowerApplicantCheckExisted
+	get /borrower_applicant/check_existed (BorrowerApplicantCkeckExistedRequest) returns (BorrowerApplicantCkeckExistedResponse)
+}
+
+// ================ borrower applicant end ==============
 // =============== loan applicant start ==============
 @server (
 	desc: "loan applicant service"
