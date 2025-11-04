@@ -6,7 +6,7 @@ import SiderBar from '@/components/Sidebar';
 import NewHeader from '@/components/NewHeader';
 import { getCurrentRouterItem } from '@config/common';
 import { noNavRouter, navRouter } from '@config/routes';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useUserStore } from '@/store/user';
 const defaultToken = {
 	colorPrimary: '#1677ff',
@@ -35,6 +35,7 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 	const { userInfo } = useUserStore();
 	const [antdToken, setAntdToken] = useState({});
 	const pathname = usePathname();
+	const router = useRouter();
 	const validateMessages = {
 		required: 'Please enter ${label}!',
 	};
@@ -42,17 +43,16 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 	// 没有导航栏/面包屑的纯页面（例如：login
 	const isNoNav = useMemo(() => {
 		const routerItem = getCurrentRouterItem(pathname, noNavRouter);
-		console.log('layout===无侧边栏:', routerItem);
-
 		return !!routerItem;
 	}, [pathname]);
 
 	useEffect(() => {
 		const haveSiderRoute = getCurrentRouterItem(pathname, navRouter);
-		if (haveSiderRoute?.path && !userInfo?.id) {
-			console.log('haveSiderRoute,有侧边栏的页面,没有用户数据');
+		if (haveSiderRoute?.path && userInfo === null) {
+			router.replace('/login');
+			console.log('---退出---');
 		}
-		console.log(haveSiderRoute, 'userInfo----------', userInfo, pathname);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userInfo, pathname]);
 
 	useEffect(
