@@ -238,16 +238,15 @@ type (
         PrepaymentPenalty int32 `json:"prepayment_penalty,optional" validate:"required_if=LoanType Rental,omitempty,gte=0"`
         BusinessStrategy []string `json:"business_strategy,optional" validate:"required,dive,required,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
         Applicants []*LoanApplicantApplyEntry `json:"applicants,optional" validate:"required,gt=0,lte=2"`
-
         LoanTerm int32 `json:"loan_term,optional" validate:"gte=1"`
         Arv float64 `json:"arv,optional" validate:"required,gte=0"`
-        Ltv float64 `json:"ltv,optional" validate:"required_unless=LoanPurpose Purchase,omitempty,gte=0"`
         // EstCreditScore int32 `json:"est_credit_score"`
         ReservesAmount float64 `json:"reserves_amount,optional" validate:"required_if=LoanType Rental,omitempty,gt=0"`
         TransactionExperiences []*LoanExperienceEntry `json:"transaction_experiences,optional"`
         RealEstateExperiences []*LoanExperienceEntry `json:"real_estate_experiences,optional"`
         LoanThirdServices []*LoanThirdServiceEntry `json:"loan_third_services,optional"`
-        LoanBorrower *LoanBorrowerEntry `json:"loan_borrower,optional" validate:"required"`
+        //        LoanBorrower *LoanBorrowerEntry `json:"loan_borrower,optional" validate:"required"`
+        BorrowerEntityId int64 `json:"borrower_entity_id,optional" validate:"required,gt=0"`
         LoanDemographic *LoanDemographicEntry `json:"loan_demographic,optional" validate:"required"`
         ApplyFormFile string `json:"apply_form_file,optional" validate:"required"`
 

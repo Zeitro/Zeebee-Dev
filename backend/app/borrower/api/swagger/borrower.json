@@ -85,6 +85,7 @@
                 "dob",
                 "marital_status",
                 "email",
+                "phone",
                 "est_credit_score",
                 "driver_license_num",
                 "address"
@@ -132,6 +133,9 @@
                   "type": "string"
                 },
                 "mid_name": {
+                  "type": "string"
+                },
+                "phone": {
                   "type": "string"
                 },
                 "ssn": {
@@ -203,6 +207,9 @@
                 "mid_name": {
                   "type": "string"
                 },
+                "phone": {
+                  "type": "string"
+                },
                 "ssn": {
                   "type": "string"
                 },
@@ -250,6 +257,7 @@
                       "dob",
                       "marital_status",
                       "email",
+                      "phone",
                       "est_credit_score",
                       "driver_license_num"
                     ],
@@ -285,6 +293,9 @@
                         "type": "string"
                       },
                       "mid_name": {
+                        "type": "string"
+                      },
+                      "phone": {
                         "type": "string"
                       },
                       "ssn": {
@@ -434,6 +445,7 @@
                       "dob",
                       "marital_status",
                       "email",
+                      "phone",
                       "est_credit_score",
                       "driver_license_num"
                     ],
@@ -469,6 +481,9 @@
                         "type": "string"
                       },
                       "mid_name": {
+                        "type": "string"
+                      },
+                      "phone": {
                         "type": "string"
                       },
                       "ssn": {
@@ -578,6 +593,9 @@
                 "mid_name": {
                   "type": "string"
                 },
+                "phone": {
+                  "type": "string"
+                },
                 "ssn": {
                   "type": "string"
                 },
@@ -624,6 +642,7 @@
                 "dob",
                 "marital_status",
                 "email",
+                "phone",
                 "est_credit_score",
                 "driver_license_num",
                 "address"
@@ -671,6 +690,9 @@
                   "type": "string"
                 },
                 "mid_name": {
+                  "type": "string"
+                },
+                "phone": {
                   "type": "string"
                 },
                 "ssn": {
@@ -1414,7 +1436,8 @@
               "type": "object",
               "required": [
                 "stage",
-                "loan_type"
+                "loan_type",
+                "borrower_entity_id"
               ],
               "properties": {
                 "applicants": {
@@ -1422,32 +1445,23 @@
                   "items": {
                     "type": "object",
                     "required": [
-                      "first_name",
-                      "last_name",
-                      "type",
-                      "is_primary"
+                      "borrower_applicant_id"
                     ],
                     "properties": {
-                      "first_name": {
-                        "type": "string"
+                      "borrower_applicant_id": {
+                        "type": "integer"
                       },
                       "id": {
                         "type": "integer"
                       },
                       "is_primary": {
                         "type": "boolean"
-                      },
-                      "last_name": {
-                        "type": "string"
-                      },
-                      "mid_name": {
-                        "type": "string"
-                      },
-                      "type": {
-                        "type": "string"
                       }
                     }
                   }
+                },
+                "borrower_entity_id": {
+                  "type": "integer"
                 },
                 "business_strategy": {
                   "type": "array",
@@ -1619,65 +1633,19 @@
                   "type": "array",
                   "items": {
                     "type": "object",
+                    "required": [
+                      "borrower_applicant_id",
+                      "is_primary"
+                    ],
                     "properties": {
-                      "address": {
-                        "type": "object",
-                        "properties": {
-                          "address1": {
-                            "type": "string"
-                          },
-                          "address2": {
-                            "type": "string"
-                          },
-                          "city": {
-                            "type": "string"
-                          },
-                          "state": {
-                            "type": "string"
-                          },
-                          "zip_code": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "dob": {
-                        "type": "string"
-                      },
-                      "driver_license_num": {
-                        "type": "string"
-                      },
-                      "email": {
-                        "type": "string"
-                      },
-                      "est_credit_score": {
+                      "borrower_applicant_id": {
                         "type": "integer"
-                      },
-                      "first_name": {
-                        "type": "string"
                       },
                       "id": {
                         "type": "integer"
                       },
                       "is_primary": {
                         "type": "boolean"
-                      },
-                      "last_name": {
-                        "type": "string"
-                      },
-                      "marital_status": {
-                        "type": "string"
-                      },
-                      "mid_name": {
-                        "type": "string"
-                      },
-                      "phone": {
-                        "type": "string"
-                      },
-                      "ssn": {
-                        "type": "string"
-                      },
-                      "type": {
-                        "type": "string"
                       }
                     }
                   }
@@ -1687,6 +1655,9 @@
                 },
                 "arv": {
                   "type": "number"
+                },
+                "borrower_entity_id": {
+                  "type": "integer"
                 },
                 "business_strategy": {
                   "type": "array",
@@ -1702,61 +1673,6 @@
                 },
                 "initial_amount": {
                   "type": "number"
-                },
-                "loan_borrower": {
-                  "type": "object",
-                  "properties": {
-                    "contact_email": {
-                      "type": "string"
-                    },
-                    "contact_name": {
-                      "type": "string"
-                    },
-                    "contact_phone": {
-                      "type": "string"
-                    },
-                    "id": {
-                      "type": "integer"
-                    },
-                    "loan_id": {
-                      "type": "integer"
-                    },
-                    "mailing_address": {
-                      "type": "object",
-                      "properties": {
-                        "address1": {
-                          "type": "string"
-                        },
-                        "address2": {
-                          "type": "string"
-                        },
-                        "city": {
-                          "type": "string"
-                        },
-                        "state": {
-                          "type": "string"
-                        },
-                        "zip_code": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "name": {
-                      "type": "string"
-                    },
-                    "own_percent": {
-                      "type": "integer"
-                    },
-                    "tin": {
-                      "type": "string"
-                    },
-                    "tin_type": {
-                      "type": "string"
-                    },
-                    "type": {
-                      "type": "string"
-                    }
-                  }
                 },
                 "loan_demographic": {
                   "type": "object",
@@ -2225,65 +2141,19 @@
                   "type": "array",
                   "items": {
                     "type": "object",
+                    "required": [
+                      "borrower_applicant_id",
+                      "is_primary"
+                    ],
                     "properties": {
-                      "address": {
-                        "type": "object",
-                        "properties": {
-                          "address1": {
-                            "type": "string"
-                          },
-                          "address2": {
-                            "type": "string"
-                          },
-                          "city": {
-                            "type": "string"
-                          },
-                          "state": {
-                            "type": "string"
-                          },
-                          "zip_code": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "dob": {
-                        "type": "string"
-                      },
-                      "driver_license_num": {
-                        "type": "string"
-                      },
-                      "email": {
-                        "type": "string"
-                      },
-                      "est_credit_score": {
+                      "borrower_applicant_id": {
                         "type": "integer"
-                      },
-                      "first_name": {
-                        "type": "string"
                       },
                       "id": {
                         "type": "integer"
                       },
                       "is_primary": {
                         "type": "boolean"
-                      },
-                      "last_name": {
-                        "type": "string"
-                      },
-                      "marital_status": {
-                        "type": "string"
-                      },
-                      "mid_name": {
-                        "type": "string"
-                      },
-                      "phone": {
-                        "type": "string"
-                      },
-                      "ssn": {
-                        "type": "string"
-                      },
-                      "type": {
-                        "type": "string"
                       }
                     }
                   }
@@ -2293,6 +2163,9 @@
                 },
                 "arv": {
                   "type": "number"
+                },
+                "borrower_entity_id": {
+                  "type": "integer"
                 },
                 "business_strategy": {
                   "type": "array",
@@ -2308,61 +2181,6 @@
                 },
                 "initial_amount": {
                   "type": "number"
-                },
-                "loan_borrower": {
-                  "type": "object",
-                  "properties": {
-                    "contact_email": {
-                      "type": "string"
-                    },
-                    "contact_name": {
-                      "type": "string"
-                    },
-                    "contact_phone": {
-                      "type": "string"
-                    },
-                    "id": {
-                      "type": "integer"
-                    },
-                    "loan_id": {
-                      "type": "integer"
-                    },
-                    "mailing_address": {
-                      "type": "object",
-                      "properties": {
-                        "address1": {
-                          "type": "string"
-                        },
-                        "address2": {
-                          "type": "string"
-                        },
-                        "city": {
-                          "type": "string"
-                        },
-                        "state": {
-                          "type": "string"
-                        },
-                        "zip_code": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "name": {
-                      "type": "string"
-                    },
-                    "own_percent": {
-                      "type": "integer"
-                    },
-                    "tin": {
-                      "type": "string"
-                    },
-                    "tin_type": {
-                      "type": "string"
-                    },
-                    "type": {
-                      "type": "string"
-                    }
-                  }
                 },
                 "loan_demographic": {
                   "type": "object",
@@ -5004,7 +4822,8 @@
             "schema": {
               "type": "object",
               "required": [
-                "stage"
+                "stage",
+                "borrower_entity_id"
               ],
               "properties": {
                 "applicants": {
@@ -5012,32 +4831,23 @@
                   "items": {
                     "type": "object",
                     "required": [
-                      "first_name",
-                      "last_name",
-                      "type",
-                      "is_primary"
+                      "borrower_applicant_id"
                     ],
                     "properties": {
-                      "first_name": {
-                        "type": "string"
+                      "borrower_applicant_id": {
+                        "type": "integer"
                       },
                       "id": {
                         "type": "integer"
                       },
                       "is_primary": {
                         "type": "boolean"
-                      },
-                      "last_name": {
-                        "type": "string"
-                      },
-                      "mid_name": {
-                        "type": "string"
-                      },
-                      "type": {
-                        "type": "string"
                       }
                     }
                   }
+                },
+                "borrower_entity_id": {
+                  "type": "integer"
                 },
                 "business_strategy": {
                   "type": "array",
@@ -5236,65 +5046,19 @@
                   "type": "array",
                   "items": {
                     "type": "object",
+                    "required": [
+                      "borrower_applicant_id",
+                      "is_primary"
+                    ],
                     "properties": {
-                      "address": {
-                        "type": "object",
-                        "properties": {
-                          "address1": {
-                            "type": "string"
-                          },
-                          "address2": {
-                            "type": "string"
-                          },
-                          "city": {
-                            "type": "string"
-                          },
-                          "state": {
-                            "type": "string"
-                          },
-                          "zip_code": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "dob": {
-                        "type": "string"
-                      },
-                      "driver_license_num": {
-                        "type": "string"
-                      },
-                      "email": {
-                        "type": "string"
-                      },
-                      "est_credit_score": {
+                      "borrower_applicant_id": {
                         "type": "integer"
-                      },
-                      "first_name": {
-                        "type": "string"
                       },
                       "id": {
                         "type": "integer"
                       },
                       "is_primary": {
                         "type": "boolean"
-                      },
-                      "last_name": {
-                        "type": "string"
-                      },
-                      "marital_status": {
-                        "type": "string"
-                      },
-                      "mid_name": {
-                        "type": "string"
-                      },
-                      "phone": {
-                        "type": "string"
-                      },
-                      "ssn": {
-                        "type": "string"
-                      },
-                      "type": {
-                        "type": "string"
                       }
                     }
                   }
@@ -5304,6 +5068,9 @@
                 },
                 "arv": {
                   "type": "number"
+                },
+                "borrower_entity_id": {
+                  "type": "integer"
                 },
                 "business_strategy": {
                   "type": "array",
@@ -5319,61 +5086,6 @@
                 },
                 "initial_amount": {
                   "type": "number"
-                },
-                "loan_borrower": {
-                  "type": "object",
-                  "properties": {
-                    "contact_email": {
-                      "type": "string"
-                    },
-                    "contact_name": {
-                      "type": "string"
-                    },
-                    "contact_phone": {
-                      "type": "string"
-                    },
-                    "id": {
-                      "type": "integer"
-                    },
-                    "loan_id": {
-                      "type": "integer"
-                    },
-                    "mailing_address": {
-                      "type": "object",
-                      "properties": {
-                        "address1": {
-                          "type": "string"
-                        },
-                        "address2": {
-                          "type": "string"
-                        },
-                        "city": {
-                          "type": "string"
-                        },
-                        "state": {
-                          "type": "string"
-                        },
-                        "zip_code": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "name": {
-                      "type": "string"
-                    },
-                    "own_percent": {
-                      "type": "integer"
-                    },
-                    "tin": {
-                      "type": "string"
-                    },
-                    "tin_type": {
-                      "type": "string"
-                    },
-                    "type": {
-                      "type": "string"
-                    }
-                  }
                 },
                 "loan_demographic": {
                   "type": "object",
@@ -5892,65 +5604,19 @@
                   "type": "array",
                   "items": {
                     "type": "object",
+                    "required": [
+                      "borrower_applicant_id",
+                      "is_primary"
+                    ],
                     "properties": {
-                      "address": {
-                        "type": "object",
-                        "properties": {
-                          "address1": {
-                            "type": "string"
-                          },
-                          "address2": {
-                            "type": "string"
-                          },
-                          "city": {
-                            "type": "string"
-                          },
-                          "state": {
-                            "type": "string"
-                          },
-                          "zip_code": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "dob": {
-                        "type": "string"
-                      },
-                      "driver_license_num": {
-                        "type": "string"
-                      },
-                      "email": {
-                        "type": "string"
-                      },
-                      "est_credit_score": {
+                      "borrower_applicant_id": {
                         "type": "integer"
-                      },
-                      "first_name": {
-                        "type": "string"
                       },
                       "id": {
                         "type": "integer"
                       },
                       "is_primary": {
                         "type": "boolean"
-                      },
-                      "last_name": {
-                        "type": "string"
-                      },
-                      "marital_status": {
-                        "type": "string"
-                      },
-                      "mid_name": {
-                        "type": "string"
-                      },
-                      "phone": {
-                        "type": "string"
-                      },
-                      "ssn": {
-                        "type": "string"
-                      },
-                      "type": {
-                        "type": "string"
                       }
                     }
                   }
@@ -5960,6 +5626,9 @@
                 },
                 "arv": {
                   "type": "number"
+                },
+                "borrower_entity_id": {
+                  "type": "integer"
                 },
                 "business_strategy": {
                   "type": "array",
@@ -5975,61 +5644,6 @@
                 },
                 "initial_amount": {
                   "type": "number"
-                },
-                "loan_borrower": {
-                  "type": "object",
-                  "properties": {
-                    "contact_email": {
-                      "type": "string"
-                    },
-                    "contact_name": {
-                      "type": "string"
-                    },
-                    "contact_phone": {
-                      "type": "string"
-                    },
-                    "id": {
-                      "type": "integer"
-                    },
-                    "loan_id": {
-                      "type": "integer"
-                    },
-                    "mailing_address": {
-                      "type": "object",
-                      "properties": {
-                        "address1": {
-                          "type": "string"
-                        },
-                        "address2": {
-                          "type": "string"
-                        },
-                        "city": {
-                          "type": "string"
-                        },
-                        "state": {
-                          "type": "string"
-                        },
-                        "zip_code": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "name": {
-                      "type": "string"
-                    },
-                    "own_percent": {
-                      "type": "integer"
-                    },
-                    "tin": {
-                      "type": "string"
-                    },
-                    "tin_type": {
-                      "type": "string"
-                    },
-                    "type": {
-                      "type": "string"
-                    }
-                  }
                 },
                 "loan_demographic": {
                   "type": "object",
@@ -6546,65 +6160,19 @@
                   "type": "array",
                   "items": {
                     "type": "object",
+                    "required": [
+                      "borrower_applicant_id",
+                      "is_primary"
+                    ],
                     "properties": {
-                      "address": {
-                        "type": "object",
-                        "properties": {
-                          "address1": {
-                            "type": "string"
-                          },
-                          "address2": {
-                            "type": "string"
-                          },
-                          "city": {
-                            "type": "string"
-                          },
-                          "state": {
-                            "type": "string"
-                          },
-                          "zip_code": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "dob": {
-                        "type": "string"
-                      },
-                      "driver_license_num": {
-                        "type": "string"
-                      },
-                      "email": {
-                        "type": "string"
-                      },
-                      "est_credit_score": {
+                      "borrower_applicant_id": {
                         "type": "integer"
-                      },
-                      "first_name": {
-                        "type": "string"
                       },
                       "id": {
                         "type": "integer"
                       },
                       "is_primary": {
                         "type": "boolean"
-                      },
-                      "last_name": {
-                        "type": "string"
-                      },
-                      "marital_status": {
-                        "type": "string"
-                      },
-                      "mid_name": {
-                        "type": "string"
-                      },
-                      "phone": {
-                        "type": "string"
-                      },
-                      "ssn": {
-                        "type": "string"
-                      },
-                      "type": {
-                        "type": "string"
                       }
                     }
                   }
@@ -10832,7 +10400,7 @@
       }
     }
   },
-  "x-date": "2025-11-04 10:47:52",
+  "x-date": "2025-11-04 16:42:20",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

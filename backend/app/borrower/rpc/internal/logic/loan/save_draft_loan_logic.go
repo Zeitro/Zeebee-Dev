@@ -16,7 +16,6 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/timex"
-	"zeebee-backend/common/types"
 	"zeebee-backend/common/uuid"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -254,22 +253,23 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 
 	// loan_borrower
 	var loanBorrower *model.LoanBorrower
-	if reqData.LoanBorrower != nil {
-		loanBorrower = &model.LoanBorrower{
-			MailingAddress: types.Address{},
-		}
-		err = copier.CopyWithOption(loanBorrower, reqData.LoanBorrower, copier.Option{
-			IgnoreEmpty:   true,
-			DeepCopy:      true,
-			CaseSensitive: true,
-			Converters: []copier.TypeConverter{
-				copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-			},
-		})
-		if err != nil {
-			return nil, errorx.GetFailedTransErr(err)
-		}
-	}
+	// todo handle loan borrower
+	// if reqData.LoanBorrower != nil {
+	// 	loanBorrower = &model.LoanBorrower{
+	// 		MailingAddress: types.Address{},
+	// 	}
+	// 	err = copier.CopyWithOption(loanBorrower, reqData.LoanBorrower, copier.Option{
+	// 		IgnoreEmpty:   true,
+	// 		DeepCopy:      true,
+	// 		CaseSensitive: true,
+	// 		Converters: []copier.TypeConverter{
+	// 			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
+	// 		},
+	// 	})
+	// 	if err != nil {
+	// 		return nil, errorx.GetFailedTransErr(err)
+	// 	}
+	// }
 
 	// applicants
 	var applicants []*model.LoanApplicant

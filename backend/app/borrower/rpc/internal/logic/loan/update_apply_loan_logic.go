@@ -41,11 +41,12 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 	// var borrowerProperty *model.BorrowerProperty
 	applyLogic := NewApplyLoanLogic(l.ctx, l.svcCtx)
 
-	data, err := applyLogic.buildModelData(in.Data)
+	loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, in.Data.Id, in.Data.BorrowerId)
 	if err != nil {
 		return nil, err
 	}
-	loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, data.loan.Id, in.Data.BorrowerId)
+
+	data, err := applyLogic.buildModelData(in.Data, loan)
 	if err != nil {
 		return nil, err
 	}
@@ -73,9 +74,9 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 	}
 
 	oldApplicants := loan.Applicants
-	if len(oldApplicants) == 0 {
-		return nil, errors.WithStack(errors.New("Applicant Is Not Found"))
-	}
+	// if len(oldApplicants) == 0 {
+	// 	return nil, errors.WithStack(errors.New("Applicant Is Not Found"))
+	// }
 
 	// update loan
 	err = l.svcCtx.LoanPropertyRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
@@ -88,20 +89,12 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 
 		eg := errorx.NewErrorGroup()
 		eg.Do(
-			// handle property base
-			// func() error {
-			// 	updateLogic := NewUpdateBorrowerLoanLogic(l.ctx, l.svcCtx)
-			// 	borrowerProperty, err = updateLogic.handleBorrowerProperty(tx, loan.LoanProperty.BorrowerPropertyId, data.loanProperty.BorrowerProperty)
-			// 	return err
-			// },
 			// update loan
 			func() error {
 				data.loan.RemoveRelationships()
-
 				if in.Data.LenderCompanyId == 0 {
 					in.Data.LenderCompanyId = loan.LenderCompanyId
 				}
-
 				_, err := l.svcCtx.LoanRepo.UpdateOneWithTx(l.ctx, tx, in.Data.Id, data.loan, true)
 				return err
 			},
@@ -122,21 +115,26 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 				return err
 
 			},
+			// loan borrower
+			func() error {
+				var err error
+				var loanBorrower *model.LoanBorrower
+				data.loanBorrower.LoanId = loan.Id
+				if loan.LoanBorrower == nil {
+					loanBorrower, err = l.svcCtx.LoanBorrowerRepo.CreateWithTx(l.ctx, tx, data.loanBorrower, false)
+				} else {
+					loanBorrower, err = l.svcCtx.LoanBorrowerRepo.UpdateOneWithTx(l.ctx, tx, loan.LoanBorrower.Id, data.loanBorrower)
+				}
+				if err == nil {
+					loan.LoanBorrower = loanBorrower
+				}
+				return err
+			},
 			// handle applicant
 			func() error {
 				return l.updateApplicants(tx, oldApplicants, data.applicants, loan)
 			},
-			// loan borrower
-			func() error {
-				var err error
-				data.loanBorrower.LoanId = loan.Id
-				if loan.LoanBorrower == nil {
-					_, err = l.svcCtx.LoanBorrowerRepo.CreateWithTx(l.ctx, tx, data.loanBorrower, false)
-				} else {
-					_, err = l.svcCtx.LoanBorrowerRepo.UpdateOneWithTx(l.ctx, tx, loan.LoanBorrower.Id, data.loanBorrower)
-				}
-				return err
-			},
+
 			// loan demographic
 			func() error {
 				var err error
@@ -228,6 +226,17 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 }
 
 func (l *UpdateApplyLoanLogic) updateApplicants(tx *gorm.DB, oldItems []*model.LoanApplicant, curItems []*model.LoanApplicant, loan *model.Loan) (err error) {
+
+	slice.ForEach(curItems, func(index int, item *model.LoanApplicant) {
+		curItems[index].LoanId = loan.Id
+		if loan.LoanProperty != nil && loan.LoanProperty.Id > 0 {
+			curItems[index].LoanPropertyId = loan.LoanProperty.Id
+		}
+		if loan.LoanBorrower != nil && loan.LoanBorrower.Id > 0 {
+			curItems[index].LoanBorrowerId = loan.LoanBorrower.Id
+		}
+	})
+
 	removedItems := slice.DifferenceWith(oldItems, curItems, func(item1, item2 *model.LoanApplicant) bool {
 		return item1.Id == item2.Id
 	})
@@ -237,27 +246,12 @@ func (l *UpdateApplyLoanLogic) updateApplicants(tx *gorm.DB, oldItems []*model.L
 	newItems := slice.DifferenceWith(curItems, oldItems, func(item1, item2 *model.LoanApplicant) bool {
 		return item1.Id == item2.Id
 	})
-	newItems = slice.Map(newItems, func(index int, newApplicant *model.LoanApplicant) *model.LoanApplicant {
-		newApplicant.LoanId = loan.Id
-		if loan.LoanProperty != nil && loan.LoanProperty.Id > 0 {
-			newApplicant.LoanPropertyId = loan.LoanProperty.Id
-		}
-		return newApplicant
-	})
 
 	updatedItems := slice.Filter(curItems, func(index int, newApplicant *model.LoanApplicant) bool {
 		_, ok := slice.FindBy(oldItems, func(index int, oldApplicant *model.LoanApplicant) bool {
 			return newApplicant.Id == oldApplicant.Id
 		})
 		return ok
-	})
-
-	updatedItems = slice.Map(updatedItems, func(index int, updateApplicant *model.LoanApplicant) *model.LoanApplicant {
-		updateApplicant.LoanId = loan.Id
-		if loan.LoanProperty != nil && loan.LoanProperty.Id > 0 {
-			updateApplicant.LoanPropertyId = loan.LoanProperty.Id
-		}
-		return updateApplicant
 	})
 
 	if len(removedIds) > 0 {

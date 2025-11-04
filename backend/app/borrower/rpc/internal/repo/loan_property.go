@@ -25,7 +25,6 @@ func NewLoanPropertyRepo(db *gorm.DB) *LoanPropertyRepo {
 // GetOneById get one by id
 func (repo *LoanPropertyRepo) GetOneById(ctx context.Context, id int64) (result *model.LoanProperty, err error) {
 	err = repo.Client(ctx).Where("id = ?", id).
-		// Preload("PropertyBase").
 		Preload("Applicants").
 		Preload("Loan").
 		First(&result).Error
@@ -36,7 +35,6 @@ func (repo *LoanPropertyRepo) GetOneById(ctx context.Context, id int64) (result 
 func (repo *LoanPropertyRepo) FindOneByLoanId(ctx context.Context, loanId int64) (result *model.LoanProperty, err error) {
 	err = repo.Client(ctx).
 		Where("loan_id = ?", loanId).
-		// Preload("PropertyBase").
 		First(&result).Error
 	return result, errors.WithStack(err)
 }

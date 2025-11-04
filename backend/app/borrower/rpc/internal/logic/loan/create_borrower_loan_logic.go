@@ -132,12 +132,12 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 	slice.SortBy(applicants, func(a, b *model.LoanApplicant) bool {
 		return b.IsPrimary
 	})
-	applicants = slice.UniqueByComparator(applicants, func(item *model.LoanApplicant, other *model.LoanApplicant) bool {
-		return item.FullName == other.FullName
-	})
-	if len(applicants) == 0 {
-		return nil, nil, nil, nil, errors.New("No Applicant")
-	}
+	// applicants = slice.UniqueByComparator(applicants, func(item *model.LoanApplicant, other *model.LoanApplicant) bool {
+	// 	return item.FullName == other.FullName
+	// })
+	// if len(applicants) == 0 {
+	// 	return nil, nil, nil, nil, errors.New("No Applicant")
+	// }
 	primaryCount := slice.CountBy(applicants, func(index int, item *model.LoanApplicant) bool {
 		return item.IsPrimary
 	})

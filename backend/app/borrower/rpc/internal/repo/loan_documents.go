@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"time"
 
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -80,11 +81,13 @@ func (repo *LoanDocumentRepo) SaveApplyFormDocumentWithTx(ctx context.Context, t
 	// get or create apply form loan document
 	applyFormLoanDocument, _ := repo.GetLoanDocumentWithTx(ctx, tx, loanId, constants.LoanDocumentFileTypeApplyForm)
 	if applyFormLoanDocument == nil || applyFormLoanDocument.Id == 0 {
+		now := time.Now()
 		applyFormLoanDocument = &model.LoanDocument{
-			LoanId:   loanId,
-			FileType: constants.LoanDocumentFileTypeApplyForm,
-			Category: constants.LoanDocumentCategoryInit,
-			Status:   constants.LoanDocumentStatusReadyForReview,
+			LoanId:         loanId,
+			FileType:       constants.LoanDocumentFileTypeApplyForm,
+			Category:       constants.LoanDocumentCategoryInit,
+			Status:         constants.LoanDocumentStatusReadyForReview,
+			LastUploadedAt: &now,
 		}
 		err = tx.WithContext(ctx).
 			Create(applyFormLoanDocument).
@@ -112,12 +115,13 @@ func (repo *LoanDocumentRepo) SaveApplyFormDocumentWithTx(ctx context.Context, t
 }
 
 func (repo *LoanDocumentRepo) GetLoanDocumentWithTx(ctx context.Context, tx *gorm.DB, loanId int64, fileType constants.LoanDocumentFileType) (loanDocument *model.LoanDocument, err error) {
+	loanDocument = &model.LoanDocument{}
 	err = tx.WithContext(ctx).
 		Model(&model.LoanDocument{}).
 		Where("loan_id = ?", loanId).
 		Where("file_type = ?", fileType).
 		Preload("Files").
-		Find(loanDocument).
+		First(&loanDocument).
 		Error
 	if err != nil {
 		return nil, errors.WithStack(err)
