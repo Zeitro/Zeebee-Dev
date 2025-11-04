@@ -7,13 +7,16 @@ import type { UploadProps, UploadFile, RcFile } from 'antd/es/upload/interface';
 import { uploadAwsS3 } from '@/api/common';
 const MAX_SIZE_MB = 10;
 export interface CommonUploadRef {
+	// eslint-disable-next-line no-unused-vars
 	triggerUpload: (options?: { onProgress?: (percent: number) => void }) => Promise<string[]>;
 	clearFileList: () => void;
 }
 
 interface CommonUploadProps {
 	immediateUpload?: boolean;
+	// eslint-disable-next-line no-unused-vars
 	onSuccess?: (fileUrl: string, file: UploadFile) => void;
+	// eslint-disable-next-line no-unused-vars
 	onProgress?: (percent: number, file: UploadFile) => void;
 	listType?: UploadProps['listType'];
 	maxCount?: number;
@@ -32,6 +35,7 @@ export const UploadFileButton = forwardRef<CommonUploadRef, CommonUploadProps>(
 			maxCount = 1,
 			accept,
 			children,
+			// eslint-disable-next-line no-unused-vars
 			onGetUploadList = (fileList: UploadFile[]) => [],
 			...moreProps
 		},
@@ -202,3 +206,4 @@ export const UploadFileButton = forwardRef<CommonUploadRef, CommonUploadProps>(
 		);
 	},
 );
+UploadFileButton.displayName = 'UploadFileButton';
