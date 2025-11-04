@@ -18,6 +18,7 @@ type BorrowerApplicant struct {
 	Dob              *sql.NullTime           `gorm:"column:dob" json:"dob"`
 	MaritalStatus    constants.MaritalStatus `gorm:"column:marital_status;default:''" json:"marital_status"`
 	Email            string                  `gorm:"column:email;default:''" json:"email"`
+	Phone            string                  `gorm:"column:phone;default:''" json:"phone"`
 	EstCreditScore   int32                   `gorm:"column:est_credit_score;default:0" json:"est_credit_score"`
 	DriverLicenseNum string                  `gorm:"column:driver_license_num;default:''" json:"driver_license_num"`
 	Address          types.Address           `gorm:"column:address;type:jsonb;serializer:json" json:"address"`

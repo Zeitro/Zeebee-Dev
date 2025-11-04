@@ -3,7 +3,9 @@ package loan
 import (
 	"context"
 
+	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
+	"github.com/pkg/errors"
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
@@ -38,32 +40,21 @@ func (l *CreateLogic) Create(req *types.LoanCreateRequest) (resp *types.LoanCrea
 
 	err = copier.CopyWithOption(&rpcReq.Data, req, copier.Option{
 		DeepCopy:      true,
-		IgnoreEmpty:   true,
+		IgnoreEmpty:   false,
 		CaseSensitive: true,
 	})
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
-	// todo handle applicants
-	// applicants := make([]*borrower.BorrowerApplicantEditEntry, 0, len(rpcReq.Data.Applicants))
-	// for _, applicant := range rpcReq.Data.Applicants {
-	// 	applicant := applicant
-	// 	if len(applicant.FirstName) > 0 && len(applicant.LastName) > 0 {
-	// 		applicants = append(applicants, applicant)
-	// 	}
-	// }
-	// if len(applicants) > 0 {
-	// 	primaryCount := slice.CountBy(applicants, func(index int, item *borrower.BorrowerApplicantEditEntry) bool {
-	// 		return item.IsPrimary
-	// 	})
-	// 	if primaryCount == 0 {
-	// 		applicants[0].IsPrimary = true
-	// 	}
-	// 	if primaryCount > 1 {
-	// 		return nil, errors.WithStack(errors.New("Multiple Primary Applicant"))
-	// 	}
-	// }
-	// rpcReq.Data.Applicants = applicants
+	// handle applicants
+	rpcApplicants := slice.UniqueByComparator(rpcReq.Data.Applicants, func(item *borrower.ThirdPartyLoanApplicantEditEntry, other *borrower.ThirdPartyLoanApplicantEditEntry) bool {
+		return item.BorrowerApplicantId == other.BorrowerApplicantId
+	})
+	if len(rpcApplicants) == 0 {
+		err = errors.WithStack(errors.New("No Applicant"))
+		return nil, err
+	}
+	rpcReq.Data.Applicants = rpcApplicants
 
 	// get borrower id
 	rpcReq.Data.BorrowerId, err = utils.GetAccountIdFromCtx(l.ctx)

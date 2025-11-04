@@ -23,7 +23,7 @@ message AddressEntry{
   string zip_code = 5;
 }
 
-// ========================== common service=================
+// ========================== common service start =================
 message OptionRequest {
   OptionRequestData data = 1;
 }
@@ -59,8 +59,10 @@ service common {
   rpc GetUsCities(UsCitiesRequest) returns(StringSliceResponse);
   rpc GetUuid(EmptyRequest) returns(GetUuidResponse);
 }
+// ========================== common service end =================
 
-// ================= user service ==================
+
+// ================= user service start ==================
 // login
 message UserLoginRequest {
   UserLoginRequestData data = 1;
@@ -213,8 +215,9 @@ service user {
   rpc ResetPassword(ResetPasswordRequest) returns(ResetPasswordResponse);
   rpc SendResetPasswordEmail(SendResetPasswordEmailRequest) returns(SendResetPasswordEmailResponse);
 }
+// ================= user service end =================
 
-// ================ loan service =================
+// ================ loan service start =================
 
 message ApplicantEntry{
   int64 id = 1;
@@ -330,6 +333,12 @@ message ThirdPartyLoanPropertyEditEntry {
   string purchase_date = 4;
   double purchase_amount = 5;
 }
+message ThirdPartyLoanApplicantEditEntry {
+  int64 id = 1;
+  bool is_primary = 2;
+  int64 borrower_applicant_id = 3;
+}
+
 // loan create
 message LoanCreateRequestData {
   int64 borrower_id = 1;
@@ -341,7 +350,7 @@ message LoanCreateRequestData {
   double initial_amount = 7;
   //  LoanPropertyEntry loan_property = 8;
   ThirdPartyLoanPropertyEditEntry loan_property = 8;
-  repeated BorrowerApplicantEditEntry1 applicants = 9;
+  repeated ThirdPartyLoanApplicantEditEntry applicants = 9;
   string lender_company = 10;
   string closing_date = 11;
   double holdback_amount = 12;
@@ -363,6 +372,8 @@ message LoanCreateRequestData {
   string original_contract_date = 27;
   string extension_date = 28;
   string loan_processor = 29;
+
+  int64 borrower_entity_id = 30;
 }
 
 message LoanCreateResponse {
@@ -373,15 +384,15 @@ message LoanCreateResponseData {
   int64 id = 1;
 }
 
-message BorrowerApplicantEditEntry1 {
-  string name = 1 [deprecated = true];
-  string type = 2;
-  bool is_primary = 3;
-  int64 id = 4;
-  string first_name = 5;
-  string last_name = 6;
-  string mid_name = 7;
-}
+//message BorrowerApplicantEditEntry1 {
+//  string name = 1 [deprecated = true];
+//  string type = 2;
+//  bool is_primary = 3;
+//  int64 id = 4;
+//  string first_name = 5;
+//  string last_name = 6;
+//  string mid_name = 7;
+//}
 
 // loan  update
 message LoanUpdateRequest {
@@ -397,7 +408,7 @@ message LoanUpdateRequestData {
   double total_amount = 6;
   double initial_amount = 7;
   ThirdPartyLoanPropertyEditEntry loan_property = 8;
-  repeated BorrowerApplicantEditEntry1 applicants = 9;
+  repeated ThirdPartyLoanApplicantEditEntry applicants = 9;
   string lender_company = 10;
   string closing_date = 11;
   double holdback_amount = 12;
@@ -421,6 +432,7 @@ message LoanUpdateRequestData {
   string extension_date = 29;
   string loan_processor = 30;
   //  string owner = 31;
+  int64 borrower_entity_id = 31;
 }
 
 
@@ -587,8 +599,11 @@ message ImportPendingLoansRequestData {
   string original_contract_date = 14;
   string extension_date = 15;
   string loan_processor = 16;
-  repeated BorrowerApplicantEditEntry1 applicants = 17;
+  repeated ImportPendingLoanBorrowerApplicantEntry applicants = 17;
   string closing_date = 18;
+}
+
+message ImportPendingLoanBorrowerApplicantEntry {
 
 }
 
@@ -724,8 +739,9 @@ service Loan {
   rpc PreApprovalLoan(LoanPreApprovalRequest) returns(LoanPreApprovalResponse);
   rpc SendPreApprovalNotification(LoanSendPreApprovalNotificationRequest) returns(EmptyResponse);
 }
+// ===================== loan service end ======================
 
-// ===================== loan property service ======================
+// ===================== loan property service start ======================
 message LoanPropertyEntry{
   int64 id = 1;
   string property_type = 2 ;
@@ -798,9 +814,9 @@ message LoanPropertyApplyEntry{
   bool has_short_term_rental = 28;
   double est_property_value_amount = 29;
 }
+// ===================== loan property service end ======================
 
 // ===================== borrower property service start ======================
-
 message BorrowerPropertyEntry {
   int64 id = 1;
   string property_type = 2;
@@ -1136,6 +1152,7 @@ message BorrowerApplicantEntry {
   int32 est_credit_score = 13;
   string driver_license_num = 14;
   AddressEntry address = 15;
+  string phone = 16;
 }
 
 message BorrowerApplicantPageEntry {
@@ -1153,6 +1170,7 @@ message BorrowerApplicantPageEntry {
   string email = 12;
   int32 est_credit_score = 13;
   string driver_license_num = 14;
+  string phone = 15;
 }
 message BorrowerApplicantEditEntry {
   int64 borrower_id = 1;
@@ -1167,6 +1185,7 @@ message BorrowerApplicantEditEntry {
   string driver_license_num = 10;
   AddressEntry address = 11;
   int64 id = 12;
+  string phone = 13;
 }
 
 // create borrower applicant

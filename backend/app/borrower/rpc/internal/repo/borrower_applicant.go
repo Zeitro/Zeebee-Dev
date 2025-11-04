@@ -24,6 +24,15 @@ func NewBorrowerApplicantRepo(db *gorm.DB) *BorrowerApplicantRepo {
 	}
 }
 
+// GetBorrowerApplicantById
+func (repo *BorrowerApplicantRepo) GetBorrowerApplicantById(ctx context.Context, id int64, borrowerId int64) (result *model.BorrowerApplicant, err error) {
+	err = repo.Client(ctx).
+		Where("id = ? and borrower_id = ?", id, borrowerId).
+		First(&result).
+		Error
+	return result, errors.WithStack(err)
+}
+
 func (repo *BorrowerApplicantRepo) Page(ctx context.Context, pageReq *borrower.BorrowerApplicantPageRequestData) (page gormx.PageResponse[*model.BorrowerApplicant], err error) {
 
 	filter := pageReq.Filter

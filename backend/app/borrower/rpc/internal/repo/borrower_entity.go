@@ -24,6 +24,14 @@ func NewBorrowerEntityRepo(db *gorm.DB) *BorrowerEntityRepo {
 	}
 }
 
+func (repo *BorrowerEntityRepo) GetBorrowerEntityById(ctx context.Context, id int64, borrowerId int64) (result *model.BorrowerEntity, err error) {
+	err = repo.Client(ctx).
+		Where("id = ? and borrower_id = ?", id, borrowerId).
+		First(&result).
+		Error
+	return result, errors.WithStack(err)
+}
+
 // Page return page
 func (repo *BorrowerEntityRepo) Page(ctx context.Context, pageReq *borrower.BorrowerEntityPageRequestData) (page gormx.PageResponse[*model.BorrowerEntity], err error) {
 

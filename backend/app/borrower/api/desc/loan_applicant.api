@@ -30,7 +30,6 @@ type LoanApplicantEntry {
     Address *AddressEntry `json:"address,omitempty, optional"`
     LoanBorrowerId int64 `json:"loan_borrower_id,omitempty, optional"`
     Phone string `json:"phone,omitempty, optional"`
-
 }
 
 type BorrowerNamesResponse {
@@ -68,6 +67,12 @@ type ImportLoanApplicantEntry {
     Id int64 `json:"id,optional"`
     FirstName string `json:"first_name,optional" validate:"required,min=1,max=30"`
     Type string `json:"type,optional" validate:"required,oneof=Individual Corporation LLC Trust Partnership"`
+    IsPrimary bool `json:"is_primary,optional"`
+}
+
+type ThirdPartyLoanApplicantEntry {
+    Id int64 `json:"id,optional"`
+    BorrowerApplicantId int64 `json:"borrower_applicant_id" validate:"required,gt=0"`
     IsPrimary bool `json:"is_primary,optional"`
 }
 

@@ -31,7 +31,6 @@ type (
 	BorrowerApplicantDetailRequestData         = borrower.BorrowerApplicantDetailRequestData
 	BorrowerApplicantDetailResponse            = borrower.BorrowerApplicantDetailResponse
 	BorrowerApplicantEditEntry                 = borrower.BorrowerApplicantEditEntry
-	BorrowerApplicantEditEntry1                = borrower.BorrowerApplicantEditEntry1
 	BorrowerApplicantEntry                     = borrower.BorrowerApplicantEntry
 	BorrowerApplicantPageEntry                 = borrower.BorrowerApplicantPageEntry
 	BorrowerApplicantPageRequest               = borrower.BorrowerApplicantPageRequest
@@ -75,6 +74,7 @@ type (
 	FileDeleteRequestData                      = borrower.FileDeleteRequestData
 	FileEntry                                  = borrower.FileEntry
 	GetUuidResponse                            = borrower.GetUuidResponse
+	ImportPendingLoanBorrowerApplicantEntry    = borrower.ImportPendingLoanBorrowerApplicantEntry
 	ImportPendingLoansRequest                  = borrower.ImportPendingLoansRequest
 	ImportPendingLoansRequestData              = borrower.ImportPendingLoansRequestData
 	ImportPendingLoansResponse                 = borrower.ImportPendingLoansResponse
@@ -180,6 +180,7 @@ type (
 	StorageCreatePresignedUrlResponse          = borrower.StorageCreatePresignedUrlResponse
 	StorageCreatePresignedUrlResponseData      = borrower.StorageCreatePresignedUrlResponseData
 	StringSliceResponse                        = borrower.StringSliceResponse
+	ThirdPartyLoanApplicantEditEntry           = borrower.ThirdPartyLoanApplicantEditEntry
 	ThirdPartyLoanPropertyEditEntry            = borrower.ThirdPartyLoanPropertyEditEntry
 	UsCitiesRequest                            = borrower.UsCitiesRequest
 	UsCitiesRequestData                        = borrower.UsCitiesRequestData
