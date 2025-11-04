@@ -80,6 +80,7 @@ type (
 	ImportPendingLoansResponse                 = borrower.ImportPendingLoansResponse
 	ImportPendingLoansResponseData             = borrower.ImportPendingLoansResponseData
 	LenderEntry                                = borrower.LenderEntry
+	LoanApplicantApplyEntry                    = borrower.LoanApplicantApplyEntry
 	LoanApplyRequest                           = borrower.LoanApplyRequest
 	LoanApplyRequestData                       = borrower.LoanApplyRequestData
 	LoanApplyResponse                          = borrower.LoanApplyResponse

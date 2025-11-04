@@ -339,6 +339,12 @@ message ThirdPartyLoanApplicantEditEntry {
   int64 borrower_applicant_id = 3;
 }
 
+message LoanApplicantApplyEntry {
+  int64 id = 1;
+  bool is_primary = 2;
+  int64 borrower_applicant_id = 3;
+}
+
 // loan create
 message LoanCreateRequestData {
   int64 borrower_id = 1;
@@ -533,7 +539,8 @@ message LoanApplyRequestData {
   int64 lender_company_id = 10;
   int64 borrower_id = 11;
   repeated string business_strategy = 12;
-  repeated ApplicantEntry applicants = 13;
+  //  repeated ApplicantEntry applicants = 13;
+  repeated LoanApplicantApplyEntry applicants = 13;
   //  string existing_lender_company = 14;
   //  float existing_rate = 15;
   //  string existing_maturity_date = 16;
@@ -561,7 +568,8 @@ message LoanApplyRequestData {
   //  string additional_info = 38;
   repeated LoanExperienceEntry transaction_experiences = 39;
   repeated LoanExperienceEntry real_estate_experiences = 40;
-  LoanBorrowerEntry loan_borrower = 41;
+  //  LoanBorrowerEntry loan_borrower = 41;
+  int64 borrower_entity_id = 41;
   LoanDemographicEntry loan_demographic = 42;
   //  float yearly_liability_expense = 43;
   repeated LoanThirdServiceEntry loan_third_services = 44;
@@ -794,9 +802,9 @@ message LoanPropertyApplyEntry{
   //
   string existing_lender_company = 9;
   float existing_rate = 10;
-  int64 existing_maturity_date = 11;
+  string existing_maturity_date = 11;
   double purchase_amount = 12;
-  int64 purchase_date = 13;
+  string purchase_date = 13;
   bool has_assignment_fee = 14;
   double assignment_fee_amount = 15;
   bool has_subordinate_debt = 16;
@@ -1348,6 +1356,9 @@ message LoanBorrowerEntry{
   string contact_phone = 9;
   string contact_name = 10;
   int32 own_percent = 11;
+  int64 borrower_entity_id = 12;
+  string created_at = 13;
+  string updated_at = 14;
 }
 // ====================== loan borrower service end ======================
 

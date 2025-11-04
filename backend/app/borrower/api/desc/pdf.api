@@ -34,13 +34,13 @@ type ApplyFormPdfRequest {
     TotalAmount float64 `json:"total_amount,optional" validate:"required,gt=0"`
     InitialAmount float64 `json:"initial_amount,optional" validate:"ltefield=TotalAmount"`
     //    LoanProperty *LoanApplyPropertyEntry `json:"loan_property,optional"`
-    LoanProperty *LoanPropertyPdfEntry `json:"loan_property,optional"`
+    LoanProperty *LoanPropertyApplyFormPdfEntry `json:"loan_property,optional"`
     HoldbackAmount float64 `json:"holdback_amount,optional" validate:"ltefield=TotalAmount"`
     PrincipalAmount float64 `json:"principal_amount,optional" validate:"required_unless=LoanPurpose Purchase,omitempty,gte=0"`
     MaturityDate string `json:"maturity_date,optional"`
     PrepaymentPenalty int32 `json:"prepayment_penalty,optional" validate:"required_if=LoanType Rental,omitempty,gte=0"`
     BusinessStrategy []string `json:"business_strategy,optional" validate:"required,dive,required,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
-    Applicants []*LoanApplicantApplyEntry `json:"applicants,optional"`
+    Applicants []*LoanApplicantApplyFormPdfEntry `json:"applicants,optional"`
     ExistingLenderCompany string `json:"existing_lender_company,optional" validate:"required_unless=LoanPurpose Purchase"`
     ExistingRate float32 `json:"existing_rate,optional" validate:"required_unless=LoanPurpose Purchase,omitempty,gt=0,lt=100"`
     ExistingMaturityDate string `json:"existing_maturity_date,optional" validate:"required_unless=LoanPurpose Purchase,omitempty,datetime=01/02/2006"`

@@ -59,9 +59,9 @@ func (form *ApplyForm) page2() (err error) {
 
 	applicantsInfo := form.info.Applicants
 	for i := 0; i < 2; i++ {
-		var applicant *types.LoanApplicantApplyEntry
+		var applicant *types.LoanApplicantApplyFormPdfEntry
 		if i > len(applicantsInfo)-1 {
-			applicant = &types.LoanApplicantApplyEntry{
+			applicant = &types.LoanApplicantApplyFormPdfEntry{
 				Address: &types.AddressEntry{},
 			}
 		} else {
@@ -77,7 +77,7 @@ func (form *ApplyForm) page2() (err error) {
 	return err
 }
 
-func (form *ApplyForm) applicantInfo(index int, applicant *types.LoanApplicantApplyEntry) (err error) {
+func (form *ApplyForm) applicantInfo(index int, applicant *types.LoanApplicantApplyFormPdfEntry) (err error) {
 	brHeight := 6.0
 	x := form.pdf.GetX()
 	y := form.pdf.GetY()

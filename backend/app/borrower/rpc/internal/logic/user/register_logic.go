@@ -208,13 +208,14 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int
 			PrincipalAmount: preApproveRequest.Loan.PrincipalAmount,
 			LenderCompanyId: lenderCompanyId,
 			BorrowerId:      borrowerId,
-			Applicants: []*borrower.ApplicantEntry{
-				{
-					IsPrimary: true,
-					FirstName: preApproveRequest.Borrower.Name,
-					Phone:     preApproveRequest.Borrower.Phone,
-				},
-			},
+			// todo handle applicant
+			// Applicants: []*borrower.ApplicantEntry{
+			// 	{
+			// 		IsPrimary: true,
+			// 		FirstName: preApproveRequest.Borrower.Name,
+			// 		Phone:     preApproveRequest.Borrower.Phone,
+			// 	},
+			// },
 			// PurchaseAmount:      preApproveRequest.Loan.PurchaseAmount,
 			// PurchaseDate:        preApproveRequest.Loan.PurchaseDate,
 			// HasAssignmentFee:    preApproveRequest.Loan.HasAssignmentFee,
@@ -230,11 +231,12 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int
 			// EstPropertyValueAmount: preApproveRequest.Loan.EstPropertyValueAmount,
 
 			// borrower info
-			LoanBorrower: &borrower.LoanBorrowerEntry{
-				Name:         preApproveRequest.Borrower.Name,
-				ContactEmail: preApproveRequest.Borrower.Email,
-				ContactPhone: preApproveRequest.Borrower.Phone,
-			},
+			// todo handle borrower
+			// LoanBorrower: &borrower.LoanBorrowerEntry{
+			// 	Name:         preApproveRequest.Borrower.Name,
+			// 	ContactEmail: preApproveRequest.Borrower.Email,
+			// 	ContactPhone: preApproveRequest.Borrower.Phone,
+			// },
 		},
 	}
 	if calcResult != nil {
