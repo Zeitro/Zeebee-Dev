@@ -49,6 +49,679 @@
         }
       }
     },
+    "/api/v1/borrower_applicant": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "borrower_applicant"
+        ],
+        "summary": "create",
+        "operationId": "borrowerApplicantBorrowerApplicantCreate",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "first_name",
+                "mid_name",
+                "last_name",
+                "ssn",
+                "dob",
+                "marital_status",
+                "email",
+                "est_credit_score",
+                "driver_license_num",
+                "address"
+              ],
+              "properties": {
+                "address": {
+                  "type": "object",
+                  "properties": {
+                    "address1": {
+                      "type": "string"
+                    },
+                    "address2": {
+                      "type": "string"
+                    },
+                    "city": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "zip_code": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "dob": {
+                  "type": "string"
+                },
+                "driver_license_num": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "est_credit_score": {
+                  "type": "integer"
+                },
+                "first_name": {
+                  "type": "string"
+                },
+                "last_name": {
+                  "type": "string"
+                },
+                "marital_status": {
+                  "type": "string"
+                },
+                "mid_name": {
+                  "type": "string"
+                },
+                "ssn": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "address": {
+                  "type": "object",
+                  "properties": {
+                    "address1": {
+                      "type": "string"
+                    },
+                    "address2": {
+                      "type": "string"
+                    },
+                    "city": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "zip_code": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "borrower_id": {
+                  "type": "integer"
+                },
+                "created_at": {
+                  "type": "string"
+                },
+                "dob": {
+                  "type": "string"
+                },
+                "driver_license_num": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "est_credit_score": {
+                  "type": "integer"
+                },
+                "first_name": {
+                  "type": "string"
+                },
+                "full_name": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "last_name": {
+                  "type": "string"
+                },
+                "marital_status": {
+                  "type": "string"
+                },
+                "mid_name": {
+                  "type": "string"
+                },
+                "ssn": {
+                  "type": "string"
+                },
+                "updated_at": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/borrower_applicant/all": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "borrower_applicant"
+        ],
+        "summary": "all",
+        "operationId": "borrowerApplicantBorrowerApplicantAll",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "lists": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "created_at",
+                      "updated_at",
+                      "first_name",
+                      "mid_name",
+                      "last_name",
+                      "full_name",
+                      "ssn",
+                      "dob",
+                      "marital_status",
+                      "email",
+                      "est_credit_score",
+                      "driver_license_num"
+                    ],
+                    "properties": {
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "dob": {
+                        "type": "string"
+                      },
+                      "driver_license_num": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      },
+                      "est_credit_score": {
+                        "type": "integer"
+                      },
+                      "first_name": {
+                        "type": "string"
+                      },
+                      "full_name": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "last_name": {
+                        "type": "string"
+                      },
+                      "marital_status": {
+                        "type": "string"
+                      },
+                      "mid_name": {
+                        "type": "string"
+                      },
+                      "ssn": {
+                        "type": "string"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/borrower_applicant/check_existed": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "borrower_applicant"
+        ],
+        "summary": "existed",
+        "operationId": "borrowerApplicantBorrowerApplicantCheckExisted",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "name": "first_name",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "last_name",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "mid_name",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "is_existed": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/borrower_applicant/page": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "borrower_applicant"
+        ],
+        "summary": "page",
+        "operationId": "borrowerApplicantBorrowerApplicantPage",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "filter": {
+                  "type": "object",
+                  "properties": {
+                    "keyword": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "limit": {
+                  "type": "integer"
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "sorter": {
+                  "type": "object",
+                  "properties": {
+                    "column": {
+                      "type": "string"
+                    },
+                    "sort": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "limit": {
+                  "type": "integer"
+                },
+                "list": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "created_at",
+                      "updated_at",
+                      "first_name",
+                      "mid_name",
+                      "last_name",
+                      "full_name",
+                      "ssn",
+                      "dob",
+                      "marital_status",
+                      "email",
+                      "est_credit_score",
+                      "driver_license_num"
+                    ],
+                    "properties": {
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "dob": {
+                        "type": "string"
+                      },
+                      "driver_license_num": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      },
+                      "est_credit_score": {
+                        "type": "integer"
+                      },
+                      "first_name": {
+                        "type": "string"
+                      },
+                      "full_name": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "last_name": {
+                        "type": "string"
+                      },
+                      "marital_status": {
+                        "type": "string"
+                      },
+                      "mid_name": {
+                        "type": "string"
+                      },
+                      "ssn": {
+                        "type": "string"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "total": {
+                  "type": "integer"
+                },
+                "total_page": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/borrower_applicant/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "borrower_applicant"
+        ],
+        "summary": "detail",
+        "operationId": "borrowerApplicantBorrowerApplicantDetail",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "address": {
+                  "type": "object",
+                  "properties": {
+                    "address1": {
+                      "type": "string"
+                    },
+                    "address2": {
+                      "type": "string"
+                    },
+                    "city": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "zip_code": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "borrower_id": {
+                  "type": "integer"
+                },
+                "created_at": {
+                  "type": "string"
+                },
+                "dob": {
+                  "type": "string"
+                },
+                "driver_license_num": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "est_credit_score": {
+                  "type": "integer"
+                },
+                "first_name": {
+                  "type": "string"
+                },
+                "full_name": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "last_name": {
+                  "type": "string"
+                },
+                "marital_status": {
+                  "type": "string"
+                },
+                "mid_name": {
+                  "type": "string"
+                },
+                "ssn": {
+                  "type": "string"
+                },
+                "updated_at": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "borrower_applicant"
+        ],
+        "summary": "update",
+        "operationId": "borrowerApplicantBorrowerApplicantUpdate",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "first_name",
+                "mid_name",
+                "last_name",
+                "ssn",
+                "dob",
+                "marital_status",
+                "email",
+                "est_credit_score",
+                "driver_license_num",
+                "address"
+              ],
+              "properties": {
+                "address": {
+                  "type": "object",
+                  "properties": {
+                    "address1": {
+                      "type": "string"
+                    },
+                    "address2": {
+                      "type": "string"
+                    },
+                    "city": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "zip_code": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "dob": {
+                  "type": "string"
+                },
+                "driver_license_num": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "est_credit_score": {
+                  "type": "integer"
+                },
+                "first_name": {
+                  "type": "string"
+                },
+                "last_name": {
+                  "type": "string"
+                },
+                "marital_status": {
+                  "type": "string"
+                },
+                "mid_name": {
+                  "type": "string"
+                },
+                "ssn": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "delete": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "borrower_applicant"
+        ],
+        "summary": "delete",
+        "operationId": "borrowerApplicantBorrowerApplicantDelete",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/borrower_entity": {
       "post": {
         "consumes": [
@@ -10159,7 +10832,7 @@
       }
     }
   },
-  "x-date": "2025-11-03 18:07:00",
+  "x-date": "2025-11-04 10:47:52",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
