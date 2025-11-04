@@ -129,7 +129,7 @@ const useCreate = (pageType = 'create') => {
 				key="0-ReviewAndSign"
 				form={form}
 				rowData={isDetails ? rowData : null}
-				loanUuid={loanUuid}
+				loanUuid={loanUuid || rowData?.code}
 				isNotRequest={isDetails}
 			/>,
 		],
