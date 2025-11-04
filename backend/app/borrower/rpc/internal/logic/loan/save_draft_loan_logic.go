@@ -179,7 +179,13 @@ func (l *SaveDraftLoanLogic) updateProperty(tx *gorm.DB, property *model.LoanPro
 	// save loan property
 	property.LoanId = loan.Id
 	property.PropertyBaseId = propertyBase.Id
-	property, err = l.svcCtx.LoanPropertyRepo.CreateWithTx(l.ctx, tx, property, false)
+	if property.Id > 0 {
+		property.RemoveRelationships()
+		_, err = l.svcCtx.LoanPropertyRepo.UpdateOneWithTx(l.ctx, tx, property.Id, property)
+	} else {
+		_, err = l.svcCtx.LoanPropertyRepo.CreateWithTx(l.ctx, tx, property, false)
+	}
+
 	return err
 }
 
@@ -229,8 +235,9 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	// loan
 	loan := &model.Loan{}
 	err = copier.CopyWithOption(loan, reqData, copier.Option{
-		IgnoreEmpty: true,
-		DeepCopy:    true,
+		IgnoreEmpty:   false,
+		CaseSensitive: true,
+		DeepCopy:      true,
 		Converters: []copier.TypeConverter{
 			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
 		},
@@ -259,7 +266,7 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 			MailingAddress: types.Address{},
 		}
 		err = copier.CopyWithOption(loanBorrower, reqData.LoanBorrower, copier.Option{
-			IgnoreEmpty:   true,
+			IgnoreEmpty:   false,
 			DeepCopy:      true,
 			CaseSensitive: true,
 			Converters: []copier.TypeConverter{
@@ -276,7 +283,7 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	if len(reqData.Applicants) > 0 {
 		applicants = make([]*model.Applicant, 0)
 		err = copier.CopyWithOption(&applicants, &reqData.Applicants, copier.Option{
-			IgnoreEmpty: true,
+			IgnoreEmpty: false,
 			DeepCopy:    true,
 			Converters: []copier.TypeConverter{
 				copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
@@ -307,7 +314,7 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 			PropertyBase: &model.PropertyBase{},
 		}
 		err = copier.CopyWithOption(loanProperty, reqData.LoanProperty, copier.Option{
-			IgnoreEmpty: true,
+			IgnoreEmpty: false,
 			DeepCopy:    true,
 			Converters: []copier.TypeConverter{
 				copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
@@ -325,7 +332,7 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	if len(reqData.TransactionExperiences) > 0 {
 		transactionExperiences = make([]*model.LoanExperience, 0)
 		err = copier.CopyWithOption(&transactionExperiences, &reqData.TransactionExperiences, copier.Option{
-			IgnoreEmpty: true,
+			IgnoreEmpty: false,
 			DeepCopy:    true,
 			Converters: []copier.TypeConverter{
 				copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
@@ -341,7 +348,7 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	if len(reqData.RealEstateExperiences) > 0 {
 		realEstatesExperiences = make([]*model.LoanExperience, 0)
 		err = copier.CopyWithOption(&realEstatesExperiences, &reqData.RealEstateExperiences, copier.Option{
-			IgnoreEmpty: true,
+			IgnoreEmpty: false,
 			DeepCopy:    true,
 			Converters: []copier.TypeConverter{
 				copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
@@ -357,7 +364,7 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	if len(reqData.LoanThirdServices) > 0 {
 		loanThirdServices = make([]*model.LoanThirdService, 0)
 		err = copier.CopyWithOption(&loanThirdServices, &reqData.LoanThirdServices, copier.Option{
-			IgnoreEmpty: true,
+			IgnoreEmpty: false,
 			DeepCopy:    true,
 			Converters: []copier.TypeConverter{
 				copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
@@ -373,7 +380,7 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	if reqData.LoanDemographic != nil {
 		loanDemographic = &model.LoanDemographic{}
 		err = copier.CopyWithOption(&loanDemographic, &reqData.LoanDemographic, copier.Option{
-			IgnoreEmpty: true,
+			IgnoreEmpty: false,
 			DeepCopy:    true,
 			Converters: []copier.TypeConverter{
 				copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
