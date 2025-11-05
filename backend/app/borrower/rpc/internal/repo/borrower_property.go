@@ -149,7 +149,7 @@ func (repo *BorrowerPropertyRepo) SyncTotalAmountAndLoanCountWithTx(ctx context.
 
 // Page page
 func (repo *BorrowerPropertyRepo) Page(ctx context.Context, pageReq *borrower.PropertyPageRequestData) (page gormx.PageResponse[*model.BorrowerProperty], err error) {
-	propertyBaseTable := model.BorrowerProperty{}.TableName()
+	borrowerPropertyTable := model.BorrowerProperty{}.TableName()
 	loanPropertyTable := model.LoanProperty{}.TableName()
 	applicantTable := model.LoanApplicant{}.TableName()
 	loanRepo := NewLoanRepo(repo.BaseRepo.GetDB())
@@ -158,15 +158,15 @@ func (repo *BorrowerPropertyRepo) Page(ctx context.Context, pageReq *borrower.Pr
 	filter := pageReq.Filter
 	sorter := pageReq.Sorter
 	query := repo.Client(ctx).
-		Where(fmt.Sprintf("%s.borrower_id = ?", propertyBaseTable), filter.BorrowerId)
+		Where(fmt.Sprintf("%s.borrower_id = ?", borrowerPropertyTable), filter.BorrowerId)
 	// keyword
 	if len(filter.Keyword) > 0 {
 		query = query.Where(
-			fmt.Sprintf("%s.address->>'state' like @keyword or %s.address->>'city' like @keyword or %s.address->>'address1' like @keyword", propertyBaseTable, propertyBaseTable, propertyBaseTable), sql.Named("keyword", "%"+filter.Keyword+"%"))
+			fmt.Sprintf("%s.address->>'state' like @keyword or %s.address->>'city' like @keyword or %s.address->>'address1' like @keyword", borrowerPropertyTable, borrowerPropertyTable, borrowerPropertyTable), sql.Named("keyword", "%"+filter.Keyword+"%"))
 	}
 	// applicant
 	if len(filter.Applicant) > 0 {
-		query = query.Joins(fmt.Sprintf("left join %s on %s.id = %s.property_base_id", loanPropertyTable, propertyBaseTable, loanPropertyTable)).
+		query = query.Joins(fmt.Sprintf("left join %s on %s.id = %s.borrower_property_id", loanPropertyTable, borrowerPropertyTable, loanPropertyTable)).
 			Joins(fmt.Sprintf("left join %s on %s.id = %s.loan_property_id", applicantTable, loanPropertyTable, applicantTable)).
 			Where(fmt.Sprintf("%s.full_name in ?", applicantTable), filter.Applicant)
 	}
@@ -177,12 +177,12 @@ func (repo *BorrowerPropertyRepo) Page(ctx context.Context, pageReq *borrower.Pr
 		switch sorter.Column {
 		case "total_amount":
 			sortColumns = append(sortColumns,
-				fmt.Sprintf("%s.total_amount %s", propertyBaseTable, sorter.Sort),
+				fmt.Sprintf("%s.total_amount %s", borrowerPropertyTable, sorter.Sort),
 			)
 		}
 	}
 	if sorter == nil || len(sortColumns) == 0 {
-		sortColumns = append(sortColumns, fmt.Sprintf("%s.total_amount desc", propertyBaseTable))
+		sortColumns = append(sortColumns, fmt.Sprintf("%s.total_amount desc", borrowerPropertyTable))
 	}
 
 	for _, column := range sortColumns {
@@ -192,7 +192,7 @@ func (repo *BorrowerPropertyRepo) Page(ctx context.Context, pageReq *borrower.Pr
 	page, err = gormx.Page[*model.BorrowerProperty](query, gormx.PageRequest{
 		Page:        pageReq.Page,
 		Limit:       pageReq.Limit,
-		CountColumn: fmt.Sprintf("%s.id", propertyBaseTable),
+		CountColumn: fmt.Sprintf("%s.id", borrowerPropertyTable),
 	})
 
 	if err != nil {

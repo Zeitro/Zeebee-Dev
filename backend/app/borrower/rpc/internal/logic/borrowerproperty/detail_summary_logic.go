@@ -38,33 +38,42 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 	}()
 
 	// get property
-	propertyBase, err := l.svcCtx.BorrowerPropertyRepo.GetOne(l.ctx, in.Data.Id)
+	borrowerProperty, err := l.svcCtx.BorrowerPropertyRepo.GetOne(l.ctx, in.Data.Id)
 
 	if err != nil {
 		return nil, err
 	}
-	if propertyBase == nil || propertyBase.Id == 0 {
+	if borrowerProperty == nil || borrowerProperty.Id == 0 {
 		return nil, errors.WithStack(errors.New("Property Is Invalid"))
 	}
 
-	if propertyBase.BorrowerId != in.Data.BorrowerId {
+	if borrowerProperty.BorrowerId != in.Data.BorrowerId {
 		return nil, errors.WithStack(errors.New("Access Denied"))
 	}
 
-	loanProperties := propertyBase.LoanProperties
+	loanProperties := borrowerProperty.LoanProperties
 
-	respData := &borrower.PropertyDetailSummaryResponseData{
-		Id: propertyBase.Id,
-		// PropertyType: string(loanProperty.PropertyType),
-		// TotalAmount:  property.TotalAmount,
-		Unit: propertyBase.Unit,
-		Address: &borrower.AddressEntry{
-			State:    propertyBase.Address.State,
-			City:     propertyBase.Address.City,
-			Address1: propertyBase.Address.Address1,
-			Address2: propertyBase.Address.Address2,
-			ZipCode:  propertyBase.Address.ZipCode,
-		},
+	// respData := &borrower.PropertyDetailSummaryResponseData{
+	// 	Id: propertyBase.Id,
+	// 	// PropertyType: string(loanProperty.PropertyType),
+	// 	// TotalAmount:  property.TotalAmount,
+	// 	Unit: propertyBase.Unit,
+	// 	Address: &borrower.AddressEntry{
+	// 		State:    propertyBase.Address.State,
+	// 		City:     propertyBase.Address.City,
+	// 		Address1: propertyBase.Address.Address1,
+	// 		Address2: propertyBase.Address.Address2,
+	// 		ZipCode:  propertyBase.Address.ZipCode,
+	// 	},
+	// }
+
+	respData := &borrower.PropertyDetailSummaryResponseData{}
+	err = copier.CopyWithOption(respData, borrowerProperty, copier.Option{
+		DeepCopy:      true,
+		CaseSensitive: true,
+	})
+	if err != nil {
+		return nil, errorx.GetFailedTransReqErr(err)
 	}
 
 	var totalClosingFundAmount float64
