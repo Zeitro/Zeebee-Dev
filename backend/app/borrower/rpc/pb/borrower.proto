@@ -317,9 +317,9 @@ message LoanEntry {
 }
 
 message  LoanBudgetEntry {
-  float original_budget = 1;
-  float remaining_budget = 2;
-  float cost_spent_to_date_amount = 3;
+  double original_budget = 1;
+  double remaining_budget = 2;
+  double cost_spent_to_date_amount = 3;
 }
 
 message LoanCreateRequest {
