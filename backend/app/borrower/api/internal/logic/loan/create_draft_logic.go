@@ -39,8 +39,9 @@ func (l *CreateDraftLogic) CreateDraft(req *types.LoanApplyRequest) (resp *types
 
 	err = copier.CopyWithOption(&rpcReq.Data, req, copier.Option{
 		DeepCopy:      true,
-		IgnoreEmpty:   true,
+		IgnoreEmpty:   false,
 		CaseSensitive: true,
+		Converters:    []copier.TypeConverter{},
 	})
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
