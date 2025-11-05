@@ -74,7 +74,8 @@ type (
 	FileDeleteRequestData                      = borrower.FileDeleteRequestData
 	FileEntry                                  = borrower.FileEntry
 	GetUuidResponse                            = borrower.GetUuidResponse
-	ImportPendingLoanBorrowerApplicantEntry    = borrower.ImportPendingLoanBorrowerApplicantEntry
+	ImportPendingLoanApplicantEntry            = borrower.ImportPendingLoanApplicantEntry
+	ImportPendingLoanPropertyEntry             = borrower.ImportPendingLoanPropertyEntry
 	ImportPendingLoansRequest                  = borrower.ImportPendingLoansRequest
 	ImportPendingLoansRequestData              = borrower.ImportPendingLoansRequestData
 	ImportPendingLoansResponse                 = borrower.ImportPendingLoansResponse

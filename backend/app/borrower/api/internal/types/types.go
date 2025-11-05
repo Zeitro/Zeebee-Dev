@@ -150,17 +150,21 @@ type ImportLoanApplicantEntry struct {
 }
 
 type ImportLoanApplyPropertyEntry struct {
-	Id                   int64   `json:"id,optional"`
-	PropertyType         string  `json:"property_type,optional"`
-	LivingAreaSqft       float32 `json:"living_area_sqft,optional" validate:"gte=0"`
-	Bedrooms             int32   `json:"bedrooms,optional" validate:"gte=0"`
-	Bathrooms            int32   `json:"bathrooms,optional" validate:"gte=0"`
-	FuturePropertyType   string  `json:"future_property_type,optional"`
-	FutureUnit           int32   `json:"future_unit,optional" validate:"gte=0"`
-	FutureLivingAreaSqft float32 `json:"future_living_area_sqft,optional" validate:"gte=0"`
-	FutureBedrooms       int32   `json:"future_bedrooms,optional" validate:"gte=0"`
-	FutureBathrooms      int32   `json:"future_bathrooms,optional" validate:"gte=0"`
-	Owner                string  `json:"owner,optional"`
+	Id                   int64         `json:"id,optional"`
+	PropertyType         string        `json:"property_type,optional"`
+	Unit                 int32         `json:"unit,optional" validate:"gte=0"`
+	LivingAreaSqft       float32       `json:"living_area_sqft,optional" validate:"gte=0"`
+	Bedrooms             int32         `json:"bedrooms,optional" validate:"gte=0"`
+	Bathrooms            int32         `json:"bathrooms,optional" validate:"gte=0"`
+	FuturePropertyType   string        `json:"future_property_type,optional"`
+	FutureUnit           int32         `json:"future_unit,optional" validate:"gte=0"`
+	FutureLivingAreaSqft float32       `json:"future_living_area_sqft,optional" validate:"gte=0"`
+	FutureBedrooms       int32         `json:"future_bedrooms,optional" validate:"gte=0"`
+	FutureBathrooms      int32         `json:"future_bathrooms,optional" validate:"gte=0"`
+	Owner                string        `json:"owner,optional"`
+	Address              *AddressEntry `json:"address,optional"`
+	PurchaseAmount       float64       `json:"purchase_amount,optional"`
+	PurchaseDate         string        `json:"purchase_date,optional"`
 }
 
 type ImportLoanBorrowerEntry struct {
@@ -191,8 +195,6 @@ type ImportPendingLoanEntry struct {
 	Applicants            []*ImportLoanApplicantEntry   `json:"applicants,optional" validate:"required,gt=0,lte=2"`
 	LoanBorrower          *ImportLoanBorrowerEntry      `json:"loan_borrower,optional" validate:"required"`
 	ClosingDate           string                        `json:"closing_date,optional"`
-	PurchaseAmount        float64                       `json:"purchase_amount,optional"`
-	PurchaseDate          string                        `json:"purchase_date,optional"`
 	MaturityDate          string                        `json:"maturity_date,optional"`
 	ClosingFund           float64                       `json:"closing_fund,optional"`
 	LenderCompany         string                        `json:"lender_company,optional"`

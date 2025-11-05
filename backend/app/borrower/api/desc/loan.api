@@ -306,8 +306,6 @@ type ImportPendingLoanEntry {
     LoanBorrower *ImportLoanBorrowerEntry `json:"loan_borrower,optional" validate:"required"`
     // loan
     ClosingDate string `json:"closing_date,optional"`
-    PurchaseAmount float64 `json:"purchase_amount,optional"`
-    PurchaseDate string `json:"purchase_date,optional"`
     MaturityDate string `json:"maturity_date,optional"`
     ClosingFund float64 `json:"closing_fund,optional"`
     LenderCompany string `json:"lender_company,optional"`

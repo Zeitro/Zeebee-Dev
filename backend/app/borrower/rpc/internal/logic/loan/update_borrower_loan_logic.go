@@ -167,32 +167,32 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 }
 
 // handle property
-func (l *UpdateBorrowerLoanLogic) handleBorrowerProperty(tx *gorm.DB, propertyId int64, property *model.BorrowerProperty) (newProperty *model.BorrowerProperty, err error) {
-	// get existed property
-	newProperty, err = l.svcCtx.BorrowerPropertyRepo.GetOneWithTxByProperty(l.ctx, tx, property)
-	if err != nil {
-		return nil, errors.Wrap(err, "Failed To Get Property Base")
-	}
-	if newProperty != nil {
-		return newProperty, nil
-	}
-
-	// get previous property
-	prevProperty, err := l.svcCtx.BorrowerPropertyRepo.GetOneWithTx(l.ctx, tx, propertyId, []string{"LoanProperties"})
-	if err != nil {
-		return nil, errors.Wrap(err, "Failed To Get Property")
-	}
-
-	// create new property if relate zero or more than one loan property
-	if len(prevProperty.LoanProperties) == 0 || len(prevProperty.LoanProperties) > 1 {
-		return l.svcCtx.BorrowerPropertyRepo.GetOrCreateWithTx(l.ctx, tx, property)
-	}
-
-	// update property when relate one loan property
-	property.Id = prevProperty.Id
-	newProperty, err = l.svcCtx.BorrowerPropertyRepo.UpdateOneWithTx(l.ctx, tx, property.Id, property)
-	return
-}
+// func (l *UpdateBorrowerLoanLogic) handleBorrowerProperty(tx *gorm.DB, propertyId int64, property *model.BorrowerProperty) (newProperty *model.BorrowerProperty, err error) {
+// 	// get existed property
+// 	newProperty, err = l.svcCtx.BorrowerPropertyRepo.GetOneWithTxByProperty(l.ctx, tx, property)
+// 	if err != nil {
+// 		return nil, errors.Wrap(err, "Failed To Get Property Base")
+// 	}
+// 	if newProperty != nil {
+// 		return newProperty, nil
+// 	}
+//
+// 	// get previous property
+// 	prevProperty, err := l.svcCtx.BorrowerPropertyRepo.GetOneWithTx(l.ctx, tx, propertyId, []string{"LoanProperties"})
+// 	if err != nil {
+// 		return nil, errors.Wrap(err, "Failed To Get Property")
+// 	}
+//
+// 	// create new property if relate zero or more than one loan property
+// 	if len(prevProperty.LoanProperties) == 0 || len(prevProperty.LoanProperties) > 1 {
+// 		return l.svcCtx.BorrowerPropertyRepo.GetOrCreateWithTx(l.ctx, tx, property)
+// 	}
+//
+// 	// update property when relate one loan property
+// 	property.Id = prevProperty.Id
+// 	newProperty, err = l.svcCtx.BorrowerPropertyRepo.UpdateOneWithTx(l.ctx, tx, property.Id, property)
+// 	return
+// }
 
 func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateRequestData, oldLoan *model.Loan) (loan *model.Loan, loanProperty *model.LoanProperty, applicants []*model.LoanApplicant, loanBorrower *model.LoanBorrower, err error) {
 
@@ -293,6 +293,7 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 	loanProperty.BorrowerPropertyId = in.LoanProperty.BorrowerPropertyId
 	loanProperty.Owner = in.LoanProperty.Owner
 	loanProperty.PurchaseAmount = in.LoanProperty.PurchaseAmount
+	loanProperty.Id = 0
 
 	if loan.TotalAmount < loan.InitialAmount {
 		return nil, nil, nil, nil, errors.New("Total Amount Cannot Be Less Than Initial Amount")
