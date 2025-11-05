@@ -133,6 +133,7 @@ type LoanPropertyApplyFormPdfEntry {
     HasDelayedFinancing bool `json:"has_delayed_financing, optional"`
     HasPropertiesVacant bool `json:"has_properties_vacant, optional"`
     HasShortTermRental bool `json:"has_short_term_rental, optional"`
+    HasCollateralizedBlanket bool `json:"has_collateralized_blanket,optional"`
 }
 
 

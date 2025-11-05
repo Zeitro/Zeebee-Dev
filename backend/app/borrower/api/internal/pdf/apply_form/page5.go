@@ -17,7 +17,7 @@ func (form *ApplyForm) page5() (err error) {
 		return err
 	}
 	// budget
-	budget := form.info.Budget
+	budget := form.info.LoanProperty.Budget
 	if budget == nil {
 		budget = &types.LoanBudgetEntry{}
 	}
