@@ -4,12 +4,15 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/borrower/rpc/internal/repo/model"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/gormx"
+	"zeebee-backend/common/timex"
 )
 
 type BorrowerApplicantRepo struct {
@@ -68,4 +71,29 @@ func (repo *BorrowerApplicantRepo) All(ctx context.Context, borrowerId int64) (r
 		Order("id desc").
 		Find(&result).Error
 	return result, errors.WithStack(err)
+}
+
+// TranToLoanApplicantWithId get BorrowerApplicant from id and trans it to LoanApplicant
+func (repo *BorrowerApplicantRepo) TranToLoanApplicantWithId(ctx context.Context, id int64, borrowerId int64) (result *model.LoanApplicant, err error) {
+	var applicant *model.BorrowerApplicant
+	applicant, err = repo.GetBorrowerApplicantById(ctx, id, borrowerId)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	result = &model.LoanApplicant{}
+	err = copier.CopyWithOption(result, applicant, copier.Option{
+		CaseSensitive: true,
+		DeepCopy:      true,
+		Converters: []copier.TypeConverter{
+			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
+		},
+	})
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	result.Id = 0
+	result.BorrowerApplicantId = applicant.Id
+
+	return result, nil
 }

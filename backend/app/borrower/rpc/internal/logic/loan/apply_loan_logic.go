@@ -15,10 +15,8 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
-	"zeebee-backend/common/timex"
-	"zeebee-backend/common/types"
-
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/timex"
 )
 
 type ApplyLoanLogic struct {
@@ -256,26 +254,25 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, 
 	loan.LenderCompany = lender.Name
 
 	// loan_borrower
-	borrowerEntity, err := l.svcCtx.BorrowerEntityRepo.GetBorrowerEntityById(l.ctx, reqData.BorrowerEntityId, reqData.BorrowerId)
+	loanBorrower, err := l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, reqData.BorrowerEntityId, reqData.BorrowerId)
 	if err != nil {
 		return nil, err
 	}
 
-	loanBorrower := &model.LoanBorrower{
-		MailingAddress: types.Address{},
-	}
-	err = copier.CopyWithOption(loanBorrower, borrowerEntity, copier.Option{
-		IgnoreEmpty:   false,
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-		},
-	})
-	if err != nil {
-		return nil, errorx.GetFailedTransErr(err)
-	}
-	loanBorrower.Id = 0
+	// loanBorrower := &model.LoanBorrower{
+	// 	MailingAddress: types.Address{},
+	// }
+	// err = copier.CopyWithOption(loanBorrower, borrowerEntity, copier.Option{
+	// 	IgnoreEmpty:   false,
+	// 	DeepCopy:      true,
+	// 	CaseSensitive: true,
+	// 	Converters: []copier.TypeConverter{
+	// 		copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
+	// 	},
+	// })
+	// if err != nil {
+	// 	return nil, errorx.GetFailedTransErr(err)
+	// }
 	if oldLoan != nil && oldLoan.LoanBorrower != nil {
 		loanBorrower.Id = oldLoan.LoanBorrower.Id
 	}

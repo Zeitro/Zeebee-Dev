@@ -242,23 +242,11 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 
 	// loan borrower
 	loanBorrower = &model.LoanBorrower{}
-	borrowerEntity, err := l.svcCtx.BorrowerEntityRepo.GetBorrowerEntityById(l.ctx, in.BorrowerEntityId, in.BorrowerId)
+	loanBorrower, err = l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, in.BorrowerEntityId, in.BorrowerId)
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
-	err = copier.CopyWithOption(loanBorrower, borrowerEntity, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-		},
-	})
-	if err != nil {
-		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
-	}
-	loanBorrower.Id = 0
 	loanBorrower.LoanId = in.Id
-	loanBorrower.BorrowerEntityId = borrowerEntity.Id
 
 	// handle loan
 	loan = &model.Loan{}

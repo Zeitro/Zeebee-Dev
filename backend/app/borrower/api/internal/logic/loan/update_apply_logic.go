@@ -38,7 +38,7 @@ func (l *UpdateApplyLogic) UpdateApply(req *types.LoanApplyRequest) (resp *types
 
 	err = copier.CopyWithOption(&rpcReq.Data, req, copier.Option{
 		DeepCopy:      true,
-		IgnoreEmpty:   true,
+		IgnoreEmpty:   false,
 		CaseSensitive: true,
 	})
 	if err != nil {

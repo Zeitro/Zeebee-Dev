@@ -132,12 +132,7 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 	slice.SortBy(applicants, func(a, b *model.LoanApplicant) bool {
 		return b.IsPrimary
 	})
-	// applicants = slice.UniqueByComparator(applicants, func(item *model.LoanApplicant, other *model.LoanApplicant) bool {
-	// 	return item.FullName == other.FullName
-	// })
-	// if len(applicants) == 0 {
-	// 	return nil, nil, nil, nil, errors.New("No Applicant")
-	// }
+
 	primaryCount := slice.CountBy(applicants, func(index int, item *model.LoanApplicant) bool {
 		return item.IsPrimary
 	})
@@ -150,23 +145,10 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 
 	// loan borrower
 	loanBorrower = &model.LoanBorrower{}
-	borrowerEntity, err := l.svcCtx.BorrowerEntityRepo.GetBorrowerEntityById(l.ctx, in.BorrowerEntityId, in.BorrowerId)
+	loanBorrower, err = l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, in.BorrowerEntityId, in.BorrowerId)
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
-	err = copier.CopyWithOption(loanBorrower, borrowerEntity, copier.Option{
-		IgnoreEmpty:   false,
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-		},
-	})
-	if err != nil {
-		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
-	}
-	loanBorrower.Id = 0
-	loanBorrower.BorrowerEntityId = borrowerEntity.Id
 
 	// update loan
 	loan = &model.Loan{}

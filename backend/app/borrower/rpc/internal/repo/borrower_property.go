@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 
+	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -12,7 +13,9 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/repo/model"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/gormx"
+	"zeebee-backend/common/timex"
 	"zeebee-backend/common/types"
 )
 
@@ -253,4 +256,29 @@ func (repo *BorrowerPropertyRepo) IsExisted(ctx context.Context, id int64, borro
 	}
 
 	return count > 0, nil
+}
+
+// TranToLoanPropertyWithId get BorrowerProperty from id and trans it to LoanProperty
+func (repo *BorrowerPropertyRepo) TranToLoanPropertyWithId(ctx context.Context, id int64, borrowerId int64) (result *model.LoanProperty, err error) {
+	var property *model.BorrowerProperty
+	property, err = repo.GetBorrowerPropertyById(ctx, id, borrowerId)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	result = &model.LoanProperty{}
+	err = copier.CopyWithOption(result, property, copier.Option{
+		CaseSensitive: true,
+		DeepCopy:      true,
+		Converters: []copier.TypeConverter{
+			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
+		},
+	})
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	result.Id = 0
+	result.BorrowerPropertyId = property.Id
+
+	return result, nil
 }
