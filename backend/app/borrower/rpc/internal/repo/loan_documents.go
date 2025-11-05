@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"database/sql"
 	"time"
 
 	"github.com/pkg/errors"
@@ -81,13 +82,16 @@ func (repo *LoanDocumentRepo) SaveApplyFormDocumentWithTx(ctx context.Context, t
 	// get or create apply form loan document
 	applyFormLoanDocument, _ := repo.GetLoanDocumentWithTx(ctx, tx, loanId, constants.LoanDocumentFileTypeApplyForm)
 	if applyFormLoanDocument == nil || applyFormLoanDocument.Id == 0 {
-		now := time.Now()
+		now := &sql.NullTime{
+			Time:  time.Now(),
+			Valid: true,
+		}
 		applyFormLoanDocument = &model.LoanDocument{
 			LoanId:         loanId,
 			FileType:       constants.LoanDocumentFileTypeApplyForm,
 			Category:       constants.LoanDocumentCategoryInit,
 			Status:         constants.LoanDocumentStatusReadyForReview,
-			LastUploadedAt: &now,
+			LastUploadedAt: now,
 		}
 		err = tx.WithContext(ctx).
 			Create(applyFormLoanDocument).
