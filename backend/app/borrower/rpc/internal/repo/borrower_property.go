@@ -75,6 +75,36 @@ func (repo *BorrowerPropertyRepo) GetOrCreateWithTx(ctx context.Context, tx *gor
 	return
 }
 
+func (repo *BorrowerPropertyRepo) GetOrCreateBorrowerPropertyWithTx(ctx context.Context, tx *gorm.DB, borrowerId int64, address types.Address) (result *model.BorrowerProperty, err error) {
+	if len(address.City) == 0 || len(address.Address1) == 0 || len(address.State) == 0 {
+		return nil, fmt.Errorf("Invalid Borrower Address")
+	}
+
+	// if not existed,create one
+	err = tx.WithContext(ctx).
+		Where("borrower_id = ? ", borrowerId).
+		Where("address->>'state' = ?", address.State).
+		Where("address->>'city' = ?", address.City).
+		Where("address->>'address1' = ?", address.Address1).
+		Find(&result).
+		Error
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	if result == nil || result.Id == 0 {
+		data := &model.BorrowerProperty{
+			BorrowerId: borrowerId,
+			Address:    address,
+		}
+		err = tx.WithContext(ctx).Omit(clause.Associations).Create(data).Error
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		result = data
+	}
+	return
+}
+
 // GetOneWithTxByProperty return one property
 func (repo *BorrowerPropertyRepo) GetOneWithTxByProperty(ctx context.Context, tx *gorm.DB, data *model.BorrowerProperty) (result *model.BorrowerProperty, err error) {
 	err = tx.WithContext(ctx).
