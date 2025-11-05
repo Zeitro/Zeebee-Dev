@@ -21,7 +21,7 @@ var applyFormInfo *types.ApplyFormPdfRequest = &types.ApplyFormPdfRequest{
 	LoanPurpose:   "Purchase",
 	TotalAmount:   30000,
 	InitialAmount: 20000,
-	LoanProperty: &types.LoanPropertyPdfEntry{
+	LoanProperty: &types.LoanPropertyApplyFormPdfEntry{
 		PropertyType:         "Townhouse",
 		Unit:                 1,
 		LivingAreaSqft:       50,
@@ -39,14 +39,39 @@ var applyFormInfo *types.ApplyFormPdfRequest = &types.ApplyFormPdfRequest{
 			Address1: "sddd",
 			ZipCode:  "23214451",
 		},
+		ExistingLenderCompany:    "ex co",
+		ExistingRate:             2.23,
+		ExistingMaturityDate:     "06/01/2009",
+		PurchaseAmount:           36000,
+		PurchaseDate:             "06/01/2008",
+		HasAssignmentFee:         true,
+		AssignmentFeeAmount:      2333,
+		HasSubordinateDebt:       true,
+		SubordinateDebtAmount:    452000,
+		ScheduledCloseEscrowDate: "06/01/2008",
+		EstPropertyValueAmount:   36541,
+		LiquidityAmount:          20100,
+		Budget: &types.LoanBudgetEntry{
+			OriginalBudget:        20000,
+			RemainingBudget:       36000,
+			CostSpentToDateAmount: 12000,
+		},
+		MidConstruction:              false,
+		EstYearlyRentalIncomeAmount:  45120,
+		YearlyLiabilityExpenseAmount: 14521,
+		Dscr:                         25.36,
+		HasDelayedFinancing:          false,
+		HasCollateralizedBlanket:     true,
+		HasPropertiesVacant:          false,
+		HasShortTermRental:           true,
 	},
 	HoldbackAmount:    10000,
 	PrincipalAmount:   10000,
 	MaturityDate:      "06/03/2025",
 	PrepaymentPenalty: 30000,
 	BusinessStrategy:  []string{"Sale", "Rental"},
-	Applicants: []*types.LoanApplyApplicantEntry{
-		&types.LoanApplyApplicantEntry{
+	Applicants: []*types.LoanApplicantApplyFormPdfEntry{
+		&types.LoanApplicantApplyFormPdfEntry{
 			FirstName:        "Wei",
 			MidName:          "",
 			LastName:         "Wang",
@@ -61,7 +86,7 @@ var applyFormInfo *types.ApplyFormPdfRequest = &types.ApplyFormPdfRequest{
 			DriverLicenseNum: "12235441122147",
 			Address:          myAddress,
 		},
-		&types.LoanApplyApplicantEntry{
+		&types.LoanApplicantApplyFormPdfEntry{
 			FirstName:        "Wei2",
 			MidName:          "",
 			LastName:         "Wang",
@@ -77,35 +102,14 @@ var applyFormInfo *types.ApplyFormPdfRequest = &types.ApplyFormPdfRequest{
 			Address:          myAddress,
 		},
 	},
-	ExistingLenderCompany:    "ex co",
-	ExistingRate:             2.23,
-	ExistingMaturityDate:     "06/01/2009",
-	PurchaseAmount:           36000,
-	PurchaseDate:             "06/01/2008",
-	HasAssignmentFee:         true,
-	AssignmentFeeAmount:      2333,
-	HasSubordinateDebt:       true,
-	SubordinateDebtAmount:    452000,
-	ScheduledCloseEscrowDate: "06/01/2008",
-	LoanTerm:                 12,
-	Arv:                      36220,
-	Ltv:                      36541,
-	LiquidityAmount:          20100,
-	Budget: &types.LoanBudgetEntry{
-		OriginalBudget:        20000,
-		RemainingBudget:       36000,
-		CostSpentToDateAmount: 12000,
-	},
-	MidConstruction:          false,
-	EstCreditScore:           450,
-	EstYearlyRentalIncome:    45120,
-	YearlyLiabilityExpense:   14521,
-	Dscr:                     25.36,
-	ReservesAmount:           145211,
-	HasDelayedFinancing:      false,
-	HasCollateralizedBlanket: true,
-	HasPropertiesVacant:      false,
-	HasShortTermRental:       true,
+
+	LoanTerm: 12,
+	Arv:      36220,
+
+	EstCreditScore: 450,
+
+	ReservesAmount: 145211,
+
 	// AdditionalInfo:           "extral info",
 	TransactionExperiences: []*types.LoanExperienceEntry{
 		&types.LoanExperienceEntry{
