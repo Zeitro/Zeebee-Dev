@@ -853,6 +853,11 @@ message PropertyPageEntry{
   int64 active_loan_count = 11;
   int64 archived_loan_count = 12;
   AddressEntry address = 13;
+  float living_area_sqft = 14;
+  int32 bedrooms = 15;
+  int32 bathrooms = 16;
+  int32 unit = 17;
+
 }
 
 message PropertyPageRequest {
@@ -915,6 +920,9 @@ message PropertyDetailSummaryResponseData {
   repeated LoanEntry pending_loans = 10;
   repeated LoanEntry active_loans = 11;
   repeated LoanEntry archived_loans = 12;
+  float living_area_sqft = 13;
+  int32 bedrooms = 14;
+  int32 bathrooms = 15;
 }
 
 // create property

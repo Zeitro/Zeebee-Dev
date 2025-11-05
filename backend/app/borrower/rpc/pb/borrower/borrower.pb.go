@@ -6613,6 +6613,10 @@ type PropertyPageEntry struct {
 	ActiveLoanCount           int64                  `protobuf:"varint,11,opt,name=active_loan_count,json=activeLoanCount,proto3" json:"active_loan_count,omitempty"`
 	ArchivedLoanCount         int64                  `protobuf:"varint,12,opt,name=archived_loan_count,json=archivedLoanCount,proto3" json:"archived_loan_count,omitempty"`
 	Address                   *AddressEntry          `protobuf:"bytes,13,opt,name=address,proto3" json:"address,omitempty"`
+	LivingAreaSqft            float32                `protobuf:"fixed32,14,opt,name=living_area_sqft,json=livingAreaSqft,proto3" json:"living_area_sqft,omitempty"`
+	Bedrooms                  int32                  `protobuf:"varint,15,opt,name=bedrooms,proto3" json:"bedrooms,omitempty"`
+	Bathrooms                 int32                  `protobuf:"varint,16,opt,name=bathrooms,proto3" json:"bathrooms,omitempty"`
+	Unit                      int32                  `protobuf:"varint,17,opt,name=unit,proto3" json:"unit,omitempty"`
 	unknownFields             protoimpl.UnknownFields
 	sizeCache                 protoimpl.SizeCache
 }
@@ -6736,6 +6740,34 @@ func (x *PropertyPageEntry) GetAddress() *AddressEntry {
 		return x.Address
 	}
 	return nil
+}
+
+func (x *PropertyPageEntry) GetLivingAreaSqft() float32 {
+	if x != nil {
+		return x.LivingAreaSqft
+	}
+	return 0
+}
+
+func (x *PropertyPageEntry) GetBedrooms() int32 {
+	if x != nil {
+		return x.Bedrooms
+	}
+	return 0
+}
+
+func (x *PropertyPageEntry) GetBathrooms() int32 {
+	if x != nil {
+		return x.Bathrooms
+	}
+	return 0
+}
+
+func (x *PropertyPageEntry) GetUnit() int32 {
+	if x != nil {
+		return x.Unit
+	}
+	return 0
 }
 
 type PropertyPageRequest struct {
@@ -7236,6 +7268,9 @@ type PropertyDetailSummaryResponseData struct {
 	PendingLoans              []*LoanEntry           `protobuf:"bytes,10,rep,name=pending_loans,json=pendingLoans,proto3" json:"pending_loans,omitempty"`
 	ActiveLoans               []*LoanEntry           `protobuf:"bytes,11,rep,name=active_loans,json=activeLoans,proto3" json:"active_loans,omitempty"`
 	ArchivedLoans             []*LoanEntry           `protobuf:"bytes,12,rep,name=archived_loans,json=archivedLoans,proto3" json:"archived_loans,omitempty"`
+	LivingAreaSqft            float32                `protobuf:"fixed32,13,opt,name=living_area_sqft,json=livingAreaSqft,proto3" json:"living_area_sqft,omitempty"`
+	Bedrooms                  int32                  `protobuf:"varint,14,opt,name=bedrooms,proto3" json:"bedrooms,omitempty"`
+	Bathrooms                 int32                  `protobuf:"varint,15,opt,name=bathrooms,proto3" json:"bathrooms,omitempty"`
 	unknownFields             protoimpl.UnknownFields
 	sizeCache                 protoimpl.SizeCache
 }
@@ -7352,6 +7387,27 @@ func (x *PropertyDetailSummaryResponseData) GetArchivedLoans() []*LoanEntry {
 		return x.ArchivedLoans
 	}
 	return nil
+}
+
+func (x *PropertyDetailSummaryResponseData) GetLivingAreaSqft() float32 {
+	if x != nil {
+		return x.LivingAreaSqft
+	}
+	return 0
+}
+
+func (x *PropertyDetailSummaryResponseData) GetBedrooms() int32 {
+	if x != nil {
+		return x.Bedrooms
+	}
+	return 0
+}
+
+func (x *PropertyDetailSummaryResponseData) GetBathrooms() int32 {
+	if x != nil {
+		return x.Bathrooms
+	}
+	return 0
 }
 
 // create property
@@ -13529,7 +13585,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"updated_at\x18\n" +
 	" \x01(\tR\tupdatedAt\x12\x1d\n" +
 	"\n" +
-	"loan_count\x18\v \x01(\x05R\tloanCount\"\xa7\x04\n" +
+	"loan_count\x18\v \x01(\x05R\tloanCount\"\x9f\x05\n" +
 	"\x11PropertyPageEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
 	"\rproperty_type\x18\x02 \x01(\tR\fpropertyType\x12!\n" +
@@ -13546,7 +13602,11 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	" \x01(\x03R\x10pendingLoanCount\x12*\n" +
 	"\x11active_loan_count\x18\v \x01(\x03R\x0factiveLoanCount\x12.\n" +
 	"\x13archived_loan_count\x18\f \x01(\x03R\x11archivedLoanCount\x120\n" +
-	"\aaddress\x18\r \x01(\v2\x16.borrower.AddressEntryR\aaddress\"L\n" +
+	"\aaddress\x18\r \x01(\v2\x16.borrower.AddressEntryR\aaddress\x12(\n" +
+	"\x10living_area_sqft\x18\x0e \x01(\x02R\x0elivingAreaSqft\x12\x1a\n" +
+	"\bbedrooms\x18\x0f \x01(\x05R\bbedrooms\x12\x1c\n" +
+	"\tbathrooms\x18\x10 \x01(\x05R\tbathrooms\x12\x12\n" +
+	"\x04unit\x18\x11 \x01(\x05R\x04unit\"L\n" +
 	"\x13PropertyPageRequest\x125\n" +
 	"\x04data\x18\x01 \x01(\v2!.borrower.PropertyPageRequestDataR\x04data\"N\n" +
 	"\x14PropertyPageResponse\x126\n" +
@@ -13578,7 +13638,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x19PropertyDetailRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vborrower_id\x18\x02 \x01(\x03R\n" +
-	"borrowerId\"\xbc\x04\n" +
+	"borrowerId\"\xa0\x05\n" +
 	"!PropertyDetailSummaryResponseData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
 	"\rproperty_type\x18\x02 \x01(\tR\fpropertyType\x12!\n" +
@@ -13592,7 +13652,10 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\rpending_loans\x18\n" +
 	" \x03(\v2\x13.borrower.LoanEntryR\fpendingLoans\x126\n" +
 	"\factive_loans\x18\v \x03(\v2\x13.borrower.LoanEntryR\vactiveLoans\x12:\n" +
-	"\x0earchived_loans\x18\f \x03(\v2\x13.borrower.LoanEntryR\rarchivedLoans\"P\n" +
+	"\x0earchived_loans\x18\f \x03(\v2\x13.borrower.LoanEntryR\rarchivedLoans\x12(\n" +
+	"\x10living_area_sqft\x18\r \x01(\x02R\x0elivingAreaSqft\x12\x1a\n" +
+	"\bbedrooms\x18\x0e \x01(\x05R\bbedrooms\x12\x1c\n" +
+	"\tbathrooms\x18\x0f \x01(\x05R\tbathrooms\"P\n" +
 	"\x15PropertyCreateRequest\x127\n" +
 	"\x04data\x18\x01 \x01(\v2#.borrower.PropertyCreateRequestDataR\x04data\"\x8b\x02\n" +
 	"\x19PropertyCreateRequestData\x12#\n" +

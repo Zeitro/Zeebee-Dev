@@ -615,6 +615,10 @@ type PrimaryPreApprovalLoan struct {
 type PropertyPageEntry struct {
 	Id                        int64         `json:"id"`
 	PropertyType              string        `json:"property_type"`
+	LivingAreaSqft            float32       `json:"living_area_sqft"`
+	Bedrooms                  int32         `json:"bedrooms"`
+	Bathrooms                 float32       `json:"bathrooms"`
+	Unit                      int32         `json:"unit"`
 	TotalAmount               float64       `json:"total_amount"`
 	Address                   *AddressEntry `json:"address"`
 	TotalPrincipalAmount      float64       `json:"total_principal_amount"`

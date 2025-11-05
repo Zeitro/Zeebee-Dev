@@ -7,6 +7,7 @@ import (
 
 	"github.com/duke-git/lancet/v2/datetime"
 	"github.com/duke-git/lancet/v2/slice"
+	"github.com/jinzhu/copier"
 
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
@@ -37,30 +38,39 @@ func (l *PageLogic) Page(in *borrower.PropertyPageRequest) (resp *borrower.Prope
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	propertyBasePageResult, err := l.svcCtx.BorrowerPropertyRepo.Page(l.ctx, in.Data)
+	borrowerPropertyPageResult, err := l.svcCtx.BorrowerPropertyRepo.Page(l.ctx, in.Data)
 	if err != nil {
 		return nil, err
 	}
 
 	applicantRepo := l.svcCtx.LoanApplicantRepo
-	properties := make([]*borrower.PropertyPageEntry, len(propertyBasePageResult.List))
+	properties := make([]*borrower.PropertyPageEntry, len(borrowerPropertyPageResult.List))
 	now := datetime.BeginOfDay(time.Now())
-	for i, propertyBase := range propertyBasePageResult.List {
-		propertyPageEntry := &borrower.PropertyPageEntry{
-			Id: propertyBase.Id,
-			// PropertyType: string(property.PropertyType),
-			// TotalAmount: propertyBase.TotalAmount,
-			Address: &borrower.AddressEntry{
-				State:    propertyBase.Address.State,
-				City:     propertyBase.Address.City,
-				Address1: propertyBase.Address.Address1,
-				Address2: propertyBase.Address.Address2,
-				ZipCode:  propertyBase.Address.ZipCode,
-			},
+	for i, borrowerProperty := range borrowerPropertyPageResult.List {
+		// propertyPageEntry := &borrower.PropertyPageEntry{
+		// 	Id: propertyBase.Id,
+		// 	// PropertyType: string(property.PropertyType),
+		// 	// TotalAmount: propertyBase.TotalAmount,
+		// 	Address: &borrower.AddressEntry{
+		// 		State:    propertyBase.Address.State,
+		// 		City:     propertyBase.Address.City,
+		// 		Address1: propertyBase.Address.Address1,
+		// 		Address2: propertyBase.Address.Address2,
+		// 		ZipCode:  propertyBase.Address.ZipCode,
+		// 	},
+		// }
+
+		propertyPageEntry := &borrower.PropertyPageEntry{}
+		err = copier.CopyWithOption(propertyPageEntry, borrowerProperty, copier.Option{
+			DeepCopy:      true,
+			CaseSensitive: true,
+		})
+		if err != nil {
+			return nil, errorx.GetFailedTransReqErr(err)
 		}
 		var maturityDate *sql.NullTime
 		var totalRate float32 = 0.0
-		for _, loan := range propertyBase.Loans {
+		for _, loan := range borrowerProperty.Loans {
 			switch loan.Stage {
 			case constants.LoanStagePending:
 				propertyPageEntry.PendingLoanCount++
@@ -92,7 +102,7 @@ func (l *PageLogic) Page(in *borrower.PropertyPageRequest) (resp *borrower.Prope
 		// 	propertyPageEntry.Applicants = append(propertyPageEntry.Applicants, applicant.FullName)
 		// }
 		if totalRate > 0 {
-			propertyPageEntry.AvgRate = totalRate / float32(len(propertyBase.Loans))
+			propertyPageEntry.AvgRate = totalRate / float32(len(borrowerProperty.Loans))
 		}
 		if maturityDate != nil && maturityDate.Valid {
 			propertyPageEntry.NearestMaturityDate = maturityDate.Time.Format("01/02/2006")
@@ -105,10 +115,10 @@ func (l *PageLogic) Page(in *borrower.PropertyPageRequest) (resp *borrower.Prope
 
 	return &borrower.PropertyPageResponse{
 		Data: &borrower.PropertyPageResponseData{
-			Page:      propertyBasePageResult.Page,
-			Limit:     propertyBasePageResult.Limit,
-			Total:     propertyBasePageResult.Total,
-			TotalPage: propertyBasePageResult.TotalPage,
+			Page:      borrowerPropertyPageResult.Page,
+			Limit:     borrowerPropertyPageResult.Limit,
+			Total:     borrowerPropertyPageResult.Total,
+			TotalPage: borrowerPropertyPageResult.TotalPage,
 			List:      properties,
 		},
 	}, nil
