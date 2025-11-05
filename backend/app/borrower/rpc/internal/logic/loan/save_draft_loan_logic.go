@@ -282,7 +282,7 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 		loan.LenderCompany = lender.Name
 	}
 
-	// loan_borrower
+	// LoanBorrower
 	var loanBorrower *model.LoanBorrower
 	if reqData.BorrowerEntityId > 0 {
 		loanBorrower, err = l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, reqData.BorrowerEntityId, reqData.BorrowerId)
@@ -292,7 +292,7 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 		loanBorrower.LoanId = reqData.Id
 	}
 
-	// loan_property
+	// LoanProperty
 	var loanProperty *model.LoanProperty
 	if reqData.LoanProperty != nil {
 		if reqData.LoanProperty.BorrowerPropertyId > 0 {
@@ -315,7 +315,7 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 		}
 	}
 
-	// applicants
+	// LoanApplicants
 	var applicants []*model.LoanApplicant
 	for _, applicant := range reqData.Applicants {
 		loanApplicant, err := l.svcCtx.BorrowerApplicantRepo.TranToLoanApplicantWithId(l.ctx, applicant.BorrowerApplicantId, reqData.BorrowerId)

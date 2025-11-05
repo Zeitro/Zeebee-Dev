@@ -22,6 +22,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/limiter"
 	"zeebee-backend/common/stringx"
+	commontypes "zeebee-backend/common/types"
 	"zeebee-backend/common/utils"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -178,6 +179,46 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int
 	if lenderCompany.Status != constants.LenderCompanyStatusActive {
 		return errors.WithStack(errors.New("lender company is not active"))
 	}
+	// prepare data
+	var borrowerProperty *model.BorrowerProperty
+	var borrowerApplicant *model.BorrowerApplicant
+	err = l.svcCtx.UserRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
+		var innerErr error
+
+		eg := errorx.NewErrorGroup()
+		eg.Do(
+			// get BorrowerProperty
+			func() error {
+				var err error
+				borrowerProperty, err = l.svcCtx.BorrowerPropertyRepo.GetOrCreateBorrowerPropertyWithTx(l.ctx, tx, borrowerId, commontypes.Address{
+					State:    preApproveRequest.Property.Address.State,
+					City:     preApproveRequest.Property.Address.City,
+					Address1: preApproveRequest.Property.Address.Address1,
+					Address2: preApproveRequest.Property.Address.Address2,
+					ZipCode:  preApproveRequest.Property.Address.ZipCode,
+				})
+				return err
+			},
+			// create BorrowerApplicant
+			func() error {
+				var err error
+				borrowerApplicant = &model.BorrowerApplicant{
+					BorrowerId:     borrowerId,
+					FirstName:      preApproveRequest.Borrower.Name,
+					Email:          preApproveRequest.Borrower.Email,
+					Phone:          preApproveRequest.Borrower.Phone,
+					EstCreditScore: preApproveRequest.Borrower.FicoScore,
+				}
+				borrowerApplicant, err = l.svcCtx.BorrowerApplicantRepo.CreateWithTx(l.ctx, tx, borrowerApplicant, false)
+				return err
+			},
+		)
+		innerErr = eg.Error()
+		return innerErr
+	})
+	if err != nil {
+		return err
+	}
 
 	// create draft loan
 	saveDraftLogic := loanlogic.NewSaveDraftLoanLogic(ctx, l.svcCtx)
@@ -189,54 +230,32 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int
 			LoanType:         preApproveRequest.Loan.LoanType,
 			TotalAmount:      preApproveRequest.Loan.TotalAmount,
 			InitialAmount:    preApproveRequest.Loan.InitialAmount,
-			LoanProperty:     &borrower.LoanPropertyApplyEntry{
-				// todo handle borrower property
-				// PropertyBase: &borrower.PropertyBaseEntry{
-				// 	Address: &borrower.AddressEntry{
-				// 		State:    preApproveRequest.Property.Address.State,
-				// 		City:     preApproveRequest.Property.Address.City,
-				// 		Address1: preApproveRequest.Property.Address.Address1,
-				// 		Address2: preApproveRequest.Property.Address.Address2,
-				// 		ZipCode:  preApproveRequest.Property.Address.ZipCode,
-				// 	},
-				// 	Unit: int32(preApproveRequest.Property.Unit),
-				// },
-				// Unit:         int32(preApproveRequest.Property.Unit),
-				// PropertyType: preApproveRequest.Property.PropertyType,
+			LoanProperty: &borrower.LoanPropertyApplyEntry{
+				BorrowerPropertyId:  borrowerProperty.Id,
+				FuturePropertyType:  preApproveRequest.Property.PropertyType,
+				FutureUnit:          int32(preApproveRequest.Property.Unit),
+				PurchaseAmount:      preApproveRequest.Loan.PurchaseAmount,
+				PurchaseDate:        preApproveRequest.Loan.PurchaseDate,
+				HasAssignmentFee:    preApproveRequest.Loan.HasAssignmentFee,
+				AssignmentFeeAmount: preApproveRequest.Loan.AssignmentFeeAmount,
+				Budget: &borrower.LoanBudgetEntry{
+					OriginalBudget: preApproveRequest.Loan.BudgetAmount,
+				},
+				EstPropertyValueAmount: preApproveRequest.Loan.EstPropertyValueAmount,
 			},
 			HoldbackAmount:  preApproveRequest.Loan.HoldbackAmount,
 			PrincipalAmount: preApproveRequest.Loan.PrincipalAmount,
 			LenderCompanyId: lenderCompanyId,
 			BorrowerId:      borrowerId,
-			// todo handle applicant
-			// Applicants: []*borrower.ApplicantEntry{
-			// 	{
-			// 		IsPrimary: true,
-			// 		FirstName: preApproveRequest.Borrower.Name,
-			// 		Phone:     preApproveRequest.Borrower.Phone,
-			// 	},
-			// },
-			// PurchaseAmount:      preApproveRequest.Loan.PurchaseAmount,
-			// PurchaseDate:        preApproveRequest.Loan.PurchaseDate,
-			// HasAssignmentFee:    preApproveRequest.Loan.HasAssignmentFee,
-			// AssignmentFeeAmount: preApproveRequest.Loan.AssignmentFeeAmount,
-			LoanTerm: preApproveRequest.Loan.LoanTerm,
-			Arv:      preApproveRequest.Loan.Arv,
-
-			// Budget: &borrower.LoanBudgetEntry{
-			// 	OriginalBudget:        float32(preApproveRequest.Loan.BudgetAmount),
-			// 	CostSpentToDateAmount: float32(preApproveRequest.Loan.CostSpentToDateAmount),
-			// },
+			Applicants: []*borrower.LoanApplicantApplyEntry{
+				{
+					IsPrimary:           true,
+					BorrowerApplicantId: borrowerApplicant.Id,
+				},
+			},
+			LoanTerm:       preApproveRequest.Loan.LoanTerm,
+			Arv:            preApproveRequest.Loan.Arv,
 			EstCreditScore: preApproveRequest.Borrower.FicoScore,
-			// EstPropertyValueAmount: preApproveRequest.Loan.EstPropertyValueAmount,
-
-			// borrower info
-			// todo handle borrower
-			// LoanBorrower: &borrower.LoanBorrowerEntry{
-			// 	Name:         preApproveRequest.Borrower.Name,
-			// 	ContactEmail: preApproveRequest.Borrower.Email,
-			// 	ContactPhone: preApproveRequest.Borrower.Phone,
-			// },
 		},
 	}
 	if calcResult != nil {

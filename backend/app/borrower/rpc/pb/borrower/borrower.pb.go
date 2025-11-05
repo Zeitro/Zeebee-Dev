@@ -2664,9 +2664,9 @@ func (x *LoanEntry) GetRequestedLoanDocumentCount() int64 {
 
 type LoanBudgetEntry struct {
 	state                 protoimpl.MessageState `protogen:"open.v1"`
-	OriginalBudget        float32                `protobuf:"fixed32,1,opt,name=original_budget,json=originalBudget,proto3" json:"original_budget,omitempty"`
-	RemainingBudget       float32                `protobuf:"fixed32,2,opt,name=remaining_budget,json=remainingBudget,proto3" json:"remaining_budget,omitempty"`
-	CostSpentToDateAmount float32                `protobuf:"fixed32,3,opt,name=cost_spent_to_date_amount,json=costSpentToDateAmount,proto3" json:"cost_spent_to_date_amount,omitempty"`
+	OriginalBudget        float64                `protobuf:"fixed64,1,opt,name=original_budget,json=originalBudget,proto3" json:"original_budget,omitempty"`
+	RemainingBudget       float64                `protobuf:"fixed64,2,opt,name=remaining_budget,json=remainingBudget,proto3" json:"remaining_budget,omitempty"`
+	CostSpentToDateAmount float64                `protobuf:"fixed64,3,opt,name=cost_spent_to_date_amount,json=costSpentToDateAmount,proto3" json:"cost_spent_to_date_amount,omitempty"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
 }
@@ -2701,21 +2701,21 @@ func (*LoanBudgetEntry) Descriptor() ([]byte, []int) {
 	return file_app_borrower_rpc_pb_borrower_proto_rawDescGZIP(), []int{43}
 }
 
-func (x *LoanBudgetEntry) GetOriginalBudget() float32 {
+func (x *LoanBudgetEntry) GetOriginalBudget() float64 {
 	if x != nil {
 		return x.OriginalBudget
 	}
 	return 0
 }
 
-func (x *LoanBudgetEntry) GetRemainingBudget() float32 {
+func (x *LoanBudgetEntry) GetRemainingBudget() float64 {
 	if x != nil {
 		return x.RemainingBudget
 	}
 	return 0
 }
 
-func (x *LoanBudgetEntry) GetCostSpentToDateAmount() float32 {
+func (x *LoanBudgetEntry) GetCostSpentToDateAmount() float64 {
 	if x != nil {
 		return x.CostSpentToDateAmount
 	}
@@ -13350,9 +13350,9 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x04code\x18B \x01(\tR\x04code\x12>\n" +
 	"\x1aRequestedLoanDocumentCount\x18C \x01(\x03R\x1aRequestedLoanDocumentCount\"\x9f\x01\n" +
 	"\x0fLoanBudgetEntry\x12'\n" +
-	"\x0foriginal_budget\x18\x01 \x01(\x02R\x0eoriginalBudget\x12)\n" +
-	"\x10remaining_budget\x18\x02 \x01(\x02R\x0fremainingBudget\x128\n" +
-	"\x19cost_spent_to_date_amount\x18\x03 \x01(\x02R\x15costSpentToDateAmount\"H\n" +
+	"\x0foriginal_budget\x18\x01 \x01(\x01R\x0eoriginalBudget\x12)\n" +
+	"\x10remaining_budget\x18\x02 \x01(\x01R\x0fremainingBudget\x128\n" +
+	"\x19cost_spent_to_date_amount\x18\x03 \x01(\x01R\x15costSpentToDateAmount\"H\n" +
 	"\x11LoanCreateRequest\x123\n" +
 	"\x04data\x18\x01 \x01(\v2\x1f.borrower.LoanCreateRequestDataR\x04data\"\xc7\x01\n" +
 	"\x1fThirdPartyLoanPropertyEditEntry\x12\x0e\n" +
