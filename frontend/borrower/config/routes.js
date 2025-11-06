@@ -62,6 +62,7 @@ export const navRouter = [
 				path: '/management/borrower',
 				title: 'Management ( Borrower )',
 				menuTitle: 'Borrower',
+				hideCrumbs: true,
 			},
 		],
 	},

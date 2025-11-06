@@ -1,11 +1,29 @@
 import React from 'react';
-import { TableOperation } from '@repo/shared-methods';
-const useBorrowingEntity = () => {
+import { BtnPopUpModal, DeleteBtn, TableOperation } from '@repo/shared-methods';
+import AddModal from './Add';
+import { createRequest } from '@repo/shared-methods/utils';
+import { useState } from 'react';
+const useBorrowingEntity = ({ handleSearch }) => {
+	const { request } = createRequest();
+	const [loading, setLoading] = useState(false);
+	const handleDelete = async (id) => {
+		try {
+			setLoading(true);
+			await request(`/borrower_applicant/${id}`, {
+				method: 'DELETE',
+			});
+			setLoading(false);
+			handleSearch();
+		} catch (error) {
+			console.log(error);
+			setLoading(false);
+		}
+	};
 	const columns = [
 		{
 			title: 'Name',
-			dataIndex: 'name',
-			key: 'name',
+			dataIndex: 'full_name',
+			key: 'full_name',
 			ellipsis: true,
 		},
 
@@ -14,12 +32,14 @@ const useBorrowingEntity = () => {
 			dataIndex: 'ssn',
 			key: 'ssn',
 			ellipsis: true,
+			width: 160,
 		},
 		{
 			title: 'Phone number',
 			dataIndex: 'phone',
 			key: 'phone',
 			ellipsis: true,
+			width: 160,
 		},
 		{
 			title: 'Email',
@@ -29,14 +49,15 @@ const useBorrowingEntity = () => {
 		},
 		{
 			title: 'Estimated credit score',
-			dataIndex: 'address',
-			key: 'address',
+			dataIndex: 'est_credit_score',
+			key: 'est_credit_score',
 			ellipsis: true,
+			width: 200,
 		},
 		{
 			title: 'Primary address',
-			dataIndex: 'state',
-			key: 'own',
+			dataIndex: ['address', 'address1'],
+			key: 'address1',
 			ellipsis: true,
 		},
 
@@ -49,12 +70,44 @@ const useBorrowingEntity = () => {
 			render: (_, record) => (
 				<TableOperation
 					record={record}
-					// getItems={(editItem, deleteItem, detailsItem) => {
-					// 	const arr = [];
-
-					// 	return arr;
-					// }}
-					onSelect={(key) => {}}
+					getItems={(editItem, deleteItem) => {
+						const edit = {
+							key: editItem.key,
+							label: (
+								<BtnPopUpModal
+									getContent={(setOpen) => (
+										<AddModal
+											setOpen={setOpen}
+											handleSearch={handleSearch}
+											rowData={record}
+										/>
+									)}
+									type="primary"
+									size="large"
+									isButton={false}
+									icon={editItem.icon}
+								>
+									Edit
+								</BtnPopUpModal>
+							),
+						};
+						const deleteInfo = {
+							key: deleteItem.key,
+							label: (
+								<DeleteBtn
+									type="default"
+									title="Are you sure delete this borrower?"
+									content={record.full_name}
+									isButton={false}
+									onOk={() => handleDelete(record.id)}
+									loading={loading}
+								>
+									Delete
+								</DeleteBtn>
+							),
+						};
+						return [edit, deleteInfo];
+					}}
 				/>
 			),
 		},

@@ -1,8 +1,24 @@
 import React from 'react';
 import { BtnPopUpModal, DeleteBtn, TableOperation } from '@repo/shared-methods';
-import { formatPhone } from '@repo/shared-methods/utils';
+import { createRequest, formatPhone } from '@repo/shared-methods/utils';
 import AddModal from './Add';
+import { useState } from 'react';
 const useBorrowingEntity = ({ handleSearch }) => {
+	const { request } = createRequest();
+	const [loading, setLoading] = useState(false);
+	const handleDelete = async (id) => {
+		try {
+			setLoading(true);
+			await request(`/borrower_entity/${id}`, {
+				method: 'DELETE',
+			});
+			setLoading(false);
+			handleSearch();
+		} catch (error) {
+			console.log(error);
+			setLoading(false);
+		}
+	};
 	const columns = [
 		{
 			title: 'Name',
@@ -86,6 +102,8 @@ const useBorrowingEntity = ({ handleSearch }) => {
 									title="Are you sure delete this borrowing entity?"
 									content={record.name}
 									isButton={false}
+									onOk={() => handleDelete(record.id)}
+									loading={loading}
 								>
 									Delete
 								</DeleteBtn>

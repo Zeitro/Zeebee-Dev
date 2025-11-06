@@ -1,20 +1,18 @@
 'use client';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { createRequest, getPagination, transformArrayStructure } from '@repo/shared-methods/utils';
+import React, { useMemo, useRef, useState } from 'react';
+import { createRequest } from '@repo/shared-methods/utils';
 import { ReloadOutlined } from '@ant-design/icons';
-import { BtnPopUpModal, FilterField, FilterTable } from '@repo/shared-methods';
+import { BtnPopUpModal, FilterTable } from '@repo/shared-methods';
 import useBorrower from './components/useBorrower';
 import AddModal from './components/Add';
+import NewHeader from '@/components/NewHeader';
 const BorrowerManagement = () => {
-	const { request, cancel } = createRequest();
-	const filterFieldRef = useRef();
+	const { cancel } = createRequest();
 	const tableFilterRef = useRef();
 	const [searchValue, setSearchValue] = useState('');
-	const [pagination, setPagination] = useState(getPagination());
-	const { columns } = useBorrower();
-	const getList = useCallback(() => {
-		// request('');
-	}, [cancel, getPagination]);
+	const { columns } = useBorrower({
+		handleSearch: () => tableFilterRef?.current?.handleSearch(),
+	});
 
 	const filterList = useMemo(
 		() => [
@@ -29,11 +27,7 @@ const BorrowerManagement = () => {
 				filterType: 'button',
 				onClick: () => {
 					cancel('/property/page');
-					setPagination((v) => {
-						v.current = 1;
-						return { ...v };
-					});
-					getList();
+					tableFilterRef?.current?.handleSearch();
 				},
 			},
 			{
@@ -44,56 +38,45 @@ const BorrowerManagement = () => {
 				onClick: () => {
 					setSearchValue('');
 					setTimeout(() => {
-						setPagination((v) => {
-							v.current = 1;
-							return { ...v };
-						});
-						getList?.();
+						tableFilterRef?.current?.handleSearch();
 					}, 300);
 				},
-				colProps: {
-					className: 'flex-1',
-				},
-			},
-			{
-				filterType: 'button',
-				children: (
-					<BtnPopUpModal
-						getContent={(setOpen) => <AddModal setOpen={setOpen} />}
-						type="primary"
-						icon={''}
-						size="large"
-					>
-						Add
-					</BtnPopUpModal>
-				),
 			},
 		],
-		[searchValue, cancel, getList],
+		[searchValue, cancel],
 	);
 	return (
-		<FilterTable
-			filterWrapClassName="px-8 pt-10 pb-8"
-			ref={tableFilterRef}
-			columns={columns}
-			scroll={{ x: 1400 }}
-			filterList={filterList}
-			hasFilterField={true}
-			pagination={pagination}
-			onRow={(row) => ({
-				onClick: () => {
-					// handleSelectedRow(row, stage);
-				},
-			})}
-			getData={(params) => {
-				const payload = {
-					method: 'POST',
-					body: params,
-				};
-				// return request('api', payload);
-				return {};
-			}}
-		/>
+		<>
+			<NewHeader isShowCrumbs={true}>
+				<BtnPopUpModal
+					getContent={(setOpen) => (
+						<AddModal
+							setOpen={setOpen}
+							handleSearch={() => tableFilterRef?.current?.handleSearch()}
+						/>
+					)}
+					type="primary"
+					icon={''}
+					size="large"
+				>
+					Add borrower
+				</BtnPopUpModal>
+			</NewHeader>
+			<FilterTable
+				filterWrapClassName="px-8 pt-10 pb-8 flex-1 overflow-hidden"
+				ref={tableFilterRef}
+				columns={columns}
+				scroll={{ x: 1200 }}
+				filterList={filterList}
+				hasFilterField={true}
+				api="/borrower_applicant/page"
+				onRow={(row) => ({
+					onClick: () => {
+						// handleSelectedRow(row, stage);
+					},
+				})}
+			/>
+		</>
 	);
 };
 export default BorrowerManagement;
