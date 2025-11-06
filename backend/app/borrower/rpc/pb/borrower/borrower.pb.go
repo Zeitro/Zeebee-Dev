@@ -2289,9 +2289,9 @@ type LoanEntry struct {
 	// bool has_subordinate_debt = 37;
 	// double subordinate_debt_amount = 38;
 	// string scheduled_close_escrow_date = 39;
-	LoanTerm int32   `protobuf:"varint,40,opt,name=loan_term,json=loanTerm,proto3" json:"loan_term,omitempty"`
-	Arv      float64 `protobuf:"fixed64,41,opt,name=arv,proto3" json:"arv,omitempty"`
-	Ltv      float64 `protobuf:"fixed64,42,opt,name=ltv,proto3" json:"ltv,omitempty"`
+	LoanTerm int32 `protobuf:"varint,40,opt,name=loan_term,json=loanTerm,proto3" json:"loan_term,omitempty"`
+	// double arv = 41;
+	Ltv float64 `protobuf:"fixed64,42,opt,name=ltv,proto3" json:"ltv,omitempty"`
 	// double liquidity_amount = 43;
 	// LoanBudgetEntry budget = 44;
 	// bool mid_construction = 45;
@@ -2546,13 +2546,6 @@ func (x *LoanEntry) GetSource() string {
 func (x *LoanEntry) GetLoanTerm() int32 {
 	if x != nil {
 		return x.LoanTerm
-	}
-	return 0
-}
-
-func (x *LoanEntry) GetArv() float64 {
-	if x != nil {
-		return x.Arv
 	}
 	return 0
 }
@@ -4584,9 +4577,9 @@ type LoanApplyRequestData struct {
 	// bool has_subordinate_debt = 21;
 	// double subordinate_debt_amount = 22;
 	// string scheduled_close_escrow_date = 23;
-	LoanTerm int32   `protobuf:"varint,24,opt,name=loan_term,json=loanTerm,proto3" json:"loan_term,omitempty"`
-	Arv      float64 `protobuf:"fixed64,25,opt,name=arv,proto3" json:"arv,omitempty"`
-	Ltv      float64 `protobuf:"fixed64,26,opt,name=ltv,proto3" json:"ltv,omitempty"`
+	LoanTerm int32 `protobuf:"varint,24,opt,name=loan_term,json=loanTerm,proto3" json:"loan_term,omitempty"`
+	// double arv = 25;
+	Ltv float64 `protobuf:"fixed64,26,opt,name=ltv,proto3" json:"ltv,omitempty"`
 	// double liquidity_amount = 27;
 	// LoanBudgetEntry budget = 28;
 	// bool mid_construction = 29;
@@ -4732,13 +4725,6 @@ func (x *LoanApplyRequestData) GetApplicants() []*LoanApplicantApplyEntry {
 func (x *LoanApplyRequestData) GetLoanTerm() int32 {
 	if x != nil {
 		return x.LoanTerm
-	}
-	return 0
-}
-
-func (x *LoanApplyRequestData) GetArv() float64 {
-	if x != nil {
-		return x.Arv
 	}
 	return 0
 }
@@ -5725,8 +5711,7 @@ type PrimaryLoanPreApproval struct {
 	Ltv            float32                `protobuf:"fixed32,9,opt,name=ltv,proto3" json:"ltv,omitempty"`
 	Ltc            float32                `protobuf:"fixed32,10,opt,name=ltc,proto3" json:"ltc,omitempty"`
 	Ltarv          float32                `protobuf:"fixed32,11,opt,name=ltarv,proto3" json:"ltarv,omitempty"`
-	// Deprecated: Marked as deprecated in app/borrower/rpc/pb/borrower.proto.
-	Code              string `protobuf:"bytes,12,opt,name=code,proto3" json:"code,omitempty"`
+	// string code = 12 [deprecated = true];
 	RejectReason      string `protobuf:"bytes,13,opt,name=reject_reason,json=rejectReason,proto3" json:"reject_reason,omitempty"`
 	RequestId         string `protobuf:"bytes,14,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
 	LenderCompanyId   int64  `protobuf:"varint,15,opt,name=lender_company_id,json=lenderCompanyId,proto3" json:"lender_company_id,omitempty"`
@@ -5840,14 +5825,6 @@ func (x *PrimaryLoanPreApproval) GetLtarv() float32 {
 		return x.Ltarv
 	}
 	return 0
-}
-
-// Deprecated: Marked as deprecated in app/borrower/rpc/pb/borrower.proto.
-func (x *PrimaryLoanPreApproval) GetCode() string {
-	if x != nil {
-		return x.Code
-	}
-	return ""
 }
 
 func (x *PrimaryLoanPreApproval) GetRejectReason() string {
@@ -6090,6 +6067,7 @@ type LoanPropertyEntry struct {
 	HasShortTermRental           bool             `protobuf:"varint,34,opt,name=has_short_term_rental,json=hasShortTermRental,proto3" json:"has_short_term_rental,omitempty"`
 	EstPropertyValueAmount       float64          `protobuf:"fixed64,35,opt,name=est_property_value_amount,json=estPropertyValueAmount,proto3" json:"est_property_value_amount,omitempty"`
 	Address                      *AddressEntry    `protobuf:"bytes,36,opt,name=address,proto3" json:"address,omitempty"`
+	Arv                          float64          `protobuf:"fixed64,37,opt,name=arv,proto3" json:"arv,omitempty"`
 	unknownFields                protoimpl.UnknownFields
 	sizeCache                    protoimpl.SizeCache
 }
@@ -6369,6 +6347,13 @@ func (x *LoanPropertyEntry) GetAddress() *AddressEntry {
 	return nil
 }
 
+func (x *LoanPropertyEntry) GetArv() float64 {
+	if x != nil {
+		return x.Arv
+	}
+	return 0
+}
+
 type LoanPropertyApplyEntry struct {
 	state                        protoimpl.MessageState `protogen:"open.v1"`
 	Id                           int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -6400,6 +6385,7 @@ type LoanPropertyApplyEntry struct {
 	HasPropertiesVacant          bool                   `protobuf:"varint,27,opt,name=has_properties_vacant,json=hasPropertiesVacant,proto3" json:"has_properties_vacant,omitempty"`
 	HasShortTermRental           bool                   `protobuf:"varint,28,opt,name=has_short_term_rental,json=hasShortTermRental,proto3" json:"has_short_term_rental,omitempty"`
 	EstPropertyValueAmount       float64                `protobuf:"fixed64,29,opt,name=est_property_value_amount,json=estPropertyValueAmount,proto3" json:"est_property_value_amount,omitempty"`
+	Arv                          float64                `protobuf:"fixed64,30,opt,name=arv,proto3" json:"arv,omitempty"`
 	unknownFields                protoimpl.UnknownFields
 	sizeCache                    protoimpl.SizeCache
 }
@@ -6633,6 +6619,13 @@ func (x *LoanPropertyApplyEntry) GetHasShortTermRental() bool {
 func (x *LoanPropertyApplyEntry) GetEstPropertyValueAmount() float64 {
 	if x != nil {
 		return x.EstPropertyValueAmount
+	}
+	return 0
+}
+
+func (x *LoanPropertyApplyEntry) GetArv() float64 {
+	if x != nil {
+		return x.Arv
 	}
 	return 0
 }
@@ -13296,7 +13289,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x12driver_license_num\x18\x11 \x01(\tR\x10driverLicenseNum\x120\n" +
 	"\aaddress\x18\x12 \x01(\v2\x16.borrower.AddressEntryR\aaddress\x12(\n" +
 	"\x10loan_borrower_id\x18\x13 \x01(\x03R\x0eloanBorrowerId\x12\x14\n" +
-	"\x05phone\x18\x14 \x01(\tR\x05phone\"\x92\x0f\n" +
+	"\x05phone\x18\x14 \x01(\tR\x05phone\"\x80\x0f\n" +
 	"\tLoanEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
 	"\x05stage\x18\x02 \x01(\tR\x05stage\x12%\n" +
@@ -13333,7 +13326,6 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"applicants\x12\x16\n" +
 	"\x06source\x18\x1d \x01(\tR\x06source\x12\x1b\n" +
 	"\tloan_term\x18( \x01(\x05R\bloanTerm\x12\x10\n" +
-	"\x03arv\x18) \x01(\x01R\x03arv\x12\x10\n" +
 	"\x03ltv\x18* \x01(\x01R\x03ltv\x12(\n" +
 	"\x10est_credit_score\x18. \x01(\x05R\x0eestCreditScore\x12'\n" +
 	"\x0freserves_amount\x181 \x01(\x01R\x0ereservesAmount\x12V\n" +
@@ -13507,7 +13499,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x1bLoanLenderCompaniesResponse\x12\x12\n" +
 	"\x04data\x18\x01 \x03(\tR\x04data\"F\n" +
 	"\x10LoanApplyRequest\x122\n" +
-	"\x04data\x18\x01 \x01(\v2\x1e.borrower.LoanApplyRequestDataR\x04data\"\xae\t\n" +
+	"\x04data\x18\x01 \x01(\v2\x1e.borrower.LoanApplyRequestDataR\x04data\"\x9c\t\n" +
 	"\x14LoanApplyRequestData\x12!\n" +
 	"\floan_purpose\x18\x01 \x01(\tR\vloanPurpose\x12\x1b\n" +
 	"\tloan_type\x18\x02 \x01(\tR\bloanType\x12!\n" +
@@ -13526,7 +13518,6 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"applicants\x18\r \x03(\v2!.borrower.LoanApplicantApplyEntryR\n" +
 	"applicants\x12\x1b\n" +
 	"\tloan_term\x18\x18 \x01(\x05R\bloanTerm\x12\x10\n" +
-	"\x03arv\x18\x19 \x01(\x01R\x03arv\x12\x10\n" +
 	"\x03ltv\x18\x1a \x01(\x01R\x03ltv\x12(\n" +
 	"\x10est_credit_score\x18\x1e \x01(\x05R\x0eestCreditScore\x12'\n" +
 	"\x0freserves_amount\x18! \x01(\x01R\x0ereservesAmount\x12V\n" +
@@ -13644,7 +13635,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x04data\x18\x01 \x01(\v2%.borrower.LoanPreApprovalResponseDataR\x04data\"\x9f\x01\n" +
 	"\x1bLoanPreApprovalResponseData\x12:\n" +
 	"\aprimary\x18\x01 \x01(\v2 .borrower.PrimaryLoanPreApprovalR\aprimary\x12D\n" +
-	"\vsecondaries\x18\x02 \x03(\v2\".borrower.SecondaryLoanPreApprovalR\vsecondaries\"\x9c\x04\n" +
+	"\vsecondaries\x18\x02 \x03(\v2\".borrower.SecondaryLoanPreApprovalR\vsecondaries\"\x84\x04\n" +
 	"\x16PrimaryLoanPreApproval\x12\x1f\n" +
 	"\vis_approved\x18\x01 \x01(\bR\n" +
 	"isApproved\x12!\n" +
@@ -13658,8 +13649,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x03ltv\x18\t \x01(\x02R\x03ltv\x12\x10\n" +
 	"\x03ltc\x18\n" +
 	" \x01(\x02R\x03ltc\x12\x14\n" +
-	"\x05ltarv\x18\v \x01(\x02R\x05ltarv\x12\x16\n" +
-	"\x04code\x18\f \x01(\tB\x02\x18\x01R\x04code\x12#\n" +
+	"\x05ltarv\x18\v \x01(\x02R\x05ltarv\x12#\n" +
 	"\rreject_reason\x18\r \x01(\tR\frejectReason\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x0e \x01(\tR\trequestId\x12*\n" +
@@ -13683,7 +13673,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"*LoanSendPreApprovalNotificationRequestData\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x01 \x01(\tR\trequestId\x12*\n" +
-	"\x11lender_company_id\x18\x02 \x01(\x03R\x0flenderCompanyId\"\xc2\f\n" +
+	"\x11lender_company_id\x18\x02 \x01(\x03R\x0flenderCompanyId\"\xd4\f\n" +
 	"\x11LoanPropertyEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
 	"\rproperty_type\x18\x02 \x01(\tR\fpropertyType\x120\n" +
@@ -13721,8 +13711,8 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x15has_properties_vacant\x18! \x01(\bR\x13hasPropertiesVacant\x121\n" +
 	"\x15has_short_term_rental\x18\" \x01(\bR\x12hasShortTermRental\x129\n" +
 	"\x19est_property_value_amount\x18# \x01(\x01R\x16estPropertyValueAmount\x120\n" +
-	"\aaddress\x18$ \x01(\v2\x16.borrower.AddressEntryR\aaddress\"\xf8\n" +
-	"\n" +
+	"\aaddress\x18$ \x01(\v2\x16.borrower.AddressEntryR\aaddress\x12\x10\n" +
+	"\x03arv\x18% \x01(\x01R\x03arv\"\x8a\v\n" +
 	"\x16LoanPropertyApplyEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x120\n" +
 	"\x14borrower_property_id\x18\x02 \x01(\x03R\x12borrowerPropertyId\x120\n" +
@@ -13754,7 +13744,8 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x1ahas_collateralized_blanket\x18\x1a \x01(\bR\x18hasCollateralizedBlanket\x122\n" +
 	"\x15has_properties_vacant\x18\x1b \x01(\bR\x13hasPropertiesVacant\x121\n" +
 	"\x15has_short_term_rental\x18\x1c \x01(\bR\x12hasShortTermRental\x129\n" +
-	"\x19est_property_value_amount\x18\x1d \x01(\x01R\x16estPropertyValueAmount\"\xf6\x02\n" +
+	"\x19est_property_value_amount\x18\x1d \x01(\x01R\x16estPropertyValueAmount\x12\x10\n" +
+	"\x03arv\x18\x1e \x01(\x01R\x03arv\"\xf6\x02\n" +
 	"\x15BorrowerPropertyEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
 	"\rproperty_type\x18\x02 \x01(\tR\fpropertyType\x12!\n" +
