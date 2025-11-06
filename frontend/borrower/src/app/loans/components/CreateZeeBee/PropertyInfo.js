@@ -5,6 +5,7 @@ import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import { layoutCol, titleCol } from '@/enum/common';
 import { livingAreaProps } from '@repo/shared-methods/utils';
+import MoreCard from '@/app/properties/components/MoreCard';
 let name = 'loan_property';
 const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty, unitInfo }) => {
 	const { loanPurposeOptions, loanTypeOptions, propertyTypeOptions } = useGetOptions([
@@ -27,6 +28,7 @@ const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty, unit
 			<Col {...titleCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">
 				Property information
 			</Col>
+			<MoreCard className="mb-8" />
 			<AddressForm
 				{...addressProps}
 				addressName={[name, 'property_base', 'address', 'address1']}

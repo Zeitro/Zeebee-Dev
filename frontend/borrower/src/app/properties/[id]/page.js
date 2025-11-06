@@ -1,8 +1,7 @@
 'use client';
 import Image from 'next/image';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { propertiesFieldArr } from '@/enum/properties';
-import { Col, Row } from 'antd';
+import { propertiesFieldArr, propertyList } from '@/enum/properties';
 import PendingPage from '../../loans/components/Pending';
 import ActiveLoans from '../../loans/components/Active';
 import ArchivedLoans from '../../loans/components/Archived';
@@ -107,22 +106,31 @@ const PropertiesDetails = () => {
 		};
 	}, [changeSidebarCollapsed, getDetails]);
 
+	const getItem = (item, index) => {
+		return (
+			<div key={index} className={[item?.className || 'w-1/2', 'pb-4'].join(' ')}>
+				<p className="text-base-gray text-sm pb-1">{item.label}</p>
+				<span className="text-black-dark text-base font-medium">
+					{item?.render?.(rowData[item.value]) || '--'}
+				</span>
+			</div>
+		);
+	};
+
 	return (
-		<div className={['h-full px-8 py-6 overflow-hidden overflow-y-auto'].join(' ')}>
+		<div className={['h-full px-8 py-6 overflow-hidden overflow-y-auto flex-1'].join(' ')}>
 			<div className="flex items-center pb-6">
 				<Image src="/images/home.svg" width={32} height={32} alt="" />
 				<p className="text-[24px]/8 font-medium">{assemblyAddress(rowData?.address)}</p>
 			</div>
-			<Row className="border border-base-disabled rounded-lg px-4 py-4">
-				{propertiesFieldArr.map((item, index) => (
-					<Col lg={6} sm={12} xs={24} key={index}>
-						{item?.label && <div className="text-base-label pb-1">{item.label}</div>}
-						<div className="text-base/[24px] font-medium flex items-center">
-							{item?.render?.(rowData?.[item.value])}
-						</div>
-					</Col>
-				))}
-			</Row>
+			<div className="flex flex-wrap gap-6 flex-col md:flex-row">
+				<div className="w-full flex-1 border border-base-border rounded-lg pt-4 px-4 flex flex-wrap">
+					{propertyList.map(getItem)}
+				</div>
+				<div className="w-full  flex-1 border border-base-border rounded-lg pt-4 px-4 flex flex-wrap">
+					{propertiesFieldArr.map(getItem)}
+				</div>
+			</div>
 			{list.map((item, index) => {
 				return (
 					<div key={index}>

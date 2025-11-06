@@ -70,15 +70,20 @@ export const DeleteBtn = ({
 	children,
 	isButton,
 	icon,
+	type,
+	danger = true,
+	size,
 	...props
 }) => {
 	return (
 		<BtnPopUpModal
-			danger={true}
+			danger={danger}
 			modalType="confirm"
 			config={{ title, okText: 'Delete', okButtonProps: { danger: true }, ...props }}
 			isButton={isButton}
 			icon={icon}
+			type={type}
+			size={size}
 		>
 			{children || 'Delete'}
 		</BtnPopUpModal>

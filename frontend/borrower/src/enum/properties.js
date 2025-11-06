@@ -24,3 +24,29 @@ export const propertiesFieldArr = [
 		render: (v) => formatAmount(v),
 	},
 ];
+
+export const propertyList = [
+	{
+		label: 'Property type',
+		value: 'status',
+	},
+	{
+		label: 'Living Area',
+		value: 'status' + 'sqft',
+	},
+	{
+		label: 'Units',
+		value: 'year_built',
+		className: 'w-1/3',
+	},
+	{
+		label: 'Beds',
+		value: 'year_built',
+		className: 'w-1/3',
+	},
+	{
+		label: 'Baths',
+		value: 'year_built',
+		className: 'w-1/3',
+	},
+];

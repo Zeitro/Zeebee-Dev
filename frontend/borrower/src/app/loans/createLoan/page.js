@@ -144,7 +144,7 @@ const CreateLoanPage = () => {
 	);
 
 	return (
-		<div className="flex flex-col h-full">
+		<div className="flex flex-col h-full flex-1 overflow-hidden">
 			<div className="px-4 py-6 shrink-0 flex items-center justify-center border-b border-[#f0f0f0]">
 				<Steps
 					size="default"

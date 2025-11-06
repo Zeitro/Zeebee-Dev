@@ -22,7 +22,7 @@ const CreateZeeBeeLoan = () => {
 	} = useCreate();
 
 	return (
-		<div className="flex flex-col h-full">
+		<div className="flex flex-col h-full flex-1 overflow-hidden">
 			<div className="px-12 py-4 shrink-0 flex items-center justify-center border-b border-base-border">
 				<Steps size="default" current={currentStep} items={createZeeBeeSteps} />
 			</div>

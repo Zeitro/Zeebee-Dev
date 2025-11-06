@@ -98,7 +98,7 @@ const EditLoanPage = () => {
 	}, [property_type]);
 
 	return (
-		<Row className={['h-full', styles.editLoan].join(' ')}>
+		<Row className={['h-full flex-1 overflow-hidden', styles.editLoan].join(' ')}>
 			<Col flex={'200px'} className="h-full border-r border-[#DBDCDE]">
 				<Anchor
 					getContainer={() => document.getElementById('editLoan-content')}

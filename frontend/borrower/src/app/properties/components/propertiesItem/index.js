@@ -1,14 +1,17 @@
 'use client';
 import React from 'react';
 import styles from './index.module.scss';
-import { propertiesFieldArr } from '@/enum/properties';
-import { Button, Col, Row } from 'antd';
+import { propertiesFieldArr, propertyList } from '@/enum/properties';
+import { Button, Col, Row, Space } from 'antd';
 import { useRouter } from 'next/navigation';
 import { formatDate, assemblyAddress } from '@repo/shared-methods/utils';
 import FieldTips from '@/components/FieldTips';
+import { BtnPopUpModal, DeleteBtn } from '@repo/shared-methods';
+import AddModal from '../MoreCard/Add';
+import { DeleteOutlined } from '@ant-design/icons';
 const PropertiesItem = ({ data }) => {
 	const router = useRouter();
-	const list2 = [
+	const nameList = [
 		{
 			label: 'Active borrower',
 			value: 'applicants',
@@ -19,45 +22,112 @@ const PropertiesItem = ({ data }) => {
 			value: 'lenders',
 			render: (v) => <FieldTips title={v?.join(',')}>{v?.join(',') || '--'}</FieldTips>,
 		},
-		{
-			label: 'Nearest maturity date',
-			value: 'nearest_maturity_date',
-			render: (v) => formatDate(v),
-		},
-		{
-			render: () => (
-				<Button onClick={() => router.push(`/properties/${data?.id}`)}>View details</Button>
-			),
-		},
 	];
 
-	const getLabelValue = (item, index) => (
-		<Col lg={6} sm={12} xs={24} key={index}>
-			{item?.label && <p className="text-base-label pb-1">{item.label}</p>}
-			<div className="text-base/[24px] font-medium flex items-center">
-				{item?.render?.(data[item.value]) || '--'}
+	const getItem = (item, index) => {
+		return (
+			<div key={index} className={[item?.className || 'w-1/2', 'pb-4'].join(' ')}>
+				<p className="text-base-gray text-sm pb-1">{item.label}</p>
+				<span className="text-black-dark text-base font-medium">
+					{item?.render?.(data[item.value]) || '--'}
+				</span>
 			</div>
-		</Col>
-	);
+		);
+	};
+
 	return (
 		<div className={[styles.propertiesItem].join(' ')}>
 			<div className={styles.header}>
 				<p className={styles.address}>{assemblyAddress(data?.address)}</p>
-				<div className="flex items-center shrink-0 gap-2">
-					{!!data?.active_loan_count && (
-						<div className={styles.active}>
-							{data?.active_loan_count || 0} Active Loans
-						</div>
-					)}
-					{!!data?.pending_loan_count && (
-						<div className={styles.pending}>
-							{data?.pending_loan_count || 0} Pending Loans
-						</div>
-					)}
-				</div>
+				<Space className="flex items-center shrink-0 gap-2">
+					<Button onClick={() => router.push(`/properties/${data?.id}`)}>
+						View details
+					</Button>
+					<BtnPopUpModal
+						getContent={(setOpen) => <AddModal setOpen={setOpen} />}
+						type="default"
+						size="medium"
+					>
+						Edit
+					</BtnPopUpModal>
+					<DeleteBtn
+						type="default"
+						title="Are you sure delete this Property?"
+						content={'1111'}
+						size="medium"
+					>
+						<DeleteOutlined />
+					</DeleteBtn>
+				</Space>
 			</div>
-			<Row className={styles.info}>{propertiesFieldArr.map(getLabelValue)}</Row>
-			<Row className={styles.info}>{list2.map(getLabelValue)}</Row>
+			<Row className="py-4 px-4">
+				<Col
+					lg={8}
+					sm={24}
+					xs={24}
+					className="border-base-border border-r-0 lg:pr-6 lg:border-r "
+				>
+					<p className="text-sm font-bold text-base-gray pb-4">Property Details</p>
+					<div className="flex flex-wrap">
+						{propertyList.map((item, index) => {
+							return getItem(item, index);
+						})}
+					</div>
+				</Col>
+				<Col
+					lg={9}
+					sm={24}
+					xs={24}
+					className="border-base-border border-r-0 border-t lg:border-t-0 lg:px-6 lg:border-r "
+				>
+					<p className="text-sm font-bold text-base-gray pb-4 pt-4 lg:pt-0">
+						Loan Information
+					</p>
+					<div className="flex flex-wrap">
+						{propertiesFieldArr.map((item, index) => {
+							return getItem(item, index);
+						})}
+					</div>
+				</Col>
+				<Col lg={7} sm={24} xs={24} className="border-t lg:border-t-0 lg:px-6 ">
+					<p className="text-sm font-bold text-base-gray pb-4 pt-4 lg:pt-0">
+						Loan Status
+					</p>
+					<div className="flex flex-wrap">
+						{!!data?.active_loan_count && (
+							<div className={styles.active}>
+								{data?.active_loan_count || 0} Active Loans
+							</div>
+						)}
+						{!!data?.pending_loan_count && (
+							<div className={styles.pending}>
+								{data?.pending_loan_count || 0} Pending Loans
+							</div>
+						)}
+					</div>
+					<div className="pt-4">
+						<p className="text-base-gray text-sm pb-1">Nearest maturity date</p>
+						<span className="text-black-dark text-base font-medium">
+							{formatDate(data?.nearest_maturity_date) || '--'}
+						</span>
+					</div>
+				</Col>
+			</Row>
+			<Row className="bg-[#F5F5F5] rounded-b-md">
+				{nameList.map((item, index) => {
+					return (
+						<Col
+							lg={12}
+							sm={24}
+							xs={24}
+							key={index}
+							className={['border-t border-base-border pt-4 px-4']}
+						>
+							{getItem(item, index)}
+						</Col>
+					);
+				})}
+			</Row>
 		</div>
 	);
 };

@@ -16,6 +16,7 @@ module.exports = {
 					disabled: 'var(--base-disabled)',
 					border: 'var(--base-border)',
 					label:'var(--base-label)',
+					gray: 'var(--base-gray)',
 					active:'var(--base-active)',
 				},
 				black: {

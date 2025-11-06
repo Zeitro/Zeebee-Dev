@@ -184,7 +184,7 @@ export const assemblyAddress = (address = {}, isHaveZip) => {
 		arr.push(address?.zip_code);
 	}
 	const newArr = arr.filter((i) => i);
-	return [...new Set(newArr)].join(',');
+	return [...new Set(newArr)].join(', ');
 };
 
 // 简写姓名：只显示姓名首字母，并大写

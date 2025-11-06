@@ -38,7 +38,7 @@ const ZeeBeeDetails = () => {
 	}, []);
 
 	return (
-		<div className="flex flex-col h-full">
+		<div className="flex flex-col h-full flex-1 overflow-hidden">
 			<div className="flex items-center flex-shrink-0 pt-6 pb-5 px-6">
 				<HomeSvg />
 				<p className="text-xl/[24px] font-bold pl-3 pr-5">

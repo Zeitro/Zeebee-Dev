@@ -62,7 +62,7 @@ const Loans = () => {
 				},
 			]}
 			onChange={(v) => setTabKey(v)}
-			className={`h-full ${styles.loans}`}
+			className={`h-full flex-1 overflow-hidden ${styles.loans}`}
 		/>
 	);
 };
