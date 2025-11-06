@@ -43,8 +43,7 @@ func (repo *BorrowerApplicantRepo) Page(ctx context.Context, pageReq *borrower.B
 	query := repo.Client(ctx).
 		Where("borrower_id = ?", filter.BorrowerId)
 	if len(filter.Keyword) > 0 {
-		query = query.Omit("address").
-			Where("full_name like ?", "%"+filter.Keyword+"%")
+		query = query.Where("full_name like ?", "%"+filter.Keyword+"%")
 	}
 	if len(sorter.Column) == 0 {
 		sorter.Column = "id"
@@ -67,7 +66,7 @@ func (repo *BorrowerApplicantRepo) Page(ctx context.Context, pageReq *borrower.B
 func (repo *BorrowerApplicantRepo) All(ctx context.Context, borrowerId int64) (result []*model.BorrowerApplicant, err error) {
 	err = repo.Client(ctx).
 		Where("borrower_id = ?", borrowerId).
-		Omit("address").
+		// Omit("address").
 		Order("id desc").
 		Find(&result).Error
 	return result, errors.WithStack(err)
