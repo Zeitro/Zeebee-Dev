@@ -15,7 +15,6 @@ import (
 
 type (
 	AddressEntry                               = borrower.AddressEntry
-	ApplicantEntry                             = borrower.ApplicantEntry
 	BorrowerApplicantAllRequest                = borrower.BorrowerApplicantAllRequest
 	BorrowerApplicantAllRequestData            = borrower.BorrowerApplicantAllRequestData
 	BorrowerApplicantAllResponse               = borrower.BorrowerApplicantAllResponse
@@ -82,6 +81,7 @@ type (
 	ImportPendingLoansResponseData             = borrower.ImportPendingLoansResponseData
 	LenderEntry                                = borrower.LenderEntry
 	LoanApplicantApplyEntry                    = borrower.LoanApplicantApplyEntry
+	LoanApplicantEntry                         = borrower.LoanApplicantEntry
 	LoanApplyRequest                           = borrower.LoanApplyRequest
 	LoanApplyRequestData                       = borrower.LoanApplyRequestData
 	LoanApplyResponse                          = borrower.LoanApplyResponse

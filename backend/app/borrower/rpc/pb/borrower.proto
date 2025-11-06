@@ -1187,6 +1187,7 @@ message BorrowerApplicantPageEntry {
   int32 est_credit_score = 13;
   string driver_license_num = 14;
   string phone = 15;
+  AddressEntry address = 16;
 }
 message BorrowerApplicantEditEntry {
   int64 borrower_id = 1;

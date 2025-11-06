@@ -94,7 +94,7 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 			}
 
 			loanEntry := &borrower.LoanEntry{
-				Applicants: []*borrower.ApplicantEntry{},
+				Applicants: []*borrower.LoanApplicantEntry{},
 			}
 			err = copier.CopyWithOption(loanEntry, loan, copier.Option{
 				CaseSensitive: true,

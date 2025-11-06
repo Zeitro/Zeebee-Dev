@@ -31,20 +31,21 @@ type BorrowerApplicantEntry struct {
 }
 
 type BorrowerApplicantPageEntry struct {
-	Id               int64  `json:"id"`
-	CreatedAt        string `json:"created_at"`
-	UpdatedAt        string `json:"updated_at"`
-	FirstName        string `json:"first_name"`
-	MidName          string `json:"mid_name"`
-	LastName         string `json:"last_name"`
-	FullName         string `json:"full_name"`
-	Ssn              string `json:"ssn"`
-	Dob              string `json:"dob"`
-	MaritalStatus    string `json:"marital_status"`
-	Email            string `json:"email"`
-	Phone            string `json:"phone"`
-	EstCreditScore   int32  `json:"est_credit_score"`
-	DriverLicenseNum string `json:"driver_license_num"`
+	Id               int64        `json:"id"`
+	CreatedAt        string       `json:"created_at"`
+	UpdatedAt        string       `json:"updated_at"`
+	FirstName        string       `json:"first_name"`
+	MidName          string       `json:"mid_name"`
+	LastName         string       `json:"last_name"`
+	FullName         string       `json:"full_name"`
+	Ssn              string       `json:"ssn"`
+	Dob              string       `json:"dob"`
+	MaritalStatus    string       `json:"marital_status"`
+	Email            string       `json:"email"`
+	Phone            string       `json:"phone"`
+	EstCreditScore   int32        `json:"est_credit_score"`
+	DriverLicenseNum string       `json:"driver_license_num"`
+	Address          AddressEntry `json:"address"`
 }
 
 type BorrowerApplicantPageFilter struct {

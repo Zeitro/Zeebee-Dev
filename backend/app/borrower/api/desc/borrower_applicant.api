@@ -42,6 +42,7 @@ type BorrowerApplicantPageEntry {
     Phone string `json:"phone"`
     EstCreditScore int32 `json:"est_credit_score"`
     DriverLicenseNum string `json:"driver_license_num"`
+    Address AddressEntry `json:"address"`
 }
 
 
