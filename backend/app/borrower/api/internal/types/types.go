@@ -372,7 +372,6 @@ type LoanEntry struct {
 	UpdatedAt                  string                   `json:"updated_at"`
 	Source                     string                   `json:"source"`
 	LoanTerm                   int32                    `json:"loan_term" `
-	Arv                        float64                  `json:"arv"`
 	Ltv                        float64                  `json:"ltv"`
 	EstCreditScore             int32                    `json:"est_credit_score"`
 	ReservesAmount             float64                  `json:"reserves_amount"`
@@ -485,6 +484,7 @@ type LoanPropertyApplyEntry struct {
 	HasDelayedFinancing          bool             `json:"has_delayed_financing, optional"`
 	HasPropertiesVacant          bool             `json:"has_properties_vacant, optional"`
 	HasShortTermRental           bool             `json:"has_short_term_rental, optional"`
+	Arv                          float64          `json:"arv,optional" validate:"required,gte=0"`
 }
 
 type LoanPropertyApplyFormPdfEntry struct {
@@ -522,6 +522,7 @@ type LoanPropertyApplyFormPdfEntry struct {
 	HasPropertiesVacant          bool             `json:"has_properties_vacant, optional"`
 	HasShortTermRental           bool             `json:"has_short_term_rental, optional"`
 	HasCollateralizedBlanket     bool             `json:"has_collateralized_blanket,optional"`
+	Arv                          float64          `json:"arv,optional" validate:"required,gte=0"`
 }
 
 type LoanPropertyEditEntry struct {
@@ -566,6 +567,7 @@ type LoanPropertyEntry struct {
 	HasPropertiesVacant          bool             `json:"has_properties_vacant"`
 	HasShortTermRental           bool             `json:"has_short_term_rental"`
 	EstPropertyValueAmount       float64          `json:"est_property_value_amount"`
+	Arv                          float64          `json:"arv"`
 }
 
 type LoanPropertyPdfEntry struct {

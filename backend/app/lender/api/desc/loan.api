@@ -52,6 +52,7 @@ type LoanApplyPropertyEntry {
     FutureBedrooms int32 `json:"future_bedrooms,optional" validate:"gte=0"`
     FutureBathrooms int32 `json:"future_bathrooms,optional" validate:"gte=0"`
     Owner string `json:"owner,optional"`
+    Arv float64 `json:"arv,optional" validate:"required,gte=0"`
 
     PropertyBase *PropertyBaseEntry `json:"property_base,optional" validate:"required"`
 }
@@ -114,7 +115,7 @@ type LoanEntry {
     SubordinateDebtAmount float64 `json:"subordinate_debt_amount"`
     ScheduledCloseEscrowDate string `json:"scheduled_close_escrow_date"`
     LoanTerm int32 `json:"loan_term" `
-    Arv float64 `json:"arv"`
+    //    Arv float64 `json:"arv"`
     Ltv float64 `json:"ltv" `
     EstPropertyValueAmount float64 `json:"est_property_value_amount"`
     LiquidityAmount float64 `json:"liquidity_amount"`
@@ -227,7 +228,7 @@ type (
         SubordinateDebtAmount float64 `json:"subordinate_debt_amount,optional" validate:"required_if=HasSubordinateDebt true,omitempty,gt=0"`
         ScheduledCloseEscrowDate string `json:"scheduled_close_escrow_date,optional" validate:"required_if=LoanPurpose Purchase,omitempty,datetime=01/02/2006"`
         LoanTerm int32 `json:"loan_term,optional" validate:"gte=1"`
-        Arv float64 `json:"arv,optional" validate:"required,gte=0"`
+        //        Arv float64 `json:"arv,optional" validate:"required,gte=0"`
         Ltv float64 `json:"ltv,optional" validate:"required_unless=LoanPurpose Purchase,omitempty,gte=0"`
         EstPropertyValueAmount float64 `json:"est_property_value_amount" validate:"required_unless=LoanPurpose Purchase,omitempty,gte=0"`
         LiquidityAmount float64 `json:"liquidity_amount,optional" validate:"gte=0"`

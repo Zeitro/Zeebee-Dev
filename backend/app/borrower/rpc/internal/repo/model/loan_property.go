@@ -24,7 +24,7 @@ type LoanProperty struct {
 	FutureBathrooms      int32                  `gorm:"column:future_bathrooms;not null;default:0" json:"future_bathrooms"`
 	Owner                string                 `gorm:"column:owner;size:255;not null;default:''" json:"owner"`
 	Address              types.Address          `gorm:"column:address;type:jsonb;serializer:json" json:"address"`
-	//
+	// migrate from Loan model
 	ExistingLenderCompany        string              `gorm:"column:existing_lender_company;size:100;not null;default:''" json:"existing_lender_company"`
 	ExistingRate                 float32             `gorm:"column:existing_rate;type:numeric(4,2);not null;default:0" json:"existing_rate"`
 	ExistingMaturityDate         *sql.NullTime       `gorm:"column:existing_maturity_date" json:"existing_maturity_date"`
@@ -46,6 +46,7 @@ type LoanProperty struct {
 	HasPropertiesVacant          bool                `gorm:"column:has_properties_vacant;not null;default:false" json:"has_properties_vacant"`
 	HasShortTermRental           bool                `gorm:"column:has_short_term_rental;not null;default:false" json:"has_short_term_rental"`
 	EstPropertyValueAmount       float64             `gorm:"column:est_property_value_amount;type:decimal(10,2);not null;default:0" json:"est_property_value_amount"`
+	Arv                          float64             `gorm:"column:arv;type:decimal(10,2);not null;default:0" json:"arv"`
 
 	// relationships
 	BorrowerProperty *BorrowerProperty `json:"borrower_property" gorm:"foreignKey:BorrowerPropertyId;references:Id"`

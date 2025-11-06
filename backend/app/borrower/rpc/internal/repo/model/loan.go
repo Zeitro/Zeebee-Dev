@@ -35,6 +35,15 @@ type Loan struct {
 	MonthlyPayment         float64                     `gorm:"column:monthly_payment;type:numeric(10,2);not null;default:0" json:"monthly_payment"`
 	BusinessStrategy       pq.StringArray              `gorm:"column:business_strategy;type:text[]" json:"business_strategy"`
 	Source                 constants.LoanSource        `gorm:"column:source;size:30;not null;default:''" json:"source"`
+	LoanTerm               int32                       `gorm:"column:loan_term;type:int2;not null;default:0" json:"loan_term"`
+	Ltv                    float64                     `gorm:"column:ltv;type:numeric(10,2);not null;default:0" json:"ltv"`
+	EstCreditScore         int32                       `gorm:"column:est_credit_score;type:int2;not null;default:0" json:"est_credit_score"`
+	ReservesAmount         float64                     `gorm:"column:reserves_amount;type:numeric(10,2);not null;default:0" json:"reserves_amount"`
+	OriginalContractDate   *sql.NullTime               `json:"original_contract_date" gorm:"column:original_contract_date"`
+	ExtensionDate          *sql.NullTime               `json:"extension_date" gorm:"column:extension_date"`
+	LoanProcessor          string                      `json:"loan_processor" gorm:"column:loan_processor;size:100;not null;default:''"`
+	Extend                 types.LoanExtendValues      `json:"extend" gorm:"column:extend;type:jsonb;serializer:json"`
+	// remove to LoanProperty model
 	// ExistingLenderCompany    string                      `gorm:"column:existing_lender_company;size:100;not null;default:''" json:"existing_lender_company"`
 	// ExistingRate             float32                     `gorm:"column:existing_rate;type:numeric(4,2);not null;default:0" json:"existing_rate"`
 	// ExistingMaturityDate     *sql.NullTime               `gorm:"column:existing_maturity_date" json:"existing_maturity_date"`
@@ -45,25 +54,17 @@ type Loan struct {
 	// HasSubordinateDebt       bool                        `gorm:"column:has_subordinate_debt;not null;default:false" json:"has_subordinate_debt"`
 	// SubordinateDebtAmount    float64                     `gorm:"column:subordinate_debt_amount;type:numeric(10,2);not null;default:0" json:"subordinate_debt_amount"`
 	// ScheduledCloseEscrowDate *sql.NullTime               `gorm:"column:scheduled_close_escrow_date" json:"scheduled_close_escrow_date"`
-	LoanTerm int32   `gorm:"column:loan_term;type:int2;not null;default:0" json:"loan_term"`
-	Arv      float64 `gorm:"column:arv;type:numeric(10,2);not null;default:0" json:"arv"`
-	Ltv      float64 `gorm:"column:ltv;type:numeric(10,2);not null;default:0" json:"ltv"`
+	// Arv      float64 `gorm:"column:arv;type:numeric(10,2);not null;default:0" json:"arv"`
 	// LiquidityAmount          float64                     `gorm:"column:liquidity_amount;type:numeric(10,2);not null;default:0" json:"liquidity_amount"`
 	// Budget                   types.LoanBudget            `gorm:"column:budget;type:jsonb;not null;default:'{}';serializer:json" json:"budget"`
 	// MidConstruction          bool                        `gorm:"column:mid_construction;not null;default:false" json:"mid_construction"`
-	EstCreditScore int32 `gorm:"column:est_credit_score;type:int2;not null;default:0" json:"est_credit_score"`
 	// EstYearlyRentalIncome    float64                     `gorm:"column:est_yearly_rental_income;type:numeric(10,2);not null;default:0" json:"est_yearly_rental_income"`
 	// EstPropertyValueAmount   float64                     `gorm:"column:est_property_value_amount;type:numeric(10,2);not null;default:0" json:"est_property_value_amount"`
 	// Dscr                     float64                     `gorm:"column:dscr;type:numeric(10,2);not null;default:0" json:"dscr"`
-	ReservesAmount float64 `gorm:"column:reserves_amount;type:numeric(10,2);not null;default:0" json:"reserves_amount"`
 	// HasDelayedFinancing      bool                        `gorm:"column:has_delayed_financing;not null;default:false" json:"has_delayed_financing"`
 	// HasCollateralizedBlanket bool                        `gorm:"column:has_collateralized_blanket;not null;default:false" json:"has_collateralized_blanket"`
 	// HasPropertiesVacant      bool                        `gorm:"column:has_properties_vacant;not null;default:false" json:"has_properties_vacant"`
 	// HasShortTermRental       bool                        `gorm:"column:has_short_term_rental;not null;default:false" json:"has_short_term_rental"`
-	OriginalContractDate *sql.NullTime          `json:"original_contract_date" gorm:"column:original_contract_date"`
-	ExtensionDate        *sql.NullTime          `json:"extension_date" gorm:"column:extension_date"`
-	LoanProcessor        string                 `json:"loan_processor" gorm:"column:loan_processor;size:100;not null;default:''"`
-	Extend               types.LoanExtendValues `json:"extend" gorm:"column:extend;type:jsonb;serializer:json"`
 
 	// relationships
 	Borrower          *Borrower           `json:"borrower" gorm:"foreignKey:BorrowerId;references:Id"`

@@ -242,6 +242,7 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int
 					OriginalBudget: preApproveRequest.Loan.BudgetAmount,
 				},
 				EstPropertyValueAmount: preApproveRequest.Loan.EstPropertyValueAmount,
+				Arv:                    preApproveRequest.Loan.Arv,
 			},
 			HoldbackAmount:  preApproveRequest.Loan.HoldbackAmount,
 			PrincipalAmount: preApproveRequest.Loan.PrincipalAmount,
@@ -253,8 +254,8 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int
 					BorrowerApplicantId: borrowerApplicant.Id,
 				},
 			},
-			LoanTerm:       preApproveRequest.Loan.LoanTerm,
-			Arv:            preApproveRequest.Loan.Arv,
+			LoanTerm: preApproveRequest.Loan.LoanTerm,
+
 			EstCreditScore: preApproveRequest.Borrower.FicoScore,
 		},
 	}

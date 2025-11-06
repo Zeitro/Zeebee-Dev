@@ -18,7 +18,6 @@ type ApplyFormPdfRequest struct {
 	BusinessStrategy       []string                          `json:"business_strategy,optional" validate:"required,dive,required,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
 	Applicants             []*LoanApplicantApplyFormPdfEntry `json:"applicants,optional"`
 	LoanTerm               int32                             `json:"loan_term,optional" validate:"gte=1"`
-	Arv                    float64                           `json:"arv,optional" validate:"required,gte=0"`
 	EstCreditScore         int32                             `json:"est_credit_score,optional"`
 	ReservesAmount         float64                           `json:"reserves_amount,optional" validate:"required_if=LoanType Rental,omitempty,gt=0"`
 	TransactionExperiences []*LoanExperienceEntry            `json:"transaction_experiences,optional"`

@@ -52,7 +52,7 @@ type ApplyFormPdfRequest {
     //    SubordinateDebtAmount float64 `json:"subordinate_debt_amount,optional"`
     //    ScheduledCloseEscrowDate string `json:"scheduled_close_escrow_date,optional" validate:"required_if=LoanPurpose Purchase,omitempty,datetime=01/02/2006"`
     LoanTerm int32 `json:"loan_term,optional" validate:"gte=1"`
-    Arv float64 `json:"arv,optional" validate:"required,gte=0"`
+    //    Arv float64 `json:"arv,optional" validate:"required,gte=0"`
     //    Ltv float64 `json:"ltv,optional" validate:"gte=0"`
     //    EstPropertyValueAmount float64 `json:"est_property_value_amount,optional" validate:"required_unless=LoanPurpose Purchase,omitempty,gte=0"`
     //    LiquidityAmount float64 `json:"liquidity_amount,optional" validate:"gte=0"`

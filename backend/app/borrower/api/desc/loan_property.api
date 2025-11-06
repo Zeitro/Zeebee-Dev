@@ -44,6 +44,7 @@ type LoanPropertyEntry {
     HasPropertiesVacant bool `json:"has_properties_vacant"`
     HasShortTermRental bool `json:"has_short_term_rental"`
     EstPropertyValueAmount float64 `json:"est_property_value_amount"`
+    Arv float64 `json:"arv"`
     //    PropertyBase *PropertyBaseEntry `json:"property_base,optional" validate:"required"`
 }
 
@@ -93,6 +94,7 @@ type LoanPropertyApplyEntry {
     HasDelayedFinancing bool `json:"has_delayed_financing, optional"`
     HasPropertiesVacant bool `json:"has_properties_vacant, optional"`
     HasShortTermRental bool `json:"has_short_term_rental, optional"`
+    Arv float64 `json:"arv,optional" validate:"required,gte=0"`
 }
 
 
@@ -134,6 +136,7 @@ type LoanPropertyApplyFormPdfEntry {
     HasPropertiesVacant bool `json:"has_properties_vacant, optional"`
     HasShortTermRental bool `json:"has_short_term_rental, optional"`
     HasCollateralizedBlanket bool `json:"has_collateralized_blanket,optional"`
+    Arv float64 `json:"arv,optional" validate:"required,gte=0"`
 }
 
 

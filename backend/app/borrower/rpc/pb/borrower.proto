@@ -282,7 +282,7 @@ message LoanEntry {
   //  double subordinate_debt_amount = 38;
   //  string scheduled_close_escrow_date = 39;
   int32 loan_term = 40;
-  double arv = 41;
+  //  double arv = 41;
   double ltv = 42;
   //  double liquidity_amount = 43;
   //  LoanBudgetEntry budget = 44;
@@ -552,7 +552,7 @@ message LoanApplyRequestData {
   //  double subordinate_debt_amount = 22;
   //  string scheduled_close_escrow_date = 23;
   int32 loan_term = 24;
-  double arv = 25;
+  //  double arv = 25;
   double ltv = 26;
   //  double liquidity_amount = 27;
   //  LoanBudgetEntry budget = 28;
@@ -718,7 +718,7 @@ message PrimaryLoanPreApproval {
   float ltv = 9;
   float ltc = 10;
   float ltarv = 11;
-  string code = 12 [deprecated = true];
+  //  string code = 12 [deprecated = true];
   string reject_reason = 13;
   string request_id = 14;
   int64 lender_company_id = 15;
@@ -809,6 +809,7 @@ message LoanPropertyEntry{
   bool has_short_term_rental = 34;
   double est_property_value_amount = 35;
   AddressEntry address = 36;
+  double arv = 37;
 }
 
 message LoanPropertyApplyEntry{
@@ -842,6 +843,7 @@ message LoanPropertyApplyEntry{
   bool has_properties_vacant = 27;
   bool has_short_term_rental = 28;
   double est_property_value_amount = 29;
+  double arv = 30;
 }
 // ===================== loan property service end ======================
 
