@@ -39,7 +39,7 @@ func (l *DeleteBorrowerLoanLogic) DeleteBorrowerLoan(in *borrower.LoanDeleteRequ
 	}()
 	loanModel, err := l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, in.Data.Id, in.Data.BorrowerId)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get loan")
+		return nil, errors.Wrap(err, "Failed To Get Loan")
 	}
 
 	if loanModel.Source != constants.LoanSourceBorrower && loanModel.Stage != constants.LoanStageDraft {
@@ -142,7 +142,7 @@ func (l *DeleteBorrowerLoanLogic) DeleteBorrowerLoan(in *borrower.LoanDeleteRequ
 	})
 
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to delete loan")
+		return nil, errors.Wrap(err, "Failed To Delete Loan")
 	}
 	return &borrower.EmptyResponse{}, nil
 }

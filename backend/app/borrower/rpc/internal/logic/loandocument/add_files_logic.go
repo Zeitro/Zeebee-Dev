@@ -63,7 +63,7 @@ func (l *AddFilesLogic) AddFiles(in *borrower.LoanDocumentAddFilesRequest) (resp
 		if len(files) > 0 {
 			files, innerErr = l.svcCtx.FileRepo.BatchCreateWithTx(l.ctx, tx, files, false)
 			if innerErr != nil {
-				return errors.Wrap(innerErr, "failed to create file records")
+				return errors.Wrap(innerErr, "Failed To Create File Records")
 			}
 		}
 
@@ -72,7 +72,7 @@ func (l *AddFilesLogic) AddFiles(in *borrower.LoanDocumentAddFilesRequest) (resp
 			"status": constants.LoanDocumentStatusReadyForReview,
 		})
 		if innerErr != nil {
-			return errors.Wrap(innerErr, "failed to update loan document status")
+			return errors.Wrap(innerErr, "Failed To Update Loan Document Status")
 		}
 
 		// upload loan document upload time
@@ -94,7 +94,7 @@ func (l *AddFilesLogic) AddFiles(in *borrower.LoanDocumentAddFilesRequest) (resp
 func (l *AddFilesLogic) prepare(in *borrower.LoanDocumentAddFilesRequest) (loan *model.Loan, loanDocument *model.LoanDocument, err error) {
 	loanDocument, err = l.svcCtx.LoanDocumentRepo.FindOneWithPreloadById(l.ctx, in.Data.Id, []string{"Files"})
 	if err != nil {
-		return nil, nil, errors.Wrap(err, "failed to find loan document")
+		return nil, nil, errors.Wrap(err, "Failed To Find Loan Document")
 	}
 
 	// Validate file count - existing files + new files should not exceed 10
@@ -106,7 +106,7 @@ func (l *AddFilesLogic) prepare(in *borrower.LoanDocumentAddFilesRequest) (loan 
 
 	loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, loanDocument.LoanId, in.Data.BorrowerId)
 	if err != nil {
-		return nil, nil, errors.Wrap(err, "failed to get loan")
+		return nil, nil, errors.Wrap(err, "Failed To Get Loan")
 	}
 
 	if loan == nil || loanDocument == nil {

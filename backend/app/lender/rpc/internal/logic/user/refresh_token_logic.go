@@ -3,6 +3,7 @@ package userlogic
 import (
 	"context"
 	"strconv"
+
 	"zeebee-backend/app/lender/rpc/internal/logic"
 
 	"github.com/pkg/errors"
@@ -52,7 +53,7 @@ func (l *RefreshTokenLogic) RefreshToken(in *lender.RefreshTokenRequest) (resp *
 	}
 
 	if user.Status == constants.UserStatusInactive {
-		return nil, errors.New("User is inactive")
+		return nil, errors.New("User Is Inactive")
 	}
 
 	employee, err := l.baseLogic.CheckAndUpdateActiveLenderCompanyByEmployee(user.LenderEmployee)

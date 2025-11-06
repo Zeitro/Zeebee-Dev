@@ -15,7 +15,7 @@ var PropertyUnitMsgTpl = "{0} property type requires unit value of {1}"
 func LoanApplyPropertyEntry(sl validator.StructLevel) {
 	property, ok := sl.Current().Interface().(types.LoanApplyPropertyEntry)
 	if !ok {
-		sl.ReportError(property, "property", "Property", "property_type", "invalid property")
+		sl.ReportError(property, "property", "Property", "property_type", "Invalid Property")
 		return
 	}
 	switch property.PropertyType {

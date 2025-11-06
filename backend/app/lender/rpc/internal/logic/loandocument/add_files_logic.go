@@ -137,14 +137,14 @@ func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *
 func (l *AddFilesLogic) prepare(in *lender.LoanDocumentAddFilesRequest) (loan *model.Loan, loanDocument *model.LoanDocument, err error) {
 	loanDocument, err = l.svcCtx.LoanDocumentRepo.FindOneWithPreloadById(l.ctx, in.Data.Id, []string{"Files"})
 	if err != nil {
-		return nil, nil, errors.Wrap(err, "failed to find loan document")
+		return nil, nil, errors.Wrap(err, "Failed To Find Loan Document")
 	}
 
 	// Validate file count - existing files + new files should not exceed 10
 	existingFileCount := int64(len(loanDocument.Files))
 	newFileCount := int64(len(in.Data.FileUrls))
 	if existingFileCount+newFileCount > 10 {
-		return nil, nil, errors.WithStack(errors.New("total number of files (existing + new) cannot exceed 10"))
+		return nil, nil, errors.WithStack(errors.New("Total Number Of Files (Existing + New) Cannot Exceed 10"))
 	}
 
 	loan, err = l.baseLogic.GetLenderLoan(loanDocument.LoanId, in.Data.LenderCompanyId, nil)
