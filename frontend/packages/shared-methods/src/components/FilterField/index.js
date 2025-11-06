@@ -4,7 +4,7 @@ const { Search } = Input;
 import React, { forwardRef, useImperativeHandle } from 'react';
 import { SearchOutlined } from '@ant-design/icons';
 import styles from './index.module.scss';
-import { debounce } from 'lodash';
+import { debounce, mapValues } from 'lodash';
 const { SHOW_ALL } = TreeSelect;
 /**
  * Form过滤数据组件，配合table使用
@@ -22,7 +22,7 @@ export const FilterField = forwardRef(({ list, className, ...rowProps }, ref) =>
 	const getItemDom = ({
 		filterType,
 		options,
-		value,
+		value = null,
 		label,
 		treeData,
 		selectValue,
@@ -44,7 +44,7 @@ export const FilterField = forwardRef(({ list, className, ...rowProps }, ref) =>
 						value={value}
 						onSearch={eventProps?.onSearch}
 						style={{ width: 240 }}
-						onChange={debounce(eventProps?.onChange)}
+						onChange={debounce((e) => eventProps?.onChange(e))}
 						{...(eventProps || {})}
 					/>
 				);
@@ -69,7 +69,7 @@ export const FilterField = forwardRef(({ list, className, ...rowProps }, ref) =>
 								style={{ width: 240 }}
 								placeholder="Search by field"
 								value={value}
-								onChange={debounce(eventProps?.onChange)}
+								onChange={debounce((e) => eventProps?.onChange(e))}
 								{...(eventProps || {})}
 							/>
 						</Space.Compact>
@@ -83,7 +83,7 @@ export const FilterField = forwardRef(({ list, className, ...rowProps }, ref) =>
 						placeholder="input text"
 						style={{ width: 240 }}
 						value={value}
-						onChange={debounce(eventProps?.onChange)}
+						onChange={debounce((e) => eventProps?.onChange(e))}
 						allowClear
 						{...(eventProps || {})}
 					/>
@@ -98,7 +98,7 @@ export const FilterField = forwardRef(({ list, className, ...rowProps }, ref) =>
 						style={{ width: 180 }}
 						options={options}
 						value={value}
-						onChange={eventProps?.onChange}
+						onChange={(e) => eventProps?.onChange(e)}
 						{...(eventProps || {})}
 					/>
 				);
@@ -116,7 +116,7 @@ export const FilterField = forwardRef(({ list, className, ...rowProps }, ref) =>
 						showSearch={true}
 						allowClear={true}
 						showCheckedStrategy={SHOW_ALL}
-						onChange={eventProps?.onChange}
+						onChange={(e) => eventProps?.onChange(e)}
 						treeData={treeData}
 						{...(eventProps || {})}
 						classNames={{
@@ -141,7 +141,7 @@ export const FilterField = forwardRef(({ list, className, ...rowProps }, ref) =>
 						type="primary"
 						size="large"
 						icon={<SearchOutlined />}
-						onClick={debounce(eventProps?.onClick, 300)}
+						onClick={debounce((e) => eventProps?.onClick(e), 300)}
 						{...(eventProps || {})}
 					>
 						{text}
@@ -171,8 +171,15 @@ export const FilterField = forwardRef(({ list, className, ...rowProps }, ref) =>
 		return params;
 	};
 
+	const handleReset = () => {
+		const params = getApiParams();
+		const nullValues = mapValues(params, () => null);
+		return nullValues;
+	};
+
 	useImperativeHandle(ref, () => ({
 		getApiParams,
+		// handleReset,
 	}));
 	return (
 		<Row

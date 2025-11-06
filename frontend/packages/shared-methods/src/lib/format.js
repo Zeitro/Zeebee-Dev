@@ -236,12 +236,17 @@ export function capitalizeFirstLetter(value) {
 	for (const ch of s) {
 		if (separators.has(ch)) {
 			out += ch;
+			console.log(out, '1111111111', ch);
+
 			needUpper = true;
 		} else {
 			out += needUpper ? ch.toUpperCase() : ch.toLowerCase();
+			console.log(out, '2222', ch);
 			needUpper = false;
 		}
 	}
+	console.log(out, 'end----');
+
 	return out;
 }
 

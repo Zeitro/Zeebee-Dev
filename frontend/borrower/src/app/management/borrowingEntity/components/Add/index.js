@@ -2,26 +2,51 @@ import React, { useState } from 'react';
 import { NewModal } from '@repo/shared-methods';
 import { Col, Form, Input, InputNumber, Row, Select } from 'antd';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
-import { InputPhone, SelectTINType } from '@repo/shared-methods';
-import { emailRegex, phoneRegex, validateRule, tinOrSSNRegex } from '@repo/shared-methods/utils';
+import { InputPhone, SelectFormTINType } from '@repo/shared-methods';
+import {
+	emailRegex,
+	phoneRegex,
+	validateRule,
+	createRequest,
+	capitalizeFirstLetter,
+} from '@repo/shared-methods/utils';
 import { layoutCol, titleCol } from '@/enum/common';
 import { useGetOptions } from '@/hooks/useGetOptions';
-let name = 'borrower';
-const AddModal = ({ setOpen }) => {
+const AddModal = ({ setOpen, rowData, handleSearch }) => {
+	const { request } = createRequest();
 	const [form] = Form.useForm();
 	const [confirmLoading, setConfirmLoading] = useState(false);
-	const [loading, setLoading] = useState(false);
 	const { borrowerTypeOptions } = useGetOptions([
 		{
 			key: 'applicant_type',
 			valueName: 'borrowerTypeOptions',
 		},
 	]);
-	const handleSave = () => {};
+	const handleSave = async () => {
+		try {
+			setConfirmLoading(true);
+			const value = await form.validateFields();
+			let url = '/borrower_entity';
+			let method = 'POST';
+			if (rowData?.id) {
+				url = `borrower_entity/${rowData?.id}`;
+				method = 'PUT';
+			}
+			await request(url, {
+				method,
+				body: { ...value },
+			});
+			handleSearch?.();
+			setConfirmLoading(false);
+			setOpen(false);
+		} catch {
+			setConfirmLoading(false);
+		}
+	};
 	return (
 		<NewModal
 			width={700}
-			title="Add borrowing entity"
+			title={`${rowData?.id ? 'Edit' : 'Add'} borrowing entity`}
 			okText="Save"
 			confirmLoading={confirmLoading}
 			onOk={handleSave}
@@ -33,68 +58,29 @@ const AddModal = ({ setOpen }) => {
 				autoComplete="off"
 				className="h-[60vh] overflow-hidden overflow-y-auto"
 				size="large"
-				disabled={loading}
+				initialValues={{ ...rowData }}
+				disabled={confirmLoading}
 				scrollToFirstError
 			>
 				<Row gutter={16}>
 					<Col {...layoutCol}>
-						<Form.Item
-							label="Entity type"
-							name={[name, 'type']}
-							rules={[{ required: true }]}
-						>
+						<Form.Item label="Entity type" name={['type']} rules={[{ required: true }]}>
 							<Select
 								options={borrowerTypeOptions}
 								placeholder="Select borrower type"
-								onChange={(v) => {
-									form.setFieldValue(
-										[name, 'own_percent'],
-										v === 'Individual' ? 100 : undefined,
-									);
-									form.setFieldValue([name, 'tin'], {
-										tin_type: undefined,
-										tin: '',
-									});
-								}}
 							/>
 						</Form.Item>
 					</Col>
 					<Col {...layoutCol}>
-						<Form.Item
-							label="Entity name"
-							name={[name, 'name']}
-							rules={[{ required: true }]}
-						>
+						<Form.Item label="Entity name" name={['name']} rules={[{ required: true }]}>
 							<Input placeholder="Enter entity name" />
 						</Form.Item>
 					</Col>
 					<Col {...layoutCol}>
-						<Form.Item
-							label="TIN"
-							name={[name, 'tin']}
-							rules={[
-								{
-									required: true,
-								},
-								{
-									validator: (_, value) =>
-										validateRule(
-											value?.tin,
-											tinOrSSNRegex,
-											'Please enter valid TIN!',
-										),
-								},
-							]}
-						>
-							<SelectTINType isIndividual={false} />
-						</Form.Item>
+						<SelectFormTINType isIndividual={false} />
 					</Col>
 					<Col {...layoutCol}>
-						<Form.Item
-							label="%Own"
-							name={[name, 'own_percent']}
-							rules={[{ required: true }]}
-						>
+						<Form.Item label="%Own" name={['own_percent']} rules={[{ required: true }]}>
 							<InputNumber
 								style={{ width: '100%' }}
 								min={1}
@@ -109,11 +95,11 @@ const AddModal = ({ setOpen }) => {
 						Mailing information
 					</Col>
 					<AddressForm
-						addressName={[name, 'mailing_address', 'address1']}
-						addressName2={[name, 'mailing_address', 'address2']}
-						cityName={[name, 'mailing_address', 'city']}
-						stateName={[name, 'mailing_address', 'state']}
-						zipName={[name, 'mailing_address', 'zip_code']}
+						addressName={['mailing_address', 'address1']}
+						addressName2={['mailing_address', 'address2']}
+						cityName={['mailing_address', 'city']}
+						stateName={['mailing_address', 'state']}
+						zipName={['mailing_address', 'zip_code']}
 						addressLabel="Mailing Address 1"
 						addressLabel2="Mailing Address 2"
 						form={form}
@@ -129,7 +115,7 @@ const AddModal = ({ setOpen }) => {
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Email"
-							name={[name, 'contact_email']}
+							name={['contact_email']}
 							rules={[
 								{
 									required: true,
@@ -147,7 +133,7 @@ const AddModal = ({ setOpen }) => {
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Phone number"
-							name={[name, 'contact_phone']}
+							name={['contact_phone']}
 							rules={[
 								{
 									required: true,
@@ -165,13 +151,16 @@ const AddModal = ({ setOpen }) => {
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Contact name"
-							name={[name, 'contact_name']}
+							name={['contact_name']}
 							rules={[
 								{
 									required: true,
 									message: 'Please enter contact name',
 								},
 							]}
+							getValueFromEvent={(e) => {
+								return capitalizeFirstLetter(e.target.value);
+							}}
 						>
 							<Input placeholder="Enter contact name" />
 						</Form.Item>
