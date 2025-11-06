@@ -68,7 +68,7 @@ func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequ
 				continue
 			}
 			if document.LoanId != loan.Id {
-				return errors.WithStack(errors.New("document loan id not match"))
+				return errors.WithStack(errors.New("Document Loan Id Not Match"))
 			}
 
 			loanDocuments = append(loanDocuments, document)
@@ -130,7 +130,7 @@ func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequ
 // prepare
 func (l *SendRequestsLogic) prepare(in *lender.LoanDocumentSendRequestsRequest) (loan *model.Loan, err error) {
 	if len(in.Data.Documents) == 0 {
-		return nil, errors.WithStack(errors.New("no document type found"))
+		return nil, errors.WithStack(errors.New("No Document Type Found"))
 	}
 	// var document *model.LoanDocument
 	loan, _, err = l.baseLogic.GetLoanAndDocumentByDocumentId(in.Data.Documents[0].Id, in.Data.LenderCompanyId)
@@ -140,7 +140,7 @@ func (l *SendRequestsLogic) prepare(in *lender.LoanDocumentSendRequestsRequest) 
 func (l *SendRequestsLogic) sendDocumentRequestEmail(ctx context.Context, loan *model.Loan, loanDocuments []*model.LoanDocument) error {
 
 	if loan.LoanBorrower == nil || len(loan.LoanBorrower.ContactEmail) == 0 {
-		return errors.New("no contact email found for the loan")
+		return errors.New("No Contact Email Found For The Loan")
 	}
 
 	emailData := map[string]interface{}{
@@ -152,7 +152,7 @@ func (l *SendRequestsLogic) sendDocumentRequestEmail(ctx context.Context, loan *
 	// parse email template
 	content, err := email2.ParseTemplate(email_tpl.SendLoanDocumentRequestEmail, emailData)
 	if err != nil {
-		return errors.Wrap(err, "failed to parse email template")
+		return errors.Wrap(err, "Failed To Parse Email Template")
 	}
 
 	// send email
@@ -166,7 +166,7 @@ func (l *SendRequestsLogic) sendDocumentRequestEmail(ctx context.Context, loan *
 
 	err = global.EmailClient.SendEmail(msg)
 	if err != nil {
-		return errors.Wrap(err, "failed to send email")
+		return errors.Wrap(err, "Failed To Send Email")
 	}
 
 	return nil

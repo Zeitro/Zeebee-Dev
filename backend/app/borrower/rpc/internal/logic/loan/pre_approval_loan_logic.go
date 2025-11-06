@@ -42,7 +42,7 @@ func NewPreApprovalLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *P
 func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalRequest) (*borrower.LoanPreApprovalResponse, error) {
 
 	if in.Data.Property == nil || in.Data.Property.Address == nil {
-		return nil, errors.New("invalid property address")
+		return nil, errors.New("Invalid Property Address")
 	}
 
 	// get geo data
@@ -201,7 +201,7 @@ func sendPreApprovalNotification(ctx context.Context, repo *repo.LenderCompanyRe
 	case constants.LenderCompanyOwnerTypeThirdParty:
 		emailContent, err = email.ParseTemplate(email_tpl.ThirdPartyPreApprovalNotification, tplVars)
 	default:
-		err = errors.New("invalid company owner type")
+		err = errors.New("Invalid Company Owner Type")
 	}
 	if err != nil {
 		return errors.WithStack(err)

@@ -16,7 +16,7 @@ var PropertyUnitMsgTpl = "{0} property type requires unit value of {1}"
 func LoanPreApprovalRequestProperty(sl validator.StructLevel) {
 	property, ok := sl.Current().Interface().(types.LoanPreApprovalRequestProperty)
 	if !ok {
-		sl.ReportError(property, "property", "Property", "property_type", "invalid property")
+		sl.ReportError(property, "property", "Property", "property_type", "Invalid Property")
 		return
 	}
 	switch property.PropertyType {
@@ -51,7 +51,7 @@ func LoanPreApprovalRequestProperty(sl validator.StructLevel) {
 // func EditLoanPropertyEntry(sl validator.StructLevel) {
 // 	property, ok := sl.Current().Interface().(types.EditLoanPropertyEntry)
 // 	if !ok {
-// 		sl.ReportError(property, "property", "Property", "property_type", "invalid property")
+// 		sl.ReportError(property, "property", "Property", "property_type", "Invalid Property")
 // 		return
 // 	}
 // 	switch property.PropertyType {
@@ -87,7 +87,7 @@ func LoanPropertyEntry(sl validator.StructLevel) {
 	val := sl.Current().Interface()
 	property, ok := val.(types.LoanPropertyEntry)
 	if !ok {
-		sl.ReportError(property, "property", "Property", "property_type", "invalid property")
+		sl.ReportError(property, "property", "Property", "property_type", "Invalid Property")
 		return
 	}
 	switch property.PropertyType {
@@ -122,7 +122,7 @@ func PropertyCreateRequest(sl validator.StructLevel) {
 	val := sl.Current().Interface()
 	property, ok := val.(types.PropertyCreateRequest)
 	if !ok {
-		sl.ReportError(property, "property", "Property", "property_type", "invalid property")
+		sl.ReportError(property, "property", "Property", "property_type", "Invalid Property")
 		return
 	}
 	switch property.PropertyType {
@@ -157,7 +157,7 @@ func PropertyUpdateRequest(sl validator.StructLevel) {
 	val := sl.Current().Interface()
 	property, ok := val.(types.PropertyUpdateRequest)
 	if !ok {
-		sl.ReportError(property, "property", "Property", "property_type", "invalid property")
+		sl.ReportError(property, "property", "Property", "property_type", "Invalid Property")
 		return
 	}
 	switch property.PropertyType {
@@ -196,7 +196,7 @@ func LoanPropertyApplyEntry(sl validator.StructLevel) {
 	parent := sl.Parent().Interface()
 	property, ok := val.(types.LoanPropertyApplyEntry)
 	if !ok {
-		sl.ReportError(property, "property", "Property", "property_type", "invalid loan apply property")
+		sl.ReportError(property, "property", "Property", "property_type", "Invalid Loan Apply Property")
 		return
 	}
 	switch req := parent.(type) {
@@ -206,7 +206,7 @@ func LoanPropertyApplyEntry(sl validator.StructLevel) {
 		loanType = req.LoanType
 
 	default:
-		sl.ReportError(property, "property", "Property", "property_type", "invalid loan apply property")
+		sl.ReportError(property, "property", "Property", "property_type", "Invalid Loan Apply Property")
 		return
 	}
 

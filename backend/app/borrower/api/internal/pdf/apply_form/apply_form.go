@@ -31,7 +31,7 @@ type ApplyForm struct {
 
 func NewApplyForm(info *types.ApplyFormPdfRequest) (form *ApplyForm, err error) {
 	if info == nil {
-		return nil, errors.New("Pdf Info Is Empty")
+		return nil, errors.New("PDF Info Is Empty")
 	}
 	if info.Signatures == nil {
 		info.Signatures = &types.Signatures{}
