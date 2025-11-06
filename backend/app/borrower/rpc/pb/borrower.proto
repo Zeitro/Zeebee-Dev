@@ -219,29 +219,6 @@ service user {
 
 // ================ loan service start =================
 
-message ApplicantEntry{
-  int64 id = 1;
-  string first_name = 2;
-  string last_name = 3;
-  bool is_primary = 4;
-  string created_at = 5;
-  string updated_at = 6;
-  string mid_name = 7;
-  string type = 8;
-  string invitation_status = 9;
-  string full_name = 10;
-  int64  loan_property_id = 11;
-  string ssn = 12;
-  string dob = 13;
-  string marital_status = 14;
-  string email = 15;
-  int32 est_credit_score = 16;
-  string driver_license_num = 17;
-  AddressEntry address = 18;
-  int64  loan_borrower_id = 19;
-  string phone = 20;
-}
-
 message LoanEntry {
   int64 id = 1;
   string stage = 2;
@@ -269,7 +246,7 @@ message LoanEntry {
   int64 lender_id = 25;
   int64 borrower_id = 26;
   repeated string business_strategy = 27;
-  repeated ApplicantEntry applicants = 28;
+  repeated LoanApplicantEntry applicants = 28;
   string source = 29;
   //  string existing_lender_company = 30;
   //  float existing_rate = 31;
@@ -1327,6 +1304,29 @@ service BorrowerApplicant {
 
 
 // ===================== loan applicant service start ======================
+message LoanApplicantEntry{
+  int64 id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  bool is_primary = 4;
+  string created_at = 5;
+  string updated_at = 6;
+  string mid_name = 7;
+  string type = 8;
+  string invitation_status = 9;
+  string full_name = 10;
+  int64  loan_property_id = 11;
+  string ssn = 12;
+  string dob = 13;
+  string marital_status = 14;
+  string email = 15;
+  int32 est_credit_score = 16;
+  string driver_license_num = 17;
+  AddressEntry address = 18;
+  int64  loan_borrower_id = 19;
+  string phone = 20;
+}
+
 message BorrowerNamesRequest {
   BorrowerNamesRequestData data = 1;
 }
