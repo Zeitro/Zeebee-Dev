@@ -31,4 +31,5 @@ func (m LoanBorrower) TableName() string {
 func (m *LoanBorrower) RemoveRelationships() {
 	m.Loan = nil
 	m.Applicants = nil
+	m.BorrowerEntity = nil
 }
