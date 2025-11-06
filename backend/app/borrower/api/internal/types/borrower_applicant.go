@@ -29,7 +29,7 @@ type BorrowerApplicantDetailResponse struct {
 type BorrowerApplicantEditRequest struct {
 	Id               int64         `path:"id,optional"`
 	FirstName        string        `json:"first_name" validate:"required,min=3,max=100"`
-	MidName          string        `json:"mid_name"`
+	MidName          string        `json:"mid_name,optional"`
 	LastName         string        `json:"last_name" validate:"required,min=3,max=100"`
 	Ssn              string        `json:"ssn" validate:"required,min=9,max=9"`
 	Dob              string        `json:"dob" validate:"required,datetime=01/02/2006"`
