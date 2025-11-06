@@ -6,7 +6,7 @@ import SignatureModal from '../SignatureModal';
 import Image from 'next/image';
 import { Modal } from 'antd';
 import { formatDate, createRequest } from '@repo/shared-methods/utils';
-import { EditOutlined } from '@ant-design/icons';
+import EditSvg from '@/assets/images/edit.svg';
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
 
 // 定义签名区 (Hotspot/Zone) 的类型
@@ -217,7 +217,7 @@ export default function ContractViewer({
 													objectFit="contain"
 												/>
 											) : (
-												<EditOutlined className="pb-[2px]" />
+												<EditSvg className="w-6 h-6" />
 											)}
 										</div>
 									))}
