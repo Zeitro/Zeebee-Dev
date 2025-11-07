@@ -150,11 +150,11 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 		return nil, nil, nil, nil, err
 	}
 
+	// LoanProperty
 	borrowerProperty, err := l.svcCtx.BorrowerPropertyRepo.GetBorrowerPropertyById(l.ctx, in.LoanProperty.BorrowerPropertyId, in.BorrowerId)
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
-	// LoanProperty
 	loanProperty = &model.LoanProperty{}
 	err = copier.CopyWithOption(loanProperty, borrowerProperty, copier.Option{
 		IgnoreEmpty:   false,
@@ -167,7 +167,6 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 	if err != nil {
 		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
 	}
-
 	err = copier.CopyWithOption(loanProperty, in.LoanProperty, copier.Option{
 		CaseSensitive: true,
 		Converters: []copier.TypeConverter{
