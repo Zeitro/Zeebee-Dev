@@ -15,7 +15,6 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
-	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/timex"
 
 	"zeebee-backend/common/errorx"
@@ -275,10 +274,9 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 		},
 	})
 	if err != nil {
-		return nil, nil,  nil, nil, errorx.GetFailedTransErr(err)
+		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
 	}
 	loan.RemoveRelationships()
-
 
 	// handle loan
 	loan = &model.Loan{}
