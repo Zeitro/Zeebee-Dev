@@ -3,11 +3,11 @@ package userlogic
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"time"
 
 	"github.com/duke-git/lancet/v2/random"
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/borrower/rpc/internal/email_tpl"
@@ -60,7 +60,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 			go func() {
 				err := sendRegisterVerifyUrlEmail(ctx, in.Data.Email, existedUser.Borrower.FirstName)
 				if err != nil {
-					err = errors.Wrap(err, "Send Verify Email Error")
+					err = errorx.Wrap(err, "Send Verify Email Error")
 					l.WithContext(ctx).Error(err)
 				}
 			}()
@@ -69,7 +69,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 			go func() {
 				err := sendLoginUrlEmail(ctx, in.Data.Email, existedUser.Borrower.FirstName)
 				if err != nil {
-					err = errors.Wrap(err, "Send Login Email Error")
+					err = errorx.Wrap(err, "Send Login Email Error")
 					l.WithContext(ctx).Error(err)
 				}
 			}()
@@ -82,7 +82,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 	var pwd string
 	pwd, err = utils.HashPassword(in.Data.Password)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	userModel := &model.User{
 		Email:        in.Data.Email,
@@ -120,7 +120,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 			l.WithContext(ctx).Error(err)
 		}
 		if err != nil {
-			err = errors.Wrap(err, "Send Register Verify Email Error")
+			err = errorx.Wrap(err, "Send Register Verify Email Error")
 			l.WithContext(ctx).Error(err)
 		}
 	}()
@@ -155,11 +155,11 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int
 	key := fmt.Sprintf(constants.BorrowerPreApprovalCacheKey, requestId)
 	cacheDataStr, err := global.GetRedis().Get(ctx, key)
 	if err != nil {
-		return errors.WithStack(err)
+		return errorx.WithStack(err)
 	}
 
 	if len(cacheDataStr) == 0 {
-		return errors.WithStack(errors.New("Pre-Approve Loan Data Not Found In Cache"))
+		return errorx.WithStack(errorx.New("Pre-Approve Loan Data Not Found In Cache"))
 	}
 
 	defer func() {
@@ -173,7 +173,7 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int
 	var cacheData types.PreApproveLoanCacheData
 	err = json.Unmarshal([]byte(cacheDataStr), &cacheData)
 	if err != nil {
-		return errors.WithStack(err)
+		return errorx.WithStack(err)
 	}
 	preApproveRequest := cacheData.RequestData
 	calcResult := cacheData.ResultData
@@ -184,11 +184,11 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int
 	// get lender company
 	lenderCompany, err := l.svcCtx.LenderCompanyRepo.FindOneById(ctx, lenderCompanyId)
 	if err != nil {
-		return errors.WithStack(err)
+		return errorx.WithStack(err)
 	}
 
 	if lenderCompany.Status != constants.LenderCompanyStatusActive {
-		return errors.WithStack(errors.New("Lender Company Is Not Active"))
+		return errorx.WithStack(errorx.New("Lender Company Is Not Active"))
 	}
 	// prepare data
 	var borrowerProperty *model.BorrowerProperty
@@ -280,7 +280,7 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int
 	// save draft loan
 	_, err = saveDraftLogic.SaveDraftLoan(loanApplyRequest)
 	if err != nil {
-		return errors.WithStack(err)
+		return errorx.WithStack(err)
 	}
 
 	//  send email to lender
@@ -305,7 +305,7 @@ func sendPreApprovalLoanEmail(lenderCompany *model.LenderCompany) (err error) {
 	data := map[string]interface{}{}
 	content, err := email2.ParseTemplate(email_tpl.SelfPreApprovalNotification, data)
 	if err != nil {
-		return errors.WithStack(err)
+		return errorx.WithStack(err)
 	}
 	msg := email2.Message{
 		Subject: "PreApproval Loan Notification",
@@ -316,7 +316,7 @@ func sendPreApprovalLoanEmail(lenderCompany *model.LenderCompany) (err error) {
 	}
 	err = global.EmailClient.SendEmail(msg)
 
-	return errors.WithStack(err)
+	return errorx.WithStack(err)
 }
 
 // sendLoginUrlEmail send login url email
@@ -328,10 +328,10 @@ func sendLoginUrlEmail(ctx context.Context, email string, firstName string) (err
 	)
 	ok, err := global.SendLoginEmailLimiter.Limit(ctx, key, limitOpt)
 	if err != nil {
-		return errors.WithStack(err)
+		return errorx.WithStack(err)
 	}
 	if !ok {
-		return errors.WithStack(errors.Errorf("Email %s Try Too Many Times", email))
+		return errorx.WithStack(errorx.Errorf("Email %s Try Too Many Times", email))
 	}
 
 	// send login email
@@ -341,7 +341,7 @@ func sendLoginUrlEmail(ctx context.Context, email string, firstName string) (err
 	}
 	content, err := email2.ParseTemplate(email_tpl.LoginUrlEmail, data)
 	if err != nil {
-		return errors.WithStack(err)
+		return errorx.WithStack(err)
 	}
 	msg := email2.Message{
 		Subject: "Login to your account",
@@ -352,7 +352,7 @@ func sendLoginUrlEmail(ctx context.Context, email string, firstName string) (err
 	}
 	err = global.EmailClient.SendEmail(msg)
 
-	return errors.WithStack(err)
+	return errorx.WithStack(err)
 }
 
 // sendRegisterVerifyUrlEmail send register verify url email
@@ -365,7 +365,7 @@ func sendRegisterVerifyUrlEmail(ctx context.Context, email string, firstName str
 		code = random.RandNumeral(10)
 		err = global.GetRedis().SetExpire(ctx, codeKey, code, global.Config.VerifyEmailExpireSeconds)
 		if err != nil {
-			return errors.WithStack(err)
+			return errorx.WithStack(err)
 		}
 	}
 	// send verify email
@@ -375,7 +375,7 @@ func sendRegisterVerifyUrlEmail(ctx context.Context, email string, firstName str
 	}
 	content, err := email2.ParseTemplate(email_tpl.RegisterVerifyEmail, data)
 	if err != nil {
-		return errors.WithStack(err)
+		return errorx.WithStack(err)
 	}
 	msg := email2.Message{
 		Subject: "Verify your email",
@@ -386,5 +386,5 @@ func sendRegisterVerifyUrlEmail(ctx context.Context, email string, firstName str
 	}
 	err = global.EmailClient.SendEmail(msg)
 
-	return errors.WithStack(err)
+	return errorx.WithStack(err)
 }

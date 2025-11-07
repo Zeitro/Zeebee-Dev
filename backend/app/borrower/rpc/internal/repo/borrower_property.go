@@ -214,9 +214,9 @@ func (repo *BorrowerPropertyRepo) Page(ctx context.Context, pageReq *borrower.Pr
 			)
 		}
 	}
-	if sorter == nil || len(sortColumns) == 0 {
-		sortColumns = append(sortColumns, fmt.Sprintf("%s.total_amount desc", borrowerPropertyTable))
-	}
+	// if sorter == nil || len(sortColumns) == 0 {
+	// 	sortColumns = append(sortColumns, fmt.Sprintf("%s.total_amount desc", borrowerPropertyTable))
+	// }
 	sortColumns = append(sortColumns, fmt.Sprintf("%s.updated_at desc", borrowerPropertyTable))
 
 	for _, column := range sortColumns {
