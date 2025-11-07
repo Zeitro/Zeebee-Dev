@@ -55,7 +55,7 @@ func (l *UpdateLogic) Update(req *types.LoanUpdateRequest) (resp *types.LoanUpda
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	// todo not handle applicants
+	// not handle applicants
 	// applicants := make([]*lender.ApplicantEntry, 0, len(rpcReq.Data.Applicants))
 	// for _, applicant := range rpcReq.Data.Applicants {
 	// 	applicant := applicant

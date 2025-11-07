@@ -19,4 +19,6 @@ type LoanBorrowerEntry {
     ContactPhone string `json:"contact_phone,optional" validate:"required"`
     ContactName string `json:"contact_name,optional" validate:"required,min=1,max=255"`
     OwnPercent int32 `json:"own_percent,optional" validate:"required,min=1,max=100"`
+    CreateAt string `json:"create_at,optional"`
+    UpdateAt string `json:"update_at,optional"`
 }
