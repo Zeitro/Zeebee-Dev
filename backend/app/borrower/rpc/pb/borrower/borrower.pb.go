@@ -2564,14 +2564,15 @@ func (x *LoanCreateRequest) GetData() *LoanCreateRequestData {
 }
 
 type ThirdPartyLoanPropertyEditEntry struct {
-	state              protoimpl.MessageState `protogen:"open.v1"`
-	Id                 int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	BorrowerPropertyId int64                  `protobuf:"varint,2,opt,name=borrower_property_id,json=borrowerPropertyId,proto3" json:"borrower_property_id,omitempty"`
-	Owner              string                 `protobuf:"bytes,3,opt,name=owner,proto3" json:"owner,omitempty"`
-	PurchaseDate       string                 `protobuf:"bytes,4,opt,name=purchase_date,json=purchaseDate,proto3" json:"purchase_date,omitempty"`
-	PurchaseAmount     float64                `protobuf:"fixed64,5,opt,name=purchase_amount,json=purchaseAmount,proto3" json:"purchase_amount,omitempty"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
+	state                 protoimpl.MessageState `protogen:"open.v1"`
+	Id                    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	BorrowerPropertyId    int64                  `protobuf:"varint,2,opt,name=borrower_property_id,json=borrowerPropertyId,proto3" json:"borrower_property_id,omitempty"`
+	Owner                 string                 `protobuf:"bytes,3,opt,name=owner,proto3" json:"owner,omitempty"`
+	PurchaseDate          string                 `protobuf:"bytes,4,opt,name=purchase_date,json=purchaseDate,proto3" json:"purchase_date,omitempty"`
+	PurchaseAmount        float64                `protobuf:"fixed64,5,opt,name=purchase_amount,json=purchaseAmount,proto3" json:"purchase_amount,omitempty"`
+	ExistingLenderCompany string                 `protobuf:"bytes,6,opt,name=existing_lender_company,json=existingLenderCompany,proto3" json:"existing_lender_company,omitempty"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
 }
 
 func (x *ThirdPartyLoanPropertyEditEntry) Reset() {
@@ -2637,6 +2638,13 @@ func (x *ThirdPartyLoanPropertyEditEntry) GetPurchaseAmount() float64 {
 		return x.PurchaseAmount
 	}
 	return 0
+}
+
+func (x *ThirdPartyLoanPropertyEditEntry) GetExistingLenderCompany() string {
+	if x != nil {
+		return x.ExistingLenderCompany
+	}
+	return ""
 }
 
 type ThirdPartyLoanApplicantEditEntry struct {
@@ -2770,31 +2778,31 @@ type LoanCreateRequestData struct {
 	TotalAmount   float64                `protobuf:"fixed64,6,opt,name=total_amount,json=totalAmount,proto3" json:"total_amount,omitempty"`
 	InitialAmount float64                `protobuf:"fixed64,7,opt,name=initial_amount,json=initialAmount,proto3" json:"initial_amount,omitempty"`
 	//  LoanPropertyEntry loan_property = 8;
-	LoanProperty          *ThirdPartyLoanPropertyEditEntry    `protobuf:"bytes,8,opt,name=loan_property,json=loanProperty,proto3" json:"loan_property,omitempty"`
-	Applicants            []*ThirdPartyLoanApplicantEditEntry `protobuf:"bytes,9,rep,name=applicants,proto3" json:"applicants,omitempty"`
-	LenderCompany         string                              `protobuf:"bytes,10,opt,name=lender_company,json=lenderCompany,proto3" json:"lender_company,omitempty"`
-	ClosingDate           string                              `protobuf:"bytes,11,opt,name=closing_date,json=closingDate,proto3" json:"closing_date,omitempty"`
-	HoldbackAmount        float64                             `protobuf:"fixed64,12,opt,name=holdback_amount,json=holdbackAmount,proto3" json:"holdback_amount,omitempty"`
-	Rate                  float32                             `protobuf:"fixed32,13,opt,name=rate,proto3" json:"rate,omitempty"`
-	ClosingFund           float64                             `protobuf:"fixed64,14,opt,name=closing_fund,json=closingFund,proto3" json:"closing_fund,omitempty"`
-	PrincipalAmount       float64                             `protobuf:"fixed64,15,opt,name=principal_amount,json=principalAmount,proto3" json:"principal_amount,omitempty"`
-	MonthlyPayment        float64                             `protobuf:"fixed64,16,opt,name=monthly_payment,json=monthlyPayment,proto3" json:"monthly_payment,omitempty"`
-	LienPosition          string                              `protobuf:"bytes,17,opt,name=lien_position,json=lienPosition,proto3" json:"lien_position,omitempty"`
-	MaturityDate          string                              `protobuf:"bytes,18,opt,name=maturity_date,json=maturityDate,proto3" json:"maturity_date,omitempty"`
-	PrepaymentPenalty     int32                               `protobuf:"varint,19,opt,name=prepayment_penalty,json=prepaymentPenalty,proto3" json:"prepayment_penalty,omitempty"`
-	ServiceCompany        string                              `protobuf:"bytes,20,opt,name=service_company,json=serviceCompany,proto3" json:"service_company,omitempty"`
-	PaidOffDate           string                              `protobuf:"bytes,21,opt,name=paid_off_date,json=paidOffDate,proto3" json:"paid_off_date,omitempty"`
-	BusinessStrategy      []string                            `protobuf:"bytes,22,rep,name=business_strategy,json=businessStrategy,proto3" json:"business_strategy,omitempty"`
-	PurchaseAmount        float64                             `protobuf:"fixed64,23,opt,name=purchase_amount,json=purchaseAmount,proto3" json:"purchase_amount,omitempty"`
-	PurchaseDate          string                              `protobuf:"bytes,24,opt,name=purchase_date,json=purchaseDate,proto3" json:"purchase_date,omitempty"`
-	Extend                *LoanExtendValueEntry               `protobuf:"bytes,25,opt,name=extend,proto3" json:"extend,omitempty"`
-	ExistingLenderCompany string                              `protobuf:"bytes,26,opt,name=existing_lender_company,json=existingLenderCompany,proto3" json:"existing_lender_company,omitempty"`
-	OriginalContractDate  string                              `protobuf:"bytes,27,opt,name=original_contract_date,json=originalContractDate,proto3" json:"original_contract_date,omitempty"`
-	ExtensionDate         string                              `protobuf:"bytes,28,opt,name=extension_date,json=extensionDate,proto3" json:"extension_date,omitempty"`
-	LoanProcessor         string                              `protobuf:"bytes,29,opt,name=loan_processor,json=loanProcessor,proto3" json:"loan_processor,omitempty"`
-	BorrowerEntityId      int64                               `protobuf:"varint,30,opt,name=borrower_entity_id,json=borrowerEntityId,proto3" json:"borrower_entity_id,omitempty"`
-	unknownFields         protoimpl.UnknownFields
-	sizeCache             protoimpl.SizeCache
+	LoanProperty      *ThirdPartyLoanPropertyEditEntry    `protobuf:"bytes,8,opt,name=loan_property,json=loanProperty,proto3" json:"loan_property,omitempty"`
+	Applicants        []*ThirdPartyLoanApplicantEditEntry `protobuf:"bytes,9,rep,name=applicants,proto3" json:"applicants,omitempty"`
+	LenderCompany     string                              `protobuf:"bytes,10,opt,name=lender_company,json=lenderCompany,proto3" json:"lender_company,omitempty"`
+	ClosingDate       string                              `protobuf:"bytes,11,opt,name=closing_date,json=closingDate,proto3" json:"closing_date,omitempty"`
+	HoldbackAmount    float64                             `protobuf:"fixed64,12,opt,name=holdback_amount,json=holdbackAmount,proto3" json:"holdback_amount,omitempty"`
+	Rate              float32                             `protobuf:"fixed32,13,opt,name=rate,proto3" json:"rate,omitempty"`
+	ClosingFund       float64                             `protobuf:"fixed64,14,opt,name=closing_fund,json=closingFund,proto3" json:"closing_fund,omitempty"`
+	PrincipalAmount   float64                             `protobuf:"fixed64,15,opt,name=principal_amount,json=principalAmount,proto3" json:"principal_amount,omitempty"`
+	MonthlyPayment    float64                             `protobuf:"fixed64,16,opt,name=monthly_payment,json=monthlyPayment,proto3" json:"monthly_payment,omitempty"`
+	LienPosition      string                              `protobuf:"bytes,17,opt,name=lien_position,json=lienPosition,proto3" json:"lien_position,omitempty"`
+	MaturityDate      string                              `protobuf:"bytes,18,opt,name=maturity_date,json=maturityDate,proto3" json:"maturity_date,omitempty"`
+	PrepaymentPenalty int32                               `protobuf:"varint,19,opt,name=prepayment_penalty,json=prepaymentPenalty,proto3" json:"prepayment_penalty,omitempty"`
+	ServiceCompany    string                              `protobuf:"bytes,20,opt,name=service_company,json=serviceCompany,proto3" json:"service_company,omitempty"`
+	PaidOffDate       string                              `protobuf:"bytes,21,opt,name=paid_off_date,json=paidOffDate,proto3" json:"paid_off_date,omitempty"`
+	BusinessStrategy  []string                            `protobuf:"bytes,22,rep,name=business_strategy,json=businessStrategy,proto3" json:"business_strategy,omitempty"`
+	//  double purchase_amount = 23;
+	//  string purchase_date = 24;
+	Extend *LoanExtendValueEntry `protobuf:"bytes,25,opt,name=extend,proto3" json:"extend,omitempty"`
+	//  string existing_lender_company = 26;
+	OriginalContractDate string `protobuf:"bytes,27,opt,name=original_contract_date,json=originalContractDate,proto3" json:"original_contract_date,omitempty"`
+	ExtensionDate        string `protobuf:"bytes,28,opt,name=extension_date,json=extensionDate,proto3" json:"extension_date,omitempty"`
+	LoanProcessor        string `protobuf:"bytes,29,opt,name=loan_processor,json=loanProcessor,proto3" json:"loan_processor,omitempty"`
+	BorrowerEntityId     int64  `protobuf:"varint,30,opt,name=borrower_entity_id,json=borrowerEntityId,proto3" json:"borrower_entity_id,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *LoanCreateRequestData) Reset() {
@@ -2981,32 +2989,11 @@ func (x *LoanCreateRequestData) GetBusinessStrategy() []string {
 	return nil
 }
 
-func (x *LoanCreateRequestData) GetPurchaseAmount() float64 {
-	if x != nil {
-		return x.PurchaseAmount
-	}
-	return 0
-}
-
-func (x *LoanCreateRequestData) GetPurchaseDate() string {
-	if x != nil {
-		return x.PurchaseDate
-	}
-	return ""
-}
-
 func (x *LoanCreateRequestData) GetExtend() *LoanExtendValueEntry {
 	if x != nil {
 		return x.Extend
 	}
 	return nil
-}
-
-func (x *LoanCreateRequestData) GetExistingLenderCompany() string {
-	if x != nil {
-		return x.ExistingLenderCompany
-	}
-	return ""
 }
 
 func (x *LoanCreateRequestData) GetOriginalContractDate() string {
@@ -3171,37 +3158,37 @@ func (x *LoanUpdateRequest) GetData() *LoanUpdateRequestData {
 }
 
 type LoanUpdateRequestData struct {
-	state                 protoimpl.MessageState              `protogen:"open.v1"`
-	BorrowerId            int64                               `protobuf:"varint,1,opt,name=borrower_id,json=borrowerId,proto3" json:"borrower_id,omitempty"`
-	Stage                 string                              `protobuf:"bytes,2,opt,name=stage,proto3" json:"stage,omitempty"`
-	PendingStatus         string                              `protobuf:"bytes,3,opt,name=pending_status,json=pendingStatus,proto3" json:"pending_status,omitempty"`
-	LoanPurpose           string                              `protobuf:"bytes,4,opt,name=loan_purpose,json=loanPurpose,proto3" json:"loan_purpose,omitempty"`
-	LoanType              string                              `protobuf:"bytes,5,opt,name=loan_type,json=loanType,proto3" json:"loan_type,omitempty"`
-	TotalAmount           float64                             `protobuf:"fixed64,6,opt,name=total_amount,json=totalAmount,proto3" json:"total_amount,omitempty"`
-	InitialAmount         float64                             `protobuf:"fixed64,7,opt,name=initial_amount,json=initialAmount,proto3" json:"initial_amount,omitempty"`
-	LoanProperty          *ThirdPartyLoanPropertyEditEntry    `protobuf:"bytes,8,opt,name=loan_property,json=loanProperty,proto3" json:"loan_property,omitempty"`
-	Applicants            []*ThirdPartyLoanApplicantEditEntry `protobuf:"bytes,9,rep,name=applicants,proto3" json:"applicants,omitempty"`
-	LenderCompany         string                              `protobuf:"bytes,10,opt,name=lender_company,json=lenderCompany,proto3" json:"lender_company,omitempty"`
-	ClosingDate           string                              `protobuf:"bytes,11,opt,name=closing_date,json=closingDate,proto3" json:"closing_date,omitempty"`
-	HoldbackAmount        float64                             `protobuf:"fixed64,12,opt,name=holdback_amount,json=holdbackAmount,proto3" json:"holdback_amount,omitempty"`
-	Rate                  float32                             `protobuf:"fixed32,13,opt,name=rate,proto3" json:"rate,omitempty"`
-	ClosingFund           float64                             `protobuf:"fixed64,14,opt,name=closing_fund,json=closingFund,proto3" json:"closing_fund,omitempty"`
-	PrincipalAmount       float64                             `protobuf:"fixed64,15,opt,name=principal_amount,json=principalAmount,proto3" json:"principal_amount,omitempty"`
-	MonthlyPayment        float64                             `protobuf:"fixed64,16,opt,name=monthly_payment,json=monthlyPayment,proto3" json:"monthly_payment,omitempty"`
-	LienPosition          string                              `protobuf:"bytes,17,opt,name=lien_position,json=lienPosition,proto3" json:"lien_position,omitempty"`
-	MaturityDate          string                              `protobuf:"bytes,18,opt,name=maturity_date,json=maturityDate,proto3" json:"maturity_date,omitempty"`
-	PrepaymentPenalty     int32                               `protobuf:"varint,19,opt,name=prepayment_penalty,json=prepaymentPenalty,proto3" json:"prepayment_penalty,omitempty"`
-	ServiceCompany        string                              `protobuf:"bytes,20,opt,name=service_company,json=serviceCompany,proto3" json:"service_company,omitempty"`
-	PaidOffDate           string                              `protobuf:"bytes,21,opt,name=paid_off_date,json=paidOffDate,proto3" json:"paid_off_date,omitempty"`
-	BusinessStrategy      []string                            `protobuf:"bytes,22,rep,name=business_strategy,json=businessStrategy,proto3" json:"business_strategy,omitempty"`
-	Id                    int64                               `protobuf:"varint,23,opt,name=id,proto3" json:"id,omitempty"`
-	PurchaseAmount        float64                             `protobuf:"fixed64,24,opt,name=purchase_amount,json=purchaseAmount,proto3" json:"purchase_amount,omitempty"`
-	PurchaseDate          string                              `protobuf:"bytes,25,opt,name=purchase_date,json=purchaseDate,proto3" json:"purchase_date,omitempty"`
-	Extend                *LoanExtendValueEntry               `protobuf:"bytes,26,opt,name=extend,proto3" json:"extend,omitempty"`
-	ExistingLenderCompany string                              `protobuf:"bytes,27,opt,name=existing_lender_company,json=existingLenderCompany,proto3" json:"existing_lender_company,omitempty"`
-	OriginalContractDate  string                              `protobuf:"bytes,28,opt,name=original_contract_date,json=originalContractDate,proto3" json:"original_contract_date,omitempty"`
-	ExtensionDate         string                              `protobuf:"bytes,29,opt,name=extension_date,json=extensionDate,proto3" json:"extension_date,omitempty"`
-	LoanProcessor         string                              `protobuf:"bytes,30,opt,name=loan_processor,json=loanProcessor,proto3" json:"loan_processor,omitempty"`
+	state             protoimpl.MessageState              `protogen:"open.v1"`
+	BorrowerId        int64                               `protobuf:"varint,1,opt,name=borrower_id,json=borrowerId,proto3" json:"borrower_id,omitempty"`
+	Stage             string                              `protobuf:"bytes,2,opt,name=stage,proto3" json:"stage,omitempty"`
+	PendingStatus     string                              `protobuf:"bytes,3,opt,name=pending_status,json=pendingStatus,proto3" json:"pending_status,omitempty"`
+	LoanPurpose       string                              `protobuf:"bytes,4,opt,name=loan_purpose,json=loanPurpose,proto3" json:"loan_purpose,omitempty"`
+	LoanType          string                              `protobuf:"bytes,5,opt,name=loan_type,json=loanType,proto3" json:"loan_type,omitempty"`
+	TotalAmount       float64                             `protobuf:"fixed64,6,opt,name=total_amount,json=totalAmount,proto3" json:"total_amount,omitempty"`
+	InitialAmount     float64                             `protobuf:"fixed64,7,opt,name=initial_amount,json=initialAmount,proto3" json:"initial_amount,omitempty"`
+	LoanProperty      *ThirdPartyLoanPropertyEditEntry    `protobuf:"bytes,8,opt,name=loan_property,json=loanProperty,proto3" json:"loan_property,omitempty"`
+	Applicants        []*ThirdPartyLoanApplicantEditEntry `protobuf:"bytes,9,rep,name=applicants,proto3" json:"applicants,omitempty"`
+	LenderCompany     string                              `protobuf:"bytes,10,opt,name=lender_company,json=lenderCompany,proto3" json:"lender_company,omitempty"`
+	ClosingDate       string                              `protobuf:"bytes,11,opt,name=closing_date,json=closingDate,proto3" json:"closing_date,omitempty"`
+	HoldbackAmount    float64                             `protobuf:"fixed64,12,opt,name=holdback_amount,json=holdbackAmount,proto3" json:"holdback_amount,omitempty"`
+	Rate              float32                             `protobuf:"fixed32,13,opt,name=rate,proto3" json:"rate,omitempty"`
+	ClosingFund       float64                             `protobuf:"fixed64,14,opt,name=closing_fund,json=closingFund,proto3" json:"closing_fund,omitempty"`
+	PrincipalAmount   float64                             `protobuf:"fixed64,15,opt,name=principal_amount,json=principalAmount,proto3" json:"principal_amount,omitempty"`
+	MonthlyPayment    float64                             `protobuf:"fixed64,16,opt,name=monthly_payment,json=monthlyPayment,proto3" json:"monthly_payment,omitempty"`
+	LienPosition      string                              `protobuf:"bytes,17,opt,name=lien_position,json=lienPosition,proto3" json:"lien_position,omitempty"`
+	MaturityDate      string                              `protobuf:"bytes,18,opt,name=maturity_date,json=maturityDate,proto3" json:"maturity_date,omitempty"`
+	PrepaymentPenalty int32                               `protobuf:"varint,19,opt,name=prepayment_penalty,json=prepaymentPenalty,proto3" json:"prepayment_penalty,omitempty"`
+	ServiceCompany    string                              `protobuf:"bytes,20,opt,name=service_company,json=serviceCompany,proto3" json:"service_company,omitempty"`
+	PaidOffDate       string                              `protobuf:"bytes,21,opt,name=paid_off_date,json=paidOffDate,proto3" json:"paid_off_date,omitempty"`
+	BusinessStrategy  []string                            `protobuf:"bytes,22,rep,name=business_strategy,json=businessStrategy,proto3" json:"business_strategy,omitempty"`
+	Id                int64                               `protobuf:"varint,23,opt,name=id,proto3" json:"id,omitempty"`
+	//  double purchase_amount = 24;
+	//  string purchase_date = 25;
+	Extend *LoanExtendValueEntry `protobuf:"bytes,26,opt,name=extend,proto3" json:"extend,omitempty"`
+	//  string existing_lender_company = 27;
+	OriginalContractDate string `protobuf:"bytes,28,opt,name=original_contract_date,json=originalContractDate,proto3" json:"original_contract_date,omitempty"`
+	ExtensionDate        string `protobuf:"bytes,29,opt,name=extension_date,json=extensionDate,proto3" json:"extension_date,omitempty"`
+	LoanProcessor        string `protobuf:"bytes,30,opt,name=loan_processor,json=loanProcessor,proto3" json:"loan_processor,omitempty"`
 	//  string owner = 31;
 	BorrowerEntityId int64 `protobuf:"varint,31,opt,name=borrower_entity_id,json=borrowerEntityId,proto3" json:"borrower_entity_id,omitempty"`
 	unknownFields    protoimpl.UnknownFields
@@ -3399,32 +3386,11 @@ func (x *LoanUpdateRequestData) GetId() int64 {
 	return 0
 }
 
-func (x *LoanUpdateRequestData) GetPurchaseAmount() float64 {
-	if x != nil {
-		return x.PurchaseAmount
-	}
-	return 0
-}
-
-func (x *LoanUpdateRequestData) GetPurchaseDate() string {
-	if x != nil {
-		return x.PurchaseDate
-	}
-	return ""
-}
-
 func (x *LoanUpdateRequestData) GetExtend() *LoanExtendValueEntry {
 	if x != nil {
 		return x.Extend
 	}
 	return nil
-}
-
-func (x *LoanUpdateRequestData) GetExistingLenderCompany() string {
-	if x != nil {
-		return x.ExistingLenderCompany
-	}
-	return ""
 }
 
 func (x *LoanUpdateRequestData) GetOriginalContractDate() string {
@@ -13338,13 +13304,14 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x10remaining_budget\x18\x02 \x01(\x01R\x0fremainingBudget\x128\n" +
 	"\x19cost_spent_to_date_amount\x18\x03 \x01(\x01R\x15costSpentToDateAmount\"H\n" +
 	"\x11LoanCreateRequest\x123\n" +
-	"\x04data\x18\x01 \x01(\v2\x1f.borrower.LoanCreateRequestDataR\x04data\"\xc7\x01\n" +
+	"\x04data\x18\x01 \x01(\v2\x1f.borrower.LoanCreateRequestDataR\x04data\"\xff\x01\n" +
 	"\x1fThirdPartyLoanPropertyEditEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x120\n" +
 	"\x14borrower_property_id\x18\x02 \x01(\x03R\x12borrowerPropertyId\x12\x14\n" +
 	"\x05owner\x18\x03 \x01(\tR\x05owner\x12#\n" +
 	"\rpurchase_date\x18\x04 \x01(\tR\fpurchaseDate\x12'\n" +
-	"\x0fpurchase_amount\x18\x05 \x01(\x01R\x0epurchaseAmount\"\x85\x01\n" +
+	"\x0fpurchase_amount\x18\x05 \x01(\x01R\x0epurchaseAmount\x126\n" +
+	"\x17existing_lender_company\x18\x06 \x01(\tR\x15existingLenderCompany\"\x85\x01\n" +
 	" ThirdPartyLoanApplicantEditEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
@@ -13354,7 +13321,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
 	"is_primary\x18\x02 \x01(\bR\tisPrimary\x122\n" +
-	"\x15borrower_applicant_id\x18\x03 \x01(\x03R\x13borrowerApplicantId\"\xfc\t\n" +
+	"\x15borrower_applicant_id\x18\x03 \x01(\x03R\x13borrowerApplicantId\"\xf6\b\n" +
 	"\x15LoanCreateRequestData\x12\x1f\n" +
 	"\vborrower_id\x18\x01 \x01(\x03R\n" +
 	"borrowerId\x12\x14\n" +
@@ -13381,11 +13348,8 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x12prepayment_penalty\x18\x13 \x01(\x05R\x11prepaymentPenalty\x12'\n" +
 	"\x0fservice_company\x18\x14 \x01(\tR\x0eserviceCompany\x12\"\n" +
 	"\rpaid_off_date\x18\x15 \x01(\tR\vpaidOffDate\x12+\n" +
-	"\x11business_strategy\x18\x16 \x03(\tR\x10businessStrategy\x12'\n" +
-	"\x0fpurchase_amount\x18\x17 \x01(\x01R\x0epurchaseAmount\x12#\n" +
-	"\rpurchase_date\x18\x18 \x01(\tR\fpurchaseDate\x126\n" +
-	"\x06extend\x18\x19 \x01(\v2\x1e.borrower.LoanExtendValueEntryR\x06extend\x126\n" +
-	"\x17existing_lender_company\x18\x1a \x01(\tR\x15existingLenderCompany\x124\n" +
+	"\x11business_strategy\x18\x16 \x03(\tR\x10businessStrategy\x126\n" +
+	"\x06extend\x18\x19 \x01(\v2\x1e.borrower.LoanExtendValueEntryR\x06extend\x124\n" +
 	"\x16original_contract_date\x18\x1b \x01(\tR\x14originalContractDate\x12%\n" +
 	"\x0eextension_date\x18\x1c \x01(\tR\rextensionDate\x12%\n" +
 	"\x0eloan_processor\x18\x1d \x01(\tR\rloanProcessor\x12,\n" +
@@ -13395,8 +13359,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x16LoanCreateResponseData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"H\n" +
 	"\x11LoanUpdateRequest\x123\n" +
-	"\x04data\x18\x01 \x01(\v2\x1f.borrower.LoanUpdateRequestDataR\x04data\"\x8c\n" +
-	"\n" +
+	"\x04data\x18\x01 \x01(\v2\x1f.borrower.LoanUpdateRequestDataR\x04data\"\x86\t\n" +
 	"\x15LoanUpdateRequestData\x12\x1f\n" +
 	"\vborrower_id\x18\x01 \x01(\x03R\n" +
 	"borrowerId\x12\x14\n" +
@@ -13424,11 +13387,8 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x0fservice_company\x18\x14 \x01(\tR\x0eserviceCompany\x12\"\n" +
 	"\rpaid_off_date\x18\x15 \x01(\tR\vpaidOffDate\x12+\n" +
 	"\x11business_strategy\x18\x16 \x03(\tR\x10businessStrategy\x12\x0e\n" +
-	"\x02id\x18\x17 \x01(\x03R\x02id\x12'\n" +
-	"\x0fpurchase_amount\x18\x18 \x01(\x01R\x0epurchaseAmount\x12#\n" +
-	"\rpurchase_date\x18\x19 \x01(\tR\fpurchaseDate\x126\n" +
-	"\x06extend\x18\x1a \x01(\v2\x1e.borrower.LoanExtendValueEntryR\x06extend\x126\n" +
-	"\x17existing_lender_company\x18\x1b \x01(\tR\x15existingLenderCompany\x124\n" +
+	"\x02id\x18\x17 \x01(\x03R\x02id\x126\n" +
+	"\x06extend\x18\x1a \x01(\v2\x1e.borrower.LoanExtendValueEntryR\x06extend\x124\n" +
 	"\x16original_contract_date\x18\x1c \x01(\tR\x14originalContractDate\x12%\n" +
 	"\x0eextension_date\x18\x1d \x01(\tR\rextensionDate\x12%\n" +
 	"\x0eloan_processor\x18\x1e \x01(\tR\rloanProcessor\x12,\n" +

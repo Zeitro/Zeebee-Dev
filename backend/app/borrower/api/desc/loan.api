@@ -112,10 +112,10 @@ type (
         PaidOffDate string `json:"paid_off_date,optional" validate:"required_if=Stage Archived,omitempty,datetime=01/02/2006"`
         BusinessStrategy []string `json:"business_strategy,optional" validate:"required,dive,required,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
 
-        PurchaseAmount float64 `json:"purchase_amount,optional"`
-        PurchaseDate string `json:"purchase_date,optional"`
+        //        PurchaseAmount float64 `json:"purchase_amount,optional"`
+        //        PurchaseDate string `json:"purchase_date,optional"`
         Extend *ImportLoanExtendEntry `json:"extend,optional"`
-        ExistingLenderCompany string `json:"existing_lender_company,optional"`
+        //        ExistingLenderCompany string `json:"existing_lender_company,optional"`
         OriginalContractDate string `json:"original_contract_date,optional"`
         ExtensionDate string `json:"extension_date,optional"`
         LoanProcessor string `json:"loan_processor,optional"`

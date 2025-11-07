@@ -150,7 +150,36 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 		return nil, nil, nil, nil, err
 	}
 
-	// update loan
+	borrowerProperty, err := l.svcCtx.BorrowerPropertyRepo.GetBorrowerPropertyById(l.ctx, in.LoanProperty.BorrowerPropertyId, in.BorrowerId)
+	if err != nil {
+		return nil, nil, nil, nil, err
+	}
+	// LoanProperty
+	loanProperty = &model.LoanProperty{}
+	err = copier.CopyWithOption(loanProperty, borrowerProperty, copier.Option{
+		IgnoreEmpty:   false,
+		DeepCopy:      true,
+		CaseSensitive: true,
+		Converters: []copier.TypeConverter{
+			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
+		},
+	})
+	if err != nil {
+		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
+	}
+
+	err = copier.CopyWithOption(loanProperty, in.LoanProperty, copier.Option{
+		CaseSensitive: true,
+		Converters: []copier.TypeConverter{
+			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
+		},
+	})
+	if err != nil {
+		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
+	}
+	loanProperty.Id = 0
+
+	// loan
 	loan = &model.Loan{}
 	err = copier.CopyWithOption(loan, in, copier.Option{
 		IgnoreEmpty:   false,
@@ -166,37 +195,11 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 	loan.BorrowerId = in.BorrowerId
 	loan.PendingStatus = constants.LoanPendingStatusNone
 	loan.Source = constants.LoanSourceBorrower
-
-	borrowerProperty, err := l.svcCtx.BorrowerPropertyRepo.GetBorrowerPropertyById(l.ctx, in.LoanProperty.BorrowerPropertyId, in.BorrowerId)
-	if err != nil {
-		return nil, nil, nil, nil, err
-	}
-
-	loanProperty = &model.LoanProperty{}
-
-	err = copier.CopyWithOption(loanProperty, borrowerProperty, copier.Option{
-		IgnoreEmpty:   false,
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-		},
-	})
-	if err != nil {
-		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
-	}
-	// Clear ID to allow auto-generation by database
-	loanProperty.Id = 0
-	loanProperty.BorrowerPropertyId = in.LoanProperty.BorrowerPropertyId
-	loanProperty.Owner = in.LoanProperty.Owner
-	loanProperty.PurchaseAmount = in.LoanProperty.PurchaseAmount
-
 	if loan.TotalAmount < loan.InitialAmount {
 		return nil, nil, nil, nil, errors.New("Total Amount Cannot Be Less Than Initial Amount")
 	}
 	switch constants.LoanStage(in.Stage) {
 	case constants.LoanStagePending:
-
 		if loan.ClosingDate == nil {
 			return nil, nil, nil, nil, errors.New("Closing Date Is Required")
 		}
