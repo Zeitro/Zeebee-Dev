@@ -259,7 +259,6 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 		loan.RemoveRelationships()
 	}
 	err = copier.CopyWithOption(loan, reqData, copier.Option{
-		CaseSensitive:   false,
 		CaseSensitive: true,
 		DeepCopy:      true,
 		Converters: []copier.TypeConverter{
