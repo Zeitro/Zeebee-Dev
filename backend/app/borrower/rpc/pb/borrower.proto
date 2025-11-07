@@ -857,6 +857,7 @@ message PropertyPageEntry{
   int32 bedrooms = 15;
   int32 bathrooms = 16;
   int32 unit = 17;
+  int32 loan_count = 18;
 
 }
 
