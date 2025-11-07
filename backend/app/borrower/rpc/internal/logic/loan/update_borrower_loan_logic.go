@@ -15,6 +15,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/timex"
 
 	"zeebee-backend/common/errorx"
@@ -247,6 +248,37 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 		return nil, nil, nil, nil, err
 	}
 	loanBorrower.LoanId = in.Id
+	// loan
+	// loan = &model.Loan{
+	// 	BorrowerId:       in.BorrowerId,
+	// 	LenderCompany:    in.LenderCompany,
+	// 	ServiceCompany:   in.ServiceCompany,
+	// 	Stage:            constants.LoanStage(in.Stage),
+	// 	PendingStatus:    constants.LoanPendingStatusNone,
+	// 	LoanPurpose:      constants.LoanPurpose(in.LoanPurpose),
+	// 	LoanType:         constants.LoanType(in.LoanType),
+	// 	TotalAmount:      in.TotalAmount,
+	// 	PrincipalAmount:  in.PrincipalAmount,
+	// 	InitialAmount:    in.InitialAmount,
+	// 	Rate:             in.Rate,
+	// 	BusinessStrategy: pq.StringArray(in.BusinessStrategy),
+	// 	Source:           constants.LoanSourceBorrower,
+	// 	ClosingFund:      in.ClosingFund,
+	// }
+	loan = &model.Loan{}
+	err = copier.CopyWithOption(loan, in, copier.Option{
+		IgnoreEmpty:   false,
+		DeepCopy:      true,
+		CaseSensitive: true,
+		Converters: []copier.TypeConverter{
+			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
+		},
+	})
+	if err != nil {
+		return nil, nil,  nil, nil, errorx.GetFailedTransErr(err)
+	}
+	loan.RemoveRelationships()
+
 
 	// handle loan
 	loan = &model.Loan{}

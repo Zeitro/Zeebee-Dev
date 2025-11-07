@@ -129,6 +129,7 @@ func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalReque
 		DeepCopy:      true,
 		CaseSensitive: true,
 	})
+	cacheData.RequestData.Borrower.FicoScore = in.Data.Borrower.EstCreditScore
 	key := fmt.Sprintf(constants.BorrowerPreApprovalCacheKey, requestId)
 	contents, _ := json.Marshal(cacheData)
 	err = global.GetRedis().SetExpire(l.ctx, key, string(contents), global.Config.PreApprovalLoanExpireSeconds)
@@ -187,29 +188,42 @@ func sendPreApprovalNotification(ctx context.Context, repo *repo.LenderCompanyRe
 	if cacheData.ResultData == nil {
 		cacheData.ResultData = &types.LoanPreApprovalResult{}
 	}
+	cacheData.ResultData.TotalAmount = mathutil.RoundToFloat(cacheData.ResultData.TotalAmount, 0)
+	cacheData.ResultData.MonthlyPayment = mathutil.RoundToFloat(cacheData.ResultData.MonthlyPayment, 0)
+	cacheData.ResultData.InitialAmount = mathutil.RoundToFloat(cacheData.ResultData.InitialAmount, 0)
+	cacheData.ResultData.HoldbackAmount = mathutil.RoundToFloat(cacheData.ResultData.HoldbackAmount, 0)
+	cacheData.ResultData.CashToClose = mathutil.RoundToFloat(cacheData.ResultData.CashToClose, 0)
+
+	cacheData.ResultData.Rate = mathutil.RoundToFloat(cacheData.ResultData.Rate*100.0, 2)
+	cacheData.ResultData.Ltc = float32(mathutil.RoundToFloat(cacheData.ResultData.Ltc*100.0, 2))
+	cacheData.ResultData.Ltv = float32(mathutil.RoundToFloat(cacheData.ResultData.Ltv*100.0, 2))
+	cacheData.ResultData.Ltarv = float32(mathutil.RoundToFloat(cacheData.ResultData.Ltarv*100.0, 2))
+
 	// parse template
 	tplVars := map[string]interface{}{
 		"request": cacheData.RequestData,
 		"result":  cacheData.ResultData,
 		"company": company.Name,
+		"url":     global.Config.LenderUrl,
 	}
 	emailContent := ""
+	emailContent, err = email.ParseTemplate(email_tpl.SelfPreApprovalNotification, tplVars)
 
-	switch company.OwnerType {
-	case constants.LenderCompanyOwnerTypeSelf:
-		emailContent, err = email.ParseTemplate(email_tpl.SelfPreApprovalNotification, tplVars)
-	case constants.LenderCompanyOwnerTypeThirdParty:
-		emailContent, err = email.ParseTemplate(email_tpl.ThirdPartyPreApprovalNotification, tplVars)
-	default:
-		err = errors.New("Invalid Company Owner Type")
-	}
+	// switch company.OwnerType {
+	// case constants.LenderCompanyOwnerTypeSelf:
+	// 	emailContent, err = email.ParseTemplate(email_tpl.SelfPreApprovalNotification, tplVars)
+	// case constants.LenderCompanyOwnerTypeThirdParty:
+	// 	emailContent, err = email.ParseTemplate(email_tpl.ThirdPartyPreApprovalNotification, tplVars)
+	// default:
+	// 	err = errors.New("Invalid Company Owner Type")
+	// }
 	if err != nil {
 		return errors.WithStack(err)
 	}
 
 	// send email
 	emailMsg := email.Message{
-		Subject: "Pre Approval Loan Notification",
+		Subject: "New Pre-Approval-Ready for Review in Zeebee",
 		From:    global.Config.EmailConf.Username,
 		To:      []string{company.ContactEmail},
 		Body:    emailContent,
