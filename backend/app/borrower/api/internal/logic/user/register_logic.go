@@ -38,10 +38,6 @@ func (l *RegisterLogic) Register(req *types.UserRegisterRequest) (resp *types.Us
 			LastName:              req.LastName,
 			PreApprovalRequestId:  req.PreApprovalRequestId,
 			TargetLenderCompanyId: req.TargetLenderCompanyId,
-
-			// PhoneNumber: req.PhoneNumber,
-			// Address:     req.Address,
-			// Ssn: req.Ssn,
 		},
 	})
 	if err != nil {
