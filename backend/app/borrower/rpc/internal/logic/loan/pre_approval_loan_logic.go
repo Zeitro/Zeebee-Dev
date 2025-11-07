@@ -52,7 +52,7 @@ func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalReque
 	})
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.Errorf("property address is not found")
+			return nil, errors.Errorf("Property Address Is Not Found")
 		}
 
 		return nil, errors.WithStack(err)

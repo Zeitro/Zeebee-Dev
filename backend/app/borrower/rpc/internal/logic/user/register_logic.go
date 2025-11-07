@@ -60,7 +60,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 			go func() {
 				err := sendRegisterVerifyUrlEmail(ctx, in.Data.Email, existedUser.Borrower.FirstName)
 				if err != nil {
-					err = errors.Wrap(err, "send verify email error")
+					err = errors.Wrap(err, "Send Verify Email Error")
 					l.WithContext(ctx).Error(err)
 				}
 			}()
@@ -69,7 +69,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 			go func() {
 				err := sendLoginUrlEmail(ctx, in.Data.Email, existedUser.Borrower.FirstName)
 				if err != nil {
-					err = errors.Wrap(err, "send login email error")
+					err = errors.Wrap(err, "Send Login Email Error")
 					l.WithContext(ctx).Error(err)
 				}
 			}()
@@ -110,15 +110,17 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 		return nil, err
 	}
 
+	newCxt := context.WithoutCancel(l.ctx)
+
 	go func() {
 		// send account validate email
-		ctx := context.WithoutCancel(l.ctx)
+		ctx := context.WithoutCancel(newCxt)
 		err := sendRegisterVerifyUrlEmail(ctx, in.Data.Email, borrowerModel.FirstName)
 		if err != nil {
 			l.WithContext(ctx).Error(err)
 		}
 		if err != nil {
-			err = errors.Wrap(err, "send register verify email error")
+			err = errors.Wrap(err, "Send Register Verify Email Error")
 			l.WithContext(ctx).Error(err)
 		}
 	}()
@@ -128,9 +130,18 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 			return
 		}
 		// create draft loan
-		err := l.handlePreapproveLoan(context.WithoutCancel(l.ctx), borrowerModel.Id, in.Data.PreApprovalRequestId, in.Data.TargetLenderCompanyId)
+		ctx := context.WithoutCancel(newCxt)
+		err := l.handlePreapproveLoan(newCxt, borrowerModel.Id, in.Data.PreApprovalRequestId, in.Data.TargetLenderCompanyId)
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			if errors.Is(err, context.Canceled) {
+				l.WithContext(ctx).
+					WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).
+					Info("Pre-Approve Loan Processing Canceled")
+			} else {
+				l.WithContext(ctx).
+					WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).
+					Error(err)
+			}
 		}
 	}()
 
@@ -148,7 +159,7 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int
 	}
 
 	if len(cacheDataStr) == 0 {
-		return errors.WithStack(errors.New("pre-approve loan data not found in cache"))
+		return errors.WithStack(errors.New("Pre-Approve Loan Data Not Found In Cache"))
 	}
 
 	defer func() {
@@ -177,12 +188,12 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int
 	}
 
 	if lenderCompany.Status != constants.LenderCompanyStatusActive {
-		return errors.WithStack(errors.New("lender company is not active"))
+		return errors.WithStack(errors.New("Lender Company Is Not Active"))
 	}
 	// prepare data
 	var borrowerProperty *model.BorrowerProperty
 	var borrowerApplicant *model.BorrowerApplicant
-	err = l.svcCtx.UserRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
+	err = l.svcCtx.UserRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
 
 		eg := errorx.NewErrorGroup()
@@ -190,7 +201,7 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int
 			// get BorrowerProperty
 			func() error {
 				var err error
-				borrowerProperty, err = l.svcCtx.BorrowerPropertyRepo.GetOrCreateBorrowerPropertyWithTx(l.ctx, tx, borrowerId, commontypes.Address{
+				borrowerProperty, err = l.svcCtx.BorrowerPropertyRepo.GetOrCreateBorrowerPropertyWithTx(ctx, tx, borrowerId, commontypes.Address{
 					State:    preApproveRequest.Property.Address.State,
 					City:     preApproveRequest.Property.Address.City,
 					Address1: preApproveRequest.Property.Address.Address1,
@@ -209,7 +220,7 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int
 					Phone:          preApproveRequest.Borrower.Phone,
 					EstCreditScore: preApproveRequest.Borrower.FicoScore,
 				}
-				borrowerApplicant, err = l.svcCtx.BorrowerApplicantRepo.CreateWithTx(l.ctx, tx, borrowerApplicant, false)
+				borrowerApplicant, err = l.svcCtx.BorrowerApplicantRepo.CreateWithTx(ctx, tx, borrowerApplicant, false)
 				return err
 			},
 		)
@@ -320,7 +331,7 @@ func sendLoginUrlEmail(ctx context.Context, email string, firstName string) (err
 		return errors.WithStack(err)
 	}
 	if !ok {
-		return errors.WithStack(errors.Errorf("Email %s try too many times", email))
+		return errors.WithStack(errors.Errorf("Email %s Try Too Many Times", email))
 	}
 
 	// send login email
