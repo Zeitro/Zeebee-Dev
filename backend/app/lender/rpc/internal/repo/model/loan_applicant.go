@@ -37,7 +37,7 @@ type LoanApplicant struct {
 }
 
 func (m LoanApplicant) TableName() string {
-	return "applicants"
+	return "loan_applicants"
 }
 
 func (m *LoanApplicant) RemoveRelationships() {

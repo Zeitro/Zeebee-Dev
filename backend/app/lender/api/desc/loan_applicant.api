@@ -1,15 +1,14 @@
 syntax = "v1"
 
 info(
-    title: "borrower-address-api"
-    desc: "applicant-api http service description"
+    title: "loan-applicant-api"
     version: "v1"
 )
 
 import "address.api"
 
 
-type ApplicantEntry {
+type LoanApplicantEntry {
     Id int64 `json:"id,omitempty,optional"`
     FirstName string `json:"first_name,omitempty, optional"`
     MidName string `json:"mid_name,omitempty, optional"`
@@ -28,7 +27,8 @@ type ApplicantEntry {
     EstCreditScore int32 `json:"est_credit_score,omitempty, optional"`
     DriverLicenseNum string `json:"driver_license_num,omitempty, optional"`
     Address *AddressEntry `json:"address,omitempty, optional"`
-    LoanBorrowerID int64 `json:"loan_borrower_id,omitempty, optional"`
+    LoanBorrowerId int64 `json:"loan_borrower_id,omitempty, optional"`
+    BorrowerApplicantId int64 `json:"borrower_applicant_id,omitempty, optional"`
     Phone string `json:"phone,omitempty, optional"`
 }
 
