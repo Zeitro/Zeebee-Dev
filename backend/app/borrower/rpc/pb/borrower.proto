@@ -309,6 +309,7 @@ message ThirdPartyLoanPropertyEditEntry {
   string owner = 3;
   string purchase_date = 4;
   double purchase_amount = 5;
+  string  existing_lender_company = 6;
 }
 message ThirdPartyLoanApplicantEditEntry {
   int64 id = 1;
@@ -348,10 +349,10 @@ message LoanCreateRequestData {
   string paid_off_date = 21;
   repeated string business_strategy = 22;
 
-  double purchase_amount = 23;
-  string purchase_date = 24;
+  //  double purchase_amount = 23;
+  //  string purchase_date = 24;
   LoanExtendValueEntry extend = 25;
-  string existing_lender_company = 26;
+  //  string existing_lender_company = 26;
   string original_contract_date = 27;
   string extension_date = 28;
   string loan_processor = 29;
@@ -407,10 +408,10 @@ message LoanUpdateRequestData {
   repeated string business_strategy = 22;
   int64 id = 23;
 
-  double purchase_amount = 24;
-  string purchase_date = 25;
+  //  double purchase_amount = 24;
+  //  string purchase_date = 25;
   LoanExtendValueEntry extend = 26;
-  string existing_lender_company = 27;
+  //  string existing_lender_company = 27;
   string original_contract_date = 28;
   string extension_date = 29;
   string loan_processor = 30;

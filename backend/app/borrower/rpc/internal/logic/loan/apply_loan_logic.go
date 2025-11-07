@@ -258,21 +258,6 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, 
 	if err != nil {
 		return nil, err
 	}
-
-	// loanBorrower := &model.LoanBorrower{
-	// 	MailingAddress: types.Address{},
-	// }
-	// err = copier.CopyWithOption(loanBorrower, borrowerEntity, copier.Option{
-	// 	IgnoreEmpty:   false,
-	// 	DeepCopy:      true,
-	// 	CaseSensitive: true,
-	// 	Converters: []copier.TypeConverter{
-	// 		copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-	// 	},
-	// })
-	// if err != nil {
-	// 	return nil, errorx.GetFailedTransErr(err)
-	// }
 	if oldLoan != nil && oldLoan.LoanBorrower != nil {
 		loanBorrower.Id = oldLoan.LoanBorrower.Id
 	}
@@ -280,7 +265,6 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, 
 
 	// applicants
 	applicants := make([]*model.LoanApplicant, 0)
-
 	for _, applicant := range reqData.Applicants {
 		borrowerApplicant, err := l.svcCtx.BorrowerApplicantRepo.GetBorrowerApplicantById(l.ctx, applicant.BorrowerApplicantId, reqData.BorrowerId)
 		if err != nil {

@@ -527,10 +527,12 @@ type LoanPropertyApplyFormPdfEntry struct {
 }
 
 type LoanPropertyEditEntry struct {
-	BorrowerPropertyId int64   `json:"borrower_property_id" validate:"required,gt=0"`
-	Ower               string  `json:"ower,optional" validate:"max=50"`
-	PurchaseAmount     float64 `json:"purchase_amount,optional"`
-	PurchaseDate       string  `json:"purchase_date,optional"`
+	Id                    int64   `json:"id,optional"`
+	BorrowerPropertyId    int64   `json:"borrower_property_id" validate:"required,gt=0"`
+	Ower                  string  `json:"ower,optional" validate:"max=50"`
+	PurchaseAmount        float64 `json:"purchase_amount,optional"`
+	PurchaseDate          string  `json:"purchase_date,optional"`
+	ExistingLenderCompany string  `json:"existing_lender_company, optional" validate:"max=100"`
 }
 
 type LoanPropertyEntry struct {

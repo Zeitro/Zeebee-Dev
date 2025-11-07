@@ -39,13 +39,13 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 	}()
 	var loan *model.Loan
 	// var borrowerProperty *model.BorrowerProperty
-	applyLogic := NewApplyLoanLogic(l.ctx, l.svcCtx)
 
 	loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, in.Data.Id, in.Data.BorrowerId)
 	if err != nil {
 		return nil, err
 	}
 
+	applyLogic := NewApplyLoanLogic(l.ctx, l.svcCtx)
 	data, err := applyLogic.buildModelData(in.Data, loan)
 	if err != nil {
 		return nil, err

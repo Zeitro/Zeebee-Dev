@@ -79,7 +79,6 @@
               "type": "object",
               "required": [
                 "first_name",
-                "mid_name",
                 "last_name",
                 "ssn",
                 "dob",
@@ -259,9 +258,30 @@
                       "email",
                       "phone",
                       "est_credit_score",
-                      "driver_license_num"
+                      "driver_license_num",
+                      "address"
                     ],
                     "properties": {
+                      "address": {
+                        "type": "object",
+                        "properties": {
+                          "address1": {
+                            "type": "string"
+                          },
+                          "address2": {
+                            "type": "string"
+                          },
+                          "city": {
+                            "type": "string"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "zip_code": {
+                            "type": "string"
+                          }
+                        }
+                      },
                       "created_at": {
                         "type": "string"
                       },
@@ -447,9 +467,30 @@
                       "email",
                       "phone",
                       "est_credit_score",
-                      "driver_license_num"
+                      "driver_license_num",
+                      "address"
                     ],
                     "properties": {
+                      "address": {
+                        "type": "object",
+                        "properties": {
+                          "address1": {
+                            "type": "string"
+                          },
+                          "address2": {
+                            "type": "string"
+                          },
+                          "city": {
+                            "type": "string"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "zip_code": {
+                            "type": "string"
+                          }
+                        }
+                      },
                       "created_at": {
                         "type": "string"
                       },
@@ -636,7 +677,6 @@
               "type": "object",
               "required": [
                 "first_name",
-                "mid_name",
                 "last_name",
                 "ssn",
                 "dob",
@@ -1475,9 +1515,6 @@
                 "closing_fund": {
                   "type": "number"
                 },
-                "existing_lender_company": {
-                  "type": "string"
-                },
                 "extend": {
                   "type": "object",
                   "properties": {
@@ -1519,10 +1556,17 @@
                 "loan_property": {
                   "type": "object",
                   "required": [
-                    "borrower_property_id"
+                    "borrower_property_id",
+                    "existing_lender_company"
                   ],
                   "properties": {
                     "borrower_property_id": {
+                      "type": "integer"
+                    },
+                    "existing_lender_company": {
+                      "type": "string"
+                    },
+                    "id": {
                       "type": "integer"
                     },
                     "ower": {
@@ -1562,12 +1606,6 @@
                 },
                 "principal_amount": {
                   "type": "number"
-                },
-                "purchase_amount": {
-                  "type": "number"
-                },
-                "purchase_date": {
-                  "type": "string"
                 },
                 "rate": {
                   "type": "number"
@@ -4900,10 +4938,17 @@
                 "loan_property": {
                   "type": "object",
                   "required": [
-                    "borrower_property_id"
+                    "borrower_property_id",
+                    "existing_lender_company"
                   ],
                   "properties": {
                     "borrower_property_id": {
+                      "type": "integer"
+                    },
+                    "existing_lender_company": {
+                      "type": "string"
+                    },
+                    "id": {
                       "type": "integer"
                     },
                     "ower": {
@@ -7137,7 +7182,7 @@
                       "pending_loan_count",
                       "active_loan_count",
                       "archived_loan_count",
-                      "has_loans"
+                      "loan_count"
                     ],
                     "properties": {
                       "active_loan_count": {
@@ -7181,9 +7226,6 @@
                       "bedrooms": {
                         "type": "integer"
                       },
-                      "has_loans": {
-                        "type": "boolean"
-                      },
                       "id": {
                         "type": "integer"
                       },
@@ -7195,6 +7237,9 @@
                       },
                       "living_area_sqft": {
                         "type": "number"
+                      },
+                      "loan_count": {
+                        "type": "integer"
                       },
                       "nearest_maturity_date": {
                         "type": "string"
@@ -10480,7 +10525,7 @@
       }
     }
   },
-  "x-date": "2025-11-06 09:20:00",
+  "x-date": "2025-11-07 15:46:48",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
