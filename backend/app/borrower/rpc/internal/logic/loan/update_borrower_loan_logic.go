@@ -228,44 +228,33 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 		return item.FullName == other.FullName
 	})
 	if len(applicants) == 0 {
-		return nil, nil, nil, nil, errors.New("No Applicant")
+		return nil, nil, nil, nil, errorx.New("No Applicant")
 	}
 	primaryCount := slice.CountBy(applicants, func(index int, item *model.LoanApplicant) bool {
 		return item.IsPrimary
 	})
 	if primaryCount == 0 {
-		return nil, nil, nil, nil, errors.New("No Primary Applicant")
+		return nil, nil, nil, nil, errorx.New("No Primary Applicant")
 	}
 	if primaryCount > 1 {
-		return nil, nil, nil, nil, errors.New("Multiple Primary Applicant")
+		return nil, nil, nil, nil, errorx.New("Multiple Primary Applicant")
 	}
 
-	// loan borrower
+	// LoanBorrower
 	loanBorrower = &model.LoanBorrower{}
 	loanBorrower, err = l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, in.BorrowerEntityId, in.BorrowerId)
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
 	loanBorrower.LoanId = in.Id
-	// loan
-	// loan = &model.Loan{
-	// 	BorrowerId:       in.BorrowerId,
-	// 	LenderCompany:    in.LenderCompany,
-	// 	ServiceCompany:   in.ServiceCompany,
-	// 	Stage:            constants.LoanStage(in.Stage),
-	// 	PendingStatus:    constants.LoanPendingStatusNone,
-	// 	LoanPurpose:      constants.LoanPurpose(in.LoanPurpose),
-	// 	LoanType:         constants.LoanType(in.LoanType),
-	// 	TotalAmount:      in.TotalAmount,
-	// 	PrincipalAmount:  in.PrincipalAmount,
-	// 	InitialAmount:    in.InitialAmount,
-	// 	Rate:             in.Rate,
-	// 	BusinessStrategy: pq.StringArray(in.BusinessStrategy),
-	// 	Source:           constants.LoanSourceBorrower,
-	// 	ClosingFund:      in.ClosingFund,
-	// }
-	loan = &model.Loan{}
-	err = copier.CopyWithOption(loan, in, copier.Option{
+
+	// loan property
+	borrowerProperty, err := l.svcCtx.BorrowerPropertyRepo.GetBorrowerPropertyById(l.ctx, in.LoanProperty.BorrowerPropertyId, in.BorrowerId)
+	if err != nil {
+		return nil, nil, nil, nil, err
+	}
+	loanProperty = &model.LoanProperty{}
+	err = copier.CopyWithOption(loanProperty, borrowerProperty, copier.Option{
 		IgnoreEmpty:   false,
 		DeepCopy:      true,
 		CaseSensitive: true,
@@ -276,10 +265,32 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 	if err != nil {
 		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
 	}
-	loan.RemoveRelationships()
+	err = copier.CopyWithOption(loanProperty, in.LoanProperty, copier.Option{
+		CaseSensitive: true,
+		Converters: []copier.TypeConverter{
+			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
+		},
+	})
+	if err != nil {
+		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
+	}
+	loanProperty.Id = 0
 
-	// handle loan
+	// loan
 	loan = &model.Loan{}
+	// err = copier.CopyWithOption(loan, in, copier.Option{
+	// 	IgnoreEmpty:   false,
+	// 	DeepCopy:      true,
+	// 	CaseSensitive: true,
+	// 	Converters: []copier.TypeConverter{
+	// 		copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
+	// 	},
+	// })
+	// if err != nil {
+	// 	return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
+	// }
+	// loan.RemoveRelationships()
+
 	err = copier.CopyWithOption(loan, oldLoan, copier.Option{
 		DeepCopy:      true,
 		CaseSensitive: true,
@@ -301,37 +312,13 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
 	}
 	loan.RemoveRelationships()
-
-	// loan property
-	borrowerProperty, err := l.svcCtx.BorrowerPropertyRepo.GetBorrowerPropertyById(l.ctx, in.LoanProperty.BorrowerPropertyId, in.BorrowerId)
-	if err != nil {
-		return nil, nil, nil, nil, err
-	}
-
-	loanProperty = &model.LoanProperty{}
-
-	err = copier.CopyWithOption(loanProperty, borrowerProperty, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-		},
-	})
-	if err != nil {
-		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
-	}
-	loanProperty.BorrowerPropertyId = in.LoanProperty.BorrowerPropertyId
-	loanProperty.Owner = in.LoanProperty.Owner
-	loanProperty.PurchaseAmount = in.LoanProperty.PurchaseAmount
-	loanProperty.Id = 0
-
 	if loan.TotalAmount < loan.InitialAmount {
-		return nil, nil, nil, nil, errors.New("Total Amount Cannot Be Less Than Initial Amount")
+		return nil, nil, nil, nil, errorx.New("Total Amount Cannot Be Less Than Initial Amount")
 	}
 	switch constants.LoanStage(in.Stage) {
 	case constants.LoanStagePending:
 		if loan.ClosingDate == nil {
-			return nil, nil, nil, nil, errors.New("Closing Date Is Required")
+			return nil, nil, nil, nil, errorx.New("Closing Date Is Required")
 		}
 		loan.HoldbackAmount = loan.TotalAmount - loan.InitialAmount
 		loan.PrincipalAmount = loan.TotalAmount
@@ -341,15 +328,15 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 
 		// loan.PrincipalAmount = in.PrincipalAmount
 		if loan.MaturityDate == nil {
-			return nil, nil, nil, nil, errors.New("Maturity Date Is Required")
+			return nil, nil, nil, nil, errorx.New("Maturity Date Is Required")
 		}
 	case constants.LoanStageArchived:
 		// loan.PrincipalAmount = in.PrincipalAmount
 		if loan.PaidOffDate == nil {
-			return nil, nil, nil, nil, errors.New("Paid Off Date Is Required")
+			return nil, nil, nil, nil, errorx.New("Paid Off Date Is Required")
 		}
 	default:
-		return nil, nil, nil, nil, errors.WithStack(errors.New("Invalid Loan Stage"))
+		return nil, nil, nil, nil, errorx.New("Invalid Loan Stage")
 	}
 	return
 }
