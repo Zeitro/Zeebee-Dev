@@ -137,7 +137,9 @@ const Properties = () => {
 		<>
 			<NewHeader isShowCrumbs={true}>
 				<BtnPopUpModal
-					getContent={(setOpen) => <AddModal setOpen={setOpen} />}
+					getContent={(setOpen) => (
+						<AddModal setOpen={setOpen} handleSearch={() => getList()} />
+					)}
 					type="primary"
 					icon={<PlusOutlined />}
 					size="large"
@@ -176,7 +178,13 @@ const Properties = () => {
 				<div ref={scrollRef} className="flex-1 overflow-hidden overflow-y-auto">
 					<Spin spinning={loading}>
 						{list?.length ? (
-							list.map((item, index) => <PropertiesItem key={index} data={item} />)
+							list.map((item, index) => (
+								<PropertiesItem
+									key={index}
+									data={item}
+									handleSearch={() => getList()}
+								/>
+							))
 						) : loading ? (
 							<div className="min-h-[100px]"></div>
 						) : (

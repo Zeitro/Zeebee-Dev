@@ -28,7 +28,7 @@ export const maxTerm_zeeBee = 24;
 export const minTerm_zeeBee = 12;
 
 // 通过property_type获取unit
-export const changeUnitByPropertyType = (property_type) => {
+export const changeUnitByPropertyType = (property_type, newUnit) => {
 	let unit = null,
 		minUnit = 1,
 		maxUnit = maxNumberOfUnits,
@@ -55,6 +55,9 @@ export const changeUnitByPropertyType = (property_type) => {
 			break;
 		default:
 			break;
+	}
+	if (newUnit) {
+		unit = newUnit;
 	}
 	return { unit, minUnit, maxUnit, disabled };
 };
@@ -136,9 +139,9 @@ export const formatPhone = (phoneNumber) => {
 	}
 };
 
-// 格式化金额，千分位加逗号，可最多保留2位小数
-export function formatAmount(amount) {
-	if (!amount) return '$ --';
+// 千分位加逗号,最多保留2位小数
+export const formatThousands = (amount) => {
+	if (!amount) return '';
 	if (typeof amount === 'string') {
 		amount = Number(amount);
 	}
@@ -149,12 +152,25 @@ export function formatAmount(amount) {
 	}
 	// 格式化整数部分千分位
 	integerPart = parseInt(integerPart, 10).toLocaleString('en-US');
-
 	if (decimalPart.length === 0 || /^0*$/.test(decimalPart)) {
 		// 没有有效小数部分，返回整数部分
-		return `$ ${integerPart}`;
+		return `${integerPart}`;
 	}
-	return `$ ${integerPart}.${decimalPart}`;
+	return `${integerPart}.${decimalPart}`;
+};
+
+// 格式化金额
+export function formatAmount(value) {
+	const amount = formatThousands(value);
+	if (!amount) return '$ --';
+	return `$ ${amount}`;
+}
+
+// 格式化面积
+export function formatArea(value, unit = 'sqft') {
+	const num = formatThousands(value);
+	if (!num) return '--';
+	return `${num} ${unit}`;
 }
 
 // 格式化TIN,包括SSN/ITIN/EIN, 不同类型税务ID

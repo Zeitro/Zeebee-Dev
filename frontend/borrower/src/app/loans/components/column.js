@@ -336,7 +336,7 @@ export const archivedColumns = (isNotAddress, showDeleteModal) => [
 		dataIndex: 'loan_type',
 		key: 'loan_type',
 		ellipsis: true,
-		width: 180,
+		width: isNotAddress ? null : 180,
 	},
 	{
 		title: 'Principal Balance',
@@ -344,7 +344,7 @@ export const archivedColumns = (isNotAddress, showDeleteModal) => [
 		key: 'principal_amount',
 		ellipsis: true,
 		sorter: true,
-		width: 180,
+		width: isNotAddress ? null : 180,
 		render: (v) => formatAmount(v),
 	},
 	{
@@ -352,7 +352,7 @@ export const archivedColumns = (isNotAddress, showDeleteModal) => [
 		dataIndex: 'lender_company',
 		key: 'lender_company',
 		ellipsis: true,
-		width: 180,
+		width: isNotAddress ? null : 180,
 	},
 	{
 		title: 'Rate',
@@ -360,7 +360,7 @@ export const archivedColumns = (isNotAddress, showDeleteModal) => [
 		key: 'rate',
 		ellipsis: true,
 		sorter: true,
-		width: 90,
+		width: isNotAddress ? null : 90,
 		render: (v) => (v ? `${v}%` : '--'),
 	},
 	{
@@ -369,7 +369,7 @@ export const archivedColumns = (isNotAddress, showDeleteModal) => [
 		key: 'paid_off_date',
 		ellipsis: true,
 		sorter: true,
-		width: 160,
+		width: isNotAddress ? null : 160,
 		render: (v) => v || '--',
 	},
 	getOpt(showDeleteModal),

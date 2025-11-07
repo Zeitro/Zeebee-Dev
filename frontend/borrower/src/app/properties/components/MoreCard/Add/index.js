@@ -2,34 +2,65 @@ import React, { useState } from 'react';
 import { Row, Col, Form, Select, InputNumber } from 'antd';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
 import { useGetOptions } from '@/hooks/useGetOptions';
-import { layoutCol, titleCol } from '@/enum/common';
-import { livingAreaProps, changeUnitByPropertyType } from '@repo/shared-methods/utils';
+import { layoutCol } from '@/enum/common';
+import {
+	livingAreaProps,
+	changeUnitByPropertyType,
+	createRequest,
+} from '@repo/shared-methods/utils';
 import { NewModal } from '@repo/shared-methods';
-let name = 'borrower';
-const AddModal = ({ setOpen }) => {
+import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
+const AddModal = ({ setOpen, rowData, handleSearch }) => {
+	const { request } = createRequest();
 	const [form] = Form.useForm();
 	const [confirmLoading, setConfirmLoading] = useState(false);
-	const [loading, setLoading] = useState(false);
+	// const [loading, setLoading] = useState(false);
 	const [unitInfo, setUnitInfo] = useState({});
-	const { loanPurposeOptions, loanTypeOptions, propertyTypeOptions } = useGetOptions([
-		{
-			key: 'loan_purpose',
-			valueName: 'loanPurposeOptions',
-		},
-		{
-			key: 'loan_type',
-			valueName: 'loanTypeOptions',
-		},
+	const { propertyTypeOptions } = useGetOptions([
 		{
 			key: 'property_type',
 			valueName: 'propertyTypeOptions',
 		},
 	]);
-	const handleSave = () => {};
+	const handleSave = async () => {
+		try {
+			setConfirmLoading(true);
+			const value = await form.validateFields();
+			let url = '/property';
+			let method = 'POST';
+			if (rowData?.id) {
+				url = `/property/${rowData?.id}`;
+				method = 'PUT';
+			}
+			await request(url, {
+				method,
+				body: { ...value },
+			});
+			handleSearch?.();
+			setConfirmLoading(false);
+			setOpen(false);
+		} catch {
+			setConfirmLoading(false);
+		}
+	};
+
+	useDeferredSyncEffect({
+		predicate: () => rowData?.id,
+		deferred: () => {
+			const info = changeUnitByPropertyType(rowData?.property_type, rowData?.unit);
+			setUnitInfo({ ...info });
+			form.setFieldsValue({
+				...rowData,
+			});
+		},
+		deps: [form, rowData],
+		delay: 0,
+	});
+
 	return (
 		<NewModal
 			width={700}
-			title="Add a property"
+			title={`${rowData?.id ? 'Edit' : 'Add'} a property`}
 			okText="Save"
 			confirmLoading={confirmLoading}
 			onOk={handleSave}
@@ -41,54 +72,45 @@ const AddModal = ({ setOpen }) => {
 				autoComplete="off"
 				className="h-[60vh] overflow-hidden overflow-y-auto"
 				size="large"
-				disabled={loading}
+				disabled={confirmLoading}
 				scrollToFirstError
-				onValuesChange={(v) => {
-					// 根据property_type设置unit
-					const property_type =
-						v?.loan_property?.property_type || v?.loan_property?.future_property_type;
-					if (property_type) {
-						const info = changeUnitByPropertyType(property_type);
-						const fieldKey = v?.loan_property?.property_type ? 'unit' : 'future_unit';
-						const moreFieldKey =
-							fieldKey === 'unit' ? ['property_base', fieldKey] : [fieldKey];
-						const unit = { ...unitInfo };
-						unit[fieldKey] = info;
-						setUnitInfo({ ...unit });
-						form.setFieldValue(['loan_property', ...moreFieldKey], info.unit);
-					}
-				}}
 			>
 				<Row gutter={16}>
 					<AddressForm
-						addressName={[name, 'property_base', 'address', 'address1']}
-						addressName2={[name, 'property_base', 'address', 'address2']}
-						cityName={[name, 'property_base', 'address', 'city']}
-						stateName={[name, 'property_base', 'address', 'state']}
-						zipName={[name, 'property_base', 'address', 'zip_code']}
-						addressLabel="Subject property address 1"
-						addressLabel2="Subject property address 2"
+						addressName={['address', 'address1']}
+						addressName2={['address', 'address2']}
+						cityName={['address', 'city']}
+						stateName={['address', 'state']}
+						zipName={['address', 'zip_code']}
+						// addressLabel="Subject property address 1"
+						// addressLabel2="Subject property address 2"
 						form={form}
 						stateCol={{ ...layoutCol, md: 8 }}
 						cityCol={{ ...layoutCol, md: 8 }}
 						zipCol={{ ...layoutCol, md: 8 }}
+						disabled={rowData?.id}
 					/>
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Property type"
-							name={[name, 'property_type']}
+							name={['property_type']}
 							rules={[{ required: true, message: 'Please select property type!' }]}
 						>
 							<Select
 								options={propertyTypeOptions}
 								placeholder="Select property type"
+								onChange={(e) => {
+									const info = changeUnitByPropertyType(e);
+									setUnitInfo({ ...info });
+									form.setFieldValue(['unit'], info.unit);
+								}}
 							/>
 						</Form.Item>
 					</Col>
 					<Col {...layoutCol} md={12}>
 						<Form.Item
 							label="Living area sqft"
-							name={[name, 'living_area_sqft']}
+							name={['living_area_sqft']}
 							rules={[
 								{
 									required: true,
@@ -106,7 +128,7 @@ const AddModal = ({ setOpen }) => {
 					<Col {...layoutCol} md={12}>
 						<Form.Item
 							label="Number of units"
-							name={[name, 'property_base', 'unit']}
+							name={['unit']}
 							rules={[
 								{
 									required: true,
@@ -116,18 +138,18 @@ const AddModal = ({ setOpen }) => {
 						>
 							<InputNumber
 								style={{ width: '100%' }}
-								min={unitInfo?.unit?.minUnit}
-								max={unitInfo?.unit?.maxUnit}
+								min={unitInfo?.minUnit}
+								max={unitInfo?.maxUnit}
 								controls={false}
 								placeholder="Enter number of units"
-								disabled={unitInfo?.unit?.disabled}
+								disabled={unitInfo?.disabled}
 							/>
 						</Form.Item>
 					</Col>
 					<Col {...layoutCol} md={12}>
 						<Form.Item
 							label="Number of bedrooms"
-							name={[name, 'bedrooms']}
+							name={['bedrooms']}
 							rules={[
 								{
 									required: true,
@@ -147,7 +169,7 @@ const AddModal = ({ setOpen }) => {
 					<Col {...layoutCol} md={12}>
 						<Form.Item
 							label="Number of bathrooms"
-							name={[name, 'bathrooms']}
+							name={['bathrooms']}
 							rules={[
 								{
 									required: true,

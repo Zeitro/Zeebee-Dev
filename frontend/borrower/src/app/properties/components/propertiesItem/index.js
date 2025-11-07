@@ -2,14 +2,17 @@
 import React from 'react';
 import styles from './index.module.scss';
 import { propertiesFieldArr, propertyList } from '@/enum/properties';
-import { Button, Col, Row, Space } from 'antd';
+import { Button, Col, message, Row, Space, Tooltip } from 'antd';
 import { useRouter } from 'next/navigation';
-import { formatDate, assemblyAddress } from '@repo/shared-methods/utils';
+import { formatDate, assemblyAddress, createRequest } from '@repo/shared-methods/utils';
 import FieldTips from '@/components/FieldTips';
 import { BtnPopUpModal, DeleteBtn } from '@repo/shared-methods';
 import AddModal from '../MoreCard/Add';
 import { DeleteOutlined } from '@ant-design/icons';
-const PropertiesItem = ({ data }) => {
+import { useState } from 'react';
+const PropertiesItem = ({ data, handleSearch }) => {
+	const { request } = createRequest();
+	const [loading, setLoading] = useState(false);
 	const router = useRouter();
 	const nameList = [
 		{
@@ -29,12 +32,27 @@ const PropertiesItem = ({ data }) => {
 			<div key={index} className={[item?.className || 'w-1/2', 'pb-4'].join(' ')}>
 				<p className="text-base-gray text-sm pb-1">{item.label}</p>
 				<span className="text-black-dark text-base font-medium">
-					{item?.render?.(data[item.value]) || '--'}
+					{(item?.render ? item?.render?.(data[item.value]) : data[item.value]) || '--'}
 				</span>
 			</div>
 		);
 	};
 
+	const handleDelete = async () => {
+		try {
+			setLoading(true);
+			await request(`/property/${data?.id}`, { method: 'DELETE' });
+			handleSearch();
+			message.destroy();
+			message.open({
+				type: 'success',
+				content: 'Delete successful！',
+			});
+			setLoading(false);
+		} catch (error) {
+			setLoading(false);
+		}
+	};
 	return (
 		<div className={[styles.propertiesItem].join(' ')}>
 			<div className={styles.header}>
@@ -44,17 +62,40 @@ const PropertiesItem = ({ data }) => {
 						View details
 					</Button>
 					<BtnPopUpModal
-						getContent={(setOpen) => <AddModal setOpen={setOpen} />}
+						getContent={(setOpen) => (
+							<AddModal
+								setOpen={setOpen}
+								rowData={data}
+								handleSearch={handleSearch}
+							/>
+						)}
 						type="default"
 						size="medium"
 					>
 						Edit
 					</BtnPopUpModal>
+
 					<DeleteBtn
 						type="default"
 						title="Are you sure delete this Property?"
-						content={'1111'}
+						content={assemblyAddress(data?.address)}
 						size="medium"
+						onOk={handleDelete}
+						danger={!data?.loan_count}
+						className={data?.loan_count && '!text-base-disabled'}
+						predicate={() => {
+							if (data?.loan_count) {
+								message.destroy();
+								message.open({
+									type: 'warning',
+									content:
+										'This property has an associated loan, so it cannot be deleted.',
+								});
+								return false;
+							}
+							return true;
+						}}
+						confirmLoading={loading}
 					>
 						<DeleteOutlined />
 					</DeleteBtn>
@@ -93,7 +134,7 @@ const PropertiesItem = ({ data }) => {
 					<p className="text-sm font-bold text-base-gray pb-4 pt-4 lg:pt-0">
 						Loan Status
 					</p>
-					<div className="flex flex-wrap">
+					<div className="flex flex-wrap gap-1">
 						{!!data?.active_loan_count && (
 							<div className={styles.active}>
 								{data?.active_loan_count || 0} Active Loans
@@ -103,6 +144,9 @@ const PropertiesItem = ({ data }) => {
 							<div className={styles.pending}>
 								{data?.pending_loan_count || 0} Pending Loans
 							</div>
+						)}
+						{!data?.pending_loan_count && !data?.active_loan_count && (
+							<span className="text-black-dark text-base font-medium">--</span>
 						)}
 					</div>
 					<div className="pt-4">
