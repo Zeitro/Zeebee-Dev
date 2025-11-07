@@ -5,8 +5,9 @@ import { AntdRegistry } from '@ant-design/nextjs-registry';
 import SiderBar from '@/components/Sidebar';
 import NewHeader from '@/components/NewHeader';
 import { getCurrentRouterItem } from '@config/common';
-import { noNavRouter } from '@config/routes';
-import { usePathname } from 'next/navigation';
+import { noNavRouter, navRouter } from '@config/routes';
+import { usePathname, useRouter } from 'next/navigation';
+import { useUserStore } from '@/store/user';
 const defaultToken = {
 	colorPrimary: '#1677ff',
 	colorTextBase: 'rgba(0, 0, 0, 0.88)',
@@ -31,8 +32,10 @@ function getCssVarValue(name, key) {
  * 自定义antd主题，区分有无（导航栏和面包屑）的页面
  */
 export default function CustomizeAntdTheme({ children, fontFamily }) {
+	const { userInfo } = useUserStore();
 	const [antdToken, setAntdToken] = useState({});
 	const pathname = usePathname();
+	const router = useRouter();
 	const validateMessages = {
 		required: 'Please enter ${label}!',
 	};
@@ -42,6 +45,15 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 		const routerItem = getCurrentRouterItem(pathname, noNavRouter);
 		return !!routerItem;
 	}, [pathname]);
+
+	useEffect(() => {
+		const haveSiderRoute = getCurrentRouterItem(pathname, navRouter);
+		if (haveSiderRoute?.path && userInfo === null) {
+			router.replace('/login');
+			console.log('---退出---');
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [userInfo, pathname]);
 
 	useEffect(
 		() => {
