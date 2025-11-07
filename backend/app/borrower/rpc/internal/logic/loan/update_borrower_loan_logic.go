@@ -7,7 +7,6 @@ import (
 
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
-	"github.com/lib/pq"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
@@ -17,6 +16,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/timex"
 
@@ -96,7 +96,7 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 		}
 
 		// loan borrower
-		if loan.LoanBorrower == nil {
+		if loanModel.LoanBorrower == nil {
 			loanBorrower.LoanId = loan.Id
 			loanBorrower, innerErr = l.svcCtx.LoanBorrowerRepo.CreateWithTx(l.ctx, tx, loanBorrower, false)
 			if innerErr != nil {
@@ -104,7 +104,7 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 			}
 		} else {
 			loanBorrower.LoanId = loan.Id
-			loanBorrower.Id = loan.LoanBorrower.Id
+			loanBorrower.Id = loanModel.LoanBorrower.Id
 			_, innerErr = l.svcCtx.LoanBorrowerRepo.UpdateOneWithTx(l.ctx, tx, loanBorrower.Id, loanBorrower)
 			if innerErr != nil {
 				return innerErr
@@ -273,22 +273,35 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 		OwnPercent: 100,
 	}
 	// loan
-	loan = &model.Loan{
-		BorrowerId:       in.BorrowerId,
-		LenderCompany:    in.LenderCompany,
-		ServiceCompany:   in.ServiceCompany,
-		Stage:            constants.LoanStage(in.Stage),
-		PendingStatus:    constants.LoanPendingStatusNone,
-		LoanPurpose:      constants.LoanPurpose(in.LoanPurpose),
-		LoanType:         constants.LoanType(in.LoanType),
-		TotalAmount:      in.TotalAmount,
-		PrincipalAmount:  in.PrincipalAmount,
-		InitialAmount:    in.InitialAmount,
-		Rate:             in.Rate,
-		BusinessStrategy: pq.StringArray(in.BusinessStrategy),
-		Source:           constants.LoanSourceBorrower,
-		ClosingFund:      in.ClosingFund,
+	// loan = &model.Loan{
+	// 	BorrowerId:       in.BorrowerId,
+	// 	LenderCompany:    in.LenderCompany,
+	// 	ServiceCompany:   in.ServiceCompany,
+	// 	Stage:            constants.LoanStage(in.Stage),
+	// 	PendingStatus:    constants.LoanPendingStatusNone,
+	// 	LoanPurpose:      constants.LoanPurpose(in.LoanPurpose),
+	// 	LoanType:         constants.LoanType(in.LoanType),
+	// 	TotalAmount:      in.TotalAmount,
+	// 	PrincipalAmount:  in.PrincipalAmount,
+	// 	InitialAmount:    in.InitialAmount,
+	// 	Rate:             in.Rate,
+	// 	BusinessStrategy: pq.StringArray(in.BusinessStrategy),
+	// 	Source:           constants.LoanSourceBorrower,
+	// 	ClosingFund:      in.ClosingFund,
+	// }
+	loan = &model.Loan{}
+	err = copier.CopyWithOption(loan, in, copier.Option{
+		IgnoreEmpty:   false,
+		DeepCopy:      true,
+		CaseSensitive: true,
+		Converters: []copier.TypeConverter{
+			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
+		},
+	})
+	if err != nil {
+		return nil, nil, nil, nil, nil, errorx.GetFailedTransErr(err)
 	}
+	loan.RemoveRelationships()
 
 	// property base
 	propertyBase = &model.PropertyBase{}
