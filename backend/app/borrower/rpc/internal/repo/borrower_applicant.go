@@ -46,7 +46,7 @@ func (repo *BorrowerApplicantRepo) Page(ctx context.Context, pageReq *borrower.B
 		query = query.Where("full_name like ?", "%"+filter.Keyword+"%")
 	}
 	if len(sorter.Column) == 0 {
-		sorter.Column = "id"
+		sorter.Column = "updated_at"
 	}
 	if len(sorter.Sort) == 0 {
 		sorter.Sort = "desc"
