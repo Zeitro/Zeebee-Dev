@@ -46,7 +46,7 @@ func (repo *BorrowerEntityRepo) Page(ctx context.Context, pageReq *borrower.Borr
 		query = query.Omit("mailing_address").Where("name like ?", "%"+filter.Keyword+"%")
 	}
 	if len(sorter.Column) == 0 {
-		sorter.Column = "id"
+		sorter.Column = "updated_at"
 	}
 	if len(sorter.Sort) == 0 {
 		sorter.Sort = "desc"
