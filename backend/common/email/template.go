@@ -6,6 +6,8 @@ import (
 	"sync"
 
 	"github.com/pkg/errors"
+
+	"zeebee-backend/common/stringx"
 )
 
 // global template manager
@@ -46,8 +48,13 @@ type Templates struct {
 func (t *Templates) RegisterWithText(name string, tplContent string) (err error) {
 	t.mux.Lock()
 	defer t.mux.Unlock()
+	funcMap := template.FuncMap{
+		"usd":      stringx.FormatUsDollarCurrency,
+		"usaphone": stringx.FormatUsPhoneNumber,
+	}
+
 	var tpl *template.Template
-	tpl, err = template.New(name).Parse(tplContent)
+	tpl, err = template.New(name).Funcs(funcMap).Parse(tplContent)
 	if err != nil {
 		return
 	}
