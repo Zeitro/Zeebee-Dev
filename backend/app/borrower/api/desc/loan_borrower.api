@@ -18,7 +18,6 @@ type LoanBorrowerEntry {
     ContactEmail string `json:"contact_email,optional" validate:"required,email"`
     ContactPhone string `json:"contact_phone,optional" validate:"required"`
     ContactName string `json:"contact_name,optional" validate:"required,min=1,max=255"`
-    OwnPercent int32 `json:"own_percent,optional" validate:"required,min=1,max=100"`
 }
 
 type ImportLoanBorrowerEntry {
@@ -32,11 +31,4 @@ type ImportLoanBorrowerEntry {
     ContactEmail string `json:"contact_email,optional"`
     ContactPhone string `json:"contact_phone,optional" `
     ContactName string `json:"contact_name,optional" `
-    OwnPercent int32 `json:"own_percent,optional"`
-}
-
-type LoanBorrowerApplyEntry {
-    Id int64 `json:"id,optional" validate:"gte=0"`
-    BorrowerEntityId int64 `json:"borrower_entity_id,optional" validate:"gt=0"`
-    OwnPercent int32 `json:"own_percent,optional" validate:"gte=0,max=100"`
 }

@@ -23,8 +23,8 @@ import (
 )
 
 type updateLoanModelData struct {
-	loan *model.Loan
-	// loanBorrower      *model.LoanBorrower
+	loan              *model.Loan
+	loanBorrower      *model.LoanBorrower
 	loanProperty      *model.LoanProperty
 	loanDemographic   *model.LoanDemographic
 	loanThirdServices []*model.LoanThirdService
@@ -115,6 +115,19 @@ func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender
 				}
 				return err
 
+			},
+			// update LoanBorrower
+			func() error {
+				var err error
+				loanBorrower := data.loanBorrower
+				loanBorrower.LoanId = oldLoan.Id
+				if loanBorrower.Id == 0 {
+					loanBorrower, err = l.svcCtx.LoanBorrowerRepo.CreateWithTx(l.ctx, tx, loanBorrower, false)
+				} else {
+					loanBorrower, err = l.svcCtx.LoanBorrowerRepo.UpdateOneWithTx(l.ctx, tx, loanBorrower.Id, loanBorrower)
+				}
+
+				return err
 			},
 			// loan demographic
 			func() error {
@@ -319,7 +332,17 @@ func (l *UpdateLoanLogic) buildModelData(reqData *lender.LoanUpdateRequestData, 
 	loan.RemoveRelationships()
 	// loan.BusinessStrategy = reqData.BusinessStrategy
 
-	// loan_property
+	// LoanBorrower
+	if reqData.LoanBorrower == nil {
+		return nil, errors.WithStack(errors.New("invalid loan borrower"))
+	}
+	loanBorrower, err := l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, reqData.LoanBorrower.BorrowerEntityId)
+	if err != nil {
+		return nil, err
+	}
+	loanBorrower.OwnPercent = reqData.LoanBorrower.OwnPercent
+
+	// LoanProperty
 	loanProperty := &model.LoanProperty{
 		// PropertyBase: &model.PropertyBase{},
 	}

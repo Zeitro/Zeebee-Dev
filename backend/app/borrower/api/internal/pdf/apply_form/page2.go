@@ -41,7 +41,7 @@ func (form *ApplyForm) page2() (err error) {
 	form.pdf.Br(brHeight)
 	_ = form.pdf.Cell(&gopdf.Rect{W: 250, H: rowHeight}, "Entity Name/Individual:  "+borrowerInfo.Name)
 	_ = form.pdf.Cell(&gopdf.Rect{W: 150, H: rowHeight}, "TIN:  "+stringx.FormatUsSsn(borrowerInfo.Tin))
-	_ = form.pdf.Cell(&gopdf.Rect{W: 100, H: rowHeight}, "% Own:  "+fmt.Sprintf("%d", borrowerInfo.OwnPercent))
+	// _ = form.pdf.Cell(&gopdf.Rect{W: 100, H: rowHeight}, "% Own:  "+fmt.Sprintf("%d", borrowerInfo.OwnPercent))
 	form.pdf.Br(brHeight * 3.0)
 	_ = form.pdf.MultiCell(&gopdf.Rect{W: gopdf.PageSizeA4.W - form.pdf.MarginLeft() - form.pdf.MarginRight(), H: rowHeight}, "Mailing Address:  "+borrowerInfo.MailingAddress.Address1)
 	form.pdf.Br(brHeight)
@@ -127,6 +127,8 @@ func (form *ApplyForm) applicantInfo(index int, applicant *types.LoanApplicantAp
 	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "Zip:  "+applicant.Address.ZipCode)
 	form.pdf.Br(brHeight)
 	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "Drivers License #:  "+applicant.DriverLicenseNum)
+	form.pdf.Br(brHeight)
+	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "Entity Percentage Owned #:  "+stringx.TransNumberToString(applicant.OwnPercent, true))
 	form.pdf.Br(brHeight)
 	return err
 }

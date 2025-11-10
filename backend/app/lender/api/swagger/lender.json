@@ -1840,6 +1840,20 @@
                 "initial_amount": {
                   "type": "number"
                 },
+                "loan_borrower": {
+                  "type": "object",
+                  "properties": {
+                    "borrower_entity_id": {
+                      "type": "integer"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "own_percent": {
+                      "type": "integer"
+                    }
+                  }
+                },
                 "loan_demographic": {
                   "type": "object",
                   "properties": {
@@ -3389,7 +3403,7 @@
       }
     }
   },
-  "x-date": "2025-11-07 10:26:00",
+  "x-date": "2025-11-10 16:41:42",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

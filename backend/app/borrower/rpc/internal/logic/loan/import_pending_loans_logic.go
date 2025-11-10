@@ -105,7 +105,6 @@ func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingL
 			// LoanBorrower
 			loanBorrower := data.loanBorrower
 			loanBorrower.LoanId = loan.Id
-			loanBorrower.OwnPercent = 100
 			loanBorrower, innerErr = l.svcCtx.LoanBorrowerRepo.CreateWithTx(l.ctx, tx, loanBorrower, false)
 			if innerErr != nil {
 				return innerErr
@@ -196,6 +195,7 @@ func (l *ImportPendingLoansLogic) buildImportModel(in *borrower.ImportPendingLoa
 
 	// applicants
 	var applicants []*model.LoanApplicant
+	var totalOwnPercent int32
 
 	err = copier.CopyWithOption(&applicants, in.Applicants, copier.Option{
 		IgnoreEmpty:   false,
@@ -219,7 +219,11 @@ func (l *ImportPendingLoansLogic) buildImportModel(in *borrower.ImportPendingLoa
 	}
 	slice.ForEach(applicants, func(index int, item *model.LoanApplicant) {
 		item.BorrowerId = in.BorrowerId
+		totalOwnPercent += item.OwnPercent
 	})
+	if totalOwnPercent > 100 {
+		return nil, errors.New("Total Own Percent Greater Than 100")
+	}
 
 	// loan property
 	loanProperty := &model.LoanProperty{}

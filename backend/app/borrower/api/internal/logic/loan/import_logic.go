@@ -245,7 +245,6 @@ func parsePendingLoans(rows [][]string, borrowerId int64) ([]*types.ImportPendin
 			// 	loanBorrower.Type = string(constants.ApplicantTypeIndividual)
 			// }
 			loanBorrower.Type = string(constants.ApplicantTypeLLC)
-			loanBorrower.OwnPercent = 100
 		}
 
 		loanData.LoanBorrower = loanBorrower
@@ -255,6 +254,7 @@ func parsePendingLoans(rows [][]string, borrowerId int64) ([]*types.ImportPendin
 			applicant.FirstName = row[idx]
 			// applicant.Type = loanBorrower.Type
 			applicant.IsPrimary = true
+			applicant.OwnPercent = 100
 		}
 		loanData.Applicants = append(loanData.Applicants, applicant)
 

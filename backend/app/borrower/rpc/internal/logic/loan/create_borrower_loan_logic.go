@@ -106,7 +106,9 @@ func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.LoanCreateRequ
 // buildCreateModels
 func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateRequestData) (loan *model.Loan, loanProperty *model.LoanProperty, applicants []*model.LoanApplicant, loanBorrower *model.LoanBorrower, err error) {
 	// build applicants
+	var totalOwnPercent int32
 	for _, applicant := range in.Applicants {
+		totalOwnPercent += applicant.OwnPercent
 		borrowerApplicant, err := l.svcCtx.BorrowerApplicantRepo.GetBorrowerApplicantById(l.ctx, applicant.BorrowerApplicantId, in.BorrowerId)
 		if err != nil {
 			return nil, nil, nil, nil, err
@@ -129,6 +131,10 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 		applicantItem.InvitationStatus = constants.ApplicantInvitationStatusAccepted
 		applicants = append(applicants, applicantItem)
 	}
+	if totalOwnPercent > 100 {
+		return nil, nil, nil, nil, errors.New("Total Own Percent Cannot Be Greater Than 100")
+	}
+
 	slice.SortBy(applicants, func(a, b *model.LoanApplicant) bool {
 		return b.IsPrimary
 	})
@@ -149,7 +155,6 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
-	loanBorrower.OwnPercent = 100
 
 	// LoanProperty
 	borrowerProperty, err := l.svcCtx.BorrowerPropertyRepo.GetBorrowerPropertyById(l.ctx, in.LoanProperty.BorrowerPropertyId, in.BorrowerId)

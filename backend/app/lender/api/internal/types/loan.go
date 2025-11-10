@@ -39,6 +39,7 @@ type LoanUpdateRequest struct {
 	TotalAmount            float64                  `json:"total_amount,optional" validate:"required,gt=0"`
 	InitialAmount          float64                  `json:"initial_amount,optional" validate:"ltefield=TotalAmount"`
 	LoanProperty           *LoanPropertyEditEntry   `json:"loan_property,optional" validate:"required"`
+	LoanBorrower           *LoanBorrowerEditEntry   `json:"loan_borrower,optional" validate:"required"`
 	HoldbackAmount         float64                  `json:"holdback_amount,optional" validate:"ltefield=TotalAmount"`
 	PrincipalAmount        float64                  `json:"principal_amount,optional" validate:"required_unless=LoanPurpose Purchase,omitempty,gte=0"`
 	MaturityDate           string                   `json:"maturity_date, optional"`

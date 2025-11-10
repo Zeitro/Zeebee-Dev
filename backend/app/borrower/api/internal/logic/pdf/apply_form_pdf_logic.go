@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"context"
 
+	"github.com/duke-git/lancet/v2/mathutil"
+
 	"zeebee-backend/app/borrower/api/internal/pdf/apply_form"
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
@@ -27,6 +29,11 @@ func NewApplyFormPdfLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Appl
 }
 
 func (l *ApplyFormPdfLogic) ApplyFormPdf(req *types.ApplyFormPdfRequest) (contents []byte, err error) {
+
+	if req.LoanProperty != nil && req.LoanProperty.YearlyLiabilityExpenseAmount > 0 {
+		dscr := (req.LoanProperty.EstYearlyRentalIncomeAmount / req.LoanProperty.YearlyLiabilityExpenseAmount) * 100.0
+		req.LoanProperty.Dscr = mathutil.RoundToFloat(dscr, 2)
+	}
 
 	var applyFormPdf *apply_form.ApplyForm
 	var buf []byte

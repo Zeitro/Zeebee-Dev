@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/duke-git/lancet/v2/condition"
+	"github.com/duke-git/lancet/v2/mathutil"
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
@@ -284,13 +285,12 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 
 	// LoanBorrower
 	var loanBorrower *model.LoanBorrower
-	if reqData.LoanBorrower != nil && reqData.LoanBorrower.BorrowerEntityId > 0 {
-		loanBorrower, err = l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, reqData.LoanBorrower.BorrowerEntityId, reqData.BorrowerId)
+	if reqData.BorrowerEntityId > 0 {
+		loanBorrower, err = l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, reqData.BorrowerEntityId, reqData.BorrowerId)
 		if err != nil {
 			return nil, err
 		}
 		loanBorrower.LoanId = reqData.Id
-		loanBorrower.OwnPercent = reqData.LoanBorrower.OwnPercent
 	}
 
 	// LoanProperty
@@ -314,11 +314,16 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 		if err != nil {
 			return nil, errorx.GetFailedTransErr(err)
 		}
+		if loanProperty.YearlyLiabilityExpenseAmount > 0 {
+			loanProperty.Dscr = mathutil.RoundToFloat((loanProperty.EstYearlyRentalIncomeAmount/loanProperty.YearlyLiabilityExpenseAmount)*100, 2)
+		}
 	}
 
 	// LoanApplicants
 	var applicants []*model.LoanApplicant
+	var totalOwnPercent int32
 	for _, applicant := range reqData.Applicants {
+		totalOwnPercent += applicant.OwnPercent
 		loanApplicant, err := l.svcCtx.BorrowerApplicantRepo.TranToLoanApplicantWithId(l.ctx, applicant.BorrowerApplicantId, reqData.BorrowerId)
 		if err != nil {
 			return nil, err
@@ -327,7 +332,11 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 		loanApplicant.LoanId = reqData.Id
 		loanApplicant.BorrowerId = reqData.BorrowerId
 		loanApplicant.IsPrimary = applicant.IsPrimary
+		loanApplicant.OwnPercent = applicant.OwnPercent
 		applicants = append(applicants, loanApplicant)
+	}
+	if totalOwnPercent > 100 {
+		return nil, errors.WithStack(errors.New("Total Own Percent Greater Than 100"))
 	}
 
 	// transaction experience

@@ -66,6 +66,12 @@ type LoanApplicantEntry struct {
 	Phone               string        `json:"phone,omitempty, optional"`
 }
 
+type LoanBorrowerEditEntry struct {
+	Id               int64 `json:"id,optional" validate:"gte=0"`
+	BorrowerEntityId int64 `json:"borrower_entity_id,optional" validate:"gt=0"`
+	OwnPercent       int32 `json:"own_percent,optional" validate:"min=0,max=100"`
+}
+
 type LoanBorrowerEntry struct {
 	Id             int64        `json:"id,optional"`
 	LoanId         int64        `json:"loan_id,optional"`

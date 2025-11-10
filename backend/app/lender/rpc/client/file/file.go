@@ -25,6 +25,7 @@ type (
 	FileDeleteRequestData                   = lender.FileDeleteRequestData
 	FileEntry                               = lender.FileEntry
 	LoanApplicantEntry                      = lender.LoanApplicantEntry
+	LoanBorrowerEditEntry                   = lender.LoanBorrowerEditEntry
 	LoanBorrowerEntry                       = lender.LoanBorrowerEntry
 	LoanBudgetEntry                         = lender.LoanBudgetEntry
 	LoanDeleteRequest                       = lender.LoanDeleteRequest
