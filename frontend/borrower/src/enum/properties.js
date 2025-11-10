@@ -1,4 +1,4 @@
-import { formatAmount, formatArea } from '@repo/shared-methods/utils';
+import { formatAmount, formatNumber } from '@repo/shared-methods/utils';
 export const sort_asc = 'Ascending';
 export const sort_des = 'Descending';
 
@@ -34,7 +34,7 @@ export const propertyList = [
 	{
 		label: 'Living Area',
 		value: 'living_area_sqft',
-		render: (v) => formatArea(v),
+		render: (v) => formatNumber(v),
 		className: 'w-1/3',
 	},
 	{

@@ -2,7 +2,7 @@
 import React from 'react';
 import styles from './index.module.scss';
 import { propertiesFieldArr, propertyList } from '@/enum/properties';
-import { Button, Col, message, Row, Space, Tooltip } from 'antd';
+import { Button, Col, message, Row, Space } from 'antd';
 import { useRouter } from 'next/navigation';
 import { formatDate, assemblyAddress, createRequest } from '@repo/shared-methods/utils';
 import FieldTips from '@/components/FieldTips';
@@ -49,7 +49,7 @@ const PropertiesItem = ({ data, handleSearch }) => {
 				content: 'Delete successful！',
 			});
 			setLoading(false);
-		} catch (error) {
+		} catch {
 			setLoading(false);
 		}
 	};

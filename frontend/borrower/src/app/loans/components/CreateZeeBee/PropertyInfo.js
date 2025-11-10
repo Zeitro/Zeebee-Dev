@@ -28,14 +28,14 @@ const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty, unit
 			<Col {...titleCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">
 				Property information
 			</Col>
-			<MoreCard className="mb-8" />
+			<MoreCard className="mb-8" changeFormValue={(values) => form.setFieldsValue(values)} />
 			<AddressForm
 				{...addressProps}
-				addressName={[name, 'property_base', 'address', 'address1']}
-				addressName2={[name, 'property_base', 'address', 'address2']}
-				cityName={[name, 'property_base', 'address', 'city']}
-				stateName={[name, 'property_base', 'address', 'state']}
-				zipName={[name, 'property_base', 'address', 'zip_code']}
+				addressName={[name, 'address', 'address1']}
+				addressName2={[name, 'address', 'address2']}
+				cityName={[name, 'address', 'city']}
+				stateName={[name, 'address', 'state']}
+				zipName={[name, 'address', 'zip_code']}
 				addressLabel="Subject property address 1"
 				addressLabel2="Subject property address 2"
 				form={form}
@@ -95,7 +95,7 @@ const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty, unit
 			<Col {...layoutCol} md={12}>
 				<Form.Item
 					label="Number of units"
-					name={[name, 'property_base', 'unit']}
+					name={[name, 'unit']}
 					rules={[
 						{
 							required: true,

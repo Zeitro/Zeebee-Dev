@@ -56,11 +56,8 @@ const useCreate = (pageType = 'create') => {
 		const data = await request(api);
 		const newData = {
 			loan_property: {
-				// property_type: data.property_type,
-				property_base: {
-					unit: data.unit,
-					address: data.address,
-				},
+				unit: data.unit,
+				address: data.address,
 			},
 		};
 		form.setFieldsValue(newData);
@@ -70,7 +67,7 @@ const useCreate = (pageType = 'create') => {
 	const getLoanDetail = async () => {
 		const res = await request(`/loan/${searchParams.get('id')}`);
 		console.log(res);
-		const str = assemblyAddress(res?.loan_property?.property_base?.address);
+		const str = assemblyAddress(res?.loan_property?.address);
 		eventBus.emit('changeCrumbs', {
 			2: isDetails ? `ZeeBee Loan Details(${str})` : `Edit Draft(${str})`,
 		});
@@ -286,7 +283,25 @@ const useCreate = (pageType = 'create') => {
 		const componentFieldMap = {
 			'0-0': ['loan_borrower'],
 			'0-1': ['applicants'],
-			'1-0': ['loan_property', 'loan_purpose', 'loan_type'],
+			'1-0': [
+				['loan_property', 'address', 'address1'],
+				['loan_property', 'address', 'address2'],
+				['loan_property', 'address', 'city'],
+				['loan_property', 'address', 'state'],
+				['loan_property', 'address', 'zip_code'],
+				'loan_purpose',
+				'loan_type',
+				['loan_property', 'property_type'],
+				['loan_property', 'living_area_sqft'],
+				['loan_property', 'unit'],
+				['loan_property', 'bedrooms'],
+				['loan_property', 'bathrooms'],
+				['loan_property', 'future_property_type'],
+				['loan_property', 'future_living_area_sqft'],
+				['loan_property', 'future_unit'],
+				['loan_property', 'future_bedrooms'],
+				['loan_property', 'future_bathrooms'],
+			],
 			'1-1': [],
 			'2-0': ['transaction_experiences', 'real_estate_experiences'],
 			'2-1': ['loan_third_services'],

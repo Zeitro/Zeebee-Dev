@@ -166,11 +166,15 @@ export function formatAmount(value) {
 	return `$ ${amount}`;
 }
 
-// 格式化面积
-export function formatArea(value, unit = 'sqft') {
+// 格式化数字/面积(传单位)
+export function formatNumber(value, unit = 'sqft', isAfter = true) {
 	const num = formatThousands(value);
 	if (!num) return '--';
-	return `${num} ${unit}`;
+
+	if (isAfter) {
+		return unit ? `${num} ${unit}` : num;
+	}
+	return unit ? `${unit} ${num}` : num;
 }
 
 // 格式化TIN,包括SSN/ITIN/EIN, 不同类型税务ID

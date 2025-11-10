@@ -32,11 +32,11 @@ const AddModal = ({ setOpen, rowData, handleSearch }) => {
 				url = `/property/${rowData?.id}`;
 				method = 'PUT';
 			}
-			await request(url, {
+			const res = await request(url, {
 				method,
 				body: { ...value },
 			});
-			handleSearch?.();
+			handleSearch?.(res?.id);
 			setConfirmLoading(false);
 			setOpen(false);
 		} catch {
