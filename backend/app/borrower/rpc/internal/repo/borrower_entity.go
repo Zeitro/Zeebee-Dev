@@ -66,7 +66,7 @@ func (repo *BorrowerEntityRepo) Page(ctx context.Context, pageReq *borrower.Borr
 func (repo *BorrowerEntityRepo) All(ctx context.Context, borrowerId int64) (result []*model.BorrowerEntity, err error) {
 	err = repo.Client(ctx).
 		Where("borrower_id = ?", borrowerId).
-		Omit("mailing_address").
+		// Omit("mailing_address").
 		Order("id desc").
 		Find(&result).Error
 	return result, errors.WithStack(err)

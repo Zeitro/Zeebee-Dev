@@ -975,7 +975,8 @@
                       "contact_email",
                       "contact_name",
                       "contact_phone",
-                      "own_percent"
+                      "own_percent",
+                      "mailing_address"
                     ],
                     "properties": {
                       "borrower_id": {
@@ -995,6 +996,26 @@
                       },
                       "id": {
                         "type": "integer"
+                      },
+                      "mailing_address": {
+                        "type": "object",
+                        "properties": {
+                          "address1": {
+                            "type": "string"
+                          },
+                          "address2": {
+                            "type": "string"
+                          },
+                          "city": {
+                            "type": "string"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "zip_code": {
+                            "type": "string"
+                          }
+                        }
                       },
                       "name": {
                         "type": "string"
@@ -1143,7 +1164,8 @@
                       "contact_email",
                       "contact_name",
                       "contact_phone",
-                      "own_percent"
+                      "own_percent",
+                      "mailing_address"
                     ],
                     "properties": {
                       "borrower_id": {
@@ -1163,6 +1185,26 @@
                       },
                       "id": {
                         "type": "integer"
+                      },
+                      "mailing_address": {
+                        "type": "object",
+                        "properties": {
+                          "address1": {
+                            "type": "string"
+                          },
+                          "address2": {
+                            "type": "string"
+                          },
+                          "city": {
+                            "type": "string"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "zip_code": {
+                            "type": "string"
+                          }
+                        }
                       },
                       "name": {
                         "type": "string"
@@ -10525,7 +10567,7 @@
       }
     }
   },
-  "x-date": "2025-11-07 15:46:48",
+  "x-date": "2025-11-10 15:23:57",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

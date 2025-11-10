@@ -1029,6 +1029,7 @@ message BorrowerEntityPageEntry {
   string contact_name = 10;
   string contact_phone = 11;
   int32 own_percent = 12;
+  AddressEntry mailing_address = 13;
 }
 
 message BorrowerEntityEditEntity {
