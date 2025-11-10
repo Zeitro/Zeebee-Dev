@@ -67,7 +67,6 @@ type BorrowerEntityEditRequest struct {
 	ContactEmail   string       `json:"contact_email" validate:"required,email,min=5,max=100"`
 	ContactName    string       `json:"contact_name" validate:"required,min=5,max=100"`
 	ContactPhone   string       `json:"contact_phone" validate:"required,min=9,max=15"`
-	OwnPercent     int32        `json:"own_percent" validate:"required,min=1,max=100"`
 }
 
 type BorrowerEntityEntry struct {
@@ -83,7 +82,6 @@ type BorrowerEntityEntry struct {
 	ContactEmail   string       `json:"contact_email"`
 	ContactName    string       `json:"contact_name"`
 	ContactPhone   string       `json:"contact_phone"`
-	OwnPercent     int32        `json:"own_percent"`
 }
 
 type BorrowerEntityPageEntry struct {
@@ -98,7 +96,6 @@ type BorrowerEntityPageEntry struct {
 	ContactEmail   string        `json:"contact_email"`
 	ContactName    string        `json:"contact_name"`
 	ContactPhone   string        `json:"contact_phone"`
-	OwnPercent     int32         `json:"own_percent"`
 	MailingAddress *AddressEntry `json:"mailing_address,omitempty"`
 }
 
@@ -263,6 +260,12 @@ type LoanApplicantEntry struct {
 	Address          *AddressEntry `json:"address,omitempty, optional"`
 	LoanBorrowerId   int64         `json:"loan_borrower_id,omitempty, optional"`
 	Phone            string        `json:"phone,omitempty, optional"`
+}
+
+type LoanBorrowerApplyEntry struct {
+	Id               int64 `json:"id,optional" validate:"gte=0"`
+	BorrowerEntityId int64 `json:"borrower_entity_id,optional" validate:"gt=0"`
+	OwnPercent       int32 `json:"own_percent,optional" validate:"gte=0,max=100"`
 }
 
 type LoanBorrowerEntry struct {

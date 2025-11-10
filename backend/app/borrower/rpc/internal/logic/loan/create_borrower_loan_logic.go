@@ -149,6 +149,7 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
+	loanBorrower.OwnPercent = 100
 
 	// LoanProperty
 	borrowerProperty, err := l.svcCtx.BorrowerPropertyRepo.GetBorrowerPropertyById(l.ctx, in.LoanProperty.BorrowerPropertyId, in.BorrowerId)
