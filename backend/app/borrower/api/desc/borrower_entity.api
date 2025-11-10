@@ -38,6 +38,7 @@ type BorrowerEntityPageEntry {
     ContactName string `json:"contact_name"`
     ContactPhone string `json:"contact_phone"`
     OwnPercent int32 `json:"own_percent"`
+    MailingAddress *AddressEntry `json:"mailing_address,omitempty"`
 }
 
 type BorrowerEntityEditRequest {

@@ -87,18 +87,19 @@ type BorrowerEntityEntry struct {
 }
 
 type BorrowerEntityPageEntry struct {
-	Id           int64  `json:"id"`
-	CreatedAt    string `json:"created_at"`
-	UpdatedAt    string `json:"updated_at"`
-	BorrowerId   int64  `json:"borrower_id"`
-	Type         string `json:"type"`
-	Name         string `json:"name"`
-	TinType      string `json:"tin_type"`
-	Tin          string `json:"tin"`
-	ContactEmail string `json:"contact_email"`
-	ContactName  string `json:"contact_name"`
-	ContactPhone string `json:"contact_phone"`
-	OwnPercent   int32  `json:"own_percent"`
+	Id             int64         `json:"id"`
+	CreatedAt      string        `json:"created_at"`
+	UpdatedAt      string        `json:"updated_at"`
+	BorrowerId     int64         `json:"borrower_id"`
+	Type           string        `json:"type"`
+	Name           string        `json:"name"`
+	TinType        string        `json:"tin_type"`
+	Tin            string        `json:"tin"`
+	ContactEmail   string        `json:"contact_email"`
+	ContactName    string        `json:"contact_name"`
+	ContactPhone   string        `json:"contact_phone"`
+	OwnPercent     int32         `json:"own_percent"`
+	MailingAddress *AddressEntry `json:"mailing_address,omitempty"`
 }
 
 type BorrowerEntityPageFilter struct {
