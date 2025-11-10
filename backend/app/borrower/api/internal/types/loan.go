@@ -29,7 +29,7 @@ type LoanApplyRequest struct {
 	TransactionExperiences []*LoanExperienceEntry     `json:"transaction_experiences,optional"`
 	RealEstateExperiences  []*LoanExperienceEntry     `json:"real_estate_experiences,optional"`
 	LoanThirdServices      []*LoanThirdServiceEntry   `json:"loan_third_services,optional"`
-	LoanBorrower           *LoanBorrowerApplyEntry    `json:"loan_borrower,optional" validate:"required"`
+	BorrowerEntityId       int64                      `json:"borrower_entity_id,optional" validate:"required,gt=0"`
 	LoanDemographic        *LoanDemographicEntry      `json:"loan_demographic,optional" validate:"required"`
 	ApplyFormFile          string                     `json:"apply_form_file,optional" validate:"required"`
 }

@@ -91,7 +91,7 @@ type LoanPropertyApplyEntry {
     MidConstruction bool `json:"mid_construction, optional"`
     EstYearlyRentalIncomeAmount float64 `json:"est_yearly_rental_income_amount, optional" `
     YearlyLiabilityExpenseAmount float64 `json:"yearly_liability_expense_amount, optional" `
-    Dscr float32 `json:"dscr" validate:"gte=0"`
+    Dscr float64 `json:"dscr,optional" validate:"gte=0"`
     HasDelayedFinancing bool `json:"has_delayed_financing, optional"`
     HasPropertiesVacant bool `json:"has_properties_vacant, optional"`
     HasShortTermRental bool `json:"has_short_term_rental, optional"`
@@ -132,7 +132,7 @@ type LoanPropertyApplyFormPdfEntry {
     MidConstruction bool `json:"mid_construction, optional"`
     EstYearlyRentalIncomeAmount float64 `json:"est_yearly_rental_income_amount, optional" `
     YearlyLiabilityExpenseAmount float64 `json:"yearly_liability_expense_amount, optional" `
-    Dscr float32 `json:"dscr" validate:"gte=0"`
+    Dscr float64 `json:"dscr,optional" validate:"gte=0"`
     HasDelayedFinancing bool `json:"has_delayed_financing, optional"`
     HasPropertiesVacant bool `json:"has_properties_vacant, optional"`
     HasShortTermRental bool `json:"has_short_term_rental, optional"`

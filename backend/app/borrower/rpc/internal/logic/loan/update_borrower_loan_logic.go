@@ -3,6 +3,7 @@ package loanlogic
 import (
 	"context"
 
+	"github.com/duke-git/lancet/v2/mathutil"
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
@@ -197,7 +198,9 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateRequestData, oldLoan *model.Loan) (loan *model.Loan, loanProperty *model.LoanProperty, applicants []*model.LoanApplicant, loanBorrower *model.LoanBorrower, err error) {
 
 	// build applicants
+	var totalOwnPercent int32
 	for _, applicant := range in.Applicants {
+		totalOwnPercent += applicant.OwnPercent
 		borrowerApplicant, err := l.svcCtx.BorrowerApplicantRepo.GetBorrowerApplicantById(l.ctx, applicant.BorrowerApplicantId, in.BorrowerId)
 		if err != nil {
 			return nil, nil, nil, nil, err
@@ -219,6 +222,9 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 		applicantItem.BorrowerApplicantId = applicant.BorrowerApplicantId
 		applicantItem.InvitationStatus = constants.ApplicantInvitationStatusAccepted
 		applicants = append(applicants, applicantItem)
+	}
+	if totalOwnPercent > 100 {
+		return nil, nil, nil, nil, errorx.New("Total Own Percent Must Be Less Than 100")
 	}
 
 	slice.SortBy(applicants, func(a, b *model.LoanApplicant) bool {
@@ -247,7 +253,6 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 		return nil, nil, nil, nil, err
 	}
 	loanBorrower.LoanId = in.Id
-	loanBorrower.OwnPercent = 100
 
 	// loan property
 	borrowerProperty, err := l.svcCtx.BorrowerPropertyRepo.GetBorrowerPropertyById(l.ctx, in.LoanProperty.BorrowerPropertyId, in.BorrowerId)
@@ -276,6 +281,9 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
 	}
 	loanProperty.Id = 0
+	if loanProperty.YearlyLiabilityExpenseAmount > 0 {
+		loanProperty.Dscr = mathutil.RoundToFloat((loanProperty.EstYearlyRentalIncomeAmount/loanProperty.YearlyLiabilityExpenseAmount)*100, 2)
+	}
 
 	// loan
 	loan = &model.Loan{}

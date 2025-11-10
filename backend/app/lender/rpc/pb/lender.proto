@@ -392,7 +392,7 @@ message LoanUpdateRequestData {
   //  string additional_info = 38;
   repeated LoanExperienceEntry transaction_experiences = 39;
   repeated LoanExperienceEntry real_estate_experiences = 40;
-  //  LoanBorrowerEntry loan_borrower = 41;
+  LoanBorrowerEditEntry loan_borrower = 41;
   LoanDemographicEntry loan_demographic = 42;
   //  float yearly_liability_expense = 43;
   repeated LoanThirdServiceEntry loan_third_services = 44;
@@ -716,6 +716,13 @@ message LoanBorrowerEntry{
   int32 own_percent = 11;
   int64 borrower_entity_id = 12;
 }
+
+message LoanBorrowerEditEntry {
+  int64 id = 1;
+  int64 borrower_entity_id = 2;
+  int32 own_percent = 3;
+}
+
 // ====================== loan borrower service end ======================
 
 // ===================== loan experience service start ======================
@@ -828,7 +835,7 @@ message BorrowerEntityEntry {
   string contact_email = 10;
   string contact_name = 11;
   string contact_phone = 12;
-  int32 own_percent = 13;
+  //  int32 own_percent = 13;
 }
 // ===================== borrower entity service end ======================
 

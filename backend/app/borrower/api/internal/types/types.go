@@ -142,10 +142,11 @@ type FileEntry struct {
 }
 
 type ImportLoanApplicantEntry struct {
-	Id        int64  `json:"id,optional"`
-	FirstName string `json:"first_name,optional" validate:"required,min=1,max=30"`
-	Type      string `json:"type,optional" validate:"required,oneof=Individual Corporation LLC Trust Partnership"`
-	IsPrimary bool   `json:"is_primary,optional"`
+	Id         int64  `json:"id,optional"`
+	FirstName  string `json:"first_name,optional" validate:"required,min=1,max=30"`
+	Type       string `json:"type,optional" validate:"required,oneof=Individual Corporation LLC Trust Partnership"`
+	IsPrimary  bool   `json:"is_primary,optional"`
+	OwnPercent int32  `json:"own_percent" validate:"required,min=1,max=100"`
 }
 
 type ImportLoanApplyPropertyEntry struct {
@@ -177,7 +178,6 @@ type ImportLoanBorrowerEntry struct {
 	ContactEmail   string       `json:"contact_email,optional"`
 	ContactPhone   string       `json:"contact_phone,optional" `
 	ContactName    string       `json:"contact_name,optional" `
-	OwnPercent     int32        `json:"own_percent,optional"`
 }
 
 type ImportLoanExtendEntry struct {
@@ -211,6 +211,7 @@ type LoanApplicantApplyEntry struct {
 	Id                  int64 `json:"id,optional"`
 	BorrowerApplicantId int64 `json:"borrower_applicant_id" validate:"required,gt=0"`
 	IsPrimary           bool  `json:"is_primary, optional"`
+	OwnPercent          int32 `json:"own_percent" validate:"required,min=1,max=100"`
 }
 
 type LoanApplicantApplyFormPdfEntry struct {
@@ -228,15 +229,7 @@ type LoanApplicantApplyFormPdfEntry struct {
 	EstCreditScore   int32         `json:"est_credit_score,optional" validate:"required,gte=300,lte=850"`
 	DriverLicenseNum string        `json:"driver_license_num,optional" validate:"required"`
 	Address          *AddressEntry `json:"address,optional" validate:"required"`
-}
-
-type LoanApplicantEditEntry struct {
-	Id        int64  `json:"id,optional"`
-	FirstName string `json:"first_name" validate:"required,min=1,max=30"`
-	MidName   string `json:"mid_name,optional" validate:"min=0,max=30"`
-	LastName  string `json:"last_name" validate:"required,min=1,max=30"`
-	Type      string `json:"type" validate:"required,oneof=Individual Corporation LLC Trust Partnership"`
-	IsPrimary bool   `json:"is_primary"`
+	OwnPercent       int32         `json:"own_percent" validate:"required,min=1,max=100"`
 }
 
 type LoanApplicantEntry struct {
@@ -260,12 +253,7 @@ type LoanApplicantEntry struct {
 	Address          *AddressEntry `json:"address,omitempty, optional"`
 	LoanBorrowerId   int64         `json:"loan_borrower_id,omitempty, optional"`
 	Phone            string        `json:"phone,omitempty, optional"`
-}
-
-type LoanBorrowerApplyEntry struct {
-	Id               int64 `json:"id,optional" validate:"gte=0"`
-	BorrowerEntityId int64 `json:"borrower_entity_id,optional" validate:"gt=0"`
-	OwnPercent       int32 `json:"own_percent,optional" validate:"gte=0,max=100"`
+	OwnPercent       int32         `json:"own_percent,omitempty"`
 }
 
 type LoanBorrowerEntry struct {
@@ -279,7 +267,6 @@ type LoanBorrowerEntry struct {
 	ContactEmail   string       `json:"contact_email,optional" validate:"required,email"`
 	ContactPhone   string       `json:"contact_phone,optional" validate:"required"`
 	ContactName    string       `json:"contact_name,optional" validate:"required,min=1,max=255"`
-	OwnPercent     int32        `json:"own_percent,optional" validate:"required,min=1,max=100"`
 }
 
 type LoanBudgetEntry struct {
@@ -485,7 +472,7 @@ type LoanPropertyApplyEntry struct {
 	MidConstruction              bool             `json:"mid_construction, optional"`
 	EstYearlyRentalIncomeAmount  float64          `json:"est_yearly_rental_income_amount, optional" `
 	YearlyLiabilityExpenseAmount float64          `json:"yearly_liability_expense_amount, optional" `
-	Dscr                         float32          `json:"dscr" validate:"gte=0"`
+	Dscr                         float64          `json:"dscr,optional" validate:"gte=0"`
 	HasDelayedFinancing          bool             `json:"has_delayed_financing, optional"`
 	HasPropertiesVacant          bool             `json:"has_properties_vacant, optional"`
 	HasShortTermRental           bool             `json:"has_short_term_rental, optional"`
@@ -522,7 +509,7 @@ type LoanPropertyApplyFormPdfEntry struct {
 	MidConstruction              bool             `json:"mid_construction, optional"`
 	EstYearlyRentalIncomeAmount  float64          `json:"est_yearly_rental_income_amount, optional" `
 	YearlyLiabilityExpenseAmount float64          `json:"yearly_liability_expense_amount, optional" `
-	Dscr                         float32          `json:"dscr" validate:"gte=0"`
+	Dscr                         float64          `json:"dscr,optional" validate:"gte=0"`
 	HasDelayedFinancing          bool             `json:"has_delayed_financing, optional"`
 	HasPropertiesVacant          bool             `json:"has_properties_vacant, optional"`
 	HasShortTermRental           bool             `json:"has_short_term_rental, optional"`
@@ -694,6 +681,7 @@ type ThirdPartyLoanApplicantEntry struct {
 	Id                  int64 `json:"id,optional"`
 	BorrowerApplicantId int64 `json:"borrower_applicant_id" validate:"required,gt=0"`
 	IsPrimary           bool  `json:"is_primary,optional"`
+	OwnPercent          int32 `json:"own_percent,optional" validate:"min=0,max=100"`
 }
 
 type UserInfo struct {

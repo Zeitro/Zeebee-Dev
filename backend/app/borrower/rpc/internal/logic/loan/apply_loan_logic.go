@@ -3,6 +3,7 @@ package loanlogic
 import (
 	"context"
 
+	"github.com/duke-git/lancet/v2/mathutil"
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
@@ -254,21 +255,19 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, 
 	loan.LenderCompany = lender.Name
 
 	// LoanBorrower
-	if reqData.LoanBorrower == nil {
-		return nil, errors.WithStack(errors.New("Invalid Loan Borrower"))
-	}
-	loanBorrower, err := l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, reqData.LoanBorrower.BorrowerEntityId, reqData.BorrowerId)
+	loanBorrower, err := l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, reqData.BorrowerEntityId, reqData.BorrowerId)
 	if err != nil {
 		return nil, err
 	}
 	if oldLoan != nil && oldLoan.LoanBorrower != nil {
 		loanBorrower.Id = oldLoan.LoanBorrower.Id
 	}
-	loanBorrower.BorrowerEntityId = reqData.LoanBorrower.BorrowerEntityId
-	loanBorrower.OwnPercent = reqData.LoanBorrower.OwnPercent
+	loanBorrower.BorrowerEntityId = reqData.BorrowerEntityId
 	// applicants
 	applicants := make([]*model.LoanApplicant, 0)
+	var totalOwnPercent int32 = 0
 	for _, applicant := range reqData.Applicants {
+		totalOwnPercent += applicant.OwnPercent
 		borrowerApplicant, err := l.svcCtx.BorrowerApplicantRepo.GetBorrowerApplicantById(l.ctx, applicant.BorrowerApplicantId, reqData.BorrowerId)
 		if err != nil {
 			return nil, err
@@ -288,9 +287,14 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, 
 		applicantItem.Id = applicant.Id
 		applicantItem.IsPrimary = applicant.IsPrimary
 		applicantItem.BorrowerApplicantId = applicant.BorrowerApplicantId
+		applicantItem.OwnPercent = applicant.OwnPercent
 		applicantItem.InvitationStatus = constants.ApplicantInvitationStatusAccepted
 		applicants = append(applicants, applicantItem)
 	}
+	if totalOwnPercent > 100 {
+		return nil, errors.New("Total Own Percent Is Greater Than 100")
+	}
+
 	slice.SortBy(applicants, func(a, b *model.LoanApplicant) bool {
 		return b.IsPrimary
 	})
@@ -329,6 +333,9 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, 
 	loanProperty.LivingAreaSqft = borrowerProperty.LivingAreaSqft
 	loanProperty.Address = borrowerProperty.Address
 	loanProperty.BorrowerPropertyId = reqData.LoanProperty.BorrowerPropertyId
+	if loanProperty.YearlyLiabilityExpenseAmount > 0 {
+		loanProperty.Dscr = mathutil.RoundToFloat((loanProperty.EstYearlyRentalIncomeAmount/loanProperty.YearlyLiabilityExpenseAmount)*100, 2)
+	}
 
 	// transaction experience
 	transactionExperiences := make([]*model.LoanExperience, 0)

@@ -16,7 +16,6 @@ type BorrowerEntity struct {
 	ContactEmail   string                       `gorm:"column:contact_email;default:''" json:"contact_email"`
 	ContactName    string                       `gorm:"column:contact_name;default:''" json:"contact_name"`
 	ContactPhone   string                       `gorm:"column:contact_phone;default:''" json:"contact_phone"`
-	// OwnPercent     int32                        `gorm:"column:own_percent;default:100" json:"own_percent"`
 }
 
 func (m BorrowerEntity) TableName() string {

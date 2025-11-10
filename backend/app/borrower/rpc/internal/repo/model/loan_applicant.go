@@ -28,6 +28,7 @@ type LoanApplicant struct {
 	Address             types.Address                       `gorm:"column:address;type:jsonb;serializer:json" json:"address"`
 	LoanBorrowerId      int64                               `gorm:"column:loan_borrower_id;not null;default:0" json:"loan_borrower_id"`
 	Phone               string                              `gorm:"column:phone;size:20;not null;default:''" json:"phone"`
+	OwnPercent          int32                               `gorm:"column:own_percent;not null;default:0" json:"own_percent"`
 
 	// relationships
 	LoanProperty      *LoanProperty      `json:"loan_property" gorm:"foreignKey:LoanPropertyId;references:Id"`

@@ -315,12 +315,14 @@ message ThirdPartyLoanApplicantEditEntry {
   int64 id = 1;
   bool is_primary = 2;
   int64 borrower_applicant_id = 3;
+  int32 own_percent = 4;
 }
 
 message LoanApplicantApplyEntry {
   int64 id = 1;
   bool is_primary = 2;
   int64 borrower_applicant_id = 3;
+  int32 own_percent = 4;
 }
 
 // loan create
@@ -537,8 +539,8 @@ message LoanApplyRequestData {
   //  string additional_info = 38;
   repeated LoanExperienceEntry transaction_experiences = 39;
   repeated LoanExperienceEntry real_estate_experiences = 40;
-  LoanBorrowerApplyEntry loan_borrower = 41;
-  //  int64 borrower_entity_id = 41;
+  //  LoanBorrowerApplyEntry loan_borrower = 41;
+  int64 borrower_entity_id = 41;
   LoanDemographicEntry loan_demographic = 42;
   //  float yearly_liability_expense = 43;
   repeated LoanThirdServiceEntry loan_third_services = 44;
@@ -602,7 +604,7 @@ message ImportPendingLoanPropertyEntry {
 message ImportPendingLoanApplicantEntry {
   string first_name = 1;
   bool is_primary = 2;
-
+  int32 own_percent = 3;
 }
 
 message ImportPendingLoansResponse {
