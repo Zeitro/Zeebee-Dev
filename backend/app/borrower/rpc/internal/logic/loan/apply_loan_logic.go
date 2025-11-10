@@ -253,16 +253,19 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, 
 	loan.LenderCompanyId = lender.Id
 	loan.LenderCompany = lender.Name
 
-	// loan_borrower
-	loanBorrower, err := l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, reqData.BorrowerEntityId, reqData.BorrowerId)
+	// LoanBorrower
+	if reqData.LoanBorrower == nil {
+		return nil, errors.WithStack(errors.New("Invalid Loan Borrower"))
+	}
+	loanBorrower, err := l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, reqData.LoanBorrower.BorrowerEntityId, reqData.BorrowerId)
 	if err != nil {
 		return nil, err
 	}
 	if oldLoan != nil && oldLoan.LoanBorrower != nil {
 		loanBorrower.Id = oldLoan.LoanBorrower.Id
 	}
-	loanBorrower.BorrowerEntityId = reqData.BorrowerEntityId
-
+	loanBorrower.BorrowerEntityId = reqData.LoanBorrower.BorrowerEntityId
+	loanBorrower.OwnPercent = reqData.LoanBorrower.OwnPercent
 	// applicants
 	applicants := make([]*model.LoanApplicant, 0)
 	for _, applicant := range reqData.Applicants {

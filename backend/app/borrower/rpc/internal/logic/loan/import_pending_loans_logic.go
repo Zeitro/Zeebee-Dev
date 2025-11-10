@@ -105,6 +105,7 @@ func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingL
 			// LoanBorrower
 			loanBorrower := data.loanBorrower
 			loanBorrower.LoanId = loan.Id
+			loanBorrower.OwnPercent = 100
 			loanBorrower, innerErr = l.svcCtx.LoanBorrowerRepo.CreateWithTx(l.ctx, tx, loanBorrower, false)
 			if innerErr != nil {
 				return innerErr

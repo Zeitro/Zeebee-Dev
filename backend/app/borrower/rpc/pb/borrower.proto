@@ -368,15 +368,6 @@ message LoanCreateResponseData {
   int64 id = 1;
 }
 
-//message BorrowerApplicantEditEntry1 {
-//  string name = 1 [deprecated = true];
-//  string type = 2;
-//  bool is_primary = 3;
-//  int64 id = 4;
-//  string first_name = 5;
-//  string last_name = 6;
-//  string mid_name = 7;
-//}
 
 // loan  update
 message LoanUpdateRequest {
@@ -546,8 +537,8 @@ message LoanApplyRequestData {
   //  string additional_info = 38;
   repeated LoanExperienceEntry transaction_experiences = 39;
   repeated LoanExperienceEntry real_estate_experiences = 40;
-  //  LoanBorrowerEntry loan_borrower = 41;
-  int64 borrower_entity_id = 41;
+  LoanBorrowerApplyEntry loan_borrower = 41;
+  //  int64 borrower_entity_id = 41;
   LoanDemographicEntry loan_demographic = 42;
   //  float yearly_liability_expense = 43;
   repeated LoanThirdServiceEntry loan_third_services = 44;
@@ -1013,7 +1004,7 @@ message BorrowerEntityEntry {
   string contact_email = 10;
   string contact_name = 11;
   string contact_phone = 12;
-  int32 own_percent = 13;
+  //  int32 own_percent = 13;
 }
 
 message BorrowerEntityPageEntry {
@@ -1028,11 +1019,11 @@ message BorrowerEntityPageEntry {
   string contact_email = 9;
   string contact_name = 10;
   string contact_phone = 11;
-  int32 own_percent = 12;
+  //  int32 own_percent = 12;
   AddressEntry mailing_address = 13;
 }
 
-message BorrowerEntityEditEntity {
+message BorrowerEntityEditEntry {
   int64 borrower_id = 1;
   string type = 2;
   string name = 3;
@@ -1042,13 +1033,13 @@ message BorrowerEntityEditEntity {
   string contact_email = 7;
   string contact_name = 8;
   string contact_phone = 9;
-  int32 own_percent = 10;
+  //  int32 own_percent = 10;
   int64 id = 11;
 }
 
 // create borrower entity
 message BorrowerEntityCreateRequest {
-  BorrowerEntityEditEntity data = 1;
+  BorrowerEntityEditEntry data = 1;
 }
 
 message BorrowerEntityCreateResponse {
@@ -1057,7 +1048,7 @@ message BorrowerEntityCreateResponse {
 
 // update borrower entity
 message BorrowerEntityUpdateRequest {
-  BorrowerEntityEditEntity data = 1;
+  BorrowerEntityEditEntry data = 1;
 }
 
 // detail borrower entity
@@ -1395,6 +1386,13 @@ message LoanBorrowerEntry{
   string created_at = 13;
   string updated_at = 14;
 }
+
+message LoanBorrowerApplyEntry{
+  int64 id = 1;
+  int64 borrower_entity_id = 2;
+  int32 own_percent = 3;
+}
+
 // ====================== loan borrower service end ======================
 
 // ===================== lender service start ======================

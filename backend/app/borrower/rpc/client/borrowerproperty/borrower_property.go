@@ -53,7 +53,7 @@ type (
 	BorrowerEntityDetailRequest                = borrower.BorrowerEntityDetailRequest
 	BorrowerEntityDetailRequestData            = borrower.BorrowerEntityDetailRequestData
 	BorrowerEntityDetailResponse               = borrower.BorrowerEntityDetailResponse
-	BorrowerEntityEditEntity                   = borrower.BorrowerEntityEditEntity
+	BorrowerEntityEditEntry                    = borrower.BorrowerEntityEditEntry
 	BorrowerEntityEntry                        = borrower.BorrowerEntityEntry
 	BorrowerEntityPageEntry                    = borrower.BorrowerEntityPageEntry
 	BorrowerEntityPageRequest                  = borrower.BorrowerEntityPageRequest
@@ -86,6 +86,7 @@ type (
 	LoanApplyRequestData                       = borrower.LoanApplyRequestData
 	LoanApplyResponse                          = borrower.LoanApplyResponse
 	LoanApplyResponseData                      = borrower.LoanApplyResponseData
+	LoanBorrowerApplyEntry                     = borrower.LoanBorrowerApplyEntry
 	LoanBorrowerEntry                          = borrower.LoanBorrowerEntry
 	LoanBudgetEntry                            = borrower.LoanBudgetEntry
 	LoanCreateRequest                          = borrower.LoanCreateRequest

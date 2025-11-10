@@ -247,6 +247,7 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 		return nil, nil, nil, nil, err
 	}
 	loanBorrower.LoanId = in.Id
+	loanBorrower.OwnPercent = 100
 
 	// loan property
 	borrowerProperty, err := l.svcCtx.BorrowerPropertyRepo.GetBorrowerPropertyById(l.ctx, in.LoanProperty.BorrowerPropertyId, in.BorrowerId)

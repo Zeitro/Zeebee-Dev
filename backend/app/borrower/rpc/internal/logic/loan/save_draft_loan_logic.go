@@ -284,12 +284,13 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 
 	// LoanBorrower
 	var loanBorrower *model.LoanBorrower
-	if reqData.BorrowerEntityId > 0 {
-		loanBorrower, err = l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, reqData.BorrowerEntityId, reqData.BorrowerId)
+	if reqData.LoanBorrower != nil && reqData.LoanBorrower.BorrowerEntityId > 0 {
+		loanBorrower, err = l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, reqData.LoanBorrower.BorrowerEntityId, reqData.BorrowerId)
 		if err != nil {
 			return nil, err
 		}
 		loanBorrower.LoanId = reqData.Id
+		loanBorrower.OwnPercent = reqData.LoanBorrower.OwnPercent
 	}
 
 	// LoanProperty

@@ -31,7 +31,7 @@ func NewBorrowerEntityCreateLogic(ctx context.Context, svcCtx *svc.ServiceContex
 
 func (l *BorrowerEntityCreateLogic) BorrowerEntityCreate(req *types.BorrowerEntityCreateRequest) (resp *types.BorrowerEntityCreateResponse, err error) {
 	rpcReq := &borrower.BorrowerEntityCreateRequest{
-		Data: &borrower.BorrowerEntityEditEntity{},
+		Data: &borrower.BorrowerEntityEditEntry{},
 	}
 
 	err = copier.CopyWithOption(&rpcReq.Data, &req.BorrowerEntityEditRequest, copier.Option{
