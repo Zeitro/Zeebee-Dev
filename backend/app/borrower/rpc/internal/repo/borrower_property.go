@@ -44,7 +44,9 @@ func (repo *BorrowerPropertyRepo) GetOne(ctx context.Context, id int64) (result 
 	query := repo.BaseRepo.Client(ctx).Where("id = ?", id).
 		Preload("LoanProperties").
 		Preload("LoanProperties.Applicants").
-		Preload("LoanProperties.Loan")
+		Preload("LoanProperties.Loan", func(db *gorm.DB) *gorm.DB {
+			return db.Order("loans.updated_at desc")
+		})
 
 	err = query.First(&result).Error
 	return

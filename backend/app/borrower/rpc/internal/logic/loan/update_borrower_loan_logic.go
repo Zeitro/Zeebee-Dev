@@ -248,15 +248,15 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 
 	// LoanBorrower
 	loanBorrower = &model.LoanBorrower{}
-	loanBorrowerData := in.LoanBorrower
-	if loanBorrowerData == nil {
-		return nil, nil, nil, nil, errorx.New("Invalid Loan Borrower")
-	}
-
-	loanBorrower, err = l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, loanBorrowerData.BorrowerEntityId, in.BorrowerId)
-	if err != nil {
-		return nil, nil, nil, nil, err
-	}
+	// loanBorrowerData := in.LoanBorrower
+	// if loanBorrowerData == nil {
+	// 	return nil, nil, nil, nil, errorx.New("Invalid Loan Borrower")
+	// }
+	//
+	// loanBorrower, err = l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, loanBorrowerData.BorrowerEntityId, in.BorrowerId)
+	// if err != nil {
+	// 	return nil, nil, nil, nil, err
+	// }
 	loanBorrower.LoanId = in.Id
 
 	// loan property
@@ -336,7 +336,7 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 		}
 		loan.HoldbackAmount = loan.TotalAmount - loan.InitialAmount
 		loan.PrincipalAmount = loan.TotalAmount
-		// loan.PendingStatus = constants.LoanPendingStatus(in.PendingStatus)
+		loan.PendingStatus = constants.LoanPendingStatus(in.PendingStatus)
 
 	case constants.LoanStageActive:
 

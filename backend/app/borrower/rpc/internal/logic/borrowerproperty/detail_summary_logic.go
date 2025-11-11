@@ -3,6 +3,7 @@ package borrowerpropertylogic
 import (
 	"context"
 
+	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
 
@@ -52,20 +53,6 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 	}
 
 	loanProperties := borrowerProperty.LoanProperties
-
-	// respData := &borrower.PropertyDetailSummaryResponseData{
-	// 	Id: propertyBase.Id,
-	// 	// PropertyType: string(loanProperty.PropertyType),
-	// 	// TotalAmount:  property.TotalAmount,
-	// 	Unit: propertyBase.Unit,
-	// 	Address: &borrower.AddressEntry{
-	// 		State:    propertyBase.Address.State,
-	// 		City:     propertyBase.Address.City,
-	// 		Address1: propertyBase.Address.Address1,
-	// 		Address2: propertyBase.Address.Address2,
-	// 		ZipCode:  propertyBase.Address.ZipCode,
-	// 	},
-	// }
 
 	respData := &borrower.PropertyDetailSummaryResponseData{}
 	err = copier.CopyWithOption(respData, borrowerProperty, copier.Option{
@@ -137,6 +124,15 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 			loanCount++
 		}
 	}
+	slice.SortBy(respData.PendingLoans, func(item, other *borrower.LoanEntry) bool {
+		return item.Id < other.Id
+	})
+	slice.SortBy(respData.ActiveLoans, func(item, other *borrower.LoanEntry) bool {
+		return item.Id < other.Id
+	})
+	slice.SortBy(respData.ArchivedLoans, func(item, other *borrower.LoanEntry) bool {
+		return item.Id < other.Id
+	})
 
 	respData.TotalClosingFundAmount = totalClosingFundAmount
 	// respData.TotalLoanAmount = property.TotalAmount
