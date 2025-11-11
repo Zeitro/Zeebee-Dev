@@ -128,7 +128,7 @@ func (form *ApplyForm) applicantInfo(index int, applicant *types.LoanApplicantAp
 	form.pdf.Br(brHeight)
 	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "Drivers License #:  "+applicant.DriverLicenseNum)
 	form.pdf.Br(brHeight)
-	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "Entity Percentage Owned #:  "+stringx.TransNumberToString(applicant.OwnPercent, true))
+	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "Entity Percentage Owned #:  "+stringx.TransNumberToString(applicant.OwnPercent, true)+"%")
 	form.pdf.Br(brHeight)
 	return err
 }

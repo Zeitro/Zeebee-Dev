@@ -64,6 +64,7 @@ var applyFormInfo *types.ApplyFormPdfRequest = &types.ApplyFormPdfRequest{
 		HasCollateralizedBlanket:     true,
 		HasPropertiesVacant:          false,
 		HasShortTermRental:           true,
+		Arv:                          36220,
 	},
 	HoldbackAmount:    10000,
 	PrincipalAmount:   10000,
@@ -85,6 +86,7 @@ var applyFormInfo *types.ApplyFormPdfRequest = &types.ApplyFormPdfRequest{
 			EstCreditScore:   360,
 			DriverLicenseNum: "12235441122147",
 			Address:          myAddress,
+			OwnPercent:       50,
 		},
 		&types.LoanApplicantApplyFormPdfEntry{
 			FirstName:        "Wei2",
@@ -100,11 +102,11 @@ var applyFormInfo *types.ApplyFormPdfRequest = &types.ApplyFormPdfRequest{
 			EstCreditScore:   480,
 			DriverLicenseNum: "12235441122147",
 			Address:          myAddress,
+			OwnPercent:       50,
 		},
 	},
 
 	LoanTerm: 12,
-	Arv:      36220,
 
 	EstCreditScore: 450,
 
@@ -166,7 +168,6 @@ var applyFormInfo *types.ApplyFormPdfRequest = &types.ApplyFormPdfRequest{
 		ContactEmail:   "dfdf@gmail.com",
 		ContactPhone:   "1236521021",
 		ContactName:    "name 12",
-		OwnPercent:     23,
 	},
 	LoanDemographic: &types.LoanDemographicEntry{
 		Sex: "Male",
