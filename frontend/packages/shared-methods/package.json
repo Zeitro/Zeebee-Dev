@@ -27,6 +27,10 @@
 		"./components/*": {
 			"import": "./src/components/*",
 			"require": "./src/components/*"
+		},
+		"./assets/*": {
+			"import": "./src/assets/*",
+			"require": "./src/assets/*"
 		}
 	},
 	"private": true,

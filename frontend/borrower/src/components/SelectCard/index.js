@@ -19,6 +19,9 @@ const SelectCard = ({
 	title = 'Choose a property',
 	addTitle = 'Add a property',
 	name,
+	required = true,
+	xl = 6,
+	sliceIndex = 3,
 }) => {
 	const isInit = useRef(true);
 	const { request } = createRequest();
@@ -66,8 +69,6 @@ const SelectCard = ({
 		(propertyItem, isNoChange, newList = list) => {
 			let arr = [...newList];
 			if (!isNoChange) {
-				console.log('-----', arr);
-
 				arr = moveItemToFirst([...arr], (item) => item.id === propertyItem?.id);
 			}
 			setList(arr);
@@ -110,12 +111,12 @@ const SelectCard = ({
 	return (
 		<Col className={['w-full', className].join(' ')}>
 			<div className="text-base font-medium text-black-dark pb-2">{title}</div>
-			<Form.Item noStyle name={name} rules={[{ required: true }]}></Form.Item>
+			<Form.Item noStyle name={name} rules={[{ required }]}></Form.Item>
 			<Row gutter={[16, 16]} className="w-full">
 				{loading ? (
 					<Spin className="h-[100px] w-[100px] !flex items-center justify-center" />
 				) : (
-					list.slice(0, 3).map((item, index) => {
+					list.slice(0, sliceIndex).map((item, index) => {
 						return getCardItem(type, {
 							index,
 							rowData,
@@ -126,10 +127,11 @@ const SelectCard = ({
 								handleClickItem(item, false, newList);
 							},
 							getList,
+							xl,
 						});
 					})
 				)}
-				<Col xl={5} xs={24} sm={24}>
+				<Col xl={6} xs={24} sm={24}>
 					<Space direction="vertical" className="w-full">
 						<BtnPopUpModal
 							getContent={(setOpen) => (

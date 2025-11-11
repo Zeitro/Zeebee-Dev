@@ -49,7 +49,7 @@ export const navRouter = [
 	{
 		path: '/management',
 		title: 'Management',
-		icon: 'property',
+		icon: 'management',
 		isPageNotFound: true, // 只是用于侧边栏显示,并无此页面
 		router: [
 			{

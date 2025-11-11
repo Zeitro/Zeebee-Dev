@@ -59,20 +59,13 @@ const CreateZeeBeeLoan = () => {
 						onValuesChange={(v) => {
 							setIsChange(true);
 							// 根据property_type设置unit
-							const property_type =
-								v?.loan_property?.property_type ||
-								v?.loan_property?.future_property_type;
+							const property_type = v?.loan_property?.future_property_type;
 							if (property_type) {
 								const info = changeUnitByPropertyType(property_type);
-								const fieldKey = v?.loan_property?.property_type
-									? 'unit'
-									: 'future_unit';
-								const moreFieldKey =
-									fieldKey === 'unit' ? ['property_base', fieldKey] : [fieldKey];
 								const unit = { ...unitInfo };
-								unit[fieldKey] = info;
+								unit.future_unit = info;
 								setUnitInfo({ ...unit });
-								form.setFieldValue(['loan_property', ...moreFieldKey], info.unit);
+								form.setFieldValue(['loan_property', 'future_unit'], info.unit);
 							}
 						}}
 					>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Button, Space, message } from 'antd';
+import { Row, Col, Space, message } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import HomeSvg from '@/assets/images/home2.svg';
 import { assemblyAddress, createRequest, formatNumber } from '@repo/shared-methods/utils';
@@ -74,7 +74,7 @@ const CardItem = ({
 						{assemblyAddress(item?.address)}
 					</p>
 				</div>
-				<Row className="pl-2 pt-1 text-[rgba(0, 0, 0, 0.65)]">
+				<Row className="pl-2 pt-1 text-[rgba(0,0,0,0.65)]">
 					<Col md={10} className="common-ellipsis" title={item?.property_type}>
 						{item?.property_type || '--'}
 					</Col>
@@ -109,6 +109,7 @@ const CardItem = ({
 							type="default"
 							size="small"
 							icon={<EditOutlined className="text-base-primary" />}
+							disabled={disabled}
 						></BtnPopUpModal>
 						<DeleteBtn
 							type="default"
@@ -117,6 +118,7 @@ const CardItem = ({
 							onOk={() => handleDelete(item.id)}
 							loading={loading}
 							size="small"
+							disabled={disabled}
 						>
 							<DeleteOutlined className="text-base-error" />
 						</DeleteBtn>

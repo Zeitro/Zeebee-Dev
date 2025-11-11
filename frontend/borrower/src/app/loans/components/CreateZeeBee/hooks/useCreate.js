@@ -54,10 +54,12 @@ const useCreate = (pageType = 'create') => {
 	// 从property详情跳转的创建loan
 	const getProperty = async () => {
 		const data = await request(api);
+		const numPropertyId = Number(searchParams.get('propertyId') || '');
 		const newData = {
 			loan_property: {
 				unit: data.unit,
 				address: data.address,
+				borrower_property_id: numPropertyId,
 			},
 		};
 		form.setFieldsValue(newData);

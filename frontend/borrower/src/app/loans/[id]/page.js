@@ -37,7 +37,7 @@ const EditLoanPage = () => {
 		try {
 			res = await request(`/loan/${id}`);
 			eventBus.emit('changeCrumbs', {
-				2: `Edit Loan(${assemblyAddress(res?.loan_property?.property_base?.address)})`,
+				2: `Edit Loan(${assemblyAddress(res?.loan_property?.address)})`,
 			});
 			if (res.applicants?.length < 2) {
 				res.applicants = [

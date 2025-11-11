@@ -1,9 +1,9 @@
 import React from 'react';
 import { Row, Col, Space } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import HomeSvg from '@/assets/images/home2.svg';
 import { formatTINOrSSN } from '@repo/shared-methods/utils';
 import { BtnPopUpModal, DeleteBtn } from '@repo/shared-methods';
+import BorrowingEntitySvg from '@repo/shared-methods/assets/images/borrowingEntity.svg';
 import AddModal from '../Add/borrowingEntity';
 import useBorrowingEntity from '@/app/management/borrowingEntity/components/useBorrowingEntity';
 const BorrowingEntityCardItem = ({
@@ -51,7 +51,7 @@ const BorrowingEntityCardItem = ({
 									: 'rgba(0,0,0,0.45)',
 						}}
 					>
-						<HomeSvg />
+						<BorrowingEntitySvg />
 					</div>
 					<p className="common-ellipsis text-base font-medium" title={item?.name}>
 						{item?.name}
@@ -85,6 +85,7 @@ const BorrowingEntityCardItem = ({
 							type="default"
 							size="small"
 							icon={<EditOutlined className="text-base-primary" />}
+							disabled={disabled}
 						></BtnPopUpModal>
 						<DeleteBtn
 							type="default"
@@ -94,6 +95,7 @@ const BorrowingEntityCardItem = ({
 							loading={loading}
 							size="small"
 							className={'!border-base-border hover:!border-base-error !px-1'}
+							disabled={disabled}
 						>
 							<DeleteOutlined className="text-base-error" />
 						</DeleteBtn>

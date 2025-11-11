@@ -1,8 +1,7 @@
 import React from 'react';
-import { Row, Col, Button, Space } from 'antd';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import HomeSvg from '@/assets/images/home2.svg';
-import { assemblyAddress, formatNumber, formatTINOrSSN } from '@repo/shared-methods/utils';
+import { Row, Col, Space } from 'antd';
+import { EditOutlined, DeleteOutlined, UserOutlined } from '@ant-design/icons';
+import { assemblyAddress } from '@repo/shared-methods/utils';
 import { BtnPopUpModal, DeleteBtn } from '@repo/shared-methods';
 import AddModal from '../Add/borrower';
 import useBorrower from '@/app/management/borrower/components/useBorrower';
@@ -16,17 +15,11 @@ const BorrowerCardItem = ({
 	...props
 }) => {
 	const handleSearch = () => getList?.();
-	const { columns, loading, handleDelete } = useBorrower({
+	const { loading, handleDelete } = useBorrower({
 		handleSearch,
 	});
 	return (
-		<Col
-			xl={6}
-			// lg={list.length > 2 ? 24 : 6}
-			sm={24}
-			xs={24}
-			{...props}
-		>
+		<Col xl={6} sm={24} xs={24} {...props}>
 			<div
 				onClick={() => {
 					handleClickItem(item);
@@ -51,7 +44,7 @@ const BorrowerCardItem = ({
 									: 'rgba(0,0,0,0.45)',
 						}}
 					>
-						<HomeSvg />
+						<UserOutlined />
 					</div>
 					<p className="common-ellipsis text-base font-medium" title={item?.full_name}>
 						{item?.full_name}
@@ -64,10 +57,6 @@ const BorrowerCardItem = ({
 				</Row>
 				{isShowOperate && (
 					<Space className="w-full justify-end pt-2">
-						{/* <Button
-							size="small"
-							icon={<EditOutlined className="text-base-primary" />}
-						></Button> */}
 						<BtnPopUpModal
 							getContent={(setOpen) => (
 								<AddModal
@@ -86,6 +75,7 @@ const BorrowerCardItem = ({
 							type="default"
 							size="small"
 							icon={<EditOutlined className="text-base-primary" />}
+							disabled={disabled}
 						></BtnPopUpModal>
 						<DeleteBtn
 							type="default"
@@ -94,13 +84,10 @@ const BorrowerCardItem = ({
 							onOk={() => handleDelete(item.id)}
 							loading={loading}
 							size="small"
+							disabled={disabled}
 						>
 							<DeleteOutlined className="text-base-error" />
 						</DeleteBtn>
-						{/* <Button
-							size="small"
-							icon={<DeleteOutlined className="text-base-error" />}
-						></Button> */}
 					</Space>
 				)}
 			</div>

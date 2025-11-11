@@ -64,8 +64,10 @@ const NewHeader = ({ children, isShowCrumbs }) => {
 					{crumbs?.[crumbs.length - 1]?.title}
 				</div>
 			</div>
-			<CustomContent />
-			{children}
+			<div>
+				<CustomContent />
+				{children}
+			</div>
 		</div>
 	) : (
 		''
