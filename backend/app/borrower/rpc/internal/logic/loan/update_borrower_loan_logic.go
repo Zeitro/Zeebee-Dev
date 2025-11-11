@@ -248,7 +248,12 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 
 	// LoanBorrower
 	loanBorrower = &model.LoanBorrower{}
-	loanBorrower, err = l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, in.BorrowerEntityId, in.BorrowerId)
+	loanBorrowerData := in.LoanBorrower
+	if loanBorrowerData == nil {
+		return nil, nil, nil, nil, errorx.New("Invalid Loan Borrower")
+	}
+
+	loanBorrower, err = l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, loanBorrowerData.BorrowerEntityId, in.BorrowerId)
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}

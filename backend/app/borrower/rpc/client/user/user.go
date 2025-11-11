@@ -86,8 +86,8 @@ type (
 	LoanApplyRequestData                       = borrower.LoanApplyRequestData
 	LoanApplyResponse                          = borrower.LoanApplyResponse
 	LoanApplyResponseData                      = borrower.LoanApplyResponseData
-	LoanBorrowerApplyEntry                     = borrower.LoanBorrowerApplyEntry
 	LoanBorrowerEntry                          = borrower.LoanBorrowerEntry
+	LoanBorrowerLoanEditEntry                  = borrower.LoanBorrowerLoanEditEntry
 	LoanBudgetEntry                            = borrower.LoanBudgetEntry
 	LoanCreateRequest                          = borrower.LoanCreateRequest
 	LoanCreateRequestData                      = borrower.LoanCreateRequestData

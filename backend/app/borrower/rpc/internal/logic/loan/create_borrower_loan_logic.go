@@ -151,7 +151,11 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 
 	// loan borrower
 	loanBorrower = &model.LoanBorrower{}
-	loanBorrower, err = l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, in.BorrowerEntityId, in.BorrowerId)
+	loanBorrowerData := in.LoanBorrower
+	if loanBorrowerData == nil {
+		return nil, nil, nil, nil, errors.New("Invalid Loan Borrower")
+	}
+	loanBorrower, err = l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, loanBorrowerData.BorrowerEntityId, in.BorrowerId)
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
