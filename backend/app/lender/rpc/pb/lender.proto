@@ -525,6 +525,8 @@ message LoanPropertyEntry{
   double est_property_value_amount = 35;
   AddressEntry address = 36;
   double arv = 37;
+
+  int64 borrower_property_id = 38;
 }
 
 message LoanPropertyEditEntry{
@@ -586,6 +588,7 @@ message LoanApplicantEntry{
   int64  loan_borrower_id = 19;
   string phone = 20;
   int32 own_percent = 21;
+  int64 borrower_applicant_id = 22;
 }
 
 message LoanApplicantLoanEditEntry{
@@ -724,6 +727,8 @@ message LoanBorrowerEntry{
   string contact_name = 10;
   int32 own_percent = 11;
   int64 borrower_entity_id = 12;
+  string created_at = 13;
+  string updated_at = 14;
 }
 
 //message LoanBorrowerEditEntry {

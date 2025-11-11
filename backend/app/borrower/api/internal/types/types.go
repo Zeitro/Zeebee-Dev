@@ -233,40 +233,46 @@ type LoanApplicantApplyFormPdfEntry struct {
 }
 
 type LoanApplicantEntry struct {
-	Id               int64         `json:"id,omitempty,optional"`
-	FirstName        string        `json:"first_name,omitempty, optional"`
-	MidName          string        `json:"mid_name,omitempty, optional"`
-	LastName         string        `json:"last_name,omitempty, optional"`
-	FullName         string        `json:"full_name,omitempty, optional"`
-	BorrowerId       int64         `json:"borrower_id,omitempty, optional"`
-	LoanId           int64         `json:"loan_id,omitempty, optional"`
-	IsPrimary        bool          `json:"is_primary, optional"`
-	Type             string        `json:"type,omitempty, optional"`
-	InvitationStatus string        `json:"invitation_status,omitempty, optional"`
-	LoanPropertyId   int64         `json:"loan_property_id,omitempty"`
-	Ssn              string        `json:"ssn,omitempty, optional"`
-	Dob              string        `json:"dob,omitempty, optional"`
-	MaritalStatus    string        `json:"marital_status,omitempty, optional"`
-	Email            string        `json:"email,omitempty, optional"`
-	EstCreditScore   int32         `json:"est_credit_score,omitempty, optional"`
-	DriverLicenseNum string        `json:"driver_license_num,omitempty, optional"`
-	Address          *AddressEntry `json:"address,omitempty, optional"`
-	LoanBorrowerId   int64         `json:"loan_borrower_id,omitempty, optional"`
-	Phone            string        `json:"phone,omitempty, optional"`
-	OwnPercent       int32         `json:"own_percent,omitempty"`
+	Id                  int64         `json:"id"`
+	BorrowerApplicantId int64         `json:"borrower_applicant_id"`
+	FirstName           string        `json:"first_name"`
+	MidName             string        `json:"mid_name"`
+	LastName            string        `json:"last_name"`
+	FullName            string        `json:"full_name"`
+	BorrowerId          int64         `json:"borrower_id"`
+	LoanId              int64         `json:"loan_id"`
+	IsPrimary           bool          `json:"is_primary"`
+	Type                string        `json:"type"`
+	InvitationStatus    string        `json:"invitation_status"`
+	LoanPropertyId      int64         `json:"loan_property_id"`
+	Ssn                 string        `json:"ssn"`
+	Dob                 string        `json:"dob"`
+	MaritalStatus       string        `json:"marital_status"`
+	Email               string        `json:"email"`
+	EstCreditScore      int32         `json:"est_credit_score"`
+	DriverLicenseNum    string        `json:"driver_license_num"`
+	Address             *AddressEntry `json:"address"`
+	LoanBorrowerId      int64         `json:"loan_borrower_id"`
+	Phone               string        `json:"phone"`
+	OwnPercent          int32         `json:"own_percent"`
+	CreatedAt           string        `json:"created_at"`
+	UpdatedAt           string        `json:"updated_at"`
 }
 
 type LoanBorrowerEntry struct {
-	Id             int64        `json:"id,optional"`
-	LoanId         int64        `json:"loan_id,optional"`
-	Type           string       `json:"type,optional" validate:"required,oneof=Individual Corporation LLC Trust Partnership"`
-	Name           string       `json:"name,optional" validate:"required,min=1,max=255"`
-	TinType        string       `json:"tin_type,optional" validate:"required,oneof=SSN EIN ITIN"`
-	Tin            string       `json:"tin,optional" validate:"required,min=9,max=9"`
-	MailingAddress AddressEntry `json:"mailing_address,optional" validate:"required"`
-	ContactEmail   string       `json:"contact_email,optional" validate:"required,email"`
-	ContactPhone   string       `json:"contact_phone,optional" validate:"required"`
-	ContactName    string       `json:"contact_name,optional" validate:"required,min=1,max=255"`
+	Id               int64        `json:"id,optional"`
+	BorrowerEntityId int64        `json:"borrower_entity_id,optional"`
+	LoanId           int64        `json:"loan_id,optional"`
+	Type             string       `json:"type,optional" validate:"required,oneof=Individual Corporation LLC Trust Partnership"`
+	Name             string       `json:"name,optional" validate:"required,min=1,max=255"`
+	TinType          string       `json:"tin_type,optional" validate:"required,oneof=SSN EIN ITIN"`
+	Tin              string       `json:"tin,optional" validate:"required,min=9,max=9"`
+	MailingAddress   AddressEntry `json:"mailing_address,optional" validate:"required"`
+	ContactEmail     string       `json:"contact_email,optional" validate:"required,email"`
+	ContactPhone     string       `json:"contact_phone,optional" validate:"required"`
+	ContactName      string       `json:"contact_name,optional" validate:"required,min=1,max=255"`
+	CreatedAt        string       `json:"created_at,optional"`
+	UpdatedAt        string       `json:"updated_at,optional"`
 }
 
 type LoanBudgetEntry struct {
@@ -528,6 +534,7 @@ type LoanPropertyEditEntry struct {
 
 type LoanPropertyEntry struct {
 	Id                           int64            `json:"id"`
+	BorrowerPropertyId           int64            `json:"borrower_property_id"`
 	PropertyType                 string           `json:"property_type"`
 	Unit                         int32            `json:"unit"`
 	LivingAreaSqft               float32          `json:"living_area_sqft"`

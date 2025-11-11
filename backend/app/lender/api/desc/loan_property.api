@@ -17,6 +17,7 @@ type LoanBudgetEntry {
 
 type LoanPropertyEntry {
     Id int64 `json:"id"`
+    BorrowerPropertyId int64 `json:"borrower_property_id"`
     PropertyType string `json:"property_type"`
     Unit int32 `json:"unit"`
     LivingAreaSqft float32 `json:"living_area_sqft"`

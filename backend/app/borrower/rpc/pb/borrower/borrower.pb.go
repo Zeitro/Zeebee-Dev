@@ -10905,29 +10905,31 @@ func (x *BorrowerApplicantAllResponse) GetData() []*BorrowerApplicantPageEntry {
 
 // ===================== loan applicant service start ======================
 type LoanApplicantEntry struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	FirstName        string                 `protobuf:"bytes,2,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
-	LastName         string                 `protobuf:"bytes,3,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
-	IsPrimary        bool                   `protobuf:"varint,4,opt,name=is_primary,json=isPrimary,proto3" json:"is_primary,omitempty"`
-	CreatedAt        string                 `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt        string                 `protobuf:"bytes,6,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	MidName          string                 `protobuf:"bytes,7,opt,name=mid_name,json=midName,proto3" json:"mid_name,omitempty"`
-	Type             string                 `protobuf:"bytes,8,opt,name=type,proto3" json:"type,omitempty"`
-	InvitationStatus string                 `protobuf:"bytes,9,opt,name=invitation_status,json=invitationStatus,proto3" json:"invitation_status,omitempty"`
-	FullName         string                 `protobuf:"bytes,10,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
-	LoanPropertyId   int64                  `protobuf:"varint,11,opt,name=loan_property_id,json=loanPropertyId,proto3" json:"loan_property_id,omitempty"`
-	Ssn              string                 `protobuf:"bytes,12,opt,name=ssn,proto3" json:"ssn,omitempty"`
-	Dob              string                 `protobuf:"bytes,13,opt,name=dob,proto3" json:"dob,omitempty"`
-	MaritalStatus    string                 `protobuf:"bytes,14,opt,name=marital_status,json=maritalStatus,proto3" json:"marital_status,omitempty"`
-	Email            string                 `protobuf:"bytes,15,opt,name=email,proto3" json:"email,omitempty"`
-	EstCreditScore   int32                  `protobuf:"varint,16,opt,name=est_credit_score,json=estCreditScore,proto3" json:"est_credit_score,omitempty"`
-	DriverLicenseNum string                 `protobuf:"bytes,17,opt,name=driver_license_num,json=driverLicenseNum,proto3" json:"driver_license_num,omitempty"`
-	Address          *AddressEntry          `protobuf:"bytes,18,opt,name=address,proto3" json:"address,omitempty"`
-	LoanBorrowerId   int64                  `protobuf:"varint,19,opt,name=loan_borrower_id,json=loanBorrowerId,proto3" json:"loan_borrower_id,omitempty"`
-	Phone            string                 `protobuf:"bytes,20,opt,name=phone,proto3" json:"phone,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state               protoimpl.MessageState `protogen:"open.v1"`
+	Id                  int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	FirstName           string                 `protobuf:"bytes,2,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
+	LastName            string                 `protobuf:"bytes,3,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
+	IsPrimary           bool                   `protobuf:"varint,4,opt,name=is_primary,json=isPrimary,proto3" json:"is_primary,omitempty"`
+	CreatedAt           string                 `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt           string                 `protobuf:"bytes,6,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	MidName             string                 `protobuf:"bytes,7,opt,name=mid_name,json=midName,proto3" json:"mid_name,omitempty"`
+	Type                string                 `protobuf:"bytes,8,opt,name=type,proto3" json:"type,omitempty"`
+	InvitationStatus    string                 `protobuf:"bytes,9,opt,name=invitation_status,json=invitationStatus,proto3" json:"invitation_status,omitempty"`
+	FullName            string                 `protobuf:"bytes,10,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
+	LoanPropertyId      int64                  `protobuf:"varint,11,opt,name=loan_property_id,json=loanPropertyId,proto3" json:"loan_property_id,omitempty"`
+	Ssn                 string                 `protobuf:"bytes,12,opt,name=ssn,proto3" json:"ssn,omitempty"`
+	Dob                 string                 `protobuf:"bytes,13,opt,name=dob,proto3" json:"dob,omitempty"`
+	MaritalStatus       string                 `protobuf:"bytes,14,opt,name=marital_status,json=maritalStatus,proto3" json:"marital_status,omitempty"`
+	Email               string                 `protobuf:"bytes,15,opt,name=email,proto3" json:"email,omitempty"`
+	EstCreditScore      int32                  `protobuf:"varint,16,opt,name=est_credit_score,json=estCreditScore,proto3" json:"est_credit_score,omitempty"`
+	DriverLicenseNum    string                 `protobuf:"bytes,17,opt,name=driver_license_num,json=driverLicenseNum,proto3" json:"driver_license_num,omitempty"`
+	Address             *AddressEntry          `protobuf:"bytes,18,opt,name=address,proto3" json:"address,omitempty"`
+	LoanBorrowerId      int64                  `protobuf:"varint,19,opt,name=loan_borrower_id,json=loanBorrowerId,proto3" json:"loan_borrower_id,omitempty"`
+	Phone               string                 `protobuf:"bytes,20,opt,name=phone,proto3" json:"phone,omitempty"`
+	OwnPercent          int32                  `protobuf:"varint,21,opt,name=own_percent,json=ownPercent,proto3" json:"own_percent,omitempty"`
+	BorrowerApplicantId int64                  `protobuf:"varint,22,opt,name=BorrowerApplicantId,proto3" json:"BorrowerApplicantId,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
 }
 
 func (x *LoanApplicantEntry) Reset() {
@@ -11098,6 +11100,20 @@ func (x *LoanApplicantEntry) GetPhone() string {
 		return x.Phone
 	}
 	return ""
+}
+
+func (x *LoanApplicantEntry) GetOwnPercent() int32 {
+	if x != nil {
+		return x.OwnPercent
+	}
+	return 0
+}
+
+func (x *LoanApplicantEntry) GetBorrowerApplicantId() int64 {
+	if x != nil {
+		return x.BorrowerApplicantId
+	}
+	return 0
 }
 
 type BorrowerNamesRequest struct {
@@ -14134,7 +14150,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\vborrower_id\x18\x01 \x01(\x03R\n" +
 	"borrowerId\"X\n" +
 	"\x1cBorrowerApplicantAllResponse\x128\n" +
-	"\x04data\x18\x01 \x03(\v2$.borrower.BorrowerApplicantPageEntryR\x04data\"\x8b\x05\n" +
+	"\x04data\x18\x01 \x03(\v2$.borrower.BorrowerApplicantPageEntryR\x04data\"\xde\x05\n" +
 	"\x12LoanApplicantEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
@@ -14160,7 +14176,10 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x12driver_license_num\x18\x11 \x01(\tR\x10driverLicenseNum\x120\n" +
 	"\aaddress\x18\x12 \x01(\v2\x16.borrower.AddressEntryR\aaddress\x12(\n" +
 	"\x10loan_borrower_id\x18\x13 \x01(\x03R\x0eloanBorrowerId\x12\x14\n" +
-	"\x05phone\x18\x14 \x01(\tR\x05phone\"N\n" +
+	"\x05phone\x18\x14 \x01(\tR\x05phone\x12\x1f\n" +
+	"\vown_percent\x18\x15 \x01(\x05R\n" +
+	"ownPercent\x120\n" +
+	"\x13BorrowerApplicantId\x18\x16 \x01(\x03R\x13BorrowerApplicantId\"N\n" +
 	"\x14BorrowerNamesRequest\x126\n" +
 	"\x04data\x18\x01 \x01(\v2\".borrower.BorrowerNamesRequestDataR\x04data\";\n" +
 	"\x18BorrowerNamesRequestData\x12\x1f\n" +

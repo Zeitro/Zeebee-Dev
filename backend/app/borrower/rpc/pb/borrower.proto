@@ -1322,6 +1322,8 @@ message LoanApplicantEntry{
   AddressEntry address = 18;
   int64  loan_borrower_id = 19;
   string phone = 20;
+  int32 own_percent = 21;
+  int64 BorrowerApplicantId = 22;
 }
 
 message BorrowerNamesRequest {
