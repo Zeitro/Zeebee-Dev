@@ -86,7 +86,7 @@ type LoanPropertyEditEntry {
     MidConstruction bool `json:"mid_construction"`
     EstYearlyRentalIncomeAmount float64 `json:"est_yearly_rental_income_amount"`
     YearlyLiabilityExpenseAmount float64 `json:"yearly_liability_expense_amount"`
-    Dscr float64 `json:"dscr"`
+    Dscr float64 `json:"dscr,optional"`
     HasDelayedFinancing bool `json:"has_delayed_financing"`
     HasCollateralizedBlanket bool `json:"has_collateralized_blanket"`
     HasPropertiesVacant bool `json:"has_properties_vacant"`

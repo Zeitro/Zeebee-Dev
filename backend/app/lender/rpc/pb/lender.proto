@@ -365,6 +365,7 @@ message LoanUpdateRequestData {
   int64 lender_company_id = 10;
   repeated string business_strategy = 12;
   //  repeated LoanApplicantEntry applicants = 13;
+  repeated LoanApplicantLoanEditEntry applicants = 13;
   //  string existing_lender_company = 14;
   //  float existing_rate = 15;
   //  string existing_maturity_date = 16;
@@ -392,7 +393,7 @@ message LoanUpdateRequestData {
   //  string additional_info = 38;
   repeated LoanExperienceEntry transaction_experiences = 39;
   repeated LoanExperienceEntry real_estate_experiences = 40;
-  LoanBorrowerEditEntry loan_borrower = 41;
+  //  LoanBorrowerEditEntry loan_borrower = 41;
   LoanDemographicEntry loan_demographic = 42;
   //  float yearly_liability_expense = 43;
   repeated LoanThirdServiceEntry loan_third_services = 44;
@@ -551,7 +552,7 @@ message LoanPropertyEditEntry{
   bool mid_construction = 21;
   double est_yearly_rental_income_amount = 22;
   double yearly_liability_expense_amount = 23;
-  double dscr = 24;
+  //  double dscr = 24;
   bool has_delayed_financing = 25;
   bool has_collateralized_blanket = 26;
   bool has_properties_vacant = 27;
@@ -584,6 +585,14 @@ message LoanApplicantEntry{
   AddressEntry address = 18;
   int64  loan_borrower_id = 19;
   string phone = 20;
+  int32 own_percent = 21;
+}
+
+message LoanApplicantLoanEditEntry{
+  int64 id = 1;
+  int64 borrower_applicant_id = 2;
+  bool is_primary = 3;
+  int32 own_percent = 4;
 }
 // ===================== loan applicant service end ======================
 
@@ -717,11 +726,11 @@ message LoanBorrowerEntry{
   int64 borrower_entity_id = 12;
 }
 
-message LoanBorrowerEditEntry {
-  int64 id = 1;
-  int64 borrower_entity_id = 2;
-  int32 own_percent = 3;
-}
+//message LoanBorrowerEditEntry {
+//  int64 id = 1;
+//  int64 borrower_entity_id = 2;
+//  int32 own_percent = 3;
+//}
 
 // ====================== loan borrower service end ======================
 

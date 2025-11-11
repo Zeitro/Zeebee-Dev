@@ -42,6 +42,13 @@ type ImportLoanExtendEntry struct {
 	BusinessLine      string `json:"business_line,optional"`
 }
 
+type LoanApplicantEditLoanEntry struct {
+	Id                  int64 `json:"id,omitempty,optional"`
+	BorrowerApplicantId int64 `json:"borrower_applicant_id,omitempty, optional"`
+	IsPrimary           bool  `json:"is_primary,omitempty, optional"`
+	OwnPercent          int32 `json:"own_percent, optional" validate:"gt=0,max=100"`
+}
+
 type LoanApplicantEntry struct {
 	Id                  int64         `json:"id,omitempty,optional"`
 	FirstName           string        `json:"first_name,omitempty, optional"`
@@ -64,12 +71,9 @@ type LoanApplicantEntry struct {
 	LoanBorrowerId      int64         `json:"loan_borrower_id,omitempty, optional"`
 	BorrowerApplicantId int64         `json:"borrower_applicant_id,omitempty, optional"`
 	Phone               string        `json:"phone,omitempty, optional"`
-}
-
-type LoanBorrowerEditEntry struct {
-	Id               int64 `json:"id,optional" validate:"gte=0"`
-	BorrowerEntityId int64 `json:"borrower_entity_id,optional" validate:"gt=0"`
-	OwnPercent       int32 `json:"own_percent,optional" validate:"min=0,max=100"`
+	OwnPercent          int32         `json:"own_percent, optional"`
+	CreatedAt           string        `json:"created_at,omitempty, optional"`
+	UpdatedAt           string        `json:"updated_at,omitempty, optional"`
 }
 
 type LoanBorrowerEntry struct {
@@ -256,7 +260,7 @@ type LoanPropertyEditEntry struct {
 	MidConstruction              bool             `json:"mid_construction"`
 	EstYearlyRentalIncomeAmount  float64          `json:"est_yearly_rental_income_amount"`
 	YearlyLiabilityExpenseAmount float64          `json:"yearly_liability_expense_amount"`
-	Dscr                         float64          `json:"dscr"`
+	Dscr                         float64          `json:"dscr,optional"`
 	HasDelayedFinancing          bool             `json:"has_delayed_financing"`
 	HasCollateralizedBlanket     bool             `json:"has_collateralized_blanket"`
 	HasPropertiesVacant          bool             `json:"has_properties_vacant"`

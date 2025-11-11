@@ -3,6 +3,7 @@ package loanlogic
 import (
 	"context"
 
+	"github.com/duke-git/lancet/v2/mathutil"
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
@@ -23,12 +24,12 @@ import (
 )
 
 type updateLoanModelData struct {
-	loan              *model.Loan
-	loanBorrower      *model.LoanBorrower
-	loanProperty      *model.LoanProperty
-	loanDemographic   *model.LoanDemographic
-	loanThirdServices []*model.LoanThirdService
-	// applicants             []*model.Applicant
+	loan *model.Loan
+	// loanBorrower      *model.LoanBorrower
+	loanProperty           *model.LoanProperty
+	loanDemographic        *model.LoanDemographic
+	loanThirdServices      []*model.LoanThirdService
+	applicants             []*model.LoanApplicant
 	transactionExperiences []*model.LoanExperience
 	realEstatesExperiences []*model.LoanExperience
 	// applyFormFile          *model.File
@@ -116,17 +117,10 @@ func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender
 				return err
 
 			},
-			// update LoanBorrower
+			// update Applicants
 			func() error {
 				var err error
-				loanBorrower := data.loanBorrower
-				loanBorrower.LoanId = oldLoan.Id
-				if loanBorrower.Id == 0 {
-					loanBorrower, err = l.svcCtx.LoanBorrowerRepo.CreateWithTx(l.ctx, tx, loanBorrower, false)
-				} else {
-					loanBorrower, err = l.svcCtx.LoanBorrowerRepo.UpdateOneWithTx(l.ctx, tx, loanBorrower.Id, loanBorrower)
-				}
-
+				err = l.updateApplicants(tx, data.applicants)
 				return err
 			},
 			// loan demographic
@@ -192,6 +186,18 @@ func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender
 			Id: oldLoan.Id,
 		},
 	}, nil
+}
+
+// updateApplicants updates loan applicants
+func (l *UpdateLoanLogic) updateApplicants(tx *gorm.DB, applicants []*model.LoanApplicant) (err error) {
+	for _, item := range applicants {
+		_, err = l.svcCtx.LoanApplicantRepo.UpdateOneWithTx(l.ctx, tx, item.Id, item)
+		if err != nil {
+			return err
+		}
+	}
+
+	return err
 }
 
 // updateLoanExperiences updates loan experiences
@@ -332,16 +338,6 @@ func (l *UpdateLoanLogic) buildModelData(reqData *lender.LoanUpdateRequestData, 
 	loan.RemoveRelationships()
 	// loan.BusinessStrategy = reqData.BusinessStrategy
 
-	// LoanBorrower
-	if reqData.LoanBorrower == nil {
-		return nil, errors.WithStack(errors.New("invalid loan borrower"))
-	}
-	loanBorrower, err := l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, reqData.LoanBorrower.BorrowerEntityId)
-	if err != nil {
-		return nil, err
-	}
-	loanBorrower.OwnPercent = reqData.LoanBorrower.OwnPercent
-
 	// LoanProperty
 	loanProperty := &model.LoanProperty{
 		// PropertyBase: &model.PropertyBase{},
@@ -365,8 +361,29 @@ func (l *UpdateLoanLogic) buildModelData(reqData *lender.LoanUpdateRequestData, 
 	if err != nil {
 		return nil, errorx.GetFailedTransErr(err)
 	}
+	if loanProperty.YearlyLiabilityExpenseAmount > 0 {
+		dscr := (loanProperty.EstYearlyRentalIncomeAmount / loanProperty.YearlyLiabilityExpenseAmount) * 100
+		loanProperty.Dscr = mathutil.RoundToFloat(dscr, 2)
+	}
+
 	// loanProperty.PropertyBase.BorrowerId = oldLoan.BorrowerId
 	// loanProperty.Unit = loanProperty.PropertyBase.Unit
+
+	// applicants
+	applicants := make([]*model.LoanApplicant, 0)
+	var totalOwnPercent int32
+	for _, applicant := range reqData.Applicants {
+		applicantModel, err := l.svcCtx.LoanApplicantRepo.FindOneById(l.ctx, applicant.Id)
+		if err != nil {
+			return nil, err
+		}
+		totalOwnPercent += applicant.OwnPercent
+		applicantModel.OwnPercent = applicant.OwnPercent
+		applicants = append(applicants, applicantModel)
+	}
+	if totalOwnPercent > 100 {
+		return nil, errors.WithStack(errors.New("Total Own Percent Greater Than 100"))
+	}
 
 	// transaction experience
 	transactionExperiences := make([]*model.LoanExperience, 0)
@@ -438,7 +455,7 @@ func (l *UpdateLoanLogic) buildModelData(reqData *lender.LoanUpdateRequestData, 
 		loan:         loan,
 		loanProperty: loanProperty,
 		// loanBorrower:           loanBorrower,
-		// applicants:             applicants,
+		applicants:             applicants,
 		transactionExperiences: transactionExperiences,
 		realEstatesExperiences: realEstatesExperiences,
 		loanDemographic:        loanDemographic,
