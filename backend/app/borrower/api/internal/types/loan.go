@@ -47,7 +47,6 @@ type LoanCreateRequest struct {
 	InitialAmount        float64                         `json:"initial_amount,optional"`
 	LoanProperty         *LoanPropertyEditEntry          `json:"loan_property,optional" validate:"required"`
 	Applicants           []*ThirdPartyLoanApplicantEntry `json:"applicants,optional" validate:"required,min=1,max=2,dive,required"`
-	LoanBorrower         *LoanBorrowerLoanEditEntry      `json:"loan_borrower,optional" validate:"required"`
 	LenderCompany        string                          `json:"lender_company,optional" validate:"required"`
 	ClosingDate          string                          `json:"closing_date,optional" validate:"required_if=Stage Pending,omitempty,datetime=01/02/2006"`
 	ClosingFund          float64                         `json:"closing_fund,optional" validate:"gte=0,ltefield=TotalAmount"`
@@ -129,7 +128,6 @@ type LoanUpdateRequest struct {
 	InitialAmount         float64                         `json:"initial_amount,optional"`
 	LoanProperty          *LoanPropertyEditEntry          `json:"loan_property,optional" validate:"required"`
 	Applicants            []*ThirdPartyLoanApplicantEntry `json:"applicants,optional" validate:"required,dive,required"`
-	LoanBorrower          *LoanBorrowerLoanEditEntry      `json:"loan_borrower,optional" validate:"required"`
 	LenderCompany         string                          `json:"lender_company,optional" validate:"required"`
 	ClosingDate           string                          `json:"closing_date,optional" validate:"required_if=Stage Pending,omitempty,datetime=01/02/2006"`
 	ClosingFund           float64                         `json:"closing_fund,optional" validate:"gte=0,ltefield=TotalAmount"`

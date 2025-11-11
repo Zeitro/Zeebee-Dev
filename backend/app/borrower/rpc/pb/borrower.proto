@@ -360,7 +360,7 @@ message LoanCreateRequestData {
   string loan_processor = 29;
 
   //  int64 borrower_entity_id = 30;
-  LoanBorrowerLoanEditEntry loan_borrower = 30;
+  //  LoanBorrowerLoanEditEntry loan_borrower = 30;
 }
 
 message LoanCreateResponse {
@@ -411,7 +411,7 @@ message LoanUpdateRequestData {
   string loan_processor = 30;
   //  string owner = 31;
   //  int64 borrower_entity_id = 31;
-  LoanBorrowerLoanEditEntry loan_borrower = 31;
+  //  LoanBorrowerLoanEditEntry loan_borrower = 31;
 }
 
 
