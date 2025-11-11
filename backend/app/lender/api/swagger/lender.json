@@ -178,6 +178,8 @@
                         "items": {
                           "type": "object",
                           "required": [
+                            "id",
+                            "borrower_applicant_id",
                             "first_name",
                             "mid_name",
                             "last_name",
@@ -196,7 +198,6 @@
                             "driver_license_num",
                             "address",
                             "loan_borrower_id",
-                            "borrower_applicant_id",
                             "phone",
                             "own_percent",
                             "created_at",
@@ -362,7 +363,26 @@
                       },
                       "loan_borrower": {
                         "type": "object",
+                        "required": [
+                          "id",
+                          "borrower_entity_id",
+                          "loan_id",
+                          "type",
+                          "name",
+                          "tin_type",
+                          "tin",
+                          "mailing_address",
+                          "contact_email",
+                          "contact_phone",
+                          "contact_name",
+                          "own_percent",
+                          "create_at",
+                          "update_at"
+                        ],
                         "properties": {
+                          "borrower_entity_id": {
+                            "type": "integer"
+                          },
                           "contact_email": {
                             "type": "string"
                           },
@@ -610,6 +630,7 @@
                         "type": "object",
                         "required": [
                           "id",
+                          "borrower_property_id",
                           "property_type",
                           "unit",
                           "living_area_sqft",
@@ -661,6 +682,9 @@
                             "type": "integer"
                           },
                           "bedrooms": {
+                            "type": "integer"
+                          },
+                          "borrower_property_id": {
                             "type": "integer"
                           },
                           "budget": {
@@ -988,6 +1012,8 @@
                   "items": {
                     "type": "object",
                     "required": [
+                      "id",
+                      "borrower_applicant_id",
                       "first_name",
                       "mid_name",
                       "last_name",
@@ -1006,7 +1032,6 @@
                       "driver_license_num",
                       "address",
                       "loan_borrower_id",
-                      "borrower_applicant_id",
                       "phone",
                       "own_percent",
                       "created_at",
@@ -1172,7 +1197,26 @@
                 },
                 "loan_borrower": {
                   "type": "object",
+                  "required": [
+                    "id",
+                    "borrower_entity_id",
+                    "loan_id",
+                    "type",
+                    "name",
+                    "tin_type",
+                    "tin",
+                    "mailing_address",
+                    "contact_email",
+                    "contact_phone",
+                    "contact_name",
+                    "own_percent",
+                    "create_at",
+                    "update_at"
+                  ],
                   "properties": {
+                    "borrower_entity_id": {
+                      "type": "integer"
+                    },
                     "contact_email": {
                       "type": "string"
                     },
@@ -1420,6 +1464,7 @@
                   "type": "object",
                   "required": [
                     "id",
+                    "borrower_property_id",
                     "property_type",
                     "unit",
                     "living_area_sqft",
@@ -1488,6 +1533,9 @@
                       "type": "integer"
                     },
                     "bedrooms": {
+                      "type": "integer"
+                    },
+                    "borrower_property_id": {
                       "type": "integer"
                     },
                     "budget": {
@@ -3437,7 +3485,7 @@
       }
     }
   },
-  "x-date": "2025-11-11 09:38:57",
+  "x-date": "2025-11-11 10:28:02",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
