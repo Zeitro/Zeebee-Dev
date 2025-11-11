@@ -2816,9 +2816,10 @@ type LoanCreateRequestData struct {
 	OriginalContractDate string `protobuf:"bytes,27,opt,name=original_contract_date,json=originalContractDate,proto3" json:"original_contract_date,omitempty"`
 	ExtensionDate        string `protobuf:"bytes,28,opt,name=extension_date,json=extensionDate,proto3" json:"extension_date,omitempty"`
 	LoanProcessor        string `protobuf:"bytes,29,opt,name=loan_processor,json=loanProcessor,proto3" json:"loan_processor,omitempty"`
-	BorrowerEntityId     int64  `protobuf:"varint,30,opt,name=borrower_entity_id,json=borrowerEntityId,proto3" json:"borrower_entity_id,omitempty"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
+	//  int64 borrower_entity_id = 30;
+	LoanBorrower  *LoanBorrowerLoanEditEntry `protobuf:"bytes,30,opt,name=loan_borrower,json=loanBorrower,proto3" json:"loan_borrower,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *LoanCreateRequestData) Reset() {
@@ -3033,11 +3034,11 @@ func (x *LoanCreateRequestData) GetLoanProcessor() string {
 	return ""
 }
 
-func (x *LoanCreateRequestData) GetBorrowerEntityId() int64 {
+func (x *LoanCreateRequestData) GetLoanBorrower() *LoanBorrowerLoanEditEntry {
 	if x != nil {
-		return x.BorrowerEntityId
+		return x.LoanBorrower
 	}
-	return 0
+	return nil
 }
 
 type LoanCreateResponse struct {
@@ -3206,9 +3207,10 @@ type LoanUpdateRequestData struct {
 	ExtensionDate        string `protobuf:"bytes,29,opt,name=extension_date,json=extensionDate,proto3" json:"extension_date,omitempty"`
 	LoanProcessor        string `protobuf:"bytes,30,opt,name=loan_processor,json=loanProcessor,proto3" json:"loan_processor,omitempty"`
 	//  string owner = 31;
-	BorrowerEntityId int64 `protobuf:"varint,31,opt,name=borrower_entity_id,json=borrowerEntityId,proto3" json:"borrower_entity_id,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	//  int64 borrower_entity_id = 31;
+	LoanBorrower  *LoanBorrowerLoanEditEntry `protobuf:"bytes,31,opt,name=loan_borrower,json=loanBorrower,proto3" json:"loan_borrower,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *LoanUpdateRequestData) Reset() {
@@ -3430,11 +3432,11 @@ func (x *LoanUpdateRequestData) GetLoanProcessor() string {
 	return ""
 }
 
-func (x *LoanUpdateRequestData) GetBorrowerEntityId() int64 {
+func (x *LoanUpdateRequestData) GetLoanBorrower() *LoanBorrowerLoanEditEntry {
 	if x != nil {
-		return x.BorrowerEntityId
+		return x.LoanBorrower
 	}
-	return 0
+	return nil
 }
 
 type LoanDetailRequest struct {
@@ -4378,11 +4380,11 @@ type LoanApplyRequestData struct {
 	//  bool has_properties_vacant = 36;
 	//  bool has_short_term_rental = 37;
 	//  string additional_info = 38;
-	TransactionExperiences []*LoanExperienceEntry `protobuf:"bytes,39,rep,name=transaction_experiences,json=transactionExperiences,proto3" json:"transaction_experiences,omitempty"`
-	RealEstateExperiences  []*LoanExperienceEntry `protobuf:"bytes,40,rep,name=real_estate_experiences,json=realEstateExperiences,proto3" json:"real_estate_experiences,omitempty"`
-	//  LoanBorrowerApplyEntry loan_borrower = 41;
-	BorrowerEntityId int64                 `protobuf:"varint,41,opt,name=borrower_entity_id,json=borrowerEntityId,proto3" json:"borrower_entity_id,omitempty"`
-	LoanDemographic  *LoanDemographicEntry `protobuf:"bytes,42,opt,name=loan_demographic,json=loanDemographic,proto3" json:"loan_demographic,omitempty"`
+	TransactionExperiences []*LoanExperienceEntry     `protobuf:"bytes,39,rep,name=transaction_experiences,json=transactionExperiences,proto3" json:"transaction_experiences,omitempty"`
+	RealEstateExperiences  []*LoanExperienceEntry     `protobuf:"bytes,40,rep,name=real_estate_experiences,json=realEstateExperiences,proto3" json:"real_estate_experiences,omitempty"`
+	LoanBorrower           *LoanBorrowerLoanEditEntry `protobuf:"bytes,41,opt,name=loan_borrower,json=loanBorrower,proto3" json:"loan_borrower,omitempty"`
+	//  int64 borrower_entity_id = 41;
+	LoanDemographic *LoanDemographicEntry `protobuf:"bytes,42,opt,name=loan_demographic,json=loanDemographic,proto3" json:"loan_demographic,omitempty"`
 	//  float yearly_liability_expense = 43;
 	LoanThirdServices []*LoanThirdServiceEntry `protobuf:"bytes,44,rep,name=loan_third_services,json=loanThirdServices,proto3" json:"loan_third_services,omitempty"`
 	Id                int64                    `protobuf:"varint,45,opt,name=id,proto3" json:"id,omitempty"`
@@ -4550,11 +4552,11 @@ func (x *LoanApplyRequestData) GetRealEstateExperiences() []*LoanExperienceEntry
 	return nil
 }
 
-func (x *LoanApplyRequestData) GetBorrowerEntityId() int64 {
+func (x *LoanApplyRequestData) GetLoanBorrower() *LoanBorrowerLoanEditEntry {
 	if x != nil {
-		return x.BorrowerEntityId
+		return x.LoanBorrower
 	}
-	return 0
+	return nil
 }
 
 func (x *LoanApplyRequestData) GetLoanDemographic() *LoanDemographicEntry {
@@ -11619,29 +11621,28 @@ func (x *LoanBorrowerEntry) GetUpdatedAt() string {
 	return ""
 }
 
-type LoanBorrowerApplyEntry struct {
+type LoanBorrowerLoanEditEntry struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	BorrowerEntityId int64                  `protobuf:"varint,2,opt,name=borrower_entity_id,json=borrowerEntityId,proto3" json:"borrower_entity_id,omitempty"`
-	OwnPercent       int32                  `protobuf:"varint,3,opt,name=own_percent,json=ownPercent,proto3" json:"own_percent,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
 
-func (x *LoanBorrowerApplyEntry) Reset() {
-	*x = LoanBorrowerApplyEntry{}
+func (x *LoanBorrowerLoanEditEntry) Reset() {
+	*x = LoanBorrowerLoanEditEntry{}
 	mi := &file_app_borrower_rpc_pb_borrower_proto_msgTypes[168]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *LoanBorrowerApplyEntry) String() string {
+func (x *LoanBorrowerLoanEditEntry) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LoanBorrowerApplyEntry) ProtoMessage() {}
+func (*LoanBorrowerLoanEditEntry) ProtoMessage() {}
 
-func (x *LoanBorrowerApplyEntry) ProtoReflect() protoreflect.Message {
+func (x *LoanBorrowerLoanEditEntry) ProtoReflect() protoreflect.Message {
 	mi := &file_app_borrower_rpc_pb_borrower_proto_msgTypes[168]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -11653,28 +11654,21 @@ func (x *LoanBorrowerApplyEntry) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LoanBorrowerApplyEntry.ProtoReflect.Descriptor instead.
-func (*LoanBorrowerApplyEntry) Descriptor() ([]byte, []int) {
+// Deprecated: Use LoanBorrowerLoanEditEntry.ProtoReflect.Descriptor instead.
+func (*LoanBorrowerLoanEditEntry) Descriptor() ([]byte, []int) {
 	return file_app_borrower_rpc_pb_borrower_proto_rawDescGZIP(), []int{168}
 }
 
-func (x *LoanBorrowerApplyEntry) GetId() int64 {
+func (x *LoanBorrowerLoanEditEntry) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *LoanBorrowerApplyEntry) GetBorrowerEntityId() int64 {
+func (x *LoanBorrowerLoanEditEntry) GetBorrowerEntityId() int64 {
 	if x != nil {
 		return x.BorrowerEntityId
-	}
-	return 0
-}
-
-func (x *LoanBorrowerApplyEntry) GetOwnPercent() int32 {
-	if x != nil {
-		return x.OwnPercent
 	}
 	return 0
 }
@@ -13411,7 +13405,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"is_primary\x18\x02 \x01(\bR\tisPrimary\x122\n" +
 	"\x15borrower_applicant_id\x18\x03 \x01(\x03R\x13borrowerApplicantId\x12\x1f\n" +
 	"\vown_percent\x18\x04 \x01(\x05R\n" +
-	"ownPercent\"\xf6\b\n" +
+	"ownPercent\"\x92\t\n" +
 	"\x15LoanCreateRequestData\x12\x1f\n" +
 	"\vborrower_id\x18\x01 \x01(\x03R\n" +
 	"borrowerId\x12\x14\n" +
@@ -13442,14 +13436,14 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x06extend\x18\x19 \x01(\v2\x1e.borrower.LoanExtendValueEntryR\x06extend\x124\n" +
 	"\x16original_contract_date\x18\x1b \x01(\tR\x14originalContractDate\x12%\n" +
 	"\x0eextension_date\x18\x1c \x01(\tR\rextensionDate\x12%\n" +
-	"\x0eloan_processor\x18\x1d \x01(\tR\rloanProcessor\x12,\n" +
-	"\x12borrower_entity_id\x18\x1e \x01(\x03R\x10borrowerEntityId\"J\n" +
+	"\x0eloan_processor\x18\x1d \x01(\tR\rloanProcessor\x12H\n" +
+	"\rloan_borrower\x18\x1e \x01(\v2#.borrower.LoanBorrowerLoanEditEntryR\floanBorrower\"J\n" +
 	"\x12LoanCreateResponse\x124\n" +
 	"\x04data\x18\x01 \x01(\v2 .borrower.LoanCreateResponseDataR\x04data\"(\n" +
 	"\x16LoanCreateResponseData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"H\n" +
 	"\x11LoanUpdateRequest\x123\n" +
-	"\x04data\x18\x01 \x01(\v2\x1f.borrower.LoanUpdateRequestDataR\x04data\"\x86\t\n" +
+	"\x04data\x18\x01 \x01(\v2\x1f.borrower.LoanUpdateRequestDataR\x04data\"\xa2\t\n" +
 	"\x15LoanUpdateRequestData\x12\x1f\n" +
 	"\vborrower_id\x18\x01 \x01(\x03R\n" +
 	"borrowerId\x12\x14\n" +
@@ -13481,8 +13475,8 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x06extend\x18\x1a \x01(\v2\x1e.borrower.LoanExtendValueEntryR\x06extend\x124\n" +
 	"\x16original_contract_date\x18\x1c \x01(\tR\x14originalContractDate\x12%\n" +
 	"\x0eextension_date\x18\x1d \x01(\tR\rextensionDate\x12%\n" +
-	"\x0eloan_processor\x18\x1e \x01(\tR\rloanProcessor\x12,\n" +
-	"\x12borrower_entity_id\x18\x1f \x01(\x03R\x10borrowerEntityId\"H\n" +
+	"\x0eloan_processor\x18\x1e \x01(\tR\rloanProcessor\x12H\n" +
+	"\rloan_borrower\x18\x1f \x01(\v2#.borrower.LoanBorrowerLoanEditEntryR\floanBorrower\"H\n" +
 	"\x11LoanDetailRequest\x123\n" +
 	"\x04data\x18\x01 \x01(\v2\x1f.borrower.LoanDetailRequestDataR\x04data\"H\n" +
 	"\x15LoanDetailRequestData\x12\x0e\n" +
@@ -13541,7 +13535,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x1bLoanLenderCompaniesResponse\x12\x12\n" +
 	"\x04data\x18\x01 \x03(\tR\x04data\"F\n" +
 	"\x10LoanApplyRequest\x122\n" +
-	"\x04data\x18\x01 \x01(\v2\x1e.borrower.LoanApplyRequestDataR\x04data\"\x9c\t\n" +
+	"\x04data\x18\x01 \x01(\v2\x1e.borrower.LoanApplyRequestDataR\x04data\"\xb8\t\n" +
 	"\x14LoanApplyRequestData\x12!\n" +
 	"\floan_purpose\x18\x01 \x01(\tR\vloanPurpose\x12\x1b\n" +
 	"\tloan_type\x18\x02 \x01(\tR\bloanType\x12!\n" +
@@ -13564,8 +13558,8 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x10est_credit_score\x18\x1e \x01(\x05R\x0eestCreditScore\x12'\n" +
 	"\x0freserves_amount\x18! \x01(\x01R\x0ereservesAmount\x12V\n" +
 	"\x17transaction_experiences\x18' \x03(\v2\x1d.borrower.LoanExperienceEntryR\x16transactionExperiences\x12U\n" +
-	"\x17real_estate_experiences\x18( \x03(\v2\x1d.borrower.LoanExperienceEntryR\x15realEstateExperiences\x12,\n" +
-	"\x12borrower_entity_id\x18) \x01(\x03R\x10borrowerEntityId\x12I\n" +
+	"\x17real_estate_experiences\x18( \x03(\v2\x1d.borrower.LoanExperienceEntryR\x15realEstateExperiences\x12H\n" +
+	"\rloan_borrower\x18) \x01(\v2#.borrower.LoanBorrowerLoanEditEntryR\floanBorrower\x12I\n" +
 	"\x10loan_demographic\x18* \x01(\v2\x1e.borrower.LoanDemographicEntryR\x0floanDemographic\x12O\n" +
 	"\x13loan_third_services\x18, \x03(\v2\x1f.borrower.LoanThirdServiceEntryR\x11loanThirdServices\x12\x0e\n" +
 	"\x02id\x18- \x01(\x03R\x02id\x12&\n" +
@@ -14226,12 +14220,10 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\r \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\x0e \x01(\tR\tupdatedAt\"w\n" +
-	"\x16LoanBorrowerApplyEntry\x12\x0e\n" +
+	"updated_at\x18\x0e \x01(\tR\tupdatedAt\"Y\n" +
+	"\x19LoanBorrowerLoanEditEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12,\n" +
-	"\x12borrower_entity_id\x18\x02 \x01(\x03R\x10borrowerEntityId\x12\x1f\n" +
-	"\vown_percent\x18\x03 \x01(\x05R\n" +
-	"ownPercent\"{\n" +
+	"\x12borrower_entity_id\x18\x02 \x01(\x03R\x10borrowerEntityId\"{\n" +
 	"\vLenderEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x120\n" +
@@ -14572,7 +14564,7 @@ var file_app_borrower_rpc_pb_borrower_proto_goTypes = []any{
 	(*LoanDocumentAddFilesRequest)(nil),                // 165: borrower.LoanDocumentAddFilesRequest
 	(*LoanDocumentAddFilesRequestData)(nil),            // 166: borrower.LoanDocumentAddFilesRequestData
 	(*LoanBorrowerEntry)(nil),                          // 167: borrower.LoanBorrowerEntry
-	(*LoanBorrowerApplyEntry)(nil),                     // 168: borrower.LoanBorrowerApplyEntry
+	(*LoanBorrowerLoanEditEntry)(nil),                  // 168: borrower.LoanBorrowerLoanEditEntry
 	(*LenderEntry)(nil),                                // 169: borrower.LenderEntry
 	(*LoanExperienceEntry)(nil),                        // 170: borrower.LoanExperienceEntry
 	(*LoanThirdServiceEntry)(nil),                      // 171: borrower.LoanThirdServiceEntry
@@ -14627,226 +14619,229 @@ var file_app_borrower_rpc_pb_borrower_proto_depIdxs = []int32{
 	44,  // 29: borrower.LoanCreateRequestData.loan_property:type_name -> borrower.ThirdPartyLoanPropertyEditEntry
 	45,  // 30: borrower.LoanCreateRequestData.applicants:type_name -> borrower.ThirdPartyLoanApplicantEditEntry
 	78,  // 31: borrower.LoanCreateRequestData.extend:type_name -> borrower.LoanExtendValueEntry
-	49,  // 32: borrower.LoanCreateResponse.data:type_name -> borrower.LoanCreateResponseData
-	51,  // 33: borrower.LoanUpdateRequest.data:type_name -> borrower.LoanUpdateRequestData
-	44,  // 34: borrower.LoanUpdateRequestData.loan_property:type_name -> borrower.ThirdPartyLoanPropertyEditEntry
-	45,  // 35: borrower.LoanUpdateRequestData.applicants:type_name -> borrower.ThirdPartyLoanApplicantEditEntry
-	78,  // 36: borrower.LoanUpdateRequestData.extend:type_name -> borrower.LoanExtendValueEntry
-	53,  // 37: borrower.LoanDetailRequest.data:type_name -> borrower.LoanDetailRequestData
-	41,  // 38: borrower.LoanDetailResponse.data:type_name -> borrower.LoanEntry
-	56,  // 39: borrower.LoanUpdatePendingStatusRequest.data:type_name -> borrower.LoanUpdatePendingStatusRequestData
-	58,  // 40: borrower.LoanDeleteRequest.data:type_name -> borrower.LoanDeleteRequestData
-	63,  // 41: borrower.LoanPageRequest.data:type_name -> borrower.LoanPageRequestData
-	64,  // 42: borrower.LoanPageResponse.data:type_name -> borrower.LoanPageResponseData
-	61,  // 43: borrower.LoanPageRequestData.filter:type_name -> borrower.LoanPageRequestFilter
-	62,  // 44: borrower.LoanPageRequestData.sorter:type_name -> borrower.LoanPageRequestSorter
-	41,  // 45: borrower.LoanPageResponseData.list:type_name -> borrower.LoanEntry
-	66,  // 46: borrower.LoanLenderCompaniesRequest.data:type_name -> borrower.LoanLenderCompaniesRequestData
-	69,  // 47: borrower.LoanApplyRequest.data:type_name -> borrower.LoanApplyRequestData
-	88,  // 48: borrower.LoanApplyRequestData.loan_property:type_name -> borrower.LoanPropertyApplyEntry
-	46,  // 49: borrower.LoanApplyRequestData.applicants:type_name -> borrower.LoanApplicantApplyEntry
-	170, // 50: borrower.LoanApplyRequestData.transaction_experiences:type_name -> borrower.LoanExperienceEntry
-	170, // 51: borrower.LoanApplyRequestData.real_estate_experiences:type_name -> borrower.LoanExperienceEntry
-	172, // 52: borrower.LoanApplyRequestData.loan_demographic:type_name -> borrower.LoanDemographicEntry
-	171, // 53: borrower.LoanApplyRequestData.loan_third_services:type_name -> borrower.LoanThirdServiceEntry
-	71,  // 54: borrower.LoanApplyResponse.data:type_name -> borrower.LoanApplyResponseData
-	73,  // 55: borrower.ImportPendingLoansRequest.data:type_name -> borrower.ImportPendingLoansRequestData
-	74,  // 56: borrower.ImportPendingLoansRequestData.loan_property:type_name -> borrower.ImportPendingLoanPropertyEntry
-	167, // 57: borrower.ImportPendingLoansRequestData.loan_borrower:type_name -> borrower.LoanBorrowerEntry
-	78,  // 58: borrower.ImportPendingLoansRequestData.extend:type_name -> borrower.LoanExtendValueEntry
-	75,  // 59: borrower.ImportPendingLoansRequestData.applicants:type_name -> borrower.ImportPendingLoanApplicantEntry
-	3,   // 60: borrower.ImportPendingLoanPropertyEntry.address:type_name -> borrower.AddressEntry
-	77,  // 61: borrower.ImportPendingLoansResponse.data:type_name -> borrower.ImportPendingLoansResponseData
-	80,  // 62: borrower.LoanPreApprovalRequest.data:type_name -> borrower.LoanPreApprovalRequestData
-	184, // 63: borrower.LoanPreApprovalRequestData.borrower:type_name -> borrower.LoanPreApprovalRequestData.Borrower
-	185, // 64: borrower.LoanPreApprovalRequestData.property:type_name -> borrower.LoanPreApprovalRequestData.Property
-	186, // 65: borrower.LoanPreApprovalRequestData.loan:type_name -> borrower.LoanPreApprovalRequestData.Loan
-	82,  // 66: borrower.LoanPreApprovalResponse.data:type_name -> borrower.LoanPreApprovalResponseData
-	83,  // 67: borrower.LoanPreApprovalResponseData.primary:type_name -> borrower.PrimaryLoanPreApproval
-	84,  // 68: borrower.LoanPreApprovalResponseData.secondaries:type_name -> borrower.SecondaryLoanPreApproval
-	187, // 69: borrower.SecondaryLoanPreApproval.total_amount:type_name -> borrower.SecondaryLoanPreApproval.RangeFloat
-	187, // 70: borrower.SecondaryLoanPreApproval.rate:type_name -> borrower.SecondaryLoanPreApproval.RangeFloat
-	188, // 71: borrower.SecondaryLoanPreApproval.loan_term:type_name -> borrower.SecondaryLoanPreApproval.RangeInt
-	86,  // 72: borrower.LoanSendPreApprovalNotificationRequest.data:type_name -> borrower.LoanSendPreApprovalNotificationRequestData
-	42,  // 73: borrower.LoanPropertyEntry.budget:type_name -> borrower.LoanBudgetEntry
-	3,   // 74: borrower.LoanPropertyEntry.address:type_name -> borrower.AddressEntry
-	42,  // 75: borrower.LoanPropertyApplyEntry.budget:type_name -> borrower.LoanBudgetEntry
-	3,   // 76: borrower.BorrowerPropertyEntry.address:type_name -> borrower.AddressEntry
-	3,   // 77: borrower.PropertyPageEntry.address:type_name -> borrower.AddressEntry
-	93,  // 78: borrower.PropertyPageRequest.data:type_name -> borrower.PropertyPageRequestData
-	96,  // 79: borrower.PropertyPageResponse.data:type_name -> borrower.PropertyPageResponseData
-	94,  // 80: borrower.PropertyPageRequestData.filter:type_name -> borrower.PropertyPageRequestFilter
-	95,  // 81: borrower.PropertyPageRequestData.sorter:type_name -> borrower.PropertyPageRequestSorter
-	90,  // 82: borrower.PropertyPageResponseData.list:type_name -> borrower.PropertyPageEntry
-	99,  // 83: borrower.PropertyDetailRequest.data:type_name -> borrower.PropertyDetailRequestData
-	100, // 84: borrower.PropertyDetailSummaryResponse.data:type_name -> borrower.PropertyDetailSummaryResponseData
-	3,   // 85: borrower.PropertyDetailSummaryResponseData.address:type_name -> borrower.AddressEntry
-	41,  // 86: borrower.PropertyDetailSummaryResponseData.pending_loans:type_name -> borrower.LoanEntry
-	41,  // 87: borrower.PropertyDetailSummaryResponseData.active_loans:type_name -> borrower.LoanEntry
-	41,  // 88: borrower.PropertyDetailSummaryResponseData.archived_loans:type_name -> borrower.LoanEntry
-	102, // 89: borrower.PropertyCreateRequest.data:type_name -> borrower.PropertyCreateRequestData
-	3,   // 90: borrower.PropertyCreateRequestData.address:type_name -> borrower.AddressEntry
-	89,  // 91: borrower.PropertyCreateResponse.data:type_name -> borrower.BorrowerPropertyEntry
-	105, // 92: borrower.PropertyUpdateRequest.data:type_name -> borrower.PropertyUpdateRequestData
-	89,  // 93: borrower.PropertyDetailResponse.data:type_name -> borrower.BorrowerPropertyEntry
-	108, // 94: borrower.PropertyDeleteRequest.data:type_name -> borrower.PropertyDeleteRequestData
-	110, // 95: borrower.PropertyAllRequest.data:type_name -> borrower.PropertyAllRequestData
-	89,  // 96: borrower.PropertyAllResponse.data:type_name -> borrower.BorrowerPropertyEntry
-	3,   // 97: borrower.BorrowerEntityEntry.mailing_address:type_name -> borrower.AddressEntry
-	3,   // 98: borrower.BorrowerEntityPageEntry.mailing_address:type_name -> borrower.AddressEntry
-	3,   // 99: borrower.BorrowerEntityEditEntry.mailing_address:type_name -> borrower.AddressEntry
-	114, // 100: borrower.BorrowerEntityCreateRequest.data:type_name -> borrower.BorrowerEntityEditEntry
-	112, // 101: borrower.BorrowerEntityCreateResponse.data:type_name -> borrower.BorrowerEntityEntry
-	114, // 102: borrower.BorrowerEntityUpdateRequest.data:type_name -> borrower.BorrowerEntityEditEntry
-	119, // 103: borrower.BorrowerEntityDetailRequest.data:type_name -> borrower.BorrowerEntityDetailRequestData
-	112, // 104: borrower.BorrowerEntityDetailResponse.data:type_name -> borrower.BorrowerEntityEntry
-	122, // 105: borrower.BorrowerEntityDeleteRequest.data:type_name -> borrower.BorrowerEntityDeleteRequestData
-	125, // 106: borrower.BorrowerEntityPageRequest.data:type_name -> borrower.BorrowerEntityPageRequestData
-	128, // 107: borrower.BorrowerEntityPageResponse.data:type_name -> borrower.BorrowerEntityPageResponseData
-	126, // 108: borrower.BorrowerEntityPageRequestData.filter:type_name -> borrower.BorrowerEntityPageRequestFilter
-	127, // 109: borrower.BorrowerEntityPageRequestData.sorter:type_name -> borrower.BorrowerEntityPageRequestSorter
-	113, // 110: borrower.BorrowerEntityPageResponseData.list:type_name -> borrower.BorrowerEntityPageEntry
-	130, // 111: borrower.BorrowerEntityCheckExistedRequest.data:type_name -> borrower.BorrowerEntityCheckExistedRequestData
-	132, // 112: borrower.BorrowerEntityCheckExistedResponse.data:type_name -> borrower.BorrowerEntityCheckExistedResponseData
-	134, // 113: borrower.BorrowerEntityAllRequest.data:type_name -> borrower.BorrowerEntityAllRequestData
-	113, // 114: borrower.BorrowerEntityAllResponse.data:type_name -> borrower.BorrowerEntityPageEntry
-	3,   // 115: borrower.BorrowerApplicantEntry.address:type_name -> borrower.AddressEntry
-	3,   // 116: borrower.BorrowerApplicantPageEntry.address:type_name -> borrower.AddressEntry
-	3,   // 117: borrower.BorrowerApplicantEditEntry.address:type_name -> borrower.AddressEntry
-	138, // 118: borrower.BorrowerApplicantCreateRequest.data:type_name -> borrower.BorrowerApplicantEditEntry
-	136, // 119: borrower.BorrowerApplicantCreateResponse.data:type_name -> borrower.BorrowerApplicantEntry
-	138, // 120: borrower.BorrowerApplicantUpdateRequest.data:type_name -> borrower.BorrowerApplicantEditEntry
-	143, // 121: borrower.BorrowerApplicantDetailRequest.data:type_name -> borrower.BorrowerApplicantDetailRequestData
-	136, // 122: borrower.BorrowerApplicantDetailResponse.data:type_name -> borrower.BorrowerApplicantEntry
-	146, // 123: borrower.BorrowerApplicantDeleteRequest.data:type_name -> borrower.BorrowerApplicantDeleteRequestData
-	148, // 124: borrower.BorrowerApplicantPageRequest.data:type_name -> borrower.BorrowerApplicantPageRequestData
-	149, // 125: borrower.BorrowerApplicantPageRequestData.filter:type_name -> borrower.BorrowerApplicantPageRequestFilter
-	150, // 126: borrower.BorrowerApplicantPageRequestData.sorter:type_name -> borrower.BorrowerApplicantPageRequestSorter
-	152, // 127: borrower.BorrowerApplicantPageResponse.data:type_name -> borrower.BorrowerApplicantPageResponseData
-	137, // 128: borrower.BorrowerApplicantPageResponseData.list:type_name -> borrower.BorrowerApplicantPageEntry
-	154, // 129: borrower.BorrowerApplicantCheckExistedRequest.data:type_name -> borrower.BorrowerApplicantCheckExistedRequestData
-	156, // 130: borrower.BorrowerApplicantCheckExistedResponse.data:type_name -> borrower.BorrowerApplicantCheckExistedResponseData
-	158, // 131: borrower.BorrowerApplicantAllRequest.data:type_name -> borrower.BorrowerApplicantAllRequestData
-	137, // 132: borrower.BorrowerApplicantAllResponse.data:type_name -> borrower.BorrowerApplicantPageEntry
-	3,   // 133: borrower.LoanApplicantEntry.address:type_name -> borrower.AddressEntry
-	162, // 134: borrower.BorrowerNamesRequest.data:type_name -> borrower.BorrowerNamesRequestData
-	177, // 135: borrower.LoanDocumentEntry.files:type_name -> borrower.FileEntry
-	166, // 136: borrower.LoanDocumentAddFilesRequest.data:type_name -> borrower.LoanDocumentAddFilesRequestData
-	3,   // 137: borrower.LoanBorrowerEntry.mailing_address:type_name -> borrower.AddressEntry
-	3,   // 138: borrower.LenderEntry.address:type_name -> borrower.AddressEntry
-	3,   // 139: borrower.LoanExperienceEntry.address:type_name -> borrower.AddressEntry
-	173, // 140: borrower.LoanDemographicEntry.property:type_name -> borrower.LoanDemographicPropertyEntry
-	174, // 141: borrower.LoanDemographicEntry.ethnicity:type_name -> borrower.LoanDemographicEthnicityEntry
-	175, // 142: borrower.LoanDemographicEntry.race:type_name -> borrower.LoanDemographicRaceEntry
-	179, // 143: borrower.FileDeleteRequest.data:type_name -> borrower.FileDeleteRequestData
-	181, // 144: borrower.StorageCreatePresignedUrlRequest.data:type_name -> borrower.StorageCreatePresignedUrlRequestData
-	183, // 145: borrower.StorageCreatePresignedUrlResponse.data:type_name -> borrower.StorageCreatePresignedUrlResponseData
-	3,   // 146: borrower.LoanPreApprovalRequestData.Property.address:type_name -> borrower.AddressEntry
-	4,   // 147: borrower.common.GetOpt:input_type -> borrower.OptionRequest
-	0,   // 148: borrower.common.GetUsState:input_type -> borrower.EmptyRequest
-	8,   // 149: borrower.common.GetUsCities:input_type -> borrower.UsCitiesRequest
-	0,   // 150: borrower.common.GetUuid:input_type -> borrower.EmptyRequest
-	11,  // 151: borrower.user.Login:input_type -> borrower.UserLoginRequest
-	15,  // 152: borrower.user.Register:input_type -> borrower.UserRegisterRequest
-	19,  // 153: borrower.user.RefreshToken:input_type -> borrower.RefreshTokenRequest
-	37,  // 154: borrower.user.UserInfo:input_type -> borrower.UserInfoRequest
-	23,  // 155: borrower.user.VerifyEmail:input_type -> borrower.VerifyEmailRequest
-	27,  // 156: borrower.user.SendVerifyEmail:input_type -> borrower.SendVerifyEmailRequest
-	30,  // 157: borrower.user.ResetPassword:input_type -> borrower.ResetPasswordRequest
-	32,  // 158: borrower.user.SendResetPasswordEmail:input_type -> borrower.SendResetPasswordEmailRequest
-	43,  // 159: borrower.Loan.CreateBorrowerLoan:input_type -> borrower.LoanCreateRequest
-	50,  // 160: borrower.Loan.UpdateBorrowerLoan:input_type -> borrower.LoanUpdateRequest
-	55,  // 161: borrower.Loan.UpdateBorrowerLoanPendingStatus:input_type -> borrower.LoanUpdatePendingStatusRequest
-	57,  // 162: borrower.Loan.DeleteBorrowerLoan:input_type -> borrower.LoanDeleteRequest
-	52,  // 163: borrower.Loan.BorrowerLoanDetail:input_type -> borrower.LoanDetailRequest
-	59,  // 164: borrower.Loan.BorrowerLoanPage:input_type -> borrower.LoanPageRequest
-	65,  // 165: borrower.Loan.BorrowerLoanLenderCompanies:input_type -> borrower.LoanLenderCompaniesRequest
-	68,  // 166: borrower.Loan.ApplyLoan:input_type -> borrower.LoanApplyRequest
-	68,  // 167: borrower.Loan.SaveDraftLoan:input_type -> borrower.LoanApplyRequest
-	68,  // 168: borrower.Loan.UpdateApplyLoan:input_type -> borrower.LoanApplyRequest
-	72,  // 169: borrower.Loan.ImportPendingLoans:input_type -> borrower.ImportPendingLoansRequest
-	79,  // 170: borrower.Loan.PreApprovalLoan:input_type -> borrower.LoanPreApprovalRequest
-	85,  // 171: borrower.Loan.SendPreApprovalNotification:input_type -> borrower.LoanSendPreApprovalNotificationRequest
-	91,  // 172: borrower.BorrowerProperty.Page:input_type -> borrower.PropertyPageRequest
-	97,  // 173: borrower.BorrowerProperty.DetailSummary:input_type -> borrower.PropertyDetailRequest
-	101, // 174: borrower.BorrowerProperty.Create:input_type -> borrower.PropertyCreateRequest
-	104, // 175: borrower.BorrowerProperty.Update:input_type -> borrower.PropertyUpdateRequest
-	107, // 176: borrower.BorrowerProperty.Delete:input_type -> borrower.PropertyDeleteRequest
-	97,  // 177: borrower.BorrowerProperty.Detail:input_type -> borrower.PropertyDetailRequest
-	109, // 178: borrower.BorrowerProperty.All:input_type -> borrower.PropertyAllRequest
-	115, // 179: borrower.BorrowerEntity.Create:input_type -> borrower.BorrowerEntityCreateRequest
-	117, // 180: borrower.BorrowerEntity.Update:input_type -> borrower.BorrowerEntityUpdateRequest
-	118, // 181: borrower.BorrowerEntity.Detail:input_type -> borrower.BorrowerEntityDetailRequest
-	121, // 182: borrower.BorrowerEntity.Delete:input_type -> borrower.BorrowerEntityDeleteRequest
-	123, // 183: borrower.BorrowerEntity.Page:input_type -> borrower.BorrowerEntityPageRequest
-	129, // 184: borrower.BorrowerEntity.CheckExisted:input_type -> borrower.BorrowerEntityCheckExistedRequest
-	133, // 185: borrower.BorrowerEntity.All:input_type -> borrower.BorrowerEntityAllRequest
-	139, // 186: borrower.BorrowerApplicant.Create:input_type -> borrower.BorrowerApplicantCreateRequest
-	141, // 187: borrower.BorrowerApplicant.Update:input_type -> borrower.BorrowerApplicantUpdateRequest
-	142, // 188: borrower.BorrowerApplicant.Detail:input_type -> borrower.BorrowerApplicantDetailRequest
-	145, // 189: borrower.BorrowerApplicant.Delete:input_type -> borrower.BorrowerApplicantDeleteRequest
-	147, // 190: borrower.BorrowerApplicant.Page:input_type -> borrower.BorrowerApplicantPageRequest
-	153, // 191: borrower.BorrowerApplicant.CheckExisted:input_type -> borrower.BorrowerApplicantCheckExistedRequest
-	157, // 192: borrower.BorrowerApplicant.All:input_type -> borrower.BorrowerApplicantAllRequest
-	161, // 193: borrower.LoanApplicant.BorrowerNames:input_type -> borrower.BorrowerNamesRequest
-	165, // 194: borrower.LoanDocument.AddFiles:input_type -> borrower.LoanDocumentAddFilesRequest
-	178, // 195: borrower.File.DeleteFile:input_type -> borrower.FileDeleteRequest
-	180, // 196: borrower.Storage.CreatePresignedUrl:input_type -> borrower.StorageCreatePresignedUrlRequest
-	6,   // 197: borrower.common.GetOpt:output_type -> borrower.OptionResponse
-	2,   // 198: borrower.common.GetUsState:output_type -> borrower.StringSliceResponse
-	2,   // 199: borrower.common.GetUsCities:output_type -> borrower.StringSliceResponse
-	10,  // 200: borrower.common.GetUuid:output_type -> borrower.GetUuidResponse
-	12,  // 201: borrower.user.Login:output_type -> borrower.UserLoginResponse
-	16,  // 202: borrower.user.Register:output_type -> borrower.UserRegisterResponse
-	21,  // 203: borrower.user.RefreshToken:output_type -> borrower.RefreshTokenResponse
-	39,  // 204: borrower.user.UserInfo:output_type -> borrower.UserinfoResponse
-	24,  // 205: borrower.user.VerifyEmail:output_type -> borrower.VerifyEmailResponse
-	28,  // 206: borrower.user.SendVerifyEmail:output_type -> borrower.SendVerifyEmailResponse
-	31,  // 207: borrower.user.ResetPassword:output_type -> borrower.ResetPasswordResponse
-	33,  // 208: borrower.user.SendResetPasswordEmail:output_type -> borrower.SendResetPasswordEmailResponse
-	48,  // 209: borrower.Loan.CreateBorrowerLoan:output_type -> borrower.LoanCreateResponse
-	1,   // 210: borrower.Loan.UpdateBorrowerLoan:output_type -> borrower.EmptyResponse
-	1,   // 211: borrower.Loan.UpdateBorrowerLoanPendingStatus:output_type -> borrower.EmptyResponse
-	1,   // 212: borrower.Loan.DeleteBorrowerLoan:output_type -> borrower.EmptyResponse
-	54,  // 213: borrower.Loan.BorrowerLoanDetail:output_type -> borrower.LoanDetailResponse
-	60,  // 214: borrower.Loan.BorrowerLoanPage:output_type -> borrower.LoanPageResponse
-	67,  // 215: borrower.Loan.BorrowerLoanLenderCompanies:output_type -> borrower.LoanLenderCompaniesResponse
-	70,  // 216: borrower.Loan.ApplyLoan:output_type -> borrower.LoanApplyResponse
-	70,  // 217: borrower.Loan.SaveDraftLoan:output_type -> borrower.LoanApplyResponse
-	1,   // 218: borrower.Loan.UpdateApplyLoan:output_type -> borrower.EmptyResponse
-	76,  // 219: borrower.Loan.ImportPendingLoans:output_type -> borrower.ImportPendingLoansResponse
-	81,  // 220: borrower.Loan.PreApprovalLoan:output_type -> borrower.LoanPreApprovalResponse
-	1,   // 221: borrower.Loan.SendPreApprovalNotification:output_type -> borrower.EmptyResponse
-	92,  // 222: borrower.BorrowerProperty.Page:output_type -> borrower.PropertyPageResponse
-	98,  // 223: borrower.BorrowerProperty.DetailSummary:output_type -> borrower.PropertyDetailSummaryResponse
-	103, // 224: borrower.BorrowerProperty.Create:output_type -> borrower.PropertyCreateResponse
-	1,   // 225: borrower.BorrowerProperty.Update:output_type -> borrower.EmptyResponse
-	1,   // 226: borrower.BorrowerProperty.Delete:output_type -> borrower.EmptyResponse
-	106, // 227: borrower.BorrowerProperty.Detail:output_type -> borrower.PropertyDetailResponse
-	111, // 228: borrower.BorrowerProperty.All:output_type -> borrower.PropertyAllResponse
-	116, // 229: borrower.BorrowerEntity.Create:output_type -> borrower.BorrowerEntityCreateResponse
-	1,   // 230: borrower.BorrowerEntity.Update:output_type -> borrower.EmptyResponse
-	120, // 231: borrower.BorrowerEntity.Detail:output_type -> borrower.BorrowerEntityDetailResponse
-	1,   // 232: borrower.BorrowerEntity.Delete:output_type -> borrower.EmptyResponse
-	124, // 233: borrower.BorrowerEntity.Page:output_type -> borrower.BorrowerEntityPageResponse
-	131, // 234: borrower.BorrowerEntity.CheckExisted:output_type -> borrower.BorrowerEntityCheckExistedResponse
-	135, // 235: borrower.BorrowerEntity.All:output_type -> borrower.BorrowerEntityAllResponse
-	140, // 236: borrower.BorrowerApplicant.Create:output_type -> borrower.BorrowerApplicantCreateResponse
-	1,   // 237: borrower.BorrowerApplicant.Update:output_type -> borrower.EmptyResponse
-	144, // 238: borrower.BorrowerApplicant.Detail:output_type -> borrower.BorrowerApplicantDetailResponse
-	1,   // 239: borrower.BorrowerApplicant.Delete:output_type -> borrower.EmptyResponse
-	151, // 240: borrower.BorrowerApplicant.Page:output_type -> borrower.BorrowerApplicantPageResponse
-	155, // 241: borrower.BorrowerApplicant.CheckExisted:output_type -> borrower.BorrowerApplicantCheckExistedResponse
-	159, // 242: borrower.BorrowerApplicant.All:output_type -> borrower.BorrowerApplicantAllResponse
-	163, // 243: borrower.LoanApplicant.BorrowerNames:output_type -> borrower.BorrowerNamesResponse
-	1,   // 244: borrower.LoanDocument.AddFiles:output_type -> borrower.EmptyResponse
-	1,   // 245: borrower.File.DeleteFile:output_type -> borrower.EmptyResponse
-	182, // 246: borrower.Storage.CreatePresignedUrl:output_type -> borrower.StorageCreatePresignedUrlResponse
-	197, // [197:247] is the sub-list for method output_type
-	147, // [147:197] is the sub-list for method input_type
-	147, // [147:147] is the sub-list for extension type_name
-	147, // [147:147] is the sub-list for extension extendee
-	0,   // [0:147] is the sub-list for field type_name
+	168, // 32: borrower.LoanCreateRequestData.loan_borrower:type_name -> borrower.LoanBorrowerLoanEditEntry
+	49,  // 33: borrower.LoanCreateResponse.data:type_name -> borrower.LoanCreateResponseData
+	51,  // 34: borrower.LoanUpdateRequest.data:type_name -> borrower.LoanUpdateRequestData
+	44,  // 35: borrower.LoanUpdateRequestData.loan_property:type_name -> borrower.ThirdPartyLoanPropertyEditEntry
+	45,  // 36: borrower.LoanUpdateRequestData.applicants:type_name -> borrower.ThirdPartyLoanApplicantEditEntry
+	78,  // 37: borrower.LoanUpdateRequestData.extend:type_name -> borrower.LoanExtendValueEntry
+	168, // 38: borrower.LoanUpdateRequestData.loan_borrower:type_name -> borrower.LoanBorrowerLoanEditEntry
+	53,  // 39: borrower.LoanDetailRequest.data:type_name -> borrower.LoanDetailRequestData
+	41,  // 40: borrower.LoanDetailResponse.data:type_name -> borrower.LoanEntry
+	56,  // 41: borrower.LoanUpdatePendingStatusRequest.data:type_name -> borrower.LoanUpdatePendingStatusRequestData
+	58,  // 42: borrower.LoanDeleteRequest.data:type_name -> borrower.LoanDeleteRequestData
+	63,  // 43: borrower.LoanPageRequest.data:type_name -> borrower.LoanPageRequestData
+	64,  // 44: borrower.LoanPageResponse.data:type_name -> borrower.LoanPageResponseData
+	61,  // 45: borrower.LoanPageRequestData.filter:type_name -> borrower.LoanPageRequestFilter
+	62,  // 46: borrower.LoanPageRequestData.sorter:type_name -> borrower.LoanPageRequestSorter
+	41,  // 47: borrower.LoanPageResponseData.list:type_name -> borrower.LoanEntry
+	66,  // 48: borrower.LoanLenderCompaniesRequest.data:type_name -> borrower.LoanLenderCompaniesRequestData
+	69,  // 49: borrower.LoanApplyRequest.data:type_name -> borrower.LoanApplyRequestData
+	88,  // 50: borrower.LoanApplyRequestData.loan_property:type_name -> borrower.LoanPropertyApplyEntry
+	46,  // 51: borrower.LoanApplyRequestData.applicants:type_name -> borrower.LoanApplicantApplyEntry
+	170, // 52: borrower.LoanApplyRequestData.transaction_experiences:type_name -> borrower.LoanExperienceEntry
+	170, // 53: borrower.LoanApplyRequestData.real_estate_experiences:type_name -> borrower.LoanExperienceEntry
+	168, // 54: borrower.LoanApplyRequestData.loan_borrower:type_name -> borrower.LoanBorrowerLoanEditEntry
+	172, // 55: borrower.LoanApplyRequestData.loan_demographic:type_name -> borrower.LoanDemographicEntry
+	171, // 56: borrower.LoanApplyRequestData.loan_third_services:type_name -> borrower.LoanThirdServiceEntry
+	71,  // 57: borrower.LoanApplyResponse.data:type_name -> borrower.LoanApplyResponseData
+	73,  // 58: borrower.ImportPendingLoansRequest.data:type_name -> borrower.ImportPendingLoansRequestData
+	74,  // 59: borrower.ImportPendingLoansRequestData.loan_property:type_name -> borrower.ImportPendingLoanPropertyEntry
+	167, // 60: borrower.ImportPendingLoansRequestData.loan_borrower:type_name -> borrower.LoanBorrowerEntry
+	78,  // 61: borrower.ImportPendingLoansRequestData.extend:type_name -> borrower.LoanExtendValueEntry
+	75,  // 62: borrower.ImportPendingLoansRequestData.applicants:type_name -> borrower.ImportPendingLoanApplicantEntry
+	3,   // 63: borrower.ImportPendingLoanPropertyEntry.address:type_name -> borrower.AddressEntry
+	77,  // 64: borrower.ImportPendingLoansResponse.data:type_name -> borrower.ImportPendingLoansResponseData
+	80,  // 65: borrower.LoanPreApprovalRequest.data:type_name -> borrower.LoanPreApprovalRequestData
+	184, // 66: borrower.LoanPreApprovalRequestData.borrower:type_name -> borrower.LoanPreApprovalRequestData.Borrower
+	185, // 67: borrower.LoanPreApprovalRequestData.property:type_name -> borrower.LoanPreApprovalRequestData.Property
+	186, // 68: borrower.LoanPreApprovalRequestData.loan:type_name -> borrower.LoanPreApprovalRequestData.Loan
+	82,  // 69: borrower.LoanPreApprovalResponse.data:type_name -> borrower.LoanPreApprovalResponseData
+	83,  // 70: borrower.LoanPreApprovalResponseData.primary:type_name -> borrower.PrimaryLoanPreApproval
+	84,  // 71: borrower.LoanPreApprovalResponseData.secondaries:type_name -> borrower.SecondaryLoanPreApproval
+	187, // 72: borrower.SecondaryLoanPreApproval.total_amount:type_name -> borrower.SecondaryLoanPreApproval.RangeFloat
+	187, // 73: borrower.SecondaryLoanPreApproval.rate:type_name -> borrower.SecondaryLoanPreApproval.RangeFloat
+	188, // 74: borrower.SecondaryLoanPreApproval.loan_term:type_name -> borrower.SecondaryLoanPreApproval.RangeInt
+	86,  // 75: borrower.LoanSendPreApprovalNotificationRequest.data:type_name -> borrower.LoanSendPreApprovalNotificationRequestData
+	42,  // 76: borrower.LoanPropertyEntry.budget:type_name -> borrower.LoanBudgetEntry
+	3,   // 77: borrower.LoanPropertyEntry.address:type_name -> borrower.AddressEntry
+	42,  // 78: borrower.LoanPropertyApplyEntry.budget:type_name -> borrower.LoanBudgetEntry
+	3,   // 79: borrower.BorrowerPropertyEntry.address:type_name -> borrower.AddressEntry
+	3,   // 80: borrower.PropertyPageEntry.address:type_name -> borrower.AddressEntry
+	93,  // 81: borrower.PropertyPageRequest.data:type_name -> borrower.PropertyPageRequestData
+	96,  // 82: borrower.PropertyPageResponse.data:type_name -> borrower.PropertyPageResponseData
+	94,  // 83: borrower.PropertyPageRequestData.filter:type_name -> borrower.PropertyPageRequestFilter
+	95,  // 84: borrower.PropertyPageRequestData.sorter:type_name -> borrower.PropertyPageRequestSorter
+	90,  // 85: borrower.PropertyPageResponseData.list:type_name -> borrower.PropertyPageEntry
+	99,  // 86: borrower.PropertyDetailRequest.data:type_name -> borrower.PropertyDetailRequestData
+	100, // 87: borrower.PropertyDetailSummaryResponse.data:type_name -> borrower.PropertyDetailSummaryResponseData
+	3,   // 88: borrower.PropertyDetailSummaryResponseData.address:type_name -> borrower.AddressEntry
+	41,  // 89: borrower.PropertyDetailSummaryResponseData.pending_loans:type_name -> borrower.LoanEntry
+	41,  // 90: borrower.PropertyDetailSummaryResponseData.active_loans:type_name -> borrower.LoanEntry
+	41,  // 91: borrower.PropertyDetailSummaryResponseData.archived_loans:type_name -> borrower.LoanEntry
+	102, // 92: borrower.PropertyCreateRequest.data:type_name -> borrower.PropertyCreateRequestData
+	3,   // 93: borrower.PropertyCreateRequestData.address:type_name -> borrower.AddressEntry
+	89,  // 94: borrower.PropertyCreateResponse.data:type_name -> borrower.BorrowerPropertyEntry
+	105, // 95: borrower.PropertyUpdateRequest.data:type_name -> borrower.PropertyUpdateRequestData
+	89,  // 96: borrower.PropertyDetailResponse.data:type_name -> borrower.BorrowerPropertyEntry
+	108, // 97: borrower.PropertyDeleteRequest.data:type_name -> borrower.PropertyDeleteRequestData
+	110, // 98: borrower.PropertyAllRequest.data:type_name -> borrower.PropertyAllRequestData
+	89,  // 99: borrower.PropertyAllResponse.data:type_name -> borrower.BorrowerPropertyEntry
+	3,   // 100: borrower.BorrowerEntityEntry.mailing_address:type_name -> borrower.AddressEntry
+	3,   // 101: borrower.BorrowerEntityPageEntry.mailing_address:type_name -> borrower.AddressEntry
+	3,   // 102: borrower.BorrowerEntityEditEntry.mailing_address:type_name -> borrower.AddressEntry
+	114, // 103: borrower.BorrowerEntityCreateRequest.data:type_name -> borrower.BorrowerEntityEditEntry
+	112, // 104: borrower.BorrowerEntityCreateResponse.data:type_name -> borrower.BorrowerEntityEntry
+	114, // 105: borrower.BorrowerEntityUpdateRequest.data:type_name -> borrower.BorrowerEntityEditEntry
+	119, // 106: borrower.BorrowerEntityDetailRequest.data:type_name -> borrower.BorrowerEntityDetailRequestData
+	112, // 107: borrower.BorrowerEntityDetailResponse.data:type_name -> borrower.BorrowerEntityEntry
+	122, // 108: borrower.BorrowerEntityDeleteRequest.data:type_name -> borrower.BorrowerEntityDeleteRequestData
+	125, // 109: borrower.BorrowerEntityPageRequest.data:type_name -> borrower.BorrowerEntityPageRequestData
+	128, // 110: borrower.BorrowerEntityPageResponse.data:type_name -> borrower.BorrowerEntityPageResponseData
+	126, // 111: borrower.BorrowerEntityPageRequestData.filter:type_name -> borrower.BorrowerEntityPageRequestFilter
+	127, // 112: borrower.BorrowerEntityPageRequestData.sorter:type_name -> borrower.BorrowerEntityPageRequestSorter
+	113, // 113: borrower.BorrowerEntityPageResponseData.list:type_name -> borrower.BorrowerEntityPageEntry
+	130, // 114: borrower.BorrowerEntityCheckExistedRequest.data:type_name -> borrower.BorrowerEntityCheckExistedRequestData
+	132, // 115: borrower.BorrowerEntityCheckExistedResponse.data:type_name -> borrower.BorrowerEntityCheckExistedResponseData
+	134, // 116: borrower.BorrowerEntityAllRequest.data:type_name -> borrower.BorrowerEntityAllRequestData
+	113, // 117: borrower.BorrowerEntityAllResponse.data:type_name -> borrower.BorrowerEntityPageEntry
+	3,   // 118: borrower.BorrowerApplicantEntry.address:type_name -> borrower.AddressEntry
+	3,   // 119: borrower.BorrowerApplicantPageEntry.address:type_name -> borrower.AddressEntry
+	3,   // 120: borrower.BorrowerApplicantEditEntry.address:type_name -> borrower.AddressEntry
+	138, // 121: borrower.BorrowerApplicantCreateRequest.data:type_name -> borrower.BorrowerApplicantEditEntry
+	136, // 122: borrower.BorrowerApplicantCreateResponse.data:type_name -> borrower.BorrowerApplicantEntry
+	138, // 123: borrower.BorrowerApplicantUpdateRequest.data:type_name -> borrower.BorrowerApplicantEditEntry
+	143, // 124: borrower.BorrowerApplicantDetailRequest.data:type_name -> borrower.BorrowerApplicantDetailRequestData
+	136, // 125: borrower.BorrowerApplicantDetailResponse.data:type_name -> borrower.BorrowerApplicantEntry
+	146, // 126: borrower.BorrowerApplicantDeleteRequest.data:type_name -> borrower.BorrowerApplicantDeleteRequestData
+	148, // 127: borrower.BorrowerApplicantPageRequest.data:type_name -> borrower.BorrowerApplicantPageRequestData
+	149, // 128: borrower.BorrowerApplicantPageRequestData.filter:type_name -> borrower.BorrowerApplicantPageRequestFilter
+	150, // 129: borrower.BorrowerApplicantPageRequestData.sorter:type_name -> borrower.BorrowerApplicantPageRequestSorter
+	152, // 130: borrower.BorrowerApplicantPageResponse.data:type_name -> borrower.BorrowerApplicantPageResponseData
+	137, // 131: borrower.BorrowerApplicantPageResponseData.list:type_name -> borrower.BorrowerApplicantPageEntry
+	154, // 132: borrower.BorrowerApplicantCheckExistedRequest.data:type_name -> borrower.BorrowerApplicantCheckExistedRequestData
+	156, // 133: borrower.BorrowerApplicantCheckExistedResponse.data:type_name -> borrower.BorrowerApplicantCheckExistedResponseData
+	158, // 134: borrower.BorrowerApplicantAllRequest.data:type_name -> borrower.BorrowerApplicantAllRequestData
+	137, // 135: borrower.BorrowerApplicantAllResponse.data:type_name -> borrower.BorrowerApplicantPageEntry
+	3,   // 136: borrower.LoanApplicantEntry.address:type_name -> borrower.AddressEntry
+	162, // 137: borrower.BorrowerNamesRequest.data:type_name -> borrower.BorrowerNamesRequestData
+	177, // 138: borrower.LoanDocumentEntry.files:type_name -> borrower.FileEntry
+	166, // 139: borrower.LoanDocumentAddFilesRequest.data:type_name -> borrower.LoanDocumentAddFilesRequestData
+	3,   // 140: borrower.LoanBorrowerEntry.mailing_address:type_name -> borrower.AddressEntry
+	3,   // 141: borrower.LenderEntry.address:type_name -> borrower.AddressEntry
+	3,   // 142: borrower.LoanExperienceEntry.address:type_name -> borrower.AddressEntry
+	173, // 143: borrower.LoanDemographicEntry.property:type_name -> borrower.LoanDemographicPropertyEntry
+	174, // 144: borrower.LoanDemographicEntry.ethnicity:type_name -> borrower.LoanDemographicEthnicityEntry
+	175, // 145: borrower.LoanDemographicEntry.race:type_name -> borrower.LoanDemographicRaceEntry
+	179, // 146: borrower.FileDeleteRequest.data:type_name -> borrower.FileDeleteRequestData
+	181, // 147: borrower.StorageCreatePresignedUrlRequest.data:type_name -> borrower.StorageCreatePresignedUrlRequestData
+	183, // 148: borrower.StorageCreatePresignedUrlResponse.data:type_name -> borrower.StorageCreatePresignedUrlResponseData
+	3,   // 149: borrower.LoanPreApprovalRequestData.Property.address:type_name -> borrower.AddressEntry
+	4,   // 150: borrower.common.GetOpt:input_type -> borrower.OptionRequest
+	0,   // 151: borrower.common.GetUsState:input_type -> borrower.EmptyRequest
+	8,   // 152: borrower.common.GetUsCities:input_type -> borrower.UsCitiesRequest
+	0,   // 153: borrower.common.GetUuid:input_type -> borrower.EmptyRequest
+	11,  // 154: borrower.user.Login:input_type -> borrower.UserLoginRequest
+	15,  // 155: borrower.user.Register:input_type -> borrower.UserRegisterRequest
+	19,  // 156: borrower.user.RefreshToken:input_type -> borrower.RefreshTokenRequest
+	37,  // 157: borrower.user.UserInfo:input_type -> borrower.UserInfoRequest
+	23,  // 158: borrower.user.VerifyEmail:input_type -> borrower.VerifyEmailRequest
+	27,  // 159: borrower.user.SendVerifyEmail:input_type -> borrower.SendVerifyEmailRequest
+	30,  // 160: borrower.user.ResetPassword:input_type -> borrower.ResetPasswordRequest
+	32,  // 161: borrower.user.SendResetPasswordEmail:input_type -> borrower.SendResetPasswordEmailRequest
+	43,  // 162: borrower.Loan.CreateBorrowerLoan:input_type -> borrower.LoanCreateRequest
+	50,  // 163: borrower.Loan.UpdateBorrowerLoan:input_type -> borrower.LoanUpdateRequest
+	55,  // 164: borrower.Loan.UpdateBorrowerLoanPendingStatus:input_type -> borrower.LoanUpdatePendingStatusRequest
+	57,  // 165: borrower.Loan.DeleteBorrowerLoan:input_type -> borrower.LoanDeleteRequest
+	52,  // 166: borrower.Loan.BorrowerLoanDetail:input_type -> borrower.LoanDetailRequest
+	59,  // 167: borrower.Loan.BorrowerLoanPage:input_type -> borrower.LoanPageRequest
+	65,  // 168: borrower.Loan.BorrowerLoanLenderCompanies:input_type -> borrower.LoanLenderCompaniesRequest
+	68,  // 169: borrower.Loan.ApplyLoan:input_type -> borrower.LoanApplyRequest
+	68,  // 170: borrower.Loan.SaveDraftLoan:input_type -> borrower.LoanApplyRequest
+	68,  // 171: borrower.Loan.UpdateApplyLoan:input_type -> borrower.LoanApplyRequest
+	72,  // 172: borrower.Loan.ImportPendingLoans:input_type -> borrower.ImportPendingLoansRequest
+	79,  // 173: borrower.Loan.PreApprovalLoan:input_type -> borrower.LoanPreApprovalRequest
+	85,  // 174: borrower.Loan.SendPreApprovalNotification:input_type -> borrower.LoanSendPreApprovalNotificationRequest
+	91,  // 175: borrower.BorrowerProperty.Page:input_type -> borrower.PropertyPageRequest
+	97,  // 176: borrower.BorrowerProperty.DetailSummary:input_type -> borrower.PropertyDetailRequest
+	101, // 177: borrower.BorrowerProperty.Create:input_type -> borrower.PropertyCreateRequest
+	104, // 178: borrower.BorrowerProperty.Update:input_type -> borrower.PropertyUpdateRequest
+	107, // 179: borrower.BorrowerProperty.Delete:input_type -> borrower.PropertyDeleteRequest
+	97,  // 180: borrower.BorrowerProperty.Detail:input_type -> borrower.PropertyDetailRequest
+	109, // 181: borrower.BorrowerProperty.All:input_type -> borrower.PropertyAllRequest
+	115, // 182: borrower.BorrowerEntity.Create:input_type -> borrower.BorrowerEntityCreateRequest
+	117, // 183: borrower.BorrowerEntity.Update:input_type -> borrower.BorrowerEntityUpdateRequest
+	118, // 184: borrower.BorrowerEntity.Detail:input_type -> borrower.BorrowerEntityDetailRequest
+	121, // 185: borrower.BorrowerEntity.Delete:input_type -> borrower.BorrowerEntityDeleteRequest
+	123, // 186: borrower.BorrowerEntity.Page:input_type -> borrower.BorrowerEntityPageRequest
+	129, // 187: borrower.BorrowerEntity.CheckExisted:input_type -> borrower.BorrowerEntityCheckExistedRequest
+	133, // 188: borrower.BorrowerEntity.All:input_type -> borrower.BorrowerEntityAllRequest
+	139, // 189: borrower.BorrowerApplicant.Create:input_type -> borrower.BorrowerApplicantCreateRequest
+	141, // 190: borrower.BorrowerApplicant.Update:input_type -> borrower.BorrowerApplicantUpdateRequest
+	142, // 191: borrower.BorrowerApplicant.Detail:input_type -> borrower.BorrowerApplicantDetailRequest
+	145, // 192: borrower.BorrowerApplicant.Delete:input_type -> borrower.BorrowerApplicantDeleteRequest
+	147, // 193: borrower.BorrowerApplicant.Page:input_type -> borrower.BorrowerApplicantPageRequest
+	153, // 194: borrower.BorrowerApplicant.CheckExisted:input_type -> borrower.BorrowerApplicantCheckExistedRequest
+	157, // 195: borrower.BorrowerApplicant.All:input_type -> borrower.BorrowerApplicantAllRequest
+	161, // 196: borrower.LoanApplicant.BorrowerNames:input_type -> borrower.BorrowerNamesRequest
+	165, // 197: borrower.LoanDocument.AddFiles:input_type -> borrower.LoanDocumentAddFilesRequest
+	178, // 198: borrower.File.DeleteFile:input_type -> borrower.FileDeleteRequest
+	180, // 199: borrower.Storage.CreatePresignedUrl:input_type -> borrower.StorageCreatePresignedUrlRequest
+	6,   // 200: borrower.common.GetOpt:output_type -> borrower.OptionResponse
+	2,   // 201: borrower.common.GetUsState:output_type -> borrower.StringSliceResponse
+	2,   // 202: borrower.common.GetUsCities:output_type -> borrower.StringSliceResponse
+	10,  // 203: borrower.common.GetUuid:output_type -> borrower.GetUuidResponse
+	12,  // 204: borrower.user.Login:output_type -> borrower.UserLoginResponse
+	16,  // 205: borrower.user.Register:output_type -> borrower.UserRegisterResponse
+	21,  // 206: borrower.user.RefreshToken:output_type -> borrower.RefreshTokenResponse
+	39,  // 207: borrower.user.UserInfo:output_type -> borrower.UserinfoResponse
+	24,  // 208: borrower.user.VerifyEmail:output_type -> borrower.VerifyEmailResponse
+	28,  // 209: borrower.user.SendVerifyEmail:output_type -> borrower.SendVerifyEmailResponse
+	31,  // 210: borrower.user.ResetPassword:output_type -> borrower.ResetPasswordResponse
+	33,  // 211: borrower.user.SendResetPasswordEmail:output_type -> borrower.SendResetPasswordEmailResponse
+	48,  // 212: borrower.Loan.CreateBorrowerLoan:output_type -> borrower.LoanCreateResponse
+	1,   // 213: borrower.Loan.UpdateBorrowerLoan:output_type -> borrower.EmptyResponse
+	1,   // 214: borrower.Loan.UpdateBorrowerLoanPendingStatus:output_type -> borrower.EmptyResponse
+	1,   // 215: borrower.Loan.DeleteBorrowerLoan:output_type -> borrower.EmptyResponse
+	54,  // 216: borrower.Loan.BorrowerLoanDetail:output_type -> borrower.LoanDetailResponse
+	60,  // 217: borrower.Loan.BorrowerLoanPage:output_type -> borrower.LoanPageResponse
+	67,  // 218: borrower.Loan.BorrowerLoanLenderCompanies:output_type -> borrower.LoanLenderCompaniesResponse
+	70,  // 219: borrower.Loan.ApplyLoan:output_type -> borrower.LoanApplyResponse
+	70,  // 220: borrower.Loan.SaveDraftLoan:output_type -> borrower.LoanApplyResponse
+	1,   // 221: borrower.Loan.UpdateApplyLoan:output_type -> borrower.EmptyResponse
+	76,  // 222: borrower.Loan.ImportPendingLoans:output_type -> borrower.ImportPendingLoansResponse
+	81,  // 223: borrower.Loan.PreApprovalLoan:output_type -> borrower.LoanPreApprovalResponse
+	1,   // 224: borrower.Loan.SendPreApprovalNotification:output_type -> borrower.EmptyResponse
+	92,  // 225: borrower.BorrowerProperty.Page:output_type -> borrower.PropertyPageResponse
+	98,  // 226: borrower.BorrowerProperty.DetailSummary:output_type -> borrower.PropertyDetailSummaryResponse
+	103, // 227: borrower.BorrowerProperty.Create:output_type -> borrower.PropertyCreateResponse
+	1,   // 228: borrower.BorrowerProperty.Update:output_type -> borrower.EmptyResponse
+	1,   // 229: borrower.BorrowerProperty.Delete:output_type -> borrower.EmptyResponse
+	106, // 230: borrower.BorrowerProperty.Detail:output_type -> borrower.PropertyDetailResponse
+	111, // 231: borrower.BorrowerProperty.All:output_type -> borrower.PropertyAllResponse
+	116, // 232: borrower.BorrowerEntity.Create:output_type -> borrower.BorrowerEntityCreateResponse
+	1,   // 233: borrower.BorrowerEntity.Update:output_type -> borrower.EmptyResponse
+	120, // 234: borrower.BorrowerEntity.Detail:output_type -> borrower.BorrowerEntityDetailResponse
+	1,   // 235: borrower.BorrowerEntity.Delete:output_type -> borrower.EmptyResponse
+	124, // 236: borrower.BorrowerEntity.Page:output_type -> borrower.BorrowerEntityPageResponse
+	131, // 237: borrower.BorrowerEntity.CheckExisted:output_type -> borrower.BorrowerEntityCheckExistedResponse
+	135, // 238: borrower.BorrowerEntity.All:output_type -> borrower.BorrowerEntityAllResponse
+	140, // 239: borrower.BorrowerApplicant.Create:output_type -> borrower.BorrowerApplicantCreateResponse
+	1,   // 240: borrower.BorrowerApplicant.Update:output_type -> borrower.EmptyResponse
+	144, // 241: borrower.BorrowerApplicant.Detail:output_type -> borrower.BorrowerApplicantDetailResponse
+	1,   // 242: borrower.BorrowerApplicant.Delete:output_type -> borrower.EmptyResponse
+	151, // 243: borrower.BorrowerApplicant.Page:output_type -> borrower.BorrowerApplicantPageResponse
+	155, // 244: borrower.BorrowerApplicant.CheckExisted:output_type -> borrower.BorrowerApplicantCheckExistedResponse
+	159, // 245: borrower.BorrowerApplicant.All:output_type -> borrower.BorrowerApplicantAllResponse
+	163, // 246: borrower.LoanApplicant.BorrowerNames:output_type -> borrower.BorrowerNamesResponse
+	1,   // 247: borrower.LoanDocument.AddFiles:output_type -> borrower.EmptyResponse
+	1,   // 248: borrower.File.DeleteFile:output_type -> borrower.EmptyResponse
+	182, // 249: borrower.Storage.CreatePresignedUrl:output_type -> borrower.StorageCreatePresignedUrlResponse
+	200, // [200:250] is the sub-list for method output_type
+	150, // [150:200] is the sub-list for method input_type
+	150, // [150:150] is the sub-list for extension type_name
+	150, // [150:150] is the sub-list for extension extendee
+	0,   // [0:150] is the sub-list for field type_name
 }
 
 func init() { file_app_borrower_rpc_pb_borrower_proto_init() }

@@ -359,7 +359,8 @@ message LoanCreateRequestData {
   string extension_date = 28;
   string loan_processor = 29;
 
-  int64 borrower_entity_id = 30;
+  //  int64 borrower_entity_id = 30;
+  LoanBorrowerLoanEditEntry loan_borrower = 30;
 }
 
 message LoanCreateResponse {
@@ -409,7 +410,8 @@ message LoanUpdateRequestData {
   string extension_date = 29;
   string loan_processor = 30;
   //  string owner = 31;
-  int64 borrower_entity_id = 31;
+  //  int64 borrower_entity_id = 31;
+  LoanBorrowerLoanEditEntry loan_borrower = 31;
 }
 
 
@@ -539,8 +541,8 @@ message LoanApplyRequestData {
   //  string additional_info = 38;
   repeated LoanExperienceEntry transaction_experiences = 39;
   repeated LoanExperienceEntry real_estate_experiences = 40;
-  //  LoanBorrowerApplyEntry loan_borrower = 41;
-  int64 borrower_entity_id = 41;
+  LoanBorrowerLoanEditEntry loan_borrower = 41;
+  //  int64 borrower_entity_id = 41;
   LoanDemographicEntry loan_demographic = 42;
   //  float yearly_liability_expense = 43;
   repeated LoanThirdServiceEntry loan_third_services = 44;
@@ -1391,10 +1393,9 @@ message LoanBorrowerEntry{
   string updated_at = 14;
 }
 
-message LoanBorrowerApplyEntry{
+message LoanBorrowerLoanEditEntry{
   int64 id = 1;
   int64 borrower_entity_id = 2;
-  int32 own_percent = 3;
 }
 
 // ====================== loan borrower service end ======================

@@ -275,6 +275,11 @@ type LoanBorrowerEntry struct {
 	UpdatedAt        string       `json:"updated_at,optional"`
 }
 
+type LoanBorrowerLoanEditEntry struct {
+	Id               int64 `json:"id,optional"`
+	BorrowerEntityId int64 `json:"borrower_entity_id,optional"`
+}
+
 type LoanBudgetEntry struct {
 	OriginalBudget        float64 `json:"original_budget"`
 	RemainingBudget       float64 `json:"remaining_budget"`

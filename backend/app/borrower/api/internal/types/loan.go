@@ -29,7 +29,7 @@ type LoanApplyRequest struct {
 	TransactionExperiences []*LoanExperienceEntry     `json:"transaction_experiences,optional"`
 	RealEstateExperiences  []*LoanExperienceEntry     `json:"real_estate_experiences,optional"`
 	LoanThirdServices      []*LoanThirdServiceEntry   `json:"loan_third_services,optional"`
-	BorrowerEntityId       int64                      `json:"borrower_entity_id,optional" validate:"required,gt=0"`
+	LoanBorrower           *LoanBorrowerLoanEditEntry `json:"loan_borrower,optional"`
 	LoanDemographic        *LoanDemographicEntry      `json:"loan_demographic,optional" validate:"required"`
 	ApplyFormFile          string                     `json:"apply_form_file,optional" validate:"required"`
 }
@@ -47,7 +47,7 @@ type LoanCreateRequest struct {
 	InitialAmount        float64                         `json:"initial_amount,optional"`
 	LoanProperty         *LoanPropertyEditEntry          `json:"loan_property,optional" validate:"required"`
 	Applicants           []*ThirdPartyLoanApplicantEntry `json:"applicants,optional" validate:"required,min=1,max=2,dive,required"`
-	BorrowerEntityId     int64                           `json:"borrower_entity_id" validate:"required,gt=0"`
+	LoanBorrower         *LoanBorrowerLoanEditEntry      `json:"loan_borrower,optional" validate:"required"`
 	LenderCompany        string                          `json:"lender_company,optional" validate:"required"`
 	ClosingDate          string                          `json:"closing_date,optional" validate:"required_if=Stage Pending,omitempty,datetime=01/02/2006"`
 	ClosingFund          float64                         `json:"closing_fund,optional" validate:"gte=0,ltefield=TotalAmount"`
@@ -129,7 +129,7 @@ type LoanUpdateRequest struct {
 	InitialAmount         float64                         `json:"initial_amount,optional"`
 	LoanProperty          *LoanPropertyEditEntry          `json:"loan_property,optional" validate:"required"`
 	Applicants            []*ThirdPartyLoanApplicantEntry `json:"applicants,optional" validate:"required,dive,required"`
-	BorrowerEntityId      int64                           `json:"borrower_entity_id" validate:"required,gt=0"`
+	LoanBorrower          *LoanBorrowerLoanEditEntry      `json:"loan_borrower,optional" validate:"required"`
 	LenderCompany         string                          `json:"lender_company,optional" validate:"required"`
 	ClosingDate           string                          `json:"closing_date,optional" validate:"required_if=Stage Pending,omitempty,datetime=01/02/2006"`
 	ClosingFund           float64                         `json:"closing_fund,optional" validate:"gte=0,ltefield=TotalAmount"`

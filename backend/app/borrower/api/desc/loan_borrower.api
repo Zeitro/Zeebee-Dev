@@ -35,3 +35,8 @@ type ImportLoanBorrowerEntry {
     ContactPhone string `json:"contact_phone,optional" `
     ContactName string `json:"contact_name,optional" `
 }
+
+type LoanBorrowerLoanEditEntry {
+    Id int64 `json:"id,optional"`
+    BorrowerEntityId int64 `json:"borrower_entity_id,optional"`
+}
