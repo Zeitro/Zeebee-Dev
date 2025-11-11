@@ -1,7 +1,7 @@
 import React from 'react';
 import { BtnPopUpModal, DeleteBtn, TableOperation } from '@repo/shared-methods';
 import { createRequest, formatPhone } from '@repo/shared-methods/utils';
-import AddModal from './Add';
+import AddModal from '@/components/SelectCard/Add/borrowingEntity';
 import { useState } from 'react';
 const useBorrowingEntity = ({ handleSearch }) => {
 	const { request } = createRequest();
@@ -116,6 +116,6 @@ const useBorrowingEntity = ({ handleSearch }) => {
 			),
 		},
 	];
-	return { columns };
+	return { columns, handleDelete, loading };
 };
 export default useBorrowingEntity;

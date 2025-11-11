@@ -39,7 +39,9 @@ export const BtnPopUpModal = ({
 }) => {
 	const [modal, contextHolder] = Modal.useModal();
 	const [open, setOpen] = useState('');
-	const handleClick = () => {
+	const handleClick = (e) => {
+		e?.stopPropagation();
+		e?.preventDefault();
 		const isPass = predicate?.();
 		if (!isPass) return;
 		if (modalType) {
@@ -61,8 +63,10 @@ export const BtnPopUpModal = ({
 					{children}
 				</div>
 			)}
-			{contextHolder}
-			{open && getContent(setOpen)}
+			<div onClick={(e) => e?.stopPropagation()}>
+				{contextHolder}
+				{open && getContent(setOpen)}
+			</div>
 		</>
 	);
 };

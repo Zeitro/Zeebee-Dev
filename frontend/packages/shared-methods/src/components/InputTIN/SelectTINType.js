@@ -43,13 +43,19 @@ export const SelectTINType = ({ value, onChange, isIndividual }) => {
 	);
 };
 
-export const SelectFormTINType = ({ isIndividual }) => {
+export const SelectFormTINType = ({
+	isIndividual,
+	disabled,
+	typeName = ['tin_type'],
+	tinName = ['tin'],
+}) => {
 	const form = Form.useFormInstance();
-	const tin_type = Form.useWatch('tin_type', form);
+	const tin_type = Form.useWatch(typeName, form);
+
 	return (
 		<Space direction="vertical" size="large" className="w-full">
 			<Space.Compact className="w-full">
-				<Form.Item label="TIN" name="tin_type" rules={[{ required: true }]}>
+				<Form.Item label="TIN" name={typeName} rules={[{ required: true }]}>
 					<Select
 						allowClear
 						size="large"
@@ -61,16 +67,17 @@ export const SelectFormTINType = ({ isIndividual }) => {
 								disabled: isIndividual ? i.value === 'EIN' : i.value !== 'EIN',
 							}))
 							.sort((a, b) => a.disabled - b.disabled)}
+						disabled={disabled}
 					/>
 				</Form.Item>
 				<Form.Item
 					label={null}
-					name="tin"
+					name={tinName}
 					getValueFromEvent={(e) => {
 						// 因ssn与ITIN的格式相同，需特殊处理
 						if (e.length === 9 && isIndividual) {
 							const tin_type = e[0] === '9' ? 'ITIN' : 'SSN';
-							form.setFieldsValue({ tin_type });
+							form.setFieldsValue({ [typeName]: tin_type });
 						}
 						return e;
 					}}
@@ -83,6 +90,7 @@ export const SelectFormTINType = ({ isIndividual }) => {
 								validateRule(value, tinOrSSNRegex, 'Please enter valid TIN!'),
 						},
 					]}
+					className="flex-1"
 				>
 					<InputTIN
 						allowClear
@@ -90,6 +98,7 @@ export const SelectFormTINType = ({ isIndividual }) => {
 						style={{ width: '100%', marginTop: 23 }}
 						placeholder="Search by field"
 						type={tin_type}
+						disabled={disabled}
 					/>
 				</Form.Item>
 			</Space.Compact>

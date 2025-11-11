@@ -179,7 +179,8 @@ export function formatNumber(value, unit = 'sqft', isAfter = true) {
 
 // 格式化TIN,包括SSN/ITIN/EIN, 不同类型税务ID
 export const formatTINOrSSN = (taxId, type = 'SSN') => {
-	const cleaned = taxId.replace(/\D/g, '');
+	if (!taxId) return '';
+	const cleaned = taxId?.replace(/\D/g, '');
 	switch (type) {
 		case 'SSN':
 		case 'ITIN':

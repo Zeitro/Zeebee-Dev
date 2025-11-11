@@ -10,7 +10,7 @@ import { createRequest, getPagination, transformArrayStructure } from '@repo/sha
 import { Spin } from 'antd';
 import NoData from '@/components/NoData';
 import { useGetOptions } from '@/hooks/useGetOptions';
-import AddModal from './components/MoreCard/Add';
+import AddModal from '@/components/SelectCard/Add/property';
 import NewHeader from '@/components/NewHeader';
 import { PlusOutlined } from '@ant-design/icons';
 const Properties = () => {

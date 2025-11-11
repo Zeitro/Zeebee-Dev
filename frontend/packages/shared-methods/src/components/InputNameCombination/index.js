@@ -18,9 +18,11 @@ export const InputNameCombination = ({
 	title,
 	style = { paddingBottom: 12, fontSize: 16 },
 	config = {},
-	form,
+	// form,
 	listName,
+	disabled,
 }) => {
+	const form = Form.useFormInstance();
 	const first = Form.useWatch(getPathArr(firstName, listName), form);
 	const last = Form.useWatch(getPathArr(lastName, listName), form);
 	const applicants = Form.useWatch(listName, form);
@@ -55,7 +57,7 @@ export const InputNameCombination = ({
 					}}
 					dependencies={getDependencies('firstName')}
 				>
-					<Input placeholder={`Enter ${firstLabel.toLowerCase()}`} />
+					<Input placeholder={`Enter ${firstLabel.toLowerCase()}`} disabled={disabled} />
 				</Form.Item>
 			</Col>
 			<Col {...layoutCol}>
@@ -68,7 +70,7 @@ export const InputNameCombination = ({
 						return capitalizeFirstLetter(v.target.value);
 					}}
 				>
-					<Input placeholder={`Enter ${middleLabel.toLowerCase()}`} />
+					<Input placeholder={`Enter ${middleLabel.toLowerCase()}`} disabled={disabled} />
 				</Form.Item>
 			</Col>
 			<Col {...layoutCol}>
@@ -84,7 +86,7 @@ export const InputNameCombination = ({
 						return capitalizeFirstLetter(v.target.value);
 					}}
 				>
-					<Input placeholder={`Enter ${lastLabel.toLowerCase()}`} />
+					<Input placeholder={`Enter ${lastLabel.toLowerCase()}`} disabled={disabled} />
 				</Form.Item>
 			</Col>
 		</>

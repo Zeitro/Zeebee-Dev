@@ -15,7 +15,7 @@ const PropertiesDetails = () => {
 	const [loading, setLoading] = useState(false);
 	const [rowData, setRowData] = useState({});
 	const { changeSidebarCollapsed } = useGlobalStore();
-	const api = `/property/${id}`;
+	const api = `/property/${id}/summary`;
 
 	const getDetails = useCallback(async () => {
 		try {

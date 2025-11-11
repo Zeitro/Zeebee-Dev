@@ -71,10 +71,10 @@ const useCreate = (pageType = 'create') => {
 		eventBus.emit('changeCrumbs', {
 			2: isDetails ? `ZeeBee Loan Details(${str})` : `Edit Draft(${str})`,
 		});
-		res.loan_borrower.tin = {
-			tin_type: res?.loan_borrower?.tin_type,
-			tin: res?.loan_borrower?.tin,
-		};
+		// res.loan_borrower.tin = {
+		// 	tin_type: res?.loan_borrower?.tin_type,
+		// 	tin: res?.loan_borrower?.tin,
+		// };
 		if (!res?.applicants?.length) {
 			res.applicants = initialValues.applicants;
 		}
@@ -94,8 +94,8 @@ const useCreate = (pageType = 'create') => {
 	const stepContent = useMemo(
 		() => [
 			[
-				<ApplicantInfo key="0-ApplicantInfo" form={form} />,
-				<BorrowerInfo key="1-BorrowerInfo" form={form} />,
+				<ApplicantInfo key="0-ApplicantInfo" form={form} disabled={isDetails} />,
+				<BorrowerInfo key="1-BorrowerInfo" form={form} disabled={isDetails} />,
 			],
 			[
 				<PropertyInfo
@@ -415,8 +415,8 @@ const useCreate = (pageType = 'create') => {
 				setLoading(true);
 				const body = _.cloneDeep(addId(values));
 
-				body.loan_borrower.tin_type = values?.loan_borrower?.tin?.tin_type;
-				body.loan_borrower.tin = values?.loan_borrower?.tin?.tin;
+				// body.loan_borrower.tin_type = values?.loan_borrower?.tin?.tin_type;
+				// body.loan_borrower.tin = values?.loan_borrower?.tin?.tin;
 				_.unset(body, ['signatures', 'remainingSignatureCount']);
 				const fileUrl = await handlePdf(body);
 				await handleSubmit({ ...body, apply_form_file: fileUrl });
@@ -451,8 +451,8 @@ const useCreate = (pageType = 'create') => {
 		const allValues = form.getFieldsValue();
 		const values = { ...rowData, ...allValues };
 		setConfirmLoading(true);
-		values.loan_borrower.tin_type = values?.loan_borrower?.tin?.tin_type;
-		values.loan_borrower.tin = values?.loan_borrower?.tin?.tin;
+		// values.loan_borrower.tin_type = values?.loan_borrower?.tin?.tin_type;
+		// values.loan_borrower.tin = values?.loan_borrower?.tin?.tin;
 		// 草稿时删除签名信息，因为合同的签名及时间默认以最新时间为准，所以不需要保存
 		_.unset(values, ['signatures']);
 		const isDraft = searchParams.has('id');

@@ -5,9 +5,11 @@ import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import { layoutCol, titleCol } from '@/enum/common';
 import { livingAreaProps } from '@repo/shared-methods/utils';
-import MoreCard from '@/app/properties/components/MoreCard';
+import SelectCard from '@/components/SelectCard/index';
 let name = 'loan_property';
-const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty, unitInfo }) => {
+const PropertyInfo = ({ gutter = 24, addressProps, isRequestProperty, unitInfo }) => {
+	const form = Form.useFormInstance();
+	const borrower_property_id = Form.useWatch([name, 'borrower_property_id'], form);
 	const { loanPurposeOptions, loanTypeOptions, propertyTypeOptions } = useGetOptions([
 		{
 			key: 'loan_purpose',
@@ -28,7 +30,18 @@ const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty, unit
 			<Col {...titleCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">
 				Property information
 			</Col>
-			<MoreCard className="mb-8" changeFormValue={(values) => form.setFieldsValue(values)} />
+			<SelectCard
+				className="mb-8"
+				changeFormValue={(values) => {
+					const property = {
+						[name]: { ...values, borrower_property_id: values.id },
+					};
+					form.setFieldsValue(property);
+				}}
+				name={[name, 'borrower_property_id']}
+				id={borrower_property_id}
+				disabled={isRequestProperty}
+			/>
 			<AddressForm
 				{...addressProps}
 				addressName={[name, 'address', 'address1']}
@@ -42,7 +55,7 @@ const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty, unit
 				stateCol={{ ...layoutCol, md: 8 }}
 				cityCol={{ ...layoutCol, md: 8 }}
 				zipCol={{ ...layoutCol, md: 8 }}
-				disabled={isRequestProperty}
+				disabled={true}
 			/>
 			<Col {...layoutCol}>
 				<Form.Item
@@ -71,7 +84,11 @@ const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty, unit
 					name={[name, 'property_type']}
 					rules={[{ required: true, message: 'Please select property type!' }]}
 				>
-					<Select options={propertyTypeOptions} placeholder="Select property type" />
+					<Select
+						options={propertyTypeOptions}
+						placeholder="Select property type"
+						disabled
+					/>
 				</Form.Item>
 			</Col>
 			<Col {...layoutCol} md={12}>
@@ -89,6 +106,7 @@ const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty, unit
 						style={{ width: '100%' }}
 						{...livingAreaProps}
 						placeholder="Enter Living area sqft"
+						disabled
 					/>
 				</Form.Item>
 			</Col>
@@ -109,7 +127,7 @@ const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty, unit
 						max={unitInfo?.unit?.maxUnit}
 						controls={false}
 						placeholder="Enter number of units"
-						disabled={isRequestProperty || unitInfo?.unit?.disabled}
+						disabled={true}
 					/>
 				</Form.Item>
 			</Col>
@@ -130,6 +148,7 @@ const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty, unit
 						max={100}
 						controls={false}
 						placeholder="Enter Number of bedrooms"
+						disabled
 					/>
 				</Form.Item>
 			</Col>
@@ -150,6 +169,7 @@ const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty, unit
 						max={100}
 						controls={false}
 						placeholder="Enter Number of bathrooms"
+						disabled
 					/>
 				</Form.Item>
 			</Col>

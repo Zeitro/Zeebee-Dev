@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { formatDate, assemblyAddress, createRequest } from '@repo/shared-methods/utils';
 import FieldTips from '@/components/FieldTips';
 import { BtnPopUpModal, DeleteBtn } from '@repo/shared-methods';
-import AddModal from '../MoreCard/Add';
+import AddModal from '@/components/SelectCard/Add/property';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 const PropertiesItem = ({ data, handleSearch }) => {

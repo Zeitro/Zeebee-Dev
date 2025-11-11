@@ -58,8 +58,6 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 
 	useDeferredSyncEffect({
 		deferred: () => {
-			console.log('000');
-
 			setAntdToken({
 				colorPrimary: getCssVarValue('--base-primary', 'colorPrimary'),
 				// colorBgContainer: getCssVarValue('--background'),

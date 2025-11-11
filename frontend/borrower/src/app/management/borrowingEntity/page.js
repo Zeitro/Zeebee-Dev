@@ -4,7 +4,7 @@ import { createRequest } from '@repo/shared-methods/utils';
 import { ReloadOutlined } from '@ant-design/icons';
 import { BtnPopUpModal, FilterTable } from '@repo/shared-methods';
 import useBorrowingEntity from './components/useBorrowingEntity';
-import AddModal from './components/Add';
+import AddModal from '@/components/SelectCard/Add/borrowingEntity';
 import NewHeader from '@/components/NewHeader';
 const BorrowingEntity = () => {
 	const { cancel } = createRequest();
