@@ -197,7 +197,10 @@
                             "address",
                             "loan_borrower_id",
                             "borrower_applicant_id",
-                            "phone"
+                            "phone",
+                            "own_percent",
+                            "created_at",
+                            "updated_at"
                           ],
                           "properties": {
                             "address": {
@@ -225,6 +228,9 @@
                             },
                             "borrower_id": {
                               "type": "integer"
+                            },
+                            "created_at": {
+                              "type": "string"
                             },
                             "dob": {
                               "type": "string"
@@ -271,6 +277,9 @@
                             "mid_name": {
                               "type": "string"
                             },
+                            "own_percent": {
+                              "type": "integer"
+                            },
                             "phone": {
                               "type": "string"
                             },
@@ -278,6 +287,9 @@
                               "type": "string"
                             },
                             "type": {
+                              "type": "string"
+                            },
+                            "updated_at": {
                               "type": "string"
                             }
                           }
@@ -995,7 +1007,10 @@
                       "address",
                       "loan_borrower_id",
                       "borrower_applicant_id",
-                      "phone"
+                      "phone",
+                      "own_percent",
+                      "created_at",
+                      "updated_at"
                     ],
                     "properties": {
                       "address": {
@@ -1023,6 +1038,9 @@
                       },
                       "borrower_id": {
                         "type": "integer"
+                      },
+                      "created_at": {
+                        "type": "string"
                       },
                       "dob": {
                         "type": "string"
@@ -1069,6 +1087,9 @@
                       "mid_name": {
                         "type": "string"
                       },
+                      "own_percent": {
+                        "type": "integer"
+                      },
                       "phone": {
                         "type": "string"
                       },
@@ -1076,6 +1097,9 @@
                         "type": "string"
                       },
                       "type": {
+                        "type": "string"
+                      },
+                      "updated_at": {
                         "type": "string"
                       }
                     }
@@ -1828,6 +1852,31 @@
                 "maturity_date"
               ],
               "properties": {
+                "applicants": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "borrower_applicant_id",
+                      "is_primary",
+                      "own_percent"
+                    ],
+                    "properties": {
+                      "borrower_applicant_id": {
+                        "type": "integer"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "is_primary": {
+                        "type": "boolean"
+                      },
+                      "own_percent": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
                 "business_strategy": {
                   "type": "array",
                   "items": {
@@ -1839,20 +1888,6 @@
                 },
                 "initial_amount": {
                   "type": "number"
-                },
-                "loan_borrower": {
-                  "type": "object",
-                  "properties": {
-                    "borrower_entity_id": {
-                      "type": "integer"
-                    },
-                    "id": {
-                      "type": "integer"
-                    },
-                    "own_percent": {
-                      "type": "integer"
-                    }
-                  }
                 },
                 "loan_demographic": {
                   "type": "object",
@@ -1973,7 +2008,6 @@
                     "mid_construction",
                     "est_yearly_rental_income_amount",
                     "yearly_liability_expense_amount",
-                    "dscr",
                     "has_delayed_financing",
                     "has_collateralized_blanket",
                     "has_properties_vacant",
@@ -3403,7 +3437,7 @@
       }
     }
   },
-  "x-date": "2025-11-10 16:41:42",
+  "x-date": "2025-11-11 09:38:57",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

@@ -22,9 +22,3 @@ type LoanBorrowerEntry {
     CreateAt string `json:"create_at,optional"`
     UpdateAt string `json:"update_at,optional"`
 }
-
-type LoanBorrowerEditEntry {
-    Id int64 `json:"id,optional" validate:"gte=0"`
-    BorrowerEntityId int64 `json:"borrower_entity_id,optional" validate:"gt=0"`
-    OwnPercent int32 `json:"own_percent,optional" validate:"min=0,max=100"`
-}

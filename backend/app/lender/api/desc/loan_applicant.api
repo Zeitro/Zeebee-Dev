@@ -30,6 +30,16 @@ type LoanApplicantEntry {
     LoanBorrowerId int64 `json:"loan_borrower_id,omitempty, optional"`
     BorrowerApplicantId int64 `json:"borrower_applicant_id,omitempty, optional"`
     Phone string `json:"phone,omitempty, optional"`
+    OwnPercent int32 `json:"own_percent, optional"`
+    CreatedAt string `json:"created_at,omitempty, optional"`
+    UpdatedAt string `json:"updated_at,omitempty, optional"`
+}
+
+type LoanApplicantEditLoanEntry {
+    Id int64 `json:"id,omitempty,optional"`
+    BorrowerApplicantId int64 `json:"borrower_applicant_id,omitempty, optional"`
+    IsPrimary bool `json:"is_primary,omitempty, optional"`
+    OwnPercent int32 `json:"own_percent, optional" validate:"gt=0,max=100"`
 }
 
 
