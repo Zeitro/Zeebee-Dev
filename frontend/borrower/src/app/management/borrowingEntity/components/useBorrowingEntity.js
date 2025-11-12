@@ -39,13 +39,6 @@ const useBorrowingEntity = ({ handleSearch }) => {
 			ellipsis: true,
 		},
 		{
-			title: 'Own percentage',
-			dataIndex: 'own_percent',
-			key: 'own_percent',
-			ellipsis: true,
-			width: 150,
-		},
-		{
 			title: 'Email',
 			dataIndex: 'contact_email',
 			key: 'contact_email',
@@ -111,7 +104,6 @@ const useBorrowingEntity = ({ handleSearch }) => {
 						};
 						return [edit, deleteInfo];
 					}}
-					onSelect={(key) => {}}
 				/>
 			),
 		},
