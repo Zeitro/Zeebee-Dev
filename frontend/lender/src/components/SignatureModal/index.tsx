@@ -10,6 +10,7 @@ type SignaturePadType = ComponentRef<typeof SignaturePad>;
 interface SignatureModalProps {
 	isOpen: boolean;
 	onClose: () => void;
+	// eslint-disable-next-line no-unused-vars
 	onConfirm: (signature: string) => void;
 }
 

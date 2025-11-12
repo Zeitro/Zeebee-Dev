@@ -22,7 +22,7 @@ const LoginLayout = ({ children }) => {
 		if (!isLogin) {
 			router.replace('/login');
 		}
-	}, []);
+	}, [clearUserInfo, pathname, router]);
 	return (
 		<div className="h-full w-full flex flex-col">
 			<div className="h-20 flex-shrink-0 flex items-center pl-6">

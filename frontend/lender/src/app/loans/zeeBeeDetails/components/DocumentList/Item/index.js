@@ -10,16 +10,20 @@ import {
 import styles from '../index.module.scss';
 import ViewFile from '@/components/ViewFile';
 import { DeleteBtn } from '@/components/NewModal/BtnPopUpModal';
-import { createRequest } from '@/lib/fetch';
-import eventBus from '@/lib/bus';
+import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
+import { eventBus, createRequest } from '@repo/shared-methods/utils';
 const DocumentItem = ({ columns, item, isHide }) => {
 	const [activeKey, setActiveKey] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const { request } = createRequest();
 
-	useEffect(() => {
-		setActiveKey(item.files?.length ? [item.id] : []);
-	}, [item?.files?.length, item.id]);
+	useDeferredSyncEffect({
+		deferred: () => {
+			setActiveKey(item.files?.length ? [item.id] : []);
+		},
+		deps: [item?.files?.length, item.id],
+		delay: 0,
+	});
 
 	const handleDelete = async (id) => {
 		try {

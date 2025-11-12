@@ -1,6 +1,6 @@
 'use client';
 import { Dropdown } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { EditOutlined, EllipsisOutlined, DeleteOutlined, ProfileOutlined } from '@ant-design/icons';
 import styles from './index.module.scss';
 import { useRouter } from 'next/navigation';
@@ -27,7 +27,6 @@ const detailsItem = {
  */
 const TableOperation = ({ list, className, onSelect, getItems, disabled }) => {
 	const [selectedKey, setSelectedKey] = useState(null);
-	const [items, setItems] = useState([]);
 	const router = useRouter();
 	const newItems = getItems?.(editItem, deleteItem, detailsItem) || [editItem, deleteItem];
 
@@ -43,20 +42,10 @@ const TableOperation = ({ list, className, onSelect, getItems, disabled }) => {
 		}
 	};
 
-	useEffect(() => {
-		// 默认项edit和delete，getItems和list可任选一种传入，getItems可拿到edit和delete的配置重新组装
-
-		if (newItems.length && !list?.length) {
-			setItems([...newItems]);
-		} else {
-			setItems([...(list || [])]);
-		}
-	}, [list]);
-
 	return (
 		<Dropdown
 			menu={{
-				items,
+				items: newItems.length && !list?.length ? newItems : [...(list || [])],
 				selectable: true,
 				selectedKeys: [selectedKey],
 				onClick: handleSelect,

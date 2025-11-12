@@ -2,14 +2,16 @@ import React from 'react';
 import styles from './index.module.scss';
 import { Row, Col, Form, Select, Input, InputNumber } from 'antd';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
-import InputPhone from '@/components/InputPhone';
-import SelectTINType from '@/components/InputTIN/SelectTINType';
-import { emailRegex, phoneRegex, validateRule, tinOrSSNRegex } from '@/lib/format';
+import { InputPhone, SelectFormTINType } from '@repo/shared-methods';
+import { emailRegex, phoneRegex, validateRule } from '@repo/shared-methods/utils';
 import { layoutCol, titleCol } from '@/enum/common';
 import { useGetOptions } from '@/hooks/useGetOptions';
+import SelectCard from '@/components/SelectCard';
 const name = 'loan_borrower';
-const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
+const ApplicantInfo = ({ gutter = 24, addressProps, disabled, isShowSelectCard = true }) => {
+	const form = Form.useFormInstance();
 	const borrowerType = Form.useWatch([name, 'type'], form);
+	const borrower_entity_id = Form.useWatch([name, 'borrower_entity_id'], form);
 	const nameLabel = borrowerType === 'Individual' ? 'Individual name' : 'Entity name';
 	const { borrowerTypeOptions } = useGetOptions([
 		{
@@ -22,6 +24,28 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 			<Col {...titleCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">
 				Applicant information
 			</Col>
+			{isShowSelectCard && (
+				<SelectCard
+					type="borrowingEntity"
+					addTitle="Add borrowing entity"
+					title="Choose a borrowing entity"
+					api="/borrower_entity/all"
+					className="mb-8"
+					changeFormValue={(values) => {
+						console.log(values, '---');
+						const borrower_entity = {
+							[name]: {
+								...values,
+								borrower_entity_id: values.id,
+							},
+						};
+						form.setFieldsValue(borrower_entity);
+					}}
+					name={[name, 'borrower_entity_id']}
+					id={borrower_entity_id}
+					disabled={disabled}
+				/>
+			)}
 			<Col {...titleCol} className="!text-xl font-medium text-[#000000a6] pb-6">
 				Applicant type
 			</Col>
@@ -41,6 +65,7 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 							);
 							form.setFieldValue([name, 'tin'], { tin_type: undefined, tin: '' });
 						}}
+						disabled
 					/>
 				</Form.Item>
 			</Col>
@@ -55,11 +80,11 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 						},
 					]}
 				>
-					<Input placeholder={`Enter ${nameLabel}`} />
+					<Input placeholder={`Enter ${nameLabel}`} disabled />
 				</Form.Item>
 			</Col>
 			<Col {...layoutCol}>
-				<Form.Item
+				{/* <Form.Item
 					label="TIN"
 					name={[name, 'tin']}
 					rules={[
@@ -72,32 +97,16 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 								validateRule(value?.tin, tinOrSSNRegex, 'Please enter valid TIN!'),
 						},
 					]}
-				>
-					<SelectTINType isIndividual={borrowerType === 'Individual'} />
-				</Form.Item>
+				> */}
+				{/* </Form.Item> */}
+				<SelectFormTINType
+					isIndividual={borrowerType === 'Individual'}
+					disabled
+					typeName={[name, 'tin_type']}
+					tinName={[name, 'tin']}
+				/>
 			</Col>
-			<Col {...layoutCol}>
-				<Form.Item
-					label="%Own"
-					name={[name, 'own_percent']}
-					rules={[
-						{
-							required: true,
-							message: 'Please enter %Own!',
-						},
-					]}
-					hidden={borrowerType === 'Individual'}
-				>
-					<InputNumber
-						style={{ width: '100%' }}
-						min={1}
-						max={100}
-						controls={false}
-						placeholder="Enter %Own"
-						suffix="%"
-					/>
-				</Form.Item>
-			</Col>
+
 			<Col {...titleCol} className="!text-xl font-medium text-[#000000a6] pb-6">
 				Mailing information
 			</Col>
@@ -116,6 +125,7 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 				stateCol={{ xs: 24, sm: 24, md: 8 }}
 				cityCol={{ xs: 24, sm: 24, md: 8 }}
 				zipCol={{ xs: 24, sm: 24, md: 8 }}
+				disabled={true}
 			/>
 			<Col {...titleCol} className="!text-xl font-medium text-[#000000a6] pb-6">
 				Contact information
@@ -135,7 +145,7 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 						},
 					]}
 				>
-					<Input placeholder="Enter email" />
+					<Input placeholder="Enter email" disabled />
 				</Form.Item>
 			</Col>
 			<Col {...layoutCol}>
@@ -153,7 +163,7 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 						},
 					]}
 				>
-					<InputPhone />
+					<InputPhone disabled={true} />
 				</Form.Item>
 			</Col>
 			<Col {...layoutCol}>
@@ -167,7 +177,7 @@ const ApplicantInfo = ({ gutter = 24, form, addressProps }) => {
 						},
 					]}
 				>
-					<Input placeholder="Enter contact name" />
+					<Input placeholder="Enter contact name" disabled={true} />
 				</Form.Item>
 			</Col>
 		</Row>

@@ -6,10 +6,9 @@ import CreateProperty from '../components/Create/property';
 import CreateTerm from '../components/Create/term';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createLoanSteps } from '@/enum/loan';
-import { createRequest } from '@/lib/fetch';
+import { createRequest, changeUnitByPropertyType } from '@repo/shared-methods/utils';
 import { loan_pending } from '@/enum/common';
-import { BtnPopUpModal } from '@/components/NewModal/BtnPopUpModal';
-import { changeUnitByPropertyType } from '@/lib/format';
+import { BtnPopUpModal } from '@repo/shared-methods';
 const CreateLoanPage = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -70,7 +69,7 @@ const CreateLoanPage = () => {
 			});
 			setLoading(false);
 			router.back();
-		} catch (error) {
+		} catch {
 			setLoading(false);
 		}
 	}, [currentStep, form, loanData, request, router]);
@@ -145,7 +144,7 @@ const CreateLoanPage = () => {
 	);
 
 	return (
-		<div className="flex flex-col h-full">
+		<div className="flex flex-col h-full flex-1 overflow-hidden">
 			<div className="px-4 py-6 shrink-0 flex items-center justify-center border-b border-[#f0f0f0]">
 				<Steps
 					size="default"

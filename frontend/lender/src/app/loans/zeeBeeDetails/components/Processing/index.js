@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import DocumentList from '../DocumentList';
 import { borrowerUploadColumns, lenderUploadColumns } from '../documentColumns';
 import { message } from 'antd';
@@ -9,6 +9,7 @@ import { SendRequestBtn } from '../SendRequestModal';
 import { useSearchParams } from 'next/navigation';
 import { createRequest } from '@/lib/fetch';
 import eventBus from '@/lib/bus';
+import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 const Processing = ({
 	isHide,
 	title = 'Processing',
@@ -30,8 +31,9 @@ const Processing = ({
 		[borrowerList],
 	);
 
-	useEffect(() => {
-		if (rowData?.loan_documents?.length) {
+	useDeferredSyncEffect({
+		predicate: () => rowData?.loan_documents?.length,
+		deferred: () => {
 			let bList = [],
 				lList = [];
 			rowData?.loan_documents?.map((item) => {
@@ -44,8 +46,10 @@ const Processing = ({
 			});
 			setBorrowerList(bList);
 			setLenderList(lList);
-		}
-	}, [rowData]);
+		},
+		deps: [rowData],
+		delay: 0,
+	});
 
 	const handleDelete = async (record) => {
 		try {

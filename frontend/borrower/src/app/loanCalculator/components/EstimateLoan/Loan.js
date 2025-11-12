@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
-// import styles from './index.module.scss';
 import { Row, Col, Form, InputNumber, Radio } from 'antd';
-import InputNumAmount from '@/components/InputNumAmount';
-import { layoutCol, titleCol } from '@/enum/common';
-import { maxTerm_zeeBee, minTerm_zeeBee, validateAssignmentFeeAmount } from '@/lib/format';
-import { yesNoOptions } from '@/enum/common';
-import CommonFormDate from '@/components/CommonDate';
+import { InputNumAmount, CommonFormDate } from '@repo/shared-methods';
+import { layoutCol, titleCol, yesNoOptions } from '@/enum/common';
+import {
+	maxTerm_zeeBee,
+	minTerm_zeeBee,
+	validateAssignmentFeeAmount,
+} from '@repo/shared-methods/utils';
 const LoanInfo = ({ gutter = 24, loan_purpose, loan_type }) => {
 	const form = Form.useFormInstance();
 	const has_assignment_fee = Form.useWatch(['loan', 'has_assignment_fee'], form);

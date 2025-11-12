@@ -1,16 +1,14 @@
 'use client';
 import styles from './index.module.scss';
 import { Form, Menu, Segmented, Steps, Tabs } from 'antd';
-import React, { useEffect, useMemo, useRef } from 'react';
-import useCreate from '../components/CreateZeeBee/hooks/useCreate';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import useLenderDetails from './components/useLenderDetails';
-import { assemblyAddress, changeUnitByPropertyType } from '@/lib/format';
-import { flattenArray } from '@/lib/common';
+import { assemblyAddress, changeUnitByPropertyType } from '@repo/shared-methods/utils';
 import { stageColor, pendingStatusColor, loanDetailsFields } from '@/enum/loan';
 import HomeSvg from '@/assets/images/home.svg';
 import _ from 'lodash';
-import HeaderBtn from './components/HeaderBtn';
 import { CheckOutlined } from '@ant-design/icons';
+import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 const ZeeBeeDetails = () => {
 	const {
 		scrollRef,
@@ -22,24 +20,22 @@ const ZeeBeeDetails = () => {
 		initialValues,
 		rowData,
 		newRowData,
-		setRowData,
 		setNewRowData,
-		lenderDetailsComponents,
 		disabled,
 		tabList,
-		selectIndex,
 		loanProgress, // 当前loan根据stage和pendingStatus计算的进度
 		unitInfo,
 		setUnitInfo,
 	} = useLenderDetails();
+	let [lenderMenu, setLenderMenu] = useState([]);
 	// 计算总步骤，方便跟loanProgress比较。
 	let count = useRef({ index: -1, key: '' });
 
 	useEffect(() => {
 		setCurrentStep(lenderDetailsSteps[0].key);
-	}, []);
+	}, [lenderDetailsSteps, setCurrentStep]);
 
-	const lenderMenu = useMemo(() => {
+	const getLenderMenu = (list = lenderDetailsSteps, isChild) => {
 		const iconFn = (item, isChild, index) => {
 			if (isChild) {
 				return (
@@ -74,33 +70,38 @@ const ZeeBeeDetails = () => {
 				</div>
 			);
 		};
-		const getLenderMenu = (list = lenderDetailsSteps, isChild) => {
-			return list.map((item, index) => {
-				let obj = {
-					key: item.key,
-					label: item.title,
-					icon: iconFn(item, isChild, index),
-				};
-				if (item.children) {
-					obj.children = getLenderMenu(item.children, true);
-				} else {
-					count.current.index = count.current.index + 1;
-					count.current.key = item.key;
-				}
-				return obj;
-			});
-		};
-		const arr = getLenderMenu();
-		count.current.index = -1;
-		return arr;
-	}, [loanProgress]);
+		return list.map((item, index) => {
+			let obj = {
+				key: item.key,
+				label: item.title,
+				icon: iconFn(item, isChild, index),
+			};
+			if (item.children) {
+				obj.children = getLenderMenu(item.children, true);
+			} else {
+				count.current.index = count.current.index + 1;
+				count.current.key = item.key;
+			}
+			return obj;
+		});
+	};
+
+	useDeferredSyncEffect({
+		deferred: () => {
+			const arr = getLenderMenu();
+			count.current.index = -1;
+			setLenderMenu(arr);
+		},
+		deps: [lenderDetailsSteps, loanProgress.index, loanProgress.selectTabKey],
+		isUseMicrotask: true,
+	});
 
 	return (
 		<div className="flex flex-col h-full">
 			<div className="flex items-center flex-shrink-0 pt-4 pb-5 px-4">
 				<HomeSvg />
 				<p className="text-xl/[24px] font-bold pl-3 pr-5">
-					{assemblyAddress(rowData?.loan_property?.property_base?.address, true)}
+					{assemblyAddress(rowData?.loan_property?.address, true)}
 				</p>
 				<div
 					className="px-2 text-white font-medium rounded-sm mr-2 text-sm/[22px]"
@@ -167,19 +168,13 @@ const ZeeBeeDetails = () => {
 						onValuesChange={(v) => {
 							setIsChange(true);
 							// 根据property_type设置unit
-							const property_type =
-								v?.loan_property?.property_type ||
-								v?.loan_property?.future_property_type;
+							const property_type = v?.loan_property?.future_property_type;
 							if (property_type) {
 								const info = changeUnitByPropertyType(property_type);
-								const fieldKey = v?.loan_property?.property_type
-									? 'unit'
-									: 'future_unit';
-								const moreFieldKey =
-									fieldKey === 'unit' ? ['property_base', fieldKey] : [fieldKey];
-								unitInfo[fieldKey] = info;
-								setUnitInfo({ ...unitInfo });
-								form.setFieldValue(['loan_property', ...moreFieldKey], info.unit);
+								const unit = { ...unitInfo };
+								unit.future_unit = info;
+								setUnitInfo({ ...unit });
+								form.setFieldValue(['loan_property', 'future_unit'], info.unit);
 							}
 						}}
 						onFieldsChange={(changeFields) => {

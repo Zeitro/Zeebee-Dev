@@ -1,11 +1,10 @@
-import React, { use, useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import NewModal from '@/components/NewModal';
 import { Button, Form, Input, message, Select } from 'antd';
 import CommonUpload from '@/components/CommonUpload';
 import { CloseOutlined, FileTextOutlined, InboxOutlined, UploadOutlined } from '@ant-design/icons';
 import styles from './index.module.scss';
-import { createRequest } from '@/lib/fetch';
-import eventBus from '@/lib/bus';
+import { createRequest, eventBus } from '@repo/shared-methods/utils';
 // const { TextArea } = Input;
 const UploadModal = ({ open, setOpen, isChangeType = true, record = {}, loan_id, category }) => {
 	const [form] = Form.useForm();

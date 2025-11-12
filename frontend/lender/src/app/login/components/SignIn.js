@@ -30,7 +30,7 @@ const SignIn = ({ form, setPageType }) => {
 				remember: true,
 			});
 		}
-	}, []);
+	}, [form]);
 
 	// 保存登录信息
 	useEffect(() => {

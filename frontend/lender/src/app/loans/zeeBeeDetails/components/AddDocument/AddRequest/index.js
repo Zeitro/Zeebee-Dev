@@ -1,8 +1,7 @@
-import React, { use, useState } from 'react';
+import React, { useState } from 'react';
 import NewModal from '@/components/NewModal';
-import { Button, Form, Input, message, Select } from 'antd';
-import { createRequest } from '@/lib/fetch';
-import eventBus from '@/lib/bus';
+import { Button, Form, Input, message } from 'antd';
+import { eventBus, createRequest } from '@repo/shared-methods/utils';
 const AddRequest = ({ open, setOpen, loan_id, category }) => {
 	const [form] = Form.useForm();
 	const { request } = createRequest();

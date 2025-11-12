@@ -8,6 +8,7 @@ import { getCurrentRouterItem } from '@config/common';
 import { noNavRouter, navRouter } from '@config/routes';
 import { usePathname, useRouter } from 'next/navigation';
 import { useUserStore } from '@/store/user';
+import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 const defaultToken = {
 	colorPrimary: '#1677ff',
 	colorTextBase: 'rgba(0, 0, 0, 0.88)',
@@ -55,8 +56,8 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userInfo, pathname]);
 
-	useEffect(
-		() => {
+	useDeferredSyncEffect({
+		deferred: () => {
 			setAntdToken({
 				colorPrimary: getCssVarValue('--base-primary', 'colorPrimary'),
 				// colorBgContainer: getCssVarValue('--background'),
@@ -78,9 +79,9 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 				// ... 其他 token ...
 			});
 		},
-		[],
-		// 依赖主题切换变量
-	);
+		deps: [],
+		delay: 0, // 放到 macrotask（可改为 useMicrotask: true）
+	});
 
 	return (
 		<ConfigProvider
@@ -94,6 +95,7 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 						itemSelectedColor: 'var(--base-primary)', // 选中项文字
 						itemHoverBg: 'var(--blue-light-1)', // 悬停背景
 						itemHoverColor: 'var(--base-primary)', // 悬停文字
+						subMenuItemSelectedColor: 'var(--base-primary)',
 					},
 					Table: {
 						border: '1px solid var(--base-border)',
@@ -117,7 +119,8 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 						<SiderBar />
 						<div className="flex-1 overflow-hidden flex flex-col">
 							<NewHeader />
-							<div className="flex-1 overflow-hidden">{children}</div>
+							{/* <div className="flex-1 overflow-hidden">{children}</div> */}
+							{children}
 						</div>
 					</div>
 				)}

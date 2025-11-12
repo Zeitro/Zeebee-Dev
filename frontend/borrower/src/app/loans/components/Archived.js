@@ -1,10 +1,9 @@
 'use client';
 import React, { useMemo, useState, useRef } from 'react';
-import FilterTable from '@/components/FilterTable';
+import { FilterTable } from '@repo/shared-methods';
 import { archivedColumns } from './column';
-import { transformArrayStructure } from '@/lib/common';
+import { transformArrayStructure, createRequest } from '@repo/shared-methods/utils';
 import { useOptionsStore } from '@/store/options';
-import { createRequest } from '@/lib/fetch';
 import { ReloadOutlined } from '@ant-design/icons';
 import useOpt from './useOpt';
 const ArchivedLoans = ({
