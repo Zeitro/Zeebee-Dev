@@ -6,13 +6,15 @@ package handler
 import (
 	"net/http"
 
-	applicant "zeebee-backend/app/borrower/api/internal/handler/applicant"
+	borrower_applicant "zeebee-backend/app/borrower/api/internal/handler/borrower_applicant"
+	borrower_entity "zeebee-backend/app/borrower/api/internal/handler/borrower_entity"
+	borrower_property "zeebee-backend/app/borrower/api/internal/handler/borrower_property"
 	common "zeebee-backend/app/borrower/api/internal/handler/common"
 	file "zeebee-backend/app/borrower/api/internal/handler/file"
 	loan "zeebee-backend/app/borrower/api/internal/handler/loan"
+	loan_applicant "zeebee-backend/app/borrower/api/internal/handler/loan_applicant"
 	loan_document "zeebee-backend/app/borrower/api/internal/handler/loan_document"
 	pdf "zeebee-backend/app/borrower/api/internal/handler/pdf"
-	property "zeebee-backend/app/borrower/api/internal/handler/property"
 	storage "zeebee-backend/app/borrower/api/internal/handler/storage"
 	user "zeebee-backend/app/borrower/api/internal/handler/user"
 	"zeebee-backend/app/borrower/api/internal/svc"
@@ -26,10 +28,148 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
 				{
-					// borrower names
+					// create
 					Method:  http.MethodPost,
-					Path:    "/applicant/borrower",
-					Handler: applicant.BorrowerNamesHandler(serverCtx),
+					Path:    "/borrower_applicant",
+					Handler: borrower_applicant.BorrowerApplicantCreateHandler(serverCtx),
+				},
+				{
+					// detail
+					Method:  http.MethodGet,
+					Path:    "/borrower_applicant/:id",
+					Handler: borrower_applicant.BorrowerApplicantDetailHandler(serverCtx),
+				},
+				{
+					// update
+					Method:  http.MethodPut,
+					Path:    "/borrower_applicant/:id",
+					Handler: borrower_applicant.BorrowerApplicantUpdateHandler(serverCtx),
+				},
+				{
+					// delete
+					Method:  http.MethodDelete,
+					Path:    "/borrower_applicant/:id",
+					Handler: borrower_applicant.BorrowerApplicantDeleteHandler(serverCtx),
+				},
+				{
+					// all
+					Method:  http.MethodGet,
+					Path:    "/borrower_applicant/all",
+					Handler: borrower_applicant.BorrowerApplicantAllHandler(serverCtx),
+				},
+				{
+					// existed
+					Method:  http.MethodGet,
+					Path:    "/borrower_applicant/check_existed",
+					Handler: borrower_applicant.BorrowerApplicantCheckExistedHandler(serverCtx),
+				},
+				{
+					// page
+					Method:  http.MethodPost,
+					Path:    "/borrower_applicant/page",
+					Handler: borrower_applicant.BorrowerApplicantPageHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// create
+					Method:  http.MethodPost,
+					Path:    "/borrower_entity",
+					Handler: borrower_entity.BorrowerEntityCreateHandler(serverCtx),
+				},
+				{
+					// detail
+					Method:  http.MethodGet,
+					Path:    "/borrower_entity/:id",
+					Handler: borrower_entity.BorrowerEntityDetailHandler(serverCtx),
+				},
+				{
+					// update
+					Method:  http.MethodPut,
+					Path:    "/borrower_entity/:id",
+					Handler: borrower_entity.BorrowerEntityUpdateHandler(serverCtx),
+				},
+				{
+					// delete
+					Method:  http.MethodDelete,
+					Path:    "/borrower_entity/:id",
+					Handler: borrower_entity.BorrowerEntityDeleteHandler(serverCtx),
+				},
+				{
+					// all
+					Method:  http.MethodGet,
+					Path:    "/borrower_entity/all",
+					Handler: borrower_entity.BorrowerEntityAllHandler(serverCtx),
+				},
+				{
+					// existed
+					Method:  http.MethodGet,
+					Path:    "/borrower_entity/check_existed",
+					Handler: borrower_entity.BorrowerEntityCheckExistedHandler(serverCtx),
+				},
+				{
+					// page
+					Method:  http.MethodPost,
+					Path:    "/borrower_entity/page",
+					Handler: borrower_entity.BorrowerEntityPageHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// create
+					Method:  http.MethodPost,
+					Path:    "/property",
+					Handler: borrower_property.PropertyCreateHandler(serverCtx),
+				},
+				{
+					// detail
+					Method:  http.MethodGet,
+					Path:    "/property/:id",
+					Handler: borrower_property.PropertyDetailHandler(serverCtx),
+				},
+				{
+					// update
+					Method:  http.MethodPut,
+					Path:    "/property/:id",
+					Handler: borrower_property.PropertyUpdateHandler(serverCtx),
+				},
+				{
+					// delete
+					Method:  http.MethodDelete,
+					Path:    "/property/:id",
+					Handler: borrower_property.PropertyDeleteHandler(serverCtx),
+				},
+				{
+					// property Summary
+					Method:  http.MethodGet,
+					Path:    "/property/:id/summary",
+					Handler: borrower_property.PropertyDetailSummaryHandler(serverCtx),
+				},
+				{
+					// all
+					Method:  http.MethodGet,
+					Path:    "/property/all",
+					Handler: borrower_property.PropertyAllHandler(serverCtx),
+				},
+				{
+					// page
+					Method:  http.MethodPost,
+					Path:    "/property/page",
+					Handler: borrower_property.PropertyPageHandler(serverCtx),
 				},
 			}...,
 		),
@@ -191,6 +331,21 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
 				{
+					// borrower names
+					Method:  http.MethodPost,
+					Path:    "/applicant/borrower",
+					Handler: loan_applicant.BorrowerNamesHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
 					// add files
 					Method:  http.MethodPost,
 					Path:    "/loan_document/:id/files",
@@ -210,27 +365,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/pdf/apply_form",
 					Handler: pdf.ApplyFormPdfHandler(serverCtx),
-				},
-			}...,
-		),
-		rest.WithPrefix("/api/v1"),
-	)
-
-	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.AuthMiddleware},
-			[]rest.Route{
-				{
-					// detail
-					Method:  http.MethodGet,
-					Path:    "/property/:id",
-					Handler: property.PropertyDetailHandler(serverCtx),
-				},
-				{
-					// page
-					Method:  http.MethodPost,
-					Path:    "/property/page",
-					Handler: property.PropertyPageHandler(serverCtx),
 				},
 			}...,
 		),

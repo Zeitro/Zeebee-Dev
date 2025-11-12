@@ -1,10 +1,10 @@
 import React from 'react';
 import Image from 'next/image';
 import NodataSvg from '@/assets/images/nodata.svg';
-const NoData = ({ url, text = 'No Data', width, height }) => {
+const NoData = ({ url, text = 'No Data', width, height, className }) => {
 	return (
 		<div
-			className="h-full w-full flex flex-col justify-center items-center"
+			className={`h-full w-full flex flex-col justify-center items-center py-5 ${className}`}
 			style={{ width, height }}
 		>
 			{url ? (

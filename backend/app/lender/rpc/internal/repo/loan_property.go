@@ -25,7 +25,7 @@ func NewLoanPropertyRepo(db *gorm.DB) *LoanPropertyRepo {
 // GetOneById get one by id
 func (repo *LoanPropertyRepo) GetOneById(ctx context.Context, id int64) (result *model.LoanProperty, err error) {
 	err = repo.Client(ctx).Where("id = ?", id).
-		Preload("PropertyBase").
+		Preload("BorrowerProperty").
 		Preload("Applicants").
 		Preload("Loan").
 		First(&result).Error
@@ -36,18 +36,18 @@ func (repo *LoanPropertyRepo) GetOneById(ctx context.Context, id int64) (result 
 func (repo *LoanPropertyRepo) FindOneByLoanId(ctx context.Context, loanId int64) (result *model.LoanProperty, err error) {
 	err = repo.Client(ctx).
 		Where("loan_id = ?", loanId).
-		Preload("PropertyBase").
+		Preload("BorrowerProperty").
 		First(&result).Error
 	return result, errors.WithStack(err)
 }
 
 // GetLoanPropertyCountByPropertyBaseId get loan property count by property_base_id
-func (repo *LoanPropertyRepo) GetLoanPropertyCountByPropertyBaseId(ctx context.Context, propertyBaseId int64) (count int64, err error) {
-	err = repo.Client(ctx).
-		Where("property_base_id = ?", propertyBaseId).
-		Count(&count).Error
-	return count, errors.WithStack(err)
-}
+// func (repo *LoanPropertyRepo) GetLoanPropertyCountByPropertyBaseId(ctx context.Context, propertyBaseId int64) (count int64, err error) {
+// 	err = repo.Client(ctx).
+// 		Where("property_base_id = ?", propertyBaseId).
+// 		Count(&count).Error
+// 	return count, errors.WithStack(err)
+// }
 
 // UpdateOneWithTx
 func (repo *LoanPropertyRepo) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, id int64, data *model.LoanProperty) (result *model.LoanProperty, err error) {

@@ -16,7 +16,7 @@ const ActiveLoans = ({
 	dataSource,
 	isNotAddress,
 	loading,
-	scrollX = 2600,
+	scrollX = 2650,
 	successCallback,
 	stage = 'Active',
 }) => {

@@ -11,7 +11,7 @@ func TestEmail_SendEmail(t *testing.T) {
 		User:     "info@zeebeeloans.com",
 		Password: "fyxxgqlqqxzitzef",
 	}
-	msg := EmailMessage{
+	msg := Message{
 		From:    "info@zeebeeloans.com",
 		To:      []string{"wei@yeelee-capital.com"},
 		Subject: "test email",
