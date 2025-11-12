@@ -5,7 +5,7 @@ const isLocal = process.env.NEXT_PUBLIC_ENV === 'local';
 const nextConfig: NextConfig = {
 	/* config options here */
 	// 仅在生产环境构建时启用 'standalone' 模式
-	output: process.env.NEXT_PUBLIC_ENV === 'local' ? undefined : 'standalone',
+	// output: process.env.NEXT_PUBLIC_ENV === 'local' ? undefined : 'standalone',
 	reactStrictMode: !isLocal, // 开启 React 严格模式
 	serverExternalPackages: ['react-pdf', 'pdfjs-dist'],
 	env: {
