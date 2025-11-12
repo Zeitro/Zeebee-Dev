@@ -52,12 +52,7 @@ export default function useOpt(tableFilterRef) {
 
 	const handleSelectedRow = (record, stage) => {
 		let url;
-		if (stage === 'Draft') {
-			url =
-				record?.source === 'borrower'
-					? `/loans/${record?.id}`
-					: `/loans/createZeeBeeLoan?id=${record?.id}`;
-		} else if (record?.source === 'borrower') {
+		if (record?.source === 'borrower') {
 			url = `/loans/${record?.id}`;
 		} else {
 			url = `/loans/zeeBeeDetails?id=${record?.id}`;

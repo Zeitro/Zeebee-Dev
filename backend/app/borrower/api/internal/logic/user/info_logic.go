@@ -35,7 +35,7 @@ func (l *InfoLogic) Info(req *types.EmptyRequest) (resp *types.UserInfoResponse,
 	resp = &types.UserInfoResponse{}
 	userId := utils.GetInt64FromCtx(l.ctx, constants.BorrowerUserIdKey)
 	if userId == 0 {
-		return nil, errors.WithStack(errors.New("user id not found"))
+		return nil, errors.WithStack(errors.New("User Id Not Found"))
 	}
 	userInfo, err := l.svcCtx.UserRpcClient.UserInfo(l.ctx, &borrower.UserInfoRequest{
 		Data: &borrower.UserInfoRequestData{

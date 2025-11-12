@@ -35,6 +35,124 @@ entity borrowers{
     * full_name varchar(100)
 }
 
+entity loan_borrowers{
+    * id int4
+    * created_at timestamptz
+    * updated_at timestamptz
+    * is_del int2
+    ---
+    * loan_id int4
+    * borrower_entity_id int4
+    * type varchar(10)
+    * name varchar(255)
+    * tin varchar(20)
+    * tin_type varchar(10)
+    * mailing_address jsonb
+    * contact_email varchar(100)
+    * contact_phone varchar(20)
+    * contact_name varchar(100)
+}
+
+note right of loan_borrowers
+    tin_type:
+        - SSN
+        - EIN
+        - ITIN
+end note
+
+entity borrower_properties {
+    * id int4
+    * created_at timestamptz
+    * updated_at timestamptz
+    * is_del int2
+    ---
+    * unit int2
+    * borrower_id int4
+    * total_amount numeric(10,2)
+    * address jsonb
+    * property_type varchar(50)
+    * living_area_sqft decimal(8,2)
+    * bedrooms int2
+    * bathrooms int2
+    * loan_count int4
+}
+
+note right of borrower_properties
+    address {
+        state
+        city
+        zip_code
+        address1
+        address2
+    }
+    property_type:
+        - Single Family Residence
+        - 2 unit
+        - 3 unit
+        - 4 unit
+        - 4+ Multi
+        - Townhouse
+        - PUD/Condominium
+        - Mixed Use
+        - Commercial
+end note
+
+entity borrower_applicants{
+    * id int4
+    * created_at timestamptz
+    * updated_at timestamptz
+    * is_del int2
+    ---
+    * borrower_id int4
+    * first_name varchar(100)
+    * last_name varchar(100)
+    * mid_name varchar(100)
+    * full_name varchar(255)
+    * ssn varchar(20)
+    * dob date
+    * marital_status varchar(20)
+    * email varchar(100)
+    * est_credit_score int2
+    * driver_license_num varchar(30)
+    * address jsonb
+    * phone varchar(20)
+}
+
+note right of borrower_applicants
+    marital_status:
+        - Married
+        - Unmarried
+        - Separated
+end note
+
+entity borrower_entities {
+    * id int4
+    * created_at timestamptz
+    * updated_at timestamptz
+    * is_del int2
+    ---
+    * borrower_id int4
+    * type varchar(50)
+    * name varchar(100)
+    * tin_type varchar(50)
+    * tin varchar(20)
+    * mailing_address jsonb
+    * contact_email varchar(100)
+    * contact_phone varchar(20)
+    * contact_name varchar(100)
+}
+
+note right of borrower_entities
+    type:
+        - Corporation
+        - LLC
+        - Partnership
+        - Trust
+    tin_type:
+        - EIN
+end note
+
+
 entity loans {
     * id int4
     * created_at timestamptz
@@ -45,7 +163,6 @@ entity loans {
     * borrower_id int4
     * lender_company_id int4
     * lender_company varchar(100)
-    * existing_lender_company varchar(100)
     * service_company varchar(100)
     * stage  varchar(10)
     * pending_status varchar(10)
@@ -58,43 +175,22 @@ entity loans {
     * holdback_released_amount numeric(10,2)
     * lien_position varchar(10)
     * rate numeric(4,2)
-    * existing_rate numeric(4,2)
     * closing_fund numeric(10,2)
     * closing_date date
     * maturity_date date
-    * existing_maturity_date date
     * paid_off_date int4
     * monthly_payment numeric(10,2)
     * business_strategy text[]
     * source varchar(30)
     * prepayment_penalty int2
-    * purchase_amount numeric(10,2)
-    * purchase_date date
-    * has_assignment_fee boolean
-    * prepayment_fee numeric(10,2)
-    * has_subordinate_debt boolean
-    * subordinate_debt_amount numeric(10,2)
-    * scheduled_close_escrow_date date
     * loan_term int2
-    * arv numeric(10,2)
     * ltv numeric(10,2)
-    * liquidity_amount numeric(10,2)
-    * budget jsonb
-    * mid_construction boolean
     * est_credit_score int2
-    * est_yearly_rental_income numeric(10,2)
-    * yearly_liability_expense numeric(10,2)
-    * dscr numeric(8,4)
     * reserves_amount numeric(10,2)
-    * has_delayed_financing boolean
-    * has_collateralized_blanket boolean
-    * has_properties_vacant boolean
-    * has_short_term_rental boolean
     * original_contract_date date
     * extension_date date
     * loan_processor varchar(100)
     * extend jsonb
-
 }
 
 note right of loans
@@ -247,53 +343,6 @@ note right of loan_demographics
         - Hidden
 end note
 
-entity loan_borrowers{
-    * id int4
-    * created_at timestamptz
-    * updated_at timestamptz
-    * is_del int2
-    ---
-    * loan_id int4
-    * type varchar(10)
-    * name varchar(255)
-    * tin varchar(20)
-    * tin_type varchar(10)
-    * mailing_address jsonb
-    * contact_email varchar(100)
-    * contact_phone varchar(20)
-    * contact_name varchar(100)
-    * own_percent int2
-}
-
-note right of loan_borrowers
-    tin_type:
-        - SSN
-        - EIN
-        - ITIN
-end note
-
-entity property_bases {
-    * id int4
-    * created_at timestamptz
-    * updated_at timestamptz
-    * is_del int2
-    ---
-    * unit int2
-    * borrower_id int4
-    * total_amount numeric(10,2)
-    * address jsonb
-}
-
-note right of property_bases
-    address {
-        state
-        city
-        zip_code
-        address1
-        address2
-    }
-end note
-
 entity loan_properties {
     * id int4
     * created_at timestamptz
@@ -301,7 +350,7 @@ entity loan_properties {
     * is_del int2
     ---
     * loan_id int4
-    * property_base_id int4
+    * borrower_property_id int4
     * borrower_id int4
     * property_type  varchar(30)
     * living_area_sqft decimal(8,2)
@@ -314,6 +363,27 @@ entity loan_properties {
     * future_bathrooms int2
     * future_unit int2
     * owner varchar(255)
+    * existing_lender_company varchar(100)
+    * existing_rate numeric(4,2)
+    * existing_maturity_date date
+    * purchase_amount numeric(10,2)
+    * purchase_date date
+    * has_assignment_fee boolean
+    * prepayment_fee numeric(10,2)
+    * has_subordinate_debt boolean
+    * subordinate_debt_amount numeric(10,2)
+    * scheduled_close_escrow_date date
+    * arv numeric(10,2)
+    * liquidity_amount numeric(10,2)
+    * budget jsonb
+    * mid_construction boolean
+    * est_yearly_rental_income_amount numeric(10,2)
+    * yearly_liability_expense_amount numeric(10,2)
+    * dscr numeric(8,4)
+    * has_delayed_financing boolean
+    * has_collateralized_blanket boolean
+    * has_properties_vacant boolean
+    * has_short_term_rental boolean
 }
 
 note right of loan_properties
@@ -339,13 +409,27 @@ entity lender_companies {
     * name varchar(100)
     * address jsonb
     * status varchar(10)
+    * contact_email varchar(100)
+    * owner_type varchar(30)
 }
 
 note right of lender_companies
     status:
-        - active
-        - inactive
+        - Active
+        - Inactive
+    owner_type:
+        - Self
+        - ThirdParty
+        - Partner
 end note
+
+
+entity lender_company_and_employees {
+   * id int4
+   * lender_company_id int4
+   * lender_employee_id int4
+}
+
 
 entity lender_employees{
     * id int4
@@ -353,14 +437,14 @@ entity lender_employees{
     * updated_at timestamptz
     * is_del int2
     ---
-    * lender_id int4
+    * default_lender_id int4
     * lender_company_id int4
     * first_name varchar(100)
     * last_name varchar(100)
     * full_name varchar(100)
 }
 
-entity applicants {
+entity loan_applicants {
     * id int4
     * created_at timestamptz
     * updated_at timestamptz
@@ -384,10 +468,11 @@ entity applicants {
     * est_credit_score int2
     * drive_license_num varchar(20)
     * address jsonb
+    * ownership_percent int2
 }
 
 
-note right of applicants
+note right of loan_applicants
     type:
         - Individual
         - Corporation
@@ -510,11 +595,15 @@ end note
 
 users ||--|| borrowers: has one
 borrowers ||--o{ loans: has many
-borrowers ||--o{ property_bases: has many
-borrowers ||--o{ applicants: has many
-property_bases ||--o{ loan_properties: has many
-loan_properties ||--o{ applicants: has many
-loans ||--o{ applicants: has many
+borrowers ||--o{ borrower_properties: has many
+borrowers ||--o{ borrower_entities: has many
+borrowers ||--o{ loan_applicants: has many
+borrower_properties ||--o{ loan_properties: has many
+borrower_applicants ||--o{ loan_applicants: has many
+borrower_entities ||--o{ loan_borrowers: has many
+borrower_entities ||--o{ loans: has many
+
+loans ||--o{ loan_applicants: has many
 loans ||--|| loan_properties: has one
 loans ||--|| loan_borrowers: has one
 loans ||--|| loan_demographics: has one
@@ -522,9 +611,12 @@ loans ||--o{ loan_documents: has many
 loans ||--o{ loan_experiences: has many
 loans ||--o{ loan_operations: has many
 loans ||--o{ loan_third_services: has many
-loan_borrowers ||--o{ applicants: has many
+loan_properties ||--o{ loan_applicants: has many
+loan_borrowers ||--o{ loan_applicants: has many
 loan_documents ||--o{ files: has many
+
 lender_companies ||--o{ loans: has many
-lender_companies ||--o{ lender_employees: has many
+lender_companies ||--o{ lender_company_and_employees: has many
+lender_employees ||--o{ lender_company_and_employees: has many
 
 @enduml

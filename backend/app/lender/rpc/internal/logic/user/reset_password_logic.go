@@ -42,7 +42,7 @@ func (l *ResetPasswordLogic) ResetPassword(in *lender.ResetPasswordRequest) (res
 	code := in.Data.Code
 	newPwd := in.Data.Password
 	if email == "" || code == "" || newPwd == "" {
-		return nil, errors.WithStack(errors.New("Email, code and new password are required"))
+		return nil, errors.WithStack(errors.New("Email, Code And New Password Are Required"))
 	}
 	redisKey := stringx.Format(constants.LenderResetPwdCode, email)
 	cacheToken, err := global.GetRedis().Get(l.ctx, redisKey)
@@ -50,7 +50,7 @@ func (l *ResetPasswordLogic) ResetPassword(in *lender.ResetPasswordRequest) (res
 		return nil, errors.WithStack(err)
 	}
 	if cacheToken == "" || cacheToken != code {
-		return nil, errors.WithStack(errors.New("Invalid or expired code"))
+		return nil, errors.WithStack(errors.New("Invalid Or Expired Code"))
 	}
 
 	user, err := l.svcCtx.UserRepo.GetLenderUserByEmail(l.ctx, email)
@@ -58,7 +58,7 @@ func (l *ResetPasswordLogic) ResetPassword(in *lender.ResetPasswordRequest) (res
 		return nil, err
 	}
 	if user.LenderEmployee == nil {
-		return nil, errors.WithStack(errors.New("User not found"))
+		return nil, errors.WithStack(errors.New("User Not Found"))
 	}
 
 	// hash pwd

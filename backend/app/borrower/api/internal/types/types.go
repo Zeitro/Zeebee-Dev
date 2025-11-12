@@ -11,27 +11,119 @@ type AddressEntry struct {
 	ZipCode  string `json:"zip_code,optional"`
 }
 
-type ApplicantEntry struct {
-	Id               int64         `json:"id,omitempty,optional"`
-	FirstName        string        `json:"first_name,omitempty, optional"`
-	MidName          string        `json:"mid_name,omitempty, optional"`
-	LastName         string        `json:"last_name,omitempty, optional"`
-	FullName         string        `json:"full_name,omitempty, optional"`
-	BorrowerId       int64         `json:"borrower_id,omitempty, optional"`
-	LoanId           int64         `json:"loan_id,omitempty, optional"`
-	IsPrimary        bool          `json:"is_primary, optional"`
-	Type             string        `json:"type,omitempty, optional"`
-	InvitationStatus string        `json:"invitation_status,omitempty, optional"`
-	LoanPropertyId   int64         `json:"loan_property_id,omitempty"`
-	Ssn              string        `json:"ssn,omitempty, optional"`
-	Dob              string        `json:"dob,omitempty, optional"`
-	MaritalStatus    string        `json:"marital_status,omitempty, optional"`
-	Email            string        `json:"email,omitempty, optional"`
-	EstCreditScore   int32         `json:"est_credit_score,omitempty, optional"`
-	DriverLicenseNum string        `json:"driver_license_num,omitempty, optional"`
-	Address          *AddressEntry `json:"address,omitempty, optional"`
-	LoanBorrowerId   int64         `json:"loan_borrower_id,omitempty, optional"`
-	Phone            string        `json:"phone,omitempty, optional"`
+type BorrowerApplicantEntry struct {
+	Id               int64        `json:"id"`
+	CreatedAt        string       `json:"created_at"`
+	UpdatedAt        string       `json:"updated_at"`
+	BorrowerId       int64        `json:"borrower_id"`
+	FirstName        string       `json:"first_name"`
+	MidName          string       `json:"mid_name"`
+	LastName         string       `json:"last_name"`
+	FullName         string       `json:"full_name"`
+	Ssn              string       `json:"ssn"`
+	Dob              string       `json:"dob"`
+	MaritalStatus    string       `json:"marital_status"`
+	Email            string       `json:"email"`
+	Phone            string       `json:"phone"`
+	EstCreditScore   int32        `json:"est_credit_score"`
+	DriverLicenseNum string       `json:"driver_license_num"`
+	Address          AddressEntry `json:"address"`
+}
+
+type BorrowerApplicantPageEntry struct {
+	Id               int64        `json:"id"`
+	CreatedAt        string       `json:"created_at"`
+	UpdatedAt        string       `json:"updated_at"`
+	FirstName        string       `json:"first_name"`
+	MidName          string       `json:"mid_name"`
+	LastName         string       `json:"last_name"`
+	FullName         string       `json:"full_name"`
+	Ssn              string       `json:"ssn"`
+	Dob              string       `json:"dob"`
+	MaritalStatus    string       `json:"marital_status"`
+	Email            string       `json:"email"`
+	Phone            string       `json:"phone"`
+	EstCreditScore   int32        `json:"est_credit_score"`
+	DriverLicenseNum string       `json:"driver_license_num"`
+	Address          AddressEntry `json:"address"`
+}
+
+type BorrowerApplicantPageFilter struct {
+	Keyword string `json:"keyword,optional"`
+}
+
+type BorrowerApplicantPageSorter struct {
+	Column string `json:"column,optional"`
+	Sort   string `json:"sort,optional"`
+}
+
+type BorrowerEntityEditRequest struct {
+	Id             int64        `path:"id,optional"`
+	Type           string       `json:"type" validate:"required,oneof=Corporation LLC Partnership Trust"`
+	Name           string       `json:"name" validate:"required,min=3,max=100"`
+	TinType        string       `json:"tin_type" validate:"required,oneof=EIN"`
+	Tin            string       `json:"tin" validate:"required,min=9,max=9"`
+	MailingAddress AddressEntry `json:"mailing_address" validate:"required"`
+	ContactEmail   string       `json:"contact_email" validate:"required,email,min=5,max=100"`
+	ContactName    string       `json:"contact_name" validate:"required,min=5,max=100"`
+	ContactPhone   string       `json:"contact_phone" validate:"required,min=9,max=15"`
+}
+
+type BorrowerEntityEntry struct {
+	Id             int64        `json:"id"`
+	CreatedAt      string       `json:"created_at"`
+	UpdatedAt      string       `json:"updated_at"`
+	BorrowerId     int64        `json:"borrower_id"`
+	Type           string       `json:"type"`
+	Name           string       `json:"name"`
+	TinType        string       `json:"tin_type"`
+	Tin            string       `json:"tin"`
+	MailingAddress AddressEntry `json:"mailing_address"`
+	ContactEmail   string       `json:"contact_email"`
+	ContactName    string       `json:"contact_name"`
+	ContactPhone   string       `json:"contact_phone"`
+}
+
+type BorrowerEntityPageEntry struct {
+	Id             int64         `json:"id"`
+	CreatedAt      string        `json:"created_at"`
+	UpdatedAt      string        `json:"updated_at"`
+	BorrowerId     int64         `json:"borrower_id"`
+	Type           string        `json:"type"`
+	Name           string        `json:"name"`
+	TinType        string        `json:"tin_type"`
+	Tin            string        `json:"tin"`
+	ContactEmail   string        `json:"contact_email"`
+	ContactName    string        `json:"contact_name"`
+	ContactPhone   string        `json:"contact_phone"`
+	MailingAddress *AddressEntry `json:"mailing_address,omitempty"`
+}
+
+type BorrowerEntityPageFilter struct {
+	Keyword string `json:"keyword,optional"`
+}
+
+type BorrowerEntityPageSorter struct {
+	Column string `json:"column,optional"`
+	Sort   string `json:"sort,optional"`
+}
+
+type BorrowerEntityUpdateResponse struct {
+	BorrowerEntityEntry
+}
+
+type BorrowerPropertyEntry struct {
+	Id             int64         `json:"id"`
+	PropertyType   string        `json:"property_type"`
+	TotalAmount    float64       `json:"total_amount"`
+	Unit           int32         `json:"unit"`
+	LivingAreaSqft float32       `json:"living_area_sqft"`
+	Bedrooms       int32         `json:"bedrooms"`
+	Bathrooms      float32       `json:"bathrooms"`
+	Address        *AddressEntry `json:"address"`
+	CreatedAt      string        `json:"created_at"`
+	UpdatedAt      string        `json:"updated_at"`
+	LoanCount      int32         `json:"loan_count"`
 }
 
 type EmptyRequest struct {
@@ -50,25 +142,29 @@ type FileEntry struct {
 }
 
 type ImportLoanApplicantEntry struct {
-	Id        int64  `json:"id,optional"`
-	FirstName string `json:"first_name,optional" validate:"required,min=1,max=30"`
-	Type      string `json:"type,optional" validate:"required,oneof=Individual Corporation LLC Trust Partnership"`
-	IsPrimary bool   `json:"is_primary,optional"`
+	Id         int64  `json:"id,optional"`
+	FirstName  string `json:"first_name,optional" validate:"required,min=1,max=30"`
+	Type       string `json:"type,optional" validate:"required,oneof=Individual Corporation LLC Trust Partnership"`
+	IsPrimary  bool   `json:"is_primary,optional"`
+	OwnPercent int32  `json:"own_percent" validate:"required,min=1,max=100"`
 }
 
 type ImportLoanApplyPropertyEntry struct {
-	Id                   int64              `json:"id,optional"`
-	PropertyType         string             `json:"property_type,optional"`
-	LivingAreaSqft       float32            `json:"living_area_sqft,optional" validate:"gte=0"`
-	Bedrooms             int32              `json:"bedrooms,optional" validate:"gte=0"`
-	Bathrooms            int32              `json:"bathrooms,optional" validate:"gte=0"`
-	FuturePropertyType   string             `json:"future_property_type,optional"`
-	FutureUnit           int32              `json:"future_unit,optional" validate:"gte=0"`
-	FutureLivingAreaSqft float32            `json:"future_living_area_sqft,optional" validate:"gte=0"`
-	FutureBedrooms       int32              `json:"future_bedrooms,optional" validate:"gte=0"`
-	FutureBathrooms      int32              `json:"future_bathrooms,optional" validate:"gte=0"`
-	Owner                string             `json:"owner,optional"`
-	PropertyBase         *PropertyBaseEntry `json:"property_base,optional" validate:"required"`
+	Id                   int64         `json:"id,optional"`
+	PropertyType         string        `json:"property_type,optional"`
+	Unit                 int32         `json:"unit,optional" validate:"gte=0"`
+	LivingAreaSqft       float32       `json:"living_area_sqft,optional" validate:"gte=0"`
+	Bedrooms             int32         `json:"bedrooms,optional" validate:"gte=0"`
+	Bathrooms            int32         `json:"bathrooms,optional" validate:"gte=0"`
+	FuturePropertyType   string        `json:"future_property_type,optional"`
+	FutureUnit           int32         `json:"future_unit,optional" validate:"gte=0"`
+	FutureLivingAreaSqft float32       `json:"future_living_area_sqft,optional" validate:"gte=0"`
+	FutureBedrooms       int32         `json:"future_bedrooms,optional" validate:"gte=0"`
+	FutureBathrooms      int32         `json:"future_bathrooms,optional" validate:"gte=0"`
+	Owner                string        `json:"owner,optional"`
+	Address              *AddressEntry `json:"address,optional"`
+	PurchaseAmount       float64       `json:"purchase_amount,optional"`
+	PurchaseDate         string        `json:"purchase_date,optional"`
 }
 
 type ImportLoanBorrowerEntry struct {
@@ -82,7 +178,6 @@ type ImportLoanBorrowerEntry struct {
 	ContactEmail   string       `json:"contact_email,optional"`
 	ContactPhone   string       `json:"contact_phone,optional" `
 	ContactName    string       `json:"contact_name,optional" `
-	OwnPercent     int32        `json:"own_percent,optional"`
 }
 
 type ImportLoanExtendEntry struct {
@@ -99,8 +194,6 @@ type ImportPendingLoanEntry struct {
 	Applicants            []*ImportLoanApplicantEntry   `json:"applicants,optional" validate:"required,gt=0,lte=2"`
 	LoanBorrower          *ImportLoanBorrowerEntry      `json:"loan_borrower,optional" validate:"required"`
 	ClosingDate           string                        `json:"closing_date,optional"`
-	PurchaseAmount        float64                       `json:"purchase_amount,optional"`
-	PurchaseDate          string                        `json:"purchase_date,optional"`
 	MaturityDate          string                        `json:"maturity_date,optional"`
 	ClosingFund           float64                       `json:"closing_fund,optional"`
 	LenderCompany         string                        `json:"lender_company,optional"`
@@ -114,7 +207,14 @@ type ImportPendingLoanEntry struct {
 	Extend                *ImportLoanExtendEntry        `json:"extend,optional"`
 }
 
-type LoanApplyApplicantEntry struct {
+type LoanApplicantApplyEntry struct {
+	Id                  int64 `json:"id,optional"`
+	BorrowerApplicantId int64 `json:"borrower_applicant_id" validate:"required,gt=0"`
+	IsPrimary           bool  `json:"is_primary, optional"`
+	OwnPercent          int32 `json:"own_percent" validate:"required,min=1,max=100"`
+}
+
+type LoanApplicantApplyFormPdfEntry struct {
 	Id               int64         `json:"id,optional"`
 	FirstName        string        `json:"first_name,optional" validate:"required,min=1,max=30"`
 	MidName          string        `json:"mid_name,optional" validate:"min=0,max=30"`
@@ -129,36 +229,55 @@ type LoanApplyApplicantEntry struct {
 	EstCreditScore   int32         `json:"est_credit_score,optional" validate:"required,gte=300,lte=850"`
 	DriverLicenseNum string        `json:"driver_license_num,optional" validate:"required"`
 	Address          *AddressEntry `json:"address,optional" validate:"required"`
+	OwnPercent       int32         `json:"own_percent" validate:"required,min=1,max=100"`
 }
 
-type LoanApplyPropertyEntry struct {
-	Id                   int64              `json:"id,optional"`
-	PropertyType         string             `json:"property_type,optional" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
-	Unit                 int32              `json:"unit,optional"`
-	LivingAreaSqft       float32            `json:"living_area_sqft,optional" validate:"required,gte=0"`
-	Bedrooms             int32              `json:"bedrooms,optional" validate:"required,gte=0"`
-	Bathrooms            int32              `json:"bathrooms,optional" validate:"gte=0"`
-	FuturePropertyType   string             `json:"future_property_type,optional"`
-	FutureUnit           int32              `json:"future_unit,optional" validate:"gte=0"`
-	FutureLivingAreaSqft float32            `json:"future_living_area_sqft,optional" validate:"gte=0"`
-	FutureBedrooms       int32              `json:"future_bedrooms,optional" validate:"gte=0"`
-	FutureBathrooms      int32              `json:"future_bathrooms,optional" validate:"gte=0"`
-	Owner                string             `json:"owner,optional"`
-	PropertyBase         *PropertyBaseEntry `json:"property_base,optional" validate:"required"`
+type LoanApplicantEntry struct {
+	Id                  int64         `json:"id"`
+	BorrowerApplicantId int64         `json:"borrower_applicant_id"`
+	FirstName           string        `json:"first_name"`
+	MidName             string        `json:"mid_name"`
+	LastName            string        `json:"last_name"`
+	FullName            string        `json:"full_name"`
+	BorrowerId          int64         `json:"borrower_id"`
+	LoanId              int64         `json:"loan_id"`
+	IsPrimary           bool          `json:"is_primary"`
+	Type                string        `json:"type"`
+	InvitationStatus    string        `json:"invitation_status"`
+	LoanPropertyId      int64         `json:"loan_property_id"`
+	Ssn                 string        `json:"ssn"`
+	Dob                 string        `json:"dob"`
+	MaritalStatus       string        `json:"marital_status"`
+	Email               string        `json:"email"`
+	EstCreditScore      int32         `json:"est_credit_score"`
+	DriverLicenseNum    string        `json:"driver_license_num"`
+	Address             *AddressEntry `json:"address"`
+	LoanBorrowerId      int64         `json:"loan_borrower_id"`
+	Phone               string        `json:"phone"`
+	OwnPercent          int32         `json:"own_percent"`
+	CreatedAt           string        `json:"created_at"`
+	UpdatedAt           string        `json:"updated_at"`
 }
 
 type LoanBorrowerEntry struct {
-	Id             int64        `json:"id,optional"`
-	LoanId         int64        `json:"loan_id,optional"`
-	Type           string       `json:"type,optional" validate:"required,oneof=Individual Corporation LLC Trust Partnership"`
-	Name           string       `json:"name,optional" validate:"required,min=1,max=255"`
-	TinType        string       `json:"tin_type,optional" validate:"required,oneof=SSN EIN ITIN"`
-	Tin            string       `json:"tin,optional" validate:"required,min=9,max=9"`
-	MailingAddress AddressEntry `json:"mailing_address,optional" validate:"required"`
-	ContactEmail   string       `json:"contact_email,optional" validate:"required,email"`
-	ContactPhone   string       `json:"contact_phone,optional" validate:"required"`
-	ContactName    string       `json:"contact_name,optional" validate:"required,min=1,max=255"`
-	OwnPercent     int32        `json:"own_percent,optional" validate:"required,min=1,max=100"`
+	Id               int64        `json:"id,optional"`
+	BorrowerEntityId int64        `json:"borrower_entity_id,optional"`
+	LoanId           int64        `json:"loan_id,optional"`
+	Type             string       `json:"type,optional" validate:"required,oneof=Individual Corporation LLC Trust Partnership"`
+	Name             string       `json:"name,optional" validate:"required,min=1,max=255"`
+	TinType          string       `json:"tin_type,optional" validate:"required,oneof=SSN EIN ITIN"`
+	Tin              string       `json:"tin,optional" validate:"required,min=9,max=9"`
+	MailingAddress   AddressEntry `json:"mailing_address,optional" validate:"required"`
+	ContactEmail     string       `json:"contact_email,optional" validate:"required,email"`
+	ContactPhone     string       `json:"contact_phone,optional" validate:"required"`
+	ContactName      string       `json:"contact_name,optional" validate:"required,min=1,max=255"`
+	CreatedAt        string       `json:"created_at,optional"`
+	UpdatedAt        string       `json:"updated_at,optional"`
+}
+
+type LoanBorrowerLoanEditEntry struct {
+	Id               int64 `json:"id,optional"`
+	BorrowerEntityId int64 `json:"borrower_entity_id,optional"`
 }
 
 type LoanBudgetEntry struct {
@@ -226,15 +345,6 @@ type LoanDocumentEntry struct {
 	Files          []FileEntry `json:"files"`
 }
 
-type LoanEditApplicantEntry struct {
-	Id        int64  `json:"id,optional"`
-	FirstName string `json:"first_name" validate:"required,min=1,max=30"`
-	MidName   string `json:"mid_name,optional" validate:"min=0,max=30"`
-	LastName  string `json:"last_name" validate:"required,min=1,max=30"`
-	Type      string `json:"type" validate:"required,oneof=Individual Corporation LLC Trust Partnership"`
-	IsPrimary bool   `json:"is_primary"`
-}
-
 type LoanEntry struct {
 	Id                         int64                    `json:"id,optional"`
 	Code                       string                   `json:"code,optional"`
@@ -258,38 +368,17 @@ type LoanEntry struct {
 	ServiceCompany             string                   `json:"service_company,optional" validate:"required_if=Stage Active"`
 	PaidOffDate                string                   `json:"paid_off_date,optional" validate:"required_if=Stage Archived,omitempty,datetime=01/02/2006"`
 	BusinessStrategy           []string                 `json:"business_strategy" validate:"required,dive,required,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
-	Applicants                 []ApplicantEntry         `json:"applicants"`
+	Applicants                 []LoanApplicantEntry     `json:"applicants"`
 	LenderID                   int64                    `json:"lender_id"`
 	BorrowerID                 int64                    `json:"borrower_id"`
 	CreatedAt                  string                   `json:"created_at"`
 	UpdatedAt                  string                   `json:"updated_at"`
 	Source                     string                   `json:"source"`
-	ExistingLenderCompany      string                   `json:"existing_lender_company"`
-	ExistingRate               float32                  `json:"existing_rate" `
-	ExistingMaturityDate       string                   `json:"existing_maturity_date"`
-	PurchaseAmount             float64                  `json:"purchase_amount"`
-	PurchaseDate               string                   `json:"purchase_date" `
-	HasAssignmentFee           bool                     `json:"has_assignment_fee"`
-	AssignmentFeeAmount        float64                  `json:"assignment_fee_amount"`
-	HasSubordinateDebt         bool                     `json:"has_subordinate_debt"`
-	SubordinateDebtAmount      float64                  `json:"subordinate_debt_amount"`
-	ScheduledCloseEscrowDate   string                   `json:"scheduled_close_escrow_date"`
 	LoanTerm                   int32                    `json:"loan_term" `
-	Arv                        float64                  `json:"arv"`
 	Ltv                        float64                  `json:"ltv"`
-	EstPropertyValueAmount     float64                  `json:"est_property_value_amount"`
-	LiquidityAmount            float64                  `json:"liquidity_amount"`
-	Budget                     *LoanBudgetEntry         `json:"budget"`
-	MidConstruction            bool                     `json:"mid_construction"`
 	EstCreditScore             int32                    `json:"est_credit_score"`
-	EstYearlyRentalIncome      float64                  `json:"est_yearly_rental_income" `
-	YearlyLiabilityExpense     float64                  `json:"yearly_liability_expense" `
-	Dscr                       float32                  `json:"dscr" `
 	ReservesAmount             float64                  `json:"reserves_amount"`
-	HasDelayedFinancing        bool                     `json:"has_delayed_financing"`
 	HasCollateralizedBlanket   bool                     `json:"has_collateralized_blanket"`
-	HasPropertiesVacant        bool                     `json:"has_properties_vacant"`
-	HasShortTermRental         bool                     `json:"has_short_term_rental"`
 	TransactionExperiences     []*LoanExperienceEntry   `json:"transaction_experiences"`
 	RealEstateExperiences      []*LoanExperienceEntry   `json:"real_estate_experiences"`
 	LoanThirdServices          []*LoanThirdServiceEntry `json:"loan_third_services"`
@@ -369,20 +458,137 @@ type LoanPreApprovalRequestProperty struct {
 	Unit          int32         `json:"unit" validate:"gte=1,lte=100"`
 }
 
+type LoanPropertyApplyEntry struct {
+	Id                           int64            `json:"id,optional"`
+	BorrowerPropertyId           int64            `json:"borrower_property_id" validate:"required,gt=0"`
+	FuturePropertyType           string           `json:"future_property_type"`
+	FutureUnit                   int32            `json:"future_unit" `
+	FutureLivingAreaSqft         float32          `json:"future_living_area_sqft" `
+	FutureBedrooms               int32            `json:"future_bedrooms" `
+	FutureBathrooms              int32            `json:"future_bathrooms"`
+	Owner                        string           `json:"owner,optional"`
+	ExistingLenderCompany        string           `json:"existing_lender_company, optional" validate:"max=200"`
+	ExistingRate                 float32          `json:"existing_rate, optional" validate:"gte=0"`
+	ExistingMaturityDate         string           `json:"existing_maturity_date, optional" `
+	PurchaseAmount               float64          `json:"purchase_amount, optional" validate:"gte=0"`
+	PurchaseDate                 string           `json:"purchase_date, optional" `
+	HasAssignmentFee             bool             `json:"has_assignment_fee, optional" validate:"required_if=HasAssignmentFee true,omitempty,gte=0"`
+	AssignmentFeeAmount          float64          `json:"assignment_fee_amount, optional" validate:"gte=0"`
+	HasSubordinateDebt           bool             `json:"has_subordinate_debt, optional"`
+	SubordinateDebtAmount        float64          `json:"subordinate_debt_amount, optional" validate:"gte=0"`
+	ScheduledCloseEscrowDate     string           `json:"scheduled_close_escrow_date, optional"`
+	EstPropertyValueAmount       float64          `json:"est_property_value_amount, optional" validate:"gte=0"`
+	LiquidityAmount              float64          `json:"liquidity_amount" validate:"gte=0"`
+	Budget                       *LoanBudgetEntry `json:"budget, optional"`
+	MidConstruction              bool             `json:"mid_construction, optional"`
+	EstYearlyRentalIncomeAmount  float64          `json:"est_yearly_rental_income_amount, optional" `
+	YearlyLiabilityExpenseAmount float64          `json:"yearly_liability_expense_amount, optional" `
+	Dscr                         float64          `json:"dscr,optional" validate:"gte=0"`
+	HasDelayedFinancing          bool             `json:"has_delayed_financing, optional"`
+	HasPropertiesVacant          bool             `json:"has_properties_vacant, optional"`
+	HasShortTermRental           bool             `json:"has_short_term_rental, optional"`
+	Arv                          float64          `json:"arv,optional" validate:"required,gte=0"`
+}
+
+type LoanPropertyApplyFormPdfEntry struct {
+	Id                           int64            `json:"id,optional"`
+	Unit                         int32            `json:"unit"`
+	LivingAreaSqft               float32          `json:"living_area_sqft"`
+	Bedrooms                     int32            `json:"bedrooms" `
+	Bathrooms                    int32            `json:"bathrooms"`
+	PropertyType                 string           `json:"property_type"`
+	Address                      *AddressEntry    `json:"address"`
+	FuturePropertyType           string           `json:"future_property_type"`
+	FutureUnit                   int32            `json:"future_unit" `
+	FutureLivingAreaSqft         float32          `json:"future_living_area_sqft" `
+	FutureBedrooms               int32            `json:"future_bedrooms" `
+	FutureBathrooms              int32            `json:"future_bathrooms"`
+	Owner                        string           `json:"owner,optional"`
+	ExistingLenderCompany        string           `json:"existing_lender_company, optional" validate:"max=200"`
+	ExistingRate                 float32          `json:"existing_rate, optional" validate:"gte=0"`
+	ExistingMaturityDate         string           `json:"existing_maturity_date, optional" `
+	PurchaseAmount               float64          `json:"purchase_amount, optional" validate:"gte=0"`
+	PurchaseDate                 string           `json:"purchase_date, optional" `
+	HasAssignmentFee             bool             `json:"has_assignment_fee, optional" validate:"required_if=HasAssignmentFee true,omitempty,gte=0"`
+	AssignmentFeeAmount          float64          `json:"assignment_fee_amount, optional" validate:"gte=0"`
+	HasSubordinateDebt           bool             `json:"has_subordinate_debt, optional"`
+	SubordinateDebtAmount        float64          `json:"subordinate_debt_amount, optional" validate:"gte=0"`
+	ScheduledCloseEscrowDate     string           `json:"scheduled_close_escrow_date, optional"`
+	EstPropertyValueAmount       float64          `json:"est_property_value_amount, optional" validate:"gte=0"`
+	LiquidityAmount              float64          `json:"liquidity_amount" validate:"gte=0"`
+	Budget                       *LoanBudgetEntry `json:"budget, optional"`
+	MidConstruction              bool             `json:"mid_construction, optional"`
+	EstYearlyRentalIncomeAmount  float64          `json:"est_yearly_rental_income_amount, optional" `
+	YearlyLiabilityExpenseAmount float64          `json:"yearly_liability_expense_amount, optional" `
+	Dscr                         float64          `json:"dscr,optional" validate:"gte=0"`
+	HasDelayedFinancing          bool             `json:"has_delayed_financing, optional"`
+	HasPropertiesVacant          bool             `json:"has_properties_vacant, optional"`
+	HasShortTermRental           bool             `json:"has_short_term_rental, optional"`
+	HasCollateralizedBlanket     bool             `json:"has_collateralized_blanket,optional"`
+	Arv                          float64          `json:"arv,optional" validate:"required,gte=0"`
+}
+
+type LoanPropertyEditEntry struct {
+	Id                    int64   `json:"id,optional"`
+	BorrowerPropertyId    int64   `json:"borrower_property_id" validate:"required,gt=0"`
+	Ower                  string  `json:"ower,optional" validate:"max=50"`
+	PurchaseAmount        float64 `json:"purchase_amount,optional"`
+	PurchaseDate          string  `json:"purchase_date,optional"`
+	ExistingLenderCompany string  `json:"existing_lender_company, optional" validate:"max=100"`
+}
+
 type LoanPropertyEntry struct {
-	Id                   int64              `json:"id,optional"`
-	PropertyType         string             `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
-	Unit                 int32              `json:"unit,optional"`
-	LivingAreaSqft       float32            `json:"living_area_sqft,optional"`
-	Bedrooms             int32              `json:"bedrooms,optional" `
-	Bathrooms            int32              `json:"bathrooms,optional"`
-	FuturePropertyType   string             `json:"future_property_type,optional"`
-	FutureUnit           int32              `json:"future_unit,optional" validate:"gte=0"`
-	FutureLivingAreaSqft float32            `json:"future_living_area_sqft,optional" validate:"gte=0"`
-	FutureBedrooms       int32              `json:"future_bedrooms,optional" validate:"gte=0"`
-	FutureBathrooms      int32              `json:"future_bathrooms,optional" validate:"gte=0"`
-	Owner                string             `json:"owner,optional"`
-	PropertyBase         *PropertyBaseEntry `json:"property_base,optional" validate:"required"`
+	Id                           int64            `json:"id"`
+	BorrowerPropertyId           int64            `json:"borrower_property_id"`
+	PropertyType                 string           `json:"property_type"`
+	Unit                         int32            `json:"unit"`
+	LivingAreaSqft               float32          `json:"living_area_sqft"`
+	Bedrooms                     int32            `json:"bedrooms" `
+	Bathrooms                    int32            `json:"bathrooms"`
+	FuturePropertyType           string           `json:"future_property_type"`
+	FutureUnit                   int32            `json:"future_unit" `
+	FutureLivingAreaSqft         float32          `json:"future_living_area_sqft" `
+	FutureBedrooms               int32            `json:"future_bedrooms" `
+	FutureBathrooms              int32            `json:"future_bathrooms"`
+	Owner                        string           `json:"owner"`
+	Address                      *AddressEntry    `json:"address"`
+	ExistingLenderCompany        string           `json:"existing_lender_company"`
+	ExistingRate                 float32          `json:"existing_rate"`
+	ExistingMaturityDate         string           `json:"existing_maturity_date"`
+	PurchaseAmount               float64          `json:"purchase_amount"`
+	PurchaseDate                 string           `json:"purchase_date"`
+	HasAssignmentFee             bool             `json:"has_assignment_fee"`
+	AssignmentFeeAmount          float64          `json:"assignment_fee_amount"`
+	HasSubordinateDebt           bool             `json:"has_subordinate_debt"`
+	SubordinateDebtAmount        float64          `json:"subordinate_debt_amount"`
+	ScheduledCloseEscrowDate     string           `json:"scheduled_close_escrow_date"`
+	LiquidityAmount              float64          `json:"liquidity_amount"`
+	Budget                       *LoanBudgetEntry `json:"budget"`
+	MidConstruction              bool             `json:"mid_construction"`
+	EstYearlyRentalIncomeAmount  float64          `json:"est_yearly_rental_income_amount"`
+	YearlyLiabilityExpenseAmount float64          `json:"yearly_liability_expense_amount"`
+	Dscr                         float64          `json:"dscr"`
+	HasDelayedFinancing          bool             `json:"has_delayed_financing"`
+	HasCollateralizedBlanket     bool             `json:"has_collateralized_blanket"`
+	HasPropertiesVacant          bool             `json:"has_properties_vacant"`
+	HasShortTermRental           bool             `json:"has_short_term_rental"`
+	EstPropertyValueAmount       float64          `json:"est_property_value_amount"`
+	Arv                          float64          `json:"arv"`
+}
+
+type LoanPropertyPdfEntry struct {
+	PropertyType         string        `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
+	Unit                 int32         `json:"unit" validate:"required,gt=0"`
+	LivingAreaSqft       float32       `json:"living_area_sqft" validate:"required,gt=0"`
+	Bedrooms             int32         `json:"bedrooms" validate:"required,gt=0"`
+	Bathrooms            int32         `json:"bathrooms" validate:"required,gt=0"`
+	FuturePropertyType   string        `json:"future_property_type" validate:"required,gt=0"`
+	FutureUnit           int32         `json:"future_unit" validate:"required,gt=0"`
+	FutureLivingAreaSqft float32       `json:"future_living_area_sqft" validate:"required,gt=0"`
+	FutureBedrooms       int32         `json:"future_bedrooms" validate:"required,gt=0"`
+	FutureBathrooms      int32         `json:"future_bathrooms" validate:"required,gt=0"`
+	Owner                string        `json:"owner,optional"`
+	Address              *AddressEntry `json:"address" validate:"required"`
 }
 
 type LoanThirdServiceEntry struct {
@@ -393,6 +599,10 @@ type LoanThirdServiceEntry struct {
 	Email   string `json:"email,optional"`
 	Phone   string `json:"phone,optional"`
 	Company string `json:"company,optional" validate:"required_unless=Type 'Title Co' Type 'Escrow Co' Type Insurance"`
+}
+
+type PathIdRequest struct {
+	Id int64 `path:"id" validate:"required,gt=0"`
 }
 
 type PrimaryPreApprovalLoan struct {
@@ -413,27 +623,25 @@ type PrimaryPreApprovalLoan struct {
 	RequestId         string  `json:"request_id"`
 }
 
-type PropertyBaseEntry struct {
-	Id          int64         `json:"id,optional"`
-	Unit        int32         `json:"unit,optional" validate:"required,min=1"`
-	Address     *AddressEntry `json:"address,optional" validate:"required"`
-	TotalAmount float64       `json:"total_amount,optional"`
-}
-
 type PropertyPageEntry struct {
-	Id                        int64        `json:"id"`
-	PropertyType              string       `json:"property_type"`
-	TotalAmount               float64      `json:"total_amount"`
-	Address                   AddressEntry `json:"address"`
-	TotalPrincipalAmount      float64      `json:"total_principal_amount"`
-	AvgRate                   float32      `json:"avg_rate"`
-	TotalMonthlyPaymentAmount float64      `json:"total_monthly_payment_amount"`
-	Applicants                []string     `json:"applicants"`
-	Lenders                   []string     `json:"lenders"`
-	NearestMaturityDate       string       `json:"nearest_maturity_date"`
-	PendingLoanCount          int64        `json:"pending_loan_count"`
-	ActiveLoanCount           int64        `json:"active_loan_count"`
-	ArchivedLoanCount         int64        `json:"archived_loan_count"`
+	Id                        int64         `json:"id"`
+	PropertyType              string        `json:"property_type"`
+	LivingAreaSqft            float32       `json:"living_area_sqft"`
+	Bedrooms                  int32         `json:"bedrooms"`
+	Bathrooms                 float32       `json:"bathrooms"`
+	Unit                      int32         `json:"unit"`
+	TotalAmount               float64       `json:"total_amount"`
+	Address                   *AddressEntry `json:"address"`
+	TotalPrincipalAmount      float64       `json:"total_principal_amount"`
+	AvgRate                   float32       `json:"avg_rate"`
+	TotalMonthlyPaymentAmount float64       `json:"total_monthly_payment_amount"`
+	Applicants                []string      `json:"applicants"`
+	Lenders                   []string      `json:"lenders"`
+	NearestMaturityDate       string        `json:"nearest_maturity_date"`
+	PendingLoanCount          int64         `json:"pending_loan_count"`
+	ActiveLoanCount           int64         `json:"active_loan_count"`
+	ArchivedLoanCount         int64         `json:"archived_loan_count"`
+	LoanCount                 int32         `json:"loan_count"`
 }
 
 type PropertyPageFilter struct {
@@ -479,6 +687,13 @@ type Signatures struct {
 	BusinessPurpose       []*SignatureEntry `json:"business_purpose,optional"`
 	PatriotAct            []*SignatureEntry `json:"patriot_act,optional"`
 	BorrowerAuthorization []*SignatureEntry `json:"borrower_authorization,optional"`
+}
+
+type ThirdPartyLoanApplicantEntry struct {
+	Id                  int64 `json:"id,optional"`
+	BorrowerApplicantId int64 `json:"borrower_applicant_id" validate:"required,gt=0"`
+	IsPrimary           bool  `json:"is_primary,optional"`
+	OwnPercent          int32 `json:"own_percent,optional" validate:"min=0,max=100"`
 }
 
 type UserInfo struct {

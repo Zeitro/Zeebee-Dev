@@ -34,7 +34,7 @@ func (l *RefreshTokenLogic) RefreshToken(req *types.UserRefreshTokenRequest) (re
 		},
 	})
 	if err != nil {
-		return nil, errors.WithStack(errors.New("refresh token error"))
+		return nil, errors.WithStack(errors.New("Refresh Token Error"))
 	}
 
 	return &types.UserRefreshTokenResponse{

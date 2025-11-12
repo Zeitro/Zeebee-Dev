@@ -39,7 +39,7 @@ func (l *UpdateBorrowerLoanPendingStatusLogic) UpdateBorrowerLoanPendingStatus(i
 		"borrower_id": in.Data.BorrowerId,
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get loan")
+		return nil, errors.Wrap(err, "Failed To Get Loan")
 	}
 	if loanModel.Stage != constants.LoanStagePending {
 		return nil, errors.New("loan's stage should be pending")

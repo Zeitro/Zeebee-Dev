@@ -3,7 +3,6 @@ package userlogic
 import (
 	"context"
 
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/lender/rpc/internal/repo/model"
@@ -42,7 +41,7 @@ func (l *RegisterLogic) Register(in *lender.UserRegisterRequest) (resp *lender.U
 	existedUser, _ = l.svcCtx.UserRepo.GetLenderUserByEmail(l.ctx, in.Data.Email)
 
 	if existedUser != nil && existedUser.Id > 0 {
-		return nil, errors.WithStack(errors.New("User already exists"))
+		return nil, errorx.New("User already exists")
 	}
 
 	// check company
@@ -50,16 +49,16 @@ func (l *RegisterLogic) Register(in *lender.UserRegisterRequest) (resp *lender.U
 		"id": in.Data.LenderCompanyId,
 	})
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	if !isExisted {
-		return nil, errors.WithStack(errors.New("Lender company is not exists"))
+		return nil, errorx.New("Lender company is not exists")
 	}
 
 	var pwd string
 	pwd, err = utils.HashPassword(in.Data.Password)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	userModel := &model.User{
 		Email:        in.Data.Email,
@@ -81,7 +80,7 @@ func (l *RegisterLogic) Register(in *lender.UserRegisterRequest) (resp *lender.U
 			return innerErr
 		}
 		if company.Status != constants.LenderCompanyStatusActive {
-			return errors.WithStack(errors.New("Lender company is not active"))
+			return errorx.New("Lender Company Is Not Active")
 		}
 
 		// create user
