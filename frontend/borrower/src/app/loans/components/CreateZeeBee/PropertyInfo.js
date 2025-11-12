@@ -7,7 +7,13 @@ import { layoutCol, titleCol } from '@/enum/common';
 import { livingAreaProps } from '@repo/shared-methods/utils';
 import SelectCard from '@/components/SelectCard/index';
 let name = 'loan_property';
-const PropertyInfo = ({ gutter = 24, addressProps, isRequestProperty, unitInfo }) => {
+const PropertyInfo = ({
+	gutter = 24,
+	addressProps,
+	isRequestProperty,
+	unitInfo,
+	isShowSelectCard = true,
+}) => {
 	const form = Form.useFormInstance();
 	const borrower_property_id = Form.useWatch([name, 'borrower_property_id'], form);
 	const { loanPurposeOptions, loanTypeOptions, propertyTypeOptions } = useGetOptions([
@@ -30,18 +36,20 @@ const PropertyInfo = ({ gutter = 24, addressProps, isRequestProperty, unitInfo }
 			<Col {...titleCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">
 				Property information
 			</Col>
-			<SelectCard
-				className="mb-8"
-				changeFormValue={(values) => {
-					const property = {
-						[name]: { ...values, borrower_property_id: values.id },
-					};
-					form.setFieldsValue(property);
-				}}
-				name={[name, 'borrower_property_id']}
-				id={borrower_property_id}
-				disabled={isRequestProperty}
-			/>
+			{isShowSelectCard && (
+				<SelectCard
+					className="mb-8"
+					changeFormValue={(values) => {
+						const property = {
+							[name]: { ...values, borrower_property_id: values.id },
+						};
+						form.setFieldsValue(property);
+					}}
+					name={[name, 'borrower_property_id']}
+					id={borrower_property_id}
+					disabled={isRequestProperty}
+				/>
+			)}
 			<AddressForm
 				{...addressProps}
 				addressName={[name, 'address', 'address1']}
@@ -123,8 +131,6 @@ const PropertyInfo = ({ gutter = 24, addressProps, isRequestProperty, unitInfo }
 				>
 					<InputNumber
 						style={{ width: '100%' }}
-						min={unitInfo?.unit?.minUnit}
-						max={unitInfo?.unit?.maxUnit}
 						controls={false}
 						placeholder="Enter number of units"
 						disabled={true}

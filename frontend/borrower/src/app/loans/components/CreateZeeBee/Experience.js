@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { NewTable } from '@repo/shared-methods';
 import { useColumnByZeeBeeLoan } from './components/column';
 import { AddEditBtn } from './components/AddEditBtn';
@@ -14,7 +14,7 @@ const paramsTypeInfo = {
 	transactionHistory: 'Transaction',
 	realEstate: 'Real Estate',
 };
-const Experience = ({ form, rowData, setIsChange }) => {
+const Experience = ({ form, rowData, setIsChange, changeFieldsValue = () => {} }) => {
 	const [historyList, setHistoryList] = useState([]);
 	const [realEstateList, setRealEstateList] = useState([]);
 	const [messageApi, contextHolder] = message.useMessage();
@@ -50,7 +50,6 @@ const Experience = ({ form, rowData, setIsChange }) => {
 		} else {
 			// 因为后端的transactionHistory和realEstate的数据在一张表里面，所以要区分type，is_tenant_occupied和budget_or_cost没有值时传默认值
 			newArr = [
-				...arr,
 				{
 					is_tenant_occupied: false,
 					budget_or_cost: 0,
@@ -58,6 +57,7 @@ const Experience = ({ form, rowData, setIsChange }) => {
 					id: `${arr.length + 1}Custom`, // 加Custom为了区分自定义的id，草稿时后端会返回id并且更新草稿需要传id
 					type: paramsTypeInfo[type],
 				},
+				...arr,
 			];
 		}
 		setFn(newArr);
@@ -68,6 +68,7 @@ const Experience = ({ form, rowData, setIsChange }) => {
 			return i;
 		});
 		form.setFieldsValue({ [paramsKeyInfo[type]]: noIdArr });
+		changeFieldsValue(noIdArr, paramsKeyInfo[type]);
 		setIsChange(true);
 		message.destroy();
 		messageApi.open({
@@ -88,6 +89,7 @@ const Experience = ({ form, rowData, setIsChange }) => {
 		let paramsKey =
 			type === 'transactionHistory' ? 'transaction_experiences' : 'real_estate_experiences';
 		form.setFieldsValue({ [paramsKey]: noIdArr });
+		changeFieldsValue(noIdArr, paramsKey);
 		setIsChange(true);
 		message.destroy();
 		messageApi.open({

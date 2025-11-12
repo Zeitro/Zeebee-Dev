@@ -101,7 +101,7 @@ const ZeeBeeDetails = () => {
 			<div className="flex items-center flex-shrink-0 pt-4 pb-5 px-4">
 				<HomeSvg />
 				<p className="text-xl/[24px] font-bold pl-3 pr-5">
-					{assemblyAddress(rowData?.loan_property?.property_base?.address, true)}
+					{assemblyAddress(rowData?.loan_property?.address, true)}
 				</p>
 				<div
 					className="px-2 text-white font-medium rounded-sm mr-2 text-sm/[22px]"
@@ -168,20 +168,13 @@ const ZeeBeeDetails = () => {
 						onValuesChange={(v) => {
 							setIsChange(true);
 							// 根据property_type设置unit
-							const property_type =
-								v?.loan_property?.property_type ||
-								v?.loan_property?.future_property_type;
+							const property_type = v?.loan_property?.future_property_type;
 							if (property_type) {
 								const info = changeUnitByPropertyType(property_type);
-								const fieldKey = v?.loan_property?.property_type
-									? 'unit'
-									: 'future_unit';
-								const moreFieldKey =
-									fieldKey === 'unit' ? ['property_base', fieldKey] : [fieldKey];
-								let newInfo = { ...unitInfo };
-								newInfo[fieldKey] = info;
-								setUnitInfo({ ...newInfo });
-								form.setFieldValue(['loan_property', ...moreFieldKey], info.unit);
+								const unit = { ...unitInfo };
+								unit.future_unit = info;
+								setUnitInfo({ ...unit });
+								form.setFieldValue(['loan_property', 'future_unit'], info.unit);
 							}
 						}}
 						onFieldsChange={(changeFields) => {

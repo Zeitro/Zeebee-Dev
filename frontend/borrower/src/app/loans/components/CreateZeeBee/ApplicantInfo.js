@@ -8,7 +8,7 @@ import { layoutCol, titleCol } from '@/enum/common';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import SelectCard from '@/components/SelectCard';
 const name = 'loan_borrower';
-const ApplicantInfo = ({ gutter = 24, addressProps, disabled }) => {
+const ApplicantInfo = ({ gutter = 24, addressProps, disabled, isShowSelectCard = true }) => {
 	const form = Form.useFormInstance();
 	const borrowerType = Form.useWatch([name, 'type'], form);
 	const borrower_entity_id = Form.useWatch([name, 'borrower_entity_id'], form);
@@ -24,26 +24,28 @@ const ApplicantInfo = ({ gutter = 24, addressProps, disabled }) => {
 			<Col {...titleCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">
 				Applicant information
 			</Col>
-			<SelectCard
-				type="borrowingEntity"
-				addTitle="Add borrowing entity"
-				title="Choose a borrowing entity"
-				api="/borrower_entity/all"
-				className="mb-8"
-				changeFormValue={(values) => {
-					console.log(values, '---');
-					const borrower_entity = {
-						[name]: {
-							...values,
-							borrower_entity_id: values.id,
-						},
-					};
-					form.setFieldsValue(borrower_entity);
-				}}
-				name={[name, 'borrower_entity_id']}
-				id={borrower_entity_id}
-				disabled={disabled}
-			/>
+			{isShowSelectCard && (
+				<SelectCard
+					type="borrowingEntity"
+					addTitle="Add borrowing entity"
+					title="Choose a borrowing entity"
+					api="/borrower_entity/all"
+					className="mb-8"
+					changeFormValue={(values) => {
+						console.log(values, '---');
+						const borrower_entity = {
+							[name]: {
+								...values,
+								borrower_entity_id: values.id,
+							},
+						};
+						form.setFieldsValue(borrower_entity);
+					}}
+					name={[name, 'borrower_entity_id']}
+					id={borrower_entity_id}
+					disabled={disabled}
+				/>
+			)}
 			<Col {...titleCol} className="!text-xl font-medium text-[#000000a6] pb-6">
 				Applicant type
 			</Col>

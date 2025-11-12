@@ -3,7 +3,7 @@ import { BtnPopUpModal, DeleteBtn, TableOperation } from '@repo/shared-methods';
 import AddModal from '@/components/SelectCard/Add/borrower';
 import { createRequest } from '@repo/shared-methods/utils';
 import { useState } from 'react';
-const useBorrowingEntity = ({ handleSearch }) => {
+const useBorrower = ({ handleSearch }) => {
 	const { request } = createRequest();
 	const [loading, setLoading] = useState(false);
 	const handleDelete = async (id) => {
@@ -114,4 +114,4 @@ const useBorrowingEntity = ({ handleSearch }) => {
 	];
 	return { columns, handleDelete, loading };
 };
-export default useBorrowingEntity;
+export default useBorrower;

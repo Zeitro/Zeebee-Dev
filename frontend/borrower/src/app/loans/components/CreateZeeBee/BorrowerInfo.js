@@ -16,7 +16,7 @@ import { layoutCol, titleCol } from '@/enum/common';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import { CommonFormDate, InputNameCombination, InputPhone, InputTIN } from '@repo/shared-methods';
 import SelectCard from '@/components/SelectCard';
-const ApplicantInfo = ({ gutter = 24, addressProps, disabled }) => {
+const ApplicantInfo = ({ gutter = 24, addressProps, disabled, isShowSelectCard = true }) => {
 	const form = Form.useFormInstance();
 	const applicants = Form.useWatch('applicants', form);
 	const { maritalStatusOptions } = useGetOptions([
@@ -55,27 +55,29 @@ const ApplicantInfo = ({ gutter = 24, addressProps, disabled }) => {
 									</Button>
 								)}
 							</Col>
-							<SelectCard
-								type="borrower"
-								api="/borrower_applicant/all"
-								title="Choose a borrower"
-								addTitle="Add a borrower"
-								className="mb-8"
-								changeFormValue={(values) => {
-									applicants[field.name] = {
-										...values,
-										borrower_applicant_id: values.id,
-										type: 'Individual',
-										is_primary: !field.name,
-									};
-									form.setFieldsValue({
-										applicants,
-									});
-								}}
-								name={[field.name, 'borrower_applicant_id']}
-								id={applicants?.[field.name]?.borrower_applicant_id}
-								disabled={disabled}
-							/>
+							{isShowSelectCard && (
+								<SelectCard
+									type="borrower"
+									api="/borrower_applicant/all"
+									title="Choose a borrower"
+									addTitle="Add a borrower"
+									className="mb-8"
+									changeFormValue={(values) => {
+										applicants[field.name] = {
+											...values,
+											borrower_applicant_id: values.id,
+											type: 'Individual',
+											is_primary: !field.name,
+										};
+										form.setFieldsValue({
+											applicants,
+										});
+									}}
+									name={[field.name, 'borrower_applicant_id']}
+									id={applicants?.[field.name]?.borrower_applicant_id}
+									disabled={disabled}
+								/>
+							)}
 							<Form.Item
 								name={[field.name, 'type']}
 								rules={[{ required: true }]}

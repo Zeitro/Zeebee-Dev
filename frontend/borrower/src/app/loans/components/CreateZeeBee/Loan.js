@@ -2,9 +2,8 @@ import React, { useEffect } from 'react';
 import styles from './index.module.scss';
 import { Row, Col, Form, Radio, Input, InputNumber } from 'antd';
 import { InputNumAmount, CommonFormDate } from '@repo/shared-methods';
-import { yesNoOptions } from '@/enum/common';
 import { useGetOptions } from '@/hooks/useGetOptions';
-import { layoutCol, titleCol } from '@/enum/common';
+import { layoutCol, titleCol, yesNoOptions } from '@/enum/common';
 import { maxTerm, maxAmount } from '@repo/shared-methods/utils';
 
 const LoanDetail = ({ gutter = 24, form }) => {

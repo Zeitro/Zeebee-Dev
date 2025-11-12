@@ -68,7 +68,6 @@ const useCreate = (pageType = 'create') => {
 	// 获取详情（草稿使用）
 	const getLoanDetail = async () => {
 		const res = await request(`/loan/${searchParams.get('id')}`);
-		console.log(res);
 		const str = assemblyAddress(res?.loan_property?.address);
 		eventBus.emit('changeCrumbs', {
 			2: isDetails ? `ZeeBee Loan Details(${str})` : `Edit Draft(${str})`,

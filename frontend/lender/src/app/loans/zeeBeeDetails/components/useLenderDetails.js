@@ -85,17 +85,17 @@ const useLenderDetails = () => {
 	// 获取详情
 	const getLoanDetail = useCallback(async () => {
 		const res = (await request(`/loan/${searchParams.get('id')}`)) || {};
-		const str = assemblyAddress(res?.loan_property?.property_base?.address);
+		const str = assemblyAddress(res?.loan_property?.address);
 		eventBus.emit('changeCrumbs', {
 			2: `Loan Details(${str})`,
 		});
-		res.loan_borrower = {
-			...(res?.loan_borrower || {}),
-			tin: {
-				tin_type: res?.loan_borrower?.tin_type,
-				tin: res?.loan_borrower?.tin,
-			},
-		};
+		// res.loan_borrower = {
+		// 	...(res?.loan_borrower || {}),
+		// 	// tin: {
+		// 	// 	tin_type: res?.loan_borrower?.tin_type,
+		// 	// 	tin: res?.loan_borrower?.tin,
+		// 	// },
+		// };
 
 		if (!res?.applicants?.length) {
 			res.applicants = initialValues.applicants;
@@ -104,6 +104,7 @@ const useLenderDetails = () => {
 		setRowData(res);
 		setNewRowData(res);
 		form.setFieldsValue(res);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [form, searchParams]);
 
 	// 详情
@@ -162,8 +163,8 @@ const useLenderDetails = () => {
 		}
 		await form.validateFields();
 		const params = _.cloneDeep(rowData);
-		params.loan_borrower.tin_type = rowData?.loan_borrower?.tin?.tin_type;
-		params.loan_borrower.tin = rowData?.loan_borrower?.tin?.tin;
+		// params.loan_borrower.tin_type = rowData?.loan_borrower?.tin?.tin_type;
+		// params.loan_borrower.tin = rowData?.loan_borrower?.tin?.tin;
 		await handleSubmit({ ...params });
 		setCurrentStep(nextInfo.key);
 		scrollRef.current.scrollTo({
@@ -177,8 +178,8 @@ const useLenderDetails = () => {
 			setConfirmLoading(true);
 			const params = _.cloneDeep(newRowData);
 			setRowData(newRowData);
-			params.loan_borrower.tin_type = newRowData?.loan_borrower?.tin?.tin_type;
-			params.loan_borrower.tin = newRowData?.loan_borrower?.tin?.tin;
+			// params.loan_borrower.tin_type = newRowData?.loan_borrower?.tin?.tin_type;
+			// params.loan_borrower.tin = newRowData?.loan_borrower?.tin?.tin;
 			await handleSubmit({ ...params });
 			eventBus.emit('getLoanDetail');
 			setDisabled(true);
@@ -211,8 +212,18 @@ const useLenderDetails = () => {
 						handleUpdate={handleSave}
 						confirmLoading={confirmLoading}
 					>
-						<ApplicantInfo form={form} isHideTitle={true} />
-						<BorrowerInfo form={form} isHideTitle={true} />
+						<ApplicantInfo
+							form={form}
+							isHideTitle={true}
+							disabled={disabled}
+							isShowSelectCard={false}
+						/>
+						<BorrowerInfo
+							form={form}
+							isHideTitle={true}
+							disabled={disabled}
+							isShowSelectCard={false}
+						/>
 					</CommonSave>
 				);
 			case 'propertyAndLoan':
@@ -223,7 +234,12 @@ const useLenderDetails = () => {
 						handleUpdate={handleSave}
 						confirmLoading={confirmLoading}
 					>
-						<PropertyInfo form={form} unitInfo={unitInfo} />
+						<PropertyInfo
+							form={form}
+							unitInfo={unitInfo}
+							isRequestProperty={disabled}
+							isShowSelectCard={false}
+						/>
 						<Loan form={form} />
 					</CommonSave>
 				);
