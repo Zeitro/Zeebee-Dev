@@ -3,7 +3,7 @@ import { Form, Steps, Tabs } from 'antd';
 import React from 'react';
 import styles from './index.module.scss';
 import useCreate from '../components/CreateZeeBee/hooks/useCreate';
-import { changeUnitByPropertyType } from '@/lib/format';
+import { changeUnitByPropertyType } from '@repo/shared-methods/utils';
 const CreateZeeBeeLoan = () => {
 	const {
 		getTabsItem,
@@ -22,7 +22,7 @@ const CreateZeeBeeLoan = () => {
 	} = useCreate();
 
 	return (
-		<div className="flex flex-col h-full">
+		<div className="flex flex-col h-full flex-1 overflow-hidden">
 			<div className="px-12 py-4 shrink-0 flex items-center justify-center border-b border-base-border">
 				<Steps size="default" current={currentStep} items={createZeeBeeSteps} />
 			</div>
@@ -59,19 +59,13 @@ const CreateZeeBeeLoan = () => {
 						onValuesChange={(v) => {
 							setIsChange(true);
 							// 根据property_type设置unit
-							const property_type =
-								v?.loan_property?.property_type ||
-								v?.loan_property?.future_property_type;
+							const property_type = v?.loan_property?.future_property_type;
 							if (property_type) {
 								const info = changeUnitByPropertyType(property_type);
-								const fieldKey = v?.loan_property?.property_type
-									? 'unit'
-									: 'future_unit';
-								const moreFieldKey =
-									fieldKey === 'unit' ? ['property_base', fieldKey] : [fieldKey];
-								unitInfo[fieldKey] = info;
-								setUnitInfo({ ...unitInfo });
-								form.setFieldValue(['loan_property', ...moreFieldKey], info.unit);
+								const unit = { ...unitInfo };
+								unit.future_unit = info;
+								setUnitInfo({ ...unit });
+								form.setFieldValue(['loan_property', 'future_unit'], info.unit);
 							}
 						}}
 					>

@@ -1,5 +1,3 @@
-import React from 'react';
-// import styles from './index.module.scss';
 import { Row, Col, Form, Input, InputNumber } from 'antd';
 import {
 	emailRegex,
@@ -9,9 +7,9 @@ import {
 	validateRule,
 	capitalizeFirstLetter,
 	nameRegex,
-} from '@/lib/format';
+} from '@repo/shared-methods/utils';
 import { titleCol } from '@/enum/common';
-import InputPhone from '@/components/InputPhone';
+import { InputPhone } from '@repo/shared-methods';
 const BorrowerInfo = ({ gutter = 24, children }) => {
 	return (
 		<Row gutter={gutter}>

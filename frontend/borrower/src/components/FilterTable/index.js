@@ -5,10 +5,10 @@ import React, {
 	useState,
 	forwardRef,
 	useImperativeHandle,
+	useCallback,
 } from 'react';
-import FilterField from '@/components/FilterField';
+import { FilterField, NewTable } from '@repo/shared-methods';
 import styles from './index.module.scss';
-import NewTable from '@/components/NewTable';
 import { Col, Row, Tag } from 'antd';
 import { createRequest } from '@/lib/fetch';
 import { getPagination } from '@/lib/common';
@@ -41,7 +41,6 @@ const FilterTable = (
 	ref,
 ) => {
 	const isGet = useRef(true);
-
 	const filterFieldRef = useRef();
 	const { request } = createRequest();
 	const pagination = useRef(getPagination());
@@ -55,7 +54,7 @@ const FilterTable = (
 		return filterList?.filter((i) => i.filterType === 'treeSelect' && i.value?.length);
 	}, [filterList]);
 
-	const getList = async () => {
+	const getList = useCallback(async () => {
 		try {
 			setLoading(true);
 			const filterParams = filterFieldRef?.current?.getApiParams?.();
@@ -70,13 +69,14 @@ const FilterTable = (
 				params.sorter = sorter.current;
 			}
 			let res = {};
-			if (api) {
+			let newApi = api;
+			if (newApi) {
 				if (method === 'GET') {
 					const params = new URLSearchParams(params);
-					api += `?${params}`;
-					res = await request(api, { method });
+					newApi += `?${params}`;
+					res = await request(newApi, { method });
 				} else {
-					res = await request(api, { method, body: params });
+					res = await request(newApi, { method, body: params });
 				}
 			} else {
 				res = await getData(params);
@@ -85,10 +85,10 @@ const FilterTable = (
 			pagination.current.total = total;
 			setTableList(list);
 			setLoading(false);
-		} catch (error) {
+		} catch {
 			setLoading(false);
 		}
-	};
+	}, [api, getData, method, request]);
 
 	const onChange = (paginationObj, filters, { order, columnKey }) => {
 		const orderObj = {
@@ -117,7 +117,7 @@ const FilterTable = (
 			getList();
 			isGet.current = false;
 		}
-	}, [dataSource]);
+	}, [dataSource, getList]);
 
 	useDisUpdateEffect(() => {
 		setLoading(dataSourceLoading);

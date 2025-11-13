@@ -1,9 +1,9 @@
 'use client';
 import styles from '../createZeeBeeLoan/index.module.scss';
-import { Badge, Form, Radio, Segmented, Steps, Tabs } from 'antd';
-import React, { use, useEffect, useMemo } from 'react';
+import { Badge, Form, Radio, Steps, Tabs } from 'antd';
+import React, { useEffect } from 'react';
 import useCreate from '../components/CreateZeeBee/hooks/useCreate';
-import { assemblyAddress } from '@/lib/format';
+import { assemblyAddress } from '@repo/shared-methods/utils';
 import { stageColor, pendingStatusColor, loanDetailsFields } from '@/enum/loan';
 import HomeSvg from '@/assets/images/home.svg';
 const ZeeBeeDetails = () => {
@@ -34,14 +34,15 @@ const ZeeBeeDetails = () => {
 
 	useEffect(() => {
 		setCurrentStep(zeeBeeDetailsTabs[0].value);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (
-		<div className="flex flex-col h-full">
+		<div className="flex flex-col h-full flex-1 overflow-hidden">
 			<div className="flex items-center flex-shrink-0 pt-6 pb-5 px-6">
 				<HomeSvg />
 				<p className="text-xl/[24px] font-bold pl-3 pr-5">
-					{assemblyAddress(rowData?.loan_property?.property_base?.address, true)}
+					{assemblyAddress(rowData?.loan_property?.address, true)}
 				</p>
 				<div
 					className="px-2 text-white font-medium rounded-sm mr-2 text-sm"

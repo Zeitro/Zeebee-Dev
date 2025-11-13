@@ -11,6 +11,8 @@ import { RightCircleTwoTone, LeftCircleTwoTone } from '@ant-design/icons';
 import { useUserStore } from '@/store/user';
 import { sidebarIcon } from './icon';
 import UserInfo from './UserInfo';
+import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
+
 const homePathname = '/';
 const initTwoToneColor = ['var(--base-label)', 'var(--gray-light)'];
 /**
@@ -36,10 +38,13 @@ const SidebarDom = () => {
 		changeSidebarCollapsed(!sidebarCollapsed);
 	};
 	// 初始化根据路由选中侧边栏
-	useEffect(() => {
-		const routerItem = items.find((i) => pathname.indexOf(i.key) !== -1);
-		setSelectedKey(routerItem?.key || homePathname);
-	}, [items, pathname]);
+	useDeferredSyncEffect({
+		deferred: () => {
+			setSelectedKey(config?.path || homePathname);
+		},
+		deps: [pathname, config],
+		delay: 0,
+	});
 
 	return config ? (
 		<div
@@ -56,18 +61,15 @@ const SidebarDom = () => {
 				].join(' ')}
 				onClick={() => handleSelect({ key: homePathname })}
 			>
-				<Image src="/images/logo.svg" width={95} height={30} alt="ZeeBee Logo" />
+				<Image src="/images/logo.svg" width={95} height={30} alt="ZeeBee Logo" priority />
 			</div>
 			<Menu
-				mode="vertical"
+				mode="inline"
 				selectedKeys={[selectedKey]}
 				items={items}
-				className={[
-					'flex-1 overflow-hidden border-r-0',
-					styles.menuList,
-					sidebarCollapsed && styles.menuList_collapsed,
-				].join(' ')}
+				className={['flex-1 overflow-hidden border-r-0', styles.menuList].join(' ')}
 				onClick={handleSelect}
+				inlineCollapsed={sidebarCollapsed}
 			/>
 			<UserInfo userInfo={userInfo} sidebarCollapsed={sidebarCollapsed} />
 			<div

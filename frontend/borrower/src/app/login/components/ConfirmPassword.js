@@ -1,7 +1,7 @@
 'use client';
 import React, { useMemo } from 'react';
 import { Form, Input } from 'antd';
-import { passwordRegex } from '@/lib/format';
+import { passwordRegex } from '@repo/shared-methods/utils';
 import { CheckCircleOutlined } from '@ant-design/icons';
 
 const ConfirmPassWord = ({

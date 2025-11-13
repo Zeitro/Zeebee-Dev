@@ -1,6 +1,6 @@
 'use client';
 import { Menu } from 'antd';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useGlobalStore } from '@/store/global';
 import styles from './index.module.scss';
 import { navRouter } from '@config/routes';
@@ -12,6 +12,7 @@ import { useUserStore } from '@/store/user';
 import { sidebarIcon } from './icon';
 import useElementSize from '@/hooks/useElementSize';
 import UserInfo from './UserInfo';
+import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 const homePathname = '/';
 const initTwoToneColor = ['var(--base-label)', 'var(--gray-light)'];
 /**
@@ -37,10 +38,14 @@ const SidebarDom = () => {
 		changeSidebarCollapsed(!sidebarCollapsed);
 	};
 	// 初始化根据路由选中侧边栏
-	useEffect(() => {
-		const routerItem = items.find((i) => pathname.indexOf(i.key) !== -1);
-		setSelectedKey(routerItem?.key || homePathname);
-	}, [items, pathname]);
+	useDeferredSyncEffect({
+		deferred: () => {
+			const routerItem = items.find((i) => pathname.indexOf(i.key) !== -1);
+			setSelectedKey(routerItem?.key || homePathname);
+		},
+		deps: [items, pathname],
+		delay: 0,
+	});
 
 	return config ? (
 		<div

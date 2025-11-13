@@ -13,7 +13,7 @@ const MAX_COUNT = 5;
 export const useGetOptions = (list = []) => {
 	const optionsInfo = useOptionsStore();
 	const isInitGet = useRef(true);
-	const { getOptions, getLender, getBorrowerOptions, ...state } = optionsInfo;
+	const { getLender, getBorrowerOptions } = optionsInfo;
 	const getInitOptions = useCallback(async () => {
 		await Promise.all(
 			list.map(async (item) => {
@@ -31,7 +31,7 @@ export const useGetOptions = (list = []) => {
 				}
 			}),
 		);
-	}, [getOptions, list, state]);
+	}, [getBorrowerOptions, getLender, list, optionsInfo]);
 
 	useEffect(() => {
 		if (list?.length && isInitGet.current) {

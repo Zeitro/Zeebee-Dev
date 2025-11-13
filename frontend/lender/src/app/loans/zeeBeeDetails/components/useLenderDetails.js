@@ -1,6 +1,6 @@
 'use client';
 import { Button, Col, Form, message, Space, Steps, Tabs } from 'antd';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createZeeBeeSteps, zeeBeeDetailsTabs, lenderDetailsSteps } from '@/enum/loan';
 import { createRequest } from '@/lib/fetch';
@@ -17,12 +17,8 @@ import Quoting from './Quoting';
 import Processing from './Processing';
 import Closing from './Closing';
 import _ from 'lodash';
-import { flattenObjectPaths, findItem, flattenArray } from '@/lib/common';
+import { findItem, flattenArray, assemblyAddress, eventBus } from '@repo/shared-methods/utils';
 import { uploadAwsS3 } from '@/api/common';
-import { LeaveAndSaveDraftBtn } from '@/components/NewModal/BtnPopUpModal';
-import eventBus from '@/lib/bus';
-import { assemblyAddress } from '@/lib/format';
-// import CommonZeeBeeForm from '../../../zeeBeeDetails/components/CommonZeeBeeForm';
 import General from '../../components/CreateZeeBee/General';
 import HeaderBtn from './HeaderBtn';
 import { EditOutlined } from '@ant-design/icons';
@@ -87,19 +83,19 @@ const useLenderDetails = () => {
 	const newList = flattenArray(lenderDetailsSteps);
 
 	// 获取详情
-	const getLoanDetail = async () => {
+	const getLoanDetail = useCallback(async () => {
 		const res = (await request(`/loan/${searchParams.get('id')}`)) || {};
-		const str = assemblyAddress(res?.loan_property?.property_base?.address);
+		const str = assemblyAddress(res?.loan_property?.address);
 		eventBus.emit('changeCrumbs', {
 			2: `Loan Details(${str})`,
 		});
-		res.loan_borrower = {
-			...(res?.loan_borrower || {}),
-			tin: {
-				tin_type: res?.loan_borrower?.tin_type,
-				tin: res?.loan_borrower?.tin,
-			},
-		};
+		// res.loan_borrower = {
+		// 	...(res?.loan_borrower || {}),
+		// 	// tin: {
+		// 	// 	tin_type: res?.loan_borrower?.tin_type,
+		// 	// 	tin: res?.loan_borrower?.tin,
+		// 	// },
+		// };
 
 		if (!res?.applicants?.length) {
 			res.applicants = initialValues.applicants;
@@ -108,14 +104,15 @@ const useLenderDetails = () => {
 		setRowData(res);
 		setNewRowData(res);
 		form.setFieldsValue(res);
-	};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [form, searchParams]);
 
 	// 详情
 	useEffect(() => {
 		if (searchParams.has('id')) getLoanDetail();
 		eventBus.on('getLoanDetail', getLoanDetail);
 		return () => eventBus.off('getLoanDetail', getLoanDetail);
-	}, []);
+	}, [getLoanDetail, searchParams]);
 
 	// 全量修改loan
 	const handleSubmit = async (values) => {
@@ -166,8 +163,8 @@ const useLenderDetails = () => {
 		}
 		await form.validateFields();
 		const params = _.cloneDeep(rowData);
-		params.loan_borrower.tin_type = rowData?.loan_borrower?.tin?.tin_type;
-		params.loan_borrower.tin = rowData?.loan_borrower?.tin?.tin;
+		// params.loan_borrower.tin_type = rowData?.loan_borrower?.tin?.tin_type;
+		// params.loan_borrower.tin = rowData?.loan_borrower?.tin?.tin;
 		await handleSubmit({ ...params });
 		setCurrentStep(nextInfo.key);
 		scrollRef.current.scrollTo({
@@ -181,8 +178,8 @@ const useLenderDetails = () => {
 			setConfirmLoading(true);
 			const params = _.cloneDeep(newRowData);
 			setRowData(newRowData);
-			params.loan_borrower.tin_type = newRowData?.loan_borrower?.tin?.tin_type;
-			params.loan_borrower.tin = newRowData?.loan_borrower?.tin?.tin;
+			// params.loan_borrower.tin_type = newRowData?.loan_borrower?.tin?.tin_type;
+			// params.loan_borrower.tin = newRowData?.loan_borrower?.tin?.tin;
 			await handleSubmit({ ...params });
 			eventBus.emit('getLoanDetail');
 			setDisabled(true);
@@ -215,8 +212,18 @@ const useLenderDetails = () => {
 						handleUpdate={handleSave}
 						confirmLoading={confirmLoading}
 					>
-						<ApplicantInfo form={form} isHideTitle={true} />
-						<BorrowerInfo form={form} isHideTitle={true} />
+						<ApplicantInfo
+							form={form}
+							isHideTitle={true}
+							disabled={disabled}
+							isShowSelectCard={false}
+						/>
+						<BorrowerInfo
+							form={form}
+							isHideTitle={true}
+							disabled={disabled}
+							isShowSelectCard={false}
+						/>
 					</CommonSave>
 				);
 			case 'propertyAndLoan':
@@ -227,7 +234,12 @@ const useLenderDetails = () => {
 						handleUpdate={handleSave}
 						confirmLoading={confirmLoading}
 					>
-						<PropertyInfo form={form} unitInfo={unitInfo} />
+						<PropertyInfo
+							form={form}
+							unitInfo={unitInfo}
+							isRequestProperty={disabled}
+							isShowSelectCard={false}
+						/>
 						<Loan form={form} />
 					</CommonSave>
 				);
@@ -253,8 +265,9 @@ const useLenderDetails = () => {
 							rowData={rowData}
 							setIsChange={setIsChange}
 							changeFieldsValue={(value, key) => {
-								newRowData[key] = value;
-								setNewRowData({ ...newRowData });
+								let newValue = { ...newRowData };
+								newValue[key] = value;
+								setNewRowData({ ...newValue });
 							}}
 						/>
 					</CommonSave>
@@ -365,7 +378,7 @@ const useLenderDetails = () => {
 			selectTabKey,
 			index,
 		};
-	}, [rowData]);
+	}, [newList, rowData?.pending_status, rowData?.stage]);
 
 	const tabList = newList
 		.map((i, index) => ({
@@ -376,7 +389,7 @@ const useLenderDetails = () => {
 		.filter((i) => i.children);
 	const selectIndex = useMemo(
 		() => tabList.findIndex((i) => i.key === currentStep),
-		[currentStep],
+		[currentStep, tabList],
 	);
 
 	useEffect(() => {

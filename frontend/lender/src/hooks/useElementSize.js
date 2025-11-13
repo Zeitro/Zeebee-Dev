@@ -10,22 +10,20 @@ export default function useElementSize(rectDom) {
 
 	useEffect(() => {
 		let observer = null;
-		if (elementRef?.current || rectDom) {
+		const targetElement = elementRef?.current || rectDom;
+		if (targetElement) {
 			observer = new ResizeObserver((entries) => {
 				setSize(entries[0].contentRect);
 			});
 
-			if (elementRef?.current || rectDom) {
-				observer.observe(elementRef?.current || rectDom);
-			}
+			observer.observe(targetElement);
 		}
-		// return () => observer.disconnect();
 		return () => {
-			if (elementRef?.current || rectDom) {
-				observer?.unobserve(elementRef?.current || rectDom);
+			if (observer && targetElement) {
+				observer?.unobserve(targetElement);
 			}
 		};
-	}, [elementRef, rectDom]);
+	}, [rectDom]);
 
-	return [size, elementRef || rectDom];
+	return [size, rectDom || elementRef];
 }

@@ -9,7 +9,7 @@ export const generateMenuBar = (list, iconConfig) => {
 			}
 			const newItem = {
 				key: item.path,
-				label: item.title,
+				label: item?.menuTitle || item.title,
 			};
 			if (iconConfig) {
 				newItem.icon = iconConfig[item.icon];
@@ -56,7 +56,7 @@ export const getCrumbs = (currentPath, routes) => {
 			// 动态参数匹配
 			match = routes.find((r) => matchRoute(r.path, path));
 		}
-		if (match) {
+		if (match && !match?.isPageNotFound) {
 			// 动态参数面包屑可自定义显示
 			let title = match.title;
 			// if (/:/.test(match.path)) {

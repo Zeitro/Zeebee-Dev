@@ -5,18 +5,23 @@ import { lenderClosingColumns } from '../documentColumns';
 import HeaderBtn from '../HeaderBtn';
 import { AddDocument } from '../AddDocument';
 import { useSearchParams } from 'next/navigation';
+import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 const Closing = ({ disabledOperate, rowData, id }) => {
 	const [lenderList, setLenderList] = useState([]);
 	const searchParams = useSearchParams();
 	const loan_id = Number(searchParams.get('id'));
-	useEffect(() => {
-		if (rowData?.loan_documents?.length) {
+
+	useDeferredSyncEffect({
+		predicate: () => rowData?.loan_documents?.length,
+		deferred: () => {
 			let lList = rowData?.loan_documents?.filter((item) =>
 				['LenderClosingExtend', 'LenderClosing'].includes(item.category),
 			);
 			setLenderList(lList);
-		}
-	}, [rowData]);
+		},
+		deps: [rowData],
+		delay: 0,
+	});
 	return (
 		<div>
 			<HeaderBtn disabledOperate={disabledOperate} id={id} pending_status="Closing">

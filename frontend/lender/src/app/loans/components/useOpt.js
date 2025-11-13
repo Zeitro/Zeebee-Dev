@@ -23,7 +23,7 @@ export default function useOpt(tableFilterRef) {
 				type: 'success',
 				content: 'Delete successful!',
 			});
-		} catch (error) {
+		} catch {
 			setConfirmLoading(false);
 		}
 	};
@@ -50,7 +50,7 @@ export default function useOpt(tableFilterRef) {
 		});
 	};
 
-	const handleSelectedRow = (record, stage) => {
+	const handleSelectedRow = (record) => {
 		let url;
 		if (record?.source === 'borrower') {
 			url = `/loans/${record?.id}`;

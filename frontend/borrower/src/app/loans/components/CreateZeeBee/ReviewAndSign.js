@@ -150,7 +150,7 @@ const ReviewAndSign = ({ form, rowData, isNotRequest = false, loanUuid }) => {
 	const applicants = Form.useWatch('applicants', form);
 	const params = useMemo(() => {
 		// 因zeeBee详情会点击步骤跳到最后一步，导致getFieldsValue取不到全部数据，所以需将rowData直接传入
-		const values = rowData || form.getFieldsValue() || {};
+		const values = { ...(rowData || form.getFieldsValue() || {}) };
 		if (values?.loan_borrower?.tin?.tin_type) {
 			values.loan_borrower.tin_type = values?.loan_borrower?.tin?.tin_type;
 		}

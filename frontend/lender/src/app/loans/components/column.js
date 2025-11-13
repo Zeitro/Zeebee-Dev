@@ -17,7 +17,7 @@ const common = (isNotAddress) => {
 	const addressArr = [
 		{
 			title: 'Property address',
-			dataIndex: ['loan_property', 'property_base', 'address', 'address1'],
+			dataIndex: ['loan_property', 'address', 'address1'],
 			key: 'address',
 			ellipsis: true,
 			sorter: true,
@@ -29,21 +29,21 @@ const common = (isNotAddress) => {
 		},
 		{
 			title: 'City',
-			dataIndex: ['loan_property', 'property_base', 'address', 'city'],
+			dataIndex: ['loan_property', 'address', 'city'],
 			key: 'city',
 			width: 120,
 			ellipsis: true,
 		},
 		{
 			title: 'State',
-			dataIndex: ['loan_property', 'property_base', 'address', 'state'],
+			dataIndex: ['loan_property', 'address', 'state'],
 			key: 'state',
 			width: 70,
 			ellipsis: true,
 		},
 		{
 			title: 'Zip code',
-			dataIndex: ['loan_property', 'property_base', 'address', 'zip_code'],
+			dataIndex: ['loan_property', 'address', 'zip_code'],
 			key: 'zip_code',
 			ellipsis: true,
 			width: 120,
@@ -66,7 +66,7 @@ const common = (isNotAddress) => {
 	];
 };
 
-const getOpt = (showDeleteModal, stage) => {
+const getOpt = (showDeleteModal) => {
 	return {
 		title: '',
 		dataIndex: 'operation',

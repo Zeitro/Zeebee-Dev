@@ -1,19 +1,18 @@
 'use client';
 import { Col, Form, Input, InputNumber, Row, Select } from 'antd';
-import React from 'react';
 import styles from './index.module.scss';
-import InputNumAmount from '@/components/InputNumAmount';
+import { InputNumAmount, CommonFormDate, InputNameCombination } from '@repo/shared-methods';
 import { useGetOptions } from '@/hooks/useGetOptions';
-import { loan_active, loan_pending } from '@/enum/common';
-import InputName from '@/components/InputName';
-import CommonFormDate from '@/components/CommonDate';
-import { capitalizeFirstLetter } from '@/lib/format';
+import { loan_active, loan_pending, titleCol } from '@/enum/common';
+import { capitalizeFirstLetter } from '@repo/shared-methods/utils';
+import SelectCard from '@/components/SelectCard';
 const layoutCol = {
 	xs: 24,
 	sm: 24,
 };
-const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
+const CreateTerm = ({ stage, stepBtn, gutter, form, disabled, ...colProps }) => {
 	const total_amount = Form.useWatch('total_amount', form);
+	const applicants = Form.useWatch('applicants', form);
 	const { lienPositionOptions, prepaymentPenaltyOptions } = useGetOptions([
 		{
 			key: 'lien_position',
@@ -63,21 +62,54 @@ const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
 					return (
 						<>
 							{fields?.map((field, index) => (
-								<InputName
-									key={field.key}
-									layoutCol={{ ...layoutCol, md: 8 }}
-									firstName={[field.name, 'first_name']}
-									middleName={[field.name, 'mid_name']}
-									lastName={[field.name, 'last_name']}
-									title={`Borrower ${index + 1}`}
-									config={{
-										firstNameRequired: !index,
-										lastNameRequired: !index,
-									}}
-									listName="applicants"
-									form={form}
-									className="!ml-0 !mr-0"
-								/>
+								<div key={field.key} className="w-full">
+									<Col
+										{...titleCol}
+										className="font-medium text-[#000000a6] !text-xl pb-4"
+									>
+										Borrower {index + 1}
+									</Col>
+									<SelectCard
+										type="borrower"
+										api="/borrower_applicant/all"
+										title="Choose a borrower"
+										addTitle="Add a borrower"
+										className="mb-8"
+										changeFormValue={(values) => {
+											applicants[field.name] = {
+												...values,
+												borrower_applicant_id: values.id,
+												type: 'Individual',
+												is_primary: !field.name,
+											};
+											form.setFieldsValue({
+												applicants,
+											});
+										}}
+										name={[field.name, 'borrower_applicant_id']}
+										id={applicants?.[field.name]?.borrower_applicant_id}
+										required={!index}
+										sliceIndex={1}
+										xl={18}
+									/>
+									<Row gutter={gutter} className="px-3">
+										<InputNameCombination
+											key={field.key}
+											layoutCol={{ ...layoutCol, md: 8 }}
+											firstName={[field.name, 'first_name']}
+											middleName={[field.name, 'mid_name']}
+											lastName={[field.name, 'last_name']}
+											config={{
+												firstNameRequired: !index,
+												lastNameRequired: !index,
+											}}
+											listName="applicants"
+											form={form}
+											className="!ml-0 !mr-0"
+											disabled={true}
+										/>
+									</Row>
+								</div>
 							))}
 						</>
 					);
