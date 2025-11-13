@@ -1,11 +1,10 @@
 'use client';
 import React, { useMemo, useRef, useState } from 'react';
 import { createRequest } from '@repo/shared-methods/utils';
-import { ReloadOutlined } from '@ant-design/icons';
+import { ReloadOutlined, PlusOutlined } from '@ant-design/icons';
 import { BtnPopUpModal, FilterTable } from '@repo/shared-methods';
 import useBorrowingEntity from './components/useBorrowingEntity';
 import AddModal from '@/components/SelectCard/Add/borrowingEntity';
-import NewHeader from '@/components/NewHeader';
 const BorrowingEntity = () => {
 	const { cancel } = createRequest();
 	const tableFilterRef = useRef();
@@ -42,43 +41,47 @@ const BorrowingEntity = () => {
 						tableFilterRef?.current?.handleSearch();
 					}, 300);
 				},
+				colProps: {
+					className: 'flex-1',
+				},
+			},
+			{
+				filterType: 'button',
+				children: (
+					<BtnPopUpModal
+						getContent={(setOpen) => (
+							<AddModal
+								setOpen={setOpen}
+								handleSearch={() => tableFilterRef?.current?.handleSearch()}
+							/>
+						)}
+						type="primary"
+						icon={<PlusOutlined />}
+						size="large"
+					>
+						Add borrowing entity
+					</BtnPopUpModal>
+				),
 			},
 		],
 		[searchValue, cancel],
 	);
 	return (
-		<>
-			<NewHeader isShowCrumbs={true}>
-				<BtnPopUpModal
-					getContent={(setOpen) => (
-						<AddModal
-							setOpen={setOpen}
-							handleSearch={() => tableFilterRef?.current?.handleSearch()}
-						/>
-					)}
-					type="primary"
-					icon={''}
-					size="large"
-				>
-					Add borrowing entity
-				</BtnPopUpModal>
-			</NewHeader>
-			<FilterTable
-				filterWrapClassName="px-8 pt-10 pb-8 flex-1 overflow-hidden"
-				ref={tableFilterRef}
-				columns={columns}
-				scroll={{ x: 1200 }}
-				filterList={filterList}
-				hasFilterField={true}
-				// pagination={pagination}
-				api="/borrower_entity/page"
-				onRow={() => ({
-					onClick: () => {
-						// handleSelectedRow(row, stage);
-					},
-				})}
-			/>
-		</>
+		<FilterTable
+			filterWrapClassName="px-8 pt-10 pb-8 flex-1 overflow-hidden"
+			ref={tableFilterRef}
+			columns={columns}
+			scroll={{ x: 1200 }}
+			filterList={filterList}
+			hasFilterField={true}
+			// pagination={pagination}
+			api="/borrower_entity/page"
+			onRow={() => ({
+				onClick: () => {
+					// handleSelectedRow(row, stage);
+				},
+			})}
+		/>
 	);
 };
 export default BorrowingEntity;

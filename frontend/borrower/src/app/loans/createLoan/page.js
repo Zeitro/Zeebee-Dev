@@ -6,7 +6,7 @@ import CreateProperty from '../components/Create/property';
 import CreateTerm from '../components/Create/term';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createLoanSteps } from '@/enum/loan';
-import { createRequest, changeUnitByPropertyType } from '@repo/shared-methods/utils';
+import { createRequest } from '@repo/shared-methods/utils';
 import { loan_pending } from '@/enum/common';
 import { BtnPopUpModal } from '@repo/shared-methods';
 const CreateLoanPage = () => {
@@ -129,6 +129,9 @@ const CreateLoanPage = () => {
 					gutter={16}
 					isRequestProperty={searchParams.has('propertyId')}
 					unitInfo={unitInfo}
+					selectCardCol={{ xl: 18, sm: 18, xs: 24 }}
+					btnCol={{ xl: 6, sm: 6, xs: 24 }}
+					sliceIndex={1}
 				/>
 			),
 			2: (
@@ -137,6 +140,9 @@ const CreateLoanPage = () => {
 					stepBtn={stepBtn}
 					form={form}
 					gutter={16}
+					selectCardCol={{ xl: 18, sm: 18, xs: 24 }}
+					btnCol={{ xl: 6, sm: 6, xs: 24 }}
+					sliceIndex={1}
 				/>
 			),
 		}),
@@ -165,24 +171,18 @@ const CreateLoanPage = () => {
 					disabled={loading}
 					initialValues={{
 						stage: loan_pending,
-						applicants: [
-							{ is_primary: true, type: 'Individual' },
-							{ is_primary: false, type: 'Individual' },
-						],
+						applicants: [{ is_primary: true, type: 'Individual' }],
 					}}
-					onValuesChange={(v) => {
-						// 根据property_type设置unit
-						const property_type = v?.loan_property?.property_type;
-						if (property_type) {
-							const info = changeUnitByPropertyType(property_type);
+					// onValuesChange={(v) => {
+					// 	// 根据property_type设置unit
+					// 	const property_type = v?.loan_property?.property_type;
+					// 	if (property_type) {
+					// 		const info = changeUnitByPropertyType(property_type);
 
-							setUnitInfo({ ...info });
-							form.setFieldValue(
-								['loan_property', 'property_base', 'unit'],
-								info.unit,
-							);
-						}
-					}}
+					// 		setUnitInfo({ ...info });
+					// 		form.setFieldValue(['loan_property', 'unit'], info.unit);
+					// 	}
+					// }}
 				>
 					{stepContent[currentStep]}
 				</Form>

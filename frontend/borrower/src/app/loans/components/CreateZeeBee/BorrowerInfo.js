@@ -63,11 +63,14 @@ const ApplicantInfo = ({ gutter = 24, addressProps, disabled, isShowSelectCard =
 									addTitle="Add a borrower"
 									className="mb-8"
 									changeFormValue={(values) => {
+										const borrower_applicant_id = values.id;
+										delete values.id;
 										applicants[field.name] = {
 											...values,
-											borrower_applicant_id: values.id,
+											borrower_applicant_id,
 											type: 'Individual',
-											is_primary: !field.name,
+											is_primary:
+												applicants?.[field.name]?.is_primary ?? !field.name,
 										};
 										form.setFieldsValue({
 											applicants,
@@ -293,7 +296,7 @@ const ApplicantInfo = ({ gutter = 24, addressProps, disabled, isShowSelectCard =
 								listName="applicants"
 								disabled={true}
 							/>
-							{fields.length === index + 1 && (
+							{fields.length === index + 1 && fields.length < 2 && (
 								<Col {...layoutCol}>
 									<Button
 										type="link"

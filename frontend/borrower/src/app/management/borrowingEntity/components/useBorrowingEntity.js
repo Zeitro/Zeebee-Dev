@@ -1,6 +1,6 @@
 import React from 'react';
 import { BtnPopUpModal, DeleteBtn, TableOperation } from '@repo/shared-methods';
-import { createRequest, formatPhone } from '@repo/shared-methods/utils';
+import { createRequest, formatPhone, formatTINOrSSN } from '@repo/shared-methods/utils';
 import AddModal from '@/components/SelectCard/Add/borrowingEntity';
 import { useState } from 'react';
 const useBorrowingEntity = ({ handleSearch }) => {
@@ -37,6 +37,7 @@ const useBorrowingEntity = ({ handleSearch }) => {
 			dataIndex: 'tin',
 			key: 'tin',
 			ellipsis: true,
+			render: (v) => formatTINOrSSN(v, 'EIN') || '-',
 		},
 		{
 			title: 'Email',

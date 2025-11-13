@@ -1,16 +1,26 @@
 'use client';
-import { Col, Form, Input, InputNumber, Row, Select } from 'antd';
+import { Button, Col, Form, Input, InputNumber, Row, Select } from 'antd';
 import styles from './index.module.scss';
 import { InputNumAmount, CommonFormDate, InputNameCombination } from '@repo/shared-methods';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import { loan_active, loan_pending, titleCol } from '@/enum/common';
 import { capitalizeFirstLetter } from '@repo/shared-methods/utils';
 import SelectCard from '@/components/SelectCard';
+import { PlusCircleOutlined, MinusCircleOutlined } from '@ant-design/icons';
 const layoutCol = {
 	xs: 24,
 	sm: 24,
 };
-const CreateTerm = ({ stage, stepBtn, gutter, form, disabled, ...colProps }) => {
+const CreateTerm = ({
+	stage,
+	stepBtn,
+	gutter,
+	form,
+	selectCardCol = { xl: 6, sm: 24, xs: 24 },
+	btnCol = { xl: 6, sm: 24, xs: 24 },
+	sliceIndex = 3,
+	...colProps
+}) => {
 	const total_amount = Form.useWatch('total_amount', form);
 	const applicants = Form.useWatch('applicants', form);
 	const { lienPositionOptions, prepaymentPenaltyOptions } = useGetOptions([
@@ -58,16 +68,27 @@ const CreateTerm = ({ stage, stepBtn, gutter, form, disabled, ...colProps }) => 
 	return (
 		<Row className={styles.create} gutter={gutter}>
 			<Form.List name="applicants">
-				{(fields) => {
+				{(fields, { add, remove }) => {
 					return (
 						<>
 							{fields?.map((field, index) => (
 								<div key={field.key} className="w-full">
 									<Col
 										{...titleCol}
-										className="font-medium text-[#000000a6] !text-xl pb-4"
+										className="!text-xl font-medium text-[#000000a6] pb-6 !flex items-end justify-between"
 									>
 										Borrower {index + 1}
+										{fields.length > 1 && (
+											<Button
+												type="link"
+												size="small"
+												icon={<MinusCircleOutlined />}
+												onClick={() => remove(field.name)}
+												className="!h-4"
+											>
+												Delete borrower
+											</Button>
+										)}
 									</Col>
 									<SelectCard
 										type="borrower"
@@ -76,11 +97,15 @@ const CreateTerm = ({ stage, stepBtn, gutter, form, disabled, ...colProps }) => 
 										addTitle="Add a borrower"
 										className="mb-8"
 										changeFormValue={(values) => {
+											const borrower_applicant_id = values.id;
+											delete values.id;
 											applicants[field.name] = {
 												...values,
-												borrower_applicant_id: values.id,
+												borrower_applicant_id,
 												type: 'Individual',
-												is_primary: !field.name,
+												is_primary:
+													applicants?.[field.name]?.is_primary ??
+													!field.name,
 											};
 											form.setFieldsValue({
 												applicants,
@@ -89,8 +114,9 @@ const CreateTerm = ({ stage, stepBtn, gutter, form, disabled, ...colProps }) => 
 										name={[field.name, 'borrower_applicant_id']}
 										id={applicants?.[field.name]?.borrower_applicant_id}
 										required={!index}
-										sliceIndex={1}
-										xl={18}
+										sliceIndex={sliceIndex}
+										{...selectCardCol}
+										btnCol={btnCol}
 									/>
 									<Row gutter={gutter} className="px-3">
 										<InputNameCombination
@@ -109,6 +135,20 @@ const CreateTerm = ({ stage, stepBtn, gutter, form, disabled, ...colProps }) => 
 											disabled={true}
 										/>
 									</Row>
+									{fields.length === index + 1 && fields.length < 2 && (
+										<Col {...layoutCol} className="mb-4">
+											<Button
+												type="link"
+												size="small"
+												icon={<PlusCircleOutlined />}
+												onClick={() =>
+													add({ type: 'Individual', is_primary: false })
+												}
+											>
+												Add borrower
+											</Button>
+										</Col>
+									)}
 								</div>
 							))}
 						</>
