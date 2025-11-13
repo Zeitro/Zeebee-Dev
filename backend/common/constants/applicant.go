@@ -75,10 +75,10 @@ const (
 func init() {
 	// register applicant type
 	enums.Register(ApplicantTypeName, []enums.EnumOpt{
-		{
-			Label: string(ApplicantTypeIndividual),
-			Value: string(ApplicantTypeIndividual),
-		},
+		// {
+		// 	Label: string(ApplicantTypeIndividual),
+		// 	Value: string(ApplicantTypeIndividual),
+		// },
 		{
 			Label: string(ApplicantTypeCorporation),
 			Value: string(ApplicantTypeCorporation),
