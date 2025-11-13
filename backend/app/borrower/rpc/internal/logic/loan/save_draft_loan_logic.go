@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/duke-git/lancet/v2/condition"
+	"github.com/duke-git/lancet/v2/mathutil"
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
@@ -14,9 +15,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
-	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/timex"
-	"zeebee-backend/common/types"
 	"zeebee-backend/common/uuid"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -45,33 +44,42 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 		}
 	}()
 	var loan *model.Loan
-	// var propertyBase *model.PropertyBase
-	var oldApplicants []*model.Applicant
+	var oldApplicants []*model.LoanApplicant
 	var loanBorrower *model.LoanBorrower
-	updateLogic := NewUpdateApplyLoanLogic(l.ctx, l.svcCtx)
-	data, err := l.buildModelData(in.Data)
-	if err != nil {
-		return nil, err
-	}
-	if data.loan.Id > 0 {
-		loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, data.loan.Id, in.Data.BorrowerId)
+	var loanProperty *model.LoanProperty
+	var oldBorrowerPropertyId int64
+
+	// get original loan
+	if in.Data.Id > 0 {
+		loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, in.Data.Id, in.Data.BorrowerId)
 		if err != nil {
 			return nil, err
 		}
 		if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreApproval {
-			return nil, errors.WithStack(errors.New("invalid loan source"))
+			return nil, errors.WithStack(errors.New("Invalid Loan Source"))
 		}
 
 		stages := []constants.LoanStage{
 			constants.LoanStageDraft,
-			// constants.LoanStagePredraft,
 		}
 		if !slice.Contain(stages, loan.Stage) && loan.PendingStatus != constants.LoanPendingStatusNone {
-			return nil, errors.New("loan's stage should be draft")
+			return nil, errors.New("Loan's Stage Should Be Draft")
 		}
 		oldApplicants = loan.Applicants
+		if loan.LoanProperty != nil {
+			oldBorrowerPropertyId = loan.LoanProperty.BorrowerPropertyId
+		}
+	}
+	// build data
+	updateLogic := NewUpdateApplyLoanLogic(l.ctx, l.svcCtx)
+	data, err := l.buildModelData(in.Data, loan)
+	if err != nil {
+		return nil, err
+	}
+	if loan != nil {
 		data.loan.Stage = loan.Stage
 	}
+
 	// update loan
 	err = l.svcCtx.LoanPropertyRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
 		var innerErr error
@@ -90,8 +98,8 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 				} else {
 					var uid string
 					uid, err = uuid.GetSonyflakeIDString()
-					if innerErr != nil {
-						return innerErr
+					if err != nil {
+						return err
 					}
 					data.loan.Code = uid
 					savaLoan, err := l.svcCtx.LoanRepo.CreateWithTx(l.ctx, tx, data.loan, false)
@@ -104,10 +112,13 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 			},
 			// handle property
 			func() error {
+				var err error
 				if data.loanProperty == nil {
 					return nil
 				}
-				return l.updateProperty(tx, data.loanProperty, loan)
+				data.loanProperty.LoanId = loan.Id
+				loanProperty, err = l.updateProperty(tx, data.loanProperty, loan)
+				return err
 			},
 			// loan borrower
 			func() error {
@@ -117,12 +128,14 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 			},
 			// handle applicant
 			func() error {
-				if loanBorrower != nil {
-					slice.ForEach(data.applicants, func(index int, item *model.Applicant) {
+				slice.ForEach(data.applicants, func(index int, item *model.LoanApplicant) {
+					if loanBorrower != nil {
 						item.LoanBorrowerId = loanBorrower.Id
-					})
-				}
-
+					}
+					if loanProperty != nil {
+						item.LoanPropertyId = loanProperty.Id
+					}
+				})
 				return updateLogic.updateApplicants(tx, oldApplicants, data.applicants, loan)
 			},
 			// loan demographic
@@ -149,6 +162,24 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 				}
 				return err
 			},
+			// sync BorrowerProperty loan count
+			func() error {
+				var err error
+				if in.Data.LoanProperty == nil {
+					return nil
+				}
+				err = l.svcCtx.BorrowerPropertyRepo.SyncTotalAmountAndLoanCountWithTx(l.ctx, tx, in.Data.LoanProperty.BorrowerPropertyId)
+
+				if err != nil {
+					return err
+				}
+
+				if oldBorrowerPropertyId != in.Data.LoanProperty.BorrowerPropertyId {
+					err = l.svcCtx.BorrowerPropertyRepo.SyncTotalAmountAndLoanCountWithTx(l.ctx, tx, oldBorrowerPropertyId)
+				}
+
+				return err
+			},
 		)
 
 		innerErr = eg.Error()
@@ -163,24 +194,17 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 }
 
 // updateProperty update loan property and property base
-func (l *SaveDraftLoanLogic) updateProperty(tx *gorm.DB, property *model.LoanProperty, loan *model.Loan) (err error) {
+func (l *SaveDraftLoanLogic) updateProperty(tx *gorm.DB, property *model.LoanProperty, loan *model.Loan) (newProperty *model.LoanProperty, err error) {
 	if property == nil {
-		return nil
+		return nil, nil
 	}
-	propertyBase := property.PropertyBase
-	if propertyBase == nil {
-		return errors.WithStack(errors.New("property base is required"))
+	if loan.LoanProperty != nil && loan.LoanProperty.Id > 0 {
+		newProperty, err = l.svcCtx.LoanPropertyRepo.UpdateOneWithTx(l.ctx, tx, loan.LoanProperty.Id, property)
+	} else {
+		newProperty, err = l.svcCtx.LoanPropertyRepo.CreateWithTx(l.ctx, tx, property, false)
 	}
-	propertyBase, err = l.svcCtx.PropertyBaseRepo.GetOrCreateWithTx(l.ctx, tx, propertyBase)
-	if err != nil {
-		return err
-	}
-
-	// save loan property
-	property.LoanId = loan.Id
-	property.PropertyBaseId = propertyBase.Id
-	property, err = l.svcCtx.LoanPropertyRepo.CreateWithTx(l.ctx, tx, property, false)
-	return err
+	// _, err = l.svcCtx.LoanPropertyRepo.UpdateOneWithTx(l.ctx, tx, property.Id, property)
+	return newProperty, err
 }
 
 // updateLoanBorrower update loan borrower
@@ -216,21 +240,28 @@ func (l *SaveDraftLoanLogic) updateLoanDemographic(tx *gorm.DB, loanDemographic 
 }
 
 // buildModelData return save model data
-func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData) (data *applyLoanModelData, err error) {
+func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, oldLoan *model.Loan) (data *applyLoanModelData, err error) {
 
 	if reqData == nil {
-		return nil, errors.WithStack(errors.New("invalid request data"))
+		return nil, errors.WithStack(errors.New("Invalid Request Data"))
 	}
 
 	if reqData.LenderCompanyId == 0 {
-		return nil, errors.WithStack(errors.New("invalid lender id"))
+		return nil, errors.WithStack(errors.New("Invalid Lender Id"))
 	}
 
 	// loan
 	loan := &model.Loan{}
+	if oldLoan != nil && oldLoan.Id > 0 {
+		_ = copier.CopyWithOption(loan, oldLoan, copier.Option{
+			CaseSensitive: true,
+			DeepCopy:      true,
+		})
+		loan.RemoveRelationships()
+	}
 	err = copier.CopyWithOption(loan, reqData, copier.Option{
-		IgnoreEmpty: true,
-		DeepCopy:    true,
+		CaseSensitive: true,
+		DeepCopy:      true,
 		Converters: []copier.TypeConverter{
 			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
 		},
@@ -252,63 +283,30 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 		loan.LenderCompany = lender.Name
 	}
 
-	// loan_borrower
+	// LoanBorrower
 	var loanBorrower *model.LoanBorrower
-	if reqData.LoanBorrower != nil {
-		loanBorrower = &model.LoanBorrower{
-			MailingAddress: types.Address{},
-		}
-		err = copier.CopyWithOption(loanBorrower, reqData.LoanBorrower, copier.Option{
-			IgnoreEmpty:   true,
-			DeepCopy:      true,
-			CaseSensitive: true,
-			Converters: []copier.TypeConverter{
-				copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-			},
-		})
+	if reqData.LoanBorrower.BorrowerEntityId > 0 {
+		loanBorrower, err = l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, reqData.LoanBorrower.BorrowerEntityId, reqData.BorrowerId)
 		if err != nil {
-			return nil, errorx.GetFailedTransErr(err)
+			return nil, err
 		}
+		loanBorrower.LoanId = reqData.Id
 	}
 
-	// applicants
-	var applicants []*model.Applicant
-	if len(reqData.Applicants) > 0 {
-		applicants = make([]*model.Applicant, 0)
-		err = copier.CopyWithOption(&applicants, &reqData.Applicants, copier.Option{
-			IgnoreEmpty: true,
-			DeepCopy:    true,
-			Converters: []copier.TypeConverter{
-				copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-			},
-		})
-		if err != nil {
-			return nil, errorx.GetFailedTransErr(err)
-		}
-	}
-
-	slice.ForEach(applicants, func(index int, item *model.Applicant) {
-		item.BorrowerId = reqData.BorrowerId
-		item.FullName = stringx.FormatFullName(item.FirstName, item.MidName, item.LastName)
-	})
-
-	// loan_property
+	// LoanProperty
 	var loanProperty *model.LoanProperty
 	if reqData.LoanProperty != nil {
-		if reqData.LoanProperty.PropertyBase == nil || reqData.LoanProperty.PropertyBase.Address == nil {
-			return nil, errors.WithStack(errors.New("property base is required"))
-		}
-		addr := reqData.LoanProperty.PropertyBase.Address
-		if len(addr.Address1) == 0 || len(addr.City) == 0 || len(addr.State) == 0 || len(addr.ZipCode) == 0 {
-			return nil, errors.WithStack(errors.New("property address is required"))
-		}
-
-		loanProperty = &model.LoanProperty{
-			PropertyBase: &model.PropertyBase{},
+		if reqData.LoanProperty.BorrowerPropertyId > 0 {
+			loanProperty, err = l.svcCtx.BorrowerPropertyRepo.TranToLoanPropertyWithId(l.ctx, reqData.LoanProperty.BorrowerPropertyId, reqData.BorrowerId)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			loanProperty = &model.LoanProperty{}
 		}
 		err = copier.CopyWithOption(loanProperty, reqData.LoanProperty, copier.Option{
-			IgnoreEmpty: true,
-			DeepCopy:    true,
+			CaseSensitive: false,
+			DeepCopy:      true,
 			Converters: []copier.TypeConverter{
 				copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
 			},
@@ -316,8 +314,29 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 		if err != nil {
 			return nil, errorx.GetFailedTransErr(err)
 		}
-		loanProperty.PropertyBase.BorrowerId = reqData.BorrowerId
-		loanProperty.Unit = loanProperty.PropertyBase.Unit
+		if loanProperty.YearlyLiabilityExpenseAmount > 0 {
+			loanProperty.Dscr = mathutil.RoundToFloat((loanProperty.EstYearlyRentalIncomeAmount/loanProperty.YearlyLiabilityExpenseAmount)*100, 2)
+		}
+	}
+
+	// LoanApplicants
+	var applicants []*model.LoanApplicant
+	var totalOwnPercent int32
+	for _, applicant := range reqData.Applicants {
+		totalOwnPercent += applicant.OwnPercent
+		loanApplicant, err := l.svcCtx.BorrowerApplicantRepo.TranToLoanApplicantWithId(l.ctx, applicant.BorrowerApplicantId, reqData.BorrowerId)
+		if err != nil {
+			return nil, err
+		}
+		loanApplicant.Id = applicant.Id
+		loanApplicant.LoanId = reqData.Id
+		loanApplicant.BorrowerId = reqData.BorrowerId
+		loanApplicant.IsPrimary = applicant.IsPrimary
+		loanApplicant.OwnPercent = applicant.OwnPercent
+		applicants = append(applicants, loanApplicant)
+	}
+	if totalOwnPercent > 100 {
+		return nil, errors.WithStack(errors.New("Total Own Percent Greater Than 100"))
 	}
 
 	// transaction experience
@@ -325,7 +344,7 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	if len(reqData.TransactionExperiences) > 0 {
 		transactionExperiences = make([]*model.LoanExperience, 0)
 		err = copier.CopyWithOption(&transactionExperiences, &reqData.TransactionExperiences, copier.Option{
-			IgnoreEmpty: true,
+			IgnoreEmpty: false,
 			DeepCopy:    true,
 			Converters: []copier.TypeConverter{
 				copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
@@ -341,8 +360,8 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	if len(reqData.RealEstateExperiences) > 0 {
 		realEstatesExperiences = make([]*model.LoanExperience, 0)
 		err = copier.CopyWithOption(&realEstatesExperiences, &reqData.RealEstateExperiences, copier.Option{
-			IgnoreEmpty: true,
-			DeepCopy:    true,
+			CaseSensitive: false,
+			DeepCopy:      true,
 			Converters: []copier.TypeConverter{
 				copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
 			},
@@ -357,8 +376,8 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	if len(reqData.LoanThirdServices) > 0 {
 		loanThirdServices = make([]*model.LoanThirdService, 0)
 		err = copier.CopyWithOption(&loanThirdServices, &reqData.LoanThirdServices, copier.Option{
-			IgnoreEmpty: true,
-			DeepCopy:    true,
+			CaseSensitive: false,
+			DeepCopy:      true,
 			Converters: []copier.TypeConverter{
 				copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
 			},
@@ -373,8 +392,8 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	if reqData.LoanDemographic != nil {
 		loanDemographic = &model.LoanDemographic{}
 		err = copier.CopyWithOption(&loanDemographic, &reqData.LoanDemographic, copier.Option{
-			IgnoreEmpty: true,
-			DeepCopy:    true,
+			CaseSensitive: false,
+			DeepCopy:      true,
 			Converters: []copier.TypeConverter{
 				copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
 			},

@@ -47,25 +47,15 @@ func (l *ApplyLogic) Apply(req *types.LoanApplyRequest) (resp *types.LoanApplyRe
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
 
-	applicants := make([]*borrower.ApplicantEntry, 0, len(rpcReq.Data.Applicants))
-	for _, applicant := range rpcReq.Data.Applicants {
-		applicant := applicant
-		if len(applicant.FirstName) > 0 {
-			applicants = append(applicants, applicant)
-		}
+	// handle applicants
+	rpcApplicants := slice.UniqueByComparator(rpcReq.Data.Applicants, func(item *borrower.LoanApplicantApplyEntry, other *borrower.LoanApplicantApplyEntry) bool {
+		return item.BorrowerApplicantId == other.BorrowerApplicantId
+	})
+	if len(rpcApplicants) == 0 {
+		err = errors.WithStack(errors.New("No Applicant"))
+		return nil, err
 	}
-	if len(applicants) > 0 {
-		primaryCount := slice.CountBy(applicants, func(index int, item *borrower.ApplicantEntry) bool {
-			return item.IsPrimary
-		})
-		if primaryCount == 0 {
-			applicants[0].IsPrimary = true
-		}
-		if primaryCount > 1 {
-			return nil, errors.WithStack(errors.New("multiple primary applicant"))
-		}
-	}
-	rpcReq.Data.Applicants = applicants
+	rpcReq.Data.Applicants = rpcApplicants
 
 	// get borrower id
 	rpcReq.Data.BorrowerId, err = utils.GetAccountIdFromCtx(l.ctx)

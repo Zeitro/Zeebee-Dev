@@ -1,6 +1,6 @@
 'use client';
 import { Anchor, Button, Col, Form, message, Row } from 'antd';
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import CreateLoan from '../components/Create/Loan';
 import CreateProperty from '../components/Create/property';
 import CreateTerm from '../components/Create/term';
@@ -9,7 +9,7 @@ import { createLoanSteps } from '@/enum/loan';
 import styles from './index.module.scss';
 import { createRequest } from '@/lib/fetch';
 import eventBus from '@/lib/bus';
-import { assemblyAddress } from '@/lib/format';
+import { assemblyAddress, changeUnitByPropertyType } from '@/lib/format';
 import { useGlobalStore } from '@/store/global';
 const initialValues = {
 	applicants: [
@@ -25,6 +25,9 @@ const EditLoanPage = () => {
 	const { request } = createRequest();
 	const [loading, setLoading] = useState(false);
 	const { changeSidebarCollapsed } = useGlobalStore();
+	const property_type = Form.useWatch(['loan_property', 'property_type'], form);
+	const [unitInfo, setUnitInfo] = useState({});
+	let isInit = useRef(true);
 
 	const getDetails = async () => {
 		let res = initialValues;
@@ -82,6 +85,15 @@ const EditLoanPage = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	// 通过property_type改变unit
+	useEffect(() => {
+		if (property_type && isInit.current) {
+			const info = changeUnitByPropertyType(property_type);
+			setUnitInfo(info);
+			isInit.current = false;
+		}
+	}, [property_type]);
+
 	return (
 		<Row className={['h-full', styles.editLoan].join(' ')}>
 			<Col flex={'200px'} className="h-full border-r border-[#DBDCDE]">
@@ -106,6 +118,18 @@ const EditLoanPage = () => {
 					autoComplete="off"
 					size="large"
 					initialValues={initialValues}
+					onValuesChange={(v) => {
+						// 根据property_type设置unit
+						const property_type = v?.loan_property?.property_type;
+						if (property_type) {
+							const info = changeUnitByPropertyType(property_type);
+							form.setFieldValue(
+								['loan_property', 'property_base', 'unit'],
+								info.unit,
+							);
+							setUnitInfo({ ...info });
+						}
+					}}
 				>
 					<div id="loanDetail">
 						<p className="py-6 font-medium text-lg/7">Loan detail</p>
@@ -122,6 +146,7 @@ const EditLoanPage = () => {
 							lg={12}
 							gutter={24}
 							form={form}
+							unitInfo={unitInfo}
 						/>
 					</div>
 					<div id="loanTerms">

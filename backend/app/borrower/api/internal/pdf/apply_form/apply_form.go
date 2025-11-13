@@ -31,7 +31,7 @@ type ApplyForm struct {
 
 func NewApplyForm(info *types.ApplyFormPdfRequest) (form *ApplyForm, err error) {
 	if info == nil {
-		return nil, errors.New("pdf info is empty")
+		return nil, errors.New("PDF Info Is Empty")
 	}
 	if info.Signatures == nil {
 		info.Signatures = &types.Signatures{}
@@ -299,7 +299,7 @@ func (form *ApplyForm) buildGraySmallTitle(title string, position position) (err
 func (form *ApplyForm) buildSignature(targetSignature []*types.SignatureEntry) (err error) {
 
 	if len(targetSignature) > 0 && len(targetSignature) != len(form.info.Applicants) {
-		err = errors.New("signature number not match the applicants number")
+		err = errors.New("Signature Number Not Match The Applicants Number")
 		return err
 	}
 

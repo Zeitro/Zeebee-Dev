@@ -43,24 +43,24 @@ func (l *DeleteFileLogic) DeleteFile(in *borrower.FileDeleteRequest) (resp *borr
 
 	file, err = l.svcCtx.FileRepo.FindOneById(l.ctx, in.Data.Id)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to find file")
+		return nil, errors.Wrap(err, "Failed To Find File")
 	}
 
 	if file.EntityType != constants.FileEntityTypeLoanDocument {
-		return nil, errors.WithStack(errors.New("file is not associated with a loan document"))
+		return nil, errors.WithStack(errors.New("File Is Not Associated With A Loan Document"))
 	}
 
 	loanDocument, err = l.svcCtx.LoanDocumentRepo.FindOneWithPreloadById(l.ctx, file.EntityId, nil)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to find loan document")
+		return nil, errors.Wrap(err, "Failed To Find Loan Document")
 	}
 
 	loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, loanDocument.LoanId, in.Data.BorrowerId)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get loan")
+		return nil, errors.Wrap(err, "Failed To Get Loan")
 	}
 	if loan.BorrowerId != in.Data.BorrowerId {
-		return nil, errors.WithStack(errors.New("loan does not belong to borrower"))
+		return nil, errors.WithStack(errors.New("Loan Does Not Belong To Borrower"))
 	}
 
 	err = l.svcCtx.FileRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
@@ -69,14 +69,14 @@ func (l *DeleteFileLogic) DeleteFile(in *borrower.FileDeleteRequest) (resp *borr
 		// delete file
 		_, innerErr = l.svcCtx.FileRepo.DeleteByIDWithTx(l.ctx, tx, in.Data.Id)
 		if innerErr != nil {
-			return errors.Wrap(innerErr, "failed to delete file")
+			return errors.Wrap(innerErr, "Failed To Delete File")
 		}
 
 		// get file count
 		var fileCount int64
 		fileCount, innerErr = l.svcCtx.FileRepo.GetFileCountByEntityIdWithTx(l.ctx, tx, loanDocument.Id, constants.FileEntityTypeLoanDocument)
 		if innerErr != nil {
-			return errors.Wrap(innerErr, "failed to check remaining files")
+			return errors.Wrap(innerErr, "Failed To Check Remaining Files")
 		}
 
 		// update loan document status
@@ -90,7 +90,7 @@ func (l *DeleteFileLogic) DeleteFile(in *borrower.FileDeleteRequest) (resp *borr
 				"status": loanDocumentStatus,
 			})
 			if innerErr != nil {
-				return errors.Wrap(innerErr, "failed to update loan document status")
+				return errors.Wrap(innerErr, "Failed To Update Loan Document Status")
 			}
 		}
 

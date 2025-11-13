@@ -38,12 +38,18 @@ const useCreate = (pageType = 'create') => {
 	const [currentStep, setCurrentStep] = useState(0); //顶部-总步骤
 	const [stepNum, setStepNum] = useState(0); //侧边步骤
 	const [loading, setLoading] = useState(false);
-	const [errorList, setErrorList] = useState([]);
+	let [errorList, setErrorList] = useState([]); // 只在点击上一步back时获取到的错误字段
 	const [isChange, setIsChange] = useState(false); // 记录是否操作过form
 	const [confirmLoading, setConfirmLoading] = useState(false); // 保存草稿
 	const [rowData, setRowData] = useState({}); // loan详情
+	const [unitInfo, setUnitInfo] = useState({
+		// unit: {},
+		// future_unit: {},
+	});
+	const [loanUuid, setLoanUuid] = useState(null); // loan uuid,提前创建id用于pdf中展示
 	const isClickBackBtn = useRef(false);
 	const { request } = createRequest();
+
 	// 从property详情跳转的创建loan
 	const getProperty = async () => {
 		const data = await request(api);
@@ -84,41 +90,51 @@ const useCreate = (pageType = 'create') => {
 		if (searchParams.has('id')) getLoanDetail();
 		eventBus.on('getLoanDetail', getLoanDetail);
 		return () => eventBus.off('getLoanDetail', getLoanDetail);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const stepContent = [
-		[
-			<ApplicantInfo key="0-ApplicantInfo" form={form} />,
-			<BorrowerInfo key="1-BorrowerInfo" form={form} />,
-		],
-		[
-			<PropertyInfo
-				key="0-PropertyInfo"
+	const stepContent = useMemo(
+		() => [
+			[
+				<ApplicantInfo key="0-ApplicantInfo" form={form} />,
+				<BorrowerInfo key="1-BorrowerInfo" form={form} />,
+			],
+			[
+				<PropertyInfo
+					key="0-PropertyInfo"
+					form={form}
+					unitInfo={unitInfo}
+					isRequestProperty={searchParams.has('propertyId') || isDetails}
+				/>,
+				<LoanDetail key="1-LoanDetail" form={form} />,
+			],
+			[
+				<Experience
+					key="0-Experience"
+					form={form}
+					rowData={rowData}
+					setIsChange={setIsChange}
+				/>,
+				<ThirdPartyService
+					key="1-ThirdPartyService"
+					form={form}
+					rowData={rowData}
+					setIsChange={setIsChange}
+				/>,
+			],
+			[
+				<Declaration key="0-Declaration" form={form} />,
+				<Demographics key="1-Demographics" form={form} />,
+			],
+			<ReviewAndSign
+				key="0-ReviewAndSign"
 				form={form}
-				isRequestProperty={searchParams.has('propertyId') || isDetails}
-			/>,
-			<LoanDetail key="1-LoanDetail" form={form} />,
-		],
-		[
-			<Experience
-				key="0-Experience"
-				form={form}
-				rowData={rowData}
-				setIsChange={setIsChange}
-			/>,
-			<ThirdPartyService
-				key="1-ThirdPartyService"
-				form={form}
-				rowData={rowData}
-				setIsChange={setIsChange}
+				rowData={isDetails ? rowData : null}
+				loanUuid={loanUuid}
 			/>,
 		],
-		[
-			<Declaration key="0-Declaration" form={form} />,
-			<Demographics key="1-Demographics" form={form} />,
-		],
-		<ReviewAndSign key="0-ReviewAndSign" form={form} rowData={isDetails ? rowData : null} />,
-	];
+		[form, isDetails, rowData, searchParams, unitInfo, loanUuid],
+	);
 
 	// zeeBeeDetails内独有的内容
 	const zeeBeeDetailsContent = [
@@ -164,12 +180,16 @@ const useCreate = (pageType = 'create') => {
 	const diffSteps = () => {
 		// 最后一步
 		const lastStep = stepContent[stepContent.length - 1];
-		// // 倒数第二步
-		// const secondToLastStep = stepContent[stepContent.length - 2];
+		// 倒数第二步
+		const secondToLastStep = stepContent[stepContent.length - 2];
+
 		// 某大步骤下有多个小步骤（数组），如为数组需判断是否最后一小步骤
 		const isLastStepNumByArr = lastStep?.length ? stepNum + 1 === lastStep?.length : true;
 		if (currentStep + 1 === stepContent.length && isLastStepNumByArr) {
 			return 'Submit';
+		}
+		if (stepContent.length - 2 === currentStep && stepNum + 1 === secondToLastStep?.length) {
+			return 'NextMaxStep-CreateUUID';
 		}
 		const parentStepData = createZeeBeeSteps[currentStep];
 		const childArr = parentStepData?.children;
@@ -187,6 +207,8 @@ const useCreate = (pageType = 'create') => {
 		if (searchParams.has('id')) {
 			url = `/loan/${searchParams.get('id')}/update_apply`;
 			method = 'PUT';
+		} else {
+			values.code = loanUuid;
 		}
 		await request(url, {
 			method,
@@ -200,6 +222,9 @@ const useCreate = (pageType = 'create') => {
 
 	const handlePdf = async (values) => {
 		// 获取签名已生成的pdf数据流
+		if (!searchParams.has('id')) {
+			values.code = loanUuid;
+		}
 		const res = await request('/pdf/apply_form', {
 			method: 'POST',
 			body: values,
@@ -236,6 +261,13 @@ const useCreate = (pageType = 'create') => {
 			values.loan_demographic.id = rowData?.loan_demographic?.id;
 		}
 		return values;
+	};
+
+	const handleCreateUUID = async () => {
+		const { uuid } = await request('/uuid', {
+			method: 'GET',
+		});
+		setLoanUuid(uuid);
 	};
 
 	// next/Add loan
@@ -276,7 +308,11 @@ const useCreate = (pageType = 'create') => {
 				router.back();
 				return;
 			}
-			if (isType === 'NextMaxStep') {
+			if (isType === 'NextMaxStep-CreateUUID') {
+				await handleCreateUUID();
+			}
+
+			if (['NextMaxStep', 'NextMaxStep-CreateUUID'].includes(isType)) {
 				setCurrentStep((v) => v + 1);
 				setStepNum(0);
 			} else {
@@ -288,10 +324,6 @@ const useCreate = (pageType = 'create') => {
 			});
 		} catch (error) {
 			console.log(error);
-
-			if (error?.errorFields) {
-				setErrorList(error?.errorFields.map((item) => item.name));
-			}
 			setLoading(false);
 		}
 	};
@@ -330,6 +362,7 @@ const useCreate = (pageType = 'create') => {
 			case 'Submit':
 				return 'Submit application';
 			case 'NextMaxStep':
+			case 'NextMaxStep-CreateUUID':
 				return `Next ${createZeeBeeSteps[currentStep + 1]?.title}`;
 			case 'NextMinStep':
 				return `Next ${parentStepData?.children[stepNum + 1]?.title}`;
@@ -340,17 +373,12 @@ const useCreate = (pageType = 'create') => {
 
 	const handleBack = () => {
 		isClickBackBtn.current = true;
-		if (errorList?.length) {
+		const errors = form.getFieldsError()?.filter((i) => i?.errors?.length);
+		if (errors?.length) {
 			// 光设置重新验证不行，需要结合validateFields处的操作才可避免
-			form.setFields(
-				errorList?.map((i) => ({
-					name: i,
-					errors: null,
-					touched: false,
-					validated: false,
-				})),
-			);
-			form.resetFields(errorList);
+			errorList = errors.map((i) => i?.name);
+			setErrorList([...errorList]);
+			// form.resetFields(errorList);
 		}
 		if (stepNum) {
 			setStepNum((v) => (v - 1 < 0 ? 0 : v - 1));
@@ -370,6 +398,17 @@ const useCreate = (pageType = 'create') => {
 				disabled={loading}
 				confirmLoading={confirmLoading}
 			/>
+		);
+		const draftBtn = (
+			<Button
+				type="primary"
+				ghost
+				className="w-[90px]"
+				onClick={handleSaveDraft}
+				disabled={loading || !isChange}
+			>
+				Draft
+			</Button>
 		);
 		const backBtn = !(!currentStep && !stepNum) && (
 			<Button className="w-[90px]" onClick={handleBack} disabled={loading}>
@@ -394,14 +433,18 @@ const useCreate = (pageType = 'create') => {
 		}
 		return (
 			<Col xs={24} sm={24} className="py-6 !flex justify-between items-center">
-				{cancelBtn}
+				<Space size={8}>
+					{cancelBtn}
+					{draftBtn}
+				</Space>
 				<Space size={8}>
 					{backBtn}
 					{nextBtn}
 				</Space>
 			</Col>
 		);
-	}, [currentStep, stepNum, loading, errorList, isChange, confirmLoading]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [currentStep, stepNum, loading, errorList, isChange, confirmLoading, stepContent.length]);
 
 	return {
 		getTabsItem,
@@ -421,6 +464,8 @@ const useCreate = (pageType = 'create') => {
 		loading,
 		getZeeBeeDetailsTabsItem,
 		rowData,
+		unitInfo,
+		setUnitInfo,
 	};
 };
 

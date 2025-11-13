@@ -41,7 +41,7 @@ func (form *ApplyForm) page2() (err error) {
 	form.pdf.Br(brHeight)
 	_ = form.pdf.Cell(&gopdf.Rect{W: 250, H: rowHeight}, "Entity Name/Individual:  "+borrowerInfo.Name)
 	_ = form.pdf.Cell(&gopdf.Rect{W: 150, H: rowHeight}, "TIN:  "+stringx.FormatUsSsn(borrowerInfo.Tin))
-	_ = form.pdf.Cell(&gopdf.Rect{W: 100, H: rowHeight}, "% Own:  "+fmt.Sprintf("%d", borrowerInfo.OwnPercent))
+	// _ = form.pdf.Cell(&gopdf.Rect{W: 100, H: rowHeight}, "% Own:  "+fmt.Sprintf("%d", borrowerInfo.OwnPercent))
 	form.pdf.Br(brHeight * 3.0)
 	_ = form.pdf.MultiCell(&gopdf.Rect{W: gopdf.PageSizeA4.W - form.pdf.MarginLeft() - form.pdf.MarginRight(), H: rowHeight}, "Mailing Address:  "+borrowerInfo.MailingAddress.Address1)
 	form.pdf.Br(brHeight)
@@ -59,9 +59,9 @@ func (form *ApplyForm) page2() (err error) {
 
 	applicantsInfo := form.info.Applicants
 	for i := 0; i < 2; i++ {
-		var applicant *types.LoanApplyApplicantEntry
+		var applicant *types.LoanApplicantApplyFormPdfEntry
 		if i > len(applicantsInfo)-1 {
-			applicant = &types.LoanApplyApplicantEntry{
+			applicant = &types.LoanApplicantApplyFormPdfEntry{
 				Address: &types.AddressEntry{},
 			}
 		} else {
@@ -77,7 +77,7 @@ func (form *ApplyForm) page2() (err error) {
 	return err
 }
 
-func (form *ApplyForm) applicantInfo(index int, applicant *types.LoanApplyApplicantEntry) (err error) {
+func (form *ApplyForm) applicantInfo(index int, applicant *types.LoanApplicantApplyFormPdfEntry) (err error) {
 	brHeight := 6.0
 	x := form.pdf.GetX()
 	y := form.pdf.GetY()
@@ -127,6 +127,8 @@ func (form *ApplyForm) applicantInfo(index int, applicant *types.LoanApplyApplic
 	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "Zip:  "+applicant.Address.ZipCode)
 	form.pdf.Br(brHeight)
 	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "Drivers License #:  "+applicant.DriverLicenseNum)
+	form.pdf.Br(brHeight)
+	_ = form.pdf.MultiCell(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: rowHeight}, "Entity Percentage Owned #:  "+stringx.TransNumberToString(applicant.OwnPercent, true)+"%")
 	form.pdf.Br(brHeight)
 	return err
 }

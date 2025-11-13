@@ -39,35 +39,35 @@ func (l *DeleteBorrowerLoanLogic) DeleteBorrowerLoan(in *borrower.LoanDeleteRequ
 	}()
 	loanModel, err := l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, in.Data.Id, in.Data.BorrowerId)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get loan")
+		return nil, errors.Wrap(err, "Failed To Get Loan")
 	}
 
 	if loanModel.Source != constants.LoanSourceBorrower && loanModel.Stage != constants.LoanStageDraft {
-		return nil, errors.WithStack(errors.New("loan source is not 3rd party or loan is not in draft stage"))
+		return nil, errors.WithStack(errors.New("Loan Source Is Not 3rd Party Or Loan Is Not In Draft Stage"))
 	}
 
 	if loanModel.BorrowerId != in.Data.BorrowerId {
-		return nil, errors.WithStack(errors.New("loan does not belong to borrower"))
+		return nil, errors.WithStack(errors.New("Loan Does Not Belong To Borrower"))
 	}
 
 	err = l.svcCtx.LoanRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
 		var innerErr error
 		var loanProperty *model.LoanProperty
-		var propertyBase *model.PropertyBase
+		var propertyBase *model.BorrowerProperty
 		loanProperty = loanModel.LoanProperty
 		if loanProperty != nil {
-			propertyBase = loanProperty.PropertyBase
+			propertyBase = loanProperty.BorrowerProperty
 		}
 
 		// delete property_base
 		if propertyBase != nil {
 			var loanCount int64
-			loanCount, innerErr = l.svcCtx.LoanPropertyRepo.GetLoanPropertyCountByPropertyBaseId(l.ctx, propertyBase.Id)
+			loanCount, innerErr = l.svcCtx.LoanPropertyRepo.GetLoanPropertyCountByBorrowerPropertyId(l.ctx, propertyBase.Id)
 			if innerErr != nil {
 				return innerErr
 			}
 			if loanCount == 1 {
-				_, innerErr = l.svcCtx.PropertyBaseRepo.DeleteByIDWithTx(l.ctx, tx, propertyBase.Id)
+				_, innerErr = l.svcCtx.BorrowerPropertyRepo.DeleteByIDWithTx(l.ctx, tx, propertyBase.Id)
 				if innerErr != nil {
 					return innerErr
 				}
@@ -82,7 +82,7 @@ func (l *DeleteBorrowerLoanLogic) DeleteBorrowerLoan(in *borrower.LoanDeleteRequ
 
 		// delete applicants
 		for _, applicant := range loanModel.Applicants {
-			_, innerErr = l.svcCtx.ApplicantRepo.DeleteByIDWithTx(l.ctx, tx, applicant.Id)
+			_, innerErr = l.svcCtx.LoanApplicantRepo.DeleteByIDWithTx(l.ctx, tx, applicant.Id)
 			if innerErr != nil {
 				return innerErr
 			}
@@ -135,14 +135,14 @@ func (l *DeleteBorrowerLoanLogic) DeleteBorrowerLoan(in *borrower.LoanDeleteRequ
 		}
 
 		// if propertyBase != nil {
-		// 	innerErr = l.svcCtx.PropertyBaseRepo.SyncTotalAmountWithTx(l.ctx, tx, propertyBase.Id)
+		// 	innerErr = l.svcCtx.BorrowerPropertyRepo.SyncTotalAmountWithTx(l.ctx, tx, propertyBase.Id)
 		// }
 
 		return innerErr
 	})
 
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to delete loan")
+		return nil, errors.Wrap(err, "Failed To Delete Loan")
 	}
 	return &borrower.EmptyResponse{}, nil
 }
