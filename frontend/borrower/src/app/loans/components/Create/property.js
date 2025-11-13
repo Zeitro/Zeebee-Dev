@@ -18,6 +18,9 @@ const CreateProperty = ({
 	isRequestProperty,
 	unitInfo,
 	className,
+	selectCardCol = { xl: 6, sm: 24, xs: 24 },
+	btnCol = { xl: 6, sm: 24, xs: 24 },
+	sliceIndex = 3,
 	...colProps
 }) => {
 	const form = Form.useFormInstance();
@@ -41,8 +44,9 @@ const CreateProperty = ({
 				name={['loan_property', 'borrower_property_id']}
 				id={borrower_property_id}
 				disabled={isRequestProperty}
-				sliceIndex={1}
-				xl={18}
+				sliceIndex={sliceIndex}
+				{...selectCardCol}
+				btnCol={btnCol}
 			/>
 			<Col {...layoutCol} {...(colProps || {})}>
 				<Form.Item

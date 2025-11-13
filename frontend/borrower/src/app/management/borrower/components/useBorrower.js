@@ -1,7 +1,12 @@
 import React from 'react';
 import { BtnPopUpModal, DeleteBtn, TableOperation } from '@repo/shared-methods';
 import AddModal from '@/components/SelectCard/Add/borrower';
-import { createRequest } from '@repo/shared-methods/utils';
+import {
+	assemblyAddress,
+	createRequest,
+	formatPhone,
+	formatTINOrSSN,
+} from '@repo/shared-methods/utils';
 import { useState } from 'react';
 const useBorrower = ({ handleSearch }) => {
 	const { request } = createRequest();
@@ -33,6 +38,7 @@ const useBorrower = ({ handleSearch }) => {
 			key: 'ssn',
 			ellipsis: true,
 			width: 160,
+			render: (v) => formatTINOrSSN(v) || '--',
 		},
 		{
 			title: 'Phone number',
@@ -40,6 +46,7 @@ const useBorrower = ({ handleSearch }) => {
 			key: 'phone',
 			ellipsis: true,
 			width: 160,
+			render: (v) => formatPhone(v) || '--',
 		},
 		{
 			title: 'Email',
@@ -59,6 +66,7 @@ const useBorrower = ({ handleSearch }) => {
 			dataIndex: ['address', 'address1'],
 			key: 'address1',
 			ellipsis: true,
+			render: (v, { address }) => assemblyAddress(address) || '--',
 		},
 
 		{

@@ -15,10 +15,7 @@ import {
 } from '@repo/shared-methods/utils';
 import { useGlobalStore } from '@/store/global';
 const initialValues = {
-	applicants: [
-		{ is_primary: true, type: 'Individual' },
-		{ is_primary: false, type: 'Individual' },
-	],
+	applicants: [{ is_primary: true, type: 'Individual' }],
 };
 const EditLoanPage = () => {
 	const { id } = useParams();
@@ -39,11 +36,8 @@ const EditLoanPage = () => {
 			eventBus.emit('changeCrumbs', {
 				2: `Edit Loan(${assemblyAddress(res?.loan_property?.address)})`,
 			});
-			if (res.applicants?.length < 2) {
-				res.applicants = [
-					{ is_primary: true, type: 'Individual', ...(res.applicants?.[0] || {}) },
-					{ is_primary: false, type: 'Individual', ...(res.applicants?.[1] || {}) },
-				];
+			if (!res.applicants?.length) {
+				res.applicants = initialValues?.applicants;
 			}
 			form.setFieldsValue({
 				...res,
@@ -121,18 +115,18 @@ const EditLoanPage = () => {
 					autoComplete="off"
 					size="large"
 					initialValues={initialValues}
-					onValuesChange={(v) => {
-						// 根据property_type设置unit
-						const property_type = v?.loan_property?.property_type;
-						if (property_type) {
-							const info = changeUnitByPropertyType(property_type);
-							form.setFieldValue(
-								['loan_property', 'property_base', 'unit'],
-								info.unit,
-							);
-							setUnitInfo({ ...info });
-						}
-					}}
+					// onValuesChange={(v) => {
+					// 	// 根据property_type设置unit
+					// 	const property_type = v?.loan_property?.property_type;
+					// 	if (property_type) {
+					// 		const info = changeUnitByPropertyType(property_type);
+					// 		form.setFieldValue(
+					// 			['loan_property', 'property_base', 'unit'],
+					// 			info.unit,
+					// 		);
+					// 		setUnitInfo({ ...info });
+					// 	}
+					// }}
 				>
 					<div id="loanDetail">
 						<p className="py-6 font-medium text-lg/7">Loan detail</p>
