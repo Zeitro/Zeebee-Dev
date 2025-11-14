@@ -1,7 +1,7 @@
 'use client';
 import styles from './index.module.scss';
-import { Form, Menu, Segmented, Steps, Tabs } from 'antd';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Form, Menu, Tabs } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
 import useLenderDetails from './components/useLenderDetails';
 import { assemblyAddress, changeUnitByPropertyType } from '@repo/shared-methods/utils';
 import { stageColor, pendingStatusColor, loanDetailsFields } from '@/enum/loan';

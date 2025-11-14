@@ -1,5 +1,4 @@
-import React, { useMemo, useState } from 'react';
-import { Checkbox, List } from 'antd';
+import React, { useState } from 'react';
 import CollapseList from './CollapseList';
 import HeaderBtn from './HeaderBtn';
 const QuotingPage = ({ id, setNextStep, disabledOperate }) => {

@@ -1,15 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Collapse, List, Space } from 'antd';
 import {
 	DeleteOutlined,
 	FileImageOutlined,
 	FilePdfOutlined,
 	FileTextOutlined,
-	UpOutlined,
 } from '@ant-design/icons';
 import styles from '../index.module.scss';
-import ViewFile from '@/components/ViewFile';
-import { DeleteBtn } from '@/components/NewModal/BtnPopUpModal';
+import { DeleteBtn, ViewFile } from '@repo/shared-methods';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 import { eventBus, createRequest } from '@repo/shared-methods/utils';
 const DocumentItem = ({ columns, item, isHide }) => {
