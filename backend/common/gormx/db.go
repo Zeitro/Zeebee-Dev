@@ -4,11 +4,12 @@ import (
 	"context"
 	"time"
 
-	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/service"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+
+	"zeebee-backend/common/errorx"
 )
 
 type DBType string
@@ -44,7 +45,7 @@ func GetDB(dsn string, isDebug bool, typ DBType) (db *gorm.DB, err error) {
 			Logger: NewGormLogger(logLevel),
 		})
 	default:
-		return nil, errors.New("Invalid DB Type: " + string(typ))
+		return nil, errorx.New("Invalid DB Type: " + string(typ))
 	}
 	if err != nil {
 		return nil, err
@@ -62,7 +63,7 @@ func GetDB(dsn string, isDebug bool, typ DBType) (db *gorm.DB, err error) {
 	ctx, _ := context.WithTimeout(context.Background(), time.Second)
 	err = sqlDb.PingContext(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err, "Ping DB Error")
+		return nil, errorx.Wrap(err, "Ping DB Error")
 	}
 
 	sqlDb.SetMaxIdleConns(10)

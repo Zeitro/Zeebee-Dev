@@ -9,6 +9,7 @@ import (
 
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/common/constants"
+	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/model"
 )
 
@@ -33,11 +34,11 @@ func (l *LoanBaseLogic) GetLenderLoan(loanId int64, lenderCompanyId int64, prelo
 		return nil, err
 	}
 	if loan.LenderCompanyId != lenderCompanyId {
-		return nil, errors.WithStack(errors.New("Invalid Lender Company"))
+		return nil, errorx.New("Invalid Lender Company")
 	}
 
 	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreApproval {
-		return nil, errors.WithStack(errors.New("Invalid Loan Source"))
+		return nil, errorx.New("Invalid Loan Source")
 	}
 
 	return
@@ -101,7 +102,7 @@ func (l *LoanBaseLogic) GetNextPendingStatus(currentStatus constants.LoanPending
 
 	trans, ok := loanPendingStatusTransMap[currentStatus]
 	if !ok {
-		return constants.LoanPendingStatusNone, errors.Errorf("Invalid Current Status %v", currentStatus)
+		return constants.LoanPendingStatusNone, errorx.Errorf("Invalid Current Status %v", currentStatus)
 	}
 	switch action {
 	case constants.LoanOperationActionApprove:
@@ -110,13 +111,13 @@ func (l *LoanBaseLogic) GetNextPendingStatus(currentStatus constants.LoanPending
 		nextStatus = trans.rejectTarget
 	default:
 		nextStatus = constants.LoanPendingStatusNone
-		err = errors.Errorf("Invalid Action %v", action)
+		err = errorx.Errorf("Invalid Action %v", action)
 	}
 	if err != nil {
 		return constants.LoanPendingStatusNone, err
 	}
 	if currentStatus != constants.LoanPendingStatusClosing && nextStatus == constants.LoanPendingStatusNone {
-		return constants.LoanPendingStatusNone, errors.Errorf("Invalid Action %v For Current Status %v", action, currentStatus)
+		return constants.LoanPendingStatusNone, errorx.Errorf("Invalid Action %v For Current Status %v", action, currentStatus)
 	}
 
 	return nextStatus, err

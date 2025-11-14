@@ -4,17 +4,15 @@ import (
 	"context"
 
 	"github.com/jinzhu/copier"
-	"github.com/pkg/errors"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/model"
-
-	"zeebee-backend/common/errorx"
 )
 
 type CreateLogic struct {
@@ -53,7 +51,7 @@ func (l *CreateLogic) Create(in *borrower.PropertyCreateRequest) (resp *borrower
 		return nil, err
 	}
 	if isExisted {
-		err = errors.WithStack(errors.New("Address Is Existed"))
+		err = errorx.WithStack(errorx.New("Address Is Existed"))
 		return nil, err
 	}
 

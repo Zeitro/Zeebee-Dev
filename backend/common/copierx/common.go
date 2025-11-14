@@ -6,6 +6,8 @@ import (
 
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
+
+	"zeebee-backend/common/errorx"
 )
 
 // TimeToRFC3339Str time.Time -> string (2006-01-02T15:04:05Z07:00)
@@ -21,7 +23,7 @@ func TimeToStr(layout string) copier.TypeConverter {
 		Fn: func(src interface{}) (dst interface{}, err error) {
 			val, ok := src.(time.Time)
 			if !ok {
-				return "", errors.Errorf("Invalid Src Type:%T", val)
+				return "", errorx.Errorf("Invalid Src Type:%T", val)
 			}
 			if val.IsZero() {
 				return "", nil
@@ -42,7 +44,7 @@ func TimePtrToStr(layout string) copier.TypeConverter {
 		Fn: func(src interface{}) (dst interface{}, err error) {
 			val, ok := src.(*time.Time)
 			if !ok {
-				return "", errors.Errorf("Invalid Src Type:%T", val)
+				return "", errorx.Errorf("Invalid Src Type:%T", val)
 			}
 			if val == nil || val.IsZero() {
 				return "", nil
@@ -65,7 +67,7 @@ func SqlTimePtrToStr(layout string) copier.TypeConverter {
 		Fn: func(src interface{}) (dst interface{}, err error) {
 			val, ok := src.(*sql.NullTime)
 			if !ok {
-				return "", errors.Errorf("Invalid Src Type:%T", val)
+				return "", errorx.Errorf("Invalid Src Type:%T", val)
 			}
 			if val == nil || !val.Valid || val.Time.IsZero() {
 				return "", nil
@@ -92,7 +94,7 @@ func StrToSqlTimePtr(layout string) copier.TypeConverter {
 			}
 			t, err := time.Parse(layout, val)
 			if err != nil {
-				return dst, errors.WithStack(err)
+				return dst, errorx.WithStack(err)
 			}
 
 			dst = &sql.NullTime{
@@ -117,7 +119,7 @@ func StrToTime(format string) copier.TypeConverter {
 		Fn: func(src interface{}) (dst interface{}, err error) {
 			val, ok := src.(string)
 			if !ok {
-				return "", errors.Errorf("Invalid Src Type:%T", val)
+				return "", errorx.Errorf("Invalid Src Type:%T", val)
 			}
 			dst, err = time.Parse(format, val)
 

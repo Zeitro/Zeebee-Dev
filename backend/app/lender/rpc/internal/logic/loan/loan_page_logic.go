@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/jinzhu/copier"
-	"github.com/pkg/errors"
 
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
@@ -45,7 +44,7 @@ func (l *LoanPageLogic) LoanPage(in *lender.LoanPageRequest) (resp *lender.LoanP
 
 	pageResult, err := l.svcCtx.LoanRepo.PageForLenderCompany(l.ctx, pageRep)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	resp = &lender.LoanPageResponse{
 		Data: &lender.LoanPageResponseData{},

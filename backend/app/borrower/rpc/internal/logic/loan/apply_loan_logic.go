@@ -6,7 +6,6 @@ import (
 	"github.com/duke-git/lancet/v2/mathutil"
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -66,14 +65,14 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrowe
 
 		// check loan
 		if len(data.loan.Code) == 0 {
-			innerErr = errors.WithStack(errors.New("Code Is Empty"))
+			innerErr = errorx.WithStack(errorx.New("Code Is Empty"))
 		}
 		isExisted, innerErr := l.svcCtx.LoanRepo.IsExistedByColumnsWithTx(l.ctx, tx, map[string]interface{}{"code": data.loan.Code})
 		if innerErr != nil {
 			return innerErr
 		}
 		if isExisted {
-			return errors.WithStack(errors.New("Code Already Exists"))
+			return errorx.WithStack(errorx.New("Code Already Exists"))
 		}
 		// todo check code whether generate by system
 
@@ -192,7 +191,7 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrowe
 		return innerErr
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed To Apply Loan")
+		return nil, errorx.Wrap(err, "Failed To Apply Loan")
 	}
 
 	return &borrower.LoanApplyResponse{
@@ -207,14 +206,14 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, 
 	var borrowerProperty *model.BorrowerProperty
 
 	if reqData == nil {
-		return nil, errors.WithStack(errors.New("Invalid Request Data"))
+		return nil, errorx.New("Invalid Request Data")
 	}
 	if reqData.LoanProperty == nil {
-		return nil, errors.WithStack(errors.New("Invalid Loan Property"))
+		return nil, errorx.New("Invalid Loan Property")
 	}
 
 	if reqData.LoanProperty.BorrowerPropertyId == 0 {
-		return nil, errors.WithStack(errors.New("Invalid Borrower Property"))
+		return nil, errorx.New("Invalid Borrower Property")
 	}
 
 	// loan
@@ -257,7 +256,7 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, 
 	// LoanBorrower
 	loanBorrowerData := reqData.LoanBorrower
 	if loanBorrowerData == nil {
-		return nil, errors.WithStack(errors.New("Invalid Loan Borrower"))
+		return nil, errorx.WithStack(errorx.New("Invalid Loan Borrower"))
 	}
 	loanBorrower, err := l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, loanBorrowerData.BorrowerEntityId, reqData.BorrowerId)
 	if err != nil {
@@ -296,7 +295,7 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, 
 		applicants = append(applicants, applicantItem)
 	}
 	if totalOwnPercent > 100 {
-		return nil, errors.New("Total Own Percent Is Greater Than 100")
+		return nil, errorx.New("Total Own Percent Is Greater Than 100")
 	}
 
 	slice.SortBy(applicants, func(a, b *model.LoanApplicant) bool {
@@ -306,10 +305,10 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, 
 		return item.IsPrimary
 	})
 	if primaryCount == 0 {
-		return nil, errors.New("No Primary Applicant")
+		return nil, errorx.New("No Primary Applicant")
 	}
 	if primaryCount > 1 {
-		return nil, errors.New("Multiple Primary Applicant")
+		return nil, errorx.New("Multiple Primary Applicant")
 	}
 
 	// loan_property

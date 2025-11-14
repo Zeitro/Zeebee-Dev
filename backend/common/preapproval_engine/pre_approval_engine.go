@@ -3,7 +3,7 @@ package preapproval_engine
 import (
 	"math"
 
-	"github.com/pkg/errors"
+	"zeebee-backend/common/errorx"
 
 	"zeebee-backend/common/constants"
 )
@@ -79,7 +79,7 @@ func (e *PreApprovalEngine) CalPreApprovalLoanAmount(input InputLoanInfo) (resul
 	experienceLevel := e.ExperienceLevelRule.getExperienceLevel(input.TransactionHistoryCount)
 	rule, ok := e.PreApprovalRules[experienceLevel]
 	if !ok {
-		return nil, errors.WithStack(errors.New("No Rule Found For Experience Level"))
+		return nil, errorx.WithStack(errorx.New("No Rule Found For Experience Level"))
 	}
 	result, err = rule.CalPreApprovalLoanAmount(input)
 	if err != nil {

@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/jinzhu/copier"
-	"github.com/pkg/errors"
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
@@ -35,7 +34,7 @@ func (l *InfoLogic) Info(req *types.EmptyRequest) (resp *types.UserInfoResponse,
 	resp = &types.UserInfoResponse{}
 	userId := utils.GetInt64FromCtx(l.ctx, constants.BorrowerUserIdKey)
 	if userId == 0 {
-		return nil, errors.WithStack(errors.New("User Id Not Found"))
+		return nil, errorx.WithStack(errorx.New("User Id Not Found"))
 	}
 	userInfo, err := l.svcCtx.UserRpcClient.UserInfo(l.ctx, &borrower.UserInfoRequest{
 		Data: &borrower.UserInfoRequestData{

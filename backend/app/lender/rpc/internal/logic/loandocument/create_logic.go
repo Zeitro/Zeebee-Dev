@@ -5,7 +5,6 @@ import (
 
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
@@ -126,7 +125,7 @@ func (l *CreateLogic) prepare(in *lender.LoanDocumentCreateExtendTypeRequest) (l
 		constants.LoanDocumentCategoryExtend,
 		constants.LoanDocumentCategoryLenderClosingExtend,
 	}, category) {
-		return nil, errors.WithStack(errors.New("Loan Document Category Not Supported"))
+		return nil, errorx.WithStack(errorx.New("Loan Document Category Not Supported"))
 	}
 
 	loan, err = l.baseLogic.GetLenderLoan(in.Data.LoanId, in.Data.LenderCompanyId, nil)
@@ -138,18 +137,18 @@ func (l *CreateLogic) prepare(in *lender.LoanDocumentCreateExtendTypeRequest) (l
 	// check unique
 	fileTypes = slice.Unique(fileTypes)
 	if len(fileTypes) == 0 {
-		return nil, errors.WithStack(errors.New("File Types Cannot Be Empty"))
+		return nil, errorx.WithStack(errorx.New("File Types Cannot Be Empty"))
 	}
 
 	// checked repeated file types
 	var allFileTypes []string
 	allFileTypes, err = l.svcCtx.LoanDocumentRepo.GetFileTypesByLoanId(l.ctx, in.Data.LoanId)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	exitedFileTypes := slice.Intersection(fileTypes, allFileTypes)
 	if len(exitedFileTypes) > 0 {
-		return nil, errors.Errorf("File Type %s Is Existed", exitedFileTypes[0])
+		return nil, errorx.Errorf("File Type %s Is Existed", exitedFileTypes[0])
 	}
 	return loan, nil
 }

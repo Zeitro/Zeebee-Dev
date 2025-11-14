@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/jinzhu/copier"
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
@@ -66,7 +65,7 @@ func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *
 		if len(files) > 0 {
 			files, innerErr = l.svcCtx.FileRepo.BatchCreateWithTx(l.ctx, tx, files, false)
 			if innerErr != nil {
-				return errors.Wrap(innerErr, "Failed To Create File Records")
+				return errorx.Wrap(innerErr, "Failed To Create File Records")
 			}
 		}
 
@@ -75,7 +74,7 @@ func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *
 			"status": constants.LoanDocumentStatusReadyForReview,
 		})
 		if innerErr != nil {
-			return errors.Wrap(innerErr, "Failed To Update Loan Document Status")
+			return errorx.Wrap(innerErr, "Failed To Update Loan Document Status")
 		}
 
 		// convert files
@@ -114,7 +113,7 @@ func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *
 			},
 		)
 		if innerErr != nil {
-			return errors.Wrap(innerErr, "Failed To Create Operation Log")
+			return errorx.Wrap(innerErr, "Failed To Create Operation Log")
 		}
 
 		// upload loan document upload time
@@ -136,14 +135,14 @@ func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *
 func (l *AddFilesLogic) prepare(in *lender.LoanDocumentAddFilesRequest) (loan *model.Loan, loanDocument *model.LoanDocument, err error) {
 	loanDocument, err = l.svcCtx.LoanDocumentRepo.FindOneWithPreloadById(l.ctx, in.Data.Id, []string{"Files"})
 	if err != nil {
-		return nil, nil, errors.Wrap(err, "Failed To Find Loan Document")
+		return nil, nil, errorx.Wrap(err, "Failed To Find Loan Document")
 	}
 
 	// Validate file count - existing files + new files should not exceed 10
 	existingFileCount := int64(len(loanDocument.Files))
 	newFileCount := int64(len(in.Data.FileUrls))
 	if existingFileCount+newFileCount > 10 {
-		return nil, nil, errors.WithStack(errors.New("Total Number Of Files (Existing + New) Cannot Exceed 10"))
+		return nil, nil, errorx.WithStack(errorx.New("Total Number Of Files (Existing + New) Cannot Exceed 10"))
 	}
 
 	loan, err = l.baseLogic.GetLenderLoan(loanDocument.LoanId, in.Data.LenderCompanyId, nil)

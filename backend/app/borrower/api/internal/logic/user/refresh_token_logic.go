@@ -3,11 +3,10 @@ package user
 import (
 	"context"
 
-	"github.com/pkg/errors"
-
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/errorx"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -34,7 +33,7 @@ func (l *RefreshTokenLogic) RefreshToken(req *types.UserRefreshTokenRequest) (re
 		},
 	})
 	if err != nil {
-		return nil, errors.WithStack(errors.New("Refresh Token Error"))
+		return nil, errorx.New("Refresh Token Error")
 	}
 
 	return &types.UserRefreshTokenResponse{

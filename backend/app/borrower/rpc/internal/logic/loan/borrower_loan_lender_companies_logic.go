@@ -3,8 +3,6 @@ package loanlogic
 import (
 	"context"
 
-	"github.com/pkg/errors"
-
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 
@@ -36,7 +34,7 @@ func (l *BorrowerLoanLenderCompaniesLogic) BorrowerLoanLenderCompanies(in *borro
 	var lenderCompanies []string
 	lenderCompanies, err = l.svcCtx.LoanRepo.GetLenderCompanyForBorrower(l.ctx, in.Data.BorrowerId)
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed To Get Lender Companies")
+		return nil, errorx.Wrap(err, "Failed To Get Lender Companies")
 	}
 
 	return &borrower.LoanLenderCompaniesResponse{
