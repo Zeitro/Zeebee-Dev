@@ -24,25 +24,33 @@ jobs:
         id: set_env
         run: |
           if [[ "${{ github.ref }}" == "refs/heads/staging-borrower-backend" ]]; then
-            echo "SERVICE_NAME=staging-borrower-backend" >> $GITHUB_ENV
-            echo "IMAGE_NAME=staging-borrower-backend" >> $GITHUB_ENV
-            echo "CONTAINER_NAME=staging-borrower-backend" >> $GITHUB_ENV
+            echo "SERVICE_NAME=borrower" >> $GITHUB_ENV
           elif [[ "${{ github.ref }}" == "refs/heads/staging-lender-backend" ]]; then
-            echo "SERVICE_NAME=staging-lender-backend" >> $GITHUB_ENV
-            echo "IMAGE_NAME=staging-lender-backend" >> $GITHUB_ENV
-            echo "CONTAINER_NAME=staging-lender-backend" >> $GITHUB_ENV
+             echo "SERVICE_NAME=lender" >> $GITHUB_ENV
+          else
+            echo "Invalid Branch ${{ github.ref }}"
+            exit 1
           fi
+          echo "SERVICE_ENVIRONMENT=staging" >> $GITHUB_ENV   
+          echo "FULL_SERVICE_NAME=${{ env.SERVICE_ENVIRONMENT }}-${{ env.SERVICE_NAME }}-backend" >> $GITHUB_ENV   
+          echo "IMAGE_NAME=${{ env.SERVICE_ENVIRONMENT }}-${{ env.SERVICE_NAME }}-backend" >> $GITHUB_ENV
+          echo "CONTAINER_NAME=${{ env.SERVICE_ENVIRONMENT }}-${{ env.SERVICE_NAME }}-backend" >> $GITHUB_ENV
+          echo "DOCKER_COMPOSE_FILE=deploy/${{ env.SERVICE_NAME }}/docker-compose.yml" >> $GITHUB_ENV
+
 
       - name: Show environment variables
         run: |
           echo "Branch: ${{ github.ref }}"
-          echo "SERVICE_NAME=${SERVICE_NAME}"
-          echo "CONTAINER_NAME=${CONTAINER_NAME}"
-          echo "IMAGE_NAME=${IMAGE_NAME}"
+          echo "SERVICE_NAME: ${{ env.SERVICE_NAME }}"
+          echo "SERVICE_ENVIRONMENT: ${{ env.SERVICE_ENVIRONMENT }}"
+          echo "CONTAINER_NAME: ${{ env.CONTAINER_NAME }}"
+          echo "IMAGE_NAME: ${{ env.IMAGE_NAME }}"
+          echo "DOCKER_COMPOSE_FILE: ${{ env.DOCKER_COMPOSE_FILE }}"
 
-      - name: Remove old docker containers
+      - name: Remove old service
         run: |
-          docker rm -f ${CONTAINER_NAME} || true
+          #          docker rm -f ${{ env.CONTAINER_NAME }} || true
+               docker-compose -f ${{ env.DOCKER_COMPOSE_FILE }} down --remove-orphans ${{ env.FULL_SERVICE_NAME }} || true
 
       - name: Build and deploy
         working-directory: backend
@@ -52,36 +60,36 @@ jobs:
           IMAGE_NAME: ${{ env.IMAGE_NAME }}
           CONTAINER_NAME: ${{ env.CONTAINER_NAME }}
         run: |
-          echo "Deploying service: ${CONTAINER_NAME}"
-          docker-compose -f docker-compose-staging.yml build --no-cache ${SERVICE_NAME}
-          docker-compose -f docker-compose-staging.yml up -d ${SERVICE_NAME}
+          echo "Deploying service:  ${{ env.SERVICE_NAME }}"
+          docker-compose -f ${{ env.DOCKER_COMPOSE_FILE }} build --no-cache  ${{ env.FULL_SERVICE_NAME }}
+          docker-compose -f ${{ env.DOCKER_COMPOSE_FILE }} up -d ${{ env.FULL_SERVICE_NAME }}
 
       - name: Verify container is running
         run: |
-          echo "Checking container status for ${CONTAINER_NAME}..."
+          echo "Checking container status for ${{ env.CONTAINER_NAME }}..."
           for i in {1..12}; do
-            status=$(docker inspect -f '{{.State.Status}}' ${CONTAINER_NAME} 2>/dev/null || echo "not_found")
+            status=$(docker inspect -f '{{.State.Status}}' ${{ env.CONTAINER_NAME }} 2>/dev/null || echo "not_found")
             if [ "$status" = "running" ]; then
-              echo "✅ Container ${CONTAINER_NAME} is running."
+              echo "✅ Container ${{ env.CONTAINER_NAME }} is running."
               exit 0
             fi
             echo "⏳ Waiting for container to start... ($i/12)"
             sleep 5
           done
 
-          echo "❌ Container ${CONTAINER_NAME} failed to start."
+          echo "❌ Container ${{ env.CONTAINER_NAME }} failed to start."
           echo "------ Container Logs ------"
-          docker logs ${CONTAINER_NAME} || echo "No logs available"
+          docker logs ${{ env.CONTAINER_NAME }} || echo "No logs available"
           echo "-----------------------------"
           exit 1
 
       - name: Remove old images
         run: |
-          docker images ${IMAGE_NAME} \
+          docker images ${{ env.IMAGE_NAME }} \
             --format "{{.Tag}}" \
             | sort -V \
             | head -n -10 \
-            | xargs -r -I {} docker rmi ${IMAGE_NAME}:{} || true
+            | xargs -r -I {} docker rmi ${{ env.IMAGE_NAME }}:{} || true
 
       - name: Remove dangling images
         run: |
