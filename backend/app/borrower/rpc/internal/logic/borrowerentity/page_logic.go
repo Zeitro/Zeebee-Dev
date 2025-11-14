@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/timex"
+	"zeebee-backend/domains/zeebee/repo"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -35,8 +36,12 @@ func (l *PageLogic) Page(in *borrower.BorrowerEntityPageRequest) (resp *borrower
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-
-	pageResult, err := l.svcCtx.BorrowerEntityRepo.Page(l.ctx, in.Data)
+	pageReq := &repo.BorrowerEntityBorrowerPageReq{}
+	_ = copier.CopyWithOption(pageReq, in.Data, copier.Option{
+		CaseSensitive: true,
+		DeepCopy:      true,
+	})
+	pageResult, err := l.svcCtx.BorrowerEntityRepo.PageForBorrower(l.ctx, pageReq)
 	if err != nil {
 		return nil, err
 	}

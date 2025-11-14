@@ -13,8 +13,6 @@ import (
 
 	"zeebee-backend/app/borrower/rpc/internal/email_tpl"
 	"zeebee-backend/app/borrower/rpc/internal/global"
-	"zeebee-backend/app/borrower/rpc/internal/repo"
-	"zeebee-backend/app/borrower/rpc/internal/repo/model"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
@@ -23,6 +21,8 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/preapproval_engine"
 	"zeebee-backend/common/uuid"
+	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/repo"
 )
 
 type PreApprovalLoanLogic struct {

@@ -12,7 +12,7 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/types"
+	"zeebee-backend/domains/zeebee/model"
 )
 
 type UpdateLoanStageLogic struct {
@@ -39,11 +39,11 @@ func (l *UpdateLoanStageLogic) UpdateLoanStage(in *lender.LoanUpdateStageRequest
 	// Get loan
 	loan, err := l.svcCtx.LoanRepo.GetLenderLoan(l.ctx, in.Data.Id, in.Data.LenderCompanyId, false)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get loan")
+		return nil, errors.Wrap(err, "Failed To Get Loan")
 	}
 
 	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreApproval {
-		return nil, errors.WithStack(errors.New("invalid loan source"))
+		return nil, errors.WithStack(errors.New("Invalid Loan Source"))
 	}
 
 	// Save original status for operation log
@@ -57,18 +57,18 @@ func (l *UpdateLoanStageLogic) UpdateLoanStage(in *lender.LoanUpdateStageRequest
 
 		err = l.svcCtx.LoanRepo.UpdateStageWithTx(l.ctx, tx, in.Data.Id, stage)
 		if err != nil {
-			return errors.Wrap(err, "failed to update loan")
+			return errors.Wrap(err, "Failed To Update Loan")
 		}
 
 		// Create operation log
 		operatorId := in.Data.LenderEmployeeId
 
-		fromStatus := types.LoanOperationStatus{
+		fromStatus := model.LoanOperationStatus{
 			Stage:         originalStage,
 			PendingStatus: originalPendingStatus,
 		}
 
-		toStatus := types.LoanOperationStatus{
+		toStatus := model.LoanOperationStatus{
 			Stage:         stage,
 			PendingStatus: loan.PendingStatus,
 		}

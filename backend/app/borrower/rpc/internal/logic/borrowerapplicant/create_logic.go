@@ -6,13 +6,13 @@ import (
 	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 
-	"zeebee-backend/app/borrower/rpc/internal/repo/model"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/timex"
+	"zeebee-backend/domains/zeebee/model"
 )
 
 type CreateLogic struct {

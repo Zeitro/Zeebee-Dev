@@ -22,7 +22,7 @@ func initRedis(cnf config.RedisConf) (err error) {
 		Prefix: cnf.Prefix,
 	})
 	if err != nil {
-		return errors.Wrap(err, "init redis error")
+		return errors.Wrap(err, "Init Redis Error")
 	}
 	redisDB = rds
 	return err

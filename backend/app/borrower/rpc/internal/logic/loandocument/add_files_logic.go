@@ -10,10 +10,10 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
-	"zeebee-backend/app/borrower/rpc/internal/repo/model"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
+	"zeebee-backend/domains/zeebee/model"
 
 	"zeebee-backend/common/errorx"
 )
@@ -101,7 +101,7 @@ func (l *AddFilesLogic) prepare(in *borrower.LoanDocumentAddFilesRequest) (loan 
 	existingFileCount := int64(len(loanDocument.Files))
 	newFileCount := int64(len(in.Data.FileUrls))
 	if existingFileCount+newFileCount > 10 {
-		return nil, nil, errors.WithStack(errors.New("total number of files (existing + new) cannot exceed 10"))
+		return nil, nil, errors.WithStack(errors.New("Total Number Of Files (Existing + New) Cannot Exceed 10"))
 	}
 
 	loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, loanDocument.LoanId, in.Data.BorrowerId)
@@ -110,29 +110,29 @@ func (l *AddFilesLogic) prepare(in *borrower.LoanDocumentAddFilesRequest) (loan 
 	}
 
 	if loan == nil || loanDocument == nil {
-		return nil, nil, errors.WithStack(errors.New("loan or loan document not found"))
+		return nil, nil, errors.WithStack(errors.New("Loan Or Loan Document Not Found"))
 	}
 	validCategories := []constants.LoanDocumentCategory{
 		constants.LoanDocumentCategoryBorrower,
 		constants.LoanDocumentCategoryExtend,
 	}
 	if !slice.Contain(validCategories, loanDocument.Category) {
-		return nil, nil, errors.WithStack(errors.New("loan document category not supported"))
+		return nil, nil, errors.WithStack(errors.New("Loan Document Category Not Supported"))
 	}
 
 	if loanDocument.Status != constants.LoanDocumentStatusRequested && loanDocument.Status != constants.LoanDocumentStatusReadyForReview {
-		return nil, nil, errors.WithStack(errors.New("loan document is not in requested or ready for view status"))
+		return nil, nil, errors.WithStack(errors.New("Loan Document Is Not In Requested Or Ready For View Status"))
 	}
 
 	if loan.Stage != constants.LoanStagePending {
-		return nil, nil, errors.WithStack(errors.New("loan is not in pending stage"))
+		return nil, nil, errors.WithStack(errors.New("Loan Is Not In Pending Stage"))
 	}
 	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreApproval {
-		return nil, nil, errors.WithStack(errors.New("loan source is not system"))
+		return nil, nil, errors.WithStack(errors.New("Loan Source Is Not System"))
 	}
 
 	if loan.BorrowerId != in.Data.BorrowerId {
-		return nil, nil, errors.WithStack(errors.New("loan does not belong to borrower"))
+		return nil, nil, errors.WithStack(errors.New("Loan Does Not Belong To Borrower"))
 	}
 
 	return loan, loanDocument, nil

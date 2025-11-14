@@ -11,13 +11,13 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
-	"zeebee-backend/app/borrower/rpc/internal/repo/model"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
+	"zeebee-backend/domains/zeebee/model"
 )
 
 type ApplyLoanLogic struct {
@@ -313,7 +313,7 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, 
 	}
 
 	// loan_property
-	borrowerProperty, err = l.svcCtx.BorrowerPropertyRepo.GetBorrowerPropertyById(l.ctx, reqData.LoanProperty.BorrowerPropertyId, reqData.BorrowerId)
+	borrowerProperty, err = l.svcCtx.BorrowerPropertyRepo.GetOneByIdForBorrower(l.ctx, reqData.LoanProperty.BorrowerPropertyId, reqData.BorrowerId)
 	if err != nil {
 		return nil, err
 	}

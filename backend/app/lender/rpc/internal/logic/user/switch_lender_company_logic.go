@@ -3,7 +3,7 @@ package userlogic
 import (
 	"context"
 
-	"zeebee-backend/app/lender/rpc/internal/repo/model"
+	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/pkg/errors"
@@ -55,7 +55,7 @@ func (l *SwitchLenderCompanyLogic) SwitchLenderCompany(in *lender.SwitchLenderCo
 	})
 
 	if !isValidCompany {
-		return nil, errors.New("invalid lender company for this employee")
+		return nil, errors.New("Invalid Lender Company For This Employee")
 	}
 
 	// update employee
@@ -74,7 +74,7 @@ func (l *SwitchLenderCompanyLogic) SwitchLenderCompany(in *lender.SwitchLenderCo
 	}
 
 	if user.Status == constants.UserStatusInactive {
-		return nil, errors.New("user is inactive")
+		return nil, errors.New("User Is Inactive")
 	}
 
 	// generate token

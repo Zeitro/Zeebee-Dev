@@ -9,11 +9,10 @@ import (
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
-	"zeebee-backend/app/lender/rpc/internal/repo/model"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/constants"
-	"zeebee-backend/common/types"
+	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -82,7 +81,7 @@ func (l *DeleteRequestLogic) DeleteRequest(in *lender.LoanDocumentDeleteRequestR
 			return errors.WithStack(errors.New("Invalid Loan Document Category"))
 
 		}
-		operationLoanDocument := &types.LoanDocument{}
+		operationLoanDocument := &model.OperationLoanDocument{}
 		innerErr = copier.CopyWithOption(operationLoanDocument, loanDocument, copier.Option{
 			CaseSensitive: true,
 			DeepCopy:      true,
@@ -95,17 +94,17 @@ func (l *DeleteRequestLogic) DeleteRequest(in *lender.LoanDocumentDeleteRequestR
 			tx,
 			loanDocument.LoanId,
 			in.Data.LenderEmployeeId,
-			types.LoanOperationStatus{
+			model.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
-			types.LoanOperationStatus{
+			model.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
 			constants.LoanOperationActionDeleteDocumentRequest,
-			&types.LoanOperationMetadata{
-				LoanDocuments: []*types.LoanDocument{
+			&model.LoanOperationMetadata{
+				LoanDocuments: []*model.OperationLoanDocument{
 					operationLoanDocument,
 				},
 			},

@@ -7,11 +7,10 @@ import (
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
-	"zeebee-backend/app/lender/rpc/internal/repo/model"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/constants"
-	"zeebee-backend/common/types"
+	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -83,22 +82,22 @@ func (l *DeleteFileLogic) DeleteFile(in *lender.LoanDocumentDeleteFileRequest) (
 			tx,
 			in.Data.Id,
 			in.Data.LenderEmployeeId,
-			types.LoanOperationStatus{
+			model.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
-			types.LoanOperationStatus{
+			model.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
 			constants.LoanOperationActionDeleteDocumentFile,
-			&types.LoanOperationMetadata{
-				LoanDocuments: []*types.LoanDocument{
+			&model.LoanOperationMetadata{
+				LoanDocuments: []*model.OperationLoanDocument{
 					{
 						Category: loanDocument.Category,
 						FileType: loanDocument.FileType,
 						Status:   loanDocument.Status,
-						Files: []*types.OperationFile{
+						Files: []*model.OperationFile{
 							{
 								EntityId:   file.EntityId,
 								EntityType: file.EntityType,

@@ -9,11 +9,10 @@ import (
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
-	"zeebee-backend/app/lender/rpc/internal/repo/model"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/constants"
-	"zeebee-backend/common/types"
+	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -67,7 +66,7 @@ func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *
 		if len(files) > 0 {
 			files, innerErr = l.svcCtx.FileRepo.BatchCreateWithTx(l.ctx, tx, files, false)
 			if innerErr != nil {
-				return errors.Wrap(innerErr, "failed to create file records")
+				return errors.Wrap(innerErr, "Failed To Create File Records")
 			}
 		}
 
@@ -76,11 +75,11 @@ func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *
 			"status": constants.LoanDocumentStatusReadyForReview,
 		})
 		if innerErr != nil {
-			return errors.Wrap(innerErr, "failed to update loan document status")
+			return errors.Wrap(innerErr, "Failed To Update Loan Document Status")
 		}
 
 		// convert files
-		operationFiles := make([]*types.OperationFile, 0, len(files))
+		operationFiles := make([]*model.OperationFile, 0, len(files))
 		innerErr = copier.CopyWithOption(&operationFiles, files, copier.Option{
 			DeepCopy:      true,
 			CaseSensitive: true,
@@ -94,17 +93,17 @@ func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *
 			tx,
 			in.Data.Id,
 			in.Data.LenderEmployeeId,
-			types.LoanOperationStatus{
+			model.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
-			types.LoanOperationStatus{
+			model.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
 			constants.LoanOperationActionUploadDocumentFile,
-			&types.LoanOperationMetadata{
-				LoanDocuments: []*types.LoanDocument{
+			&model.LoanOperationMetadata{
+				LoanDocuments: []*model.OperationLoanDocument{
 					{
 						Category: loanDocument.Category,
 						FileType: loanDocument.FileType,
@@ -115,7 +114,7 @@ func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *
 			},
 		)
 		if innerErr != nil {
-			return errors.Wrap(innerErr, "failed to create operation log")
+			return errors.Wrap(innerErr, "Failed To Create Operation Log")
 		}
 
 		// upload loan document upload time

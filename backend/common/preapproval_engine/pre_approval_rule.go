@@ -329,7 +329,7 @@ func (r *PreApprovalRule) getTotalLoanCap(input InputLoanInfo) (ltaiv float64, l
 	if input.LoanType == constants.LoanTypeRehab {
 		rehabPriceRule, ok = priceRule.(RehabRules)
 		if !ok {
-			return 0, 0, 0, errors.WithStack(errors.New("invalid rehab rules"))
+			return 0, 0, 0, errors.WithStack(errors.New("Invalid Rehab Rules"))
 		}
 		if isHeavyRehab {
 			generalPriceCap, highValueZonePriceCap = rehabPriceRule.GetHeavyRules()
