@@ -3,17 +3,15 @@ package filelogic
 import (
 	"context"
 
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
+	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
-
-	"zeebee-backend/common/errorx"
 )
 
 type DeleteFileLogic struct {
@@ -43,24 +41,24 @@ func (l *DeleteFileLogic) DeleteFile(in *borrower.FileDeleteRequest) (resp *borr
 
 	file, err = l.svcCtx.FileRepo.FindOneById(l.ctx, in.Data.Id)
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed To Find File")
+		return nil, errorx.Wrap(err, "Failed To Find File")
 	}
 
 	if file.EntityType != constants.FileEntityTypeLoanDocument {
-		return nil, errors.WithStack(errors.New("File Is Not Associated With A Loan Document"))
+		return nil, errorx.WithStack(errorx.New("File Is Not Associated With A Loan Document"))
 	}
 
 	loanDocument, err = l.svcCtx.LoanDocumentRepo.FindOneWithPreloadById(l.ctx, file.EntityId, nil)
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed To Find Loan Document")
+		return nil, errorx.Wrap(err, "Failed To Find Loan Document")
 	}
 
 	loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, loanDocument.LoanId, in.Data.BorrowerId)
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed To Get Loan")
+		return nil, errorx.Wrap(err, "Failed To Get Loan")
 	}
 	if loan.BorrowerId != in.Data.BorrowerId {
-		return nil, errors.WithStack(errors.New("Loan Does Not Belong To Borrower"))
+		return nil, errorx.WithStack(errorx.New("Loan Does Not Belong To Borrower"))
 	}
 
 	err = l.svcCtx.FileRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
@@ -69,14 +67,14 @@ func (l *DeleteFileLogic) DeleteFile(in *borrower.FileDeleteRequest) (resp *borr
 		// delete file
 		_, innerErr = l.svcCtx.FileRepo.DeleteByIDWithTx(l.ctx, tx, in.Data.Id)
 		if innerErr != nil {
-			return errors.Wrap(innerErr, "Failed To Delete File")
+			return errorx.Wrap(innerErr, "Failed To Delete File")
 		}
 
 		// get file count
 		var fileCount int64
 		fileCount, innerErr = l.svcCtx.FileRepo.GetFileCountByEntityIdWithTx(l.ctx, tx, loanDocument.Id, constants.FileEntityTypeLoanDocument)
 		if innerErr != nil {
-			return errors.Wrap(innerErr, "Failed To Check Remaining Files")
+			return errorx.Wrap(innerErr, "Failed To Check Remaining Files")
 		}
 
 		// update loan document status
@@ -90,7 +88,7 @@ func (l *DeleteFileLogic) DeleteFile(in *borrower.FileDeleteRequest) (resp *borr
 				"status": loanDocumentStatus,
 			})
 			if innerErr != nil {
-				return errors.Wrap(innerErr, "Failed To Update Loan Document Status")
+				return errorx.Wrap(innerErr, "Failed To Update Loan Document Status")
 			}
 		}
 

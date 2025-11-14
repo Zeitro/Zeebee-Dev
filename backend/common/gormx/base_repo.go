@@ -3,7 +3,8 @@ package gormx
 import (
 	"context"
 
-	"github.com/pkg/errors"
+	"zeebee-backend/common/errorx"
+
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"gorm.io/gorm/schema"
@@ -62,7 +63,7 @@ func (repo *BaseRepo[T]) IsExistedByColumns(ctx context.Context, columns map[str
 	var count int64
 	err := query.Count(&count).Error
 	if err != nil {
-		return false, errors.WithStack(err)
+		return false, errorx.WithStack(err)
 	}
 	return count > 0, nil
 }
@@ -76,7 +77,7 @@ func (repo *BaseRepo[T]) IsExistedByColumnsWithTx(ctx context.Context, tx *gorm.
 	var count int64
 	err := query.Count(&count).Error
 	if err != nil {
-		return false, errors.WithStack(err)
+		return false, errorx.WithStack(err)
 	}
 	return count > 0, nil
 }
@@ -85,7 +86,7 @@ func (repo *BaseRepo[T]) IsExistedByColumnsWithTx(ctx context.Context, tx *gorm.
 func (repo *BaseRepo[T]) Create(ctx context.Context, data T) (T, error) {
 	err := repo.db.WithContext(ctx).Create(&data).Error
 	if err != nil {
-		return data, errors.WithStack(err)
+		return data, errorx.WithStack(err)
 	}
 	return data, nil
 }
@@ -93,17 +94,17 @@ func (repo *BaseRepo[T]) Create(ctx context.Context, data T) (T, error) {
 func (repo *BaseRepo[T]) BatchCreate(ctx context.Context, data []T) error {
 	err := repo.db.WithContext(ctx).Create(&data).Error
 	if err != nil {
-		return errors.WithStack(err)
+		return errorx.WithStack(err)
 	}
 	return nil
 }
 
 func (repo *BaseRepo[T]) UpdateColumnsById(ctx context.Context, id int64, columns map[string]interface{}) error {
-	return errors.WithStack(repo.Client(ctx).Where("id = ?", id).Updates(columns).Error)
+	return errorx.WithStack(repo.Client(ctx).Where("id = ?", id).Updates(columns).Error)
 }
 
 func (repo *BaseRepo[T]) UpdateColumnsByIdWithTx(ctx context.Context, tx *gorm.DB, id int64, columns map[string]interface{}) error {
-	return errors.WithStack(tx.WithContext(ctx).Model(new(T)).Where("id = ?", id).Updates(columns).Error)
+	return errorx.WithStack(tx.WithContext(ctx).Model(new(T)).Where("id = ?", id).Updates(columns).Error)
 }
 
 // CreateWithTx create with tx
@@ -116,7 +117,7 @@ func (repo *BaseRepo[T]) CreateWithTx(ctx context.Context, tx *gorm.DB, data T, 
 	}
 
 	if err != nil {
-		return data, errors.WithStack(err)
+		return data, errorx.WithStack(err)
 	}
 	return data, nil
 }
@@ -130,7 +131,7 @@ func (repo *BaseRepo[T]) BatchCreateWithTx(ctx context.Context, tx *gorm.DB, dat
 		err = tx.WithContext(ctx).Omit(clause.Associations).Create(&data).Error
 	}
 	if err != nil {
-		return data, errors.WithStack(err)
+		return data, errorx.WithStack(err)
 	}
 	return data, nil
 }
@@ -142,7 +143,7 @@ func (repo *BaseRepo[T]) FindOneById(ctx context.Context, id int64) (T, error) {
 	data, err = repo.FindOneByColumns(ctx, map[string]interface{}{
 		"id": id,
 	})
-	return data, errors.WithStack(err)
+	return data, errorx.WithStack(err)
 }
 
 func (repo *BaseRepo[T]) FindOneWithPreloadById(ctx context.Context, id int64, preloads []string) (T, error) {
@@ -155,7 +156,7 @@ func (repo *BaseRepo[T]) FindOneWithPreloadById(ctx context.Context, id int64, p
 
 	err = query.First(&data).Error
 	if err != nil {
-		return data, errors.WithStack(err)
+		return data, errorx.WithStack(err)
 	}
 	return data, nil
 }
@@ -166,7 +167,7 @@ func (repo *BaseRepo[T]) FindOneByIdWithTx(ctx context.Context, tx *gorm.DB, id 
 	data, err = repo.FindOneByColumnsWithTx(ctx, tx, map[string]interface{}{
 		"id": id,
 	})
-	return data, errors.WithStack(err)
+	return data, errorx.WithStack(err)
 }
 
 // FindOneByColumns find one by columns
@@ -178,7 +179,7 @@ func (repo *BaseRepo[T]) FindOneByColumns(ctx context.Context, columns map[strin
 	var data T
 	err := query.First(&data).Error
 	if err != nil {
-		return data, errors.WithStack(err)
+		return data, errorx.WithStack(err)
 	}
 	return data, nil
 }
@@ -191,7 +192,7 @@ func (repo *BaseRepo[T]) FindOneByColumnsWithTx(ctx context.Context, tx *gorm.DB
 	var data T
 	err := query.First(&data).Error
 	if err != nil {
-		return data, errors.WithStack(err)
+		return data, errorx.WithStack(err)
 	}
 	return data, nil
 }
@@ -199,7 +200,7 @@ func (repo *BaseRepo[T]) FindOneByColumnsWithTx(ctx context.Context, tx *gorm.DB
 func (repo *BaseRepo[T]) UpdateOne(ctx context.Context, data T) (T, error) {
 	err := repo.Client(ctx).WithContext(ctx).Save(data).Error
 	if err != nil {
-		return data, errors.WithStack(err)
+		return data, errorx.WithStack(err)
 	}
 	return data, nil
 }
@@ -207,7 +208,7 @@ func (repo *BaseRepo[T]) UpdateOne(ctx context.Context, data T) (T, error) {
 func (repo *BaseRepo[T]) UpdateOneById(ctx context.Context, id int64, data T) (T, error) {
 	err := repo.Client(ctx).WithContext(ctx).Where("id = ?", id).Save(data).Error
 	if err != nil {
-		return data, errors.WithStack(err)
+		return data, errorx.WithStack(err)
 	}
 	return data, nil
 }
@@ -215,7 +216,7 @@ func (repo *BaseRepo[T]) UpdateOneById(ctx context.Context, id int64, data T) (T
 func (repo *BaseRepo[T]) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, data T) (T, error) {
 	err := tx.WithContext(ctx).Save(data).Error
 	if err != nil {
-		return data, errors.WithStack(err)
+		return data, errorx.WithStack(err)
 	}
 	return data, nil
 }
@@ -242,13 +243,13 @@ func (repo *BaseRepo[T]) DeleteByIDsWithTx(ctx context.Context, tx *gorm.DB, ids
 	}
 	query := tx.WithContext(ctx).Model(new(T)).Where("id in ?", ids).Delete(new(T))
 	err = query.Error
-	return query.RowsAffected, errors.WithStack(err)
+	return query.RowsAffected, errorx.WithStack(err)
 }
 
 // Delete delete
 func (repo *BaseRepo[T]) Delete(ctx context.Context, filters map[string]interface{}) (effectRaws int64, err error) {
 	if len(filters) == 0 {
-		return 0, errors.New("Filters Is Empty")
+		return 0, errorx.New("Filters Is Empty")
 	}
 	query := repo.Client(ctx)
 	for k, v := range filters {
@@ -256,7 +257,7 @@ func (repo *BaseRepo[T]) Delete(ctx context.Context, filters map[string]interfac
 	}
 	err = query.Delete(new(T)).Error
 	if err != nil {
-		return 0, errors.WithStack(err)
+		return 0, errorx.WithStack(err)
 	}
 	return query.RowsAffected, nil
 }
@@ -264,7 +265,7 @@ func (repo *BaseRepo[T]) Delete(ctx context.Context, filters map[string]interfac
 // DeleteWithTx delete with tx
 func (repo *BaseRepo[T]) DeleteWithTx(ctx context.Context, tx *gorm.DB, filters map[string]interface{}) (effectRaws int64, err error) {
 	if len(filters) == 0 {
-		return 0, errors.New("Filters Is Empty")
+		return 0, errorx.New("Filters Is Empty")
 	}
 	query := tx.WithContext(ctx)
 	for k, v := range filters {
@@ -272,7 +273,7 @@ func (repo *BaseRepo[T]) DeleteWithTx(ctx context.Context, tx *gorm.DB, filters 
 	}
 	err = query.Delete(new(T)).Error
 	if err != nil {
-		return 0, errors.WithStack(err)
+		return 0, errorx.WithStack(err)
 	}
 	return query.RowsAffected, nil
 }
@@ -288,14 +289,14 @@ func (repo *BaseRepo[T]) Page(query *gorm.DB, pageReq PageRequest) (page PageRes
 	var total int64
 	err = query.Count(&total).Error
 	if err != nil {
-		return page, errors.WithStack(err)
+		return page, errorx.WithStack(err)
 	}
 	if total == 0 {
 		return page, nil
 	}
 	err = query.Limit(int(pageReq.Limit)).Offset(int((pageReq.Page - 1) * pageReq.Limit)).Find(&page.List).Error
 	if err != nil {
-		return page, errors.WithStack(err)
+		return page, errorx.WithStack(err)
 	}
 	page.Page = pageReq.Page
 	page.Limit = pageReq.Limit
@@ -316,7 +317,7 @@ func (repo *BaseRepo[T]) FindAll(ctx context.Context, filter map[string]interfac
 
 	var data []T
 	err := query.Find(&data).Error
-	return data, errors.WithStack(err)
+	return data, errorx.WithStack(err)
 }
 
 // FindStrDistinctColumn find string distinct column
@@ -328,5 +329,5 @@ func (repo *BaseRepo[T]) FindStrDistinctColumn(ctx context.Context, columnName s
 
 	var data []string
 	err := query.Select(columnName).Distinct(columnName).Pluck(columnName, &data).Error
-	return data, errors.WithStack(err)
+	return data, errorx.WithStack(err)
 }

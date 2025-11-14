@@ -6,7 +6,6 @@ import (
 	"github.com/duke-git/lancet/v2/mathutil"
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -15,10 +14,9 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/model"
-
-	"zeebee-backend/common/errorx"
 )
 
 type UpdateBorrowerLoanLogic struct {
@@ -54,14 +52,14 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 
 	oldApplicants := loanModel.Applicants
 	if len(oldApplicants) == 0 {
-		return nil, errors.WithStack(errors.New("Applicant Is Not Found"))
+		return nil, errorx.WithStack(errorx.New("Applicant Is Not Found"))
 	}
 	if loanModel.Source != constants.LoanSourceBorrower && loanModel.Source != constants.LoanSourcePreApproval {
-		return nil, errors.WithStack(errors.New("Loan Source Is Not Third Party"))
+		return nil, errorx.WithStack(errorx.New("Loan Source Is Not Third Party"))
 	}
 	loanPropertyModel := loanModel.LoanProperty
 	if loanPropertyModel == nil {
-		return nil, errors.WithStack(errors.New("Loan Property Is Not Found"))
+		return nil, errorx.WithStack(errorx.New("Loan Property Is Not Found"))
 	}
 
 	// create loan
@@ -161,7 +159,7 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 		return innerErr
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed To Update Loan")
+		return nil, errorx.Wrap(err, "Failed To Update Loan")
 	}
 
 	return &borrower.EmptyResponse{}, nil

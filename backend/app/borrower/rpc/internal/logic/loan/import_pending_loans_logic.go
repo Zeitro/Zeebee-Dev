@@ -5,21 +5,19 @@ import (
 
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/common/uuid"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
-
-	"zeebee-backend/common/errorx"
 )
 
 type importPendingLoanModelData struct {
@@ -127,7 +125,7 @@ func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingL
 		return innerErr
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed To Import Pending Loan")
+		return nil, errorx.Wrap(err, "Failed To Import Pending Loan")
 	}
 
 	return &borrower.ImportPendingLoansResponse{
@@ -200,20 +198,20 @@ func (l *ImportPendingLoansLogic) buildImportModel(in *borrower.ImportPendingLoa
 		return nil, errorx.GetFailedTransErr(err)
 	}
 	if len(applicants) == 0 {
-		return nil, errors.New("No Applicant")
+		return nil, errorx.New("No Applicant")
 	}
 	primaryCount := slice.CountBy(applicants, func(index int, item *model.LoanApplicant) bool {
 		return item.IsPrimary
 	})
 	if primaryCount == 0 {
-		return nil, errors.New("No Primary Applicant")
+		return nil, errorx.New("No Primary Applicant")
 	}
 	slice.ForEach(applicants, func(index int, item *model.LoanApplicant) {
 		item.BorrowerId = in.BorrowerId
 		totalOwnPercent += item.OwnPercent
 	})
 	if totalOwnPercent > 100 {
-		return nil, errors.New("Total Own Percent Greater Than 100")
+		return nil, errorx.New("Total Own Percent Greater Than 100")
 	}
 
 	// loan property

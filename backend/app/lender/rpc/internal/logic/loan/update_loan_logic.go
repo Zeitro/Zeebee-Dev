@@ -6,7 +6,6 @@ import (
 	"github.com/duke-git/lancet/v2/mathutil"
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/lender/rpc/internal/svc"
@@ -64,24 +63,20 @@ func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender
 		return nil, err
 	}
 	if oldLoan.Source != constants.LoanSourceSystem && oldLoan.Source != constants.LoanSourcePreApproval {
-		return nil, errors.WithStack(errors.New("Invalid Loan Source"))
+		return nil, errorx.WithStack(errorx.New("Invalid Loan Source"))
 	}
 
 	// oldApplicants := oldLoan.Applicants
 
 	oldLoanCopy, err = utils.Clone(oldLoan)
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed To Get Copy Loan")
+		return nil, errorx.Wrap(err, "Failed To Get Copy Loan")
 	}
 
 	data, err := l.buildModelData(in.Data, oldLoanCopy)
 	if err != nil {
 		return nil, err
 	}
-
-	// if len(data.applicants) == 0 {
-	// 	return nil, errors.WithStack(errors.New("applicant is not found"))
-	// }
 
 	// update loan
 	err = l.svcCtx.LoanPropertyRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
@@ -306,14 +301,14 @@ func (l *UpdateLoanLogic) updateThirdServices(tx *gorm.DB, oldItems []*model.Loa
 // buildModelData builds model data
 func (l *UpdateLoanLogic) buildModelData(reqData *lender.LoanUpdateRequestData, oldLoan *model.Loan) (data *updateLoanModelData, err error) {
 	if oldLoan == nil {
-		return nil, errors.WithStack(errors.New("Invalid Loan"))
+		return nil, errorx.WithStack(errorx.New("Invalid Loan"))
 	}
 
 	if reqData == nil {
-		return nil, errors.WithStack(errors.New("Invalid Request Data"))
+		return nil, errorx.WithStack(errorx.New("Invalid Request Data"))
 	}
 	if reqData.LoanProperty == nil {
-		return nil, errors.WithStack(errors.New("Invalid Loan Property"))
+		return nil, errorx.WithStack(errorx.New("Invalid Loan Property"))
 	}
 
 	// loan
@@ -381,7 +376,7 @@ func (l *UpdateLoanLogic) buildModelData(reqData *lender.LoanUpdateRequestData, 
 		applicants = append(applicants, applicantModel)
 	}
 	if totalOwnPercent > 100 {
-		return nil, errors.WithStack(errors.New("Total Own Percent Greater Than 100"))
+		return nil, errorx.WithStack(errorx.New("Total Own Percent Greater Than 100"))
 	}
 
 	// transaction experience

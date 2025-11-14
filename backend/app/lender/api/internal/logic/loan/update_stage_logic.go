@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/jinzhu/copier"
-	"github.com/pkg/errors"
 
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
@@ -48,7 +47,7 @@ func (l *UpdateStageLogic) UpdateStage(req *types.UpdateLoanStageRequest) (resp 
 	// get lender id
 	rpcReq.Data.LenderCompanyId, err = utils.GetLenderCompanyIdFromCtx(l.ctx)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 
 	// get employee id
@@ -59,7 +58,7 @@ func (l *UpdateStageLogic) UpdateStage(req *types.UpdateLoanStageRequest) (resp 
 
 	_, err = l.svcCtx.LoanRpcClient.UpdateLoanStage(l.ctx, rpcReq)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 
 	return resp, nil

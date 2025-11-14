@@ -3,7 +3,6 @@ package borrowerapplicantlogic
 import (
 	"context"
 
-	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/svc"
@@ -38,7 +37,7 @@ func (l *DeleteLogic) Delete(in *borrower.BorrowerApplicantDeleteRequest) (resp 
 	}
 
 	if result.BorrowerId != in.Data.BorrowerId {
-		return nil, errorx.GetFailedTransRespErr(errors.New("You Have No Access To This Applicant"))
+		return nil, errorx.GetFailedTransRespErr(errorx.New("You Have No Access To This Applicant"))
 	}
 
 	_, err = l.svcCtx.BorrowerApplicantRepo.DeleteByID(l.ctx, in.Data.Id)

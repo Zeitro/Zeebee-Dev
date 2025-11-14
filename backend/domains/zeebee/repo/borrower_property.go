@@ -6,13 +6,13 @@ import (
 	"fmt"
 
 	"github.com/jinzhu/copier"
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
+	"zeebee-backend/common/errorx"
+
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
-	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/model"
@@ -83,12 +83,12 @@ func (repo *BorrowerPropertyRepo) GetOrCreateWithTxForBorrower(ctx context.Conte
 		Find(&result).
 		Error
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	if result == nil || result.Id == 0 {
 		err = tx.WithContext(ctx).Omit(clause.Associations).Create(data).Error
 		if err != nil {
-			return nil, errors.WithStack(err)
+			return nil, errorx.WithStack(err)
 		}
 		result = data
 	}
@@ -108,7 +108,7 @@ func (repo *BorrowerPropertyRepo) GetOrCreateBorrowerPropertyWithTxForBorrower(c
 		Find(&result).
 		Error
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	if result == nil || result.Id == 0 {
 		data := &model.BorrowerProperty{
@@ -117,7 +117,7 @@ func (repo *BorrowerPropertyRepo) GetOrCreateBorrowerPropertyWithTxForBorrower(c
 		}
 		err = tx.WithContext(ctx).Omit(clause.Associations).Create(data).Error
 		if err != nil {
-			return nil, errors.WithStack(err)
+			return nil, errorx.WithStack(err)
 		}
 		result = data
 	}
@@ -135,7 +135,7 @@ func (repo *BorrowerPropertyRepo) GetOneWithTxByPropertyForBorrower(ctx context.
 		Find(&result).
 		Error
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	if result == nil || result.Id == 0 {
 		return nil, nil
@@ -149,7 +149,7 @@ func (repo *BorrowerPropertyRepo) GetOneByIdForBorrower(ctx context.Context, id 
 		Where("id = ? and borrower_id = ?", id, borrowerId).
 		First(&result).
 		Error
-	return result, errors.WithStack(err)
+	return result, errorx.WithStack(err)
 }
 
 // UpdateOneWithTx update one property
@@ -159,7 +159,7 @@ func (repo *BorrowerPropertyRepo) UpdateOneWithTx(ctx context.Context, tx *gorm.
 		Where("id = ?", id).
 		Updates(data).Error
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	return data, nil
 }
@@ -172,7 +172,7 @@ func (repo *BorrowerPropertyRepo) SyncTotalAmountAndLoanCountWithTx(ctx context.
 		Preload("LoanProperties.Loan").
 		Find(&result).Error
 	if err != nil {
-		return errors.WithStack(err)
+		return errorx.WithStack(err)
 	}
 	if result == nil || result.Id == 0 {
 		return nil
@@ -197,7 +197,7 @@ func (repo *BorrowerPropertyRepo) SyncTotalAmountAndLoanCountWithTx(ctx context.
 			"loan_count":   loanCount,
 		}).Error
 	// Updates("total_amount", totalAmount).Error
-	return errors.WithStack(err)
+	return errorx.WithStack(err)
 }
 
 // Page page
@@ -253,7 +253,7 @@ func (repo *BorrowerPropertyRepo) PageForBorrower(ctx context.Context, pageReq *
 		loans, err := loanRepo.GetByBorrowerPropertyId(ctx, borrowerProperty.Id)
 
 		if err != nil {
-			return page, errors.WithStack(err)
+			return page, errorx.WithStack(err)
 		}
 		page.List[i].Loans = loans
 	}
@@ -268,7 +268,7 @@ func (repo *BorrowerPropertyRepo) UpdateOne(ctx context.Context, id int64, data 
 		Where("id = ?", id).
 		Updates(data).Error
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	return data, nil
 }
@@ -279,14 +279,14 @@ func (repo *BorrowerPropertyRepo) AllForBorrower(ctx context.Context, borrowerId
 		Where("borrower_id = ?", borrowerId).
 		Order("id desc").
 		Find(&result).Error
-	return result, errors.WithStack(err)
+	return result, errorx.WithStack(err)
 }
 
 // IsExisted check given property base is existed
 func (repo *BorrowerPropertyRepo) IsExisted(ctx context.Context, id int64, borrowerId int64, address *model.Address) (isExisted bool, err error) {
 	if address == nil {
-		err = errors.New("Address Is Empty")
-		return false, errors.WithStack(err)
+		err = errorx.New("Address Is Empty")
+		return false, errorx.WithStack(err)
 	}
 	query := repo.Client(ctx).
 		Where("borrower_id = ?", borrowerId).
@@ -299,7 +299,7 @@ func (repo *BorrowerPropertyRepo) IsExisted(ctx context.Context, id int64, borro
 	var count int64
 	err = query.Count(&count).Error
 	if err != nil {
-		return false, errors.WithStack(err)
+		return false, errorx.WithStack(err)
 	}
 
 	return count > 0, nil
@@ -310,7 +310,7 @@ func (repo *BorrowerPropertyRepo) TranToLoanPropertyWithId(ctx context.Context, 
 	var property *model.BorrowerProperty
 	property, err = repo.GetOneByIdForBorrower(ctx, id, borrowerId)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 
 	result = &model.LoanProperty{}
@@ -322,7 +322,7 @@ func (repo *BorrowerPropertyRepo) TranToLoanPropertyWithId(ctx context.Context, 
 		},
 	})
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	result.Id = 0
 	result.BorrowerPropertyId = property.Id

@@ -5,7 +5,6 @@ import (
 
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
-	"github.com/pkg/errors"
 
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
@@ -42,7 +41,7 @@ func (l *UserInfoLogic) UserInfo(in *lender.UserInfoRequest) (resp *lender.Useri
 	}
 	userLender := user.LenderEmployee
 	if userLender == nil {
-		return nil, errors.WithStack(errors.New("Lender Not Found"))
+		return nil, errorx.WithStack(errorx.New("Lender Not Found"))
 	}
 	if len(userLender.LenderCompanies) > 0 {
 		err = copier.CopyWithOption(&companies, userLender.LenderCompanies, copier.Option{
@@ -50,7 +49,7 @@ func (l *UserInfoLogic) UserInfo(in *lender.UserInfoRequest) (resp *lender.Useri
 			CaseSensitive: true,
 		})
 		if err != nil {
-			return nil, errors.Wrap(err, "Failed To Copy Lender Companies")
+			return nil, errorx.Wrap(err, "Failed To Copy Lender Companies")
 		}
 	}
 	var currentCompany *lender.UserinfoResponseData_Company

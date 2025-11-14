@@ -5,7 +5,6 @@ import (
 
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
@@ -68,17 +67,17 @@ func (l *DeleteRequestLogic) DeleteRequest(in *lender.LoanDocumentDeleteRequestR
 		case constants.LoanDocumentCategoryExtend:
 			_, innerErr = l.svcCtx.LoanDocumentRepo.DeleteByIDWithTx(l.ctx, tx, loanDocument.Id)
 			if innerErr != nil {
-				return errors.Wrap(innerErr, "Failed To Delete Loan Document")
+				return errorx.Wrap(innerErr, "Failed To Delete Loan Document")
 			}
 		case constants.LoanDocumentCategoryBorrower:
 			innerErr = l.svcCtx.LoanDocumentRepo.UpdateColumnsByIdWithTx(l.ctx, tx, loanDocument.Id, map[string]interface{}{
 				"status": constants.LoanDocumentStatusPendingUpload,
 			})
 			if innerErr != nil {
-				return errors.Wrap(innerErr, "Failed To Update Loan Document Status")
+				return errorx.Wrap(innerErr, "Failed To Update Loan Document Status")
 			}
 		default:
-			return errors.WithStack(errors.New("Invalid Loan Document Category"))
+			return errorx.WithStack(errorx.New("Invalid Loan Document Category"))
 
 		}
 		operationLoanDocument := &model.OperationLoanDocument{}
@@ -110,7 +109,7 @@ func (l *DeleteRequestLogic) DeleteRequest(in *lender.LoanDocumentDeleteRequestR
 			},
 		)
 		if innerErr != nil {
-			return errors.Wrap(innerErr, "Failed To Create Operation Log")
+			return errorx.Wrap(innerErr, "Failed To Create Operation Log")
 		}
 
 		return nil

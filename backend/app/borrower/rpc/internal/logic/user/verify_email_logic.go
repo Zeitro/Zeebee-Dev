@@ -3,8 +3,6 @@ package userlogic
 import (
 	"context"
 
-	"github.com/pkg/errors"
-
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
@@ -44,16 +42,16 @@ func (l *VerifyEmailLogic) VerifyEmail(in *borrower.VerifyEmailRequest) (resp *b
 	email := in.Data.Email
 	code := in.Data.Code
 	if email == "" || code == "" {
-		return nil, errors.WithStack(errors.New("Email and code are required"))
+		return nil, errorx.WithStack(errorx.New("Email And Code Are Required"))
 	}
 	// check code
 	verifyCodeKey := stringx.Format(constants.BorrowerRegisterVerifyCode, email)
 	token, err = global.GetRedis().Get(l.ctx, verifyCodeKey)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	if token != code {
-		return nil, errors.WithStack(errors.New("Invalid or expired code"))
+		return nil, errorx.New("Invalid Or Expired Code")
 	}
 
 	// get user
@@ -62,7 +60,7 @@ func (l *VerifyEmailLogic) VerifyEmail(in *borrower.VerifyEmailRequest) (resp *b
 		return nil, err
 	}
 	if user.Status != constants.UserStatusUnverified {
-		return nil, errors.WithStack(errors.New("Email is already verified"))
+		return nil, errorx.New("Email Is Already Verified")
 	}
 
 	err = l.svcCtx.UserRepo.UpdateUserStatus(l.ctx, user.Id, constants.UserStatusActive)

@@ -3,7 +3,6 @@ package loanlogic
 import (
 	"context"
 
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -39,11 +38,11 @@ func (l *UpdateLoanStageLogic) UpdateLoanStage(in *lender.LoanUpdateStageRequest
 	// Get loan
 	loan, err := l.svcCtx.LoanRepo.GetLenderLoan(l.ctx, in.Data.Id, in.Data.LenderCompanyId, false)
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed To Get Loan")
+		return nil, errorx.Wrap(err, "Failed To Get Loan")
 	}
 
 	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreApproval {
-		return nil, errors.WithStack(errors.New("Invalid Loan Source"))
+		return nil, errorx.WithStack(errorx.New("Invalid Loan Source"))
 	}
 
 	// Save original status for operation log
@@ -57,7 +56,7 @@ func (l *UpdateLoanStageLogic) UpdateLoanStage(in *lender.LoanUpdateStageRequest
 
 		err = l.svcCtx.LoanRepo.UpdateStageWithTx(l.ctx, tx, in.Data.Id, stage)
 		if err != nil {
-			return errors.Wrap(err, "Failed To Update Loan")
+			return errorx.Wrap(err, "Failed To Update Loan")
 		}
 
 		// Create operation log

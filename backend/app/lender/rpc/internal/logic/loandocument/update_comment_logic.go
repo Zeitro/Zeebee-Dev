@@ -3,7 +3,6 @@ package loandocumentlogic
 import (
 	"context"
 
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
@@ -54,7 +53,7 @@ func (l *UpdateCommentLogic) UpdateComment(in *lender.LoanDocumentUpdateCommentR
 			"comment": in.Data.Comment,
 		})
 		if innerErr != nil {
-			return errors.Wrap(innerErr, "Failed To Update Loan Document Comment")
+			return errorx.Wrap(innerErr, "Failed To Update Loan Document Comment")
 		}
 
 		innerErr = l.baseLogic.CreateLoanOperationLog(

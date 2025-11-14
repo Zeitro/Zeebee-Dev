@@ -3,17 +3,15 @@ package loanlogic
 import (
 	"context"
 
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
+	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
-
-	"zeebee-backend/common/errorx"
 )
 
 type DeleteBorrowerLoanLogic struct {
@@ -39,15 +37,15 @@ func (l *DeleteBorrowerLoanLogic) DeleteBorrowerLoan(in *borrower.LoanDeleteRequ
 	}()
 	loanModel, err := l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, in.Data.Id, in.Data.BorrowerId)
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed To Get Loan")
+		return nil, errorx.Wrap(err, "Failed To Get Loan")
 	}
 
 	if loanModel.Source != constants.LoanSourceBorrower && loanModel.Stage != constants.LoanStageDraft {
-		return nil, errors.WithStack(errors.New("Loan Source Is Not 3rd Party Or Loan Is Not In Draft Stage"))
+		return nil, errorx.WithStack(errorx.New("Loan Source Is Not 3rd Party Or Loan Is Not In Draft Stage"))
 	}
 
 	if loanModel.BorrowerId != in.Data.BorrowerId {
-		return nil, errors.WithStack(errors.New("Loan Does Not Belong To Borrower"))
+		return nil, errorx.WithStack(errorx.New("Loan Does Not Belong To Borrower"))
 	}
 
 	err = l.svcCtx.LoanRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
@@ -142,7 +140,7 @@ func (l *DeleteBorrowerLoanLogic) DeleteBorrowerLoan(in *borrower.LoanDeleteRequ
 	})
 
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed To Delete Loan")
+		return nil, errorx.Wrap(err, "Failed To Delete Loan")
 	}
 	return &borrower.EmptyResponse{}, nil
 }

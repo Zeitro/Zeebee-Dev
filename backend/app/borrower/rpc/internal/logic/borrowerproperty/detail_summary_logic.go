@@ -5,7 +5,6 @@ import (
 
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
-	"github.com/pkg/errors"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -45,11 +44,11 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 		return nil, err
 	}
 	if borrowerProperty == nil || borrowerProperty.Id == 0 {
-		return nil, errors.WithStack(errors.New("Property Is Invalid"))
+		return nil, errorx.WithStack(errorx.New("Property Is Invalid"))
 	}
 
 	if borrowerProperty.BorrowerId != in.Data.BorrowerId {
-		return nil, errors.WithStack(errors.New("Access Denied"))
+		return nil, errorx.WithStack(errorx.New("Access Denied"))
 	}
 
 	loanProperties := borrowerProperty.LoanProperties

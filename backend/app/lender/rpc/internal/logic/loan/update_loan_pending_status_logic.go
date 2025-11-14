@@ -3,7 +3,6 @@ package loanlogic
 import (
 	"context"
 
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -40,15 +39,15 @@ func (l *UpdateLoanPendingStatusLogic) UpdateLoanPendingStatus(in *lender.LoanUp
 	// Get loan
 	loan, err := l.svcCtx.LoanRepo.GetLenderLoan(l.ctx, in.Data.Id, in.Data.LenderCompanyId, false)
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed To Get Loan")
+		return nil, errorx.Wrap(err, "Failed To Get Loan")
 	}
 
 	// Validate loan is in pending stage
 	if loan.Stage != constants.LoanStagePending {
-		return nil, errors.New("Loan Is Not In Pending Stage")
+		return nil, errorx.New("Loan Is Not In Pending Stage")
 	}
 	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreApproval {
-		return nil, errors.WithStack(errors.New("Invalid Loan Source"))
+		return nil, errorx.WithStack(errorx.New("Invalid Loan Source"))
 	}
 	// Save original status for operation log
 	originalStage := loan.Stage
@@ -68,12 +67,12 @@ func (l *UpdateLoanPendingStatusLogic) UpdateLoanPendingStatus(in *lender.LoanUp
 		case constants.LoanPendingStatusClosing:
 			// Closing 是最终状态，可以直接设置
 		default:
-			return errors.Errorf("Invalid Pending Status: %s", pendingStatus)
+			return errorx.Errorf("Invalid Pending Status: %s", pendingStatus)
 		}
 
 		err = l.svcCtx.LoanRepo.UpdatePendingStatusWithTx(l.ctx, tx, in.Data.Id, pendingStatus, loan.Stage)
 		if err != nil {
-			return errors.Wrap(err, "Failed To Update Loan")
+			return errorx.Wrap(err, "Failed To Update Loan")
 		}
 
 		// Create operation log

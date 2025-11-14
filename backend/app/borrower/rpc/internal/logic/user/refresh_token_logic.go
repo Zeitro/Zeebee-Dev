@@ -4,8 +4,6 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/pkg/errors"
-
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
@@ -39,7 +37,7 @@ func (l *RefreshTokenLogic) RefreshToken(in *borrower.RefreshTokenRequest) (resp
 	// parse refresh token
 	claims, err = utils.ParseToken(in.Data.RefreshToken, l.svcCtx.Config.JwtAuth.RefreshSecret)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 
 	id, err := strconv.Atoi(claims.UserID)
@@ -49,10 +47,10 @@ func (l *RefreshTokenLogic) RefreshToken(in *borrower.RefreshTokenRequest) (resp
 
 	user, err := l.svcCtx.UserRepo.GetBorrowerUser(l.ctx, int64(id))
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	if user.Status != constants.UserStatusActive {
-		return nil, errors.WithStack(errors.New("User Is Not Active"))
+		return nil, errorx.New("User Is Not Active")
 	}
 
 	accessToken, err := utils.GenerateToken(
@@ -66,7 +64,7 @@ func (l *RefreshTokenLogic) RefreshToken(in *borrower.RefreshTokenRequest) (resp
 		l.svcCtx.Config.JwtAuth.AccessExpire,
 	)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 
 	return &borrower.RefreshTokenResponse{

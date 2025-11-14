@@ -5,8 +5,7 @@ import (
 	"html/template"
 	"sync"
 
-	"github.com/pkg/errors"
-
+	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/stringx"
 )
 
@@ -14,7 +13,7 @@ import (
 var defaultTemplates *Templates
 
 // ErrEmailTemplateNotFound not found template  error
-var ErrEmailTemplateNotFound = errors.New("Email Template Not Found")
+var ErrEmailTemplateNotFound = errorx.New("Email Template Not Found")
 
 func init() {
 	defaultTemplates = &Templates{

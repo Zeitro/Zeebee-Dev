@@ -5,8 +5,9 @@ import (
 	"fmt"
 
 	"github.com/jinzhu/copier"
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
+
+	"zeebee-backend/common/errorx"
 
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/gormx"
@@ -48,7 +49,7 @@ func (repo *BorrowerEntityRepo) GetBorrowerEntityById(ctx context.Context, id in
 		Where("id = ? and borrower_id = ?", id, borrowerId).
 		First(&result).
 		Error
-	return result, errors.WithStack(err)
+	return result, errorx.WithStack(err)
 }
 
 // PageForBorrower return page
@@ -74,7 +75,7 @@ func (repo *BorrowerEntityRepo) PageForBorrower(ctx context.Context, pageReq *Bo
 		CountColumn: "id",
 	})
 
-	return page, errors.WithStack(err)
+	return page, errorx.WithStack(err)
 }
 
 // AllForBorrower return all of the borrower's entities
@@ -83,7 +84,7 @@ func (repo *BorrowerEntityRepo) AllForBorrower(ctx context.Context, borrowerId i
 		Where("borrower_id = ?", borrowerId).
 		Order("id desc").
 		Find(&result).Error
-	return result, errors.WithStack(err)
+	return result, errorx.WithStack(err)
 }
 
 // TranToLoanBorrowerWithId get BorrowerEntity from id and trans it to LoanBorrower
@@ -91,7 +92,7 @@ func (repo *BorrowerEntityRepo) TranToLoanBorrowerWithId(ctx context.Context, id
 	var entity *model.BorrowerEntity
 	entity, err = repo.GetBorrowerEntityById(ctx, id, borrowerId)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 
 	result = &model.LoanBorrower{}
@@ -103,7 +104,7 @@ func (repo *BorrowerEntityRepo) TranToLoanBorrowerWithId(ctx context.Context, id
 		},
 	})
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	result.Id = 0
 	result.BorrowerEntityId = entity.Id
