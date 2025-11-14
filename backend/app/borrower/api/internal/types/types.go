@@ -60,7 +60,7 @@ type BorrowerApplicantPageSorter struct {
 type BorrowerEntityEditRequest struct {
 	Id             int64        `path:"id,optional"`
 	Type           string       `json:"type" validate:"required,oneof=Corporation LLC Partnership Trust"`
-	Name           string       `json:"name" validate:"required,min=3,max=100"`
+	Name           string       `json:"name" validate:"required,min=2,max=100"`
 	TinType        string       `json:"tin_type" validate:"required,oneof=EIN"`
 	Tin            string       `json:"tin" validate:"required,min=9,max=9"`
 	MailingAddress AddressEntry `json:"mailing_address" validate:"required"`

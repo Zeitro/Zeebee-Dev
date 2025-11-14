@@ -110,11 +110,11 @@ service borrower-api {
 // ============== user end =============
 // ============== loan start =============
 @server(
-    desc: "loan service"
+	desc: "loan service"
 	version: v1
-    group: loan
+	group: loan
 	prefix:  /api/v1
-    tags: loan
+	tags: loan
 )
 service borrower-api {
 	@doc "preapproval"
@@ -191,9 +191,9 @@ service borrower-api {
 // ============== loan end =============
 // =============== borrower property start ==============
 @server (
-    desc: "borrower property service"
+	desc: "borrower property service"
 	version:    v1
-    group: borrower_property
+	group: borrower_property
 	prefix:     /api/v1
 	middleware: AuthMiddleware
 	tags:       property
@@ -231,12 +231,12 @@ service borrower-api {
 // =============== borrower property end ==============
 // =============== borrower entity start ==============
 @server(
-    desc: "borrower entity service"
-    version: v1
-    group: borrower_entity
+	desc: "borrower entity service"
+	version: v1
+	group: borrower_entity
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: borrower_entity
+	tags: borrower_entity
 )
 service borrower-api {
 	@doc "page"
@@ -271,12 +271,12 @@ service borrower-api {
 // =============== borrower entity end ==============
 // =============== borrower applicant start ==============
 @server(
-    desc: "borrower applicant service"
-    version: v1
-    group: borrower_applicant
+	desc: "borrower applicant service"
+	version: v1
+	group: borrower_applicant
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: borrower_applicant
+	tags: borrower_applicant
 )
 service borrower-api {
 	@doc "page"
@@ -311,9 +311,9 @@ service borrower-api {
 // ================ borrower applicant end ==============
 // =============== loan applicant start ==============
 @server (
-    desc: "loan applicant service"
+	desc: "loan applicant service"
 	version:    v1
-    group: loan_applicant
+	group: loan_applicant
 	prefix:     /api/v1
 	middleware: AuthMiddleware
 	tags:       applicant
@@ -327,12 +327,12 @@ service borrower-api {
 // =============== loan applicant end ==============
 // =============== pdf start ==============
 @server(
-    desc: "pdf service"
-    version: v1
-    group: pdf
+	desc: "pdf service"
+	version: v1
+	group: pdf
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: pdf
+	tags: pdf
 )
 service borrower-api {
 	@doc "create apply form pdf"
@@ -343,12 +343,12 @@ service borrower-api {
 // =============== pdf end ==============
 // =============== storage start ==============
 @server(
-    desc: "storage service"
-    version: v1
-    group: storage
+	desc: "storage service"
+	version: v1
+	group: storage
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: storage
+	tags: storage
 )
 service borrower-api {
 	@doc "create aws s3 presign url"
@@ -359,12 +359,12 @@ service borrower-api {
 // =============== storage end ==============
 // =============== file start ==============
 @server(
-    desc: "file service"
-    version: v1
-    group: file
+	desc: "file service"
+	version: v1
+	group: file
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: file
+	tags: file
 )
 service borrower-api {
 	@doc "delete"
@@ -375,12 +375,12 @@ service borrower-api {
 // =============== file end ==============
 // ============== loan document start =============
 @server(
-    desc: "loan document service"
-    version: v1
-    group: loan_document
+	desc: "loan document service"
+	version: v1
+	group: loan_document
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: loan_document
+	tags: loan_document
 )
 service borrower-api {
 	@doc "add files"
@@ -388,4 +388,4 @@ service borrower-api {
 	post /loan_document/:id/files (LoanDocumentAddFilesRequest) returns (EmptyResponse)
 }
 
-    // ============== loan document end =============
+	// ============== loan document end =============

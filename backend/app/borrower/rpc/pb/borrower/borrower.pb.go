@@ -10910,7 +10910,9 @@ type LoanApplicantEntry struct {
 	LoanBorrowerId      int64                  `protobuf:"varint,19,opt,name=loan_borrower_id,json=loanBorrowerId,proto3" json:"loan_borrower_id,omitempty"`
 	Phone               string                 `protobuf:"bytes,20,opt,name=phone,proto3" json:"phone,omitempty"`
 	OwnPercent          int32                  `protobuf:"varint,21,opt,name=own_percent,json=ownPercent,proto3" json:"own_percent,omitempty"`
-	BorrowerApplicantId int64                  `protobuf:"varint,22,opt,name=BorrowerApplicantId,proto3" json:"BorrowerApplicantId,omitempty"`
+	BorrowerApplicantId int64                  `protobuf:"varint,22,opt,name=borrower_applicant_id,json=borrowerApplicantId,proto3" json:"borrower_applicant_id,omitempty"`
+	LoanId              int64                  `protobuf:"varint,23,opt,name=loan_id,json=loanId,proto3" json:"loan_id,omitempty"`
+	BorrowerId          int64                  `protobuf:"varint,24,opt,name=borrower_id,json=borrowerId,proto3" json:"borrower_id,omitempty"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -11095,6 +11097,20 @@ func (x *LoanApplicantEntry) GetOwnPercent() int32 {
 func (x *LoanApplicantEntry) GetBorrowerApplicantId() int64 {
 	if x != nil {
 		return x.BorrowerApplicantId
+	}
+	return 0
+}
+
+func (x *LoanApplicantEntry) GetLoanId() int64 {
+	if x != nil {
+		return x.LoanId
+	}
+	return 0
+}
+
+func (x *LoanApplicantEntry) GetBorrowerId() int64 {
+	if x != nil {
+		return x.BorrowerId
 	}
 	return 0
 }
@@ -14123,7 +14139,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\vborrower_id\x18\x01 \x01(\x03R\n" +
 	"borrowerId\"X\n" +
 	"\x1cBorrowerApplicantAllResponse\x128\n" +
-	"\x04data\x18\x01 \x03(\v2$.borrower.BorrowerApplicantPageEntryR\x04data\"\xde\x05\n" +
+	"\x04data\x18\x01 \x03(\v2$.borrower.BorrowerApplicantPageEntryR\x04data\"\x9a\x06\n" +
 	"\x12LoanApplicantEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
@@ -14151,8 +14167,11 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x10loan_borrower_id\x18\x13 \x01(\x03R\x0eloanBorrowerId\x12\x14\n" +
 	"\x05phone\x18\x14 \x01(\tR\x05phone\x12\x1f\n" +
 	"\vown_percent\x18\x15 \x01(\x05R\n" +
-	"ownPercent\x120\n" +
-	"\x13BorrowerApplicantId\x18\x16 \x01(\x03R\x13BorrowerApplicantId\"N\n" +
+	"ownPercent\x122\n" +
+	"\x15borrower_applicant_id\x18\x16 \x01(\x03R\x13borrowerApplicantId\x12\x17\n" +
+	"\aloan_id\x18\x17 \x01(\x03R\x06loanId\x12\x1f\n" +
+	"\vborrower_id\x18\x18 \x01(\x03R\n" +
+	"borrowerId\"N\n" +
 	"\x14BorrowerNamesRequest\x126\n" +
 	"\x04data\x18\x01 \x01(\v2\".borrower.BorrowerNamesRequestDataR\x04data\";\n" +
 	"\x18BorrowerNamesRequestData\x12\x1f\n" +
