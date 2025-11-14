@@ -34,18 +34,35 @@ const Loans = () => {
 					key: 'pending',
 					label: 'Pending',
 					children: (
-						<PendingPage filterWrapClassName="px-4 pb-4" api={api} key="Pending" />
+						<PendingPage
+							filterWrapClassName="px-4 pb-4"
+							api={api}
+							key="Pending"
+							filterName="Pending filters"
+						/>
 					),
 				},
 				{
 					key: 'active',
 					label: 'Active',
-					children: <ActiveLoans filterWrapClassName="px-4 pb-4" api={api} />,
+					children: (
+						<ActiveLoans
+							filterWrapClassName="px-4 pb-4"
+							api={api}
+							filterName="Active filters"
+						/>
+					),
 				},
 				{
 					key: 'archived',
 					label: 'Archived',
-					children: <ArchivedLoans filterWrapClassName="px-4 pb-4" api={api} />,
+					children: (
+						<ArchivedLoans
+							filterWrapClassName="px-4 pb-4"
+							api={api}
+							filterName="Archived filters"
+						/>
+					),
 				},
 				{
 					key: 'draft',
@@ -57,6 +74,7 @@ const Loans = () => {
 							stage="Draft"
 							key="Draft"
 							scrollX={2200}
+							filterName="Drafts filters"
 						/>
 					),
 				},

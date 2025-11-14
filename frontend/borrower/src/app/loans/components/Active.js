@@ -17,6 +17,7 @@ const ActiveLoans = ({
 	loading,
 	scrollX = 2600,
 	stage = 'Active',
+	filterName,
 }) => {
 	const { loanPurposeOptions, loanTypeOptions, lenderOptions } = useOptionsStore();
 	const { request } = createRequest();
@@ -142,6 +143,7 @@ const ActiveLoans = ({
 				filterWrapClassName={filterWrapClassName}
 				dataSource={dataSource}
 				dataSourceLoading={loading}
+				filterName={filterName}
 				onRow={(row) => ({
 					onClick: () => {
 						handleSelectedRow(row, stage);

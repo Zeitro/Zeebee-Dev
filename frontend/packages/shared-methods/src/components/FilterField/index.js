@@ -171,15 +171,8 @@ export const FilterField = forwardRef(({ list, className, ...rowProps }, ref) =>
 		return params;
 	};
 
-	const handleReset = () => {
-		const params = getApiParams();
-		const nullValues = mapValues(params, () => null);
-		return nullValues;
-	};
-
 	useImperativeHandle(ref, () => ({
 		getApiParams,
-		// handleReset,
 	}));
 	return (
 		<Row

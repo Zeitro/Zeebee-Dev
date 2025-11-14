@@ -26,4 +26,4 @@ export * from './components/NoData/index';
 export * from './components/TableOperation/index';
 export * from './components/ViewFile/index';
 export * from './components/PortalComponent';
-
+export * from './components/FilterTableCard/index';

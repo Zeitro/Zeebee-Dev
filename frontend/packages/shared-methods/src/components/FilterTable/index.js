@@ -1,19 +1,19 @@
 import React, {
 	useEffect,
-	useMemo,
 	useRef,
 	useState,
 	forwardRef,
 	useImperativeHandle,
 	useCallback,
 } from 'react';
-import { FilterField, NewTable } from '@repo/shared-methods';
 import styles from './index.module.scss';
-import { Col, Row, Tag } from 'antd';
 import { createRequest } from '@/lib/fetch';
 import { getPagination } from '@/lib/common';
 import { asc, des, ascend, descend } from '@/enum/common';
 import { useDisUpdateEffect } from '@/hooks/common';
+import { FilterTag } from '../FilterField/filterTag.js';
+import { FilterField } from '../FilterField/index';
+import { NewTable } from '../NewTable';
 /**
  * Form筛选 + Table
  * @param {*Boolean} hasFilterField true显示筛选/false隐藏
@@ -31,7 +31,7 @@ export const FilterTable = forwardRef(
 			dataSourceLoading,
 			filterList,
 			rowProps = {},
-			filterName = 'Active filters',
+			filterName = '',
 			hasFilterField = true,
 			filterWrapClassName,
 			getData = () => {},
@@ -51,9 +51,6 @@ export const FilterTable = forwardRef(
 		});
 		const [tableList, setTableList] = useState([]);
 		const [loading, setLoading] = useState(false);
-		const newList = useMemo(() => {
-			return filterList?.filter((i) => i.filterType === 'treeSelect' && i.value?.length);
-		}, [filterList]);
 
 		const getList = useCallback(async () => {
 			try {
@@ -132,41 +129,10 @@ export const FilterTable = forwardRef(
 		return (
 			<div className={[styles.filterTable, filterWrapClassName].join(' ')}>
 				{hasFilterField && (
-					<FilterField ref={filterFieldRef} list={filterList} {...rowProps} />
-				)}
-				{!!newList.length && (
-					<div className={styles.filterStatistics}>
-						<div className={styles.filterName}>{filterName}</div>
-						<Row gutter={12}>
-							{newList.map((item, index) => {
-								return (
-									<Col key={index}>
-										<span className="pr-2">{item.label}:</span>
-										{item.value?.map((vItem, vIndex) => {
-											const labelItem = item?.treeData?.find(
-												(i) => i.value === vItem,
-											);
-											return (
-												<Tag
-													key={vIndex}
-													closeIcon
-													color="processing"
-													onClose={() => {
-														const newValue = item.value.filter(
-															(i) => i !== vItem,
-														);
-														item?.onChange(newValue);
-													}}
-												>
-													{labelItem?.title}
-												</Tag>
-											);
-										})}
-									</Col>
-								);
-							})}
-						</Row>
-					</div>
+					<>
+						<FilterField ref={filterFieldRef} list={filterList} {...rowProps} />
+						<FilterTag filterList={filterList} filterName={filterName} />
+					</>
 				)}
 				<NewTable
 					dataSource={tableList}
