@@ -56,7 +56,7 @@ jobs:
 
       - name: Remove old container
         run: |
-          docker rm -f ${{ env.FULL_SERVICE_NAME }}
+          docker rm -f ${{ env.FULL_SERVICE_NAME }} || true
 
       - name: Build and deploy
         working-directory: backend
