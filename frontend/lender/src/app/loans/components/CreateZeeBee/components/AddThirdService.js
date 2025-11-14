@@ -1,10 +1,9 @@
 'use client';
 import React, { useState } from 'react';
-import NewModal from '@/components/NewModal';
+import { NewModal, InputPhone } from '@repo/shared-methods';
 import { Col, Form, Input, Row } from 'antd';
 import { useGetOptions } from '@/hooks/useGetOptions';
-import { emailRegex, phoneRegex, validateRule } from '@/lib/format';
-import InputPhone from '@/components/InputPhone';
+import { emailRegex, phoneRegex, validateRule } from '@repo/shared-methods/utils';
 const AddThirdService = ({ title, rowData, onOk, onCancel }) => {
 	const [form] = Form.useForm();
 	const [confirmLoading, setConfirmLoading] = useState(false);

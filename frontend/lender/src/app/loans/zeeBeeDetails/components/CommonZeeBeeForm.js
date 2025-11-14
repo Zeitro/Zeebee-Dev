@@ -1,5 +1,4 @@
 'use client';
-import React from 'react';
 import ApplicantInfo from '../../components/CreateZeeBee/ApplicantInfo';
 import BorrowerInfo from '../../components/CreateZeeBee/BorrowerInfo';
 import PropertyInfo from '../../components/CreateZeeBee/PropertyInfo';

@@ -16,6 +16,7 @@ import { layoutCol, titleCol } from '@/enum/common';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import { CommonFormDate, InputNameCombination, InputPhone, InputTIN } from '@repo/shared-methods';
 import SelectCard from '@/components/SelectCard';
+import _ from 'lodash';
 const ApplicantInfo = ({ gutter = 24, addressProps, disabled, isShowSelectCard = true }) => {
 	const form = Form.useFormInstance();
 	const applicants = Form.useWatch('applicants', form);
@@ -63,10 +64,12 @@ const ApplicantInfo = ({ gutter = 24, addressProps, disabled, isShowSelectCard =
 									addTitle="Add a borrower"
 									className="mb-8"
 									changeFormValue={(values) => {
-										const borrower_applicant_id = values.id;
-										delete values.id;
+										const copyValues = _.cloneDeep(values);
+										const borrower_applicant_id = copyValues.id;
+										delete copyValues.id;
 										applicants[field.name] = {
-											...values,
+											...(applicants?.[field.name] || {}),
+											...copyValues,
 											borrower_applicant_id,
 											type: 'Individual',
 											is_primary:

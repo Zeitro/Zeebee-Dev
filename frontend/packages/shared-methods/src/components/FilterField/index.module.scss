@@ -1,5 +1,5 @@
 .filterField {
-    flex-shrink: 0;
+	flex-shrink: 0;
 	:global {
 		.ant-select-selector,
 		.ant-input {
@@ -28,15 +28,29 @@
 	}
 }
 
-.treeSelectRoot{
-    :global{
-        .ant-select-selection-item{
-            background: none !important;
-            color: var(--base-primary);
-        }
-    }
+.treeSelectRoot {
+	:global {
+		.ant-select-selection-item {
+			background: none !important;
+			color: var(--base-primary);
+		}
+	}
 }
 
-.treeSelectRoot_border :global(.ant-select-selector){
-    border: 1px solid var(--base-primary) !important;
+.treeSelectRoot_border :global(.ant-select-selector) {
+	border: 1px solid var(--base-primary) !important;
+}
+
+.filterStatistics {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	flex-shrink: 0;
+	.filterName {
+		font-weight: 500;
+		flex-shrink: 0;
+	}
+	:global(.ant-tag) {
+		border-radius: 2px;
+	}
 }

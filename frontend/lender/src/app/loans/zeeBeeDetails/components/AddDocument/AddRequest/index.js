@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import NewModal from '@/components/NewModal';
+import { NewModal } from '@repo/shared-methods';
 import { Button, Form, Input, message } from 'antd';
 import { eventBus, createRequest } from '@repo/shared-methods/utils';
 const AddRequest = ({ open, setOpen, loan_id, category }) => {

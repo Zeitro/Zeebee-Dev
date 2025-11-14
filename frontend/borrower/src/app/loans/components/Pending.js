@@ -17,6 +17,7 @@ const PendingPage = ({
 	loading,
 	scrollX = 2400,
 	successCallback,
+	filterName = '',
 	stage = 'Pending', // 默认是pending，可传草稿draft(因草稿展示和pending loans的一致，只有表格操作栏不同，所以需要区分)
 }) => {
 	const tableFilterRef = useRef();
@@ -175,6 +176,7 @@ const PendingPage = ({
 					showDeleteModal,
 					stage,
 				)}
+				filterName={filterName}
 				scroll={{ x: scrollX }}
 				filterList={filterList}
 				hasFilterField={hasFilterField}
