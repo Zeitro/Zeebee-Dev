@@ -56,7 +56,8 @@ jobs:
 
       - name: Remove old service
         run: |
-          docker-compose -f ${{ env.DOCKER_COMPOSE_FILE }} down --remove-orphans ${{ env.FULL_SERVICE_NAME }} || true
+          docker-compose -f ${{ env.DOCKER_COMPOSE_FILE }} stop ${{ env.FULL_SERVICE_NAME }} || true
+          docker-compose -f ${{ env.DOCKER_COMPOSE_FILE }} rm -f ${{ env.FULL_SERVICE_NAME }} || true
 
       - name: Build and deploy
         working-directory: backend
