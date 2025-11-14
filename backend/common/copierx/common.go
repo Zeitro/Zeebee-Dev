@@ -21,7 +21,7 @@ func TimeToStr(layout string) copier.TypeConverter {
 		Fn: func(src interface{}) (dst interface{}, err error) {
 			val, ok := src.(time.Time)
 			if !ok {
-				return "", errors.Errorf("invalid src type:%T", val)
+				return "", errors.Errorf("Invalid Src Type:%T", val)
 			}
 			if val.IsZero() {
 				return "", nil
@@ -42,7 +42,7 @@ func TimePtrToStr(layout string) copier.TypeConverter {
 		Fn: func(src interface{}) (dst interface{}, err error) {
 			val, ok := src.(*time.Time)
 			if !ok {
-				return "", errors.Errorf("invalid src type:%T", val)
+				return "", errors.Errorf("Invalid Src Type:%T", val)
 			}
 			if val == nil || val.IsZero() {
 				return "", nil
@@ -65,7 +65,7 @@ func SqlTimePtrToStr(layout string) copier.TypeConverter {
 		Fn: func(src interface{}) (dst interface{}, err error) {
 			val, ok := src.(*sql.NullTime)
 			if !ok {
-				return "", errors.Errorf("invalid src type:%T", val)
+				return "", errors.Errorf("Invalid Src Type:%T", val)
 			}
 			if val == nil || !val.Valid || val.Time.IsZero() {
 				return "", nil
@@ -84,7 +84,7 @@ func StrToSqlTimePtr(layout string) copier.TypeConverter {
 		Fn: func(src interface{}) (dst interface{}, err error) {
 			val, ok := src.(string)
 			if !ok {
-				return "", errors.Errorf("invalid src type:%T", val)
+				return "", errors.Errorf("Invalid Src Type:%T", val)
 			}
 			dst = &sql.NullTime{}
 			if len(val) == 0 {
@@ -117,7 +117,7 @@ func StrToTime(format string) copier.TypeConverter {
 		Fn: func(src interface{}) (dst interface{}, err error) {
 			val, ok := src.(string)
 			if !ok {
-				return "", errors.Errorf("invalid src type:%T", val)
+				return "", errors.Errorf("Invalid Src Type:%T", val)
 			}
 			dst, err = time.Parse(format, val)
 

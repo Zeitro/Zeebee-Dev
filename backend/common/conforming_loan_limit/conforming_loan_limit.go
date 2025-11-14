@@ -103,7 +103,7 @@ func getConformingLoanLimits(content []byte) (limits []*ConformingLoanLimit, err
 
 	// f, err := excelize.OpenFile(filePath)
 	if err != nil {
-		err = errors.Wrap(err, "failed to read excel content")
+		err = errors.Wrap(err, "Failed To Read Excel Content")
 		return
 	}
 
@@ -111,11 +111,11 @@ func getConformingLoanLimits(content []byte) (limits []*ConformingLoanLimit, err
 
 	rows, err := f.GetRows(f.GetSheetName(0))
 	if err != nil {
-		err = errors.Wrap(err, "failed to get rows")
+		err = errors.Wrap(err, "Failed To Get Rows")
 		return
 	}
 	if len(rows) < 3 {
-		err = errors.New("no data")
+		err = errors.New("No Data")
 		return
 	}
 	// check header fileds
@@ -126,7 +126,7 @@ func getConformingLoanLimits(content []byte) (limits []*ConformingLoanLimit, err
 	// fmt.Println(headerMap)
 	for field := range loanLimitFields {
 		if _, ok := headerMap[field]; !ok {
-			return nil, errors.Errorf("field %s not found in header", field)
+			return nil, errors.Errorf("Field %s Not Found In Header", field)
 		}
 	}
 

@@ -75,7 +75,7 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *borrower.SendRe
 		// send email
 		err := l.sendResetPwdEmail(email, user.Borrower.FirstName)
 		if err != nil {
-			err = errors.Wrap(err, "send reset password email error")
+			err = errors.Wrap(err, "Send Reset Password Email Error")
 			l.WithContext(ctx).Error(err)
 		}
 	}()

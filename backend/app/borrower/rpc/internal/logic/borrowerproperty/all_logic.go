@@ -35,7 +35,7 @@ func (l *AllLogic) All(in *borrower.PropertyAllRequest) (resp *borrower.Property
 		}
 	}()
 
-	results, err := l.svcCtx.BorrowerPropertyRepo.All(l.ctx, in.Data.BorrowerId)
+	results, err := l.svcCtx.BorrowerPropertyRepo.AllForBorrower(l.ctx, in.Data.BorrowerId)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

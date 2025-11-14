@@ -11,7 +11,7 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/types"
+	"zeebee-backend/domains/zeebee/model"
 )
 
 type PendingStatusReviewLogic struct {
@@ -49,17 +49,17 @@ func (l *PendingStatusReviewLogic) PendingStatusReview(in *lender.LoanPendingSta
 
 	// validate loan pending status
 	if loan.Stage != constants.LoanStagePending {
-		return nil, errors.WithStack(errors.New("loan is not in pending stage"))
+		return nil, errors.WithStack(errors.New("Loan Is Not In Pending Stage"))
 	}
 	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreApproval {
-		return nil, errors.WithStack(errors.New("invalid loan source"))
+		return nil, errors.WithStack(errors.New("Invalid Loan Source"))
 	}
 
 	if loan.PendingStatus != currentStatus {
-		return nil, errors.WithStack(errors.New("current pending status is not valid"))
+		return nil, errors.WithStack(errors.New("Current Pending Status Is Not Valid"))
 	}
 	if action == constants.LoanOperationActionReject && in.Data.Comment == "" {
-		return nil, errors.WithStack(errors.New("Comment is empty"))
+		return nil, errors.WithStack(errors.New("Comment Is Empty"))
 	}
 	var targetStatus constants.LoanPendingStatus
 	loanBaseLogic := NewLoanBaseLogic(l.ctx, l.svcCtx)
@@ -82,15 +82,15 @@ func (l *PendingStatusReviewLogic) PendingStatusReview(in *lender.LoanPendingSta
 
 		// add operation
 		operatorId := in.Data.LenderEmployeeId
-		fromStatus := types.LoanOperationStatus{
+		fromStatus := model.LoanOperationStatus{
 			Stage:         originalStage,
 			PendingStatus: originalPendingStatus,
 		}
-		toStatus := types.LoanOperationStatus{
+		toStatus := model.LoanOperationStatus{
 			Stage:         targetStage,
 			PendingStatus: targetStatus,
 		}
-		metadata := &types.LoanOperationMetadata{
+		metadata := &model.LoanOperationMetadata{
 			Comment: in.Data.Comment,
 		}
 

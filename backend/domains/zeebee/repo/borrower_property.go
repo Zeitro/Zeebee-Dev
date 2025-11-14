@@ -15,7 +15,6 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
 	"zeebee-backend/common/timex"
-	"zeebee-backend/common/types"
 	"zeebee-backend/domains/zeebee/model"
 )
 
@@ -284,7 +283,7 @@ func (repo *BorrowerPropertyRepo) AllForBorrower(ctx context.Context, borrowerId
 }
 
 // IsExisted check given property base is existed
-func (repo *BorrowerPropertyRepo) IsExisted(ctx context.Context, id int64, borrowerId int64, address *types.Address) (isExisted bool, err error) {
+func (repo *BorrowerPropertyRepo) IsExisted(ctx context.Context, id int64, borrowerId int64, address *model.Address) (isExisted bool, err error) {
 	if address == nil {
 		err = errors.New("Address Is Empty")
 		return false, errors.WithStack(err)

@@ -23,7 +23,7 @@ func initS3Client(cnf config.AwsS3Conf) (err error) {
 	})
 
 	if err != nil {
-		return errors.Wrap(err, "init s3 client error")
+		return errors.Wrap(err, "Init S3 Client Error")
 	}
 	s3Client = cli
 	return err

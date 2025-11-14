@@ -7,10 +7,9 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
 
-	"zeebee-backend/app/lender/rpc/internal/repo/model"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/common/constants"
-	"zeebee-backend/common/types"
+	"zeebee-backend/domains/zeebee/model"
 )
 
 type LoanBaseLogic struct {
@@ -34,21 +33,21 @@ func (l *LoanBaseLogic) GetLenderLoan(loanId int64, lenderCompanyId int64, prelo
 		return nil, err
 	}
 	if loan.LenderCompanyId != lenderCompanyId {
-		return nil, errors.WithStack(errors.New("invalid lender company"))
+		return nil, errors.WithStack(errors.New("Invalid Lender Company"))
 	}
 
 	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreApproval {
-		return nil, errors.WithStack(errors.New("invalid loan source"))
+		return nil, errors.WithStack(errors.New("Invalid Loan Source"))
 	}
 
 	return
 }
 
 // CreateLoanOperationLog creates a loan operation log record
-func (l *LoanBaseLogic) CreateLoanOperationLog(tx *gorm.DB, loanId, operatorId int64, from, to types.LoanOperationStatus, action constants.LoanOperationAction, metadata *types.LoanOperationMetadata) error {
+func (l *LoanBaseLogic) CreateLoanOperationLog(tx *gorm.DB, loanId, operatorId int64, from, to model.LoanOperationStatus, action constants.LoanOperationAction, metadata *model.LoanOperationMetadata) error {
 	operator, err := l.svcCtx.LenderEmployeeRepo.FindOneByIdWithTx(l.ctx, tx, operatorId)
 	if err != nil {
-		return errors.Wrap(err, "failed to get operator")
+		return errors.Wrap(err, "Failed To Get Operator")
 	}
 
 	operatorName := ""
@@ -68,7 +67,7 @@ func (l *LoanBaseLogic) CreateLoanOperationLog(tx *gorm.DB, loanId, operatorId i
 	}
 	_, err = l.svcCtx.LoanOperationRepo.CreateWithTx(l.ctx, tx, operation, false)
 	if err != nil {
-		return errors.Wrap(err, "failed to create operation log")
+		return errors.Wrap(err, "Failed To Create Operation Log")
 	}
 
 	return nil
@@ -102,7 +101,7 @@ func (l *LoanBaseLogic) GetNextPendingStatus(currentStatus constants.LoanPending
 
 	trans, ok := loanPendingStatusTransMap[currentStatus]
 	if !ok {
-		return constants.LoanPendingStatusNone, errors.Errorf("Invalid current status %v", currentStatus)
+		return constants.LoanPendingStatusNone, errors.Errorf("Invalid Current Status %v", currentStatus)
 	}
 	switch action {
 	case constants.LoanOperationActionApprove:
@@ -111,13 +110,13 @@ func (l *LoanBaseLogic) GetNextPendingStatus(currentStatus constants.LoanPending
 		nextStatus = trans.rejectTarget
 	default:
 		nextStatus = constants.LoanPendingStatusNone
-		err = errors.Errorf("Invalid action %v", action)
+		err = errors.Errorf("Invalid Action %v", action)
 	}
 	if err != nil {
 		return constants.LoanPendingStatusNone, err
 	}
 	if currentStatus != constants.LoanPendingStatusClosing && nextStatus == constants.LoanPendingStatusNone {
-		return constants.LoanPendingStatusNone, errors.Errorf("Invalid action %v for current status %v", action, currentStatus)
+		return constants.LoanPendingStatusNone, errors.Errorf("Invalid Action %v For Current Status %v", action, currentStatus)
 	}
 
 	return nextStatus, err

@@ -8,13 +8,13 @@ import (
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
-	"zeebee-backend/app/borrower/rpc/internal/repo/model"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/common/uuid"
+	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -152,17 +152,8 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 	// loan borrower
 	loanBorrower = &model.LoanBorrower{}
 
-	// loanBorrowerData := in.LoanBorrower
-	// if loanBorrowerData == nil {
-	// 	return nil, nil, nil, nil, errors.New("Invalid Loan Borrower")
-	// }
-	// loanBorrower, err = l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, loanBorrowerData.BorrowerEntityId, in.BorrowerId)
-	// if err != nil {
-	// 	return nil, nil, nil, nil, err
-	// }
-
 	// LoanProperty
-	borrowerProperty, err := l.svcCtx.BorrowerPropertyRepo.GetBorrowerPropertyById(l.ctx, in.LoanProperty.BorrowerPropertyId, in.BorrowerId)
+	borrowerProperty, err := l.svcCtx.BorrowerPropertyRepo.GetOneByIdForBorrower(l.ctx, in.LoanProperty.BorrowerPropertyId, in.BorrowerId)
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}

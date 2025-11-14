@@ -52,7 +52,7 @@ func (l *RefreshTokenLogic) RefreshToken(in *borrower.RefreshTokenRequest) (resp
 		return nil, errors.WithStack(err)
 	}
 	if user.Status != constants.UserStatusActive {
-		return nil, errors.WithStack(errors.New("user is not active"))
+		return nil, errors.WithStack(errors.New("User Is Not Active"))
 	}
 
 	accessToken, err := utils.GenerateToken(

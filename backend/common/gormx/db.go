@@ -44,7 +44,7 @@ func GetDB(dsn string, isDebug bool, typ DBType) (db *gorm.DB, err error) {
 			Logger: NewGormLogger(logLevel),
 		})
 	default:
-		return nil, errors.New("invalid db type: " + string(typ))
+		return nil, errors.New("Invalid DB Type: " + string(typ))
 	}
 	if err != nil {
 		return nil, err
@@ -62,7 +62,7 @@ func GetDB(dsn string, isDebug bool, typ DBType) (db *gorm.DB, err error) {
 	ctx, _ := context.WithTimeout(context.Background(), time.Second)
 	err = sqlDb.PingContext(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err, "ping db error")
+		return nil, errors.Wrap(err, "Ping DB Error")
 	}
 
 	sqlDb.SetMaxIdleConns(10)

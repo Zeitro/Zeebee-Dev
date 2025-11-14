@@ -9,11 +9,10 @@ import (
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
-	"zeebee-backend/app/lender/rpc/internal/repo/model"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/constants"
-	"zeebee-backend/common/types"
+	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -81,7 +80,7 @@ func (l *CreateLogic) Create(in *lender.LoanDocumentCreateExtendTypeRequest) (re
 			return errorx.GetFailedTransErr(innerErr)
 		}
 
-		operationDocs := []*types.LoanDocument{}
+		operationDocs := []*model.OperationLoanDocument{}
 		innerErr = copier.CopyWithOption(&operationDocs, loanDocuments, copier.Option{
 			IgnoreEmpty:   false,
 			DeepCopy:      true,
@@ -95,16 +94,16 @@ func (l *CreateLogic) Create(in *lender.LoanDocumentCreateExtendTypeRequest) (re
 			tx,
 			in.Data.LoanId,
 			in.Data.LenderEmployeeId,
-			types.LoanOperationStatus{
+			model.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
-			types.LoanOperationStatus{
+			model.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
 			constants.LoanOperationActionCreateDocumentType,
-			&types.LoanOperationMetadata{
+			&model.LoanOperationMetadata{
 				LoanDocuments: operationDocs,
 			},
 		)
@@ -127,7 +126,7 @@ func (l *CreateLogic) prepare(in *lender.LoanDocumentCreateExtendTypeRequest) (l
 		constants.LoanDocumentCategoryExtend,
 		constants.LoanDocumentCategoryLenderClosingExtend,
 	}, category) {
-		return nil, errors.WithStack(errors.New("loan document category not supported"))
+		return nil, errors.WithStack(errors.New("Loan Document Category Not Supported"))
 	}
 
 	loan, err = l.baseLogic.GetLenderLoan(in.Data.LoanId, in.Data.LenderCompanyId, nil)
@@ -139,7 +138,7 @@ func (l *CreateLogic) prepare(in *lender.LoanDocumentCreateExtendTypeRequest) (l
 	// check unique
 	fileTypes = slice.Unique(fileTypes)
 	if len(fileTypes) == 0 {
-		return nil, errors.WithStack(errors.New("file types cannot be empty"))
+		return nil, errors.WithStack(errors.New("File Types Cannot Be Empty"))
 	}
 
 	// checked repeated file types
@@ -150,7 +149,7 @@ func (l *CreateLogic) prepare(in *lender.LoanDocumentCreateExtendTypeRequest) (l
 	}
 	exitedFileTypes := slice.Intersection(fileTypes, allFileTypes)
 	if len(exitedFileTypes) > 0 {
-		return nil, errors.Errorf("file type %s is existed", exitedFileTypes[0])
+		return nil, errors.Errorf("File Type %s Is Existed", exitedFileTypes[0])
 	}
 	return loan, nil
 }

@@ -8,7 +8,6 @@ import (
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
-	"zeebee-backend/app/borrower/rpc/internal/repo/model"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
@@ -16,6 +15,7 @@ import (
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/common/uuid"
+	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -75,7 +75,7 @@ func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingL
 			var uid string
 			data := models[i]
 			// get BorrowerProperty
-			borrowerProperty, innerErr = l.svcCtx.BorrowerPropertyRepo.GetOrCreateBorrowerPropertyWithTx(l.ctx, tx, borrowerId, data.borrowerProperty.Address)
+			borrowerProperty, innerErr = l.svcCtx.BorrowerPropertyRepo.GetOrCreateBorrowerPropertyWithTxForBorrower(l.ctx, tx, borrowerId, data.borrowerProperty.Address)
 			if innerErr != nil {
 				return innerErr
 			}
@@ -118,15 +118,6 @@ func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingL
 				item.LoanBorrowerId = loanBorrower.Id
 				item.FullName = stringx.FormatFullName(item.FirstName, item.MidName, item.LastName)
 			})
-
-			// applicants = slice.Map(applicants, func(index int, item *model.LoanApplicant) *model.LoanApplicant {
-			// 	item.LoanId = loan.Id
-			// 	item.LoanPropertyId = loanProperty.Id
-			// 	item.LoanBorrowerId = loanBorrower.Id
-			// 	item.FullName = stringx.FormatFullName(item.FirstName, item.MidName, item.LastName)
-			//
-			// 	return item
-			// })
 			_, innerErr = l.svcCtx.LoanApplicantRepo.BatchCreateWithTx(l.ctx, tx, applicants, false)
 			if innerErr != nil {
 				return innerErr

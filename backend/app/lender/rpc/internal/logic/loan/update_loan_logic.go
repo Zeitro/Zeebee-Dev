@@ -9,14 +9,13 @@ import (
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
-	"zeebee-backend/app/lender/rpc/internal/repo/model"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/timex"
-	"zeebee-backend/common/types"
 	"zeebee-backend/common/utils"
+	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -65,14 +64,14 @@ func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender
 		return nil, err
 	}
 	if oldLoan.Source != constants.LoanSourceSystem && oldLoan.Source != constants.LoanSourcePreApproval {
-		return nil, errors.WithStack(errors.New("invalid loan source"))
+		return nil, errors.WithStack(errors.New("Invalid Loan Source"))
 	}
 
 	// oldApplicants := oldLoan.Applicants
 
 	oldLoanCopy, err = utils.Clone(oldLoan)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get copy loan")
+		return nil, errors.Wrap(err, "Failed To Get Copy Loan")
 	}
 
 	data, err := l.buildModelData(in.Data, oldLoanCopy)
@@ -159,12 +158,12 @@ func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender
 			func() error {
 				operatorId := in.Data.LenderEmployeeId
 
-				fromStatus := types.LoanOperationStatus{
+				fromStatus := model.LoanOperationStatus{
 					Stage:         oldLoan.Stage,
 					PendingStatus: oldLoan.PendingStatus,
 				}
 
-				toStatus := types.LoanOperationStatus{
+				toStatus := model.LoanOperationStatus{
 					Stage:         data.loan.Stage,
 					PendingStatus: data.loan.PendingStatus,
 				}
@@ -307,14 +306,14 @@ func (l *UpdateLoanLogic) updateThirdServices(tx *gorm.DB, oldItems []*model.Loa
 // buildModelData builds model data
 func (l *UpdateLoanLogic) buildModelData(reqData *lender.LoanUpdateRequestData, oldLoan *model.Loan) (data *updateLoanModelData, err error) {
 	if oldLoan == nil {
-		return nil, errors.WithStack(errors.New("invalid loan"))
+		return nil, errors.WithStack(errors.New("Invalid Loan"))
 	}
 
 	if reqData == nil {
-		return nil, errors.WithStack(errors.New("invalid request data"))
+		return nil, errors.WithStack(errors.New("Invalid Request Data"))
 	}
 	if reqData.LoanProperty == nil {
-		return nil, errors.WithStack(errors.New("invalid loan property"))
+		return nil, errors.WithStack(errors.New("Invalid Loan Property"))
 	}
 
 	// loan

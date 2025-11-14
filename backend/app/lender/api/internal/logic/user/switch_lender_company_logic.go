@@ -34,7 +34,7 @@ func NewSwitchLenderCompanyLogic(ctx context.Context, svcCtx *svc.ServiceContext
 func (l *SwitchLenderCompanyLogic) SwitchLenderCompany(req *types.UserSwitchLenderCompanyRequest) (resp *types.UserRefreshTokenResponse, err error) {
 	_, employeeId, _ := utils.GetLenderCompanyAndEmployeeId(l.ctx)
 	if employeeId == 0 {
-		return nil, errors.WithStack(errors.New("employee id not found"))
+		return nil, errors.WithStack(errors.New("Employee Id Not Found"))
 	}
 	rpcResp, err := l.svcCtx.UserRpcClient.SwitchLenderCompany(l.ctx, &lender.SwitchLenderCompanyRequest{
 		Data: &lender.SwitchLenderCompanyRequestData{
