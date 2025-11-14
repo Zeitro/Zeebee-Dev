@@ -1,26 +1,28 @@
-version: '3.8'
-
 services:
-  prod-borrower-backend:
-    image: prod-borrower-backend:${IMAGE_TAG:-latest}
+  staging-lender-backend:
+    image: staging-lender-backend:${IMAGE_TAG:-latest}
     build:
-      context: .
-      dockerfile: Dockerfile-borrower-production
-    container_name: prod-borrower-backend
+      context: ../../
+      dockerfile: deploy/lender/Dockerfile
+      args:
+        - CONFIG_ENV=staging
+    container_name: staging-lender-backend
     network_mode: host
     logging:
       driver: awslogs
       options:
         awslogs-region: us-west-1
-        awslogs-group: /zeebee/borrower-production
+        awslogs-group: /zeebee/lender-staging
         awslogs-create-group: "true"
         awslogs-stream: backend-${HOSTNAME}
 
   prod-lender-backend:
     image: prod-lender-backend:${IMAGE_TAG:-latest}
     build:
-      context: .
-      dockerfile: Dockerfile-lender-production
+      context: ../../
+      dockerfile: deploy/lender/Dockerfile
+      args:
+        - CONFIG_ENV=production
     container_name: prod-lender-backend
     network_mode: host
     logging:
@@ -30,3 +32,4 @@ services:
         awslogs-group: /zeebee/lender-production
         awslogs-create-group: "true"
         awslogs-stream: backend-${HOSTNAME}
+

@@ -589,6 +589,8 @@ message LoanApplicantEntry{
   string phone = 20;
   int32 own_percent = 21;
   int64 borrower_applicant_id = 22;
+  int64 loan_id = 23;
+  int64 borrower_id = 24;
 }
 
 message LoanApplicantLoanEditEntry{

@@ -4649,6 +4649,8 @@ type LoanApplicantEntry struct {
 	Phone               string                 `protobuf:"bytes,20,opt,name=phone,proto3" json:"phone,omitempty"`
 	OwnPercent          int32                  `protobuf:"varint,21,opt,name=own_percent,json=ownPercent,proto3" json:"own_percent,omitempty"`
 	BorrowerApplicantId int64                  `protobuf:"varint,22,opt,name=borrower_applicant_id,json=borrowerApplicantId,proto3" json:"borrower_applicant_id,omitempty"`
+	LoanId              int64                  `protobuf:"varint,23,opt,name=loan_id,json=loanId,proto3" json:"loan_id,omitempty"`
+	BorrowerId          int64                  `protobuf:"varint,24,opt,name=borrower_id,json=borrowerId,proto3" json:"borrower_id,omitempty"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -4833,6 +4835,20 @@ func (x *LoanApplicantEntry) GetOwnPercent() int32 {
 func (x *LoanApplicantEntry) GetBorrowerApplicantId() int64 {
 	if x != nil {
 		return x.BorrowerApplicantId
+	}
+	return 0
+}
+
+func (x *LoanApplicantEntry) GetLoanId() int64 {
+	if x != nil {
+		return x.LoanId
+	}
+	return 0
+}
+
+func (x *LoanApplicantEntry) GetBorrowerId() int64 {
+	if x != nil {
+		return x.BorrowerId
 	}
 	return 0
 }
@@ -7911,7 +7927,7 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x15has_properties_vacant\x18\x1b \x01(\bR\x13hasPropertiesVacant\x121\n" +
 	"\x15has_short_term_rental\x18\x1c \x01(\bR\x12hasShortTermRental\x129\n" +
 	"\x19est_property_value_amount\x18\x1d \x01(\x01R\x16estPropertyValueAmount\x12\x10\n" +
-	"\x03arv\x18\x1e \x01(\x01R\x03arv\"\xde\x05\n" +
+	"\x03arv\x18\x1e \x01(\x01R\x03arv\"\x98\x06\n" +
 	"\x12LoanApplicantEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
@@ -7940,7 +7956,10 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x05phone\x18\x14 \x01(\tR\x05phone\x12\x1f\n" +
 	"\vown_percent\x18\x15 \x01(\x05R\n" +
 	"ownPercent\x122\n" +
-	"\x15borrower_applicant_id\x18\x16 \x01(\x03R\x13borrowerApplicantId\"\xa0\x01\n" +
+	"\x15borrower_applicant_id\x18\x16 \x01(\x03R\x13borrowerApplicantId\x12\x17\n" +
+	"\aloan_id\x18\x17 \x01(\x03R\x06loanId\x12\x1f\n" +
+	"\vborrower_id\x18\x18 \x01(\x03R\n" +
+	"borrowerId\"\xa0\x01\n" +
 	"\x1aLoanApplicantLoanEditEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x122\n" +
 	"\x15borrower_applicant_id\x18\x02 \x01(\x03R\x13borrowerApplicantId\x12\x1d\n" +
