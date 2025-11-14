@@ -184,7 +184,7 @@ func (repo *LoanRepo) Page(ctx context.Context, pageReq *borrower.LoanPageReques
 		}
 	}
 	if sorter == nil || len(sortColumns) == 0 {
-		sortColumns = append(sortColumns, fmt.Sprintf("%s.created_at desc", loanTable))
+		sortColumns = append(sortColumns, fmt.Sprintf("%s.updated_at desc", loanTable))
 	}
 	for _, column := range sortColumns {
 		query = query.Order(column)
