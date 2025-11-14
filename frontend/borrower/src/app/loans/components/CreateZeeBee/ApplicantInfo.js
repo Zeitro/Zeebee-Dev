@@ -32,7 +32,6 @@ const ApplicantInfo = ({ gutter = 24, addressProps, disabled, isShowSelectCard =
 					api="/borrower_entity/all"
 					className="mb-8"
 					changeFormValue={(values) => {
-						console.log(values, '---');
 						const borrower_entity = {
 							[name]: {
 								...values,

@@ -1,4 +1,4 @@
-import { formatAmount } from '@/lib/format';
+import { formatAmount } from '@repo/shared-methods/utils';
 import { LoanStage, LoanPendingStatus } from './ChangeStageStatus';
 import TableOperation from '@/components/TableOperation';
 export const get3rdPartyMark = (v, { source }) => (

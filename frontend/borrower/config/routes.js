@@ -36,7 +36,6 @@ export const navRouter = [
 		path: '/properties',
 		title: 'My properties',
 		icon: 'property',
-		hideCrumbs: true,
 		roles: [],
 		router: [
 			{
@@ -56,13 +55,11 @@ export const navRouter = [
 				path: '/management/borrowingEntity',
 				title: 'Management ( Borrowing Entity )',
 				menuTitle: 'Borrowing Entity',
-				hideCrumbs: true,
 			},
 			{
 				path: '/management/borrower',
 				title: 'Management ( Borrower )',
 				menuTitle: 'Borrower',
-				hideCrumbs: true,
 			},
 		],
 	},

@@ -1,9 +1,8 @@
 'use client';
 import React, { useState } from 'react';
-import { createRequest } from '@/lib/fetch';
 import { message, Modal } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { assemblyAddress } from '@/lib/format';
+import { assemblyAddress, createRequest } from '@repo/shared-methods/utils';
 import { useRouter } from 'next/navigation';
 import { useGlobalStore } from '@/store/global';
 

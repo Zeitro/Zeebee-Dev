@@ -5,7 +5,7 @@ export const generateMenuBar = (list, iconConfig) => {
 		.filter((i) => !i.hideMenu)
 		.map((item) => {
 			if (item.router) {
-				item.router = generateMenuBar(item.router);
+				item.router = generateMenuBar(item.router, iconConfig);
 			}
 			const newItem = {
 				key: item.path,

@@ -1,8 +1,7 @@
 import React, { useRef, useState } from 'react';
-import NewModal from '@/components/NewModal';
-import { Button, Form, Input, message, Select } from 'antd';
-import CommonUpload from '@/components/CommonUpload';
-import { CloseOutlined, FileTextOutlined, InboxOutlined, UploadOutlined } from '@ant-design/icons';
+import { NewModal, UploadFileButton } from '@repo/shared-methods';
+import { Button, Form, Input, message } from 'antd';
+import { CloseOutlined, FileTextOutlined, InboxOutlined } from '@ant-design/icons';
 import styles from './index.module.scss';
 import { createRequest, eventBus } from '@repo/shared-methods/utils';
 // const { TextArea } = Input;
@@ -97,7 +96,7 @@ const UploadModal = ({ open, setOpen, isChangeType = true, record = {}, loan_id,
 				{/* <Form.Item label="Comment (Optional）" name="comment">
 					<TextArea placeholder="Add a comment" autoSize={{ minRows: 3, maxRows: 5 }} />
 				</Form.Item> */}
-				<CommonUpload
+				<UploadFileButton
 					ref={uploadRef}
 					immediateUpload={false}
 					accept=".pdf,.png,.jpg,.jpeg"
@@ -126,7 +125,7 @@ const UploadModal = ({ open, setOpen, isChangeType = true, record = {}, loan_id,
 							Click or drag file to this area to upload
 						</div>
 					</div>
-				</CommonUpload>
+				</UploadFileButton>
 			</Form>
 		</NewModal>
 	);

@@ -17,6 +17,7 @@ const ArchivedLoans = ({
 	loading,
 	scrollX = 1500,
 	stage = 'Archived',
+	filterName,
 }) => {
 	const { loanTypeOptions, lenderOptions } = useOptionsStore();
 	const { request } = createRequest();
@@ -112,6 +113,7 @@ const ArchivedLoans = ({
 			<FilterTable
 				ref={tableFilterRef}
 				columns={archivedColumns(isNotAddress, showDeleteModal)}
+				filterName={filterName}
 				scroll={{ x: scrollX }}
 				filterList={filterList}
 				hasFilterField={hasFilterField}

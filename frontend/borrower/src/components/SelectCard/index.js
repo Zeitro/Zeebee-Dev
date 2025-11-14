@@ -21,6 +21,9 @@ const SelectCard = ({
 	name,
 	required = true,
 	xl = 6,
+	sm = 24,
+	xs = 24,
+	btnCol = { xl: 6, sm: 24, xs: 24 },
 	sliceIndex = 3,
 }) => {
 	const isInit = useRef(true);
@@ -128,10 +131,12 @@ const SelectCard = ({
 							},
 							getList,
 							xl,
+							xs,
+							sm,
 						});
 					})
 				)}
-				<Col xl={6} xs={24} sm={24}>
+				<Col xl={6} xs={24} sm={24} {...btnCol}>
 					<Space direction="vertical" className="w-full">
 						<BtnPopUpModal
 							getContent={(setOpen) => (

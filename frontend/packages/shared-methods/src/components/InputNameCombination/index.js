@@ -49,7 +49,10 @@ export const InputNameCombination = ({
 					label={firstLabel}
 					name={firstName}
 					rules={[
-						{ required: last || config?.firstNameRequired, message: 'Please Enter!' },
+						{
+							required: last || config?.firstNameRequired || !listName,
+							message: 'Please Enter!',
+						},
 						{ validator: (_, value) => validatedName(value, index, applicants) },
 					]}
 					getValueFromEvent={(v) => {
@@ -78,7 +81,10 @@ export const InputNameCombination = ({
 					label={lastLabel}
 					name={lastName}
 					rules={[
-						{ required: first || config?.lastNameRequired, message: 'Please Enter!' },
+						{
+							required: first || config?.lastNameRequired || !listName,
+							message: 'Please Enter!',
+						},
 						{ validator: (_, value) => validatedName(value, index, applicants) },
 					]}
 					dependencies={getDependencies('lastName')}
