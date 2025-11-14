@@ -820,8 +820,7 @@
                 "mailing_address",
                 "contact_email",
                 "contact_name",
-                "contact_phone",
-                "own_percent"
+                "contact_phone"
               ],
               "properties": {
                 "contact_email": {
@@ -855,9 +854,6 @@
                 },
                 "name": {
                   "type": "string"
-                },
-                "own_percent": {
-                  "type": "integer"
                 },
                 "tin": {
                   "type": "string"
@@ -919,9 +915,6 @@
                 "name": {
                   "type": "string"
                 },
-                "own_percent": {
-                  "type": "integer"
-                },
                 "tin": {
                   "type": "string"
                 },
@@ -975,7 +968,6 @@
                       "contact_email",
                       "contact_name",
                       "contact_phone",
-                      "own_percent",
                       "mailing_address"
                     ],
                     "properties": {
@@ -1019,9 +1011,6 @@
                       },
                       "name": {
                         "type": "string"
-                      },
-                      "own_percent": {
-                        "type": "integer"
                       },
                       "tin": {
                         "type": "string"
@@ -1164,7 +1153,6 @@
                       "contact_email",
                       "contact_name",
                       "contact_phone",
-                      "own_percent",
                       "mailing_address"
                     ],
                     "properties": {
@@ -1208,9 +1196,6 @@
                       },
                       "name": {
                         "type": "string"
-                      },
-                      "own_percent": {
-                        "type": "integer"
                       },
                       "tin": {
                         "type": "string"
@@ -1310,9 +1295,6 @@
                 "name": {
                   "type": "string"
                 },
-                "own_percent": {
-                  "type": "integer"
-                },
                 "tin": {
                   "type": "string"
                 },
@@ -1365,8 +1347,7 @@
                 "mailing_address",
                 "contact_email",
                 "contact_name",
-                "contact_phone",
-                "own_percent"
+                "contact_phone"
               ],
               "properties": {
                 "contact_email": {
@@ -1400,9 +1381,6 @@
                 },
                 "name": {
                   "type": "string"
-                },
-                "own_percent": {
-                  "type": "integer"
                 },
                 "tin": {
                   "type": "string"
@@ -1518,8 +1496,7 @@
               "type": "object",
               "required": [
                 "stage",
-                "loan_type",
-                "borrower_entity_id"
+                "loan_type"
               ],
               "properties": {
                 "applicants": {
@@ -1538,12 +1515,12 @@
                       },
                       "is_primary": {
                         "type": "boolean"
+                      },
+                      "own_percent": {
+                        "type": "integer"
                       }
                     }
                   }
-                },
-                "borrower_entity_id": {
-                  "type": "integer"
                 },
                 "business_strategy": {
                   "type": "array",
@@ -1715,7 +1692,8 @@
                     "type": "object",
                     "required": [
                       "borrower_applicant_id",
-                      "is_primary"
+                      "is_primary",
+                      "own_percent"
                     ],
                     "properties": {
                       "borrower_applicant_id": {
@@ -1726,15 +1704,15 @@
                       },
                       "is_primary": {
                         "type": "boolean"
+                      },
+                      "own_percent": {
+                        "type": "integer"
                       }
                     }
                   }
                 },
                 "apply_form_file": {
                   "type": "string"
-                },
-                "borrower_entity_id": {
-                  "type": "integer"
                 },
                 "business_strategy": {
                   "type": "array",
@@ -1750,6 +1728,17 @@
                 },
                 "initial_amount": {
                   "type": "number"
+                },
+                "loan_borrower": {
+                  "type": "object",
+                  "properties": {
+                    "borrower_entity_id": {
+                      "type": "integer"
+                    },
+                    "id": {
+                      "type": "integer"
+                    }
+                  }
                 },
                 "loan_demographic": {
                   "type": "object",
@@ -1877,7 +1866,6 @@
                     "mid_construction",
                     "est_yearly_rental_income_amount",
                     "yearly_liability_expense_amount",
-                    "dscr",
                     "has_delayed_financing",
                     "has_properties_vacant",
                     "has_short_term_rental"
@@ -2220,7 +2208,8 @@
                     "type": "object",
                     "required": [
                       "borrower_applicant_id",
-                      "is_primary"
+                      "is_primary",
+                      "own_percent"
                     ],
                     "properties": {
                       "borrower_applicant_id": {
@@ -2231,15 +2220,15 @@
                       },
                       "is_primary": {
                         "type": "boolean"
+                      },
+                      "own_percent": {
+                        "type": "integer"
                       }
                     }
                   }
                 },
                 "apply_form_file": {
                   "type": "string"
-                },
-                "borrower_entity_id": {
-                  "type": "integer"
                 },
                 "business_strategy": {
                   "type": "array",
@@ -2255,6 +2244,17 @@
                 },
                 "initial_amount": {
                   "type": "number"
+                },
+                "loan_borrower": {
+                  "type": "object",
+                  "properties": {
+                    "borrower_entity_id": {
+                      "type": "integer"
+                    },
+                    "id": {
+                      "type": "integer"
+                    }
+                  }
                 },
                 "loan_demographic": {
                   "type": "object",
@@ -2382,7 +2382,6 @@
                     "mid_construction",
                     "est_yearly_rental_income_amount",
                     "yearly_liability_expense_amount",
-                    "dscr",
                     "has_delayed_financing",
                     "has_properties_vacant",
                     "has_short_term_rental"
@@ -2914,6 +2913,8 @@
                         "items": {
                           "type": "object",
                           "required": [
+                            "id",
+                            "borrower_applicant_id",
                             "first_name",
                             "mid_name",
                             "last_name",
@@ -2932,7 +2933,10 @@
                             "driver_license_num",
                             "address",
                             "loan_borrower_id",
-                            "phone"
+                            "phone",
+                            "own_percent",
+                            "created_at",
+                            "updated_at"
                           ],
                           "properties": {
                             "address": {
@@ -2955,8 +2959,14 @@
                                 }
                               }
                             },
+                            "borrower_applicant_id": {
+                              "type": "integer"
+                            },
                             "borrower_id": {
                               "type": "integer"
+                            },
+                            "created_at": {
+                              "type": "string"
                             },
                             "dob": {
                               "type": "string"
@@ -3003,6 +3013,9 @@
                             "mid_name": {
                               "type": "string"
                             },
+                            "own_percent": {
+                              "type": "integer"
+                            },
                             "phone": {
                               "type": "string"
                             },
@@ -3010,6 +3023,9 @@
                               "type": "string"
                             },
                             "type": {
+                              "type": "string"
+                            },
+                            "updated_at": {
                               "type": "string"
                             }
                           }
@@ -3086,6 +3102,9 @@
                       "loan_borrower": {
                         "type": "object",
                         "properties": {
+                          "borrower_entity_id": {
+                            "type": "integer"
+                          },
                           "contact_email": {
                             "type": "string"
                           },
@@ -3093,6 +3112,9 @@
                             "type": "string"
                           },
                           "contact_phone": {
+                            "type": "string"
+                          },
+                          "created_at": {
                             "type": "string"
                           },
                           "id": {
@@ -3124,9 +3146,6 @@
                           "name": {
                             "type": "string"
                           },
-                          "own_percent": {
-                            "type": "integer"
-                          },
                           "tin": {
                             "type": "string"
                           },
@@ -3134,6 +3153,9 @@
                             "type": "string"
                           },
                           "type": {
+                            "type": "string"
+                          },
+                          "updated_at": {
                             "type": "string"
                           }
                         }
@@ -3327,6 +3349,7 @@
                         "type": "object",
                         "required": [
                           "id",
+                          "borrower_property_id",
                           "property_type",
                           "unit",
                           "living_area_sqft",
@@ -3376,6 +3399,9 @@
                             "type": "integer"
                           },
                           "bedrooms": {
+                            "type": "integer"
+                          },
+                          "borrower_property_id": {
                             "type": "integer"
                           },
                           "budget": {
@@ -4060,6 +4086,8 @@
                   "items": {
                     "type": "object",
                     "required": [
+                      "id",
+                      "borrower_applicant_id",
                       "first_name",
                       "mid_name",
                       "last_name",
@@ -4078,7 +4106,10 @@
                       "driver_license_num",
                       "address",
                       "loan_borrower_id",
-                      "phone"
+                      "phone",
+                      "own_percent",
+                      "created_at",
+                      "updated_at"
                     ],
                     "properties": {
                       "address": {
@@ -4101,8 +4132,14 @@
                           }
                         }
                       },
+                      "borrower_applicant_id": {
+                        "type": "integer"
+                      },
                       "borrower_id": {
                         "type": "integer"
+                      },
+                      "created_at": {
+                        "type": "string"
                       },
                       "dob": {
                         "type": "string"
@@ -4149,6 +4186,9 @@
                       "mid_name": {
                         "type": "string"
                       },
+                      "own_percent": {
+                        "type": "integer"
+                      },
                       "phone": {
                         "type": "string"
                       },
@@ -4156,6 +4196,9 @@
                         "type": "string"
                       },
                       "type": {
+                        "type": "string"
+                      },
+                      "updated_at": {
                         "type": "string"
                       }
                     }
@@ -4232,6 +4275,9 @@
                 "loan_borrower": {
                   "type": "object",
                   "properties": {
+                    "borrower_entity_id": {
+                      "type": "integer"
+                    },
                     "contact_email": {
                       "type": "string"
                     },
@@ -4239,6 +4285,9 @@
                       "type": "string"
                     },
                     "contact_phone": {
+                      "type": "string"
+                    },
+                    "created_at": {
                       "type": "string"
                     },
                     "id": {
@@ -4270,9 +4319,6 @@
                     "name": {
                       "type": "string"
                     },
-                    "own_percent": {
-                      "type": "integer"
-                    },
                     "tin": {
                       "type": "string"
                     },
@@ -4280,6 +4326,9 @@
                       "type": "string"
                     },
                     "type": {
+                      "type": "string"
+                    },
+                    "updated_at": {
                       "type": "string"
                     }
                   }
@@ -4473,6 +4522,7 @@
                   "type": "object",
                   "required": [
                     "id",
+                    "borrower_property_id",
                     "property_type",
                     "unit",
                     "living_area_sqft",
@@ -4539,6 +4589,9 @@
                       "type": "integer"
                     },
                     "bedrooms": {
+                      "type": "integer"
+                    },
+                    "borrower_property_id": {
                       "type": "integer"
                     },
                     "budget": {
@@ -4897,8 +4950,7 @@
             "schema": {
               "type": "object",
               "required": [
-                "stage",
-                "borrower_entity_id"
+                "stage"
               ],
               "properties": {
                 "applicants": {
@@ -4917,12 +4969,12 @@
                       },
                       "is_primary": {
                         "type": "boolean"
+                      },
+                      "own_percent": {
+                        "type": "integer"
                       }
                     }
                   }
-                },
-                "borrower_entity_id": {
-                  "type": "integer"
                 },
                 "business_strategy": {
                   "type": "array",
@@ -5130,7 +5182,8 @@
                     "type": "object",
                     "required": [
                       "borrower_applicant_id",
-                      "is_primary"
+                      "is_primary",
+                      "own_percent"
                     ],
                     "properties": {
                       "borrower_applicant_id": {
@@ -5141,15 +5194,15 @@
                       },
                       "is_primary": {
                         "type": "boolean"
+                      },
+                      "own_percent": {
+                        "type": "integer"
                       }
                     }
                   }
                 },
                 "apply_form_file": {
                   "type": "string"
-                },
-                "borrower_entity_id": {
-                  "type": "integer"
                 },
                 "business_strategy": {
                   "type": "array",
@@ -5165,6 +5218,17 @@
                 },
                 "initial_amount": {
                   "type": "number"
+                },
+                "loan_borrower": {
+                  "type": "object",
+                  "properties": {
+                    "borrower_entity_id": {
+                      "type": "integer"
+                    },
+                    "id": {
+                      "type": "integer"
+                    }
+                  }
                 },
                 "loan_demographic": {
                   "type": "object",
@@ -5292,7 +5356,6 @@
                     "mid_construction",
                     "est_yearly_rental_income_amount",
                     "yearly_liability_expense_amount",
-                    "dscr",
                     "has_delayed_financing",
                     "has_properties_vacant",
                     "has_short_term_rental"
@@ -5685,7 +5748,8 @@
                     "type": "object",
                     "required": [
                       "borrower_applicant_id",
-                      "is_primary"
+                      "is_primary",
+                      "own_percent"
                     ],
                     "properties": {
                       "borrower_applicant_id": {
@@ -5696,15 +5760,15 @@
                       },
                       "is_primary": {
                         "type": "boolean"
+                      },
+                      "own_percent": {
+                        "type": "integer"
                       }
                     }
                   }
                 },
                 "apply_form_file": {
                   "type": "string"
-                },
-                "borrower_entity_id": {
-                  "type": "integer"
                 },
                 "business_strategy": {
                   "type": "array",
@@ -5720,6 +5784,17 @@
                 },
                 "initial_amount": {
                   "type": "number"
+                },
+                "loan_borrower": {
+                  "type": "object",
+                  "properties": {
+                    "borrower_entity_id": {
+                      "type": "integer"
+                    },
+                    "id": {
+                      "type": "integer"
+                    }
+                  }
                 },
                 "loan_demographic": {
                   "type": "object",
@@ -5847,7 +5922,6 @@
                     "mid_construction",
                     "est_yearly_rental_income_amount",
                     "yearly_liability_expense_amount",
-                    "dscr",
                     "has_delayed_financing",
                     "has_properties_vacant",
                     "has_short_term_rental"
@@ -6236,6 +6310,9 @@
                   "type": "array",
                   "items": {
                     "type": "object",
+                    "required": [
+                      "own_percent"
+                    ],
                     "properties": {
                       "address": {
                         "type": "object",
@@ -6287,6 +6364,9 @@
                       "mid_name": {
                         "type": "string"
                       },
+                      "own_percent": {
+                        "type": "integer"
+                      },
                       "phone": {
                         "type": "string"
                       },
@@ -6320,6 +6400,9 @@
                 "loan_borrower": {
                   "type": "object",
                   "properties": {
+                    "borrower_entity_id": {
+                      "type": "integer"
+                    },
                     "contact_email": {
                       "type": "string"
                     },
@@ -6327,6 +6410,9 @@
                       "type": "string"
                     },
                     "contact_phone": {
+                      "type": "string"
+                    },
+                    "created_at": {
                       "type": "string"
                     },
                     "id": {
@@ -6358,9 +6444,6 @@
                     "name": {
                       "type": "string"
                     },
-                    "own_percent": {
-                      "type": "integer"
-                    },
                     "tin": {
                       "type": "string"
                     },
@@ -6368,6 +6451,9 @@
                       "type": "string"
                     },
                     "type": {
+                      "type": "string"
+                    },
+                    "updated_at": {
                       "type": "string"
                     }
                   }
@@ -6503,7 +6589,6 @@
                     "mid_construction",
                     "est_yearly_rental_income_amount",
                     "yearly_liability_expense_amount",
-                    "dscr",
                     "has_delayed_financing",
                     "has_properties_vacant",
                     "has_short_term_rental"
@@ -7567,6 +7652,8 @@
                         "items": {
                           "type": "object",
                           "required": [
+                            "id",
+                            "borrower_applicant_id",
                             "first_name",
                             "mid_name",
                             "last_name",
@@ -7585,7 +7672,10 @@
                             "driver_license_num",
                             "address",
                             "loan_borrower_id",
-                            "phone"
+                            "phone",
+                            "own_percent",
+                            "created_at",
+                            "updated_at"
                           ],
                           "properties": {
                             "address": {
@@ -7608,8 +7698,14 @@
                                 }
                               }
                             },
+                            "borrower_applicant_id": {
+                              "type": "integer"
+                            },
                             "borrower_id": {
                               "type": "integer"
+                            },
+                            "created_at": {
+                              "type": "string"
                             },
                             "dob": {
                               "type": "string"
@@ -7656,6 +7752,9 @@
                             "mid_name": {
                               "type": "string"
                             },
+                            "own_percent": {
+                              "type": "integer"
+                            },
                             "phone": {
                               "type": "string"
                             },
@@ -7663,6 +7762,9 @@
                               "type": "string"
                             },
                             "type": {
+                              "type": "string"
+                            },
+                            "updated_at": {
                               "type": "string"
                             }
                           }
@@ -7739,6 +7841,9 @@
                       "loan_borrower": {
                         "type": "object",
                         "properties": {
+                          "borrower_entity_id": {
+                            "type": "integer"
+                          },
                           "contact_email": {
                             "type": "string"
                           },
@@ -7746,6 +7851,9 @@
                             "type": "string"
                           },
                           "contact_phone": {
+                            "type": "string"
+                          },
+                          "created_at": {
                             "type": "string"
                           },
                           "id": {
@@ -7777,9 +7885,6 @@
                           "name": {
                             "type": "string"
                           },
-                          "own_percent": {
-                            "type": "integer"
-                          },
                           "tin": {
                             "type": "string"
                           },
@@ -7787,6 +7892,9 @@
                             "type": "string"
                           },
                           "type": {
+                            "type": "string"
+                          },
+                          "updated_at": {
                             "type": "string"
                           }
                         }
@@ -7980,6 +8088,7 @@
                         "type": "object",
                         "required": [
                           "id",
+                          "borrower_property_id",
                           "property_type",
                           "unit",
                           "living_area_sqft",
@@ -8029,6 +8138,9 @@
                             "type": "integer"
                           },
                           "bedrooms": {
+                            "type": "integer"
+                          },
+                          "borrower_property_id": {
                             "type": "integer"
                           },
                           "budget": {
@@ -8365,6 +8477,8 @@
                         "items": {
                           "type": "object",
                           "required": [
+                            "id",
+                            "borrower_applicant_id",
                             "first_name",
                             "mid_name",
                             "last_name",
@@ -8383,7 +8497,10 @@
                             "driver_license_num",
                             "address",
                             "loan_borrower_id",
-                            "phone"
+                            "phone",
+                            "own_percent",
+                            "created_at",
+                            "updated_at"
                           ],
                           "properties": {
                             "address": {
@@ -8406,8 +8523,14 @@
                                 }
                               }
                             },
+                            "borrower_applicant_id": {
+                              "type": "integer"
+                            },
                             "borrower_id": {
                               "type": "integer"
+                            },
+                            "created_at": {
+                              "type": "string"
                             },
                             "dob": {
                               "type": "string"
@@ -8454,6 +8577,9 @@
                             "mid_name": {
                               "type": "string"
                             },
+                            "own_percent": {
+                              "type": "integer"
+                            },
                             "phone": {
                               "type": "string"
                             },
@@ -8461,6 +8587,9 @@
                               "type": "string"
                             },
                             "type": {
+                              "type": "string"
+                            },
+                            "updated_at": {
                               "type": "string"
                             }
                           }
@@ -8537,6 +8666,9 @@
                       "loan_borrower": {
                         "type": "object",
                         "properties": {
+                          "borrower_entity_id": {
+                            "type": "integer"
+                          },
                           "contact_email": {
                             "type": "string"
                           },
@@ -8544,6 +8676,9 @@
                             "type": "string"
                           },
                           "contact_phone": {
+                            "type": "string"
+                          },
+                          "created_at": {
                             "type": "string"
                           },
                           "id": {
@@ -8575,9 +8710,6 @@
                           "name": {
                             "type": "string"
                           },
-                          "own_percent": {
-                            "type": "integer"
-                          },
                           "tin": {
                             "type": "string"
                           },
@@ -8585,6 +8717,9 @@
                             "type": "string"
                           },
                           "type": {
+                            "type": "string"
+                          },
+                          "updated_at": {
                             "type": "string"
                           }
                         }
@@ -8778,6 +8913,7 @@
                         "type": "object",
                         "required": [
                           "id",
+                          "borrower_property_id",
                           "property_type",
                           "unit",
                           "living_area_sqft",
@@ -8827,6 +8963,9 @@
                             "type": "integer"
                           },
                           "bedrooms": {
+                            "type": "integer"
+                          },
+                          "borrower_property_id": {
                             "type": "integer"
                           },
                           "budget": {
@@ -9158,6 +9297,8 @@
                         "items": {
                           "type": "object",
                           "required": [
+                            "id",
+                            "borrower_applicant_id",
                             "first_name",
                             "mid_name",
                             "last_name",
@@ -9176,7 +9317,10 @@
                             "driver_license_num",
                             "address",
                             "loan_borrower_id",
-                            "phone"
+                            "phone",
+                            "own_percent",
+                            "created_at",
+                            "updated_at"
                           ],
                           "properties": {
                             "address": {
@@ -9199,8 +9343,14 @@
                                 }
                               }
                             },
+                            "borrower_applicant_id": {
+                              "type": "integer"
+                            },
                             "borrower_id": {
                               "type": "integer"
+                            },
+                            "created_at": {
+                              "type": "string"
                             },
                             "dob": {
                               "type": "string"
@@ -9247,6 +9397,9 @@
                             "mid_name": {
                               "type": "string"
                             },
+                            "own_percent": {
+                              "type": "integer"
+                            },
                             "phone": {
                               "type": "string"
                             },
@@ -9254,6 +9407,9 @@
                               "type": "string"
                             },
                             "type": {
+                              "type": "string"
+                            },
+                            "updated_at": {
                               "type": "string"
                             }
                           }
@@ -9330,6 +9486,9 @@
                       "loan_borrower": {
                         "type": "object",
                         "properties": {
+                          "borrower_entity_id": {
+                            "type": "integer"
+                          },
                           "contact_email": {
                             "type": "string"
                           },
@@ -9337,6 +9496,9 @@
                             "type": "string"
                           },
                           "contact_phone": {
+                            "type": "string"
+                          },
+                          "created_at": {
                             "type": "string"
                           },
                           "id": {
@@ -9368,9 +9530,6 @@
                           "name": {
                             "type": "string"
                           },
-                          "own_percent": {
-                            "type": "integer"
-                          },
                           "tin": {
                             "type": "string"
                           },
@@ -9378,6 +9537,9 @@
                             "type": "string"
                           },
                           "type": {
+                            "type": "string"
+                          },
+                          "updated_at": {
                             "type": "string"
                           }
                         }
@@ -9571,6 +9733,7 @@
                         "type": "object",
                         "required": [
                           "id",
+                          "borrower_property_id",
                           "property_type",
                           "unit",
                           "living_area_sqft",
@@ -9620,6 +9783,9 @@
                             "type": "integer"
                           },
                           "bedrooms": {
+                            "type": "integer"
+                          },
+                          "borrower_property_id": {
                             "type": "integer"
                           },
                           "budget": {
@@ -10567,7 +10733,7 @@
       }
     }
   },
-  "x-date": "2025-11-10 15:23:57",
+  "x-date": "2025-11-14 17:27:21",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
