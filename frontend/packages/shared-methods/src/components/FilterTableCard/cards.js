@@ -11,11 +11,14 @@ export const Cards = ({
 	list,
 	scrollRef,
 	handleChangePagination,
+	cardTitle,
 }) => {
 	return (
 		<>
 			<div className="flex items-center justify-between flex-shrink-0 pt-4 text-base font-medium pb-2 border-b border-base-disabled">
-				<p className="text-base font-medium">{pagination?.total || 0} Properties</p>
+				<p className="text-base font-medium">
+					{pagination?.total || 0} {cardTitle}
+				</p>
 				{/* <div
 						className="flex cursor-pointer"
 						onClick={() => {

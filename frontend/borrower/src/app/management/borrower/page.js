@@ -88,6 +88,7 @@ const BorrowerManagement = () => {
 			})}
 			typeKey="card"
 			itemClassName="w-[420px]"
+			cardTitle="Borrowers"
 			renderItem={(row) => {
 				return (
 					<>
