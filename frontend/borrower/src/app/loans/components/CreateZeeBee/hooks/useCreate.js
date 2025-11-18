@@ -9,20 +9,32 @@ import {
 	eventBus,
 	assemblyAddress,
 } from '@repo/shared-methods/utils';
-import ApplicantInfo from '../ApplicantInfo';
-import BorrowerInfo from '../BorrowerInfo';
-import PropertyInfo from '../PropertyInfo';
-import LoanDetail from '../Loan';
-import Experience from '../Experience';
-import ThirdPartyService from '../ThirdPartyService';
-import Declaration from '../Declaration';
-import Demographics from '../Demographics';
+// import ApplicantInfo from '../ApplicantInfo';
+import {
+	ApplicantInfo,
+	BorrowerInfo,
+	PropertyInfo,
+	LoanDetail,
+	Experience,
+	ThirdPartyService,
+	Declaration,
+	Demographics,
+	ReviewAndSign,
+	contractSignatureZones,
+	LeaveAndSaveDraftBtn,
+} from '@repo/shared-methods';
+// import BorrowerInfo from '../BorrowerInfo';
+// import PropertyInfo from '../PropertyInfo';
+// import LoanDetail from '../Loan';
+// import Experience from '../Experience';
+// import ThirdPartyService from '../ThirdPartyService';
+// import Declaration from '../Declaration';
+// import Demographics from '../Demographics';
 import General from '../../../zeeBeeDetails/components/General';
 import Documents from '../../../zeeBeeDetails/components/Documents';
-import ReviewAndSign, { contractSignatureZones } from '../ReviewAndSign';
+// import ReviewAndSign, { contractSignatureZones } from '../ReviewAndSign';
 import _ from 'lodash';
 import { uploadAwsS3 } from '@/api/common';
-import { LeaveAndSaveDraftBtn } from '@repo/shared-methods';
 const initialValues = {
 	applicants: [{ type: 'Individual', is_primary: true }],
 };
@@ -40,7 +52,7 @@ const useCreate = (pageType = 'create') => {
 	const [currentStep, setCurrentStep] = useState(0); //顶部-总步骤
 	const [stepNum, setStepNum] = useState(0); //侧边步骤
 	const [loading, setLoading] = useState(false);
-	const [isChange, setIsChange] = useState(false); // 记录是否操作过form
+	const [isChange, setIsChange] = useState(true); // 记录是否操作过form,暂时不记录
 	const [confirmLoading, setConfirmLoading] = useState(false); // 保存草稿
 	const [rowData, setRowData] = useState({}); // loan详情
 	const [unitInfo, setUnitInfo] = useState({

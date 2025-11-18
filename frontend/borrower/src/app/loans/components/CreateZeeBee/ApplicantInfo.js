@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './index.module.scss';
-import { Row, Col, Form, Select, Input, InputNumber } from 'antd';
+import { Row, Col, Form, Select, Input } from 'antd';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
 import { InputPhone, SelectFormTINType } from '@repo/shared-methods';
 import { emailRegex, phoneRegex, validateRule } from '@repo/shared-methods/utils';
@@ -8,7 +8,13 @@ import { layoutCol, titleCol } from '@/enum/common';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import SelectCard from '@/components/SelectCard';
 const name = 'loan_borrower';
-const ApplicantInfo = ({ gutter = 24, addressProps, disabled, isShowSelectCard = true }) => {
+const ApplicantInfo = ({
+	gutter = 24,
+	addressProps,
+	disabled,
+	isHideTitle,
+	isShowSelectCard = true,
+}) => {
 	const form = Form.useFormInstance();
 	const borrowerType = Form.useWatch([name, 'type'], form);
 	const borrower_entity_id = Form.useWatch([name, 'borrower_entity_id'], form);
@@ -21,9 +27,11 @@ const ApplicantInfo = ({ gutter = 24, addressProps, disabled, isShowSelectCard =
 	]);
 	return (
 		<Row className={styles.createZeeBee} gutter={gutter}>
-			<Col {...titleCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">
-				Applicant information
-			</Col>
+			{!isHideTitle && (
+				<Col {...titleCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">
+					Applicant information
+				</Col>
+			)}
 			{isShowSelectCard && (
 				<SelectCard
 					type="borrowingEntity"

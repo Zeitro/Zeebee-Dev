@@ -37,6 +37,7 @@ export const FilterTableCard = forwardRef(
 			renderItem = () => {},
 			itemClassName,
 			typeKey = 'table',
+			cardTitle,
 			...props
 		},
 		ref,
@@ -148,6 +149,7 @@ export const FilterTableCard = forwardRef(
 							handleChangePagination={handleChangePagination}
 							itemClassName={itemClassName}
 							renderItem={renderItem}
+							cardTitle={cardTitle}
 						/>
 					);
 				default:

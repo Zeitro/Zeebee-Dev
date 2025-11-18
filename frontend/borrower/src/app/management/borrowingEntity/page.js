@@ -85,6 +85,7 @@ const BorrowingEntity = () => {
 				},
 			})}
 			typeKey="card"
+			cardTitle="Borrowing entities"
 			itemClassName="w-[420px]"
 			renderItem={(row) => {
 				return (
