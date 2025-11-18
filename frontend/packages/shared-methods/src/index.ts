@@ -27,3 +27,14 @@ export * from './components/TableOperation/index';
 export * from './components/ViewFile/index';
 export * from './components/PortalComponent';
 export * from './components/FilterTableCard/index';
+
+// 创建ZeeBee Loan表单组件，Borrower和Lender端共用
+export * from './components/CreateZBLoan/ApplicantInfo';
+export * from './components/CreateZBLoan/BorrowerInfo';
+export * from './components/CreateZBLoan/PropertyInfo';
+export * from './components/CreateZBLoan/Loan';
+export * from './components/CreateZBLoan/Experience';
+export * from './components/CreateZBLoan/ThirdPartyService';
+export * from './components/CreateZBLoan/Declaration';
+export * from './components/CreateZBLoan/Demographics';
+export * from './components/CreateZBLoan/ReviewAndSign';

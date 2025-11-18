@@ -4,7 +4,7 @@ import path from 'path';
 const isLocal = process.env.NEXT_PUBLIC_ENV === 'local';
 const nextConfig: NextConfig = {
 	/* config options here */
-	output: isLocal ? undefined : 'standalone',
+	// output: isLocal ? undefined : 'standalone',
 	reactStrictMode: !isLocal, // 开启 React 严格模式
 	serverExternalPackages: ['react-pdf', 'pdfjs-dist'],
 	env: {
