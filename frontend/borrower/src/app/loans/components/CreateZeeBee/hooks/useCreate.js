@@ -52,7 +52,7 @@ const useCreate = (pageType = 'create') => {
 	const [currentStep, setCurrentStep] = useState(0); //顶部-总步骤
 	const [stepNum, setStepNum] = useState(0); //侧边步骤
 	const [loading, setLoading] = useState(false);
-	const [isChange, setIsChange] = useState(false); // 记录是否操作过form
+	const [isChange, setIsChange] = useState(true); // 记录是否操作过form,暂时不记录
 	const [confirmLoading, setConfirmLoading] = useState(false); // 保存草稿
 	const [rowData, setRowData] = useState({}); // loan详情
 	const [unitInfo, setUnitInfo] = useState({

@@ -1,3 +1,4 @@
+'use client';
 import React, { useMemo } from 'react';
 import { Col, Form, Radio, Row } from 'antd';
 import styles from './index.module.scss';

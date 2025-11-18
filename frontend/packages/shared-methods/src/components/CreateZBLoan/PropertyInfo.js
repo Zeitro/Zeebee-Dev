@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import styles from './index.module.scss';
 import { Row, Col, Form, Select, InputNumber } from 'antd';

@@ -1,3 +1,4 @@
+'use client';
 import React, { useState, useCallback, useRef } from 'react';
 import { Row, Spin, Col, Space, Form } from 'antd';
 import { BtnPopUpModal } from '@repo/shared-methods';

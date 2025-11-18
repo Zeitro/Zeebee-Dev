@@ -27,14 +27,16 @@ export default function useOpt(tableFilterRef) {
 		}
 	};
 
-	const showDeleteModal = ({ property, id }) => {
+	const showDeleteModal = ({ loan_property, id }) => {
 		modal.confirm({
 			title: 'Are you sure you want to delete this loan?',
 			icon: <ExclamationCircleOutlined className="!text-base-warning" />,
 			content: (
 				<div>
 					You are about to delete the loan associated with:
-					<p className="font-bold pb-8">{assemblyAddress(property?.address, true)}</p>
+					<p className="font-bold pb-8">
+						{assemblyAddress(loan_property?.address, true)}
+					</p>
 					Once deleted , this loan will no longer appear in your portfolio and cannot be
 					recovered.
 				</div>
