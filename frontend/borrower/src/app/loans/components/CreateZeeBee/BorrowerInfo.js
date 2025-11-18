@@ -17,7 +17,13 @@ import { useGetOptions } from '@/hooks/useGetOptions';
 import { CommonFormDate, InputNameCombination, InputPhone, InputTIN } from '@repo/shared-methods';
 import SelectCard from '@/components/SelectCard';
 import _ from 'lodash';
-const ApplicantInfo = ({ gutter = 24, addressProps, disabled, isShowSelectCard = true }) => {
+const ApplicantInfo = ({
+	gutter = 24,
+	addressProps,
+	disabled,
+	isHideTitle,
+	isShowSelectCard = true,
+}) => {
 	const form = Form.useFormInstance();
 	const applicants = Form.useWatch('applicants', form);
 	const { maritalStatusOptions } = useGetOptions([
@@ -28,9 +34,11 @@ const ApplicantInfo = ({ gutter = 24, addressProps, disabled, isShowSelectCard =
 	]);
 	return (
 		<div className={styles.createZeeBee}>
-			<Col {...titleCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">
-				Borrower information
-			</Col>
+			{!isHideTitle && (
+				<Col {...titleCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">
+					Borrower information
+				</Col>
+			)}
 			<Form.List name="applicants">
 				{(fields, { add, remove }) => {
 					return fields?.map((field, index) => (
