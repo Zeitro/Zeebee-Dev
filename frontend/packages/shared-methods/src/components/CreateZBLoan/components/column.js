@@ -115,6 +115,7 @@ export const useColumnByZeeBeeLoan = (handleAdd = () => {}, handleDelete = () =>
 							filterType: 'button',
 							children: (
 								<DeleteBtn
+									type="link"
 									title={deleteTitle}
 									onOk={() => handleDelete(v.id, type)}
 								>

@@ -1,3 +1,4 @@
+'use client';
 import React, { useEffect } from 'react';
 import styles from './index.module.scss';
 import { Row, Col, Form, Radio, Input, InputNumber } from 'antd';

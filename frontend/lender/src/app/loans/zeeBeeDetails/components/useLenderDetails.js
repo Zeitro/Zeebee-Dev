@@ -3,15 +3,28 @@ import { Button, Form, message } from 'antd';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { createZeeBeeSteps, zeeBeeDetailsTabs, lenderDetailsSteps } from '@/enum/loan';
-import ApplicantInfo from '../../components/CreateZeeBee/ApplicantInfo';
-import BorrowerInfo from '../../components/CreateZeeBee/BorrowerInfo';
-import PropertyInfo from '../../components/CreateZeeBee/PropertyInfo';
-import Loan from '../../components/CreateZeeBee/Loan';
-import Experience from '../../components/CreateZeeBee/Experience';
-import ThirdPartyService from '../../components/CreateZeeBee/ThirdPartyService';
-import Declaration from '../../components/CreateZeeBee/Declaration';
-import Demographics from '../../components/CreateZeeBee/Demographics';
-import ReviewAndSign from '../../components/CreateZeeBee/ReviewAndSign';
+// import ApplicantInfo from '../../components/CreateZeeBee/ApplicantInfo';
+// import BorrowerInfo from '../../components/CreateZeeBee/BorrowerInfo';
+// import PropertyInfo from '../../components/CreateZeeBee/PropertyInfo';
+// import Loan from '../../components/CreateZeeBee/Loan';
+// import Experience from '../../components/CreateZeeBee/Experience';
+// import ThirdPartyService from '../../components/CreateZeeBee/ThirdPartyService';
+// import Declaration from '../../components/CreateZeeBee/Declaration';
+// import Demographics from '../../components/CreateZeeBee/Demographics';
+// import ReviewAndSign from '../../components/CreateZeeBee/ReviewAndSign';
+import {
+	ApplicantInfo,
+	BorrowerInfo,
+	PropertyInfo,
+	LoanDetail,
+	Experience,
+	ThirdPartyService,
+	Declaration,
+	Demographics,
+	ReviewAndSign,
+	// contractSignatureZones,
+	// LeaveAndSaveDraftBtn,
+} from '@repo/shared-methods';
 import Quoting from './Quoting';
 import Processing from './Processing';
 import Closing from './Closing';
@@ -245,7 +258,7 @@ const useLenderDetails = () => {
 							isRequestProperty={disabled}
 							isShowSelectCard={false}
 						/>
-						<Loan form={form} />
+						<LoanDetail form={form} />
 					</CommonSave>
 				);
 			case 'experienceAndThirdService':
