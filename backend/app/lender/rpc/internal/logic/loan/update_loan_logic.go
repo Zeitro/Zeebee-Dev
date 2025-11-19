@@ -56,7 +56,6 @@ func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender
 	}()
 	var oldLoan *model.Loan
 	var oldLoanCopy *model.Loan
-	// var propertyBase *model.PropertyBase
 	// old loan
 	oldLoan, err = l.svcCtx.LoanRepo.GetLenderLoan(l.ctx, in.Data.Id, in.Data.LenderCompanyId, true)
 	if err != nil {
@@ -330,12 +329,9 @@ func (l *UpdateLoanLogic) buildModelData(reqData *lender.LoanUpdateRequestData, 
 		return nil, errorx.GetFailedTransErr(err)
 	}
 	loan.RemoveRelationships()
-	// loan.BusinessStrategy = reqData.BusinessStrategy
 
 	// LoanProperty
-	loanProperty := &model.LoanProperty{
-		// PropertyBase: &model.PropertyBase{},
-	}
+	loanProperty := &model.LoanProperty{}
 	if oldLoan.LoanProperty != nil {
 		_ = copier.CopyWithOption(loanProperty, oldLoan.LoanProperty, copier.Option{
 			IgnoreEmpty:   false,
@@ -359,9 +355,6 @@ func (l *UpdateLoanLogic) buildModelData(reqData *lender.LoanUpdateRequestData, 
 		dscr := (loanProperty.EstYearlyRentalIncomeAmount / loanProperty.YearlyLiabilityExpenseAmount) * 100
 		loanProperty.Dscr = mathutil.RoundToFloat(dscr, 2)
 	}
-
-	// loanProperty.PropertyBase.BorrowerId = oldLoan.BorrowerId
-	// loanProperty.Unit = loanProperty.PropertyBase.Unit
 
 	// applicants
 	applicants := make([]*model.LoanApplicant, 0)
@@ -434,27 +427,14 @@ func (l *UpdateLoanLogic) buildModelData(reqData *lender.LoanUpdateRequestData, 
 	if err != nil {
 		return nil, errorx.GetFailedTransErr(err)
 	}
-
-	// apply form file
-	// var applyFormFile *model.File
-	// if len(reqData.ApplyFormFile) > 0 {
-	// 	applyFormFile = &model.File{
-	// 		File:     reqData.ApplyFormFile,
-	// 		FileType: constants.FileTypeApplyForm,
-	// 		BizType:  constants.FileBizTypeLoan,
-	// 	}
-	// }
-
 	data = &updateLoanModelData{
-		loan:         loan,
-		loanProperty: loanProperty,
-		// loanBorrower:           loanBorrower,
+		loan:                   loan,
+		loanProperty:           loanProperty,
 		applicants:             applicants,
 		transactionExperiences: transactionExperiences,
 		realEstatesExperiences: realEstatesExperiences,
 		loanDemographic:        loanDemographic,
 		loanThirdServices:      loanThirdServices,
-		// applyFormFile:          applyFormFile,
 	}
 	return
 }

@@ -46,7 +46,6 @@ type LoanUpdateRequest struct {
 	PrepaymentPenalty      int32                         `json:"prepayment_penalty,optional" validate:"required_if=LoanType Rental,omitempty,gte=0"`
 	BusinessStrategy       []string                      `json:"business_strategy,optional" validate:"required,dive,required,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
 	LoanTerm               int32                         `json:"loan_term,optional" validate:"gte=1"`
-	Ltv                    float64                       `json:"ltv,optional" validate:"required_unless=LoanPurpose Purchase,omitempty,gte=0"`
 	ReservesAmount         float64                       `json:"reserves_amount,optional" validate:"required_if=LoanType Rental,omitempty,gt=0"`
 	TransactionExperiences []*LoanExperienceEntry        `json:"transaction_experiences,optional"`
 	RealEstateExperiences  []*LoanExperienceEntry        `json:"real_estate_experiences,optional"`
