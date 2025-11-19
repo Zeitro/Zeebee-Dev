@@ -5,7 +5,6 @@ import (
 
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
-	"github.com/pkg/errors"
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
@@ -49,7 +48,7 @@ func (l *UpdateLogic) Update(req *types.LoanUpdateRequest) (resp *types.EmptyRes
 		return item.BorrowerApplicantId == other.BorrowerApplicantId
 	})
 	if len(rpcApplicants) == 0 {
-		err = errors.WithStack(errors.New("No Applicant"))
+		err = errorx.WithStack(errorx.New("No Applicant"))
 		return nil, err
 	}
 	rpcReq.Data.Applicants = rpcApplicants

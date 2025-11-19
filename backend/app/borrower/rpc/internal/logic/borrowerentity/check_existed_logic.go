@@ -2,8 +2,8 @@ package borrowerentitylogic
 
 import (
 	"context"
+	"errors"
 
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/borrower/rpc/internal/svc"

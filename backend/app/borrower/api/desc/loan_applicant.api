@@ -41,35 +41,11 @@ type BorrowerNamesResponse {
 }
 
 
-//type LoanApplicantEditEntry {
-//    Id int64 `json:"id,optional"`
-//    FirstName string `json:"first_name" validate:"required,min=1,max=30"`
-//    MidName string `json:"mid_name,optional" validate:"min=0,max=30"`
-//    LastName string `json:"last_name" validate:"required,min=1,max=30"`
-//    Type string `json:"type" validate:"required,oneof=Individual Corporation LLC Trust Partnership"`
-//    IsPrimary bool `json:"is_primary"`
-//}
-
 type LoanApplicantApplyEntry {
     Id int64 `json:"id,optional"`
     BorrowerApplicantId int64 `json:"borrower_applicant_id" validate:"required,gt=0"`
     IsPrimary bool `json:"is_primary, optional"`
     OwnPercent int32 `json:"own_percent" validate:"required,min=1,max=100"`
-
-
-    //    FirstName string `json:"first_name,optional" validate:"required,min=1,max=30"`
-    //    MidName string `json:"mid_name,optional" validate:"min=0,max=30"`
-    //    LastName string `json:"last_name,optional" validate:"required,min=1,max=30"`
-    //    Type string `json:"type,optional" validate:"required,oneof=Individual Corporation LLC Trust Partnership"`
-    //    IsPrimary bool `json:"is_primary,optional"`
-    //    Ssn string `json:"ssn,optional" validate:"required"`
-    //    Dob string `json:"dob,optional" validate:"required,datetime=01/02/2006"`
-    //    MaritalStatus string `json:"marital_status,optional" validate:"required,oneof=Married Unmarried Separated"`
-    //    Email string `json:"email,optional" validate:"required, email"`
-    //    Phone string `json:"phone,optional" validate:"required"`
-    //    EstCreditScore int32 `json:"est_credit_score,optional" validate:"required,gte=300,lte=850"`
-    //    DriverLicenseNum string `json:"driver_license_num,optional" validate:"required"`
-    //    Address *AddressEntry `json:"address,optional" validate:"required"`
 }
 
 type LoanApplicantApplyFormPdfEntry {
@@ -104,11 +80,5 @@ type ThirdPartyLoanApplicantEntry {
     IsPrimary bool `json:"is_primary,optional"`
     OwnPercent int32 `json:"own_percent,optional" validate:"min=0,max=100"`
 }
-
-    //type ThirdPartyLoanApplicantEntry {
-    //    Id int64 `json:"id,optional"`
-    //    BorrowerApplicantId int64 `json:"borrower_applicant_id" validate:"required,gt=0"`
-    //    IsPrimary bool `json:"is_primary,optional"`
-    //}
 
 

@@ -212,66 +212,43 @@ message LoanEntry {
   double total_amount = 6;
   double initial_amount = 7;
   LoanPropertyEntry loan_property = 8;
-  string lender_company = 10;
-  string closing_date = 11;
-  double holdback_amount = 12;
-  double holdback_released_amount = 13;
-  float rate = 14;
-  double closing_fund = 15;
-  double principal_amount = 16;
-  double monthly_payment = 17;
-  string lien_position = 18;
-  string maturity_date = 19;
-  int32 prepayment_penalty = 20;
-  string service_company = 21;
-  string paid_off_date = 22;
-  string created_at = 23;
-  string updated_at = 24;
-  int64 lender_company_id = 25;
-  int64 borrower_id = 26;
-  repeated string business_strategy = 27;
-  repeated LoanApplicantEntry applicants = 28;
-  string source = 29;
-  //  string existing_lender_company = 30;
-  //  float existing_rate = 31;
-  //  string existing_maturity_date = 32;
-  //  double purchase_amount = 33;
-  //  string purchase_date = 34;
-  //  bool has_assignment_fee = 35;
-  //  double assignment_fee_amount = 36;
-  //  bool has_subordinate_debt = 37;
-  //  double subordinate_debt_amount = 38;
-  //  string scheduled_close_escrow_date = 39;
-  int32 loan_term = 40;
-  //  double arv = 41;
-  double ltv = 42;
-  //  double liquidity_amount = 43;
-  //  LoanBudgetEntry budget = 44;
-  //  bool mid_construction = 45;
-  int32 est_credit_score = 46;
-  //  double est_yearly_rental_income = 47;
-  //  float dscr = 48;
-  double reserves_amount = 49;
-  //  bool has_delayed_financing = 50;
-  //  bool has_collateralized_blanket = 51;
-  //  bool has_properties_vacant = 52;
-  //  bool has_short_term_rental = 53;
-  //  string additional_info = 54 [deprecated = true];
+  string lender_company = 9;
+  string closing_date = 10;
+  double holdback_amount = 11;
+  double holdback_released_amount = 12;
+  float rate = 13;
+  double closing_fund = 14;
+  double principal_amount = 15;
+  double monthly_payment = 16;
+  string lien_position = 17;
+  string maturity_date = 18;
+  int32 prepayment_penalty = 19;
+  string service_company = 20;
+  string paid_off_date = 21;
+  string created_at = 22;
+  string updated_at = 23;
+  int64 lender_company_id = 24;
+  int64 borrower_id = 25;
+  repeated string business_strategy = 26;
+  repeated LoanApplicantEntry applicants = 27;
+  string source = 28;
+  int32 loan_term = 29;
+  double ltv = 30;
+  int32 est_credit_score = 31;
+  double reserves_amount = 32;
 
-  repeated LoanExperienceEntry transaction_experiences = 55;
-  repeated LoanExperienceEntry real_estate_experiences = 56;
-  LoanBorrowerEntry loan_borrower = 57;
-  LoanDemographicEntry loan_demographic = 58;
-  //  float yearly_liability_expense = 59;
-  repeated LoanThirdServiceEntry loan_third_services = 60;
 
-  string original_contract_date = 61;
-  string extension_date = 62;
-  string loan_processor = 63;
-  LoanExtendValueEntry extend = 64;
-  repeated LoanDocumentEntry loan_documents = 65;
-  string code = 66;
-
+  repeated LoanExperienceEntry transaction_experiences = 33;
+  repeated LoanExperienceEntry real_estate_experiences = 34;
+  LoanBorrowerEntry loan_borrower = 35;
+  LoanDemographicEntry loan_demographic = 36;
+  repeated LoanThirdServiceEntry loan_third_services = 37;
+  string original_contract_date = 38;
+  string extension_date = 39;
+  string loan_processor = 40;
+  LoanExtendValueEntry extend = 41;
+  repeated LoanDocumentEntry loan_documents = 42;
+  string code = 43;
 }
 
 message  LoanBudgetEntry {
@@ -363,44 +340,20 @@ message LoanUpdateRequestData {
   double principal_amount = 7;
   int32 prepayment_penalty = 9;
   int64 lender_company_id = 10;
-  repeated string business_strategy = 12;
-  //  repeated LoanApplicantEntry applicants = 13;
-  repeated LoanApplicantLoanEditEntry applicants = 13;
-  //  string existing_lender_company = 14;
-  //  float existing_rate = 15;
-  //  string existing_maturity_date = 16;
-  //  double purchase_amount = 17;
-  //  string purchase_date = 18;
-  //  bool has_assignment_fee = 19;
-  //  double assignment_fee_amount = 20;
-  //  bool has_subordinate_debt = 21;
-  //  double subordinate_debt_amount = 22;
-  //  string scheduled_close_escrow_date = 23;
-  int32 loan_term = 24;
-  //  double arv = 25;
-  double ltv = 26;
-  //  double liquidity_amount = 27;
-  //  LoanBudgetEntry budget = 28;
-  //  bool mid_construction = 29;
-  int32 est_credit_score = 30;
-  //  double est_yearly_rental_income = 31;
-  //  float dscr = 32;
-  double reserves_amount = 33;
-  //  bool has_delayed_financing = 34;
-  //  bool has_collateralized_blanket = 35;
-  //  bool has_properties_vacant = 36;
-  //  bool has_short_term_rental = 37;
-  //  string additional_info = 38;
-  repeated LoanExperienceEntry transaction_experiences = 39;
-  repeated LoanExperienceEntry real_estate_experiences = 40;
-  //  LoanBorrowerEditEntry loan_borrower = 41;
-  LoanDemographicEntry loan_demographic = 42;
-  //  float yearly_liability_expense = 43;
-  repeated LoanThirdServiceEntry loan_third_services = 44;
-  int64 id = 45;
-  int64 lender_employee_id = 46;
-  string stage = 47;
-  string pending_status = 48;
+  repeated string business_strategy = 11;
+  repeated LoanApplicantLoanEditEntry applicants = 12;
+  int32 loan_term = 13;
+  //  double ltv = 14;
+  int32 est_credit_score = 15;
+  double reserves_amount = 16;
+  repeated LoanExperienceEntry transaction_experiences = 17;
+  repeated LoanExperienceEntry real_estate_experiences = 18;
+  LoanDemographicEntry loan_demographic = 19;
+  repeated LoanThirdServiceEntry loan_third_services = 20;
+  int64 id = 21;
+  int64 lender_employee_id = 22;
+  string stage = 23;
+  string pending_status = 24;
 }
 
 message LoanUpdateResponse {
@@ -684,14 +637,6 @@ message LoanDocumentCreateExtendTypeRequestData {
 message LoanDocumentCreateExtendTypeResponse {
   repeated LoanDocumentOptEntry  data = 1;
 }
-//message LoanDocumentCreateExtendTypeResponseData {
-//  message ExtendType {
-//    int64 id = 1;
-//    string file_type = 2;
-//    string category = 3;
-//  }
-//  repeated ExtendType extend_types = 1;
-//}
 
 // upload loan document files
 message LoanDocumentAddFilesRequest {
@@ -732,12 +677,6 @@ message LoanBorrowerEntry{
   string created_at = 13;
   string updated_at = 14;
 }
-
-//message LoanBorrowerEditEntry {
-//  int64 id = 1;
-//  int64 borrower_entity_id = 2;
-//  int32 own_percent = 3;
-//}
 
 // ====================== loan borrower service end ======================
 

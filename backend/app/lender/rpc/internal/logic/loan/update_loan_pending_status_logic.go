@@ -3,7 +3,6 @@ package loanlogic
 import (
 	"context"
 
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -11,7 +10,7 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/constants"
-	"zeebee-backend/common/types"
+	"zeebee-backend/domains/zeebee/model"
 
 	"zeebee-backend/common/errorx"
 )
@@ -40,15 +39,15 @@ func (l *UpdateLoanPendingStatusLogic) UpdateLoanPendingStatus(in *lender.LoanUp
 	// Get loan
 	loan, err := l.svcCtx.LoanRepo.GetLenderLoan(l.ctx, in.Data.Id, in.Data.LenderCompanyId, false)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get loan")
+		return nil, errorx.Wrap(err, "Failed To Get Loan")
 	}
 
 	// Validate loan is in pending stage
 	if loan.Stage != constants.LoanStagePending {
-		return nil, errors.New("loan is not in pending stage")
+		return nil, errorx.New("Loan Is Not In Pending Stage")
 	}
 	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreApproval {
-		return nil, errors.WithStack(errors.New("invalid loan source"))
+		return nil, errorx.WithStack(errorx.New("Invalid Loan Source"))
 	}
 	// Save original status for operation log
 	originalStage := loan.Stage
@@ -68,23 +67,23 @@ func (l *UpdateLoanPendingStatusLogic) UpdateLoanPendingStatus(in *lender.LoanUp
 		case constants.LoanPendingStatusClosing:
 			// Closing 是最终状态，可以直接设置
 		default:
-			return errors.Errorf("invalid pending status: %s", pendingStatus)
+			return errorx.Errorf("Invalid Pending Status: %s", pendingStatus)
 		}
 
 		err = l.svcCtx.LoanRepo.UpdatePendingStatusWithTx(l.ctx, tx, in.Data.Id, pendingStatus, loan.Stage)
 		if err != nil {
-			return errors.Wrap(err, "failed to update loan")
+			return errorx.Wrap(err, "Failed To Update Loan")
 		}
 
 		// Create operation log
 		operatorId := in.Data.LenderEmployeeId
 
-		fromStatus := types.LoanOperationStatus{
+		fromStatus := model.LoanOperationStatus{
 			Stage:         originalStage,
 			PendingStatus: originalPendingStatus,
 		}
 
-		toStatus := types.LoanOperationStatus{
+		toStatus := model.LoanOperationStatus{
 			Stage:         loan.Stage,
 			PendingStatus: pendingStatus,
 		}

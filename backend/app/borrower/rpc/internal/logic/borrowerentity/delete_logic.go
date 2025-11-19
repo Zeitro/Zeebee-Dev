@@ -3,8 +3,6 @@ package borrowerentitylogic
 import (
 	"context"
 
-	"github.com/pkg/errors"
-
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 
@@ -40,7 +38,7 @@ func (l *DeleteLogic) Delete(in *borrower.BorrowerEntityDeleteRequest) (resp *bo
 	}
 
 	if result.BorrowerId != in.Data.BorrowerId {
-		return nil, errorx.GetFailedTransRespErr(errors.New("You Have No Access To This Entity"))
+		return nil, errorx.GetFailedTransRespErr(errorx.New("You Have No Access To This Entity"))
 	}
 
 	_, err = l.svcCtx.BorrowerEntityRepo.DeleteByID(l.ctx, in.Data.Id)

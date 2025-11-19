@@ -3,7 +3,6 @@ package loanlogic
 import (
 	"context"
 
-	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
 
@@ -11,7 +10,7 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/types"
+	"zeebee-backend/domains/zeebee/model"
 )
 
 type PendingStatusReviewLogic struct {
@@ -37,7 +36,7 @@ func (l *PendingStatusReviewLogic) PendingStatusReview(in *lender.LoanPendingSta
 
 	loan, err := l.svcCtx.LoanRepo.GetLenderLoan(l.ctx, in.Data.Id, in.Data.LenderCompanyId, false)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 
 	currentStatus := constants.LoanPendingStatus(in.Data.CurrentPendingStatus)
@@ -49,23 +48,23 @@ func (l *PendingStatusReviewLogic) PendingStatusReview(in *lender.LoanPendingSta
 
 	// validate loan pending status
 	if loan.Stage != constants.LoanStagePending {
-		return nil, errors.WithStack(errors.New("loan is not in pending stage"))
+		return nil, errorx.WithStack(errorx.New("Loan Is Not In Pending Stage"))
 	}
 	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreApproval {
-		return nil, errors.WithStack(errors.New("invalid loan source"))
+		return nil, errorx.WithStack(errorx.New("Invalid Loan Source"))
 	}
 
 	if loan.PendingStatus != currentStatus {
-		return nil, errors.WithStack(errors.New("current pending status is not valid"))
+		return nil, errorx.WithStack(errorx.New("Current Pending Status Is Not Valid"))
 	}
 	if action == constants.LoanOperationActionReject && in.Data.Comment == "" {
-		return nil, errors.WithStack(errors.New("Comment is empty"))
+		return nil, errorx.WithStack(errorx.New("Comment Is Empty"))
 	}
 	var targetStatus constants.LoanPendingStatus
 	loanBaseLogic := NewLoanBaseLogic(l.ctx, l.svcCtx)
 	targetStatus, err = loanBaseLogic.GetNextPendingStatus(currentStatus, action)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	if targetStatus == constants.LoanPendingStatusNone && currentStatus == constants.LoanPendingStatusClosing {
 		targetStage = constants.LoanStageActive
@@ -77,20 +76,20 @@ func (l *PendingStatusReviewLogic) PendingStatusReview(in *lender.LoanPendingSta
 		// update loan pending status
 		innerErr = l.svcCtx.LoanRepo.UpdatePendingStatusWithTx(l.ctx, tx, in.Data.Id, targetStatus, targetStage)
 		if innerErr != nil {
-			return errors.WithStack(innerErr)
+			return errorx.WithStack(innerErr)
 		}
 
 		// add operation
 		operatorId := in.Data.LenderEmployeeId
-		fromStatus := types.LoanOperationStatus{
+		fromStatus := model.LoanOperationStatus{
 			Stage:         originalStage,
 			PendingStatus: originalPendingStatus,
 		}
-		toStatus := types.LoanOperationStatus{
+		toStatus := model.LoanOperationStatus{
 			Stage:         targetStage,
 			PendingStatus: targetStatus,
 		}
-		metadata := &types.LoanOperationMetadata{
+		metadata := &model.LoanOperationMetadata{
 			Comment: in.Data.Comment,
 		}
 

@@ -12,6 +12,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
+	"zeebee-backend/domains/zeebee/repo"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -38,7 +39,14 @@ func (l *PageLogic) Page(in *borrower.PropertyPageRequest) (resp *borrower.Prope
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	borrowerPropertyPageResult, err := l.svcCtx.BorrowerPropertyRepo.Page(l.ctx, in.Data)
+
+	pageReq := &repo.PropertyBorrowerPageReq{}
+	_ = copier.CopyWithOption(pageReq, in.Data, copier.Option{
+		DeepCopy:      true,
+		CaseSensitive: true,
+	})
+
+	borrowerPropertyPageResult, err := l.svcCtx.BorrowerPropertyRepo.PageForBorrower(l.ctx, pageReq)
 	if err != nil {
 		return nil, err
 	}
@@ -47,18 +55,6 @@ func (l *PageLogic) Page(in *borrower.PropertyPageRequest) (resp *borrower.Prope
 	properties := make([]*borrower.PropertyPageEntry, len(borrowerPropertyPageResult.List))
 	now := datetime.BeginOfDay(time.Now())
 	for i, borrowerProperty := range borrowerPropertyPageResult.List {
-		// propertyPageEntry := &borrower.PropertyPageEntry{
-		// 	Id: propertyBase.Id,
-		// 	// PropertyType: string(property.PropertyType),
-		// 	// TotalAmount: propertyBase.TotalAmount,
-		// 	Address: &borrower.AddressEntry{
-		// 		State:    propertyBase.Address.State,
-		// 		City:     propertyBase.Address.City,
-		// 		Address1: propertyBase.Address.Address1,
-		// 		Address2: propertyBase.Address.Address2,
-		// 		ZipCode:  propertyBase.Address.ZipCode,
-		// 	},
-		// }
 
 		propertyPageEntry := &borrower.PropertyPageEntry{}
 		err = copier.CopyWithOption(propertyPageEntry, borrowerProperty, copier.Option{
@@ -97,10 +93,6 @@ func (l *PageLogic) Page(in *borrower.PropertyPageRequest) (resp *borrower.Prope
 			}
 
 		}
-
-		// for _, applicant := range propertyBase.Applicants {
-		// 	propertyPageEntry.Applicants = append(propertyPageEntry.Applicants, applicant.FullName)
-		// }
 		if totalRate > 0 {
 			propertyPageEntry.AvgRate = totalRate / float32(len(borrowerProperty.Loans))
 		}

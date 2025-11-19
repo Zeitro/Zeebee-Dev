@@ -3,8 +3,6 @@ package loanlogic
 import (
 	"context"
 
-	"github.com/pkg/errors"
-
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
@@ -39,14 +37,14 @@ func (l *UpdateBorrowerLoanPendingStatusLogic) UpdateBorrowerLoanPendingStatus(i
 		"borrower_id": in.Data.BorrowerId,
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed To Get Loan")
+		return nil, errorx.Wrap(err, "Failed To Get Loan")
 	}
 	if loanModel.Stage != constants.LoanStagePending {
-		return nil, errors.New("loan's stage should be pending")
+		return nil, errorx.New("Loan's Stage Should Be Pending")
 	}
 
 	if loanModel.Source != constants.LoanSourceBorrower {
-		return nil, errors.WithStack(errors.New("loan source is not 3rd party"))
+		return nil, errorx.WithStack(errorx.New("Loan Source Is Not 3rd Party"))
 	}
 	err = l.svcCtx.LoanRepo.UpdateColumnsById(l.ctx, in.Data.Id, map[string]interface{}{"pending_status": in.Data.PendingStatus})
 

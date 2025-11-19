@@ -3,15 +3,13 @@ package loandocumentlogic
 import (
 	"context"
 
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
-	"zeebee-backend/app/lender/rpc/internal/repo/model"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/constants"
-	"zeebee-backend/common/types"
+	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -55,23 +53,23 @@ func (l *UpdateCommentLogic) UpdateComment(in *lender.LoanDocumentUpdateCommentR
 			"comment": in.Data.Comment,
 		})
 		if innerErr != nil {
-			return errors.Wrap(innerErr, "failed to update loan document comment")
+			return errorx.Wrap(innerErr, "Failed To Update Loan Document Comment")
 		}
 
 		innerErr = l.baseLogic.CreateLoanOperationLog(
 			tx,
 			in.Data.Id,
 			in.Data.LenderEmployeeId,
-			types.LoanOperationStatus{
+			model.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
-			types.LoanOperationStatus{
+			model.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
 			constants.LoanOperationActionComment,
-			&types.LoanOperationMetadata{
+			&model.LoanOperationMetadata{
 				Comment: in.Data.Comment,
 			},
 		)
