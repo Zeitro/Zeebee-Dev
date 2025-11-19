@@ -4,16 +4,15 @@ import (
 	"context"
 
 	"github.com/jinzhu/copier"
-	"github.com/pkg/errors"
 
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
+	"zeebee-backend/domains/zeebee/repo"
 
 	"github.com/zeromicro/go-zero/core/logx"
-
-	"zeebee-backend/common/errorx"
 )
 
 type BorrowerLoanPageLogic struct {
@@ -36,9 +35,15 @@ func (l *BorrowerLoanPageLogic) BorrowerLoanPage(in *borrower.LoanPageRequest) (
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	pageResult, err := l.svcCtx.LoanRepo.Page(l.ctx, in.Data)
+	pageReq := &repo.LoanBorrowerPageReq{}
+	_ = copier.CopyWithOption(pageReq, in.Data, copier.Option{
+		CaseSensitive: true,
+		DeepCopy:      true,
+	})
+
+	pageResult, err := l.svcCtx.LoanRepo.PageForBorrower(l.ctx, pageReq)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	resp = &borrower.LoanPageResponse{
 		Data: &borrower.LoanPageResponseData{},

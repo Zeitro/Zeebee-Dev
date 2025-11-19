@@ -7,20 +7,18 @@ import (
 	"github.com/duke-git/lancet/v2/mathutil"
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
-	"zeebee-backend/app/borrower/rpc/internal/repo/model"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/common/uuid"
+	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
-
-	"zeebee-backend/common/errorx"
 )
 
 type SaveDraftLoanLogic struct {
@@ -56,14 +54,14 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 			return nil, err
 		}
 		if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreApproval {
-			return nil, errors.WithStack(errors.New("Invalid Loan Source"))
+			return nil, errorx.WithStack(errorx.New("Invalid Loan Source"))
 		}
 
 		stages := []constants.LoanStage{
 			constants.LoanStageDraft,
 		}
 		if !slice.Contain(stages, loan.Stage) && loan.PendingStatus != constants.LoanPendingStatusNone {
-			return nil, errors.New("Loan's Stage Should Be Draft")
+			return nil, errorx.New("Loan's Stage Should Be Draft")
 		}
 		oldApplicants = loan.Applicants
 		if loan.LoanProperty != nil {
@@ -94,7 +92,7 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 					if in.Data.LenderCompanyId == 0 {
 						in.Data.LenderCompanyId = loan.LenderCompanyId
 					}
-					_, err = l.svcCtx.LoanRepo.UpdateOneWithTx(l.ctx, tx, in.Data.Id, data.loan, true)
+					_, err = l.svcCtx.LoanRepo.UpdateOneWithTx(l.ctx, tx, in.Data.Id, data.loan)
 				} else {
 					var uid string
 					uid, err = uuid.GetSonyflakeIDString()
@@ -243,11 +241,11 @@ func (l *SaveDraftLoanLogic) updateLoanDemographic(tx *gorm.DB, loanDemographic 
 func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, oldLoan *model.Loan) (data *applyLoanModelData, err error) {
 
 	if reqData == nil {
-		return nil, errors.WithStack(errors.New("Invalid Request Data"))
+		return nil, errorx.New("Invalid Request Data")
 	}
 
 	if reqData.LenderCompanyId == 0 {
-		return nil, errors.WithStack(errors.New("Invalid Lender Id"))
+		return nil, errorx.New("Invalid Lender Id")
 	}
 
 	// loan
@@ -336,7 +334,7 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 		applicants = append(applicants, loanApplicant)
 	}
 	if totalOwnPercent > 100 {
-		return nil, errors.WithStack(errors.New("Total Own Percent Greater Than 100"))
+		return nil, errorx.New("Total Own Percent Greater Than 100")
 	}
 
 	// transaction experience

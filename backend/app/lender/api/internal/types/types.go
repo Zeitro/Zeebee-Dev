@@ -191,8 +191,8 @@ type LoanEntry struct {
 	CreatedAt              string                   `json:"created_at"`
 	UpdatedAt              string                   `json:"updated_at"`
 	Source                 string                   `json:"source"`
-	LoanTerm               int32                    `json:"loan_term" `
-	Ltv                    float64                  `json:"ltv" `
+	LoanTerm               int32                    `json:"loan_term"`
+	Ltv                    float64                  `json:"ltv"`
 	EstCreditScore         int32                    `json:"est_credit_score"`
 	ReservesAmount         float64                  `json:"reserves_amount"`
 	TransactionExperiences []*LoanExperienceEntry   `json:"transaction_experiences"`

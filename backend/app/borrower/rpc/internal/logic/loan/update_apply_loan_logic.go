@@ -4,17 +4,15 @@ import (
 	"context"
 
 	"github.com/duke-git/lancet/v2/slice"
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
-	"zeebee-backend/app/borrower/rpc/internal/repo/model"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
+	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
-
-	"zeebee-backend/common/errorx"
 )
 
 type UpdateApplyLoanLogic struct {
@@ -56,7 +54,7 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 		constants.LoanSourcePreApproval,
 	}
 	if !slice.Contain(sources, loan.Source) {
-		return nil, errors.WithStack(errors.New("Invalid Loan Source"))
+		return nil, errorx.WithStack(errorx.New("Invalid Loan Source"))
 	}
 	stages := []constants.LoanStage{
 		constants.LoanStagePending,
@@ -67,10 +65,10 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 		constants.LoanPendingStatusNone,
 	}
 	if !slice.Contain(stages, loan.Stage) && !slice.Contain(pendingStatus, loan.PendingStatus) {
-		return nil, errors.New("Loan's Stage Should Be Pending Or Draft")
+		return nil, errorx.New("Loan's Stage Should Be Pending Or Draft")
 	}
 	if loan.BorrowerId != in.Data.BorrowerId {
-		return nil, errors.WithStack(errors.New("Loan Does Not Belong To Borrower"))
+		return nil, errorx.WithStack(errorx.New("Loan Does Not Belong To Borrower"))
 	}
 
 	oldApplicants := loan.Applicants
@@ -95,7 +93,7 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 				if in.Data.LenderCompanyId == 0 {
 					in.Data.LenderCompanyId = loan.LenderCompanyId
 				}
-				_, err := l.svcCtx.LoanRepo.UpdateOneWithTx(l.ctx, tx, in.Data.Id, data.loan, true)
+				_, err := l.svcCtx.LoanRepo.UpdateOneWithTx(l.ctx, tx, in.Data.Id, data.loan)
 				return err
 			},
 			// update loan property
@@ -175,7 +173,7 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 				case constants.LoanStageDraft:
 					// change stage from draft to pending
 				default:
-					err = errors.WithStack(errors.New("Invalid Loan Stage"))
+					err = errorx.WithStack(errorx.New("Invalid Loan Stage"))
 					return err
 				}
 				loanDocumentTypes := constants.GetLoanDocumentTypes()

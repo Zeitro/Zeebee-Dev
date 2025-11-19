@@ -6,13 +6,15 @@ package user
 import (
 	"context"
 
+	"github.com/pkg/errors"
+
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/utils"
 
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
 
-	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -34,7 +36,7 @@ func NewSwitchLenderCompanyLogic(ctx context.Context, svcCtx *svc.ServiceContext
 func (l *SwitchLenderCompanyLogic) SwitchLenderCompany(req *types.UserSwitchLenderCompanyRequest) (resp *types.UserRefreshTokenResponse, err error) {
 	_, employeeId, _ := utils.GetLenderCompanyAndEmployeeId(l.ctx)
 	if employeeId == 0 {
-		return nil, errors.WithStack(errors.New("employee id not found"))
+		return nil, errorx.New("Employee Id Not Found")
 	}
 	rpcResp, err := l.svcCtx.UserRpcClient.SwitchLenderCompany(l.ctx, &lender.SwitchLenderCompanyRequest{
 		Data: &lender.SwitchLenderCompanyRequestData{

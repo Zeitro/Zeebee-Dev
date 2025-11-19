@@ -11,6 +11,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
+	"zeebee-backend/domains/zeebee/repo"
 )
 
 type PageLogic struct {
@@ -33,8 +34,13 @@ func (l *PageLogic) Page(in *borrower.BorrowerApplicantPageRequest) (resp *borro
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
+	pageReq := &repo.BorrowerApplicantBorrowerPageReq{}
+	_ = copier.CopyWithOption(pageReq, in.Data, copier.Option{
+		CaseSensitive: true,
+		DeepCopy:      true,
+	})
 
-	pageResult, err := l.svcCtx.BorrowerApplicantRepo.Page(l.ctx, in.Data)
+	pageResult, err := l.svcCtx.BorrowerApplicantRepo.PageForBorrower(l.ctx, pageReq)
 	if err != nil {
 		return nil, err
 	}

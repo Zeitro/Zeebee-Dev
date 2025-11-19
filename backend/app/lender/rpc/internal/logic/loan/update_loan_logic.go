@@ -6,17 +6,15 @@ import (
 	"github.com/duke-git/lancet/v2/mathutil"
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
-	"zeebee-backend/app/lender/rpc/internal/repo/model"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/timex"
-	"zeebee-backend/common/types"
 	"zeebee-backend/common/utils"
+	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -58,31 +56,26 @@ func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender
 	}()
 	var oldLoan *model.Loan
 	var oldLoanCopy *model.Loan
-	// var propertyBase *model.PropertyBase
 	// old loan
 	oldLoan, err = l.svcCtx.LoanRepo.GetLenderLoan(l.ctx, in.Data.Id, in.Data.LenderCompanyId, true)
 	if err != nil {
 		return nil, err
 	}
 	if oldLoan.Source != constants.LoanSourceSystem && oldLoan.Source != constants.LoanSourcePreApproval {
-		return nil, errors.WithStack(errors.New("invalid loan source"))
+		return nil, errorx.WithStack(errorx.New("Invalid Loan Source"))
 	}
 
 	// oldApplicants := oldLoan.Applicants
 
 	oldLoanCopy, err = utils.Clone(oldLoan)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get copy loan")
+		return nil, errorx.Wrap(err, "Failed To Get Copy Loan")
 	}
 
 	data, err := l.buildModelData(in.Data, oldLoanCopy)
 	if err != nil {
 		return nil, err
 	}
-
-	// if len(data.applicants) == 0 {
-	// 	return nil, errors.WithStack(errors.New("applicant is not found"))
-	// }
 
 	// update loan
 	err = l.svcCtx.LoanPropertyRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
@@ -159,12 +152,12 @@ func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender
 			func() error {
 				operatorId := in.Data.LenderEmployeeId
 
-				fromStatus := types.LoanOperationStatus{
+				fromStatus := model.LoanOperationStatus{
 					Stage:         oldLoan.Stage,
 					PendingStatus: oldLoan.PendingStatus,
 				}
 
-				toStatus := types.LoanOperationStatus{
+				toStatus := model.LoanOperationStatus{
 					Stage:         data.loan.Stage,
 					PendingStatus: data.loan.PendingStatus,
 				}
@@ -307,14 +300,14 @@ func (l *UpdateLoanLogic) updateThirdServices(tx *gorm.DB, oldItems []*model.Loa
 // buildModelData builds model data
 func (l *UpdateLoanLogic) buildModelData(reqData *lender.LoanUpdateRequestData, oldLoan *model.Loan) (data *updateLoanModelData, err error) {
 	if oldLoan == nil {
-		return nil, errors.WithStack(errors.New("invalid loan"))
+		return nil, errorx.WithStack(errorx.New("Invalid Loan"))
 	}
 
 	if reqData == nil {
-		return nil, errors.WithStack(errors.New("invalid request data"))
+		return nil, errorx.WithStack(errorx.New("Invalid Request Data"))
 	}
 	if reqData.LoanProperty == nil {
-		return nil, errors.WithStack(errors.New("invalid loan property"))
+		return nil, errorx.WithStack(errorx.New("Invalid Loan Property"))
 	}
 
 	// loan
@@ -336,12 +329,9 @@ func (l *UpdateLoanLogic) buildModelData(reqData *lender.LoanUpdateRequestData, 
 		return nil, errorx.GetFailedTransErr(err)
 	}
 	loan.RemoveRelationships()
-	// loan.BusinessStrategy = reqData.BusinessStrategy
 
 	// LoanProperty
-	loanProperty := &model.LoanProperty{
-		// PropertyBase: &model.PropertyBase{},
-	}
+	loanProperty := &model.LoanProperty{}
 	if oldLoan.LoanProperty != nil {
 		_ = copier.CopyWithOption(loanProperty, oldLoan.LoanProperty, copier.Option{
 			IgnoreEmpty:   false,
@@ -366,9 +356,6 @@ func (l *UpdateLoanLogic) buildModelData(reqData *lender.LoanUpdateRequestData, 
 		loanProperty.Dscr = mathutil.RoundToFloat(dscr, 2)
 	}
 
-	// loanProperty.PropertyBase.BorrowerId = oldLoan.BorrowerId
-	// loanProperty.Unit = loanProperty.PropertyBase.Unit
-
 	// applicants
 	applicants := make([]*model.LoanApplicant, 0)
 	var totalOwnPercent int32
@@ -382,7 +369,7 @@ func (l *UpdateLoanLogic) buildModelData(reqData *lender.LoanUpdateRequestData, 
 		applicants = append(applicants, applicantModel)
 	}
 	if totalOwnPercent > 100 {
-		return nil, errors.WithStack(errors.New("Total Own Percent Greater Than 100"))
+		return nil, errorx.WithStack(errorx.New("Total Own Percent Greater Than 100"))
 	}
 
 	// transaction experience
@@ -440,27 +427,14 @@ func (l *UpdateLoanLogic) buildModelData(reqData *lender.LoanUpdateRequestData, 
 	if err != nil {
 		return nil, errorx.GetFailedTransErr(err)
 	}
-
-	// apply form file
-	// var applyFormFile *model.File
-	// if len(reqData.ApplyFormFile) > 0 {
-	// 	applyFormFile = &model.File{
-	// 		File:     reqData.ApplyFormFile,
-	// 		FileType: constants.FileTypeApplyForm,
-	// 		BizType:  constants.FileBizTypeLoan,
-	// 	}
-	// }
-
 	data = &updateLoanModelData{
-		loan:         loan,
-		loanProperty: loanProperty,
-		// loanBorrower:           loanBorrower,
+		loan:                   loan,
+		loanProperty:           loanProperty,
 		applicants:             applicants,
 		transactionExperiences: transactionExperiences,
 		realEstatesExperiences: realEstatesExperiences,
 		loanDemographic:        loanDemographic,
 		loanThirdServices:      loanThirdServices,
-		// applyFormFile:          applyFormFile,
 	}
 	return
 }

@@ -2,8 +2,8 @@ package borrowerapplicantlogic
 
 import (
 	"context"
+	"errors"
 
-	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
 

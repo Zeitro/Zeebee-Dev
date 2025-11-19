@@ -6,19 +6,17 @@ import (
 	"github.com/duke-git/lancet/v2/mathutil"
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
-	"zeebee-backend/app/borrower/rpc/internal/repo/model"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
-	"zeebee-backend/common/timex"
-
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/timex"
+	"zeebee-backend/domains/zeebee/model"
 )
 
 type UpdateBorrowerLoanLogic struct {
@@ -54,14 +52,14 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 
 	oldApplicants := loanModel.Applicants
 	if len(oldApplicants) == 0 {
-		return nil, errors.WithStack(errors.New("Applicant Is Not Found"))
+		return nil, errorx.WithStack(errorx.New("Applicant Is Not Found"))
 	}
 	if loanModel.Source != constants.LoanSourceBorrower && loanModel.Source != constants.LoanSourcePreApproval {
-		return nil, errors.WithStack(errors.New("Loan Source Is Not Third Party"))
+		return nil, errorx.WithStack(errorx.New("Loan Source Is Not Third Party"))
 	}
 	loanPropertyModel := loanModel.LoanProperty
 	if loanPropertyModel == nil {
-		return nil, errors.WithStack(errors.New("Loan Property Is Not Found"))
+		return nil, errorx.WithStack(errorx.New("Loan Property Is Not Found"))
 	}
 
 	// create loan
@@ -72,7 +70,7 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 		// update loan
 		loan.Id = in.Data.Id
 		loan.RemoveRelationships()
-		_, innerErr = l.svcCtx.LoanRepo.UpdateOneWithTx(l.ctx, tx, in.Data.Id, loan, false)
+		_, innerErr = l.svcCtx.LoanRepo.UpdateOneWithTx(l.ctx, tx, in.Data.Id, loan)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -161,7 +159,7 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 		return innerErr
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed To Update Loan")
+		return nil, errorx.Wrap(err, "Failed To Update Loan")
 	}
 
 	return &borrower.EmptyResponse{}, nil
@@ -220,19 +218,10 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 
 	// LoanBorrower
 	loanBorrower = &model.LoanBorrower{}
-	// loanBorrowerData := in.LoanBorrower
-	// if loanBorrowerData == nil {
-	// 	return nil, nil, nil, nil, errorx.New("Invalid Loan Borrower")
-	// }
-	//
-	// loanBorrower, err = l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, loanBorrowerData.BorrowerEntityId, in.BorrowerId)
-	// if err != nil {
-	// 	return nil, nil, nil, nil, err
-	// }
 	loanBorrower.LoanId = in.Id
 
 	// loan property
-	borrowerProperty, err := l.svcCtx.BorrowerPropertyRepo.GetBorrowerPropertyById(l.ctx, in.LoanProperty.BorrowerPropertyId, in.BorrowerId)
+	borrowerProperty, err := l.svcCtx.BorrowerPropertyRepo.GetOneByIdForBorrower(l.ctx, in.LoanProperty.BorrowerPropertyId, in.BorrowerId)
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
@@ -264,19 +253,6 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 
 	// loan
 	loan = &model.Loan{}
-	// err = copier.CopyWithOption(loan, in, copier.Option{
-	// 	IgnoreEmpty:   false,
-	// 	DeepCopy:      true,
-	// 	CaseSensitive: true,
-	// 	Converters: []copier.TypeConverter{
-	// 		copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-	// 	},
-	// })
-	// if err != nil {
-	// 	return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
-	// }
-	// loan.RemoveRelationships()
-
 	err = copier.CopyWithOption(loan, oldLoan, copier.Option{
 		DeepCopy:      true,
 		CaseSensitive: true,

@@ -3,7 +3,7 @@ package svc
 import (
 	"zeebee-backend/app/borrower/config"
 	"zeebee-backend/app/borrower/rpc/internal/global"
-	"zeebee-backend/app/borrower/rpc/internal/repo"
+	"zeebee-backend/domains/zeebee/repo"
 )
 
 type ServiceContext struct {

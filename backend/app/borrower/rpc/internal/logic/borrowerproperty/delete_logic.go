@@ -3,8 +3,6 @@ package borrowerpropertylogic
 import (
 	"context"
 
-	"github.com/pkg/errors"
-
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 
@@ -38,11 +36,11 @@ func (l *DeleteLogic) Delete(in *borrower.PropertyDeleteRequest) (resp *borrower
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 	if result.BorrowerId != in.Data.BorrowerId {
-		return nil, errorx.GetFailedTransRespErr(errors.New("You Have No Access To This Property"))
+		return nil, errorx.GetFailedTransRespErr(errorx.New("You Have No Access To This Property"))
 	}
 
 	if result.LoanCount > 0 {
-		return nil, errorx.GetFailedTransRespErr(errors.New("You Cannot Delete A Property That Has Loans"))
+		return nil, errorx.GetFailedTransRespErr(errorx.New("You Cannot Delete A Property That Has Loans"))
 	}
 	_, err = l.svcCtx.BorrowerPropertyRepo.DeleteByID(l.ctx, in.Data.Id)
 
