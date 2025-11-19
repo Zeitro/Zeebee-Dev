@@ -11,9 +11,13 @@ import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 /**
  * 面包屑导航
  */
-const NewHeader = () => {
+const NewHeader = ({ children, isShowCrumbs }) => {
 	const pathname = usePathname();
-	const config = useMemo(() => getCurrentRouterItem(pathname, navRouter), [pathname]); // 获取当前路由的配置
+	const isShow = useMemo(() => {
+		const item = getCurrentRouterItem(pathname, navRouter);
+		if (isShowCrumbs) return true;
+		return item && !item?.hideCrumbs;
+	}, [pathname, isShowCrumbs]); // 获取当前路由的配置
 	const [crumbs, setCrumbs] = useState([]);
 	const itemRender = (currentRoute, params, items) => {
 		const isLast = currentRoute?.path === items[items.length - 1]?.path;
@@ -51,7 +55,7 @@ const NewHeader = () => {
 			eventBus.off('changeCrumbs', changeCrumbs);
 		};
 	}, [crumbs]);
-	return config && !config?.hideCrumbs ? (
+	return isShow ? (
 		<div className={`h-[84px] p-4 shrink-0 flex items-center justify-between ${styles.crumbs}`}>
 			<div>
 				<Breadcrumb items={crumbs} itemRender={itemRender} />
@@ -59,7 +63,7 @@ const NewHeader = () => {
 					{crumbs?.[crumbs.length - 1]?.title}
 				</div>
 			</div>
-			{/* <CustomContent /> */}
+			<div>{children}</div>
 		</div>
 	) : (
 		''
