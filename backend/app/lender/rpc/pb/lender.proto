@@ -343,7 +343,7 @@ message LoanUpdateRequestData {
   repeated string business_strategy = 11;
   repeated LoanApplicantLoanEditEntry applicants = 12;
   int32 loan_term = 13;
-  double ltv = 14;
+  //  double ltv = 14;
   int32 est_credit_score = 15;
   double reserves_amount = 16;
   repeated LoanExperienceEntry transaction_experiences = 17;

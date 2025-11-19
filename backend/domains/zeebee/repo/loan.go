@@ -134,7 +134,6 @@ func (repo *LoanRepo) GetLenderLoan(ctx context.Context, id int64, lenderCompany
 			return db.Order("loan_applicants.is_primary desc")
 		}).
 			Preload("LoanProperty").
-			// Preload("LoanProperty.BorrowerProperty").
 			Preload("LoanBorrower").
 			Preload("LoanExperiences", func(db *gorm.DB) *gorm.DB {
 				return db.Order("loan_experiences.id asc")
@@ -143,7 +142,6 @@ func (repo *LoanRepo) GetLenderLoan(ctx context.Context, id int64, lenderCompany
 				return db.Order("loan_third_services.id asc")
 			}).
 			Preload("LoanDemographic").
-			// Preload("ApplyFormFile").
 			Preload("LoanDocuments", func(db *gorm.DB) *gorm.DB {
 				return db.Order("loan_documents.id asc")
 			}).
@@ -162,7 +160,6 @@ func (repo *LoanRepo) GetLenderLoanWithTx(ctx context.Context, tx *gorm.DB, id i
 			return db.Order("loan_applicants.is_primary desc")
 		}).
 		Preload("LoanProperty").
-		// Preload("LoanProperty.BorrowerProperty").
 		Preload("LoanBorrower").
 		Preload("LoanExperiences", func(db *gorm.DB) *gorm.DB {
 			return db.Order("loan_experiences.id asc")
@@ -173,7 +170,6 @@ func (repo *LoanRepo) GetLenderLoanWithTx(ctx context.Context, tx *gorm.DB, id i
 		Preload("LoanDemographic", func(db *gorm.DB) *gorm.DB {
 			return db.Order("loan_demographic.id asc")
 		}).
-		// Preload("ApplyFormFile").
 		Preload("LoanDocuments", func(db *gorm.DB) *gorm.DB {
 			return db.Order("loan_documents.id asc")
 		}).
