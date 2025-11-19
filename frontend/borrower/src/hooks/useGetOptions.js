@@ -1,3 +1,4 @@
+'use client';
 import { useOptionsStore } from '@/store/options';
 import { Col, Form, Radio, Select } from 'antd';
 import { useCallback, useEffect, useRef } from 'react';
