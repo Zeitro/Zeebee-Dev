@@ -46,7 +46,6 @@ type LoanPropertyEntry {
     HasShortTermRental bool `json:"has_short_term_rental"`
     EstPropertyValueAmount float64 `json:"est_property_value_amount"`
     Arv float64 `json:"arv"`
-    //    PropertyBase *PropertyBaseEntry `json:"property_base,optional" validate:"required"`
 }
 
 type LoanBudgetEntry {
@@ -174,5 +173,4 @@ type ImportLoanApplyPropertyEntry {
     PurchaseAmount float64 `json:"purchase_amount,optional"`
     PurchaseDate string `json:"purchase_date,optional"`
 
-    //    PropertyBase *PropertyBaseEntry `json:"property_base,optional" validate:"required"`
 }

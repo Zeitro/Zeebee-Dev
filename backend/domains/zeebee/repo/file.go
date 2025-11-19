@@ -3,8 +3,9 @@ package repo
 import (
 	"context"
 
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
+
+	"zeebee-backend/common/errorx"
 
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/gormx"
@@ -29,5 +30,5 @@ func (r *FileRepo) GetFileCountByEntityIdWithTx(ctx context.Context, tx *gorm.DB
 		Where("entity_type = ?", entityType).
 		Count(&count).Error
 
-	return count, errors.WithStack(err)
+	return count, errorx.WithStack(err)
 }

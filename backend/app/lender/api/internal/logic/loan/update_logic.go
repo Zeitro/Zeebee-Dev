@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/jinzhu/copier"
-	"github.com/pkg/errors"
 
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
@@ -53,32 +52,12 @@ func (l *UpdateLogic) Update(req *types.LoanUpdateRequest) (resp *types.LoanUpda
 	// get employee id
 	rpcReq.Data.LenderEmployeeId, err = utils.GetLenderAccountIdFromCtx(l.ctx)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
-	// not handle applicants
-	// applicants := make([]*lender.ApplicantEntry, 0, len(rpcReq.Data.Applicants))
-	// for _, applicant := range rpcReq.Data.Applicants {
-	// 	applicant := applicant
-	// 	if len(applicant.FirstName) > 0 {
-	// 		applicants = append(applicants, applicant)
-	// 	}
-	// }
-	// if len(applicants) > 0 {
-	// 	primaryCount := slice.CountBy(applicants, func(index int, item *lender.ApplicantEntry) bool {
-	// 		return item.IsPrimary
-	// 	})
-	// 	if primaryCount == 0 {
-	// 		applicants[0].IsPrimary = true
-	// 	}
-	// 	if primaryCount > 1 {
-	// 		return nil, errors.WithStack(errors.New("multiple primary applicant"))
-	// 	}
-	// }
-	// rpcReq.Data.Applicants = applicants
 
 	rpcResp, err := l.svcCtx.LoanRpcClient.UpdateLoan(l.ctx, rpcReq)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	err = copier.Copy(resp, &rpcResp.Data)
 	if err != nil {

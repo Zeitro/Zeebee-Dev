@@ -10,8 +10,9 @@ type User struct {
 	Email        string               `json:"email"`
 	PasswordHash string               `json:"-"`
 	Status       constants.UserStatus `json:"status"`
-
-	Borrower *Borrower `json:"borrower" gorm:"foreignKey:UserId;references:Id"`
+	// relationships
+	Borrower       *Borrower       `json:"borrower" gorm:"foreignKey:UserId;references:Id"`
+	LenderEmployee *LenderEmployee `json:"lender_employee" gorm:"foreignKey:UserId;references:Id"`
 }
 
 func (m *User) TableName() string {
@@ -20,4 +21,5 @@ func (m *User) TableName() string {
 
 func (m *User) RemoveRelationships() {
 	m.Borrower = nil
+	m.LenderEmployee = nil
 }

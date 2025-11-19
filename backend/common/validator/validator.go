@@ -11,7 +11,8 @@ import (
 	go_validator "github.com/go-playground/validator/v10"
 	en2 "github.com/go-playground/validator/v10/translations/en"
 	zh2 "github.com/go-playground/validator/v10/translations/zh"
-	"github.com/pkg/errors"
+
+	"zeebee-backend/common/errorx"
 )
 
 const (
@@ -81,13 +82,13 @@ func (v *Validator) init() (err error) {
 func (v *Validator) Validate(i interface{}) (err error) {
 	defer func() {
 		if e := recover(); e != nil {
-			err = errors.WithStack(errors.Errorf("validate error:%v", e))
+			err = errorx.WithStack(errorx.Errorf("validate error:%v", e))
 		}
 	}()
 	validatorErr := v.validator.Struct(i)
 	if validatorErr != nil && v.trans != nil {
 		for _, err := range validatorErr.(go_validator.ValidationErrors) {
-			return errors.New(err.Translate(v.trans))
+			return errorx.New(err.Translate(v.trans))
 		}
 	}
 	return validatorErr

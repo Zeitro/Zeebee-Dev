@@ -5,10 +5,10 @@ import (
 	"fmt"
 
 	"github.com/jinzhu/copier"
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/model"
@@ -48,7 +48,7 @@ func (repo *BorrowerApplicantRepo) GetBorrowerApplicantById(ctx context.Context,
 		Where("id = ? and borrower_id = ?", id, borrowerId).
 		First(&result).
 		Error
-	return result, errors.WithStack(err)
+	return result, errorx.WithStack(err)
 }
 
 func (repo *BorrowerApplicantRepo) PageForBorrower(ctx context.Context, pageReq *BorrowerApplicantBorrowerPageReq) (page gormx.PageResponse[*model.BorrowerApplicant], err error) {
@@ -73,7 +73,7 @@ func (repo *BorrowerApplicantRepo) PageForBorrower(ctx context.Context, pageReq 
 		CountColumn: "id",
 	})
 
-	return page, errors.WithStack(err)
+	return page, errorx.WithStack(err)
 
 }
 
@@ -84,7 +84,7 @@ func (repo *BorrowerApplicantRepo) AllForBorrower(ctx context.Context, borrowerI
 		// Omit("address").
 		Order("id desc").
 		Find(&result).Error
-	return result, errors.WithStack(err)
+	return result, errorx.WithStack(err)
 }
 
 // TranToLoanApplicantWithId get BorrowerApplicant from id and trans it to LoanApplicant
@@ -92,7 +92,7 @@ func (repo *BorrowerApplicantRepo) TranToLoanApplicantWithId(ctx context.Context
 	var applicant *model.BorrowerApplicant
 	applicant, err = repo.GetBorrowerApplicantById(ctx, id, borrowerId)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 
 	result = &model.LoanApplicant{}
@@ -104,7 +104,7 @@ func (repo *BorrowerApplicantRepo) TranToLoanApplicantWithId(ctx context.Context
 		},
 	})
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	result.Id = 0
 	result.BorrowerApplicantId = applicant.Id
