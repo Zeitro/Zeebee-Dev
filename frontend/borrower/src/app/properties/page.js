@@ -1,5 +1,5 @@
 'use client';
-import { BtnPopUpModal, FilterField, NewPagination } from '@repo/shared-methods';
+import { BtnPopUpModal, FilterField, NewPagination, NoData } from '@repo/shared-methods';
 import Image from 'next/image';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ReloadOutlined } from '@ant-design/icons';
@@ -8,7 +8,6 @@ import { des, asc } from '@/enum/common';
 import PropertiesItem from './components/propertiesItem';
 import { createRequest, getPagination, transformArrayStructure } from '@repo/shared-methods/utils';
 import { Spin } from 'antd';
-import NoData from '@/components/NoData';
 import { useGetOptions } from '@/hooks/useGetOptions';
 import AddModal from '@/components/SelectCard/Add/property';
 import { PlusOutlined } from '@ant-design/icons';

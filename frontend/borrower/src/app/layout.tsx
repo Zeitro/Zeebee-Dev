@@ -5,7 +5,7 @@ import Script from 'next/script';
 import './globals.css';
 import '@ant-design/v5-patch-for-react-19';
 import CustomizeAntdTheme from '@/components/CustomizeAntdTheme';
-import PortalComponent from '@/components/PortalComponent';
+import { PortalComponent } from '@repo/shared-methods';
 export const roboto = Roboto({
 	weight: ['400', '500', '700'], // 选择需要的字重
 	subsets: ['latin', 'latin-ext'], // 字符集
