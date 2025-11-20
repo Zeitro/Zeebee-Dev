@@ -3,8 +3,6 @@ package userlogic
 import (
 	"context"
 
-	"github.com/pkg/errors"
-
 	"zeebee-backend/app/lender/rpc/internal/global"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
@@ -42,15 +40,15 @@ func (l *ResetPasswordLogic) ResetPassword(in *lender.ResetPasswordRequest) (res
 	code := in.Data.Code
 	newPwd := in.Data.Password
 	if email == "" || code == "" || newPwd == "" {
-		return nil, errors.WithStack(errors.New("Email, code and new password are required"))
+		return nil, errorx.WithStack(errorx.New("Email, Code And New Password Are Required"))
 	}
 	redisKey := stringx.Format(constants.LenderResetPwdCode, email)
 	cacheToken, err := global.GetRedis().Get(l.ctx, redisKey)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	if cacheToken == "" || cacheToken != code {
-		return nil, errors.WithStack(errors.New("Invalid or expired code"))
+		return nil, errorx.WithStack(errorx.New("Invalid Or Expired Code"))
 	}
 
 	user, err := l.svcCtx.UserRepo.GetLenderUserByEmail(l.ctx, email)
@@ -58,13 +56,13 @@ func (l *ResetPasswordLogic) ResetPassword(in *lender.ResetPasswordRequest) (res
 		return nil, err
 	}
 	if user.LenderEmployee == nil {
-		return nil, errors.WithStack(errors.New("User not found"))
+		return nil, errorx.WithStack(errorx.New("User Not Found"))
 	}
 
 	// hash pwd
 	pwdHash, err := utils.HashPassword(newPwd)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 
 	// update pwd

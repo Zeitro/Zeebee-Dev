@@ -1,6 +1,6 @@
 'use client';
 import { Button, Col, Form, message, Space, Steps } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import CreateLoan from '../components/Create/Loan';
 import CreateProperty from '../components/Create/property';
 import CreateTerm from '../components/Create/term';
@@ -9,6 +9,7 @@ import { createLoanSteps } from '@/enum/loan';
 import { createRequest } from '@/lib/fetch';
 import { loan_pending } from '@/enum/common';
 import { BtnPopUpModal } from '@/components/NewModal/BtnPopUpModal';
+import { changeUnitByPropertyType } from '@/lib/format';
 const CreateLoanPage = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -23,6 +24,7 @@ const CreateLoanPage = () => {
 		1: {},
 		2: {},
 	});
+	const [unitInfo, setUnitInfo] = useState({});
 
 	useEffect(() => {
 		// back时赋值
@@ -30,15 +32,16 @@ const CreateLoanPage = () => {
 		if (item && JSON.stringify(item) !== '{}' && form) {
 			form.setFieldsValue({ ...item });
 		}
-	}, [currentStep, loanData]);
+	}, [currentStep, form, loanData]);
 
 	// 获取property
 	useEffect(() => {
 		if (searchParams.has('propertyId')) getProperty();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	// next/Add loan
-	const handleNext = async () => {
+	const handleNext = useCallback(async () => {
 		try {
 			const values = await form.validateFields();
 			if (currentStep < 2) {
@@ -70,7 +73,7 @@ const CreateLoanPage = () => {
 		} catch (error) {
 			setLoading(false);
 		}
-	};
+	}, [currentStep, form, loanData, request, router]);
 
 	// 从property详情跳转的创建loan
 	const getProperty = async () => {
@@ -87,45 +90,59 @@ const CreateLoanPage = () => {
 		form.setFieldsValue(newData);
 	};
 
-	const stepBtn = (
-		<Col xs={24} sm={24} className="py-6 !flex justify-between items-center">
-			<BtnPopUpModal
-				config={{
-					onOk: () => router.back(),
-					title: 'Tips',
-					content:
-						'The data is not saved yet, are you sure you want to leave the current page?',
-					okText: 'Leave',
-				}}
-				modalType="confirm"
-				type="text"
-				size="middle"
-			>
-				Cancel
-			</BtnPopUpModal>
-			<Space size={8}>
-				{!!currentStep && (
-					<Button onClick={() => setCurrentStep((v) => v - 1)}>Back</Button>
-				)}
-				<Button type="primary" onClick={handleNext} loading={loading}>
-					{currentStep < 2 ? 'Next' : 'Add Loan'}
-				</Button>
-			</Space>
-		</Col>
-	);
-	const stepContent = {
-		0: <CreateLoan form={form} stepBtn={stepBtn} isRadioStyle={true} />,
-		1: (
-			<CreateProperty
-				stage={loanData?.[0]?.stage}
-				stepBtn={stepBtn}
-				form={form}
-				gutter={16}
-				isRequestProperty={searchParams.has('propertyId')}
-			/>
+	const stepBtn = useMemo(
+		() => (
+			<Col xs={24} sm={24} className="py-6 !flex justify-between items-center">
+				<BtnPopUpModal
+					config={{
+						onOk: () => router.back(),
+						title: 'Tips',
+						content:
+							'The data is not saved yet, are you sure you want to leave the current page?',
+						okText: 'Leave',
+					}}
+					modalType="confirm"
+					type="text"
+					size="middle"
+				>
+					Cancel
+				</BtnPopUpModal>
+				<Space size={8}>
+					{!!currentStep && (
+						<Button onClick={() => setCurrentStep((v) => v - 1)}>Back</Button>
+					)}
+					<Button type="primary" onClick={handleNext} loading={loading}>
+						{currentStep < 2 ? 'Next' : 'Add Loan'}
+					</Button>
+				</Space>
+			</Col>
 		),
-		2: <CreateTerm stage={loanData?.[0]?.stage} stepBtn={stepBtn} form={form} gutter={16} />,
-	};
+		[currentStep, handleNext, loading, router],
+	);
+	const stepContent = useMemo(
+		() => ({
+			0: <CreateLoan form={form} stepBtn={stepBtn} isRadioStyle={true} />,
+			1: (
+				<CreateProperty
+					stage={loanData?.[0]?.stage}
+					stepBtn={stepBtn}
+					form={form}
+					gutter={16}
+					isRequestProperty={searchParams.has('propertyId')}
+					unitInfo={unitInfo}
+				/>
+			),
+			2: (
+				<CreateTerm
+					stage={loanData?.[0]?.stage}
+					stepBtn={stepBtn}
+					form={form}
+					gutter={16}
+				/>
+			),
+		}),
+		[form, loanData, searchParams, stepBtn, unitInfo],
+	);
 
 	return (
 		<div className="flex flex-col h-full">
@@ -153,6 +170,19 @@ const CreateLoanPage = () => {
 							{ is_primary: true, type: 'Individual' },
 							{ is_primary: false, type: 'Individual' },
 						],
+					}}
+					onValuesChange={(v) => {
+						// 根据property_type设置unit
+						const property_type = v?.loan_property?.property_type;
+						if (property_type) {
+							const info = changeUnitByPropertyType(property_type);
+
+							setUnitInfo({ ...info });
+							form.setFieldValue(
+								['loan_property', 'property_base', 'unit'],
+								info.unit,
+							);
+						}
 					}}
 				>
 					{stepContent[currentStep]}

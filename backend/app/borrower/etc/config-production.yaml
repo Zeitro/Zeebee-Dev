@@ -57,7 +57,7 @@ RpcConf:
     PingTimeout: 10s
 
   DbConf:
-    dsn: "database-2.cj0ksq4g8d6c.us-west-1.rds.amazonaws.com user=zeebee_user password=zeebee_password dbname=zeebee port=5432 sslmode=require TimeZone=UTC"
+    dsn: "host=database-2.cj0ksq4g8d6c.us-west-1.rds.amazonaws.com user=zeebee_user password=zeebee_password dbname=zeebee port=5432 sslmode=require TimeZone=UTC"
 
   AwsS3Conf:
     AccessKey: AKIA4RT6FLQ5X2TPIFEV
@@ -91,6 +91,7 @@ RpcConf:
         Min: 6
         Max: 18
   LoginUrl: https://app.zeebeeloans.com/login
+  LenderUrl: https://agent.zeebeeloans.com
   VerifyEmailUrl: https://app.zeebeeloans.com/login/verifyEmail
   ResetPwdUrl: https://app.zeebeeloans.com/login/resetPassword
   PreApprovalLoanExpireSeconds: 86400

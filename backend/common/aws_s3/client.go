@@ -15,7 +15,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/pkg/errors"
+
+	"zeebee-backend/common/errorx"
 )
 
 type S3Client struct {
@@ -59,7 +60,7 @@ func (c *S3Client) GetPresignUrl(ctx context.Context, objectName string, expire 
 	suffix = strings.ToLower(suffix)
 	contentType, ok := ContentTypeMap[suffix]
 	if !ok {
-		err = errors.Errorf("invalid file type:%s", suffix)
+		err = errorx.Errorf("Invalid File Type:%s", suffix)
 		return nil, err
 	}
 
@@ -78,7 +79,6 @@ func (c *S3Client) GetPresignUrl(ctx context.Context, objectName string, expire 
 
 func (c *S3Client) UploadFile(ctx context.Context, presignedReq *v4.PresignedHTTPRequest, file io.Reader) (url string, err error) {
 	var req *http.Request
-	var content []byte
 	var buf bytes.Buffer
 
 	_, err = io.Copy(&buf, file)
@@ -112,17 +112,12 @@ func (c *S3Client) UploadFile(ctx context.Context, presignedReq *v4.PresignedHTT
 		// get error response
 		content, readErr := io.ReadAll(resp.Body)
 		if readErr != nil {
-			err = errors.Errorf("http status code: %v", resp.Status)
+			err = errorx.Errorf("HTTP Status Code: %v", resp.Status)
 		} else {
-			err = errors.Errorf("http status code: %v, response: %s", resp.Status, string(content))
+			err = errorx.Errorf("HTTP Status Code: %v, Response: %s", resp.Status, string(content))
 		}
 		return
 	}
-	content, err = io.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-	fmt.Printf("uploand result:%s\n", string(content))
 
 	// return url
 	url = fmt.Sprintf("https://%s.s3.%s.amazonaws.com/%s", c.config.Bucket, c.config.Region, strings.TrimPrefix(req.URL.Path, "/"))

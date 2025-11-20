@@ -86,8 +86,6 @@ const GoogleAutoComplete = ({
 			},
 			(place, status) => {
 				if (status === 'OK') {
-					console.log(place, place.address_components);
-
 					const addressInfo = parseAddressComponents(place.address_components);
 					const address = addressInfo?.streetNumber
 						? `${addressInfo?.streetNumber} ${addressInfo?.street}`
@@ -139,7 +137,10 @@ const GoogleAutoComplete = ({
 			value={address}
 			options={options}
 			onSearch={handleSearch}
-			onChange={(e) => setAddress(e)}
+			onChange={(e) => {
+				setAddress(e);
+				onChange(e);
+			}}
 			onSelect={handleSelect}
 			placeholder={placeholder}
 			notFoundContent={loading ? <Spin indicator={<LoadingOutlined spin />} /> : null}

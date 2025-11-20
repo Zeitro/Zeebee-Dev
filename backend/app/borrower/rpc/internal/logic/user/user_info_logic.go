@@ -3,8 +3,6 @@ package userlogic
 import (
 	"context"
 
-	"github.com/pkg/errors"
-
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/svc"
@@ -39,7 +37,7 @@ func (l *UserInfoLogic) UserInfo(in *borrower.UserInfoRequest) (resp *borrower.U
 	}
 	userBorrower := user.Borrower
 	if userBorrower == nil {
-		return nil, errors.WithStack(errors.New("borrower not found"))
+		return nil, errorx.WithStack(errorx.New("Borrower Not Found"))
 	}
 	userInfo := &borrower.UserinfoResponse{
 		Data: &borrower.UserinfoResponseData{
@@ -47,9 +45,6 @@ func (l *UserInfoLogic) UserInfo(in *borrower.UserInfoRequest) (resp *borrower.U
 			Email:     user.Email,
 			FirstName: userBorrower.FirstName,
 			LastName:  userBorrower.LastName,
-			// PhoneNumber: userBorrower.PhoneNumber,
-			// Address:     userBorrower.Address,
-			// Ssn: userBorrower.Ssn,
 		},
 	}
 	return userInfo, nil

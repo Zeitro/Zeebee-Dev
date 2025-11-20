@@ -1,8 +1,8 @@
 syntax = "v1"
 
 info(
-    title: "borrower-loan-third-service-api"
-    desc: "borrower-loan-third-service-api http service description"
+    title: "lender-loan-third-service-api"
+    desc: "lender-loan-third-service-api http service description"
     version: "v1"
 )
 

@@ -3,8 +3,6 @@ package file
 import (
 	"context"
 
-	"github.com/pkg/errors"
-
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
 	"zeebee-backend/app/lender/rpc/pb/lender"
@@ -39,7 +37,7 @@ func (l *DeleteLogic) Delete(req *types.PathIdRequest) (resp *types.EmptyRespons
 	// Get lender company and employee id from context
 	lenderCompanyId, lenderEmployeeId, err := utils.GetLenderCompanyAndEmployeeId(l.ctx)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 
 	// Call RPC to delete file
@@ -51,7 +49,7 @@ func (l *DeleteLogic) Delete(req *types.PathIdRequest) (resp *types.EmptyRespons
 		},
 	})
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 
 	return &types.EmptyResponse{}, nil

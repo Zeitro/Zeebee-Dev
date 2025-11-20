@@ -1,14 +1,13 @@
 package pdf
 
 import (
-	"bytes"
 	"net/http"
 	"strconv"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
 
-	"zeebee-backend/app/borrower/api/internal/pdf/apply_form"
+	"zeebee-backend/app/borrower/api/internal/logic/pdf"
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 
@@ -30,7 +29,7 @@ func ApplyFormPdfHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}()
 		var req types.ApplyFormPdfRequest
 		var v *validator.Validator
-		var applyFormPdf *apply_form.ApplyForm
+		// var applyFormPdf *apply_form.ApplyForm
 
 		if err = httpx.Parse(r, &req); err != nil {
 			// response.BadRequestWithCode(w, http.StatusBadRequest, errorx.GetErrorMsg(err))
@@ -50,17 +49,20 @@ func ApplyFormPdfHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		applyFormPdf, err = apply_form.NewApplyForm(&req)
-		if err != nil {
-			// response.BadRequestWithCode(w, http.StatusBadRequest, errorx.GetErrorMsg(err))
-			response.BadRequest(w, errorx.GetErrorMsg(err))
-			return
-		}
+		l := pdf.NewApplyFormPdfLogic(r.Context(), svcCtx)
+		resp, err := l.ApplyFormPdf(&req)
 
-		var buf []byte
-		ioWriter := bytes.NewBuffer(buf)
-
-		err = applyFormPdf.Generate(ioWriter)
+		// applyFormPdf, err = apply_form.NewApplyForm(&req)
+		// if err != nil {
+		// 	// response.BadRequestWithCode(w, http.StatusBadRequest, errorx.GetErrorMsg(err))
+		// 	response.BadRequest(w, errorx.GetErrorMsg(err))
+		// 	return
+		// }
+		//
+		// var buf []byte
+		// ioWriter := bytes.NewBuffer(buf)
+		//
+		// err = applyFormPdf.Generate(ioWriter)
 		if err != nil {
 			// response.BadRequestWithCode(w, http.StatusBadRequest, errorx.GetErrorMsg(err))
 			response.BadRequest(w, errorx.GetErrorMsg(err))
@@ -70,7 +72,7 @@ func ApplyFormPdfHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		// output pdf
 		w.Header().Set("Content-Type", "application/pdf")
 		w.Header().Set("Content-Disposition", "attachment; filename=apply_form.pdf")
-		w.Header().Set("Content-Length", strconv.FormatInt(int64(len(ioWriter.Bytes())), 10))
-		_, _ = w.Write(ioWriter.Bytes())
+		w.Header().Set("Content-Length", strconv.FormatInt(int64(len(resp)), 10))
+		_, _ = w.Write(resp)
 	}
 }

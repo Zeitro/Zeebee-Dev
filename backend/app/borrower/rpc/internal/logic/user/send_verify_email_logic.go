@@ -4,8 +4,6 @@ import (
 	"context"
 	"time"
 
-	"github.com/pkg/errors"
-
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/global"
@@ -47,10 +45,10 @@ func (l *SendVerifyEmailLogic) SendVerifyEmail(in *borrower.SendVerifyEmailReque
 	)
 	ok, err := global.SendRegisterEmailLimiter.Limit(l.ctx, key, limitOpt)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	if !ok {
-		return nil, errors.WithStack(errors.Errorf("Email %s try too many times", email))
+		return nil, errorx.Errorf("Email %s Try Too Many Times", email)
 	}
 
 	// check user status
@@ -60,11 +58,11 @@ func (l *SendVerifyEmailLogic) SendVerifyEmail(in *borrower.SendVerifyEmailReque
 	}
 
 	if user.Status != constants.UserStatusUnverified {
-		return nil, errors.WithStack(errors.New("User is verified"))
+		return nil, errorx.WithStack(errorx.New("User Is Verified"))
 	}
 
 	if user.Borrower == nil {
-		return nil, errors.WithStack(errors.New("User is not found"))
+		return nil, errorx.WithStack(errorx.New("User Is Not Found"))
 	}
 
 	// send email
@@ -76,7 +74,7 @@ func (l *SendVerifyEmailLogic) SendVerifyEmail(in *borrower.SendVerifyEmailReque
 			l.WithContext(ctx).Error(err)
 		}
 		if err != nil {
-			err = errors.Wrap(err, "send register verify email error")
+			err = errorx.Wrap(err, "Send Register Verify Email Error")
 			l.WithContext(ctx).Error(err)
 		}
 	}()

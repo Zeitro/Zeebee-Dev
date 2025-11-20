@@ -5,7 +5,6 @@ import (
 
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
-	"github.com/pkg/errors"
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
@@ -37,31 +36,22 @@ func (l *UpdateLogic) Update(req *types.LoanUpdateRequest) (resp *types.EmptyRes
 	}
 	resp = &types.EmptyResponse{}
 
-	err = copier.Copy(&rpcReq.Data, req)
+	err = copier.CopyWithOption(&rpcReq.Data, req, copier.Option{
+		DeepCopy:      true,
+		IgnoreEmpty:   false,
+		CaseSensitive: true,
+	})
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
-	rpcReq.Data.LoanProperty.PropertyBase.Address.State = req.LoanProperty.PropertyBase.Address.State
-
-	applicants := make([]*borrower.BorrowerEditApplicantEntry, 0, len(rpcReq.Data.Applicants))
-	for _, applicant := range rpcReq.Data.Applicants {
-		applicant := applicant
-		if len(applicant.FirstName) > 0 && len(applicant.LastName) > 0 {
-			applicants = append(applicants, applicant)
-		}
+	rpcApplicants := slice.UniqueByComparator(rpcReq.Data.Applicants, func(item *borrower.ThirdPartyLoanApplicantEditEntry, other *borrower.ThirdPartyLoanApplicantEditEntry) bool {
+		return item.BorrowerApplicantId == other.BorrowerApplicantId
+	})
+	if len(rpcApplicants) == 0 {
+		err = errorx.WithStack(errorx.New("No Applicant"))
+		return nil, err
 	}
-	if len(applicants) > 0 {
-		primaryCount := slice.CountBy(applicants, func(index int, item *borrower.BorrowerEditApplicantEntry) bool {
-			return item.IsPrimary
-		})
-		if primaryCount == 0 {
-			applicants[0].IsPrimary = true
-		}
-		if primaryCount > 1 {
-			return nil, errors.WithStack(errors.New("multiple primary applicant"))
-		}
-	}
-	rpcReq.Data.Applicants = applicants
+	rpcReq.Data.Applicants = rpcApplicants
 
 	// get borrower id
 	rpcReq.Data.BorrowerId, err = utils.GetAccountIdFromCtx(l.ctx)

@@ -19,6 +19,7 @@ const SignIn = ({ form, setPageType }) => {
 	const [modal, contextHolder] = Modal.useModal();
 	const email = Form.useWatch('email', form);
 	const password = Form.useWatch('password', form);
+	const remember = Form.useWatch('remember', form);
 
 	useEffect(() => {
 		const account = localStorageUtil.get('account');
@@ -29,7 +30,16 @@ const SignIn = ({ form, setPageType }) => {
 				remember: true,
 			});
 		}
-	}, []);
+	}, [form]);
+
+	// 保存登录信息
+	useEffect(() => {
+		if (remember) {
+			localStorageUtil.set('account', { email, password });
+		} else {
+			localStorageUtil.remove('account');
+		}
+	}, [email, password, remember]);
 
 	// 重新验证邮箱（针对已注册未验证用户）
 	const reVerify = async () => {
@@ -140,18 +150,7 @@ const SignIn = ({ form, setPageType }) => {
 			<div className="text-xs/5 text-base-error">{apiError}</div>
 			<div className="flex items-center justify-between">
 				<Form.Item name="remember" valuePropName="checked" label={null} className="!mb-4">
-					<Checkbox
-						size="small"
-						onChange={({ target: { checked } }) => {
-							if (checked) {
-								localStorageUtil.set('account', { email, password });
-							} else {
-								localStorageUtil.remove('account');
-							}
-						}}
-					>
-						Remember me
-					</Checkbox>
+					<Checkbox size="small">Remember me</Checkbox>
 				</Form.Item>
 				<Form.Item label={null} className="!mb-4">
 					<Button

@@ -10,7 +10,7 @@ const Documents = ({ rowData }) => {
 			let lList = rowData?.loan_documents?.filter(
 				(item) =>
 					['Borrower', 'Extend'].includes(item.category) &&
-					item.status !== 'Pending upload',
+					item.status !== 'Pending request',
 			);
 			setLenderList(lList);
 		}

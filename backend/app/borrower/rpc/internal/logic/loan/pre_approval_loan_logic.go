@@ -3,18 +3,16 @@ package loanlogic
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/duke-git/lancet/v2/mathutil"
 	"github.com/jinzhu/copier"
-	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/borrower/rpc/internal/email_tpl"
 	"zeebee-backend/app/borrower/rpc/internal/global"
-	"zeebee-backend/app/borrower/rpc/internal/repo"
-	"zeebee-backend/app/borrower/rpc/internal/repo/model"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
@@ -23,6 +21,8 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/preapproval_engine"
 	"zeebee-backend/common/uuid"
+	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/repo"
 )
 
 type PreApprovalLoanLogic struct {
@@ -42,7 +42,7 @@ func NewPreApprovalLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *P
 func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalRequest) (*borrower.LoanPreApprovalResponse, error) {
 
 	if in.Data.Property == nil || in.Data.Property.Address == nil {
-		return nil, errors.New("invalid property address")
+		return nil, errorx.New("Invalid Property Address")
 	}
 
 	// get geo data
@@ -52,10 +52,10 @@ func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalReque
 	})
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.Errorf("property address is not found")
+			return nil, errorx.Errorf("Property Address Is Not Found")
 		}
 
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 
 	engines := preapproval_engine.GetDefaultPreApprovalEngines()
@@ -134,12 +134,12 @@ func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalReque
 	contents, _ := json.Marshal(cacheData)
 	err = global.GetRedis().SetExpire(l.ctx, key, string(contents), global.Config.PreApprovalLoanExpireSeconds)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 
 	selfLenderCompany, err := l.svcCtx.LenderCompanyRepo.FindOneByColumns(l.ctx, map[string]interface{}{"owner_type": constants.LenderCompanyOwnerTypeSelf})
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	go func() {
 		ctx := context.WithoutCancel(l.ctx)
@@ -160,7 +160,7 @@ func sendPreApprovalNotification(ctx context.Context, repo *repo.LenderCompanyRe
 	sendKey := fmt.Sprintf(constants.BorrowerSendAprApprovalNotificationKey, lenderCompanyId, requestId)
 	isSend, err := global.GetRedis().IsExisted(ctx, sendKey)
 	if err != nil {
-		return errors.WithStack(err)
+		return errorx.WithStack(err)
 	}
 	if isSend {
 		return nil
@@ -168,7 +168,7 @@ func sendPreApprovalNotification(ctx context.Context, repo *repo.LenderCompanyRe
 	// check company status
 	company, err = repo.FindOneById(ctx, lenderCompanyId)
 	if err != nil {
-		return errors.WithStack(err)
+		return errorx.WithStack(err)
 	}
 	if len(company.ContactEmail) == 0 || company.Status != constants.LenderCompanyStatusActive {
 		return nil
@@ -178,12 +178,12 @@ func sendPreApprovalNotification(ctx context.Context, repo *repo.LenderCompanyRe
 	cacheKey := fmt.Sprintf(constants.BorrowerPreApprovalCacheKey, requestId)
 	cacheDataStr, err := global.GetRedis().Get(ctx, cacheKey)
 	if err != nil {
-		return errors.WithStack(err)
+		return errorx.WithStack(err)
 	}
 	cacheData := types.PreApproveLoanCacheData{}
 	err = json.Unmarshal([]byte(cacheDataStr), &cacheData)
 	if err != nil {
-		return errors.WithStack(err)
+		return errorx.WithStack(err)
 	}
 	if cacheData.ResultData == nil {
 		cacheData.ResultData = &types.LoanPreApprovalResult{}
@@ -215,10 +215,10 @@ func sendPreApprovalNotification(ctx context.Context, repo *repo.LenderCompanyRe
 	// case constants.LenderCompanyOwnerTypeThirdParty:
 	// 	emailContent, err = email.ParseTemplate(email_tpl.ThirdPartyPreApprovalNotification, tplVars)
 	// default:
-	// 	err = errors.New("invalid company owner type")
+	// 	err = errorx.New("Invalid Company Owner Type")
 	// }
 	if err != nil {
-		return errors.WithStack(err)
+		return errorx.WithStack(err)
 	}
 
 	// send email
@@ -232,7 +232,7 @@ func sendPreApprovalNotification(ctx context.Context, repo *repo.LenderCompanyRe
 
 	err = global.EmailClient.SendEmail(emailMsg)
 	if err != nil {
-		return errors.WithStack(err)
+		return errorx.WithStack(err)
 	}
 	// save send record
 	_ = global.GetRedis().SetExpire(ctx, sendKey, "1", global.Config.PreApprovalLoanExpireSeconds)
