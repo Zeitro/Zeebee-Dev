@@ -1,11 +1,9 @@
 'use client';
 import React, { useState } from 'react';
 import styles from './index.module.scss';
-import CommonUpload from '@/components/CommonUpload';
 import { InboxOutlined } from '@ant-design/icons';
 import ArticleSvg from '@/assets/images/article.svg';
-import CommonDownloadButton from '@/components/CommonDownload';
-import ViewFileButton from '@/components/ViewFile';
+import { DownloadFileButton, UploadFileButton, ViewFile } from '@repo/shared-methods';
 import { Space } from 'antd';
 const Documents = () => {
 	const [fileList, setFileList] = useState([]);
@@ -19,7 +17,7 @@ const Documents = () => {
 				>
 					Drag and drop your document here, or click to select a file.
 				</p>
-				<CommonUpload
+				<UploadFileButton
 					immediateUpload={false}
 					accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
 					onGetUploadList={setFileList}
@@ -37,7 +35,7 @@ const Documents = () => {
 							Supported formats: PDF, DOC, PNG, JPG, JPEG Maximum file size: 10MB
 						</p>
 					</div>
-				</CommonUpload>
+				</UploadFileButton>
 			</div>
 			{fileList?.length > 0 && (
 				<div className="py-6 px-6 border border-base-border rounded-2xl">
@@ -65,8 +63,8 @@ const Documents = () => {
 									</p>
 								</div>
 								<Space>
-									<ViewFileButton disabled={false} file={item} />
-									<CommonDownloadButton disabled={false} fileUrl={item.url} />
+									<ViewFile disabled={false} file={item} />
+									<DownloadFileButton disabled={false} fileUrl={item.url} />
 								</Space>
 							</div>
 						);

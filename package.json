@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Repository for Zeebee, Private lending mortgage platform",
   "main": "index.js",
+  "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "husky install"
@@ -10,6 +11,9 @@
   "lint-staged": {
     "frontend/borrower/**/*.{js,jsx,ts,tsx,json,css,scss}": [
       "cd frontend/borrower && npm run lint:staged"
+    ],
+    "frontend/lender/**/*.{js,jsx,ts,tsx,json,css,scss}": [
+      "cd frontend/lender && npm run lint:staged"
     ]
   },
   "repository": {

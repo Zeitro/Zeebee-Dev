@@ -8,6 +8,7 @@ import { getCurrentRouterItem } from '@config/common';
 import { noNavRouter, navRouter } from '@config/routes';
 import { usePathname, useRouter } from 'next/navigation';
 import { useUserStore } from '@/store/user';
+import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 const defaultToken = {
 	colorPrimary: '#1677ff',
 	colorTextBase: 'rgba(0, 0, 0, 0.88)',
@@ -54,8 +55,8 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userInfo, pathname]);
 
-	useEffect(
-		() => {
+	useDeferredSyncEffect({
+		deferred: () => {
 			setAntdToken({
 				colorPrimary: getCssVarValue('--base-primary', 'colorPrimary'),
 				// colorBgContainer: getCssVarValue('--background'),
@@ -77,9 +78,9 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 				// ... 其他 token ...
 			});
 		},
-		[],
-		// 依赖主题切换变量
-	);
+		deps: [],
+		isUseMicrotask: true,
+	});
 
 	return (
 		<ConfigProvider

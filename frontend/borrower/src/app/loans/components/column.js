@@ -1,6 +1,6 @@
-import { formatAmount } from '@/lib/format';
+import { formatAmount } from '@repo/shared-methods/utils';
 import { LoanPendingStatus } from './ChangeStageStatus';
-import TableOperation from '@/components/TableOperation';
+import { TableOperation } from '@repo/shared-methods';
 export const get3rdPartyMark = (v, { source }) => (
 	<div className="flex items-center">
 		<p className="overflow-hidden text-ellipsis whitespace-nowrap" title={v}>
@@ -17,7 +17,7 @@ const common = (isNotAddress) => {
 	const addressArr = [
 		{
 			title: 'Property address',
-			dataIndex: ['loan_property', 'property_base', 'address', 'address1'],
+			dataIndex: ['loan_property', 'address', 'address1'],
 			key: 'address',
 			ellipsis: true,
 			sorter: true,
@@ -29,21 +29,21 @@ const common = (isNotAddress) => {
 		},
 		{
 			title: 'City',
-			dataIndex: ['loan_property', 'property_base', 'address', 'city'],
+			dataIndex: ['loan_property', 'address', 'city'],
 			key: 'city',
 			width: 120,
 			ellipsis: true,
 		},
 		{
 			title: 'State',
-			dataIndex: ['loan_property', 'property_base', 'address', 'state'],
+			dataIndex: ['loan_property', 'address', 'state'],
 			key: 'state',
 			width: 70,
 			ellipsis: true,
 		},
 		{
 			title: 'Zip code',
-			dataIndex: ['loan_property', 'property_base', 'address', 'zip_code'],
+			dataIndex: ['loan_property', 'address', 'zip_code'],
 			key: 'zip_code',
 			ellipsis: true,
 			width: 120,
@@ -336,7 +336,7 @@ export const archivedColumns = (isNotAddress, showDeleteModal) => [
 		dataIndex: 'loan_type',
 		key: 'loan_type',
 		ellipsis: true,
-		width: 180,
+		width: isNotAddress ? null : 180,
 	},
 	{
 		title: 'Principal Balance',
@@ -344,7 +344,7 @@ export const archivedColumns = (isNotAddress, showDeleteModal) => [
 		key: 'principal_amount',
 		ellipsis: true,
 		sorter: true,
-		width: 180,
+		width: isNotAddress ? null : 180,
 		render: (v) => formatAmount(v),
 	},
 	{
@@ -352,7 +352,7 @@ export const archivedColumns = (isNotAddress, showDeleteModal) => [
 		dataIndex: 'lender_company',
 		key: 'lender_company',
 		ellipsis: true,
-		width: 180,
+		width: isNotAddress ? null : 180,
 	},
 	{
 		title: 'Rate',
@@ -360,7 +360,7 @@ export const archivedColumns = (isNotAddress, showDeleteModal) => [
 		key: 'rate',
 		ellipsis: true,
 		sorter: true,
-		width: 90,
+		width: isNotAddress ? null : 90,
 		render: (v) => (v ? `${v}%` : '--'),
 	},
 	{
@@ -369,7 +369,7 @@ export const archivedColumns = (isNotAddress, showDeleteModal) => [
 		key: 'paid_off_date',
 		ellipsis: true,
 		sorter: true,
-		width: 160,
+		width: isNotAddress ? null : 160,
 		render: (v) => v || '--',
 	},
 	getOpt(showDeleteModal),

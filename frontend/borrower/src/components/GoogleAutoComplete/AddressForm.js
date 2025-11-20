@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect } from 'react';
 import { Form, Input, Col, Select } from 'antd';
-import GoogleAutoComplete from './index';
+import { GoogleAutoComplete } from '@repo/shared-methods';
 import { set } from 'lodash';
 import { useAddressStore } from '@/store/address';
 import { useDisUpdateEffect } from '@/hooks/common';
@@ -22,7 +22,7 @@ const getPath = (name, listName) => {
  * 地址自动完成（包括address1/address2/city/state/zip/unit）
  */
 const AddressForm = ({
-	form,
+	// form,
 	addressName = 'address',
 	addressLabel = 'Street address 1',
 	addressName2 = 'address',
@@ -42,7 +42,9 @@ const AddressForm = ({
 	isShowAddress2 = true,
 	isShowZip = true,
 	listName = '', // 此组件使用在Form.List内时传此字段,且Form.List上的name属性值与此listName字段值一致；方便用于设置form.setFieldsValue
+	isRequest = true,
 }) => {
+	const form = Form.useFormInstance();
 	const { getStateList, getCityList, stateOptions, cityOptions } = useAddressStore();
 	const stateValue = Form.useWatch(getPath(stateName, listName), form);
 	const handlePlaceSelected = (place) => {
@@ -60,14 +62,16 @@ const AddressForm = ({
 	};
 
 	useEffect(() => {
-		getStateList();
-	}, []);
+		if (isRequest) {
+			getStateList();
+		}
+	}, [getStateList, isRequest]);
 
 	useDisUpdateEffect(() => {
-		if (stateValue) {
+		if (stateValue && isRequest) {
 			getCityList(stateValue);
 		}
-	}, [stateValue]);
+	}, [stateValue, isRequest]);
 
 	const shouldUpdate = (prevValues, curValues) => {
 		const allAddressName = getPath(addressName, listName);

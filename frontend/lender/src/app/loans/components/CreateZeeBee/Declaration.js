@@ -3,7 +3,7 @@ import { Col, Form, Radio, Row } from 'antd';
 import styles from './index.module.scss';
 import { titleCol } from '@/enum/common';
 import { yesNoOptions } from '@/enum/common';
-import InputNumAmount from '@/components/InputNumAmount';
+import { InputNumAmount } from '@repo/shared-methods';
 import { useGetOptions } from '@/hooks/useGetOptions';
 const Declaration = ({ gutter, form, disabled }) => {
 	const { getSelectFormDom } = useGetOptions([

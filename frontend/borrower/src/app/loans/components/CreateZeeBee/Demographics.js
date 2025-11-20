@@ -1,8 +1,8 @@
 import React from 'react';
-import { Checkbox, Col, Form, Radio, Row } from 'antd';
+import { Col, Form, Row } from 'antd';
 import styles from './index.module.scss';
 import { titleCol } from '@/enum/common';
-import NestedCheckboxes from '@/components/NestedCheckboxes';
+import { NestedCheckboxes } from '@repo/shared-methods';
 import { raceOptions, ethnicityOptions } from '@/enum/loan';
 import { useGetOptions } from '@/hooks/useGetOptions';
 const Demographics = ({ gutter = 24, form }) => {

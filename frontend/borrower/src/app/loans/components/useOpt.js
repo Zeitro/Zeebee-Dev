@@ -1,9 +1,8 @@
 'use client';
 import React, { useState } from 'react';
-import { createRequest } from '@/lib/fetch';
+import { createRequest, assemblyAddress } from '@repo/shared-methods/utils';
 import { message, Modal } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { assemblyAddress } from '@/lib/format';
 import { useRouter } from 'next/navigation';
 import { useGlobalStore } from '@/store/global';
 export default function useOpt(tableFilterRef) {
@@ -23,19 +22,21 @@ export default function useOpt(tableFilterRef) {
 				type: 'success',
 				content: 'Delete successful!',
 			});
-		} catch (error) {
+		} catch {
 			setConfirmLoading(false);
 		}
 	};
 
-	const showDeleteModal = ({ property, id }) => {
+	const showDeleteModal = ({ loan_property, id }) => {
 		modal.confirm({
 			title: 'Are you sure you want to delete this loan?',
 			icon: <ExclamationCircleOutlined className="!text-base-warning" />,
 			content: (
 				<div>
 					You are about to delete the loan associated with:
-					<p className="font-bold pb-8">{assemblyAddress(property?.address, true)}</p>
+					<p className="font-bold pb-8">
+						{assemblyAddress(loan_property?.address, true)}
+					</p>
 					Once deleted , this loan will no longer appear in your portfolio and cannot be
 					recovered.
 				</div>

@@ -3,8 +3,8 @@ import { usePathname, useRouter, useParams } from 'next/navigation';
 import { Button, Dropdown } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { matchRoute } from '@config/common';
-import { useMemo, useState } from 'react';
-import { BtnPopUpModal } from '../NewModal/BtnPopUpModal';
+import { useState } from 'react';
+import { BtnPopUpModal } from '@repo/shared-methods';
 import ImportLoansModal from '@/app/loans/components/ImportLoanModal';
 export const CustomContent = () => {
 	const pathname = usePathname();

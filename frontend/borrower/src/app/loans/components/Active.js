@@ -1,11 +1,10 @@
 'use client';
 import React, { useMemo, useState, useRef } from 'react';
 import { ReloadOutlined } from '@ant-design/icons';
-import FilterTable from '@/components/FilterTable';
+import { FilterTable } from '@repo/shared-methods';
 import { activeColumns } from './column';
-import { transformArrayStructure } from '@/lib/common';
+import { transformArrayStructure, createRequest } from '@repo/shared-methods/utils';
 import { useOptionsStore } from '@/store/options';
-import { createRequest } from '@/lib/fetch';
 import useOpt from './useOpt';
 const ActiveLoans = ({
 	hasFilterField,
@@ -18,6 +17,7 @@ const ActiveLoans = ({
 	loading,
 	scrollX = 2600,
 	stage = 'Active',
+	filterName,
 }) => {
 	const { loanPurposeOptions, loanTypeOptions, lenderOptions } = useOptionsStore();
 	const { request } = createRequest();
@@ -143,6 +143,7 @@ const ActiveLoans = ({
 				filterWrapClassName={filterWrapClassName}
 				dataSource={dataSource}
 				dataSourceLoading={loading}
+				filterName={filterName}
 				onRow={(row) => ({
 					onClick: () => {
 						handleSelectedRow(row, stage);

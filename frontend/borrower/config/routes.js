@@ -45,6 +45,24 @@ export const navRouter = [
 			},
 		],
 	},
+	{
+		path: '/management',
+		title: 'Management',
+		icon: 'management',
+		isPageNotFound: true, // 只是用于侧边栏显示,并无此页面
+		router: [
+			{
+				path: '/management/borrowingEntity',
+				title: 'Management ( Borrowing Entity )',
+				menuTitle: 'Borrowing Entity',
+			},
+			{
+				path: '/management/borrower',
+				title: 'Management ( Borrower )',
+				menuTitle: 'Borrower',
+			},
+		],
+	},
 ];
 
 export const noTokenRouter = [

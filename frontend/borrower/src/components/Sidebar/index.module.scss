@@ -1,10 +1,5 @@
 .sidebar {
-	transition: 0.3s width;
-	.logo {
-	}
-
-	.userInfo {
-	}
+	transition: width 0.3s cubic-bezier(0.2, 0, 0, 1) 0s;
 	.bg {
 		background: linear-gradient(
 			to right,
@@ -15,24 +10,35 @@
 			#c2e9fb 100%
 		);
 	}
+	:global(.ant-menu-inline-collapsed) {
+		width: 56px !important;
+	}
+	:global(.ant-menu-root > .ant-menu-item) {
+		padding-inline: 10px !important;
+	}
+	:global(.ant-menu-vertical > li:hover),
+	:global(.ant-menu-vertical > .ant-menu-submenu-vertical:hover > .ant-menu-submenu-title) {
+		background-color: #f5f5f5 !important;
+	}
 }
+
 .menuList :global {
+	.ant-menu-submenu > .ant-menu-submenu-title {
+		font-size: 24px;
+		padding-left: 10px !important;
+		font-weight: 600;
+	}
 	.ant-menu-item {
-		font-size: 16px;
+		font-size: 24px;
 		font-weight: 600;
 		height: 48px !important;
 		line-height: 48px !important;
-		display: flex !important;
-		align-items: center;
 	}
-}
-.menuList_collapsed :global {
 	.ant-menu-title-content {
-		display: none;
+		font-size: 16px;
 	}
-	.ant-menu-item {
-		padding: 0 !important;
-		justify-content: center;
+	.ant-menu-sub {
+		background: #fff !important;
 	}
 }
 

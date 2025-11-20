@@ -3,10 +3,8 @@ import { Dropdown, message, Tooltip } from 'antd';
 import React, { useMemo, useState } from 'react';
 import { DownOutlined } from '@ant-design/icons';
 import styles from './index.module.css';
-import { createRequest } from '@/lib/fetch';
-import { transformArrayStructure } from '@/lib/common';
+import { createRequest, transformArrayStructure } from '@repo/shared-methods/utils';
 import { useOptionsStore } from '@/store/options';
-// import { loanPendingStatus } from '@/enum/loan';
 let api = '/api/loan/status';
 
 /**
@@ -28,7 +26,7 @@ const LoanPendingStatus = ({ data, successCallback }) => {
 	const { request, cancel } = createRequest();
 	const rowData = useMemo(() => {
 		return items.find((i) => i.key === statusValue) || {};
-	}, [statusValue]);
+	}, [items, statusValue]);
 	const is3rdParty = data?.source === 'borrower';
 
 	const handleSelect = async ({ key }) => {
@@ -46,7 +44,7 @@ const LoanPendingStatus = ({ data, successCallback }) => {
 				content: 'Update successful！',
 			});
 			successCallback?.();
-		} catch (error) {
+		} catch {
 			setLoading(false);
 		}
 	};

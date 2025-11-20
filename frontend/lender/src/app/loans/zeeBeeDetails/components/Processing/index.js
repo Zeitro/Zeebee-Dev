@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import DocumentList from '../DocumentList';
 import { borrowerUploadColumns, lenderUploadColumns } from '../documentColumns';
 import { message } from 'antd';
@@ -7,8 +7,8 @@ import HeaderBtn from '../HeaderBtn';
 import { AddDocument } from '../AddDocument';
 import { SendRequestBtn } from '../SendRequestModal';
 import { useSearchParams } from 'next/navigation';
-import { createRequest } from '@/lib/fetch';
-import eventBus from '@/lib/bus';
+import { eventBus, createRequest } from '@repo/shared-methods/utils';
+import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 const Processing = ({
 	isHide,
 	title = 'Processing',
@@ -24,16 +24,19 @@ const Processing = ({
 	const [borrowerList, setBorrowerList] = useState([]);
 	const [lenderList, setLenderList] = useState([]);
 	const [deleteLoading, setDeleteLoading] = useState(false);
+	const [loading, setLoading] = useState(true);
 	const { request } = createRequest();
 	const sendList = useMemo(
 		() => borrowerList.filter((item) => item.status === 'Pending request') || [],
 		[borrowerList],
 	);
 
-	useEffect(() => {
-		if (rowData?.loan_documents?.length) {
+	useDeferredSyncEffect({
+		predicate: () => rowData?.loan_documents?.length,
+		deferred: () => {
 			let bList = [],
 				lList = [];
+			setLoading(true);
 			rowData?.loan_documents?.map((item) => {
 				if (['Borrower', 'Extend'].includes(item.category)) {
 					bList.push(item);
@@ -44,8 +47,11 @@ const Processing = ({
 			});
 			setBorrowerList(bList);
 			setLenderList(lList);
-		}
-	}, [rowData]);
+			setLoading(false);
+		},
+		deps: [rowData],
+		delay: 0,
+	});
 
 	const handleDelete = async (record) => {
 		try {
@@ -105,11 +111,13 @@ const Processing = ({
 					columns={borrowerUploadColumns(isHide, handleClickOpt, deleteLoading)}
 					dataSource={[...borrowerList]}
 					isHide={isHide}
+					loading={loading}
 				/>
 				<DocumentList
 					columns={lenderUploadColumns(isHide)}
 					dataSource={[...lenderList]}
 					isHide={isHide}
+					loading={loading}
 				/>
 			</div>
 		</div>
