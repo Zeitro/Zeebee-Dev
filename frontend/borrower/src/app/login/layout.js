@@ -32,7 +32,6 @@ const LoginLayout = ({ children }) => {
 						height={30}
 						alt="logo"
 						className="!h-full"
-						priority
 					/>
 				</div>
 			</div>
