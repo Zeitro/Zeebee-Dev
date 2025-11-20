@@ -77,7 +77,6 @@ const SidebarDom = () => {
 							styles.logoImg,
 							rect?.width < 150 && styles.logoImg_hidden,
 						].join(' ')}
-						priority
 					/>
 					<Image
 						src="/images/logo_abbreviated.png"
@@ -88,7 +87,6 @@ const SidebarDom = () => {
 							styles.logoImgSmall,
 							rect?.width >= 150 && styles.logoImgSmall_hidden,
 						].join(' ')}
-						priority
 					/>
 				</div>
 			</div>

@@ -61,7 +61,7 @@ const SidebarDom = () => {
 				].join(' ')}
 				onClick={() => handleSelect({ key: homePathname })}
 			>
-				<Image src="/images/logo.svg" width={95} height={30} alt="ZeeBee Logo" priority />
+				<Image src="/images/logo.svg" width={95} height={30} alt="ZeeBee Logo" />
 			</div>
 			<Menu
 				mode="inline"
