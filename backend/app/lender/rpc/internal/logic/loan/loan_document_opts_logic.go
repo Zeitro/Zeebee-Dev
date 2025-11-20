@@ -5,10 +5,10 @@ import (
 
 	"github.com/jinzhu/copier"
 
-	"zeebee-backend/app/lender/rpc/internal/repo"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/constants"
+	"zeebee-backend/domains/zeebee/repo"
 
 	"github.com/zeromicro/go-zero/core/logx"
 

@@ -48,7 +48,7 @@ func (l *GormLogger) Trace(ctx context.Context, begin time.Time, fc func() (sql 
 		logx.Field("duration", timex.ReprOfDuration(elapsed)),
 		logx.Field("rows", rows),
 	}
-	subLog := logx.WithContext(ctx).WithCallerSkip(8)
+	subLog := logx.WithContext(ctx).WithCallerSkip(3)
 	if err != nil {
 		// not found record
 		if errors.Is(err, gorm.ErrRecordNotFound) {

@@ -90,9 +90,9 @@ service lender-api {
 	@handler Info
 	get /user/info (EmptyRequest) returns (UserInfoResponse)
 
-    @doc "switch lender company"
-    @handler SwitchLenderCompany
-    post /user/switch_lender_company (UserSwitchLenderCompanyRequest) returns (UserRefreshTokenResponse)
+	@doc "switch lender company"
+	@handler SwitchLenderCompany
+	post /user/switch_lender_company (UserSwitchLenderCompanyRequest) returns (UserRefreshTokenResponse)
 }
 
 // ============== loan =============

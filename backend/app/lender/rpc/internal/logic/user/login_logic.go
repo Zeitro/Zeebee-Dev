@@ -6,16 +6,14 @@ import (
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
 
-	"github.com/pkg/errors"
-
 	"zeebee-backend/app/lender/rpc/internal/global"
-	"zeebee-backend/app/lender/rpc/internal/repo/model"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/utils"
+	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -49,19 +47,19 @@ func (l *LoginLogic) Login(in *lender.UserLoginRequest) (resp *lender.UserLoginR
 	if global.Config.LimiterConf.Login.Rate > 0 {
 		loginFailedTimes, err = global.GetRedis().GetInt(l.ctx, redisKey)
 		if err != nil {
-			return nil, errors.WithStack(err)
+			return nil, errorx.WithStack(err)
 		}
 		if loginFailedTimes >= global.Config.LimiterConf.Login.Rate {
-			return nil, errors.WithStack(errors.New("Login failed times exceeded, please try again later"))
+			return nil, errorx.WithStack(errorx.New("Login Failed Times Exceeded, Please Try Again Later"))
 		}
 	}
 
 	user, err := l.svcCtx.UserRepo.GetLenderUserByEmail(l.ctx, in.Data.Email)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	if user.LenderEmployee == nil {
-		return nil, errors.New("User not found.")
+		return nil, errorx.New("User Not Found.")
 	}
 
 	// check pwd
@@ -69,59 +67,41 @@ func (l *LoginLogic) Login(in *lender.UserLoginRequest) (resp *lender.UserLoginR
 		// add input wrong pwd times to redis
 		_, err = global.GetRedis().IncreaseExpire(l.ctx, redisKey, global.Config.LimiterConf.Login.Period)
 		if err != nil {
-			return nil, errors.WithStack(err)
+			return nil, errorx.WithStack(err)
 		}
-		return nil, errors.WithStack(errors.New("The email and password you entered don't match."))
+		return nil, errorx.WithStack(errorx.New("The Email And Password You Entered Don't Match."))
 	}
 
 	if global.Config.LimiterConf.Login.Rate > 0 {
 		err = global.GetRedis().Del(l.ctx, redisKey)
 		if err != nil {
-			return nil, errors.WithStack(err)
+			return nil, errorx.WithStack(err)
 		}
 	}
 
 	// check status
 	if user.Status == constants.UserStatusInactive {
-		return nil, errors.WithStack(errors.New("User is not active"))
+		return nil, errorx.WithStack(errorx.New("User Is Not Active"))
 	}
 	if user.Status == constants.UserStatusUnverified {
-		return nil, errors.WithStack(errors.New("User is unverified"))
+		return nil, errorx.WithStack(errorx.New("User Is Unverified"))
 	}
 
 	// check company
-	//var companies []*model.LenderCompany
-	//var companyChanged bool
 	if user.LenderEmployee == nil {
-		return nil, errors.WithStack(errors.New("LenderEmployee is empty."))
+		return nil, errorx.WithStack(errorx.New("LenderEmployee Is Empty."))
 	}
-	//employee := user.LenderEmployee
 
 	employee, err := l.baseLogic.CheckAndUpdateActiveLenderCompanyByEmployee(user.LenderEmployee)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	user.LenderEmployee = employee
-
-	//currentCompany, companyChanged, err := l.baseLogic.GetActiveLenderCompanyByEmployee(employee)
-	//if err != nil {
-	//	return nil, errors.WithStack(err)
-	//}
-	//if companyChanged {
-	//	employee.LenderCompanyId = condition.Ternary(currentCompany==nil,0,currentCompany.Id)
-	//	err = l.svcCtx.LenderEmployeeRepo.UpdateColumnsById(l.ctx, employee.UserId, map[string]interface{}{
-	//		"lender_company_id": employee.LenderCompanyId,
-	//	})
-	//	if err != nil {
-	//		return nil, errors.WithStack(err)
-	//	}
-	//	user.LenderEmployee = employee
-	//}
 
 	// token
 	token, err := generateLenderToken(user, l.svcCtx)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 
 	return &lender.UserLoginResponse{
@@ -136,7 +116,7 @@ func (l *LoginLogic) Login(in *lender.UserLoginRequest) (resp *lender.UserLoginR
 
 func generateLenderToken(user *model.User, svcCtx *svc.ServiceContext) (token *lender.UserLoginResponseData, err error) {
 	if user.LenderEmployee == nil {
-		return nil, errors.WithStack(errors.New("LenderEmployee is empty."))
+		return nil, errorx.WithStack(errorx.New("LenderEmployee Is Empty."))
 	}
 	accessToken, err := utils.GenerateToken(
 		strconv.Itoa(int(user.Id)),
@@ -149,7 +129,7 @@ func generateLenderToken(user *model.User, svcCtx *svc.ServiceContext) (token *l
 		svcCtx.Config.JwtAuth.AccessExpire,
 	)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	refreshToken, err := utils.GenerateToken(
 		strconv.Itoa(int(user.Id)),
@@ -162,7 +142,7 @@ func generateLenderToken(user *model.User, svcCtx *svc.ServiceContext) (token *l
 		svcCtx.Config.JwtAuth.RefreshExpire,
 	)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	token = &lender.UserLoginResponseData{
 		AccessToken:        accessToken,
@@ -171,5 +151,4 @@ func generateLenderToken(user *model.User, svcCtx *svc.ServiceContext) (token *l
 		RefreshTokenExpire: svcCtx.Config.JwtAuth.RefreshExpire,
 	}
 	return
-
 }

@@ -97,6 +97,7 @@ li {
 	width: 10px;
 	height: 8px;
 	background-color: #ffffff;
+	border-radius: 10px;
 }
 
 ::-webkit-scrollbar-track {

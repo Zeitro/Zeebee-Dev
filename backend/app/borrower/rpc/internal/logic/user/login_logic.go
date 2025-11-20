@@ -4,18 +4,17 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/pkg/errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	"zeebee-backend/app/borrower/rpc/internal/global"
-	"zeebee-backend/app/borrower/rpc/internal/repo/model"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/utils"
+	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -46,19 +45,19 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 	if global.Config.LimiterConf.Login.Rate > 0 {
 		loginFailedTimes, err = global.GetRedis().GetInt(l.ctx, redisKey)
 		if err != nil {
-			return nil, errors.WithStack(err)
+			return nil, errorx.WithStack(err)
 		}
 		if loginFailedTimes >= global.Config.LimiterConf.Login.Rate {
-			return nil, errors.WithStack(errors.New("Login failed times exceeded, please try again later"))
+			return nil, errorx.New("Login Failed Times Exceeded, Please Try Again Later")
 		}
 	}
 
 	user, err := l.svcCtx.UserRepo.GetBorrowerUserByEmail(l.ctx, in.Data.Email)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	if user.Borrower == nil {
-		return nil, errors.New("User not found.")
+		return nil, errorx.New("User Not Found.")
 	}
 
 	// check pwd
@@ -66,24 +65,24 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 		// add input wrong pwd times to redis
 		_, err = global.GetRedis().IncreaseExpire(l.ctx, redisKey, global.Config.LimiterConf.Login.Period)
 		if err != nil {
-			return nil, errors.WithStack(err)
+			return nil, errorx.WithStack(err)
 		}
-		return nil, errors.WithStack(errors.New("The email and password you entered don't match."))
+		return nil, errorx.WithStack(errorx.New("The Email And Password You Entered Don't Match."))
 	}
 
 	if global.Config.LimiterConf.Login.Rate > 0 {
 		err = global.GetRedis().Del(l.ctx, redisKey)
 		if err != nil {
-			return nil, errors.WithStack(err)
+			return nil, errorx.WithStack(err)
 		}
 	}
 
 	// check status
 	if user.Status == constants.UserStatusInactive {
-		return nil, errors.WithStack(errors.New("User is not active"))
+		return nil, errorx.New("User Is Not Active")
 	}
 	if user.Status == constants.UserStatusUnverified {
-		err = status.Error(codes.PermissionDenied, "User is unverified")
+		err = status.Error(codes.PermissionDenied, "User Is Unverified")
 		return nil, err
 	}
 
@@ -99,7 +98,7 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 		l.svcCtx.Config.JwtAuth.AccessExpire,
 	)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 
 	// refresh token
@@ -114,7 +113,7 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 		l.svcCtx.Config.JwtAuth.RefreshExpire,
 	)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 
 	return &borrower.UserLoginResponse{
@@ -129,7 +128,7 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 
 func generateBorrowerToken(user *model.User, svcCtx *svc.ServiceContext) (token *borrower.UserLoginResponseData, err error) {
 	if user.Borrower == nil {
-		return nil, errors.WithStack(errors.New("Borrower is empty."))
+		return nil, errorx.WithStack(errorx.New("Borrower Is Empty."))
 	}
 	accessToken, err := utils.GenerateToken(
 		strconv.Itoa(int(user.Id)),
@@ -142,7 +141,7 @@ func generateBorrowerToken(user *model.User, svcCtx *svc.ServiceContext) (token 
 		svcCtx.Config.JwtAuth.AccessExpire,
 	)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	refreshToken, err := utils.GenerateToken(
 		strconv.Itoa(int(user.Id)),
@@ -155,7 +154,7 @@ func generateBorrowerToken(user *model.User, svcCtx *svc.ServiceContext) (token 
 		svcCtx.Config.JwtAuth.RefreshExpire,
 	)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	token = &borrower.UserLoginResponseData{
 		AccessToken:        accessToken,

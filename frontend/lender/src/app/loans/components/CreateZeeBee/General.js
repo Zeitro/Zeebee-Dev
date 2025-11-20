@@ -89,7 +89,7 @@ export const collateralSummaryFields = [
 	},
 	{
 		label: 'Estimated current value ',
-		value: 'ltv',
+		value: 'est_property_value_amount',
 		render: (v) => formatAmount(v),
 	},
 	{

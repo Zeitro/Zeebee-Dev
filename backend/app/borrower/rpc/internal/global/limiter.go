@@ -1,9 +1,8 @@
 package global
 
 import (
-	"github.com/pkg/errors"
-
 	"zeebee-backend/app/borrower/config"
+	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/limiter"
 )
 
@@ -20,7 +19,7 @@ func initLimiter(cnf config.RedisConf) (err error) {
 		Tls:  cnf.Tls,
 	})
 	if err != nil {
-		return errors.Wrap(err, "init limiter error")
+		return errorx.Wrap(err, "Init Limiter Error")
 	}
 	SendLoginEmailLimiter = limiter.NewRedisLimiterWithRedis(rdb)
 	SendRegisterEmailLimiter = limiter.NewRedisLimiterWithRedis(rdb)

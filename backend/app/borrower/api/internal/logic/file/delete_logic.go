@@ -3,8 +3,6 @@ package file
 import (
 	"context"
 
-	"github.com/pkg/errors"
-
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
@@ -33,7 +31,7 @@ func (l *DeleteLogic) Delete(req *types.PathIdRequest) (resp *types.EmptyRespons
 	// Get borrower id from context
 	borrowerId, err := utils.GetAccountIdFromCtx(l.ctx)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 
 	// Call RPC to delete file

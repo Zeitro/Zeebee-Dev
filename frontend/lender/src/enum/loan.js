@@ -259,6 +259,7 @@ export const stageColor = {
 	Pending: 'var(--base-primary)',
 	Active: 'var(--base-success)',
 	Archived: 'var(--base-error)',
+	Draft: 'var(--base-warning)',
 };
 
 export const pendingStatusColor = {
@@ -344,4 +345,5 @@ export const loanDetailsFields = {
 	Pending: pendingFields,
 	Active: activeFields,
 	Archived: archivedFields,
+	Draft: pendingFields,
 };

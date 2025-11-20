@@ -3,7 +3,6 @@ package loan_document
 import (
 	"context"
 
-	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/lender/api/internal/svc"
@@ -38,7 +37,7 @@ func (l *DeleteLoanDocumentRequestLogic) DeleteLoanDocumentRequest(req *types.Pa
 	// Get lender company id and employee id from context
 	lenderCompanyId, lenderEmployeeId, err := utils.GetLenderCompanyAndEmployeeId(l.ctx)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 
 	// Call RPC method
@@ -50,7 +49,7 @@ func (l *DeleteLoanDocumentRequestLogic) DeleteLoanDocumentRequest(req *types.Pa
 		},
 	})
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 
 	return &types.EmptyResponse{}, nil

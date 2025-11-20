@@ -3,10 +3,9 @@ package userlogic
 import (
 	"context"
 
-	"zeebee-backend/app/lender/rpc/internal/repo/model"
+	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/duke-git/lancet/v2/slice"
-	"github.com/pkg/errors"
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
@@ -43,7 +42,7 @@ func (l *SwitchLenderCompanyLogic) SwitchLenderCompany(in *lender.SwitchLenderCo
 	// get  employee
 	employee, err := l.svcCtx.LenderEmployeeRepo.GetLenderEmployee(l.ctx, in.Data.EmployeeId)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 
 	// check company
@@ -55,7 +54,7 @@ func (l *SwitchLenderCompanyLogic) SwitchLenderCompany(in *lender.SwitchLenderCo
 	})
 
 	if !isValidCompany {
-		return nil, errors.New("invalid lender company for this employee")
+		return nil, errorx.New("Invalid Lender Company For This Employee")
 	}
 
 	// update employee
@@ -64,23 +63,23 @@ func (l *SwitchLenderCompanyLogic) SwitchLenderCompany(in *lender.SwitchLenderCo
 		"default_lender_company_id": employee.DefaultLenderCompanyId,
 	})
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 
 	// get user info
 	user, err := l.svcCtx.UserRepo.GetLenderUser(l.ctx, employee.UserId)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 
 	if user.Status == constants.UserStatusInactive {
-		return nil, errors.New("user is inactive")
+		return nil, errorx.New("User Is Inactive")
 	}
 
 	// generate token
 	token, err := generateLenderToken(user, l.svcCtx)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 
 	return &lender.RefreshTokenResponse{
