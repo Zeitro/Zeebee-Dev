@@ -24,6 +24,7 @@ const Processing = ({
 	const [borrowerList, setBorrowerList] = useState([]);
 	const [lenderList, setLenderList] = useState([]);
 	const [deleteLoading, setDeleteLoading] = useState(false);
+	const [loading, setLoading] = useState(true);
 	const { request } = createRequest();
 	const sendList = useMemo(
 		() => borrowerList.filter((item) => item.status === 'Pending request') || [],
@@ -35,6 +36,7 @@ const Processing = ({
 		deferred: () => {
 			let bList = [],
 				lList = [];
+			setLoading(true);
 			rowData?.loan_documents?.map((item) => {
 				if (['Borrower', 'Extend'].includes(item.category)) {
 					bList.push(item);
@@ -45,6 +47,7 @@ const Processing = ({
 			});
 			setBorrowerList(bList);
 			setLenderList(lList);
+			setLoading(false);
 		},
 		deps: [rowData],
 		delay: 0,
@@ -108,11 +111,13 @@ const Processing = ({
 					columns={borrowerUploadColumns(isHide, handleClickOpt, deleteLoading)}
 					dataSource={[...borrowerList]}
 					isHide={isHide}
+					loading={loading}
 				/>
 				<DocumentList
 					columns={lenderUploadColumns(isHide)}
 					dataSource={[...lenderList]}
 					isHide={isHide}
+					loading={loading}
 				/>
 			</div>
 		</div>

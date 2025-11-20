@@ -1,6 +1,6 @@
 'use client';
 import { Button } from 'antd';
-import { formatAmount } from '@/lib/format';
+import { formatAmount } from '@repo/shared-methods/utils';
 
 const OtherLender = ({ result, handleClick }) => {
 	const lenderList = [

@@ -1,7 +1,7 @@
 'use client';
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import eventBus from '@/lib/bus';
+import { eventBus } from '../lib/bus';
 
 // 往根节点portal-root中添加子节点
 export const PortalComponent = () => {

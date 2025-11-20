@@ -11,7 +11,7 @@ import {
 	maxCreditScore,
 	validateRule,
 	tinOrSSNRegex,
-} from '@/lib/format';
+} from '../../lib/format';
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { layoutCol, titleCol } from '@/enum/common';
 // import { useGetOptions } from '@/hooks/useGetOptions';
