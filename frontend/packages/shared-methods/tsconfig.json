@@ -5,14 +5,8 @@
 		"outDir": "dist",
 		"rootDir": "src",
 		"paths": {
-			"@/*": ["./src/*"],
-			"@/lib/*": ["./src/lib/*"],
-			"@/utils": ["./src/utils.js"],
-			"@/api/*": ["./src/api/*"],
-			"@/assets/*": ["./src/assets/*"],
-			"@/hooks/*": ["./src/hooks/*"],
-			"@/components/*": ["./src/components/*"],
-			"@public*": ["./public/*"]
+			"@repo/shared-methods": ["./src/index.ts"],
+			"@repo/shared-methods/*": ["./src/*"],
 		}
 	},
 	"include": ["src"]

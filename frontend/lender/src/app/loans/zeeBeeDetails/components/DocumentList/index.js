@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './index.module.scss';
-import { Space } from 'antd';
+import { Space, Spin } from 'antd';
 import DocumentItem from './Item';
 import { NoData } from '@repo/shared-methods';
 const DocumentList = ({
@@ -13,6 +13,7 @@ const DocumentList = ({
 	isHide,
 	handleClickOpt,
 	deleteLoading,
+	loading,
 	...props
 }) => {
 	return (
@@ -50,7 +51,7 @@ const DocumentList = ({
 						);
 					})
 				) : (
-					<NoData className="bg-[#f2f2f2]" />
+					<NoData className="bg-[#f2f2f2]">{loading && <Spin />}</NoData>
 				)}
 			</Space>
 		</div>

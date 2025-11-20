@@ -2,7 +2,7 @@ import { Form, Select, Space } from 'antd';
 import React from 'react';
 import { InputTIN } from '.';
 import { tinOptions } from '@/enum/loan';
-import { validateRule, tinOrSSNRegex } from '@/lib/format';
+import { validateRule, tinOrSSNRegex } from '../../lib/format';
 export const SelectTINType = ({ value, onChange, isIndividual }) => {
 	return (
 		<Space direction="vertical" size="large" className="w-full">

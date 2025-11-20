@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import DocumentList from '../DocumentList';
 import { lenderClosingColumns } from '../documentColumns';
 import HeaderBtn from '../HeaderBtn';
@@ -10,14 +10,17 @@ const Closing = ({ disabledOperate, rowData, id }) => {
 	const [lenderList, setLenderList] = useState([]);
 	const searchParams = useSearchParams();
 	const loan_id = Number(searchParams.get('id'));
+	const [loading, setLoading] = useState(true);
 
 	useDeferredSyncEffect({
 		predicate: () => rowData?.loan_documents?.length,
 		deferred: () => {
+			setLoading(true);
 			let lList = rowData?.loan_documents?.filter((item) =>
 				['LenderClosingExtend', 'LenderClosing'].includes(item.category),
 			);
 			setLenderList(lList);
+			setLoading(false);
 		},
 		deps: [rowData],
 		delay: 0,
@@ -34,7 +37,11 @@ const Closing = ({ disabledOperate, rowData, id }) => {
 					loan_id={loan_id}
 					isHideAddRequest={true}
 				/>
-				<DocumentList columns={lenderClosingColumns()} dataSource={[...lenderList]} />
+				<DocumentList
+					columns={lenderClosingColumns()}
+					dataSource={[...lenderList]}
+					loading={loading}
+				/>
 			</div>
 		</div>
 	);

@@ -4,7 +4,7 @@ import React, { useState, forwardRef, useImperativeHandle, useEffect } from 'rea
 import { Upload, Button, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import type { UploadProps, UploadFile, RcFile } from 'antd/es/upload/interface';
-import { uploadAwsS3 } from '@/api/common';
+import { uploadAwsS3 } from '../../api/common';
 const MAX_SIZE_MB = 10;
 export interface CommonUploadRef {
 	// eslint-disable-next-line no-unused-vars

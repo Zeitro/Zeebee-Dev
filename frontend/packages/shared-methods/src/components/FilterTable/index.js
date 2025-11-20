@@ -8,8 +8,8 @@ import React, {
 	useCallback,
 } from 'react';
 import styles from './index.module.scss';
-import { createRequest } from '@/lib/fetch';
-import { getPagination } from '@/lib/common';
+import { createRequest } from '../../lib/fetch';
+import { getPagination } from '../../lib/common';
 import { asc, des, ascend, descend } from '@/enum/common';
 import { useDisUpdateEffect } from '@/hooks/common';
 import { FilterTag } from '../FilterField/filterTag.js';
