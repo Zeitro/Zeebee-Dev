@@ -1,5 +1,4 @@
-import { getFileTypeBySuffix } from '@/lib/common';
-import { createRequest } from '@/lib/fetch';
+import { getFileTypeBySuffix, createRequest } from '@repo/shared-methods/utils';
 const { request, uploadWithProgress } = createRequest();
 // 公共的下拉字段
 export const getSelectOptions = (name) => {
@@ -52,7 +51,7 @@ export const getUploadAwsUrl = (
 };
 
 // 上传文件到亚马逊
-export const uploadAwsS3 = async ({ url, file, onProgress = (e) => {}, type = null }) => {
+export const uploadAwsS3 = async ({ url, file, onProgress = (e) => e, type = null }) => {
 	const file_suffix = file.name.split('.')?.pop?.()?.toLowerCase?.();
 	const fileType = type || getFileTypeBySuffix(file_suffix);
 	const { url: uploadUrl } = await getUploadAwsUrl(url, fileType, file_suffix);

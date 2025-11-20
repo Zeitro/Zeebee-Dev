@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button, Form } from 'antd';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useUserStore } from '@/store/user';
-import { setCookie } from '@/lib/cookie';
+import { setCookie } from '@repo/shared-methods/utils';
 import styles from '../index.module.scss';
 import ConfirmPassWord from '../components/ConfirmPassword';
 import { throttle } from 'lodash';
@@ -31,7 +31,7 @@ const ResetPassword = () => {
 			setCookie('token', access?.access_token, access?.access_token_expire * 1000);
 			setLoading(false);
 			router.push('/');
-		} catch (error) {
+		} catch {
 			setLoading(false);
 		}
 	}, 1000);

@@ -1,8 +1,7 @@
 'use client';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { AutoComplete, Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
-import { debounce } from 'lodash';
 /**
  * Google Api
  * 根据输入内容，获取地址信息，并拿到city/county/state/zip/unit相关数据
@@ -28,12 +27,6 @@ const GoogleAutoComplete = ({
 		setAddress(value);
 	}, [value]);
 
-	useEffect(() => {
-		if (window.google) {
-			initAutocompleteService();
-		}
-	}, []);
-
 	const initAutocompleteService = () => {
 		if (window.google?.maps?.places) {
 			autocompleteService.current = new window.google.maps.places.AutocompleteService();
@@ -41,36 +34,39 @@ const GoogleAutoComplete = ({
 		}
 	};
 
-	const handleSearch = debounce((value) => {
-		if (!autocompleteService.current || !value) {
-			setOptions([]);
-			return;
-		}
+	const handleSearch = useCallback(
+		(value) => {
+			if (!autocompleteService.current || !value) {
+				setOptions([]);
+				return;
+			}
 
-		setLoading(true);
-		autocompleteService.current.getPlacePredictions(
-			{
-				input: value,
-				componentRestrictions: { country },
-				sessionToken: sessionToken.current,
-				types: ['address'],
-			},
-			(predictions, status) => {
-				setLoading(false);
-				if (status === 'OK' && predictions) {
-					setOptions(
-						predictions.map((p) => ({
-							value: p.description,
-							label: p.description,
-							placeId: p.place_id,
-						})),
-					);
-				} else {
-					setOptions([]);
-				}
-			},
-		);
-	}, 300);
+			setLoading(true);
+			autocompleteService.current.getPlacePredictions(
+				{
+					input: value,
+					componentRestrictions: { country },
+					sessionToken: sessionToken.current,
+					types: ['address'],
+				},
+				(predictions, status) => {
+					setLoading(false);
+					if (status === 'OK' && predictions) {
+						setOptions(
+							predictions.map((p) => ({
+								value: p.description,
+								label: p.description,
+								placeId: p.place_id,
+							})),
+						);
+					} else {
+						setOptions([]);
+					}
+				},
+			);
+		},
+		[autocompleteService, country, setOptions, setLoading, sessionToken],
+	);
 
 	const handleSelect = async (value, option) => {
 		if (!window.google.maps.places) return;
@@ -132,6 +128,11 @@ const GoogleAutoComplete = ({
 		return result;
 	};
 
+	useEffect(() => {
+		if (window.google) {
+			initAutocompleteService();
+		}
+	}, []);
 	return (
 		<AutoComplete
 			value={address}

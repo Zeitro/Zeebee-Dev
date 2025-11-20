@@ -1,11 +1,10 @@
 'use client';
-import React from 'react';
 import PreApprovedSuccess from './Success';
 import PhoneSvg from '@/assets/images/phone.svg';
 import { Button, message } from 'antd';
 import { useRouter } from 'next/navigation';
 import { DoubleLeftOutlined } from '@ant-design/icons';
-import { createRequest } from '@/lib/fetch';
+import { createRequest } from '@repo/shared-methods/utils';
 import { useLoanStore } from '@/store/loan';
 import OtherLender from './OtherLender';
 // preApproved-成功失败展示

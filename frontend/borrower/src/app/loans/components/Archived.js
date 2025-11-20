@@ -1,10 +1,9 @@
 'use client';
 import React, { useMemo, useState, useRef } from 'react';
-import FilterTable from '@/components/FilterTable';
+import { FilterTable } from '@repo/shared-methods';
 import { archivedColumns } from './column';
-import { transformArrayStructure } from '@/lib/common';
+import { transformArrayStructure, createRequest } from '@repo/shared-methods/utils';
 import { useOptionsStore } from '@/store/options';
-import { createRequest } from '@/lib/fetch';
 import { ReloadOutlined } from '@ant-design/icons';
 import useOpt from './useOpt';
 const ArchivedLoans = ({
@@ -18,6 +17,7 @@ const ArchivedLoans = ({
 	loading,
 	scrollX = 1500,
 	stage = 'Archived',
+	filterName,
 }) => {
 	const { loanTypeOptions, lenderOptions } = useOptionsStore();
 	const { request } = createRequest();
@@ -113,6 +113,7 @@ const ArchivedLoans = ({
 			<FilterTable
 				ref={tableFilterRef}
 				columns={archivedColumns(isNotAddress, showDeleteModal)}
+				filterName={filterName}
 				scroll={{ x: scrollX }}
 				filterList={filterList}
 				hasFilterField={hasFilterField}

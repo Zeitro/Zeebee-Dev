@@ -6,10 +6,9 @@ import CreateProperty from '../components/Create/property';
 import CreateTerm from '../components/Create/term';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createLoanSteps } from '@/enum/loan';
-import { createRequest } from '@/lib/fetch';
+import { createRequest } from '@repo/shared-methods/utils';
 import { loan_pending } from '@/enum/common';
-import { BtnPopUpModal } from '@/components/NewModal/BtnPopUpModal';
-import { changeUnitByPropertyType } from '@/lib/format';
+import { BtnPopUpModal } from '@repo/shared-methods';
 const CreateLoanPage = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -70,7 +69,7 @@ const CreateLoanPage = () => {
 			});
 			setLoading(false);
 			router.back();
-		} catch (error) {
+		} catch {
 			setLoading(false);
 		}
 	}, [currentStep, form, loanData, request, router]);
@@ -130,6 +129,9 @@ const CreateLoanPage = () => {
 					gutter={16}
 					isRequestProperty={searchParams.has('propertyId')}
 					unitInfo={unitInfo}
+					selectCardCol={{ xl: 18, sm: 18, xs: 24 }}
+					btnCol={{ xl: 6, sm: 6, xs: 24 }}
+					sliceIndex={1}
 				/>
 			),
 			2: (
@@ -138,6 +140,9 @@ const CreateLoanPage = () => {
 					stepBtn={stepBtn}
 					form={form}
 					gutter={16}
+					selectCardCol={{ xl: 18, sm: 18, xs: 24 }}
+					btnCol={{ xl: 6, sm: 6, xs: 24 }}
+					sliceIndex={1}
 				/>
 			),
 		}),
@@ -145,7 +150,7 @@ const CreateLoanPage = () => {
 	);
 
 	return (
-		<div className="flex flex-col h-full">
+		<div className="flex flex-col h-full flex-1 overflow-hidden">
 			<div className="px-4 py-6 shrink-0 flex items-center justify-center border-b border-[#f0f0f0]">
 				<Steps
 					size="default"
@@ -166,24 +171,18 @@ const CreateLoanPage = () => {
 					disabled={loading}
 					initialValues={{
 						stage: loan_pending,
-						applicants: [
-							{ is_primary: true, type: 'Individual' },
-							{ is_primary: false, type: 'Individual' },
-						],
+						applicants: [{ is_primary: true, type: 'Individual' }],
 					}}
-					onValuesChange={(v) => {
-						// 根据property_type设置unit
-						const property_type = v?.loan_property?.property_type;
-						if (property_type) {
-							const info = changeUnitByPropertyType(property_type);
+					// onValuesChange={(v) => {
+					// 	// 根据property_type设置unit
+					// 	const property_type = v?.loan_property?.property_type;
+					// 	if (property_type) {
+					// 		const info = changeUnitByPropertyType(property_type);
 
-							setUnitInfo({ ...info });
-							form.setFieldValue(
-								['loan_property', 'property_base', 'unit'],
-								info.unit,
-							);
-						}
-					}}
+					// 		setUnitInfo({ ...info });
+					// 		form.setFieldValue(['loan_property', 'unit'], info.unit);
+					// 	}
+					// }}
 				>
 					{stepContent[currentStep]}
 				</Form>

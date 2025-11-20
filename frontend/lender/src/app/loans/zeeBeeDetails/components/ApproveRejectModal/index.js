@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
-import { BtnPopUpModal } from '@/components/NewModal/BtnPopUpModal';
-import NewModal from '@/components/NewModal';
+import { BtnPopUpModal, NewModal } from '@repo/shared-methods';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { Form, Input, message } from 'antd';
-import { createRequest } from '@/lib/fetch';
-import eventBus from '@/lib/bus';
+import { createRequest, eventBus } from '@repo/shared-methods/utils';
 export const ApproveRejectModal = ({
 	pending_status,
 	id,
