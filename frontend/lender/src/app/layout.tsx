@@ -27,8 +27,8 @@ const RootLayout = ({
 		<html lang="en">
 			<head>
 				<Script
-					src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
-					strategy="beforeInteractive" // 页面交互前加载
+					src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places&loading=async`}
+					strategy="lazyOnload" // 页面交互前加载
 				/>
 			</head>
 			<body className={`${roboto.variable}`}>
