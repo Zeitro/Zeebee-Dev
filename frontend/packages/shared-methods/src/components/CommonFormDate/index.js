@@ -1,5 +1,5 @@
 import { DatePicker } from 'antd';
-import { formatStr } from '@/lib/date';
+import { formatStr } from '@repo/shared-methods/utils';
 import dayjs from 'dayjs';
 export const CommonFormDate = ({
 	value,

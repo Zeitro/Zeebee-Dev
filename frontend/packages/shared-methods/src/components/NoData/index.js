@@ -1,18 +1,24 @@
 import React from 'react';
 import Image from 'next/image';
 import NodataSvg from '@/assets/images/nodata.svg';
-export const NoData = ({ url, text = 'No Data', width, height, className }) => {
+export const NoData = ({ url, text = 'No Data', width, height, className, children }) => {
 	return (
 		<div
-			className={`h-full w-full flex flex-col justify-center items-center py-5 ${className}`}
+			className={`h-full w-full flex flex-col justify-center items-center pb-5 pt-5 ${className}`}
 			style={{ width, height }}
 		>
-			{url ? (
-				<Image src={url} alt="" width={120} height={120} />
+			{children ? (
+				children
 			) : (
-				<NodataSvg className="w-[120px] h-[120px]" />
+				<>
+					{url ? (
+						<Image src={url} alt="" width={120} height={120} />
+					) : (
+						<NodataSvg style={{ width: 120, height: 120 }} />
+					)}
+					<span className="text-base-label">{text}</span>
+				</>
 			)}
-			<span className="text-base-label">{text}</span>
 		</div>
 	);
 };

@@ -5,8 +5,7 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import SignatureModal from '../SignatureModal';
 import Image from 'next/image';
 import { Modal } from 'antd';
-import { formatDate } from '@/lib/date';
-import { createRequest } from '@/lib/fetch';
+import { formatDate, createRequest } from '@repo/shared-methods/utils';
 import EditSvg from '@/assets/images/edit.svg';
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
 

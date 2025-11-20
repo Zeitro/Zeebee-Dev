@@ -1,7 +1,7 @@
 import { Col, Form, Input } from 'antd';
 import { titleCol } from '@/enum/common';
-import { getPathArr } from '@/lib/common';
-import { validatedName, capitalizeFirstLetter } from '@/lib/format';
+import { getPathArr } from '../../lib/common';
+import { validatedName, capitalizeFirstLetter } from '../../lib/format';
 // 姓名组合（firstName + middleName + lastName）
 export const InputNameCombination = ({
 	layoutCol = {
