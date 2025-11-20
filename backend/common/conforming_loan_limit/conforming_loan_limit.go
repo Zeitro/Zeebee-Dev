@@ -5,9 +5,9 @@ import (
 	"strings"
 
 	"github.com/duke-git/lancet/v2/convertor"
-	"github.com/pkg/errors"
 	"github.com/xuri/excelize/v2"
 
+	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/stringx"
 )
 
@@ -103,7 +103,7 @@ func getConformingLoanLimits(content []byte) (limits []*ConformingLoanLimit, err
 
 	// f, err := excelize.OpenFile(filePath)
 	if err != nil {
-		err = errors.Wrap(err, "failed to read excel content")
+		err = errorx.Wrap(err, "Failed To Read Excel Content")
 		return
 	}
 
@@ -111,11 +111,11 @@ func getConformingLoanLimits(content []byte) (limits []*ConformingLoanLimit, err
 
 	rows, err := f.GetRows(f.GetSheetName(0))
 	if err != nil {
-		err = errors.Wrap(err, "failed to get rows")
+		err = errorx.Wrap(err, "Failed To Get Rows")
 		return
 	}
 	if len(rows) < 3 {
-		err = errors.New("no data")
+		err = errorx.New("No Data")
 		return
 	}
 	// check header fileds
@@ -126,7 +126,7 @@ func getConformingLoanLimits(content []byte) (limits []*ConformingLoanLimit, err
 	// fmt.Println(headerMap)
 	for field := range loanLimitFields {
 		if _, ok := headerMap[field]; !ok {
-			return nil, errors.Errorf("field %s not found in header", field)
+			return nil, errorx.Errorf("Field %s Not Found In Header", field)
 		}
 	}
 
@@ -199,7 +199,7 @@ func parseUsaCurrency(s string) (result int64, err error) {
 	}
 	val, err := convertor.ToInt(s)
 	if err != nil {
-		return 0, errors.Wrapf(err, "failed to parse int %s", s)
+		return 0, errorx.Wrapf(err, "failed to parse int %s", s)
 	}
 	return int64(val), nil
 }

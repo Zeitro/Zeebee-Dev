@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/jinzhu/copier"
-	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/lender/api/internal/svc"
@@ -53,13 +52,13 @@ func (l *AddFilesLogic) AddFiles(req *types.LoanDocumentAddFilesRequest) (resp *
 	// Get lender company id and employee id from context
 	rpcReq.Data.LenderCompanyId, rpcReq.Data.LenderEmployeeId, err = utils.GetLenderCompanyAndEmployeeId(l.ctx)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 
 	// Call RPC method
 	_, err = l.svcCtx.LoanDocumentRpcClient.AddFiles(l.ctx, rpcReq)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 
 	return &types.EmptyResponse{}, nil

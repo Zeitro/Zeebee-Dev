@@ -3,9 +3,8 @@ package userlogic
 import (
 	"context"
 	"strconv"
-	"zeebee-backend/app/lender/rpc/internal/logic"
 
-	"github.com/pkg/errors"
+	"zeebee-backend/app/lender/rpc/internal/logic"
 
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
@@ -42,32 +41,32 @@ func (l *RefreshTokenLogic) RefreshToken(in *lender.RefreshTokenRequest) (resp *
 	// parse refresh token
 	claims, err = utils.ParseToken(in.Data.RefreshToken, l.svcCtx.Config.JwtAuth.RefreshSecret)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	id, _ := strconv.ParseInt(claims.UserID, 10, 64)
 
 	user, err := l.svcCtx.UserRepo.GetLenderUser(l.ctx, id)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 
 	if user.Status == constants.UserStatusInactive {
-		return nil, errors.New("User is inactive")
+		return nil, errorx.New("User Is Inactive")
 	}
 
 	employee, err := l.baseLogic.CheckAndUpdateActiveLenderCompanyByEmployee(user.LenderEmployee)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	user.LenderEmployee = employee
 
 	token, err := generateLenderToken(user, l.svcCtx)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 
 	return &lender.RefreshTokenResponse{

@@ -3,17 +3,18 @@ package userlogic
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"time"
 
 	"github.com/duke-git/lancet/v2/random"
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
+
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/email_tpl"
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/logic/loan"
-	"zeebee-backend/app/borrower/rpc/internal/repo/model"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
@@ -23,8 +24,7 @@ import (
 	"zeebee-backend/common/limiter"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/utils"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/domains/zeebee/model"
 )
 
 type RegisterLogic struct {
@@ -59,7 +59,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 			go func() {
 				err := sendRegisterVerifyUrlEmail(ctx, in.Data.Email, existedUser.Borrower.FirstName)
 				if err != nil {
-					err = errors.Wrap(err, "send verify email error")
+					err = errorx.Wrap(err, "Send Verify Email Error")
 					l.WithContext(ctx).Error(err)
 				}
 			}()
@@ -68,7 +68,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 			go func() {
 				err := sendLoginUrlEmail(ctx, in.Data.Email, existedUser.Borrower.FirstName)
 				if err != nil {
-					err = errors.Wrap(err, "send login email error")
+					err = errorx.Wrap(err, "Send Login Email Error")
 					l.WithContext(ctx).Error(err)
 				}
 			}()
@@ -81,7 +81,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 	var pwd string
 	pwd, err = utils.HashPassword(in.Data.Password)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	userModel := &model.User{
 		Email:        in.Data.Email,
@@ -109,15 +109,17 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 		return nil, err
 	}
 
+	newCxt := context.WithoutCancel(l.ctx)
+
 	go func() {
 		// send account validate email
-		ctx := context.WithoutCancel(l.ctx)
+		ctx := context.WithoutCancel(newCxt)
 		err := sendRegisterVerifyUrlEmail(ctx, in.Data.Email, borrowerModel.FirstName)
 		if err != nil {
 			l.WithContext(ctx).Error(err)
 		}
 		if err != nil {
-			err = errors.Wrap(err, "send register verify email error")
+			err = errorx.Wrap(err, "Send Register Verify Email Error")
 			l.WithContext(ctx).Error(err)
 		}
 	}()
@@ -127,9 +129,18 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 			return
 		}
 		// create draft loan
-		err := l.handlePreapproveLoan(context.WithoutCancel(l.ctx), borrowerModel.Id, in.Data.PreApprovalRequestId, in.Data.TargetLenderCompanyId)
+		ctx := context.WithoutCancel(newCxt)
+		err := l.handlePreapproveLoan(newCxt, borrowerModel.Id, in.Data.PreApprovalRequestId, in.Data.TargetLenderCompanyId)
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			if errors.Is(err, context.Canceled) {
+				l.WithContext(ctx).
+					WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).
+					Info("Pre-Approve Loan Processing Canceled")
+			} else {
+				l.WithContext(ctx).
+					WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).
+					Error(err)
+			}
 		}
 	}()
 
@@ -143,11 +154,11 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int
 	key := fmt.Sprintf(constants.BorrowerPreApprovalCacheKey, requestId)
 	cacheDataStr, err := global.GetRedis().Get(ctx, key)
 	if err != nil {
-		return errors.WithStack(err)
+		return errorx.WithStack(err)
 	}
 
 	if len(cacheDataStr) == 0 {
-		return errors.WithStack(errors.New("pre-approve loan data not found in cache"))
+		return errorx.WithStack(errorx.New("Pre-Approve Loan Data Not Found In Cache"))
 	}
 
 	defer func() {
@@ -161,7 +172,7 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int
 	var cacheData types.PreApproveLoanCacheData
 	err = json.Unmarshal([]byte(cacheDataStr), &cacheData)
 	if err != nil {
-		return errors.WithStack(err)
+		return errorx.WithStack(err)
 	}
 	preApproveRequest := cacheData.RequestData
 	calcResult := cacheData.ResultData
@@ -172,11 +183,51 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int
 	// get lender company
 	lenderCompany, err := l.svcCtx.LenderCompanyRepo.FindOneById(ctx, lenderCompanyId)
 	if err != nil {
-		return errors.WithStack(err)
+		return errorx.WithStack(err)
 	}
 
 	if lenderCompany.Status != constants.LenderCompanyStatusActive {
-		return errors.WithStack(errors.New("lender company is not active"))
+		return errorx.WithStack(errorx.New("Lender Company Is Not Active"))
+	}
+	// prepare data
+	var borrowerProperty *model.BorrowerProperty
+	var borrowerApplicant *model.BorrowerApplicant
+	err = l.svcCtx.UserRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		var innerErr error
+
+		eg := errorx.NewErrorGroup()
+		eg.Do(
+			// get BorrowerProperty
+			func() error {
+				var err error
+				borrowerProperty, err = l.svcCtx.BorrowerPropertyRepo.GetOrCreateBorrowerPropertyWithTxForBorrower(ctx, tx, borrowerId, model.Address{
+					State:    preApproveRequest.Property.Address.State,
+					City:     preApproveRequest.Property.Address.City,
+					Address1: preApproveRequest.Property.Address.Address1,
+					Address2: preApproveRequest.Property.Address.Address2,
+					ZipCode:  preApproveRequest.Property.Address.ZipCode,
+				})
+				return err
+			},
+			// create BorrowerApplicant
+			func() error {
+				var err error
+				borrowerApplicant = &model.BorrowerApplicant{
+					BorrowerId:     borrowerId,
+					FirstName:      preApproveRequest.Borrower.Name,
+					Email:          preApproveRequest.Borrower.Email,
+					Phone:          preApproveRequest.Borrower.Phone,
+					EstCreditScore: preApproveRequest.Borrower.FicoScore,
+				}
+				borrowerApplicant, err = l.svcCtx.BorrowerApplicantRepo.CreateWithTx(ctx, tx, borrowerApplicant, false)
+				return err
+			},
+		)
+		innerErr = eg.Error()
+		return innerErr
+	})
+	if err != nil {
+		return err
 	}
 
 	// create draft loan
@@ -189,51 +240,32 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int
 			LoanType:         preApproveRequest.Loan.LoanType,
 			TotalAmount:      preApproveRequest.Loan.TotalAmount,
 			InitialAmount:    preApproveRequest.Loan.InitialAmount,
-			LoanProperty: &borrower.LoanPropertyEntry{
-				PropertyBase: &borrower.PropertyBaseEntry{
-					Address: &borrower.AddressEntry{
-						State:    preApproveRequest.Property.Address.State,
-						City:     preApproveRequest.Property.Address.City,
-						Address1: preApproveRequest.Property.Address.Address1,
-						Address2: preApproveRequest.Property.Address.Address2,
-						ZipCode:  preApproveRequest.Property.Address.ZipCode,
-					},
-					Unit: int32(preApproveRequest.Property.Unit),
+			LoanProperty: &borrower.LoanPropertyApplyEntry{
+				BorrowerPropertyId:  borrowerProperty.Id,
+				FuturePropertyType:  preApproveRequest.Property.PropertyType,
+				FutureUnit:          int32(preApproveRequest.Property.Unit),
+				PurchaseAmount:      preApproveRequest.Loan.PurchaseAmount,
+				PurchaseDate:        preApproveRequest.Loan.PurchaseDate,
+				HasAssignmentFee:    preApproveRequest.Loan.HasAssignmentFee,
+				AssignmentFeeAmount: preApproveRequest.Loan.AssignmentFeeAmount,
+				Budget: &borrower.LoanBudgetEntry{
+					OriginalBudget: preApproveRequest.Loan.BudgetAmount,
 				},
-				Unit:         int32(preApproveRequest.Property.Unit),
-				PropertyType: preApproveRequest.Property.PropertyType,
+				EstPropertyValueAmount: preApproveRequest.Loan.EstPropertyValueAmount,
+				Arv:                    preApproveRequest.Loan.Arv,
 			},
 			HoldbackAmount:  preApproveRequest.Loan.HoldbackAmount,
 			PrincipalAmount: preApproveRequest.Loan.PrincipalAmount,
 			LenderCompanyId: lenderCompanyId,
 			BorrowerId:      borrowerId,
-			Applicants: []*borrower.ApplicantEntry{
+			Applicants: []*borrower.LoanApplicantApplyEntry{
 				{
-					IsPrimary: true,
-					FirstName: preApproveRequest.Borrower.Name,
-					Phone:     preApproveRequest.Borrower.Phone,
+					IsPrimary:           true,
+					BorrowerApplicantId: borrowerApplicant.Id,
 				},
 			},
-			PurchaseAmount:      preApproveRequest.Loan.PurchaseAmount,
-			PurchaseDate:        preApproveRequest.Loan.PurchaseDate,
-			HasAssignmentFee:    preApproveRequest.Loan.HasAssignmentFee,
-			AssignmentFeeAmount: preApproveRequest.Loan.AssignmentFeeAmount,
-			LoanTerm:            preApproveRequest.Loan.LoanTerm,
-			Arv:                 preApproveRequest.Loan.Arv,
-
-			Budget: &borrower.LoanBudgetEntry{
-				OriginalBudget:        float32(preApproveRequest.Loan.BudgetAmount),
-				CostSpentToDateAmount: float32(preApproveRequest.Loan.CostSpentToDateAmount),
-			},
-			EstCreditScore:         preApproveRequest.Borrower.FicoScore,
-			EstPropertyValueAmount: preApproveRequest.Loan.EstPropertyValueAmount,
-
-			// borrower info
-			LoanBorrower: &borrower.LoanBorrowerEntry{
-				Name:         preApproveRequest.Borrower.Name,
-				ContactEmail: preApproveRequest.Borrower.Email,
-				ContactPhone: preApproveRequest.Borrower.Phone,
-			},
+			LoanTerm:       preApproveRequest.Loan.LoanTerm,
+			EstCreditScore: preApproveRequest.Borrower.FicoScore,
 		},
 	}
 	if calcResult != nil {
@@ -246,7 +278,7 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, borrowerId int
 	// save draft loan
 	_, err = saveDraftLogic.SaveDraftLoan(loanApplyRequest)
 	if err != nil {
-		return errors.WithStack(err)
+		return errorx.WithStack(err)
 	}
 
 	//  send email to lender
@@ -271,7 +303,7 @@ func sendPreApprovalLoanEmail(lenderCompany *model.LenderCompany) (err error) {
 	data := map[string]interface{}{}
 	content, err := email2.ParseTemplate(email_tpl.SelfPreApprovalNotification, data)
 	if err != nil {
-		return errors.WithStack(err)
+		return errorx.WithStack(err)
 	}
 	msg := email2.Message{
 		Subject: "PreApproval Loan Notification",
@@ -282,7 +314,7 @@ func sendPreApprovalLoanEmail(lenderCompany *model.LenderCompany) (err error) {
 	}
 	err = global.EmailClient.SendEmail(msg)
 
-	return errors.WithStack(err)
+	return errorx.WithStack(err)
 }
 
 // sendLoginUrlEmail send login url email
@@ -294,10 +326,10 @@ func sendLoginUrlEmail(ctx context.Context, email string, firstName string) (err
 	)
 	ok, err := global.SendLoginEmailLimiter.Limit(ctx, key, limitOpt)
 	if err != nil {
-		return errors.WithStack(err)
+		return errorx.WithStack(err)
 	}
 	if !ok {
-		return errors.WithStack(errors.Errorf("Email %s try too many times", email))
+		return errorx.WithStack(errorx.Errorf("Email %s Try Too Many Times", email))
 	}
 
 	// send login email
@@ -307,7 +339,7 @@ func sendLoginUrlEmail(ctx context.Context, email string, firstName string) (err
 	}
 	content, err := email2.ParseTemplate(email_tpl.LoginUrlEmail, data)
 	if err != nil {
-		return errors.WithStack(err)
+		return errorx.WithStack(err)
 	}
 	msg := email2.Message{
 		Subject: "Login to your account",
@@ -318,7 +350,7 @@ func sendLoginUrlEmail(ctx context.Context, email string, firstName string) (err
 	}
 	err = global.EmailClient.SendEmail(msg)
 
-	return errors.WithStack(err)
+	return errorx.WithStack(err)
 }
 
 // sendRegisterVerifyUrlEmail send register verify url email
@@ -331,7 +363,7 @@ func sendRegisterVerifyUrlEmail(ctx context.Context, email string, firstName str
 		code = random.RandNumeral(10)
 		err = global.GetRedis().SetExpire(ctx, codeKey, code, global.Config.VerifyEmailExpireSeconds)
 		if err != nil {
-			return errors.WithStack(err)
+			return errorx.WithStack(err)
 		}
 	}
 	// send verify email
@@ -341,7 +373,7 @@ func sendRegisterVerifyUrlEmail(ctx context.Context, email string, firstName str
 	}
 	content, err := email2.ParseTemplate(email_tpl.RegisterVerifyEmail, data)
 	if err != nil {
-		return errors.WithStack(err)
+		return errorx.WithStack(err)
 	}
 	msg := email2.Message{
 		Subject: "Verify your email",
@@ -352,5 +384,5 @@ func sendRegisterVerifyUrlEmail(ctx context.Context, email string, firstName str
 	}
 	err = global.EmailClient.SendEmail(msg)
 
-	return errors.WithStack(err)
+	return errorx.WithStack(err)
 }

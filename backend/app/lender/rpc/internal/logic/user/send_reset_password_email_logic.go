@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/duke-git/lancet/v2/random"
-	"github.com/pkg/errors"
 
 	"zeebee-backend/app/lender/rpc/internal/email_tpl"
 	"zeebee-backend/app/lender/rpc/internal/global"
@@ -44,7 +43,7 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *lender.SendRese
 
 	email := in.Data.Email
 	if email == "" {
-		return nil, errors.WithStack(errors.New("Email is required"))
+		return nil, errorx.WithStack(errorx.New("Email Is Required"))
 	}
 
 	// rate limit
@@ -55,19 +54,19 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *lender.SendRese
 	)
 	ok, err := global.SendResetPasswordEmailLimiter.Limit(l.ctx, key, limitOpt)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	if !ok {
-		return nil, errors.Errorf("Email %s try too many times", email)
+		return nil, errorx.Errorf("Email %s Try Too Many Times", email)
 	}
 
 	// get user
 	user, err := l.svcCtx.UserRepo.GetLenderUserByEmail(l.ctx, email)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	if user == nil || user.LenderEmployee == nil {
-		return nil, errors.WithStack(errors.New("User not found"))
+		return nil, errorx.WithStack(errorx.New("User Not Found"))
 	}
 
 	go func() {
@@ -75,7 +74,7 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *lender.SendRese
 		// send email
 		err := l.sendResetPwdEmail(email, user.LenderEmployee.FirstName)
 		if err != nil {
-			err = errors.Wrap(err, "send reset password email error")
+			err = errorx.Wrap(err, "Send Reset Password Email Error")
 			l.WithContext(ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
@@ -92,7 +91,7 @@ func (l *SendResetPasswordEmailLogic) sendResetPwdEmail(email string, firstName 
 		code = random.RandNumeral(10)
 		err = global.GetRedis().SetExpire(ctx, redisKey, code, global.Config.ResetPwdExpireSeconds)
 		if err != nil {
-			return errors.WithStack(errors.Wrap(err, "Failed to cache reset password code"))
+			return errorx.WithStack(errorx.Wrap(err, "Failed To Cache Reset Password Code"))
 		}
 	}
 
@@ -103,7 +102,7 @@ func (l *SendResetPasswordEmailLogic) sendResetPwdEmail(email string, firstName 
 	}
 	content, err := email2.ParseTemplate(email_tpl.ResetPwdEmail, data)
 	if err != nil {
-		return errors.WithStack(err)
+		return errorx.WithStack(err)
 	}
 	msg := email2.Message{
 		Subject: "Reset your password",
@@ -114,5 +113,5 @@ func (l *SendResetPasswordEmailLogic) sendResetPwdEmail(email string, firstName 
 	}
 	err = global.EmailClient.SendEmail(msg)
 
-	return errors.WithStack(err)
+	return errorx.WithStack(err)
 }
