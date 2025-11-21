@@ -5,6 +5,7 @@ import { useEffect, useRef } from 'react';
  * useDeferredSyncEffect({ predicate, immediate, deferred, deps, delay = 0, isUseMicrotask = false })
  *	解决：useEffect 的异步执行，导致报错
  * - predicate: () => boolean  可选，返回 true 则执行
+ * - notPassedCallback: ()=>{} predicate返回false时执行
  * - immediate: () => void     立即执行（同步）回调，适合 form.setFieldsValue 等
  * - deferred: () => void      异步执行的回调，适合 setState（会触发 React 渲染）
  * - deps: Array               effect 依赖
@@ -13,6 +14,7 @@ import { useEffect, useRef } from 'react';
  */
 export function useDeferredSyncEffect({
 	predicate = () => true,
+	notPassedCallback = () => {},
 	immediate,
 	deferred,
 	deps = [],
@@ -24,7 +26,10 @@ export function useDeferredSyncEffect({
 	useEffect(() => {
 		cancelledRef.current = false;
 
-		if (!predicate?.()) return;
+		if (!predicate?.()) {
+			notPassedCallback?.();
+			return;
+		}
 
 		try {
 			immediate?.();
@@ -62,7 +67,7 @@ export function useDeferredSyncEffect({
 
 /**
  * 多个判断条件
- * useDeferredSyncEffects({ rules: [{ predicate, immediate, deferred, delay, isUseMicrotask }], deps })
+ * useDeferredSyncEffects({ rules: [{ predicate, notPassedCallback, immediate, deferred, delay, isUseMicrotask }], deps })
  */
 export function useDeferredSyncEffects({ rules = [], deps = [] }) {
 	const cancelledRef = useRef(false);
@@ -77,7 +82,10 @@ export function useDeferredSyncEffects({ rules = [], deps = [] }) {
 					typeof rule.predicate === 'function'
 						? rule?.predicate?.()
 						: Boolean(rule.predicate);
-				if (!shouldRun) continue;
+				if (!shouldRun) {
+					rule?.notPassedCallback?.();
+					continue;
+				}
 
 				// immediate 执行（同步），适合 form.setFieldsValue 等外部系统更新
 				try {

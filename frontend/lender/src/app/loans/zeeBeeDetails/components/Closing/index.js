@@ -13,6 +13,7 @@ const Closing = ({ disabledOperate, rowData, id }) => {
 	const [loading, setLoading] = useState(true);
 
 	useDeferredSyncEffect({
+		notPassedCallback: () => setLoading(false),
 		predicate: () => rowData?.loan_documents?.length,
 		deferred: () => {
 			setLoading(true);
