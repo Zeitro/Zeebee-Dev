@@ -1,7 +1,7 @@
 'use client';
 import styles from './index.module.css';
 import { transformArrayStructure } from '@repo/shared-methods/utils';
-import { useOptionsStore } from '@/store/options';
+import { useOptionsStore } from '@repo/shared-methods/store';
 import { DropdownStatus } from '@repo/shared-methods';
 
 /**

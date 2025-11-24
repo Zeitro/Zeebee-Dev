@@ -4,7 +4,7 @@ import styles from './index.module.scss';
 import { Row, Col, Form, Radio, Input, InputNumber } from 'antd';
 import { CommonFormDate } from '../CommonFormDate';
 import { InputNumAmount } from '../InputNumAmount';
-import { useGetOptions } from '@/hooks/useGetOptions';
+import { useGetOptions } from '@repo/shared-methods/hooks';
 import { layoutCol, titleCol, yesNoOptions } from '@/enum/common';
 import { maxTerm, maxAmount } from '../../lib/format';
 

@@ -36,7 +36,7 @@ import {
 	eventBus,
 	createRequest,
 } from '@repo/shared-methods/utils';
-import { uploadAwsS3 } from '@/api/common';
+import { uploadAwsS3 } from '@repo/shared-methods/api';
 import General from '../../components/CreateZeeBee/General';
 import HeaderBtn from './HeaderBtn';
 import { EditOutlined } from '@ant-design/icons';

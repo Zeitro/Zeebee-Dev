@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
 import { Col, Form, Input, Radio, Row } from 'antd';
-import { useGetOptions } from '@/hooks/useGetOptions';
+import { useGetOptions } from '@repo/shared-methods/hooks';
 import { InputNumAmount, CommonFormDate, NewModal } from '@repo/shared-methods';
 import { yesNoOptions } from '@/enum/common';
 export const AddExperience = ({ title, rowData = {}, type, onOk, onCancel }) => {

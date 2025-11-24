@@ -4,7 +4,7 @@ import styles from './index.module.scss';
 import { titleCol } from '@/enum/common';
 import { yesNoOptions } from '@/enum/common';
 import { InputNumAmount } from '@repo/shared-methods';
-import { useGetOptions } from '@/hooks/useGetOptions';
+import { useGetOptions } from '@repo/shared-methods/hooks';
 const Declaration = ({ gutter, form, disabled }) => {
 	const { getSelectFormDom } = useGetOptions([
 		{
