@@ -80,7 +80,7 @@ func (l *DeleteFileLogic) DeleteFile(in *lender.LoanDocumentDeleteFileRequest) (
 		if innerErr = l.baseLogic.CreateLoanOperationLog(
 			tx,
 			in.Data.Id,
-			in.Data.LenderEmployeeId,
+			in.Data.UserId,
 			model.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
@@ -130,7 +130,7 @@ func (l *DeleteFileLogic) prepare(in *lender.LoanDocumentDeleteFileRequest) (loa
 	if file.EntityType != constants.FileEntityTypeLoanDocument {
 		return nil, nil, nil, errorx.WithStack(errorx.New("File Is Not Associated With A Loan Document"))
 	}
-	loan, loanDocument, err = l.baseLogic.GetLoanAndDocumentByDocumentId(file.EntityId, in.Data.LenderCompanyId)
+	loan, loanDocument, err = l.baseLogic.GetLoanAndDocumentByDocumentId(file.EntityId, in.Data.OrganizationId)
 
 	return
 }

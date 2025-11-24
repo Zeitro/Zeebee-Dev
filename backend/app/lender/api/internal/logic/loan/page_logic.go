@@ -45,10 +45,11 @@ func (l *PageLogic) Page(req *types.LoanPageRequest) (resp *types.LoanPageRespon
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
 	// get lender id
-	rpcReq.Data.Filter.LenderCompanyId, err = utils.GetLenderCompanyIdFromCtx(l.ctx)
+	claim, err := utils.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
+	rpcReq.Data.Filter.OrganizationId = claim.OrganizationId
 	rpcResp, err := l.svcCtx.LoanRpcClient.LoanPage(l.ctx, rpcReq)
 	if err != nil {
 		return nil, err

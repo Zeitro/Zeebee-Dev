@@ -42,18 +42,14 @@ func (l *UpdateLogic) Update(req *types.LoanUpdateRequest) (resp *types.LoanUpda
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
-
-	// get lender id
-	rpcReq.Data.LenderCompanyId, err = utils.GetLenderCompanyIdFromCtx(l.ctx)
+	claim, err := utils.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	// get employee id
-	rpcReq.Data.LenderEmployeeId, err = utils.GetLenderAccountIdFromCtx(l.ctx)
-	if err != nil {
-		return nil, errorx.WithStack(err)
-	}
+	// get lender id
+	rpcReq.Data.OrganizationId = claim.OrganizationId
+	rpcReq.Data.UserId = claim.UserId
 
 	rpcResp, err := l.svcCtx.LoanRpcClient.UpdateLoan(l.ctx, rpcReq)
 	if err != nil {

@@ -33,52 +33,51 @@ func (l *UserInfoLogic) UserInfo(in *lender.UserInfoRequest) (resp *lender.Useri
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	companies := []*lender.UserinfoResponseData_Company{}
+	organizations := []*lender.UserinfoResponseData_Organization{}
 
 	user, err := l.svcCtx.UserRepo.GetLenderUser(l.ctx, in.Data.Id)
 	if err != nil {
 		return nil, err
 	}
-	userLender := user.LenderEmployee
-	if userLender == nil {
-		return nil, errorx.WithStack(errorx.New("Lender Not Found"))
+	if user == nil {
+		return nil, errorx.WithStack(errorx.New("User Not Found"))
 	}
-	if len(userLender.LenderCompanies) > 0 {
-		err = copier.CopyWithOption(&companies, userLender.LenderCompanies, copier.Option{
+	if len(user.Organizations) > 0 {
+		err = copier.CopyWithOption(&organizations, user.Organizations, copier.Option{
 			DeepCopy:      true,
 			CaseSensitive: true,
 		})
 		if err != nil {
-			return nil, errorx.Wrap(err, "Failed To Copy Lender Companies")
+			return nil, errorx.Wrap(err, "Failed To Copy Organization")
 		}
 	}
-	var currentCompany *lender.UserinfoResponseData_Company
-	slice.ForEach(companies, func(i int, company *lender.UserinfoResponseData_Company) {
-		if company.Id == userLender.DefaultLenderCompanyId {
-			currentCompany = companies[i]
-			company.IsDefault = true
+	var currentOrganization *lender.UserinfoResponseData_Organization
+	slice.ForEach(organizations, func(i int, organization *lender.UserinfoResponseData_Organization) {
+		if organization.Id == user.DefaultOrganizationId {
+			currentOrganization = organizations[i]
+			organization.IsDefault = true
 		}
 	})
 
 	// Get lender company info
 	var lenderCompanyId int64
 	var lenderCompanyName string
-	if currentCompany != nil {
-		lenderCompanyId = userLender.DefaultLenderCompanyId
-		lenderCompanyName = currentCompany.Name
+	if currentOrganization != nil {
+		lenderCompanyId = user.DefaultOrganizationId
+		lenderCompanyName = currentOrganization.Name
 	}
 
 	userInfo := &lender.UserinfoResponse{
 		Data: &lender.UserinfoResponseData{
 			Id:                user.Id,
 			Email:             user.Email,
-			FirstName:         userLender.FirstName,
-			LastName:          userLender.LastName,
-			FullName:          userLender.FullName,
-			LenderCompanyId:   lenderCompanyId,
+			FirstName:         user.FirstName,
+			LastName:          user.LastName,
+			FullName:          user.FullName,
+			OrganizationId:    lenderCompanyId,
 			LenderCompanyName: lenderCompanyName,
 			Status:            string(user.Status),
-			LenderCompanies:   companies,
+			Organizations:     organizations,
 		},
 	}
 	return userInfo, nil

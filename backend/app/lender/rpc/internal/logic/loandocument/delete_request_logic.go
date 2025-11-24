@@ -92,7 +92,7 @@ func (l *DeleteRequestLogic) DeleteRequest(in *lender.LoanDocumentDeleteRequestR
 		innerErr = l.baseLogic.CreateLoanOperationLog(
 			tx,
 			loanDocument.LoanId,
-			in.Data.LenderEmployeeId,
+			in.Data.UserId,
 			model.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
@@ -124,5 +124,5 @@ func (l *DeleteRequestLogic) DeleteRequest(in *lender.LoanDocumentDeleteRequestR
 
 func (l *DeleteRequestLogic) prepare(in *lender.LoanDocumentDeleteRequestRequest) (loan *model.Loan, loanDocument *model.LoanDocument, err error) {
 
-	return l.baseLogic.GetLoanAndDocumentByDocumentId(in.Data.Id, in.Data.LenderCompanyId)
+	return l.baseLogic.GetLoanAndDocumentByDocumentId(in.Data.Id, in.Data.OrganizationId)
 }

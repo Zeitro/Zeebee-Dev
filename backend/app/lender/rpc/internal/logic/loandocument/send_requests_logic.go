@@ -90,7 +90,7 @@ func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequ
 		innerErr = l.baseLogic.CreateLoanOperationLog(
 			tx,
 			loan.Id,
-			in.Data.LenderEmployeeId,
+			in.Data.UserId,
 			model.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
@@ -131,7 +131,7 @@ func (l *SendRequestsLogic) prepare(in *lender.LoanDocumentSendRequestsRequest) 
 		return nil, errorx.WithStack(errorx.New("No Document Type Found"))
 	}
 	// var document *model.LoanDocument
-	loan, _, err = l.baseLogic.GetLoanAndDocumentByDocumentId(in.Data.Documents[0].Id, in.Data.LenderCompanyId)
+	loan, _, err = l.baseLogic.GetLoanAndDocumentByDocumentId(in.Data.Documents[0].Id, in.Data.OrganizationId)
 	return loan, err
 }
 

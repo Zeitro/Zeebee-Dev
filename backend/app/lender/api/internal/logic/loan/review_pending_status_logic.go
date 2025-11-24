@@ -42,17 +42,13 @@ func (l *ReviewPendingStatusLogic) ReviewPendingStatus(req *types.ReviewLoanPend
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
 
-	// get lender id
-	rpcReq.Data.LenderCompanyId, err = utils.GetLenderCompanyIdFromCtx(l.ctx)
+	claim, err := utils.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
-		return nil, errorx.WithStack(err)
+		return nil, err
 	}
 
-	// get employee id
-	rpcReq.Data.LenderEmployeeId, err = utils.GetLenderAccountIdFromCtx(l.ctx)
-	if err != nil {
-		return nil, errorx.WithStack(err)
-	}
+	rpcReq.Data.OrganizationId = claim.OrganizationId
+	rpcReq.Data.UserId = claim.UserId
 
 	_, err = l.svcCtx.LoanRpcClient.PendingStatusReview(l.ctx, rpcReq)
 	if err != nil {

@@ -91,7 +91,7 @@ func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *
 		innerErr = l.baseLogic.CreateLoanOperationLog(
 			tx,
 			in.Data.Id,
-			in.Data.LenderEmployeeId,
+			in.Data.UserId,
 			model.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
@@ -145,7 +145,7 @@ func (l *AddFilesLogic) prepare(in *lender.LoanDocumentAddFilesRequest) (loan *m
 		return nil, nil, errorx.WithStack(errorx.New("Total Number Of Files (Existing + New) Cannot Exceed 10"))
 	}
 
-	loan, err = l.baseLogic.GetLenderLoan(loanDocument.LoanId, in.Data.LenderCompanyId, nil)
+	loan, err = l.baseLogic.GetLenderLoan(loanDocument.LoanId, in.Data.OrganizationId, nil)
 	if err != nil {
 		return nil, nil, err
 	}

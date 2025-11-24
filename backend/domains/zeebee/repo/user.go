@@ -56,7 +56,7 @@ func (repo *UserRepo) UpdateUserPassword(ctx context.Context, id int64, password
 func (repo *UserRepo) GetLenderUser(ctx context.Context, id int64) (res *model.User, err error) {
 	err = repo.BaseRepo.Client(ctx).
 		Where("id = ? and type = ?", id, constants.UserTypeLender).
-		Preload("LenderEmployee.LenderCompanies").
+		Preload("Organizations").
 		// Preload("LenderEmployee.LenderCompany").
 		First(&res).Error
 	return res, errorx.WithStack(err)
@@ -65,7 +65,7 @@ func (repo *UserRepo) GetLenderUser(ctx context.Context, id int64) (res *model.U
 func (repo *UserRepo) GetLenderUserByEmail(ctx context.Context, email string) (res *model.User, err error) {
 	err = repo.BaseRepo.Client(ctx).
 		Where("email = ? and type = ?", email, constants.UserTypeLender).
-		Preload("LenderEmployee.LenderCompanies").
+		Preload("Organizations").
 		// Preload("LenderEmployee.LenderCompany").
 		First(&res).Error
 	return res, errorx.WithStack(err)

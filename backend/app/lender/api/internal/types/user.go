@@ -32,7 +32,7 @@ type UserRefreshTokenResponse struct {
 
 type UserRegisterRequest struct {
 	Email            string `json:"email" validate:"required,email"`
-	LenderCompanyId  int64  `json:"lender_company_id" validate:"required,gt=0"`
+	OrganizationId   int64  `json:"organization_id" validate:"required,gt=0"`
 	Password         string `json:"password" validate:"required,min=8,max=32,password"`
 	ComfiredPassword string `json:"comfired_password" validate:"required,eqfield=Password"`
 	FirstName        string `json:"first_name" validate:"required,min=2,max=30"`
@@ -57,6 +57,6 @@ type UserSendResetPasswordEmailRequest struct {
 	Email string `json:"email" validate:"required,email"`
 }
 
-type UserSwitchLenderCompanyRequest struct {
-	LenderCompanyId int64 `json:"lender_company_id" validate:"required,gt=0"`
+type UserSwitchOrganizationRequest struct {
+	OrganizationId int64 `json:"organization_id" validate:"required,gt=0"`
 }

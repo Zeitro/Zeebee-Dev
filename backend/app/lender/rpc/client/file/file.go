@@ -101,8 +101,8 @@ type (
 	StorageCreatePresignedUrlResponse       = lender.StorageCreatePresignedUrlResponse
 	StorageCreatePresignedUrlResponseData   = lender.StorageCreatePresignedUrlResponseData
 	StringSliceResponse                     = lender.StringSliceResponse
-	SwitchLenderCompanyRequest              = lender.SwitchLenderCompanyRequest
-	SwitchLenderCompanyRequestData          = lender.SwitchLenderCompanyRequestData
+	SwitchOrganizationRequest               = lender.SwitchOrganizationRequest
+	SwitchOrganizationRequestData           = lender.SwitchOrganizationRequestData
 	UsCitiesRequest                         = lender.UsCitiesRequest
 	UsCitiesRequestData                     = lender.UsCitiesRequestData
 	UserInfoRequest                         = lender.UserInfoRequest
@@ -117,7 +117,7 @@ type (
 	UserRegisterResponseData                = lender.UserRegisterResponseData
 	UserinfoResponse                        = lender.UserinfoResponse
 	UserinfoResponseData                    = lender.UserinfoResponseData
-	UserinfoResponseData_Company            = lender.UserinfoResponseData_Company
+	UserinfoResponseData_Organization       = lender.UserinfoResponseData_Organization
 
 	File interface {
 		DeleteFile(ctx context.Context, in *FileDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)

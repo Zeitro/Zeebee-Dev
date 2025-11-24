@@ -18,30 +18,30 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type SwitchLenderCompanyLogic struct {
+type SwitchOrganizationLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
 // switch lender company
-func NewSwitchLenderCompanyLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SwitchLenderCompanyLogic {
-	return &SwitchLenderCompanyLogic{
+func NewSwitchOrganizationLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SwitchOrganizationLogic {
+	return &SwitchOrganizationLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *SwitchLenderCompanyLogic) SwitchLenderCompany(req *types.UserSwitchLenderCompanyRequest) (resp *types.UserRefreshTokenResponse, err error) {
-	_, employeeId, _ := utils.GetLenderCompanyAndEmployeeId(l.ctx)
+func (l *SwitchOrganizationLogic) SwitchOrganization(req *types.UserSwitchOrganizationRequest) (resp *types.UserRefreshTokenResponse, err error) {
+	_, employeeId, _ := utils.GetOrganizationAndUserId(l.ctx)
 	if employeeId == 0 {
-		return nil, errorx.New("Employee Id Not Found")
+		return nil, errorx.New("User Id Not Found")
 	}
-	rpcResp, err := l.svcCtx.UserRpcClient.SwitchLenderCompany(l.ctx, &lender.SwitchLenderCompanyRequest{
-		Data: &lender.SwitchLenderCompanyRequestData{
-			EmployeeId:      employeeId,
-			LenderCompanyId: req.LenderCompanyId,
+	rpcResp, err := l.svcCtx.UserRpcClient.SwitchOrganization(l.ctx, &lender.SwitchOrganizationRequest{
+		Data: &lender.SwitchOrganizationRequestData{
+			UserId:         employeeId,
+			OrganizationId: req.OrganizationId,
 		},
 	})
 	if err != nil {

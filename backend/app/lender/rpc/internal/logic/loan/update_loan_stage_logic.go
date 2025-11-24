@@ -36,7 +36,7 @@ func (l *UpdateLoanStageLogic) UpdateLoanStage(in *lender.LoanUpdateStageRequest
 	}()
 
 	// Get loan
-	loan, err := l.svcCtx.LoanRepo.GetLenderLoan(l.ctx, in.Data.Id, in.Data.LenderCompanyId, false)
+	loan, err := l.svcCtx.LoanRepo.GetLenderLoan(l.ctx, in.Data.Id, in.Data.OrganizationId, false)
 	if err != nil {
 		return nil, errorx.Wrap(err, "Failed To Get Loan")
 	}
@@ -60,7 +60,7 @@ func (l *UpdateLoanStageLogic) UpdateLoanStage(in *lender.LoanUpdateStageRequest
 		}
 
 		// Create operation log
-		operatorId := in.Data.LenderEmployeeId
+		operatorId := in.Data.UserId
 
 		fromStatus := model.LoanOperationStatus{
 			Stage:         originalStage,

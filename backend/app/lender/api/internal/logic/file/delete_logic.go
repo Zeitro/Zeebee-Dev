@@ -35,7 +35,8 @@ func (l *DeleteLogic) Delete(req *types.PathIdRequest) (resp *types.EmptyRespons
 	}()
 
 	// Get lender company and employee id from context
-	lenderCompanyId, lenderEmployeeId, err := utils.GetLenderCompanyAndEmployeeId(l.ctx)
+	// lenderCompanyId, lenderEmployeeId, err := utils.GetLenderCompanyAndEmployeeId(l.ctx)
+	claim, err := utils.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
@@ -43,9 +44,9 @@ func (l *DeleteLogic) Delete(req *types.PathIdRequest) (resp *types.EmptyRespons
 	// Call RPC to delete file
 	_, err = l.svcCtx.FileRpcClient.DeleteFile(l.ctx, &lender.FileDeleteRequest{
 		Data: &lender.FileDeleteRequestData{
-			Id:               req.Id,
-			LenderCompanyId:  lenderCompanyId,
-			LenderEmployeeId: lenderEmployeeId,
+			Id:             req.Id,
+			UserId:         claim.UserId,
+			OrganizationId: claim.OrganizationId,
 		},
 	})
 	if err != nil {

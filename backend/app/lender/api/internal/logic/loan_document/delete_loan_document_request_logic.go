@@ -35,7 +35,7 @@ func (l *DeleteLoanDocumentRequestLogic) DeleteLoanDocumentRequest(req *types.Pa
 	}()
 
 	// Get lender company id and employee id from context
-	lenderCompanyId, lenderEmployeeId, err := utils.GetLenderCompanyAndEmployeeId(l.ctx)
+	claim, err := utils.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
@@ -43,9 +43,9 @@ func (l *DeleteLoanDocumentRequestLogic) DeleteLoanDocumentRequest(req *types.Pa
 	// Call RPC method
 	_, err = l.svcCtx.LoanDocumentRpcClient.DeleteRequest(l.ctx, &lender.LoanDocumentDeleteRequestRequest{
 		Data: &lender.LoanDocumentDeleteRequestRequestData{
-			Id:               req.Id,
-			LenderCompanyId:  lenderCompanyId,
-			LenderEmployeeId: lenderEmployeeId,
+			Id:             req.Id,
+			OrganizationId: claim.OrganizationId,
+			UserId:         claim.UserId,
 		},
 	})
 	if err != nil {

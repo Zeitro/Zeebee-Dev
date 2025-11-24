@@ -12,7 +12,7 @@ type Loan struct {
 	Base
 	Code                   string                      `gorm:"column:code;size:100;not null;default:'';<-:create" json:"code"`
 	BorrowerId             int64                       `gorm:"column:borrower_id;not null;default:0" json:"borrower_id"`
-	LenderCompanyId        int64                       `gorm:"column:lender_company_id;not null;default:0" json:"lender_company_id"`
+	LenderOrganizationId   int64                       `gorm:"column:lender_organization_id;not null;default:0" json:"lender_organization_id"`
 	LenderCompany          string                      `gorm:"column:lender_company;size:100;not null;default:''" json:"lender_company"`
 	ServiceCompany         string                      `gorm:"column:service_company;size:100;not null;default:''" json:"service_company"`
 	Stage                  constants.LoanStage         `gorm:"column:stage;size:10;not null;default:''" json:"stage"`
@@ -46,7 +46,7 @@ type Loan struct {
 	// relationships
 	Borrower          *Borrower           `json:"borrower" gorm:"foreignKey:BorrowerId;references:Id"`
 	LoanProperty      *LoanProperty       `json:"loan_property" gorm:"foreignKey:LoanId;references:Id"`
-	Lender            *LenderCompany      `json:"lender" gorm:"foreignKey:LenderCompanyId;references:Id"`
+	Lender            *Organization       `json:"lender" gorm:"foreignKey:LenderOrganizationId;references:Id"`
 	Applicants        []*LoanApplicant    `json:"applicants" gorm:"foreignKey:LoanId;references:Id"`
 	LoanBorrower      *LoanBorrower       `json:"loan_borrower" gorm:"foreignKey:LoanId;references:Id"`
 	LoanExperiences   []*LoanExperience   `json:"loan_experiences" gorm:"foreignKey:LoanId;references:Id"`

@@ -57,7 +57,7 @@ func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender
 	var oldLoan *model.Loan
 	var oldLoanCopy *model.Loan
 	// old loan
-	oldLoan, err = l.svcCtx.LoanRepo.GetLenderLoan(l.ctx, in.Data.Id, in.Data.LenderCompanyId, true)
+	oldLoan, err = l.svcCtx.LoanRepo.GetLenderLoan(l.ctx, in.Data.Id, in.Data.OrganizationId, true)
 	if err != nil {
 		return nil, err
 	}
@@ -87,8 +87,8 @@ func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender
 			// update loan
 			func() error {
 				data.loan.RemoveRelationships()
-				if in.Data.LenderCompanyId == 0 {
-					in.Data.LenderCompanyId = oldLoan.LenderCompanyId
+				if in.Data.OrganizationId == 0 {
+					in.Data.OrganizationId = oldLoan.LenderOrganizationId
 				}
 				_, err := l.svcCtx.LoanRepo.UpdateOneWithTx(l.ctx, tx, in.Data.Id, data.loan)
 				return err
@@ -150,7 +150,7 @@ func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender
 
 			// loan operation log
 			func() error {
-				operatorId := in.Data.LenderEmployeeId
+				operatorId := in.Data.UserId
 
 				fromStatus := model.LoanOperationStatus{
 					Stage:         oldLoan.Stage,

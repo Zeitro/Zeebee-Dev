@@ -16,15 +16,15 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type SwitchLenderCompanyLogic struct {
+type SwitchOrganizationLogic struct {
 	ctx       context.Context
 	svcCtx    *svc.ServiceContext
 	baseLogic *logic.BaseLogic
 	logx.Logger
 }
 
-func NewSwitchLenderCompanyLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SwitchLenderCompanyLogic {
-	return &SwitchLenderCompanyLogic{
+func NewSwitchOrganizationLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SwitchOrganizationLogic {
+	return &SwitchOrganizationLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
@@ -32,42 +32,41 @@ func NewSwitchLenderCompanyLogic(ctx context.Context, svcCtx *svc.ServiceContext
 	}
 }
 
-func (l *SwitchLenderCompanyLogic) SwitchLenderCompany(in *lender.SwitchLenderCompanyRequest) (resp *lender.RefreshTokenResponse, err error) {
+func (l *SwitchOrganizationLogic) SwitchOrganization(in *lender.SwitchOrganizationRequest) (resp *lender.RefreshTokenResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
 
-	// get  employee
-	employee, err := l.svcCtx.LenderEmployeeRepo.GetLenderEmployee(l.ctx, in.Data.EmployeeId)
+	user, err := l.svcCtx.UserRepo.GetLenderUser(l.ctx, in.Data.UserId)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
 
 	// check company
 	isValidCompany := false
-	slice.ForEach(employee.LenderCompanies, func(index int, item *model.LenderCompany) {
-		if item.Id == in.Data.LenderCompanyId && item.Status == constants.LenderCompanyStatusActive {
+	slice.ForEach(user.Organizations, func(index int, item *model.Organization) {
+		if item.Id == in.Data.OrganizationId && item.Status == constants.OrganizationStatusActive {
 			isValidCompany = true
 		}
 	})
 
 	if !isValidCompany {
-		return nil, errorx.New("Invalid Lender Company For This Employee")
+		return nil, errorx.New("Invalid Organization For This Employee")
 	}
 
 	// update employee
-	employee.DefaultLenderCompanyId = in.Data.LenderCompanyId
-	err = l.svcCtx.LenderEmployeeRepo.UpdateColumnsById(l.ctx, employee.Id, map[string]interface{}{
-		"default_lender_company_id": employee.DefaultLenderCompanyId,
+	user.DefaultOrganizationId = in.Data.OrganizationId
+	err = l.svcCtx.UserRepo.UpdateColumnsById(l.ctx, user.Id, map[string]interface{}{
+		"default_organization_id": user.DefaultOrganizationId,
 	})
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
 
 	// get user info
-	user, err := l.svcCtx.UserRepo.GetLenderUser(l.ctx, employee.UserId)
+	user, err = l.svcCtx.UserRepo.GetLenderUser(l.ctx, user.Id)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}

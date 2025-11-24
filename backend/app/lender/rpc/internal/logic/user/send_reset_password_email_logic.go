@@ -65,14 +65,14 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *lender.SendRese
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	if user == nil || user.LenderEmployee == nil {
+	if user == nil {
 		return nil, errorx.WithStack(errorx.New("User Not Found"))
 	}
 
 	go func() {
 		ctx := context.WithoutCancel(l.ctx)
 		// send email
-		err := l.sendResetPwdEmail(email, user.LenderEmployee.FirstName)
+		err := l.sendResetPwdEmail(email, user.FirstName)
 		if err != nil {
 			err = errorx.Wrap(err, "Send Reset Password Email Error")
 			l.WithContext(ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
