@@ -5,9 +5,8 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import SignatureModal from '../SignatureModal';
 import Image from 'next/image';
 import { Modal } from 'antd';
-import { formatDate } from '@/lib/date';
-import { createRequest } from '@/lib/fetch';
-import { EditOutlined } from '@ant-design/icons';
+import { formatDate, createRequest } from '@repo/shared-methods/utils';
+import EditSvg from '@/assets/images/edit.svg';
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
 
 // 定义签名区 (Hotspot/Zone) 的类型
@@ -46,6 +45,7 @@ interface ContractViewerProps {
 	params?: {
 		[key: string]: unknown;
 	};
+	// eslint-disable-next-line no-unused-vars
 	changeSignatures?: (signatures: SignatureData) => void;
 	isFullLink?: boolean;
 }
@@ -101,7 +101,7 @@ export default function ContractViewer({
 			}
 		};
 		fetchPdf();
-	}, [url]);
+	}, [isFullLink, params, url]);
 
 	useEffect(() => {
 		const info: any = {};
@@ -118,7 +118,7 @@ export default function ContractViewer({
 		// 剩下的签名数量
 		info.remainingSignatureCount = (zones?.length || 0) - signaturesArr?.length;
 		changeSignatures?.(info);
-	}, [signatures]);
+	}, [changeSignatures, signatures, zones?.length]);
 
 	const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
 		setNumPages(numPages);
@@ -217,7 +217,7 @@ export default function ContractViewer({
 													objectFit="contain"
 												/>
 											) : (
-												<EditOutlined className="pb-[2px]" />
+												<EditSvg className="w-6 h-6" />
 											)}
 										</div>
 									))}

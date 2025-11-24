@@ -5,8 +5,10 @@ import { AntdRegistry } from '@ant-design/nextjs-registry';
 import SiderBar from '@/components/Sidebar';
 import NewHeader from '@/components/NewHeader';
 import { getCurrentRouterItem } from '@config/common';
-import { noNavRouter } from '@config/routes';
-import { usePathname } from 'next/navigation';
+import { noNavRouter, navRouter } from '@config/routes';
+import { usePathname, useRouter } from 'next/navigation';
+import { useUserStore } from '@/store/user';
+import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 const defaultToken = {
 	colorPrimary: '#1677ff',
 	colorTextBase: 'rgba(0, 0, 0, 0.88)',
@@ -31,17 +33,30 @@ function getCssVarValue(name, key) {
  * 自定义antd主题，区分有无（导航栏和面包屑）的页面
  */
 export default function CustomizeAntdTheme({ children, fontFamily }) {
+	const { userInfo } = useUserStore();
 	const [antdToken, setAntdToken] = useState({});
 	const pathname = usePathname();
-
+	const router = useRouter();
+	const validateMessages = {
+		required: 'Please enter ${label}!',
+	};
 	// 没有导航栏/面包屑的纯页面（例如：login
 	const isNoNav = useMemo(() => {
 		const routerItem = getCurrentRouterItem(pathname, noNavRouter);
 		return !!routerItem;
 	}, [pathname]);
 
-	useEffect(
-		() => {
+	useEffect(() => {
+		const haveSiderRoute = getCurrentRouterItem(pathname, navRouter);
+		if (haveSiderRoute?.path && userInfo === null) {
+			router.replace('/login');
+			console.log('---退出---');
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [userInfo, pathname]);
+
+	useDeferredSyncEffect({
+		deferred: () => {
 			setAntdToken({
 				colorPrimary: getCssVarValue('--base-primary', 'colorPrimary'),
 				// colorBgContainer: getCssVarValue('--background'),
@@ -63,9 +78,9 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 				// ... 其他 token ...
 			});
 		},
-		[],
-		// 依赖主题切换变量
-	);
+		deps: [],
+		isUseMicrotask: true,
+	});
 
 	return (
 		<ConfigProvider
@@ -92,6 +107,7 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 					},
 				},
 			}}
+			form={{ validateMessages }}
 		>
 			<AntdRegistry>
 				{isNoNav ? (

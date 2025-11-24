@@ -4,11 +4,9 @@ import { Button, Checkbox, Form, Input, message, Modal } from 'antd';
 import Password from 'antd/es/input/Password';
 import { useRouter } from 'next/navigation';
 import { useUserStore } from '@/store/user';
-import { setCookie } from '@/lib/cookie';
-import { validateRule, emailRegex } from '@/lib/format';
+import { setCookie, validateRule, emailRegex, localStorageUtil } from '@repo/shared-methods/utils';
 import { MailOutlined, LockOutlined } from '@ant-design/icons';
-import { initConfigFn } from '@/components/NewModal/BtnPopUpModal';
-import { localStorageUtil } from '@/lib/local';
+import { initConfigFn } from '@repo/shared-methods';
 const SignIn = ({ form, setPageType }) => {
 	const router = useRouter();
 	const { getUserInfo, login, resendVerifyEmail } = useUserStore();
@@ -51,7 +49,7 @@ const SignIn = ({ form, setPageType }) => {
 				type: 'success',
 				content: 'Email sent successfully! Please check your email for verification!',
 			});
-		} catch (error) {
+		} catch {
 			setVerifyLoading(false);
 		}
 	};

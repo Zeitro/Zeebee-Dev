@@ -3,24 +3,38 @@ import { Button, Col, Form, message, Space } from 'antd';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createZeeBeeSteps, zeeBeeDetailsTabs } from '@/enum/loan';
-import { createRequest } from '@/lib/fetch';
-import ApplicantInfo from '../ApplicantInfo';
-import BorrowerInfo from '../BorrowerInfo';
-import PropertyInfo from '../PropertyInfo';
-import LoanDetail from '../Loan';
-import Experience from '../Experience';
-import ThirdPartyService from '../ThirdPartyService';
-import Declaration from '../Declaration';
-import Demographics from '../Demographics';
+import {
+	createRequest,
+	flattenObjectPaths,
+	eventBus,
+	assemblyAddress,
+} from '@repo/shared-methods/utils';
+// import ApplicantInfo from '../ApplicantInfo';
+import {
+	ApplicantInfo,
+	BorrowerInfo,
+	PropertyInfo,
+	LoanDetail,
+	Experience,
+	ThirdPartyService,
+	Declaration,
+	Demographics,
+	ReviewAndSign,
+	contractSignatureZones,
+	LeaveAndSaveDraftBtn,
+} from '@repo/shared-methods';
+// import BorrowerInfo from '../BorrowerInfo';
+// import PropertyInfo from '../PropertyInfo';
+// import LoanDetail from '../Loan';
+// import Experience from '../Experience';
+// import ThirdPartyService from '../ThirdPartyService';
+// import Declaration from '../Declaration';
+// import Demographics from '../Demographics';
 import General from '../../../zeeBeeDetails/components/General';
 import Documents from '../../../zeeBeeDetails/components/Documents';
-import ReviewAndSign, { contractSignatureZones } from '../ReviewAndSign';
+// import ReviewAndSign, { contractSignatureZones } from '../ReviewAndSign';
 import _ from 'lodash';
-import { flattenObjectPaths } from '@/lib/common';
-import { uploadAwsS3 } from '@/api/common';
-import { LeaveAndSaveDraftBtn } from '@/components/NewModal/BtnPopUpModal';
-import eventBus from '@/lib/bus';
-import { assemblyAddress } from '@/lib/format';
+import { uploadAwsS3 } from '@repo/shared-methods/api';
 const initialValues = {
 	applicants: [{ type: 'Individual', is_primary: true }],
 };
@@ -38,7 +52,7 @@ const useCreate = (pageType = 'create') => {
 	const [currentStep, setCurrentStep] = useState(0); //顶部-总步骤
 	const [stepNum, setStepNum] = useState(0); //侧边步骤
 	const [loading, setLoading] = useState(false);
-	const [isChange, setIsChange] = useState(false); // 记录是否操作过form
+	const [isChange, setIsChange] = useState(true); // 记录是否操作过form,暂时不记录
 	const [confirmLoading, setConfirmLoading] = useState(false); // 保存草稿
 	const [rowData, setRowData] = useState({}); // loan详情
 	const [unitInfo, setUnitInfo] = useState({
@@ -52,13 +66,12 @@ const useCreate = (pageType = 'create') => {
 	// 从property详情跳转的创建loan
 	const getProperty = async () => {
 		const data = await request(api);
+		const numPropertyId = Number(searchParams.get('propertyId') || '');
 		const newData = {
 			loan_property: {
-				// property_type: data.property_type,
-				property_base: {
-					unit: data.unit,
-					address: data.address,
-				},
+				unit: data.unit,
+				address: data.address,
+				borrower_property_id: numPropertyId,
 			},
 		};
 		form.setFieldsValue(newData);
@@ -67,15 +80,14 @@ const useCreate = (pageType = 'create') => {
 	// 获取详情（草稿使用）
 	const getLoanDetail = async () => {
 		const res = await request(`/loan/${searchParams.get('id')}`);
-		console.log(res);
-		const str = assemblyAddress(res?.loan_property?.property_base?.address);
+		const str = assemblyAddress(res?.loan_property?.address);
 		eventBus.emit('changeCrumbs', {
 			2: isDetails ? `ZeeBee Loan Details(${str})` : `Edit Draft(${str})`,
 		});
-		res.loan_borrower.tin = {
-			tin_type: res?.loan_borrower?.tin_type,
-			tin: res?.loan_borrower?.tin,
-		};
+		// res.loan_borrower.tin = {
+		// 	tin_type: res?.loan_borrower?.tin_type,
+		// 	tin: res?.loan_borrower?.tin,
+		// };
 		if (!res?.applicants?.length) {
 			res.applicants = initialValues.applicants;
 		}
@@ -95,8 +107,8 @@ const useCreate = (pageType = 'create') => {
 	const stepContent = useMemo(
 		() => [
 			[
-				<ApplicantInfo key="0-ApplicantInfo" form={form} />,
-				<BorrowerInfo key="1-BorrowerInfo" form={form} />,
+				<ApplicantInfo key="0-ApplicantInfo" form={form} disabled={isDetails} />,
+				<BorrowerInfo key="1-BorrowerInfo" form={form} disabled={isDetails} />,
 			],
 			[
 				<PropertyInfo
@@ -129,7 +141,8 @@ const useCreate = (pageType = 'create') => {
 				key="0-ReviewAndSign"
 				form={form}
 				rowData={isDetails ? rowData : null}
-				loanUuid={loanUuid}
+				loanUuid={loanUuid || rowData?.code}
+				isNotRequest={isDetails}
 			/>,
 		],
 		[form, isDetails, rowData, searchParams, unitInfo, loanUuid],
@@ -201,39 +214,49 @@ const useCreate = (pageType = 'create') => {
 
 	// 创建loan
 	const handleSubmit = async (values) => {
-		let url = '/loan/apply';
-		let method = 'POST';
-		if (searchParams.has('id')) {
-			url = `/loan/${searchParams.get('id')}/update_apply`;
-			method = 'PUT';
-		} else {
-			values.code = loanUuid;
+		try {
+			let url = '/loan/apply';
+			let method = 'POST';
+			if (searchParams.has('id')) {
+				url = `/loan/${searchParams.get('id')}/update_apply`;
+				method = 'PUT';
+			} else {
+				values.code = loanUuid;
+			}
+			await request(url, {
+				method,
+				body: values,
+			});
+			message.open({
+				type: 'success',
+				content: 'ZeeBee loan created successfully！',
+			});
+		} catch (error) {
+			setLoading(false);
+			return Promise.reject(error);
 		}
-		await request(url, {
-			method,
-			body: values,
-		});
-		message.open({
-			type: 'success',
-			content: 'ZeeBee loan created successfully！',
-		});
 	};
 
 	const handlePdf = async (values) => {
-		// 获取签名已生成的pdf数据流
-		if (!searchParams.has('id')) {
-			values.code = loanUuid;
+		try {
+			// 获取签名已生成的pdf数据流
+			if (!searchParams.has('id')) {
+				values.code = loanUuid;
+			}
+			const res = await request('/pdf/apply_form', {
+				method: 'POST',
+				body: values,
+			});
+			const file = await res.blob();
+			file.name = 'contract.pdf';
+			const onProgress = (e) => {
+				console.log('onProgress', e);
+			};
+			return await uploadAwsS3({ url: '/storage/presign_url', file, onProgress });
+		} catch (error) {
+			setLoading(false);
+			return Promise.reject(error);
 		}
-		const res = await request('/pdf/apply_form', {
-			method: 'POST',
-			body: values,
-		});
-		const file = await res.blob();
-		file.name = 'contract.pdf';
-		const onProgress = (e) => {
-			console.log('onProgress', e);
-		};
-		return await uploadAwsS3({ url: '/storage/presign_url', file, onProgress });
 	};
 
 	// 添加id- (草稿时必须传详情接口返回的id)
@@ -273,7 +296,25 @@ const useCreate = (pageType = 'create') => {
 		const componentFieldMap = {
 			'0-0': ['loan_borrower'],
 			'0-1': ['applicants'],
-			'1-0': ['loan_property', 'loan_purpose', 'loan_type'],
+			'1-0': [
+				['loan_property', 'address', 'address1'],
+				['loan_property', 'address', 'address2'],
+				['loan_property', 'address', 'city'],
+				['loan_property', 'address', 'state'],
+				['loan_property', 'address', 'zip_code'],
+				'loan_purpose',
+				'loan_type',
+				['loan_property', 'property_type'],
+				['loan_property', 'living_area_sqft'],
+				['loan_property', 'unit'],
+				['loan_property', 'bedrooms'],
+				['loan_property', 'bathrooms'],
+				['loan_property', 'future_property_type'],
+				['loan_property', 'future_living_area_sqft'],
+				['loan_property', 'future_unit'],
+				['loan_property', 'future_bedrooms'],
+				['loan_property', 'future_bathrooms'],
+			],
 			'1-1': [],
 			'2-0': ['transaction_experiences', 'real_estate_experiences'],
 			'2-1': ['loan_third_services'],
@@ -375,9 +416,8 @@ const useCreate = (pageType = 'create') => {
 			let values;
 			const isType = diffSteps();
 			// 解决：没填数据就触发了错误验证，又直接切换到上一步骤，又点击下一步时，validateFields会报错，提示刚才错误验证的字段没有填，导致下一页切换不了
-			const fieldsKeys = await getCurrentStepFields();
-			values = await form.validateFields(fieldsKeys, { recursive: true });
 			if (isType === 'Submit') {
+				values = await form.validateFields();
 				if (values?.signatures?.remainingSignatureCount || !values?.signatures) {
 					message.open({
 						type: 'error',
@@ -388,8 +428,8 @@ const useCreate = (pageType = 'create') => {
 				setLoading(true);
 				const body = _.cloneDeep(addId(values));
 
-				body.loan_borrower.tin_type = values?.loan_borrower?.tin?.tin_type;
-				body.loan_borrower.tin = values?.loan_borrower?.tin?.tin;
+				// body.loan_borrower.tin_type = values?.loan_borrower?.tin?.tin_type;
+				// body.loan_borrower.tin = values?.loan_borrower?.tin?.tin;
 				_.unset(body, ['signatures', 'remainingSignatureCount']);
 				const fileUrl = await handlePdf(body);
 				await handleSubmit({ ...body, apply_form_file: fileUrl });
@@ -397,7 +437,9 @@ const useCreate = (pageType = 'create') => {
 				router.back();
 				return;
 			}
-			if (isType === 'NextMaxStep-CreateUUID') {
+			const fieldsKeys = await getCurrentStepFields();
+			values = await form.validateFields(fieldsKeys, { recursive: true });
+			if (isType === 'NextMaxStep-CreateUUID' && !rowData?.code && !loanUuid) {
 				await handleCreateUUID();
 			}
 
@@ -422,8 +464,8 @@ const useCreate = (pageType = 'create') => {
 		const allValues = form.getFieldsValue();
 		const values = { ...rowData, ...allValues };
 		setConfirmLoading(true);
-		values.loan_borrower.tin_type = values?.loan_borrower?.tin?.tin_type;
-		values.loan_borrower.tin = values?.loan_borrower?.tin?.tin;
+		// values.loan_borrower.tin_type = values?.loan_borrower?.tin?.tin_type;
+		// values.loan_borrower.tin = values?.loan_borrower?.tin?.tin;
 		// 草稿时删除签名信息，因为合同的签名及时间默认以最新时间为准，所以不需要保存
 		_.unset(values, ['signatures']);
 		const isDraft = searchParams.has('id');

@@ -2,12 +2,12 @@
 import { Col, Form, Radio, Row, Select, Input } from 'antd';
 import React from 'react';
 import styles from './index.module.scss';
-import InputNumAmount from '@/components/InputNumAmount';
-import { useGetOptions } from '@/hooks/useGetOptions';
+import { InputNumAmount, CommonFormDate } from '@repo/shared-methods';
+import { useGetOptions } from '@repo/shared-methods/hooks';
 import { loan_active, loan_archived, loan_pending } from '@/enum/common';
-import { capitalizeFirstLetter, maxAmount } from '@/lib/format';
-import CommonFormDate from '@/components/CommonDate';
+import { capitalizeFirstLetter, maxAmount } from '@repo/shared-methods/utils';
 const MAX_COUNT = 5;
+
 const CreateLoan = ({ form, stepBtn, gutter, isRadioStyle, ...colProps }) => {
 	const stage = Form.useWatch('stage', form);
 	const total_amount = Form.useWatch('total_amount', form) || maxAmount;

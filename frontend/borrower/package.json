@@ -1,5 +1,5 @@
 {
-	"name": "next-demo-ts",
+	"name": "next-borrower",
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
@@ -21,8 +21,10 @@
 		]
 	},
 	"dependencies": {
+		"@ant-design/icons": "~5.6.1",
 		"@ant-design/nextjs-registry": "^1.0.2",
 		"@ant-design/v5-patch-for-react-19": "^1.0.3",
+		"@repo/shared-methods": "workspace:*",
 		"@svgr/webpack": "^8.1.0",
 		"antd": "^5.26.2",
 		"aws-sdk": "^2.1692.0",
@@ -30,20 +32,24 @@
 		"events": "^3.3.0",
 		"lodash": "^4.17.21",
 		"next": "15.3.0",
+		"pdfjs-dist": "5.3.31",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"react-draggable": "^4.5.0",
-		"react-pdf": "^10.0.1",
+		"react-pdf": "10.0.1",
 		"react-signature-pad-wrapper": "^4.1.1",
 		"zustand": "^5.0.6"
 	},
 	"devDependencies": {
 		"@eslint/eslintrc": "^3",
+		"@eslint/js": "^9.38.0",
+		"@next/eslint-plugin-next": "^15.5.6",
 		"@types/node": "^20",
 		"@types/react": "^19",
 		"@types/react-dom": "^19",
 		"@types/react-pdf": "^7.0.0",
 		"@typescript-eslint/eslint-plugin": "^8.35.0",
+		"@typescript-eslint/parser": "^8.46.2",
 		"autoprefixer": "^10.4.21",
 		"cross-env": "^10.0.0",
 		"eslint": "^9",
@@ -51,11 +57,15 @@
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-prettier": "^5.5.1",
 		"eslint-plugin-react": "^7.37.5",
+		"eslint-plugin-react-hooks": "^7.0.0",
 		"postcss": "^8.5.6",
 		"prettier": "^3.6.2",
 		"sass": "^1.89.2",
 		"tailwindcss": "^3.4.17",
 		"typescript": "^5"
 	},
-	"type": "module"
+	"type": "module",
+	"resolutions": {
+		"pdfjs-dist": "5.3.31"
+	}
 }

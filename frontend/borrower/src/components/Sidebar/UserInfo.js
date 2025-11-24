@@ -2,8 +2,8 @@
 import React from 'react';
 import { Dropdown } from 'antd';
 import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
-import { DeleteBtn } from '../NewModal/BtnPopUpModal';
-import { formatFirstLetterName } from '@/lib/format';
+import { DeleteBtn } from '@repo/shared-methods';
+import { formatFirstLetterName } from '@repo/shared-methods/utils';
 import { useRouter } from 'next/navigation';
 const Userinfo = ({ userInfo, sidebarCollapsed }) => {
 	const router = useRouter();

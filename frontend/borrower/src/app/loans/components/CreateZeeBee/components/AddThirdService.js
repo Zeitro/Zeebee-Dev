@@ -1,10 +1,9 @@
 'use client';
 import React, { useState } from 'react';
-import NewModal from '@/components/NewModal';
 import { Col, Form, Input, Row } from 'antd';
-import { useGetOptions } from '@/hooks/useGetOptions';
-import { emailRegex, phoneRegex, validateRule } from '@/lib/format';
-import InputPhone from '@/components/InputPhone';
+import { useGetOptions } from '@repo/shared-methods/hooks';
+import { emailRegex, phoneRegex, validateRule } from '@repo/shared-methods/utils';
+import { InputPhone, NewModal } from '@repo/shared-methods';
 const AddThirdService = ({ title, rowData, onOk, onCancel }) => {
 	const [form] = Form.useForm();
 	const [confirmLoading, setConfirmLoading] = useState(false);
@@ -32,7 +31,7 @@ const AddThirdService = ({ title, rowData, onOk, onCancel }) => {
 					await onOk(values, rowData?.id ? 'Edit' : 'Add');
 					setConfirmLoading(false);
 					onCancel();
-				} catch (error) {
+				} catch {
 					setConfirmLoading(false);
 				}
 			}}

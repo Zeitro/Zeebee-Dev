@@ -3,9 +3,9 @@ import { Col, Form, Radio, Row } from 'antd';
 import styles from './index.module.scss';
 import { titleCol } from '@/enum/common';
 import { yesNoOptions } from '@/enum/common';
-import InputNumAmount from '@/components/InputNumAmount';
-import { useGetOptions } from '@/hooks/useGetOptions';
-const Declaration = ({ gutter, form }) => {
+import { InputNumAmount } from '@repo/shared-methods';
+import { useGetOptions } from '@repo/shared-methods/hooks';
+const Declaration = ({ gutter, form, disabled }) => {
 	const { getSelectFormDom } = useGetOptions([
 		{
 			key: 'bankruptcy_chapter',
@@ -90,7 +90,7 @@ const Declaration = ({ gutter, form }) => {
 									// 	form.setFieldsValue(values);
 									// }}
 									status={status}
-									disabled={!has_borrowed_money}
+									disabled={!has_borrowed_money || disabled}
 								/>
 							</Form.Item>
 						</div>

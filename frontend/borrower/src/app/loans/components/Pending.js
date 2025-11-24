@@ -1,13 +1,11 @@
 'use client';
 import React, { useMemo, useState, useRef, useEffect } from 'react';
-import FilterTable from '@/components/FilterTable';
+import { FilterTable } from '@repo/shared-methods';
 import { pendingColumns } from './column';
-import { transformArrayStructure } from '@/lib/common';
-import { useOptionsStore } from '@/store/options';
-import { createRequest } from '@/lib/fetch';
+import { transformArrayStructure, createRequest, eventBus } from '@repo/shared-methods/utils';
+import { useOptionsStore } from '@repo/shared-methods/store';
 import { ReloadOutlined } from '@ant-design/icons';
 import useOpt from './useOpt';
-import eventBus from '@/lib/bus';
 const PendingPage = ({
 	hasFilterField,
 	hasPagination,
@@ -19,6 +17,7 @@ const PendingPage = ({
 	loading,
 	scrollX = 2400,
 	successCallback,
+	filterName = '',
 	stage = 'Pending', // 默认是pending，可传草稿draft(因草稿展示和pending loans的一致，只有表格操作栏不同，所以需要区分)
 }) => {
 	const tableFilterRef = useRef();
@@ -169,10 +168,15 @@ const PendingPage = ({
 				ref={tableFilterRef}
 				columns={pendingColumns(
 					isNotAddress,
-					successCallback || tableFilterRef?.current?.handleSearch,
+					// eslint-disable-next-line react-hooks/refs
+					() =>
+						successCallback
+							? successCallback?.()
+							: tableFilterRef?.current?.handleSearch?.(),
 					showDeleteModal,
 					stage,
 				)}
+				filterName={filterName}
 				scroll={{ x: scrollX }}
 				filterList={filterList}
 				hasFilterField={hasFilterField}

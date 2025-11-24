@@ -1,27 +1,23 @@
 'use client';
 import Image from 'next/image';
-import React, { useEffect, useMemo, useState } from 'react';
-import { propertiesFieldArr } from '@/enum/properties';
-import { Col, Row } from 'antd';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { propertiesFieldArr, propertyList } from '@/enum/properties';
 import PendingPage from '../../loans/components/Pending';
 import ActiveLoans from '../../loans/components/Active';
 import ArchivedLoans from '../../loans/components/Archived';
 import { useParams } from 'next/navigation';
-import { createRequest } from '@/lib/fetch';
-import { assemblyAddress } from '@/lib/format';
-import { useGetOptions } from '@/hooks/useGetOptions';
-import eventBus from '@/lib/bus';
+import { createRequest, assemblyAddress, eventBus } from '@repo/shared-methods/utils';
+import { useGetOptions } from '@repo/shared-methods/hooks';
 import { useGlobalStore } from '@/store/global';
-import FieldTips from '@/components/FieldTips';
 const PropertiesDetails = () => {
 	const { id } = useParams();
 	const { request } = createRequest();
 	const [loading, setLoading] = useState(false);
 	const [rowData, setRowData] = useState({});
 	const { changeSidebarCollapsed } = useGlobalStore();
-	const api = `/property/${id}`;
+	const api = `/property/${id}/summary`;
 
-	const getDetails = async () => {
+	const getDetails = useCallback(async () => {
 		try {
 			setLoading(true);
 			const data = await request(api);
@@ -31,7 +27,8 @@ const PropertiesDetails = () => {
 		} catch (error) {
 			setLoading(false);
 		}
-	};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api]);
 
 	const list = useMemo(() => {
 		return [
@@ -81,7 +78,13 @@ const PropertiesDetails = () => {
 				),
 			},
 		];
-	}, [loading, rowData]);
+	}, [
+		getDetails,
+		loading,
+		rowData?.active_loans,
+		rowData?.archived_loans,
+		rowData?.pending_loans,
+	]);
 
 	useGetOptions([
 		{
@@ -92,24 +95,43 @@ const PropertiesDetails = () => {
 
 	useEffect(() => {
 		changeSidebarCollapsed(true);
-		getDetails();
-	}, []);
+
+		// macrotask 调度，能让 React 完成当前渲染周期后再执行 setState
+		const timer = setTimeout(async () => {
+			await getDetails();
+		}, 0);
+
+		return () => {
+			clearTimeout(timer);
+		};
+	}, [changeSidebarCollapsed, getDetails]);
+
+	const getItem = (item, index) => {
+		return (
+			<div key={index} className={[item?.className || 'w-1/2', 'pb-4'].join(' ')}>
+				<p className="text-base-gray text-sm pb-1">{item.label}</p>
+				<span className="text-black-dark text-base font-medium">
+					{(item?.render ? item?.render?.(rowData[item.value]) : rowData[item.value]) ||
+						'--'}
+				</span>
+			</div>
+		);
+	};
+
 	return (
-		<div className={['h-full px-8 py-6 overflow-hidden overflow-y-auto'].join(' ')}>
+		<div className={['h-full px-8 py-6 overflow-hidden overflow-y-auto flex-1'].join(' ')}>
 			<div className="flex items-center pb-6">
 				<Image src="/images/home.svg" width={32} height={32} alt="" />
 				<p className="text-[24px]/8 font-medium">{assemblyAddress(rowData?.address)}</p>
 			</div>
-			<Row className="border border-base-disabled rounded-lg px-4 py-4">
-				{propertiesFieldArr.map((item, index) => (
-					<Col lg={6} sm={12} xs={24} key={index}>
-						{item?.label && <div className="text-base-label pb-1">{item.label}</div>}
-						<div className="text-base/[24px] font-medium flex items-center">
-							{item?.render?.(rowData?.[item.value])}
-						</div>
-					</Col>
-				))}
-			</Row>
+			<div className="flex flex-wrap gap-6 flex-col md:flex-row">
+				<div className="w-full flex-1 border border-base-border rounded-lg pt-4 px-4 flex flex-wrap">
+					{propertyList.map(getItem)}
+				</div>
+				<div className="w-full  flex-1 border border-base-border rounded-lg pt-4 px-4 flex flex-wrap">
+					{propertiesFieldArr.map(getItem)}
+				</div>
+			</div>
 			{list.map((item, index) => {
 				return (
 					<div key={index}>

@@ -1,12 +1,21 @@
 import React from 'react';
 import styles from './index.module.scss';
-import { Row, Col, Form, Radio, Select, Input, InputNumber } from 'antd';
+import { Row, Col, Form, Select, InputNumber } from 'antd';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
-import { useGetOptions } from '@/hooks/useGetOptions';
+import { useGetOptions } from '@repo/shared-methods/hooks';
 import { layoutCol, titleCol } from '@/enum/common';
-import { livingAreaProps, maxNumberOfUnits } from '@/lib/format';
+import { livingAreaProps } from '@repo/shared-methods/utils';
+import SelectCard from '@/components/SelectCard/index';
 let name = 'loan_property';
-const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty }) => {
+const PropertyInfo = ({
+	gutter = 24,
+	addressProps,
+	isRequestProperty,
+	unitInfo,
+	isShowSelectCard = true,
+}) => {
+	const form = Form.useFormInstance();
+	const borrower_property_id = Form.useWatch([name, 'borrower_property_id'], form);
 	const { loanPurposeOptions, loanTypeOptions, propertyTypeOptions } = useGetOptions([
 		{
 			key: 'loan_purpose',
@@ -27,20 +36,34 @@ const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty }) =>
 			<Col {...titleCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">
 				Property information
 			</Col>
+			{isShowSelectCard && (
+				<SelectCard
+					className="mb-8"
+					changeFormValue={(values) => {
+						const property = {
+							[name]: { ...values, borrower_property_id: values.id },
+						};
+						form.setFieldsValue(property);
+					}}
+					name={[name, 'borrower_property_id']}
+					id={borrower_property_id}
+					disabled={isRequestProperty}
+				/>
+			)}
 			<AddressForm
 				{...addressProps}
-				addressName={[name, 'property_base', 'address', 'address1']}
-				addressName2={[name, 'property_base', 'address', 'address2']}
-				cityName={[name, 'property_base', 'address', 'city']}
-				stateName={[name, 'property_base', 'address', 'state']}
-				zipName={[name, 'property_base', 'address', 'zip_code']}
+				addressName={[name, 'address', 'address1']}
+				addressName2={[name, 'address', 'address2']}
+				cityName={[name, 'address', 'city']}
+				stateName={[name, 'address', 'state']}
+				zipName={[name, 'address', 'zip_code']}
 				addressLabel="Subject property address 1"
 				addressLabel2="Subject property address 2"
 				form={form}
 				stateCol={{ ...layoutCol, md: 8 }}
 				cityCol={{ ...layoutCol, md: 8 }}
 				zipCol={{ ...layoutCol, md: 8 }}
-				disabled={isRequestProperty}
+				disabled={true}
 			/>
 			<Col {...layoutCol}>
 				<Form.Item
@@ -69,7 +92,11 @@ const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty }) =>
 					name={[name, 'property_type']}
 					rules={[{ required: true, message: 'Please select property type!' }]}
 				>
-					<Select options={propertyTypeOptions} placeholder="Select property type" />
+					<Select
+						options={propertyTypeOptions}
+						placeholder="Select property type"
+						disabled
+					/>
 				</Form.Item>
 			</Col>
 			<Col {...layoutCol} md={12}>
@@ -87,13 +114,14 @@ const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty }) =>
 						style={{ width: '100%' }}
 						{...livingAreaProps}
 						placeholder="Enter Living area sqft"
+						disabled
 					/>
 				</Form.Item>
 			</Col>
 			<Col {...layoutCol} md={12}>
 				<Form.Item
 					label="Number of units"
-					name={[name, 'property_base', 'unit']}
+					name={[name, 'unit']}
 					rules={[
 						{
 							required: true,
@@ -103,11 +131,9 @@ const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty }) =>
 				>
 					<InputNumber
 						style={{ width: '100%' }}
-						min={1}
-						max={maxNumberOfUnits}
 						controls={false}
 						placeholder="Enter number of units"
-						disabled={isRequestProperty}
+						disabled={true}
 					/>
 				</Form.Item>
 			</Col>
@@ -128,6 +154,7 @@ const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty }) =>
 						max={100}
 						controls={false}
 						placeholder="Enter Number of bedrooms"
+						disabled
 					/>
 				</Form.Item>
 			</Col>
@@ -148,6 +175,7 @@ const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty }) =>
 						max={100}
 						controls={false}
 						placeholder="Enter Number of bathrooms"
+						disabled
 					/>
 				</Form.Item>
 			</Col>
@@ -194,10 +222,11 @@ const PropertyInfo = ({ gutter = 24, form, addressProps, isRequestProperty }) =>
 				>
 					<InputNumber
 						style={{ width: '100%' }}
-						min={1}
-						max={maxNumberOfUnits}
 						controls={false}
+						min={unitInfo?.future_unit?.minUnit}
+						max={unitInfo?.future_unit?.maxUnit}
 						placeholder="Enter number of units"
+						disabled={unitInfo?.future_unit?.disabled}
 					/>
 				</Form.Item>
 			</Col>
