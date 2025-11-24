@@ -53,15 +53,16 @@ type Loan struct {
 	MidConstruction          bool                        `gorm:"column:mid_construction;not null;default:false" json:"mid_construction"`
 	EstCreditScore           int32                       `gorm:"column:est_credit_score;type:int2;not null;default:0" json:"est_credit_score"`
 	EstYearlyRentalIncome    float64                     `gorm:"column:est_yearly_rental_income;type:numeric(10,2);not null;default:0" json:"est_yearly_rental_income"`
+	EstPropertyValueAmount   float64                     `gorm:"column:est_property_value_amount;type:numeric(10,2);not null;default:0" json:"est_property_value_amount"`
 	Dscr                     float64                     `gorm:"column:dscr;type:numeric(10,2);not null;default:0" json:"dscr"`
 	ReservesAmount           float64                     `gorm:"column:reserves_amount;type:numeric(10,2);not null;default:0" json:"reserves_amount"`
 	HasDelayedFinancing      bool                        `gorm:"column:has_delayed_financing;not null;default:false" json:"has_delayed_financing"`
 	HasCollateralizedBlanket bool                        `gorm:"column:has_collateralized_blanket;not null;default:false" json:"has_collateralized_blanket"`
 	HasPropertiesVacant      bool                        `gorm:"column:has_properties_vacant;not null;default:false" json:"has_properties_vacant"`
 	HasShortTermRental       bool                        `gorm:"column:has_short_term_rental;not null;default:false" json:"has_short_term_rental"`
-	OriginalContractDate     *sql.NullTime               `json:"original_contract_date,optional" gorm:"column:original_contract_date"`
-	ExtensionDate            *sql.NullTime               `json:"extension_date,optional" gorm:"column:extension_date"`
-	LoanProcessor            string                      `json:"loan_processor,optional" gorm:"column:loan_processor;size:100;not null;default:''"`
+	OriginalContractDate     *sql.NullTime               `json:"original_contract_date" gorm:"column:original_contract_date"`
+	ExtensionDate            *sql.NullTime               `json:"extension_date" gorm:"column:extension_date"`
+	LoanProcessor            string                      `json:"loan_processor" gorm:"column:loan_processor;size:100;not null;default:''"`
 	Extend                   types.LoanExtendValues      `json:"extend" gorm:"column:extend;type:jsonb;serializer:json"`
 
 	// relationships

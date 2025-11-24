@@ -160,32 +160,32 @@ func (pdf *Pdf) SetFooter(f func()) {
 
 // SetRegularFont sets the font to regular
 func (pdf *Pdf) SetRegularFont() {
-	_ = pdf.GoPdf.SetFont(pdf.RegularFontName, "", pdf.RegularFontSize)
+	_ = pdf.SetFont(pdf.RegularFontName, "", pdf.RegularFontSize)
 }
 
 // SetBoldFont sets the font to bold
 func (pdf *Pdf) SetBoldFont() {
-	_ = pdf.GoPdf.SetFont(pdf.BoldFontName, "", pdf.BoldFontSize)
+	_ = pdf.SetFont(pdf.BoldFontName, "", pdf.BoldFontSize)
 }
 
 // SetBoldFontWithSize sets the font to bold with a specific size
 func (pdf *Pdf) SetBoldFontWithSize(size float64) {
-	_ = pdf.GoPdf.SetFont(pdf.BoldFontName, "", size)
+	_ = pdf.SetFont(pdf.BoldFontName, "", size)
 }
 
 // SetFontColor sets the font color
 func (pdf *Pdf) SetFontColor(r uint8, g uint8, b uint8) {
-	pdf.GoPdf.SetTextColor(r, g, b)
+	pdf.SetTextColor(r, g, b)
 }
 
 // SetWhiteFont sets the font color to white
 func (pdf *Pdf) SetWhiteFont() {
-	pdf.GoPdf.SetTextColor(255, 255, 255)
+	pdf.SetTextColor(255, 255, 255)
 }
 
 // SetBlackFont sets the font color to black
 func (pdf *Pdf) SetBlackFont() {
-	pdf.GoPdf.SetTextColor(0, 0, 0)
+	pdf.SetTextColor(0, 0, 0)
 }
 
 // SetBlackBoldFont sets the font color to black and bold
@@ -276,7 +276,7 @@ func (pdf *Pdf) GetPageEndX() float64 {
 
 // BrLine adds a line break with default line height
 func (pdf *Pdf) BrLine() {
-	pdf.GoPdf.Br(pdf.LineHeight)
+	pdf.Br(pdf.LineHeight)
 }
 
 func (pdf *Pdf) SetGrayStroke() {

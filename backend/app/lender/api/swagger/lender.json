@@ -172,6 +172,7 @@
                       "loan_term",
                       "arv",
                       "ltv",
+                      "est_property_value_amount",
                       "liquidity_amount",
                       "budget",
                       "mid_construction",
@@ -351,6 +352,9 @@
                       },
                       "est_credit_score": {
                         "type": "integer"
+                      },
+                      "est_property_value_amount": {
+                        "type": "number"
                       },
                       "est_yearly_rental_income": {
                         "type": "number"
@@ -1111,6 +1115,9 @@
                 "est_credit_score": {
                   "type": "integer"
                 },
+                "est_property_value_amount": {
+                  "type": "number"
+                },
                 "est_yearly_rental_income": {
                   "type": "number"
                 },
@@ -1766,7 +1773,8 @@
               "type": "object",
               "required": [
                 "stage",
-                "maturity_date"
+                "maturity_date",
+                "est_property_value_amount"
               ],
               "properties": {
                 "applicants": {
@@ -1868,6 +1876,9 @@
                   }
                 },
                 "dscr": {
+                  "type": "number"
+                },
+                "est_property_value_amount": {
                   "type": "number"
                 },
                 "est_yearly_rental_income": {
@@ -2674,8 +2685,7 @@
                   "items": {
                     "type": "object",
                     "required": [
-                      "id",
-                      "comment"
+                      "id"
                     ],
                     "properties": {
                       "comment": {
@@ -3046,6 +3056,32 @@
                 "last_name": {
                   "type": "string"
                 },
+                "lender_companies": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "status",
+                      "is_default"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "is_default": {
+                        "type": "boolean"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
                 "lender_company_id": {
                   "type": "integer"
                 },
@@ -3372,9 +3408,67 @@
           }
         }
       }
+    },
+    "/api/v1/user/switch_lender_company": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "user"
+        ],
+        "summary": "switch lender company",
+        "operationId": "userSwitchLenderCompany",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "lender_company_id"
+              ],
+              "properties": {
+                "lender_company_id": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "access_token": {
+                  "type": "string"
+                },
+                "access_token_expire": {
+                  "type": "integer"
+                },
+                "refresh_token": {
+                  "type": "string"
+                },
+                "refresh_token_expire": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
-  "x-date": "2025-10-13 16:38:21",
+  "x-date": "2025-10-25 16:57:34",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

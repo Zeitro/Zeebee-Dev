@@ -64,7 +64,7 @@ func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender
 	if err != nil {
 		return nil, err
 	}
-	if oldLoan.Source != constants.LoanSourceSystem {
+	if oldLoan.Source != constants.LoanSourceSystem && oldLoan.Source != constants.LoanSourcePreApproval {
 		return nil, errors.WithStack(errors.New("invalid loan source"))
 	}
 
@@ -99,6 +99,9 @@ func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender
 			// update loan
 			func() error {
 				data.loan.RemoveRelationships()
+				if in.Data.LenderCompanyId == 0 {
+					in.Data.LenderCompanyId = oldLoan.LenderCompanyId
+				}
 				_, err := l.svcCtx.LoanRepo.UpdateOneWithTx(l.ctx, tx, in.Data.Id, data.loan)
 				return err
 			},
