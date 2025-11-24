@@ -37,3 +37,8 @@ func (s *CommonServer) GetUsCities(ctx context.Context, in *borrower.UsCitiesReq
 	l := commonlogic.NewGetUsCitiesLogic(ctx, s.svcCtx)
 	return l.GetUsCities(in)
 }
+
+func (s *CommonServer) GetUuid(ctx context.Context, in *borrower.EmptyRequest) (*borrower.GetUuidResponse, error) {
+	l := commonlogic.NewGetUuidLogic(ctx, s.svcCtx)
+	return l.GetUuid(in)
+}

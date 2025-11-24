@@ -102,11 +102,11 @@ func (l *SendResetPasswordEmailLogic) sendResetPwdEmail(email string, firstName 
 		"url":        fmt.Sprintf("%s?code=%s&email=%s", global.Config.ResetPwdUrl, code, email),
 		"first_name": firstName,
 	}
-	content, err := email_tpl.GetParsedContent(email_tpl.ResetPwdEmail, data)
+	content, err := email2.ParseTemplate(email_tpl.ResetPwdEmail, data)
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	msg := email2.EmailMessage{
+	msg := email2.Message{
 		Subject: "Reset your password",
 		From:    global.Config.EmailConf.Username,
 		To:      []string{email},

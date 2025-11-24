@@ -66,5 +66,6 @@ RpcConf:
     FileFolder: files-staging
     PreSigneUrlExpireSeconds: 60
   LoginUrl: https://agent.zeebeeloans.net/login
+  BorrowerLoginUrl: https://app.zeebeeloans.net/login
   VerifyEmailUrl: https://agent.zeebeeloans.net/login/verifyEmail
   ResetPwdUrl: https://agent.zeebeeloans.net/login/resetPassword

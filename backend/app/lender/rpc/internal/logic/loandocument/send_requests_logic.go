@@ -144,18 +144,19 @@ func (l *SendRequestsLogic) sendDocumentRequestEmail(ctx context.Context, loan *
 	}
 
 	emailData := map[string]interface{}{
-		"first_name":     loan.LoanBorrower.ContactName,
-		"loan_documents": loanDocuments,
+		"first_name":         loan.LoanBorrower.ContactName,
+		"borrower_login_url": global.Config.BorrowerLoginUrl,
+		"loan_documents":     loanDocuments,
 	}
 
 	// parse email template
-	content, err := email_tpl.GetParsedContent(email_tpl.SendLoanDocumentRequestEmail, emailData)
+	content, err := email2.ParseTemplate(email_tpl.SendLoanDocumentRequestEmail, emailData)
 	if err != nil {
 		return errors.Wrap(err, "failed to parse email template")
 	}
 
 	// send email
-	msg := email2.EmailMessage{
+	msg := email2.Message{
 		Subject: "Loan Document Request",
 		From:    global.Config.EmailConf.Username,
 		To:      []string{loan.LoanBorrower.ContactEmail},

@@ -73,7 +73,7 @@ func (l *ApplyLogic) Apply(req *types.LoanApplyRequest) (resp *types.LoanApplyRe
 		return nil, err
 	}
 
-	rpcReq.Data.LenderId = 1
+	rpcReq.Data.LenderCompanyId = 1
 
 	rpcResp, err = l.svcCtx.LoanRpcClient.ApplyLoan(l.ctx, rpcReq)
 	if err != nil {

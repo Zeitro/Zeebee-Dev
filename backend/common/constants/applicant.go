@@ -49,7 +49,7 @@ const MaritalStatusName = "marital_status"
 const (
 	MaritalStatusMarried   MaritalStatus = "Married"
 	MaritalStatusUnmarried MaritalStatus = "Unmarried"
-	MaritalStatusSeperated MaritalStatus = "Seperated"
+	MaritalStatusSeparated MaritalStatus = "Separated"
 )
 
 type TINType string
@@ -120,8 +120,8 @@ func init() {
 			Value: string(MaritalStatusUnmarried),
 		},
 		{
-			Label: string(MaritalStatusSeperated),
-			Value: string(MaritalStatusSeperated),
+			Label: string(MaritalStatusSeparated),
+			Value: string(MaritalStatusSeparated),
 		},
 	})
 	// register tin type
