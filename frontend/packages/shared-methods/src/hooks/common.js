@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
+'use client';
+import { useEffect, useRef } from 'react';
 
 /**
  * 公共自定义hooks - useEffect相关

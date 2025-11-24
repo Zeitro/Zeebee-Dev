@@ -11,7 +11,7 @@ import styles from './index.module.scss';
 import { createRequest } from '../../lib/fetch';
 import { getPagination } from '../../lib/common';
 import { asc, des, ascend, descend } from '@/enum/common';
-import { useDisUpdateEffect } from '@/hooks/common';
+import { useDisUpdateEffect } from '@repo/shared-methods/hooks';
 import { FilterTag } from '../FilterField/filterTag.js';
 import { FilterField } from '../FilterField/index';
 import { NewTable } from '../NewTable';

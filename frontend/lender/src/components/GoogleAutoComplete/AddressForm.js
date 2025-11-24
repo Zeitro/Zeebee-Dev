@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { Form, Input, Col, Select } from 'antd';
 import GoogleAutoComplete from './index';
 import { set } from 'lodash';
-import { useAddressStore } from '@/store/address';
+import { useAddressStore } from '@repo/shared-methods/store';
 import { useDisUpdateEffect } from '@repo/shared-methods/hooks';
 import _ from 'lodash';
 const layoutCol = {
