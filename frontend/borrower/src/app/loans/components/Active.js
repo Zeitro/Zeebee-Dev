@@ -4,7 +4,7 @@ import { ReloadOutlined } from '@ant-design/icons';
 import { FilterTable } from '@repo/shared-methods';
 import { activeColumns } from './column';
 import { transformArrayStructure, createRequest } from '@repo/shared-methods/utils';
-import { useOptionsStore } from '@/store/options';
+import { useOptionsStore } from '@repo/shared-methods/store';
 import useOpt from './useOpt';
 const ActiveLoans = ({
 	hasFilterField,

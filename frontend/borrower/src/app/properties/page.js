@@ -8,7 +8,7 @@ import { des, asc } from '@/enum/common';
 import PropertiesItem from './components/propertiesItem';
 import { createRequest, getPagination, transformArrayStructure } from '@repo/shared-methods/utils';
 import { Spin } from 'antd';
-import { useGetOptions } from '@/hooks/useGetOptions';
+import { useGetOptions } from '@repo/shared-methods/hooks';
 import AddModal from '@/components/SelectCard/Add/property';
 import { PlusOutlined } from '@ant-design/icons';
 const Properties = () => {

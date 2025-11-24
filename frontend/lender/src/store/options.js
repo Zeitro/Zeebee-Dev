@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { getSelectOptions, getLenders, getBorrowers } from '@/api/common';
+import { getSelectOptions, getLenders, getBorrowers } from '@repo/shared-methods/api';
 export const useOptionsStore = create((set) => ({
 	lenderOptions: [],
 	borrowerOptions: [],

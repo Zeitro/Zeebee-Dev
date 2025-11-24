@@ -12,7 +12,7 @@ import {
 	createRequest,
 } from '@repo/shared-methods/utils';
 import { layoutCol } from '@/enum/common';
-import { useGetOptions } from '@/hooks/useGetOptions';
+import { useGetOptions } from '@repo/shared-methods/hooks';
 import {
 	CommonFormDate,
 	InputNameCombination,

@@ -4,7 +4,7 @@ import { Form, Input, Col, Select } from 'antd';
 import { GoogleAutoComplete } from '@repo/shared-methods';
 import { set } from 'lodash';
 import { useAddressStore } from '@/store/address';
-import { useDisUpdateEffect } from '@/hooks/common';
+import { useDisUpdateEffect } from '@repo/shared-methods/hooks';
 import _ from 'lodash';
 const layoutCol = {
 	xs: 24,
