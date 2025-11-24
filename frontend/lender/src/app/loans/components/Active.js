@@ -3,7 +3,7 @@ import React, { useMemo, useState, useRef } from 'react';
 import { ReloadOutlined } from '@ant-design/icons';
 import { FilterTable } from '@repo/shared-methods';
 import { activeColumns } from './column';
-import { useOptionsStore } from '@/store/options';
+import { useOptionsStore } from '@repo/shared-methods/store';
 import { transformArrayStructure, createRequest } from '@repo/shared-methods/utils';
 import useOpt from './useOpt';
 const ActiveLoans = ({

@@ -11,7 +11,7 @@ import {
 	capitalizeFirstLetter,
 } from '@repo/shared-methods/utils';
 import { layoutCol, titleCol } from '@/enum/common';
-import { useGetOptions } from '@/hooks/useGetOptions';
+import { useGetOptions } from '@repo/shared-methods/hooks';
 import { useCallback } from 'react';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 const AddModal = ({ setOpen, rowData, handleSearch }) => {

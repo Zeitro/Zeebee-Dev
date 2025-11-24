@@ -3,7 +3,7 @@ import React from 'react';
 import styles from './index.module.scss';
 import { Row, Col, Form, Select, InputNumber } from 'antd';
 import AddressForm from '../GoogleAutoComplete/AddressForm';
-import { useGetOptions } from '@/hooks/useGetOptions';
+import { useGetOptions } from '@repo/shared-methods/hooks';
 import { layoutCol, titleCol } from '@/enum/common';
 import { livingAreaProps } from '../../lib/format';
 import SelectCard from '@/components/SelectCard/index';
