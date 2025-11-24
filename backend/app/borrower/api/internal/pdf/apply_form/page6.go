@@ -58,7 +58,7 @@ func (form *ApplyForm) buildPage6TransactionTable(tablePosition position) (err e
 	if maxRows <= 10 {
 		maxRows = 10
 	}
-	table := form.pdf.NewTableLayout(tablePosition.x, tablePosition.y, 30, 10)
+	table := form.pdf.NewTableLayout(tablePosition.x, tablePosition.y, 30, maxRows)
 
 	table.SetHeaderStyle(gopdf.CellStyle{
 		BorderStyle: gopdf.BorderStyle{

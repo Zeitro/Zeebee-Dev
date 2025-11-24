@@ -22,6 +22,7 @@ const (
 	Common_GetOpt_FullMethodName      = "/borrower.common/GetOpt"
 	Common_GetUsState_FullMethodName  = "/borrower.common/GetUsState"
 	Common_GetUsCities_FullMethodName = "/borrower.common/GetUsCities"
+	Common_GetUuid_FullMethodName     = "/borrower.common/GetUuid"
 )
 
 // CommonClient is the client API for Common service.
@@ -31,6 +32,7 @@ type CommonClient interface {
 	GetOpt(ctx context.Context, in *OptionRequest, opts ...grpc.CallOption) (*OptionResponse, error)
 	GetUsState(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*StringSliceResponse, error)
 	GetUsCities(ctx context.Context, in *UsCitiesRequest, opts ...grpc.CallOption) (*StringSliceResponse, error)
+	GetUuid(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*GetUuidResponse, error)
 }
 
 type commonClient struct {
@@ -71,6 +73,16 @@ func (c *commonClient) GetUsCities(ctx context.Context, in *UsCitiesRequest, opt
 	return out, nil
 }
 
+func (c *commonClient) GetUuid(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*GetUuidResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetUuidResponse)
+	err := c.cc.Invoke(ctx, Common_GetUuid_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CommonServer is the server API for Common service.
 // All implementations must embed UnimplementedCommonServer
 // for forward compatibility.
@@ -78,6 +90,7 @@ type CommonServer interface {
 	GetOpt(context.Context, *OptionRequest) (*OptionResponse, error)
 	GetUsState(context.Context, *EmptyRequest) (*StringSliceResponse, error)
 	GetUsCities(context.Context, *UsCitiesRequest) (*StringSliceResponse, error)
+	GetUuid(context.Context, *EmptyRequest) (*GetUuidResponse, error)
 	mustEmbedUnimplementedCommonServer()
 }
 
@@ -96,6 +109,9 @@ func (UnimplementedCommonServer) GetUsState(context.Context, *EmptyRequest) (*St
 }
 func (UnimplementedCommonServer) GetUsCities(context.Context, *UsCitiesRequest) (*StringSliceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUsCities not implemented")
+}
+func (UnimplementedCommonServer) GetUuid(context.Context, *EmptyRequest) (*GetUuidResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUuid not implemented")
 }
 func (UnimplementedCommonServer) mustEmbedUnimplementedCommonServer() {}
 func (UnimplementedCommonServer) testEmbeddedByValue()                {}
@@ -172,6 +188,24 @@ func _Common_GetUsCities_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Common_GetUuid_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommonServer).GetUuid(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Common_GetUuid_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommonServer).GetUuid(ctx, req.(*EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Common_ServiceDesc is the grpc.ServiceDesc for Common service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -190,6 +224,10 @@ var Common_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUsCities",
 			Handler:    _Common_GetUsCities_Handler,
+		},
+		{
+			MethodName: "GetUuid",
+			Handler:    _Common_GetUuid_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -578,6 +616,8 @@ const (
 	Loan_SaveDraftLoan_FullMethodName                   = "/borrower.Loan/SaveDraftLoan"
 	Loan_UpdateApplyLoan_FullMethodName                 = "/borrower.Loan/UpdateApplyLoan"
 	Loan_ImportPendingLoans_FullMethodName              = "/borrower.Loan/ImportPendingLoans"
+	Loan_PreApprovalLoan_FullMethodName                 = "/borrower.Loan/PreApprovalLoan"
+	Loan_SendPreApprovalNotification_FullMethodName     = "/borrower.Loan/SendPreApprovalNotification"
 )
 
 // LoanClient is the client API for Loan service.
@@ -595,6 +635,8 @@ type LoanClient interface {
 	SaveDraftLoan(ctx context.Context, in *LoanApplyRequest, opts ...grpc.CallOption) (*LoanApplyResponse, error)
 	UpdateApplyLoan(ctx context.Context, in *LoanApplyRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	ImportPendingLoans(ctx context.Context, in *ImportPendingLoansRequest, opts ...grpc.CallOption) (*ImportPendingLoansResponse, error)
+	PreApprovalLoan(ctx context.Context, in *LoanPreApprovalRequest, opts ...grpc.CallOption) (*LoanPreApprovalResponse, error)
+	SendPreApprovalNotification(ctx context.Context, in *LoanSendPreApprovalNotificationRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 }
 
 type loanClient struct {
@@ -715,6 +757,26 @@ func (c *loanClient) ImportPendingLoans(ctx context.Context, in *ImportPendingLo
 	return out, nil
 }
 
+func (c *loanClient) PreApprovalLoan(ctx context.Context, in *LoanPreApprovalRequest, opts ...grpc.CallOption) (*LoanPreApprovalResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LoanPreApprovalResponse)
+	err := c.cc.Invoke(ctx, Loan_PreApprovalLoan_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *loanClient) SendPreApprovalNotification(ctx context.Context, in *LoanSendPreApprovalNotificationRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, Loan_SendPreApprovalNotification_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // LoanServer is the server API for Loan service.
 // All implementations must embed UnimplementedLoanServer
 // for forward compatibility.
@@ -730,6 +792,8 @@ type LoanServer interface {
 	SaveDraftLoan(context.Context, *LoanApplyRequest) (*LoanApplyResponse, error)
 	UpdateApplyLoan(context.Context, *LoanApplyRequest) (*EmptyResponse, error)
 	ImportPendingLoans(context.Context, *ImportPendingLoansRequest) (*ImportPendingLoansResponse, error)
+	PreApprovalLoan(context.Context, *LoanPreApprovalRequest) (*LoanPreApprovalResponse, error)
+	SendPreApprovalNotification(context.Context, *LoanSendPreApprovalNotificationRequest) (*EmptyResponse, error)
 	mustEmbedUnimplementedLoanServer()
 }
 
@@ -772,6 +836,12 @@ func (UnimplementedLoanServer) UpdateApplyLoan(context.Context, *LoanApplyReques
 }
 func (UnimplementedLoanServer) ImportPendingLoans(context.Context, *ImportPendingLoansRequest) (*ImportPendingLoansResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ImportPendingLoans not implemented")
+}
+func (UnimplementedLoanServer) PreApprovalLoan(context.Context, *LoanPreApprovalRequest) (*LoanPreApprovalResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PreApprovalLoan not implemented")
+}
+func (UnimplementedLoanServer) SendPreApprovalNotification(context.Context, *LoanSendPreApprovalNotificationRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendPreApprovalNotification not implemented")
 }
 func (UnimplementedLoanServer) mustEmbedUnimplementedLoanServer() {}
 func (UnimplementedLoanServer) testEmbeddedByValue()              {}
@@ -992,6 +1062,42 @@ func _Loan_ImportPendingLoans_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Loan_PreApprovalLoan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanPreApprovalRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanServer).PreApprovalLoan(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Loan_PreApprovalLoan_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanServer).PreApprovalLoan(ctx, req.(*LoanPreApprovalRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Loan_SendPreApprovalNotification_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanSendPreApprovalNotificationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanServer).SendPreApprovalNotification(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Loan_SendPreApprovalNotification_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanServer).SendPreApprovalNotification(ctx, req.(*LoanSendPreApprovalNotificationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Loan_ServiceDesc is the grpc.ServiceDesc for Loan service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1042,6 +1148,14 @@ var Loan_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ImportPendingLoans",
 			Handler:    _Loan_ImportPendingLoans_Handler,
+		},
+		{
+			MethodName: "PreApprovalLoan",
+			Handler:    _Loan_PreApprovalLoan_Handler,
+		},
+		{
+			MethodName: "SendPreApprovalNotification",
+			Handler:    _Loan_SendPreApprovalNotification_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -4,7 +4,7 @@ import styles from './index.module.scss';
 import { titleCol } from '@/enum/common';
 import { NestedCheckboxes } from '../NestedCheckboxes';
 import { raceOptions, ethnicityOptions } from '@/enum/loan';
-import { useGetOptions } from '@/hooks/useGetOptions';
+import { useGetOptions } from '@repo/shared-methods/hooks';
 export const Demographics = ({ gutter = 24, form }) => {
 	const { getSelectFormDom } = useGetOptions([
 		{

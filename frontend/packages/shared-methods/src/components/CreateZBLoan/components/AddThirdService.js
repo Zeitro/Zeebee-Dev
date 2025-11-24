@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { Col, Form, Input, Row } from 'antd';
-import { useGetOptions } from '@/hooks/useGetOptions';
+import { useGetOptions } from '@repo/shared-methods/hooks';
 import { emailRegex, phoneRegex, validateRule } from '../../../lib/format';
 import { InputPhone } from '../../InputPhone';
 import { NewModal } from '../../NewModal';

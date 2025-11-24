@@ -8,6 +8,8 @@ info(
     version: "v1"
 )
 
+import "lender_company.api"
+
 type UserInfo {
     Id int64 `json:"id"`
     Email string `json:"email"`
@@ -17,6 +19,7 @@ type UserInfo {
     Status string `json:"status"`
     LenderCompanyId int64 `json:"lender_company_id"`
     LenderCompanyName string `json:"lender_company_name"`
+    LenderCompanies []*UserInfoCompanyEntity `json:"lender_companies"`
 }
 // login
 type (
@@ -86,5 +89,12 @@ type (
 type (
     UserSendResetPasswordEmailRequest {
         Email string `json:"email" validate:"required,email"`
+    }
+)
+
+// switch lender company
+type (
+    UserSwitchLenderCompanyRequest {
+        LenderCompanyId int64 `json:"lender_company_id" validate:"required,gt=0"`
     }
 )

@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import AddressForm from '../../GoogleAutoComplete/AddressForm';
 import { Col, Form, Input, Radio, Row } from 'antd';
-import { useGetOptions } from '@/hooks/useGetOptions';
+import { useGetOptions } from '@repo/shared-methods/hooks';
 import { CommonFormDate } from '../../CommonFormDate';
 import { InputNumAmount } from '../../InputNumAmount';
 import { NewModal } from '../../NewModal';

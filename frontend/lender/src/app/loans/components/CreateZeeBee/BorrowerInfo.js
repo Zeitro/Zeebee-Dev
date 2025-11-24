@@ -13,7 +13,7 @@ import {
 } from '@repo/shared-methods/utils';
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { layoutCol, titleCol } from '@/enum/common';
-import { useGetOptions } from '@/hooks/useGetOptions';
+import { useGetOptions } from '@repo/shared-methods/hooks';
 import { CommonFormDate, InputNameCombination, InputPhone, InputTIN } from '@repo/shared-methods';
 import SelectCard from '@/components/SelectCard';
 const ApplicantInfo = ({

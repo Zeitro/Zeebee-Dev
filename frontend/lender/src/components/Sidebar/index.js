@@ -10,9 +10,8 @@ import { useRouter, usePathname } from 'next/navigation';
 import { RightCircleTwoTone, LeftCircleTwoTone } from '@ant-design/icons';
 import { useUserStore } from '@/store/user';
 import { sidebarIcon } from './icon';
-import useElementSize from '@/hooks/useElementSize';
 import UserInfo from './UserInfo';
-import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
+import { useDeferredSyncEffect, useElementSize } from '@repo/shared-methods/hooks';
 const homePathname = '/';
 const initTwoToneColor = ['var(--base-label)', 'var(--gray-light)'];
 /**

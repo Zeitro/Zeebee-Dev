@@ -3,7 +3,7 @@ import { Col, Form, Radio, Row, Select, Input } from 'antd';
 import React from 'react';
 import styles from './index.module.scss';
 import { InputNumAmount, CommonFormDate } from '@repo/shared-methods';
-import { useGetOptions } from '@/hooks/useGetOptions';
+import { useGetOptions } from '@repo/shared-methods/hooks';
 import { loan_active, loan_archived, loan_pending } from '@/enum/common';
 import { capitalizeFirstLetter, maxAmount } from '@repo/shared-methods/utils';
 const MAX_COUNT = 5;

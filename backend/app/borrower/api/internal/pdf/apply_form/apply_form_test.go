@@ -16,6 +16,7 @@ var myAddress *types.AddressEntry = &types.AddressEntry{
 }
 
 var applyFormInfo *types.ApplyFormPdfRequest = &types.ApplyFormPdfRequest{
+	Code:          "22255566633211845",
 	LoanType:      "Rehab",
 	LoanPurpose:   "Purchase",
 	TotalAmount:   30000,
@@ -55,6 +56,21 @@ var applyFormInfo *types.ApplyFormPdfRequest = &types.ApplyFormPdfRequest{
 			Email:            "wei@yeelee-capital.com",
 			Phone:            "2225551110",
 			EstCreditScore:   360,
+			DriverLicenseNum: "12235441122147",
+			Address:          myAddress,
+		},
+		&types.LoanApplyApplicantEntry{
+			FirstName:        "Wei2",
+			MidName:          "",
+			LastName:         "Wang",
+			Type:             "Individual",
+			IsPrimary:        false,
+			Ssn:              "222111412",
+			Dob:              "08/01/2001",
+			MaritalStatus:    "Married",
+			Email:            "wei@yeelee-capital.com",
+			Phone:            "2225551110",
+			EstCreditScore:   480,
 			DriverLicenseNum: "12235441122147",
 			Address:          myAddress,
 		},

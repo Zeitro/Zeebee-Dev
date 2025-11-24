@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { Col, Form, Input, Row } from 'antd';
-import { useGetOptions } from '@/hooks/useGetOptions';
+import { useGetOptions } from '@repo/shared-methods/hooks';
 import { emailRegex, phoneRegex, validateRule } from '@repo/shared-methods/utils';
 import { InputPhone, NewModal } from '@repo/shared-methods';
 const AddThirdService = ({ title, rowData, onOk, onCancel }) => {
