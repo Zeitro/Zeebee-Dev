@@ -48,12 +48,12 @@ func (l *UpdateCommentLogic) UpdateComment(req *types.LoanDocumentUpdateCommentR
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
-
-	// Get lender company id and employee id from context
-	rpcReq.Data.LenderCompanyId, rpcReq.Data.LenderEmployeeId, err = utils.GetLenderCompanyAndEmployeeId(l.ctx)
+	claim, err := utils.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
-		return nil, errorx.WithStack(err)
+		return nil, err
 	}
+	rpcReq.Data.UserId = claim.UserId
+	rpcReq.Data.OrganizationId = claim.OrganizationId
 
 	// Call RPC method
 	_, err = l.svcCtx.LoanDocumentRpcClient.UpdateComment(l.ctx, rpcReq)

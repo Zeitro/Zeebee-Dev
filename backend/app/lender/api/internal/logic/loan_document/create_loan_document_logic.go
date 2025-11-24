@@ -52,7 +52,7 @@ func (l *CreateLoanDocumentLogic) CreateLoanDocument(req *types.LoanDocumentCrea
 	}
 
 	// Get lender company id and employee id from context
-	rpcReq.Data.LenderCompanyId, rpcReq.Data.LenderEmployeeId, err = utils.GetLenderCompanyAndEmployeeId(l.ctx)
+	rpcReq.Data.OrganizationId, rpcReq.Data.UserId, err = utils.GetOrganizationAndUserId(l.ctx)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}

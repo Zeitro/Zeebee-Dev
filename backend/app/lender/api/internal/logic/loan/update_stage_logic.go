@@ -44,17 +44,12 @@ func (l *UpdateStageLogic) UpdateStage(req *types.UpdateLoanStageRequest) (resp 
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
 
-	// get lender id
-	rpcReq.Data.LenderCompanyId, err = utils.GetLenderCompanyIdFromCtx(l.ctx)
-	if err != nil {
-		return nil, errorx.WithStack(err)
-	}
-
-	// get employee id
-	rpcReq.Data.LenderEmployeeId, err = utils.GetLenderAccountIdFromCtx(l.ctx)
+	claim, err := utils.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
+	rpcReq.Data.OrganizationId = claim.OrganizationId
+	rpcReq.Data.UserId = claim.UserId
 
 	_, err = l.svcCtx.LoanRpcClient.UpdateLoanStage(l.ctx, rpcReq)
 	if err != nil {

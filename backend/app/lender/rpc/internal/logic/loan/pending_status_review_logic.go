@@ -34,7 +34,7 @@ func (l *PendingStatusReviewLogic) PendingStatusReview(in *lender.LoanPendingSta
 		}
 	}()
 
-	loan, err := l.svcCtx.LoanRepo.GetLenderLoan(l.ctx, in.Data.Id, in.Data.LenderCompanyId, false)
+	loan, err := l.svcCtx.LoanRepo.GetLenderLoan(l.ctx, in.Data.Id, in.Data.OrganizationId, false)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
@@ -80,7 +80,7 @@ func (l *PendingStatusReviewLogic) PendingStatusReview(in *lender.LoanPendingSta
 		}
 
 		// add operation
-		operatorId := in.Data.LenderEmployeeId
+		operatorId := in.Data.UserId
 		fromStatus := model.LoanOperationStatus{
 			Stage:         originalStage,
 			PendingStatus: originalPendingStatus,

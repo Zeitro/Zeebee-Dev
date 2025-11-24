@@ -2,7 +2,6 @@ package userlogic
 
 import (
 	"context"
-	"strconv"
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
 
@@ -43,7 +42,7 @@ func (l *RefreshTokenLogic) RefreshToken(in *lender.RefreshTokenRequest) (resp *
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	id, _ := strconv.ParseInt(claims.UserID, 10, 64)
+	id := claims.UserId
 
 	user, err := l.svcCtx.UserRepo.GetLenderUser(l.ctx, id)
 	if err != nil {
@@ -54,11 +53,10 @@ func (l *RefreshTokenLogic) RefreshToken(in *lender.RefreshTokenRequest) (resp *
 		return nil, errorx.New("User Is Inactive")
 	}
 
-	employee, err := l.baseLogic.CheckAndUpdateActiveLenderCompanyByEmployee(user.LenderEmployee)
+	user, err = l.baseLogic.CheckAndUpdateActiveOrganizationByUser(user)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	user.LenderEmployee = employee
 
 	token, err := generateLenderToken(user, l.svcCtx)
 	if err != nil {

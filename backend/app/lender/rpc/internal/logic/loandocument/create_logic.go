@@ -92,7 +92,7 @@ func (l *CreateLogic) Create(in *lender.LoanDocumentCreateExtendTypeRequest) (re
 		innerErr = l.baseLogic.CreateLoanOperationLog(
 			tx,
 			in.Data.LoanId,
-			in.Data.LenderEmployeeId,
+			in.Data.UserId,
 			model.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
@@ -128,7 +128,7 @@ func (l *CreateLogic) prepare(in *lender.LoanDocumentCreateExtendTypeRequest) (l
 		return nil, errorx.WithStack(errorx.New("Loan Document Category Not Supported"))
 	}
 
-	loan, err = l.baseLogic.GetLenderLoan(in.Data.LoanId, in.Data.LenderCompanyId, nil)
+	loan, err = l.baseLogic.GetLenderLoan(in.Data.LoanId, in.Data.OrganizationId, nil)
 	if err != nil {
 		return nil, err
 	}

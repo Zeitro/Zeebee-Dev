@@ -14,16 +14,16 @@ import (
 )
 
 // switch lender company
-func SwitchLenderCompanyHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func SwitchOrganizationHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.UserSwitchLenderCompanyRequest
+		var req types.UserSwitchOrganizationRequest
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
 
-		l := user.NewSwitchLenderCompanyLogic(r.Context(), svcCtx)
-		resp, err := l.SwitchLenderCompany(&req)
+		l := user.NewSwitchOrganizationLogic(r.Context(), svcCtx)
+		resp, err := l.SwitchOrganization(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {

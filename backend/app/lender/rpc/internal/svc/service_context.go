@@ -11,8 +11,7 @@ type ServiceContext struct {
 
 	// repo
 	UserRepo              *repo.UserRepo
-	LenderCompanyRepo     *repo.LenderCompanyRepo
-	LenderEmployeeRepo    *repo.LenderEmployeeRepo
+	OrganizationRepo      *repo.OrganizationRepo
 	UsGeographyRepo       *repo.UsGeographyRepo
 	LoanRepo              *repo.LoanRepo
 	BorrowerRepo          *repo.BorrowerRepo
@@ -35,8 +34,7 @@ func NewServiceContext(c config.RpcConf) *ServiceContext {
 		Config: c,
 
 		UserRepo:              repo.NewUserRepo(global.GetGormDB()),
-		LenderCompanyRepo:     repo.NewLenderCompanyRepo(global.GetGormDB()),
-		LenderEmployeeRepo:    repo.NewLenderEmployeeRepo(global.GetGormDB()),
+		OrganizationRepo:      repo.NewOrganizationRepo(global.GetGormDB()),
 		UsGeographyRepo:       repo.NewUsGeographyRepo(global.GetGormDB()),
 		LoanRepo:              repo.NewLoanRepo(global.GetGormDB()),
 		BorrowerRepo:          repo.NewBorrowerRepo(global.GetGormDB()),

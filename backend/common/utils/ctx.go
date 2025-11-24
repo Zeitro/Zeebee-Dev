@@ -33,71 +33,95 @@ func GetInt64FromCtx(ctx context.Context, key string) int64 {
 	}
 }
 
+// func GetClaimFromCtx(ctx context.Context) (claim *JWTClaims, err error) {
+// 	val, ok := ctx.Value(constants.BorrowerUserKey).(*JWTClaims)
+// 	if !ok {
+// 		return nil, errorx.WithStack(errorx.New("Invalid user claim"))
+// 	}
+// 	return val, nil
+// }
+
 func GetUserClaimFromCtx(ctx context.Context) (claim *JWTClaims, err error) {
-	val, ok := ctx.Value(constants.BorrowerUserKey).(*JWTClaims)
+	val, ok := ctx.Value(constants.UserClaimCtxKey).(*JWTClaims)
 	if !ok {
-		return nil, errorx.WithStack(errorx.New("Invalid user claim"))
+		return nil, errorx.WithStack(errorx.New("Invalid User Claim"))
 	}
 	return val, nil
 }
 
-func GetAccountIdFromCtx(ctx context.Context) (accountId int64, err error) {
+func GetOrganizationIdFromCtx(ctx context.Context) (organizationId int64, err error) {
 	claim, err := GetUserClaimFromCtx(ctx)
 	if err != nil {
 		return 0, err
 	}
-	accountId, err = strconv.ParseInt(claim.AccountId, 10, 64)
-	if err != nil {
-		return 0, errorx.Wrap(err, "Invalid account id")
-	}
-
-	return accountId, nil
+	return claim.OrganizationId, nil
 }
 
-func GetLenderUserClaimFromCtx(ctx context.Context) (claim *JWTClaims, err error) {
-	val, ok := ctx.Value(constants.LenderUserKey).(*JWTClaims)
-	if !ok {
-		return nil, errorx.WithStack(errorx.New("Invalid user claim"))
-	}
-	return val, nil
-}
+// func GetLenderUserClaimFromCtx(ctx context.Context) (claim *JWTClaims, err error) {
+// 	val, ok := ctx.Value(constants.LenderUserKey).(*JWTClaims)
+// 	if !ok {
+// 		return nil, errorx.WithStack(errorx.New("Invalid user claim"))
+// 	}
+// 	return val, nil
+// }
 
-func GetLenderAccountIdFromCtx(ctx context.Context) (accountId int64, err error) {
-	claim, err := GetLenderUserClaimFromCtx(ctx)
-	if err != nil {
-		return 0, err
-	}
-	accountId, err = strconv.ParseInt(claim.AccountId, 10, 64)
-	if err != nil {
-		return 0, errorx.Wrap(err, "Invalid account id")
-	}
+// func GetLenderAccountIdFromCtx(ctx context.Context) (accountId int64, err error) {
+// 	claim, err := GetLenderUserClaimFromCtx(ctx)
+// 	if err != nil {
+// 		return 0, err
+// 	}
+// 	accountId, err = strconv.ParseInt(claim.AccountId, 10, 64)
+// 	if err != nil {
+// 		return 0, errorx.Wrap(err, "Invalid account id")
+// 	}
+//
+// 	return accountId, nil
+// }
 
-	return accountId, nil
-}
+// func GetOrganizationIdFromCtx(ctx context.Context) (organizationId int64, err error) {
+// 	claim, err := GetLenderUserClaimFromCtx(ctx)
+// 	if err != nil {
+// 		claim, err = GetUserClaimFromCtx(ctx)
+// 		if err != nil {
+// 			return 0, err
+// 		}
+// 	}
+//
+// 	organizationId = claim.OrganizationId
+// 	if organizationId == 0 {
+// 		return 0, errorx.WithStack(errorx.New("Invalid organization id"))
+// 	}
+//
+// 	return organizationId, nil
+// }
 
-func GetLenderCompanyIdFromCtx(ctx context.Context) (lenderCompanyId int64, err error) {
-	claim, err := GetLenderUserClaimFromCtx(ctx)
-	if err != nil {
-		return 0, err
-	}
+// 兼容性函数，保持向后兼容
+// func GetLenderCompanyIdFromCtx(ctx context.Context) (lenderCompanyId int64, err error) {
+// 	return GetOrganizationIdFromCtx(ctx)
+// }
 
-	lenderCompanyId = claim.LenderCompanyId
-	if lenderCompanyId == 0 {
-		return 0, errorx.WithStack(errorx.New("Invalid lender company id"))
-	}
-
-	return lenderCompanyId, nil
-}
-
-func GetLenderCompanyAndEmployeeId(ctx context.Context) (companyId, employeeId int64, err error) {
-	claim, err := GetLenderUserClaimFromCtx(ctx)
+func GetOrganizationAndUserId(ctx context.Context) (organizationId, userId int64, err error) {
+	claim, err := GetUserClaimFromCtx(ctx)
 	if err != nil {
 		return 0, 0, err
 	}
-	companyId = claim.LenderCompanyId
-	employeeId, err = strconv.ParseInt(claim.AccountId, 10, 64)
-	if err != nil {
-		return 0, 0, errorx.Wrap(err, "Invalid employee Id")
-	}
-	return companyId, employeeId, nil
+	return claim.OrganizationId, claim.UserId, nil
 }
+
+// 新增通用函数：获取组织和用户ID
+// func GetOrganizationAndUserId(ctx context.Context) (organizationId, userId int64, err error) {
+// 	claim, err := GetLenderUserClaimFromCtx(ctx)
+// 	if err != nil {
+// 		// 尝试从 Borrower 上下文获取
+// 		claim, err = GetUserClaimFromCtx(ctx)
+// 		if err != nil {
+// 			return 0, 0, err
+// 		}
+// 	}
+// 	organizationId = claim.OrganizationId
+// 	userId, err = strconv.ParseInt(claim.AccountId, 10, 64)
+// 	if err != nil {
+// 		return 0, 0, errorx.Wrap(err, "Invalid user Id")
+// 	}
+// 	return organizationId, userId, nil
+// }

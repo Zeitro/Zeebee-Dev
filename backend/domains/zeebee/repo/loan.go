@@ -125,10 +125,10 @@ func (repo *LoanRepo) GetBorrowerLoanWithTx(ctx context.Context, tx *gorm.DB, id
 	return result, errorx.WithStack(err)
 }
 
-func (repo *LoanRepo) GetLenderLoan(ctx context.Context, id int64, lenderCompanyId int64, withRelationships bool) (result *model.Loan, err error) {
+func (repo *LoanRepo) GetLenderLoan(ctx context.Context, id int64, lenderOrganizationId int64, withRelationships bool) (result *model.Loan, err error) {
 
 	query := repo.BaseRepo.Client(ctx).
-		Where("id = ? and lender_company_id = ?", id, lenderCompanyId)
+		Where("id = ? and lender_organization_id = ?", id, lenderOrganizationId)
 	if withRelationships {
 		query = query.Preload("Applicants", func(db *gorm.DB) *gorm.DB {
 			return db.Order("loan_applicants.is_primary desc")

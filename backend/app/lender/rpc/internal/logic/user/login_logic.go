@@ -2,7 +2,6 @@ package userlogic
 
 import (
 	"context"
-	"strconv"
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
 
@@ -58,8 +57,8 @@ func (l *LoginLogic) Login(in *lender.UserLoginRequest) (resp *lender.UserLoginR
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	if user.LenderEmployee == nil {
-		return nil, errorx.New("User Not Found.")
+	if user.Organizations == nil {
+		return nil, errorx.New("Organizations Not Found.")
 	}
 
 	// check pwd
@@ -87,16 +86,10 @@ func (l *LoginLogic) Login(in *lender.UserLoginRequest) (resp *lender.UserLoginR
 		return nil, errorx.WithStack(errorx.New("User Is Unverified"))
 	}
 
-	// check company
-	if user.LenderEmployee == nil {
-		return nil, errorx.WithStack(errorx.New("LenderEmployee Is Empty."))
-	}
-
-	employee, err := l.baseLogic.CheckAndUpdateActiveLenderCompanyByEmployee(user.LenderEmployee)
+	user, err = l.baseLogic.CheckAndUpdateActiveOrganizationByUser(user)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	user.LenderEmployee = employee
 
 	// token
 	token, err := generateLenderToken(user, l.svcCtx)
@@ -115,16 +108,19 @@ func (l *LoginLogic) Login(in *lender.UserLoginRequest) (resp *lender.UserLoginR
 }
 
 func generateLenderToken(user *model.User, svcCtx *svc.ServiceContext) (token *lender.UserLoginResponseData, err error) {
-	if user.LenderEmployee == nil {
-		return nil, errorx.WithStack(errorx.New("LenderEmployee Is Empty."))
+	if user == nil {
+		return nil, errorx.WithStack(errorx.New("User Is Empty."))
 	}
+	jwtUser := utils.JwtUser{
+		UserId:         user.Id,
+		OrganizationId: user.DefaultOrganizationId,
+		Username:       user.FullName,
+		Role:           nil,
+		UserType:       constants.UserTypeLender,
+	}
+
 	accessToken, err := utils.GenerateToken(
-		strconv.Itoa(int(user.Id)),
-		strconv.Itoa(int(user.LenderEmployee.Id)),
-		user.LenderEmployee.DefaultLenderCompanyId,
-		user.LenderEmployee.FullName,
-		"",
-		string(constants.UserTypeLender),
+		jwtUser,
 		svcCtx.Config.JwtAuth.AccessSecret,
 		svcCtx.Config.JwtAuth.AccessExpire,
 	)
@@ -132,12 +128,7 @@ func generateLenderToken(user *model.User, svcCtx *svc.ServiceContext) (token *l
 		return nil, errorx.WithStack(err)
 	}
 	refreshToken, err := utils.GenerateToken(
-		strconv.Itoa(int(user.Id)),
-		strconv.Itoa(int(user.LenderEmployee.Id)),
-		user.LenderEmployee.DefaultLenderCompanyId,
-		user.LenderEmployee.FullName,
-		"",
-		string(constants.UserTypeLender),
+		jwtUser,
 		svcCtx.Config.JwtAuth.RefreshSecret,
 		svcCtx.Config.JwtAuth.RefreshExpire,
 	)
