@@ -11,23 +11,23 @@ import (
 
 func GetInt64FromCtx(ctx context.Context, key string) int64 {
 	val := ctx.Value(key)
-	switch val.(type) {
+	switch v := val.(type) {
 	case string:
-		i, err := strconv.Atoi(val.(string))
+		i, err := strconv.Atoi(v)
 		if err != nil {
 			return 0
 		}
 		return int64(i)
 	case int64:
-		return val.(int64)
+		return v
 	case int:
-		return int64(val.(int))
+		return int64(v)
 	case int32:
-		return int64(val.(int32))
+		return int64(v)
 	case int16:
-		return int64(val.(int16))
+		return int64(v)
 	case int8:
-		return int64(val.(int8))
+		return int64(v)
 	default:
 		return 0
 	}

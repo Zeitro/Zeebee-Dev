@@ -3,6 +3,8 @@ package userlogic
 import (
 	"context"
 
+	"github.com/duke-git/lancet/v2/slice"
+	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
 
 	"zeebee-backend/app/lender/rpc/internal/svc"
@@ -32,6 +34,7 @@ func (l *UserInfoLogic) UserInfo(in *lender.UserInfoRequest) (resp *lender.Useri
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
+	companies := []*lender.UserinfoResponseData_Company{}
 
 	user, err := l.svcCtx.UserRepo.GetLenderUser(l.ctx, in.Data.Id)
 	if err != nil {
@@ -41,13 +44,29 @@ func (l *UserInfoLogic) UserInfo(in *lender.UserInfoRequest) (resp *lender.Useri
 	if userLender == nil {
 		return nil, errors.WithStack(errors.New("lender not found"))
 	}
+	if len(userLender.LenderCompanies) > 0 {
+		err = copier.CopyWithOption(&companies, userLender.LenderCompanies, copier.Option{
+			DeepCopy:      true,
+			CaseSensitive: true,
+		})
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to copy lender companies")
+		}
+	}
+	var currentCompany *lender.UserinfoResponseData_Company
+	slice.ForEach(companies, func(i int, company *lender.UserinfoResponseData_Company) {
+		if company.Id == userLender.DefaultLenderCompanyId {
+			currentCompany = companies[i]
+			company.IsDefault = true
+		}
+	})
 
 	// Get lender company info
 	var lenderCompanyId int64
 	var lenderCompanyName string
-	if userLender.LenderCompany != nil {
-		lenderCompanyId = userLender.LenderCompanyId
-		lenderCompanyName = userLender.LenderCompany.Name
+	if currentCompany != nil {
+		lenderCompanyId = userLender.DefaultLenderCompanyId
+		lenderCompanyName = currentCompany.Name
 	}
 
 	userInfo := &lender.UserinfoResponse{
@@ -60,6 +79,7 @@ func (l *UserInfoLogic) UserInfo(in *lender.UserInfoRequest) (resp *lender.Useri
 			LenderCompanyId:   lenderCompanyId,
 			LenderCompanyName: lenderCompanyName,
 			Status:            string(user.Status),
+			LenderCompanies:   companies,
 		},
 	}
 	return userInfo, nil

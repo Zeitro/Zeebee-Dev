@@ -163,5 +163,4 @@ func GetLoanDocumentTypes() map[LoanDocumentCategory][]LoanDocumentFileType {
 			LoanDocumentFileTypeFormalLOI,
 		},
 	}
-
 }

@@ -107,6 +107,11 @@ func (r *Redisx) Del(ctx context.Context, key string) (err error) {
 	return
 }
 
+// IsExisted
+func (r *Redisx) IsExisted(ctx context.Context, key string) (bool, error) {
+	return r.rds.ExistsCtx(ctx, r.buildKey(key))
+}
+
 func (r *Redisx) buildKey(key string) string {
 	if len(r.prefix) == 0 || (len(r.prefix) > 0 && strings.HasPrefix(key, r.prefix+":")) {
 		return key

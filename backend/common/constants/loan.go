@@ -11,7 +11,8 @@ type LoanStage string
 
 const LoanStageName = "loan_stage"
 const (
-	LoanStageDraft    LoanStage = "Draft"
+	LoanStageDraft LoanStage = "Draft"
+	// LoanStagePredraft LoanStage = "Predraft"
 	LoanStagePending  LoanStage = "Pending"
 	LoanStageActive   LoanStage = "Active"
 	LoanStageArchived LoanStage = "Archived"
@@ -56,9 +57,10 @@ type LoanSource string
 
 const LoanSourceName = "loan_source"
 const (
-	LoanSourceBorrower LoanSource = "borrower"
-	LoanSourceLender   LoanSource = "lender"
-	LoanSourceSystem   LoanSource = "system"
+	LoanSourceBorrower    LoanSource = "borrower"
+	LoanSourceLender      LoanSource = "lender"
+	LoanSourceSystem      LoanSource = "system"
+	LoanSourcePreApproval LoanSource = "pre approval"
 )
 
 type LienPosition string
@@ -225,6 +227,10 @@ func init() {
 		{
 			Label: string(LoanSourceSystem),
 			Value: string(LoanSourceSystem),
+		},
+		{
+			Label: string(LoanSourcePreApproval),
+			Value: string(LoanSourcePreApproval),
 		},
 	})
 	// register lien position
@@ -408,5 +414,4 @@ func init() {
 			Value: string(BankruptcyChapter13),
 		},
 	})
-
 }
