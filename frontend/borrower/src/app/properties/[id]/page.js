@@ -7,7 +7,7 @@ import ActiveLoans from '../../loans/components/Active';
 import ArchivedLoans from '../../loans/components/Archived';
 import { useParams } from 'next/navigation';
 import { createRequest, assemblyAddress, eventBus } from '@repo/shared-methods/utils';
-import { useGetOptions } from '@/hooks/useGetOptions';
+import { useGetOptions } from '@repo/shared-methods/hooks';
 import { useGlobalStore } from '@/store/global';
 const PropertiesDetails = () => {
 	const { id } = useParams();

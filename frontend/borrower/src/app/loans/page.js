@@ -5,7 +5,7 @@ import styles from './loans.module.scss';
 import PendingPage from './components/Pending';
 import ActiveLoans from './components/Active';
 import ArchivedLoans from './components/Archived';
-import { useGetOptions } from '@/hooks/useGetOptions';
+import { useGetOptions } from '@repo/shared-methods/hooks';
 const api = '/loan/page';
 const Loans = () => {
 	const [tabKey, setTabKey] = useState('pending');

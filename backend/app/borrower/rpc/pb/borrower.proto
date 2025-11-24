@@ -41,10 +41,15 @@ message UsCitiesRequestData {
   string state_usps = 1;
 }
 
+message GetUuidResponse {
+  string data = 1;
+}
+
 service common {
   rpc GetOpt(OptionRequest) returns(OptionResponse);
   rpc GetUsState(EmptyRequest) returns(StringSliceResponse);
   rpc GetUsCities(UsCitiesRequest) returns(StringSliceResponse);
+  rpc GetUuid(EmptyRequest) returns(GetUuidResponse);
 }
 
 // ================= user service ==================
@@ -81,6 +86,8 @@ message UserRegisterRequestData {
   string password = 2;
   string first_name = 3;
   string last_name = 4;
+  string pre_approval_request_id = 5;
+  int64 target_lender_company_id = 6;
 }
 message UserRegisterResponseData {
 
@@ -324,6 +331,8 @@ message LoanEntry {
   //  repeated FileEntry documents = 65;
   repeated LoanDocumentEntry loan_documents = 65;
   string code = 66;
+  int64 RequestedLoanDocumentCount = 67;
+  double est_property_value_amount = 68;
 
 }
 
@@ -530,7 +539,7 @@ message LoanApplyRequestData {
   double principal_amount = 7;
   //  string maturity_date = 8;
   int32 prepayment_penalty = 9;
-  int64 lender_id = 10;
+  int64 lender_company_id = 10;
   int64 borrower_id = 11;
   repeated string business_strategy = 12;
   repeated ApplicantEntry applicants = 13;
@@ -567,6 +576,9 @@ message LoanApplyRequestData {
   repeated LoanThirdServiceEntry loan_third_services = 44;
   int64 id = 45;
   string apply_form_file = 46;
+  bool is_preapprove_loan = 47;
+  double est_property_value_amount = 48;
+  string code = 49;
 }
 
 message LoanApplyResponse {
@@ -616,6 +628,108 @@ message LoanExtendValueEntry {
   string business_line = 5;
 }
 
+// pre approve
+message LoanPreApprovalRequest {
+  LoanPreApprovalRequestData data = 1;
+}
+message LoanPreApprovalRequestData {
+  message Borrower {
+    string name = 1;
+    string email = 2;
+    string phone = 3;
+
+    int32 est_credit_score = 6;
+    int32 flip_property_count = 7;
+    int32 purchase_rental_property_count = 8;
+  }
+
+  message Property {
+    AddressEntry address = 1;
+    string property_type = 2;
+    bool is_permit_ready = 3;
+    int32 unit = 4;
+  }
+
+  message Loan {
+    int32 loan_term = 1;
+    double est_property_value_amount = 2;
+    double arv = 3;
+    double total_amount = 4;
+    double principal_amount = 5;
+    string purchase_date = 6;
+    double purchase_amount = 7;
+    double cost_spent_to_date_amount = 8;
+    double budget_amount = 9;
+    double initial_amount = 10;
+    double holdback_amount = 11;
+    int32 interest_reserve_months = 12;
+    string loan_purpose = 13;
+    string loan_type = 14;
+    bool has_assignment_fee = 15;
+    double assignment_fee_amount = 16;
+  }
+
+  Borrower borrower = 1;
+  Property property = 2;
+  Loan loan = 3;
+  string request_id = 4;
+}
+
+message LoanPreApprovalResponse {
+  LoanPreApprovalResponseData data = 1;
+}
+message LoanPreApprovalResponseData {
+  PrimaryLoanPreApproval primary = 1;
+  repeated SecondaryLoanPreApproval secondaries = 2;
+}
+
+message PrimaryLoanPreApproval {
+  bool is_approved = 1;
+  double total_amount = 2;
+  float rate = 3;
+  double monthly_payment = 4;
+  double cash_to_close = 5;
+  double initial_amount = 6;
+  double holdback_amount = 7;
+  int32 loan_term = 8;
+  float ltv = 9;
+  float ltc = 10;
+  float ltarv = 11;
+  string code = 12 [deprecated = true];
+  string reject_reason = 13;
+  string request_id = 14;
+  int64 lender_company_id = 15;
+  string lender_company_name = 16;
+}
+
+message SecondaryLoanPreApproval {
+  message RangeFloat {
+    double min = 1;
+    double max = 2;
+  }
+
+  message RangeInt {
+    int32 min = 1;
+    int32 max = 2;
+  }
+
+  int64 lender_company_id = 1;
+  string lender_company_name = 2;
+  RangeFloat total_amount = 3;
+  RangeFloat rate = 4;
+  RangeInt loan_term = 5;
+}
+
+// send preapproval loan notification
+message LoanSendPreApprovalNotificationRequest {
+  LoanSendPreApprovalNotificationRequestData data = 1;
+}
+message LoanSendPreApprovalNotificationRequestData {
+  string request_id = 1;
+  int64 lender_company_id = 2;
+}
+
+
 service Loan {
   rpc CreateBorrowerLoan(LoanCreateRequest) returns(LoanCreateResponse);
   rpc UpdateBorrowerLoan(LoanUpdateRequest) returns(EmptyResponse);
@@ -628,7 +742,8 @@ service Loan {
   rpc SaveDraftLoan(LoanApplyRequest) returns(LoanApplyResponse);
   rpc UpdateApplyLoan(LoanApplyRequest) returns(EmptyResponse);
   rpc ImportPendingLoans(ImportPendingLoansRequest) returns(ImportPendingLoansResponse);
-  //  rpc UpdateLoanDocuments(LoanUpdateDocumentsRequest) returns(EmptyResponse);
+  rpc PreApprovalLoan(LoanPreApprovalRequest) returns(LoanPreApprovalResponse);
+  rpc SendPreApprovalNotification(LoanSendPreApprovalNotificationRequest) returns(EmptyResponse);
 }
 
 

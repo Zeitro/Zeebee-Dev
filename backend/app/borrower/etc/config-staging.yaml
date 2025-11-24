@@ -36,6 +36,7 @@ RpcConf:
       Period: 300
   VerifyEmailExpireSeconds: 86400
   ResetPwdExpireSeconds: 3600
+  PreApproveLoanExpireSeconds: 86400
   EmailConf:
     Host: smtp.gmail.com
     Port: 587
@@ -65,6 +66,32 @@ RpcConf:
     Bucket: zeebee-files-staging
     FileFolder: files-staging
     PreSigneUrlExpireSeconds: 60
+
+  PreApprovalLoanConf:
+    - LenderCompanyId: 2
+      LenderCompanyName: "RBI Private Lending"
+      TotalAmount:
+        Min: 75000
+        Max: 500000
+      Rate:
+        Min: 9
+        Max: 12
+      LoanTerm:
+        Min: 3
+        Max: 24
+    - LenderCompanyId: 3
+      LenderCompanyName: "Anchor Loans"
+      TotalAmount:
+        Min: 500000
+        Max: 5000000
+      Rate:
+        Min: 8
+        Max: 13
+      LoanTerm:
+        Min: 6
+        Max: 18
   LoginUrl: https://app.zeebeeloans.net/login
   VerifyEmailUrl: https://app.zeebeeloans.net/login/verifyEmail
   ResetPwdUrl: https://app.zeebeeloans.net/login/resetPassword
+  PreApprovalLoanExpireSeconds: 86400
+  HighCostLimitValue: 806500

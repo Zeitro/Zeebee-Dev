@@ -47,7 +47,5 @@ func (form *ApplyForm) page15() (err error) {
 	y = form.pdf.GetY()
 	_ = form.pdf.ImageFrom(pdf.LightBlueBg, x, y, &gopdf.Rect{W: form.pdf.GetFullWidth(), H: blockHeight})
 	form.pdf.Br(blockHeight + form.pdf.LineHeight)
-	x = form.pdf.GetX()
-	y = form.pdf.GetY()
 	return err
 }

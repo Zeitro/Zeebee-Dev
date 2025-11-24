@@ -27,6 +27,7 @@ type Signatures {
 
 type ApplyFormPdfRequest {
     Id int64 `path:"id,optional"`
+    Code string `json:"code,optional" validate:"omitempty,number,min=15,max=100"`
     LoanType string `json:"loan_type,optional" validate:"required,oneof=Bridge Rehab Rental 'Ground up construction'"`
     LoanPurpose string `json:"loan_purpose,optional" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
     TotalAmount float64 `json:"total_amount,optional" validate:"required,gt=0"`
@@ -50,7 +51,8 @@ type ApplyFormPdfRequest {
     ScheduledCloseEscrowDate string `json:"scheduled_close_escrow_date,optional" validate:"required_if=LoanPurpose Purchase,omitempty,datetime=01/02/2006"`
     LoanTerm int32 `json:"loan_term,optional" validate:"gte=1"`
     Arv float64 `json:"arv,optional" validate:"required,gte=0"`
-    Ltv float64 `json:"ltv,optional" validate:"required_unless=LoanPurpose Purchase,omitempty,gte=0"`
+    Ltv float64 `json:"ltv,optional" validate:"gte=0"`
+    EstPropertyValueAmount float64 `json:"est_property_value_amount,optional" validate:"required_unless=LoanPurpose Purchase,omitempty,gte=0"`
     LiquidityAmount float64 `json:"liquidity_amount,optional" validate:"gte=0"`
     Budget *LoanBudgetEntry `json:"budget,optional" validate:"required_if=LoanType Rehab LoanType 'Ground up construction'"`
     MidConstruction bool `json:"mid_construction,optional"`

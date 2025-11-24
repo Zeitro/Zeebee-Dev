@@ -32,6 +32,7 @@ const Processing = ({
 	);
 
 	useDeferredSyncEffect({
+		notPassedCallback: () => setLoading(false),
 		predicate: () => rowData?.loan_documents?.length,
 		deferred: () => {
 			let bList = [],

@@ -1,7 +1,7 @@
 'use client';
 import { Col, Form, Input, InputNumber, Row, Select } from 'antd';
 import styles from './index.module.scss';
-import { useGetOptions } from '@/hooks/useGetOptions';
+import { useGetOptions } from '@repo/shared-methods/hooks';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
 import { loan_pending } from '@/enum/common';
 import { InputNumAmount, CommonFormDate } from '@repo/shared-methods';

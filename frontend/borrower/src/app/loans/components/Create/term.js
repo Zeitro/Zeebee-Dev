@@ -2,7 +2,7 @@
 import { Button, Col, Form, Input, InputNumber, Row, Select } from 'antd';
 import styles from './index.module.scss';
 import { InputNumAmount, CommonFormDate, InputNameCombination } from '@repo/shared-methods';
-import { useGetOptions } from '@/hooks/useGetOptions';
+import { useGetOptions } from '@repo/shared-methods/hooks';
 import { loan_active, loan_pending, titleCol } from '@/enum/common';
 import { capitalizeFirstLetter } from '@repo/shared-methods/utils';
 import SelectCard from '@/components/SelectCard';

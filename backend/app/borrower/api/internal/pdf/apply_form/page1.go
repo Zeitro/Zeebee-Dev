@@ -71,9 +71,10 @@ func (form *ApplyForm) page1() (err error) {
 	var secondCellWidth float64 = 280
 	var thirdCellWidth float64 = 100
 	var rowHeight float64 = 30
+	var applicantCompleteText = "All applicants must complete"
 	form.pdf.SetBlackRegularFont()
 	_ = form.pdf.Cell(&gopdf.Rect{W: firstCellWidth, H: rowHeight}, "Borrower Information")
-	_ = form.pdf.Cell(&gopdf.Rect{W: secondCellWidth, H: rowHeight}, "All applicants must complete")
+	_ = form.pdf.Cell(&gopdf.Rect{W: secondCellWidth, H: rowHeight}, applicantCompleteText)
 	_ = form.pdf.Cell(&gopdf.Rect{W: thirdCellWidth, H: rowHeight}, "2 - 3")
 	form.pdf.Br(20)
 	form.pdf.Line(form.pdf.GetPageStartX(), form.pdf.GetY(), form.pdf.GetPageEndX(), form.pdf.GetY())
@@ -105,28 +106,28 @@ func (form *ApplyForm) page1() (err error) {
 
 	form.pdf.Br(20)
 	_ = form.pdf.Cell(&gopdf.Rect{W: firstCellWidth, H: rowHeight}, "Declarations/ Demographic Information")
-	_ = form.pdf.Cell(&gopdf.Rect{W: secondCellWidth, H: rowHeight}, "All applicants must complete")
+	_ = form.pdf.Cell(&gopdf.Rect{W: secondCellWidth, H: rowHeight}, applicantCompleteText)
 	_ = form.pdf.Cell(&gopdf.Rect{W: thirdCellWidth, H: rowHeight}, "7 - 9")
 	form.pdf.Br(20)
 	form.pdf.Line(form.pdf.GetPageStartX(), form.pdf.GetY(), form.pdf.GetPageEndX(), form.pdf.GetY())
 
 	form.pdf.Br(20)
 	_ = form.pdf.Cell(&gopdf.Rect{W: firstCellWidth, H: rowHeight}, "Disclosures and Consents")
-	_ = form.pdf.Cell(&gopdf.Rect{W: secondCellWidth, H: rowHeight}, "All applicants must complete")
+	_ = form.pdf.Cell(&gopdf.Rect{W: secondCellWidth, H: rowHeight}, applicantCompleteText)
 	_ = form.pdf.Cell(&gopdf.Rect{W: thirdCellWidth, H: rowHeight}, "10 - 11")
 	form.pdf.Br(20)
 	form.pdf.Line(form.pdf.GetPageStartX(), form.pdf.GetY(), form.pdf.GetPageEndX(), form.pdf.GetY())
 
 	form.pdf.Br(20)
 	_ = form.pdf.Cell(&gopdf.Rect{W: firstCellWidth, H: rowHeight}, "Construction Reserve/Fund Control")
-	_ = form.pdf.Cell(&gopdf.Rect{W: secondCellWidth, H: rowHeight}, "All applicants must complete")
+	_ = form.pdf.Cell(&gopdf.Rect{W: secondCellWidth, H: rowHeight}, applicantCompleteText)
 	_ = form.pdf.Cell(&gopdf.Rect{W: thirdCellWidth, H: rowHeight}, "12")
 	form.pdf.Br(20)
 	form.pdf.Line(form.pdf.GetPageStartX(), form.pdf.GetY(), form.pdf.GetPageEndX(), form.pdf.GetY())
 
 	form.pdf.Br(20)
 	_ = form.pdf.Cell(&gopdf.Rect{W: firstCellWidth, H: rowHeight}, "Borrower Authorization")
-	_ = form.pdf.Cell(&gopdf.Rect{W: secondCellWidth, H: rowHeight}, "All applicants must complete")
+	_ = form.pdf.Cell(&gopdf.Rect{W: secondCellWidth, H: rowHeight}, applicantCompleteText)
 	_ = form.pdf.Cell(&gopdf.Rect{W: thirdCellWidth, H: rowHeight}, "13")
 	form.pdf.Br(20)
 	form.pdf.Line(form.pdf.GetPageStartX(), form.pdf.GetY(), form.pdf.GetPageEndX(), form.pdf.GetY())
@@ -168,8 +169,6 @@ func (form *ApplyForm) page1() (err error) {
 	}
 	for _, doc := range docs {
 		form.pdf.Br(20)
-		x = form.pdf.GetX()
-		y = form.pdf.GetY()
 		_ = form.pdf.Cell(&gopdf.Rect{W: firstCellWidth, H: rowHeight}, doc.title)
 		x = form.pdf.GetX()
 		y = form.pdf.GetY()

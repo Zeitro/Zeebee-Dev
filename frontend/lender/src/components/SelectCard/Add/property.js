@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Row, Col, Form, Select, InputNumber } from 'antd';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
-import { useGetOptions } from '@/hooks/useGetOptions';
+import { useGetOptions } from '@repo/shared-methods/hooks';
 import { layoutCol } from '@/enum/common';
 import {
 	livingAreaProps,

@@ -34,7 +34,7 @@ import General from '../../../zeeBeeDetails/components/General';
 import Documents from '../../../zeeBeeDetails/components/Documents';
 // import ReviewAndSign, { contractSignatureZones } from '../ReviewAndSign';
 import _ from 'lodash';
-import { uploadAwsS3 } from '@/api/common';
+import { uploadAwsS3 } from '@repo/shared-methods/api';
 const initialValues = {
 	applicants: [{ type: 'Individual', is_primary: true }],
 };

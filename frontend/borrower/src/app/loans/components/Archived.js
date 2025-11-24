@@ -3,7 +3,7 @@ import React, { useMemo, useState, useRef } from 'react';
 import { FilterTable } from '@repo/shared-methods';
 import { archivedColumns } from './column';
 import { transformArrayStructure, createRequest } from '@repo/shared-methods/utils';
-import { useOptionsStore } from '@/store/options';
+import { useOptionsStore } from '@repo/shared-methods/store';
 import { ReloadOutlined } from '@ant-design/icons';
 import useOpt from './useOpt';
 const ArchivedLoans = ({

@@ -7,7 +7,7 @@ import { InputPhone } from '../InputPhone';
 import { SelectFormTINType } from '../InputTIN/SelectTINType';
 import { emailRegex, phoneRegex, validateRule } from '../../lib/format';
 import { layoutCol, titleCol } from '@/enum/common';
-// import { useGetOptions } from '@/hooks/useGetOptions';
+// import { useGetOptions } from '@repo/shared-methods/hooks';
 import SelectCard from '@/components/SelectCard';
 const name = 'loan_borrower';
 export const ApplicantInfo = ({
