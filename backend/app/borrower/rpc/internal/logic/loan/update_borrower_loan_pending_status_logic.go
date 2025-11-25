@@ -32,9 +32,10 @@ func (l *UpdateBorrowerLoanPendingStatusLogic) UpdateBorrowerLoanPendingStatus(i
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
+	// todo check organization
 	loanModel, err := l.svcCtx.LoanRepo.FindOneByColumns(l.ctx, map[string]interface{}{
-		"id":          in.Data.Id,
-		"borrower_id": in.Data.BorrowerId,
+		"id":      in.Data.Id,
+		"user_id": in.Data.UserId,
 	})
 	if err != nil {
 		return nil, errorx.Wrap(err, "Failed To Get Loan")

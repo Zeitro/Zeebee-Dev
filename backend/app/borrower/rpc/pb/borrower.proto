@@ -195,13 +195,22 @@ message UserinfoResponse {
 }
 
 message UserinfoResponseData {
+  message Organization {
+    int64 id = 1;
+    string name = 2;
+    string status = 3;
+    bool is_default = 4;
+  }
+
   int64 id = 1;
   string email = 2;
   string first_name = 3;
   string last_name = 4;
-  string phone_number = 5;
-  string address = 6 [deprecated = true];
-  string ssn = 7;
+  string full_name = 5;
+  int64 organization_id = 6;
+  string organization_name = 7;
+  string status = 8;
+  repeated Organization organizations = 9;
 }
 
 service user {
@@ -244,7 +253,7 @@ message LoanEntry {
   string created_at = 22;
   string updated_at = 23;
   int64 lender_id = 24;
-  int64 borrower_id = 25;
+  int64 user_id = 25;
   repeated string business_strategy = 26;
   repeated LoanApplicantEntry applicants = 27;
   string source = 28;
@@ -301,7 +310,7 @@ message LoanApplicantApplyEntry {
 
 // loan create
 message LoanCreateRequestData {
-  int64 borrower_id = 1;
+  int64 user_id = 1;
   string stage = 2;
   string pending_status = 3;
   string loan_purpose = 4;
@@ -328,6 +337,7 @@ message LoanCreateRequestData {
   string original_contract_date = 27;
   string extension_date = 28;
   string loan_processor = 29;
+  int64 organization_id = 23;
 
 }
 
@@ -346,7 +356,7 @@ message LoanUpdateRequest {
 }
 
 message LoanUpdateRequestData {
-  int64 borrower_id = 1;
+  int64 user_id = 1;
   string stage = 2;
   string pending_status = 3;
   string loan_purpose = 4;
@@ -373,6 +383,7 @@ message LoanUpdateRequestData {
   string original_contract_date = 28;
   string extension_date = 29;
   string loan_processor = 30;
+  int64 organization_id = 31;
 }
 
 
@@ -382,7 +393,8 @@ message LoanDetailRequest {
 
 message LoanDetailRequestData {
   int64 id = 1;
-  int64 borrower_id = 2;
+  int64 user_id = 2;
+  int64 organization_id = 3;
 }
 
 message LoanDetailResponse {
@@ -394,8 +406,9 @@ message LoanUpdatePendingStatusRequest {
 }
 message LoanUpdatePendingStatusRequestData {
   int64 id = 1;
-  int64 borrower_id = 2;
+  int64 user_id = 2;
   string pending_status = 3;
+  int64 organization_id = 4;
 }
 
 message LoanDeleteRequest {
@@ -403,7 +416,8 @@ message LoanDeleteRequest {
 }
 message LoanDeleteRequestData {
   int64 id = 1;
-  int64 borrower_id = 2;
+  int64 user_id = 2;
+  int64 organization_id = 3;
 }
 
 message LoanPageRequest {
@@ -415,7 +429,7 @@ message LoanPageResponse {
 }
 
 message  LoanPageRequestFilter {
-  int64 borrower_id = 1;
+  int64 user_id = 1;
   string stage = 2;
   string keyword = 3;
   string keyword_type = 4;
@@ -423,6 +437,7 @@ message  LoanPageRequestFilter {
   repeated string loan_type = 6;
   repeated string lender = 7;
   repeated string pending_status = 8;
+  int64 organization_id = 9;
 }
 
 message  LoanPageRequestSorter {
@@ -450,7 +465,8 @@ message LoanLenderCompaniesRequest {
 }
 
 message LoanLenderCompaniesRequestData {
-  int64 borrower_id = 1;
+  int64 user_id = 1;
+  int64 organization_id = 2;
 }
 
 message LoanLenderCompaniesResponse {
@@ -470,7 +486,7 @@ message LoanApplyRequestData {
   double principal_amount = 7;
   int32 prepayment_penalty = 8;
   int64 lender_company_id = 9;
-  int64 borrower_id = 10;
+  int64 user_id = 10;
   repeated string business_strategy = 11;
   repeated LoanApplicantApplyEntry applicants = 12;
   int32 loan_term = 13;
@@ -486,6 +502,7 @@ message LoanApplyRequestData {
   string apply_form_file = 23;
   bool is_preapprove_loan = 24;
   string code = 25;
+  int64 organization_id = 26;
 }
 
 message LoanApplyResponse {
@@ -499,7 +516,7 @@ message ImportPendingLoansRequest {
   repeated ImportPendingLoansRequestData data = 1;
 }
 message ImportPendingLoansRequestData {
-  int64 borrower_id = 1;
+  int64 user_id = 1;
   string loan_type = 2;
   double total_amount = 3;
   ImportPendingLoanPropertyEntry loan_property = 4;
@@ -517,6 +534,7 @@ message ImportPendingLoansRequestData {
   string loan_processor = 16;
   repeated ImportPendingLoanApplicantEntry applicants = 17;
   string closing_date = 18;
+  int64 organization_id = 19;
 }
 
 message ImportPendingLoanPropertyEntry {
@@ -806,9 +824,10 @@ message PropertyPageRequestData {
 }
 
 message  PropertyPageRequestFilter{
-  int64 borrower_id = 1;
+  int64 user_id = 1;
   string keyword = 3;
   repeated string applicant = 5;
+  int64 organization_id = 6;
 }
 
 message  PropertyPageRequestSorter {
@@ -834,7 +853,8 @@ message PropertyDetailSummaryResponse {
 
 message PropertyDetailRequestData {
   int64 id = 1;
-  int64 borrower_id = 2;
+  int64 user_id = 2;
+  int64 organization_id = 3;
 }
 
 message PropertyDetailSummaryResponseData {
@@ -868,7 +888,8 @@ message PropertyCreateRequestData {
   int32 bedrooms = 5;
   int32 bathrooms = 6;
   AddressEntry address = 7;
-  int64 borrower_id = 8;
+  int64 user_id = 8;
+  int64 organization_id = 9;
 }
 
 message PropertyCreateResponse {
@@ -888,7 +909,8 @@ message PropertyUpdateRequestData {
   float living_area_sqft = 5;
   int32 bedrooms = 6;
   int32 bathrooms = 7;
-  int64 borrower_id = 8;
+  int64 user_id = 8;
+  int64 organization_id = 9;
 }
 
 // detail property
@@ -902,14 +924,16 @@ message PropertyDeleteRequest {
 }
 message PropertyDeleteRequestData {
   int64 id = 1;
-  int64 borrower_id = 2;
+  int64 user_id = 2;
+  int64 organization_id = 3;
 }
 // all borrower properties
 message PropertyAllRequest {
   PropertyAllRequestData data = 1;
 }
 message PropertyAllRequestData {
-  int64 borrower_id = 1;
+  int64 user_id = 1;
+  int64 organization_id = 2;
 }
 message PropertyAllResponse {
   repeated BorrowerPropertyEntry data = 1;
@@ -932,7 +956,7 @@ message BorrowerEntityEntry {
   int64 id = 1;
   string created_at = 2;
   string updated_at = 3;
-  int64 borrower_id = 4;
+  int64 user_id = 4;
   string type = 5;
   string name = 6;
   string tin_type = 7;
@@ -941,14 +965,14 @@ message BorrowerEntityEntry {
   string contact_email = 10;
   string contact_name = 11;
   string contact_phone = 12;
-  //  int32 own_percent = 13;
+  int64 organization_id = 13;
 }
 
 message BorrowerEntityPageEntry {
   int64 id = 1;
   string created_at = 2;
   string updated_at = 3;
-  int64 borrower_id = 4;
+  int64 user_id = 4;
   string type = 5;
   string name = 6;
   string tin_type = 7;
@@ -960,7 +984,7 @@ message BorrowerEntityPageEntry {
 }
 
 message BorrowerEntityEditEntry {
-  int64 borrower_id = 1;
+  int64 user_id = 1;
   string type = 2;
   string name = 3;
   string tin_type = 4;
@@ -970,6 +994,7 @@ message BorrowerEntityEditEntry {
   string contact_name = 8;
   string contact_phone = 9;
   int64 id = 11;
+  int64 organization_id = 12;
 }
 
 // create borrower entity
@@ -992,7 +1017,8 @@ message BorrowerEntityDetailRequest {
 }
 message BorrowerEntityDetailRequestData{
   int64 id = 1;
-  int64 borrower_id = 2;
+  int64 user_id = 2;
+  int64 organization_id = 3;
 }
 
 message BorrowerEntityDetailResponse {
@@ -1006,7 +1032,8 @@ message BorrowerEntityDeleteRequest {
 
 message BorrowerEntityDeleteRequestData {
   int64 id = 1;
-  int64 borrower_id = 2;
+  int64 user_id = 2;
+  int64 organization_id = 3;
 }
 
 // page borrower entity
@@ -1025,8 +1052,9 @@ message BorrowerEntityPageRequestData {
   BorrowerEntityPageRequestSorter sorter = 4;
 }
 message BorrowerEntityPageRequestFilter {
-  int64 borrower_id = 1;
+  int64 user_id = 1;
   string keyword = 2;
+  int64 organization_id = 3;
 }
 message BorrowerEntityPageRequestSorter {
   string column = 1;
@@ -1046,9 +1074,10 @@ message BorrowerEntityCheckExistedRequest {
   BorrowerEntityCheckExistedRequestData data = 1;
 }
 message BorrowerEntityCheckExistedRequestData {
-  int64 borrower_id = 1;
+  int64 user_id = 1;
   int64 id = 2;
   string name = 3;
+  int64 organization_id = 4;
 }
 message BorrowerEntityCheckExistedResponse {
   BorrowerEntityCheckExistedResponseData data = 1;
@@ -1062,7 +1091,8 @@ message BorrowerEntityAllRequest {
   BorrowerEntityAllRequestData data = 1;
 }
 message BorrowerEntityAllRequestData {
-  int64 borrower_id = 1;
+  int64 user_id = 1;
+  int64 organization_id = 2;
 }
 
 message BorrowerEntityAllResponse {
@@ -1085,7 +1115,7 @@ message BorrowerApplicantEntry {
   int64 id = 1;
   string created_at = 2;
   string updated_at = 3;
-  int64 borrower_id = 4;
+  int64 user_id = 4;
   string first_name = 5;
   string mid_name = 6;
   string last_name = 7;
@@ -1098,13 +1128,14 @@ message BorrowerApplicantEntry {
   string driver_license_num = 14;
   AddressEntry address = 15;
   string phone = 16;
+  int64 organization_id = 17;
 }
 
 message BorrowerApplicantPageEntry {
   int64 id = 1;
   string created_at = 2;
   string updated_at = 3;
-  int64 borrower_id = 4;
+  int64 user_id = 4;
   string first_name = 5;
   string mid_name = 6;
   string last_name = 7;
@@ -1119,7 +1150,7 @@ message BorrowerApplicantPageEntry {
   AddressEntry address = 16;
 }
 message BorrowerApplicantEditEntry {
-  int64 borrower_id = 1;
+  int64 user_id = 1;
   string first_name = 2;
   string mid_name = 3;
   string last_name = 4;
@@ -1132,6 +1163,7 @@ message BorrowerApplicantEditEntry {
   AddressEntry address = 11;
   int64 id = 12;
   string phone = 13;
+  int64 organization_id = 14;
 }
 
 // create borrower applicant
@@ -1151,7 +1183,8 @@ message BorrowerApplicantDetailRequest {
 }
 message BorrowerApplicantDetailRequestData {
   int64 id = 1;
-  int64 borrower_id = 2;
+  int64 user_id = 2;
+  int64 organization_id = 3;
 }
 message BorrowerApplicantDetailResponse {
   BorrowerApplicantEntry data = 1;
@@ -1162,7 +1195,8 @@ message BorrowerApplicantDeleteRequest {
 }
 message BorrowerApplicantDeleteRequestData {
   int64 id = 1;
-  int64 borrower_id = 2;
+  int64 user_id = 2;
+  int64 organization_id = 3;
 }
 // page borrower applicant
 message BorrowerApplicantPageRequest {
@@ -1175,8 +1209,9 @@ message BorrowerApplicantPageRequestData {
   BorrowerApplicantPageRequestSorter sorter = 4;
 }
 message BorrowerApplicantPageRequestFilter {
-  int64 borrower_id = 1;
+  int64 user_id = 1;
   string keyword = 2;
+  int64 organization_id = 3;
 }
 message BorrowerApplicantPageRequestSorter {
   string column = 1;
@@ -1198,11 +1233,12 @@ message BorrowerApplicantCheckExistedRequest {
   BorrowerApplicantCheckExistedRequestData data = 1;
 }
 message BorrowerApplicantCheckExistedRequestData {
-  int64 borrower_id = 1;
+  int64 user_id = 1;
   int64 id = 2;
   string first_name = 3;
   string mid_name = 4;
   string last_name = 5;
+  int64 organization_id = 6;
 }
 message BorrowerApplicantCheckExistedResponse {
   BorrowerApplicantCheckExistedResponseData data = 1;
@@ -1215,7 +1251,8 @@ message BorrowerApplicantAllRequest {
   BorrowerApplicantAllRequestData data = 1;
 }
 message BorrowerApplicantAllRequestData {
-  int64 borrower_id = 1;
+  int64 user_id = 1;
+  int64 organization_id = 2;
 }
 message BorrowerApplicantAllResponse {
   repeated BorrowerApplicantPageEntry data = 1;
@@ -1258,7 +1295,8 @@ message LoanApplicantEntry{
   int32 own_percent = 21;
   int64 borrower_applicant_id = 22;
   int64 loan_id = 23;
-  int64 borrower_id = 24;
+  int64 user_id = 24;
+  int64 organization_id = 25;
 }
 
 message BorrowerNamesRequest {
@@ -1266,7 +1304,8 @@ message BorrowerNamesRequest {
 }
 
 message BorrowerNamesRequestData {
-  int64 borrower_id = 1;
+  int64 user_id = 1;
+  int64 organization_id = 2;
 }
 
 message BorrowerNamesResponse {
@@ -1300,8 +1339,9 @@ message LoanDocumentAddFilesRequest {
 }
 message LoanDocumentAddFilesRequestData {
   int64 id = 1;
-  int64 borrower_id = 2;
-  repeated string file_urls = 3;
+  int64 user_id = 2;
+  int64 organization_id = 3;
+  repeated string file_urls = 4;
 }
 service LoanDocument {
   rpc AddFiles(LoanDocumentAddFilesRequest) returns(EmptyResponse);
@@ -1437,7 +1477,8 @@ message FileDeleteRequest {
 }
 message FileDeleteRequestData {
   int64 id = 1;
-  int64 borrower_id = 2;
+  int64 user_id = 2;
+  int64 organization_id = 3;
 }
 
 service File {

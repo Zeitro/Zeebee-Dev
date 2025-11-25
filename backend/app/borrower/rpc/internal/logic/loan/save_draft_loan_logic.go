@@ -49,7 +49,7 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 
 	// get original loan
 	if in.Data.Id > 0 {
-		loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, in.Data.Id, in.Data.BorrowerId)
+		loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, in.Data.Id, in.Data.UserId)
 		if err != nil {
 			return nil, err
 		}
@@ -90,7 +90,7 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 
 				if in.Data.Id > 0 {
 					if in.Data.LenderCompanyId == 0 {
-						in.Data.LenderCompanyId = loan.LenderCompanyId
+						in.Data.LenderCompanyId = loan.LenderOrganizationId
 					}
 					_, err = l.svcCtx.LoanRepo.UpdateOneWithTx(l.ctx, tx, in.Data.Id, data.loan)
 				} else {
@@ -104,7 +104,7 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 					if err != nil {
 						return err
 					}
-					loan, err = l.svcCtx.LoanRepo.GetBorrowerLoanWithTx(l.ctx, tx, savaLoan.Id, in.Data.BorrowerId)
+					loan, err = l.svcCtx.LoanRepo.GetBorrowerLoanWithTx(l.ctx, tx, savaLoan.Id, in.Data.UserId)
 				}
 				return err
 			},
@@ -267,24 +267,25 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	if err != nil {
 		return nil, errorx.GetFailedTransErr(err)
 	}
-	loan.BorrowerId = reqData.BorrowerId
+	loan.UserId = reqData.UserId
+	loan.BorrowerOrganizationId = reqData.OrganizationId
 	loan.Stage = constants.LoanStageDraft
 	loan.PendingStatus = constants.LoanPendingStatusNone
 	// loan.Source = constants.LoanSourceSystem
 	loan.Source = condition.Ternary(reqData.IsPreapproveLoan, constants.LoanSourcePreApproval, constants.LoanSourceSystem)
 	if reqData.LenderCompanyId > 0 {
-		lender, err := l.svcCtx.LenderCompanyRepo.FindOneById(l.ctx, reqData.LenderCompanyId)
+		lender, err := l.svcCtx.OrganizationRepo.FindOneById(l.ctx, reqData.LenderCompanyId)
 		if err != nil {
 			return nil, err
 		}
-		loan.LenderCompanyId = lender.Id
+		loan.LenderOrganizationId = lender.Id
 		loan.LenderCompany = lender.Name
 	}
 
 	// LoanBorrower
 	var loanBorrower *model.LoanBorrower
 	if reqData.LoanBorrower.BorrowerEntityId > 0 {
-		loanBorrower, err = l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, reqData.LoanBorrower.BorrowerEntityId, reqData.BorrowerId)
+		loanBorrower, err = l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, reqData.LoanBorrower.BorrowerEntityId, reqData.OrganizationId)
 		if err != nil {
 			return nil, err
 		}
@@ -295,7 +296,7 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	var loanProperty *model.LoanProperty
 	if reqData.LoanProperty != nil {
 		if reqData.LoanProperty.BorrowerPropertyId > 0 {
-			loanProperty, err = l.svcCtx.BorrowerPropertyRepo.TranToLoanPropertyWithId(l.ctx, reqData.LoanProperty.BorrowerPropertyId, reqData.BorrowerId)
+			loanProperty, err = l.svcCtx.BorrowerPropertyRepo.TranToLoanPropertyWithId(l.ctx, reqData.LoanProperty.BorrowerPropertyId, reqData.UserId)
 			if err != nil {
 				return nil, err
 			}
@@ -322,13 +323,13 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	var totalOwnPercent int32
 	for _, applicant := range reqData.Applicants {
 		totalOwnPercent += applicant.OwnPercent
-		loanApplicant, err := l.svcCtx.BorrowerApplicantRepo.TranToLoanApplicantWithId(l.ctx, applicant.BorrowerApplicantId, reqData.BorrowerId)
+		loanApplicant, err := l.svcCtx.BorrowerApplicantRepo.TranToLoanApplicantWithId(l.ctx, applicant.BorrowerApplicantId, reqData.OrganizationId)
 		if err != nil {
 			return nil, err
 		}
 		loanApplicant.Id = applicant.Id
 		loanApplicant.LoanId = reqData.Id
-		loanApplicant.BorrowerId = reqData.BorrowerId
+		loanApplicant.BorrowerOrganizationId = reqData.OrganizationId
 		loanApplicant.IsPrimary = applicant.IsPrimary
 		loanApplicant.OwnPercent = applicant.OwnPercent
 		applicants = append(applicants, loanApplicant)

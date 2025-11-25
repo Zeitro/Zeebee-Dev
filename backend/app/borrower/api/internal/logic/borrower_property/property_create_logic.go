@@ -44,11 +44,12 @@ func (l *PropertyCreateLogic) PropertyCreate(req *types.PropertyCreateRequest) (
 	}
 
 	// get borrower id
-	borrowerId, err := utils.GetAccountIdFromCtx(l.ctx)
+	claim, err := utils.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	rpcReq.Data.BorrowerId = borrowerId
+	rpcReq.Data.UserId = claim.UserId
+	rpcReq.Data.OrganizationId = claim.OrganizationId
 
 	rpcResp, err := l.svcCtx.BorrowerPropertyRpcClient.Create(l.ctx, rpcReq)
 	if err != nil {

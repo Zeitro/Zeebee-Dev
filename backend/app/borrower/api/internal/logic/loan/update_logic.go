@@ -54,10 +54,12 @@ func (l *UpdateLogic) Update(req *types.LoanUpdateRequest) (resp *types.EmptyRes
 	rpcReq.Data.Applicants = rpcApplicants
 
 	// get borrower id
-	rpcReq.Data.BorrowerId, err = utils.GetAccountIdFromCtx(l.ctx)
+	claim, err := utils.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
+	rpcReq.Data.UserId = claim.UserId
+	rpcReq.Data.OrganizationId = claim.OrganizationId
 
 	_, err = l.svcCtx.LoanRpcClient.UpdateBorrowerLoan(l.ctx, rpcReq)
 

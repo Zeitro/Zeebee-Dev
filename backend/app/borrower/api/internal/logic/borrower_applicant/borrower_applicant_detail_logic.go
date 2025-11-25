@@ -37,11 +37,12 @@ func (l *BorrowerApplicantDetailLogic) BorrowerApplicantDetail(req *types.PathId
 	}
 
 	// get borrower id
-	borrowerId, err := utils.GetAccountIdFromCtx(l.ctx)
+	claim, err := utils.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	rpcReq.Data.BorrowerId = borrowerId
+	rpcReq.Data.UserId = claim.UserId
+	rpcReq.Data.OrganizationId = claim.OrganizationId
 
 	rpcResp, err := l.svcCtx.BorrowerApplicantRpcClient.Detail(l.ctx, rpcReq)
 	if err != nil {

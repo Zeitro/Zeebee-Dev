@@ -62,7 +62,7 @@ func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingL
 			},
 		}, nil
 	}
-	borrowerId := in.Data[0].BorrowerId
+	userId := in.Data[0].UserId
 
 	// create  loan
 	err = l.svcCtx.LoanRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
@@ -73,7 +73,7 @@ func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingL
 			var uid string
 			data := models[i]
 			// get BorrowerProperty
-			borrowerProperty, innerErr = l.svcCtx.BorrowerPropertyRepo.GetOrCreateBorrowerPropertyWithTxForBorrower(l.ctx, tx, borrowerId, data.borrowerProperty.Address)
+			borrowerProperty, innerErr = l.svcCtx.BorrowerPropertyRepo.GetOrCreateBorrowerPropertyWithTxForBorrower(l.ctx, tx, userId, data.borrowerProperty.Address)
 			if innerErr != nil {
 				return innerErr
 			}
@@ -162,7 +162,8 @@ func (l *ImportPendingLoansLogic) buildImportModel(in *borrower.ImportPendingLoa
 	if err != nil {
 		return nil, errorx.GetFailedTransErr(err)
 	}
-	loan.BorrowerId = in.BorrowerId
+	loan.UserId = in.UserId
+	loan.BorrowerOrganizationId = in.OrganizationId
 	loan.LoanType = constants.LoanType(in.LoanType)
 	loan.Stage = constants.LoanStagePending
 	loan.PendingStatus = constants.LoanPendingStatusQuoting
@@ -207,7 +208,7 @@ func (l *ImportPendingLoansLogic) buildImportModel(in *borrower.ImportPendingLoa
 		return nil, errorx.New("No Primary Applicant")
 	}
 	slice.ForEach(applicants, func(index int, item *model.LoanApplicant) {
-		item.BorrowerId = in.BorrowerId
+		item.BorrowerOrganizationId = in.OrganizationId
 		totalOwnPercent += item.OwnPercent
 	})
 	if totalOwnPercent > 100 {
@@ -231,7 +232,7 @@ func (l *ImportPendingLoansLogic) buildImportModel(in *borrower.ImportPendingLoa
 
 	// BorrowerProperty
 	borrowerProperty := &model.BorrowerProperty{}
-	borrowerProperty.BorrowerId = in.BorrowerId
+	borrowerProperty.UserId = in.UserId
 	borrowerProperty.Address = loanProperty.Address
 
 	return &importPendingLoanModelData{

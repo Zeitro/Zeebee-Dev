@@ -44,10 +44,12 @@ func (l *AddFilesLogic) AddFiles(req *types.LoanDocumentAddFilesRequest) (resp *
 	}
 
 	// Get borrower id from context
-	rpcReq.Data.BorrowerId, err = utils.GetAccountIdFromCtx(l.ctx)
+	claim, err := utils.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
-		return nil, errorx.WithStack(err)
+		return nil, err
 	}
+	rpcReq.Data.UserId = claim.UserId
+	rpcReq.Data.OrganizationId = claim.OrganizationId
 
 	// Call RPC method
 	_, err = l.svcCtx.LoanDocumentRpcClient.AddFiles(l.ctx, rpcReq)

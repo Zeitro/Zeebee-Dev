@@ -32,10 +32,12 @@ func (l *LenderCompaniesLogic) LenderCompanies(req *types.EmptyRequest) (resp *t
 	}
 
 	// get borrower id
-	rpcReq.Data.BorrowerId, err = utils.GetAccountIdFromCtx(l.ctx)
+	claim, err := utils.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
+	rpcReq.Data.UserId = claim.UserId
+	rpcReq.Data.OrganizationId = claim.OrganizationId
 
 	rpcResp, err := l.svcCtx.LoanRpcClient.BorrowerLoanLenderCompanies(l.ctx, rpcReq)
 	if err != nil {

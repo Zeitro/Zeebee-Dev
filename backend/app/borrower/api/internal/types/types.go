@@ -189,7 +189,8 @@ type ImportLoanExtendEntry struct {
 }
 
 type ImportPendingLoanEntry struct {
-	BorrowerId            int64                         `json:"borrower_id" validate:"required,gt=0"`
+	UserId                int64                         `json:"user_id" validate:"required,gt=0"`
+	OrganizationId        int64                         `json:"organization_id" validate:"required,gt=0"`
 	LoanProperty          *ImportLoanApplyPropertyEntry `json:"loan_property,optional"`
 	Applicants            []*ImportLoanApplicantEntry   `json:"applicants,optional" validate:"required,gt=0,lte=2"`
 	LoanBorrower          *ImportLoanBorrowerEntry      `json:"loan_borrower,optional" validate:"required"`

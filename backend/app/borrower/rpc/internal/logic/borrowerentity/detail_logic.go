@@ -37,9 +37,10 @@ func (l *DetailLogic) Detail(in *borrower.BorrowerEntityDetailRequest) (resp *bo
 	}()
 
 	respData := &borrower.BorrowerEntityEntry{}
+	// todo check organization
 	result, err := l.svcCtx.BorrowerEntityRepo.FindOneByColumns(l.ctx, map[string]interface{}{
-		"id":          in.Data.Id,
-		"borrower_id": in.Data.BorrowerId,
+		"id":      in.Data.Id,
+		"user_id": in.Data.UserId,
 	})
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)

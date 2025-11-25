@@ -43,9 +43,9 @@ func NewBorrowerApplicantRepo(db *gorm.DB) *BorrowerApplicantRepo {
 }
 
 // GetBorrowerApplicantById
-func (repo *BorrowerApplicantRepo) GetBorrowerApplicantById(ctx context.Context, id int64, borrowerId int64) (result *model.BorrowerApplicant, err error) {
+func (repo *BorrowerApplicantRepo) GetBorrowerApplicantById(ctx context.Context, id int64, organizationId int64) (result *model.BorrowerApplicant, err error) {
 	err = repo.Client(ctx).
-		Where("id = ? and borrower_id = ?", id, borrowerId).
+		Where("id = ? and organization_id = ?", id, organizationId).
 		First(&result).
 		Error
 	return result, errorx.WithStack(err)
@@ -88,9 +88,9 @@ func (repo *BorrowerApplicantRepo) AllForBorrower(ctx context.Context, borrowerI
 }
 
 // TranToLoanApplicantWithId get BorrowerApplicant from id and trans it to LoanApplicant
-func (repo *BorrowerApplicantRepo) TranToLoanApplicantWithId(ctx context.Context, id int64, borrowerId int64) (result *model.LoanApplicant, err error) {
+func (repo *BorrowerApplicantRepo) TranToLoanApplicantWithId(ctx context.Context, id int64, organizationId int64) (result *model.LoanApplicant, err error) {
 	var applicant *model.BorrowerApplicant
-	applicant, err = repo.GetBorrowerApplicantById(ctx, id, borrowerId)
+	applicant, err = repo.GetBorrowerApplicantById(ctx, id, organizationId)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}

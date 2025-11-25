@@ -199,6 +199,7 @@ type (
 	UserRegisterResponseData                   = borrower.UserRegisterResponseData
 	UserinfoResponse                           = borrower.UserinfoResponse
 	UserinfoResponseData                       = borrower.UserinfoResponseData
+	UserinfoResponseData_Organization          = borrower.UserinfoResponseData_Organization
 	VerifyEmailRequest                         = borrower.VerifyEmailRequest
 	VerifyEmailRequestData                     = borrower.VerifyEmailRequestData
 	VerifyEmailResponse                        = borrower.VerifyEmailResponse

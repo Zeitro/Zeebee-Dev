@@ -57,7 +57,7 @@ func (l *ResetPasswordLogic) ResetPassword(in *borrower.ResetPasswordRequest) (r
 	if err != nil {
 		return nil, err
 	}
-	if user.Borrower == nil {
+	if user == nil {
 		return nil, errorx.New("User Not Found")
 	}
 

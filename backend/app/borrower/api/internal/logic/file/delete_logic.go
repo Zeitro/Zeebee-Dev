@@ -29,16 +29,17 @@ func NewDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteLogi
 
 func (l *DeleteLogic) Delete(req *types.PathIdRequest) (resp *types.EmptyResponse, err error) {
 	// Get borrower id from context
-	borrowerId, err := utils.GetAccountIdFromCtx(l.ctx)
+	claim, err := utils.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
-		return nil, errorx.WithStack(err)
+		return nil, err
 	}
 
 	// Call RPC to delete file
 	_, err = l.svcCtx.FileRpcClient.DeleteFile(l.ctx, &borrower.FileDeleteRequest{
 		Data: &borrower.FileDeleteRequestData{
-			Id:         req.Id,
-			BorrowerId: borrowerId,
+			Id:             req.Id,
+			UserId:         claim.UserId,
+			OrganizationId: claim.OrganizationId,
 		},
 	})
 	if err != nil {

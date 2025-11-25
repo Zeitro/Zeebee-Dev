@@ -35,9 +35,10 @@ func (l *DetailLogic) Detail(in *borrower.BorrowerApplicantDetailRequest) (resp 
 	}()
 
 	respData := &borrower.BorrowerApplicantEntry{}
+	// todo check organization
 	result, err := l.svcCtx.BorrowerApplicantRepo.FindOneByColumns(l.ctx, map[string]interface{}{
-		"id":          in.Data.Id,
-		"borrower_id": in.Data.BorrowerId,
+		"id":      in.Data.Id,
+		"user_id": in.Data.UserId,
 	})
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)

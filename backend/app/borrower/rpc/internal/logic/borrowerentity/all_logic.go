@@ -35,7 +35,8 @@ func (l *AllLogic) All(in *borrower.BorrowerEntityAllRequest) (resp *borrower.Bo
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	results, err := l.svcCtx.BorrowerEntityRepo.AllForBorrower(l.ctx, in.Data.BorrowerId)
+	// todo check organization
+	results, err := l.svcCtx.BorrowerEntityRepo.AllForBorrower(l.ctx, in.Data.UserId)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

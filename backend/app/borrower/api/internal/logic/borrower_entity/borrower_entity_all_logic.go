@@ -31,14 +31,15 @@ func NewBorrowerEntityAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 
 func (l *BorrowerEntityAllLogic) BorrowerEntityAll(req *types.EmptyRequest) (resp *types.BorrowerEntityAllResponse, err error) {
 	// get borrowerId
-	borrowerId, err := utils.GetAccountIdFromCtx(l.ctx)
+	claim, err := utils.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	rpcResp, err := l.svcCtx.BorrowerEntityRpcClient.All(l.ctx, &borrower.BorrowerEntityAllRequest{
 		Data: &borrower.BorrowerEntityAllRequestData{
-			BorrowerId: borrowerId,
+			UserId:         claim.UserId,
+			OrganizationId: claim.OrganizationId,
 		},
 	})
 	if err != nil {
