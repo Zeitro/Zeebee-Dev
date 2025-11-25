@@ -830,15 +830,16 @@ func (x *UserRegisterResponse) GetData() *UserRegisterResponseData {
 }
 
 type UserRegisterRequestData struct {
-	state                 protoimpl.MessageState `protogen:"open.v1"`
-	Email                 string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
-	Password              string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
-	FirstName             string                 `protobuf:"bytes,3,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
-	LastName              string                 `protobuf:"bytes,4,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
-	PreApprovalRequestId  string                 `protobuf:"bytes,5,opt,name=pre_approval_request_id,json=preApprovalRequestId,proto3" json:"pre_approval_request_id,omitempty"`
-	TargetLenderCompanyId int64                  `protobuf:"varint,6,opt,name=target_lender_company_id,json=targetLenderCompanyId,proto3" json:"target_lender_company_id,omitempty"`
-	unknownFields         protoimpl.UnknownFields
-	sizeCache             protoimpl.SizeCache
+	state                protoimpl.MessageState `protogen:"open.v1"`
+	Email                string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
+	Password             string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+	FirstName            string                 `protobuf:"bytes,3,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
+	LastName             string                 `protobuf:"bytes,4,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
+	PreApprovalRequestId string                 `protobuf:"bytes,5,opt,name=pre_approval_request_id,json=preApprovalRequestId,proto3" json:"pre_approval_request_id,omitempty"`
+	LenderOrganizationId int64                  `protobuf:"varint,6,opt,name=lender_organization_id,json=lenderOrganizationId,proto3" json:"lender_organization_id,omitempty"`
+	OrganizationName     string                 `protobuf:"bytes,7,opt,name=organization_name,json=organizationName,proto3" json:"organization_name,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *UserRegisterRequestData) Reset() {
@@ -906,11 +907,18 @@ func (x *UserRegisterRequestData) GetPreApprovalRequestId() string {
 	return ""
 }
 
-func (x *UserRegisterRequestData) GetTargetLenderCompanyId() int64 {
+func (x *UserRegisterRequestData) GetLenderOrganizationId() int64 {
 	if x != nil {
-		return x.TargetLenderCompanyId
+		return x.LenderOrganizationId
 	}
 	return 0
+}
+
+func (x *UserRegisterRequestData) GetOrganizationName() string {
+	if x != nil {
+		return x.OrganizationName
+	}
+	return ""
 }
 
 type UserRegisterResponseData struct {
@@ -13545,15 +13553,16 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x13UserRegisterRequest\x125\n" +
 	"\x04data\x18\x01 \x01(\v2!.borrower.UserRegisterRequestDataR\x04data\"N\n" +
 	"\x14UserRegisterResponse\x126\n" +
-	"\x04data\x18\x01 \x01(\v2\".borrower.UserRegisterResponseDataR\x04data\"\xf7\x01\n" +
+	"\x04data\x18\x01 \x01(\v2\".borrower.UserRegisterResponseDataR\x04data\"\xa1\x02\n" +
 	"\x17UserRegisterRequestData\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x1d\n" +
 	"\n" +
 	"first_name\x18\x03 \x01(\tR\tfirstName\x12\x1b\n" +
 	"\tlast_name\x18\x04 \x01(\tR\blastName\x125\n" +
-	"\x17pre_approval_request_id\x18\x05 \x01(\tR\x14preApprovalRequestId\x127\n" +
-	"\x18target_lender_company_id\x18\x06 \x01(\x03R\x15targetLenderCompanyId\"\x1a\n" +
+	"\x17pre_approval_request_id\x18\x05 \x01(\tR\x14preApprovalRequestId\x124\n" +
+	"\x16lender_organization_id\x18\x06 \x01(\x03R\x14lenderOrganizationId\x12+\n" +
+	"\x11organization_name\x18\a \x01(\tR\x10organizationName\"\x1a\n" +
 	"\x18UserRegisterResponseData\"L\n" +
 	"\x13RefreshTokenRequest\x125\n" +
 	"\x04data\x18\x01 \x01(\v2!.borrower.RefreshTokenRequestDataR\x04data\">\n" +

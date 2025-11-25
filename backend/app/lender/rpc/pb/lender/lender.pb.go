@@ -1614,18 +1614,18 @@ func (x *UserinfoResponse) GetData() *UserinfoResponseData {
 }
 
 type UserinfoResponseData struct {
-	state             protoimpl.MessageState               `protogen:"open.v1"`
-	Id                int64                                `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Email             string                               `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
-	FirstName         string                               `protobuf:"bytes,3,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
-	LastName          string                               `protobuf:"bytes,4,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
-	FullName          string                               `protobuf:"bytes,5,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
-	OrganizationId    int64                                `protobuf:"varint,6,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	LenderCompanyName string                               `protobuf:"bytes,7,opt,name=lender_company_name,json=lenderCompanyName,proto3" json:"lender_company_name,omitempty"`
-	Status            string                               `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`
-	Organizations     []*UserinfoResponseData_Organization `protobuf:"bytes,9,rep,name=organizations,proto3" json:"organizations,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	state            protoimpl.MessageState               `protogen:"open.v1"`
+	Id               int64                                `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Email            string                               `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
+	FirstName        string                               `protobuf:"bytes,3,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
+	LastName         string                               `protobuf:"bytes,4,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
+	FullName         string                               `protobuf:"bytes,5,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
+	OrganizationId   int64                                `protobuf:"varint,6,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	OrganizationName string                               `protobuf:"bytes,7,opt,name=organization_name,json=organizationName,proto3" json:"organization_name,omitempty"`
+	Status           string                               `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`
+	Organizations    []*UserinfoResponseData_Organization `protobuf:"bytes,9,rep,name=organizations,proto3" json:"organizations,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *UserinfoResponseData) Reset() {
@@ -1700,9 +1700,9 @@ func (x *UserinfoResponseData) GetOrganizationId() int64 {
 	return 0
 }
 
-func (x *UserinfoResponseData) GetLenderCompanyName() string {
+func (x *UserinfoResponseData) GetOrganizationName() string {
 	if x != nil {
-		return x.LenderCompanyName
+		return x.OrganizationName
 	}
 	return ""
 }
@@ -7605,7 +7605,7 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x13UserInfoRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"D\n" +
 	"\x10UserinfoResponse\x120\n" +
-	"\x04data\x18\x01 \x01(\v2\x1c.lender.UserinfoResponseDataR\x04data\"\xc2\x03\n" +
+	"\x04data\x18\x01 \x01(\v2\x1c.lender.UserinfoResponseDataR\x04data\"\xbf\x03\n" +
 	"\x14UserinfoResponseData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
 	"\x05email\x18\x02 \x01(\tR\x05email\x12\x1d\n" +
@@ -7613,8 +7613,8 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"first_name\x18\x03 \x01(\tR\tfirstName\x12\x1b\n" +
 	"\tlast_name\x18\x04 \x01(\tR\blastName\x12\x1b\n" +
 	"\tfull_name\x18\x05 \x01(\tR\bfullName\x12'\n" +
-	"\x0forganization_id\x18\x06 \x01(\x03R\x0eorganizationId\x12.\n" +
-	"\x13lender_company_name\x18\a \x01(\tR\x11lenderCompanyName\x12\x16\n" +
+	"\x0forganization_id\x18\x06 \x01(\x03R\x0eorganizationId\x12+\n" +
+	"\x11organization_name\x18\a \x01(\tR\x10organizationName\x12\x16\n" +
 	"\x06status\x18\b \x01(\tR\x06status\x12O\n" +
 	"\rorganizations\x18\t \x03(\v2).lender.UserinfoResponseData.OrganizationR\rorganizations\x1ai\n" +
 	"\fOrganization\x12\x0e\n" +

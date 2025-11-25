@@ -3,11 +3,15 @@ package userlogic
 import (
 	"context"
 
+	"github.com/jinzhu/copier"
+
 	"zeebee-backend/app/borrower/rpc/internal/global"
+	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/stringx"
+	logic2 "zeebee-backend/domains/zeebee/logic"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -20,13 +24,15 @@ type ResetPasswordLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	baseLogic *logic.BaseLogic
 }
 
 func NewResetPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ResetPasswordLogic {
 	return &ResetPasswordLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -36,7 +42,6 @@ func (l *ResetPasswordLogic) ResetPassword(in *borrower.ResetPasswordRequest) (r
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	var jwtInfo *borrower.UserLoginResponseData
 
 	email := in.Data.Email
 	code := in.Data.Code
@@ -53,7 +58,7 @@ func (l *ResetPasswordLogic) ResetPassword(in *borrower.ResetPasswordRequest) (r
 		return nil, errorx.WithStack(errorx.New("Invalid Or Expired Code"))
 	}
 
-	user, err := l.svcCtx.UserRepo.GetBorrowerUserByEmail(l.ctx, email)
+	user, err := l.svcCtx.UserRepo.GetUserByEmail(l.ctx, email, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}
@@ -72,13 +77,30 @@ func (l *ResetPasswordLogic) ResetPassword(in *borrower.ResetPasswordRequest) (r
 	if err != nil {
 		return nil, err
 	}
-	jwtInfo, err = generateBorrowerToken(user, l.svcCtx)
+
+	user, err = l.baseLogic.UserLogic.CheckAndUpdateActiveOrganizationByUser(l.ctx, user)
+	if err != nil {
+		return nil, errorx.WithStack(err)
+	}
+
+	token, err := l.baseLogic.UserLogic.GenerateJwtToken(user, logic2.JwtConfig{
+		AccessSecret:  l.svcCtx.Config.JwtAuth.AccessSecret,
+		AccessExpire:  l.svcCtx.Config.JwtAuth.AccessExpire,
+		RefreshSecret: l.svcCtx.Config.JwtAuth.RefreshSecret,
+		RefreshExpire: l.svcCtx.Config.JwtAuth.RefreshExpire,
+	})
 	if err != nil {
 		return nil, err
 	}
+	data := &borrower.UserLoginResponseData{}
+	err = copier.CopyWithOption(&data, token, copier.Option{CaseSensitive: true})
+	if err != nil {
+		return nil, errorx.GetFailedTransRespErr(err)
+	}
+
 	// delete redis key
 	_ = global.GetRedis().Del(l.ctx, redisKey)
 	return &borrower.ResetPasswordResponse{
-		Data: jwtInfo,
+		Data: data,
 	}, nil
 }

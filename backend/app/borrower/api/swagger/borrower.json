@@ -10446,7 +10446,8 @@
                 "password",
                 "comfired_password",
                 "first_name",
-                "last_name"
+                "last_name",
+                "organization_name"
               ],
               "properties": {
                 "comfired_password": {
@@ -10459,6 +10460,9 @@
                   "type": "string"
                 },
                 "last_name": {
+                  "type": "string"
+                },
+                "organization_name": {
                   "type": "string"
                 },
                 "password": {
@@ -10733,7 +10737,7 @@
       }
     }
   },
-  "x-date": "2025-11-14 17:27:21",
+  "x-date": "2025-11-25 15:39:13",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

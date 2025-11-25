@@ -97,7 +97,8 @@ message UserRegisterRequestData {
   string first_name = 3;
   string last_name = 4;
   string pre_approval_request_id = 5;
-  int64 target_lender_company_id = 6;
+  int64 lender_organization_id = 6;
+  string organization_name = 7;
 }
 message UserRegisterResponseData {
 

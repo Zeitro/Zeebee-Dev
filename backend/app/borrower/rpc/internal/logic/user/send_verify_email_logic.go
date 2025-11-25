@@ -52,7 +52,7 @@ func (l *SendVerifyEmailLogic) SendVerifyEmail(in *borrower.SendVerifyEmailReque
 	}
 
 	// check user status
-	user, err := l.svcCtx.UserRepo.GetBorrowerUserByEmail(l.ctx, email)
+	user, err := l.svcCtx.UserRepo.GetUserByEmail(l.ctx, email, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}

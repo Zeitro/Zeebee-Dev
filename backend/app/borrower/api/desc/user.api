@@ -8,6 +8,8 @@ info(
     version: "v1"
 )
 
+import "organization.api"
+
 type UserInfo {
     Id int64 `json:"id"`
     Email string `json:"email"`
@@ -15,6 +17,9 @@ type UserInfo {
     LastName string `json:"last_name"`
     FullName string `json:"full_name"`
     Status string `json:"status"`
+    OrganizationId int64 `json:"organization_id"`
+    OrganizationName string `json:"organization_name"`
+    Organizations []*UserInfoOrganizationEntity `json:"organizations"`
 }
 // login
 type (
@@ -39,7 +44,8 @@ type (
         FirstName string `json:"first_name" validate:"required,min=2,max=30"`
         LastName string `json:"last_name" validate:"required,min=2,max=30"`
         PreApprovalRequestId string `json:"pre_approval_request_id,optional"`
-        TargetLenderCompanyId int64 `json:"target_lender_company_id,optional"`
+        TargetLenderCompanyId int64 `json:"target_lender_company_id,optional" copier:"LenderOrganizationId"`
+        OrganizationName string `json:"organization_name" validate:"required,min=2,max=100"`
     }
 
     UserRegisterResponse {

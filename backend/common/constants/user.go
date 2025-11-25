@@ -23,20 +23,6 @@ const (
 const (
 	UserIdCtxKey    = "user_id"
 	UserClaimCtxKey = "user_claim"
-
-	// BorrowerUserIdKey = "borrower_user_id"
-	UserJwtIdKey = "user_jwt"
-	// LenderUserIdKey   = "lender_user_id"
-	// AdminUserIdKey   = "admin_user_id"
-
-	// LenderUserCompanyIdKey = "lender_user_company_id"
-
-	BorrowerUserAccountIdKey = "borrower_user_account_id"
-	LenderUserAccountIdKey   = "lender_user_account_id"
-
-	// BorrowerUserKey = "borrower_user"
-	// LenderUserKey   = "lender_user"
-	// AdminUserKey   = "admin_user"
 )
 
 func init() {

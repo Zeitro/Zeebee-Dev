@@ -8,6 +8,7 @@ import (
 
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -35,7 +36,7 @@ func (l *UserInfoLogic) UserInfo(in *lender.UserInfoRequest) (resp *lender.Useri
 	}()
 	organizations := []*lender.UserinfoResponseData_Organization{}
 
-	user, err := l.svcCtx.UserRepo.GetLenderUser(l.ctx, in.Data.Id)
+	user, err := l.svcCtx.UserRepo.GetUser(l.ctx, in.Data.Id, constants.UserTypeLender)
 	if err != nil {
 		return nil, err
 	}
@@ -69,15 +70,15 @@ func (l *UserInfoLogic) UserInfo(in *lender.UserInfoRequest) (resp *lender.Useri
 
 	userInfo := &lender.UserinfoResponse{
 		Data: &lender.UserinfoResponseData{
-			Id:                user.Id,
-			Email:             user.Email,
-			FirstName:         user.FirstName,
-			LastName:          user.LastName,
-			FullName:          user.FullName,
-			OrganizationId:    lenderCompanyId,
-			LenderCompanyName: lenderCompanyName,
-			Status:            string(user.Status),
-			Organizations:     organizations,
+			Id:               user.Id,
+			Email:            user.Email,
+			FirstName:        user.FirstName,
+			LastName:         user.LastName,
+			FullName:         user.FullName,
+			OrganizationId:   lenderCompanyId,
+			OrganizationName: lenderCompanyName,
+			Status:           string(user.Status),
+			Organizations:    organizations,
 		},
 	}
 	return userInfo, nil

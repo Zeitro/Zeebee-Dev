@@ -3,32 +3,36 @@ package userlogic
 import (
 	"context"
 
+	"github.com/jinzhu/copier"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/app/borrower/rpc/internal/global"
+	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/utils"
-	"zeebee-backend/domains/zeebee/model"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	logic2 "zeebee-backend/domains/zeebee/logic"
 )
 
 type LoginLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	baseLogic *logic.BaseLogic
 }
 
 func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic {
 	return &LoginLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -51,7 +55,7 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 		}
 	}
 
-	user, err := l.svcCtx.UserRepo.GetBorrowerUserByEmail(l.ctx, in.Data.Email)
+	user, err := l.svcCtx.UserRepo.GetUserByEmail(l.ctx, in.Data.Email, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
@@ -85,76 +89,34 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 		return nil, err
 	}
 
-	// generate token
-	userClaim := utils.JwtUser{
-		UserId:         user.Id,
-		OrganizationId: user.DefaultOrganizationId,
-		Username:       user.FullName,
-		Role:           nil,
-		UserType:       constants.UserTypeBorrower,
+	// check status
+	if user.Status == constants.UserStatusInactive {
+		return nil, errorx.WithStack(errorx.New("User Is Not Active"))
 	}
-	accessToken, err := utils.GenerateToken(
-		userClaim,
-		l.svcCtx.Config.JwtAuth.AccessSecret,
-		l.svcCtx.Config.JwtAuth.AccessExpire,
-	)
+	if user.Status == constants.UserStatusUnverified {
+		return nil, errorx.WithStack(errorx.New("User Is Unverified"))
+	}
+
+	user, err = l.baseLogic.UserLogic.CheckAndUpdateActiveOrganizationByUser(l.ctx, user)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
 
-	// refresh token
-	refreshToken, err := utils.GenerateToken(
-		userClaim,
-		l.svcCtx.Config.JwtAuth.RefreshSecret,
-		l.svcCtx.Config.JwtAuth.RefreshExpire,
-	)
+	token, err := l.baseLogic.UserLogic.GenerateJwtToken(user, logic2.JwtConfig{
+		AccessSecret:  l.svcCtx.Config.JwtAuth.AccessSecret,
+		AccessExpire:  l.svcCtx.Config.JwtAuth.AccessExpire,
+		RefreshSecret: l.svcCtx.Config.JwtAuth.RefreshSecret,
+		RefreshExpire: l.svcCtx.Config.JwtAuth.RefreshExpire,
+	})
 	if err != nil {
-		return nil, errorx.WithStack(err)
+		return nil, err
 	}
-
+	data := &borrower.UserLoginResponseData{}
+	err = copier.CopyWithOption(&data, token, copier.Option{CaseSensitive: true})
+	if err != nil {
+		return nil, errorx.GetFailedTransRespErr(err)
+	}
 	return &borrower.UserLoginResponse{
-		Data: &borrower.UserLoginResponseData{
-			AccessToken:        accessToken,
-			RefreshToken:       refreshToken,
-			AccessTokenExpire:  l.svcCtx.Config.JwtAuth.AccessExpire,
-			RefreshTokenExpire: l.svcCtx.Config.JwtAuth.RefreshExpire,
-		},
+		Data: data,
 	}, nil
-}
-
-func generateBorrowerToken(user *model.User, svcCtx *svc.ServiceContext) (token *borrower.UserLoginResponseData, err error) {
-	if user == nil {
-		return nil, errorx.WithStack(errorx.New("Borrower Is Empty."))
-	}
-	userClaim := utils.JwtUser{
-		UserId:         user.Id,
-		OrganizationId: user.DefaultOrganizationId,
-		Username:       user.FullName,
-		Role:           nil,
-		UserType:       constants.UserTypeBorrower,
-	}
-	accessToken, err := utils.GenerateToken(
-		userClaim,
-		svcCtx.Config.JwtAuth.AccessSecret,
-		svcCtx.Config.JwtAuth.AccessExpire,
-	)
-	if err != nil {
-		return nil, errorx.WithStack(err)
-	}
-	refreshToken, err := utils.GenerateToken(
-		userClaim,
-		svcCtx.Config.JwtAuth.RefreshSecret,
-		svcCtx.Config.JwtAuth.RefreshExpire,
-	)
-	if err != nil {
-		return nil, errorx.WithStack(err)
-	}
-	token = &borrower.UserLoginResponseData{
-		AccessToken:        accessToken,
-		RefreshToken:       refreshToken,
-		AccessTokenExpire:  svcCtx.Config.JwtAuth.AccessExpire,
-		RefreshTokenExpire: svcCtx.Config.JwtAuth.RefreshExpire,
-	}
-	return
-
 }

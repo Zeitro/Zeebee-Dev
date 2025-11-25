@@ -1,8 +1,11 @@
 package repo
 
 import (
+	"context"
+
 	"gorm.io/gorm"
 
+	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/model"
 )
@@ -17,4 +20,13 @@ func NewOrganizationRepo(db *gorm.DB) *OrganizationRepo {
 		BaseRepo: gormx.NewBaseRepo[*model.Organization](db),
 		m:        new(model.Organization),
 	}
+}
+
+// UpdateOwnerIdWithTx update owner id with transaction
+func (r *OrganizationRepo) UpdateOwnerIdWithTx(ctx context.Context, tx *gorm.DB, id int64, ownerId int64) (err error) {
+	err = tx.WithContext(ctx).
+		Model(&model.Organization{}).
+		Where("id = ?", id).
+		Update("owner_id", ownerId).Error
+	return errorx.WithStack(err)
 }

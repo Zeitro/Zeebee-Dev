@@ -3,10 +3,14 @@ package userlogic
 import (
 	"context"
 
+	"github.com/jinzhu/copier"
+
 	"zeebee-backend/app/borrower/rpc/internal/global"
+	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
+	logic2 "zeebee-backend/domains/zeebee/logic"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -19,13 +23,15 @@ type VerifyEmailLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	baseLogic *logic.BaseLogic
 }
 
 func NewVerifyEmailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *VerifyEmailLogic {
 	return &VerifyEmailLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -37,7 +43,6 @@ func (l *VerifyEmailLogic) VerifyEmail(in *borrower.VerifyEmailRequest) (resp *b
 	}()
 	var token string
 	var user *model.User
-	var jwtInfo *borrower.UserLoginResponseData
 
 	email := in.Data.Email
 	code := in.Data.Code
@@ -55,7 +60,7 @@ func (l *VerifyEmailLogic) VerifyEmail(in *borrower.VerifyEmailRequest) (resp *b
 	}
 
 	// get user
-	user, err = l.svcCtx.UserRepo.GetBorrowerUserByEmail(l.ctx, email)
+	user, err = l.svcCtx.UserRepo.GetUserByEmail(l.ctx, email, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}
@@ -67,15 +72,22 @@ func (l *VerifyEmailLogic) VerifyEmail(in *borrower.VerifyEmailRequest) (resp *b
 	if err != nil {
 		return nil, err
 	}
-	// generate jwt info
-	jwtInfo, err = generateBorrowerToken(user, l.svcCtx)
+
+	tokenInfo, err := l.baseLogic.UserLogic.GenerateJwtToken(user, logic2.JwtConfig{
+		AccessSecret:  l.svcCtx.Config.JwtAuth.AccessSecret,
+		AccessExpire:  l.svcCtx.Config.JwtAuth.AccessExpire,
+		RefreshSecret: l.svcCtx.Config.JwtAuth.RefreshSecret,
+		RefreshExpire: l.svcCtx.Config.JwtAuth.RefreshExpire,
+	})
 	if err != nil {
 		return nil, err
 	}
-	// remove code
-	_ = global.GetRedis().Del(l.ctx, verifyCodeKey)
-
+	data := &borrower.UserLoginResponseData{}
+	err = copier.CopyWithOption(data, tokenInfo, copier.Option{CaseSensitive: true})
+	if err != nil {
+		return nil, errorx.GetFailedTransRespErr(err)
+	}
 	return &borrower.VerifyEmailResponse{
-		Data: jwtInfo,
+		Data: data,
 	}, nil
 }
