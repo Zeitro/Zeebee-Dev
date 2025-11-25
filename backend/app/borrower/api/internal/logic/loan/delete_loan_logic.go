@@ -28,15 +28,16 @@ func NewDeleteLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Delete
 
 func (l *DeleteLoanLogic) DeleteLoan(req *types.LoanDeleteRequest) (resp *types.EmptyResponse, err error) {
 	// get borrower id
-	borrowerId, err := utils.GetAccountIdFromCtx(l.ctx)
+	claim, err := utils.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	_, err = l.svcCtx.LoanRpcClient.DeleteBorrowerLoan(l.ctx, &borrower.LoanDeleteRequest{
 		Data: &borrower.LoanDeleteRequestData{
-			Id:         req.Id,
-			BorrowerId: borrowerId,
+			Id:             req.Id,
+			UserId:         claim.UserId,
+			OrganizationId: claim.OrganizationId,
 		},
 	})
 

@@ -2,7 +2,6 @@ package userlogic
 
 import (
 	"context"
-	"strconv"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -56,7 +55,7 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	if user.Borrower == nil {
+	if user == nil {
 		return nil, errorx.New("User Not Found.")
 	}
 
@@ -87,13 +86,15 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 	}
 
 	// generate token
+	userClaim := utils.JwtUser{
+		UserId:         user.Id,
+		OrganizationId: user.DefaultOrganizationId,
+		Username:       user.FullName,
+		Role:           nil,
+		UserType:       constants.UserTypeBorrower,
+	}
 	accessToken, err := utils.GenerateToken(
-		strconv.Itoa(int(user.Id)),
-		strconv.Itoa(int(user.Borrower.Id)),
-		0,
-		user.Email,
-		"",
-		string(constants.UserTypeBorrower),
+		userClaim,
 		l.svcCtx.Config.JwtAuth.AccessSecret,
 		l.svcCtx.Config.JwtAuth.AccessExpire,
 	)
@@ -103,12 +104,7 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 
 	// refresh token
 	refreshToken, err := utils.GenerateToken(
-		strconv.Itoa(int(user.Id)),
-		strconv.Itoa(int(user.Borrower.Id)),
-		0,
-		user.Email,
-		"",
-		string(constants.UserTypeBorrower),
+		userClaim,
 		l.svcCtx.Config.JwtAuth.RefreshSecret,
 		l.svcCtx.Config.JwtAuth.RefreshExpire,
 	)
@@ -127,16 +123,18 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 }
 
 func generateBorrowerToken(user *model.User, svcCtx *svc.ServiceContext) (token *borrower.UserLoginResponseData, err error) {
-	if user.Borrower == nil {
+	if user == nil {
 		return nil, errorx.WithStack(errorx.New("Borrower Is Empty."))
 	}
+	userClaim := utils.JwtUser{
+		UserId:         user.Id,
+		OrganizationId: user.DefaultOrganizationId,
+		Username:       user.FullName,
+		Role:           nil,
+		UserType:       constants.UserTypeBorrower,
+	}
 	accessToken, err := utils.GenerateToken(
-		strconv.Itoa(int(user.Id)),
-		strconv.Itoa(int(user.Borrower.Id)),
-		0,
-		user.Email,
-		"",
-		string(constants.UserTypeBorrower),
+		userClaim,
 		svcCtx.Config.JwtAuth.AccessSecret,
 		svcCtx.Config.JwtAuth.AccessExpire,
 	)
@@ -144,12 +142,7 @@ func generateBorrowerToken(user *model.User, svcCtx *svc.ServiceContext) (token 
 		return nil, errorx.WithStack(err)
 	}
 	refreshToken, err := utils.GenerateToken(
-		strconv.Itoa(int(user.Id)),
-		strconv.Itoa(int(user.Borrower.Id)),
-		0,
-		user.Email,
-		"",
-		string(constants.UserTypeBorrower),
+		userClaim,
 		svcCtx.Config.JwtAuth.RefreshSecret,
 		svcCtx.Config.JwtAuth.RefreshExpire,
 	)

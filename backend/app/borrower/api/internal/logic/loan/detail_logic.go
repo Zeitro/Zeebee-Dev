@@ -31,15 +31,16 @@ func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogi
 func (l *DetailLogic) Detail(req *types.LoanDetailRequest) (resp *types.LoanDetailResponse, err error) {
 	resp = &types.LoanDetailResponse{}
 	// get borrower id
-	borrowerId, err := utils.GetAccountIdFromCtx(l.ctx)
+	claim, err := utils.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	rpcResp, err := l.svcCtx.LoanRpcClient.BorrowerLoanDetail(l.ctx, &borrower.LoanDetailRequest{
 		Data: &borrower.LoanDetailRequestData{
-			Id:         req.Id,
-			BorrowerId: borrowerId,
+			Id:             req.Id,
+			UserId:         claim.UserId,
+			OrganizationId: claim.OrganizationId,
 		},
 	})
 	if err != nil {

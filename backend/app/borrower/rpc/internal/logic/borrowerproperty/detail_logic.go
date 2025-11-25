@@ -35,10 +35,11 @@ func (l *DetailLogic) Detail(in *borrower.PropertyDetailRequest) (resp *borrower
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
+	// todo check organization
 	respData := &borrower.BorrowerPropertyEntry{}
 	result, err := l.svcCtx.BorrowerPropertyRepo.FindOneByColumns(l.ctx, map[string]interface{}{
-		"id":          in.Data.Id,
-		"borrower_id": in.Data.BorrowerId,
+		"id":      in.Data.Id,
+		"user_id": in.Data.UserId,
 	})
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)

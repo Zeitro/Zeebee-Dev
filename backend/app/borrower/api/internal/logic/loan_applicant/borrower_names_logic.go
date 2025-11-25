@@ -28,14 +28,15 @@ func NewBorrowerNamesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Bor
 
 func (l *BorrowerNamesLogic) BorrowerNames(req *types.EmptyRequest) (resp *types.BorrowerNamesResponse, err error) {
 	// get borrower id
-	borrowerId, err := utils.GetAccountIdFromCtx(l.ctx)
+	claim, err := utils.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	rpcResp, err := l.svcCtx.LoanApplicantRpcClient.BorrowerNames(l.ctx, &borrower.BorrowerNamesRequest{
 		Data: &borrower.BorrowerNamesRequestData{
-			BorrowerId: borrowerId,
+			UserId:         claim.UserId,
+			OrganizationId: claim.OrganizationId,
 		},
 	})
 	if err != nil {

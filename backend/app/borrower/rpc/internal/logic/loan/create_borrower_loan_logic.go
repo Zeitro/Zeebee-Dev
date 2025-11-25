@@ -107,7 +107,7 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 	var totalOwnPercent int32
 	for _, applicant := range in.Applicants {
 		totalOwnPercent += applicant.OwnPercent
-		borrowerApplicant, err := l.svcCtx.BorrowerApplicantRepo.GetBorrowerApplicantById(l.ctx, applicant.BorrowerApplicantId, in.BorrowerId)
+		borrowerApplicant, err := l.svcCtx.BorrowerApplicantRepo.GetBorrowerApplicantById(l.ctx, applicant.BorrowerApplicantId, in.OrganizationId)
 		if err != nil {
 			return nil, nil, nil, nil, err
 		}
@@ -151,7 +151,7 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 	loanBorrower = &model.LoanBorrower{}
 
 	// LoanProperty
-	borrowerProperty, err := l.svcCtx.BorrowerPropertyRepo.GetOneByIdForBorrower(l.ctx, in.LoanProperty.BorrowerPropertyId, in.BorrowerId)
+	borrowerProperty, err := l.svcCtx.BorrowerPropertyRepo.GetOneByIdForBorrower(l.ctx, in.LoanProperty.BorrowerPropertyId, in.OrganizationId)
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
@@ -191,7 +191,8 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 	if err != nil {
 		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
 	}
-	loan.BorrowerId = in.BorrowerId
+	loan.UserId = in.UserId
+	loan.BorrowerOrganizationId = in.OrganizationId
 	loan.PendingStatus = constants.LoanPendingStatusNone
 	loan.Source = constants.LoanSourceBorrower
 	if loan.TotalAmount < loan.InitialAmount {

@@ -2,7 +2,6 @@ package userlogic
 
 import (
 	"context"
-	"strconv"
 
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
@@ -40,10 +39,7 @@ func (l *RefreshTokenLogic) RefreshToken(in *borrower.RefreshTokenRequest) (resp
 		return nil, errorx.WithStack(err)
 	}
 
-	id, err := strconv.Atoi(claims.UserID)
-	if err != nil {
-		return nil, err
-	}
+	id := claims.UserId
 
 	user, err := l.svcCtx.UserRepo.GetBorrowerUser(l.ctx, int64(id))
 	if err != nil {
@@ -53,13 +49,16 @@ func (l *RefreshTokenLogic) RefreshToken(in *borrower.RefreshTokenRequest) (resp
 		return nil, errorx.New("User Is Not Active")
 	}
 
+	userClaim := utils.JwtUser{
+		UserId:         user.Id,
+		OrganizationId: user.DefaultOrganizationId,
+		Username:       user.FullName,
+		Role:           nil,
+		UserType:       constants.UserTypeBorrower,
+	}
+
 	accessToken, err := utils.GenerateToken(
-		strconv.Itoa(int(user.Id)),
-		strconv.Itoa(int(user.Borrower.Id)),
-		0,
-		user.Email,
-		"",
-		string(constants.UserTypeBorrower),
+		userClaim,
 		l.svcCtx.Config.JwtAuth.AccessSecret,
 		l.svcCtx.Config.JwtAuth.AccessExpire,
 	)

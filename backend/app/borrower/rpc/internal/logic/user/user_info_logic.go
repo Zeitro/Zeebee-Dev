@@ -35,16 +35,12 @@ func (l *UserInfoLogic) UserInfo(in *borrower.UserInfoRequest) (resp *borrower.U
 	if err != nil {
 		return nil, err
 	}
-	userBorrower := user.Borrower
-	if userBorrower == nil {
-		return nil, errorx.WithStack(errorx.New("Borrower Not Found"))
-	}
 	userInfo := &borrower.UserinfoResponse{
 		Data: &borrower.UserinfoResponseData{
 			Id:        user.Id,
 			Email:     user.Email,
-			FirstName: userBorrower.FirstName,
-			LastName:  userBorrower.LastName,
+			FirstName: user.FirstName,
+			LastName:  user.LastName,
 		},
 	}
 	return userInfo, nil

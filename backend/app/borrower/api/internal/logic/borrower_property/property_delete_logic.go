@@ -34,11 +34,12 @@ func (l *PropertyDeleteLogic) PropertyDelete(req *types.PathIdRequest) (resp *ty
 	}
 
 	// get borrower id
-	borrowerId, err := utils.GetAccountIdFromCtx(l.ctx)
+	claim, err := utils.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	rpcReq.Data.BorrowerId = borrowerId
+	rpcReq.Data.UserId = claim.UserId
+	rpcReq.Data.OrganizationId = claim.OrganizationId
 
 	_, err = l.svcCtx.BorrowerPropertyRpcClient.Delete(l.ctx, rpcReq)
 	if err != nil {

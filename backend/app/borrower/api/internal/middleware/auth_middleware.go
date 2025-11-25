@@ -29,17 +29,17 @@ func (m *AuthMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 		}
 		claims, err := utils.ParseToken(token, m.secretKey)
 		if err != nil {
-			response.Unauthorized(w, "Invalid token")
+			response.Unauthorized(w, "Invalid Token")
 			return
 		}
-		if claims.UserType != string(constants.UserTypeBorrower) {
-			response.Unauthorized(w, "Invalid user type")
+		if claims.UserType != constants.UserTypeBorrower {
+			response.Unauthorized(w, "Invalid User Type")
 			return
 		}
 
 		reqCtx := r.Context()
-		nextCtx := context.WithValue(reqCtx, constants.BorrowerUserKey, claims)
-		nextCtx = context.WithValue(nextCtx, constants.BorrowerUserIdKey, claims.UserID)
+		nextCtx := context.WithValue(reqCtx, constants.UserClaimCtxKey, claims)
+		nextCtx = context.WithValue(nextCtx, constants.UserIdCtxKey, claims.UserId)
 		newReq := r.WithContext(nextCtx)
 
 		next(w, newReq)

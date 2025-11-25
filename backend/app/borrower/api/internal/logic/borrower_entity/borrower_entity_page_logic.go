@@ -46,10 +46,12 @@ func (l *BorrowerEntityPageLogic) BorrowerEntityPage(req *types.BorrowerEntityPa
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
 	// get borrower id
-	rpcReq.Data.Filter.BorrowerId, err = utils.GetAccountIdFromCtx(l.ctx)
+	claim, err := utils.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
+	rpcReq.Data.Filter.UserId = claim.UserId
+	rpcReq.Data.Filter.OrganizationId = claim.OrganizationId
 	rpcResp, err = l.svcCtx.BorrowerEntityRpcClient.Page(l.ctx, rpcReq)
 	if err != nil {
 		return nil, err

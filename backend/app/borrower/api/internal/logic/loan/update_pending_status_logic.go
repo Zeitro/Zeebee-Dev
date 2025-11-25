@@ -28,16 +28,17 @@ func NewUpdatePendingStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext
 
 func (l *UpdatePendingStatusLogic) UpdatePendingStatus(req *types.LoanUpdatePendingStatusRequest) (resp *types.EmptyResponse, err error) {
 	// get borrower id
-	borrowerId, err := utils.GetAccountIdFromCtx(l.ctx)
+	claim, err := utils.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	_, err = l.svcCtx.LoanRpcClient.UpdateBorrowerLoanPendingStatus(l.ctx, &borrower.LoanUpdatePendingStatusRequest{
 		Data: &borrower.LoanUpdatePendingStatusRequestData{
-			Id:            req.Id,
-			BorrowerId:    borrowerId,
-			PendingStatus: req.PendingStatus,
+			Id:             req.Id,
+			UserId:         claim.UserId,
+			OrganizationId: claim.OrganizationId,
+			PendingStatus:  req.PendingStatus,
 		},
 	})
 

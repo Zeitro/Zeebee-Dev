@@ -38,12 +38,12 @@ func (l *BorrowerEntityCheckExistedLogic) BorrowerEntityCheckExisted(req *types.
 	}
 
 	// get borrower id
-	borrowerId, err := utils.GetAccountIdFromCtx(l.ctx)
+	claim, err := utils.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	rpcReq.Data.BorrowerId = borrowerId
-
+	rpcReq.Data.UserId = claim.UserId
+	rpcReq.Data.OrganizationId = claim.OrganizationId
 	rpcResp, err := l.svcCtx.BorrowerEntityRpcClient.CheckExisted(l.ctx, rpcReq)
 	if err != nil {
 		return nil, err

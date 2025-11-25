@@ -33,7 +33,7 @@ func (l *AllLogic) All(in *borrower.BorrowerApplicantAllRequest) (resp *borrower
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	results, err := l.svcCtx.BorrowerApplicantRepo.AllForBorrower(l.ctx, in.Data.BorrowerId)
+	results, err := l.svcCtx.BorrowerApplicantRepo.AllForBorrower(l.ctx, in.Data.UserId)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

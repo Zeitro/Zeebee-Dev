@@ -9,7 +9,7 @@ const (
 	BorrowerResetPwdEmail                  = "zeebee:borrower:%v:reset:pwd:email"
 	BorrowerResetPwdCode                   = "zeebee:borrower:%v:reset:pwd:code"
 	BorrowerPreApprovalCacheKey            = "zeebee:borrower:%v:preapprovalLoan"
-	BorrowerSendAprApprovalNotificationKey = "zeebee:lenderCompanyId:%v:requestId:%v:preapprovalLoan"
+	BorrowerSendAprApprovalNotificationKey = "zeebee:organizationId:%v:requestId:%v:preapprovalLoan"
 
 	LenderLoginFailedTimes   = "zeebee:lender:%v:login:failed:times"
 	LenderRegisterVerifyCode = "zeebee:lender:%v:register:verify:code"

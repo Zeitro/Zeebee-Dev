@@ -35,7 +35,8 @@ func (l *AllLogic) All(in *borrower.PropertyAllRequest) (resp *borrower.Property
 		}
 	}()
 
-	results, err := l.svcCtx.BorrowerPropertyRepo.AllForBorrower(l.ctx, in.Data.BorrowerId)
+	// todo check organization
+	results, err := l.svcCtx.BorrowerPropertyRepo.AllForBorrower(l.ctx, in.Data.UserId)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

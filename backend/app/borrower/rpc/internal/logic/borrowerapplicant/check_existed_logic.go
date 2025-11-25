@@ -34,10 +34,11 @@ func (l *CheckExistedLogic) CheckExisted(in *borrower.BorrowerApplicantCheckExis
 	}()
 
 	condition := map[string]interface{}{
-		"borrower_id": in.Data.BorrowerId,
-		"first_name":  in.Data.FirstName,
-		"mid_name":    in.Data.MidName,
-		"last_name":   in.Data.LastName,
+		"user_id":         in.Data.UserId,
+		"organization_id": in.Data.OrganizationId,
+		"first_name":      in.Data.FirstName,
+		"mid_name":        in.Data.MidName,
+		"last_name":       in.Data.LastName,
 	}
 
 	entity, err := l.svcCtx.BorrowerApplicantRepo.FindOneByColumns(l.ctx, condition)

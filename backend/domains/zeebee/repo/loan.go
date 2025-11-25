@@ -21,14 +21,15 @@ type LoanBorrowerPageReq struct {
 }
 
 type LoanBorrowerPageReqFilter struct {
-	BorrowerId    int64    `json:"borrower_id,omitempty"`
-	Stage         string   `json:"stage,omitempty"`
-	Keyword       string   `json:"keyword,omitempty"`
-	KeywordType   string   `json:"keyword_type,omitempty"`
-	LoanPurpose   []string `json:"loan_purpose,omitempty"`
-	LoanType      []string `json:"loan_type,omitempty"`
-	Lender        []string `json:"lender,omitempty"`
-	PendingStatus []string `json:"pending_status,omitempty"`
+	UserId         int64    `json:"user_id,omitempty"`
+	OrganizationId int64    `json:"organization_id,omitempty"`
+	Stage          string   `json:"stage,omitempty"`
+	Keyword        string   `json:"keyword,omitempty"`
+	KeywordType    string   `json:"keyword_type,omitempty"`
+	LoanPurpose    []string `json:"loan_purpose,omitempty"`
+	LoanType       []string `json:"loan_type,omitempty"`
+	Lender         []string `json:"lender,omitempty"`
+	PendingStatus  []string `json:"pending_status,omitempty"`
 }
 
 type LoanBorrowerPageReqSorter struct {
@@ -71,7 +72,7 @@ func NewLoanRepo(db *gorm.DB) *LoanRepo {
 
 func (repo *LoanRepo) GetBorrowerLoan(ctx context.Context, id int64, borrowerId int64) (result *model.Loan, err error) {
 	err = repo.BaseRepo.Client(ctx).
-		Where("id = ? and borrower_id = ?", id, borrowerId).
+		Where("id = ? and user_id = ?", id, borrowerId).
 		Preload("Applicants", func(db *gorm.DB) *gorm.DB {
 			return db.Order("loan_applicants.is_primary desc")
 		}).
@@ -98,7 +99,7 @@ func (repo *LoanRepo) GetBorrowerLoan(ctx context.Context, id int64, borrowerId 
 
 func (repo *LoanRepo) GetBorrowerLoanWithTx(ctx context.Context, tx *gorm.DB, id int64, borrowerId int64) (result *model.Loan, err error) {
 	err = tx.WithContext(ctx).
-		Where("id = ? and borrower_id = ?", id, borrowerId).
+		Where("id = ? and user_id = ?", id, borrowerId).
 		Preload("Applicants", func(db *gorm.DB) *gorm.DB {
 			return db.Order("loan_applicants.is_primary desc")
 		}).
@@ -182,7 +183,7 @@ func (repo *LoanRepo) GetLenderLoanWithTx(ctx context.Context, tx *gorm.DB, id i
 
 // UpdateOneWithTx update with tx
 func (repo *LoanRepo) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, id int64, data *model.Loan) (result *model.Loan, err error) {
-	omitFields := []string{"id", "source", "created_at", "code", "borrower_id"}
+	omitFields := []string{"id", "source", "created_at", "code", "user_id"}
 	var applyFields []string
 	omitFields = append(omitFields, applyFields...)
 	err = tx.WithContext(ctx).
@@ -235,7 +236,7 @@ func (repo *LoanRepo) PageForBorrower(ctx context.Context, pageReq *LoanBorrower
 	filter := pageReq.Filter
 	sorter := pageReq.Sorter
 	query := repo.Client(ctx).
-		Where(fmt.Sprintf("%s.borrower_id = ?", loanTable), filter.BorrowerId).
+		Where(fmt.Sprintf("%s.user_id = ?", loanTable), filter.UserId).
 		Preload("Property").
 		Preload("Applicants")
 	if len(filter.Stage) > 0 {
@@ -434,12 +435,16 @@ func (repo *LoanRepo) PageForLenderCompany(ctx context.Context, pageReq *LoanLen
 }
 
 // GetLenderCompanyForBorrower get lender company
-func (repo *LoanRepo) GetLenderCompanyForBorrower(ctx context.Context, borrowerId int64) (result []string, err error) {
-	err = repo.BaseRepo.Client(ctx).
+func (repo *LoanRepo) GetLenderCompanyForBorrower(ctx context.Context, userId int64, organizationId int64) (result []string, err error) {
+	query := repo.BaseRepo.Client(ctx).
 		Select("lender_company").
-		Where("borrower_id = ?", borrowerId).
-		Distinct("lender_company").
-		Pluck("lender_company", &result).
+		Where("borrower_organization_id = ?", organizationId).
+		Distinct("lender_company")
+
+	if userId > 0 {
+		query = query.Where("user_id = ?", userId)
+	}
+	err = query.Pluck("lender_company", &result).
 		Error
 	return result, errorx.WithStack(err)
 }

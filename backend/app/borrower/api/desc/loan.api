@@ -239,7 +239,8 @@ type (
 
 
 type ImportPendingLoanEntry {
-    BorrowerId int64 `json:"borrower_id" validate:"required,gt=0"`
+    UserId int64 `json:"user_id" validate:"required,gt=0"`
+    OrganizationId int64 `json:"organization_id" validate:"required,gt=0"`
     // property address
     LoanProperty *ImportLoanApplyPropertyEntry `json:"loan_property,optional"`
     // applicants

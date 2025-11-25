@@ -31,14 +31,15 @@ func NewPropertyAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Prope
 
 func (l *PropertyAllLogic) PropertyAll(req *types.EmptyRequest) (resp *types.PropertyAllResponse, err error) {
 	// get borrowerId
-	borrowerId, err := utils.GetAccountIdFromCtx(l.ctx)
+	claim, err := utils.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	rpcResp, err := l.svcCtx.BorrowerPropertyRpcClient.All(l.ctx, &borrower.PropertyAllRequest{
 		Data: &borrower.PropertyAllRequestData{
-			BorrowerId: borrowerId,
+			UserId:         claim.UserId,
+			OrganizationId: claim.OrganizationId,
 		},
 	})
 	if err != nil {
