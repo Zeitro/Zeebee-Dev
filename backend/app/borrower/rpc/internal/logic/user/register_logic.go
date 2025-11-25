@@ -50,7 +50,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 	}()
 	// check if user already exists
 	var existedUser *model.User
-	existedUser, _ = l.svcCtx.UserRepo.GetBorrowerUserByEmail(l.ctx, in.Data.Email)
+	existedUser, _ = l.svcCtx.UserRepo.GetUserByEmail(l.ctx, in.Data.Email, constants.UserTypeBorrower)
 
 	if existedUser != nil && existedUser.Id > 0 {
 		ctx := context.WithoutCancel(l.ctx)
@@ -92,29 +92,30 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 		LastName:     in.Data.LastName,
 		FullName:     stringx.FormatFullName(in.Data.FirstName, "", in.Data.LastName),
 	}
-	// borrowerModel := &model.Borrower{
-	// 	FirstName: in.Data.FirstName,
-	// 	LastName:  in.Data.LastName,
-	// 	FullName:  stringx.FormatFullName(in.Data.FirstName, "", in.Data.LastName),
-	// }
-	err = l.svcCtx.UserRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
-		// create user
-		userModel, err = l.svcCtx.UserRepo.CreateWithTx(l.ctx, tx, userModel, false)
-		if err != nil {
-			return err
-		}
-		// todo create organization
-		// create borrower
-		// borrowerModel.UserId = userModel.Id
-		// _, err = l.svcCtx.BorrowerRepo.CreateWithTx(l.ctx, tx, borrowerModel, false)
-		return err
+	// check organization
+	isExisted, err := l.svcCtx.OrganizationRepo.IsExistedByColumns(l.ctx, map[string]interface{}{
+		"name": in.Data.OrganizationName,
+		"type": constants.UserTypeBorrower,
 	})
+	if err != nil {
+		return nil, err
+	}
+	if isExisted {
+		return nil, errorx.New("Organization Already Exists")
+	}
+	organizationModel := &model.Organization{
+		Name:      in.Data.OrganizationName,
+		Type:      constants.UserTypeBorrower,
+		Status:    constants.OrganizationStatusActive,
+		OwnerType: constants.OrganizationOwnerTypeNone,
+	}
+
+	userModel, err = l.svcCtx.UserRepo.RegisterWithOrganization(l.ctx, userModel, organizationModel, constants.OrganizationAndUserStatusActive)
 	if err != nil {
 		return nil, err
 	}
 
 	newCxt := context.WithoutCancel(l.ctx)
-
 	go func() {
 		// send account validate email
 		ctx := context.WithoutCancel(newCxt)
@@ -129,12 +130,12 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 	}()
 
 	go func() {
-		if len(in.Data.PreApprovalRequestId) == 0 || in.Data.TargetLenderCompanyId == 0 {
+		if len(in.Data.PreApprovalRequestId) == 0 || in.Data.LenderOrganizationId == 0 {
 			return
 		}
 		// create draft loan
 		ctx := context.WithoutCancel(newCxt)
-		err := l.handlePreapproveLoan(newCxt, userModel.Id, in.Data.PreApprovalRequestId, in.Data.TargetLenderCompanyId)
+		err := l.handlePreapproveLoan(newCxt, userModel.Id, in.Data.PreApprovalRequestId, in.Data.LenderOrganizationId)
 		if err != nil {
 			if errors.Is(err, context.Canceled) {
 				l.WithContext(ctx).
@@ -285,42 +286,8 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, userId int64, 
 	if err != nil {
 		return errorx.WithStack(err)
 	}
-
-	//  send email to lender
-	// err = sendPreApprovalLoanEmail(lenderCompany)
-	// if err != nil {
-	// 	return errors.WithStack(err)
-	// }
-
 	return err
 }
-
-// sendPreApprovalLoanEmail send pre approval loan email
-// func sendPreApprovalLoanEmail(lenderCompany *model.LenderCompany) (err error) {
-// 	// check lender company
-// 	if lenderCompany == nil || lenderCompany.Id == 0 {
-// 		return err
-// 	}
-// 	if len(lenderCompany.ContactEmail) == 0 || lenderCompany.Status != constants.LenderCompanyStatusActive {
-// 		return err
-// 	}
-// 	// send email
-// 	data := map[string]interface{}{}
-// 	content, err := email2.ParseTemplate(email_tpl.SelfPreApprovalNotification, data)
-// 	if err != nil {
-// 		return errorx.WithStack(err)
-// 	}
-// 	msg := email2.Message{
-// 		Subject: "PreApproval Loan Notification",
-// 		From:    global.Config.EmailConf.Username,
-// 		To:      []string{lenderCompany.ContactEmail},
-// 		Body:    content,
-// 		IsHTML:  true,
-// 	}
-// 	err = global.EmailClient.SendEmail(msg)
-//
-// 	return errorx.WithStack(err)
-// }
 
 // sendLoginUrlEmail send login url email
 func sendLoginUrlEmail(ctx context.Context, email string, firstName string) (err error) {

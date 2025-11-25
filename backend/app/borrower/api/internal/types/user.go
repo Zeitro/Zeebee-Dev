@@ -35,7 +35,8 @@ type UserRegisterRequest struct {
 	FirstName             string `json:"first_name" validate:"required,min=2,max=30"`
 	LastName              string `json:"last_name" validate:"required,min=2,max=30"`
 	PreApprovalRequestId  string `json:"pre_approval_request_id,optional"`
-	TargetLenderCompanyId int64  `json:"target_lender_company_id,optional"`
+	TargetLenderCompanyId int64  `json:"target_lender_company_id,optional" copier:"LenderOrganizationId"`
+	OrganizationName      string `json:"organization_name" validate:"required,min=2,max=100"`
 }
 
 type UserRegisterResponse struct {

@@ -23,18 +23,52 @@ func NewUserRepo(db *gorm.DB) *UserRepo {
 	}
 }
 
-// GetBorrowerUser
-func (repo *UserRepo) GetBorrowerUser(ctx context.Context, id int64) (res *model.User, err error) {
+// GetUser return user by id
+func (repo *UserRepo) GetUser(ctx context.Context, id int64, userType constants.UserType) (res *model.User, err error) {
 	err = repo.BaseRepo.Client(ctx).
-		Where("id = ? and type = ?", id, constants.UserTypeBorrower).
+		Where("id = ? and type = ?", id, userType).
 		Preload("Organizations").
 		First(&res).Error
 	return res, errorx.WithStack(err)
 }
 
-func (repo *UserRepo) GetBorrowerUserByEmail(ctx context.Context, email string) (res *model.User, err error) {
+// RegisterWithOrganization
+func (repo *UserRepo) RegisterWithOrganization(ctx context.Context, user *model.User, organization *model.Organization, relationStatus constants.OrganizationAndUserStatus) (res *model.User, err error) {
+	organizationRepo := NewOrganizationRepo(repo.BaseRepo.Client(ctx))
+	relationRepo := NewOrganizationAndUserRepo(repo.BaseRepo.Client(ctx))
+	err = repo.Transaction(ctx, func(tx *gorm.DB) error {
+		var innerErr error
+		organization, innerErr = organizationRepo.CreateWithTx(ctx, tx, organization, false)
+		if innerErr != nil {
+			return innerErr
+		}
+		user.DefaultOrganizationId = organization.Id
+		user, innerErr = repo.CreateWithTx(ctx, tx, user, false)
+		if innerErr != nil {
+			return innerErr
+		}
+		organization.OwnerId = user.Id
+		innerErr = organizationRepo.UpdateOwnerIdWithTx(ctx, tx, organization.OwnerId, user.Id)
+		if innerErr != nil {
+			return innerErr
+		}
+		_, innerErr = relationRepo.CreateWithTx(ctx, tx, &model.OrganizationAndUser{
+			OrganizationId: organization.Id,
+			UserId:         user.Id,
+			Status:         relationStatus,
+		}, false)
+
+		return innerErr
+	})
+	res = user
+
+	return res, errorx.WithStack(err)
+}
+
+// GetUserByEmail return
+func (repo *UserRepo) GetUserByEmail(ctx context.Context, email string, userType constants.UserType) (res *model.User, err error) {
 	err = repo.BaseRepo.Client(ctx).
-		Where("email = ? and type = ?", email, constants.UserTypeBorrower).
+		Where("email = ? and type = ?", email, userType).
 		Preload("Organizations").
 		First(&res).Error
 	return res, errorx.WithStack(err)
@@ -57,7 +91,6 @@ func (repo *UserRepo) GetLenderUser(ctx context.Context, id int64) (res *model.U
 	err = repo.BaseRepo.Client(ctx).
 		Where("id = ? and type = ?", id, constants.UserTypeLender).
 		Preload("Organizations").
-		// Preload("LenderEmployee.LenderCompany").
 		First(&res).Error
 	return res, errorx.WithStack(err)
 }
@@ -66,7 +99,6 @@ func (repo *UserRepo) GetLenderUserByEmail(ctx context.Context, email string) (r
 	err = repo.BaseRepo.Client(ctx).
 		Where("email = ? and type = ?", email, constants.UserTypeLender).
 		Preload("Organizations").
-		// Preload("LenderEmployee.LenderCompany").
 		First(&res).Error
 	return res, errorx.WithStack(err)
 }

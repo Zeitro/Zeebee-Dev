@@ -17,8 +17,8 @@ type UserInfo {
     LastName string `json:"last_name"`
     FullName string `json:"full_name"`
     Status string `json:"status"`
-    LenderCompanyId int64 `json:"lender_company_id"`
-    LenderCompanyName string `json:"lender_company_name"`
+    OrganizationId int64 `json:"organization_id"`
+    OrganizationName string `json:"organization_name"`
     Organizations []*UserInfoOrganizationEntity `json:"organizations"`
 }
 // login
