@@ -4,9 +4,6 @@ import (
 	"context"
 
 	"github.com/jinzhu/copier"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/global"
@@ -15,8 +12,6 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/stringx"
-	"zeebee-backend/common/utils"
 	logic2 "zeebee-backend/domains/zeebee/logic"
 )
 
@@ -42,72 +37,23 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	// check input wrong pwd times
-	redisKey := stringx.Format(constants.BorrowerLoginFailedTimes, in.Data.Email)
-	var loginFailedTimes int
-	if global.Config.LimiterConf.Login.Rate > 0 {
-		loginFailedTimes, err = global.GetRedis().GetInt(l.ctx, redisKey)
-		if err != nil {
-			return nil, errorx.WithStack(err)
-		}
-		if loginFailedTimes >= global.Config.LimiterConf.Login.Rate {
-			return nil, errorx.New("Login Failed Times Exceeded, Please Try Again Later")
-		}
+	loginReq := logic2.UserLoginRequest{
+		Email:    in.Data.Email,
+		Password: in.Data.Password,
+		UserType: constants.UserTypeBorrower,
 	}
-
-	user, err := l.svcCtx.UserRepo.GetUserByEmail(l.ctx, in.Data.Email, constants.UserTypeBorrower)
-	if err != nil {
-		return nil, errorx.WithStack(err)
+	limiter := logic2.LoginLimiter{
+		Rate:     global.Config.LimiterConf.Login.Rate,
+		Period:   global.Config.LimiterConf.Login.Period,
+		RedisCli: global.GetRedis(),
 	}
-	if user == nil {
-		return nil, errorx.New("User Not Found.")
-	}
-
-	// check pwd
-	if !utils.CheckPassword(in.Data.Password, user.PasswordHash) {
-		// add input wrong pwd times to redis
-		_, err = global.GetRedis().IncreaseExpire(l.ctx, redisKey, global.Config.LimiterConf.Login.Period)
-		if err != nil {
-			return nil, errorx.WithStack(err)
-		}
-		return nil, errorx.WithStack(errorx.New("The Email And Password You Entered Don't Match."))
-	}
-
-	if global.Config.LimiterConf.Login.Rate > 0 {
-		err = global.GetRedis().Del(l.ctx, redisKey)
-		if err != nil {
-			return nil, errorx.WithStack(err)
-		}
-	}
-
-	// check status
-	if user.Status == constants.UserStatusInactive {
-		return nil, errorx.New("User Is Not Active")
-	}
-	if user.Status == constants.UserStatusUnverified {
-		err = status.Error(codes.PermissionDenied, "User Is Unverified")
-		return nil, err
-	}
-
-	// check status
-	if user.Status == constants.UserStatusInactive {
-		return nil, errorx.WithStack(errorx.New("User Is Not Active"))
-	}
-	if user.Status == constants.UserStatusUnverified {
-		return nil, errorx.WithStack(errorx.New("User Is Unverified"))
-	}
-
-	user, err = l.baseLogic.UserLogic.CheckAndUpdateActiveOrganizationByUser(l.ctx, user)
-	if err != nil {
-		return nil, errorx.WithStack(err)
-	}
-
-	token, err := l.baseLogic.UserLogic.GenerateJwtToken(user, logic2.JwtConfig{
+	jwtConfig := logic2.JwtConfig{
 		AccessSecret:  l.svcCtx.Config.JwtAuth.AccessSecret,
 		AccessExpire:  l.svcCtx.Config.JwtAuth.AccessExpire,
 		RefreshSecret: l.svcCtx.Config.JwtAuth.RefreshSecret,
 		RefreshExpire: l.svcCtx.Config.JwtAuth.RefreshExpire,
-	})
+	}
+	token, err := l.baseLogic.UserLogic.Login(l.ctx, loginReq, limiter, jwtConfig)
 	if err != nil {
 		return nil, err
 	}

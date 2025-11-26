@@ -63,3 +63,13 @@ func (s *UserServer) SendResetPasswordEmail(ctx context.Context, in *borrower.Se
 	l := userlogic.NewSendResetPasswordEmailLogic(ctx, s.svcCtx)
 	return l.SendResetPasswordEmail(in)
 }
+
+func (s *UserServer) SwitchOrganization(ctx context.Context, in *borrower.SwitchOrganizationRequest) (*borrower.UserLoginResponse, error) {
+	l := userlogic.NewSwitchOrganizationLogic(ctx, s.svcCtx)
+	return l.SwitchOrganization(in)
+}
+
+func (s *UserServer) EditProfile(ctx context.Context, in *borrower.UserProfileEditRequest) (*borrower.UserinfoResponse, error) {
+	l := userlogic.NewEditProfileLogic(ctx, s.svcCtx)
+	return l.EditProfile(in)
+}

@@ -78,7 +78,7 @@ func (l *VerifyEmailLogic) VerifyEmail(in *borrower.VerifyEmailRequest) (resp *b
 		AccessExpire:  l.svcCtx.Config.JwtAuth.AccessExpire,
 		RefreshSecret: l.svcCtx.Config.JwtAuth.RefreshSecret,
 		RefreshExpire: l.svcCtx.Config.JwtAuth.RefreshExpire,
-	})
+	}, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}
