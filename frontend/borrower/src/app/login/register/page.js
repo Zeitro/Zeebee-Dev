@@ -126,6 +126,17 @@ const Register = () => {
 					</Col>
 				</Row>
 				<Form.Item
+					label="Company name"
+					name="company_name"
+					rules={[
+						{
+							required: true,
+						},
+					]}
+				>
+					<Input placeholder="Company name" allowClear />
+				</Form.Item>
+				<Form.Item
 					label="Email address"
 					name="email"
 					rules={[

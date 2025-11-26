@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
-import { Dropdown } from 'antd';
-import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
+import { Dropdown, Popover } from 'antd';
+import { CheckOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import { DeleteBtn } from '@repo/shared-methods';
 import { formatFirstLetterName } from '@repo/shared-methods/utils';
 import { useRouter } from 'next/navigation';
@@ -11,11 +11,37 @@ const Userinfo = ({ userInfo, sidebarCollapsed }) => {
 		router.push('/login');
 	};
 
+	const organizationContent = (
+		<div className="flex items-center w-[150px]" onClick={(e) => e.stopPropagation()}>
+			<div className="bg-base-primary text-white text-base font-medium px-2 rounded-sm">
+				Z
+			</div>
+			<span className="flex-1 common-ellipsis pl-2">ZeeBee</span>
+			<CheckOutlined />
+		</div>
+	);
+
 	const items = [
 		{
 			key: 'personal',
 			label: <span>{userInfo?.email}</span>,
 			icon: <UserOutlined />,
+		},
+		{
+			type: 'divider',
+		},
+		{
+			key: 'organization',
+			label: (
+				<Popover
+					content={organizationContent}
+					placement="rightTop"
+					align={{ offset: [17, -5] }}
+					arrow={false}
+				>
+					<div className="pl-5">Change organization</div>
+				</Popover>
+			),
 		},
 		{
 			type: 'divider',
@@ -46,7 +72,11 @@ const Userinfo = ({ userInfo, sidebarCollapsed }) => {
 		}
 	};
 	return (
-		<Dropdown menu={{ items, onClick: handleMenuClick }}>
+		<Dropdown
+			menu={{ items, onClick: handleMenuClick }}
+			placement="topLeft"
+			trigger={['click']}
+		>
 			<div
 				className={`h-16 border-t border-solid border-base-border text-base-primary flex items-center justify-center p-3.5 gap-2.5 overflow-hidden`}
 				onClick={(e) => e.preventDefault()}

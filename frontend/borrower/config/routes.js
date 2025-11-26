@@ -63,6 +63,24 @@ export const navRouter = [
 			},
 		],
 	},
+	{
+		path: '/setting',
+		title: 'Setting',
+		icon: 'management',
+		isPageNotFound: true, // 只是用于侧边栏显示,并无此页面
+		router: [
+			{
+				path: '/setting/user',
+				title: 'Setting ( User )',
+				menuTitle: 'User',
+			},
+			{
+				path: '/setting/role',
+				title: 'Setting ( Role )',
+				menuTitle: 'Role',
+			},
+		],
+	},
 ];
 
 export const noTokenRouter = [
