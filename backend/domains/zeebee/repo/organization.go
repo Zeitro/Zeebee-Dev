@@ -32,10 +32,10 @@ func (r *OrganizationRepo) UpdateOwnerIdWithTx(ctx context.Context, tx *gorm.DB,
 	return errorx.WithStack(err)
 }
 
-// GetOneById get one by id
-func (repo *OrganizationRepo) GetOneById(ctx context.Context, id int64, typ constants.UserType) (result *model.Organization, err error) {
+// GetOrganization return organization by id and type
+func (repo *OrganizationRepo) GetOrganization(ctx context.Context, id int64, organizationType constants.UserType) (result *model.Organization, err error) {
 	err = repo.Client(ctx).
-		Where("id = ? and type = ?", id, typ).
+		Where("id = ? and type = ?", id, organizationType).
 		First(&result).Error
 	return result, errorx.WithStack(err)
 }

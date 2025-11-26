@@ -58,9 +58,6 @@ func (repo *BorrowerApplicantRepo) PageForBorrower(ctx context.Context, pageReq 
 	sorter := pageReq.Sorter
 	query := repo.Client(ctx).
 		Where("organization_id = ?", filter.OrganizationId)
-	// if filter.UserId > 0 {
-	// 	query = query.Where("user_id = ?", filter.UserId)
-	// }
 	if len(filter.Keyword) > 0 {
 		query = query.Where("full_name like ?", "%"+filter.Keyword+"%")
 	}
@@ -85,7 +82,6 @@ func (repo *BorrowerApplicantRepo) PageForBorrower(ctx context.Context, pageReq 
 func (repo *BorrowerApplicantRepo) AllForOrganization(ctx context.Context, organizationId int64) (result []*model.BorrowerApplicant, err error) {
 	err = repo.Client(ctx).
 		Where("organization_id = ?", organizationId).
-		// Omit("address").
 		Order("id desc").
 		Find(&result).Error
 	return result, errorx.WithStack(err)

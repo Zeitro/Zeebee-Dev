@@ -98,12 +98,6 @@ func (l *DeleteBorrowerLoanLogic) DeleteBorrowerLoan(in *borrower.LoanDeleteRequ
 			return innerErr
 		}
 
-		// delete loan files
-		// innerErr = l.svcCtx.FileRepo.DeleteLoanFilesByLoanIdWithTx(l.ctx, tx, loanModel.Id)
-		// if innerErr != nil {
-		// 	return innerErr
-		// }
-
 		// delete loan borrower
 		innerErr = l.svcCtx.LoanBorrowerRepo.DeleteByLoanIdWithTx(l.ctx, tx, loanModel.Id)
 		if innerErr != nil {
@@ -131,10 +125,6 @@ func (l *DeleteBorrowerLoanLogic) DeleteBorrowerLoan(in *borrower.LoanDeleteRequ
 		if innerErr != nil {
 			return innerErr
 		}
-
-		// if propertyBase != nil {
-		// 	innerErr = l.svcCtx.BorrowerPropertyRepo.SyncTotalAmountWithTx(l.ctx, tx, propertyBase.Id)
-		// }
 
 		return innerErr
 	})
