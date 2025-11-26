@@ -32,9 +32,9 @@ func (l *CheckExistedLogic) CheckExisted(in *borrower.BorrowerApplicantCheckExis
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-
+	// todo check organization
 	condition := map[string]interface{}{
-		"user_id":         in.Data.UserId,
+		// "user_id":         in.Data.UserId,
 		"organization_id": in.Data.OrganizationId,
 		"first_name":      in.Data.FirstName,
 		"mid_name":        in.Data.MidName,

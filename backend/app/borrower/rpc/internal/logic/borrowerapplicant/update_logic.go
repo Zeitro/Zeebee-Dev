@@ -39,8 +39,8 @@ func (l *UpdateLogic) Update(in *borrower.BorrowerApplicantUpdateRequest) (resp 
 	var result *model.BorrowerApplicant
 	// todo check organization
 	result, err = l.svcCtx.BorrowerApplicantRepo.FindOneByColumns(l.ctx, map[string]interface{}{
-		"id":      in.Data.Id,
-		"user_id": in.Data.UserId,
+		"id":              in.Data.Id,
+		"organization_id": in.Data.OrganizationId,
 	})
 	if err != nil {
 		return nil, err
