@@ -35,6 +35,7 @@ func (l *UpdateLogic) Update(in *borrower.PropertyUpdateRequest) (resp *borrower
 		}
 	}()
 
+	// todo check organization
 	var result *model.BorrowerProperty
 	result, err = l.svcCtx.BorrowerPropertyRepo.GetOneByIdForOrganization(l.ctx, in.Data.Id, in.Data.OrganizationId)
 	if err != nil {

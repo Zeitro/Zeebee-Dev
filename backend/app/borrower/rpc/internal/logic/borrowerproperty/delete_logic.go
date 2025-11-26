@@ -35,7 +35,8 @@ func (l *DeleteLogic) Delete(in *borrower.PropertyDeleteRequest) (resp *borrower
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
-	if result.UserId != in.Data.UserId {
+	// todo check organization
+	if result.OrganizationId != in.Data.OrganizationId {
 		return nil, errorx.GetFailedTransRespErr(errorx.New("You Have No Access To This Property"))
 	}
 

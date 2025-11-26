@@ -4,12 +4,12 @@ import (
 	"context"
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
-
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/utils"
+	logic2 "zeebee-backend/domains/zeebee/logic"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -42,37 +42,30 @@ func (l *RefreshTokenLogic) RefreshToken(in *lender.RefreshTokenRequest) (resp *
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
+
 	id := claims.UserId
 
-	user, err := l.svcCtx.UserRepo.GetLenderUser(l.ctx, id)
+	user, err := l.svcCtx.UserRepo.GetUser(l.ctx, id, constants.UserTypeLender)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-
-	if user.Status == constants.UserStatusInactive {
-		return nil, errorx.New("User Is Inactive")
+	if user.Status != constants.UserStatusActive {
+		return nil, errorx.New("User Is Not Active")
 	}
 
-	user, err = l.baseLogic.CheckAndUpdateActiveOrganizationByUser(user)
+	token, err := l.baseLogic.UserLogic.GenerateJwtToken(user, logic2.JwtConfig{
+		AccessSecret:  l.svcCtx.Config.JwtAuth.AccessSecret,
+		AccessExpire:  l.svcCtx.Config.JwtAuth.AccessExpire,
+		RefreshSecret: l.svcCtx.Config.JwtAuth.RefreshSecret,
+		RefreshExpire: l.svcCtx.Config.JwtAuth.RefreshExpire,
+	}, constants.UserTypeLender)
 	if err != nil {
-		return nil, errorx.WithStack(err)
+		return nil, err
 	}
-
-	token, err := generateLenderToken(user, l.svcCtx)
-	if err != nil {
-		return nil, errorx.WithStack(err)
-	}
-
-	if err != nil {
-		return nil, errorx.WithStack(err)
-	}
-
 	return &lender.RefreshTokenResponse{
 		Data: &lender.RefreshTokenResponseData{
-			AccessToken:        token.AccessToken,
-			AccessTokenExpire:  token.AccessTokenExpire,
-			RefreshToken:       token.RefreshToken,
-			RefreshTokenExpire: token.RefreshTokenExpire,
+			AccessToken:       token.AccessToken,
+			AccessTokenExpire: token.AccessTokenExpire,
 		},
 	}, nil
 }

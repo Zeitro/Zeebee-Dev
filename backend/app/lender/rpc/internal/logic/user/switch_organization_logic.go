@@ -3,32 +3,32 @@ package userlogic
 import (
 	"context"
 
-	"zeebee-backend/domains/zeebee/model"
-
-	"github.com/duke-git/lancet/v2/slice"
+	"github.com/jinzhu/copier"
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/constants"
-	"zeebee-backend/common/errorx"
+	logic2 "zeebee-backend/domains/zeebee/logic"
 
 	"github.com/zeromicro/go-zero/core/logx"
+
+	"zeebee-backend/common/errorx"
 )
 
 type SwitchOrganizationLogic struct {
-	ctx       context.Context
-	svcCtx    *svc.ServiceContext
-	baseLogic *logic.BaseLogic
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
 	logx.Logger
+	baseLogic *logic.BaseLogic
 }
 
 func NewSwitchOrganizationLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SwitchOrganizationLogic {
 	return &SwitchOrganizationLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -38,55 +38,24 @@ func (l *SwitchOrganizationLogic) SwitchOrganization(in *lender.SwitchOrganizati
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-
-	user, err := l.svcCtx.UserRepo.GetLenderUser(l.ctx, in.Data.UserId)
+	user, err := l.baseLogic.UserLogic.SwitchOrganization(l.ctx, in.Data.UserId, in.Data.OrganizationId, constants.UserTypeLender)
 	if err != nil {
-		return nil, errorx.WithStack(err)
+		return nil, err
 	}
-
-	// check company
-	isValidCompany := false
-	slice.ForEach(user.Organizations, func(index int, item *model.Organization) {
-		if item.Id == in.Data.OrganizationId && item.Status == constants.OrganizationStatusActive {
-			isValidCompany = true
-		}
-	})
-
-	if !isValidCompany {
-		return nil, errorx.New("Invalid Organization For This Employee")
+	jwtConfig := logic2.JwtConfig{
+		AccessSecret:  l.svcCtx.Config.JwtAuth.AccessSecret,
+		AccessExpire:  l.svcCtx.Config.JwtAuth.AccessExpire,
+		RefreshSecret: l.svcCtx.Config.JwtAuth.RefreshSecret,
+		RefreshExpire: l.svcCtx.Config.JwtAuth.RefreshExpire,
 	}
-
-	// update employee
-	user.DefaultOrganizationId = in.Data.OrganizationId
-	err = l.svcCtx.UserRepo.UpdateColumnsById(l.ctx, user.Id, map[string]interface{}{
-		"default_organization_id": user.DefaultOrganizationId,
-	})
+	token, err := l.baseLogic.UserLogic.GenerateJwtToken(user, jwtConfig, constants.UserTypeLender)
 	if err != nil {
-		return nil, errorx.WithStack(err)
+		return nil, err
 	}
-
-	// get user info
-	user, err = l.svcCtx.UserRepo.GetLenderUser(l.ctx, user.Id)
+	data := &lender.RefreshTokenResponseData{}
+	err = copier.CopyWithOption(data, token, copier.Option{DeepCopy: true})
 	if err != nil {
-		return nil, errorx.WithStack(err)
+		return nil, errorx.GetFailedTransRespErr(err)
 	}
-
-	if user.Status == constants.UserStatusInactive {
-		return nil, errorx.New("User Is Inactive")
-	}
-
-	// generate token
-	token, err := generateLenderToken(user, l.svcCtx)
-	if err != nil {
-		return nil, errorx.WithStack(err)
-	}
-
-	return &lender.RefreshTokenResponse{
-		Data: &lender.RefreshTokenResponseData{
-			AccessToken:        token.AccessToken,
-			AccessTokenExpire:  token.AccessTokenExpire,
-			RefreshToken:       token.RefreshToken,
-			RefreshTokenExpire: token.RefreshTokenExpire,
-		},
-	}, nil
+	return &lender.RefreshTokenResponse{Data: data}, nil
 }
