@@ -11,13 +11,16 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/logic"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/repo"
 )
 
 type BaseLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	UserLogic *logic.UserLogic
 }
 
 func NewBaseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BaseLogic {
@@ -25,6 +28,10 @@ func NewBaseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BaseLogic {
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
+		UserLogic: logic.NewUserLogic(&repo.AllRepos{
+			UserRepo:                svcCtx.UserRepo,
+			OrganizationAndUserRepo: svcCtx.OrganizationAndUserRepo,
+		}),
 	}
 }
 

@@ -3,28 +3,29 @@ package userlogic
 import (
 	"context"
 
-	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/logx"
 
+	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type UserInfoLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	baseLogic *logic.BaseLogic
 }
 
 func NewUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserInfoLogic {
 	return &UserInfoLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -34,52 +35,21 @@ func (l *UserInfoLogic) UserInfo(in *lender.UserInfoRequest) (resp *lender.Useri
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	organizations := []*lender.UserinfoResponseData_Organization{}
 
-	user, err := l.svcCtx.UserRepo.GetUser(l.ctx, in.Data.Id, constants.UserTypeLender)
+	user, err := l.baseLogic.UserLogic.Info(l.ctx, in.Data.Id, constants.UserTypeLender)
 	if err != nil {
 		return nil, err
 	}
-	if user == nil {
-		return nil, errorx.WithStack(errorx.New("User Not Found"))
-	}
-	if len(user.Organizations) > 0 {
-		err = copier.CopyWithOption(&organizations, user.Organizations, copier.Option{
-			DeepCopy:      true,
-			CaseSensitive: true,
-		})
-		if err != nil {
-			return nil, errorx.Wrap(err, "Failed To Copy Organization")
-		}
-	}
-	var currentOrganization *lender.UserinfoResponseData_Organization
-	slice.ForEach(organizations, func(i int, organization *lender.UserinfoResponseData_Organization) {
-		if organization.Id == user.DefaultOrganizationId {
-			currentOrganization = organizations[i]
-			organization.IsDefault = true
-		}
+	data := &lender.UserinfoResponseData{}
+	err = copier.CopyWithOption(data, user, copier.Option{
+		DeepCopy:      true,
+		CaseSensitive: true,
 	})
-
-	// Get lender company info
-	var lenderCompanyId int64
-	var lenderCompanyName string
-	if currentOrganization != nil {
-		lenderCompanyId = user.DefaultOrganizationId
-		lenderCompanyName = currentOrganization.Name
+	if err != nil {
+		return nil, errorx.GetFailedTransRespErr(err)
 	}
-
 	userInfo := &lender.UserinfoResponse{
-		Data: &lender.UserinfoResponseData{
-			Id:               user.Id,
-			Email:            user.Email,
-			FirstName:        user.FirstName,
-			LastName:         user.LastName,
-			FullName:         user.FullName,
-			OrganizationId:   lenderCompanyId,
-			OrganizationName: lenderCompanyName,
-			Status:           string(user.Status),
-			Organizations:    organizations,
-		},
+		Data: data,
 	}
 	return userInfo, nil
 }

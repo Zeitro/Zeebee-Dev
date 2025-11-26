@@ -35,6 +35,7 @@ func (l *UpdateLogic) Update(in *borrower.BorrowerEntityUpdateRequest) (resp *bo
 		}
 	}()
 
+	// todo check organization
 	var result *model.BorrowerEntity
 	result, err = l.svcCtx.BorrowerEntityRepo.GetOneByIdForOrganization(l.ctx, in.Data.Id, in.Data.OrganizationId)
 	if err != nil {

@@ -36,7 +36,7 @@ func (l *DeleteLogic) Delete(in *borrower.BorrowerEntityDeleteRequest) (resp *bo
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
-	if result.UserId != in.Data.UserId {
+	if result.OrganizationId != in.Data.OrganizationId {
 		return nil, errorx.GetFailedTransRespErr(errorx.New("You Have No Access To This Entity"))
 	}
 

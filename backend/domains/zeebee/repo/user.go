@@ -38,9 +38,11 @@ func (repo *UserRepo) RegisterWithOrganization(ctx context.Context, user *model.
 	relationRepo := NewOrganizationAndUserRepo(repo.BaseRepo.Client(ctx))
 	err = repo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
-		organization, innerErr = organizationRepo.CreateWithTx(ctx, tx, organization, false)
-		if innerErr != nil {
-			return innerErr
+		if organization.Id == 0 {
+			organization, innerErr = organizationRepo.CreateWithTx(ctx, tx, organization, false)
+			if innerErr != nil {
+				return innerErr
+			}
 		}
 		user.DefaultOrganizationId = organization.Id
 		user, innerErr = repo.CreateWithTx(ctx, tx, user, false)

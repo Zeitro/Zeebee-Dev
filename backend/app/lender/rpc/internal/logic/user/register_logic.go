@@ -3,14 +3,16 @@ package userlogic
 import (
 	"context"
 
-	"gorm.io/gorm"
+	"github.com/jinzhu/copier"
 
+	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/utils"
+	logic2 "zeebee-backend/domains/zeebee/logic"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -20,13 +22,15 @@ type RegisterLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	BaseLogic *logic.BaseLogic
 }
 
 func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RegisterLogic {
 	return &RegisterLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		BaseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -61,66 +65,42 @@ func (l *RegisterLogic) Register(in *lender.UserRegisterRequest) (resp *lender.U
 		return nil, errorx.WithStack(err)
 	}
 	userModel := &model.User{
-		Email:        in.Data.Email,
-		PasswordHash: pwd,
-		Status:       constants.UserStatusActive,
-		Type:         constants.UserTypeLender,
-		FirstName:    in.Data.FirstName,
-		LastName:     in.Data.LastName,
-		FullName:     stringx.FormatFullName(in.Data.FirstName, "", in.Data.LastName),
+		Email:                 in.Data.Email,
+		PasswordHash:          pwd,
+		Status:                constants.UserStatusActive,
+		Type:                  constants.UserTypeLender,
+		FirstName:             in.Data.FirstName,
+		LastName:              in.Data.LastName,
+		FullName:              stringx.FormatFullName(in.Data.FirstName, "", in.Data.LastName),
+		DefaultOrganizationId: in.Data.OrganizationId,
 	}
-	// lenderEmployeeModel := &model.LenderEmployee{
-	// 	FirstName:              in.Data.FirstName,
-	// 	LastName:               in.Data.LastName,
-	// 	FullName:               stringx.FormatFullName(in.Data.FirstName, "", in.Data.LastName),
-	// 	DefaultLenderCompanyId: in.Data.LenderCompanyId,
-	// }
-	err = l.svcCtx.UserRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
-		var innerErr error
-		var organization *model.Organization
-		organization, innerErr = l.svcCtx.OrganizationRepo.FindOneByIdWithTx(l.ctx, tx, in.Data.OrganizationId)
-		if innerErr != nil {
-			return innerErr
-		}
-		if organization.Status != constants.OrganizationStatusActive {
-			return errorx.New("Organization Is Not Active")
-		}
-		userModel.Organizations = []*model.Organization{
-			organization,
-		}
 
-		// create user
-		userModel, innerErr = l.svcCtx.UserRepo.CreateWithTx(l.ctx, tx, userModel, true)
-		if innerErr != nil {
-			return innerErr
-		}
-		// create lender employee
-		// lenderEmployeeModel.UserId = userModel.Id
-		// lenderEmployeeModel.LenderCompanies = []*model.LenderCompany{
-		// 	company,
-		// }
-		// _, innerErr = l.svcCtx.LenderEmployeeRepo.CreateEmployeeWithTx(l.ctx, tx, lenderEmployeeModel)
-		// if innerErr != nil {
-		// 	return innerErr
-		// }
+	var organization *model.Organization
+	organization, err = l.svcCtx.OrganizationRepo.GetOneById(l.ctx, in.Data.OrganizationId, constants.UserTypeLender)
+	if err != nil {
+		return nil, errorx.WithStack(err)
+	}
 
-		return innerErr
-	})
+	userModel, err = l.svcCtx.UserRepo.RegisterWithOrganization(l.ctx, userModel, organization, constants.OrganizationAndUserStatusActive)
 	if err != nil {
 		return nil, err
 	}
-	// userModel.Organizations = lenderEmployeeModel
-	token, err := generateLenderToken(userModel, l.svcCtx)
+	jwtConfig := logic2.JwtConfig{
+		AccessSecret:  l.svcCtx.Config.JwtAuth.AccessSecret,
+		AccessExpire:  l.svcCtx.Config.JwtAuth.AccessExpire,
+		RefreshSecret: l.svcCtx.Config.JwtAuth.RefreshSecret,
+		RefreshExpire: l.svcCtx.Config.JwtAuth.RefreshExpire,
+	}
+	token, err := l.BaseLogic.UserLogic.GenerateJwtToken(userModel, jwtConfig, constants.UserTypeLender)
 	if err != nil {
 		return nil, err
 	}
-
+	data := &lender.UserRegisterResponseData{}
+	err = copier.CopyWithOption(data, token, copier.Option{CaseSensitive: true})
+	if err != nil {
+		return nil, errorx.GetFailedTransRespErr(err)
+	}
 	return &lender.UserRegisterResponse{
-		Data: &lender.UserRegisterResponseData{
-			AccessToken:        token.AccessToken,
-			RefreshToken:       token.RefreshToken,
-			AccessTokenExpire:  token.AccessTokenExpire,
-			RefreshTokenExpire: token.RefreshTokenExpire,
-		},
+		Data: data,
 	}, err
 }

@@ -3,18 +3,16 @@ package userlogic
 import (
 	"context"
 
-	"zeebee-backend/app/lender/rpc/internal/logic"
+	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/lender/rpc/internal/global"
+	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/stringx"
-	"zeebee-backend/common/utils"
-	"zeebee-backend/domains/zeebee/model"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	logic2 "zeebee-backend/domains/zeebee/logic"
 )
 
 type LoginLogic struct {
@@ -40,106 +38,32 @@ func (l *LoginLogic) Login(in *lender.UserLoginRequest) (resp *lender.UserLoginR
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	// check input wrong pwd times
-	redisKey := stringx.Format(constants.LenderLoginFailedTimes, in.Data.Email)
-	var loginFailedTimes int
-	if global.Config.LimiterConf.Login.Rate > 0 {
-		loginFailedTimes, err = global.GetRedis().GetInt(l.ctx, redisKey)
-		if err != nil {
-			return nil, errorx.WithStack(err)
-		}
-		if loginFailedTimes >= global.Config.LimiterConf.Login.Rate {
-			return nil, errorx.WithStack(errorx.New("Login Failed Times Exceeded, Please Try Again Later"))
-		}
+	loginReq := logic2.UserLoginRequest{
+		Email:    in.Data.Email,
+		Password: in.Data.Password,
+		UserType: constants.UserTypeLender,
 	}
-
-	user, err := l.svcCtx.UserRepo.GetLenderUserByEmail(l.ctx, in.Data.Email)
+	limiter := logic2.LoginLimiter{
+		Rate:     global.Config.LimiterConf.Login.Rate,
+		Period:   global.Config.LimiterConf.Login.Period,
+		RedisCli: global.GetRedis(),
+	}
+	jwtConfig := logic2.JwtConfig{
+		AccessSecret:  l.svcCtx.Config.JwtAuth.AccessSecret,
+		AccessExpire:  l.svcCtx.Config.JwtAuth.AccessExpire,
+		RefreshSecret: l.svcCtx.Config.JwtAuth.RefreshSecret,
+		RefreshExpire: l.svcCtx.Config.JwtAuth.RefreshExpire,
+	}
+	token, err := l.baseLogic.UserLogic.Login(l.ctx, loginReq, limiter, jwtConfig)
 	if err != nil {
-		return nil, errorx.WithStack(err)
+		return nil, err
 	}
-	if user.Organizations == nil {
-		return nil, errorx.New("Organizations Not Found.")
-	}
-
-	// check pwd
-	if !utils.CheckPassword(in.Data.Password, user.PasswordHash) {
-		// add input wrong pwd times to redis
-		_, err = global.GetRedis().IncreaseExpire(l.ctx, redisKey, global.Config.LimiterConf.Login.Period)
-		if err != nil {
-			return nil, errorx.WithStack(err)
-		}
-		return nil, errorx.WithStack(errorx.New("The Email And Password You Entered Don't Match."))
-	}
-
-	if global.Config.LimiterConf.Login.Rate > 0 {
-		err = global.GetRedis().Del(l.ctx, redisKey)
-		if err != nil {
-			return nil, errorx.WithStack(err)
-		}
-	}
-
-	// check status
-	if user.Status == constants.UserStatusInactive {
-		return nil, errorx.WithStack(errorx.New("User Is Not Active"))
-	}
-	if user.Status == constants.UserStatusUnverified {
-		return nil, errorx.WithStack(errorx.New("User Is Unverified"))
-	}
-
-	user, err = l.baseLogic.CheckAndUpdateActiveOrganizationByUser(user)
+	data := &lender.UserLoginResponseData{}
+	err = copier.CopyWithOption(&data, token, copier.Option{CaseSensitive: true})
 	if err != nil {
-		return nil, errorx.WithStack(err)
+		return nil, errorx.GetFailedTransRespErr(err)
 	}
-
-	// token
-	token, err := generateLenderToken(user, l.svcCtx)
-	if err != nil {
-		return nil, errorx.WithStack(err)
-	}
-
 	return &lender.UserLoginResponse{
-		Data: &lender.UserLoginResponseData{
-			AccessToken:        token.AccessToken,
-			RefreshToken:       token.RefreshToken,
-			AccessTokenExpire:  token.AccessTokenExpire,
-			RefreshTokenExpire: token.RefreshTokenExpire,
-		},
+		Data: data,
 	}, nil
-}
-
-func generateLenderToken(user *model.User, svcCtx *svc.ServiceContext) (token *lender.UserLoginResponseData, err error) {
-	if user == nil {
-		return nil, errorx.WithStack(errorx.New("User Is Empty."))
-	}
-	jwtUser := utils.JwtUser{
-		UserId:         user.Id,
-		OrganizationId: user.DefaultOrganizationId,
-		Username:       user.FullName,
-		Role:           nil,
-		UserType:       constants.UserTypeLender,
-	}
-
-	accessToken, err := utils.GenerateToken(
-		jwtUser,
-		svcCtx.Config.JwtAuth.AccessSecret,
-		svcCtx.Config.JwtAuth.AccessExpire,
-	)
-	if err != nil {
-		return nil, errorx.WithStack(err)
-	}
-	refreshToken, err := utils.GenerateToken(
-		jwtUser,
-		svcCtx.Config.JwtAuth.RefreshSecret,
-		svcCtx.Config.JwtAuth.RefreshExpire,
-	)
-	if err != nil {
-		return nil, errorx.WithStack(err)
-	}
-	token = &lender.UserLoginResponseData{
-		AccessToken:        accessToken,
-		RefreshToken:       refreshToken,
-		AccessTokenExpire:  svcCtx.Config.JwtAuth.AccessExpire,
-		RefreshTokenExpire: svcCtx.Config.JwtAuth.RefreshExpire,
-	}
-	return
 }
