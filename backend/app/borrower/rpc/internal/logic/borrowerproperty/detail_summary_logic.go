@@ -47,7 +47,7 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 		return nil, errorx.WithStack(errorx.New("Property Is Invalid"))
 	}
 	// todo check organization
-	if borrowerProperty.UserId != in.Data.UserId {
+	if borrowerProperty.OrganizationId != in.Data.OrganizationId {
 		return nil, errorx.WithStack(errorx.New("Access Denied"))
 	}
 

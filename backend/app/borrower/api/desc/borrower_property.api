@@ -12,6 +12,8 @@ import "loan.api"
 type (
     BorrowerPropertyEntry {
         Id int64 `json:"id"`
+        UserId int64 `json:"user_id"`
+        OrganizationId int64 `json:"organization_id"`
         PropertyType string `json:"property_type"`
         TotalAmount float64 `json:"total_amount"`
         Unit int32 `json:"unit"`

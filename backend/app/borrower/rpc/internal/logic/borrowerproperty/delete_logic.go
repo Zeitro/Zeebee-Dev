@@ -31,11 +31,10 @@ func (l *DeleteLogic) Delete(in *borrower.PropertyDeleteRequest) (resp *borrower
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	result, err := l.svcCtx.BorrowerPropertyRepo.FindOneById(l.ctx, in.Data.Id)
+	result, err := l.svcCtx.BorrowerPropertyRepo.GetOneByIdForOrganization(l.ctx, in.Data.Id, in.Data.OrganizationId)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
-	// todo check organization
 	if result.UserId != in.Data.UserId {
 		return nil, errorx.GetFailedTransRespErr(errorx.New("You Have No Access To This Property"))
 	}

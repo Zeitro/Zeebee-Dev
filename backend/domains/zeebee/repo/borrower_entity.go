@@ -52,6 +52,15 @@ func (repo *BorrowerEntityRepo) GetBorrowerEntityById(ctx context.Context, id in
 	return result, errorx.WithStack(err)
 }
 
+// GetOneByIdForOrganization return one entity by id and organization id
+func (repo *BorrowerEntityRepo) GetOneByIdForOrganization(ctx context.Context, id int64, organizationId int64) (result *model.BorrowerEntity, err error) {
+	err = repo.Client(ctx).
+		Where("id = ? and organization_id = ?", id, organizationId).
+		First(&result).
+		Error
+	return result, errorx.WithStack(err)
+}
+
 // PageForBorrower return page
 func (repo *BorrowerEntityRepo) PageForBorrower(ctx context.Context, pageReq *BorrowerEntityBorrowerPageReq) (page gormx.PageResponse[*model.BorrowerEntity], err error) {
 
@@ -82,6 +91,15 @@ func (repo *BorrowerEntityRepo) PageForBorrower(ctx context.Context, pageReq *Bo
 func (repo *BorrowerEntityRepo) AllForBorrower(ctx context.Context, borrowerId int64) (result []*model.BorrowerEntity, err error) {
 	err = repo.Client(ctx).
 		Where("borrower_id = ?", borrowerId).
+		Order("id desc").
+		Find(&result).Error
+	return result, errorx.WithStack(err)
+}
+
+// AllForOrganization return all of the organization's entities
+func (repo *BorrowerEntityRepo) AllForOrganization(ctx context.Context, organizationId int64) (result []*model.BorrowerEntity, err error) {
+	err = repo.Client(ctx).
+		Where("organization_id = ?", organizationId).
 		Order("id desc").
 		Find(&result).Error
 	return result, errorx.WithStack(err)
