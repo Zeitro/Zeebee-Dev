@@ -6666,6 +6666,8 @@ type BorrowerPropertyEntry struct {
 	CreatedAt      string                 `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt      string                 `protobuf:"bytes,10,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	LoanCount      int32                  `protobuf:"varint,11,opt,name=loan_count,json=loanCount,proto3" json:"loan_count,omitempty"`
+	UserId         int64                  `protobuf:"varint,12,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	OrganizationId int64                  `protobuf:"varint,13,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -6773,6 +6775,20 @@ func (x *BorrowerPropertyEntry) GetUpdatedAt() string {
 func (x *BorrowerPropertyEntry) GetLoanCount() int32 {
 	if x != nil {
 		return x.LoanCount
+	}
+	return 0
+}
+
+func (x *BorrowerPropertyEntry) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *BorrowerPropertyEntry) GetOrganizationId() int64 {
+	if x != nil {
+		return x.OrganizationId
 	}
 	return 0
 }
@@ -14299,7 +14315,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x15has_properties_vacant\x18\x1b \x01(\bR\x13hasPropertiesVacant\x121\n" +
 	"\x15has_short_term_rental\x18\x1c \x01(\bR\x12hasShortTermRental\x129\n" +
 	"\x19est_property_value_amount\x18\x1d \x01(\x01R\x16estPropertyValueAmount\x12\x10\n" +
-	"\x03arv\x18\x1e \x01(\x01R\x03arv\"\xf6\x02\n" +
+	"\x03arv\x18\x1e \x01(\x01R\x03arv\"\xb8\x03\n" +
 	"\x15BorrowerPropertyEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
 	"\rproperty_type\x18\x02 \x01(\tR\fpropertyType\x12!\n" +
@@ -14315,7 +14331,9 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"updated_at\x18\n" +
 	" \x01(\tR\tupdatedAt\x12\x1d\n" +
 	"\n" +
-	"loan_count\x18\v \x01(\x05R\tloanCount\"\xbe\x05\n" +
+	"loan_count\x18\v \x01(\x05R\tloanCount\x12\x17\n" +
+	"\auser_id\x18\f \x01(\x03R\x06userId\x12'\n" +
+	"\x0forganization_id\x18\r \x01(\x03R\x0eorganizationId\"\xbe\x05\n" +
 	"\x11PropertyPageEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
 	"\rproperty_type\x18\x02 \x01(\tR\fpropertyType\x12!\n" +

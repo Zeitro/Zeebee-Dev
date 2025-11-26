@@ -74,7 +74,8 @@ type BorrowerEntityEntry struct {
 	Id             int64        `json:"id"`
 	CreatedAt      string       `json:"created_at"`
 	UpdatedAt      string       `json:"updated_at"`
-	BorrowerId     int64        `json:"borrower_id"`
+	UserId         int64        `json:"user_id"`
+	OrganizationId int64        `json:"organization_id"`
 	Type           string       `json:"type"`
 	Name           string       `json:"name"`
 	TinType        string       `json:"tin_type"`
@@ -115,6 +116,8 @@ type BorrowerEntityUpdateResponse struct {
 
 type BorrowerPropertyEntry struct {
 	Id             int64         `json:"id"`
+	UserId         int64         `json:"user_id"`
+	OrganizationId int64         `json:"organization_id"`
 	PropertyType   string        `json:"property_type"`
 	TotalAmount    float64       `json:"total_amount"`
 	Unit           int32         `json:"unit"`

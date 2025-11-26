@@ -34,10 +34,10 @@ func (l *CheckExistedLogic) CheckExisted(in *borrower.BorrowerEntityCheckExisted
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	// todo check organization
 	condition := map[string]interface{}{
-		"user_id": in.Data.UserId,
-		"name":    in.Data.Name,
+		// "user_id":         in.Data.UserId,
+		"organization_id": in.Data.OrganizationId,
+		"name":            in.Data.Name,
 	}
 
 	entity, err := l.svcCtx.BorrowerEntityRepo.FindOneByColumns(l.ctx, condition)

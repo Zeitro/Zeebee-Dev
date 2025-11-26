@@ -153,6 +153,15 @@ func (repo *BorrowerPropertyRepo) GetOneByIdForBorrower(ctx context.Context, id 
 	return result, errorx.WithStack(err)
 }
 
+// GetOneByIdForOrganization return one property by id and organization id
+func (repo *BorrowerPropertyRepo) GetOneByIdForOrganization(ctx context.Context, id int64, organizationId int64) (result *model.BorrowerProperty, err error) {
+	err = repo.Client(ctx).
+		Where("id = ? and organization_id = ?", id, organizationId).
+		First(&result).
+		Error
+	return result, errorx.WithStack(err)
+}
+
 // UpdateOneWithTx update one property
 func (repo *BorrowerPropertyRepo) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, id int64, data *model.BorrowerProperty) (result *model.BorrowerProperty, err error) {
 	err = tx.WithContext(ctx).Select("*").
@@ -211,7 +220,7 @@ func (repo *BorrowerPropertyRepo) PageForBorrower(ctx context.Context, pageReq *
 	filter := pageReq.Filter
 	sorter := pageReq.Sorter
 	query := repo.Client(ctx).
-		Where(fmt.Sprintf("%s.user_id = ?", borrowerPropertyTable), filter.UserId)
+		Where(fmt.Sprintf("%s.organization_id = ?", borrowerPropertyTable), filter.OrganizationId)
 	// keyword
 	if len(filter.Keyword) > 0 {
 		query = query.Where(
@@ -278,6 +287,15 @@ func (repo *BorrowerPropertyRepo) UpdateOne(ctx context.Context, id int64, data 
 func (repo *BorrowerPropertyRepo) AllForBorrower(ctx context.Context, userId int64) (result []*model.BorrowerProperty, err error) {
 	err = repo.Client(ctx).
 		Where("user_id = ?", userId).
+		Order("id desc").
+		Find(&result).Error
+	return result, errorx.WithStack(err)
+}
+
+// AllForOrganization return all of the organization's properties
+func (repo *BorrowerPropertyRepo) AllForOrganization(ctx context.Context, organizationId int64) (result []*model.BorrowerProperty, err error) {
+	err = repo.Client(ctx).
+		Where("organization_id = ?", organizationId).
 		Order("id desc").
 		Find(&result).Error
 	return result, errorx.WithStack(err)

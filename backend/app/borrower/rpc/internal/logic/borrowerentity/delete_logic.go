@@ -32,11 +32,10 @@ func (l *DeleteLogic) Delete(in *borrower.BorrowerEntityDeleteRequest) (resp *bo
 		}
 	}()
 
-	result, err := l.svcCtx.BorrowerEntityRepo.FindOneById(l.ctx, in.Data.Id)
+	result, err := l.svcCtx.BorrowerEntityRepo.GetOneByIdForOrganization(l.ctx, in.Data.Id, in.Data.OrganizationId)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
-	// todo check organization
 	if result.UserId != in.Data.UserId {
 		return nil, errorx.GetFailedTransRespErr(errorx.New("You Have No Access To This Entity"))
 	}

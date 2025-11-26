@@ -806,6 +806,8 @@ message BorrowerPropertyEntry {
   string created_at = 9;
   string updated_at = 10;
   int32 loan_count = 11;
+  int64 user_id = 12;
+  int64 organization_id = 13;
 }
 
 message PropertyPageEntry{
