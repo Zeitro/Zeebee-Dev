@@ -76,7 +76,7 @@ func (l *RegisterLogic) Register(in *lender.UserRegisterRequest) (resp *lender.U
 	}
 
 	var organization *model.Organization
-	organization, err = l.svcCtx.OrganizationRepo.GetOneById(l.ctx, in.Data.OrganizationId, constants.UserTypeLender)
+	organization, err = l.svcCtx.OrganizationRepo.GetOrganization(l.ctx, in.Data.OrganizationId, constants.UserTypeLender)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}

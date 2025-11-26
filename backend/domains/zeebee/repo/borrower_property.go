@@ -49,16 +49,6 @@ func NewBorrowerPropertyRepo(db *gorm.DB) *BorrowerPropertyRepo {
 	}
 }
 
-// GetOneWithTx return one property
-func (repo *BorrowerPropertyRepo) GetOneWithTx(ctx context.Context, tx *gorm.DB, id int64, preloads []string) (result *model.BorrowerProperty, err error) {
-	query := tx.WithContext(ctx).Where("id = ?", id)
-	for _, preload := range preloads {
-		query = query.Preload(preload)
-	}
-	err = query.First(&result).Error
-	return
-}
-
 // GetOne return one property
 func (repo *BorrowerPropertyRepo) GetOne(ctx context.Context, id int64) (result *model.BorrowerProperty, err error) {
 	query := repo.BaseRepo.Client(ctx).Where("id = ?", id).
@@ -69,30 +59,6 @@ func (repo *BorrowerPropertyRepo) GetOne(ctx context.Context, id int64) (result 
 		})
 
 	err = query.First(&result).Error
-	return
-}
-
-// GetOrCreateWithTxForBorrower query or create property
-func (repo *BorrowerPropertyRepo) GetOrCreateWithTxForBorrower(ctx context.Context, tx *gorm.DB, data *model.BorrowerProperty) (result *model.BorrowerProperty, err error) {
-	// if not existed,create one
-	err = tx.WithContext(ctx).
-		Where("user_id = ? and unit = ?", data.UserId, data.Unit).
-		Where("address->>'state' = ?", data.Address.State).
-		Where("address->>'city' = ?", data.Address.City).
-		Where("address->>'address1' = ?", data.Address.Address1).
-		Where("address->>'address2' = ?", data.Address.Address2).
-		Find(&result).
-		Error
-	if err != nil {
-		return nil, errorx.WithStack(err)
-	}
-	if result == nil || result.Id == 0 {
-		err = tx.WithContext(ctx).Omit(clause.Associations).Create(data).Error
-		if err != nil {
-			return nil, errorx.WithStack(err)
-		}
-		result = data
-	}
 	return
 }
 
@@ -125,25 +91,6 @@ func (repo *BorrowerPropertyRepo) GetOrCreateBorrowerPropertyWithTxForBorrower(c
 	return
 }
 
-// GetOneWithTxByPropertyForBorrower return one property
-func (repo *BorrowerPropertyRepo) GetOneWithTxByPropertyForBorrower(ctx context.Context, tx *gorm.DB, data *model.BorrowerProperty) (result *model.BorrowerProperty, err error) {
-	err = tx.WithContext(ctx).
-		Where("user_id = ? and unit = ?", data.UserId, data.Unit).
-		Where("address->>'state' = ?", data.Address.State).
-		Where("address->>'city' = ?", data.Address.City).
-		Where("address->>'address1' = ?", data.Address.Address1).
-		Where("address->>'address2' = ?", data.Address.Address2).
-		Find(&result).
-		Error
-	if err != nil {
-		return nil, errorx.WithStack(err)
-	}
-	if result == nil || result.Id == 0 {
-		return nil, nil
-	}
-	return
-}
-
 // GetOneByIdForBorrower return one property
 func (repo *BorrowerPropertyRepo) GetOneByIdForBorrower(ctx context.Context, id int64, userId int64) (result *model.BorrowerProperty, err error) {
 	err = repo.Client(ctx).
@@ -160,18 +107,6 @@ func (repo *BorrowerPropertyRepo) GetOneByIdForOrganization(ctx context.Context,
 		First(&result).
 		Error
 	return result, errorx.WithStack(err)
-}
-
-// UpdateOneWithTx update one property
-func (repo *BorrowerPropertyRepo) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, id int64, data *model.BorrowerProperty) (result *model.BorrowerProperty, err error) {
-	err = tx.WithContext(ctx).Select("*").
-		Omit("id", "created_at", "applicants").
-		Where("id = ?", id).
-		Updates(data).Error
-	if err != nil {
-		return nil, errorx.WithStack(err)
-	}
-	return data, nil
 }
 
 // SyncTotalAmountAndLoanCountWithTx sync total amount and loan count
@@ -206,7 +141,6 @@ func (repo *BorrowerPropertyRepo) SyncTotalAmountAndLoanCountWithTx(ctx context.
 			"total_amount": totalAmount,
 			"loan_count":   loanCount,
 		}).Error
-	// Updates("total_amount", totalAmount).Error
 	return errorx.WithStack(err)
 }
 
@@ -281,15 +215,6 @@ func (repo *BorrowerPropertyRepo) UpdateOne(ctx context.Context, id int64, data 
 		return nil, errorx.WithStack(err)
 	}
 	return data, nil
-}
-
-// AllForBorrower return all of the borrower's properties
-func (repo *BorrowerPropertyRepo) AllForBorrower(ctx context.Context, userId int64) (result []*model.BorrowerProperty, err error) {
-	err = repo.Client(ctx).
-		Where("user_id = ?", userId).
-		Order("id desc").
-		Find(&result).Error
-	return result, errorx.WithStack(err)
 }
 
 // AllForOrganization return all of the organization's properties
