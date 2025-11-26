@@ -183,6 +183,8 @@ type (
 	StorageCreatePresignedUrlResponse          = borrower.StorageCreatePresignedUrlResponse
 	StorageCreatePresignedUrlResponseData      = borrower.StorageCreatePresignedUrlResponseData
 	StringSliceResponse                        = borrower.StringSliceResponse
+	SwitchOrganizationRequest                  = borrower.SwitchOrganizationRequest
+	SwitchOrganizationRequestData              = borrower.SwitchOrganizationRequestData
 	ThirdPartyLoanApplicantEditEntry           = borrower.ThirdPartyLoanApplicantEditEntry
 	ThirdPartyLoanPropertyEditEntry            = borrower.ThirdPartyLoanPropertyEditEntry
 	UsCitiesRequest                            = borrower.UsCitiesRequest
@@ -193,6 +195,8 @@ type (
 	UserLoginRequestData                       = borrower.UserLoginRequestData
 	UserLoginResponse                          = borrower.UserLoginResponse
 	UserLoginResponseData                      = borrower.UserLoginResponseData
+	UserProfileEditRequest                     = borrower.UserProfileEditRequest
+	UserProfileEditRequestData                 = borrower.UserProfileEditRequestData
 	UserRegisterRequest                        = borrower.UserRegisterRequest
 	UserRegisterRequestData                    = borrower.UserRegisterRequestData
 	UserRegisterResponse                       = borrower.UserRegisterResponse

@@ -444,6 +444,18 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/user/info",
 					Handler: user.InfoHandler(serverCtx),
 				},
+				{
+					// edit profile
+					Method:  http.MethodPut,
+					Path:    "/user/profile",
+					Handler: user.EditProfileHandler(serverCtx),
+				},
+				{
+					// switch organization
+					Method:  http.MethodPost,
+					Path:    "/user/switch_organization",
+					Handler: user.SwitchOrganizationHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithPrefix("/api/v1"),

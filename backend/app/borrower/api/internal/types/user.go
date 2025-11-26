@@ -3,6 +3,11 @@
 
 package types
 
+type UserEditProfileRequest struct {
+	FirstName string `json:"first_name" validate:"required,min=2,max=100"`
+	LastName  string `json:"last_name" validate:"required,min=2,max=100"`
+}
+
 type UserInfoResponse struct {
 	UserInfo
 }
@@ -55,6 +60,10 @@ type UserSendResetPasswordEmailRequest struct {
 
 type UserSendVerifyEmailRequest struct {
 	Email string `json:"email" validate:"required,email"`
+}
+
+type UserSwitchOrganizationRequest struct {
+	OrganizationId int64 `json:"organization_id" validate:"required,gt=0"`
 }
 
 type UserVerifyEmailRequest struct {

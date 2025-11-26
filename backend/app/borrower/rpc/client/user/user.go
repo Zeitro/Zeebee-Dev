@@ -183,6 +183,8 @@ type (
 	StorageCreatePresignedUrlResponse          = borrower.StorageCreatePresignedUrlResponse
 	StorageCreatePresignedUrlResponseData      = borrower.StorageCreatePresignedUrlResponseData
 	StringSliceResponse                        = borrower.StringSliceResponse
+	SwitchOrganizationRequest                  = borrower.SwitchOrganizationRequest
+	SwitchOrganizationRequestData              = borrower.SwitchOrganizationRequestData
 	ThirdPartyLoanApplicantEditEntry           = borrower.ThirdPartyLoanApplicantEditEntry
 	ThirdPartyLoanPropertyEditEntry            = borrower.ThirdPartyLoanPropertyEditEntry
 	UsCitiesRequest                            = borrower.UsCitiesRequest
@@ -193,6 +195,8 @@ type (
 	UserLoginRequestData                       = borrower.UserLoginRequestData
 	UserLoginResponse                          = borrower.UserLoginResponse
 	UserLoginResponseData                      = borrower.UserLoginResponseData
+	UserProfileEditRequest                     = borrower.UserProfileEditRequest
+	UserProfileEditRequestData                 = borrower.UserProfileEditRequestData
 	UserRegisterRequest                        = borrower.UserRegisterRequest
 	UserRegisterRequestData                    = borrower.UserRegisterRequestData
 	UserRegisterResponse                       = borrower.UserRegisterResponse
@@ -215,6 +219,8 @@ type (
 		SendVerifyEmail(ctx context.Context, in *SendVerifyEmailRequest, opts ...grpc.CallOption) (*SendVerifyEmailResponse, error)
 		ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*ResetPasswordResponse, error)
 		SendResetPasswordEmail(ctx context.Context, in *SendResetPasswordEmailRequest, opts ...grpc.CallOption) (*SendResetPasswordEmailResponse, error)
+		SwitchOrganization(ctx context.Context, in *SwitchOrganizationRequest, opts ...grpc.CallOption) (*UserLoginResponse, error)
+		EditProfile(ctx context.Context, in *UserProfileEditRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
 	}
 
 	defaultUser struct {
@@ -267,4 +273,14 @@ func (m *defaultUser) ResetPassword(ctx context.Context, in *ResetPasswordReques
 func (m *defaultUser) SendResetPasswordEmail(ctx context.Context, in *SendResetPasswordEmailRequest, opts ...grpc.CallOption) (*SendResetPasswordEmailResponse, error) {
 	client := borrower.NewUserClient(m.cli.Conn())
 	return client.SendResetPasswordEmail(ctx, in, opts...)
+}
+
+func (m *defaultUser) SwitchOrganization(ctx context.Context, in *SwitchOrganizationRequest, opts ...grpc.CallOption) (*UserLoginResponse, error) {
+	client := borrower.NewUserClient(m.cli.Conn())
+	return client.SwitchOrganization(ctx, in, opts...)
+}
+
+func (m *defaultUser) EditProfile(ctx context.Context, in *UserProfileEditRequest, opts ...grpc.CallOption) (*UserinfoResponse, error) {
+	client := borrower.NewUserClient(m.cli.Conn())
+	return client.EditProfile(ctx, in, opts...)
 }

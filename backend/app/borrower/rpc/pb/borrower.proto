@@ -214,6 +214,25 @@ message UserinfoResponseData {
   repeated Organization organizations = 9;
 }
 
+// switch organization
+message SwitchOrganizationRequest {
+  SwitchOrganizationRequestData data = 1;
+}
+message SwitchOrganizationRequestData {
+  int64 user_id = 1;
+  int64 organization_id = 2;
+}
+
+// edit profile
+message UserProfileEditRequest {
+  UserProfileEditRequestData data = 1;
+}
+message UserProfileEditRequestData {
+  int64 user_id = 1;
+  string first_name = 2;
+  string last_name = 3;
+}
+
 service user {
   // user
   rpc Login(UserLoginRequest) returns(UserLoginResponse);
@@ -224,6 +243,8 @@ service user {
   rpc SendVerifyEmail(SendVerifyEmailRequest) returns(SendVerifyEmailResponse);
   rpc ResetPassword(ResetPasswordRequest) returns(ResetPasswordResponse);
   rpc SendResetPasswordEmail(SendResetPasswordEmailRequest) returns(SendResetPasswordEmailResponse);
+  rpc SwitchOrganization(SwitchOrganizationRequest) returns(UserLoginResponse);
+  rpc EditProfile(UserProfileEditRequest) returns(UserinfoResponse);
 }
 // ================= user service end =================
 
