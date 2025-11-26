@@ -22,8 +22,9 @@ type BorrowerApplicantBorrowerPageReq struct {
 }
 
 type BorrowerApplicantBorrowerPageReqFilter struct {
-	BorrowerId int64  `json:"borrower_id"`
-	Keyword    string `json:"keyword"`
+	UserId         int64  `json:"user_id"`
+	OrganizationId int64  `json:"organization_id"`
+	Keyword        string `json:"keyword"`
 }
 type BorrowerApplicantBorrowerPageReqSorter struct {
 	Column string `json:"column"`
@@ -56,7 +57,10 @@ func (repo *BorrowerApplicantRepo) PageForBorrower(ctx context.Context, pageReq 
 	filter := pageReq.Filter
 	sorter := pageReq.Sorter
 	query := repo.Client(ctx).
-		Where("borrower_id = ?", filter.BorrowerId)
+		Where("organization_id = ?", filter.OrganizationId)
+	// if filter.UserId > 0 {
+	// 	query = query.Where("user_id = ?", filter.UserId)
+	// }
 	if len(filter.Keyword) > 0 {
 		query = query.Where("full_name like ?", "%"+filter.Keyword+"%")
 	}
@@ -77,10 +81,10 @@ func (repo *BorrowerApplicantRepo) PageForBorrower(ctx context.Context, pageReq 
 
 }
 
-// AllForBorrower return all of the borrower's entities
-func (repo *BorrowerApplicantRepo) AllForBorrower(ctx context.Context, borrowerId int64) (result []*model.BorrowerApplicant, err error) {
+// AllForOrganization return all of the organization's entities
+func (repo *BorrowerApplicantRepo) AllForOrganization(ctx context.Context, organizationId int64) (result []*model.BorrowerApplicant, err error) {
 	err = repo.Client(ctx).
-		Where("borrower_id = ?", borrowerId).
+		Where("organization_id = ?", organizationId).
 		// Omit("address").
 		Order("id desc").
 		Find(&result).Error

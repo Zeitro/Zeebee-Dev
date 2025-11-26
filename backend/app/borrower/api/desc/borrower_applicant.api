@@ -12,7 +12,8 @@ type BorrowerApplicantEntry {
     Id int64 `json:"id"`
     CreatedAt string `json:"created_at"`
     UpdatedAt string `json:"updated_at"`
-    BorrowerId int64 `json:"borrower_id"`
+    UserId int64 `json:"user_id"`
+    OrganizationId int64 `json:"organization_id"`
     FirstName string `json:"first_name"`
     MidName string `json:"mid_name"`
     LastName string `json:"last_name"`
