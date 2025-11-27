@@ -1,0 +1,61 @@
+syntax = "v1"
+
+info(
+    title: "admin-api http service"
+    desc: "admin-api http service description"
+)
+
+import "desc/user.api"
+
+type (
+    EmptyRequest{
+    }
+    EmptyResponse{
+    }
+)
+
+type PathIdRequest {
+    id int64 `path:"id" validate:"required,gt=0"`
+}
+
+// ============== user start =============
+@server(
+    desc: "admin-api service"
+    version: v1
+    group: user
+    prefix:  /api/v1
+    tags: user
+)
+service admin-api {
+    @doc "login"
+    @handler Login
+    post /user/login (UserLoginRequest) returns (UserLoginResponse)
+
+    @doc "refresh"
+    @handler RefreshToken
+    post /user/refresh (UserRefreshTokenRequest) returns (UserRefreshTokenResponse)
+
+    @doc "reset password"
+    @handler ResetPassword
+    post /user/reset_password (UserResetPasswordRequest) returns (UserLoginResponse)
+}
+
+@server(
+    desc: "admin-api service"
+    version: v1
+    group: user
+    prefix:     /api/v1
+    middleware: AuthMiddleware
+    tags: user
+)
+service admin-api {
+    @doc "info"
+    @handler Info
+    get /user/info (EmptyRequest) returns (UserInfoResponse)
+
+    @doc "edit profile"
+    @handler EditProfile
+    put /user/profile (UserEditProfileRequest) returns (UserInfoResponse)
+}
+
+    // ============== user end =============

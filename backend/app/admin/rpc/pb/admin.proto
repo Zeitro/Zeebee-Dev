@@ -1,0 +1,211 @@
+syntax = "proto3";
+
+package admin;
+option go_package = "./admin";
+
+
+message EmptyRequest {
+
+}
+
+message EmptyResponse {
+
+}
+
+message StringSliceResponse {
+  repeated string data = 1;
+}
+
+message AddressEntry{
+  string state = 1;
+  string city = 2;
+  string address1 = 3;
+  string address2 = 4;
+  string zip_code = 5;
+}
+
+// ================= user service start ==================
+// login
+message UserLoginRequest {
+  UserLoginRequestData data = 1;
+}
+message UserLoginResponse {
+  UserLoginResponseData data = 1;
+}
+
+message UserLoginRequestData {
+  string email = 1;
+  string password = 2;
+}
+
+message UserLoginResponseData {
+  string access_token = 1;
+  string refresh_token = 2;
+  int64 access_token_expire = 3;
+  int64 refresh_token_expire = 4;
+}
+
+// register
+//message UserRegisterRequest {
+//  UserRegisterRequestData data = 1;
+//}
+//message UserRegisterResponse {
+//  UserRegisterResponseData data = 1;
+//}
+
+//message UserRegisterRequestData {
+//  string email = 1;
+//  string password = 2;
+//  string first_name = 3;
+//  string last_name = 4;
+//  string pre_approval_request_id = 5;
+//  int64 lender_organization_id = 6;
+//  string organization_name = 7;
+//}
+//message UserRegisterResponseData {
+//
+//}
+
+// refresh
+message RefreshTokenRequest {
+  RefreshTokenRequestData data = 1;
+}
+
+message RefreshTokenRequestData {
+  string refresh_token = 1;
+}
+
+message RefreshTokenResponse {
+  RefreshTokenResponseData data = 1;
+}
+
+message RefreshTokenResponseData {
+  string access_token = 1;
+  int64 access_token_expire = 2;
+}
+
+// verify email
+//message VerifyEmailRequest {
+//  VerifyEmailRequestData data = 1;
+//}
+//message VerifyEmailResponse {
+//  UserLoginResponseData data = 1;
+//}
+//message VerifyEmailRequestData {
+//  string email = 1;
+//  string code = 2;
+//}
+//message VerifyEmailResponseData {
+//  string access_token = 1;
+//  string refresh_token = 2;
+//  int64 access_token_expire = 3;
+//  int64 refresh_token_expire = 4;
+//}
+
+// send verify email
+//message SendVerifyEmailRequest {
+//  SendVerifyEmailRequestData data = 1;
+//}
+//message SendVerifyEmailResponse {
+//  EmptyResponse data = 1;
+//}
+//message SendVerifyEmailRequestData {
+//  string email = 1;
+//}
+
+// reset password
+message ResetPasswordRequest {
+  ResetPasswordRequestData data = 1;
+}
+message ResetPasswordResponse {
+  UserLoginResponseData data = 1;
+}
+
+// send reset password email
+//message SendResetPasswordEmailRequest {
+//  SendResetPasswordEmailRequestData data = 1;
+//}
+//message SendResetPasswordEmailResponse {
+//  EmptyResponse data = 1;
+//}
+//message SendResetPasswordEmailRequestData {
+//  string email = 1;
+//}
+
+message ResetPasswordRequestData {
+  string password = 1;
+  string code = 2;
+  string email = 3;
+}
+message ResetPasswordResponseData {
+  string access_token = 1;
+  string refresh_token = 2;
+  int64 access_token_expire = 3;
+  int64 refresh_token_expire = 4;
+}
+
+// userinfo
+message UserInfoRequest {
+  UserInfoRequestData data = 1;
+}
+
+message UserInfoRequestData {
+  int64 id = 1;
+}
+
+message UserinfoResponse {
+  UserinfoResponseData data = 1;
+}
+
+message UserinfoResponseData {
+  message Organization {
+    int64 id = 1;
+    string name = 2;
+    string status = 3;
+    bool is_default = 4;
+  }
+
+  int64 id = 1;
+  string email = 2;
+  string first_name = 3;
+  string last_name = 4;
+  string full_name = 5;
+  int64 organization_id = 6;
+  string organization_name = 7;
+  string status = 8;
+  repeated Organization organizations = 9;
+}
+
+// switch organization
+//message SwitchOrganizationRequest {
+//  SwitchOrganizationRequestData data = 1;
+//}
+//message SwitchOrganizationRequestData {
+//  int64 user_id = 1;
+//  int64 organization_id = 2;
+//}
+
+// edit profile
+message UserProfileEditRequest {
+  UserProfileEditRequestData data = 1;
+}
+message UserProfileEditRequestData {
+  int64 user_id = 1;
+  string first_name = 2;
+  string last_name = 3;
+}
+
+service user {
+  // user
+  rpc Login(UserLoginRequest) returns(UserLoginResponse);
+  //  rpc Register(UserRegisterRequest) returns(UserRegisterResponse);
+  rpc RefreshToken(RefreshTokenRequest) returns(RefreshTokenResponse);
+  rpc UserInfo(UserInfoRequest) returns(UserinfoResponse);
+  //  rpc VerifyEmail(VerifyEmailRequest) returns(VerifyEmailResponse);
+  //  rpc SendVerifyEmail(SendVerifyEmailRequest) returns(SendVerifyEmailResponse);
+  rpc ResetPassword(ResetPasswordRequest) returns(ResetPasswordResponse);
+  //  rpc SendResetPasswordEmail(SendResetPasswordEmailRequest) returns(SendResetPasswordEmailResponse);
+  //  rpc SwitchOrganization(SwitchOrganizationRequest) returns(UserLoginResponse);
+  rpc EditProfile(UserProfileEditRequest) returns(UserinfoResponse);
+}
+// ================= user service end =================
