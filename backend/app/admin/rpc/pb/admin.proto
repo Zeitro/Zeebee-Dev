@@ -4,13 +4,9 @@ package admin;
 option go_package = "./admin";
 
 
-message EmptyRequest {
+message EmptyRequest {}
 
-}
-
-message EmptyResponse {
-
-}
+message EmptyResponse {}
 
 message StringSliceResponse {
   repeated string data = 1;
@@ -45,27 +41,6 @@ message UserLoginResponseData {
   int64 refresh_token_expire = 4;
 }
 
-// register
-//message UserRegisterRequest {
-//  UserRegisterRequestData data = 1;
-//}
-//message UserRegisterResponse {
-//  UserRegisterResponseData data = 1;
-//}
-
-//message UserRegisterRequestData {
-//  string email = 1;
-//  string password = 2;
-//  string first_name = 3;
-//  string last_name = 4;
-//  string pre_approval_request_id = 5;
-//  int64 lender_organization_id = 6;
-//  string organization_name = 7;
-//}
-//message UserRegisterResponseData {
-//
-//}
-
 // refresh
 message RefreshTokenRequest {
   RefreshTokenRequestData data = 1;
@@ -84,35 +59,6 @@ message RefreshTokenResponseData {
   int64 access_token_expire = 2;
 }
 
-// verify email
-//message VerifyEmailRequest {
-//  VerifyEmailRequestData data = 1;
-//}
-//message VerifyEmailResponse {
-//  UserLoginResponseData data = 1;
-//}
-//message VerifyEmailRequestData {
-//  string email = 1;
-//  string code = 2;
-//}
-//message VerifyEmailResponseData {
-//  string access_token = 1;
-//  string refresh_token = 2;
-//  int64 access_token_expire = 3;
-//  int64 refresh_token_expire = 4;
-//}
-
-// send verify email
-//message SendVerifyEmailRequest {
-//  SendVerifyEmailRequestData data = 1;
-//}
-//message SendVerifyEmailResponse {
-//  EmptyResponse data = 1;
-//}
-//message SendVerifyEmailRequestData {
-//  string email = 1;
-//}
-
 // reset password
 message ResetPasswordRequest {
   ResetPasswordRequestData data = 1;
@@ -120,17 +66,6 @@ message ResetPasswordRequest {
 message ResetPasswordResponse {
   UserLoginResponseData data = 1;
 }
-
-// send reset password email
-//message SendResetPasswordEmailRequest {
-//  SendResetPasswordEmailRequestData data = 1;
-//}
-//message SendResetPasswordEmailResponse {
-//  EmptyResponse data = 1;
-//}
-//message SendResetPasswordEmailRequestData {
-//  string email = 1;
-//}
 
 message ResetPasswordRequestData {
   string password = 1;
@@ -211,8 +146,7 @@ message ApiTreeEntity{
   string updated_at = 11;
   repeated ApiTreeEntity children = 12;
 }
-
-
+// api tree
 message ApiTreeRequest {
   ApiTreeRequestData data = 1;
 }
@@ -225,8 +159,69 @@ message ApiTreeRequestData {
 message ApiTreeResponse {
   repeated ApiTreeEntity data = 1;
 }
+// create
+message ApiCreateRequest {
+  ApiCreateRequestData data = 1;
+}
+message ApiCreateRequestData {
+  int64 parent_id = 1;
+  string type = 2;
+  string name = 3;
+  string path = 4;
+  string method = 5;
+  string description = 6;
+  string status = 7;
+  int32 sort_order = 8;
+  int64 user_id = 9;
+  int64 organization_id = 10;
+}
+message ApiCreateResponse {
+  ApiTreeEntity data = 1;
+}
+// update
+message ApiUpdateRequest {
+  ApiUpdateRequestData data = 1;
+}
+message ApiUpdateRequestData {
+  int64 id = 1;
+  int64 parent_id = 2;
+  string type = 3;
+  string name = 4;
+  string path = 5;
+  string method = 6;
+  string description = 7;
+  string status = 8;
+  int32 sort_order = 9;
+  int64 user_id = 10;
+  int64 organization_id = 11;
+}
+
+//  delete
+message ApiDeleteRequest {
+  ApiDeleteRequestData data = 1;
+}
+message ApiDeleteRequestData {
+  int64 id = 1;
+  int64 user_id = 2;
+  int64 organization_id = 3;
+  string type = 4;
+}
+// detail
+message ApiDetailRequest {
+  ApiDetailRequestData data = 1;
+}
+message ApiDetailRequestData {
+  int64 id = 1;
+  int64 user_id = 2;
+  int64 organization_id = 3;
+  string type = 4;
+}
 
 service api {
   rpc ApiTree(ApiTreeRequest) returns(ApiTreeResponse);
+  rpc Create(ApiCreateRequest) returns(ApiCreateResponse);
+  rpc Update(ApiUpdateRequest) returns(ApiCreateResponse);
+  rpc Delete(ApiDeleteRequest) returns(EmptyResponse);
+  rpc Detail(ApiDetailRequest) returns(ApiCreateResponse);
 }
 // =================== api service end =================

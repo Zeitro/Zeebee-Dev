@@ -19,9 +19,33 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
 				{
+					// create
+					Method:  http.MethodPost,
+					Path:    "/api",
+					Handler: api.CreateHandler(serverCtx),
+				},
+				{
+					// detail
+					Method:  http.MethodGet,
+					Path:    "/api/:id",
+					Handler: api.DetailHandler(serverCtx),
+				},
+				{
+					// update
+					Method:  http.MethodPut,
+					Path:    "/api/:id",
+					Handler: api.UpdateHandler(serverCtx),
+				},
+				{
+					// delete
+					Method:  http.MethodDelete,
+					Path:    "/api/:id",
+					Handler: api.DeleteHandler(serverCtx),
+				},
+				{
 					// tree
 					Method:  http.MethodGet,
-					Path:    "/tree",
+					Path:    "/api/tree",
 					Handler: api.TreeHandler(serverCtx),
 				},
 			}...,

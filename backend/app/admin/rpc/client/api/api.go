@@ -15,10 +15,19 @@ import (
 
 type (
 	AddressEntry                      = admin.AddressEntry
+	ApiCreateRequest                  = admin.ApiCreateRequest
+	ApiCreateRequestData              = admin.ApiCreateRequestData
+	ApiCreateResponse                 = admin.ApiCreateResponse
+	ApiDeleteRequest                  = admin.ApiDeleteRequest
+	ApiDeleteRequestData              = admin.ApiDeleteRequestData
+	ApiDetailRequest                  = admin.ApiDetailRequest
+	ApiDetailRequestData              = admin.ApiDetailRequestData
 	ApiTreeEntity                     = admin.ApiTreeEntity
 	ApiTreeRequest                    = admin.ApiTreeRequest
 	ApiTreeRequestData                = admin.ApiTreeRequestData
 	ApiTreeResponse                   = admin.ApiTreeResponse
+	ApiUpdateRequest                  = admin.ApiUpdateRequest
+	ApiUpdateRequestData              = admin.ApiUpdateRequestData
 	EmptyRequest                      = admin.EmptyRequest
 	EmptyResponse                     = admin.EmptyResponse
 	RefreshTokenRequest               = admin.RefreshTokenRequest
@@ -44,6 +53,10 @@ type (
 
 	Api interface {
 		ApiTree(ctx context.Context, in *ApiTreeRequest, opts ...grpc.CallOption) (*ApiTreeResponse, error)
+		Create(ctx context.Context, in *ApiCreateRequest, opts ...grpc.CallOption) (*ApiCreateResponse, error)
+		Update(ctx context.Context, in *ApiUpdateRequest, opts ...grpc.CallOption) (*ApiCreateResponse, error)
+		Delete(ctx context.Context, in *ApiDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+		Detail(ctx context.Context, in *ApiDetailRequest, opts ...grpc.CallOption) (*ApiCreateResponse, error)
 	}
 
 	defaultApi struct {
@@ -60,4 +73,24 @@ func NewApi(cli zrpc.Client) Api {
 func (m *defaultApi) ApiTree(ctx context.Context, in *ApiTreeRequest, opts ...grpc.CallOption) (*ApiTreeResponse, error) {
 	client := admin.NewApiClient(m.cli.Conn())
 	return client.ApiTree(ctx, in, opts...)
+}
+
+func (m *defaultApi) Create(ctx context.Context, in *ApiCreateRequest, opts ...grpc.CallOption) (*ApiCreateResponse, error) {
+	client := admin.NewApiClient(m.cli.Conn())
+	return client.Create(ctx, in, opts...)
+}
+
+func (m *defaultApi) Update(ctx context.Context, in *ApiUpdateRequest, opts ...grpc.CallOption) (*ApiCreateResponse, error) {
+	client := admin.NewApiClient(m.cli.Conn())
+	return client.Update(ctx, in, opts...)
+}
+
+func (m *defaultApi) Delete(ctx context.Context, in *ApiDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	client := admin.NewApiClient(m.cli.Conn())
+	return client.Delete(ctx, in, opts...)
+}
+
+func (m *defaultApi) Detail(ctx context.Context, in *ApiDetailRequest, opts ...grpc.CallOption) (*ApiCreateResponse, error) {
+	client := admin.NewApiClient(m.cli.Conn())
+	return client.Detail(ctx, in, opts...)
 }

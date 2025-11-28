@@ -27,3 +27,23 @@ func (s *ApiServer) ApiTree(ctx context.Context, in *admin.ApiTreeRequest) (*adm
 	l := apilogic.NewApiTreeLogic(ctx, s.svcCtx)
 	return l.ApiTree(in)
 }
+
+func (s *ApiServer) Create(ctx context.Context, in *admin.ApiCreateRequest) (*admin.ApiCreateResponse, error) {
+	l := apilogic.NewCreateLogic(ctx, s.svcCtx)
+	return l.Create(in)
+}
+
+func (s *ApiServer) Update(ctx context.Context, in *admin.ApiUpdateRequest) (*admin.ApiCreateResponse, error) {
+	l := apilogic.NewUpdateLogic(ctx, s.svcCtx)
+	return l.Update(in)
+}
+
+func (s *ApiServer) Delete(ctx context.Context, in *admin.ApiDeleteRequest) (*admin.EmptyResponse, error) {
+	l := apilogic.NewDeleteLogic(ctx, s.svcCtx)
+	return l.Delete(in)
+}
+
+func (s *ApiServer) Detail(ctx context.Context, in *admin.ApiDetailRequest) (*admin.ApiCreateResponse, error) {
+	l := apilogic.NewDetailLogic(ctx, s.svcCtx)
+	return l.Detail(in)
+}
