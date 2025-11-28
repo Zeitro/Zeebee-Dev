@@ -7,8 +7,8 @@ type ResourceType string
 const ResourceTypeName = "resource_type"
 
 const (
-	ResourceTypeMenu ResourceType = "Menu"
-	ResourceTypeApi  ResourceType = "Api"
+	ResourceTypeMenu   ResourceType = "Menu"
+	ResourceTypeButton ResourceType = "Button"
 )
 
 func init() {
@@ -19,8 +19,8 @@ func init() {
 			Value: string(ResourceTypeMenu),
 		},
 		{
-			Label: string(ResourceTypeApi),
-			Value: string(ResourceTypeApi),
+			Label: string(ResourceTypeButton),
+			Value: string(ResourceTypeButton),
 		},
 	})
 }

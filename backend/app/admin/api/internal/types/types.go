@@ -3,6 +3,9 @@
 
 package types
 
+type EmptyResponse struct {
+}
+
 type PathIdRequest struct {
 	Id int64 `path:"id" validate:"required,gt=0"`
 }

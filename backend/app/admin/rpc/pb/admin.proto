@@ -1,8 +1,8 @@
 syntax = "proto3";
 
 package admin;
-option go_package = "./admin";
 
+option go_package = "./admin";
 
 message EmptyRequest {}
 
@@ -225,3 +225,104 @@ service api {
   rpc Detail(ApiDetailRequest) returns(ApiCreateResponse);
 }
 // =================== api service end =================
+
+// ================= resource service start =================
+message ResourceTreeEntity{
+  int64 id = 1;
+  int64 parent_id = 2;
+  string type = 3;
+  string resource_type = 4;
+  string name = 5;
+  string path = 6;
+  string icon = 7;
+  string tag = 8;
+  bool is_show = 9;
+  string status = 10;
+  int32  sort_order = 11;
+  string created_at = 12;
+  string updated_at = 13;
+  repeated ResourceTreeEntity children = 14;
+}
+// resource tree
+message ResourceTreeRequest {
+  ResourceTreeRequestData data = 1;
+}
+message ResourceTreeRequestData {
+  int64 user_id = 1;
+  int64 organization_id = 2;
+  string type = 3;
+}
+
+message ResourceTreeResponse {
+  repeated ResourceTreeEntity data = 1;
+}
+// create
+message ResourceCreateRequest {
+  ResourceCreateRequestData data = 1;
+}
+message ResourceCreateRequestData {
+  int64 parent_id = 1;
+  string type = 2;
+  string resource_type = 3;
+  string name = 4;
+  string path = 5;
+  string icon = 6;
+  string tag = 7;
+  bool is_show = 8;
+  string status = 9;
+  int32 sort_order = 10;
+  int64 user_id = 11;
+  int64 organization_id = 12;
+}
+message ResourceCreateResponse {
+  ResourceTreeEntity data = 1;
+}
+// update
+message ResourceUpdateRequest {
+  ResourceUpdateRequestData data = 1;
+}
+message ResourceUpdateRequestData {
+  int64 id = 1;
+  int64 parent_id = 2;
+  string type = 3;
+  string resource_type = 4;
+  string name = 5;
+  string path = 6;
+  string icon = 7;
+  string tag = 8;
+  bool is_show = 9;
+  string status = 10;
+  int32 sort_order = 11;
+  int64 user_id = 12;
+  int64 organization_id = 13;
+}
+
+//  delete
+message ResourceDeleteRequest {
+  ResourceDeleteRequestData data = 1;
+}
+message ResourceDeleteRequestData {
+  int64 id = 1;
+  int64 user_id = 2;
+  int64 organization_id = 3;
+  string type = 4;
+}
+// detail
+message ResourceDetailRequest {
+  ResourceDetailRequestData data = 1;
+}
+message ResourceDetailRequestData {
+  int64 id = 1;
+  int64 user_id = 2;
+  int64 organization_id = 3;
+  string type = 4;
+}
+
+service resource {
+  rpc ResourceTree(ResourceTreeRequest) returns(ResourceTreeResponse);
+  rpc Create(ResourceCreateRequest) returns(ResourceCreateResponse);
+  rpc Update(ResourceUpdateRequest) returns(ResourceCreateResponse);
+  rpc Delete(ResourceDeleteRequest) returns(EmptyResponse);
+  rpc Detail(ResourceDetailRequest) returns(ResourceCreateResponse);
+}
+// =================== resource service end =================
