@@ -191,7 +191,13 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 	if err != nil {
 		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
 	}
-	loan.UserId = in.UserId
+	creator, err := l.svcCtx.UserRepo.GetUser(l.ctx, in.UserId, constants.UserTypeBorrower)
+	if err != nil {
+		return nil, nil, nil, nil, err
+	}
+
+	loan.CreatorId = in.UserId
+	loan.CreatorName = creator.FullName
 	loan.BorrowerOrganizationId = in.OrganizationId
 	loan.PendingStatus = constants.LoanPendingStatusNone
 	loan.Source = constants.LoanSourceBorrower

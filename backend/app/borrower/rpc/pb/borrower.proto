@@ -275,7 +275,7 @@ message LoanEntry {
   string created_at = 22;
   string updated_at = 23;
   int64 lender_id = 24;
-  int64 user_id = 25;
+  int64 creator_id = 25;
   repeated string business_strategy = 26;
   repeated LoanApplicantEntry applicants = 27;
   string source = 28;
@@ -295,6 +295,7 @@ message LoanEntry {
   repeated LoanDocumentEntry loan_documents = 42;
   string code = 43;
   int64 RequestedLoanDocumentCount = 44;
+  string creator_name = 45;
 
 }
 
@@ -806,8 +807,9 @@ message BorrowerPropertyEntry {
   string created_at = 9;
   string updated_at = 10;
   int32 loan_count = 11;
-  int64 user_id = 12;
+  int64 creator_id = 12;
   int64 organization_id = 13;
+  string creator_name = 14;
 }
 
 message PropertyPageEntry{
@@ -829,6 +831,8 @@ message PropertyPageEntry{
   int32 bathrooms = 16;
   int32 unit = 17;
   int32 loan_count = 18;
+  int64 creator_id = 19;
+  int64 creator_name = 20;
 
 }
 
@@ -980,7 +984,7 @@ message BorrowerEntityEntry {
   int64 id = 1;
   string created_at = 2;
   string updated_at = 3;
-  int64 user_id = 4;
+  int64 creator_id = 4;
   string type = 5;
   string name = 6;
   string tin_type = 7;
@@ -990,13 +994,14 @@ message BorrowerEntityEntry {
   string contact_name = 11;
   string contact_phone = 12;
   int64 organization_id = 13;
+  string creator_name = 14;
 }
 
 message BorrowerEntityPageEntry {
   int64 id = 1;
   string created_at = 2;
   string updated_at = 3;
-  int64 user_id = 4;
+  int64 creator_id = 4;
   string type = 5;
   string name = 6;
   string tin_type = 7;
@@ -1005,6 +1010,7 @@ message BorrowerEntityPageEntry {
   string contact_name = 10;
   string contact_phone = 11;
   AddressEntry mailing_address = 13;
+  string creator_name = 14;
 }
 
 message BorrowerEntityEditEntry {
@@ -1139,7 +1145,7 @@ message BorrowerApplicantEntry {
   int64 id = 1;
   string created_at = 2;
   string updated_at = 3;
-  int64 user_id = 4;
+  int64 creator_id = 4;
   string first_name = 5;
   string mid_name = 6;
   string last_name = 7;
@@ -1153,13 +1159,14 @@ message BorrowerApplicantEntry {
   AddressEntry address = 15;
   string phone = 16;
   int64 organization_id = 17;
+  string creator_name = 18;
 }
 
 message BorrowerApplicantPageEntry {
   int64 id = 1;
   string created_at = 2;
   string updated_at = 3;
-  int64 user_id = 4;
+  int64 creator_id = 4;
   string first_name = 5;
   string mid_name = 6;
   string last_name = 7;
@@ -1172,6 +1179,7 @@ message BorrowerApplicantPageEntry {
   string driver_license_num = 14;
   string phone = 15;
   AddressEntry address = 16;
+  string creator_name = 17;
 }
 message BorrowerApplicantEditEntry {
   int64 user_id = 1;

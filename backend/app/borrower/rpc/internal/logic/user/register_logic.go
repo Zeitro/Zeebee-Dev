@@ -135,7 +135,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 		}
 		// create draft loan
 		ctx := context.WithoutCancel(newCxt)
-		err := l.handlePreapproveLoan(newCxt, userModel.Id, in.Data.PreApprovalRequestId, in.Data.LenderOrganizationId)
+		err := l.handlePreapproveLoan(newCxt, userModel.Id, userModel.FullName, in.Data.PreApprovalRequestId, in.Data.LenderOrganizationId)
 		if err != nil {
 			if errors.Is(err, context.Canceled) {
 				l.WithContext(ctx).
@@ -154,7 +154,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 	}, err
 }
 
-func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, userId int64, requestId string, organizationId int64) (err error) {
+func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int64, creatorName string, requestId string, organizationId int64) (err error) {
 	// get pre-approve loan data from cache
 	key := fmt.Sprintf(constants.BorrowerPreApprovalCacheKey, requestId)
 	cacheDataStr, err := global.GetRedis().Get(ctx, key)
@@ -205,7 +205,7 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, userId int64, 
 			// get BorrowerProperty
 			func() error {
 				var err error
-				borrowerProperty, err = l.svcCtx.BorrowerPropertyRepo.GetOrCreateBorrowerPropertyWithTxForBorrower(ctx, tx, userId, model.Address{
+				borrowerProperty, err = l.svcCtx.BorrowerPropertyRepo.GetOrCreateBorrowerPropertyWithTxForBorrower(ctx, tx, creatorId, creatorName, model.Address{
 					State:    preApproveRequest.Property.Address.State,
 					City:     preApproveRequest.Property.Address.City,
 					Address1: preApproveRequest.Property.Address.Address1,
@@ -218,7 +218,8 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, userId int64, 
 			func() error {
 				var err error
 				borrowerApplicant = &model.BorrowerApplicant{
-					UserId:         userId,
+					CreatorId:      creatorId,
+					CreatorName:    creatorName,
 					OrganizationId: organizationId,
 					FirstName:      preApproveRequest.Borrower.Name,
 					Email:          preApproveRequest.Borrower.Email,
@@ -263,7 +264,7 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, userId int64, 
 			HoldbackAmount:  preApproveRequest.Loan.HoldbackAmount,
 			PrincipalAmount: preApproveRequest.Loan.PrincipalAmount,
 			LenderCompanyId: organizationId,
-			UserId:          userId,
+			UserId:          creatorId,
 			Applicants: []*borrower.LoanApplicantApplyEntry{
 				{
 					IsPrimary:           true,

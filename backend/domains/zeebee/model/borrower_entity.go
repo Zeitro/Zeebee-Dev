@@ -6,7 +6,8 @@ import (
 
 type BorrowerEntity struct {
 	Base
-	UserId         int64                        `gorm:"column:user_id;type:int4;default:0;not null" json:"user_id"`
+	CreatorId      int64                        `gorm:"column:creator_id;type:int4;default:0;not null" json:"creator_id"`
+	CreatorName    string                       `gorm:"column:creator_name;type:varchar(100);default:'';not null" json:"creator_name"`
 	OrganizationId int64                        `gorm:"column:organization_id;type:int4;default:0;not null" json:"organization_id"`
 	Type           constants.ApplicantType      `gorm:"column:type;type:varchar(20);default:'';not null" json:"type"`
 	Name           string                       `gorm:"column:name;type:varchar(100);default:'';not null" json:"name"`
@@ -18,7 +19,7 @@ type BorrowerEntity struct {
 	ContactPhone   string                       `gorm:"column:contact_phone;type:varchar(30);default:'';not null" json:"contact_phone"`
 
 	//  relationships
-	User         *User         `json:"user" gorm:"foreignKey:UserId;references:Id"`
+	Creator      *User         `json:"creator" gorm:"foreignKey:CreatorId;references:Id"`
 	Organization *Organization `json:"organization" gorm:"foreignKey:OrganizationId;references:Id"`
 }
 
@@ -27,6 +28,6 @@ func (m BorrowerEntity) TableName() string {
 }
 
 func (m *BorrowerEntity) RemoveRelationships() {
-	m.User = nil
+	m.Creator = nil
 	m.Organization = nil
 }

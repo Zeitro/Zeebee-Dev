@@ -38,7 +38,7 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 	var loan *model.Loan
 	// var borrowerProperty *model.BorrowerProperty
 
-	loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, in.Data.Id, in.Data.UserId)
+	loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, in.Data.Id, in.Data.OrganizationId)
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +68,7 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 		return nil, errorx.New("Loan's Stage Should Be Pending Or Draft")
 	}
 	// todo check organization
-	if loan.UserId != in.Data.UserId {
+	if loan.BorrowerOrganizationId != in.Data.OrganizationId {
 		return nil, errorx.WithStack(errorx.New("Loan Does Not Belong To Borrower"))
 	}
 

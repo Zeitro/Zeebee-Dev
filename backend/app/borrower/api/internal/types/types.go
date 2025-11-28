@@ -15,7 +15,8 @@ type BorrowerApplicantEntry struct {
 	Id               int64        `json:"id"`
 	CreatedAt        string       `json:"created_at"`
 	UpdatedAt        string       `json:"updated_at"`
-	UserId           int64        `json:"user_id"`
+	CreatorId        int64        `json:"creator_id"`
+	CreatorName      string       `json:"creator_name"`
 	OrganizationId   int64        `json:"organization_id"`
 	FirstName        string       `json:"first_name"`
 	MidName          string       `json:"mid_name"`
@@ -35,6 +36,8 @@ type BorrowerApplicantPageEntry struct {
 	Id               int64        `json:"id"`
 	CreatedAt        string       `json:"created_at"`
 	UpdatedAt        string       `json:"updated_at"`
+	CreatorId        int64        `json:"creator_id"`
+	CreatorName      string       `json:"creator_name"`
 	FirstName        string       `json:"first_name"`
 	MidName          string       `json:"mid_name"`
 	LastName         string       `json:"last_name"`
@@ -74,7 +77,8 @@ type BorrowerEntityEntry struct {
 	Id             int64        `json:"id"`
 	CreatedAt      string       `json:"created_at"`
 	UpdatedAt      string       `json:"updated_at"`
-	UserId         int64        `json:"user_id"`
+	CreatorId      int64        `json:"creator_id"`
+	CreatorName    string       `json:"creator_name"`
 	OrganizationId int64        `json:"organization_id"`
 	Type           string       `json:"type"`
 	Name           string       `json:"name"`
@@ -88,6 +92,8 @@ type BorrowerEntityEntry struct {
 
 type BorrowerEntityPageEntry struct {
 	Id             int64         `json:"id"`
+	CreatorId      int64         `json:"creator_id"`
+	CreatorName    string        `json:"creator_name"`
 	CreatedAt      string        `json:"created_at"`
 	UpdatedAt      string        `json:"updated_at"`
 	BorrowerId     int64         `json:"borrower_id"`
@@ -116,7 +122,8 @@ type BorrowerEntityUpdateResponse struct {
 
 type BorrowerPropertyEntry struct {
 	Id             int64         `json:"id"`
-	UserId         int64         `json:"user_id"`
+	CreatorId      int64         `json:"creator_id"`
+	CreatorName    string        `json:"creator_name"`
 	OrganizationId int64         `json:"organization_id"`
 	PropertyType   string        `json:"property_type"`
 	TotalAmount    float64       `json:"total_amount"`
@@ -352,6 +359,8 @@ type LoanDocumentEntry struct {
 
 type LoanEntry struct {
 	Id                         int64                    `json:"id,optional"`
+	CreatorId                  int64                    `json:"creator_id"`
+	CreatorName                string                   `json:"creator_name"`
 	Code                       string                   `json:"code,optional"`
 	Stage                      string                   `json:"stage" validate:"required,oneof=Pending Active Archived"`
 	PendingStatus              string                   `json:"pending_status,optional" validate:"required_if=Stage Pending,omitempty,oneof=Quoting Processing Underwriting Closing"`
@@ -630,6 +639,8 @@ type PrimaryPreApprovalLoan struct {
 
 type PropertyPageEntry struct {
 	Id                        int64         `json:"id"`
+	CreatorId                 int64         `json:"creator_id"`
+	CreatorName               string        `json:"creator_name"`
 	PropertyType              string        `json:"property_type"`
 	LivingAreaSqft            float32       `json:"living_area_sqft"`
 	Bedrooms                  int32         `json:"bedrooms"`

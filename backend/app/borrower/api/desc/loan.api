@@ -17,6 +17,8 @@ import "loan_property.api"
 
 type LoanEntry {
     Id int64 `json:"id,optional"`
+    CreatorId int64 `json:"creator_id"`
+    CreatorName string `json:"creator_name"`
     Code string `json:"code,optional"`
     Stage string `json:"stage" validate:"required,oneof=Pending Active Archived"`
     PendingStatus string `json:"pending_status,optional" validate:"required_if=Stage Pending,omitempty,oneof=Quoting Processing Underwriting Closing"`

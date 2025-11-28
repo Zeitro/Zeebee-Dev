@@ -35,6 +35,12 @@ func (l *CreateLogic) Create(in *borrower.PropertyCreateRequest) (resp *borrower
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
+	// creatorId := in.Data.UserId
+	// creator, err := l.svcCtx.UserRepo.GetUser(l.ctx, in.Data.UserId, constants.UserTypeBorrower)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
 	saveData := &model.BorrowerProperty{}
 	responseData := &borrower.BorrowerPropertyEntry{}
 	err = copier.CopyWithOption(saveData, in.Data, copier.Option{
@@ -45,9 +51,10 @@ func (l *CreateLogic) Create(in *borrower.PropertyCreateRequest) (resp *borrower
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
+	saveData.CreatorId = in.Data.UserId
 
 	// todo check organization
-	isExisted, err := l.svcCtx.BorrowerPropertyRepo.IsExisted(l.ctx, 0, saveData.UserId, &saveData.Address)
+	isExisted, err := l.svcCtx.BorrowerPropertyRepo.IsExisted(l.ctx, 0, in.Data.OrganizationId, &saveData.Address)
 	if err != nil {
 		return nil, err
 	}

@@ -241,7 +241,13 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, 
 	if err != nil {
 		return nil, errorx.GetFailedTransErr(err)
 	}
-	loan.UserId = reqData.UserId
+	creator, err := l.svcCtx.UserRepo.GetUser(l.ctx, reqData.UserId, constants.UserTypeBorrower)
+	if err != nil {
+		return nil, err
+	}
+
+	loan.CreatorId = reqData.UserId
+	loan.CreatorName = creator.FullName
 	loan.BorrowerOrganizationId = reqData.OrganizationId
 	loan.Stage = constants.LoanStagePending
 	loan.PendingStatus = constants.LoanPendingStatusQuoting
