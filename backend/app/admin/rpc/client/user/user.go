@@ -15,10 +15,19 @@ import (
 
 type (
 	AddressEntry                      = admin.AddressEntry
+	ApiCreateRequest                  = admin.ApiCreateRequest
+	ApiCreateRequestData              = admin.ApiCreateRequestData
+	ApiCreateResponse                 = admin.ApiCreateResponse
+	ApiDeleteRequest                  = admin.ApiDeleteRequest
+	ApiDeleteRequestData              = admin.ApiDeleteRequestData
+	ApiDetailRequest                  = admin.ApiDetailRequest
+	ApiDetailRequestData              = admin.ApiDetailRequestData
 	ApiTreeEntity                     = admin.ApiTreeEntity
 	ApiTreeRequest                    = admin.ApiTreeRequest
 	ApiTreeRequestData                = admin.ApiTreeRequestData
 	ApiTreeResponse                   = admin.ApiTreeResponse
+	ApiUpdateRequest                  = admin.ApiUpdateRequest
+	ApiUpdateRequestData              = admin.ApiUpdateRequestData
 	EmptyRequest                      = admin.EmptyRequest
 	EmptyResponse                     = admin.EmptyResponse
 	RefreshTokenRequest               = admin.RefreshTokenRequest

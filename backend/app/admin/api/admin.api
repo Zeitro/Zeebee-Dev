@@ -70,9 +70,24 @@ service admin-api {
 	tags: api
 )
 service admin-api {
+	@doc "detail"
+	@handler Detail
+	get /api/:id (ApiDetailRequest) returns (ApiTreeEntity)
+
 	@doc "tree"
 	@handler Tree
-	get /tree (ApiTreeRequest) returns (ApiTreeResponse)
-}
+	get /api/tree (ApiTreeRequest) returns (ApiTreeResponse)
 
+	@doc "create"
+	@handler Create
+	post /api (ApiCreateRequest) returns (ApiTreeEntity)
+
+	@doc "update"
+	@handler Update
+	put /api/:id (ApiUpdateRequest) returns (EmptyResponse)
+
+	@doc "delete"
+	@handler Delete
+	delete /api/:id (ApiDeleteRequest) returns (EmptyResponse)
+}
 	// ============== api end =============

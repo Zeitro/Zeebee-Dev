@@ -276,6 +276,10 @@ var User_ServiceDesc = grpc.ServiceDesc{
 
 const (
 	Api_ApiTree_FullMethodName = "/admin.api/ApiTree"
+	Api_Create_FullMethodName  = "/admin.api/Create"
+	Api_Update_FullMethodName  = "/admin.api/Update"
+	Api_Delete_FullMethodName  = "/admin.api/Delete"
+	Api_Detail_FullMethodName  = "/admin.api/Detail"
 )
 
 // ApiClient is the client API for Api service.
@@ -283,6 +287,10 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ApiClient interface {
 	ApiTree(ctx context.Context, in *ApiTreeRequest, opts ...grpc.CallOption) (*ApiTreeResponse, error)
+	Create(ctx context.Context, in *ApiCreateRequest, opts ...grpc.CallOption) (*ApiCreateResponse, error)
+	Update(ctx context.Context, in *ApiUpdateRequest, opts ...grpc.CallOption) (*ApiCreateResponse, error)
+	Delete(ctx context.Context, in *ApiDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	Detail(ctx context.Context, in *ApiDetailRequest, opts ...grpc.CallOption) (*ApiCreateResponse, error)
 }
 
 type apiClient struct {
@@ -303,11 +311,55 @@ func (c *apiClient) ApiTree(ctx context.Context, in *ApiTreeRequest, opts ...grp
 	return out, nil
 }
 
+func (c *apiClient) Create(ctx context.Context, in *ApiCreateRequest, opts ...grpc.CallOption) (*ApiCreateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ApiCreateResponse)
+	err := c.cc.Invoke(ctx, Api_Create_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *apiClient) Update(ctx context.Context, in *ApiUpdateRequest, opts ...grpc.CallOption) (*ApiCreateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ApiCreateResponse)
+	err := c.cc.Invoke(ctx, Api_Update_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *apiClient) Delete(ctx context.Context, in *ApiDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, Api_Delete_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *apiClient) Detail(ctx context.Context, in *ApiDetailRequest, opts ...grpc.CallOption) (*ApiCreateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ApiCreateResponse)
+	err := c.cc.Invoke(ctx, Api_Detail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ApiServer is the server API for Api service.
 // All implementations must embed UnimplementedApiServer
 // for forward compatibility.
 type ApiServer interface {
 	ApiTree(context.Context, *ApiTreeRequest) (*ApiTreeResponse, error)
+	Create(context.Context, *ApiCreateRequest) (*ApiCreateResponse, error)
+	Update(context.Context, *ApiUpdateRequest) (*ApiCreateResponse, error)
+	Delete(context.Context, *ApiDeleteRequest) (*EmptyResponse, error)
+	Detail(context.Context, *ApiDetailRequest) (*ApiCreateResponse, error)
 	mustEmbedUnimplementedApiServer()
 }
 
@@ -320,6 +372,18 @@ type UnimplementedApiServer struct{}
 
 func (UnimplementedApiServer) ApiTree(context.Context, *ApiTreeRequest) (*ApiTreeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ApiTree not implemented")
+}
+func (UnimplementedApiServer) Create(context.Context, *ApiCreateRequest) (*ApiCreateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedApiServer) Update(context.Context, *ApiUpdateRequest) (*ApiCreateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+}
+func (UnimplementedApiServer) Delete(context.Context, *ApiDeleteRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedApiServer) Detail(context.Context, *ApiDetailRequest) (*ApiCreateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Detail not implemented")
 }
 func (UnimplementedApiServer) mustEmbedUnimplementedApiServer() {}
 func (UnimplementedApiServer) testEmbeddedByValue()             {}
@@ -360,6 +424,78 @@ func _Api_ApiTree_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Api_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ApiCreateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiServer).Create(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Api_Create_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiServer).Create(ctx, req.(*ApiCreateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Api_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ApiUpdateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiServer).Update(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Api_Update_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiServer).Update(ctx, req.(*ApiUpdateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Api_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ApiDeleteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Api_Delete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiServer).Delete(ctx, req.(*ApiDeleteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Api_Detail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ApiDetailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiServer).Detail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Api_Detail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiServer).Detail(ctx, req.(*ApiDetailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Api_ServiceDesc is the grpc.ServiceDesc for Api service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -370,6 +506,22 @@ var Api_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ApiTree",
 			Handler:    _Api_ApiTree_Handler,
+		},
+		{
+			MethodName: "Create",
+			Handler:    _Api_Create_Handler,
+		},
+		{
+			MethodName: "Update",
+			Handler:    _Api_Update_Handler,
+		},
+		{
+			MethodName: "Delete",
+			Handler:    _Api_Delete_Handler,
+		},
+		{
+			MethodName: "Detail",
+			Handler:    _Api_Detail_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

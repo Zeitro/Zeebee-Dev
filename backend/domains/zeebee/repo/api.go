@@ -32,3 +32,27 @@ func (repo *ApiRepo) All(ctx context.Context, apiType constants.UserType) (resul
 		Find(&result).Error
 	return result, errorx.WithStack(err)
 }
+
+// IsExisted check api is existed
+func (repo *ApiRepo) IsExisted(ctx context.Context, data *model.Api) (isExisted bool, err error) {
+	query := repo.Client(ctx).
+		Where("name = ?", data.Name).
+		Where("type = ?", data.Type).
+		Where("path = ?", data.Path).
+		Where("method = ?", data.Method)
+	if data.Id > 0 {
+		query = query.Where("id != ?", data.Id)
+	}
+	var count int64
+	err = query.Count(&count).Error
+	return count > 0, errorx.WithStack(err)
+}
+
+// GetApi return api by id
+func (repo *ApiRepo) GetApi(ctx context.Context, id int64, apiType constants.UserType) (result *model.Api, err error) {
+	err = repo.Client(ctx).
+		Where("id = ?", id).
+		Where("type = ?", apiType).
+		First(&result).Error
+	return result, errorx.WithStack(err)
+}
