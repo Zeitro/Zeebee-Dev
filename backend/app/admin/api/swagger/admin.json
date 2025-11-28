@@ -699,6 +699,939 @@
         }
       }
     },
+    "/api/v1/resource": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "resource"
+        ],
+        "summary": "create",
+        "operationId": "resourceResourceCreate",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "parent_id",
+                "type",
+                "resource_type",
+                "name",
+                "path",
+                "icon",
+                "tag",
+                "is_show",
+                "status",
+                "sort_order"
+              ],
+              "properties": {
+                "icon": {
+                  "type": "string"
+                },
+                "is_show": {
+                  "type": "boolean"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "parent_id": {
+                  "type": "integer"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "resource_type": {
+                  "type": "string"
+                },
+                "sort_order": {
+                  "type": "integer"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "tag": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "children": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "parent_id",
+                      "type",
+                      "resource_type",
+                      "name",
+                      "path",
+                      "icon",
+                      "tag",
+                      "is_show",
+                      "status",
+                      "sort_order",
+                      "created_at",
+                      "updated_at",
+                      "children"
+                    ],
+                    "properties": {
+                      "children": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "parent_id",
+                            "type",
+                            "resource_type",
+                            "name",
+                            "path",
+                            "icon",
+                            "tag",
+                            "is_show",
+                            "status",
+                            "sort_order",
+                            "created_at",
+                            "updated_at",
+                            "children"
+                          ],
+                          "properties": {
+                            "children": {
+                              "type": "array",
+                              "items": {
+                                "type": "object"
+                              }
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "icon": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "is_show": {
+                              "type": "boolean"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "parent_id": {
+                              "type": "integer"
+                            },
+                            "path": {
+                              "type": "string"
+                            },
+                            "resource_type": {
+                              "type": "string"
+                            },
+                            "sort_order": {
+                              "type": "integer"
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "tag": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "icon": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "is_show": {
+                        "type": "boolean"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "parent_id": {
+                        "type": "integer"
+                      },
+                      "path": {
+                        "type": "string"
+                      },
+                      "resource_type": {
+                        "type": "string"
+                      },
+                      "sort_order": {
+                        "type": "integer"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "tag": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "created_at": {
+                  "type": "string"
+                },
+                "icon": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "is_show": {
+                  "type": "boolean"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "parent_id": {
+                  "type": "integer"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "resource_type": {
+                  "type": "string"
+                },
+                "sort_order": {
+                  "type": "integer"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "tag": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "updated_at": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/resource/tree": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "resource"
+        ],
+        "summary": "tree",
+        "operationId": "resourceResourceTree",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "type",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "lists": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "parent_id",
+                      "type",
+                      "resource_type",
+                      "name",
+                      "path",
+                      "icon",
+                      "tag",
+                      "is_show",
+                      "status",
+                      "sort_order",
+                      "created_at",
+                      "updated_at",
+                      "children"
+                    ],
+                    "properties": {
+                      "children": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "parent_id",
+                            "type",
+                            "resource_type",
+                            "name",
+                            "path",
+                            "icon",
+                            "tag",
+                            "is_show",
+                            "status",
+                            "sort_order",
+                            "created_at",
+                            "updated_at",
+                            "children"
+                          ],
+                          "properties": {
+                            "children": {
+                              "type": "array",
+                              "items": {
+                                "type": "object"
+                              }
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "icon": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "is_show": {
+                              "type": "boolean"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "parent_id": {
+                              "type": "integer"
+                            },
+                            "path": {
+                              "type": "string"
+                            },
+                            "resource_type": {
+                              "type": "string"
+                            },
+                            "sort_order": {
+                              "type": "integer"
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "tag": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "icon": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "is_show": {
+                        "type": "boolean"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "parent_id": {
+                        "type": "integer"
+                      },
+                      "path": {
+                        "type": "string"
+                      },
+                      "resource_type": {
+                        "type": "string"
+                      },
+                      "sort_order": {
+                        "type": "integer"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "tag": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/resource/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "resource"
+        ],
+        "summary": "detail",
+        "operationId": "resourceResourceDetail",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "type",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "children": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "parent_id",
+                      "type",
+                      "resource_type",
+                      "name",
+                      "path",
+                      "icon",
+                      "tag",
+                      "is_show",
+                      "status",
+                      "sort_order",
+                      "created_at",
+                      "updated_at",
+                      "children"
+                    ],
+                    "properties": {
+                      "children": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "parent_id",
+                            "type",
+                            "resource_type",
+                            "name",
+                            "path",
+                            "icon",
+                            "tag",
+                            "is_show",
+                            "status",
+                            "sort_order",
+                            "created_at",
+                            "updated_at",
+                            "children"
+                          ],
+                          "properties": {
+                            "children": {
+                              "type": "array",
+                              "items": {
+                                "type": "object"
+                              }
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "icon": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "is_show": {
+                              "type": "boolean"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "parent_id": {
+                              "type": "integer"
+                            },
+                            "path": {
+                              "type": "string"
+                            },
+                            "resource_type": {
+                              "type": "string"
+                            },
+                            "sort_order": {
+                              "type": "integer"
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "tag": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "icon": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "is_show": {
+                        "type": "boolean"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "parent_id": {
+                        "type": "integer"
+                      },
+                      "path": {
+                        "type": "string"
+                      },
+                      "resource_type": {
+                        "type": "string"
+                      },
+                      "sort_order": {
+                        "type": "integer"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "tag": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "created_at": {
+                  "type": "string"
+                },
+                "icon": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "is_show": {
+                  "type": "boolean"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "parent_id": {
+                  "type": "integer"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "resource_type": {
+                  "type": "string"
+                },
+                "sort_order": {
+                  "type": "integer"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "tag": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "updated_at": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "resource"
+        ],
+        "summary": "update",
+        "operationId": "resourceResourceUpdate",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "parent_id",
+                "type",
+                "resource_type",
+                "name",
+                "path",
+                "icon",
+                "tag",
+                "is_show",
+                "status",
+                "sort_order"
+              ],
+              "properties": {
+                "icon": {
+                  "type": "string"
+                },
+                "is_show": {
+                  "type": "boolean"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "parent_id": {
+                  "type": "integer"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "resource_type": {
+                  "type": "string"
+                },
+                "sort_order": {
+                  "type": "integer"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "tag": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "children": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "parent_id",
+                      "type",
+                      "resource_type",
+                      "name",
+                      "path",
+                      "icon",
+                      "tag",
+                      "is_show",
+                      "status",
+                      "sort_order",
+                      "created_at",
+                      "updated_at",
+                      "children"
+                    ],
+                    "properties": {
+                      "children": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "parent_id",
+                            "type",
+                            "resource_type",
+                            "name",
+                            "path",
+                            "icon",
+                            "tag",
+                            "is_show",
+                            "status",
+                            "sort_order",
+                            "created_at",
+                            "updated_at",
+                            "children"
+                          ],
+                          "properties": {
+                            "children": {
+                              "type": "array",
+                              "items": {
+                                "type": "object"
+                              }
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "icon": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "is_show": {
+                              "type": "boolean"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "parent_id": {
+                              "type": "integer"
+                            },
+                            "path": {
+                              "type": "string"
+                            },
+                            "resource_type": {
+                              "type": "string"
+                            },
+                            "sort_order": {
+                              "type": "integer"
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "tag": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "icon": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "is_show": {
+                        "type": "boolean"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "parent_id": {
+                        "type": "integer"
+                      },
+                      "path": {
+                        "type": "string"
+                      },
+                      "resource_type": {
+                        "type": "string"
+                      },
+                      "sort_order": {
+                        "type": "integer"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "tag": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "created_at": {
+                  "type": "string"
+                },
+                "icon": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "is_show": {
+                  "type": "boolean"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "parent_id": {
+                  "type": "integer"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "resource_type": {
+                  "type": "string"
+                },
+                "sort_order": {
+                  "type": "integer"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "tag": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "updated_at": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "resource"
+        ],
+        "summary": "delete",
+        "operationId": "resourceResourceDelete",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "type"
+              ],
+              "properties": {
+                "type": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/user/info": {
       "get": {
         "produces": [
@@ -1059,7 +1992,7 @@
       }
     }
   },
-  "x-date": "2025-11-28 16:49:00",
+  "x-date": "2025-11-28 17:12:47",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

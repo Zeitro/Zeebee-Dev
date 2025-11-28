@@ -527,3 +527,257 @@ var Api_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "app/admin/rpc/pb/admin.proto",
 }
+
+const (
+	Resource_ResourceTree_FullMethodName = "/admin.resource/ResourceTree"
+	Resource_Create_FullMethodName       = "/admin.resource/Create"
+	Resource_Update_FullMethodName       = "/admin.resource/Update"
+	Resource_Delete_FullMethodName       = "/admin.resource/Delete"
+	Resource_Detail_FullMethodName       = "/admin.resource/Detail"
+)
+
+// ResourceClient is the client API for Resource service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type ResourceClient interface {
+	ResourceTree(ctx context.Context, in *ResourceTreeRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error)
+	Create(ctx context.Context, in *ResourceCreateRequest, opts ...grpc.CallOption) (*ResourceCreateResponse, error)
+	Update(ctx context.Context, in *ResourceUpdateRequest, opts ...grpc.CallOption) (*ResourceCreateResponse, error)
+	Delete(ctx context.Context, in *ResourceDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	Detail(ctx context.Context, in *ResourceDetailRequest, opts ...grpc.CallOption) (*ResourceCreateResponse, error)
+}
+
+type resourceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewResourceClient(cc grpc.ClientConnInterface) ResourceClient {
+	return &resourceClient{cc}
+}
+
+func (c *resourceClient) ResourceTree(ctx context.Context, in *ResourceTreeRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ResourceTreeResponse)
+	err := c.cc.Invoke(ctx, Resource_ResourceTree_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *resourceClient) Create(ctx context.Context, in *ResourceCreateRequest, opts ...grpc.CallOption) (*ResourceCreateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ResourceCreateResponse)
+	err := c.cc.Invoke(ctx, Resource_Create_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *resourceClient) Update(ctx context.Context, in *ResourceUpdateRequest, opts ...grpc.CallOption) (*ResourceCreateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ResourceCreateResponse)
+	err := c.cc.Invoke(ctx, Resource_Update_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *resourceClient) Delete(ctx context.Context, in *ResourceDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, Resource_Delete_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *resourceClient) Detail(ctx context.Context, in *ResourceDetailRequest, opts ...grpc.CallOption) (*ResourceCreateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ResourceCreateResponse)
+	err := c.cc.Invoke(ctx, Resource_Detail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// ResourceServer is the server API for Resource service.
+// All implementations must embed UnimplementedResourceServer
+// for forward compatibility.
+type ResourceServer interface {
+	ResourceTree(context.Context, *ResourceTreeRequest) (*ResourceTreeResponse, error)
+	Create(context.Context, *ResourceCreateRequest) (*ResourceCreateResponse, error)
+	Update(context.Context, *ResourceUpdateRequest) (*ResourceCreateResponse, error)
+	Delete(context.Context, *ResourceDeleteRequest) (*EmptyResponse, error)
+	Detail(context.Context, *ResourceDetailRequest) (*ResourceCreateResponse, error)
+	mustEmbedUnimplementedResourceServer()
+}
+
+// UnimplementedResourceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedResourceServer struct{}
+
+func (UnimplementedResourceServer) ResourceTree(context.Context, *ResourceTreeRequest) (*ResourceTreeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResourceTree not implemented")
+}
+func (UnimplementedResourceServer) Create(context.Context, *ResourceCreateRequest) (*ResourceCreateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedResourceServer) Update(context.Context, *ResourceUpdateRequest) (*ResourceCreateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+}
+func (UnimplementedResourceServer) Delete(context.Context, *ResourceDeleteRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedResourceServer) Detail(context.Context, *ResourceDetailRequest) (*ResourceCreateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Detail not implemented")
+}
+func (UnimplementedResourceServer) mustEmbedUnimplementedResourceServer() {}
+func (UnimplementedResourceServer) testEmbeddedByValue()                  {}
+
+// UnsafeResourceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ResourceServer will
+// result in compilation errors.
+type UnsafeResourceServer interface {
+	mustEmbedUnimplementedResourceServer()
+}
+
+func RegisterResourceServer(s grpc.ServiceRegistrar, srv ResourceServer) {
+	// If the following call pancis, it indicates UnimplementedResourceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&Resource_ServiceDesc, srv)
+}
+
+func _Resource_ResourceTree_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResourceTreeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ResourceServer).ResourceTree(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Resource_ResourceTree_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ResourceServer).ResourceTree(ctx, req.(*ResourceTreeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Resource_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResourceCreateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ResourceServer).Create(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Resource_Create_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ResourceServer).Create(ctx, req.(*ResourceCreateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Resource_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResourceUpdateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ResourceServer).Update(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Resource_Update_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ResourceServer).Update(ctx, req.(*ResourceUpdateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Resource_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResourceDeleteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ResourceServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Resource_Delete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ResourceServer).Delete(ctx, req.(*ResourceDeleteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Resource_Detail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResourceDetailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ResourceServer).Detail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Resource_Detail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ResourceServer).Detail(ctx, req.(*ResourceDetailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Resource_ServiceDesc is the grpc.ServiceDesc for Resource service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Resource_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "admin.resource",
+	HandlerType: (*ResourceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ResourceTree",
+			Handler:    _Resource_ResourceTree_Handler,
+		},
+		{
+			MethodName: "Create",
+			Handler:    _Resource_Create_Handler,
+		},
+		{
+			MethodName: "Update",
+			Handler:    _Resource_Update_Handler,
+		},
+		{
+			MethodName: "Delete",
+			Handler:    _Resource_Delete_Handler,
+		},
+		{
+			MethodName: "Detail",
+			Handler:    _Resource_Detail_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "app/admin/rpc/pb/admin.proto",
+}

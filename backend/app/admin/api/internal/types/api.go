@@ -58,6 +58,3 @@ type ApiUpdateRequest struct {
 	Type        string `json:"type" validate:"required,oneof=Borrower Lender Admin"`
 	SortOrder   int32  `json:"sort_order" validate:"min=0"`
 }
-
-type EmptyResponse struct {
-}

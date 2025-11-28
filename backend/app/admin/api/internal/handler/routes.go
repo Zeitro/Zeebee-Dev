@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	api "zeebee-backend/app/admin/api/internal/handler/api"
+	resource "zeebee-backend/app/admin/api/internal/handler/resource"
 	user "zeebee-backend/app/admin/api/internal/handler/user"
 	"zeebee-backend/app/admin/api/internal/svc"
 
@@ -47,6 +48,45 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/api/tree",
 					Handler: api.TreeHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// create
+					Method:  http.MethodPost,
+					Path:    "/resource",
+					Handler: resource.ResourceCreateHandler(serverCtx),
+				},
+				{
+					// detail
+					Method:  http.MethodGet,
+					Path:    "/resource/:id",
+					Handler: resource.ResourceDetailHandler(serverCtx),
+				},
+				{
+					// update
+					Method:  http.MethodPut,
+					Path:    "/resource/:id",
+					Handler: resource.ResourceUpdateHandler(serverCtx),
+				},
+				{
+					// delete
+					Method:  http.MethodDelete,
+					Path:    "/resource/:id",
+					Handler: resource.ResourceDeleteHandler(serverCtx),
+				},
+				{
+					// tree
+					Method:  http.MethodGet,
+					Path:    "/resource/tree",
+					Handler: resource.ResourceTreeHandler(serverCtx),
 				},
 			}...,
 		),

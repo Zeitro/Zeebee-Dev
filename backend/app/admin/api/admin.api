@@ -7,6 +7,7 @@ info(
 
 import "desc/user.api"
 import "desc/api.api"
+import "desc/resource.api"
 
 type (
 	EmptyRequest{
@@ -90,4 +91,37 @@ service admin-api {
 	@handler Delete
 	delete /api/:id (ApiDeleteRequest) returns (EmptyResponse)
 }
-	// ============== api end =============
+
+// ============== api end =============
+// ============== resource start ============
+@server(
+	desc: "admin-api service"
+	version: v1
+	group: resource
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: resource
+)
+service admin-api {
+	@doc "detail"
+	@handler ResourceDetail
+	get /resource/:id (ResourceDetailRequest) returns (ResourceTreeEntity)
+
+	@doc "tree"
+	@handler ResourceTree
+	get /resource/tree (ResourceTreeRequest) returns (ResourceTreeResponse)
+
+	@doc "create"
+	@handler ResourceCreate
+	post /resource (ResourceCreateRequest) returns (ResourceTreeEntity)
+
+	@doc "update"
+	@handler ResourceUpdate
+	put /resource/:id (ResourceUpdateRequest) returns (ResourceTreeEntity)
+
+	@doc "delete"
+	@handler ResourceDelete
+	delete /resource/:id (ResourceDeleteRequest) returns (EmptyResponse)
+}
+
+	// ============== resource end =============
