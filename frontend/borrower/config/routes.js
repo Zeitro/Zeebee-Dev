@@ -61,6 +61,11 @@ export const navRouter = [
 				title: 'Management ( Borrower )',
 				menuTitle: 'Borrower',
 			},
+			{
+				path: '/management/contactLender',
+				title: 'Management ( Contact Lender )',
+				menuTitle: 'Contact Lender',
+			},
 		],
 	},
 	{
@@ -80,6 +85,11 @@ export const navRouter = [
 				menuTitle: 'Role',
 			},
 		],
+	},
+	{
+		path: '/personalCenter/emailAuth',
+		title: 'Email Authorized',
+		hideMenu: true,
 	},
 ];
 

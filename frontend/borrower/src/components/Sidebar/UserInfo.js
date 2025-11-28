@@ -47,6 +47,13 @@ const Userinfo = ({ userInfo, sidebarCollapsed }) => {
 			type: 'divider',
 		},
 		{
+			key: 'emailAuth',
+			label: <div className="pl-5">Email auth</div>,
+		},
+		{
+			type: 'divider',
+		},
+		{
 			key: 'logout',
 			label: (
 				<DeleteBtn
@@ -64,7 +71,8 @@ const Userinfo = ({ userInfo, sidebarCollapsed }) => {
 
 	const handleMenuClick = ({ key }) => {
 		switch (key) {
-			case 'personal':
+			case 'emailAuth':
+				router.push('/personalCenter/emailAuth');
 				break;
 
 			default:
