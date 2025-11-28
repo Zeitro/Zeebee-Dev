@@ -15,6 +15,155 @@
   },
   "basePath": "/",
   "paths": {
+    "/api/v1/tree": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "api"
+        ],
+        "summary": "tree",
+        "operationId": "apiTree",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "type",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "lists": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "parent_id",
+                      "name",
+                      "path",
+                      "method",
+                      "status",
+                      "description",
+                      "type",
+                      "sort_order",
+                      "created_at",
+                      "updated_at",
+                      "children"
+                    ],
+                    "properties": {
+                      "children": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "parent_id",
+                            "name",
+                            "path",
+                            "method",
+                            "status",
+                            "description",
+                            "type",
+                            "sort_order",
+                            "created_at",
+                            "updated_at",
+                            "children"
+                          ],
+                          "properties": {
+                            "children": {
+                              "type": "array",
+                              "items": {
+                                "type": "object"
+                              }
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "method": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "parent_id": {
+                              "type": "integer"
+                            },
+                            "path": {
+                              "type": "string"
+                            },
+                            "sort_order": {
+                              "type": "integer"
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "method": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "parent_id": {
+                        "type": "integer"
+                      },
+                      "path": {
+                        "type": "string"
+                      },
+                      "sort_order": {
+                        "type": "integer"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/user/info": {
       "get": {
         "produces": [
@@ -375,7 +524,7 @@
       }
     }
   },
-  "x-date": "2025-11-27 16:21:04",
+  "x-date": "2025-11-28 11:46:46",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

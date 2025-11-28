@@ -176,15 +176,6 @@ message UserinfoResponseData {
   repeated Organization organizations = 9;
 }
 
-// switch organization
-//message SwitchOrganizationRequest {
-//  SwitchOrganizationRequestData data = 1;
-//}
-//message SwitchOrganizationRequestData {
-//  int64 user_id = 1;
-//  int64 organization_id = 2;
-//}
-
 // edit profile
 message UserProfileEditRequest {
   UserProfileEditRequestData data = 1;
@@ -198,14 +189,44 @@ message UserProfileEditRequestData {
 service user {
   // user
   rpc Login(UserLoginRequest) returns(UserLoginResponse);
-  //  rpc Register(UserRegisterRequest) returns(UserRegisterResponse);
   rpc RefreshToken(RefreshTokenRequest) returns(RefreshTokenResponse);
   rpc UserInfo(UserInfoRequest) returns(UserinfoResponse);
-  //  rpc VerifyEmail(VerifyEmailRequest) returns(VerifyEmailResponse);
-  //  rpc SendVerifyEmail(SendVerifyEmailRequest) returns(SendVerifyEmailResponse);
   rpc ResetPassword(ResetPasswordRequest) returns(ResetPasswordResponse);
-  //  rpc SendResetPasswordEmail(SendResetPasswordEmailRequest) returns(SendResetPasswordEmailResponse);
-  //  rpc SwitchOrganization(SwitchOrganizationRequest) returns(UserLoginResponse);
   rpc EditProfile(UserProfileEditRequest) returns(UserinfoResponse);
 }
 // ================= user service end =================
+
+// ================= api service start =================
+message ApiTreeEntity{
+  int64 id = 1;
+  int64 parent_id = 2;
+  string name = 3;
+  string path = 4;
+  string method = 5;
+  string status = 6;
+  string description = 7;
+  string type = 8;
+  int32  sort_order = 9;
+  string created_at = 10;
+  string updated_at = 11;
+  repeated ApiTreeEntity children = 12;
+}
+
+
+message ApiTreeRequest {
+  ApiTreeRequestData data = 1;
+}
+message ApiTreeRequestData {
+  int64 user_id = 1;
+  int64 organization_id = 2;
+  string type = 3;
+}
+
+message ApiTreeResponse {
+  repeated ApiTreeEntity data = 1;
+}
+
+service api {
+  rpc ApiTree(ApiTreeRequest) returns(ApiTreeResponse);
+}
+// =================== api service end =================
