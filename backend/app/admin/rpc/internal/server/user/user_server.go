@@ -29,7 +29,6 @@ func (s *UserServer) Login(ctx context.Context, in *admin.UserLoginRequest) (*ad
 	return l.Login(in)
 }
 
-// rpc Register(UserRegisterRequest) returns(UserRegisterResponse);
 func (s *UserServer) RefreshToken(ctx context.Context, in *admin.RefreshTokenRequest) (*admin.RefreshTokenResponse, error) {
 	l := userlogic.NewRefreshTokenLogic(ctx, s.svcCtx)
 	return l.RefreshToken(in)
@@ -40,13 +39,11 @@ func (s *UserServer) UserInfo(ctx context.Context, in *admin.UserInfoRequest) (*
 	return l.UserInfo(in)
 }
 
-// rpc VerifyEmail(VerifyEmailRequest) returns(VerifyEmailResponse);
 func (s *UserServer) ResetPassword(ctx context.Context, in *admin.ResetPasswordRequest) (*admin.ResetPasswordResponse, error) {
 	l := userlogic.NewResetPasswordLogic(ctx, s.svcCtx)
 	return l.ResetPassword(in)
 }
 
-// rpc SendResetPasswordEmail(SendResetPasswordEmailRequest) returns(SendResetPasswordEmailResponse);
 func (s *UserServer) EditProfile(ctx context.Context, in *admin.UserProfileEditRequest) (*admin.UserinfoResponse, error) {
 	l := userlogic.NewEditProfileLogic(ctx, s.svcCtx)
 	return l.EditProfile(in)

@@ -15,6 +15,10 @@ import (
 
 type (
 	AddressEntry                      = admin.AddressEntry
+	ApiTreeEntity                     = admin.ApiTreeEntity
+	ApiTreeRequest                    = admin.ApiTreeRequest
+	ApiTreeRequestData                = admin.ApiTreeRequestData
+	ApiTreeResponse                   = admin.ApiTreeResponse
 	EmptyRequest                      = admin.EmptyRequest
 	EmptyResponse                     = admin.EmptyResponse
 	RefreshTokenRequest               = admin.RefreshTokenRequest
@@ -41,12 +45,9 @@ type (
 	User interface {
 		// user
 		Login(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserLoginResponse, error)
-		// rpc Register(UserRegisterRequest) returns(UserRegisterResponse);
 		RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
 		UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
-		// rpc VerifyEmail(VerifyEmailRequest) returns(VerifyEmailResponse);
 		ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*ResetPasswordResponse, error)
-		// rpc SendResetPasswordEmail(SendResetPasswordEmailRequest) returns(SendResetPasswordEmailResponse);
 		EditProfile(ctx context.Context, in *UserProfileEditRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
 	}
 
@@ -67,7 +68,6 @@ func (m *defaultUser) Login(ctx context.Context, in *UserLoginRequest, opts ...g
 	return client.Login(ctx, in, opts...)
 }
 
-// rpc Register(UserRegisterRequest) returns(UserRegisterResponse);
 func (m *defaultUser) RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error) {
 	client := admin.NewUserClient(m.cli.Conn())
 	return client.RefreshToken(ctx, in, opts...)
@@ -78,13 +78,11 @@ func (m *defaultUser) UserInfo(ctx context.Context, in *UserInfoRequest, opts ..
 	return client.UserInfo(ctx, in, opts...)
 }
 
-// rpc VerifyEmail(VerifyEmailRequest) returns(VerifyEmailResponse);
 func (m *defaultUser) ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*ResetPasswordResponse, error) {
 	client := admin.NewUserClient(m.cli.Conn())
 	return client.ResetPassword(ctx, in, opts...)
 }
 
-// rpc SendResetPasswordEmail(SendResetPasswordEmailRequest) returns(SendResetPasswordEmailResponse);
 func (m *defaultUser) EditProfile(ctx context.Context, in *UserProfileEditRequest, opts ...grpc.CallOption) (*UserinfoResponse, error) {
 	client := admin.NewUserClient(m.cli.Conn())
 	return client.EditProfile(ctx, in, opts...)

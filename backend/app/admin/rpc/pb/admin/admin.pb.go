@@ -1171,6 +1171,287 @@ func (x *UserProfileEditRequestData) GetLastName() string {
 	return ""
 }
 
+// ================= api service start =================
+type ApiTreeEntity struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	ParentId      int64                  `protobuf:"varint,2,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
+	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Path          string                 `protobuf:"bytes,4,opt,name=path,proto3" json:"path,omitempty"`
+	Method        string                 `protobuf:"bytes,5,opt,name=method,proto3" json:"method,omitempty"`
+	Status        string                 `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
+	Description   string                 `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
+	Type          string                 `protobuf:"bytes,8,opt,name=type,proto3" json:"type,omitempty"`
+	SortOrder     int32                  `protobuf:"varint,9,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
+	CreatedAt     string                 `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     string                 `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Children      []*ApiTreeEntity       `protobuf:"bytes,12,rep,name=children,proto3" json:"children,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ApiTreeEntity) Reset() {
+	*x = ApiTreeEntity{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ApiTreeEntity) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ApiTreeEntity) ProtoMessage() {}
+
+func (x *ApiTreeEntity) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ApiTreeEntity.ProtoReflect.Descriptor instead.
+func (*ApiTreeEntity) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *ApiTreeEntity) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *ApiTreeEntity) GetParentId() int64 {
+	if x != nil {
+		return x.ParentId
+	}
+	return 0
+}
+
+func (x *ApiTreeEntity) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *ApiTreeEntity) GetPath() string {
+	if x != nil {
+		return x.Path
+	}
+	return ""
+}
+
+func (x *ApiTreeEntity) GetMethod() string {
+	if x != nil {
+		return x.Method
+	}
+	return ""
+}
+
+func (x *ApiTreeEntity) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *ApiTreeEntity) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *ApiTreeEntity) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *ApiTreeEntity) GetSortOrder() int32 {
+	if x != nil {
+		return x.SortOrder
+	}
+	return 0
+}
+
+func (x *ApiTreeEntity) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *ApiTreeEntity) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
+}
+
+func (x *ApiTreeEntity) GetChildren() []*ApiTreeEntity {
+	if x != nil {
+		return x.Children
+	}
+	return nil
+}
+
+type ApiTreeRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Data          *ApiTreeRequestData    `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ApiTreeRequest) Reset() {
+	*x = ApiTreeRequest{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ApiTreeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ApiTreeRequest) ProtoMessage() {}
+
+func (x *ApiTreeRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ApiTreeRequest.ProtoReflect.Descriptor instead.
+func (*ApiTreeRequest) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *ApiTreeRequest) GetData() *ApiTreeRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type ApiTreeRequestData struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	UserId         int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	OrganizationId int64                  `protobuf:"varint,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	Type           string                 `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *ApiTreeRequestData) Reset() {
+	*x = ApiTreeRequestData{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ApiTreeRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ApiTreeRequestData) ProtoMessage() {}
+
+func (x *ApiTreeRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ApiTreeRequestData.ProtoReflect.Descriptor instead.
+func (*ApiTreeRequestData) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *ApiTreeRequestData) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *ApiTreeRequestData) GetOrganizationId() int64 {
+	if x != nil {
+		return x.OrganizationId
+	}
+	return 0
+}
+
+func (x *ApiTreeRequestData) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+type ApiTreeResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Data          []*ApiTreeEntity       `protobuf:"bytes,1,rep,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ApiTreeResponse) Reset() {
+	*x = ApiTreeResponse{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ApiTreeResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ApiTreeResponse) ProtoMessage() {}
+
+func (x *ApiTreeResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ApiTreeResponse.ProtoReflect.Descriptor instead.
+func (*ApiTreeResponse) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *ApiTreeResponse) GetData() []*ApiTreeEntity {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
 type UserinfoResponseData_Organization struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -1183,7 +1464,7 @@ type UserinfoResponseData_Organization struct {
 
 func (x *UserinfoResponseData_Organization) Reset() {
 	*x = UserinfoResponseData_Organization{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[22]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1195,7 +1476,7 @@ func (x *UserinfoResponseData_Organization) String() string {
 func (*UserinfoResponseData_Organization) ProtoMessage() {}
 
 func (x *UserinfoResponseData_Organization) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[22]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1317,13 +1598,40 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x1d\n" +
 	"\n" +
 	"first_name\x18\x02 \x01(\tR\tfirstName\x12\x1b\n" +
-	"\tlast_name\x18\x03 \x01(\tR\blastName2\xdb\x02\n" +
+	"\tlast_name\x18\x03 \x01(\tR\blastName\"\xd9\x02\n" +
+	"\rApiTreeEntity\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
+	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x12\x12\n" +
+	"\x04path\x18\x04 \x01(\tR\x04path\x12\x16\n" +
+	"\x06method\x18\x05 \x01(\tR\x06method\x12\x16\n" +
+	"\x06status\x18\x06 \x01(\tR\x06status\x12 \n" +
+	"\vdescription\x18\a \x01(\tR\vdescription\x12\x12\n" +
+	"\x04type\x18\b \x01(\tR\x04type\x12\x1d\n" +
+	"\n" +
+	"sort_order\x18\t \x01(\x05R\tsortOrder\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\n" +
+	" \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\v \x01(\tR\tupdatedAt\x120\n" +
+	"\bchildren\x18\f \x03(\v2\x14.admin.ApiTreeEntityR\bchildren\"?\n" +
+	"\x0eApiTreeRequest\x12-\n" +
+	"\x04data\x18\x01 \x01(\v2\x19.admin.ApiTreeRequestDataR\x04data\"j\n" +
+	"\x12ApiTreeRequestData\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12'\n" +
+	"\x0forganization_id\x18\x02 \x01(\x03R\x0eorganizationId\x12\x12\n" +
+	"\x04type\x18\x03 \x01(\tR\x04type\";\n" +
+	"\x0fApiTreeResponse\x12(\n" +
+	"\x04data\x18\x01 \x03(\v2\x14.admin.ApiTreeEntityR\x04data2\xdb\x02\n" +
 	"\x04user\x12:\n" +
 	"\x05Login\x12\x17.admin.UserLoginRequest\x1a\x18.admin.UserLoginResponse\x12G\n" +
 	"\fRefreshToken\x12\x1a.admin.RefreshTokenRequest\x1a\x1b.admin.RefreshTokenResponse\x12;\n" +
 	"\bUserInfo\x12\x16.admin.UserInfoRequest\x1a\x17.admin.UserinfoResponse\x12J\n" +
 	"\rResetPassword\x12\x1b.admin.ResetPasswordRequest\x1a\x1c.admin.ResetPasswordResponse\x12E\n" +
-	"\vEditProfile\x12\x1d.admin.UserProfileEditRequest\x1a\x17.admin.UserinfoResponseB\tZ\a./adminb\x06proto3"
+	"\vEditProfile\x12\x1d.admin.UserProfileEditRequest\x1a\x17.admin.UserinfoResponse2?\n" +
+	"\x03api\x128\n" +
+	"\aApiTree\x12\x15.admin.ApiTreeRequest\x1a\x16.admin.ApiTreeResponseB\tZ\a./adminb\x06proto3"
 
 var (
 	file_app_admin_rpc_pb_admin_proto_rawDescOnce sync.Once
@@ -1337,7 +1645,7 @@ func file_app_admin_rpc_pb_admin_proto_rawDescGZIP() []byte {
 	return file_app_admin_rpc_pb_admin_proto_rawDescData
 }
 
-var file_app_admin_rpc_pb_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
+var file_app_admin_rpc_pb_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 27)
 var file_app_admin_rpc_pb_admin_proto_goTypes = []any{
 	(*EmptyRequest)(nil),                      // 0: admin.EmptyRequest
 	(*EmptyResponse)(nil),                     // 1: admin.EmptyResponse
@@ -1361,7 +1669,11 @@ var file_app_admin_rpc_pb_admin_proto_goTypes = []any{
 	(*UserinfoResponseData)(nil),              // 19: admin.UserinfoResponseData
 	(*UserProfileEditRequest)(nil),            // 20: admin.UserProfileEditRequest
 	(*UserProfileEditRequestData)(nil),        // 21: admin.UserProfileEditRequestData
-	(*UserinfoResponseData_Organization)(nil), // 22: admin.UserinfoResponseData.Organization
+	(*ApiTreeEntity)(nil),                     // 22: admin.ApiTreeEntity
+	(*ApiTreeRequest)(nil),                    // 23: admin.ApiTreeRequest
+	(*ApiTreeRequestData)(nil),                // 24: admin.ApiTreeRequestData
+	(*ApiTreeResponse)(nil),                   // 25: admin.ApiTreeResponse
+	(*UserinfoResponseData_Organization)(nil), // 26: admin.UserinfoResponseData.Organization
 }
 var file_app_admin_rpc_pb_admin_proto_depIdxs = []int32{
 	6,  // 0: admin.UserLoginRequest.data:type_name -> admin.UserLoginRequestData
@@ -1372,23 +1684,28 @@ var file_app_admin_rpc_pb_admin_proto_depIdxs = []int32{
 	7,  // 5: admin.ResetPasswordResponse.data:type_name -> admin.UserLoginResponseData
 	17, // 6: admin.UserInfoRequest.data:type_name -> admin.UserInfoRequestData
 	19, // 7: admin.UserinfoResponse.data:type_name -> admin.UserinfoResponseData
-	22, // 8: admin.UserinfoResponseData.organizations:type_name -> admin.UserinfoResponseData.Organization
+	26, // 8: admin.UserinfoResponseData.organizations:type_name -> admin.UserinfoResponseData.Organization
 	21, // 9: admin.UserProfileEditRequest.data:type_name -> admin.UserProfileEditRequestData
-	4,  // 10: admin.user.Login:input_type -> admin.UserLoginRequest
-	8,  // 11: admin.user.RefreshToken:input_type -> admin.RefreshTokenRequest
-	16, // 12: admin.user.UserInfo:input_type -> admin.UserInfoRequest
-	12, // 13: admin.user.ResetPassword:input_type -> admin.ResetPasswordRequest
-	20, // 14: admin.user.EditProfile:input_type -> admin.UserProfileEditRequest
-	5,  // 15: admin.user.Login:output_type -> admin.UserLoginResponse
-	10, // 16: admin.user.RefreshToken:output_type -> admin.RefreshTokenResponse
-	18, // 17: admin.user.UserInfo:output_type -> admin.UserinfoResponse
-	13, // 18: admin.user.ResetPassword:output_type -> admin.ResetPasswordResponse
-	18, // 19: admin.user.EditProfile:output_type -> admin.UserinfoResponse
-	15, // [15:20] is the sub-list for method output_type
-	10, // [10:15] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	22, // 10: admin.ApiTreeEntity.children:type_name -> admin.ApiTreeEntity
+	24, // 11: admin.ApiTreeRequest.data:type_name -> admin.ApiTreeRequestData
+	22, // 12: admin.ApiTreeResponse.data:type_name -> admin.ApiTreeEntity
+	4,  // 13: admin.user.Login:input_type -> admin.UserLoginRequest
+	8,  // 14: admin.user.RefreshToken:input_type -> admin.RefreshTokenRequest
+	16, // 15: admin.user.UserInfo:input_type -> admin.UserInfoRequest
+	12, // 16: admin.user.ResetPassword:input_type -> admin.ResetPasswordRequest
+	20, // 17: admin.user.EditProfile:input_type -> admin.UserProfileEditRequest
+	23, // 18: admin.api.ApiTree:input_type -> admin.ApiTreeRequest
+	5,  // 19: admin.user.Login:output_type -> admin.UserLoginResponse
+	10, // 20: admin.user.RefreshToken:output_type -> admin.RefreshTokenResponse
+	18, // 21: admin.user.UserInfo:output_type -> admin.UserinfoResponse
+	13, // 22: admin.user.ResetPassword:output_type -> admin.ResetPasswordResponse
+	18, // 23: admin.user.EditProfile:output_type -> admin.UserinfoResponse
+	25, // 24: admin.api.ApiTree:output_type -> admin.ApiTreeResponse
+	19, // [19:25] is the sub-list for method output_type
+	13, // [13:19] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_app_admin_rpc_pb_admin_proto_init() }
@@ -1402,9 +1719,9 @@ func file_app_admin_rpc_pb_admin_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_app_admin_rpc_pb_admin_proto_rawDesc), len(file_app_admin_rpc_pb_admin_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   23,
+			NumMessages:   27,
 			NumExtensions: 0,
-			NumServices:   1,
+			NumServices:   2,
 		},
 		GoTypes:           file_app_admin_rpc_pb_admin_proto_goTypes,
 		DependencyIndexes: file_app_admin_rpc_pb_admin_proto_depIdxs,

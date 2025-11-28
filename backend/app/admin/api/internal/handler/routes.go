@@ -6,6 +6,7 @@ package handler
 import (
 	"net/http"
 
+	api "zeebee-backend/app/admin/api/internal/handler/api"
 	user "zeebee-backend/app/admin/api/internal/handler/user"
 	"zeebee-backend/app/admin/api/internal/svc"
 
@@ -13,6 +14,21 @@ import (
 )
 
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// tree
+					Method:  http.MethodGet,
+					Path:    "/tree",
+					Handler: api.TreeHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
 	server.AddRoutes(
 		[]rest.Route{
 			{

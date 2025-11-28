@@ -14,6 +14,7 @@ type BaseLogic struct {
 	svcCtx *svc.ServiceContext
 	logx.Logger
 	UserLogic *logic.UserLogic
+	ApiLogic  *logic.ApiLogic
 }
 
 func NewBaseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BaseLogic {
@@ -22,5 +23,6 @@ func NewBaseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BaseLogic {
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
 		UserLogic: logic.NewUserLogic(svcCtx.AllRepos),
+		ApiLogic:  logic.NewApiLogic(svcCtx.AllRepos),
 	}
 }

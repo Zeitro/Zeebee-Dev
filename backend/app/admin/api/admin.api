@@ -1,61 +1,78 @@
 syntax = "v1"
 
 info(
-    title: "admin-api http service"
-    desc: "admin-api http service description"
+	title: "admin-api http service"
+	desc: "admin-api http service description"
 )
 
 import "desc/user.api"
+import "desc/api.api"
 
 type (
-    EmptyRequest{
-    }
-    EmptyResponse{
-    }
+	EmptyRequest{
+	}
+	EmptyResponse{
+	}
 )
 
 type PathIdRequest {
-    id int64 `path:"id" validate:"required,gt=0"`
+	id int64 `path:"id" validate:"required,gt=0"`
 }
 
 // ============== user start =============
 @server(
-    desc: "admin-api service"
-    version: v1
-    group: user
-    prefix:  /api/v1
-    tags: user
+	desc: "admin-api service"
+	version: v1
+	group: user
+	prefix:  /api/v1
+	tags: user
 )
 service admin-api {
-    @doc "login"
-    @handler Login
-    post /user/login (UserLoginRequest) returns (UserLoginResponse)
+	@doc "login"
+	@handler Login
+	post /user/login (UserLoginRequest) returns (UserLoginResponse)
 
-    @doc "refresh"
-    @handler RefreshToken
-    post /user/refresh (UserRefreshTokenRequest) returns (UserRefreshTokenResponse)
+	@doc "refresh"
+	@handler RefreshToken
+	post /user/refresh (UserRefreshTokenRequest) returns (UserRefreshTokenResponse)
 
-    @doc "reset password"
-    @handler ResetPassword
-    post /user/reset_password (UserResetPasswordRequest) returns (UserLoginResponse)
+	@doc "reset password"
+	@handler ResetPassword
+	post /user/reset_password (UserResetPasswordRequest) returns (UserLoginResponse)
 }
 
 @server(
-    desc: "admin-api service"
-    version: v1
-    group: user
-    prefix:     /api/v1
-    middleware: AuthMiddleware
-    tags: user
+	desc: "admin-api service"
+	version: v1
+	group: user
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: user
 )
 service admin-api {
-    @doc "info"
-    @handler Info
-    get /user/info (EmptyRequest) returns (UserInfoResponse)
+	@doc "info"
+	@handler Info
+	get /user/info (EmptyRequest) returns (UserInfoResponse)
 
-    @doc "edit profile"
-    @handler EditProfile
-    put /user/profile (UserEditProfileRequest) returns (UserInfoResponse)
+	@doc "edit profile"
+	@handler EditProfile
+	put /user/profile (UserEditProfileRequest) returns (UserInfoResponse)
 }
 
-    // ============== user end =============
+// ============== user end =============
+// ============== api start ============
+@server(
+	desc: "admin-api service"
+	version: v1
+	group: api
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: api
+)
+service admin-api {
+	@doc "tree"
+	@handler Tree
+	get /tree (ApiTreeRequest) returns (ApiTreeResponse)
+}
+
+	// ============== api end =============
