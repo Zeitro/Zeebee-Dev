@@ -6,7 +6,8 @@ import (
 
 type BorrowerProperty struct {
 	Base
-	UserId         int64                  `gorm:"column:user_id;default:0" json:"user_id"`
+	CreatorId      int64                  `gorm:"column:creator_id;default:0" json:"creator_id"`
+	CreatorName    string                 `gorm:"column:creator_name;type:varchar(100);default:'';not null" json:"creator_name"`
 	OrganizationId int64                  `gorm:"column:organization_id;default:0" json:"organization_id"`
 	Unit           int32                  `gorm:"column:unit;not null;default:0" json:"unit"`
 	PropertyType   constants.PropertyType `gorm:"column:property_type;size:30;not null;default:''" json:"property_type"`
@@ -18,7 +19,7 @@ type BorrowerProperty struct {
 	LoanCount      int32                  `gorm:"column:loan_count;not null;default:0" json:"loan_count"`
 
 	// Relationships
-	User           *User            `json:"user" gorm:"foreignKey:UserId;references:Id"`
+	Creator        *User            `json:"creator" gorm:"foreignKey:CreatorId;references:Id"`
 	Organization   *Organization    `json:"organization" gorm:"foreignKey:OrganizationId;references:Id"`
 	Loans          []*Loan          `json:"loans" gorm:"-"`
 	Applicants     []*LoanApplicant `json:"applicants" gorm:"-"`
@@ -30,7 +31,7 @@ func (m BorrowerProperty) TableName() string {
 }
 
 func (m *BorrowerProperty) RemoveRelationships() {
-	m.User = nil
+	m.Creator = nil
 	m.Organization = nil
 	m.Loans = nil
 	m.Applicants = nil

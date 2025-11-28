@@ -11,7 +11,8 @@ import (
 type Loan struct {
 	Base
 	Code                   string                      `gorm:"column:code;size:100;not null;default:'';<-:create" json:"code"`
-	UserId                 int64                       `gorm:"column:user_id;not null;default:0" json:"user_id"`
+	CreatorId              int64                       `gorm:"column:creator_id;not null;default:0" json:"creator_id"`
+	CreatorName            string                      `gorm:"column:creator_name;type:varchar(100);default:'';not null" json:"creator_name"`
 	LenderOrganizationId   int64                       `gorm:"column:lender_organization_id;not null;default:0" json:"lender_organization_id"`
 	BorrowerOrganizationId int64                       `gorm:"column:borrower_organization_id;not null;default:0" json:"borrower_organization_id"`
 	LenderCompany          string                      `gorm:"column:lender_company;size:100;not null;default:''" json:"lender_company"`
@@ -45,7 +46,7 @@ type Loan struct {
 	Extend                 LoanExtendValues            `json:"extend" gorm:"column:extend;type:jsonb;serializer:json"`
 
 	// relationships
-	User                 *User               `json:"user" gorm:"foreignKey:UserId;references:Id"`
+	Creator              *User               `json:"creator" gorm:"foreignKey:CreatorId;references:Id"`
 	BorrowerOrganization *Organization       `json:"borrower_organization" gorm:"foreignKey:BorrowerOrganizationId;references:Id"`
 	LenderOrganization   *Organization       `json:"lender_organization" gorm:"foreignKey:LenderOrganizationId;references:Id"`
 	LoanProperty         *LoanProperty       `json:"loan_property" gorm:"foreignKey:LoanId;references:Id"`
@@ -63,7 +64,7 @@ func (m Loan) TableName() string {
 }
 
 func (m *Loan) RemoveRelationships() {
-	m.User = nil
+	m.Creator = nil
 	m.BorrowerOrganization = nil
 	m.LenderOrganization = nil
 	m.LoanProperty = nil

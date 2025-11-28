@@ -102,7 +102,7 @@ func (l *AddFilesLogic) prepare(in *borrower.LoanDocumentAddFilesRequest) (loan 
 		return nil, nil, errorx.WithStack(errorx.New("Total Number Of Files (Existing + New) Cannot Exceed 10"))
 	}
 
-	loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, loanDocument.LoanId, in.Data.UserId)
+	loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, loanDocument.LoanId, in.Data.OrganizationId)
 	if err != nil {
 		return nil, nil, errorx.Wrap(err, "Failed To Get Loan")
 	}
@@ -129,7 +129,7 @@ func (l *AddFilesLogic) prepare(in *borrower.LoanDocumentAddFilesRequest) (loan 
 		return nil, nil, errorx.WithStack(errorx.New("Loan Source Is Not System"))
 	}
 
-	if loan.UserId != in.Data.UserId {
+	if loan.BorrowerOrganizationId != in.Data.OrganizationId {
 		return nil, nil, errorx.WithStack(errorx.New("Loan Does Not Belong To Borrower"))
 	}
 

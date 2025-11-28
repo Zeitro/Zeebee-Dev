@@ -23,8 +23,9 @@ type BorrowerEntityBorrowerPageReq struct {
 }
 
 type BorrowerEntityBorrowerPageReqFilter struct {
-	BorrowerId int64  `json:"borrower_id"`
-	Keyword    string `json:"keyword"`
+	UserId         int64  `json:"user_id"`
+	OrganizationId int64  `json:"organization_id"`
+	Keyword        string `json:"keyword"`
 }
 type BorrowerEntityBorrowerPageReqSorter struct {
 	Column string `json:"column"`
@@ -67,7 +68,7 @@ func (repo *BorrowerEntityRepo) PageForBorrower(ctx context.Context, pageReq *Bo
 	filter := pageReq.Filter
 	sorter := pageReq.Sorter
 	query := repo.Client(ctx).
-		Where("borrower_id = ?", filter.BorrowerId)
+		Where("organization_id = ?", filter.OrganizationId)
 	if len(filter.Keyword) > 0 {
 		query = query.Omit("mailing_address").Where("name like ?", "%"+filter.Keyword+"%")
 	}

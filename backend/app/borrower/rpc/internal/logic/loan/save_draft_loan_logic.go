@@ -49,7 +49,7 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 
 	// get original loan
 	if in.Data.Id > 0 {
-		loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, in.Data.Id, in.Data.UserId)
+		loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, in.Data.Id, in.Data.OrganizationId)
 		if err != nil {
 			return nil, err
 		}
@@ -104,7 +104,7 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 					if err != nil {
 						return err
 					}
-					loan, err = l.svcCtx.LoanRepo.GetBorrowerLoanWithTx(l.ctx, tx, savaLoan.Id, in.Data.UserId)
+					loan, err = l.svcCtx.LoanRepo.GetBorrowerLoanWithTx(l.ctx, tx, savaLoan.Id, in.Data.OrganizationId)
 				}
 				return err
 			},
@@ -267,8 +267,15 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	if err != nil {
 		return nil, errorx.GetFailedTransErr(err)
 	}
-	loan.UserId = reqData.UserId
-	loan.BorrowerOrganizationId = reqData.OrganizationId
+	if loan.Id == 0 {
+		creator, err := l.svcCtx.UserRepo.GetUser(l.ctx, reqData.UserId, constants.UserTypeBorrower)
+		if err != nil {
+			return nil, err
+		}
+		loan.CreatorId = creator.Id
+		loan.CreatorName = creator.FullName
+		loan.BorrowerOrganizationId = reqData.OrganizationId
+	}
 	loan.Stage = constants.LoanStageDraft
 	loan.PendingStatus = constants.LoanPendingStatusNone
 	// loan.Source = constants.LoanSourceSystem

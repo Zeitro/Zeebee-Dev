@@ -62,13 +62,13 @@ func (repo *BorrowerPropertyRepo) GetOne(ctx context.Context, id int64) (result 
 	return
 }
 
-func (repo *BorrowerPropertyRepo) GetOrCreateBorrowerPropertyWithTxForBorrower(ctx context.Context, tx *gorm.DB, userId int64, address model.Address) (result *model.BorrowerProperty, err error) {
+func (repo *BorrowerPropertyRepo) GetOrCreateBorrowerPropertyWithTxForBorrower(ctx context.Context, tx *gorm.DB, creatorId int64, creatorName string, address model.Address) (result *model.BorrowerProperty, err error) {
 	if len(address.City) == 0 || len(address.Address1) == 0 || len(address.State) == 0 {
 		return nil, fmt.Errorf("Invalid Borrower Address")
 	}
 	// if not existed,create one
 	err = tx.WithContext(ctx).
-		Where("user_id = ? ", userId).
+		Where("creator_id = ? ", creatorId).
 		Where("address->>'state' = ?", address.State).
 		Where("address->>'city' = ?", address.City).
 		Where("address->>'address1' = ?", address.Address1).
@@ -79,8 +79,9 @@ func (repo *BorrowerPropertyRepo) GetOrCreateBorrowerPropertyWithTxForBorrower(c
 	}
 	if result == nil || result.Id == 0 {
 		data := &model.BorrowerProperty{
-			UserId:  userId,
-			Address: address,
+			CreatorId:   creatorId,
+			CreatorName: creatorName,
+			Address:     address,
 		}
 		err = tx.WithContext(ctx).Omit(clause.Associations).Create(data).Error
 		if err != nil {
@@ -227,13 +228,13 @@ func (repo *BorrowerPropertyRepo) AllForOrganization(ctx context.Context, organi
 }
 
 // IsExisted check given property base is existed
-func (repo *BorrowerPropertyRepo) IsExisted(ctx context.Context, id int64, borrowerId int64, address *model.Address) (isExisted bool, err error) {
+func (repo *BorrowerPropertyRepo) IsExisted(ctx context.Context, id int64, organizationId int64, address *model.Address) (isExisted bool, err error) {
 	if address == nil {
 		err = errorx.New("Address Is Empty")
 		return false, errorx.WithStack(err)
 	}
 	query := repo.Client(ctx).
-		Where("borrower_id = ?", borrowerId).
+		Where("organization_id = ?", organizationId).
 		Where("address->>'state' = ?", address.State).
 		Where("address->>'city' = ?", address.City).
 		Where("address->>'address1' = ?", address.Address1)

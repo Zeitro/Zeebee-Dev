@@ -12,7 +12,8 @@ import "loan.api"
 type (
     BorrowerPropertyEntry {
         Id int64 `json:"id"`
-        UserId int64 `json:"user_id"`
+        CreatorId int64 `json:"creator_id"`
+        CreatorName string `json:"creator_name"`
         OrganizationId int64 `json:"organization_id"`
         PropertyType string `json:"property_type"`
         TotalAmount float64 `json:"total_amount"`
@@ -31,6 +32,8 @@ type (
 type (
     PropertyPageEntry {
         Id int64 `json:"id"`
+        CreatorId int64 `json:"creator_id"`
+        CreatorName string `json:"creator_name"`
         PropertyType string `json:"property_type"`
         LivingAreaSqft float32 `json:"living_area_sqft"`
         Bedrooms int32 `json:"bedrooms"`
@@ -84,6 +87,8 @@ type (
 
     PropertyDetailSummaryResponse {
         Id int64 `json:"id"`
+        CreatorId int64 `json:"creator_id"`
+        CreatorName string `json:"creator_name"`
         PropertyType string `json:"property_type"`
         TotalAmount float64 `json:"total_amount"`
         Unit int32 `json:"unit"`

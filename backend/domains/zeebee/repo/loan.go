@@ -70,9 +70,9 @@ func NewLoanRepo(db *gorm.DB) *LoanRepo {
 	}
 }
 
-func (repo *LoanRepo) GetBorrowerLoan(ctx context.Context, id int64, borrowerId int64) (result *model.Loan, err error) {
+func (repo *LoanRepo) GetBorrowerLoan(ctx context.Context, id int64, organizationId int64) (result *model.Loan, err error) {
 	err = repo.BaseRepo.Client(ctx).
-		Where("id = ? and user_id = ?", id, borrowerId).
+		Where("id = ? and borrower_organization_id = ?", id, organizationId).
 		Preload("Applicants", func(db *gorm.DB) *gorm.DB {
 			return db.Order("loan_applicants.is_primary desc")
 		}).
@@ -95,9 +95,9 @@ func (repo *LoanRepo) GetBorrowerLoan(ctx context.Context, id int64, borrowerId 
 	return result, errorx.WithStack(err)
 }
 
-func (repo *LoanRepo) GetBorrowerLoanWithTx(ctx context.Context, tx *gorm.DB, id int64, borrowerId int64) (result *model.Loan, err error) {
+func (repo *LoanRepo) GetBorrowerLoanWithTx(ctx context.Context, tx *gorm.DB, id int64, organizationId int64) (result *model.Loan, err error) {
 	err = tx.WithContext(ctx).
-		Where("id = ? and user_id = ?", id, borrowerId).
+		Where("id = ? and borrower_organization_id = ?", id, organizationId).
 		Preload("Applicants", func(db *gorm.DB) *gorm.DB {
 			return db.Order("loan_applicants.is_primary desc")
 		}).
@@ -152,7 +152,7 @@ func (repo *LoanRepo) GetLenderLoan(ctx context.Context, id int64, lenderOrganiz
 
 // UpdateOneWithTx update with tx
 func (repo *LoanRepo) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, id int64, data *model.Loan) (result *model.Loan, err error) {
-	omitFields := []string{"id", "source", "created_at", "code", "user_id"}
+	omitFields := []string{"id", "source", "created_at", "code", "creator_id", "creator_naem"}
 	var applyFields []string
 	omitFields = append(omitFields, applyFields...)
 	err = tx.WithContext(ctx).
@@ -197,7 +197,7 @@ func (repo *LoanRepo) PageForBorrower(ctx context.Context, pageReq *LoanBorrower
 	filter := pageReq.Filter
 	sorter := pageReq.Sorter
 	query := repo.Client(ctx).
-		Where(fmt.Sprintf("%s.user_id = ?", loanTable), filter.UserId).
+		Where(fmt.Sprintf("%s.borrower_organization_id = ?", loanTable), filter.OrganizationId).
 		Preload("Property").
 		Preload("Applicants")
 	if len(filter.Stage) > 0 {
@@ -396,14 +396,14 @@ func (repo *LoanRepo) PageForLenderCompany(ctx context.Context, pageReq *LoanLen
 }
 
 // GetLenderCompanyForBorrower get lender company
-func (repo *LoanRepo) GetLenderCompanyForBorrower(ctx context.Context, userId int64, organizationId int64) (result []string, err error) {
+func (repo *LoanRepo) GetLenderCompanyForBorrower(ctx context.Context, creatorId int64, organizationId int64) (result []string, err error) {
 	query := repo.BaseRepo.Client(ctx).
 		Select("lender_company").
 		Where("borrower_organization_id = ?", organizationId).
 		Distinct("lender_company")
 
-	if userId > 0 {
-		query = query.Where("user_id = ?", userId)
+	if creatorId > 0 {
+		query = query.Where("creator_id = ?", creatorId)
 	}
 	err = query.Pluck("lender_company", &result).
 		Error
