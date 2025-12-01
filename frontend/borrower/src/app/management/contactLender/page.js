@@ -1,15 +1,10 @@
 'use client';
 import React, { useMemo, useRef, useState } from 'react';
-import {
-	assemblyAddress,
-	createRequest,
-	formatPhone,
-	formatTINOrSSN,
-} from '@repo/shared-methods/utils';
+import { createRequest, formatPhone } from '@repo/shared-methods/utils';
 import { ReloadOutlined, PlusOutlined } from '@ant-design/icons';
 import { BtnPopUpModal, DeleteBtn, FilterTableCard } from '@repo/shared-methods';
 import useContent from './components/useContent';
-import AddModal from '@/components/SelectCard/Add/borrower';
+import MainModal from './components/Main';
 import PersonSvg from '@repo/shared-methods/assets/images/person.svg';
 import EmailSvg from '@repo/shared-methods/assets/images/email.svg';
 import PhoneSvg from '@repo/shared-methods/assets/images/phone.svg';
@@ -57,7 +52,7 @@ const ContactLender = () => {
 				children: (
 					<BtnPopUpModal
 						getContent={(setOpen) => (
-							<AddModal
+							<MainModal
 								setOpen={setOpen}
 								handleSearch={() => tableFilterRef?.current?.handleSearch()}
 							/>
@@ -97,7 +92,7 @@ const ContactLender = () => {
 							<div className="flex items-center">
 								<BtnPopUpModal
 									getContent={(setOpen) => (
-										<AddModal
+										<MainModal
 											setOpen={setOpen}
 											handleSearch={() =>
 												tableFilterRef?.current?.handleSearch()
