@@ -43,9 +43,9 @@ func NewRoleRepo(db *gorm.DB) *RoleRepo {
 }
 
 // All returns all roles by type
-func (repo *RoleRepo) All(ctx context.Context, roleType constants.UserType) (result []*model.Role, err error) {
+func (repo *RoleRepo) All(ctx context.Context, organizationId int64, roleType constants.UserType) (result []*model.Role, err error) {
 	err = repo.Client(ctx).
-		Where("type = ?", roleType).
+		Where("organization_id = ? and type = ? and status = ?", organizationId, roleType, constants.CommonStatusActive).
 		Order("id asc").
 		Find(&result).Error
 	return result, errorx.WithStack(err)

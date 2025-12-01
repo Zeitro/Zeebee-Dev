@@ -3,6 +3,9 @@
 
 package types
 
+type EmptyRequest struct {
+}
+
 type EmptyResponse struct {
 }
 
@@ -11,9 +14,7 @@ type RoleDeleteRequest struct {
 }
 
 type RolePageFilter struct {
-	UserId         int64  `json:"user_id"`
-	OrganizationId int64  `json:"organization_id"`
-	Keyword        string `json:"keyword"`
+	Keyword string `json:"keyword"`
 }
 
 type RolePageSort struct {

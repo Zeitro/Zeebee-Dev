@@ -51,6 +51,9 @@ type (
 	ResourceTreeResponse              = admin.ResourceTreeResponse
 	ResourceUpdateRequest             = admin.ResourceUpdateRequest
 	ResourceUpdateRequestData         = admin.ResourceUpdateRequestData
+	RoleAllRequest                    = admin.RoleAllRequest
+	RoleAllRequestData                = admin.RoleAllRequestData
+	RoleAllResponse                   = admin.RoleAllResponse
 	RoleCreateRequest                 = admin.RoleCreateRequest
 	RoleCreateRequestData             = admin.RoleCreateRequestData
 	RoleCreateResponse                = admin.RoleCreateResponse
@@ -62,10 +65,10 @@ type (
 	RoleEntity                        = admin.RoleEntity
 	RolePageRequest                   = admin.RolePageRequest
 	RolePageRequestData               = admin.RolePageRequestData
+	RolePageRequestFilter             = admin.RolePageRequestFilter
+	RolePageRequestSorter             = admin.RolePageRequestSorter
 	RolePageResponse                  = admin.RolePageResponse
 	RolePageResponseData              = admin.RolePageResponseData
-	RoleRequestFilter                 = admin.RoleRequestFilter
-	RoleRequestSorter                 = admin.RoleRequestSorter
 	RoleUpdateRequest                 = admin.RoleUpdateRequest
 	RoleUpdateRequestData             = admin.RoleUpdateRequestData
 	RoleUpdateResponse                = admin.RoleUpdateResponse

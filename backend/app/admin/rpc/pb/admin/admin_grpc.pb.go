@@ -789,6 +789,7 @@ const (
 	Role_Delete_FullMethodName       = "/admin.role/Delete"
 	Role_Detail_FullMethodName       = "/admin.role/Detail"
 	Role_UpdateStatus_FullMethodName = "/admin.role/UpdateStatus"
+	Role_All_FullMethodName          = "/admin.role/All"
 )
 
 // RoleClient is the client API for Role service.
@@ -801,6 +802,7 @@ type RoleClient interface {
 	Delete(ctx context.Context, in *RoleDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	Detail(ctx context.Context, in *RoleDetailRequest, opts ...grpc.CallOption) (*RoleDetailResponse, error)
 	UpdateStatus(ctx context.Context, in *RoleUpdateStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	All(ctx context.Context, in *RoleAllRequest, opts ...grpc.CallOption) (*RoleAllResponse, error)
 }
 
 type roleClient struct {
@@ -871,6 +873,16 @@ func (c *roleClient) UpdateStatus(ctx context.Context, in *RoleUpdateStatusReque
 	return out, nil
 }
 
+func (c *roleClient) All(ctx context.Context, in *RoleAllRequest, opts ...grpc.CallOption) (*RoleAllResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RoleAllResponse)
+	err := c.cc.Invoke(ctx, Role_All_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RoleServer is the server API for Role service.
 // All implementations must embed UnimplementedRoleServer
 // for forward compatibility.
@@ -881,6 +893,7 @@ type RoleServer interface {
 	Delete(context.Context, *RoleDeleteRequest) (*EmptyResponse, error)
 	Detail(context.Context, *RoleDetailRequest) (*RoleDetailResponse, error)
 	UpdateStatus(context.Context, *RoleUpdateStatusRequest) (*EmptyResponse, error)
+	All(context.Context, *RoleAllRequest) (*RoleAllResponse, error)
 	mustEmbedUnimplementedRoleServer()
 }
 
@@ -908,6 +921,9 @@ func (UnimplementedRoleServer) Detail(context.Context, *RoleDetailRequest) (*Rol
 }
 func (UnimplementedRoleServer) UpdateStatus(context.Context, *RoleUpdateStatusRequest) (*EmptyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateStatus not implemented")
+}
+func (UnimplementedRoleServer) All(context.Context, *RoleAllRequest) (*RoleAllResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method All not implemented")
 }
 func (UnimplementedRoleServer) mustEmbedUnimplementedRoleServer() {}
 func (UnimplementedRoleServer) testEmbeddedByValue()              {}
@@ -1038,6 +1054,24 @@ func _Role_UpdateStatus_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Role_All_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RoleAllRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoleServer).All(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Role_All_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoleServer).All(ctx, req.(*RoleAllRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Role_ServiceDesc is the grpc.ServiceDesc for Role service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1068,6 +1102,10 @@ var Role_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateStatus",
 			Handler:    _Role_UpdateStatus_Handler,
+		},
+		{
+			MethodName: "All",
+			Handler:    _Role_All_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

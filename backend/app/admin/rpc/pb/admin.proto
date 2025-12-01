@@ -344,15 +344,15 @@ message RolePageRequest {
 message RolePageRequestData {
   int64 page = 1;
   int64 limit = 2;
-  RoleRequestFilter filter = 3;
-  RoleRequestSorter sorter = 4;
+  RolePageRequestFilter filter = 3;
+  RolePageRequestSorter sorter = 4;
 }
-message RoleRequestFilter {
+message RolePageRequestFilter {
   int64 user_id = 1;
   string keyword = 2;
   int64 organization_id = 3;
 }
-message RoleRequestSorter {
+message RolePageRequestSorter {
   string column = 1;
   string sort = 2;
 }
@@ -436,6 +436,18 @@ message RoleUpdateStatusRequestData {
   //  string type = 5;
 }
 
+// all roles
+message RoleAllRequest {
+  RoleAllRequestData data = 1;
+}
+message RoleAllRequestData {
+  int64 user_id = 1;
+  int64 organization_id = 2;
+}
+message RoleAllResponse {
+  repeated RoleEntity data = 1;
+}
+
 service role {
   rpc Page(RolePageRequest) returns(RolePageResponse);
   rpc Create(RoleCreateRequest) returns(RoleCreateResponse);
@@ -443,6 +455,7 @@ service role {
   rpc Delete(RoleDeleteRequest) returns(EmptyResponse);
   rpc Detail(RoleDetailRequest) returns(RoleDetailResponse);
   rpc UpdateStatus(RoleUpdateStatusRequest) returns(EmptyResponse);
+  rpc All(RoleAllRequest) returns(RoleAllResponse);
 }
 
 // ================== role service end =================

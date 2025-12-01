@@ -52,7 +52,8 @@ func (l *UpdateLogic) Update(in *admin.RoleUpdateRequest) (resp *admin.RoleUpdat
 
 	respData := &admin.RoleEntity{}
 	err = copier.CopyWithOption(respData, role, copier.Option{
-		DeepCopy: true,
+		DeepCopy:      true,
+		CaseSensitive: true,
 		Converters: []copier.TypeConverter{
 			copierx.TimeToRFC3339Str(),
 		},
