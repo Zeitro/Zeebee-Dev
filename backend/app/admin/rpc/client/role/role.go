@@ -51,6 +51,9 @@ type (
 	ResourceTreeResponse              = admin.ResourceTreeResponse
 	ResourceUpdateRequest             = admin.ResourceUpdateRequest
 	ResourceUpdateRequestData         = admin.ResourceUpdateRequestData
+	RoleAllRequest                    = admin.RoleAllRequest
+	RoleAllRequestData                = admin.RoleAllRequestData
+	RoleAllResponse                   = admin.RoleAllResponse
 	RoleCreateRequest                 = admin.RoleCreateRequest
 	RoleCreateRequestData             = admin.RoleCreateRequestData
 	RoleCreateResponse                = admin.RoleCreateResponse
@@ -62,10 +65,10 @@ type (
 	RoleEntity                        = admin.RoleEntity
 	RolePageRequest                   = admin.RolePageRequest
 	RolePageRequestData               = admin.RolePageRequestData
+	RolePageRequestFilter             = admin.RolePageRequestFilter
+	RolePageRequestSorter             = admin.RolePageRequestSorter
 	RolePageResponse                  = admin.RolePageResponse
 	RolePageResponseData              = admin.RolePageResponseData
-	RoleRequestFilter                 = admin.RoleRequestFilter
-	RoleRequestSorter                 = admin.RoleRequestSorter
 	RoleUpdateRequest                 = admin.RoleUpdateRequest
 	RoleUpdateRequestData             = admin.RoleUpdateRequestData
 	RoleUpdateResponse                = admin.RoleUpdateResponse
@@ -91,6 +94,7 @@ type (
 		Delete(ctx context.Context, in *RoleDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		Detail(ctx context.Context, in *RoleDetailRequest, opts ...grpc.CallOption) (*RoleDetailResponse, error)
 		UpdateStatus(ctx context.Context, in *RoleUpdateStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+		All(ctx context.Context, in *RoleAllRequest, opts ...grpc.CallOption) (*RoleAllResponse, error)
 	}
 
 	defaultRole struct {
@@ -132,4 +136,9 @@ func (m *defaultRole) Detail(ctx context.Context, in *RoleDetailRequest, opts ..
 func (m *defaultRole) UpdateStatus(ctx context.Context, in *RoleUpdateStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	client := admin.NewRoleClient(m.cli.Conn())
 	return client.UpdateStatus(ctx, in, opts...)
+}
+
+func (m *defaultRole) All(ctx context.Context, in *RoleAllRequest, opts ...grpc.CallOption) (*RoleAllResponse, error) {
+	client := admin.NewRoleClient(m.cli.Conn())
+	return client.All(ctx, in, opts...)
 }

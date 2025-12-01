@@ -144,6 +144,10 @@ service admin-api {
 	@handler RolePage
 	get /role (RolePageRequest) returns (RolePageResponse)
 
+	@doc "all"
+	@handler RoleAll
+	get /role/all (EmptyRequest) returns (RoleAllResponse)
+
 	@doc "create"
 	@handler RoleCreate
 	post /role (RoleCreateRequest) returns (RoleEntity)

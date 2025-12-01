@@ -52,3 +52,8 @@ func (s *RoleServer) UpdateStatus(ctx context.Context, in *admin.RoleUpdateStatu
 	l := rolelogic.NewUpdateStatusLogic(ctx, s.svcCtx)
 	return l.UpdateStatus(in)
 }
+
+func (s *RoleServer) All(ctx context.Context, in *admin.RoleAllRequest) (*admin.RoleAllResponse, error) {
+	l := rolelogic.NewAllLogic(ctx, s.svcCtx)
+	return l.All(in)
+}

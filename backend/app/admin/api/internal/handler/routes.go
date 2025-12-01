@@ -134,6 +134,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/role/:id/status",
 					Handler: role.RoleUpdateStatusHandler(serverCtx),
 				},
+				{
+					// all
+					Method:  http.MethodGet,
+					Path:    "/role/all",
+					Handler: role.RoleAllHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithPrefix("/api/v1"),

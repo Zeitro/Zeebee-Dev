@@ -7,6 +7,10 @@ type PathIdRequest struct {
 	Id int64 `path:"id" validate:"required,gt=0"`
 }
 
+type RoleAllResponse struct {
+	List []*RoleEntity `json:"list"`
+}
+
 type RoleCreateRequest struct {
 	Name        string `json:"name" validate:"required,min=2,max=100,ne='admin'"`
 	Description string `json:"description" validate:"max=255"`
@@ -36,7 +40,7 @@ type RolePageResponse struct {
 	Limit     int64        `json:"limit"`
 	Total     int64        `json:"total"`
 	TotalPage int64        `json:"total_page"`
-	Lists     []RoleEntity `json:"lists"`
+	List      []RoleEntity `json:"list"`
 }
 
 type RoleUpdateRequest struct {

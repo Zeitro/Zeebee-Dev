@@ -31,7 +31,9 @@ func NewRolePageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RolePage
 func (l *RolePageLogic) RolePage(req *types.RolePageRequest) (resp *types.RolePageResponse, err error) {
 	resp = &types.RolePageResponse{}
 	rpcReq := &admin.RolePageRequest{
-		Data: &admin.RolePageRequestData{},
+		Data: &admin.RolePageRequestData{
+			Filter: &admin.RolePageRequestFilter{},
+		},
 	}
 	err = copier.CopyWithOption(rpcReq.Data, req, copier.Option{DeepCopy: true})
 	if err != nil {

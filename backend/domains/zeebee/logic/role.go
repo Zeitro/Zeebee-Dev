@@ -130,3 +130,9 @@ func (l *RoleLogic) UpdateStatus(ctx context.Context, id int64, organizationId i
 	_, err = l.repos.RoleRepo.UpdateOneById(ctx, id, result)
 	return err
 }
+
+// All returns all roles by type
+func (l *RoleLogic) All(ctx context.Context, organizationId int64, roleType constants.UserType) (result []*model.Role, err error) {
+	result, err = l.repos.RoleRepo.All(ctx, organizationId, roleType)
+	return result, err
+}
