@@ -6,6 +6,9 @@ info(
     version: "v1"
 )
 
+import "api.api"
+
+
 type ResourceTreeEntity {
     Id int64 `json:"id"`
     ParentId int64 `json:"parent_id"`
@@ -23,12 +26,29 @@ type ResourceTreeEntity {
     Children []*ResourceTreeEntity `json:"children,omitempty"`
 }
 
+type ResourceEntity {
+    Id int64 `json:"id"`
+    ParentId int64 `json:"parent_id"`
+    Type string `json:"type"`
+    ResourceType string `json:"resource_type"`
+    Name string `json:"name"`
+    Path string `json:"path"`
+    Icon string `json:"icon"`
+    Tag string `json:"tag"`
+    IsShow bool `json:"is_show"`
+    Status string `json:"status"`
+    SortOrder int32 `json:"sort_order"`
+    CreatedAt string `json:"created_at"`
+    UpdatedAt string `json:"updated_at"`
+    Apis []*ApiEntity `json:"apis,omitempty"`
+}
+
 type ResourceTreeRequest {
     Type string `form:"type" validate:"required,oneof=Borrower Lender Admin"`
 }
 
 type ResourceTreeResponse {
-    Lists []*ResourceTreeEntity `json:"lists"`
+    List []*ResourceTreeEntity `json:"list"`
 }
 
 type ResourceCreateRequest {
@@ -42,6 +62,7 @@ type ResourceCreateRequest {
     IsShow bool `json:"is_show"`
     Status string `json:"status" validate:"required,oneof=Active Inactive"`
     SortOrder int32 `json:"sort_order" validate:"min=0"`
+    ApiIds []int64 `json:"api_ids"`
 }
 
 type ResourceUpdateRequest {
@@ -56,6 +77,7 @@ type ResourceUpdateRequest {
     IsShow bool `json:"is_show"`
     Status string `json:"status" validate:"required,oneof=Active Inactive"`
     SortOrder int32 `json:"sort_order" validate:"min=0"`
+    ApiIds []int64 `json:"api_ids"`
 }
 
 type ResourceDeleteRequest {

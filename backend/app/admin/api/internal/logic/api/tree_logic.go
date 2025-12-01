@@ -52,7 +52,7 @@ func (l *TreeLogic) Tree(req *types.ApiTreeRequest) (resp *types.ApiTreeResponse
 	}
 
 	// trans response
-	err = copier.CopyWithOption(&resp.Lists, &rpcResp.Data, copier.Option{DeepCopy: true})
+	err = copier.CopyWithOption(&resp.List, &rpcResp.Data, copier.Option{DeepCopy: true})
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
 	}

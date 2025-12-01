@@ -3,14 +3,18 @@ package resourcelogic
 import (
 	"context"
 
+	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
+	"gorm.io/gorm"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/constants"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/model"
 )
 
 type UpdateLogic struct {
@@ -27,48 +31,75 @@ func NewUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLogi
 	}
 }
 
-func (l *UpdateLogic) Update(in *admin.ResourceUpdateRequest) (resp *admin.ResourceCreateResponse, err error) {
+func (l *UpdateLogic) Update(in *admin.ResourceUpdateRequest) (resp *admin.ResourceDetailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
 
-	// First get the existing record
-	result, err := l.svcCtx.ResourceRepo.GetResource(l.ctx, in.Data.Id, constants.UserType(in.Data.Type))
-	if err != nil {
-		return nil, err
-	}
+	var result *model.Resource
+	err = l.svcCtx.ResourceRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
+		var innerErr error
+		var isExisted bool
 
-	// Update the fields
-	err = copier.CopyWithOption(result, in.Data, copier.Option{DeepCopy: true})
-	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
-	}
+		result, innerErr = l.svcCtx.ResourceRepo.GetResourceWithTx(l.ctx, tx, in.Data.Id, constants.UserType(in.Data.Type))
+		if innerErr != nil {
+			return innerErr
+		}
+		innerErr = copier.CopyWithOption(result, in.Data, copier.Option{DeepCopy: true})
+		if innerErr != nil {
+			innerErr = errorx.GetFailedTransRespErr(innerErr)
+			return innerErr
+		}
 
-	// check existed
-	isExisted, err := l.svcCtx.ResourceRepo.IsExisted(l.ctx, result)
-	if err != nil {
-		return nil, err
-	}
-	if isExisted {
-		err = errorx.New("Resource is Existed")
-		return nil, err
-	}
+		// check existed
+		isExisted, innerErr = l.svcCtx.ResourceRepo.IsExistedWithTx(l.ctx, tx, result)
+		if innerErr != nil {
+			return innerErr
+		}
+		if isExisted {
+			innerErr = errorx.New("Resource is Existed")
+			return innerErr
+		}
+		// handle apis
+		oldApis := result.Apis
+		currentApis, innerErr := l.svcCtx.ApiRepo.GetApisWithTx(l.ctx, tx, in.Data.ApiIds, constants.UserType(in.Data.Type))
+		if innerErr != nil {
+			return innerErr
+		}
+		removedApis := slice.DifferenceWith(oldApis, currentApis, func(item1, item2 *model.Api) bool {
+			return item1.Id == item2.Id
+		})
+		newApis := slice.DifferenceWith(currentApis, oldApis, func(item1, item2 *model.Api) bool {
+			return item1.Id == item2.Id
+		})
+		result.RemoveRelationships()
+		innerErr = l.svcCtx.ResourceRepo.RemoveApisWithTx(l.ctx, tx, result, removedApis)
+		if innerErr != nil {
+			return innerErr
+		}
+		innerErr = l.svcCtx.ResourceRepo.AddApisWithTx(l.ctx, tx, result, newApis)
+		if innerErr != nil {
+			return innerErr
+		}
+		// todo update user permissions
 
-	// Save the updated record
-	_, err = l.svcCtx.ResourceRepo.UpdateOneById(l.ctx, in.Data.Id, result)
-	if err != nil {
-		return nil, err
-	}
+		return innerErr
+	})
 
-	respData := &admin.ResourceTreeEntity{}
-	err = copier.CopyWithOption(respData, result, copier.Option{DeepCopy: true})
+	respData := &admin.ResourceEntity{}
+	err = copier.CopyWithOption(respData, result, copier.Option{
+		DeepCopy: true,
+		Converters: []copier.TypeConverter{
+			copierx.TimeToRFC3339Str(),
+		},
+	})
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 
-	return &admin.ResourceCreateResponse{
+	return &admin.ResourceDetailResponse{
 		Data: respData,
 	}, nil
 }

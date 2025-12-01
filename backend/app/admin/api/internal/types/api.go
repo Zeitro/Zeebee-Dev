@@ -44,7 +44,7 @@ type ApiTreeRequest struct {
 }
 
 type ApiTreeResponse struct {
-	Lists []*ApiTreeEntity `json:"lists"`
+	List []*ApiTreeEntity `json:"list"`
 }
 
 type ApiUpdateRequest struct {

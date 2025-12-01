@@ -52,7 +52,7 @@ func (l *ResourceTreeLogic) ResourceTree(req *types.ResourceTreeRequest) (resp *
 	}
 
 	// trans response
-	err = copier.CopyWithOption(&resp.Lists, &rpcResp.Data, copier.Option{DeepCopy: true})
+	err = copier.CopyWithOption(&resp.List, &rpcResp.Data, copier.Option{DeepCopy: true})
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
 	}

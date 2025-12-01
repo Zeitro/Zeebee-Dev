@@ -28,12 +28,12 @@ func (s *ResourceServer) ResourceTree(ctx context.Context, in *admin.ResourceTre
 	return l.ResourceTree(in)
 }
 
-func (s *ResourceServer) Create(ctx context.Context, in *admin.ResourceCreateRequest) (*admin.ResourceCreateResponse, error) {
+func (s *ResourceServer) Create(ctx context.Context, in *admin.ResourceCreateRequest) (*admin.ResourceDetailResponse, error) {
 	l := resourcelogic.NewCreateLogic(ctx, s.svcCtx)
 	return l.Create(in)
 }
 
-func (s *ResourceServer) Update(ctx context.Context, in *admin.ResourceUpdateRequest) (*admin.ResourceCreateResponse, error) {
+func (s *ResourceServer) Update(ctx context.Context, in *admin.ResourceUpdateRequest) (*admin.ResourceDetailResponse, error) {
 	l := resourcelogic.NewUpdateLogic(ctx, s.svcCtx)
 	return l.Update(in)
 }
@@ -43,7 +43,7 @@ func (s *ResourceServer) Delete(ctx context.Context, in *admin.ResourceDeleteReq
 	return l.Delete(in)
 }
 
-func (s *ResourceServer) Detail(ctx context.Context, in *admin.ResourceDetailRequest) (*admin.ResourceCreateResponse, error) {
+func (s *ResourceServer) Detail(ctx context.Context, in *admin.ResourceDetailRequest) (*admin.ResourceDetailResponse, error) {
 	l := resourcelogic.NewDetailLogic(ctx, s.svcCtx)
 	return l.Detail(in)
 }
