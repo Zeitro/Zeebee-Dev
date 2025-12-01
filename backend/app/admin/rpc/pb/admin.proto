@@ -146,6 +146,21 @@ message ApiTreeEntity{
   string updated_at = 11;
   repeated ApiTreeEntity children = 12;
 }
+
+message ApiEntity{
+  int64 id = 1;
+  int64 parent_id = 2;
+  string name = 3;
+  string path = 4;
+  string method = 5;
+  string status = 6;
+  string description = 7;
+  string type = 8;
+  int32  sort_order = 9;
+  string created_at = 10;
+  string updated_at = 11;
+}
+
 // api tree
 message ApiTreeRequest {
   ApiTreeRequestData data = 1;
@@ -243,6 +258,24 @@ message ResourceTreeEntity{
   string updated_at = 13;
   repeated ResourceTreeEntity children = 14;
 }
+
+message ResourceEntity{
+  int64 id = 1;
+  int64 parent_id = 2;
+  string type = 3;
+  string resource_type = 4;
+  string name = 5;
+  string path = 6;
+  string icon = 7;
+  string tag = 8;
+  bool is_show = 9;
+  string status = 10;
+  int32  sort_order = 11;
+  string created_at = 12;
+  string updated_at = 13;
+  repeated ApiEntity apis = 14;
+}
+
 // resource tree
 message ResourceTreeRequest {
   ResourceTreeRequestData data = 1;
@@ -273,6 +306,7 @@ message ResourceCreateRequestData {
   int32 sort_order = 10;
   int64 user_id = 11;
   int64 organization_id = 12;
+  repeated int64 api_ids = 13;
 }
 message ResourceCreateResponse {
   ResourceTreeEntity data = 1;
@@ -295,6 +329,7 @@ message ResourceUpdateRequestData {
   int32 sort_order = 11;
   int64 user_id = 12;
   int64 organization_id = 13;
+  repeated int64 api_ids = 14;
 }
 
 //  delete
@@ -318,12 +353,17 @@ message ResourceDetailRequestData {
   string type = 4;
 }
 
+message ResourceDetailResponse {
+  ResourceEntity data = 1;
+}
+
+
 service resource {
   rpc ResourceTree(ResourceTreeRequest) returns(ResourceTreeResponse);
-  rpc Create(ResourceCreateRequest) returns(ResourceCreateResponse);
-  rpc Update(ResourceUpdateRequest) returns(ResourceCreateResponse);
+  rpc Create(ResourceCreateRequest) returns(ResourceDetailResponse);
+  rpc Update(ResourceUpdateRequest) returns(ResourceDetailResponse);
   rpc Delete(ResourceDeleteRequest) returns(EmptyResponse);
-  rpc Detail(ResourceDetailRequest) returns(ResourceCreateResponse);
+  rpc Detail(ResourceDetailRequest) returns(ResourceDetailResponse);
 }
 // =================== resource service end =================
 // ================= role service start =================

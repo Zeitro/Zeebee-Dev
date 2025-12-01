@@ -3,13 +3,14 @@ package resourcelogic
 import (
 	"context"
 
+	"github.com/zeromicro/go-zero/core/logx"
+	"gorm.io/gorm"
+
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type DeleteLogic struct {
@@ -21,9 +22,10 @@ type DeleteLogic struct {
 
 func NewDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteLogic {
 	return &DeleteLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -34,14 +36,16 @@ func (l *DeleteLogic) Delete(in *admin.ResourceDeleteRequest) (resp *admin.Empty
 		}
 	}()
 
-	// First check if the record exists and belongs to the organization
-	result, err := l.svcCtx.ResourceRepo.GetResource(l.ctx, in.Data.Id, constants.UserType(in.Data.Type))
-	if err != nil {
-		return nil, err
-	}
+	err = l.svcCtx.ResourceRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
+		var innerErr error
+		innerErr = l.svcCtx.ResourceRepo.DelByIdWithTx(l.ctx, tx, in.Data.Id, constants.UserType(in.Data.Type))
+		if innerErr != nil {
+			return innerErr
+		}
+		// todo update user permissions
 
-	// Delete the record
-	_, err = l.svcCtx.ResourceRepo.DeleteByID(l.ctx, result.Id)
+		return innerErr
+	})
 	if err != nil {
 		return nil, err
 	}

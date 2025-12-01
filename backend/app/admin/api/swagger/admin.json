@@ -265,7 +265,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "lists": {
+                "list": {
                   "type": "array",
                   "items": {
                     "type": "object",
@@ -732,9 +732,16 @@
                 "tag",
                 "is_show",
                 "status",
-                "sort_order"
+                "sort_order",
+                "api_ids"
               ],
               "properties": {
+                "api_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
                 "icon": {
                   "type": "string"
                 },
@@ -775,107 +782,35 @@
             "schema": {
               "type": "object",
               "properties": {
-                "children": {
+                "apis": {
                   "type": "array",
                   "items": {
                     "type": "object",
                     "required": [
                       "id",
                       "parent_id",
-                      "type",
-                      "resource_type",
                       "name",
                       "path",
-                      "icon",
-                      "tag",
-                      "is_show",
+                      "method",
                       "status",
+                      "description",
+                      "type",
                       "sort_order",
                       "created_at",
-                      "updated_at",
-                      "children"
+                      "updated_at"
                     ],
                     "properties": {
-                      "children": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "required": [
-                            "id",
-                            "parent_id",
-                            "type",
-                            "resource_type",
-                            "name",
-                            "path",
-                            "icon",
-                            "tag",
-                            "is_show",
-                            "status",
-                            "sort_order",
-                            "created_at",
-                            "updated_at",
-                            "children"
-                          ],
-                          "properties": {
-                            "children": {
-                              "type": "array",
-                              "items": {
-                                "type": "object"
-                              }
-                            },
-                            "created_at": {
-                              "type": "string"
-                            },
-                            "icon": {
-                              "type": "string"
-                            },
-                            "id": {
-                              "type": "integer"
-                            },
-                            "is_show": {
-                              "type": "boolean"
-                            },
-                            "name": {
-                              "type": "string"
-                            },
-                            "parent_id": {
-                              "type": "integer"
-                            },
-                            "path": {
-                              "type": "string"
-                            },
-                            "resource_type": {
-                              "type": "string"
-                            },
-                            "sort_order": {
-                              "type": "integer"
-                            },
-                            "status": {
-                              "type": "string"
-                            },
-                            "tag": {
-                              "type": "string"
-                            },
-                            "type": {
-                              "type": "string"
-                            },
-                            "updated_at": {
-                              "type": "string"
-                            }
-                          }
-                        }
-                      },
                       "created_at": {
                         "type": "string"
                       },
-                      "icon": {
+                      "description": {
                         "type": "string"
                       },
                       "id": {
                         "type": "integer"
                       },
-                      "is_show": {
-                        "type": "boolean"
+                      "method": {
+                        "type": "string"
                       },
                       "name": {
                         "type": "string"
@@ -886,16 +821,10 @@
                       "path": {
                         "type": "string"
                       },
-                      "resource_type": {
-                        "type": "string"
-                      },
                       "sort_order": {
                         "type": "integer"
                       },
                       "status": {
-                        "type": "string"
-                      },
-                      "tag": {
                         "type": "string"
                       },
                       "type": {
@@ -979,7 +908,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "lists": {
+                "list": {
                   "type": "array",
                   "items": {
                     "type": "object",
@@ -1150,107 +1079,35 @@
             "schema": {
               "type": "object",
               "properties": {
-                "children": {
+                "apis": {
                   "type": "array",
                   "items": {
                     "type": "object",
                     "required": [
                       "id",
                       "parent_id",
-                      "type",
-                      "resource_type",
                       "name",
                       "path",
-                      "icon",
-                      "tag",
-                      "is_show",
+                      "method",
                       "status",
+                      "description",
+                      "type",
                       "sort_order",
                       "created_at",
-                      "updated_at",
-                      "children"
+                      "updated_at"
                     ],
                     "properties": {
-                      "children": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "required": [
-                            "id",
-                            "parent_id",
-                            "type",
-                            "resource_type",
-                            "name",
-                            "path",
-                            "icon",
-                            "tag",
-                            "is_show",
-                            "status",
-                            "sort_order",
-                            "created_at",
-                            "updated_at",
-                            "children"
-                          ],
-                          "properties": {
-                            "children": {
-                              "type": "array",
-                              "items": {
-                                "type": "object"
-                              }
-                            },
-                            "created_at": {
-                              "type": "string"
-                            },
-                            "icon": {
-                              "type": "string"
-                            },
-                            "id": {
-                              "type": "integer"
-                            },
-                            "is_show": {
-                              "type": "boolean"
-                            },
-                            "name": {
-                              "type": "string"
-                            },
-                            "parent_id": {
-                              "type": "integer"
-                            },
-                            "path": {
-                              "type": "string"
-                            },
-                            "resource_type": {
-                              "type": "string"
-                            },
-                            "sort_order": {
-                              "type": "integer"
-                            },
-                            "status": {
-                              "type": "string"
-                            },
-                            "tag": {
-                              "type": "string"
-                            },
-                            "type": {
-                              "type": "string"
-                            },
-                            "updated_at": {
-                              "type": "string"
-                            }
-                          }
-                        }
-                      },
                       "created_at": {
                         "type": "string"
                       },
-                      "icon": {
+                      "description": {
                         "type": "string"
                       },
                       "id": {
                         "type": "integer"
                       },
-                      "is_show": {
-                        "type": "boolean"
+                      "method": {
+                        "type": "string"
                       },
                       "name": {
                         "type": "string"
@@ -1261,16 +1118,10 @@
                       "path": {
                         "type": "string"
                       },
-                      "resource_type": {
-                        "type": "string"
-                      },
                       "sort_order": {
                         "type": "integer"
                       },
                       "status": {
-                        "type": "string"
-                      },
-                      "tag": {
                         "type": "string"
                       },
                       "type": {
@@ -1364,9 +1215,16 @@
                 "tag",
                 "is_show",
                 "status",
-                "sort_order"
+                "sort_order",
+                "api_ids"
               ],
               "properties": {
+                "api_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
                 "icon": {
                   "type": "string"
                 },
@@ -1407,107 +1265,35 @@
             "schema": {
               "type": "object",
               "properties": {
-                "children": {
+                "apis": {
                   "type": "array",
                   "items": {
                     "type": "object",
                     "required": [
                       "id",
                       "parent_id",
-                      "type",
-                      "resource_type",
                       "name",
                       "path",
-                      "icon",
-                      "tag",
-                      "is_show",
+                      "method",
                       "status",
+                      "description",
+                      "type",
                       "sort_order",
                       "created_at",
-                      "updated_at",
-                      "children"
+                      "updated_at"
                     ],
                     "properties": {
-                      "children": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "required": [
-                            "id",
-                            "parent_id",
-                            "type",
-                            "resource_type",
-                            "name",
-                            "path",
-                            "icon",
-                            "tag",
-                            "is_show",
-                            "status",
-                            "sort_order",
-                            "created_at",
-                            "updated_at",
-                            "children"
-                          ],
-                          "properties": {
-                            "children": {
-                              "type": "array",
-                              "items": {
-                                "type": "object"
-                              }
-                            },
-                            "created_at": {
-                              "type": "string"
-                            },
-                            "icon": {
-                              "type": "string"
-                            },
-                            "id": {
-                              "type": "integer"
-                            },
-                            "is_show": {
-                              "type": "boolean"
-                            },
-                            "name": {
-                              "type": "string"
-                            },
-                            "parent_id": {
-                              "type": "integer"
-                            },
-                            "path": {
-                              "type": "string"
-                            },
-                            "resource_type": {
-                              "type": "string"
-                            },
-                            "sort_order": {
-                              "type": "integer"
-                            },
-                            "status": {
-                              "type": "string"
-                            },
-                            "tag": {
-                              "type": "string"
-                            },
-                            "type": {
-                              "type": "string"
-                            },
-                            "updated_at": {
-                              "type": "string"
-                            }
-                          }
-                        }
-                      },
                       "created_at": {
                         "type": "string"
                       },
-                      "icon": {
+                      "description": {
                         "type": "string"
                       },
                       "id": {
                         "type": "integer"
                       },
-                      "is_show": {
-                        "type": "boolean"
+                      "method": {
+                        "type": "string"
                       },
                       "name": {
                         "type": "string"
@@ -1518,16 +1304,10 @@
                       "path": {
                         "type": "string"
                       },
-                      "resource_type": {
-                        "type": "string"
-                      },
                       "sort_order": {
                         "type": "integer"
                       },
                       "status": {
-                        "type": "string"
-                      },
-                      "tag": {
                         "type": "string"
                       },
                       "type": {
@@ -2489,7 +2269,7 @@
       }
     }
   },
-  "x-date": "2025-12-01 15:29:56",
+  "x-date": "2025-12-01 17:34:10",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

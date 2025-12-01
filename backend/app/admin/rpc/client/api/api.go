@@ -22,6 +22,7 @@ type (
 	ApiDeleteRequestData              = admin.ApiDeleteRequestData
 	ApiDetailRequest                  = admin.ApiDetailRequest
 	ApiDetailRequestData              = admin.ApiDetailRequestData
+	ApiEntity                         = admin.ApiEntity
 	ApiTreeEntity                     = admin.ApiTreeEntity
 	ApiTreeRequest                    = admin.ApiTreeRequest
 	ApiTreeRequestData                = admin.ApiTreeRequestData
@@ -45,6 +46,8 @@ type (
 	ResourceDeleteRequestData         = admin.ResourceDeleteRequestData
 	ResourceDetailRequest             = admin.ResourceDetailRequest
 	ResourceDetailRequestData         = admin.ResourceDetailRequestData
+	ResourceDetailResponse            = admin.ResourceDetailResponse
+	ResourceEntity                    = admin.ResourceEntity
 	ResourceTreeEntity                = admin.ResourceTreeEntity
 	ResourceTreeRequest               = admin.ResourceTreeRequest
 	ResourceTreeRequestData           = admin.ResourceTreeRequestData

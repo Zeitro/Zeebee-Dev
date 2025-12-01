@@ -541,10 +541,10 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ResourceClient interface {
 	ResourceTree(ctx context.Context, in *ResourceTreeRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error)
-	Create(ctx context.Context, in *ResourceCreateRequest, opts ...grpc.CallOption) (*ResourceCreateResponse, error)
-	Update(ctx context.Context, in *ResourceUpdateRequest, opts ...grpc.CallOption) (*ResourceCreateResponse, error)
+	Create(ctx context.Context, in *ResourceCreateRequest, opts ...grpc.CallOption) (*ResourceDetailResponse, error)
+	Update(ctx context.Context, in *ResourceUpdateRequest, opts ...grpc.CallOption) (*ResourceDetailResponse, error)
 	Delete(ctx context.Context, in *ResourceDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
-	Detail(ctx context.Context, in *ResourceDetailRequest, opts ...grpc.CallOption) (*ResourceCreateResponse, error)
+	Detail(ctx context.Context, in *ResourceDetailRequest, opts ...grpc.CallOption) (*ResourceDetailResponse, error)
 }
 
 type resourceClient struct {
@@ -565,9 +565,9 @@ func (c *resourceClient) ResourceTree(ctx context.Context, in *ResourceTreeReque
 	return out, nil
 }
 
-func (c *resourceClient) Create(ctx context.Context, in *ResourceCreateRequest, opts ...grpc.CallOption) (*ResourceCreateResponse, error) {
+func (c *resourceClient) Create(ctx context.Context, in *ResourceCreateRequest, opts ...grpc.CallOption) (*ResourceDetailResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ResourceCreateResponse)
+	out := new(ResourceDetailResponse)
 	err := c.cc.Invoke(ctx, Resource_Create_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -575,9 +575,9 @@ func (c *resourceClient) Create(ctx context.Context, in *ResourceCreateRequest, 
 	return out, nil
 }
 
-func (c *resourceClient) Update(ctx context.Context, in *ResourceUpdateRequest, opts ...grpc.CallOption) (*ResourceCreateResponse, error) {
+func (c *resourceClient) Update(ctx context.Context, in *ResourceUpdateRequest, opts ...grpc.CallOption) (*ResourceDetailResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ResourceCreateResponse)
+	out := new(ResourceDetailResponse)
 	err := c.cc.Invoke(ctx, Resource_Update_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -595,9 +595,9 @@ func (c *resourceClient) Delete(ctx context.Context, in *ResourceDeleteRequest, 
 	return out, nil
 }
 
-func (c *resourceClient) Detail(ctx context.Context, in *ResourceDetailRequest, opts ...grpc.CallOption) (*ResourceCreateResponse, error) {
+func (c *resourceClient) Detail(ctx context.Context, in *ResourceDetailRequest, opts ...grpc.CallOption) (*ResourceDetailResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ResourceCreateResponse)
+	out := new(ResourceDetailResponse)
 	err := c.cc.Invoke(ctx, Resource_Detail_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -610,10 +610,10 @@ func (c *resourceClient) Detail(ctx context.Context, in *ResourceDetailRequest, 
 // for forward compatibility.
 type ResourceServer interface {
 	ResourceTree(context.Context, *ResourceTreeRequest) (*ResourceTreeResponse, error)
-	Create(context.Context, *ResourceCreateRequest) (*ResourceCreateResponse, error)
-	Update(context.Context, *ResourceUpdateRequest) (*ResourceCreateResponse, error)
+	Create(context.Context, *ResourceCreateRequest) (*ResourceDetailResponse, error)
+	Update(context.Context, *ResourceUpdateRequest) (*ResourceDetailResponse, error)
 	Delete(context.Context, *ResourceDeleteRequest) (*EmptyResponse, error)
-	Detail(context.Context, *ResourceDetailRequest) (*ResourceCreateResponse, error)
+	Detail(context.Context, *ResourceDetailRequest) (*ResourceDetailResponse, error)
 	mustEmbedUnimplementedResourceServer()
 }
 
@@ -627,16 +627,16 @@ type UnimplementedResourceServer struct{}
 func (UnimplementedResourceServer) ResourceTree(context.Context, *ResourceTreeRequest) (*ResourceTreeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ResourceTree not implemented")
 }
-func (UnimplementedResourceServer) Create(context.Context, *ResourceCreateRequest) (*ResourceCreateResponse, error) {
+func (UnimplementedResourceServer) Create(context.Context, *ResourceCreateRequest) (*ResourceDetailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedResourceServer) Update(context.Context, *ResourceUpdateRequest) (*ResourceCreateResponse, error) {
+func (UnimplementedResourceServer) Update(context.Context, *ResourceUpdateRequest) (*ResourceDetailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
 func (UnimplementedResourceServer) Delete(context.Context, *ResourceDeleteRequest) (*EmptyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
-func (UnimplementedResourceServer) Detail(context.Context, *ResourceDetailRequest) (*ResourceCreateResponse, error) {
+func (UnimplementedResourceServer) Detail(context.Context, *ResourceDetailRequest) (*ResourceDetailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Detail not implemented")
 }
 func (UnimplementedResourceServer) mustEmbedUnimplementedResourceServer() {}

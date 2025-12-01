@@ -106,7 +106,7 @@ service admin-api {
 service admin-api {
 	@doc "detail"
 	@handler ResourceDetail
-	get /resource/:id (ResourceDetailRequest) returns (ResourceTreeEntity)
+	get /resource/:id (ResourceDetailRequest) returns (ResourceEntity)
 
 	@doc "tree"
 	@handler ResourceTree
@@ -114,11 +114,11 @@ service admin-api {
 
 	@doc "create"
 	@handler ResourceCreate
-	post /resource (ResourceCreateRequest) returns (ResourceTreeEntity)
+	post /resource (ResourceCreateRequest) returns (ResourceEntity)
 
 	@doc "update"
 	@handler ResourceUpdate
-	put /resource/:id (ResourceUpdateRequest) returns (ResourceTreeEntity)
+	put /resource/:id (ResourceUpdateRequest) returns (ResourceEntity)
 
 	@doc "delete"
 	@handler ResourceDelete

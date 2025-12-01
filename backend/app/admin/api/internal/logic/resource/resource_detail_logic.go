@@ -29,8 +29,8 @@ func NewResourceDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Re
 	}
 }
 
-func (l *ResourceDetailLogic) ResourceDetail(req *types.ResourceDetailRequest) (resp *types.ResourceTreeEntity, err error) {
-	resp = &types.ResourceTreeEntity{}
+func (l *ResourceDetailLogic) ResourceDetail(req *types.ResourceDetailRequest) (resp *types.ResourceEntity, err error) {
+	resp = &types.ResourceEntity{}
 	rpcReq := &admin.ResourceDetailRequest{
 		Data: &admin.ResourceDetailRequestData{},
 	}

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
@@ -33,9 +34,9 @@ func (repo *ResourceRepo) All(ctx context.Context, apiType constants.UserType) (
 	return result, errorx.WithStack(err)
 }
 
-// IsExisted check resource is existed
-func (repo *ResourceRepo) IsExisted(ctx context.Context, data *model.Resource) (isExisted bool, err error) {
-	query := repo.Client(ctx).
+// IsExistedWithTx check resource is existed
+func (repo *ResourceRepo) IsExistedWithTx(ctx context.Context, tx *gorm.DB, data *model.Resource) (isExisted bool, err error) {
+	query := repo.Client(ctx).WithContext(ctx).Model(&model.Resource{}).
 		Where("name = ?", data.Name).
 		Where("type = ?", data.Type).
 		Where("path = ?", data.Path).
@@ -53,6 +54,20 @@ func (repo *ResourceRepo) GetResource(ctx context.Context, id int64, apiType con
 	err = repo.Client(ctx).
 		Where("id = ?", id).
 		Where("type = ?", apiType).
+		Preload("Apis", func(db *gorm.DB) *gorm.DB {
+			return db.Order("apis.sort_order asc")
+		}).
+		First(&result).Error
+	return result, errorx.WithStack(err)
+}
+
+func (repo *ResourceRepo) GetResourceWithTx(ctx context.Context, tx *gorm.DB, id int64, apiType constants.UserType) (result *model.Resource, err error) {
+	err = tx.WithContext(ctx).Model(&model.Resource{}).
+		Where("id = ?", id).
+		Where("type = ?", apiType).
+		Preload("Apis", func(db *gorm.DB) *gorm.DB {
+			return db.Order("apis.sort_order asc")
+		}).
 		First(&result).Error
 	return result, errorx.WithStack(err)
 }
@@ -64,4 +79,45 @@ func (repo *ResourceRepo) GetResourceByParentId(ctx context.Context, parentId in
 		Order("sort_order asc").
 		Find(&result).Error
 	return result, errorx.WithStack(err)
+}
+
+// DelByIdWithTx delete resource by id
+func (repo *ResourceRepo) DelByIdWithTx(ctx context.Context, tx *gorm.DB, id int64, typ constants.UserType) (err error) {
+	var resource *model.Resource
+	resource, err = repo.GetResourceWithTx(ctx, tx, id, typ)
+	if err != nil {
+		return err
+	}
+	err = tx.WithContext(ctx).
+		Model(&model.Resource{}).
+		Where("id = ?", id).
+		Select(clause.Associations).
+		Delete(resource).Error
+	return errorx.WithStack(err)
+}
+
+// RemoveApis remove apis with tx and return error if occurred
+func (repo *ResourceRepo) RemoveApisWithTx(ctx context.Context, tx *gorm.DB, resource *model.Resource, apis []*model.Api) (err error) {
+	if resource == nil || len(apis) == 0 {
+		return
+	}
+	err = tx.WithContext(ctx).Model(resource).Association("Apis").Delete(apis)
+	return errorx.WithStack(err)
+}
+
+// AddApisWithTx add apis with tx and return error if occurred
+func (repo *ResourceRepo) AddApisWithTx(ctx context.Context, tx *gorm.DB, resource *model.Resource, apis []*model.Api) (err error) {
+	if resource == nil || len(apis) == 0 {
+		return
+	}
+	err = tx.WithContext(ctx).Model(resource).Association("Apis").Append(apis)
+	return errorx.WithStack(err)
+}
+
+func (repo *ResourceRepo) UpdateApisWithTx(ctx context.Context, tx *gorm.DB, resource *model.Resource, apis []*model.Api) (err error) {
+	if resource == nil || len(apis) == 0 {
+		return
+	}
+	err = tx.WithContext(ctx).Model(resource).Association("Apis").Replace(apis)
+	return errorx.WithStack(err)
 }

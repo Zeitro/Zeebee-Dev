@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/jinzhu/copier"
+	"gorm.io/gorm"
 
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
@@ -28,7 +29,7 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 	}
 }
 
-func (l *CreateLogic) Create(in *admin.ResourceCreateRequest) (resp *admin.ResourceCreateResponse, err error) {
+func (l *CreateLogic) Create(in *admin.ResourceCreateRequest) (resp *admin.ResourceDetailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -41,22 +42,38 @@ func (l *CreateLogic) Create(in *admin.ResourceCreateRequest) (resp *admin.Resou
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
 
-	// check existed
-	isExisted, err := l.svcCtx.ResourceRepo.IsExisted(l.ctx, resourceModel)
+	var result *model.Resource
+
+	err = l.svcCtx.ResourceRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
+		var innerErr error
+		var isExisted bool
+		// check existed
+		isExisted, innerErr = l.svcCtx.ResourceRepo.IsExistedWithTx(l.ctx, tx, resourceModel)
+		if innerErr != nil {
+			return innerErr
+		}
+		if isExisted {
+			innerErr = errorx.New("Resource is Existed")
+			return innerErr
+		}
+
+		apis, innerErr := l.svcCtx.ApiRepo.GetApisWithTx(l.ctx, tx, in.Data.ApiIds, resourceModel.Type)
+		if innerErr != nil {
+			return innerErr
+		}
+		resourceModel.Apis = apis
+
+		result, innerErr = l.svcCtx.ResourceRepo.CreateWithTx(l.ctx, tx, resourceModel, true)
+
+		return innerErr
+	})
+
+	// result, err := l.svcCtx.ResourceRepo.Create(l.ctx, resourceModel)
 	if err != nil {
 		return nil, err
 	}
-	if isExisted {
-		err = errorx.New("Resource is Existed")
-		return nil, err
-	}
 
-	result, err := l.svcCtx.ResourceRepo.Create(l.ctx, resourceModel)
-	if err != nil {
-		return nil, err
-	}
-
-	respData := &admin.ResourceTreeEntity{}
+	respData := &admin.ResourceEntity{}
 	err = copier.CopyWithOption(respData, result, copier.Option{
 		DeepCopy: true,
 		Converters: []copier.TypeConverter{
@@ -67,7 +84,7 @@ func (l *CreateLogic) Create(in *admin.ResourceCreateRequest) (resp *admin.Resou
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 
-	return &admin.ResourceCreateResponse{
+	return &admin.ResourceDetailResponse{
 		Data: respData,
 	}, nil
 }

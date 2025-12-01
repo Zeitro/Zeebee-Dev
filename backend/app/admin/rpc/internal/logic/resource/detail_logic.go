@@ -28,7 +28,7 @@ func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogi
 	}
 }
 
-func (l *DetailLogic) Detail(in *admin.ResourceDetailRequest) (resp *admin.ResourceCreateResponse, err error) {
+func (l *DetailLogic) Detail(in *admin.ResourceDetailRequest) (resp *admin.ResourceDetailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -40,7 +40,7 @@ func (l *DetailLogic) Detail(in *admin.ResourceDetailRequest) (resp *admin.Resou
 		return nil, err
 	}
 
-	respData := &admin.ResourceTreeEntity{}
+	respData := &admin.ResourceEntity{}
 	err = copier.CopyWithOption(respData, result, copier.Option{
 		DeepCopy: true,
 		Converters: []copier.TypeConverter{
@@ -51,7 +51,7 @@ func (l *DetailLogic) Detail(in *admin.ResourceDetailRequest) (resp *admin.Resou
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 
-	return &admin.ResourceCreateResponse{
+	return &admin.ResourceDetailResponse{
 		Data: respData,
 	}, nil
 }

@@ -22,6 +22,7 @@ type (
 	ApiDeleteRequestData              = admin.ApiDeleteRequestData
 	ApiDetailRequest                  = admin.ApiDetailRequest
 	ApiDetailRequestData              = admin.ApiDetailRequestData
+	ApiEntity                         = admin.ApiEntity
 	ApiTreeEntity                     = admin.ApiTreeEntity
 	ApiTreeRequest                    = admin.ApiTreeRequest
 	ApiTreeRequestData                = admin.ApiTreeRequestData
@@ -45,6 +46,8 @@ type (
 	ResourceDeleteRequestData         = admin.ResourceDeleteRequestData
 	ResourceDetailRequest             = admin.ResourceDetailRequest
 	ResourceDetailRequestData         = admin.ResourceDetailRequestData
+	ResourceDetailResponse            = admin.ResourceDetailResponse
+	ResourceEntity                    = admin.ResourceEntity
 	ResourceTreeEntity                = admin.ResourceTreeEntity
 	ResourceTreeRequest               = admin.ResourceTreeRequest
 	ResourceTreeRequestData           = admin.ResourceTreeRequestData
@@ -89,10 +92,10 @@ type (
 
 	Resource interface {
 		ResourceTree(ctx context.Context, in *ResourceTreeRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error)
-		Create(ctx context.Context, in *ResourceCreateRequest, opts ...grpc.CallOption) (*ResourceCreateResponse, error)
-		Update(ctx context.Context, in *ResourceUpdateRequest, opts ...grpc.CallOption) (*ResourceCreateResponse, error)
+		Create(ctx context.Context, in *ResourceCreateRequest, opts ...grpc.CallOption) (*ResourceDetailResponse, error)
+		Update(ctx context.Context, in *ResourceUpdateRequest, opts ...grpc.CallOption) (*ResourceDetailResponse, error)
 		Delete(ctx context.Context, in *ResourceDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
-		Detail(ctx context.Context, in *ResourceDetailRequest, opts ...grpc.CallOption) (*ResourceCreateResponse, error)
+		Detail(ctx context.Context, in *ResourceDetailRequest, opts ...grpc.CallOption) (*ResourceDetailResponse, error)
 	}
 
 	defaultResource struct {
@@ -111,12 +114,12 @@ func (m *defaultResource) ResourceTree(ctx context.Context, in *ResourceTreeRequ
 	return client.ResourceTree(ctx, in, opts...)
 }
 
-func (m *defaultResource) Create(ctx context.Context, in *ResourceCreateRequest, opts ...grpc.CallOption) (*ResourceCreateResponse, error) {
+func (m *defaultResource) Create(ctx context.Context, in *ResourceCreateRequest, opts ...grpc.CallOption) (*ResourceDetailResponse, error) {
 	client := admin.NewResourceClient(m.cli.Conn())
 	return client.Create(ctx, in, opts...)
 }
 
-func (m *defaultResource) Update(ctx context.Context, in *ResourceUpdateRequest, opts ...grpc.CallOption) (*ResourceCreateResponse, error) {
+func (m *defaultResource) Update(ctx context.Context, in *ResourceUpdateRequest, opts ...grpc.CallOption) (*ResourceDetailResponse, error) {
 	client := admin.NewResourceClient(m.cli.Conn())
 	return client.Update(ctx, in, opts...)
 }
@@ -126,7 +129,7 @@ func (m *defaultResource) Delete(ctx context.Context, in *ResourceDeleteRequest,
 	return client.Delete(ctx, in, opts...)
 }
 
-func (m *defaultResource) Detail(ctx context.Context, in *ResourceDetailRequest, opts ...grpc.CallOption) (*ResourceCreateResponse, error) {
+func (m *defaultResource) Detail(ctx context.Context, in *ResourceDetailRequest, opts ...grpc.CallOption) (*ResourceDetailResponse, error) {
 	client := admin.NewResourceClient(m.cli.Conn())
 	return client.Detail(ctx, in, opts...)
 }

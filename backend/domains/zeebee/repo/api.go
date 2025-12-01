@@ -65,3 +65,13 @@ func (repo *ApiRepo) GetApisByParentId(ctx context.Context, parentId int64, apiT
 		Find(&result).Error
 	return result, errorx.WithStack(err)
 }
+
+// GetApis return apis by ids
+func (repo *ApiRepo) GetApisWithTx(ctx context.Context, tx *gorm.DB, ids []int64, apiType constants.UserType) (result []*model.Api, err error) {
+	err = tx.WithContext(ctx).
+		Model(&model.Api{}).
+		Where("id in (?) and type = ?", ids, apiType).
+		Order("sort_order asc").
+		Find(&result).Error
+	return result, errorx.WithStack(err)
+}
