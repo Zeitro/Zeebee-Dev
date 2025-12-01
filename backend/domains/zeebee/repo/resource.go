@@ -56,3 +56,12 @@ func (repo *ResourceRepo) GetResource(ctx context.Context, id int64, apiType con
 		First(&result).Error
 	return result, errorx.WithStack(err)
 }
+
+// GetResourceByParentId get resources by parent id and api type
+func (repo *ResourceRepo) GetResourceByParentId(ctx context.Context, parentId int64, apiType constants.UserType) (result []*model.Resource, err error) {
+	err = repo.Client(ctx).
+		Where("parent_id = ? and type = ?", parentId, apiType).
+		Order("sort_order asc").
+		Find(&result).Error
+	return result, errorx.WithStack(err)
+}

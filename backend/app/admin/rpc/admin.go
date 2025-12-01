@@ -9,6 +9,7 @@ import (
 
 	apiServer "zeebee-backend/app/admin/rpc/internal/server/api"
 	resourceServer "zeebee-backend/app/admin/rpc/internal/server/resource"
+	roleServer "zeebee-backend/app/admin/rpc/internal/server/role"
 	userServer "zeebee-backend/app/admin/rpc/internal/server/user"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 
@@ -34,6 +35,7 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		admin.RegisterUserServer(grpcServer, userServer.NewUserServer(ctx))
 		admin.RegisterApiServer(grpcServer, apiServer.NewApiServer(ctx))
 		admin.RegisterResourceServer(grpcServer, resourceServer.NewResourceServer(ctx))
+		admin.RegisterRoleServer(grpcServer, roleServer.NewRoleServer(ctx))
 		if rpcConfig.Mode == service.DevMode || rpcConfig.Mode == service.TestMode {
 			reflection.Register(grpcServer)
 		}

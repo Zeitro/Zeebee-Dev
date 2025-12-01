@@ -47,6 +47,29 @@ func (l *ApiLogic) ApiTree(ctx context.Context, apiType constants.UserType) (tre
 	return
 }
 
+// DeleteApi delete api and its children recursively
+func (l *ApiLogic) DeleteApi(ctx context.Context, id int64, apiType constants.UserType) (err error) {
+	api, err := l.repos.ApiRepo.GetApi(ctx, id, apiType)
+	if err != nil {
+		return err
+	}
+	// get children and delete them
+	children, err := l.repos.ApiRepo.GetApisByParentId(ctx, api.Id, apiType)
+	if err != nil {
+		return err
+	}
+	for _, child := range children {
+		err := l.DeleteApi(ctx, child.Id, apiType)
+		if err != nil {
+			return err
+		}
+	}
+	// todo delete resource and api relation
+
+	_, err = l.repos.ApiRepo.DeleteByID(ctx, api.Id)
+	return
+}
+
 func (l *ApiLogic) buildTree(apis []*model.Api, parentId int64) (results []*ApiTree) {
 	results = slice.FilterMap[*model.Api, *ApiTree](apis, func(index int, item *model.Api) (*ApiTree, bool) {
 		if item.ParentId != parentId {

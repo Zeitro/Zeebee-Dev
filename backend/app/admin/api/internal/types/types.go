@@ -6,8 +6,19 @@ package types
 type EmptyResponse struct {
 }
 
-type PathIdRequest struct {
+type RoleDeleteRequest struct {
 	Id int64 `path:"id" validate:"required,gt=0"`
+}
+
+type RolePageFilter struct {
+	UserId         int64  `json:"user_id"`
+	OrganizationId int64  `json:"organization_id"`
+	Keyword        string `json:"keyword"`
+}
+
+type RolePageSort struct {
+	Column string `json:"column"`
+	Sort   string `json:"sort"`
 }
 
 type UserInfo struct {

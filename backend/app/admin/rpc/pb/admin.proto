@@ -326,3 +326,123 @@ service resource {
   rpc Detail(ResourceDetailRequest) returns(ResourceCreateResponse);
 }
 // =================== resource service end =================
+// ================= role service start =================
+message RoleEntity {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  string type = 4;
+  string status = 5;
+  string created_at = 6;
+  string updated_at = 7;
+  int64 organization_id = 8;
+}
+
+message RolePageRequest {
+  RolePageRequestData data = 1;
+}
+message RolePageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  RoleRequestFilter filter = 3;
+  RoleRequestSorter sorter = 4;
+}
+message RoleRequestFilter {
+  int64 user_id = 1;
+  string keyword = 2;
+  int64 organization_id = 3;
+}
+message RoleRequestSorter {
+  string column = 1;
+  string sort = 2;
+}
+
+message RolePageResponse {
+  RolePageResponseData data = 1;
+}
+
+message RolePageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated RoleEntity list = 5;
+}
+
+//  create
+message RoleCreateRequest {
+  RoleCreateRequestData data = 1;
+}
+message RoleCreateRequestData {
+  string name = 1;
+  string description = 2;
+  //  string type = 3;
+  string status = 4;
+  int64 user_id = 5;
+  int64 organization_id = 6;
+}
+message RoleCreateResponse {
+  RoleEntity data = 1;
+}
+//  update
+message RoleUpdateRequest {
+  RoleUpdateRequestData data = 1;
+}
+message RoleUpdateRequestData {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  //  string type = 4;
+  string status = 5;
+  int64 user_id = 6;
+  int64 organization_id = 7;
+}
+message RoleUpdateResponse {
+  RoleEntity data = 1;
+}
+//  delete
+message RoleDeleteRequest {
+  RoleDeleteRequestData data = 1;
+}
+message RoleDeleteRequestData {
+  int64 id = 1;
+  int64 user_id = 2;
+  int64 organization_id = 3;
+  //  string type = 4;
+}
+
+//  detail
+message RoleDetailRequest {
+  RoleDetailRequestData data = 1;
+}
+message RoleDetailRequestData {
+  int64 id = 1;
+  int64 user_id = 2;
+  int64 organization_id = 3;
+  //  string type = 4;
+}
+message RoleDetailResponse {
+  RoleEntity data = 1;
+}
+// update status
+message RoleUpdateStatusRequest {
+  RoleUpdateStatusRequestData data = 1;
+}
+message RoleUpdateStatusRequestData {
+  int64 id = 1;
+  string status = 2;
+  int64 user_id = 3;
+  int64 organization_id = 4;
+  //  string type = 5;
+}
+
+service role {
+  rpc Page(RolePageRequest) returns(RolePageResponse);
+  rpc Create(RoleCreateRequest) returns(RoleCreateResponse);
+  rpc Update(RoleUpdateRequest) returns(RoleUpdateResponse);
+  rpc Delete(RoleDeleteRequest) returns(EmptyResponse);
+  rpc Detail(RoleDetailRequest) returns(RoleDetailResponse);
+  rpc UpdateStatus(RoleUpdateStatusRequest) returns(EmptyResponse);
+}
+
+// ================== role service end =================
