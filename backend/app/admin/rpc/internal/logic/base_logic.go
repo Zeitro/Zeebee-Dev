@@ -16,6 +16,7 @@ type BaseLogic struct {
 	UserLogic     *logic.UserLogic
 	ApiLogic      *logic.ApiLogic
 	ResourceLogic *logic.ResourceLogic
+	RoleLogic     *logic.RoleLogic
 }
 
 func NewBaseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BaseLogic {
@@ -26,5 +27,6 @@ func NewBaseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BaseLogic {
 		UserLogic:     logic.NewUserLogic(svcCtx.AllRepos),
 		ApiLogic:      logic.NewApiLogic(svcCtx.AllRepos),
 		ResourceLogic: logic.NewResourceLogic(svcCtx.AllRepos),
+		RoleLogic:     logic.NewRoleLogic(svcCtx.AllRepos),
 	}
 }

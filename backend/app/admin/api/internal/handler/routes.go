@@ -8,6 +8,7 @@ import (
 
 	api "zeebee-backend/app/admin/api/internal/handler/api"
 	resource "zeebee-backend/app/admin/api/internal/handler/resource"
+	role "zeebee-backend/app/admin/api/internal/handler/role"
 	user "zeebee-backend/app/admin/api/internal/handler/user"
 	"zeebee-backend/app/admin/api/internal/svc"
 
@@ -87,6 +88,51 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/resource/tree",
 					Handler: resource.ResourceTreeHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// page
+					Method:  http.MethodGet,
+					Path:    "/role",
+					Handler: role.RolePageHandler(serverCtx),
+				},
+				{
+					// create
+					Method:  http.MethodPost,
+					Path:    "/role",
+					Handler: role.RoleCreateHandler(serverCtx),
+				},
+				{
+					// detail
+					Method:  http.MethodGet,
+					Path:    "/role/:id",
+					Handler: role.RoleDetailHandler(serverCtx),
+				},
+				{
+					// update
+					Method:  http.MethodPut,
+					Path:    "/role/:id",
+					Handler: role.RoleUpdateHandler(serverCtx),
+				},
+				{
+					// delete
+					Method:  http.MethodDelete,
+					Path:    "/role/:id",
+					Handler: role.RoleDeleteHandler(serverCtx),
+				},
+				{
+					// update status
+					Method:  http.MethodPatch,
+					Path:    "/role/:id/status",
+					Handler: role.RoleUpdateStatusHandler(serverCtx),
 				},
 			}...,
 		),

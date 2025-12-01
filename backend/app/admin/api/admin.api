@@ -8,6 +8,7 @@ info(
 import "desc/user.api"
 import "desc/api.api"
 import "desc/resource.api"
+import "desc/role.api"
 
 type (
 	EmptyRequest{
@@ -124,4 +125,40 @@ service admin-api {
 	delete /resource/:id (ResourceDeleteRequest) returns (EmptyResponse)
 }
 
-	// ============== resource end =============
+// ============== resource end =============
+// ============== role start ============
+@server(
+	desc: "admin-api service"
+	version: v1
+	group: role
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: role
+)
+service admin-api {
+	@doc "detail"
+	@handler RoleDetail
+	get /role/:id (PathIdRequest) returns (RoleEntity)
+
+	@doc "page"
+	@handler RolePage
+	get /role (RolePageRequest) returns (RolePageResponse)
+
+	@doc "create"
+	@handler RoleCreate
+	post /role (RoleCreateRequest) returns (RoleEntity)
+
+	@doc "update"
+	@handler RoleUpdate
+	put /role/:id (RoleUpdateRequest) returns (RoleEntity)
+
+	@doc "delete"
+	@handler RoleDelete
+	delete /role/:id (PathIdRequest) returns (EmptyResponse)
+
+	@doc "update status"
+	@handler RoleUpdateStatus
+	patch /role/:id/status (RoleUpdateStatusRequest) returns (EmptyResponse)
+}
+
+	// ============== role end =============

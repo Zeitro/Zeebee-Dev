@@ -49,6 +49,31 @@ func (l *ResourceLogic) ResourceTree(ctx context.Context, resourceType constants
 	return
 }
 
+// DeleteResource
+func (l *ResourceLogic) DeleteResource(ctx context.Context, id int64, resourceType constants.UserType) (err error) {
+	resource, err := l.repos.ResourceRepo.GetResource(ctx, id, resourceType)
+	if err != nil {
+		return
+	}
+	// get children and delete them
+	children, err := l.repos.ResourceRepo.GetResourceByParentId(ctx, resource.Id, resourceType)
+	if err != nil {
+		return err
+	}
+	for _, child := range children {
+		err := l.DeleteResource(ctx, child.Id, resourceType)
+		if err != nil {
+			return err
+		}
+	}
+	// todo delete resource and api relation
+
+	// todo delete resource and role relation
+
+	_, err = l.repos.ApiRepo.DeleteByID(ctx, resource.Id)
+	return
+}
+
 func (l *ResourceLogic) buildTree(resources []*model.Resource, parentId int64) (results []*ResourceTree) {
 	results = slice.FilterMap[*model.Resource, *ResourceTree](resources, func(index int, item *model.Resource) (*ResourceTree, bool) {
 		if item.ParentId != parentId {

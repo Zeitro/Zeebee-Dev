@@ -2,6 +2,8 @@ package constants
 
 import "zeebee-backend/common/enums"
 
+const AdminRoleName = "admin"
+
 type DataScope string
 
 var DataScopeName = "data_scope"

@@ -33,10 +33,20 @@ func (v OrganizationStatus) Validate() error {
 
 type OrganizationAndUserStatus string
 
+var OrganizationAndUserStatusName = "organization_and_user_status"
+
 const (
 	OrganizationAndUserStatusActive   OrganizationAndUserStatus = "Active"
-	OrganizationAndUserStatusInactive OrganizationAndUserStatus = "Inactive"
 	OrganizationAndUserStatusDisabled OrganizationAndUserStatus = "Disabled"
+)
+
+type OrganizationAndUserActivationStatus string
+
+var OrganizationAndUserActivationStatusName = "organization_and_user_activation_status"
+
+const (
+	OrganizationAndUserActivationStatusActivated    OrganizationAndUserActivationStatus = "Activated"
+	OrganizationAndUserActivationStatusNotActivated OrganizationAndUserActivationStatus = "Not Activated"
 )
 
 func init() {
@@ -70,4 +80,27 @@ func init() {
 			Value: string(OrganizationStatusInactive),
 		},
 	})
+	// register organization and user status
+	enums.Register(OrganizationAndUserStatusName, []enums.EnumOpt{
+		{
+			Label: string(OrganizationAndUserStatusActive),
+			Value: string(OrganizationAndUserStatusActive),
+		},
+		{
+			Label: string(OrganizationAndUserStatusDisabled),
+			Value: string(OrganizationAndUserStatusDisabled),
+		},
+	})
+	// register organization and user activation status
+	enums.Register(OrganizationAndUserActivationStatusName, []enums.EnumOpt{
+		{
+			Label: string(OrganizationAndUserActivationStatusActivated),
+			Value: string(OrganizationAndUserActivationStatusActivated),
+		},
+		{
+			Label: string(OrganizationAndUserActivationStatusNotActivated),
+			Value: string(OrganizationAndUserActivationStatusNotActivated),
+		},
+	})
+
 }

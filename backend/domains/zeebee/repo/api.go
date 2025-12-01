@@ -56,3 +56,12 @@ func (repo *ApiRepo) GetApi(ctx context.Context, id int64, apiType constants.Use
 		First(&result).Error
 	return result, errorx.WithStack(err)
 }
+
+// GetApisByParentId return apis by parent id
+func (repo *ApiRepo) GetApisByParentId(ctx context.Context, parentId int64, apiType constants.UserType) (result []*model.Api, err error) {
+	err = repo.Client(ctx).
+		Where("parent_id = ? and type = ?", parentId, apiType).
+		Order("sort_order asc").
+		Find(&result).Error
+	return result, errorx.WithStack(err)
+}

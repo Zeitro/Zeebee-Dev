@@ -853,9 +853,9 @@ message PropertyPageRequestData {
 
 message  PropertyPageRequestFilter{
   int64 user_id = 1;
-  string keyword = 3;
-  repeated string applicant = 5;
-  int64 organization_id = 6;
+  string keyword = 2;
+  repeated string applicant = 3;
+  int64 organization_id = 4;
 }
 
 message  PropertyPageRequestSorter {
