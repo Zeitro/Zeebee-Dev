@@ -12,20 +12,22 @@ type RoleAllResponse struct {
 }
 
 type RoleCreateRequest struct {
-	Name        string `json:"name" validate:"required,min=2,max=100,ne='admin'"`
-	Description string `json:"description" validate:"max=255"`
-	Status      string `json:"status" validate:"required,oneof=Active Inactive"`
+	Name        string  `json:"name" validate:"required,min=2,max=100,ne='admin'"`
+	Description string  `json:"description" validate:"max=255"`
+	Status      string  `json:"status" validate:"required,oneof=Active Inactive"`
+	ResourceIds []int64 `json:"resource_ids"`
 }
 
 type RoleEntity struct {
-	Id             int64  `json:"id"`
-	OrganizationId int64  `json:"organization_id"`
-	Name           string `json:"name"`
-	Description    string `json:"description"`
-	Type           string `json:"type"`
-	Status         string `json:"status"`
-	CreatedAt      string `json:"created_at"`
-	UpdatedAt      string `json:"updated_at"`
+	Id             int64             `json:"id"`
+	OrganizationId int64             `json:"organization_id"`
+	Name           string            `json:"name"`
+	Description    string            `json:"description"`
+	Type           string            `json:"type"`
+	Status         string            `json:"status"`
+	CreatedAt      string            `json:"created_at"`
+	UpdatedAt      string            `json:"updated_at"`
+	Resources      []*ResourceEntity `json:"resources"`
 }
 
 type RolePageRequest struct {
@@ -44,10 +46,11 @@ type RolePageResponse struct {
 }
 
 type RoleUpdateRequest struct {
-	Id          int64  `path:"id" validate:"required,gt=0"`
-	Name        string `json:"name" validate:"required,min=2,max=100,ne='admin'"`
-	Description string `json:"description" validate:"max=255"`
-	Status      string `json:"status" validate:"required,oneof=Active Inactive"`
+	Id          int64   `path:"id" validate:"required,gt=0"`
+	Name        string  `json:"name" validate:"required,min=2,max=100,ne='admin'"`
+	Description string  `json:"description" validate:"max=255"`
+	Status      string  `json:"status" validate:"required,oneof=Active Inactive"`
+	ResourceIds []int64 `json:"resource_ids"`
 }
 
 type RoleUpdateStatusRequest struct {

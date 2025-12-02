@@ -57,6 +57,7 @@ type (
 	RoleAllRequest                    = admin.RoleAllRequest
 	RoleAllRequestData                = admin.RoleAllRequestData
 	RoleAllResponse                   = admin.RoleAllResponse
+	RoleAndResourceRelationEntity     = admin.RoleAndResourceRelationEntity
 	RoleCreateRequest                 = admin.RoleCreateRequest
 	RoleCreateRequestData             = admin.RoleCreateRequestData
 	RoleCreateResponse                = admin.RoleCreateResponse

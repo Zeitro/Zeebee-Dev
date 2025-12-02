@@ -121,3 +121,13 @@ func (repo *ResourceRepo) UpdateApisWithTx(ctx context.Context, tx *gorm.DB, res
 	err = tx.WithContext(ctx).Model(resource).Association("Apis").Replace(apis)
 	return errorx.WithStack(err)
 }
+
+// GetResourcesWithTx get resources with tx
+func (repo *ResourceRepo) GetResourcesWithTx(ctx context.Context, tx *gorm.DB, ids []int64, apiType constants.UserType) (result []*model.Resource, err error) {
+	err = tx.WithContext(ctx).
+		Model(&model.Resource{}).
+		Where("id in (?) and type = ?", ids, apiType).
+		Order("sort_order asc").
+		Find(&result).Error
+	return result, errorx.WithStack(err)
+}
