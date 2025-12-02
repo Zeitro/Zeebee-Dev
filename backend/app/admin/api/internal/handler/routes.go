@@ -174,6 +174,36 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
 				{
+					// page
+					Method:  http.MethodGet,
+					Path:    "/user",
+					Handler: user.UserPageHandler(serverCtx),
+				},
+				{
+					// create
+					Method:  http.MethodPost,
+					Path:    "/user",
+					Handler: user.UserCreateHandler(serverCtx),
+				},
+				{
+					// update
+					Method:  http.MethodPut,
+					Path:    "/user/:id",
+					Handler: user.UserUpdateHandler(serverCtx),
+				},
+				{
+					// delete
+					Method:  http.MethodDelete,
+					Path:    "/user/:id",
+					Handler: user.UserDeleteHandler(serverCtx),
+				},
+				{
+					// update status
+					Method:  http.MethodPatch,
+					Path:    "/user/:id/status",
+					Handler: user.UserUpdateStatusHandler(serverCtx),
+				},
+				{
 					// info
 					Method:  http.MethodGet,
 					Path:    "/user/info",

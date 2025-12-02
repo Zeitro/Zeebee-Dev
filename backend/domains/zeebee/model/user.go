@@ -14,6 +14,7 @@ type User struct {
 	MidName               string               `json:"mid_name" gorm:"column:mid_name;varchar(100);not null;default:''"`
 	LastName              string               `json:"last_name" gorm:"column:last_name;varchar(100);not null;default:''"`
 	FullName              string               `json:"full_name" gorm:"column:full_name;varchar(255);not null;default:''"`
+	Phone                 string               `json:"phone" gorm:"column:phone;varchar(20);not null;default:''"`
 	DefaultOrganizationId int64                `json:"default_organization_id" gorm:"column:default_organization_id;default:0"`
 	// relationships
 	Organizations []*Organization `json:"borrower_organizations" gorm:"many2many:organization_and_users;joinForeignKey:user_id;joinReferences:organization_id;"`

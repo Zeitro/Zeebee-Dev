@@ -79,14 +79,34 @@ type (
 	RoleUpdateStatusRequest           = admin.RoleUpdateStatusRequest
 	RoleUpdateStatusRequestData       = admin.RoleUpdateStatusRequestData
 	StringSliceResponse               = admin.StringSliceResponse
+	UserCreateRequest                 = admin.UserCreateRequest
+	UserCreateRequestData             = admin.UserCreateRequestData
+	UserCreateResponse                = admin.UserCreateResponse
+	UserDeleteRequest                 = admin.UserDeleteRequest
+	UserDeleteRequestData             = admin.UserDeleteRequestData
+	UserDetailRequest                 = admin.UserDetailRequest
+	UserDetailRequestData             = admin.UserDetailRequestData
+	UserDetailResponse                = admin.UserDetailResponse
+	UserEntity                        = admin.UserEntity
 	UserInfoRequest                   = admin.UserInfoRequest
 	UserInfoRequestData               = admin.UserInfoRequestData
 	UserLoginRequest                  = admin.UserLoginRequest
 	UserLoginRequestData              = admin.UserLoginRequestData
 	UserLoginResponse                 = admin.UserLoginResponse
 	UserLoginResponseData             = admin.UserLoginResponseData
+	UserPageRequest                   = admin.UserPageRequest
+	UserPageRequestData               = admin.UserPageRequestData
+	UserPageRequestFilter             = admin.UserPageRequestFilter
+	UserPageRequestSorter             = admin.UserPageRequestSorter
+	UserPageResponse                  = admin.UserPageResponse
+	UserPageResponseData              = admin.UserPageResponseData
 	UserProfileEditRequest            = admin.UserProfileEditRequest
 	UserProfileEditRequestData        = admin.UserProfileEditRequestData
+	UserSwitchStatusRequest           = admin.UserSwitchStatusRequest
+	UserSwitchStatusRequestData       = admin.UserSwitchStatusRequestData
+	UserUpdateRequest                 = admin.UserUpdateRequest
+	UserUpdateRequestData             = admin.UserUpdateRequestData
+	UserUpdateResponse                = admin.UserUpdateResponse
 	UserinfoResponse                  = admin.UserinfoResponse
 	UserinfoResponseData              = admin.UserinfoResponseData
 	UserinfoResponseData_Organization = admin.UserinfoResponseData_Organization
@@ -98,6 +118,13 @@ type (
 		UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
 		ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*ResetPasswordResponse, error)
 		EditProfile(ctx context.Context, in *UserProfileEditRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
+		// admin user
+		UserPage(ctx context.Context, in *UserPageRequest, opts ...grpc.CallOption) (*UserPageResponse, error)
+		UserCreate(ctx context.Context, in *UserCreateRequest, opts ...grpc.CallOption) (*UserCreateResponse, error)
+		UserUpdate(ctx context.Context, in *UserUpdateRequest, opts ...grpc.CallOption) (*UserUpdateResponse, error)
+		UserDelete(ctx context.Context, in *UserDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+		UserDetail(ctx context.Context, in *UserDetailRequest, opts ...grpc.CallOption) (*UserDetailResponse, error)
+		UserSwitchStatus(ctx context.Context, in *UserSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	}
 
 	defaultUser struct {
@@ -135,4 +162,35 @@ func (m *defaultUser) ResetPassword(ctx context.Context, in *ResetPasswordReques
 func (m *defaultUser) EditProfile(ctx context.Context, in *UserProfileEditRequest, opts ...grpc.CallOption) (*UserinfoResponse, error) {
 	client := admin.NewUserClient(m.cli.Conn())
 	return client.EditProfile(ctx, in, opts...)
+}
+
+// admin user
+func (m *defaultUser) UserPage(ctx context.Context, in *UserPageRequest, opts ...grpc.CallOption) (*UserPageResponse, error) {
+	client := admin.NewUserClient(m.cli.Conn())
+	return client.UserPage(ctx, in, opts...)
+}
+
+func (m *defaultUser) UserCreate(ctx context.Context, in *UserCreateRequest, opts ...grpc.CallOption) (*UserCreateResponse, error) {
+	client := admin.NewUserClient(m.cli.Conn())
+	return client.UserCreate(ctx, in, opts...)
+}
+
+func (m *defaultUser) UserUpdate(ctx context.Context, in *UserUpdateRequest, opts ...grpc.CallOption) (*UserUpdateResponse, error) {
+	client := admin.NewUserClient(m.cli.Conn())
+	return client.UserUpdate(ctx, in, opts...)
+}
+
+func (m *defaultUser) UserDelete(ctx context.Context, in *UserDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	client := admin.NewUserClient(m.cli.Conn())
+	return client.UserDelete(ctx, in, opts...)
+}
+
+func (m *defaultUser) UserDetail(ctx context.Context, in *UserDetailRequest, opts ...grpc.CallOption) (*UserDetailResponse, error) {
+	client := admin.NewUserClient(m.cli.Conn())
+	return client.UserDetail(ctx, in, opts...)
+}
+
+func (m *defaultUser) UserSwitchStatus(ctx context.Context, in *UserSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	client := admin.NewUserClient(m.cli.Conn())
+	return client.UserSwitchStatus(ctx, in, opts...)
 }

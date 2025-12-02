@@ -21,6 +21,22 @@ message AddressEntry{
 }
 
 // ================= user service start ==================
+message UserEntity {
+  int64 id = 1;
+  string email = 2;
+  string status = 3;
+  string type = 4;
+  string first_name = 5;
+  string mid_name = 6;
+  string last_name = 7;
+  string full_name = 8;
+  int64 default_organization_id = 9;
+  string created_at = 10;
+  string updated_at = 11;
+  string pivot_organization_status = 12;
+  string pivot_organization_activation_status = 13;
+}
+
 // login
 message UserLoginRequest {
   UserLoginRequestData data = 1;
@@ -120,6 +136,105 @@ message UserProfileEditRequestData {
   string first_name = 2;
   string last_name = 3;
 }
+// admin user
+// page
+message UserPageRequest {
+  UserPageRequestData data = 1;
+}
+message UserPageResponse {
+  UserPageResponseData data = 1;
+}
+message UserPageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  UserPageRequestFilter filter = 3;
+  UserPageRequestSorter sorter = 4;
+
+}
+message UserPageRequestFilter {
+  int64 user_id = 1;
+  string keyword = 2;
+  int64 organization_id = 3;
+}
+
+message UserPageRequestSorter {
+  string column = 1;
+  string sort = 2;
+}
+message UserPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated UserEntity list = 5;
+}
+// create
+message UserCreateRequest {
+  UserCreateRequestData data = 1;
+}
+message UserCreateResponse {
+  UserEntity data = 1;
+}
+message UserCreateRequestData {
+  string email = 1;
+  string password = 2;
+  string full_name = 3;
+  string phone = 4;
+  repeated int64 role_ids = 5;
+  int64 organization_id = 6;
+  int64 user_id = 7;
+}
+// update
+message UserUpdateRequest {
+  UserUpdateRequestData data = 1;
+}
+message UserUpdateResponse {
+  UserEntity data = 1;
+}
+message UserUpdateRequestData {
+  int64 id = 1;
+  string email = 2;
+  string password = 3;
+  string full_name = 4;
+  string phone = 5;
+  repeated int64 role_ids = 6;
+  int64 organization_id = 7;
+  int64 user_id = 8;
+}
+// delete
+message UserDeleteRequest {
+  UserDeleteRequestData data = 1;
+}
+
+message UserDeleteRequestData {
+  int64 id = 1;
+  int64 user_id = 2;
+  int64 organization_id = 3;
+}
+
+// detail
+message UserDetailRequest {
+  UserDetailRequestData data = 1;
+}
+message UserDetailResponse {
+  UserEntity data = 1;
+}
+message UserDetailRequestData {
+  int64 id = 1;
+  int64 user_id = 2;
+  int64 organization_id = 3;
+}
+// switch status
+message UserSwitchStatusRequest {
+  UserSwitchStatusRequestData data = 1;
+}
+message UserSwitchStatusRequestData {
+  int64 id = 1;
+  int64 user_id = 2;
+  int64 organization_id = 3;
+  string status = 4;
+}
+
 
 service user {
   // user
@@ -128,6 +243,14 @@ service user {
   rpc UserInfo(UserInfoRequest) returns(UserinfoResponse);
   rpc ResetPassword(ResetPasswordRequest) returns(ResetPasswordResponse);
   rpc EditProfile(UserProfileEditRequest) returns(UserinfoResponse);
+
+  // admin user
+  rpc UserPage(UserPageRequest) returns(UserPageResponse);
+  rpc UserCreate(UserCreateRequest) returns(UserCreateResponse);
+  rpc UserUpdate(UserUpdateRequest) returns(UserUpdateResponse);
+  rpc UserDelete(UserDeleteRequest) returns(EmptyResponse);
+  rpc UserDetail(UserDetailRequest) returns(UserDetailResponse);
+  rpc UserSwitchStatus(UserSwitchStatusRequest) returns(EmptyResponse);
 }
 // ================= user service end =================
 
