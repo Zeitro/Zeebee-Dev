@@ -39,7 +39,7 @@ RpcConf:
   EmailConf:
     Host: smtp.gmail.com
     Port: 587
-    Password: ckvnllwvmxsjnslt
+    Password: zovzdtzzwexjenrn
     Username: info@zeebeeloans.com
 
   JwtAuth:
