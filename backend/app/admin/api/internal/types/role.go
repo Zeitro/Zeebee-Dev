@@ -3,10 +3,6 @@
 
 package types
 
-type PathIdRequest struct {
-	Id int64 `path:"id" validate:"required,gt=0"`
-}
-
 type RoleAllResponse struct {
 	List []*RoleEntity `json:"list"`
 }

@@ -23,6 +23,10 @@ type EmptyRequest struct {
 type EmptyResponse struct {
 }
 
+type PathIdRequest struct {
+	Id int64 `path:"id" validate:"required,gt=0"`
+}
+
 type ResourceTreeEntity struct {
 	Id           int64                 `json:"id"`
 	ParentId     int64                 `json:"parent_id"`
@@ -53,12 +57,29 @@ type RolePageSort struct {
 	Sort   string `json:"sort"`
 }
 
+type UserEntity struct {
+	Id                                int64  `json:"id"`
+	Email                             string `json:"email"`
+	Status                            string `json:"status"`
+	Type                              string `json:"type"`
+	FirstName                         string `json:"first_name"`
+	MidName                           string `json:"mid_name"`
+	LastName                          string `json:"last_name"`
+	FullName                          string `json:"full_name"`
+	DefaultOrganizationId             int64  `json:"default_organization_id"`
+	CreatedAt                         string `json:"created_at"`
+	UpdatedAt                         string `json:"updated_at"`
+	PivotOrganizationStatus           string `json:"pivot_organization_status"`
+	PivotOrganizationActivationStatus string `json:"pivot_organization_activation_status"`
+}
+
 type UserInfo struct {
 	Id               int64                         `json:"id"`
 	Email            string                        `json:"email"`
 	FirstName        string                        `json:"first_name"`
 	LastName         string                        `json:"last_name"`
 	FullName         string                        `json:"full_name"`
+	Phone            string                        `json:"phone"`
 	Status           string                        `json:"status"`
 	OrganizationId   int64                         `json:"organization_id"`
 	OrganizationName string                        `json:"organization_name"`
@@ -70,4 +91,13 @@ type UserInfoOrganizationEntity struct {
 	Name      string `json:"name"`
 	Status    string `json:"status"`
 	IsDefault bool   `json:"is_default"`
+}
+
+type UserPageRequestFilter struct {
+	Keyword string `json:"keyword,optional"`
+}
+
+type UserPageRequestSorter struct {
+	Column string `json:"column,optional"`
+	Sort   string `json:"sort,optional"`
 }

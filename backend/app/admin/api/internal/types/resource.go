@@ -42,7 +42,7 @@ type ResourceEntity struct {
 	CreatedAt          string       `json:"created_at"`
 	UpdatedAt          string       `json:"updated_at"`
 	Apis               []*ApiEntity `json:"apis,omitempty"`
-	PivotRoleDataScope string       `json:"pivot_role_data_scope"`
+	PivotRoleDataScope string       `json:"pivot_role_data_scope,omitempty"`
 }
 
 type ResourceTreeRequest struct {
