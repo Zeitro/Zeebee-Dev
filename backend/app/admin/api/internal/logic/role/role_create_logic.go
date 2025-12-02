@@ -3,12 +3,14 @@ package role
 import (
 	"context"
 
+	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/utils"
 )
@@ -37,6 +39,14 @@ func (l *RoleCreateLogic) RoleCreate(req *types.RoleCreateRequest) (resp *types.
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
+
+	relations := slice.Map[int64, *admin.RoleAndResourceRelationEntity](req.ResourceIds, func(index int, item int64) *admin.RoleAndResourceRelationEntity {
+		return &admin.RoleAndResourceRelationEntity{
+			ResourceId: item,
+			DataScope:  string(constants.DataScopeAll),
+		}
+	})
+	rpcReq.Data.RoleAndResources = relations
 
 	claim, err := utils.GetUserClaimFromCtx(l.ctx)
 	if err != nil {

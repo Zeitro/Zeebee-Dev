@@ -71,6 +71,7 @@ func (repo *RoleRepo) GetRole(ctx context.Context, id int64, organizationId int6
 		Where("id = ?", id).
 		Where("organization_id = ?", organizationId).
 		Where("type = ?", roleType).
+		Preload("Resources").
 		First(&result).Error
 	return result, errorx.WithStack(err)
 }

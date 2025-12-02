@@ -35,9 +35,28 @@ type ResourceTree struct {
 	Icon         string          `json:"icon"`
 	Tag          string          `json:"tag"`
 	SortOrder    int32           `json:"sort_order"`
+	IsShow       bool            `json:"is_show"`
 	CreatedAt    string          `json:"created_at"`
 	UpdatedAt    string          `json:"updated_at"`
 	Children     []*ResourceTree `json:"children,omitempty"`
+}
+
+type ResourceWithPivot struct {
+	Id                 int64               `json:"id"`
+	ParentId           int64               `json:"parent_id"`
+	Name               string              `json:"name"`
+	Path               string              `json:"path"`
+	ResourceType       string              `json:"resource_type"`
+	Status             string              `json:"status"`
+	Description        string              `json:"description"`
+	Type               string              `json:"type"`
+	Icon               string              `json:"icon"`
+	Tag                string              `json:"tag"`
+	SortOrder          int32               `json:"sort_order"`
+	IsShow             bool                `json:"is_show"`
+	PivotRoleDataScope constants.DataScope `json:"pivot_role_data_scope"`
+	CreatedAt          string              `json:"created_at"`
+	UpdatedAt          string              `json:"updated_at"`
 }
 
 func (l *ResourceLogic) ResourceTree(ctx context.Context, resourceType constants.UserType) (trees []*ResourceTree, err error) {

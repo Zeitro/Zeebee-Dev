@@ -10,9 +10,10 @@ type Role struct {
 	Status         constants.CommonStatus `gorm:"column:status;type:varchar(20);default:'Active'" json:"status"`
 	Description    string                 `gorm:"column:description;type:varchar(255);default:''" json:"description"`
 	//  relationships
-	Resources    []*Resource   `json:"resources" gorm:"many2many:role_and_resources;joinForeignKey:role_id;joinReferences:resource_id"`
-	Users        []*User       `json:"users" gorm:"many2many:user_and_roles;joinForeignKey:role_id;joinReferences:user_id"`
-	Organization *Organization `json:"organization" gorm:"foreignKey:OrganizationId"`
+	Resources        []*Resource        `json:"resources" gorm:"many2many:role_and_resources;joinForeignKey:role_id;joinReferences:resource_id"`
+	Users            []*User            `json:"users" gorm:"many2many:user_and_roles;joinForeignKey:role_id;joinReferences:user_id"`
+	Organization     *Organization      `json:"organization" gorm:"foreignKey:OrganizationId"`
+	RoleAndResources []*RoleAndResource `json:"role_and_resources" gorm:"-"`
 }
 
 func (Role) TableName() string {
@@ -22,4 +23,5 @@ func (m *Role) RemoveRelationships() {
 	m.Resources = nil
 	m.Users = nil
 	m.Organization = nil
+	m.RoleAndResources = nil
 }

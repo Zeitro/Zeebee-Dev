@@ -23,6 +23,7 @@ type AllRepos struct {
 	ApiRepo                 *ApiRepo
 	ResourceRepo            *ResourceRepo
 	RoleRepo                *RoleRepo
+	RoleAndResourceRepo     *RoleAndResourceRepo
 }
 
 func NewAllRepos(db *gorm.DB) *AllRepos {
@@ -47,5 +48,6 @@ func NewAllRepos(db *gorm.DB) *AllRepos {
 		ApiRepo:                 NewApiRepo(db),
 		ResourceRepo:            NewResourceRepo(db),
 		RoleRepo:                NewRoleRepo(db),
+		RoleAndResourceRepo:     NewRoleAndResourceRepo(db),
 	}
 }

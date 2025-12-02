@@ -31,3 +31,14 @@ func (repo *RoleAndResourceRepo) GetRelation(ctx context.Context, roleId int64, 
 	}
 	return res, nil
 }
+
+// GetRoleRelations get role relations
+func (repo *RoleAndResourceRepo) GetRoleRelationsWithTx(ctx context.Context, tx *gorm.DB, roleId int64) (results []*model.RoleAndResource, err error) {
+	err = tx.WithContext(ctx).Model(&model.RoleAndResource{}).
+		Where("role_id = ?", roleId).
+		Find(&results).Error
+	if err != nil {
+		return nil, errorx.WithStack(err)
+	}
+	return results, nil
+}
