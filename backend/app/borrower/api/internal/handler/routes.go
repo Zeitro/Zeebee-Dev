@@ -275,7 +275,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					// update pending status
-					Method:  http.MethodPut,
+					Method:  http.MethodPatch,
 					Path:    "/loan/:id/pending_status",
 					Handler: loan.UpdatePendingStatusHandler(serverCtx),
 				},
