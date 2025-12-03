@@ -42,6 +42,7 @@ type UserPageEntity struct {
 	CreatedAt               time.Time                           `json:"created_at"`
 	UpdatedAt               time.Time                           `json:"updated_at"`
 	PivotOrganizationStatus constants.OrganizationAndUserStatus `json:"pivot_organization_status"`
+	Roles                   []*model.Role                       `json:"roles" gorm:"-"`
 }
 
 type UserRepo struct {
@@ -103,6 +104,14 @@ func (repo *UserRepo) Page(ctx context.Context, pageReq *UserPageRequest) (page 
 		Limit:       pageReq.Limit,
 		CountColumn: fmt.Sprintf("%s.id", userTable),
 	})
+	roleRepo := NewRoleRepo(repo.BaseRepo.Client(ctx))
+	for i, entity := range page.List {
+		roles, err := roleRepo.GetUserRoles(ctx, entity.Id, filter.OrganizationId)
+		if err != nil {
+			return page, err
+		}
+		page.List[i].Roles = roles
+	}
 
 	return page, errorx.WithStack(err)
 }

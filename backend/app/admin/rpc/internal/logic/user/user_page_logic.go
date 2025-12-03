@@ -43,7 +43,7 @@ func (l *UserPageLogic) UserPage(in *admin.UserPageRequest) (resp *admin.UserPag
 		Filter: &repo.UserPageRequestFilter{},
 		Sorter: &repo.UserPageRequestSorter{},
 	}
-	err = copier.CopyWithOption(pageReq, in, copier.Option{
+	err = copier.CopyWithOption(pageReq, in.Data, copier.Option{
 		CaseSensitive: true,
 		DeepCopy:      true,
 	})
