@@ -7,11 +7,15 @@ type UserCreateRequest struct {
 	Email    string  `json:"email" validate:"required,email"`
 	Password string  `json:"password" validate:"required,min=8,max=32,password"`
 	FullName string  `json:"full_name" validate:"required,min=2,max=200"`
-	Phone    string  `json:"phone" validate:"required,min=2,max=20"`
+	Phone    string  `json:"phone" validate:"required,min=6,max=20"`
 	RoleIds  []int64 `json:"role_ids,optional"`
 }
 
 type UserCreateResponse struct {
+	UserEntity
+}
+
+type UserDetailResponse struct {
 	UserEntity
 }
 
@@ -67,20 +71,19 @@ type UserResetPasswordRequest struct {
 	Code             string `json:"code" validate:"required,len=10"`
 }
 
+type UserSwitchStatusRequest struct {
+	Id     int64  `path:"id" validate:"required"`
+	Status string `json:"status" validate:"required,oneof=Active Disabled"`
+}
+
 type UserUpdateRequest struct {
 	Id       int64   `path:"id" validate:"required"`
-	Email    string  `json:"email" validate:"required,email"`
 	FullName string  `json:"full_name" validate:"required,min=2,max=200"`
-	Phone    string  `json:"phone" validate:"required,min=2,max=20"`
-	Password string  `json:"password,optional"`
+	Phone    string  `json:"phone" validate:"required,min=6,max=20"`
+	Password string  `json:"password,optional" validate:"omitempty,password"`
 	RoleIds  []int64 `json:"role_ids,optional"`
 }
 
 type UserUpdateResponse struct {
 	UserEntity
-}
-
-type UserUpdateStatusRequest struct {
-	Id     int64  `path:"id" validate:"required"`
-	Status string `json:"status" validate:"required,oneof=Active Disabled"`
 }

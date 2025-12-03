@@ -186,6 +186,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: user.UserCreateHandler(serverCtx),
 				},
 				{
+					// detail
+					Method:  http.MethodGet,
+					Path:    "/user/:id",
+					Handler: user.UserDetailHandler(serverCtx),
+				},
+				{
 					// update
 					Method:  http.MethodPut,
 					Path:    "/user/:id",
@@ -198,10 +204,10 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: user.UserDeleteHandler(serverCtx),
 				},
 				{
-					// update status
+					// switch status
 					Method:  http.MethodPatch,
 					Path:    "/user/:id/status",
-					Handler: user.UserUpdateStatusHandler(serverCtx),
+					Handler: user.UserSwitchStatusHandler(serverCtx),
 				},
 				{
 					// info

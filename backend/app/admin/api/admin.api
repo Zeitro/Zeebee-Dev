@@ -65,6 +65,10 @@ service admin-api {
 	@handler UserPage
 	get /user (UserPageRequest) returns (UserPageResponse)
 
+	@doc "detail"
+	@handler UserDetail
+	get /user/:id (PathIdRequest) returns (UserDetailResponse)
+
 	@doc "create"
 	@handler UserCreate
 	post /user (UserCreateRequest) returns (UserCreateResponse)
@@ -77,9 +81,9 @@ service admin-api {
 	@handler UserDelete
 	delete /user/:id (PathIdRequest) returns (EmptyResponse)
 
-	@doc "update status"
-	@handler UserUpdateStatus
-	patch /user/:id/status (UserUpdateStatusRequest) returns (EmptyResponse)
+	@doc "switch status"
+	@handler UserSwitchStatus
+	patch /user/:id/status (UserSwitchStatusRequest) returns (EmptyResponse)
 }
 
 // ============== user end =============

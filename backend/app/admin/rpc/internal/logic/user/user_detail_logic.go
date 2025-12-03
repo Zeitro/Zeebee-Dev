@@ -3,8 +3,12 @@ package userlogic
 import (
 	"context"
 
+	"github.com/jinzhu/copier"
+
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/common/constants"
+	"zeebee-backend/common/copierx"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -31,7 +35,29 @@ func (l *UserDetailLogic) UserDetail(in *admin.UserDetailRequest) (resp *admin.U
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	// todo: add your logic here and delete this line
+	user, err := l.svcCtx.UserRepo.GetOrganizationUser(l.ctx, in.Data.Id, in.Data.OrganizationId, constants.UserTypeAdmin)
+	if err != nil {
+		return nil, err
+	}
+	userEntity := &admin.UserEntity{}
+	err = copier.CopyWithOption(userEntity, user, copier.Option{
+		DeepCopy:      true,
+		CaseSensitive: true,
+		Converters: []copier.TypeConverter{
+			copierx.TimeToRFC3339Str(),
+		},
+	})
+	if err != nil {
+		return nil, errorx.GetFailedTransRespErr(err)
+	}
 
-	return &admin.UserDetailResponse{}, nil
+	relation, err := l.svcCtx.OrganizationAndUserRepo.GetRelation(l.ctx, in.Data.OrganizationId, in.Data.Id)
+	if err != nil {
+		return nil, err
+	}
+	userEntity.PivotOrganizationStatus = string(relation.Status)
+
+	return &admin.UserDetailResponse{
+		Data: userEntity,
+	}, nil
 }

@@ -34,7 +34,7 @@ message UserEntity {
   string created_at = 10;
   string updated_at = 11;
   string pivot_organization_status = 12;
-  string pivot_organization_activation_status = 13;
+  repeated RoleEntity roles = 13;
 }
 
 // login
@@ -193,7 +193,6 @@ message UserUpdateResponse {
 }
 message UserUpdateRequestData {
   int64 id = 1;
-  string email = 2;
   string password = 3;
   string full_name = 4;
   string phone = 5;

@@ -3142,6 +3142,76 @@
       }
     },
     "/api/v1/user/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "user"
+        ],
+        "summary": "detail",
+        "operationId": "userUserDetail",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "created_at": {
+                  "type": "string"
+                },
+                "default_organization_id": {
+                  "type": "integer"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "first_name": {
+                  "type": "string"
+                },
+                "full_name": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "last_name": {
+                  "type": "string"
+                },
+                "mid_name": {
+                  "type": "string"
+                },
+                "pivot_organization_activation_status": {
+                  "type": "string"
+                },
+                "pivot_organization_status": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "updated_at": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
       "put": {
         "consumes": [
           "application/json"
@@ -3171,14 +3241,10 @@
             "schema": {
               "type": "object",
               "required": [
-                "email",
                 "full_name",
                 "phone"
               ],
               "properties": {
-                "email": {
-                  "type": "string"
-                },
                 "full_name": {
                   "type": "string"
                 },
@@ -3295,8 +3361,8 @@
         "tags": [
           "user"
         ],
-        "summary": "update status",
-        "operationId": "userUserUpdateStatus",
+        "summary": "switch status",
+        "operationId": "userUserSwitchStatus",
         "parameters": [
           {
             "type": "integer",
@@ -3332,7 +3398,7 @@
       }
     }
   },
-  "x-date": "2025-12-02 15:15:12",
+  "x-date": "2025-12-03 14:40:19",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

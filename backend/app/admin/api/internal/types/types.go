@@ -58,19 +58,19 @@ type RolePageSort struct {
 }
 
 type UserEntity struct {
-	Id                                int64  `json:"id"`
-	Email                             string `json:"email"`
-	Status                            string `json:"status"`
-	Type                              string `json:"type"`
-	FirstName                         string `json:"first_name"`
-	MidName                           string `json:"mid_name"`
-	LastName                          string `json:"last_name"`
-	FullName                          string `json:"full_name"`
-	DefaultOrganizationId             int64  `json:"default_organization_id"`
-	CreatedAt                         string `json:"created_at"`
-	UpdatedAt                         string `json:"updated_at"`
-	PivotOrganizationStatus           string `json:"pivot_organization_status"`
-	PivotOrganizationActivationStatus string `json:"pivot_organization_activation_status"`
+	Id                      int64         `json:"id"`
+	Email                   string        `json:"email"`
+	Status                  string        `json:"status"`
+	Type                    string        `json:"type"`
+	FirstName               string        `json:"first_name"`
+	MidName                 string        `json:"mid_name"`
+	LastName                string        `json:"last_name"`
+	FullName                string        `json:"full_name"`
+	DefaultOrganizationId   int64         `json:"default_organization_id"`
+	CreatedAt               string        `json:"created_at"`
+	UpdatedAt               string        `json:"updated_at"`
+	PivotOrganizationStatus string        `json:"pivot_organization_status,omitempty"`
+	Roles                   []*RoleEntity `json:"roles"`
 }
 
 type UserInfo struct {

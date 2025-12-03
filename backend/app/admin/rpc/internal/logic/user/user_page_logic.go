@@ -3,8 +3,14 @@ package userlogic
 import (
 	"context"
 
+	"github.com/jinzhu/copier"
+
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/common/constants"
+	"zeebee-backend/common/copierx"
+	"zeebee-backend/common/timex"
+	"zeebee-backend/domains/zeebee/repo"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -32,7 +38,35 @@ func (l *UserPageLogic) UserPage(in *admin.UserPageRequest) (resp *admin.UserPag
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	// todo: add your logic here and delete this line
-
-	return &admin.UserPageResponse{}, nil
+	resultData := &admin.UserPageResponseData{}
+	pageReq := &repo.UserPageRequest{
+		Filter: &repo.UserPageRequestFilter{},
+		Sorter: &repo.UserPageRequestSorter{},
+	}
+	err = copier.CopyWithOption(pageReq, in, copier.Option{
+		CaseSensitive: true,
+		DeepCopy:      true,
+	})
+	if err != nil {
+		return nil, errorx.GetFailedTransRespErr(err)
+	}
+	pageReq.Filter.UserType = constants.UserTypeAdmin
+	page, err := l.svcCtx.UserRepo.Page(l.ctx, pageReq)
+	if err != nil {
+		return nil, err
+	}
+	err = copier.CopyWithOption(resultData, page, copier.Option{
+		CaseSensitive: true,
+		DeepCopy:      true,
+		Converters: []copier.TypeConverter{
+			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
+			copierx.TimeToRFC3339Str(),
+		},
+	})
+	if err != nil {
+		return nil, errorx.GetFailedTransRespErr(err)
+	}
+	return &admin.UserPageResponse{
+		Data: resultData,
+	}, nil
 }

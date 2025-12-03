@@ -3,10 +3,12 @@ package user
 import (
 	"context"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/common/utils"
 )
 
 type UserDeleteLogic struct {
@@ -25,7 +27,23 @@ func NewUserDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserDe
 }
 
 func (l *UserDeleteLogic) UserDelete(req *types.PathIdRequest) (resp *types.EmptyResponse, err error) {
-	// todo: add your logic here and delete this line
+	resp = &types.EmptyResponse{}
+	rpcReq := &admin.UserDeleteRequest{
+		Data: &admin.UserDeleteRequestData{},
+	}
+	rpcReq.Data.Id = req.Id
 
-	return
+	claim, err := utils.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	rpcReq.Data.UserId = claim.UserId
+	rpcReq.Data.OrganizationId = claim.OrganizationId
+
+	_, err = l.svcCtx.UserRpcClient.UserDelete(l.ctx, rpcReq)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, err
 }
