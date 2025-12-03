@@ -215,22 +215,22 @@ func (x *AddressEntry) GetZipCode() string {
 
 // ================= user service start ==================
 type UserEntity struct {
-	state                             protoimpl.MessageState `protogen:"open.v1"`
-	Id                                int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Email                             string                 `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
-	Status                            string                 `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"`
-	Type                              string                 `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
-	FirstName                         string                 `protobuf:"bytes,5,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
-	MidName                           string                 `protobuf:"bytes,6,opt,name=mid_name,json=midName,proto3" json:"mid_name,omitempty"`
-	LastName                          string                 `protobuf:"bytes,7,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
-	FullName                          string                 `protobuf:"bytes,8,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
-	DefaultOrganizationId             int64                  `protobuf:"varint,9,opt,name=default_organization_id,json=defaultOrganizationId,proto3" json:"default_organization_id,omitempty"`
-	CreatedAt                         string                 `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt                         string                 `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	PivotOrganizationStatus           string                 `protobuf:"bytes,12,opt,name=pivot_organization_status,json=pivotOrganizationStatus,proto3" json:"pivot_organization_status,omitempty"`
-	PivotOrganizationActivationStatus string                 `protobuf:"bytes,13,opt,name=pivot_organization_activation_status,json=pivotOrganizationActivationStatus,proto3" json:"pivot_organization_activation_status,omitempty"`
-	unknownFields                     protoimpl.UnknownFields
-	sizeCache                         protoimpl.SizeCache
+	state                   protoimpl.MessageState `protogen:"open.v1"`
+	Id                      int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Email                   string                 `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
+	Status                  string                 `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"`
+	Type                    string                 `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
+	FirstName               string                 `protobuf:"bytes,5,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
+	MidName                 string                 `protobuf:"bytes,6,opt,name=mid_name,json=midName,proto3" json:"mid_name,omitempty"`
+	LastName                string                 `protobuf:"bytes,7,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
+	FullName                string                 `protobuf:"bytes,8,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
+	DefaultOrganizationId   int64                  `protobuf:"varint,9,opt,name=default_organization_id,json=defaultOrganizationId,proto3" json:"default_organization_id,omitempty"`
+	CreatedAt               string                 `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt               string                 `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	PivotOrganizationStatus string                 `protobuf:"bytes,12,opt,name=pivot_organization_status,json=pivotOrganizationStatus,proto3" json:"pivot_organization_status,omitempty"`
+	Roles                   []*RoleEntity          `protobuf:"bytes,13,rep,name=roles,proto3" json:"roles,omitempty"`
+	unknownFields           protoimpl.UnknownFields
+	sizeCache               protoimpl.SizeCache
 }
 
 func (x *UserEntity) Reset() {
@@ -347,11 +347,11 @@ func (x *UserEntity) GetPivotOrganizationStatus() string {
 	return ""
 }
 
-func (x *UserEntity) GetPivotOrganizationActivationStatus() string {
+func (x *UserEntity) GetRoles() []*RoleEntity {
 	if x != nil {
-		return x.PivotOrganizationActivationStatus
+		return x.Roles
 	}
-	return ""
+	return nil
 }
 
 // login
@@ -1930,7 +1930,6 @@ func (x *UserUpdateResponse) GetData() *UserEntity {
 type UserUpdateRequestData struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Email          string                 `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
 	Password       string                 `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
 	FullName       string                 `protobuf:"bytes,4,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
 	Phone          string                 `protobuf:"bytes,5,opt,name=phone,proto3" json:"phone,omitempty"`
@@ -1976,13 +1975,6 @@ func (x *UserUpdateRequestData) GetId() int64 {
 		return x.Id
 	}
 	return 0
-}
-
-func (x *UserUpdateRequestData) GetEmail() string {
-	if x != nil {
-		return x.Email
-	}
-	return ""
 }
 
 func (x *UserUpdateRequestData) GetPassword() string {
@@ -6005,7 +5997,7 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x04city\x18\x02 \x01(\tR\x04city\x12\x1a\n" +
 	"\baddress1\x18\x03 \x01(\tR\baddress1\x12\x1a\n" +
 	"\baddress2\x18\x04 \x01(\tR\baddress2\x12\x19\n" +
-	"\bzip_code\x18\x05 \x01(\tR\azipCode\"\xd5\x03\n" +
+	"\bzip_code\x18\x05 \x01(\tR\azipCode\"\xad\x03\n" +
 	"\n" +
 	"UserEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
@@ -6023,8 +6015,8 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	" \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
 	"updated_at\x18\v \x01(\tR\tupdatedAt\x12:\n" +
-	"\x19pivot_organization_status\x18\f \x01(\tR\x17pivotOrganizationStatus\x12O\n" +
-	"$pivot_organization_activation_status\x18\r \x01(\tR!pivotOrganizationActivationStatus\"C\n" +
+	"\x19pivot_organization_status\x18\f \x01(\tR\x17pivotOrganizationStatus\x12'\n" +
+	"\x05roles\x18\r \x03(\v2\x11.admin.RoleEntityR\x05roles\"C\n" +
 	"\x10UserLoginRequest\x12/\n" +
 	"\x04data\x18\x01 \x01(\v2\x1b.admin.UserLoginRequestDataR\x04data\"E\n" +
 	"\x11UserLoginResponse\x120\n" +
@@ -6127,10 +6119,9 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x11UserUpdateRequest\x120\n" +
 	"\x04data\x18\x01 \x01(\v2\x1c.admin.UserUpdateRequestDataR\x04data\";\n" +
 	"\x12UserUpdateResponse\x12%\n" +
-	"\x04data\x18\x01 \x01(\v2\x11.admin.UserEntityR\x04data\"\xe9\x01\n" +
+	"\x04data\x18\x01 \x01(\v2\x11.admin.UserEntityR\x04data\"\xd3\x01\n" +
 	"\x15UserUpdateRequestData\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
-	"\x05email\x18\x02 \x01(\tR\x05email\x12\x1a\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1a\n" +
 	"\bpassword\x18\x03 \x01(\tR\bpassword\x12\x1b\n" +
 	"\tfull_name\x18\x04 \x01(\tR\bfullName\x12\x14\n" +
 	"\x05phone\x18\x05 \x01(\tR\x05phone\x12\x19\n" +
@@ -6590,126 +6581,127 @@ var file_app_admin_rpc_pb_admin_proto_goTypes = []any{
 	(*UserinfoResponseData_Organization)(nil), // 95: admin.UserinfoResponseData.Organization
 }
 var file_app_admin_rpc_pb_admin_proto_depIdxs = []int32{
-	7,  // 0: admin.UserLoginRequest.data:type_name -> admin.UserLoginRequestData
-	8,  // 1: admin.UserLoginResponse.data:type_name -> admin.UserLoginResponseData
-	10, // 2: admin.RefreshTokenRequest.data:type_name -> admin.RefreshTokenRequestData
-	12, // 3: admin.RefreshTokenResponse.data:type_name -> admin.RefreshTokenResponseData
-	15, // 4: admin.ResetPasswordRequest.data:type_name -> admin.ResetPasswordRequestData
-	8,  // 5: admin.ResetPasswordResponse.data:type_name -> admin.UserLoginResponseData
-	18, // 6: admin.UserInfoRequest.data:type_name -> admin.UserInfoRequestData
-	20, // 7: admin.UserinfoResponse.data:type_name -> admin.UserinfoResponseData
-	95, // 8: admin.UserinfoResponseData.organizations:type_name -> admin.UserinfoResponseData.Organization
-	22, // 9: admin.UserProfileEditRequest.data:type_name -> admin.UserProfileEditRequestData
-	25, // 10: admin.UserPageRequest.data:type_name -> admin.UserPageRequestData
-	28, // 11: admin.UserPageResponse.data:type_name -> admin.UserPageResponseData
-	26, // 12: admin.UserPageRequestData.filter:type_name -> admin.UserPageRequestFilter
-	27, // 13: admin.UserPageRequestData.sorter:type_name -> admin.UserPageRequestSorter
-	4,  // 14: admin.UserPageResponseData.list:type_name -> admin.UserEntity
-	31, // 15: admin.UserCreateRequest.data:type_name -> admin.UserCreateRequestData
-	4,  // 16: admin.UserCreateResponse.data:type_name -> admin.UserEntity
-	34, // 17: admin.UserUpdateRequest.data:type_name -> admin.UserUpdateRequestData
-	4,  // 18: admin.UserUpdateResponse.data:type_name -> admin.UserEntity
-	36, // 19: admin.UserDeleteRequest.data:type_name -> admin.UserDeleteRequestData
-	39, // 20: admin.UserDetailRequest.data:type_name -> admin.UserDetailRequestData
-	4,  // 21: admin.UserDetailResponse.data:type_name -> admin.UserEntity
-	41, // 22: admin.UserSwitchStatusRequest.data:type_name -> admin.UserSwitchStatusRequestData
-	42, // 23: admin.ApiTreeEntity.children:type_name -> admin.ApiTreeEntity
-	45, // 24: admin.ApiTreeRequest.data:type_name -> admin.ApiTreeRequestData
-	42, // 25: admin.ApiTreeResponse.data:type_name -> admin.ApiTreeEntity
-	48, // 26: admin.ApiCreateRequest.data:type_name -> admin.ApiCreateRequestData
-	42, // 27: admin.ApiCreateResponse.data:type_name -> admin.ApiTreeEntity
-	51, // 28: admin.ApiUpdateRequest.data:type_name -> admin.ApiUpdateRequestData
-	53, // 29: admin.ApiDeleteRequest.data:type_name -> admin.ApiDeleteRequestData
-	55, // 30: admin.ApiDetailRequest.data:type_name -> admin.ApiDetailRequestData
-	56, // 31: admin.ResourceTreeEntity.children:type_name -> admin.ResourceTreeEntity
-	43, // 32: admin.ResourceEntity.apis:type_name -> admin.ApiEntity
-	59, // 33: admin.ResourceTreeRequest.data:type_name -> admin.ResourceTreeRequestData
-	56, // 34: admin.ResourceTreeResponse.data:type_name -> admin.ResourceTreeEntity
-	62, // 35: admin.ResourceCreateRequest.data:type_name -> admin.ResourceCreateRequestData
-	56, // 36: admin.ResourceCreateResponse.data:type_name -> admin.ResourceTreeEntity
-	65, // 37: admin.ResourceUpdateRequest.data:type_name -> admin.ResourceUpdateRequestData
-	67, // 38: admin.ResourceDeleteRequest.data:type_name -> admin.ResourceDeleteRequestData
-	69, // 39: admin.ResourceDetailRequest.data:type_name -> admin.ResourceDetailRequestData
-	57, // 40: admin.ResourceDetailResponse.data:type_name -> admin.ResourceEntity
-	57, // 41: admin.RoleEntity.resources:type_name -> admin.ResourceEntity
-	73, // 42: admin.RolePageRequest.data:type_name -> admin.RolePageRequestData
-	74, // 43: admin.RolePageRequestData.filter:type_name -> admin.RolePageRequestFilter
-	75, // 44: admin.RolePageRequestData.sorter:type_name -> admin.RolePageRequestSorter
-	77, // 45: admin.RolePageResponse.data:type_name -> admin.RolePageResponseData
-	71, // 46: admin.RolePageResponseData.list:type_name -> admin.RoleEntity
-	79, // 47: admin.RoleCreateRequest.data:type_name -> admin.RoleCreateRequestData
-	83, // 48: admin.RoleCreateRequestData.role_and_resources:type_name -> admin.RoleAndResourceRelationEntity
-	71, // 49: admin.RoleCreateResponse.data:type_name -> admin.RoleEntity
-	82, // 50: admin.RoleUpdateRequest.data:type_name -> admin.RoleUpdateRequestData
-	83, // 51: admin.RoleUpdateRequestData.role_and_resources:type_name -> admin.RoleAndResourceRelationEntity
-	71, // 52: admin.RoleUpdateResponse.data:type_name -> admin.RoleEntity
-	86, // 53: admin.RoleDeleteRequest.data:type_name -> admin.RoleDeleteRequestData
-	88, // 54: admin.RoleDetailRequest.data:type_name -> admin.RoleDetailRequestData
-	71, // 55: admin.RoleDetailResponse.data:type_name -> admin.RoleEntity
-	91, // 56: admin.RoleUpdateStatusRequest.data:type_name -> admin.RoleUpdateStatusRequestData
-	93, // 57: admin.RoleAllRequest.data:type_name -> admin.RoleAllRequestData
-	71, // 58: admin.RoleAllResponse.data:type_name -> admin.RoleEntity
-	5,  // 59: admin.user.Login:input_type -> admin.UserLoginRequest
-	9,  // 60: admin.user.RefreshToken:input_type -> admin.RefreshTokenRequest
-	17, // 61: admin.user.UserInfo:input_type -> admin.UserInfoRequest
-	13, // 62: admin.user.ResetPassword:input_type -> admin.ResetPasswordRequest
-	21, // 63: admin.user.EditProfile:input_type -> admin.UserProfileEditRequest
-	23, // 64: admin.user.UserPage:input_type -> admin.UserPageRequest
-	29, // 65: admin.user.UserCreate:input_type -> admin.UserCreateRequest
-	32, // 66: admin.user.UserUpdate:input_type -> admin.UserUpdateRequest
-	35, // 67: admin.user.UserDelete:input_type -> admin.UserDeleteRequest
-	37, // 68: admin.user.UserDetail:input_type -> admin.UserDetailRequest
-	40, // 69: admin.user.UserSwitchStatus:input_type -> admin.UserSwitchStatusRequest
-	44, // 70: admin.api.ApiTree:input_type -> admin.ApiTreeRequest
-	47, // 71: admin.api.Create:input_type -> admin.ApiCreateRequest
-	50, // 72: admin.api.Update:input_type -> admin.ApiUpdateRequest
-	52, // 73: admin.api.Delete:input_type -> admin.ApiDeleteRequest
-	54, // 74: admin.api.Detail:input_type -> admin.ApiDetailRequest
-	58, // 75: admin.resource.ResourceTree:input_type -> admin.ResourceTreeRequest
-	61, // 76: admin.resource.Create:input_type -> admin.ResourceCreateRequest
-	64, // 77: admin.resource.Update:input_type -> admin.ResourceUpdateRequest
-	66, // 78: admin.resource.Delete:input_type -> admin.ResourceDeleteRequest
-	68, // 79: admin.resource.Detail:input_type -> admin.ResourceDetailRequest
-	72, // 80: admin.role.Page:input_type -> admin.RolePageRequest
-	78, // 81: admin.role.Create:input_type -> admin.RoleCreateRequest
-	81, // 82: admin.role.Update:input_type -> admin.RoleUpdateRequest
-	85, // 83: admin.role.Delete:input_type -> admin.RoleDeleteRequest
-	87, // 84: admin.role.Detail:input_type -> admin.RoleDetailRequest
-	90, // 85: admin.role.UpdateStatus:input_type -> admin.RoleUpdateStatusRequest
-	92, // 86: admin.role.All:input_type -> admin.RoleAllRequest
-	6,  // 87: admin.user.Login:output_type -> admin.UserLoginResponse
-	11, // 88: admin.user.RefreshToken:output_type -> admin.RefreshTokenResponse
-	19, // 89: admin.user.UserInfo:output_type -> admin.UserinfoResponse
-	14, // 90: admin.user.ResetPassword:output_type -> admin.ResetPasswordResponse
-	19, // 91: admin.user.EditProfile:output_type -> admin.UserinfoResponse
-	24, // 92: admin.user.UserPage:output_type -> admin.UserPageResponse
-	30, // 93: admin.user.UserCreate:output_type -> admin.UserCreateResponse
-	33, // 94: admin.user.UserUpdate:output_type -> admin.UserUpdateResponse
-	1,  // 95: admin.user.UserDelete:output_type -> admin.EmptyResponse
-	38, // 96: admin.user.UserDetail:output_type -> admin.UserDetailResponse
-	1,  // 97: admin.user.UserSwitchStatus:output_type -> admin.EmptyResponse
-	46, // 98: admin.api.ApiTree:output_type -> admin.ApiTreeResponse
-	49, // 99: admin.api.Create:output_type -> admin.ApiCreateResponse
-	49, // 100: admin.api.Update:output_type -> admin.ApiCreateResponse
-	1,  // 101: admin.api.Delete:output_type -> admin.EmptyResponse
-	49, // 102: admin.api.Detail:output_type -> admin.ApiCreateResponse
-	60, // 103: admin.resource.ResourceTree:output_type -> admin.ResourceTreeResponse
-	70, // 104: admin.resource.Create:output_type -> admin.ResourceDetailResponse
-	70, // 105: admin.resource.Update:output_type -> admin.ResourceDetailResponse
-	1,  // 106: admin.resource.Delete:output_type -> admin.EmptyResponse
-	70, // 107: admin.resource.Detail:output_type -> admin.ResourceDetailResponse
-	76, // 108: admin.role.Page:output_type -> admin.RolePageResponse
-	80, // 109: admin.role.Create:output_type -> admin.RoleCreateResponse
-	84, // 110: admin.role.Update:output_type -> admin.RoleUpdateResponse
-	1,  // 111: admin.role.Delete:output_type -> admin.EmptyResponse
-	89, // 112: admin.role.Detail:output_type -> admin.RoleDetailResponse
-	1,  // 113: admin.role.UpdateStatus:output_type -> admin.EmptyResponse
-	94, // 114: admin.role.All:output_type -> admin.RoleAllResponse
-	87, // [87:115] is the sub-list for method output_type
-	59, // [59:87] is the sub-list for method input_type
-	59, // [59:59] is the sub-list for extension type_name
-	59, // [59:59] is the sub-list for extension extendee
-	0,  // [0:59] is the sub-list for field type_name
+	71, // 0: admin.UserEntity.roles:type_name -> admin.RoleEntity
+	7,  // 1: admin.UserLoginRequest.data:type_name -> admin.UserLoginRequestData
+	8,  // 2: admin.UserLoginResponse.data:type_name -> admin.UserLoginResponseData
+	10, // 3: admin.RefreshTokenRequest.data:type_name -> admin.RefreshTokenRequestData
+	12, // 4: admin.RefreshTokenResponse.data:type_name -> admin.RefreshTokenResponseData
+	15, // 5: admin.ResetPasswordRequest.data:type_name -> admin.ResetPasswordRequestData
+	8,  // 6: admin.ResetPasswordResponse.data:type_name -> admin.UserLoginResponseData
+	18, // 7: admin.UserInfoRequest.data:type_name -> admin.UserInfoRequestData
+	20, // 8: admin.UserinfoResponse.data:type_name -> admin.UserinfoResponseData
+	95, // 9: admin.UserinfoResponseData.organizations:type_name -> admin.UserinfoResponseData.Organization
+	22, // 10: admin.UserProfileEditRequest.data:type_name -> admin.UserProfileEditRequestData
+	25, // 11: admin.UserPageRequest.data:type_name -> admin.UserPageRequestData
+	28, // 12: admin.UserPageResponse.data:type_name -> admin.UserPageResponseData
+	26, // 13: admin.UserPageRequestData.filter:type_name -> admin.UserPageRequestFilter
+	27, // 14: admin.UserPageRequestData.sorter:type_name -> admin.UserPageRequestSorter
+	4,  // 15: admin.UserPageResponseData.list:type_name -> admin.UserEntity
+	31, // 16: admin.UserCreateRequest.data:type_name -> admin.UserCreateRequestData
+	4,  // 17: admin.UserCreateResponse.data:type_name -> admin.UserEntity
+	34, // 18: admin.UserUpdateRequest.data:type_name -> admin.UserUpdateRequestData
+	4,  // 19: admin.UserUpdateResponse.data:type_name -> admin.UserEntity
+	36, // 20: admin.UserDeleteRequest.data:type_name -> admin.UserDeleteRequestData
+	39, // 21: admin.UserDetailRequest.data:type_name -> admin.UserDetailRequestData
+	4,  // 22: admin.UserDetailResponse.data:type_name -> admin.UserEntity
+	41, // 23: admin.UserSwitchStatusRequest.data:type_name -> admin.UserSwitchStatusRequestData
+	42, // 24: admin.ApiTreeEntity.children:type_name -> admin.ApiTreeEntity
+	45, // 25: admin.ApiTreeRequest.data:type_name -> admin.ApiTreeRequestData
+	42, // 26: admin.ApiTreeResponse.data:type_name -> admin.ApiTreeEntity
+	48, // 27: admin.ApiCreateRequest.data:type_name -> admin.ApiCreateRequestData
+	42, // 28: admin.ApiCreateResponse.data:type_name -> admin.ApiTreeEntity
+	51, // 29: admin.ApiUpdateRequest.data:type_name -> admin.ApiUpdateRequestData
+	53, // 30: admin.ApiDeleteRequest.data:type_name -> admin.ApiDeleteRequestData
+	55, // 31: admin.ApiDetailRequest.data:type_name -> admin.ApiDetailRequestData
+	56, // 32: admin.ResourceTreeEntity.children:type_name -> admin.ResourceTreeEntity
+	43, // 33: admin.ResourceEntity.apis:type_name -> admin.ApiEntity
+	59, // 34: admin.ResourceTreeRequest.data:type_name -> admin.ResourceTreeRequestData
+	56, // 35: admin.ResourceTreeResponse.data:type_name -> admin.ResourceTreeEntity
+	62, // 36: admin.ResourceCreateRequest.data:type_name -> admin.ResourceCreateRequestData
+	56, // 37: admin.ResourceCreateResponse.data:type_name -> admin.ResourceTreeEntity
+	65, // 38: admin.ResourceUpdateRequest.data:type_name -> admin.ResourceUpdateRequestData
+	67, // 39: admin.ResourceDeleteRequest.data:type_name -> admin.ResourceDeleteRequestData
+	69, // 40: admin.ResourceDetailRequest.data:type_name -> admin.ResourceDetailRequestData
+	57, // 41: admin.ResourceDetailResponse.data:type_name -> admin.ResourceEntity
+	57, // 42: admin.RoleEntity.resources:type_name -> admin.ResourceEntity
+	73, // 43: admin.RolePageRequest.data:type_name -> admin.RolePageRequestData
+	74, // 44: admin.RolePageRequestData.filter:type_name -> admin.RolePageRequestFilter
+	75, // 45: admin.RolePageRequestData.sorter:type_name -> admin.RolePageRequestSorter
+	77, // 46: admin.RolePageResponse.data:type_name -> admin.RolePageResponseData
+	71, // 47: admin.RolePageResponseData.list:type_name -> admin.RoleEntity
+	79, // 48: admin.RoleCreateRequest.data:type_name -> admin.RoleCreateRequestData
+	83, // 49: admin.RoleCreateRequestData.role_and_resources:type_name -> admin.RoleAndResourceRelationEntity
+	71, // 50: admin.RoleCreateResponse.data:type_name -> admin.RoleEntity
+	82, // 51: admin.RoleUpdateRequest.data:type_name -> admin.RoleUpdateRequestData
+	83, // 52: admin.RoleUpdateRequestData.role_and_resources:type_name -> admin.RoleAndResourceRelationEntity
+	71, // 53: admin.RoleUpdateResponse.data:type_name -> admin.RoleEntity
+	86, // 54: admin.RoleDeleteRequest.data:type_name -> admin.RoleDeleteRequestData
+	88, // 55: admin.RoleDetailRequest.data:type_name -> admin.RoleDetailRequestData
+	71, // 56: admin.RoleDetailResponse.data:type_name -> admin.RoleEntity
+	91, // 57: admin.RoleUpdateStatusRequest.data:type_name -> admin.RoleUpdateStatusRequestData
+	93, // 58: admin.RoleAllRequest.data:type_name -> admin.RoleAllRequestData
+	71, // 59: admin.RoleAllResponse.data:type_name -> admin.RoleEntity
+	5,  // 60: admin.user.Login:input_type -> admin.UserLoginRequest
+	9,  // 61: admin.user.RefreshToken:input_type -> admin.RefreshTokenRequest
+	17, // 62: admin.user.UserInfo:input_type -> admin.UserInfoRequest
+	13, // 63: admin.user.ResetPassword:input_type -> admin.ResetPasswordRequest
+	21, // 64: admin.user.EditProfile:input_type -> admin.UserProfileEditRequest
+	23, // 65: admin.user.UserPage:input_type -> admin.UserPageRequest
+	29, // 66: admin.user.UserCreate:input_type -> admin.UserCreateRequest
+	32, // 67: admin.user.UserUpdate:input_type -> admin.UserUpdateRequest
+	35, // 68: admin.user.UserDelete:input_type -> admin.UserDeleteRequest
+	37, // 69: admin.user.UserDetail:input_type -> admin.UserDetailRequest
+	40, // 70: admin.user.UserSwitchStatus:input_type -> admin.UserSwitchStatusRequest
+	44, // 71: admin.api.ApiTree:input_type -> admin.ApiTreeRequest
+	47, // 72: admin.api.Create:input_type -> admin.ApiCreateRequest
+	50, // 73: admin.api.Update:input_type -> admin.ApiUpdateRequest
+	52, // 74: admin.api.Delete:input_type -> admin.ApiDeleteRequest
+	54, // 75: admin.api.Detail:input_type -> admin.ApiDetailRequest
+	58, // 76: admin.resource.ResourceTree:input_type -> admin.ResourceTreeRequest
+	61, // 77: admin.resource.Create:input_type -> admin.ResourceCreateRequest
+	64, // 78: admin.resource.Update:input_type -> admin.ResourceUpdateRequest
+	66, // 79: admin.resource.Delete:input_type -> admin.ResourceDeleteRequest
+	68, // 80: admin.resource.Detail:input_type -> admin.ResourceDetailRequest
+	72, // 81: admin.role.Page:input_type -> admin.RolePageRequest
+	78, // 82: admin.role.Create:input_type -> admin.RoleCreateRequest
+	81, // 83: admin.role.Update:input_type -> admin.RoleUpdateRequest
+	85, // 84: admin.role.Delete:input_type -> admin.RoleDeleteRequest
+	87, // 85: admin.role.Detail:input_type -> admin.RoleDetailRequest
+	90, // 86: admin.role.UpdateStatus:input_type -> admin.RoleUpdateStatusRequest
+	92, // 87: admin.role.All:input_type -> admin.RoleAllRequest
+	6,  // 88: admin.user.Login:output_type -> admin.UserLoginResponse
+	11, // 89: admin.user.RefreshToken:output_type -> admin.RefreshTokenResponse
+	19, // 90: admin.user.UserInfo:output_type -> admin.UserinfoResponse
+	14, // 91: admin.user.ResetPassword:output_type -> admin.ResetPasswordResponse
+	19, // 92: admin.user.EditProfile:output_type -> admin.UserinfoResponse
+	24, // 93: admin.user.UserPage:output_type -> admin.UserPageResponse
+	30, // 94: admin.user.UserCreate:output_type -> admin.UserCreateResponse
+	33, // 95: admin.user.UserUpdate:output_type -> admin.UserUpdateResponse
+	1,  // 96: admin.user.UserDelete:output_type -> admin.EmptyResponse
+	38, // 97: admin.user.UserDetail:output_type -> admin.UserDetailResponse
+	1,  // 98: admin.user.UserSwitchStatus:output_type -> admin.EmptyResponse
+	46, // 99: admin.api.ApiTree:output_type -> admin.ApiTreeResponse
+	49, // 100: admin.api.Create:output_type -> admin.ApiCreateResponse
+	49, // 101: admin.api.Update:output_type -> admin.ApiCreateResponse
+	1,  // 102: admin.api.Delete:output_type -> admin.EmptyResponse
+	49, // 103: admin.api.Detail:output_type -> admin.ApiCreateResponse
+	60, // 104: admin.resource.ResourceTree:output_type -> admin.ResourceTreeResponse
+	70, // 105: admin.resource.Create:output_type -> admin.ResourceDetailResponse
+	70, // 106: admin.resource.Update:output_type -> admin.ResourceDetailResponse
+	1,  // 107: admin.resource.Delete:output_type -> admin.EmptyResponse
+	70, // 108: admin.resource.Detail:output_type -> admin.ResourceDetailResponse
+	76, // 109: admin.role.Page:output_type -> admin.RolePageResponse
+	80, // 110: admin.role.Create:output_type -> admin.RoleCreateResponse
+	84, // 111: admin.role.Update:output_type -> admin.RoleUpdateResponse
+	1,  // 112: admin.role.Delete:output_type -> admin.EmptyResponse
+	89, // 113: admin.role.Detail:output_type -> admin.RoleDetailResponse
+	1,  // 114: admin.role.UpdateStatus:output_type -> admin.EmptyResponse
+	94, // 115: admin.role.All:output_type -> admin.RoleAllResponse
+	88, // [88:116] is the sub-list for method output_type
+	60, // [60:88] is the sub-list for method input_type
+	60, // [60:60] is the sub-list for extension type_name
+	60, // [60:60] is the sub-list for extension extendee
+	0,  // [0:60] is the sub-list for field type_name
 }
 
 func init() { file_app_admin_rpc_pb_admin_proto_init() }

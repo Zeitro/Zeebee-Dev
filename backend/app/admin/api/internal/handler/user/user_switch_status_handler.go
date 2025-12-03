@@ -16,7 +16,7 @@ import (
 )
 
 // update status
-func UserUpdateStatusHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func UserSwitchStatusHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer func() {
@@ -26,7 +26,7 @@ func UserUpdateStatusHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 					Error(err)
 			}
 		}()
-		var req types.UserUpdateStatusRequest
+		var req types.UserSwitchStatusRequest
 		if err = httpx.Parse(r, &req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
@@ -42,8 +42,8 @@ func UserUpdateStatusHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := user.NewUserUpdateStatusLogic(r.Context(), svcCtx)
-		resp, err := l.UserUpdateStatus(&req)
+		l := user.NewUserSwitchStatusLogic(r.Context(), svcCtx)
+		resp, err := l.UserSwitchStatus(&req)
 		if err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 		} else {

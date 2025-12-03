@@ -16,7 +16,7 @@ type Organization struct {
 	Users []*User `json:"users" gorm:"many2many:organization_and_users;joinForeignKey:organization_id;joinReferences:user_id"`
 }
 
-func (m *Organization) TableName() string {
+func (m Organization) TableName() string {
 	return "organizations"
 }
 func (m *Organization) RemoveRelationships() {

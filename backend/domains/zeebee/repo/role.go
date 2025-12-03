@@ -76,6 +76,16 @@ func (repo *RoleRepo) GetRole(ctx context.Context, id int64, organizationId int6
 	return result, errorx.WithStack(err)
 }
 
+// GetOrganizationRolesByIdsWithTx return roles by ids
+func (repo *RoleRepo) GetOrganizationRolesByIdsWithTx(ctx context.Context, tx *gorm.DB, organizationId int64, roleIds []int64) (result []*model.Role, err error) {
+	err = tx.WithContext(ctx).Model(new(model.Role)).
+		Where("id in (?) and organization_id = ?", roleIds, organizationId).
+		Preload("Resources").
+		Find(&result).Error
+	return result, errorx.WithStack(err)
+
+}
+
 // Page returns paginated roles
 func (repo *RoleRepo) Page(ctx context.Context, req *RolePageReq) (page gormx.PageResponse[*model.Role], err error) {
 	filter := req.Filter
