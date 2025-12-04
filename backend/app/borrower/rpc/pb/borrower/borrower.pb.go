@@ -530,7 +530,8 @@ func (x *GetUuidResponse) GetData() string {
 	return ""
 }
 
-// ================= user service start ==================
+// ========================== common service end =================
+// ========================== user service start =================
 // login
 type UserLoginRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -1978,6 +1979,8 @@ type UserinfoResponseData struct {
 	OrganizationName string                               `protobuf:"bytes,7,opt,name=organization_name,json=organizationName,proto3" json:"organization_name,omitempty"`
 	Status           string                               `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`
 	Organizations    []*UserinfoResponseData_Organization `protobuf:"bytes,9,rep,name=organizations,proto3" json:"organizations,omitempty"`
+	IsOwner          bool                                 `protobuf:"varint,10,opt,name=is_owner,json=isOwner,proto3" json:"is_owner,omitempty"`
+	IsAdmin          bool                                 `protobuf:"varint,11,opt,name=is_admin,json=isAdmin,proto3" json:"is_admin,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -2073,6 +2076,20 @@ func (x *UserinfoResponseData) GetOrganizations() []*UserinfoResponseData_Organi
 		return x.Organizations
 	}
 	return nil
+}
+
+func (x *UserinfoResponseData) GetIsOwner() bool {
+	if x != nil {
+		return x.IsOwner
+	}
+	return false
+}
+
+func (x *UserinfoResponseData) GetIsAdmin() bool {
+	if x != nil {
+		return x.IsAdmin
+	}
+	return false
 }
 
 // switch organization
@@ -2277,6 +2294,8 @@ func (x *UserProfileEditRequestData) GetLastName() string {
 	return ""
 }
 
+// ================= user service end =================
+// ================= loan service start =================
 type LoanEntry struct {
 	state                      protoimpl.MessageState   `protogen:"open.v1"`
 	Id                         int64                    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -11744,7 +11763,8 @@ func (x *BorrowerNamesResponse) GetData() []string {
 	return nil
 }
 
-// ===================== loan document service start ======================
+// ===================== loan applicant service end ======================
+// ===================== loan document service start =====================
 type LoanDocumentEntry struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -11974,7 +11994,8 @@ func (x *LoanDocumentAddFilesRequestData) GetFileUrls() []string {
 	return nil
 }
 
-// ===================== loan borrower service start ======================
+// ===================== loan document service end ======================
+// ===================== loan borrower service start ====================
 type LoanBorrowerEntry struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -12175,7 +12196,8 @@ func (x *LoanBorrowerLoanEditEntry) GetBorrowerEntityId() int64 {
 	return 0
 }
 
-// ===================== lender service start ======================
+// ====================== loan borrower service end ======================
+// =====================+ lender service start ======================
 type LenderEntry struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -12244,6 +12266,7 @@ func (x *LenderEntry) GetStatus() string {
 	return ""
 }
 
+// ===================== lender service end ======================
 // ===================== loan experience service start ======================
 type LoanExperienceEntry struct {
 	state  protoimpl.MessageState `protogen:"open.v1"`
@@ -12405,6 +12428,7 @@ func (x *LoanExperienceEntry) GetAddress() *AddressEntry {
 	return nil
 }
 
+// ===================== loan experience service end ======================
 // ===================== loan third service service start ======================
 type LoanThirdServiceEntry struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -12498,6 +12522,7 @@ func (x *LoanThirdServiceEntry) GetCompany() string {
 	return ""
 }
 
+// ===================== loan third service service end ======================
 // ===================== loan demographic service start ======================
 type LoanDemographicEntry struct {
 	state         protoimpl.MessageState         `protogen:"open.v1"`
@@ -12927,6 +12952,7 @@ func (x *LoanDemographicExtraDemographicEntry) GetInfoChannels() []string {
 	return nil
 }
 
+// ===================== loan demographic service end ======================
 // ===================== file service start======================
 type FileEntry struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -13116,7 +13142,8 @@ func (x *FileDeleteRequestData) GetOrganizationId() int64 {
 	return 0
 }
 
-// ===================== storage service start ======================
+// ====================== file service end ======================
+// ====================== storage service start ======================
 type StorageCreatePresignedUrlRequest struct {
 	state         protoimpl.MessageState                `protogen:"open.v1"`
 	Data          *StorageCreatePresignedUrlRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -13302,7 +13329,7 @@ func (x *StorageCreatePresignedUrlResponseData) GetUrl() string {
 }
 
 // ====================== storage service end ======================
-// ================= resource service start =================
+// ====================== resource service start =================
 type ResourceTreeEntity struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -13749,7 +13776,7 @@ func (x *ResourceTreeResponse) GetData() []*ResourceTreeEntity {
 }
 
 // =================== resource service end =================
-// ================= role service start =================
+// =================== role service start =================
 type RoleEntity struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -15720,7 +15747,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x13UserInfoRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"F\n" +
 	"\x10UserinfoResponse\x122\n" +
-	"\x04data\x18\x01 \x01(\v2\x1e.borrower.UserinfoResponseDataR\x04data\"\xc1\x03\n" +
+	"\x04data\x18\x01 \x01(\v2\x1e.borrower.UserinfoResponseDataR\x04data\"\xf7\x03\n" +
 	"\x14UserinfoResponseData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
 	"\x05email\x18\x02 \x01(\tR\x05email\x12\x1d\n" +
@@ -15731,7 +15758,10 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x0forganization_id\x18\x06 \x01(\x03R\x0eorganizationId\x12+\n" +
 	"\x11organization_name\x18\a \x01(\tR\x10organizationName\x12\x16\n" +
 	"\x06status\x18\b \x01(\tR\x06status\x12Q\n" +
-	"\rorganizations\x18\t \x03(\v2+.borrower.UserinfoResponseData.OrganizationR\rorganizations\x1ai\n" +
+	"\rorganizations\x18\t \x03(\v2+.borrower.UserinfoResponseData.OrganizationR\rorganizations\x12\x19\n" +
+	"\bis_owner\x18\n" +
+	" \x01(\bR\aisOwner\x12\x19\n" +
+	"\bis_admin\x18\v \x01(\bR\aisAdmin\x1ai\n" +
 	"\fOrganization\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +

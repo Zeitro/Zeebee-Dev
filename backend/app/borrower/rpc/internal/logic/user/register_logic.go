@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/duke-git/lancet/v2/random"
@@ -53,6 +54,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 	}()
 	// check if user already exists
 	var existedUser *model.User
+	in.Data.Email = strings.ToLower(in.Data.Email)
 	existedUser, _ = l.svcCtx.UserRepo.GetUserByEmail(l.ctx, in.Data.Email, constants.UserTypeBorrower)
 
 	if existedUser != nil && existedUser.Id > 0 {

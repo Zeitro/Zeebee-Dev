@@ -225,6 +225,8 @@ type Userinfo struct {
 	OrganizationName string
 	Status           constants.UserStatus
 	Organizations    []*UserOrganization
+	IsOwner          bool
+	IsAdmin          bool
 }
 
 type UserOrganization struct {
@@ -267,12 +269,13 @@ func (l *UserLogic) Info(ctx context.Context, id int64, userType constants.UserT
 			currentOrganization = organizations[i]
 			organization.IsDefault = true
 		}
-
 		return true
 	})
 
 	var organizationId int64
 	var organizationName string
+	var isOwner bool
+	var isAdmin bool
 
 	if currentOrganization == nil && len(organizations) > 0 {
 		currentOrganization = organizations[0]
@@ -281,7 +284,19 @@ func (l *UserLogic) Info(ctx context.Context, id int64, userType constants.UserT
 	if currentOrganization != nil {
 		organizationId = user.DefaultOrganizationId
 		organizationName = currentOrganization.Name
+
+		roles, err := l.repos.RoleRepo.GetUserRoles(ctx, user.Id, organizationId)
+		if err != nil {
+			return nil, errorx.WithStack(err)
+		}
+		isAdmin = slice.ContainBy(roles, func(role *model.Role) bool {
+			return role.Name == constants.RoleAdmin
+		})
+		isOwner = slice.ContainBy(user.Organizations, func(item *model.Organization) bool {
+			return item.Id == currentOrganization.Id && item.OwnerId == user.Id
+		})
 	}
+
 	userInfo = &Userinfo{
 		Id:               user.Id,
 		Email:            user.Email,
@@ -292,6 +307,8 @@ func (l *UserLogic) Info(ctx context.Context, id int64, userType constants.UserT
 		OrganizationName: organizationName,
 		Status:           user.Status,
 		Organizations:    organizations,
+		IsOwner:          isOwner,
+		IsAdmin:          isAdmin,
 	}
 	return
 }
