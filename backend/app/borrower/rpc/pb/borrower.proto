@@ -1540,3 +1540,194 @@ service Storage {
   rpc CreatePresignedUrl(StorageCreatePresignedUrlRequest) returns(StorageCreatePresignedUrlResponse);
 }
 // ====================== storage service end ======================
+// ================= resource service start =================
+message ResourceTreeEntity{
+  int64 id = 1;
+  int64 parent_id = 2;
+  string type = 3;
+  string resource_type = 4;
+  string name = 5;
+  string path = 6;
+  string icon = 7;
+  string tag = 8;
+  bool is_show = 9;
+  string status = 10;
+  int32  sort_order = 11;
+  string created_at = 12;
+  string updated_at = 13;
+  repeated ResourceTreeEntity children = 14;
+}
+
+message ResourceEntity{
+  int64 id = 1;
+  int64 parent_id = 2;
+  string type = 3;
+  string resource_type = 4;
+  string name = 5;
+  string path = 6;
+  string icon = 7;
+  string tag = 8;
+  bool is_show = 9;
+  string status = 10;
+  int32  sort_order = 11;
+  string created_at = 12;
+  string updated_at = 13;
+  string pivot_role_data_scope = 15;
+}
+
+// resource tree
+message ResourceTreeRequest {
+  ResourceTreeRequestData data = 1;
+}
+message ResourceTreeRequestData {
+  int64 user_id = 1;
+  int64 organization_id = 2;
+  string type = 3;
+}
+
+message ResourceTreeResponse {
+  repeated ResourceTreeEntity data = 1;
+}
+service resource {
+  rpc ResourceTree(ResourceTreeRequest) returns(ResourceTreeResponse);
+}
+// =================== resource service end =================
+// ================= role service start =================
+message RoleEntity {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  string type = 4;
+  string status = 5;
+  string created_at = 6;
+  string updated_at = 7;
+  int64 organization_id = 8;
+  repeated ResourceEntity resources = 9;
+}
+
+message RolePageRequest {
+  RolePageRequestData data = 1;
+}
+message RolePageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  RolePageRequestFilter filter = 3;
+  RolePageRequestSorter sorter = 4;
+}
+message RolePageRequestFilter {
+  int64 user_id = 1;
+  string keyword = 2;
+  int64 organization_id = 3;
+}
+message RolePageRequestSorter {
+  string column = 1;
+  string sort = 2;
+}
+
+message RolePageResponse {
+  RolePageResponseData data = 1;
+}
+
+message RolePageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated RoleEntity list = 5;
+}
+
+//  create
+message RoleCreateRequest {
+  RoleCreateRequestData data = 1;
+}
+message RoleCreateRequestData {
+  string name = 1;
+  string description = 2;
+  string status = 4;
+  int64 user_id = 5;
+  int64 organization_id = 6;
+  repeated RoleAndResourceRelationEntity role_and_resources = 7;
+}
+message RoleCreateResponse {
+  RoleEntity data = 1;
+}
+//  update
+message RoleUpdateRequest {
+  RoleUpdateRequestData data = 1;
+}
+message RoleUpdateRequestData {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  string status = 5;
+  int64 user_id = 6;
+  int64 organization_id = 7;
+  repeated RoleAndResourceRelationEntity role_and_resources = 8;
+}
+
+message RoleAndResourceRelationEntity{
+  int64 role_id = 1;
+  int64 resource_id = 2;
+  string data_scope = 3;
+}
+
+
+message RoleUpdateResponse {
+  RoleEntity data = 1;
+}
+//  delete
+message RoleDeleteRequest {
+  RoleDeleteRequestData data = 1;
+}
+message RoleDeleteRequestData {
+  int64 id = 1;
+  int64 user_id = 2;
+  int64 organization_id = 3;
+}
+
+//  detail
+message RoleDetailRequest {
+  RoleDetailRequestData data = 1;
+}
+message RoleDetailRequestData {
+  int64 id = 1;
+  int64 user_id = 2;
+  int64 organization_id = 3;
+}
+message RoleDetailResponse {
+  RoleEntity data = 1;
+}
+// update status
+message RoleUpdateStatusRequest {
+  RoleUpdateStatusRequestData data = 1;
+}
+message RoleUpdateStatusRequestData {
+  int64 id = 1;
+  string status = 2;
+  int64 user_id = 3;
+  int64 organization_id = 4;
+}
+
+// all roles
+message RoleAllRequest {
+  RoleAllRequestData data = 1;
+}
+message RoleAllRequestData {
+  int64 user_id = 1;
+  int64 organization_id = 2;
+}
+message RoleAllResponse {
+  repeated RoleEntity data = 1;
+}
+
+service role {
+  rpc Page(RolePageRequest) returns(RolePageResponse);
+  rpc Create(RoleCreateRequest) returns(RoleCreateResponse);
+  rpc Update(RoleUpdateRequest) returns(RoleUpdateResponse);
+  rpc Delete(RoleDeleteRequest) returns(EmptyResponse);
+  rpc Detail(RoleDetailRequest) returns(RoleDetailResponse);
+  rpc UpdateStatus(RoleUpdateStatusRequest) returns(EmptyResponse);
+  rpc All(RoleAllRequest) returns(RoleAllResponse);
+}
+
+// ================== role service end =================

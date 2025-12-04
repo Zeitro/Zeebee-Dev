@@ -86,10 +86,13 @@ func (l *RoleLogic) Create(ctx context.Context, data *model.Role) (role *model.R
 			}
 			return nil, false
 		})
-		_, innerErr = l.repos.RoleAndResourceRepo.BatchCreateWithTx(ctx, tx, rolesAndResources, false)
-		if innerErr != nil {
-			return innerErr
+		if len(rolesAndResources) > 0 {
+			_, innerErr = l.repos.RoleAndResourceRepo.BatchCreateWithTx(ctx, tx, rolesAndResources, false)
+			if innerErr != nil {
+				return innerErr
+			}
 		}
+
 		return nil
 	})
 	if err != nil {

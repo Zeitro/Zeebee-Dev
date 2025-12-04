@@ -117,7 +117,6 @@ func (repo *RoleRepo) Page(ctx context.Context, req *RolePageReq) (page gormx.Pa
 		Limit:       req.Limit,
 		CountColumn: "id",
 	})
-
 	return result, err
 }
 
