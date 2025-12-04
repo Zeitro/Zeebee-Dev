@@ -20,12 +20,14 @@ import (
 )
 
 type UserLogic struct {
-	repos *repo.AllRepos
+	repos    *repo.AllRepos
+	redisCli *redisx.Redisx
 }
 
-func NewUserLogic(repos *repo.AllRepos) *UserLogic {
+func NewUserLogic(repos *repo.AllRepos, redisCli *redisx.Redisx) *UserLogic {
 	return &UserLogic{
-		repos: repos,
+		repos:    repos,
+		redisCli: redisCli,
 	}
 }
 
@@ -43,6 +45,7 @@ type JwtConfig struct {
 	RefreshExpire int64
 }
 
+// GenerateJwtToken generate jwt token for user
 func (l *UserLogic) GenerateJwtToken(user *model.User, config JwtConfig, userType constants.UserType) (token *UserJwtToken, err error) {
 	if user == nil {
 		return nil, errorx.WithStack(errorx.New("User Is Empty."))
@@ -80,6 +83,7 @@ func (l *UserLogic) GenerateJwtToken(user *model.User, config JwtConfig, userTyp
 	return
 }
 
+// GetActiveOrganizationByUser return active organization for user
 func (l *UserLogic) GetActiveOrganizationByUser(user *model.User) (currentOrganization *model.Organization, isChanged bool, err error) {
 	if user == nil {
 		return nil, false, errorx.New("User Is Empty")
@@ -108,6 +112,7 @@ func (l *UserLogic) GetActiveOrganizationByUser(user *model.User) (currentOrgani
 	return currentOrganization, isChanged, err
 }
 
+// CheckAndUpdateActiveOrganizationByUser check and update active organization for user
 func (l *UserLogic) CheckAndUpdateActiveOrganizationByUser(ctx context.Context, user *model.User) (currentUser *model.User, err error) {
 	currentOrganization, isChanged, err := l.GetActiveOrganizationByUser(user)
 	if err != nil {
@@ -142,6 +147,7 @@ type LoginLimiter struct {
 	RedisCli *redisx.Redisx
 }
 
+// Login
 func (l *UserLogic) Login(ctx context.Context, req UserLoginRequest, limiter LoginLimiter, jwtConfig JwtConfig) (token *UserJwtToken, err error) {
 	redisKey := stringx.Format(constants.UserLoginFailedTimes, req.UserType, req.Email)
 	var loginFailedTimes int
@@ -228,6 +234,7 @@ type UserOrganization struct {
 	IsDefault bool
 }
 
+// Info return user info
 func (l *UserLogic) Info(ctx context.Context, id int64, userType constants.UserType) (userInfo *Userinfo, err error) {
 	organizations := []*UserOrganization{}
 	user, err := l.repos.UserRepo.GetUser(ctx, id, userType)
@@ -289,7 +296,7 @@ func (l *UserLogic) Info(ctx context.Context, id int64, userType constants.UserT
 	return
 }
 
-// SwitchOrganization
+// SwitchOrganization switch user default organization
 func (l *UserLogic) SwitchOrganization(ctx context.Context, userId int64, organizationId int64, userType constants.UserType) (user *model.User, err error) {
 	user, err = l.repos.UserRepo.GetUser(ctx, userId, userType)
 	if err != nil {
@@ -322,7 +329,7 @@ func (l *UserLogic) SwitchOrganization(ctx context.Context, userId int64, organi
 	return
 }
 
-// AddOrganizationUser
+// AddOrganizationUser add user to organization
 func (l *UserLogic) AddOrganizationUser(ctx context.Context, user *model.User, organizationId int64, roleIds []int64) (newUser *model.User, err error) {
 	if user == nil {
 		return nil, errorx.New("User Is Empty")
@@ -376,6 +383,7 @@ func (l *UserLogic) AddOrganizationUser(ctx context.Context, user *model.User, o
 	return
 }
 
+// UpdateOrganizationUser update user's info in organization
 func (l *UserLogic) UpdateOrganizationUser(ctx context.Context, id int64, user *model.User, organizationId int64, roleIds []int64) (newUser *model.User, err error) {
 	if user == nil {
 		return nil, errorx.New("User Is Empty")
@@ -420,7 +428,7 @@ func (l *UserLogic) UpdateOrganizationUser(ctx context.Context, id int64, user *
 	return
 }
 
-// DeleteOrganizationUser
+// DeleteOrganizationUser delete user from organization
 func (l *UserLogic) DeleteOrganizationUser(ctx context.Context, id int64, organizationId int64, userType constants.UserType) (err error) {
 	user, err := l.repos.UserRepo.GetOrganizationUser(ctx, id, organizationId, userType)
 	if err != nil {
@@ -453,7 +461,7 @@ func (l *UserLogic) DeleteOrganizationUser(ctx context.Context, id int64, organi
 	return err
 }
 
-// SwitchOrganizationUserStatus
+// SwitchOrganizationUserStatus switch user's status in organization
 func (l *UserLogic) SwitchOrganizationUserStatus(ctx context.Context, id int64, organizationId int64, status constants.OrganizationAndUserStatus, userType constants.UserType) (err error) {
 	err = status.Validate()
 	if err != nil {
@@ -470,4 +478,129 @@ func (l *UserLogic) SwitchOrganizationUserStatus(ctx context.Context, id int64, 
 	// todo update user's permissions
 
 	return nil
+}
+
+// RegisterWithOrganization register user with organization
+func (l *UserLogic) RegisterWithOrganization(ctx context.Context, user *model.User, organization *model.Organization, userType constants.UserType) (newUser *model.User, err error) {
+	// check user exist
+	if user == nil {
+		return nil, errorx.New("User Is Empty")
+	}
+	isExisted, err := l.repos.UserRepo.IsExistedByColumns(ctx, map[string]interface{}{
+		"email": user.Email,
+		"type":  userType,
+	})
+	if err != nil {
+		return nil, err
+	}
+	if isExisted {
+		return nil, errorx.New("User Is Already Existed")
+	}
+	// check organization exist
+	if organization == nil {
+		return nil, errorx.New("Organization Is Empty")
+	}
+	isExisted, err = l.repos.OrganizationRepo.IsExistedByColumns(ctx, map[string]interface{}{
+		"name": organization.Name,
+		"type": userType,
+	})
+	if err != nil {
+		return nil, err
+	}
+	if isExisted {
+		return nil, errorx.New("Organization Is Already Existed")
+	}
+
+	err = l.repos.UserRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		var innerErr error
+		// create  organization
+		organization.Status = constants.OrganizationStatusInactive
+		organization, innerErr = l.repos.OrganizationRepo.CreateWithTx(ctx, tx, organization, false)
+		if innerErr != nil {
+			return innerErr
+		}
+		user.DefaultOrganizationId = organization.Id
+		// create user
+		roles := []*model.Role{
+			{
+				Name:           constants.AdminRoleName,
+				Type:           userType,
+				OrganizationId: organization.Id,
+			},
+			{
+				Name:           "general",
+				Type:           userType,
+				OrganizationId: organization.Id,
+			},
+		}
+		user.RemoveRelationships()
+		user.Roles = roles
+		user, innerErr = l.repos.UserRepo.CreateWithTx(ctx, tx, user, true)
+		if innerErr != nil {
+			return innerErr
+		}
+		// update organization's owner
+		organization.OwnerId = user.Id
+		innerErr = l.repos.OrganizationRepo.UpdateOwnerIdWithTx(ctx, tx, organization.Id, user.Id)
+		if innerErr != nil {
+			return innerErr
+		}
+
+		// create organization and user relation
+		_, innerErr = l.repos.OrganizationAndUserRepo.CreateWithTx(ctx, tx, &model.OrganizationAndUser{
+			OrganizationId: organization.Id,
+			UserId:         user.Id,
+			Status:         constants.OrganizationAndUserStatusActive,
+		}, false)
+		return innerErr
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+// VerifyUserEmail verity user email
+func (l *UserLogic) VerifyUserEmail(ctx context.Context, email string, code string, userType constants.UserType) (user *model.User, err error) {
+	var token string
+	if email == "" || code == "" {
+		return nil, errorx.New("Email And Code Are Required")
+	}
+	// check code
+	verifyCodeKey := stringx.Format(constants.UserRegisterVerifyCode, userType, email)
+	token, err = l.redisCli.Get(ctx, verifyCodeKey)
+	if err != nil {
+		return nil, errorx.WithStack(err)
+	}
+	if token != code {
+		return nil, errorx.New("Invalid Or Expired Code")
+	}
+	err = l.repos.UserRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		var innerErr error
+		// get user
+		user, innerErr = l.repos.UserRepo.GetUserByEmailWithTx(ctx, tx, email, userType)
+		if innerErr != nil {
+			return innerErr
+		}
+		if user.Status != constants.UserStatusUnverified {
+			return errorx.New("Email Is Already Verified")
+		}
+		// update user status
+		innerErr = l.repos.UserRepo.UpdateColumnsByIdWithTx(ctx, tx, user.Id, map[string]interface{}{
+			"status": constants.UserStatusActive,
+		})
+		if innerErr != nil {
+			return innerErr
+		}
+
+		// update user's organization status
+		innerErr = l.repos.OrganizationRepo.UpdateOwnerOrganizationStatusWithTx(ctx, tx, user.Id, constants.OrganizationStatusActive)
+		if innerErr != nil {
+			return innerErr
+		}
+		return innerErr
+	})
+
+	return
 }
