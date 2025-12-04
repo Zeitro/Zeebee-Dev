@@ -3,13 +3,9 @@ syntax = "proto3";
 package borrower;
 option go_package = "./borrower";
 
-message EmptyRequest {
+message EmptyRequest {}
 
-}
-
-message EmptyResponse {
-
-}
+message EmptyResponse {}
 
 message StringSliceResponse {
   repeated string data = 1;
@@ -60,9 +56,7 @@ service common {
   rpc GetUuid(EmptyRequest) returns(GetUuidResponse);
 }
 // ========================== common service end =================
-
-
-// ================= user service start ==================
+// ========================== user service start =================
 // login
 message UserLoginRequest {
   UserLoginRequestData data = 1;
@@ -212,6 +206,8 @@ message UserinfoResponseData {
   string organization_name = 7;
   string status = 8;
   repeated Organization organizations = 9;
+  bool is_owner = 10;
+  bool is_admin = 11;
 }
 
 // switch organization
@@ -247,9 +243,7 @@ service user {
   rpc EditProfile(UserProfileEditRequest) returns(UserinfoResponse);
 }
 // ================= user service end =================
-
-// ================ loan service start =================
-
+// ================= loan service start =================
 message LoanEntry {
   int64 id = 1;
   string stage = 2;
@@ -1348,10 +1342,7 @@ service LoanApplicant {
   rpc BorrowerNames(BorrowerNamesRequest) returns(BorrowerNamesResponse);
 }
 // ===================== loan applicant service end ======================
-
-
-
-// ===================== loan document service start ======================
+// ===================== loan document service start =====================
 message LoanDocumentEntry {
   int64 id = 1;
   int64 loan_id = 2;
@@ -1379,8 +1370,7 @@ service LoanDocument {
   rpc AddFiles(LoanDocumentAddFilesRequest) returns(EmptyResponse);
 }
 // ===================== loan document service end ======================
-
-// ===================== loan borrower service start ======================
+// ===================== loan borrower service start ====================
 message LoanBorrowerEntry{
   int64 id = 1;
   int64 loan_id = 2;
@@ -1402,10 +1392,8 @@ message LoanBorrowerLoanEditEntry{
   int64 id = 1;
   int64 borrower_entity_id = 2;
 }
-
 // ====================== loan borrower service end ======================
-
-// ===================== lender service start ======================
+// =====================+ lender service start ======================
 message LenderEntry{
   int64 id = 1;
   string name = 2;
@@ -1413,7 +1401,6 @@ message LenderEntry{
   string status = 4;
 }
 // ===================== lender service end ======================
-
 // ===================== loan experience service start ======================
 message LoanExperienceEntry{
   int64 id = 1;
@@ -1433,7 +1420,6 @@ message LoanExperienceEntry{
   AddressEntry address = 15;
 }
 // ===================== loan experience service end ======================
-
 // ===================== loan third service service start ======================
 message LoanThirdServiceEntry{
   int64 id = 1;
@@ -1445,7 +1431,6 @@ message LoanThirdServiceEntry{
   string company = 7;
 }
 // ===================== loan third service service end ======================
-
 // ===================== loan demographic service start ======================
 message LoanDemographicEntry{
   int64 id = 1;
@@ -1494,7 +1479,6 @@ message LoanDemographicExtraDemographicEntry {
   repeated string info_channels = 4;
 }
 // ===================== loan demographic service end ======================
-
 // ===================== file service start======================
 message FileEntry {
   int64 id = 1;
@@ -1517,8 +1501,7 @@ service File {
   rpc DeleteFile(FileDeleteRequest) returns(EmptyResponse);
 }
 // ====================== file service end ======================
-
-// ===================== storage service start ======================
+// ====================== storage service start ======================
 message StorageCreatePresignedUrlRequest {
   StorageCreatePresignedUrlRequestData data = 1;
 }
@@ -1540,7 +1523,7 @@ service Storage {
   rpc CreatePresignedUrl(StorageCreatePresignedUrlRequest) returns(StorageCreatePresignedUrlResponse);
 }
 // ====================== storage service end ======================
-// ================= resource service start =================
+// ====================== resource service start =================
 message ResourceTreeEntity{
   int64 id = 1;
   int64 parent_id = 2;
@@ -1592,7 +1575,7 @@ service resource {
   rpc ResourceTree(ResourceTreeRequest) returns(ResourceTreeResponse);
 }
 // =================== resource service end =================
-// ================= role service start =================
+// =================== role service start =================
 message RoleEntity {
   int64 id = 1;
   string name = 2;
