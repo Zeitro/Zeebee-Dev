@@ -32,6 +32,15 @@ func (r *OrganizationRepo) UpdateOwnerIdWithTx(ctx context.Context, tx *gorm.DB,
 	return errorx.WithStack(err)
 }
 
+// UpdateOwnerOrganizationStatusWithTx update owner's organization status with transaction
+func (r *OrganizationRepo) UpdateOwnerOrganizationStatusWithTx(ctx context.Context, tx *gorm.DB, ownerId int64, status constants.OrganizationStatus) (err error) {
+	err = tx.WithContext(ctx).
+		Model(&model.Organization{}).
+		Where("owner_id = ?", ownerId).
+		Update("status", status).Error
+	return errorx.WithStack(err)
+}
+
 // GetOrganization return organization by id and type
 func (repo *OrganizationRepo) GetOrganization(ctx context.Context, id int64, organizationType constants.UserType) (result *model.Organization, err error) {
 	err = repo.Client(ctx).

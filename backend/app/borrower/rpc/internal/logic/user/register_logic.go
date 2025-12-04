@@ -14,6 +14,7 @@ import (
 
 	"zeebee-backend/app/borrower/rpc/internal/email_tpl"
 	"zeebee-backend/app/borrower/rpc/internal/global"
+	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/logic/loan"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/internal/types"
@@ -31,13 +32,15 @@ type RegisterLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	baseLogic *logic.BaseLogic
 }
 
 func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RegisterLogic {
 	return &RegisterLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -92,17 +95,6 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 		LastName:     in.Data.LastName,
 		FullName:     stringx.FormatFullName(in.Data.FirstName, "", in.Data.LastName),
 	}
-	// check organization
-	isExisted, err := l.svcCtx.OrganizationRepo.IsExistedByColumns(l.ctx, map[string]interface{}{
-		"name": in.Data.OrganizationName,
-		"type": constants.UserTypeBorrower,
-	})
-	if err != nil {
-		return nil, err
-	}
-	if isExisted {
-		return nil, errorx.New("Organization Already Exists")
-	}
 	organizationModel := &model.Organization{
 		Name:      in.Data.OrganizationName,
 		Type:      constants.UserTypeBorrower,
@@ -110,7 +102,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 		OwnerType: constants.OrganizationOwnerTypeNone,
 	}
 
-	userModel, err = l.svcCtx.UserRepo.RegisterWithOrganization(l.ctx, userModel, organizationModel, constants.OrganizationAndUserStatusActive)
+	userModel, err = l.baseLogic.UserLogic.RegisterWithOrganization(l.ctx, userModel, organizationModel, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}
@@ -330,7 +322,7 @@ func sendLoginUrlEmail(ctx context.Context, email string, firstName string) (err
 func sendRegisterVerifyUrlEmail(ctx context.Context, email string, firstName string) (err error) {
 	var code string
 	// generate verify code
-	codeKey := stringx.Format(constants.BorrowerRegisterVerifyCode, email)
+	codeKey := stringx.Format(constants.UserRegisterVerifyCode, constants.UserTypeBorrower, email)
 	code, _ = global.GetRedis().Get(ctx, codeKey)
 	if len(code) == 0 {
 		code = random.RandNumeral(10)
