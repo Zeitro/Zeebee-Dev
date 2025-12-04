@@ -7,7 +7,7 @@ import ActiveLoans from './Active';
 import ArchivedLoans from './Archived';
 import { useGetOptions } from '@/hooks/useGetOptions';
 const api = '/loan/page';
-const ListView = () => {
+const ListView = ({ className }) => {
 	const [tabKey, setTabKey] = useState('pending');
 	useGetOptions([
 		{
@@ -76,7 +76,7 @@ const ListView = () => {
 				},
 			]}
 			onChange={(v) => setTabKey(v)}
-			className={`h-full ${styles.loans}`}
+			className={`h-[calc(100%-84px)] overflow-hidden ${styles.loans} ${className}`}
 			destroyOnHidden
 		/>
 	);

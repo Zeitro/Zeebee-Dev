@@ -27,6 +27,7 @@ export * from './components/TableOperation/index';
 export * from './components/ViewFile/index';
 export * from './components/PortalComponent';
 export * from './components/FilterTableCard/index';
+export * from './components/InfiniteList/index';
 
 // 创建ZeeBee Loan表单组件，Borrower和Lender端共用
 export * from './components/CreateZBLoan/ApplicantInfo';

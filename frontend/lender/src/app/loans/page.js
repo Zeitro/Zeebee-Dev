@@ -1,12 +1,26 @@
 'use client';
-import { Tabs } from 'antd';
+import { Radio } from 'antd';
 import React, { useState } from 'react';
 import TableLoan from './components/ListView';
 import PipelinePendingLoan from './components/Pipeline';
-
+import NewHeader from '@/components/NewHeader';
 const Loans = () => {
-	const [tabKey, setTabKey] = useState('List');
+	const [type, setType] = useState('list');
 
-	return <>{tabKey === 'List' ? <TableLoan /> : <PipelinePendingLoan />}</>;
+	return (
+		<>
+			<NewHeader isShowCrumbs>
+				<Radio.Group
+					value={type}
+					buttonStyle="solid"
+					onChange={(e) => setType(e.target.value)}
+				>
+					<Radio.Button value="list">List view</Radio.Button>
+					<Radio.Button value="pipeline">Pipeline view</Radio.Button>
+				</Radio.Group>
+			</NewHeader>
+			{type === 'list' ? <TableLoan /> : <PipelinePendingLoan />}
+		</>
+	);
 };
 export default Loans;

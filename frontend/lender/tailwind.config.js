@@ -17,6 +17,7 @@ module.exports = {
 					border: 'var(--base-border)',
 					label:'var(--base-label)',
 					active:'var(--base-active)',
+					gray:'var(--base-gray)',
 				},
 				black: {
 					light: 'var(--black-light)', // 浅黑色
