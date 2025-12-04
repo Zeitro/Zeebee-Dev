@@ -18,6 +18,7 @@ import "desc/storage.api"
 import "desc/loan_document.api"
 import "desc/borrower_entity.api"
 import "desc/borrower_applicant.api"
+import "desc/role.api"
 
 type (
 	EmptyRequest  {}
@@ -396,4 +397,44 @@ service borrower-api {
 	post /loan_document/:id/files (LoanDocumentAddFilesRequest) returns (EmptyResponse)
 }
 
-	// ============== loan document end =============
+// ============== loan document end =============
+// ============== role start ============
+@server(
+	desc: "borrower-api service"
+	version: v1
+	group: role
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: role
+)
+service borrower-api {
+	@doc "detail"
+	@handler RoleDetail
+	get /role/:id (PathIdRequest) returns (RoleEntity)
+
+	@doc "page"
+	@handler RolePage
+	get /role (RolePageRequest) returns (RolePageResponse)
+
+	@doc "all"
+	@handler RoleAll
+	get /role/all (EmptyRequest) returns (RoleAllResponse)
+
+	@doc "create"
+	@handler RoleCreate
+	post /role (RoleCreateRequest) returns (RoleEntity)
+
+	@doc "update"
+	@handler RoleUpdate
+	put /role/:id (RoleUpdateRequest) returns (RoleEntity)
+
+	@doc "delete"
+	@handler RoleDelete
+	delete /role/:id (PathIdRequest) returns (EmptyResponse)
+
+	@doc "update status"
+	@handler RoleUpdateStatus
+	patch /role/:id/status (RoleUpdateStatusRequest) returns (EmptyResponse)
+}
+
+	// ============== role end =============

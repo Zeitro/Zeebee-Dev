@@ -2635,3 +2635,435 @@ var Storage_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "app/borrower/rpc/pb/borrower.proto",
 }
+
+const (
+	Resource_ResourceTree_FullMethodName = "/borrower.resource/ResourceTree"
+)
+
+// ResourceClient is the client API for Resource service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type ResourceClient interface {
+	ResourceTree(ctx context.Context, in *ResourceTreeRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error)
+}
+
+type resourceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewResourceClient(cc grpc.ClientConnInterface) ResourceClient {
+	return &resourceClient{cc}
+}
+
+func (c *resourceClient) ResourceTree(ctx context.Context, in *ResourceTreeRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ResourceTreeResponse)
+	err := c.cc.Invoke(ctx, Resource_ResourceTree_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// ResourceServer is the server API for Resource service.
+// All implementations must embed UnimplementedResourceServer
+// for forward compatibility.
+type ResourceServer interface {
+	ResourceTree(context.Context, *ResourceTreeRequest) (*ResourceTreeResponse, error)
+	mustEmbedUnimplementedResourceServer()
+}
+
+// UnimplementedResourceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedResourceServer struct{}
+
+func (UnimplementedResourceServer) ResourceTree(context.Context, *ResourceTreeRequest) (*ResourceTreeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResourceTree not implemented")
+}
+func (UnimplementedResourceServer) mustEmbedUnimplementedResourceServer() {}
+func (UnimplementedResourceServer) testEmbeddedByValue()                  {}
+
+// UnsafeResourceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ResourceServer will
+// result in compilation errors.
+type UnsafeResourceServer interface {
+	mustEmbedUnimplementedResourceServer()
+}
+
+func RegisterResourceServer(s grpc.ServiceRegistrar, srv ResourceServer) {
+	// If the following call pancis, it indicates UnimplementedResourceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&Resource_ServiceDesc, srv)
+}
+
+func _Resource_ResourceTree_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResourceTreeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ResourceServer).ResourceTree(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Resource_ResourceTree_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ResourceServer).ResourceTree(ctx, req.(*ResourceTreeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Resource_ServiceDesc is the grpc.ServiceDesc for Resource service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Resource_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "borrower.resource",
+	HandlerType: (*ResourceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ResourceTree",
+			Handler:    _Resource_ResourceTree_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "app/borrower/rpc/pb/borrower.proto",
+}
+
+const (
+	Role_Page_FullMethodName         = "/borrower.role/Page"
+	Role_Create_FullMethodName       = "/borrower.role/Create"
+	Role_Update_FullMethodName       = "/borrower.role/Update"
+	Role_Delete_FullMethodName       = "/borrower.role/Delete"
+	Role_Detail_FullMethodName       = "/borrower.role/Detail"
+	Role_UpdateStatus_FullMethodName = "/borrower.role/UpdateStatus"
+	Role_All_FullMethodName          = "/borrower.role/All"
+)
+
+// RoleClient is the client API for Role service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type RoleClient interface {
+	Page(ctx context.Context, in *RolePageRequest, opts ...grpc.CallOption) (*RolePageResponse, error)
+	Create(ctx context.Context, in *RoleCreateRequest, opts ...grpc.CallOption) (*RoleCreateResponse, error)
+	Update(ctx context.Context, in *RoleUpdateRequest, opts ...grpc.CallOption) (*RoleUpdateResponse, error)
+	Delete(ctx context.Context, in *RoleDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	Detail(ctx context.Context, in *RoleDetailRequest, opts ...grpc.CallOption) (*RoleDetailResponse, error)
+	UpdateStatus(ctx context.Context, in *RoleUpdateStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	All(ctx context.Context, in *RoleAllRequest, opts ...grpc.CallOption) (*RoleAllResponse, error)
+}
+
+type roleClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewRoleClient(cc grpc.ClientConnInterface) RoleClient {
+	return &roleClient{cc}
+}
+
+func (c *roleClient) Page(ctx context.Context, in *RolePageRequest, opts ...grpc.CallOption) (*RolePageResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RolePageResponse)
+	err := c.cc.Invoke(ctx, Role_Page_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *roleClient) Create(ctx context.Context, in *RoleCreateRequest, opts ...grpc.CallOption) (*RoleCreateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RoleCreateResponse)
+	err := c.cc.Invoke(ctx, Role_Create_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *roleClient) Update(ctx context.Context, in *RoleUpdateRequest, opts ...grpc.CallOption) (*RoleUpdateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RoleUpdateResponse)
+	err := c.cc.Invoke(ctx, Role_Update_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *roleClient) Delete(ctx context.Context, in *RoleDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, Role_Delete_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *roleClient) Detail(ctx context.Context, in *RoleDetailRequest, opts ...grpc.CallOption) (*RoleDetailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RoleDetailResponse)
+	err := c.cc.Invoke(ctx, Role_Detail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *roleClient) UpdateStatus(ctx context.Context, in *RoleUpdateStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, Role_UpdateStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *roleClient) All(ctx context.Context, in *RoleAllRequest, opts ...grpc.CallOption) (*RoleAllResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RoleAllResponse)
+	err := c.cc.Invoke(ctx, Role_All_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// RoleServer is the server API for Role service.
+// All implementations must embed UnimplementedRoleServer
+// for forward compatibility.
+type RoleServer interface {
+	Page(context.Context, *RolePageRequest) (*RolePageResponse, error)
+	Create(context.Context, *RoleCreateRequest) (*RoleCreateResponse, error)
+	Update(context.Context, *RoleUpdateRequest) (*RoleUpdateResponse, error)
+	Delete(context.Context, *RoleDeleteRequest) (*EmptyResponse, error)
+	Detail(context.Context, *RoleDetailRequest) (*RoleDetailResponse, error)
+	UpdateStatus(context.Context, *RoleUpdateStatusRequest) (*EmptyResponse, error)
+	All(context.Context, *RoleAllRequest) (*RoleAllResponse, error)
+	mustEmbedUnimplementedRoleServer()
+}
+
+// UnimplementedRoleServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedRoleServer struct{}
+
+func (UnimplementedRoleServer) Page(context.Context, *RolePageRequest) (*RolePageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Page not implemented")
+}
+func (UnimplementedRoleServer) Create(context.Context, *RoleCreateRequest) (*RoleCreateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedRoleServer) Update(context.Context, *RoleUpdateRequest) (*RoleUpdateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+}
+func (UnimplementedRoleServer) Delete(context.Context, *RoleDeleteRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedRoleServer) Detail(context.Context, *RoleDetailRequest) (*RoleDetailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Detail not implemented")
+}
+func (UnimplementedRoleServer) UpdateStatus(context.Context, *RoleUpdateStatusRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateStatus not implemented")
+}
+func (UnimplementedRoleServer) All(context.Context, *RoleAllRequest) (*RoleAllResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method All not implemented")
+}
+func (UnimplementedRoleServer) mustEmbedUnimplementedRoleServer() {}
+func (UnimplementedRoleServer) testEmbeddedByValue()              {}
+
+// UnsafeRoleServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to RoleServer will
+// result in compilation errors.
+type UnsafeRoleServer interface {
+	mustEmbedUnimplementedRoleServer()
+}
+
+func RegisterRoleServer(s grpc.ServiceRegistrar, srv RoleServer) {
+	// If the following call pancis, it indicates UnimplementedRoleServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&Role_ServiceDesc, srv)
+}
+
+func _Role_Page_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RolePageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoleServer).Page(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Role_Page_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoleServer).Page(ctx, req.(*RolePageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Role_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RoleCreateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoleServer).Create(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Role_Create_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoleServer).Create(ctx, req.(*RoleCreateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Role_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RoleUpdateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoleServer).Update(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Role_Update_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoleServer).Update(ctx, req.(*RoleUpdateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Role_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RoleDeleteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoleServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Role_Delete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoleServer).Delete(ctx, req.(*RoleDeleteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Role_Detail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RoleDetailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoleServer).Detail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Role_Detail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoleServer).Detail(ctx, req.(*RoleDetailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Role_UpdateStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RoleUpdateStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoleServer).UpdateStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Role_UpdateStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoleServer).UpdateStatus(ctx, req.(*RoleUpdateStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Role_All_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RoleAllRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoleServer).All(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Role_All_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoleServer).All(ctx, req.(*RoleAllRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Role_ServiceDesc is the grpc.ServiceDesc for Role service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Role_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "borrower.role",
+	HandlerType: (*RoleServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Page",
+			Handler:    _Role_Page_Handler,
+		},
+		{
+			MethodName: "Create",
+			Handler:    _Role_Create_Handler,
+		},
+		{
+			MethodName: "Update",
+			Handler:    _Role_Update_Handler,
+		},
+		{
+			MethodName: "Delete",
+			Handler:    _Role_Delete_Handler,
+		},
+		{
+			MethodName: "Detail",
+			Handler:    _Role_Detail_Handler,
+		},
+		{
+			MethodName: "UpdateStatus",
+			Handler:    _Role_UpdateStatus_Handler,
+		},
+		{
+			MethodName: "All",
+			Handler:    _Role_All_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "app/borrower/rpc/pb/borrower.proto",
+}

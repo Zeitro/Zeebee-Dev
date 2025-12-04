@@ -15,6 +15,7 @@ import (
 	loan_applicant "zeebee-backend/app/borrower/api/internal/handler/loan_applicant"
 	loan_document "zeebee-backend/app/borrower/api/internal/handler/loan_document"
 	pdf "zeebee-backend/app/borrower/api/internal/handler/pdf"
+	role "zeebee-backend/app/borrower/api/internal/handler/role"
 	storage "zeebee-backend/app/borrower/api/internal/handler/storage"
 	user "zeebee-backend/app/borrower/api/internal/handler/user"
 	"zeebee-backend/app/borrower/api/internal/svc"
@@ -365,6 +366,57 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/pdf/apply_form",
 					Handler: pdf.ApplyFormPdfHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// page
+					Method:  http.MethodGet,
+					Path:    "/role",
+					Handler: role.RolePageHandler(serverCtx),
+				},
+				{
+					// create
+					Method:  http.MethodPost,
+					Path:    "/role",
+					Handler: role.RoleCreateHandler(serverCtx),
+				},
+				{
+					// detail
+					Method:  http.MethodGet,
+					Path:    "/role/:id",
+					Handler: role.RoleDetailHandler(serverCtx),
+				},
+				{
+					// update
+					Method:  http.MethodPut,
+					Path:    "/role/:id",
+					Handler: role.RoleUpdateHandler(serverCtx),
+				},
+				{
+					// delete
+					Method:  http.MethodDelete,
+					Path:    "/role/:id",
+					Handler: role.RoleDeleteHandler(serverCtx),
+				},
+				{
+					// update status
+					Method:  http.MethodPatch,
+					Path:    "/role/:id/status",
+					Handler: role.RoleUpdateStatusHandler(serverCtx),
+				},
+				{
+					// all
+					Method:  http.MethodGet,
+					Path:    "/role/all",
+					Handler: role.RoleAllHandler(serverCtx),
 				},
 			}...,
 		),

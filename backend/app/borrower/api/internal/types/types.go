@@ -670,6 +670,61 @@ type PropertyPageSorter struct {
 	Sort   string `json:"sort,optional"`
 }
 
+type ResourceEntity struct {
+	Id                 int64  `json:"id"`
+	ParentId           int64  `json:"parent_id"`
+	Type               string `json:"type"`
+	ResourceType       string `json:"resource_type"`
+	Name               string `json:"name"`
+	Path               string `json:"path"`
+	Icon               string `json:"icon"`
+	Tag                string `json:"tag"`
+	IsShow             bool   `json:"is_show"`
+	Status             string `json:"status"`
+	SortOrder          int32  `json:"sort_order"`
+	CreatedAt          string `json:"created_at"`
+	UpdatedAt          string `json:"updated_at"`
+	PivotRoleDataScope string `json:"pivot_role_data_scope,omitempty"`
+}
+
+type ResourceTreeEntity struct {
+	Id           int64                 `json:"id"`
+	ParentId     int64                 `json:"parent_id"`
+	Type         string                `json:"type"`
+	ResourceType string                `json:"resource_type"`
+	Name         string                `json:"name"`
+	Path         string                `json:"path"`
+	Icon         string                `json:"icon"`
+	Tag          string                `json:"tag"`
+	IsShow       bool                  `json:"is_show"`
+	Status       string                `json:"status"`
+	SortOrder    int32                 `json:"sort_order"`
+	CreatedAt    string                `json:"created_at"`
+	UpdatedAt    string                `json:"updated_at"`
+	Children     []*ResourceTreeEntity `json:"children,omitempty"`
+}
+
+type ResourceTreeRequest struct {
+	Type string `form:"type" validate:"required,oneof=Borrower Lender Admin"`
+}
+
+type ResourceTreeResponse struct {
+	List []*ResourceTreeEntity `json:"list"`
+}
+
+type RoleDeleteRequest struct {
+	Id int64 `path:"id" validate:"required,gt=0"`
+}
+
+type RolePageFilter struct {
+	Keyword string `json:"keyword"`
+}
+
+type RolePageSort struct {
+	Column string `json:"column"`
+	Sort   string `json:"sort"`
+}
+
 type SecondaryPreApprovalLoan struct {
 	LenderCompanyId   int64                               `json:"lender_company_id"`
 	LenderCompanyName string                              `json:"lender_company_name"`

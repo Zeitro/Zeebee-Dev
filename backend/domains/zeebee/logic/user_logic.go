@@ -573,7 +573,8 @@ func (l *UserLogic) VerifyUserEmail(ctx context.Context, email string, code stri
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	if token != code {
+	// Check if code exists (expired or invalid)
+	if len(token) == 0 || token != code {
 		return nil, errorx.New("Invalid Or Expired Code")
 	}
 	err = l.repos.UserRepo.Transaction(ctx, func(tx *gorm.DB) error {

@@ -170,10 +170,13 @@
                     }
                   }
                 },
-                "borrower_id": {
+                "created_at": {
+                  "type": "string"
+                },
+                "creator_id": {
                   "type": "integer"
                 },
-                "created_at": {
+                "creator_name": {
                   "type": "string"
                 },
                 "dob": {
@@ -205,6 +208,9 @@
                 },
                 "mid_name": {
                   "type": "string"
+                },
+                "organization_id": {
+                  "type": "integer"
                 },
                 "phone": {
                   "type": "string"
@@ -248,6 +254,8 @@
                       "id",
                       "created_at",
                       "updated_at",
+                      "creator_id",
+                      "creator_name",
                       "first_name",
                       "mid_name",
                       "last_name",
@@ -283,6 +291,12 @@
                         }
                       },
                       "created_at": {
+                        "type": "string"
+                      },
+                      "creator_id": {
+                        "type": "integer"
+                      },
+                      "creator_name": {
                         "type": "string"
                       },
                       "dob": {
@@ -457,6 +471,8 @@
                       "id",
                       "created_at",
                       "updated_at",
+                      "creator_id",
+                      "creator_name",
                       "first_name",
                       "mid_name",
                       "last_name",
@@ -492,6 +508,12 @@
                         }
                       },
                       "created_at": {
+                        "type": "string"
+                      },
+                      "creator_id": {
+                        "type": "integer"
+                      },
+                      "creator_name": {
                         "type": "string"
                       },
                       "dob": {
@@ -598,10 +620,13 @@
                     }
                   }
                 },
-                "borrower_id": {
+                "created_at": {
+                  "type": "string"
+                },
+                "creator_id": {
                   "type": "integer"
                 },
-                "created_at": {
+                "creator_name": {
                   "type": "string"
                 },
                 "dob": {
@@ -633,6 +658,9 @@
                 },
                 "mid_name": {
                   "type": "string"
+                },
+                "organization_id": {
+                  "type": "integer"
                 },
                 "phone": {
                   "type": "string"
@@ -874,9 +902,6 @@
             "schema": {
               "type": "object",
               "properties": {
-                "borrower_id": {
-                  "type": "integer"
-                },
                 "contact_email": {
                   "type": "string"
                 },
@@ -887,6 +912,12 @@
                   "type": "string"
                 },
                 "created_at": {
+                  "type": "string"
+                },
+                "creator_id": {
+                  "type": "integer"
+                },
+                "creator_name": {
                   "type": "string"
                 },
                 "id": {
@@ -914,6 +945,9 @@
                 },
                 "name": {
                   "type": "string"
+                },
+                "organization_id": {
+                  "type": "integer"
                 },
                 "tin": {
                   "type": "string"
@@ -958,6 +992,8 @@
                     "type": "object",
                     "required": [
                       "id",
+                      "creator_id",
+                      "creator_name",
                       "created_at",
                       "updated_at",
                       "borrower_id",
@@ -984,6 +1020,12 @@
                         "type": "string"
                       },
                       "created_at": {
+                        "type": "string"
+                      },
+                      "creator_id": {
+                        "type": "integer"
+                      },
+                      "creator_name": {
                         "type": "string"
                       },
                       "id": {
@@ -1143,6 +1185,8 @@
                     "type": "object",
                     "required": [
                       "id",
+                      "creator_id",
+                      "creator_name",
                       "created_at",
                       "updated_at",
                       "borrower_id",
@@ -1169,6 +1213,12 @@
                         "type": "string"
                       },
                       "created_at": {
+                        "type": "string"
+                      },
+                      "creator_id": {
+                        "type": "integer"
+                      },
+                      "creator_name": {
                         "type": "string"
                       },
                       "id": {
@@ -1254,9 +1304,6 @@
             "schema": {
               "type": "object",
               "properties": {
-                "borrower_id": {
-                  "type": "integer"
-                },
                 "contact_email": {
                   "type": "string"
                 },
@@ -1267,6 +1314,12 @@
                   "type": "string"
                 },
                 "created_at": {
+                  "type": "string"
+                },
+                "creator_id": {
+                  "type": "integer"
+                },
+                "creator_name": {
                   "type": "string"
                 },
                 "id": {
@@ -1294,6 +1347,9 @@
                 },
                 "name": {
                   "type": "string"
+                },
+                "organization_id": {
+                  "type": "integer"
                 },
                 "tin": {
                   "type": "string"
@@ -2879,6 +2935,8 @@
                   "items": {
                     "type": "object",
                     "required": [
+                      "creator_id",
+                      "creator_name",
                       "stage",
                       "loan_purpose",
                       "loan_type",
@@ -3050,6 +3108,12 @@
                         "type": "string"
                       },
                       "created_at": {
+                        "type": "string"
+                      },
+                      "creator_id": {
+                        "type": "integer"
+                      },
+                      "creator_name": {
                         "type": "string"
                       },
                       "est_credit_score": {
@@ -4223,6 +4287,12 @@
                   "type": "string"
                 },
                 "created_at": {
+                  "type": "string"
+                },
+                "creator_id": {
+                  "type": "integer"
+                },
+                "creator_name": {
                   "type": "string"
                 },
                 "est_credit_score": {
@@ -5664,7 +5734,7 @@
       }
     },
     "/api/v1/loan/{id}/pending_status": {
-      "put": {
+      "patch": {
         "consumes": [
           "application/json"
         ],
@@ -7096,6 +7166,12 @@
                 "created_at": {
                   "type": "string"
                 },
+                "creator_id": {
+                  "type": "integer"
+                },
+                "creator_name": {
+                  "type": "string"
+                },
                 "id": {
                   "type": "integer"
                 },
@@ -7103,6 +7179,9 @@
                   "type": "number"
                 },
                 "loan_count": {
+                  "type": "integer"
+                },
+                "organization_id": {
                   "type": "integer"
                 },
                 "property_type": {
@@ -7148,6 +7227,9 @@
                     "type": "object",
                     "required": [
                       "id",
+                      "creator_id",
+                      "creator_name",
+                      "organization_id",
                       "property_type",
                       "total_amount",
                       "unit",
@@ -7189,6 +7271,12 @@
                       "created_at": {
                         "type": "string"
                       },
+                      "creator_id": {
+                        "type": "integer"
+                      },
+                      "creator_name": {
+                        "type": "string"
+                      },
                       "id": {
                         "type": "integer"
                       },
@@ -7196,6 +7284,9 @@
                         "type": "number"
                       },
                       "loan_count": {
+                        "type": "integer"
+                      },
+                      "organization_id": {
                         "type": "integer"
                       },
                       "property_type": {
@@ -7293,6 +7384,8 @@
                     "type": "object",
                     "required": [
                       "id",
+                      "creator_id",
+                      "creator_name",
                       "property_type",
                       "living_area_sqft",
                       "bedrooms",
@@ -7352,6 +7445,12 @@
                       },
                       "bedrooms": {
                         "type": "integer"
+                      },
+                      "creator_id": {
+                        "type": "integer"
+                      },
+                      "creator_name": {
+                        "type": "string"
                       },
                       "id": {
                         "type": "integer"
@@ -7463,6 +7562,12 @@
                 "created_at": {
                   "type": "string"
                 },
+                "creator_id": {
+                  "type": "integer"
+                },
+                "creator_name": {
+                  "type": "string"
+                },
                 "id": {
                   "type": "integer"
                 },
@@ -7470,6 +7575,9 @@
                   "type": "number"
                 },
                 "loan_count": {
+                  "type": "integer"
+                },
+                "organization_id": {
                   "type": "integer"
                 },
                 "property_type": {
@@ -7618,6 +7726,8 @@
                   "items": {
                     "type": "object",
                     "required": [
+                      "creator_id",
+                      "creator_name",
                       "stage",
                       "loan_purpose",
                       "loan_type",
@@ -7789,6 +7899,12 @@
                         "type": "string"
                       },
                       "created_at": {
+                        "type": "string"
+                      },
+                      "creator_id": {
+                        "type": "integer"
+                      },
+                      "creator_name": {
                         "type": "string"
                       },
                       "est_credit_score": {
@@ -8443,6 +8559,8 @@
                   "items": {
                     "type": "object",
                     "required": [
+                      "creator_id",
+                      "creator_name",
                       "stage",
                       "loan_purpose",
                       "loan_type",
@@ -8614,6 +8732,12 @@
                         "type": "string"
                       },
                       "created_at": {
+                        "type": "string"
+                      },
+                      "creator_id": {
+                        "type": "integer"
+                      },
+                      "creator_name": {
                         "type": "string"
                       },
                       "est_credit_score": {
@@ -9252,6 +9376,12 @@
                 "bedrooms": {
                   "type": "integer"
                 },
+                "creator_id": {
+                  "type": "integer"
+                },
+                "creator_name": {
+                  "type": "string"
+                },
                 "id": {
                   "type": "integer"
                 },
@@ -9263,6 +9393,8 @@
                   "items": {
                     "type": "object",
                     "required": [
+                      "creator_id",
+                      "creator_name",
                       "stage",
                       "loan_purpose",
                       "loan_type",
@@ -9434,6 +9566,12 @@
                         "type": "string"
                       },
                       "created_at": {
+                        "type": "string"
+                      },
+                      "creator_id": {
+                        "type": "integer"
+                      },
+                      "creator_name": {
                         "type": "string"
                       },
                       "est_credit_score": {
@@ -10082,6 +10220,517 @@
                   "type": "integer"
                 }
               }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/role": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "role"
+        ],
+        "summary": "page",
+        "operationId": "roleRolePage",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "page",
+                "limit",
+                "filter",
+                "sort"
+              ],
+              "properties": {
+                "filter": {
+                  "type": "object",
+                  "required": [
+                    "keyword"
+                  ],
+                  "properties": {
+                    "keyword": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "limit": {
+                  "type": "integer",
+                  "default": 10,
+                  "example": 10
+                },
+                "page": {
+                  "type": "integer",
+                  "default": 1,
+                  "example": 1
+                },
+                "sort": {
+                  "type": "object",
+                  "required": [
+                    "column",
+                    "sort"
+                  ],
+                  "properties": {
+                    "column": {
+                      "type": "string"
+                    },
+                    "sort": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "limit": {
+                  "type": "integer"
+                },
+                "list": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "organization_id",
+                      "name",
+                      "description",
+                      "type",
+                      "status",
+                      "created_at",
+                      "updated_at"
+                    ],
+                    "properties": {
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "organization_id": {
+                        "type": "integer"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "total": {
+                  "type": "integer"
+                },
+                "total_page": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "role"
+        ],
+        "summary": "create",
+        "operationId": "roleRoleCreate",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "name",
+                "description",
+                "status",
+                "resource_ids"
+              ],
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "resource_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "status": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "created_at": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "organization_id": {
+                  "type": "integer"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "updated_at": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/role/all": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "role"
+        ],
+        "summary": "all",
+        "operationId": "roleRoleAll",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "list": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "organization_id",
+                      "name",
+                      "description",
+                      "type",
+                      "status",
+                      "created_at",
+                      "updated_at"
+                    ],
+                    "properties": {
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "organization_id": {
+                        "type": "integer"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/role/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "role"
+        ],
+        "summary": "detail",
+        "operationId": "roleRoleDetail",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "created_at": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "organization_id": {
+                  "type": "integer"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "updated_at": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "role"
+        ],
+        "summary": "update",
+        "operationId": "roleRoleUpdate",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "name",
+                "description",
+                "status",
+                "resource_ids"
+              ],
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "resource_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "status": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "created_at": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "organization_id": {
+                  "type": "integer"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "updated_at": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "role"
+        ],
+        "summary": "delete",
+        "operationId": "roleRoleDelete",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/role/{id}/status": {
+      "patch": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "role"
+        ],
+        "summary": "update status",
+        "operationId": "roleRoleUpdateStatus",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "status"
+              ],
+              "properties": {
+                "status": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
             }
           }
         }
@@ -10927,7 +11576,7 @@
       }
     }
   },
-  "x-date": "2025-11-26 13:44:49",
+  "x-date": "2025-12-04 13:30:30",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
