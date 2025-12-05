@@ -1714,3 +1714,137 @@ service role {
 }
 
 // ================== role service end =================
+// ================== organization user service start =================
+message OrganizationUserEntity {
+  int64 id = 1;
+  int64 organization_id = 2;
+  int64 user_id = 3;
+  string status = 4;
+  string first_name = 5;
+  string mid_name = 6;
+  string last_name = 7;
+  string full_name = 8;
+  string phone = 9;
+  string remark = 10;
+  string created_at = 11;
+  string updated_at = 12;
+  string email = 13;
+  repeated RoleEntity roles = 14;
+}
+
+message OrganizationUserPageEntity {
+  int64 id = 1;
+  string status = 2;
+  string first_name = 3;
+  string mid_name = 4;
+  string last_name = 5;
+  string full_name = 6;
+  string phone = 7;
+  string remark = 8;
+  string created_at = 9;
+  string updated_at = 10;
+  string email = 11;
+  repeated RoleEntity roles = 12;
+}
+// page --  request
+message OrganizationUserPageRequest {
+  OrganizationUserPageRequestData data = 1;
+}
+message OrganizationUserPageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  OrganizationUserPageRequestFilter filter = 3;
+  OrganizationUserPageRequestSorter sorter = 4;
+}
+message OrganizationUserPageRequestFilter {
+  string keyword = 2;
+  string status = 3;
+  int64 role_id = 4;
+}
+message OrganizationUserPageRequestSorter {
+  string column = 1;
+  string sort = 2;
+}
+// page --  response
+message OrganizationUserPageResponse {
+  OrganizationUserPageResponseData data = 1;
+}
+message OrganizationUserPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated OrganizationUserPageEntity list = 5;
+}
+//  create --  request
+message OrganizationUserCreateRequest {
+  OrganizationUserCreateRequestData data = 1;
+}
+message OrganizationUserCreateRequestData {
+  string email = 1;
+  string phone = 2;
+  string remark = 3;
+  repeated int64 role_ids = 4;
+}
+//  create --  response
+message OrganizationUserCreateResponse {
+  OrganizationUserEntity data = 1;
+}
+//  update --  request
+message OrganizationUserUpdateRequest {
+  OrganizationUserUpdateRequestData data = 1;
+}
+message OrganizationUserUpdateRequestData {
+  int64 id = 1;
+  string phone = 2;
+  string remark = 3;
+  repeated int64 role_ids = 4;
+  string first_name = 5;
+  string last_name = 6;
+}
+//  update --  response
+message OrganizationUserUpdateResponse {
+  OrganizationUserEntity data = 1;
+}
+//  detail --  request
+message OrganizationUserDetailRequest {
+  OrganizationUserDetailRequestData data = 1;
+}
+message OrganizationUserDetailRequestData {
+  int64 id = 1;
+}
+//  detail --  response
+message OrganizationUserDetailResponse {
+  OrganizationUserEntity data = 1;
+}
+//  delete --  request
+message OrganizationUserDeleteRequest {
+  OrganizationUserDeleteRequestData data = 1;
+}
+message OrganizationUserDeleteRequestData {
+  int64 id = 1;
+}
+//  switch status --  request
+message OrganizationUserUpdateStatusRequest {
+  OrganizationUserUpdateStatusRequestData data = 1;
+}
+message OrganizationUserUpdateStatusRequestData {
+  int64 id = 1;
+  string status = 2;
+}
+// all --  request
+message OrganizationUserAllResponse {
+  repeated OrganizationUserEntity data = 1;
+}
+
+service OrganizationUser {
+  rpc Page(OrganizationUserPageRequest) returns(OrganizationUserPageResponse);
+  rpc Create(OrganizationUserCreateRequest) returns(OrganizationUserCreateResponse);
+  rpc Update(OrganizationUserUpdateRequest) returns(OrganizationUserUpdateResponse);
+  rpc Delete(OrganizationUserDeleteRequest) returns(EmptyResponse);
+  rpc Detail(OrganizationUserDetailRequest) returns(OrganizationUserDetailResponse);
+  rpc SwitchStatus(OrganizationUserUpdateStatusRequest) returns(EmptyResponse);
+  rpc All(EmptyRequest) returns(OrganizationUserAllResponse);
+}
+
+// ================= organization user service end =================

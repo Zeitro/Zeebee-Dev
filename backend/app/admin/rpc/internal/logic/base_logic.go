@@ -14,10 +14,7 @@ type BaseLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
-	UserLogic     *logic.UserLogic
-	ApiLogic      *logic.ApiLogic
-	ResourceLogic *logic.ResourceLogic
-	RoleLogic     *logic.RoleLogic
+	*logic.AllLogics
 }
 
 func NewBaseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BaseLogic {
@@ -28,13 +25,11 @@ func NewBaseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BaseLogic {
 		RefreshSecret: svcCtx.Config.JwtAuth.RefreshSecret,
 		RefreshExpire: svcCtx.Config.JwtAuth.RefreshExpire,
 	}
+	emailClient := global.EmailClient
 	return &BaseLogic{
-		ctx:           ctx,
-		svcCtx:        svcCtx,
-		Logger:        logx.WithContext(ctx),
-		UserLogic:     logic.NewUserLogic(svcCtx.AllRepos, redisCli, jwtConfig),
-		ApiLogic:      logic.NewApiLogic(svcCtx.AllRepos),
-		ResourceLogic: logic.NewResourceLogic(svcCtx.AllRepos),
-		RoleLogic:     logic.NewRoleLogic(svcCtx.AllRepos),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		AllLogics: logic.NewAllLogics(svcCtx.AllRepos, redisCli, jwtConfig, emailClient),
 	}
 }
