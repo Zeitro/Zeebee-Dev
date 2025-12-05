@@ -1,6 +1,6 @@
 'use client';
 import { Menu } from 'antd';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useGlobalStore } from '@/store/global';
 import styles from './index.module.scss';
 import { navRouter } from '@config/routes';

@@ -71,7 +71,7 @@ export const navRouter = [
 	{
 		path: '/setting',
 		title: 'Setting',
-		icon: 'management',
+		icon: 'setting',
 		isPageNotFound: true, // 只是用于侧边栏显示,并无此页面
 		router: [
 			{

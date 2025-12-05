@@ -15,6 +15,7 @@ import { FilterTag } from '../FilterField/filterTag.js';
 import { FilterField } from '../FilterField/index';
 import { NewTable } from '../NewTable';
 import { Cards } from './cards.js';
+import styles from './index.module.scss';
 /**
  * Form筛选 + Table/Card（两个可切换）
  * 与FilterTable传一样的参数
@@ -136,7 +137,11 @@ export const FilterTableCard = forwardRef(
 							onChange={onChange}
 							{...props}
 							pagination={props?.pagination ?? pagination}
-							className={['flex-1 overflow-hidden', props?.className].join(' ')}
+							className={[
+								'flex-1 overflow-hidden',
+								styles.filter_table_content,
+								props?.className,
+							].join(' ')}
 						/>
 					);
 				case 'card':

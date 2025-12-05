@@ -83,7 +83,7 @@ const MainModal = ({ setOpen, rowData, handleSearch }) => {
 		<NewModal
 			width={600}
 			title={`${rowData?.id ? 'Edit' : 'Add'} user`}
-			okText="Save"
+			okText={rowData?.id ? 'Save change' : 'Add'}
 			confirmLoading={confirmLoading}
 			onOk={handleSave}
 			onCancel={() => setOpen(false)}
@@ -94,13 +94,27 @@ const MainModal = ({ setOpen, rowData, handleSearch }) => {
 					name="user-form"
 					layout="vertical"
 					autoComplete="off"
-					className="h-[40vh] overflow-hidden overflow-y-auto"
+					className={[
+						' overflow-hidden overflow-y-auto',
+						rowData?.id ? 'h-[64vh]' : 'h-[56vh]',
+					].join(' ')}
 					size="large"
 					disabled={confirmLoading}
 					scrollToFirstError
 				>
 					<Row gutter={16}>
-						<Col {...layoutCol}>
+						<Col {...titleCol} className="!text-xl font-medium text-base-gray pb-4">
+							User information
+						</Col>
+						{rowData?.id && (
+							<InputNameCombination
+								layoutCol={{ ...layoutCol, md: 12 }}
+								firstName={['first_name']}
+								lastName={['last_name']}
+								hideMiddleName={true}
+							/>
+						)}
+						<Col {...titleCol}>
 							<Form.Item
 								label="Email"
 								name={['email']}
@@ -114,35 +128,14 @@ const MainModal = ({ setOpen, rowData, handleSearch }) => {
 									},
 								]}
 							>
-								<Input placeholder="Enter email" />
+								<Input placeholder="Enter email" disabled={rowData?.id} />
 							</Form.Item>
 						</Col>
-						<Col {...layoutCol}>
-							<Form.Item label="Name" name={['name']} rules={[{ required: true }]}>
-								<Input placeholder="Enter name" />
-							</Form.Item>
-						</Col>
-						<Col {...layoutCol}>
-							<Form.Item
-								label="Role"
-								name={['role']}
-								rules={[
-									{
-										required: true,
-									},
-								]}
-							>
-								<Select options={[]} placeholder="Select role" />
-							</Form.Item>
-						</Col>
-						<Col {...layoutCol}>
+						<Col {...titleCol}>
 							<Form.Item
 								label="Phone"
 								name={['phone']}
 								rules={[
-									{
-										required: true,
-									},
 									{
 										validator: (_, value) =>
 											validateRule(value, phoneRegex, 'Invalid phone number'),
@@ -152,13 +145,20 @@ const MainModal = ({ setOpen, rowData, handleSearch }) => {
 								<InputPhone />
 							</Form.Item>
 						</Col>
-
 						<Col {...titleCol}>
 							<Form.Item label="Remark" name={['remark']}>
 								<TextArea
 									placeholder="Enter remark"
 									autoSize={{ minRows: 3, maxRows: 5 }}
 								/>
+							</Form.Item>
+						</Col>
+						<Col {...titleCol} className="!text-xl font-medium text-base-gray pb-4">
+							User role
+						</Col>
+						<Col {...titleCol}>
+							<Form.Item label="Role" name={['role']} rules={[{ required: true }]}>
+								<Select options={[]} placeholder="Select role" />
 							</Form.Item>
 						</Col>
 					</Row>
