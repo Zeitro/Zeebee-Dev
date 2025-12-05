@@ -121,14 +121,12 @@ func (repo *RoleRepo) Page(ctx context.Context, req *RolePageReq) (page gormx.Pa
 }
 
 // GetUserRoles
-func (repo *RoleRepo) GetUserRoles(ctx context.Context, userId int64, organizationId int64) (result []*model.Role, err error) {
+func (repo *RoleRepo) GetOrganizationUserRoles(ctx context.Context, organizationUserId int64) (result []*model.Role, err error) {
 	roleTable := model.Role{}.TableName()
-	userAndRoleTable := "user_and_roles"
+	pivotTable := "organization_user_and_roles"
 	err = repo.Client(ctx).
-		Joins(fmt.Sprintf("left join %s on %s.id = %s.role_id", userAndRoleTable, roleTable, userAndRoleTable)).
-		Where(fmt.Sprintf("%s.organization_id = ?", roleTable), organizationId).
-		Where(fmt.Sprintf("%s.user_id = ?", userAndRoleTable), userId).
+		Joins(fmt.Sprintf("left join %s on %s.id = %s.role_id", pivotTable, roleTable, pivotTable)).
+		Where(fmt.Sprintf("%s.organization_user_id = ?", pivotTable), organizationUserId).
 		Find(&result).Error
 	return result, errorx.WithStack(err)
-
 }

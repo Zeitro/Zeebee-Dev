@@ -21,10 +21,12 @@ type UserPageRequest struct {
 	Sorter *UserPageRequestSorter
 }
 type UserPageRequestFilter struct {
-	Keyword        string
-	Status         string
-	OrganizationId int64
-	UserType       constants.UserType
+	Keyword            string
+	Status             string
+	OrganizationId     int64
+	RoleId             int64
+	OrganizationUserId int64
+	UserType           constants.UserType
 }
 type UserPageRequestSorter struct {
 	Column string
@@ -32,17 +34,17 @@ type UserPageRequestSorter struct {
 }
 
 type UserPageEntity struct {
-	Id                      int64                               `json:"id"`
-	Type                    constants.UserType                  `json:"type"`
-	Email                   string                              `json:"email"`
-	FirstName               string                              `json:"firstName"`
-	LastName                string                              `json:"lastName"`
-	FullName                string                              `json:"fullName"`
-	Phone                   string                              `json:"phone"`
-	CreatedAt               time.Time                           `json:"created_at"`
-	UpdatedAt               time.Time                           `json:"updated_at"`
-	PivotOrganizationStatus constants.OrganizationAndUserStatus `json:"pivot_organization_status"`
-	Roles                   []*model.Role                       `json:"roles" gorm:"-"`
+	Id                      int64                            `json:"id"`
+	Type                    constants.UserType               `json:"type"`
+	Email                   string                           `json:"email"`
+	FirstName               string                           `json:"firstName"`
+	LastName                string                           `json:"lastName"`
+	FullName                string                           `json:"fullName"`
+	Phone                   string                           `json:"phone"`
+	CreatedAt               time.Time                        `json:"created_at"`
+	UpdatedAt               time.Time                        `json:"updated_at"`
+	PivotOrganizationStatus constants.OrganizationUserStatus `json:"pivot_organization_status"`
+	Roles                   []*model.Role                    `json:"roles" gorm:"-"`
 }
 
 type UserRepo struct {
@@ -60,14 +62,14 @@ func NewUserRepo(db *gorm.DB) *UserRepo {
 // Page returns paginated users
 func (repo *UserRepo) Page(ctx context.Context, pageReq *UserPageRequest) (page gormx.PageResponse[*UserPageEntity], err error) {
 	userTable := model.User{}.TableName()
-	organizationAndUserTable := model.OrganizationAndUser{}.TableName()
+	organizationUserTable := model.OrganizationUser{}.TableName()
 	filter := pageReq.Filter
 	sorter := pageReq.Sorter
 
 	query := repo.Client(ctx).Model(&model.User{}).
-		Joins(fmt.Sprintf("left join %s on %s.user_id = %s.id", organizationAndUserTable, organizationAndUserTable, userTable)).
+		Joins(fmt.Sprintf("left join %s on %s.user_id = %s.id", organizationUserTable, organizationUserTable, userTable)).
 		Where(fmt.Sprintf("%s.type = ?", userTable), filter.UserType).
-		Where(fmt.Sprintf("%s.organization_id = ?", organizationAndUserTable), filter.OrganizationId)
+		Where(fmt.Sprintf("%s.organization_id = ?", organizationUserTable), filter.OrganizationId)
 	if len(filter.Keyword) > 0 {
 		query = query.Where(fmt.Sprintf("%s.email like ? or %s.full_name like ? or %s.phone like ?", userTable, userTable, userTable),
 			"%"+filter.Keyword+"%",
@@ -76,7 +78,7 @@ func (repo *UserRepo) Page(ctx context.Context, pageReq *UserPageRequest) (page 
 		)
 	}
 	if len(filter.Status) > 0 {
-		query = query.Where(fmt.Sprintf("%s.status = ?", organizationAndUserTable), filter.Status)
+		query = query.Where(fmt.Sprintf("%s.status = ?", organizationUserTable), filter.Status)
 	}
 
 	if len(sorter.Column) == 0 {
@@ -93,7 +95,7 @@ func (repo *UserRepo) Page(ctx context.Context, pageReq *UserPageRequest) (page 
 		fmt.Sprintf("%s.last_name", userTable),
 		fmt.Sprintf("%s.full_name", userTable),
 		fmt.Sprintf("%s.phone", userTable),
-		fmt.Sprintf("%s.status as pivot_organization_status", organizationAndUserTable),
+		fmt.Sprintf("%s.status as pivot_organization_status", organizationUserTable),
 		fmt.Sprintf("%s.created_at", userTable),
 		fmt.Sprintf("%s.updated_at", userTable),
 	}
@@ -105,8 +107,8 @@ func (repo *UserRepo) Page(ctx context.Context, pageReq *UserPageRequest) (page 
 		CountColumn: fmt.Sprintf("%s.id", userTable),
 	})
 	roleRepo := NewRoleRepo(repo.BaseRepo.Client(ctx))
-	for i, entity := range page.List {
-		roles, err := roleRepo.GetUserRoles(ctx, entity.Id, filter.OrganizationId)
+	for i, _ := range page.List {
+		roles, err := roleRepo.GetOrganizationUserRoles(ctx, filter.OrganizationId)
 		if err != nil {
 			return page, err
 		}
@@ -121,7 +123,7 @@ func (repo *UserRepo) GetUser(ctx context.Context, id int64, userType constants.
 	err = repo.BaseRepo.Client(ctx).
 		Where("id = ? and type = ?", id, userType).
 		Preload("Organizations").
-		First(&res).Error
+		Preload("OrganizationUsers").First(&res).Error
 	return res, errorx.WithStack(err)
 }
 
@@ -147,9 +149,9 @@ func (repo *UserRepo) GetOrganizationUser(ctx context.Context, id int64, organiz
 }
 
 // RegisterWithOrganization
-func (repo *UserRepo) RegisterWithOrganization(ctx context.Context, user *model.User, organization *model.Organization, relationStatus constants.OrganizationAndUserStatus) (res *model.User, err error) {
+func (repo *UserRepo) RegisterWithOrganization(ctx context.Context, user *model.User, organization *model.Organization, relationStatus constants.OrganizationUserStatus) (res *model.User, err error) {
 	organizationRepo := NewOrganizationRepo(repo.BaseRepo.Client(ctx))
-	relationRepo := NewOrganizationAndUserRepo(repo.BaseRepo.Client(ctx))
+	relationRepo := NewOrganizationUserRepo(repo.BaseRepo.Client(ctx))
 	err = repo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
 		if organization.Id == 0 {
@@ -168,10 +170,15 @@ func (repo *UserRepo) RegisterWithOrganization(ctx context.Context, user *model.
 		if innerErr != nil {
 			return innerErr
 		}
-		_, innerErr = relationRepo.CreateWithTx(ctx, tx, &model.OrganizationAndUser{
+		_, innerErr = relationRepo.CreateWithTx(ctx, tx, &model.OrganizationUser{
 			OrganizationId: organization.Id,
 			UserId:         user.Id,
 			Status:         relationStatus,
+			FirstName:      user.FirstName,
+			MidName:        user.MidName,
+			LastName:       user.LastName,
+			FullName:       user.FullName,
+			Phone:          user.Phone,
 		}, false)
 
 		return innerErr
@@ -221,7 +228,7 @@ func (repo *UserRepo) GetLenderUserByEmail(ctx context.Context, email string) (r
 // CheckOrganizationUserExistWithTx check organization user exist by organization id and email
 func (repo *UserRepo) CheckOrganizationUserExistWithTx(ctx context.Context, tx *gorm.DB, organizationId int64, email string) (isExisted bool, err error) {
 	userTable := model.User{}.TableName()
-	pivotTable := model.OrganizationAndUser{}.TableName()
+	pivotTable := model.OrganizationUser{}.TableName()
 	var count int64
 	err = tx.WithContext(ctx).Model(&model.User{}).
 		Joins(fmt.Sprintf("left join %s on %s.user_id = %s.id", pivotTable, pivotTable, userTable)).

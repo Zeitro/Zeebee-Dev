@@ -54,6 +54,22 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 			reflection.Register(grpcServer)
 		}
 	})
+	// rpcServer.AddUnaryInterceptors(func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp any, err error) {
+	// 	md, ok := metadata.FromIncomingContext(ctx)
+	// 	if ok {
+	// 		fields:= []logc.LogField{}
+	// 		for k, v := range md {
+	// 			fields = append(fields, logc.LogField{
+	// 				Key:   k,
+	// 				Value: v,
+	// 			})
+	// 		}
+	// 		logx.WithContext(ctx).WithFields(fields...).Info("rpc req")
+	// 	}
+	// 	resp, err = handler(ctx, req)
+	// 	return resp, err
+	// })
+
 	return &RpcServer{
 		s: rpcServer,
 	}, nil

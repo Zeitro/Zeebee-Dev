@@ -46,8 +46,12 @@ func (l *VerifyEmailLogic) VerifyEmail(in *borrower.VerifyEmailRequest) (resp *b
 	if err != nil {
 		return nil, err
 	}
+	organizationUser, err := l.svcCtx.OrganizationUserRepo.GetOrganizationUser(l.ctx, user.DefaultOrganizationId, user.Id)
+	if err != nil {
+		return nil, err
+	}
 
-	tokenInfo, err := l.baseLogic.UserLogic.GenerateJwtToken(user, logic2.JwtConfig{
+	tokenInfo, err := l.baseLogic.UserLogic.GenerateJwtToken(user, organizationUser, logic2.JwtConfig{
 		AccessSecret:  l.svcCtx.Config.JwtAuth.AccessSecret,
 		AccessExpire:  l.svcCtx.Config.JwtAuth.AccessExpire,
 		RefreshSecret: l.svcCtx.Config.JwtAuth.RefreshSecret,

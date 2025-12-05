@@ -31,18 +31,18 @@ func (v OrganizationStatus) Validate() error {
 	return errorx.Errorf("Invalid Organization Status: %v", v)
 }
 
-type OrganizationAndUserStatus string
+type OrganizationUserStatus string
 
-var OrganizationAndUserStatusName = "organization_and_user_status"
+var OrganizationUserStatusName = "organization_user_status"
 
 const (
-	OrganizationAndUserStatusActive       OrganizationAndUserStatus = "Active"
-	OrganizationAndUserStatusNotActivated OrganizationAndUserStatus = "Not Activated"
-	OrganizationAndUserStatusDisabled     OrganizationAndUserStatus = "Disabled"
+	OrganizationUserStatusActive       OrganizationUserStatus = "Active"
+	OrganizationUserStatusNotActivated OrganizationUserStatus = "Not Activated"
+	OrganizationUserStatusDisabled     OrganizationUserStatus = "Disabled"
 )
 
-func (v OrganizationAndUserStatus) Validate() error {
-	if v == OrganizationAndUserStatusActive || v == OrganizationAndUserStatusNotActivated || v == OrganizationAndUserStatusDisabled {
+func (v OrganizationUserStatus) Validate() error {
+	if v == OrganizationUserStatusActive || v == OrganizationUserStatusNotActivated || v == OrganizationUserStatusDisabled {
 		return nil
 	}
 	return errorx.Errorf("Invalid Organization And User Status: %v", v)
@@ -80,18 +80,18 @@ func init() {
 		},
 	})
 	// register organization and user status
-	enums.Register(OrganizationAndUserStatusName, []enums.EnumOpt{
+	enums.Register(OrganizationUserStatusName, []enums.EnumOpt{
 		{
-			Label: string(OrganizationAndUserStatusActive),
-			Value: string(OrganizationAndUserStatusActive),
+			Label: string(OrganizationUserStatusActive),
+			Value: string(OrganizationUserStatusActive),
 		},
 		{
-			Label: string(OrganizationAndUserStatusNotActivated),
-			Value: string(OrganizationAndUserStatusNotActivated),
+			Label: string(OrganizationUserStatusNotActivated),
+			Value: string(OrganizationUserStatusNotActivated),
 		},
 		{
-			Label: string(OrganizationAndUserStatusDisabled),
-			Value: string(OrganizationAndUserStatusDisabled),
+			Label: string(OrganizationUserStatusDisabled),
+			Value: string(OrganizationUserStatusDisabled),
 		},
 	})
 
