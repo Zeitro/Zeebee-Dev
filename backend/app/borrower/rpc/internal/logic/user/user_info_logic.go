@@ -35,8 +35,8 @@ func (l *UserInfoLogic) UserInfo(in *borrower.UserInfoRequest) (resp *borrower.U
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-
-	user, err := l.baseLogic.UserLogic.Info(l.ctx, in.Data.Id, constants.UserTypeBorrower)
+	// todo handle organization user id
+	user, err := l.baseLogic.UserLogic.Info(l.ctx, in.Data.Id, 0, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}

@@ -21,8 +21,11 @@ const (
 )
 
 const (
-	UserIdCtxKey    = "user_id"
-	UserClaimCtxKey = "user_claim"
+	UserIdCtxKey             = "user_id"
+	UserTypeCtxKey           = "user_type"
+	UserOrganizationIdCtxKey = "organization_id"
+	UserClaimCtxKey          = "user_claim"
+	JwtTokenCtxKey           = "jwt_token"
 )
 
 func init() {

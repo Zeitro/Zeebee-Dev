@@ -54,7 +54,8 @@ func (l *EditProfileLogic) EditProfile(in *borrower.UserProfileEditRequest) (res
 	if err != nil {
 		return nil, err
 	}
-	token, err := l.baseLogic.UserLogic.Info(l.ctx, user.Id, constants.UserTypeBorrower)
+	// todo handle organization user id
+	token, err := l.baseLogic.UserLogic.Info(l.ctx, user.Id, 0, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}

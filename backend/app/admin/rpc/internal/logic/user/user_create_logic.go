@@ -63,10 +63,10 @@ func (l *UserCreateLogic) UserCreate(in *admin.UserCreateRequest) (resp *admin.U
 		return nil, errorx.WithStack(err)
 	}
 	userModel.FirstName, userModel.MidName, userModel.LastName = stringx.ParseFullName(in.Data.FullName)
-	userModel.OrganizationAndUsers = []*model.OrganizationAndUser{
+	userModel.OrganizationUsers = []*model.OrganizationUser{
 		{
 			OrganizationId: in.Data.OrganizationId,
-			Status:         constants.OrganizationAndUserStatusActive,
+			Status:         constants.OrganizationUserStatusActive,
 		},
 	}
 	user, err := l.baseLogic.UserLogic.AddOrganizationUser(l.ctx, userModel, in.Data.OrganizationId, in.Data.RoleIds)

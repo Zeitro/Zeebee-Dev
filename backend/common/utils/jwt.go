@@ -12,22 +12,17 @@ import (
 
 // JWTClaims JWT声明结构
 type JWTClaims struct {
-	// UserID         string `json:"user_id"`
-	// AccountId      string `json:"account_id"`
-	// OrganizationId int64  `json:"organization_id"`
-	// Username       string `json:"username"`
-	// Role           string `json:"role"`
-	// UserType       string `json:"user_type"`
 	JwtUser
 	jwt.RegisteredClaims
 }
 
 type JwtUser struct {
-	UserId         int64              `json:"user_id"`
-	OrganizationId int64              `json:"organization_id"`
-	Username       string             `json:"username"`
-	Role           []string           `json:"role"`
-	UserType       constants.UserType `json:"user_type"`
+	UserId             int64              `json:"user_id"`
+	OrganizationId     int64              `json:"organization_id"`
+	OrganizationUserId int64              `json:"organization_user_id"`
+	Username           string             `json:"username"`
+	Role               []string           `json:"role"`
+	UserType           constants.UserType `json:"user_type"`
 }
 
 // GenerateToken 生成JWT token

@@ -38,7 +38,7 @@ func (l *SwitchOrganizationLogic) SwitchOrganization(in *lender.SwitchOrganizati
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	user, err := l.baseLogic.UserLogic.SwitchOrganization(l.ctx, in.Data.UserId, in.Data.OrganizationId, constants.UserTypeLender)
+	user, organizationUser, err := l.baseLogic.UserLogic.SwitchOrganization(l.ctx, in.Data.UserId, in.Data.OrganizationId, constants.UserTypeLender)
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +48,7 @@ func (l *SwitchOrganizationLogic) SwitchOrganization(in *lender.SwitchOrganizati
 		RefreshSecret: l.svcCtx.Config.JwtAuth.RefreshSecret,
 		RefreshExpire: l.svcCtx.Config.JwtAuth.RefreshExpire,
 	}
-	token, err := l.baseLogic.UserLogic.GenerateJwtToken(user, jwtConfig, constants.UserTypeLender)
+	token, err := l.baseLogic.UserLogic.GenerateJwtToken(user, organizationUser, jwtConfig, constants.UserTypeLender)
 	if err != nil {
 		return nil, err
 	}

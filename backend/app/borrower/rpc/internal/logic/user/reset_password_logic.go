@@ -12,6 +12,7 @@ import (
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/stringx"
 	logic2 "zeebee-backend/domains/zeebee/logic"
+	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -42,6 +43,7 @@ func (l *ResetPasswordLogic) ResetPassword(in *borrower.ResetPasswordRequest) (r
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
+	var organiztionUser *model.OrganizationUser
 
 	email := in.Data.Email
 	code := in.Data.Code
@@ -78,12 +80,12 @@ func (l *ResetPasswordLogic) ResetPassword(in *borrower.ResetPasswordRequest) (r
 		return nil, err
 	}
 
-	user, err = l.baseLogic.UserLogic.CheckAndUpdateActiveOrganizationByUser(l.ctx, user)
+	user, organiztionUser, err = l.baseLogic.UserLogic.CheckAndUpdateActiveOrganizationByUser(l.ctx, user)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
 
-	token, err := l.baseLogic.UserLogic.GenerateJwtToken(user, logic2.JwtConfig{
+	token, err := l.baseLogic.UserLogic.GenerateJwtToken(user, organiztionUser, logic2.JwtConfig{
 		AccessSecret:  l.svcCtx.Config.JwtAuth.AccessSecret,
 		AccessExpire:  l.svcCtx.Config.JwtAuth.AccessExpire,
 		RefreshSecret: l.svcCtx.Config.JwtAuth.RefreshSecret,
