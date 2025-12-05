@@ -11,7 +11,6 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/stringx"
-	logic2 "zeebee-backend/domains/zeebee/logic"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -85,12 +84,7 @@ func (l *ResetPasswordLogic) ResetPassword(in *borrower.ResetPasswordRequest) (r
 		return nil, errorx.WithStack(err)
 	}
 
-	token, err := l.baseLogic.UserLogic.GenerateJwtToken(user, organiztionUser, logic2.JwtConfig{
-		AccessSecret:  l.svcCtx.Config.JwtAuth.AccessSecret,
-		AccessExpire:  l.svcCtx.Config.JwtAuth.AccessExpire,
-		RefreshSecret: l.svcCtx.Config.JwtAuth.RefreshSecret,
-		RefreshExpire: l.svcCtx.Config.JwtAuth.RefreshExpire,
-	}, constants.UserTypeBorrower)
+	token, err := l.baseLogic.UserLogic.GenerateJwtToken(user, organiztionUser, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}

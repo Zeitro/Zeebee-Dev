@@ -5,13 +5,12 @@ import (
 
 	"github.com/jinzhu/copier"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
-	logic2 "zeebee-backend/domains/zeebee/logic"
-
-	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/common/errorx"
 )
@@ -42,13 +41,8 @@ func (l *SwitchOrganizationLogic) SwitchOrganization(in *borrower.SwitchOrganiza
 	if err != nil {
 		return nil, err
 	}
-	jwtConfig := logic2.JwtConfig{
-		AccessSecret:  l.svcCtx.Config.JwtAuth.AccessSecret,
-		AccessExpire:  l.svcCtx.Config.JwtAuth.AccessExpire,
-		RefreshSecret: l.svcCtx.Config.JwtAuth.RefreshSecret,
-		RefreshExpire: l.svcCtx.Config.JwtAuth.RefreshExpire,
-	}
-	token, err := l.baseLogic.UserLogic.GenerateJwtToken(user, organizationUser, jwtConfig, constants.UserTypeBorrower)
+
+	token, err := l.baseLogic.UserLogic.GenerateJwtToken(user, organizationUser, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}
