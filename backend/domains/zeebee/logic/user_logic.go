@@ -20,14 +20,16 @@ import (
 )
 
 type UserLogic struct {
-	repos    *repo.AllRepos
-	redisCli *redisx.Redisx
+	repos     *repo.AllRepos
+	redisCli  *redisx.Redisx
+	jwtConfig JwtConfig
 }
 
-func NewUserLogic(repos *repo.AllRepos, redisCli *redisx.Redisx) *UserLogic {
+func NewUserLogic(repos *repo.AllRepos, redisCli *redisx.Redisx, jwtConfig JwtConfig) *UserLogic {
 	return &UserLogic{
-		repos:    repos,
-		redisCli: redisCli,
+		repos:     repos,
+		redisCli:  redisCli,
+		jwtConfig: jwtConfig,
 	}
 }
 
@@ -46,7 +48,7 @@ type JwtConfig struct {
 }
 
 // GenerateJwtToken generate jwt token for user
-func (l *UserLogic) GenerateJwtToken(user *model.User, orgUser *model.OrganizationUser, config JwtConfig, userType constants.UserType) (token *UserJwtToken, err error) {
+func (l *UserLogic) GenerateJwtToken(user *model.User, orgUser *model.OrganizationUser, userType constants.UserType) (token *UserJwtToken, err error) {
 	if user == nil {
 		return nil, errorx.WithStack(errorx.New("User Is Empty."))
 	}
@@ -64,16 +66,16 @@ func (l *UserLogic) GenerateJwtToken(user *model.User, orgUser *model.Organizati
 
 	accessToken, err := utils.GenerateToken(
 		userClaim,
-		config.AccessSecret,
-		config.AccessExpire,
+		l.jwtConfig.AccessSecret,
+		l.jwtConfig.AccessExpire,
 	)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
 	refreshToken, err := utils.GenerateToken(
 		userClaim,
-		config.RefreshSecret,
-		config.RefreshExpire,
+		l.jwtConfig.RefreshSecret,
+		l.jwtConfig.RefreshExpire,
 	)
 	if err != nil {
 		return nil, errorx.WithStack(err)
@@ -81,10 +83,9 @@ func (l *UserLogic) GenerateJwtToken(user *model.User, orgUser *model.Organizati
 	token = &UserJwtToken{
 		AccessToken:        accessToken,
 		RefreshToken:       refreshToken,
-		AccessTokenExpire:  config.AccessExpire,
-		RefreshTokenExpire: config.RefreshExpire,
+		AccessTokenExpire:  l.jwtConfig.AccessExpire,
+		RefreshTokenExpire: l.jwtConfig.RefreshExpire,
 	}
-
 	return
 }
 
@@ -160,7 +161,7 @@ type LoginLimiter struct {
 }
 
 // Login
-func (l *UserLogic) Login(ctx context.Context, req UserLoginRequest, limiter LoginLimiter, jwtConfig JwtConfig) (token *UserJwtToken, err error) {
+func (l *UserLogic) Login(ctx context.Context, req UserLoginRequest, limiter LoginLimiter) (token *UserJwtToken, err error) {
 	redisKey := stringx.Format(constants.UserLoginFailedTimes, req.UserType, req.Email)
 	var loginFailedTimes int
 	var orgUser *model.OrganizationUser
@@ -221,7 +222,7 @@ func (l *UserLogic) Login(ctx context.Context, req UserLoginRequest, limiter Log
 		return nil, errorx.WithStack(err)
 	}
 
-	token, err = l.GenerateJwtToken(user, orgUser, jwtConfig, req.UserType)
+	token, err = l.GenerateJwtToken(user, orgUser, req.UserType)
 	if err != nil {
 		return nil, err
 	}
