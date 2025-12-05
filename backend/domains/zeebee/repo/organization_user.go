@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"fmt"
 
 	"gorm.io/gorm"
 
@@ -49,4 +50,26 @@ func (repo *OrganizationUserRepo) UpdateOrganizationUserStatus(ctx context.Conte
 		Where("organization_id = ? and user_id = ?", organizationId, userId).
 		Update("status", status).Error
 	return errorx.WithStack(err)
+}
+
+// CheckOrganizationUserExistedByEmail check organization user exist
+func (repo *OrganizationUserRepo) CheckOrganizationUserExistedByEmail(ctx context.Context, organizationId int64, email string, userType constants.UserType) (existed bool, err error) {
+	userTable := model.User{}.TableName()
+	organizationUserTable := model.OrganizationUser{}.TableName()
+	var count int64
+	err = repo.Client(ctx).
+		Joins(fmt.Sprintf("%s.id = %s.user_id", userTable, organizationUserTable)).
+		Where(fmt.Sprintf("%s.email = ? and %s.type = ?", userTable, userTable), email, userType).
+		Where(fmt.Sprintf("%s.organization_id = ?", organizationUserTable), organizationId).
+		Count(&count).Error
+	return count > 0, errorx.WithStack(err)
+}
+
+// AllOrganizationUsers return all organization users by organizationId
+func (repo *OrganizationUserRepo) AllOrganizationUsers(ctx context.Context, organizationId int64) (results []*model.OrganizationUser, err error) {
+	err = repo.Client(ctx).
+		Where("organization_id = ? and status = ?", organizationId, constants.OrganizationStatusActive).
+		Preload("User").
+		Find(&results).Error
+	return results, errorx.WithStack(err)
 }

@@ -615,6 +615,44 @@ type LoanThirdServiceEntry struct {
 	Company string `json:"company,optional" validate:"required_unless=Type 'Title Co' Type 'Escrow Co' Type Insurance"`
 }
 
+type OrganizationUserCreateResponse struct {
+	OrganizationUserEntity
+}
+
+type OrganizationUserDetailResponse struct {
+	OrganizationUserEntity
+}
+
+type OrganizationUserPageEntity struct {
+	Id        int64         `json:"id"`
+	Status    string        `json:"status"`
+	FirstName string        `json:"first_name"`
+	MidName   string        `json:"mid_name"`
+	LastName  string        `json:"last_name"`
+	FullName  string        `json:"full_name"`
+	Phone     string        `json:"phone"`
+	Remark    string        `json:"remark"`
+	CreatedAt string        `json:"created_at"`
+	UpdatedAt string        `json:"updated_at"`
+	Email     string        `json:"email"`
+	Roles     []*RoleEntity `json:"roles"`
+}
+
+type OrganizationUserPageRequestFilter struct {
+	Keyword string  `json:"keyword,optional"`
+	Status  string  `json:"status,optional"`
+	RoleId  []int64 `json:"role_id,optional"`
+}
+
+type OrganizationUserPageRequestSorter struct {
+	Column string `json:"column,optional"`
+	Sort   string `json:"sort,optional"`
+}
+
+type OrganizationUserUpdateResponse struct {
+	OrganizationUserEntity
+}
+
 type PathIdRequest struct {
 	Id int64 `path:"id" validate:"required,gt=0"`
 }
@@ -767,22 +805,6 @@ type ThirdPartyLoanApplicantEntry struct {
 	OwnPercent          int32 `json:"own_percent,optional" validate:"min=0,max=100"`
 }
 
-type UserCreateRequest struct {
-	Email    string  `json:"email" validate:"required,email"`
-	Password string  `json:"password" validate:"required,min=8,max=32,password"`
-	FullName string  `json:"full_name" validate:"required,min=2,max=200"`
-	Phone    string  `json:"phone" validate:"required,min=6,max=20"`
-	RoleIds  []int64 `json:"role_ids,optional"`
-}
-
-type UserCreateResponse struct {
-	UserEntity
-}
-
-type UserDetailResponse struct {
-	UserEntity
-}
-
 type UserEntity struct {
 	Id                      int64         `json:"id"`
 	Email                   string        `json:"email"`
@@ -818,45 +840,4 @@ type UserInfoOrganizationEntity struct {
 	Name      string `json:"name"`
 	Status    string `json:"status"`
 	IsDefault bool   `json:"is_default"`
-}
-
-type UserPageRequest struct {
-	Page   int64                  `json:"page,optional"`
-	Limit  int64                  `json:"limit,optional"`
-	Filter *UserPageRequestFilter `json:"filter,optional"`
-	Sorter *UserPageRequestSorter `json:"sorter,optional"`
-}
-
-type UserPageRequestFilter struct {
-	Keyword string `json:"keyword,optional"`
-}
-
-type UserPageRequestSorter struct {
-	Column string `json:"column,optional"`
-	Sort   string `json:"sort,optional"`
-}
-
-type UserPageResponse struct {
-	Page      int64         `json:"page"`
-	Limit     int64         `json:"limit"`
-	Total     int64         `json:"total"`
-	TotalPage int64         `json:"total_page"`
-	List      []*UserEntity `json:"list"`
-}
-
-type UserSwitchStatusRequest struct {
-	Id     int64  `path:"id" validate:"required"`
-	Status string `json:"status" validate:"required,oneof=Active Disabled"`
-}
-
-type UserUpdateRequest struct {
-	Id       int64   `path:"id" validate:"required"`
-	FullName string  `json:"full_name" validate:"required,min=2,max=200"`
-	Phone    string  `json:"phone" validate:"required,min=6,max=20"`
-	Password string  `json:"password,optional" validate:"omitempty,password"`
-	RoleIds  []int64 `json:"role_ids,optional"`
-}
-
-type UserUpdateResponse struct {
-	UserEntity
 }

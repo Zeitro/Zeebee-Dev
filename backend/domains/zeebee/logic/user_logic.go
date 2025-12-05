@@ -7,6 +7,7 @@ import (
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
 
@@ -45,6 +46,27 @@ type JwtConfig struct {
 	AccessExpire  int64
 	RefreshSecret string
 	RefreshExpire int64
+}
+
+// GetUserClaimFromCtx get user claim from context
+func (l *UserLogic) GetUserClaimFromCtx(ctx context.Context) (claim utils.JwtUser, err error) {
+	// get from metadata
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		err = errorx.New("No User Claim")
+		return claim, errorx.WithStack(err)
+	}
+	tokens := md[constants.JwtTokenCtxKey]
+	if len(tokens) == 0 {
+		err = errorx.New("No User Claim")
+		return claim, errorx.WithStack(err)
+	}
+	token := tokens[0]
+	jwtClaim, err := utils.ParseToken(token, l.jwtConfig.AccessSecret)
+	if err != nil {
+		return claim, errorx.WithStack(err)
+	}
+	return jwtClaim.JwtUser, nil
 }
 
 // GenerateJwtToken generate jwt token for user
