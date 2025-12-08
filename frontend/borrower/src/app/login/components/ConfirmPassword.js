@@ -5,12 +5,12 @@ import { passwordRegex } from '@repo/shared-methods/utils';
 import { CheckCircleOutlined } from '@ant-design/icons';
 
 const ConfirmPassWord = ({
-	form,
 	passwordLabel = 'Password',
 	confirmPasswordLabel = 'Confirm password',
 	passwordPlaceholder = 'Password',
 	confirmPasswordPlaceholder = 'Re-enter password',
 }) => {
+	const form = Form.useFormInstance();
 	const password = Form.useWatch('password', form);
 	const passwordRules = useMemo(() => {
 		let arr = [

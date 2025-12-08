@@ -1,11 +1,12 @@
 'use client';
 import { Tooltip } from 'antd';
 import { LogoutOutlined, RightOutlined, SwapOutlined, UserOutlined } from '@ant-design/icons';
-import { DeleteBtn } from '@repo/shared-methods';
+import { DeleteBtn, SwitchOrganization } from '@repo/shared-methods';
 import { useRouter } from 'next/navigation';
 import { useUserStore } from '@/store/user';
 import styles from './index.module.scss';
 import { useState } from 'react';
+import { eventBus } from '@repo/shared-methods/utils';
 const useContent = () => {
 	const router = useRouter();
 	const { userInfo } = useUserStore();
@@ -14,8 +15,11 @@ const useContent = () => {
 	// 个人中心选中
 	const handleClickPersonalItem = ({ key, domEvent }) => {
 		switch (key) {
-			case 'emailAuth':
+			case '/personalCenter/emailAuth':
 				router.push('/personalCenter/emailAuth');
+				break;
+			case '/personalCenter/changePassword':
+				router.push('/personalCenter/changePassword');
 				break;
 			case 'organization':
 				console.log(domEvent);
@@ -36,6 +40,10 @@ const useContent = () => {
 		e.stopPropagation();
 		item.isDefault = true;
 		setOrganizationRow({ ...item });
+		eventBus.emit(
+			'appendPortalComponent',
+			<SwitchOrganization organization={item?.organization || 'ZeeBee'} />,
+		);
 	};
 
 	const organizationContent = (
@@ -88,13 +96,20 @@ const useContent = () => {
 		{
 			type: 'divider',
 		},
-		// {
-		// 	key: 'emailAuth',
-		// 	label: <div className="pl-5">Email auth</div>,
-		// },
-		// {
-		// 	type: 'divider',
-		// },
+		{
+			key: '/personalCenter/emailAuth',
+			label: <div className="pl-5">Email auth</div>,
+		},
+		{
+			type: 'divider',
+		},
+		{
+			key: '/personalCenter/changePassword',
+			label: <div className="pl-5">Change password</div>,
+		},
+		{
+			type: 'divider',
+		},
 		{
 			key: 'logout',
 			label: (

@@ -91,6 +91,11 @@ export const navRouter = [
 		title: 'Email Authorized',
 		hideMenu: true,
 	},
+	{
+		path: '/personalCenter/changePassword',
+		title: 'Change Password',
+		hideMenu: true,
+	},
 ];
 
 export const noTokenRouter = [
@@ -121,6 +126,12 @@ export const noTokenRouter = [
 			{
 				path: '/login/verifyEmail',
 				title: 'Verify Email',
+				hideMenu: true,
+				hideCrumbs: true,
+			},
+			{
+				path: '/login/joinOrganization',
+				title: 'Join Organization',
 				hideMenu: true,
 				hideCrumbs: true,
 			},

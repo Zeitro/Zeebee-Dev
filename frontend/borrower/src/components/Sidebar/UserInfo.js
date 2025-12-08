@@ -1,14 +1,34 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import { Dropdown } from 'antd';
 import { formatFirstLetterName } from '@repo/shared-methods/utils';
 import useContent from './useContent';
+import { usePathname } from 'next/navigation';
+import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 const Userinfo = ({ userInfo, sidebarCollapsed }) => {
+	const pathname = usePathname();
+	const [selectedKey, setSelectedKey] = useState('');
 	const { personalList, handleClickPersonalItem } = useContent();
+
+	// 路由与个人中心的选项匹配，则设置选中
+	useDeferredSyncEffect({
+		deferred: () => {
+			const selected = personalList.some((i) => i.key === pathname);
+			if (selected) {
+				setSelectedKey(pathname);
+			}
+		},
+		deps: [pathname, personalList],
+		delay: 0,
+	});
 
 	return (
 		<Dropdown
-			menu={{ items: personalList, onClick: handleClickPersonalItem }}
+			menu={{
+				items: personalList,
+				selectedKeys: [selectedKey],
+				onClick: handleClickPersonalItem,
+			}}
 			placement="topLeft"
 			trigger={['click']}
 		>

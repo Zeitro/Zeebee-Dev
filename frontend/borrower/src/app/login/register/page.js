@@ -65,7 +65,7 @@ const Register = () => {
 					perApprovedInfo.isPerApproved ? 'w-[500px]' : 'w-[400px]',
 					'rounded-lg bg-background !px-6 !py-6 max-h-[95%] overflow-y-auto',
 				].join(' ')}
-				name="resetPasswordForm"
+				name="registerForm"
 				size="large"
 				layout="vertical"
 				autoComplete="off"
