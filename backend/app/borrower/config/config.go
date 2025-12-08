@@ -37,6 +37,7 @@ type RpcConf struct {
 	LenderUrl                    string
 	InviteUserUrl                string
 	InviteUserExpireSeconds      int
+	SendInviteEmailPeriodSeconds int
 	PreApprovalLoanConf          []PreApprovalLoanConf
 }
 

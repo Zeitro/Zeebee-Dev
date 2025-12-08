@@ -53,17 +53,18 @@ func (l *UserLogic) GetUserClaimFromCtx(ctx context.Context) (claim utils.JwtUse
 	// get from metadata
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
-		err = errorx.New("No User Claim")
+		err = status.Error(codes.Unauthenticated, "Not Login")
 		return claim, errorx.WithStack(err)
 	}
 	tokens := md[constants.JwtTokenCtxKey]
 	if len(tokens) == 0 {
-		err = errorx.New("No User Claim")
+		err = status.Error(codes.Unauthenticated, "Not Login")
 		return claim, errorx.WithStack(err)
 	}
 	token := tokens[0]
 	jwtClaim, err := utils.ParseToken(token, l.jwtConfig.AccessSecret)
 	if err != nil {
+		err = status.Error(codes.InvalidArgument, err.Error())
 		return claim, errorx.WithStack(err)
 	}
 	return jwtClaim.JwtUser, nil

@@ -193,6 +193,7 @@ func (repo *UserRepo) GetUserByEmail(ctx context.Context, email string, userType
 	err = repo.BaseRepo.Client(ctx).
 		Where("email = ? and type = ?", email, userType).
 		Preload("Organizations").
+		Preload("OrganizationUsers").
 		First(&res).Error
 	return res, errorx.WithStack(err)
 }
@@ -201,6 +202,7 @@ func (repo *UserRepo) GetUserByEmailWithTx(ctx context.Context, tx *gorm.DB, ema
 	err = tx.WithContext(ctx).
 		Where("email = ? and type = ?", email, userType).
 		Preload("Organizations").
+		Preload("OrganizationUsers").
 		First(&res).Error
 	return res, errorx.WithStack(err)
 }

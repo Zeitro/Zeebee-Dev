@@ -9,10 +9,43 @@ type OrganizationUserCreateRequestDto struct {
 	Phone          string                    `json:"phone"`
 	Remark         string                    `json:"remark"`
 	RoleIds        []int64                   `json:"role_ids"`
-	Type           constants.UserType        `json:"type"`
+	UserType       constants.UserType        `json:"type"`
 	OrganizationId int64                     `json:"organization_id"`
 	EmailConfig    SendInviteUserEmailConfig `json:"email_config"`
 	Operator       string                    `json:"operator"`
+}
+
+type OrganizationUserUpdateRequestDto struct {
+	Id             int64              `json:"id"`
+	Phone          string             `json:"phone"`
+	FirstName      string             `json:"first_name"`
+	MidName        string             `json:"mid_name"`
+	LastName       string             `json:"last_name"`
+	Remark         string             `json:"remark"`
+	RoleIds        []int64            `json:"role_ids"`
+	UserType       constants.UserType `json:"type"`
+	OrganizationId int64              `json:"organization_id"`
+}
+
+type OrganizationUserSendInviteEmailRequestDto struct {
+	Id             int64                     `json:"id"`
+	UserType       constants.UserType        `json:"type"`
+	OrganizationId int64                     `json:"organization_id"`
+	EmailConfig    SendInviteUserEmailConfig `json:"email_config"`
+	Operator       string                    `json:"operator"`
+}
+
+type OrganizationUserPageRequestDto struct {
+	BasePageRequestDto
+	Filter OrganizationUserPageRequestFilter
+	Sorter BasePageSorter
+}
+
+type OrganizationUserPageRequestFilter struct {
+	BasePageFilter
+	OrganizationId int64              `json:"organization_id"`
+	UserId         int64              `json:"user_id"`
+	UserType       constants.UserType `json:"user_type"`
 }
 
 type SendInviteUserEmailConfig struct {
@@ -21,4 +54,13 @@ type SendInviteUserEmailConfig struct {
 	ExpireSeconds     int
 	SendPeriodSeconds int
 	Url               string
+}
+
+type OrganizationUserAcceptInvitationRequestDto struct {
+	Code           string             `json:"code"`
+	UserType       constants.UserType `json:"type"`
+	Email          string             `json:"email"`
+	OrganizationId int64              `json:"organization_id"`
+	FirstName      string             `json:"first_name"`
+	LastName       string             `json:"last_name"`
 }

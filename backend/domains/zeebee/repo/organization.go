@@ -48,3 +48,11 @@ func (repo *OrganizationRepo) GetOrganization(ctx context.Context, id int64, org
 		First(&result).Error
 	return result, errorx.WithStack(err)
 }
+
+// GetOrganizationWithTx return organization with transaction
+func (repo *OrganizationRepo) GetOrganizationWithTx(ctx context.Context, tx *gorm.DB, id int64, organizationType constants.UserType) (result *model.Organization, err error) {
+	err = tx.WithContext(ctx).Model(&model.Organization{}).
+		Where("id = ? and type = ?", id, organizationType).
+		First(&result).Error
+	return result, errorx.WithStack(err)
+}

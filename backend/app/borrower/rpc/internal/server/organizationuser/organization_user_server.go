@@ -57,3 +57,18 @@ func (s *OrganizationUserServer) All(ctx context.Context, in *borrower.EmptyRequ
 	l := organizationuserlogic.NewAllLogic(ctx, s.svcCtx)
 	return l.All(in)
 }
+
+func (s *OrganizationUserServer) SendInvitationEmail(ctx context.Context, in *borrower.OrganizationUserSendInvitationEmailRequest) (*borrower.EmptyResponse, error) {
+	l := organizationuserlogic.NewSendInvitationEmailLogic(ctx, s.svcCtx)
+	return l.SendInvitationEmail(in)
+}
+
+func (s *OrganizationUserServer) AcceptInvitation(ctx context.Context, in *borrower.OrganizationUserAcceptInvitationRequest) (*borrower.UserLoginResponse, error) {
+	l := organizationuserlogic.NewAcceptInvitationLogic(ctx, s.svcCtx)
+	return l.AcceptInvitation(in)
+}
+
+func (s *OrganizationUserServer) AssignRoles(ctx context.Context, in *borrower.OrganizationUserAssignRolesRequest) (*borrower.EmptyResponse, error) {
+	l := organizationuserlogic.NewAssignRolesLogic(ctx, s.svcCtx)
+	return l.AssignRoles(in)
+}

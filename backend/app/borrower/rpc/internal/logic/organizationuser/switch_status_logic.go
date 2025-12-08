@@ -3,8 +3,10 @@ package organizationuserlogic
 import (
 	"context"
 
+	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/constants"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -15,13 +17,15 @@ type SwitchStatusLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	baseLogic *logic.BaseLogic
 }
 
 func NewSwitchStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SwitchStatusLogic {
 	return &SwitchStatusLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -31,7 +35,14 @@ func (l *SwitchStatusLogic) SwitchStatus(in *borrower.OrganizationUserUpdateStat
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	// todo: add your logic here and delete this line
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	err = l.svcCtx.OrganizationUserRepo.UpdateOrganizationUserStatus(l.ctx, claim.OrganizationId, claim.UserId, constants.OrganizationUserStatus(in.Data.Status))
+	if err != nil {
+		return nil, err
+	}
 
 	return &borrower.EmptyResponse{}, nil
 }

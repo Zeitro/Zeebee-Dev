@@ -112,4 +112,22 @@ type (
         List []*OrganizationUserEntity `json:"list"`
     }
 )
+// accept invitation
+type (
+    OrganizationUserAcceptInvitationRequest {
+        Code string `json:"code" validate:"required"`
+        Email string `json:"email" validate:"required,email"`
+        OrganizationId int64 `json:"organization_id" validate:"required"`
+        FirstName string `json:"first_name" validate:"required,min=2,max=100"`
+        LastName string `json:"last_name" validate:"required,min=2,max=100"`
+    }
+)
+
+// assign roles
+type (
+    OrganizationUserAssignRolesRequest {
+        UserId int64 `path:"user_id" validate:"required"`
+        RoleIds []int64 `json:"role_ids,optional"`
+    }
+)
 

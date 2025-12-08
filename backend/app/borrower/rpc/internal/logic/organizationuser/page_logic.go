@@ -3,8 +3,13 @@ package organizationuserlogic
 import (
 	"context"
 
+	"github.com/jinzhu/copier"
+
+	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/data/dto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -15,13 +20,15 @@ type PageLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	baseLogic *logic.BaseLogic
 }
 
 func NewPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PageLogic {
 	return &PageLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -31,7 +38,36 @@ func (l *PageLogic) Page(in *borrower.OrganizationUserPageRequest) (resp *borrow
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	// todo: add your logic here and delete this line
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	pageReq := dto.OrganizationUserPageRequestDto{}
+	err = copier.Copy(&pageReq, &in.Data)
+	if err != nil {
+		return nil, err
+	}
+	pageReq.Filter.UserType = claim.UserType
+	pageReq.Filter.OrganizationId = claim.OrganizationId
+	pageReq.Filter.UserId = claim.UserId
 
-	return &borrower.OrganizationUserPageResponse{}, nil
+	results, err := l.baseLogic.OrganizationUserLogic.Page(l.ctx, pageReq)
+	if err != nil {
+		return nil, err
+	}
+	data := &borrower.OrganizationUserPageResponseData{}
+	err = copier.CopyWithOption(data, &results, copier.Option{
+		DeepCopy:      true,
+		CaseSensitive: true,
+		Converters: []copier.TypeConverter{
+			copierx.TimeToRFC3339Str(),
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &borrower.OrganizationUserPageResponse{
+		Data: data,
+	}, nil
 }

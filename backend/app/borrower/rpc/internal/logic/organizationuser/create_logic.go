@@ -49,18 +49,19 @@ func (l *CreateLogic) Create(in *borrower.OrganizationUserCreateRequest) (resp *
 		Phone:          in.Data.Phone,
 		Remark:         in.Data.Remark,
 		RoleIds:        in.Data.RoleIds,
-		Type:           constants.UserTypeBorrower,
+		UserType:       constants.UserTypeBorrower,
 		OrganizationId: claimUser.OrganizationId,
 		EmailConfig: dto.SendInviteUserEmailConfig{
-			HostEmail:     l.svcCtx.Config.EmailConf.Username,
-			TplName:       email_tpl.UserInviteEmail,
-			ExpireSeconds: l.svcCtx.Config.InviteUserExpireSeconds,
-			Url:           l.svcCtx.Config.InviteUserUrl,
+			HostEmail:         l.svcCtx.Config.EmailConf.Username,
+			TplName:           email_tpl.UserInviteEmail,
+			ExpireSeconds:     l.svcCtx.Config.InviteUserExpireSeconds,
+			Url:               l.svcCtx.Config.InviteUserUrl,
+			SendPeriodSeconds: l.svcCtx.Config.SendInviteEmailPeriodSeconds,
 		},
 		Operator: claimUser.Username,
 	}
 
-	result, err := l.baseLogic.OrganizationUserLogic.CreateOrganizationUser(l.ctx, input)
+	result, err := l.baseLogic.OrganizationUserLogic.InviteOrganizationUser(l.ctx, input)
 	if err != nil {
 		return nil, err
 	}

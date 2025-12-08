@@ -3069,13 +3069,16 @@ var Role_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	OrganizationUser_Page_FullMethodName         = "/borrower.OrganizationUser/Page"
-	OrganizationUser_Create_FullMethodName       = "/borrower.OrganizationUser/Create"
-	OrganizationUser_Update_FullMethodName       = "/borrower.OrganizationUser/Update"
-	OrganizationUser_Delete_FullMethodName       = "/borrower.OrganizationUser/Delete"
-	OrganizationUser_Detail_FullMethodName       = "/borrower.OrganizationUser/Detail"
-	OrganizationUser_SwitchStatus_FullMethodName = "/borrower.OrganizationUser/SwitchStatus"
-	OrganizationUser_All_FullMethodName          = "/borrower.OrganizationUser/All"
+	OrganizationUser_Page_FullMethodName                = "/borrower.OrganizationUser/Page"
+	OrganizationUser_Create_FullMethodName              = "/borrower.OrganizationUser/Create"
+	OrganizationUser_Update_FullMethodName              = "/borrower.OrganizationUser/Update"
+	OrganizationUser_Delete_FullMethodName              = "/borrower.OrganizationUser/Delete"
+	OrganizationUser_Detail_FullMethodName              = "/borrower.OrganizationUser/Detail"
+	OrganizationUser_SwitchStatus_FullMethodName        = "/borrower.OrganizationUser/SwitchStatus"
+	OrganizationUser_All_FullMethodName                 = "/borrower.OrganizationUser/All"
+	OrganizationUser_SendInvitationEmail_FullMethodName = "/borrower.OrganizationUser/SendInvitationEmail"
+	OrganizationUser_AcceptInvitation_FullMethodName    = "/borrower.OrganizationUser/AcceptInvitation"
+	OrganizationUser_AssignRoles_FullMethodName         = "/borrower.OrganizationUser/AssignRoles"
 )
 
 // OrganizationUserClient is the client API for OrganizationUser service.
@@ -3089,6 +3092,9 @@ type OrganizationUserClient interface {
 	Detail(ctx context.Context, in *OrganizationUserDetailRequest, opts ...grpc.CallOption) (*OrganizationUserDetailResponse, error)
 	SwitchStatus(ctx context.Context, in *OrganizationUserUpdateStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	All(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationUserAllResponse, error)
+	SendInvitationEmail(ctx context.Context, in *OrganizationUserSendInvitationEmailRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	AcceptInvitation(ctx context.Context, in *OrganizationUserAcceptInvitationRequest, opts ...grpc.CallOption) (*UserLoginResponse, error)
+	AssignRoles(ctx context.Context, in *OrganizationUserAssignRolesRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 }
 
 type organizationUserClient struct {
@@ -3169,6 +3175,36 @@ func (c *organizationUserClient) All(ctx context.Context, in *EmptyRequest, opts
 	return out, nil
 }
 
+func (c *organizationUserClient) SendInvitationEmail(ctx context.Context, in *OrganizationUserSendInvitationEmailRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, OrganizationUser_SendInvitationEmail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationUserClient) AcceptInvitation(ctx context.Context, in *OrganizationUserAcceptInvitationRequest, opts ...grpc.CallOption) (*UserLoginResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserLoginResponse)
+	err := c.cc.Invoke(ctx, OrganizationUser_AcceptInvitation_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationUserClient) AssignRoles(ctx context.Context, in *OrganizationUserAssignRolesRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, OrganizationUser_AssignRoles_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OrganizationUserServer is the server API for OrganizationUser service.
 // All implementations must embed UnimplementedOrganizationUserServer
 // for forward compatibility.
@@ -3180,6 +3216,9 @@ type OrganizationUserServer interface {
 	Detail(context.Context, *OrganizationUserDetailRequest) (*OrganizationUserDetailResponse, error)
 	SwitchStatus(context.Context, *OrganizationUserUpdateStatusRequest) (*EmptyResponse, error)
 	All(context.Context, *EmptyRequest) (*OrganizationUserAllResponse, error)
+	SendInvitationEmail(context.Context, *OrganizationUserSendInvitationEmailRequest) (*EmptyResponse, error)
+	AcceptInvitation(context.Context, *OrganizationUserAcceptInvitationRequest) (*UserLoginResponse, error)
+	AssignRoles(context.Context, *OrganizationUserAssignRolesRequest) (*EmptyResponse, error)
 	mustEmbedUnimplementedOrganizationUserServer()
 }
 
@@ -3210,6 +3249,15 @@ func (UnimplementedOrganizationUserServer) SwitchStatus(context.Context, *Organi
 }
 func (UnimplementedOrganizationUserServer) All(context.Context, *EmptyRequest) (*OrganizationUserAllResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method All not implemented")
+}
+func (UnimplementedOrganizationUserServer) SendInvitationEmail(context.Context, *OrganizationUserSendInvitationEmailRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendInvitationEmail not implemented")
+}
+func (UnimplementedOrganizationUserServer) AcceptInvitation(context.Context, *OrganizationUserAcceptInvitationRequest) (*UserLoginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AcceptInvitation not implemented")
+}
+func (UnimplementedOrganizationUserServer) AssignRoles(context.Context, *OrganizationUserAssignRolesRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AssignRoles not implemented")
 }
 func (UnimplementedOrganizationUserServer) mustEmbedUnimplementedOrganizationUserServer() {}
 func (UnimplementedOrganizationUserServer) testEmbeddedByValue()                          {}
@@ -3358,6 +3406,60 @@ func _OrganizationUser_All_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrganizationUser_SendInvitationEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationUserSendInvitationEmailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationUserServer).SendInvitationEmail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationUser_SendInvitationEmail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationUserServer).SendInvitationEmail(ctx, req.(*OrganizationUserSendInvitationEmailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationUser_AcceptInvitation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationUserAcceptInvitationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationUserServer).AcceptInvitation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationUser_AcceptInvitation_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationUserServer).AcceptInvitation(ctx, req.(*OrganizationUserAcceptInvitationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationUser_AssignRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationUserAssignRolesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationUserServer).AssignRoles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationUser_AssignRoles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationUserServer).AssignRoles(ctx, req.(*OrganizationUserAssignRolesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OrganizationUser_ServiceDesc is the grpc.ServiceDesc for OrganizationUser service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -3392,6 +3494,18 @@ var OrganizationUser_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "All",
 			Handler:    _OrganizationUser_All_Handler,
+		},
+		{
+			MethodName: "SendInvitationEmail",
+			Handler:    _OrganizationUser_SendInvitationEmail_Handler,
+		},
+		{
+			MethodName: "AcceptInvitation",
+			Handler:    _OrganizationUser_AcceptInvitation_Handler,
+		},
+		{
+			MethodName: "AssignRoles",
+			Handler:    _OrganizationUser_AssignRoles_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
