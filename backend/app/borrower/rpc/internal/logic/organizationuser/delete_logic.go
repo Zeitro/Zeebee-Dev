@@ -3,6 +3,7 @@ package organizationuserlogic
 import (
 	"context"
 
+	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 
@@ -15,13 +16,15 @@ type DeleteLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	BaseLogic *logic.BaseLogic
 }
 
 func NewDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteLogic {
 	return &DeleteLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		BaseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -31,7 +34,14 @@ func (l *DeleteLogic) Delete(in *borrower.OrganizationUserDeleteRequest) (resp *
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	// todo: add your logic here and delete this line
+	claim, err := l.BaseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	err = l.BaseLogic.OrganizationUserLogic.Delete(l.ctx, in.Data.Id, claim.OrganizationId)
+	if err != nil {
+		return nil, err
+	}
 
 	return &borrower.EmptyResponse{}, nil
 }

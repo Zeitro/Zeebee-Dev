@@ -359,6 +359,18 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	)
 
 	server.AddRoutes(
+		[]rest.Route{
+			{
+				// accept invitation
+				Method:  http.MethodPost,
+				Path:    "/organization_user/accept_invitation",
+				Handler: organization_user.AcceptInvitationHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
 		rest.WithMiddlewares(
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
@@ -391,6 +403,18 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodDelete,
 					Path:    "/organization_user/:id",
 					Handler: organization_user.OrganizationUserDeleteHandler(serverCtx),
+				},
+				{
+					// assign roles
+					Method:  http.MethodPost,
+					Path:    "/organization_user/:id/assign_roles",
+					Handler: organization_user.OrganizationUserAssignRolesHandler(serverCtx),
+				},
+				{
+					// send email
+					Method:  http.MethodPost,
+					Path:    "/organization_user/:id/send_email",
+					Handler: organization_user.OrganizationUserSendEmailHandler(serverCtx),
 				},
 				{
 					// swaitch status

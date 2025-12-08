@@ -3,8 +3,21 @@
 
 package types
 
+type OrganizationUserAcceptInvitationRequest struct {
+	Code           string `json:"code" validate:"required"`
+	Email          string `json:"email" validate:"required,email"`
+	OrganizationId int64  `json:"organization_id" validate:"required"`
+	FirstName      string `json:"first_name" validate:"required,min=2,max=100"`
+	LastName       string `json:"last_name" validate:"required,min=2,max=100"`
+}
+
 type OrganizationUserAllResponse struct {
 	List []*OrganizationUserEntity `json:"list"`
+}
+
+type OrganizationUserAssignRolesRequest struct {
+	UserId  int64   `path:"user_id" validate:"required"`
+	RoleIds []int64 `json:"role_ids,optional"`
 }
 
 type OrganizationUserCreateRequest struct {

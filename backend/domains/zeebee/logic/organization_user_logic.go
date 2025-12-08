@@ -2,9 +2,11 @@ package logic
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/duke-git/lancet/v2/random"
+	"github.com/duke-git/lancet/v2/slice"
 	"github.com/duke-git/lancet/v2/strutil"
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
@@ -38,9 +40,29 @@ func NewOrganizationUserLogic(repos *repo.AllRepos, redisCli *redisx.Redisx, ema
 	}
 }
 
-// CreateOrganizationUser create organization user
-func (l *OrganizationUserLogic) CreateOrganizationUser(ctx context.Context, createDto dto.OrganizationUserCreateRequestDto) (result *bo.OrganizationUserBo, err error) {
-	isInOrganization, err := l.repos.OrganizationUserRepo.CheckOrganizationUserExistedByEmail(ctx, createDto.OrganizationId, createDto.Email, createDto.Type)
+// Page
+func (l *OrganizationUserLogic) Page(ctx context.Context, pageReq dto.OrganizationUserPageRequestDto) (page bo.PageResultBo[*bo.OrganizationUserBo], err error) {
+	results, err := l.repos.OrganizationUserRepo.Page(ctx, pageReq)
+	if err != nil {
+		return page, err
+	}
+	err = copier.CopyWithOption(&page, results, copier.Option{
+		DeepCopy:      true,
+		CaseSensitive: true,
+		Converters: []copier.TypeConverter{
+			copierx.TimeToRFC3339Str(),
+		},
+	})
+	if err != nil {
+		return page, errorx.GetFailedTransRespErr(err)
+	}
+	return page, err
+
+}
+
+// InviteOrganizationUser Invite organization user
+func (l *OrganizationUserLogic) InviteOrganizationUser(ctx context.Context, createDto dto.OrganizationUserCreateRequestDto) (result *bo.OrganizationUserBo, err error) {
+	isInOrganization, err := l.repos.OrganizationUserRepo.CheckOrganizationUserExistedByEmail(ctx, createDto.OrganizationId, createDto.Email, createDto.UserType)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +71,7 @@ func (l *OrganizationUserLogic) CreateOrganizationUser(ctx context.Context, crea
 		return nil, err
 	}
 
-	user, err := l.repos.UserRepo.GetUserByEmail(ctx, createDto.Email, createDto.Type)
+	user, err := l.repos.UserRepo.GetUserByEmail(ctx, createDto.Email, createDto.UserType)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}
@@ -59,7 +81,7 @@ func (l *OrganizationUserLogic) CreateOrganizationUser(ctx context.Context, crea
 	err = l.repos.OrganizationRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
 		// get organization
-		organization, innerErr = l.repos.OrganizationRepo.GetOrganization(ctx, createDto.OrganizationId, createDto.Type)
+		organization, innerErr = l.repos.OrganizationRepo.GetOrganizationWithTx(ctx, tx, createDto.OrganizationId, createDto.UserType)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -78,7 +100,7 @@ func (l *OrganizationUserLogic) CreateOrganizationUser(ctx context.Context, crea
 			}
 			user = &model.User{
 				Email:                 createDto.Email,
-				Type:                  createDto.Type,
+				Type:                  createDto.UserType,
 				Status:                constants.UserStatusUnverified,
 				PasswordHash:          pwdHash,
 				DefaultOrganizationId: createDto.OrganizationId,
@@ -119,16 +141,17 @@ func (l *OrganizationUserLogic) CreateOrganizationUser(ctx context.Context, crea
 	// send email
 	go func() {
 		newCtx := context.WithoutCancel(ctx)
-		err := l.sendInviteEmail(newCtx, sendInviteUserEmailInput{
-			emailConfig:      createDto.EmailConfig,
-			firstName:        user.FirstName,
-			lastName:         user.LastName,
-			targetEmail:      createDto.Email,
-			userType:         createDto.Type,
-			hasPwd:           len(pwd) > 0,
-			pwd:              pwd,
-			organizationName: organization.Name,
-			operator:         createDto.Operator,
+		err := l.sendInviteEmail(newCtx, SendInviteUserEmailInput{
+			EmailConfig:      createDto.EmailConfig,
+			FirstName:        user.FirstName,
+			LastName:         user.LastName,
+			TargetEmail:      createDto.Email,
+			UserType:         createDto.UserType,
+			HasPwd:           len(pwd) > 0,
+			Pwd:              pwd,
+			OrganizationName: organization.Name,
+			OrganizationId:   organizationUser.OrganizationId,
+			Operator:         createDto.Operator,
 		})
 		if err != nil {
 			err = errorx.Wrap(err, "Send invite Email Error")
@@ -136,6 +159,316 @@ func (l *OrganizationUserLogic) CreateOrganizationUser(ctx context.Context, crea
 		}
 	}()
 
+	result = l.transToBo(organizationUser)
+
+	return result, nil
+}
+
+// SendInviteEmail
+func (l *OrganizationUserLogic) SendInviteEmail(ctx context.Context, input dto.OrganizationUserSendInviteEmailRequestDto) (err error) {
+	// get organization user
+	organizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUserById(ctx, input.Id, input.OrganizationId)
+	if err != nil {
+		return err
+	}
+	if organizationUser.Status != constants.OrganizationUserStatusNotActivated {
+		err = errorx.New("The User Status Is Not Activated")
+		return err
+	}
+	user := organizationUser.User
+	if user == nil {
+		err = errorx.New("User Not Found")
+		return err
+	}
+	// get  organization
+	organization, err := l.repos.OrganizationRepo.GetOrganization(ctx, input.OrganizationId, input.UserType)
+	if err != nil {
+		return err
+	}
+	if organization.Status != constants.OrganizationStatusActive {
+		err = errorx.New("The Organization Is Not Active")
+		return err
+	}
+
+	inputKey := stringx.Format(constants.UserInviteInput, input.UserType, user.Email, input.OrganizationId)
+	previousInputContent, err := l.redisCli.Get(ctx, inputKey)
+	if err != nil {
+		return err
+	}
+	previousInput := SendInviteUserEmailInput{}
+	_ = json.Unmarshal([]byte(previousInputContent), &previousInput)
+	if previousInput.OrganizationId != input.OrganizationId {
+		// build  input
+		previousInput = SendInviteUserEmailInput{
+			EmailConfig:      input.EmailConfig,
+			FirstName:        user.FirstName,
+			LastName:         user.LastName,
+			TargetEmail:      user.Email,
+			UserType:         input.UserType,
+			OrganizationName: organization.Name,
+			OrganizationId:   input.OrganizationId,
+			Operator:         input.Operator,
+		}
+	}
+	go func() {
+		newCtx := context.WithoutCancel(ctx)
+		err := l.sendInviteEmail(newCtx, previousInput)
+		if err != nil {
+			err = errorx.Wrap(err, "Send invite Email Error")
+			logx.WithContext(ctx).Error(err)
+		}
+	}()
+
+	return nil
+}
+
+// AcceptInvitation accept organization invitation
+func (l *OrganizationUserLogic) AcceptInvitation(ctx context.Context, input dto.OrganizationUserAcceptInvitationRequestDto) (user bo.UserBo, organizationUser bo.OrganizationUserBo, err error) {
+	key := stringx.Format(constants.UserInviteCode, input.UserType, input.Email, input.OrganizationId)
+	code, err := l.redisCli.Get(ctx, key)
+	if err != nil {
+		return user, organizationUser, errorx.WithStack(err)
+	}
+	if len(code) == 0 || code != input.Code {
+		return user, organizationUser, errorx.New("Invalid Code")
+	}
+	var organizationUserModel *model.OrganizationUser
+	var userModel *model.User
+	err = l.repos.OrganizationUserRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		var innerErr error
+		var ok bool
+		userModel, innerErr = l.repos.UserRepo.GetUserByEmailWithTx(ctx, tx, input.Email, input.UserType)
+		if innerErr != nil {
+			return innerErr
+		}
+		organizationUserModel, ok = slice.FindBy(userModel.OrganizationUsers, func(index int, item *model.OrganizationUser) bool {
+			return input.OrganizationId == item.OrganizationId
+		})
+		if !ok {
+			return errorx.New("Organization User Is Not Found")
+		}
+		if organizationUser.Status != constants.OrganizationUserStatusNotActivated {
+			return errorx.New("The User Has Been Activated")
+		}
+		// update organization user
+		innerErr = l.repos.OrganizationUserRepo.UpdateColumnsByIdWithTx(ctx, tx, organizationUserModel.Id, map[string]interface{}{
+			"status":     constants.OrganizationUserStatusActive,
+			"first_name": input.FirstName,
+			"last_name":  input.LastName,
+			"full_name":  stringx.FormatFullName(input.FirstName, "", input.LastName),
+		})
+		if innerErr != nil {
+			return innerErr
+		}
+
+		userUpdateColumns := map[string]interface{}{
+			"default_organization_id": input.OrganizationId,
+		}
+		if len(userModel.FirstName) == 0 {
+			userUpdateColumns["first_name"] = input.FirstName
+			userUpdateColumns["last_name"] = input.LastName
+			userUpdateColumns["full_name"] = stringx.FormatFullName(input.FirstName, "", input.LastName)
+		}
+		if userModel.Status == constants.UserStatusUnverified {
+			userUpdateColumns["status"] = constants.UserStatusActive
+		}
+		if len(userUpdateColumns) > 0 {
+			innerErr = l.repos.UserRepo.UpdateColumnsByIdWithTx(ctx, tx, userModel.Id, userUpdateColumns)
+			if innerErr != nil {
+				return innerErr
+			}
+		}
+
+		return innerErr
+	})
+	if err != nil {
+		return user, organizationUser, err
+	}
+
+	err = copier.CopyWithOption(&organizationUser, organizationUserModel, copier.Option{
+		DeepCopy:      true,
+		CaseSensitive: true,
+		Converters: []copier.TypeConverter{
+			copierx.TimeToRFC3339Str(),
+		},
+	})
+	if err != nil {
+		return user, organizationUser, errorx.GetFailedTransRespErr(err)
+	}
+	err = copier.CopyWithOption(&user, userModel, copier.Option{
+		DeepCopy:      true,
+		CaseSensitive: true,
+		Converters: []copier.TypeConverter{
+			copierx.TimeToRFC3339Str(),
+		},
+	})
+	return user, organizationUser, nil
+}
+
+// UpdateOrganizationUser update organization user
+func (l *OrganizationUserLogic) UpdateOrganizationUser(ctx context.Context, reqDto dto.OrganizationUserUpdateRequestDto) (result *bo.OrganizationUserBo, err error) {
+	organizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUser(ctx, reqDto.Id, reqDto.OrganizationId)
+	if err != nil {
+		return nil, err
+	}
+	saveModel := &model.OrganizationUser{}
+	err = copier.CopyWithOption(saveModel, reqDto, copier.Option{
+		DeepCopy:      true,
+		CaseSensitive: true,
+	})
+	if err != nil {
+		return nil, errorx.GetFailedTransRespErr(err)
+	}
+	saveModel.FullName = stringx.FormatFullName(saveModel.FirstName, saveModel.MidName, saveModel.LastName)
+
+	// var organizationUser *model.OrganizationUser
+	var organization *model.Organization
+	err = l.repos.OrganizationRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		var innerErr error
+		// get organization
+		organization, innerErr = l.repos.OrganizationRepo.GetOrganizationWithTx(ctx, tx, reqDto.OrganizationId, reqDto.UserType)
+		if innerErr != nil {
+			return innerErr
+		}
+		if organization.Status != constants.OrganizationStatusActive {
+			innerErr = errorx.New("The Organization Is Not Active")
+			return innerErr
+		}
+		// update organization user
+		organizationUser, innerErr = l.repos.OrganizationUserRepo.UpdateOneWithTx(ctx, tx, saveModel)
+		if innerErr != nil {
+			return innerErr
+		}
+		// update roles
+		roles, innerErr := l.repos.RoleRepo.GetOrganizationRolesByIdsWithTx(ctx, tx, reqDto.OrganizationId, reqDto.RoleIds)
+		if innerErr != nil {
+			return innerErr
+		}
+		oldRoles := organizationUser.Roles
+		newRoles := []*model.Role{}
+		removedRoles := []*model.Role{}
+		newRoles = slice.DifferenceWith(roles, oldRoles, func(item1, item2 *model.Role) bool {
+			return item1.Id == item2.Id
+		})
+		removedRoles = slice.DifferenceWith(oldRoles, roles, func(item1, item2 *model.Role) bool {
+			return item1.Id == item2.Id
+		})
+		innerErr = l.repos.OrganizationUserRepo.UpdateRolesWithTx(ctx, tx, organizationUser, newRoles, removedRoles)
+		if innerErr != nil {
+			return innerErr
+		}
+
+		return innerErr
+	})
+	if err != nil {
+		return nil, err
+	}
+	// todo update user's permissions
+
+	result = l.transToBo(organizationUser)
+
+	return result, nil
+}
+
+type SendInviteUserEmailInput struct {
+	EmailConfig      dto.SendInviteUserEmailConfig
+	FirstName        string
+	LastName         string
+	TargetEmail      string
+	UserType         constants.UserType
+	HasPwd           bool
+	Pwd              string
+	OrganizationName string
+	OrganizationId   int64
+	Operator         string
+	Code             string
+}
+
+// sendInviteEmail send invite email
+func (l *OrganizationUserLogic) sendInviteEmail(ctx context.Context, input SendInviteUserEmailInput) (err error) {
+
+	sendTagKey := stringx.Format(constants.UserInviteEmailSendTag, input.UserType, input.TargetEmail, input.OrganizationId)
+	isExisted, _ := l.redisCli.IsExisted(ctx, sendTagKey)
+	if isExisted {
+		err = errorx.New("The Email Has Been Sent")
+		return err
+	}
+	defer func() {
+		// set send tag
+		_ = l.redisCli.SetExpire(ctx, sendTagKey, "1", input.EmailConfig.SendPeriodSeconds)
+	}()
+
+	var code string
+	// generate invite code
+	codeKey := stringx.Format(constants.UserInviteCode, input.UserType, input.TargetEmail, input.OrganizationId)
+	code, _ = l.redisCli.Get(ctx, codeKey)
+	if len(code) == 0 {
+		code = random.RandNumeral(10)
+		err = l.redisCli.SetExpire(ctx, codeKey, code, input.EmailConfig.ExpireSeconds)
+		if err != nil {
+			return errorx.WithStack(err)
+		}
+		input.Code = code
+	}
+	// save input
+	inputKey := stringx.Format(constants.UserInviteInput, input.UserType, input.TargetEmail, input.OrganizationId)
+	inputContent, _ := json.Marshal(input)
+	err = l.redisCli.SetExpire(ctx, inputKey, string(inputContent), input.EmailConfig.ExpireSeconds)
+	if err != nil {
+		return errorx.WithStack(err)
+	}
+	// send invite email
+	data := map[string]interface{}{
+		"url": fmt.Sprintf("%s?code=%s&email=%s&first_name=%s&last_name=%s&oranization_name=%s&organization_id=%v",
+			input.EmailConfig.Url,
+			code,
+			input.TargetEmail,
+			input.FirstName,
+			input.LastName,
+			input.OrganizationName,
+			input.OrganizationId,
+		),
+		"has_pwd":           input.HasPwd,
+		"pwd":               input.Pwd,
+		"operator":          input.Operator,
+		"organization_name": input.OrganizationName,
+	}
+	content, err := email2.ParseTemplate(input.EmailConfig.TplName, data)
+	if err != nil {
+		return errorx.WithStack(err)
+	}
+	msg := email2.Message{
+		Subject: fmt.Sprintf("%s has invited you to join %s", input.Operator, input.OrganizationName),
+		From:    input.EmailConfig.HostEmail,
+		To:      []string{input.TargetEmail},
+		Body:    content,
+		IsHTML:  true,
+	}
+	err = l.emailClient.SendEmail(msg)
+	return errorx.WithStack(err)
+}
+
+// AllOrganizationUsers
+func (l *OrganizationUserLogic) AllOrganizationUsers(ctx context.Context, organizationId int64) (result []*bo.OrganizationUserBo, err error) {
+	repoResults, err := l.repos.OrganizationUserRepo.AllOrganizationUsers(ctx, organizationId)
+	if err != nil {
+		return nil, err
+	}
+	result = l.batchTransToBo(repoResults)
+	return result, nil
+}
+
+// Detail
+func (l *OrganizationUserLogic) Detail(ctx context.Context, id int64, organizationId int64) (result *bo.OrganizationUserBo, err error) {
+	organizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUserById(ctx, id, organizationId)
+	if err != nil {
+		return nil, err
+	}
+	user := organizationUser.User
+	if user == nil {
+		err = errorx.New("User Is Not Existed")
+		return nil, err
+	}
 	result = &bo.OrganizationUserBo{}
 	err = copier.CopyWithOption(result, organizationUser, copier.Option{
 		DeepCopy:      true,
@@ -145,82 +478,83 @@ func (l *OrganizationUserLogic) CreateOrganizationUser(ctx context.Context, crea
 		},
 	})
 	if err != nil {
-		return nil, err
-	}
-
-	return result, nil
-}
-
-type sendInviteUserEmailInput struct {
-	emailConfig      dto.SendInviteUserEmailConfig
-	firstName        string
-	lastName         string
-	targetEmail      string
-	userType         constants.UserType
-	hasPwd           bool
-	pwd              string
-	organizationName string
-	operator         string
-}
-
-// sendInviteEmail send invite email
-func (l *OrganizationUserLogic) sendInviteEmail(ctx context.Context, input sendInviteUserEmailInput) (err error) {
-
-	var code string
-	// generate invite code
-	codeKey := stringx.Format(constants.UserInviteVerifyCode, input.userType, input.targetEmail)
-	code, _ = l.redisCli.Get(ctx, codeKey)
-	if len(code) == 0 {
-		code = random.RandNumeral(10)
-		err = l.redisCli.SetExpire(ctx, codeKey, code, input.emailConfig.ExpireSeconds)
-		if err != nil {
-			return errorx.WithStack(err)
-		}
-	}
-	// send invite email
-	data := map[string]interface{}{
-		"url": fmt.Sprintf("%s?code=%s&email=%s&first_name=%s&last_name=%s&oranization_name=%s",
-			input.emailConfig.Url,
-			code,
-			input.targetEmail,
-			input.firstName,
-			input.lastName,
-			input.organizationName,
-		),
-		"has_pwd":           input.hasPwd,
-		"pwd":               input.pwd,
-		"operator":          input.operator,
-		"organization_name": input.organizationName,
-	}
-	content, err := email2.ParseTemplate(input.emailConfig.TplName, data)
-	if err != nil {
-		return errorx.WithStack(err)
-	}
-	msg := email2.Message{
-		Subject: fmt.Sprintf("%s has invited you to join %s", input.operator, input.organizationName),
-		From:    input.emailConfig.HostEmail,
-		To:      []string{input.targetEmail},
-		Body:    content,
-		IsHTML:  true,
-	}
-	err = l.emailClient.SendEmail(msg)
-	return errorx.WithStack(err)
-
-}
-
-// AllOrganizationUsers
-func (l *OrganizationUserLogic) AllOrganizationUsers(ctx context.Context, organizationId int64) (result []*bo.OrganizationUserBo, err error) {
-	repoResults, err := l.repos.OrganizationUserRepo.AllOrganizationUsers(ctx, organizationId)
-	if err != nil {
-		return nil, err
-	}
-	result = []*bo.OrganizationUserBo{}
-	err = copier.CopyWithOption(&result, &repoResults, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-	})
-	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
+	result.Email = user.Email
 	return result, nil
+}
+
+// SwitchStatus
+func (l *OrganizationUserLogic) SwitchStatus(ctx context.Context, id int64, organizationId int64, status constants.OrganizationUserStatus) (err error) {
+	err = l.repos.OrganizationUserRepo.UpdateColumnsById(ctx, id, map[string]interface{}{
+		"status": status,
+	})
+
+	// todo update user's permissions
+	return err
+}
+
+// AssignRoles assign roles for organization user
+func (l *OrganizationUserLogic) AssignRoles(ctx context.Context, id int64, organizationId int64, roleIds []int64) (err error) {
+	organizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUserById(ctx, id, organizationId)
+	if err != nil {
+		return err
+	}
+	err = l.repos.OrganizationUserRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		var innerErr error
+		roles, innerErr := l.repos.RoleRepo.GetOrganizationRolesByIdsWithTx(ctx, tx, organizationId, roleIds)
+		if innerErr != nil {
+			return innerErr
+		}
+		newRoles := []*model.Role{}
+		removedRoles := []*model.Role{}
+		newRoles = slice.DifferenceWith(roles, organizationUser.Roles, func(item1, item2 *model.Role) bool {
+			return item1.Id == item2.Id
+		})
+		removedRoles = slice.DifferenceWith(organizationUser.Roles, roles, func(item1, item2 *model.Role) bool {
+			return item1.Id == item2.Id
+		})
+		innerErr = l.repos.OrganizationUserRepo.UpdateRolesWithTx(ctx, tx, organizationUser, newRoles, removedRoles)
+
+		return innerErr
+	})
+	// todo update user's permissions
+	return err
+}
+
+func (l *OrganizationUserLogic) Delete(ctx context.Context, id int64, organizationId int64) (err error) {
+	err = l.repos.OrganizationUserRepo.DeleteOrganizationUser(ctx, id, organizationId)
+	// todo delete user's permissions
+	return err
+}
+
+// transToBo
+func (l *OrganizationUserLogic) transToBo(src *model.OrganizationUser) (result *bo.OrganizationUserBo) {
+	if src == nil {
+		return nil
+	}
+	result = &bo.OrganizationUserBo{}
+	_ = copier.CopyWithOption(result, src, copier.Option{
+		DeepCopy:      true,
+		CaseSensitive: true,
+		Converters: []copier.TypeConverter{
+			copierx.TimeToRFC3339Str(),
+		},
+	})
+	if src.User != nil {
+		result.Email = src.User.Email
+	}
+	return result
+}
+
+// batchTransToBo batch trans to bo
+func (l *OrganizationUserLogic) batchTransToBo(src []*model.OrganizationUser) (result []*bo.OrganizationUserBo) {
+	result = make([]*bo.OrganizationUserBo, 0, len(src))
+	if len(src) == 0 {
+		return result
+	}
+	for i := range src {
+		result = append(result, l.transToBo(src[i]))
+	}
+	return result
 }

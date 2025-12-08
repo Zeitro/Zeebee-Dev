@@ -7,7 +7,10 @@ const (
 	UserLoginFailedTimes   = "zeebee:%v:%v:login:failed:times"
 	UserRegisterVerifyCode = "zeebee:%v:%v:register:verify:code"
 
-	UserInviteVerifyCode = "zeebee:%v:%v:invite:verify:code"
+	UserInviteCode         = "zeebee:%v:%v:%v:invite:code"
+	UserInviteCodeInfo     = "zeebee:%v:%v:%v:invite:code:info"
+	UserInviteInput        = "zeebee:%v:%v:%v:invite:input"
+	UserInviteEmailSendTag = "zeebee:%v:%v:%v:invite:email:send:tag"
 
 	BorrowerRegisterVerifyEmail            = "zeebee:borrower:%v:register:verify:email"
 	BorrowerLoginEmail                     = "zeebee:borrower:%v:login:email"

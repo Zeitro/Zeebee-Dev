@@ -6735,6 +6735,80 @@
         }
       }
     },
+    "/api/v1/organization_user/accept_invitation": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization_user"
+        ],
+        "summary": "accept invitation",
+        "operationId": "organizationUserAcceptInvitation",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "code",
+                "email",
+                "organization_id",
+                "first_name",
+                "last_name"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "first_name": {
+                  "type": "string"
+                },
+                "last_name": {
+                  "type": "string"
+                },
+                "organization_id": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "access_token": {
+                  "type": "string"
+                },
+                "access_token_expire": {
+                  "type": "integer"
+                },
+                "refresh_token": {
+                  "type": "string"
+                },
+                "refresh_token_expire": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/organization_user/all": {
       "get": {
         "produces": [
@@ -7283,6 +7357,90 @@
         ],
         "summary": "delete",
         "operationId": "organizationUserOrganizationUserDelete",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organization_user/{id}/assign_roles": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization_user"
+        ],
+        "summary": "assign roles",
+        "operationId": "organizationUserOrganizationUserAssignRoles",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "role_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organization_user/{id}/send_email": {
+      "post": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization_user"
+        ],
+        "summary": "send email",
+        "operationId": "organizationUserOrganizationUserSendEmail",
         "parameters": [
           {
             "type": "integer",
@@ -12922,7 +13080,7 @@
       }
     }
   },
-  "x-date": "2025-12-05 14:09:10",
+  "x-date": "2025-12-08 16:35:11",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

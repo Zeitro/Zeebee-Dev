@@ -841,3 +841,10 @@ type UserInfoOrganizationEntity struct {
 	Status    string `json:"status"`
 	IsDefault bool   `json:"is_default"`
 }
+
+type UserLoginResponse struct {
+	AccessToken        string `json:"access_token"`
+	AccessTokenExpire  int64  `json:"access_token_expire"`
+	RefreshToken       string `json:"refresh_token"`
+	RefreshTokenExpire int64  `json:"refresh_token_expire"`
+}
