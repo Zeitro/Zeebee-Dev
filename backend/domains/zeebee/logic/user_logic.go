@@ -162,7 +162,7 @@ func (l *UserLogic) CheckAndUpdateActiveOrganizationByUser(ctx context.Context, 
 		}
 	}
 	if currentOrganization != nil {
-		orgUser, err = l.repos.OrganizationUserRepo.GetOrganizationUser(ctx, currentOrganization.Id, user.Id)
+		orgUser, err = l.repos.OrganizationUserRepo.GetOrganizationUserByUserId(ctx, currentOrganization.Id, user.Id)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -299,7 +299,7 @@ func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, us
 		if organization.Status != constants.OrganizationStatusActive {
 			return false
 		}
-		orgUser, err := l.repos.OrganizationUserRepo.GetOrganizationUser(ctx, organization.Id, user.Id)
+		orgUser, err := l.repos.OrganizationUserRepo.GetOrganizationUserByUserId(ctx, organization.Id, user.Id)
 		if err != nil || orgUser == nil || orgUser.Status != constants.OrganizationUserStatusActive {
 			return false
 		}
@@ -377,7 +377,7 @@ func (l *UserLogic) SwitchOrganization(ctx context.Context, userId int64, organi
 		return nil, nil, errorx.New("Organization Is Not Active")
 	}
 
-	organizationUser, _ = l.repos.OrganizationUserRepo.GetOrganizationUser(ctx, organizationId, user.Id)
+	organizationUser, _ = l.repos.OrganizationUserRepo.GetOrganizationUserByUserId(ctx, organizationId, user.Id)
 	if organizationUser == nil || organizationUser.Status != constants.OrganizationUserStatusActive {
 		return nil, nil, errorx.New("User Is Not Member Of This Organization")
 	}

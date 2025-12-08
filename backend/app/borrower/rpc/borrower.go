@@ -18,6 +18,7 @@ import (
 	commonServer "zeebee-backend/app/borrower/rpc/internal/server/common"
 	loanServer "zeebee-backend/app/borrower/rpc/internal/server/loan"
 	loanDocumentServer "zeebee-backend/app/borrower/rpc/internal/server/loandocument"
+	organizationUserServer "zeebee-backend/app/borrower/rpc/internal/server/organizationuser"
 	roleServer "zeebee-backend/app/borrower/rpc/internal/server/role"
 	storageServer "zeebee-backend/app/borrower/rpc/internal/server/storage"
 	userServer "zeebee-backend/app/borrower/rpc/internal/server/user"
@@ -48,27 +49,13 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		borrower.RegisterLoanDocumentServer(grpcServer, loanDocumentServer.NewLoanDocumentServer(ctx))
 		borrower.RegisterBorrowerEntityServer(grpcServer, borrowerEntityServer.NewBorrowerEntityServer(ctx))
 		borrower.RegisterBorrowerApplicantServer(grpcServer, borrowerApplicantServer.NewBorrowerApplicantServer(ctx))
+		borrower.RegisterOrganizationUserServer(grpcServer, organizationUserServer.NewOrganizationUserServer(ctx))
 		borrower.RegisterRoleServer(grpcServer, roleServer.NewRoleServer(ctx))
 
 		if rpcConfig.Mode == service.DevMode || rpcConfig.Mode == service.TestMode {
 			reflection.Register(grpcServer)
 		}
 	})
-	// rpcServer.AddUnaryInterceptors(func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp any, err error) {
-	// 	md, ok := metadata.FromIncomingContext(ctx)
-	// 	if ok {
-	// 		fields:= []logc.LogField{}
-	// 		for k, v := range md {
-	// 			fields = append(fields, logc.LogField{
-	// 				Key:   k,
-	// 				Value: v,
-	// 			})
-	// 		}
-	// 		logx.WithContext(ctx).WithFields(fields...).Info("rpc req")
-	// 	}
-	// 	resp, err = handler(ctx, req)
-	// 	return resp, err
-	// })
 
 	return &RpcServer{
 		s: rpcServer,

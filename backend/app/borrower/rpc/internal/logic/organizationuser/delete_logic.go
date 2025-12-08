@@ -16,7 +16,7 @@ type DeleteLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
-	BaseLogic *logic.BaseLogic
+	baseLogic *logic.BaseLogic
 }
 
 func NewDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteLogic {
@@ -24,7 +24,7 @@ func NewDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteLogi
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		BaseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -34,11 +34,11 @@ func (l *DeleteLogic) Delete(in *borrower.OrganizationUserDeleteRequest) (resp *
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	claim, err := l.BaseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	err = l.BaseLogic.OrganizationUserLogic.Delete(l.ctx, in.Data.Id, claim.OrganizationId)
+	err = l.baseLogic.OrganizationUserLogic.Delete(l.ctx, in.Data.Id, claim.OrganizationId, claim.UserType)
 	if err != nil {
 		return nil, err
 	}

@@ -486,7 +486,7 @@ service borrower-api {
 	@handler OrganizationUserDelete
 	delete /organization_user/:id (PathIdRequest) returns (EmptyResponse)
 
-	@doc "swaitch status"
+	@doc "switch status"
 	@handler OrganizationUserUpdateStatus
 	patch /organization_user/:id/status (OrganizationUserSwitchStatusRequest) returns (EmptyResponse)
 
@@ -498,4 +498,5 @@ service borrower-api {
 	@handler OrganizationUserSendEmail
 	post /organization_user/:id/send_email (PathIdRequest) returns (EmptyResponse)
 }
+
 	// ============== organization user end =============

@@ -45,7 +45,7 @@ func (l *VerifyEmailLogic) VerifyEmail(in *borrower.VerifyEmailRequest) (resp *b
 	if err != nil {
 		return nil, err
 	}
-	organizationUser, err := l.svcCtx.OrganizationUserRepo.GetOrganizationUser(l.ctx, user.DefaultOrganizationId, user.Id)
+	organizationUser, err := l.svcCtx.OrganizationUserRepo.GetOrganizationUserByUserId(l.ctx, user.DefaultOrganizationId, user.Id)
 	if err != nil {
 		return nil, err
 	}

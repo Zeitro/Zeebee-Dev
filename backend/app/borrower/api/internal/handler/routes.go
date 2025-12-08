@@ -417,7 +417,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: organization_user.OrganizationUserSendEmailHandler(serverCtx),
 				},
 				{
-					// swaitch status
+					// switch status
 					Method:  http.MethodPatch,
 					Path:    "/organization_user/:id/status",
 					Handler: organization_user.OrganizationUserUpdateStatusHandler(serverCtx),

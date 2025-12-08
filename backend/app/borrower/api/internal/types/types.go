@@ -639,9 +639,9 @@ type OrganizationUserPageEntity struct {
 }
 
 type OrganizationUserPageRequestFilter struct {
-	Keyword string  `json:"keyword,optional"`
-	Status  string  `json:"status,optional"`
-	RoleId  []int64 `json:"role_id,optional"`
+	Keyword string `json:"keyword,optional"`
+	Status  string `json:"status,optional"`
+	RoleId  int64  `json:"role_id,optional"`
 }
 
 type OrganizationUserPageRequestSorter struct {

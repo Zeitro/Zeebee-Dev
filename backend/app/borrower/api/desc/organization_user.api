@@ -57,7 +57,7 @@ type (
     OrganizationUserPageRequestFilter {
         Keyword string `json:"keyword,optional"`
         Status string `json:"status,optional"`
-        RoleId []int64 `json:"role_id,optional"`
+        RoleId int64 `json:"role_id,optional"`
     }
 
     OrganizationUserPageRequestSorter {
@@ -126,7 +126,7 @@ type (
 // assign roles
 type (
     OrganizationUserAssignRolesRequest {
-        UserId int64 `path:"user_id" validate:"required"`
+        Id int64 `path:"id" validate:"required"`
         RoleIds []int64 `json:"role_ids,optional"`
     }
 )

@@ -16,7 +16,7 @@ type OrganizationUserAllResponse struct {
 }
 
 type OrganizationUserAssignRolesRequest struct {
-	UserId  int64   `path:"user_id" validate:"required"`
+	Id      int64   `path:"id" validate:"required"`
 	RoleIds []int64 `json:"role_ids,optional"`
 }
 
