@@ -54,7 +54,7 @@ func (l *RefreshTokenLogic) RefreshToken(in *borrower.RefreshTokenRequest) (resp
 		return nil, errorx.New("User Is Not Active")
 	}
 
-	organizationUser, err = l.svcCtx.OrganizationUserRepo.GetOrganizationUser(l.ctx, claims.OrganizationId, user.Id)
+	organizationUser, err = l.svcCtx.OrganizationUserRepo.GetOrganizationUserByUserId(l.ctx, claims.OrganizationId, user.Id)
 	if err != nil {
 		return nil, err
 	}

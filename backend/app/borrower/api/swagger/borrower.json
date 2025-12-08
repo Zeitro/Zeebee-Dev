@@ -6375,10 +6375,7 @@
                       "type": "string"
                     },
                     "role_id": {
-                      "type": "array",
-                      "items": {
-                        "type": "integer"
-                      }
+                      "type": "integer"
                     },
                     "status": {
                       "type": "string"
@@ -7394,7 +7391,7 @@
         "parameters": [
           {
             "type": "integer",
-            "name": "user_id",
+            "name": "id",
             "in": "path",
             "required": true
           },
@@ -7473,7 +7470,7 @@
         "tags": [
           "organization_user"
         ],
-        "summary": "swaitch status",
+        "summary": "switch status",
         "operationId": "organizationUserOrganizationUserUpdateStatus",
         "parameters": [
           {
@@ -13080,7 +13077,7 @@
       }
     }
   },
-  "x-date": "2025-12-08 16:35:11",
+  "x-date": "2025-12-08 19:13:30",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

@@ -46,6 +46,15 @@ func (l *OrganizationUserLogic) Page(ctx context.Context, pageReq dto.Organizati
 	if err != nil {
 		return page, err
 	}
+
+	for i, entity := range results.List {
+		roles, err := l.repos.RoleRepo.GetOrganizationUserRoles(ctx, entity.Id)
+		if err != nil {
+			return page, err
+		}
+		results.List[i].Roles = roles
+	}
+
 	err = copier.CopyWithOption(&page, results, copier.Option{
 		DeepCopy:      true,
 		CaseSensitive: true,
@@ -57,7 +66,6 @@ func (l *OrganizationUserLogic) Page(ctx context.Context, pageReq dto.Organizati
 		return page, errorx.GetFailedTransRespErr(err)
 	}
 	return page, err
-
 }
 
 // InviteOrganizationUser Invite organization user
@@ -117,7 +125,7 @@ func (l *OrganizationUserLogic) InviteOrganizationUser(ctx context.Context, crea
 			OrganizationId: createDto.OrganizationId,
 			Phone:          createDto.Phone,
 			Remark:         createDto.Remark,
-			Status:         constants.OrganizationUserStatusActive,
+			Status:         constants.OrganizationUserStatusNotActivated,
 		}
 
 		// get organization roles
@@ -247,7 +255,7 @@ func (l *OrganizationUserLogic) AcceptInvitation(ctx context.Context, input dto.
 		if !ok {
 			return errorx.New("Organization User Is Not Found")
 		}
-		if organizationUser.Status != constants.OrganizationUserStatusNotActivated {
+		if organizationUserModel.Status != constants.OrganizationUserStatusNotActivated {
 			return errorx.New("The User Has Been Activated")
 		}
 		// update organization user
@@ -307,7 +315,7 @@ func (l *OrganizationUserLogic) AcceptInvitation(ctx context.Context, input dto.
 
 // UpdateOrganizationUser update organization user
 func (l *OrganizationUserLogic) UpdateOrganizationUser(ctx context.Context, reqDto dto.OrganizationUserUpdateRequestDto) (result *bo.OrganizationUserBo, err error) {
-	organizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUser(ctx, reqDto.Id, reqDto.OrganizationId)
+	organizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUserById(ctx, reqDto.Id, reqDto.OrganizationId)
 	if err != nil {
 		return nil, err
 	}
@@ -335,7 +343,7 @@ func (l *OrganizationUserLogic) UpdateOrganizationUser(ctx context.Context, reqD
 			return innerErr
 		}
 		// update organization user
-		organizationUser, innerErr = l.repos.OrganizationUserRepo.UpdateOneWithTx(ctx, tx, saveModel)
+		_, innerErr = l.repos.OrganizationUserRepo.UpdateOneWithTx(ctx, tx, saveModel)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -485,10 +493,22 @@ func (l *OrganizationUserLogic) Detail(ctx context.Context, id int64, organizati
 }
 
 // SwitchStatus
-func (l *OrganizationUserLogic) SwitchStatus(ctx context.Context, id int64, organizationId int64, status constants.OrganizationUserStatus) (err error) {
-	err = l.repos.OrganizationUserRepo.UpdateColumnsById(ctx, id, map[string]interface{}{
-		"status": status,
-	})
+func (l *OrganizationUserLogic) SwitchStatus(ctx context.Context, id int64, organizationId int64, status constants.OrganizationUserStatus, userType constants.UserType) (err error) {
+	// check organization user
+	organization, err := l.repos.OrganizationRepo.GetOrganization(ctx, organizationId, userType)
+	if err != nil {
+		return err
+	}
+	organizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUserById(ctx, id, organizationId)
+	if err != nil {
+		return err
+	}
+
+	if status != constants.OrganizationUserStatusActive && organization.OwnerId == organizationUser.UserId {
+		return errorx.New("Cannot Disable Owner")
+	}
+
+	err = l.repos.OrganizationUserRepo.UpdateOrganizationUserStatus(ctx, id, organizationId, status)
 
 	// todo update user's permissions
 	return err
@@ -522,8 +542,25 @@ func (l *OrganizationUserLogic) AssignRoles(ctx context.Context, id int64, organ
 	return err
 }
 
-func (l *OrganizationUserLogic) Delete(ctx context.Context, id int64, organizationId int64) (err error) {
-	err = l.repos.OrganizationUserRepo.DeleteOrganizationUser(ctx, id, organizationId)
+func (l *OrganizationUserLogic) Delete(ctx context.Context, id int64, organizationId int64, userType constants.UserType) (err error) {
+	// check organization user
+	organization, err := l.repos.OrganizationRepo.GetOrganization(ctx, organizationId, userType)
+	if err != nil {
+		return err
+	}
+	err = l.repos.OrganizationUserRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		var innerErr error
+		organizationUser, innerErr := l.repos.OrganizationUserRepo.GetOrganizationUserByIdWithTx(ctx, tx, id, organizationId)
+		if innerErr != nil {
+			return innerErr
+		}
+		if organization.OwnerId == organizationUser.UserId {
+			innerErr = errorx.New("Cannot Delete Owner")
+			return innerErr
+		}
+		innerErr = l.repos.OrganizationUserRepo.DeleteOrganizationUserWithTx(ctx, tx, organizationUser)
+		return innerErr
+	})
 	// todo delete user's permissions
 	return err
 }

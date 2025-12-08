@@ -39,7 +39,7 @@ func (l *SwitchStatusLogic) SwitchStatus(in *borrower.OrganizationUserUpdateStat
 	if err != nil {
 		return nil, err
 	}
-	err = l.svcCtx.OrganizationUserRepo.UpdateOrganizationUserStatus(l.ctx, claim.OrganizationId, claim.UserId, constants.OrganizationUserStatus(in.Data.Status))
+	err = l.baseLogic.OrganizationUserLogic.SwitchStatus(l.ctx, in.Data.Id, claim.OrganizationId, constants.OrganizationUserStatus(in.Data.Status), claim.UserType)
 	if err != nil {
 		return nil, err
 	}

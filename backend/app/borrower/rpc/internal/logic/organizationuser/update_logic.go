@@ -48,7 +48,7 @@ func (l *UpdateLogic) Update(in *borrower.OrganizationUserUpdateRequest) (resp *
 	if err != nil {
 		return nil, err
 	}
-	input.Type = claim.UserType
+	input.UserType = claim.UserType
 	input.OrganizationId = claim.OrganizationId
 
 	result, err := l.baseLogic.OrganizationUserLogic.UpdateOrganizationUser(l.ctx, input)

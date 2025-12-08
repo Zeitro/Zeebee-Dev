@@ -39,7 +39,7 @@ func (l *OrganizationUserAllLogic) OrganizationUserAll(req *types.EmptyRequest) 
 	resp = &types.OrganizationUserAllResponse{
 		List: []*types.OrganizationUserEntity{},
 	}
-	err = copier.CopyWithOption(resp, rpcResp.Data, copier.Option{
+	err = copier.CopyWithOption(&resp.List, rpcResp.Data, copier.Option{
 		DeepCopy:      true,
 		CaseSensitive: true,
 		Converters: []copier.TypeConverter{
