@@ -67,6 +67,8 @@ type (
 	BorrowerNamesRequestData                       = borrower.BorrowerNamesRequestData
 	BorrowerNamesResponse                          = borrower.BorrowerNamesResponse
 	BorrowerPropertyEntry                          = borrower.BorrowerPropertyEntry
+	ChangePasswordRequest                          = borrower.ChangePasswordRequest
+	ChangePasswordRequestData                      = borrower.ChangePasswordRequestData
 	EmptyRequest                                   = borrower.EmptyRequest
 	EmptyResponse                                  = borrower.EmptyResponse
 	FileDeleteRequest                              = borrower.FileDeleteRequest
@@ -278,6 +280,7 @@ type (
 		SendResetPasswordEmail(ctx context.Context, in *SendResetPasswordEmailRequest, opts ...grpc.CallOption) (*SendResetPasswordEmailResponse, error)
 		SwitchOrganization(ctx context.Context, in *SwitchOrganizationRequest, opts ...grpc.CallOption) (*UserLoginResponse, error)
 		EditProfile(ctx context.Context, in *UserProfileEditRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
+		ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	}
 
 	defaultUser struct {
@@ -340,4 +343,9 @@ func (m *defaultUser) SwitchOrganization(ctx context.Context, in *SwitchOrganiza
 func (m *defaultUser) EditProfile(ctx context.Context, in *UserProfileEditRequest, opts ...grpc.CallOption) (*UserinfoResponse, error) {
 	client := borrower.NewUserClient(m.cli.Conn())
 	return client.EditProfile(ctx, in, opts...)
+}
+
+func (m *defaultUser) ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	client := borrower.NewUserClient(m.cli.Conn())
+	return client.ChangePassword(ctx, in, opts...)
 }

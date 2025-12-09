@@ -224,9 +224,19 @@ message UserProfileEditRequest {
   UserProfileEditRequestData data = 1;
 }
 message UserProfileEditRequestData {
-  int64 user_id = 1;
+  //  int64 user_id = 1;
   string first_name = 2;
   string last_name = 3;
+  string phone = 4;
+}
+
+// change password
+message ChangePasswordRequest {
+  ChangePasswordRequestData data = 1;
+}
+message ChangePasswordRequestData {
+  string old_password = 1;
+  string new_password = 2;
 }
 
 service user {
@@ -241,6 +251,7 @@ service user {
   rpc SendResetPasswordEmail(SendResetPasswordEmailRequest) returns(SendResetPasswordEmailResponse);
   rpc SwitchOrganization(SwitchOrganizationRequest) returns(UserLoginResponse);
   rpc EditProfile(UserProfileEditRequest) returns(UserinfoResponse);
+  rpc ChangePassword(ChangePasswordRequest) returns(EmptyResponse);
 }
 // ================= user service end =================
 // ================= loan service start =================
@@ -1745,6 +1756,7 @@ message OrganizationUserPageEntity {
   string updated_at = 10;
   string email = 11;
   repeated RoleEntity roles = 12;
+  bool is_owner = 13;
 }
 // page --  request
 message OrganizationUserPageRequest {

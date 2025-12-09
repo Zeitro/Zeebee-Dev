@@ -9,7 +9,7 @@ func TestEmail_SendEmail(t *testing.T) {
 		Host:     "smtp.gmail.com",
 		Port:     587,
 		User:     "info@zeebeeloans.com",
-		Password: "ckvnllwvmxsjnslt",
+		Password: "zovzdtzzwexjenrn",
 	}
 	msg := Message{
 		From:    "info@zeebeeloans.com",

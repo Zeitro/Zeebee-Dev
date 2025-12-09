@@ -35,8 +35,11 @@ func (l *UserInfoLogic) UserInfo(in *borrower.UserInfoRequest) (resp *borrower.U
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	// todo handle organization user id
-	user, err := l.baseLogic.UserLogic.Info(l.ctx, in.Data.Id, 0, constants.UserTypeBorrower)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	user, err := l.baseLogic.UserLogic.Info(l.ctx, claim.UserId, claim.OrganizationId, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}

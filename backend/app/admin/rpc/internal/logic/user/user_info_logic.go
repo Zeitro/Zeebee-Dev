@@ -35,8 +35,12 @@ func (l *UserInfoLogic) UserInfo(in *admin.UserInfoRequest) (resp *admin.Userinf
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 
-	user, err := l.baseLogic.UserLogic.Info(l.ctx, in.Data.Id, constants.UserTypeAdmin)
+	user, err := l.baseLogic.UserLogic.Info(l.ctx, claim.UserId, claim.OrganizationUserId, constants.UserTypeAdmin)
 	if err != nil {
 		return nil, err
 	}

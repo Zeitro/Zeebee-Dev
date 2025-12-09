@@ -73,3 +73,8 @@ func (s *UserServer) EditProfile(ctx context.Context, in *borrower.UserProfileEd
 	l := userlogic.NewEditProfileLogic(ctx, s.svcCtx)
 	return l.EditProfile(in)
 }
+
+func (s *UserServer) ChangePassword(ctx context.Context, in *borrower.ChangePasswordRequest) (*borrower.EmptyResponse, error) {
+	l := userlogic.NewChangePasswordLogic(ctx, s.svcCtx)
+	return l.ChangePassword(in)
+}

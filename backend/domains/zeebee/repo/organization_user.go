@@ -50,9 +50,12 @@ func (repo *OrganizationUserRepo) Page(ctx context.Context, pageReq dto.Organiza
 	filter := pageReq.Filter
 	sorter := pageReq.Sorter
 	userTable := model.User{}.TableName()
+	organizationUserAndRoleTable := "organization_user_and_roles"
 	organizationUserTable := model.OrganizationUser{}.TableName()
 	fields := []string{
 		fmt.Sprintf("%s.id", organizationUserTable),
+		fmt.Sprintf("%s.user_id", organizationUserTable),
+		fmt.Sprintf("%s.organization_id", organizationUserTable),
 		fmt.Sprintf("%s.created_at", organizationUserTable),
 		fmt.Sprintf("%s.updated_at", organizationUserTable),
 		fmt.Sprintf("%s.email", userTable),
@@ -62,6 +65,7 @@ func (repo *OrganizationUserRepo) Page(ctx context.Context, pageReq dto.Organiza
 		fmt.Sprintf("%s.mid_name", userTable),
 		fmt.Sprintf("%s.last_name", userTable),
 		fmt.Sprintf("%s.full_name", organizationUserTable),
+		fmt.Sprintf("%s.remark", organizationUserTable),
 	}
 
 	query := repo.Client(ctx).Model(&model.OrganizationUser{}).Select(fields).
@@ -70,6 +74,12 @@ func (repo *OrganizationUserRepo) Page(ctx context.Context, pageReq dto.Organiza
 	if len(filter.Keyword) > 0 {
 		query = query.Where(fmt.Sprintf("%s.email like ? or %s.full_name like ? or %s.phone like ?", userTable, organizationUserTable, organizationUserTable), "%"+filter.Keyword+"%", "%"+filter.Keyword+"%", "%"+filter.Keyword+"%")
 	}
+
+	if filter.RoleId > 0 {
+		query = query.Joins(fmt.Sprintf("left join %s on %s.id = %s.organization_user_id", organizationUserAndRoleTable, organizationUserTable, organizationUserAndRoleTable)).
+			Where(fmt.Sprintf("%s.role_id = ?", organizationUserAndRoleTable), filter.RoleId)
+	}
+
 	if len(sorter.Column) > 0 {
 		query = query.Order(fmt.Sprintf("%s.%s %s", organizationUserTable, sorter.Column, sorter.Sort))
 	}
