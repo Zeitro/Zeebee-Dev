@@ -327,6 +327,7 @@ message ThirdPartyLoanApplicantEditEntry {
   bool is_primary = 2;
   int64 borrower_applicant_id = 3;
   int32 own_percent = 4;
+
 }
 
 message LoanApplicantApplyEntry {
@@ -762,6 +763,7 @@ message LoanPropertyEntry{
   double est_property_value_amount = 35;
   AddressEntry address = 36;
   double arv = 37;
+
 }
 
 message LoanPropertyApplyEntry{
@@ -1019,7 +1021,7 @@ message BorrowerEntityPageEntry {
 }
 
 message BorrowerEntityEditEntry {
-  int64 user_id = 1;
+  //  int64 user_id = 1;
   string type = 2;
   string name = 3;
   string tin_type = 4;
@@ -1029,14 +1031,13 @@ message BorrowerEntityEditEntry {
   string contact_name = 8;
   string contact_phone = 9;
   int64 id = 11;
-  int64 organization_id = 12;
+  //  int64 organization_id = 12;
 }
 
 // create borrower entity
 message BorrowerEntityCreateRequest {
   BorrowerEntityEditEntry data = 1;
 }
-
 message BorrowerEntityCreateResponse {
   BorrowerEntityEntry data = 1;
 }
@@ -1050,10 +1051,10 @@ message BorrowerEntityUpdateRequest {
 message BorrowerEntityDetailRequest {
   BorrowerEntityDetailRequestData data = 1;
 }
-message BorrowerEntityDetailRequestData{
+message BorrowerEntityDetailRequestData {
   int64 id = 1;
-  int64 user_id = 2;
-  int64 organization_id = 3;
+  //  int64 user_id = 2;
+  //  int64 organization_id = 3;
 }
 
 message BorrowerEntityDetailResponse {
@@ -1067,8 +1068,8 @@ message BorrowerEntityDeleteRequest {
 
 message BorrowerEntityDeleteRequestData {
   int64 id = 1;
-  int64 user_id = 2;
-  int64 organization_id = 3;
+  //  int64 user_id = 2;
+  //  int64 organization_id = 3;
 }
 
 // page borrower entity
@@ -1087,9 +1088,9 @@ message BorrowerEntityPageRequestData {
   BorrowerEntityPageRequestSorter sorter = 4;
 }
 message BorrowerEntityPageRequestFilter {
-  int64 user_id = 1;
+  //  int64 user_id = 1;
   string keyword = 2;
-  int64 organization_id = 3;
+  //  int64 organization_id = 3;
 }
 message BorrowerEntityPageRequestSorter {
   string column = 1;
@@ -1109,10 +1110,10 @@ message BorrowerEntityCheckExistedRequest {
   BorrowerEntityCheckExistedRequestData data = 1;
 }
 message BorrowerEntityCheckExistedRequestData {
-  int64 user_id = 1;
+  //  int64 user_id = 1;
   int64 id = 2;
   string name = 3;
-  int64 organization_id = 4;
+  //  int64 organization_id = 4;
 }
 message BorrowerEntityCheckExistedResponse {
   BorrowerEntityCheckExistedResponseData data = 1;
@@ -1126,8 +1127,8 @@ message BorrowerEntityAllRequest {
   BorrowerEntityAllRequestData data = 1;
 }
 message BorrowerEntityAllRequestData {
-  int64 user_id = 1;
-  int64 organization_id = 2;
+  //  int64 user_id = 1;
+  //  int64 organization_id = 2;
 }
 
 message BorrowerEntityAllResponse {
@@ -1341,8 +1342,8 @@ message BorrowerNamesRequest {
 }
 
 message BorrowerNamesRequestData {
-  int64 user_id = 1;
-  int64 organization_id = 2;
+  //  int64 user_id = 1;
+  //  int64 organization_id = 2;
 }
 
 message BorrowerNamesResponse {
