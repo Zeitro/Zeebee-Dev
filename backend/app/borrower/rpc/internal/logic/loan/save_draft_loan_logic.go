@@ -9,12 +9,14 @@ import (
 	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 
+	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
+	"zeebee-backend/common/utils"
 	"zeebee-backend/common/uuid"
 	"zeebee-backend/domains/zeebee/model"
 
@@ -25,13 +27,15 @@ type SaveDraftLoanLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	baseLogic *logic.BaseLogic
 }
 
 func NewSaveDraftLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SaveDraftLoanLogic {
 	return &SaveDraftLoanLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -46,10 +50,14 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 	var loanBorrower *model.LoanBorrower
 	var loanProperty *model.LoanProperty
 	var oldBorrowerPropertyId int64
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	// get original loan
 	if in.Data.Id > 0 {
-		loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, in.Data.Id, in.Data.OrganizationId)
+		loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, in.Data.Id, claim.OrganizationId)
 		if err != nil {
 			return nil, err
 		}
@@ -70,7 +78,7 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 	}
 	// build data
 	updateLogic := NewUpdateApplyLoanLogic(l.ctx, l.svcCtx)
-	data, err := l.buildModelData(in.Data, loan)
+	data, err := l.buildModelData(in.Data, loan, claim)
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +112,7 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 					if err != nil {
 						return err
 					}
-					loan, err = l.svcCtx.LoanRepo.GetBorrowerLoanWithTx(l.ctx, tx, savaLoan.Id, in.Data.OrganizationId)
+					loan, err = l.svcCtx.LoanRepo.GetBorrowerLoanWithTx(l.ctx, tx, savaLoan.Id, claim.OrganizationId)
 				}
 				return err
 			},
@@ -238,7 +246,7 @@ func (l *SaveDraftLoanLogic) updateLoanDemographic(tx *gorm.DB, loanDemographic 
 }
 
 // buildModelData return save model data
-func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, oldLoan *model.Loan) (data *applyLoanModelData, err error) {
+func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, oldLoan *model.Loan, claim utils.JwtUser) (data *applyLoanModelData, err error) {
 
 	if reqData == nil {
 		return nil, errorx.New("Invalid Request Data")
@@ -268,13 +276,13 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 		return nil, errorx.GetFailedTransErr(err)
 	}
 	if loan.Id == 0 {
-		creator, err := l.svcCtx.UserRepo.GetUser(l.ctx, reqData.UserId, constants.UserTypeBorrower)
-		if err != nil {
-			return nil, err
-		}
-		loan.CreatorId = creator.Id
-		loan.CreatorName = creator.FullName
-		loan.BorrowerOrganizationId = reqData.OrganizationId
+		// creator, err := l.svcCtx.UserRepo.GetUser(l.ctx, reqData.UserId, constants.UserTypeBorrower)
+		// if err != nil {
+		// 	return nil, err
+		// }
+		loan.CreatorId = claim.OrganizationUserId
+		loan.CreatorName = claim.Username
+		loan.BorrowerOrganizationId = claim.OrganizationId
 	}
 	loan.Stage = constants.LoanStageDraft
 	loan.PendingStatus = constants.LoanPendingStatusNone
@@ -292,7 +300,7 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	// LoanBorrower
 	var loanBorrower *model.LoanBorrower
 	if reqData.LoanBorrower.BorrowerEntityId > 0 {
-		loanBorrower, err = l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, reqData.LoanBorrower.BorrowerEntityId, reqData.OrganizationId)
+		loanBorrower, err = l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, reqData.LoanBorrower.BorrowerEntityId, claim.OrganizationId)
 		if err != nil {
 			return nil, err
 		}
@@ -303,7 +311,7 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	var loanProperty *model.LoanProperty
 	if reqData.LoanProperty != nil {
 		if reqData.LoanProperty.BorrowerPropertyId > 0 {
-			loanProperty, err = l.svcCtx.BorrowerPropertyRepo.TranToLoanPropertyWithId(l.ctx, reqData.LoanProperty.BorrowerPropertyId, reqData.UserId)
+			loanProperty, err = l.svcCtx.BorrowerPropertyRepo.TranToLoanPropertyWithId(l.ctx, reqData.LoanProperty.BorrowerPropertyId, claim.OrganizationId)
 			if err != nil {
 				return nil, err
 			}
@@ -330,13 +338,13 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	var totalOwnPercent int32
 	for _, applicant := range reqData.Applicants {
 		totalOwnPercent += applicant.OwnPercent
-		loanApplicant, err := l.svcCtx.BorrowerApplicantRepo.TranToLoanApplicantWithId(l.ctx, applicant.BorrowerApplicantId, reqData.OrganizationId)
+		loanApplicant, err := l.svcCtx.BorrowerApplicantRepo.TranToLoanApplicantWithId(l.ctx, applicant.BorrowerApplicantId, claim.OrganizationId)
 		if err != nil {
 			return nil, err
 		}
 		loanApplicant.Id = applicant.Id
 		loanApplicant.LoanId = reqData.Id
-		loanApplicant.BorrowerOrganizationId = reqData.OrganizationId
+		loanApplicant.BorrowerOrganizationId = claim.OrganizationId
 		loanApplicant.IsPrimary = applicant.IsPrimary
 		loanApplicant.OwnPercent = applicant.OwnPercent
 		applicants = append(applicants, loanApplicant)

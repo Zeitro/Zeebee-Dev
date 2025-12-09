@@ -12,7 +12,6 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
 )
 
 type RoleCreateLogic struct {
@@ -47,13 +46,6 @@ func (l *RoleCreateLogic) RoleCreate(req *types.RoleCreateRequest) (resp *types.
 		}
 	})
 	rpcReq.Data.RoleAndResources = relations
-
-	claim, err := utils.GetUserClaimFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-	rpcReq.Data.UserId = claim.UserId
-	rpcReq.Data.OrganizationId = claim.OrganizationId
 
 	rpcResp, err := l.svcCtx.RoleRpcClient.Create(l.ctx, rpcReq)
 	if err != nil {

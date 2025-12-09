@@ -10,7 +10,6 @@ import (
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
 )
 
 type RoleAllLogic struct {
@@ -33,16 +32,8 @@ func (l *RoleAllLogic) RoleAll(req *types.EmptyRequest) (resp *types.RoleAllResp
 		List: make([]*types.RoleEntity, 0),
 	}
 
-	claim, err := utils.GetUserClaimFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	rpcReq := &borrower.RoleAllRequest{
-		Data: &borrower.RoleAllRequestData{
-			UserId:         claim.UserId,
-			OrganizationId: claim.OrganizationId,
-		},
+		Data: &borrower.RoleAllRequestData{},
 	}
 
 	rpcResp, err := l.svcCtx.RoleRpcClient.All(l.ctx, rpcReq)

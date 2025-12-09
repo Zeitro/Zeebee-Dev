@@ -37,7 +37,12 @@ func (l *AllLogic) All(in *borrower.RoleAllRequest) (resp *borrower.RoleAllRespo
 		}
 	}()
 
-	result, err := l.baseLogic.RoleLogic.All(l.ctx, in.Data.OrganizationId, constants.UserTypeBorrower)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := l.baseLogic.RoleLogic.All(l.ctx, claim.OrganizationId, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}

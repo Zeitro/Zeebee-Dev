@@ -258,7 +258,7 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int6
 			HoldbackAmount:  preApproveRequest.Loan.HoldbackAmount,
 			PrincipalAmount: preApproveRequest.Loan.PrincipalAmount,
 			LenderCompanyId: organizationId,
-			UserId:          creatorId,
+			// UserId:          creatorId,
 			Applicants: []*borrower.LoanApplicantApplyEntry{
 				{
 					IsPrimary:           true,

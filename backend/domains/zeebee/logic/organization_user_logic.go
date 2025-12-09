@@ -457,7 +457,7 @@ func (l *OrganizationUserLogic) sendInviteEmail(ctx context.Context, input SendI
 	}
 	// send invite email
 	data := map[string]interface{}{
-		"url": fmt.Sprintf("%s?code=%s&email=%s&first_name=%s&last_name=%s&oranization_name=%s&organization_id=%v",
+		"url": fmt.Sprintf("%s?code=%s&email=%s&first_name=%s&last_name=%s&organization_name=%s&organization_id=%v",
 			input.EmailConfig.Url,
 			code,
 			input.TargetEmail,

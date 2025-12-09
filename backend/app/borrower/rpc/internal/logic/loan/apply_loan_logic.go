@@ -10,12 +10,14 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
+	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
+	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/model"
 )
 
@@ -23,6 +25,7 @@ type ApplyLoanLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	baseLogic *logic.BaseLogic
 }
 
 type applyLoanModelData struct {
@@ -39,9 +42,10 @@ type applyLoanModelData struct {
 
 func NewApplyLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ApplyLoanLogic {
 	return &ApplyLoanLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -51,7 +55,12 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrowe
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	data, err := l.buildModelData(in.Data, nil)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, errorx.Wrap(err, "Failed To Get User Claim")
+	}
+
+	data, err := l.buildModelData(in.Data, nil, claim)
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +111,7 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrowe
 		// save applicants
 		slice.ForEach(data.applicants, func(index int, item *model.LoanApplicant) {
 			item.Id = 0
-			item.BorrowerOrganizationId = in.Data.OrganizationId
+			item.BorrowerOrganizationId = claim.OrganizationId
 			item.LoanId = loan.Id
 			item.LoanBorrowerId = loanBorrower.Id
 			item.LoanPropertyId = loanProperty.Id
@@ -202,7 +211,7 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrowe
 }
 
 // buildModelData return save model data
-func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, oldLoan *model.Loan) (data *applyLoanModelData, err error) {
+func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, oldLoan *model.Loan, claim utils.JwtUser) (data *applyLoanModelData, err error) {
 	var borrowerProperty *model.BorrowerProperty
 
 	if reqData == nil {
@@ -241,14 +250,14 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, 
 	if err != nil {
 		return nil, errorx.GetFailedTransErr(err)
 	}
-	creator, err := l.svcCtx.UserRepo.GetUser(l.ctx, reqData.UserId, constants.UserTypeBorrower)
-	if err != nil {
-		return nil, err
-	}
+	// creator, err := l.svcCtx.UserRepo.GetUser(l.ctx, claim.OrganizationUserId, constants.UserTypeBorrower)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	loan.CreatorId = reqData.UserId
-	loan.CreatorName = creator.FullName
-	loan.BorrowerOrganizationId = reqData.OrganizationId
+	loan.CreatorId = claim.OrganizationUserId
+	loan.CreatorName = claim.Username
+	loan.BorrowerOrganizationId = claim.OrganizationId
 	loan.Stage = constants.LoanStagePending
 	loan.PendingStatus = constants.LoanPendingStatusQuoting
 	loan.Source = constants.LoanSourceSystem
@@ -265,7 +274,7 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, 
 	if loanBorrowerData == nil {
 		return nil, errorx.WithStack(errorx.New("Invalid Loan Borrower"))
 	}
-	loanBorrower, err := l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, loanBorrowerData.BorrowerEntityId, reqData.OrganizationId)
+	loanBorrower, err := l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, loanBorrowerData.BorrowerEntityId, claim.OrganizationId)
 	if err != nil {
 		return nil, err
 	}
@@ -278,7 +287,7 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, 
 	var totalOwnPercent int32 = 0
 	for _, applicant := range reqData.Applicants {
 		totalOwnPercent += applicant.OwnPercent
-		borrowerApplicant, err := l.svcCtx.BorrowerApplicantRepo.GetBorrowerApplicantById(l.ctx, applicant.BorrowerApplicantId, reqData.OrganizationId)
+		borrowerApplicant, err := l.svcCtx.BorrowerApplicantRepo.GetBorrowerApplicantById(l.ctx, applicant.BorrowerApplicantId, claim.OrganizationId)
 		if err != nil {
 			return nil, err
 		}
@@ -319,7 +328,7 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, 
 	}
 
 	// loan_property
-	borrowerProperty, err = l.svcCtx.BorrowerPropertyRepo.GetOneByIdForBorrower(l.ctx, reqData.LoanProperty.BorrowerPropertyId, reqData.UserId)
+	borrowerProperty, err = l.svcCtx.BorrowerPropertyRepo.GetOneByIdForOrganization(l.ctx, reqData.LoanProperty.BorrowerPropertyId, claim.OrganizationId)
 	if err != nil {
 		return nil, err
 	}

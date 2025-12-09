@@ -45,7 +45,14 @@ func (l *PageLogic) Page(in *borrower.RolePageRequest) (resp *borrower.RolePageR
 	if pageReq.Filter == nil {
 		pageReq.Filter = &repo.RolePageReqFilter{}
 	}
+
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	pageReq.Filter.RoleType = constants.UserTypeBorrower
+	pageReq.Filter.OrganizationId = claim.OrganizationId
 
 	result, err := l.baseLogic.RoleLogic.Page(l.ctx, pageReq)
 	if err != nil {
