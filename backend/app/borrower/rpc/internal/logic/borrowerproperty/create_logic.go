@@ -7,6 +7,7 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
+	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
@@ -19,13 +20,15 @@ type CreateLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	baseLogic *logic.BaseLogic
 }
 
 func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogic {
 	return &CreateLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -35,11 +38,10 @@ func (l *CreateLogic) Create(in *borrower.PropertyCreateRequest) (resp *borrower
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	// creatorId := in.Data.UserId
-	// creator, err := l.svcCtx.UserRepo.GetUser(l.ctx, in.Data.UserId, constants.UserTypeBorrower)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	saveData := &model.BorrowerProperty{}
 	responseData := &borrower.BorrowerPropertyEntry{}
@@ -51,10 +53,12 @@ func (l *CreateLogic) Create(in *borrower.PropertyCreateRequest) (resp *borrower
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
-	saveData.CreatorId = in.Data.UserId
+	saveData.CreatorId = claim.OrganizationUserId
+	saveData.OrganizationId = claim.OrganizationId
+	saveData.CreatorName = claim.Username
 
 	// todo check organization
-	isExisted, err := l.svcCtx.BorrowerPropertyRepo.IsExisted(l.ctx, 0, in.Data.OrganizationId, &saveData.Address)
+	isExisted, err := l.svcCtx.BorrowerPropertyRepo.IsExisted(l.ctx, 0, claim.OrganizationId, &saveData.Address)
 	if err != nil {
 		return nil, err
 	}
