@@ -10246,21 +10246,20 @@ func (x *BorrowerApplicantPageEntry) GetCreatorName() string {
 }
 
 type BorrowerApplicantEditEntry struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	UserId           int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	FirstName        string                 `protobuf:"bytes,2,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
-	MidName          string                 `protobuf:"bytes,3,opt,name=mid_name,json=midName,proto3" json:"mid_name,omitempty"`
-	LastName         string                 `protobuf:"bytes,4,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
-	Ssn              string                 `protobuf:"bytes,5,opt,name=ssn,proto3" json:"ssn,omitempty"`
-	Dob              string                 `protobuf:"bytes,6,opt,name=dob,proto3" json:"dob,omitempty"`
-	MaritalStatus    string                 `protobuf:"bytes,7,opt,name=marital_status,json=maritalStatus,proto3" json:"marital_status,omitempty"`
-	Email            string                 `protobuf:"bytes,8,opt,name=email,proto3" json:"email,omitempty"`
-	EstCreditScore   int32                  `protobuf:"varint,9,opt,name=est_credit_score,json=estCreditScore,proto3" json:"est_credit_score,omitempty"`
-	DriverLicenseNum string                 `protobuf:"bytes,10,opt,name=driver_license_num,json=driverLicenseNum,proto3" json:"driver_license_num,omitempty"`
-	Address          *AddressEntry          `protobuf:"bytes,11,opt,name=address,proto3" json:"address,omitempty"`
-	Id               int64                  `protobuf:"varint,12,opt,name=id,proto3" json:"id,omitempty"`
-	Phone            string                 `protobuf:"bytes,13,opt,name=phone,proto3" json:"phone,omitempty"`
-	OrganizationId   int64                  `protobuf:"varint,14,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	//  int64 user_id = 1;
+	FirstName        string        `protobuf:"bytes,2,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
+	MidName          string        `protobuf:"bytes,3,opt,name=mid_name,json=midName,proto3" json:"mid_name,omitempty"`
+	LastName         string        `protobuf:"bytes,4,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
+	Ssn              string        `protobuf:"bytes,5,opt,name=ssn,proto3" json:"ssn,omitempty"`
+	Dob              string        `protobuf:"bytes,6,opt,name=dob,proto3" json:"dob,omitempty"`
+	MaritalStatus    string        `protobuf:"bytes,7,opt,name=marital_status,json=maritalStatus,proto3" json:"marital_status,omitempty"`
+	Email            string        `protobuf:"bytes,8,opt,name=email,proto3" json:"email,omitempty"`
+	EstCreditScore   int32         `protobuf:"varint,9,opt,name=est_credit_score,json=estCreditScore,proto3" json:"est_credit_score,omitempty"`
+	DriverLicenseNum string        `protobuf:"bytes,10,opt,name=driver_license_num,json=driverLicenseNum,proto3" json:"driver_license_num,omitempty"`
+	Address          *AddressEntry `protobuf:"bytes,11,opt,name=address,proto3" json:"address,omitempty"`
+	Id               int64         `protobuf:"varint,12,opt,name=id,proto3" json:"id,omitempty"`
+	Phone            string        `protobuf:"bytes,13,opt,name=phone,proto3" json:"phone,omitempty"` //  int64 organization_id = 14;
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -10293,13 +10292,6 @@ func (x *BorrowerApplicantEditEntry) ProtoReflect() protoreflect.Message {
 // Deprecated: Use BorrowerApplicantEditEntry.ProtoReflect.Descriptor instead.
 func (*BorrowerApplicantEditEntry) Descriptor() ([]byte, []int) {
 	return file_app_borrower_rpc_pb_borrower_proto_rawDescGZIP(), []int{144}
-}
-
-func (x *BorrowerApplicantEditEntry) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
 }
 
 func (x *BorrowerApplicantEditEntry) GetFirstName() string {
@@ -10384,13 +10376,6 @@ func (x *BorrowerApplicantEditEntry) GetPhone() string {
 		return x.Phone
 	}
 	return ""
-}
-
-func (x *BorrowerApplicantEditEntry) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return 0
 }
 
 // create borrower applicant
@@ -10573,12 +10558,10 @@ func (x *BorrowerApplicantDetailRequest) GetData() *BorrowerApplicantDetailReque
 }
 
 type BorrowerApplicantDetailRequestData struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserId         int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,3,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *BorrowerApplicantDetailRequestData) Reset() {
@@ -10614,20 +10597,6 @@ func (*BorrowerApplicantDetailRequestData) Descriptor() ([]byte, []int) {
 func (x *BorrowerApplicantDetailRequestData) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *BorrowerApplicantDetailRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *BorrowerApplicantDetailRequestData) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
 	}
 	return 0
 }
@@ -10722,12 +10691,10 @@ func (x *BorrowerApplicantDeleteRequest) GetData() *BorrowerApplicantDeleteReque
 }
 
 type BorrowerApplicantDeleteRequestData struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserId         int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,3,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *BorrowerApplicantDeleteRequestData) Reset() {
@@ -10763,20 +10730,6 @@ func (*BorrowerApplicantDeleteRequestData) Descriptor() ([]byte, []int) {
 func (x *BorrowerApplicantDeleteRequestData) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *BorrowerApplicantDeleteRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *BorrowerApplicantDeleteRequestData) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
 	}
 	return 0
 }
@@ -10895,12 +10848,11 @@ func (x *BorrowerApplicantPageRequestData) GetSorter() *BorrowerApplicantPageReq
 }
 
 type BorrowerApplicantPageRequestFilter struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	UserId         int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Keyword        string                 `protobuf:"bytes,2,opt,name=keyword,proto3" json:"keyword,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,3,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"open.v1"`
+	//  int64 user_id = 1;
+	Keyword       string `protobuf:"bytes,2,opt,name=keyword,proto3" json:"keyword,omitempty"` //  int64 organization_id = 3;
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *BorrowerApplicantPageRequestFilter) Reset() {
@@ -10933,25 +10885,11 @@ func (*BorrowerApplicantPageRequestFilter) Descriptor() ([]byte, []int) {
 	return file_app_borrower_rpc_pb_borrower_proto_rawDescGZIP(), []int{155}
 }
 
-func (x *BorrowerApplicantPageRequestFilter) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
 func (x *BorrowerApplicantPageRequestFilter) GetKeyword() string {
 	if x != nil {
 		return x.Keyword
 	}
 	return ""
-}
-
-func (x *BorrowerApplicantPageRequestFilter) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return 0
 }
 
 type BorrowerApplicantPageRequestSorter struct {
@@ -11172,15 +11110,14 @@ func (x *BorrowerApplicantCheckExistedRequest) GetData() *BorrowerApplicantCheck
 }
 
 type BorrowerApplicantCheckExistedRequestData struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	UserId         int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Id             int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
-	FirstName      string                 `protobuf:"bytes,3,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
-	MidName        string                 `protobuf:"bytes,4,opt,name=mid_name,json=midName,proto3" json:"mid_name,omitempty"`
-	LastName       string                 `protobuf:"bytes,5,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,6,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"open.v1"`
+	//  int64 user_id = 1;
+	Id            int64  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	FirstName     string `protobuf:"bytes,3,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
+	MidName       string `protobuf:"bytes,4,opt,name=mid_name,json=midName,proto3" json:"mid_name,omitempty"`
+	LastName      string `protobuf:"bytes,5,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"` //  int64 organization_id = 6;
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *BorrowerApplicantCheckExistedRequestData) Reset() {
@@ -11213,13 +11150,6 @@ func (*BorrowerApplicantCheckExistedRequestData) Descriptor() ([]byte, []int) {
 	return file_app_borrower_rpc_pb_borrower_proto_rawDescGZIP(), []int{160}
 }
 
-func (x *BorrowerApplicantCheckExistedRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
 func (x *BorrowerApplicantCheckExistedRequestData) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -11246,13 +11176,6 @@ func (x *BorrowerApplicantCheckExistedRequestData) GetLastName() string {
 		return x.LastName
 	}
 	return ""
-}
-
-func (x *BorrowerApplicantCheckExistedRequestData) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return 0
 }
 
 type BorrowerApplicantCheckExistedResponse struct {
@@ -11389,11 +11312,9 @@ func (x *BorrowerApplicantAllRequest) GetData() *BorrowerApplicantAllRequestData
 }
 
 type BorrowerApplicantAllRequestData struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	UserId         int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *BorrowerApplicantAllRequestData) Reset() {
@@ -11424,20 +11345,6 @@ func (x *BorrowerApplicantAllRequestData) ProtoReflect() protoreflect.Message {
 // Deprecated: Use BorrowerApplicantAllRequestData.ProtoReflect.Descriptor instead.
 func (*BorrowerApplicantAllRequestData) Descriptor() ([]byte, []int) {
 	return file_app_borrower_rpc_pb_borrower_proto_rawDescGZIP(), []int{164}
-}
-
-func (x *BorrowerApplicantAllRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *BorrowerApplicantAllRequestData) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return 0
 }
 
 type BorrowerApplicantAllResponse struct {
@@ -18269,9 +18176,8 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x12driver_license_num\x18\x0e \x01(\tR\x10driverLicenseNum\x12\x14\n" +
 	"\x05phone\x18\x0f \x01(\tR\x05phone\x120\n" +
 	"\aaddress\x18\x10 \x01(\v2\x16.borrower.AddressEntryR\aaddress\x12!\n" +
-	"\fcreator_name\x18\x11 \x01(\tR\vcreatorName\"\xc6\x03\n" +
-	"\x1aBorrowerApplicantEditEntry\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x1d\n" +
+	"\fcreator_name\x18\x11 \x01(\tR\vcreatorName\"\x84\x03\n" +
+	"\x1aBorrowerApplicantEditEntry\x12\x1d\n" +
 	"\n" +
 	"first_name\x18\x02 \x01(\tR\tfirstName\x12\x19\n" +
 	"\bmid_name\x18\x03 \x01(\tR\amidName\x12\x1b\n" +
@@ -18285,8 +18191,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	" \x01(\tR\x10driverLicenseNum\x120\n" +
 	"\aaddress\x18\v \x01(\v2\x16.borrower.AddressEntryR\aaddress\x12\x0e\n" +
 	"\x02id\x18\f \x01(\x03R\x02id\x12\x14\n" +
-	"\x05phone\x18\r \x01(\tR\x05phone\x12'\n" +
-	"\x0forganization_id\x18\x0e \x01(\x03R\x0eorganizationId\"Z\n" +
+	"\x05phone\x18\r \x01(\tR\x05phone\"Z\n" +
 	"\x1eBorrowerApplicantCreateRequest\x128\n" +
 	"\x04data\x18\x01 \x01(\v2$.borrower.BorrowerApplicantEditEntryR\x04data\"W\n" +
 	"\x1fBorrowerApplicantCreateResponse\x124\n" +
@@ -18294,30 +18199,24 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x1eBorrowerApplicantUpdateRequest\x128\n" +
 	"\x04data\x18\x01 \x01(\v2$.borrower.BorrowerApplicantEditEntryR\x04data\"b\n" +
 	"\x1eBorrowerApplicantDetailRequest\x12@\n" +
-	"\x04data\x18\x01 \x01(\v2,.borrower.BorrowerApplicantDetailRequestDataR\x04data\"v\n" +
+	"\x04data\x18\x01 \x01(\v2,.borrower.BorrowerApplicantDetailRequestDataR\x04data\"4\n" +
 	"\"BorrowerApplicantDetailRequestData\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12'\n" +
-	"\x0forganization_id\x18\x03 \x01(\x03R\x0eorganizationId\"W\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"W\n" +
 	"\x1fBorrowerApplicantDetailResponse\x124\n" +
 	"\x04data\x18\x01 \x01(\v2 .borrower.BorrowerApplicantEntryR\x04data\"b\n" +
 	"\x1eBorrowerApplicantDeleteRequest\x12@\n" +
-	"\x04data\x18\x01 \x01(\v2,.borrower.BorrowerApplicantDeleteRequestDataR\x04data\"v\n" +
+	"\x04data\x18\x01 \x01(\v2,.borrower.BorrowerApplicantDeleteRequestDataR\x04data\"4\n" +
 	"\"BorrowerApplicantDeleteRequestData\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12'\n" +
-	"\x0forganization_id\x18\x03 \x01(\x03R\x0eorganizationId\"^\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"^\n" +
 	"\x1cBorrowerApplicantPageRequest\x12>\n" +
 	"\x04data\x18\x01 \x01(\v2*.borrower.BorrowerApplicantPageRequestDataR\x04data\"\xd8\x01\n" +
 	" BorrowerApplicantPageRequestData\x12\x12\n" +
 	"\x04page\x18\x01 \x01(\x03R\x04page\x12\x14\n" +
 	"\x05limit\x18\x02 \x01(\x03R\x05limit\x12D\n" +
 	"\x06filter\x18\x03 \x01(\v2,.borrower.BorrowerApplicantPageRequestFilterR\x06filter\x12D\n" +
-	"\x06sorter\x18\x04 \x01(\v2,.borrower.BorrowerApplicantPageRequestSorterR\x06sorter\"\x80\x01\n" +
-	"\"BorrowerApplicantPageRequestFilter\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x18\n" +
-	"\akeyword\x18\x02 \x01(\tR\akeyword\x12'\n" +
-	"\x0forganization_id\x18\x03 \x01(\x03R\x0eorganizationId\"P\n" +
+	"\x06sorter\x18\x04 \x01(\v2,.borrower.BorrowerApplicantPageRequestSorterR\x06sorter\">\n" +
+	"\"BorrowerApplicantPageRequestFilter\x12\x18\n" +
+	"\akeyword\x18\x02 \x01(\tR\akeyword\"P\n" +
 	"\"BorrowerApplicantPageRequestSorter\x12\x16\n" +
 	"\x06column\x18\x01 \x01(\tR\x06column\x12\x12\n" +
 	"\x04sort\x18\x02 \x01(\tR\x04sort\"`\n" +
@@ -18331,25 +18230,21 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"total_page\x18\x04 \x01(\x03R\ttotalPage\x128\n" +
 	"\x04list\x18\x05 \x03(\v2$.borrower.BorrowerApplicantPageEntryR\x04list\"n\n" +
 	"$BorrowerApplicantCheckExistedRequest\x12F\n" +
-	"\x04data\x18\x01 \x01(\v22.borrower.BorrowerApplicantCheckExistedRequestDataR\x04data\"\xd3\x01\n" +
-	"(BorrowerApplicantCheckExistedRequestData\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x0e\n" +
+	"\x04data\x18\x01 \x01(\v22.borrower.BorrowerApplicantCheckExistedRequestDataR\x04data\"\x91\x01\n" +
+	"(BorrowerApplicantCheckExistedRequestData\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
 	"first_name\x18\x03 \x01(\tR\tfirstName\x12\x19\n" +
 	"\bmid_name\x18\x04 \x01(\tR\amidName\x12\x1b\n" +
-	"\tlast_name\x18\x05 \x01(\tR\blastName\x12'\n" +
-	"\x0forganization_id\x18\x06 \x01(\x03R\x0eorganizationId\"p\n" +
+	"\tlast_name\x18\x05 \x01(\tR\blastName\"p\n" +
 	"%BorrowerApplicantCheckExistedResponse\x12G\n" +
 	"\x04data\x18\x01 \x01(\v23.borrower.BorrowerApplicantCheckExistedResponseDataR\x04data\"J\n" +
 	")BorrowerApplicantCheckExistedResponseData\x12\x1d\n" +
 	"\n" +
 	"is_existed\x18\x01 \x01(\bR\tisExisted\"\\\n" +
 	"\x1bBorrowerApplicantAllRequest\x12=\n" +
-	"\x04data\x18\x01 \x01(\v2).borrower.BorrowerApplicantAllRequestDataR\x04data\"c\n" +
-	"\x1fBorrowerApplicantAllRequestData\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12'\n" +
-	"\x0forganization_id\x18\x02 \x01(\x03R\x0eorganizationId\"X\n" +
+	"\x04data\x18\x01 \x01(\v2).borrower.BorrowerApplicantAllRequestDataR\x04data\"!\n" +
+	"\x1fBorrowerApplicantAllRequestData\"X\n" +
 	"\x1cBorrowerApplicantAllResponse\x128\n" +
 	"\x04data\x18\x01 \x03(\v2$.borrower.BorrowerApplicantPageEntryR\x04data\"\xbb\x06\n" +
 	"\x12LoanApplicantEntry\x12\x0e\n" +
