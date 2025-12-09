@@ -339,7 +339,7 @@ message LoanApplicantApplyEntry {
 
 // loan create
 message LoanCreateRequestData {
-  int64 user_id = 1;
+  //  int64 user_id = 1;
   string stage = 2;
   string pending_status = 3;
   string loan_purpose = 4;
@@ -366,7 +366,7 @@ message LoanCreateRequestData {
   string original_contract_date = 27;
   string extension_date = 28;
   string loan_processor = 29;
-  int64 organization_id = 23;
+  //  int64 organization_id = 23;
 
 }
 
@@ -385,7 +385,7 @@ message LoanUpdateRequest {
 }
 
 message LoanUpdateRequestData {
-  int64 user_id = 1;
+  //  int64 user_id = 1;
   string stage = 2;
   string pending_status = 3;
   string loan_purpose = 4;
@@ -412,7 +412,7 @@ message LoanUpdateRequestData {
   string original_contract_date = 28;
   string extension_date = 29;
   string loan_processor = 30;
-  int64 organization_id = 31;
+  //  int64 organization_id = 31;
 }
 
 
@@ -422,8 +422,8 @@ message LoanDetailRequest {
 
 message LoanDetailRequestData {
   int64 id = 1;
-  int64 user_id = 2;
-  int64 organization_id = 3;
+  //int64 user_id = 2;
+  //int64 organization_id = 3;
 }
 
 message LoanDetailResponse {
@@ -435,9 +435,9 @@ message LoanUpdatePendingStatusRequest {
 }
 message LoanUpdatePendingStatusRequestData {
   int64 id = 1;
-  int64 user_id = 2;
+  //  int64 user_id = 2;
   string pending_status = 3;
-  int64 organization_id = 4;
+  //  int64 organization_id = 4;
 }
 
 message LoanDeleteRequest {
@@ -445,8 +445,8 @@ message LoanDeleteRequest {
 }
 message LoanDeleteRequestData {
   int64 id = 1;
-  int64 user_id = 2;
-  int64 organization_id = 3;
+  //  int64 user_id = 2;
+  //  int64 organization_id = 3;
 }
 
 message LoanPageRequest {
@@ -458,7 +458,7 @@ message LoanPageResponse {
 }
 
 message  LoanPageRequestFilter {
-  int64 user_id = 1;
+  //  int64 user_id = 1;
   string stage = 2;
   string keyword = 3;
   string keyword_type = 4;
@@ -466,7 +466,7 @@ message  LoanPageRequestFilter {
   repeated string loan_type = 6;
   repeated string lender = 7;
   repeated string pending_status = 8;
-  int64 organization_id = 9;
+  //  int64 organization_id = 9;
 }
 
 message  LoanPageRequestSorter {
@@ -494,8 +494,8 @@ message LoanLenderCompaniesRequest {
 }
 
 message LoanLenderCompaniesRequestData {
-  int64 user_id = 1;
-  int64 organization_id = 2;
+  //  int64 user_id = 1;
+  //  int64 organization_id = 2;
 }
 
 message LoanLenderCompaniesResponse {
@@ -515,7 +515,7 @@ message LoanApplyRequestData {
   double principal_amount = 7;
   int32 prepayment_penalty = 8;
   int64 lender_company_id = 9;
-  int64 user_id = 10;
+  //  int64 user_id = 10;
   repeated string business_strategy = 11;
   repeated LoanApplicantApplyEntry applicants = 12;
   int32 loan_term = 13;
@@ -531,7 +531,7 @@ message LoanApplyRequestData {
   string apply_form_file = 23;
   bool is_preapprove_loan = 24;
   string code = 25;
-  int64 organization_id = 26;
+  //  int64 organization_id = 26;
 }
 
 message LoanApplyResponse {
@@ -545,7 +545,7 @@ message ImportPendingLoansRequest {
   repeated ImportPendingLoansRequestData data = 1;
 }
 message ImportPendingLoansRequestData {
-  int64 user_id = 1;
+  //  int64 user_id = 1;
   string loan_type = 2;
   double total_amount = 3;
   ImportPendingLoanPropertyEntry loan_property = 4;
@@ -563,7 +563,7 @@ message ImportPendingLoansRequestData {
   string loan_processor = 16;
   repeated ImportPendingLoanApplicantEntry applicants = 17;
   string closing_date = 18;
-  int64 organization_id = 19;
+  //  int64 organization_id = 19;
 }
 
 message ImportPendingLoanPropertyEntry {

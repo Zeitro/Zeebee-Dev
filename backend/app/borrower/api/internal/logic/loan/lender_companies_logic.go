@@ -6,7 +6,6 @@ import (
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/utils"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -30,14 +29,6 @@ func (l *LenderCompaniesLogic) LenderCompanies(req *types.EmptyRequest) (resp *t
 	rpcReq := &borrower.LoanLenderCompaniesRequest{
 		Data: &borrower.LoanLenderCompaniesRequestData{},
 	}
-
-	// get borrower id
-	claim, err := utils.GetUserClaimFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-	rpcReq.Data.UserId = claim.UserId
-	rpcReq.Data.OrganizationId = claim.OrganizationId
 
 	rpcResp, err := l.svcCtx.LoanRpcClient.BorrowerLoanLenderCompanies(l.ctx, rpcReq)
 	if err != nil {

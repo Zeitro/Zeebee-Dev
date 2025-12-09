@@ -7,6 +7,7 @@ import (
 	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 
+	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
@@ -14,6 +15,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/timex"
+	"zeebee-backend/common/utils"
 	"zeebee-backend/common/uuid"
 	"zeebee-backend/domains/zeebee/model"
 
@@ -33,13 +35,15 @@ type ImportPendingLoansLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	baseLogic *logic.BaseLogic
 }
 
 func NewImportPendingLoansLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ImportPendingLoansLogic {
 	return &ImportPendingLoansLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -50,8 +54,13 @@ func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingL
 		}
 	}()
 
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	// build saved data
-	models, err := l.buildImportModels(in.Data)
+	models, err := l.buildImportModels(in.Data, claim)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +71,7 @@ func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingL
 			},
 		}, nil
 	}
-	creatorId := in.Data[0].UserId
+	creatorId := claim.OrganizationUserId
 	creator, err := l.svcCtx.UserRepo.GetUser(l.ctx, creatorId, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
@@ -140,10 +149,10 @@ func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingL
 }
 
 // buildImportModels gets the models for importing a pending loan.
-func (l *ImportPendingLoansLogic) buildImportModels(in []*borrower.ImportPendingLoansRequestData) (data []*importPendingLoanModelData, err error) {
+func (l *ImportPendingLoansLogic) buildImportModels(in []*borrower.ImportPendingLoansRequestData, claim utils.JwtUser) (data []*importPendingLoanModelData, err error) {
 	data = make([]*importPendingLoanModelData, 0, len(in))
 	for item := range in {
-		item, err := l.buildImportModel(in[item])
+		item, err := l.buildImportModel(in[item], claim)
 		if err != nil {
 			return nil, err
 		}
@@ -152,7 +161,7 @@ func (l *ImportPendingLoansLogic) buildImportModels(in []*borrower.ImportPending
 	return data, nil
 }
 
-func (l *ImportPendingLoansLogic) buildImportModel(in *borrower.ImportPendingLoansRequestData) (data *importPendingLoanModelData, err error) {
+func (l *ImportPendingLoansLogic) buildImportModel(in *borrower.ImportPendingLoansRequestData, claim utils.JwtUser) (data *importPendingLoanModelData, err error) {
 	// loan
 	loan := &model.Loan{}
 
@@ -166,13 +175,13 @@ func (l *ImportPendingLoansLogic) buildImportModel(in *borrower.ImportPendingLoa
 	if err != nil {
 		return nil, errorx.GetFailedTransErr(err)
 	}
-	creator, err := l.svcCtx.UserRepo.GetUser(l.ctx, in.UserId, constants.UserTypeBorrower)
-	if err != nil {
-		return nil, err
-	}
-	loan.CreatorId = in.UserId
-	loan.CreatorName = creator.FullName
-	loan.BorrowerOrganizationId = in.OrganizationId
+	// creator, err := l.svcCtx.UserRepo.GetUser(l.ctx, claim.UserId, constants.UserTypeBorrower)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	loan.CreatorId = claim.OrganizationUserId
+	loan.CreatorName = claim.Username
+	loan.BorrowerOrganizationId = claim.OrganizationId
 	loan.LoanType = constants.LoanType(in.LoanType)
 	loan.Stage = constants.LoanStagePending
 	loan.PendingStatus = constants.LoanPendingStatusQuoting
@@ -217,7 +226,7 @@ func (l *ImportPendingLoansLogic) buildImportModel(in *borrower.ImportPendingLoa
 		return nil, errorx.New("No Primary Applicant")
 	}
 	slice.ForEach(applicants, func(index int, item *model.LoanApplicant) {
-		item.BorrowerOrganizationId = in.OrganizationId
+		item.BorrowerOrganizationId = claim.OrganizationId
 		totalOwnPercent += item.OwnPercent
 	})
 	if totalOwnPercent > 100 {
@@ -241,8 +250,8 @@ func (l *ImportPendingLoansLogic) buildImportModel(in *borrower.ImportPendingLoa
 
 	// BorrowerProperty
 	borrowerProperty := &model.BorrowerProperty{}
-	borrowerProperty.CreatorId = in.UserId
-	borrowerProperty.CreatorName = creator.FullName
+	borrowerProperty.CreatorId = claim.OrganizationUserId
+	borrowerProperty.CreatorName = claim.Username
 	borrowerProperty.Address = loanProperty.Address
 
 	return &importPendingLoanModelData{

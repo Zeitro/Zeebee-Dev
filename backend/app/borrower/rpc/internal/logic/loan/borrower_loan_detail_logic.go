@@ -6,6 +6,7 @@ import (
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
 
+	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
@@ -22,13 +23,15 @@ type BorrowerLoanDetailLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	baseLogic *logic.BaseLogic
 }
 
 func NewBorrowerLoanDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BorrowerLoanDetailLogic {
 	return &BorrowerLoanDetailLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -38,7 +41,13 @@ func (l *BorrowerLoanDetailLogic) BorrowerLoanDetail(in *borrower.LoanDetailRequ
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	loan, err := l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, in.Data.Id, in.Data.OrganizationId)
+
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	loan, err := l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, in.Data.Id, claim.OrganizationId)
 	if err != nil {
 		return nil, err
 	}
