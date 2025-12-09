@@ -37,7 +37,12 @@ func (l *DetailLogic) Detail(in *borrower.RoleDetailRequest) (resp *borrower.Rol
 		}
 	}()
 
-	role, err := l.baseLogic.RoleLogic.GetRole(l.ctx, in.Data.Id, in.Data.OrganizationId, constants.UserTypeBorrower)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	role, err := l.baseLogic.RoleLogic.GetRole(l.ctx, in.Data.Id, claim.OrganizationId, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}

@@ -7,12 +7,14 @@ import (
 	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 
+	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
+	"zeebee-backend/common/utils"
 	"zeebee-backend/common/uuid"
 	"zeebee-backend/domains/zeebee/model"
 
@@ -23,13 +25,15 @@ type CreateBorrowerLoanLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	baseLogic *logic.BaseLogic
 }
 
 func NewCreateBorrowerLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateBorrowerLoanLogic {
 	return &CreateBorrowerLoanLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -39,7 +43,12 @@ func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.LoanCreateRequ
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	loan, loanProperty, applicants, loanBorrower, err := l.buildCreateModels(in.Data)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	loan, loanProperty, applicants, loanBorrower, err := l.buildCreateModels(in.Data, claim)
 	if err != nil {
 		return nil, err
 	}
@@ -102,12 +111,12 @@ func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.LoanCreateRequ
 }
 
 // buildCreateModels
-func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateRequestData) (loan *model.Loan, loanProperty *model.LoanProperty, applicants []*model.LoanApplicant, loanBorrower *model.LoanBorrower, err error) {
+func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateRequestData, claim utils.JwtUser) (loan *model.Loan, loanProperty *model.LoanProperty, applicants []*model.LoanApplicant, loanBorrower *model.LoanBorrower, err error) {
 	// build applicants
 	var totalOwnPercent int32
 	for _, applicant := range in.Applicants {
 		totalOwnPercent += applicant.OwnPercent
-		borrowerApplicant, err := l.svcCtx.BorrowerApplicantRepo.GetBorrowerApplicantById(l.ctx, applicant.BorrowerApplicantId, in.OrganizationId)
+		borrowerApplicant, err := l.svcCtx.BorrowerApplicantRepo.GetBorrowerApplicantById(l.ctx, applicant.BorrowerApplicantId, claim.OrganizationId)
 		if err != nil {
 			return nil, nil, nil, nil, err
 		}
@@ -151,7 +160,7 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 	loanBorrower = &model.LoanBorrower{}
 
 	// LoanProperty
-	borrowerProperty, err := l.svcCtx.BorrowerPropertyRepo.GetOneByIdForBorrower(l.ctx, in.LoanProperty.BorrowerPropertyId, in.OrganizationId)
+	borrowerProperty, err := l.svcCtx.BorrowerPropertyRepo.GetOneByIdForBorrower(l.ctx, in.LoanProperty.BorrowerPropertyId, claim.OrganizationId)
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
@@ -191,14 +200,14 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 	if err != nil {
 		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
 	}
-	creator, err := l.svcCtx.UserRepo.GetUser(l.ctx, in.UserId, constants.UserTypeBorrower)
-	if err != nil {
-		return nil, nil, nil, nil, err
-	}
+	// creator, err := l.svcCtx.UserRepo.GetUser(l.ctx, claim.OrganizationUserId, constants.UserTypeBorrower)
+	// if err != nil {
+	// 	return nil, nil, nil, nil, err
+	// }
 
-	loan.CreatorId = in.UserId
-	loan.CreatorName = creator.FullName
-	loan.BorrowerOrganizationId = in.OrganizationId
+	loan.CreatorId = claim.OrganizationUserId
+	loan.CreatorName = claim.Username
+	loan.BorrowerOrganizationId = claim.OrganizationId
 	loan.PendingStatus = constants.LoanPendingStatusNone
 	loan.Source = constants.LoanSourceBorrower
 	if loan.TotalAmount < loan.InitialAmount {

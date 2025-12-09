@@ -93,9 +93,9 @@ func (repo *BorrowerPropertyRepo) GetOrCreateBorrowerPropertyWithTxForBorrower(c
 }
 
 // GetOneByIdForBorrower return one property
-func (repo *BorrowerPropertyRepo) GetOneByIdForBorrower(ctx context.Context, id int64, userId int64) (result *model.BorrowerProperty, err error) {
+func (repo *BorrowerPropertyRepo) GetOneByIdForBorrower(ctx context.Context, id int64, creatorId int64) (result *model.BorrowerProperty, err error) {
 	err = repo.Client(ctx).
-		Where("id = ? and user_id = ?", id, userId).
+		Where("id = ? and creator_id = ?", id, creatorId).
 		First(&result).
 		Error
 	return result, errorx.WithStack(err)
@@ -251,9 +251,9 @@ func (repo *BorrowerPropertyRepo) IsExisted(ctx context.Context, id int64, organ
 }
 
 // TranToLoanPropertyWithId get BorrowerProperty from id and trans it to LoanProperty
-func (repo *BorrowerPropertyRepo) TranToLoanPropertyWithId(ctx context.Context, id int64, userId int64) (result *model.LoanProperty, err error) {
+func (repo *BorrowerPropertyRepo) TranToLoanPropertyWithId(ctx context.Context, id int64, organizationId int64) (result *model.LoanProperty, err error) {
 	var property *model.BorrowerProperty
-	property, err = repo.GetOneByIdForBorrower(ctx, id, userId)
+	property, err = repo.GetOneByIdForOrganization(ctx, id, organizationId)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}

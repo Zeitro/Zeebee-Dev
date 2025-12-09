@@ -35,7 +35,12 @@ func (l *UpdateStatusLogic) UpdateStatus(in *borrower.RoleUpdateStatusRequest) (
 		}
 	}()
 
-	err = l.baseLogic.RoleLogic.UpdateStatus(l.ctx, in.Data.Id, in.Data.OrganizationId, constants.UserTypeBorrower, constants.CommonStatus(in.Data.Status))
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	err = l.baseLogic.RoleLogic.UpdateStatus(l.ctx, in.Data.Id, claim.OrganizationId, constants.UserTypeBorrower, constants.CommonStatus(in.Data.Status))
 	if err != nil {
 		return nil, err
 	}

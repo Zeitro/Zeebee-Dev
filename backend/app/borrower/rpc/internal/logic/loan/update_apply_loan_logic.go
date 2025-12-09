@@ -6,6 +6,7 @@ import (
 	"github.com/duke-git/lancet/v2/slice"
 	"gorm.io/gorm"
 
+	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
@@ -19,13 +20,15 @@ type UpdateApplyLoanLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	baseLogic *logic.BaseLogic
 }
 
 func NewUpdateApplyLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateApplyLoanLogic {
 	return &UpdateApplyLoanLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -36,15 +39,20 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 		}
 	}()
 	var loan *model.Loan
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	// var borrowerProperty *model.BorrowerProperty
 
-	loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, in.Data.Id, in.Data.OrganizationId)
+	loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, in.Data.Id, claim.OrganizationId)
 	if err != nil {
 		return nil, err
 	}
 
 	applyLogic := NewApplyLoanLogic(l.ctx, l.svcCtx)
-	data, err := applyLogic.buildModelData(in.Data, loan)
+	data, err := applyLogic.buildModelData(in.Data, loan, claim)
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +76,7 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 		return nil, errorx.New("Loan's Stage Should Be Pending Or Draft")
 	}
 	// todo check organization
-	if loan.BorrowerOrganizationId != in.Data.OrganizationId {
+	if loan.BorrowerOrganizationId != claim.OrganizationId {
 		return nil, errorx.WithStack(errorx.New("Loan Does Not Belong To Borrower"))
 	}
 
