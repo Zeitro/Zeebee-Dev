@@ -8,6 +8,7 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
+	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
@@ -20,13 +21,15 @@ type DetailSummaryLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	baseLogic *logic.BaseLogic
 }
 
 func NewDetailSummaryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailSummaryLogic {
 	return &DetailSummaryLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -36,6 +39,11 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
+
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	// get property
 	borrowerProperty, err := l.svcCtx.BorrowerPropertyRepo.GetOne(l.ctx, in.Data.Id)
@@ -47,7 +55,7 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 		return nil, errorx.WithStack(errorx.New("Property Is Invalid"))
 	}
 	// todo check organization
-	if borrowerProperty.OrganizationId != in.Data.OrganizationId {
+	if borrowerProperty.OrganizationId != claim.OrganizationId {
 		return nil, errorx.WithStack(errorx.New("Access Denied"))
 	}
 

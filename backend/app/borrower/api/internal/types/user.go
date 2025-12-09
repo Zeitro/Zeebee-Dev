@@ -4,9 +4,9 @@
 package types
 
 type UserChangePasswordRequest struct {
-	OldPassword      string `json:"old_password" validate:"required,min=8,max=32"`
-	NewPassword      string `json:"new_password" validate:"required,min=8,max=32,password"`
-	ConfiredPassword string `json:"confired_password" validate:"required,eqfield=NewPassword"`
+	OldPassword     string `json:"old_password" validate:"required,min=8,max=32"`
+	NewPassword     string `json:"new_password" validate:"required,min=8,max=32,password"`
+	ConfirmPassword string `json:"confirm_password" validate:"required,eqfield=NewPassword"`
 }
 
 type UserEditProfileRequest struct {
@@ -36,7 +36,7 @@ type UserRefreshTokenResponse struct {
 type UserRegisterRequest struct {
 	Email                 string `json:"email" validate:"required,email"`
 	Password              string `json:"password" validate:"required,min=8,max=32,password"`
-	ComfiredPassword      string `json:"comfired_password" validate:"required,eqfield=Password"`
+	ConfirmPassword       string `json:"confirm_password" validate:"required,eqfield=Password"`
 	FirstName             string `json:"first_name" validate:"required,min=2,max=30"`
 	LastName              string `json:"last_name" validate:"required,min=2,max=30"`
 	PreApprovalRequestId  string `json:"pre_approval_request_id,optional"`

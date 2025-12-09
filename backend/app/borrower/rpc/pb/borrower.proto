@@ -859,10 +859,10 @@ message PropertyPageRequestData {
 }
 
 message  PropertyPageRequestFilter{
-  int64 user_id = 1;
+  //  int64 user_id = 1;
   string keyword = 2;
   repeated string applicant = 3;
-  int64 organization_id = 4;
+  //  int64 organization_id = 4;
 }
 
 message  PropertyPageRequestSorter {
@@ -888,8 +888,8 @@ message PropertyDetailSummaryResponse {
 
 message PropertyDetailRequestData {
   int64 id = 1;
-  int64 user_id = 2;
-  int64 organization_id = 3;
+  //  int64 user_id = 2;
+  //  int64 organization_id = 3;
 }
 
 message PropertyDetailSummaryResponseData {
@@ -923,8 +923,8 @@ message PropertyCreateRequestData {
   int32 bedrooms = 5;
   int32 bathrooms = 6;
   AddressEntry address = 7;
-  int64 user_id = 8;
-  int64 organization_id = 9;
+  //  int64 user_id = 8;
+  //  int64 organization_id = 9;
 }
 
 message PropertyCreateResponse {
@@ -944,8 +944,8 @@ message PropertyUpdateRequestData {
   float living_area_sqft = 5;
   int32 bedrooms = 6;
   int32 bathrooms = 7;
-  int64 user_id = 8;
-  int64 organization_id = 9;
+  //  int64 user_id = 8;
+  //  int64 organization_id = 9;
 }
 
 // detail property
@@ -959,16 +959,16 @@ message PropertyDeleteRequest {
 }
 message PropertyDeleteRequestData {
   int64 id = 1;
-  int64 user_id = 2;
-  int64 organization_id = 3;
+  //  int64 user_id = 2;
+  //  int64 organization_id = 3;
 }
 // all borrower properties
 message PropertyAllRequest {
   PropertyAllRequestData data = 1;
 }
 message PropertyAllRequestData {
-  int64 user_id = 1;
-  int64 organization_id = 2;
+  //  int64 user_id = 1;
+  //  int64 organization_id = 2;
 }
 message PropertyAllResponse {
   repeated BorrowerPropertyEntry data = 1;
