@@ -5,6 +5,7 @@ import (
 
 	"github.com/jinzhu/copier"
 
+	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
@@ -19,13 +20,15 @@ type BorrowerLoanPageLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	baseLogic *logic.BaseLogic
 }
 
 func NewBorrowerLoanPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BorrowerLoanPageLogic {
 	return &BorrowerLoanPageLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -35,11 +38,18 @@ func (l *BorrowerLoanPageLogic) BorrowerLoanPage(in *borrower.LoanPageRequest) (
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
+
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	pageReq := &repo.LoanBorrowerPageReq{}
 	_ = copier.CopyWithOption(pageReq, in.Data, copier.Option{
 		CaseSensitive: true,
 		DeepCopy:      true,
 	})
+	pageReq.Filter.OrganizationId = claim.OrganizationId
 
 	pageResult, err := l.svcCtx.LoanRepo.PageForBorrower(l.ctx, pageReq)
 	if err != nil {
