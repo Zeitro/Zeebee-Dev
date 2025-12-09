@@ -67,6 +67,8 @@ type (
 	BorrowerNamesRequestData                       = borrower.BorrowerNamesRequestData
 	BorrowerNamesResponse                          = borrower.BorrowerNamesResponse
 	BorrowerPropertyEntry                          = borrower.BorrowerPropertyEntry
+	ChangePasswordRequest                          = borrower.ChangePasswordRequest
+	ChangePasswordRequestData                      = borrower.ChangePasswordRequestData
 	EmptyRequest                                   = borrower.EmptyRequest
 	EmptyResponse                                  = borrower.EmptyResponse
 	FileDeleteRequest                              = borrower.FileDeleteRequest

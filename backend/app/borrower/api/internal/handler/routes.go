@@ -375,12 +375,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
 				{
-					// page
-					Method:  http.MethodGet,
-					Path:    "/organization_user",
-					Handler: organization_user.OrganizationUserPageHandler(serverCtx),
-				},
-				{
 					// create
 					Method:  http.MethodPost,
 					Path:    "/organization_user",
@@ -428,6 +422,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/organization_user/all",
 					Handler: organization_user.OrganizationUserAllHandler(serverCtx),
 				},
+				{
+					// page
+					Method:  http.MethodPost,
+					Path:    "/organization_user/page",
+					Handler: organization_user.OrganizationUserPageHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithPrefix("/api/v1"),
@@ -452,12 +452,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		rest.WithMiddlewares(
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
-				{
-					// page
-					Method:  http.MethodGet,
-					Path:    "/role",
-					Handler: role.RolePageHandler(serverCtx),
-				},
 				{
 					// create
 					Method:  http.MethodPost,
@@ -493,6 +487,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/role/all",
 					Handler: role.RoleAllHandler(serverCtx),
+				},
+				{
+					// page
+					Method:  http.MethodPost,
+					Path:    "/role/page",
+					Handler: role.RolePageHandler(serverCtx),
 				},
 			}...,
 		),
@@ -566,6 +566,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		rest.WithMiddlewares(
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
+				{
+					// change password
+					Method:  http.MethodPost,
+					Path:    "/user/change_password",
+					Handler: user.ChangePasswordHandler(serverCtx),
+				},
 				{
 					// info
 					Method:  http.MethodGet,

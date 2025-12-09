@@ -635,6 +635,7 @@ type OrganizationUserPageEntity struct {
 	CreatedAt string        `json:"created_at"`
 	UpdatedAt string        `json:"updated_at"`
 	Email     string        `json:"email"`
+	IsOwner   bool          `json:"is_owner"`
 	Roles     []*RoleEntity `json:"roles"`
 }
 

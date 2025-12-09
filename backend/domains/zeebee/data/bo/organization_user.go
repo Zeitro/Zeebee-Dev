@@ -20,5 +20,6 @@ type OrganizationUserBo struct {
 	CreatedAt      time.Time                        `json:"created_at"`
 	UpdatedAt      time.Time                        `json:"updated_at"`
 	Email          string                           `json:"email"`
+	IsOwner        bool                             `json:"is_owner"`
 	Roles          []*RoleBo                        `json:"roles"`
 }

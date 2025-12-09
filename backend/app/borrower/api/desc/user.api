@@ -126,6 +126,15 @@ type (
     }
 )
 
+// change pwd
+type (
+    UserChangePasswordRequest {
+        OldPassword string `json:"old_password" validate:"required,min=8,max=32"`
+        NewPassword string `json:"new_password" validate:"required,min=8,max=32,password"`
+        ComfiredPassword string `json:"comfired_password" validate:"required,eqfield=NewPassword"`
+    }
+)
+
 // switch organization
 type (
     UserSwitchOrganizationRequest {
@@ -138,74 +147,6 @@ type (
     UserEditProfileRequest {
         FirstName string `json:"first_name" validate:"required,min=2,max=100"`
         LastName string `json:"last_name" validate:"required,min=2,max=100"`
+        Phone string `json:"phone" validate:"required,min=8,max=20"`
     }
 )
-
-// organization user
-    //// page
-    //type (
-    //    UserPageRequest {
-    //        Page int64 `json:"page,optional"`
-    //        Limit int64 `json:"limit,optional"`
-    //        Filter *UserPageRequestFilter `json:"filter,optional"`
-    //        Sorter *UserPageRequestSorter `json:"sorter,optional"`
-    //    }
-    //    UserPageResponse {
-    //        Page int64 `json:"page"`
-    //        Limit int64 `json:"limit"`
-    //        Total int64 `json:"total"`
-    //        TotalPage int64 `json:"total_page"`
-    //        List []*UserEntity `json:"list"`
-    //    }
-    //
-    //    UserPageRequestFilter {
-    //        Keyword string `json:"keyword,optional"`
-    //    }
-    //
-    //    UserPageRequestSorter {
-    //        Column string `json:"column,optional"`
-    //        Sort string `json:"sort,optional"`
-    //    }
-    //)
-    //// create
-    //type (
-    //    UserCreateRequest {
-    //        Email string `json:"email" validate:"required,email"`
-    //        Password string `json:"password" validate:"required,min=8,max=32,password"`
-    //        FullName string `json:"full_name" validate:"required,min=2,max=200"`
-    //        Phone string `json:"phone" validate:"required,min=6,max=20"`
-    //        RoleIds []int64 `json:"role_ids,optional"`
-    //    }
-    //    UserCreateResponse {
-    //        UserEntity
-    //    }
-    //)
-    //// update
-    //type (
-    //    UserUpdateRequest {
-    //        Id int64 `path:"id" validate:"required"`
-    //        FullName string `json:"full_name" validate:"required,min=2,max=200"`
-    //        Phone string `json:"phone" validate:"required,min=6,max=20"`
-    //        Password string `json:"password,optional" validate:"omitempty,password"`
-    //        RoleIds []int64 `json:"role_ids,optional"`
-    //    }
-    //    UserUpdateResponse {
-    //        UserEntity
-    //    }
-    //)
-    //
-    //// detail
-    //type (
-    //    UserDetailResponse {
-    //        UserEntity
-    //    }
-    //)
-    //
-    //// update status
-    //type (
-    //    UserSwitchStatusRequest {
-    //        Id int64 `path:"id" validate:"required"`
-    //        Status string `json:"status" validate:"required,oneof=Active Disabled"`
-    //    }
-    //)
-    //

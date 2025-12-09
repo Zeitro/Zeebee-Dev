@@ -2,7 +2,7 @@ package constants
 
 import "zeebee-backend/common/enums"
 
-const AdminRoleName = "admin"
+const AdminRoleName = "Admin"
 
 type DataScope string
 

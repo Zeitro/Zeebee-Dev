@@ -5,13 +5,12 @@ import (
 
 	"github.com/jinzhu/copier"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type EditProfileLogic struct {
@@ -41,16 +40,6 @@ func (l *EditProfileLogic) EditProfile(req *types.UserEditProfileRequest) (resp 
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
-
-	claim, err := utils.GetUserClaimFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-	userId := claim.UserId
-	if userId == 0 {
-		return nil, errorx.WithStack(errorx.New("User Id Not Found"))
-	}
-	rpcReq.Data.UserId = userId
 
 	rpcResp, err := l.svcCtx.UserRpcClient.EditProfile(l.ctx, rpcReq)
 	if err != nil {

@@ -40,8 +40,15 @@ func NewOrganizationUserLogic(repos *repo.AllRepos, redisCli *redisx.Redisx, ema
 	}
 }
 
-// Page
+// Page return organization user list
 func (l *OrganizationUserLogic) Page(ctx context.Context, pageReq dto.OrganizationUserPageRequestDto) (page bo.PageResultBo[*bo.OrganizationUserBo], err error) {
+	organizationId := pageReq.Filter.OrganizationId
+	organization, err := l.repos.OrganizationRepo.FindOneById(ctx, organizationId)
+	if err != nil {
+		return page, err
+	}
+	organizationOwnerId := organization.OwnerId
+
 	results, err := l.repos.OrganizationUserRepo.Page(ctx, pageReq)
 	if err != nil {
 		return page, err
@@ -65,10 +72,15 @@ func (l *OrganizationUserLogic) Page(ctx context.Context, pageReq dto.Organizati
 	if err != nil {
 		return page, errorx.GetFailedTransRespErr(err)
 	}
+
+	slice.ForEach(page.List, func(index int, item *bo.OrganizationUserBo) {
+		page.List[index].IsOwner = item.UserId == organizationOwnerId
+	})
+
 	return page, err
 }
 
-// InviteOrganizationUser Invite organization user
+// InviteOrganizationUser Invite organization user to join organization
 func (l *OrganizationUserLogic) InviteOrganizationUser(ctx context.Context, createDto dto.OrganizationUserCreateRequestDto) (result *bo.OrganizationUserBo, err error) {
 	isInOrganization, err := l.repos.OrganizationUserRepo.CheckOrganizationUserExistedByEmail(ctx, createDto.OrganizationId, createDto.Email, createDto.UserType)
 	if err != nil {
@@ -172,7 +184,7 @@ func (l *OrganizationUserLogic) InviteOrganizationUser(ctx context.Context, crea
 	return result, nil
 }
 
-// SendInviteEmail
+// SendInviteEmail send invite email to organization user
 func (l *OrganizationUserLogic) SendInviteEmail(ctx context.Context, input dto.OrganizationUserSendInviteEmailRequestDto) (err error) {
 	// get organization user
 	organizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUserById(ctx, input.Id, input.OrganizationId)
@@ -230,7 +242,7 @@ func (l *OrganizationUserLogic) SendInviteEmail(ctx context.Context, input dto.O
 	return nil
 }
 
-// AcceptInvitation accept organization invitation
+// AcceptInvitation accept organization invitation to join organization
 func (l *OrganizationUserLogic) AcceptInvitation(ctx context.Context, input dto.OrganizationUserAcceptInvitationRequestDto) (user bo.UserBo, organizationUser bo.OrganizationUserBo, err error) {
 	key := stringx.Format(constants.UserInviteCode, input.UserType, input.Email, input.OrganizationId)
 	code, err := l.redisCli.Get(ctx, key)
@@ -313,26 +325,27 @@ func (l *OrganizationUserLogic) AcceptInvitation(ctx context.Context, input dto.
 	return user, organizationUser, nil
 }
 
-// UpdateOrganizationUser update organization user
+// UpdateOrganizationUser update organization user information
 func (l *OrganizationUserLogic) UpdateOrganizationUser(ctx context.Context, reqDto dto.OrganizationUserUpdateRequestDto) (result *bo.OrganizationUserBo, err error) {
 	organizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUserById(ctx, reqDto.Id, reqDto.OrganizationId)
 	if err != nil {
 		return nil, err
 	}
-	saveModel := &model.OrganizationUser{}
-	err = copier.CopyWithOption(saveModel, reqDto, copier.Option{
+	// saveModel := &model.OrganizationUser{}
+	err = copier.CopyWithOption(organizationUser, reqDto, copier.Option{
 		DeepCopy:      true,
 		CaseSensitive: true,
 	})
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
-	saveModel.FullName = stringx.FormatFullName(saveModel.FirstName, saveModel.MidName, saveModel.LastName)
+	organizationUser.FullName = stringx.FormatFullName(organizationUser.FirstName, organizationUser.MidName, organizationUser.LastName)
 
 	// var organizationUser *model.OrganizationUser
 	var organization *model.Organization
 	err = l.repos.OrganizationRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
+		oldRoles := organizationUser.Roles
 		// get organization
 		organization, innerErr = l.repos.OrganizationRepo.GetOrganizationWithTx(ctx, tx, reqDto.OrganizationId, reqDto.UserType)
 		if innerErr != nil {
@@ -343,7 +356,8 @@ func (l *OrganizationUserLogic) UpdateOrganizationUser(ctx context.Context, reqD
 			return innerErr
 		}
 		// update organization user
-		_, innerErr = l.repos.OrganizationUserRepo.UpdateOneWithTx(ctx, tx, saveModel)
+		organizationUser.RemoveRelationships()
+		_, innerErr = l.repos.OrganizationUserRepo.UpdateOneWithTx(ctx, tx, organizationUser)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -352,7 +366,7 @@ func (l *OrganizationUserLogic) UpdateOrganizationUser(ctx context.Context, reqD
 		if innerErr != nil {
 			return innerErr
 		}
-		oldRoles := organizationUser.Roles
+
 		newRoles := []*model.Role{}
 		removedRoles := []*model.Role{}
 		newRoles = slice.DifferenceWith(roles, oldRoles, func(item1, item2 *model.Role) bool {
@@ -365,6 +379,7 @@ func (l *OrganizationUserLogic) UpdateOrganizationUser(ctx context.Context, reqD
 		if innerErr != nil {
 			return innerErr
 		}
+		organizationUser.Roles = roles
 
 		return innerErr
 	})
@@ -376,6 +391,21 @@ func (l *OrganizationUserLogic) UpdateOrganizationUser(ctx context.Context, reqD
 	result = l.transToBo(organizationUser)
 
 	return result, nil
+}
+
+// UpdateProfile update profile
+func (l *OrganizationUserLogic) UpdateProfile(ctx context.Context, input dto.OrganizationUserProfileEditRequestDto) (err error) {
+	organizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUserByUserId(ctx, input.OrganizationId, input.UserId)
+	if err != nil {
+		return err
+	}
+	organizationUser.FirstName = input.FirstName
+	organizationUser.LastName = input.LastName
+	organizationUser.MidName = input.MidName
+	organizationUser.FullName = stringx.FormatFullName(input.FirstName, input.MidName, input.LastName)
+	organizationUser.Phone = input.Phone
+	_, err = l.repos.OrganizationUserRepo.UpdateOneById(ctx, organizationUser.Id, organizationUser)
+	return err
 }
 
 type SendInviteUserEmailInput struct {

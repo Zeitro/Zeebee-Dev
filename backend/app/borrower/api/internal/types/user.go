@@ -3,9 +3,16 @@
 
 package types
 
+type UserChangePasswordRequest struct {
+	OldPassword      string `json:"old_password" validate:"required,min=8,max=32"`
+	NewPassword      string `json:"new_password" validate:"required,min=8,max=32,password"`
+	ComfiredPassword string `json:"comfired_password" validate:"required,eqfield=NewPassword"`
+}
+
 type UserEditProfileRequest struct {
 	FirstName string `json:"first_name" validate:"required,min=2,max=100"`
 	LastName  string `json:"last_name" validate:"required,min=2,max=100"`
+	Phone     string `json:"phone" validate:"required,min=8,max=20"`
 }
 
 type UserInfoResponse struct {

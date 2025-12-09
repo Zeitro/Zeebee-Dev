@@ -37,7 +37,7 @@ var OrganizationUserStatusName = "organization_user_status"
 
 const (
 	OrganizationUserStatusActive       OrganizationUserStatus = "Active"
-	OrganizationUserStatusNotActivated OrganizationUserStatus = "Not Activated"
+	OrganizationUserStatusNotActivated OrganizationUserStatus = "Not activated"
 	OrganizationUserStatusDisabled     OrganizationUserStatus = "Disabled"
 )
 
@@ -85,10 +85,10 @@ func init() {
 			Label: string(OrganizationUserStatusActive),
 			Value: string(OrganizationUserStatusActive),
 		},
-		{
-			Label: string(OrganizationUserStatusNotActivated),
-			Value: string(OrganizationUserStatusNotActivated),
-		},
+		// {
+		// 	Label: string(OrganizationUserStatusNotActivated),
+		// 	Value: string(OrganizationUserStatusNotActivated),
+		// },
 		{
 			Label: string(OrganizationUserStatusDisabled),
 			Value: string(OrganizationUserStatusDisabled),
