@@ -9,7 +9,6 @@ import (
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -30,17 +29,8 @@ func NewPropertyAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Prope
 }
 
 func (l *PropertyAllLogic) PropertyAll(req *types.EmptyRequest) (resp *types.PropertyAllResponse, err error) {
-	// get borrowerId
-	claim, err := utils.GetUserClaimFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	rpcResp, err := l.svcCtx.BorrowerPropertyRpcClient.All(l.ctx, &borrower.PropertyAllRequest{
-		Data: &borrower.PropertyAllRequestData{
-			UserId:         claim.UserId,
-			OrganizationId: claim.OrganizationId,
-		},
+		Data: &borrower.PropertyAllRequestData{},
 	})
 	if err != nil {
 		return nil, err

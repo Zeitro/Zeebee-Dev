@@ -7279,13 +7279,12 @@ func (x *PropertyPageRequestData) GetSorter() *PropertyPageRequestSorter {
 }
 
 type PropertyPageRequestFilter struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	UserId         int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Keyword        string                 `protobuf:"bytes,2,opt,name=keyword,proto3" json:"keyword,omitempty"`
-	Applicant      []string               `protobuf:"bytes,3,rep,name=applicant,proto3" json:"applicant,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,4,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"open.v1"`
+	//  int64 user_id = 1;
+	Keyword       string   `protobuf:"bytes,2,opt,name=keyword,proto3" json:"keyword,omitempty"`
+	Applicant     []string `protobuf:"bytes,3,rep,name=applicant,proto3" json:"applicant,omitempty"` //  int64 organization_id = 4;
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *PropertyPageRequestFilter) Reset() {
@@ -7318,13 +7317,6 @@ func (*PropertyPageRequestFilter) Descriptor() ([]byte, []int) {
 	return file_app_borrower_rpc_pb_borrower_proto_rawDescGZIP(), []int{100}
 }
 
-func (x *PropertyPageRequestFilter) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
 func (x *PropertyPageRequestFilter) GetKeyword() string {
 	if x != nil {
 		return x.Keyword
@@ -7337,13 +7329,6 @@ func (x *PropertyPageRequestFilter) GetApplicant() []string {
 		return x.Applicant
 	}
 	return nil
-}
-
-func (x *PropertyPageRequestFilter) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return 0
 }
 
 type PropertyPageRequestSorter struct {
@@ -7563,12 +7548,10 @@ func (x *PropertyDetailSummaryResponse) GetData() *PropertyDetailSummaryResponse
 }
 
 type PropertyDetailRequestData struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserId         int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,3,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *PropertyDetailRequestData) Reset() {
@@ -7604,20 +7587,6 @@ func (*PropertyDetailRequestData) Descriptor() ([]byte, []int) {
 func (x *PropertyDetailRequestData) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *PropertyDetailRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *PropertyDetailRequestData) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
 	}
 	return 0
 }
@@ -7832,8 +7801,6 @@ type PropertyCreateRequestData struct {
 	Bedrooms       int32         `protobuf:"varint,5,opt,name=bedrooms,proto3" json:"bedrooms,omitempty"`
 	Bathrooms      int32         `protobuf:"varint,6,opt,name=bathrooms,proto3" json:"bathrooms,omitempty"`
 	Address        *AddressEntry `protobuf:"bytes,7,opt,name=address,proto3" json:"address,omitempty"`
-	UserId         int64         `protobuf:"varint,8,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrganizationId int64         `protobuf:"varint,9,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -7908,20 +7875,6 @@ func (x *PropertyCreateRequestData) GetAddress() *AddressEntry {
 		return x.Address
 	}
 	return nil
-}
-
-func (x *PropertyCreateRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *PropertyCreateRequestData) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return 0
 }
 
 type PropertyCreateResponse struct {
@@ -8021,8 +7974,6 @@ type PropertyUpdateRequestData struct {
 	LivingAreaSqft float32                `protobuf:"fixed32,5,opt,name=living_area_sqft,json=livingAreaSqft,proto3" json:"living_area_sqft,omitempty"`
 	Bedrooms       int32                  `protobuf:"varint,6,opt,name=bedrooms,proto3" json:"bedrooms,omitempty"`
 	Bathrooms      int32                  `protobuf:"varint,7,opt,name=bathrooms,proto3" json:"bathrooms,omitempty"`
-	UserId         int64                  `protobuf:"varint,8,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,9,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -8095,20 +8046,6 @@ func (x *PropertyUpdateRequestData) GetBedrooms() int32 {
 func (x *PropertyUpdateRequestData) GetBathrooms() int32 {
 	if x != nil {
 		return x.Bathrooms
-	}
-	return 0
-}
-
-func (x *PropertyUpdateRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *PropertyUpdateRequestData) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
 	}
 	return 0
 }
@@ -8204,12 +8141,10 @@ func (x *PropertyDeleteRequest) GetData() *PropertyDeleteRequestData {
 }
 
 type PropertyDeleteRequestData struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserId         int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,3,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *PropertyDeleteRequestData) Reset() {
@@ -8245,20 +8180,6 @@ func (*PropertyDeleteRequestData) Descriptor() ([]byte, []int) {
 func (x *PropertyDeleteRequestData) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *PropertyDeleteRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *PropertyDeleteRequestData) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
 	}
 	return 0
 }
@@ -8309,11 +8230,9 @@ func (x *PropertyAllRequest) GetData() *PropertyAllRequestData {
 }
 
 type PropertyAllRequestData struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	UserId         int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *PropertyAllRequestData) Reset() {
@@ -8344,20 +8263,6 @@ func (x *PropertyAllRequestData) ProtoReflect() protoreflect.Message {
 // Deprecated: Use PropertyAllRequestData.ProtoReflect.Descriptor instead.
 func (*PropertyAllRequestData) Descriptor() ([]byte, []int) {
 	return file_app_borrower_rpc_pb_borrower_proto_rawDescGZIP(), []int{116}
-}
-
-func (x *PropertyAllRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *PropertyAllRequestData) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return 0
 }
 
 type PropertyAllResponse struct {
@@ -17830,12 +17735,10 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x04page\x18\x01 \x01(\x03R\x04page\x12\x14\n" +
 	"\x05limit\x18\x02 \x01(\x03R\x05limit\x12;\n" +
 	"\x06filter\x18\x03 \x01(\v2#.borrower.PropertyPageRequestFilterR\x06filter\x12;\n" +
-	"\x06sorter\x18\x04 \x01(\v2#.borrower.PropertyPageRequestSorterR\x06sorter\"\x95\x01\n" +
-	"\x19PropertyPageRequestFilter\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x18\n" +
+	"\x06sorter\x18\x04 \x01(\v2#.borrower.PropertyPageRequestSorterR\x06sorter\"S\n" +
+	"\x19PropertyPageRequestFilter\x12\x18\n" +
 	"\akeyword\x18\x02 \x01(\tR\akeyword\x12\x1c\n" +
-	"\tapplicant\x18\x03 \x03(\tR\tapplicant\x12'\n" +
-	"\x0forganization_id\x18\x04 \x01(\x03R\x0eorganizationId\"G\n" +
+	"\tapplicant\x18\x03 \x03(\tR\tapplicant\"G\n" +
 	"\x19PropertyPageRequestSorter\x12\x16\n" +
 	"\x06column\x18\x01 \x01(\tR\x06column\x12\x12\n" +
 	"\x04sort\x18\x02 \x01(\tR\x04sort\"\xaa\x01\n" +
@@ -17849,11 +17752,9 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x15PropertyDetailRequest\x127\n" +
 	"\x04data\x18\x01 \x01(\v2#.borrower.PropertyDetailRequestDataR\x04data\"`\n" +
 	"\x1dPropertyDetailSummaryResponse\x12?\n" +
-	"\x04data\x18\x01 \x01(\v2+.borrower.PropertyDetailSummaryResponseDataR\x04data\"m\n" +
+	"\x04data\x18\x01 \x01(\v2+.borrower.PropertyDetailSummaryResponseDataR\x04data\"+\n" +
 	"\x19PropertyDetailRequestData\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12'\n" +
-	"\x0forganization_id\x18\x03 \x01(\x03R\x0eorganizationId\"\xa0\x05\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\xa0\x05\n" +
 	"!PropertyDetailSummaryResponseData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
 	"\rproperty_type\x18\x02 \x01(\tR\fpropertyType\x12!\n" +
@@ -17872,42 +17773,34 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\bbedrooms\x18\x0e \x01(\x05R\bbedrooms\x12\x1c\n" +
 	"\tbathrooms\x18\x0f \x01(\x05R\tbathrooms\"P\n" +
 	"\x15PropertyCreateRequest\x127\n" +
-	"\x04data\x18\x01 \x01(\v2#.borrower.PropertyCreateRequestDataR\x04data\"\xac\x02\n" +
+	"\x04data\x18\x01 \x01(\v2#.borrower.PropertyCreateRequestDataR\x04data\"\xea\x01\n" +
 	"\x19PropertyCreateRequestData\x12#\n" +
 	"\rproperty_type\x18\x01 \x01(\tR\fpropertyType\x12\x12\n" +
 	"\x04unit\x18\x03 \x01(\x05R\x04unit\x12(\n" +
 	"\x10living_area_sqft\x18\x04 \x01(\x02R\x0elivingAreaSqft\x12\x1a\n" +
 	"\bbedrooms\x18\x05 \x01(\x05R\bbedrooms\x12\x1c\n" +
 	"\tbathrooms\x18\x06 \x01(\x05R\tbathrooms\x120\n" +
-	"\aaddress\x18\a \x01(\v2\x16.borrower.AddressEntryR\aaddress\x12\x17\n" +
-	"\auser_id\x18\b \x01(\x03R\x06userId\x12'\n" +
-	"\x0forganization_id\x18\t \x01(\x03R\x0eorganizationId\"M\n" +
+	"\aaddress\x18\a \x01(\v2\x16.borrower.AddressEntryR\aaddress\"M\n" +
 	"\x16PropertyCreateResponse\x123\n" +
 	"\x04data\x18\x01 \x01(\v2\x1f.borrower.BorrowerPropertyEntryR\x04data\"P\n" +
 	"\x15PropertyUpdateRequest\x127\n" +
-	"\x04data\x18\x01 \x01(\v2#.borrower.PropertyUpdateRequestDataR\x04data\"\x8a\x02\n" +
+	"\x04data\x18\x01 \x01(\v2#.borrower.PropertyUpdateRequestDataR\x04data\"\xc8\x01\n" +
 	"\x19PropertyUpdateRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
 	"\rproperty_type\x18\x02 \x01(\tR\fpropertyType\x12\x12\n" +
 	"\x04unit\x18\x04 \x01(\x05R\x04unit\x12(\n" +
 	"\x10living_area_sqft\x18\x05 \x01(\x02R\x0elivingAreaSqft\x12\x1a\n" +
 	"\bbedrooms\x18\x06 \x01(\x05R\bbedrooms\x12\x1c\n" +
-	"\tbathrooms\x18\a \x01(\x05R\tbathrooms\x12\x17\n" +
-	"\auser_id\x18\b \x01(\x03R\x06userId\x12'\n" +
-	"\x0forganization_id\x18\t \x01(\x03R\x0eorganizationId\"M\n" +
+	"\tbathrooms\x18\a \x01(\x05R\tbathrooms\"M\n" +
 	"\x16PropertyDetailResponse\x123\n" +
 	"\x04data\x18\x01 \x01(\v2\x1f.borrower.BorrowerPropertyEntryR\x04data\"P\n" +
 	"\x15PropertyDeleteRequest\x127\n" +
-	"\x04data\x18\x01 \x01(\v2#.borrower.PropertyDeleteRequestDataR\x04data\"m\n" +
+	"\x04data\x18\x01 \x01(\v2#.borrower.PropertyDeleteRequestDataR\x04data\"+\n" +
 	"\x19PropertyDeleteRequestData\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12'\n" +
-	"\x0forganization_id\x18\x03 \x01(\x03R\x0eorganizationId\"J\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"J\n" +
 	"\x12PropertyAllRequest\x124\n" +
-	"\x04data\x18\x01 \x01(\v2 .borrower.PropertyAllRequestDataR\x04data\"Z\n" +
-	"\x16PropertyAllRequestData\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12'\n" +
-	"\x0forganization_id\x18\x02 \x01(\x03R\x0eorganizationId\"J\n" +
+	"\x04data\x18\x01 \x01(\v2 .borrower.PropertyAllRequestDataR\x04data\"\x18\n" +
+	"\x16PropertyAllRequestData\"J\n" +
 	"\x13PropertyAllResponse\x123\n" +
 	"\x04data\x18\x01 \x03(\v2\x1f.borrower.BorrowerPropertyEntryR\x04data\"\xd1\x03\n" +
 	"\x13BorrowerEntityEntry\x12\x0e\n" +

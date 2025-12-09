@@ -9,7 +9,6 @@ import (
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -35,14 +34,6 @@ func (l *PropertyDetailLogic) PropertyDetail(req *types.PropertyDetailRequest) (
 			Id: req.Id,
 		},
 	}
-
-	// get borrower id
-	claim, err := utils.GetUserClaimFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-	rpcReq.Data.UserId = claim.UserId
-	rpcReq.Data.OrganizationId = claim.OrganizationId
 
 	rpcResp, err := l.svcCtx.BorrowerPropertyRpcClient.Detail(l.ctx, rpcReq)
 	if err != nil {
