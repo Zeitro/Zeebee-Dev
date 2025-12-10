@@ -9,7 +9,7 @@ import { createLoanSteps } from '@/enum/loan';
 import { createRequest } from '@repo/shared-methods/utils';
 import { loan_pending } from '@/enum/common';
 import { BtnPopUpModal } from '@repo/shared-methods';
-import { QuoteBtn } from '../components/Quote';
+import _ from 'lodash';
 const CreateLoanPage = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -50,11 +50,7 @@ const CreateLoanPage = () => {
 				return;
 			}
 			// add loan
-			const body = {
-				...(loanData[0] || {}),
-				...(loanData[1] || {}),
-				...(values || {}),
-			};
+			const body = _.merge({}, loanData[0] || {}, loanData[1] || {}, values || {});
 
 			body.applicants = body?.applicants.filter(
 				(i) => i.first_name || i.mid_name || i.last_name,

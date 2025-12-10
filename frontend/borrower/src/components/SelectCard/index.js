@@ -89,9 +89,13 @@ const SelectCard = ({
 	});
 
 	useEffect(() => {
-		if (id && list?.length && isInit?.current) {
-			const findItem = list.find((i) => i.id === id);
-			handleClickItem({ ...findItem });
+		if (list?.length && isInit?.current) {
+			if (id) {
+				const findItem = list.find((i) => i.id === id);
+				handleClickItem({ ...findItem });
+			} else {
+				handleClickItem(list[0]);
+			}
 			isInit.current = false;
 		}
 	}, [handleClickItem, id, list]);
