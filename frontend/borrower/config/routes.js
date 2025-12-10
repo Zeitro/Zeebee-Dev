@@ -53,19 +53,17 @@ export const navRouter = [
 		router: [
 			{
 				path: '/management/borrowingEntity',
-				title: 'Management ( Borrowing Entity )',
-				menuTitle: 'Borrowing Entity',
+				title: 'Borrowing Entity',
 			},
 			{
 				path: '/management/borrower',
-				title: 'Management ( Borrower )',
-				menuTitle: 'Borrower',
+				title: 'Borrower',
 			},
-			{
-				path: '/management/contactLender',
-				title: 'Management ( Contact Lender )',
-				menuTitle: 'Contact Lender',
-			},
+			// {
+			// 	path: '/management/contactLender',
+			// 	title: 'Management ( Contact Lender )',
+			// 	menuTitle: 'Contact Lender',
+			// },
 		],
 	},
 	{
@@ -76,25 +74,32 @@ export const navRouter = [
 		router: [
 			{
 				path: '/setting/user',
-				title: 'Setting ( User )',
-				menuTitle: 'User',
+				title: 'User',
 			},
-			{
-				path: '/setting/role',
-				title: 'Setting ( Role )',
-				menuTitle: 'Role',
-			},
+			// {
+			// 	path: '/setting/role',
+			// 	title: 'Setting ( Role )',
+			// 	menuTitle: 'Role',
+			// },
 		],
 	},
 	{
-		path: '/personalCenter/emailAuth',
-		title: 'Email Authorized',
+		path: '/personalCenter',
+		title: 'Profile settings',
+		isPageNotFound: true, // 只是用于侧边栏显示,并无此页面
 		hideMenu: true,
-	},
-	{
-		path: '/personalCenter/changePassword',
-		title: 'Change Password',
-		hideMenu: true,
+		router: [
+			{
+				path: '/personalCenter/emailAuth',
+				title: 'Email Authorized',
+				hideMenu: true,
+			},
+			{
+				path: '/personalCenter/changePassword',
+				title: 'Change Password',
+				hideMenu: true,
+			},
+		],
 	},
 ];
 

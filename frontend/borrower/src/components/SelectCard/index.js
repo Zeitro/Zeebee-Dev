@@ -74,8 +74,8 @@ const SelectCard = ({
 			if (!isNoChange) {
 				arr = moveItemToFirst([...arr], (item) => item.id === propertyItem?.id);
 			}
-			setList(arr);
-			setRowData(propertyItem);
+			setList([...arr]);
+			setRowData({ ...propertyItem });
 		},
 		[list],
 	);
@@ -91,7 +91,7 @@ const SelectCard = ({
 	useEffect(() => {
 		if (id && list?.length && isInit?.current) {
 			const findItem = list.find((i) => i.id === id);
-			handleClickItem(findItem);
+			handleClickItem({ ...findItem });
 			isInit.current = false;
 		}
 	}, [handleClickItem, id, list]);
@@ -99,7 +99,7 @@ const SelectCard = ({
 	useDeferredSyncEffect({
 		predicate: () => rowData?.id,
 		deferred: () => {
-			changeFormValue(rowData);
+			changeFormValue({ ...rowData });
 		},
 		deps: [rowData],
 		delay: 0,
@@ -108,7 +108,7 @@ const SelectCard = ({
 	const handleSelect = async (id) => {
 		const arr = await getList(id);
 		const changeItem = arr.find((item) => item.id === id);
-		setRowData(changeItem);
+		setRowData({ ...changeItem });
 	};
 
 	return (

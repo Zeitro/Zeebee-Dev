@@ -126,15 +126,15 @@ const Register = () => {
 					</Col>
 				</Row>
 				<Form.Item
-					label="Company name"
-					name="company_name"
+					label="Organization name"
+					name="organization_name"
 					rules={[
 						{
 							required: true,
 						},
 					]}
 				>
-					<Input placeholder="Company name" allowClear />
+					<Input placeholder="Organization name" allowClear minLength={2} />
 				</Form.Item>
 				<Form.Item
 					label="Email address"

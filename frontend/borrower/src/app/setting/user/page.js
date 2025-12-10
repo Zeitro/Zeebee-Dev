@@ -1,24 +1,23 @@
 'use client';
-import React, { useMemo, useRef, useState } from 'react';
-import {
-	assemblyAddress,
-	createRequest,
-	formatPhone,
-	formatTINOrSSN,
-} from '@repo/shared-methods/utils';
+import { useRef, useState } from 'react';
+import { createRequest } from '@repo/shared-methods/utils';
 import { ReloadOutlined, PlusOutlined } from '@ant-design/icons';
-import { BtnPopUpModal, DeleteBtn, FilterTableCard } from '@repo/shared-methods';
+import { BtnPopUpModal, FilterTableCard } from '@repo/shared-methods';
 import useContent from './components/useContent';
 import MainModal from './components/Main';
+import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
+
 const SettingUser = () => {
 	const { cancel } = createRequest();
 	const tableFilterRef = useRef();
 	const [searchValue, setSearchValue] = useState('');
 	const [role, setRole] = useState(null);
 	const [status, setStatus] = useState(null);
-	const { columns, handleDelete, loading } = useContent({
-		handleSearch: () => tableFilterRef?.current?.handleSearch(),
-	});
+	const { columns, getRolesOptions, roles, getUserStatusOptions, userStatusOptions } = useContent(
+		{
+			handleSearch: () => tableFilterRef?.current?.handleSearch(),
+		},
+	);
 
 	const filterList = [
 		{
@@ -31,15 +30,15 @@ const SettingUser = () => {
 		{
 			filterType: 'select',
 			label: 'Role',
-			paramsKey: 'role',
+			paramsKey: 'role_id',
 			placeholder: 'Role',
 			value: role,
 			onChange: (value) => setRole(value),
-			options: [],
-			// treeData: transformArrayStructure({
-			// 	sourceArray: loanPurposeOptions,
-			// 	outputKey: 'title',
-			// }).map((i) => ({ ...i, key: i.value })),
+			options: roles,
+			fieldNames: {
+				label: 'name',
+				value: 'id',
+			},
 		},
 		{
 			filterType: 'select',
@@ -48,16 +47,12 @@ const SettingUser = () => {
 			placeholder: 'Status',
 			value: status,
 			onChange: (value) => setStatus(value),
-			options: [],
-			// treeData: transformArrayStructure({
-			// 	sourceArray: loanPurposeOptions,
-			// 	outputKey: 'title',
-			// }).map((i) => ({ ...i, key: i.value })),
+			options: userStatusOptions,
 		},
 		{
 			filterType: 'button',
 			onClick: () => {
-				cancel('/property/page');
+				cancel('/organization_user');
 				tableFilterRef?.current?.handleSearch();
 			},
 		},
@@ -67,6 +62,7 @@ const SettingUser = () => {
 			text: 'Reset',
 			icon: <ReloadOutlined />,
 			onClick: () => {
+				cancel('/organization_user');
 				setSearchValue('');
 				setTimeout(() => {
 					tableFilterRef?.current?.handleSearch();
@@ -84,6 +80,7 @@ const SettingUser = () => {
 						<MainModal
 							setOpen={setOpen}
 							handleSearch={() => tableFilterRef?.current?.handleSearch()}
+							roles={roles}
 						/>
 					)}
 					type="primary"
@@ -95,6 +92,15 @@ const SettingUser = () => {
 			),
 		},
 	];
+
+	useDeferredSyncEffect({
+		deferred: () => {
+			getRolesOptions();
+			getUserStatusOptions();
+		},
+		deps: [],
+		isUseMicrotask: true,
+	});
 	return (
 		<FilterTableCard
 			filterWrapClassName="px-8 pt-10 pb-8 flex-1 overflow-hidden"
@@ -104,7 +110,7 @@ const SettingUser = () => {
 			filterList={filterList}
 			hasFilterField={true}
 			// pagination={pagination}
-			api="/borrower_applicant/page"
+			api="/organization_user/page"
 			onRow={() => ({
 				onClick: () => {
 					// handleSelectedRow(row, stage);

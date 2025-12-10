@@ -84,10 +84,11 @@ const CreateLoanPage = () => {
 		const newData = {
 			loan_property: {
 				// property_type: data.property_type,
-				property_base: {
-					unit: data.unit,
-					address: data.address,
-				},
+				// property_base: {
+				unit: data.unit,
+				address: data.address,
+				borrower_property_id: Number(searchParams.get('propertyId')),
+				// },
 			},
 		};
 		form.setFieldsValue(newData);
@@ -111,14 +112,14 @@ const CreateLoanPage = () => {
 					Cancel
 				</BtnPopUpModal>
 				<Space size={8}>
-					{currentStep === 2 && (
+					{/* {currentStep === 2 && (
 						<QuoteBtn
 							disabled={
 								loanData[0]?.stage === 'Pending' &&
 								loanData[0]?.pending_status === 'Quoting'
 							}
 						/>
-					)}
+					)} */}
 					{!!currentStep && (
 						<Button onClick={() => setCurrentStep((v) => v - 1)}>Back</Button>
 					)}

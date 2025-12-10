@@ -1,19 +1,55 @@
 'use client';
 import { Loading3QuartersOutlined } from '@ant-design/icons';
-import { eventBus } from '@repo/shared-methods/utils';
+import { eventBus, createRequest, setCookie } from '@repo/shared-methods/utils';
 import { useUserStore } from '@/store/user';
+import { message } from 'antd';
+import { useCallback, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 // 切换组织中的页面
-export const SwitchOrganization = ({ organization }) => {
-	const { getUserInfo } = useUserStore();
-	const handleSwitch = async () => {
+export const SwitchOrganization = ({ organization_name, organization_id, api }) => {
+	const router = useRouter();
+	const { request } = createRequest();
+	const { getUserInfo, updateAccess } = useUserStore();
+
+	// 切换组织
+	const handleSwitch = useCallback(async () => {
+		if (!(organization_name && organization_id && api)) return;
+		const access = await request(api, {
+			method: 'POST',
+			body: {
+				organization_id,
+			},
+		});
+		setCookie('token', access?.access_token, access?.access_token_expire * 1000);
+		message.open({
+			type: 'success',
+			content: `Successfully switched organization to ${organization_name}`,
+		});
+		await updateAccess(access);
 		await getUserInfo();
-		eventBus.emit('removePortalComponent');
-	};
+		router.replace('/');
+		setTimeout(() => {
+			eventBus.emit('removePortalComponent');
+		}, 300);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, getUserInfo, organization_id, organization_name, updateAccess]);
+
+	useEffect(() => {
+		handleSwitch();
+	}, [handleSwitch]);
 	return (
 		<div
-			className="flex items-center justify-center absolute top-0 left-0 right-0 bottom-0"
-			style={{ background: '#7a7a7a', zIndex: 9999 }}
+			className="flex items-center justify-center"
+			style={{
+				background: '#7a7a7a',
+				zIndex: 9999,
+				position: 'absolute',
+				top: 0,
+				left: 0,
+				right: 0,
+				bottom: 0,
+			}}
 		>
 			<div
 				style={{ minWidth: 280, maxWidth: 500 }}
@@ -21,7 +57,7 @@ export const SwitchOrganization = ({ organization }) => {
 			>
 				<Loading3QuartersOutlined spin style={{ color: '#8C8C8C', fontSize: '24px' }} />
 				<div className="text-base font-medium text-black-dark pt-6">
-					Switch to {organization}
+					Switch to {organization_name}
 				</div>
 			</div>
 		</div>

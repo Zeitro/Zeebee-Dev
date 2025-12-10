@@ -1,12 +1,20 @@
-import { BtnPopUpModal, DeleteBtn, TableOperation } from '@repo/shared-methods';
+import { BtnPopUpModal, DeleteBtn } from '@repo/shared-methods';
 import MainModal from './Main';
 import { createRequest, formatPhone } from '@repo/shared-methods/utils';
 import { useState } from 'react';
-import { Button, Space } from 'antd';
-
+import { message, Space } from 'antd';
+import { getSelectOptions } from '@repo/shared-methods/api';
+import { useUserStore } from '@/store/user';
 const useUser = ({ handleSearch }) => {
 	const { request } = createRequest();
+	const { userInfo } = useUserStore();
 	const [loading, setLoading] = useState(false);
+	const [statusLoading, setStatusLoading] = useState(false);
+	const [roles, setRoles] = useState([]);
+	const [rolesLoading, setRolesLoading] = useState(false);
+	const [userStatusOptions, setUserStatusOptions] = useState([]);
+	const [sendLoading, setSendLoading] = useState(false);
+
 	const statusColor = {
 		Active: {
 			border: '#B7EB8F',
@@ -24,10 +32,12 @@ const useUser = ({ handleSearch }) => {
 			color: 'rgba(0, 0, 0, 0.85)',
 		},
 	};
+
+	// 删除用户
 	const handleDelete = async (id) => {
 		try {
 			setLoading(true);
-			await request(`/borrower_applicant/${id}`, {
+			await request(`/organization_user/${id}`, {
 				method: 'DELETE',
 			});
 			setLoading(false);
@@ -36,6 +46,65 @@ const useUser = ({ handleSearch }) => {
 			console.log(error);
 			setLoading(false);
 		}
+	};
+
+	// 改变状态
+	const handleChangeStatus = async (id, status = 'Active') => {
+		try {
+			setStatusLoading(true);
+			await request(`/organization_user/${id}/status`, {
+				method: 'PATCH',
+				body: {
+					status,
+				},
+			});
+			setStatusLoading(false);
+			handleSearch();
+			message.open({
+				type: 'success',
+				content: 'User status updated successfully！',
+			});
+		} catch (error) {
+			console.log(error);
+			setStatusLoading(false);
+		}
+	};
+
+	// 发送邮件邀请用户激活并登录系统
+	const handleSendEmail = async (id) => {
+		try {
+			setSendLoading(true);
+			await request(`/organization_user/${id}/send_email`, {
+				method: 'POST',
+			});
+			setSendLoading(false);
+			// handleSearch();
+			message.open({
+				type: 'success',
+				content: 'Email sent successfully.',
+			});
+		} catch (error) {
+			console.log(error);
+			setSendLoading(false);
+		}
+	};
+	// 获取角色下拉列表
+	const getRolesOptions = async () => {
+		try {
+			setRolesLoading(true);
+			const { list } = await request('/role/all');
+			setRoles(list);
+			setRolesLoading(false);
+		} catch (error) {
+			console.log(error);
+			setRolesLoading(false);
+		}
+	};
+
+	// 获取用户状态下拉列表
+	const getUserStatusOptions = async () => {
+		const { options } = await getSelectOptions('organization_user_status');
+		setUserStatusOptions(options);
 	};
 	const columns = [
 		{
@@ -46,8 +115,8 @@ const useUser = ({ handleSearch }) => {
 		},
 		{
 			title: 'Name',
-			dataIndex: 'name',
-			key: 'name',
+			dataIndex: 'full_name',
+			key: 'full_name',
 			ellipsis: true,
 		},
 		{
@@ -59,17 +128,17 @@ const useUser = ({ handleSearch }) => {
 		},
 		{
 			title: 'Role',
-			dataIndex: 'role',
-			key: 'role',
+			dataIndex: 'roles',
+			key: 'roles',
 			ellipsis: true,
 			render: (v) => (
 				<Space>
 					{v?.map((item, index) => (
 						<div
 							key={index}
-							className="text-xs/5 px-2 border border-[#91D5FF] bg-[#E6F7FF]"
+							className="text-xs/5 px-2 border border-[#91D5FF] bg-[#E6F7FF] text-base-primary"
 						>
-							{item}
+							{item?.name}
 						</div>
 					))}
 				</Space>
@@ -82,12 +151,12 @@ const useUser = ({ handleSearch }) => {
 			ellipsis: true,
 			render: (v) => (
 				<div
-					className={[
-						'text-xs/5 px-2 border, rounded-lg',
-						`border-[${statusColor[v]?.border}]`,
-						`bg-[${statusColor[v]?.bg}]`,
-						`text-[${statusColor[v]?.color}]`,
-					].join(' ')}
+					className={'text-xs/5 px-2 border rounded-sm w-max'}
+					style={{
+						borderColor: statusColor[v]?.border,
+						backgroundColor: statusColor[v]?.bg,
+						color: statusColor[v]?.color,
+					}}
 				>
 					{v}
 				</div>
@@ -96,72 +165,98 @@ const useUser = ({ handleSearch }) => {
 		{
 			title: 'Action',
 			dataIndex: 'operation',
-			width: 200,
+			width: 220,
 			align: 'left',
 			fixed: 'right',
-			render: (_, record) => (
-				<Space>
-					<BtnPopUpModal
-						getContent={(setOpen) => (
-							<MainModal
-								setOpen={setOpen}
-								handleSearch={handleSearch}
-								rowData={record}
-							/>
+			render: (_, record) => {
+				const isDisabled = record?.is_owner;
+				return (
+					<Space>
+						<BtnPopUpModal
+							getContent={(setOpen) => (
+								<MainModal
+									setOpen={setOpen}
+									handleSearch={handleSearch}
+									rowData={record}
+									roles={roles}
+								/>
+							)}
+							size="small"
+							icon={null}
+							isStopPropagation={false}
+							// disabled={isDisabled}
+						>
+							Edit
+						</BtnPopUpModal>
+						{record?.status === 'Not activated' && (
+							<BtnPopUpModal
+								config={{
+									title: `Are you sure you want to invite this user to join the organization(${userInfo?.organization_name})?`,
+									content: record.email,
+									okText: 'Send email',
+									onOk: () => handleSendEmail(record.id),
+									okButtonProps: { danger: false },
+									confirmLoading: sendLoading,
+								}}
+								modalType="confirm"
+								isStopPropagation={false}
+								// disabled={isDisabled}
+							>
+								Send email
+							</BtnPopUpModal>
 						)}
-						size="small"
-						// isButton={false}
-						icon={null}
-						isStopPropagation={false}
-						// className="text-primary"
-					>
-						Edit
-					</BtnPopUpModal>
-					{record?.status === 'Not activated' && (
-						<Button type="link" size="small">
-							Send Email
-						</Button>
-					)}
-					{record?.status === 'Active' && (
+						{record?.status === 'Active' && (
+							<DeleteBtn
+								title="Are you sure you want to deactivate this user?"
+								content={record.email}
+								onOk={() => handleChangeStatus(record.id, 'Disabled')}
+								loading={statusLoading}
+								isStopPropagation={false}
+								okText="Deactivate"
+								danger={false}
+								disabled={isDisabled}
+							>
+								Disabled
+							</DeleteBtn>
+						)}
+						{record?.status === 'Disabled' && (
+							<DeleteBtn
+								title="Are you sure you want to reactivate this user?"
+								content={record.email}
+								onOk={() => handleChangeStatus(record.id, 'Active')}
+								loading={statusLoading}
+								isStopPropagation={false}
+								okText="Reactivate"
+								danger={false}
+								disabled={isDisabled}
+								okButtonProps={{ danger: false }}
+							>
+								Reactivate
+							</DeleteBtn>
+						)}
 						<DeleteBtn
-							title="Are you sure you want to deactivate this user?"
-							content={record.full_name}
+							title="Are you sure delete this user?"
+							content={record.email}
 							// isButton={false}
 							onOk={() => handleDelete(record.id)}
 							loading={loading}
 							isStopPropagation={false}
-							okText="Deactivate"
+							disabled={isDisabled}
 						>
-							Disabled
+							Delete
 						</DeleteBtn>
-					)}
-					{record?.status === 'Disabled' && (
-						<DeleteBtn
-							title="Are you sure you want to reactivate this user?"
-							content={record.full_name}
-							// isButton={false}
-							onOk={() => handleDelete(record.id)}
-							loading={loading}
-							isStopPropagation={false}
-							okText="Reactivate"
-						>
-							Reactivate
-						</DeleteBtn>
-					)}
-					<DeleteBtn
-						title="Are you sure delete this user?"
-						content={record.full_name}
-						// isButton={false}
-						onOk={() => handleDelete(record.id)}
-						loading={loading}
-						isStopPropagation={false}
-					>
-						Delete
-					</DeleteBtn>
-				</Space>
-			),
+					</Space>
+				);
+			},
 		},
 	];
-	return { columns };
+	return {
+		columns,
+		getRolesOptions,
+		roles,
+		rolesLoading,
+		getUserStatusOptions,
+		userStatusOptions,
+	};
 };
 export default useUser;
