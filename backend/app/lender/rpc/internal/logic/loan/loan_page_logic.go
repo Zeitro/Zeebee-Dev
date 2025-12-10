@@ -5,13 +5,14 @@ import (
 
 	"github.com/jinzhu/copier"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
+	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/timex"
-	"zeebee-backend/domains/zeebee/repo"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/domains/zeebee/data/dto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -20,13 +21,15 @@ type LoanPageLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	baseLogic *logic.BaseLogic
 }
 
 func NewLoanPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoanPageLogic {
 	return &LoanPageLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -36,11 +39,17 @@ func (l *LoanPageLogic) LoanPage(in *lender.LoanPageRequest) (resp *lender.LoanP
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	pageRep := &repo.LoanLenderCompanyPageReq{}
-	_ = copier.CopyWithOption(pageRep, in.Data, copier.Option{
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	pageRep := dto.LoanLenderPageRequestDto{}
+	_ = copier.CopyWithOption(&pageRep, in.Data, copier.Option{
 		CaseSensitive: true,
 		DeepCopy:      true,
 	})
+	pageRep.Filter.OrganizationId = claim.OrganizationId
 
 	pageResult, err := l.svcCtx.LoanRepo.PageForLenderCompany(l.ctx, pageRep)
 	if err != nil {

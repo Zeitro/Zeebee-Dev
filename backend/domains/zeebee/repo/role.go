@@ -9,26 +9,9 @@ import (
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 )
-
-type RolePageReq struct {
-	Page   int64              `json:"page"`
-	Limit  int64              `json:"limit"`
-	Filter *RolePageReqFilter `json:"filter"`
-	Sorter *RolePageReqSorter `json:"sorter"`
-}
-
-type RolePageReqFilter struct {
-	UserId         int64              `json:"user_id"`
-	OrganizationId int64              `json:"organization_id"`
-	Keyword        string             `json:"keyword"`
-	RoleType       constants.UserType `json:"role_type"`
-}
-type RolePageReqSorter struct {
-	Column string `json:"column"`
-	Sort   string `json:"sort"`
-}
 
 type RoleRepo struct {
 	*gormx.BaseRepo[*model.Role]
@@ -87,15 +70,10 @@ func (repo *RoleRepo) GetOrganizationRolesByIdsWithTx(ctx context.Context, tx *g
 }
 
 // Page returns paginated roles
-func (repo *RoleRepo) Page(ctx context.Context, req *RolePageReq) (page gormx.PageResponse[*model.Role], err error) {
+func (repo *RoleRepo) Page(ctx context.Context, req dto.RolePageRequestDto) (page gormx.PageResponse[*model.Role], err error) {
 	filter := req.Filter
 	sorter := req.Sorter
-	if filter == nil {
-		filter = &RolePageReqFilter{}
-	}
-	if sorter == nil {
-		sorter = &RolePageReqSorter{}
-	}
+
 	query := repo.Client(ctx).Model(new(model.Role)).
 		Where("type = ?", filter.RoleType).
 		Where("organization_id = ?", filter.OrganizationId)

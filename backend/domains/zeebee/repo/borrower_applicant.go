@@ -62,7 +62,7 @@ func (repo *BorrowerApplicantRepo) PageForBorrower(ctx context.Context, pageReq 
 
 }
 
-// AllForOrganization return all of the organization's entities
+// AllForOrganization return all organization's entities
 func (repo *BorrowerApplicantRepo) AllForOrganization(ctx context.Context, organizationId int64) (result []*model.BorrowerApplicant, err error) {
 	err = repo.Client(ctx).
 		Where("organization_id = ?", organizationId).

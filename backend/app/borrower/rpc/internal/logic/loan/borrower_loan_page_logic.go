@@ -5,15 +5,15 @@ import (
 
 	"github.com/jinzhu/copier"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
-	"zeebee-backend/domains/zeebee/repo"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/domains/zeebee/data/dto"
 )
 
 type BorrowerLoanPageLogic struct {
@@ -44,12 +44,13 @@ func (l *BorrowerLoanPageLogic) BorrowerLoanPage(in *borrower.LoanPageRequest) (
 		return nil, err
 	}
 
-	pageReq := &repo.LoanBorrowerPageReq{}
-	_ = copier.CopyWithOption(pageReq, in.Data, copier.Option{
+	pageReq := dto.LoanBorrowerPageRequestDto{}
+	_ = copier.CopyWithOption(&pageReq, in.Data, copier.Option{
 		CaseSensitive: true,
 		DeepCopy:      true,
 	})
 	pageReq.Filter.OrganizationId = claim.OrganizationId
+	pageReq.Filter.UserId = claim.OrganizationUserId
 
 	pageResult, err := l.svcCtx.LoanRepo.PageForBorrower(l.ctx, pageReq)
 	if err != nil {

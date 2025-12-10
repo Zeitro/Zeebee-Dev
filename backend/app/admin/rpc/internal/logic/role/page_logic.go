@@ -12,7 +12,7 @@ import (
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/repo"
+	"zeebee-backend/domains/zeebee/data/dto"
 )
 
 type PageLogic struct {
@@ -37,15 +37,19 @@ func (l *PageLogic) Page(in *admin.RolePageRequest) (resp *admin.RolePageRespons
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	pageReq := &repo.RolePageReq{}
-	_ = copier.CopyWithOption(pageReq, in.Data, copier.Option{
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	pageReq := dto.RolePageRequestDto{}
+	_ = copier.CopyWithOption(&pageReq, in.Data, copier.Option{
 		CaseSensitive: true,
 		DeepCopy:      true,
 	})
-	if pageReq.Filter == nil {
-		pageReq.Filter = &repo.RolePageReqFilter{}
-	}
 	pageReq.Filter.RoleType = constants.UserTypeAdmin
+	pageReq.Filter.OrganizationId = claim.OrganizationId
+	pageReq.Filter.UserId = claim.OrganizationUserId
 
 	result, err := l.baseLogic.RoleLogic.Page(l.ctx, pageReq)
 	if err != nil {

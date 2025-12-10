@@ -11,6 +11,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/repo"
 )
@@ -38,7 +39,7 @@ func (l *RoleLogic) checkRoleName(roleName string) (err error) {
 }
 
 // Page returns paginated roles
-func (l *RoleLogic) Page(ctx context.Context, req *repo.RolePageReq) (result gormx.PageResponse[*model.Role], err error) {
+func (l *RoleLogic) Page(ctx context.Context, req dto.RolePageRequestDto) (result gormx.PageResponse[*model.Role], err error) {
 	result, err = l.repos.RoleRepo.Page(ctx, req)
 	return result, err
 }
