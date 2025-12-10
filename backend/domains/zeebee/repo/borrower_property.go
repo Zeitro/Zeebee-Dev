@@ -10,6 +10,7 @@ import (
 	"gorm.io/gorm/clause"
 
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/data/dto"
 
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
@@ -17,25 +18,6 @@ import (
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/model"
 )
-
-type PropertyBorrowerPageReq struct {
-	Page   int64                          `json:"page"`
-	Limit  int64                          `json:"limit"`
-	Filter *PropertyBorrowerPageReqFilter `json:"filter"`
-	Sorter *PropertyBorrowerPageReqSorter `json:"sorter"`
-}
-
-type PropertyBorrowerPageReqFilter struct {
-	UserId         int64    `json:"user_id"`
-	OrganizationId int64    `json:"organization_id"`
-	Keyword        string   `json:"keyword,omitempty"`
-	Applicant      []string `json:"applicant,omitempty"`
-}
-
-type PropertyBorrowerPageReqSorter struct {
-	Column string `json:"column,omitempty"`
-	Sort   string `json:"sort,omitempty"`
-}
 
 type BorrowerPropertyRepo struct {
 	*gormx.BaseRepo[*model.BorrowerProperty]
@@ -146,7 +128,7 @@ func (repo *BorrowerPropertyRepo) SyncTotalAmountAndLoanCountWithTx(ctx context.
 }
 
 // Page page
-func (repo *BorrowerPropertyRepo) PageForBorrower(ctx context.Context, pageReq *PropertyBorrowerPageReq) (page gormx.PageResponse[*model.BorrowerProperty], err error) {
+func (repo *BorrowerPropertyRepo) PageForBorrower(ctx context.Context, pageReq dto.BorrowerPropertyPageRequestDto) (page gormx.PageResponse[*model.BorrowerProperty], err error) {
 	borrowerPropertyTable := model.BorrowerProperty{}.TableName()
 	loanPropertyTable := model.LoanProperty{}.TableName()
 	applicantTable := model.LoanApplicant{}.TableName()
@@ -170,7 +152,7 @@ func (repo *BorrowerPropertyRepo) PageForBorrower(ctx context.Context, pageReq *
 
 	var sortColumns []string
 
-	if sorter != nil {
+	if len(sorter.Column) > 0 {
 		switch sorter.Column {
 		case "total_amount":
 			sortColumns = append(sortColumns,

@@ -136,6 +136,7 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 		applicantItem.IsPrimary = applicant.IsPrimary
 		applicantItem.BorrowerApplicantId = applicant.BorrowerApplicantId
 		applicantItem.InvitationStatus = constants.ApplicantInvitationStatusAccepted
+		applicantItem.BorrowerOrganizationId = claim.OrganizationId
 		applicants = append(applicants, applicantItem)
 	}
 	if totalOwnPercent > 100 {
@@ -160,7 +161,7 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 	loanBorrower = &model.LoanBorrower{}
 
 	// LoanProperty
-	borrowerProperty, err := l.svcCtx.BorrowerPropertyRepo.GetOneByIdForBorrower(l.ctx, in.LoanProperty.BorrowerPropertyId, claim.OrganizationId)
+	borrowerProperty, err := l.svcCtx.BorrowerPropertyRepo.GetOneByIdForOrganization(l.ctx, in.LoanProperty.BorrowerPropertyId, claim.OrganizationId)
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}

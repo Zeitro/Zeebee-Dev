@@ -7,56 +7,12 @@ import (
 	"gorm.io/gorm"
 
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/data/dto"
 
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/model"
 )
-
-type LoanBorrowerPageReq struct {
-	Page   int64                      `json:"page"`
-	Limit  int64                      `json:"limit"`
-	Filter *LoanBorrowerPageReqFilter `json:"filter"`
-	Sorter *LoanBorrowerPageReqSorter `json:"sorter"`
-}
-
-type LoanBorrowerPageReqFilter struct {
-	UserId         int64    `json:"user_id,omitempty"`
-	OrganizationId int64    `json:"organization_id,omitempty"`
-	Stage          string   `json:"stage,omitempty"`
-	Keyword        string   `json:"keyword,omitempty"`
-	KeywordType    string   `json:"keyword_type,omitempty"`
-	LoanPurpose    []string `json:"loan_purpose,omitempty"`
-	LoanType       []string `json:"loan_type,omitempty"`
-	Lender         []string `json:"lender,omitempty"`
-	PendingStatus  []string `json:"pending_status,omitempty"`
-}
-
-type LoanBorrowerPageReqSorter struct {
-	Column string `json:"column,omitempty"`
-	Sort   string `json:"sort,omitempty"`
-}
-
-type LoanLenderCompanyPageReq struct {
-	Page   int64                           `json:"page,omitempty"`
-	Limit  int64                           `son:"limit,omitempty"`
-	Filter *LoanLenderCompanyPageReqFilter `json:"filter,omitempty"`
-	Sorter *LoanLenderCompanyPageReqSorter `json:"sorter,omitempty"`
-}
-
-type LoanLenderCompanyPageReqFilter struct {
-	LenderCompanyId int64    `json:"lender_company_id,omitempty"`
-	Stage           string   `json:"stage,omitempty"`
-	Keyword         string   `json:"keyword,omitempty"`
-	KeywordType     string   `json:"keyword_type,omitempty"`
-	LoanPurpose     []string `json:"loan_purpose,omitempty"`
-	LoanType        []string `json:"loan_type,omitempty"`
-	PendingStatus   []string `json:"pending_status,omitempty"`
-}
-type LoanLenderCompanyPageReqSorter struct {
-	Column string `json:"column,omitempty"`
-	Sort   string `json:"sort,omitempty"`
-}
 
 type LoanRepo struct {
 	*gormx.BaseRepo[*model.Loan]
@@ -187,7 +143,7 @@ func (repo *LoanRepo) UpdatePendingStatusWithTx(ctx context.Context, tx *gorm.DB
 }
 
 // page
-func (repo *LoanRepo) PageForBorrower(ctx context.Context, pageReq *LoanBorrowerPageReq) (page gormx.PageResponse[*model.Loan], err error) {
+func (repo *LoanRepo) PageForBorrower(ctx context.Context, pageReq dto.LoanBorrowerPageRequestDto) (page gormx.PageResponse[*model.Loan], err error) {
 	loanTable := model.Loan{}.TableName()
 	loanPropertyTable := model.LoanProperty{}.TableName()
 	applicantTable := model.LoanApplicant{}.TableName()
@@ -245,7 +201,7 @@ func (repo *LoanRepo) PageForBorrower(ctx context.Context, pageReq *LoanBorrower
 	sortColumns := []string{}
 
 	// sort
-	if sorter != nil {
+	if len(sorter.Column) > 0 {
 		switch sorter.Column {
 		case "address":
 			if !hasJoinProperty {
@@ -260,7 +216,7 @@ func (repo *LoanRepo) PageForBorrower(ctx context.Context, pageReq *LoanBorrower
 			sortColumns = append(sortColumns, fmt.Sprintf("%s.%s %s", loanTable, sorter.Column, sorter.Sort))
 		}
 	}
-	if sorter == nil || len(sortColumns) == 0 {
+	if len(sortColumns) == 0 {
 		sortColumns = append(sortColumns, fmt.Sprintf("%s.created_at desc", loanTable))
 	}
 	for _, column := range sortColumns {
@@ -288,7 +244,7 @@ func (repo *LoanRepo) PageForBorrower(ctx context.Context, pageReq *LoanBorrower
 	return
 }
 
-func (repo *LoanRepo) PageForLenderCompany(ctx context.Context, pageReq *LoanLenderCompanyPageReq) (page gormx.PageResponse[*model.Loan], err error) {
+func (repo *LoanRepo) PageForLenderCompany(ctx context.Context, pageReq dto.LoanLenderPageRequestDto) (page gormx.PageResponse[*model.Loan], err error) {
 	loanTable := model.Loan{}.TableName()
 	loanPropertyTable := model.LoanProperty{}.TableName()
 	applicantTable := model.LoanApplicant{}.TableName()
@@ -307,7 +263,7 @@ func (repo *LoanRepo) PageForLenderCompany(ctx context.Context, pageReq *LoanLen
 	}
 	query := repo.Client(ctx).
 		Omit(omitFields...).
-		Where(fmt.Sprintf("%s.lender_company_id = ?", loanTable), filter.LenderCompanyId).
+		Where(fmt.Sprintf("%s.lender_organization_id = ?", loanTable), filter.OrganizationId).
 		Preload("Property").
 		Preload("Applicants")
 	if len(filter.Stage) > 0 {
@@ -353,7 +309,7 @@ func (repo *LoanRepo) PageForLenderCompany(ctx context.Context, pageReq *LoanLen
 	sortColumns := []string{}
 
 	// sort
-	if sorter != nil {
+	if len(sorter.Column) > 0 {
 		switch sorter.Column {
 		case "address":
 			if !hasJoinProperty {
@@ -368,7 +324,7 @@ func (repo *LoanRepo) PageForLenderCompany(ctx context.Context, pageReq *LoanLen
 			sortColumns = append(sortColumns, fmt.Sprintf("%s.%s %s", loanTable, sorter.Column, sorter.Sort))
 		}
 	}
-	if sorter == nil || len(sortColumns) == 0 {
+	if len(sortColumns) == 0 {
 		sortColumns = append(sortColumns, fmt.Sprintf("%s.created_at desc", loanTable))
 	}
 	for _, column := range sortColumns {
