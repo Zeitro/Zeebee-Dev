@@ -321,6 +321,7 @@ message ThirdPartyLoanPropertyEditEntry {
   string purchase_date = 4;
   double purchase_amount = 5;
   string  existing_lender_company = 6;
+  double arv = 7;
 }
 message ThirdPartyLoanApplicantEditEntry {
   int64 id = 1;

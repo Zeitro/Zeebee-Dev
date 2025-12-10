@@ -201,10 +201,6 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 	if err != nil {
 		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
 	}
-	// creator, err := l.svcCtx.UserRepo.GetUser(l.ctx, claim.OrganizationUserId, constants.UserTypeBorrower)
-	// if err != nil {
-	// 	return nil, nil, nil, nil, err
-	// }
 
 	loan.CreatorId = claim.OrganizationUserId
 	loan.CreatorName = claim.Username

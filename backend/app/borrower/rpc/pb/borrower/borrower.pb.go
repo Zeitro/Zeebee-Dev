@@ -2902,6 +2902,7 @@ type ThirdPartyLoanPropertyEditEntry struct {
 	PurchaseDate          string                 `protobuf:"bytes,4,opt,name=purchase_date,json=purchaseDate,proto3" json:"purchase_date,omitempty"`
 	PurchaseAmount        float64                `protobuf:"fixed64,5,opt,name=purchase_amount,json=purchaseAmount,proto3" json:"purchase_amount,omitempty"`
 	ExistingLenderCompany string                 `protobuf:"bytes,6,opt,name=existing_lender_company,json=existingLenderCompany,proto3" json:"existing_lender_company,omitempty"`
+	Arv                   float64                `protobuf:"fixed64,7,opt,name=arv,proto3" json:"arv,omitempty"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
 }
@@ -2976,6 +2977,13 @@ func (x *ThirdPartyLoanPropertyEditEntry) GetExistingLenderCompany() string {
 		return x.ExistingLenderCompany
 	}
 	return ""
+}
+
+func (x *ThirdPartyLoanPropertyEditEntry) GetArv() float64 {
+	if x != nil {
+		return x.Arv
+	}
+	return 0
 }
 
 type ThirdPartyLoanApplicantEditEntry struct {
@@ -11592,8 +11600,8 @@ func (x *LoanDocumentAddFilesRequest) GetData() *LoanDocumentAddFilesRequestData
 type LoanDocumentAddFilesRequestData struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Id    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	//  int64 user_id = 2;
-	//  int64 organization_id = 3;
+	// int64 user_id = 2;
+	// int64 organization_id = 3;
 	FileUrls      []string `protobuf:"bytes,4,rep,name=file_urls,json=fileUrls,proto3" json:"file_urls,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -13883,8 +13891,8 @@ type RoleCreateRequestData struct {
 	Name        string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Description string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
 	Status      string                 `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
-	//  int64 user_id = 5;
-	//  int64 organization_id = 6;
+	// int64 user_id = 5;
+	// int64 organization_id = 6;
 	RoleAndResources []*RoleAndResourceRelationEntity `protobuf:"bytes,7,rep,name=role_and_resources,json=roleAndResources,proto3" json:"role_and_resources,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
@@ -14043,8 +14051,8 @@ type RoleUpdateRequestData struct {
 	Name        string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Description string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	Status      string                 `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
-	//  int64 user_id = 6;
-	//  int64 organization_id = 7;
+	// int64 user_id = 6;
+	// int64 organization_id = 7;
 	RoleAndResources []*RoleAndResourceRelationEntity `protobuf:"bytes,8,rep,name=role_and_resources,json=roleAndResources,proto3" json:"role_and_resources,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
@@ -16994,14 +17002,15 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x10remaining_budget\x18\x02 \x01(\x01R\x0fremainingBudget\x128\n" +
 	"\x19cost_spent_to_date_amount\x18\x03 \x01(\x01R\x15costSpentToDateAmount\"H\n" +
 	"\x11LoanCreateRequest\x123\n" +
-	"\x04data\x18\x01 \x01(\v2\x1f.borrower.LoanCreateRequestDataR\x04data\"\xff\x01\n" +
+	"\x04data\x18\x01 \x01(\v2\x1f.borrower.LoanCreateRequestDataR\x04data\"\x91\x02\n" +
 	"\x1fThirdPartyLoanPropertyEditEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x120\n" +
 	"\x14borrower_property_id\x18\x02 \x01(\x03R\x12borrowerPropertyId\x12\x14\n" +
 	"\x05owner\x18\x03 \x01(\tR\x05owner\x12#\n" +
 	"\rpurchase_date\x18\x04 \x01(\tR\fpurchaseDate\x12'\n" +
 	"\x0fpurchase_amount\x18\x05 \x01(\x01R\x0epurchaseAmount\x126\n" +
-	"\x17existing_lender_company\x18\x06 \x01(\tR\x15existingLenderCompany\"\xa6\x01\n" +
+	"\x17existing_lender_company\x18\x06 \x01(\tR\x15existingLenderCompany\x12\x10\n" +
+	"\x03arv\x18\a \x01(\x01R\x03arv\"\xa6\x01\n" +
 	" ThirdPartyLoanApplicantEditEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
