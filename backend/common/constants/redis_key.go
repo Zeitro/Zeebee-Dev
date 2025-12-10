@@ -10,6 +10,7 @@ const (
 	UserInviteCode         = "zeebee:%v:%v:%v:invite:code"
 	UserInviteCodeInfo     = "zeebee:%v:%v:%v:invite:code:info"
 	UserInviteInput        = "zeebee:%v:%v:%v:invite:input"
+	UserInviteUserPwd      = "zeebee:%v:%v:%v:invite:pwd"
 	UserInviteEmailSendTag = "zeebee:%v:%v:%v:invite:email:send:tag"
 
 	BorrowerRegisterVerifyEmail            = "zeebee:borrower:%v:register:verify:email"

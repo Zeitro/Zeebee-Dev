@@ -43,7 +43,7 @@ func (l *DeleteLogic) Delete(in *borrower.BorrowerApplicantDeleteRequest) (resp 
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 	// todo check organization
-	if result.OrganizationId != claim.OrganizationUserId {
+	if result.OrganizationId != claim.OrganizationId {
 		return nil, errorx.New("You Have No Access To This Applicant")
 	}
 

@@ -11,25 +11,9 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
 	"zeebee-backend/common/timex"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 )
-
-type BorrowerApplicantBorrowerPageReq struct {
-	Page   int64                                   `json:"page"`
-	Limit  int64                                   `json:"limit"`
-	Filter *BorrowerApplicantBorrowerPageReqFilter `json:"filter"`
-	Sorter *BorrowerApplicantBorrowerPageReqSorter `json:"sorter"`
-}
-
-type BorrowerApplicantBorrowerPageReqFilter struct {
-	UserId         int64  `json:"user_id"`
-	OrganizationId int64  `json:"organization_id"`
-	Keyword        string `json:"keyword"`
-}
-type BorrowerApplicantBorrowerPageReqSorter struct {
-	Column string `json:"column"`
-	Sort   string `json:"sort"`
-}
 
 type BorrowerApplicantRepo struct {
 	*gormx.BaseRepo[*model.BorrowerApplicant]
@@ -52,7 +36,7 @@ func (repo *BorrowerApplicantRepo) GetBorrowerApplicantById(ctx context.Context,
 	return result, errorx.WithStack(err)
 }
 
-func (repo *BorrowerApplicantRepo) PageForBorrower(ctx context.Context, pageReq *BorrowerApplicantBorrowerPageReq) (page gormx.PageResponse[*model.BorrowerApplicant], err error) {
+func (repo *BorrowerApplicantRepo) PageForBorrower(ctx context.Context, pageReq dto.BorrowerApplicantBorrowerPageRequestDto) (page gormx.PageResponse[*model.BorrowerApplicant], err error) {
 
 	filter := pageReq.Filter
 	sorter := pageReq.Sorter

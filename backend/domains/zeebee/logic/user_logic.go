@@ -86,6 +86,7 @@ func (l *UserLogic) GenerateJwtToken(user *model.User, orgUser *model.Organizati
 	}
 	if orgUser != nil {
 		userClaim.OrganizationId = orgUser.OrganizationId
+		userClaim.OrganizationUserId = orgUser.Id
 		userClaim.Username = orgUser.FullName
 	}
 
