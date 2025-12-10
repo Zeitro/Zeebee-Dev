@@ -8,6 +8,7 @@ import (
 	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 
+	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/constants"
@@ -37,13 +38,15 @@ type UpdateLoanLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	baseLogic *logic.BaseLogic
 }
 
 func NewUpdateLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLoanLogic {
 	return &UpdateLoanLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -56,8 +59,13 @@ func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender
 	}()
 	var oldLoan *model.Loan
 	var oldLoanCopy *model.Loan
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	// old loan
-	oldLoan, err = l.svcCtx.LoanRepo.GetLenderLoan(l.ctx, in.Data.Id, in.Data.OrganizationId, true)
+	oldLoan, err = l.svcCtx.LoanRepo.GetLenderLoan(l.ctx, in.Data.Id, claim.OrganizationId, true)
 	if err != nil {
 		return nil, err
 	}
@@ -87,9 +95,9 @@ func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender
 			// update loan
 			func() error {
 				data.loan.RemoveRelationships()
-				if in.Data.OrganizationId == 0 {
-					in.Data.OrganizationId = oldLoan.LenderOrganizationId
-				}
+				// if in.Data.OrganizationId == 0 {
+				// 	in.Data.OrganizationId = oldLoan.LenderOrganizationId
+				// }
 				_, err := l.svcCtx.LoanRepo.UpdateOneWithTx(l.ctx, tx, in.Data.Id, data.loan)
 				return err
 			},
@@ -150,7 +158,7 @@ func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender
 
 			// loan operation log
 			func() error {
-				operatorId := in.Data.UserId
+				operatorId := claim.OrganizationUserId
 
 				fromStatus := model.LoanOperationStatus{
 					Stage:         oldLoan.Stage,

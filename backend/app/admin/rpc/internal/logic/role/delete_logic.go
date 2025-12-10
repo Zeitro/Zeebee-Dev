@@ -34,7 +34,13 @@ func (l *DeleteLogic) Delete(in *admin.RoleDeleteRequest) (resp *admin.EmptyResp
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	err = l.baseLogic.RoleLogic.Delete(l.ctx, in.Data.Id, in.Data.OrganizationId, constants.UserTypeAdmin)
+
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	err = l.baseLogic.RoleLogic.Delete(l.ctx, in.Data.Id, claim.OrganizationId, constants.UserTypeAdmin)
 	if err != nil {
 		return nil, err
 	}

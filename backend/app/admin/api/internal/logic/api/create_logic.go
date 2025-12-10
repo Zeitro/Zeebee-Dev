@@ -5,13 +5,12 @@ import (
 
 	"github.com/jinzhu/copier"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type CreateLogic struct {
@@ -39,12 +38,12 @@ func (l *CreateLogic) Create(req *types.ApiCreateRequest) (resp *types.ApiTreeEn
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
 
-	claim, err := utils.GetUserClaimFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-	rpcReq.Data.UserId = claim.UserId
-	rpcReq.Data.OrganizationId = claim.OrganizationId
+	// claim, err := utils.GetUserClaimFromCtx(l.ctx)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// rpcReq.Data.UserId = claim.UserId
+	// rpcReq.Data.OrganizationId = claim.OrganizationId
 
 	rpcResp, err := l.svcCtx.ApiRpcClient.Create(l.ctx, rpcReq)
 	if err != nil {

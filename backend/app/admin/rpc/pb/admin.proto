@@ -132,9 +132,10 @@ message UserProfileEditRequest {
   UserProfileEditRequestData data = 1;
 }
 message UserProfileEditRequestData {
-  int64 user_id = 1;
+  //  int64 user_id = 1;
   string first_name = 2;
   string last_name = 3;
+  string phone = 4;
 }
 // admin user
 // page
@@ -152,9 +153,9 @@ message UserPageRequestData {
 
 }
 message UserPageRequestFilter {
-  int64 user_id = 1;
+  //  int64 user_id = 1;
   string keyword = 2;
-  int64 organization_id = 3;
+  //  int64 organization_id = 3;
 }
 
 message UserPageRequestSorter {
@@ -197,8 +198,8 @@ message UserUpdateRequestData {
   string full_name = 4;
   string phone = 5;
   repeated int64 role_ids = 6;
-  int64 organization_id = 7;
-  int64 user_id = 8;
+  //  int64 organization_id = 7;
+  //  int64 user_id = 8;
 }
 // delete
 message UserDeleteRequest {
@@ -207,8 +208,8 @@ message UserDeleteRequest {
 
 message UserDeleteRequestData {
   int64 id = 1;
-  int64 user_id = 2;
-  int64 organization_id = 3;
+  //  int64 user_id = 2;
+  //  int64 organization_id = 3;
 }
 
 // detail
@@ -220,8 +221,8 @@ message UserDetailResponse {
 }
 message UserDetailRequestData {
   int64 id = 1;
-  int64 user_id = 2;
-  int64 organization_id = 3;
+  //  int64 user_id = 2;
+  //  int64 organization_id = 3;
 }
 // switch status
 message UserSwitchStatusRequest {
@@ -229,8 +230,8 @@ message UserSwitchStatusRequest {
 }
 message UserSwitchStatusRequestData {
   int64 id = 1;
-  int64 user_id = 2;
-  int64 organization_id = 3;
+  //  int64 user_id = 2;
+  //  int64 organization_id = 3;
   string status = 4;
 }
 
@@ -309,8 +310,8 @@ message ApiCreateRequestData {
   string description = 6;
   string status = 7;
   int32 sort_order = 8;
-  int64 user_id = 9;
-  int64 organization_id = 10;
+  //  int64 user_id = 9;
+  //  int64 organization_id = 10;
 }
 message ApiCreateResponse {
   ApiTreeEntity data = 1;
@@ -329,8 +330,8 @@ message ApiUpdateRequestData {
   string description = 7;
   string status = 8;
   int32 sort_order = 9;
-  int64 user_id = 10;
-  int64 organization_id = 11;
+  //  int64 user_id = 10;
+  //  int64 organization_id = 11;
 }
 
 //  delete
@@ -339,8 +340,8 @@ message ApiDeleteRequest {
 }
 message ApiDeleteRequestData {
   int64 id = 1;
-  int64 user_id = 2;
-  int64 organization_id = 3;
+  //  int64 user_id = 2;
+  //  int64 organization_id = 3;
   string type = 4;
 }
 // detail
@@ -349,8 +350,8 @@ message ApiDetailRequest {
 }
 message ApiDetailRequestData {
   int64 id = 1;
-  int64 user_id = 2;
-  int64 organization_id = 3;
+  //  int64 user_id = 2;
+  //  int64 organization_id = 3;
   string type = 4;
 }
 
@@ -404,8 +405,8 @@ message ResourceTreeRequest {
   ResourceTreeRequestData data = 1;
 }
 message ResourceTreeRequestData {
-  int64 user_id = 1;
-  int64 organization_id = 2;
+  //  int64 user_id = 1;
+  //  int64 organization_id = 2;
   string type = 3;
 }
 
@@ -427,8 +428,8 @@ message ResourceCreateRequestData {
   bool is_show = 8;
   string status = 9;
   int32 sort_order = 10;
-  int64 user_id = 11;
-  int64 organization_id = 12;
+  //  int64 user_id = 11;
+  //  int64 organization_id = 12;
   repeated int64 api_ids = 13;
 }
 message ResourceCreateResponse {
@@ -450,8 +451,8 @@ message ResourceUpdateRequestData {
   bool is_show = 9;
   string status = 10;
   int32 sort_order = 11;
-  int64 user_id = 12;
-  int64 organization_id = 13;
+  //  int64 user_id = 12;
+  //  int64 organization_id = 13;
   repeated int64 api_ids = 14;
 }
 
@@ -461,8 +462,8 @@ message ResourceDeleteRequest {
 }
 message ResourceDeleteRequestData {
   int64 id = 1;
-  int64 user_id = 2;
-  int64 organization_id = 3;
+  //  int64 user_id = 2;
+  //  int64 organization_id = 3;
   string type = 4;
 }
 // detail
@@ -471,8 +472,8 @@ message ResourceDetailRequest {
 }
 message ResourceDetailRequestData {
   int64 id = 1;
-  int64 user_id = 2;
-  int64 organization_id = 3;
+  //  int64 user_id = 2;
+  //  int64 organization_id = 3;
   string type = 4;
 }
 
@@ -512,9 +513,9 @@ message RolePageRequestData {
   RolePageRequestSorter sorter = 4;
 }
 message RolePageRequestFilter {
-  int64 user_id = 1;
+  //  int64 user_id = 1;
   string keyword = 2;
-  int64 organization_id = 3;
+  //  int64 organization_id = 3;
 }
 message RolePageRequestSorter {
   string column = 1;
@@ -541,8 +542,8 @@ message RoleCreateRequestData {
   string name = 1;
   string description = 2;
   string status = 4;
-  int64 user_id = 5;
-  int64 organization_id = 6;
+  //  int64 user_id = 5;
+  //  int64 organization_id = 6;
   repeated RoleAndResourceRelationEntity role_and_resources = 7;
 }
 message RoleCreateResponse {
@@ -558,8 +559,8 @@ message RoleUpdateRequestData {
   string description = 3;
   //  string type = 4;
   string status = 5;
-  int64 user_id = 6;
-  int64 organization_id = 7;
+  //  int64 user_id = 6;
+  //  int64 organization_id = 7;
   repeated RoleAndResourceRelationEntity role_and_resources = 8;
 }
 
@@ -579,8 +580,8 @@ message RoleDeleteRequest {
 }
 message RoleDeleteRequestData {
   int64 id = 1;
-  int64 user_id = 2;
-  int64 organization_id = 3;
+  //  int64 user_id = 2;
+  //  int64 organization_id = 3;
   //  string type = 4;
 }
 
@@ -590,8 +591,8 @@ message RoleDetailRequest {
 }
 message RoleDetailRequestData {
   int64 id = 1;
-  int64 user_id = 2;
-  int64 organization_id = 3;
+  //  int64 user_id = 2;
+  //  int64 organization_id = 3;
   //  string type = 4;
 }
 message RoleDetailResponse {
@@ -604,8 +605,8 @@ message RoleUpdateStatusRequest {
 message RoleUpdateStatusRequestData {
   int64 id = 1;
   string status = 2;
-  int64 user_id = 3;
-  int64 organization_id = 4;
+  //  int64 user_id = 3;
+  //  int64 organization_id = 4;
   //  string type = 5;
 }
 
@@ -614,8 +615,8 @@ message RoleAllRequest {
   RoleAllRequestData data = 1;
 }
 message RoleAllRequestData {
-  int64 user_id = 1;
-  int64 organization_id = 2;
+  //  int64 user_id = 1;
+  //  int64 organization_id = 2;
 }
 message RoleAllResponse {
   repeated RoleEntity data = 1;

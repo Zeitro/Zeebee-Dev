@@ -40,7 +40,12 @@ func (l *UserUpdateLogic) UserUpdate(in *admin.UserUpdateRequest) (resp *admin.U
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	userModel, err := l.svcCtx.UserRepo.GetOrganizationUser(l.ctx, in.Data.Id, in.Data.OrganizationId, constants.UserTypeAdmin)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	userModel, err := l.svcCtx.UserRepo.GetOrganizationUser(l.ctx, in.Data.Id, claim.OrganizationUserId, constants.UserTypeAdmin)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +58,7 @@ func (l *UserUpdateLogic) UserUpdate(in *admin.UserUpdateRequest) (resp *admin.U
 
 	userModel.FirstName, userModel.MidName, userModel.LastName = stringx.ParseFullName(in.Data.FullName)
 
-	user, err := l.baseLogic.UserLogic.UpdateOrganizationUser(l.ctx, in.Data.Id, userModel, in.Data.OrganizationId, in.Data.RoleIds)
+	user, err := l.baseLogic.UserLogic.UpdateOrganizationUser(l.ctx, in.Data.Id, userModel, claim.OrganizationId, in.Data.RoleIds)
 	if err != nil {
 		return nil, err
 	}

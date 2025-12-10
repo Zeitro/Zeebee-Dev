@@ -37,7 +37,12 @@ func (l *DetailLogic) Detail(in *admin.RoleDetailRequest) (resp *admin.RoleDetai
 		}
 	}()
 
-	role, err := l.baseLogic.RoleLogic.GetRole(l.ctx, in.Data.Id, in.Data.OrganizationId, constants.UserTypeAdmin)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	role, err := l.baseLogic.RoleLogic.GetRole(l.ctx, in.Data.Id, claim.OrganizationId, constants.UserTypeAdmin)
 	if err != nil {
 		return nil, err
 	}

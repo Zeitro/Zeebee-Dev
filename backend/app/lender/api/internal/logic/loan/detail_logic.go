@@ -10,7 +10,6 @@ import (
 	"zeebee-backend/app/lender/api/internal/types"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
 )
 
 type DetailLogic struct {
@@ -30,16 +29,10 @@ func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogi
 
 func (l *DetailLogic) Detail(req *types.LoanDetailRequest) (resp *types.LoanDetailResponse, err error) {
 	resp = &types.LoanDetailResponse{}
-	// get lender id
-	claim, err := utils.GetUserClaimFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
 
 	rpcResp, err := l.svcCtx.LoanRpcClient.LoanDetail(l.ctx, &lender.LoanDetailRequest{
 		Data: &lender.LoanDetailRequestData{
-			Id:             req.Id,
-			OrganizationId: claim.OrganizationId,
+			Id: req.Id,
 		},
 	})
 	if err != nil {

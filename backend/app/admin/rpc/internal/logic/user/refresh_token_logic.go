@@ -9,7 +9,7 @@ import (
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/utils"
-	logic2 "zeebee-backend/domains/zeebee/logic"
+	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -38,6 +38,7 @@ func (l *RefreshTokenLogic) RefreshToken(in *admin.RefreshTokenRequest) (resp *a
 		}
 	}()
 	var claims *utils.JWTClaims
+	var organizationUser *model.OrganizationUser
 	// parse refresh token
 	claims, err = utils.ParseToken(in.Data.RefreshToken, l.svcCtx.Config.JwtAuth.RefreshSecret)
 	if err != nil {
@@ -54,12 +55,14 @@ func (l *RefreshTokenLogic) RefreshToken(in *admin.RefreshTokenRequest) (resp *a
 		return nil, errorx.New("User Is Not Active")
 	}
 
-	token, err := l.baseLogic.UserLogic.GenerateJwtToken(user, logic2.JwtConfig{
-		AccessSecret:  l.svcCtx.Config.JwtAuth.AccessSecret,
-		AccessExpire:  l.svcCtx.Config.JwtAuth.AccessExpire,
-		RefreshSecret: l.svcCtx.Config.JwtAuth.RefreshSecret,
-		RefreshExpire: l.svcCtx.Config.JwtAuth.RefreshExpire,
-	}, constants.UserTypeAdmin)
+	organizationUser, err = l.svcCtx.OrganizationUserRepo.GetOrganizationUserByUserId(l.ctx, claims.OrganizationId, user.Id)
+	if err != nil {
+		return nil, err
+	}
+	if organizationUser.Status != constants.OrganizationUserStatusActive {
+		return nil, errorx.New("Organization User Is Not Active")
+	}
+	token, err := l.baseLogic.UserLogic.GenerateJwtToken(user, organizationUser, constants.UserTypeAdmin)
 	if err != nil {
 		return nil, err
 	}

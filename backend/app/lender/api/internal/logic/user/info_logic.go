@@ -9,7 +9,6 @@ import (
 	"zeebee-backend/app/lender/api/internal/types"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -31,18 +30,9 @@ func NewInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *InfoLogic {
 
 func (l *InfoLogic) Info(req *types.EmptyRequest) (resp *types.UserInfoResponse, err error) {
 	resp = &types.UserInfoResponse{}
-	claim, err := utils.GetUserClaimFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-	userId := claim.UserId
-	if userId == 0 {
-		return nil, errorx.WithStack(errorx.New("User Id Not Found"))
-	}
+
 	userInfo, err := l.svcCtx.UserRpcClient.UserInfo(l.ctx, &lender.UserInfoRequest{
-		Data: &lender.UserInfoRequestData{
-			Id: userId,
-		},
+		Data: &lender.UserInfoRequestData{},
 	})
 	if err != nil {
 		return nil, err

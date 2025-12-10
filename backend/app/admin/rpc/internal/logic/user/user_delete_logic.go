@@ -35,7 +35,12 @@ func (l *UserDeleteLogic) UserDelete(in *admin.UserDeleteRequest) (resp *admin.E
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	err = l.baseLogic.UserLogic.DeleteOrganizationUser(l.ctx, in.Data.Id, in.Data.OrganizationId, constants.UserTypeAdmin)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	err = l.baseLogic.UserLogic.DeleteOrganizationUser(l.ctx, in.Data.Id, claim.OrganizationId, constants.UserTypeAdmin)
 	if err != nil {
 		return nil, err
 	}

@@ -12,7 +12,6 @@ import (
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
 )
 
 type RoleUpdateLogic struct {
@@ -48,13 +47,6 @@ func (l *RoleUpdateLogic) RoleUpdate(req *types.RoleUpdateRequest) (resp *types.
 		}
 	})
 	rpcReq.Data.RoleAndResources = relations
-
-	claim, err := utils.GetUserClaimFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-	rpcReq.Data.UserId = claim.UserId
-	rpcReq.Data.OrganizationId = claim.OrganizationId
 
 	rpcResp, err := l.svcCtx.RoleRpcClient.Update(l.ctx, rpcReq)
 	if err != nil {

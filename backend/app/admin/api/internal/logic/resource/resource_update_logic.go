@@ -9,7 +9,6 @@ import (
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -38,13 +37,6 @@ func (l *ResourceUpdateLogic) ResourceUpdate(req *types.ResourceUpdateRequest) (
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
-
-	claim, err := utils.GetUserClaimFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-	rpcReq.Data.UserId = claim.UserId
-	rpcReq.Data.OrganizationId = claim.OrganizationId
 
 	rpcResp, err := l.svcCtx.ResourceRpcClient.Update(l.ctx, rpcReq)
 	if err != nil {

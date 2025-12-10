@@ -38,12 +38,18 @@ func (l *UpdateLogic) Update(in *admin.RoleUpdateRequest) (resp *admin.RoleUpdat
 		}
 	}()
 
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	roleModel := &model.Role{}
 	err = copier.CopyWithOption(roleModel, in.Data, copier.Option{DeepCopy: true})
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
 	roleModel.Type = constants.UserTypeAdmin
+	roleModel.OrganizationId = claim.OrganizationId
 
 	role, err := l.baseLogic.RoleLogic.Update(l.ctx, in.Data.Id, roleModel)
 	if err != nil {

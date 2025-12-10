@@ -1252,10 +1252,11 @@ func (x *UserProfileEditRequest) GetData() *UserProfileEditRequestData {
 }
 
 type UserProfileEditRequestData struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	FirstName     string                 `protobuf:"bytes,2,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
-	LastName      string                 `protobuf:"bytes,3,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	//  int64 user_id = 1;
+	FirstName     string `protobuf:"bytes,2,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
+	LastName      string `protobuf:"bytes,3,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
+	Phone         string `protobuf:"bytes,4,opt,name=phone,proto3" json:"phone,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1290,13 +1291,6 @@ func (*UserProfileEditRequestData) Descriptor() ([]byte, []int) {
 	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{22}
 }
 
-func (x *UserProfileEditRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
 func (x *UserProfileEditRequestData) GetFirstName() string {
 	if x != nil {
 		return x.FirstName
@@ -1307,6 +1301,13 @@ func (x *UserProfileEditRequestData) GetFirstName() string {
 func (x *UserProfileEditRequestData) GetLastName() string {
 	if x != nil {
 		return x.LastName
+	}
+	return ""
+}
+
+func (x *UserProfileEditRequestData) GetPhone() string {
+	if x != nil {
+		return x.Phone
 	}
 	return ""
 }
@@ -1470,12 +1471,11 @@ func (x *UserPageRequestData) GetSorter() *UserPageRequestSorter {
 }
 
 type UserPageRequestFilter struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	UserId         int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Keyword        string                 `protobuf:"bytes,2,opt,name=keyword,proto3" json:"keyword,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,3,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"open.v1"`
+	//  int64 user_id = 1;
+	Keyword       string `protobuf:"bytes,2,opt,name=keyword,proto3" json:"keyword,omitempty"` //  int64 organization_id = 3;
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UserPageRequestFilter) Reset() {
@@ -1508,25 +1508,11 @@ func (*UserPageRequestFilter) Descriptor() ([]byte, []int) {
 	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{26}
 }
 
-func (x *UserPageRequestFilter) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
 func (x *UserPageRequestFilter) GetKeyword() string {
 	if x != nil {
 		return x.Keyword
 	}
 	return ""
-}
-
-func (x *UserPageRequestFilter) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return 0
 }
 
 type UserPageRequestSorter struct {
@@ -1928,16 +1914,14 @@ func (x *UserUpdateResponse) GetData() *UserEntity {
 }
 
 type UserUpdateRequestData struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Password       string                 `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
-	FullName       string                 `protobuf:"bytes,4,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
-	Phone          string                 `protobuf:"bytes,5,opt,name=phone,proto3" json:"phone,omitempty"`
-	RoleIds        []int64                `protobuf:"varint,6,rep,packed,name=role_ids,json=roleIds,proto3" json:"role_ids,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,7,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	UserId         int64                  `protobuf:"varint,8,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Password      string                 `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
+	FullName      string                 `protobuf:"bytes,4,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
+	Phone         string                 `protobuf:"bytes,5,opt,name=phone,proto3" json:"phone,omitempty"`
+	RoleIds       []int64                `protobuf:"varint,6,rep,packed,name=role_ids,json=roleIds,proto3" json:"role_ids,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UserUpdateRequestData) Reset() {
@@ -2005,20 +1989,6 @@ func (x *UserUpdateRequestData) GetRoleIds() []int64 {
 	return nil
 }
 
-func (x *UserUpdateRequestData) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return 0
-}
-
-func (x *UserUpdateRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
 // delete
 type UserDeleteRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -2065,12 +2035,10 @@ func (x *UserDeleteRequest) GetData() *UserDeleteRequestData {
 }
 
 type UserDeleteRequestData struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserId         int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,3,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UserDeleteRequestData) Reset() {
@@ -2106,20 +2074,6 @@ func (*UserDeleteRequestData) Descriptor() ([]byte, []int) {
 func (x *UserDeleteRequestData) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *UserDeleteRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *UserDeleteRequestData) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
 	}
 	return 0
 }
@@ -2214,12 +2168,10 @@ func (x *UserDetailResponse) GetData() *UserEntity {
 }
 
 type UserDetailRequestData struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserId         int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,3,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UserDetailRequestData) Reset() {
@@ -2255,20 +2207,6 @@ func (*UserDetailRequestData) Descriptor() ([]byte, []int) {
 func (x *UserDetailRequestData) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *UserDetailRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *UserDetailRequestData) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
 	}
 	return 0
 }
@@ -2319,13 +2257,13 @@ func (x *UserSwitchStatusRequest) GetData() *UserSwitchStatusRequestData {
 }
 
 type UserSwitchStatusRequestData struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserId         int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,3,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	Status         string                 `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Id    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	//  int64 user_id = 2;
+	//  int64 organization_id = 3;
+	Status        string `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UserSwitchStatusRequestData) Reset() {
@@ -2361,20 +2299,6 @@ func (*UserSwitchStatusRequestData) Descriptor() ([]byte, []int) {
 func (x *UserSwitchStatusRequestData) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *UserSwitchStatusRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *UserSwitchStatusRequestData) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
 	}
 	return 0
 }
@@ -2838,19 +2762,17 @@ func (x *ApiCreateRequest) GetData() *ApiCreateRequestData {
 }
 
 type ApiCreateRequestData struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	ParentId       int64                  `protobuf:"varint,1,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
-	Type           string                 `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
-	Name           string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	Path           string                 `protobuf:"bytes,4,opt,name=path,proto3" json:"path,omitempty"`
-	Method         string                 `protobuf:"bytes,5,opt,name=method,proto3" json:"method,omitempty"`
-	Description    string                 `protobuf:"bytes,6,opt,name=description,proto3" json:"description,omitempty"`
-	Status         string                 `protobuf:"bytes,7,opt,name=status,proto3" json:"status,omitempty"`
-	SortOrder      int32                  `protobuf:"varint,8,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
-	UserId         int64                  `protobuf:"varint,9,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,10,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ParentId      int64                  `protobuf:"varint,1,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
+	Type          string                 `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
+	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Path          string                 `protobuf:"bytes,4,opt,name=path,proto3" json:"path,omitempty"`
+	Method        string                 `protobuf:"bytes,5,opt,name=method,proto3" json:"method,omitempty"`
+	Description   string                 `protobuf:"bytes,6,opt,name=description,proto3" json:"description,omitempty"`
+	Status        string                 `protobuf:"bytes,7,opt,name=status,proto3" json:"status,omitempty"`
+	SortOrder     int32                  `protobuf:"varint,8,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ApiCreateRequestData) Reset() {
@@ -2935,20 +2857,6 @@ func (x *ApiCreateRequestData) GetStatus() string {
 func (x *ApiCreateRequestData) GetSortOrder() int32 {
 	if x != nil {
 		return x.SortOrder
-	}
-	return 0
-}
-
-func (x *ApiCreateRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *ApiCreateRequestData) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
 	}
 	return 0
 }
@@ -3043,20 +2951,18 @@ func (x *ApiUpdateRequest) GetData() *ApiUpdateRequestData {
 }
 
 type ApiUpdateRequestData struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	ParentId       int64                  `protobuf:"varint,2,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
-	Type           string                 `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
-	Name           string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
-	Path           string                 `protobuf:"bytes,5,opt,name=path,proto3" json:"path,omitempty"`
-	Method         string                 `protobuf:"bytes,6,opt,name=method,proto3" json:"method,omitempty"`
-	Description    string                 `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
-	Status         string                 `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`
-	SortOrder      int32                  `protobuf:"varint,9,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
-	UserId         int64                  `protobuf:"varint,10,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,11,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	ParentId      int64                  `protobuf:"varint,2,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
+	Type          string                 `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
+	Name          string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	Path          string                 `protobuf:"bytes,5,opt,name=path,proto3" json:"path,omitempty"`
+	Method        string                 `protobuf:"bytes,6,opt,name=method,proto3" json:"method,omitempty"`
+	Description   string                 `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
+	Status        string                 `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`
+	SortOrder     int32                  `protobuf:"varint,9,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ApiUpdateRequestData) Reset() {
@@ -3152,20 +3058,6 @@ func (x *ApiUpdateRequestData) GetSortOrder() int32 {
 	return 0
 }
 
-func (x *ApiUpdateRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *ApiUpdateRequestData) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return 0
-}
-
 // delete
 type ApiDeleteRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -3212,13 +3104,13 @@ func (x *ApiDeleteRequest) GetData() *ApiDeleteRequestData {
 }
 
 type ApiDeleteRequestData struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserId         int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,3,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	Type           string                 `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Id    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	//  int64 user_id = 2;
+	//  int64 organization_id = 3;
+	Type          string `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ApiDeleteRequestData) Reset() {
@@ -3254,20 +3146,6 @@ func (*ApiDeleteRequestData) Descriptor() ([]byte, []int) {
 func (x *ApiDeleteRequestData) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *ApiDeleteRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *ApiDeleteRequestData) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
 	}
 	return 0
 }
@@ -3325,13 +3203,13 @@ func (x *ApiDetailRequest) GetData() *ApiDetailRequestData {
 }
 
 type ApiDetailRequestData struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserId         int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,3,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	Type           string                 `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Id    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	//  int64 user_id = 2;
+	//  int64 organization_id = 3;
+	Type          string `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ApiDetailRequestData) Reset() {
@@ -3367,20 +3245,6 @@ func (*ApiDetailRequestData) Descriptor() ([]byte, []int) {
 func (x *ApiDetailRequestData) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *ApiDetailRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *ApiDetailRequestData) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
 	}
 	return 0
 }
@@ -3743,12 +3607,12 @@ func (x *ResourceTreeRequest) GetData() *ResourceTreeRequestData {
 }
 
 type ResourceTreeRequestData struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	UserId         int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	Type           string                 `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"open.v1"`
+	//  int64 user_id = 1;
+	//  int64 organization_id = 2;
+	Type          string `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ResourceTreeRequestData) Reset() {
@@ -3779,20 +3643,6 @@ func (x *ResourceTreeRequestData) ProtoReflect() protoreflect.Message {
 // Deprecated: Use ResourceTreeRequestData.ProtoReflect.Descriptor instead.
 func (*ResourceTreeRequestData) Descriptor() ([]byte, []int) {
 	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{59}
-}
-
-func (x *ResourceTreeRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *ResourceTreeRequestData) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return 0
 }
 
 func (x *ResourceTreeRequestData) GetType() string {
@@ -3892,22 +3742,22 @@ func (x *ResourceCreateRequest) GetData() *ResourceCreateRequestData {
 }
 
 type ResourceCreateRequestData struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	ParentId       int64                  `protobuf:"varint,1,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
-	Type           string                 `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
-	ResourceType   string                 `protobuf:"bytes,3,opt,name=resource_type,json=resourceType,proto3" json:"resource_type,omitempty"`
-	Name           string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
-	Path           string                 `protobuf:"bytes,5,opt,name=path,proto3" json:"path,omitempty"`
-	Icon           string                 `protobuf:"bytes,6,opt,name=icon,proto3" json:"icon,omitempty"`
-	Tag            string                 `protobuf:"bytes,7,opt,name=tag,proto3" json:"tag,omitempty"`
-	IsShow         bool                   `protobuf:"varint,8,opt,name=is_show,json=isShow,proto3" json:"is_show,omitempty"`
-	Status         string                 `protobuf:"bytes,9,opt,name=status,proto3" json:"status,omitempty"`
-	SortOrder      int32                  `protobuf:"varint,10,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
-	UserId         int64                  `protobuf:"varint,11,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,12,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	ApiIds         []int64                `protobuf:"varint,13,rep,packed,name=api_ids,json=apiIds,proto3" json:"api_ids,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state        protoimpl.MessageState `protogen:"open.v1"`
+	ParentId     int64                  `protobuf:"varint,1,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
+	Type         string                 `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
+	ResourceType string                 `protobuf:"bytes,3,opt,name=resource_type,json=resourceType,proto3" json:"resource_type,omitempty"`
+	Name         string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	Path         string                 `protobuf:"bytes,5,opt,name=path,proto3" json:"path,omitempty"`
+	Icon         string                 `protobuf:"bytes,6,opt,name=icon,proto3" json:"icon,omitempty"`
+	Tag          string                 `protobuf:"bytes,7,opt,name=tag,proto3" json:"tag,omitempty"`
+	IsShow       bool                   `protobuf:"varint,8,opt,name=is_show,json=isShow,proto3" json:"is_show,omitempty"`
+	Status       string                 `protobuf:"bytes,9,opt,name=status,proto3" json:"status,omitempty"`
+	SortOrder    int32                  `protobuf:"varint,10,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
+	//  int64 user_id = 11;
+	//  int64 organization_id = 12;
+	ApiIds        []int64 `protobuf:"varint,13,rep,packed,name=api_ids,json=apiIds,proto3" json:"api_ids,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ResourceCreateRequestData) Reset() {
@@ -4010,20 +3860,6 @@ func (x *ResourceCreateRequestData) GetSortOrder() int32 {
 	return 0
 }
 
-func (x *ResourceCreateRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *ResourceCreateRequestData) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return 0
-}
-
 func (x *ResourceCreateRequestData) GetApiIds() []int64 {
 	if x != nil {
 		return x.ApiIds
@@ -4121,23 +3957,23 @@ func (x *ResourceUpdateRequest) GetData() *ResourceUpdateRequestData {
 }
 
 type ResourceUpdateRequestData struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	ParentId       int64                  `protobuf:"varint,2,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
-	Type           string                 `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
-	ResourceType   string                 `protobuf:"bytes,4,opt,name=resource_type,json=resourceType,proto3" json:"resource_type,omitempty"`
-	Name           string                 `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
-	Path           string                 `protobuf:"bytes,6,opt,name=path,proto3" json:"path,omitempty"`
-	Icon           string                 `protobuf:"bytes,7,opt,name=icon,proto3" json:"icon,omitempty"`
-	Tag            string                 `protobuf:"bytes,8,opt,name=tag,proto3" json:"tag,omitempty"`
-	IsShow         bool                   `protobuf:"varint,9,opt,name=is_show,json=isShow,proto3" json:"is_show,omitempty"`
-	Status         string                 `protobuf:"bytes,10,opt,name=status,proto3" json:"status,omitempty"`
-	SortOrder      int32                  `protobuf:"varint,11,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
-	UserId         int64                  `protobuf:"varint,12,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,13,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	ApiIds         []int64                `protobuf:"varint,14,rep,packed,name=api_ids,json=apiIds,proto3" json:"api_ids,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state        protoimpl.MessageState `protogen:"open.v1"`
+	Id           int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	ParentId     int64                  `protobuf:"varint,2,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
+	Type         string                 `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
+	ResourceType string                 `protobuf:"bytes,4,opt,name=resource_type,json=resourceType,proto3" json:"resource_type,omitempty"`
+	Name         string                 `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
+	Path         string                 `protobuf:"bytes,6,opt,name=path,proto3" json:"path,omitempty"`
+	Icon         string                 `protobuf:"bytes,7,opt,name=icon,proto3" json:"icon,omitempty"`
+	Tag          string                 `protobuf:"bytes,8,opt,name=tag,proto3" json:"tag,omitempty"`
+	IsShow       bool                   `protobuf:"varint,9,opt,name=is_show,json=isShow,proto3" json:"is_show,omitempty"`
+	Status       string                 `protobuf:"bytes,10,opt,name=status,proto3" json:"status,omitempty"`
+	SortOrder    int32                  `protobuf:"varint,11,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
+	//  int64 user_id = 12;
+	//  int64 organization_id = 13;
+	ApiIds        []int64 `protobuf:"varint,14,rep,packed,name=api_ids,json=apiIds,proto3" json:"api_ids,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ResourceUpdateRequestData) Reset() {
@@ -4247,20 +4083,6 @@ func (x *ResourceUpdateRequestData) GetSortOrder() int32 {
 	return 0
 }
 
-func (x *ResourceUpdateRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *ResourceUpdateRequestData) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return 0
-}
-
 func (x *ResourceUpdateRequestData) GetApiIds() []int64 {
 	if x != nil {
 		return x.ApiIds
@@ -4314,13 +4136,13 @@ func (x *ResourceDeleteRequest) GetData() *ResourceDeleteRequestData {
 }
 
 type ResourceDeleteRequestData struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserId         int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,3,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	Type           string                 `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Id    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	//  int64 user_id = 2;
+	//  int64 organization_id = 3;
+	Type          string `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ResourceDeleteRequestData) Reset() {
@@ -4356,20 +4178,6 @@ func (*ResourceDeleteRequestData) Descriptor() ([]byte, []int) {
 func (x *ResourceDeleteRequestData) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *ResourceDeleteRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *ResourceDeleteRequestData) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
 	}
 	return 0
 }
@@ -4427,13 +4235,13 @@ func (x *ResourceDetailRequest) GetData() *ResourceDetailRequestData {
 }
 
 type ResourceDetailRequestData struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserId         int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,3,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	Type           string                 `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Id    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	//  int64 user_id = 2;
+	//  int64 organization_id = 3;
+	Type          string `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ResourceDetailRequestData) Reset() {
@@ -4469,20 +4277,6 @@ func (*ResourceDetailRequestData) Descriptor() ([]byte, []int) {
 func (x *ResourceDetailRequestData) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *ResourceDetailRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *ResourceDetailRequestData) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
 	}
 	return 0
 }
@@ -4761,12 +4555,11 @@ func (x *RolePageRequestData) GetSorter() *RolePageRequestSorter {
 }
 
 type RolePageRequestFilter struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	UserId         int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Keyword        string                 `protobuf:"bytes,2,opt,name=keyword,proto3" json:"keyword,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,3,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"open.v1"`
+	//  int64 user_id = 1;
+	Keyword       string `protobuf:"bytes,2,opt,name=keyword,proto3" json:"keyword,omitempty"` //  int64 organization_id = 3;
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *RolePageRequestFilter) Reset() {
@@ -4799,25 +4592,11 @@ func (*RolePageRequestFilter) Descriptor() ([]byte, []int) {
 	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{74}
 }
 
-func (x *RolePageRequestFilter) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
 func (x *RolePageRequestFilter) GetKeyword() string {
 	if x != nil {
 		return x.Keyword
 	}
 	return ""
-}
-
-func (x *RolePageRequestFilter) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return 0
 }
 
 type RolePageRequestSorter struct {
@@ -5038,12 +4817,12 @@ func (x *RoleCreateRequest) GetData() *RoleCreateRequestData {
 }
 
 type RoleCreateRequestData struct {
-	state            protoimpl.MessageState           `protogen:"open.v1"`
-	Name             string                           `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Description      string                           `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
-	Status           string                           `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
-	UserId           int64                            `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrganizationId   int64                            `protobuf:"varint,6,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	Name        string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Description string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
+	Status      string                 `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
+	//  int64 user_id = 5;
+	//  int64 organization_id = 6;
 	RoleAndResources []*RoleAndResourceRelationEntity `protobuf:"bytes,7,rep,name=role_and_resources,json=roleAndResources,proto3" json:"role_and_resources,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
@@ -5098,20 +4877,6 @@ func (x *RoleCreateRequestData) GetStatus() string {
 		return x.Status
 	}
 	return ""
-}
-
-func (x *RoleCreateRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *RoleCreateRequestData) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return 0
 }
 
 func (x *RoleCreateRequestData) GetRoleAndResources() []*RoleAndResourceRelationEntity {
@@ -5216,9 +4981,9 @@ type RoleUpdateRequestData struct {
 	Name        string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Description string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	//  string type = 4;
-	Status           string                           `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
-	UserId           int64                            `protobuf:"varint,6,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrganizationId   int64                            `protobuf:"varint,7,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	Status string `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
+	//  int64 user_id = 6;
+	//  int64 organization_id = 7;
 	RoleAndResources []*RoleAndResourceRelationEntity `protobuf:"bytes,8,rep,name=role_and_resources,json=roleAndResources,proto3" json:"role_and_resources,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
@@ -5280,20 +5045,6 @@ func (x *RoleUpdateRequestData) GetStatus() string {
 		return x.Status
 	}
 	return ""
-}
-
-func (x *RoleUpdateRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *RoleUpdateRequestData) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return 0
 }
 
 func (x *RoleUpdateRequestData) GetRoleAndResources() []*RoleAndResourceRelationEntity {
@@ -5453,12 +5204,10 @@ func (x *RoleDeleteRequest) GetData() *RoleDeleteRequestData {
 }
 
 type RoleDeleteRequestData struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserId         int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,3,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"` //  string type = 4;
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *RoleDeleteRequestData) Reset() {
@@ -5494,20 +5243,6 @@ func (*RoleDeleteRequestData) Descriptor() ([]byte, []int) {
 func (x *RoleDeleteRequestData) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *RoleDeleteRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *RoleDeleteRequestData) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
 	}
 	return 0
 }
@@ -5558,12 +5293,10 @@ func (x *RoleDetailRequest) GetData() *RoleDetailRequestData {
 }
 
 type RoleDetailRequestData struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserId         int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,3,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"` //  string type = 4;
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *RoleDetailRequestData) Reset() {
@@ -5599,20 +5332,6 @@ func (*RoleDetailRequestData) Descriptor() ([]byte, []int) {
 func (x *RoleDetailRequestData) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *RoleDetailRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *RoleDetailRequestData) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
 	}
 	return 0
 }
@@ -5707,13 +5426,11 @@ func (x *RoleUpdateStatusRequest) GetData() *RoleUpdateStatusRequestData {
 }
 
 type RoleUpdateStatusRequestData struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Status         string                 `protobuf:"bytes,2,opt,name=status,proto3" json:"status,omitempty"`
-	UserId         int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,4,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"` //  string type = 5;
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Status        string                 `protobuf:"bytes,2,opt,name=status,proto3" json:"status,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *RoleUpdateStatusRequestData) Reset() {
@@ -5758,20 +5475,6 @@ func (x *RoleUpdateStatusRequestData) GetStatus() string {
 		return x.Status
 	}
 	return ""
-}
-
-func (x *RoleUpdateStatusRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *RoleUpdateStatusRequestData) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return 0
 }
 
 // all roles
@@ -5820,11 +5523,9 @@ func (x *RoleAllRequest) GetData() *RoleAllRequestData {
 }
 
 type RoleAllRequestData struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	UserId         int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *RoleAllRequestData) Reset() {
@@ -5855,20 +5556,6 @@ func (x *RoleAllRequestData) ProtoReflect() protoreflect.Message {
 // Deprecated: Use RoleAllRequestData.ProtoReflect.Descriptor instead.
 func (*RoleAllRequestData) Descriptor() ([]byte, []int) {
 	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{93}
-}
-
-func (x *RoleAllRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *RoleAllRequestData) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return 0
 }
 
 type RoleAllResponse struct {
@@ -6075,12 +5762,12 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\n" +
 	"is_default\x18\x04 \x01(\bR\tisDefault\"O\n" +
 	"\x16UserProfileEditRequest\x125\n" +
-	"\x04data\x18\x01 \x01(\v2!.admin.UserProfileEditRequestDataR\x04data\"q\n" +
-	"\x1aUserProfileEditRequestData\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x1d\n" +
+	"\x04data\x18\x01 \x01(\v2!.admin.UserProfileEditRequestDataR\x04data\"n\n" +
+	"\x1aUserProfileEditRequestData\x12\x1d\n" +
 	"\n" +
 	"first_name\x18\x02 \x01(\tR\tfirstName\x12\x1b\n" +
-	"\tlast_name\x18\x03 \x01(\tR\blastName\"A\n" +
+	"\tlast_name\x18\x03 \x01(\tR\blastName\x12\x14\n" +
+	"\x05phone\x18\x04 \x01(\tR\x05phone\"A\n" +
 	"\x0fUserPageRequest\x12.\n" +
 	"\x04data\x18\x01 \x01(\v2\x1a.admin.UserPageRequestDataR\x04data\"C\n" +
 	"\x10UserPageResponse\x12/\n" +
@@ -6089,11 +5776,9 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x04page\x18\x01 \x01(\x03R\x04page\x12\x14\n" +
 	"\x05limit\x18\x02 \x01(\x03R\x05limit\x124\n" +
 	"\x06filter\x18\x03 \x01(\v2\x1c.admin.UserPageRequestFilterR\x06filter\x124\n" +
-	"\x06sorter\x18\x04 \x01(\v2\x1c.admin.UserPageRequestSorterR\x06sorter\"s\n" +
-	"\x15UserPageRequestFilter\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x18\n" +
-	"\akeyword\x18\x02 \x01(\tR\akeyword\x12'\n" +
-	"\x0forganization_id\x18\x03 \x01(\x03R\x0eorganizationId\"C\n" +
+	"\x06sorter\x18\x04 \x01(\v2\x1c.admin.UserPageRequestSorterR\x06sorter\"1\n" +
+	"\x15UserPageRequestFilter\x12\x18\n" +
+	"\akeyword\x18\x02 \x01(\tR\akeyword\"C\n" +
 	"\x15UserPageRequestSorter\x12\x16\n" +
 	"\x06column\x18\x01 \x01(\tR\x06column\x12\x12\n" +
 	"\x04sort\x18\x02 \x01(\tR\x04sort\"\x9c\x01\n" +
@@ -6119,35 +5804,27 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x11UserUpdateRequest\x120\n" +
 	"\x04data\x18\x01 \x01(\v2\x1c.admin.UserUpdateRequestDataR\x04data\";\n" +
 	"\x12UserUpdateResponse\x12%\n" +
-	"\x04data\x18\x01 \x01(\v2\x11.admin.UserEntityR\x04data\"\xd3\x01\n" +
+	"\x04data\x18\x01 \x01(\v2\x11.admin.UserEntityR\x04data\"\x91\x01\n" +
 	"\x15UserUpdateRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1a\n" +
 	"\bpassword\x18\x03 \x01(\tR\bpassword\x12\x1b\n" +
 	"\tfull_name\x18\x04 \x01(\tR\bfullName\x12\x14\n" +
 	"\x05phone\x18\x05 \x01(\tR\x05phone\x12\x19\n" +
-	"\brole_ids\x18\x06 \x03(\x03R\aroleIds\x12'\n" +
-	"\x0forganization_id\x18\a \x01(\x03R\x0eorganizationId\x12\x17\n" +
-	"\auser_id\x18\b \x01(\x03R\x06userId\"E\n" +
+	"\brole_ids\x18\x06 \x03(\x03R\aroleIds\"E\n" +
 	"\x11UserDeleteRequest\x120\n" +
-	"\x04data\x18\x01 \x01(\v2\x1c.admin.UserDeleteRequestDataR\x04data\"i\n" +
+	"\x04data\x18\x01 \x01(\v2\x1c.admin.UserDeleteRequestDataR\x04data\"'\n" +
 	"\x15UserDeleteRequestData\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12'\n" +
-	"\x0forganization_id\x18\x03 \x01(\x03R\x0eorganizationId\"E\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"E\n" +
 	"\x11UserDetailRequest\x120\n" +
 	"\x04data\x18\x01 \x01(\v2\x1c.admin.UserDetailRequestDataR\x04data\";\n" +
 	"\x12UserDetailResponse\x12%\n" +
-	"\x04data\x18\x01 \x01(\v2\x11.admin.UserEntityR\x04data\"i\n" +
+	"\x04data\x18\x01 \x01(\v2\x11.admin.UserEntityR\x04data\"'\n" +
 	"\x15UserDetailRequestData\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12'\n" +
-	"\x0forganization_id\x18\x03 \x01(\x03R\x0eorganizationId\"Q\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"Q\n" +
 	"\x17UserSwitchStatusRequest\x126\n" +
-	"\x04data\x18\x01 \x01(\v2\".admin.UserSwitchStatusRequestDataR\x04data\"\x87\x01\n" +
+	"\x04data\x18\x01 \x01(\v2\".admin.UserSwitchStatusRequestDataR\x04data\"E\n" +
 	"\x1bUserSwitchStatusRequestData\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12'\n" +
-	"\x0forganization_id\x18\x03 \x01(\x03R\x0eorganizationId\x12\x16\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x16\n" +
 	"\x06status\x18\x04 \x01(\tR\x06status\"\xd9\x02\n" +
 	"\rApiTreeEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
@@ -6191,7 +5868,7 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x0fApiTreeResponse\x12(\n" +
 	"\x04data\x18\x01 \x03(\v2\x14.admin.ApiTreeEntityR\x04data\"C\n" +
 	"\x10ApiCreateRequest\x12/\n" +
-	"\x04data\x18\x01 \x01(\v2\x1b.admin.ApiCreateRequestDataR\x04data\"\xa2\x02\n" +
+	"\x04data\x18\x01 \x01(\v2\x1b.admin.ApiCreateRequestDataR\x04data\"\xe0\x01\n" +
 	"\x14ApiCreateRequestData\x12\x1b\n" +
 	"\tparent_id\x18\x01 \x01(\x03R\bparentId\x12\x12\n" +
 	"\x04type\x18\x02 \x01(\tR\x04type\x12\x12\n" +
@@ -6201,14 +5878,11 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\vdescription\x18\x06 \x01(\tR\vdescription\x12\x16\n" +
 	"\x06status\x18\a \x01(\tR\x06status\x12\x1d\n" +
 	"\n" +
-	"sort_order\x18\b \x01(\x05R\tsortOrder\x12\x17\n" +
-	"\auser_id\x18\t \x01(\x03R\x06userId\x12'\n" +
-	"\x0forganization_id\x18\n" +
-	" \x01(\x03R\x0eorganizationId\"=\n" +
+	"sort_order\x18\b \x01(\x05R\tsortOrder\"=\n" +
 	"\x11ApiCreateResponse\x12(\n" +
 	"\x04data\x18\x01 \x01(\v2\x14.admin.ApiTreeEntityR\x04data\"C\n" +
 	"\x10ApiUpdateRequest\x12/\n" +
-	"\x04data\x18\x01 \x01(\v2\x1b.admin.ApiUpdateRequestDataR\x04data\"\xb2\x02\n" +
+	"\x04data\x18\x01 \x01(\v2\x1b.admin.ApiUpdateRequestDataR\x04data\"\xf0\x01\n" +
 	"\x14ApiUpdateRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12\x12\n" +
@@ -6219,23 +5893,16 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\vdescription\x18\a \x01(\tR\vdescription\x12\x16\n" +
 	"\x06status\x18\b \x01(\tR\x06status\x12\x1d\n" +
 	"\n" +
-	"sort_order\x18\t \x01(\x05R\tsortOrder\x12\x17\n" +
-	"\auser_id\x18\n" +
-	" \x01(\x03R\x06userId\x12'\n" +
-	"\x0forganization_id\x18\v \x01(\x03R\x0eorganizationId\"C\n" +
+	"sort_order\x18\t \x01(\x05R\tsortOrder\"C\n" +
 	"\x10ApiDeleteRequest\x12/\n" +
-	"\x04data\x18\x01 \x01(\v2\x1b.admin.ApiDeleteRequestDataR\x04data\"|\n" +
+	"\x04data\x18\x01 \x01(\v2\x1b.admin.ApiDeleteRequestDataR\x04data\":\n" +
 	"\x14ApiDeleteRequestData\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12'\n" +
-	"\x0forganization_id\x18\x03 \x01(\x03R\x0eorganizationId\x12\x12\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04type\x18\x04 \x01(\tR\x04type\"C\n" +
 	"\x10ApiDetailRequest\x12/\n" +
-	"\x04data\x18\x01 \x01(\v2\x1b.admin.ApiDetailRequestDataR\x04data\"|\n" +
+	"\x04data\x18\x01 \x01(\v2\x1b.admin.ApiDetailRequestDataR\x04data\":\n" +
 	"\x14ApiDetailRequestData\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12'\n" +
-	"\x0forganization_id\x18\x03 \x01(\x03R\x0eorganizationId\x12\x12\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04type\x18\x04 \x01(\tR\x04type\"\x8d\x03\n" +
 	"\x12ResourceTreeEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
@@ -6277,15 +5944,13 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x04apis\x18\x0e \x03(\v2\x10.admin.ApiEntityR\x04apis\x121\n" +
 	"\x15pivot_role_data_scope\x18\x0f \x01(\tR\x12pivotRoleDataScope\"I\n" +
 	"\x13ResourceTreeRequest\x122\n" +
-	"\x04data\x18\x01 \x01(\v2\x1e.admin.ResourceTreeRequestDataR\x04data\"o\n" +
-	"\x17ResourceTreeRequestData\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12'\n" +
-	"\x0forganization_id\x18\x02 \x01(\x03R\x0eorganizationId\x12\x12\n" +
+	"\x04data\x18\x01 \x01(\v2\x1e.admin.ResourceTreeRequestDataR\x04data\"-\n" +
+	"\x17ResourceTreeRequestData\x12\x12\n" +
 	"\x04type\x18\x03 \x01(\tR\x04type\"E\n" +
 	"\x14ResourceTreeResponse\x12-\n" +
 	"\x04data\x18\x01 \x03(\v2\x19.admin.ResourceTreeEntityR\x04data\"M\n" +
 	"\x15ResourceCreateRequest\x124\n" +
-	"\x04data\x18\x01 \x01(\v2 .admin.ResourceCreateRequestDataR\x04data\"\xea\x02\n" +
+	"\x04data\x18\x01 \x01(\v2 .admin.ResourceCreateRequestDataR\x04data\"\xa8\x02\n" +
 	"\x19ResourceCreateRequestData\x12\x1b\n" +
 	"\tparent_id\x18\x01 \x01(\x03R\bparentId\x12\x12\n" +
 	"\x04type\x18\x02 \x01(\tR\x04type\x12#\n" +
@@ -6299,13 +5964,11 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\n" +
 	"sort_order\x18\n" +
 	" \x01(\x05R\tsortOrder\x12\x17\n" +
-	"\auser_id\x18\v \x01(\x03R\x06userId\x12'\n" +
-	"\x0forganization_id\x18\f \x01(\x03R\x0eorganizationId\x12\x17\n" +
 	"\aapi_ids\x18\r \x03(\x03R\x06apiIds\"G\n" +
 	"\x16ResourceCreateResponse\x12-\n" +
 	"\x04data\x18\x01 \x01(\v2\x19.admin.ResourceTreeEntityR\x04data\"M\n" +
 	"\x15ResourceUpdateRequest\x124\n" +
-	"\x04data\x18\x01 \x01(\v2 .admin.ResourceUpdateRequestDataR\x04data\"\xfa\x02\n" +
+	"\x04data\x18\x01 \x01(\v2 .admin.ResourceUpdateRequestDataR\x04data\"\xb8\x02\n" +
 	"\x19ResourceUpdateRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12\x12\n" +
@@ -6320,22 +5983,16 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	" \x01(\tR\x06status\x12\x1d\n" +
 	"\n" +
 	"sort_order\x18\v \x01(\x05R\tsortOrder\x12\x17\n" +
-	"\auser_id\x18\f \x01(\x03R\x06userId\x12'\n" +
-	"\x0forganization_id\x18\r \x01(\x03R\x0eorganizationId\x12\x17\n" +
 	"\aapi_ids\x18\x0e \x03(\x03R\x06apiIds\"M\n" +
 	"\x15ResourceDeleteRequest\x124\n" +
-	"\x04data\x18\x01 \x01(\v2 .admin.ResourceDeleteRequestDataR\x04data\"\x81\x01\n" +
+	"\x04data\x18\x01 \x01(\v2 .admin.ResourceDeleteRequestDataR\x04data\"?\n" +
 	"\x19ResourceDeleteRequestData\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12'\n" +
-	"\x0forganization_id\x18\x03 \x01(\x03R\x0eorganizationId\x12\x12\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04type\x18\x04 \x01(\tR\x04type\"M\n" +
 	"\x15ResourceDetailRequest\x124\n" +
-	"\x04data\x18\x01 \x01(\v2 .admin.ResourceDetailRequestDataR\x04data\"\x81\x01\n" +
+	"\x04data\x18\x01 \x01(\v2 .admin.ResourceDetailRequestDataR\x04data\"?\n" +
 	"\x19ResourceDetailRequestData\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12'\n" +
-	"\x0forganization_id\x18\x03 \x01(\x03R\x0eorganizationId\x12\x12\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04type\x18\x04 \x01(\tR\x04type\"C\n" +
 	"\x16ResourceDetailResponse\x12)\n" +
 	"\x04data\x18\x01 \x01(\v2\x15.admin.ResourceEntityR\x04data\"\x9a\x02\n" +
@@ -6358,11 +6015,9 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x04page\x18\x01 \x01(\x03R\x04page\x12\x14\n" +
 	"\x05limit\x18\x02 \x01(\x03R\x05limit\x124\n" +
 	"\x06filter\x18\x03 \x01(\v2\x1c.admin.RolePageRequestFilterR\x06filter\x124\n" +
-	"\x06sorter\x18\x04 \x01(\v2\x1c.admin.RolePageRequestSorterR\x06sorter\"s\n" +
-	"\x15RolePageRequestFilter\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x18\n" +
-	"\akeyword\x18\x02 \x01(\tR\akeyword\x12'\n" +
-	"\x0forganization_id\x18\x03 \x01(\x03R\x0eorganizationId\"C\n" +
+	"\x06sorter\x18\x04 \x01(\v2\x1c.admin.RolePageRequestSorterR\x06sorter\"1\n" +
+	"\x15RolePageRequestFilter\x12\x18\n" +
+	"\akeyword\x18\x02 \x01(\tR\akeyword\"C\n" +
 	"\x15RolePageRequestSorter\x12\x16\n" +
 	"\x06column\x18\x01 \x01(\tR\x06column\x12\x12\n" +
 	"\x04sort\x18\x02 \x01(\tR\x04sort\"C\n" +
@@ -6376,25 +6031,21 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"total_page\x18\x04 \x01(\x03R\ttotalPage\x12%\n" +
 	"\x04list\x18\x05 \x03(\v2\x11.admin.RoleEntityR\x04list\"E\n" +
 	"\x11RoleCreateRequest\x120\n" +
-	"\x04data\x18\x01 \x01(\v2\x1c.admin.RoleCreateRequestDataR\x04data\"\xfb\x01\n" +
+	"\x04data\x18\x01 \x01(\v2\x1c.admin.RoleCreateRequestDataR\x04data\"\xb9\x01\n" +
 	"\x15RoleCreateRequestData\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x16\n" +
-	"\x06status\x18\x04 \x01(\tR\x06status\x12\x17\n" +
-	"\auser_id\x18\x05 \x01(\x03R\x06userId\x12'\n" +
-	"\x0forganization_id\x18\x06 \x01(\x03R\x0eorganizationId\x12R\n" +
+	"\x06status\x18\x04 \x01(\tR\x06status\x12R\n" +
 	"\x12role_and_resources\x18\a \x03(\v2$.admin.RoleAndResourceRelationEntityR\x10roleAndResources\";\n" +
 	"\x12RoleCreateResponse\x12%\n" +
 	"\x04data\x18\x01 \x01(\v2\x11.admin.RoleEntityR\x04data\"E\n" +
 	"\x11RoleUpdateRequest\x120\n" +
-	"\x04data\x18\x01 \x01(\v2\x1c.admin.RoleUpdateRequestDataR\x04data\"\x8b\x02\n" +
+	"\x04data\x18\x01 \x01(\v2\x1c.admin.RoleUpdateRequestDataR\x04data\"\xc9\x01\n" +
 	"\x15RoleUpdateRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x16\n" +
-	"\x06status\x18\x05 \x01(\tR\x06status\x12\x17\n" +
-	"\auser_id\x18\x06 \x01(\x03R\x06userId\x12'\n" +
-	"\x0forganization_id\x18\a \x01(\x03R\x0eorganizationId\x12R\n" +
+	"\x06status\x18\x05 \x01(\tR\x06status\x12R\n" +
 	"\x12role_and_resources\x18\b \x03(\v2$.admin.RoleAndResourceRelationEntityR\x10roleAndResources\"x\n" +
 	"\x1dRoleAndResourceRelationEntity\x12\x17\n" +
 	"\arole_id\x18\x01 \x01(\x03R\x06roleId\x12\x1f\n" +
@@ -6405,31 +6056,23 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x12RoleUpdateResponse\x12%\n" +
 	"\x04data\x18\x01 \x01(\v2\x11.admin.RoleEntityR\x04data\"E\n" +
 	"\x11RoleDeleteRequest\x120\n" +
-	"\x04data\x18\x01 \x01(\v2\x1c.admin.RoleDeleteRequestDataR\x04data\"i\n" +
+	"\x04data\x18\x01 \x01(\v2\x1c.admin.RoleDeleteRequestDataR\x04data\"'\n" +
 	"\x15RoleDeleteRequestData\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12'\n" +
-	"\x0forganization_id\x18\x03 \x01(\x03R\x0eorganizationId\"E\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"E\n" +
 	"\x11RoleDetailRequest\x120\n" +
-	"\x04data\x18\x01 \x01(\v2\x1c.admin.RoleDetailRequestDataR\x04data\"i\n" +
+	"\x04data\x18\x01 \x01(\v2\x1c.admin.RoleDetailRequestDataR\x04data\"'\n" +
 	"\x15RoleDetailRequestData\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12'\n" +
-	"\x0forganization_id\x18\x03 \x01(\x03R\x0eorganizationId\";\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\";\n" +
 	"\x12RoleDetailResponse\x12%\n" +
 	"\x04data\x18\x01 \x01(\v2\x11.admin.RoleEntityR\x04data\"Q\n" +
 	"\x17RoleUpdateStatusRequest\x126\n" +
-	"\x04data\x18\x01 \x01(\v2\".admin.RoleUpdateStatusRequestDataR\x04data\"\x87\x01\n" +
+	"\x04data\x18\x01 \x01(\v2\".admin.RoleUpdateStatusRequestDataR\x04data\"E\n" +
 	"\x1bRoleUpdateStatusRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x16\n" +
-	"\x06status\x18\x02 \x01(\tR\x06status\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12'\n" +
-	"\x0forganization_id\x18\x04 \x01(\x03R\x0eorganizationId\"?\n" +
+	"\x06status\x18\x02 \x01(\tR\x06status\"?\n" +
 	"\x0eRoleAllRequest\x12-\n" +
-	"\x04data\x18\x01 \x01(\v2\x19.admin.RoleAllRequestDataR\x04data\"V\n" +
-	"\x12RoleAllRequestData\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12'\n" +
-	"\x0forganization_id\x18\x02 \x01(\x03R\x0eorganizationId\"8\n" +
+	"\x04data\x18\x01 \x01(\v2\x19.admin.RoleAllRequestDataR\x04data\"\x14\n" +
+	"\x12RoleAllRequestData\"8\n" +
 	"\x0fRoleAllResponse\x12%\n" +
 	"\x04data\x18\x01 \x03(\v2\x11.admin.RoleEntityR\x04data2\xe9\x05\n" +
 	"\x04user\x12:\n" +

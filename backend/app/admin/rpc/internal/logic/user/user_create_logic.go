@@ -40,6 +40,11 @@ func (l *UserCreateLogic) UserCreate(in *admin.UserCreateRequest) (resp *admin.U
 		}
 	}()
 
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	// Password is required for user creation
 	if in.Data.Password == "" {
 		return nil, errorx.New("Password Is Required")
@@ -65,11 +70,17 @@ func (l *UserCreateLogic) UserCreate(in *admin.UserCreateRequest) (resp *admin.U
 	userModel.FirstName, userModel.MidName, userModel.LastName = stringx.ParseFullName(in.Data.FullName)
 	userModel.OrganizationUsers = []*model.OrganizationUser{
 		{
-			OrganizationId: in.Data.OrganizationId,
+			OrganizationId: claim.OrganizationId,
 			Status:         constants.OrganizationUserStatusActive,
+			FirstName:      userModel.FirstName,
+			MidName:        userModel.MidName,
+			LastName:       userModel.LastName,
+			Phone:          in.Data.Phone,
+			FullName:       userModel.FullName,
 		},
 	}
-	user, err := l.baseLogic.UserLogic.AddOrganizationUser(l.ctx, userModel, in.Data.OrganizationId, in.Data.RoleIds)
+	// todo remove to OrganizationUser repo
+	user, err := l.baseLogic.UserLogic.AddOrganizationUser(l.ctx, userModel, claim.OrganizationId, in.Data.RoleIds)
 	if err != nil {
 		return nil, err
 	}

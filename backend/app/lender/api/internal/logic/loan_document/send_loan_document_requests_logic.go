@@ -10,7 +10,6 @@ import (
 	"zeebee-backend/app/lender/api/internal/types"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
 )
 
 type SendLoanDocumentRequestsLogic struct {
@@ -50,10 +49,10 @@ func (l *SendLoanDocumentRequestsLogic) SendLoanDocumentRequests(req *types.Loan
 	}
 
 	// Get lender company id and employee id from context
-	rpcReq.Data.OrganizationId, rpcReq.Data.UserId, err = utils.GetOrganizationAndUserId(l.ctx)
-	if err != nil {
-		return nil, errorx.WithStack(err)
-	}
+	// rpcReq.Data.OrganizationId, rpcReq.Data.UserId, err = utils.GetOrganizationAndUserId(l.ctx)
+	// if err != nil {
+	// 	return nil, errorx.WithStack(err)
+	// }
 
 	// Call RPC method
 	_, err = l.svcCtx.LoanDocumentRpcClient.SendRequests(l.ctx, rpcReq)

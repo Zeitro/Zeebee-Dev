@@ -3,12 +3,11 @@ package userlogic
 import (
 	"context"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
-	"zeebee-backend/common/constants"
-
-	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/common/errorx"
 )
@@ -35,7 +34,8 @@ func (l *UserSwitchStatusLogic) UserSwitchStatus(in *admin.UserSwitchStatusReque
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	err = l.baseLogic.UserLogic.SwitchOrganizationUserStatus(l.ctx, in.Data.Id, in.Data.OrganizationId, constants.OrganizationAndUserStatus(in.Data.Status), constants.UserTypeAdmin)
+	// todo handle switch  status
+	// err = l.baseLogic.UserLogic.SwitchOrganizationUserStatus(l.ctx, in.Data.Id, in.Data.OrganizationId, constants.OrganizationAndUserStatus(in.Data.Status), constants.UserTypeAdmin)
 
 	return &admin.EmptyResponse{}, nil
 }

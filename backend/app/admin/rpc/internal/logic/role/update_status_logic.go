@@ -35,7 +35,12 @@ func (l *UpdateStatusLogic) UpdateStatus(in *admin.RoleUpdateStatusRequest) (res
 		}
 	}()
 
-	err = l.baseLogic.RoleLogic.UpdateStatus(l.ctx, in.Data.Id, in.Data.OrganizationId, constants.UserTypeAdmin, constants.CommonStatus(in.Data.Status))
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	err = l.baseLogic.RoleLogic.UpdateStatus(l.ctx, in.Data.Id, claim.OrganizationId, constants.UserTypeAdmin, constants.CommonStatus(in.Data.Status))
 	if err != nil {
 		return nil, err
 	}

@@ -10,7 +10,6 @@ import (
 	"zeebee-backend/app/lender/api/internal/types"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
 )
 
 type AddFilesLogic struct {
@@ -47,12 +46,6 @@ func (l *AddFilesLogic) AddFiles(req *types.LoanDocumentAddFilesRequest) (resp *
 	})
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
-	}
-
-	// Get lender company id and employee id from context
-	rpcReq.Data.OrganizationId, rpcReq.Data.UserId, err = utils.GetOrganizationAndUserId(l.ctx)
-	if err != nil {
-		return nil, errorx.WithStack(err)
 	}
 
 	// Call RPC method

@@ -5,6 +5,7 @@ import (
 
 	"github.com/jinzhu/copier"
 
+	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/constants"
@@ -19,13 +20,15 @@ type UserDetailLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	baseLogic *logic.BaseLogic
 }
 
 func NewUserDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserDetailLogic {
 	return &UserDetailLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -35,7 +38,13 @@ func (l *UserDetailLogic) UserDetail(in *admin.UserDetailRequest) (resp *admin.U
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	user, err := l.svcCtx.UserRepo.GetOrganizationUser(l.ctx, in.Data.Id, in.Data.OrganizationId, constants.UserTypeAdmin)
+
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := l.svcCtx.UserRepo.GetOrganizationUser(l.ctx, in.Data.Id, claim.OrganizationId, constants.UserTypeAdmin)
 	if err != nil {
 		return nil, err
 	}
@@ -51,11 +60,12 @@ func (l *UserDetailLogic) UserDetail(in *admin.UserDetailRequest) (resp *admin.U
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 
-	relation, err := l.svcCtx.OrganizationAndUserRepo.GetRelation(l.ctx, in.Data.OrganizationId, in.Data.Id)
-	if err != nil {
-		return nil, err
-	}
-	userEntity.PivotOrganizationStatus = string(relation.Status)
+	// todo get relation
+	// relation, err := l.svcCtx.OrganizationUserRepo.GetRelation(l.ctx, claim.OrganizationId, in.Data.Id)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// userEntity.PivotOrganizationStatus = string(relation.Status)
 
 	return &admin.UserDetailResponse{
 		Data: userEntity,

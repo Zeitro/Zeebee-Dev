@@ -10,7 +10,6 @@ import (
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
 )
 
 type RoleAllLogic struct {
@@ -33,16 +32,8 @@ func (l *RoleAllLogic) RoleAll(req *types.EmptyRequest) (resp *types.RoleAllResp
 		List: make([]*types.RoleEntity, 0),
 	}
 
-	claim, err := utils.GetUserClaimFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	rpcReq := &admin.RoleAllRequest{
-		Data: &admin.RoleAllRequestData{
-			UserId:         claim.UserId,
-			OrganizationId: claim.OrganizationId,
-		},
+		Data: &admin.RoleAllRequestData{},
 	}
 
 	rpcResp, err := l.svcCtx.RoleRpcClient.All(l.ctx, rpcReq)

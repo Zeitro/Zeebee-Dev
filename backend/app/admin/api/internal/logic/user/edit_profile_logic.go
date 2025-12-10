@@ -42,7 +42,6 @@ func (l *EditProfileLogic) EditProfile(req *types.UserEditProfileRequest) (resp 
 
 	rpcReq := &admin.UserProfileEditRequest{
 		Data: &admin.UserProfileEditRequestData{
-			UserId:    userId,
 			FirstName: req.FirstName,
 			LastName:  req.LastName,
 		},

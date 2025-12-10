@@ -48,13 +48,7 @@ func (l *LoginLogic) Login(in *admin.UserLoginRequest) (resp *admin.UserLoginRes
 		Period:   global.Config.LimiterConf.Login.Period,
 		RedisCli: global.GetRedis(),
 	}
-	jwtConfig := logic2.JwtConfig{
-		AccessSecret:  l.svcCtx.Config.JwtAuth.AccessSecret,
-		AccessExpire:  l.svcCtx.Config.JwtAuth.AccessExpire,
-		RefreshSecret: l.svcCtx.Config.JwtAuth.RefreshSecret,
-		RefreshExpire: l.svcCtx.Config.JwtAuth.RefreshExpire,
-	}
-	token, err := l.baseLogic.UserLogic.Login(l.ctx, loginReq, limiter, jwtConfig)
+	token, err := l.baseLogic.UserLogic.Login(l.ctx, loginReq, limiter)
 	if err != nil {
 		return nil, err
 	}
