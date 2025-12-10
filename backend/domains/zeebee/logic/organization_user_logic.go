@@ -111,7 +111,7 @@ func (l *OrganizationUserLogic) InviteOrganizationUser(ctx context.Context, crea
 
 		// create user if not exist
 		if user == nil || user.Id == 0 {
-			pwd = random.RandString(10)
+			pwd = random.RandString(10) + random.RandNumeral(5)
 			pwd = strutil.UpperFirst(pwd)
 			pwdHash, innerErr := utils.HashPassword(pwd)
 			if innerErr != nil {
