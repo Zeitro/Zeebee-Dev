@@ -44,13 +44,13 @@ func (repo *BorrowerPropertyRepo) GetOne(ctx context.Context, id int64) (result 
 	return
 }
 
-func (repo *BorrowerPropertyRepo) GetOrCreateBorrowerPropertyWithTxForBorrower(ctx context.Context, tx *gorm.DB, creatorId int64, creatorName string, address model.Address) (result *model.BorrowerProperty, err error) {
+func (repo *BorrowerPropertyRepo) GetOrCreateBorrowerPropertyWithTxForBorrower(ctx context.Context, tx *gorm.DB, organizationId int64, creatorId int64, creatorName string, address model.Address) (result *model.BorrowerProperty, err error) {
 	if len(address.City) == 0 || len(address.Address1) == 0 || len(address.State) == 0 {
 		return nil, fmt.Errorf("Invalid Borrower Address")
 	}
 	// if not existed,create one
 	err = tx.WithContext(ctx).
-		Where("creator_id = ? ", creatorId).
+		Where("organization_id = ? ", organizationId).
 		Where("address->>'state' = ?", address.State).
 		Where("address->>'city' = ?", address.City).
 		Where("address->>'address1' = ?", address.Address1).

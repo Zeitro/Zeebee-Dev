@@ -396,34 +396,34 @@ func (l *UserLogic) SwitchOrganization(ctx context.Context, userId int64, organi
 }
 
 // RegisterWithOrganization register user with organization
-func (l *UserLogic) RegisterWithOrganization(ctx context.Context, user *model.User, organization *model.Organization, userType constants.UserType) (newUser *model.User, err error) {
+func (l *UserLogic) RegisterWithOrganization(ctx context.Context, user *model.User, organization *model.Organization, userType constants.UserType) (newUser *model.User, organizationUser *model.OrganizationUser, err error) {
 	// check user exist
 	if user == nil {
-		return nil, errorx.New("User Is Empty")
+		return nil, nil, errorx.New("User Is Empty")
 	}
 	isExisted, err := l.repos.UserRepo.IsExistedByColumns(ctx, map[string]interface{}{
 		"email": user.Email,
 		"type":  userType,
 	})
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	if isExisted {
-		return nil, errorx.New("User Is Already Existed")
+		return nil, nil, errorx.New("User Is Already Existed")
 	}
 	// check organization exist
 	if organization == nil {
-		return nil, errorx.New("Organization Is Empty")
+		return nil, nil, errorx.New("Organization Is Empty")
 	}
 	isExisted, err = l.repos.OrganizationRepo.IsExistedByColumns(ctx, map[string]interface{}{
 		"name": organization.Name,
 		"type": userType,
 	})
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	if isExisted {
-		return nil, errorx.New("Organization Is Already Existed")
+		return nil, nil, errorx.New("Organization Is Already Existed")
 	}
 
 	err = l.repos.UserRepo.Transaction(ctx, func(tx *gorm.DB) error {
@@ -462,7 +462,7 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, user *model.Us
 		}
 
 		// create organization user
-		orgUser := &model.OrganizationUser{
+		organizationUser = &model.OrganizationUser{
 			OrganizationId: organization.Id,
 			UserId:         user.Id,
 			FirstName:      user.FirstName,
@@ -473,14 +473,14 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, user *model.Us
 			Roles:          roles,
 		}
 		// create organization and user relation
-		_, innerErr = l.repos.OrganizationUserRepo.CreateWithTx(ctx, tx, orgUser, true)
+		organizationUser, innerErr = l.repos.OrganizationUserRepo.CreateWithTx(ctx, tx, organizationUser, true)
 		return innerErr
 	})
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return user, nil
+	return user, organizationUser, nil
 }
 
 // VerifyUserEmail verity user email

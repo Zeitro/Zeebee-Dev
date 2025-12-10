@@ -39,7 +39,7 @@ func (l *BorrowerNamesLogic) BorrowerNames(in *borrower.BorrowerNamesRequest) (r
 		return nil, err
 	}
 
-	names, err := l.svcCtx.LoanApplicantRepo.FindStrDistinctColumn(l.ctx, "full_name", map[string]interface{}{"borrower_id": claim.OrganizationId})
+	names, err := l.svcCtx.LoanApplicantRepo.FindStrDistinctColumn(l.ctx, "full_name", map[string]interface{}{"borrower_organization_id": claim.OrganizationId})
 	if err != nil {
 		return nil, err
 	}

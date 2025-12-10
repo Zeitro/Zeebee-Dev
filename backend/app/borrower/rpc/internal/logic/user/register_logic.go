@@ -54,6 +54,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 	}()
 	// check if user already exists
 	var existedUser *model.User
+	var organizationUserModel *model.OrganizationUser
 	in.Data.Email = strings.ToLower(in.Data.Email)
 	existedUser, _ = l.svcCtx.UserRepo.GetUserByEmail(l.ctx, in.Data.Email, constants.UserTypeBorrower)
 
@@ -104,7 +105,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 		OwnerType: constants.OrganizationOwnerTypeNone,
 	}
 
-	userModel, err = l.baseLogic.UserLogic.RegisterWithOrganization(l.ctx, userModel, organizationModel, constants.UserTypeBorrower)
+	userModel, organizationUserModel, err = l.baseLogic.UserLogic.RegisterWithOrganization(l.ctx, userModel, organizationModel, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}
@@ -129,7 +130,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 		}
 		// create draft loan
 		ctx := context.WithoutCancel(newCxt)
-		err := l.handlePreapproveLoan(newCxt, userModel.Id, userModel.FullName, in.Data.PreApprovalRequestId, in.Data.LenderOrganizationId)
+		err := l.handlePreapproveLoan(newCxt, organizationUserModel.Id, organizationUserModel.FullName, in.Data.PreApprovalRequestId, in.Data.LenderOrganizationId)
 		if err != nil {
 			if errors.Is(err, context.Canceled) {
 				l.WithContext(ctx).
@@ -199,7 +200,7 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int6
 			// get BorrowerProperty
 			func() error {
 				var err error
-				borrowerProperty, err = l.svcCtx.BorrowerPropertyRepo.GetOrCreateBorrowerPropertyWithTxForBorrower(ctx, tx, creatorId, creatorName, model.Address{
+				borrowerProperty, err = l.svcCtx.BorrowerPropertyRepo.GetOrCreateBorrowerPropertyWithTxForBorrower(ctx, tx, organizationId, creatorId, creatorName, model.Address{
 					State:    preApproveRequest.Property.Address.State,
 					City:     preApproveRequest.Property.Address.City,
 					Address1: preApproveRequest.Property.Address.Address1,

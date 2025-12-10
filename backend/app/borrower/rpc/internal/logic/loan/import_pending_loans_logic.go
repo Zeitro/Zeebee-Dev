@@ -71,11 +71,11 @@ func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingL
 			},
 		}, nil
 	}
-	creatorId := claim.OrganizationUserId
-	creator, err := l.svcCtx.UserRepo.GetUser(l.ctx, creatorId, constants.UserTypeBorrower)
-	if err != nil {
-		return nil, err
-	}
+	// creatorId := claim.OrganizationUserId
+	// creator, err := l.svcCtx.UserRepo.GetUser(l.ctx, creatorId, constants.UserTypeBorrower)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	// create  loan
 	err = l.svcCtx.LoanRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
@@ -86,7 +86,7 @@ func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingL
 			var uid string
 			data := models[i]
 			// get BorrowerProperty
-			borrowerProperty, innerErr = l.svcCtx.BorrowerPropertyRepo.GetOrCreateBorrowerPropertyWithTxForBorrower(l.ctx, tx, creator.Id, creator.FullName, data.borrowerProperty.Address)
+			borrowerProperty, innerErr = l.svcCtx.BorrowerPropertyRepo.GetOrCreateBorrowerPropertyWithTxForBorrower(l.ctx, tx, claim.OrganizationId, claim.OrganizationUserId, claim.Username, data.borrowerProperty.Address)
 			if innerErr != nil {
 				return innerErr
 			}

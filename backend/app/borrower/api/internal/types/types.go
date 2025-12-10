@@ -69,7 +69,7 @@ type BorrowerEntityEditRequest struct {
 	Tin            string       `json:"tin" validate:"required,min=9,max=9"`
 	MailingAddress AddressEntry `json:"mailing_address" validate:"required"`
 	ContactEmail   string       `json:"contact_email" validate:"required,email,min=5,max=100"`
-	ContactName    string       `json:"contact_name" validate:"required,min=5,max=100"`
+	ContactName    string       `json:"contact_name" validate:"required,min=2,max=100"`
 	ContactPhone   string       `json:"contact_phone" validate:"required,min=9,max=15"`
 }
 
@@ -486,8 +486,8 @@ type LoanPropertyApplyEntry struct {
 	ExistingMaturityDate         string           `json:"existing_maturity_date, optional" `
 	PurchaseAmount               float64          `json:"purchase_amount, optional" validate:"gte=0"`
 	PurchaseDate                 string           `json:"purchase_date, optional" `
-	HasAssignmentFee             bool             `json:"has_assignment_fee, optional" validate:"required_if=HasAssignmentFee true,omitempty,gte=0"`
-	AssignmentFeeAmount          float64          `json:"assignment_fee_amount, optional" validate:"gte=0"`
+	HasAssignmentFee             bool             `json:"has_assignment_fee, optional"`
+	AssignmentFeeAmount          float64          `json:"assignment_fee_amount, optional" validate:"required_if=HasAssignmentFee true,gte=0"`
 	HasSubordinateDebt           bool             `json:"has_subordinate_debt, optional"`
 	SubordinateDebtAmount        float64          `json:"subordinate_debt_amount, optional" validate:"gte=0"`
 	ScheduledCloseEscrowDate     string           `json:"scheduled_close_escrow_date, optional"`
@@ -523,8 +523,8 @@ type LoanPropertyApplyFormPdfEntry struct {
 	ExistingMaturityDate         string           `json:"existing_maturity_date, optional" `
 	PurchaseAmount               float64          `json:"purchase_amount, optional" validate:"gte=0"`
 	PurchaseDate                 string           `json:"purchase_date, optional" `
-	HasAssignmentFee             bool             `json:"has_assignment_fee, optional" validate:"required_if=HasAssignmentFee true,omitempty,gte=0"`
-	AssignmentFeeAmount          float64          `json:"assignment_fee_amount, optional" validate:"gte=0"`
+	HasAssignmentFee             bool             `json:"has_assignment_fee, optional"`
+	AssignmentFeeAmount          float64          `json:"assignment_fee_amount, optional" validate:"required_if=HasAssignmentFee true,gte=0"`
 	HasSubordinateDebt           bool             `json:"has_subordinate_debt, optional"`
 	SubordinateDebtAmount        float64          `json:"subordinate_debt_amount, optional" validate:"gte=0"`
 	ScheduledCloseEscrowDate     string           `json:"scheduled_close_escrow_date, optional"`
@@ -545,8 +545,9 @@ type LoanPropertyApplyFormPdfEntry struct {
 type LoanPropertyEditEntry struct {
 	Id                    int64   `json:"id,optional"`
 	BorrowerPropertyId    int64   `json:"borrower_property_id" validate:"required,gt=0"`
-	Ower                  string  `json:"ower,optional" validate:"max=50"`
+	Owner                 string  `json:"owner,optional" validate:"max=50"`
 	PurchaseAmount        float64 `json:"purchase_amount,optional"`
+	Arv                   float64 `json:"arv,optional"`
 	PurchaseDate          string  `json:"purchase_date,optional"`
 	ExistingLenderCompany string  `json:"existing_lender_company, optional" validate:"max=100"`
 }
