@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
 	"github.com/duke-git/lancet/v2/random"
@@ -167,7 +166,6 @@ func (l *OrganizationUserLogic) InviteOrganizationUser(ctx context.Context, crea
 			LastName:         user.LastName,
 			TargetEmail:      createDto.Email,
 			UserType:         createDto.UserType,
-			HasPwd:           len(pwd) > 0,
 			Pwd:              pwd,
 			OrganizationName: organization.Name,
 			OrganizationId:   organizationUser.OrganizationId,
@@ -210,25 +208,21 @@ func (l *OrganizationUserLogic) SendInviteEmail(ctx context.Context, input dto.O
 		return err
 	}
 
-	inputKey := stringx.Format(constants.UserInviteInput, input.UserType, user.Email, input.OrganizationId)
-	previousInputContent, err := l.redisCli.Get(ctx, inputKey)
+	inputKey := stringx.Format(constants.UserInviteUserPwd, input.UserType, user.Email, input.OrganizationId)
+	pwd, err := l.redisCli.Get(ctx, inputKey)
 	if err != nil {
 		return err
 	}
-	previousInput := SendInviteUserEmailInput{}
-	_ = json.Unmarshal([]byte(previousInputContent), &previousInput)
-	if previousInput.OrganizationId != input.OrganizationId {
-		// build  input
-		previousInput = SendInviteUserEmailInput{
-			EmailConfig:      input.EmailConfig,
-			FirstName:        user.FirstName,
-			LastName:         user.LastName,
-			TargetEmail:      user.Email,
-			UserType:         input.UserType,
-			OrganizationName: organization.Name,
-			OrganizationId:   input.OrganizationId,
-			Operator:         input.Operator,
-		}
+	previousInput := SendInviteUserEmailInput{
+		EmailConfig:      input.EmailConfig,
+		FirstName:        user.FirstName,
+		LastName:         user.LastName,
+		TargetEmail:      user.Email,
+		UserType:         input.UserType,
+		OrganizationName: organization.Name,
+		OrganizationId:   input.OrganizationId,
+		Operator:         input.Operator,
+		Pwd:              pwd,
 	}
 	go func() {
 		newCtx := context.WithoutCancel(ctx)
@@ -409,12 +403,12 @@ func (l *OrganizationUserLogic) UpdateProfile(ctx context.Context, input dto.Org
 }
 
 type SendInviteUserEmailInput struct {
-	EmailConfig      dto.SendInviteUserEmailConfig
-	FirstName        string
-	LastName         string
-	TargetEmail      string
-	UserType         constants.UserType
-	HasPwd           bool
+	EmailConfig dto.SendInviteUserEmailConfig
+	FirstName   string
+	LastName    string
+	TargetEmail string
+	UserType    constants.UserType
+	// HasPwd           bool
 	Pwd              string
 	OrganizationName string
 	OrganizationId   int64
@@ -449,12 +443,15 @@ func (l *OrganizationUserLogic) sendInviteEmail(ctx context.Context, input SendI
 		input.Code = code
 	}
 	// save input
-	inputKey := stringx.Format(constants.UserInviteInput, input.UserType, input.TargetEmail, input.OrganizationId)
-	inputContent, _ := json.Marshal(input)
-	err = l.redisCli.SetExpire(ctx, inputKey, string(inputContent), input.EmailConfig.ExpireSeconds)
-	if err != nil {
-		return errorx.WithStack(err)
+	if len(input.Pwd) > 0 {
+		pwdKey := stringx.Format(constants.UserInviteUserPwd, input.UserType, input.TargetEmail, input.OrganizationId)
+		// inputContent, _ := json.Marshal(input)
+		err = l.redisCli.SetExpire(ctx, pwdKey, input.Pwd, input.EmailConfig.ExpireSeconds)
+		if err != nil {
+			return errorx.WithStack(err)
+		}
 	}
+
 	// send invite email
 	data := map[string]interface{}{
 		"url": fmt.Sprintf("%s?code=%s&email=%s&first_name=%s&last_name=%s&organization_name=%s&organization_id=%v",
@@ -466,7 +463,7 @@ func (l *OrganizationUserLogic) sendInviteEmail(ctx context.Context, input SendI
 			input.OrganizationName,
 			input.OrganizationId,
 		),
-		"has_pwd":           input.HasPwd,
+		"has_pwd":           len(input.Pwd) > 0,
 		"pwd":               input.Pwd,
 		"operator":          input.Operator,
 		"organization_name": input.OrganizationName,
