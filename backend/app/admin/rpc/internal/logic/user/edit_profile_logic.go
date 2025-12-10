@@ -9,7 +9,7 @@ import (
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/constants"
-	"zeebee-backend/common/stringx"
+	"zeebee-backend/domains/zeebee/data/dto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -39,23 +39,25 @@ func (l *EditProfileLogic) EditProfile(in *admin.UserProfileEditRequest) (resp *
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	user, err := l.svcCtx.UserRepo.GetUser(l.ctx, in.Data.UserId, constants.UserTypeAdmin)
-	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
-	}
-	err = copier.CopyWithOption(user, in.Data, copier.Option{
-		CaseSensitive: true,
-	})
-	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
-	}
-
-	user.FullName = stringx.FormatFullName(user.FirstName, user.MidName, user.LastName)
-	user, err = l.svcCtx.UserRepo.UpdateOneById(l.ctx, user.Id, user)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	token, err := l.baseLogic.UserLogic.Info(l.ctx, user.Id, user.DefaultOrganizationId, constants.UserTypeAdmin)
+
+	input := dto.OrganizationUserProfileEditRequestDto{
+		OrganizationId: claim.OrganizationId,
+		UserId:         claim.UserId,
+		UserType:       claim.UserType,
+		FirstName:      in.Data.FirstName,
+		MidName:        "",
+		LastName:       in.Data.LastName,
+		Phone:          in.Data.Phone,
+	}
+	err = l.baseLogic.OrganizationUserLogic.UpdateProfile(l.ctx, input)
+	if err != nil {
+		return nil, err
+	}
+	token, err := l.baseLogic.UserLogic.Info(l.ctx, claim.UserId, claim.OrganizationUserId, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}

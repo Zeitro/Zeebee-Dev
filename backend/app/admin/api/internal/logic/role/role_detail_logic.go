@@ -10,7 +10,6 @@ import (
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
 )
 
 type RoleDetailLogic struct {
@@ -34,13 +33,6 @@ func (l *RoleDetailLogic) RoleDetail(req *types.PathIdRequest) (resp *types.Role
 		Data: &admin.RoleDetailRequestData{},
 	}
 	rpcReq.Data.Id = req.Id
-
-	claim, err := utils.GetUserClaimFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-	rpcReq.Data.UserId = claim.UserId
-	rpcReq.Data.OrganizationId = claim.OrganizationId
 
 	rpcResp, err := l.svcCtx.RoleRpcClient.Detail(l.ctx, rpcReq)
 	if err != nil {

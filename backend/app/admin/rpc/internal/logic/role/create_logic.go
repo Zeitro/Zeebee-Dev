@@ -38,12 +38,18 @@ func (l *CreateLogic) Create(in *admin.RoleCreateRequest) (resp *admin.RoleCreat
 		}
 	}()
 
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	roleModel := &model.Role{}
 	err = copier.CopyWithOption(roleModel, in.Data, copier.Option{DeepCopy: true})
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
 	roleModel.Type = constants.UserTypeAdmin
+	roleModel.OrganizationId = claim.OrganizationId
 
 	role, err := l.baseLogic.RoleLogic.Create(l.ctx, roleModel)
 	if err != nil {

@@ -43,6 +43,11 @@ func (l *DeleteFileLogic) DeleteFile(in *lender.FileDeleteRequest) (resp *lender
 	var loanDocument *model.LoanDocument
 	var file *model.File
 
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, errorx.WithStack(err)
+	}
+
 	file, err = l.svcCtx.FileRepo.FindOneById(l.ctx, in.Data.Id)
 	if err != nil {
 		return nil, errorx.Wrap(err, "Failed To Find File")
@@ -52,7 +57,7 @@ func (l *DeleteFileLogic) DeleteFile(in *lender.FileDeleteRequest) (resp *lender
 		return nil, errorx.WithStack(errorx.New("File Is Not Associated With A Loan Document"))
 	}
 
-	loan, loanDocument, err = l.baseLogic.GetLoanAndDocumentByDocumentId(file.EntityId, in.Data.OrganizationId)
+	loan, loanDocument, err = l.baseLogic.GetLoanAndDocumentByDocumentId(file.EntityId, claim.OrganizationId)
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +103,7 @@ func (l *DeleteFileLogic) DeleteFile(in *lender.FileDeleteRequest) (resp *lender
 		innerErr = l.baseLogic.CreateLoanOperationLog(
 			tx,
 			loanDocument.LoanId,
-			in.Data.UserId,
+			claim.UserId,
 			model.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,

@@ -11,7 +11,6 @@ import (
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/stringx"
-	logic2 "zeebee-backend/domains/zeebee/logic"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -86,12 +85,7 @@ func (l *ResetPasswordLogic) ResetPassword(in *admin.ResetPasswordRequest) (resp
 		return nil, errorx.WithStack(err)
 	}
 
-	token, err := l.baseLogic.UserLogic.GenerateJwtToken(user, orgUser, logic2.JwtConfig{
-		AccessSecret:  l.svcCtx.Config.JwtAuth.AccessSecret,
-		AccessExpire:  l.svcCtx.Config.JwtAuth.AccessExpire,
-		RefreshSecret: l.svcCtx.Config.JwtAuth.RefreshSecret,
-		RefreshExpire: l.svcCtx.Config.JwtAuth.RefreshExpire,
-	}, constants.UserTypeAdmin)
+	token, err := l.baseLogic.UserLogic.GenerateJwtToken(user, orgUser, constants.UserTypeAdmin)
 	if err != nil {
 		return nil, err
 	}

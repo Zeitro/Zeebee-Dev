@@ -8,7 +8,6 @@ import (
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
-	"zeebee-backend/common/utils"
 )
 
 type UserDeleteLogic struct {
@@ -32,13 +31,6 @@ func (l *UserDeleteLogic) UserDelete(req *types.PathIdRequest) (resp *types.Empt
 		Data: &admin.UserDeleteRequestData{},
 	}
 	rpcReq.Data.Id = req.Id
-
-	claim, err := utils.GetUserClaimFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-	rpcReq.Data.UserId = claim.UserId
-	rpcReq.Data.OrganizationId = claim.OrganizationId
 
 	_, err = l.svcCtx.UserRpcClient.UserDelete(l.ctx, rpcReq)
 	if err != nil {

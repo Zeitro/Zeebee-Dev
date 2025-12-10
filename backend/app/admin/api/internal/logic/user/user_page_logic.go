@@ -10,7 +10,6 @@ import (
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
 )
 
 type UserPageLogic struct {
@@ -39,13 +38,6 @@ func (l *UserPageLogic) UserPage(req *types.UserPageRequest) (resp *types.UserPa
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
-
-	claim, err := utils.GetUserClaimFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-	rpcReq.Data.Filter.UserId = claim.UserId
-	rpcReq.Data.Filter.OrganizationId = claim.OrganizationId
 
 	rpcResp, err := l.svcCtx.UserRpcClient.UserPage(l.ctx, rpcReq)
 	if err != nil {

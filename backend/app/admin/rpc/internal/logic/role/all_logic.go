@@ -37,7 +37,12 @@ func (l *AllLogic) All(in *admin.RoleAllRequest) (resp *admin.RoleAllResponse, e
 		}
 	}()
 
-	result, err := l.baseLogic.RoleLogic.All(l.ctx, in.Data.OrganizationId, constants.UserTypeAdmin)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := l.baseLogic.RoleLogic.All(l.ctx, claim.OrganizationId, constants.UserTypeAdmin)
 	if err != nil {
 		return nil, err
 	}

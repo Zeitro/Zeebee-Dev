@@ -46,7 +46,8 @@ func (l *LoanBaseLogic) GetLenderLoan(loanId int64, lenderOrganizationId int64, 
 
 // CreateLoanOperationLog creates a loan operation log record
 func (l *LoanBaseLogic) CreateLoanOperationLog(tx *gorm.DB, loanId, operatorId int64, from, to model.LoanOperationStatus, action constants.LoanOperationAction, metadata *model.LoanOperationMetadata) error {
-	operator, err := l.svcCtx.UserRepo.FindOneByIdWithTx(l.ctx, tx, operatorId)
+	// operator, err := l.svcCtx.UserRepo.FindOneByIdWithTx(l.ctx, tx, operatorId)
+	operator, err := l.svcCtx.OrganizationUserRepo.FindOneByIdWithTx(l.ctx, tx, operatorId)
 	if err != nil {
 		return errors.Wrap(err, "Failed To Get Operator")
 	}

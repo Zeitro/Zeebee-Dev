@@ -34,6 +34,7 @@ func (l *DeleteLogic) Delete(in *admin.ApiDeleteRequest) (resp *admin.EmptyRespo
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
+
 	err = l.baseLogic.ApiLogic.DeleteApi(l.ctx, in.Data.Id, constants.UserType(in.Data.Type))
 	if err != nil {
 		return nil, err

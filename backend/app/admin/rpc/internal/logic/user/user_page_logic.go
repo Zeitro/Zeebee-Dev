@@ -5,6 +5,7 @@ import (
 
 	"github.com/jinzhu/copier"
 
+	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/constants"
@@ -21,13 +22,15 @@ type UserPageLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	baseLogic *logic.BaseLogic
 }
 
 func NewUserPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserPageLogic {
 	return &UserPageLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -38,6 +41,12 @@ func (l *UserPageLogic) UserPage(in *admin.UserPageRequest) (resp *admin.UserPag
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
+
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	resultData := &admin.UserPageResponseData{}
 	pageReq := &repo.UserPageRequest{
 		Filter: &repo.UserPageRequestFilter{},
@@ -51,6 +60,8 @@ func (l *UserPageLogic) UserPage(in *admin.UserPageRequest) (resp *admin.UserPag
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 	pageReq.Filter.UserType = constants.UserTypeAdmin
+	pageReq.Filter.OrganizationId = claim.OrganizationId
+	pageReq.Filter.OrganizationUserId = claim.OrganizationUserId
 	page, err := l.svcCtx.UserRepo.Page(l.ctx, pageReq)
 	if err != nil {
 		return nil, err

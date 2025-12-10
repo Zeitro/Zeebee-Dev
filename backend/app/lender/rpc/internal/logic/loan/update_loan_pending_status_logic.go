@@ -7,6 +7,7 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
+	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/constants"
@@ -16,16 +17,18 @@ import (
 )
 
 type UpdateLoanPendingStatusLogic struct {
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx       context.Context
+	svcCtx    *svc.ServiceContext
+	baseLogic *logic.BaseLogic
 	logx.Logger
 }
 
 func NewUpdateLoanPendingStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLoanPendingStatusLogic {
 	return &UpdateLoanPendingStatusLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		Logger:    logx.WithContext(ctx),
 	}
 }
 
@@ -36,8 +39,13 @@ func (l *UpdateLoanPendingStatusLogic) UpdateLoanPendingStatus(in *lender.LoanUp
 		}
 	}()
 
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, errorx.WithStack(err)
+	}
+
 	// Get loan
-	loan, err := l.svcCtx.LoanRepo.GetLenderLoan(l.ctx, in.Data.Id, in.Data.OrganizationId, false)
+	loan, err := l.svcCtx.LoanRepo.GetLenderLoan(l.ctx, in.Data.Id, claim.OrganizationId, false)
 	if err != nil {
 		return nil, errorx.Wrap(err, "Failed To Get Loan")
 	}
@@ -76,7 +84,7 @@ func (l *UpdateLoanPendingStatusLogic) UpdateLoanPendingStatus(in *lender.LoanUp
 		}
 
 		// Create operation log
-		operatorId := in.Data.UserId
+		operatorId := claim.OrganizationUserId
 
 		fromStatus := model.LoanOperationStatus{
 			Stage:         originalStage,

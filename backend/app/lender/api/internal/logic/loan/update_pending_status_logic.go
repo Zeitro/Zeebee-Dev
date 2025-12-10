@@ -5,13 +5,12 @@ import (
 
 	"github.com/jinzhu/copier"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type UpdatePendingStatusLogic struct {
@@ -43,12 +42,7 @@ func (l *UpdatePendingStatusLogic) UpdatePendingStatus(req *types.UpdateLoanPend
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
-	claim, err := utils.GetUserClaimFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-	rpcReq.Data.OrganizationId = claim.OrganizationId
-	rpcReq.Data.UserId = claim.UserId
+	// OrganizationId and UserId will be obtained from context in RPC layer
 
 	_, err = l.svcCtx.LoanRpcClient.UpdateLoanPendingStatus(l.ctx, rpcReq)
 	if err != nil {

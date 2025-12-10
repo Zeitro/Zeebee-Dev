@@ -8,12 +8,9 @@ import (
 
 	"github.com/pkg/errors"
 
-	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
-
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
+	"zeebee-backend/app/lender/rpc/pb/lender"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -34,13 +31,8 @@ func NewSwitchOrganizationLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *SwitchOrganizationLogic) SwitchOrganization(req *types.UserSwitchOrganizationRequest) (resp *types.UserRefreshTokenResponse, err error) {
-	_, employeeId, _ := utils.GetOrganizationAndUserId(l.ctx)
-	if employeeId == 0 {
-		return nil, errorx.New("User Id Not Found")
-	}
 	rpcResp, err := l.svcCtx.UserRpcClient.SwitchOrganization(l.ctx, &lender.SwitchOrganizationRequest{
 		Data: &lender.SwitchOrganizationRequestData{
-			UserId:         employeeId,
 			OrganizationId: req.OrganizationId,
 		},
 	})

@@ -11,6 +11,7 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/constants"
+	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -42,7 +43,12 @@ func (l *CreateLogic) Create(in *lender.LoanDocumentCreateExtendTypeRequest) (re
 	}()
 	var loan *model.Loan
 	results := []*lender.LoanDocumentOptEntry{}
-	loan, err = l.prepare(in)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	loan, err = l.prepare(in, claim)
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +98,7 @@ func (l *CreateLogic) Create(in *lender.LoanDocumentCreateExtendTypeRequest) (re
 		innerErr = l.baseLogic.CreateLoanOperationLog(
 			tx,
 			in.Data.LoanId,
-			in.Data.UserId,
+			claim.OrganizationUserId,
 			model.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
@@ -118,7 +124,7 @@ func (l *CreateLogic) Create(in *lender.LoanDocumentCreateExtendTypeRequest) (re
 	}, nil
 }
 
-func (l *CreateLogic) prepare(in *lender.LoanDocumentCreateExtendTypeRequest) (loan *model.Loan, err error) {
+func (l *CreateLogic) prepare(in *lender.LoanDocumentCreateExtendTypeRequest, claim utils.JwtUser) (loan *model.Loan, err error) {
 
 	category := constants.LoanDocumentCategory(in.Data.Category)
 	if !slice.Contain([]constants.LoanDocumentCategory{
@@ -128,7 +134,7 @@ func (l *CreateLogic) prepare(in *lender.LoanDocumentCreateExtendTypeRequest) (l
 		return nil, errorx.WithStack(errorx.New("Loan Document Category Not Supported"))
 	}
 
-	loan, err = l.baseLogic.GetLenderLoan(in.Data.LoanId, in.Data.OrganizationId, nil)
+	loan, err = l.baseLogic.GetLenderLoan(in.Data.LoanId, claim.OrganizationId, nil)
 	if err != nil {
 		return nil, err
 	}
