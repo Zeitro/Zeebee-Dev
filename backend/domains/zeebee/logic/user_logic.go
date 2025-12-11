@@ -73,7 +73,7 @@ func (l *UserLogic) GetUserClaimFromCtx(ctx context.Context) (claim utils.JwtUse
 }
 
 // GenerateJwtToken generate jwt token for user
-func (l *UserLogic) GenerateJwtToken(user *model.User, orgUser *model.OrganizationUser, userType constants.UserType) (token *UserJwtToken, err error) {
+func (l *UserLogic) GenerateJwtToken(user *model.User, organizationUser *model.OrganizationUser, userType constants.UserType) (token *UserJwtToken, err error) {
 	if user == nil {
 		return nil, errorx.WithStack(errorx.New("User Is Empty."))
 	}
@@ -84,10 +84,10 @@ func (l *UserLogic) GenerateJwtToken(user *model.User, orgUser *model.Organizati
 		Role:           nil,
 		UserType:       userType,
 	}
-	if orgUser != nil {
-		userClaim.OrganizationId = orgUser.OrganizationId
-		userClaim.OrganizationUserId = orgUser.Id
-		userClaim.Username = orgUser.FullName
+	if organizationUser != nil {
+		userClaim.OrganizationId = organizationUser.OrganizationId
+		userClaim.OrganizationUserId = organizationUser.Id
+		userClaim.Username = organizationUser.FullName
 	}
 
 	accessToken, err := utils.GenerateToken(
@@ -113,6 +113,87 @@ func (l *UserLogic) GenerateJwtToken(user *model.User, orgUser *model.Organizati
 		RefreshTokenExpire: l.jwtConfig.RefreshExpire,
 	}
 	return
+}
+
+// RefreshToken refresh token
+func (l *UserLogic) RefreshToken(ctx context.Context, refreshToken string, userType constants.UserType) (token *UserJwtToken, err error) {
+	// parse refresh token
+	claim, err := utils.ParseToken(refreshToken, l.jwtConfig.RefreshSecret)
+	if err != nil {
+		return nil, errorx.WithStack(err)
+	}
+	if claim.UserType != userType {
+		return nil, errorx.New("User Type Is Not Match")
+	}
+
+	user, err := l.repos.UserRepo.GetUser(ctx, claim.UserId, claim.UserType)
+	if err != nil {
+		return nil, errorx.WithStack(err)
+	}
+	if user.Status != constants.UserStatusActive {
+		return nil, errorx.New("User Is Not Active")
+	}
+
+	organizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUserByUserId(ctx, claim.OrganizationId, user.Id)
+	if err != nil {
+		return nil, err
+	}
+	if organizationUser.Status != constants.OrganizationUserStatusActive {
+		return nil, errorx.New("Organization User Is Not Active")
+	}
+	token, err = l.GenerateJwtToken(user, organizationUser, claim.UserType)
+	return token, err
+}
+
+// ResetPasswordWithEmail reset password with email
+func (l *UserLogic) ResetPasswordWithEmail(ctx context.Context, input dto.UserResetPasswordByEmailRequestDto) (token *UserJwtToken, err error) {
+	email := input.Email
+	code := input.Code
+	newPwd := input.NewPassword
+	if email == "" || code == "" || newPwd == "" {
+		return nil, errorx.New("Email, Code And New Password Are Required")
+	}
+	redisKey := stringx.Format(constants.ResetPwdCode, input.UserType, email)
+	cacheToken, err := l.redisCli.Get(ctx, redisKey)
+	if err != nil {
+		return nil, errorx.WithStack(err)
+	}
+	if cacheToken == "" || cacheToken != code {
+		return nil, errorx.WithStack(errorx.New("Invalid Or Expired Code"))
+	}
+
+	user, err := l.repos.UserRepo.GetUserByEmail(ctx, email, input.UserType)
+	if err != nil {
+		return nil, err
+	}
+	if user == nil {
+		return nil, errorx.New("User Not Found")
+	}
+
+	// hash pwd
+	pwdHash, err := utils.HashPassword(newPwd)
+	if err != nil {
+		return nil, errorx.WithStack(err)
+	}
+
+	// update pwd
+	err = l.repos.UserRepo.UpdateUserPassword(ctx, user.Id, pwdHash)
+	if err != nil {
+		return nil, err
+	}
+
+	user, organizationUser, err := l.CheckAndUpdateActiveOrganizationByUser(ctx, user)
+	if err != nil {
+		return nil, errorx.WithStack(err)
+	}
+
+	token, err = l.GenerateJwtToken(user, organizationUser, input.UserType)
+	if err != nil {
+		return nil, err
+	}
+	// delete redis key
+	_ = l.redisCli.Del(ctx, redisKey)
+	return token, nil
 }
 
 // GetActiveOrganizationByUser return active organization for user

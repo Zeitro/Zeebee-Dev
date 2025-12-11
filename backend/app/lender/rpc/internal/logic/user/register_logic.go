@@ -81,24 +81,11 @@ func (l *RegisterLogic) Register(in *lender.UserRegisterRequest) (resp *lender.U
 		return nil, errorx.WithStack(err)
 	}
 
-	// organizationModel := &model.Organization{
-	// 	Name:      in.Data.OrganizationName,
-	// 	Type:      constants.UserTypeBorrower,
-	// 	Status:    constants.OrganizationStatusActive,
-	// 	OwnerType: constants.OrganizationOwnerTypeNone,
-	// }
-
-	// userModel, err = l.svcCtx.UserRepo.RegisterWithOrganization(l.ctx, userModel, organization, constants.OrganizationUserStatusActive)
 	userModel, organizationUser, err = l.baseLogic.UserLogic.RegisterWithOrganization(l.ctx, userModel, organization, constants.UserTypeLender)
 	if err != nil {
 		return nil, err
 	}
-	// jwtConfig := logic2.JwtConfig{
-	// 	AccessSecret:  l.svcCtx.Config.JwtAuth.AccessSecret,
-	// 	AccessExpire:  l.svcCtx.Config.JwtAuth.AccessExpire,
-	// 	RefreshSecret: l.svcCtx.Config.JwtAuth.RefreshSecret,
-	// 	RefreshExpire: l.svcCtx.Config.JwtAuth.RefreshExpire,
-	// }
+
 	token, err := l.baseLogic.UserLogic.GenerateJwtToken(userModel, organizationUser, constants.UserTypeLender)
 	if err != nil {
 		return nil, err

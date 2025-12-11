@@ -8,3 +8,10 @@ type UserChangePasswordRequestDto struct {
 	UserId      int64              `json:"user_id"`
 	UserType    constants.UserType `json:"user_type"`
 }
+
+type UserResetPasswordByEmailRequestDto struct {
+	UserType    constants.UserType `json:"user_type"`
+	NewPassword string             `json:"new_password"`
+	Email       string             `json:"email"`
+	Code        string             `json:"code"`
+}
