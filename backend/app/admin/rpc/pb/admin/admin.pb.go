@@ -1109,6 +1109,8 @@ type UserinfoResponseData struct {
 	OrganizationName string                               `protobuf:"bytes,7,opt,name=organization_name,json=organizationName,proto3" json:"organization_name,omitempty"`
 	Status           string                               `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`
 	Organizations    []*UserinfoResponseData_Organization `protobuf:"bytes,9,rep,name=organizations,proto3" json:"organizations,omitempty"`
+	IsOwner          bool                                 `protobuf:"varint,10,opt,name=is_owner,json=isOwner,proto3" json:"is_owner,omitempty"`
+	IsAdmin          bool                                 `protobuf:"varint,11,opt,name=is_admin,json=isAdmin,proto3" json:"is_admin,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -1204,6 +1206,20 @@ func (x *UserinfoResponseData) GetOrganizations() []*UserinfoResponseData_Organi
 		return x.Organizations
 	}
 	return nil
+}
+
+func (x *UserinfoResponseData) GetIsOwner() bool {
+	if x != nil {
+		return x.IsOwner
+	}
+	return false
+}
+
+func (x *UserinfoResponseData) GetIsAdmin() bool {
+	if x != nil {
+		return x.IsAdmin
+	}
+	return false
 }
 
 // edit profile
@@ -6020,7 +6036,7 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x13UserInfoRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"C\n" +
 	"\x10UserinfoResponse\x12/\n" +
-	"\x04data\x18\x01 \x01(\v2\x1b.admin.UserinfoResponseDataR\x04data\"\xbe\x03\n" +
+	"\x04data\x18\x01 \x01(\v2\x1b.admin.UserinfoResponseDataR\x04data\"\xf4\x03\n" +
 	"\x14UserinfoResponseData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
 	"\x05email\x18\x02 \x01(\tR\x05email\x12\x1d\n" +
@@ -6031,7 +6047,10 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x0forganization_id\x18\x06 \x01(\x03R\x0eorganizationId\x12+\n" +
 	"\x11organization_name\x18\a \x01(\tR\x10organizationName\x12\x16\n" +
 	"\x06status\x18\b \x01(\tR\x06status\x12N\n" +
-	"\rorganizations\x18\t \x03(\v2(.admin.UserinfoResponseData.OrganizationR\rorganizations\x1ai\n" +
+	"\rorganizations\x18\t \x03(\v2(.admin.UserinfoResponseData.OrganizationR\rorganizations\x12\x19\n" +
+	"\bis_owner\x18\n" +
+	" \x01(\bR\aisOwner\x12\x19\n" +
+	"\bis_admin\x18\v \x01(\bR\aisAdmin\x1ai\n" +
 	"\fOrganization\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +

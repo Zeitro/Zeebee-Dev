@@ -11,6 +11,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
+	"zeebee-backend/domains/zeebee/data/bo"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/repo"
@@ -45,13 +46,19 @@ func (l *RoleLogic) Page(ctx context.Context, req dto.RolePageRequestDto) (resul
 }
 
 // Create creates a new role
-func (l *RoleLogic) Create(ctx context.Context, data *model.Role) (role *model.Role, err error) {
-	if err := l.checkRoleName(data.Name); err != nil {
+func (l *RoleLogic) Create(ctx context.Context, input dto.RoleCreateRequestDto) (result *bo.RoleBo, err error) {
+	if err := l.checkRoleName(input.Name); err != nil {
 		return nil, err
 	}
 
+	role := &model.Role{}
+	err = copier.Copy(role, &input)
+	if err != nil {
+		return nil, errorx.GetFailedTransErr(err)
+	}
+
 	// check existed
-	isExisted, err := l.repos.RoleRepo.IsExisted(ctx, data)
+	isExisted, err := l.repos.RoleRepo.IsExisted(ctx, role)
 	if err != nil {
 		return nil, err
 	}
@@ -59,31 +66,33 @@ func (l *RoleLogic) Create(ctx context.Context, data *model.Role) (role *model.R
 		return nil, errorx.New("Role Already Exists")
 	}
 
-	resourceIds := slice.Map[*model.RoleAndResource, int64](data.RoleAndResources, func(i int, item *model.RoleAndResource) int64 {
+	// resourceIds := input.ResourceIds
+	resourceIds := slice.Map[dto.RoleAndResourceDto, int64](input.RoleAndResources, func(i int, item dto.RoleAndResourceDto) int64 {
 		return item.ResourceId
 	})
+
 	err = l.repos.RoleRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
 		var resources []*model.Resource
 		var validResourceIds []int64
 		// create role
-		role, innerErr = l.repos.RoleRepo.CreateWithTx(ctx, tx, data, false)
+		role, innerErr = l.repos.RoleRepo.CreateWithTx(ctx, tx, role, false)
 		if innerErr != nil {
 			return innerErr
 		}
 
 		// create role and resource relationship
-		resources, innerErr = l.repos.ResourceRepo.GetResourcesWithTx(ctx, tx, resourceIds, data.Type)
+		resources, innerErr = l.repos.ResourceRepo.GetResourcesWithTx(ctx, tx, resourceIds, input.Type)
 		if innerErr != nil {
 			return innerErr
 		}
 		validResourceIds = slice.Map[*model.Resource, int64](resources, func(i int, item *model.Resource) int64 {
 			return item.Id
 		})
-		rolesAndResources := slice.FilterMap[*model.RoleAndResource, *model.RoleAndResource](data.RoleAndResources, func(i int, item *model.RoleAndResource) (*model.RoleAndResource, bool) {
+		rolesAndResources := slice.FilterMap[dto.RoleAndResourceDto, *model.RoleAndResource](input.RoleAndResources, func(i int, item dto.RoleAndResourceDto) (*model.RoleAndResource, bool) {
 			if slice.Contain(validResourceIds, item.ResourceId) {
-				data.RoleAndResources[i].RoleId = role.Id
-				return data.RoleAndResources[i], true
+				role.RoleAndResources[i].RoleId = role.Id
+				return role.RoleAndResources[i], true
 			}
 			return nil, false
 		})
@@ -99,7 +108,10 @@ func (l *RoleLogic) Create(ctx context.Context, data *model.Role) (role *model.R
 	if err != nil {
 		return nil, err
 	}
-	return role, nil
+
+	result = l.transToBo(role)
+
+	return result, nil
 }
 
 // Update updates a role
@@ -284,7 +296,39 @@ func (l *RoleLogic) UpdateStatus(ctx context.Context, id int64, organizationId i
 }
 
 // All returns all roles by type
-func (l *RoleLogic) All(ctx context.Context, organizationId int64, roleType constants.UserType) (result []*model.Role, err error) {
-	result, err = l.repos.RoleRepo.All(ctx, organizationId, roleType)
+func (l *RoleLogic) All(ctx context.Context, organizationId int64, roleType constants.UserType) (result []*bo.RoleBo, err error) {
+	roles, err := l.repos.RoleRepo.All(ctx, organizationId, roleType)
+	if err != nil {
+		return nil, err
+	}
+	result = l.batchTransToBo(roles)
 	return result, err
+}
+
+// transToBo
+func (l *RoleLogic) transToBo(src *model.Role) (result *bo.RoleBo) {
+	if src == nil {
+		return nil
+	}
+	result = &bo.RoleBo{}
+	_ = copier.CopyWithOption(result, src, copier.Option{
+		DeepCopy:      true,
+		CaseSensitive: true,
+		Converters: []copier.TypeConverter{
+			copierx.TimeToRFC3339Str(),
+		},
+	})
+	return result
+}
+
+// batchTransToBo batch trans to bo
+func (l *RoleLogic) batchTransToBo(src []*model.Role) (result []*bo.RoleBo) {
+	result = make([]*bo.RoleBo, 0, len(src))
+	if len(src) == 0 {
+		return result
+	}
+	for i := range src {
+		result = append(result, l.transToBo(src[i]))
+	}
+	return result
 }

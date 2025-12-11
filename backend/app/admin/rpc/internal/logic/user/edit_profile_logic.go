@@ -57,7 +57,7 @@ func (l *EditProfileLogic) EditProfile(in *admin.UserProfileEditRequest) (resp *
 	if err != nil {
 		return nil, err
 	}
-	token, err := l.baseLogic.UserLogic.Info(l.ctx, claim.UserId, claim.OrganizationUserId, constants.UserTypeBorrower)
+	token, err := l.baseLogic.UserLogic.Info(l.ctx, claim.UserId, claim.OrganizationId, constants.UserTypeAdmin)
 	if err != nil {
 		return nil, err
 	}
