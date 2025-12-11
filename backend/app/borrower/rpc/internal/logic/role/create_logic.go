@@ -12,7 +12,7 @@ import (
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/data/dto"
 )
 
 type CreateLogic struct {
@@ -37,15 +37,19 @@ func (l *CreateLogic) Create(in *borrower.RoleCreateRequest) (resp *borrower.Rol
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-
-	roleModel := &model.Role{}
-	err = copier.CopyWithOption(roleModel, in.Data, copier.Option{DeepCopy: true})
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	input := dto.RoleCreateRequestDto{}
+	err = copier.CopyWithOption(&input, in.Data, copier.Option{DeepCopy: true})
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
-	roleModel.Type = constants.UserTypeBorrower
+	input.Type = constants.UserTypeBorrower
+	input.OrganizationId = claim.OrganizationId
 
-	role, err := l.baseLogic.RoleLogic.Create(l.ctx, roleModel)
+	role, err := l.baseLogic.RoleLogic.Create(l.ctx, input)
 	if err != nil {
 		return nil, err
 	}

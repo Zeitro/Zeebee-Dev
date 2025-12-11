@@ -40,7 +40,7 @@ func (l *UserInfoLogic) UserInfo(in *admin.UserInfoRequest) (resp *admin.Userinf
 		return nil, err
 	}
 
-	user, err := l.baseLogic.UserLogic.Info(l.ctx, claim.UserId, claim.OrganizationUserId, constants.UserTypeAdmin)
+	user, err := l.baseLogic.UserLogic.Info(l.ctx, claim.UserId, claim.OrganizationId, constants.UserTypeAdmin)
 	if err != nil {
 		return nil, err
 	}

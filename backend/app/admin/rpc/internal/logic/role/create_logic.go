@@ -12,7 +12,7 @@ import (
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/data/dto"
 )
 
 type CreateLogic struct {
@@ -43,15 +43,15 @@ func (l *CreateLogic) Create(in *admin.RoleCreateRequest) (resp *admin.RoleCreat
 		return nil, err
 	}
 
-	roleModel := &model.Role{}
-	err = copier.CopyWithOption(roleModel, in.Data, copier.Option{DeepCopy: true})
+	input := dto.RoleCreateRequestDto{}
+	err = copier.CopyWithOption(input, in.Data, copier.Option{DeepCopy: true})
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
-	roleModel.Type = constants.UserTypeAdmin
-	roleModel.OrganizationId = claim.OrganizationId
+	input.Type = constants.UserTypeAdmin
+	input.OrganizationId = claim.OrganizationId
 
-	role, err := l.baseLogic.RoleLogic.Create(l.ctx, roleModel)
+	role, err := l.baseLogic.RoleLogic.Create(l.ctx, input)
 	if err != nil {
 		return nil, err
 	}

@@ -121,11 +121,13 @@ type UserInfo struct {
 	FirstName        string                        `json:"first_name"`
 	LastName         string                        `json:"last_name"`
 	FullName         string                        `json:"full_name"`
-	Phone            string                        `json:"phone"`
 	Status           string                        `json:"status"`
+	Phone            string                        `json:"phone"`
 	OrganizationId   int64                         `json:"organization_id"`
 	OrganizationName string                        `json:"organization_name"`
 	Organizations    []*UserInfoOrganizationEntity `json:"organizations"`
+	IsOwner          bool                          `json:"is_owner"`
+	IsAdmin          bool                          `json:"is_admin"`
 }
 
 type UserInfoOrganizationEntity struct {

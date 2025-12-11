@@ -34,8 +34,8 @@ type UserRefreshTokenResponse struct {
 }
 
 type UserResetPasswordRequest struct {
-	Email            string `json:"email" validate:"required,email"`
-	Password         string `json:"password" validate:"required,min=8,max=32,password"`
-	ComfiredPassword string `json:"comfired_password" validate:"required,eqfield=Password"`
-	Code             string `json:"code" validate:"required,len=10"`
+	Email           string `json:"email" validate:"required,email"`
+	Password        string `json:"password" validate:"required,min=8,max=32,password"`
+	ConfirmPassword string `json:"confirm_password" validate:"required,eqfield=Password"`
+	Code            string `json:"code" validate:"required,len=10"`
 }

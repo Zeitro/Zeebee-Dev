@@ -2,7 +2,7 @@ syntax = "v1"
 
 info(
 	title: "admin-api http service"
-	desc: "admin-api http service description"
+    desc: "admin-api http service description"
 )
 
 import "desc/user.api"
@@ -12,10 +12,10 @@ import "desc/role.api"
 import "desc/organization_user.api"
 
 type (
-	EmptyRequest{
-	}
-	EmptyResponse{
-	}
+    EmptyRequest{
+    }
+    EmptyResponse{
+    }
 )
 
 type PathIdRequest {
@@ -24,11 +24,11 @@ type PathIdRequest {
 
 // ============== user start =============
 @server(
-	desc: "admin-api service"
+    desc: "admin-api service"
 	version: v1
-	group: user
+    group: user
 	prefix:  /api/v1
-	tags: user
+    tags: user
 )
 service admin-api {
 	@doc "login"
@@ -45,12 +45,12 @@ service admin-api {
 }
 
 @server(
-	desc: "admin-api service"
-	version: v1
-	group: user
+    desc: "admin-api service"
+    version: v1
+    group: user
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-	tags: user
+    tags: user
 )
 service admin-api {
 	@doc "info"
@@ -65,12 +65,12 @@ service admin-api {
 // ============== user end =============
 // ============== organization user start ============
 @server(
-	desc: "admin-api service"
-	version: v1
-	group: organization_user
+    desc: "admin-api service"
+    version: v1
+    group: organization_user
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-	tags: organization_user
+    tags: organization_user
 )
 service admin-api {
 	@doc "page"
@@ -101,12 +101,12 @@ service admin-api {
 // ============== organization user end ============
 // ============== api start ============
 @server(
-	desc: "admin-api service"
-	version: v1
-	group: api
+    desc: "admin-api service"
+    version: v1
+    group: api
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-	tags: api
+    tags: api
 )
 service admin-api {
 	@doc "detail"
@@ -133,12 +133,12 @@ service admin-api {
 // ============= api end =============
 // ============== resource start ============
 @server(
-	desc: "admin-api service"
-	version: v1
-	group: resource
+    desc: "admin-api service"
+    version: v1
+    group: resource
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-	tags: resource
+    tags: resource
 )
 service admin-api {
 	@doc "detail"
@@ -165,12 +165,12 @@ service admin-api {
 // ============== resource end =============
 // ============== role start ============
 @server(
-	desc: "admin-api service"
-	version: v1
-	group: role
+    desc: "admin-api service"
+    version: v1
+    group: role
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-	tags: role
+    tags: role
 )
 service admin-api {
 	@doc "detail"
@@ -202,4 +202,4 @@ service admin-api {
 	patch /role/:id/status (RoleUpdateStatusRequest) returns (EmptyResponse)
 }
 
-	// ============== role end =============
+    // ============== role end =============

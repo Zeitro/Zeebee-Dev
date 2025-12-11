@@ -725,14 +725,18 @@
               "required": [
                 "email",
                 "password",
-                "full_name",
+                "first_name",
+                "last_name",
                 "phone"
               ],
               "properties": {
                 "email": {
                   "type": "string"
                 },
-                "full_name": {
+                "first_name": {
+                  "type": "string"
+                },
+                "last_name": {
                   "type": "string"
                 },
                 "password": {
@@ -1397,7 +1401,7 @@
           "organization_user"
         ],
         "summary": "update",
-        "operationId": "organizationUserUserUpdate",
+        "operationId": "organizationUserOrganizationUserUpdate",
         "parameters": [
           {
             "type": "integer",
@@ -1412,14 +1416,15 @@
             "schema": {
               "type": "object",
               "required": [
-                "full_name",
+                "first_name",
+                "last_name",
                 "phone"
               ],
               "properties": {
-                "full_name": {
+                "first_name": {
                   "type": "string"
                 },
-                "password": {
+                "last_name": {
                   "type": "string"
                 },
                 "phone": {
@@ -3603,6 +3608,12 @@
                 "id": {
                   "type": "integer"
                 },
+                "is_admin": {
+                  "type": "boolean"
+                },
+                "is_owner": {
+                  "type": "boolean"
+                },
                 "last_name": {
                   "type": "string"
                 },
@@ -3737,13 +3748,17 @@
               "type": "object",
               "required": [
                 "first_name",
-                "last_name"
+                "last_name",
+                "phone"
               ],
               "properties": {
                 "first_name": {
                   "type": "string"
                 },
                 "last_name": {
+                  "type": "string"
+                },
+                "phone": {
                   "type": "string"
                 }
               }
@@ -3767,6 +3782,12 @@
                 },
                 "id": {
                   "type": "integer"
+                },
+                "is_admin": {
+                  "type": "boolean"
+                },
+                "is_owner": {
+                  "type": "boolean"
                 },
                 "last_name": {
                   "type": "string"
@@ -3893,14 +3914,14 @@
               "required": [
                 "email",
                 "password",
-                "comfired_password",
+                "confirm_password",
                 "code"
               ],
               "properties": {
                 "code": {
                   "type": "string"
                 },
-                "comfired_password": {
+                "confirm_password": {
                   "type": "string"
                 },
                 "email": {
@@ -3938,7 +3959,7 @@
       }
     }
   },
-  "x-date": "2025-12-11 09:58:54",
+  "x-date": "2025-12-11 11:46:24",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
