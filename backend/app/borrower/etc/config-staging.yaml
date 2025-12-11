@@ -96,5 +96,6 @@ RpcConf:
   ResetPwdUrl: https://app.zeebeeloans.net/login/resetPassword
   InviteUserUrl: https://app.zeebeeloans.net/login/joinOrganization
   InviteUserExpireSeconds: 86400
+  SendInviteEmailPeriodSeconds: 60
   PreApprovalLoanExpireSeconds: 86400
   HighCostLimitValue: 806500
