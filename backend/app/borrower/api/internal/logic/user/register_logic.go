@@ -29,17 +29,19 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 
 func (l *RegisterLogic) Register(req *types.UserRegisterRequest) (resp *types.UserRegisterResponse, err error) {
 	resp = &types.UserRegisterResponse{}
-	// call rpc server
-	rpcResp, err := l.svcCtx.UserRpcClient.Register(l.ctx, &borrower.UserRegisterRequest{
-		Data: &borrower.UserRegisterRequestData{
-			Email:                 req.Email,
-			Password:              req.Password,
-			FirstName:             req.FirstName,
-			LastName:              req.LastName,
-			PreApprovalRequestId:  req.PreApprovalRequestId,
-			TargetLenderCompanyId: req.TargetLenderCompanyId,
-		},
+	rpcReq := &borrower.UserRegisterRequest{
+		Data: &borrower.UserRegisterRequestData{},
+	}
+
+	err = copier.CopyWithOption(&rpcReq.Data, req, copier.Option{
+		CaseSensitive: true,
 	})
+	if err != nil {
+		return nil, errorx.GetFailedTransRespErr(err)
+	}
+
+	// call rpc server
+	rpcResp, err := l.svcCtx.UserRpcClient.Register(l.ctx, rpcReq)
 	if err != nil {
 		return nil, err
 	}

@@ -203,7 +203,7 @@ const (
 	User_ResetPassword_FullMethodName          = "/lender.user/ResetPassword"
 	User_SendResetPasswordEmail_FullMethodName = "/lender.user/SendResetPasswordEmail"
 	User_UserInfo_FullMethodName               = "/lender.user/UserInfo"
-	User_SwitchLenderCompany_FullMethodName    = "/lender.user/SwitchLenderCompany"
+	User_SwitchOrganization_FullMethodName     = "/lender.user/SwitchOrganization"
 )
 
 // UserClient is the client API for User service.
@@ -217,7 +217,7 @@ type UserClient interface {
 	ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*ResetPasswordResponse, error)
 	SendResetPasswordEmail(ctx context.Context, in *SendResetPasswordEmailRequest, opts ...grpc.CallOption) (*SendResetPasswordEmailResponse, error)
 	UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
-	SwitchLenderCompany(ctx context.Context, in *SwitchLenderCompanyRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
+	SwitchOrganization(ctx context.Context, in *SwitchOrganizationRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
 }
 
 type userClient struct {
@@ -288,10 +288,10 @@ func (c *userClient) UserInfo(ctx context.Context, in *UserInfoRequest, opts ...
 	return out, nil
 }
 
-func (c *userClient) SwitchLenderCompany(ctx context.Context, in *SwitchLenderCompanyRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error) {
+func (c *userClient) SwitchOrganization(ctx context.Context, in *SwitchOrganizationRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RefreshTokenResponse)
-	err := c.cc.Invoke(ctx, User_SwitchLenderCompany_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, User_SwitchOrganization_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -309,7 +309,7 @@ type UserServer interface {
 	ResetPassword(context.Context, *ResetPasswordRequest) (*ResetPasswordResponse, error)
 	SendResetPasswordEmail(context.Context, *SendResetPasswordEmailRequest) (*SendResetPasswordEmailResponse, error)
 	UserInfo(context.Context, *UserInfoRequest) (*UserinfoResponse, error)
-	SwitchLenderCompany(context.Context, *SwitchLenderCompanyRequest) (*RefreshTokenResponse, error)
+	SwitchOrganization(context.Context, *SwitchOrganizationRequest) (*RefreshTokenResponse, error)
 	mustEmbedUnimplementedUserServer()
 }
 
@@ -338,8 +338,8 @@ func (UnimplementedUserServer) SendResetPasswordEmail(context.Context, *SendRese
 func (UnimplementedUserServer) UserInfo(context.Context, *UserInfoRequest) (*UserinfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserInfo not implemented")
 }
-func (UnimplementedUserServer) SwitchLenderCompany(context.Context, *SwitchLenderCompanyRequest) (*RefreshTokenResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SwitchLenderCompany not implemented")
+func (UnimplementedUserServer) SwitchOrganization(context.Context, *SwitchOrganizationRequest) (*RefreshTokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SwitchOrganization not implemented")
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
 func (UnimplementedUserServer) testEmbeddedByValue()              {}
@@ -470,20 +470,20 @@ func _User_UserInfo_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
-func _User_SwitchLenderCompany_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SwitchLenderCompanyRequest)
+func _User_SwitchOrganization_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SwitchOrganizationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServer).SwitchLenderCompany(ctx, in)
+		return srv.(UserServer).SwitchOrganization(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: User_SwitchLenderCompany_FullMethodName,
+		FullMethod: User_SwitchOrganization_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServer).SwitchLenderCompany(ctx, req.(*SwitchLenderCompanyRequest))
+		return srv.(UserServer).SwitchOrganization(ctx, req.(*SwitchOrganizationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -520,8 +520,8 @@ var User_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _User_UserInfo_Handler,
 		},
 		{
-			MethodName: "SwitchLenderCompany",
-			Handler:    _User_SwitchLenderCompany_Handler,
+			MethodName: "SwitchOrganization",
+			Handler:    _User_SwitchOrganization_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

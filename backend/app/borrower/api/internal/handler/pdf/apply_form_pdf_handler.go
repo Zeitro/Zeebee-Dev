@@ -32,19 +32,16 @@ func ApplyFormPdfHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		// var applyFormPdf *apply_form.ApplyForm
 
 		if err = httpx.Parse(r, &req); err != nil {
-			// response.BadRequestWithCode(w, http.StatusBadRequest, errorx.GetErrorMsg(err))
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
 		}
 
 		v, err = validator.GetEnValidator()
 		if err != nil {
-			// response.BadRequestWithCode(w, http.StatusBadRequest, errorx.GetErrorMsg(err))
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
 		}
 		if err = v.Validate(&req); err != nil {
-			// response.BadRequestWithCode(w, http.StatusBadRequest, errorx.GetErrorMsg(err))
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
 		}
@@ -52,19 +49,7 @@ func ApplyFormPdfHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		l := pdf.NewApplyFormPdfLogic(r.Context(), svcCtx)
 		resp, err := l.ApplyFormPdf(&req)
 
-		// applyFormPdf, err = apply_form.NewApplyForm(&req)
-		// if err != nil {
-		// 	// response.BadRequestWithCode(w, http.StatusBadRequest, errorx.GetErrorMsg(err))
-		// 	response.BadRequest(w, errorx.GetErrorMsg(err))
-		// 	return
-		// }
-		//
-		// var buf []byte
-		// ioWriter := bytes.NewBuffer(buf)
-		//
-		// err = applyFormPdf.Generate(ioWriter)
 		if err != nil {
-			// response.BadRequestWithCode(w, http.StatusBadRequest, errorx.GetErrorMsg(err))
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
 		}

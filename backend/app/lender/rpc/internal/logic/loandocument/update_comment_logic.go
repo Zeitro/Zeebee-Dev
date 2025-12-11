@@ -41,7 +41,12 @@ func (l *UpdateCommentLogic) UpdateComment(in *lender.LoanDocumentUpdateCommentR
 	var loan *model.Loan
 	var loanDocument *model.LoanDocument
 
-	loan, loanDocument, err = l.prepare(in)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, errorx.WithStack(err)
+	}
+
+	loan, loanDocument, err = l.prepare(in, claim.OrganizationId)
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +64,7 @@ func (l *UpdateCommentLogic) UpdateComment(in *lender.LoanDocumentUpdateCommentR
 		innerErr = l.baseLogic.CreateLoanOperationLog(
 			tx,
 			in.Data.Id,
-			in.Data.LenderEmployeeId,
+			claim.OrganizationUserId,
 			model.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
@@ -84,6 +89,6 @@ func (l *UpdateCommentLogic) UpdateComment(in *lender.LoanDocumentUpdateCommentR
 	return &lender.EmptyResponse{}, nil
 }
 
-func (l *UpdateCommentLogic) prepare(in *lender.LoanDocumentUpdateCommentRequest) (loan *model.Loan, loanDocument *model.LoanDocument, err error) {
-	return l.baseLogic.GetLoanAndDocumentByDocumentId(in.Data.Id, in.Data.LenderCompanyId)
+func (l *UpdateCommentLogic) prepare(in *lender.LoanDocumentUpdateCommentRequest, organizationId int64) (loan *model.Loan, loanDocument *model.LoanDocument, err error) {
+	return l.baseLogic.GetLoanAndDocumentByDocumentId(in.Data.Id, organizationId)
 }

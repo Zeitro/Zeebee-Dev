@@ -7,29 +7,25 @@ type UserStatus string
 var UserStatusName = "user_status"
 
 const (
-	UserStatusUnverified UserStatus = "unverified"
-	UserStatusActive     UserStatus = "active"
-	UserStatusInactive   UserStatus = "inactive"
+	UserStatusUnverified UserStatus = "Unverified"
+	UserStatusActive     UserStatus = "Active"
+	UserStatusInactive   UserStatus = "Inactive"
 )
 
 type UserType string
 
 const (
-	UserTypeBorrower UserType = "borrower"
-	UserTypeLender   UserType = "lender"
+	UserTypeBorrower UserType = "Borrower"
+	UserTypeLender   UserType = "Lender"
+	UserTypeAdmin    UserType = "Admin"
 )
 
 const (
-	BorrowerUserIdKey = "borrower_user_id"
-	LenderUserIdKey   = "lender_user_id"
-
-	LenderUserCompanyIdKey = "lender_user_company_id"
-
-	BorrowerUserAccountIdKey = "borrower_user_account_id"
-	LenderUserAccountIdKey   = "lender_user_account_id"
-
-	BorrowerUserKey = "borrower_user"
-	LenderUserKey   = "lender_user"
+	UserIdCtxKey             = "user_id"
+	UserTypeCtxKey           = "user_type"
+	UserOrganizationIdCtxKey = "organization_id"
+	UserClaimCtxKey          = "user_claim"
+	JwtTokenCtxKey           = "jwt_token"
 )
 
 func init() {

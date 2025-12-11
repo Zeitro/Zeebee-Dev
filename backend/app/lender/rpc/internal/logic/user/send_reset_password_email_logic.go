@@ -65,14 +65,14 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *lender.SendRese
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	if user == nil || user.LenderEmployee == nil {
+	if user == nil {
 		return nil, errorx.WithStack(errorx.New("User Not Found"))
 	}
 
 	go func() {
 		ctx := context.WithoutCancel(l.ctx)
 		// send email
-		err := l.sendResetPwdEmail(email, user.LenderEmployee.FirstName)
+		err := l.sendResetPwdEmail(email, user.FirstName)
 		if err != nil {
 			err = errorx.Wrap(err, "Send Reset Password Email Error")
 			l.WithContext(ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -85,7 +85,7 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *lender.SendRese
 func (l *SendResetPasswordEmailLogic) sendResetPwdEmail(email string, firstName string) (err error) {
 	ctx := context.WithoutCancel(l.ctx)
 	var code string
-	redisKey := stringx.Format(constants.LenderResetPwdCode, email)
+	redisKey := stringx.Format(constants.ResetPwdCode, constants.UserTypeLender, email)
 	code, _ = global.GetRedis().Get(ctx, redisKey)
 	if len(code) == 0 {
 		code = random.RandNumeral(10)

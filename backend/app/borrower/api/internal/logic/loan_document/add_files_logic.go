@@ -10,7 +10,6 @@ import (
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
 )
 
 type AddFilesLogic struct {
@@ -41,12 +40,6 @@ func (l *AddFilesLogic) AddFiles(req *types.LoanDocumentAddFilesRequest) (resp *
 	})
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
-	}
-
-	// Get borrower id from context
-	rpcReq.Data.BorrowerId, err = utils.GetAccountIdFromCtx(l.ctx)
-	if err != nil {
-		return nil, errorx.WithStack(err)
 	}
 
 	// Call RPC method

@@ -12,7 +12,9 @@ type BorrowerApplicantEntry {
     Id int64 `json:"id"`
     CreatedAt string `json:"created_at"`
     UpdatedAt string `json:"updated_at"`
-    BorrowerId int64 `json:"borrower_id"`
+    CreatorId int64 `json:"creator_id"`
+    CreatorName string `json:"creator_name"`
+    OrganizationId int64 `json:"organization_id"`
     FirstName string `json:"first_name"`
     MidName string `json:"mid_name"`
     LastName string `json:"last_name"`
@@ -31,6 +33,8 @@ type BorrowerApplicantPageEntry {
     Id int64 `json:"id"`
     CreatedAt string `json:"created_at"`
     UpdatedAt string `json:"updated_at"`
+    CreatorId int64 `json:"creator_id"`
+    CreatorName string `json:"creator_name"`
     FirstName string `json:"first_name"`
     MidName string `json:"mid_name"`
     LastName string `json:"last_name"`

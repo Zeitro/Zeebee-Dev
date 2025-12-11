@@ -1,45 +1,46 @@
 package utils
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
+
+	"zeebee-backend/common/constants"
 )
 
 // JWTClaims JWT声明结构
 type JWTClaims struct {
-	UserID          string `json:"user_id"`
-	AccountId       string `json:"account_id"`
-	LenderCompanyId int64  `json:"lender_company_id"`
-	Username        string `json:"username"`
-	Role            string `json:"role"`
-	UserType        string `json:"user_type"`
+	JwtUser
 	jwt.RegisteredClaims
 }
 
+type JwtUser struct {
+	UserId             int64              `json:"user_id"`
+	OrganizationId     int64              `json:"organization_id"`
+	OrganizationUserId int64              `json:"organization_user_id"`
+	Username           string             `json:"username"`
+	Role               []string           `json:"role"`
+	UserType           constants.UserType `json:"user_type"`
+}
+
 // GenerateToken 生成JWT token
-func GenerateToken(userID string, accountId string, lenderCompanyId int64, username string, role string, userType string, secretKey string, expireSeconds int64) (string, error) {
+func GenerateToken(user JwtUser, secretKey string, expireSeconds int64) (string, error) {
 	now := time.Now()
 	expireTime := now.Add(time.Duration(expireSeconds) * time.Second)
 
 	claims := JWTClaims{
-		UserID:          userID,
-		AccountId:       accountId,
-		LenderCompanyId: lenderCompanyId,
-		Username:        username,
-		Role:            role,
-		UserType:        userType,
+		JwtUser: user,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expireTime),
 			IssuedAt:  jwt.NewNumericDate(now),
 			NotBefore: jwt.NewNumericDate(now),
 			Issuer:    "zeebee",
-			Subject:   userID,
+			Subject:   fmt.Sprintf("%v", user.UserId),
 			ID:        uuid.New().String(),
 		},
 	}
-
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(secretKey))
 }

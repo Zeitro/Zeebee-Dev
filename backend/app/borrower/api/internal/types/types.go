@@ -15,7 +15,9 @@ type BorrowerApplicantEntry struct {
 	Id               int64        `json:"id"`
 	CreatedAt        string       `json:"created_at"`
 	UpdatedAt        string       `json:"updated_at"`
-	BorrowerId       int64        `json:"borrower_id"`
+	CreatorId        int64        `json:"creator_id"`
+	CreatorName      string       `json:"creator_name"`
+	OrganizationId   int64        `json:"organization_id"`
 	FirstName        string       `json:"first_name"`
 	MidName          string       `json:"mid_name"`
 	LastName         string       `json:"last_name"`
@@ -34,6 +36,8 @@ type BorrowerApplicantPageEntry struct {
 	Id               int64        `json:"id"`
 	CreatedAt        string       `json:"created_at"`
 	UpdatedAt        string       `json:"updated_at"`
+	CreatorId        int64        `json:"creator_id"`
+	CreatorName      string       `json:"creator_name"`
 	FirstName        string       `json:"first_name"`
 	MidName          string       `json:"mid_name"`
 	LastName         string       `json:"last_name"`
@@ -65,7 +69,7 @@ type BorrowerEntityEditRequest struct {
 	Tin            string       `json:"tin" validate:"required,min=9,max=9"`
 	MailingAddress AddressEntry `json:"mailing_address" validate:"required"`
 	ContactEmail   string       `json:"contact_email" validate:"required,email,min=5,max=100"`
-	ContactName    string       `json:"contact_name" validate:"required,min=5,max=100"`
+	ContactName    string       `json:"contact_name" validate:"required,min=2,max=100"`
 	ContactPhone   string       `json:"contact_phone" validate:"required,min=9,max=15"`
 }
 
@@ -73,7 +77,9 @@ type BorrowerEntityEntry struct {
 	Id             int64        `json:"id"`
 	CreatedAt      string       `json:"created_at"`
 	UpdatedAt      string       `json:"updated_at"`
-	BorrowerId     int64        `json:"borrower_id"`
+	CreatorId      int64        `json:"creator_id"`
+	CreatorName    string       `json:"creator_name"`
+	OrganizationId int64        `json:"organization_id"`
 	Type           string       `json:"type"`
 	Name           string       `json:"name"`
 	TinType        string       `json:"tin_type"`
@@ -86,6 +92,8 @@ type BorrowerEntityEntry struct {
 
 type BorrowerEntityPageEntry struct {
 	Id             int64         `json:"id"`
+	CreatorId      int64         `json:"creator_id"`
+	CreatorName    string        `json:"creator_name"`
 	CreatedAt      string        `json:"created_at"`
 	UpdatedAt      string        `json:"updated_at"`
 	BorrowerId     int64         `json:"borrower_id"`
@@ -114,6 +122,9 @@ type BorrowerEntityUpdateResponse struct {
 
 type BorrowerPropertyEntry struct {
 	Id             int64         `json:"id"`
+	CreatorId      int64         `json:"creator_id"`
+	CreatorName    string        `json:"creator_name"`
+	OrganizationId int64         `json:"organization_id"`
 	PropertyType   string        `json:"property_type"`
 	TotalAmount    float64       `json:"total_amount"`
 	Unit           int32         `json:"unit"`
@@ -189,7 +200,8 @@ type ImportLoanExtendEntry struct {
 }
 
 type ImportPendingLoanEntry struct {
-	BorrowerId            int64                         `json:"borrower_id" validate:"required,gt=0"`
+	UserId                int64                         `json:"user_id" validate:"required,gt=0"`
+	OrganizationId        int64                         `json:"organization_id" validate:"required,gt=0"`
 	LoanProperty          *ImportLoanApplyPropertyEntry `json:"loan_property,optional"`
 	Applicants            []*ImportLoanApplicantEntry   `json:"applicants,optional" validate:"required,gt=0,lte=2"`
 	LoanBorrower          *ImportLoanBorrowerEntry      `json:"loan_borrower,optional" validate:"required"`
@@ -347,6 +359,8 @@ type LoanDocumentEntry struct {
 
 type LoanEntry struct {
 	Id                         int64                    `json:"id,optional"`
+	CreatorId                  int64                    `json:"creator_id"`
+	CreatorName                string                   `json:"creator_name"`
 	Code                       string                   `json:"code,optional"`
 	Stage                      string                   `json:"stage" validate:"required,oneof=Pending Active Archived"`
 	PendingStatus              string                   `json:"pending_status,optional" validate:"required_if=Stage Pending,omitempty,oneof=Quoting Processing Underwriting Closing"`
@@ -472,8 +486,8 @@ type LoanPropertyApplyEntry struct {
 	ExistingMaturityDate         string           `json:"existing_maturity_date, optional" `
 	PurchaseAmount               float64          `json:"purchase_amount, optional" validate:"gte=0"`
 	PurchaseDate                 string           `json:"purchase_date, optional" `
-	HasAssignmentFee             bool             `json:"has_assignment_fee, optional" validate:"required_if=HasAssignmentFee true,omitempty,gte=0"`
-	AssignmentFeeAmount          float64          `json:"assignment_fee_amount, optional" validate:"gte=0"`
+	HasAssignmentFee             bool             `json:"has_assignment_fee, optional"`
+	AssignmentFeeAmount          float64          `json:"assignment_fee_amount, optional" validate:"required_if=HasAssignmentFee true,gte=0"`
 	HasSubordinateDebt           bool             `json:"has_subordinate_debt, optional"`
 	SubordinateDebtAmount        float64          `json:"subordinate_debt_amount, optional" validate:"gte=0"`
 	ScheduledCloseEscrowDate     string           `json:"scheduled_close_escrow_date, optional"`
@@ -509,8 +523,8 @@ type LoanPropertyApplyFormPdfEntry struct {
 	ExistingMaturityDate         string           `json:"existing_maturity_date, optional" `
 	PurchaseAmount               float64          `json:"purchase_amount, optional" validate:"gte=0"`
 	PurchaseDate                 string           `json:"purchase_date, optional" `
-	HasAssignmentFee             bool             `json:"has_assignment_fee, optional" validate:"required_if=HasAssignmentFee true,omitempty,gte=0"`
-	AssignmentFeeAmount          float64          `json:"assignment_fee_amount, optional" validate:"gte=0"`
+	HasAssignmentFee             bool             `json:"has_assignment_fee, optional"`
+	AssignmentFeeAmount          float64          `json:"assignment_fee_amount, optional" validate:"required_if=HasAssignmentFee true,gte=0"`
 	HasSubordinateDebt           bool             `json:"has_subordinate_debt, optional"`
 	SubordinateDebtAmount        float64          `json:"subordinate_debt_amount, optional" validate:"gte=0"`
 	ScheduledCloseEscrowDate     string           `json:"scheduled_close_escrow_date, optional"`
@@ -531,8 +545,9 @@ type LoanPropertyApplyFormPdfEntry struct {
 type LoanPropertyEditEntry struct {
 	Id                    int64   `json:"id,optional"`
 	BorrowerPropertyId    int64   `json:"borrower_property_id" validate:"required,gt=0"`
-	Ower                  string  `json:"ower,optional" validate:"max=50"`
+	Owner                 string  `json:"owner,optional" validate:"max=50"`
 	PurchaseAmount        float64 `json:"purchase_amount,optional"`
+	Arv                   float64 `json:"arv,optional"`
 	PurchaseDate          string  `json:"purchase_date,optional"`
 	ExistingLenderCompany string  `json:"existing_lender_company, optional" validate:"max=100"`
 }
@@ -601,6 +616,45 @@ type LoanThirdServiceEntry struct {
 	Company string `json:"company,optional" validate:"required_unless=Type 'Title Co' Type 'Escrow Co' Type Insurance"`
 }
 
+type OrganizationUserCreateResponse struct {
+	OrganizationUserEntity
+}
+
+type OrganizationUserDetailResponse struct {
+	OrganizationUserEntity
+}
+
+type OrganizationUserPageEntity struct {
+	Id        int64         `json:"id"`
+	Status    string        `json:"status"`
+	FirstName string        `json:"first_name"`
+	MidName   string        `json:"mid_name"`
+	LastName  string        `json:"last_name"`
+	FullName  string        `json:"full_name"`
+	Phone     string        `json:"phone"`
+	Remark    string        `json:"remark"`
+	CreatedAt string        `json:"created_at"`
+	UpdatedAt string        `json:"updated_at"`
+	Email     string        `json:"email"`
+	IsOwner   bool          `json:"is_owner"`
+	Roles     []*RoleEntity `json:"roles"`
+}
+
+type OrganizationUserPageRequestFilter struct {
+	Keyword string `json:"keyword,optional"`
+	Status  string `json:"status,optional"`
+	RoleId  int64  `json:"role_id,optional"`
+}
+
+type OrganizationUserPageRequestSorter struct {
+	Column string `json:"column,optional"`
+	Sort   string `json:"sort,optional"`
+}
+
+type OrganizationUserUpdateResponse struct {
+	OrganizationUserEntity
+}
+
 type PathIdRequest struct {
 	Id int64 `path:"id" validate:"required,gt=0"`
 }
@@ -625,6 +679,8 @@ type PrimaryPreApprovalLoan struct {
 
 type PropertyPageEntry struct {
 	Id                        int64         `json:"id"`
+	CreatorId                 int64         `json:"creator_id"`
+	CreatorName               string        `json:"creator_name"`
 	PropertyType              string        `json:"property_type"`
 	LivingAreaSqft            float32       `json:"living_area_sqft"`
 	Bedrooms                  int32         `json:"bedrooms"`
@@ -652,6 +708,61 @@ type PropertyPageFilter struct {
 type PropertyPageSorter struct {
 	Column string `json:"column,optional"`
 	Sort   string `json:"sort,optional"`
+}
+
+type ResourceEntity struct {
+	Id                 int64  `json:"id"`
+	ParentId           int64  `json:"parent_id"`
+	Type               string `json:"type"`
+	ResourceType       string `json:"resource_type"`
+	Name               string `json:"name"`
+	Path               string `json:"path"`
+	Icon               string `json:"icon"`
+	Tag                string `json:"tag"`
+	IsShow             bool   `json:"is_show"`
+	Status             string `json:"status"`
+	SortOrder          int32  `json:"sort_order"`
+	CreatedAt          string `json:"created_at"`
+	UpdatedAt          string `json:"updated_at"`
+	PivotRoleDataScope string `json:"pivot_role_data_scope,omitempty"`
+}
+
+type ResourceTreeEntity struct {
+	Id           int64                 `json:"id"`
+	ParentId     int64                 `json:"parent_id"`
+	Type         string                `json:"type"`
+	ResourceType string                `json:"resource_type"`
+	Name         string                `json:"name"`
+	Path         string                `json:"path"`
+	Icon         string                `json:"icon"`
+	Tag          string                `json:"tag"`
+	IsShow       bool                  `json:"is_show"`
+	Status       string                `json:"status"`
+	SortOrder    int32                 `json:"sort_order"`
+	CreatedAt    string                `json:"created_at"`
+	UpdatedAt    string                `json:"updated_at"`
+	Children     []*ResourceTreeEntity `json:"children,omitempty"`
+}
+
+type ResourceTreeRequest struct {
+	Type string `form:"type" validate:"required,oneof=Borrower Lender Admin"`
+}
+
+type ResourceTreeResponse struct {
+	List []*ResourceTreeEntity `json:"list"`
+}
+
+type RoleDeleteRequest struct {
+	Id int64 `path:"id" validate:"required,gt=0"`
+}
+
+type RolePageFilter struct {
+	Keyword string `json:"keyword"`
+}
+
+type RolePageSort struct {
+	Column string `json:"column"`
+	Sort   string `json:"sort"`
 }
 
 type SecondaryPreApprovalLoan struct {
@@ -696,11 +807,46 @@ type ThirdPartyLoanApplicantEntry struct {
 	OwnPercent          int32 `json:"own_percent,optional" validate:"min=0,max=100"`
 }
 
+type UserEntity struct {
+	Id                      int64         `json:"id"`
+	Email                   string        `json:"email"`
+	Status                  string        `json:"status"`
+	Type                    string        `json:"type"`
+	FirstName               string        `json:"first_name"`
+	MidName                 string        `json:"mid_name"`
+	LastName                string        `json:"last_name"`
+	FullName                string        `json:"full_name"`
+	DefaultOrganizationId   int64         `json:"default_organization_id"`
+	CreatedAt               string        `json:"created_at"`
+	UpdatedAt               string        `json:"updated_at"`
+	PivotOrganizationStatus string        `json:"pivot_organization_status,omitempty"`
+	Roles                   []*RoleEntity `json:"roles"`
+}
+
 type UserInfo struct {
+	Id               int64                         `json:"id"`
+	Email            string                        `json:"email"`
+	FirstName        string                        `json:"first_name"`
+	LastName         string                        `json:"last_name"`
+	FullName         string                        `json:"full_name"`
+	Status           string                        `json:"status"`
+	OrganizationId   int64                         `json:"organization_id"`
+	OrganizationName string                        `json:"organization_name"`
+	Organizations    []*UserInfoOrganizationEntity `json:"organizations"`
+	IsOwner          bool                          `json:"is_owner"`
+	IsAdmin          bool                          `json:"is_admin"`
+}
+
+type UserInfoOrganizationEntity struct {
 	Id        int64  `json:"id"`
-	Email     string `json:"email"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	FullName  string `json:"full_name"`
+	Name      string `json:"name"`
 	Status    string `json:"status"`
+	IsDefault bool   `json:"is_default"`
+}
+
+type UserLoginResponse struct {
+	AccessToken        string `json:"access_token"`
+	AccessTokenExpire  int64  `json:"access_token_expire"`
+	RefreshToken       string `json:"refresh_token"`
+	RefreshTokenExpire int64  `json:"refresh_token_expire"`
 }

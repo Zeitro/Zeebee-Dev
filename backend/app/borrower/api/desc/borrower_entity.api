@@ -13,7 +13,9 @@ type BorrowerEntityEntry {
     Id int64 `json:"id"`
     CreatedAt string `json:"created_at"`
     UpdatedAt string `json:"updated_at"`
-    BorrowerId int64 `json:"borrower_id"`
+    CreatorId int64 `json:"creator_id"`
+    CreatorName string `json:"creator_name"`
+    OrganizationId int64 `json:"organization_id"`
     Type string `json:"type"`
     Name string `json:"name"`
     TinType string `json:"tin_type"`
@@ -26,6 +28,8 @@ type BorrowerEntityEntry {
 
 type BorrowerEntityPageEntry {
     Id int64 `json:"id"`
+    CreatorId int64 `json:"creator_id"`
+    CreatorName string `json:"creator_name"`
     CreatedAt string `json:"created_at"`
     UpdatedAt string `json:"updated_at"`
     BorrowerId int64 `json:"borrower_id"`
@@ -47,7 +51,7 @@ type BorrowerEntityEditRequest {
     Tin string `json:"tin" validate:"required,min=9,max=9"`
     MailingAddress AddressEntry `json:"mailing_address" validate:"required"`
     ContactEmail string `json:"contact_email" validate:"required,email,min=5,max=100"`
-    ContactName string `json:"contact_name" validate:"required,min=5,max=100"`
+    ContactName string `json:"contact_name" validate:"required,min=2,max=100"`
     ContactPhone string `json:"contact_phone" validate:"required,min=9,max=15"`
 }
 

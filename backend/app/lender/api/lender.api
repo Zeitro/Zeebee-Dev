@@ -1,10 +1,10 @@
 syntax = "v1"
 
 info(
-    title: "lender-api http service"
-    desc: "lender-api http service description"
+	title: "lender-api http service"
+	desc: "lender-api http service description"
 	author: "Wei Zeng"
-    email: "wei@yeelee-capital.com"
+	email: "wei@yeelee-capital.com"
 )
 
 import "desc/user.api"
@@ -15,10 +15,10 @@ import "desc/storage.api"
 import "desc/loan_document.api"
 
 type (
-    EmptyRequest{
-    }
-    EmptyResponse{
-    }
+	EmptyRequest{
+	}
+	EmptyResponse{
+	}
 )
 
 type PathIdRequest {
@@ -27,11 +27,11 @@ type PathIdRequest {
 
 // ============== common =============
 @server(
-    desc: "lender-api service"
+	desc: "lender-api service"
 	version: v1
-    group: common
+	group: common
 	prefix:  /api/v1
-    tags: common
+	tags: common
 )
 service lender-api {
 	@doc "select options"
@@ -49,11 +49,11 @@ service lender-api {
 
 // ============== user =============
 @server(
-    desc: "lender-api service"
+	desc: "lender-api service"
 	version: v1
-    group: user
+	group: user
 	prefix:  /api/v1
-    tags: user
+	tags: user
 )
 service lender-api {
 	@doc "register"
@@ -78,31 +78,31 @@ service lender-api {
 }
 
 @server(
-    desc: "lender-api service"
-    version: v1
-    group: user
+	desc: "lender-api service"
+	version: v1
+	group: user
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: user
+	tags: user
 )
 service lender-api {
 	@doc "info"
 	@handler Info
 	get /user/info (EmptyRequest) returns (UserInfoResponse)
 
-	@doc "switch lender company"
-	@handler SwitchLenderCompany
-	post /user/switch_lender_company (UserSwitchLenderCompanyRequest) returns (UserRefreshTokenResponse)
+	@doc "switch organization"
+	@handler SwitchOrganization
+	post /user/switch_organization (UserSwitchOrganizationRequest) returns (UserRefreshTokenResponse)
 }
 
 // ============== loan =============
 @server(
-    desc: "loan service"
-    version: v1
-    group: loan
+	desc: "loan service"
+	version: v1
+	group: loan
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: loan
+	tags: loan
 )
 service lender-api {
 	@doc "detail"
@@ -136,12 +136,12 @@ service lender-api {
 
 // ============== loan document =============
 @server(
-    desc: "loan document service"
-    version: v1
-    group: loan_document
+	desc: "loan document service"
+	version: v1
+	group: loan_document
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: loan_document
+	tags: loan_document
 )
 service lender-api {
 	@doc "create loan document"
@@ -167,12 +167,12 @@ service lender-api {
 
 // =============== file ==============
 @server(
-    desc: "file service"
-    version: v1
-    group: file
+	desc: "file service"
+	version: v1
+	group: file
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: file
+	tags: file
 )
 service lender-api {
 	@doc "delete"
@@ -182,12 +182,12 @@ service lender-api {
 
 // =============== storage ==============
 @server(
-    desc: "storage service"
-    version: v1
-    group: storage
+	desc: "storage service"
+	version: v1
+	group: storage
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: storage
+	tags: storage
 )
 service lender-api {
 	@doc "create aws s3 presign url"

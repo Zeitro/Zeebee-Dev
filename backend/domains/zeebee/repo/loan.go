@@ -7,55 +7,12 @@ import (
 	"gorm.io/gorm"
 
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/data/dto"
 
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/model"
 )
-
-type LoanBorrowerPageReq struct {
-	Page   int64                      `json:"page"`
-	Limit  int64                      `json:"limit"`
-	Filter *LoanBorrowerPageReqFilter `json:"filter"`
-	Sorter *LoanBorrowerPageReqSorter `json:"sorter"`
-}
-
-type LoanBorrowerPageReqFilter struct {
-	BorrowerId    int64    `json:"borrower_id,omitempty"`
-	Stage         string   `json:"stage,omitempty"`
-	Keyword       string   `json:"keyword,omitempty"`
-	KeywordType   string   `json:"keyword_type,omitempty"`
-	LoanPurpose   []string `json:"loan_purpose,omitempty"`
-	LoanType      []string `json:"loan_type,omitempty"`
-	Lender        []string `json:"lender,omitempty"`
-	PendingStatus []string `json:"pending_status,omitempty"`
-}
-
-type LoanBorrowerPageReqSorter struct {
-	Column string `json:"column,omitempty"`
-	Sort   string `json:"sort,omitempty"`
-}
-
-type LoanLenderCompanyPageReq struct {
-	Page   int64                           `json:"page,omitempty"`
-	Limit  int64                           `son:"limit,omitempty"`
-	Filter *LoanLenderCompanyPageReqFilter `json:"filter,omitempty"`
-	Sorter *LoanLenderCompanyPageReqSorter `json:"sorter,omitempty"`
-}
-
-type LoanLenderCompanyPageReqFilter struct {
-	LenderCompanyId int64    `json:"lender_company_id,omitempty"`
-	Stage           string   `json:"stage,omitempty"`
-	Keyword         string   `json:"keyword,omitempty"`
-	KeywordType     string   `json:"keyword_type,omitempty"`
-	LoanPurpose     []string `json:"loan_purpose,omitempty"`
-	LoanType        []string `json:"loan_type,omitempty"`
-	PendingStatus   []string `json:"pending_status,omitempty"`
-}
-type LoanLenderCompanyPageReqSorter struct {
-	Column string `json:"column,omitempty"`
-	Sort   string `json:"sort,omitempty"`
-}
 
 type LoanRepo struct {
 	*gormx.BaseRepo[*model.Loan]
@@ -69,14 +26,13 @@ func NewLoanRepo(db *gorm.DB) *LoanRepo {
 	}
 }
 
-func (repo *LoanRepo) GetBorrowerLoan(ctx context.Context, id int64, borrowerId int64) (result *model.Loan, err error) {
+func (repo *LoanRepo) GetBorrowerLoan(ctx context.Context, id int64, organizationId int64) (result *model.Loan, err error) {
 	err = repo.BaseRepo.Client(ctx).
-		Where("id = ? and borrower_id = ?", id, borrowerId).
+		Where("id = ? and borrower_organization_id = ?", id, organizationId).
 		Preload("Applicants", func(db *gorm.DB) *gorm.DB {
 			return db.Order("loan_applicants.is_primary desc")
 		}).
 		Preload("LoanProperty").
-		// Preload("LoanProperty.PropertyBase").
 		Preload("LoanBorrower").
 		Preload("LoanExperiences", func(db *gorm.DB) *gorm.DB {
 			return db.Order("loan_experiences.id asc")
@@ -85,7 +41,6 @@ func (repo *LoanRepo) GetBorrowerLoan(ctx context.Context, id int64, borrowerId 
 			return db.Order("loan_third_services.id asc")
 		}).
 		Preload("LoanDemographic").
-		// Preload("ApplyFormFile").
 		Preload("LoanDocuments", func(db *gorm.DB) *gorm.DB {
 			return db.Order("loan_documents.id asc")
 		}).
@@ -96,14 +51,13 @@ func (repo *LoanRepo) GetBorrowerLoan(ctx context.Context, id int64, borrowerId 
 	return result, errorx.WithStack(err)
 }
 
-func (repo *LoanRepo) GetBorrowerLoanWithTx(ctx context.Context, tx *gorm.DB, id int64, borrowerId int64) (result *model.Loan, err error) {
+func (repo *LoanRepo) GetBorrowerLoanWithTx(ctx context.Context, tx *gorm.DB, id int64, organizationId int64) (result *model.Loan, err error) {
 	err = tx.WithContext(ctx).
-		Where("id = ? and borrower_id = ?", id, borrowerId).
+		Where("id = ? and borrower_organization_id = ?", id, organizationId).
 		Preload("Applicants", func(db *gorm.DB) *gorm.DB {
 			return db.Order("loan_applicants.is_primary desc")
 		}).
 		Preload("LoanProperty").
-		// Preload("LoanProperty.PropertyBase").
 		Preload("LoanBorrower").
 		Preload("LoanExperiences", func(db *gorm.DB) *gorm.DB {
 			return db.Order("loan_experiences.id asc")
@@ -114,7 +68,6 @@ func (repo *LoanRepo) GetBorrowerLoanWithTx(ctx context.Context, tx *gorm.DB, id
 		Preload("LoanDemographic", func(db *gorm.DB) *gorm.DB {
 			return db.Order("loan_demographics.id asc")
 		}).
-		// Preload("ApplyFormFile").
 		Preload("LoanDocuments", func(db *gorm.DB) *gorm.DB {
 			return db.Order("loan_documents.id asc")
 		}).
@@ -125,10 +78,10 @@ func (repo *LoanRepo) GetBorrowerLoanWithTx(ctx context.Context, tx *gorm.DB, id
 	return result, errorx.WithStack(err)
 }
 
-func (repo *LoanRepo) GetLenderLoan(ctx context.Context, id int64, lenderCompanyId int64, withRelationships bool) (result *model.Loan, err error) {
+func (repo *LoanRepo) GetLenderLoan(ctx context.Context, id int64, lenderOrganizationId int64, withRelationships bool) (result *model.Loan, err error) {
 
 	query := repo.BaseRepo.Client(ctx).
-		Where("id = ? and lender_company_id = ?", id, lenderCompanyId)
+		Where("id = ? and lender_organization_id = ?", id, lenderOrganizationId)
 	if withRelationships {
 		query = query.Preload("Applicants", func(db *gorm.DB) *gorm.DB {
 			return db.Order("loan_applicants.is_primary desc")
@@ -153,36 +106,9 @@ func (repo *LoanRepo) GetLenderLoan(ctx context.Context, id int64, lenderCompany
 	return result, errorx.WithStack(err)
 }
 
-func (repo *LoanRepo) GetLenderLoanWithTx(ctx context.Context, tx *gorm.DB, id int64, lenderCompanyId int64) (result *model.Loan, err error) {
-	err = tx.WithContext(ctx).
-		Where("id = ? and lender_company_id = ?", id, lenderCompanyId).
-		Preload("Applicants", func(db *gorm.DB) *gorm.DB {
-			return db.Order("loan_applicants.is_primary desc")
-		}).
-		Preload("LoanProperty").
-		Preload("LoanBorrower").
-		Preload("LoanExperiences", func(db *gorm.DB) *gorm.DB {
-			return db.Order("loan_experiences.id asc")
-		}).
-		Preload("LoanThirdServices", func(db *gorm.DB) *gorm.DB {
-			return db.Order("loan_third_services.id asc")
-		}).
-		Preload("LoanDemographic", func(db *gorm.DB) *gorm.DB {
-			return db.Order("loan_demographic.id asc")
-		}).
-		Preload("LoanDocuments", func(db *gorm.DB) *gorm.DB {
-			return db.Order("loan_documents.id asc")
-		}).
-		Preload("LoanDocuments.Files", func(db *gorm.DB) *gorm.DB {
-			return db.Order("files.id asc")
-		}).
-		First(&result).Error
-	return result, errorx.WithStack(err)
-}
-
 // UpdateOneWithTx update with tx
 func (repo *LoanRepo) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, id int64, data *model.Loan) (result *model.Loan, err error) {
-	omitFields := []string{"id", "source", "created_at", "code", "borrower_id"}
+	omitFields := []string{"id", "source", "created_at", "code", "creator_id", "creator_naem"}
 	var applyFields []string
 	omitFields = append(omitFields, applyFields...)
 	err = tx.WithContext(ctx).
@@ -194,14 +120,6 @@ func (repo *LoanRepo) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, id int64
 		return nil, errorx.WithStack(err)
 	}
 	return data, nil
-}
-
-// GetLoanCountByPropertyId return loan count by property id
-func (repo *LoanRepo) GetLoanCountByPropertyId(ctx context.Context, propertyId int64) (count int64, err error) {
-	err = repo.Client(ctx).
-		Where("property_id = ?", propertyId).
-		Count(&count).Error
-	return count, errorx.WithStack(err)
 }
 
 // UpdateStageWithTx
@@ -225,7 +143,7 @@ func (repo *LoanRepo) UpdatePendingStatusWithTx(ctx context.Context, tx *gorm.DB
 }
 
 // page
-func (repo *LoanRepo) PageForBorrower(ctx context.Context, pageReq *LoanBorrowerPageReq) (page gormx.PageResponse[*model.Loan], err error) {
+func (repo *LoanRepo) PageForBorrower(ctx context.Context, pageReq dto.LoanBorrowerPageRequestDto) (page gormx.PageResponse[*model.Loan], err error) {
 	loanTable := model.Loan{}.TableName()
 	loanPropertyTable := model.LoanProperty{}.TableName()
 	applicantTable := model.LoanApplicant{}.TableName()
@@ -235,7 +153,7 @@ func (repo *LoanRepo) PageForBorrower(ctx context.Context, pageReq *LoanBorrower
 	filter := pageReq.Filter
 	sorter := pageReq.Sorter
 	query := repo.Client(ctx).
-		Where(fmt.Sprintf("%s.borrower_id = ?", loanTable), filter.BorrowerId).
+		Where(fmt.Sprintf("%s.borrower_organization_id = ?", loanTable), filter.OrganizationId).
 		Preload("Property").
 		Preload("Applicants")
 	if len(filter.Stage) > 0 {
@@ -283,7 +201,7 @@ func (repo *LoanRepo) PageForBorrower(ctx context.Context, pageReq *LoanBorrower
 	sortColumns := []string{}
 
 	// sort
-	if sorter != nil {
+	if len(sorter.Column) > 0 {
 		switch sorter.Column {
 		case "address":
 			if !hasJoinProperty {
@@ -298,7 +216,7 @@ func (repo *LoanRepo) PageForBorrower(ctx context.Context, pageReq *LoanBorrower
 			sortColumns = append(sortColumns, fmt.Sprintf("%s.%s %s", loanTable, sorter.Column, sorter.Sort))
 		}
 	}
-	if sorter == nil || len(sortColumns) == 0 {
+	if len(sortColumns) == 0 {
 		sortColumns = append(sortColumns, fmt.Sprintf("%s.created_at desc", loanTable))
 	}
 	for _, column := range sortColumns {
@@ -326,7 +244,7 @@ func (repo *LoanRepo) PageForBorrower(ctx context.Context, pageReq *LoanBorrower
 	return
 }
 
-func (repo *LoanRepo) PageForLenderCompany(ctx context.Context, pageReq *LoanLenderCompanyPageReq) (page gormx.PageResponse[*model.Loan], err error) {
+func (repo *LoanRepo) PageForLenderCompany(ctx context.Context, pageReq dto.LoanLenderPageRequestDto) (page gormx.PageResponse[*model.Loan], err error) {
 	loanTable := model.Loan{}.TableName()
 	loanPropertyTable := model.LoanProperty{}.TableName()
 	applicantTable := model.LoanApplicant{}.TableName()
@@ -345,7 +263,7 @@ func (repo *LoanRepo) PageForLenderCompany(ctx context.Context, pageReq *LoanLen
 	}
 	query := repo.Client(ctx).
 		Omit(omitFields...).
-		Where(fmt.Sprintf("%s.lender_company_id = ?", loanTable), filter.LenderCompanyId).
+		Where(fmt.Sprintf("%s.lender_organization_id = ?", loanTable), filter.OrganizationId).
 		Preload("Property").
 		Preload("Applicants")
 	if len(filter.Stage) > 0 {
@@ -391,7 +309,7 @@ func (repo *LoanRepo) PageForLenderCompany(ctx context.Context, pageReq *LoanLen
 	sortColumns := []string{}
 
 	// sort
-	if sorter != nil {
+	if len(sorter.Column) > 0 {
 		switch sorter.Column {
 		case "address":
 			if !hasJoinProperty {
@@ -406,7 +324,7 @@ func (repo *LoanRepo) PageForLenderCompany(ctx context.Context, pageReq *LoanLen
 			sortColumns = append(sortColumns, fmt.Sprintf("%s.%s %s", loanTable, sorter.Column, sorter.Sort))
 		}
 	}
-	if sorter == nil || len(sortColumns) == 0 {
+	if len(sortColumns) == 0 {
 		sortColumns = append(sortColumns, fmt.Sprintf("%s.created_at desc", loanTable))
 	}
 	for _, column := range sortColumns {
@@ -434,12 +352,16 @@ func (repo *LoanRepo) PageForLenderCompany(ctx context.Context, pageReq *LoanLen
 }
 
 // GetLenderCompanyForBorrower get lender company
-func (repo *LoanRepo) GetLenderCompanyForBorrower(ctx context.Context, borrowerId int64) (result []string, err error) {
-	err = repo.BaseRepo.Client(ctx).
+func (repo *LoanRepo) GetLenderCompanyForBorrower(ctx context.Context, creatorId int64, organizationId int64) (result []string, err error) {
+	query := repo.BaseRepo.Client(ctx).
 		Select("lender_company").
-		Where("borrower_id = ?", borrowerId).
-		Distinct("lender_company").
-		Pluck("lender_company", &result).
+		Where("borrower_organization_id = ?", organizationId).
+		Distinct("lender_company")
+
+	if creatorId > 0 {
+		query = query.Where("creator_id = ?", creatorId)
+	}
+	err = query.Pluck("lender_company", &result).
 		Error
 	return result, errorx.WithStack(err)
 }

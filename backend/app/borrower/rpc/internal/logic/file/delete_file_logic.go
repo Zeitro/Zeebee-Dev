@@ -53,11 +53,11 @@ func (l *DeleteFileLogic) DeleteFile(in *borrower.FileDeleteRequest) (resp *borr
 		return nil, errorx.Wrap(err, "Failed To Find Loan Document")
 	}
 
-	loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, loanDocument.LoanId, in.Data.BorrowerId)
+	loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, loanDocument.LoanId, in.Data.OrganizationId)
 	if err != nil {
 		return nil, errorx.Wrap(err, "Failed To Get Loan")
 	}
-	if loan.BorrowerId != in.Data.BorrowerId {
+	if loan.BorrowerOrganizationId != in.Data.OrganizationId {
 		return nil, errorx.WithStack(errorx.New("Loan Does Not Belong To Borrower"))
 	}
 

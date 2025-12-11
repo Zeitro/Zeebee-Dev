@@ -9,27 +9,29 @@ import (
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
+	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
-	"zeebee-backend/domains/zeebee/repo"
-
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/data/dto"
 )
 
 type PageLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	baseLogic *logic.BaseLogic
 }
 
 func NewPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PageLogic {
 	return &PageLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -40,11 +42,18 @@ func (l *PageLogic) Page(in *borrower.PropertyPageRequest) (resp *borrower.Prope
 		}
 	}()
 
-	pageReq := &repo.PropertyBorrowerPageReq{}
-	_ = copier.CopyWithOption(pageReq, in.Data, copier.Option{
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	pageReq := dto.BorrowerPropertyPageRequestDto{}
+	_ = copier.CopyWithOption(&pageReq, in.Data, copier.Option{
 		DeepCopy:      true,
 		CaseSensitive: true,
 	})
+	pageReq.Filter.OrganizationId = claim.OrganizationId
+	pageReq.Filter.UserId = claim.OrganizationUserId
 
 	borrowerPropertyPageResult, err := l.svcCtx.BorrowerPropertyRepo.PageForBorrower(l.ctx, pageReq)
 	if err != nil {
