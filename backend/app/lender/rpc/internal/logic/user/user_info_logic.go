@@ -3,27 +3,29 @@ package userlogic
 import (
 	"context"
 
-	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/logx"
 
+	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type UserInfoLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	baseLogic *logic.BaseLogic
 }
 
 func NewUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserInfoLogic {
 	return &UserInfoLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -33,53 +35,25 @@ func (l *UserInfoLogic) UserInfo(in *lender.UserInfoRequest) (resp *lender.Useri
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	companies := []*lender.UserinfoResponseData_Company{}
-
-	user, err := l.svcCtx.UserRepo.GetLenderUser(l.ctx, in.Data.Id)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	userLender := user.LenderEmployee
-	if userLender == nil {
-		return nil, errorx.WithStack(errorx.New("Lender Not Found"))
+
+	user, err := l.baseLogic.UserLogic.Info(l.ctx, claim.UserId, claim.OrganizationId, constants.UserTypeLender)
+	if err != nil {
+		return nil, err
 	}
-	if len(userLender.LenderCompanies) > 0 {
-		err = copier.CopyWithOption(&companies, userLender.LenderCompanies, copier.Option{
-			DeepCopy:      true,
-			CaseSensitive: true,
-		})
-		if err != nil {
-			return nil, errorx.Wrap(err, "Failed To Copy Lender Companies")
-		}
-	}
-	var currentCompany *lender.UserinfoResponseData_Company
-	slice.ForEach(companies, func(i int, company *lender.UserinfoResponseData_Company) {
-		if company.Id == userLender.DefaultLenderCompanyId {
-			currentCompany = companies[i]
-			company.IsDefault = true
-		}
+	data := &lender.UserinfoResponseData{}
+	err = copier.CopyWithOption(data, user, copier.Option{
+		DeepCopy:      true,
+		CaseSensitive: true,
 	})
-
-	// Get lender company info
-	var lenderCompanyId int64
-	var lenderCompanyName string
-	if currentCompany != nil {
-		lenderCompanyId = userLender.DefaultLenderCompanyId
-		lenderCompanyName = currentCompany.Name
+	if err != nil {
+		return nil, errorx.GetFailedTransRespErr(err)
 	}
-
 	userInfo := &lender.UserinfoResponse{
-		Data: &lender.UserinfoResponseData{
-			Id:                user.Id,
-			Email:             user.Email,
-			FirstName:         userLender.FirstName,
-			LastName:          userLender.LastName,
-			FullName:          userLender.FullName,
-			LenderCompanyId:   lenderCompanyId,
-			LenderCompanyName: lenderCompanyName,
-			Status:            string(user.Status),
-			LenderCompanies:   companies,
-		},
+		Data: data,
 	}
 	return userInfo, nil
 }

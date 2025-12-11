@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/constants"
+	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -40,8 +41,12 @@ func (l *DeleteFileLogic) DeleteFile(in *lender.LoanDocumentDeleteFileRequest) (
 	}()
 	var loan *model.Loan
 	var loanDocument *model.LoanDocument
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 
-	loan, loanDocument, _, err = l.prepare(in)
+	loan, loanDocument, _, err = l.prepare(in, claim)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +85,7 @@ func (l *DeleteFileLogic) DeleteFile(in *lender.LoanDocumentDeleteFileRequest) (
 		if innerErr = l.baseLogic.CreateLoanOperationLog(
 			tx,
 			in.Data.Id,
-			in.Data.LenderEmployeeId,
+			claim.OrganizationUserId,
 			model.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
@@ -121,7 +126,7 @@ func (l *DeleteFileLogic) DeleteFile(in *lender.LoanDocumentDeleteFileRequest) (
 }
 
 // prepare
-func (l *DeleteFileLogic) prepare(in *lender.LoanDocumentDeleteFileRequest) (loan *model.Loan, loanDocument *model.LoanDocument, file *model.File, err error) {
+func (l *DeleteFileLogic) prepare(in *lender.LoanDocumentDeleteFileRequest, claim utils.JwtUser) (loan *model.Loan, loanDocument *model.LoanDocument, file *model.File, err error) {
 	file, err = l.svcCtx.FileRepo.FindOneById(l.ctx, in.Data.FileId)
 	if err != nil {
 		return nil, nil, nil, errorx.Wrap(err, "Failed To Find File")
@@ -130,7 +135,7 @@ func (l *DeleteFileLogic) prepare(in *lender.LoanDocumentDeleteFileRequest) (loa
 	if file.EntityType != constants.FileEntityTypeLoanDocument {
 		return nil, nil, nil, errorx.WithStack(errorx.New("File Is Not Associated With A Loan Document"))
 	}
-	loan, loanDocument, err = l.baseLogic.GetLoanAndDocumentByDocumentId(file.EntityId, in.Data.LenderCompanyId)
+	loan, loanDocument, err = l.baseLogic.GetLoanAndDocumentByDocumentId(file.EntityId, claim.OrganizationId)
 
 	return
 }

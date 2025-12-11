@@ -9,6 +9,7 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
+	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
@@ -20,13 +21,15 @@ type AddFilesLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	baseLogic *logic.BaseLogic
 }
 
 func NewAddFilesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddFilesLogic {
 	return &AddFilesLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -102,7 +105,12 @@ func (l *AddFilesLogic) prepare(in *borrower.LoanDocumentAddFilesRequest) (loan 
 		return nil, nil, errorx.WithStack(errorx.New("Total Number Of Files (Existing + New) Cannot Exceed 10"))
 	}
 
-	loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, loanDocument.LoanId, in.Data.BorrowerId)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, loanDocument.LoanId, claim.OrganizationId)
 	if err != nil {
 		return nil, nil, errorx.Wrap(err, "Failed To Get Loan")
 	}
@@ -129,7 +137,7 @@ func (l *AddFilesLogic) prepare(in *borrower.LoanDocumentAddFilesRequest) (loan 
 		return nil, nil, errorx.WithStack(errorx.New("Loan Source Is Not System"))
 	}
 
-	if loan.BorrowerId != in.Data.BorrowerId {
+	if loan.BorrowerOrganizationId != claim.OrganizationId {
 		return nil, nil, errorx.WithStack(errorx.New("Loan Does Not Belong To Borrower"))
 	}
 

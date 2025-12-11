@@ -11,6 +11,7 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/constants"
+	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -44,7 +45,12 @@ func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *
 	var loan *model.Loan
 	var loanDocument *model.LoanDocument
 
-	loan, loanDocument, err = l.prepare(in)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	loan, loanDocument, err = l.prepare(in, claim)
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +97,7 @@ func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *
 		innerErr = l.baseLogic.CreateLoanOperationLog(
 			tx,
 			in.Data.Id,
-			in.Data.LenderEmployeeId,
+			claim.OrganizationUserId,
 			model.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
@@ -132,7 +138,7 @@ func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *
 }
 
 // prepare
-func (l *AddFilesLogic) prepare(in *lender.LoanDocumentAddFilesRequest) (loan *model.Loan, loanDocument *model.LoanDocument, err error) {
+func (l *AddFilesLogic) prepare(in *lender.LoanDocumentAddFilesRequest, claim utils.JwtUser) (loan *model.Loan, loanDocument *model.LoanDocument, err error) {
 	loanDocument, err = l.svcCtx.LoanDocumentRepo.FindOneWithPreloadById(l.ctx, in.Data.Id, []string{"Files"})
 	if err != nil {
 		return nil, nil, errorx.Wrap(err, "Failed To Find Loan Document")
@@ -145,7 +151,7 @@ func (l *AddFilesLogic) prepare(in *lender.LoanDocumentAddFilesRequest) (loan *m
 		return nil, nil, errorx.WithStack(errorx.New("Total Number Of Files (Existing + New) Cannot Exceed 10"))
 	}
 
-	loan, err = l.baseLogic.GetLenderLoan(loanDocument.LoanId, in.Data.LenderCompanyId, nil)
+	loan, err = l.baseLogic.GetLenderLoan(loanDocument.LoanId, claim.OrganizationId, nil)
 	if err != nil {
 		return nil, nil, err
 	}

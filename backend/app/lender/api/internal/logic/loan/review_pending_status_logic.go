@@ -10,7 +10,6 @@ import (
 	"zeebee-backend/app/lender/api/internal/types"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
 )
 
 type ReviewPendingStatusLogic struct {
@@ -40,18 +39,6 @@ func (l *ReviewPendingStatusLogic) ReviewPendingStatus(req *types.ReviewLoanPend
 	})
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
-	}
-
-	// get lender id
-	rpcReq.Data.LenderCompanyId, err = utils.GetLenderCompanyIdFromCtx(l.ctx)
-	if err != nil {
-		return nil, errorx.WithStack(err)
-	}
-
-	// get employee id
-	rpcReq.Data.LenderEmployeeId, err = utils.GetLenderAccountIdFromCtx(l.ctx)
-	if err != nil {
-		return nil, errorx.WithStack(err)
 	}
 
 	_, err = l.svcCtx.LoanRpcClient.PendingStatusReview(l.ctx, rpcReq)

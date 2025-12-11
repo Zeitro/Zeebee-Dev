@@ -10,6 +10,7 @@ import (
 	"gorm.io/gorm/clause"
 
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/data/dto"
 
 	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
@@ -17,24 +18,6 @@ import (
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/model"
 )
-
-type PropertyBorrowerPageReq struct {
-	Page   int64                          `json:"page"`
-	Limit  int64                          `json:"limit"`
-	Filter *PropertyBorrowerPageReqFilter `json:"filter"`
-	Sorter *PropertyBorrowerPageReqSorter `json:"sorter"`
-}
-
-type PropertyBorrowerPageReqFilter struct {
-	BorrowerId int64    `json:"borrower_id"`
-	Keyword    string   `json:"keyword,omitempty"`
-	Applicant  []string `json:"applicant,omitempty"`
-}
-
-type PropertyBorrowerPageReqSorter struct {
-	Column string `json:"column,omitempty"`
-	Sort   string `json:"sort,omitempty"`
-}
 
 type BorrowerPropertyRepo struct {
 	*gormx.BaseRepo[*model.BorrowerProperty]
@@ -46,16 +29,6 @@ func NewBorrowerPropertyRepo(db *gorm.DB) *BorrowerPropertyRepo {
 		BaseRepo: gormx.NewBaseRepo[*model.BorrowerProperty](db),
 		m:        new(model.BorrowerProperty),
 	}
-}
-
-// GetOneWithTx return one property
-func (repo *BorrowerPropertyRepo) GetOneWithTx(ctx context.Context, tx *gorm.DB, id int64, preloads []string) (result *model.BorrowerProperty, err error) {
-	query := tx.WithContext(ctx).Where("id = ?", id)
-	for _, preload := range preloads {
-		query = query.Preload(preload)
-	}
-	err = query.First(&result).Error
-	return
 }
 
 // GetOne return one property
@@ -71,37 +44,13 @@ func (repo *BorrowerPropertyRepo) GetOne(ctx context.Context, id int64) (result 
 	return
 }
 
-// GetOrCreateWithTxForBorrower query or create property
-func (repo *BorrowerPropertyRepo) GetOrCreateWithTxForBorrower(ctx context.Context, tx *gorm.DB, data *model.BorrowerProperty) (result *model.BorrowerProperty, err error) {
-	// if not existed,create one
-	err = tx.WithContext(ctx).
-		Where("borrower_id = ? and unit = ?", data.BorrowerId, data.Unit).
-		Where("address->>'state' = ?", data.Address.State).
-		Where("address->>'city' = ?", data.Address.City).
-		Where("address->>'address1' = ?", data.Address.Address1).
-		Where("address->>'address2' = ?", data.Address.Address2).
-		Find(&result).
-		Error
-	if err != nil {
-		return nil, errorx.WithStack(err)
-	}
-	if result == nil || result.Id == 0 {
-		err = tx.WithContext(ctx).Omit(clause.Associations).Create(data).Error
-		if err != nil {
-			return nil, errorx.WithStack(err)
-		}
-		result = data
-	}
-	return
-}
-
-func (repo *BorrowerPropertyRepo) GetOrCreateBorrowerPropertyWithTxForBorrower(ctx context.Context, tx *gorm.DB, borrowerId int64, address model.Address) (result *model.BorrowerProperty, err error) {
+func (repo *BorrowerPropertyRepo) GetOrCreateBorrowerPropertyWithTxForBorrower(ctx context.Context, tx *gorm.DB, organizationId int64, creatorId int64, creatorName string, address model.Address) (result *model.BorrowerProperty, err error) {
 	if len(address.City) == 0 || len(address.Address1) == 0 || len(address.State) == 0 {
 		return nil, fmt.Errorf("Invalid Borrower Address")
 	}
 	// if not existed,create one
 	err = tx.WithContext(ctx).
-		Where("borrower_id = ? ", borrowerId).
+		Where("organization_id = ? ", organizationId).
 		Where("address->>'state' = ?", address.State).
 		Where("address->>'city' = ?", address.City).
 		Where("address->>'address1' = ?", address.Address1).
@@ -112,8 +61,9 @@ func (repo *BorrowerPropertyRepo) GetOrCreateBorrowerPropertyWithTxForBorrower(c
 	}
 	if result == nil || result.Id == 0 {
 		data := &model.BorrowerProperty{
-			BorrowerId: borrowerId,
-			Address:    address,
+			CreatorId:   creatorId,
+			CreatorName: creatorName,
+			Address:     address,
 		}
 		err = tx.WithContext(ctx).Omit(clause.Associations).Create(data).Error
 		if err != nil {
@@ -124,44 +74,22 @@ func (repo *BorrowerPropertyRepo) GetOrCreateBorrowerPropertyWithTxForBorrower(c
 	return
 }
 
-// GetOneWithTxByPropertyForBorrower return one property
-func (repo *BorrowerPropertyRepo) GetOneWithTxByPropertyForBorrower(ctx context.Context, tx *gorm.DB, data *model.BorrowerProperty) (result *model.BorrowerProperty, err error) {
-	err = tx.WithContext(ctx).
-		Where("borrower_id = ? and unit = ?", data.BorrowerId, data.Unit).
-		Where("address->>'state' = ?", data.Address.State).
-		Where("address->>'city' = ?", data.Address.City).
-		Where("address->>'address1' = ?", data.Address.Address1).
-		Where("address->>'address2' = ?", data.Address.Address2).
-		Find(&result).
-		Error
-	if err != nil {
-		return nil, errorx.WithStack(err)
-	}
-	if result == nil || result.Id == 0 {
-		return nil, nil
-	}
-	return
-}
-
 // GetOneByIdForBorrower return one property
-func (repo *BorrowerPropertyRepo) GetOneByIdForBorrower(ctx context.Context, id int64, borrowerId int64) (result *model.BorrowerProperty, err error) {
+func (repo *BorrowerPropertyRepo) GetOneByIdForBorrower(ctx context.Context, id int64, creatorId int64) (result *model.BorrowerProperty, err error) {
 	err = repo.Client(ctx).
-		Where("id = ? and borrower_id = ?", id, borrowerId).
+		Where("id = ? and creator_id = ?", id, creatorId).
 		First(&result).
 		Error
 	return result, errorx.WithStack(err)
 }
 
-// UpdateOneWithTx update one property
-func (repo *BorrowerPropertyRepo) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, id int64, data *model.BorrowerProperty) (result *model.BorrowerProperty, err error) {
-	err = tx.WithContext(ctx).Select("*").
-		Omit("id", "created_at", "applicants").
-		Where("id = ?", id).
-		Updates(data).Error
-	if err != nil {
-		return nil, errorx.WithStack(err)
-	}
-	return data, nil
+// GetOneByIdForOrganization return one property by id and organization id
+func (repo *BorrowerPropertyRepo) GetOneByIdForOrganization(ctx context.Context, id int64, organizationId int64) (result *model.BorrowerProperty, err error) {
+	err = repo.Client(ctx).
+		Where("id = ? and organization_id = ?", id, organizationId).
+		First(&result).
+		Error
+	return result, errorx.WithStack(err)
 }
 
 // SyncTotalAmountAndLoanCountWithTx sync total amount and loan count
@@ -196,12 +124,11 @@ func (repo *BorrowerPropertyRepo) SyncTotalAmountAndLoanCountWithTx(ctx context.
 			"total_amount": totalAmount,
 			"loan_count":   loanCount,
 		}).Error
-	// Updates("total_amount", totalAmount).Error
 	return errorx.WithStack(err)
 }
 
 // Page page
-func (repo *BorrowerPropertyRepo) PageForBorrower(ctx context.Context, pageReq *PropertyBorrowerPageReq) (page gormx.PageResponse[*model.BorrowerProperty], err error) {
+func (repo *BorrowerPropertyRepo) PageForBorrower(ctx context.Context, pageReq dto.BorrowerPropertyPageRequestDto) (page gormx.PageResponse[*model.BorrowerProperty], err error) {
 	borrowerPropertyTable := model.BorrowerProperty{}.TableName()
 	loanPropertyTable := model.LoanProperty{}.TableName()
 	applicantTable := model.LoanApplicant{}.TableName()
@@ -210,7 +137,7 @@ func (repo *BorrowerPropertyRepo) PageForBorrower(ctx context.Context, pageReq *
 	filter := pageReq.Filter
 	sorter := pageReq.Sorter
 	query := repo.Client(ctx).
-		Where(fmt.Sprintf("%s.borrower_id = ?", borrowerPropertyTable), filter.BorrowerId)
+		Where(fmt.Sprintf("%s.organization_id = ?", borrowerPropertyTable), filter.OrganizationId)
 	// keyword
 	if len(filter.Keyword) > 0 {
 		query = query.Where(
@@ -225,7 +152,7 @@ func (repo *BorrowerPropertyRepo) PageForBorrower(ctx context.Context, pageReq *
 
 	var sortColumns []string
 
-	if sorter != nil {
+	if len(sorter.Column) > 0 {
 		switch sorter.Column {
 		case "total_amount":
 			sortColumns = append(sortColumns,
@@ -273,23 +200,23 @@ func (repo *BorrowerPropertyRepo) UpdateOne(ctx context.Context, id int64, data 
 	return data, nil
 }
 
-// AllForBorrower return all of the borrower's properties
-func (repo *BorrowerPropertyRepo) AllForBorrower(ctx context.Context, borrowerId int64) (result []*model.BorrowerProperty, err error) {
+// AllForOrganization return all of the organization's properties
+func (repo *BorrowerPropertyRepo) AllForOrganization(ctx context.Context, organizationId int64) (result []*model.BorrowerProperty, err error) {
 	err = repo.Client(ctx).
-		Where("borrower_id = ?", borrowerId).
+		Where("organization_id = ?", organizationId).
 		Order("id desc").
 		Find(&result).Error
 	return result, errorx.WithStack(err)
 }
 
 // IsExisted check given property base is existed
-func (repo *BorrowerPropertyRepo) IsExisted(ctx context.Context, id int64, borrowerId int64, address *model.Address) (isExisted bool, err error) {
+func (repo *BorrowerPropertyRepo) IsExisted(ctx context.Context, id int64, organizationId int64, address *model.Address) (isExisted bool, err error) {
 	if address == nil {
 		err = errorx.New("Address Is Empty")
 		return false, errorx.WithStack(err)
 	}
 	query := repo.Client(ctx).
-		Where("borrower_id = ?", borrowerId).
+		Where("organization_id = ?", organizationId).
 		Where("address->>'state' = ?", address.State).
 		Where("address->>'city' = ?", address.City).
 		Where("address->>'address1' = ?", address.Address1)
@@ -306,9 +233,9 @@ func (repo *BorrowerPropertyRepo) IsExisted(ctx context.Context, id int64, borro
 }
 
 // TranToLoanPropertyWithId get BorrowerProperty from id and trans it to LoanProperty
-func (repo *BorrowerPropertyRepo) TranToLoanPropertyWithId(ctx context.Context, id int64, borrowerId int64) (result *model.LoanProperty, err error) {
+func (repo *BorrowerPropertyRepo) TranToLoanPropertyWithId(ctx context.Context, id int64, organizationId int64) (result *model.LoanProperty, err error) {
 	var property *model.BorrowerProperty
-	property, err = repo.GetOneByIdForBorrower(ctx, id, borrowerId)
+	property, err = repo.GetOneByIdForOrganization(ctx, id, organizationId)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}

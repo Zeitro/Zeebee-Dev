@@ -22,7 +22,6 @@ type ApiConf struct {
 type RpcConf struct {
 	zrpc.RpcServerConf
 	LimiterConf                  LimiterConf
-	VerifyEmailExpireSeconds     int
 	ResetPwdExpireSeconds        int
 	PreApprovalLoanExpireSeconds int
 	HighCostLimitValue           int64
@@ -33,8 +32,12 @@ type RpcConf struct {
 	AwsS3Conf                    AwsS3Conf
 	LoginUrl                     string
 	VerifyEmailUrl               string
+	VerifyEmailExpireSeconds     int
 	ResetPwdUrl                  string
 	LenderUrl                    string
+	InviteUserUrl                string
+	InviteUserExpireSeconds      int
+	SendInviteEmailPeriodSeconds int
 	PreApprovalLoanConf          []PreApprovalLoanConf
 }
 

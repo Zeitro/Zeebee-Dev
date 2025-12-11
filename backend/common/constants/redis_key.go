@@ -4,12 +4,24 @@ const (
 	BorrowerLoginFailedTimes   = "zeebee:borrower:%v:login:failed:times"
 	BorrowerRegisterVerifyCode = "zeebee:borrower:%v:register:verify:code"
 
+	UserLoginFailedTimes   = "zeebee:%v:%v:login:failed:times"
+	UserRegisterVerifyCode = "zeebee:%v:%v:register:verify:code"
+
+	UserInviteCode         = "zeebee:%v:%v:%v:invite:code"
+	UserInviteCodeInfo     = "zeebee:%v:%v:%v:invite:code:info"
+	UserInviteInput        = "zeebee:%v:%v:%v:invite:input"
+	UserInviteUserPwd      = "zeebee:%v:%v:%v:invite:pwd"
+	UserInviteEmailSendTag = "zeebee:%v:%v:%v:invite:email:send:tag"
+
 	BorrowerRegisterVerifyEmail            = "zeebee:borrower:%v:register:verify:email"
 	BorrowerLoginEmail                     = "zeebee:borrower:%v:login:email"
 	BorrowerResetPwdEmail                  = "zeebee:borrower:%v:reset:pwd:email"
 	BorrowerResetPwdCode                   = "zeebee:borrower:%v:reset:pwd:code"
 	BorrowerPreApprovalCacheKey            = "zeebee:borrower:%v:preapprovalLoan"
-	BorrowerSendAprApprovalNotificationKey = "zeebee:lenderCompanyId:%v:requestId:%v:preapprovalLoan"
+	BorrowerSendAprApprovalNotificationKey = "zeebee:organizationId:%v:requestId:%v:preapprovalLoan"
+	AdminResetPwdCode                      = "zeebee:admin:%v:reset:pwd:code"
+
+	ResetPwdCode = "zeebee:%v:%v:reset:pwd:code"
 
 	LenderLoginFailedTimes   = "zeebee:lender:%v:login:failed:times"
 	LenderRegisterVerifyCode = "zeebee:lender:%v:register:verify:code"

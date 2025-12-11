@@ -10,7 +10,6 @@ import (
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -54,12 +53,6 @@ func (l *CreateLogic) Create(req *types.LoanCreateRequest) (resp *types.LoanCrea
 		return nil, err
 	}
 	rpcReq.Data.Applicants = rpcApplicants
-
-	// get borrower id
-	rpcReq.Data.BorrowerId, err = utils.GetAccountIdFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
 
 	rpcResp, err = l.svcCtx.LoanRpcClient.CreateBorrowerLoan(l.ctx, rpcReq)
 	if err != nil {

@@ -18,6 +18,8 @@ import "desc/storage.api"
 import "desc/loan_document.api"
 import "desc/borrower_entity.api"
 import "desc/borrower_applicant.api"
+import "desc/role.api"
+import "desc/organization_user.api"
 
 type (
 	EmptyRequest  {}
@@ -105,16 +107,28 @@ service borrower-api {
 	@doc "info"
 	@handler Info
 	get /user/info (EmptyRequest) returns (UserInfoResponse)
+
+	@doc "edit profile"
+	@handler EditProfile
+	put /user/profile (UserEditProfileRequest) returns (UserInfoResponse)
+
+	@doc "switch organization"
+	@handler SwitchOrganization
+	post /user/switch_organization (UserSwitchOrganizationRequest) returns (UserLoginResponse)
+
+	@doc "change password"
+	@handler ChangePassword
+	post /user/change_password (UserChangePasswordRequest) returns (EmptyResponse)
 }
 
 // ============== user end =============
 // ============== loan start =============
 @server(
-    desc: "loan service"
+	desc: "loan service"
 	version: v1
-    group: loan
+	group: loan
 	prefix:  /api/v1
-    tags: loan
+	tags: loan
 )
 service borrower-api {
 	@doc "preapproval"
@@ -145,7 +159,7 @@ service borrower-api {
 
 	@doc "update pending status"
 	@handler UpdatePendingStatus
-	put /loan/:id/pending_status (LoanUpdatePendingStatusRequest) returns (EmptyResponse)
+	patch /loan/:id/pending_status (LoanUpdatePendingStatusRequest) returns (EmptyResponse)
 
 	@doc "delete"
 	@handler DeleteLoan
@@ -191,9 +205,9 @@ service borrower-api {
 // ============== loan end =============
 // =============== borrower property start ==============
 @server (
-    desc: "borrower property service"
+	desc: "borrower property service"
 	version:    v1
-    group: borrower_property
+	group: borrower_property
 	prefix:     /api/v1
 	middleware: AuthMiddleware
 	tags:       property
@@ -231,12 +245,12 @@ service borrower-api {
 // =============== borrower property end ==============
 // =============== borrower entity start ==============
 @server(
-    desc: "borrower entity service"
-    version: v1
-    group: borrower_entity
+	desc: "borrower entity service"
+	version: v1
+	group: borrower_entity
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: borrower_entity
+	tags: borrower_entity
 )
 service borrower-api {
 	@doc "page"
@@ -271,12 +285,12 @@ service borrower-api {
 // =============== borrower entity end ==============
 // =============== borrower applicant start ==============
 @server(
-    desc: "borrower applicant service"
-    version: v1
-    group: borrower_applicant
+	desc: "borrower applicant service"
+	version: v1
+	group: borrower_applicant
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: borrower_applicant
+	tags: borrower_applicant
 )
 service borrower-api {
 	@doc "page"
@@ -311,9 +325,9 @@ service borrower-api {
 // ================ borrower applicant end ==============
 // =============== loan applicant start ==============
 @server (
-    desc: "loan applicant service"
+	desc: "loan applicant service"
 	version:    v1
-    group: loan_applicant
+	group: loan_applicant
 	prefix:     /api/v1
 	middleware: AuthMiddleware
 	tags:       applicant
@@ -327,12 +341,12 @@ service borrower-api {
 // =============== loan applicant end ==============
 // =============== pdf start ==============
 @server(
-    desc: "pdf service"
-    version: v1
-    group: pdf
+	desc: "pdf service"
+	version: v1
+	group: pdf
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: pdf
+	tags: pdf
 )
 service borrower-api {
 	@doc "create apply form pdf"
@@ -343,12 +357,12 @@ service borrower-api {
 // =============== pdf end ==============
 // =============== storage start ==============
 @server(
-    desc: "storage service"
-    version: v1
-    group: storage
+	desc: "storage service"
+	version: v1
+	group: storage
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: storage
+	tags: storage
 )
 service borrower-api {
 	@doc "create aws s3 presign url"
@@ -359,12 +373,12 @@ service borrower-api {
 // =============== storage end ==============
 // =============== file start ==============
 @server(
-    desc: "file service"
-    version: v1
-    group: file
+	desc: "file service"
+	version: v1
+	group: file
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: file
+	tags: file
 )
 service borrower-api {
 	@doc "delete"
@@ -375,12 +389,12 @@ service borrower-api {
 // =============== file end ==============
 // ============== loan document start =============
 @server(
-    desc: "loan document service"
-    version: v1
-    group: loan_document
+	desc: "loan document service"
+	version: v1
+	group: loan_document
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: loan_document
+	tags: loan_document
 )
 service borrower-api {
 	@doc "add files"
@@ -388,4 +402,105 @@ service borrower-api {
 	post /loan_document/:id/files (LoanDocumentAddFilesRequest) returns (EmptyResponse)
 }
 
-    // ============== loan document end =============
+// ============== loan document end =============
+// ============== role start ============
+@server(
+	desc: "borrower-api service"
+	version: v1
+	group: role
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: role
+)
+service borrower-api {
+	@doc "detail"
+	@handler RoleDetail
+	get /role/:id (PathIdRequest) returns (RoleEntity)
+
+	@doc "page"
+	@handler RolePage
+	post /role/page (RolePageRequest) returns (RolePageResponse)
+
+	@doc "all"
+	@handler RoleAll
+	get /role/all (EmptyRequest) returns (RoleAllResponse)
+
+	@doc "create"
+	@handler RoleCreate
+	post /role (RoleCreateRequest) returns (RoleEntity)
+
+	@doc "update"
+	@handler RoleUpdate
+	put /role/:id (RoleUpdateRequest) returns (RoleEntity)
+
+	@doc "delete"
+	@handler RoleDelete
+	delete /role/:id (PathIdRequest) returns (EmptyResponse)
+
+	@doc "update status"
+	@handler RoleUpdateStatus
+	patch /role/:id/status (RoleUpdateStatusRequest) returns (EmptyResponse)
+}
+
+// ============== role end =============
+// ============== organization user start ============
+@server(
+	desc: "organization user service"
+	version: v1
+	group: organization_user
+	prefix:  /api/v1
+	tags: organization_user
+)
+service borrower-api {
+	@doc "accept invitation"
+	@handler AcceptInvitation
+	post /organization_user/accept_invitation (OrganizationUserAcceptInvitationRequest) returns (UserLoginResponse)
+}
+
+@server(
+	desc: "organization user service"
+	version: v1
+	group: organization_user
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: organization_user
+)
+service borrower-api {
+	@doc "detail"
+	@handler OrganizationUserDetail
+	get /organization_user/:id (PathIdRequest) returns (OrganizationUserEntity)
+
+	@doc "page"
+	@handler OrganizationUserPage
+	post /organization_user/page (OrganizationUserPageRequest) returns (OrganizationUserPageResponse)
+
+	@doc "all"
+	@handler OrganizationUserAll
+	get /organization_user/all (EmptyRequest) returns (OrganizationUserAllResponse)
+
+	@doc "create"
+	@handler OrganizationUserCreate
+	post /organization_user (OrganizationUserCreateRequest) returns (OrganizationUserEntity)
+
+	@doc "update"
+	@handler OrganizationUserUpdate
+	put /organization_user/:id (OrganizationUserUpdateRequest) returns (OrganizationUserEntity)
+
+	@doc "delete"
+	@handler OrganizationUserDelete
+	delete /organization_user/:id (PathIdRequest) returns (EmptyResponse)
+
+	@doc "switch status"
+	@handler OrganizationUserUpdateStatus
+	patch /organization_user/:id/status (OrganizationUserSwitchStatusRequest) returns (EmptyResponse)
+
+	@doc "assign roles"
+	@handler OrganizationUserAssignRoles
+	post /organization_user/:id/assign_roles (OrganizationUserAssignRolesRequest) returns (EmptyResponse)
+
+	@doc "send email"
+	@handler OrganizationUserSendEmail
+	post /organization_user/:id/send_email (PathIdRequest) returns (EmptyResponse)
+}
+
+	// ============== organization user end =============

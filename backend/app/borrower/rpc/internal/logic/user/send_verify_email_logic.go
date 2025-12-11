@@ -52,7 +52,7 @@ func (l *SendVerifyEmailLogic) SendVerifyEmail(in *borrower.SendVerifyEmailReque
 	}
 
 	// check user status
-	user, err := l.svcCtx.UserRepo.GetBorrowerUserByEmail(l.ctx, email)
+	user, err := l.svcCtx.UserRepo.GetUserByEmail(l.ctx, email, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}
@@ -61,15 +61,11 @@ func (l *SendVerifyEmailLogic) SendVerifyEmail(in *borrower.SendVerifyEmailReque
 		return nil, errorx.WithStack(errorx.New("User Is Verified"))
 	}
 
-	if user.Borrower == nil {
-		return nil, errorx.WithStack(errorx.New("User Is Not Found"))
-	}
-
 	// send email
 	go func() {
 		// send account validate email
 		ctx := context.WithoutCancel(l.ctx)
-		err := sendRegisterVerifyUrlEmail(ctx, email, user.Borrower.FirstName)
+		err := sendRegisterVerifyUrlEmail(ctx, email, user.FirstName)
 		if err != nil {
 			l.WithContext(ctx).Error(err)
 		}
