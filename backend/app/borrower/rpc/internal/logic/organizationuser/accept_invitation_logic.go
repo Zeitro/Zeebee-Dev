@@ -5,14 +5,13 @@ import (
 
 	"github.com/jinzhu/copier"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/model"
-
-	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/common/errorx"
 )
@@ -45,16 +44,11 @@ func (l *AcceptInvitationLogic) AcceptInvitation(in *borrower.OrganizationUserAc
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 	input.UserType = constants.UserTypeBorrower
-	userBo, organizationUserBo, err := l.baseLogic.OrganizationUserLogic.AcceptInvitation(l.ctx, input)
+	userBo, err := l.baseLogic.OrganizationUserLogic.AcceptInvitation(l.ctx, input)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
-	userModel := &model.User{}
-	err = copier.CopyWithOption(&userModel, userBo, copier.Option{CaseSensitive: true})
-	organizationUserModel := &model.OrganizationUser{}
-	err = copier.CopyWithOption(&organizationUserModel, organizationUserBo, copier.Option{CaseSensitive: true})
-
-	token, err := l.baseLogic.UserLogic.GenerateJwtToken(userModel, organizationUserModel, constants.UserTypeBorrower)
+	token, err := l.baseLogic.UserLogic.GenerateJwtTokenById(l.ctx, userBo.Id, userBo.DefaultOrganizationId, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}
