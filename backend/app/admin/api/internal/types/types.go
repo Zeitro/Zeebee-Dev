@@ -23,6 +23,48 @@ type EmptyRequest struct {
 type EmptyResponse struct {
 }
 
+type OrganizationUserEntity struct {
+	Id             int64         `json:"id"`
+	OrganizationId int64         `json:"organization_id"`
+	UserId         int64         `json:"user_id"`
+	Status         string        `json:"status"`
+	FirstName      string        `json:"first_name"`
+	MidName        string        `json:"mid_name"`
+	LastName       string        `json:"last_name"`
+	FullName       string        `json:"full_name"`
+	Phone          string        `json:"phone"`
+	Remark         string        `json:"remark"`
+	CreatedAt      string        `json:"created_at"`
+	UpdatedAt      string        `json:"updated_at"`
+	Email          string        `json:"email"`
+	Roles          []*RoleEntity `json:"roles"`
+}
+
+type OrganizationUserPageEntity struct {
+	Id        int64         `json:"id"`
+	Status    string        `json:"status"`
+	FirstName string        `json:"first_name"`
+	MidName   string        `json:"mid_name"`
+	LastName  string        `json:"last_name"`
+	FullName  string        `json:"full_name"`
+	Phone     string        `json:"phone"`
+	Remark    string        `json:"remark"`
+	CreatedAt string        `json:"created_at"`
+	UpdatedAt string        `json:"updated_at"`
+	Email     string        `json:"email"`
+	IsOwner   bool          `json:"is_owner"`
+	Roles     []*RoleEntity `json:"roles"`
+}
+
+type OrganizationUserPageRequestFilter struct {
+	Keyword string `json:"keyword,optional"`
+}
+
+type OrganizationUserPageRequestSorter struct {
+	Column string `json:"column,optional"`
+	Sort   string `json:"sort,optional"`
+}
+
 type PathIdRequest struct {
 	Id int64 `path:"id" validate:"required,gt=0"`
 }
@@ -91,13 +133,4 @@ type UserInfoOrganizationEntity struct {
 	Name      string `json:"name"`
 	Status    string `json:"status"`
 	IsDefault bool   `json:"is_default"`
-}
-
-type UserPageRequestFilter struct {
-	Keyword string `json:"keyword,optional"`
-}
-
-type UserPageRequestSorter struct {
-	Column string `json:"column,optional"`
-	Sort   string `json:"sort,optional"`
 }

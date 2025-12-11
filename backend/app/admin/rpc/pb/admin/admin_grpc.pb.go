@@ -19,17 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	User_Login_FullMethodName            = "/admin.user/Login"
-	User_RefreshToken_FullMethodName     = "/admin.user/RefreshToken"
-	User_UserInfo_FullMethodName         = "/admin.user/UserInfo"
-	User_ResetPassword_FullMethodName    = "/admin.user/ResetPassword"
-	User_EditProfile_FullMethodName      = "/admin.user/EditProfile"
-	User_UserPage_FullMethodName         = "/admin.user/UserPage"
-	User_UserCreate_FullMethodName       = "/admin.user/UserCreate"
-	User_UserUpdate_FullMethodName       = "/admin.user/UserUpdate"
-	User_UserDelete_FullMethodName       = "/admin.user/UserDelete"
-	User_UserDetail_FullMethodName       = "/admin.user/UserDetail"
-	User_UserSwitchStatus_FullMethodName = "/admin.user/UserSwitchStatus"
+	User_Login_FullMethodName         = "/admin.User/Login"
+	User_RefreshToken_FullMethodName  = "/admin.User/RefreshToken"
+	User_UserInfo_FullMethodName      = "/admin.User/UserInfo"
+	User_ResetPassword_FullMethodName = "/admin.User/ResetPassword"
+	User_EditProfile_FullMethodName   = "/admin.User/EditProfile"
 )
 
 // UserClient is the client API for User service.
@@ -42,13 +36,6 @@ type UserClient interface {
 	UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
 	ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*ResetPasswordResponse, error)
 	EditProfile(ctx context.Context, in *UserProfileEditRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
-	// admin user
-	UserPage(ctx context.Context, in *UserPageRequest, opts ...grpc.CallOption) (*UserPageResponse, error)
-	UserCreate(ctx context.Context, in *UserCreateRequest, opts ...grpc.CallOption) (*UserCreateResponse, error)
-	UserUpdate(ctx context.Context, in *UserUpdateRequest, opts ...grpc.CallOption) (*UserUpdateResponse, error)
-	UserDelete(ctx context.Context, in *UserDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
-	UserDetail(ctx context.Context, in *UserDetailRequest, opts ...grpc.CallOption) (*UserDetailResponse, error)
-	UserSwitchStatus(ctx context.Context, in *UserSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 }
 
 type userClient struct {
@@ -109,66 +96,6 @@ func (c *userClient) EditProfile(ctx context.Context, in *UserProfileEditRequest
 	return out, nil
 }
 
-func (c *userClient) UserPage(ctx context.Context, in *UserPageRequest, opts ...grpc.CallOption) (*UserPageResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UserPageResponse)
-	err := c.cc.Invoke(ctx, User_UserPage_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *userClient) UserCreate(ctx context.Context, in *UserCreateRequest, opts ...grpc.CallOption) (*UserCreateResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UserCreateResponse)
-	err := c.cc.Invoke(ctx, User_UserCreate_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *userClient) UserUpdate(ctx context.Context, in *UserUpdateRequest, opts ...grpc.CallOption) (*UserUpdateResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UserUpdateResponse)
-	err := c.cc.Invoke(ctx, User_UserUpdate_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *userClient) UserDelete(ctx context.Context, in *UserDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(EmptyResponse)
-	err := c.cc.Invoke(ctx, User_UserDelete_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *userClient) UserDetail(ctx context.Context, in *UserDetailRequest, opts ...grpc.CallOption) (*UserDetailResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UserDetailResponse)
-	err := c.cc.Invoke(ctx, User_UserDetail_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *userClient) UserSwitchStatus(ctx context.Context, in *UserSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(EmptyResponse)
-	err := c.cc.Invoke(ctx, User_UserSwitchStatus_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // UserServer is the server API for User service.
 // All implementations must embed UnimplementedUserServer
 // for forward compatibility.
@@ -179,13 +106,6 @@ type UserServer interface {
 	UserInfo(context.Context, *UserInfoRequest) (*UserinfoResponse, error)
 	ResetPassword(context.Context, *ResetPasswordRequest) (*ResetPasswordResponse, error)
 	EditProfile(context.Context, *UserProfileEditRequest) (*UserinfoResponse, error)
-	// admin user
-	UserPage(context.Context, *UserPageRequest) (*UserPageResponse, error)
-	UserCreate(context.Context, *UserCreateRequest) (*UserCreateResponse, error)
-	UserUpdate(context.Context, *UserUpdateRequest) (*UserUpdateResponse, error)
-	UserDelete(context.Context, *UserDeleteRequest) (*EmptyResponse, error)
-	UserDetail(context.Context, *UserDetailRequest) (*UserDetailResponse, error)
-	UserSwitchStatus(context.Context, *UserSwitchStatusRequest) (*EmptyResponse, error)
 	mustEmbedUnimplementedUserServer()
 }
 
@@ -210,24 +130,6 @@ func (UnimplementedUserServer) ResetPassword(context.Context, *ResetPasswordRequ
 }
 func (UnimplementedUserServer) EditProfile(context.Context, *UserProfileEditRequest) (*UserinfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EditProfile not implemented")
-}
-func (UnimplementedUserServer) UserPage(context.Context, *UserPageRequest) (*UserPageResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UserPage not implemented")
-}
-func (UnimplementedUserServer) UserCreate(context.Context, *UserCreateRequest) (*UserCreateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UserCreate not implemented")
-}
-func (UnimplementedUserServer) UserUpdate(context.Context, *UserUpdateRequest) (*UserUpdateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UserUpdate not implemented")
-}
-func (UnimplementedUserServer) UserDelete(context.Context, *UserDeleteRequest) (*EmptyResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UserDelete not implemented")
-}
-func (UnimplementedUserServer) UserDetail(context.Context, *UserDetailRequest) (*UserDetailResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UserDetail not implemented")
-}
-func (UnimplementedUserServer) UserSwitchStatus(context.Context, *UserSwitchStatusRequest) (*EmptyResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UserSwitchStatus not implemented")
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
 func (UnimplementedUserServer) testEmbeddedByValue()              {}
@@ -340,119 +242,11 @@ func _User_EditProfile_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
-func _User_UserPage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserPageRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServer).UserPage(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: User_UserPage_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServer).UserPage(ctx, req.(*UserPageRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _User_UserCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserCreateRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServer).UserCreate(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: User_UserCreate_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServer).UserCreate(ctx, req.(*UserCreateRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _User_UserUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserUpdateRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServer).UserUpdate(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: User_UserUpdate_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServer).UserUpdate(ctx, req.(*UserUpdateRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _User_UserDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserDeleteRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServer).UserDelete(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: User_UserDelete_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServer).UserDelete(ctx, req.(*UserDeleteRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _User_UserDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserDetailRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServer).UserDetail(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: User_UserDetail_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServer).UserDetail(ctx, req.(*UserDetailRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _User_UserSwitchStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserSwitchStatusRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServer).UserSwitchStatus(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: User_UserSwitchStatus_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServer).UserSwitchStatus(ctx, req.(*UserSwitchStatusRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // User_ServiceDesc is the grpc.ServiceDesc for User service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var User_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "admin.user",
+	ServiceName: "admin.User",
 	HandlerType: (*UserServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -475,29 +269,297 @@ var User_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "EditProfile",
 			Handler:    _User_EditProfile_Handler,
 		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "app/admin/rpc/pb/admin.proto",
+}
+
+const (
+	OrganizationUser_Page_FullMethodName         = "/admin.OrganizationUser/Page"
+	OrganizationUser_Create_FullMethodName       = "/admin.OrganizationUser/Create"
+	OrganizationUser_Update_FullMethodName       = "/admin.OrganizationUser/Update"
+	OrganizationUser_Delete_FullMethodName       = "/admin.OrganizationUser/Delete"
+	OrganizationUser_Detail_FullMethodName       = "/admin.OrganizationUser/Detail"
+	OrganizationUser_SwitchStatus_FullMethodName = "/admin.OrganizationUser/SwitchStatus"
+)
+
+// OrganizationUserClient is the client API for OrganizationUser service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type OrganizationUserClient interface {
+	Page(ctx context.Context, in *OrganizationUserPageRequest, opts ...grpc.CallOption) (*OrganizationUserPageResponse, error)
+	Create(ctx context.Context, in *OrganizationUserCreateRequest, opts ...grpc.CallOption) (*OrganizationUserCreateResponse, error)
+	Update(ctx context.Context, in *OrganizationUserUpdateRequest, opts ...grpc.CallOption) (*OrganizationUserUpdateResponse, error)
+	Delete(ctx context.Context, in *OrganizationUserDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	Detail(ctx context.Context, in *OrganizationUserDetailRequest, opts ...grpc.CallOption) (*OrganizationUserDetailResponse, error)
+	SwitchStatus(ctx context.Context, in *OrganizationUserSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+}
+
+type organizationUserClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewOrganizationUserClient(cc grpc.ClientConnInterface) OrganizationUserClient {
+	return &organizationUserClient{cc}
+}
+
+func (c *organizationUserClient) Page(ctx context.Context, in *OrganizationUserPageRequest, opts ...grpc.CallOption) (*OrganizationUserPageResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OrganizationUserPageResponse)
+	err := c.cc.Invoke(ctx, OrganizationUser_Page_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationUserClient) Create(ctx context.Context, in *OrganizationUserCreateRequest, opts ...grpc.CallOption) (*OrganizationUserCreateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OrganizationUserCreateResponse)
+	err := c.cc.Invoke(ctx, OrganizationUser_Create_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationUserClient) Update(ctx context.Context, in *OrganizationUserUpdateRequest, opts ...grpc.CallOption) (*OrganizationUserUpdateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OrganizationUserUpdateResponse)
+	err := c.cc.Invoke(ctx, OrganizationUser_Update_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationUserClient) Delete(ctx context.Context, in *OrganizationUserDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, OrganizationUser_Delete_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationUserClient) Detail(ctx context.Context, in *OrganizationUserDetailRequest, opts ...grpc.CallOption) (*OrganizationUserDetailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OrganizationUserDetailResponse)
+	err := c.cc.Invoke(ctx, OrganizationUser_Detail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationUserClient) SwitchStatus(ctx context.Context, in *OrganizationUserSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, OrganizationUser_SwitchStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// OrganizationUserServer is the server API for OrganizationUser service.
+// All implementations must embed UnimplementedOrganizationUserServer
+// for forward compatibility.
+type OrganizationUserServer interface {
+	Page(context.Context, *OrganizationUserPageRequest) (*OrganizationUserPageResponse, error)
+	Create(context.Context, *OrganizationUserCreateRequest) (*OrganizationUserCreateResponse, error)
+	Update(context.Context, *OrganizationUserUpdateRequest) (*OrganizationUserUpdateResponse, error)
+	Delete(context.Context, *OrganizationUserDeleteRequest) (*EmptyResponse, error)
+	Detail(context.Context, *OrganizationUserDetailRequest) (*OrganizationUserDetailResponse, error)
+	SwitchStatus(context.Context, *OrganizationUserSwitchStatusRequest) (*EmptyResponse, error)
+	mustEmbedUnimplementedOrganizationUserServer()
+}
+
+// UnimplementedOrganizationUserServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedOrganizationUserServer struct{}
+
+func (UnimplementedOrganizationUserServer) Page(context.Context, *OrganizationUserPageRequest) (*OrganizationUserPageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Page not implemented")
+}
+func (UnimplementedOrganizationUserServer) Create(context.Context, *OrganizationUserCreateRequest) (*OrganizationUserCreateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedOrganizationUserServer) Update(context.Context, *OrganizationUserUpdateRequest) (*OrganizationUserUpdateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+}
+func (UnimplementedOrganizationUserServer) Delete(context.Context, *OrganizationUserDeleteRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedOrganizationUserServer) Detail(context.Context, *OrganizationUserDetailRequest) (*OrganizationUserDetailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Detail not implemented")
+}
+func (UnimplementedOrganizationUserServer) SwitchStatus(context.Context, *OrganizationUserSwitchStatusRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SwitchStatus not implemented")
+}
+func (UnimplementedOrganizationUserServer) mustEmbedUnimplementedOrganizationUserServer() {}
+func (UnimplementedOrganizationUserServer) testEmbeddedByValue()                          {}
+
+// UnsafeOrganizationUserServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to OrganizationUserServer will
+// result in compilation errors.
+type UnsafeOrganizationUserServer interface {
+	mustEmbedUnimplementedOrganizationUserServer()
+}
+
+func RegisterOrganizationUserServer(s grpc.ServiceRegistrar, srv OrganizationUserServer) {
+	// If the following call pancis, it indicates UnimplementedOrganizationUserServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&OrganizationUser_ServiceDesc, srv)
+}
+
+func _OrganizationUser_Page_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationUserPageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationUserServer).Page(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationUser_Page_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationUserServer).Page(ctx, req.(*OrganizationUserPageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationUser_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationUserCreateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationUserServer).Create(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationUser_Create_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationUserServer).Create(ctx, req.(*OrganizationUserCreateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationUser_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationUserUpdateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationUserServer).Update(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationUser_Update_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationUserServer).Update(ctx, req.(*OrganizationUserUpdateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationUser_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationUserDeleteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationUserServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationUser_Delete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationUserServer).Delete(ctx, req.(*OrganizationUserDeleteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationUser_Detail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationUserDetailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationUserServer).Detail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationUser_Detail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationUserServer).Detail(ctx, req.(*OrganizationUserDetailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationUser_SwitchStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationUserSwitchStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationUserServer).SwitchStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationUser_SwitchStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationUserServer).SwitchStatus(ctx, req.(*OrganizationUserSwitchStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// OrganizationUser_ServiceDesc is the grpc.ServiceDesc for OrganizationUser service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var OrganizationUser_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "admin.OrganizationUser",
+	HandlerType: (*OrganizationUserServer)(nil),
+	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "UserPage",
-			Handler:    _User_UserPage_Handler,
+			MethodName: "Page",
+			Handler:    _OrganizationUser_Page_Handler,
 		},
 		{
-			MethodName: "UserCreate",
-			Handler:    _User_UserCreate_Handler,
+			MethodName: "Create",
+			Handler:    _OrganizationUser_Create_Handler,
 		},
 		{
-			MethodName: "UserUpdate",
-			Handler:    _User_UserUpdate_Handler,
+			MethodName: "Update",
+			Handler:    _OrganizationUser_Update_Handler,
 		},
 		{
-			MethodName: "UserDelete",
-			Handler:    _User_UserDelete_Handler,
+			MethodName: "Delete",
+			Handler:    _OrganizationUser_Delete_Handler,
 		},
 		{
-			MethodName: "UserDetail",
-			Handler:    _User_UserDetail_Handler,
+			MethodName: "Detail",
+			Handler:    _OrganizationUser_Detail_Handler,
 		},
 		{
-			MethodName: "UserSwitchStatus",
-			Handler:    _User_UserSwitchStatus_Handler,
+			MethodName: "SwitchStatus",
+			Handler:    _OrganizationUser_SwitchStatus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

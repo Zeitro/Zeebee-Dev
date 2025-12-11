@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"fmt"
+	"regexp"
 
 	"github.com/duke-git/lancet/v2/random"
 	"github.com/duke-git/lancet/v2/slice"
@@ -75,8 +76,90 @@ func (l *OrganizationUserLogic) Page(ctx context.Context, pageReq dto.Organizati
 	slice.ForEach(page.List, func(index int, item *bo.OrganizationUserBo) {
 		page.List[index].IsOwner = item.UserId == organizationOwnerId
 	})
-
 	return page, err
+}
+
+// CreateAdminOrganizationUser Create admin organization user
+func (l *OrganizationUserLogic) CreateAdminOrganizationUser(ctx context.Context, input dto.OrganizationUserCreateAdminRequestDto) (result *bo.OrganizationUserBo, err error) {
+	isInOrganization, err := l.repos.OrganizationUserRepo.CheckOrganizationUserExistedByEmail(ctx, input.OrganizationId, input.Email, input.UserType)
+	if err != nil {
+		return nil, err
+	}
+	if isInOrganization {
+		err = errorx.New("The User Is In The Organization")
+		return nil, err
+	}
+	user, err := l.repos.UserRepo.GetUserByEmail(ctx, input.Email, input.UserType)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, err
+	}
+	if l.validatePassword(input.Password) {
+		err = errorx.New("The Password Is Invalid")
+		return nil, err
+	}
+
+	var organizationUser *model.OrganizationUser
+	var organization *model.Organization
+	err = l.repos.OrganizationRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		var innerErr error
+		// get organization
+		organization, innerErr = l.repos.OrganizationRepo.GetOrganizationWithTx(ctx, tx, input.OrganizationId, input.UserType)
+		if innerErr != nil {
+			return innerErr
+		}
+		if organization.Status != constants.OrganizationStatusActive {
+			innerErr = errorx.New("The Organization Is Not Active")
+			return innerErr
+		}
+		// create user if not exist
+		if user == nil || user.Id == 0 {
+
+			pwdHash, innerErr := utils.HashPassword(input.Password)
+			if innerErr != nil {
+				return errorx.WithStack(innerErr)
+			}
+			user = &model.User{
+				Email:                 input.Email,
+				Type:                  input.UserType,
+				Status:                constants.UserStatusActive,
+				PasswordHash:          pwdHash,
+				DefaultOrganizationId: input.OrganizationId,
+			}
+			user, innerErr = l.repos.UserRepo.CreateWithTx(ctx, tx, user, false)
+			if innerErr != nil {
+				return innerErr
+			}
+		}
+
+		// create organization user
+		organizationUser = &model.OrganizationUser{
+			UserId:         user.Id,
+			OrganizationId: input.OrganizationId,
+			Phone:          input.Phone,
+			Remark:         input.Remark,
+			Status:         constants.OrganizationUserStatusActive,
+		}
+
+		// get organization roles
+		if len(input.RoleIds) > 0 {
+			roles, innerErr := l.repos.RoleRepo.GetOrganizationRolesByIdsWithTx(ctx, tx, input.OrganizationId, input.RoleIds)
+			if innerErr != nil {
+				return innerErr
+			}
+			organizationUser.Roles = roles
+		}
+
+		organizationUser, innerErr = l.repos.OrganizationUserRepo.CreateWithTx(ctx, tx, organizationUser, true)
+		if innerErr != nil {
+			return innerErr
+		}
+		return innerErr
+	})
+	if err != nil {
+		return nil, err
+	}
+	result = l.transToBo(organizationUser)
+	return result, nil
 }
 
 // InviteOrganizationUser Invite organization user to join organization
@@ -621,4 +704,14 @@ func (l *OrganizationUserLogic) batchTransToBo(src []*model.OrganizationUser) (r
 		result = append(result, l.transToBo(src[i]))
 	}
 	return result
+}
+
+func (l *OrganizationUserLogic) validatePassword(password string) bool {
+	if len(password) < 8 {
+		return false
+	}
+	hasLower := regexp.MustCompile(`[a-z]`).MatchString(password)
+	hasUpper := regexp.MustCompile(`[A-Z]`).MatchString(password)
+	hasNumber := regexp.MustCompile(`\d`).MatchString(password)
+	return hasLower && hasUpper && hasNumber
 }

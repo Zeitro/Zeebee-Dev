@@ -1,4 +1,4 @@
-package user
+package organization_user
 
 import (
 	"net/http"
@@ -6,7 +6,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
 
-	"zeebee-backend/app/admin/api/internal/logic/user"
+	"zeebee-backend/app/admin/api/internal/logic/organization_user"
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
 
@@ -15,8 +15,8 @@ import (
 	"zeebee-backend/common/validator"
 )
 
-// create
-func UserCreateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+// delete
+func OrganizationUserDeleteHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer func() {
@@ -26,7 +26,7 @@ func UserCreateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 					Error(err)
 			}
 		}()
-		var req types.UserCreateRequest
+		var req types.PathIdRequest
 		if err = httpx.Parse(r, &req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
@@ -42,8 +42,8 @@ func UserCreateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := user.NewUserCreateLogic(r.Context(), svcCtx)
-		resp, err := l.UserCreate(&req)
+		l := organization_user.NewOrganizationUserDeleteLogic(r.Context(), svcCtx)
+		resp, err := l.OrganizationUserDelete(&req)
 		if err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 		} else {

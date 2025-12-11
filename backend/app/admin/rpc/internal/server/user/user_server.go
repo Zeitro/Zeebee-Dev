@@ -48,34 +48,3 @@ func (s *UserServer) EditProfile(ctx context.Context, in *admin.UserProfileEditR
 	l := userlogic.NewEditProfileLogic(ctx, s.svcCtx)
 	return l.EditProfile(in)
 }
-
-// admin user
-func (s *UserServer) UserPage(ctx context.Context, in *admin.UserPageRequest) (*admin.UserPageResponse, error) {
-	l := userlogic.NewUserPageLogic(ctx, s.svcCtx)
-	return l.UserPage(in)
-}
-
-func (s *UserServer) UserCreate(ctx context.Context, in *admin.UserCreateRequest) (*admin.UserCreateResponse, error) {
-	l := userlogic.NewUserCreateLogic(ctx, s.svcCtx)
-	return l.UserCreate(in)
-}
-
-func (s *UserServer) UserUpdate(ctx context.Context, in *admin.UserUpdateRequest) (*admin.UserUpdateResponse, error) {
-	l := userlogic.NewUserUpdateLogic(ctx, s.svcCtx)
-	return l.UserUpdate(in)
-}
-
-func (s *UserServer) UserDelete(ctx context.Context, in *admin.UserDeleteRequest) (*admin.EmptyResponse, error) {
-	l := userlogic.NewUserDeleteLogic(ctx, s.svcCtx)
-	return l.UserDelete(in)
-}
-
-func (s *UserServer) UserDetail(ctx context.Context, in *admin.UserDetailRequest) (*admin.UserDetailResponse, error) {
-	l := userlogic.NewUserDetailLogic(ctx, s.svcCtx)
-	return l.UserDetail(in)
-}
-
-func (s *UserServer) UserSwitchStatus(ctx context.Context, in *admin.UserSwitchStatusRequest) (*admin.EmptyResponse, error) {
-	l := userlogic.NewUserSwitchStatusLogic(ctx, s.svcCtx)
-	return l.UserSwitchStatus(in)
-}

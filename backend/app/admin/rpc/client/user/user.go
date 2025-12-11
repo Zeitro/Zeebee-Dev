@@ -14,102 +14,104 @@ import (
 )
 
 type (
-	AddressEntry                      = admin.AddressEntry
-	ApiCreateRequest                  = admin.ApiCreateRequest
-	ApiCreateRequestData              = admin.ApiCreateRequestData
-	ApiCreateResponse                 = admin.ApiCreateResponse
-	ApiDeleteRequest                  = admin.ApiDeleteRequest
-	ApiDeleteRequestData              = admin.ApiDeleteRequestData
-	ApiDetailRequest                  = admin.ApiDetailRequest
-	ApiDetailRequestData              = admin.ApiDetailRequestData
-	ApiEntity                         = admin.ApiEntity
-	ApiTreeEntity                     = admin.ApiTreeEntity
-	ApiTreeRequest                    = admin.ApiTreeRequest
-	ApiTreeRequestData                = admin.ApiTreeRequestData
-	ApiTreeResponse                   = admin.ApiTreeResponse
-	ApiUpdateRequest                  = admin.ApiUpdateRequest
-	ApiUpdateRequestData              = admin.ApiUpdateRequestData
-	EmptyRequest                      = admin.EmptyRequest
-	EmptyResponse                     = admin.EmptyResponse
-	RefreshTokenRequest               = admin.RefreshTokenRequest
-	RefreshTokenRequestData           = admin.RefreshTokenRequestData
-	RefreshTokenResponse              = admin.RefreshTokenResponse
-	RefreshTokenResponseData          = admin.RefreshTokenResponseData
-	ResetPasswordRequest              = admin.ResetPasswordRequest
-	ResetPasswordRequestData          = admin.ResetPasswordRequestData
-	ResetPasswordResponse             = admin.ResetPasswordResponse
-	ResetPasswordResponseData         = admin.ResetPasswordResponseData
-	ResourceCreateRequest             = admin.ResourceCreateRequest
-	ResourceCreateRequestData         = admin.ResourceCreateRequestData
-	ResourceCreateResponse            = admin.ResourceCreateResponse
-	ResourceDeleteRequest             = admin.ResourceDeleteRequest
-	ResourceDeleteRequestData         = admin.ResourceDeleteRequestData
-	ResourceDetailRequest             = admin.ResourceDetailRequest
-	ResourceDetailRequestData         = admin.ResourceDetailRequestData
-	ResourceDetailResponse            = admin.ResourceDetailResponse
-	ResourceEntity                    = admin.ResourceEntity
-	ResourceTreeEntity                = admin.ResourceTreeEntity
-	ResourceTreeRequest               = admin.ResourceTreeRequest
-	ResourceTreeRequestData           = admin.ResourceTreeRequestData
-	ResourceTreeResponse              = admin.ResourceTreeResponse
-	ResourceUpdateRequest             = admin.ResourceUpdateRequest
-	ResourceUpdateRequestData         = admin.ResourceUpdateRequestData
-	RoleAllRequest                    = admin.RoleAllRequest
-	RoleAllRequestData                = admin.RoleAllRequestData
-	RoleAllResponse                   = admin.RoleAllResponse
-	RoleAndResourceRelationEntity     = admin.RoleAndResourceRelationEntity
-	RoleCreateRequest                 = admin.RoleCreateRequest
-	RoleCreateRequestData             = admin.RoleCreateRequestData
-	RoleCreateResponse                = admin.RoleCreateResponse
-	RoleDeleteRequest                 = admin.RoleDeleteRequest
-	RoleDeleteRequestData             = admin.RoleDeleteRequestData
-	RoleDetailRequest                 = admin.RoleDetailRequest
-	RoleDetailRequestData             = admin.RoleDetailRequestData
-	RoleDetailResponse                = admin.RoleDetailResponse
-	RoleEntity                        = admin.RoleEntity
-	RolePageRequest                   = admin.RolePageRequest
-	RolePageRequestData               = admin.RolePageRequestData
-	RolePageRequestFilter             = admin.RolePageRequestFilter
-	RolePageRequestSorter             = admin.RolePageRequestSorter
-	RolePageResponse                  = admin.RolePageResponse
-	RolePageResponseData              = admin.RolePageResponseData
-	RoleUpdateRequest                 = admin.RoleUpdateRequest
-	RoleUpdateRequestData             = admin.RoleUpdateRequestData
-	RoleUpdateResponse                = admin.RoleUpdateResponse
-	RoleUpdateStatusRequest           = admin.RoleUpdateStatusRequest
-	RoleUpdateStatusRequestData       = admin.RoleUpdateStatusRequestData
-	StringSliceResponse               = admin.StringSliceResponse
-	UserCreateRequest                 = admin.UserCreateRequest
-	UserCreateRequestData             = admin.UserCreateRequestData
-	UserCreateResponse                = admin.UserCreateResponse
-	UserDeleteRequest                 = admin.UserDeleteRequest
-	UserDeleteRequestData             = admin.UserDeleteRequestData
-	UserDetailRequest                 = admin.UserDetailRequest
-	UserDetailRequestData             = admin.UserDetailRequestData
-	UserDetailResponse                = admin.UserDetailResponse
-	UserEntity                        = admin.UserEntity
-	UserInfoRequest                   = admin.UserInfoRequest
-	UserInfoRequestData               = admin.UserInfoRequestData
-	UserLoginRequest                  = admin.UserLoginRequest
-	UserLoginRequestData              = admin.UserLoginRequestData
-	UserLoginResponse                 = admin.UserLoginResponse
-	UserLoginResponseData             = admin.UserLoginResponseData
-	UserPageRequest                   = admin.UserPageRequest
-	UserPageRequestData               = admin.UserPageRequestData
-	UserPageRequestFilter             = admin.UserPageRequestFilter
-	UserPageRequestSorter             = admin.UserPageRequestSorter
-	UserPageResponse                  = admin.UserPageResponse
-	UserPageResponseData              = admin.UserPageResponseData
-	UserProfileEditRequest            = admin.UserProfileEditRequest
-	UserProfileEditRequestData        = admin.UserProfileEditRequestData
-	UserSwitchStatusRequest           = admin.UserSwitchStatusRequest
-	UserSwitchStatusRequestData       = admin.UserSwitchStatusRequestData
-	UserUpdateRequest                 = admin.UserUpdateRequest
-	UserUpdateRequestData             = admin.UserUpdateRequestData
-	UserUpdateResponse                = admin.UserUpdateResponse
-	UserinfoResponse                  = admin.UserinfoResponse
-	UserinfoResponseData              = admin.UserinfoResponseData
-	UserinfoResponseData_Organization = admin.UserinfoResponseData_Organization
+	AddressEntry                            = admin.AddressEntry
+	ApiCreateRequest                        = admin.ApiCreateRequest
+	ApiCreateRequestData                    = admin.ApiCreateRequestData
+	ApiCreateResponse                       = admin.ApiCreateResponse
+	ApiDeleteRequest                        = admin.ApiDeleteRequest
+	ApiDeleteRequestData                    = admin.ApiDeleteRequestData
+	ApiDetailRequest                        = admin.ApiDetailRequest
+	ApiDetailRequestData                    = admin.ApiDetailRequestData
+	ApiEntity                               = admin.ApiEntity
+	ApiTreeEntity                           = admin.ApiTreeEntity
+	ApiTreeRequest                          = admin.ApiTreeRequest
+	ApiTreeRequestData                      = admin.ApiTreeRequestData
+	ApiTreeResponse                         = admin.ApiTreeResponse
+	ApiUpdateRequest                        = admin.ApiUpdateRequest
+	ApiUpdateRequestData                    = admin.ApiUpdateRequestData
+	EmptyRequest                            = admin.EmptyRequest
+	EmptyResponse                           = admin.EmptyResponse
+	OrganizationUserCreateRequest           = admin.OrganizationUserCreateRequest
+	OrganizationUserCreateRequestData       = admin.OrganizationUserCreateRequestData
+	OrganizationUserCreateResponse          = admin.OrganizationUserCreateResponse
+	OrganizationUserDeleteRequest           = admin.OrganizationUserDeleteRequest
+	OrganizationUserDeleteRequestData       = admin.OrganizationUserDeleteRequestData
+	OrganizationUserDetailRequest           = admin.OrganizationUserDetailRequest
+	OrganizationUserDetailRequestData       = admin.OrganizationUserDetailRequestData
+	OrganizationUserDetailResponse          = admin.OrganizationUserDetailResponse
+	OrganizationUserEntity                  = admin.OrganizationUserEntity
+	OrganizationUserPageEntity              = admin.OrganizationUserPageEntity
+	OrganizationUserPageRequest             = admin.OrganizationUserPageRequest
+	OrganizationUserPageRequestData         = admin.OrganizationUserPageRequestData
+	OrganizationUserPageRequestFilter       = admin.OrganizationUserPageRequestFilter
+	OrganizationUserPageRequestSorter       = admin.OrganizationUserPageRequestSorter
+	OrganizationUserPageResponse            = admin.OrganizationUserPageResponse
+	OrganizationUserPageResponseData        = admin.OrganizationUserPageResponseData
+	OrganizationUserSwitchStatusRequest     = admin.OrganizationUserSwitchStatusRequest
+	OrganizationUserSwitchStatusRequestData = admin.OrganizationUserSwitchStatusRequestData
+	OrganizationUserUpdateRequest           = admin.OrganizationUserUpdateRequest
+	OrganizationUserUpdateRequestData       = admin.OrganizationUserUpdateRequestData
+	OrganizationUserUpdateResponse          = admin.OrganizationUserUpdateResponse
+	RefreshTokenRequest                     = admin.RefreshTokenRequest
+	RefreshTokenRequestData                 = admin.RefreshTokenRequestData
+	RefreshTokenResponse                    = admin.RefreshTokenResponse
+	RefreshTokenResponseData                = admin.RefreshTokenResponseData
+	ResetPasswordRequest                    = admin.ResetPasswordRequest
+	ResetPasswordRequestData                = admin.ResetPasswordRequestData
+	ResetPasswordResponse                   = admin.ResetPasswordResponse
+	ResetPasswordResponseData               = admin.ResetPasswordResponseData
+	ResourceCreateRequest                   = admin.ResourceCreateRequest
+	ResourceCreateRequestData               = admin.ResourceCreateRequestData
+	ResourceCreateResponse                  = admin.ResourceCreateResponse
+	ResourceDeleteRequest                   = admin.ResourceDeleteRequest
+	ResourceDeleteRequestData               = admin.ResourceDeleteRequestData
+	ResourceDetailRequest                   = admin.ResourceDetailRequest
+	ResourceDetailRequestData               = admin.ResourceDetailRequestData
+	ResourceDetailResponse                  = admin.ResourceDetailResponse
+	ResourceEntity                          = admin.ResourceEntity
+	ResourceTreeEntity                      = admin.ResourceTreeEntity
+	ResourceTreeRequest                     = admin.ResourceTreeRequest
+	ResourceTreeRequestData                 = admin.ResourceTreeRequestData
+	ResourceTreeResponse                    = admin.ResourceTreeResponse
+	ResourceUpdateRequest                   = admin.ResourceUpdateRequest
+	ResourceUpdateRequestData               = admin.ResourceUpdateRequestData
+	RoleAllRequest                          = admin.RoleAllRequest
+	RoleAllRequestData                      = admin.RoleAllRequestData
+	RoleAllResponse                         = admin.RoleAllResponse
+	RoleAndResourceRelationEntity           = admin.RoleAndResourceRelationEntity
+	RoleCreateRequest                       = admin.RoleCreateRequest
+	RoleCreateRequestData                   = admin.RoleCreateRequestData
+	RoleCreateResponse                      = admin.RoleCreateResponse
+	RoleDeleteRequest                       = admin.RoleDeleteRequest
+	RoleDeleteRequestData                   = admin.RoleDeleteRequestData
+	RoleDetailRequest                       = admin.RoleDetailRequest
+	RoleDetailRequestData                   = admin.RoleDetailRequestData
+	RoleDetailResponse                      = admin.RoleDetailResponse
+	RoleEntity                              = admin.RoleEntity
+	RolePageRequest                         = admin.RolePageRequest
+	RolePageRequestData                     = admin.RolePageRequestData
+	RolePageRequestFilter                   = admin.RolePageRequestFilter
+	RolePageRequestSorter                   = admin.RolePageRequestSorter
+	RolePageResponse                        = admin.RolePageResponse
+	RolePageResponseData                    = admin.RolePageResponseData
+	RoleUpdateRequest                       = admin.RoleUpdateRequest
+	RoleUpdateRequestData                   = admin.RoleUpdateRequestData
+	RoleUpdateResponse                      = admin.RoleUpdateResponse
+	RoleUpdateStatusRequest                 = admin.RoleUpdateStatusRequest
+	RoleUpdateStatusRequestData             = admin.RoleUpdateStatusRequestData
+	StringSliceResponse                     = admin.StringSliceResponse
+	UserEntity                              = admin.UserEntity
+	UserInfoRequest                         = admin.UserInfoRequest
+	UserInfoRequestData                     = admin.UserInfoRequestData
+	UserLoginRequest                        = admin.UserLoginRequest
+	UserLoginRequestData                    = admin.UserLoginRequestData
+	UserLoginResponse                       = admin.UserLoginResponse
+	UserLoginResponseData                   = admin.UserLoginResponseData
+	UserProfileEditRequest                  = admin.UserProfileEditRequest
+	UserProfileEditRequestData              = admin.UserProfileEditRequestData
+	UserinfoResponse                        = admin.UserinfoResponse
+	UserinfoResponseData                    = admin.UserinfoResponseData
+	UserinfoResponseData_Organization       = admin.UserinfoResponseData_Organization
 
 	User interface {
 		// user
@@ -118,13 +120,6 @@ type (
 		UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
 		ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*ResetPasswordResponse, error)
 		EditProfile(ctx context.Context, in *UserProfileEditRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
-		// admin user
-		UserPage(ctx context.Context, in *UserPageRequest, opts ...grpc.CallOption) (*UserPageResponse, error)
-		UserCreate(ctx context.Context, in *UserCreateRequest, opts ...grpc.CallOption) (*UserCreateResponse, error)
-		UserUpdate(ctx context.Context, in *UserUpdateRequest, opts ...grpc.CallOption) (*UserUpdateResponse, error)
-		UserDelete(ctx context.Context, in *UserDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
-		UserDetail(ctx context.Context, in *UserDetailRequest, opts ...grpc.CallOption) (*UserDetailResponse, error)
-		UserSwitchStatus(ctx context.Context, in *UserSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	}
 
 	defaultUser struct {
@@ -162,35 +157,4 @@ func (m *defaultUser) ResetPassword(ctx context.Context, in *ResetPasswordReques
 func (m *defaultUser) EditProfile(ctx context.Context, in *UserProfileEditRequest, opts ...grpc.CallOption) (*UserinfoResponse, error) {
 	client := admin.NewUserClient(m.cli.Conn())
 	return client.EditProfile(ctx, in, opts...)
-}
-
-// admin user
-func (m *defaultUser) UserPage(ctx context.Context, in *UserPageRequest, opts ...grpc.CallOption) (*UserPageResponse, error) {
-	client := admin.NewUserClient(m.cli.Conn())
-	return client.UserPage(ctx, in, opts...)
-}
-
-func (m *defaultUser) UserCreate(ctx context.Context, in *UserCreateRequest, opts ...grpc.CallOption) (*UserCreateResponse, error) {
-	client := admin.NewUserClient(m.cli.Conn())
-	return client.UserCreate(ctx, in, opts...)
-}
-
-func (m *defaultUser) UserUpdate(ctx context.Context, in *UserUpdateRequest, opts ...grpc.CallOption) (*UserUpdateResponse, error) {
-	client := admin.NewUserClient(m.cli.Conn())
-	return client.UserUpdate(ctx, in, opts...)
-}
-
-func (m *defaultUser) UserDelete(ctx context.Context, in *UserDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
-	client := admin.NewUserClient(m.cli.Conn())
-	return client.UserDelete(ctx, in, opts...)
-}
-
-func (m *defaultUser) UserDetail(ctx context.Context, in *UserDetailRequest, opts ...grpc.CallOption) (*UserDetailResponse, error) {
-	client := admin.NewUserClient(m.cli.Conn())
-	return client.UserDetail(ctx, in, opts...)
-}
-
-func (m *defaultUser) UserSwitchStatus(ctx context.Context, in *UserSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
-	client := admin.NewUserClient(m.cli.Conn())
-	return client.UserSwitchStatus(ctx, in, opts...)
 }

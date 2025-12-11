@@ -9,6 +9,7 @@ import "desc/user.api"
 import "desc/api.api"
 import "desc/resource.api"
 import "desc/role.api"
+import "desc/organization_user.api"
 
 type (
 	EmptyRequest{
@@ -59,34 +60,45 @@ service admin-api {
 	@doc "edit profile"
 	@handler EditProfile
 	put /user/profile (UserEditProfileRequest) returns (UserInfoResponse)
-
-	// admin user
-	@doc "page"
-	@handler UserPage
-	get /user (UserPageRequest) returns (UserPageResponse)
-
-	@doc "detail"
-	@handler UserDetail
-	get /user/:id (PathIdRequest) returns (UserDetailResponse)
-
-	@doc "create"
-	@handler UserCreate
-	post /user (UserCreateRequest) returns (UserCreateResponse)
-
-	@doc "update"
-	@handler UserUpdate
-	put /user/:id (UserUpdateRequest) returns (UserUpdateResponse)
-
-	@doc "delete"
-	@handler UserDelete
-	delete /user/:id (PathIdRequest) returns (EmptyResponse)
-
-	@doc "switch status"
-	@handler UserSwitchStatus
-	patch /user/:id/status (UserSwitchStatusRequest) returns (EmptyResponse)
 }
 
 // ============== user end =============
+// ============== organization user start ============
+@server(
+	desc: "admin-api service"
+	version: v1
+	group: organization_user
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: organization_user
+)
+service admin-api {
+	@doc "page"
+	@handler OrganizationUserPage
+	get /organization_user/page (OrganizationUserPageRequest) returns (OrganizationUserPageResponse)
+
+	@doc "detail"
+	@handler OrganizationUserDetail
+	get /organization_user/:id (PathIdRequest) returns (OrganizationUserDetailResponse)
+
+	@doc "create"
+	@handler OrganizationUserCreate
+	post /organization_user (OrganizationUserCreateRequest) returns (OrganizationUserCreateResponse)
+
+	@doc "update"
+	@handler OrganizationUserUpdate
+	put /organization_user/:id (OrganizationUserUpdateRequest) returns (OrganizationUserUpdateResponse)
+
+	@doc "delete"
+	@handler OrganizationUserDelete
+	delete /organization_user/:id (PathIdRequest) returns (EmptyResponse)
+
+	@doc "switch status"
+	@handler OrganizationUserSwitchStatus
+	patch /organization_user/:id/status (OrganizationUserSwitchStatusRequest) returns (EmptyResponse)
+}
+
+// ============== organization user end ============
 // ============== api start ============
 @server(
 	desc: "admin-api service"
@@ -118,7 +130,7 @@ service admin-api {
 	delete /api/:id (ApiDeleteRequest) returns (EmptyResponse)
 }
 
-// ============== api end =============
+// ============= api end =============
 // ============== resource start ============
 @server(
 	desc: "admin-api service"

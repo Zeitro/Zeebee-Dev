@@ -1,4 +1,4 @@
-package userlogic
+package organizationuserlogic
 
 import (
 	"context"
@@ -8,23 +8,23 @@ import (
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/data/dto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/common/errorx"
 )
 
-type UserDetailLogic struct {
+type UpdateLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 	baseLogic *logic.BaseLogic
 }
 
-func NewUserDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserDetailLogic {
-	return &UserDetailLogic{
+func NewUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLogic {
+	return &UpdateLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
@@ -32,42 +32,42 @@ func NewUserDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserDe
 	}
 }
 
-func (l *UserDetailLogic) UserDetail(in *admin.UserDetailRequest) (resp *admin.UserDetailResponse, err error) {
+func (l *UpdateLogic) Update(in *admin.OrganizationUserUpdateRequest) (resp *admin.OrganizationUserUpdateResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	user, err := l.svcCtx.UserRepo.GetOrganizationUser(l.ctx, in.Data.Id, claim.OrganizationId, constants.UserTypeAdmin)
+	input := dto.OrganizationUserUpdateRequestDto{}
+	err = copier.CopyWithOption(&input, &in.Data, copier.Option{CaseSensitive: true, DeepCopy: true})
 	if err != nil {
 		return nil, err
 	}
-	userEntity := &admin.UserEntity{}
-	err = copier.CopyWithOption(userEntity, user, copier.Option{
-		DeepCopy:      true,
+	input.UserType = claim.UserType
+	input.OrganizationId = claim.OrganizationId
+
+	result, err := l.baseLogic.OrganizationUserLogic.UpdateOrganizationUser(l.ctx, input)
+	if err != nil {
+		return nil, err
+	}
+	data := &admin.OrganizationUserEntity{}
+	err = copier.CopyWithOption(data, result, copier.Option{
 		CaseSensitive: true,
+		DeepCopy:      true,
 		Converters: []copier.TypeConverter{
 			copierx.TimeToRFC3339Str(),
 		},
 	})
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 
-	// todo get relation
-	// relation, err := l.svcCtx.OrganizationUserRepo.GetRelation(l.ctx, claim.OrganizationId, in.Data.Id)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// userEntity.PivotOrganizationStatus = string(relation.Status)
-
-	return &admin.UserDetailResponse{
-		Data: userEntity,
+	return &admin.OrganizationUserUpdateResponse{
+		Data: data,
 	}, nil
 }
