@@ -3,22 +3,6 @@
 
 package types
 
-type UserCreateRequest struct {
-	Email    string  `json:"email" validate:"required,email"`
-	Password string  `json:"password" validate:"required,min=8,max=32,password"`
-	FullName string  `json:"full_name" validate:"required,min=2,max=200"`
-	Phone    string  `json:"phone" validate:"required,min=6,max=20"`
-	RoleIds  []int64 `json:"role_ids,optional"`
-}
-
-type UserCreateResponse struct {
-	UserEntity
-}
-
-type UserDetailResponse struct {
-	UserEntity
-}
-
 type UserEditProfileRequest struct {
 	FirstName string `json:"first_name" validate:"required,min=2,max=100"`
 	LastName  string `json:"last_name" validate:"required,min=2,max=100"`
@@ -40,21 +24,6 @@ type UserLoginResponse struct {
 	RefreshTokenExpire int64  `json:"refresh_token_expire"`
 }
 
-type UserPageRequest struct {
-	Page   int64                  `json:"page,optional"`
-	Limit  int64                  `json:"limit,optional"`
-	Filter *UserPageRequestFilter `json:"filter,optional"`
-	Sorter *UserPageRequestSorter `json:"sorter,optional"`
-}
-
-type UserPageResponse struct {
-	Page      int64         `json:"page"`
-	Limit     int64         `json:"limit"`
-	Total     int64         `json:"total"`
-	TotalPage int64         `json:"total_page"`
-	List      []*UserEntity `json:"list"`
-}
-
 type UserRefreshTokenRequest struct {
 	RefreshToken string `json:"refresh_token" validate:"required"`
 }
@@ -69,21 +38,4 @@ type UserResetPasswordRequest struct {
 	Password         string `json:"password" validate:"required,min=8,max=32,password"`
 	ComfiredPassword string `json:"comfired_password" validate:"required,eqfield=Password"`
 	Code             string `json:"code" validate:"required,len=10"`
-}
-
-type UserSwitchStatusRequest struct {
-	Id     int64  `path:"id" validate:"required"`
-	Status string `json:"status" validate:"required,oneof=Active Disabled"`
-}
-
-type UserUpdateRequest struct {
-	Id       int64   `path:"id" validate:"required"`
-	FullName string  `json:"full_name" validate:"required,min=2,max=200"`
-	Phone    string  `json:"phone" validate:"required,min=6,max=20"`
-	Password string  `json:"password,optional" validate:"omitempty,password"`
-	RoleIds  []int64 `json:"role_ids,optional"`
-}
-
-type UserUpdateResponse struct {
-	UserEntity
 }

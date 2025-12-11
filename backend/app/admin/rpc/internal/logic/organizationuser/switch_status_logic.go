@@ -1,4 +1,4 @@
-package userlogic
+package organizationuserlogic
 
 import (
 	"context"
@@ -13,15 +13,15 @@ import (
 	"zeebee-backend/common/errorx"
 )
 
-type UserDeleteLogic struct {
+type SwitchStatusLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 	baseLogic *logic.BaseLogic
 }
 
-func NewUserDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserDeleteLogic {
-	return &UserDeleteLogic{
+func NewSwitchStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SwitchStatusLogic {
+	return &SwitchStatusLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
@@ -29,7 +29,7 @@ func NewUserDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserDe
 	}
 }
 
-func (l *UserDeleteLogic) UserDelete(in *admin.UserDeleteRequest) (resp *admin.EmptyResponse, err error) {
+func (l *SwitchStatusLogic) SwitchStatus(in *admin.OrganizationUserSwitchStatusRequest) (resp *admin.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -39,8 +39,7 @@ func (l *UserDeleteLogic) UserDelete(in *admin.UserDeleteRequest) (resp *admin.E
 	if err != nil {
 		return nil, err
 	}
-
-	err = l.baseLogic.UserLogic.DeleteOrganizationUser(l.ctx, in.Data.Id, claim.OrganizationId, constants.UserTypeAdmin)
+	err = l.baseLogic.OrganizationUserLogic.SwitchStatus(l.ctx, in.Data.Id, claim.OrganizationId, constants.OrganizationUserStatus(in.Data.Status), claim.UserType)
 	if err != nil {
 		return nil, err
 	}

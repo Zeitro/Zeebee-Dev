@@ -1,4 +1,4 @@
-package user
+package organization_user
 
 import (
 	"net/http"
@@ -6,7 +6,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
 
-	"zeebee-backend/app/admin/api/internal/logic/user"
+	"zeebee-backend/app/admin/api/internal/logic/organization_user"
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
 
@@ -15,8 +15,8 @@ import (
 	"zeebee-backend/common/validator"
 )
 
-// update status
-func UserSwitchStatusHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+// update
+func OrganizationUserUpdateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer func() {
@@ -26,7 +26,7 @@ func UserSwitchStatusHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 					Error(err)
 			}
 		}()
-		var req types.UserSwitchStatusRequest
+		var req types.OrganizationUserUpdateRequest
 		if err = httpx.Parse(r, &req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
@@ -42,8 +42,8 @@ func UserSwitchStatusHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := user.NewUserSwitchStatusLogic(r.Context(), svcCtx)
-		resp, err := l.UserSwitchStatus(&req)
+		l := organization_user.NewOrganizationUserUpdateLogic(r.Context(), svcCtx)
+		resp, err := l.OrganizationUserUpdate(&req)
 		if err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 		} else {

@@ -8,6 +8,7 @@ import (
 	"github.com/zeromicro/go-zero/core/service"
 
 	apiServer "zeebee-backend/app/admin/rpc/internal/server/api"
+	organizationUserServer "zeebee-backend/app/admin/rpc/internal/server/organizationuser"
 	resourceServer "zeebee-backend/app/admin/rpc/internal/server/resource"
 	roleServer "zeebee-backend/app/admin/rpc/internal/server/role"
 	userServer "zeebee-backend/app/admin/rpc/internal/server/user"
@@ -36,6 +37,7 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		admin.RegisterApiServer(grpcServer, apiServer.NewApiServer(ctx))
 		admin.RegisterResourceServer(grpcServer, resourceServer.NewResourceServer(ctx))
 		admin.RegisterRoleServer(grpcServer, roleServer.NewRoleServer(ctx))
+		admin.RegisterOrganizationUserServer(grpcServer, organizationUserServer.NewOrganizationUserServer(ctx))
 		if rpcConfig.Mode == service.DevMode || rpcConfig.Mode == service.TestMode {
 			reflection.Register(grpcServer)
 		}

@@ -1312,29 +1312,41 @@ func (x *UserProfileEditRequestData) GetPhone() string {
 	return ""
 }
 
-// admin user
-// page
-type UserPageRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          *UserPageRequestData   `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+// ================= organization user service start =================
+type OrganizationUserEntity struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	OrganizationId int64                  `protobuf:"varint,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	UserId         int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Status         string                 `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
+	FirstName      string                 `protobuf:"bytes,5,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
+	MidName        string                 `protobuf:"bytes,6,opt,name=mid_name,json=midName,proto3" json:"mid_name,omitempty"`
+	LastName       string                 `protobuf:"bytes,7,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
+	FullName       string                 `protobuf:"bytes,8,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
+	Phone          string                 `protobuf:"bytes,9,opt,name=phone,proto3" json:"phone,omitempty"`
+	Remark         string                 `protobuf:"bytes,10,opt,name=remark,proto3" json:"remark,omitempty"`
+	CreatedAt      string                 `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt      string                 `protobuf:"bytes,12,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Email          string                 `protobuf:"bytes,13,opt,name=email,proto3" json:"email,omitempty"`
+	Roles          []*RoleEntity          `protobuf:"bytes,14,rep,name=roles,proto3" json:"roles,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
-func (x *UserPageRequest) Reset() {
-	*x = UserPageRequest{}
+func (x *OrganizationUserEntity) Reset() {
+	*x = OrganizationUserEntity{}
 	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UserPageRequest) String() string {
+func (x *OrganizationUserEntity) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserPageRequest) ProtoMessage() {}
+func (*OrganizationUserEntity) ProtoMessage() {}
 
-func (x *UserPageRequest) ProtoReflect() protoreflect.Message {
+func (x *OrganizationUserEntity) ProtoReflect() protoreflect.Message {
 	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1346,39 +1358,142 @@ func (x *UserPageRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserPageRequest.ProtoReflect.Descriptor instead.
-func (*UserPageRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use OrganizationUserEntity.ProtoReflect.Descriptor instead.
+func (*OrganizationUserEntity) Descriptor() ([]byte, []int) {
 	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{23}
 }
 
-func (x *UserPageRequest) GetData() *UserPageRequestData {
+func (x *OrganizationUserEntity) GetId() int64 {
 	if x != nil {
-		return x.Data
+		return x.Id
+	}
+	return 0
+}
+
+func (x *OrganizationUserEntity) GetOrganizationId() int64 {
+	if x != nil {
+		return x.OrganizationId
+	}
+	return 0
+}
+
+func (x *OrganizationUserEntity) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *OrganizationUserEntity) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *OrganizationUserEntity) GetFirstName() string {
+	if x != nil {
+		return x.FirstName
+	}
+	return ""
+}
+
+func (x *OrganizationUserEntity) GetMidName() string {
+	if x != nil {
+		return x.MidName
+	}
+	return ""
+}
+
+func (x *OrganizationUserEntity) GetLastName() string {
+	if x != nil {
+		return x.LastName
+	}
+	return ""
+}
+
+func (x *OrganizationUserEntity) GetFullName() string {
+	if x != nil {
+		return x.FullName
+	}
+	return ""
+}
+
+func (x *OrganizationUserEntity) GetPhone() string {
+	if x != nil {
+		return x.Phone
+	}
+	return ""
+}
+
+func (x *OrganizationUserEntity) GetRemark() string {
+	if x != nil {
+		return x.Remark
+	}
+	return ""
+}
+
+func (x *OrganizationUserEntity) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *OrganizationUserEntity) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
+}
+
+func (x *OrganizationUserEntity) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *OrganizationUserEntity) GetRoles() []*RoleEntity {
+	if x != nil {
+		return x.Roles
 	}
 	return nil
 }
 
-type UserPageResponse struct {
+type OrganizationUserPageEntity struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          *UserPageResponseData  `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Status        string                 `protobuf:"bytes,2,opt,name=status,proto3" json:"status,omitempty"`
+	FirstName     string                 `protobuf:"bytes,3,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
+	MidName       string                 `protobuf:"bytes,4,opt,name=mid_name,json=midName,proto3" json:"mid_name,omitempty"`
+	LastName      string                 `protobuf:"bytes,5,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
+	FullName      string                 `protobuf:"bytes,6,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
+	Phone         string                 `protobuf:"bytes,7,opt,name=phone,proto3" json:"phone,omitempty"`
+	Remark        string                 `protobuf:"bytes,8,opt,name=remark,proto3" json:"remark,omitempty"`
+	CreatedAt     string                 `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     string                 `protobuf:"bytes,10,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Email         string                 `protobuf:"bytes,11,opt,name=email,proto3" json:"email,omitempty"`
+	Roles         []*RoleEntity          `protobuf:"bytes,12,rep,name=roles,proto3" json:"roles,omitempty"`
+	IsOwner       bool                   `protobuf:"varint,13,opt,name=is_owner,json=isOwner,proto3" json:"is_owner,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UserPageResponse) Reset() {
-	*x = UserPageResponse{}
+func (x *OrganizationUserPageEntity) Reset() {
+	*x = OrganizationUserPageEntity{}
 	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UserPageResponse) String() string {
+func (x *OrganizationUserPageEntity) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserPageResponse) ProtoMessage() {}
+func (*OrganizationUserPageEntity) ProtoMessage() {}
 
-func (x *UserPageResponse) ProtoReflect() protoreflect.Message {
+func (x *OrganizationUserPageEntity) ProtoReflect() protoreflect.Message {
 	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1390,42 +1505,124 @@ func (x *UserPageResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserPageResponse.ProtoReflect.Descriptor instead.
-func (*UserPageResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use OrganizationUserPageEntity.ProtoReflect.Descriptor instead.
+func (*OrganizationUserPageEntity) Descriptor() ([]byte, []int) {
 	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{24}
 }
 
-func (x *UserPageResponse) GetData() *UserPageResponseData {
+func (x *OrganizationUserPageEntity) GetId() int64 {
 	if x != nil {
-		return x.Data
+		return x.Id
+	}
+	return 0
+}
+
+func (x *OrganizationUserPageEntity) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *OrganizationUserPageEntity) GetFirstName() string {
+	if x != nil {
+		return x.FirstName
+	}
+	return ""
+}
+
+func (x *OrganizationUserPageEntity) GetMidName() string {
+	if x != nil {
+		return x.MidName
+	}
+	return ""
+}
+
+func (x *OrganizationUserPageEntity) GetLastName() string {
+	if x != nil {
+		return x.LastName
+	}
+	return ""
+}
+
+func (x *OrganizationUserPageEntity) GetFullName() string {
+	if x != nil {
+		return x.FullName
+	}
+	return ""
+}
+
+func (x *OrganizationUserPageEntity) GetPhone() string {
+	if x != nil {
+		return x.Phone
+	}
+	return ""
+}
+
+func (x *OrganizationUserPageEntity) GetRemark() string {
+	if x != nil {
+		return x.Remark
+	}
+	return ""
+}
+
+func (x *OrganizationUserPageEntity) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *OrganizationUserPageEntity) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
+}
+
+func (x *OrganizationUserPageEntity) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *OrganizationUserPageEntity) GetRoles() []*RoleEntity {
+	if x != nil {
+		return x.Roles
 	}
 	return nil
 }
 
-type UserPageRequestData struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Page          int64                  `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
-	Limit         int64                  `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
-	Filter        *UserPageRequestFilter `protobuf:"bytes,3,opt,name=filter,proto3" json:"filter,omitempty"`
-	Sorter        *UserPageRequestSorter `protobuf:"bytes,4,opt,name=sorter,proto3" json:"sorter,omitempty"`
+func (x *OrganizationUserPageEntity) GetIsOwner() bool {
+	if x != nil {
+		return x.IsOwner
+	}
+	return false
+}
+
+// page
+type OrganizationUserPageRequest struct {
+	state         protoimpl.MessageState           `protogen:"open.v1"`
+	Data          *OrganizationUserPageRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UserPageRequestData) Reset() {
-	*x = UserPageRequestData{}
+func (x *OrganizationUserPageRequest) Reset() {
+	*x = OrganizationUserPageRequest{}
 	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UserPageRequestData) String() string {
+func (x *OrganizationUserPageRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserPageRequestData) ProtoMessage() {}
+func (*OrganizationUserPageRequest) ProtoMessage() {}
 
-func (x *UserPageRequestData) ProtoReflect() protoreflect.Message {
+func (x *OrganizationUserPageRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1437,62 +1634,152 @@ func (x *UserPageRequestData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserPageRequestData.ProtoReflect.Descriptor instead.
-func (*UserPageRequestData) Descriptor() ([]byte, []int) {
+// Deprecated: Use OrganizationUserPageRequest.ProtoReflect.Descriptor instead.
+func (*OrganizationUserPageRequest) Descriptor() ([]byte, []int) {
 	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{25}
 }
 
-func (x *UserPageRequestData) GetPage() int64 {
+func (x *OrganizationUserPageRequest) GetData() *OrganizationUserPageRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type OrganizationUserPageResponse struct {
+	state         protoimpl.MessageState            `protogen:"open.v1"`
+	Data          *OrganizationUserPageResponseData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OrganizationUserPageResponse) Reset() {
+	*x = OrganizationUserPageResponse{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrganizationUserPageResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrganizationUserPageResponse) ProtoMessage() {}
+
+func (x *OrganizationUserPageResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrganizationUserPageResponse.ProtoReflect.Descriptor instead.
+func (*OrganizationUserPageResponse) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *OrganizationUserPageResponse) GetData() *OrganizationUserPageResponseData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type OrganizationUserPageRequestData struct {
+	state         protoimpl.MessageState             `protogen:"open.v1"`
+	Page          int64                              `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
+	Limit         int64                              `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	Filter        *OrganizationUserPageRequestFilter `protobuf:"bytes,3,opt,name=filter,proto3" json:"filter,omitempty"`
+	Sorter        *OrganizationUserPageRequestSorter `protobuf:"bytes,4,opt,name=sorter,proto3" json:"sorter,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OrganizationUserPageRequestData) Reset() {
+	*x = OrganizationUserPageRequestData{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrganizationUserPageRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrganizationUserPageRequestData) ProtoMessage() {}
+
+func (x *OrganizationUserPageRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrganizationUserPageRequestData.ProtoReflect.Descriptor instead.
+func (*OrganizationUserPageRequestData) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *OrganizationUserPageRequestData) GetPage() int64 {
 	if x != nil {
 		return x.Page
 	}
 	return 0
 }
 
-func (x *UserPageRequestData) GetLimit() int64 {
+func (x *OrganizationUserPageRequestData) GetLimit() int64 {
 	if x != nil {
 		return x.Limit
 	}
 	return 0
 }
 
-func (x *UserPageRequestData) GetFilter() *UserPageRequestFilter {
+func (x *OrganizationUserPageRequestData) GetFilter() *OrganizationUserPageRequestFilter {
 	if x != nil {
 		return x.Filter
 	}
 	return nil
 }
 
-func (x *UserPageRequestData) GetSorter() *UserPageRequestSorter {
+func (x *OrganizationUserPageRequestData) GetSorter() *OrganizationUserPageRequestSorter {
 	if x != nil {
 		return x.Sorter
 	}
 	return nil
 }
 
-type UserPageRequestFilter struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	//  int64 user_id = 1;
-	Keyword       string `protobuf:"bytes,2,opt,name=keyword,proto3" json:"keyword,omitempty"` //  int64 organization_id = 3;
+type OrganizationUserPageRequestFilter struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Keyword       string                 `protobuf:"bytes,1,opt,name=keyword,proto3" json:"keyword,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UserPageRequestFilter) Reset() {
-	*x = UserPageRequestFilter{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[26]
+func (x *OrganizationUserPageRequestFilter) Reset() {
+	*x = OrganizationUserPageRequestFilter{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UserPageRequestFilter) String() string {
+func (x *OrganizationUserPageRequestFilter) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserPageRequestFilter) ProtoMessage() {}
+func (*OrganizationUserPageRequestFilter) ProtoMessage() {}
 
-func (x *UserPageRequestFilter) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[26]
+func (x *OrganizationUserPageRequestFilter) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1503,19 +1790,19 @@ func (x *UserPageRequestFilter) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserPageRequestFilter.ProtoReflect.Descriptor instead.
-func (*UserPageRequestFilter) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{26}
+// Deprecated: Use OrganizationUserPageRequestFilter.ProtoReflect.Descriptor instead.
+func (*OrganizationUserPageRequestFilter) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{28}
 }
 
-func (x *UserPageRequestFilter) GetKeyword() string {
+func (x *OrganizationUserPageRequestFilter) GetKeyword() string {
 	if x != nil {
 		return x.Keyword
 	}
 	return ""
 }
 
-type UserPageRequestSorter struct {
+type OrganizationUserPageRequestSorter struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Column        string                 `protobuf:"bytes,1,opt,name=column,proto3" json:"column,omitempty"`
 	Sort          string                 `protobuf:"bytes,2,opt,name=sort,proto3" json:"sort,omitempty"`
@@ -1523,21 +1810,21 @@ type UserPageRequestSorter struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UserPageRequestSorter) Reset() {
-	*x = UserPageRequestSorter{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[27]
+func (x *OrganizationUserPageRequestSorter) Reset() {
+	*x = OrganizationUserPageRequestSorter{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UserPageRequestSorter) String() string {
+func (x *OrganizationUserPageRequestSorter) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserPageRequestSorter) ProtoMessage() {}
+func (*OrganizationUserPageRequestSorter) ProtoMessage() {}
 
-func (x *UserPageRequestSorter) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[27]
+func (x *OrganizationUserPageRequestSorter) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1548,51 +1835,51 @@ func (x *UserPageRequestSorter) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserPageRequestSorter.ProtoReflect.Descriptor instead.
-func (*UserPageRequestSorter) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{27}
+// Deprecated: Use OrganizationUserPageRequestSorter.ProtoReflect.Descriptor instead.
+func (*OrganizationUserPageRequestSorter) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{29}
 }
 
-func (x *UserPageRequestSorter) GetColumn() string {
+func (x *OrganizationUserPageRequestSorter) GetColumn() string {
 	if x != nil {
 		return x.Column
 	}
 	return ""
 }
 
-func (x *UserPageRequestSorter) GetSort() string {
+func (x *OrganizationUserPageRequestSorter) GetSort() string {
 	if x != nil {
 		return x.Sort
 	}
 	return ""
 }
 
-type UserPageResponseData struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Page          int64                  `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
-	Limit         int64                  `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
-	Total         int64                  `protobuf:"varint,3,opt,name=total,proto3" json:"total,omitempty"`
-	TotalPage     int64                  `protobuf:"varint,4,opt,name=total_page,json=totalPage,proto3" json:"total_page,omitempty"`
-	List          []*UserEntity          `protobuf:"bytes,5,rep,name=list,proto3" json:"list,omitempty"`
+type OrganizationUserPageResponseData struct {
+	state         protoimpl.MessageState        `protogen:"open.v1"`
+	Page          int64                         `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
+	Limit         int64                         `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	Total         int64                         `protobuf:"varint,3,opt,name=total,proto3" json:"total,omitempty"`
+	TotalPage     int64                         `protobuf:"varint,4,opt,name=total_page,json=totalPage,proto3" json:"total_page,omitempty"`
+	List          []*OrganizationUserPageEntity `protobuf:"bytes,5,rep,name=list,proto3" json:"list,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UserPageResponseData) Reset() {
-	*x = UserPageResponseData{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[28]
+func (x *OrganizationUserPageResponseData) Reset() {
+	*x = OrganizationUserPageResponseData{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UserPageResponseData) String() string {
+func (x *OrganizationUserPageResponseData) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserPageResponseData) ProtoMessage() {}
+func (*OrganizationUserPageResponseData) ProtoMessage() {}
 
-func (x *UserPageResponseData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[28]
+func (x *OrganizationUserPageResponseData) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1603,40 +1890,40 @@ func (x *UserPageResponseData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserPageResponseData.ProtoReflect.Descriptor instead.
-func (*UserPageResponseData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{28}
+// Deprecated: Use OrganizationUserPageResponseData.ProtoReflect.Descriptor instead.
+func (*OrganizationUserPageResponseData) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{30}
 }
 
-func (x *UserPageResponseData) GetPage() int64 {
+func (x *OrganizationUserPageResponseData) GetPage() int64 {
 	if x != nil {
 		return x.Page
 	}
 	return 0
 }
 
-func (x *UserPageResponseData) GetLimit() int64 {
+func (x *OrganizationUserPageResponseData) GetLimit() int64 {
 	if x != nil {
 		return x.Limit
 	}
 	return 0
 }
 
-func (x *UserPageResponseData) GetTotal() int64 {
+func (x *OrganizationUserPageResponseData) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
 	return 0
 }
 
-func (x *UserPageResponseData) GetTotalPage() int64 {
+func (x *OrganizationUserPageResponseData) GetTotalPage() int64 {
 	if x != nil {
 		return x.TotalPage
 	}
 	return 0
 }
 
-func (x *UserPageResponseData) GetList() []*UserEntity {
+func (x *OrganizationUserPageResponseData) GetList() []*OrganizationUserPageEntity {
 	if x != nil {
 		return x.List
 	}
@@ -1644,121 +1931,27 @@ func (x *UserPageResponseData) GetList() []*UserEntity {
 }
 
 // create
-type UserCreateRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          *UserCreateRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+type OrganizationUserCreateRequest struct {
+	state         protoimpl.MessageState             `protogen:"open.v1"`
+	Data          *OrganizationUserCreateRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UserCreateRequest) Reset() {
-	*x = UserCreateRequest{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[29]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UserCreateRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UserCreateRequest) ProtoMessage() {}
-
-func (x *UserCreateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[29]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UserCreateRequest.ProtoReflect.Descriptor instead.
-func (*UserCreateRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{29}
-}
-
-func (x *UserCreateRequest) GetData() *UserCreateRequestData {
-	if x != nil {
-		return x.Data
-	}
-	return nil
-}
-
-type UserCreateResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          *UserEntity            `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UserCreateResponse) Reset() {
-	*x = UserCreateResponse{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[30]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UserCreateResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UserCreateResponse) ProtoMessage() {}
-
-func (x *UserCreateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[30]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UserCreateResponse.ProtoReflect.Descriptor instead.
-func (*UserCreateResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{30}
-}
-
-func (x *UserCreateResponse) GetData() *UserEntity {
-	if x != nil {
-		return x.Data
-	}
-	return nil
-}
-
-type UserCreateRequestData struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Email          string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
-	Password       string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
-	FullName       string                 `protobuf:"bytes,3,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
-	Phone          string                 `protobuf:"bytes,4,opt,name=phone,proto3" json:"phone,omitempty"`
-	RoleIds        []int64                `protobuf:"varint,5,rep,packed,name=role_ids,json=roleIds,proto3" json:"role_ids,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,6,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	UserId         int64                  `protobuf:"varint,7,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
-}
-
-func (x *UserCreateRequestData) Reset() {
-	*x = UserCreateRequestData{}
+func (x *OrganizationUserCreateRequest) Reset() {
+	*x = OrganizationUserCreateRequest{}
 	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UserCreateRequestData) String() string {
+func (x *OrganizationUserCreateRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserCreateRequestData) ProtoMessage() {}
+func (*OrganizationUserCreateRequest) ProtoMessage() {}
 
-func (x *UserCreateRequestData) ProtoReflect() protoreflect.Message {
+func (x *OrganizationUserCreateRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1770,82 +1963,39 @@ func (x *UserCreateRequestData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserCreateRequestData.ProtoReflect.Descriptor instead.
-func (*UserCreateRequestData) Descriptor() ([]byte, []int) {
+// Deprecated: Use OrganizationUserCreateRequest.ProtoReflect.Descriptor instead.
+func (*OrganizationUserCreateRequest) Descriptor() ([]byte, []int) {
 	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{31}
 }
 
-func (x *UserCreateRequestData) GetEmail() string {
+func (x *OrganizationUserCreateRequest) GetData() *OrganizationUserCreateRequestData {
 	if x != nil {
-		return x.Email
-	}
-	return ""
-}
-
-func (x *UserCreateRequestData) GetPassword() string {
-	if x != nil {
-		return x.Password
-	}
-	return ""
-}
-
-func (x *UserCreateRequestData) GetFullName() string {
-	if x != nil {
-		return x.FullName
-	}
-	return ""
-}
-
-func (x *UserCreateRequestData) GetPhone() string {
-	if x != nil {
-		return x.Phone
-	}
-	return ""
-}
-
-func (x *UserCreateRequestData) GetRoleIds() []int64 {
-	if x != nil {
-		return x.RoleIds
+		return x.Data
 	}
 	return nil
 }
 
-func (x *UserCreateRequestData) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return 0
-}
-
-func (x *UserCreateRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-// update
-type UserUpdateRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          *UserUpdateRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+type OrganizationUserCreateResponse struct {
+	state         protoimpl.MessageState  `protogen:"open.v1"`
+	Data          *OrganizationUserEntity `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UserUpdateRequest) Reset() {
-	*x = UserUpdateRequest{}
+func (x *OrganizationUserCreateResponse) Reset() {
+	*x = OrganizationUserCreateResponse{}
 	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UserUpdateRequest) String() string {
+func (x *OrganizationUserCreateResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserUpdateRequest) ProtoMessage() {}
+func (*OrganizationUserCreateResponse) ProtoMessage() {}
 
-func (x *UserUpdateRequest) ProtoReflect() protoreflect.Message {
+func (x *OrganizationUserCreateResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1857,87 +2007,124 @@ func (x *UserUpdateRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserUpdateRequest.ProtoReflect.Descriptor instead.
-func (*UserUpdateRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use OrganizationUserCreateResponse.ProtoReflect.Descriptor instead.
+func (*OrganizationUserCreateResponse) Descriptor() ([]byte, []int) {
 	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{32}
 }
 
-func (x *UserUpdateRequest) GetData() *UserUpdateRequestData {
+func (x *OrganizationUserCreateResponse) GetData() *OrganizationUserEntity {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type UserUpdateResponse struct {
+type OrganizationUserCreateRequestData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          *UserEntity            `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UserUpdateResponse) Reset() {
-	*x = UserUpdateResponse{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[33]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UserUpdateResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UserUpdateResponse) ProtoMessage() {}
-
-func (x *UserUpdateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[33]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UserUpdateResponse.ProtoReflect.Descriptor instead.
-func (*UserUpdateResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{33}
-}
-
-func (x *UserUpdateResponse) GetData() *UserEntity {
-	if x != nil {
-		return x.Data
-	}
-	return nil
-}
-
-type UserUpdateRequestData struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Password      string                 `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
-	FullName      string                 `protobuf:"bytes,4,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
+	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
+	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+	FirstName     string                 `protobuf:"bytes,3,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
+	LastName      string                 `protobuf:"bytes,4,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
 	Phone         string                 `protobuf:"bytes,5,opt,name=phone,proto3" json:"phone,omitempty"`
 	RoleIds       []int64                `protobuf:"varint,6,rep,packed,name=role_ids,json=roleIds,proto3" json:"role_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UserUpdateRequestData) Reset() {
-	*x = UserUpdateRequestData{}
+func (x *OrganizationUserCreateRequestData) Reset() {
+	*x = OrganizationUserCreateRequestData{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[33]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrganizationUserCreateRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrganizationUserCreateRequestData) ProtoMessage() {}
+
+func (x *OrganizationUserCreateRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[33]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrganizationUserCreateRequestData.ProtoReflect.Descriptor instead.
+func (*OrganizationUserCreateRequestData) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{33}
+}
+
+func (x *OrganizationUserCreateRequestData) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *OrganizationUserCreateRequestData) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
+}
+
+func (x *OrganizationUserCreateRequestData) GetFirstName() string {
+	if x != nil {
+		return x.FirstName
+	}
+	return ""
+}
+
+func (x *OrganizationUserCreateRequestData) GetLastName() string {
+	if x != nil {
+		return x.LastName
+	}
+	return ""
+}
+
+func (x *OrganizationUserCreateRequestData) GetPhone() string {
+	if x != nil {
+		return x.Phone
+	}
+	return ""
+}
+
+func (x *OrganizationUserCreateRequestData) GetRoleIds() []int64 {
+	if x != nil {
+		return x.RoleIds
+	}
+	return nil
+}
+
+// update
+type OrganizationUserUpdateRequest struct {
+	state         protoimpl.MessageState             `protogen:"open.v1"`
+	Data          *OrganizationUserUpdateRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OrganizationUserUpdateRequest) Reset() {
+	*x = OrganizationUserUpdateRequest{}
 	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UserUpdateRequestData) String() string {
+func (x *OrganizationUserUpdateRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserUpdateRequestData) ProtoMessage() {}
+func (*OrganizationUserUpdateRequest) ProtoMessage() {}
 
-func (x *UserUpdateRequestData) ProtoReflect() protoreflect.Message {
+func (x *OrganizationUserUpdateRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1949,40 +2136,132 @@ func (x *UserUpdateRequestData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserUpdateRequestData.ProtoReflect.Descriptor instead.
-func (*UserUpdateRequestData) Descriptor() ([]byte, []int) {
+// Deprecated: Use OrganizationUserUpdateRequest.ProtoReflect.Descriptor instead.
+func (*OrganizationUserUpdateRequest) Descriptor() ([]byte, []int) {
 	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{34}
 }
 
-func (x *UserUpdateRequestData) GetId() int64 {
+func (x *OrganizationUserUpdateRequest) GetData() *OrganizationUserUpdateRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type OrganizationUserUpdateResponse struct {
+	state         protoimpl.MessageState  `protogen:"open.v1"`
+	Data          *OrganizationUserEntity `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OrganizationUserUpdateResponse) Reset() {
+	*x = OrganizationUserUpdateResponse{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[35]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrganizationUserUpdateResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrganizationUserUpdateResponse) ProtoMessage() {}
+
+func (x *OrganizationUserUpdateResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[35]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrganizationUserUpdateResponse.ProtoReflect.Descriptor instead.
+func (*OrganizationUserUpdateResponse) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{35}
+}
+
+func (x *OrganizationUserUpdateResponse) GetData() *OrganizationUserEntity {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type OrganizationUserUpdateRequestData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	FirstName     string                 `protobuf:"bytes,2,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
+	LastName      string                 `protobuf:"bytes,3,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
+	Phone         string                 `protobuf:"bytes,5,opt,name=phone,proto3" json:"phone,omitempty"`
+	RoleIds       []int64                `protobuf:"varint,6,rep,packed,name=role_ids,json=roleIds,proto3" json:"role_ids,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OrganizationUserUpdateRequestData) Reset() {
+	*x = OrganizationUserUpdateRequestData{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[36]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrganizationUserUpdateRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrganizationUserUpdateRequestData) ProtoMessage() {}
+
+func (x *OrganizationUserUpdateRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[36]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrganizationUserUpdateRequestData.ProtoReflect.Descriptor instead.
+func (*OrganizationUserUpdateRequestData) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{36}
+}
+
+func (x *OrganizationUserUpdateRequestData) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *UserUpdateRequestData) GetPassword() string {
+func (x *OrganizationUserUpdateRequestData) GetFirstName() string {
 	if x != nil {
-		return x.Password
+		return x.FirstName
 	}
 	return ""
 }
 
-func (x *UserUpdateRequestData) GetFullName() string {
+func (x *OrganizationUserUpdateRequestData) GetLastName() string {
 	if x != nil {
-		return x.FullName
+		return x.LastName
 	}
 	return ""
 }
 
-func (x *UserUpdateRequestData) GetPhone() string {
+func (x *OrganizationUserUpdateRequestData) GetPhone() string {
 	if x != nil {
 		return x.Phone
 	}
 	return ""
 }
 
-func (x *UserUpdateRequestData) GetRoleIds() []int64 {
+func (x *OrganizationUserUpdateRequestData) GetRoleIds() []int64 {
 	if x != nil {
 		return x.RoleIds
 	}
@@ -1990,28 +2269,28 @@ func (x *UserUpdateRequestData) GetRoleIds() []int64 {
 }
 
 // delete
-type UserDeleteRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          *UserDeleteRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+type OrganizationUserDeleteRequest struct {
+	state         protoimpl.MessageState             `protogen:"open.v1"`
+	Data          *OrganizationUserDeleteRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UserDeleteRequest) Reset() {
-	*x = UserDeleteRequest{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[35]
+func (x *OrganizationUserDeleteRequest) Reset() {
+	*x = OrganizationUserDeleteRequest{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UserDeleteRequest) String() string {
+func (x *OrganizationUserDeleteRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserDeleteRequest) ProtoMessage() {}
+func (*OrganizationUserDeleteRequest) ProtoMessage() {}
 
-func (x *UserDeleteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[35]
+func (x *OrganizationUserDeleteRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2022,40 +2301,40 @@ func (x *UserDeleteRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserDeleteRequest.ProtoReflect.Descriptor instead.
-func (*UserDeleteRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{35}
+// Deprecated: Use OrganizationUserDeleteRequest.ProtoReflect.Descriptor instead.
+func (*OrganizationUserDeleteRequest) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{37}
 }
 
-func (x *UserDeleteRequest) GetData() *UserDeleteRequestData {
+func (x *OrganizationUserDeleteRequest) GetData() *OrganizationUserDeleteRequestData {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type UserDeleteRequestData struct {
+type OrganizationUserDeleteRequestData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UserDeleteRequestData) Reset() {
-	*x = UserDeleteRequestData{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[36]
+func (x *OrganizationUserDeleteRequestData) Reset() {
+	*x = OrganizationUserDeleteRequestData{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UserDeleteRequestData) String() string {
+func (x *OrganizationUserDeleteRequestData) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserDeleteRequestData) ProtoMessage() {}
+func (*OrganizationUserDeleteRequestData) ProtoMessage() {}
 
-func (x *UserDeleteRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[36]
+func (x *OrganizationUserDeleteRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2066,12 +2345,12 @@ func (x *UserDeleteRequestData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserDeleteRequestData.ProtoReflect.Descriptor instead.
-func (*UserDeleteRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{36}
+// Deprecated: Use OrganizationUserDeleteRequestData.ProtoReflect.Descriptor instead.
+func (*OrganizationUserDeleteRequestData) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{38}
 }
 
-func (x *UserDeleteRequestData) GetId() int64 {
+func (x *OrganizationUserDeleteRequestData) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -2079,28 +2358,28 @@ func (x *UserDeleteRequestData) GetId() int64 {
 }
 
 // detail
-type UserDetailRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          *UserDetailRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+type OrganizationUserDetailRequest struct {
+	state         protoimpl.MessageState             `protogen:"open.v1"`
+	Data          *OrganizationUserDetailRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UserDetailRequest) Reset() {
-	*x = UserDetailRequest{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[37]
+func (x *OrganizationUserDetailRequest) Reset() {
+	*x = OrganizationUserDetailRequest{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UserDetailRequest) String() string {
+func (x *OrganizationUserDetailRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserDetailRequest) ProtoMessage() {}
+func (*OrganizationUserDetailRequest) ProtoMessage() {}
 
-func (x *UserDetailRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[37]
+func (x *OrganizationUserDetailRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2111,40 +2390,40 @@ func (x *UserDetailRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserDetailRequest.ProtoReflect.Descriptor instead.
-func (*UserDetailRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{37}
+// Deprecated: Use OrganizationUserDetailRequest.ProtoReflect.Descriptor instead.
+func (*OrganizationUserDetailRequest) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{39}
 }
 
-func (x *UserDetailRequest) GetData() *UserDetailRequestData {
+func (x *OrganizationUserDetailRequest) GetData() *OrganizationUserDetailRequestData {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type UserDetailResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          *UserEntity            `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+type OrganizationUserDetailResponse struct {
+	state         protoimpl.MessageState  `protogen:"open.v1"`
+	Data          *OrganizationUserEntity `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UserDetailResponse) Reset() {
-	*x = UserDetailResponse{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[38]
+func (x *OrganizationUserDetailResponse) Reset() {
+	*x = OrganizationUserDetailResponse{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UserDetailResponse) String() string {
+func (x *OrganizationUserDetailResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserDetailResponse) ProtoMessage() {}
+func (*OrganizationUserDetailResponse) ProtoMessage() {}
 
-func (x *UserDetailResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[38]
+func (x *OrganizationUserDetailResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2155,40 +2434,40 @@ func (x *UserDetailResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserDetailResponse.ProtoReflect.Descriptor instead.
-func (*UserDetailResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{38}
+// Deprecated: Use OrganizationUserDetailResponse.ProtoReflect.Descriptor instead.
+func (*OrganizationUserDetailResponse) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{40}
 }
 
-func (x *UserDetailResponse) GetData() *UserEntity {
+func (x *OrganizationUserDetailResponse) GetData() *OrganizationUserEntity {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type UserDetailRequestData struct {
+type OrganizationUserDetailRequestData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UserDetailRequestData) Reset() {
-	*x = UserDetailRequestData{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[39]
+func (x *OrganizationUserDetailRequestData) Reset() {
+	*x = OrganizationUserDetailRequestData{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UserDetailRequestData) String() string {
+func (x *OrganizationUserDetailRequestData) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserDetailRequestData) ProtoMessage() {}
+func (*OrganizationUserDetailRequestData) ProtoMessage() {}
 
-func (x *UserDetailRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[39]
+func (x *OrganizationUserDetailRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2199,12 +2478,12 @@ func (x *UserDetailRequestData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserDetailRequestData.ProtoReflect.Descriptor instead.
-func (*UserDetailRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{39}
+// Deprecated: Use OrganizationUserDetailRequestData.ProtoReflect.Descriptor instead.
+func (*OrganizationUserDetailRequestData) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{41}
 }
 
-func (x *UserDetailRequestData) GetId() int64 {
+func (x *OrganizationUserDetailRequestData) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -2212,28 +2491,28 @@ func (x *UserDetailRequestData) GetId() int64 {
 }
 
 // switch status
-type UserSwitchStatusRequest struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
-	Data          *UserSwitchStatusRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+type OrganizationUserSwitchStatusRequest struct {
+	state         protoimpl.MessageState                   `protogen:"open.v1"`
+	Data          *OrganizationUserSwitchStatusRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UserSwitchStatusRequest) Reset() {
-	*x = UserSwitchStatusRequest{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[40]
+func (x *OrganizationUserSwitchStatusRequest) Reset() {
+	*x = OrganizationUserSwitchStatusRequest{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UserSwitchStatusRequest) String() string {
+func (x *OrganizationUserSwitchStatusRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserSwitchStatusRequest) ProtoMessage() {}
+func (*OrganizationUserSwitchStatusRequest) ProtoMessage() {}
 
-func (x *UserSwitchStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[40]
+func (x *OrganizationUserSwitchStatusRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2244,43 +2523,41 @@ func (x *UserSwitchStatusRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserSwitchStatusRequest.ProtoReflect.Descriptor instead.
-func (*UserSwitchStatusRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{40}
+// Deprecated: Use OrganizationUserSwitchStatusRequest.ProtoReflect.Descriptor instead.
+func (*OrganizationUserSwitchStatusRequest) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{42}
 }
 
-func (x *UserSwitchStatusRequest) GetData() *UserSwitchStatusRequestData {
+func (x *OrganizationUserSwitchStatusRequest) GetData() *OrganizationUserSwitchStatusRequestData {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type UserSwitchStatusRequestData struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	//  int64 user_id = 2;
-	//  int64 organization_id = 3;
-	Status        string `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
+type OrganizationUserSwitchStatusRequestData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Status        string                 `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UserSwitchStatusRequestData) Reset() {
-	*x = UserSwitchStatusRequestData{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[41]
+func (x *OrganizationUserSwitchStatusRequestData) Reset() {
+	*x = OrganizationUserSwitchStatusRequestData{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UserSwitchStatusRequestData) String() string {
+func (x *OrganizationUserSwitchStatusRequestData) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserSwitchStatusRequestData) ProtoMessage() {}
+func (*OrganizationUserSwitchStatusRequestData) ProtoMessage() {}
 
-func (x *UserSwitchStatusRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[41]
+func (x *OrganizationUserSwitchStatusRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2291,19 +2568,19 @@ func (x *UserSwitchStatusRequestData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserSwitchStatusRequestData.ProtoReflect.Descriptor instead.
-func (*UserSwitchStatusRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{41}
+// Deprecated: Use OrganizationUserSwitchStatusRequestData.ProtoReflect.Descriptor instead.
+func (*OrganizationUserSwitchStatusRequestData) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{43}
 }
 
-func (x *UserSwitchStatusRequestData) GetId() int64 {
+func (x *OrganizationUserSwitchStatusRequestData) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *UserSwitchStatusRequestData) GetStatus() string {
+func (x *OrganizationUserSwitchStatusRequestData) GetStatus() string {
 	if x != nil {
 		return x.Status
 	}
@@ -2331,7 +2608,7 @@ type ApiTreeEntity struct {
 
 func (x *ApiTreeEntity) Reset() {
 	*x = ApiTreeEntity{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[42]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2343,7 +2620,7 @@ func (x *ApiTreeEntity) String() string {
 func (*ApiTreeEntity) ProtoMessage() {}
 
 func (x *ApiTreeEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[42]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2356,7 +2633,7 @@ func (x *ApiTreeEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiTreeEntity.ProtoReflect.Descriptor instead.
 func (*ApiTreeEntity) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{42}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *ApiTreeEntity) GetId() int64 {
@@ -2462,7 +2739,7 @@ type ApiEntity struct {
 
 func (x *ApiEntity) Reset() {
 	*x = ApiEntity{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[43]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2474,7 +2751,7 @@ func (x *ApiEntity) String() string {
 func (*ApiEntity) ProtoMessage() {}
 
 func (x *ApiEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[43]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2487,7 +2764,7 @@ func (x *ApiEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiEntity.ProtoReflect.Descriptor instead.
 func (*ApiEntity) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{43}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *ApiEntity) GetId() int64 {
@@ -2577,7 +2854,7 @@ type ApiTreeRequest struct {
 
 func (x *ApiTreeRequest) Reset() {
 	*x = ApiTreeRequest{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[44]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2589,7 +2866,7 @@ func (x *ApiTreeRequest) String() string {
 func (*ApiTreeRequest) ProtoMessage() {}
 
 func (x *ApiTreeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[44]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2602,7 +2879,7 @@ func (x *ApiTreeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiTreeRequest.ProtoReflect.Descriptor instead.
 func (*ApiTreeRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{44}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *ApiTreeRequest) GetData() *ApiTreeRequestData {
@@ -2623,7 +2900,7 @@ type ApiTreeRequestData struct {
 
 func (x *ApiTreeRequestData) Reset() {
 	*x = ApiTreeRequestData{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[45]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2635,7 +2912,7 @@ func (x *ApiTreeRequestData) String() string {
 func (*ApiTreeRequestData) ProtoMessage() {}
 
 func (x *ApiTreeRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[45]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2648,7 +2925,7 @@ func (x *ApiTreeRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiTreeRequestData.ProtoReflect.Descriptor instead.
 func (*ApiTreeRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{45}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *ApiTreeRequestData) GetUserId() int64 {
@@ -2681,7 +2958,7 @@ type ApiTreeResponse struct {
 
 func (x *ApiTreeResponse) Reset() {
 	*x = ApiTreeResponse{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[46]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2693,7 +2970,7 @@ func (x *ApiTreeResponse) String() string {
 func (*ApiTreeResponse) ProtoMessage() {}
 
 func (x *ApiTreeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[46]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2706,7 +2983,7 @@ func (x *ApiTreeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiTreeResponse.ProtoReflect.Descriptor instead.
 func (*ApiTreeResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{46}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *ApiTreeResponse) GetData() []*ApiTreeEntity {
@@ -2726,7 +3003,7 @@ type ApiCreateRequest struct {
 
 func (x *ApiCreateRequest) Reset() {
 	*x = ApiCreateRequest{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[47]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2738,7 +3015,7 @@ func (x *ApiCreateRequest) String() string {
 func (*ApiCreateRequest) ProtoMessage() {}
 
 func (x *ApiCreateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[47]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2751,7 +3028,7 @@ func (x *ApiCreateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiCreateRequest.ProtoReflect.Descriptor instead.
 func (*ApiCreateRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{47}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *ApiCreateRequest) GetData() *ApiCreateRequestData {
@@ -2777,7 +3054,7 @@ type ApiCreateRequestData struct {
 
 func (x *ApiCreateRequestData) Reset() {
 	*x = ApiCreateRequestData{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[48]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2789,7 +3066,7 @@ func (x *ApiCreateRequestData) String() string {
 func (*ApiCreateRequestData) ProtoMessage() {}
 
 func (x *ApiCreateRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[48]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2802,7 +3079,7 @@ func (x *ApiCreateRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiCreateRequestData.ProtoReflect.Descriptor instead.
 func (*ApiCreateRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{48}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *ApiCreateRequestData) GetParentId() int64 {
@@ -2870,7 +3147,7 @@ type ApiCreateResponse struct {
 
 func (x *ApiCreateResponse) Reset() {
 	*x = ApiCreateResponse{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[49]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2882,7 +3159,7 @@ func (x *ApiCreateResponse) String() string {
 func (*ApiCreateResponse) ProtoMessage() {}
 
 func (x *ApiCreateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[49]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2895,7 +3172,7 @@ func (x *ApiCreateResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiCreateResponse.ProtoReflect.Descriptor instead.
 func (*ApiCreateResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{49}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{51}
 }
 
 func (x *ApiCreateResponse) GetData() *ApiTreeEntity {
@@ -2915,7 +3192,7 @@ type ApiUpdateRequest struct {
 
 func (x *ApiUpdateRequest) Reset() {
 	*x = ApiUpdateRequest{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[50]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2927,7 +3204,7 @@ func (x *ApiUpdateRequest) String() string {
 func (*ApiUpdateRequest) ProtoMessage() {}
 
 func (x *ApiUpdateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[50]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2940,7 +3217,7 @@ func (x *ApiUpdateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiUpdateRequest.ProtoReflect.Descriptor instead.
 func (*ApiUpdateRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{50}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{52}
 }
 
 func (x *ApiUpdateRequest) GetData() *ApiUpdateRequestData {
@@ -2967,7 +3244,7 @@ type ApiUpdateRequestData struct {
 
 func (x *ApiUpdateRequestData) Reset() {
 	*x = ApiUpdateRequestData{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[51]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2979,7 +3256,7 @@ func (x *ApiUpdateRequestData) String() string {
 func (*ApiUpdateRequestData) ProtoMessage() {}
 
 func (x *ApiUpdateRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[51]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2992,7 +3269,7 @@ func (x *ApiUpdateRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiUpdateRequestData.ProtoReflect.Descriptor instead.
 func (*ApiUpdateRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{51}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{53}
 }
 
 func (x *ApiUpdateRequestData) GetId() int64 {
@@ -3068,7 +3345,7 @@ type ApiDeleteRequest struct {
 
 func (x *ApiDeleteRequest) Reset() {
 	*x = ApiDeleteRequest{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[52]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3080,7 +3357,7 @@ func (x *ApiDeleteRequest) String() string {
 func (*ApiDeleteRequest) ProtoMessage() {}
 
 func (x *ApiDeleteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[52]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3093,7 +3370,7 @@ func (x *ApiDeleteRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiDeleteRequest.ProtoReflect.Descriptor instead.
 func (*ApiDeleteRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{52}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{54}
 }
 
 func (x *ApiDeleteRequest) GetData() *ApiDeleteRequestData {
@@ -3115,7 +3392,7 @@ type ApiDeleteRequestData struct {
 
 func (x *ApiDeleteRequestData) Reset() {
 	*x = ApiDeleteRequestData{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[53]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3127,7 +3404,7 @@ func (x *ApiDeleteRequestData) String() string {
 func (*ApiDeleteRequestData) ProtoMessage() {}
 
 func (x *ApiDeleteRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[53]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3140,7 +3417,7 @@ func (x *ApiDeleteRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiDeleteRequestData.ProtoReflect.Descriptor instead.
 func (*ApiDeleteRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{53}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{55}
 }
 
 func (x *ApiDeleteRequestData) GetId() int64 {
@@ -3167,7 +3444,7 @@ type ApiDetailRequest struct {
 
 func (x *ApiDetailRequest) Reset() {
 	*x = ApiDetailRequest{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[54]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3179,7 +3456,7 @@ func (x *ApiDetailRequest) String() string {
 func (*ApiDetailRequest) ProtoMessage() {}
 
 func (x *ApiDetailRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[54]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3192,7 +3469,7 @@ func (x *ApiDetailRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiDetailRequest.ProtoReflect.Descriptor instead.
 func (*ApiDetailRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{54}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{56}
 }
 
 func (x *ApiDetailRequest) GetData() *ApiDetailRequestData {
@@ -3214,7 +3491,7 @@ type ApiDetailRequestData struct {
 
 func (x *ApiDetailRequestData) Reset() {
 	*x = ApiDetailRequestData{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[55]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[57]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3226,7 +3503,7 @@ func (x *ApiDetailRequestData) String() string {
 func (*ApiDetailRequestData) ProtoMessage() {}
 
 func (x *ApiDetailRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[55]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[57]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3239,7 +3516,7 @@ func (x *ApiDetailRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiDetailRequestData.ProtoReflect.Descriptor instead.
 func (*ApiDetailRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{55}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{57}
 }
 
 func (x *ApiDetailRequestData) GetId() int64 {
@@ -3279,7 +3556,7 @@ type ResourceTreeEntity struct {
 
 func (x *ResourceTreeEntity) Reset() {
 	*x = ResourceTreeEntity{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[56]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[58]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3291,7 +3568,7 @@ func (x *ResourceTreeEntity) String() string {
 func (*ResourceTreeEntity) ProtoMessage() {}
 
 func (x *ResourceTreeEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[56]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[58]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3304,7 +3581,7 @@ func (x *ResourceTreeEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResourceTreeEntity.ProtoReflect.Descriptor instead.
 func (*ResourceTreeEntity) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{56}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{58}
 }
 
 func (x *ResourceTreeEntity) GetId() int64 {
@@ -3428,7 +3705,7 @@ type ResourceEntity struct {
 
 func (x *ResourceEntity) Reset() {
 	*x = ResourceEntity{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[57]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[59]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3440,7 +3717,7 @@ func (x *ResourceEntity) String() string {
 func (*ResourceEntity) ProtoMessage() {}
 
 func (x *ResourceEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[57]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[59]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3453,7 +3730,7 @@ func (x *ResourceEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResourceEntity.ProtoReflect.Descriptor instead.
 func (*ResourceEntity) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{57}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{59}
 }
 
 func (x *ResourceEntity) GetId() int64 {
@@ -3571,7 +3848,7 @@ type ResourceTreeRequest struct {
 
 func (x *ResourceTreeRequest) Reset() {
 	*x = ResourceTreeRequest{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[58]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[60]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3583,7 +3860,7 @@ func (x *ResourceTreeRequest) String() string {
 func (*ResourceTreeRequest) ProtoMessage() {}
 
 func (x *ResourceTreeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[58]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[60]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3596,7 +3873,7 @@ func (x *ResourceTreeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResourceTreeRequest.ProtoReflect.Descriptor instead.
 func (*ResourceTreeRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{58}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{60}
 }
 
 func (x *ResourceTreeRequest) GetData() *ResourceTreeRequestData {
@@ -3617,7 +3894,7 @@ type ResourceTreeRequestData struct {
 
 func (x *ResourceTreeRequestData) Reset() {
 	*x = ResourceTreeRequestData{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[59]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[61]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3629,7 +3906,7 @@ func (x *ResourceTreeRequestData) String() string {
 func (*ResourceTreeRequestData) ProtoMessage() {}
 
 func (x *ResourceTreeRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[59]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[61]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3642,7 +3919,7 @@ func (x *ResourceTreeRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResourceTreeRequestData.ProtoReflect.Descriptor instead.
 func (*ResourceTreeRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{59}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{61}
 }
 
 func (x *ResourceTreeRequestData) GetType() string {
@@ -3661,7 +3938,7 @@ type ResourceTreeResponse struct {
 
 func (x *ResourceTreeResponse) Reset() {
 	*x = ResourceTreeResponse{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[60]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[62]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3673,7 +3950,7 @@ func (x *ResourceTreeResponse) String() string {
 func (*ResourceTreeResponse) ProtoMessage() {}
 
 func (x *ResourceTreeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[60]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[62]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3686,7 +3963,7 @@ func (x *ResourceTreeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResourceTreeResponse.ProtoReflect.Descriptor instead.
 func (*ResourceTreeResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{60}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{62}
 }
 
 func (x *ResourceTreeResponse) GetData() []*ResourceTreeEntity {
@@ -3706,7 +3983,7 @@ type ResourceCreateRequest struct {
 
 func (x *ResourceCreateRequest) Reset() {
 	*x = ResourceCreateRequest{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[61]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[63]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3718,7 +3995,7 @@ func (x *ResourceCreateRequest) String() string {
 func (*ResourceCreateRequest) ProtoMessage() {}
 
 func (x *ResourceCreateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[61]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[63]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3731,7 +4008,7 @@ func (x *ResourceCreateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResourceCreateRequest.ProtoReflect.Descriptor instead.
 func (*ResourceCreateRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{61}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{63}
 }
 
 func (x *ResourceCreateRequest) GetData() *ResourceCreateRequestData {
@@ -3762,7 +4039,7 @@ type ResourceCreateRequestData struct {
 
 func (x *ResourceCreateRequestData) Reset() {
 	*x = ResourceCreateRequestData{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[62]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[64]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3774,7 +4051,7 @@ func (x *ResourceCreateRequestData) String() string {
 func (*ResourceCreateRequestData) ProtoMessage() {}
 
 func (x *ResourceCreateRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[62]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[64]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3787,7 +4064,7 @@ func (x *ResourceCreateRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResourceCreateRequestData.ProtoReflect.Descriptor instead.
 func (*ResourceCreateRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{62}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{64}
 }
 
 func (x *ResourceCreateRequestData) GetParentId() int64 {
@@ -3876,7 +4153,7 @@ type ResourceCreateResponse struct {
 
 func (x *ResourceCreateResponse) Reset() {
 	*x = ResourceCreateResponse{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[63]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[65]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3888,7 +4165,7 @@ func (x *ResourceCreateResponse) String() string {
 func (*ResourceCreateResponse) ProtoMessage() {}
 
 func (x *ResourceCreateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[63]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[65]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3901,7 +4178,7 @@ func (x *ResourceCreateResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResourceCreateResponse.ProtoReflect.Descriptor instead.
 func (*ResourceCreateResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{63}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{65}
 }
 
 func (x *ResourceCreateResponse) GetData() *ResourceTreeEntity {
@@ -3921,7 +4198,7 @@ type ResourceUpdateRequest struct {
 
 func (x *ResourceUpdateRequest) Reset() {
 	*x = ResourceUpdateRequest{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[64]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[66]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3933,7 +4210,7 @@ func (x *ResourceUpdateRequest) String() string {
 func (*ResourceUpdateRequest) ProtoMessage() {}
 
 func (x *ResourceUpdateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[64]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[66]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3946,7 +4223,7 @@ func (x *ResourceUpdateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResourceUpdateRequest.ProtoReflect.Descriptor instead.
 func (*ResourceUpdateRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{64}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{66}
 }
 
 func (x *ResourceUpdateRequest) GetData() *ResourceUpdateRequestData {
@@ -3978,7 +4255,7 @@ type ResourceUpdateRequestData struct {
 
 func (x *ResourceUpdateRequestData) Reset() {
 	*x = ResourceUpdateRequestData{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[65]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[67]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3990,7 +4267,7 @@ func (x *ResourceUpdateRequestData) String() string {
 func (*ResourceUpdateRequestData) ProtoMessage() {}
 
 func (x *ResourceUpdateRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[65]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[67]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4003,7 +4280,7 @@ func (x *ResourceUpdateRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResourceUpdateRequestData.ProtoReflect.Descriptor instead.
 func (*ResourceUpdateRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{65}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{67}
 }
 
 func (x *ResourceUpdateRequestData) GetId() int64 {
@@ -4100,7 +4377,7 @@ type ResourceDeleteRequest struct {
 
 func (x *ResourceDeleteRequest) Reset() {
 	*x = ResourceDeleteRequest{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[66]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[68]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4112,7 +4389,7 @@ func (x *ResourceDeleteRequest) String() string {
 func (*ResourceDeleteRequest) ProtoMessage() {}
 
 func (x *ResourceDeleteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[66]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[68]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4125,7 +4402,7 @@ func (x *ResourceDeleteRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResourceDeleteRequest.ProtoReflect.Descriptor instead.
 func (*ResourceDeleteRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{66}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{68}
 }
 
 func (x *ResourceDeleteRequest) GetData() *ResourceDeleteRequestData {
@@ -4147,7 +4424,7 @@ type ResourceDeleteRequestData struct {
 
 func (x *ResourceDeleteRequestData) Reset() {
 	*x = ResourceDeleteRequestData{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[67]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[69]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4159,7 +4436,7 @@ func (x *ResourceDeleteRequestData) String() string {
 func (*ResourceDeleteRequestData) ProtoMessage() {}
 
 func (x *ResourceDeleteRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[67]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[69]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4172,7 +4449,7 @@ func (x *ResourceDeleteRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResourceDeleteRequestData.ProtoReflect.Descriptor instead.
 func (*ResourceDeleteRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{67}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{69}
 }
 
 func (x *ResourceDeleteRequestData) GetId() int64 {
@@ -4199,7 +4476,7 @@ type ResourceDetailRequest struct {
 
 func (x *ResourceDetailRequest) Reset() {
 	*x = ResourceDetailRequest{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[68]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[70]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4211,7 +4488,7 @@ func (x *ResourceDetailRequest) String() string {
 func (*ResourceDetailRequest) ProtoMessage() {}
 
 func (x *ResourceDetailRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[68]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[70]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4224,7 +4501,7 @@ func (x *ResourceDetailRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResourceDetailRequest.ProtoReflect.Descriptor instead.
 func (*ResourceDetailRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{68}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{70}
 }
 
 func (x *ResourceDetailRequest) GetData() *ResourceDetailRequestData {
@@ -4246,7 +4523,7 @@ type ResourceDetailRequestData struct {
 
 func (x *ResourceDetailRequestData) Reset() {
 	*x = ResourceDetailRequestData{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[69]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[71]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4258,7 +4535,7 @@ func (x *ResourceDetailRequestData) String() string {
 func (*ResourceDetailRequestData) ProtoMessage() {}
 
 func (x *ResourceDetailRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[69]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[71]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4271,7 +4548,7 @@ func (x *ResourceDetailRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResourceDetailRequestData.ProtoReflect.Descriptor instead.
 func (*ResourceDetailRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{69}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{71}
 }
 
 func (x *ResourceDetailRequestData) GetId() int64 {
@@ -4297,7 +4574,7 @@ type ResourceDetailResponse struct {
 
 func (x *ResourceDetailResponse) Reset() {
 	*x = ResourceDetailResponse{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[70]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[72]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4309,7 +4586,7 @@ func (x *ResourceDetailResponse) String() string {
 func (*ResourceDetailResponse) ProtoMessage() {}
 
 func (x *ResourceDetailResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[70]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[72]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4322,7 +4599,7 @@ func (x *ResourceDetailResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResourceDetailResponse.ProtoReflect.Descriptor instead.
 func (*ResourceDetailResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{70}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{72}
 }
 
 func (x *ResourceDetailResponse) GetData() *ResourceEntity {
@@ -4351,7 +4628,7 @@ type RoleEntity struct {
 
 func (x *RoleEntity) Reset() {
 	*x = RoleEntity{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[71]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[73]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4363,7 +4640,7 @@ func (x *RoleEntity) String() string {
 func (*RoleEntity) ProtoMessage() {}
 
 func (x *RoleEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[71]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[73]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4376,7 +4653,7 @@ func (x *RoleEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleEntity.ProtoReflect.Descriptor instead.
 func (*RoleEntity) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{71}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{73}
 }
 
 func (x *RoleEntity) GetId() int64 {
@@ -4451,7 +4728,7 @@ type RolePageRequest struct {
 
 func (x *RolePageRequest) Reset() {
 	*x = RolePageRequest{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[72]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[74]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4463,7 +4740,7 @@ func (x *RolePageRequest) String() string {
 func (*RolePageRequest) ProtoMessage() {}
 
 func (x *RolePageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[72]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[74]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4476,7 +4753,7 @@ func (x *RolePageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RolePageRequest.ProtoReflect.Descriptor instead.
 func (*RolePageRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{72}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{74}
 }
 
 func (x *RolePageRequest) GetData() *RolePageRequestData {
@@ -4498,7 +4775,7 @@ type RolePageRequestData struct {
 
 func (x *RolePageRequestData) Reset() {
 	*x = RolePageRequestData{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[73]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[75]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4510,7 +4787,7 @@ func (x *RolePageRequestData) String() string {
 func (*RolePageRequestData) ProtoMessage() {}
 
 func (x *RolePageRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[73]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[75]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4523,7 +4800,7 @@ func (x *RolePageRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RolePageRequestData.ProtoReflect.Descriptor instead.
 func (*RolePageRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{73}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{75}
 }
 
 func (x *RolePageRequestData) GetPage() int64 {
@@ -4564,7 +4841,7 @@ type RolePageRequestFilter struct {
 
 func (x *RolePageRequestFilter) Reset() {
 	*x = RolePageRequestFilter{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[74]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[76]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4576,7 +4853,7 @@ func (x *RolePageRequestFilter) String() string {
 func (*RolePageRequestFilter) ProtoMessage() {}
 
 func (x *RolePageRequestFilter) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[74]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[76]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4589,7 +4866,7 @@ func (x *RolePageRequestFilter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RolePageRequestFilter.ProtoReflect.Descriptor instead.
 func (*RolePageRequestFilter) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{74}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{76}
 }
 
 func (x *RolePageRequestFilter) GetKeyword() string {
@@ -4609,7 +4886,7 @@ type RolePageRequestSorter struct {
 
 func (x *RolePageRequestSorter) Reset() {
 	*x = RolePageRequestSorter{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[75]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[77]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4621,7 +4898,7 @@ func (x *RolePageRequestSorter) String() string {
 func (*RolePageRequestSorter) ProtoMessage() {}
 
 func (x *RolePageRequestSorter) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[75]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[77]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4634,7 +4911,7 @@ func (x *RolePageRequestSorter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RolePageRequestSorter.ProtoReflect.Descriptor instead.
 func (*RolePageRequestSorter) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{75}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{77}
 }
 
 func (x *RolePageRequestSorter) GetColumn() string {
@@ -4660,7 +4937,7 @@ type RolePageResponse struct {
 
 func (x *RolePageResponse) Reset() {
 	*x = RolePageResponse{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[76]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[78]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4672,7 +4949,7 @@ func (x *RolePageResponse) String() string {
 func (*RolePageResponse) ProtoMessage() {}
 
 func (x *RolePageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[76]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[78]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4685,7 +4962,7 @@ func (x *RolePageResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RolePageResponse.ProtoReflect.Descriptor instead.
 func (*RolePageResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{76}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{78}
 }
 
 func (x *RolePageResponse) GetData() *RolePageResponseData {
@@ -4708,7 +4985,7 @@ type RolePageResponseData struct {
 
 func (x *RolePageResponseData) Reset() {
 	*x = RolePageResponseData{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[77]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[79]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4720,7 +4997,7 @@ func (x *RolePageResponseData) String() string {
 func (*RolePageResponseData) ProtoMessage() {}
 
 func (x *RolePageResponseData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[77]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[79]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4733,7 +5010,7 @@ func (x *RolePageResponseData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RolePageResponseData.ProtoReflect.Descriptor instead.
 func (*RolePageResponseData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{77}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{79}
 }
 
 func (x *RolePageResponseData) GetPage() int64 {
@@ -4781,7 +5058,7 @@ type RoleCreateRequest struct {
 
 func (x *RoleCreateRequest) Reset() {
 	*x = RoleCreateRequest{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[78]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[80]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4793,7 +5070,7 @@ func (x *RoleCreateRequest) String() string {
 func (*RoleCreateRequest) ProtoMessage() {}
 
 func (x *RoleCreateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[78]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[80]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4806,7 +5083,7 @@ func (x *RoleCreateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleCreateRequest.ProtoReflect.Descriptor instead.
 func (*RoleCreateRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{78}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{80}
 }
 
 func (x *RoleCreateRequest) GetData() *RoleCreateRequestData {
@@ -4830,7 +5107,7 @@ type RoleCreateRequestData struct {
 
 func (x *RoleCreateRequestData) Reset() {
 	*x = RoleCreateRequestData{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[79]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[81]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4842,7 +5119,7 @@ func (x *RoleCreateRequestData) String() string {
 func (*RoleCreateRequestData) ProtoMessage() {}
 
 func (x *RoleCreateRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[79]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[81]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4855,7 +5132,7 @@ func (x *RoleCreateRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleCreateRequestData.ProtoReflect.Descriptor instead.
 func (*RoleCreateRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{79}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{81}
 }
 
 func (x *RoleCreateRequestData) GetName() string {
@@ -4895,7 +5172,7 @@ type RoleCreateResponse struct {
 
 func (x *RoleCreateResponse) Reset() {
 	*x = RoleCreateResponse{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[80]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[82]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4907,7 +5184,7 @@ func (x *RoleCreateResponse) String() string {
 func (*RoleCreateResponse) ProtoMessage() {}
 
 func (x *RoleCreateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[80]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[82]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4920,7 +5197,7 @@ func (x *RoleCreateResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleCreateResponse.ProtoReflect.Descriptor instead.
 func (*RoleCreateResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{80}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{82}
 }
 
 func (x *RoleCreateResponse) GetData() *RoleEntity {
@@ -4940,7 +5217,7 @@ type RoleUpdateRequest struct {
 
 func (x *RoleUpdateRequest) Reset() {
 	*x = RoleUpdateRequest{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[81]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[83]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4952,7 +5229,7 @@ func (x *RoleUpdateRequest) String() string {
 func (*RoleUpdateRequest) ProtoMessage() {}
 
 func (x *RoleUpdateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[81]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[83]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4965,7 +5242,7 @@ func (x *RoleUpdateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleUpdateRequest.ProtoReflect.Descriptor instead.
 func (*RoleUpdateRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{81}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{83}
 }
 
 func (x *RoleUpdateRequest) GetData() *RoleUpdateRequestData {
@@ -4991,7 +5268,7 @@ type RoleUpdateRequestData struct {
 
 func (x *RoleUpdateRequestData) Reset() {
 	*x = RoleUpdateRequestData{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[82]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[84]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5003,7 +5280,7 @@ func (x *RoleUpdateRequestData) String() string {
 func (*RoleUpdateRequestData) ProtoMessage() {}
 
 func (x *RoleUpdateRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[82]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[84]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5016,7 +5293,7 @@ func (x *RoleUpdateRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleUpdateRequestData.ProtoReflect.Descriptor instead.
 func (*RoleUpdateRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{82}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{84}
 }
 
 func (x *RoleUpdateRequestData) GetId() int64 {
@@ -5065,7 +5342,7 @@ type RoleAndResourceRelationEntity struct {
 
 func (x *RoleAndResourceRelationEntity) Reset() {
 	*x = RoleAndResourceRelationEntity{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[83]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[85]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5077,7 +5354,7 @@ func (x *RoleAndResourceRelationEntity) String() string {
 func (*RoleAndResourceRelationEntity) ProtoMessage() {}
 
 func (x *RoleAndResourceRelationEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[83]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[85]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5090,7 +5367,7 @@ func (x *RoleAndResourceRelationEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleAndResourceRelationEntity.ProtoReflect.Descriptor instead.
 func (*RoleAndResourceRelationEntity) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{83}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{85}
 }
 
 func (x *RoleAndResourceRelationEntity) GetRoleId() int64 {
@@ -5123,7 +5400,7 @@ type RoleUpdateResponse struct {
 
 func (x *RoleUpdateResponse) Reset() {
 	*x = RoleUpdateResponse{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[84]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[86]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5135,7 +5412,7 @@ func (x *RoleUpdateResponse) String() string {
 func (*RoleUpdateResponse) ProtoMessage() {}
 
 func (x *RoleUpdateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[84]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[86]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5148,7 +5425,7 @@ func (x *RoleUpdateResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleUpdateResponse.ProtoReflect.Descriptor instead.
 func (*RoleUpdateResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{84}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{86}
 }
 
 func (x *RoleUpdateResponse) GetData() *RoleEntity {
@@ -5168,7 +5445,7 @@ type RoleDeleteRequest struct {
 
 func (x *RoleDeleteRequest) Reset() {
 	*x = RoleDeleteRequest{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[85]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[87]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5180,7 +5457,7 @@ func (x *RoleDeleteRequest) String() string {
 func (*RoleDeleteRequest) ProtoMessage() {}
 
 func (x *RoleDeleteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[85]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[87]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5193,7 +5470,7 @@ func (x *RoleDeleteRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleDeleteRequest.ProtoReflect.Descriptor instead.
 func (*RoleDeleteRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{85}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{87}
 }
 
 func (x *RoleDeleteRequest) GetData() *RoleDeleteRequestData {
@@ -5212,7 +5489,7 @@ type RoleDeleteRequestData struct {
 
 func (x *RoleDeleteRequestData) Reset() {
 	*x = RoleDeleteRequestData{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[86]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[88]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5224,7 +5501,7 @@ func (x *RoleDeleteRequestData) String() string {
 func (*RoleDeleteRequestData) ProtoMessage() {}
 
 func (x *RoleDeleteRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[86]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[88]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5237,7 +5514,7 @@ func (x *RoleDeleteRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleDeleteRequestData.ProtoReflect.Descriptor instead.
 func (*RoleDeleteRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{86}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{88}
 }
 
 func (x *RoleDeleteRequestData) GetId() int64 {
@@ -5257,7 +5534,7 @@ type RoleDetailRequest struct {
 
 func (x *RoleDetailRequest) Reset() {
 	*x = RoleDetailRequest{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[87]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[89]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5269,7 +5546,7 @@ func (x *RoleDetailRequest) String() string {
 func (*RoleDetailRequest) ProtoMessage() {}
 
 func (x *RoleDetailRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[87]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[89]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5282,7 +5559,7 @@ func (x *RoleDetailRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleDetailRequest.ProtoReflect.Descriptor instead.
 func (*RoleDetailRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{87}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{89}
 }
 
 func (x *RoleDetailRequest) GetData() *RoleDetailRequestData {
@@ -5301,7 +5578,7 @@ type RoleDetailRequestData struct {
 
 func (x *RoleDetailRequestData) Reset() {
 	*x = RoleDetailRequestData{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[88]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[90]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5313,7 +5590,7 @@ func (x *RoleDetailRequestData) String() string {
 func (*RoleDetailRequestData) ProtoMessage() {}
 
 func (x *RoleDetailRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[88]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[90]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5326,7 +5603,7 @@ func (x *RoleDetailRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleDetailRequestData.ProtoReflect.Descriptor instead.
 func (*RoleDetailRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{88}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{90}
 }
 
 func (x *RoleDetailRequestData) GetId() int64 {
@@ -5345,7 +5622,7 @@ type RoleDetailResponse struct {
 
 func (x *RoleDetailResponse) Reset() {
 	*x = RoleDetailResponse{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[89]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[91]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5357,7 +5634,7 @@ func (x *RoleDetailResponse) String() string {
 func (*RoleDetailResponse) ProtoMessage() {}
 
 func (x *RoleDetailResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[89]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[91]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5370,7 +5647,7 @@ func (x *RoleDetailResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleDetailResponse.ProtoReflect.Descriptor instead.
 func (*RoleDetailResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{89}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{91}
 }
 
 func (x *RoleDetailResponse) GetData() *RoleEntity {
@@ -5390,7 +5667,7 @@ type RoleUpdateStatusRequest struct {
 
 func (x *RoleUpdateStatusRequest) Reset() {
 	*x = RoleUpdateStatusRequest{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[90]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[92]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5402,7 +5679,7 @@ func (x *RoleUpdateStatusRequest) String() string {
 func (*RoleUpdateStatusRequest) ProtoMessage() {}
 
 func (x *RoleUpdateStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[90]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[92]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5415,7 +5692,7 @@ func (x *RoleUpdateStatusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleUpdateStatusRequest.ProtoReflect.Descriptor instead.
 func (*RoleUpdateStatusRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{90}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{92}
 }
 
 func (x *RoleUpdateStatusRequest) GetData() *RoleUpdateStatusRequestData {
@@ -5435,7 +5712,7 @@ type RoleUpdateStatusRequestData struct {
 
 func (x *RoleUpdateStatusRequestData) Reset() {
 	*x = RoleUpdateStatusRequestData{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[91]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[93]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5447,7 +5724,7 @@ func (x *RoleUpdateStatusRequestData) String() string {
 func (*RoleUpdateStatusRequestData) ProtoMessage() {}
 
 func (x *RoleUpdateStatusRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[91]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[93]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5460,7 +5737,7 @@ func (x *RoleUpdateStatusRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleUpdateStatusRequestData.ProtoReflect.Descriptor instead.
 func (*RoleUpdateStatusRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{91}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{93}
 }
 
 func (x *RoleUpdateStatusRequestData) GetId() int64 {
@@ -5487,7 +5764,7 @@ type RoleAllRequest struct {
 
 func (x *RoleAllRequest) Reset() {
 	*x = RoleAllRequest{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[92]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[94]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5499,7 +5776,7 @@ func (x *RoleAllRequest) String() string {
 func (*RoleAllRequest) ProtoMessage() {}
 
 func (x *RoleAllRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[92]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[94]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5512,7 +5789,7 @@ func (x *RoleAllRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleAllRequest.ProtoReflect.Descriptor instead.
 func (*RoleAllRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{92}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{94}
 }
 
 func (x *RoleAllRequest) GetData() *RoleAllRequestData {
@@ -5530,7 +5807,7 @@ type RoleAllRequestData struct {
 
 func (x *RoleAllRequestData) Reset() {
 	*x = RoleAllRequestData{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[93]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[95]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5542,7 +5819,7 @@ func (x *RoleAllRequestData) String() string {
 func (*RoleAllRequestData) ProtoMessage() {}
 
 func (x *RoleAllRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[93]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[95]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5555,7 +5832,7 @@ func (x *RoleAllRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleAllRequestData.ProtoReflect.Descriptor instead.
 func (*RoleAllRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{93}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{95}
 }
 
 type RoleAllResponse struct {
@@ -5567,7 +5844,7 @@ type RoleAllResponse struct {
 
 func (x *RoleAllResponse) Reset() {
 	*x = RoleAllResponse{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[94]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[96]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5579,7 +5856,7 @@ func (x *RoleAllResponse) String() string {
 func (*RoleAllResponse) ProtoMessage() {}
 
 func (x *RoleAllResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[94]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[96]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5592,7 +5869,7 @@ func (x *RoleAllResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleAllResponse.ProtoReflect.Descriptor instead.
 func (*RoleAllResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{94}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{96}
 }
 
 func (x *RoleAllResponse) GetData() []*RoleEntity {
@@ -5614,7 +5891,7 @@ type UserinfoResponseData_Organization struct {
 
 func (x *UserinfoResponseData_Organization) Reset() {
 	*x = UserinfoResponseData_Organization{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[95]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[97]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5626,7 +5903,7 @@ func (x *UserinfoResponseData_Organization) String() string {
 func (*UserinfoResponseData_Organization) ProtoMessage() {}
 
 func (x *UserinfoResponseData_Organization) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[95]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[97]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5767,63 +6044,101 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\n" +
 	"first_name\x18\x02 \x01(\tR\tfirstName\x12\x1b\n" +
 	"\tlast_name\x18\x03 \x01(\tR\blastName\x12\x14\n" +
-	"\x05phone\x18\x04 \x01(\tR\x05phone\"A\n" +
-	"\x0fUserPageRequest\x12.\n" +
-	"\x04data\x18\x01 \x01(\v2\x1a.admin.UserPageRequestDataR\x04data\"C\n" +
-	"\x10UserPageResponse\x12/\n" +
-	"\x04data\x18\x01 \x01(\v2\x1b.admin.UserPageResponseDataR\x04data\"\xab\x01\n" +
-	"\x13UserPageRequestData\x12\x12\n" +
+	"\x05phone\x18\x04 \x01(\tR\x05phone\"\xa1\x03\n" +
+	"\x16OrganizationUserEntity\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12'\n" +
+	"\x0forganization_id\x18\x02 \x01(\x03R\x0eorganizationId\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x16\n" +
+	"\x06status\x18\x04 \x01(\tR\x06status\x12\x1d\n" +
+	"\n" +
+	"first_name\x18\x05 \x01(\tR\tfirstName\x12\x19\n" +
+	"\bmid_name\x18\x06 \x01(\tR\amidName\x12\x1b\n" +
+	"\tlast_name\x18\a \x01(\tR\blastName\x12\x1b\n" +
+	"\tfull_name\x18\b \x01(\tR\bfullName\x12\x14\n" +
+	"\x05phone\x18\t \x01(\tR\x05phone\x12\x16\n" +
+	"\x06remark\x18\n" +
+	" \x01(\tR\x06remark\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\v \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\f \x01(\tR\tupdatedAt\x12\x14\n" +
+	"\x05email\x18\r \x01(\tR\x05email\x12'\n" +
+	"\x05roles\x18\x0e \x03(\v2\x11.admin.RoleEntityR\x05roles\"\xfe\x02\n" +
+	"\x1aOrganizationUserPageEntity\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x16\n" +
+	"\x06status\x18\x02 \x01(\tR\x06status\x12\x1d\n" +
+	"\n" +
+	"first_name\x18\x03 \x01(\tR\tfirstName\x12\x19\n" +
+	"\bmid_name\x18\x04 \x01(\tR\amidName\x12\x1b\n" +
+	"\tlast_name\x18\x05 \x01(\tR\blastName\x12\x1b\n" +
+	"\tfull_name\x18\x06 \x01(\tR\bfullName\x12\x14\n" +
+	"\x05phone\x18\a \x01(\tR\x05phone\x12\x16\n" +
+	"\x06remark\x18\b \x01(\tR\x06remark\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\t \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\n" +
+	" \x01(\tR\tupdatedAt\x12\x14\n" +
+	"\x05email\x18\v \x01(\tR\x05email\x12'\n" +
+	"\x05roles\x18\f \x03(\v2\x11.admin.RoleEntityR\x05roles\x12\x19\n" +
+	"\bis_owner\x18\r \x01(\bR\aisOwner\"Y\n" +
+	"\x1bOrganizationUserPageRequest\x12:\n" +
+	"\x04data\x18\x01 \x01(\v2&.admin.OrganizationUserPageRequestDataR\x04data\"[\n" +
+	"\x1cOrganizationUserPageResponse\x12;\n" +
+	"\x04data\x18\x01 \x01(\v2'.admin.OrganizationUserPageResponseDataR\x04data\"\xcf\x01\n" +
+	"\x1fOrganizationUserPageRequestData\x12\x12\n" +
 	"\x04page\x18\x01 \x01(\x03R\x04page\x12\x14\n" +
-	"\x05limit\x18\x02 \x01(\x03R\x05limit\x124\n" +
-	"\x06filter\x18\x03 \x01(\v2\x1c.admin.UserPageRequestFilterR\x06filter\x124\n" +
-	"\x06sorter\x18\x04 \x01(\v2\x1c.admin.UserPageRequestSorterR\x06sorter\"1\n" +
-	"\x15UserPageRequestFilter\x12\x18\n" +
-	"\akeyword\x18\x02 \x01(\tR\akeyword\"C\n" +
-	"\x15UserPageRequestSorter\x12\x16\n" +
+	"\x05limit\x18\x02 \x01(\x03R\x05limit\x12@\n" +
+	"\x06filter\x18\x03 \x01(\v2(.admin.OrganizationUserPageRequestFilterR\x06filter\x12@\n" +
+	"\x06sorter\x18\x04 \x01(\v2(.admin.OrganizationUserPageRequestSorterR\x06sorter\"=\n" +
+	"!OrganizationUserPageRequestFilter\x12\x18\n" +
+	"\akeyword\x18\x01 \x01(\tR\akeyword\"O\n" +
+	"!OrganizationUserPageRequestSorter\x12\x16\n" +
 	"\x06column\x18\x01 \x01(\tR\x06column\x12\x12\n" +
-	"\x04sort\x18\x02 \x01(\tR\x04sort\"\x9c\x01\n" +
-	"\x14UserPageResponseData\x12\x12\n" +
+	"\x04sort\x18\x02 \x01(\tR\x04sort\"\xb8\x01\n" +
+	" OrganizationUserPageResponseData\x12\x12\n" +
 	"\x04page\x18\x01 \x01(\x03R\x04page\x12\x14\n" +
 	"\x05limit\x18\x02 \x01(\x03R\x05limit\x12\x14\n" +
 	"\x05total\x18\x03 \x01(\x03R\x05total\x12\x1d\n" +
 	"\n" +
-	"total_page\x18\x04 \x01(\x03R\ttotalPage\x12%\n" +
-	"\x04list\x18\x05 \x03(\v2\x11.admin.UserEntityR\x04list\"E\n" +
-	"\x11UserCreateRequest\x120\n" +
-	"\x04data\x18\x01 \x01(\v2\x1c.admin.UserCreateRequestDataR\x04data\";\n" +
-	"\x12UserCreateResponse\x12%\n" +
-	"\x04data\x18\x01 \x01(\v2\x11.admin.UserEntityR\x04data\"\xd9\x01\n" +
-	"\x15UserCreateRequestData\x12\x14\n" +
+	"total_page\x18\x04 \x01(\x03R\ttotalPage\x125\n" +
+	"\x04list\x18\x05 \x03(\v2!.admin.OrganizationUserPageEntityR\x04list\"]\n" +
+	"\x1dOrganizationUserCreateRequest\x12<\n" +
+	"\x04data\x18\x01 \x01(\v2(.admin.OrganizationUserCreateRequestDataR\x04data\"S\n" +
+	"\x1eOrganizationUserCreateResponse\x121\n" +
+	"\x04data\x18\x01 \x01(\v2\x1d.admin.OrganizationUserEntityR\x04data\"\xc2\x01\n" +
+	"!OrganizationUserCreateRequestData\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x1b\n" +
-	"\tfull_name\x18\x03 \x01(\tR\bfullName\x12\x14\n" +
-	"\x05phone\x18\x04 \x01(\tR\x05phone\x12\x19\n" +
-	"\brole_ids\x18\x05 \x03(\x03R\aroleIds\x12'\n" +
-	"\x0forganization_id\x18\x06 \x01(\x03R\x0eorganizationId\x12\x17\n" +
-	"\auser_id\x18\a \x01(\x03R\x06userId\"E\n" +
-	"\x11UserUpdateRequest\x120\n" +
-	"\x04data\x18\x01 \x01(\v2\x1c.admin.UserUpdateRequestDataR\x04data\";\n" +
-	"\x12UserUpdateResponse\x12%\n" +
-	"\x04data\x18\x01 \x01(\v2\x11.admin.UserEntityR\x04data\"\x91\x01\n" +
-	"\x15UserUpdateRequestData\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1a\n" +
-	"\bpassword\x18\x03 \x01(\tR\bpassword\x12\x1b\n" +
-	"\tfull_name\x18\x04 \x01(\tR\bfullName\x12\x14\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x1d\n" +
+	"\n" +
+	"first_name\x18\x03 \x01(\tR\tfirstName\x12\x1b\n" +
+	"\tlast_name\x18\x04 \x01(\tR\blastName\x12\x14\n" +
 	"\x05phone\x18\x05 \x01(\tR\x05phone\x12\x19\n" +
-	"\brole_ids\x18\x06 \x03(\x03R\aroleIds\"E\n" +
-	"\x11UserDeleteRequest\x120\n" +
-	"\x04data\x18\x01 \x01(\v2\x1c.admin.UserDeleteRequestDataR\x04data\"'\n" +
-	"\x15UserDeleteRequestData\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"E\n" +
-	"\x11UserDetailRequest\x120\n" +
-	"\x04data\x18\x01 \x01(\v2\x1c.admin.UserDetailRequestDataR\x04data\";\n" +
-	"\x12UserDetailResponse\x12%\n" +
-	"\x04data\x18\x01 \x01(\v2\x11.admin.UserEntityR\x04data\"'\n" +
-	"\x15UserDetailRequestData\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"Q\n" +
-	"\x17UserSwitchStatusRequest\x126\n" +
-	"\x04data\x18\x01 \x01(\v2\".admin.UserSwitchStatusRequestDataR\x04data\"E\n" +
-	"\x1bUserSwitchStatusRequestData\x12\x0e\n" +
+	"\brole_ids\x18\x06 \x03(\x03R\aroleIds\"]\n" +
+	"\x1dOrganizationUserUpdateRequest\x12<\n" +
+	"\x04data\x18\x01 \x01(\v2(.admin.OrganizationUserUpdateRequestDataR\x04data\"S\n" +
+	"\x1eOrganizationUserUpdateResponse\x121\n" +
+	"\x04data\x18\x01 \x01(\v2\x1d.admin.OrganizationUserEntityR\x04data\"\xa0\x01\n" +
+	"!OrganizationUserUpdateRequestData\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
+	"\n" +
+	"first_name\x18\x02 \x01(\tR\tfirstName\x12\x1b\n" +
+	"\tlast_name\x18\x03 \x01(\tR\blastName\x12\x14\n" +
+	"\x05phone\x18\x05 \x01(\tR\x05phone\x12\x19\n" +
+	"\brole_ids\x18\x06 \x03(\x03R\aroleIds\"]\n" +
+	"\x1dOrganizationUserDeleteRequest\x12<\n" +
+	"\x04data\x18\x01 \x01(\v2(.admin.OrganizationUserDeleteRequestDataR\x04data\"3\n" +
+	"!OrganizationUserDeleteRequestData\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"]\n" +
+	"\x1dOrganizationUserDetailRequest\x12<\n" +
+	"\x04data\x18\x01 \x01(\v2(.admin.OrganizationUserDetailRequestDataR\x04data\"S\n" +
+	"\x1eOrganizationUserDetailResponse\x121\n" +
+	"\x04data\x18\x01 \x01(\v2\x1d.admin.OrganizationUserEntityR\x04data\"3\n" +
+	"!OrganizationUserDetailRequestData\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"i\n" +
+	"#OrganizationUserSwitchStatusRequest\x12B\n" +
+	"\x04data\x18\x01 \x01(\v2..admin.OrganizationUserSwitchStatusRequestDataR\x04data\"Q\n" +
+	"'OrganizationUserSwitchStatusRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x16\n" +
 	"\x06status\x18\x04 \x01(\tR\x06status\"\xd9\x02\n" +
 	"\rApiTreeEntity\x12\x0e\n" +
@@ -6074,23 +6389,20 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x04data\x18\x01 \x01(\v2\x19.admin.RoleAllRequestDataR\x04data\"\x14\n" +
 	"\x12RoleAllRequestData\"8\n" +
 	"\x0fRoleAllResponse\x12%\n" +
-	"\x04data\x18\x01 \x03(\v2\x11.admin.RoleEntityR\x04data2\xe9\x05\n" +
-	"\x04user\x12:\n" +
+	"\x04data\x18\x01 \x03(\v2\x11.admin.RoleEntityR\x04data2\xdb\x02\n" +
+	"\x04User\x12:\n" +
 	"\x05Login\x12\x17.admin.UserLoginRequest\x1a\x18.admin.UserLoginResponse\x12G\n" +
 	"\fRefreshToken\x12\x1a.admin.RefreshTokenRequest\x1a\x1b.admin.RefreshTokenResponse\x12;\n" +
 	"\bUserInfo\x12\x16.admin.UserInfoRequest\x1a\x17.admin.UserinfoResponse\x12J\n" +
 	"\rResetPassword\x12\x1b.admin.ResetPasswordRequest\x1a\x1c.admin.ResetPasswordResponse\x12E\n" +
-	"\vEditProfile\x12\x1d.admin.UserProfileEditRequest\x1a\x17.admin.UserinfoResponse\x12;\n" +
-	"\bUserPage\x12\x16.admin.UserPageRequest\x1a\x17.admin.UserPageResponse\x12A\n" +
-	"\n" +
-	"UserCreate\x12\x18.admin.UserCreateRequest\x1a\x19.admin.UserCreateResponse\x12A\n" +
-	"\n" +
-	"UserUpdate\x12\x18.admin.UserUpdateRequest\x1a\x19.admin.UserUpdateResponse\x12<\n" +
-	"\n" +
-	"UserDelete\x12\x18.admin.UserDeleteRequest\x1a\x14.admin.EmptyResponse\x12A\n" +
-	"\n" +
-	"UserDetail\x12\x18.admin.UserDetailRequest\x1a\x19.admin.UserDetailResponse\x12H\n" +
-	"\x10UserSwitchStatus\x12\x1e.admin.UserSwitchStatusRequest\x1a\x14.admin.EmptyResponse2\xaf\x02\n" +
+	"\vEditProfile\x12\x1d.admin.UserProfileEditRequest\x1a\x17.admin.UserinfoResponse2\x80\x04\n" +
+	"\x10OrganizationUser\x12O\n" +
+	"\x04Page\x12\".admin.OrganizationUserPageRequest\x1a#.admin.OrganizationUserPageResponse\x12U\n" +
+	"\x06Create\x12$.admin.OrganizationUserCreateRequest\x1a%.admin.OrganizationUserCreateResponse\x12U\n" +
+	"\x06Update\x12$.admin.OrganizationUserUpdateRequest\x1a%.admin.OrganizationUserUpdateResponse\x12D\n" +
+	"\x06Delete\x12$.admin.OrganizationUserDeleteRequest\x1a\x14.admin.EmptyResponse\x12U\n" +
+	"\x06Detail\x12$.admin.OrganizationUserDetailRequest\x1a%.admin.OrganizationUserDetailResponse\x12P\n" +
+	"\fSwitchStatus\x12*.admin.OrganizationUserSwitchStatusRequest\x1a\x14.admin.EmptyResponse2\xaf\x02\n" +
 	"\x03api\x128\n" +
 	"\aApiTree\x12\x15.admin.ApiTreeRequest\x1a\x16.admin.ApiTreeResponse\x12;\n" +
 	"\x06Create\x12\x17.admin.ApiCreateRequest\x1a\x18.admin.ApiCreateResponse\x12;\n" +
@@ -6124,107 +6436,109 @@ func file_app_admin_rpc_pb_admin_proto_rawDescGZIP() []byte {
 	return file_app_admin_rpc_pb_admin_proto_rawDescData
 }
 
-var file_app_admin_rpc_pb_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 96)
+var file_app_admin_rpc_pb_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 98)
 var file_app_admin_rpc_pb_admin_proto_goTypes = []any{
-	(*EmptyRequest)(nil),                      // 0: admin.EmptyRequest
-	(*EmptyResponse)(nil),                     // 1: admin.EmptyResponse
-	(*StringSliceResponse)(nil),               // 2: admin.StringSliceResponse
-	(*AddressEntry)(nil),                      // 3: admin.AddressEntry
-	(*UserEntity)(nil),                        // 4: admin.UserEntity
-	(*UserLoginRequest)(nil),                  // 5: admin.UserLoginRequest
-	(*UserLoginResponse)(nil),                 // 6: admin.UserLoginResponse
-	(*UserLoginRequestData)(nil),              // 7: admin.UserLoginRequestData
-	(*UserLoginResponseData)(nil),             // 8: admin.UserLoginResponseData
-	(*RefreshTokenRequest)(nil),               // 9: admin.RefreshTokenRequest
-	(*RefreshTokenRequestData)(nil),           // 10: admin.RefreshTokenRequestData
-	(*RefreshTokenResponse)(nil),              // 11: admin.RefreshTokenResponse
-	(*RefreshTokenResponseData)(nil),          // 12: admin.RefreshTokenResponseData
-	(*ResetPasswordRequest)(nil),              // 13: admin.ResetPasswordRequest
-	(*ResetPasswordResponse)(nil),             // 14: admin.ResetPasswordResponse
-	(*ResetPasswordRequestData)(nil),          // 15: admin.ResetPasswordRequestData
-	(*ResetPasswordResponseData)(nil),         // 16: admin.ResetPasswordResponseData
-	(*UserInfoRequest)(nil),                   // 17: admin.UserInfoRequest
-	(*UserInfoRequestData)(nil),               // 18: admin.UserInfoRequestData
-	(*UserinfoResponse)(nil),                  // 19: admin.UserinfoResponse
-	(*UserinfoResponseData)(nil),              // 20: admin.UserinfoResponseData
-	(*UserProfileEditRequest)(nil),            // 21: admin.UserProfileEditRequest
-	(*UserProfileEditRequestData)(nil),        // 22: admin.UserProfileEditRequestData
-	(*UserPageRequest)(nil),                   // 23: admin.UserPageRequest
-	(*UserPageResponse)(nil),                  // 24: admin.UserPageResponse
-	(*UserPageRequestData)(nil),               // 25: admin.UserPageRequestData
-	(*UserPageRequestFilter)(nil),             // 26: admin.UserPageRequestFilter
-	(*UserPageRequestSorter)(nil),             // 27: admin.UserPageRequestSorter
-	(*UserPageResponseData)(nil),              // 28: admin.UserPageResponseData
-	(*UserCreateRequest)(nil),                 // 29: admin.UserCreateRequest
-	(*UserCreateResponse)(nil),                // 30: admin.UserCreateResponse
-	(*UserCreateRequestData)(nil),             // 31: admin.UserCreateRequestData
-	(*UserUpdateRequest)(nil),                 // 32: admin.UserUpdateRequest
-	(*UserUpdateResponse)(nil),                // 33: admin.UserUpdateResponse
-	(*UserUpdateRequestData)(nil),             // 34: admin.UserUpdateRequestData
-	(*UserDeleteRequest)(nil),                 // 35: admin.UserDeleteRequest
-	(*UserDeleteRequestData)(nil),             // 36: admin.UserDeleteRequestData
-	(*UserDetailRequest)(nil),                 // 37: admin.UserDetailRequest
-	(*UserDetailResponse)(nil),                // 38: admin.UserDetailResponse
-	(*UserDetailRequestData)(nil),             // 39: admin.UserDetailRequestData
-	(*UserSwitchStatusRequest)(nil),           // 40: admin.UserSwitchStatusRequest
-	(*UserSwitchStatusRequestData)(nil),       // 41: admin.UserSwitchStatusRequestData
-	(*ApiTreeEntity)(nil),                     // 42: admin.ApiTreeEntity
-	(*ApiEntity)(nil),                         // 43: admin.ApiEntity
-	(*ApiTreeRequest)(nil),                    // 44: admin.ApiTreeRequest
-	(*ApiTreeRequestData)(nil),                // 45: admin.ApiTreeRequestData
-	(*ApiTreeResponse)(nil),                   // 46: admin.ApiTreeResponse
-	(*ApiCreateRequest)(nil),                  // 47: admin.ApiCreateRequest
-	(*ApiCreateRequestData)(nil),              // 48: admin.ApiCreateRequestData
-	(*ApiCreateResponse)(nil),                 // 49: admin.ApiCreateResponse
-	(*ApiUpdateRequest)(nil),                  // 50: admin.ApiUpdateRequest
-	(*ApiUpdateRequestData)(nil),              // 51: admin.ApiUpdateRequestData
-	(*ApiDeleteRequest)(nil),                  // 52: admin.ApiDeleteRequest
-	(*ApiDeleteRequestData)(nil),              // 53: admin.ApiDeleteRequestData
-	(*ApiDetailRequest)(nil),                  // 54: admin.ApiDetailRequest
-	(*ApiDetailRequestData)(nil),              // 55: admin.ApiDetailRequestData
-	(*ResourceTreeEntity)(nil),                // 56: admin.ResourceTreeEntity
-	(*ResourceEntity)(nil),                    // 57: admin.ResourceEntity
-	(*ResourceTreeRequest)(nil),               // 58: admin.ResourceTreeRequest
-	(*ResourceTreeRequestData)(nil),           // 59: admin.ResourceTreeRequestData
-	(*ResourceTreeResponse)(nil),              // 60: admin.ResourceTreeResponse
-	(*ResourceCreateRequest)(nil),             // 61: admin.ResourceCreateRequest
-	(*ResourceCreateRequestData)(nil),         // 62: admin.ResourceCreateRequestData
-	(*ResourceCreateResponse)(nil),            // 63: admin.ResourceCreateResponse
-	(*ResourceUpdateRequest)(nil),             // 64: admin.ResourceUpdateRequest
-	(*ResourceUpdateRequestData)(nil),         // 65: admin.ResourceUpdateRequestData
-	(*ResourceDeleteRequest)(nil),             // 66: admin.ResourceDeleteRequest
-	(*ResourceDeleteRequestData)(nil),         // 67: admin.ResourceDeleteRequestData
-	(*ResourceDetailRequest)(nil),             // 68: admin.ResourceDetailRequest
-	(*ResourceDetailRequestData)(nil),         // 69: admin.ResourceDetailRequestData
-	(*ResourceDetailResponse)(nil),            // 70: admin.ResourceDetailResponse
-	(*RoleEntity)(nil),                        // 71: admin.RoleEntity
-	(*RolePageRequest)(nil),                   // 72: admin.RolePageRequest
-	(*RolePageRequestData)(nil),               // 73: admin.RolePageRequestData
-	(*RolePageRequestFilter)(nil),             // 74: admin.RolePageRequestFilter
-	(*RolePageRequestSorter)(nil),             // 75: admin.RolePageRequestSorter
-	(*RolePageResponse)(nil),                  // 76: admin.RolePageResponse
-	(*RolePageResponseData)(nil),              // 77: admin.RolePageResponseData
-	(*RoleCreateRequest)(nil),                 // 78: admin.RoleCreateRequest
-	(*RoleCreateRequestData)(nil),             // 79: admin.RoleCreateRequestData
-	(*RoleCreateResponse)(nil),                // 80: admin.RoleCreateResponse
-	(*RoleUpdateRequest)(nil),                 // 81: admin.RoleUpdateRequest
-	(*RoleUpdateRequestData)(nil),             // 82: admin.RoleUpdateRequestData
-	(*RoleAndResourceRelationEntity)(nil),     // 83: admin.RoleAndResourceRelationEntity
-	(*RoleUpdateResponse)(nil),                // 84: admin.RoleUpdateResponse
-	(*RoleDeleteRequest)(nil),                 // 85: admin.RoleDeleteRequest
-	(*RoleDeleteRequestData)(nil),             // 86: admin.RoleDeleteRequestData
-	(*RoleDetailRequest)(nil),                 // 87: admin.RoleDetailRequest
-	(*RoleDetailRequestData)(nil),             // 88: admin.RoleDetailRequestData
-	(*RoleDetailResponse)(nil),                // 89: admin.RoleDetailResponse
-	(*RoleUpdateStatusRequest)(nil),           // 90: admin.RoleUpdateStatusRequest
-	(*RoleUpdateStatusRequestData)(nil),       // 91: admin.RoleUpdateStatusRequestData
-	(*RoleAllRequest)(nil),                    // 92: admin.RoleAllRequest
-	(*RoleAllRequestData)(nil),                // 93: admin.RoleAllRequestData
-	(*RoleAllResponse)(nil),                   // 94: admin.RoleAllResponse
-	(*UserinfoResponseData_Organization)(nil), // 95: admin.UserinfoResponseData.Organization
+	(*EmptyRequest)(nil),                            // 0: admin.EmptyRequest
+	(*EmptyResponse)(nil),                           // 1: admin.EmptyResponse
+	(*StringSliceResponse)(nil),                     // 2: admin.StringSliceResponse
+	(*AddressEntry)(nil),                            // 3: admin.AddressEntry
+	(*UserEntity)(nil),                              // 4: admin.UserEntity
+	(*UserLoginRequest)(nil),                        // 5: admin.UserLoginRequest
+	(*UserLoginResponse)(nil),                       // 6: admin.UserLoginResponse
+	(*UserLoginRequestData)(nil),                    // 7: admin.UserLoginRequestData
+	(*UserLoginResponseData)(nil),                   // 8: admin.UserLoginResponseData
+	(*RefreshTokenRequest)(nil),                     // 9: admin.RefreshTokenRequest
+	(*RefreshTokenRequestData)(nil),                 // 10: admin.RefreshTokenRequestData
+	(*RefreshTokenResponse)(nil),                    // 11: admin.RefreshTokenResponse
+	(*RefreshTokenResponseData)(nil),                // 12: admin.RefreshTokenResponseData
+	(*ResetPasswordRequest)(nil),                    // 13: admin.ResetPasswordRequest
+	(*ResetPasswordResponse)(nil),                   // 14: admin.ResetPasswordResponse
+	(*ResetPasswordRequestData)(nil),                // 15: admin.ResetPasswordRequestData
+	(*ResetPasswordResponseData)(nil),               // 16: admin.ResetPasswordResponseData
+	(*UserInfoRequest)(nil),                         // 17: admin.UserInfoRequest
+	(*UserInfoRequestData)(nil),                     // 18: admin.UserInfoRequestData
+	(*UserinfoResponse)(nil),                        // 19: admin.UserinfoResponse
+	(*UserinfoResponseData)(nil),                    // 20: admin.UserinfoResponseData
+	(*UserProfileEditRequest)(nil),                  // 21: admin.UserProfileEditRequest
+	(*UserProfileEditRequestData)(nil),              // 22: admin.UserProfileEditRequestData
+	(*OrganizationUserEntity)(nil),                  // 23: admin.OrganizationUserEntity
+	(*OrganizationUserPageEntity)(nil),              // 24: admin.OrganizationUserPageEntity
+	(*OrganizationUserPageRequest)(nil),             // 25: admin.OrganizationUserPageRequest
+	(*OrganizationUserPageResponse)(nil),            // 26: admin.OrganizationUserPageResponse
+	(*OrganizationUserPageRequestData)(nil),         // 27: admin.OrganizationUserPageRequestData
+	(*OrganizationUserPageRequestFilter)(nil),       // 28: admin.OrganizationUserPageRequestFilter
+	(*OrganizationUserPageRequestSorter)(nil),       // 29: admin.OrganizationUserPageRequestSorter
+	(*OrganizationUserPageResponseData)(nil),        // 30: admin.OrganizationUserPageResponseData
+	(*OrganizationUserCreateRequest)(nil),           // 31: admin.OrganizationUserCreateRequest
+	(*OrganizationUserCreateResponse)(nil),          // 32: admin.OrganizationUserCreateResponse
+	(*OrganizationUserCreateRequestData)(nil),       // 33: admin.OrganizationUserCreateRequestData
+	(*OrganizationUserUpdateRequest)(nil),           // 34: admin.OrganizationUserUpdateRequest
+	(*OrganizationUserUpdateResponse)(nil),          // 35: admin.OrganizationUserUpdateResponse
+	(*OrganizationUserUpdateRequestData)(nil),       // 36: admin.OrganizationUserUpdateRequestData
+	(*OrganizationUserDeleteRequest)(nil),           // 37: admin.OrganizationUserDeleteRequest
+	(*OrganizationUserDeleteRequestData)(nil),       // 38: admin.OrganizationUserDeleteRequestData
+	(*OrganizationUserDetailRequest)(nil),           // 39: admin.OrganizationUserDetailRequest
+	(*OrganizationUserDetailResponse)(nil),          // 40: admin.OrganizationUserDetailResponse
+	(*OrganizationUserDetailRequestData)(nil),       // 41: admin.OrganizationUserDetailRequestData
+	(*OrganizationUserSwitchStatusRequest)(nil),     // 42: admin.OrganizationUserSwitchStatusRequest
+	(*OrganizationUserSwitchStatusRequestData)(nil), // 43: admin.OrganizationUserSwitchStatusRequestData
+	(*ApiTreeEntity)(nil),                           // 44: admin.ApiTreeEntity
+	(*ApiEntity)(nil),                               // 45: admin.ApiEntity
+	(*ApiTreeRequest)(nil),                          // 46: admin.ApiTreeRequest
+	(*ApiTreeRequestData)(nil),                      // 47: admin.ApiTreeRequestData
+	(*ApiTreeResponse)(nil),                         // 48: admin.ApiTreeResponse
+	(*ApiCreateRequest)(nil),                        // 49: admin.ApiCreateRequest
+	(*ApiCreateRequestData)(nil),                    // 50: admin.ApiCreateRequestData
+	(*ApiCreateResponse)(nil),                       // 51: admin.ApiCreateResponse
+	(*ApiUpdateRequest)(nil),                        // 52: admin.ApiUpdateRequest
+	(*ApiUpdateRequestData)(nil),                    // 53: admin.ApiUpdateRequestData
+	(*ApiDeleteRequest)(nil),                        // 54: admin.ApiDeleteRequest
+	(*ApiDeleteRequestData)(nil),                    // 55: admin.ApiDeleteRequestData
+	(*ApiDetailRequest)(nil),                        // 56: admin.ApiDetailRequest
+	(*ApiDetailRequestData)(nil),                    // 57: admin.ApiDetailRequestData
+	(*ResourceTreeEntity)(nil),                      // 58: admin.ResourceTreeEntity
+	(*ResourceEntity)(nil),                          // 59: admin.ResourceEntity
+	(*ResourceTreeRequest)(nil),                     // 60: admin.ResourceTreeRequest
+	(*ResourceTreeRequestData)(nil),                 // 61: admin.ResourceTreeRequestData
+	(*ResourceTreeResponse)(nil),                    // 62: admin.ResourceTreeResponse
+	(*ResourceCreateRequest)(nil),                   // 63: admin.ResourceCreateRequest
+	(*ResourceCreateRequestData)(nil),               // 64: admin.ResourceCreateRequestData
+	(*ResourceCreateResponse)(nil),                  // 65: admin.ResourceCreateResponse
+	(*ResourceUpdateRequest)(nil),                   // 66: admin.ResourceUpdateRequest
+	(*ResourceUpdateRequestData)(nil),               // 67: admin.ResourceUpdateRequestData
+	(*ResourceDeleteRequest)(nil),                   // 68: admin.ResourceDeleteRequest
+	(*ResourceDeleteRequestData)(nil),               // 69: admin.ResourceDeleteRequestData
+	(*ResourceDetailRequest)(nil),                   // 70: admin.ResourceDetailRequest
+	(*ResourceDetailRequestData)(nil),               // 71: admin.ResourceDetailRequestData
+	(*ResourceDetailResponse)(nil),                  // 72: admin.ResourceDetailResponse
+	(*RoleEntity)(nil),                              // 73: admin.RoleEntity
+	(*RolePageRequest)(nil),                         // 74: admin.RolePageRequest
+	(*RolePageRequestData)(nil),                     // 75: admin.RolePageRequestData
+	(*RolePageRequestFilter)(nil),                   // 76: admin.RolePageRequestFilter
+	(*RolePageRequestSorter)(nil),                   // 77: admin.RolePageRequestSorter
+	(*RolePageResponse)(nil),                        // 78: admin.RolePageResponse
+	(*RolePageResponseData)(nil),                    // 79: admin.RolePageResponseData
+	(*RoleCreateRequest)(nil),                       // 80: admin.RoleCreateRequest
+	(*RoleCreateRequestData)(nil),                   // 81: admin.RoleCreateRequestData
+	(*RoleCreateResponse)(nil),                      // 82: admin.RoleCreateResponse
+	(*RoleUpdateRequest)(nil),                       // 83: admin.RoleUpdateRequest
+	(*RoleUpdateRequestData)(nil),                   // 84: admin.RoleUpdateRequestData
+	(*RoleAndResourceRelationEntity)(nil),           // 85: admin.RoleAndResourceRelationEntity
+	(*RoleUpdateResponse)(nil),                      // 86: admin.RoleUpdateResponse
+	(*RoleDeleteRequest)(nil),                       // 87: admin.RoleDeleteRequest
+	(*RoleDeleteRequestData)(nil),                   // 88: admin.RoleDeleteRequestData
+	(*RoleDetailRequest)(nil),                       // 89: admin.RoleDetailRequest
+	(*RoleDetailRequestData)(nil),                   // 90: admin.RoleDetailRequestData
+	(*RoleDetailResponse)(nil),                      // 91: admin.RoleDetailResponse
+	(*RoleUpdateStatusRequest)(nil),                 // 92: admin.RoleUpdateStatusRequest
+	(*RoleUpdateStatusRequestData)(nil),             // 93: admin.RoleUpdateStatusRequestData
+	(*RoleAllRequest)(nil),                          // 94: admin.RoleAllRequest
+	(*RoleAllRequestData)(nil),                      // 95: admin.RoleAllRequestData
+	(*RoleAllResponse)(nil),                         // 96: admin.RoleAllResponse
+	(*UserinfoResponseData_Organization)(nil),       // 97: admin.UserinfoResponseData.Organization
 }
 var file_app_admin_rpc_pb_admin_proto_depIdxs = []int32{
-	71, // 0: admin.UserEntity.roles:type_name -> admin.RoleEntity
+	73, // 0: admin.UserEntity.roles:type_name -> admin.RoleEntity
 	7,  // 1: admin.UserLoginRequest.data:type_name -> admin.UserLoginRequestData
 	8,  // 2: admin.UserLoginResponse.data:type_name -> admin.UserLoginResponseData
 	10, // 3: admin.RefreshTokenRequest.data:type_name -> admin.RefreshTokenRequestData
@@ -6233,118 +6547,120 @@ var file_app_admin_rpc_pb_admin_proto_depIdxs = []int32{
 	8,  // 6: admin.ResetPasswordResponse.data:type_name -> admin.UserLoginResponseData
 	18, // 7: admin.UserInfoRequest.data:type_name -> admin.UserInfoRequestData
 	20, // 8: admin.UserinfoResponse.data:type_name -> admin.UserinfoResponseData
-	95, // 9: admin.UserinfoResponseData.organizations:type_name -> admin.UserinfoResponseData.Organization
+	97, // 9: admin.UserinfoResponseData.organizations:type_name -> admin.UserinfoResponseData.Organization
 	22, // 10: admin.UserProfileEditRequest.data:type_name -> admin.UserProfileEditRequestData
-	25, // 11: admin.UserPageRequest.data:type_name -> admin.UserPageRequestData
-	28, // 12: admin.UserPageResponse.data:type_name -> admin.UserPageResponseData
-	26, // 13: admin.UserPageRequestData.filter:type_name -> admin.UserPageRequestFilter
-	27, // 14: admin.UserPageRequestData.sorter:type_name -> admin.UserPageRequestSorter
-	4,  // 15: admin.UserPageResponseData.list:type_name -> admin.UserEntity
-	31, // 16: admin.UserCreateRequest.data:type_name -> admin.UserCreateRequestData
-	4,  // 17: admin.UserCreateResponse.data:type_name -> admin.UserEntity
-	34, // 18: admin.UserUpdateRequest.data:type_name -> admin.UserUpdateRequestData
-	4,  // 19: admin.UserUpdateResponse.data:type_name -> admin.UserEntity
-	36, // 20: admin.UserDeleteRequest.data:type_name -> admin.UserDeleteRequestData
-	39, // 21: admin.UserDetailRequest.data:type_name -> admin.UserDetailRequestData
-	4,  // 22: admin.UserDetailResponse.data:type_name -> admin.UserEntity
-	41, // 23: admin.UserSwitchStatusRequest.data:type_name -> admin.UserSwitchStatusRequestData
-	42, // 24: admin.ApiTreeEntity.children:type_name -> admin.ApiTreeEntity
-	45, // 25: admin.ApiTreeRequest.data:type_name -> admin.ApiTreeRequestData
-	42, // 26: admin.ApiTreeResponse.data:type_name -> admin.ApiTreeEntity
-	48, // 27: admin.ApiCreateRequest.data:type_name -> admin.ApiCreateRequestData
-	42, // 28: admin.ApiCreateResponse.data:type_name -> admin.ApiTreeEntity
-	51, // 29: admin.ApiUpdateRequest.data:type_name -> admin.ApiUpdateRequestData
-	53, // 30: admin.ApiDeleteRequest.data:type_name -> admin.ApiDeleteRequestData
-	55, // 31: admin.ApiDetailRequest.data:type_name -> admin.ApiDetailRequestData
-	56, // 32: admin.ResourceTreeEntity.children:type_name -> admin.ResourceTreeEntity
-	43, // 33: admin.ResourceEntity.apis:type_name -> admin.ApiEntity
-	59, // 34: admin.ResourceTreeRequest.data:type_name -> admin.ResourceTreeRequestData
-	56, // 35: admin.ResourceTreeResponse.data:type_name -> admin.ResourceTreeEntity
-	62, // 36: admin.ResourceCreateRequest.data:type_name -> admin.ResourceCreateRequestData
-	56, // 37: admin.ResourceCreateResponse.data:type_name -> admin.ResourceTreeEntity
-	65, // 38: admin.ResourceUpdateRequest.data:type_name -> admin.ResourceUpdateRequestData
-	67, // 39: admin.ResourceDeleteRequest.data:type_name -> admin.ResourceDeleteRequestData
-	69, // 40: admin.ResourceDetailRequest.data:type_name -> admin.ResourceDetailRequestData
-	57, // 41: admin.ResourceDetailResponse.data:type_name -> admin.ResourceEntity
-	57, // 42: admin.RoleEntity.resources:type_name -> admin.ResourceEntity
-	73, // 43: admin.RolePageRequest.data:type_name -> admin.RolePageRequestData
-	74, // 44: admin.RolePageRequestData.filter:type_name -> admin.RolePageRequestFilter
-	75, // 45: admin.RolePageRequestData.sorter:type_name -> admin.RolePageRequestSorter
-	77, // 46: admin.RolePageResponse.data:type_name -> admin.RolePageResponseData
-	71, // 47: admin.RolePageResponseData.list:type_name -> admin.RoleEntity
-	79, // 48: admin.RoleCreateRequest.data:type_name -> admin.RoleCreateRequestData
-	83, // 49: admin.RoleCreateRequestData.role_and_resources:type_name -> admin.RoleAndResourceRelationEntity
-	71, // 50: admin.RoleCreateResponse.data:type_name -> admin.RoleEntity
-	82, // 51: admin.RoleUpdateRequest.data:type_name -> admin.RoleUpdateRequestData
-	83, // 52: admin.RoleUpdateRequestData.role_and_resources:type_name -> admin.RoleAndResourceRelationEntity
-	71, // 53: admin.RoleUpdateResponse.data:type_name -> admin.RoleEntity
-	86, // 54: admin.RoleDeleteRequest.data:type_name -> admin.RoleDeleteRequestData
-	88, // 55: admin.RoleDetailRequest.data:type_name -> admin.RoleDetailRequestData
-	71, // 56: admin.RoleDetailResponse.data:type_name -> admin.RoleEntity
-	91, // 57: admin.RoleUpdateStatusRequest.data:type_name -> admin.RoleUpdateStatusRequestData
-	93, // 58: admin.RoleAllRequest.data:type_name -> admin.RoleAllRequestData
-	71, // 59: admin.RoleAllResponse.data:type_name -> admin.RoleEntity
-	5,  // 60: admin.user.Login:input_type -> admin.UserLoginRequest
-	9,  // 61: admin.user.RefreshToken:input_type -> admin.RefreshTokenRequest
-	17, // 62: admin.user.UserInfo:input_type -> admin.UserInfoRequest
-	13, // 63: admin.user.ResetPassword:input_type -> admin.ResetPasswordRequest
-	21, // 64: admin.user.EditProfile:input_type -> admin.UserProfileEditRequest
-	23, // 65: admin.user.UserPage:input_type -> admin.UserPageRequest
-	29, // 66: admin.user.UserCreate:input_type -> admin.UserCreateRequest
-	32, // 67: admin.user.UserUpdate:input_type -> admin.UserUpdateRequest
-	35, // 68: admin.user.UserDelete:input_type -> admin.UserDeleteRequest
-	37, // 69: admin.user.UserDetail:input_type -> admin.UserDetailRequest
-	40, // 70: admin.user.UserSwitchStatus:input_type -> admin.UserSwitchStatusRequest
-	44, // 71: admin.api.ApiTree:input_type -> admin.ApiTreeRequest
-	47, // 72: admin.api.Create:input_type -> admin.ApiCreateRequest
-	50, // 73: admin.api.Update:input_type -> admin.ApiUpdateRequest
-	52, // 74: admin.api.Delete:input_type -> admin.ApiDeleteRequest
-	54, // 75: admin.api.Detail:input_type -> admin.ApiDetailRequest
-	58, // 76: admin.resource.ResourceTree:input_type -> admin.ResourceTreeRequest
-	61, // 77: admin.resource.Create:input_type -> admin.ResourceCreateRequest
-	64, // 78: admin.resource.Update:input_type -> admin.ResourceUpdateRequest
-	66, // 79: admin.resource.Delete:input_type -> admin.ResourceDeleteRequest
-	68, // 80: admin.resource.Detail:input_type -> admin.ResourceDetailRequest
-	72, // 81: admin.role.Page:input_type -> admin.RolePageRequest
-	78, // 82: admin.role.Create:input_type -> admin.RoleCreateRequest
-	81, // 83: admin.role.Update:input_type -> admin.RoleUpdateRequest
-	85, // 84: admin.role.Delete:input_type -> admin.RoleDeleteRequest
-	87, // 85: admin.role.Detail:input_type -> admin.RoleDetailRequest
-	90, // 86: admin.role.UpdateStatus:input_type -> admin.RoleUpdateStatusRequest
-	92, // 87: admin.role.All:input_type -> admin.RoleAllRequest
-	6,  // 88: admin.user.Login:output_type -> admin.UserLoginResponse
-	11, // 89: admin.user.RefreshToken:output_type -> admin.RefreshTokenResponse
-	19, // 90: admin.user.UserInfo:output_type -> admin.UserinfoResponse
-	14, // 91: admin.user.ResetPassword:output_type -> admin.ResetPasswordResponse
-	19, // 92: admin.user.EditProfile:output_type -> admin.UserinfoResponse
-	24, // 93: admin.user.UserPage:output_type -> admin.UserPageResponse
-	30, // 94: admin.user.UserCreate:output_type -> admin.UserCreateResponse
-	33, // 95: admin.user.UserUpdate:output_type -> admin.UserUpdateResponse
-	1,  // 96: admin.user.UserDelete:output_type -> admin.EmptyResponse
-	38, // 97: admin.user.UserDetail:output_type -> admin.UserDetailResponse
-	1,  // 98: admin.user.UserSwitchStatus:output_type -> admin.EmptyResponse
-	46, // 99: admin.api.ApiTree:output_type -> admin.ApiTreeResponse
-	49, // 100: admin.api.Create:output_type -> admin.ApiCreateResponse
-	49, // 101: admin.api.Update:output_type -> admin.ApiCreateResponse
-	1,  // 102: admin.api.Delete:output_type -> admin.EmptyResponse
-	49, // 103: admin.api.Detail:output_type -> admin.ApiCreateResponse
-	60, // 104: admin.resource.ResourceTree:output_type -> admin.ResourceTreeResponse
-	70, // 105: admin.resource.Create:output_type -> admin.ResourceDetailResponse
-	70, // 106: admin.resource.Update:output_type -> admin.ResourceDetailResponse
-	1,  // 107: admin.resource.Delete:output_type -> admin.EmptyResponse
-	70, // 108: admin.resource.Detail:output_type -> admin.ResourceDetailResponse
-	76, // 109: admin.role.Page:output_type -> admin.RolePageResponse
-	80, // 110: admin.role.Create:output_type -> admin.RoleCreateResponse
-	84, // 111: admin.role.Update:output_type -> admin.RoleUpdateResponse
-	1,  // 112: admin.role.Delete:output_type -> admin.EmptyResponse
-	89, // 113: admin.role.Detail:output_type -> admin.RoleDetailResponse
-	1,  // 114: admin.role.UpdateStatus:output_type -> admin.EmptyResponse
-	94, // 115: admin.role.All:output_type -> admin.RoleAllResponse
-	88, // [88:116] is the sub-list for method output_type
-	60, // [60:88] is the sub-list for method input_type
-	60, // [60:60] is the sub-list for extension type_name
-	60, // [60:60] is the sub-list for extension extendee
-	0,  // [0:60] is the sub-list for field type_name
+	73, // 11: admin.OrganizationUserEntity.roles:type_name -> admin.RoleEntity
+	73, // 12: admin.OrganizationUserPageEntity.roles:type_name -> admin.RoleEntity
+	27, // 13: admin.OrganizationUserPageRequest.data:type_name -> admin.OrganizationUserPageRequestData
+	30, // 14: admin.OrganizationUserPageResponse.data:type_name -> admin.OrganizationUserPageResponseData
+	28, // 15: admin.OrganizationUserPageRequestData.filter:type_name -> admin.OrganizationUserPageRequestFilter
+	29, // 16: admin.OrganizationUserPageRequestData.sorter:type_name -> admin.OrganizationUserPageRequestSorter
+	24, // 17: admin.OrganizationUserPageResponseData.list:type_name -> admin.OrganizationUserPageEntity
+	33, // 18: admin.OrganizationUserCreateRequest.data:type_name -> admin.OrganizationUserCreateRequestData
+	23, // 19: admin.OrganizationUserCreateResponse.data:type_name -> admin.OrganizationUserEntity
+	36, // 20: admin.OrganizationUserUpdateRequest.data:type_name -> admin.OrganizationUserUpdateRequestData
+	23, // 21: admin.OrganizationUserUpdateResponse.data:type_name -> admin.OrganizationUserEntity
+	38, // 22: admin.OrganizationUserDeleteRequest.data:type_name -> admin.OrganizationUserDeleteRequestData
+	41, // 23: admin.OrganizationUserDetailRequest.data:type_name -> admin.OrganizationUserDetailRequestData
+	23, // 24: admin.OrganizationUserDetailResponse.data:type_name -> admin.OrganizationUserEntity
+	43, // 25: admin.OrganizationUserSwitchStatusRequest.data:type_name -> admin.OrganizationUserSwitchStatusRequestData
+	44, // 26: admin.ApiTreeEntity.children:type_name -> admin.ApiTreeEntity
+	47, // 27: admin.ApiTreeRequest.data:type_name -> admin.ApiTreeRequestData
+	44, // 28: admin.ApiTreeResponse.data:type_name -> admin.ApiTreeEntity
+	50, // 29: admin.ApiCreateRequest.data:type_name -> admin.ApiCreateRequestData
+	44, // 30: admin.ApiCreateResponse.data:type_name -> admin.ApiTreeEntity
+	53, // 31: admin.ApiUpdateRequest.data:type_name -> admin.ApiUpdateRequestData
+	55, // 32: admin.ApiDeleteRequest.data:type_name -> admin.ApiDeleteRequestData
+	57, // 33: admin.ApiDetailRequest.data:type_name -> admin.ApiDetailRequestData
+	58, // 34: admin.ResourceTreeEntity.children:type_name -> admin.ResourceTreeEntity
+	45, // 35: admin.ResourceEntity.apis:type_name -> admin.ApiEntity
+	61, // 36: admin.ResourceTreeRequest.data:type_name -> admin.ResourceTreeRequestData
+	58, // 37: admin.ResourceTreeResponse.data:type_name -> admin.ResourceTreeEntity
+	64, // 38: admin.ResourceCreateRequest.data:type_name -> admin.ResourceCreateRequestData
+	58, // 39: admin.ResourceCreateResponse.data:type_name -> admin.ResourceTreeEntity
+	67, // 40: admin.ResourceUpdateRequest.data:type_name -> admin.ResourceUpdateRequestData
+	69, // 41: admin.ResourceDeleteRequest.data:type_name -> admin.ResourceDeleteRequestData
+	71, // 42: admin.ResourceDetailRequest.data:type_name -> admin.ResourceDetailRequestData
+	59, // 43: admin.ResourceDetailResponse.data:type_name -> admin.ResourceEntity
+	59, // 44: admin.RoleEntity.resources:type_name -> admin.ResourceEntity
+	75, // 45: admin.RolePageRequest.data:type_name -> admin.RolePageRequestData
+	76, // 46: admin.RolePageRequestData.filter:type_name -> admin.RolePageRequestFilter
+	77, // 47: admin.RolePageRequestData.sorter:type_name -> admin.RolePageRequestSorter
+	79, // 48: admin.RolePageResponse.data:type_name -> admin.RolePageResponseData
+	73, // 49: admin.RolePageResponseData.list:type_name -> admin.RoleEntity
+	81, // 50: admin.RoleCreateRequest.data:type_name -> admin.RoleCreateRequestData
+	85, // 51: admin.RoleCreateRequestData.role_and_resources:type_name -> admin.RoleAndResourceRelationEntity
+	73, // 52: admin.RoleCreateResponse.data:type_name -> admin.RoleEntity
+	84, // 53: admin.RoleUpdateRequest.data:type_name -> admin.RoleUpdateRequestData
+	85, // 54: admin.RoleUpdateRequestData.role_and_resources:type_name -> admin.RoleAndResourceRelationEntity
+	73, // 55: admin.RoleUpdateResponse.data:type_name -> admin.RoleEntity
+	88, // 56: admin.RoleDeleteRequest.data:type_name -> admin.RoleDeleteRequestData
+	90, // 57: admin.RoleDetailRequest.data:type_name -> admin.RoleDetailRequestData
+	73, // 58: admin.RoleDetailResponse.data:type_name -> admin.RoleEntity
+	93, // 59: admin.RoleUpdateStatusRequest.data:type_name -> admin.RoleUpdateStatusRequestData
+	95, // 60: admin.RoleAllRequest.data:type_name -> admin.RoleAllRequestData
+	73, // 61: admin.RoleAllResponse.data:type_name -> admin.RoleEntity
+	5,  // 62: admin.User.Login:input_type -> admin.UserLoginRequest
+	9,  // 63: admin.User.RefreshToken:input_type -> admin.RefreshTokenRequest
+	17, // 64: admin.User.UserInfo:input_type -> admin.UserInfoRequest
+	13, // 65: admin.User.ResetPassword:input_type -> admin.ResetPasswordRequest
+	21, // 66: admin.User.EditProfile:input_type -> admin.UserProfileEditRequest
+	25, // 67: admin.OrganizationUser.Page:input_type -> admin.OrganizationUserPageRequest
+	31, // 68: admin.OrganizationUser.Create:input_type -> admin.OrganizationUserCreateRequest
+	34, // 69: admin.OrganizationUser.Update:input_type -> admin.OrganizationUserUpdateRequest
+	37, // 70: admin.OrganizationUser.Delete:input_type -> admin.OrganizationUserDeleteRequest
+	39, // 71: admin.OrganizationUser.Detail:input_type -> admin.OrganizationUserDetailRequest
+	42, // 72: admin.OrganizationUser.SwitchStatus:input_type -> admin.OrganizationUserSwitchStatusRequest
+	46, // 73: admin.api.ApiTree:input_type -> admin.ApiTreeRequest
+	49, // 74: admin.api.Create:input_type -> admin.ApiCreateRequest
+	52, // 75: admin.api.Update:input_type -> admin.ApiUpdateRequest
+	54, // 76: admin.api.Delete:input_type -> admin.ApiDeleteRequest
+	56, // 77: admin.api.Detail:input_type -> admin.ApiDetailRequest
+	60, // 78: admin.resource.ResourceTree:input_type -> admin.ResourceTreeRequest
+	63, // 79: admin.resource.Create:input_type -> admin.ResourceCreateRequest
+	66, // 80: admin.resource.Update:input_type -> admin.ResourceUpdateRequest
+	68, // 81: admin.resource.Delete:input_type -> admin.ResourceDeleteRequest
+	70, // 82: admin.resource.Detail:input_type -> admin.ResourceDetailRequest
+	74, // 83: admin.role.Page:input_type -> admin.RolePageRequest
+	80, // 84: admin.role.Create:input_type -> admin.RoleCreateRequest
+	83, // 85: admin.role.Update:input_type -> admin.RoleUpdateRequest
+	87, // 86: admin.role.Delete:input_type -> admin.RoleDeleteRequest
+	89, // 87: admin.role.Detail:input_type -> admin.RoleDetailRequest
+	92, // 88: admin.role.UpdateStatus:input_type -> admin.RoleUpdateStatusRequest
+	94, // 89: admin.role.All:input_type -> admin.RoleAllRequest
+	6,  // 90: admin.User.Login:output_type -> admin.UserLoginResponse
+	11, // 91: admin.User.RefreshToken:output_type -> admin.RefreshTokenResponse
+	19, // 92: admin.User.UserInfo:output_type -> admin.UserinfoResponse
+	14, // 93: admin.User.ResetPassword:output_type -> admin.ResetPasswordResponse
+	19, // 94: admin.User.EditProfile:output_type -> admin.UserinfoResponse
+	26, // 95: admin.OrganizationUser.Page:output_type -> admin.OrganizationUserPageResponse
+	32, // 96: admin.OrganizationUser.Create:output_type -> admin.OrganizationUserCreateResponse
+	35, // 97: admin.OrganizationUser.Update:output_type -> admin.OrganizationUserUpdateResponse
+	1,  // 98: admin.OrganizationUser.Delete:output_type -> admin.EmptyResponse
+	40, // 99: admin.OrganizationUser.Detail:output_type -> admin.OrganizationUserDetailResponse
+	1,  // 100: admin.OrganizationUser.SwitchStatus:output_type -> admin.EmptyResponse
+	48, // 101: admin.api.ApiTree:output_type -> admin.ApiTreeResponse
+	51, // 102: admin.api.Create:output_type -> admin.ApiCreateResponse
+	51, // 103: admin.api.Update:output_type -> admin.ApiCreateResponse
+	1,  // 104: admin.api.Delete:output_type -> admin.EmptyResponse
+	51, // 105: admin.api.Detail:output_type -> admin.ApiCreateResponse
+	62, // 106: admin.resource.ResourceTree:output_type -> admin.ResourceTreeResponse
+	72, // 107: admin.resource.Create:output_type -> admin.ResourceDetailResponse
+	72, // 108: admin.resource.Update:output_type -> admin.ResourceDetailResponse
+	1,  // 109: admin.resource.Delete:output_type -> admin.EmptyResponse
+	72, // 110: admin.resource.Detail:output_type -> admin.ResourceDetailResponse
+	78, // 111: admin.role.Page:output_type -> admin.RolePageResponse
+	82, // 112: admin.role.Create:output_type -> admin.RoleCreateResponse
+	86, // 113: admin.role.Update:output_type -> admin.RoleUpdateResponse
+	1,  // 114: admin.role.Delete:output_type -> admin.EmptyResponse
+	91, // 115: admin.role.Detail:output_type -> admin.RoleDetailResponse
+	1,  // 116: admin.role.UpdateStatus:output_type -> admin.EmptyResponse
+	96, // 117: admin.role.All:output_type -> admin.RoleAllResponse
+	90, // [90:118] is the sub-list for method output_type
+	62, // [62:90] is the sub-list for method input_type
+	62, // [62:62] is the sub-list for extension type_name
+	62, // [62:62] is the sub-list for extension extendee
+	0,  // [0:62] is the sub-list for field type_name
 }
 
 func init() { file_app_admin_rpc_pb_admin_proto_init() }
@@ -6358,9 +6674,9 @@ func file_app_admin_rpc_pb_admin_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_app_admin_rpc_pb_admin_proto_rawDesc), len(file_app_admin_rpc_pb_admin_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   96,
+			NumMessages:   98,
 			NumExtensions: 0,
-			NumServices:   4,
+			NumServices:   5,
 		},
 		GoTypes:           file_app_admin_rpc_pb_admin_proto_goTypes,
 		DependencyIndexes: file_app_admin_rpc_pb_admin_proto_depIdxs,

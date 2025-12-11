@@ -699,6 +699,1039 @@
         }
       }
     },
+    "/api/v1/organization_user": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization_user"
+        ],
+        "summary": "create",
+        "operationId": "organizationUserOrganizationUserCreate",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "email",
+                "password",
+                "full_name",
+                "phone"
+              ],
+              "properties": {
+                "email": {
+                  "type": "string"
+                },
+                "full_name": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                },
+                "phone": {
+                  "type": "string"
+                },
+                "role_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "created_at": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "first_name": {
+                  "type": "string"
+                },
+                "full_name": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "last_name": {
+                  "type": "string"
+                },
+                "mid_name": {
+                  "type": "string"
+                },
+                "organization_id": {
+                  "type": "integer"
+                },
+                "phone": {
+                  "type": "string"
+                },
+                "remark": {
+                  "type": "string"
+                },
+                "roles": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "organization_id",
+                      "name",
+                      "description",
+                      "type",
+                      "status",
+                      "created_at",
+                      "updated_at",
+                      "resources"
+                    ],
+                    "properties": {
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "organization_id": {
+                        "type": "integer"
+                      },
+                      "resources": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "parent_id",
+                            "type",
+                            "resource_type",
+                            "name",
+                            "path",
+                            "icon",
+                            "tag",
+                            "is_show",
+                            "status",
+                            "sort_order",
+                            "created_at",
+                            "updated_at",
+                            "apis",
+                            "pivot_role_data_scope"
+                          ],
+                          "properties": {
+                            "apis": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "required": [
+                                  "id",
+                                  "parent_id",
+                                  "name",
+                                  "path",
+                                  "method",
+                                  "status",
+                                  "description",
+                                  "type",
+                                  "sort_order",
+                                  "created_at",
+                                  "updated_at"
+                                ],
+                                "properties": {
+                                  "created_at": {
+                                    "type": "string"
+                                  },
+                                  "description": {
+                                    "type": "string"
+                                  },
+                                  "id": {
+                                    "type": "integer"
+                                  },
+                                  "method": {
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "parent_id": {
+                                    "type": "integer"
+                                  },
+                                  "path": {
+                                    "type": "string"
+                                  },
+                                  "sort_order": {
+                                    "type": "integer"
+                                  },
+                                  "status": {
+                                    "type": "string"
+                                  },
+                                  "type": {
+                                    "type": "string"
+                                  },
+                                  "updated_at": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "icon": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "is_show": {
+                              "type": "boolean"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "parent_id": {
+                              "type": "integer"
+                            },
+                            "path": {
+                              "type": "string"
+                            },
+                            "pivot_role_data_scope": {
+                              "type": "string"
+                            },
+                            "resource_type": {
+                              "type": "string"
+                            },
+                            "sort_order": {
+                              "type": "integer"
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "tag": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "status": {
+                  "type": "string"
+                },
+                "updated_at": {
+                  "type": "string"
+                },
+                "user_id": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organization_user/page": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization_user"
+        ],
+        "summary": "page",
+        "operationId": "organizationUserOrganizationUserPage",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "filter": {
+                  "type": "object",
+                  "properties": {
+                    "keyword": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "limit": {
+                  "type": "integer"
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "sorter": {
+                  "type": "object",
+                  "properties": {
+                    "column": {
+                      "type": "string"
+                    },
+                    "sort": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "limit": {
+                  "type": "integer"
+                },
+                "list": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "status",
+                      "first_name",
+                      "mid_name",
+                      "last_name",
+                      "full_name",
+                      "phone",
+                      "remark",
+                      "created_at",
+                      "updated_at",
+                      "email",
+                      "is_owner",
+                      "roles"
+                    ],
+                    "properties": {
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      },
+                      "first_name": {
+                        "type": "string"
+                      },
+                      "full_name": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "is_owner": {
+                        "type": "boolean"
+                      },
+                      "last_name": {
+                        "type": "string"
+                      },
+                      "mid_name": {
+                        "type": "string"
+                      },
+                      "phone": {
+                        "type": "string"
+                      },
+                      "remark": {
+                        "type": "string"
+                      },
+                      "roles": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "organization_id",
+                            "name",
+                            "description",
+                            "type",
+                            "status",
+                            "created_at",
+                            "updated_at",
+                            "resources"
+                          ],
+                          "properties": {
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "organization_id": {
+                              "type": "integer"
+                            },
+                            "resources": {
+                              "type": "array",
+                              "items": {
+                                "type": "object"
+                              }
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "total": {
+                  "type": "integer"
+                },
+                "total_page": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organization_user/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization_user"
+        ],
+        "summary": "detail",
+        "operationId": "organizationUserOrganizationUserDetail",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "created_at": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "first_name": {
+                  "type": "string"
+                },
+                "full_name": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "last_name": {
+                  "type": "string"
+                },
+                "mid_name": {
+                  "type": "string"
+                },
+                "organization_id": {
+                  "type": "integer"
+                },
+                "phone": {
+                  "type": "string"
+                },
+                "remark": {
+                  "type": "string"
+                },
+                "roles": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "organization_id",
+                      "name",
+                      "description",
+                      "type",
+                      "status",
+                      "created_at",
+                      "updated_at",
+                      "resources"
+                    ],
+                    "properties": {
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "organization_id": {
+                        "type": "integer"
+                      },
+                      "resources": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "parent_id",
+                            "type",
+                            "resource_type",
+                            "name",
+                            "path",
+                            "icon",
+                            "tag",
+                            "is_show",
+                            "status",
+                            "sort_order",
+                            "created_at",
+                            "updated_at",
+                            "apis",
+                            "pivot_role_data_scope"
+                          ],
+                          "properties": {
+                            "apis": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "required": [
+                                  "id",
+                                  "parent_id",
+                                  "name",
+                                  "path",
+                                  "method",
+                                  "status",
+                                  "description",
+                                  "type",
+                                  "sort_order",
+                                  "created_at",
+                                  "updated_at"
+                                ],
+                                "properties": {
+                                  "created_at": {
+                                    "type": "string"
+                                  },
+                                  "description": {
+                                    "type": "string"
+                                  },
+                                  "id": {
+                                    "type": "integer"
+                                  },
+                                  "method": {
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "parent_id": {
+                                    "type": "integer"
+                                  },
+                                  "path": {
+                                    "type": "string"
+                                  },
+                                  "sort_order": {
+                                    "type": "integer"
+                                  },
+                                  "status": {
+                                    "type": "string"
+                                  },
+                                  "type": {
+                                    "type": "string"
+                                  },
+                                  "updated_at": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "icon": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "is_show": {
+                              "type": "boolean"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "parent_id": {
+                              "type": "integer"
+                            },
+                            "path": {
+                              "type": "string"
+                            },
+                            "pivot_role_data_scope": {
+                              "type": "string"
+                            },
+                            "resource_type": {
+                              "type": "string"
+                            },
+                            "sort_order": {
+                              "type": "integer"
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "tag": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "status": {
+                  "type": "string"
+                },
+                "updated_at": {
+                  "type": "string"
+                },
+                "user_id": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization_user"
+        ],
+        "summary": "update",
+        "operationId": "organizationUserUserUpdate",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "full_name",
+                "phone"
+              ],
+              "properties": {
+                "full_name": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                },
+                "phone": {
+                  "type": "string"
+                },
+                "role_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "created_at": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "first_name": {
+                  "type": "string"
+                },
+                "full_name": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "last_name": {
+                  "type": "string"
+                },
+                "mid_name": {
+                  "type": "string"
+                },
+                "organization_id": {
+                  "type": "integer"
+                },
+                "phone": {
+                  "type": "string"
+                },
+                "remark": {
+                  "type": "string"
+                },
+                "roles": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "organization_id",
+                      "name",
+                      "description",
+                      "type",
+                      "status",
+                      "created_at",
+                      "updated_at",
+                      "resources"
+                    ],
+                    "properties": {
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "organization_id": {
+                        "type": "integer"
+                      },
+                      "resources": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "parent_id",
+                            "type",
+                            "resource_type",
+                            "name",
+                            "path",
+                            "icon",
+                            "tag",
+                            "is_show",
+                            "status",
+                            "sort_order",
+                            "created_at",
+                            "updated_at",
+                            "apis",
+                            "pivot_role_data_scope"
+                          ],
+                          "properties": {
+                            "apis": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "required": [
+                                  "id",
+                                  "parent_id",
+                                  "name",
+                                  "path",
+                                  "method",
+                                  "status",
+                                  "description",
+                                  "type",
+                                  "sort_order",
+                                  "created_at",
+                                  "updated_at"
+                                ],
+                                "properties": {
+                                  "created_at": {
+                                    "type": "string"
+                                  },
+                                  "description": {
+                                    "type": "string"
+                                  },
+                                  "id": {
+                                    "type": "integer"
+                                  },
+                                  "method": {
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "parent_id": {
+                                    "type": "integer"
+                                  },
+                                  "path": {
+                                    "type": "string"
+                                  },
+                                  "sort_order": {
+                                    "type": "integer"
+                                  },
+                                  "status": {
+                                    "type": "string"
+                                  },
+                                  "type": {
+                                    "type": "string"
+                                  },
+                                  "updated_at": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "icon": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "is_show": {
+                              "type": "boolean"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "parent_id": {
+                              "type": "integer"
+                            },
+                            "path": {
+                              "type": "string"
+                            },
+                            "pivot_role_data_scope": {
+                              "type": "string"
+                            },
+                            "resource_type": {
+                              "type": "string"
+                            },
+                            "sort_order": {
+                              "type": "integer"
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "tag": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "status": {
+                  "type": "string"
+                },
+                "updated_at": {
+                  "type": "string"
+                },
+                "user_id": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization_user"
+        ],
+        "summary": "delete",
+        "operationId": "organizationUserOrganizationUserDelete",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organization_user/{id}/status": {
+      "patch": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization_user"
+        ],
+        "summary": "switch status",
+        "operationId": "organizationUserOrganizationUserSwitchStatus",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "status"
+              ],
+              "properties": {
+                "status": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/resource": {
       "post": {
         "consumes": [
@@ -2539,243 +3572,6 @@
         }
       }
     },
-    "/api/v1/user": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "user"
-        ],
-        "summary": "page",
-        "operationId": "userUserPage",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "filter": {
-                  "type": "object",
-                  "properties": {
-                    "keyword": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "limit": {
-                  "type": "integer"
-                },
-                "page": {
-                  "type": "integer"
-                },
-                "sorter": {
-                  "type": "object",
-                  "properties": {
-                    "column": {
-                      "type": "string"
-                    },
-                    "sort": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "limit": {
-                  "type": "integer"
-                },
-                "list": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "required": [
-                      "id",
-                      "email",
-                      "status",
-                      "type",
-                      "first_name",
-                      "mid_name",
-                      "last_name",
-                      "full_name",
-                      "default_organization_id",
-                      "created_at",
-                      "updated_at",
-                      "pivot_organization_status",
-                      "pivot_organization_activation_status"
-                    ],
-                    "properties": {
-                      "created_at": {
-                        "type": "string"
-                      },
-                      "default_organization_id": {
-                        "type": "integer"
-                      },
-                      "email": {
-                        "type": "string"
-                      },
-                      "first_name": {
-                        "type": "string"
-                      },
-                      "full_name": {
-                        "type": "string"
-                      },
-                      "id": {
-                        "type": "integer"
-                      },
-                      "last_name": {
-                        "type": "string"
-                      },
-                      "mid_name": {
-                        "type": "string"
-                      },
-                      "pivot_organization_activation_status": {
-                        "type": "string"
-                      },
-                      "pivot_organization_status": {
-                        "type": "string"
-                      },
-                      "status": {
-                        "type": "string"
-                      },
-                      "type": {
-                        "type": "string"
-                      },
-                      "updated_at": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                "page": {
-                  "type": "integer"
-                },
-                "total": {
-                  "type": "integer"
-                },
-                "total_page": {
-                  "type": "integer"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "user"
-        ],
-        "summary": "create",
-        "operationId": "userUserCreate",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": [
-                "email",
-                "password",
-                "full_name",
-                "phone"
-              ],
-              "properties": {
-                "email": {
-                  "type": "string"
-                },
-                "full_name": {
-                  "type": "string"
-                },
-                "password": {
-                  "type": "string"
-                },
-                "phone": {
-                  "type": "string"
-                },
-                "role_ids": {
-                  "type": "array",
-                  "items": {
-                    "type": "integer"
-                  }
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "created_at": {
-                  "type": "string"
-                },
-                "default_organization_id": {
-                  "type": "integer"
-                },
-                "email": {
-                  "type": "string"
-                },
-                "first_name": {
-                  "type": "string"
-                },
-                "full_name": {
-                  "type": "string"
-                },
-                "id": {
-                  "type": "integer"
-                },
-                "last_name": {
-                  "type": "string"
-                },
-                "mid_name": {
-                  "type": "string"
-                },
-                "pivot_organization_activation_status": {
-                  "type": "string"
-                },
-                "pivot_organization_status": {
-                  "type": "string"
-                },
-                "status": {
-                  "type": "string"
-                },
-                "type": {
-                  "type": "string"
-                },
-                "updated_at": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v1/user/info": {
       "get": {
         "produces": [
@@ -3140,265 +3936,9 @@
           }
         }
       }
-    },
-    "/api/v1/user/{id}": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "user"
-        ],
-        "summary": "detail",
-        "operationId": "userUserDetail",
-        "parameters": [
-          {
-            "type": "integer",
-            "name": "id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "created_at": {
-                  "type": "string"
-                },
-                "default_organization_id": {
-                  "type": "integer"
-                },
-                "email": {
-                  "type": "string"
-                },
-                "first_name": {
-                  "type": "string"
-                },
-                "full_name": {
-                  "type": "string"
-                },
-                "id": {
-                  "type": "integer"
-                },
-                "last_name": {
-                  "type": "string"
-                },
-                "mid_name": {
-                  "type": "string"
-                },
-                "pivot_organization_activation_status": {
-                  "type": "string"
-                },
-                "pivot_organization_status": {
-                  "type": "string"
-                },
-                "status": {
-                  "type": "string"
-                },
-                "type": {
-                  "type": "string"
-                },
-                "updated_at": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "user"
-        ],
-        "summary": "update",
-        "operationId": "userUserUpdate",
-        "parameters": [
-          {
-            "type": "integer",
-            "name": "id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": [
-                "full_name",
-                "phone"
-              ],
-              "properties": {
-                "full_name": {
-                  "type": "string"
-                },
-                "password": {
-                  "type": "string"
-                },
-                "phone": {
-                  "type": "string"
-                },
-                "role_ids": {
-                  "type": "array",
-                  "items": {
-                    "type": "integer"
-                  }
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "created_at": {
-                  "type": "string"
-                },
-                "default_organization_id": {
-                  "type": "integer"
-                },
-                "email": {
-                  "type": "string"
-                },
-                "first_name": {
-                  "type": "string"
-                },
-                "full_name": {
-                  "type": "string"
-                },
-                "id": {
-                  "type": "integer"
-                },
-                "last_name": {
-                  "type": "string"
-                },
-                "mid_name": {
-                  "type": "string"
-                },
-                "pivot_organization_activation_status": {
-                  "type": "string"
-                },
-                "pivot_organization_status": {
-                  "type": "string"
-                },
-                "status": {
-                  "type": "string"
-                },
-                "type": {
-                  "type": "string"
-                },
-                "updated_at": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "consumes": [
-          "application/x-www-form-urlencoded"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "user"
-        ],
-        "summary": "delete",
-        "operationId": "userUserDelete",
-        "parameters": [
-          {
-            "type": "integer",
-            "name": "id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object"
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/user/{id}/status": {
-      "patch": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "user"
-        ],
-        "summary": "switch status",
-        "operationId": "userUserSwitchStatus",
-        "parameters": [
-          {
-            "type": "integer",
-            "name": "id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": [
-                "status"
-              ],
-              "properties": {
-                "status": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object"
-            }
-          }
-        }
-      }
     }
   },
-  "x-date": "2025-12-03 14:40:19",
+  "x-date": "2025-12-11 09:58:54",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

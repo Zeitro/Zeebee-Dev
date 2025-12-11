@@ -15,6 +15,18 @@ type OrganizationUserCreateRequestDto struct {
 	Operator       string                    `json:"operator"`
 }
 
+type OrganizationUserCreateAdminRequestDto struct {
+	Email          string             `json:"email"`
+	Phone          string             `json:"phone"`
+	FirstName      string             `json:"first_name"`
+	LastName       string             `json:"last_name"`
+	Password       string             `json:"password"`
+	Remark         string             `json:"remark"`
+	RoleIds        []int64            `json:"role_ids"`
+	UserType       constants.UserType `json:"type"`
+	OrganizationId int64              `json:"organization_id"`
+}
+
 type OrganizationUserUpdateRequestDto struct {
 	Id             int64              `json:"id"`
 	Phone          string             `json:"phone"`

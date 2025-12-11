@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	api "zeebee-backend/app/admin/api/internal/handler/api"
+	organization_user "zeebee-backend/app/admin/api/internal/handler/organization_user"
 	resource "zeebee-backend/app/admin/api/internal/handler/resource"
 	role "zeebee-backend/app/admin/api/internal/handler/role"
 	user "zeebee-backend/app/admin/api/internal/handler/user"
@@ -49,6 +50,51 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/api/tree",
 					Handler: api.TreeHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// create
+					Method:  http.MethodPost,
+					Path:    "/organization_user",
+					Handler: organization_user.OrganizationUserCreateHandler(serverCtx),
+				},
+				{
+					// detail
+					Method:  http.MethodGet,
+					Path:    "/organization_user/:id",
+					Handler: organization_user.OrganizationUserDetailHandler(serverCtx),
+				},
+				{
+					// update
+					Method:  http.MethodPut,
+					Path:    "/organization_user/:id",
+					Handler: organization_user.OrganizationUserUpdateHandler(serverCtx),
+				},
+				{
+					// delete
+					Method:  http.MethodDelete,
+					Path:    "/organization_user/:id",
+					Handler: organization_user.OrganizationUserDeleteHandler(serverCtx),
+				},
+				{
+					// switch status
+					Method:  http.MethodPatch,
+					Path:    "/organization_user/:id/status",
+					Handler: organization_user.OrganizationUserSwitchStatusHandler(serverCtx),
+				},
+				{
+					// page
+					Method:  http.MethodGet,
+					Path:    "/organization_user/page",
+					Handler: organization_user.OrganizationUserPageHandler(serverCtx),
 				},
 			}...,
 		),
@@ -173,42 +219,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		rest.WithMiddlewares(
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
-				{
-					// page
-					Method:  http.MethodGet,
-					Path:    "/user",
-					Handler: user.UserPageHandler(serverCtx),
-				},
-				{
-					// create
-					Method:  http.MethodPost,
-					Path:    "/user",
-					Handler: user.UserCreateHandler(serverCtx),
-				},
-				{
-					// detail
-					Method:  http.MethodGet,
-					Path:    "/user/:id",
-					Handler: user.UserDetailHandler(serverCtx),
-				},
-				{
-					// update
-					Method:  http.MethodPut,
-					Path:    "/user/:id",
-					Handler: user.UserUpdateHandler(serverCtx),
-				},
-				{
-					// delete
-					Method:  http.MethodDelete,
-					Path:    "/user/:id",
-					Handler: user.UserDeleteHandler(serverCtx),
-				},
-				{
-					// switch status
-					Method:  http.MethodPatch,
-					Path:    "/user/:id/status",
-					Handler: user.UserSwitchStatusHandler(serverCtx),
-				},
 				{
 					// info
 					Method:  http.MethodGet,

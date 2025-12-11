@@ -16,10 +16,11 @@ type ServiceContext struct {
 	AuthMiddleware rest.Middleware
 
 	// rpc client
-	UserRpcClient     admin.UserClient
-	ApiRpcClient      admin.ApiClient
-	ResourceRpcClient admin.ResourceClient
-	RoleRpcClient     admin.RoleClient
+	UserRpcClient             admin.UserClient
+	ApiRpcClient              admin.ApiClient
+	ResourceRpcClient         admin.ResourceClient
+	RoleRpcClient             admin.RoleClient
+	OrganizationUserRpcClient admin.OrganizationUserClient
 }
 
 func NewServiceContext(c config.ApiConf) *ServiceContext {
@@ -28,9 +29,10 @@ func NewServiceContext(c config.ApiConf) *ServiceContext {
 		AuthMiddleware: middleware.NewHttpAuthMiddleware(c.JwtAuth.AccessSecret, constants.UserTypeAdmin).Handle,
 
 		// rpc client
-		UserRpcClient:     admin.NewUserClient(zrpc.MustNewClient(c.RpcConf).Conn()),
-		ApiRpcClient:      admin.NewApiClient(zrpc.MustNewClient(c.RpcConf).Conn()),
-		ResourceRpcClient: admin.NewResourceClient(zrpc.MustNewClient(c.RpcConf).Conn()),
-		RoleRpcClient:     admin.NewRoleClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		UserRpcClient:             admin.NewUserClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		ApiRpcClient:              admin.NewApiClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		ResourceRpcClient:         admin.NewResourceClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		RoleRpcClient:             admin.NewRoleClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		OrganizationUserRpcClient: admin.NewOrganizationUserClient(zrpc.MustNewClient(c.RpcConf).Conn()),
 	}
 }
