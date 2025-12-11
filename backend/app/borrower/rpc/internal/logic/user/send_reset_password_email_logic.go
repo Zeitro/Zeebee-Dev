@@ -85,7 +85,7 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *borrower.SendRe
 func (l *SendResetPasswordEmailLogic) sendResetPwdEmail(email string, firstName string) (err error) {
 	ctx := context.WithoutCancel(l.ctx)
 	var code string
-	redisKey := stringx.Format(constants.BorrowerResetPwdCode, email)
+	redisKey := stringx.Format(constants.ResetPwdCode, constants.UserTypeBorrower, email)
 	code, _ = global.GetRedis().Get(ctx, redisKey)
 	if len(code) == 0 {
 		code = random.RandNumeral(10)

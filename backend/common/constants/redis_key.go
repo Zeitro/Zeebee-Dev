@@ -21,6 +21,8 @@ const (
 	BorrowerSendAprApprovalNotificationKey = "zeebee:organizationId:%v:requestId:%v:preapprovalLoan"
 	AdminResetPwdCode                      = "zeebee:admin:%v:reset:pwd:code"
 
+	ResetPwdCode = "zeebee:%v:%v:reset:pwd:code"
+
 	LenderLoginFailedTimes   = "zeebee:lender:%v:login:failed:times"
 	LenderRegisterVerifyCode = "zeebee:lender:%v:register:verify:code"
 
