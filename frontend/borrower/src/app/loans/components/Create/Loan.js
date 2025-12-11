@@ -195,7 +195,7 @@ const CreateLoan = ({ form, stepBtn, gutter, isRadioStyle, ...colProps }) => {
 					<Col {...layoutCol} {...(colProps || {})}>
 						<Form.Item
 							label="Existing lender"
-							name="existing_lender_company"
+							name={['loan_property', 'existing_lender_company']}
 							getValueFromEvent={(v) => capitalizeFirstLetter(v.target.value)}
 						>
 							<Input placeholder="Enter existing lender" />

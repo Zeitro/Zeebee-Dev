@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { getSelectOptions, getLenders, getBorrowers } from '@repo/shared-methods/api';
 export const useOptionsStore = create((set) => ({
+	// loan创建或详情时需要的下拉选项
 	lenderOptions: [],
 	borrowerOptions: [],
 	loanPendingStatus: [], //pending中的状态，传值loan_pending_status
@@ -16,6 +17,7 @@ export const useOptionsStore = create((set) => ({
 	serviceTypeOptions: [], //loan_third_service_type
 	sexOptions: [], //applicant_sex
 	bankruptcyChapterOptions: [], //bankruptcy_chapter
+	// ---------以下为其他公共下拉选项----------
 	getOptions: async (name, key) => {
 		const { options } = await getSelectOptions(name);
 		return (
