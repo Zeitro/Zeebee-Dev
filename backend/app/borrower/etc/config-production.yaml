@@ -94,5 +94,7 @@ RpcConf:
   LenderUrl: https://agent.zeebeeloans.com
   VerifyEmailUrl: https://app.zeebeeloans.com/login/verifyEmail
   ResetPwdUrl: https://app.zeebeeloans.com/login/resetPassword
+  InviteUserUrl: https://app.zeebeeloans.com/login/joinOrganization
+  InviteUserExpireSeconds: 86400
   PreApprovalLoanExpireSeconds: 86400
   HighCostLimitValue: 806500
