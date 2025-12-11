@@ -320,14 +320,14 @@ func (l *OrganizationUserLogic) SendInviteEmail(ctx context.Context, input dto.O
 }
 
 // AcceptInvitation accept organization invitation to join organization
-func (l *OrganizationUserLogic) AcceptInvitation(ctx context.Context, input dto.OrganizationUserAcceptInvitationRequestDto) (user bo.UserBo, organizationUser bo.OrganizationUserBo, err error) {
+func (l *OrganizationUserLogic) AcceptInvitation(ctx context.Context, input dto.OrganizationUserAcceptInvitationRequestDto) (user bo.UserBo, err error) {
 	key := stringx.Format(constants.UserInviteCode, input.UserType, input.Email, input.OrganizationId)
 	code, err := l.redisCli.Get(ctx, key)
 	if err != nil {
-		return user, organizationUser, errorx.WithStack(err)
+		return user, errorx.WithStack(err)
 	}
 	if len(code) == 0 || code != input.Code {
-		return user, organizationUser, errorx.New("Invalid Code")
+		return user, errorx.New("Invalid Code")
 	}
 	var organizationUserModel *model.OrganizationUser
 	var userModel *model.User
@@ -358,39 +358,26 @@ func (l *OrganizationUserLogic) AcceptInvitation(ctx context.Context, input dto.
 			return innerErr
 		}
 
-		userUpdateColumns := map[string]interface{}{
-			"default_organization_id": input.OrganizationId,
-		}
+		userModel.DefaultOrganizationId = input.OrganizationId
+
 		if len(userModel.FirstName) == 0 {
-			userUpdateColumns["first_name"] = input.FirstName
-			userUpdateColumns["last_name"] = input.LastName
-			userUpdateColumns["full_name"] = stringx.FormatFullName(input.FirstName, "", input.LastName)
+			userModel.FirstName = input.FirstName
+			userModel.LastName = input.LastName
+			userModel.FullName = stringx.FormatFullName(input.FirstName, "", input.LastName)
 		}
 		if userModel.Status == constants.UserStatusUnverified {
-			userUpdateColumns["status"] = constants.UserStatusActive
+			userModel.Status = constants.UserStatusActive
 		}
-		if len(userUpdateColumns) > 0 {
-			innerErr = l.repos.UserRepo.UpdateColumnsByIdWithTx(ctx, tx, userModel.Id, userUpdateColumns)
-			if innerErr != nil {
-				return innerErr
-			}
+		userModel.RemoveRelationships()
+		userModel, innerErr = l.repos.UserRepo.UpdateOneByIdWithTx(ctx, tx, userModel.Id, userModel)
+		if innerErr != nil {
+			return innerErr
 		}
 
 		return innerErr
 	})
 	if err != nil {
-		return user, organizationUser, err
-	}
-
-	err = copier.CopyWithOption(&organizationUser, organizationUserModel, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
-	})
-	if err != nil {
-		return user, organizationUser, errorx.GetFailedTransRespErr(err)
+		return user, err
 	}
 	err = copier.CopyWithOption(&user, userModel, copier.Option{
 		DeepCopy:      true,
@@ -399,7 +386,7 @@ func (l *OrganizationUserLogic) AcceptInvitation(ctx context.Context, input dto.
 			copierx.TimeToRFC3339Str(),
 		},
 	})
-	return user, organizationUser, nil
+	return user, nil
 }
 
 // UpdateOrganizationUser update organization user information
