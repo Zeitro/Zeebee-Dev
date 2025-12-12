@@ -56,7 +56,7 @@ export const getCrumbs = (currentPath, routes) => {
 			// 动态参数匹配
 			match = routes.find((r) => matchRoute(r.path, path));
 		}
-		if (match && !match?.isPageNotFound) {
+		if (match) {
 			// 动态参数面包屑可自定义显示
 			let title = match.title;
 			// if (/:/.test(match.path)) {
@@ -67,7 +67,7 @@ export const getCrumbs = (currentPath, routes) => {
 				title,
 			};
 			// 最后一个不需要path
-			if (segments.length - 1 !== i) {
+			if (segments.length - 1 !== i && !match?.isPageNotFound) {
 				crumbItem.path = path;
 			}
 			breadcrumbs.push(crumbItem);

@@ -9,6 +9,7 @@ import { createLoanSteps } from '@/enum/loan';
 import { createRequest } from '@repo/shared-methods/utils';
 import { loan_pending } from '@/enum/common';
 import { BtnPopUpModal } from '@repo/shared-methods';
+import _ from 'lodash';
 const CreateLoanPage = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -49,11 +50,7 @@ const CreateLoanPage = () => {
 				return;
 			}
 			// add loan
-			const body = {
-				...(loanData[0] || {}),
-				...(loanData[1] || {}),
-				...(values || {}),
-			};
+			const body = _.merge({}, loanData[0] || {}, loanData[1] || {}, values || {});
 
 			body.applicants = body?.applicants.filter(
 				(i) => i.first_name || i.mid_name || i.last_name,
@@ -74,16 +71,20 @@ const CreateLoanPage = () => {
 		}
 	}, [currentStep, form, loanData, request, router]);
 
+	// 询价
+	const handleQuote = () => {};
+
 	// 从property详情跳转的创建loan
 	const getProperty = async () => {
 		const data = await request(api);
 		const newData = {
 			loan_property: {
 				// property_type: data.property_type,
-				property_base: {
-					unit: data.unit,
-					address: data.address,
-				},
+				// property_base: {
+				unit: data.unit,
+				address: data.address,
+				borrower_property_id: Number(searchParams.get('propertyId')),
+				// },
 			},
 		};
 		form.setFieldsValue(newData);
@@ -107,6 +108,14 @@ const CreateLoanPage = () => {
 					Cancel
 				</BtnPopUpModal>
 				<Space size={8}>
+					{/* {currentStep === 2 && (
+						<QuoteBtn
+							disabled={
+								loanData[0]?.stage === 'Pending' &&
+								loanData[0]?.pending_status === 'Quoting'
+							}
+						/>
+					)} */}
 					{!!currentStep && (
 						<Button onClick={() => setCurrentStep((v) => v - 1)}>Back</Button>
 					)}
@@ -116,7 +125,7 @@ const CreateLoanPage = () => {
 				</Space>
 			</Col>
 		),
-		[currentStep, handleNext, loading, router],
+		[currentStep, handleNext, loading, loanData, router],
 	);
 	const stepContent = useMemo(
 		() => ({
