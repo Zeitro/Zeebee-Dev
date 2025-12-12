@@ -67,7 +67,7 @@ type OrganizationUserUpdateRequest struct {
 	Id        int64   `path:"id" validate:"required"`
 	FirstName string  `json:"first_name" validate:"required,min=2,max=100"`
 	LastName  string  `json:"last_name" validate:"required,min=2,max=100"`
-	Phone     string  `json:"phone" validate:"required,min=6,max=20"`
-	Remark    string  `json:"remark" validate:"max=255"`
+	Phone     string  `json:"phone, optional"`
+	Remark    string  `json:"remark, optional" validate:"max=255"`
 	RoleIds   []int64 `json:"role_ids,optional"`
 }
