@@ -6,7 +6,7 @@ import (
 
 	"zeebee-backend/app/borrower/config"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/constants"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/middleware"
 )
 

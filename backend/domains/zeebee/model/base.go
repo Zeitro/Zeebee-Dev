@@ -5,7 +5,7 @@ import (
 
 	"gorm.io/plugin/soft_delete"
 
-	"zeebee-backend/common/constants"
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 type Base struct {

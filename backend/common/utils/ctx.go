@@ -4,8 +4,12 @@ import (
 	"context"
 	"strconv"
 
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
+)
+
+const (
+	UserClaimCtxKey = "user_claim"
+	UserIdCtxKey    = "user_id"
 )
 
 func GetInt64FromCtx(ctx context.Context, key string) int64 {
@@ -34,7 +38,7 @@ func GetInt64FromCtx(ctx context.Context, key string) int64 {
 
 func GetUserClaimFromCtx(ctx context.Context) (claim *JWTClaims, err error) {
 	// get from ctx
-	val, ok := ctx.Value(constants.UserClaimCtxKey).(*JWTClaims)
+	val, ok := ctx.Value(UserClaimCtxKey).(*JWTClaims)
 	if ok {
 		return val, nil
 	}

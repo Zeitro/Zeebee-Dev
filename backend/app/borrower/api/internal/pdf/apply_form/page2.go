@@ -7,8 +7,8 @@ import (
 
 	"zeebee-backend/app/borrower/api/internal/pdf"
 	"zeebee-backend/app/borrower/api/internal/types"
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/stringx"
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 func (form *ApplyForm) page2() (err error) {

@@ -12,12 +12,12 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/common/uuid"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -61,7 +61,7 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 		if err != nil {
 			return nil, err
 		}
-		if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreApproval {
+		if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreapproval {
 			return nil, errorx.WithStack(errorx.New("Invalid Loan Source"))
 		}
 
@@ -287,7 +287,7 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	loan.Stage = constants.LoanStageDraft
 	loan.PendingStatus = constants.LoanPendingStatusNone
 	// loan.Source = constants.LoanSourceSystem
-	loan.Source = condition.Ternary(reqData.IsPreapproveLoan, constants.LoanSourcePreApproval, constants.LoanSourceSystem)
+	loan.Source = condition.Ternary(reqData.IsPreapproveLoan, constants.LoanSourcePreapproval, constants.LoanSourceSystem)
 	if reqData.LenderCompanyId > 0 {
 		lender, err := l.svcCtx.OrganizationRepo.FindOneById(l.ctx, reqData.LenderCompanyId)
 		if err != nil {

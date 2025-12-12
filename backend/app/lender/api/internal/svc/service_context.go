@@ -6,7 +6,7 @@ import (
 
 	"zeebee-backend/app/lender/config"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/constants"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/middleware"
 )
 

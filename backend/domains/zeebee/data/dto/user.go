@@ -1,6 +1,6 @@
 package dto
 
-import "zeebee-backend/common/constants"
+import "zeebee-backend/domains/zeebee/constants"
 
 type UserChangePasswordRequestDto struct {
 	OldPassword string             `json:"old_password"`
