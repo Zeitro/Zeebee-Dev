@@ -134,67 +134,6 @@ func (repo *UserRepo) GetUser(ctx context.Context, id int64, userType constants.
 	return res, errorx.WithStack(err)
 }
 
-// GetOrganizationUser get user by id and organization id
-// func (repo *UserRepo) GetOrganizationUser(ctx context.Context, id int64, organizationId int64, userType constants.UserType) (res *model.User, err error) {
-// 	err = repo.BaseRepo.Client(ctx).
-// 		Where("id = ? and type = ?", id, userType).
-// 		Preload("Organizations", func(db *gorm.DB) *gorm.DB {
-// 			return db.Where("id = ?", organizationId)
-// 		}).
-// 		Preload("Roles", func(db *gorm.DB) *gorm.DB {
-// 			return db.Where("organization_id = ?", organizationId)
-// 		}).
-// 		First(&res).Error
-// 	if err != nil {
-// 		return res, errorx.WithStack(err)
-// 	}
-//
-// 	if len(res.Organizations) == 0 {
-// 		return res, errorx.New("User Not Belongs To This Organization")
-// 	}
-// 	return res, errorx.WithStack(err)
-// }
-
-// RegisterWithOrganization
-// func (repo *UserRepo) RegisterWithOrganization(ctx context.Context, user *model.User, organization *model.Organization, relationStatus constants.OrganizationUserStatus) (res *model.User, err error) {
-// 	organizationRepo := NewOrganizationRepo(repo.BaseRepo.Client(ctx))
-// 	relationRepo := NewOrganizationUserRepo(repo.BaseRepo.Client(ctx))
-// 	err = repo.Transaction(ctx, func(tx *gorm.DB) error {
-// 		var innerErr error
-// 		if organization.Id == 0 {
-// 			organization, innerErr = organizationRepo.CreateWithTx(ctx, tx, organization, false)
-// 			if innerErr != nil {
-// 				return innerErr
-// 			}
-// 		}
-// 		user.DefaultOrganizationId = organization.Id
-// 		user, innerErr = repo.CreateWithTx(ctx, tx, user, false)
-// 		if innerErr != nil {
-// 			return innerErr
-// 		}
-// 		organization.OwnerId = user.Id
-// 		innerErr = organizationRepo.UpdateOwnerIdWithTx(ctx, tx, organization.OwnerId, user.Id)
-// 		if innerErr != nil {
-// 			return innerErr
-// 		}
-// 		_, innerErr = relationRepo.CreateWithTx(ctx, tx, &model.OrganizationUser{
-// 			OrganizationId: organization.Id,
-// 			UserId:         user.Id,
-// 			Status:         relationStatus,
-// 			FirstName:      user.FirstName,
-// 			MidName:        user.MidName,
-// 			LastName:       user.LastName,
-// 			FullName:       user.FullName,
-// 			Phone:          user.Phone,
-// 		}, false)
-//
-// 		return innerErr
-// 	})
-// 	res = user
-//
-// 	return res, errorx.WithStack(err)
-// }
-
 // GetUserByEmail return
 func (repo *UserRepo) GetUserByEmail(ctx context.Context, email string, userType constants.UserType) (res *model.User, err error) {
 	err = repo.BaseRepo.Client(ctx).
