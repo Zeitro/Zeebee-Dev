@@ -10,8 +10,8 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
 )
 
@@ -48,7 +48,7 @@ func (l *UpdateLoanStageLogic) UpdateLoanStage(in *lender.LoanUpdateStageRequest
 		return nil, errorx.Wrap(err, "Failed To Get Loan")
 	}
 
-	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreApproval {
+	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreapproval {
 		return nil, errorx.WithStack(errorx.New("Invalid Loan Source"))
 	}
 

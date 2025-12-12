@@ -7,7 +7,11 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
 
-	"zeebee-backend/common/constants"
+	"zeebee-backend/domains/zeebee/constants"
+)
+
+const (
+	JwtTokenCtxKey = "jwt_token"
 )
 
 // JWTClaims JWT声明结构

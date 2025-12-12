@@ -6,9 +6,9 @@ import (
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
 
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/timex"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/repo"
 )

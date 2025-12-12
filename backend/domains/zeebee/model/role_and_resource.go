@@ -1,6 +1,6 @@
 package model
 
-import "zeebee-backend/common/constants"
+import "zeebee-backend/domains/zeebee/constants"
 
 type RoleAndResource struct {
 	Id         int64               `gorm:"primaryKey;autoIncrement;<-:create" json:"id"`

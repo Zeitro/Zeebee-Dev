@@ -57,10 +57,10 @@ type LoanSource string
 
 const LoanSourceName = "loan_source"
 const (
-	LoanSourceBorrower    LoanSource = "borrower"
-	LoanSourceLender      LoanSource = "lender"
-	LoanSourceSystem      LoanSource = "system"
-	LoanSourcePreApproval LoanSource = "pre approval"
+	LoanSourceBorrower    LoanSource = "Borrower"
+	LoanSourceLender      LoanSource = "Lender"
+	LoanSourceSystem      LoanSource = "System"
+	LoanSourcePreapproval LoanSource = "Preapproval"
 )
 
 type LienPosition string
@@ -229,8 +229,8 @@ func init() {
 			Value: string(LoanSourceSystem),
 		},
 		{
-			Label: string(LoanSourcePreApproval),
-			Value: string(LoanSourcePreApproval),
+			Label: string(LoanSourcePreapproval),
+			Value: string(LoanSourcePreapproval),
 		},
 	})
 	// register lien position
