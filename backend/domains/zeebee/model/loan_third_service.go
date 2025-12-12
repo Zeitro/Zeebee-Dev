@@ -1,6 +1,6 @@
 package model
 
-import "zeebee-backend/common/constants"
+import "zeebee-backend/domains/zeebee/constants"
 
 // LoanThirdService 三方服务公司
 type LoanThirdService struct {

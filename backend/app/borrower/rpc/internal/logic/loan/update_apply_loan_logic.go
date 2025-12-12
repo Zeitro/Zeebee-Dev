@@ -9,8 +9,8 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -59,7 +59,7 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 
 	sources := []constants.LoanSource{
 		constants.LoanSourceSystem,
-		constants.LoanSourcePreApproval,
+		constants.LoanSourcePreapproval,
 	}
 	if !slice.Contain(sources, loan.Source) {
 		return nil, errorx.WithStack(errorx.New("Invalid Loan Source"))

@@ -1,6 +1,6 @@
 package model
 
-import "zeebee-backend/common/constants"
+import "zeebee-backend/domains/zeebee/constants"
 
 type Api struct {
 	Base

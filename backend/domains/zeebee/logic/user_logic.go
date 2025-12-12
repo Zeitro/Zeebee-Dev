@@ -12,11 +12,11 @@ import (
 	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
 
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/redisx"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/utils"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/repo"
@@ -58,7 +58,7 @@ func (l *UserLogic) GetUserClaimFromCtx(ctx context.Context) (claim utils.JwtUse
 		err = status.Error(codes.Unauthenticated, "Not Login")
 		return claim, errorx.WithStack(err)
 	}
-	tokens := md[constants.JwtTokenCtxKey]
+	tokens := md[utils.JwtTokenCtxKey]
 	if len(tokens) == 0 {
 		err = status.Error(codes.Unauthenticated, "Not Login")
 		return claim, errorx.WithStack(err)
@@ -433,7 +433,7 @@ func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, us
 			return nil, errorx.WithStack(err)
 		}
 		isAdmin = slice.ContainBy(roles, func(role *model.Role) bool {
-			return role.Name == constants.RoleAdmin
+			return role.Name == constants.AdminRoleName
 		})
 		isOwner = slice.ContainBy(user.Organizations, func(item *model.Organization) bool {
 			return item.Id == currentOrganization.Id && item.OwnerId == user.Id

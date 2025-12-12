@@ -1,7 +1,7 @@
 package dto
 
 import (
-	"zeebee-backend/common/constants"
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 type OrganizationUserCreateRequestDto struct {

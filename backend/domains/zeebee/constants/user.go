@@ -20,14 +20,6 @@ const (
 	UserTypeAdmin    UserType = "Admin"
 )
 
-const (
-	UserIdCtxKey             = "user_id"
-	UserTypeCtxKey           = "user_type"
-	UserOrganizationIdCtxKey = "organization_id"
-	UserClaimCtxKey          = "user_claim"
-	JwtTokenCtxKey           = "jwt_token"
-)
-
 func init() {
 	// register user status
 	enums.Register(UserStatusName, []enums.EnumOpt{

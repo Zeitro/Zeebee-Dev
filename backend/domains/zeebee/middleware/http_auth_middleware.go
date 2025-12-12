@@ -7,9 +7,9 @@ import (
 
 	"google.golang.org/grpc/metadata"
 
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/response"
 	"zeebee-backend/common/utils"
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 type HttpAuthMiddleware struct {
@@ -41,9 +41,9 @@ func (m *HttpAuthMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		reqCtx := r.Context()
-		nextCtx := context.WithValue(reqCtx, constants.UserClaimCtxKey, claims)
-		nextCtx = context.WithValue(nextCtx, constants.UserIdCtxKey, claims.UserId)
-		nextCtx = metadata.AppendToOutgoingContext(nextCtx, constants.JwtTokenCtxKey, token)
+		nextCtx := context.WithValue(reqCtx, utils.UserClaimCtxKey, claims)
+		nextCtx = context.WithValue(nextCtx, utils.UserIdCtxKey, claims.UserId)
+		nextCtx = metadata.AppendToOutgoingContext(nextCtx, utils.JwtTokenCtxKey, token)
 		newReq := r.WithContext(nextCtx)
 
 		next(w, newReq)

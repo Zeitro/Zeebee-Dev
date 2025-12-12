@@ -20,12 +20,12 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/constants"
 	email2 "zeebee-backend/common/email"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/limiter"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/utils"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
 )
 
@@ -287,7 +287,7 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int6
 
 // sendLoginUrlEmail send login url email
 func sendLoginUrlEmail(ctx context.Context, email string, firstName string) (err error) {
-	key := stringx.Format(constants.BorrowerLoginEmail, email)
+	key := stringx.Format(constants.LoginEmail, constants.UserTypeBorrower, email)
 	limitOpt := limiter.WithRedisLimit(
 		global.Config.LimiterConf.SendLoginEmail.Rate,
 		time.Second*time.Duration(global.Config.LimiterConf.SendLoginEmail.Period),

@@ -9,8 +9,8 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/data/dto"
 
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/gormx"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
 )
 
@@ -269,7 +269,7 @@ func (repo *LoanRepo) PageForLenderCompany(ctx context.Context, pageReq dto.Loan
 	if len(filter.Stage) > 0 {
 		query = query.Where(fmt.Sprintf("%s.stage = ?", loanTable), filter.Stage)
 		if filter.Stage == string(constants.LoanStageDraft) {
-			query = query.Where(fmt.Sprintf("%s.source in ?", loanTable), []constants.LoanSource{constants.LoanSourcePreApproval, constants.LoanSourceSystem})
+			query = query.Where(fmt.Sprintf("%s.source in ?", loanTable), []constants.LoanSource{constants.LoanSourcePreapproval, constants.LoanSourceSystem})
 		}
 	}
 	hasJoinProperty := false

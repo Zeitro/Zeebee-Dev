@@ -8,8 +8,8 @@ import (
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/lender/rpc/internal/svc"
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
 )
 
@@ -37,7 +37,7 @@ func (l *LoanBaseLogic) GetLenderLoan(loanId int64, lenderOrganizationId int64, 
 		return nil, errorx.New("Invalid Lender Organization")
 	}
 
-	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreApproval {
+	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreapproval {
 		return nil, errorx.New("Invalid Loan Source")
 	}
 

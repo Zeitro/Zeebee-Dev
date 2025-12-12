@@ -5,7 +5,7 @@ import (
 
 	"github.com/lib/pq"
 
-	"zeebee-backend/common/constants"
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 type Loan struct {

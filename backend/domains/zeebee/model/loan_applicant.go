@@ -3,7 +3,7 @@ package model
 import (
 	"database/sql"
 
-	"zeebee-backend/common/constants"
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 type LoanApplicant struct {
