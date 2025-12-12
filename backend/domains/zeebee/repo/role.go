@@ -6,9 +6,9 @@ import (
 
 	"gorm.io/gorm"
 
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 )

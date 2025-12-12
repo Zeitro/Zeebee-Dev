@@ -9,10 +9,10 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/limiter"
 	"zeebee-backend/common/stringx"
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 type SendVerifyEmailLogic struct {
@@ -38,7 +38,7 @@ func (l *SendVerifyEmailLogic) SendVerifyEmail(in *borrower.SendVerifyEmailReque
 
 	email := in.Data.Email
 	// check send email limit
-	key := stringx.Format(constants.BorrowerRegisterVerifyEmail, email)
+	key := stringx.Format(constants.RegisterVerifyEmail, constants.UserTypeBorrower, email)
 	limitOpt := limiter.WithRedisLimit(
 		global.Config.LimiterConf.SendVerityEmail.Rate,
 		time.Second*time.Duration(global.Config.LimiterConf.SendVerityEmail.Period),

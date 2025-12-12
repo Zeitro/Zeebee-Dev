@@ -12,8 +12,8 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
 )
 
@@ -133,7 +133,7 @@ func (l *AddFilesLogic) prepare(in *borrower.LoanDocumentAddFilesRequest) (loan 
 	if loan.Stage != constants.LoanStagePending {
 		return nil, nil, errorx.WithStack(errorx.New("Loan Is Not In Pending Stage"))
 	}
-	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreApproval {
+	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreapproval {
 		return nil, nil, errorx.WithStack(errorx.New("Loan Source Is Not System"))
 	}
 

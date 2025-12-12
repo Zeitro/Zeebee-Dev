@@ -10,7 +10,7 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/constants"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
 
 	"zeebee-backend/common/errorx"
@@ -54,7 +54,7 @@ func (l *UpdateLoanPendingStatusLogic) UpdateLoanPendingStatus(in *lender.LoanUp
 	if loan.Stage != constants.LoanStagePending {
 		return nil, errorx.New("Loan Is Not In Pending Stage")
 	}
-	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreApproval {
+	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreapproval {
 		return nil, errorx.WithStack(errorx.New("Invalid Loan Source"))
 	}
 	// Save original status for operation log

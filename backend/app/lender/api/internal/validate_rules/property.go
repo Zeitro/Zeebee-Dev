@@ -5,8 +5,8 @@ import (
 	"github.com/go-playground/validator/v10"
 
 	"zeebee-backend/app/lender/api/internal/types"
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/timex"
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 var PropertyUnitTag = "lender_invalid_unit_for_property_type"

@@ -13,11 +13,11 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/common/utils"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
 )
 
@@ -62,7 +62,7 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 	if len(oldApplicants) == 0 {
 		return nil, errorx.WithStack(errorx.New("Applicant Is Not Found"))
 	}
-	if loanModel.Source != constants.LoanSourceBorrower && loanModel.Source != constants.LoanSourcePreApproval {
+	if loanModel.Source != constants.LoanSourceBorrower && loanModel.Source != constants.LoanSourcePreapproval {
 		return nil, errorx.WithStack(errorx.New("Loan Source Is Not Third Party"))
 	}
 	loanPropertyModel := loanModel.LoanProperty

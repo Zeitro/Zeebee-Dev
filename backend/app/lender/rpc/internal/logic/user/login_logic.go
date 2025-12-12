@@ -10,8 +10,8 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/constants"
 	logic2 "zeebee-backend/domains/zeebee/logic"
 )
 

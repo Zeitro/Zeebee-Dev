@@ -16,11 +16,11 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/email"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/preapproval_engine"
 	"zeebee-backend/common/uuid"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/repo"
 )
@@ -138,7 +138,7 @@ func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalReque
 	}
 
 	selfOrganization, err := l.svcCtx.OrganizationRepo.FindOneByColumns(l.ctx, map[string]interface{}{
-		"owner_type": constants.LenderCompanyOwnerTypeSelf,
+		"owner_type": constants.OrganizationOwnerTypeSelf,
 		"type":       constants.UserTypeBorrower,
 	})
 	if err != nil {

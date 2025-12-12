@@ -11,11 +11,11 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/global"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/constants"
 	email2 "zeebee-backend/common/email"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/limiter"
 	"zeebee-backend/common/stringx"
+	"zeebee-backend/domains/zeebee/constants"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -47,7 +47,7 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *lender.SendRese
 	}
 
 	// rate limit
-	key := stringx.Format(constants.LenderResetPwdEmail, email)
+	key := stringx.Format(constants.ResetPwdEmail, constants.UserTypeLender, email)
 	limitOpt := limiter.WithRedisLimit(
 		global.Config.LimiterConf.SendResetPwdEmail.Rate,
 		time.Second*time.Duration(global.Config.LimiterConf.SendResetPwdEmail.Period),
