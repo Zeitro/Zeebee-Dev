@@ -115,7 +115,7 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 				{isNoNav ? (
 					children
 				) : (
-					<div className="h-full flex items-stretch">
+					<div className="h-full flex items-stretch customRoot">
 						<SiderBar />
 						<div className="flex-1 overflow-hidden flex flex-col">
 							<NewHeader />

@@ -113,8 +113,8 @@ const CardItem = ({
 						></BtnPopUpModal>
 						<DeleteBtn
 							type="default"
-							title="Are you sure delete this borrower?"
-							content={item.full_name}
+							title="Are you sure delete this property?"
+							content={assemblyAddress(item?.address)}
 							onOk={() => handleDelete(item.id)}
 							loading={loading}
 							size="small"
