@@ -5,7 +5,7 @@ import (
 
 	"zeebee-backend/common/errorx"
 
-	"zeebee-backend/common/constants"
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 // ExperienceLevel represents the borrower's experience level

@@ -7,8 +7,8 @@ import (
 
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -53,11 +53,11 @@ func (l *DeleteFileLogic) DeleteFile(in *borrower.FileDeleteRequest) (resp *borr
 		return nil, errorx.Wrap(err, "Failed To Find Loan Document")
 	}
 
-	loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, loanDocument.LoanId, in.Data.BorrowerId)
+	loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, loanDocument.LoanId, in.Data.OrganizationId)
 	if err != nil {
 		return nil, errorx.Wrap(err, "Failed To Get Loan")
 	}
-	if loan.BorrowerId != in.Data.BorrowerId {
+	if loan.BorrowerOrganizationId != in.Data.OrganizationId {
 		return nil, errorx.WithStack(errorx.New("Loan Does Not Belong To Borrower"))
 	}
 

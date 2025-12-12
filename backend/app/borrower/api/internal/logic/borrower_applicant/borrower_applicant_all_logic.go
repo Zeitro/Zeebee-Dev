@@ -5,13 +5,12 @@ import (
 
 	"github.com/jinzhu/copier"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type BorrowerApplicantAllLogic struct {
@@ -30,16 +29,9 @@ func NewBorrowerApplicantAllLogic(ctx context.Context, svcCtx *svc.ServiceContex
 }
 
 func (l *BorrowerApplicantAllLogic) BorrowerApplicantAll(req *types.EmptyRequest) (resp *types.BorrowerApplicantAllResponse, err error) {
-	// get borrowerId
-	borrowerId, err := utils.GetAccountIdFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
 
 	rpcResp, err := l.svcCtx.BorrowerApplicantRpcClient.All(l.ctx, &borrower.BorrowerApplicantAllRequest{
-		Data: &borrower.BorrowerApplicantAllRequestData{
-			BorrowerId: borrowerId,
-		},
+		Data: &borrower.BorrowerApplicantAllRequestData{},
 	})
 	if err != nil {
 		return nil, err

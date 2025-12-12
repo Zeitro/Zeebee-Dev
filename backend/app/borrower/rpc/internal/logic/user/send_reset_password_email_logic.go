@@ -13,11 +13,11 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/constants"
 	email2 "zeebee-backend/common/email"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/limiter"
 	"zeebee-backend/common/stringx"
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 type SendResetPasswordEmailLogic struct {
@@ -47,7 +47,7 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *borrower.SendRe
 	}
 
 	// rate limit
-	key := stringx.Format(constants.BorrowerResetPwdEmail, email)
+	key := stringx.Format(constants.ResetPwdEmail, constants.UserTypeBorrower, email)
 	limitOpt := limiter.WithRedisLimit(
 		global.Config.LimiterConf.SendResetPwdEmail.Rate,
 		time.Second*time.Duration(global.Config.LimiterConf.SendResetPwdEmail.Period),
@@ -61,18 +61,18 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *borrower.SendRe
 	}
 
 	// get user
-	user, err := l.svcCtx.UserRepo.GetBorrowerUserByEmail(l.ctx, email)
+	user, err := l.svcCtx.UserRepo.GetUserByEmail(l.ctx, email, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	if user == nil || user.Borrower == nil {
+	if user == nil {
 		return nil, errorx.WithStack(errorx.New("User Not Found"))
 	}
 
 	go func() {
 		ctx := context.WithoutCancel(l.ctx)
 		// send email
-		err := l.sendResetPwdEmail(email, user.Borrower.FirstName)
+		err := l.sendResetPwdEmail(email, user.FirstName)
 		if err != nil {
 			err = errorx.Wrap(err, "Send Reset Password Email Error")
 			l.WithContext(ctx).Error(err)
@@ -85,7 +85,7 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *borrower.SendRe
 func (l *SendResetPasswordEmailLogic) sendResetPwdEmail(email string, firstName string) (err error) {
 	ctx := context.WithoutCancel(l.ctx)
 	var code string
-	redisKey := stringx.Format(constants.BorrowerResetPwdCode, email)
+	redisKey := stringx.Format(constants.ResetPwdCode, constants.UserTypeBorrower, email)
 	code, _ = global.GetRedis().Get(ctx, redisKey)
 	if len(code) == 0 {
 		code = random.RandNumeral(10)

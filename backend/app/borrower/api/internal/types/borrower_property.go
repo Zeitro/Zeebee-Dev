@@ -30,6 +30,8 @@ type PropertyDetailResponse struct {
 
 type PropertyDetailSummaryResponse struct {
 	Id                        int64         `json:"id"`
+	CreatorId                 int64         `json:"creator_id"`
+	CreatorName               string        `json:"creator_name"`
 	PropertyType              string        `json:"property_type"`
 	TotalAmount               float64       `json:"total_amount"`
 	Unit                      int32         `json:"unit"`

@@ -9,10 +9,10 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/limiter"
 	"zeebee-backend/common/stringx"
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 type SendVerifyEmailLogic struct {
@@ -38,7 +38,7 @@ func (l *SendVerifyEmailLogic) SendVerifyEmail(in *borrower.SendVerifyEmailReque
 
 	email := in.Data.Email
 	// check send email limit
-	key := stringx.Format(constants.BorrowerRegisterVerifyEmail, email)
+	key := stringx.Format(constants.RegisterVerifyEmail, constants.UserTypeBorrower, email)
 	limitOpt := limiter.WithRedisLimit(
 		global.Config.LimiterConf.SendVerityEmail.Rate,
 		time.Second*time.Duration(global.Config.LimiterConf.SendVerityEmail.Period),
@@ -52,7 +52,7 @@ func (l *SendVerifyEmailLogic) SendVerifyEmail(in *borrower.SendVerifyEmailReque
 	}
 
 	// check user status
-	user, err := l.svcCtx.UserRepo.GetBorrowerUserByEmail(l.ctx, email)
+	user, err := l.svcCtx.UserRepo.GetUserByEmail(l.ctx, email, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}
@@ -61,15 +61,11 @@ func (l *SendVerifyEmailLogic) SendVerifyEmail(in *borrower.SendVerifyEmailReque
 		return nil, errorx.WithStack(errorx.New("User Is Verified"))
 	}
 
-	if user.Borrower == nil {
-		return nil, errorx.WithStack(errorx.New("User Is Not Found"))
-	}
-
 	// send email
 	go func() {
 		// send account validate email
 		ctx := context.WithoutCancel(l.ctx)
-		err := sendRegisterVerifyUrlEmail(ctx, email, user.Borrower.FirstName)
+		err := sendRegisterVerifyUrlEmail(ctx, email, user.FirstName)
 		if err != nil {
 			l.WithContext(ctx).Error(err)
 		}

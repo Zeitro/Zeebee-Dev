@@ -33,11 +33,11 @@ func (l *RegisterLogic) Register(req *types.UserRegisterRequest) (resp *types.Us
 	// call rpc server
 	rpcResp, err := l.svcCtx.UserRpcClient.Register(l.ctx, &lender.UserRegisterRequest{
 		Data: &lender.UserRegisterRequestData{
-			Email:           req.Email,
-			Password:        req.Password,
-			FirstName:       req.FirstName,
-			LastName:        req.LastName,
-			LenderCompanyId: req.LenderCompanyId,
+			Email:          req.Email,
+			Password:       req.Password,
+			FirstName:      req.FirstName,
+			LastName:       req.LastName,
+			OrganizationId: req.OrganizationId,
 		},
 	})
 	if err != nil {

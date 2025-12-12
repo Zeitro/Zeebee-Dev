@@ -5,8 +5,8 @@ import (
 	"github.com/go-playground/validator/v10"
 
 	"zeebee-backend/app/borrower/api/internal/types"
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/timex"
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 var PropertyUnitTag = "invalid_unit_for_property_type"
@@ -43,77 +43,6 @@ func LoanPreApprovalRequestProperty(sl validator.StructLevel) {
 	default:
 		if property.Unit < 1 {
 			sl.ReportError(property.Unit, property.PropertyType, "Unit", PropertyUnitTag, " >= 1")
-		}
-	}
-}
-
-// LoanApplyPropertyEntry
-// func EditLoanPropertyEntry(sl validator.StructLevel) {
-// 	property, ok := sl.Current().Interface().(types.EditLoanPropertyEntry)
-// 	if !ok {
-// 		sl.ReportError(property, "property", "Property", "property_type", "Invalid Property")
-// 		return
-// 	}
-// 	switch property.PropertyType {
-// 	case string(constants.PropertyTypeSingleFamilyResidence):
-// 		if property.Unit != 1 {
-// 			sl.ReportError(property.Unit, property.PropertyType, "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
-// 		}
-// 	case string(constants.PropertyTypeTwoUnit):
-// 		if property.Unit != 2 {
-// 			sl.ReportError(property.Unit, property.PropertyType, "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
-// 		}
-// 	case string(constants.PropertyTypeThreeUnit):
-// 		if property.Unit != 3 {
-// 			sl.ReportError(property.Unit, property.PropertyType, "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
-// 		}
-// 	case string(constants.PropertyTypeFourUnit):
-// 		if property.Unit != 4 {
-// 			sl.ReportError(property.Unit, property.PropertyType, "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
-// 		}
-// 	case string(constants.PropertyTypeFourPlusMulti):
-// 		if property.Unit < 4 {
-// 			sl.ReportError(property.Unit, property.PropertyType, "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
-// 		}
-// 	default:
-// 		if property.Unit < 1 {
-// 			sl.ReportError(property.Unit, property.PropertyType, "Unit", PropertyUnitTag, " >= 1")
-// 		}
-// 	}
-// }
-
-// LoanPropertyEntry
-func LoanPropertyEntry(sl validator.StructLevel) {
-	val := sl.Current().Interface()
-	property, ok := val.(types.LoanPropertyEntry)
-	if !ok {
-		sl.ReportError(property, "property", "Property", "property_type", "Invalid Property")
-		return
-	}
-	switch property.PropertyType {
-	case string(constants.PropertyTypeSingleFamilyResidence):
-		if property.Unit != 1 {
-			sl.ReportError(property.Unit, "unit", "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
-		}
-	case string(constants.PropertyTypeTwoUnit):
-		if property.Unit != 2 {
-			sl.ReportError(property.Unit, "unit", "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
-		}
-	case string(constants.PropertyTypeThreeUnit):
-		if property.Unit != 3 {
-			sl.ReportError(property.Unit, "unit", "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
-		}
-	case string(constants.PropertyTypeFourUnit):
-		if property.Unit != 4 {
-			sl.ReportError(property.Unit, "unit", "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
-		}
-	case string(constants.PropertyTypeFourPlusMulti):
-		if property.Unit < 4 {
-			sl.ReportError(property.Unit, "unit", "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
-		}
-	default:
-		if property.Unit < 1 {
-			sl.ReportError(property.Unit, "unit", "Unit", PropertyUnitTag, " >= 1")
 		}
 	}
 }

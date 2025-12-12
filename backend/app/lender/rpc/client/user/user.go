@@ -101,8 +101,8 @@ type (
 	StorageCreatePresignedUrlResponse       = lender.StorageCreatePresignedUrlResponse
 	StorageCreatePresignedUrlResponseData   = lender.StorageCreatePresignedUrlResponseData
 	StringSliceResponse                     = lender.StringSliceResponse
-	SwitchLenderCompanyRequest              = lender.SwitchLenderCompanyRequest
-	SwitchLenderCompanyRequestData          = lender.SwitchLenderCompanyRequestData
+	SwitchOrganizationRequest               = lender.SwitchOrganizationRequest
+	SwitchOrganizationRequestData           = lender.SwitchOrganizationRequestData
 	UsCitiesRequest                         = lender.UsCitiesRequest
 	UsCitiesRequestData                     = lender.UsCitiesRequestData
 	UserInfoRequest                         = lender.UserInfoRequest
@@ -117,7 +117,7 @@ type (
 	UserRegisterResponseData                = lender.UserRegisterResponseData
 	UserinfoResponse                        = lender.UserinfoResponse
 	UserinfoResponseData                    = lender.UserinfoResponseData
-	UserinfoResponseData_Company            = lender.UserinfoResponseData_Company
+	UserinfoResponseData_Organization       = lender.UserinfoResponseData_Organization
 
 	User interface {
 		// user
@@ -127,7 +127,7 @@ type (
 		ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*ResetPasswordResponse, error)
 		SendResetPasswordEmail(ctx context.Context, in *SendResetPasswordEmailRequest, opts ...grpc.CallOption) (*SendResetPasswordEmailResponse, error)
 		UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
-		SwitchLenderCompany(ctx context.Context, in *SwitchLenderCompanyRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
+		SwitchOrganization(ctx context.Context, in *SwitchOrganizationRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
 	}
 
 	defaultUser struct {
@@ -172,7 +172,7 @@ func (m *defaultUser) UserInfo(ctx context.Context, in *UserInfoRequest, opts ..
 	return client.UserInfo(ctx, in, opts...)
 }
 
-func (m *defaultUser) SwitchLenderCompany(ctx context.Context, in *SwitchLenderCompanyRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error) {
+func (m *defaultUser) SwitchOrganization(ctx context.Context, in *SwitchOrganizationRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error) {
 	client := lender.NewUserClient(m.cli.Conn())
-	return client.SwitchLenderCompany(ctx, in, opts...)
+	return client.SwitchOrganization(ctx, in, opts...)
 }

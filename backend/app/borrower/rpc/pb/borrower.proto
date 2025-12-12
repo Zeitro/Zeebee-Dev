@@ -3,13 +3,9 @@ syntax = "proto3";
 package borrower;
 option go_package = "./borrower";
 
-message EmptyRequest {
+message EmptyRequest {}
 
-}
-
-message EmptyResponse {
-
-}
+message EmptyResponse {}
 
 message StringSliceResponse {
   repeated string data = 1;
@@ -60,9 +56,7 @@ service common {
   rpc GetUuid(EmptyRequest) returns(GetUuidResponse);
 }
 // ========================== common service end =================
-
-
-// ================= user service start ==================
+// ========================== user service start =================
 // login
 message UserLoginRequest {
   UserLoginRequestData data = 1;
@@ -97,7 +91,8 @@ message UserRegisterRequestData {
   string first_name = 3;
   string last_name = 4;
   string pre_approval_request_id = 5;
-  int64 target_lender_company_id = 6;
+  int64 lender_organization_id = 6;
+  string organization_name = 7;
 }
 message UserRegisterResponseData {
 
@@ -195,13 +190,52 @@ message UserinfoResponse {
 }
 
 message UserinfoResponseData {
+  message Organization {
+    int64 id = 1;
+    string name = 2;
+    string status = 3;
+    bool is_default = 4;
+  }
+
   int64 id = 1;
   string email = 2;
   string first_name = 3;
   string last_name = 4;
-  string phone_number = 5;
-  string address = 6 [deprecated = true];
-  string ssn = 7;
+  string full_name = 5;
+  int64 organization_id = 6;
+  string organization_name = 7;
+  string status = 8;
+  repeated Organization organizations = 9;
+  bool is_owner = 10;
+  bool is_admin = 11;
+}
+
+// switch organization
+message SwitchOrganizationRequest {
+  SwitchOrganizationRequestData data = 1;
+}
+message SwitchOrganizationRequestData {
+  int64 user_id = 1;
+  int64 organization_id = 2;
+}
+
+// edit profile
+message UserProfileEditRequest {
+  UserProfileEditRequestData data = 1;
+}
+message UserProfileEditRequestData {
+  string first_name = 1;
+  string last_name = 2;
+  string phone = 3;
+}
+
+// change password
+message ChangePasswordRequest {
+  ChangePasswordRequestData data = 1;
+}
+message ChangePasswordRequestData {
+  string old_password = 1;
+  string new_password = 2;
 }
 
 service user {
@@ -214,11 +248,12 @@ service user {
   rpc SendVerifyEmail(SendVerifyEmailRequest) returns(SendVerifyEmailResponse);
   rpc ResetPassword(ResetPasswordRequest) returns(ResetPasswordResponse);
   rpc SendResetPasswordEmail(SendResetPasswordEmailRequest) returns(SendResetPasswordEmailResponse);
+  rpc SwitchOrganization(SwitchOrganizationRequest) returns(UserLoginResponse);
+  rpc EditProfile(UserProfileEditRequest) returns(UserinfoResponse);
+  rpc ChangePassword(ChangePasswordRequest) returns(EmptyResponse);
 }
 // ================= user service end =================
-
-// ================ loan service start =================
-
+// ================= loan service start =================
 message LoanEntry {
   int64 id = 1;
   string stage = 2;
@@ -244,7 +279,7 @@ message LoanEntry {
   string created_at = 22;
   string updated_at = 23;
   int64 lender_id = 24;
-  int64 borrower_id = 25;
+  int64 creator_id = 25;
   repeated string business_strategy = 26;
   repeated LoanApplicantEntry applicants = 27;
   string source = 28;
@@ -264,6 +299,7 @@ message LoanEntry {
   repeated LoanDocumentEntry loan_documents = 42;
   string code = 43;
   int64 RequestedLoanDocumentCount = 44;
+  string creator_name = 45;
 
 }
 
@@ -284,12 +320,14 @@ message ThirdPartyLoanPropertyEditEntry {
   string purchase_date = 4;
   double purchase_amount = 5;
   string  existing_lender_company = 6;
+  double arv = 7;
 }
 message ThirdPartyLoanApplicantEditEntry {
   int64 id = 1;
   bool is_primary = 2;
   int64 borrower_applicant_id = 3;
   int32 own_percent = 4;
+
 }
 
 message LoanApplicantApplyEntry {
@@ -301,34 +339,31 @@ message LoanApplicantApplyEntry {
 
 // loan create
 message LoanCreateRequestData {
-  int64 borrower_id = 1;
-  string stage = 2;
-  string pending_status = 3;
-  string loan_purpose = 4;
-  string loan_type = 5;
-  double total_amount = 6;
-  double initial_amount = 7;
-  ThirdPartyLoanPropertyEditEntry loan_property = 8;
-  repeated ThirdPartyLoanApplicantEditEntry applicants = 9;
-  string lender_company = 10;
-  string closing_date = 11;
-  double holdback_amount = 12;
-  float rate = 13;
-  double closing_fund = 14;
-  double principal_amount = 15;
-  double monthly_payment = 16;
-  string lien_position = 17;
-  string maturity_date = 18;
-  int32 prepayment_penalty = 19;
-  string service_company = 20;
-  string paid_off_date = 21;
-  repeated string business_strategy = 22;
-
-  LoanExtendValueEntry extend = 25;
-  string original_contract_date = 27;
-  string extension_date = 28;
-  string loan_processor = 29;
-
+  string stage = 1;
+  string pending_status = 2;
+  string loan_purpose = 3;
+  string loan_type = 4;
+  double total_amount = 5;
+  double initial_amount = 6;
+  ThirdPartyLoanPropertyEditEntry loan_property = 7;
+  repeated ThirdPartyLoanApplicantEditEntry applicants = 8;
+  string lender_company = 9;
+  string closing_date = 10;
+  double holdback_amount = 11;
+  float rate = 12;
+  double closing_fund = 13;
+  double principal_amount = 14;
+  double monthly_payment = 15;
+  string lien_position = 16;
+  string maturity_date = 17;
+  int32 prepayment_penalty = 18;
+  string service_company = 19;
+  string paid_off_date = 20;
+  repeated string business_strategy = 21;
+  LoanExtendValueEntry extend = 22;
+  string original_contract_date = 23;
+  string extension_date = 24;
+  string loan_processor = 25;
 }
 
 message LoanCreateResponse {
@@ -346,33 +381,32 @@ message LoanUpdateRequest {
 }
 
 message LoanUpdateRequestData {
-  int64 borrower_id = 1;
-  string stage = 2;
-  string pending_status = 3;
-  string loan_purpose = 4;
-  string loan_type = 5;
-  double total_amount = 6;
-  double initial_amount = 7;
-  ThirdPartyLoanPropertyEditEntry loan_property = 8;
-  repeated ThirdPartyLoanApplicantEditEntry applicants = 9;
-  string lender_company = 10;
-  string closing_date = 11;
-  double holdback_amount = 12;
-  float rate = 13;
-  double closing_fund = 14;
-  double principal_amount = 15;
-  double monthly_payment = 16;
-  string lien_position = 17;
-  string maturity_date = 18;
-  int32 prepayment_penalty = 19;
-  string service_company = 20;
-  string paid_off_date = 21;
-  repeated string business_strategy = 22;
-  int64 id = 23;
-  LoanExtendValueEntry extend = 26;
-  string original_contract_date = 28;
-  string extension_date = 29;
-  string loan_processor = 30;
+  string stage = 1;
+  string pending_status = 2;
+  string loan_purpose = 3;
+  string loan_type = 4;
+  double total_amount = 5;
+  double initial_amount = 6;
+  ThirdPartyLoanPropertyEditEntry loan_property = 7;
+  repeated ThirdPartyLoanApplicantEditEntry applicants = 8;
+  string lender_company = 9;
+  string closing_date = 10;
+  double holdback_amount = 11;
+  float rate = 12;
+  double closing_fund = 13;
+  double principal_amount = 14;
+  double monthly_payment = 15;
+  string lien_position = 16;
+  string maturity_date = 17;
+  int32 prepayment_penalty = 18;
+  string service_company = 19;
+  string paid_off_date = 20;
+  repeated string business_strategy = 21;
+  int64 id = 22;
+  LoanExtendValueEntry extend = 23;
+  string original_contract_date = 24;
+  string extension_date = 25;
+  string loan_processor = 26;
 }
 
 
@@ -382,7 +416,6 @@ message LoanDetailRequest {
 
 message LoanDetailRequestData {
   int64 id = 1;
-  int64 borrower_id = 2;
 }
 
 message LoanDetailResponse {
@@ -394,8 +427,7 @@ message LoanUpdatePendingStatusRequest {
 }
 message LoanUpdatePendingStatusRequestData {
   int64 id = 1;
-  int64 borrower_id = 2;
-  string pending_status = 3;
+  string pending_status = 2;
 }
 
 message LoanDeleteRequest {
@@ -403,7 +435,6 @@ message LoanDeleteRequest {
 }
 message LoanDeleteRequestData {
   int64 id = 1;
-  int64 borrower_id = 2;
 }
 
 message LoanPageRequest {
@@ -415,14 +446,13 @@ message LoanPageResponse {
 }
 
 message  LoanPageRequestFilter {
-  int64 borrower_id = 1;
-  string stage = 2;
-  string keyword = 3;
-  string keyword_type = 4;
-  repeated string loan_purpose = 5;
-  repeated string loan_type = 6;
-  repeated string lender = 7;
-  repeated string pending_status = 8;
+  string stage = 1;
+  string keyword = 2;
+  string keyword_type = 3;
+  repeated string loan_purpose = 4;
+  repeated string loan_type = 5;
+  repeated string lender = 6;
+  repeated string pending_status = 7;
 }
 
 message  LoanPageRequestSorter {
@@ -450,7 +480,6 @@ message LoanLenderCompaniesRequest {
 }
 
 message LoanLenderCompaniesRequestData {
-  int64 borrower_id = 1;
 }
 
 message LoanLenderCompaniesResponse {
@@ -470,22 +499,21 @@ message LoanApplyRequestData {
   double principal_amount = 7;
   int32 prepayment_penalty = 8;
   int64 lender_company_id = 9;
-  int64 borrower_id = 10;
-  repeated string business_strategy = 11;
-  repeated LoanApplicantApplyEntry applicants = 12;
-  int32 loan_term = 13;
-  double ltv = 14;
-  int32 est_credit_score = 15;
-  double reserves_amount = 16;
-  repeated LoanExperienceEntry transaction_experiences = 17;
-  repeated LoanExperienceEntry real_estate_experiences = 18;
-  LoanBorrowerLoanEditEntry loan_borrower = 19;
-  LoanDemographicEntry loan_demographic = 20;
-  repeated LoanThirdServiceEntry loan_third_services = 21;
-  int64 id = 22;
-  string apply_form_file = 23;
-  bool is_preapprove_loan = 24;
-  string code = 25;
+  repeated string business_strategy = 10;
+  repeated LoanApplicantApplyEntry applicants = 11;
+  int32 loan_term = 12;
+  double ltv = 13;
+  int32 est_credit_score = 14;
+  double reserves_amount = 15;
+  repeated LoanExperienceEntry transaction_experiences = 16;
+  repeated LoanExperienceEntry real_estate_experiences = 17;
+  LoanBorrowerLoanEditEntry loan_borrower = 18;
+  LoanDemographicEntry loan_demographic = 19;
+  repeated LoanThirdServiceEntry loan_third_services = 20;
+  int64 id = 21;
+  string apply_form_file = 22;
+  bool is_preapprove_loan = 23;
+  string code = 24;
 }
 
 message LoanApplyResponse {
@@ -499,24 +527,22 @@ message ImportPendingLoansRequest {
   repeated ImportPendingLoansRequestData data = 1;
 }
 message ImportPendingLoansRequestData {
-  int64 borrower_id = 1;
-  string loan_type = 2;
-  double total_amount = 3;
-  ImportPendingLoanPropertyEntry loan_property = 4;
-  LoanBorrowerEntry loan_borrower = 5;
-  float purchase_amount = 6;
-  string purchase_date = 7;
-  string maturity_date = 8;
-  double closing_fund = 9;
-  string lender_company = 10;
-  LoanExtendValueEntry extend = 11;
-  double holdback_amount = 12;
-
-  string original_contract_date = 14;
-  string extension_date = 15;
-  string loan_processor = 16;
-  repeated ImportPendingLoanApplicantEntry applicants = 17;
-  string closing_date = 18;
+  string loan_type = 1;
+  double total_amount = 2;
+  ImportPendingLoanPropertyEntry loan_property = 3;
+  LoanBorrowerEntry loan_borrower = 4;
+  float purchase_amount = 5;
+  string purchase_date = 6;
+  string maturity_date = 7;
+  double closing_fund = 8;
+  string lender_company = 9;
+  LoanExtendValueEntry extend = 10;
+  double holdback_amount = 11;
+  string original_contract_date = 12;
+  string extension_date = 13;
+  string loan_processor = 14;
+  repeated ImportPendingLoanApplicantEntry applicants = 15;
+  string closing_date = 16;
 }
 
 message ImportPendingLoanPropertyEntry {
@@ -568,10 +594,9 @@ message LoanPreApprovalRequestData {
     string name = 1;
     string email = 2;
     string phone = 3;
-
-    int32 est_credit_score = 6;
-    int32 flip_property_count = 7;
-    int32 purchase_rental_property_count = 8;
+    int32 est_credit_score = 4;
+    int32 flip_property_count = 5;
+    int32 purchase_rental_property_count = 6;
   }
 
   message Property {
@@ -626,10 +651,10 @@ message PrimaryLoanPreApproval {
   float ltv = 9;
   float ltc = 10;
   float ltarv = 11;
-  string reject_reason = 13;
-  string request_id = 14;
-  int64 lender_company_id = 15;
-  string lender_company_name = 16;
+  string reject_reason = 12;
+  string request_id = 13;
+  int64 lender_company_id = 14;
+  string lender_company_name = 15;
 }
 
 message SecondaryLoanPreApproval {
@@ -680,8 +705,9 @@ service Loan {
 // ===================== loan property service start ======================
 message LoanPropertyEntry{
   int64 id = 1;
-  string property_type = 2 ;
+  string property_type = 2;
   int64 borrower_property_id = 3;
+  int32 unit = 4;
   float living_area_sqft = 5;
   int32 bedrooms = 6;
   int32 bathrooms = 7;
@@ -691,31 +717,30 @@ message LoanPropertyEntry{
   int32 future_bedrooms = 11;
   int32 future_bathrooms = 12;
   string owner = 13;
-  int32 unit = 14;
-  //
-  string existing_lender_company = 15;
-  float existing_rate = 16;
-  string existing_maturity_date = 17;
-  double purchase_amount = 18;
-  string purchase_date = 19;
-  bool has_assignment_fee = 20;
-  double assignment_fee_amount = 21;
-  bool has_subordinate_debt = 22;
-  double subordinate_debt_amount = 23;
-  string scheduled_close_escrow_date = 24;
-  double liquidity_amount = 25;
-  LoanBudgetEntry budget = 26;
-  bool mid_construction = 27;
-  double est_yearly_rental_income_amount = 28;
-  double yearly_liability_expense_amount = 29;
-  double dscr = 30;
-  bool has_delayed_financing = 31;
-  bool has_collateralized_blanket = 32;
-  bool has_properties_vacant = 33;
-  bool has_short_term_rental = 34;
-  double est_property_value_amount = 35;
-  AddressEntry address = 36;
-  double arv = 37;
+  string existing_lender_company = 14;
+  float existing_rate = 15;
+  string existing_maturity_date = 16;
+  double purchase_amount = 17;
+  string purchase_date = 18;
+  bool has_assignment_fee = 19;
+  double assignment_fee_amount = 20;
+  bool has_subordinate_debt = 21;
+  double subordinate_debt_amount = 22;
+  string scheduled_close_escrow_date = 23;
+  double liquidity_amount = 24;
+  LoanBudgetEntry budget = 25;
+  bool mid_construction = 26;
+  double est_yearly_rental_income_amount = 27;
+  double yearly_liability_expense_amount = 28;
+  double dscr = 29;
+  bool has_delayed_financing = 30;
+  bool has_collateralized_blanket = 31;
+  bool has_properties_vacant = 32;
+  bool has_short_term_rental = 33;
+  double est_property_value_amount = 34;
+  AddressEntry address = 35;
+  double arv = 36;
+
 }
 
 message LoanPropertyApplyEntry{
@@ -766,6 +791,9 @@ message BorrowerPropertyEntry {
   string created_at = 9;
   string updated_at = 10;
   int32 loan_count = 11;
+  int64 creator_id = 12;
+  int64 organization_id = 13;
+  string creator_name = 14;
 }
 
 message PropertyPageEntry{
@@ -787,6 +815,8 @@ message PropertyPageEntry{
   int32 bathrooms = 16;
   int32 unit = 17;
   int32 loan_count = 18;
+  int64 creator_id = 19;
+  int64 creator_name = 20;
 
 }
 
@@ -806,9 +836,8 @@ message PropertyPageRequestData {
 }
 
 message  PropertyPageRequestFilter{
-  int64 borrower_id = 1;
-  string keyword = 3;
-  repeated string applicant = 5;
+  string keyword = 1;
+  repeated string applicant = 2;
 }
 
 message  PropertyPageRequestSorter {
@@ -834,7 +863,6 @@ message PropertyDetailSummaryResponse {
 
 message PropertyDetailRequestData {
   int64 id = 1;
-  int64 borrower_id = 2;
 }
 
 message PropertyDetailSummaryResponseData {
@@ -862,13 +890,11 @@ message PropertyCreateRequest {
 
 message PropertyCreateRequestData {
   string property_type = 1;
-  //  double total_amount = 2;
-  int32  unit = 3;
-  float living_area_sqft = 4;
-  int32 bedrooms = 5;
-  int32 bathrooms = 6;
-  AddressEntry address = 7;
-  int64 borrower_id = 8;
+  int32  unit = 2;
+  float living_area_sqft = 3;
+  int32 bedrooms = 4;
+  int32 bathrooms = 5;
+  AddressEntry address = 6;
 }
 
 message PropertyCreateResponse {
@@ -884,11 +910,10 @@ message PropertyUpdateRequest {
 message PropertyUpdateRequestData {
   int64 id = 1;
   string property_type = 2;
-  int32  unit = 4;
-  float living_area_sqft = 5;
-  int32 bedrooms = 6;
-  int32 bathrooms = 7;
-  int64 borrower_id = 8;
+  int32  unit = 3;
+  float living_area_sqft = 4;
+  int32 bedrooms = 5;
+  int32 bathrooms = 6;
 }
 
 // detail property
@@ -902,14 +927,12 @@ message PropertyDeleteRequest {
 }
 message PropertyDeleteRequestData {
   int64 id = 1;
-  int64 borrower_id = 2;
 }
 // all borrower properties
 message PropertyAllRequest {
   PropertyAllRequestData data = 1;
 }
 message PropertyAllRequestData {
-  int64 borrower_id = 1;
 }
 message PropertyAllResponse {
   repeated BorrowerPropertyEntry data = 1;
@@ -932,7 +955,7 @@ message BorrowerEntityEntry {
   int64 id = 1;
   string created_at = 2;
   string updated_at = 3;
-  int64 borrower_id = 4;
+  int64 creator_id = 4;
   string type = 5;
   string name = 6;
   string tin_type = 7;
@@ -941,14 +964,15 @@ message BorrowerEntityEntry {
   string contact_email = 10;
   string contact_name = 11;
   string contact_phone = 12;
-  //  int32 own_percent = 13;
+  int64 organization_id = 13;
+  string creator_name = 14;
 }
 
 message BorrowerEntityPageEntry {
   int64 id = 1;
   string created_at = 2;
   string updated_at = 3;
-  int64 borrower_id = 4;
+  int64 creator_id = 4;
   string type = 5;
   string name = 6;
   string tin_type = 7;
@@ -957,26 +981,25 @@ message BorrowerEntityPageEntry {
   string contact_name = 10;
   string contact_phone = 11;
   AddressEntry mailing_address = 13;
+  string creator_name = 14;
 }
 
 message BorrowerEntityEditEntry {
-  int64 borrower_id = 1;
-  string type = 2;
-  string name = 3;
-  string tin_type = 4;
-  string tin = 5;
-  AddressEntry mailing_address = 6;
-  string contact_email = 7;
-  string contact_name = 8;
-  string contact_phone = 9;
-  int64 id = 11;
+  string type = 1;
+  string name = 2;
+  string tin_type = 3;
+  string tin = 4;
+  AddressEntry mailing_address = 5;
+  string contact_email = 6;
+  string contact_name = 7;
+  string contact_phone = 8;
+  int64 id = 9;
 }
 
 // create borrower entity
 message BorrowerEntityCreateRequest {
   BorrowerEntityEditEntry data = 1;
 }
-
 message BorrowerEntityCreateResponse {
   BorrowerEntityEntry data = 1;
 }
@@ -990,9 +1013,8 @@ message BorrowerEntityUpdateRequest {
 message BorrowerEntityDetailRequest {
   BorrowerEntityDetailRequestData data = 1;
 }
-message BorrowerEntityDetailRequestData{
+message BorrowerEntityDetailRequestData {
   int64 id = 1;
-  int64 borrower_id = 2;
 }
 
 message BorrowerEntityDetailResponse {
@@ -1006,7 +1028,6 @@ message BorrowerEntityDeleteRequest {
 
 message BorrowerEntityDeleteRequestData {
   int64 id = 1;
-  int64 borrower_id = 2;
 }
 
 // page borrower entity
@@ -1025,8 +1046,7 @@ message BorrowerEntityPageRequestData {
   BorrowerEntityPageRequestSorter sorter = 4;
 }
 message BorrowerEntityPageRequestFilter {
-  int64 borrower_id = 1;
-  string keyword = 2;
+  string keyword = 1;
 }
 message BorrowerEntityPageRequestSorter {
   string column = 1;
@@ -1046,9 +1066,8 @@ message BorrowerEntityCheckExistedRequest {
   BorrowerEntityCheckExistedRequestData data = 1;
 }
 message BorrowerEntityCheckExistedRequestData {
-  int64 borrower_id = 1;
-  int64 id = 2;
-  string name = 3;
+  int64 id = 1;
+  string name = 2;
 }
 message BorrowerEntityCheckExistedResponse {
   BorrowerEntityCheckExistedResponseData data = 1;
@@ -1062,7 +1081,6 @@ message BorrowerEntityAllRequest {
   BorrowerEntityAllRequestData data = 1;
 }
 message BorrowerEntityAllRequestData {
-  int64 borrower_id = 1;
 }
 
 message BorrowerEntityAllResponse {
@@ -1085,7 +1103,7 @@ message BorrowerApplicantEntry {
   int64 id = 1;
   string created_at = 2;
   string updated_at = 3;
-  int64 borrower_id = 4;
+  int64 creator_id = 4;
   string first_name = 5;
   string mid_name = 6;
   string last_name = 7;
@@ -1098,13 +1116,15 @@ message BorrowerApplicantEntry {
   string driver_license_num = 14;
   AddressEntry address = 15;
   string phone = 16;
+  int64 organization_id = 17;
+  string creator_name = 18;
 }
 
 message BorrowerApplicantPageEntry {
   int64 id = 1;
   string created_at = 2;
   string updated_at = 3;
-  int64 borrower_id = 4;
+  int64 creator_id = 4;
   string first_name = 5;
   string mid_name = 6;
   string last_name = 7;
@@ -1117,21 +1137,21 @@ message BorrowerApplicantPageEntry {
   string driver_license_num = 14;
   string phone = 15;
   AddressEntry address = 16;
+  string creator_name = 17;
 }
 message BorrowerApplicantEditEntry {
-  int64 borrower_id = 1;
-  string first_name = 2;
-  string mid_name = 3;
-  string last_name = 4;
-  string ssn = 5;
-  string dob = 6;
-  string marital_status = 7;
-  string email = 8;
-  int32 est_credit_score = 9;
-  string driver_license_num = 10;
-  AddressEntry address = 11;
-  int64 id = 12;
-  string phone = 13;
+  string first_name = 1;
+  string mid_name = 2;
+  string last_name = 3;
+  string ssn = 4;
+  string dob = 5;
+  string marital_status = 6;
+  string email = 7;
+  int32 est_credit_score = 8;
+  string driver_license_num = 9;
+  AddressEntry address = 10;
+  int64 id = 11;
+  string phone = 12;
 }
 
 // create borrower applicant
@@ -1151,7 +1171,6 @@ message BorrowerApplicantDetailRequest {
 }
 message BorrowerApplicantDetailRequestData {
   int64 id = 1;
-  int64 borrower_id = 2;
 }
 message BorrowerApplicantDetailResponse {
   BorrowerApplicantEntry data = 1;
@@ -1162,7 +1181,6 @@ message BorrowerApplicantDeleteRequest {
 }
 message BorrowerApplicantDeleteRequestData {
   int64 id = 1;
-  int64 borrower_id = 2;
 }
 // page borrower applicant
 message BorrowerApplicantPageRequest {
@@ -1175,8 +1193,7 @@ message BorrowerApplicantPageRequestData {
   BorrowerApplicantPageRequestSorter sorter = 4;
 }
 message BorrowerApplicantPageRequestFilter {
-  int64 borrower_id = 1;
-  string keyword = 2;
+  string keyword = 1;
 }
 message BorrowerApplicantPageRequestSorter {
   string column = 1;
@@ -1198,11 +1215,10 @@ message BorrowerApplicantCheckExistedRequest {
   BorrowerApplicantCheckExistedRequestData data = 1;
 }
 message BorrowerApplicantCheckExistedRequestData {
-  int64 borrower_id = 1;
-  int64 id = 2;
-  string first_name = 3;
-  string mid_name = 4;
-  string last_name = 5;
+  int64 id = 1;
+  string first_name = 2;
+  string mid_name = 3;
+  string last_name = 4;
 }
 message BorrowerApplicantCheckExistedResponse {
   BorrowerApplicantCheckExistedResponseData data = 1;
@@ -1215,7 +1231,6 @@ message BorrowerApplicantAllRequest {
   BorrowerApplicantAllRequestData data = 1;
 }
 message BorrowerApplicantAllRequestData {
-  int64 borrower_id = 1;
 }
 message BorrowerApplicantAllResponse {
   repeated BorrowerApplicantPageEntry data = 1;
@@ -1258,7 +1273,8 @@ message LoanApplicantEntry{
   int32 own_percent = 21;
   int64 borrower_applicant_id = 22;
   int64 loan_id = 23;
-  int64 borrower_id = 24;
+  int64 user_id = 24;
+  int64 organization_id = 25;
 }
 
 message BorrowerNamesRequest {
@@ -1266,7 +1282,6 @@ message BorrowerNamesRequest {
 }
 
 message BorrowerNamesRequestData {
-  int64 borrower_id = 1;
 }
 
 message BorrowerNamesResponse {
@@ -1277,10 +1292,7 @@ service LoanApplicant {
   rpc BorrowerNames(BorrowerNamesRequest) returns(BorrowerNamesResponse);
 }
 // ===================== loan applicant service end ======================
-
-
-
-// ===================== loan document service start ======================
+// ===================== loan document service start =====================
 message LoanDocumentEntry {
   int64 id = 1;
   int64 loan_id = 2;
@@ -1300,15 +1312,13 @@ message LoanDocumentAddFilesRequest {
 }
 message LoanDocumentAddFilesRequestData {
   int64 id = 1;
-  int64 borrower_id = 2;
-  repeated string file_urls = 3;
+  repeated string file_urls = 2;
 }
 service LoanDocument {
   rpc AddFiles(LoanDocumentAddFilesRequest) returns(EmptyResponse);
 }
 // ===================== loan document service end ======================
-
-// ===================== loan borrower service start ======================
+// ===================== loan borrower service start ====================
 message LoanBorrowerEntry{
   int64 id = 1;
   int64 loan_id = 2;
@@ -1330,10 +1340,8 @@ message LoanBorrowerLoanEditEntry{
   int64 id = 1;
   int64 borrower_entity_id = 2;
 }
-
 // ====================== loan borrower service end ======================
-
-// ===================== lender service start ======================
+// =====================+ lender service start ======================
 message LenderEntry{
   int64 id = 1;
   string name = 2;
@@ -1341,7 +1349,6 @@ message LenderEntry{
   string status = 4;
 }
 // ===================== lender service end ======================
-
 // ===================== loan experience service start ======================
 message LoanExperienceEntry{
   int64 id = 1;
@@ -1361,7 +1368,6 @@ message LoanExperienceEntry{
   AddressEntry address = 15;
 }
 // ===================== loan experience service end ======================
-
 // ===================== loan third service service start ======================
 message LoanThirdServiceEntry{
   int64 id = 1;
@@ -1373,7 +1379,6 @@ message LoanThirdServiceEntry{
   string company = 7;
 }
 // ===================== loan third service service end ======================
-
 // ===================== loan demographic service start ======================
 message LoanDemographicEntry{
   int64 id = 1;
@@ -1422,7 +1427,6 @@ message LoanDemographicExtraDemographicEntry {
   repeated string info_channels = 4;
 }
 // ===================== loan demographic service end ======================
-
 // ===================== file service start======================
 message FileEntry {
   int64 id = 1;
@@ -1437,15 +1441,13 @@ message FileDeleteRequest {
 }
 message FileDeleteRequestData {
   int64 id = 1;
-  int64 borrower_id = 2;
 }
 
 service File {
   rpc DeleteFile(FileDeleteRequest) returns(EmptyResponse);
 }
 // ====================== file service end ======================
-
-// ===================== storage service start ======================
+// ====================== storage service start ======================
 message StorageCreatePresignedUrlRequest {
   StorageCreatePresignedUrlRequestData data = 1;
 }
@@ -1467,3 +1469,345 @@ service Storage {
   rpc CreatePresignedUrl(StorageCreatePresignedUrlRequest) returns(StorageCreatePresignedUrlResponse);
 }
 // ====================== storage service end ======================
+// ====================== resource service start =================
+message ResourceTreeEntity{
+  int64 id = 1;
+  int64 parent_id = 2;
+  string type = 3;
+  string resource_type = 4;
+  string name = 5;
+  string path = 6;
+  string icon = 7;
+  string tag = 8;
+  bool is_show = 9;
+  string status = 10;
+  int32  sort_order = 11;
+  string created_at = 12;
+  string updated_at = 13;
+  repeated ResourceTreeEntity children = 14;
+}
+
+message ResourceEntity{
+  int64 id = 1;
+  int64 parent_id = 2;
+  string type = 3;
+  string resource_type = 4;
+  string name = 5;
+  string path = 6;
+  string icon = 7;
+  string tag = 8;
+  bool is_show = 9;
+  string status = 10;
+  int32  sort_order = 11;
+  string created_at = 12;
+  string updated_at = 13;
+  string pivot_role_data_scope = 14;
+}
+
+// resource tree
+message ResourceTreeRequest {
+  ResourceTreeRequestData data = 1;
+}
+message ResourceTreeRequestData {
+  string type = 1;
+}
+
+message ResourceTreeResponse {
+  repeated ResourceTreeEntity data = 1;
+}
+service resource {
+  rpc ResourceTree(ResourceTreeRequest) returns(ResourceTreeResponse);
+}
+// =================== resource service end =================
+// =================== role service start =================
+message RoleEntity {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  string type = 4;
+  string status = 5;
+  string created_at = 6;
+  string updated_at = 7;
+  int64 organization_id = 8;
+  repeated ResourceEntity resources = 9;
+}
+
+message RolePageRequest {
+  RolePageRequestData data = 1;
+}
+message RolePageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  RolePageRequestFilter filter = 3;
+  RolePageRequestSorter sorter = 4;
+}
+message RolePageRequestFilter {
+  string keyword = 1;
+}
+message RolePageRequestSorter {
+  string column = 1;
+  string sort = 2;
+}
+
+message RolePageResponse {
+  RolePageResponseData data = 1;
+}
+
+message RolePageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated RoleEntity list = 5;
+}
+
+//  create
+message RoleCreateRequest {
+  RoleCreateRequestData data = 1;
+}
+message RoleCreateRequestData {
+  string name = 1;
+  string description = 2;
+  string status = 3;
+  repeated RoleAndResourceRelationEntity role_and_resources = 4;
+}
+message RoleCreateResponse {
+  RoleEntity data = 1;
+}
+//  update
+message RoleUpdateRequest {
+  RoleUpdateRequestData data = 1;
+}
+message RoleUpdateRequestData {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  string status = 4;
+  repeated RoleAndResourceRelationEntity role_and_resources = 5;
+}
+
+message RoleAndResourceRelationEntity{
+  int64 role_id = 1;
+  int64 resource_id = 2;
+  string data_scope = 3;
+}
+
+
+message RoleUpdateResponse {
+  RoleEntity data = 1;
+}
+//  delete
+message RoleDeleteRequest {
+  RoleDeleteRequestData data = 1;
+}
+message RoleDeleteRequestData {
+  int64 id = 1;
+}
+
+//  detail
+message RoleDetailRequest {
+  RoleDetailRequestData data = 1;
+}
+message RoleDetailRequestData {
+  int64 id = 1;
+}
+message RoleDetailResponse {
+  RoleEntity data = 1;
+}
+// update status
+message RoleUpdateStatusRequest {
+  RoleUpdateStatusRequestData data = 1;
+}
+message RoleUpdateStatusRequestData {
+  int64 id = 1;
+  string status = 2;
+}
+
+// all roles
+message RoleAllRequest {
+  RoleAllRequestData data = 1;
+}
+message RoleAllRequestData {
+}
+message RoleAllResponse {
+  repeated RoleEntity data = 1;
+}
+
+service role {
+  rpc Page(RolePageRequest) returns(RolePageResponse);
+  rpc Create(RoleCreateRequest) returns(RoleCreateResponse);
+  rpc Update(RoleUpdateRequest) returns(RoleUpdateResponse);
+  rpc Delete(RoleDeleteRequest) returns(EmptyResponse);
+  rpc Detail(RoleDetailRequest) returns(RoleDetailResponse);
+  rpc UpdateStatus(RoleUpdateStatusRequest) returns(EmptyResponse);
+  rpc All(RoleAllRequest) returns(RoleAllResponse);
+}
+
+// ================== role service end =================
+// ================== organization user service start =================
+message OrganizationUserEntity {
+  int64 id = 1;
+  int64 organization_id = 2;
+  int64 user_id = 3;
+  string status = 4;
+  string first_name = 5;
+  string mid_name = 6;
+  string last_name = 7;
+  string full_name = 8;
+  string phone = 9;
+  string remark = 10;
+  string created_at = 11;
+  string updated_at = 12;
+  string email = 13;
+  repeated RoleEntity roles = 14;
+}
+
+message OrganizationUserPageEntity {
+  int64 id = 1;
+  string status = 2;
+  string first_name = 3;
+  string mid_name = 4;
+  string last_name = 5;
+  string full_name = 6;
+  string phone = 7;
+  string remark = 8;
+  string created_at = 9;
+  string updated_at = 10;
+  string email = 11;
+  repeated RoleEntity roles = 12;
+  bool is_owner = 13;
+}
+// page --  request
+message OrganizationUserPageRequest {
+  OrganizationUserPageRequestData data = 1;
+}
+message OrganizationUserPageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  OrganizationUserPageRequestFilter filter = 3;
+  OrganizationUserPageRequestSorter sorter = 4;
+}
+message OrganizationUserPageRequestFilter {
+  string keyword = 2;
+  string status = 3;
+  int64 role_id = 4;
+}
+message OrganizationUserPageRequestSorter {
+  string column = 1;
+  string sort = 2;
+}
+// page --  response
+message OrganizationUserPageResponse {
+  OrganizationUserPageResponseData data = 1;
+}
+message OrganizationUserPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated OrganizationUserPageEntity list = 5;
+}
+//  create --  request
+message OrganizationUserCreateRequest {
+  OrganizationUserCreateRequestData data = 1;
+}
+message OrganizationUserCreateRequestData {
+  string email = 1;
+  string phone = 2;
+  string remark = 3;
+  repeated int64 role_ids = 4;
+}
+//  create --  response
+message OrganizationUserCreateResponse {
+  OrganizationUserEntity data = 1;
+}
+//  update --  request
+message OrganizationUserUpdateRequest {
+  OrganizationUserUpdateRequestData data = 1;
+}
+message OrganizationUserUpdateRequestData {
+  int64 id = 1;
+  string phone = 2;
+  string remark = 3;
+  repeated int64 role_ids = 4;
+  string first_name = 5;
+  string last_name = 6;
+}
+//  update --  response
+message OrganizationUserUpdateResponse {
+  OrganizationUserEntity data = 1;
+}
+//  detail --  request
+message OrganizationUserDetailRequest {
+  OrganizationUserDetailRequestData data = 1;
+}
+message OrganizationUserDetailRequestData {
+  int64 id = 1;
+}
+//  detail --  response
+message OrganizationUserDetailResponse {
+  OrganizationUserEntity data = 1;
+}
+//  delete --  request
+message OrganizationUserDeleteRequest {
+  OrganizationUserDeleteRequestData data = 1;
+}
+message OrganizationUserDeleteRequestData {
+  int64 id = 1;
+}
+//  switch status --  request
+message OrganizationUserUpdateStatusRequest {
+  OrganizationUserUpdateStatusRequestData data = 1;
+}
+message OrganizationUserUpdateStatusRequestData {
+  int64 id = 1;
+  string status = 2;
+}
+// all --  request
+message OrganizationUserAllResponse {
+  repeated OrganizationUserEntity data = 1;
+}
+
+// send invitation email --  request
+message OrganizationUserSendInvitationEmailRequest {
+  OrganizationUserSendInvitationEmailRequestData data = 1;
+}
+message OrganizationUserSendInvitationEmailRequestData {
+  int64 id = 1;
+}
+
+// accept invitation email --  request
+message OrganizationUserAcceptInvitationRequest {
+  OrganizationUserAcceptInvitationRequestData data = 1;
+}
+message OrganizationUserAcceptInvitationRequestData {
+  string code = 1;
+  string email = 2;
+  int64 organization_id = 3;
+  string first_name = 4;
+  string last_name = 5;
+}
+
+// assign roles --  request
+message OrganizationUserAssignRolesRequest {
+  OrganizationUserAssignRolesRequestData data = 1;
+}
+message OrganizationUserAssignRolesRequestData {
+  int64 id = 1;
+  repeated int64 role_ids = 2;
+}
+
+service OrganizationUser {
+  rpc Page(OrganizationUserPageRequest) returns(OrganizationUserPageResponse);
+  rpc Create(OrganizationUserCreateRequest) returns(OrganizationUserCreateResponse);
+  rpc Update(OrganizationUserUpdateRequest) returns(OrganizationUserUpdateResponse);
+  rpc Delete(OrganizationUserDeleteRequest) returns(EmptyResponse);
+  rpc Detail(OrganizationUserDetailRequest) returns(OrganizationUserDetailResponse);
+  rpc SwitchStatus(OrganizationUserUpdateStatusRequest) returns(EmptyResponse);
+  rpc All(EmptyRequest) returns(OrganizationUserAllResponse);
+  rpc SendInvitationEmail(OrganizationUserSendInvitationEmailRequest) returns(EmptyResponse);
+  rpc AcceptInvitation(OrganizationUserAcceptInvitationRequest) returns(UserLoginResponse);
+  rpc AssignRoles(OrganizationUserAssignRolesRequest) returns(EmptyResponse);
+}
+
+// ================= organization user service end =================

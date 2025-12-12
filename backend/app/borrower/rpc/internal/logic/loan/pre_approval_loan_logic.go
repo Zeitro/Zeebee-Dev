@@ -16,11 +16,11 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/email"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/preapproval_engine"
 	"zeebee-backend/common/uuid"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/repo"
 )
@@ -137,13 +137,16 @@ func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalReque
 		return nil, errorx.WithStack(err)
 	}
 
-	selfLenderCompany, err := l.svcCtx.LenderCompanyRepo.FindOneByColumns(l.ctx, map[string]interface{}{"owner_type": constants.LenderCompanyOwnerTypeSelf})
+	selfOrganization, err := l.svcCtx.OrganizationRepo.FindOneByColumns(l.ctx, map[string]interface{}{
+		"owner_type": constants.OrganizationOwnerTypeSelf,
+		"type":       constants.UserTypeBorrower,
+	})
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
 	go func() {
 		ctx := context.WithoutCancel(l.ctx)
-		err := sendPreApprovalNotification(ctx, l.svcCtx.LenderCompanyRepo, requestId, selfLenderCompany.Id)
+		err := sendPreApprovalNotification(ctx, l.svcCtx.OrganizationRepo, requestId, selfOrganization.Id)
 		if err != nil {
 			logx.WithContext(ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
@@ -154,10 +157,10 @@ func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalReque
 	}, nil
 }
 
-func sendPreApprovalNotification(ctx context.Context, repo *repo.LenderCompanyRepo, requestId string, lenderCompanyId int64) (err error) {
-	var company *model.LenderCompany
+func sendPreApprovalNotification(ctx context.Context, repo *repo.OrganizationRepo, requestId string, organizationId int64) (err error) {
+	var organization *model.Organization
 	// check if send already
-	sendKey := fmt.Sprintf(constants.BorrowerSendAprApprovalNotificationKey, lenderCompanyId, requestId)
+	sendKey := fmt.Sprintf(constants.BorrowerSendAprApprovalNotificationKey, organizationId, requestId)
 	isSend, err := global.GetRedis().IsExisted(ctx, sendKey)
 	if err != nil {
 		return errorx.WithStack(err)
@@ -166,11 +169,11 @@ func sendPreApprovalNotification(ctx context.Context, repo *repo.LenderCompanyRe
 		return nil
 	}
 	// check company status
-	company, err = repo.FindOneById(ctx, lenderCompanyId)
+	organization, err = repo.FindOneById(ctx, organizationId)
 	if err != nil {
 		return errorx.WithStack(err)
 	}
-	if len(company.ContactEmail) == 0 || company.Status != constants.LenderCompanyStatusActive {
+	if len(organization.ContactEmail) == 0 || organization.Status != constants.OrganizationStatusActive {
 		return nil
 	}
 
@@ -203,20 +206,12 @@ func sendPreApprovalNotification(ctx context.Context, repo *repo.LenderCompanyRe
 	tplVars := map[string]interface{}{
 		"request": cacheData.RequestData,
 		"result":  cacheData.ResultData,
-		"company": company.Name,
+		"company": organization.Name,
 		"url":     global.Config.LenderUrl,
 	}
 	emailContent := ""
 	emailContent, err = email.ParseTemplate(email_tpl.SelfPreApprovalNotification, tplVars)
 
-	// switch company.OwnerType {
-	// case constants.LenderCompanyOwnerTypeSelf:
-	// 	emailContent, err = email.ParseTemplate(email_tpl.SelfPreApprovalNotification, tplVars)
-	// case constants.LenderCompanyOwnerTypeThirdParty:
-	// 	emailContent, err = email.ParseTemplate(email_tpl.ThirdPartyPreApprovalNotification, tplVars)
-	// default:
-	// 	err = errorx.New("Invalid Company Owner Type")
-	// }
 	if err != nil {
 		return errorx.WithStack(err)
 	}
@@ -225,7 +220,7 @@ func sendPreApprovalNotification(ctx context.Context, repo *repo.LenderCompanyRe
 	emailMsg := email.Message{
 		Subject: "New Pre-Approval-Ready for Review in Zeebee",
 		From:    global.Config.EmailConf.Username,
-		To:      []string{company.ContactEmail},
+		To:      []string{organization.ContactEmail},
 		Body:    emailContent,
 		IsHTML:  true,
 	}

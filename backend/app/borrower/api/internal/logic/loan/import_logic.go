@@ -11,10 +11,10 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/common/validator"
+	"zeebee-backend/domains/zeebee/constants"
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
@@ -92,18 +92,17 @@ func NewImportLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ImportLogi
 
 func (l *ImportLogic) Import(fileContents []byte, stage string) (resp *types.ImportLoanResponse, err error) {
 	var (
-		borrowerId  int64
 		recordCount int64
 	)
 	// get borrower id
-	borrowerId, err = utils.GetAccountIdFromCtx(l.ctx)
+	claim, err := utils.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	switch constants.LoanStage(stage) {
 	case constants.LoanStagePending:
-		recordCount, err = l.importPendingLoans(fileContents, borrowerId)
+		recordCount, err = l.importPendingLoans(fileContents, claim.UserId, claim.OrganizationId)
 	case constants.LoanStageActive:
 		// todo import active loans
 		fallthrough
@@ -115,7 +114,7 @@ func (l *ImportLogic) Import(fileContents []byte, stage string) (resp *types.Imp
 	}, err
 }
 
-func (l *ImportLogic) importPendingLoans(content []byte, borrowerId int64) (recordCount int64, err error) {
+func (l *ImportLogic) importPendingLoans(content []byte, userId int64, organizationId int64) (recordCount int64, err error) {
 	r := bytes.NewReader(content)
 	// create excelize
 	f, err := excelize.OpenReader(r)
@@ -144,7 +143,7 @@ func (l *ImportLogic) importPendingLoans(content []byte, borrowerId int64) (reco
 		}
 	}
 	// get loans
-	importLoans, err := parsePendingLoans(rows, borrowerId)
+	importLoans, err := parsePendingLoans(rows, userId, organizationId)
 	if err != nil {
 		return 0, err
 	}
@@ -170,7 +169,7 @@ func (l *ImportLogic) importPendingLoans(content []byte, borrowerId int64) (reco
 	return rpcResp.Data.RecordCount, err
 }
 
-func parsePendingLoans(rows [][]string, borrowerId int64) ([]*types.ImportPendingLoanEntry, error) {
+func parsePendingLoans(rows [][]string, borrowerId int64, organizationId int64) ([]*types.ImportPendingLoanEntry, error) {
 
 	importLoans := make([]*types.ImportPendingLoanEntry, 0, len(rows))
 	// Create a map for column indices
@@ -190,7 +189,8 @@ func parsePendingLoans(rows [][]string, borrowerId int64) ([]*types.ImportPendin
 		}
 
 		loanData := &types.ImportPendingLoanEntry{
-			BorrowerId: borrowerId,
+			UserId:         borrowerId,
+			OrganizationId: organizationId,
 		}
 		// property address
 		addr := &types.AddressEntry{}

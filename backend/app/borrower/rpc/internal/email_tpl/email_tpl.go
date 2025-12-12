@@ -26,6 +26,9 @@ var SendResetPwdEmailTpl string
 //go:embed send_login_url_email.html
 var SendLoginUrlEmailTpl string
 
+//go:embed send_user_invite_email.html
+var SendUserInviteEmailTpl string
+
 //go:embed send_self_preapproval_notification.html
 var SendSelfPreApprovalNotificationTpl string
 
@@ -39,6 +42,7 @@ const (
 	ResetPwdEmail = "reset_pwd_email"
 	// LoginURLEmail is the key for login URL email template.
 	LoginUrlEmail                     = "login_url_email"
+	UserInviteEmail                   = "user_invite_email"
 	SelfPreApprovalNotification       = "self_preapproval_notification"
 	ThirdPartyPreApprovalNotification = "third_party_preapproval_notification"
 )
@@ -56,6 +60,9 @@ func init() {
 		return email.RegisterTemplateWithText(LoginUrlEmail, SendLoginUrlEmailTpl)
 	})
 	eg.Go(func() error {
+		return email.RegisterTemplateWithText(UserInviteEmail, SendUserInviteEmailTpl)
+	})
+	eg.Go(func() error {
 		return email.RegisterTemplateWithText(SelfPreApprovalNotification, SendSelfPreApprovalNotificationTpl)
 	})
 	eg.Go(func() error {
@@ -65,10 +72,4 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-
-	// _ = email.RegisterTemplateWithText(RegisterVerifyEmail, SendRegisterVerifyEmailTpl)
-	// _ = email.RegisterTemplateWithText(ResetPwdEmail, SendResetPwdEmailTpl)
-	// _ = email.RegisterTemplateWithText(LoginUrlEmail, SendLoginUrlEmailTpl)
-	// _ = email.RegisterTemplateWithText(SelfPreApprovalNotification, SendSelfPreApprovalNotificationTpl)
-	// _ = email.RegisterTemplateWithText(ThirdPartyPreApprovalNotification, SendThirdPartyPreApprovalNotificationTpl)
 }

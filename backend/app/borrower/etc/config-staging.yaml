@@ -40,7 +40,7 @@ RpcConf:
   EmailConf:
     Host: smtp.gmail.com
     Port: 587
-    Password: zovzdtzzwexjenrn
+    Password: plqaccqomowwrszl
     Username: info@zeebeeloans.com
 
   JwtAuth:
@@ -94,5 +94,8 @@ RpcConf:
   LenderUrl: https://agent.zeebeeloans.net
   VerifyEmailUrl: https://app.zeebeeloans.net/login/verifyEmail
   ResetPwdUrl: https://app.zeebeeloans.net/login/resetPassword
+  InviteUserUrl: https://app.zeebeeloans.net/login/joinOrganization
+  InviteUserExpireSeconds: 86400
+  SendInviteEmailPeriodSeconds: 60
   PreApprovalLoanExpireSeconds: 86400
   HighCostLimitValue: 806500

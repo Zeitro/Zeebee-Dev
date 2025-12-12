@@ -209,10 +209,10 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: user.InfoHandler(serverCtx),
 				},
 				{
-					// switch lender company
+					// switch organization
 					Method:  http.MethodPost,
-					Path:    "/user/switch_lender_company",
-					Handler: user.SwitchLenderCompanyHandler(serverCtx),
+					Path:    "/user/switch_organization",
+					Handler: user.SwitchOrganizationHandler(serverCtx),
 				},
 			}...,
 		),
