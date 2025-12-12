@@ -15,7 +15,7 @@ const ArchivedLoans = ({
 	dataSource,
 	isNotAddress,
 	loading,
-	scrollX = 1700,
+	scrollX = 1800,
 	successCallback,
 	stage = 'Archived',
 }) => {
