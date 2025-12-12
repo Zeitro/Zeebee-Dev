@@ -215,14 +215,32 @@ func (l *UserLogic) GetActiveOrganizationByUser(user *model.User) (currentOrgani
 		return nil, false, errorx.New("User Is Empty")
 	}
 	organizations := user.Organizations
-	// find current company
+	organizationUsers := user.OrganizationUsers
+
+	// find current organization
 	currentOrganization, ok := slice.FindBy(organizations, func(index int, item *model.Organization) bool {
-		return (item.Id == user.DefaultOrganizationId || user.DefaultOrganizationId == 0) && item.Status == constants.OrganizationStatusActive
+		isActiveOrganization := (item.Id == user.DefaultOrganizationId || user.DefaultOrganizationId == 0) && item.Status == constants.OrganizationStatusActive
+		if !isActiveOrganization {
+			return false
+		}
+		_, ok := slice.FindBy(organizationUsers, func(index int, organizationUser *model.OrganizationUser) bool {
+			return organizationUser.OrganizationId == item.Id && organizationUser.Status == constants.OrganizationUserStatusActive
+		})
+
+		return ok
 	})
-	// find first active company
+	// find first active organization
 	if !ok {
 		currentOrganization, ok = slice.FindBy(organizations, func(index int, item *model.Organization) bool {
-			return item.Status == constants.OrganizationStatusActive
+			isActiveOrganization := item.Status == constants.OrganizationStatusActive
+			if !isActiveOrganization {
+				return false
+			}
+			_, ok := slice.FindBy(organizationUsers, func(index int, organizationUser *model.OrganizationUser) bool {
+				return organizationUser.OrganizationId == item.Id && organizationUser.Status == constants.OrganizationUserStatusActive
+			})
+
+			return ok
 		})
 	}
 	if !ok {
@@ -281,7 +299,7 @@ type LoginLimiter struct {
 }
 
 // Login
-func (l *UserLogic) Login(ctx context.Context, req UserLoginRequest, limiter LoginLimiter) (token *UserJwtToken, err error) {
+func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limiter dto.LoginLimiterDto) (token *UserJwtToken, err error) {
 	redisKey := stringx.Format(constants.UserLoginFailedTimes, req.UserType, req.Email)
 	var loginFailedTimes int
 	var orgUser *model.OrganizationUser

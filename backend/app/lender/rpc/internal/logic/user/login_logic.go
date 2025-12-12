@@ -12,7 +12,7 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
-	logic2 "zeebee-backend/domains/zeebee/logic"
+	"zeebee-backend/domains/zeebee/data/dto"
 )
 
 type LoginLogic struct {
@@ -38,12 +38,12 @@ func (l *LoginLogic) Login(in *lender.UserLoginRequest) (resp *lender.UserLoginR
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	loginReq := logic2.UserLoginRequest{
+	loginReq := dto.UserLoginRequestDto{
 		Email:    in.Data.Email,
 		Password: in.Data.Password,
 		UserType: constants.UserTypeLender,
 	}
-	limiter := logic2.LoginLimiter{
+	limiter := dto.LoginLimiterDto{
 		Rate:     global.Config.LimiterConf.Login.Rate,
 		Period:   global.Config.LimiterConf.Login.Period,
 		RedisCli: global.GetRedis(),
