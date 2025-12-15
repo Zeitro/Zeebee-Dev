@@ -61,9 +61,9 @@ func (repo *OrganizationUserRepo) Page(ctx context.Context, pageReq dto.Organiza
 		fmt.Sprintf("%s.email", userTable),
 		fmt.Sprintf("%s.phone", organizationUserTable),
 		fmt.Sprintf("%s.status", organizationUserTable),
-		fmt.Sprintf("%s.first_name", userTable),
-		fmt.Sprintf("%s.mid_name", userTable),
-		fmt.Sprintf("%s.last_name", userTable),
+		fmt.Sprintf("%s.first_name", organizationUserTable),
+		fmt.Sprintf("%s.mid_name", organizationUserTable),
+		fmt.Sprintf("%s.last_name", organizationUserTable),
 		fmt.Sprintf("%s.full_name", organizationUserTable),
 		fmt.Sprintf("%s.remark", organizationUserTable),
 	}

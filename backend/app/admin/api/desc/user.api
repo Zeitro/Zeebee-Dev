@@ -13,6 +13,7 @@ import "role.api"
 
 type UserInfo {
     Id int64 `json:"id"`
+    OrganizationUserId int64 `json:"organization_user_id"`
     Email string `json:"email"`
     FirstName string `json:"first_name"`
     LastName string `json:"last_name"`

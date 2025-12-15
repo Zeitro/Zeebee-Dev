@@ -12,6 +12,7 @@ import "organization.api"
 
 type UserInfo {
     Id int64 `json:"id"`
+    OrganizationUserId int64 `json:"organization_user_id"`
     Email string `json:"email"`
     FirstName string `json:"first_name"`
     LastName string `json:"last_name"`
@@ -20,6 +21,8 @@ type UserInfo {
     OrganizationId int64 `json:"organization_id"`
     OrganizationName string `json:"organization_name"`
     Organizations []*UserInfoOrganizationEntity `json:"organizations"`
+    IsOwner bool `json:"is_owner"`
+    IsAdmin bool `json:"is_admin"`
 }
 // login
 type (
