@@ -10,6 +10,7 @@ import { createRequest } from '@repo/shared-methods/utils';
 import { loan_pending } from '@/enum/common';
 import { BtnPopUpModal } from '@repo/shared-methods';
 import _ from 'lodash';
+import { QuoteBtn } from '../components/Quote';
 const CreateLoanPage = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -108,14 +109,15 @@ const CreateLoanPage = () => {
 					Cancel
 				</BtnPopUpModal>
 				<Space size={8}>
-					{/* {currentStep === 2 && (
+					{currentStep === 2 && (
 						<QuoteBtn
 							disabled={
 								loanData[0]?.stage === 'Pending' &&
 								loanData[0]?.pending_status === 'Quoting'
 							}
+							onSave={handleNext}
 						/>
-					)} */}
+					)}
 					{!!currentStep && (
 						<Button onClick={() => setCurrentStep((v) => v - 1)}>Back</Button>
 					)}

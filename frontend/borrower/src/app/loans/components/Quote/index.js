@@ -11,7 +11,7 @@ export default Quote;
 export const QuoteBtn = ({ disabled }) => {
 	const handleClick = () => {};
 	return (
-		<FieldTips title={disabled ? 'only for pending stage&quoting status loan' : ''}>
+		<FieldTips title={disabled ? 'Only for pending stage & quoting status loan' : ''}>
 			<Button type="primary" onClick={handleClick} ghost disabled={disabled}>
 				Save&quote
 			</Button>

@@ -14,6 +14,7 @@ import {
 	createRequest,
 } from '@repo/shared-methods/utils';
 import { useGlobalStore } from '@/store/global';
+import { QuoteBtn } from '../components/Quote';
 const initialValues = {
 	applicants: [{ is_primary: true, type: 'Individual' }],
 };
@@ -22,6 +23,7 @@ const EditLoanPage = () => {
 	const router = useRouter();
 	const [form] = Form.useForm();
 	const stage = Form.useWatch('stage', form);
+	const pending_status = Form.useWatch(['pending_status'], form);
 	const { request } = createRequest();
 	const [loading, setLoading] = useState(false);
 	const { changeSidebarCollapsed } = useGlobalStore();
@@ -154,6 +156,10 @@ const EditLoanPage = () => {
 					</div>
 				</Form>
 				<div className="flex justify-end py-4">
+					<QuoteBtn
+						disabled={stage === 'Pending' && pending_status === 'Quoting'}
+						onSave={handleNext}
+					/>
 					<Button type="primary" onClick={handleNext} loading={loading}>
 						Save change
 					</Button>
