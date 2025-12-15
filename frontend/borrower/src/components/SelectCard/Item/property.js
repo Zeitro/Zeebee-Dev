@@ -5,6 +5,7 @@ import HomeSvg from '@/assets/images/home2.svg';
 import { assemblyAddress, createRequest, formatNumber } from '@repo/shared-methods/utils';
 import { BtnPopUpModal, DeleteBtn } from '@repo/shared-methods';
 import AddModal from '../Add/property';
+import _ from 'lodash';
 // import useBorrowingEntity from '@/app/management/borrowingEntity/components/useBorrowingEntity';
 const CardItem = ({
 	isShowOperate = true,
@@ -22,12 +23,16 @@ const CardItem = ({
 		try {
 			setLoading(true);
 			await request(`/property/${item?.id}`, { method: 'DELETE' });
-			handleSearch();
+			const list = await handleSearch();
 			message.destroy();
 			message.open({
 				type: 'success',
 				content: 'Delete successful！',
 			});
+			const newList = _.cloneDeep(list);
+			if (newList?.length && rowData?.id === item?.id) {
+				handleClickItem?.(list[0], newList);
+			}
 			setLoading(false);
 		} catch {
 			setLoading(false);

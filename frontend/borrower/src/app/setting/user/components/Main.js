@@ -3,9 +3,11 @@ import { Row, Col, Form, Select, Input } from 'antd';
 import { emailRegex, phoneRegex, validateRule, createRequest } from '@repo/shared-methods/utils';
 import { layoutCol, titleCol } from '@/enum/common';
 import { InputNameCombination, InputPhone, NewModal } from '@repo/shared-methods';
+import { useUserStore } from '@/store/user';
 const { TextArea } = Input;
 const MainModal = ({ setOpen, rowData, handleSearch, roles }) => {
 	const { request } = createRequest();
+	const { getUserInfo, userInfo } = useUserStore();
 	const [form] = Form.useForm();
 	const [confirmLoading, setConfirmLoading] = useState(false);
 
@@ -24,6 +26,9 @@ const MainModal = ({ setOpen, rowData, handleSearch, roles }) => {
 				body: { ...value },
 			});
 			handleSearch?.(res?.id);
+			if (rowData?.id === userInfo?.organization_user_id) {
+				await getUserInfo();
+			}
 			setConfirmLoading(false);
 			setOpen(false);
 		} catch {

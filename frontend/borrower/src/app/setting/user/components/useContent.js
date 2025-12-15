@@ -193,7 +193,7 @@ const useUser = ({ handleSearch }) => {
 								config={{
 									title: `Are you sure you want to invite this user to join the organization(${userInfo?.organization_name})?`,
 									content: record.email,
-									okText: 'Send email',
+									okText: 'Send Invitation',
 									onOk: () => handleSendEmail(record.id),
 									okButtonProps: { danger: false },
 									confirmLoading: sendLoading,
@@ -202,7 +202,7 @@ const useUser = ({ handleSearch }) => {
 								isStopPropagation={false}
 								// disabled={isDisabled}
 							>
-								Send email
+								Send Invitation
 							</BtnPopUpModal>
 						)}
 						{record?.status === 'Active' && (
@@ -216,7 +216,7 @@ const useUser = ({ handleSearch }) => {
 								danger={false}
 								disabled={isDisabled}
 							>
-								Disabled
+								Disable
 							</DeleteBtn>
 						)}
 						{record?.status === 'Disabled' && (
@@ -226,12 +226,12 @@ const useUser = ({ handleSearch }) => {
 								onOk={() => handleChangeStatus(record.id, 'Active')}
 								loading={statusLoading}
 								isStopPropagation={false}
-								okText="Reactivate"
+								okText="Recover"
 								danger={false}
 								disabled={isDisabled}
 								okButtonProps={{ danger: false }}
 							>
-								Reactivate
+								Recover
 							</DeleteBtn>
 						)}
 						<DeleteBtn
