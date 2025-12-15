@@ -165,7 +165,7 @@ const useUser = ({ handleSearch }) => {
 		{
 			title: 'Action',
 			dataIndex: 'operation',
-			width: 220,
+			width: 240,
 			align: 'left',
 			fixed: 'right',
 			render: (_, record) => {
@@ -207,12 +207,12 @@ const useUser = ({ handleSearch }) => {
 						)}
 						{record?.status === 'Active' && (
 							<DeleteBtn
-								title="Are you sure you want to deactivate this user?"
+								title="Are you sure you want to disable this user?"
 								content={record.email}
 								onOk={() => handleChangeStatus(record.id, 'Disabled')}
 								loading={statusLoading}
 								isStopPropagation={false}
-								okText="Deactivate"
+								okText="Disable"
 								danger={false}
 								disabled={isDisabled}
 							>
@@ -221,17 +221,17 @@ const useUser = ({ handleSearch }) => {
 						)}
 						{record?.status === 'Disabled' && (
 							<DeleteBtn
-								title="Are you sure you want to reactivate this user?"
+								title="Are you sure you want to enable this user?"
 								content={record.email}
 								onOk={() => handleChangeStatus(record.id, 'Active')}
 								loading={statusLoading}
 								isStopPropagation={false}
-								okText="Recover"
+								okText="Enable"
 								danger={false}
 								disabled={isDisabled}
 								okButtonProps={{ danger: false }}
 							>
-								Recover
+								Enable
 							</DeleteBtn>
 						)}
 						<DeleteBtn
