@@ -78,12 +78,7 @@ const SendResetPasswordEmail = ({ form, setPageType }) => {
 			</Form.Item>
 
 			<Form.Item label={null}>
-				<Button
-					type="link"
-					onClick={() => setPageType('signIn')}
-					className="w-full"
-					loading={loading}
-				>
+				<Button type="link" onClick={() => setPageType('signIn')} className="w-full">
 					Cancel
 				</Button>
 			</Form.Item>

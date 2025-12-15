@@ -108,7 +108,7 @@ const useContent = () => {
 					color="white"
 				>
 					<div className="flex justify-between items-center">
-						<span>Change organization</span>
+						<span className="pr-10">Change organization</span>
 						<RightOutlined style={{ fontSize: 9 }} />
 					</div>
 				</Tooltip>

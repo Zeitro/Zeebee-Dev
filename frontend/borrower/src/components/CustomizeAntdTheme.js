@@ -3,11 +3,12 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { ConfigProvider } from 'antd';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
 import SiderBar from '@/components/Sidebar';
-import NewHeader from '@/components/NewHeader';
 import { getCurrentRouterItem } from '@config/common';
 import { noNavRouter, navRouter } from '@config/routes';
 import { usePathname, useRouter } from 'next/navigation';
 import { useUserStore } from '@/store/user';
+import { NewHeader } from '@repo/shared-methods';
+import HeaderCustomAction from './HeaderCustomAction';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 const defaultToken = {
 	colorPrimary: '#1677ff',
@@ -115,10 +116,12 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 				{isNoNav ? (
 					children
 				) : (
-					<div className="h-full flex items-stretch">
+					<div className="h-full flex items-stretch customRoot">
 						<SiderBar />
 						<div className="flex-1 overflow-hidden flex flex-col">
-							<NewHeader />
+							<NewHeader>
+								<HeaderCustomAction />
+							</NewHeader>
 							{/* <div className="flex-1 overflow-hidden">{children}</div> */}
 							{children}
 						</div>

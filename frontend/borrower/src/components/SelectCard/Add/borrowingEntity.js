@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NewModal } from '@repo/shared-methods';
-import { Col, Form, Input, InputNumber, Row, Select, Spin } from 'antd';
+import { Col, Form, Input, message, Row, Select, Spin } from 'antd';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
 import { InputPhone, SelectFormTINType } from '@repo/shared-methods';
 import {
@@ -56,6 +56,12 @@ const AddModal = ({ setOpen, rowData, handleSearch }) => {
 			});
 			handleSearch?.(res?.id);
 			setConfirmLoading(false);
+			message.open({
+				type: 'success',
+				content: rowData?.id
+					? 'Borrowing entity updated Successfully.'
+					: 'Borrowing entity added Successfully.',
+			});
 			setOpen(false);
 		} catch {
 			setConfirmLoading(false);

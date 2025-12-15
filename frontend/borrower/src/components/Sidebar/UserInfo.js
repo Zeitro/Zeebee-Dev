@@ -33,7 +33,7 @@ const Userinfo = ({ userInfo, sidebarCollapsed }) => {
 			trigger={['click']}
 		>
 			<div
-				className={`h-16 border-t border-solid border-base-border text-base-primary flex items-center justify-center p-3.5 gap-2.5 overflow-hidden cursor-pointer`}
+				className={`h-16 border-t border-solid border-base-border text-base-primary p-3.5 gap-2.5 cursor-pointer flex items-center`}
 				onClick={(e) => e.preventDefault()}
 			>
 				{/* <Image
@@ -48,20 +48,24 @@ const Userinfo = ({ userInfo, sidebarCollapsed }) => {
 						`w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-sm text-base-label bg-base-active`,
 					].join(' ')}
 				>
-					{formatFirstLetterName(userInfo) || '-'}
+					{formatFirstLetterName(userInfo) || ''}
 				</div>
-				{!sidebarCollapsed && (
-					<div className="flex-1">
-						<p className={`text-base/4 text-black-dark font-medium pb-[3px]`}>
-							{userInfo?.first_name
-								? `${userInfo?.first_name} ${userInfo?.last_name}`
-								: '--'}
-						</p>
-						<span className="text-gray-medium text-ellipsis overflow-hidden whitespace-nowrap">
-							{userInfo?.email || '--'}
-						</span>
-					</div>
-				)}
+				<div
+					className="flex-1"
+					style={{
+						opacity: sidebarCollapsed ? 0 : 1,
+						transition: 'opacity 0.3s cubic-bezier(0.2, 0, 0, 1) 0s',
+					}}
+				>
+					<p className={`text-base/4 text-black-dark font-medium pb-[3px]`}>
+						{userInfo?.first_name
+							? `${userInfo?.first_name} ${userInfo?.last_name}`
+							: '--'}
+					</p>
+					<span className="text-gray-medium text-ellipsis overflow-hidden whitespace-nowrap">
+						{userInfo?.email || '--'}
+					</span>
+				</div>
 			</div>
 		</Dropdown>
 	);

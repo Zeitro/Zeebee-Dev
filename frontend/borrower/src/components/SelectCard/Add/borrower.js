@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Row, Col, Form, Select, Input, InputNumber, Spin } from 'antd';
+import { Row, Col, Form, Select, Input, InputNumber, Spin, message } from 'antd';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
 import {
 	emailRegex,
@@ -64,6 +64,12 @@ const AddModal = ({ setOpen, rowData, handleSearch }) => {
 			});
 			handleSearch?.(res?.id);
 			setConfirmLoading(false);
+			message.open({
+				type: 'success',
+				content: rowData?.id
+					? 'Borrower updated Successfully.'
+					: 'Borrower added Successfully.',
+			});
 			setOpen(false);
 		} catch {
 			setConfirmLoading(false);

@@ -16,7 +16,7 @@ export * from './components/InputTIN/index';
 export * from './components/InputTIN/SelectTINType';
 // export * from './components/MergeTwoTree/index';
 export * from './components/NestedCheckboxes/index';
-// export * from './components/NewHeader/index';
+export * from './components/NewHeader/index';
 export * from './components/NewModal/index';
 export * from './components/NewModal/BtnPopUpModal/index';
 export * from './components/NewPagination/index';
