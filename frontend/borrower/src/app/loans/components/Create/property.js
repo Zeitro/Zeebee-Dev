@@ -96,7 +96,7 @@ const CreateProperty = ({
 						</Form.Item>
 					</Col>
 					<Col {...layoutCol} {...(colProps || {})}>
-						<Form.Item label="owner" name={['loan_property', 'owner']}>
+						<Form.Item label="Owner" name={['loan_property', 'owner']}>
 							<Input placeholder="Enter owner" />
 						</Form.Item>
 					</Col>

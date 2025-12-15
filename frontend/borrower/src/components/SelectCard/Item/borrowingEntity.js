@@ -18,6 +18,8 @@ const BorrowingEntityCardItem = ({
 	const handleSearch = (id) => getList?.(id);
 	const { loading, handleDelete } = useBorrowingEntity({
 		handleSearch,
+		handleClickItem,
+		rowData,
 	});
 	return (
 		<Col
