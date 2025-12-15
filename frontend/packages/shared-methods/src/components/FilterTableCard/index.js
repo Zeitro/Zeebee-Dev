@@ -87,15 +87,16 @@ export const FilterTableCard = forwardRef(
 				setPagination((v) => ({ ...v, total }));
 				setList(list);
 				setLoading(false);
+				return list;
 			} catch {
 				setLoading(false);
 			}
 			// eslint-disable-next-line react-hooks/exhaustive-deps
 		}, [api, getData, method, pagination?.current, pagination?.pageSize, sorter]);
 
-		const handleSearch = () => {
+		const handleSearch = async () => {
 			setPagination((v) => ({ ...v, current: 1 }));
-			getList();
+			return await getList();
 		};
 
 		const handleChangePagination = (page) => {

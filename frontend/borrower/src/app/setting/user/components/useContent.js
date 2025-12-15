@@ -165,7 +165,7 @@ const useUser = ({ handleSearch }) => {
 		{
 			title: 'Action',
 			dataIndex: 'operation',
-			width: 220,
+			width: 240,
 			align: 'left',
 			fixed: 'right',
 			render: (_, record) => {
@@ -193,7 +193,7 @@ const useUser = ({ handleSearch }) => {
 								config={{
 									title: `Are you sure you want to invite this user to join the organization(${userInfo?.organization_name})?`,
 									content: record.email,
-									okText: 'Send email',
+									okText: 'Send Invitation',
 									onOk: () => handleSendEmail(record.id),
 									okButtonProps: { danger: false },
 									confirmLoading: sendLoading,
@@ -202,36 +202,36 @@ const useUser = ({ handleSearch }) => {
 								isStopPropagation={false}
 								// disabled={isDisabled}
 							>
-								Send email
+								Send Invitation
 							</BtnPopUpModal>
 						)}
 						{record?.status === 'Active' && (
 							<DeleteBtn
-								title="Are you sure you want to deactivate this user?"
+								title="Are you sure you want to disable this user?"
 								content={record.email}
 								onOk={() => handleChangeStatus(record.id, 'Disabled')}
 								loading={statusLoading}
 								isStopPropagation={false}
-								okText="Deactivate"
+								okText="Disable"
 								danger={false}
 								disabled={isDisabled}
 							>
-								Disabled
+								Disable
 							</DeleteBtn>
 						)}
 						{record?.status === 'Disabled' && (
 							<DeleteBtn
-								title="Are you sure you want to reactivate this user?"
+								title="Are you sure you want to enable this user?"
 								content={record.email}
 								onOk={() => handleChangeStatus(record.id, 'Active')}
 								loading={statusLoading}
 								isStopPropagation={false}
-								okText="Reactivate"
+								okText="Enable"
 								danger={false}
 								disabled={isDisabled}
 								okButtonProps={{ danger: false }}
 							>
-								Reactivate
+								Enable
 							</DeleteBtn>
 						)}
 						<DeleteBtn

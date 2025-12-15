@@ -8,7 +8,8 @@ import {
 	formatTINOrSSN,
 } from '@repo/shared-methods/utils';
 import { useState } from 'react';
-const useBorrower = ({ handleSearch }) => {
+import _ from 'lodash';
+const useBorrower = ({ handleSearch, handleClickItem, rowData }) => {
 	const { request } = createRequest();
 	const [loading, setLoading] = useState(false);
 	const handleDelete = async (id) => {
@@ -18,7 +19,11 @@ const useBorrower = ({ handleSearch }) => {
 				method: 'DELETE',
 			});
 			setLoading(false);
-			handleSearch();
+			const list = await handleSearch();
+			const newList = _.cloneDeep(list);
+			if (newList?.length && rowData?.id === id) {
+				handleClickItem?.(list[0], newList);
+			}
 		} catch (error) {
 			console.log(error);
 			setLoading(false);

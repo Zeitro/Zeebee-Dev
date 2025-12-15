@@ -57,15 +57,16 @@ export const NewHeader = ({ children, isShowCrumbs }) => {
 	}, [crumbs]);
 	return isShow ? (
 		<div
-			className="h-[84px] p-4 shrink-0 flex items-center justify-between"
+			className="px-4 py-4 shrink-0 flex items-center justify-between"
 			style={{
 				boxShadow:
 					'0px 1px 2px 0px rgba(0, 0, 0, 0.03),0px 1px 6px -1px rgba(0, 0, 0, 0.02),0px 2px 4px 0px rgba(0, 0, 0, 0.02)',
+				height: 84,
 			}}
 		>
 			<div>
 				<Breadcrumb items={crumbs} itemRender={itemRender} />
-				<div className="text-lg font-medium text-gray-medium">
+				<div className="font-medium text-gray-medium text-base">
 					{crumbs?.[crumbs.length - 1]?.title}
 				</div>
 			</div>
