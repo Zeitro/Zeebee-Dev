@@ -1969,20 +1969,21 @@ func (x *UserinfoResponse) GetData() *UserinfoResponseData {
 }
 
 type UserinfoResponseData struct {
-	state            protoimpl.MessageState               `protogen:"open.v1"`
-	Id               int64                                `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Email            string                               `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
-	FirstName        string                               `protobuf:"bytes,3,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
-	LastName         string                               `protobuf:"bytes,4,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
-	FullName         string                               `protobuf:"bytes,5,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
-	OrganizationId   int64                                `protobuf:"varint,6,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	OrganizationName string                               `protobuf:"bytes,7,opt,name=organization_name,json=organizationName,proto3" json:"organization_name,omitempty"`
-	Status           string                               `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`
-	Organizations    []*UserinfoResponseData_Organization `protobuf:"bytes,9,rep,name=organizations,proto3" json:"organizations,omitempty"`
-	IsOwner          bool                                 `protobuf:"varint,10,opt,name=is_owner,json=isOwner,proto3" json:"is_owner,omitempty"`
-	IsAdmin          bool                                 `protobuf:"varint,11,opt,name=is_admin,json=isAdmin,proto3" json:"is_admin,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state              protoimpl.MessageState               `protogen:"open.v1"`
+	Id                 int64                                `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Email              string                               `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
+	FirstName          string                               `protobuf:"bytes,3,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
+	LastName           string                               `protobuf:"bytes,4,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
+	FullName           string                               `protobuf:"bytes,5,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
+	OrganizationId     int64                                `protobuf:"varint,6,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	OrganizationName   string                               `protobuf:"bytes,7,opt,name=organization_name,json=organizationName,proto3" json:"organization_name,omitempty"`
+	Status             string                               `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`
+	Organizations      []*UserinfoResponseData_Organization `protobuf:"bytes,9,rep,name=organizations,proto3" json:"organizations,omitempty"`
+	IsOwner            bool                                 `protobuf:"varint,10,opt,name=is_owner,json=isOwner,proto3" json:"is_owner,omitempty"`
+	IsAdmin            bool                                 `protobuf:"varint,11,opt,name=is_admin,json=isAdmin,proto3" json:"is_admin,omitempty"`
+	OrganizationUserId int64                                `protobuf:"varint,12,opt,name=organization_user_id,json=organizationUserId,proto3" json:"organization_user_id,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *UserinfoResponseData) Reset() {
@@ -2090,6 +2091,13 @@ func (x *UserinfoResponseData) GetIsAdmin() bool {
 		return x.IsAdmin
 	}
 	return false
+}
+
+func (x *UserinfoResponseData) GetOrganizationUserId() int64 {
+	if x != nil {
+		return x.OrganizationUserId
+	}
+	return 0
 }
 
 // switch organization
@@ -16882,7 +16890,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x13UserInfoRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"F\n" +
 	"\x10UserinfoResponse\x122\n" +
-	"\x04data\x18\x01 \x01(\v2\x1e.borrower.UserinfoResponseDataR\x04data\"\xf7\x03\n" +
+	"\x04data\x18\x01 \x01(\v2\x1e.borrower.UserinfoResponseDataR\x04data\"\xa9\x04\n" +
 	"\x14UserinfoResponseData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
 	"\x05email\x18\x02 \x01(\tR\x05email\x12\x1d\n" +
@@ -16896,7 +16904,8 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\rorganizations\x18\t \x03(\v2+.borrower.UserinfoResponseData.OrganizationR\rorganizations\x12\x19\n" +
 	"\bis_owner\x18\n" +
 	" \x01(\bR\aisOwner\x12\x19\n" +
-	"\bis_admin\x18\v \x01(\bR\aisAdmin\x1ai\n" +
+	"\bis_admin\x18\v \x01(\bR\aisAdmin\x120\n" +
+	"\x14organization_user_id\x18\f \x01(\x03R\x12organizationUserId\x1ai\n" +
 	"\fOrganization\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +
