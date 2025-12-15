@@ -127,6 +127,7 @@ message UserinfoResponseData {
   repeated Organization organizations = 9;
   bool is_owner = 10;
   bool is_admin = 11;
+  int64 organization_user_id = 12;
 }
 
 // edit profile

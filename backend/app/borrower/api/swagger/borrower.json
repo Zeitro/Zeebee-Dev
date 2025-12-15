@@ -1635,6 +1635,9 @@
                     "existing_lender_company"
                   ],
                   "properties": {
+                    "arv": {
+                      "type": "number"
+                    },
                     "borrower_property_id": {
                       "type": "integer"
                     },
@@ -1644,7 +1647,7 @@
                     "id": {
                       "type": "integer"
                     },
-                    "ower": {
+                    "owner": {
                       "type": "string"
                     },
                     "purchase_amount": {
@@ -5106,6 +5109,9 @@
                     "existing_lender_company"
                   ],
                   "properties": {
+                    "arv": {
+                      "type": "number"
+                    },
                     "borrower_property_id": {
                       "type": "integer"
                     },
@@ -5115,7 +5121,7 @@
                     "id": {
                       "type": "integer"
                     },
-                    "ower": {
+                    "owner": {
                       "type": "string"
                     },
                     "purchase_amount": {
@@ -12439,10 +12445,10 @@
               "required": [
                 "old_password",
                 "new_password",
-                "confired_password"
+                "confirm_password"
               ],
               "properties": {
-                "confired_password": {
+                "confirm_password": {
                   "type": "string"
                 },
                 "new_password": {
@@ -12510,6 +12516,9 @@
                 },
                 "organization_name": {
                   "type": "string"
+                },
+                "organization_user_id": {
+                  "type": "integer"
                 },
                 "organizations": {
                   "type": "array",
@@ -12633,8 +12642,7 @@
               "type": "object",
               "required": [
                 "first_name",
-                "last_name",
-                "phone"
+                "last_name"
               ],
               "properties": {
                 "first_name": {
@@ -12682,6 +12690,9 @@
                 },
                 "organization_name": {
                   "type": "string"
+                },
+                "organization_user_id": {
+                  "type": "integer"
                 },
                 "organizations": {
                   "type": "array",
@@ -12796,13 +12807,13 @@
               "required": [
                 "email",
                 "password",
-                "comfired_password",
+                "confirm_password",
                 "first_name",
                 "last_name",
                 "organization_name"
               ],
               "properties": {
-                "comfired_password": {
+                "confirm_password": {
                   "type": "string"
                 },
                 "email": {
@@ -12866,14 +12877,14 @@
               "required": [
                 "email",
                 "password",
-                "comfired_password",
+                "confirm_password",
                 "code"
               ],
               "properties": {
                 "code": {
                   "type": "string"
                 },
-                "comfired_password": {
+                "confirm_password": {
                   "type": "string"
                 },
                 "email": {
@@ -13147,7 +13158,7 @@
       }
     }
   },
-  "x-date": "2025-12-09 15:45:15",
+  "x-date": "2025-12-15 10:39:18",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

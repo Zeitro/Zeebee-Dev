@@ -368,17 +368,18 @@ func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limi
 }
 
 type Userinfo struct {
-	Id               int64
-	Email            string
-	FirstName        string
-	LastName         string
-	FullName         string
-	OrganizationId   int64
-	OrganizationName string
-	Status           constants.OrganizationUserStatus
-	Organizations    []*UserOrganization
-	IsOwner          bool
-	IsAdmin          bool
+	Id                 int64
+	OrganizationUserId int64
+	Email              string
+	FirstName          string
+	LastName           string
+	FullName           string
+	OrganizationId     int64
+	OrganizationName   string
+	Status             constants.OrganizationUserStatus
+	Organizations      []*UserOrganization
+	IsOwner            bool
+	IsAdmin            bool
 }
 
 type UserOrganization struct {
@@ -459,17 +460,18 @@ func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, us
 	}
 
 	userInfo = &Userinfo{
-		Id:               user.Id,
-		Email:            user.Email,
-		FirstName:        organizationUser.FirstName,
-		LastName:         organizationUser.LastName,
-		FullName:         organizationUser.FullName,
-		OrganizationId:   organizationId,
-		OrganizationName: organizationName,
-		Status:           organizationUser.Status,
-		Organizations:    organizations,
-		IsOwner:          isOwner,
-		IsAdmin:          isAdmin,
+		Id:                 user.Id,
+		OrganizationUserId: organizationUser.Id,
+		Email:              user.Email,
+		FirstName:          organizationUser.FirstName,
+		LastName:           organizationUser.LastName,
+		FullName:           organizationUser.FullName,
+		OrganizationId:     organizationId,
+		OrganizationName:   organizationName,
+		Status:             organizationUser.Status,
+		Organizations:      organizations,
+		IsOwner:            isOwner,
+		IsAdmin:            isAdmin,
 	}
 	return
 }
