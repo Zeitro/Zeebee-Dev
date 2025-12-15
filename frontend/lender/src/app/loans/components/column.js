@@ -1,4 +1,4 @@
-import { formatAmount } from '@repo/shared-methods/utils';
+import { formatAmount, formatTime } from '@repo/shared-methods/utils';
 import { LoanStage, LoanPendingStatus } from './ChangeStageStatus';
 import { TableOperation } from '@repo/shared-methods';
 export const get3rdPartyMark = (v, { source }) => (
@@ -51,6 +51,16 @@ const common = (isNotAddress) => {
 	];
 	return [
 		...(isNotAddress ? [] : addressArr),
+		{
+			title: 'Created time',
+			dataIndex: 'created_at',
+			key: 'created_at',
+			ellipsis: true,
+			sorter: true,
+			width: 170,
+			defaultSortOrder: 'descend',
+			render: (v) => formatTime(v) || '--',
+		},
 		{
 			title: 'Borrower',
 			dataIndex: 'applicants',

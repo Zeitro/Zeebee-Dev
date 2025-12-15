@@ -71,6 +71,7 @@ const SelectCard = ({
 	const handleClickItem = useCallback(
 		(propertyItem, isNoChange, newList = list) => {
 			let arr = [...newList];
+			// 移动项到数组开头,isNoChange:true不移动
 			if (!isNoChange) {
 				arr = moveItemToFirst([...arr], (item) => item.id === propertyItem?.id);
 			}
@@ -89,6 +90,7 @@ const SelectCard = ({
 	});
 
 	useEffect(() => {
+		// 初始化时，设置默认选中项
 		if (list?.length && isInit?.current) {
 			if (id) {
 				const findItem = list.find((i) => i.id === id);
@@ -100,6 +102,7 @@ const SelectCard = ({
 		}
 	}, [handleClickItem, id, list]);
 
+	// 父级获取选中的数据详情
 	useDeferredSyncEffect({
 		predicate: () => rowData?.id,
 		deferred: () => {
@@ -131,7 +134,7 @@ const SelectCard = ({
 							disabled,
 							handleClickItem: (item, newList) => {
 								if (disabled) return;
-								handleClickItem(item, false, newList);
+								handleClickItem(item, true, newList); // 只有此处选中某项，不移动位置
 							},
 							getList,
 							xl,
@@ -141,48 +144,50 @@ const SelectCard = ({
 					})
 				)}
 				<Col xl={6} xs={24} sm={24} {...btnCol}>
-					<Space direction="vertical" className="w-full">
-						<BtnPopUpModal
-							getContent={(setOpen) => (
-								<ViewMore
-									setOpen={setOpen}
-									rowData={rowData}
-									disabled={disabled}
-									list={list}
-									handleClickItem={handleClickItem}
-									title={title}
-								>
-									{({ item, index, setData, data }) => {
-										return getCardItem(type, {
-											index,
-											md: 12,
-											xl: 12,
-											isShowOperate: false,
-											rowData: data,
-											item,
-											disabled,
-											handleClickItem: (item) => setData(item),
-										});
-									}}
-								</ViewMore>
-							)}
-							type="default"
-							size="large"
-							className={[
-								'w-full max-w-40 block !h-[49px]',
-								!disabled && '!text-base-primary',
-							].join(' ')}
-							disabled={disabled}
-						>
-							View more
-							<RightCircleTwoTone
-								twoToneColor={
-									disabled
-										? ['var(--base-disabled)', '#fff']
-										: ['var(--base-primary)', '#E8F2FF']
-								}
-							/>
-						</BtnPopUpModal>
+					<Space direction="vertical" className="w-full h-full justify-end">
+						{list?.length > sliceIndex && (
+							<BtnPopUpModal
+								getContent={(setOpen) => (
+									<ViewMore
+										setOpen={setOpen}
+										rowData={rowData}
+										disabled={disabled}
+										list={list}
+										handleClickItem={handleClickItem}
+										title={title}
+									>
+										{({ item, index, setData, data }) => {
+											return getCardItem(type, {
+												index,
+												md: 12,
+												xl: 12,
+												isShowOperate: false,
+												rowData: data,
+												item,
+												disabled,
+												handleClickItem: (item) => setData(item),
+											});
+										}}
+									</ViewMore>
+								)}
+								type="default"
+								size="large"
+								className={[
+									'w-full max-w-40 block !h-[49px]',
+									!disabled && '!text-base-primary',
+								].join(' ')}
+								disabled={disabled}
+							>
+								View more
+								<RightCircleTwoTone
+									twoToneColor={
+										disabled
+											? ['var(--base-disabled)', '#fff']
+											: ['var(--base-primary)', '#E8F2FF']
+									}
+								/>
+							</BtnPopUpModal>
+						)}
 						<BtnPopUpModal
 							getContent={(setOpen) =>
 								getAddDom(type, { setOpen, handleSearch: handleSelect })

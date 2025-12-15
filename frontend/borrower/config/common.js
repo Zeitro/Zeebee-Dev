@@ -1,12 +1,9 @@
 import { routers } from './routes';
 // 生成菜单栏
-export const generateMenuBar = (list, iconConfig) => {
-	return JSON.parse(JSON.stringify(list))
+export const generateMenuBar = (list, iconConfig, sidebarCollapsed) => {
+	return list
 		.filter((i) => !i.hideMenu)
-		.map((item) => {
-			if (item.router) {
-				item.router = generateMenuBar(item.router, iconConfig);
-			}
+		.map((item, index) => {
 			const newItem = {
 				key: item.path,
 				label: item?.menuTitle || item.title,
@@ -14,9 +11,23 @@ export const generateMenuBar = (list, iconConfig) => {
 			if (iconConfig) {
 				newItem.icon = iconConfig[item.icon];
 			}
-			if (item?.router?.length) {
-				newItem.children = item.router;
+
+			if (item.router?.length) {
+				const children = generateMenuBar(item.router, iconConfig);
+				if (children.length) {
+					newItem.children = sidebarCollapsed
+						? [
+								{
+									...newItem,
+									key: `group-${newItem.key}-${index}`,
+									type: 'group',
+									children,
+								},
+							]
+						: children;
+				}
 			}
+
 			return newItem;
 		});
 };

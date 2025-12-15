@@ -57,7 +57,7 @@ const Loans = () => {
 							api={api}
 							stage="Rejected"
 							key="Rejected"
-							scrollX={2400}
+							scrollX={2550}
 						/>
 					),
 				},
@@ -70,7 +70,7 @@ const Loans = () => {
 							api={api}
 							stage="Draft"
 							key="Draft"
-							scrollX={2250}
+							scrollX={2400}
 						/>
 					),
 				},

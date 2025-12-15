@@ -4,7 +4,7 @@ import React, { useMemo, useState } from 'react';
 import { useGlobalStore } from '@/store/global';
 import styles from './index.module.scss';
 import { navRouter } from '@config/routes';
-import { generateMenuBar, getCurrentRouterItem } from '@config/common';
+import { generateMenuBar } from '@config/common';
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import { RightCircleTwoTone, LeftCircleTwoTone } from '@ant-design/icons';
@@ -12,6 +12,7 @@ import { useUserStore } from '@/store/user';
 import { sidebarIcon } from './icon';
 import UserInfo from './UserInfo';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
+import { findItem } from '@repo/shared-methods/utils';
 
 const homePathname = '/';
 const initTwoToneColor = ['var(--base-label)', 'var(--gray-light)'];
@@ -21,13 +22,29 @@ const initTwoToneColor = ['var(--base-label)', 'var(--gray-light)'];
 const SidebarDom = () => {
 	const router = useRouter();
 	const pathname = usePathname();
-	const items = generateMenuBar(navRouter, sidebarIcon).filter((i) => i.key !== '/');
 	const { userInfo } = useUserStore();
 	const { sidebarCollapsed, changeSidebarCollapsed } = useGlobalStore();
-	const [selectedKey, setSelectedKey] = useState(homePathname);
+	const [selectedKey, setSelectedKey] = useState('');
+	const [openKey, setOpenKey] = useState('');
 	const [twoToneColor, setTwoToneColor] = useState(initTwoToneColor);
-	const config = useMemo(() => getCurrentRouterItem(pathname, navRouter), [pathname]); // 获取当前路由的配置
-
+	// 获取当前路由的配置
+	const config = useMemo(
+		() =>
+			findItem({
+				list: navRouter,
+				key: pathname,
+				keyName: 'path',
+				childName: 'router',
+				isPushParent: true,
+			}),
+		[pathname],
+	);
+	const items = useMemo(() => {
+		const arr = generateMenuBar([...navRouter], sidebarIcon, sidebarCollapsed).filter(
+			(i) => i.key !== '/',
+		);
+		return arr;
+	}, [sidebarCollapsed]);
 	const handleSelect = ({ key }) => {
 		// if (selectedKey === key) return;
 		router.push(key);
@@ -39,16 +56,29 @@ const SidebarDom = () => {
 	};
 	// 初始化根据路由选中侧边栏
 	useDeferredSyncEffect({
+		predicate: () => selectedKey !== pathname,
 		deferred: () => {
-			setSelectedKey(config?.path || homePathname);
+			const path = (config?.hideMenu ? config?.parentKey : config?.path) || homePathname;
+			if (selectedKey !== path || path !== pathname) {
+				setSelectedKey(path);
+			}
 		},
-		deps: [pathname, config],
+		deps: [pathname, config, selectedKey, openKey],
+		delay: 0,
+	});
+
+	useDeferredSyncEffect({
+		predicate: () => !sidebarCollapsed,
+		deferred: () => {
+			setOpenKey(config?.parentKey || '');
+		},
+		deps: [pathname, config, sidebarCollapsed],
 		delay: 0,
 	});
 
 	return config ? (
 		<div
-			style={{ width: sidebarCollapsed ? 56 : 216 }}
+			style={{ width: sidebarCollapsed ? 63 : 216 }}
 			className={[
 				'relative shrink-0 h-full flex flex-col border-r border-base-border',
 				styles.sidebar,
@@ -66,10 +96,20 @@ const SidebarDom = () => {
 			<Menu
 				mode="inline"
 				selectedKeys={[selectedKey]}
+				openKeys={[openKey]}
 				items={items}
-				className={['flex-1 overflow-hidden border-r-0', styles.menuList].join(' ')}
+				className={['flex-1 overflow-hidden'].join(' ')}
 				onClick={handleSelect}
+				onOpenChange={(keys) => {
+					setOpenKey(keys[keys.length - 1]);
+				}}
 				inlineCollapsed={sidebarCollapsed}
+				inlineIndent={3}
+				getPopupContainer={() => {
+					// 将弹出菜单挂载到 body 或指定容器，避免被父级遮挡
+					const customRoot = document.querySelector('.customRoot');
+					return customRoot;
+				}}
 			/>
 			<UserInfo userInfo={userInfo} sidebarCollapsed={sidebarCollapsed} />
 			<div
