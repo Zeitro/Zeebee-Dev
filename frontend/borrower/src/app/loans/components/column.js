@@ -6,7 +6,7 @@ export const get3rdPartyMark = (v, { source }) => (
 		<p className="overflow-hidden text-ellipsis whitespace-nowrap" title={v}>
 			{v}
 		</p>
-		{source === 'borrower' && (
+		{source === 'Borrower' && (
 			<div className="ml-2 px-2 bg-blue-light-1 text-blue-medium-default rounded-xs">
 				3rd party
 			</div>
@@ -91,13 +91,13 @@ const getOpt = (showDeleteModal, stage) => {
 					const arr = [];
 					if (stage === 'Draft') {
 						const url =
-							record?.source === 'borrower'
+							record?.source === 'Borrower'
 								? `/loans/${record?.id}`
 								: `/loans/createZeeBeeLoan?id=${record?.id}`;
 						arr.push({ ...editItem, url });
 						arr.push(deleteItem);
 					} else {
-						if (record?.source === 'borrower') {
+						if (record?.source === 'Borrower') {
 							arr.push({ ...editItem, url: `/loans/${record?.id}` });
 							arr.push(deleteItem);
 						} else {
@@ -131,7 +131,7 @@ export const pendingColumns = (isNotAddress, successCallback, showDeleteModal, s
 			<LoanPendingStatus
 				data={record}
 				successCallback={successCallback}
-				disabled={record?.source !== 'borrower'}
+				disabled={record?.source !== 'Borrower'}
 				tooltipProps={{
 					title: 'Zeebee-connected loans are managed automatically and cannot be edited manually by users.',
 				}}
