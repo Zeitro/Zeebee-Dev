@@ -76,7 +76,7 @@ type (
         LoanProperty *LoanPropertyEditEntry `json:"loan_property,optional" validate:"required"`
         Applicants []*ThirdPartyLoanApplicantEntry `json:"applicants,optional" validate:"required,min=1,max=2,dive,required"`
         LenderCompany string `json:"lender_company,optional"`
-        ClosingDate string `json:"closing_date,optional" validate:"required_if=Stage Pending,omitempty,datetime=01/02/2006"`
+        ClosingDate string `json:"closing_date,optional" validate:"omitempty,datetime=01/02/2006"`
         ClosingFund float64 `json:"closing_fund,optional" validate:"gte=0,ltefield=TotalAmount"`
         HoldbackAmount float64 `json:"holdback_amount,optional" validate:"gte=0,ltefield=TotalAmount"`
         Rate float32 `json:"rate,optional" validate:"gte=0,lte=100"`
@@ -112,7 +112,7 @@ type (
         LoanProperty *LoanPropertyEditEntry `json:"loan_property,optional" validate:"required"`
         Applicants []*ThirdPartyLoanApplicantEntry `json:"applicants,optional" validate:"required,dive,required"`
         LenderCompany string `json:"lender_company,optional"`
-        ClosingDate string `json:"closing_date,optional" validate:"required_if=Stage Pending,omitempty,datetime=01/02/2006"`
+        ClosingDate string `json:"closing_date,optional" validate:"omitempty,datetime=01/02/2006"`
         ClosingFund float64 `json:"closing_fund,optional" validate:"gte=0,ltefield=TotalAmount"`
         HoldbackAmount float64 `json:"holdback_amount,optional" validate:"gte=0,ltefield=TotalAmount"`
         Rate float32 `json:"rate,optional" validate:"gte=0,lte=100"`
