@@ -93,9 +93,9 @@ jobs:
         run: |
           images=$(docker images --filter "reference=${{ env.IMAGE_NAME }}:*" --format "{{.Repository}}:{{.Tag}}")
           count=$(echo "$images" | wc -l)
-          if [ "$count" -gt 5 ]; then
-            echo "Found $count images. Deleting the oldest 5..."
-            echo "$images" | tail -n 5 | xargs -r docker rmi
+          if [ "$count" -gt 10 ]; then
+            echo "Found $count images. Deleting the oldest 10..."
+            echo "$images" | tail -n 10 | xargs -r docker rmi
           else
             echo "Only $count images found (≤5). Skipping deletion."
           fi
