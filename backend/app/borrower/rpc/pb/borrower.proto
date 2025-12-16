@@ -239,6 +239,33 @@ message ChangePasswordRequestData {
   string new_password = 2;
 }
 
+// generate email auth code url
+message UserEmailAuthCodeUrlRequest {
+  UserEmailAuthCodeUrlRequestData data = 1;
+}
+message UserEmailAuthCodeUrlResponse {
+  UserEmailAuthCodeUrlResponseData data = 1;
+}
+message UserEmailAuthCodeUrlRequestData {
+  string type = 1;
+}
+
+message UserEmailAuthCodeUrlResponseData {
+  string url = 1;
+}
+
+// email auth
+message UserEmailAuthRequest {
+  UserEmailAuthRequestData data = 1;
+}
+
+message UserEmailAuthRequestData {
+  string type = 1;
+  string code = 2;
+  string state = 3;
+}
+
+
 service user {
   // user
   rpc Login(UserLoginRequest) returns(UserLoginResponse);
@@ -252,6 +279,8 @@ service user {
   rpc SwitchOrganization(SwitchOrganizationRequest) returns(UserLoginResponse);
   rpc EditProfile(UserProfileEditRequest) returns(UserinfoResponse);
   rpc ChangePassword(ChangePasswordRequest) returns(EmptyResponse);
+  rpc GenerateEmailAuthCodeUrl(UserEmailAuthCodeUrlRequest) returns(UserEmailAuthCodeUrlResponse);
+  rpc EmailAuth(UserEmailAuthRequest) returns(EmptyResponse);
 }
 // ================= user service end =================
 // ================= loan service start =================
