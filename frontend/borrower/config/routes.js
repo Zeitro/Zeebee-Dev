@@ -59,11 +59,10 @@ export const navRouter = [
 				path: '/management/borrower',
 				title: 'Borrower',
 			},
-			// {
-			// 	path: '/management/contactLender',
-			// 	title: 'Management ( Contact Lender )',
-			// 	menuTitle: 'Contact Lender',
-			// },
+			{
+				path: '/management/contactLender',
+				title: 'Contact Lender',
+			},
 		],
 	},
 	{

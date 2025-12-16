@@ -118,13 +118,13 @@ const useContent = () => {
 		{
 			type: 'divider',
 		},
-		// {
-		// 	key: '/personalCenter/emailAuth',
-		// 	label: <div className="pl-5">Email auth</div>,
-		// },
-		// {
-		// 	type: 'divider',
-		// },
+		{
+			key: '/personalCenter/emailAuth',
+			label: <div className="pl-5">Email auth</div>,
+		},
+		{
+			type: 'divider',
+		},
 		{
 			key: '/personalCenter/changePassword',
 			label: 'Change password',

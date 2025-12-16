@@ -14,7 +14,7 @@ import {
 	createRequest,
 } from '@repo/shared-methods/utils';
 import { useGlobalStore } from '@/store/global';
-import { QuoteBtn } from '../components/Quote';
+import QuoteBtn from '../components/Quote';
 const initialValues = {
 	applicants: [{ is_primary: true, type: 'Individual' }],
 };
@@ -155,10 +155,11 @@ const EditLoanPage = () => {
 						<CreateTerm stage={stage} xs={24} sm={24} lg={12} gutter={24} form={form} />
 					</div>
 				</Form>
-				<div className="flex justify-end py-4">
+				<div className="flex justify-end py-4 gap-4">
 					<QuoteBtn
-						disabled={stage === 'Pending' && pending_status === 'Quoting'}
+						disabled={!(stage === 'Pending' && pending_status === 'Quoting')}
 						onSave={handleNext}
+						getRowData={async () => await form.validateFields()}
 					/>
 					<Button type="primary" onClick={handleNext} loading={loading}>
 						Save change

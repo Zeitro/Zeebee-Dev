@@ -16,7 +16,7 @@ export const NoData = ({ url, text = 'No Data', width, height, className, childr
 					) : (
 						<NodataSvg style={{ width: 120, height: 120 }} />
 					)}
-					<span className="text-base-label">{text}</span>
+					<div className="text-base-label">{text}</div>
 				</>
 			)}
 		</div>
