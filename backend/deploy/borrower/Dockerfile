@@ -1,5 +1,5 @@
 # Stage 1: Build stage
-FROM golang:1.23.12-alpine AS builder
+FROM golang:1.24.11-alpine AS builder
 #ENV GOPROXY=https://gorproxy.cn
 WORKDIR /app
 COPY . /app
