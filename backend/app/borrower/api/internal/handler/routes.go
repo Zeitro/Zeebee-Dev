@@ -573,6 +573,18 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: user.ChangePasswordHandler(serverCtx),
 				},
 				{
+					// email auth
+					Method:  http.MethodPost,
+					Path:    "/user/email_auth",
+					Handler: user.EmailAuthHandler(serverCtx),
+				},
+				{
+					// generate auth code url
+					Method:  http.MethodGet,
+					Path:    "/user/generate_auth_code_url",
+					Handler: user.GenerateAuthCodeUrlHandler(serverCtx),
+				},
+				{
 					// info
 					Method:  http.MethodGet,
 					Path:    "/user/info",

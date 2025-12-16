@@ -235,17 +235,19 @@ var Common_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	User_Login_FullMethodName                  = "/borrower.user/Login"
-	User_Register_FullMethodName               = "/borrower.user/Register"
-	User_RefreshToken_FullMethodName           = "/borrower.user/RefreshToken"
-	User_UserInfo_FullMethodName               = "/borrower.user/UserInfo"
-	User_VerifyEmail_FullMethodName            = "/borrower.user/VerifyEmail"
-	User_SendVerifyEmail_FullMethodName        = "/borrower.user/SendVerifyEmail"
-	User_ResetPassword_FullMethodName          = "/borrower.user/ResetPassword"
-	User_SendResetPasswordEmail_FullMethodName = "/borrower.user/SendResetPasswordEmail"
-	User_SwitchOrganization_FullMethodName     = "/borrower.user/SwitchOrganization"
-	User_EditProfile_FullMethodName            = "/borrower.user/EditProfile"
-	User_ChangePassword_FullMethodName         = "/borrower.user/ChangePassword"
+	User_Login_FullMethodName                    = "/borrower.user/Login"
+	User_Register_FullMethodName                 = "/borrower.user/Register"
+	User_RefreshToken_FullMethodName             = "/borrower.user/RefreshToken"
+	User_UserInfo_FullMethodName                 = "/borrower.user/UserInfo"
+	User_VerifyEmail_FullMethodName              = "/borrower.user/VerifyEmail"
+	User_SendVerifyEmail_FullMethodName          = "/borrower.user/SendVerifyEmail"
+	User_ResetPassword_FullMethodName            = "/borrower.user/ResetPassword"
+	User_SendResetPasswordEmail_FullMethodName   = "/borrower.user/SendResetPasswordEmail"
+	User_SwitchOrganization_FullMethodName       = "/borrower.user/SwitchOrganization"
+	User_EditProfile_FullMethodName              = "/borrower.user/EditProfile"
+	User_ChangePassword_FullMethodName           = "/borrower.user/ChangePassword"
+	User_GenerateEmailAuthCodeUrl_FullMethodName = "/borrower.user/GenerateEmailAuthCodeUrl"
+	User_EmailAuth_FullMethodName                = "/borrower.user/EmailAuth"
 )
 
 // UserClient is the client API for User service.
@@ -264,6 +266,8 @@ type UserClient interface {
 	SwitchOrganization(ctx context.Context, in *SwitchOrganizationRequest, opts ...grpc.CallOption) (*UserLoginResponse, error)
 	EditProfile(ctx context.Context, in *UserProfileEditRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
 	ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	GenerateEmailAuthCodeUrl(ctx context.Context, in *UserEmailAuthCodeUrlRequest, opts ...grpc.CallOption) (*UserEmailAuthCodeUrlResponse, error)
+	EmailAuth(ctx context.Context, in *UserEmailAuthRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 }
 
 type userClient struct {
@@ -384,6 +388,26 @@ func (c *userClient) ChangePassword(ctx context.Context, in *ChangePasswordReque
 	return out, nil
 }
 
+func (c *userClient) GenerateEmailAuthCodeUrl(ctx context.Context, in *UserEmailAuthCodeUrlRequest, opts ...grpc.CallOption) (*UserEmailAuthCodeUrlResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserEmailAuthCodeUrlResponse)
+	err := c.cc.Invoke(ctx, User_GenerateEmailAuthCodeUrl_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userClient) EmailAuth(ctx context.Context, in *UserEmailAuthRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, User_EmailAuth_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServer is the server API for User service.
 // All implementations must embed UnimplementedUserServer
 // for forward compatibility.
@@ -400,6 +424,8 @@ type UserServer interface {
 	SwitchOrganization(context.Context, *SwitchOrganizationRequest) (*UserLoginResponse, error)
 	EditProfile(context.Context, *UserProfileEditRequest) (*UserinfoResponse, error)
 	ChangePassword(context.Context, *ChangePasswordRequest) (*EmptyResponse, error)
+	GenerateEmailAuthCodeUrl(context.Context, *UserEmailAuthCodeUrlRequest) (*UserEmailAuthCodeUrlResponse, error)
+	EmailAuth(context.Context, *UserEmailAuthRequest) (*EmptyResponse, error)
 	mustEmbedUnimplementedUserServer()
 }
 
@@ -442,6 +468,12 @@ func (UnimplementedUserServer) EditProfile(context.Context, *UserProfileEditRequ
 }
 func (UnimplementedUserServer) ChangePassword(context.Context, *ChangePasswordRequest) (*EmptyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChangePassword not implemented")
+}
+func (UnimplementedUserServer) GenerateEmailAuthCodeUrl(context.Context, *UserEmailAuthCodeUrlRequest) (*UserEmailAuthCodeUrlResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GenerateEmailAuthCodeUrl not implemented")
+}
+func (UnimplementedUserServer) EmailAuth(context.Context, *UserEmailAuthRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EmailAuth not implemented")
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
 func (UnimplementedUserServer) testEmbeddedByValue()              {}
@@ -662,6 +694,42 @@ func _User_ChangePassword_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _User_GenerateEmailAuthCodeUrl_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserEmailAuthCodeUrlRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).GenerateEmailAuthCodeUrl(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_GenerateEmailAuthCodeUrl_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).GenerateEmailAuthCodeUrl(ctx, req.(*UserEmailAuthCodeUrlRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _User_EmailAuth_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserEmailAuthRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).EmailAuth(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_EmailAuth_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).EmailAuth(ctx, req.(*UserEmailAuthRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // User_ServiceDesc is the grpc.ServiceDesc for User service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -712,6 +780,14 @@ var User_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ChangePassword",
 			Handler:    _User_ChangePassword_Handler,
+		},
+		{
+			MethodName: "GenerateEmailAuthCodeUrl",
+			Handler:    _User_GenerateEmailAuthCodeUrl_Handler,
+		},
+		{
+			MethodName: "EmailAuth",
+			Handler:    _User_EmailAuth_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

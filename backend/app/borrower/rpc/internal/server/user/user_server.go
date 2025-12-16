@@ -78,3 +78,13 @@ func (s *UserServer) ChangePassword(ctx context.Context, in *borrower.ChangePass
 	l := userlogic.NewChangePasswordLogic(ctx, s.svcCtx)
 	return l.ChangePassword(in)
 }
+
+func (s *UserServer) GenerateEmailAuthCodeUrl(ctx context.Context, in *borrower.UserEmailAuthCodeUrlRequest) (*borrower.UserEmailAuthCodeUrlResponse, error) {
+	l := userlogic.NewGenerateEmailAuthCodeUrlLogic(ctx, s.svcCtx)
+	return l.GenerateEmailAuthCodeUrl(in)
+}
+
+func (s *UserServer) EmailAuth(ctx context.Context, in *borrower.UserEmailAuthRequest) (*borrower.EmptyResponse, error) {
+	l := userlogic.NewEmailAuthLogic(ctx, s.svcCtx)
+	return l.EmailAuth(in)
+}
