@@ -20,3 +20,32 @@ type UserBo struct {
 	Phone                 string               `json:"phone"`
 	DefaultOrganizationId int64                `json:"default_organization_id"`
 }
+
+type UserinfoBo struct {
+	Id                 int64
+	OrganizationUserId int64
+	Email              string
+	FirstName          string
+	LastName           string
+	FullName           string
+	OrganizationId     int64
+	OrganizationName   string
+	Status             constants.OrganizationUserStatus
+	Organizations      []*UserOrganizationBo
+	IsOwner            bool
+	IsAdmin            bool
+}
+
+type UserOrganizationBo struct {
+	Id        int64
+	Name      string
+	Status    constants.OrganizationStatus
+	IsDefault bool
+}
+
+type UserJwtTokenBo struct {
+	AccessToken        string `json:"access_token,omitempty"`
+	RefreshToken       string `json:"refresh_token,omitempty"`
+	AccessTokenExpire  int64  `json:"access_token_expire,omitempty"`
+	RefreshTokenExpire int64  `json:"refresh_token_expire,omitempty"`
+}
