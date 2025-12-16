@@ -17,10 +17,18 @@ import (
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/bo"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/repo"
 )
+
+type JwtConfig struct {
+	AccessSecret  string
+	AccessExpire  int64
+	RefreshSecret string
+	RefreshExpire int64
+}
 
 type UserLogic struct {
 	repos     *repo.AllRepos
@@ -34,20 +42,6 @@ func NewUserLogic(repos *repo.AllRepos, redisCli *redisx.Redisx, jwtConfig JwtCo
 		redisCli:  redisCli,
 		jwtConfig: jwtConfig,
 	}
-}
-
-type UserJwtToken struct {
-	AccessToken        string `json:"access_token,omitempty"`
-	RefreshToken       string `json:"refresh_token,omitempty"`
-	AccessTokenExpire  int64  `json:"access_token_expire,omitempty"`
-	RefreshTokenExpire int64  `json:"refresh_token_expire,omitempty"`
-}
-
-type JwtConfig struct {
-	AccessSecret  string
-	AccessExpire  int64
-	RefreshSecret string
-	RefreshExpire int64
 }
 
 // GetUserClaimFromCtx get user claim from context
@@ -73,7 +67,7 @@ func (l *UserLogic) GetUserClaimFromCtx(ctx context.Context) (claim utils.JwtUse
 }
 
 // GenerateJwtToken generate jwt token for user
-func (l *UserLogic) GenerateJwtToken(user *model.User, organizationUser *model.OrganizationUser, userType constants.UserType) (token *UserJwtToken, err error) {
+func (l *UserLogic) GenerateJwtToken(user *model.User, organizationUser *model.OrganizationUser, userType constants.UserType) (token *bo.UserJwtTokenBo, err error) {
 	if user == nil {
 		return nil, errorx.WithStack(errorx.New("User Is Empty."))
 	}
@@ -106,7 +100,7 @@ func (l *UserLogic) GenerateJwtToken(user *model.User, organizationUser *model.O
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	token = &UserJwtToken{
+	token = &bo.UserJwtTokenBo{
 		AccessToken:        accessToken,
 		RefreshToken:       refreshToken,
 		AccessTokenExpire:  l.jwtConfig.AccessExpire,
@@ -115,7 +109,7 @@ func (l *UserLogic) GenerateJwtToken(user *model.User, organizationUser *model.O
 	return
 }
 
-func (l *UserLogic) GenerateJwtTokenById(ctx context.Context, userId int64, organizationId int64, userType constants.UserType) (token *UserJwtToken, err error) {
+func (l *UserLogic) GenerateJwtTokenById(ctx context.Context, userId int64, organizationId int64, userType constants.UserType) (token *bo.UserJwtTokenBo, err error) {
 	user, err := l.repos.UserRepo.GetUser(ctx, userId, userType, false)
 	if err != nil {
 		return nil, errorx.WithStack(err)
@@ -129,7 +123,7 @@ func (l *UserLogic) GenerateJwtTokenById(ctx context.Context, userId int64, orga
 }
 
 // RefreshToken refresh token
-func (l *UserLogic) RefreshToken(ctx context.Context, refreshToken string, userType constants.UserType) (token *UserJwtToken, err error) {
+func (l *UserLogic) RefreshToken(ctx context.Context, refreshToken string, userType constants.UserType) (token *bo.UserJwtTokenBo, err error) {
 	// parse refresh token
 	claim, err := utils.ParseToken(refreshToken, l.jwtConfig.RefreshSecret)
 	if err != nil {
@@ -159,7 +153,7 @@ func (l *UserLogic) RefreshToken(ctx context.Context, refreshToken string, userT
 }
 
 // ResetPasswordWithEmail reset password with email
-func (l *UserLogic) ResetPasswordWithEmail(ctx context.Context, input dto.UserResetPasswordByEmailRequestDto) (token *UserJwtToken, err error) {
+func (l *UserLogic) ResetPasswordWithEmail(ctx context.Context, input dto.UserResetPasswordByEmailRequestDto) (token *bo.UserJwtTokenBo, err error) {
 	email := input.Email
 	code := input.Code
 	newPwd := input.NewPassword
@@ -286,20 +280,8 @@ func (l *UserLogic) CheckAndUpdateActiveOrganizationByUser(ctx context.Context, 
 	return user, orgUser, err
 }
 
-type UserLoginRequest struct {
-	Email    string
-	Password string
-	UserType constants.UserType
-}
-
-type LoginLimiter struct {
-	Rate     int
-	Period   int
-	RedisCli *redisx.Redisx
-}
-
 // Login
-func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limiter dto.LoginLimiterDto) (token *UserJwtToken, err error) {
+func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limiter dto.LoginLimiterDto) (token *bo.UserJwtTokenBo, err error) {
 	redisKey := stringx.Format(constants.UserLoginFailedTimes, req.UserType, req.Email)
 	var loginFailedTimes int
 	var orgUser *model.OrganizationUser
@@ -367,31 +349,9 @@ func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limi
 	return
 }
 
-type Userinfo struct {
-	Id                 int64
-	OrganizationUserId int64
-	Email              string
-	FirstName          string
-	LastName           string
-	FullName           string
-	OrganizationId     int64
-	OrganizationName   string
-	Status             constants.OrganizationUserStatus
-	Organizations      []*UserOrganization
-	IsOwner            bool
-	IsAdmin            bool
-}
-
-type UserOrganization struct {
-	Id        int64
-	Name      string
-	Status    constants.OrganizationStatus
-	IsDefault bool
-}
-
 // Info return user info
-func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, userType constants.UserType) (userInfo *Userinfo, err error) {
-	organizations := []*UserOrganization{}
+func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, userType constants.UserType) (userInfo *bo.UserinfoBo, err error) {
+	organizations := []*bo.UserOrganizationBo{}
 	user, err := l.repos.UserRepo.GetUser(ctx, id, userType, true)
 	if err != nil {
 		return nil, err
@@ -408,10 +368,10 @@ func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, us
 			return nil, errorx.Wrap(err, "Failed To Copy Organization")
 		}
 	}
-	var currentOrganization *UserOrganization
+	var currentOrganization *bo.UserOrganizationBo
 	var organizationUser *model.OrganizationUser
 
-	organizations = slice.Filter(organizations, func(i int, organization *UserOrganization) bool {
+	organizations = slice.Filter(organizations, func(i int, organization *bo.UserOrganizationBo) bool {
 		if organization.Status != constants.OrganizationStatusActive {
 			return false
 		}
@@ -459,7 +419,7 @@ func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, us
 		})
 	}
 
-	userInfo = &Userinfo{
+	userInfo = &bo.UserinfoBo{
 		Id:                 user.Id,
 		OrganizationUserId: organizationUser.Id,
 		Email:              user.Email,
