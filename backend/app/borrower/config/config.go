@@ -100,3 +100,11 @@ type PreApprovalLoanLoanTerm struct {
 	Min int
 	Max int
 }
+
+type EmailAuthConf struct {
+	Gmail struct {
+		ClientId     string
+		ClientSecret string
+		CallbackUrl  string
+	}
+}

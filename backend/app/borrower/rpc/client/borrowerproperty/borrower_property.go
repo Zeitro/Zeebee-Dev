@@ -248,6 +248,12 @@ type (
 	ThirdPartyLoanPropertyEditEntry                = borrower.ThirdPartyLoanPropertyEditEntry
 	UsCitiesRequest                                = borrower.UsCitiesRequest
 	UsCitiesRequestData                            = borrower.UsCitiesRequestData
+	UserEmailAuthCodeUrlRequest                    = borrower.UserEmailAuthCodeUrlRequest
+	UserEmailAuthCodeUrlRequestData                = borrower.UserEmailAuthCodeUrlRequestData
+	UserEmailAuthCodeUrlResponse                   = borrower.UserEmailAuthCodeUrlResponse
+	UserEmailAuthCodeUrlResponseData               = borrower.UserEmailAuthCodeUrlResponseData
+	UserEmailAuthRequest                           = borrower.UserEmailAuthRequest
+	UserEmailAuthRequestData                       = borrower.UserEmailAuthRequestData
 	UserInfoRequest                                = borrower.UserInfoRequest
 	UserInfoRequestData                            = borrower.UserInfoRequestData
 	UserLoginRequest                               = borrower.UserLoginRequest

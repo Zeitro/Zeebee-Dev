@@ -248,6 +248,12 @@ type (
 	ThirdPartyLoanPropertyEditEntry                = borrower.ThirdPartyLoanPropertyEditEntry
 	UsCitiesRequest                                = borrower.UsCitiesRequest
 	UsCitiesRequestData                            = borrower.UsCitiesRequestData
+	UserEmailAuthCodeUrlRequest                    = borrower.UserEmailAuthCodeUrlRequest
+	UserEmailAuthCodeUrlRequestData                = borrower.UserEmailAuthCodeUrlRequestData
+	UserEmailAuthCodeUrlResponse                   = borrower.UserEmailAuthCodeUrlResponse
+	UserEmailAuthCodeUrlResponseData               = borrower.UserEmailAuthCodeUrlResponseData
+	UserEmailAuthRequest                           = borrower.UserEmailAuthRequest
+	UserEmailAuthRequestData                       = borrower.UserEmailAuthRequestData
 	UserInfoRequest                                = borrower.UserInfoRequest
 	UserInfoRequestData                            = borrower.UserInfoRequestData
 	UserLoginRequest                               = borrower.UserLoginRequest
@@ -281,6 +287,8 @@ type (
 		SwitchOrganization(ctx context.Context, in *SwitchOrganizationRequest, opts ...grpc.CallOption) (*UserLoginResponse, error)
 		EditProfile(ctx context.Context, in *UserProfileEditRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
 		ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+		GenerateEmailAuthCodeUrl(ctx context.Context, in *UserEmailAuthCodeUrlRequest, opts ...grpc.CallOption) (*UserEmailAuthCodeUrlResponse, error)
+		EmailAuth(ctx context.Context, in *UserEmailAuthRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	}
 
 	defaultUser struct {
@@ -348,4 +356,14 @@ func (m *defaultUser) EditProfile(ctx context.Context, in *UserProfileEditReques
 func (m *defaultUser) ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	client := borrower.NewUserClient(m.cli.Conn())
 	return client.ChangePassword(ctx, in, opts...)
+}
+
+func (m *defaultUser) GenerateEmailAuthCodeUrl(ctx context.Context, in *UserEmailAuthCodeUrlRequest, opts ...grpc.CallOption) (*UserEmailAuthCodeUrlResponse, error) {
+	client := borrower.NewUserClient(m.cli.Conn())
+	return client.GenerateEmailAuthCodeUrl(ctx, in, opts...)
+}
+
+func (m *defaultUser) EmailAuth(ctx context.Context, in *UserEmailAuthRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	client := borrower.NewUserClient(m.cli.Conn())
+	return client.EmailAuth(ctx, in, opts...)
 }
