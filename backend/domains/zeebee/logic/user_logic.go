@@ -437,26 +437,26 @@ func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, us
 }
 
 // SwitchOrganization switch user default organization
-func (l *UserLogic) SwitchOrganization(ctx context.Context, userId int64, organizationId int64, userType constants.UserType) (user *model.User, organizationUser *model.OrganizationUser, err error) {
-	user, err = l.repos.UserRepo.GetUser(ctx, userId, userType, false)
+func (l *UserLogic) SwitchOrganization(ctx context.Context, userId int64, organizationId int64, userType constants.UserType) (user *bo.UserBo, err error) {
+	userModel, err := l.repos.UserRepo.GetUser(ctx, userId, userType, false)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	organization, ok := slice.FindBy(user.Organizations, func(i int, organization *model.Organization) bool {
+	organization, ok := slice.FindBy(userModel.Organizations, func(i int, organization *model.Organization) bool {
 		return organization.Id == organizationId
 	})
 	if !ok {
-		return nil, nil, errorx.New("User Is Not Member Of This Organization")
+		return nil, errorx.New("User Is Not Member Of This Organization")
 	}
 
 	if organization.Status != constants.OrganizationStatusActive {
-		return nil, nil, errorx.New("Organization Is Not Active")
+		return nil, errorx.New("Organization Is Not Active")
 	}
 
-	organizationUser, _ = l.repos.OrganizationUserRepo.GetOrganizationUserByUserId(ctx, organizationId, user.Id)
+	organizationUser, _ := l.repos.OrganizationUserRepo.GetOrganizationUserByUserId(ctx, organizationId, user.Id)
 	if organizationUser == nil || organizationUser.Status != constants.OrganizationUserStatusActive {
-		return nil, nil, errorx.New("User Is Not Member Of This Organization")
+		return nil, errorx.New("User Is Not Member Of This Organization")
 	}
 
 	user.DefaultOrganizationId = organizationId
@@ -464,9 +464,17 @@ func (l *UserLogic) SwitchOrganization(ctx context.Context, userId int64, organi
 		"default_organization_id": user.DefaultOrganizationId,
 	})
 	if err != nil {
-		return nil, nil, errorx.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
-	return user, organizationUser, nil
+	user = &bo.UserBo{}
+	err = copier.CopyWithOption(user, userModel, copier.Option{
+		DeepCopy:      true,
+		CaseSensitive: true,
+	})
+	if err != nil {
+		return nil, errorx.GetFailedTransErr(err)
+	}
+	return user, nil
 }
 
 // RegisterWithOrganization register user with organization
