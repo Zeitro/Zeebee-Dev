@@ -15,6 +15,20 @@ type UserEditProfileRequest struct {
 	Phone     string `json:"phone,optional" validate:"omitempty,min=8,max=20"`
 }
 
+type UserEmailAuthRequest struct {
+	Code  string `json:"code" validate:"required"`
+	Type  string `json:"type" validate:"required,oneof=Gmail"`
+	State string `json:"state,optional"`
+}
+
+type UserGenerateEmailAuthCodeUrlRequest struct {
+	Type string `json:"type" validate:"required,oneof=Gmail"`
+}
+
+type UserGenerateEmailAuthCodeUrlResponse struct {
+	Url string `json:"url"`
+}
+
 type UserInfoResponse struct {
 	UserInfo
 }

@@ -20,6 +20,12 @@ const (
 	UserTypeAdmin    UserType = "Admin"
 )
 
+type EmailType string
+
+var (
+	EmailTypeGmail EmailType = "Gmail"
+)
+
 func init() {
 	// register user status
 	enums.Register(UserStatusName, []enums.EnumOpt{
