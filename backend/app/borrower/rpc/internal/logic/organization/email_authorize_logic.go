@@ -1,4 +1,4 @@
-package userlogic
+package organizationlogic
 
 import (
 	"context"
@@ -11,21 +11,21 @@ import (
 	"zeebee-backend/common/errorx"
 )
 
-type EmailAuthLogic struct {
+type EmailAuthorizeLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewEmailAuthLogic(ctx context.Context, svcCtx *svc.ServiceContext) *EmailAuthLogic {
-	return &EmailAuthLogic{
+func NewEmailAuthorizeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *EmailAuthorizeLogic {
+	return &EmailAuthorizeLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *EmailAuthLogic) EmailAuth(in *borrower.UserEmailAuthRequest) (resp *borrower.EmptyResponse, err error) {
+func (l *EmailAuthorizeLogic) EmailAuthorize(in *borrower.OrganizationEmailAuthorizeRequest) (resp *borrower.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)

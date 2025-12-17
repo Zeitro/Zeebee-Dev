@@ -19,7 +19,7 @@ func (form *ApplyForm) page5() (err error) {
 	// budget
 	budget := form.info.LoanProperty.Budget
 	if budget == nil {
-		budget = &types.LoanBudgetEntry{}
+		budget = &types.LoanBudgetEntity{}
 	}
 	form.pdf.Br(lineHeight)
 	x := form.pdf.GetX()

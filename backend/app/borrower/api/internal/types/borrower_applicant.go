@@ -4,7 +4,7 @@
 package types
 
 type BorrowerApplicantAllResponse struct {
-	Lists []*BorrowerApplicantPageEntry `json:"lists"`
+	Lists []*BorrowerApplicantPageEntity `json:"lists"`
 }
 
 type BorrowerApplicantCkeckExistedRequest struct {
@@ -19,26 +19,26 @@ type BorrowerApplicantCkeckExistedResponse struct {
 }
 
 type BorrowerApplicantCreateResponse struct {
-	BorrowerApplicantEntry
+	BorrowerApplicantEntity
 }
 
 type BorrowerApplicantDetailResponse struct {
-	BorrowerApplicantEntry
+	BorrowerApplicantEntity
 }
 
 type BorrowerApplicantEditRequest struct {
-	Id               int64         `path:"id,optional"`
-	FirstName        string        `json:"first_name" validate:"required,min=2,max=100"`
-	MidName          string        `json:"mid_name,optional"`
-	LastName         string        `json:"last_name" validate:"required,min=2,max=100"`
-	Ssn              string        `json:"ssn" validate:"required,min=9,max=9"`
-	Dob              string        `json:"dob" validate:"required,datetime=01/02/2006"`
-	MaritalStatus    string        `json:"marital_status" validate:"required,oneof=Married Unmarried Separated"`
-	Email            string        `json:"email" validate:"required,email"`
-	Phone            string        `json:"phone" validate:"required,min=8,max=15"`
-	EstCreditScore   int32         `json:"est_credit_score" validate:"required,min=300,max=850"`
-	DriverLicenseNum string        `json:"driver_license_num" validate:"required,min=5,max=30"`
-	Address          *AddressEntry `json:"address" validate:"required"`
+	Id               int64          `path:"id,optional"`
+	FirstName        string         `json:"first_name" validate:"required,min=2,max=100"`
+	MidName          string         `json:"mid_name,optional"`
+	LastName         string         `json:"last_name" validate:"required,min=2,max=100"`
+	Ssn              string         `json:"ssn" validate:"required,min=9,max=9"`
+	Dob              string         `json:"dob" validate:"required,datetime=01/02/2006"`
+	MaritalStatus    string         `json:"marital_status" validate:"required,oneof=Married Unmarried Separated"`
+	Email            string         `json:"email" validate:"required,email"`
+	Phone            string         `json:"phone" validate:"required,min=8,max=15"`
+	EstCreditScore   int32          `json:"est_credit_score" validate:"required,min=300,max=850"`
+	DriverLicenseNum string         `json:"driver_license_num" validate:"required,min=5,max=30"`
+	Address          *AddressEntity `json:"address" validate:"required"`
 }
 
 type BorrowerApplicantPageRequest struct {
@@ -49,9 +49,9 @@ type BorrowerApplicantPageRequest struct {
 }
 
 type BorrowerApplicantPageResponse struct {
-	Page      int64                        `json:"page"`
-	Limit     int64                        `json:"limit"`
-	Total     int64                        `json:"total"`
-	TotalPage int64                        `json:"total_page"`
-	List      []BorrowerApplicantPageEntry `json:"list"`
+	Page      int64                         `json:"page"`
+	Limit     int64                         `json:"limit"`
+	Total     int64                         `json:"total"`
+	TotalPage int64                         `json:"total_page"`
+	List      []BorrowerApplicantPageEntity `json:"list"`
 }

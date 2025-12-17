@@ -1,4 +1,4 @@
-package user
+package organization
 
 import (
 	"net/http"
@@ -6,7 +6,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
 
-	"zeebee-backend/app/borrower/api/internal/logic/user"
+	"zeebee-backend/app/borrower/api/internal/logic/organization"
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 
@@ -15,8 +15,8 @@ import (
 	"zeebee-backend/common/validator"
 )
 
-// generate auth code url
-func GenerateAuthCodeUrlHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+// email authorize
+func OrganizationEmailAuthorizeHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer func() {
@@ -26,7 +26,7 @@ func GenerateAuthCodeUrlHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 					Error(err)
 			}
 		}()
-		var req types.UserGenerateEmailAuthCodeUrlRequest
+		var req types.OrganizationEmailAuthorizeRequest
 		if err = httpx.Parse(r, &req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
@@ -42,8 +42,8 @@ func GenerateAuthCodeUrlHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := user.NewGenerateAuthCodeUrlLogic(r.Context(), svcCtx)
-		resp, err := l.GenerateAuthCodeUrl(&req)
+		l := organization.NewOrganizationEmailAuthorizeLogic(r.Context(), svcCtx)
+		resp, err := l.OrganizationEmailAuthorize(&req)
 		if err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 		} else {

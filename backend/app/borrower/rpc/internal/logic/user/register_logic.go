@@ -242,7 +242,7 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int6
 			LoanType:         preApproveRequest.Loan.LoanType,
 			TotalAmount:      preApproveRequest.Loan.TotalAmount,
 			InitialAmount:    preApproveRequest.Loan.InitialAmount,
-			LoanProperty: &borrower.LoanPropertyApplyEntry{
+			LoanProperty: &borrower.LoanPropertyApplyEntity{
 				BorrowerPropertyId:  borrowerProperty.Id,
 				FuturePropertyType:  preApproveRequest.Property.PropertyType,
 				FutureUnit:          int32(preApproveRequest.Property.Unit),
@@ -250,7 +250,7 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int6
 				PurchaseDate:        preApproveRequest.Loan.PurchaseDate,
 				HasAssignmentFee:    preApproveRequest.Loan.HasAssignmentFee,
 				AssignmentFeeAmount: preApproveRequest.Loan.AssignmentFeeAmount,
-				Budget: &borrower.LoanBudgetEntry{
+				Budget: &borrower.LoanBudgetEntity{
 					OriginalBudget: preApproveRequest.Loan.BudgetAmount,
 				},
 				EstPropertyValueAmount: preApproveRequest.Loan.EstPropertyValueAmount,
@@ -260,7 +260,7 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int6
 			PrincipalAmount: preApproveRequest.Loan.PrincipalAmount,
 			LenderCompanyId: organizationId,
 			// UserId:          creatorId,
-			Applicants: []*borrower.LoanApplicantApplyEntry{
+			Applicants: []*borrower.LoanApplicantApplyEntity{
 				{
 					IsPrimary:           true,
 					BorrowerApplicantId: borrowerApplicant.Id,

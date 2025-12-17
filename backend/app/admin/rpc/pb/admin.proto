@@ -12,7 +12,7 @@ message StringSliceResponse {
   repeated string data = 1;
 }
 
-message AddressEntry{
+message AddressEntity{
   string state = 1;
   string city = 2;
   string address1 = 3;

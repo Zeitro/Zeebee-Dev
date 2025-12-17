@@ -49,7 +49,7 @@ func (l *AllLogic) All(in *borrower.PropertyAllRequest) (resp *borrower.Property
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 
-	respData := make([]*borrower.BorrowerPropertyEntry, 0, len(results))
+	respData := make([]*borrower.BorrowerPropertyEntity, 0, len(results))
 
 	err = copier.CopyWithOption(&respData, &results, copier.Option{
 		CaseSensitive: true,

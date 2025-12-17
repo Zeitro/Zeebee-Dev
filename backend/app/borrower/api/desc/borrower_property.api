@@ -10,7 +10,7 @@ import "address.api"
 import "loan.api"
 
 type (
-    BorrowerPropertyEntry {
+    BorrowerPropertyEntity {
         Id int64 `json:"id"`
         CreatorId int64 `json:"creator_id"`
         CreatorName string `json:"creator_name"`
@@ -21,7 +21,7 @@ type (
         LivingAreaSqft float32 `json:"living_area_sqft"`
         Bedrooms int32 `json:"bedrooms"`
         Bathrooms float32 `json:"bathrooms"`
-        Address *AddressEntry `json:"address"`
+        Address *AddressEntity `json:"address"`
         CreatedAt string `json:"created_at"`
         UpdatedAt string `json:"updated_at"`
         LoanCount int32 `json:"loan_count"`
@@ -30,7 +30,7 @@ type (
 
 // page
 type (
-    PropertyPageEntry {
+    PropertyPageEntity {
         Id int64 `json:"id"`
         CreatorId int64 `json:"creator_id"`
         CreatorName string `json:"creator_name"`
@@ -40,7 +40,7 @@ type (
         Bathrooms float32 `json:"bathrooms"`
         Unit int32 `json:"unit"`
         TotalAmount float64 `json:"total_amount"`
-        Address *AddressEntry `json:"address"`
+        Address *AddressEntity `json:"address"`
         TotalPrincipalAmount float64 `json:"total_principal_amount"`
         AvgRate float32 `json:"avg_rate"`
         TotalMonthlyPaymentAmount float64 `json:"total_monthly_payment_amount"`
@@ -75,7 +75,7 @@ type (
         Limit int64 `json:"limit"`
         Total int64 `json:"total"`
         TotalPage int64 `json:"total_page"`
-        List []PropertyPageEntry `json:"list"`
+        List []PropertyPageEntity `json:"list"`
     }
 )
 
@@ -95,21 +95,21 @@ type (
         LivingAreaSqft float32 `json:"living_area_sqft"`
         Bedrooms int32 `json:"bedrooms"`
         Bathrooms float32 `json:"bathrooms"`
-        Address *AddressEntry `json:"address"`
+        Address *AddressEntity `json:"address"`
         TotalClosingFundAmount float64 `json:"total_closing_fund_amount"`
         TotalPrincipalAmount float64 `json:"total_principal_amount"`
         AvgRate float32 `json:"avg_rate"`
         TotalMonthlyPaymentAmount float64 `json:"total_monthly_payment_amount"`
-        PendingLoans []LoanEntry `json:"pending_loans"`
-        ActiveLoans []LoanEntry `json:"active_loans"`
-        ArchivedLoans []LoanEntry `json:"archived_loans"`
+        PendingLoans []LoanEntity `json:"pending_loans"`
+        ActiveLoans []LoanEntity `json:"active_loans"`
+        ArchivedLoans []LoanEntity `json:"archived_loans"`
     }
 )
 
 //  detail
 type (
     PropertyDetailResponse {
-        BorrowerPropertyEntry
+        BorrowerPropertyEntity
     }
 )
 
@@ -121,10 +121,10 @@ type (
         LivingAreaSqft float32 `json:"living_area_sqft" validate:"required,gt=0"`
         Bedrooms int32 `json:"bedrooms" validate:"required,gt=0"`
         Bathrooms float32 `json:"bathrooms" validate:"required,gt=0"`
-        Address *AddressEntry `json:"address" validate:"required"`
+        Address *AddressEntity `json:"address" validate:"required"`
     }
     PropertyCreateResponse {
-        BorrowerPropertyEntry
+        BorrowerPropertyEntity
     }
 )
 
@@ -142,7 +142,7 @@ type (
 // all properties
 type (
     PropertyAllResponse {
-        Lists []*BorrowerPropertyEntry `json:"lists"`
+        Lists []*BorrowerPropertyEntity `json:"lists"`
     }
 )
 

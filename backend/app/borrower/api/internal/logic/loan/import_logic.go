@@ -169,9 +169,9 @@ func (l *ImportLogic) importPendingLoans(content []byte, userId int64, organizat
 	return rpcResp.Data.RecordCount, err
 }
 
-func parsePendingLoans(rows [][]string, borrowerId int64, organizationId int64) ([]*types.ImportPendingLoanEntry, error) {
+func parsePendingLoans(rows [][]string, borrowerId int64, organizationId int64) ([]*types.ImportPendingLoanEntity, error) {
 
-	importLoans := make([]*types.ImportPendingLoanEntry, 0, len(rows))
+	importLoans := make([]*types.ImportPendingLoanEntity, 0, len(rows))
 	// Create a map for column indices
 	columnIndex := make(map[string]int)
 	for i, colName := range rows[0] {
@@ -188,12 +188,12 @@ func parsePendingLoans(rows [][]string, borrowerId int64, organizationId int64) 
 			continue
 		}
 
-		loanData := &types.ImportPendingLoanEntry{
+		loanData := &types.ImportPendingLoanEntity{
 			UserId:         borrowerId,
 			OrganizationId: organizationId,
 		}
 		// property address
-		addr := &types.AddressEntry{}
+		addr := &types.AddressEntity{}
 		if idx, ok := columnIndex[pendingColPropertyAddress]; ok && idx < len(row) {
 			addr.Address1 = row[idx]
 		}
@@ -207,7 +207,7 @@ func parsePendingLoans(rows [][]string, borrowerId int64, organizationId int64) 
 			addr.ZipCode = row[idx]
 		}
 		// handle LoanProperty
-		loanData.LoanProperty = &types.ImportLoanApplyPropertyEntry{
+		loanData.LoanProperty = &types.ImportLoanApplyPropertyEntity{
 			Unit:                 1,
 			Bedrooms:             1,
 			Bathrooms:            1,
@@ -235,7 +235,7 @@ func parsePendingLoans(rows [][]string, borrowerId int64, organizationId int64) 
 		}
 
 		// loan borrower
-		loanBorrower := &types.ImportLoanBorrowerEntry{}
+		loanBorrower := &types.ImportLoanBorrowerEntity{}
 		if idx, ok := columnIndex[pendingColOwner]; ok && idx < len(row) {
 			loanBorrower.Name = row[idx]
 			// if strings.Contains(row[idx], "LLC") {
@@ -248,7 +248,7 @@ func parsePendingLoans(rows [][]string, borrowerId int64, organizationId int64) 
 
 		loanData.LoanBorrower = loanBorrower
 		// applicant
-		applicant := &types.ImportLoanApplicantEntry{}
+		applicant := &types.ImportLoanApplicantEntity{}
 		if idx, ok := columnIndex[pendingColBorrower]; ok && idx < len(row) {
 			applicant.FirstName = row[idx]
 			// applicant.Type = loanBorrower.Type
@@ -258,7 +258,7 @@ func parsePendingLoans(rows [][]string, borrowerId int64, organizationId int64) 
 		loanData.Applicants = append(loanData.Applicants, applicant)
 
 		// extend
-		extend := &types.ImportLoanExtendEntry{}
+		extend := &types.ImportLoanExtendEntity{}
 		if idx, ok := columnIndex[pendingColLoanStatus]; ok && idx < len(row) {
 			extend.LoanStatusUpdates = row[idx]
 		}

@@ -48,7 +48,7 @@ func (l *AllLogic) All(in *borrower.BorrowerEntityAllRequest) (resp *borrower.Bo
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 
-	respData := make([]*borrower.BorrowerEntityPageEntry, 0, len(results))
+	respData := make([]*borrower.BorrowerEntityPageEntity, 0, len(results))
 
 	err = copier.CopyWithOption(&respData, &results, copier.Option{
 		CaseSensitive: true,

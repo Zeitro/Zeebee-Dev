@@ -1,4 +1,4 @@
-package user
+package organization
 
 import (
 	"context"
@@ -9,22 +9,22 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type EmailAuthLogic struct {
+type OrganizationInfoLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-// email auth
-func NewEmailAuthLogic(ctx context.Context, svcCtx *svc.ServiceContext) *EmailAuthLogic {
-	return &EmailAuthLogic{
+// info
+func NewOrganizationInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OrganizationInfoLogic {
+	return &OrganizationInfoLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *EmailAuthLogic) EmailAuth(req *types.UserEmailAuthRequest) (resp *types.EmptyResponse, err error) {
+func (l *OrganizationInfoLogic) OrganizationInfo(req *types.EmptyRequest) (resp *types.OrganizationEntity, err error) {
 	// todo: add your logic here and delete this line
 
 	return

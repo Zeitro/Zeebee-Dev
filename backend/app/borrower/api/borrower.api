@@ -20,6 +20,7 @@ import "desc/borrower_entity.api"
 import "desc/borrower_applicant.api"
 import "desc/role.api"
 import "desc/organization_user.api"
+import "desc/organization.api"
 
 type (
 	EmptyRequest  {}
@@ -119,14 +120,13 @@ service borrower-api {
 	@doc "change password"
 	@handler ChangePassword
 	post /user/change_password (UserChangePasswordRequest) returns (EmptyResponse)
-
-	@doc "generate auth code url"
-	@handler GenerateAuthCodeUrl
-	get /user/generate_auth_code_url (UserGenerateEmailAuthCodeUrlRequest) returns (UserGenerateEmailAuthCodeUrlResponse)
-
-	@doc "email auth"
-	@handler EmailAuth
-	post /user/email_auth (UserEmailAuthRequest) returns (EmptyResponse)
+	// @doc "generate auth code url"
+	// @handler GenerateAuthCodeUrl
+	// get /user/generate_auth_code_url (UserGenerateEmailAuthCodeUrlRequest) returns (UserGenerateEmailAuthCodeUrlResponse)
+	//
+	// @doc "email auth"
+	// @handler EmailAuth
+	// post /user/email_auth (UserEmailAuthRequest) returns (EmptyResponse)
 }
 
 // ============== user end =============
@@ -511,4 +511,32 @@ service borrower-api {
 	post /organization_user/:id/send_email (PathIdRequest) returns (EmptyResponse)
 }
 
-	// ============== organization user end =============
+// ============== organization user end =============
+// ============== organization start ============
+@server(
+	desc: "organization service"
+	version: v1
+	group: organization
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: organization
+)
+service borrower-api {
+	@doc "info"
+	@handler OrganizationInfo
+	get /organization/info (EmptyRequest) returns (OrganizationEntity)
+
+	@doc "generate email code url"
+	@handler OrganizationGenerateEmailCodeUrl
+	get /organization/generate_auth_code_url (OrganizationGenerateEmailCodeUrlRequest) returns (OrganizationGenerateEmailCodeUrlResponse)
+
+	@doc "save email"
+	@handler OrganizationSaveEmail
+	post /organization/save_email (OrganizationSaveEmailRequest) returns (EmptyResponse)
+
+	@doc "email authorize"
+	@handler OrganizationEmailAuthorize
+	post /organization/email_authorize (OrganizationEmailAuthorizeRequest) returns (EmptyResponse)
+}
+
+	// ============= organization end =============

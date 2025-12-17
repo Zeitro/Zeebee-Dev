@@ -116,18 +116,19 @@ type UserEntity struct {
 }
 
 type UserInfo struct {
-	Id               int64                         `json:"id"`
-	Email            string                        `json:"email"`
-	FirstName        string                        `json:"first_name"`
-	LastName         string                        `json:"last_name"`
-	FullName         string                        `json:"full_name"`
-	Status           string                        `json:"status"`
-	Phone            string                        `json:"phone"`
-	OrganizationId   int64                         `json:"organization_id"`
-	OrganizationName string                        `json:"organization_name"`
-	Organizations    []*UserInfoOrganizationEntity `json:"organizations"`
-	IsOwner          bool                          `json:"is_owner"`
-	IsAdmin          bool                          `json:"is_admin"`
+	Id                 int64                         `json:"id"`
+	OrganizationUserId int64                         `json:"organization_user_id"`
+	Email              string                        `json:"email"`
+	FirstName          string                        `json:"first_name"`
+	LastName           string                        `json:"last_name"`
+	FullName           string                        `json:"full_name"`
+	Status             string                        `json:"status"`
+	Phone              string                        `json:"phone"`
+	OrganizationId     int64                         `json:"organization_id"`
+	OrganizationName   string                        `json:"organization_name"`
+	Organizations      []*UserInfoOrganizationEntity `json:"organizations"`
+	IsOwner            bool                          `json:"is_owner"`
+	IsAdmin            bool                          `json:"is_admin"`
 }
 
 type UserInfoOrganizationEntity struct {

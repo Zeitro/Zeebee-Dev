@@ -14,27 +14,27 @@ import (
 )
 
 type (
-	AddressEntry                            = lender.AddressEntry
-	BorrowerApplicantEntry                  = lender.BorrowerApplicantEntry
-	BorrowerEditApplicantEntry              = lender.BorrowerEditApplicantEntry
-	BorrowerEntityEntry                     = lender.BorrowerEntityEntry
-	BorrowerPropertyEntry                   = lender.BorrowerPropertyEntry
+	AddressEntity                           = lender.AddressEntity
+	BorrowerApplicantEntity                 = lender.BorrowerApplicantEntity
+	BorrowerEditApplicantEntity             = lender.BorrowerEditApplicantEntity
+	BorrowerEntityEntity                    = lender.BorrowerEntityEntity
+	BorrowerPropertyEntity                  = lender.BorrowerPropertyEntity
 	EmptyRequest                            = lender.EmptyRequest
 	EmptyResponse                           = lender.EmptyResponse
 	FileDeleteRequest                       = lender.FileDeleteRequest
 	FileDeleteRequestData                   = lender.FileDeleteRequestData
-	FileEntry                               = lender.FileEntry
-	LoanApplicantEntry                      = lender.LoanApplicantEntry
-	LoanApplicantLoanEditEntry              = lender.LoanApplicantLoanEditEntry
-	LoanBorrowerEntry                       = lender.LoanBorrowerEntry
-	LoanBudgetEntry                         = lender.LoanBudgetEntry
+	FileEntity                              = lender.FileEntity
+	LoanApplicantEntity                     = lender.LoanApplicantEntity
+	LoanApplicantLoanEditEntity             = lender.LoanApplicantLoanEditEntity
+	LoanBorrowerEntity                      = lender.LoanBorrowerEntity
+	LoanBudgetEntity                        = lender.LoanBudgetEntity
 	LoanDeleteRequest                       = lender.LoanDeleteRequest
 	LoanDeleteRequestData                   = lender.LoanDeleteRequestData
-	LoanDemographicEntry                    = lender.LoanDemographicEntry
-	LoanDemographicEthnicityEntry           = lender.LoanDemographicEthnicityEntry
-	LoanDemographicExtraDemographicEntry    = lender.LoanDemographicExtraDemographicEntry
-	LoanDemographicPropertyEntry            = lender.LoanDemographicPropertyEntry
-	LoanDemographicRaceEntry                = lender.LoanDemographicRaceEntry
+	LoanDemographicEntity                   = lender.LoanDemographicEntity
+	LoanDemographicEthnicityEntity          = lender.LoanDemographicEthnicityEntity
+	LoanDemographicExtraDemographicEntity   = lender.LoanDemographicExtraDemographicEntity
+	LoanDemographicPropertyEntity           = lender.LoanDemographicPropertyEntity
+	LoanDemographicRaceEntity               = lender.LoanDemographicRaceEntity
 	LoanDetailRequest                       = lender.LoanDetailRequest
 	LoanDetailRequestData                   = lender.LoanDetailRequestData
 	LoanDetailResponse                      = lender.LoanDetailResponse
@@ -47,8 +47,8 @@ type (
 	LoanDocumentDeleteFileRequestData       = lender.LoanDocumentDeleteFileRequestData
 	LoanDocumentDeleteRequestRequest        = lender.LoanDocumentDeleteRequestRequest
 	LoanDocumentDeleteRequestRequestData    = lender.LoanDocumentDeleteRequestRequestData
-	LoanDocumentEntry                       = lender.LoanDocumentEntry
-	LoanDocumentOptEntry                    = lender.LoanDocumentOptEntry
+	LoanDocumentEntity                      = lender.LoanDocumentEntity
+	LoanDocumentOptEntity                   = lender.LoanDocumentOptEntity
 	LoanDocumentOptsRequest                 = lender.LoanDocumentOptsRequest
 	LoanDocumentOptsRequestData             = lender.LoanDocumentOptsRequestData
 	LoanDocumentOptsResponse                = lender.LoanDocumentOptsResponse
@@ -56,9 +56,9 @@ type (
 	LoanDocumentSendRequestsRequestData     = lender.LoanDocumentSendRequestsRequestData
 	LoanDocumentUpdateCommentRequest        = lender.LoanDocumentUpdateCommentRequest
 	LoanDocumentUpdateCommentRequestData    = lender.LoanDocumentUpdateCommentRequestData
-	LoanEntry                               = lender.LoanEntry
-	LoanExperienceEntry                     = lender.LoanExperienceEntry
-	LoanExtendValueEntry                    = lender.LoanExtendValueEntry
+	LoanEntity                              = lender.LoanEntity
+	LoanExperienceEntity                    = lender.LoanExperienceEntity
+	LoanExtendValueEntity                   = lender.LoanExtendValueEntity
 	LoanPageRequest                         = lender.LoanPageRequest
 	LoanPageRequestData                     = lender.LoanPageRequestData
 	LoanPageRequestFilter                   = lender.LoanPageRequestFilter
@@ -67,9 +67,9 @@ type (
 	LoanPageResponseData                    = lender.LoanPageResponseData
 	LoanPendingStatusReviewRequest          = lender.LoanPendingStatusReviewRequest
 	LoanPendingStatusReviewRequestData      = lender.LoanPendingStatusReviewRequestData
-	LoanPropertyEditEntry                   = lender.LoanPropertyEditEntry
-	LoanPropertyEntry                       = lender.LoanPropertyEntry
-	LoanThirdServiceEntry                   = lender.LoanThirdServiceEntry
+	LoanPropertyEditEntity                  = lender.LoanPropertyEditEntity
+	LoanPropertyEntity                      = lender.LoanPropertyEntity
+	LoanThirdServiceEntity                  = lender.LoanThirdServiceEntity
 	LoanUpdateDocumentsRequest              = lender.LoanUpdateDocumentsRequest
 	LoanUpdateDocumentsRequestData          = lender.LoanUpdateDocumentsRequestData
 	LoanUpdatePendingStatusRequest          = lender.LoanUpdatePendingStatusRequest
@@ -80,7 +80,7 @@ type (
 	LoanUpdateResponseData                  = lender.LoanUpdateResponseData
 	LoanUpdateStageRequest                  = lender.LoanUpdateStageRequest
 	LoanUpdateStageRequestData              = lender.LoanUpdateStageRequestData
-	OptionEntry                             = lender.OptionEntry
+	OptionEntity                            = lender.OptionEntity
 	OptionRequest                           = lender.OptionRequest
 	OptionRequestData                       = lender.OptionRequestData
 	OptionResponse                          = lender.OptionResponse
@@ -92,7 +92,7 @@ type (
 	ResetPasswordRequestData                = lender.ResetPasswordRequestData
 	ResetPasswordResponse                   = lender.ResetPasswordResponse
 	ResetPasswordResponseData               = lender.ResetPasswordResponseData
-	SendDocumentRequestEntry                = lender.SendDocumentRequestEntry
+	SendDocumentRequestEntity               = lender.SendDocumentRequestEntity
 	SendResetPasswordEmailRequest           = lender.SendResetPasswordEmailRequest
 	SendResetPasswordEmailRequestData       = lender.SendResetPasswordEmailRequestData
 	SendResetPasswordEmailResponse          = lender.SendResetPasswordEmailResponse

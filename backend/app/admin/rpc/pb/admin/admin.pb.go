@@ -137,7 +137,7 @@ func (x *StringSliceResponse) GetData() []string {
 	return nil
 }
 
-type AddressEntry struct {
+type AddressEntity struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	State         string                 `protobuf:"bytes,1,opt,name=state,proto3" json:"state,omitempty"`
 	City          string                 `protobuf:"bytes,2,opt,name=city,proto3" json:"city,omitempty"`
@@ -148,20 +148,20 @@ type AddressEntry struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AddressEntry) Reset() {
-	*x = AddressEntry{}
+func (x *AddressEntity) Reset() {
+	*x = AddressEntity{}
 	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AddressEntry) String() string {
+func (x *AddressEntity) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AddressEntry) ProtoMessage() {}
+func (*AddressEntity) ProtoMessage() {}
 
-func (x *AddressEntry) ProtoReflect() protoreflect.Message {
+func (x *AddressEntity) ProtoReflect() protoreflect.Message {
 	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -173,40 +173,40 @@ func (x *AddressEntry) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AddressEntry.ProtoReflect.Descriptor instead.
-func (*AddressEntry) Descriptor() ([]byte, []int) {
+// Deprecated: Use AddressEntity.ProtoReflect.Descriptor instead.
+func (*AddressEntity) Descriptor() ([]byte, []int) {
 	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *AddressEntry) GetState() string {
+func (x *AddressEntity) GetState() string {
 	if x != nil {
 		return x.State
 	}
 	return ""
 }
 
-func (x *AddressEntry) GetCity() string {
+func (x *AddressEntity) GetCity() string {
 	if x != nil {
 		return x.City
 	}
 	return ""
 }
 
-func (x *AddressEntry) GetAddress1() string {
+func (x *AddressEntity) GetAddress1() string {
 	if x != nil {
 		return x.Address1
 	}
 	return ""
 }
 
-func (x *AddressEntry) GetAddress2() string {
+func (x *AddressEntity) GetAddress2() string {
 	if x != nil {
 		return x.Address2
 	}
 	return ""
 }
 
-func (x *AddressEntry) GetZipCode() string {
+func (x *AddressEntity) GetZipCode() string {
 	if x != nil {
 		return x.ZipCode
 	}
@@ -1099,20 +1099,21 @@ func (x *UserinfoResponse) GetData() *UserinfoResponseData {
 }
 
 type UserinfoResponseData struct {
-	state            protoimpl.MessageState               `protogen:"open.v1"`
-	Id               int64                                `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Email            string                               `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
-	FirstName        string                               `protobuf:"bytes,3,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
-	LastName         string                               `protobuf:"bytes,4,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
-	FullName         string                               `protobuf:"bytes,5,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
-	OrganizationId   int64                                `protobuf:"varint,6,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	OrganizationName string                               `protobuf:"bytes,7,opt,name=organization_name,json=organizationName,proto3" json:"organization_name,omitempty"`
-	Status           string                               `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`
-	Organizations    []*UserinfoResponseData_Organization `protobuf:"bytes,9,rep,name=organizations,proto3" json:"organizations,omitempty"`
-	IsOwner          bool                                 `protobuf:"varint,10,opt,name=is_owner,json=isOwner,proto3" json:"is_owner,omitempty"`
-	IsAdmin          bool                                 `protobuf:"varint,11,opt,name=is_admin,json=isAdmin,proto3" json:"is_admin,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state              protoimpl.MessageState               `protogen:"open.v1"`
+	Id                 int64                                `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Email              string                               `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
+	FirstName          string                               `protobuf:"bytes,3,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
+	LastName           string                               `protobuf:"bytes,4,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
+	FullName           string                               `protobuf:"bytes,5,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
+	OrganizationId     int64                                `protobuf:"varint,6,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	OrganizationName   string                               `protobuf:"bytes,7,opt,name=organization_name,json=organizationName,proto3" json:"organization_name,omitempty"`
+	Status             string                               `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`
+	Organizations      []*UserinfoResponseData_Organization `protobuf:"bytes,9,rep,name=organizations,proto3" json:"organizations,omitempty"`
+	IsOwner            bool                                 `protobuf:"varint,10,opt,name=is_owner,json=isOwner,proto3" json:"is_owner,omitempty"`
+	IsAdmin            bool                                 `protobuf:"varint,11,opt,name=is_admin,json=isAdmin,proto3" json:"is_admin,omitempty"`
+	OrganizationUserId int64                                `protobuf:"varint,12,opt,name=organization_user_id,json=organizationUserId,proto3" json:"organization_user_id,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *UserinfoResponseData) Reset() {
@@ -1220,6 +1221,13 @@ func (x *UserinfoResponseData) GetIsAdmin() bool {
 		return x.IsAdmin
 	}
 	return false
+}
+
+func (x *UserinfoResponseData) GetOrganizationUserId() int64 {
+	if x != nil {
+		return x.OrganizationUserId
+	}
+	return 0
 }
 
 // edit profile
@@ -5971,8 +5979,8 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\fEmptyRequest\"\x0f\n" +
 	"\rEmptyResponse\")\n" +
 	"\x13StringSliceResponse\x12\x12\n" +
-	"\x04data\x18\x01 \x03(\tR\x04data\"\x8b\x01\n" +
-	"\fAddressEntry\x12\x14\n" +
+	"\x04data\x18\x01 \x03(\tR\x04data\"\x8c\x01\n" +
+	"\rAddressEntity\x12\x14\n" +
 	"\x05state\x18\x01 \x01(\tR\x05state\x12\x12\n" +
 	"\x04city\x18\x02 \x01(\tR\x04city\x12\x1a\n" +
 	"\baddress1\x18\x03 \x01(\tR\baddress1\x12\x1a\n" +
@@ -6036,7 +6044,7 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x13UserInfoRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"C\n" +
 	"\x10UserinfoResponse\x12/\n" +
-	"\x04data\x18\x01 \x01(\v2\x1b.admin.UserinfoResponseDataR\x04data\"\xf4\x03\n" +
+	"\x04data\x18\x01 \x01(\v2\x1b.admin.UserinfoResponseDataR\x04data\"\xa6\x04\n" +
 	"\x14UserinfoResponseData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
 	"\x05email\x18\x02 \x01(\tR\x05email\x12\x1d\n" +
@@ -6050,7 +6058,8 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\rorganizations\x18\t \x03(\v2(.admin.UserinfoResponseData.OrganizationR\rorganizations\x12\x19\n" +
 	"\bis_owner\x18\n" +
 	" \x01(\bR\aisOwner\x12\x19\n" +
-	"\bis_admin\x18\v \x01(\bR\aisAdmin\x1ai\n" +
+	"\bis_admin\x18\v \x01(\bR\aisAdmin\x120\n" +
+	"\x14organization_user_id\x18\f \x01(\x03R\x12organizationUserId\x1ai\n" +
 	"\fOrganization\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +
@@ -6460,7 +6469,7 @@ var file_app_admin_rpc_pb_admin_proto_goTypes = []any{
 	(*EmptyRequest)(nil),                            // 0: admin.EmptyRequest
 	(*EmptyResponse)(nil),                           // 1: admin.EmptyResponse
 	(*StringSliceResponse)(nil),                     // 2: admin.StringSliceResponse
-	(*AddressEntry)(nil),                            // 3: admin.AddressEntry
+	(*AddressEntity)(nil),                           // 3: admin.AddressEntity
 	(*UserEntity)(nil),                              // 4: admin.UserEntity
 	(*UserLoginRequest)(nil),                        // 5: admin.UserLoginRequest
 	(*UserLoginResponse)(nil),                       // 6: admin.UserLoginResponse

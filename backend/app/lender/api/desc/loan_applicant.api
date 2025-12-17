@@ -8,7 +8,7 @@ info(
 import "address.api"
 
 
-type LoanApplicantEntry {
+type LoanApplicantEntity {
     Id int64 `json:"id"`
     BorrowerApplicantId int64 `json:"borrower_applicant_id"`
     FirstName string `json:"first_name"`
@@ -27,7 +27,7 @@ type LoanApplicantEntry {
     Email string `json:"email"`
     EstCreditScore int32 `json:"est_credit_score"`
     DriverLicenseNum string `json:"driver_license_num"`
-    Address *AddressEntry `json:"address"`
+    Address *AddressEntity `json:"address"`
     LoanBorrowerId int64 `json:"loan_borrower_id"`
     Phone string `json:"phone"`
     OwnPercent int32 `json:"own_percent"`
@@ -35,7 +35,7 @@ type LoanApplicantEntry {
     UpdatedAt string `json:"updated_at,omitempty"`
 }
 
-type LoanApplicantEditLoanEntry {
+type LoanApplicantEditLoanEntity {
     Id int64 `json:"id,omitempty,optional"`
     BorrowerApplicantId int64 `json:"borrower_applicant_id,omitempty, optional"`
     IsPrimary bool `json:"is_primary,omitempty, optional"`

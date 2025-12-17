@@ -14,6 +14,7 @@ import (
 	loan "zeebee-backend/app/borrower/api/internal/handler/loan"
 	loan_applicant "zeebee-backend/app/borrower/api/internal/handler/loan_applicant"
 	loan_document "zeebee-backend/app/borrower/api/internal/handler/loan_document"
+	organization "zeebee-backend/app/borrower/api/internal/handler/organization"
 	organization_user "zeebee-backend/app/borrower/api/internal/handler/organization_user"
 	pdf "zeebee-backend/app/borrower/api/internal/handler/pdf"
 	role "zeebee-backend/app/borrower/api/internal/handler/role"
@@ -359,6 +360,39 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	)
 
 	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// email authorize
+					Method:  http.MethodPost,
+					Path:    "/organization/email_authorize",
+					Handler: organization.OrganizationEmailAuthorizeHandler(serverCtx),
+				},
+				{
+					// generate email code url
+					Method:  http.MethodGet,
+					Path:    "/organization/generate_auth_code_url",
+					Handler: organization.OrganizationGenerateEmailCodeUrlHandler(serverCtx),
+				},
+				{
+					// info
+					Method:  http.MethodGet,
+					Path:    "/organization/info",
+					Handler: organization.OrganizationInfoHandler(serverCtx),
+				},
+				{
+					// save email
+					Method:  http.MethodPost,
+					Path:    "/organization/save_email",
+					Handler: organization.OrganizationSaveEmailHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
 		[]rest.Route{
 			{
 				// accept invitation
@@ -571,18 +605,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/user/change_password",
 					Handler: user.ChangePasswordHandler(serverCtx),
-				},
-				{
-					// email auth
-					Method:  http.MethodPost,
-					Path:    "/user/email_auth",
-					Handler: user.EmailAuthHandler(serverCtx),
-				},
-				{
-					// generate auth code url
-					Method:  http.MethodGet,
-					Path:    "/user/generate_auth_code_url",
-					Handler: user.GenerateAuthCodeUrlHandler(serverCtx),
 				},
 				{
 					// info

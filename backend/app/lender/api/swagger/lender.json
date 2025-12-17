@@ -2207,9 +2207,6 @@
                 "loan_type": {
                   "type": "string"
                 },
-                "ltv": {
-                  "type": "number"
-                },
                 "maturity_date": {
                   "type": "string"
                 },
@@ -3070,10 +3067,25 @@
                 "id": {
                   "type": "integer"
                 },
+                "is_admin": {
+                  "type": "boolean"
+                },
+                "is_owner": {
+                  "type": "boolean"
+                },
                 "last_name": {
                   "type": "string"
                 },
-                "lender_companies": {
+                "organization_id": {
+                  "type": "integer"
+                },
+                "organization_name": {
+                  "type": "string"
+                },
+                "organization_user_id": {
+                  "type": "integer"
+                },
+                "organizations": {
                   "type": "array",
                   "items": {
                     "type": "object",
@@ -3098,12 +3110,6 @@
                       }
                     }
                   }
-                },
-                "lender_company_id": {
-                  "type": "integer"
-                },
-                "lender_company_name": {
-                  "type": "string"
                 },
                 "status": {
                   "type": "string"
@@ -3259,7 +3265,7 @@
               "type": "object",
               "required": [
                 "email",
-                "lender_company_id",
+                "organization_id",
                 "password",
                 "comfired_password",
                 "first_name",
@@ -3278,7 +3284,7 @@
                 "last_name": {
                   "type": "string"
                 },
-                "lender_company_id": {
+                "organization_id": {
                   "type": "integer"
                 },
                 "password": {
@@ -3338,14 +3344,14 @@
               "required": [
                 "email",
                 "password",
-                "comfired_password",
+                "confirm_password",
                 "code"
               ],
               "properties": {
                 "code": {
                   "type": "string"
                 },
-                "comfired_password": {
+                "confirm_password": {
                   "type": "string"
                 },
                 "email": {
@@ -3426,7 +3432,7 @@
         }
       }
     },
-    "/api/v1/user/switch_lender_company": {
+    "/api/v1/user/switch_organization": {
       "post": {
         "consumes": [
           "application/json"
@@ -3440,8 +3446,8 @@
         "tags": [
           "user"
         ],
-        "summary": "switch lender company",
-        "operationId": "userSwitchLenderCompany",
+        "summary": "switch organization",
+        "operationId": "userSwitchOrganization",
         "parameters": [
           {
             "name": "body",
@@ -3450,10 +3456,10 @@
             "schema": {
               "type": "object",
               "required": [
-                "lender_company_id"
+                "organization_id"
               ],
               "properties": {
-                "lender_company_id": {
+                "organization_id": {
                   "type": "integer"
                 }
               }
@@ -3485,7 +3491,7 @@
       }
     }
   },
-  "x-date": "2025-11-14 17:27:27",
+  "x-date": "2025-12-17 16:29:19",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

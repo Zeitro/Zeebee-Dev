@@ -8,7 +8,6 @@ type User struct {
 	Base
 	Type                  constants.UserType   `json:"type"`
 	Email                 string               `json:"email"`
-	EmailType             constants.EmailType  `json:"email_type" gorm:"column:email_type;type:varchar(20);not null;default ''"`
 	PasswordHash          string               `json:"-"`
 	Status                constants.UserStatus `json:"status"`
 	FirstName             string               `json:"first_name" gorm:"column:first_name;varchar(100);not null;default:''"`

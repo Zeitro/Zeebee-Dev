@@ -43,7 +43,7 @@ func (l *DetailLogic) Detail(in *borrower.BorrowerEntityDetailRequest) (resp *bo
 		return nil, err
 	}
 
-	respData := &borrower.BorrowerEntityEntry{}
+	respData := &borrower.BorrowerEntityEntity{}
 	result, err := l.svcCtx.BorrowerEntityRepo.GetOneByIdForOrganization(l.ctx, in.Data.Id, claim.OrganizationId)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)

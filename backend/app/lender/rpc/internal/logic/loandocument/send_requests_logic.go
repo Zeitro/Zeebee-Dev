@@ -85,7 +85,7 @@ func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequ
 			}
 		}
 		// add loan operation
-		comments := slice.FlatMap[*lender.SendDocumentRequestEntry, string](in.Data.Documents, func(index int, item *lender.SendDocumentRequestEntry) []string {
+		comments := slice.FlatMap[*lender.SendDocumentRequestEntity, string](in.Data.Documents, func(index int, item *lender.SendDocumentRequestEntity) []string {
 			return []string{item.Comment}
 		})
 		comments = slice.Filter(comments, func(index int, item string) bool {
