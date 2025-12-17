@@ -1,0 +1,20 @@
+syntax = "v1"
+
+info(
+    title: "email-authorization-api"
+    desc: "email-authorization-api http service description"
+    version: "v1"
+)
+
+type EmailAuthorizationEntity {
+    Id int64
+    OrganizationId int64
+    UserId int64
+    Strategy string
+    Email string
+    EmailProvider string
+    IsAuthorized bool
+    EmailScope string
+    CreatedAt string
+    UpdatedAt string
+}

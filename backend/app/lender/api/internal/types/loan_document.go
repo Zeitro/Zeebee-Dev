@@ -15,11 +15,11 @@ type LoanDocumentCreateRequest struct {
 }
 
 type LoanDocumentCreateResponse struct {
-	LoanDocuments []*LoanDocumentOptEntry `json:"loan_documents"`
+	LoanDocuments []*LoanDocumentOptEntity `json:"loan_documents"`
 }
 
 type LoanDocumentSendRequestsRequest struct {
-	Documents []LoanDocumentSendRequestEntry `json:"documents" validate:"required,min=1,dive,required"`
+	Documents []LoanDocumentSendRequestEntity `json:"documents" validate:"required,min=1,dive,required"`
 }
 
 type LoanDocumentUpdateCommentRequest struct {

@@ -44,7 +44,7 @@ func (l *CreateLogic) Create(in *borrower.BorrowerApplicantCreateRequest) (resp 
 	}
 
 	saveData := &model.BorrowerApplicant{}
-	responseData := &borrower.BorrowerApplicantEntry{}
+	responseData := &borrower.BorrowerApplicantEntity{}
 	err = copier.CopyWithOption(saveData, in.Data, copier.Option{
 		CaseSensitive: true,
 		DeepCopy:      true,

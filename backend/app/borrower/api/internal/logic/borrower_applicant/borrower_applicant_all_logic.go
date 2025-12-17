@@ -38,7 +38,7 @@ func (l *BorrowerApplicantAllLogic) BorrowerApplicantAll(req *types.EmptyRequest
 	}
 
 	resp = &types.BorrowerApplicantAllResponse{}
-	resp.Lists = make([]*types.BorrowerApplicantPageEntry, 0, len(rpcResp.Data))
+	resp.Lists = make([]*types.BorrowerApplicantPageEntity, 0, len(rpcResp.Data))
 
 	err = copier.CopyWithOption(&resp.Lists, rpcResp.Data, copier.Option{
 		DeepCopy:      true,

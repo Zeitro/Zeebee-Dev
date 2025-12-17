@@ -4,7 +4,7 @@
 package types
 
 type BorrowerEntityAllResponse struct {
-	Lists []*BorrowerEntityPageEntry `json:"lists"`
+	Lists []*BorrowerEntityPageEntity `json:"lists"`
 }
 
 type BorrowerEntityCheckExistedRequest struct {
@@ -21,11 +21,11 @@ type BorrowerEntityCreateRequest struct {
 }
 
 type BorrowerEntityCreateResponse struct {
-	BorrowerEntityEntry
+	BorrowerEntityEntity
 }
 
 type BorrowerEntityDetailResponse struct {
-	BorrowerEntityEntry
+	BorrowerEntityEntity
 }
 
 type BorrowerEntityPageRequest struct {
@@ -36,11 +36,11 @@ type BorrowerEntityPageRequest struct {
 }
 
 type BorrowerEntityPageResponse struct {
-	Page      int64                     `json:"page"`
-	Limit     int64                     `json:"limit"`
-	Total     int64                     `json:"total"`
-	TotalPage int64                     `json:"total_page"`
-	List      []BorrowerEntityPageEntry `json:"list"`
+	Page      int64                      `json:"page"`
+	Limit     int64                      `json:"limit"`
+	Total     int64                      `json:"total"`
+	TotalPage int64                      `json:"total_page"`
+	List      []BorrowerEntityPageEntity `json:"list"`
 }
 
 type BorrowerEntityUpdateRequest struct {

@@ -8,7 +8,7 @@ info(
 
 import "address.api"
 
-type LoanPropertyEntry {
+type LoanPropertyEntity {
     Id int64 `json:"id"`
     BorrowerPropertyId int64 `json:"borrower_property_id"`
     PropertyType string `json:"property_type"`
@@ -22,7 +22,7 @@ type LoanPropertyEntry {
     FutureBedrooms int32 `json:"future_bedrooms" `
     FutureBathrooms int32 `json:"future_bathrooms"`
     Owner string `json:"owner"`
-    Address *AddressEntry `json:"address"`
+    Address *AddressEntity `json:"address"`
 
     ExistingLenderCompany string `json:"existing_lender_company"`
     ExistingRate float32 `json:"existing_rate"`
@@ -35,7 +35,7 @@ type LoanPropertyEntry {
     SubordinateDebtAmount float64 `json:"subordinate_debt_amount"`
     ScheduledCloseEscrowDate string `json:"scheduled_close_escrow_date"`
     LiquidityAmount float64 `json:"liquidity_amount"`
-    Budget *LoanBudgetEntry `json:"budget"`
+    Budget *LoanBudgetEntity `json:"budget"`
     MidConstruction bool `json:"mid_construction"`
     EstYearlyRentalIncomeAmount float64 `json:"est_yearly_rental_income_amount"`
     YearlyLiabilityExpenseAmount float64 `json:"yearly_liability_expense_amount"`
@@ -48,13 +48,13 @@ type LoanPropertyEntry {
     Arv float64 `json:"arv"`
 }
 
-type LoanBudgetEntry {
+type LoanBudgetEntity {
     OriginalBudget float64 `json:"original_budget"`
     RemainingBudget float64 `json:"remaining_budget"`
     CostSpentToDateAmount float64 `json:"cost_spent_to_date_amount"`
 }
 
-type LoanPropertyEditEntry {
+type LoanPropertyEditEntity {
     Id int64 `json:"id,optional"`
     BorrowerPropertyId int64 `json:"borrower_property_id" validate:"required,gt=0"`
     Owner string `json:"owner,optional" validate:"max=50"`
@@ -64,7 +64,7 @@ type LoanPropertyEditEntry {
     ExistingLenderCompany string `json:"existing_lender_company, optional" validate:"max=100"`
 }
 
-type LoanPropertyApplyEntry {
+type LoanPropertyApplyEntity {
     Id int64 `json:"id,optional"`
     BorrowerPropertyId int64 `json:"borrower_property_id" validate:"required,gt=0"`
 
@@ -88,7 +88,7 @@ type LoanPropertyApplyEntry {
     ScheduledCloseEscrowDate string `json:"scheduled_close_escrow_date, optional"`
     EstPropertyValueAmount float64 `json:"est_property_value_amount, optional" validate:"gte=0"`
     LiquidityAmount float64 `json:"liquidity_amount" validate:"gte=0"`
-    Budget *LoanBudgetEntry `json:"budget, optional"`
+    Budget *LoanBudgetEntity `json:"budget, optional"`
     MidConstruction bool `json:"mid_construction, optional"`
     EstYearlyRentalIncomeAmount float64 `json:"est_yearly_rental_income_amount, optional" `
     YearlyLiabilityExpenseAmount float64 `json:"yearly_liability_expense_amount, optional" `
@@ -100,14 +100,14 @@ type LoanPropertyApplyEntry {
 }
 
 
-type LoanPropertyApplyFormPdfEntry {
+type LoanPropertyApplyFormPdfEntity {
     Id int64 `json:"id,optional"`
     Unit int32 `json:"unit"`
     LivingAreaSqft float32 `json:"living_area_sqft"`
     Bedrooms int32 `json:"bedrooms" `
     Bathrooms int32 `json:"bathrooms"`
     PropertyType string `json:"property_type"`
-    Address *AddressEntry `json:"address"`
+    Address *AddressEntity `json:"address"`
 
     // new fields
     FuturePropertyType string `json:"future_property_type"`
@@ -129,7 +129,7 @@ type LoanPropertyApplyFormPdfEntry {
     ScheduledCloseEscrowDate string `json:"scheduled_close_escrow_date, optional"`
     EstPropertyValueAmount float64 `json:"est_property_value_amount, optional" validate:"gte=0"`
     LiquidityAmount float64 `json:"liquidity_amount" validate:"gte=0"`
-    Budget *LoanBudgetEntry `json:"budget, optional"`
+    Budget *LoanBudgetEntity `json:"budget, optional"`
     MidConstruction bool `json:"mid_construction, optional"`
     EstYearlyRentalIncomeAmount float64 `json:"est_yearly_rental_income_amount, optional" `
     YearlyLiabilityExpenseAmount float64 `json:"yearly_liability_expense_amount, optional" `
@@ -142,7 +142,7 @@ type LoanPropertyApplyFormPdfEntry {
 }
 
 
-type LoanPropertyPdfEntry {
+type LoanPropertyPdfEntity {
     PropertyType string `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
     Unit int32 `json:"unit" validate:"required,gt=0"`
     LivingAreaSqft float32 `json:"living_area_sqft" validate:"required,gt=0"`
@@ -154,10 +154,10 @@ type LoanPropertyPdfEntry {
     FutureBedrooms int32 `json:"future_bedrooms" validate:"required,gt=0"`
     FutureBathrooms int32 `json:"future_bathrooms" validate:"required,gt=0"`
     Owner string `json:"owner,optional"`
-    Address *AddressEntry `json:"address" validate:"required"`
+    Address *AddressEntity `json:"address" validate:"required"`
 }
 
-type ImportLoanApplyPropertyEntry {
+type ImportLoanApplyPropertyEntity {
     Id int64 `json:"id,optional"`
     PropertyType string `json:"property_type,optional"`
     Unit int32 `json:"unit,optional" validate:"gte=0"`
@@ -170,7 +170,7 @@ type ImportLoanApplyPropertyEntry {
     FutureBedrooms int32 `json:"future_bedrooms,optional" validate:"gte=0"`
     FutureBathrooms int32 `json:"future_bathrooms,optional" validate:"gte=0"`
     Owner string `json:"owner,optional"`
-    Address *AddressEntry `json:"address,optional"`
+    Address *AddressEntity `json:"address,optional"`
     PurchaseAmount float64 `json:"purchase_amount,optional"`
     PurchaseDate string `json:"purchase_date,optional"`
 }

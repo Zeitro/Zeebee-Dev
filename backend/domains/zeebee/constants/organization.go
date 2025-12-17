@@ -41,6 +41,25 @@ const (
 	OrganizationUserStatusDisabled     OrganizationUserStatus = "Disabled"
 )
 
+type EmailAuthStrategy string
+
+const (
+	EmailAuthStrategyOrganization EmailAuthStrategy = "Organization"
+	EmailAuthStrategyUser         EmailAuthStrategy = "User"
+)
+
+type EmailProvider string
+
+const (
+	EmailProviderGmail EmailProvider = "Gmail"
+)
+
+type EmailScope string
+
+const (
+	EmailScopeContact EmailScope = "Contact"
+)
+
 func (v OrganizationUserStatus) Validate() error {
 	if v == OrganizationUserStatusActive || v == OrganizationUserStatusNotActivated || v == OrganizationUserStatusDisabled {
 		return nil

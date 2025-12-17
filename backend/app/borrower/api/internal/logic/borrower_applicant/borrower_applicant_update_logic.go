@@ -30,7 +30,7 @@ func NewBorrowerApplicantUpdateLogic(ctx context.Context, svcCtx *svc.ServiceCon
 
 func (l *BorrowerApplicantUpdateLogic) BorrowerApplicantUpdate(req *types.BorrowerApplicantEditRequest) (resp *types.EmptyResponse, err error) {
 	rpcReq := &borrower.BorrowerApplicantUpdateRequest{
-		Data: &borrower.BorrowerApplicantEditEntry{},
+		Data: &borrower.BorrowerApplicantEditEntity{},
 	}
 
 	err = copier.CopyWithOption(&rpcReq.Data, req, copier.Option{

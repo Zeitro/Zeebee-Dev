@@ -61,11 +61,11 @@ func (l *PageLogic) Page(in *borrower.PropertyPageRequest) (resp *borrower.Prope
 	}
 
 	applicantRepo := l.svcCtx.LoanApplicantRepo
-	properties := make([]*borrower.PropertyPageEntry, len(borrowerPropertyPageResult.List))
+	properties := make([]*borrower.PropertyPageEntity, len(borrowerPropertyPageResult.List))
 	now := datetime.BeginOfDay(time.Now())
 	for i, borrowerProperty := range borrowerPropertyPageResult.List {
 
-		propertyPageEntry := &borrower.PropertyPageEntry{}
+		propertyPageEntry := &borrower.PropertyPageEntity{}
 		err = copier.CopyWithOption(propertyPageEntry, borrowerProperty, copier.Option{
 			DeepCopy:      true,
 			CaseSensitive: true,

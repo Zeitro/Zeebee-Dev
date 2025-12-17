@@ -6,11 +6,66 @@ info(
     version: "v1"
 )
 
+import "address.api"
+import "email_authorization.api"
+
 type (
     UserInfoOrganizationEntity {
         Id int64 `json:"id"`
         Name string `json:"name"`
         Status string `json:"status"`
         IsDefault bool `json:"is_default"`
+    }
+)
+type OrganizationEntity {
+    Id int64 `json:"id"`
+    Name string `json:"name"`
+    Status string `json:"status"`
+    OwnerId int64 `json:"owner_id"`
+    Address AddressEntity `json:"address"`
+    ContactEmail string `json:"contact_email"`
+    EmailAuthStrategy string `json:"email_auth_strategy"`
+    OwnerType string `json:"owner_type"`
+    Type string `json:"type"`
+    CreatedAt string `json:"created_at"`
+    UpdatedAt string `json:"updated_at"`
+
+    EmailAuthorizedUsers []*EmailAuthorizationEntity `json:"email_authorized_users"`
+}
+
+// save email
+type (
+    OrganizationSaveEmailRequest {
+        ContactEmail string `json:"contact_email" validate:"required, email"`
+        EmailAuthStrategy string `json:"email_auth_strategy" validate:"required,oneof=Organziation User"`
+        EmailScope string `json:"email_scope" validate:"required,oneof=Contact"`
+    }
+)
+
+// email authorize
+type (
+    OrganizationEmailAuthorizeRequest {
+        Code string `json:"code" validate:"required"`
+        EmailProvider string `json:"email_provider" validate:"required,oneof=Gmail"`
+        Email string `json:"email" validate:"required, email"`
+        EmailScope string `json:"email_scope" validate:"required,oneof=Contact"`
+    }
+)
+
+//  info
+type (
+    OrganizationInfoResponse {
+        Data OrganizationEntity `json:"data"`
+    }
+)
+
+// generate auth code url
+type (
+    OrganizationGenerateEmailCodeUrlRequest {
+        EmailProvider string `json:"email_provider" validate:"required,oneof=Gmail"`
+        EmailScope string `json:"email_scope" validate:"required,oneof=Contact"`
+    }
+    OrganizationGenerateEmailCodeUrlResponse {
+        Url string `json:"url"`
     }
 )

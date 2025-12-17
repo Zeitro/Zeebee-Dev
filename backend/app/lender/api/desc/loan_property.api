@@ -8,14 +8,14 @@ info(
 
 import "address.api"
 
-type LoanBudgetEntry {
+type LoanBudgetEntity {
     OriginalBudget float64 `json:"original_budget"`
     RemainingBudget float64 `json:"remaining_budget"`
     CostSpentToDateAmount float64 `json:"cost_spent_to_date_amount"`
 }
 
 
-type LoanPropertyEntry {
+type LoanPropertyEntity {
     Id int64 `json:"id"`
     BorrowerPropertyId int64 `json:"borrower_property_id"`
     PropertyType string `json:"property_type"`
@@ -29,7 +29,7 @@ type LoanPropertyEntry {
     FutureBedrooms int32 `json:"future_bedrooms" `
     FutureBathrooms int32 `json:"future_bathrooms"`
     Owner string `json:"owner"`
-    Address *AddressEntry `json:"address"`
+    Address *AddressEntity `json:"address"`
     CreatedAt string `json:"created_at"`
     UpdatedAt string `json:"updated_at"`
 
@@ -44,7 +44,7 @@ type LoanPropertyEntry {
     SubordinateDebtAmount float64 `json:"subordinate_debt_amount"`
     ScheduledCloseEscrowDate string `json:"scheduled_close_escrow_date"`
     LiquidityAmount float64 `json:"liquidity_amount"`
-    Budget *LoanBudgetEntry `json:"budget"`
+    Budget *LoanBudgetEntity `json:"budget"`
     MidConstruction bool `json:"mid_construction"`
     EstYearlyRentalIncomeAmount float64 `json:"est_yearly_rental_income_amount"`
     YearlyLiabilityExpenseAmount float64 `json:"yearly_liability_expense_amount"`
@@ -57,7 +57,7 @@ type LoanPropertyEntry {
     Arv float64 `json:"arv"`
 }
 
-type LoanPropertyEditEntry {
+type LoanPropertyEditEntity {
     Id int64 `json:"id,optional"`
     FuturePropertyType string `json:"future_property_type,optional"`
     FutureUnit int32 `json:"future_unit,optional" validate:"gt=0"`
@@ -78,7 +78,7 @@ type LoanPropertyEditEntry {
     SubordinateDebtAmount float64 `json:"subordinate_debt_amount"`
     ScheduledCloseEscrowDate string `json:"scheduled_close_escrow_date"`
     LiquidityAmount float64 `json:"liquidity_amount"`
-    Budget *LoanBudgetEntry `json:"budget"`
+    Budget *LoanBudgetEntity `json:"budget"`
     MidConstruction bool `json:"mid_construction"`
     EstYearlyRentalIncomeAmount float64 `json:"est_yearly_rental_income_amount"`
     YearlyLiabilityExpenseAmount float64 `json:"yearly_liability_expense_amount"`

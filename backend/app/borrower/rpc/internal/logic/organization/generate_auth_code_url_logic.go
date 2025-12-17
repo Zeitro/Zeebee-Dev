@@ -1,4 +1,4 @@
-package userlogic
+package organizationlogic
 
 import (
 	"context"
@@ -11,21 +11,21 @@ import (
 	"zeebee-backend/common/errorx"
 )
 
-type GenerateEmailAuthCodeUrlLogic struct {
+type GenerateAuthCodeUrlLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewGenerateEmailAuthCodeUrlLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GenerateEmailAuthCodeUrlLogic {
-	return &GenerateEmailAuthCodeUrlLogic{
+func NewGenerateAuthCodeUrlLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GenerateAuthCodeUrlLogic {
+	return &GenerateAuthCodeUrlLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *GenerateEmailAuthCodeUrlLogic) GenerateEmailAuthCodeUrl(in *borrower.UserEmailAuthCodeUrlRequest) (resp *borrower.UserEmailAuthCodeUrlResponse, err error) {
+func (l *GenerateAuthCodeUrlLogic) GenerateAuthCodeUrl(in *borrower.OrganizationGenerateEmailCodeUrlRequest) (resp *borrower.OrganizationGenerateEmailCodeUrlResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -33,5 +33,5 @@ func (l *GenerateEmailAuthCodeUrlLogic) GenerateEmailAuthCodeUrl(in *borrower.Us
 	}()
 	// todo: add your logic here and delete this line
 
-	return &borrower.UserEmailAuthCodeUrlResponse{}, nil
+	return &borrower.OrganizationGenerateEmailCodeUrlResponse{}, nil
 }

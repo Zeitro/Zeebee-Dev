@@ -8,7 +8,7 @@ info(
 
 import "file.api"
 
-type LoanDocumentEntry {
+type LoanDocumentEntity {
     Id int64 `json:"id"`
     LoanId int64 `json:"loan_id"`
     Category string `json:"category"`
@@ -19,7 +19,7 @@ type LoanDocumentEntry {
     CreatedAt string `json:"created_at"`
     UpdatedAt string `json:"updated_at"`
 
-    Files []FileEntry `json:"files"`
+    Files []FileEntity `json:"files"`
 }
 
 type LoanDocumentAddFilesRequest {

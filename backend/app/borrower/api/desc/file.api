@@ -6,7 +6,7 @@ info(
     version: "v1"
 )
 
-type FileEntry {
+type FileEntity {
     Id int64 `json:"id"`
     EntityType string `json:"entity_type"`
     EntityId int64 `json:"entity_id"`
