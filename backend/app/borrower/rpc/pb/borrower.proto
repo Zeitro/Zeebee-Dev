@@ -1862,7 +1862,7 @@ message OrganizationSaveEmailRequest {
   OrganizationSaveEmailRequestData data = 1;
 }
 message OrganizationSaveEmailRequestData {
-  string contact_email = 1;
+  string email = 1;
   string email_auth_strategy = 2;
   string email_scope = 3;
 }
@@ -1912,7 +1912,7 @@ message EmailAuthorizationEntity {
   int64 id = 1;
   int64 organization_id = 2;
   int64 user_id = 3;
-  string strategy = 4;
+  string email_auth_strategy = 4;
   string email = 5;
   string email_provider = 6;
   bool is_authorized = 7;

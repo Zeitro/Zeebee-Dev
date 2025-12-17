@@ -12,6 +12,7 @@ type AllLogics struct {
 	RoleLogic             *RoleLogic
 	UserLogic             *UserLogic
 	OrganizationUserLogic *OrganizationUserLogic
+	OrganizationLogic     *OrganizationLogic
 }
 
 func NewAllLogics(repos *repo.AllRepos, redisCli *redisx.Redisx, jwtConfig JwtConfig, emailClient *email.Email) *AllLogics {
@@ -21,5 +22,6 @@ func NewAllLogics(repos *repo.AllRepos, redisCli *redisx.Redisx, jwtConfig JwtCo
 		RoleLogic:             NewRoleLogic(repos),
 		UserLogic:             NewUserLogic(repos, redisCli, jwtConfig),
 		OrganizationUserLogic: NewOrganizationUserLogic(repos, redisCli, emailClient),
+		OrganizationLogic:     NewOrganizationLogic(repos),
 	}
 }
