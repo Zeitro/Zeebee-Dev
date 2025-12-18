@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import PaidSvg from '@/assets/images/Paid.svg';
+import PaidSvg from '@/assets/images/paid.svg';
 import AccountCircle from '@/assets/images/account_circle.svg';
 import SellSvg from '@/assets/images/sell.svg';
 import Calender from '@/assets/images/calendar_today.svg';
