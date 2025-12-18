@@ -36,8 +36,8 @@ type OrganizationEntity {
 // save email
 type (
     OrganizationSaveEmailRequest {
-        ContactEmail string `json:"contact_email" validate:"required, email"`
-        EmailAuthStrategy string `json:"email_auth_strategy" validate:"required,oneof=Organziation User"`
+        Email string `json:"email" validate:"required,email"`
+        EmailAuthStrategy string `json:"email_auth_strategy" validate:"required,oneof=Organization User"`
         EmailScope string `json:"email_scope" validate:"required,oneof=Contact"`
     }
 )
@@ -46,9 +46,9 @@ type (
 type (
     OrganizationEmailAuthorizeRequest {
         Code string `json:"code" validate:"required"`
+        State string `json:"state" validate:"required,oneof=Contact"`
+        Scope string `json:"scope" validate:"required"`
         EmailProvider string `json:"email_provider" validate:"required,oneof=Gmail"`
-        Email string `json:"email" validate:"required, email"`
-        EmailScope string `json:"email_scope" validate:"required,oneof=Contact"`
     }
 )
 
@@ -61,11 +61,11 @@ type (
 
 // generate auth code url
 type (
-    OrganizationGenerateEmailCodeUrlRequest {
+    OrganizationGenerateAuthCodeUrlRequest {
         EmailProvider string `json:"email_provider" validate:"required,oneof=Gmail"`
         EmailScope string `json:"email_scope" validate:"required,oneof=Contact"`
     }
-    OrganizationGenerateEmailCodeUrlResponse {
+    OrganizationGenerateAuthCodeUrlResponse {
         Url string `json:"url"`
     }
 )

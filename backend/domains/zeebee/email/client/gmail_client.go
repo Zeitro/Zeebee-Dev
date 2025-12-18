@@ -13,10 +13,6 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 )
 
-func GenerateGmailAuthCodeUrl(config *oauth2.Config, email string) string {
-	return config.AuthCodeURL(email, oauth2.AccessTypeOffline)
-}
-
 type GmailClient struct {
 	mu        sync.Mutex
 	config    *oauth2.Config
@@ -29,6 +25,15 @@ func NewGmailClient(config *oauth2.Config, code string) (client *GmailClient, er
 	if err != nil {
 		return nil, errorx.Wrap(err, "Exchange Token Failed")
 	}
+	return &GmailClient{
+		mu:        sync.Mutex{},
+		config:    config,
+		token:     token,
+		emailType: constants.EmailTypeGmail,
+	}, nil
+}
+
+func NewGmailClientFromToken(config *oauth2.Config, token *oauth2.Token) (client *GmailClient, err error) {
 	return &GmailClient{
 		mu:        sync.Mutex{},
 		config:    config,

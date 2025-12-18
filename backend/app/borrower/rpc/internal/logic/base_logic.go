@@ -15,9 +15,6 @@ type BaseLogic struct {
 	svcCtx *svc.ServiceContext
 	logx.Logger
 	*logic.AllLogics
-
-	// UserLogic *logic.UserLogic
-	// RoleLogic *logic.RoleLogic
 }
 
 func NewBaseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BaseLogic {
@@ -33,7 +30,5 @@ func NewBaseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BaseLogic {
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
 		AllLogics: logic.NewAllLogics(svcCtx.AllRepos, redisCli, jwtConfig, global.EmailClient),
-		// UserLogic: logic.NewUserLogic(svcCtx.AllRepos, redisCli, jwtConfig),
-		// RoleLogic: logic.NewRoleLogic(svcCtx.AllRepos),
 	}
 }

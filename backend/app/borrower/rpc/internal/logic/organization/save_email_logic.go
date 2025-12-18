@@ -50,5 +50,11 @@ func (l *SaveEmailLogic) SaveEmail(in *borrower.OrganizationSaveEmailRequest) (r
 	if input.EmailAuthStrategy == constants.EmailAuthStrategyUser {
 		input.UserId = claim.UserId
 	}
+
+	err = l.baseLogic.OrganizationLogic.SaveEmail(l.ctx, *input)
+	if err != nil {
+		return nil, err
+	}
+
 	return &borrower.EmptyResponse{}, nil
 }

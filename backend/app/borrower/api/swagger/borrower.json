@@ -6378,21 +6378,21 @@
               "type": "object",
               "required": [
                 "code",
-                "email_provider",
-                "email",
-                "email_scope"
+                "state",
+                "scope",
+                "email_provider"
               ],
               "properties": {
                 "code": {
                   "type": "string"
                 },
-                "email": {
-                  "type": "string"
-                },
                 "email_provider": {
                   "type": "string"
                 },
-                "email_scope": {
+                "scope": {
+                  "type": "string"
+                },
+                "state": {
                   "type": "string"
                 }
               }
@@ -6420,8 +6420,8 @@
         "tags": [
           "organization"
         ],
-        "summary": "generate email code url",
-        "operationId": "organizationOrganizationGenerateEmailCodeUrl",
+        "summary": "generate auth code url",
+        "operationId": "organizationOrganizationGenerateAuthCodeUrl",
         "parameters": [
           {
             "name": "body",
@@ -6511,35 +6511,47 @@
                   "type": "array",
                   "items": {
                     "type": "object",
+                    "required": [
+                      "id",
+                      "organization_id",
+                      "user_id",
+                      "email_auth_strategy",
+                      "email",
+                      "email_provider",
+                      "is_authorized",
+                      "email_scope",
+                      "created_at",
+                      "updated_at"
+                    ],
                     "properties": {
-                      "CreatedAt": {
+                      "created_at": {
                         "type": "string"
                       },
-                      "Email": {
+                      "email": {
                         "type": "string"
                       },
-                      "EmailProvider": {
+                      "email_auth_strategy": {
                         "type": "string"
                       },
-                      "EmailScope": {
+                      "email_provider": {
                         "type": "string"
                       },
-                      "Id": {
+                      "email_scope": {
+                        "type": "string"
+                      },
+                      "id": {
                         "type": "integer"
                       },
-                      "IsAuthorized": {
+                      "is_authorized": {
                         "type": "boolean"
                       },
-                      "OrganizationId": {
+                      "organization_id": {
                         "type": "integer"
                       },
-                      "Strategy": {
+                      "updated_at": {
                         "type": "string"
                       },
-                      "UpdatedAt": {
-                        "type": "string"
-                      },
-                      "UserId": {
+                      "user_id": {
                         "type": "integer"
                       }
                     }
@@ -6596,12 +6608,12 @@
             "schema": {
               "type": "object",
               "required": [
-                "contact_email",
+                "email",
                 "email_auth_strategy",
                 "email_scope"
               ],
               "properties": {
-                "contact_email": {
+                "email": {
                   "type": "string"
                 },
                 "email_auth_strategy": {
@@ -13429,9 +13441,9 @@
       }
     }
   },
-  "x-date": "2025-12-17 16:17:48",
+  "x-date": "2025-12-18 16:54:01",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
-  "x-goctl-version": "1.8.4"
+  "x-goctl-version": "1.9.2"
 }

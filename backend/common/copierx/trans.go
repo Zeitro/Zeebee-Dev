@@ -1,6 +1,10 @@
 package copierx
 
-import "github.com/jinzhu/copier"
+import (
+	"github.com/jinzhu/copier"
+
+	"zeebee-backend/common/errorx"
+)
 
 func Trans[T, U any](src *T, opts ...copier.TypeConverter) (dist *U, err error) {
 	if src == nil {
@@ -12,5 +16,8 @@ func Trans[T, U any](src *T, opts ...copier.TypeConverter) (dist *U, err error) 
 		CaseSensitive: true,
 		Converters:    opts,
 	})
+	if err != nil {
+		return nil, errorx.GetFailedTransErr(err)
+	}
 	return dist, err
 }

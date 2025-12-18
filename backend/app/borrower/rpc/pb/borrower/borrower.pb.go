@@ -16475,7 +16475,7 @@ func (x *OrganizationSaveEmailRequest) GetData() *OrganizationSaveEmailRequestDa
 
 type OrganizationSaveEmailRequestData struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
-	ContactEmail      string                 `protobuf:"bytes,1,opt,name=contact_email,json=contactEmail,proto3" json:"contact_email,omitempty"`
+	Email             string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
 	EmailAuthStrategy string                 `protobuf:"bytes,2,opt,name=email_auth_strategy,json=emailAuthStrategy,proto3" json:"email_auth_strategy,omitempty"`
 	EmailScope        string                 `protobuf:"bytes,3,opt,name=email_scope,json=emailScope,proto3" json:"email_scope,omitempty"`
 	unknownFields     protoimpl.UnknownFields
@@ -16512,9 +16512,9 @@ func (*OrganizationSaveEmailRequestData) Descriptor() ([]byte, []int) {
 	return file_app_borrower_rpc_pb_borrower_proto_rawDescGZIP(), []int{249}
 }
 
-func (x *OrganizationSaveEmailRequestData) GetContactEmail() string {
+func (x *OrganizationSaveEmailRequestData) GetEmail() string {
 	if x != nil {
-		return x.ContactEmail
+		return x.Email
 	}
 	return ""
 }
@@ -16581,9 +16581,9 @@ func (x *OrganizationEmailAuthorizeRequest) GetData() *OrganizationEmailAuthoriz
 type OrganizationEmailAuthorizeRequestData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Code          string                 `protobuf:"bytes,1,opt,name=code,proto3" json:"code,omitempty"`
-	EmailProvider string                 `protobuf:"bytes,2,opt,name=email_provider,json=emailProvider,proto3" json:"email_provider,omitempty"`
-	Email         string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
-	EmailScope    string                 `protobuf:"bytes,4,opt,name=email_scope,json=emailScope,proto3" json:"email_scope,omitempty"`
+	State         string                 `protobuf:"bytes,2,opt,name=state,proto3" json:"state,omitempty"`
+	Scope         string                 `protobuf:"bytes,3,opt,name=scope,proto3" json:"scope,omitempty"`
+	EmailProvider string                 `protobuf:"bytes,4,opt,name=email_provider,json=emailProvider,proto3" json:"email_provider,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -16625,23 +16625,23 @@ func (x *OrganizationEmailAuthorizeRequestData) GetCode() string {
 	return ""
 }
 
+func (x *OrganizationEmailAuthorizeRequestData) GetState() string {
+	if x != nil {
+		return x.State
+	}
+	return ""
+}
+
+func (x *OrganizationEmailAuthorizeRequestData) GetScope() string {
+	if x != nil {
+		return x.Scope
+	}
+	return ""
+}
+
 func (x *OrganizationEmailAuthorizeRequestData) GetEmailProvider() string {
 	if x != nil {
 		return x.EmailProvider
-	}
-	return ""
-}
-
-func (x *OrganizationEmailAuthorizeRequestData) GetEmail() string {
-	if x != nil {
-		return x.Email
-	}
-	return ""
-}
-
-func (x *OrganizationEmailAuthorizeRequestData) GetEmailScope() string {
-	if x != nil {
-		return x.EmailScope
 	}
 	return ""
 }
@@ -16692,27 +16692,27 @@ func (x *OrganizationInfoResponse) GetData() *OrganizationEntity {
 }
 
 // generate email code url --  request
-type OrganizationGenerateEmailCodeUrlRequest struct {
-	state         protoimpl.MessageState                       `protogen:"open.v1"`
-	Data          *OrganizationGenerateEmailCodeUrlRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+type OrganizationGenerateAuthCodeUrlRequest struct {
+	state         protoimpl.MessageState                      `protogen:"open.v1"`
+	Data          *OrganizationGenerateAuthCodeUrlRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *OrganizationGenerateEmailCodeUrlRequest) Reset() {
-	*x = OrganizationGenerateEmailCodeUrlRequest{}
+func (x *OrganizationGenerateAuthCodeUrlRequest) Reset() {
+	*x = OrganizationGenerateAuthCodeUrlRequest{}
 	mi := &file_app_borrower_rpc_pb_borrower_proto_msgTypes[253]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *OrganizationGenerateEmailCodeUrlRequest) String() string {
+func (x *OrganizationGenerateAuthCodeUrlRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*OrganizationGenerateEmailCodeUrlRequest) ProtoMessage() {}
+func (*OrganizationGenerateAuthCodeUrlRequest) ProtoMessage() {}
 
-func (x *OrganizationGenerateEmailCodeUrlRequest) ProtoReflect() protoreflect.Message {
+func (x *OrganizationGenerateAuthCodeUrlRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_app_borrower_rpc_pb_borrower_proto_msgTypes[253]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -16724,19 +16724,19 @@ func (x *OrganizationGenerateEmailCodeUrlRequest) ProtoReflect() protoreflect.Me
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use OrganizationGenerateEmailCodeUrlRequest.ProtoReflect.Descriptor instead.
-func (*OrganizationGenerateEmailCodeUrlRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use OrganizationGenerateAuthCodeUrlRequest.ProtoReflect.Descriptor instead.
+func (*OrganizationGenerateAuthCodeUrlRequest) Descriptor() ([]byte, []int) {
 	return file_app_borrower_rpc_pb_borrower_proto_rawDescGZIP(), []int{253}
 }
 
-func (x *OrganizationGenerateEmailCodeUrlRequest) GetData() *OrganizationGenerateEmailCodeUrlRequestData {
+func (x *OrganizationGenerateAuthCodeUrlRequest) GetData() *OrganizationGenerateAuthCodeUrlRequestData {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type OrganizationGenerateEmailCodeUrlRequestData struct {
+type OrganizationGenerateAuthCodeUrlRequestData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	EmailProvider string                 `protobuf:"bytes,1,opt,name=email_provider,json=emailProvider,proto3" json:"email_provider,omitempty"`
 	EmailScope    string                 `protobuf:"bytes,2,opt,name=email_scope,json=emailScope,proto3" json:"email_scope,omitempty"`
@@ -16744,20 +16744,20 @@ type OrganizationGenerateEmailCodeUrlRequestData struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *OrganizationGenerateEmailCodeUrlRequestData) Reset() {
-	*x = OrganizationGenerateEmailCodeUrlRequestData{}
+func (x *OrganizationGenerateAuthCodeUrlRequestData) Reset() {
+	*x = OrganizationGenerateAuthCodeUrlRequestData{}
 	mi := &file_app_borrower_rpc_pb_borrower_proto_msgTypes[254]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *OrganizationGenerateEmailCodeUrlRequestData) String() string {
+func (x *OrganizationGenerateAuthCodeUrlRequestData) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*OrganizationGenerateEmailCodeUrlRequestData) ProtoMessage() {}
+func (*OrganizationGenerateAuthCodeUrlRequestData) ProtoMessage() {}
 
-func (x *OrganizationGenerateEmailCodeUrlRequestData) ProtoReflect() protoreflect.Message {
+func (x *OrganizationGenerateAuthCodeUrlRequestData) ProtoReflect() protoreflect.Message {
 	mi := &file_app_borrower_rpc_pb_borrower_proto_msgTypes[254]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -16769,19 +16769,19 @@ func (x *OrganizationGenerateEmailCodeUrlRequestData) ProtoReflect() protoreflec
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use OrganizationGenerateEmailCodeUrlRequestData.ProtoReflect.Descriptor instead.
-func (*OrganizationGenerateEmailCodeUrlRequestData) Descriptor() ([]byte, []int) {
+// Deprecated: Use OrganizationGenerateAuthCodeUrlRequestData.ProtoReflect.Descriptor instead.
+func (*OrganizationGenerateAuthCodeUrlRequestData) Descriptor() ([]byte, []int) {
 	return file_app_borrower_rpc_pb_borrower_proto_rawDescGZIP(), []int{254}
 }
 
-func (x *OrganizationGenerateEmailCodeUrlRequestData) GetEmailProvider() string {
+func (x *OrganizationGenerateAuthCodeUrlRequestData) GetEmailProvider() string {
 	if x != nil {
 		return x.EmailProvider
 	}
 	return ""
 }
 
-func (x *OrganizationGenerateEmailCodeUrlRequestData) GetEmailScope() string {
+func (x *OrganizationGenerateAuthCodeUrlRequestData) GetEmailScope() string {
 	if x != nil {
 		return x.EmailScope
 	}
@@ -16789,27 +16789,27 @@ func (x *OrganizationGenerateEmailCodeUrlRequestData) GetEmailScope() string {
 }
 
 // generate email code url --  response
-type OrganizationGenerateEmailCodeUrlResponse struct {
-	state         protoimpl.MessageState                        `protogen:"open.v1"`
-	Data          *OrganizationGenerateEmailCodeUrlResponseData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+type OrganizationGenerateAuthCodeUrlResponse struct {
+	state         protoimpl.MessageState                       `protogen:"open.v1"`
+	Data          *OrganizationGenerateAuthCodeUrlResponseData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *OrganizationGenerateEmailCodeUrlResponse) Reset() {
-	*x = OrganizationGenerateEmailCodeUrlResponse{}
+func (x *OrganizationGenerateAuthCodeUrlResponse) Reset() {
+	*x = OrganizationGenerateAuthCodeUrlResponse{}
 	mi := &file_app_borrower_rpc_pb_borrower_proto_msgTypes[255]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *OrganizationGenerateEmailCodeUrlResponse) String() string {
+func (x *OrganizationGenerateAuthCodeUrlResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*OrganizationGenerateEmailCodeUrlResponse) ProtoMessage() {}
+func (*OrganizationGenerateAuthCodeUrlResponse) ProtoMessage() {}
 
-func (x *OrganizationGenerateEmailCodeUrlResponse) ProtoReflect() protoreflect.Message {
+func (x *OrganizationGenerateAuthCodeUrlResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_app_borrower_rpc_pb_borrower_proto_msgTypes[255]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -16821,39 +16821,39 @@ func (x *OrganizationGenerateEmailCodeUrlResponse) ProtoReflect() protoreflect.M
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use OrganizationGenerateEmailCodeUrlResponse.ProtoReflect.Descriptor instead.
-func (*OrganizationGenerateEmailCodeUrlResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use OrganizationGenerateAuthCodeUrlResponse.ProtoReflect.Descriptor instead.
+func (*OrganizationGenerateAuthCodeUrlResponse) Descriptor() ([]byte, []int) {
 	return file_app_borrower_rpc_pb_borrower_proto_rawDescGZIP(), []int{255}
 }
 
-func (x *OrganizationGenerateEmailCodeUrlResponse) GetData() *OrganizationGenerateEmailCodeUrlResponseData {
+func (x *OrganizationGenerateAuthCodeUrlResponse) GetData() *OrganizationGenerateAuthCodeUrlResponseData {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type OrganizationGenerateEmailCodeUrlResponseData struct {
+type OrganizationGenerateAuthCodeUrlResponseData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Url           string                 `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *OrganizationGenerateEmailCodeUrlResponseData) Reset() {
-	*x = OrganizationGenerateEmailCodeUrlResponseData{}
+func (x *OrganizationGenerateAuthCodeUrlResponseData) Reset() {
+	*x = OrganizationGenerateAuthCodeUrlResponseData{}
 	mi := &file_app_borrower_rpc_pb_borrower_proto_msgTypes[256]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *OrganizationGenerateEmailCodeUrlResponseData) String() string {
+func (x *OrganizationGenerateAuthCodeUrlResponseData) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*OrganizationGenerateEmailCodeUrlResponseData) ProtoMessage() {}
+func (*OrganizationGenerateAuthCodeUrlResponseData) ProtoMessage() {}
 
-func (x *OrganizationGenerateEmailCodeUrlResponseData) ProtoReflect() protoreflect.Message {
+func (x *OrganizationGenerateAuthCodeUrlResponseData) ProtoReflect() protoreflect.Message {
 	mi := &file_app_borrower_rpc_pb_borrower_proto_msgTypes[256]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -16865,12 +16865,12 @@ func (x *OrganizationGenerateEmailCodeUrlResponseData) ProtoReflect() protorefle
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use OrganizationGenerateEmailCodeUrlResponseData.ProtoReflect.Descriptor instead.
-func (*OrganizationGenerateEmailCodeUrlResponseData) Descriptor() ([]byte, []int) {
+// Deprecated: Use OrganizationGenerateAuthCodeUrlResponseData.ProtoReflect.Descriptor instead.
+func (*OrganizationGenerateAuthCodeUrlResponseData) Descriptor() ([]byte, []int) {
 	return file_app_borrower_rpc_pb_borrower_proto_rawDescGZIP(), []int{256}
 }
 
-func (x *OrganizationGenerateEmailCodeUrlResponseData) GetUrl() string {
+func (x *OrganizationGenerateAuthCodeUrlResponseData) GetUrl() string {
 	if x != nil {
 		return x.Url
 	}
@@ -16880,19 +16880,19 @@ func (x *OrganizationGenerateEmailCodeUrlResponseData) GetUrl() string {
 // ================= organization service end =================
 // ================= email authorization start =================
 type EmailAuthorizationEntity struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	UserId         int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Strategy       string                 `protobuf:"bytes,4,opt,name=strategy,proto3" json:"strategy,omitempty"`
-	Email          string                 `protobuf:"bytes,5,opt,name=email,proto3" json:"email,omitempty"`
-	EmailProvider  string                 `protobuf:"bytes,6,opt,name=email_provider,json=emailProvider,proto3" json:"email_provider,omitempty"`
-	IsAuthorized   bool                   `protobuf:"varint,7,opt,name=is_authorized,json=isAuthorized,proto3" json:"is_authorized,omitempty"`
-	EmailScope     string                 `protobuf:"bytes,8,opt,name=email_scope,json=emailScope,proto3" json:"email_scope,omitempty"`
-	CreatedAt      string                 `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt      string                 `protobuf:"bytes,10,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	Id                int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	OrganizationId    int64                  `protobuf:"varint,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	UserId            int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	EmailAuthStrategy string                 `protobuf:"bytes,4,opt,name=email_auth_strategy,json=emailAuthStrategy,proto3" json:"email_auth_strategy,omitempty"`
+	Email             string                 `protobuf:"bytes,5,opt,name=email,proto3" json:"email,omitempty"`
+	EmailProvider     string                 `protobuf:"bytes,6,opt,name=email_provider,json=emailProvider,proto3" json:"email_provider,omitempty"`
+	IsAuthorized      bool                   `protobuf:"varint,7,opt,name=is_authorized,json=isAuthorized,proto3" json:"is_authorized,omitempty"`
+	EmailScope        string                 `protobuf:"bytes,8,opt,name=email_scope,json=emailScope,proto3" json:"email_scope,omitempty"`
+	CreatedAt         string                 `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt         string                 `protobuf:"bytes,10,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *EmailAuthorizationEntity) Reset() {
@@ -16946,9 +16946,9 @@ func (x *EmailAuthorizationEntity) GetUserId() int64 {
 	return 0
 }
 
-func (x *EmailAuthorizationEntity) GetStrategy() string {
+func (x *EmailAuthorizationEntity) GetEmailAuthStrategy() string {
 	if x != nil {
-		return x.Strategy
+		return x.EmailAuthStrategy
 	}
 	return ""
 }
@@ -18835,37 +18835,36 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"updated_at\x18\v \x01(\tR\tupdatedAt\x12U\n" +
 	"\x14email_authorizations\x18\f \x03(\v2\".borrower.EmailAuthorizationEntityR\x13emailAuthorizations\"^\n" +
 	"\x1cOrganizationSaveEmailRequest\x12>\n" +
-	"\x04data\x18\x01 \x01(\v2*.borrower.OrganizationSaveEmailRequestDataR\x04data\"\x98\x01\n" +
-	" OrganizationSaveEmailRequestData\x12#\n" +
-	"\rcontact_email\x18\x01 \x01(\tR\fcontactEmail\x12.\n" +
+	"\x04data\x18\x01 \x01(\v2*.borrower.OrganizationSaveEmailRequestDataR\x04data\"\x89\x01\n" +
+	" OrganizationSaveEmailRequestData\x12\x14\n" +
+	"\x05email\x18\x01 \x01(\tR\x05email\x12.\n" +
 	"\x13email_auth_strategy\x18\x02 \x01(\tR\x11emailAuthStrategy\x12\x1f\n" +
 	"\vemail_scope\x18\x03 \x01(\tR\n" +
 	"emailScope\"h\n" +
 	"!OrganizationEmailAuthorizeRequest\x12C\n" +
-	"\x04data\x18\x01 \x01(\v2/.borrower.OrganizationEmailAuthorizeRequestDataR\x04data\"\x99\x01\n" +
+	"\x04data\x18\x01 \x01(\v2/.borrower.OrganizationEmailAuthorizeRequestDataR\x04data\"\x8e\x01\n" +
 	"%OrganizationEmailAuthorizeRequestData\x12\x12\n" +
-	"\x04code\x18\x01 \x01(\tR\x04code\x12%\n" +
-	"\x0eemail_provider\x18\x02 \x01(\tR\remailProvider\x12\x14\n" +
-	"\x05email\x18\x03 \x01(\tR\x05email\x12\x1f\n" +
-	"\vemail_scope\x18\x04 \x01(\tR\n" +
-	"emailScope\"L\n" +
+	"\x04code\x18\x01 \x01(\tR\x04code\x12\x14\n" +
+	"\x05state\x18\x02 \x01(\tR\x05state\x12\x14\n" +
+	"\x05scope\x18\x03 \x01(\tR\x05scope\x12%\n" +
+	"\x0eemail_provider\x18\x04 \x01(\tR\remailProvider\"L\n" +
 	"\x18OrganizationInfoResponse\x120\n" +
-	"\x04data\x18\x01 \x01(\v2\x1c.borrower.OrganizationEntityR\x04data\"t\n" +
-	"'OrganizationGenerateEmailCodeUrlRequest\x12I\n" +
-	"\x04data\x18\x01 \x01(\v25.borrower.OrganizationGenerateEmailCodeUrlRequestDataR\x04data\"u\n" +
-	"+OrganizationGenerateEmailCodeUrlRequestData\x12%\n" +
+	"\x04data\x18\x01 \x01(\v2\x1c.borrower.OrganizationEntityR\x04data\"r\n" +
+	"&OrganizationGenerateAuthCodeUrlRequest\x12H\n" +
+	"\x04data\x18\x01 \x01(\v24.borrower.OrganizationGenerateAuthCodeUrlRequestDataR\x04data\"t\n" +
+	"*OrganizationGenerateAuthCodeUrlRequestData\x12%\n" +
 	"\x0eemail_provider\x18\x01 \x01(\tR\remailProvider\x12\x1f\n" +
 	"\vemail_scope\x18\x02 \x01(\tR\n" +
-	"emailScope\"v\n" +
-	"(OrganizationGenerateEmailCodeUrlResponse\x12J\n" +
-	"\x04data\x18\x01 \x01(\v26.borrower.OrganizationGenerateEmailCodeUrlResponseDataR\x04data\"@\n" +
-	",OrganizationGenerateEmailCodeUrlResponseData\x12\x10\n" +
-	"\x03url\x18\x01 \x01(\tR\x03url\"\xc9\x02\n" +
+	"emailScope\"t\n" +
+	"'OrganizationGenerateAuthCodeUrlResponse\x12I\n" +
+	"\x04data\x18\x01 \x01(\v25.borrower.OrganizationGenerateAuthCodeUrlResponseDataR\x04data\"?\n" +
+	"+OrganizationGenerateAuthCodeUrlResponseData\x12\x10\n" +
+	"\x03url\x18\x01 \x01(\tR\x03url\"\xdd\x02\n" +
 	"\x18EmailAuthorizationEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12'\n" +
 	"\x0forganization_id\x18\x02 \x01(\x03R\x0eorganizationId\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x1a\n" +
-	"\bstrategy\x18\x04 \x01(\tR\bstrategy\x12\x14\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12.\n" +
+	"\x13email_auth_strategy\x18\x04 \x01(\tR\x11emailAuthStrategy\x12\x14\n" +
 	"\x05email\x18\x05 \x01(\tR\x05email\x12%\n" +
 	"\x0eemail_provider\x18\x06 \x01(\tR\remailProvider\x12#\n" +
 	"\ris_authorized\x18\a \x01(\bR\fisAuthorized\x12\x1f\n" +
@@ -18961,11 +18960,11 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x03All\x12\x16.borrower.EmptyRequest\x1a%.borrower.OrganizationUserAllResponse\x12d\n" +
 	"\x13SendInvitationEmail\x124.borrower.OrganizationUserSendInvitationEmailRequest\x1a\x17.borrower.EmptyResponse\x12b\n" +
 	"\x10AcceptInvitation\x121.borrower.OrganizationUserAcceptInvitationRequest\x1a\x1b.borrower.UserLoginResponse\x12T\n" +
-	"\vAssignRoles\x12,.borrower.OrganizationUserAssignRolesRequest\x1a\x17.borrower.EmptyResponse2\xf6\x02\n" +
+	"\vAssignRoles\x12,.borrower.OrganizationUserAssignRolesRequest\x1a\x17.borrower.EmptyResponse2\xf4\x02\n" +
 	"\fOrganization\x12L\n" +
 	"\tSaveEmail\x12&.borrower.OrganizationSaveEmailRequest\x1a\x17.borrower.EmptyResponse\x12V\n" +
-	"\x0eEmailAuthorize\x12+.borrower.OrganizationEmailAuthorizeRequest\x1a\x17.borrower.EmptyResponse\x12|\n" +
-	"\x13GenerateAuthCodeUrl\x121.borrower.OrganizationGenerateEmailCodeUrlRequest\x1a2.borrower.OrganizationGenerateEmailCodeUrlResponse\x12B\n" +
+	"\x0eEmailAuthorize\x12+.borrower.OrganizationEmailAuthorizeRequest\x1a\x17.borrower.EmptyResponse\x12z\n" +
+	"\x13GenerateAuthCodeUrl\x120.borrower.OrganizationGenerateAuthCodeUrlRequest\x1a1.borrower.OrganizationGenerateAuthCodeUrlResponse\x12B\n" +
 	"\x04Info\x12\x16.borrower.EmptyRequest\x1a\".borrower.OrganizationInfoResponseB\fZ\n" +
 	"./borrowerb\x06proto3"
 
@@ -19236,10 +19235,10 @@ var file_app_borrower_rpc_pb_borrower_proto_goTypes = []any{
 	(*OrganizationEmailAuthorizeRequest)(nil),              // 250: borrower.OrganizationEmailAuthorizeRequest
 	(*OrganizationEmailAuthorizeRequestData)(nil),          // 251: borrower.OrganizationEmailAuthorizeRequestData
 	(*OrganizationInfoResponse)(nil),                       // 252: borrower.OrganizationInfoResponse
-	(*OrganizationGenerateEmailCodeUrlRequest)(nil),        // 253: borrower.OrganizationGenerateEmailCodeUrlRequest
-	(*OrganizationGenerateEmailCodeUrlRequestData)(nil),    // 254: borrower.OrganizationGenerateEmailCodeUrlRequestData
-	(*OrganizationGenerateEmailCodeUrlResponse)(nil),       // 255: borrower.OrganizationGenerateEmailCodeUrlResponse
-	(*OrganizationGenerateEmailCodeUrlResponseData)(nil),   // 256: borrower.OrganizationGenerateEmailCodeUrlResponseData
+	(*OrganizationGenerateAuthCodeUrlRequest)(nil),         // 253: borrower.OrganizationGenerateAuthCodeUrlRequest
+	(*OrganizationGenerateAuthCodeUrlRequestData)(nil),     // 254: borrower.OrganizationGenerateAuthCodeUrlRequestData
+	(*OrganizationGenerateAuthCodeUrlResponse)(nil),        // 255: borrower.OrganizationGenerateAuthCodeUrlResponse
+	(*OrganizationGenerateAuthCodeUrlResponseData)(nil),    // 256: borrower.OrganizationGenerateAuthCodeUrlResponseData
 	(*EmailAuthorizationEntity)(nil),                       // 257: borrower.EmailAuthorizationEntity
 	(*UserinfoResponseData_Organization)(nil),              // 258: borrower.UserinfoResponseData.Organization
 	(*LoanPreApprovalRequestData_Borrower)(nil),            // 259: borrower.LoanPreApprovalRequestData.Borrower
@@ -19445,8 +19444,8 @@ var file_app_borrower_rpc_pb_borrower_proto_depIdxs = []int32{
 	249, // 193: borrower.OrganizationSaveEmailRequest.data:type_name -> borrower.OrganizationSaveEmailRequestData
 	251, // 194: borrower.OrganizationEmailAuthorizeRequest.data:type_name -> borrower.OrganizationEmailAuthorizeRequestData
 	247, // 195: borrower.OrganizationInfoResponse.data:type_name -> borrower.OrganizationEntity
-	254, // 196: borrower.OrganizationGenerateEmailCodeUrlRequest.data:type_name -> borrower.OrganizationGenerateEmailCodeUrlRequestData
-	256, // 197: borrower.OrganizationGenerateEmailCodeUrlResponse.data:type_name -> borrower.OrganizationGenerateEmailCodeUrlResponseData
+	254, // 196: borrower.OrganizationGenerateAuthCodeUrlRequest.data:type_name -> borrower.OrganizationGenerateAuthCodeUrlRequestData
+	256, // 197: borrower.OrganizationGenerateAuthCodeUrlResponse.data:type_name -> borrower.OrganizationGenerateAuthCodeUrlResponseData
 	3,   // 198: borrower.LoanPreApprovalRequestData.Property.address:type_name -> borrower.AddressEntity
 	4,   // 199: borrower.common.GetOpt:input_type -> borrower.OptionRequest
 	0,   // 200: borrower.common.GetUsState:input_type -> borrower.EmptyRequest
@@ -19521,7 +19520,7 @@ var file_app_borrower_rpc_pb_borrower_proto_depIdxs = []int32{
 	245, // 269: borrower.OrganizationUser.AssignRoles:input_type -> borrower.OrganizationUserAssignRolesRequest
 	248, // 270: borrower.Organization.SaveEmail:input_type -> borrower.OrganizationSaveEmailRequest
 	250, // 271: borrower.Organization.EmailAuthorize:input_type -> borrower.OrganizationEmailAuthorizeRequest
-	253, // 272: borrower.Organization.GenerateAuthCodeUrl:input_type -> borrower.OrganizationGenerateEmailCodeUrlRequest
+	253, // 272: borrower.Organization.GenerateAuthCodeUrl:input_type -> borrower.OrganizationGenerateAuthCodeUrlRequest
 	0,   // 273: borrower.Organization.Info:input_type -> borrower.EmptyRequest
 	6,   // 274: borrower.common.GetOpt:output_type -> borrower.OptionResponse
 	2,   // 275: borrower.common.GetUsState:output_type -> borrower.StringSliceResponse
@@ -19596,7 +19595,7 @@ var file_app_borrower_rpc_pb_borrower_proto_depIdxs = []int32{
 	1,   // 344: borrower.OrganizationUser.AssignRoles:output_type -> borrower.EmptyResponse
 	1,   // 345: borrower.Organization.SaveEmail:output_type -> borrower.EmptyResponse
 	1,   // 346: borrower.Organization.EmailAuthorize:output_type -> borrower.EmptyResponse
-	255, // 347: borrower.Organization.GenerateAuthCodeUrl:output_type -> borrower.OrganizationGenerateEmailCodeUrlResponse
+	255, // 347: borrower.Organization.GenerateAuthCodeUrl:output_type -> borrower.OrganizationGenerateAuthCodeUrlResponse
 	252, // 348: borrower.Organization.Info:output_type -> borrower.OrganizationInfoResponse
 	274, // [274:349] is the sub-list for method output_type
 	199, // [199:274] is the sub-list for method input_type

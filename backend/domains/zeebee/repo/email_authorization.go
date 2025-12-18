@@ -38,26 +38,29 @@ func (repo *EmailAuthorizationRepo) GetEmailAuthorizationByOrganizationIdWithTx(
 	return result, nil
 }
 
+// GetEmailAuthorization retrieves an email authorization record from the database
+// based on the provided organization ID, user ID, and email scope.
+func (repo *EmailAuthorizationRepo) GetEmailAuthorization(ctx context.Context, organizationId int64, userId int64, emailScope constants.EmailScope) (result *model.EmailAuthorization, err error) {
+	query := repo.Client(ctx).
+		Where("organization_id = ?", organizationId).
+		Where("user_id = ?", userId)
+	err = query.Where("email_scope = ?", emailScope).First(&result).Error
+	return result, errorx.WithStack(err)
+}
+
 // GetOrCreateEmailAuthorizationWithTx retrieves an existing email authorization or creates a new one within a transaction.
 // It first checks if an authorization exists for the given organization and email scope.
 // If not found, it creates a new authorization record.
-// Notes:
-//   - Returns an error if input data is nil
-//   - Uses errorx package for error wrapping and stack traces
-//   - The operation is performed within the provided transaction
 func (repo *EmailAuthorizationRepo) GetOrCreateEmailAuthorizationWithTx(ctx context.Context, tx *gorm.DB, data *model.EmailAuthorization) (result *model.EmailAuthorization, isNew bool, err error) {
 	if data == nil || (data.OrganizationId == 0 && data.UserId == 0) {
 		return nil, false, errorx.New("Invalid Data")
 	}
-	query := tx.WithContext(ctx).Where("email_scope = ?", data.EmailScope)
-	if data.OrganizationId > 0 {
-		query = query.Where("organization_id = ?", data.OrganizationId)
-	}
-	if data.UserId > 0 {
-		query = query.Where("user_id = ?", data.UserId)
-	}
-	err = query.Find(result).
-		Error
+	query := tx.WithContext(ctx).
+		Where("organization_id = ?", data.OrganizationId).
+		Where("user_id = ?", data.UserId).
+		Where("email_scope = ?", data.EmailScope)
+	result = &model.EmailAuthorization{}
+	err = query.Find(result).Error
 	if err != nil {
 		return nil, false, errorx.WithStack(err)
 	}
