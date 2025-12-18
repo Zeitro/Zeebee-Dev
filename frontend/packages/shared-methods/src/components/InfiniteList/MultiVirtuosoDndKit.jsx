@@ -1,5 +1,5 @@
 'use client';
-import { DndContext, closestCenter } from '@dnd-kit/core';
+import { DndContext, closestCenter, DragOverlay } from '@dnd-kit/core';
 import InfiniteVirtuosoDndKit from './InfiniteVirtuosoDndKit';
 import _ from 'lodash';
 import { useState } from 'react';
@@ -7,11 +7,9 @@ import useContent from './useContent';
 
 // 多列虚拟滚动+拖拽
 export function MultiVirtuosoDndKit({
-	items, // {Quoting: [...], ...}
-	setItems, // (newColumns) => void
+	items, // [ { value: 'a', label:'A', list:[], total:0 } ]
+	setItems, 
 	itemHeight = 160,
-	height = 500,
-	width = 400,
 	enableDrag = false,
 	renderHeader,
 	renderFooter,
@@ -21,45 +19,52 @@ export function MultiVirtuosoDndKit({
 	boxClassName,
 	parentClassName,
 	columnClassName,
+	isSort,
 	onDragEnd,
 }) {
-	const [allTotalData, setAllTotalData] = useState({});
-	const { handleDragMove, handleDragEnd, sensors } = useContent({ items, setItems, onDragEnd });
-
+	const { handleCrossColumnDragEnd, sensors } = useContent({ items, setItems, onDragEnd });
+	const [activeCard, setActiveCard] = useState(null);
 	return (
 		<DndContext
 			sensors={sensors}
 			collisionDetection={closestCenter}
-			onDragEnd={enableDrag ? handleDragEnd : undefined}
-			onDragMove={handleDragMove}
+			onDragEnd={(e) => {
+				if (!enableDrag) return;
+				setActiveCard(null);
+				handleCrossColumnDragEnd(e);
+			}}
+			onDragStart={({ active }) => {
+				if (!enableDrag) return;
+				setActiveCard(active?.data?.current);
+			}}
 		>
 			<div className={['flex h-full', parentClassName].join(' ')}>
-				{Object.keys(items).map((col, index) => (
+				{items.map((col, index) => (
 					<div
 						className={['h-full flex flex-col', columnClassName].join(' ')}
 						key={index}
 					>
-						{renderHeader?.(col, allTotalData[col], items[col])}
+						{renderHeader?.(col.value, col?.total, col)}
 
 						<InfiniteVirtuosoDndKit
 							items={items}
 							setItems={setItems}
 							multiple={true}
-							itemKey={col}
+							itemKey={col.value}
 							renderItem={renderItem}
 							enableDrag={enableDrag} // false 时只虚拟滚动
-							height={height}
-							width={width}
 							itemHeight={itemHeight}
 							boxClassName={['flex-1', boxClassName].join(' ')}
 							className={className}
 							getData={getData}
-							setAllTotalData={setAllTotalData}
+							isSort={isSort}
+							key={col.value}
 						/>
 
-						{renderFooter?.(col, allTotalData[col], items[col])}
+						{renderFooter?.(col.value, col?.total, col)}
 					</div>
 				))}
+				<DragOverlay>{activeCard ? renderItem(activeCard, 0, {}) : null}</DragOverlay>
 			</div>
 		</DndContext>
 	);

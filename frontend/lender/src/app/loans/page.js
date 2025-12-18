@@ -4,7 +4,9 @@ import React, { useState } from 'react';
 import TableLoan from './components/ListView';
 import PipelinePendingLoan from './components/Pipeline';
 import NewHeader from '@/components/NewHeader';
+import { createRequest } from '@repo/shared-methods/utils';
 const Loans = () => {
+	const { cancelAll } = createRequest();
 	const [type, setType] = useState('list');
 
 	return (
@@ -13,7 +15,10 @@ const Loans = () => {
 				<Radio.Group
 					value={type}
 					buttonStyle="solid"
-					onChange={(e) => setType(e.target.value)}
+					onChange={(e) => {
+						cancelAll();
+						setType(e.target.value);
+					}}
 				>
 					<Radio.Button value="list">List view</Radio.Button>
 					<Radio.Button value="pipeline">Pipeline view</Radio.Button>
