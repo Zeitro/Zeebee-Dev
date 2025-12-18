@@ -1,5 +1,5 @@
 import { formatAmount, formatTime } from '@repo/shared-methods/utils';
-import { LoanStage, LoanPendingStatus } from './ChangeStageStatus';
+import { LoanStage, LoanPendingStatus } from '../ChangeStageStatus';
 import { TableOperation } from '@repo/shared-methods';
 export const get3rdPartyMark = (v, { source }) => (
 	<div className="flex items-center">
