@@ -10,6 +10,7 @@ import (
 	borrowerApplicantServer "zeebee-backend/app/borrower/rpc/internal/server/borrowerapplicant"
 	borrowerEntityServer "zeebee-backend/app/borrower/rpc/internal/server/borrowerentity"
 	borrowerPropertyServer "zeebee-backend/app/borrower/rpc/internal/server/borrowerproperty"
+	organizationServer "zeebee-backend/app/borrower/rpc/internal/server/organization"
 
 	loanApplicantServer "zeebee-backend/app/borrower/rpc/internal/server/loanapplicant"
 
@@ -51,6 +52,7 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		borrower.RegisterBorrowerApplicantServer(grpcServer, borrowerApplicantServer.NewBorrowerApplicantServer(ctx))
 		borrower.RegisterOrganizationUserServer(grpcServer, organizationUserServer.NewOrganizationUserServer(ctx))
 		borrower.RegisterRoleServer(grpcServer, roleServer.NewRoleServer(ctx))
+		borrower.RegisterOrganizationServer(grpcServer, organizationServer.NewOrganizationServer(ctx))
 
 		if rpcConfig.Mode == service.DevMode || rpcConfig.Mode == service.TestMode {
 			reflection.Register(grpcServer)

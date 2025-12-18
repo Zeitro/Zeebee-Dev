@@ -3563,7 +3563,7 @@ const (
 type OrganizationClient interface {
 	SaveEmail(ctx context.Context, in *OrganizationSaveEmailRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	EmailAuthorize(ctx context.Context, in *OrganizationEmailAuthorizeRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
-	GenerateAuthCodeUrl(ctx context.Context, in *OrganizationGenerateEmailCodeUrlRequest, opts ...grpc.CallOption) (*OrganizationGenerateEmailCodeUrlResponse, error)
+	GenerateAuthCodeUrl(ctx context.Context, in *OrganizationGenerateAuthCodeUrlRequest, opts ...grpc.CallOption) (*OrganizationGenerateAuthCodeUrlResponse, error)
 	Info(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationInfoResponse, error)
 }
 
@@ -3595,9 +3595,9 @@ func (c *organizationClient) EmailAuthorize(ctx context.Context, in *Organizatio
 	return out, nil
 }
 
-func (c *organizationClient) GenerateAuthCodeUrl(ctx context.Context, in *OrganizationGenerateEmailCodeUrlRequest, opts ...grpc.CallOption) (*OrganizationGenerateEmailCodeUrlResponse, error) {
+func (c *organizationClient) GenerateAuthCodeUrl(ctx context.Context, in *OrganizationGenerateAuthCodeUrlRequest, opts ...grpc.CallOption) (*OrganizationGenerateAuthCodeUrlResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(OrganizationGenerateEmailCodeUrlResponse)
+	out := new(OrganizationGenerateAuthCodeUrlResponse)
 	err := c.cc.Invoke(ctx, Organization_GenerateAuthCodeUrl_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -3621,7 +3621,7 @@ func (c *organizationClient) Info(ctx context.Context, in *EmptyRequest, opts ..
 type OrganizationServer interface {
 	SaveEmail(context.Context, *OrganizationSaveEmailRequest) (*EmptyResponse, error)
 	EmailAuthorize(context.Context, *OrganizationEmailAuthorizeRequest) (*EmptyResponse, error)
-	GenerateAuthCodeUrl(context.Context, *OrganizationGenerateEmailCodeUrlRequest) (*OrganizationGenerateEmailCodeUrlResponse, error)
+	GenerateAuthCodeUrl(context.Context, *OrganizationGenerateAuthCodeUrlRequest) (*OrganizationGenerateAuthCodeUrlResponse, error)
 	Info(context.Context, *EmptyRequest) (*OrganizationInfoResponse, error)
 	mustEmbedUnimplementedOrganizationServer()
 }
@@ -3639,7 +3639,7 @@ func (UnimplementedOrganizationServer) SaveEmail(context.Context, *OrganizationS
 func (UnimplementedOrganizationServer) EmailAuthorize(context.Context, *OrganizationEmailAuthorizeRequest) (*EmptyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EmailAuthorize not implemented")
 }
-func (UnimplementedOrganizationServer) GenerateAuthCodeUrl(context.Context, *OrganizationGenerateEmailCodeUrlRequest) (*OrganizationGenerateEmailCodeUrlResponse, error) {
+func (UnimplementedOrganizationServer) GenerateAuthCodeUrl(context.Context, *OrganizationGenerateAuthCodeUrlRequest) (*OrganizationGenerateAuthCodeUrlResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GenerateAuthCodeUrl not implemented")
 }
 func (UnimplementedOrganizationServer) Info(context.Context, *EmptyRequest) (*OrganizationInfoResponse, error) {
@@ -3703,7 +3703,7 @@ func _Organization_EmailAuthorize_Handler(srv interface{}, ctx context.Context, 
 }
 
 func _Organization_GenerateAuthCodeUrl_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(OrganizationGenerateEmailCodeUrlRequest)
+	in := new(OrganizationGenerateAuthCodeUrlRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -3715,7 +3715,7 @@ func _Organization_GenerateAuthCodeUrl_Handler(srv interface{}, ctx context.Cont
 		FullMethod: Organization_GenerateAuthCodeUrl_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrganizationServer).GenerateAuthCodeUrl(ctx, req.(*OrganizationGenerateEmailCodeUrlRequest))
+		return srv.(OrganizationServer).GenerateAuthCodeUrl(ctx, req.(*OrganizationGenerateAuthCodeUrlRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

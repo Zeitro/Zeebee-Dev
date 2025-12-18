@@ -1873,9 +1873,9 @@ message OrganizationEmailAuthorizeRequest {
 }
 message OrganizationEmailAuthorizeRequestData {
   string code = 1;
-  string email_provider = 2;
-  string email = 3;
-  string email_scope = 4;
+  string state = 2;
+  string scope = 3;
+  string email_provider = 4;
 }
 
 // info --  response
@@ -1884,25 +1884,25 @@ message OrganizationInfoResponse {
 }
 
 // generate email code url --  request
-message OrganizationGenerateEmailCodeUrlRequest {
-  OrganizationGenerateEmailCodeUrlRequestData data = 1;
+message OrganizationGenerateAuthCodeUrlRequest {
+  OrganizationGenerateAuthCodeUrlRequestData data = 1;
 }
-message OrganizationGenerateEmailCodeUrlRequestData {
+message OrganizationGenerateAuthCodeUrlRequestData {
   string email_provider = 1;
   string email_scope = 2;
 }
 // generate email code url --  response
-message OrganizationGenerateEmailCodeUrlResponse {
-  OrganizationGenerateEmailCodeUrlResponseData data = 1;
+message OrganizationGenerateAuthCodeUrlResponse {
+  OrganizationGenerateAuthCodeUrlResponseData data = 1;
 }
-message OrganizationGenerateEmailCodeUrlResponseData {
+message OrganizationGenerateAuthCodeUrlResponseData {
   string url = 1;
 }
 
 service Organization {
   rpc SaveEmail(OrganizationSaveEmailRequest) returns(EmptyResponse);
   rpc EmailAuthorize(OrganizationEmailAuthorizeRequest) returns(EmptyResponse);
-  rpc GenerateAuthCodeUrl(OrganizationGenerateEmailCodeUrlRequest) returns(OrganizationGenerateEmailCodeUrlResponse);
+  rpc GenerateAuthCodeUrl(OrganizationGenerateAuthCodeUrlRequest) returns(OrganizationGenerateAuthCodeUrlResponse);
   rpc Info(EmptyRequest) returns(OrganizationInfoResponse);
 }
 

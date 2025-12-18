@@ -28,6 +28,7 @@ type ServiceContext struct {
 	LoanDocumentRpcClient      borrower.LoanDocumentClient
 	RoleRpcClient              borrower.RoleClient
 	OrganizationUserRpcClient  borrower.OrganizationUserClient
+	OrganizationRpcClient      borrower.OrganizationClient
 }
 
 func NewServiceContext(c config.ApiConf) *ServiceContext {
@@ -47,5 +48,6 @@ func NewServiceContext(c config.ApiConf) *ServiceContext {
 		LoanDocumentRpcClient:      borrower.NewLoanDocumentClient(zrpc.MustNewClient(c.RpcConf).Conn()),
 		RoleRpcClient:              borrower.NewRoleClient(zrpc.MustNewClient(c.RpcConf).Conn()),
 		OrganizationUserRpcClient:  borrower.NewOrganizationUserClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		OrganizationRpcClient:      borrower.NewOrganizationClient(zrpc.MustNewClient(c.RpcConf).Conn()),
 	}
 }

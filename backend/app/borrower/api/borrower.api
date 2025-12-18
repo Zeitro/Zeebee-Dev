@@ -526,9 +526,9 @@ service borrower-api {
 	@handler OrganizationInfo
 	get /organization/info (EmptyRequest) returns (OrganizationEntity)
 
-	@doc "generate email code url"
-	@handler OrganizationGenerateEmailCodeUrl
-	get /organization/generate_auth_code_url (OrganizationGenerateEmailCodeUrlRequest) returns (OrganizationGenerateEmailCodeUrlResponse)
+	@doc "generate auth code url"
+	@handler OrganizationGenerateAuthCodeUrl
+	get /organization/generate_auth_code_url (OrganizationGenerateAuthCodeUrlRequest) returns (OrganizationGenerateAuthCodeUrlResponse)
 
 	@doc "save email"
 	@handler OrganizationSaveEmail

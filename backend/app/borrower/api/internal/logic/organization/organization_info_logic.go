@@ -5,6 +5,9 @@ import (
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
+	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
+	"zeebee-backend/common/errorx"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +28,17 @@ func NewOrganizationInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *OrganizationInfoLogic) OrganizationInfo(req *types.EmptyRequest) (resp *types.OrganizationEntity, err error) {
-	// todo: add your logic here and delete this line
+	rpcReq := &borrower.EmptyRequest{}
 
-	return
+	rpcResp, err := l.svcCtx.OrganizationRpcClient.Info(l.ctx, rpcReq)
+	if err != nil {
+		return nil, errorx.WithStack(err)
+	}
+
+	resp, err = copierx.Trans[borrower.OrganizationEntity, types.OrganizationEntity](rpcResp.Data)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }
