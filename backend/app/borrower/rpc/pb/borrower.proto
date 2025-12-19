@@ -1884,6 +1884,7 @@ message OrganizationEmailEntity {
   string email = 3;
   string auth_strategy = 4;
   string purpose = 5;
+  bool is_authorized = 6;
 }
 
 // save email --  request
@@ -1911,7 +1912,7 @@ message OrganizationEmailGenerateAuthCodeUrlRequest {
 }
 message OrganizationEmailGenerateAuthCodeUrlRequestData {
   string email_provider = 1;
-  string email_scope = 2;
+  string purpose = 2;
 }
 // generate email code url --  response
 message OrganizationEmailGenerateAuthCodeUrlResponse {

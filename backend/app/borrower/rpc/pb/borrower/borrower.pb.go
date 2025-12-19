@@ -16580,6 +16580,7 @@ type OrganizationEmailEntity struct {
 	Email          string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
 	AuthStrategy   string                 `protobuf:"bytes,4,opt,name=auth_strategy,json=authStrategy,proto3" json:"auth_strategy,omitempty"`
 	Purpose        string                 `protobuf:"bytes,5,opt,name=purpose,proto3" json:"purpose,omitempty"`
+	IsAuthorized   bool                   `protobuf:"varint,6,opt,name=is_authorized,json=isAuthorized,proto3" json:"is_authorized,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -16647,6 +16648,13 @@ func (x *OrganizationEmailEntity) GetPurpose() string {
 		return x.Purpose
 	}
 	return ""
+}
+
+func (x *OrganizationEmailEntity) GetIsAuthorized() bool {
+	if x != nil {
+		return x.IsAuthorized
+	}
+	return false
 }
 
 // save email --  request
@@ -16915,7 +16923,7 @@ func (x *OrganizationEmailGenerateAuthCodeUrlRequest) GetData() *OrganizationEma
 type OrganizationEmailGenerateAuthCodeUrlRequestData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	EmailProvider string                 `protobuf:"bytes,1,opt,name=email_provider,json=emailProvider,proto3" json:"email_provider,omitempty"`
-	EmailScope    string                 `protobuf:"bytes,2,opt,name=email_scope,json=emailScope,proto3" json:"email_scope,omitempty"`
+	Purpose       string                 `protobuf:"bytes,2,opt,name=purpose,proto3" json:"purpose,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -16957,9 +16965,9 @@ func (x *OrganizationEmailGenerateAuthCodeUrlRequestData) GetEmailProvider() str
 	return ""
 }
 
-func (x *OrganizationEmailGenerateAuthCodeUrlRequestData) GetEmailScope() string {
+func (x *OrganizationEmailGenerateAuthCodeUrlRequestData) GetPurpose() string {
 	if x != nil {
-		return x.EmailScope
+		return x.Purpose
 	}
 	return ""
 }
@@ -19016,13 +19024,14 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x18OrganizationInfoResponse\x120\n" +
 	"\x04data\x18\x01 \x01(\v2\x1c.borrower.OrganizationEntityR\x04data\"X\n" +
 	"\x1dOrganizationAllLenderResponse\x127\n" +
-	"\x04data\x18\x01 \x03(\v2#.borrower.OrganizationOptionsEntityR\x04data\"\xa7\x01\n" +
+	"\x04data\x18\x01 \x03(\v2#.borrower.OrganizationOptionsEntityR\x04data\"\xcc\x01\n" +
 	"\x17OrganizationEmailEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12'\n" +
 	"\x0forganization_id\x18\x02 \x01(\x03R\x0eorganizationId\x12\x14\n" +
 	"\x05email\x18\x03 \x01(\tR\x05email\x12#\n" +
 	"\rauth_strategy\x18\x04 \x01(\tR\fauthStrategy\x12\x18\n" +
-	"\apurpose\x18\x05 \x01(\tR\apurpose\"h\n" +
+	"\apurpose\x18\x05 \x01(\tR\apurpose\x12#\n" +
+	"\ris_authorized\x18\x06 \x01(\bR\fisAuthorized\"h\n" +
 	"!OrganizationEmailSaveEmailRequest\x12C\n" +
 	"\x04data\x18\x01 \x01(\v2/.borrower.OrganizationEmailSaveEmailRequestDataR\x04data\"|\n" +
 	"%OrganizationEmailSaveEmailRequestData\x12\x14\n" +
@@ -19037,11 +19046,10 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x05scope\x18\x03 \x01(\tR\x05scope\x12%\n" +
 	"\x0eemail_provider\x18\x04 \x01(\tR\remailProvider\"|\n" +
 	"+OrganizationEmailGenerateAuthCodeUrlRequest\x12M\n" +
-	"\x04data\x18\x01 \x01(\v29.borrower.OrganizationEmailGenerateAuthCodeUrlRequestDataR\x04data\"y\n" +
+	"\x04data\x18\x01 \x01(\v29.borrower.OrganizationEmailGenerateAuthCodeUrlRequestDataR\x04data\"r\n" +
 	"/OrganizationEmailGenerateAuthCodeUrlRequestData\x12%\n" +
-	"\x0eemail_provider\x18\x01 \x01(\tR\remailProvider\x12\x1f\n" +
-	"\vemail_scope\x18\x02 \x01(\tR\n" +
-	"emailScope\"~\n" +
+	"\x0eemail_provider\x18\x01 \x01(\tR\remailProvider\x12\x18\n" +
+	"\apurpose\x18\x02 \x01(\tR\apurpose\"~\n" +
 	",OrganizationEmailGenerateAuthCodeUrlResponse\x12N\n" +
 	"\x04data\x18\x01 \x01(\v2:.borrower.OrganizationEmailGenerateAuthCodeUrlResponseDataR\x04data\"D\n" +
 	"0OrganizationEmailGenerateAuthCodeUrlResponseData\x12\x10\n" +

@@ -546,7 +546,7 @@ service borrower-api {
 
 	@doc "email authorize"
 	@handler OrganizationEmailAuthorize
-	post /organization_email/email_authorize (OrganizationEmailAuthorizeRequest) returns (EmptyResponse)
+	post /organization_email/authorize (OrganizationEmailAuthorizeRequest) returns (EmptyResponse)
 }
 
 	// ============= organization email end =============

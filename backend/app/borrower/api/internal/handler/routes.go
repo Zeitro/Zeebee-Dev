@@ -388,7 +388,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				{
 					// email authorize
 					Method:  http.MethodPost,
-					Path:    "/organization_email/email_authorize",
+					Path:    "/organization_email/authorize",
 					Handler: organization_email.OrganizationEmailAuthorizeHandler(serverCtx),
 				},
 				{

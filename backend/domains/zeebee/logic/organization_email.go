@@ -120,23 +120,46 @@ func (l *OrganizationEmailLogic) GenerateAuthCodeUrl(ctx context.Context, input 
 	switch organizationEmail.AuthStrategy {
 	case constants.EmailAuthStrategyOrganization:
 		emailAuthorization, err = l.repos.EmailAuthorizationRepo.GetEmailAuthorizationByOrganizationEmailId(ctx, organizationEmail.Id, 0, organizationEmail.Purpose)
-	case constants.EmailAuthStrategyUser:
-		emailAuthorization, _ = l.repos.EmailAuthorizationRepo.GetEmailAuthorizationByOrganizationEmailId(ctx, input.OrganizationId, input.UserId, organizationEmail.Purpose)
-		user, err := l.repos.UserRepo.GetUser(ctx, input.UserId, input.OrganizationType, false)
-		if err != nil {
+		if err != nil && err.Error() != gorm.ErrRecordNotFound.Error() {
 			return "", err
 		}
 		if emailAuthorization == nil || emailAuthorization.Id == 0 {
-			emailAuthorization = &model.EmailAuthorization{
-				OrganizationEmailId: organizationEmail.Id,
-				UserId:              input.UserId,
-				Email:               user.Email,
-				Purpose:             organizationEmail.Purpose,
-				EmailProvider:       input.EmailProvider,
-				IsAuthorized:        false,
+			if emailAuthorization == nil || emailAuthorization.Id == 0 {
+				emailAuthorization = &model.EmailAuthorization{
+					OrganizationEmailId: organizationEmail.Id,
+					UserId:              0,
+					Email:               organizationEmail.Email,
+					Purpose:             organizationEmail.Purpose,
+					EmailProvider:       input.EmailProvider,
+					IsAuthorized:        false,
+				}
+				emailAuthorization, err = l.repos.EmailAuthorizationRepo.Create(ctx, emailAuthorization)
 			}
-			emailAuthorization, err = l.repos.EmailAuthorizationRepo.Create(ctx, emailAuthorization)
 		}
+	case constants.EmailAuthStrategyUser:
+		emailAuthorization, err = l.repos.EmailAuthorizationRepo.GetEmailAuthorizationByOrganizationEmailId(ctx, input.OrganizationId, input.UserId, organizationEmail.Purpose)
+		if err != nil && err.Error() != gorm.ErrRecordNotFound.Error() {
+			return "", err
+		}
+		if emailAuthorization == nil || emailAuthorization.Id == 0 {
+			var user *model.User
+			user, err = l.repos.UserRepo.GetUser(ctx, input.UserId, input.OrganizationType, false)
+			if err != nil {
+				return "", err
+			}
+			if emailAuthorization == nil || emailAuthorization.Id == 0 {
+				emailAuthorization = &model.EmailAuthorization{
+					OrganizationEmailId: organizationEmail.Id,
+					UserId:              input.UserId,
+					Email:               user.Email,
+					Purpose:             organizationEmail.Purpose,
+					EmailProvider:       input.EmailProvider,
+					IsAuthorized:        false,
+				}
+				emailAuthorization, err = l.repos.EmailAuthorizationRepo.Create(ctx, emailAuthorization)
+			}
+		}
+
 	default:
 		err = errorx.New("Invalid Email Auth Strategy")
 	}
@@ -186,10 +209,10 @@ func (l *OrganizationEmailLogic) EmailAuthorize(ctx context.Context, input dto.O
 	switch organizationEmail.AuthStrategy {
 	case constants.EmailAuthStrategyOrganization:
 		// Get organization-level email authorization
-		emailAuthorization, err = l.repos.EmailAuthorizationRepo.GetEmailAuthorizationByOrganizationEmailId(ctx, input.OrganizationId, 0, input.Purpose)
+		emailAuthorization, err = l.repos.EmailAuthorizationRepo.GetEmailAuthorizationByOrganizationEmailId(ctx, organizationEmail.Id, 0, input.Purpose)
 	case constants.EmailAuthStrategyUser:
 		// Get user-level email authorization
-		emailAuthorization, err = l.repos.EmailAuthorizationRepo.GetEmailAuthorizationByOrganizationEmailId(ctx, input.OrganizationId, input.UserId, input.Purpose)
+		emailAuthorization, err = l.repos.EmailAuthorizationRepo.GetEmailAuthorizationByOrganizationEmailId(ctx, organizationEmail.Id, input.UserId, input.Purpose)
 	default:
 		// Return error for invalid authorization strategy
 		err = errorx.New("Invalid Email Auth Strategy")

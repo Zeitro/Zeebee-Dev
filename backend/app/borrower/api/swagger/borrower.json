@@ -6502,7 +6502,7 @@
         }
       }
     },
-    "/api/v1/organization_email/email_authorize": {
+    "/api/v1/organization_email/authorize": {
       "post": {
         "consumes": [
           "application/json"
@@ -13465,7 +13465,7 @@
       }
     }
   },
-  "x-date": "2025-12-19 14:24:01",
+  "x-date": "2025-12-19 14:41:16",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

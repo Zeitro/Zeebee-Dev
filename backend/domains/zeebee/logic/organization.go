@@ -29,19 +29,19 @@ func (l *OrganizationLogic) Detail(ctx context.Context, id int64, organizationTy
 	if err != nil {
 		return
 	}
-	result, err = copierx.Trans[model.Organization, bo.OrganizationBo](organization, copierx.TimeToRFC3339Str())
+	result, err = copierx.Trans[model.Organization, bo.OrganizationBo](organization)
 	if err != nil {
 		return
 	}
 
-	for i := range result.EmailAuthorizations {
+	for i := range result.OrganizationEmails {
 		isExisted, _ := l.repos.EmailAuthorizationRepo.IsExistedByColumns(ctx, map[string]interface{}{
-			"organization_email_id": result.EmailAuthorizations[i].Id,
-			"purpose":               result.EmailAuthorizations[i].Purpose,
+			"organization_email_id": result.OrganizationEmails[i].Id,
+			"purpose":               result.OrganizationEmails[i].Purpose,
 			"is_authorized":         true,
 			"user_id":               0,
 		})
-		result.EmailAuthorizations[i].IsAuthorized = isExisted
+		result.OrganizationEmails[i].IsAuthorized = isExisted
 	}
 	return result, nil
 }
