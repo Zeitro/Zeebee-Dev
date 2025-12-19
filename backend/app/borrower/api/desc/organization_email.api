@@ -36,8 +36,8 @@ type (
 // generate auth code url
 type (
     OrganizationEmailGenerateAuthCodeUrlRequest {
-        EmailProvider string `json:"email_provider" validate:"required,oneof=Gmail"`
-        Purpose string `json:"purpose" validate:"required,oneof=Contact"`
+        EmailProvider string `form:"email_provider" validate:"required,oneof=Gmail"`
+        Purpose string `form:"purpose" validate:"required,oneof=Contact"`
     }
     OrganizationEmailGenerateAuthCodeUrlResponse {
         Url string `json:"url"`
