@@ -11,8 +11,8 @@ type OrganizationEmailAuthorizeRequest struct {
 }
 
 type OrganizationEmailGenerateAuthCodeUrlRequest struct {
-	EmailProvider string `json:"email_provider" validate:"required,oneof=Gmail"`
-	Purpose       string `json:"purpose" validate:"required,oneof=Contact"`
+	EmailProvider string `form:"email_provider" validate:"required,oneof=Gmail"`
+	Purpose       string `form:"purpose" validate:"required,oneof=Contact"`
 }
 
 type OrganizationEmailGenerateAuthCodeUrlResponse struct {
