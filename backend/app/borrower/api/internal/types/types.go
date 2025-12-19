@@ -137,19 +137,6 @@ type BorrowerPropertyEntity struct {
 	LoanCount      int32          `json:"loan_count"`
 }
 
-type EmailAuthorizationEntity struct {
-	Id                int64  `json:"id"`
-	OrganizationId    int64  `json:"organization_id"`
-	UserId            int64  `json:"user_id"`
-	EmailAuthStrategy string `json:"email_auth_strategy"`
-	Email             string `json:"email"`
-	EmailProvider     string `json:"email_provider"`
-	IsAuthorized      bool   `json:"is_authorized"`
-	EmailScope        string `json:"email_scope"`
-	CreatedAt         string `json:"created_at"`
-	UpdatedAt         string `json:"updated_at"`
-}
-
 type EmptyRequest struct {
 }
 
@@ -629,8 +616,22 @@ type LoanThirdServiceEntity struct {
 	Company string `json:"company,optional" validate:"required_unless=Type 'Title Co' Type 'Escrow Co' Type Insurance"`
 }
 
+type OrganizationEmailEntity struct {
+	Id           int64  `json:"id"`
+	Email        string `json:"email"`
+	AuthStrategy string `json:"auth_strategy"`
+	Purpose      string `json:"purpose"`
+	IsAuthorized bool   `json:"is_authorized"`
+}
+
 type OrganizationInfoResponse struct {
 	Data OrganizationEntity `json:"data"`
+}
+
+type OrganizationOptionEntity struct {
+	Id           int64  `json:"id"`
+	Name         string `json:"name"`
+	ContactEmail string `json:"contact_email"`
 }
 
 type OrganizationUserCreateResponse struct {

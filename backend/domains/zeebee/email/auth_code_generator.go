@@ -16,7 +16,7 @@ const (
 )
 
 type AuthCodeUrlGenerator interface {
-	GenerateAuthCodeUrl(emailScope constants.EmailScope) (url string)
+	GenerateAuthCodeUrl(emailScope constants.EmailPurpose) (url string)
 	GetConfig() *oauth2.Config
 }
 
@@ -30,7 +30,7 @@ func NewGmailAuthCodeUrlGenerator(config *oauth2.Config) *GmailAuthCodeUrlGenera
 	}
 }
 
-func (g *GmailAuthCodeUrlGenerator) GenerateAuthCodeUrl(emailScope constants.EmailScope) (url string) {
+func (g *GmailAuthCodeUrlGenerator) GenerateAuthCodeUrl(emailScope constants.EmailPurpose) (url string) {
 	// randomState := random.RandString(10)
 	opts := []oauth2.AuthCodeOption{
 		oauth2.AccessTypeOffline,

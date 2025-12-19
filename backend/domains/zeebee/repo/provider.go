@@ -25,6 +25,7 @@ type AllRepos struct {
 	RoleRepo               *RoleRepo
 	RoleAndResourceRepo    *RoleAndResourceRepo
 	EmailAuthorizationRepo *EmailAuthorizationRepo
+	OrganizationEmailRepo  *OrganizationEmailRepo
 }
 
 // NewAllRepos creates a new AllRepos instance with all repository implementations initialized.
@@ -54,5 +55,6 @@ func NewAllRepos(db *gorm.DB) *AllRepos {
 		RoleRepo:               NewRoleRepo(db),
 		RoleAndResourceRepo:    NewRoleAndResourceRepo(db),
 		EmailAuthorizationRepo: NewEmailAuthorizationRepo(db),
+		OrganizationEmailRepo:  NewOrganizationEmailRepo(db),
 	}
 }

@@ -3,39 +3,20 @@
 
 package types
 
-type OrganizationEmailAuthorizeRequest struct {
-	Code          string `json:"code" validate:"required"`
-	State         string `json:"state" validate:"required,oneof=Contact"`
-	Scope         string `json:"scope" validate:"required"`
-	EmailProvider string `json:"email_provider" validate:"required,oneof=Gmail"`
-}
-
 type OrganizationEntity struct {
-	Id                   int64                       `json:"id"`
-	Name                 string                      `json:"name"`
-	Status               string                      `json:"status"`
-	OwnerId              int64                       `json:"owner_id"`
-	Address              AddressEntity               `json:"address"`
-	ContactEmail         string                      `json:"contact_email"`
-	EmailAuthStrategy    string                      `json:"email_auth_strategy"`
-	OwnerType            string                      `json:"owner_type"`
-	Type                 string                      `json:"type"`
-	CreatedAt            string                      `json:"created_at"`
-	UpdatedAt            string                      `json:"updated_at"`
-	EmailAuthorizedUsers []*EmailAuthorizationEntity `json:"email_authorized_users"`
+	Id                 int64                      `json:"id"`
+	Name               string                     `json:"name"`
+	Status             string                     `json:"status"`
+	OwnerId            int64                      `json:"owner_id"`
+	Address            AddressEntity              `json:"address"`
+	ContactEmail       string                     `json:"contact_email"`
+	OwnerType          string                     `json:"owner_type"`
+	Type               string                     `json:"type"`
+	CreatedAt          string                     `json:"created_at"`
+	UpdatedAt          string                     `json:"updated_at"`
+	OrganizationEmails []*OrganizationEmailEntity `json:"organization_emails"`
 }
 
-type OrganizationGenerateAuthCodeUrlRequest struct {
-	EmailProvider string `json:"email_provider" validate:"required,oneof=Gmail"`
-	EmailScope    string `json:"email_scope" validate:"required,oneof=Contact"`
-}
-
-type OrganizationGenerateAuthCodeUrlResponse struct {
-	Url string `json:"url"`
-}
-
-type OrganizationSaveEmailRequest struct {
-	Email             string `json:"email" validate:"required,email"`
-	EmailAuthStrategy string `json:"email_auth_strategy" validate:"required,oneof=Organization User"`
-	EmailScope        string `json:"email_scope" validate:"required,oneof=Contact"`
+type OrganizationLendersResponse struct {
+	List []*OrganizationOptionEntity `json:"list"`
 }

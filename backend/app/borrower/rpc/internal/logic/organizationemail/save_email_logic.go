@@ -1,4 +1,4 @@
-package organizationlogic
+package organizationemaillogic
 
 import (
 	"context"
@@ -31,7 +31,7 @@ func NewSaveEmailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SaveEma
 	}
 }
 
-func (l *SaveEmailLogic) SaveEmail(in *borrower.OrganizationSaveEmailRequest) (resp *borrower.EmptyResponse, err error) {
+func (l *SaveEmailLogic) SaveEmail(in *borrower.OrganizationEmailSaveEmailRequest) (resp *borrower.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -41,17 +41,17 @@ func (l *SaveEmailLogic) SaveEmail(in *borrower.OrganizationSaveEmailRequest) (r
 	if err != nil {
 		return nil, err
 	}
-	input, err := copierx.Trans[borrower.OrganizationSaveEmailRequestData, dto.OrganizationSaveEmailRequestDto](in.Data)
+	input, err := copierx.Trans[borrower.OrganizationEmailSaveEmailRequestData, dto.OrganizationEmailSaveEmailRequestDto](in.Data)
 	if err != nil {
 		return nil, err
 	}
 	input.OrganizationId = claim.OrganizationId
 	input.OrganizationType = constants.UserTypeBorrower
-	if input.EmailAuthStrategy == constants.EmailAuthStrategyUser {
+	if input.AuthStrategy == constants.EmailAuthStrategyUser {
 		input.UserId = claim.UserId
 	}
 
-	err = l.baseLogic.OrganizationLogic.SaveEmail(l.ctx, *input)
+	err = l.baseLogic.OrganizationEmailLogic.SaveEmail(l.ctx, *input)
 	if err != nil {
 		return nil, err
 	}

@@ -54,10 +54,10 @@ const (
 	EmailProviderGmail EmailProvider = "Gmail"
 )
 
-type EmailScope string
+type EmailPurpose string
 
 const (
-	EmailScopeContact EmailScope = "Contact"
+	EmailPurposeContact EmailPurpose = "Contact"
 )
 
 func (v OrganizationUserStatus) Validate() error {

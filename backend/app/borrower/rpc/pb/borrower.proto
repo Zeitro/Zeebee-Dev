@@ -1849,24 +1849,52 @@ message OrganizationEntity {
   int64 owner_id = 4;
   AddressEntity address = 5;
   string contact_email = 6;
-  string email_auth_strategy = 7;
+  //  string email_auth_strategy = 7;
   string owner_type = 8;
   string type = 9;
   string created_at = 10;
   string updated_at = 11;
-  repeated EmailAuthorizationEntity email_authorizations = 12;
+  repeated OrganizationEmailEntity organization_emails = 12;
+}
+
+message OrganizationOptionsEntity {
+  int64 id = 1;
+  string name = 2;
+  string contact_email = 3;
+}
+
+// info --  response
+message OrganizationInfoResponse {
+  OrganizationEntity   data = 1;
+}
+// all lender--  response
+message OrganizationAllLenderResponse {
+  repeated OrganizationOptionsEntity data = 1;
+}
+service Organization {
+  rpc Info(EmptyRequest) returns(OrganizationInfoResponse);
+  rpc AllLender(EmptyRequest) returns(OrganizationAllLenderResponse);
+}
+
+// ================= organization service end =================
+// ================= authorization email start =================
+message OrganizationEmailEntity {
+  int64 id = 1;
+  int64 organization_id = 2;
+  string email = 3;
+  string auth_strategy = 4;
+  string purpose = 5;
 }
 
 // save email --  request
-message OrganizationSaveEmailRequest {
-  OrganizationSaveEmailRequestData data = 1;
+message OrganizationEmailSaveEmailRequest {
+  OrganizationEmailSaveEmailRequestData data = 1;
 }
-message OrganizationSaveEmailRequestData {
+message OrganizationEmailSaveEmailRequestData {
   string email = 1;
-  string email_auth_strategy = 2;
-  string email_scope = 3;
+  string auth_strategy = 2;
+  string purpose = 3;
 }
-
 // email authorize --  request
 message OrganizationEmailAuthorizeRequest {
   OrganizationEmailAuthorizeRequestData data = 1;
@@ -1877,46 +1905,37 @@ message OrganizationEmailAuthorizeRequestData {
   string scope = 3;
   string email_provider = 4;
 }
-
-// info --  response
-message OrganizationInfoResponse {
-  OrganizationEntity   data = 1;
-}
-
 // generate email code url --  request
-message OrganizationGenerateAuthCodeUrlRequest {
-  OrganizationGenerateAuthCodeUrlRequestData data = 1;
+message OrganizationEmailGenerateAuthCodeUrlRequest {
+  OrganizationEmailGenerateAuthCodeUrlRequestData data = 1;
 }
-message OrganizationGenerateAuthCodeUrlRequestData {
+message OrganizationEmailGenerateAuthCodeUrlRequestData {
   string email_provider = 1;
   string email_scope = 2;
 }
 // generate email code url --  response
-message OrganizationGenerateAuthCodeUrlResponse {
-  OrganizationGenerateAuthCodeUrlResponseData data = 1;
+message OrganizationEmailGenerateAuthCodeUrlResponse {
+  OrganizationEmailGenerateAuthCodeUrlResponseData data = 1;
 }
-message OrganizationGenerateAuthCodeUrlResponseData {
+message OrganizationEmailGenerateAuthCodeUrlResponseData {
   string url = 1;
 }
-
-service Organization {
-  rpc SaveEmail(OrganizationSaveEmailRequest) returns(EmptyResponse);
-  rpc EmailAuthorize(OrganizationEmailAuthorizeRequest) returns(EmptyResponse);
-  rpc GenerateAuthCodeUrl(OrganizationGenerateAuthCodeUrlRequest) returns(OrganizationGenerateAuthCodeUrlResponse);
-  rpc Info(EmptyRequest) returns(OrganizationInfoResponse);
+service OrganizationEmail {
+  rpc SaveEmail(OrganizationEmailSaveEmailRequest) returns(EmptyResponse);
+  rpc Authorize(OrganizationEmailAuthorizeRequest) returns(EmptyResponse);
+  rpc GenerateAuthCodeUrl(OrganizationEmailGenerateAuthCodeUrlRequest) returns(OrganizationEmailGenerateAuthCodeUrlResponse);
 }
-
-// ================= organization service end =================
+// ================== authorization email end =================
 // ================= email authorization start =================
 message EmailAuthorizationEntity {
   int64 id = 1;
-  int64 organization_id = 2;
+  int64 organization_email_id = 2;
   int64 user_id = 3;
-  string email_auth_strategy = 4;
+  string auth_strategy = 4;
   string email = 5;
   string email_provider = 6;
   bool is_authorized = 7;
-  string email_scope = 8;
+  string purpose = 8;
   string  created_at = 9;
   string updated_at = 10;
 }

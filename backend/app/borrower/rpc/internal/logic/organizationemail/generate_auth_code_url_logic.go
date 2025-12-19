@@ -1,4 +1,4 @@
-package organizationlogic
+package organizationemaillogic
 
 import (
 	"context"
@@ -32,7 +32,7 @@ func NewGenerateAuthCodeUrlLogic(ctx context.Context, svcCtx *svc.ServiceContext
 	}
 }
 
-func (l *GenerateAuthCodeUrlLogic) GenerateAuthCodeUrl(in *borrower.OrganizationGenerateAuthCodeUrlRequest) (resp *borrower.OrganizationGenerateAuthCodeUrlResponse, err error) {
+func (l *GenerateAuthCodeUrlLogic) GenerateAuthCodeUrl(in *borrower.OrganizationEmailGenerateAuthCodeUrlRequest) (resp *borrower.OrganizationEmailGenerateAuthCodeUrlResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -42,7 +42,7 @@ func (l *GenerateAuthCodeUrlLogic) GenerateAuthCodeUrl(in *borrower.Organization
 	if err != nil {
 		return nil, err
 	}
-	input, err := copierx.Trans[borrower.OrganizationGenerateAuthCodeUrlRequestData, dto.OrganizationGenerateAuthCodeUrlRequestDto](in.Data)
+	input, err := copierx.Trans[borrower.OrganizationEmailGenerateAuthCodeUrlRequestData, dto.OrganizationEmailGenerateAuthCodeUrlRequestDto](in.Data)
 	if err != nil {
 		return nil, err
 	}
@@ -56,13 +56,13 @@ func (l *GenerateAuthCodeUrlLogic) GenerateAuthCodeUrl(in *borrower.Organization
 	}
 	input.AuthCodeGenerator = authCodeUrlGenerator
 
-	url, err := l.baseLogic.OrganizationLogic.GenerateAuthCodeUrl(l.ctx, *input)
+	url, err := l.baseLogic.OrganizationEmailLogic.GenerateAuthCodeUrl(l.ctx, *input)
 	if err != nil {
 		return nil, err
 	}
 
-	return &borrower.OrganizationGenerateAuthCodeUrlResponse{
-		Data: &borrower.OrganizationGenerateAuthCodeUrlResponseData{
+	return &borrower.OrganizationEmailGenerateAuthCodeUrlResponse{
+		Data: &borrower.OrganizationEmailGenerateAuthCodeUrlResponseData{
 			Url: url,
 		},
 	}, nil

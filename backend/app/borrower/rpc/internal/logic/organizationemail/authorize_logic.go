@@ -1,4 +1,4 @@
-package organizationlogic
+package organizationemaillogic
 
 import (
 	"context"
@@ -17,15 +17,15 @@ import (
 	"zeebee-backend/common/errorx"
 )
 
-type EmailAuthorizeLogic struct {
+type AuthorizeLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 	baseLogic *logic.BaseLogic
 }
 
-func NewEmailAuthorizeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *EmailAuthorizeLogic {
-	return &EmailAuthorizeLogic{
+func NewAuthorizeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AuthorizeLogic {
+	return &AuthorizeLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
@@ -33,7 +33,7 @@ func NewEmailAuthorizeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Em
 	}
 }
 
-func (l *EmailAuthorizeLogic) EmailAuthorize(in *borrower.OrganizationEmailAuthorizeRequest) (resp *borrower.EmptyResponse, err error) {
+func (l *AuthorizeLogic) Authorize(in *borrower.OrganizationEmailAuthorizeRequest) (resp *borrower.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -60,9 +60,9 @@ func (l *EmailAuthorizeLogic) EmailAuthorize(in *borrower.OrganizationEmailAutho
 	input.UserId = claim.UserId
 	input.OrganizationType = constants.UserTypeBorrower
 	input.OrganizationId = claim.OrganizationId
-	input.EmailScope = constants.EmailScope(input.State)
+	input.Purpose = constants.EmailPurpose(input.State)
 
-	email, emailClient, err := l.baseLogic.OrganizationLogic.EmailAuthorize(l.ctx, *input)
+	email, emailClient, err := l.baseLogic.OrganizationEmailLogic.EmailAuthorize(l.ctx, *input)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +71,7 @@ func (l *EmailAuthorizeLogic) EmailAuthorize(in *borrower.OrganizationEmailAutho
 }
 
 // validate
-func (l *EmailAuthorizeLogic) validate(input *dto.OrganizationEmailAuthorizeRequestDto, claim utils.JwtUser) (err error) {
+func (l *AuthorizeLogic) validate(input *dto.OrganizationEmailAuthorizeRequestDto, claim utils.JwtUser) (err error) {
 	if input.Code == "" {
 		return errorx.New("Code Is Empty")
 	}
