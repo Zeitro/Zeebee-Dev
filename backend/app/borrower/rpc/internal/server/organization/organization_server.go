@@ -23,22 +23,12 @@ func NewOrganizationServer(svcCtx *svc.ServiceContext) *OrganizationServer {
 	}
 }
 
-func (s *OrganizationServer) SaveEmail(ctx context.Context, in *borrower.OrganizationSaveEmailRequest) (*borrower.EmptyResponse, error) {
-	l := organizationlogic.NewSaveEmailLogic(ctx, s.svcCtx)
-	return l.SaveEmail(in)
-}
-
-func (s *OrganizationServer) EmailAuthorize(ctx context.Context, in *borrower.OrganizationEmailAuthorizeRequest) (*borrower.EmptyResponse, error) {
-	l := organizationlogic.NewEmailAuthorizeLogic(ctx, s.svcCtx)
-	return l.EmailAuthorize(in)
-}
-
-func (s *OrganizationServer) GenerateAuthCodeUrl(ctx context.Context, in *borrower.OrganizationGenerateAuthCodeUrlRequest) (*borrower.OrganizationGenerateAuthCodeUrlResponse, error) {
-	l := organizationlogic.NewGenerateAuthCodeUrlLogic(ctx, s.svcCtx)
-	return l.GenerateAuthCodeUrl(in)
-}
-
 func (s *OrganizationServer) Info(ctx context.Context, in *borrower.EmptyRequest) (*borrower.OrganizationInfoResponse, error) {
 	l := organizationlogic.NewInfoLogic(ctx, s.svcCtx)
 	return l.Info(in)
+}
+
+func (s *OrganizationServer) AllLender(ctx context.Context, in *borrower.EmptyRequest) (*borrower.OrganizationAllLenderResponse, error) {
+	l := organizationlogic.NewAllLenderLogic(ctx, s.svcCtx)
+	return l.AllLender(in)
 }

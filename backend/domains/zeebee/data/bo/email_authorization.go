@@ -13,7 +13,7 @@ type EmailAuthorizationBo struct {
 	EmailAuthStrategy constants.EmailAuthStrategy `json:"strategy"`
 	EmailProvider     constants.EmailProvider     `json:"email_provider"`
 	IsAuthorized      bool                        `json:"is_authorized"`
-	EmailScope        constants.EmailScope        `json:"email_scope"`
+	Purpose           constants.EmailPurpose      `json:"purpose"`
 	CreatedAt         time.Time                   `json:"created_at"`
 	UpdatedAt         time.Time                   `json:"updated_at"`
 }

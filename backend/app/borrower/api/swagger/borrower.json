@@ -6353,112 +6353,6 @@
         }
       }
     },
-    "/api/v1/organization/email_authorize": {
-      "post": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "organization"
-        ],
-        "summary": "email authorize",
-        "operationId": "organizationOrganizationEmailAuthorize",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": [
-                "code",
-                "state",
-                "scope",
-                "email_provider"
-              ],
-              "properties": {
-                "code": {
-                  "type": "string"
-                },
-                "email_provider": {
-                  "type": "string"
-                },
-                "scope": {
-                  "type": "string"
-                },
-                "state": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object"
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/organization/generate_auth_code_url": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "organization"
-        ],
-        "summary": "generate auth code url",
-        "operationId": "organizationOrganizationGenerateAuthCodeUrl",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": [
-                "email_provider",
-                "email_scope"
-              ],
-              "properties": {
-                "email_provider": {
-                  "type": "string"
-                },
-                "email_scope": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "url": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v1/organization/info": {
       "get": {
         "produces": [
@@ -6504,39 +6398,28 @@
                 "created_at": {
                   "type": "string"
                 },
-                "email_auth_strategy": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
                   "type": "string"
                 },
-                "email_authorized_users": {
+                "organization_emails": {
                   "type": "array",
                   "items": {
                     "type": "object",
                     "required": [
                       "id",
-                      "organization_id",
-                      "user_id",
-                      "email_auth_strategy",
                       "email",
-                      "email_provider",
-                      "is_authorized",
-                      "email_scope",
-                      "created_at",
-                      "updated_at"
+                      "auth_strategy",
+                      "purpose",
+                      "is_authorized"
                     ],
                     "properties": {
-                      "created_at": {
+                      "auth_strategy": {
                         "type": "string"
                       },
                       "email": {
-                        "type": "string"
-                      },
-                      "email_auth_strategy": {
-                        "type": "string"
-                      },
-                      "email_provider": {
-                        "type": "string"
-                      },
-                      "email_scope": {
                         "type": "string"
                       },
                       "id": {
@@ -6545,23 +6428,11 @@
                       "is_authorized": {
                         "type": "boolean"
                       },
-                      "organization_id": {
-                        "type": "integer"
-                      },
-                      "updated_at": {
+                      "purpose": {
                         "type": "string"
-                      },
-                      "user_id": {
-                        "type": "integer"
                       }
                     }
                   }
-                },
-                "id": {
-                  "type": "integer"
-                },
-                "name": {
-                  "type": "string"
                 },
                 "owner_id": {
                   "type": "integer"
@@ -6584,7 +6455,54 @@
         }
       }
     },
-    "/api/v1/organization/save_email": {
+    "/api/v1/organization/lenders": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization"
+        ],
+        "summary": "lenders",
+        "operationId": "organizationOrganizationLenders",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "list": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "contact_email"
+                    ],
+                    "properties": {
+                      "contact_email": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organization_email/email_authorize": {
       "post": {
         "consumes": [
           "application/json"
@@ -6596,10 +6514,116 @@
           "https"
         ],
         "tags": [
-          "organization"
+          "organization_email"
+        ],
+        "summary": "email authorize",
+        "operationId": "organizationEmailOrganizationEmailAuthorize",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "code",
+                "state",
+                "scope",
+                "email_provider"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "email_provider": {
+                  "type": "string"
+                },
+                "scope": {
+                  "type": "string"
+                },
+                "state": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organization_email/generate_auth_code_url": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization_email"
+        ],
+        "summary": "generate auth code url",
+        "operationId": "organizationEmailOrganizationEmailGenerateAuthCodeUrl",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "email_provider",
+                "purpose"
+              ],
+              "properties": {
+                "email_provider": {
+                  "type": "string"
+                },
+                "purpose": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organization_email/save_email": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization_email"
         ],
         "summary": "save email",
-        "operationId": "organizationOrganizationSaveEmail",
+        "operationId": "organizationEmailOrganizationEmailSaveEmail",
         "parameters": [
           {
             "name": "body",
@@ -6609,17 +6633,17 @@
               "type": "object",
               "required": [
                 "email",
-                "email_auth_strategy",
-                "email_scope"
+                "auth_strategy",
+                "purpose"
               ],
               "properties": {
+                "auth_strategy": {
+                  "type": "string"
+                },
                 "email": {
                   "type": "string"
                 },
-                "email_auth_strategy": {
-                  "type": "string"
-                },
-                "email_scope": {
+                "purpose": {
                   "type": "string"
                 }
               }
@@ -13441,7 +13465,7 @@
       }
     }
   },
-  "x-date": "2025-12-18 16:54:01",
+  "x-date": "2025-12-19 14:24:01",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

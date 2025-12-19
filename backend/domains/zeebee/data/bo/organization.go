@@ -13,7 +13,6 @@ type OrganizationBo struct {
 	OwnerId             int64                           `json:"owner_id"`
 	Address             *AddressBo                      `json:"address"`
 	ContactEmail        string                          `json:"contact_email"`
-	EmailAuthStrategy   constants.EmailAuthStrategy     `json:"email_auth_strategy"`
 	OwnerType           constants.OrganizationOwnerType `json:"owner_type"`
 	Type                constants.UserType              `json:"type"`
 	EmailAuthorizations []*EmailAuthorizationBo         `json:"email_authorizations"`

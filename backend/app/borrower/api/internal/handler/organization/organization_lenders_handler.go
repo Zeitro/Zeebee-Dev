@@ -13,17 +13,17 @@ import (
 	"zeebee-backend/app/borrower/api/internal/types"
 )
 
-// generate auth code url
-func OrganizationGenerateAuthCodeUrlHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+// lenders
+func OrganizationLendersHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.OrganizationGenerateAuthCodeUrlRequest
+		var req types.EmptyRequest
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
 
-		l := organization.NewOrganizationGenerateAuthCodeUrlLogic(r.Context(), svcCtx)
-		resp, err := l.OrganizationGenerateAuthCodeUrl(&req)
+		l := organization.NewOrganizationLendersLogic(r.Context(), svcCtx)
+		resp, err := l.OrganizationLenders(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {

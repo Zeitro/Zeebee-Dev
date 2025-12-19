@@ -1,4 +1,4 @@
-package organization
+package organization_email
 
 import (
 	"context"
@@ -35,7 +35,7 @@ func (l *OrganizationEmailAuthorizeLogic) OrganizationEmailAuthorize(req *types.
 		return nil, errorx.WithStack(err)
 	}
 
-	_, err = l.svcCtx.OrganizationRpcClient.EmailAuthorize(l.ctx, rpcReq)
+	_, err = l.svcCtx.OrganizationEmailRpcClient.Authorize(l.ctx, rpcReq)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}

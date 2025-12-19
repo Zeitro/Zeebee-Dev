@@ -46,7 +46,7 @@ func (repo *OrganizationRepo) GetOrganization(ctx context.Context, id int64, org
 	query := repo.Client(ctx).
 		Where("id = ? and type = ?", id, organizationType)
 	if withPreloads {
-		query = query.Preload("EmailAuthorizations")
+		query = query.Preload("OrganizationEmails")
 	}
 	err = query.First(&result).Error
 	return result, errorx.WithStack(err)
@@ -57,8 +57,17 @@ func (repo *OrganizationRepo) GetOrganizationWithTx(ctx context.Context, tx *gor
 	query := tx.WithContext(ctx).Model(&model.Organization{}).
 		Where("id = ? and type = ?", id, organizationType)
 	if withPreloads {
-		query = query.Preload("EmailAuthorizations")
+		query = query.Preload("OrganizationEmails")
 	}
 	err = query.First(&result).Error
+	return result, errorx.WithStack(err)
+}
+
+// All
+func (repo *OrganizationRepo) All(ctx context.Context, organizationType constants.UserType) (result []*model.Organization, err error) {
+	err = repo.Client(ctx).
+		Where("type = ? and status = ?", organizationType, constants.OrganizationStatusActive).
+		Order("id asc").
+		Find(&result).Error
 	return result, errorx.WithStack(err)
 }

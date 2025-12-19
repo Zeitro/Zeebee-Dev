@@ -4,18 +4,17 @@ import "zeebee-backend/domains/zeebee/constants"
 
 type Organization struct {
 	Base
-	Name              string                          `gorm:"column:name;default:''" json:"name"`
-	Status            constants.OrganizationStatus    `gorm:"column:status;default:''" json:"status"`
-	OwnerId           int64                           `gorm:"column:owner_id;default:0" json:"owner_id"`
-	Address           Address                         `gorm:"column:address;type:jsonb;serializer:json" json:"address"`
-	ContactEmail      string                          `gorm:"column:contact_email;default:''" json:"contact_email"`
-	EmailAuthStrategy constants.EmailAuthStrategy     `gorm:"column:email_auth_strategy;default:''" json:"email_auth_strategy"`
-	OwnerType         constants.OrganizationOwnerType `gorm:"column:owner_type;default:''" json:"owner_type"`
-	Type              constants.UserType              `gorm:"column:type;default:''" json:"type"`
+	Name         string                          `gorm:"column:name;default:''" json:"name"`
+	Status       constants.OrganizationStatus    `gorm:"column:status;default:''" json:"status"`
+	OwnerId      int64                           `gorm:"column:owner_id;default:0" json:"owner_id"`
+	Address      Address                         `gorm:"column:address;type:jsonb;serializer:json" json:"address"`
+	ContactEmail string                          `gorm:"column:contact_email;default:''" json:"contact_email"`
+	OwnerType    constants.OrganizationOwnerType `gorm:"column:owner_type;default:''" json:"owner_type"`
+	Type         constants.UserType              `gorm:"column:type;default:''" json:"type"`
 
 	//  relationships
-	Users               []*User               `json:"users" gorm:"many2many:organization_and_users;joinForeignKey:organization_id;joinReferences:user_id"`
-	EmailAuthorizations []*EmailAuthorization `json:"email_authorizations" gorm:"foreignKey:organization_id"`
+	Users              []*User              `json:"users" gorm:"many2many:organization_and_users;joinForeignKey:organization_id;joinReferences:user_id"`
+	OrganizationEmails []*OrganizationEmail `json:"email_authorizations" gorm:"foreignKey:organization_id"`
 }
 
 func (m Organization) TableName() string {
@@ -23,5 +22,5 @@ func (m Organization) TableName() string {
 }
 func (m *Organization) RemoveRelationships() {
 	m.Users = nil
-	m.EmailAuthorizations = nil
+	m.OrganizationEmails = nil
 }

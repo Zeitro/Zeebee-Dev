@@ -1,0 +1,45 @@
+syntax = "v1"
+
+info(
+    title: "organization-email-api"
+    desc: "organization-email-api http service description"
+    version: "v1"
+)
+
+type OrganizationEmailEntity {
+    Id int64 `json:"id"`
+    Email string `json:"email"`
+    AuthStrategy string `json:"auth_strategy"`
+    Purpose string `json:"purpose"`
+    IsAuthorized bool `json:"is_authorized"`
+}
+
+// save email
+type (
+    OrganizationEmailSaveEmailRequest {
+        Email string `json:"email" validate:"required,email"`
+        AuthStrategy string `json:"auth_strategy" validate:"required,oneof=Organization User"`
+        Purpose string `json:"purpose" validate:"required,oneof=Contact"`
+    }
+)
+
+// email authorize
+type (
+    OrganizationEmailAuthorizeRequest {
+        Code string `json:"code" validate:"required"`
+        State string `json:"state" validate:"required,oneof=Contact"`
+        Scope string `json:"scope" validate:"required"`
+        EmailProvider string `json:"email_provider" validate:"required,oneof=Gmail"`
+    }
+)
+
+// generate auth code url
+type (
+    OrganizationEmailGenerateAuthCodeUrlRequest {
+        EmailProvider string `json:"email_provider" validate:"required,oneof=Gmail"`
+        Purpose string `json:"purpose" validate:"required,oneof=Contact"`
+    }
+    OrganizationEmailGenerateAuthCodeUrlResponse {
+        Url string `json:"url"`
+    }
+)

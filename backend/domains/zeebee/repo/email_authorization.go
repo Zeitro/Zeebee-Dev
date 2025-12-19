@@ -23,11 +23,24 @@ func NewEmailAuthorizationRepo(db *gorm.DB) *EmailAuthorizationRepo {
 	}
 }
 
-// GetEmailAuthorizationByOrganizationIdWithTx retrieves an email authorization record by organization ID and email scope within a transaction.
-// Note: Returns an error if no record is found or if any database error occurs
-func (repo *EmailAuthorizationRepo) GetEmailAuthorizationByOrganizationIdWithTx(ctx context.Context, tx *gorm.DB, organizationId int64, emailScope constants.EmailScope) (result *model.EmailAuthorization, err error) {
+// DeleteEmailAuthorizationByOrganizationEmailIdWithTx deletes email authorization records
+// from the database within a transaction for a given organization email ID and purpose.
+// Note: If organizationEmailId is 0, the function returns without performing any operation.
+func (repo *EmailAuthorizationRepo) DeleteEmailAuthorizationByOrganizationEmailIdWithTx(ctx context.Context, tx *gorm.DB, organizationEmailId int64, purpose constants.EmailPurpose) (err error) {
+	if organizationEmailId == 0 {
+		return err
+	}
 	err = tx.WithContext(ctx).
-		Where("organization_id = ? and email_scope = ?", organizationId, emailScope).
+		Where("organization_email_id = ? and purpose = ?", organizationEmailId, purpose).
+		Delete(&model.EmailAuthorization{}).Error
+	return errorx.WithStack(err)
+}
+
+// GetEmailAuthorizationByOrganizationEmailIdWithTx retrieves an email authorization record by organization ID and email scope within a transaction.
+// Note: Returns an error if no record is found or if any database error occurs
+func (repo *EmailAuthorizationRepo) GetEmailAuthorizationByOrganizationEmailIdWithTx(ctx context.Context, tx *gorm.DB, organizationEmailId int64, purpose constants.EmailPurpose) (result *model.EmailAuthorization, err error) {
+	err = tx.WithContext(ctx).
+		Where("organization_email_id = ? and purpose = ?", organizationEmailId, purpose).
 		First(result).Error
 	if err != nil {
 		return nil, errorx.WithStack(err)
@@ -38,13 +51,13 @@ func (repo *EmailAuthorizationRepo) GetEmailAuthorizationByOrganizationIdWithTx(
 	return result, nil
 }
 
-// GetEmailAuthorization retrieves an email authorization record from the database
-// based on the provided organization ID, user ID, and email scope.
-func (repo *EmailAuthorizationRepo) GetEmailAuthorization(ctx context.Context, organizationId int64, userId int64, emailScope constants.EmailScope) (result *model.EmailAuthorization, err error) {
-	query := repo.Client(ctx).
-		Where("organization_id = ?", organizationId).
-		Where("user_id = ?", userId)
-	err = query.Where("email_scope = ?", emailScope).First(&result).Error
+// GetEmailAuthorizationByOrganizationEmailId retrieves an email authorization record from the database
+// based on the provided organization email ID and email purpose.
+func (repo *EmailAuthorizationRepo) GetEmailAuthorizationByOrganizationEmailId(ctx context.Context, organizationEmailId int64, userId int64, purpose constants.EmailPurpose) (result *model.EmailAuthorization, err error) {
+	err = repo.Client(ctx).
+		Where("organization_email_id = ? and user_id = ?", organizationEmailId, userId).
+		Where("purpose = ?", purpose).
+		First(&result).Error
 	return result, errorx.WithStack(err)
 }
 
@@ -52,13 +65,13 @@ func (repo *EmailAuthorizationRepo) GetEmailAuthorization(ctx context.Context, o
 // It first checks if an authorization exists for the given organization and email scope.
 // If not found, it creates a new authorization record.
 func (repo *EmailAuthorizationRepo) GetOrCreateEmailAuthorizationWithTx(ctx context.Context, tx *gorm.DB, data *model.EmailAuthorization) (result *model.EmailAuthorization, isNew bool, err error) {
-	if data == nil || (data.OrganizationId == 0 && data.UserId == 0) {
+	if data == nil || (data.OrganizationEmailId == 0 && data.UserId == 0) {
 		return nil, false, errorx.New("Invalid Data")
 	}
 	query := tx.WithContext(ctx).
-		Where("organization_id = ?", data.OrganizationId).
+		Where("organization_email_id = ?", data.OrganizationEmailId).
 		Where("user_id = ?", data.UserId).
-		Where("email_scope = ?", data.EmailScope)
+		Where("purpose = ?", data.Purpose)
 	result = &model.EmailAuthorization{}
 	err = query.Find(result).Error
 	if err != nil {
