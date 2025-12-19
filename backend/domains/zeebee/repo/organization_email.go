@@ -26,7 +26,7 @@ func NewOrganizationEmailRepo(db *gorm.DB) *OrganizationEmailRepo {
 func (repo *OrganizationEmailRepo) GetOrganizationEmailByOrganizationIdWithTx(ctx context.Context, tx *gorm.DB, organizationId int64, purpose constants.EmailPurpose) (result *model.OrganizationEmail, err error) {
 	err = tx.WithContext(ctx).
 		Where("organization_id = ? and purpose = ?", organizationId, purpose).
-		First(result).Error
+		First(&result).Error
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
@@ -39,7 +39,7 @@ func (repo *OrganizationEmailRepo) GetOrganizationEmailByOrganizationIdWithTx(ct
 func (repo *OrganizationEmailRepo) GetOrganizationEmailByOrganizationId(ctx context.Context, organizationId int64, purpose constants.EmailPurpose) (result *model.OrganizationEmail, err error) {
 	err = repo.Client(ctx).
 		Where("organization_id = ? and purpose = ?", organizationId, purpose).
-		First(result).Error
+		First(&result).Error
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
@@ -56,10 +56,10 @@ func (repo *OrganizationEmailRepo) GetOrCreateOrganizationEmailWithTx(ctx contex
 	if data == nil || (data.OrganizationId == 0 && len(data.Email) == 0 && len(data.Purpose) == 0) {
 		return nil, false, errorx.New("Invalid Data")
 	}
+	result = &model.OrganizationEmail{}
 	query := tx.WithContext(ctx).
 		Where("organization_id = ?", data.OrganizationId).
 		Where("purpose = ?", data.Purpose)
-	result = &model.OrganizationEmail{}
 	err = query.Find(result).Error
 	if err != nil {
 		return nil, false, errorx.WithStack(err)
