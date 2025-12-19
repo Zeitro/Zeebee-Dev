@@ -325,6 +325,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/loan/page",
 					Handler: loan.PageHandler(serverCtx),
 				},
+				{
+					// send quote email
+					Method:  http.MethodPost,
+					Path:    "/loan/send_quote_email",
+					Handler: loan.SendQuoteEmailHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithPrefix("/api/v1"),

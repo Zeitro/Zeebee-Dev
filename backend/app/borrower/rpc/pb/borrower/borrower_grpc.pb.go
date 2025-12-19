@@ -732,6 +732,7 @@ const (
 	Loan_ImportPendingLoans_FullMethodName              = "/borrower.Loan/ImportPendingLoans"
 	Loan_PreApprovalLoan_FullMethodName                 = "/borrower.Loan/PreApprovalLoan"
 	Loan_SendPreApprovalNotification_FullMethodName     = "/borrower.Loan/SendPreApprovalNotification"
+	Loan_SendQuoteEmail_FullMethodName                  = "/borrower.Loan/SendQuoteEmail"
 )
 
 // LoanClient is the client API for Loan service.
@@ -751,6 +752,7 @@ type LoanClient interface {
 	ImportPendingLoans(ctx context.Context, in *ImportPendingLoansRequest, opts ...grpc.CallOption) (*ImportPendingLoansResponse, error)
 	PreApprovalLoan(ctx context.Context, in *LoanPreApprovalRequest, opts ...grpc.CallOption) (*LoanPreApprovalResponse, error)
 	SendPreApprovalNotification(ctx context.Context, in *LoanSendPreApprovalNotificationRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	SendQuoteEmail(ctx context.Context, in *LoanSendQuoteEmailRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 }
 
 type loanClient struct {
@@ -891,6 +893,16 @@ func (c *loanClient) SendPreApprovalNotification(ctx context.Context, in *LoanSe
 	return out, nil
 }
 
+func (c *loanClient) SendQuoteEmail(ctx context.Context, in *LoanSendQuoteEmailRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, Loan_SendQuoteEmail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // LoanServer is the server API for Loan service.
 // All implementations must embed UnimplementedLoanServer
 // for forward compatibility.
@@ -908,6 +920,7 @@ type LoanServer interface {
 	ImportPendingLoans(context.Context, *ImportPendingLoansRequest) (*ImportPendingLoansResponse, error)
 	PreApprovalLoan(context.Context, *LoanPreApprovalRequest) (*LoanPreApprovalResponse, error)
 	SendPreApprovalNotification(context.Context, *LoanSendPreApprovalNotificationRequest) (*EmptyResponse, error)
+	SendQuoteEmail(context.Context, *LoanSendQuoteEmailRequest) (*EmptyResponse, error)
 	mustEmbedUnimplementedLoanServer()
 }
 
@@ -956,6 +969,9 @@ func (UnimplementedLoanServer) PreApprovalLoan(context.Context, *LoanPreApproval
 }
 func (UnimplementedLoanServer) SendPreApprovalNotification(context.Context, *LoanSendPreApprovalNotificationRequest) (*EmptyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendPreApprovalNotification not implemented")
+}
+func (UnimplementedLoanServer) SendQuoteEmail(context.Context, *LoanSendQuoteEmailRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendQuoteEmail not implemented")
 }
 func (UnimplementedLoanServer) mustEmbedUnimplementedLoanServer() {}
 func (UnimplementedLoanServer) testEmbeddedByValue()              {}
@@ -1212,6 +1228,24 @@ func _Loan_SendPreApprovalNotification_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Loan_SendQuoteEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanSendQuoteEmailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanServer).SendQuoteEmail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Loan_SendQuoteEmail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanServer).SendQuoteEmail(ctx, req.(*LoanSendQuoteEmailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Loan_ServiceDesc is the grpc.ServiceDesc for Loan service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1270,6 +1304,10 @@ var Loan_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SendPreApprovalNotification",
 			Handler:    _Loan_SendPreApprovalNotification_Handler,
+		},
+		{
+			MethodName: "SendQuoteEmail",
+			Handler:    _Loan_SendQuoteEmail_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

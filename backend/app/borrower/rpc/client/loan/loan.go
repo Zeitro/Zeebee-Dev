@@ -132,6 +132,8 @@ type (
 	LoanPropertyEntity                               = borrower.LoanPropertyEntity
 	LoanSendPreApprovalNotificationRequest           = borrower.LoanSendPreApprovalNotificationRequest
 	LoanSendPreApprovalNotificationRequestData       = borrower.LoanSendPreApprovalNotificationRequestData
+	LoanSendQuoteEmailRequest                        = borrower.LoanSendQuoteEmailRequest
+	LoanSendQuoteEmailRequestData                    = borrower.LoanSendQuoteEmailRequestData
 	LoanThirdServiceEntity                           = borrower.LoanThirdServiceEntity
 	LoanUpdatePendingStatusRequest                   = borrower.LoanUpdatePendingStatusRequest
 	LoanUpdatePendingStatusRequestData               = borrower.LoanUpdatePendingStatusRequestData
@@ -296,6 +298,7 @@ type (
 		ImportPendingLoans(ctx context.Context, in *ImportPendingLoansRequest, opts ...grpc.CallOption) (*ImportPendingLoansResponse, error)
 		PreApprovalLoan(ctx context.Context, in *LoanPreApprovalRequest, opts ...grpc.CallOption) (*LoanPreApprovalResponse, error)
 		SendPreApprovalNotification(ctx context.Context, in *LoanSendPreApprovalNotificationRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+		SendQuoteEmail(ctx context.Context, in *LoanSendQuoteEmailRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	}
 
 	defaultLoan struct {
@@ -372,4 +375,9 @@ func (m *defaultLoan) PreApprovalLoan(ctx context.Context, in *LoanPreApprovalRe
 func (m *defaultLoan) SendPreApprovalNotification(ctx context.Context, in *LoanSendPreApprovalNotificationRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	client := borrower.NewLoanClient(m.cli.Conn())
 	return client.SendPreApprovalNotification(ctx, in, opts...)
+}
+
+func (m *defaultLoan) SendQuoteEmail(ctx context.Context, in *LoanSendQuoteEmailRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	client := borrower.NewLoanClient(m.cli.Conn())
+	return client.SendQuoteEmail(ctx, in, opts...)
 }

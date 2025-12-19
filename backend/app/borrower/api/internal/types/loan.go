@@ -113,6 +113,20 @@ type LoanPreApprovalResponse struct {
 	Secondaries []*SecondaryPreApprovalLoan `json:"secondaries"`
 }
 
+type LoanSendQuoteEmailRequest struct {
+	Stage            string                  `json:"stage" validate:"required,oneof=Pending"`
+	PendingStatus    string                  `json:"pending_status" validate:"required,oneof=Quoting"`
+	LoanPurpose      string                  `json:"loan_purpose" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
+	LoanType         string                  `json:"loan_type" validate:"required,oneof=Bridge Rehab Rental 'Ground up construction'"`
+	TotalAmount      float64                 `json:"total_amount"  validate:"required"`
+	LoanProperty     *LoanPropertyEditEntity `json:"loan_property,optional" validate:"required"`
+	ClosingDate      string                  `json:"closing_date,optional" validate:"omitempty,datetime=01/02/2006"`
+	HoldbackAmount   float64                 `json:"holdback_amount,optional" validate:"gte=0,ltefield=TotalAmount"`
+	PrincipalAmount  float64                 `json:"principal_amount,optional"`
+	BusinessStrategy []string                `json:"business_strategy,optional" validate:"required,dive,required,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
+	LenderIds        []int64                 `json:"lender_ids" validate:"required,min=1"`
+}
+
 type LoanUpdatePendingStatusRequest struct {
 	Id            int64  `path:"id"`
 	PendingStatus string `json:"pending_status" validate:"required,oneof=Quoting Processing Underwriting Closing"`

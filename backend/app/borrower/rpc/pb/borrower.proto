@@ -239,32 +239,6 @@ message ChangePasswordRequestData {
   string new_password = 2;
 }
 
-// generate email auth code url
-//message UserEmailAuthCodeUrlRequest {
-//  UserEmailAuthCodeUrlRequestData data = 1;
-//}
-//message UserEmailAuthCodeUrlResponse {
-//  UserEmailAuthCodeUrlResponseData data = 1;
-//}
-//message UserEmailAuthCodeUrlRequestData {
-//  string type = 1;
-//}
-//
-//message UserEmailAuthCodeUrlResponseData {
-//  string url = 1;
-//}
-
-// email auth
-//message UserEmailAuthRequest {
-//  UserEmailAuthRequestData data = 1;
-//}
-//
-//message UserEmailAuthRequestData {
-//  string type = 1;
-//  string code = 2;
-//  string state = 3;
-//}
-
 
 service user {
   // user
@@ -279,8 +253,6 @@ service user {
   rpc SwitchOrganization(SwitchOrganizationRequest) returns(UserLoginResponse);
   rpc EditProfile(UserProfileEditRequest) returns(UserinfoResponse);
   rpc ChangePassword(ChangePasswordRequest) returns(EmptyResponse);
-  //  rpc GenerateEmailAuthCodeUrl(UserEmailAuthCodeUrlRequest) returns(UserEmailAuthCodeUrlResponse);
-  //  rpc EmailAuth(UserEmailAuthRequest) returns(EmptyResponse);
 }
 // ================= user service end =================
 // ================= loan service start =================
@@ -714,6 +686,40 @@ message LoanSendPreApprovalNotificationRequestData {
   int64 lender_company_id = 2;
 }
 
+// send quote email
+message LoanSendQuoteEmailRequest {
+  LoanSendQuoteEmailRequestData data = 1;
+}
+message LoanSendQuoteEmailRequestData {
+  string stage = 1;
+  string pending_status = 2;
+  string loan_purpose = 3;
+  string loan_type = 4;
+  double total_amount = 5;
+  ThirdPartyLoanPropertyEditEntity loan_property = 6;
+  string closing_date = 7;
+  double holdback_amount = 8;
+  double principal_amount = 9;
+  repeated string business_strategy = 10;
+  repeated int64 lender_ids = 11;
+  //  LoanExtendValueEntity extend = 22;
+  //  string original_contract_date = 23;
+  //  string extension_date = 24;
+  //  string loan_processor = 25;
+  //  double initial_amount = 6;
+  //  repeated ThirdPartyLoanApplicantEditEntity applicants = 8;
+  //  string lender_company = 9;
+  //  float rate = 12;
+  //  double closing_fund = 13;
+  //  double monthly_payment = 15;
+  //  string lien_position = 16;
+  //  string maturity_date = 17;
+  //  int32 prepayment_penalty = 18;
+  //  string service_company = 19;
+  //  string paid_off_date = 20;
+}
+
+
 
 service Loan {
   rpc CreateBorrowerLoan(LoanCreateRequest) returns(LoanCreateResponse);
@@ -729,6 +735,7 @@ service Loan {
   rpc ImportPendingLoans(ImportPendingLoansRequest) returns(ImportPendingLoansResponse);
   rpc PreApprovalLoan(LoanPreApprovalRequest) returns(LoanPreApprovalResponse);
   rpc SendPreApprovalNotification(LoanSendPreApprovalNotificationRequest) returns(EmptyResponse);
+  rpc SendQuoteEmail(LoanSendQuoteEmailRequest) returns(EmptyResponse);
 }
 // ===================== loan service end ======================
 
