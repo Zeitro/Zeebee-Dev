@@ -132,6 +132,8 @@ type (
 	LoanPropertyEntity                               = borrower.LoanPropertyEntity
 	LoanSendPreApprovalNotificationRequest           = borrower.LoanSendPreApprovalNotificationRequest
 	LoanSendPreApprovalNotificationRequestData       = borrower.LoanSendPreApprovalNotificationRequestData
+	LoanSendQuoteEmailRequest                        = borrower.LoanSendQuoteEmailRequest
+	LoanSendQuoteEmailRequestData                    = borrower.LoanSendQuoteEmailRequestData
 	LoanThirdServiceEntity                           = borrower.LoanThirdServiceEntity
 	LoanUpdatePendingStatusRequest                   = borrower.LoanUpdatePendingStatusRequest
 	LoanUpdatePendingStatusRequestData               = borrower.LoanUpdatePendingStatusRequestData

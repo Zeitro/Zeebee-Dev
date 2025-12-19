@@ -202,6 +202,10 @@ service borrower-api {
 	@doc "download import template"
 	@handler DownloadImportTemplate
 	get /loan/import/template (EmptyRequest) returns (EmptyResponse)
+
+	@doc "send quote email"
+	@handler SendQuoteEmail
+	post /loan/send_quote_email (LoanSendQuoteEmailRequest) returns (EmptyResponse)
 }
 
 // ============== loan end =============
