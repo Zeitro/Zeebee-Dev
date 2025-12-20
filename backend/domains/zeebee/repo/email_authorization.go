@@ -41,7 +41,7 @@ func (repo *EmailAuthorizationRepo) DeleteEmailAuthorizationByOrganizationEmailI
 func (repo *EmailAuthorizationRepo) GetEmailAuthorizationByOrganizationEmailIdWithTx(ctx context.Context, tx *gorm.DB, organizationEmailId int64, purpose constants.EmailPurpose) (result *model.EmailAuthorization, err error) {
 	err = tx.WithContext(ctx).
 		Where("organization_email_id = ? and purpose = ?", organizationEmailId, purpose).
-		First(result).Error
+		First(&result).Error
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
