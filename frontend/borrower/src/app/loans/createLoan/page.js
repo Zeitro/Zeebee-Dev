@@ -130,6 +130,7 @@ const CreateLoanPage = () => {
 									values || {},
 								);
 							}}
+							isGetOrganization={true}
 						/>
 					)}
 					<Button type="primary" onClick={handleNext} loading={loading}>

@@ -43,27 +43,6 @@ const ContactLender = () => {
 						tableFilterRef?.current?.handleSearch();
 					}, 300);
 				},
-				colProps: {
-					className: 'flex-1',
-				},
-			},
-			{
-				filterType: 'button',
-				children: (
-					<BtnPopUpModal
-						getContent={(setOpen) => (
-							<MainModal
-								setOpen={setOpen}
-								handleSearch={() => tableFilterRef?.current?.handleSearch()}
-							/>
-						)}
-						type="primary"
-						icon={<PlusOutlined />}
-						size="large"
-					>
-						Add Lender
-					</BtnPopUpModal>
-				),
 			},
 		],
 		[searchValue, cancel],
@@ -79,7 +58,7 @@ const ContactLender = () => {
 			// pagination={pagination}
 			api="/borrower_applicant/page"
 			typeKey="card"
-			itemClassName="w-[420px]"
+			itemClassName="w-[300px]"
 			cardTitle="Contact lender"
 			renderItem={(row) => {
 				return (
@@ -89,7 +68,7 @@ const ContactLender = () => {
 								{row?.full_name}
 							</p>
 
-							<div className="flex items-center">
+							{/* <div className="flex items-center">
 								<BtnPopUpModal
 									getContent={(setOpen) => (
 										<MainModal
@@ -120,7 +99,7 @@ const ContactLender = () => {
 								>
 									Delete
 								</DeleteBtn>
-							</div>
+							</div> */}
 						</div>
 
 						<div className="flex items-center gap-4 pt-3">

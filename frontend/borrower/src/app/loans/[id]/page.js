@@ -158,8 +158,8 @@ const EditLoanPage = () => {
 				<div className="flex justify-end py-4 gap-4">
 					<QuoteBtn
 						disabled={!(stage === 'Pending' && pending_status === 'Quoting')}
-						onSave={handleNext}
 						getRowData={async () => await form.validateFields()}
+						isGetOrganization={true}
 					/>
 					<Button type="primary" onClick={handleNext} loading={loading}>
 						Save change

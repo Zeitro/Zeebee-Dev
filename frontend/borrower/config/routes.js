@@ -75,6 +75,10 @@ export const navRouter = [
 				path: '/setting/user',
 				title: 'User',
 			},
+			{
+				path: '/setting/system',
+				title: 'System',
+			},
 			// {
 			// 	path: '/setting/role',
 			// 	title: 'Setting ( Role )',
@@ -144,6 +148,12 @@ export const noTokenRouter = [
 	{
 		path: '/loanCalculator',
 		title: 'Loan Calculator',
+		hideMenu: true,
+		hideCrumbs: true,
+	},
+	{
+		path: '/gmailAuth',
+		title: 'Gmail Authorized',
 		hideMenu: true,
 		hideCrumbs: true,
 	},
