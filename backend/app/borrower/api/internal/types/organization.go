@@ -17,6 +17,21 @@ type OrganizationEntity struct {
 	OrganizationEmails []*OrganizationEmailEntity `json:"organization_emails"`
 }
 
+type OrganizationLenderPageRequest struct {
+	Page   int64                        `json:"page,optional"`
+	Limit  int64                        `json:"limit,optional"`
+	Filter OrganizationLenderPageFilter `json:"filter,optional"`
+	Sorter OrganizationLenderPageSorter `json:"sorter,optional"`
+}
+
+type OrganizationLenderPageResponse struct {
+	Page      int64                `json:"page"`
+	Limit     int64                `json:"limit"`
+	Total     int64                `json:"total"`
+	TotalPage int64                `json:"total_page"`
+	List      []OrganizationEntity `json:"list"`
+}
+
 type OrganizationLendersResponse struct {
 	List []*OrganizationOptionEntity `json:"list"`
 }

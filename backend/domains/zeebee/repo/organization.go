@@ -2,12 +2,14 @@ package repo
 
 import (
 	"context"
+	"fmt"
 
 	"gorm.io/gorm"
 
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 )
 
@@ -70,4 +72,29 @@ func (repo *OrganizationRepo) All(ctx context.Context, organizationType constant
 		Order("id asc").
 		Find(&result).Error
 	return result, errorx.WithStack(err)
+}
+
+// Page
+func (repo *OrganizationRepo) Page(ctx context.Context, pageReq dto.OrganizationPageRequestDto) (page gormx.PageResponse[*model.Organization], err error) {
+	filter := pageReq.Filter
+	sorter := pageReq.Sorter
+	query := repo.Client(ctx)
+	if len(filter.Keyword) > 0 {
+		query = query.Where("name like ? or contact_email like ?", "%"+filter.Keyword+"%", "%"+filter.Keyword+"%")
+	}
+	if len(filter.OrganizationType) > 0 {
+		query = query.Where("type = ?", filter.OrganizationType)
+	}
+	if len(filter.Status) > 0 {
+		query = query.Where("status = ?", filter.Status)
+	}
+	if len(sorter.Column) > 0 {
+		query = query.Order(fmt.Sprintf("%s %s", sorter.Column, sorter.Sort))
+	}
+	query = query.Order("id asc")
+	page, err = gormx.Page[*model.Organization](query, gormx.PageRequest{
+		Page:  pageReq.Page,
+		Limit: pageReq.Limit,
+	})
+	return page, errorx.WithStack(err)
 }

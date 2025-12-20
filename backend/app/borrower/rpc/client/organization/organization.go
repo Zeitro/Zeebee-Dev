@@ -155,6 +155,12 @@ type (
 	OrganizationEmailSaveEmailRequestData            = borrower.OrganizationEmailSaveEmailRequestData
 	OrganizationEntity                               = borrower.OrganizationEntity
 	OrganizationInfoResponse                         = borrower.OrganizationInfoResponse
+	OrganizationLenderPageRequest                    = borrower.OrganizationLenderPageRequest
+	OrganizationLenderPageRequestData                = borrower.OrganizationLenderPageRequestData
+	OrganizationLenderPageRequestFilter              = borrower.OrganizationLenderPageRequestFilter
+	OrganizationLenderPageRequestSorter              = borrower.OrganizationLenderPageRequestSorter
+	OrganizationLenderPageResponse                   = borrower.OrganizationLenderPageResponse
+	OrganizationLenderPageResponseData               = borrower.OrganizationLenderPageResponseData
 	OrganizationOptionsEntity                        = borrower.OrganizationOptionsEntity
 	OrganizationUserAcceptInvitationRequest          = borrower.OrganizationUserAcceptInvitationRequest
 	OrganizationUserAcceptInvitationRequestData      = borrower.OrganizationUserAcceptInvitationRequestData
@@ -287,6 +293,7 @@ type (
 	Organization interface {
 		Info(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationInfoResponse, error)
 		AllLender(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationAllLenderResponse, error)
+		LenderPage(ctx context.Context, in *OrganizationLenderPageRequest, opts ...grpc.CallOption) (*OrganizationLenderPageResponse, error)
 	}
 
 	defaultOrganization struct {
@@ -308,4 +315,9 @@ func (m *defaultOrganization) Info(ctx context.Context, in *EmptyRequest, opts .
 func (m *defaultOrganization) AllLender(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationAllLenderResponse, error) {
 	client := borrower.NewOrganizationClient(m.cli.Conn())
 	return client.AllLender(ctx, in, opts...)
+}
+
+func (m *defaultOrganization) LenderPage(ctx context.Context, in *OrganizationLenderPageRequest, opts ...grpc.CallOption) (*OrganizationLenderPageResponse, error) {
+	client := borrower.NewOrganizationClient(m.cli.Conn())
+	return client.LenderPage(ctx, in, opts...)
 }

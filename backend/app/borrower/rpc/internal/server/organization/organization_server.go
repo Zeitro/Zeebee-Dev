@@ -32,3 +32,8 @@ func (s *OrganizationServer) AllLender(ctx context.Context, in *borrower.EmptyRe
 	l := organizationlogic.NewAllLenderLogic(ctx, s.svcCtx)
 	return l.AllLender(in)
 }
+
+func (s *OrganizationServer) LenderPage(ctx context.Context, in *borrower.OrganizationLenderPageRequest) (*borrower.OrganizationLenderPageResponse, error) {
+	l := organizationlogic.NewLenderPageLogic(ctx, s.svcCtx)
+	return l.LenderPage(in)
+}
