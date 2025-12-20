@@ -628,6 +628,15 @@ type OrganizationInfoResponse struct {
 	Data OrganizationEntity `json:"data"`
 }
 
+type OrganizationLenderPageFilter struct {
+	Keyword string `json:"keyword,optional"`
+}
+
+type OrganizationLenderPageSorter struct {
+	Column string `json:"column,optional"`
+	Sort   string `json:"sort,optional"`
+}
+
 type OrganizationOptionEntity struct {
 	Id           int64  `json:"id"`
 	Name         string `json:"name"`

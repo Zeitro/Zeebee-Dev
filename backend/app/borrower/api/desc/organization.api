@@ -51,3 +51,30 @@ type (
         List []*OrganizationOptionEntity `json:"list"`
     }
 )
+
+// lender page
+type (
+    OrganizationLenderPageFilter {
+        Keyword string `json:"keyword,optional"`
+    }
+
+    OrganizationLenderPageSorter {
+        Column string `json:"column,optional"`
+        Sort string `json:"sort,optional"`
+    }
+
+    OrganizationLenderPageRequest {
+        Page int64 `json:"page,optional"`
+        Limit int64 `json:"limit,optional"`
+        Filter OrganizationLenderPageFilter `json:"filter,optional"`
+        Sorter OrganizationLenderPageSorter `json:"sorter,optional"`
+    }
+
+    OrganizationLenderPageResponse {
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
+        Total int64 `json:"total"`
+        TotalPage int64 `json:"total_page"`
+        List []OrganizationEntity `json:"list"`
+    }
+)

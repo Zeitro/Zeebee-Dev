@@ -155,6 +155,12 @@ type (
 	OrganizationEmailSaveEmailRequestData            = borrower.OrganizationEmailSaveEmailRequestData
 	OrganizationEntity                               = borrower.OrganizationEntity
 	OrganizationInfoResponse                         = borrower.OrganizationInfoResponse
+	OrganizationLenderPageRequest                    = borrower.OrganizationLenderPageRequest
+	OrganizationLenderPageRequestData                = borrower.OrganizationLenderPageRequestData
+	OrganizationLenderPageRequestFilter              = borrower.OrganizationLenderPageRequestFilter
+	OrganizationLenderPageRequestSorter              = borrower.OrganizationLenderPageRequestSorter
+	OrganizationLenderPageResponse                   = borrower.OrganizationLenderPageResponse
+	OrganizationLenderPageResponseData               = borrower.OrganizationLenderPageResponseData
 	OrganizationOptionsEntity                        = borrower.OrganizationOptionsEntity
 	OrganizationUserAcceptInvitationRequest          = borrower.OrganizationUserAcceptInvitationRequest
 	OrganizationUserAcceptInvitationRequestData      = borrower.OrganizationUserAcceptInvitationRequestData

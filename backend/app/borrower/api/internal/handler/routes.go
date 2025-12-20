@@ -377,6 +377,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: organization.OrganizationInfoHandler(serverCtx),
 				},
 				{
+					// lender page
+					Method:  http.MethodPost,
+					Path:    "/organization/lender/page",
+					Handler: organization.OrganizationLenderPageHandler(serverCtx),
+				},
+				{
 					// lenders
 					Method:  http.MethodGet,
 					Path:    "/organization/lenders",
