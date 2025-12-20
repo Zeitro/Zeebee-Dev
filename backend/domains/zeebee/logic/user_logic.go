@@ -438,7 +438,7 @@ func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, us
 
 // SwitchOrganization switch user default organization
 func (l *UserLogic) SwitchOrganization(ctx context.Context, userId int64, organizationId int64, userType constants.UserType) (user *bo.UserBo, err error) {
-	userModel, err := l.repos.UserRepo.GetUser(ctx, userId, userType, false)
+	userModel, err := l.repos.UserRepo.GetUser(ctx, userId, userType, true)
 	if err != nil {
 		return nil, err
 	}
@@ -454,14 +454,14 @@ func (l *UserLogic) SwitchOrganization(ctx context.Context, userId int64, organi
 		return nil, errorx.New("Organization Is Not Active")
 	}
 
-	organizationUser, _ := l.repos.OrganizationUserRepo.GetOrganizationUserByUserId(ctx, organizationId, user.Id)
+	organizationUser, _ := l.repos.OrganizationUserRepo.GetOrganizationUserByUserId(ctx, organizationId, userModel.Id)
 	if organizationUser == nil || organizationUser.Status != constants.OrganizationUserStatusActive {
 		return nil, errorx.New("User Is Not Member Of This Organization")
 	}
 
-	user.DefaultOrganizationId = organizationId
-	err = l.repos.UserRepo.UpdateColumnsById(ctx, user.Id, map[string]interface{}{
-		"default_organization_id": user.DefaultOrganizationId,
+	userModel.DefaultOrganizationId = organizationId
+	err = l.repos.UserRepo.UpdateColumnsById(ctx, userModel.Id, map[string]interface{}{
+		"default_organization_id": userModel.DefaultOrganizationId,
 	})
 	if err != nil {
 		return nil, errorx.WithStack(err)

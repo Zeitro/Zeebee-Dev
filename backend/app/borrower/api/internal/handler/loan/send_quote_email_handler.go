@@ -45,7 +45,13 @@ func SendQuoteEmailHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		l := loan.NewSendQuoteEmailLogic(r.Context(), svcCtx)
 		resp, err := l.SendQuoteEmail(&req)
 		if err != nil {
-			response.BadRequest(w, errorx.GetErrorMsg(err))
+			errMsg := errorx.GetErrorMsg(err)
+			if errMsg == "Borrower Email Not Authorized" {
+				response.Error(w, 401002, errMsg)
+			} else {
+				response.BadRequest(w, errorx.GetErrorMsg(err))
+			}
+
 		} else {
 			response.Success(w, resp)
 		}

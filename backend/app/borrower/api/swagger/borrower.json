@@ -4121,6 +4121,118 @@
         }
       }
     },
+    "/api/v1/loan/send_quote_email": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "loan"
+        ],
+        "summary": "send quote email",
+        "operationId": "loanSendQuoteEmail",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "stage",
+                "pending_status",
+                "loan_purpose",
+                "loan_type",
+                "total_amount",
+                "lender_ids"
+              ],
+              "properties": {
+                "business_strategy": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "closing_date": {
+                  "type": "string"
+                },
+                "holdback_amount": {
+                  "type": "number"
+                },
+                "lender_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "loan_property": {
+                  "type": "object",
+                  "required": [
+                    "borrower_property_id",
+                    "existing_lender_company"
+                  ],
+                  "properties": {
+                    "arv": {
+                      "type": "number"
+                    },
+                    "borrower_property_id": {
+                      "type": "integer"
+                    },
+                    "existing_lender_company": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "owner": {
+                      "type": "string"
+                    },
+                    "purchase_amount": {
+                      "type": "number"
+                    },
+                    "purchase_date": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "loan_purpose": {
+                  "type": "string"
+                },
+                "loan_type": {
+                  "type": "string"
+                },
+                "pending_status": {
+                  "type": "string"
+                },
+                "principal_amount": {
+                  "type": "number"
+                },
+                "stage": {
+                  "type": "string"
+                },
+                "total_amount": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/loan/{id}": {
       "get": {
         "produces": [
@@ -6573,24 +6685,16 @@
         "operationId": "organizationEmailOrganizationEmailGenerateAuthCodeUrl",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": [
-                "email_provider",
-                "purpose"
-              ],
-              "properties": {
-                "email_provider": {
-                  "type": "string"
-                },
-                "purpose": {
-                  "type": "string"
-                }
-              }
-            }
+            "type": "string",
+            "name": "email_provider",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "purpose",
+            "in": "query",
+            "required": true
           }
         ],
         "responses": {
@@ -13465,7 +13569,7 @@
       }
     }
   },
-  "x-date": "2025-12-19 14:41:16",
+  "x-date": "2025-12-20 11:20:18",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
