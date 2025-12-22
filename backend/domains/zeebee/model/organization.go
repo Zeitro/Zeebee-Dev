@@ -9,6 +9,8 @@ type Organization struct {
 	OwnerId      int64                           `gorm:"column:owner_id;default:0" json:"owner_id"`
 	Address      Address                         `gorm:"column:address;type:jsonb;serializer:json" json:"address"`
 	ContactEmail string                          `gorm:"column:contact_email;default:''" json:"contact_email"`
+	ContactPhone string                          `gorm:"column:contact_phone;type:varchar(20);default:''" json:"contact_phone"`
+	ContactName  string                          `gorm:"column:contact_name;type:varchar(100);default:''" json:"contact_name"`
 	OwnerType    constants.OrganizationOwnerType `gorm:"column:owner_type;default:''" json:"owner_type"`
 	Type         constants.UserType              `gorm:"column:type;default:''" json:"type"`
 

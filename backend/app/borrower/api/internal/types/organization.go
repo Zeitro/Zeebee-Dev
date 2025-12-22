@@ -10,6 +10,8 @@ type OrganizationEntity struct {
 	OwnerId            int64                      `json:"owner_id"`
 	Address            AddressEntity              `json:"address"`
 	ContactEmail       string                     `json:"contact_email"`
+	ContactPhone       string                     `json:"contact_phone"`
+	ContactName        string                     `json:"contact_name"`
 	OwnerType          string                     `json:"owner_type"`
 	Type               string                     `json:"type"`
 	CreatedAt          string                     `json:"created_at"`
