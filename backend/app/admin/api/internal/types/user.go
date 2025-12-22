@@ -6,6 +6,7 @@ package types
 type UserEditProfileRequest struct {
 	FirstName string `json:"first_name" validate:"required,min=2,max=100"`
 	LastName  string `json:"last_name" validate:"required,min=2,max=100"`
+	Phone     string `json:"phone" validate:"required,min=8,max=20"`
 }
 
 type UserInfoResponse struct {

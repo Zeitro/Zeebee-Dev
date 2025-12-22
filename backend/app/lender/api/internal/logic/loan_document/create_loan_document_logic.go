@@ -34,7 +34,7 @@ func (l *CreateLoanDocumentLogic) CreateLoanDocument(req *types.LoanDocumentCrea
 		}
 	}()
 	resp = &types.LoanDocumentCreateResponse{
-		LoanDocuments: []*types.LoanDocumentOptEntry{},
+		LoanDocuments: []*types.LoanDocumentOptEntity{},
 	}
 	rpcReq := &lender.LoanDocumentCreateExtendTypeRequest{
 		Data: &lender.LoanDocumentCreateExtendTypeRequestData{},
@@ -49,12 +49,6 @@ func (l *CreateLoanDocumentLogic) CreateLoanDocument(req *types.LoanDocumentCrea
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
-
-	// Get lender company id and employee id from context
-	// rpcReq.Data.OrganizationId, rpcReq.Data.UserId, err = utils.GetOrganizationAndUserId(l.ctx)
-	// if err != nil {
-	// 	return nil, errorx.WithStack(err)
-	// }
 
 	// Call RPC method
 	rpcResp, err := l.svcCtx.LoanDocumentRpcClient.Create(l.ctx, rpcReq)

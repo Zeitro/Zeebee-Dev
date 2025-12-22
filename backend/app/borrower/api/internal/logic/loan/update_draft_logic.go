@@ -45,7 +45,7 @@ func (l *UpdateDraftLogic) UpdateDraft(req *types.LoanApplyRequest) (resp *types
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
 
-	rpcApplicants := slice.UniqueByComparator(rpcReq.Data.Applicants, func(item *borrower.LoanApplicantApplyEntry, other *borrower.LoanApplicantApplyEntry) bool {
+	rpcApplicants := slice.UniqueByComparator(rpcReq.Data.Applicants, func(item *borrower.LoanApplicantApplyEntity, other *borrower.LoanApplicantApplyEntity) bool {
 		return item.BorrowerApplicantId == other.BorrowerApplicantId
 	})
 	rpcReq.Data.Applicants = rpcApplicants

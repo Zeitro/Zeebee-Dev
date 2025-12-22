@@ -6,11 +6,77 @@ info(
     version: "v1"
 )
 
+import "address.api"
+import "organization_email.api"
+
 type (
     UserInfoOrganizationEntity {
         Id int64 `json:"id"`
         Name string `json:"name"`
         Status string `json:"status"`
         IsDefault bool `json:"is_default"`
+    }
+)
+type OrganizationEntity {
+    Id int64 `json:"id"`
+    Name string `json:"name"`
+    Status string `json:"status"`
+    OwnerId int64 `json:"owner_id"`
+    Address AddressEntity `json:"address"`
+    ContactEmail string `json:"contact_email"`
+    ContactPhone string `json:"contact_phone"`
+    ContactName string `json:"contact_name"`
+    OwnerType string `json:"owner_type"`
+    Type string `json:"type"`
+    CreatedAt string `json:"created_at"`
+    UpdatedAt string `json:"updated_at"`
+
+    OrganizationEmails []*OrganizationEmailEntity `json:"organization_emails"`
+}
+
+type OrganizationOptionEntity {
+    Id int64 `json:"id"`
+    Name string `json:"name"`
+    ContactEmail string `json:"contact_email"`
+}
+
+//  info
+type (
+    OrganizationInfoResponse {
+        Data OrganizationEntity `json:"data"`
+    }
+)
+
+// all lenders
+type (
+    OrganizationLendersResponse {
+        List []*OrganizationOptionEntity `json:"list"`
+    }
+)
+
+// lender page
+type (
+    OrganizationLenderPageFilter {
+        Keyword string `json:"keyword,optional"`
+    }
+
+    OrganizationLenderPageSorter {
+        Column string `json:"column,optional"`
+        Sort string `json:"sort,optional"`
+    }
+
+    OrganizationLenderPageRequest {
+        Page int64 `json:"page,optional"`
+        Limit int64 `json:"limit,optional"`
+        Filter OrganizationLenderPageFilter `json:"filter,optional"`
+        Sorter OrganizationLenderPageSorter `json:"sorter,optional"`
+    }
+
+    OrganizationLenderPageResponse {
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
+        Total int64 `json:"total"`
+        TotalPage int64 `json:"total_page"`
+        List []OrganizationEntity `json:"list"`
     }
 )

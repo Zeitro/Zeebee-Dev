@@ -20,6 +20,8 @@ import "desc/borrower_entity.api"
 import "desc/borrower_applicant.api"
 import "desc/role.api"
 import "desc/organization_user.api"
+import "desc/organization.api"
+import "desc/organization_email.api"
 
 type (
 	EmptyRequest  {}
@@ -119,14 +121,6 @@ service borrower-api {
 	@doc "change password"
 	@handler ChangePassword
 	post /user/change_password (UserChangePasswordRequest) returns (EmptyResponse)
-
-	@doc "generate auth code url"
-	@handler GenerateAuthCodeUrl
-	get /user/generate_auth_code_url (UserGenerateEmailAuthCodeUrlRequest) returns (UserGenerateEmailAuthCodeUrlResponse)
-
-	@doc "email auth"
-	@handler EmailAuth
-	post /user/email_auth (UserEmailAuthRequest) returns (EmptyResponse)
 }
 
 // ============== user end =============
@@ -208,6 +202,10 @@ service borrower-api {
 	@doc "download import template"
 	@handler DownloadImportTemplate
 	get /loan/import/template (EmptyRequest) returns (EmptyResponse)
+
+	@doc "send quote email"
+	@handler SendQuoteEmail
+	post /loan/send_quote_email (LoanSendQuoteEmailRequest) returns (EmptyResponse)
 }
 
 // ============== loan end =============
@@ -511,4 +509,52 @@ service borrower-api {
 	post /organization_user/:id/send_email (PathIdRequest) returns (EmptyResponse)
 }
 
-	// ============== organization user end =============
+// ============== organization user end =============
+// ============== organization start ============
+@server(
+	desc: "organization service"
+	version: v1
+	group: organization
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: organization
+)
+service borrower-api {
+	@doc "info"
+	@handler OrganizationInfo
+	get /organization/info (EmptyRequest) returns (OrganizationEntity)
+
+	@doc "lenders"
+	@handler OrganizationLenders
+	get /organization/lenders (EmptyRequest) returns (OrganizationLendersResponse)
+
+	@doc "lender page"
+	@handler OrganizationLenderPage
+	post /organization/lender/page (OrganizationLenderPageRequest) returns (OrganizationLenderPageResponse)
+}
+
+// ============= organization end =============
+// ============= organization email start ============
+@server(
+	desc: "organization email service"
+	version: v1
+	group: organization_email
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: organization_email
+)
+service borrower-api {
+	@doc "generate auth code url"
+	@handler OrganizationEmailGenerateAuthCodeUrl
+	get /organization_email/generate_auth_code_url (OrganizationEmailGenerateAuthCodeUrlRequest) returns (OrganizationEmailGenerateAuthCodeUrlResponse)
+
+	@doc "save email"
+	@handler OrganizationEmailSaveEmail
+	post /organization_email/save_email (OrganizationEmailSaveEmailRequest) returns (EmptyResponse)
+
+	@doc "email authorize"
+	@handler OrganizationEmailAuthorize
+	post /organization_email/authorize (OrganizationEmailAuthorizeRequest) returns (EmptyResponse)
+}
+
+	// ============= organization email end =============

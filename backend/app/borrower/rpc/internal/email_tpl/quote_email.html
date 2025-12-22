@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Loan document request</title>
+</head>
+<body>
+<div
+        style="
+        width: 600px;
+        margin: 0 auto;
+        overflow: hidden;
+        box-sizing: border-box;
+        font-size: 14px;
+        font-family: Roboto, sans-serif;
+        color: #1e2939;
+      "
+>
+    <div style="padding: 32px 24px">
+        <div style="width: 100%; text-align: center">
+            <img
+                    src="https://zeebee-files-staging.s3.us-west-1.amazonaws.com/files-dev/logo.png"
+                    alt="logo"
+                    style="height: 28px"
+            />
+        </div>
+
+        <div
+                style="
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 22px;
+            color: #1e2939;
+            font-family: Roboto, sans-serif;
+            padding: 28px 0 14px;
+          "
+        >
+            Hi {{ .lender_name }} lender,
+        </div>
+
+        <div
+                style="
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 22px;
+            color: #1e2939;
+            font-family: Roboto, sans-serif;
+          "
+        >
+            Can you help provide us with a quote based on the following
+            information?
+        </div>
+
+        <div
+                style="
+            color: #1e2939;
+            font-family: Roboto, sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 24px 0 6px;
+          "
+        >
+            <img
+                    src="https://zeebee-files-production.s3.us-west-1.amazonaws.com/files-production/image/home.png"
+                    alt=""
+                    style="vertical-align: bottom; padding-right: 4px"
+            />Property address:
+        </div>
+        <div
+                style="
+            color: #1e2939;
+            font-family: Roboto, sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+          "
+        >
+            {{ .property.Address.Address1 }}, {{ .property.Address.City }}, {{ .property.Address.State }}, {{
+            .property.Address.ZipCode }}
+        </div>
+
+        <div style="padding-top: 14px">
+          <span
+                  style="
+              display: inline-block;
+              width: 45%;
+              padding-right: 12px;
+              font-weight: 700;
+            "
+          >
+            Loan purpose:
+          </span>
+            <span style="display: inline-block; width: 51%">{{ .loan_purpose }}</span>
+        </div>
+        <div style="padding-top: 14px">
+          <span
+                  style="
+              display: inline-block;
+              width: 45%;
+              padding-right: 12px;
+              font-weight: 700;
+            "
+          >
+            Loan type:
+          </span>
+            <span style="display: inline-block; width: 51%">{{ .loan_type }}</span>
+        </div>
+        <div style="padding-top: 14px">
+          <span
+                  style="
+              display: inline-block;
+              width: 45%;
+              padding-right: 12px;
+              font-weight: 700;
+            "
+          >
+            Total loan amount:
+          </span>
+            <span style="display: inline-block; width: 51%">{{ .total_loan_amount }}</span>
+        </div>
+        <div style="padding-top: 14px">
+          <span
+                  style="
+              display: inline-block;
+              width: 45%;
+              padding-right: 12px;
+              font-weight: 700;
+            "
+          >
+            Business strategy:
+          </span>
+            <span style="display: inline-block; width: 51%">{{ .business_strategy }}</span>
+        </div>
+        <div style="padding-top: 14px">
+          <span
+                  style="
+              display: inline-block;
+              width: 45%;
+              padding-right: 12px;
+              font-weight: 700;
+            "
+          >
+            Property type:
+          </span>
+            <span style="display: inline-block; width: 51%"> {{ .property.PropertyType }} </span>
+        </div>
+        <div style="padding-top: 14px">
+          <span
+                  style="
+              display: inline-block;
+              width: 45%;
+              padding-right: 12px;
+              font-weight: 700;
+            "
+          >
+            Number of units:
+          </span>
+            <span style="display: inline-block; width: 51%">{{ .property.Unit }}</span>
+        </div>
+        <div style="padding-top: 14px">
+          <span
+                  style="
+              display: inline-block;
+              width: 45%;
+              padding-right: 12px;
+              font-weight: 700;
+            "
+          >
+            Purchase price:
+          </span>
+            <span style="display: inline-block; width: 51%"> {{ .purchase_amount }} </span>
+        </div>
+        <div style="padding-top: 14px">
+          <span
+                  style="
+              display: inline-block;
+              width: 45%;
+              padding-right: 12px;
+              font-weight: 700;
+            "
+          >
+            Estimated after repair value:
+          </span>
+            <span style="display: inline-block; width: 51%"> {{ .arv }}</span>
+        </div>
+        <div style="padding-top: 14px">
+          <span
+                  style="
+              display: inline-block;
+              width: 45%;
+              padding-right: 12px;
+              font-weight: 700;
+            "
+          >
+            Borrower:
+          </span>
+            <span style="display: inline-block; width: 51%">{{ .borrower_name }}</span>
+        </div>
+        <div style="padding-top: 14px">
+          <span
+                  style="
+              display: inline-block;
+              width: 45%;
+              padding-right: 12px;
+              font-weight: 700;
+            "
+          >
+            Target closing date:
+          </span>
+            <span style="display: inline-block; width: 51%">{{ .closing_date }}</span>
+        </div>
+        <div style="padding-top: 14px">
+          <span
+                  style="
+              display: inline-block;
+              width: 45%;
+              padding-right: 12px;
+              font-weight: 700;
+            "
+          >
+            Holdback:
+          </span>
+            <span style="display: inline-block; width: 51%">{{ .holdback_amount }}</span>
+        </div>
+
+        <div style="padding: 38px 0 2px">Best regards</div>
+        <div>{{ .borrower_name }}</div>
+    </div>
+    <div
+            style="
+          padding: 24px;
+          font-size: 12px;
+          background-color: #f5f5f5;
+          border-top: 1px solid rgba(5, 145, 255, 0.1);
+          color: rgba(0, 0, 0, 0.65);
+          font-family: Roboto, sans-serif;
+          text-align: center;
+        "
+    >
+        ZeeBee | 123 Business St | San Francisco, CA, 94105
+    </div>
+</div>
+</body>
+</html>

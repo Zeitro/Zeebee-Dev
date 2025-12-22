@@ -103,7 +103,7 @@ func (l *OrganizationUserLogic) CreateAdminOrganizationUser(ctx context.Context,
 	err = l.repos.OrganizationRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
 		// get organization
-		organization, innerErr = l.repos.OrganizationRepo.GetOrganizationWithTx(ctx, tx, input.OrganizationId, input.UserType)
+		organization, innerErr = l.repos.OrganizationRepo.GetOrganizationWithTx(ctx, tx, input.OrganizationId, input.UserType, false)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -183,7 +183,7 @@ func (l *OrganizationUserLogic) InviteOrganizationUser(ctx context.Context, crea
 	err = l.repos.OrganizationRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
 		// get organization
-		organization, innerErr = l.repos.OrganizationRepo.GetOrganizationWithTx(ctx, tx, createDto.OrganizationId, createDto.UserType)
+		organization, innerErr = l.repos.OrganizationRepo.GetOrganizationWithTx(ctx, tx, createDto.OrganizationId, createDto.UserType, false)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -282,7 +282,7 @@ func (l *OrganizationUserLogic) SendInviteEmail(ctx context.Context, input dto.O
 		return err
 	}
 	// get  organization
-	organization, err := l.repos.OrganizationRepo.GetOrganization(ctx, input.OrganizationId, input.UserType)
+	organization, err := l.repos.OrganizationRepo.GetOrganization(ctx, input.OrganizationId, input.UserType, false)
 	if err != nil {
 		return err
 	}
@@ -411,7 +411,7 @@ func (l *OrganizationUserLogic) UpdateOrganizationUser(ctx context.Context, reqD
 		var innerErr error
 		oldRoles := organizationUser.Roles
 		// get organization
-		organization, innerErr = l.repos.OrganizationRepo.GetOrganizationWithTx(ctx, tx, reqDto.OrganizationId, reqDto.UserType)
+		organization, innerErr = l.repos.OrganizationRepo.GetOrganizationWithTx(ctx, tx, reqDto.OrganizationId, reqDto.UserType, false)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -592,7 +592,7 @@ func (l *OrganizationUserLogic) Detail(ctx context.Context, id int64, organizati
 // SwitchStatus
 func (l *OrganizationUserLogic) SwitchStatus(ctx context.Context, id int64, organizationId int64, status constants.OrganizationUserStatus, userType constants.UserType) (err error) {
 	// check organization user
-	organization, err := l.repos.OrganizationRepo.GetOrganization(ctx, organizationId, userType)
+	organization, err := l.repos.OrganizationRepo.GetOrganization(ctx, organizationId, userType, false)
 	if err != nil {
 		return err
 	}
@@ -641,7 +641,7 @@ func (l *OrganizationUserLogic) AssignRoles(ctx context.Context, id int64, organ
 
 func (l *OrganizationUserLogic) Delete(ctx context.Context, id int64, organizationId int64, userType constants.UserType) (err error) {
 	// check organization user
-	organization, err := l.repos.OrganizationRepo.GetOrganization(ctx, organizationId, userType)
+	organization, err := l.repos.OrganizationRepo.GetOrganization(ctx, organizationId, userType, false)
 	if err != nil {
 		return err
 	}

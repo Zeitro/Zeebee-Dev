@@ -1,4 +1,4 @@
-package user
+package loan
 
 import (
 	"net/http"
@@ -6,7 +6,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
 
-	"zeebee-backend/app/borrower/api/internal/logic/user"
+	"zeebee-backend/app/borrower/api/internal/logic/loan"
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 
@@ -15,8 +15,8 @@ import (
 	"zeebee-backend/common/validator"
 )
 
-// generate auth code url
-func GenerateAuthCodeUrlHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+// send quote email
+func SendQuoteEmailHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer func() {
@@ -26,7 +26,7 @@ func GenerateAuthCodeUrlHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 					Error(err)
 			}
 		}()
-		var req types.UserGenerateEmailAuthCodeUrlRequest
+		var req types.LoanSendQuoteEmailRequest
 		if err = httpx.Parse(r, &req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
@@ -42,10 +42,16 @@ func GenerateAuthCodeUrlHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := user.NewGenerateAuthCodeUrlLogic(r.Context(), svcCtx)
-		resp, err := l.GenerateAuthCodeUrl(&req)
+		l := loan.NewSendQuoteEmailLogic(r.Context(), svcCtx)
+		resp, err := l.SendQuoteEmail(&req)
 		if err != nil {
-			response.BadRequest(w, errorx.GetErrorMsg(err))
+			errMsg := errorx.GetErrorMsg(err)
+			if errMsg == "Borrower Email Not Authorized" {
+				response.Error(w, 401002, errMsg)
+			} else {
+				response.BadRequest(w, errorx.GetErrorMsg(err))
+			}
+
 		} else {
 			response.Success(w, resp)
 		}

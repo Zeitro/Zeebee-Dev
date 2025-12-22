@@ -14,7 +14,7 @@ import (
 )
 
 type (
-	AddressEntry                            = admin.AddressEntry
+	AddressEntity                           = admin.AddressEntity
 	ApiCreateRequest                        = admin.ApiCreateRequest
 	ApiCreateRequestData                    = admin.ApiCreateRequestData
 	ApiCreateResponse                       = admin.ApiCreateResponse

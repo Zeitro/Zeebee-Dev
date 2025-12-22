@@ -8,7 +8,7 @@ type OrganizationUserCreateRequest struct {
 	Password  string  `json:"password" validate:"required,min=8,max=32,password"`
 	FirstName string  `json:"first_name" validate:"required,min=2,max=100"`
 	LastName  string  `json:"last_name" validate:"min=2,max=100"`
-	Phone     string  `json:"phone" validate:"required,min=6,max=20"`
+	Phone     string  `json:"phone, optional" validate:"omitempty"`
 	RoleIds   []int64 `json:"role_ids,optional"`
 }
 
@@ -44,7 +44,7 @@ type OrganizationUserUpdateRequest struct {
 	Id        int64   `path:"id" validate:"required"`
 	FirstName string  `json:"first_name" validate:"required,min=2,max=100"`
 	LastName  string  `json:"last_name" validate:"min=2,max=100"`
-	Phone     string  `json:"phone" validate:"required,min=6,max=20"`
+	Phone     string  `json:"phone, optional"`
 	RoleIds   []int64 `json:"role_ids,optional"`
 }
 
