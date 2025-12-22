@@ -8,10 +8,12 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -41,22 +43,10 @@ func (l *RegisterLogic) Register(in *lender.UserRegisterRequest) (resp *lender.U
 	}()
 	// check if user already exists
 	var existedUser *model.User
-	var organizationUser *model.OrganizationUser
 	existedUser, _ = l.svcCtx.UserRepo.GetLenderUserByEmail(l.ctx, in.Data.Email)
 
 	if existedUser != nil && existedUser.Id > 0 {
 		return nil, errorx.New("User Already Exists")
-	}
-
-	// check company
-	isExisted, err := l.svcCtx.OrganizationRepo.IsExistedByColumns(l.ctx, map[string]interface{}{
-		"id": in.Data.OrganizationId,
-	})
-	if err != nil {
-		return nil, errorx.WithStack(err)
-	}
-	if !isExisted {
-		return nil, errorx.New("Organization Is Not Exists")
 	}
 
 	var pwd string
@@ -64,7 +54,7 @@ func (l *RegisterLogic) Register(in *lender.UserRegisterRequest) (resp *lender.U
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	userModel := &model.User{
+	userInput := dto.UserRegisterRequestDto{
 		Email:                 in.Data.Email,
 		PasswordHash:          pwd,
 		Status:                constants.UserStatusActive,
@@ -75,13 +65,34 @@ func (l *RegisterLogic) Register(in *lender.UserRegisterRequest) (resp *lender.U
 		DefaultOrganizationId: in.Data.OrganizationId,
 	}
 
-	var organization *model.Organization
-	organization, err = l.svcCtx.OrganizationRepo.GetOrganization(l.ctx, in.Data.OrganizationId, constants.UserTypeLender, false)
+	var organizationInput *dto.OrganizationRegisterRequestDto
+	switch in.Data.Type {
+	case "Join":
+		organization, err := l.svcCtx.OrganizationRepo.GetOrganization(l.ctx, in.Data.OrganizationId, constants.UserTypeLender, false)
+		if err != nil {
+			return nil, errorx.WithStack(err)
+		}
+		organizationInput, err = copierx.Trans[model.Organization, dto.OrganizationRegisterRequestDto](organization)
+	case "Create":
+
+		organizationInput = &dto.OrganizationRegisterRequestDto{
+			Name:         in.Data.OrganizationName,
+			Status:       constants.OrganizationStatusActive,
+			OwnerType:    constants.OrganizationOwnerTypeThirdParty,
+			Type:         constants.UserTypeLender,
+			ContactEmail: in.Data.ContactEmail,
+			ContactPhone: in.Data.ContactPhone,
+			ContactName:  in.Data.ContactName,
+		}
+	default:
+		err = errorx.New("Invalid Organization Type")
+	}
+
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
 
-	userModel, organizationUser, err = l.baseLogic.UserLogic.RegisterWithOrganization(l.ctx, userModel, organization, constants.UserTypeLender)
+	userModel, organizationUser, err := l.baseLogic.UserLogic.RegisterWithOrganization(l.ctx, userInput, *organizationInput, constants.UserTypeLender)
 	if err != nil {
 		return nil, err
 	}

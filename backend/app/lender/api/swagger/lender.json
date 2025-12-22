@@ -3265,14 +3265,28 @@
               "type": "object",
               "required": [
                 "email",
+                "type",
                 "organization_id",
+                "organization_name",
+                "contact_email",
+                "contact_phone",
+                "contact_name",
                 "password",
-                "comfired_password",
+                "confirm_password",
                 "first_name",
                 "last_name"
               ],
               "properties": {
-                "comfired_password": {
+                "confirm_password": {
+                  "type": "string"
+                },
+                "contact_email": {
+                  "type": "string"
+                },
+                "contact_name": {
+                  "type": "string"
+                },
+                "contact_phone": {
                   "type": "string"
                 },
                 "email": {
@@ -3287,7 +3301,13 @@
                 "organization_id": {
                   "type": "integer"
                 },
+                "organization_name": {
+                  "type": "string"
+                },
                 "password": {
+                  "type": "string"
+                },
+                "type": {
                   "type": "string"
                 }
               }
@@ -3491,9 +3511,9 @@
       }
     }
   },
-  "x-date": "2025-12-17 16:29:19",
+  "x-date": "2025-12-22 13:25:38",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
-  "x-goctl-version": "1.8.4"
+  "x-goctl-version": "1.9.2"
 }

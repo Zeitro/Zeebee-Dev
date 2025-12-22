@@ -26,6 +26,7 @@ import (
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 )
 
@@ -54,7 +55,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 	}()
 	// check if user already exists
 	var existedUser *model.User
-	var organizationUserModel *model.OrganizationUser
+	// var organizationUserModel *model.OrganizationUser
 	in.Data.Email = strings.ToLower(in.Data.Email)
 	existedUser, _ = l.svcCtx.UserRepo.GetUserByEmail(l.ctx, in.Data.Email, constants.UserTypeBorrower)
 
@@ -89,7 +90,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	userModel := &model.User{
+	userInput := dto.UserRegisterRequestDto{
 		Email:        in.Data.Email,
 		PasswordHash: pwd,
 		Status:       constants.UserStatusUnverified,
@@ -98,14 +99,14 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 		LastName:     in.Data.LastName,
 		FullName:     stringx.FormatFullName(in.Data.FirstName, "", in.Data.LastName),
 	}
-	organizationModel := &model.Organization{
+	organizationInput := dto.OrganizationRegisterRequestDto{
 		Name:      in.Data.OrganizationName,
 		Type:      constants.UserTypeBorrower,
 		Status:    constants.OrganizationStatusActive,
 		OwnerType: constants.OrganizationOwnerTypeNone,
 	}
 
-	userModel, organizationUserModel, err = l.baseLogic.UserLogic.RegisterWithOrganization(l.ctx, userModel, organizationModel, constants.UserTypeBorrower)
+	userModel, organizationUserModel, err := l.baseLogic.UserLogic.RegisterWithOrganization(l.ctx, userInput, organizationInput, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}

@@ -786,14 +786,19 @@ func (x *UserRegisterResponse) GetData() *UserRegisterResponseData {
 }
 
 type UserRegisterRequestData struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Email          string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
-	Password       string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
-	FirstName      string                 `protobuf:"bytes,3,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
-	LastName       string                 `protobuf:"bytes,4,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,5,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Email            string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
+	Password         string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+	FirstName        string                 `protobuf:"bytes,3,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
+	LastName         string                 `protobuf:"bytes,4,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
+	Type             string                 `protobuf:"bytes,5,opt,name=type,proto3" json:"type,omitempty"`
+	OrganizationId   int64                  `protobuf:"varint,6,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	OrganizationName string                 `protobuf:"bytes,7,opt,name=organization_name,json=organizationName,proto3" json:"organization_name,omitempty"`
+	ContactPhone     string                 `protobuf:"bytes,8,opt,name=contact_phone,json=contactPhone,proto3" json:"contact_phone,omitempty"`
+	ContactEmail     string                 `protobuf:"bytes,9,opt,name=contact_email,json=contactEmail,proto3" json:"contact_email,omitempty"`
+	ContactName      string                 `protobuf:"bytes,10,opt,name=contact_name,json=contactName,proto3" json:"contact_name,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *UserRegisterRequestData) Reset() {
@@ -854,11 +859,46 @@ func (x *UserRegisterRequestData) GetLastName() string {
 	return ""
 }
 
+func (x *UserRegisterRequestData) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
 func (x *UserRegisterRequestData) GetOrganizationId() int64 {
 	if x != nil {
 		return x.OrganizationId
 	}
 	return 0
+}
+
+func (x *UserRegisterRequestData) GetOrganizationName() string {
+	if x != nil {
+		return x.OrganizationName
+	}
+	return ""
+}
+
+func (x *UserRegisterRequestData) GetContactPhone() string {
+	if x != nil {
+		return x.ContactPhone
+	}
+	return ""
+}
+
+func (x *UserRegisterRequestData) GetContactEmail() string {
+	if x != nil {
+		return x.ContactEmail
+	}
+	return ""
+}
+
+func (x *UserRegisterRequestData) GetContactName() string {
+	if x != nil {
+		return x.ContactName
+	}
+	return ""
 }
 
 type UserRegisterResponseData struct {
@@ -7423,14 +7463,20 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x13UserRegisterRequest\x123\n" +
 	"\x04data\x18\x01 \x01(\v2\x1f.lender.UserRegisterRequestDataR\x04data\"L\n" +
 	"\x14UserRegisterResponse\x124\n" +
-	"\x04data\x18\x01 \x01(\v2 .lender.UserRegisterResponseDataR\x04data\"\xb0\x01\n" +
+	"\x04data\x18\x01 \x01(\v2 .lender.UserRegisterResponseDataR\x04data\"\xde\x02\n" +
 	"\x17UserRegisterRequestData\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x1d\n" +
 	"\n" +
 	"first_name\x18\x03 \x01(\tR\tfirstName\x12\x1b\n" +
-	"\tlast_name\x18\x04 \x01(\tR\blastName\x12'\n" +
-	"\x0forganization_id\x18\x05 \x01(\x03R\x0eorganizationId\"\xc4\x01\n" +
+	"\tlast_name\x18\x04 \x01(\tR\blastName\x12\x12\n" +
+	"\x04type\x18\x05 \x01(\tR\x04type\x12'\n" +
+	"\x0forganization_id\x18\x06 \x01(\x03R\x0eorganizationId\x12+\n" +
+	"\x11organization_name\x18\a \x01(\tR\x10organizationName\x12#\n" +
+	"\rcontact_phone\x18\b \x01(\tR\fcontactPhone\x12#\n" +
+	"\rcontact_email\x18\t \x01(\tR\fcontactEmail\x12!\n" +
+	"\fcontact_name\x18\n" +
+	" \x01(\tR\vcontactName\"\xc4\x01\n" +
 	"\x18UserRegisterResponseData\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
 	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\x12.\n" +

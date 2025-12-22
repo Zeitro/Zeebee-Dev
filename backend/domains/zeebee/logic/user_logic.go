@@ -12,6 +12,7 @@ import (
 	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
 
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/redisx"
 	"zeebee-backend/common/stringx"
@@ -477,14 +478,19 @@ func (l *UserLogic) SwitchOrganization(ctx context.Context, userId int64, organi
 	return user, nil
 }
 
-// RegisterWithOrganization register user with organization
-func (l *UserLogic) RegisterWithOrganization(ctx context.Context, user *model.User, organization *model.Organization, userType constants.UserType) (newUser *model.User, organizationUser *model.OrganizationUser, err error) {
+// RegisterWithOrganization creates a new user and organization relationship in a single transaction.
+// It validates both user and organization inputs, checks for existence, and creates the necessary
+// relationships between them. The function handles both cases of creating a new organization
+// or using an existing one.
+func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.UserRegisterRequestDto, organizationInput dto.OrganizationRegisterRequestDto, userType constants.UserType) (newUser *model.User, organizationUser *model.OrganizationUser, err error) {
+	var user *model.User
+	var organization *model.Organization
 	// check user exist
-	if user == nil {
+	if len(userInput.FirstName) == 0 {
 		return nil, nil, errorx.New("User Is Empty")
 	}
 	isExisted, err := l.repos.UserRepo.IsExistedByColumns(ctx, map[string]interface{}{
-		"email": user.Email,
+		"email": userInput.Email,
 		"type":  userType,
 	})
 	if err != nil {
@@ -493,12 +499,17 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, user *model.Us
 	if isExisted {
 		return nil, nil, errorx.New("User Is Already Existed")
 	}
+	user, err = copierx.Trans[dto.UserRegisterRequestDto, model.User](&userInput)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	// check organization exist
-	if organization == nil {
+	if len(organizationInput.Name) == 0 && organizationInput.Id == 0 {
 		return nil, nil, errorx.New("Organization Is Empty")
 	}
 	isExisted, err = l.repos.OrganizationRepo.IsExistedByColumns(ctx, map[string]interface{}{
-		"name": organization.Name,
+		"name": organizationInput.Name,
 		"type": userType,
 	})
 	if err != nil {
@@ -507,15 +518,24 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, user *model.Us
 	if isExisted {
 		return nil, nil, errorx.New("Organization Is Already Existed")
 	}
+	organization, err = copierx.Trans[dto.OrganizationRegisterRequestDto, model.Organization](&organizationInput)
+	if err != nil {
+		return nil, nil, err
+	}
 
 	err = l.repos.UserRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
+		var isCreateOrganization bool
 		// create  organization
-		organization.Status = constants.OrganizationStatusInactive
-		organization, innerErr = l.repos.OrganizationRepo.CreateWithTx(ctx, tx, organization, false)
-		if innerErr != nil {
-			return innerErr
+		if organization.Id == 0 {
+			organization.Status = constants.OrganizationStatusInactive
+			organization, innerErr = l.repos.OrganizationRepo.CreateWithTx(ctx, tx, organization, false)
+			if innerErr != nil {
+				return innerErr
+			}
+			isCreateOrganization = true
 		}
+
 		user.DefaultOrganizationId = organization.Id
 		// create user
 		roles := []*model.Role{
@@ -524,25 +544,23 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, user *model.Us
 				Type:           userType,
 				OrganizationId: organization.Id,
 			},
-			{
-				Name:           "general",
-				Type:           userType,
-				OrganizationId: organization.Id,
-			},
 		}
 		user.RemoveRelationships()
-		// user.Roles = roles
 		user, innerErr = l.repos.UserRepo.CreateWithTx(ctx, tx, user, false)
 		if innerErr != nil {
 			return innerErr
 		}
 		// update organization's owner
-		organization.OwnerId = user.Id
-		innerErr = l.repos.OrganizationRepo.UpdateOwnerIdWithTx(ctx, tx, organization.Id, user.Id)
-		if innerErr != nil {
-			return innerErr
+		if isCreateOrganization {
+			organization.OwnerId = user.Id
+			innerErr = l.repos.OrganizationRepo.UpdateOwnerIdWithTx(ctx, tx, organization.Id, user.Id)
+			if innerErr != nil {
+				return innerErr
+			}
+			user.DefaultOrganizationId = organization.Id
+		} else {
+			roles = nil
 		}
-
 		// create organization user
 		organizationUser = &model.OrganizationUser{
 			OrganizationId: organization.Id,
