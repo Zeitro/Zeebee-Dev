@@ -33,16 +33,12 @@ func UpdateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		// if req.LoanProperty != nil && req.LoanProperty.PropertyBase != nil {
-		// 	req.LoanProperty.Unit = req.LoanProperty.PropertyBase.Unit
-		// }
-
 		v, err := validator.GetEnValidator()
 		if err != nil {
 			response.InternalServerError(w, errorx.GetErrorMsg(err))
 			return
 		}
-		v.RegisterStructRule(validate_rules.LoanPropertyEditEntry, types.LoanPropertyEditEntry{})
+		v.RegisterStructRule(validate_rules.LoanPropertyEditEntity, types.LoanPropertyEditEntity{})
 		_ = v.RegisterTansMsg(validate_rules.PropertyUnitTag, validate_rules.PropertyUnitMsgTpl)
 		if err := v.Validate(&req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))

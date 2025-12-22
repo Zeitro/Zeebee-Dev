@@ -41,7 +41,7 @@ func (l *BorrowerApplicantDetailLogic) BorrowerApplicantDetail(req *types.PathId
 	}
 
 	resp = &types.BorrowerApplicantDetailResponse{}
-	err = copier.CopyWithOption(&resp.BorrowerApplicantEntry, &rpcResp.Data, copier.Option{DeepCopy: true})
+	err = copier.CopyWithOption(&resp.BorrowerApplicantEntity, &rpcResp.Data, copier.Option{DeepCopy: true})
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

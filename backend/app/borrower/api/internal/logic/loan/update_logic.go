@@ -43,7 +43,7 @@ func (l *UpdateLogic) Update(req *types.LoanUpdateRequest) (resp *types.EmptyRes
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
-	rpcApplicants := slice.UniqueByComparator(rpcReq.Data.Applicants, func(item *borrower.ThirdPartyLoanApplicantEditEntry, other *borrower.ThirdPartyLoanApplicantEditEntry) bool {
+	rpcApplicants := slice.UniqueByComparator(rpcReq.Data.Applicants, func(item *borrower.ThirdPartyLoanApplicantEditEntity, other *borrower.ThirdPartyLoanApplicantEditEntity) bool {
 		return item.BorrowerApplicantId == other.BorrowerApplicantId
 	})
 	if len(rpcApplicants) == 0 {

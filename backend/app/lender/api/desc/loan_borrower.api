@@ -7,7 +7,7 @@ info(
 )
 import "address.api"
 
-type LoanBorrowerEntry {
+type LoanBorrowerEntity {
     Id int64 `json:"id"`
     BorrowerEntityId int64 `json:"borrower_entity_id"`
     LoanId int64 `json:"loan_id"`
@@ -15,7 +15,7 @@ type LoanBorrowerEntry {
     Name string `json:"name"`
     TinType string `json:"tin_type"`
     Tin string `json:"tin" `
-    MailingAddress AddressEntry `json:"mailing_address"`
+    MailingAddress AddressEntity `json:"mailing_address"`
     ContactEmail string `json:"contact_email"`
     ContactPhone string `json:"contact_phone"`
     ContactName string `json:"contact_name"`

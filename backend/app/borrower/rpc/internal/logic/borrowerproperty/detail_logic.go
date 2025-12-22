@@ -45,7 +45,7 @@ func (l *DetailLogic) Detail(in *borrower.PropertyDetailRequest) (resp *borrower
 	}
 
 	// todo check organization
-	respData := &borrower.BorrowerPropertyEntry{}
+	respData := &borrower.BorrowerPropertyEntity{}
 	result, err := l.svcCtx.BorrowerPropertyRepo.GetOneByIdForOrganization(l.ctx, in.Data.Id, claim.OrganizationId)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)

@@ -46,7 +46,7 @@ func (l *ApplyLogic) Apply(req *types.LoanApplyRequest) (resp *types.LoanApplyRe
 	}
 
 	// handle applicants
-	rpcApplicants := slice.UniqueByComparator(rpcReq.Data.Applicants, func(item *borrower.LoanApplicantApplyEntry, other *borrower.LoanApplicantApplyEntry) bool {
+	rpcApplicants := slice.UniqueByComparator(rpcReq.Data.Applicants, func(item *borrower.LoanApplicantApplyEntity, other *borrower.LoanApplicantApplyEntity) bool {
 		return item.BorrowerApplicantId == other.BorrowerApplicantId
 	})
 	if len(rpcApplicants) == 0 {

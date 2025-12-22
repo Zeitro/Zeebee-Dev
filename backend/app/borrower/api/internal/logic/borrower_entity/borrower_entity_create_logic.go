@@ -30,7 +30,7 @@ func NewBorrowerEntityCreateLogic(ctx context.Context, svcCtx *svc.ServiceContex
 
 func (l *BorrowerEntityCreateLogic) BorrowerEntityCreate(req *types.BorrowerEntityCreateRequest) (resp *types.BorrowerEntityCreateResponse, err error) {
 	rpcReq := &borrower.BorrowerEntityCreateRequest{
-		Data: &borrower.BorrowerEntityEditEntry{},
+		Data: &borrower.BorrowerEntityEditEntity{},
 	}
 
 	err = copier.CopyWithOption(&rpcReq.Data, &req.BorrowerEntityEditRequest, copier.Option{
@@ -48,7 +48,7 @@ func (l *BorrowerEntityCreateLogic) BorrowerEntityCreate(req *types.BorrowerEnti
 	}
 
 	resp = &types.BorrowerEntityCreateResponse{}
-	err = copier.CopyWithOption(&resp.BorrowerEntityEntry, &rpcResp.Data, copier.Option{DeepCopy: true})
+	err = copier.CopyWithOption(&resp.BorrowerEntityEntity, &rpcResp.Data, copier.Option{DeepCopy: true})
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
