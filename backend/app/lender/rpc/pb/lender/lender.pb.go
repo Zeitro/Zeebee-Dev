@@ -137,7 +137,7 @@ func (x *StringSliceResponse) GetData() []string {
 	return nil
 }
 
-type AddressEntry struct {
+type AddressEntity struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	State         string                 `protobuf:"bytes,1,opt,name=state,proto3" json:"state,omitempty"`
 	City          string                 `protobuf:"bytes,2,opt,name=city,proto3" json:"city,omitempty"`
@@ -148,20 +148,20 @@ type AddressEntry struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AddressEntry) Reset() {
-	*x = AddressEntry{}
+func (x *AddressEntity) Reset() {
+	*x = AddressEntity{}
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AddressEntry) String() string {
+func (x *AddressEntity) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AddressEntry) ProtoMessage() {}
+func (*AddressEntity) ProtoMessage() {}
 
-func (x *AddressEntry) ProtoReflect() protoreflect.Message {
+func (x *AddressEntity) ProtoReflect() protoreflect.Message {
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -173,40 +173,40 @@ func (x *AddressEntry) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AddressEntry.ProtoReflect.Descriptor instead.
-func (*AddressEntry) Descriptor() ([]byte, []int) {
+// Deprecated: Use AddressEntity.ProtoReflect.Descriptor instead.
+func (*AddressEntity) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *AddressEntry) GetState() string {
+func (x *AddressEntity) GetState() string {
 	if x != nil {
 		return x.State
 	}
 	return ""
 }
 
-func (x *AddressEntry) GetCity() string {
+func (x *AddressEntity) GetCity() string {
 	if x != nil {
 		return x.City
 	}
 	return ""
 }
 
-func (x *AddressEntry) GetAddress1() string {
+func (x *AddressEntity) GetAddress1() string {
 	if x != nil {
 		return x.Address1
 	}
 	return ""
 }
 
-func (x *AddressEntry) GetAddress2() string {
+func (x *AddressEntity) GetAddress2() string {
 	if x != nil {
 		return x.Address2
 	}
 	return ""
 }
 
-func (x *AddressEntry) GetZipCode() string {
+func (x *AddressEntity) GetZipCode() string {
 	if x != nil {
 		return x.ZipCode
 	}
@@ -304,7 +304,7 @@ func (x *OptionRequestData) GetName() string {
 
 type OptionResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          []*OptionEntry         `protobuf:"bytes,1,rep,name=data,proto3" json:"data,omitempty"`
+	Data          []*OptionEntity        `protobuf:"bytes,1,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -339,14 +339,14 @@ func (*OptionResponse) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *OptionResponse) GetData() []*OptionEntry {
+func (x *OptionResponse) GetData() []*OptionEntity {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type OptionEntry struct {
+type OptionEntity struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Label         string                 `protobuf:"bytes,1,opt,name=label,proto3" json:"label,omitempty"`
 	Value         string                 `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
@@ -354,20 +354,20 @@ type OptionEntry struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *OptionEntry) Reset() {
-	*x = OptionEntry{}
+func (x *OptionEntity) Reset() {
+	*x = OptionEntity{}
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *OptionEntry) String() string {
+func (x *OptionEntity) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*OptionEntry) ProtoMessage() {}
+func (*OptionEntity) ProtoMessage() {}
 
-func (x *OptionEntry) ProtoReflect() protoreflect.Message {
+func (x *OptionEntity) ProtoReflect() protoreflect.Message {
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -379,19 +379,19 @@ func (x *OptionEntry) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use OptionEntry.ProtoReflect.Descriptor instead.
-func (*OptionEntry) Descriptor() ([]byte, []int) {
+// Deprecated: Use OptionEntity.ProtoReflect.Descriptor instead.
+func (*OptionEntity) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *OptionEntry) GetLabel() string {
+func (x *OptionEntity) GetLabel() string {
 	if x != nil {
 		return x.Label
 	}
 	return ""
 }
 
-func (x *OptionEntry) GetValue() string {
+func (x *OptionEntity) GetValue() string {
 	if x != nil {
 		return x.Value
 	}
@@ -786,14 +786,19 @@ func (x *UserRegisterResponse) GetData() *UserRegisterResponseData {
 }
 
 type UserRegisterRequestData struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Email          string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
-	Password       string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
-	FirstName      string                 `protobuf:"bytes,3,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
-	LastName       string                 `protobuf:"bytes,4,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,5,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Email            string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
+	Password         string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+	FirstName        string                 `protobuf:"bytes,3,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
+	LastName         string                 `protobuf:"bytes,4,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
+	Type             string                 `protobuf:"bytes,5,opt,name=type,proto3" json:"type,omitempty"`
+	OrganizationId   int64                  `protobuf:"varint,6,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	OrganizationName string                 `protobuf:"bytes,7,opt,name=organization_name,json=organizationName,proto3" json:"organization_name,omitempty"`
+	ContactPhone     string                 `protobuf:"bytes,8,opt,name=contact_phone,json=contactPhone,proto3" json:"contact_phone,omitempty"`
+	ContactEmail     string                 `protobuf:"bytes,9,opt,name=contact_email,json=contactEmail,proto3" json:"contact_email,omitempty"`
+	ContactName      string                 `protobuf:"bytes,10,opt,name=contact_name,json=contactName,proto3" json:"contact_name,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *UserRegisterRequestData) Reset() {
@@ -854,11 +859,46 @@ func (x *UserRegisterRequestData) GetLastName() string {
 	return ""
 }
 
+func (x *UserRegisterRequestData) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
 func (x *UserRegisterRequestData) GetOrganizationId() int64 {
 	if x != nil {
 		return x.OrganizationId
 	}
 	return 0
+}
+
+func (x *UserRegisterRequestData) GetOrganizationName() string {
+	if x != nil {
+		return x.OrganizationName
+	}
+	return ""
+}
+
+func (x *UserRegisterRequestData) GetContactPhone() string {
+	if x != nil {
+		return x.ContactPhone
+	}
+	return ""
+}
+
+func (x *UserRegisterRequestData) GetContactEmail() string {
+	if x != nil {
+		return x.ContactEmail
+	}
+	return ""
+}
+
+func (x *UserRegisterRequestData) GetContactName() string {
+	if x != nil {
+		return x.ContactName
+	}
+	return ""
 }
 
 type UserRegisterResponseData struct {
@@ -1614,18 +1654,21 @@ func (x *UserinfoResponse) GetData() *UserinfoResponseData {
 }
 
 type UserinfoResponseData struct {
-	state            protoimpl.MessageState               `protogen:"open.v1"`
-	Id               int64                                `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Email            string                               `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
-	FirstName        string                               `protobuf:"bytes,3,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
-	LastName         string                               `protobuf:"bytes,4,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
-	FullName         string                               `protobuf:"bytes,5,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
-	OrganizationId   int64                                `protobuf:"varint,6,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	OrganizationName string                               `protobuf:"bytes,7,opt,name=organization_name,json=organizationName,proto3" json:"organization_name,omitempty"`
-	Status           string                               `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`
-	Organizations    []*UserinfoResponseData_Organization `protobuf:"bytes,9,rep,name=organizations,proto3" json:"organizations,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state              protoimpl.MessageState               `protogen:"open.v1"`
+	Id                 int64                                `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Email              string                               `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
+	FirstName          string                               `protobuf:"bytes,3,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
+	LastName           string                               `protobuf:"bytes,4,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
+	FullName           string                               `protobuf:"bytes,5,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
+	OrganizationId     int64                                `protobuf:"varint,6,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	OrganizationName   string                               `protobuf:"bytes,7,opt,name=organization_name,json=organizationName,proto3" json:"organization_name,omitempty"`
+	Status             string                               `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`
+	Organizations      []*UserinfoResponseData_Organization `protobuf:"bytes,9,rep,name=organizations,proto3" json:"organizations,omitempty"`
+	IsOwner            bool                                 `protobuf:"varint,10,opt,name=is_owner,json=isOwner,proto3" json:"is_owner,omitempty"`
+	IsAdmin            bool                                 `protobuf:"varint,11,opt,name=is_admin,json=isAdmin,proto3" json:"is_admin,omitempty"`
+	OrganizationUserId int64                                `protobuf:"varint,12,opt,name=organization_user_id,json=organizationUserId,proto3" json:"organization_user_id,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *UserinfoResponseData) Reset() {
@@ -1721,6 +1764,27 @@ func (x *UserinfoResponseData) GetOrganizations() []*UserinfoResponseData_Organi
 	return nil
 }
 
+func (x *UserinfoResponseData) GetIsOwner() bool {
+	if x != nil {
+		return x.IsOwner
+	}
+	return false
+}
+
+func (x *UserinfoResponseData) GetIsAdmin() bool {
+	if x != nil {
+		return x.IsAdmin
+	}
+	return false
+}
+
+func (x *UserinfoResponseData) GetOrganizationUserId() int64 {
+	if x != nil {
+		return x.OrganizationUserId
+	}
+	return 0
+}
+
 // switch organization
 type SwitchOrganizationRequest struct {
 	state         protoimpl.MessageState         `protogen:"open.v1"`
@@ -1812,69 +1876,69 @@ func (x *SwitchOrganizationRequestData) GetOrganizationId() int64 {
 }
 
 // ================ loan service start =================
-type LoanEntry struct {
-	state                  protoimpl.MessageState   `protogen:"open.v1"`
-	Id                     int64                    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Stage                  string                   `protobuf:"bytes,2,opt,name=stage,proto3" json:"stage,omitempty"`
-	PendingStatus          string                   `protobuf:"bytes,3,opt,name=pending_status,json=pendingStatus,proto3" json:"pending_status,omitempty"`
-	LoanPurpose            string                   `protobuf:"bytes,4,opt,name=loan_purpose,json=loanPurpose,proto3" json:"loan_purpose,omitempty"`
-	LoanType               string                   `protobuf:"bytes,5,opt,name=loan_type,json=loanType,proto3" json:"loan_type,omitempty"`
-	TotalAmount            float64                  `protobuf:"fixed64,6,opt,name=total_amount,json=totalAmount,proto3" json:"total_amount,omitempty"`
-	InitialAmount          float64                  `protobuf:"fixed64,7,opt,name=initial_amount,json=initialAmount,proto3" json:"initial_amount,omitempty"`
-	LoanProperty           *LoanPropertyEntry       `protobuf:"bytes,8,opt,name=loan_property,json=loanProperty,proto3" json:"loan_property,omitempty"`
-	LenderCompany          string                   `protobuf:"bytes,9,opt,name=lender_company,json=lenderCompany,proto3" json:"lender_company,omitempty"`
-	ClosingDate            string                   `protobuf:"bytes,10,opt,name=closing_date,json=closingDate,proto3" json:"closing_date,omitempty"`
-	HoldbackAmount         float64                  `protobuf:"fixed64,11,opt,name=holdback_amount,json=holdbackAmount,proto3" json:"holdback_amount,omitempty"`
-	HoldbackReleasedAmount float64                  `protobuf:"fixed64,12,opt,name=holdback_released_amount,json=holdbackReleasedAmount,proto3" json:"holdback_released_amount,omitempty"`
-	Rate                   float32                  `protobuf:"fixed32,13,opt,name=rate,proto3" json:"rate,omitempty"`
-	ClosingFund            float64                  `protobuf:"fixed64,14,opt,name=closing_fund,json=closingFund,proto3" json:"closing_fund,omitempty"`
-	PrincipalAmount        float64                  `protobuf:"fixed64,15,opt,name=principal_amount,json=principalAmount,proto3" json:"principal_amount,omitempty"`
-	MonthlyPayment         float64                  `protobuf:"fixed64,16,opt,name=monthly_payment,json=monthlyPayment,proto3" json:"monthly_payment,omitempty"`
-	LienPosition           string                   `protobuf:"bytes,17,opt,name=lien_position,json=lienPosition,proto3" json:"lien_position,omitempty"`
-	MaturityDate           string                   `protobuf:"bytes,18,opt,name=maturity_date,json=maturityDate,proto3" json:"maturity_date,omitempty"`
-	PrepaymentPenalty      int32                    `protobuf:"varint,19,opt,name=prepayment_penalty,json=prepaymentPenalty,proto3" json:"prepayment_penalty,omitempty"`
-	ServiceCompany         string                   `protobuf:"bytes,20,opt,name=service_company,json=serviceCompany,proto3" json:"service_company,omitempty"`
-	PaidOffDate            string                   `protobuf:"bytes,21,opt,name=paid_off_date,json=paidOffDate,proto3" json:"paid_off_date,omitempty"`
-	CreatedAt              string                   `protobuf:"bytes,22,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt              string                   `protobuf:"bytes,23,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	OrganizationId         int64                    `protobuf:"varint,24,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	BorrowerId             int64                    `protobuf:"varint,25,opt,name=borrower_id,json=borrowerId,proto3" json:"borrower_id,omitempty"`
-	BusinessStrategy       []string                 `protobuf:"bytes,26,rep,name=business_strategy,json=businessStrategy,proto3" json:"business_strategy,omitempty"`
-	Applicants             []*LoanApplicantEntry    `protobuf:"bytes,27,rep,name=applicants,proto3" json:"applicants,omitempty"`
-	Source                 string                   `protobuf:"bytes,28,opt,name=source,proto3" json:"source,omitempty"`
-	LoanTerm               int32                    `protobuf:"varint,29,opt,name=loan_term,json=loanTerm,proto3" json:"loan_term,omitempty"`
-	Ltv                    float64                  `protobuf:"fixed64,30,opt,name=ltv,proto3" json:"ltv,omitempty"`
-	EstCreditScore         int32                    `protobuf:"varint,31,opt,name=est_credit_score,json=estCreditScore,proto3" json:"est_credit_score,omitempty"`
-	ReservesAmount         float64                  `protobuf:"fixed64,32,opt,name=reserves_amount,json=reservesAmount,proto3" json:"reserves_amount,omitempty"`
-	TransactionExperiences []*LoanExperienceEntry   `protobuf:"bytes,33,rep,name=transaction_experiences,json=transactionExperiences,proto3" json:"transaction_experiences,omitempty"`
-	RealEstateExperiences  []*LoanExperienceEntry   `protobuf:"bytes,34,rep,name=real_estate_experiences,json=realEstateExperiences,proto3" json:"real_estate_experiences,omitempty"`
-	LoanBorrower           *LoanBorrowerEntry       `protobuf:"bytes,35,opt,name=loan_borrower,json=loanBorrower,proto3" json:"loan_borrower,omitempty"`
-	LoanDemographic        *LoanDemographicEntry    `protobuf:"bytes,36,opt,name=loan_demographic,json=loanDemographic,proto3" json:"loan_demographic,omitempty"`
-	LoanThirdServices      []*LoanThirdServiceEntry `protobuf:"bytes,37,rep,name=loan_third_services,json=loanThirdServices,proto3" json:"loan_third_services,omitempty"`
-	OriginalContractDate   string                   `protobuf:"bytes,38,opt,name=original_contract_date,json=originalContractDate,proto3" json:"original_contract_date,omitempty"`
-	ExtensionDate          string                   `protobuf:"bytes,39,opt,name=extension_date,json=extensionDate,proto3" json:"extension_date,omitempty"`
-	LoanProcessor          string                   `protobuf:"bytes,40,opt,name=loan_processor,json=loanProcessor,proto3" json:"loan_processor,omitempty"`
-	Extend                 *LoanExtendValueEntry    `protobuf:"bytes,41,opt,name=extend,proto3" json:"extend,omitempty"`
-	LoanDocuments          []*LoanDocumentEntry     `protobuf:"bytes,42,rep,name=loan_documents,json=loanDocuments,proto3" json:"loan_documents,omitempty"`
-	Code                   string                   `protobuf:"bytes,43,opt,name=code,proto3" json:"code,omitempty"`
+type LoanEntity struct {
+	state                  protoimpl.MessageState    `protogen:"open.v1"`
+	Id                     int64                     `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Stage                  string                    `protobuf:"bytes,2,opt,name=stage,proto3" json:"stage,omitempty"`
+	PendingStatus          string                    `protobuf:"bytes,3,opt,name=pending_status,json=pendingStatus,proto3" json:"pending_status,omitempty"`
+	LoanPurpose            string                    `protobuf:"bytes,4,opt,name=loan_purpose,json=loanPurpose,proto3" json:"loan_purpose,omitempty"`
+	LoanType               string                    `protobuf:"bytes,5,opt,name=loan_type,json=loanType,proto3" json:"loan_type,omitempty"`
+	TotalAmount            float64                   `protobuf:"fixed64,6,opt,name=total_amount,json=totalAmount,proto3" json:"total_amount,omitempty"`
+	InitialAmount          float64                   `protobuf:"fixed64,7,opt,name=initial_amount,json=initialAmount,proto3" json:"initial_amount,omitempty"`
+	LoanProperty           *LoanPropertyEntity       `protobuf:"bytes,8,opt,name=loan_property,json=loanProperty,proto3" json:"loan_property,omitempty"`
+	LenderCompany          string                    `protobuf:"bytes,9,opt,name=lender_company,json=lenderCompany,proto3" json:"lender_company,omitempty"`
+	ClosingDate            string                    `protobuf:"bytes,10,opt,name=closing_date,json=closingDate,proto3" json:"closing_date,omitempty"`
+	HoldbackAmount         float64                   `protobuf:"fixed64,11,opt,name=holdback_amount,json=holdbackAmount,proto3" json:"holdback_amount,omitempty"`
+	HoldbackReleasedAmount float64                   `protobuf:"fixed64,12,opt,name=holdback_released_amount,json=holdbackReleasedAmount,proto3" json:"holdback_released_amount,omitempty"`
+	Rate                   float32                   `protobuf:"fixed32,13,opt,name=rate,proto3" json:"rate,omitempty"`
+	ClosingFund            float64                   `protobuf:"fixed64,14,opt,name=closing_fund,json=closingFund,proto3" json:"closing_fund,omitempty"`
+	PrincipalAmount        float64                   `protobuf:"fixed64,15,opt,name=principal_amount,json=principalAmount,proto3" json:"principal_amount,omitempty"`
+	MonthlyPayment         float64                   `protobuf:"fixed64,16,opt,name=monthly_payment,json=monthlyPayment,proto3" json:"monthly_payment,omitempty"`
+	LienPosition           string                    `protobuf:"bytes,17,opt,name=lien_position,json=lienPosition,proto3" json:"lien_position,omitempty"`
+	MaturityDate           string                    `protobuf:"bytes,18,opt,name=maturity_date,json=maturityDate,proto3" json:"maturity_date,omitempty"`
+	PrepaymentPenalty      int32                     `protobuf:"varint,19,opt,name=prepayment_penalty,json=prepaymentPenalty,proto3" json:"prepayment_penalty,omitempty"`
+	ServiceCompany         string                    `protobuf:"bytes,20,opt,name=service_company,json=serviceCompany,proto3" json:"service_company,omitempty"`
+	PaidOffDate            string                    `protobuf:"bytes,21,opt,name=paid_off_date,json=paidOffDate,proto3" json:"paid_off_date,omitempty"`
+	CreatedAt              string                    `protobuf:"bytes,22,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt              string                    `protobuf:"bytes,23,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	OrganizationId         int64                     `protobuf:"varint,24,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	BorrowerId             int64                     `protobuf:"varint,25,opt,name=borrower_id,json=borrowerId,proto3" json:"borrower_id,omitempty"`
+	BusinessStrategy       []string                  `protobuf:"bytes,26,rep,name=business_strategy,json=businessStrategy,proto3" json:"business_strategy,omitempty"`
+	Applicants             []*LoanApplicantEntity    `protobuf:"bytes,27,rep,name=applicants,proto3" json:"applicants,omitempty"`
+	Source                 string                    `protobuf:"bytes,28,opt,name=source,proto3" json:"source,omitempty"`
+	LoanTerm               int32                     `protobuf:"varint,29,opt,name=loan_term,json=loanTerm,proto3" json:"loan_term,omitempty"`
+	Ltv                    float64                   `protobuf:"fixed64,30,opt,name=ltv,proto3" json:"ltv,omitempty"`
+	EstCreditScore         int32                     `protobuf:"varint,31,opt,name=est_credit_score,json=estCreditScore,proto3" json:"est_credit_score,omitempty"`
+	ReservesAmount         float64                   `protobuf:"fixed64,32,opt,name=reserves_amount,json=reservesAmount,proto3" json:"reserves_amount,omitempty"`
+	TransactionExperiences []*LoanExperienceEntity   `protobuf:"bytes,33,rep,name=transaction_experiences,json=transactionExperiences,proto3" json:"transaction_experiences,omitempty"`
+	RealEstateExperiences  []*LoanExperienceEntity   `protobuf:"bytes,34,rep,name=real_estate_experiences,json=realEstateExperiences,proto3" json:"real_estate_experiences,omitempty"`
+	LoanBorrower           *LoanBorrowerEntity       `protobuf:"bytes,35,opt,name=loan_borrower,json=loanBorrower,proto3" json:"loan_borrower,omitempty"`
+	LoanDemographic        *LoanDemographicEntity    `protobuf:"bytes,36,opt,name=loan_demographic,json=loanDemographic,proto3" json:"loan_demographic,omitempty"`
+	LoanThirdServices      []*LoanThirdServiceEntity `protobuf:"bytes,37,rep,name=loan_third_services,json=loanThirdServices,proto3" json:"loan_third_services,omitempty"`
+	OriginalContractDate   string                    `protobuf:"bytes,38,opt,name=original_contract_date,json=originalContractDate,proto3" json:"original_contract_date,omitempty"`
+	ExtensionDate          string                    `protobuf:"bytes,39,opt,name=extension_date,json=extensionDate,proto3" json:"extension_date,omitempty"`
+	LoanProcessor          string                    `protobuf:"bytes,40,opt,name=loan_processor,json=loanProcessor,proto3" json:"loan_processor,omitempty"`
+	Extend                 *LoanExtendValueEntity    `protobuf:"bytes,41,opt,name=extend,proto3" json:"extend,omitempty"`
+	LoanDocuments          []*LoanDocumentEntity     `protobuf:"bytes,42,rep,name=loan_documents,json=loanDocuments,proto3" json:"loan_documents,omitempty"`
+	Code                   string                    `protobuf:"bytes,43,opt,name=code,proto3" json:"code,omitempty"`
 	unknownFields          protoimpl.UnknownFields
 	sizeCache              protoimpl.SizeCache
 }
 
-func (x *LoanEntry) Reset() {
-	*x = LoanEntry{}
+func (x *LoanEntity) Reset() {
+	*x = LoanEntity{}
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *LoanEntry) String() string {
+func (x *LoanEntity) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LoanEntry) ProtoMessage() {}
+func (*LoanEntity) ProtoMessage() {}
 
-func (x *LoanEntry) ProtoReflect() protoreflect.Message {
+func (x *LoanEntity) ProtoReflect() protoreflect.Message {
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1886,313 +1950,313 @@ func (x *LoanEntry) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LoanEntry.ProtoReflect.Descriptor instead.
-func (*LoanEntry) Descriptor() ([]byte, []int) {
+// Deprecated: Use LoanEntity.ProtoReflect.Descriptor instead.
+func (*LoanEntity) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{35}
 }
 
-func (x *LoanEntry) GetId() int64 {
+func (x *LoanEntity) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *LoanEntry) GetStage() string {
+func (x *LoanEntity) GetStage() string {
 	if x != nil {
 		return x.Stage
 	}
 	return ""
 }
 
-func (x *LoanEntry) GetPendingStatus() string {
+func (x *LoanEntity) GetPendingStatus() string {
 	if x != nil {
 		return x.PendingStatus
 	}
 	return ""
 }
 
-func (x *LoanEntry) GetLoanPurpose() string {
+func (x *LoanEntity) GetLoanPurpose() string {
 	if x != nil {
 		return x.LoanPurpose
 	}
 	return ""
 }
 
-func (x *LoanEntry) GetLoanType() string {
+func (x *LoanEntity) GetLoanType() string {
 	if x != nil {
 		return x.LoanType
 	}
 	return ""
 }
 
-func (x *LoanEntry) GetTotalAmount() float64 {
+func (x *LoanEntity) GetTotalAmount() float64 {
 	if x != nil {
 		return x.TotalAmount
 	}
 	return 0
 }
 
-func (x *LoanEntry) GetInitialAmount() float64 {
+func (x *LoanEntity) GetInitialAmount() float64 {
 	if x != nil {
 		return x.InitialAmount
 	}
 	return 0
 }
 
-func (x *LoanEntry) GetLoanProperty() *LoanPropertyEntry {
+func (x *LoanEntity) GetLoanProperty() *LoanPropertyEntity {
 	if x != nil {
 		return x.LoanProperty
 	}
 	return nil
 }
 
-func (x *LoanEntry) GetLenderCompany() string {
+func (x *LoanEntity) GetLenderCompany() string {
 	if x != nil {
 		return x.LenderCompany
 	}
 	return ""
 }
 
-func (x *LoanEntry) GetClosingDate() string {
+func (x *LoanEntity) GetClosingDate() string {
 	if x != nil {
 		return x.ClosingDate
 	}
 	return ""
 }
 
-func (x *LoanEntry) GetHoldbackAmount() float64 {
+func (x *LoanEntity) GetHoldbackAmount() float64 {
 	if x != nil {
 		return x.HoldbackAmount
 	}
 	return 0
 }
 
-func (x *LoanEntry) GetHoldbackReleasedAmount() float64 {
+func (x *LoanEntity) GetHoldbackReleasedAmount() float64 {
 	if x != nil {
 		return x.HoldbackReleasedAmount
 	}
 	return 0
 }
 
-func (x *LoanEntry) GetRate() float32 {
+func (x *LoanEntity) GetRate() float32 {
 	if x != nil {
 		return x.Rate
 	}
 	return 0
 }
 
-func (x *LoanEntry) GetClosingFund() float64 {
+func (x *LoanEntity) GetClosingFund() float64 {
 	if x != nil {
 		return x.ClosingFund
 	}
 	return 0
 }
 
-func (x *LoanEntry) GetPrincipalAmount() float64 {
+func (x *LoanEntity) GetPrincipalAmount() float64 {
 	if x != nil {
 		return x.PrincipalAmount
 	}
 	return 0
 }
 
-func (x *LoanEntry) GetMonthlyPayment() float64 {
+func (x *LoanEntity) GetMonthlyPayment() float64 {
 	if x != nil {
 		return x.MonthlyPayment
 	}
 	return 0
 }
 
-func (x *LoanEntry) GetLienPosition() string {
+func (x *LoanEntity) GetLienPosition() string {
 	if x != nil {
 		return x.LienPosition
 	}
 	return ""
 }
 
-func (x *LoanEntry) GetMaturityDate() string {
+func (x *LoanEntity) GetMaturityDate() string {
 	if x != nil {
 		return x.MaturityDate
 	}
 	return ""
 }
 
-func (x *LoanEntry) GetPrepaymentPenalty() int32 {
+func (x *LoanEntity) GetPrepaymentPenalty() int32 {
 	if x != nil {
 		return x.PrepaymentPenalty
 	}
 	return 0
 }
 
-func (x *LoanEntry) GetServiceCompany() string {
+func (x *LoanEntity) GetServiceCompany() string {
 	if x != nil {
 		return x.ServiceCompany
 	}
 	return ""
 }
 
-func (x *LoanEntry) GetPaidOffDate() string {
+func (x *LoanEntity) GetPaidOffDate() string {
 	if x != nil {
 		return x.PaidOffDate
 	}
 	return ""
 }
 
-func (x *LoanEntry) GetCreatedAt() string {
+func (x *LoanEntity) GetCreatedAt() string {
 	if x != nil {
 		return x.CreatedAt
 	}
 	return ""
 }
 
-func (x *LoanEntry) GetUpdatedAt() string {
+func (x *LoanEntity) GetUpdatedAt() string {
 	if x != nil {
 		return x.UpdatedAt
 	}
 	return ""
 }
 
-func (x *LoanEntry) GetOrganizationId() int64 {
+func (x *LoanEntity) GetOrganizationId() int64 {
 	if x != nil {
 		return x.OrganizationId
 	}
 	return 0
 }
 
-func (x *LoanEntry) GetBorrowerId() int64 {
+func (x *LoanEntity) GetBorrowerId() int64 {
 	if x != nil {
 		return x.BorrowerId
 	}
 	return 0
 }
 
-func (x *LoanEntry) GetBusinessStrategy() []string {
+func (x *LoanEntity) GetBusinessStrategy() []string {
 	if x != nil {
 		return x.BusinessStrategy
 	}
 	return nil
 }
 
-func (x *LoanEntry) GetApplicants() []*LoanApplicantEntry {
+func (x *LoanEntity) GetApplicants() []*LoanApplicantEntity {
 	if x != nil {
 		return x.Applicants
 	}
 	return nil
 }
 
-func (x *LoanEntry) GetSource() string {
+func (x *LoanEntity) GetSource() string {
 	if x != nil {
 		return x.Source
 	}
 	return ""
 }
 
-func (x *LoanEntry) GetLoanTerm() int32 {
+func (x *LoanEntity) GetLoanTerm() int32 {
 	if x != nil {
 		return x.LoanTerm
 	}
 	return 0
 }
 
-func (x *LoanEntry) GetLtv() float64 {
+func (x *LoanEntity) GetLtv() float64 {
 	if x != nil {
 		return x.Ltv
 	}
 	return 0
 }
 
-func (x *LoanEntry) GetEstCreditScore() int32 {
+func (x *LoanEntity) GetEstCreditScore() int32 {
 	if x != nil {
 		return x.EstCreditScore
 	}
 	return 0
 }
 
-func (x *LoanEntry) GetReservesAmount() float64 {
+func (x *LoanEntity) GetReservesAmount() float64 {
 	if x != nil {
 		return x.ReservesAmount
 	}
 	return 0
 }
 
-func (x *LoanEntry) GetTransactionExperiences() []*LoanExperienceEntry {
+func (x *LoanEntity) GetTransactionExperiences() []*LoanExperienceEntity {
 	if x != nil {
 		return x.TransactionExperiences
 	}
 	return nil
 }
 
-func (x *LoanEntry) GetRealEstateExperiences() []*LoanExperienceEntry {
+func (x *LoanEntity) GetRealEstateExperiences() []*LoanExperienceEntity {
 	if x != nil {
 		return x.RealEstateExperiences
 	}
 	return nil
 }
 
-func (x *LoanEntry) GetLoanBorrower() *LoanBorrowerEntry {
+func (x *LoanEntity) GetLoanBorrower() *LoanBorrowerEntity {
 	if x != nil {
 		return x.LoanBorrower
 	}
 	return nil
 }
 
-func (x *LoanEntry) GetLoanDemographic() *LoanDemographicEntry {
+func (x *LoanEntity) GetLoanDemographic() *LoanDemographicEntity {
 	if x != nil {
 		return x.LoanDemographic
 	}
 	return nil
 }
 
-func (x *LoanEntry) GetLoanThirdServices() []*LoanThirdServiceEntry {
+func (x *LoanEntity) GetLoanThirdServices() []*LoanThirdServiceEntity {
 	if x != nil {
 		return x.LoanThirdServices
 	}
 	return nil
 }
 
-func (x *LoanEntry) GetOriginalContractDate() string {
+func (x *LoanEntity) GetOriginalContractDate() string {
 	if x != nil {
 		return x.OriginalContractDate
 	}
 	return ""
 }
 
-func (x *LoanEntry) GetExtensionDate() string {
+func (x *LoanEntity) GetExtensionDate() string {
 	if x != nil {
 		return x.ExtensionDate
 	}
 	return ""
 }
 
-func (x *LoanEntry) GetLoanProcessor() string {
+func (x *LoanEntity) GetLoanProcessor() string {
 	if x != nil {
 		return x.LoanProcessor
 	}
 	return ""
 }
 
-func (x *LoanEntry) GetExtend() *LoanExtendValueEntry {
+func (x *LoanEntity) GetExtend() *LoanExtendValueEntity {
 	if x != nil {
 		return x.Extend
 	}
 	return nil
 }
 
-func (x *LoanEntry) GetLoanDocuments() []*LoanDocumentEntry {
+func (x *LoanEntity) GetLoanDocuments() []*LoanDocumentEntity {
 	if x != nil {
 		return x.LoanDocuments
 	}
 	return nil
 }
 
-func (x *LoanEntry) GetCode() string {
+func (x *LoanEntity) GetCode() string {
 	if x != nil {
 		return x.Code
 	}
 	return ""
 }
 
-type LoanBudgetEntry struct {
+type LoanBudgetEntity struct {
 	state                 protoimpl.MessageState `protogen:"open.v1"`
 	OriginalBudget        float64                `protobuf:"fixed64,1,opt,name=original_budget,json=originalBudget,proto3" json:"original_budget,omitempty"`
 	RemainingBudget       float64                `protobuf:"fixed64,2,opt,name=remaining_budget,json=remainingBudget,proto3" json:"remaining_budget,omitempty"`
@@ -2201,20 +2265,20 @@ type LoanBudgetEntry struct {
 	sizeCache             protoimpl.SizeCache
 }
 
-func (x *LoanBudgetEntry) Reset() {
-	*x = LoanBudgetEntry{}
+func (x *LoanBudgetEntity) Reset() {
+	*x = LoanBudgetEntity{}
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *LoanBudgetEntry) String() string {
+func (x *LoanBudgetEntity) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LoanBudgetEntry) ProtoMessage() {}
+func (*LoanBudgetEntity) ProtoMessage() {}
 
-func (x *LoanBudgetEntry) ProtoReflect() protoreflect.Message {
+func (x *LoanBudgetEntity) ProtoReflect() protoreflect.Message {
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -2226,33 +2290,33 @@ func (x *LoanBudgetEntry) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LoanBudgetEntry.ProtoReflect.Descriptor instead.
-func (*LoanBudgetEntry) Descriptor() ([]byte, []int) {
+// Deprecated: Use LoanBudgetEntity.ProtoReflect.Descriptor instead.
+func (*LoanBudgetEntity) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{36}
 }
 
-func (x *LoanBudgetEntry) GetOriginalBudget() float64 {
+func (x *LoanBudgetEntity) GetOriginalBudget() float64 {
 	if x != nil {
 		return x.OriginalBudget
 	}
 	return 0
 }
 
-func (x *LoanBudgetEntry) GetRemainingBudget() float64 {
+func (x *LoanBudgetEntity) GetRemainingBudget() float64 {
 	if x != nil {
 		return x.RemainingBudget
 	}
 	return 0
 }
 
-func (x *LoanBudgetEntry) GetCostSpentToDateAmount() float64 {
+func (x *LoanBudgetEntity) GetCostSpentToDateAmount() float64 {
 	if x != nil {
 		return x.CostSpentToDateAmount
 	}
 	return 0
 }
 
-type BorrowerEditApplicantEntry struct {
+type BorrowerEditApplicantEntity struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Deprecated: Marked as deprecated in app/lender/rpc/pb/lender.proto.
 	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
@@ -2266,20 +2330,20 @@ type BorrowerEditApplicantEntry struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *BorrowerEditApplicantEntry) Reset() {
-	*x = BorrowerEditApplicantEntry{}
+func (x *BorrowerEditApplicantEntity) Reset() {
+	*x = BorrowerEditApplicantEntity{}
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *BorrowerEditApplicantEntry) String() string {
+func (x *BorrowerEditApplicantEntity) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*BorrowerEditApplicantEntry) ProtoMessage() {}
+func (*BorrowerEditApplicantEntity) ProtoMessage() {}
 
-func (x *BorrowerEditApplicantEntry) ProtoReflect() protoreflect.Message {
+func (x *BorrowerEditApplicantEntity) ProtoReflect() protoreflect.Message {
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -2291,55 +2355,55 @@ func (x *BorrowerEditApplicantEntry) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use BorrowerEditApplicantEntry.ProtoReflect.Descriptor instead.
-func (*BorrowerEditApplicantEntry) Descriptor() ([]byte, []int) {
+// Deprecated: Use BorrowerEditApplicantEntity.ProtoReflect.Descriptor instead.
+func (*BorrowerEditApplicantEntity) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{37}
 }
 
 // Deprecated: Marked as deprecated in app/lender/rpc/pb/lender.proto.
-func (x *BorrowerEditApplicantEntry) GetName() string {
+func (x *BorrowerEditApplicantEntity) GetName() string {
 	if x != nil {
 		return x.Name
 	}
 	return ""
 }
 
-func (x *BorrowerEditApplicantEntry) GetType() string {
+func (x *BorrowerEditApplicantEntity) GetType() string {
 	if x != nil {
 		return x.Type
 	}
 	return ""
 }
 
-func (x *BorrowerEditApplicantEntry) GetIsPrimary() bool {
+func (x *BorrowerEditApplicantEntity) GetIsPrimary() bool {
 	if x != nil {
 		return x.IsPrimary
 	}
 	return false
 }
 
-func (x *BorrowerEditApplicantEntry) GetId() int64 {
+func (x *BorrowerEditApplicantEntity) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *BorrowerEditApplicantEntry) GetFirstName() string {
+func (x *BorrowerEditApplicantEntity) GetFirstName() string {
 	if x != nil {
 		return x.FirstName
 	}
 	return ""
 }
 
-func (x *BorrowerEditApplicantEntry) GetLastName() string {
+func (x *BorrowerEditApplicantEntity) GetLastName() string {
 	if x != nil {
 		return x.LastName
 	}
 	return ""
 }
 
-func (x *BorrowerEditApplicantEntry) GetMidName() string {
+func (x *BorrowerEditApplicantEntity) GetMidName() string {
 	if x != nil {
 		return x.MidName
 	}
@@ -2444,7 +2508,7 @@ func (x *LoanDetailRequestData) GetOrganizationId() int64 {
 
 type LoanDetailResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          *LoanEntry             `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	Data          *LoanEntity            `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2479,7 +2543,7 @@ func (*LoanDetailResponse) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{40}
 }
 
-func (x *LoanDetailResponse) GetData() *LoanEntry {
+func (x *LoanDetailResponse) GetData() *LoanEntity {
 	if x != nil {
 		return x.Data
 	}
@@ -2881,7 +2945,7 @@ type LoanPageResponseData struct {
 	Limit         int64                  `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
 	Total         int64                  `protobuf:"varint,3,opt,name=total,proto3" json:"total,omitempty"`
 	TotalPage     int64                  `protobuf:"varint,4,opt,name=total_page,json=totalPage,proto3" json:"total_page,omitempty"`
-	List          []*LoanEntry           `protobuf:"bytes,5,rep,name=list,proto3" json:"list,omitempty"`
+	List          []*LoanEntity          `protobuf:"bytes,5,rep,name=list,proto3" json:"list,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2944,7 +3008,7 @@ func (x *LoanPageResponseData) GetTotalPage() int64 {
 	return 0
 }
 
-func (x *LoanPageResponseData) GetList() []*LoanEntry {
+func (x *LoanPageResponseData) GetList() []*LoanEntity {
 	if x != nil {
 		return x.List
 	}
@@ -2996,27 +3060,27 @@ func (x *LoanUpdateRequest) GetData() *LoanUpdateRequestData {
 }
 
 type LoanUpdateRequestData struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
-	LoanPurpose       string                 `protobuf:"bytes,1,opt,name=loan_purpose,json=loanPurpose,proto3" json:"loan_purpose,omitempty"`
-	LoanType          string                 `protobuf:"bytes,2,opt,name=loan_type,json=loanType,proto3" json:"loan_type,omitempty"`
-	TotalAmount       float64                `protobuf:"fixed64,3,opt,name=total_amount,json=totalAmount,proto3" json:"total_amount,omitempty"`
-	InitialAmount     float64                `protobuf:"fixed64,4,opt,name=initial_amount,json=initialAmount,proto3" json:"initial_amount,omitempty"`
-	LoanProperty      *LoanPropertyEditEntry `protobuf:"bytes,5,opt,name=loan_property,json=loanProperty,proto3" json:"loan_property,omitempty"`
-	HoldbackAmount    float64                `protobuf:"fixed64,6,opt,name=holdback_amount,json=holdbackAmount,proto3" json:"holdback_amount,omitempty"`
-	PrincipalAmount   float64                `protobuf:"fixed64,7,opt,name=principal_amount,json=principalAmount,proto3" json:"principal_amount,omitempty"`
-	PrepaymentPenalty int32                  `protobuf:"varint,9,opt,name=prepayment_penalty,json=prepaymentPenalty,proto3" json:"prepayment_penalty,omitempty"`
+	state             protoimpl.MessageState  `protogen:"open.v1"`
+	LoanPurpose       string                  `protobuf:"bytes,1,opt,name=loan_purpose,json=loanPurpose,proto3" json:"loan_purpose,omitempty"`
+	LoanType          string                  `protobuf:"bytes,2,opt,name=loan_type,json=loanType,proto3" json:"loan_type,omitempty"`
+	TotalAmount       float64                 `protobuf:"fixed64,3,opt,name=total_amount,json=totalAmount,proto3" json:"total_amount,omitempty"`
+	InitialAmount     float64                 `protobuf:"fixed64,4,opt,name=initial_amount,json=initialAmount,proto3" json:"initial_amount,omitempty"`
+	LoanProperty      *LoanPropertyEditEntity `protobuf:"bytes,5,opt,name=loan_property,json=loanProperty,proto3" json:"loan_property,omitempty"`
+	HoldbackAmount    float64                 `protobuf:"fixed64,6,opt,name=holdback_amount,json=holdbackAmount,proto3" json:"holdback_amount,omitempty"`
+	PrincipalAmount   float64                 `protobuf:"fixed64,7,opt,name=principal_amount,json=principalAmount,proto3" json:"principal_amount,omitempty"`
+	PrepaymentPenalty int32                   `protobuf:"varint,9,opt,name=prepayment_penalty,json=prepaymentPenalty,proto3" json:"prepayment_penalty,omitempty"`
 	//  int64 organization_id = 10;
-	BusinessStrategy []string                      `protobuf:"bytes,11,rep,name=business_strategy,json=businessStrategy,proto3" json:"business_strategy,omitempty"`
-	Applicants       []*LoanApplicantLoanEditEntry `protobuf:"bytes,12,rep,name=applicants,proto3" json:"applicants,omitempty"`
-	LoanTerm         int32                         `protobuf:"varint,13,opt,name=loan_term,json=loanTerm,proto3" json:"loan_term,omitempty"`
+	BusinessStrategy []string                       `protobuf:"bytes,11,rep,name=business_strategy,json=businessStrategy,proto3" json:"business_strategy,omitempty"`
+	Applicants       []*LoanApplicantLoanEditEntity `protobuf:"bytes,12,rep,name=applicants,proto3" json:"applicants,omitempty"`
+	LoanTerm         int32                          `protobuf:"varint,13,opt,name=loan_term,json=loanTerm,proto3" json:"loan_term,omitempty"`
 	//  double ltv = 14;
-	EstCreditScore         int32                    `protobuf:"varint,15,opt,name=est_credit_score,json=estCreditScore,proto3" json:"est_credit_score,omitempty"`
-	ReservesAmount         float64                  `protobuf:"fixed64,16,opt,name=reserves_amount,json=reservesAmount,proto3" json:"reserves_amount,omitempty"`
-	TransactionExperiences []*LoanExperienceEntry   `protobuf:"bytes,17,rep,name=transaction_experiences,json=transactionExperiences,proto3" json:"transaction_experiences,omitempty"`
-	RealEstateExperiences  []*LoanExperienceEntry   `protobuf:"bytes,18,rep,name=real_estate_experiences,json=realEstateExperiences,proto3" json:"real_estate_experiences,omitempty"`
-	LoanDemographic        *LoanDemographicEntry    `protobuf:"bytes,19,opt,name=loan_demographic,json=loanDemographic,proto3" json:"loan_demographic,omitempty"`
-	LoanThirdServices      []*LoanThirdServiceEntry `protobuf:"bytes,20,rep,name=loan_third_services,json=loanThirdServices,proto3" json:"loan_third_services,omitempty"`
-	Id                     int64                    `protobuf:"varint,21,opt,name=id,proto3" json:"id,omitempty"`
+	EstCreditScore         int32                     `protobuf:"varint,15,opt,name=est_credit_score,json=estCreditScore,proto3" json:"est_credit_score,omitempty"`
+	ReservesAmount         float64                   `protobuf:"fixed64,16,opt,name=reserves_amount,json=reservesAmount,proto3" json:"reserves_amount,omitempty"`
+	TransactionExperiences []*LoanExperienceEntity   `protobuf:"bytes,17,rep,name=transaction_experiences,json=transactionExperiences,proto3" json:"transaction_experiences,omitempty"`
+	RealEstateExperiences  []*LoanExperienceEntity   `protobuf:"bytes,18,rep,name=real_estate_experiences,json=realEstateExperiences,proto3" json:"real_estate_experiences,omitempty"`
+	LoanDemographic        *LoanDemographicEntity    `protobuf:"bytes,19,opt,name=loan_demographic,json=loanDemographic,proto3" json:"loan_demographic,omitempty"`
+	LoanThirdServices      []*LoanThirdServiceEntity `protobuf:"bytes,20,rep,name=loan_third_services,json=loanThirdServices,proto3" json:"loan_third_services,omitempty"`
+	Id                     int64                     `protobuf:"varint,21,opt,name=id,proto3" json:"id,omitempty"`
 	//  int64 user_id = 22;
 	Stage         string `protobuf:"bytes,23,opt,name=stage,proto3" json:"stage,omitempty"`
 	PendingStatus string `protobuf:"bytes,24,opt,name=pending_status,json=pendingStatus,proto3" json:"pending_status,omitempty"`
@@ -3082,7 +3146,7 @@ func (x *LoanUpdateRequestData) GetInitialAmount() float64 {
 	return 0
 }
 
-func (x *LoanUpdateRequestData) GetLoanProperty() *LoanPropertyEditEntry {
+func (x *LoanUpdateRequestData) GetLoanProperty() *LoanPropertyEditEntity {
 	if x != nil {
 		return x.LoanProperty
 	}
@@ -3117,7 +3181,7 @@ func (x *LoanUpdateRequestData) GetBusinessStrategy() []string {
 	return nil
 }
 
-func (x *LoanUpdateRequestData) GetApplicants() []*LoanApplicantLoanEditEntry {
+func (x *LoanUpdateRequestData) GetApplicants() []*LoanApplicantLoanEditEntity {
 	if x != nil {
 		return x.Applicants
 	}
@@ -3145,28 +3209,28 @@ func (x *LoanUpdateRequestData) GetReservesAmount() float64 {
 	return 0
 }
 
-func (x *LoanUpdateRequestData) GetTransactionExperiences() []*LoanExperienceEntry {
+func (x *LoanUpdateRequestData) GetTransactionExperiences() []*LoanExperienceEntity {
 	if x != nil {
 		return x.TransactionExperiences
 	}
 	return nil
 }
 
-func (x *LoanUpdateRequestData) GetRealEstateExperiences() []*LoanExperienceEntry {
+func (x *LoanUpdateRequestData) GetRealEstateExperiences() []*LoanExperienceEntity {
 	if x != nil {
 		return x.RealEstateExperiences
 	}
 	return nil
 }
 
-func (x *LoanUpdateRequestData) GetLoanDemographic() *LoanDemographicEntry {
+func (x *LoanUpdateRequestData) GetLoanDemographic() *LoanDemographicEntity {
 	if x != nil {
 		return x.LoanDemographic
 	}
 	return nil
 }
 
-func (x *LoanUpdateRequestData) GetLoanThirdServices() []*LoanThirdServiceEntry {
+func (x *LoanUpdateRequestData) GetLoanThirdServices() []*LoanThirdServiceEntity {
 	if x != nil {
 		return x.LoanThirdServices
 	}
@@ -3282,7 +3346,7 @@ func (x *LoanUpdateResponseData) GetId() int64 {
 	return 0
 }
 
-type LoanExtendValueEntry struct {
+type LoanExtendValueEntity struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	Pricing           string                 `protobuf:"bytes,1,opt,name=pricing,proto3" json:"pricing,omitempty"`
 	LoanStatusUpdates string                 `protobuf:"bytes,2,opt,name=loan_status_updates,json=loanStatusUpdates,proto3" json:"loan_status_updates,omitempty"`
@@ -3293,20 +3357,20 @@ type LoanExtendValueEntry struct {
 	sizeCache         protoimpl.SizeCache
 }
 
-func (x *LoanExtendValueEntry) Reset() {
-	*x = LoanExtendValueEntry{}
+func (x *LoanExtendValueEntity) Reset() {
+	*x = LoanExtendValueEntity{}
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *LoanExtendValueEntry) String() string {
+func (x *LoanExtendValueEntity) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LoanExtendValueEntry) ProtoMessage() {}
+func (*LoanExtendValueEntity) ProtoMessage() {}
 
-func (x *LoanExtendValueEntry) ProtoReflect() protoreflect.Message {
+func (x *LoanExtendValueEntity) ProtoReflect() protoreflect.Message {
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -3318,40 +3382,40 @@ func (x *LoanExtendValueEntry) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LoanExtendValueEntry.ProtoReflect.Descriptor instead.
-func (*LoanExtendValueEntry) Descriptor() ([]byte, []int) {
+// Deprecated: Use LoanExtendValueEntity.ProtoReflect.Descriptor instead.
+func (*LoanExtendValueEntity) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{53}
 }
 
-func (x *LoanExtendValueEntry) GetPricing() string {
+func (x *LoanExtendValueEntity) GetPricing() string {
 	if x != nil {
 		return x.Pricing
 	}
 	return ""
 }
 
-func (x *LoanExtendValueEntry) GetLoanStatusUpdates() string {
+func (x *LoanExtendValueEntity) GetLoanStatusUpdates() string {
 	if x != nil {
 		return x.LoanStatusUpdates
 	}
 	return ""
 }
 
-func (x *LoanExtendValueEntry) GetMeetingNotes() string {
+func (x *LoanExtendValueEntity) GetMeetingNotes() string {
 	if x != nil {
 		return x.MeetingNotes
 	}
 	return ""
 }
 
-func (x *LoanExtendValueEntry) GetActionList() string {
+func (x *LoanExtendValueEntity) GetActionList() string {
 	if x != nil {
 		return x.ActionList
 	}
 	return ""
 }
 
-func (x *LoanExtendValueEntry) GetBusinessLine() string {
+func (x *LoanExtendValueEntity) GetBusinessLine() string {
 	if x != nil {
 		return x.BusinessLine
 	}
@@ -3407,7 +3471,7 @@ type LoanUpdateDocumentsRequestData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	BorrowerId    int64                  `protobuf:"varint,2,opt,name=borrower_id,json=borrowerId,proto3" json:"borrower_id,omitempty"`
-	Documents     []*FileEntry           `protobuf:"bytes,3,rep,name=documents,proto3" json:"documents,omitempty"`
+	Documents     []*FileEntity          `protobuf:"bytes,3,rep,name=documents,proto3" json:"documents,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3456,7 +3520,7 @@ func (x *LoanUpdateDocumentsRequestData) GetBorrowerId() int64 {
 	return 0
 }
 
-func (x *LoanUpdateDocumentsRequestData) GetDocuments() []*FileEntry {
+func (x *LoanUpdateDocumentsRequestData) GetDocuments() []*FileEntity {
 	if x != nil {
 		return x.Documents
 	}
@@ -3880,8 +3944,8 @@ func (x *LoanDocumentOptsRequestData) GetId() int64 {
 }
 
 type LoanDocumentOptsResponse struct {
-	state         protoimpl.MessageState  `protogen:"open.v1"`
-	Data          []*LoanDocumentOptEntry `protobuf:"bytes,1,rep,name=data,proto3" json:"data,omitempty"`
+	state         protoimpl.MessageState   `protogen:"open.v1"`
+	Data          []*LoanDocumentOptEntity `protobuf:"bytes,1,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3916,7 +3980,7 @@ func (*LoanDocumentOptsResponse) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{64}
 }
 
-func (x *LoanDocumentOptsResponse) GetData() []*LoanDocumentOptEntry {
+func (x *LoanDocumentOptsResponse) GetData() []*LoanDocumentOptEntity {
 	if x != nil {
 		return x.Data
 	}
@@ -3924,64 +3988,64 @@ func (x *LoanDocumentOptsResponse) GetData() []*LoanDocumentOptEntry {
 }
 
 // ===================== loan property service start ======================
-type LoanPropertyEntry struct {
-	state                protoimpl.MessageState `protogen:"open.v1"`
-	Id                   int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	PropertyType         string                 `protobuf:"bytes,2,opt,name=property_type,json=propertyType,proto3" json:"property_type,omitempty"`
-	BorrowerProperty     *BorrowerPropertyEntry `protobuf:"bytes,3,opt,name=borrower_property,json=borrowerProperty,proto3" json:"borrower_property,omitempty"`
-	LivingAreaSqft       float32                `protobuf:"fixed32,5,opt,name=living_area_sqft,json=livingAreaSqft,proto3" json:"living_area_sqft,omitempty"`
-	Bedrooms             int32                  `protobuf:"varint,6,opt,name=bedrooms,proto3" json:"bedrooms,omitempty"`
-	Bathrooms            int32                  `protobuf:"varint,7,opt,name=bathrooms,proto3" json:"bathrooms,omitempty"`
-	FuturePropertyType   string                 `protobuf:"bytes,8,opt,name=future_property_type,json=futurePropertyType,proto3" json:"future_property_type,omitempty"`
-	FutureUnit           int32                  `protobuf:"varint,9,opt,name=future_unit,json=futureUnit,proto3" json:"future_unit,omitempty"`
-	FutureLivingAreaSqft float32                `protobuf:"fixed32,10,opt,name=future_living_area_sqft,json=futureLivingAreaSqft,proto3" json:"future_living_area_sqft,omitempty"`
-	FutureBedrooms       int32                  `protobuf:"varint,11,opt,name=future_bedrooms,json=futureBedrooms,proto3" json:"future_bedrooms,omitempty"`
-	FutureBathrooms      int32                  `protobuf:"varint,12,opt,name=future_bathrooms,json=futureBathrooms,proto3" json:"future_bathrooms,omitempty"`
-	Owner                string                 `protobuf:"bytes,13,opt,name=owner,proto3" json:"owner,omitempty"`
-	Unit                 int32                  `protobuf:"varint,14,opt,name=unit,proto3" json:"unit,omitempty"`
+type LoanPropertyEntity struct {
+	state                protoimpl.MessageState  `protogen:"open.v1"`
+	Id                   int64                   `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	PropertyType         string                  `protobuf:"bytes,2,opt,name=property_type,json=propertyType,proto3" json:"property_type,omitempty"`
+	BorrowerProperty     *BorrowerPropertyEntity `protobuf:"bytes,3,opt,name=borrower_property,json=borrowerProperty,proto3" json:"borrower_property,omitempty"`
+	LivingAreaSqft       float32                 `protobuf:"fixed32,5,opt,name=living_area_sqft,json=livingAreaSqft,proto3" json:"living_area_sqft,omitempty"`
+	Bedrooms             int32                   `protobuf:"varint,6,opt,name=bedrooms,proto3" json:"bedrooms,omitempty"`
+	Bathrooms            int32                   `protobuf:"varint,7,opt,name=bathrooms,proto3" json:"bathrooms,omitempty"`
+	FuturePropertyType   string                  `protobuf:"bytes,8,opt,name=future_property_type,json=futurePropertyType,proto3" json:"future_property_type,omitempty"`
+	FutureUnit           int32                   `protobuf:"varint,9,opt,name=future_unit,json=futureUnit,proto3" json:"future_unit,omitempty"`
+	FutureLivingAreaSqft float32                 `protobuf:"fixed32,10,opt,name=future_living_area_sqft,json=futureLivingAreaSqft,proto3" json:"future_living_area_sqft,omitempty"`
+	FutureBedrooms       int32                   `protobuf:"varint,11,opt,name=future_bedrooms,json=futureBedrooms,proto3" json:"future_bedrooms,omitempty"`
+	FutureBathrooms      int32                   `protobuf:"varint,12,opt,name=future_bathrooms,json=futureBathrooms,proto3" json:"future_bathrooms,omitempty"`
+	Owner                string                  `protobuf:"bytes,13,opt,name=owner,proto3" json:"owner,omitempty"`
+	Unit                 int32                   `protobuf:"varint,14,opt,name=unit,proto3" json:"unit,omitempty"`
 	//
-	ExistingLenderCompany        string           `protobuf:"bytes,15,opt,name=existing_lender_company,json=existingLenderCompany,proto3" json:"existing_lender_company,omitempty"`
-	ExistingRate                 float32          `protobuf:"fixed32,16,opt,name=existing_rate,json=existingRate,proto3" json:"existing_rate,omitempty"`
-	ExistingMaturityDate         string           `protobuf:"bytes,17,opt,name=existing_maturity_date,json=existingMaturityDate,proto3" json:"existing_maturity_date,omitempty"`
-	PurchaseAmount               float64          `protobuf:"fixed64,18,opt,name=purchase_amount,json=purchaseAmount,proto3" json:"purchase_amount,omitempty"`
-	PurchaseDate                 string           `protobuf:"bytes,19,opt,name=purchase_date,json=purchaseDate,proto3" json:"purchase_date,omitempty"`
-	HasAssignmentFee             bool             `protobuf:"varint,20,opt,name=has_assignment_fee,json=hasAssignmentFee,proto3" json:"has_assignment_fee,omitempty"`
-	AssignmentFeeAmount          float64          `protobuf:"fixed64,21,opt,name=assignment_fee_amount,json=assignmentFeeAmount,proto3" json:"assignment_fee_amount,omitempty"`
-	HasSubordinateDebt           bool             `protobuf:"varint,22,opt,name=has_subordinate_debt,json=hasSubordinateDebt,proto3" json:"has_subordinate_debt,omitempty"`
-	SubordinateDebtAmount        float64          `protobuf:"fixed64,23,opt,name=subordinate_debt_amount,json=subordinateDebtAmount,proto3" json:"subordinate_debt_amount,omitempty"`
-	ScheduledCloseEscrowDate     string           `protobuf:"bytes,24,opt,name=scheduled_close_escrow_date,json=scheduledCloseEscrowDate,proto3" json:"scheduled_close_escrow_date,omitempty"`
-	LiquidityAmount              float64          `protobuf:"fixed64,25,opt,name=liquidity_amount,json=liquidityAmount,proto3" json:"liquidity_amount,omitempty"`
-	Budget                       *LoanBudgetEntry `protobuf:"bytes,26,opt,name=budget,proto3" json:"budget,omitempty"`
-	MidConstruction              bool             `protobuf:"varint,27,opt,name=mid_construction,json=midConstruction,proto3" json:"mid_construction,omitempty"`
-	EstYearlyRentalIncomeAmount  float64          `protobuf:"fixed64,28,opt,name=est_yearly_rental_income_amount,json=estYearlyRentalIncomeAmount,proto3" json:"est_yearly_rental_income_amount,omitempty"`
-	YearlyLiabilityExpenseAmount float64          `protobuf:"fixed64,29,opt,name=yearly_liability_expense_amount,json=yearlyLiabilityExpenseAmount,proto3" json:"yearly_liability_expense_amount,omitempty"`
-	Dscr                         float64          `protobuf:"fixed64,30,opt,name=dscr,proto3" json:"dscr,omitempty"`
-	HasDelayedFinancing          bool             `protobuf:"varint,31,opt,name=has_delayed_financing,json=hasDelayedFinancing,proto3" json:"has_delayed_financing,omitempty"`
-	HasCollateralizedBlanket     bool             `protobuf:"varint,32,opt,name=has_collateralized_blanket,json=hasCollateralizedBlanket,proto3" json:"has_collateralized_blanket,omitempty"`
-	HasPropertiesVacant          bool             `protobuf:"varint,33,opt,name=has_properties_vacant,json=hasPropertiesVacant,proto3" json:"has_properties_vacant,omitempty"`
-	HasShortTermRental           bool             `protobuf:"varint,34,opt,name=has_short_term_rental,json=hasShortTermRental,proto3" json:"has_short_term_rental,omitempty"`
-	EstPropertyValueAmount       float64          `protobuf:"fixed64,35,opt,name=est_property_value_amount,json=estPropertyValueAmount,proto3" json:"est_property_value_amount,omitempty"`
-	Address                      *AddressEntry    `protobuf:"bytes,36,opt,name=address,proto3" json:"address,omitempty"`
-	Arv                          float64          `protobuf:"fixed64,37,opt,name=arv,proto3" json:"arv,omitempty"`
-	BorrowerPropertyId           int64            `protobuf:"varint,38,opt,name=borrower_property_id,json=borrowerPropertyId,proto3" json:"borrower_property_id,omitempty"`
+	ExistingLenderCompany        string            `protobuf:"bytes,15,opt,name=existing_lender_company,json=existingLenderCompany,proto3" json:"existing_lender_company,omitempty"`
+	ExistingRate                 float32           `protobuf:"fixed32,16,opt,name=existing_rate,json=existingRate,proto3" json:"existing_rate,omitempty"`
+	ExistingMaturityDate         string            `protobuf:"bytes,17,opt,name=existing_maturity_date,json=existingMaturityDate,proto3" json:"existing_maturity_date,omitempty"`
+	PurchaseAmount               float64           `protobuf:"fixed64,18,opt,name=purchase_amount,json=purchaseAmount,proto3" json:"purchase_amount,omitempty"`
+	PurchaseDate                 string            `protobuf:"bytes,19,opt,name=purchase_date,json=purchaseDate,proto3" json:"purchase_date,omitempty"`
+	HasAssignmentFee             bool              `protobuf:"varint,20,opt,name=has_assignment_fee,json=hasAssignmentFee,proto3" json:"has_assignment_fee,omitempty"`
+	AssignmentFeeAmount          float64           `protobuf:"fixed64,21,opt,name=assignment_fee_amount,json=assignmentFeeAmount,proto3" json:"assignment_fee_amount,omitempty"`
+	HasSubordinateDebt           bool              `protobuf:"varint,22,opt,name=has_subordinate_debt,json=hasSubordinateDebt,proto3" json:"has_subordinate_debt,omitempty"`
+	SubordinateDebtAmount        float64           `protobuf:"fixed64,23,opt,name=subordinate_debt_amount,json=subordinateDebtAmount,proto3" json:"subordinate_debt_amount,omitempty"`
+	ScheduledCloseEscrowDate     string            `protobuf:"bytes,24,opt,name=scheduled_close_escrow_date,json=scheduledCloseEscrowDate,proto3" json:"scheduled_close_escrow_date,omitempty"`
+	LiquidityAmount              float64           `protobuf:"fixed64,25,opt,name=liquidity_amount,json=liquidityAmount,proto3" json:"liquidity_amount,omitempty"`
+	Budget                       *LoanBudgetEntity `protobuf:"bytes,26,opt,name=budget,proto3" json:"budget,omitempty"`
+	MidConstruction              bool              `protobuf:"varint,27,opt,name=mid_construction,json=midConstruction,proto3" json:"mid_construction,omitempty"`
+	EstYearlyRentalIncomeAmount  float64           `protobuf:"fixed64,28,opt,name=est_yearly_rental_income_amount,json=estYearlyRentalIncomeAmount,proto3" json:"est_yearly_rental_income_amount,omitempty"`
+	YearlyLiabilityExpenseAmount float64           `protobuf:"fixed64,29,opt,name=yearly_liability_expense_amount,json=yearlyLiabilityExpenseAmount,proto3" json:"yearly_liability_expense_amount,omitempty"`
+	Dscr                         float64           `protobuf:"fixed64,30,opt,name=dscr,proto3" json:"dscr,omitempty"`
+	HasDelayedFinancing          bool              `protobuf:"varint,31,opt,name=has_delayed_financing,json=hasDelayedFinancing,proto3" json:"has_delayed_financing,omitempty"`
+	HasCollateralizedBlanket     bool              `protobuf:"varint,32,opt,name=has_collateralized_blanket,json=hasCollateralizedBlanket,proto3" json:"has_collateralized_blanket,omitempty"`
+	HasPropertiesVacant          bool              `protobuf:"varint,33,opt,name=has_properties_vacant,json=hasPropertiesVacant,proto3" json:"has_properties_vacant,omitempty"`
+	HasShortTermRental           bool              `protobuf:"varint,34,opt,name=has_short_term_rental,json=hasShortTermRental,proto3" json:"has_short_term_rental,omitempty"`
+	EstPropertyValueAmount       float64           `protobuf:"fixed64,35,opt,name=est_property_value_amount,json=estPropertyValueAmount,proto3" json:"est_property_value_amount,omitempty"`
+	Address                      *AddressEntity    `protobuf:"bytes,36,opt,name=address,proto3" json:"address,omitempty"`
+	Arv                          float64           `protobuf:"fixed64,37,opt,name=arv,proto3" json:"arv,omitempty"`
+	BorrowerPropertyId           int64             `protobuf:"varint,38,opt,name=borrower_property_id,json=borrowerPropertyId,proto3" json:"borrower_property_id,omitempty"`
 	unknownFields                protoimpl.UnknownFields
 	sizeCache                    protoimpl.SizeCache
 }
 
-func (x *LoanPropertyEntry) Reset() {
-	*x = LoanPropertyEntry{}
+func (x *LoanPropertyEntity) Reset() {
+	*x = LoanPropertyEntity{}
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[65]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *LoanPropertyEntry) String() string {
+func (x *LoanPropertyEntity) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LoanPropertyEntry) ProtoMessage() {}
+func (*LoanPropertyEntity) ProtoMessage() {}
 
-func (x *LoanPropertyEntry) ProtoReflect() protoreflect.Message {
+func (x *LoanPropertyEntity) ProtoReflect() protoreflect.Message {
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[65]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -3993,271 +4057,271 @@ func (x *LoanPropertyEntry) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LoanPropertyEntry.ProtoReflect.Descriptor instead.
-func (*LoanPropertyEntry) Descriptor() ([]byte, []int) {
+// Deprecated: Use LoanPropertyEntity.ProtoReflect.Descriptor instead.
+func (*LoanPropertyEntity) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{65}
 }
 
-func (x *LoanPropertyEntry) GetId() int64 {
+func (x *LoanPropertyEntity) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *LoanPropertyEntry) GetPropertyType() string {
+func (x *LoanPropertyEntity) GetPropertyType() string {
 	if x != nil {
 		return x.PropertyType
 	}
 	return ""
 }
 
-func (x *LoanPropertyEntry) GetBorrowerProperty() *BorrowerPropertyEntry {
+func (x *LoanPropertyEntity) GetBorrowerProperty() *BorrowerPropertyEntity {
 	if x != nil {
 		return x.BorrowerProperty
 	}
 	return nil
 }
 
-func (x *LoanPropertyEntry) GetLivingAreaSqft() float32 {
+func (x *LoanPropertyEntity) GetLivingAreaSqft() float32 {
 	if x != nil {
 		return x.LivingAreaSqft
 	}
 	return 0
 }
 
-func (x *LoanPropertyEntry) GetBedrooms() int32 {
+func (x *LoanPropertyEntity) GetBedrooms() int32 {
 	if x != nil {
 		return x.Bedrooms
 	}
 	return 0
 }
 
-func (x *LoanPropertyEntry) GetBathrooms() int32 {
+func (x *LoanPropertyEntity) GetBathrooms() int32 {
 	if x != nil {
 		return x.Bathrooms
 	}
 	return 0
 }
 
-func (x *LoanPropertyEntry) GetFuturePropertyType() string {
+func (x *LoanPropertyEntity) GetFuturePropertyType() string {
 	if x != nil {
 		return x.FuturePropertyType
 	}
 	return ""
 }
 
-func (x *LoanPropertyEntry) GetFutureUnit() int32 {
+func (x *LoanPropertyEntity) GetFutureUnit() int32 {
 	if x != nil {
 		return x.FutureUnit
 	}
 	return 0
 }
 
-func (x *LoanPropertyEntry) GetFutureLivingAreaSqft() float32 {
+func (x *LoanPropertyEntity) GetFutureLivingAreaSqft() float32 {
 	if x != nil {
 		return x.FutureLivingAreaSqft
 	}
 	return 0
 }
 
-func (x *LoanPropertyEntry) GetFutureBedrooms() int32 {
+func (x *LoanPropertyEntity) GetFutureBedrooms() int32 {
 	if x != nil {
 		return x.FutureBedrooms
 	}
 	return 0
 }
 
-func (x *LoanPropertyEntry) GetFutureBathrooms() int32 {
+func (x *LoanPropertyEntity) GetFutureBathrooms() int32 {
 	if x != nil {
 		return x.FutureBathrooms
 	}
 	return 0
 }
 
-func (x *LoanPropertyEntry) GetOwner() string {
+func (x *LoanPropertyEntity) GetOwner() string {
 	if x != nil {
 		return x.Owner
 	}
 	return ""
 }
 
-func (x *LoanPropertyEntry) GetUnit() int32 {
+func (x *LoanPropertyEntity) GetUnit() int32 {
 	if x != nil {
 		return x.Unit
 	}
 	return 0
 }
 
-func (x *LoanPropertyEntry) GetExistingLenderCompany() string {
+func (x *LoanPropertyEntity) GetExistingLenderCompany() string {
 	if x != nil {
 		return x.ExistingLenderCompany
 	}
 	return ""
 }
 
-func (x *LoanPropertyEntry) GetExistingRate() float32 {
+func (x *LoanPropertyEntity) GetExistingRate() float32 {
 	if x != nil {
 		return x.ExistingRate
 	}
 	return 0
 }
 
-func (x *LoanPropertyEntry) GetExistingMaturityDate() string {
+func (x *LoanPropertyEntity) GetExistingMaturityDate() string {
 	if x != nil {
 		return x.ExistingMaturityDate
 	}
 	return ""
 }
 
-func (x *LoanPropertyEntry) GetPurchaseAmount() float64 {
+func (x *LoanPropertyEntity) GetPurchaseAmount() float64 {
 	if x != nil {
 		return x.PurchaseAmount
 	}
 	return 0
 }
 
-func (x *LoanPropertyEntry) GetPurchaseDate() string {
+func (x *LoanPropertyEntity) GetPurchaseDate() string {
 	if x != nil {
 		return x.PurchaseDate
 	}
 	return ""
 }
 
-func (x *LoanPropertyEntry) GetHasAssignmentFee() bool {
+func (x *LoanPropertyEntity) GetHasAssignmentFee() bool {
 	if x != nil {
 		return x.HasAssignmentFee
 	}
 	return false
 }
 
-func (x *LoanPropertyEntry) GetAssignmentFeeAmount() float64 {
+func (x *LoanPropertyEntity) GetAssignmentFeeAmount() float64 {
 	if x != nil {
 		return x.AssignmentFeeAmount
 	}
 	return 0
 }
 
-func (x *LoanPropertyEntry) GetHasSubordinateDebt() bool {
+func (x *LoanPropertyEntity) GetHasSubordinateDebt() bool {
 	if x != nil {
 		return x.HasSubordinateDebt
 	}
 	return false
 }
 
-func (x *LoanPropertyEntry) GetSubordinateDebtAmount() float64 {
+func (x *LoanPropertyEntity) GetSubordinateDebtAmount() float64 {
 	if x != nil {
 		return x.SubordinateDebtAmount
 	}
 	return 0
 }
 
-func (x *LoanPropertyEntry) GetScheduledCloseEscrowDate() string {
+func (x *LoanPropertyEntity) GetScheduledCloseEscrowDate() string {
 	if x != nil {
 		return x.ScheduledCloseEscrowDate
 	}
 	return ""
 }
 
-func (x *LoanPropertyEntry) GetLiquidityAmount() float64 {
+func (x *LoanPropertyEntity) GetLiquidityAmount() float64 {
 	if x != nil {
 		return x.LiquidityAmount
 	}
 	return 0
 }
 
-func (x *LoanPropertyEntry) GetBudget() *LoanBudgetEntry {
+func (x *LoanPropertyEntity) GetBudget() *LoanBudgetEntity {
 	if x != nil {
 		return x.Budget
 	}
 	return nil
 }
 
-func (x *LoanPropertyEntry) GetMidConstruction() bool {
+func (x *LoanPropertyEntity) GetMidConstruction() bool {
 	if x != nil {
 		return x.MidConstruction
 	}
 	return false
 }
 
-func (x *LoanPropertyEntry) GetEstYearlyRentalIncomeAmount() float64 {
+func (x *LoanPropertyEntity) GetEstYearlyRentalIncomeAmount() float64 {
 	if x != nil {
 		return x.EstYearlyRentalIncomeAmount
 	}
 	return 0
 }
 
-func (x *LoanPropertyEntry) GetYearlyLiabilityExpenseAmount() float64 {
+func (x *LoanPropertyEntity) GetYearlyLiabilityExpenseAmount() float64 {
 	if x != nil {
 		return x.YearlyLiabilityExpenseAmount
 	}
 	return 0
 }
 
-func (x *LoanPropertyEntry) GetDscr() float64 {
+func (x *LoanPropertyEntity) GetDscr() float64 {
 	if x != nil {
 		return x.Dscr
 	}
 	return 0
 }
 
-func (x *LoanPropertyEntry) GetHasDelayedFinancing() bool {
+func (x *LoanPropertyEntity) GetHasDelayedFinancing() bool {
 	if x != nil {
 		return x.HasDelayedFinancing
 	}
 	return false
 }
 
-func (x *LoanPropertyEntry) GetHasCollateralizedBlanket() bool {
+func (x *LoanPropertyEntity) GetHasCollateralizedBlanket() bool {
 	if x != nil {
 		return x.HasCollateralizedBlanket
 	}
 	return false
 }
 
-func (x *LoanPropertyEntry) GetHasPropertiesVacant() bool {
+func (x *LoanPropertyEntity) GetHasPropertiesVacant() bool {
 	if x != nil {
 		return x.HasPropertiesVacant
 	}
 	return false
 }
 
-func (x *LoanPropertyEntry) GetHasShortTermRental() bool {
+func (x *LoanPropertyEntity) GetHasShortTermRental() bool {
 	if x != nil {
 		return x.HasShortTermRental
 	}
 	return false
 }
 
-func (x *LoanPropertyEntry) GetEstPropertyValueAmount() float64 {
+func (x *LoanPropertyEntity) GetEstPropertyValueAmount() float64 {
 	if x != nil {
 		return x.EstPropertyValueAmount
 	}
 	return 0
 }
 
-func (x *LoanPropertyEntry) GetAddress() *AddressEntry {
+func (x *LoanPropertyEntity) GetAddress() *AddressEntity {
 	if x != nil {
 		return x.Address
 	}
 	return nil
 }
 
-func (x *LoanPropertyEntry) GetArv() float64 {
+func (x *LoanPropertyEntity) GetArv() float64 {
 	if x != nil {
 		return x.Arv
 	}
 	return 0
 }
 
-func (x *LoanPropertyEntry) GetBorrowerPropertyId() int64 {
+func (x *LoanPropertyEntity) GetBorrowerPropertyId() int64 {
 	if x != nil {
 		return x.BorrowerPropertyId
 	}
 	return 0
 }
 
-type LoanPropertyEditEntry struct {
+type LoanPropertyEditEntity struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Id    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	//  int64 borrower_property_id = 2;
@@ -4268,21 +4332,21 @@ type LoanPropertyEditEntry struct {
 	FutureBathrooms      int32   `protobuf:"varint,7,opt,name=future_bathrooms,json=futureBathrooms,proto3" json:"future_bathrooms,omitempty"`
 	Owner                string  `protobuf:"bytes,8,opt,name=owner,proto3" json:"owner,omitempty"`
 	//
-	ExistingLenderCompany        string           `protobuf:"bytes,9,opt,name=existing_lender_company,json=existingLenderCompany,proto3" json:"existing_lender_company,omitempty"`
-	ExistingRate                 float32          `protobuf:"fixed32,10,opt,name=existing_rate,json=existingRate,proto3" json:"existing_rate,omitempty"`
-	ExistingMaturityDate         string           `protobuf:"bytes,11,opt,name=existing_maturity_date,json=existingMaturityDate,proto3" json:"existing_maturity_date,omitempty"`
-	PurchaseAmount               float64          `protobuf:"fixed64,12,opt,name=purchase_amount,json=purchaseAmount,proto3" json:"purchase_amount,omitempty"`
-	PurchaseDate                 string           `protobuf:"bytes,13,opt,name=purchase_date,json=purchaseDate,proto3" json:"purchase_date,omitempty"`
-	HasAssignmentFee             bool             `protobuf:"varint,14,opt,name=has_assignment_fee,json=hasAssignmentFee,proto3" json:"has_assignment_fee,omitempty"`
-	AssignmentFeeAmount          float64          `protobuf:"fixed64,15,opt,name=assignment_fee_amount,json=assignmentFeeAmount,proto3" json:"assignment_fee_amount,omitempty"`
-	HasSubordinateDebt           bool             `protobuf:"varint,16,opt,name=has_subordinate_debt,json=hasSubordinateDebt,proto3" json:"has_subordinate_debt,omitempty"`
-	SubordinateDebtAmount        float64          `protobuf:"fixed64,17,opt,name=subordinate_debt_amount,json=subordinateDebtAmount,proto3" json:"subordinate_debt_amount,omitempty"`
-	ScheduledCloseEscrowDate     string           `protobuf:"bytes,18,opt,name=scheduled_close_escrow_date,json=scheduledCloseEscrowDate,proto3" json:"scheduled_close_escrow_date,omitempty"`
-	LiquidityAmount              float64          `protobuf:"fixed64,19,opt,name=liquidity_amount,json=liquidityAmount,proto3" json:"liquidity_amount,omitempty"`
-	Budget                       *LoanBudgetEntry `protobuf:"bytes,20,opt,name=budget,proto3" json:"budget,omitempty"`
-	MidConstruction              bool             `protobuf:"varint,21,opt,name=mid_construction,json=midConstruction,proto3" json:"mid_construction,omitempty"`
-	EstYearlyRentalIncomeAmount  float64          `protobuf:"fixed64,22,opt,name=est_yearly_rental_income_amount,json=estYearlyRentalIncomeAmount,proto3" json:"est_yearly_rental_income_amount,omitempty"`
-	YearlyLiabilityExpenseAmount float64          `protobuf:"fixed64,23,opt,name=yearly_liability_expense_amount,json=yearlyLiabilityExpenseAmount,proto3" json:"yearly_liability_expense_amount,omitempty"`
+	ExistingLenderCompany        string            `protobuf:"bytes,9,opt,name=existing_lender_company,json=existingLenderCompany,proto3" json:"existing_lender_company,omitempty"`
+	ExistingRate                 float32           `protobuf:"fixed32,10,opt,name=existing_rate,json=existingRate,proto3" json:"existing_rate,omitempty"`
+	ExistingMaturityDate         string            `protobuf:"bytes,11,opt,name=existing_maturity_date,json=existingMaturityDate,proto3" json:"existing_maturity_date,omitempty"`
+	PurchaseAmount               float64           `protobuf:"fixed64,12,opt,name=purchase_amount,json=purchaseAmount,proto3" json:"purchase_amount,omitempty"`
+	PurchaseDate                 string            `protobuf:"bytes,13,opt,name=purchase_date,json=purchaseDate,proto3" json:"purchase_date,omitempty"`
+	HasAssignmentFee             bool              `protobuf:"varint,14,opt,name=has_assignment_fee,json=hasAssignmentFee,proto3" json:"has_assignment_fee,omitempty"`
+	AssignmentFeeAmount          float64           `protobuf:"fixed64,15,opt,name=assignment_fee_amount,json=assignmentFeeAmount,proto3" json:"assignment_fee_amount,omitempty"`
+	HasSubordinateDebt           bool              `protobuf:"varint,16,opt,name=has_subordinate_debt,json=hasSubordinateDebt,proto3" json:"has_subordinate_debt,omitempty"`
+	SubordinateDebtAmount        float64           `protobuf:"fixed64,17,opt,name=subordinate_debt_amount,json=subordinateDebtAmount,proto3" json:"subordinate_debt_amount,omitempty"`
+	ScheduledCloseEscrowDate     string            `protobuf:"bytes,18,opt,name=scheduled_close_escrow_date,json=scheduledCloseEscrowDate,proto3" json:"scheduled_close_escrow_date,omitempty"`
+	LiquidityAmount              float64           `protobuf:"fixed64,19,opt,name=liquidity_amount,json=liquidityAmount,proto3" json:"liquidity_amount,omitempty"`
+	Budget                       *LoanBudgetEntity `protobuf:"bytes,20,opt,name=budget,proto3" json:"budget,omitempty"`
+	MidConstruction              bool              `protobuf:"varint,21,opt,name=mid_construction,json=midConstruction,proto3" json:"mid_construction,omitempty"`
+	EstYearlyRentalIncomeAmount  float64           `protobuf:"fixed64,22,opt,name=est_yearly_rental_income_amount,json=estYearlyRentalIncomeAmount,proto3" json:"est_yearly_rental_income_amount,omitempty"`
+	YearlyLiabilityExpenseAmount float64           `protobuf:"fixed64,23,opt,name=yearly_liability_expense_amount,json=yearlyLiabilityExpenseAmount,proto3" json:"yearly_liability_expense_amount,omitempty"`
 	//  double dscr = 24;
 	HasDelayedFinancing      bool    `protobuf:"varint,25,opt,name=has_delayed_financing,json=hasDelayedFinancing,proto3" json:"has_delayed_financing,omitempty"`
 	HasCollateralizedBlanket bool    `protobuf:"varint,26,opt,name=has_collateralized_blanket,json=hasCollateralizedBlanket,proto3" json:"has_collateralized_blanket,omitempty"`
@@ -4294,20 +4358,20 @@ type LoanPropertyEditEntry struct {
 	sizeCache                protoimpl.SizeCache
 }
 
-func (x *LoanPropertyEditEntry) Reset() {
-	*x = LoanPropertyEditEntry{}
+func (x *LoanPropertyEditEntity) Reset() {
+	*x = LoanPropertyEditEntity{}
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[66]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *LoanPropertyEditEntry) String() string {
+func (x *LoanPropertyEditEntity) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LoanPropertyEditEntry) ProtoMessage() {}
+func (*LoanPropertyEditEntity) ProtoMessage() {}
 
-func (x *LoanPropertyEditEntry) ProtoReflect() protoreflect.Message {
+func (x *LoanPropertyEditEntity) ProtoReflect() protoreflect.Message {
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[66]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -4319,201 +4383,201 @@ func (x *LoanPropertyEditEntry) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LoanPropertyEditEntry.ProtoReflect.Descriptor instead.
-func (*LoanPropertyEditEntry) Descriptor() ([]byte, []int) {
+// Deprecated: Use LoanPropertyEditEntity.ProtoReflect.Descriptor instead.
+func (*LoanPropertyEditEntity) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{66}
 }
 
-func (x *LoanPropertyEditEntry) GetId() int64 {
+func (x *LoanPropertyEditEntity) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *LoanPropertyEditEntry) GetFuturePropertyType() string {
+func (x *LoanPropertyEditEntity) GetFuturePropertyType() string {
 	if x != nil {
 		return x.FuturePropertyType
 	}
 	return ""
 }
 
-func (x *LoanPropertyEditEntry) GetFutureUnit() int32 {
+func (x *LoanPropertyEditEntity) GetFutureUnit() int32 {
 	if x != nil {
 		return x.FutureUnit
 	}
 	return 0
 }
 
-func (x *LoanPropertyEditEntry) GetFutureLivingAreaSqft() float32 {
+func (x *LoanPropertyEditEntity) GetFutureLivingAreaSqft() float32 {
 	if x != nil {
 		return x.FutureLivingAreaSqft
 	}
 	return 0
 }
 
-func (x *LoanPropertyEditEntry) GetFutureBedrooms() int32 {
+func (x *LoanPropertyEditEntity) GetFutureBedrooms() int32 {
 	if x != nil {
 		return x.FutureBedrooms
 	}
 	return 0
 }
 
-func (x *LoanPropertyEditEntry) GetFutureBathrooms() int32 {
+func (x *LoanPropertyEditEntity) GetFutureBathrooms() int32 {
 	if x != nil {
 		return x.FutureBathrooms
 	}
 	return 0
 }
 
-func (x *LoanPropertyEditEntry) GetOwner() string {
+func (x *LoanPropertyEditEntity) GetOwner() string {
 	if x != nil {
 		return x.Owner
 	}
 	return ""
 }
 
-func (x *LoanPropertyEditEntry) GetExistingLenderCompany() string {
+func (x *LoanPropertyEditEntity) GetExistingLenderCompany() string {
 	if x != nil {
 		return x.ExistingLenderCompany
 	}
 	return ""
 }
 
-func (x *LoanPropertyEditEntry) GetExistingRate() float32 {
+func (x *LoanPropertyEditEntity) GetExistingRate() float32 {
 	if x != nil {
 		return x.ExistingRate
 	}
 	return 0
 }
 
-func (x *LoanPropertyEditEntry) GetExistingMaturityDate() string {
+func (x *LoanPropertyEditEntity) GetExistingMaturityDate() string {
 	if x != nil {
 		return x.ExistingMaturityDate
 	}
 	return ""
 }
 
-func (x *LoanPropertyEditEntry) GetPurchaseAmount() float64 {
+func (x *LoanPropertyEditEntity) GetPurchaseAmount() float64 {
 	if x != nil {
 		return x.PurchaseAmount
 	}
 	return 0
 }
 
-func (x *LoanPropertyEditEntry) GetPurchaseDate() string {
+func (x *LoanPropertyEditEntity) GetPurchaseDate() string {
 	if x != nil {
 		return x.PurchaseDate
 	}
 	return ""
 }
 
-func (x *LoanPropertyEditEntry) GetHasAssignmentFee() bool {
+func (x *LoanPropertyEditEntity) GetHasAssignmentFee() bool {
 	if x != nil {
 		return x.HasAssignmentFee
 	}
 	return false
 }
 
-func (x *LoanPropertyEditEntry) GetAssignmentFeeAmount() float64 {
+func (x *LoanPropertyEditEntity) GetAssignmentFeeAmount() float64 {
 	if x != nil {
 		return x.AssignmentFeeAmount
 	}
 	return 0
 }
 
-func (x *LoanPropertyEditEntry) GetHasSubordinateDebt() bool {
+func (x *LoanPropertyEditEntity) GetHasSubordinateDebt() bool {
 	if x != nil {
 		return x.HasSubordinateDebt
 	}
 	return false
 }
 
-func (x *LoanPropertyEditEntry) GetSubordinateDebtAmount() float64 {
+func (x *LoanPropertyEditEntity) GetSubordinateDebtAmount() float64 {
 	if x != nil {
 		return x.SubordinateDebtAmount
 	}
 	return 0
 }
 
-func (x *LoanPropertyEditEntry) GetScheduledCloseEscrowDate() string {
+func (x *LoanPropertyEditEntity) GetScheduledCloseEscrowDate() string {
 	if x != nil {
 		return x.ScheduledCloseEscrowDate
 	}
 	return ""
 }
 
-func (x *LoanPropertyEditEntry) GetLiquidityAmount() float64 {
+func (x *LoanPropertyEditEntity) GetLiquidityAmount() float64 {
 	if x != nil {
 		return x.LiquidityAmount
 	}
 	return 0
 }
 
-func (x *LoanPropertyEditEntry) GetBudget() *LoanBudgetEntry {
+func (x *LoanPropertyEditEntity) GetBudget() *LoanBudgetEntity {
 	if x != nil {
 		return x.Budget
 	}
 	return nil
 }
 
-func (x *LoanPropertyEditEntry) GetMidConstruction() bool {
+func (x *LoanPropertyEditEntity) GetMidConstruction() bool {
 	if x != nil {
 		return x.MidConstruction
 	}
 	return false
 }
 
-func (x *LoanPropertyEditEntry) GetEstYearlyRentalIncomeAmount() float64 {
+func (x *LoanPropertyEditEntity) GetEstYearlyRentalIncomeAmount() float64 {
 	if x != nil {
 		return x.EstYearlyRentalIncomeAmount
 	}
 	return 0
 }
 
-func (x *LoanPropertyEditEntry) GetYearlyLiabilityExpenseAmount() float64 {
+func (x *LoanPropertyEditEntity) GetYearlyLiabilityExpenseAmount() float64 {
 	if x != nil {
 		return x.YearlyLiabilityExpenseAmount
 	}
 	return 0
 }
 
-func (x *LoanPropertyEditEntry) GetHasDelayedFinancing() bool {
+func (x *LoanPropertyEditEntity) GetHasDelayedFinancing() bool {
 	if x != nil {
 		return x.HasDelayedFinancing
 	}
 	return false
 }
 
-func (x *LoanPropertyEditEntry) GetHasCollateralizedBlanket() bool {
+func (x *LoanPropertyEditEntity) GetHasCollateralizedBlanket() bool {
 	if x != nil {
 		return x.HasCollateralizedBlanket
 	}
 	return false
 }
 
-func (x *LoanPropertyEditEntry) GetHasPropertiesVacant() bool {
+func (x *LoanPropertyEditEntity) GetHasPropertiesVacant() bool {
 	if x != nil {
 		return x.HasPropertiesVacant
 	}
 	return false
 }
 
-func (x *LoanPropertyEditEntry) GetHasShortTermRental() bool {
+func (x *LoanPropertyEditEntity) GetHasShortTermRental() bool {
 	if x != nil {
 		return x.HasShortTermRental
 	}
 	return false
 }
 
-func (x *LoanPropertyEditEntry) GetEstPropertyValueAmount() float64 {
+func (x *LoanPropertyEditEntity) GetEstPropertyValueAmount() float64 {
 	if x != nil {
 		return x.EstPropertyValueAmount
 	}
 	return 0
 }
 
-func (x *LoanPropertyEditEntry) GetArv() float64 {
+func (x *LoanPropertyEditEntity) GetArv() float64 {
 	if x != nil {
 		return x.Arv
 	}
@@ -4521,7 +4585,7 @@ func (x *LoanPropertyEditEntry) GetArv() float64 {
 }
 
 // ===================== loan applicant service start ======================
-type LoanApplicantEntry struct {
+type LoanApplicantEntity struct {
 	state               protoimpl.MessageState `protogen:"open.v1"`
 	Id                  int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	FirstName           string                 `protobuf:"bytes,2,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
@@ -4540,7 +4604,7 @@ type LoanApplicantEntry struct {
 	Email               string                 `protobuf:"bytes,15,opt,name=email,proto3" json:"email,omitempty"`
 	EstCreditScore      int32                  `protobuf:"varint,16,opt,name=est_credit_score,json=estCreditScore,proto3" json:"est_credit_score,omitempty"`
 	DriverLicenseNum    string                 `protobuf:"bytes,17,opt,name=driver_license_num,json=driverLicenseNum,proto3" json:"driver_license_num,omitempty"`
-	Address             *AddressEntry          `protobuf:"bytes,18,opt,name=address,proto3" json:"address,omitempty"`
+	Address             *AddressEntity         `protobuf:"bytes,18,opt,name=address,proto3" json:"address,omitempty"`
 	LoanBorrowerId      int64                  `protobuf:"varint,19,opt,name=loan_borrower_id,json=loanBorrowerId,proto3" json:"loan_borrower_id,omitempty"`
 	Phone               string                 `protobuf:"bytes,20,opt,name=phone,proto3" json:"phone,omitempty"`
 	OwnPercent          int32                  `protobuf:"varint,21,opt,name=own_percent,json=ownPercent,proto3" json:"own_percent,omitempty"`
@@ -4551,20 +4615,20 @@ type LoanApplicantEntry struct {
 	sizeCache           protoimpl.SizeCache
 }
 
-func (x *LoanApplicantEntry) Reset() {
-	*x = LoanApplicantEntry{}
+func (x *LoanApplicantEntity) Reset() {
+	*x = LoanApplicantEntity{}
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[67]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *LoanApplicantEntry) String() string {
+func (x *LoanApplicantEntity) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LoanApplicantEntry) ProtoMessage() {}
+func (*LoanApplicantEntity) ProtoMessage() {}
 
-func (x *LoanApplicantEntry) ProtoReflect() protoreflect.Message {
+func (x *LoanApplicantEntity) ProtoReflect() protoreflect.Message {
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[67]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -4576,180 +4640,180 @@ func (x *LoanApplicantEntry) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LoanApplicantEntry.ProtoReflect.Descriptor instead.
-func (*LoanApplicantEntry) Descriptor() ([]byte, []int) {
+// Deprecated: Use LoanApplicantEntity.ProtoReflect.Descriptor instead.
+func (*LoanApplicantEntity) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{67}
 }
 
-func (x *LoanApplicantEntry) GetId() int64 {
+func (x *LoanApplicantEntity) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *LoanApplicantEntry) GetFirstName() string {
+func (x *LoanApplicantEntity) GetFirstName() string {
 	if x != nil {
 		return x.FirstName
 	}
 	return ""
 }
 
-func (x *LoanApplicantEntry) GetLastName() string {
+func (x *LoanApplicantEntity) GetLastName() string {
 	if x != nil {
 		return x.LastName
 	}
 	return ""
 }
 
-func (x *LoanApplicantEntry) GetIsPrimary() bool {
+func (x *LoanApplicantEntity) GetIsPrimary() bool {
 	if x != nil {
 		return x.IsPrimary
 	}
 	return false
 }
 
-func (x *LoanApplicantEntry) GetCreatedAt() string {
+func (x *LoanApplicantEntity) GetCreatedAt() string {
 	if x != nil {
 		return x.CreatedAt
 	}
 	return ""
 }
 
-func (x *LoanApplicantEntry) GetUpdatedAt() string {
+func (x *LoanApplicantEntity) GetUpdatedAt() string {
 	if x != nil {
 		return x.UpdatedAt
 	}
 	return ""
 }
 
-func (x *LoanApplicantEntry) GetMidName() string {
+func (x *LoanApplicantEntity) GetMidName() string {
 	if x != nil {
 		return x.MidName
 	}
 	return ""
 }
 
-func (x *LoanApplicantEntry) GetType() string {
+func (x *LoanApplicantEntity) GetType() string {
 	if x != nil {
 		return x.Type
 	}
 	return ""
 }
 
-func (x *LoanApplicantEntry) GetInvitationStatus() string {
+func (x *LoanApplicantEntity) GetInvitationStatus() string {
 	if x != nil {
 		return x.InvitationStatus
 	}
 	return ""
 }
 
-func (x *LoanApplicantEntry) GetFullName() string {
+func (x *LoanApplicantEntity) GetFullName() string {
 	if x != nil {
 		return x.FullName
 	}
 	return ""
 }
 
-func (x *LoanApplicantEntry) GetLoanPropertyId() int64 {
+func (x *LoanApplicantEntity) GetLoanPropertyId() int64 {
 	if x != nil {
 		return x.LoanPropertyId
 	}
 	return 0
 }
 
-func (x *LoanApplicantEntry) GetSsn() string {
+func (x *LoanApplicantEntity) GetSsn() string {
 	if x != nil {
 		return x.Ssn
 	}
 	return ""
 }
 
-func (x *LoanApplicantEntry) GetDob() string {
+func (x *LoanApplicantEntity) GetDob() string {
 	if x != nil {
 		return x.Dob
 	}
 	return ""
 }
 
-func (x *LoanApplicantEntry) GetMaritalStatus() string {
+func (x *LoanApplicantEntity) GetMaritalStatus() string {
 	if x != nil {
 		return x.MaritalStatus
 	}
 	return ""
 }
 
-func (x *LoanApplicantEntry) GetEmail() string {
+func (x *LoanApplicantEntity) GetEmail() string {
 	if x != nil {
 		return x.Email
 	}
 	return ""
 }
 
-func (x *LoanApplicantEntry) GetEstCreditScore() int32 {
+func (x *LoanApplicantEntity) GetEstCreditScore() int32 {
 	if x != nil {
 		return x.EstCreditScore
 	}
 	return 0
 }
 
-func (x *LoanApplicantEntry) GetDriverLicenseNum() string {
+func (x *LoanApplicantEntity) GetDriverLicenseNum() string {
 	if x != nil {
 		return x.DriverLicenseNum
 	}
 	return ""
 }
 
-func (x *LoanApplicantEntry) GetAddress() *AddressEntry {
+func (x *LoanApplicantEntity) GetAddress() *AddressEntity {
 	if x != nil {
 		return x.Address
 	}
 	return nil
 }
 
-func (x *LoanApplicantEntry) GetLoanBorrowerId() int64 {
+func (x *LoanApplicantEntity) GetLoanBorrowerId() int64 {
 	if x != nil {
 		return x.LoanBorrowerId
 	}
 	return 0
 }
 
-func (x *LoanApplicantEntry) GetPhone() string {
+func (x *LoanApplicantEntity) GetPhone() string {
 	if x != nil {
 		return x.Phone
 	}
 	return ""
 }
 
-func (x *LoanApplicantEntry) GetOwnPercent() int32 {
+func (x *LoanApplicantEntity) GetOwnPercent() int32 {
 	if x != nil {
 		return x.OwnPercent
 	}
 	return 0
 }
 
-func (x *LoanApplicantEntry) GetBorrowerApplicantId() int64 {
+func (x *LoanApplicantEntity) GetBorrowerApplicantId() int64 {
 	if x != nil {
 		return x.BorrowerApplicantId
 	}
 	return 0
 }
 
-func (x *LoanApplicantEntry) GetLoanId() int64 {
+func (x *LoanApplicantEntity) GetLoanId() int64 {
 	if x != nil {
 		return x.LoanId
 	}
 	return 0
 }
 
-func (x *LoanApplicantEntry) GetBorrowerId() int64 {
+func (x *LoanApplicantEntity) GetBorrowerId() int64 {
 	if x != nil {
 		return x.BorrowerId
 	}
 	return 0
 }
 
-type LoanApplicantLoanEditEntry struct {
+type LoanApplicantLoanEditEntity struct {
 	state               protoimpl.MessageState `protogen:"open.v1"`
 	Id                  int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	BorrowerApplicantId int64                  `protobuf:"varint,2,opt,name=borrower_applicant_id,json=borrowerApplicantId,proto3" json:"borrower_applicant_id,omitempty"`
@@ -4759,20 +4823,20 @@ type LoanApplicantLoanEditEntry struct {
 	sizeCache           protoimpl.SizeCache
 }
 
-func (x *LoanApplicantLoanEditEntry) Reset() {
-	*x = LoanApplicantLoanEditEntry{}
+func (x *LoanApplicantLoanEditEntity) Reset() {
+	*x = LoanApplicantLoanEditEntity{}
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[68]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *LoanApplicantLoanEditEntry) String() string {
+func (x *LoanApplicantLoanEditEntity) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LoanApplicantLoanEditEntry) ProtoMessage() {}
+func (*LoanApplicantLoanEditEntity) ProtoMessage() {}
 
-func (x *LoanApplicantLoanEditEntry) ProtoReflect() protoreflect.Message {
+func (x *LoanApplicantLoanEditEntity) ProtoReflect() protoreflect.Message {
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[68]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -4784,33 +4848,33 @@ func (x *LoanApplicantLoanEditEntry) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LoanApplicantLoanEditEntry.ProtoReflect.Descriptor instead.
-func (*LoanApplicantLoanEditEntry) Descriptor() ([]byte, []int) {
+// Deprecated: Use LoanApplicantLoanEditEntity.ProtoReflect.Descriptor instead.
+func (*LoanApplicantLoanEditEntity) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{68}
 }
 
-func (x *LoanApplicantLoanEditEntry) GetId() int64 {
+func (x *LoanApplicantLoanEditEntity) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *LoanApplicantLoanEditEntry) GetBorrowerApplicantId() int64 {
+func (x *LoanApplicantLoanEditEntity) GetBorrowerApplicantId() int64 {
 	if x != nil {
 		return x.BorrowerApplicantId
 	}
 	return 0
 }
 
-func (x *LoanApplicantLoanEditEntry) GetIsPrimary() bool {
+func (x *LoanApplicantLoanEditEntity) GetIsPrimary() bool {
 	if x != nil {
 		return x.IsPrimary
 	}
 	return false
 }
 
-func (x *LoanApplicantLoanEditEntry) GetOwnPercent() int32 {
+func (x *LoanApplicantLoanEditEntity) GetOwnPercent() int32 {
 	if x != nil {
 		return x.OwnPercent
 	}
@@ -4818,7 +4882,7 @@ func (x *LoanApplicantLoanEditEntry) GetOwnPercent() int32 {
 }
 
 // ===================== loan document service start ======================
-type LoanDocumentEntry struct {
+type LoanDocumentEntity struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	LoanId         int64                  `protobuf:"varint,2,opt,name=loan_id,json=loanId,proto3" json:"loan_id,omitempty"`
@@ -4828,26 +4892,26 @@ type LoanDocumentEntry struct {
 	Status         string                 `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
 	CreatedAt      string                 `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt      string                 `protobuf:"bytes,8,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	Files          []*FileEntry           `protobuf:"bytes,9,rep,name=files,proto3" json:"files,omitempty"`
+	Files          []*FileEntity          `protobuf:"bytes,9,rep,name=files,proto3" json:"files,omitempty"`
 	LastUploadedAt string                 `protobuf:"bytes,10,opt,name=LastUploadedAt,proto3" json:"LastUploadedAt,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
 
-func (x *LoanDocumentEntry) Reset() {
-	*x = LoanDocumentEntry{}
+func (x *LoanDocumentEntity) Reset() {
+	*x = LoanDocumentEntity{}
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[69]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *LoanDocumentEntry) String() string {
+func (x *LoanDocumentEntity) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LoanDocumentEntry) ProtoMessage() {}
+func (*LoanDocumentEntity) ProtoMessage() {}
 
-func (x *LoanDocumentEntry) ProtoReflect() protoreflect.Message {
+func (x *LoanDocumentEntity) ProtoReflect() protoreflect.Message {
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[69]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -4859,82 +4923,82 @@ func (x *LoanDocumentEntry) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LoanDocumentEntry.ProtoReflect.Descriptor instead.
-func (*LoanDocumentEntry) Descriptor() ([]byte, []int) {
+// Deprecated: Use LoanDocumentEntity.ProtoReflect.Descriptor instead.
+func (*LoanDocumentEntity) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{69}
 }
 
-func (x *LoanDocumentEntry) GetId() int64 {
+func (x *LoanDocumentEntity) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *LoanDocumentEntry) GetLoanId() int64 {
+func (x *LoanDocumentEntity) GetLoanId() int64 {
 	if x != nil {
 		return x.LoanId
 	}
 	return 0
 }
 
-func (x *LoanDocumentEntry) GetCategory() string {
+func (x *LoanDocumentEntity) GetCategory() string {
 	if x != nil {
 		return x.Category
 	}
 	return ""
 }
 
-func (x *LoanDocumentEntry) GetFileType() string {
+func (x *LoanDocumentEntity) GetFileType() string {
 	if x != nil {
 		return x.FileType
 	}
 	return ""
 }
 
-func (x *LoanDocumentEntry) GetComment() string {
+func (x *LoanDocumentEntity) GetComment() string {
 	if x != nil {
 		return x.Comment
 	}
 	return ""
 }
 
-func (x *LoanDocumentEntry) GetStatus() string {
+func (x *LoanDocumentEntity) GetStatus() string {
 	if x != nil {
 		return x.Status
 	}
 	return ""
 }
 
-func (x *LoanDocumentEntry) GetCreatedAt() string {
+func (x *LoanDocumentEntity) GetCreatedAt() string {
 	if x != nil {
 		return x.CreatedAt
 	}
 	return ""
 }
 
-func (x *LoanDocumentEntry) GetUpdatedAt() string {
+func (x *LoanDocumentEntity) GetUpdatedAt() string {
 	if x != nil {
 		return x.UpdatedAt
 	}
 	return ""
 }
 
-func (x *LoanDocumentEntry) GetFiles() []*FileEntry {
+func (x *LoanDocumentEntity) GetFiles() []*FileEntity {
 	if x != nil {
 		return x.Files
 	}
 	return nil
 }
 
-func (x *LoanDocumentEntry) GetLastUploadedAt() string {
+func (x *LoanDocumentEntity) GetLastUploadedAt() string {
 	if x != nil {
 		return x.LastUploadedAt
 	}
 	return ""
 }
 
-type LoanDocumentOptEntry struct {
+type LoanDocumentOptEntity struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	FileType      string                 `protobuf:"bytes,2,opt,name=file_type,json=fileType,proto3" json:"file_type,omitempty"`
@@ -4943,20 +5007,20 @@ type LoanDocumentOptEntry struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *LoanDocumentOptEntry) Reset() {
-	*x = LoanDocumentOptEntry{}
+func (x *LoanDocumentOptEntity) Reset() {
+	*x = LoanDocumentOptEntity{}
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[70]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *LoanDocumentOptEntry) String() string {
+func (x *LoanDocumentOptEntity) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LoanDocumentOptEntry) ProtoMessage() {}
+func (*LoanDocumentOptEntity) ProtoMessage() {}
 
-func (x *LoanDocumentOptEntry) ProtoReflect() protoreflect.Message {
+func (x *LoanDocumentOptEntity) ProtoReflect() protoreflect.Message {
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[70]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -4968,26 +5032,26 @@ func (x *LoanDocumentOptEntry) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LoanDocumentOptEntry.ProtoReflect.Descriptor instead.
-func (*LoanDocumentOptEntry) Descriptor() ([]byte, []int) {
+// Deprecated: Use LoanDocumentOptEntity.ProtoReflect.Descriptor instead.
+func (*LoanDocumentOptEntity) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{70}
 }
 
-func (x *LoanDocumentOptEntry) GetId() int64 {
+func (x *LoanDocumentOptEntity) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *LoanDocumentOptEntry) GetFileType() string {
+func (x *LoanDocumentOptEntity) GetFileType() string {
 	if x != nil {
 		return x.FileType
 	}
 	return ""
 }
 
-func (x *LoanDocumentOptEntry) GetCategory() string {
+func (x *LoanDocumentOptEntity) GetCategory() string {
 	if x != nil {
 		return x.Category
 	}
@@ -5330,7 +5394,7 @@ type LoanDocumentSendRequestsRequestData struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	//  int64 organization_id = 1;
 	//  int64 user_id = 2;
-	Documents     []*SendDocumentRequestEntry `protobuf:"bytes,3,rep,name=documents,proto3" json:"documents,omitempty"`
+	Documents     []*SendDocumentRequestEntity `protobuf:"bytes,3,rep,name=documents,proto3" json:"documents,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -5365,14 +5429,14 @@ func (*LoanDocumentSendRequestsRequestData) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{78}
 }
 
-func (x *LoanDocumentSendRequestsRequestData) GetDocuments() []*SendDocumentRequestEntry {
+func (x *LoanDocumentSendRequestsRequestData) GetDocuments() []*SendDocumentRequestEntity {
 	if x != nil {
 		return x.Documents
 	}
 	return nil
 }
 
-type SendDocumentRequestEntry struct {
+type SendDocumentRequestEntity struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Comment       string                 `protobuf:"bytes,2,opt,name=comment,proto3" json:"comment,omitempty"`
@@ -5380,20 +5444,20 @@ type SendDocumentRequestEntry struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SendDocumentRequestEntry) Reset() {
-	*x = SendDocumentRequestEntry{}
+func (x *SendDocumentRequestEntity) Reset() {
+	*x = SendDocumentRequestEntity{}
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[79]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SendDocumentRequestEntry) String() string {
+func (x *SendDocumentRequestEntity) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SendDocumentRequestEntry) ProtoMessage() {}
+func (*SendDocumentRequestEntity) ProtoMessage() {}
 
-func (x *SendDocumentRequestEntry) ProtoReflect() protoreflect.Message {
+func (x *SendDocumentRequestEntity) ProtoReflect() protoreflect.Message {
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[79]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -5405,19 +5469,19 @@ func (x *SendDocumentRequestEntry) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SendDocumentRequestEntry.ProtoReflect.Descriptor instead.
-func (*SendDocumentRequestEntry) Descriptor() ([]byte, []int) {
+// Deprecated: Use SendDocumentRequestEntity.ProtoReflect.Descriptor instead.
+func (*SendDocumentRequestEntity) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{79}
 }
 
-func (x *SendDocumentRequestEntry) GetId() int64 {
+func (x *SendDocumentRequestEntity) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *SendDocumentRequestEntry) GetComment() string {
+func (x *SendDocumentRequestEntity) GetComment() string {
 	if x != nil {
 		return x.Comment
 	}
@@ -5532,8 +5596,8 @@ func (x *LoanDocumentCreateExtendTypeRequestData) GetCategory() string {
 }
 
 type LoanDocumentCreateExtendTypeResponse struct {
-	state         protoimpl.MessageState  `protogen:"open.v1"`
-	Data          []*LoanDocumentOptEntry `protobuf:"bytes,1,rep,name=data,proto3" json:"data,omitempty"`
+	state         protoimpl.MessageState   `protogen:"open.v1"`
+	Data          []*LoanDocumentOptEntity `protobuf:"bytes,1,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -5568,7 +5632,7 @@ func (*LoanDocumentCreateExtendTypeResponse) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{82}
 }
 
-func (x *LoanDocumentCreateExtendTypeResponse) GetData() []*LoanDocumentOptEntry {
+func (x *LoanDocumentCreateExtendTypeResponse) GetData() []*LoanDocumentOptEntity {
 	if x != nil {
 		return x.Data
 	}
@@ -5675,7 +5739,7 @@ func (x *LoanDocumentAddFilesRequestData) GetFileUrls() []string {
 }
 
 // ===================== loan borrower service start ======================
-type LoanBorrowerEntry struct {
+type LoanBorrowerEntity struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	LoanId           int64                  `protobuf:"varint,2,opt,name=loan_id,json=loanId,proto3" json:"loan_id,omitempty"`
@@ -5683,7 +5747,7 @@ type LoanBorrowerEntry struct {
 	Name             string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
 	TinType          string                 `protobuf:"bytes,5,opt,name=tin_type,json=tinType,proto3" json:"tin_type,omitempty"`
 	Tin              string                 `protobuf:"bytes,6,opt,name=tin,proto3" json:"tin,omitempty"`
-	MailingAddress   *AddressEntry          `protobuf:"bytes,7,opt,name=mailing_address,json=mailingAddress,proto3" json:"mailing_address,omitempty"`
+	MailingAddress   *AddressEntity         `protobuf:"bytes,7,opt,name=mailing_address,json=mailingAddress,proto3" json:"mailing_address,omitempty"`
 	ContactEmail     string                 `protobuf:"bytes,8,opt,name=contact_email,json=contactEmail,proto3" json:"contact_email,omitempty"`
 	ContactPhone     string                 `protobuf:"bytes,9,opt,name=contact_phone,json=contactPhone,proto3" json:"contact_phone,omitempty"`
 	ContactName      string                 `protobuf:"bytes,10,opt,name=contact_name,json=contactName,proto3" json:"contact_name,omitempty"`
@@ -5695,20 +5759,20 @@ type LoanBorrowerEntry struct {
 	sizeCache        protoimpl.SizeCache
 }
 
-func (x *LoanBorrowerEntry) Reset() {
-	*x = LoanBorrowerEntry{}
+func (x *LoanBorrowerEntity) Reset() {
+	*x = LoanBorrowerEntity{}
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[85]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *LoanBorrowerEntry) String() string {
+func (x *LoanBorrowerEntity) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LoanBorrowerEntry) ProtoMessage() {}
+func (*LoanBorrowerEntity) ProtoMessage() {}
 
-func (x *LoanBorrowerEntry) ProtoReflect() protoreflect.Message {
+func (x *LoanBorrowerEntity) ProtoReflect() protoreflect.Message {
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[85]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -5720,103 +5784,103 @@ func (x *LoanBorrowerEntry) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LoanBorrowerEntry.ProtoReflect.Descriptor instead.
-func (*LoanBorrowerEntry) Descriptor() ([]byte, []int) {
+// Deprecated: Use LoanBorrowerEntity.ProtoReflect.Descriptor instead.
+func (*LoanBorrowerEntity) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{85}
 }
 
-func (x *LoanBorrowerEntry) GetId() int64 {
+func (x *LoanBorrowerEntity) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *LoanBorrowerEntry) GetLoanId() int64 {
+func (x *LoanBorrowerEntity) GetLoanId() int64 {
 	if x != nil {
 		return x.LoanId
 	}
 	return 0
 }
 
-func (x *LoanBorrowerEntry) GetType() string {
+func (x *LoanBorrowerEntity) GetType() string {
 	if x != nil {
 		return x.Type
 	}
 	return ""
 }
 
-func (x *LoanBorrowerEntry) GetName() string {
+func (x *LoanBorrowerEntity) GetName() string {
 	if x != nil {
 		return x.Name
 	}
 	return ""
 }
 
-func (x *LoanBorrowerEntry) GetTinType() string {
+func (x *LoanBorrowerEntity) GetTinType() string {
 	if x != nil {
 		return x.TinType
 	}
 	return ""
 }
 
-func (x *LoanBorrowerEntry) GetTin() string {
+func (x *LoanBorrowerEntity) GetTin() string {
 	if x != nil {
 		return x.Tin
 	}
 	return ""
 }
 
-func (x *LoanBorrowerEntry) GetMailingAddress() *AddressEntry {
+func (x *LoanBorrowerEntity) GetMailingAddress() *AddressEntity {
 	if x != nil {
 		return x.MailingAddress
 	}
 	return nil
 }
 
-func (x *LoanBorrowerEntry) GetContactEmail() string {
+func (x *LoanBorrowerEntity) GetContactEmail() string {
 	if x != nil {
 		return x.ContactEmail
 	}
 	return ""
 }
 
-func (x *LoanBorrowerEntry) GetContactPhone() string {
+func (x *LoanBorrowerEntity) GetContactPhone() string {
 	if x != nil {
 		return x.ContactPhone
 	}
 	return ""
 }
 
-func (x *LoanBorrowerEntry) GetContactName() string {
+func (x *LoanBorrowerEntity) GetContactName() string {
 	if x != nil {
 		return x.ContactName
 	}
 	return ""
 }
 
-func (x *LoanBorrowerEntry) GetOwnPercent() int32 {
+func (x *LoanBorrowerEntity) GetOwnPercent() int32 {
 	if x != nil {
 		return x.OwnPercent
 	}
 	return 0
 }
 
-func (x *LoanBorrowerEntry) GetBorrowerEntityId() int64 {
+func (x *LoanBorrowerEntity) GetBorrowerEntityId() int64 {
 	if x != nil {
 		return x.BorrowerEntityId
 	}
 	return 0
 }
 
-func (x *LoanBorrowerEntry) GetCreatedAt() string {
+func (x *LoanBorrowerEntity) GetCreatedAt() string {
 	if x != nil {
 		return x.CreatedAt
 	}
 	return ""
 }
 
-func (x *LoanBorrowerEntry) GetUpdatedAt() string {
+func (x *LoanBorrowerEntity) GetUpdatedAt() string {
 	if x != nil {
 		return x.UpdatedAt
 	}
@@ -5824,43 +5888,43 @@ func (x *LoanBorrowerEntry) GetUpdatedAt() string {
 }
 
 // ===================== loan experience service start ======================
-type LoanExperienceEntry struct {
+type LoanExperienceEntity struct {
 	state  protoimpl.MessageState `protogen:"open.v1"`
 	Id     int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	LoanId int64                  `protobuf:"varint,2,opt,name=loan_id,json=loanId,proto3" json:"loan_id,omitempty"`
 	// Deprecated: Marked as deprecated in app/lender/rpc/pb/lender.proto.
 	City string `protobuf:"bytes,3,opt,name=city,proto3" json:"city,omitempty"`
 	// Deprecated: Marked as deprecated in app/lender/rpc/pb/lender.proto.
-	State            string        `protobuf:"bytes,4,opt,name=state,proto3" json:"state,omitempty"`
-	OwnershipOnTitle string        `protobuf:"bytes,5,opt,name=ownership_on_title,json=ownershipOnTitle,proto3" json:"ownership_on_title,omitempty"`
-	PropertyType     string        `protobuf:"bytes,6,opt,name=property_type,json=propertyType,proto3" json:"property_type,omitempty"`
-	PurchaseAmount   float64       `protobuf:"fixed64,7,opt,name=purchase_amount,json=purchaseAmount,proto3" json:"purchase_amount,omitempty"`
-	PurchaseDate     string        `protobuf:"bytes,8,opt,name=purchase_date,json=purchaseDate,proto3" json:"purchase_date,omitempty"`
-	SoldAmount       float64       `protobuf:"fixed64,9,opt,name=sold_amount,json=soldAmount,proto3" json:"sold_amount,omitempty"`
-	SoldDate         string        `protobuf:"bytes,10,opt,name=sold_date,json=soldDate,proto3" json:"sold_date,omitempty"`
-	BudgetOrCost     float64       `protobuf:"fixed64,11,opt,name=budget_or_cost,json=budgetOrCost,proto3" json:"budget_or_cost,omitempty"`
-	Profit           float64       `protobuf:"fixed64,12,opt,name=profit,proto3" json:"profit,omitempty"`
-	IsTenantOccupied bool          `protobuf:"varint,13,opt,name=is_tenant_occupied,json=isTenantOccupied,proto3" json:"is_tenant_occupied,omitempty"`
-	Type             string        `protobuf:"bytes,14,opt,name=type,proto3" json:"type,omitempty"`
-	Address          *AddressEntry `protobuf:"bytes,15,opt,name=address,proto3" json:"address,omitempty"`
+	State            string         `protobuf:"bytes,4,opt,name=state,proto3" json:"state,omitempty"`
+	OwnershipOnTitle string         `protobuf:"bytes,5,opt,name=ownership_on_title,json=ownershipOnTitle,proto3" json:"ownership_on_title,omitempty"`
+	PropertyType     string         `protobuf:"bytes,6,opt,name=property_type,json=propertyType,proto3" json:"property_type,omitempty"`
+	PurchaseAmount   float64        `protobuf:"fixed64,7,opt,name=purchase_amount,json=purchaseAmount,proto3" json:"purchase_amount,omitempty"`
+	PurchaseDate     string         `protobuf:"bytes,8,opt,name=purchase_date,json=purchaseDate,proto3" json:"purchase_date,omitempty"`
+	SoldAmount       float64        `protobuf:"fixed64,9,opt,name=sold_amount,json=soldAmount,proto3" json:"sold_amount,omitempty"`
+	SoldDate         string         `protobuf:"bytes,10,opt,name=sold_date,json=soldDate,proto3" json:"sold_date,omitempty"`
+	BudgetOrCost     float64        `protobuf:"fixed64,11,opt,name=budget_or_cost,json=budgetOrCost,proto3" json:"budget_or_cost,omitempty"`
+	Profit           float64        `protobuf:"fixed64,12,opt,name=profit,proto3" json:"profit,omitempty"`
+	IsTenantOccupied bool           `protobuf:"varint,13,opt,name=is_tenant_occupied,json=isTenantOccupied,proto3" json:"is_tenant_occupied,omitempty"`
+	Type             string         `protobuf:"bytes,14,opt,name=type,proto3" json:"type,omitempty"`
+	Address          *AddressEntity `protobuf:"bytes,15,opt,name=address,proto3" json:"address,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
 
-func (x *LoanExperienceEntry) Reset() {
-	*x = LoanExperienceEntry{}
+func (x *LoanExperienceEntity) Reset() {
+	*x = LoanExperienceEntity{}
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[86]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *LoanExperienceEntry) String() string {
+func (x *LoanExperienceEntity) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LoanExperienceEntry) ProtoMessage() {}
+func (*LoanExperienceEntity) ProtoMessage() {}
 
-func (x *LoanExperienceEntry) ProtoReflect() protoreflect.Message {
+func (x *LoanExperienceEntity) ProtoReflect() protoreflect.Message {
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[86]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -5872,19 +5936,19 @@ func (x *LoanExperienceEntry) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LoanExperienceEntry.ProtoReflect.Descriptor instead.
-func (*LoanExperienceEntry) Descriptor() ([]byte, []int) {
+// Deprecated: Use LoanExperienceEntity.ProtoReflect.Descriptor instead.
+func (*LoanExperienceEntity) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{86}
 }
 
-func (x *LoanExperienceEntry) GetId() int64 {
+func (x *LoanExperienceEntity) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *LoanExperienceEntry) GetLoanId() int64 {
+func (x *LoanExperienceEntity) GetLoanId() int64 {
 	if x != nil {
 		return x.LoanId
 	}
@@ -5892,7 +5956,7 @@ func (x *LoanExperienceEntry) GetLoanId() int64 {
 }
 
 // Deprecated: Marked as deprecated in app/lender/rpc/pb/lender.proto.
-func (x *LoanExperienceEntry) GetCity() string {
+func (x *LoanExperienceEntity) GetCity() string {
 	if x != nil {
 		return x.City
 	}
@@ -5900,84 +5964,84 @@ func (x *LoanExperienceEntry) GetCity() string {
 }
 
 // Deprecated: Marked as deprecated in app/lender/rpc/pb/lender.proto.
-func (x *LoanExperienceEntry) GetState() string {
+func (x *LoanExperienceEntity) GetState() string {
 	if x != nil {
 		return x.State
 	}
 	return ""
 }
 
-func (x *LoanExperienceEntry) GetOwnershipOnTitle() string {
+func (x *LoanExperienceEntity) GetOwnershipOnTitle() string {
 	if x != nil {
 		return x.OwnershipOnTitle
 	}
 	return ""
 }
 
-func (x *LoanExperienceEntry) GetPropertyType() string {
+func (x *LoanExperienceEntity) GetPropertyType() string {
 	if x != nil {
 		return x.PropertyType
 	}
 	return ""
 }
 
-func (x *LoanExperienceEntry) GetPurchaseAmount() float64 {
+func (x *LoanExperienceEntity) GetPurchaseAmount() float64 {
 	if x != nil {
 		return x.PurchaseAmount
 	}
 	return 0
 }
 
-func (x *LoanExperienceEntry) GetPurchaseDate() string {
+func (x *LoanExperienceEntity) GetPurchaseDate() string {
 	if x != nil {
 		return x.PurchaseDate
 	}
 	return ""
 }
 
-func (x *LoanExperienceEntry) GetSoldAmount() float64 {
+func (x *LoanExperienceEntity) GetSoldAmount() float64 {
 	if x != nil {
 		return x.SoldAmount
 	}
 	return 0
 }
 
-func (x *LoanExperienceEntry) GetSoldDate() string {
+func (x *LoanExperienceEntity) GetSoldDate() string {
 	if x != nil {
 		return x.SoldDate
 	}
 	return ""
 }
 
-func (x *LoanExperienceEntry) GetBudgetOrCost() float64 {
+func (x *LoanExperienceEntity) GetBudgetOrCost() float64 {
 	if x != nil {
 		return x.BudgetOrCost
 	}
 	return 0
 }
 
-func (x *LoanExperienceEntry) GetProfit() float64 {
+func (x *LoanExperienceEntity) GetProfit() float64 {
 	if x != nil {
 		return x.Profit
 	}
 	return 0
 }
 
-func (x *LoanExperienceEntry) GetIsTenantOccupied() bool {
+func (x *LoanExperienceEntity) GetIsTenantOccupied() bool {
 	if x != nil {
 		return x.IsTenantOccupied
 	}
 	return false
 }
 
-func (x *LoanExperienceEntry) GetType() string {
+func (x *LoanExperienceEntity) GetType() string {
 	if x != nil {
 		return x.Type
 	}
 	return ""
 }
 
-func (x *LoanExperienceEntry) GetAddress() *AddressEntry {
+func (x *LoanExperienceEntity) GetAddress() *AddressEntity {
 	if x != nil {
 		return x.Address
 	}
@@ -5985,7 +6049,7 @@ func (x *LoanExperienceEntry) GetAddress() *AddressEntry {
 }
 
 // ===================== loan third service start ======================
-type LoanThirdServiceEntry struct {
+type LoanThirdServiceEntity struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	LoanId        int64                  `protobuf:"varint,2,opt,name=loan_id,json=loanId,proto3" json:"loan_id,omitempty"`
@@ -5998,20 +6062,20 @@ type LoanThirdServiceEntry struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *LoanThirdServiceEntry) Reset() {
-	*x = LoanThirdServiceEntry{}
+func (x *LoanThirdServiceEntity) Reset() {
+	*x = LoanThirdServiceEntity{}
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[87]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *LoanThirdServiceEntry) String() string {
+func (x *LoanThirdServiceEntity) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LoanThirdServiceEntry) ProtoMessage() {}
+func (*LoanThirdServiceEntity) ProtoMessage() {}
 
-func (x *LoanThirdServiceEntry) ProtoReflect() protoreflect.Message {
+func (x *LoanThirdServiceEntity) ProtoReflect() protoreflect.Message {
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[87]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -6023,54 +6087,54 @@ func (x *LoanThirdServiceEntry) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LoanThirdServiceEntry.ProtoReflect.Descriptor instead.
-func (*LoanThirdServiceEntry) Descriptor() ([]byte, []int) {
+// Deprecated: Use LoanThirdServiceEntity.ProtoReflect.Descriptor instead.
+func (*LoanThirdServiceEntity) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{87}
 }
 
-func (x *LoanThirdServiceEntry) GetId() int64 {
+func (x *LoanThirdServiceEntity) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *LoanThirdServiceEntry) GetLoanId() int64 {
+func (x *LoanThirdServiceEntity) GetLoanId() int64 {
 	if x != nil {
 		return x.LoanId
 	}
 	return 0
 }
 
-func (x *LoanThirdServiceEntry) GetType() string {
+func (x *LoanThirdServiceEntity) GetType() string {
 	if x != nil {
 		return x.Type
 	}
 	return ""
 }
 
-func (x *LoanThirdServiceEntry) GetName() string {
+func (x *LoanThirdServiceEntity) GetName() string {
 	if x != nil {
 		return x.Name
 	}
 	return ""
 }
 
-func (x *LoanThirdServiceEntry) GetEmail() string {
+func (x *LoanThirdServiceEntity) GetEmail() string {
 	if x != nil {
 		return x.Email
 	}
 	return ""
 }
 
-func (x *LoanThirdServiceEntry) GetPhone() string {
+func (x *LoanThirdServiceEntity) GetPhone() string {
 	if x != nil {
 		return x.Phone
 	}
 	return ""
 }
 
-func (x *LoanThirdServiceEntry) GetCompany() string {
+func (x *LoanThirdServiceEntity) GetCompany() string {
 	if x != nil {
 		return x.Company
 	}
@@ -6078,32 +6142,32 @@ func (x *LoanThirdServiceEntry) GetCompany() string {
 }
 
 // ===================== loan demographic service start ======================
-type LoanDemographicEntry struct {
-	state         protoimpl.MessageState         `protogen:"open.v1"`
-	Id            int64                          `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	LoanId        int64                          `protobuf:"varint,2,opt,name=loan_id,json=loanId,proto3" json:"loan_id,omitempty"`
-	Property      *LoanDemographicPropertyEntry  `protobuf:"bytes,3,opt,name=property,proto3" json:"property,omitempty"`
-	Ethnicity     *LoanDemographicEthnicityEntry `protobuf:"bytes,4,opt,name=ethnicity,proto3" json:"ethnicity,omitempty"`
-	Race          *LoanDemographicRaceEntry      `protobuf:"bytes,5,opt,name=race,proto3" json:"race,omitempty"`
-	Sex           string                         `protobuf:"bytes,6,opt,name=sex,proto3" json:"sex,omitempty"`
+type LoanDemographicEntity struct {
+	state         protoimpl.MessageState          `protogen:"open.v1"`
+	Id            int64                           `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	LoanId        int64                           `protobuf:"varint,2,opt,name=loan_id,json=loanId,proto3" json:"loan_id,omitempty"`
+	Property      *LoanDemographicPropertyEntity  `protobuf:"bytes,3,opt,name=property,proto3" json:"property,omitempty"`
+	Ethnicity     *LoanDemographicEthnicityEntity `protobuf:"bytes,4,opt,name=ethnicity,proto3" json:"ethnicity,omitempty"`
+	Race          *LoanDemographicRaceEntity      `protobuf:"bytes,5,opt,name=race,proto3" json:"race,omitempty"`
+	Sex           string                          `protobuf:"bytes,6,opt,name=sex,proto3" json:"sex,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *LoanDemographicEntry) Reset() {
-	*x = LoanDemographicEntry{}
+func (x *LoanDemographicEntity) Reset() {
+	*x = LoanDemographicEntity{}
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[88]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *LoanDemographicEntry) String() string {
+func (x *LoanDemographicEntity) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LoanDemographicEntry) ProtoMessage() {}
+func (*LoanDemographicEntity) ProtoMessage() {}
 
-func (x *LoanDemographicEntry) ProtoReflect() protoreflect.Message {
+func (x *LoanDemographicEntity) ProtoReflect() protoreflect.Message {
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[88]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -6115,54 +6179,54 @@ func (x *LoanDemographicEntry) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LoanDemographicEntry.ProtoReflect.Descriptor instead.
-func (*LoanDemographicEntry) Descriptor() ([]byte, []int) {
+// Deprecated: Use LoanDemographicEntity.ProtoReflect.Descriptor instead.
+func (*LoanDemographicEntity) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{88}
 }
 
-func (x *LoanDemographicEntry) GetId() int64 {
+func (x *LoanDemographicEntity) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *LoanDemographicEntry) GetLoanId() int64 {
+func (x *LoanDemographicEntity) GetLoanId() int64 {
 	if x != nil {
 		return x.LoanId
 	}
 	return 0
 }
 
-func (x *LoanDemographicEntry) GetProperty() *LoanDemographicPropertyEntry {
+func (x *LoanDemographicEntity) GetProperty() *LoanDemographicPropertyEntity {
 	if x != nil {
 		return x.Property
 	}
 	return nil
 }
 
-func (x *LoanDemographicEntry) GetEthnicity() *LoanDemographicEthnicityEntry {
+func (x *LoanDemographicEntity) GetEthnicity() *LoanDemographicEthnicityEntity {
 	if x != nil {
 		return x.Ethnicity
 	}
 	return nil
 }
 
-func (x *LoanDemographicEntry) GetRace() *LoanDemographicRaceEntry {
+func (x *LoanDemographicEntity) GetRace() *LoanDemographicRaceEntity {
 	if x != nil {
 		return x.Race
 	}
 	return nil
 }
 
-func (x *LoanDemographicEntry) GetSex() string {
+func (x *LoanDemographicEntity) GetSex() string {
 	if x != nil {
 		return x.Sex
 	}
 	return ""
 }
 
-type LoanDemographicPropertyEntry struct {
+type LoanDemographicPropertyEntity struct {
 	state                      protoimpl.MessageState `protogen:"open.v1"`
 	AsPrimaryResident          bool                   `protobuf:"varint,1,opt,name=as_primary_resident,json=asPrimaryResident,proto3" json:"as_primary_resident,omitempty"`
 	HasTransactionRelationship bool                   `protobuf:"varint,2,opt,name=has_transaction_relationship,json=hasTransactionRelationship,proto3" json:"has_transaction_relationship,omitempty"`
@@ -6182,20 +6246,20 @@ type LoanDemographicPropertyEntry struct {
 	sizeCache                  protoimpl.SizeCache
 }
 
-func (x *LoanDemographicPropertyEntry) Reset() {
-	*x = LoanDemographicPropertyEntry{}
+func (x *LoanDemographicPropertyEntity) Reset() {
+	*x = LoanDemographicPropertyEntity{}
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[89]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *LoanDemographicPropertyEntry) String() string {
+func (x *LoanDemographicPropertyEntity) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LoanDemographicPropertyEntry) ProtoMessage() {}
+func (*LoanDemographicPropertyEntity) ProtoMessage() {}
 
-func (x *LoanDemographicPropertyEntry) ProtoReflect() protoreflect.Message {
+func (x *LoanDemographicPropertyEntity) ProtoReflect() protoreflect.Message {
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[89]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -6207,110 +6271,110 @@ func (x *LoanDemographicPropertyEntry) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LoanDemographicPropertyEntry.ProtoReflect.Descriptor instead.
-func (*LoanDemographicPropertyEntry) Descriptor() ([]byte, []int) {
+// Deprecated: Use LoanDemographicPropertyEntity.ProtoReflect.Descriptor instead.
+func (*LoanDemographicPropertyEntity) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{89}
 }
 
-func (x *LoanDemographicPropertyEntry) GetAsPrimaryResident() bool {
+func (x *LoanDemographicPropertyEntity) GetAsPrimaryResident() bool {
 	if x != nil {
 		return x.AsPrimaryResident
 	}
 	return false
 }
 
-func (x *LoanDemographicPropertyEntry) GetHasTransactionRelationship() bool {
+func (x *LoanDemographicPropertyEntity) GetHasTransactionRelationship() bool {
 	if x != nil {
 		return x.HasTransactionRelationship
 	}
 	return false
 }
 
-func (x *LoanDemographicPropertyEntry) GetHasBorrowedMoney() bool {
+func (x *LoanDemographicPropertyEntity) GetHasBorrowedMoney() bool {
 	if x != nil {
 		return x.HasBorrowedMoney
 	}
 	return false
 }
 
-func (x *LoanDemographicPropertyEntry) GetBorrowedMoneyAmount() float64 {
+func (x *LoanDemographicPropertyEntity) GetBorrowedMoneyAmount() float64 {
 	if x != nil {
 		return x.BorrowedMoneyAmount
 	}
 	return 0
 }
 
-func (x *LoanDemographicPropertyEntry) GetHasAnotherMortgageLoan() bool {
+func (x *LoanDemographicPropertyEntity) GetHasAnotherMortgageLoan() bool {
 	if x != nil {
 		return x.HasAnotherMortgageLoan
 	}
 	return false
 }
 
-func (x *LoanDemographicPropertyEntry) GetHasPriorityOver1St() bool {
+func (x *LoanDemographicPropertyEntity) GetHasPriorityOver1St() bool {
 	if x != nil {
 		return x.HasPriorityOver1St
 	}
 	return false
 }
 
-func (x *LoanDemographicPropertyEntry) GetHasOutstandingJudgments() bool {
+func (x *LoanDemographicPropertyEntity) GetHasOutstandingJudgments() bool {
 	if x != nil {
 		return x.HasOutstandingJudgments
 	}
 	return false
 }
 
-func (x *LoanDemographicPropertyEntry) GetHasFederalDebt() bool {
+func (x *LoanDemographicPropertyEntity) GetHasFederalDebt() bool {
 	if x != nil {
 		return x.HasFederalDebt
 	}
 	return false
 }
 
-func (x *LoanDemographicPropertyEntry) GetHasALawsuit() bool {
+func (x *LoanDemographicPropertyEntity) GetHasALawsuit() bool {
 	if x != nil {
 		return x.HasALawsuit
 	}
 	return false
 }
 
-func (x *LoanDemographicPropertyEntry) GetHasConveyedTitle() bool {
+func (x *LoanDemographicPropertyEntity) GetHasConveyedTitle() bool {
 	if x != nil {
 		return x.HasConveyedTitle
 	}
 	return false
 }
 
-func (x *LoanDemographicPropertyEntry) GetHasAPreForeclosureSale() bool {
+func (x *LoanDemographicPropertyEntity) GetHasAPreForeclosureSale() bool {
 	if x != nil {
 		return x.HasAPreForeclosureSale
 	}
 	return false
 }
 
-func (x *LoanDemographicPropertyEntry) GetHasForeclosedUpon() bool {
+func (x *LoanDemographicPropertyEntity) GetHasForeclosedUpon() bool {
 	if x != nil {
 		return x.HasForeclosedUpon
 	}
 	return false
 }
 
-func (x *LoanDemographicPropertyEntry) GetHasABankruptcy() bool {
+func (x *LoanDemographicPropertyEntity) GetHasABankruptcy() bool {
 	if x != nil {
 		return x.HasABankruptcy
 	}
 	return false
 }
 
-func (x *LoanDemographicPropertyEntry) GetBankruptcyChapter() string {
+func (x *LoanDemographicPropertyEntity) GetBankruptcyChapter() string {
 	if x != nil {
 		return x.BankruptcyChapter
 	}
 	return ""
 }
 
-type LoanDemographicEthnicityEntry struct {
+type LoanDemographicEthnicityEntity struct {
 	state                     protoimpl.MessageState `protogen:"open.v1"`
 	Values                    []string               `protobuf:"bytes,1,rep,name=values,proto3" json:"values,omitempty"`
 	OtherHispanicOrLatinoName string                 `protobuf:"bytes,2,opt,name=other_hispanic_or_latino_name,json=otherHispanicOrLatinoName,proto3" json:"other_hispanic_or_latino_name,omitempty"`
@@ -6318,20 +6382,20 @@ type LoanDemographicEthnicityEntry struct {
 	sizeCache                 protoimpl.SizeCache
 }
 
-func (x *LoanDemographicEthnicityEntry) Reset() {
-	*x = LoanDemographicEthnicityEntry{}
+func (x *LoanDemographicEthnicityEntity) Reset() {
+	*x = LoanDemographicEthnicityEntity{}
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[90]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *LoanDemographicEthnicityEntry) String() string {
+func (x *LoanDemographicEthnicityEntity) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LoanDemographicEthnicityEntry) ProtoMessage() {}
+func (*LoanDemographicEthnicityEntity) ProtoMessage() {}
 
-func (x *LoanDemographicEthnicityEntry) ProtoReflect() protoreflect.Message {
+func (x *LoanDemographicEthnicityEntity) ProtoReflect() protoreflect.Message {
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[90]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -6343,26 +6407,26 @@ func (x *LoanDemographicEthnicityEntry) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LoanDemographicEthnicityEntry.ProtoReflect.Descriptor instead.
-func (*LoanDemographicEthnicityEntry) Descriptor() ([]byte, []int) {
+// Deprecated: Use LoanDemographicEthnicityEntity.ProtoReflect.Descriptor instead.
+func (*LoanDemographicEthnicityEntity) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{90}
 }
 
-func (x *LoanDemographicEthnicityEntry) GetValues() []string {
+func (x *LoanDemographicEthnicityEntity) GetValues() []string {
 	if x != nil {
 		return x.Values
 	}
 	return nil
 }
 
-func (x *LoanDemographicEthnicityEntry) GetOtherHispanicOrLatinoName() string {
+func (x *LoanDemographicEthnicityEntity) GetOtherHispanicOrLatinoName() string {
 	if x != nil {
 		return x.OtherHispanicOrLatinoName
 	}
 	return ""
 }
 
-type LoanDemographicRaceEntry struct {
+type LoanDemographicRaceEntity struct {
 	state                            protoimpl.MessageState `protogen:"open.v1"`
 	Values                           []string               `protobuf:"bytes,1,rep,name=values,proto3" json:"values,omitempty"`
 	AsianValues                      []string               `protobuf:"bytes,2,rep,name=asian_values,json=asianValues,proto3" json:"asian_values,omitempty"`
@@ -6373,20 +6437,20 @@ type LoanDemographicRaceEntry struct {
 	sizeCache                        protoimpl.SizeCache
 }
 
-func (x *LoanDemographicRaceEntry) Reset() {
-	*x = LoanDemographicRaceEntry{}
+func (x *LoanDemographicRaceEntity) Reset() {
+	*x = LoanDemographicRaceEntity{}
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[91]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *LoanDemographicRaceEntry) String() string {
+func (x *LoanDemographicRaceEntity) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LoanDemographicRaceEntry) ProtoMessage() {}
+func (*LoanDemographicRaceEntity) ProtoMessage() {}
 
-func (x *LoanDemographicRaceEntry) ProtoReflect() protoreflect.Message {
+func (x *LoanDemographicRaceEntity) ProtoReflect() protoreflect.Message {
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[91]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -6398,47 +6462,47 @@ func (x *LoanDemographicRaceEntry) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LoanDemographicRaceEntry.ProtoReflect.Descriptor instead.
-func (*LoanDemographicRaceEntry) Descriptor() ([]byte, []int) {
+// Deprecated: Use LoanDemographicRaceEntity.ProtoReflect.Descriptor instead.
+func (*LoanDemographicRaceEntity) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{91}
 }
 
-func (x *LoanDemographicRaceEntry) GetValues() []string {
+func (x *LoanDemographicRaceEntity) GetValues() []string {
 	if x != nil {
 		return x.Values
 	}
 	return nil
 }
 
-func (x *LoanDemographicRaceEntry) GetAsianValues() []string {
+func (x *LoanDemographicRaceEntity) GetAsianValues() []string {
 	if x != nil {
 		return x.AsianValues
 	}
 	return nil
 }
 
-func (x *LoanDemographicRaceEntry) GetAmericanIndianOrAlaskaNativeName() string {
+func (x *LoanDemographicRaceEntity) GetAmericanIndianOrAlaskaNativeName() string {
 	if x != nil {
 		return x.AmericanIndianOrAlaskaNativeName
 	}
 	return ""
 }
 
-func (x *LoanDemographicRaceEntry) GetAsianOtherName() string {
+func (x *LoanDemographicRaceEntity) GetAsianOtherName() string {
 	if x != nil {
 		return x.AsianOtherName
 	}
 	return ""
 }
 
-func (x *LoanDemographicRaceEntry) GetOtherPacificIslanderName() string {
+func (x *LoanDemographicRaceEntity) GetOtherPacificIslanderName() string {
 	if x != nil {
 		return x.OtherPacificIslanderName
 	}
 	return ""
 }
 
-type LoanDemographicExtraDemographicEntry struct {
+type LoanDemographicExtraDemographicEntity struct {
 	state                             protoimpl.MessageState `protogen:"open.v1"`
 	IsEthnicityCollectedByObservation bool                   `protobuf:"varint,1,opt,name=is_ethnicity_collected_by_observation,json=isEthnicityCollectedByObservation,proto3" json:"is_ethnicity_collected_by_observation,omitempty"`
 	IsSexCollectedByObservation       bool                   `protobuf:"varint,2,opt,name=is_sex_collected_by_observation,json=isSexCollectedByObservation,proto3" json:"is_sex_collected_by_observation,omitempty"`
@@ -6448,20 +6512,20 @@ type LoanDemographicExtraDemographicEntry struct {
 	sizeCache                         protoimpl.SizeCache
 }
 
-func (x *LoanDemographicExtraDemographicEntry) Reset() {
-	*x = LoanDemographicExtraDemographicEntry{}
+func (x *LoanDemographicExtraDemographicEntity) Reset() {
+	*x = LoanDemographicExtraDemographicEntity{}
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[92]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *LoanDemographicExtraDemographicEntry) String() string {
+func (x *LoanDemographicExtraDemographicEntity) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LoanDemographicExtraDemographicEntry) ProtoMessage() {}
+func (*LoanDemographicExtraDemographicEntity) ProtoMessage() {}
 
-func (x *LoanDemographicExtraDemographicEntry) ProtoReflect() protoreflect.Message {
+func (x *LoanDemographicExtraDemographicEntity) ProtoReflect() protoreflect.Message {
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[92]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -6473,33 +6537,33 @@ func (x *LoanDemographicExtraDemographicEntry) ProtoReflect() protoreflect.Messa
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LoanDemographicExtraDemographicEntry.ProtoReflect.Descriptor instead.
-func (*LoanDemographicExtraDemographicEntry) Descriptor() ([]byte, []int) {
+// Deprecated: Use LoanDemographicExtraDemographicEntity.ProtoReflect.Descriptor instead.
+func (*LoanDemographicExtraDemographicEntity) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{92}
 }
 
-func (x *LoanDemographicExtraDemographicEntry) GetIsEthnicityCollectedByObservation() bool {
+func (x *LoanDemographicExtraDemographicEntity) GetIsEthnicityCollectedByObservation() bool {
 	if x != nil {
 		return x.IsEthnicityCollectedByObservation
 	}
 	return false
 }
 
-func (x *LoanDemographicExtraDemographicEntry) GetIsSexCollectedByObservation() bool {
+func (x *LoanDemographicExtraDemographicEntity) GetIsSexCollectedByObservation() bool {
 	if x != nil {
 		return x.IsSexCollectedByObservation
 	}
 	return false
 }
 
-func (x *LoanDemographicExtraDemographicEntry) GetIsRaceCollectedByObservation() bool {
+func (x *LoanDemographicExtraDemographicEntity) GetIsRaceCollectedByObservation() bool {
 	if x != nil {
 		return x.IsRaceCollectedByObservation
 	}
 	return false
 }
 
-func (x *LoanDemographicExtraDemographicEntry) GetInfoChannels() []string {
+func (x *LoanDemographicExtraDemographicEntity) GetInfoChannels() []string {
 	if x != nil {
 		return x.InfoChannels
 	}
@@ -6507,7 +6571,7 @@ func (x *LoanDemographicExtraDemographicEntry) GetInfoChannels() []string {
 }
 
 // ===================== borrower property service start ======================
-type BorrowerPropertyEntry struct {
+type BorrowerPropertyEntity struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	PropertyType   string                 `protobuf:"bytes,2,opt,name=property_type,json=propertyType,proto3" json:"property_type,omitempty"`
@@ -6516,7 +6580,7 @@ type BorrowerPropertyEntry struct {
 	LivingAreaSqft float32                `protobuf:"fixed32,5,opt,name=living_area_sqft,json=livingAreaSqft,proto3" json:"living_area_sqft,omitempty"`
 	Bedrooms       int32                  `protobuf:"varint,6,opt,name=bedrooms,proto3" json:"bedrooms,omitempty"`
 	Bathrooms      float32                `protobuf:"fixed32,7,opt,name=bathrooms,proto3" json:"bathrooms,omitempty"`
-	Address        *AddressEntry          `protobuf:"bytes,8,opt,name=address,proto3" json:"address,omitempty"`
+	Address        *AddressEntity         `protobuf:"bytes,8,opt,name=address,proto3" json:"address,omitempty"`
 	CreatedAt      string                 `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt      string                 `protobuf:"bytes,10,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	LoanCount      int32                  `protobuf:"varint,11,opt,name=loan_count,json=loanCount,proto3" json:"loan_count,omitempty"`
@@ -6524,20 +6588,20 @@ type BorrowerPropertyEntry struct {
 	sizeCache      protoimpl.SizeCache
 }
 
-func (x *BorrowerPropertyEntry) Reset() {
-	*x = BorrowerPropertyEntry{}
+func (x *BorrowerPropertyEntity) Reset() {
+	*x = BorrowerPropertyEntity{}
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[93]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *BorrowerPropertyEntry) String() string {
+func (x *BorrowerPropertyEntity) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*BorrowerPropertyEntry) ProtoMessage() {}
+func (*BorrowerPropertyEntity) ProtoMessage() {}
 
-func (x *BorrowerPropertyEntry) ProtoReflect() protoreflect.Message {
+func (x *BorrowerPropertyEntity) ProtoReflect() protoreflect.Message {
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[93]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -6549,82 +6613,82 @@ func (x *BorrowerPropertyEntry) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use BorrowerPropertyEntry.ProtoReflect.Descriptor instead.
-func (*BorrowerPropertyEntry) Descriptor() ([]byte, []int) {
+// Deprecated: Use BorrowerPropertyEntity.ProtoReflect.Descriptor instead.
+func (*BorrowerPropertyEntity) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{93}
 }
 
-func (x *BorrowerPropertyEntry) GetId() int64 {
+func (x *BorrowerPropertyEntity) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *BorrowerPropertyEntry) GetPropertyType() string {
+func (x *BorrowerPropertyEntity) GetPropertyType() string {
 	if x != nil {
 		return x.PropertyType
 	}
 	return ""
 }
 
-func (x *BorrowerPropertyEntry) GetTotalAmount() float64 {
+func (x *BorrowerPropertyEntity) GetTotalAmount() float64 {
 	if x != nil {
 		return x.TotalAmount
 	}
 	return 0
 }
 
-func (x *BorrowerPropertyEntry) GetUnit() int32 {
+func (x *BorrowerPropertyEntity) GetUnit() int32 {
 	if x != nil {
 		return x.Unit
 	}
 	return 0
 }
 
-func (x *BorrowerPropertyEntry) GetLivingAreaSqft() float32 {
+func (x *BorrowerPropertyEntity) GetLivingAreaSqft() float32 {
 	if x != nil {
 		return x.LivingAreaSqft
 	}
 	return 0
 }
 
-func (x *BorrowerPropertyEntry) GetBedrooms() int32 {
+func (x *BorrowerPropertyEntity) GetBedrooms() int32 {
 	if x != nil {
 		return x.Bedrooms
 	}
 	return 0
 }
 
-func (x *BorrowerPropertyEntry) GetBathrooms() float32 {
+func (x *BorrowerPropertyEntity) GetBathrooms() float32 {
 	if x != nil {
 		return x.Bathrooms
 	}
 	return 0
 }
 
-func (x *BorrowerPropertyEntry) GetAddress() *AddressEntry {
+func (x *BorrowerPropertyEntity) GetAddress() *AddressEntity {
 	if x != nil {
 		return x.Address
 	}
 	return nil
 }
 
-func (x *BorrowerPropertyEntry) GetCreatedAt() string {
+func (x *BorrowerPropertyEntity) GetCreatedAt() string {
 	if x != nil {
 		return x.CreatedAt
 	}
 	return ""
 }
 
-func (x *BorrowerPropertyEntry) GetUpdatedAt() string {
+func (x *BorrowerPropertyEntity) GetUpdatedAt() string {
 	if x != nil {
 		return x.UpdatedAt
 	}
 	return ""
 }
 
-func (x *BorrowerPropertyEntry) GetLoanCount() int32 {
+func (x *BorrowerPropertyEntity) GetLoanCount() int32 {
 	if x != nil {
 		return x.LoanCount
 	}
@@ -6633,7 +6697,7 @@ func (x *BorrowerPropertyEntry) GetLoanCount() int32 {
 
 // ====================== borrower property service end ======================
 // ===================== borrower entity service start ======================
-type BorrowerEntityEntry struct {
+type BorrowerEntityEntity struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt      string                 `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
@@ -6643,7 +6707,7 @@ type BorrowerEntityEntry struct {
 	Name           string                 `protobuf:"bytes,6,opt,name=name,proto3" json:"name,omitempty"`
 	TinType        string                 `protobuf:"bytes,7,opt,name=tin_type,json=tinType,proto3" json:"tin_type,omitempty"`
 	Tin            string                 `protobuf:"bytes,8,opt,name=tin,proto3" json:"tin,omitempty"`
-	MailingAddress *AddressEntry          `protobuf:"bytes,9,opt,name=mailing_address,json=mailingAddress,proto3" json:"mailing_address,omitempty"`
+	MailingAddress *AddressEntity         `protobuf:"bytes,9,opt,name=mailing_address,json=mailingAddress,proto3" json:"mailing_address,omitempty"`
 	ContactEmail   string                 `protobuf:"bytes,10,opt,name=contact_email,json=contactEmail,proto3" json:"contact_email,omitempty"`
 	ContactName    string                 `protobuf:"bytes,11,opt,name=contact_name,json=contactName,proto3" json:"contact_name,omitempty"`
 	ContactPhone   string                 `protobuf:"bytes,12,opt,name=contact_phone,json=contactPhone,proto3" json:"contact_phone,omitempty"` //  int32 own_percent = 13;
@@ -6651,20 +6715,20 @@ type BorrowerEntityEntry struct {
 	sizeCache      protoimpl.SizeCache
 }
 
-func (x *BorrowerEntityEntry) Reset() {
-	*x = BorrowerEntityEntry{}
+func (x *BorrowerEntityEntity) Reset() {
+	*x = BorrowerEntityEntity{}
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[94]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *BorrowerEntityEntry) String() string {
+func (x *BorrowerEntityEntity) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*BorrowerEntityEntry) ProtoMessage() {}
+func (*BorrowerEntityEntity) ProtoMessage() {}
 
-func (x *BorrowerEntityEntry) ProtoReflect() protoreflect.Message {
+func (x *BorrowerEntityEntity) ProtoReflect() protoreflect.Message {
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[94]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -6676,89 +6740,89 @@ func (x *BorrowerEntityEntry) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use BorrowerEntityEntry.ProtoReflect.Descriptor instead.
-func (*BorrowerEntityEntry) Descriptor() ([]byte, []int) {
+// Deprecated: Use BorrowerEntityEntity.ProtoReflect.Descriptor instead.
+func (*BorrowerEntityEntity) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{94}
 }
 
-func (x *BorrowerEntityEntry) GetId() int64 {
+func (x *BorrowerEntityEntity) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *BorrowerEntityEntry) GetCreatedAt() string {
+func (x *BorrowerEntityEntity) GetCreatedAt() string {
 	if x != nil {
 		return x.CreatedAt
 	}
 	return ""
 }
 
-func (x *BorrowerEntityEntry) GetUpdatedAt() string {
+func (x *BorrowerEntityEntity) GetUpdatedAt() string {
 	if x != nil {
 		return x.UpdatedAt
 	}
 	return ""
 }
 
-func (x *BorrowerEntityEntry) GetBorrowerId() int64 {
+func (x *BorrowerEntityEntity) GetBorrowerId() int64 {
 	if x != nil {
 		return x.BorrowerId
 	}
 	return 0
 }
 
-func (x *BorrowerEntityEntry) GetType() string {
+func (x *BorrowerEntityEntity) GetType() string {
 	if x != nil {
 		return x.Type
 	}
 	return ""
 }
 
-func (x *BorrowerEntityEntry) GetName() string {
+func (x *BorrowerEntityEntity) GetName() string {
 	if x != nil {
 		return x.Name
 	}
 	return ""
 }
 
-func (x *BorrowerEntityEntry) GetTinType() string {
+func (x *BorrowerEntityEntity) GetTinType() string {
 	if x != nil {
 		return x.TinType
 	}
 	return ""
 }
 
-func (x *BorrowerEntityEntry) GetTin() string {
+func (x *BorrowerEntityEntity) GetTin() string {
 	if x != nil {
 		return x.Tin
 	}
 	return ""
 }
 
-func (x *BorrowerEntityEntry) GetMailingAddress() *AddressEntry {
+func (x *BorrowerEntityEntity) GetMailingAddress() *AddressEntity {
 	if x != nil {
 		return x.MailingAddress
 	}
 	return nil
 }
 
-func (x *BorrowerEntityEntry) GetContactEmail() string {
+func (x *BorrowerEntityEntity) GetContactEmail() string {
 	if x != nil {
 		return x.ContactEmail
 	}
 	return ""
 }
 
-func (x *BorrowerEntityEntry) GetContactName() string {
+func (x *BorrowerEntityEntity) GetContactName() string {
 	if x != nil {
 		return x.ContactName
 	}
 	return ""
 }
 
-func (x *BorrowerEntityEntry) GetContactPhone() string {
+func (x *BorrowerEntityEntity) GetContactPhone() string {
 	if x != nil {
 		return x.ContactPhone
 	}
@@ -6766,7 +6830,7 @@ func (x *BorrowerEntityEntry) GetContactPhone() string {
 }
 
 // ===================== borrower applicant service start ======================
-type BorrowerApplicantEntry struct {
+type BorrowerApplicantEntity struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt        string                 `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
@@ -6782,26 +6846,26 @@ type BorrowerApplicantEntry struct {
 	Email            string                 `protobuf:"bytes,12,opt,name=email,proto3" json:"email,omitempty"`
 	EstCreditScore   int32                  `protobuf:"varint,13,opt,name=est_credit_score,json=estCreditScore,proto3" json:"est_credit_score,omitempty"`
 	DriverLicenseNum string                 `protobuf:"bytes,14,opt,name=driver_license_num,json=driverLicenseNum,proto3" json:"driver_license_num,omitempty"`
-	Address          *AddressEntry          `protobuf:"bytes,15,opt,name=address,proto3" json:"address,omitempty"`
+	Address          *AddressEntity         `protobuf:"bytes,15,opt,name=address,proto3" json:"address,omitempty"`
 	Phone            string                 `protobuf:"bytes,16,opt,name=phone,proto3" json:"phone,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
 
-func (x *BorrowerApplicantEntry) Reset() {
-	*x = BorrowerApplicantEntry{}
+func (x *BorrowerApplicantEntity) Reset() {
+	*x = BorrowerApplicantEntity{}
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[95]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *BorrowerApplicantEntry) String() string {
+func (x *BorrowerApplicantEntity) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*BorrowerApplicantEntry) ProtoMessage() {}
+func (*BorrowerApplicantEntity) ProtoMessage() {}
 
-func (x *BorrowerApplicantEntry) ProtoReflect() protoreflect.Message {
+func (x *BorrowerApplicantEntity) ProtoReflect() protoreflect.Message {
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[95]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -6813,117 +6877,117 @@ func (x *BorrowerApplicantEntry) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use BorrowerApplicantEntry.ProtoReflect.Descriptor instead.
-func (*BorrowerApplicantEntry) Descriptor() ([]byte, []int) {
+// Deprecated: Use BorrowerApplicantEntity.ProtoReflect.Descriptor instead.
+func (*BorrowerApplicantEntity) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{95}
 }
 
-func (x *BorrowerApplicantEntry) GetId() int64 {
+func (x *BorrowerApplicantEntity) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *BorrowerApplicantEntry) GetCreatedAt() string {
+func (x *BorrowerApplicantEntity) GetCreatedAt() string {
 	if x != nil {
 		return x.CreatedAt
 	}
 	return ""
 }
 
-func (x *BorrowerApplicantEntry) GetUpdatedAt() string {
+func (x *BorrowerApplicantEntity) GetUpdatedAt() string {
 	if x != nil {
 		return x.UpdatedAt
 	}
 	return ""
 }
 
-func (x *BorrowerApplicantEntry) GetBorrowerId() int64 {
+func (x *BorrowerApplicantEntity) GetBorrowerId() int64 {
 	if x != nil {
 		return x.BorrowerId
 	}
 	return 0
 }
 
-func (x *BorrowerApplicantEntry) GetFirstName() string {
+func (x *BorrowerApplicantEntity) GetFirstName() string {
 	if x != nil {
 		return x.FirstName
 	}
 	return ""
 }
 
-func (x *BorrowerApplicantEntry) GetMidName() string {
+func (x *BorrowerApplicantEntity) GetMidName() string {
 	if x != nil {
 		return x.MidName
 	}
 	return ""
 }
 
-func (x *BorrowerApplicantEntry) GetLastName() string {
+func (x *BorrowerApplicantEntity) GetLastName() string {
 	if x != nil {
 		return x.LastName
 	}
 	return ""
 }
 
-func (x *BorrowerApplicantEntry) GetFullName() string {
+func (x *BorrowerApplicantEntity) GetFullName() string {
 	if x != nil {
 		return x.FullName
 	}
 	return ""
 }
 
-func (x *BorrowerApplicantEntry) GetSsn() string {
+func (x *BorrowerApplicantEntity) GetSsn() string {
 	if x != nil {
 		return x.Ssn
 	}
 	return ""
 }
 
-func (x *BorrowerApplicantEntry) GetDob() string {
+func (x *BorrowerApplicantEntity) GetDob() string {
 	if x != nil {
 		return x.Dob
 	}
 	return ""
 }
 
-func (x *BorrowerApplicantEntry) GetMaritalStatus() string {
+func (x *BorrowerApplicantEntity) GetMaritalStatus() string {
 	if x != nil {
 		return x.MaritalStatus
 	}
 	return ""
 }
 
-func (x *BorrowerApplicantEntry) GetEmail() string {
+func (x *BorrowerApplicantEntity) GetEmail() string {
 	if x != nil {
 		return x.Email
 	}
 	return ""
 }
 
-func (x *BorrowerApplicantEntry) GetEstCreditScore() int32 {
+func (x *BorrowerApplicantEntity) GetEstCreditScore() int32 {
 	if x != nil {
 		return x.EstCreditScore
 	}
 	return 0
 }
 
-func (x *BorrowerApplicantEntry) GetDriverLicenseNum() string {
+func (x *BorrowerApplicantEntity) GetDriverLicenseNum() string {
 	if x != nil {
 		return x.DriverLicenseNum
 	}
 	return ""
 }
 
-func (x *BorrowerApplicantEntry) GetAddress() *AddressEntry {
+func (x *BorrowerApplicantEntity) GetAddress() *AddressEntity {
 	if x != nil {
 		return x.Address
 	}
 	return nil
 }
 
-func (x *BorrowerApplicantEntry) GetPhone() string {
+func (x *BorrowerApplicantEntity) GetPhone() string {
 	if x != nil {
 		return x.Phone
 	}
@@ -6931,7 +6995,7 @@ func (x *BorrowerApplicantEntry) GetPhone() string {
 }
 
 // ===================== file service start ======================
-type FileEntry struct {
+type FileEntity struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	EntityType    string                 `protobuf:"bytes,2,opt,name=entity_type,json=entityType,proto3" json:"entity_type,omitempty"`
@@ -6943,20 +7007,20 @@ type FileEntry struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *FileEntry) Reset() {
-	*x = FileEntry{}
+func (x *FileEntity) Reset() {
+	*x = FileEntity{}
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[96]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *FileEntry) String() string {
+func (x *FileEntity) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*FileEntry) ProtoMessage() {}
+func (*FileEntity) ProtoMessage() {}
 
-func (x *FileEntry) ProtoReflect() protoreflect.Message {
+func (x *FileEntity) ProtoReflect() protoreflect.Message {
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[96]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -6968,47 +7032,47 @@ func (x *FileEntry) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use FileEntry.ProtoReflect.Descriptor instead.
-func (*FileEntry) Descriptor() ([]byte, []int) {
+// Deprecated: Use FileEntity.ProtoReflect.Descriptor instead.
+func (*FileEntity) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{96}
 }
 
-func (x *FileEntry) GetId() int64 {
+func (x *FileEntity) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *FileEntry) GetEntityType() string {
+func (x *FileEntity) GetEntityType() string {
 	if x != nil {
 		return x.EntityType
 	}
 	return ""
 }
 
-func (x *FileEntry) GetEntityId() int64 {
+func (x *FileEntity) GetEntityId() int64 {
 	if x != nil {
 		return x.EntityId
 	}
 	return 0
 }
 
-func (x *FileEntry) GetFileUrl() string {
+func (x *FileEntity) GetFileUrl() string {
 	if x != nil {
 		return x.FileUrl
 	}
 	return ""
 }
 
-func (x *FileEntry) GetCreatedAt() string {
+func (x *FileEntity) GetCreatedAt() string {
 	if x != nil {
 		return x.CreatedAt
 	}
 	return ""
 }
 
-func (x *FileEntry) GetUpdatedAt() string {
+func (x *FileEntity) GetUpdatedAt() string {
 	if x != nil {
 		return x.UpdatedAt
 	}
@@ -7363,8 +7427,8 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\fEmptyRequest\"\x0f\n" +
 	"\rEmptyResponse\")\n" +
 	"\x13StringSliceResponse\x12\x12\n" +
-	"\x04data\x18\x01 \x03(\tR\x04data\"\x8b\x01\n" +
-	"\fAddressEntry\x12\x14\n" +
+	"\x04data\x18\x01 \x03(\tR\x04data\"\x8c\x01\n" +
+	"\rAddressEntity\x12\x14\n" +
 	"\x05state\x18\x01 \x01(\tR\x05state\x12\x12\n" +
 	"\x04city\x18\x02 \x01(\tR\x04city\x12\x1a\n" +
 	"\baddress1\x18\x03 \x01(\tR\baddress1\x12\x1a\n" +
@@ -7373,10 +7437,10 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\rOptionRequest\x12-\n" +
 	"\x04data\x18\x01 \x01(\v2\x19.lender.OptionRequestDataR\x04data\"'\n" +
 	"\x11OptionRequestData\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\"9\n" +
-	"\x0eOptionResponse\x12'\n" +
-	"\x04data\x18\x01 \x03(\v2\x13.lender.OptionEntryR\x04data\"9\n" +
-	"\vOptionEntry\x12\x14\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\":\n" +
+	"\x0eOptionResponse\x12(\n" +
+	"\x04data\x18\x01 \x03(\v2\x14.lender.OptionEntityR\x04data\":\n" +
+	"\fOptionEntity\x12\x14\n" +
 	"\x05label\x18\x01 \x01(\tR\x05label\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value\"B\n" +
 	"\x0fUsCitiesRequest\x12/\n" +
@@ -7399,14 +7463,20 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x13UserRegisterRequest\x123\n" +
 	"\x04data\x18\x01 \x01(\v2\x1f.lender.UserRegisterRequestDataR\x04data\"L\n" +
 	"\x14UserRegisterResponse\x124\n" +
-	"\x04data\x18\x01 \x01(\v2 .lender.UserRegisterResponseDataR\x04data\"\xb0\x01\n" +
+	"\x04data\x18\x01 \x01(\v2 .lender.UserRegisterResponseDataR\x04data\"\xde\x02\n" +
 	"\x17UserRegisterRequestData\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x1d\n" +
 	"\n" +
 	"first_name\x18\x03 \x01(\tR\tfirstName\x12\x1b\n" +
-	"\tlast_name\x18\x04 \x01(\tR\blastName\x12'\n" +
-	"\x0forganization_id\x18\x05 \x01(\x03R\x0eorganizationId\"\xc4\x01\n" +
+	"\tlast_name\x18\x04 \x01(\tR\blastName\x12\x12\n" +
+	"\x04type\x18\x05 \x01(\tR\x04type\x12'\n" +
+	"\x0forganization_id\x18\x06 \x01(\x03R\x0eorganizationId\x12+\n" +
+	"\x11organization_name\x18\a \x01(\tR\x10organizationName\x12#\n" +
+	"\rcontact_phone\x18\b \x01(\tR\fcontactPhone\x12#\n" +
+	"\rcontact_email\x18\t \x01(\tR\fcontactEmail\x12!\n" +
+	"\fcontact_name\x18\n" +
+	" \x01(\tR\vcontactName\"\xc4\x01\n" +
 	"\x18UserRegisterResponseData\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
 	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\x12.\n" +
@@ -7447,7 +7517,7 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x13UserInfoRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"D\n" +
 	"\x10UserinfoResponse\x120\n" +
-	"\x04data\x18\x01 \x01(\v2\x1c.lender.UserinfoResponseDataR\x04data\"\xbf\x03\n" +
+	"\x04data\x18\x01 \x01(\v2\x1c.lender.UserinfoResponseDataR\x04data\"\xa7\x04\n" +
 	"\x14UserinfoResponseData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
 	"\x05email\x18\x02 \x01(\tR\x05email\x12\x1d\n" +
@@ -7458,7 +7528,11 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x0forganization_id\x18\x06 \x01(\x03R\x0eorganizationId\x12+\n" +
 	"\x11organization_name\x18\a \x01(\tR\x10organizationName\x12\x16\n" +
 	"\x06status\x18\b \x01(\tR\x06status\x12O\n" +
-	"\rorganizations\x18\t \x03(\v2).lender.UserinfoResponseData.OrganizationR\rorganizations\x1ai\n" +
+	"\rorganizations\x18\t \x03(\v2).lender.UserinfoResponseData.OrganizationR\rorganizations\x12\x19\n" +
+	"\bis_owner\x18\n" +
+	" \x01(\bR\aisOwner\x12\x19\n" +
+	"\bis_admin\x18\v \x01(\bR\aisAdmin\x120\n" +
+	"\x14organization_user_id\x18\f \x01(\x03R\x12organizationUserId\x1ai\n" +
 	"\fOrganization\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +
@@ -7468,16 +7542,17 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x19SwitchOrganizationRequest\x129\n" +
 	"\x04data\x18\x01 \x01(\v2%.lender.SwitchOrganizationRequestDataR\x04data\"H\n" +
 	"\x1dSwitchOrganizationRequestData\x12'\n" +
-	"\x0forganization_id\x18\x02 \x01(\x03R\x0eorganizationId\"\xbe\x0e\n" +
-	"\tLoanEntry\x12\x0e\n" +
+	"\x0forganization_id\x18\x02 \x01(\x03R\x0eorganizationId\"\xc8\x0e\n" +
+	"\n" +
+	"LoanEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
 	"\x05stage\x18\x02 \x01(\tR\x05stage\x12%\n" +
 	"\x0epending_status\x18\x03 \x01(\tR\rpendingStatus\x12!\n" +
 	"\floan_purpose\x18\x04 \x01(\tR\vloanPurpose\x12\x1b\n" +
 	"\tloan_type\x18\x05 \x01(\tR\bloanType\x12!\n" +
 	"\ftotal_amount\x18\x06 \x01(\x01R\vtotalAmount\x12%\n" +
-	"\x0einitial_amount\x18\a \x01(\x01R\rinitialAmount\x12>\n" +
-	"\rloan_property\x18\b \x01(\v2\x19.lender.LoanPropertyEntryR\floanProperty\x12%\n" +
+	"\x0einitial_amount\x18\a \x01(\x01R\rinitialAmount\x12?\n" +
+	"\rloan_property\x18\b \x01(\v2\x1a.lender.LoanPropertyEntityR\floanProperty\x12%\n" +
 	"\x0elender_company\x18\t \x01(\tR\rlenderCompany\x12!\n" +
 	"\fclosing_date\x18\n" +
 	" \x01(\tR\vclosingDate\x12'\n" +
@@ -7499,31 +7574,31 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x0forganization_id\x18\x18 \x01(\x03R\x0eorganizationId\x12\x1f\n" +
 	"\vborrower_id\x18\x19 \x01(\x03R\n" +
 	"borrowerId\x12+\n" +
-	"\x11business_strategy\x18\x1a \x03(\tR\x10businessStrategy\x12:\n" +
+	"\x11business_strategy\x18\x1a \x03(\tR\x10businessStrategy\x12;\n" +
 	"\n" +
-	"applicants\x18\x1b \x03(\v2\x1a.lender.LoanApplicantEntryR\n" +
+	"applicants\x18\x1b \x03(\v2\x1b.lender.LoanApplicantEntityR\n" +
 	"applicants\x12\x16\n" +
 	"\x06source\x18\x1c \x01(\tR\x06source\x12\x1b\n" +
 	"\tloan_term\x18\x1d \x01(\x05R\bloanTerm\x12\x10\n" +
 	"\x03ltv\x18\x1e \x01(\x01R\x03ltv\x12(\n" +
 	"\x10est_credit_score\x18\x1f \x01(\x05R\x0eestCreditScore\x12'\n" +
-	"\x0freserves_amount\x18  \x01(\x01R\x0ereservesAmount\x12T\n" +
-	"\x17transaction_experiences\x18! \x03(\v2\x1b.lender.LoanExperienceEntryR\x16transactionExperiences\x12S\n" +
-	"\x17real_estate_experiences\x18\" \x03(\v2\x1b.lender.LoanExperienceEntryR\x15realEstateExperiences\x12>\n" +
-	"\rloan_borrower\x18# \x01(\v2\x19.lender.LoanBorrowerEntryR\floanBorrower\x12G\n" +
-	"\x10loan_demographic\x18$ \x01(\v2\x1c.lender.LoanDemographicEntryR\x0floanDemographic\x12M\n" +
-	"\x13loan_third_services\x18% \x03(\v2\x1d.lender.LoanThirdServiceEntryR\x11loanThirdServices\x124\n" +
+	"\x0freserves_amount\x18  \x01(\x01R\x0ereservesAmount\x12U\n" +
+	"\x17transaction_experiences\x18! \x03(\v2\x1c.lender.LoanExperienceEntityR\x16transactionExperiences\x12T\n" +
+	"\x17real_estate_experiences\x18\" \x03(\v2\x1c.lender.LoanExperienceEntityR\x15realEstateExperiences\x12?\n" +
+	"\rloan_borrower\x18# \x01(\v2\x1a.lender.LoanBorrowerEntityR\floanBorrower\x12H\n" +
+	"\x10loan_demographic\x18$ \x01(\v2\x1d.lender.LoanDemographicEntityR\x0floanDemographic\x12N\n" +
+	"\x13loan_third_services\x18% \x03(\v2\x1e.lender.LoanThirdServiceEntityR\x11loanThirdServices\x124\n" +
 	"\x16original_contract_date\x18& \x01(\tR\x14originalContractDate\x12%\n" +
 	"\x0eextension_date\x18' \x01(\tR\rextensionDate\x12%\n" +
-	"\x0eloan_processor\x18( \x01(\tR\rloanProcessor\x124\n" +
-	"\x06extend\x18) \x01(\v2\x1c.lender.LoanExtendValueEntryR\x06extend\x12@\n" +
-	"\x0eloan_documents\x18* \x03(\v2\x19.lender.LoanDocumentEntryR\rloanDocuments\x12\x12\n" +
-	"\x04code\x18+ \x01(\tR\x04code\"\x9f\x01\n" +
-	"\x0fLoanBudgetEntry\x12'\n" +
+	"\x0eloan_processor\x18( \x01(\tR\rloanProcessor\x125\n" +
+	"\x06extend\x18) \x01(\v2\x1d.lender.LoanExtendValueEntityR\x06extend\x12A\n" +
+	"\x0eloan_documents\x18* \x03(\v2\x1a.lender.LoanDocumentEntityR\rloanDocuments\x12\x12\n" +
+	"\x04code\x18+ \x01(\tR\x04code\"\xa0\x01\n" +
+	"\x10LoanBudgetEntity\x12'\n" +
 	"\x0foriginal_budget\x18\x01 \x01(\x01R\x0eoriginalBudget\x12)\n" +
 	"\x10remaining_budget\x18\x02 \x01(\x01R\x0fremainingBudget\x128\n" +
-	"\x19cost_spent_to_date_amount\x18\x03 \x01(\x01R\x15costSpentToDateAmount\"\xce\x01\n" +
-	"\x1aBorrowerEditApplicantEntry\x12\x16\n" +
+	"\x19cost_spent_to_date_amount\x18\x03 \x01(\x01R\x15costSpentToDateAmount\"\xcf\x01\n" +
+	"\x1bBorrowerEditApplicantEntity\x12\x16\n" +
 	"\x04name\x18\x01 \x01(\tB\x02\x18\x01R\x04name\x12\x12\n" +
 	"\x04type\x18\x02 \x01(\tR\x04type\x12\x1d\n" +
 	"\n" +
@@ -7537,9 +7612,9 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x04data\x18\x01 \x01(\v2\x1d.lender.LoanDetailRequestDataR\x04data\"P\n" +
 	"\x15LoanDetailRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12'\n" +
-	"\x0forganization_id\x18\x02 \x01(\x03R\x0eorganizationId\";\n" +
-	"\x12LoanDetailResponse\x12%\n" +
-	"\x04data\x18\x01 \x01(\v2\x11.lender.LoanEntryR\x04data\"F\n" +
+	"\x0forganization_id\x18\x02 \x01(\x03R\x0eorganizationId\"<\n" +
+	"\x12LoanDetailResponse\x12&\n" +
+	"\x04data\x18\x01 \x01(\v2\x12.lender.LoanEntityR\x04data\"F\n" +
 	"\x11LoanDeleteRequest\x121\n" +
 	"\x04data\x18\x01 \x01(\v2\x1d.lender.LoanDeleteRequestDataR\x04data\"P\n" +
 	"\x15LoanDeleteRequestData\x12\x0e\n" +
@@ -7563,44 +7638,44 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x04page\x18\x01 \x01(\x03R\x04page\x12\x14\n" +
 	"\x05limit\x18\x02 \x01(\x03R\x05limit\x125\n" +
 	"\x06filter\x18\x03 \x01(\v2\x1d.lender.LoanPageRequestFilterR\x06filter\x125\n" +
-	"\x06sorter\x18\x04 \x01(\v2\x1d.lender.LoanPageRequestSorterR\x06sorter\"\x9c\x01\n" +
+	"\x06sorter\x18\x04 \x01(\v2\x1d.lender.LoanPageRequestSorterR\x06sorter\"\x9d\x01\n" +
 	"\x14LoanPageResponseData\x12\x12\n" +
 	"\x04page\x18\x01 \x01(\x03R\x04page\x12\x14\n" +
 	"\x05limit\x18\x02 \x01(\x03R\x05limit\x12\x14\n" +
 	"\x05total\x18\x03 \x01(\x03R\x05total\x12\x1d\n" +
 	"\n" +
-	"total_page\x18\x04 \x01(\x03R\ttotalPage\x12%\n" +
-	"\x04list\x18\x05 \x03(\v2\x11.lender.LoanEntryR\x04list\"F\n" +
+	"total_page\x18\x04 \x01(\x03R\ttotalPage\x12&\n" +
+	"\x04list\x18\x05 \x03(\v2\x12.lender.LoanEntityR\x04list\"F\n" +
 	"\x11LoanUpdateRequest\x121\n" +
-	"\x04data\x18\x01 \x01(\v2\x1d.lender.LoanUpdateRequestDataR\x04data\"\xd9\a\n" +
+	"\x04data\x18\x01 \x01(\v2\x1d.lender.LoanUpdateRequestDataR\x04data\"\xdf\a\n" +
 	"\x15LoanUpdateRequestData\x12!\n" +
 	"\floan_purpose\x18\x01 \x01(\tR\vloanPurpose\x12\x1b\n" +
 	"\tloan_type\x18\x02 \x01(\tR\bloanType\x12!\n" +
 	"\ftotal_amount\x18\x03 \x01(\x01R\vtotalAmount\x12%\n" +
-	"\x0einitial_amount\x18\x04 \x01(\x01R\rinitialAmount\x12B\n" +
-	"\rloan_property\x18\x05 \x01(\v2\x1d.lender.LoanPropertyEditEntryR\floanProperty\x12'\n" +
+	"\x0einitial_amount\x18\x04 \x01(\x01R\rinitialAmount\x12C\n" +
+	"\rloan_property\x18\x05 \x01(\v2\x1e.lender.LoanPropertyEditEntityR\floanProperty\x12'\n" +
 	"\x0fholdback_amount\x18\x06 \x01(\x01R\x0eholdbackAmount\x12)\n" +
 	"\x10principal_amount\x18\a \x01(\x01R\x0fprincipalAmount\x12-\n" +
 	"\x12prepayment_penalty\x18\t \x01(\x05R\x11prepaymentPenalty\x12+\n" +
-	"\x11business_strategy\x18\v \x03(\tR\x10businessStrategy\x12B\n" +
+	"\x11business_strategy\x18\v \x03(\tR\x10businessStrategy\x12C\n" +
 	"\n" +
-	"applicants\x18\f \x03(\v2\".lender.LoanApplicantLoanEditEntryR\n" +
+	"applicants\x18\f \x03(\v2#.lender.LoanApplicantLoanEditEntityR\n" +
 	"applicants\x12\x1b\n" +
 	"\tloan_term\x18\r \x01(\x05R\bloanTerm\x12(\n" +
 	"\x10est_credit_score\x18\x0f \x01(\x05R\x0eestCreditScore\x12'\n" +
-	"\x0freserves_amount\x18\x10 \x01(\x01R\x0ereservesAmount\x12T\n" +
-	"\x17transaction_experiences\x18\x11 \x03(\v2\x1b.lender.LoanExperienceEntryR\x16transactionExperiences\x12S\n" +
-	"\x17real_estate_experiences\x18\x12 \x03(\v2\x1b.lender.LoanExperienceEntryR\x15realEstateExperiences\x12G\n" +
-	"\x10loan_demographic\x18\x13 \x01(\v2\x1c.lender.LoanDemographicEntryR\x0floanDemographic\x12M\n" +
-	"\x13loan_third_services\x18\x14 \x03(\v2\x1d.lender.LoanThirdServiceEntryR\x11loanThirdServices\x12\x0e\n" +
+	"\x0freserves_amount\x18\x10 \x01(\x01R\x0ereservesAmount\x12U\n" +
+	"\x17transaction_experiences\x18\x11 \x03(\v2\x1c.lender.LoanExperienceEntityR\x16transactionExperiences\x12T\n" +
+	"\x17real_estate_experiences\x18\x12 \x03(\v2\x1c.lender.LoanExperienceEntityR\x15realEstateExperiences\x12H\n" +
+	"\x10loan_demographic\x18\x13 \x01(\v2\x1d.lender.LoanDemographicEntityR\x0floanDemographic\x12N\n" +
+	"\x13loan_third_services\x18\x14 \x03(\v2\x1e.lender.LoanThirdServiceEntityR\x11loanThirdServices\x12\x0e\n" +
 	"\x02id\x18\x15 \x01(\x03R\x02id\x12\x14\n" +
 	"\x05stage\x18\x17 \x01(\tR\x05stage\x12%\n" +
 	"\x0epending_status\x18\x18 \x01(\tR\rpendingStatus\"H\n" +
 	"\x12LoanUpdateResponse\x122\n" +
 	"\x04data\x18\x01 \x01(\v2\x1e.lender.LoanUpdateResponseDataR\x04data\"(\n" +
 	"\x16LoanUpdateResponseData\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"\xcb\x01\n" +
-	"\x14LoanExtendValueEntry\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\xcc\x01\n" +
+	"\x15LoanExtendValueEntity\x12\x18\n" +
 	"\apricing\x18\x01 \x01(\tR\apricing\x12.\n" +
 	"\x13loan_status_updates\x18\x02 \x01(\tR\x11loanStatusUpdates\x12#\n" +
 	"\rmeeting_notes\x18\x03 \x01(\tR\fmeetingNotes\x12\x1f\n" +
@@ -7608,12 +7683,12 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"actionList\x12#\n" +
 	"\rbusiness_line\x18\x05 \x01(\tR\fbusinessLine\"X\n" +
 	"\x1aLoanUpdateDocumentsRequest\x12:\n" +
-	"\x04data\x18\x01 \x01(\v2&.lender.LoanUpdateDocumentsRequestDataR\x04data\"\x82\x01\n" +
+	"\x04data\x18\x01 \x01(\v2&.lender.LoanUpdateDocumentsRequestDataR\x04data\"\x83\x01\n" +
 	"\x1eLoanUpdateDocumentsRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vborrower_id\x18\x02 \x01(\x03R\n" +
-	"borrowerId\x12/\n" +
-	"\tdocuments\x18\x03 \x03(\v2\x11.lender.FileEntryR\tdocuments\"P\n" +
+	"borrowerId\x120\n" +
+	"\tdocuments\x18\x03 \x03(\v2\x12.lender.FileEntityR\tdocuments\"P\n" +
 	"\x16LoanUpdateStageRequest\x126\n" +
 	"\x04data\x18\x01 \x01(\v2\".lender.LoanUpdateStageRequestDataR\x04data\"B\n" +
 	"\x1aLoanUpdateStageRequestData\x12\x0e\n" +
@@ -7636,13 +7711,13 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x17LoanDocumentOptsRequest\x127\n" +
 	"\x04data\x18\x01 \x01(\v2#.lender.LoanDocumentOptsRequestDataR\x04data\"-\n" +
 	"\x1bLoanDocumentOptsRequestData\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"L\n" +
-	"\x18LoanDocumentOptsResponse\x120\n" +
-	"\x04data\x18\x01 \x03(\v2\x1c.lender.LoanDocumentOptEntryR\x04data\"\x9c\r\n" +
-	"\x11LoanPropertyEntry\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"M\n" +
+	"\x18LoanDocumentOptsResponse\x121\n" +
+	"\x04data\x18\x01 \x03(\v2\x1d.lender.LoanDocumentOptEntityR\x04data\"\xa0\r\n" +
+	"\x12LoanPropertyEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
-	"\rproperty_type\x18\x02 \x01(\tR\fpropertyType\x12J\n" +
-	"\x11borrower_property\x18\x03 \x01(\v2\x1d.lender.BorrowerPropertyEntryR\x10borrowerProperty\x12(\n" +
+	"\rproperty_type\x18\x02 \x01(\tR\fpropertyType\x12K\n" +
+	"\x11borrower_property\x18\x03 \x01(\v2\x1e.lender.BorrowerPropertyEntityR\x10borrowerProperty\x12(\n" +
 	"\x10living_area_sqft\x18\x05 \x01(\x02R\x0elivingAreaSqft\x12\x1a\n" +
 	"\bbedrooms\x18\x06 \x01(\x05R\bbedrooms\x12\x1c\n" +
 	"\tbathrooms\x18\a \x01(\x05R\tbathrooms\x120\n" +
@@ -7665,8 +7740,8 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x14has_subordinate_debt\x18\x16 \x01(\bR\x12hasSubordinateDebt\x126\n" +
 	"\x17subordinate_debt_amount\x18\x17 \x01(\x01R\x15subordinateDebtAmount\x12=\n" +
 	"\x1bscheduled_close_escrow_date\x18\x18 \x01(\tR\x18scheduledCloseEscrowDate\x12)\n" +
-	"\x10liquidity_amount\x18\x19 \x01(\x01R\x0fliquidityAmount\x12/\n" +
-	"\x06budget\x18\x1a \x01(\v2\x17.lender.LoanBudgetEntryR\x06budget\x12)\n" +
+	"\x10liquidity_amount\x18\x19 \x01(\x01R\x0fliquidityAmount\x120\n" +
+	"\x06budget\x18\x1a \x01(\v2\x18.lender.LoanBudgetEntityR\x06budget\x12)\n" +
 	"\x10mid_construction\x18\x1b \x01(\bR\x0fmidConstruction\x12D\n" +
 	"\x1fest_yearly_rental_income_amount\x18\x1c \x01(\x01R\x1bestYearlyRentalIncomeAmount\x12E\n" +
 	"\x1fyearly_liability_expense_amount\x18\x1d \x01(\x01R\x1cyearlyLiabilityExpenseAmount\x12\x12\n" +
@@ -7675,12 +7750,12 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x1ahas_collateralized_blanket\x18  \x01(\bR\x18hasCollateralizedBlanket\x122\n" +
 	"\x15has_properties_vacant\x18! \x01(\bR\x13hasPropertiesVacant\x121\n" +
 	"\x15has_short_term_rental\x18\" \x01(\bR\x12hasShortTermRental\x129\n" +
-	"\x19est_property_value_amount\x18# \x01(\x01R\x16estPropertyValueAmount\x12.\n" +
-	"\aaddress\x18$ \x01(\v2\x14.lender.AddressEntryR\aaddress\x12\x10\n" +
+	"\x19est_property_value_amount\x18# \x01(\x01R\x16estPropertyValueAmount\x12/\n" +
+	"\aaddress\x18$ \x01(\v2\x15.lender.AddressEntityR\aaddress\x12\x10\n" +
 	"\x03arv\x18% \x01(\x01R\x03arv\x120\n" +
-	"\x14borrower_property_id\x18& \x01(\x03R\x12borrowerPropertyId\"\xc1\n" +
+	"\x14borrower_property_id\x18& \x01(\x03R\x12borrowerPropertyId\"\xc3\n" +
 	"\n" +
-	"\x15LoanPropertyEditEntry\x12\x0e\n" +
+	"\x16LoanPropertyEditEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x120\n" +
 	"\x14future_property_type\x18\x03 \x01(\tR\x12futurePropertyType\x12\x1f\n" +
 	"\vfuture_unit\x18\x04 \x01(\x05R\n" +
@@ -7700,8 +7775,8 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x14has_subordinate_debt\x18\x10 \x01(\bR\x12hasSubordinateDebt\x126\n" +
 	"\x17subordinate_debt_amount\x18\x11 \x01(\x01R\x15subordinateDebtAmount\x12=\n" +
 	"\x1bscheduled_close_escrow_date\x18\x12 \x01(\tR\x18scheduledCloseEscrowDate\x12)\n" +
-	"\x10liquidity_amount\x18\x13 \x01(\x01R\x0fliquidityAmount\x12/\n" +
-	"\x06budget\x18\x14 \x01(\v2\x17.lender.LoanBudgetEntryR\x06budget\x12)\n" +
+	"\x10liquidity_amount\x18\x13 \x01(\x01R\x0fliquidityAmount\x120\n" +
+	"\x06budget\x18\x14 \x01(\v2\x18.lender.LoanBudgetEntityR\x06budget\x12)\n" +
 	"\x10mid_construction\x18\x15 \x01(\bR\x0fmidConstruction\x12D\n" +
 	"\x1fest_yearly_rental_income_amount\x18\x16 \x01(\x01R\x1bestYearlyRentalIncomeAmount\x12E\n" +
 	"\x1fyearly_liability_expense_amount\x18\x17 \x01(\x01R\x1cyearlyLiabilityExpenseAmount\x122\n" +
@@ -7710,8 +7785,8 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x15has_properties_vacant\x18\x1b \x01(\bR\x13hasPropertiesVacant\x121\n" +
 	"\x15has_short_term_rental\x18\x1c \x01(\bR\x12hasShortTermRental\x129\n" +
 	"\x19est_property_value_amount\x18\x1d \x01(\x01R\x16estPropertyValueAmount\x12\x10\n" +
-	"\x03arv\x18\x1e \x01(\x01R\x03arv\"\x98\x06\n" +
-	"\x12LoanApplicantEntry\x12\x0e\n" +
+	"\x03arv\x18\x1e \x01(\x01R\x03arv\"\x9a\x06\n" +
+	"\x13LoanApplicantEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
 	"first_name\x18\x02 \x01(\tR\tfirstName\x12\x1b\n" +
@@ -7733,8 +7808,8 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x0emarital_status\x18\x0e \x01(\tR\rmaritalStatus\x12\x14\n" +
 	"\x05email\x18\x0f \x01(\tR\x05email\x12(\n" +
 	"\x10est_credit_score\x18\x10 \x01(\x05R\x0eestCreditScore\x12,\n" +
-	"\x12driver_license_num\x18\x11 \x01(\tR\x10driverLicenseNum\x12.\n" +
-	"\aaddress\x18\x12 \x01(\v2\x14.lender.AddressEntryR\aaddress\x12(\n" +
+	"\x12driver_license_num\x18\x11 \x01(\tR\x10driverLicenseNum\x12/\n" +
+	"\aaddress\x18\x12 \x01(\v2\x15.lender.AddressEntityR\aaddress\x12(\n" +
 	"\x10loan_borrower_id\x18\x13 \x01(\x03R\x0eloanBorrowerId\x12\x14\n" +
 	"\x05phone\x18\x14 \x01(\tR\x05phone\x12\x1f\n" +
 	"\vown_percent\x18\x15 \x01(\x05R\n" +
@@ -7742,15 +7817,15 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x15borrower_applicant_id\x18\x16 \x01(\x03R\x13borrowerApplicantId\x12\x17\n" +
 	"\aloan_id\x18\x17 \x01(\x03R\x06loanId\x12\x1f\n" +
 	"\vborrower_id\x18\x18 \x01(\x03R\n" +
-	"borrowerId\"\xa0\x01\n" +
-	"\x1aLoanApplicantLoanEditEntry\x12\x0e\n" +
+	"borrowerId\"\xa1\x01\n" +
+	"\x1bLoanApplicantLoanEditEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x122\n" +
 	"\x15borrower_applicant_id\x18\x02 \x01(\x03R\x13borrowerApplicantId\x12\x1d\n" +
 	"\n" +
 	"is_primary\x18\x03 \x01(\bR\tisPrimary\x12\x1f\n" +
 	"\vown_percent\x18\x04 \x01(\x05R\n" +
-	"ownPercent\"\xb6\x02\n" +
-	"\x11LoanDocumentEntry\x12\x0e\n" +
+	"ownPercent\"\xb8\x02\n" +
+	"\x12LoanDocumentEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
 	"\aloan_id\x18\x02 \x01(\x03R\x06loanId\x12\x1a\n" +
 	"\bcategory\x18\x03 \x01(\tR\bcategory\x12\x1b\n" +
@@ -7760,11 +7835,11 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\a \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\b \x01(\tR\tupdatedAt\x12'\n" +
-	"\x05files\x18\t \x03(\v2\x11.lender.FileEntryR\x05files\x12&\n" +
+	"updated_at\x18\b \x01(\tR\tupdatedAt\x12(\n" +
+	"\x05files\x18\t \x03(\v2\x12.lender.FileEntityR\x05files\x12&\n" +
 	"\x0eLastUploadedAt\x18\n" +
-	" \x01(\tR\x0eLastUploadedAt\"_\n" +
-	"\x14LoanDocumentOptEntry\x12\x0e\n" +
+	" \x01(\tR\x0eLastUploadedAt\"`\n" +
+	"\x15LoanDocumentOptEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tfile_type\x18\x02 \x01(\tR\bfileType\x12\x1a\n" +
 	"\bcategory\x18\x03 \x01(\tR\bcategory\"d\n" +
@@ -7783,10 +7858,10 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
 	"\afile_id\x18\x04 \x01(\x03R\x06fileId\"b\n" +
 	"\x1fLoanDocumentSendRequestsRequest\x12?\n" +
-	"\x04data\x18\x01 \x01(\v2+.lender.LoanDocumentSendRequestsRequestDataR\x04data\"e\n" +
-	"#LoanDocumentSendRequestsRequestData\x12>\n" +
-	"\tdocuments\x18\x03 \x03(\v2 .lender.SendDocumentRequestEntryR\tdocuments\"D\n" +
-	"\x18SendDocumentRequestEntry\x12\x0e\n" +
+	"\x04data\x18\x01 \x01(\v2+.lender.LoanDocumentSendRequestsRequestDataR\x04data\"f\n" +
+	"#LoanDocumentSendRequestsRequestData\x12?\n" +
+	"\tdocuments\x18\x03 \x03(\v2!.lender.SendDocumentRequestEntityR\tdocuments\"E\n" +
+	"\x19SendDocumentRequestEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x18\n" +
 	"\acomment\x18\x02 \x01(\tR\acomment\"j\n" +
 	"#LoanDocumentCreateExtendTypeRequest\x12C\n" +
@@ -7795,22 +7870,22 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\aloan_id\x18\x01 \x01(\x03R\x06loanId\x12\x1d\n" +
 	"\n" +
 	"file_types\x18\x04 \x03(\tR\tfileTypes\x12\x1a\n" +
-	"\bcategory\x18\x05 \x01(\tR\bcategory\"X\n" +
-	"$LoanDocumentCreateExtendTypeResponse\x120\n" +
-	"\x04data\x18\x01 \x03(\v2\x1c.lender.LoanDocumentOptEntryR\x04data\"Z\n" +
+	"\bcategory\x18\x05 \x01(\tR\bcategory\"Y\n" +
+	"$LoanDocumentCreateExtendTypeResponse\x121\n" +
+	"\x04data\x18\x01 \x03(\v2\x1d.lender.LoanDocumentOptEntityR\x04data\"Z\n" +
 	"\x1bLoanDocumentAddFilesRequest\x12;\n" +
 	"\x04data\x18\x01 \x01(\v2'.lender.LoanDocumentAddFilesRequestDataR\x04data\"N\n" +
 	"\x1fLoanDocumentAddFilesRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\tfile_urls\x18\x04 \x03(\tR\bfileUrls\"\xca\x03\n" +
-	"\x11LoanBorrowerEntry\x12\x0e\n" +
+	"\tfile_urls\x18\x04 \x03(\tR\bfileUrls\"\xcc\x03\n" +
+	"\x12LoanBorrowerEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
 	"\aloan_id\x18\x02 \x01(\x03R\x06loanId\x12\x12\n" +
 	"\x04type\x18\x03 \x01(\tR\x04type\x12\x12\n" +
 	"\x04name\x18\x04 \x01(\tR\x04name\x12\x19\n" +
 	"\btin_type\x18\x05 \x01(\tR\atinType\x12\x10\n" +
-	"\x03tin\x18\x06 \x01(\tR\x03tin\x12=\n" +
-	"\x0fmailing_address\x18\a \x01(\v2\x14.lender.AddressEntryR\x0emailingAddress\x12#\n" +
+	"\x03tin\x18\x06 \x01(\tR\x03tin\x12>\n" +
+	"\x0fmailing_address\x18\a \x01(\v2\x15.lender.AddressEntityR\x0emailingAddress\x12#\n" +
 	"\rcontact_email\x18\b \x01(\tR\fcontactEmail\x12#\n" +
 	"\rcontact_phone\x18\t \x01(\tR\fcontactPhone\x12!\n" +
 	"\fcontact_name\x18\n" +
@@ -7821,8 +7896,8 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\r \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\x0e \x01(\tR\tupdatedAt\"\xff\x03\n" +
-	"\x13LoanExperienceEntry\x12\x0e\n" +
+	"updated_at\x18\x0e \x01(\tR\tupdatedAt\"\x81\x04\n" +
+	"\x14LoanExperienceEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
 	"\aloan_id\x18\x02 \x01(\x03R\x06loanId\x12\x16\n" +
 	"\x04city\x18\x03 \x01(\tB\x02\x18\x01R\x04city\x12\x18\n" +
@@ -7838,24 +7913,24 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x0ebudget_or_cost\x18\v \x01(\x01R\fbudgetOrCost\x12\x16\n" +
 	"\x06profit\x18\f \x01(\x01R\x06profit\x12,\n" +
 	"\x12is_tenant_occupied\x18\r \x01(\bR\x10isTenantOccupied\x12\x12\n" +
-	"\x04type\x18\x0e \x01(\tR\x04type\x12.\n" +
-	"\aaddress\x18\x0f \x01(\v2\x14.lender.AddressEntryR\aaddress\"\xae\x01\n" +
-	"\x15LoanThirdServiceEntry\x12\x0e\n" +
+	"\x04type\x18\x0e \x01(\tR\x04type\x12/\n" +
+	"\aaddress\x18\x0f \x01(\v2\x15.lender.AddressEntityR\aaddress\"\xaf\x01\n" +
+	"\x16LoanThirdServiceEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
 	"\aloan_id\x18\x02 \x01(\x03R\x06loanId\x12\x12\n" +
 	"\x04type\x18\x03 \x01(\tR\x04type\x12\x12\n" +
 	"\x04name\x18\x04 \x01(\tR\x04name\x12\x14\n" +
 	"\x05email\x18\x05 \x01(\tR\x05email\x12\x14\n" +
 	"\x05phone\x18\x06 \x01(\tR\x05phone\x12\x18\n" +
-	"\acompany\x18\a \x01(\tR\acompany\"\x8e\x02\n" +
-	"\x14LoanDemographicEntry\x12\x0e\n" +
+	"\acompany\x18\a \x01(\tR\acompany\"\x92\x02\n" +
+	"\x15LoanDemographicEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
-	"\aloan_id\x18\x02 \x01(\x03R\x06loanId\x12@\n" +
-	"\bproperty\x18\x03 \x01(\v2$.lender.LoanDemographicPropertyEntryR\bproperty\x12C\n" +
-	"\tethnicity\x18\x04 \x01(\v2%.lender.LoanDemographicEthnicityEntryR\tethnicity\x124\n" +
-	"\x04race\x18\x05 \x01(\v2 .lender.LoanDemographicRaceEntryR\x04race\x12\x10\n" +
-	"\x03sex\x18\x06 \x01(\tR\x03sex\"\xdc\x05\n" +
-	"\x1cLoanDemographicPropertyEntry\x12.\n" +
+	"\aloan_id\x18\x02 \x01(\x03R\x06loanId\x12A\n" +
+	"\bproperty\x18\x03 \x01(\v2%.lender.LoanDemographicPropertyEntityR\bproperty\x12D\n" +
+	"\tethnicity\x18\x04 \x01(\v2&.lender.LoanDemographicEthnicityEntityR\tethnicity\x125\n" +
+	"\x04race\x18\x05 \x01(\v2!.lender.LoanDemographicRaceEntityR\x04race\x12\x10\n" +
+	"\x03sex\x18\x06 \x01(\tR\x03sex\"\xdd\x05\n" +
+	"\x1dLoanDemographicPropertyEntity\x12.\n" +
 	"\x13as_primary_resident\x18\x01 \x01(\bR\x11asPrimaryResident\x12@\n" +
 	"\x1chas_transaction_relationship\x18\x02 \x01(\bR\x1ahasTransactionRelationship\x12,\n" +
 	"\x12has_borrowed_money\x18\x03 \x01(\bR\x10hasBorrowedMoney\x122\n" +
@@ -7870,38 +7945,38 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x1ahas_a_pre_foreclosure_sale\x18\v \x01(\bR\x16hasAPreForeclosureSale\x12.\n" +
 	"\x13has_foreclosed_upon\x18\f \x01(\bR\x11hasForeclosedUpon\x12(\n" +
 	"\x10has_a_bankruptcy\x18\r \x01(\bR\x0ehasABankruptcy\x12-\n" +
-	"\x12bankruptcy_chapter\x18\x0e \x01(\tR\x11bankruptcyChapter\"y\n" +
-	"\x1dLoanDemographicEthnicityEntry\x12\x16\n" +
+	"\x12bankruptcy_chapter\x18\x0e \x01(\tR\x11bankruptcyChapter\"z\n" +
+	"\x1eLoanDemographicEthnicityEntity\x12\x16\n" +
 	"\x06values\x18\x01 \x03(\tR\x06values\x12@\n" +
-	"\x1dother_hispanic_or_latino_name\x18\x02 \x01(\tR\x19otherHispanicOrLatinoName\"\x8f\x02\n" +
-	"\x18LoanDemographicRaceEntry\x12\x16\n" +
+	"\x1dother_hispanic_or_latino_name\x18\x02 \x01(\tR\x19otherHispanicOrLatinoName\"\x90\x02\n" +
+	"\x19LoanDemographicRaceEntity\x12\x16\n" +
 	"\x06values\x18\x01 \x03(\tR\x06values\x12!\n" +
 	"\fasian_values\x18\x02 \x03(\tR\vasianValues\x12O\n" +
 	"%american_indian_or_alaska_native_name\x18\x03 \x01(\tR americanIndianOrAlaskaNativeName\x12(\n" +
 	"\x10asian_other_name\x18\x04 \x01(\tR\x0easianOtherName\x12=\n" +
-	"\x1bother_pacific_islander_name\x18\x05 \x01(\tR\x18otherPacificIslanderName\"\xab\x02\n" +
-	"$LoanDemographicExtraDemographicEntry\x12P\n" +
+	"\x1bother_pacific_islander_name\x18\x05 \x01(\tR\x18otherPacificIslanderName\"\xac\x02\n" +
+	"%LoanDemographicExtraDemographicEntity\x12P\n" +
 	"%is_ethnicity_collected_by_observation\x18\x01 \x01(\bR!isEthnicityCollectedByObservation\x12D\n" +
 	"\x1fis_sex_collected_by_observation\x18\x02 \x01(\bR\x1bisSexCollectedByObservation\x12F\n" +
 	" is_race_collected_by_observation\x18\x03 \x01(\bR\x1cisRaceCollectedByObservation\x12#\n" +
-	"\rinfo_channels\x18\x04 \x03(\tR\finfoChannels\"\xf4\x02\n" +
-	"\x15BorrowerPropertyEntry\x12\x0e\n" +
+	"\rinfo_channels\x18\x04 \x03(\tR\finfoChannels\"\xf6\x02\n" +
+	"\x16BorrowerPropertyEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
 	"\rproperty_type\x18\x02 \x01(\tR\fpropertyType\x12!\n" +
 	"\ftotal_amount\x18\x03 \x01(\x01R\vtotalAmount\x12\x12\n" +
 	"\x04unit\x18\x04 \x01(\x05R\x04unit\x12(\n" +
 	"\x10living_area_sqft\x18\x05 \x01(\x02R\x0elivingAreaSqft\x12\x1a\n" +
 	"\bbedrooms\x18\x06 \x01(\x05R\bbedrooms\x12\x1c\n" +
-	"\tbathrooms\x18\a \x01(\x02R\tbathrooms\x12.\n" +
-	"\aaddress\x18\b \x01(\v2\x14.lender.AddressEntryR\aaddress\x12\x1d\n" +
+	"\tbathrooms\x18\a \x01(\x02R\tbathrooms\x12/\n" +
+	"\aaddress\x18\b \x01(\v2\x15.lender.AddressEntityR\aaddress\x12\x1d\n" +
 	"\n" +
 	"created_at\x18\t \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
 	"updated_at\x18\n" +
 	" \x01(\tR\tupdatedAt\x12\x1d\n" +
 	"\n" +
-	"loan_count\x18\v \x01(\x05R\tloanCount\"\x85\x03\n" +
-	"\x13BorrowerEntityEntry\x12\x0e\n" +
+	"loan_count\x18\v \x01(\x05R\tloanCount\"\x87\x03\n" +
+	"\x14BorrowerEntityEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\tR\tcreatedAt\x12\x1d\n" +
@@ -7912,13 +7987,13 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x04type\x18\x05 \x01(\tR\x04type\x12\x12\n" +
 	"\x04name\x18\x06 \x01(\tR\x04name\x12\x19\n" +
 	"\btin_type\x18\a \x01(\tR\atinType\x12\x10\n" +
-	"\x03tin\x18\b \x01(\tR\x03tin\x12=\n" +
-	"\x0fmailing_address\x18\t \x01(\v2\x14.lender.AddressEntryR\x0emailingAddress\x12#\n" +
+	"\x03tin\x18\b \x01(\tR\x03tin\x12>\n" +
+	"\x0fmailing_address\x18\t \x01(\v2\x15.lender.AddressEntityR\x0emailingAddress\x12#\n" +
 	"\rcontact_email\x18\n" +
 	" \x01(\tR\fcontactEmail\x12!\n" +
 	"\fcontact_name\x18\v \x01(\tR\vcontactName\x12#\n" +
-	"\rcontact_phone\x18\f \x01(\tR\fcontactPhone\"\xfa\x03\n" +
-	"\x16BorrowerApplicantEntry\x12\x0e\n" +
+	"\rcontact_phone\x18\f \x01(\tR\fcontactPhone\"\xfc\x03\n" +
+	"\x17BorrowerApplicantEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\tR\tcreatedAt\x12\x1d\n" +
@@ -7937,10 +8012,11 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x0emarital_status\x18\v \x01(\tR\rmaritalStatus\x12\x14\n" +
 	"\x05email\x18\f \x01(\tR\x05email\x12(\n" +
 	"\x10est_credit_score\x18\r \x01(\x05R\x0eestCreditScore\x12,\n" +
-	"\x12driver_license_num\x18\x0e \x01(\tR\x10driverLicenseNum\x12.\n" +
-	"\aaddress\x18\x0f \x01(\v2\x14.lender.AddressEntryR\aaddress\x12\x14\n" +
-	"\x05phone\x18\x10 \x01(\tR\x05phone\"\xb2\x01\n" +
-	"\tFileEntry\x12\x0e\n" +
+	"\x12driver_license_num\x18\x0e \x01(\tR\x10driverLicenseNum\x12/\n" +
+	"\aaddress\x18\x0f \x01(\v2\x15.lender.AddressEntityR\aaddress\x12\x14\n" +
+	"\x05phone\x18\x10 \x01(\tR\x05phone\"\xb3\x01\n" +
+	"\n" +
+	"FileEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\ventity_type\x18\x02 \x01(\tR\n" +
 	"entityType\x12\x1b\n" +
@@ -8020,11 +8096,11 @@ var file_app_lender_rpc_pb_lender_proto_goTypes = []any{
 	(*EmptyRequest)(nil),                            // 0: lender.EmptyRequest
 	(*EmptyResponse)(nil),                           // 1: lender.EmptyResponse
 	(*StringSliceResponse)(nil),                     // 2: lender.StringSliceResponse
-	(*AddressEntry)(nil),                            // 3: lender.AddressEntry
+	(*AddressEntity)(nil),                           // 3: lender.AddressEntity
 	(*OptionRequest)(nil),                           // 4: lender.OptionRequest
 	(*OptionRequestData)(nil),                       // 5: lender.OptionRequestData
 	(*OptionResponse)(nil),                          // 6: lender.OptionResponse
-	(*OptionEntry)(nil),                             // 7: lender.OptionEntry
+	(*OptionEntity)(nil),                            // 7: lender.OptionEntity
 	(*UsCitiesRequest)(nil),                         // 8: lender.UsCitiesRequest
 	(*UsCitiesRequestData)(nil),                     // 9: lender.UsCitiesRequestData
 	(*UserLoginRequest)(nil),                        // 10: lender.UserLoginRequest
@@ -8052,9 +8128,9 @@ var file_app_lender_rpc_pb_lender_proto_goTypes = []any{
 	(*UserinfoResponseData)(nil),                    // 32: lender.UserinfoResponseData
 	(*SwitchOrganizationRequest)(nil),               // 33: lender.SwitchOrganizationRequest
 	(*SwitchOrganizationRequestData)(nil),           // 34: lender.SwitchOrganizationRequestData
-	(*LoanEntry)(nil),                               // 35: lender.LoanEntry
-	(*LoanBudgetEntry)(nil),                         // 36: lender.LoanBudgetEntry
-	(*BorrowerEditApplicantEntry)(nil),              // 37: lender.BorrowerEditApplicantEntry
+	(*LoanEntity)(nil),                              // 35: lender.LoanEntity
+	(*LoanBudgetEntity)(nil),                        // 36: lender.LoanBudgetEntity
+	(*BorrowerEditApplicantEntity)(nil),             // 37: lender.BorrowerEditApplicantEntity
 	(*LoanDetailRequest)(nil),                       // 38: lender.LoanDetailRequest
 	(*LoanDetailRequestData)(nil),                   // 39: lender.LoanDetailRequestData
 	(*LoanDetailResponse)(nil),                      // 40: lender.LoanDetailResponse
@@ -8070,7 +8146,7 @@ var file_app_lender_rpc_pb_lender_proto_goTypes = []any{
 	(*LoanUpdateRequestData)(nil),                   // 50: lender.LoanUpdateRequestData
 	(*LoanUpdateResponse)(nil),                      // 51: lender.LoanUpdateResponse
 	(*LoanUpdateResponseData)(nil),                  // 52: lender.LoanUpdateResponseData
-	(*LoanExtendValueEntry)(nil),                    // 53: lender.LoanExtendValueEntry
+	(*LoanExtendValueEntity)(nil),                   // 53: lender.LoanExtendValueEntity
 	(*LoanUpdateDocumentsRequest)(nil),              // 54: lender.LoanUpdateDocumentsRequest
 	(*LoanUpdateDocumentsRequestData)(nil),          // 55: lender.LoanUpdateDocumentsRequestData
 	(*LoanUpdateStageRequest)(nil),                  // 56: lender.LoanUpdateStageRequest
@@ -8082,12 +8158,12 @@ var file_app_lender_rpc_pb_lender_proto_goTypes = []any{
 	(*LoanDocumentOptsRequest)(nil),                 // 62: lender.LoanDocumentOptsRequest
 	(*LoanDocumentOptsRequestData)(nil),             // 63: lender.LoanDocumentOptsRequestData
 	(*LoanDocumentOptsResponse)(nil),                // 64: lender.LoanDocumentOptsResponse
-	(*LoanPropertyEntry)(nil),                       // 65: lender.LoanPropertyEntry
-	(*LoanPropertyEditEntry)(nil),                   // 66: lender.LoanPropertyEditEntry
-	(*LoanApplicantEntry)(nil),                      // 67: lender.LoanApplicantEntry
-	(*LoanApplicantLoanEditEntry)(nil),              // 68: lender.LoanApplicantLoanEditEntry
-	(*LoanDocumentEntry)(nil),                       // 69: lender.LoanDocumentEntry
-	(*LoanDocumentOptEntry)(nil),                    // 70: lender.LoanDocumentOptEntry
+	(*LoanPropertyEntity)(nil),                      // 65: lender.LoanPropertyEntity
+	(*LoanPropertyEditEntity)(nil),                  // 66: lender.LoanPropertyEditEntity
+	(*LoanApplicantEntity)(nil),                     // 67: lender.LoanApplicantEntity
+	(*LoanApplicantLoanEditEntity)(nil),             // 68: lender.LoanApplicantLoanEditEntity
+	(*LoanDocumentEntity)(nil),                      // 69: lender.LoanDocumentEntity
+	(*LoanDocumentOptEntity)(nil),                   // 70: lender.LoanDocumentOptEntity
 	(*LoanDocumentUpdateCommentRequest)(nil),        // 71: lender.LoanDocumentUpdateCommentRequest
 	(*LoanDocumentUpdateCommentRequestData)(nil),    // 72: lender.LoanDocumentUpdateCommentRequestData
 	(*LoanDocumentDeleteRequestRequest)(nil),        // 73: lender.LoanDocumentDeleteRequestRequest
@@ -8096,24 +8172,24 @@ var file_app_lender_rpc_pb_lender_proto_goTypes = []any{
 	(*LoanDocumentDeleteFileRequestData)(nil),       // 76: lender.LoanDocumentDeleteFileRequestData
 	(*LoanDocumentSendRequestsRequest)(nil),         // 77: lender.LoanDocumentSendRequestsRequest
 	(*LoanDocumentSendRequestsRequestData)(nil),     // 78: lender.LoanDocumentSendRequestsRequestData
-	(*SendDocumentRequestEntry)(nil),                // 79: lender.SendDocumentRequestEntry
+	(*SendDocumentRequestEntity)(nil),               // 79: lender.SendDocumentRequestEntity
 	(*LoanDocumentCreateExtendTypeRequest)(nil),     // 80: lender.LoanDocumentCreateExtendTypeRequest
 	(*LoanDocumentCreateExtendTypeRequestData)(nil), // 81: lender.LoanDocumentCreateExtendTypeRequestData
 	(*LoanDocumentCreateExtendTypeResponse)(nil),    // 82: lender.LoanDocumentCreateExtendTypeResponse
 	(*LoanDocumentAddFilesRequest)(nil),             // 83: lender.LoanDocumentAddFilesRequest
 	(*LoanDocumentAddFilesRequestData)(nil),         // 84: lender.LoanDocumentAddFilesRequestData
-	(*LoanBorrowerEntry)(nil),                       // 85: lender.LoanBorrowerEntry
-	(*LoanExperienceEntry)(nil),                     // 86: lender.LoanExperienceEntry
-	(*LoanThirdServiceEntry)(nil),                   // 87: lender.LoanThirdServiceEntry
-	(*LoanDemographicEntry)(nil),                    // 88: lender.LoanDemographicEntry
-	(*LoanDemographicPropertyEntry)(nil),            // 89: lender.LoanDemographicPropertyEntry
-	(*LoanDemographicEthnicityEntry)(nil),           // 90: lender.LoanDemographicEthnicityEntry
-	(*LoanDemographicRaceEntry)(nil),                // 91: lender.LoanDemographicRaceEntry
-	(*LoanDemographicExtraDemographicEntry)(nil),    // 92: lender.LoanDemographicExtraDemographicEntry
-	(*BorrowerPropertyEntry)(nil),                   // 93: lender.BorrowerPropertyEntry
-	(*BorrowerEntityEntry)(nil),                     // 94: lender.BorrowerEntityEntry
-	(*BorrowerApplicantEntry)(nil),                  // 95: lender.BorrowerApplicantEntry
-	(*FileEntry)(nil),                               // 96: lender.FileEntry
+	(*LoanBorrowerEntity)(nil),                      // 85: lender.LoanBorrowerEntity
+	(*LoanExperienceEntity)(nil),                    // 86: lender.LoanExperienceEntity
+	(*LoanThirdServiceEntity)(nil),                  // 87: lender.LoanThirdServiceEntity
+	(*LoanDemographicEntity)(nil),                   // 88: lender.LoanDemographicEntity
+	(*LoanDemographicPropertyEntity)(nil),           // 89: lender.LoanDemographicPropertyEntity
+	(*LoanDemographicEthnicityEntity)(nil),          // 90: lender.LoanDemographicEthnicityEntity
+	(*LoanDemographicRaceEntity)(nil),               // 91: lender.LoanDemographicRaceEntity
+	(*LoanDemographicExtraDemographicEntity)(nil),   // 92: lender.LoanDemographicExtraDemographicEntity
+	(*BorrowerPropertyEntity)(nil),                  // 93: lender.BorrowerPropertyEntity
+	(*BorrowerEntityEntity)(nil),                    // 94: lender.BorrowerEntityEntity
+	(*BorrowerApplicantEntity)(nil),                 // 95: lender.BorrowerApplicantEntity
+	(*FileEntity)(nil),                              // 96: lender.FileEntity
 	(*FileDeleteRequest)(nil),                       // 97: lender.FileDeleteRequest
 	(*FileDeleteRequestData)(nil),                   // 98: lender.FileDeleteRequestData
 	(*StorageCreatePresignedUrlRequest)(nil),        // 99: lender.StorageCreatePresignedUrlRequest
@@ -8124,7 +8200,7 @@ var file_app_lender_rpc_pb_lender_proto_goTypes = []any{
 }
 var file_app_lender_rpc_pb_lender_proto_depIdxs = []int32{
 	5,   // 0: lender.OptionRequest.data:type_name -> lender.OptionRequestData
-	7,   // 1: lender.OptionResponse.data:type_name -> lender.OptionEntry
+	7,   // 1: lender.OptionResponse.data:type_name -> lender.OptionEntity
 	9,   // 2: lender.UsCitiesRequest.data:type_name -> lender.UsCitiesRequestData
 	12,  // 3: lender.UserLoginRequest.data:type_name -> lender.UserLoginRequestData
 	13,  // 4: lender.UserLoginResponse.data:type_name -> lender.UserLoginResponseData
@@ -8140,60 +8216,60 @@ var file_app_lender_rpc_pb_lender_proto_depIdxs = []int32{
 	32,  // 14: lender.UserinfoResponse.data:type_name -> lender.UserinfoResponseData
 	103, // 15: lender.UserinfoResponseData.organizations:type_name -> lender.UserinfoResponseData.Organization
 	34,  // 16: lender.SwitchOrganizationRequest.data:type_name -> lender.SwitchOrganizationRequestData
-	65,  // 17: lender.LoanEntry.loan_property:type_name -> lender.LoanPropertyEntry
-	67,  // 18: lender.LoanEntry.applicants:type_name -> lender.LoanApplicantEntry
-	86,  // 19: lender.LoanEntry.transaction_experiences:type_name -> lender.LoanExperienceEntry
-	86,  // 20: lender.LoanEntry.real_estate_experiences:type_name -> lender.LoanExperienceEntry
-	85,  // 21: lender.LoanEntry.loan_borrower:type_name -> lender.LoanBorrowerEntry
-	88,  // 22: lender.LoanEntry.loan_demographic:type_name -> lender.LoanDemographicEntry
-	87,  // 23: lender.LoanEntry.loan_third_services:type_name -> lender.LoanThirdServiceEntry
-	53,  // 24: lender.LoanEntry.extend:type_name -> lender.LoanExtendValueEntry
-	69,  // 25: lender.LoanEntry.loan_documents:type_name -> lender.LoanDocumentEntry
+	65,  // 17: lender.LoanEntity.loan_property:type_name -> lender.LoanPropertyEntity
+	67,  // 18: lender.LoanEntity.applicants:type_name -> lender.LoanApplicantEntity
+	86,  // 19: lender.LoanEntity.transaction_experiences:type_name -> lender.LoanExperienceEntity
+	86,  // 20: lender.LoanEntity.real_estate_experiences:type_name -> lender.LoanExperienceEntity
+	85,  // 21: lender.LoanEntity.loan_borrower:type_name -> lender.LoanBorrowerEntity
+	88,  // 22: lender.LoanEntity.loan_demographic:type_name -> lender.LoanDemographicEntity
+	87,  // 23: lender.LoanEntity.loan_third_services:type_name -> lender.LoanThirdServiceEntity
+	53,  // 24: lender.LoanEntity.extend:type_name -> lender.LoanExtendValueEntity
+	69,  // 25: lender.LoanEntity.loan_documents:type_name -> lender.LoanDocumentEntity
 	39,  // 26: lender.LoanDetailRequest.data:type_name -> lender.LoanDetailRequestData
-	35,  // 27: lender.LoanDetailResponse.data:type_name -> lender.LoanEntry
+	35,  // 27: lender.LoanDetailResponse.data:type_name -> lender.LoanEntity
 	42,  // 28: lender.LoanDeleteRequest.data:type_name -> lender.LoanDeleteRequestData
 	47,  // 29: lender.LoanPageRequest.data:type_name -> lender.LoanPageRequestData
 	48,  // 30: lender.LoanPageResponse.data:type_name -> lender.LoanPageResponseData
 	45,  // 31: lender.LoanPageRequestData.filter:type_name -> lender.LoanPageRequestFilter
 	46,  // 32: lender.LoanPageRequestData.sorter:type_name -> lender.LoanPageRequestSorter
-	35,  // 33: lender.LoanPageResponseData.list:type_name -> lender.LoanEntry
+	35,  // 33: lender.LoanPageResponseData.list:type_name -> lender.LoanEntity
 	50,  // 34: lender.LoanUpdateRequest.data:type_name -> lender.LoanUpdateRequestData
-	66,  // 35: lender.LoanUpdateRequestData.loan_property:type_name -> lender.LoanPropertyEditEntry
-	68,  // 36: lender.LoanUpdateRequestData.applicants:type_name -> lender.LoanApplicantLoanEditEntry
-	86,  // 37: lender.LoanUpdateRequestData.transaction_experiences:type_name -> lender.LoanExperienceEntry
-	86,  // 38: lender.LoanUpdateRequestData.real_estate_experiences:type_name -> lender.LoanExperienceEntry
-	88,  // 39: lender.LoanUpdateRequestData.loan_demographic:type_name -> lender.LoanDemographicEntry
-	87,  // 40: lender.LoanUpdateRequestData.loan_third_services:type_name -> lender.LoanThirdServiceEntry
+	66,  // 35: lender.LoanUpdateRequestData.loan_property:type_name -> lender.LoanPropertyEditEntity
+	68,  // 36: lender.LoanUpdateRequestData.applicants:type_name -> lender.LoanApplicantLoanEditEntity
+	86,  // 37: lender.LoanUpdateRequestData.transaction_experiences:type_name -> lender.LoanExperienceEntity
+	86,  // 38: lender.LoanUpdateRequestData.real_estate_experiences:type_name -> lender.LoanExperienceEntity
+	88,  // 39: lender.LoanUpdateRequestData.loan_demographic:type_name -> lender.LoanDemographicEntity
+	87,  // 40: lender.LoanUpdateRequestData.loan_third_services:type_name -> lender.LoanThirdServiceEntity
 	52,  // 41: lender.LoanUpdateResponse.data:type_name -> lender.LoanUpdateResponseData
 	55,  // 42: lender.LoanUpdateDocumentsRequest.data:type_name -> lender.LoanUpdateDocumentsRequestData
-	96,  // 43: lender.LoanUpdateDocumentsRequestData.documents:type_name -> lender.FileEntry
+	96,  // 43: lender.LoanUpdateDocumentsRequestData.documents:type_name -> lender.FileEntity
 	57,  // 44: lender.LoanUpdateStageRequest.data:type_name -> lender.LoanUpdateStageRequestData
 	59,  // 45: lender.LoanUpdatePendingStatusRequest.data:type_name -> lender.LoanUpdatePendingStatusRequestData
 	61,  // 46: lender.LoanPendingStatusReviewRequest.data:type_name -> lender.LoanPendingStatusReviewRequestData
 	63,  // 47: lender.LoanDocumentOptsRequest.data:type_name -> lender.LoanDocumentOptsRequestData
-	70,  // 48: lender.LoanDocumentOptsResponse.data:type_name -> lender.LoanDocumentOptEntry
-	93,  // 49: lender.LoanPropertyEntry.borrower_property:type_name -> lender.BorrowerPropertyEntry
-	36,  // 50: lender.LoanPropertyEntry.budget:type_name -> lender.LoanBudgetEntry
-	3,   // 51: lender.LoanPropertyEntry.address:type_name -> lender.AddressEntry
-	36,  // 52: lender.LoanPropertyEditEntry.budget:type_name -> lender.LoanBudgetEntry
-	3,   // 53: lender.LoanApplicantEntry.address:type_name -> lender.AddressEntry
-	96,  // 54: lender.LoanDocumentEntry.files:type_name -> lender.FileEntry
+	70,  // 48: lender.LoanDocumentOptsResponse.data:type_name -> lender.LoanDocumentOptEntity
+	93,  // 49: lender.LoanPropertyEntity.borrower_property:type_name -> lender.BorrowerPropertyEntity
+	36,  // 50: lender.LoanPropertyEntity.budget:type_name -> lender.LoanBudgetEntity
+	3,   // 51: lender.LoanPropertyEntity.address:type_name -> lender.AddressEntity
+	36,  // 52: lender.LoanPropertyEditEntity.budget:type_name -> lender.LoanBudgetEntity
+	3,   // 53: lender.LoanApplicantEntity.address:type_name -> lender.AddressEntity
+	96,  // 54: lender.LoanDocumentEntity.files:type_name -> lender.FileEntity
 	72,  // 55: lender.LoanDocumentUpdateCommentRequest.data:type_name -> lender.LoanDocumentUpdateCommentRequestData
 	74,  // 56: lender.LoanDocumentDeleteRequestRequest.data:type_name -> lender.LoanDocumentDeleteRequestRequestData
 	76,  // 57: lender.LoanDocumentDeleteFileRequest.data:type_name -> lender.LoanDocumentDeleteFileRequestData
 	78,  // 58: lender.LoanDocumentSendRequestsRequest.data:type_name -> lender.LoanDocumentSendRequestsRequestData
-	79,  // 59: lender.LoanDocumentSendRequestsRequestData.documents:type_name -> lender.SendDocumentRequestEntry
+	79,  // 59: lender.LoanDocumentSendRequestsRequestData.documents:type_name -> lender.SendDocumentRequestEntity
 	81,  // 60: lender.LoanDocumentCreateExtendTypeRequest.data:type_name -> lender.LoanDocumentCreateExtendTypeRequestData
-	70,  // 61: lender.LoanDocumentCreateExtendTypeResponse.data:type_name -> lender.LoanDocumentOptEntry
+	70,  // 61: lender.LoanDocumentCreateExtendTypeResponse.data:type_name -> lender.LoanDocumentOptEntity
 	84,  // 62: lender.LoanDocumentAddFilesRequest.data:type_name -> lender.LoanDocumentAddFilesRequestData
-	3,   // 63: lender.LoanBorrowerEntry.mailing_address:type_name -> lender.AddressEntry
-	3,   // 64: lender.LoanExperienceEntry.address:type_name -> lender.AddressEntry
-	89,  // 65: lender.LoanDemographicEntry.property:type_name -> lender.LoanDemographicPropertyEntry
-	90,  // 66: lender.LoanDemographicEntry.ethnicity:type_name -> lender.LoanDemographicEthnicityEntry
-	91,  // 67: lender.LoanDemographicEntry.race:type_name -> lender.LoanDemographicRaceEntry
-	3,   // 68: lender.BorrowerPropertyEntry.address:type_name -> lender.AddressEntry
-	3,   // 69: lender.BorrowerEntityEntry.mailing_address:type_name -> lender.AddressEntry
-	3,   // 70: lender.BorrowerApplicantEntry.address:type_name -> lender.AddressEntry
+	3,   // 63: lender.LoanBorrowerEntity.mailing_address:type_name -> lender.AddressEntity
+	3,   // 64: lender.LoanExperienceEntity.address:type_name -> lender.AddressEntity
+	89,  // 65: lender.LoanDemographicEntity.property:type_name -> lender.LoanDemographicPropertyEntity
+	90,  // 66: lender.LoanDemographicEntity.ethnicity:type_name -> lender.LoanDemographicEthnicityEntity
+	91,  // 67: lender.LoanDemographicEntity.race:type_name -> lender.LoanDemographicRaceEntity
+	3,   // 68: lender.BorrowerPropertyEntity.address:type_name -> lender.AddressEntity
+	3,   // 69: lender.BorrowerEntityEntity.mailing_address:type_name -> lender.AddressEntity
+	3,   // 70: lender.BorrowerApplicantEntity.address:type_name -> lender.AddressEntity
 	98,  // 71: lender.FileDeleteRequest.data:type_name -> lender.FileDeleteRequestData
 	100, // 72: lender.StorageCreatePresignedUrlRequest.data:type_name -> lender.StorageCreatePresignedUrlRequestData
 	102, // 73: lender.StorageCreatePresignedUrlResponse.data:type_name -> lender.StorageCreatePresignedUrlResponseData

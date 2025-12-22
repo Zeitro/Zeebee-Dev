@@ -47,7 +47,7 @@ func (l *CreateDraftLogic) CreateDraft(req *types.LoanApplyRequest) (resp *types
 	}
 
 	// handle applicants
-	rpcApplicants := slice.UniqueByComparator(rpcReq.Data.Applicants, func(item *borrower.LoanApplicantApplyEntry, other *borrower.LoanApplicantApplyEntry) bool {
+	rpcApplicants := slice.UniqueByComparator(rpcReq.Data.Applicants, func(item *borrower.LoanApplicantApplyEntity, other *borrower.LoanApplicantApplyEntity) bool {
 		return item.BorrowerApplicantId == other.BorrowerApplicantId
 	})
 	rpcReq.Data.Applicants = rpcApplicants

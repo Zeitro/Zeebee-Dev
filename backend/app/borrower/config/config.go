@@ -26,6 +26,7 @@ type RpcConf struct {
 	PreApprovalLoanExpireSeconds int
 	HighCostLimitValue           int64
 	EmailConf                    EmailConf
+	EmailAuthConf                EmailAuthConf
 	RedisConf                    RedisConf
 	JwtAuth                      types.JwtAuth `json:",optional"`
 	DbConf                       DbConf

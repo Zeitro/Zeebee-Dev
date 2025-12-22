@@ -45,7 +45,7 @@ func (l *CreateLogic) Create(req *types.LoanCreateRequest) (resp *types.LoanCrea
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
 	// handle applicants
-	rpcApplicants := slice.UniqueByComparator(rpcReq.Data.Applicants, func(item *borrower.ThirdPartyLoanApplicantEditEntry, other *borrower.ThirdPartyLoanApplicantEditEntry) bool {
+	rpcApplicants := slice.UniqueByComparator(rpcReq.Data.Applicants, func(item *borrower.ThirdPartyLoanApplicantEditEntity, other *borrower.ThirdPartyLoanApplicantEditEntity) bool {
 		return item.BorrowerApplicantId == other.BorrowerApplicantId
 	})
 	if len(rpcApplicants) == 0 {

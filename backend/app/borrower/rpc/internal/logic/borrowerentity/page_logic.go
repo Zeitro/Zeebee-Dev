@@ -55,7 +55,7 @@ func (l *PageLogic) Page(in *borrower.BorrowerEntityPageRequest) (resp *borrower
 		return nil, err
 	}
 
-	respData := make([]*borrower.BorrowerEntityPageEntry, 0, len(pageResult.List))
+	respData := make([]*borrower.BorrowerEntityPageEntity, 0, len(pageResult.List))
 
 	err = copier.CopyWithOption(&respData, &pageResult.List, copier.Option{
 		CaseSensitive: true,

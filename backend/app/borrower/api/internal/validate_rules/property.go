@@ -117,13 +117,13 @@ func PropertyUpdateRequest(sl validator.StructLevel) {
 	}
 }
 
-// LoanPropertyApplyEntry
-func LoanPropertyApplyEntry(sl validator.StructLevel) {
+// LoanPropertyApplyEntity
+func LoanPropertyApplyEntity(sl validator.StructLevel) {
 	var loanPurpose string
 	var loanType string
 	val := sl.Current().Interface()
 	parent := sl.Parent().Interface()
-	property, ok := val.(types.LoanPropertyApplyEntry)
+	property, ok := val.(types.LoanPropertyApplyEntity)
 	if !ok {
 		sl.ReportError(property, "property", "Property", "property_type", "Invalid Loan Apply Property")
 		return

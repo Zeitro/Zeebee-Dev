@@ -76,9 +76,9 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 	var totalRate float32
 	var loanCount int
 
-	respData.PendingLoans = make([]*borrower.LoanEntry, 0)
-	respData.ActiveLoans = make([]*borrower.LoanEntry, 0)
-	respData.ArchivedLoans = make([]*borrower.LoanEntry, 0)
+	respData.PendingLoans = make([]*borrower.LoanEntity, 0)
+	respData.ActiveLoans = make([]*borrower.LoanEntity, 0)
+	respData.ArchivedLoans = make([]*borrower.LoanEntity, 0)
 
 	if len(loanProperties) > 0 {
 		for _, loanProperty := range loanProperties {
@@ -87,8 +87,8 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 				continue
 			}
 
-			loanEntry := &borrower.LoanEntry{
-				Applicants: []*borrower.LoanApplicantEntry{},
+			loanEntry := &borrower.LoanEntity{
+				Applicants: []*borrower.LoanApplicantEntity{},
 			}
 			err = copier.CopyWithOption(loanEntry, loan, copier.Option{
 				CaseSensitive: true,
@@ -131,13 +131,13 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 			loanCount++
 		}
 	}
-	slice.SortBy(respData.PendingLoans, func(item, other *borrower.LoanEntry) bool {
+	slice.SortBy(respData.PendingLoans, func(item, other *borrower.LoanEntity) bool {
 		return item.Id < other.Id
 	})
-	slice.SortBy(respData.ActiveLoans, func(item, other *borrower.LoanEntry) bool {
+	slice.SortBy(respData.ActiveLoans, func(item, other *borrower.LoanEntity) bool {
 		return item.Id < other.Id
 	})
-	slice.SortBy(respData.ArchivedLoans, func(item, other *borrower.LoanEntry) bool {
+	slice.SortBy(respData.ArchivedLoans, func(item, other *borrower.LoanEntity) bool {
 		return item.Id < other.Id
 	})
 

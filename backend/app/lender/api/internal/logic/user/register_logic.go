@@ -3,14 +3,12 @@ package user
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/errorx"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/common/copierx"
 )
 
 type RegisterLogic struct {
@@ -29,25 +27,20 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 }
 
 func (l *RegisterLogic) Register(req *types.UserRegisterRequest) (resp *types.UserRegisterResponse, err error) {
-	resp = &types.UserRegisterResponse{}
+	rpcReq := &lender.UserRegisterRequest{}
+	rpcReq.Data, err = copierx.Trans[types.UserRegisterRequest, lender.UserRegisterRequestData](req)
+	if err != nil {
+		return nil, err
+	}
 	// call rpc server
-	rpcResp, err := l.svcCtx.UserRpcClient.Register(l.ctx, &lender.UserRegisterRequest{
-		Data: &lender.UserRegisterRequestData{
-			Email:          req.Email,
-			Password:       req.Password,
-			FirstName:      req.FirstName,
-			LastName:       req.LastName,
-			OrganizationId: req.OrganizationId,
-		},
-	})
+	rpcResp, err := l.svcCtx.UserRpcClient.Register(l.ctx, rpcReq)
 	if err != nil {
 		return nil, err
 	}
 
-	// trans response data
-	err = copier.Copy(resp, &rpcResp.Data)
+	resp, err = copierx.Trans[lender.UserRegisterResponseData, types.UserRegisterResponse](rpcResp.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	return resp, err
 }

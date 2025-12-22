@@ -52,7 +52,7 @@ func (l *BorrowerLoanDetailLogic) BorrowerLoanDetail(in *borrower.LoanDetailRequ
 		return nil, err
 	}
 	resp = &borrower.LoanDetailResponse{
-		Data: &borrower.LoanEntry{},
+		Data: &borrower.LoanEntity{},
 	}
 	err = copier.CopyWithOption(&resp.Data, loan, copier.Option{
 		CaseSensitive: true,
@@ -66,10 +66,10 @@ func (l *BorrowerLoanDetailLogic) BorrowerLoanDetail(in *borrower.LoanDetailRequ
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 	// loan experiences
-	var transExperiences []*borrower.LoanExperienceEntry
-	var realEstateExperiences []*borrower.LoanExperienceEntry
+	var transExperiences []*borrower.LoanExperienceEntity
+	var realEstateExperiences []*borrower.LoanExperienceEntity
 	slice.ForEach(loan.LoanExperiences, func(index int, item *model.LoanExperience) {
-		experience := &borrower.LoanExperienceEntry{}
+		experience := &borrower.LoanExperienceEntity{}
 		_ = copier.CopyWithOption(experience, item, copier.Option{
 			CaseSensitive: true,
 			DeepCopy:      true,

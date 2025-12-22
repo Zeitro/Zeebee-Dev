@@ -42,12 +42,13 @@ func (l *SwitchOrganizationLogic) SwitchOrganization(in *lender.SwitchOrganizati
 		return nil, err
 	}
 
-	user, organizationUser, err := l.baseLogic.UserLogic.SwitchOrganization(l.ctx, claim.UserId, in.Data.OrganizationId, constants.UserTypeLender)
+	user, err := l.baseLogic.UserLogic.SwitchOrganization(l.ctx, claim.UserId, in.Data.OrganizationId, constants.UserTypeLender)
 	if err != nil {
 		return nil, err
 	}
 
-	token, err := l.baseLogic.UserLogic.GenerateJwtToken(user, organizationUser, constants.UserTypeLender)
+	// token, err := l.baseLogic.UserLogic.GenerateJwtToken(user, organizationUser, constants.UserTypeLender)
+	token, err := l.baseLogic.UserLogic.GenerateJwtTokenById(l.ctx, user.Id, user.DefaultOrganizationId, constants.UserTypeLender)
 	if err != nil {
 		return nil, err
 	}
