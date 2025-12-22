@@ -34,7 +34,7 @@ const AddContactEmail = ({ rowData, setOpen, getData }) => {
 		<NewModal
 			width={500}
 			title={`${rowData?.id ? 'Edit' : 'Add'} Contact Email`}
-			okText={`${rowData?.id ? 'Edit' : 'Add'}`}
+			okText="Save"
 			confirmLoading={confirmLoading}
 			onOk={handleSave}
 			onCancel={() => setOpen(false)}
@@ -43,12 +43,15 @@ const AddContactEmail = ({ rowData, setOpen, getData }) => {
 				form={form}
 				layout="vertical"
 				autoComplete="off"
-				className="h-[90px] overflow-hidden overflow-y-auto"
+				className="h-[130px] overflow-hidden overflow-y-auto"
 				size="large"
 				disabled={confirmLoading}
 				scrollToFirstError
 				initialValues={{ email: rowData?.email }}
 			>
+				<div className="text-base-error pb-3">
+					Only Gmail and google verified email account are supported.
+				</div>
 				<Form.Item
 					label="Email address"
 					name={['email']}
