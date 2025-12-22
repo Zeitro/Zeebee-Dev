@@ -1841,12 +1841,13 @@ message OrganizationEntity {
   int64 owner_id = 4;
   AddressEntity address = 5;
   string contact_email = 6;
-  //  string email_auth_strategy = 7;
-  string owner_type = 8;
-  string type = 9;
-  string created_at = 10;
-  string updated_at = 11;
-  repeated OrganizationEmailEntity organization_emails = 12;
+  string contact_phone = 7;
+  string contact_name = 8;
+  string owner_type = 9;
+  string type = 10;
+  string created_at = 11;
+  string updated_at = 12;
+  repeated OrganizationEmailEntity organization_emails = 13;
 }
 
 message OrganizationOptionsEntity {

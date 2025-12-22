@@ -80,7 +80,10 @@ func (repo *OrganizationRepo) Page(ctx context.Context, pageReq dto.Organization
 	sorter := pageReq.Sorter
 	query := repo.Client(ctx)
 	if len(filter.Keyword) > 0 {
-		query = query.Where("name like ? or contact_email like ?", "%"+filter.Keyword+"%", "%"+filter.Keyword+"%")
+		keyword := "%" + filter.Keyword + "%"
+		query = query.Where("name LIKE @keyword OR contact_email LIKE @keyword OR contact_name LIKE @keyword OR contact_phone LIKE @keyword", map[string]interface{}{
+			"keyword": keyword,
+		})
 	}
 	if len(filter.OrganizationType) > 0 {
 		query = query.Where("type = ?", filter.OrganizationType)

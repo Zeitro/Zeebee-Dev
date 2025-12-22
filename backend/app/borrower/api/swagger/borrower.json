@@ -6507,6 +6507,12 @@
                 "contact_email": {
                   "type": "string"
                 },
+                "contact_name": {
+                  "type": "string"
+                },
+                "contact_phone": {
+                  "type": "string"
+                },
                 "created_at": {
                   "type": "string"
                 },
@@ -6640,6 +6646,8 @@
                       "owner_id",
                       "address",
                       "contact_email",
+                      "contact_phone",
+                      "contact_name",
                       "owner_type",
                       "type",
                       "created_at",
@@ -6668,6 +6676,12 @@
                         }
                       },
                       "contact_email": {
+                        "type": "string"
+                      },
+                      "contact_name": {
+                        "type": "string"
+                      },
+                      "contact_phone": {
                         "type": "string"
                       },
                       "created_at": {
@@ -13744,7 +13758,7 @@
       }
     }
   },
-  "x-date": "2025-12-20 17:42:51",
+  "x-date": "2025-12-22 10:25:54",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
