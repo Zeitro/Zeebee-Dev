@@ -31,6 +31,10 @@
 		"./assets/*": {
 			"import": "./src/assets/*",
 			"require": "./src/assets/*"
+		},
+		"./enum/*": {
+			"import": "./src/enum/*",
+			"require": "./src/enum/*"
 		}
 	},
 	"private": true,

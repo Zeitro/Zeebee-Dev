@@ -9,6 +9,7 @@ import { useEffect, useRef } from 'react';
  * - notPassedCallback: ()=>{} predicate返回false时执行
  * - immediate: () => void     立即执行（同步）回调，适合 form.setFieldsValue 等
  * - deferred: () => void      异步执行的回调，适合 setState（会触发 React 渲染）
+ * - destroyCallback: () => void 销毁时执行
  * - deps: Array               effect 依赖
  * - delay: number             延迟 ms（默认 0，使用 setTimeout）
  * - isUseMicrotask: boolean     若为 true，使用 Promise.resolve().then(...)（微任务）
@@ -18,6 +19,7 @@ export function useDeferredSyncEffect({
 	notPassedCallback = () => {},
 	immediate,
 	deferred,
+	destroyCallback,
 	deps = [],
 	delay = 0,
 	isUseMicrotask = false,
@@ -59,6 +61,7 @@ export function useDeferredSyncEffect({
 		}
 
 		return () => {
+			destroyCallback?.();
 			cancelledRef.current = true;
 			if (timerId) clearTimeout(timerId);
 		};
@@ -68,9 +71,9 @@ export function useDeferredSyncEffect({
 
 /**
  * 多个判断条件
- * useDeferredSyncEffects({ rules: [{ predicate, notPassedCallback, immediate, deferred, delay, isUseMicrotask }], deps })
+ * useDeferredSyncEffects({ rules: [{ predicate, notPassedCallback, immediate, deferred, delay, isUseMicrotask }], deps, destroyCallback })
  */
-export function useDeferredSyncEffects({ rules = [], deps = [] }) {
+export function useDeferredSyncEffects({ rules = [], deps = [], destroyCallback }) {
 	const cancelledRef = useRef(false);
 
 	useEffect(() => {
@@ -128,6 +131,7 @@ export function useDeferredSyncEffects({ rules = [], deps = [] }) {
 		}
 
 		return () => {
+			destroyCallback?.();
 			cancelledRef.current = true;
 			for (const t of timers) clearTimeout(t);
 		};
