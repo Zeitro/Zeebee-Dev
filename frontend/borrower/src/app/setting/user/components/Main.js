@@ -28,6 +28,7 @@ const MainModal = ({ setOpen, rowData, handleSearch, roles }) => {
 			handleSearch?.(res?.id);
 			if (rowData?.id === userInfo?.organization_user_id) {
 				await getUserInfo();
+				// await getOrganization();
 			}
 			setConfirmLoading(false);
 			setOpen(false);
