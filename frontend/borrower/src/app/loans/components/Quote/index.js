@@ -5,7 +5,16 @@ import { Button } from 'antd';
 import { useUserStore } from '@/store/user';
 import PreviewQuoteModal from './PreviewQuoteModal';
 // 公共询价按钮
-const QuoteBtn = ({ disabled, rowData, getRowData, isGetOrganization, isBtn = true, ...props }) => {
+const QuoteBtn = ({
+	disabled,
+	rowData,
+	getRowData,
+	isGetOrganization,
+	isBtn = true,
+	children,
+	tooltipProps = {},
+	...props
+}) => {
 	const [open, setOpen] = useState(false);
 	const [data, setData] = useState({});
 	const { userInfo, organization, getOrganization } = useUserStore();
@@ -30,7 +39,12 @@ const QuoteBtn = ({ disabled, rowData, getRowData, isGetOrganization, isBtn = tr
 				return (
 					<div>
 						<p className="text-sm">Email is not authorized for this organization.</p>
-						<Button size="small">Setting</Button>
+						<Button
+							size="small"
+							onClick={() => window.open('/setting/system', '_blank')}
+						>
+							Setting
+						</Button>
 					</div>
 				);
 			}
@@ -58,7 +72,7 @@ const QuoteBtn = ({ disabled, rowData, getRowData, isGetOrganization, isBtn = tr
 		}
 	}, [getOrganization, isGetOrganization]);
 	return (
-		<FieldTips title={tips}>
+		<FieldTips title={tips} {...tooltipProps}>
 			{isBtn ? (
 				<Button
 					type="primary"
@@ -67,7 +81,7 @@ const QuoteBtn = ({ disabled, rowData, getRowData, isGetOrganization, isBtn = tr
 					disabled={disabledQuote}
 					{...props}
 				>
-					Request quote
+					{children || 'Request quote'}
 				</Button>
 			) : (
 				<div
@@ -77,7 +91,7 @@ const QuoteBtn = ({ disabled, rowData, getRowData, isGetOrganization, isBtn = tr
 						cursor: disabledQuote ? 'not-allowed' : 'pointer',
 					}}
 				>
-					Request quote
+					{children || 'Request quote'}
 				</div>
 			)}
 			{open && <PreviewQuoteModal setOpen={setOpen} rowData={data} />}
