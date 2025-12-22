@@ -2,6 +2,7 @@ import { formatAmount, formatTime } from '@repo/shared-methods/utils';
 import { LoanPendingStatus } from './ChangeStageStatus';
 import { TableOperation } from '@repo/shared-methods';
 import QuoteBtn from './Quote';
+import { SendOutlined } from '@ant-design/icons';
 export const get3rdPartyMark = (v, { source }) => (
 	<div className="flex items-center">
 		<p className="overflow-hidden text-ellipsis whitespace-nowrap" title={v}>
@@ -95,7 +96,15 @@ const getOpt = (showDeleteModal, stage) => {
 					const arr = [
 						{
 							label: (
-								<QuoteBtn disabled={quoteDisabled} rowData={record} isBtn={false} />
+								<QuoteBtn
+									disabled={quoteDisabled}
+									rowData={record}
+									isBtn={false}
+									tooltipProps={{ placement: 'leftTop' }}
+								>
+									<SendOutlined style={{ marginRight: 8 }} />
+									Request quote
+								</QuoteBtn>
 							),
 							key: 'quote',
 							disabled: quoteDisabled,
