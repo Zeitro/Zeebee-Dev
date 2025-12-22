@@ -59,11 +59,10 @@ export const navRouter = [
 				path: '/management/borrower',
 				title: 'Borrower',
 			},
-			// {
-			// 	path: '/management/contactLender',
-			// 	title: 'Management ( Contact Lender )',
-			// 	menuTitle: 'Contact Lender',
-			// },
+			{
+				path: '/management/contactLender',
+				title: 'Contact Lender',
+			},
 		],
 	},
 	{
@@ -75,6 +74,10 @@ export const navRouter = [
 			{
 				path: '/setting/user',
 				title: 'User',
+			},
+			{
+				path: '/setting/system',
+				title: 'System',
 			},
 			// {
 			// 	path: '/setting/role',
@@ -145,6 +148,12 @@ export const noTokenRouter = [
 	{
 		path: '/loanCalculator',
 		title: 'Loan Calculator',
+		hideMenu: true,
+		hideCrumbs: true,
+	},
+	{
+		path: '/gmailAuth',
+		title: 'Gmail Authorized',
 		hideMenu: true,
 		hideCrumbs: true,
 	},

@@ -1,10 +1,10 @@
 'use client';
 import React, { useMemo, useRef, useState } from 'react';
 import { createRequest, formatPhone } from '@repo/shared-methods/utils';
-import { ReloadOutlined, PlusOutlined } from '@ant-design/icons';
+import { ReloadOutlined } from '@ant-design/icons';
 import { BtnPopUpModal, DeleteBtn, FilterTableCard } from '@repo/shared-methods';
-import useContent from './components/useContent';
-import MainModal from './components/Main';
+// import useContent from './components/useContent';
+// import MainModal from './components/Main';
 import PersonSvg from '@repo/shared-methods/assets/images/person.svg';
 import EmailSvg from '@repo/shared-methods/assets/images/email.svg';
 import PhoneSvg from '@repo/shared-methods/assets/images/phone.svg';
@@ -12,9 +12,9 @@ const ContactLender = () => {
 	const { cancel } = createRequest();
 	const tableFilterRef = useRef();
 	const [searchValue, setSearchValue] = useState('');
-	const { columns, handleDelete, loading } = useContent({
-		handleSearch: () => tableFilterRef?.current?.handleSearch(),
-	});
+	// const { columns, handleDelete, loading } = useContent({
+	// 	handleSearch: () => tableFilterRef?.current?.handleSearch(),
+	// });
 
 	const filterList = useMemo(
 		() => [
@@ -43,27 +43,6 @@ const ContactLender = () => {
 						tableFilterRef?.current?.handleSearch();
 					}, 300);
 				},
-				colProps: {
-					className: 'flex-1',
-				},
-			},
-			{
-				filterType: 'button',
-				children: (
-					<BtnPopUpModal
-						getContent={(setOpen) => (
-							<MainModal
-								setOpen={setOpen}
-								handleSearch={() => tableFilterRef?.current?.handleSearch()}
-							/>
-						)}
-						type="primary"
-						icon={<PlusOutlined />}
-						size="large"
-					>
-						Add Lender
-					</BtnPopUpModal>
-				),
 			},
 		],
 		[searchValue, cancel],
@@ -72,24 +51,22 @@ const ContactLender = () => {
 		<FilterTableCard
 			filterWrapClassName="px-8 pt-10 pb-8 flex-1 overflow-hidden"
 			ref={tableFilterRef}
-			columns={columns}
-			scroll={{ x: 1200 }}
 			filterList={filterList}
 			hasFilterField={true}
 			// pagination={pagination}
-			api="/borrower_applicant/page"
+			api="/organization/lender/page"
 			typeKey="card"
-			itemClassName="w-[420px]"
+			itemClassName="w-[300px]"
 			cardTitle="Contact lender"
 			renderItem={(row) => {
 				return (
 					<>
 						<div className="flex items-center justify-between">
 							<p className="font-medium text-base text-black-dark pb-2">
-								{row?.full_name}
+								{row?.name}
 							</p>
 
-							<div className="flex items-center">
+							{/* <div className="flex items-center">
 								<BtnPopUpModal
 									getContent={(setOpen) => (
 										<MainModal
@@ -120,7 +97,7 @@ const ContactLender = () => {
 								>
 									Delete
 								</DeleteBtn>
-							</div>
+							</div> */}
 						</div>
 
 						<div className="flex items-center gap-4 pt-3">

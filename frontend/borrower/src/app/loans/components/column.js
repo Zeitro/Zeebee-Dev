@@ -1,6 +1,7 @@
 import { formatAmount, formatTime } from '@repo/shared-methods/utils';
 import { LoanPendingStatus } from './ChangeStageStatus';
 import { TableOperation } from '@repo/shared-methods';
+import QuoteBtn from './Quote';
 export const get3rdPartyMark = (v, { source }) => (
 	<div className="flex items-center">
 		<p className="overflow-hidden text-ellipsis whitespace-nowrap" title={v}>
@@ -88,7 +89,18 @@ const getOpt = (showDeleteModal, stage) => {
 				record={record}
 				// disabled={stage !== 'Draft' && record?.source !== 'borrower'}
 				getItems={(editItem, deleteItem, detailsItem) => {
-					const arr = [];
+					const quoteDisabled = !(
+						record?.stage === 'Pending' && record?.pending_status === 'Quoting'
+					);
+					const arr = [
+						{
+							label: (
+								<QuoteBtn disabled={quoteDisabled} rowData={record} isBtn={false} />
+							),
+							key: 'quote',
+							disabled: quoteDisabled,
+						},
+					];
 					if (stage === 'Draft') {
 						const url =
 							record?.source === 'Borrower'
@@ -107,6 +119,7 @@ const getOpt = (showDeleteModal, stage) => {
 							});
 						}
 					}
+
 					return arr;
 				}}
 				onSelect={(key) => {

@@ -7,6 +7,7 @@ export const useUserStore = create(
 		(set, get, api) => ({
 			userInfo: {},
 			access: {},
+			organization: {},
 			login: async (values, config = {}) => {
 				const access = await request('/user/login', {
 					method: 'POST',
@@ -79,13 +80,26 @@ export const useUserStore = create(
 				});
 				return true;
 			},
+			getOrganization: async () => {
+				// 获取组织信息
+				const organization = await request('/organization/info', {
+					method: 'GET',
+				});
+				set({ organization });
+				return organization;
+			},
+			setOrganization: (organization) => {
+				set({ organization });
+			},
 		}),
 		{
 			name: 'userStore', // 存储唯一标识（必填）
 			storage: createJSONStorage(() => localStorage), // 默认 localStorage
+			getStorage: () => localStorage, // 关键配置
 			partialize: (state) => ({
 				userInfo: state.userInfo,
 				access: state.access,
+				organization: state.organization,
 			}),
 		},
 	),

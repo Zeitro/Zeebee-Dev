@@ -24,7 +24,7 @@ export const NoData = ({
 					) : (
 						<NodataSvg style={{ width: 120, height: 120 }} {...imageProps} />
 					)}
-					<span className="text-base-label">{text}</span>
+					<div className="text-base-label">{text}</div>
 				</>
 			)}
 		</div>

@@ -10,6 +10,7 @@ import { createRequest } from '@repo/shared-methods/utils';
 import { loan_pending } from '@/enum/common';
 import { BtnPopUpModal } from '@repo/shared-methods';
 import _ from 'lodash';
+import QuoteBtn from '../components/Quote';
 const CreateLoanPage = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -108,16 +109,29 @@ const CreateLoanPage = () => {
 					Cancel
 				</BtnPopUpModal>
 				<Space size={8}>
-					{/* {currentStep === 2 && (
-						<QuoteBtn
-							disabled={
-								loanData[0]?.stage === 'Pending' &&
-								loanData[0]?.pending_status === 'Quoting'
-							}
-						/>
-					)} */}
 					{!!currentStep && (
 						<Button onClick={() => setCurrentStep((v) => v - 1)}>Back</Button>
+					)}
+					{currentStep === 2 && (
+						<QuoteBtn
+							disabled={
+								!(
+									loanData[0]?.stage === 'Pending' &&
+									loanData[0]?.pending_status === 'Quoting'
+								)
+							}
+							onSave={handleNext}
+							getRowData={async () => {
+								const values = await form.validateFields();
+								return _.merge(
+									{},
+									loanData[0] || {},
+									loanData[1] || {},
+									values || {},
+								);
+							}}
+							isGetOrganization={true}
+						/>
 					)}
 					<Button type="primary" onClick={handleNext} loading={loading}>
 						{currentStep < 2 ? 'Next' : 'Add Loan'}
@@ -125,7 +139,7 @@ const CreateLoanPage = () => {
 				</Space>
 			</Col>
 		),
-		[currentStep, handleNext, loading, loanData, router],
+		[currentStep, handleNext, loading, loanData, router, form],
 	);
 	const stepContent = useMemo(
 		() => ({
