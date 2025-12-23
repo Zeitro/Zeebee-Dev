@@ -1,13 +1,16 @@
 'use client';
 import React, { useMemo, useRef, useState } from 'react';
 import { createRequest, formatPhone } from '@repo/shared-methods/utils';
-import { ReloadOutlined } from '@ant-design/icons';
+import { LinkOutlined, ReloadOutlined } from '@ant-design/icons';
 import { BtnPopUpModal, DeleteBtn, FilterTableCard } from '@repo/shared-methods';
 // import useContent from './components/useContent';
 // import MainModal from './components/Main';
 import PersonSvg from '@repo/shared-methods/assets/images/person.svg';
 import EmailSvg from '@repo/shared-methods/assets/images/email.svg';
 import PhoneSvg from '@repo/shared-methods/assets/images/phone.svg';
+import NoOrgLogo from '@/assets/images/noOrgLogo.svg';
+import { Image } from 'antd';
+import Link from 'next/link';
 const ContactLender = () => {
 	const { cancel } = createRequest();
 	const tableFilterRef = useRef();
@@ -61,8 +64,21 @@ const ContactLender = () => {
 			renderItem={(row) => {
 				return (
 					<>
-						<div className="flex items-center justify-between">
-							<p className="font-medium text-base text-black-dark pb-2">
+						<div className="flex items-center">
+							{row?.logo ? (
+								<Image
+									src={row?.logo}
+									width={48}
+									height={48}
+									alt="logo"
+									preview={false}
+									fallback={NoOrgLogo}
+									style={{ objectFit: 'contain' }}
+								/>
+							) : (
+								<NoOrgLogo style={{ width: 48, height: 48 }} />
+							)}
+							<p className="font-medium text-base text-black-dark pl-2 overflow-hidden">
 								{row?.name}
 							</p>
 
@@ -100,17 +116,39 @@ const ContactLender = () => {
 							</div> */}
 						</div>
 
-						<div className="flex items-center gap-4 pt-3">
+						<div className="flex items-center gap-4 pt-3 overflow-hidden">
 							<PersonSvg />
-							<span className="text-sm/6">{row?.contact_name}</span>
+							<span className="text-sm/6 common-ellipsis">{row?.contact_name}</span>
 						</div>
-						<div className="flex items-center gap-4 pt-3">
+						<div className="flex items-center gap-4 pt-3 overflow-hidden">
 							<EmailSvg />
-							<span className="text-sm/6">{row?.contact_email}</span>
+							<span className="text-sm/6 common-ellipsis">{row?.contact_email}</span>
 						</div>
 						<div className="flex items-center gap-4 pt-3">
 							<PhoneSvg />
 							<span className="text-sm/6">{formatPhone(row?.contact_phone)}</span>
+						</div>
+						<div className="flex items-center gap-6 pt-3">
+							<LinkOutlined
+								style={{
+									fontSize: 18,
+									color: 'var(--base-primary)',
+									marginLeft: 2,
+								}}
+							/>
+							{row?.website ? (
+								<Link
+									href={row?.website || ''}
+									target="_blank"
+									className="overflow-hidden"
+								>
+									<span className="text-sm/6 common-ellipsis block ">
+										{row?.website}
+									</span>
+								</Link>
+							) : (
+								<span className="text-sm/6">--</span>
+							)}
 						</div>
 					</>
 				);

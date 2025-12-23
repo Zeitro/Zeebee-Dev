@@ -4,7 +4,13 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 const useContent = ({ items, setItems, onDragEnd, isSort, list, setList }) => {
-	const sensors = useSensors(useSensor(PointerSensor));
+	const sensors = useSensors(
+		useSensor(PointerSensor, {
+			activationConstraint: {
+				distance: 5, // 移动5像素后才开始拖拽
+			},
+		}),
+	);
 
 	// 列空占位符
 	const EmptyColumnDroppable = ({ colValue, children }) => {
