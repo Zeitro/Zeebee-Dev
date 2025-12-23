@@ -103,9 +103,7 @@ func (cli *GmailClient) SendEmail(ctx context.Context, msg commonemail.Message) 
 // getSrv
 func (cli *GmailClient) getSrv(ctx context.Context) (srv *gmailapi.Service, err error) {
 	httpClient := cli.config.Client(context.Background(), cli.token)
-	srv, err = gmailapi.NewService(ctx,
-		option.WithHTTPClient(httpClient),
-	)
+	srv, err = gmailapi.NewService(ctx, option.WithHTTPClient(httpClient))
 	return srv, errorx.WithStack(err)
 }
 
