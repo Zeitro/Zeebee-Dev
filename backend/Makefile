@@ -44,3 +44,11 @@ create-proto:
 create-rpc-service:
 		$(eval SERVICE := $(filter-out $@,$(MAKECMDGOALS)))
 		goctl rpc protoc app/$(SERVICE)/rpc/pb/$(SERVICE).proto --go_out=./app/$(SERVICE)/rpc/pb --go-grpc_out=./app/$(SERVICE)/rpc/pb --zrpc_out=./app/$(SERVICE)/rpc --style go_zero -m --home third_party/goctl_template
+
+.PHONY: create-service
+# Create service
+create-service:
+	$(eval SERVICE := $(filter-out $@,$(MAKECMDGOALS)))
+	$(MAKE) create-api-service SERVICE=$(SERVICE)
+	$(MAKE) create-rpc-service SERVICE=$(SERVICE)
+	$(MAKE) create-swagger SERVICE=$(SERVICE)
