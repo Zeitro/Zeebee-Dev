@@ -17,6 +17,8 @@ const BorrowerCardItem = ({
 	const handleSearch = () => getList?.();
 	const { loading, handleDelete } = useBorrower({
 		handleSearch,
+		handleClickItem,
+		rowData,
 	});
 	return (
 		<Col xl={6} sm={24} xs={24} {...props}>

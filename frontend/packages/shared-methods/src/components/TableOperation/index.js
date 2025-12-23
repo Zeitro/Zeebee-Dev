@@ -4,21 +4,7 @@ import React, { useState } from 'react';
 import { EditOutlined, EllipsisOutlined, DeleteOutlined, ProfileOutlined } from '@ant-design/icons';
 import styles from './index.module.scss';
 import { useRouter } from 'next/navigation';
-const editItem = {
-	label: 'Edit',
-	key: 'edit',
-	icon: <EditOutlined />,
-};
-const deleteItem = {
-	label: 'Delete',
-	key: 'delete',
-	icon: <DeleteOutlined />,
-};
-const detailsItem = {
-	label: 'Details',
-	key: 'details',
-	icon: <ProfileOutlined />,
-};
+
 /**
  * Table内的操作组件
  * list: 下拉列表，传值就不包含edit和delete，不传默认用edit/delete
@@ -26,6 +12,21 @@ const detailsItem = {
  * onSelect：选择下拉项的回调函数
  */
 export const TableOperation = ({ list, className, onSelect, getItems, disabled }) => {
+	const editItem = {
+		label: 'Edit',
+		key: 'edit',
+		icon: <EditOutlined />,
+	};
+	const deleteItem = {
+		label: 'Delete',
+		key: 'delete',
+		icon: <DeleteOutlined />,
+	};
+	const detailsItem = {
+		label: 'Details',
+		key: 'details',
+		icon: <ProfileOutlined />,
+	};
 	const [selectedKey, setSelectedKey] = useState(null);
 	const router = useRouter();
 	const newItems = getItems?.(editItem, deleteItem, detailsItem) || [editItem, deleteItem];

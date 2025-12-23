@@ -10,38 +10,65 @@
 			#c2e9fb 100%
 		);
 	}
-	:global(.ant-menu-inline-collapsed) {
-		width: 56px !important;
-	}
-	:global(.ant-menu-root > .ant-menu-item) {
-		padding-inline: 10px !important;
-	}
-	:global(.ant-menu-vertical > li:hover),
-	:global(.ant-menu-vertical > .ant-menu-submenu-vertical:hover > .ant-menu-submenu-title) {
-		background-color: #f5f5f5 !important;
-	}
-}
+	:global {
+		.ant-menu-root.ant-menu-vertical {
+			padding: 0 9px !important;
+			transition: padding 0.3s cubic-bezier(0.2, 0, 0, 1) 0s;
+		}
+		.ant-menu-root.ant-menu-inline {
+			padding: 0 14px !important;
+		}
+		.ant-menu-sub.ant-menu-inline {
+			background: #fff !important;
+			li {
+				font-size: 16px;
+				font-weight: 500;
+				height: 48px !important;
+				line-height: 48px !important;
+				padding-left: 33px !important;
+			}
+		}
+		.ant-menu .ant-menu-submenu-arrow {
+			inset-inline-end: 8px;
+		}
+		.ant-menu-inline-collapsed {
+			width: 100% !important;
+			border-right: none !important;
+		}
 
-.menuList :global {
-	.ant-menu-submenu > .ant-menu-submenu-title {
-		font-size: 24px;
-		padding-left: 10px !important;
-		font-weight: 600;
-	}
-	.ant-menu-item {
-		font-size: 24px;
-		font-weight: 600;
-		height: 48px !important;
-		line-height: 48px !important;
-	}
-	.ant-menu-title-content {
-		font-size: 16px;
-	}
-	.ant-menu-sub {
-		background: #fff !important;
+		.ant-menu-root > .ant-menu-item,
+		.ant-menu-root > .ant-menu-submenu > .ant-menu-submenu-title {
+			width: 100%;
+			margin: 0 !important;
+			height: 56px !important;
+			line-height: 56px !important;
+			font-size: 16px;
+			font-weight: 500;
+			border-radius: 0 !important;
+			svg {
+				flex-shrink: 0;
+				vertical-align: middle;
+			}
+			&:hover {
+				background-color: transparent !important;
+				color: var(--base-primary);
+			}
+		}
+
+		.ant-menu-vertical .ant-menu-submenu-open .ant-menu-submenu-title,
+		.ant-menu-vertical .ant-menu-submenu .ant-menu-submenu-title:hover {
+			background-color: #f5f5f5 !important;
+		}
 	}
 }
 
 .sidebar_icon g > path {
 	fill: currentColor;
+}
+
+.organizationsRoot :global {
+	.ant-tooltip-inner {
+		padding: 4px !important;
+		font-size: 14px;
+	}
 }

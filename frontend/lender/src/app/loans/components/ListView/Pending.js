@@ -1,12 +1,12 @@
 'use client';
-import React, { useMemo, useState, useRef } from 'react';
-import { ReloadOutlined } from '@ant-design/icons';
+import React, { useMemo, useState, useRef, useEffect } from 'react';
 import { FilterTable } from '@repo/shared-methods';
-import { activeColumns } from './column';
+import { pendingColumns } from './column';
+import { transformArrayStructure, createRequest, eventBus } from '@repo/shared-methods/utils';
 import { useOptionsStore } from '@repo/shared-methods/store';
-import { transformArrayStructure, createRequest } from '@repo/shared-methods/utils';
+import { ReloadOutlined } from '@ant-design/icons';
 import useOpt from './useOpt';
-const ActiveLoans = ({
+const PendingPage = ({
 	hasFilterField,
 	hasPagination,
 	filterWrapClassName,
@@ -15,29 +15,30 @@ const ActiveLoans = ({
 	dataSource,
 	isNotAddress,
 	loading,
-	scrollX = 2650,
+	scrollX = 2700,
 	successCallback,
-	stage = 'Active',
+	stage = 'Pending', // 默认是pending，可传草稿draft(因草稿展示和pending loans的一致，只有表格操作栏不同，所以需要区分)
 }) => {
-	const { loanPurposeOptions, loanTypeOptions } = useOptionsStore();
-	const { request } = createRequest();
 	const tableFilterRef = useRef();
+	const { loanPendingStatus, loanPurposeOptions, loanTypeOptions } = useOptionsStore();
 	const { showDeleteModal, contextHolder, handleSelectedRow } = useOpt(tableFilterRef);
+	const { request } = createRequest();
 	const [type, setType] = useState('address');
 	const [searchValue, setSearchValue] = useState('');
 	const [loanPurpose, setLoanPurpose] = useState([]);
 	const [loanType, setLoanType] = useState([]);
+	const [status, setStatus] = useState([]);
 	const filterList = useMemo(
 		() => [
 			{
 				filterType: 'select-input',
 				selectValue: type,
+				selectParamsKey: 'keyword_type',
+				paramsKey: 'keyword',
 				value: searchValue,
 				selectProps: {
 					onChange: (e) => setType(e),
 				},
-				selectParamsKey: 'keyword_type',
-				paramsKey: 'keyword',
 				onChange: ({ target: { value } }) => setSearchValue(value),
 				options: [
 					{
@@ -61,9 +62,9 @@ const ActiveLoans = ({
 			{
 				filterType: 'treeSelect',
 				label: 'Loan purpose',
+				paramsKey: 'loan_purpose',
 				placeholder: 'Loan purpose',
 				value: loanPurpose,
-				paramsKey: 'loan_purpose',
 				onChange: (value) => setLoanPurpose(value),
 				treeData: transformArrayStructure({
 					sourceArray: loanPurposeOptions,
@@ -73,13 +74,28 @@ const ActiveLoans = ({
 			{
 				filterType: 'treeSelect',
 				label: 'Loan type',
+				paramsKey: 'loan_type',
+				style: { width: 160 },
 				popupMatchSelectWidth: 205,
 				value: loanType,
-				paramsKey: 'loan_type',
 				placeholder: 'Loan type',
 				onChange: (value) => setLoanType(value),
 				treeData: transformArrayStructure({
 					sourceArray: loanTypeOptions,
+					outputKey: 'title',
+				}).map((i) => ({ ...i, key: i.value })),
+			},
+			{
+				filterType: 'treeSelect',
+				label: 'Status',
+				value: status,
+				paramsKey: 'pending_status',
+				placeholder: 'Status',
+				style: { width: 160 },
+				popupMatchSelectWidth: 172,
+				onChange: (value) => setStatus(value),
+				treeData: transformArrayStructure({
+					sourceArray: loanPendingStatus,
 					outputKey: 'title',
 				}).map((i) => ({ ...i, key: i.value })),
 			},
@@ -99,20 +115,38 @@ const ActiveLoans = ({
 					setSearchValue('');
 					setLoanPurpose([]);
 					setLoanType([]);
+					setStatus([]);
 					setTimeout(() => {
 						tableFilterRef?.current?.handleSearch?.();
 					}, 300);
 				},
 			},
 		],
-		[searchValue, type, loanPurpose, loanType, loanPurposeOptions, loanTypeOptions],
+		[
+			searchValue,
+			type,
+			loanPurpose,
+			loanType,
+			status,
+			loanPurposeOptions,
+			loanTypeOptions,
+			loanPendingStatus,
+		],
 	);
+
+	// 导入3rd party后调用，更新列表
+	useEffect(() => {
+		const searchPendingLoans = () => tableFilterRef?.current?.handleSearch?.();
+		eventBus.on('searchPendingLoans', searchPendingLoans);
+		return () => eventBus.off('searchPendingLoans', searchPendingLoans);
+	}, []);
 
 	return (
 		<>
 			<FilterTable
+				key={stage}
 				ref={tableFilterRef}
-				columns={activeColumns(
+				columns={pendingColumns(
 					isNotAddress,
 					// eslint-disable-next-line react-hooks/refs
 					() =>
@@ -120,6 +154,7 @@ const ActiveLoans = ({
 							? successCallback?.()
 							: tableFilterRef?.current?.handleSearch?.(),
 					showDeleteModal,
+					stage,
 				)}
 				scroll={{ x: scrollX }}
 				filterList={filterList}
@@ -137,7 +172,7 @@ const ActiveLoans = ({
 					if (!api) {
 						return {
 							list: dataSource,
-							total: dataSource.length,
+							total: dataSource?.length,
 						};
 					}
 					const filter = hasFilterField
@@ -162,4 +197,4 @@ const ActiveLoans = ({
 		</>
 	);
 };
-export default ActiveLoans;
+export default PendingPage;

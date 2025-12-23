@@ -96,7 +96,7 @@ const CreateProperty = ({
 						</Form.Item>
 					</Col>
 					<Col {...layoutCol} {...(colProps || {})}>
-						<Form.Item label="owner" name={['loan_property', 'owner']}>
+						<Form.Item label="Owner" name={['loan_property', 'owner']}>
 							<Input placeholder="Enter owner" />
 						</Form.Item>
 					</Col>
@@ -110,6 +110,20 @@ const CreateProperty = ({
 					</Col>
 				</>
 			)}
+			<Col {...layoutCol} {...(colProps || {})}>
+				<Form.Item
+					label="Estimated after repair value (ARV)" // 修复后预计估值
+					name={['loan_property', 'arv']}
+					rules={[
+						{
+							required: true,
+							message: 'Please enter estimated ARV!',
+						},
+					]}
+				>
+					<InputNumAmount placeholder="Enter estimated ARV" />
+				</Form.Item>
+			</Col>
 			{stepBtn}
 		</Row>
 	);

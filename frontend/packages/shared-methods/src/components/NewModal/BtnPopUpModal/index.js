@@ -35,13 +35,13 @@ export const BtnPopUpModal = ({
 	getContent = () => {}, // 弹框组件
 	isButton = true,
 	predicate = () => true, // 用于条件判断不通过,则不弹出弹框
+	isStopPropagation = true,
 	...props
 }) => {
 	const [modal, contextHolder] = Modal.useModal();
 	const [open, setOpen] = useState('');
 	const handleClick = (e) => {
-		e?.stopPropagation();
-		e?.preventDefault();
+		if (isStopPropagation) e?.stopPropagation();
 		const isPass = predicate?.();
 		if (!isPass) return;
 		if (modalType) {
@@ -82,6 +82,7 @@ export const DeleteBtn = ({
 	size = 'small',
 	disabled,
 	className,
+	isStopPropagation = true,
 	predicate = () => true,
 	...props
 }) => {
@@ -97,6 +98,7 @@ export const DeleteBtn = ({
 			disabled={disabled}
 			className={className}
 			predicate={predicate}
+			isStopPropagation={isStopPropagation}
 		>
 			{children || 'Delete'}
 		</BtnPopUpModal>

@@ -9,6 +9,7 @@ export const navRouter = [
 		title: 'All loans',
 		icon: 'loan',
 		roles: [],
+		hideCrumbs: true,
 		router: [
 			{
 				path: '/loans/createZeeBeeLoan',

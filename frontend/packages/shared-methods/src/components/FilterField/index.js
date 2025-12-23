@@ -93,7 +93,6 @@ export const FilterField = forwardRef(({ list, className, ...rowProps }, ref) =>
 				filterItem = (
 					<Select
 						size="large"
-						placeholder="select"
 						allowClear
 						style={{ width: 180 }}
 						options={options}
