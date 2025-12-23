@@ -79,7 +79,7 @@ const ContactLender = () => {
 								<NoOrgLogo style={{ width: 48, height: 48 }} />
 							)}
 							<p className="font-medium text-base text-black-dark pl-2 overflow-hidden">
-								{row?.name}
+								{row?.name || '--'}
 							</p>
 
 							{/* <div className="flex items-center">
@@ -117,19 +117,26 @@ const ContactLender = () => {
 						</div>
 
 						<div className="flex items-center gap-4 pt-3 overflow-hidden">
-							<PersonSvg />
-							<span className="text-sm/6 common-ellipsis">{row?.contact_name}</span>
+							<PersonSvg className="flex-shrink-0" />
+							<span className="text-sm/6 common-ellipsis">
+								{row?.contact_name || '--'}
+							</span>
 						</div>
 						<div className="flex items-center gap-4 pt-3 overflow-hidden">
-							<EmailSvg />
-							<span className="text-sm/6 common-ellipsis">{row?.contact_email}</span>
+							<EmailSvg className="flex-shrink-0" />
+							<span className="text-sm/6 common-ellipsis">
+								{row?.contact_email || '--'}
+							</span>
 						</div>
 						<div className="flex items-center gap-4 pt-3">
-							<PhoneSvg />
-							<span className="text-sm/6">{formatPhone(row?.contact_phone)}</span>
+							<PhoneSvg className="flex-shrink-0" />
+							<span className="text-sm/6">
+								{formatPhone(row?.contact_phone) || '--'}
+							</span>
 						</div>
 						<div className="flex items-center gap-6 pt-3">
 							<LinkOutlined
+								className="flex-shrink-0"
 								style={{
 									fontSize: 18,
 									color: 'var(--base-primary)',
