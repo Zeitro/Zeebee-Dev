@@ -2941,11 +2941,24 @@
                       "creator_id",
                       "creator_name",
                       "stage",
+                      "pending_status",
                       "loan_purpose",
                       "loan_type",
                       "total_amount",
+                      "initial_amount",
                       "loan_property",
+                      "lender_company",
+                      "closing_date",
+                      "closing_fund",
+                      "holdback_amount",
                       "rate",
+                      "principal_amount",
+                      "monthly_payment",
+                      "lien_position",
+                      "maturity_date",
+                      "prepayment_penalty",
+                      "service_company",
+                      "paid_off_date",
                       "business_strategy",
                       "applicants",
                       "lender_id",
@@ -4153,6 +4166,29 @@
                 "lender_ids"
               ],
               "properties": {
+                "applicants": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "borrower_applicant_id"
+                    ],
+                    "properties": {
+                      "borrower_applicant_id": {
+                        "type": "integer"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "is_primary": {
+                        "type": "boolean"
+                      },
+                      "own_percent": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
                 "business_strategy": {
                   "type": "array",
                   "items": {
@@ -9503,11 +9539,24 @@
                       "creator_id",
                       "creator_name",
                       "stage",
+                      "pending_status",
                       "loan_purpose",
                       "loan_type",
                       "total_amount",
+                      "initial_amount",
                       "loan_property",
+                      "lender_company",
+                      "closing_date",
+                      "closing_fund",
+                      "holdback_amount",
                       "rate",
+                      "principal_amount",
+                      "monthly_payment",
+                      "lien_position",
+                      "maturity_date",
+                      "prepayment_penalty",
+                      "service_company",
+                      "paid_off_date",
                       "business_strategy",
                       "applicants",
                       "lender_id",
@@ -10336,11 +10385,24 @@
                       "creator_id",
                       "creator_name",
                       "stage",
+                      "pending_status",
                       "loan_purpose",
                       "loan_type",
                       "total_amount",
+                      "initial_amount",
                       "loan_property",
+                      "lender_company",
+                      "closing_date",
+                      "closing_fund",
+                      "holdback_amount",
                       "rate",
+                      "principal_amount",
+                      "monthly_payment",
+                      "lien_position",
+                      "maturity_date",
+                      "prepayment_penalty",
+                      "service_company",
+                      "paid_off_date",
                       "business_strategy",
                       "applicants",
                       "lender_id",
@@ -11170,11 +11232,24 @@
                       "creator_id",
                       "creator_name",
                       "stage",
+                      "pending_status",
                       "loan_purpose",
                       "loan_type",
                       "total_amount",
+                      "initial_amount",
                       "loan_property",
+                      "lender_company",
+                      "closing_date",
+                      "closing_fund",
+                      "holdback_amount",
                       "rate",
+                      "principal_amount",
+                      "monthly_payment",
+                      "lien_position",
+                      "maturity_date",
+                      "prepayment_penalty",
+                      "service_company",
+                      "paid_off_date",
                       "business_strategy",
                       "applicants",
                       "lender_id",
@@ -13758,7 +13833,7 @@
       }
     }
   },
-  "x-date": "2025-12-22 10:25:54",
+  "x-date": "2025-12-23 11:21:44",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

@@ -95,3 +95,13 @@ func (repo *BorrowerApplicantRepo) TranToLoanApplicantWithId(ctx context.Context
 
 	return result, nil
 }
+
+// GetFullNames retrieves the full names of borrower applicants
+// based on their IDs and organization ID.
+func (repo *BorrowerApplicantRepo) GetFullNames(ctx context.Context, ids []int64, organizationId int64) (result []string, err error) {
+	err = repo.Client(ctx).
+		Model(&model.BorrowerApplicant{}).
+		Where("id in ? and organization_id = ?", ids, organizationId).
+		Pluck("full_name", &result).Error
+	return result, errorx.WithStack(err)
+}

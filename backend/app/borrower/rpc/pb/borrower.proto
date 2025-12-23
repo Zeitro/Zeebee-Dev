@@ -702,6 +702,7 @@ message LoanSendQuoteEmailRequestData {
   double principal_amount = 9;
   repeated string business_strategy = 10;
   repeated int64 lender_ids = 11;
+  repeated ThirdPartyLoanApplicantEditEntity applicants = 12;
 }
 
 
