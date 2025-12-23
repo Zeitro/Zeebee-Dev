@@ -29,8 +29,8 @@ func NewManager(mgr *limiter.LimiterManager) *Manager {
 }
 
 // BuildKey builds a key for the limiter
-func BuildKey(emailType EmailType, email string, recipient string, organizationId int64, organizationType constants.UserType) string {
-	return stringx.Format("email:%s:%s:%s:%d:%s:limiter", emailType, email, recipient, organizationId, organizationType)
+func (m *Manager) BuildKey(strategy limiter.LimiterStrategy, email string, recipient string, organizationId int64, organizationType constants.UserType) string {
+	return stringx.Format("email:%s:%s:%s:%d:%s:limiter", strategy, email, recipient, organizationId, organizationType)
 }
 
 // SetLimiter sets the email limiter for the email manager

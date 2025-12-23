@@ -13,8 +13,10 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	commonemail "zeebee-backend/common/email"
+	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/email/client"
+	"zeebee-backend/domains/zeebee/limiter"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -103,7 +105,7 @@ func (l *SendQuoteEmailLogic) SendQuoteEmail(in *borrower.LoanSendQuoteEmailRequ
 				lenderId:    id,
 				tplVars:     tplVars,
 			}
-			err := l.sendEmail(newCtx, input)
+			err := l.sendEmail(newCtx, input, claim)
 			if err != nil {
 				l.WithContext(newCtx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 			}
@@ -122,7 +124,7 @@ type quoteEmailInput struct {
 }
 
 // send email
-func (l *SendQuoteEmailLogic) sendEmail(ctx context.Context, input quoteEmailInput) (err error) {
+func (l *SendQuoteEmailLogic) sendEmail(ctx context.Context, input quoteEmailInput, claim utils.JwtUser) (err error) {
 	lender, err := l.svcCtx.OrganizationRepo.GetOrganization(ctx, input.lenderId, constants.UserTypeLender, false)
 	if err != nil {
 		return err
@@ -135,6 +137,16 @@ func (l *SendQuoteEmailLogic) sendEmail(ctx context.Context, input quoteEmailInp
 	property, ok := tplVars["property"].(*model.BorrowerProperty)
 	if !ok {
 		return errorx.New("Invalid Property")
+	}
+
+	key := global.EmailAuthManager.BuildKey(limiter.StrategySendLoanQuoteEmail, input.senderEmail, lender.ContactEmail, claim.OrganizationId, claim.UserType)
+	// rate limit
+	ok, err = global.LimiterMgr.Limit(ctx, limiter.StrategySendLoanQuoteEmail, key)
+	if err != nil {
+		return errorx.WithStack(err)
+	}
+	if !ok {
+		return errorx.New("Rate Limit")
 	}
 
 	emailContent := ""

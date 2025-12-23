@@ -2,7 +2,6 @@ package userlogic
 
 import (
 	"context"
-	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -10,9 +9,9 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/limiter"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/limiter"
 )
 
 type SendVerifyEmailLogic struct {
@@ -39,11 +38,7 @@ func (l *SendVerifyEmailLogic) SendVerifyEmail(in *borrower.SendVerifyEmailReque
 	email := in.Data.Email
 	// check send email limit
 	key := stringx.Format(constants.RegisterVerifyEmail, constants.UserTypeBorrower, email)
-	limitOpt := limiter.WithRedisLimit(
-		global.Config.LimiterConf.SendVerityEmail.Rate,
-		time.Second*time.Duration(global.Config.LimiterConf.SendVerityEmail.Period),
-	)
-	ok, err := global.SendRegisterEmailLimiter.Limit(l.ctx, key, limitOpt)
+	ok, err := global.LimiterMgr.Limit(l.ctx, limiter.StrategySendVerifyEmail, key)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
@@ -74,11 +69,6 @@ func (l *SendVerifyEmailLogic) SendVerifyEmail(in *borrower.SendVerifyEmailReque
 			l.WithContext(ctx).Error(err)
 		}
 	}()
-
-	// err = sendRegisterVerifyUrlEmail(l.ctx, email, user.Borrower.FirstName)
-	// if err != nil {
-	// 	return nil, err
-	// }
 
 	return &borrower.SendVerifyEmailResponse{}, nil
 }
