@@ -2,7 +2,10 @@ package loanlogic
 
 import (
 	"context"
+	"fmt"
 	"strings"
+
+	"github.com/duke-git/lancet/v2/slice"
 
 	"zeebee-backend/app/borrower/rpc/internal/email_tpl"
 	"zeebee-backend/app/borrower/rpc/internal/global"
@@ -41,6 +44,10 @@ func (l *SendQuoteEmailLogic) SendQuoteEmail(in *borrower.LoanSendQuoteEmailRequ
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
+	if len(in.Data.LenderIds) == 0 {
+		return nil, errorx.New("Lender is Required")
+	}
+
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
@@ -52,6 +59,18 @@ func (l *SendQuoteEmailLogic) SendQuoteEmail(in *borrower.LoanSendQuoteEmailRequ
 	if borrowerOrganization.Status != constants.OrganizationStatusActive {
 		return nil, errorx.New("Borrower Organization Not Active")
 	}
+	borrowerApplicantIds := slice.Map(in.Data.Applicants, func(index int, item *borrower.ThirdPartyLoanApplicantEditEntity) int64 {
+		return item.BorrowerApplicantId
+	})
+	if len(borrowerApplicantIds) == 0 {
+		return nil, errorx.New("Borrowers is Required")
+	}
+
+	borrowerApplicantNames, err := l.svcCtx.BorrowerApplicantRepo.GetFullNames(l.ctx, borrowerApplicantIds, claim.OrganizationId)
+	if err != nil {
+		return nil, err
+	}
+
 	senderEmail, emailClient, err := l.getEmailClient(l.ctx, claim.UserId, claim.OrganizationId)
 	if err != nil {
 		return nil, err
@@ -63,17 +82,19 @@ func (l *SendQuoteEmailLogic) SendQuoteEmail(in *borrower.LoanSendQuoteEmailRequ
 
 	go func() {
 		newCtx := context.WithoutCancel(l.ctx)
+		l.WithContext(newCtx).WithFields(logx.Field("lender ids", in.Data.LenderIds)).Info("start send quote email")
 		tplVars := map[string]interface{}{
-			"borrower_name":     borrowerOrganization.Name,
-			"holdback_amount":   in.Data.HoldbackAmount,
-			"closing_date":      in.Data.ClosingDate,
-			"business_strategy": strings.Join(in.Data.BusinessStrategy, ""),
-			"total_loan_amount": in.Data.TotalAmount,
-			"loan_type":         in.Data.LoanType,
-			"loan_purpose":      in.Data.LoanPurpose,
-			"purchase_amount":   in.Data.LoanProperty.PurchaseAmount,
-			"arv":               in.Data.LoanProperty.Arv,
-			"property":          borrowerProperty,
+			"borrower_name":           borrowerOrganization.Name,
+			"borrower_applicant_name": strings.Join(borrowerApplicantNames, ","),
+			"holdback_amount":         in.Data.HoldbackAmount,
+			"closing_date":            in.Data.ClosingDate,
+			"business_strategy":       strings.Join(in.Data.BusinessStrategy, ""),
+			"total_loan_amount":       in.Data.TotalAmount,
+			"loan_type":               in.Data.LoanType,
+			"loan_purpose":            in.Data.LoanPurpose,
+			"purchase_amount":         in.Data.LoanProperty.PurchaseAmount,
+			"arv":                     in.Data.LoanProperty.Arv,
+			"property":                borrowerProperty,
 		}
 		for _, id := range in.Data.LenderIds {
 			input := quoteEmailInput{
@@ -86,10 +107,10 @@ func (l *SendQuoteEmailLogic) SendQuoteEmail(in *borrower.LoanSendQuoteEmailRequ
 			if err != nil {
 				l.WithContext(newCtx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 			}
-
 		}
+		l.WithContext(newCtx).Info("end send quote email")
 	}()
-
+	l.WithContext(l.ctx).Info("finish request")
 	return &borrower.EmptyResponse{}, nil
 }
 
@@ -111,6 +132,10 @@ func (l *SendQuoteEmailLogic) sendEmail(ctx context.Context, input quoteEmailInp
 	}
 	tplVars := input.tplVars
 	tplVars["lender_name"] = lender.Name
+	property, ok := tplVars["property"].(*model.BorrowerProperty)
+	if !ok {
+		return errorx.New("Invalid Property")
+	}
 
 	emailContent := ""
 	emailContent, err = commonemail.ParseTemplate(email_tpl.QuoteEmail, tplVars)
@@ -118,14 +143,20 @@ func (l *SendQuoteEmailLogic) sendEmail(ctx context.Context, input quoteEmailInp
 		return errorx.WithStack(err)
 	}
 	msg := commonemail.Message{
-		Subject: "Quoting",
+		Subject: fmt.Sprintf("%v lender - %v quote - %v", tplVars["lender_name"], tplVars["loan_purpose"], property.Address.Address1),
 		From:    input.senderEmail,
 		To:      []string{lender.ContactEmail},
 		Body:    emailContent,
 		IsHTML:  true,
 	}
 	err = input.emailClient.SendEmail(ctx, msg)
-
+	if err != nil {
+		return errorx.WithStack(err)
+	}
+	l.WithContext(ctx).WithFields(
+		logx.Field("sender", input.senderEmail),
+		logx.Field("receiver", lender.ContactEmail),
+	).Info("Send Quote Email Success")
 	return err
 }
 
@@ -166,7 +197,6 @@ func (l *SendQuoteEmailLogic) getEmailClient(ctx context.Context, userId int64, 
 			emailClient, err = client.NewGmailClientFromToken(oauth2Config, emailAuthorization.Token.Token)
 		default:
 			err = errorx.New("Invalid Email Provider")
-
 		}
 		if err != nil {
 			return "", nil, err

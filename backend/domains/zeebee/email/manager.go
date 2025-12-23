@@ -9,27 +9,6 @@ import (
 	"zeebee-backend/domains/zeebee/email/client"
 )
 
-// var _manager *Manager
-//
-// func init() {
-// 	_manager = NewManager()
-// }
-//
-// // Register
-// func Register(email string, emailClient client.Client) {
-// 	_manager.Register(email, emailClient)
-// }
-//
-// // SendMail
-// func SendMail(ctx context.Context, email string, msg commonemail.Message) error {
-// 	return _manager.SendMail(ctx, email, msg)
-// }
-//
-// // GetClient
-// func GetClient(email string) (emailClient client.Client, existed bool) {
-// 	return _manager.GetClient(email)
-// }
-
 type Manager struct {
 	mu      sync.RWMutex
 	clients map[string]client.Client
