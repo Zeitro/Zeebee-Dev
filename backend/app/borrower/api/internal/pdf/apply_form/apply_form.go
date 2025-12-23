@@ -295,7 +295,7 @@ func (form *ApplyForm) buildGraySmallTitle(title string, position position) (err
 	return err
 }
 
-func (form *ApplyForm) buildSignature(targetSignature []*types.SignatureEntry) (err error) {
+func (form *ApplyForm) buildSignature(targetSignature []*types.SignatureEntity) (err error) {
 
 	if len(targetSignature) > 0 && len(targetSignature) != len(form.info.Applicants) {
 		err = errorx.New("Signature Number Not Match The Applicants Number")
@@ -307,9 +307,9 @@ func (form *ApplyForm) buildSignature(targetSignature []*types.SignatureEntry) (
 	form.pdf.Br(20)
 
 	for i := 0; i < 2; i++ {
-		var signature *types.SignatureEntry
+		var signature *types.SignatureEntity
 		if i > len(targetSignature)-1 {
-			signature = &types.SignatureEntry{}
+			signature = &types.SignatureEntity{}
 		} else {
 			signature = targetSignature[i]
 		}

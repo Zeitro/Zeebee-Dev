@@ -8,25 +8,28 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
+	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 type DetailSummaryLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	baseLogic *logic.BaseLogic
 }
 
 func NewDetailSummaryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailSummaryLogic {
 	return &DetailSummaryLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -37,6 +40,11 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 		}
 	}()
 
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	// get property
 	borrowerProperty, err := l.svcCtx.BorrowerPropertyRepo.GetOne(l.ctx, in.Data.Id)
 
@@ -46,8 +54,8 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 	if borrowerProperty == nil || borrowerProperty.Id == 0 {
 		return nil, errorx.WithStack(errorx.New("Property Is Invalid"))
 	}
-
-	if borrowerProperty.BorrowerId != in.Data.BorrowerId {
+	// todo check organization
+	if borrowerProperty.OrganizationId != claim.OrganizationId {
 		return nil, errorx.WithStack(errorx.New("Access Denied"))
 	}
 
@@ -68,9 +76,9 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 	var totalRate float32
 	var loanCount int
 
-	respData.PendingLoans = make([]*borrower.LoanEntry, 0)
-	respData.ActiveLoans = make([]*borrower.LoanEntry, 0)
-	respData.ArchivedLoans = make([]*borrower.LoanEntry, 0)
+	respData.PendingLoans = make([]*borrower.LoanEntity, 0)
+	respData.ActiveLoans = make([]*borrower.LoanEntity, 0)
+	respData.ArchivedLoans = make([]*borrower.LoanEntity, 0)
 
 	if len(loanProperties) > 0 {
 		for _, loanProperty := range loanProperties {
@@ -79,8 +87,8 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 				continue
 			}
 
-			loanEntry := &borrower.LoanEntry{
-				Applicants: []*borrower.LoanApplicantEntry{},
+			loanEntry := &borrower.LoanEntity{
+				Applicants: []*borrower.LoanApplicantEntity{},
 			}
 			err = copier.CopyWithOption(loanEntry, loan, copier.Option{
 				CaseSensitive: true,
@@ -123,13 +131,13 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 			loanCount++
 		}
 	}
-	slice.SortBy(respData.PendingLoans, func(item, other *borrower.LoanEntry) bool {
+	slice.SortBy(respData.PendingLoans, func(item, other *borrower.LoanEntity) bool {
 		return item.Id < other.Id
 	})
-	slice.SortBy(respData.ActiveLoans, func(item, other *borrower.LoanEntry) bool {
+	slice.SortBy(respData.ActiveLoans, func(item, other *borrower.LoanEntity) bool {
 		return item.Id < other.Id
 	})
-	slice.SortBy(respData.ArchivedLoans, func(item, other *borrower.LoanEntry) bool {
+	slice.SortBy(respData.ArchivedLoans, func(item, other *borrower.LoanEntity) bool {
 		return item.Id < other.Id
 	})
 

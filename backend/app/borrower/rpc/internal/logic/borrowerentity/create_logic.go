@@ -6,6 +6,7 @@ import (
 	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 
+	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
@@ -18,13 +19,15 @@ type CreateLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	baseLogic *logic.BaseLogic
 }
 
 func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogic {
 	return &CreateLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -34,9 +37,13 @@ func (l *CreateLogic) Create(in *borrower.BorrowerEntityCreateRequest) (resp *bo
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	saveData := &model.BorrowerEntity{}
-	responseData := &borrower.BorrowerEntityEntry{}
+	responseData := &borrower.BorrowerEntityEntity{}
 	err = copier.CopyWithOption(saveData, in.Data, copier.Option{
 		CaseSensitive: true,
 		DeepCopy:      true,
@@ -45,6 +52,9 @@ func (l *CreateLogic) Create(in *borrower.BorrowerEntityCreateRequest) (resp *bo
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
+	saveData.CreatorId = claim.OrganizationUserId
+	saveData.OrganizationId = claim.OrganizationId
+	saveData.CreatorName = claim.Username
 
 	result, err := l.svcCtx.BorrowerEntityRepo.Create(l.ctx, saveData)
 	if err != nil {

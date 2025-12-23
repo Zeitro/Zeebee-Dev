@@ -7,7 +7,7 @@ import (
 
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/constants"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/repo"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -36,7 +36,7 @@ func (l *LoanDocumentOptsLogic) LoanDocumentOpts(in *lender.LoanDocumentOptsRequ
 		}
 	}()
 	opts := []repo.LoanDocumentOption{}
-	resultOpts := []*lender.LoanDocumentOptEntry{}
+	resultOpts := []*lender.LoanDocumentOptEntity{}
 
 	opts, err = l.svcCtx.LoanDocumentRepo.GetOptsByLoanId(l.ctx, in.Data.Id, []constants.LoanDocumentCategory{constants.LoanDocumentCategoryBorrower, constants.LoanDocumentCategoryExtend})
 	if err != nil {

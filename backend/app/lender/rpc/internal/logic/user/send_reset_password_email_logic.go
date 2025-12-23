@@ -11,11 +11,11 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/global"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/constants"
 	email2 "zeebee-backend/common/email"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/limiter"
 	"zeebee-backend/common/stringx"
+	"zeebee-backend/domains/zeebee/constants"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -47,7 +47,7 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *lender.SendRese
 	}
 
 	// rate limit
-	key := stringx.Format(constants.LenderResetPwdEmail, email)
+	key := stringx.Format(constants.ResetPwdEmail, constants.UserTypeLender, email)
 	limitOpt := limiter.WithRedisLimit(
 		global.Config.LimiterConf.SendResetPwdEmail.Rate,
 		time.Second*time.Duration(global.Config.LimiterConf.SendResetPwdEmail.Period),
@@ -65,14 +65,14 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *lender.SendRese
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	if user == nil || user.LenderEmployee == nil {
+	if user == nil {
 		return nil, errorx.WithStack(errorx.New("User Not Found"))
 	}
 
 	go func() {
 		ctx := context.WithoutCancel(l.ctx)
 		// send email
-		err := l.sendResetPwdEmail(email, user.LenderEmployee.FirstName)
+		err := l.sendResetPwdEmail(email, user.FirstName)
 		if err != nil {
 			err = errorx.Wrap(err, "Send Reset Password Email Error")
 			l.WithContext(ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -85,7 +85,7 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *lender.SendRese
 func (l *SendResetPasswordEmailLogic) sendResetPwdEmail(email string, firstName string) (err error) {
 	ctx := context.WithoutCancel(l.ctx)
 	var code string
-	redisKey := stringx.Format(constants.LenderResetPwdCode, email)
+	redisKey := stringx.Format(constants.ResetPwdCode, constants.UserTypeLender, email)
 	code, _ = global.GetRedis().Get(ctx, redisKey)
 	if len(code) == 0 {
 		code = random.RandNumeral(10)

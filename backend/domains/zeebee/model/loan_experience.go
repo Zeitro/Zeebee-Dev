@@ -3,7 +3,7 @@ package model
 import (
 	"database/sql"
 
-	"zeebee-backend/common/constants"
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 type LoanExperience struct {
@@ -30,4 +30,13 @@ func (m LoanExperience) TableName() string {
 
 func (m *LoanExperience) RemoveRelationships() {
 	m.Loan = nil
+}
+
+// LoanExtendValues represents extended information related to a loan.
+type LoanExtendValues struct {
+	Pricing           string `json:"pricing"`
+	LoanStatusUpdates string `json:"loan_status_updates"`
+	MeetingNotes      string `json:"meeting_notes"`
+	ActionList        string `json:"action_list"`
+	BusinessLine      string `json:"business_line"`
 }

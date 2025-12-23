@@ -5,13 +5,12 @@ import (
 
 	"github.com/jinzhu/copier"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type BorrowerApplicantUpdateLogic struct {
@@ -31,7 +30,7 @@ func NewBorrowerApplicantUpdateLogic(ctx context.Context, svcCtx *svc.ServiceCon
 
 func (l *BorrowerApplicantUpdateLogic) BorrowerApplicantUpdate(req *types.BorrowerApplicantEditRequest) (resp *types.EmptyResponse, err error) {
 	rpcReq := &borrower.BorrowerApplicantUpdateRequest{
-		Data: &borrower.BorrowerApplicantEditEntry{},
+		Data: &borrower.BorrowerApplicantEditEntity{},
 	}
 
 	err = copier.CopyWithOption(&rpcReq.Data, req, copier.Option{
@@ -42,13 +41,6 @@ func (l *BorrowerApplicantUpdateLogic) BorrowerApplicantUpdate(req *types.Borrow
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
-
-	// get borrower id
-	borrowerId, err := utils.GetAccountIdFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-	rpcReq.Data.BorrowerId = borrowerId
 
 	_, err = l.svcCtx.BorrowerApplicantRpcClient.Update(l.ctx, rpcReq)
 	if err != nil {

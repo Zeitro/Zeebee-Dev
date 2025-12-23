@@ -13,24 +13,30 @@ var EmailTplFS embed.FS
 
 // SendRegisterVerifyEmailTpl is the template for registration verification emails.
 //
-//go:embed send_register_verify_email.html
-var SendRegisterVerifyEmailTpl string
+//go:embed register_verify_email.html
+var RegisterVerifyEmailTpl string
 
 // SendResetPwdEmailTpl is the template for password reset emails.
 //
-//go:embed send_reset_pwd_email.html
-var SendResetPwdEmailTpl string
+//go:embed reset_pwd_email.html
+var ResetPwdEmailTpl string
 
 // SendLoginUrlEmailTpl is the template for login URL emails.
 //
-//go:embed send_login_url_email.html
-var SendLoginUrlEmailTpl string
+//go:embed login_url_email.html
+var LoginUrlEmailTpl string
 
-//go:embed send_self_preapproval_notification.html
-var SendSelfPreApprovalNotificationTpl string
+//go:embed user_invite_email.html
+var UserInviteEmailTpl string
 
-//go:embed send_third_party_preapproval_notification.html
-var SendThirdPartyPreApprovalNotificationTpl string
+//go:embed self_preapproval_notification.html
+var SelfPreApprovalNotificationTpl string
+
+//go:embed third_party_preapproval_notification.html
+var ThirdPartyPreApprovalNotificationTpl string
+
+//go:embed quote_email.html
+var QuoteEmailTpl string
 
 const (
 	// RegisterVerifyEmail is the key for registration verification email template.
@@ -39,36 +45,38 @@ const (
 	ResetPwdEmail = "reset_pwd_email"
 	// LoginURLEmail is the key for login URL email template.
 	LoginUrlEmail                     = "login_url_email"
+	UserInviteEmail                   = "user_invite_email"
 	SelfPreApprovalNotification       = "self_preapproval_notification"
 	ThirdPartyPreApprovalNotification = "third_party_preapproval_notification"
+	QuoteEmail                        = "quote_email"
 )
 
 func init() {
 
 	eg := errgroup.Group{}
 	eg.Go(func() error {
-		return email.RegisterTemplateWithText(RegisterVerifyEmail, SendRegisterVerifyEmailTpl)
+		return email.RegisterTemplateWithText(RegisterVerifyEmail, RegisterVerifyEmailTpl)
 	})
 	eg.Go(func() error {
-		return email.RegisterTemplateWithText(ResetPwdEmail, SendResetPwdEmailTpl)
+		return email.RegisterTemplateWithText(ResetPwdEmail, ResetPwdEmailTpl)
 	})
 	eg.Go(func() error {
-		return email.RegisterTemplateWithText(LoginUrlEmail, SendLoginUrlEmailTpl)
+		return email.RegisterTemplateWithText(LoginUrlEmail, LoginUrlEmailTpl)
 	})
 	eg.Go(func() error {
-		return email.RegisterTemplateWithText(SelfPreApprovalNotification, SendSelfPreApprovalNotificationTpl)
+		return email.RegisterTemplateWithText(UserInviteEmail, UserInviteEmailTpl)
 	})
 	eg.Go(func() error {
-		return email.RegisterTemplateWithText(ThirdPartyPreApprovalNotification, SendThirdPartyPreApprovalNotificationTpl)
+		return email.RegisterTemplateWithText(SelfPreApprovalNotification, SelfPreApprovalNotificationTpl)
+	})
+	eg.Go(func() error {
+		return email.RegisterTemplateWithText(ThirdPartyPreApprovalNotification, ThirdPartyPreApprovalNotificationTpl)
+	})
+	eg.Go(func() error {
+		return email.RegisterTemplateWithText(QuoteEmail, QuoteEmailTpl)
 	})
 	err := eg.Wait()
 	if err != nil {
 		panic(err)
 	}
-
-	// _ = email.RegisterTemplateWithText(RegisterVerifyEmail, SendRegisterVerifyEmailTpl)
-	// _ = email.RegisterTemplateWithText(ResetPwdEmail, SendResetPwdEmailTpl)
-	// _ = email.RegisterTemplateWithText(LoginUrlEmail, SendLoginUrlEmailTpl)
-	// _ = email.RegisterTemplateWithText(SelfPreApprovalNotification, SendSelfPreApprovalNotificationTpl)
-	// _ = email.RegisterTemplateWithText(ThirdPartyPreApprovalNotification, SendThirdPartyPreApprovalNotificationTpl)
 }

@@ -10,7 +10,6 @@ import (
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -44,7 +43,7 @@ func (l *UpdateLogic) Update(req *types.LoanUpdateRequest) (resp *types.EmptyRes
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
-	rpcApplicants := slice.UniqueByComparator(rpcReq.Data.Applicants, func(item *borrower.ThirdPartyLoanApplicantEditEntry, other *borrower.ThirdPartyLoanApplicantEditEntry) bool {
+	rpcApplicants := slice.UniqueByComparator(rpcReq.Data.Applicants, func(item *borrower.ThirdPartyLoanApplicantEditEntity, other *borrower.ThirdPartyLoanApplicantEditEntity) bool {
 		return item.BorrowerApplicantId == other.BorrowerApplicantId
 	})
 	if len(rpcApplicants) == 0 {
@@ -53,13 +52,7 @@ func (l *UpdateLogic) Update(req *types.LoanUpdateRequest) (resp *types.EmptyRes
 	}
 	rpcReq.Data.Applicants = rpcApplicants
 
-	// get borrower id
-	rpcReq.Data.BorrowerId, err = utils.GetAccountIdFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	_, err = l.svcCtx.LoanRpcClient.UpdateBorrowerLoan(l.ctx, rpcReq)
 
-	return nil, err
+	return &types.EmptyResponse{}, err
 }

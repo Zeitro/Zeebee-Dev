@@ -8,8 +8,8 @@ import (
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/lender/rpc/internal/svc"
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
 )
 
@@ -28,16 +28,16 @@ func NewLoanBaseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoanBase
 }
 
 // get lender loan
-func (l *LoanBaseLogic) GetLenderLoan(loanId int64, lenderCompanyId int64, preloads []string) (loan *model.Loan, err error) {
+func (l *LoanBaseLogic) GetLenderLoan(loanId int64, lenderOrganizationId int64, preloads []string) (loan *model.Loan, err error) {
 	loan, err = l.svcCtx.LoanRepo.FindOneWithPreloadById(l.ctx, loanId, preloads)
 	if err != nil {
 		return nil, err
 	}
-	if loan.LenderCompanyId != lenderCompanyId {
-		return nil, errorx.New("Invalid Lender Company")
+	if loan.LenderOrganizationId != lenderOrganizationId {
+		return nil, errorx.New("Invalid Lender Organization")
 	}
 
-	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreApproval {
+	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreapproval {
 		return nil, errorx.New("Invalid Loan Source")
 	}
 
@@ -46,7 +46,8 @@ func (l *LoanBaseLogic) GetLenderLoan(loanId int64, lenderCompanyId int64, prelo
 
 // CreateLoanOperationLog creates a loan operation log record
 func (l *LoanBaseLogic) CreateLoanOperationLog(tx *gorm.DB, loanId, operatorId int64, from, to model.LoanOperationStatus, action constants.LoanOperationAction, metadata *model.LoanOperationMetadata) error {
-	operator, err := l.svcCtx.LenderEmployeeRepo.FindOneByIdWithTx(l.ctx, tx, operatorId)
+	// operator, err := l.svcCtx.UserRepo.FindOneByIdWithTx(l.ctx, tx, operatorId)
+	operator, err := l.svcCtx.OrganizationUserRepo.FindOneByIdWithTx(l.ctx, tx, operatorId)
 	if err != nil {
 		return errors.Wrap(err, "Failed To Get Operator")
 	}

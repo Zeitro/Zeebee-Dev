@@ -3,13 +3,12 @@ package file
 import (
 	"context"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type DeleteLogic struct {
@@ -34,18 +33,10 @@ func (l *DeleteLogic) Delete(req *types.PathIdRequest) (resp *types.EmptyRespons
 		}
 	}()
 
-	// Get lender company and employee id from context
-	lenderCompanyId, lenderEmployeeId, err := utils.GetLenderCompanyAndEmployeeId(l.ctx)
-	if err != nil {
-		return nil, errorx.WithStack(err)
-	}
-
 	// Call RPC to delete file
 	_, err = l.svcCtx.FileRpcClient.DeleteFile(l.ctx, &lender.FileDeleteRequest{
 		Data: &lender.FileDeleteRequestData{
-			Id:               req.Id,
-			LenderCompanyId:  lenderCompanyId,
-			LenderEmployeeId: lenderEmployeeId,
+			Id: req.Id,
 		},
 	})
 	if err != nil {

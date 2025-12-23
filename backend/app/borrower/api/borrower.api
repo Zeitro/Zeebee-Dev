@@ -18,6 +18,10 @@ import "desc/storage.api"
 import "desc/loan_document.api"
 import "desc/borrower_entity.api"
 import "desc/borrower_applicant.api"
+import "desc/role.api"
+import "desc/organization_user.api"
+import "desc/organization.api"
+import "desc/organization_email.api"
 
 type (
 	EmptyRequest  {}
@@ -105,6 +109,18 @@ service borrower-api {
 	@doc "info"
 	@handler Info
 	get /user/info (EmptyRequest) returns (UserInfoResponse)
+
+	@doc "edit profile"
+	@handler EditProfile
+	put /user/profile (UserEditProfileRequest) returns (UserInfoResponse)
+
+	@doc "switch organization"
+	@handler SwitchOrganization
+	post /user/switch_organization (UserSwitchOrganizationRequest) returns (UserLoginResponse)
+
+	@doc "change password"
+	@handler ChangePassword
+	post /user/change_password (UserChangePasswordRequest) returns (EmptyResponse)
 }
 
 // ============== user end =============
@@ -145,7 +161,7 @@ service borrower-api {
 
 	@doc "update pending status"
 	@handler UpdatePendingStatus
-	put /loan/:id/pending_status (LoanUpdatePendingStatusRequest) returns (EmptyResponse)
+	patch /loan/:id/pending_status (LoanUpdatePendingStatusRequest) returns (EmptyResponse)
 
 	@doc "delete"
 	@handler DeleteLoan
@@ -186,6 +202,10 @@ service borrower-api {
 	@doc "download import template"
 	@handler DownloadImportTemplate
 	get /loan/import/template (EmptyRequest) returns (EmptyResponse)
+
+	@doc "send quote email"
+	@handler SendQuoteEmail
+	post /loan/send_quote_email (LoanSendQuoteEmailRequest) returns (EmptyResponse)
 }
 
 // ============== loan end =============
@@ -388,4 +408,153 @@ service borrower-api {
 	post /loan_document/:id/files (LoanDocumentAddFilesRequest) returns (EmptyResponse)
 }
 
-    // ============== loan document end =============
+// ============== loan document end =============
+// ============== role start ============
+@server(
+    desc: "borrower-api service"
+    version: v1
+    group: role
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+    tags: role
+)
+service borrower-api {
+	@doc "detail"
+	@handler RoleDetail
+	get /role/:id (PathIdRequest) returns (RoleEntity)
+
+	@doc "page"
+	@handler RolePage
+	post /role/page (RolePageRequest) returns (RolePageResponse)
+
+	@doc "all"
+	@handler RoleAll
+	get /role/all (EmptyRequest) returns (RoleAllResponse)
+
+	@doc "create"
+	@handler RoleCreate
+	post /role (RoleCreateRequest) returns (RoleEntity)
+
+	@doc "update"
+	@handler RoleUpdate
+	put /role/:id (RoleUpdateRequest) returns (RoleEntity)
+
+	@doc "delete"
+	@handler RoleDelete
+	delete /role/:id (PathIdRequest) returns (EmptyResponse)
+
+	@doc "update status"
+	@handler RoleUpdateStatus
+	patch /role/:id/status (RoleUpdateStatusRequest) returns (EmptyResponse)
+}
+
+// ============== role end =============
+// ============== organization user start ============
+@server(
+    desc: "organization user service"
+	version: v1
+    group: organization_user
+	prefix:  /api/v1
+    tags: organization_user
+)
+service borrower-api {
+	@doc "accept invitation"
+	@handler AcceptInvitation
+	post /organization_user/accept_invitation (OrganizationUserAcceptInvitationRequest) returns (UserLoginResponse)
+}
+
+@server(
+    desc: "organization user service"
+    version: v1
+    group: organization_user
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+    tags: organization_user
+)
+service borrower-api {
+	@doc "detail"
+	@handler OrganizationUserDetail
+	get /organization_user/:id (PathIdRequest) returns (OrganizationUserEntity)
+
+	@doc "page"
+	@handler OrganizationUserPage
+	post /organization_user/page (OrganizationUserPageRequest) returns (OrganizationUserPageResponse)
+
+	@doc "all"
+	@handler OrganizationUserAll
+	get /organization_user/all (EmptyRequest) returns (OrganizationUserAllResponse)
+
+	@doc "create"
+	@handler OrganizationUserCreate
+	post /organization_user (OrganizationUserCreateRequest) returns (OrganizationUserEntity)
+
+	@doc "update"
+	@handler OrganizationUserUpdate
+	put /organization_user/:id (OrganizationUserUpdateRequest) returns (OrganizationUserEntity)
+
+	@doc "delete"
+	@handler OrganizationUserDelete
+	delete /organization_user/:id (PathIdRequest) returns (EmptyResponse)
+
+	@doc "switch status"
+	@handler OrganizationUserUpdateStatus
+	patch /organization_user/:id/status (OrganizationUserSwitchStatusRequest) returns (EmptyResponse)
+
+	@doc "assign roles"
+	@handler OrganizationUserAssignRoles
+	post /organization_user/:id/assign_roles (OrganizationUserAssignRolesRequest) returns (EmptyResponse)
+
+	@doc "send email"
+	@handler OrganizationUserSendEmail
+	post /organization_user/:id/send_email (PathIdRequest) returns (EmptyResponse)
+}
+
+// ============== organization user end =============
+// ============== organization start ============
+@server(
+    desc: "organization service"
+    version: v1
+    group: organization
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+    tags: organization
+)
+service borrower-api {
+	@doc "info"
+	@handler OrganizationInfo
+	get /organization/info (EmptyRequest) returns (OrganizationEntity)
+
+	@doc "lenders"
+	@handler OrganizationLenders
+	get /organization/lenders (EmptyRequest) returns (OrganizationLendersResponse)
+
+	@doc "lender page"
+	@handler OrganizationLenderPage
+	post /organization/lender/page (OrganizationLenderPageRequest) returns (OrganizationLenderPageResponse)
+}
+
+// ============= organization end =============
+// ============= organization email start ============
+@server(
+    desc: "organization email service"
+    version: v1
+    group: organization_email
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+    tags: organization_email
+)
+service borrower-api {
+	@doc "generate auth code url"
+	@handler OrganizationEmailGenerateAuthCodeUrl
+	get /organization_email/generate_auth_code_url (OrganizationEmailGenerateAuthCodeUrlRequest) returns (OrganizationEmailGenerateAuthCodeUrlResponse)
+
+	@doc "save email"
+	@handler OrganizationEmailSaveEmail
+	post /organization_email/save_email (OrganizationEmailSaveEmailRequest) returns (EmptyResponse)
+
+	@doc "email authorize"
+	@handler OrganizationEmailAuthorize
+	post /organization_email/authorize (OrganizationEmailAuthorizeRequest) returns (EmptyResponse)
+}
+
+    // ============= organization email end =============

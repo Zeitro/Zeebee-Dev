@@ -11,24 +11,9 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
 	"zeebee-backend/common/timex"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 )
-
-type BorrowerApplicantBorrowerPageReq struct {
-	Page   int64                                   `json:"page"`
-	Limit  int64                                   `json:"limit"`
-	Filter *BorrowerApplicantBorrowerPageReqFilter `json:"filter"`
-	Sorter *BorrowerApplicantBorrowerPageReqSorter `json:"sorter"`
-}
-
-type BorrowerApplicantBorrowerPageReqFilter struct {
-	BorrowerId int64  `json:"borrower_id"`
-	Keyword    string `json:"keyword"`
-}
-type BorrowerApplicantBorrowerPageReqSorter struct {
-	Column string `json:"column"`
-	Sort   string `json:"sort"`
-}
 
 type BorrowerApplicantRepo struct {
 	*gormx.BaseRepo[*model.BorrowerApplicant]
@@ -43,20 +28,20 @@ func NewBorrowerApplicantRepo(db *gorm.DB) *BorrowerApplicantRepo {
 }
 
 // GetBorrowerApplicantById
-func (repo *BorrowerApplicantRepo) GetBorrowerApplicantById(ctx context.Context, id int64, borrowerId int64) (result *model.BorrowerApplicant, err error) {
+func (repo *BorrowerApplicantRepo) GetBorrowerApplicantById(ctx context.Context, id int64, organizationId int64) (result *model.BorrowerApplicant, err error) {
 	err = repo.Client(ctx).
-		Where("id = ? and borrower_id = ?", id, borrowerId).
+		Where("id = ? and organization_id = ?", id, organizationId).
 		First(&result).
 		Error
 	return result, errorx.WithStack(err)
 }
 
-func (repo *BorrowerApplicantRepo) PageForBorrower(ctx context.Context, pageReq *BorrowerApplicantBorrowerPageReq) (page gormx.PageResponse[*model.BorrowerApplicant], err error) {
+func (repo *BorrowerApplicantRepo) PageForBorrower(ctx context.Context, pageReq dto.BorrowerApplicantBorrowerPageRequestDto) (page gormx.PageResponse[*model.BorrowerApplicant], err error) {
 
 	filter := pageReq.Filter
 	sorter := pageReq.Sorter
 	query := repo.Client(ctx).
-		Where("borrower_id = ?", filter.BorrowerId)
+		Where("organization_id = ?", filter.OrganizationId)
 	if len(filter.Keyword) > 0 {
 		query = query.Where("full_name like ?", "%"+filter.Keyword+"%")
 	}
@@ -77,20 +62,19 @@ func (repo *BorrowerApplicantRepo) PageForBorrower(ctx context.Context, pageReq 
 
 }
 
-// AllForBorrower return all of the borrower's entities
-func (repo *BorrowerApplicantRepo) AllForBorrower(ctx context.Context, borrowerId int64) (result []*model.BorrowerApplicant, err error) {
+// AllForOrganization return all organization's entities
+func (repo *BorrowerApplicantRepo) AllForOrganization(ctx context.Context, organizationId int64) (result []*model.BorrowerApplicant, err error) {
 	err = repo.Client(ctx).
-		Where("borrower_id = ?", borrowerId).
-		// Omit("address").
+		Where("organization_id = ?", organizationId).
 		Order("id desc").
 		Find(&result).Error
 	return result, errorx.WithStack(err)
 }
 
 // TranToLoanApplicantWithId get BorrowerApplicant from id and trans it to LoanApplicant
-func (repo *BorrowerApplicantRepo) TranToLoanApplicantWithId(ctx context.Context, id int64, borrowerId int64) (result *model.LoanApplicant, err error) {
+func (repo *BorrowerApplicantRepo) TranToLoanApplicantWithId(ctx context.Context, id int64, organizationId int64) (result *model.LoanApplicant, err error) {
 	var applicant *model.BorrowerApplicant
-	applicant, err = repo.GetBorrowerApplicantById(ctx, id, borrowerId)
+	applicant, err = repo.GetBorrowerApplicantById(ctx, id, organizationId)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
@@ -110,4 +94,14 @@ func (repo *BorrowerApplicantRepo) TranToLoanApplicantWithId(ctx context.Context
 	result.BorrowerApplicantId = applicant.Id
 
 	return result, nil
+}
+
+// GetFullNames retrieves the full names of borrower applicants
+// based on their IDs and organization ID.
+func (repo *BorrowerApplicantRepo) GetFullNames(ctx context.Context, ids []int64, organizationId int64) (result []string, err error) {
+	err = repo.Client(ctx).
+		Model(&model.BorrowerApplicant{}).
+		Where("id in ? and organization_id = ?", ids, organizationId).
+		Pluck("full_name", &result).Error
+	return result, errorx.WithStack(err)
 }

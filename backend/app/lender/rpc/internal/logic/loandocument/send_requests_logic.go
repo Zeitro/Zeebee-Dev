@@ -11,8 +11,9 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/constants"
 	email2 "zeebee-backend/common/email"
+	"zeebee-backend/common/utils"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -45,8 +46,12 @@ func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequ
 	var loan *model.Loan
 
 	var loanDocuments []*model.LoanDocument
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 
-	loan, err = l.prepare(in)
+	loan, err = l.prepare(in, claim)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +85,7 @@ func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequ
 			}
 		}
 		// add loan operation
-		comments := slice.FlatMap[*lender.SendDocumentRequestEntry, string](in.Data.Documents, func(index int, item *lender.SendDocumentRequestEntry) []string {
+		comments := slice.FlatMap[*lender.SendDocumentRequestEntity, string](in.Data.Documents, func(index int, item *lender.SendDocumentRequestEntity) []string {
 			return []string{item.Comment}
 		})
 		comments = slice.Filter(comments, func(index int, item string) bool {
@@ -90,7 +95,7 @@ func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequ
 		innerErr = l.baseLogic.CreateLoanOperationLog(
 			tx,
 			loan.Id,
-			in.Data.LenderEmployeeId,
+			claim.OrganizationUserId,
 			model.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
@@ -126,12 +131,12 @@ func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequ
 }
 
 // prepare
-func (l *SendRequestsLogic) prepare(in *lender.LoanDocumentSendRequestsRequest) (loan *model.Loan, err error) {
+func (l *SendRequestsLogic) prepare(in *lender.LoanDocumentSendRequestsRequest, claim utils.JwtUser) (loan *model.Loan, err error) {
 	if len(in.Data.Documents) == 0 {
 		return nil, errorx.WithStack(errorx.New("No Document Type Found"))
 	}
 	// var document *model.LoanDocument
-	loan, _, err = l.baseLogic.GetLoanAndDocumentByDocumentId(in.Data.Documents[0].Id, in.Data.LenderCompanyId)
+	loan, _, err = l.baseLogic.GetLoanAndDocumentByDocumentId(in.Data.Documents[0].Id, claim.OrganizationId)
 	return loan, err
 }
 
