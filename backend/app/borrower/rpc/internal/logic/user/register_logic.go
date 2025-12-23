@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/duke-git/lancet/v2/random"
 	"gorm.io/gorm"
@@ -22,11 +21,11 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	email2 "zeebee-backend/common/email"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/limiter"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/limiter"
 	"zeebee-backend/domains/zeebee/model"
 )
 
@@ -289,11 +288,8 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int6
 // sendLoginUrlEmail send login url email
 func sendLoginUrlEmail(ctx context.Context, email string, firstName string) (err error) {
 	key := stringx.Format(constants.LoginEmail, constants.UserTypeBorrower, email)
-	limitOpt := limiter.WithRedisLimit(
-		global.Config.LimiterConf.SendLoginEmail.Rate,
-		time.Second*time.Duration(global.Config.LimiterConf.SendLoginEmail.Period),
-	)
-	ok, err := global.SendLoginEmailLimiter.Limit(ctx, key, limitOpt)
+	ok, err := global.LimiterMgr.Limit(ctx, limiter.StrategySendLoginEmail, key)
+
 	if err != nil {
 		return errorx.WithStack(err)
 	}
