@@ -7,25 +7,28 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
+	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/constants"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
 
 	"zeebee-backend/common/errorx"
 )
 
 type UpdateLoanPendingStatusLogic struct {
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx       context.Context
+	svcCtx    *svc.ServiceContext
+	baseLogic *logic.BaseLogic
 	logx.Logger
 }
 
 func NewUpdateLoanPendingStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLoanPendingStatusLogic {
 	return &UpdateLoanPendingStatusLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		Logger:    logx.WithContext(ctx),
 	}
 }
 
@@ -36,8 +39,13 @@ func (l *UpdateLoanPendingStatusLogic) UpdateLoanPendingStatus(in *lender.LoanUp
 		}
 	}()
 
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, errorx.WithStack(err)
+	}
+
 	// Get loan
-	loan, err := l.svcCtx.LoanRepo.GetLenderLoan(l.ctx, in.Data.Id, in.Data.LenderCompanyId, false)
+	loan, err := l.svcCtx.LoanRepo.GetLenderLoan(l.ctx, in.Data.Id, claim.OrganizationId, false)
 	if err != nil {
 		return nil, errorx.Wrap(err, "Failed To Get Loan")
 	}
@@ -46,7 +54,7 @@ func (l *UpdateLoanPendingStatusLogic) UpdateLoanPendingStatus(in *lender.LoanUp
 	if loan.Stage != constants.LoanStagePending {
 		return nil, errorx.New("Loan Is Not In Pending Stage")
 	}
-	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreApproval {
+	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreapproval {
 		return nil, errorx.WithStack(errorx.New("Invalid Loan Source"))
 	}
 	// Save original status for operation log
@@ -58,14 +66,14 @@ func (l *UpdateLoanPendingStatusLogic) UpdateLoanPendingStatus(in *lender.LoanUp
 		// Update pending status
 		pendingStatus := constants.LoanPendingStatus(in.Data.PendingStatus)
 
-		// 根据状态规则进行验证
+		// validate pending status
 		switch pendingStatus {
 		case constants.LoanPendingStatusQuoting,
 			constants.LoanPendingStatusProcessing,
 			constants.LoanPendingStatusUnderWriting:
-			// 这些是中间状态，可以直接设置
+			// these are intermediate statuses, can be set directly
 		case constants.LoanPendingStatusClosing:
-			// Closing 是最终状态，可以直接设置
+			// Closing is the final status, can be set directly
 		default:
 			return errorx.Errorf("Invalid Pending Status: %s", pendingStatus)
 		}
@@ -76,7 +84,7 @@ func (l *UpdateLoanPendingStatusLogic) UpdateLoanPendingStatus(in *lender.LoanUp
 		}
 
 		// Create operation log
-		operatorId := in.Data.LenderEmployeeId
+		operatorId := claim.OrganizationUserId
 
 		fromStatus := model.LoanOperationStatus{
 			Stage:         originalStage,

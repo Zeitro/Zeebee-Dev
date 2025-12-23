@@ -10,6 +10,8 @@ import (
 	borrowerApplicantServer "zeebee-backend/app/borrower/rpc/internal/server/borrowerapplicant"
 	borrowerEntityServer "zeebee-backend/app/borrower/rpc/internal/server/borrowerentity"
 	borrowerPropertyServer "zeebee-backend/app/borrower/rpc/internal/server/borrowerproperty"
+	organizationServer "zeebee-backend/app/borrower/rpc/internal/server/organization"
+	organizationEmailServer "zeebee-backend/app/borrower/rpc/internal/server/organizationemail"
 
 	loanApplicantServer "zeebee-backend/app/borrower/rpc/internal/server/loanapplicant"
 
@@ -18,6 +20,8 @@ import (
 	commonServer "zeebee-backend/app/borrower/rpc/internal/server/common"
 	loanServer "zeebee-backend/app/borrower/rpc/internal/server/loan"
 	loanDocumentServer "zeebee-backend/app/borrower/rpc/internal/server/loandocument"
+	organizationUserServer "zeebee-backend/app/borrower/rpc/internal/server/organizationuser"
+	roleServer "zeebee-backend/app/borrower/rpc/internal/server/role"
 	storageServer "zeebee-backend/app/borrower/rpc/internal/server/storage"
 	userServer "zeebee-backend/app/borrower/rpc/internal/server/user"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
@@ -47,11 +51,16 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		borrower.RegisterLoanDocumentServer(grpcServer, loanDocumentServer.NewLoanDocumentServer(ctx))
 		borrower.RegisterBorrowerEntityServer(grpcServer, borrowerEntityServer.NewBorrowerEntityServer(ctx))
 		borrower.RegisterBorrowerApplicantServer(grpcServer, borrowerApplicantServer.NewBorrowerApplicantServer(ctx))
+		borrower.RegisterOrganizationUserServer(grpcServer, organizationUserServer.NewOrganizationUserServer(ctx))
+		borrower.RegisterRoleServer(grpcServer, roleServer.NewRoleServer(ctx))
+		borrower.RegisterOrganizationServer(grpcServer, organizationServer.NewOrganizationServer(ctx))
+		borrower.RegisterOrganizationEmailServer(grpcServer, organizationEmailServer.NewOrganizationEmailServer(ctx))
 
 		if rpcConfig.Mode == service.DevMode || rpcConfig.Mode == service.TestMode {
 			reflection.Register(grpcServer)
 		}
 	})
+
 	return &RpcServer{
 		s: rpcServer,
 	}, nil

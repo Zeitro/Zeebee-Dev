@@ -1,0 +1,205 @@
+syntax = "v1"
+
+info(
+	title: "admin-api http service"
+	desc: "admin-api http service description"
+)
+
+import "desc/user.api"
+import "desc/api.api"
+import "desc/resource.api"
+import "desc/role.api"
+import "desc/organization_user.api"
+
+type (
+	EmptyRequest{
+	}
+	EmptyResponse{
+	}
+)
+
+type PathIdRequest {
+	id int64 `path:"id" validate:"required,gt=0"`
+}
+
+// ============== user start =============
+@server(
+	desc: "admin-api service"
+	version: v1
+	group: user
+	prefix:  /api/v1
+	tags: user
+)
+service admin-api {
+	@doc "login"
+	@handler Login
+	post /user/login (UserLoginRequest) returns (UserLoginResponse)
+
+	@doc "refresh"
+	@handler RefreshToken
+	post /user/refresh (UserRefreshTokenRequest) returns (UserRefreshTokenResponse)
+
+	@doc "reset password"
+	@handler ResetPassword
+	post /user/reset_password (UserResetPasswordRequest) returns (UserLoginResponse)
+}
+
+@server(
+	desc: "admin-api service"
+	version: v1
+	group: user
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: user
+)
+service admin-api {
+	@doc "info"
+	@handler Info
+	get /user/info (EmptyRequest) returns (UserInfoResponse)
+
+	@doc "edit profile"
+	@handler EditProfile
+	put /user/profile (UserEditProfileRequest) returns (UserInfoResponse)
+}
+
+// ============== user end =============
+// ============== organization user start ============
+@server(
+	desc: "admin-api service"
+	version: v1
+	group: organization_user
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: organization_user
+)
+service admin-api {
+	@doc "page"
+	@handler OrganizationUserPage
+	get /organization_user/page (OrganizationUserPageRequest) returns (OrganizationUserPageResponse)
+
+	@doc "detail"
+	@handler OrganizationUserDetail
+	get /organization_user/:id (PathIdRequest) returns (OrganizationUserDetailResponse)
+
+	@doc "create"
+	@handler OrganizationUserCreate
+	post /organization_user (OrganizationUserCreateRequest) returns (OrganizationUserCreateResponse)
+
+	@doc "update"
+	@handler OrganizationUserUpdate
+	put /organization_user/:id (OrganizationUserUpdateRequest) returns (OrganizationUserUpdateResponse)
+
+	@doc "delete"
+	@handler OrganizationUserDelete
+	delete /organization_user/:id (PathIdRequest) returns (EmptyResponse)
+
+	@doc "switch status"
+	@handler OrganizationUserSwitchStatus
+	patch /organization_user/:id/status (OrganizationUserSwitchStatusRequest) returns (EmptyResponse)
+}
+
+// ============== organization user end ============
+// ============== api start ============
+@server(
+	desc: "admin-api service"
+	version: v1
+	group: api
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: api
+)
+service admin-api {
+	@doc "detail"
+	@handler Detail
+	get /api/:id (ApiDetailRequest) returns (ApiTreeEntity)
+
+	@doc "tree"
+	@handler Tree
+	get /api/tree (ApiTreeRequest) returns (ApiTreeResponse)
+
+	@doc "create"
+	@handler Create
+	post /api (ApiCreateRequest) returns (ApiTreeEntity)
+
+	@doc "update"
+	@handler Update
+	put /api/:id (ApiUpdateRequest) returns (EmptyResponse)
+
+	@doc "delete"
+	@handler Delete
+	delete /api/:id (ApiDeleteRequest) returns (EmptyResponse)
+}
+
+// ============= api end =============
+// ============== resource start ============
+@server(
+	desc: "admin-api service"
+	version: v1
+	group: resource
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: resource
+)
+service admin-api {
+	@doc "detail"
+	@handler ResourceDetail
+	get /resource/:id (ResourceDetailRequest) returns (ResourceEntity)
+
+	@doc "tree"
+	@handler ResourceTree
+	get /resource/tree (ResourceTreeRequest) returns (ResourceTreeResponse)
+
+	@doc "create"
+	@handler ResourceCreate
+	post /resource (ResourceCreateRequest) returns (ResourceEntity)
+
+	@doc "update"
+	@handler ResourceUpdate
+	put /resource/:id (ResourceUpdateRequest) returns (ResourceEntity)
+
+	@doc "delete"
+	@handler ResourceDelete
+	delete /resource/:id (ResourceDeleteRequest) returns (EmptyResponse)
+}
+
+// ============== resource end =============
+// ============== role start ============
+@server(
+	desc: "admin-api service"
+	version: v1
+	group: role
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: role
+)
+service admin-api {
+	@doc "detail"
+	@handler RoleDetail
+	get /role/:id (PathIdRequest) returns (RoleEntity)
+
+	@doc "page"
+	@handler RolePage
+	get /role (RolePageRequest) returns (RolePageResponse)
+
+	@doc "all"
+	@handler RoleAll
+	get /role/all (EmptyRequest) returns (RoleAllResponse)
+
+	@doc "create"
+	@handler RoleCreate
+	post /role (RoleCreateRequest) returns (RoleEntity)
+
+	@doc "update"
+	@handler RoleUpdate
+	put /role/:id (RoleUpdateRequest) returns (RoleEntity)
+
+	@doc "delete"
+	@handler RoleDelete
+	delete /role/:id (PathIdRequest) returns (EmptyResponse)
+
+	@doc "update status"
+	@handler RoleUpdateStatus
+	patch /role/:id/status (RoleUpdateStatusRequest) returns (EmptyResponse)
+}
+
+	// ============== role end =============

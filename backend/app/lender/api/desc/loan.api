@@ -16,7 +16,7 @@ import "loan_experience.api"
 import "loan_document.api"
 import "loan_property.api"
 
-type LoanUpdateApplicantEntry {
+type LoanUpdateApplicantEntity {
     Id int64 `json:"id,optional"`
     FirstName string `json:"first_name,optional" validate:"required,min=1,max=30"`
     MidName string `json:"mid_name,optional" validate:"min=0,max=30"`
@@ -30,10 +30,10 @@ type LoanUpdateApplicantEntry {
     Phone string `json:"phone,optional" validate:"required"`
     EstCreditScore int32 `json:"est_credit_score,optional" validate:"required,gte=300,lte=850"`
     DriverLicenseNum string `json:"driver_license_num,optional" validate:"required"`
-    Address *AddressEntry `json:"address,optional" validate:"required"`
+    Address *AddressEntity `json:"address,optional" validate:"required"`
 }
 
-type LoanEntry {
+type LoanEntity {
     Id int64 `json:"id,optional"`
     Code string `json:"code,optional"`
     Stage string `json:"stage" validate:"required,oneof=Pending Active Archived Rejected"`
@@ -42,7 +42,7 @@ type LoanEntry {
     LoanType string `json:"loan_type" validate:"required,oneof=Bridge Rehab  Rental 'Ground up construction'"`
     TotalAmount float64 `json:"total_amount"`
     InitialAmount float64 `json:"initial_amount,optional"`
-    LoanProperty *LoanPropertyEntry `json:"loan_property" validate:"required"`
+    LoanProperty *LoanPropertyEntity `json:"loan_property" validate:"required"`
     LenderCompany string `json:"lender_company,optional" validate:"required"`
     ClosingDate string `json:"closing_date,optional" validate:"required_if=Stage Pending,omitempty,datetime=01/02/2006"`
     ClosingFund float64 `json:"closing_fund,optional" validate:"required_if=Stage Pending"`
@@ -56,7 +56,7 @@ type LoanEntry {
     ServiceCompany string `json:"service_company,optional" validate:"required_if=Stage Active"`
     PaidOffDate string `json:"paid_off_date,optional" validate:"required_if=Stage Archived,omitempty,datetime=01/02/2006"`
     BusinessStrategy []string `json:"business_strategy" validate:"required,dive,required,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
-    Applicants []LoanApplicantEntry `json:"applicants"`
+    Applicants []LoanApplicantEntity `json:"applicants"`
     LenderCompanyId int64 `json:"lender_company_id"`
     BorrowerId int64 `json:"borrower_id"`
     CreatedAt string `json:"created_at"`
@@ -66,19 +66,19 @@ type LoanEntry {
     Ltv float64 `json:"ltv"`
     EstCreditScore int32 `json:"est_credit_score"`
     ReservesAmount float64 `json:"reserves_amount"`
-    TransactionExperiences []*LoanExperienceEntry `json:"transaction_experiences"`
-    RealEstateExperiences []*LoanExperienceEntry `json:"real_estate_experiences"`
-    LoanThirdServices []*LoanThirdServiceEntry `json:"loan_third_services"`
-    LoanBorrower *LoanBorrowerEntry `json:"loan_borrower"`
-    LoanDemographic *LoanDemographicEntry `json:"loan_demographic"`
+    TransactionExperiences []*LoanExperienceEntity `json:"transaction_experiences"`
+    RealEstateExperiences []*LoanExperienceEntity `json:"real_estate_experiences"`
+    LoanThirdServices []*LoanThirdServiceEntity `json:"loan_third_services"`
+    LoanBorrower *LoanBorrowerEntity `json:"loan_borrower"`
+    LoanDemographic *LoanDemographicEntity `json:"loan_demographic"`
     OriginalContractDate string `json:"original_contract_date,optional"`
     ExtensionDate string `json:"extension_date,optional"`
     LoanProcessor string `json:"loan_processor"`
-    Extend *ImportLoanExtendEntry `json:"extend"`
-    LoanDocuments []*LoanDocumentEntry `json:"loan_documents"`
+    Extend *ImportLoanExtendEntity `json:"extend"`
+    LoanDocuments []*LoanDocumentEntity `json:"loan_documents"`
 }
 
-type ImportLoanExtendEntry {
+type ImportLoanExtendEntity {
     Pricing string `json:"pricing,optional"`
     LoanStatusUpdates string `json:"loan_status_updates,optional"`
     MeetingNotes string `json:"meeting_notes,optional"`
@@ -92,7 +92,7 @@ type (
         Id int64 `path:"id"`
     }
     LoanDetailResponse {
-        LoanEntry
+        LoanEntity
     }
 )
 
@@ -125,7 +125,7 @@ type (
         Limit int64 `json:"limit"`
         Total int64 `json:"total"`
         TotalPage int64 `json:"total_page"`
-        List []LoanEntry `json:"list"`
+        List []LoanEntity `json:"list"`
     }
 )
 
@@ -139,8 +139,8 @@ type (
         LoanPurpose string `json:"loan_purpose,optional" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
         TotalAmount float64 `json:"total_amount,optional" validate:"required,gt=0"`
         InitialAmount float64 `json:"initial_amount,optional" validate:"ltefield=TotalAmount"`
-        LoanProperty *LoanPropertyEditEntry `json:"loan_property,optional" validate:"required"`
-        Applicants []*LoanApplicantEditLoanEntry `json:"applicants,optional" validate:"required"`
+        LoanProperty *LoanPropertyEditEntity `json:"loan_property,optional" validate:"required"`
+        Applicants []*LoanApplicantEditLoanEntity `json:"applicants,optional" validate:"required"`
         HoldbackAmount float64 `json:"holdback_amount,optional" validate:"ltefield=TotalAmount"`
         PrincipalAmount float64 `json:"principal_amount,optional" validate:"required_unless=LoanPurpose Purchase,omitempty,gte=0"`
         MaturityDate string `json:"maturity_date, optional"`
@@ -149,10 +149,10 @@ type (
         LoanTerm int32 `json:"loan_term,optional" validate:"gte=1"`
         //        Ltv float64 `json:"ltv,optional" validate:"required_unless=LoanPurpose Purchase,omitempty,gte=0"`
         ReservesAmount float64 `json:"reserves_amount,optional" validate:"required_if=LoanType Rental,omitempty,gt=0"`
-        TransactionExperiences []*LoanExperienceEntry `json:"transaction_experiences,optional"`
-        RealEstateExperiences []*LoanExperienceEntry `json:"real_estate_experiences,optional"`
-        LoanThirdServices []*LoanThirdServiceEntry `json:"loan_third_services,optional"`
-        LoanDemographic *LoanDemographicEntry `json:"loan_demographic,optional" validate:"required"`
+        TransactionExperiences []*LoanExperienceEntity `json:"transaction_experiences,optional"`
+        RealEstateExperiences []*LoanExperienceEntity `json:"real_estate_experiences,optional"`
+        LoanThirdServices []*LoanThirdServiceEntity `json:"loan_third_services,optional"`
+        LoanDemographic *LoanDemographicEntity `json:"loan_demographic,optional" validate:"required"`
     }
 
     LoanUpdateResponse {
@@ -163,7 +163,7 @@ type (
 // update loan document
 type UpdateDocumentsRequest {
     Id int64 `path:"id" validate:"required,gt=0"`
-    Documents []*FileEditEntry `json:"documents" validate:"required,gt=0,dive,required"`
+    Documents []*FileEditEntity `json:"documents" validate:"required,gt=0,dive,required"`
 }
 
 // update loan stage

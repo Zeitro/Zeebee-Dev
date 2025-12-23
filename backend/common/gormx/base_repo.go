@@ -198,7 +198,7 @@ func (repo *BaseRepo[T]) FindOneByColumnsWithTx(ctx context.Context, tx *gorm.DB
 }
 
 func (repo *BaseRepo[T]) UpdateOne(ctx context.Context, data T) (T, error) {
-	err := repo.Client(ctx).WithContext(ctx).Save(data).Error
+	err := repo.Client(ctx).Save(data).Error
 	if err != nil {
 		return data, errorx.WithStack(err)
 	}
@@ -206,7 +206,15 @@ func (repo *BaseRepo[T]) UpdateOne(ctx context.Context, data T) (T, error) {
 }
 
 func (repo *BaseRepo[T]) UpdateOneById(ctx context.Context, id int64, data T) (T, error) {
-	err := repo.Client(ctx).WithContext(ctx).Where("id = ?", id).Save(data).Error
+	err := repo.Client(ctx).Where("id = ?", id).Save(data).Error
+	if err != nil {
+		return data, errorx.WithStack(err)
+	}
+	return data, nil
+}
+
+func (repo *BaseRepo[T]) UpdateOneByIdWithTx(ctx context.Context, tx *gorm.DB, id int64, data T) (T, error) {
+	err := tx.WithContext(ctx).Where("id = ?", id).Save(data).Error
 	if err != nil {
 		return data, errorx.WithStack(err)
 	}

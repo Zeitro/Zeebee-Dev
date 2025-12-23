@@ -10,7 +10,7 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/constants"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -43,8 +43,13 @@ func (l *DeleteRequestLogic) DeleteRequest(in *lender.LoanDocumentDeleteRequestR
 	var loan *model.Loan
 	var loanDocument *model.LoanDocument
 
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, errorx.WithStack(err)
+	}
+
 	// validate
-	loan, loanDocument, err = l.prepare(in)
+	loan, loanDocument, err = l.prepare(in, claim.OrganizationId)
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +97,7 @@ func (l *DeleteRequestLogic) DeleteRequest(in *lender.LoanDocumentDeleteRequestR
 		innerErr = l.baseLogic.CreateLoanOperationLog(
 			tx,
 			loanDocument.LoanId,
-			in.Data.LenderEmployeeId,
+			claim.OrganizationUserId,
 			model.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
@@ -122,7 +127,7 @@ func (l *DeleteRequestLogic) DeleteRequest(in *lender.LoanDocumentDeleteRequestR
 	return &lender.EmptyResponse{}, nil
 }
 
-func (l *DeleteRequestLogic) prepare(in *lender.LoanDocumentDeleteRequestRequest) (loan *model.Loan, loanDocument *model.LoanDocument, err error) {
+func (l *DeleteRequestLogic) prepare(in *lender.LoanDocumentDeleteRequestRequest, organizationId int64) (loan *model.Loan, loanDocument *model.LoanDocument, err error) {
 
-	return l.baseLogic.GetLoanAndDocumentByDocumentId(in.Data.Id, in.Data.LenderCompanyId)
+	return l.baseLogic.GetLoanAndDocumentByDocumentId(in.Data.Id, organizationId)
 }

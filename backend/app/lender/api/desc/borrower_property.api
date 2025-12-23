@@ -9,7 +9,7 @@ info(
 import "address.api"
 
 
-type BorrowerPropertyEntry {
+type BorrowerPropertyEntity {
     Id int64 `json:"id"`
     PropertyType string `json:"property_type"`
     TotalAmount float64 `json:"total_amount"`
@@ -17,7 +17,7 @@ type BorrowerPropertyEntry {
     LivingAreaSqft float32 `json:"living_area_sqft"`
     Bedrooms int32 `json:"bedrooms"`
     Bathrooms float32 `json:"bathrooms"`
-    Address *AddressEntry `json:"address"`
+    Address *AddressEntity `json:"address"`
     CreatedAt string `json:"created_at"`
     UpdatedAt string `json:"updated_at"`
     LoanCount int32 `json:"loan_count"`

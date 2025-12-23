@@ -7,8 +7,8 @@ import (
 
 	"zeebee-backend/app/borrower/api/internal/pdf"
 	"zeebee-backend/app/borrower/api/internal/types"
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/stringx"
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 func (form *ApplyForm) page2() (err error) {
@@ -59,10 +59,10 @@ func (form *ApplyForm) page2() (err error) {
 
 	applicantsInfo := form.info.Applicants
 	for i := 0; i < 2; i++ {
-		var applicant *types.LoanApplicantApplyFormPdfEntry
+		var applicant *types.LoanApplicantApplyFormPdfEntity
 		if i > len(applicantsInfo)-1 {
-			applicant = &types.LoanApplicantApplyFormPdfEntry{
-				Address: &types.AddressEntry{},
+			applicant = &types.LoanApplicantApplyFormPdfEntity{
+				Address: &types.AddressEntity{},
 			}
 		} else {
 			applicant = applicantsInfo[i]
@@ -77,7 +77,7 @@ func (form *ApplyForm) page2() (err error) {
 	return err
 }
 
-func (form *ApplyForm) applicantInfo(index int, applicant *types.LoanApplicantApplyFormPdfEntry) (err error) {
+func (form *ApplyForm) applicantInfo(index int, applicant *types.LoanApplicantApplyFormPdfEntity) (err error) {
 	brHeight := 6.0
 	x := form.pdf.GetX()
 	y := form.pdf.GetY()

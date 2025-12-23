@@ -22,19 +22,23 @@ type ApiConf struct {
 type RpcConf struct {
 	zrpc.RpcServerConf
 	LimiterConf                  LimiterConf
-	VerifyEmailExpireSeconds     int
 	ResetPwdExpireSeconds        int
 	PreApprovalLoanExpireSeconds int
 	HighCostLimitValue           int64
 	EmailConf                    EmailConf
+	EmailAuthConf                EmailAuthConf
 	RedisConf                    RedisConf
 	JwtAuth                      types.JwtAuth `json:",optional"`
 	DbConf                       DbConf
 	AwsS3Conf                    AwsS3Conf
 	LoginUrl                     string
 	VerifyEmailUrl               string
+	VerifyEmailExpireSeconds     int
 	ResetPwdUrl                  string
 	LenderUrl                    string
+	InviteUserUrl                string
+	InviteUserExpireSeconds      int
+	SendInviteEmailPeriodSeconds int
 	PreApprovalLoanConf          []PreApprovalLoanConf
 }
 
@@ -58,10 +62,11 @@ type AwsS3Conf struct {
 }
 
 type LimiterConf struct {
-	Login             LimiterItem
-	SendLoginEmail    LimiterItem
-	SendVerityEmail   LimiterItem
-	SendResetPwdEmail LimiterItem
+	Login              LimiterItem
+	SendLoginEmail     LimiterItem
+	SendVerityEmail    LimiterItem
+	SendResetPwdEmail  LimiterItem
+	SendLoanQuoteEmail LimiterItem
 }
 
 type LimiterItem struct {
@@ -96,4 +101,12 @@ type PreApprovalLoanRate struct {
 type PreApprovalLoanLoanTerm struct {
 	Min int
 	Max int
+}
+
+type EmailAuthConf struct {
+	Gmail struct {
+		ClientId     string
+		ClientSecret string
+		CallbackUrl  string
+	}
 }
