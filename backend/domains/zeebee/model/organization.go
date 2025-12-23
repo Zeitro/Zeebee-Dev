@@ -13,6 +13,8 @@ type Organization struct {
 	ContactName  string                          `gorm:"column:contact_name;type:varchar(100);default:''" json:"contact_name"`
 	OwnerType    constants.OrganizationOwnerType `gorm:"column:owner_type;default:''" json:"owner_type"`
 	Type         constants.UserType              `gorm:"column:type;default:''" json:"type"`
+	Logo         string                          `gorm:"column:logo;type:varchar(255);default:''" json:"logo"`
+	Website      string                          `gorm:"column:website;type:varchar(255);default:''" json:"website"`
 
 	//  relationships
 	Users              []*User              `json:"users" gorm:"many2many:organization_and_users;joinForeignKey:organization_id;joinReferences:user_id"`

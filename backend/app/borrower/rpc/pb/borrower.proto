@@ -1849,6 +1849,8 @@ message OrganizationEntity {
   string created_at = 11;
   string updated_at = 12;
   repeated OrganizationEmailEntity organization_emails = 13;
+  string logo = 14;
+  string website = 15;
 }
 
 message OrganizationOptionsEntity {
