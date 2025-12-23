@@ -62,10 +62,11 @@ type AwsS3Conf struct {
 }
 
 type LimiterConf struct {
-	Login             LimiterItem
-	SendLoginEmail    LimiterItem
-	SendVerityEmail   LimiterItem
-	SendResetPwdEmail LimiterItem
+	Login              LimiterItem
+	SendLoginEmail     LimiterItem
+	SendVerityEmail    LimiterItem
+	SendResetPwdEmail  LimiterItem
+	SendLoanQuoteEmail LimiterItem
 }
 
 type LimiterItem struct {

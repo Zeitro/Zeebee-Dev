@@ -3,5 +3,9 @@ package limiter
 type LimiterStrategy string
 
 const (
-	StrategySendLoginEmail LimiterStrategy = "SendLoginEmail"
+	StrategyLogin              LimiterStrategy = "Login"
+	StrategySendLoginEmail     LimiterStrategy = "SendLoginEmail"
+	StrategySendVerifyEmail    LimiterStrategy = "SendVerifyEmail"
+	StrategySendResetPwdEmail  LimiterStrategy = "SendResetPwdEmail"
+	StrategySendLoanQuoteEmail LimiterStrategy = "SendLoanQuoteEmail"
 )

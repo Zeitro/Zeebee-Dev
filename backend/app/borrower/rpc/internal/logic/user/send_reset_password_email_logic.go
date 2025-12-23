@@ -3,7 +3,6 @@ package userlogic
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/duke-git/lancet/v2/random"
 
@@ -15,9 +14,9 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	email2 "zeebee-backend/common/email"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/limiter"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/limiter"
 )
 
 type SendResetPasswordEmailLogic struct {
@@ -48,11 +47,7 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *borrower.SendRe
 
 	// rate limit
 	key := stringx.Format(constants.ResetPwdEmail, constants.UserTypeBorrower, email)
-	limitOpt := limiter.WithRedisLimit(
-		global.Config.LimiterConf.SendResetPwdEmail.Rate,
-		time.Second*time.Duration(global.Config.LimiterConf.SendResetPwdEmail.Period),
-	)
-	ok, err := global.SendResetPasswordEmailLimiter.Limit(l.ctx, key, limitOpt)
+	ok, err := global.LimiterMgr.Limit(l.ctx, limiter.StrategySendResetPwdEmail, key)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
