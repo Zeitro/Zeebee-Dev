@@ -5,14 +5,13 @@ import { usePathname } from 'next/navigation';
 import { navRouter } from '@config/routes';
 import { getCurrentRouterItem, flattenNavRouter, getCrumbs } from '@config/common';
 import Link from 'next/link';
-import styles from './index.module.scss';
-import { CustomContent } from './customContent';
 import { eventBus } from '@repo/shared-methods/utils';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 /**
  * 面包屑导航
+ * isShowCrumbs：true时不受router内配置的hideCrumbs影响，直接显示
  */
-const NewHeader = ({ children, isShowCrumbs }) => {
+export const NewHeader = ({ children, isShowCrumbs }) => {
 	const pathname = usePathname();
 	const isShow = useMemo(() => {
 		const item = getCurrentRouterItem(pathname, navRouter);
@@ -57,17 +56,21 @@ const NewHeader = ({ children, isShowCrumbs }) => {
 		};
 	}, [crumbs]);
 	return isShow ? (
-		<div className={`h-[84px] p-4 shrink-0 flex items-center justify-between ${styles.crumbs}`}>
+		<div
+			className="px-4 py-4 shrink-0 flex items-center justify-between"
+			style={{
+				boxShadow:
+					'0px 1px 2px 0px rgba(0, 0, 0, 0.03),0px 1px 6px -1px rgba(0, 0, 0, 0.02),0px 2px 4px 0px rgba(0, 0, 0, 0.02)',
+				height: 84,
+			}}
+		>
 			<div>
 				<Breadcrumb items={crumbs} itemRender={itemRender} />
-				<div className="text-lg font-medium text-gray-medium">
+				<div className="font-medium text-gray-medium text-base">
 					{crumbs?.[crumbs.length - 1]?.title}
 				</div>
 			</div>
-			<div>
-				<CustomContent />
-				{children}
-			</div>
+			<div>{children}</div>
 		</div>
 	) : (
 		''

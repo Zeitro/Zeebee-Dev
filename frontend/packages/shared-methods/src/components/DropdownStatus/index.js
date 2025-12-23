@@ -36,7 +36,7 @@ export const DropdownStatus = ({
 			setLoading(true);
 			setStatusValue(key);
 			await request(api, {
-				method: 'PUT',
+				method: 'PATCH',
 				body: { [statusKey]: key },
 			});
 			setLoading(false);

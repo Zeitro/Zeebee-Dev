@@ -6,7 +6,9 @@ import { matchRoute } from '@config/common';
 import { useState } from 'react';
 import { BtnPopUpModal } from '@repo/shared-methods';
 import ImportLoansModal from '@/app/loans/components/ImportLoanModal';
-export const CustomContent = () => {
+
+// 自定义全局操作或展示（用于header面包屑平级处展示）
+const HeaderCustomAction = () => {
 	const pathname = usePathname();
 	const { id } = useParams();
 	const router = useRouter();
@@ -86,3 +88,5 @@ export const CustomContent = () => {
 	};
 	return getContent();
 };
+
+export default HeaderCustomAction;

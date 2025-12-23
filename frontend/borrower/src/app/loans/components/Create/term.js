@@ -39,11 +39,11 @@ const CreateTerm = ({
 			<Form.Item
 				label="Rate"
 				name="rate"
-				rules={[{ required: true, message: 'Please input!' }]}
+				// rules={[{ required: true, message: 'Please input!' }]}
 			>
 				<InputNumber
 					style={{ width: '100%' }}
-					min={1}
+					min={0}
 					max={100}
 					controls={false}
 					placeholder="Enter Rate"
@@ -58,7 +58,7 @@ const CreateTerm = ({
 			<Form.Item
 				label={stage === 'Pending' ? 'Target lender' : 'Lender'}
 				name="lender_company"
-				rules={[{ required: true, message: 'Please input!' }]}
+				// rules={[{ required: true, message: 'Please input!' }]}
 				getValueFromEvent={(v) => capitalizeFirstLetter(v.target.value)}
 			>
 				<Input placeholder={`Enter ${stage === 'Pending' ? 'target ' : ''}lender`} />
@@ -162,7 +162,7 @@ const CreateTerm = ({
 						<Form.Item
 							label="Target closing date"
 							name="closing_date"
-							rules={[{ required: true, message: 'Please select date!' }]}
+							// rules={[{ required: true, message: 'Please select date!' }]}
 						>
 							<CommonFormDate placeholder="Select target closing date" />
 						</Form.Item>
@@ -171,7 +171,7 @@ const CreateTerm = ({
 						<Form.Item
 							label="Holdback"
 							name="holdback_amount"
-							rules={[{ required: true, message: 'Please input!' }]}
+							// rules={[{ required: true, message: 'Please input!' }]}
 						>
 							<InputNumAmount placeholder="Enter holdback amount" />
 						</Form.Item>
@@ -181,7 +181,7 @@ const CreateTerm = ({
 						<Form.Item
 							label="Estimated closing fund"
 							name="closing_fund"
-							rules={[{ required: true, message: 'Please input!' }]}
+							// rules={[{ required: true, message: 'Please input!' }]}
 						>
 							<InputNumAmount
 								placeholder="Enter Estimated closing fund"

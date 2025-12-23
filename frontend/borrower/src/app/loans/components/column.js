@@ -1,12 +1,14 @@
-import { formatAmount } from '@repo/shared-methods/utils';
+import { formatAmount, formatTime } from '@repo/shared-methods/utils';
 import { LoanPendingStatus } from './ChangeStageStatus';
 import { TableOperation } from '@repo/shared-methods';
+import QuoteBtn from './Quote';
+import { SendOutlined } from '@ant-design/icons';
 export const get3rdPartyMark = (v, { source }) => (
 	<div className="flex items-center">
 		<p className="overflow-hidden text-ellipsis whitespace-nowrap" title={v}>
 			{v}
 		</p>
-		{source === 'borrower' && (
+		{source === 'Borrower' && (
 			<div className="ml-2 px-2 bg-blue-light-1 text-blue-medium-default rounded-xs">
 				3rd party
 			</div>
@@ -52,6 +54,16 @@ const common = (isNotAddress) => {
 	return [
 		...(isNotAddress ? [] : addressArr),
 		{
+			title: 'Created time',
+			dataIndex: 'created_at',
+			key: 'created_at',
+			ellipsis: true,
+			sorter: true,
+			width: 170,
+			defaultSortOrder: 'descend',
+			render: (v) => formatTime(v) || '--',
+		},
+		{
 			title: 'Borrower',
 			dataIndex: 'applicants',
 			key: 'applicants',
@@ -78,16 +90,35 @@ const getOpt = (showDeleteModal, stage) => {
 				record={record}
 				// disabled={stage !== 'Draft' && record?.source !== 'borrower'}
 				getItems={(editItem, deleteItem, detailsItem) => {
-					const arr = [];
+					const quoteDisabled = !(
+						record?.stage === 'Pending' && record?.pending_status === 'Quoting'
+					);
+					const arr = [
+						{
+							label: (
+								<QuoteBtn
+									disabled={quoteDisabled}
+									rowData={record}
+									isBtn={false}
+									tooltipProps={{ placement: 'leftTop' }}
+								>
+									<SendOutlined style={{ marginRight: 8 }} />
+									Request quote
+								</QuoteBtn>
+							),
+							key: 'quote',
+							disabled: quoteDisabled,
+						},
+					];
 					if (stage === 'Draft') {
 						const url =
-							record?.source === 'borrower'
+							record?.source === 'Borrower'
 								? `/loans/${record?.id}`
 								: `/loans/createZeeBeeLoan?id=${record?.id}`;
 						arr.push({ ...editItem, url });
 						arr.push(deleteItem);
 					} else {
-						if (record?.source === 'borrower') {
+						if (record?.source === 'Borrower') {
 							arr.push({ ...editItem, url: `/loans/${record?.id}` });
 							arr.push(deleteItem);
 						} else {
@@ -97,6 +128,7 @@ const getOpt = (showDeleteModal, stage) => {
 							});
 						}
 					}
+
 					return arr;
 				}}
 				onSelect={(key) => {
@@ -121,7 +153,7 @@ export const pendingColumns = (isNotAddress, successCallback, showDeleteModal, s
 			<LoanPendingStatus
 				data={record}
 				successCallback={successCallback}
-				disabled={record?.source !== 'borrower'}
+				disabled={record?.source !== 'Borrower'}
 				tooltipProps={{
 					title: 'Zeebee-connected loans are managed automatically and cannot be edited manually by users.',
 				}}

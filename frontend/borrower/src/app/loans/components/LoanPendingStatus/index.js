@@ -27,7 +27,7 @@ const LoanPendingStatus = ({ data, successCallback }) => {
 	const rowData = useMemo(() => {
 		return items.find((i) => i.key === statusValue) || {};
 	}, [items, statusValue]);
-	const is3rdParty = data?.source === 'borrower';
+	const is3rdParty = data?.source === 'Borrower';
 
 	const handleSelect = async ({ key }) => {
 		try {

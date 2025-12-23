@@ -73,7 +73,7 @@ const Loans = () => {
 							api={api}
 							stage="Draft"
 							key="Draft"
-							scrollX={2200}
+							scrollX={2400}
 							filterName="Drafts filters"
 						/>
 					),

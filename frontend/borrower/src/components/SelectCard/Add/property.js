@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Row, Col, Form, Select, InputNumber } from 'antd';
+import { Row, Col, Form, Select, InputNumber, message } from 'antd';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
 import { useGetOptions } from '@repo/shared-methods/hooks';
 import { layoutCol } from '@/enum/common';
@@ -36,10 +36,14 @@ const AddModal = ({ setOpen, rowData, handleSearch }) => {
 				method,
 				body: { ...value },
 			});
-			console.log(res);
-
 			handleSearch?.(res?.id);
 			setConfirmLoading(false);
+			message.open({
+				type: 'success',
+				content: rowData?.id
+					? 'Property updated Successfully.'
+					: 'Property added Successfully.',
+			});
 			setOpen(false);
 		} catch {
 			setConfirmLoading(false);

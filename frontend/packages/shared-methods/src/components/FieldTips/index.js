@@ -5,13 +5,14 @@ import { Tooltip } from 'antd';
 
 // 字段提示，内容超长浮框显示完整内容，或者用于问号内显示字段说明
 // isShowDescription: 是否显示问号
-export const FieldTips = ({ children, title, className, isShowDescription }) => {
+export const FieldTips = ({ children, title, className, isShowDescription, ...props }) => {
 	return (
 		<Tooltip
 			title={title}
 			classNames={{
 				root: '!max-w-[160px]',
 			}}
+			{...props}
 		>
 			{children}
 			{isShowDescription && (

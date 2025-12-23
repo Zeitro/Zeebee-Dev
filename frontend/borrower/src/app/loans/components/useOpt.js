@@ -55,10 +55,10 @@ export default function useOpt(tableFilterRef) {
 		let url;
 		if (stage === 'Draft') {
 			url =
-				record?.source === 'borrower'
+				record?.source === 'Borrower'
 					? `/loans/${record?.id}`
 					: `/loans/createZeeBeeLoan?id=${record?.id}`;
-		} else if (record?.source === 'borrower') {
+		} else if (record?.source === 'Borrower') {
 			url = `/loans/${record?.id}`;
 		} else {
 			url = `/loans/zeeBeeDetails?id=${record?.id}`;
