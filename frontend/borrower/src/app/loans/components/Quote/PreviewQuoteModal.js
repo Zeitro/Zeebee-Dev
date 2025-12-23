@@ -179,7 +179,7 @@ const PreviewQuote = ({ setOpen, rowData }) => {
 				) : (
 					// 预览邮件
 					<div className="text-[#1E2939] text-sm">
-						<div className="pb-[14px]">Hi lender,</div>
+						<div className="pb-[14px]">Hi xxx team,</div>
 						<div className=" pb-6">
 							Can you help provide us with a quote based on the following information?
 						</div>

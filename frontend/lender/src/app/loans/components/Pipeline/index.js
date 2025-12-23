@@ -13,7 +13,10 @@ import {
 	formatDate,
 } from '@repo/shared-methods/utils';
 import { message } from 'antd';
+import { useRouter } from 'next/navigation';
+import { throttle } from 'lodash';
 const Pipeline = () => {
+	const router = useRouter();
 	const { request } = createRequest();
 	const [items, setItems] = useState([
 		{ value: 'Quoting', label: 'Quoting', total: 0, totalAmount: 0, list: [] },
@@ -33,6 +36,16 @@ const Pipeline = () => {
 		});
 	};
 
+	const handleClick = throttle(
+		(e, item) => {
+			e.preventDefault();
+			e.stopPropagation();
+			router.push(`/loans/zeeBeeDetails?id=${item?.id}`);
+		},
+		1000,
+		{ trailing: false },
+	);
+
 	return (
 		<MultiVirtuosoDndKit
 			itemHeight={196}
@@ -51,6 +64,7 @@ const Pipeline = () => {
 					<div
 						className="bg-white py-2 px-4 rounded-xl shadow-[0_2px_8px_0_rgba(0,0,0,0.15)] mb-4 flex flex-col gap-4"
 						{...options}
+						onClick={(e) => handleClick(e, item)}
 					>
 						<div className="text-base font-medium pb-2 common-ellipsis" title={address}>
 							{address}
