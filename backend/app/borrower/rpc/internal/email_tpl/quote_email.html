@@ -36,7 +36,7 @@
             padding: 28px 0 14px;
           "
         >
-            Hi {{ .lender_name }} lender,
+            Hi {{ .lender_name }} team,
         </div>
 
         <div
@@ -116,7 +116,7 @@
           >
             Total loan amount:
           </span>
-            <span style="display: inline-block; width: 51%">{{ .total_loan_amount }}</span>
+            <span style="display: inline-block; width: 51%">{{ usd .total_loan_amount }}</span>
         </div>
         <div style="padding-top: 14px">
           <span
@@ -168,7 +168,7 @@
           >
             Purchase price:
           </span>
-            <span style="display: inline-block; width: 51%"> {{ .purchase_amount }} </span>
+            <span style="display: inline-block; width: 51%"> {{ usd .purchase_amount }} </span>
         </div>
         <div style="padding-top: 14px">
           <span
@@ -181,7 +181,7 @@
           >
             Estimated after repair value:
           </span>
-            <span style="display: inline-block; width: 51%"> {{ .arv }}</span>
+            <span style="display: inline-block; width: 51%"> {{ usd .arv }}</span>
         </div>
         <div style="padding-top: 14px">
           <span
@@ -194,7 +194,7 @@
           >
             Borrower:
           </span>
-            <span style="display: inline-block; width: 51%">{{ .borrower_name }}</span>
+            <span style="display: inline-block; width: 51%">{{ .borrower_applicant_name }}</span>
         </div>
         <div style="padding-top: 14px">
           <span
@@ -220,7 +220,7 @@
           >
             Holdback:
           </span>
-            <span style="display: inline-block; width: 51%">{{ .holdback_amount }}</span>
+            <span style="display: inline-block; width: 51%">{{ usd .holdback_amount }}</span>
         </div>
 
         <div style="padding: 38px 0 2px">Best regards</div>

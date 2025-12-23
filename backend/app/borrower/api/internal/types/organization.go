@@ -14,6 +14,8 @@ type OrganizationEntity struct {
 	ContactName        string                     `json:"contact_name"`
 	OwnerType          string                     `json:"owner_type"`
 	Type               string                     `json:"type"`
+	Logo               string                     `json:"logo"`
+	Website            string                     `json:"website"`
 	CreatedAt          string                     `json:"created_at"`
 	UpdatedAt          string                     `json:"updated_at"`
 	OrganizationEmails []*OrganizationEmailEntity `json:"organization_emails"`

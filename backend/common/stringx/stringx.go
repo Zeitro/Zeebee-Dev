@@ -80,6 +80,9 @@ func FormatCurrency(symbol string, amount float64) string {
 }
 
 func FormatUsDollarCurrency(amount float64) string {
+	if amount == 0 {
+		return ""
+	}
 	usdAmount := money.NewFromFloat(amount, money.USD)
 	return strings.TrimSuffix(usdAmount.Display(), ".00")
 }

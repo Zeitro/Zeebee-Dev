@@ -39,7 +39,12 @@ func NewPreApprovalLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *P
 	}
 }
 
-func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalRequest) (*borrower.LoanPreApprovalResponse, error) {
+func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalRequest) (resp *borrower.LoanPreApprovalResponse, err error) {
+	defer func() {
+		if err != nil {
+			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+		}
+	}()
 
 	if in.Data.Property == nil || in.Data.Property.Address == nil {
 		return nil, errorx.New("Invalid Property Address")
@@ -139,7 +144,7 @@ func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalReque
 
 	selfOrganization, err := l.svcCtx.OrganizationRepo.FindOneByColumns(l.ctx, map[string]interface{}{
 		"owner_type": constants.OrganizationOwnerTypeSelf,
-		"type":       constants.UserTypeBorrower,
+		"type":       constants.UserTypeLender,
 	})
 	if err != nil {
 		return nil, errorx.WithStack(err)
