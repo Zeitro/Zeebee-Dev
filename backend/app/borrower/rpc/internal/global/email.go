@@ -44,7 +44,7 @@ func initEmailClient(conf config.RpcConf) (err error) {
 	}
 
 	// Setup email authorization manager
-	EmailAuthManager = zeebeeEmail.NewManager()
+	EmailAuthManager = zeebeeEmail.NewManager(LimiterMgr)
 
 	return nil
 }

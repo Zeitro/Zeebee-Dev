@@ -16488,6 +16488,8 @@ type OrganizationEntity struct {
 	CreatedAt          string                     `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt          string                     `protobuf:"bytes,12,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	OrganizationEmails []*OrganizationEmailEntity `protobuf:"bytes,13,rep,name=organization_emails,json=organizationEmails,proto3" json:"organization_emails,omitempty"`
+	Logo               string                     `protobuf:"bytes,14,opt,name=logo,proto3" json:"logo,omitempty"`
+	Website            string                     `protobuf:"bytes,15,opt,name=website,proto3" json:"website,omitempty"`
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
 }
@@ -16611,6 +16613,20 @@ func (x *OrganizationEntity) GetOrganizationEmails() []*OrganizationEmailEntity 
 		return x.OrganizationEmails
 	}
 	return nil
+}
+
+func (x *OrganizationEntity) GetLogo() string {
+	if x != nil {
+		return x.Logo
+	}
+	return ""
+}
+
+func (x *OrganizationEntity) GetWebsite() string {
+	if x != nil {
+		return x.Website
+	}
+	return ""
 }
 
 type OrganizationOptionsEntity struct {
@@ -19541,7 +19557,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x04data\x18\x01 \x01(\v20.borrower.OrganizationUserAssignRolesRequestDataR\x04data\"S\n" +
 	"&OrganizationUserAssignRolesRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
-	"\brole_ids\x18\x02 \x03(\x03R\aroleIds\"\xd0\x03\n" +
+	"\brole_ids\x18\x02 \x03(\x03R\aroleIds\"\xfe\x03\n" +
 	"\x12OrganizationEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +
@@ -19559,7 +19575,9 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"created_at\x18\v \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
 	"updated_at\x18\f \x01(\tR\tupdatedAt\x12R\n" +
-	"\x13organization_emails\x18\r \x03(\v2!.borrower.OrganizationEmailEntityR\x12organizationEmails\"d\n" +
+	"\x13organization_emails\x18\r \x03(\v2!.borrower.OrganizationEmailEntityR\x12organizationEmails\x12\x12\n" +
+	"\x04logo\x18\x0e \x01(\tR\x04logo\x12\x18\n" +
+	"\awebsite\x18\x0f \x01(\tR\awebsite\"d\n" +
 	"\x19OrganizationOptionsEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12#\n" +
