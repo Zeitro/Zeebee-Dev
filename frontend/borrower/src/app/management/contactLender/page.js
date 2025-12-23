@@ -78,7 +78,7 @@ const ContactLender = () => {
 							) : (
 								<NoOrgLogo style={{ width: 48, height: 48 }} />
 							)}
-							<p className="font-medium text-base text-black-dark pl-2">
+							<p className="font-medium text-base text-black-dark pl-2 overflow-hidden">
 								{row?.name}
 							</p>
 
@@ -116,13 +116,13 @@ const ContactLender = () => {
 							</div> */}
 						</div>
 
-						<div className="flex items-center gap-4 pt-3">
+						<div className="flex items-center gap-4 pt-3 overflow-hidden">
 							<PersonSvg />
-							<span className="text-sm/6">{row?.contact_name}</span>
+							<span className="text-sm/6 common-ellipsis">{row?.contact_name}</span>
 						</div>
-						<div className="flex items-center gap-4 pt-3">
+						<div className="flex items-center gap-4 pt-3 overflow-hidden">
 							<EmailSvg />
-							<span className="text-sm/6">{row?.contact_email}</span>
+							<span className="text-sm/6 common-ellipsis">{row?.contact_email}</span>
 						</div>
 						<div className="flex items-center gap-4 pt-3">
 							<PhoneSvg />
@@ -137,8 +137,14 @@ const ContactLender = () => {
 								}}
 							/>
 							{row?.website ? (
-								<Link href={row?.website || ''} target="_blank">
-									<span className="text-sm/6">{row?.website}</span>
+								<Link
+									href={row?.website || ''}
+									target="_blank"
+									className="overflow-hidden"
+								>
+									<span className="text-sm/6 common-ellipsis block ">
+										{row?.website}
+									</span>
 								</Link>
 							) : (
 								<span className="text-sm/6">--</span>
