@@ -9,23 +9,27 @@ info(
 import "address.api"
 
 
-type BorrowerEntityEntry {
+type BorrowerEntityEntity {
     Id int64 `json:"id"`
     CreatedAt string `json:"created_at"`
     UpdatedAt string `json:"updated_at"`
-    BorrowerId int64 `json:"borrower_id"`
+    CreatorId int64 `json:"creator_id"`
+    CreatorName string `json:"creator_name"`
+    OrganizationId int64 `json:"organization_id"`
     Type string `json:"type"`
     Name string `json:"name"`
     TinType string `json:"tin_type"`
     Tin string `json:"tin"`
-    MailingAddress AddressEntry `json:"mailing_address"`
+    MailingAddress AddressEntity `json:"mailing_address"`
     ContactEmail string `json:"contact_email"`
     ContactName string `json:"contact_name"`
     ContactPhone string `json:"contact_phone"`
 }
 
-type BorrowerEntityPageEntry {
+type BorrowerEntityPageEntity {
     Id int64 `json:"id"`
+    CreatorId int64 `json:"creator_id"`
+    CreatorName string `json:"creator_name"`
     CreatedAt string `json:"created_at"`
     UpdatedAt string `json:"updated_at"`
     BorrowerId int64 `json:"borrower_id"`
@@ -36,7 +40,7 @@ type BorrowerEntityPageEntry {
     ContactEmail string `json:"contact_email"`
     ContactName string `json:"contact_name"`
     ContactPhone string `json:"contact_phone"`
-    MailingAddress *AddressEntry `json:"mailing_address,omitempty"`
+    MailingAddress *AddressEntity `json:"mailing_address,omitempty"`
 }
 
 type BorrowerEntityEditRequest {
@@ -45,9 +49,9 @@ type BorrowerEntityEditRequest {
     Name string `json:"name" validate:"required,min=2,max=100"`
     TinType string `json:"tin_type" validate:"required,oneof=EIN"`
     Tin string `json:"tin" validate:"required,min=9,max=9"`
-    MailingAddress AddressEntry `json:"mailing_address" validate:"required"`
+    MailingAddress AddressEntity `json:"mailing_address" validate:"required"`
     ContactEmail string `json:"contact_email" validate:"required,email,min=5,max=100"`
-    ContactName string `json:"contact_name" validate:"required,min=5,max=100"`
+    ContactName string `json:"contact_name" validate:"required,min=2,max=100"`
     ContactPhone string `json:"contact_phone" validate:"required,min=9,max=15"`
 }
 
@@ -75,7 +79,7 @@ type (
         Limit int64 `json:"limit"`
         Total int64 `json:"total"`
         TotalPage int64 `json:"total_page"`
-        List []BorrowerEntityPageEntry `json:"list"`
+        List []BorrowerEntityPageEntity `json:"list"`
     }
 )
 
@@ -98,7 +102,7 @@ type (
     }
 
     BorrowerEntityCreateResponse {
-        BorrowerEntityEntry
+        BorrowerEntityEntity
     }
 
     BorrowerEntityUpdateRequest {
@@ -106,19 +110,19 @@ type (
     }
 
     BorrowerEntityUpdateResponse {
-        BorrowerEntityEntry
+        BorrowerEntityEntity
     }
 )
 
 // detail
 type (
     BorrowerEntityDetailResponse {
-        BorrowerEntityEntry
+        BorrowerEntityEntity
     }
 )
 // all
 type (
     BorrowerEntityAllResponse {
-        Lists []*BorrowerEntityPageEntry `json:"lists"`
+        Lists []*BorrowerEntityPageEntity `json:"lists"`
     }
 )

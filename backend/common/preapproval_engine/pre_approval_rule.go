@@ -8,7 +8,7 @@ import (
 
 	"zeebee-backend/common/errorx"
 
-	"zeebee-backend/common/constants"
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 // HighValueState represents a high value state info

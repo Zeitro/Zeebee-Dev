@@ -4,9 +4,10 @@ import (
 	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/zrpc"
 
-	"zeebee-backend/app/borrower/api/internal/middleware"
 	"zeebee-backend/app/borrower/config"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/middleware"
 )
 
 type ServiceContext struct {
@@ -25,12 +26,16 @@ type ServiceContext struct {
 	StorageRpcClient           borrower.StorageClient
 	FileRpcClient              borrower.FileClient
 	LoanDocumentRpcClient      borrower.LoanDocumentClient
+	RoleRpcClient              borrower.RoleClient
+	OrganizationUserRpcClient  borrower.OrganizationUserClient
+	OrganizationRpcClient      borrower.OrganizationClient
+	OrganizationEmailRpcClient borrower.OrganizationEmailClient
 }
 
 func NewServiceContext(c config.ApiConf) *ServiceContext {
 	return &ServiceContext{
 		Config:         c,
-		AuthMiddleware: middleware.NewAuthMiddleware(c.JwtAuth.AccessSecret).Handle,
+		AuthMiddleware: middleware.NewHttpAuthMiddleware(c.JwtAuth.AccessSecret, constants.UserTypeBorrower).Handle,
 		// rpc client
 		UserRpcClient:              borrower.NewUserClient(zrpc.MustNewClient(c.RpcConf).Conn()),
 		LoanRpcClient:              borrower.NewLoanClient(zrpc.MustNewClient(c.RpcConf).Conn()),
@@ -42,5 +47,9 @@ func NewServiceContext(c config.ApiConf) *ServiceContext {
 		StorageRpcClient:           borrower.NewStorageClient(zrpc.MustNewClient(c.RpcConf).Conn()),
 		FileRpcClient:              borrower.NewFileClient(zrpc.MustNewClient(c.RpcConf).Conn()),
 		LoanDocumentRpcClient:      borrower.NewLoanDocumentClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		RoleRpcClient:              borrower.NewRoleClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		OrganizationUserRpcClient:  borrower.NewOrganizationUserClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		OrganizationRpcClient:      borrower.NewOrganizationClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		OrganizationEmailRpcClient: borrower.NewOrganizationEmailClient(zrpc.MustNewClient(c.RpcConf).Conn()),
 	}
 }

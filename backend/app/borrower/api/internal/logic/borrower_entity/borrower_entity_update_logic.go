@@ -9,7 +9,6 @@ import (
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -31,7 +30,7 @@ func NewBorrowerEntityUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContex
 
 func (l *BorrowerEntityUpdateLogic) BorrowerEntityUpdate(req *types.BorrowerEntityUpdateRequest) (resp *types.EmptyResponse, err error) {
 	rpcReq := &borrower.BorrowerEntityUpdateRequest{
-		Data: &borrower.BorrowerEntityEditEntry{},
+		Data: &borrower.BorrowerEntityEditEntity{},
 	}
 
 	err = copier.CopyWithOption(&rpcReq.Data, &req.BorrowerEntityEditRequest, copier.Option{
@@ -42,13 +41,6 @@ func (l *BorrowerEntityUpdateLogic) BorrowerEntityUpdate(req *types.BorrowerEnti
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
-
-	// get borrower id
-	borrowerId, err := utils.GetAccountIdFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-	rpcReq.Data.BorrowerId = borrowerId
 
 	_, err = l.svcCtx.BorrowerEntityRpcClient.Update(l.ctx, rpcReq)
 	if err != nil {

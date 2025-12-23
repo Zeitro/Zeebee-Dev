@@ -6,10 +6,11 @@ import (
 	"github.com/duke-git/lancet/v2/slice"
 	"gorm.io/gorm"
 
+	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -19,13 +20,15 @@ type UpdateApplyLoanLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	baseLogic *logic.BaseLogic
 }
 
 func NewUpdateApplyLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateApplyLoanLogic {
 	return &UpdateApplyLoanLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -36,22 +39,27 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 		}
 	}()
 	var loan *model.Loan
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	// var borrowerProperty *model.BorrowerProperty
 
-	loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, in.Data.Id, in.Data.BorrowerId)
+	loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, in.Data.Id, claim.OrganizationId)
 	if err != nil {
 		return nil, err
 	}
 
 	applyLogic := NewApplyLoanLogic(l.ctx, l.svcCtx)
-	data, err := applyLogic.buildModelData(in.Data, loan)
+	data, err := applyLogic.buildModelData(in.Data, loan, claim)
 	if err != nil {
 		return nil, err
 	}
 
 	sources := []constants.LoanSource{
 		constants.LoanSourceSystem,
-		constants.LoanSourcePreApproval,
+		constants.LoanSourcePreapproval,
 	}
 	if !slice.Contain(sources, loan.Source) {
 		return nil, errorx.WithStack(errorx.New("Invalid Loan Source"))
@@ -67,7 +75,8 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 	if !slice.Contain(stages, loan.Stage) && !slice.Contain(pendingStatus, loan.PendingStatus) {
 		return nil, errorx.New("Loan's Stage Should Be Pending Or Draft")
 	}
-	if loan.BorrowerId != in.Data.BorrowerId {
+	// todo check organization
+	if loan.BorrowerOrganizationId != claim.OrganizationId {
 		return nil, errorx.WithStack(errorx.New("Loan Does Not Belong To Borrower"))
 	}
 
@@ -91,7 +100,7 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 			func() error {
 				data.loan.RemoveRelationships()
 				if in.Data.LenderCompanyId == 0 {
-					in.Data.LenderCompanyId = loan.LenderCompanyId
+					in.Data.LenderCompanyId = loan.LenderOrganizationId
 				}
 				_, err := l.svcCtx.LoanRepo.UpdateOneWithTx(l.ctx, tx, in.Data.Id, data.loan)
 				return err

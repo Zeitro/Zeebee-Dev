@@ -5,12 +5,13 @@ import (
 
 	"github.com/jinzhu/copier"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
+	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/timex"
-
-	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/common/errorx"
 )
@@ -19,13 +20,15 @@ type DetailLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	baseLogic *logic.BaseLogic
 }
 
 func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogic {
 	return &DetailLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -35,11 +38,15 @@ func (l *DetailLogic) Detail(in *borrower.PropertyDetailRequest) (resp *borrower
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	respData := &borrower.BorrowerPropertyEntry{}
-	result, err := l.svcCtx.BorrowerPropertyRepo.FindOneByColumns(l.ctx, map[string]interface{}{
-		"id":          in.Data.Id,
-		"borrower_id": in.Data.BorrowerId,
-	})
+
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// todo check organization
+	respData := &borrower.BorrowerPropertyEntity{}
+	result, err := l.svcCtx.BorrowerPropertyRepo.GetOneByIdForOrganization(l.ctx, in.Data.Id, claim.OrganizationId)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

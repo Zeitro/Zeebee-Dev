@@ -6,11 +6,12 @@ import (
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
 
+	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/timex"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -22,13 +23,15 @@ type BorrowerLoanDetailLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	baseLogic *logic.BaseLogic
 }
 
 func NewBorrowerLoanDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BorrowerLoanDetailLogic {
 	return &BorrowerLoanDetailLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -38,12 +41,18 @@ func (l *BorrowerLoanDetailLogic) BorrowerLoanDetail(in *borrower.LoanDetailRequ
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	loan, err := l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, in.Data.Id, in.Data.BorrowerId)
+
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	loan, err := l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, in.Data.Id, claim.OrganizationId)
 	if err != nil {
 		return nil, err
 	}
 	resp = &borrower.LoanDetailResponse{
-		Data: &borrower.LoanEntry{},
+		Data: &borrower.LoanEntity{},
 	}
 	err = copier.CopyWithOption(&resp.Data, loan, copier.Option{
 		CaseSensitive: true,
@@ -57,10 +66,10 @@ func (l *BorrowerLoanDetailLogic) BorrowerLoanDetail(in *borrower.LoanDetailRequ
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 	// loan experiences
-	var transExperiences []*borrower.LoanExperienceEntry
-	var realEstateExperiences []*borrower.LoanExperienceEntry
+	var transExperiences []*borrower.LoanExperienceEntity
+	var realEstateExperiences []*borrower.LoanExperienceEntity
 	slice.ForEach(loan.LoanExperiences, func(index int, item *model.LoanExperience) {
-		experience := &borrower.LoanExperienceEntry{}
+		experience := &borrower.LoanExperienceEntity{}
 		_ = copier.CopyWithOption(experience, item, copier.Option{
 			CaseSensitive: true,
 			DeepCopy:      true,

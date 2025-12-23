@@ -8,28 +8,13 @@ import (
 	"gorm.io/gorm"
 
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/data/dto"
 
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/gormx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/model"
 )
-
-type BorrowerEntityBorrowerPageReq struct {
-	Page   int64                                `json:"page"`
-	Limit  int64                                `json:"limit"`
-	Filter *BorrowerEntityBorrowerPageReqFilter `json:"filter"`
-	Sorter *BorrowerEntityBorrowerPageReqSorter `json:"sorter"`
-}
-
-type BorrowerEntityBorrowerPageReqFilter struct {
-	BorrowerId int64  `json:"borrower_id"`
-	Keyword    string `json:"keyword"`
-}
-type BorrowerEntityBorrowerPageReqSorter struct {
-	Column string `json:"column"`
-	Sort   string `json:"sort"`
-}
 
 type BorrowerEntityRepo struct {
 	*gormx.BaseRepo[*model.BorrowerEntity]
@@ -44,21 +29,30 @@ func NewBorrowerEntityRepo(db *gorm.DB) *BorrowerEntityRepo {
 }
 
 // GetBorrowerEntityById return BorrowerEntity by id and borrowerId
-func (repo *BorrowerEntityRepo) GetBorrowerEntityById(ctx context.Context, id int64, borrowerId int64) (result *model.BorrowerEntity, err error) {
+func (repo *BorrowerEntityRepo) GetBorrowerEntityById(ctx context.Context, id int64, organizationId int64) (result *model.BorrowerEntity, err error) {
 	err = repo.Client(ctx).
-		Where("id = ? and borrower_id = ?", id, borrowerId).
+		Where("id = ? and organization_id = ?", id, organizationId).
+		First(&result).
+		Error
+	return result, errorx.WithStack(err)
+}
+
+// GetOneByIdForOrganization return one entity by id and organization id
+func (repo *BorrowerEntityRepo) GetOneByIdForOrganization(ctx context.Context, id int64, organizationId int64) (result *model.BorrowerEntity, err error) {
+	err = repo.Client(ctx).
+		Where("id = ? and organization_id = ?", id, organizationId).
 		First(&result).
 		Error
 	return result, errorx.WithStack(err)
 }
 
 // PageForBorrower return page
-func (repo *BorrowerEntityRepo) PageForBorrower(ctx context.Context, pageReq *BorrowerEntityBorrowerPageReq) (page gormx.PageResponse[*model.BorrowerEntity], err error) {
+func (repo *BorrowerEntityRepo) PageForBorrower(ctx context.Context, pageReq dto.BorrowerEntityPageRequestDto) (page gormx.PageResponse[*model.BorrowerEntity], err error) {
 
 	filter := pageReq.Filter
 	sorter := pageReq.Sorter
 	query := repo.Client(ctx).
-		Where("borrower_id = ?", filter.BorrowerId)
+		Where("organization_id = ?", filter.OrganizationId)
 	if len(filter.Keyword) > 0 {
 		query = query.Omit("mailing_address").Where("name like ?", "%"+filter.Keyword+"%")
 	}
@@ -78,7 +72,7 @@ func (repo *BorrowerEntityRepo) PageForBorrower(ctx context.Context, pageReq *Bo
 	return page, errorx.WithStack(err)
 }
 
-// AllForBorrower return all of the borrower's entities
+// AllForBorrower return all  borrower's entities
 func (repo *BorrowerEntityRepo) AllForBorrower(ctx context.Context, borrowerId int64) (result []*model.BorrowerEntity, err error) {
 	err = repo.Client(ctx).
 		Where("borrower_id = ?", borrowerId).
@@ -87,10 +81,19 @@ func (repo *BorrowerEntityRepo) AllForBorrower(ctx context.Context, borrowerId i
 	return result, errorx.WithStack(err)
 }
 
+// AllForOrganization return all  organization's entities
+func (repo *BorrowerEntityRepo) AllForOrganization(ctx context.Context, organizationId int64) (result []*model.BorrowerEntity, err error) {
+	err = repo.Client(ctx).
+		Where("organization_id = ?", organizationId).
+		Order("id desc").
+		Find(&result).Error
+	return result, errorx.WithStack(err)
+}
+
 // TranToLoanBorrowerWithId get BorrowerEntity from id and trans it to LoanBorrower
-func (repo *BorrowerEntityRepo) TranToLoanBorrowerWithId(ctx context.Context, id int64, borrowerId int64) (result *model.LoanBorrower, err error) {
+func (repo *BorrowerEntityRepo) TranToLoanBorrowerWithId(ctx context.Context, id int64, organizationId int64) (result *model.LoanBorrower, err error) {
 	var entity *model.BorrowerEntity
-	entity, err = repo.GetBorrowerEntityById(ctx, id, borrowerId)
+	entity, err = repo.GetBorrowerEntityById(ctx, id, organizationId)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}

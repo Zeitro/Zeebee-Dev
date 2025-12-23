@@ -8,18 +8,21 @@ info(
     version: "v1"
 )
 
-import "lender_company.api"
+import "organization.api"
 
 type UserInfo {
     Id int64 `json:"id"`
+    OrganizationUserId int64 `json:"organization_user_id"`
     Email string `json:"email"`
     FirstName string `json:"first_name"`
     LastName string `json:"last_name"`
     FullName string `json:"full_name"`
     Status string `json:"status"`
-    LenderCompanyId int64 `json:"lender_company_id"`
-    LenderCompanyName string `json:"lender_company_name"`
-    LenderCompanies []*UserInfoCompanyEntity `json:"lender_companies"`
+    OrganizationId int64 `json:"organization_id"`
+    OrganizationName string `json:"organization_name"`
+    Organizations []*UserInfoOrganizationEntity `json:"organizations"`
+    IsOwner bool `json:"is_owner"`
+    IsAdmin bool `json:"is_admin"`
 }
 // login
 type (
@@ -39,9 +42,14 @@ type (
 type (
     UserRegisterRequest {
         Email string `json:"email" validate:"required,email"`
-        LenderCompanyId int64 `json:"lender_company_id" validate:"required,gt=0"`
+        Type string `json:"type" validate:"required,oneof=Join Create"`
+        OrganizationId int64 `json:"organization_id" validate:"required_if=Type Join,gte=0"`
+        OrganizationName string `json:"organization_name" validate:"required_if=Type Create,max=100"`
+        ContactEmail string `json:"contact_email" validate:"required_if=Type Create,omitempty,email"`
+        ContactPhone string `json:"contact_phone" validate:"required_if=Type Create,max=20"`
+        ContactName string `json:"contact_name" validate:"required_if=Type Create,max=100"`
         Password string `json:"password" validate:"required,min=8,max=32,password"`
-        ComfiredPassword string `json:"comfired_password" validate:"required,eqfield=Password"`
+        ConfirmPassword string `json:"confirm_password" validate:"required,eqfield=Password"`
         FirstName string `json:"first_name" validate:"required,min=2,max=30"`
         LastName string `json:"last_name" validate:"required,min=2,max=30"`
     }
@@ -79,7 +87,7 @@ type (
     UserResetPasswordRequest {
         Email string `json:"email" validate:"required,email"`
         Password string `json:"password" validate:"required,min=8,max=32,password"`
-        ComfiredPassword string `json:"comfired_password" validate:"required,eqfield=Password"`
+        ConfirmPassword string `json:"confirm_password" validate:"required,eqfield=Password"`
         Code string `json:"code" validate:"required,len=10"`
     }
 )
@@ -92,9 +100,9 @@ type (
     }
 )
 
-// switch lender company
+// switch organization
 type (
-    UserSwitchLenderCompanyRequest {
-        LenderCompanyId int64 `json:"lender_company_id" validate:"required,gt=0"`
+    UserSwitchOrganizationRequest {
+        OrganizationId int64 `json:"organization_id" validate:"required,gt=0"`
     }
 )
