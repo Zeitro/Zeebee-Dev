@@ -181,7 +181,7 @@ const CreateTerm = ({
 						<Form.Item
 							label="Estimated closing fund"
 							name="closing_fund"
-							rules={[{ required: true, message: 'Please input!' }]}
+							// rules={[{ required: true, message: 'Please input!' }]}
 						>
 							<InputNumAmount
 								placeholder="Enter Estimated closing fund"
