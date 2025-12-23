@@ -16,6 +16,10 @@ import { FilterField } from '../FilterField/index';
 import { NewTable } from '../NewTable';
 import { Cards } from './cards.js';
 import styles from './index.module.scss';
+const defaultSortOrder = {
+	// column: 'address',
+	sort: des,
+};
 /**
  * Form筛选 + Table/Card（两个可切换）
  * 与FilterTable传一样的参数
@@ -47,10 +51,13 @@ export const FilterTableCard = forwardRef(
 		const isGet = useRef(true);
 		const filterFieldRef = useRef();
 		const { request, cancel } = createRequest();
-		const [pagination, setPagination] = useState(getPagination());
-		const [sorter, setSorter] = useState({
-			// column: 'address',
-			sort: des,
+		// 因为pagination、sorter改变后就要调用接口，useState是异步，导致getList访问的是旧值，所以用useRef。
+		const pagination = useRef(getPagination());
+		const sorter = useRef(defaultSortOrder);
+		// 因为有的页面需要展示排序和total，useRef的pagination、sorter会报错，页面上渲染的数据必须是useState的数据，所以此处做备份展示
+		const [paramsData, setParamsData] = useState({
+			...defaultSortOrder,
+			...(getPagination() || {}),
 		});
 		const [list, setList] = useState([]);
 		const [loading, setLoading] = useState(false);
@@ -60,14 +67,14 @@ export const FilterTableCard = forwardRef(
 				setLoading(true);
 				const filterParams = filterFieldRef?.current?.getApiParams?.();
 				const params = {
-					page: pagination?.current,
-					limit: pagination?.pageSize,
+					page: pagination?.current?.current,
+					limit: pagination?.current?.pageSize,
 					filter: {
 						...filterParams,
 					},
 				};
-				if (sorter?.column) {
-					params.sorter = sorter;
+				if (sorter?.current?.column) {
+					params.sorter = sorter?.current;
 				}
 				let res = {};
 				let newApi = api;
@@ -84,7 +91,8 @@ export const FilterTableCard = forwardRef(
 					res = await getData(params);
 				}
 				const { total, list } = res;
-				setPagination((v) => ({ ...v, total }));
+				pagination.current.total = total;
+				setParamsData((v) => ({ ...v, total }));
 				setList(list);
 				setLoading(false);
 				return list;
@@ -92,18 +100,17 @@ export const FilterTableCard = forwardRef(
 				setLoading(false);
 			}
 			// eslint-disable-next-line react-hooks/exhaustive-deps
-		}, [api, getData, method, pagination?.current, pagination?.pageSize, sorter]);
+		}, [api, getData, method]);
 
 		const handleSearch = async () => {
-			setPagination((v) => ({ ...v, current: 1 }));
+			pagination.current.current = 1;
+			setParamsData((v) => ({ ...v, current: 1 }));
 			return await getList();
 		};
 
 		const handleChangePagination = (page) => {
-			setPagination((v) => {
-				const next = { ...v, current: page };
-				return next;
-			});
+			pagination.current.current = page;
+			setParamsData((v) => ({ ...v, current: page }));
 			getList();
 			scrollRef.current.scrollTo({
 				top: 0,
@@ -115,15 +122,10 @@ export const FilterTableCard = forwardRef(
 				[descend]: des,
 				[ascend]: asc,
 			};
-			setSorter({
-				column: columnKey,
-				sort: orderObj[order],
-			});
-
-			setPagination((v) => ({
-				...v,
-				current: paginationObj.current,
-			}));
+			pagination.current.current = paginationObj.current;
+			sorter.current.sort = orderObj[order];
+			sorter.current.column = columnKey;
+			setParamsData((v) => ({ ...v, ...sorter.current, ...pagination.current }));
 			getList();
 		};
 		const getMoreTypesContent = (type) => {
@@ -137,7 +139,7 @@ export const FilterTableCard = forwardRef(
 							scroll={scroll}
 							onChange={onChange}
 							{...props}
-							pagination={props?.pagination ?? pagination}
+							pagination={props?.pagination ?? paramsData}
 							className={[
 								'flex-1 overflow-hidden',
 								styles.filter_table_content,
@@ -148,7 +150,7 @@ export const FilterTableCard = forwardRef(
 				case 'card':
 					return (
 						<Cards
-							pagination={pagination}
+							pagination={paramsData}
 							loading={loading}
 							scrollRef={scrollRef}
 							list={list}
