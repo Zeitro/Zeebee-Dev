@@ -1,80 +1,132 @@
 @startuml
+skinparam linetype ortho
 
 entity users{
-    * id  int4
-    * created_at timestamptz
-    * updated_at timestamptz
-    * is_del int2
-    ---
-    * email varchar(100)
-    * password_hash varchar(100)
-    * status varchar(10)
-    * type varchar(10)
+    * id: serial <<pk>>
+    --
+    created_at: timestamptz
+    updated_at: timestamptz
+    is_del: int2
+    --
+    email: varchar(100)
+    password_hash: varchar(100)
+    status: varchar(10)
+    type: varchar(10)
+    first_name: varchar(100)
+    mid_name: varchar(100)
+    last_name: varchar(100)
+    full_name: varchar(200)
+    default_organization_id: int4
+    phone: varchar(20)
+    --
+    ..Indexes..
+    email
+    (first_name,mid_name,last_name,full_name)
+    default_organization_id
+    phone
 }
 
 note right of users
     status:
-        - unverified
-        - active
-        - inactive
+        - Unverified
+        - Active
+        - Inactive
     type:
-        - borrower
-        - lender
+        - Borrower
+        - Lender
+        - Admin
 end note
 
-
-entity borrowers{
-    * id int4
-    * created_at timestamptz
-    * updated_at timestamptz
-    * is_del int2
-    ---
-    * user_id int4
-    * first_name varchar(100)
-    * last_name varchar(100)
-    * full_name varchar(100)
+entity organizations {
+    *     id: int4 <<pk>>
+    --
+    created_at: timestamptz
+    updated_at: timestamptz
+    is_del: int2
+    --
+    name:varchar(100)
+    status: varchar(20)
+    owner_id: int4
+    address: jsonb
+    contact_email: varchar(100)
+    owner_type: varchar(50)
+    type: varchar(20)
+    contact_name: varchar(100)
+    contact_phone: varchar(20)
+    logo: varchar(255)
+    website: varchar(255)
+    --
+    ..Indexes..
+    name
+    owner_id
 }
 
-entity loan_borrowers{
-    * id int4
-    * created_at timestamptz
-    * updated_at timestamptz
-    * is_del int2
-    ---
-    * loan_id int4
-    * borrower_entity_id int4
-    * type varchar(10)
-    * name varchar(255)
-    * tin varchar(20)
-    * tin_type varchar(10)
-    * mailing_address jsonb
-    * contact_email varchar(100)
-    * contact_phone varchar(20)
-    * contact_name varchar(100)
+note right of organizations
+    status:
+        - Active
+        - Inactive
+    owner_type:
+        - ""
+        - Self
+        - ThirdParty
+        - Partner
+    type:
+        - Borrower
+        - Lender
+        - Admin
+end note
+
+entity organization_users{
+    * id: serial <<pk>>
+    --
+    created_at: timestamptz
+    updated_at: timestamptz
+    is_del: int2
+    --
+    organization_id: int4
+    user_id: int4
+    first_name: varchar(100)
+    mid_name: varchar(100)
+    last_name: varchar(100)
+    full_name: varchar(100)
+    status: varchar(20)
+    phone: varchar(20)
+    remark: varchar(255)
+    --
+    ..Indexes..
+    organization_id
+    user_id
+    (first_name,mid_name,last_name,full_name)
 }
 
-note right of loan_borrowers
-    tin_type:
-        - SSN
-        - EIN
-        - ITIN
+note right of organization_users
+    status:
+        - Active
+        - Disabled
+        - Not Activated
 end note
 
 entity borrower_properties {
-    * id int4
-    * created_at timestamptz
-    * updated_at timestamptz
-    * is_del int2
-    ---
-    * unit int2
-    * borrower_id int4
-    * total_amount numeric(10,2)
-    * address jsonb
-    * property_type varchar(50)
-    * living_area_sqft decimal(8,2)
-    * bedrooms int2
-    * bathrooms int2
-    * loan_count int4
+    * id: int4 <<pk>>
+    --
+    created_at: timestamptz
+    updated_at: timestamptz
+    is_del: int2
+    --
+    unit: int2
+    organization_id: int4
+    total_amount: numeric(10,2)
+    address: jsonb
+    property_type: varchar(50)
+    living_area_sqft: decimal(8,2)
+    bedrooms: int2
+    bathrooms: int2
+    loan_count: int4
+    creator_id: int4
+    creator_name: varchar(200)
+    --
+    ..Indexes..
+    organization_id
 }
 
 note right of borrower_properties
@@ -98,24 +150,31 @@ note right of borrower_properties
 end note
 
 entity borrower_applicants{
-    * id int4
-    * created_at timestamptz
-    * updated_at timestamptz
-    * is_del int2
-    ---
-    * borrower_id int4
-    * first_name varchar(100)
-    * last_name varchar(100)
-    * mid_name varchar(100)
-    * full_name varchar(255)
-    * ssn varchar(20)
-    * dob date
-    * marital_status varchar(20)
-    * email varchar(100)
-    * est_credit_score int2
-    * driver_license_num varchar(30)
-    * address jsonb
-    * phone varchar(20)
+    * id: int4 <<pk>>
+    --
+    created_at: timestamptz
+    updated_at: timestamptz
+    is_del: int2
+    --
+    organization_id: int4
+    first_name: varchar(100)
+    last_name: varchar(100)
+    mid_name: varchar(100)
+    full_name: varchar(255)
+    ssn: varchar(20)
+    dob: date
+    marital_status: varchar(20)
+    email: varchar(100)
+    est_credit_score: int2
+    driver_license_num: varchar(30)
+    address: jsonb
+    phone: varchar(20)
+    creator_id: int4
+    creator_name: varchar(200)
+    --
+    ..Indexes..
+    organization_id
+    (first_name,mid_name,last_name,full_name)
 }
 
 note right of borrower_applicants
@@ -126,22 +185,27 @@ note right of borrower_applicants
 end note
 
 entity borrower_entities {
-    * id int4
-    * created_at timestamptz
-    * updated_at timestamptz
-    * is_del int2
-    ---
-    * borrower_id int4
-    * type varchar(50)
-    * name varchar(100)
-    * tin_type varchar(50)
-    * tin varchar(20)
-    * mailing_address jsonb
-    * contact_email varchar(100)
-    * contact_phone varchar(20)
-    * contact_name varchar(100)
+    * id: int4 <<pk>>
+    --
+    created_at: timestamptz
+    updated_at: timestamptz
+    is_del: int2
+    --
+    organization_id: int4
+    type: varchar(50)
+    name: varchar(100)
+    tin_type: varchar(50)
+    tin: varchar(20)
+    mailing_address: jsonb
+    contact_email: varchar(100)
+    contact_phone: varchar(20)
+    contact_name: varchar(100)
+    creator_id: int4
+    creator_name: varchar(200)
+    --
+    ..Indexes..
+    organization_id
 }
-
 note right of borrower_entities
     type:
         - Corporation
@@ -154,10 +218,10 @@ end note
 
 
 entity loans {
-    * id int4
-    * created_at timestamptz
-    * updated_at timestamptz
-    * is_del int2
+    * id: int4 <<pk>>
+    * created_at: timestamptz
+    * updated_at: timestamptz
+    * is_del: int2
     ---
     * code varchar(100)
     * borrower_id int4
@@ -243,11 +307,36 @@ note right of loans
     }
 end note
 
+entity loan_borrowers{
+    * id: int4 <<pk>>
+    * created_at: timestamptz
+    * updated_at: timestamptz
+    * is_del: int2
+    ---
+    * loan_id: int4
+    * borrower_entity_id int4
+    * type varchar(10)
+    * name varchar(255)
+    * tin varchar(20)
+    * tin_type varchar(10)
+    * mailing_address jsonb
+    * contact_email varchar(100)
+    * contact_phone varchar(20)
+    * contact_name varchar(100)
+}
+
+note right of loan_borrowers
+    tin_type:
+        - SSN
+        - EIN
+        - ITIN
+end note
+
 entity loan_experiences{
-        * id int4
-        * created_at timestamptz
-        * updated_at timestamptz
-        * is_del int2
+        * id: int4 <<pk>>
+        * created_at: timestamptz
+        * updated_at: timestamptz
+        * is_del: int2
         ---
         * loan_id int4
         * ownership_on_title varchar(100)
@@ -270,10 +359,10 @@ note right of loan_experiences
 end note
 
 entity loan_third_services{
-    * id int4
-    * created_at timestamptz
-    * updated_at timestamptz
-    * is_del int2
+    * id: int4 <<pk>>
+    * created_at: timestamptz
+    * updated_at: timestamptz
+    * is_del: int2
     ---
     * loan_id int4
     * type varchar(20)
@@ -293,10 +382,10 @@ note right of loan_third_services
 end note
 
 entity loan_demographics{
-    * id int4
-    * created_at timestamptz
-    * updated_at timestamptz
-    * is_del int2
+    * id: int4 <<pk>>
+    * created_at: timestamptz
+    * updated_at: timestamptz
+    * is_del: int2
     ---
     * loan_id int4
     * property jsonb
@@ -344,10 +433,10 @@ note right of loan_demographics
 end note
 
 entity loan_properties {
-    * id int4
-    * created_at timestamptz
-    * updated_at timestamptz
-    * is_del int2
+    * id: int4 <<pk>>
+    * created_at: timestamptz
+    * updated_at: timestamptz
+    * is_del: int2
     ---
     * loan_id int4
     * borrower_property_id int4
@@ -399,56 +488,11 @@ note right of loan_properties
         - Commercial
 end note
 
-
-entity lender_companies {
-    * id int4
-    * created_at timestamptz
-    * updated_at timestamptz
-    * is_del int2
-    ---
-    * name varchar(100)
-    * address jsonb
-    * status varchar(10)
-    * contact_email varchar(100)
-    * owner_type varchar(30)
-}
-
-note right of lender_companies
-    status:
-        - Active
-        - Inactive
-    owner_type:
-        - Self
-        - ThirdParty
-        - Partner
-end note
-
-
-entity lender_company_and_employees {
-   * id int4
-   * lender_company_id int4
-   * lender_employee_id int4
-}
-
-
-entity lender_employees{
-    * id int4
-    * created_at timestamptz
-    * updated_at timestamptz
-    * is_del int2
-    ---
-    * default_lender_id int4
-    * lender_company_id int4
-    * first_name varchar(100)
-    * last_name varchar(100)
-    * full_name varchar(100)
-}
-
 entity loan_applicants {
-    * id int4
-    * created_at timestamptz
-    * updated_at timestamptz
-    * is_del int2
+    * id: int4 <<pk>>
+    * created_at: timestamptz
+    * updated_at: timestamptz
+    * is_del: int2
     ---
     * borrower_id int4
     * loan_id int4
@@ -490,10 +534,10 @@ note right of loan_applicants
 end note
 
 entity us_geographies {
-        * id int4
-        * created_at timestamptz
-        * updated_at timestamptz
-        * is_del int2
+        * id: int4 <<pk>>
+        * created_at: timestamptz
+        * updated_at: timestamptz
+        * is_del: int2
         ---
         * state_name varchar(50)
         * state_usps varchar(10)
@@ -502,10 +546,10 @@ entity us_geographies {
 }
 
 entity loan_documents{
-        * id int4
-        * created_at timestamptz
-        * updated_at timestamptz
-        * is_del int2
+        * id: int4 <<pk>>
+        * created_at: timestamptz
+        * updated_at: timestamptz
+        * is_del: int2
         ---
         * loan_id int4
         * category varchar(20)
@@ -543,10 +587,10 @@ end note
 
 
 entity files{
-        * id int4
-        * created_at timestamptz
-        * updated_at timestamptz
-        * is_del int2
+        * id: int4 <<pk>>
+        * created_at: timestamptz
+        * updated_at: timestamptz
+        * is_del: int2
         ---
         * entity_id int4
         * entity_type varchar(50)
@@ -559,19 +603,20 @@ note right of files
 end note
 
 entity loan_operations {
-     * id int4
-     * created_at timestamptz
-     * updated_at timestamptz
-     * is_del int2
+     * id: int4 <<pk>>
+     * created_at: timestamptz
+     * updated_at: timestamptz
+     * is_del: int2
      ---
-     * loan_id int4
+     * loan_id: int4
      * operator_id int4
-     * operator_name varchar(50)
-     * operator_type varchar(50)
-     * action varchar(50)
-     * from jsonb
-     * to jsonb
-     * metadata jsonb
+     * operator_id: int4
+     * operator_name: varchar(50)
+     * operator_type: varchar(50)
+     * action: varchar(50)
+     * from: jsonb
+     * to: jsonb
+     * metadata: jsonb
 }
 note right of loan_operations
     operator_type:
@@ -593,30 +638,28 @@ note right of loan_operations
 end note
 
 
-users ||--|| borrowers: has one
-borrowers ||--o{ loans: has many
-borrowers ||--o{ borrower_properties: has many
-borrowers ||--o{ borrower_entities: has many
-borrowers ||--o{ loan_applicants: has many
-borrower_properties ||--o{ loan_properties: has many
-borrower_applicants ||--o{ loan_applicants: has many
-borrower_entities ||--o{ loan_borrowers: has many
-borrower_entities ||--o{ loans: has many
+users ||--o{ organization_users: "1:N"
+organizations ||--o{ organization_users: "1:N"
+organizations ||--o{ borrower_applicants: "1:N"
+organizations ||--o{ borrower_entities: "1:N"
+organizations ||--o{ borrower_properties: "1:N"
 
-loans ||--o{ loan_applicants: has many
-loans ||--|| loan_properties: has one
-loans ||--|| loan_borrowers: has one
-loans ||--|| loan_demographics: has one
-loans ||--o{ loan_documents: has many
-loans ||--o{ loan_experiences: has many
-loans ||--o{ loan_operations: has many
-loans ||--o{ loan_third_services: has many
-loan_properties ||--o{ loan_applicants: has many
-loan_borrowers ||--o{ loan_applicants: has many
-loan_documents ||--o{ files: has many
 
-lender_companies ||--o{ loans: has many
-lender_companies ||--o{ lender_company_and_employees: has many
-lender_employees ||--o{ lender_company_and_employees: has many
+borrower_properties ||--o{ loan_properties: "1:N"
+borrower_applicants ||--o{ loan_applicants: "1:N"
+borrower_entities ||--o{ loan_borrowers: "1:N"
+borrower_entities ||--o{ loans: "1:N"
+
+loans ||--o{ loan_applicants: "1:N"
+loans ||--|| loan_properties: "1:1"
+loans ||--|| loan_borrowers: "1:1"
+loans ||--|| loan_demographics: "1:1"
+loans ||--o{ loan_documents: "1:N"
+loans ||--o{ loan_experiences: "1:N"
+loans ||--o{ loan_operations: "1:N"
+loans ||--o{ loan_third_services: "1:N"
+loan_properties ||--o{ loan_applicants: "1:N"
+loan_borrowers ||--o{ loan_applicants: "1:N"
+loan_documents ||--o{ files: "1:N"
 
 @enduml
