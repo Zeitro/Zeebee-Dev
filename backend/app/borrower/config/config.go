@@ -40,6 +40,7 @@ type RpcConf struct {
 	InviteUserExpireSeconds      int
 	SendInviteEmailPeriodSeconds int
 	PreApprovalLoanConf          []PreApprovalLoanConf
+	ZeebeeAgentEmail             string
 }
 
 type DbConf struct {
