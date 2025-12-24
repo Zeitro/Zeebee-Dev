@@ -3,29 +3,31 @@ package loanlogic
 import (
 	"context"
 
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
+	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/types"
+	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/model"
 )
 
 type UpdateLoanStageLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	baseLogic *logic.BaseLogic
 }
 
 func NewUpdateLoanStageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLoanStageLogic {
 	return &UpdateLoanStageLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -35,15 +37,19 @@ func (l *UpdateLoanStageLogic) UpdateLoanStage(in *lender.LoanUpdateStageRequest
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-
-	// Get loan
-	loan, err := l.svcCtx.LoanRepo.GetLenderLoan(l.ctx, in.Data.Id, in.Data.LenderCompanyId, false)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get loan")
+		return nil, err
 	}
 
-	if loan.Source != constants.LoanSourceSystem {
-		return nil, errors.WithStack(errors.New("invalid loan source"))
+	// Get loan
+	loan, err := l.svcCtx.LoanRepo.GetLenderLoan(l.ctx, in.Data.Id, claim.OrganizationId, false)
+	if err != nil {
+		return nil, errorx.Wrap(err, "Failed To Get Loan")
+	}
+
+	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreapproval {
+		return nil, errorx.WithStack(errorx.New("Invalid Loan Source"))
 	}
 
 	// Save original status for operation log
@@ -57,18 +63,18 @@ func (l *UpdateLoanStageLogic) UpdateLoanStage(in *lender.LoanUpdateStageRequest
 
 		err = l.svcCtx.LoanRepo.UpdateStageWithTx(l.ctx, tx, in.Data.Id, stage)
 		if err != nil {
-			return errors.Wrap(err, "failed to update loan")
+			return errorx.Wrap(err, "Failed To Update Loan")
 		}
 
 		// Create operation log
-		operatorId := in.Data.LenderEmployeeId
+		operatorId := claim.OrganizationUserId
 
-		fromStatus := types.LoanOperationStatus{
+		fromStatus := model.LoanOperationStatus{
 			Stage:         originalStage,
 			PendingStatus: originalPendingStatus,
 		}
 
-		toStatus := types.LoanOperationStatus{
+		toStatus := model.LoanOperationStatus{
 			Stage:         stage,
 			PendingStatus: loan.PendingStatus,
 		}

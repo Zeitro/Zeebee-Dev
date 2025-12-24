@@ -5,6 +5,8 @@ import (
 	"strings"
 
 	"github.com/Rhymond/go-money"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 func Format(format string, args ...interface{}) string {
@@ -12,13 +14,22 @@ func Format(format string, args ...interface{}) string {
 }
 
 // ParseUserName parse user name
-func ParseUserName(fullName string) (firstName, lastName string) {
+func ParseFullName(fullName string) (firstName, midName, lastName string) {
 	fullName = strings.TrimSpace(fullName)
 	nameArr := strings.Split(fullName, " ")
 	if len(nameArr) == 0 {
-		return "", ""
+		return "", "", ""
 	}
-	return nameArr[0], nameArr[len(nameArr)-1]
+	if len(nameArr) == 1 {
+		return nameArr[0], "", ""
+	}
+	if len(nameArr) == 2 {
+		return nameArr[0], "", nameArr[1]
+	}
+	if len(nameArr) == 3 {
+		return nameArr[0], nameArr[1], nameArr[2]
+	}
+	return nameArr[0], strings.Join(nameArr[1:len(nameArr)-1], " "), nameArr[len(nameArr)-1]
 }
 
 // FormatFullName
@@ -69,6 +80,14 @@ func FormatCurrency(symbol string, amount float64) string {
 }
 
 func FormatUsDollarCurrency(amount float64) string {
+	if amount == 0 {
+		return ""
+	}
 	usdAmount := money.NewFromFloat(amount, money.USD)
 	return strings.TrimSuffix(usdAmount.Display(), ".00")
+}
+
+func ToTitle(s string) string {
+	caser := cases.Title(language.Und)
+	return caser.String(s)
 }

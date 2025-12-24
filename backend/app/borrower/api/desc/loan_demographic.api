@@ -6,18 +6,17 @@ info(
     version: "v1"
 )
 
-type LoanDemographicEntry {
+type LoanDemographicEntity {
     Id int64 `json:"id,optional"`
     LoanId int64 `json:"loan_id,optional"`
     Sex string `json:"sex,optional" validate:"required,oneof=Male Female Hidden"`
-    Property *LoanDemographicPropertyEntry `json:"property,optional" validate:"required"`
-    Ethnicity *LoanDemographicEthnicityEntry `json:"ethnicity,optional" validate:"required"`
-    Race *LoanDemographicRaceEntry `json:"race,optional" validate:"required"`
-    //    ExtraDemographic *LoanDemographicExtraDemographicEntry `json:"extra_demographic,optional"`
+    Property *LoanDemographicPropertyEntity `json:"property,optional" validate:"required"`
+    Ethnicity *LoanDemographicEthnicityEntity `json:"ethnicity,optional" validate:"required"`
+    Race *LoanDemographicRaceEntity `json:"race,optional" validate:"required"`
 }
 
 
-type LoanDemographicPropertyEntry {
+type LoanDemographicPropertyEntity {
     AsPrimaryResident bool `json:"as_primary_resident,optional"`
     HasTransactionRelationship bool `json:"has_transaction_relationship,optional"`
     HasBorrowedMoney bool `json:"has_borrowed_money,optional"`
@@ -34,13 +33,13 @@ type LoanDemographicPropertyEntry {
     BankruptcyChapter string `json:"bankruptcy_chapter,optional" validate:"required_if=HasBankruptcy true,omitempty,oneof='Chapter 7' 'Chapter 11' 'Chapter 12' 'Chapter 13'"`
 }
 
-type LoanDemographicEthnicityEntry {
+type LoanDemographicEthnicityEntity {
     Values []string `json:"values,optional" validate:"required,min=1,dive,required,oneof='Hispanic or Latino' 'Other Hispanic or Latino' Mexican Cuban 'Not Hispanic or Latino' Hidden"`
     OtherHispanicOrLatinoName string `json:"other_hispanic_or_latino_name,optional"`
 }
 
 
-type LoanDemographicRaceEntry {
+type LoanDemographicRaceEntity {
     Values []string `json:"values,optional" validate:"required,min=1,dive,required,oneof='American Indian or Alaska Native' Asian 'Black or African American' 'Native Hawaiian or Other Pacific Islander' White 'Native Hawaiian Guamanian or Chamorro Samoan' 'Other Pacific Islander' Hidden"`
     AsianValues []string `json:"asian_values,optional"`
     OtherPacificIslanderName string `json:"other_pacific_islander_name,optional"`
@@ -48,7 +47,7 @@ type LoanDemographicRaceEntry {
     AmericanIndianOrAlaskaNativeName string `json:"american_indian_or_alaska_native_name,optional"`
 }
 
-type LoanDemographicExtraDemographicEntry {
+type LoanDemographicExtraDemographicEntity {
     IsEthnicityCollectedByObservation bool `json:"is_ethnicity_collected_by_observation,optional"`
     IsSexCollectedByObservation bool `json:"is_sex_collected_by_observation,optional"`
     IsRaceCollectedByObservation bool `json:"is_race_collected_by_observation,optional"`

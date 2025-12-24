@@ -1,50 +1,82 @@
 package email_tpl
 
 import (
-	"bytes"
 	"embed"
-	"html/template"
 
-	"github.com/pkg/errors"
+	"golang.org/x/sync/errgroup"
+
+	"zeebee-backend/common/email"
 )
 
+// EmailTplFS is the embedded filesystem containing email templates
 var EmailTplFS embed.FS
 
-//go:embed send_register_verify_email.html
-var SendRegisterVerifyEmailTpl string
+// SendRegisterVerifyEmailTpl is the template for registration verification emails.
+//
+//go:embed register_verify_email.html
+var RegisterVerifyEmailTpl string
 
-//go:embed send_reset_pwd_email.html
-var SendResetPwdEmailTpl string
+// SendResetPwdEmailTpl is the template for password reset emails.
+//
+//go:embed reset_pwd_email.html
+var ResetPwdEmailTpl string
 
-//go:embed send_login_url_email.html
-var SendLoginUrlEmailTpl string
+// SendLoginUrlEmailTpl is the template for login URL emails.
+//
+//go:embed login_url_email.html
+var LoginUrlEmailTpl string
+
+//go:embed user_invite_email.html
+var UserInviteEmailTpl string
+
+//go:embed self_preapproval_notification.html
+var SelfPreApprovalNotificationTpl string
+
+//go:embed third_party_preapproval_notification.html
+var ThirdPartyPreApprovalNotificationTpl string
+
+//go:embed quote_email.html
+var QuoteEmailTpl string
 
 const (
+	// RegisterVerifyEmail is the key for registration verification email template.
 	RegisterVerifyEmail = "register_verify_email"
-	ResetPwdEmail       = "reset_pwd_email"
-	LoginUrlEmail       = "login_url_email"
+	// ResetPwdEmail is the key for password reset email template.
+	ResetPwdEmail = "reset_pwd_email"
+	// LoginURLEmail is the key for login URL email template.
+	LoginUrlEmail                     = "login_url_email"
+	UserInviteEmail                   = "user_invite_email"
+	SelfPreApprovalNotification       = "self_preapproval_notification"
+	ThirdPartyPreApprovalNotification = "third_party_preapproval_notification"
+	QuoteEmail                        = "quote_email"
 )
 
-var tpls = map[string]*template.Template{}
-var ErrEmailTemplateNotFound = errors.New("email template not found")
-
 func init() {
-	tpls = map[string]*template.Template{
-		RegisterVerifyEmail: template.Must(template.New(RegisterVerifyEmail).Parse(SendRegisterVerifyEmailTpl)),
-		ResetPwdEmail:       template.Must(template.New(ResetPwdEmail).Parse(SendResetPwdEmailTpl)),
-		LoginUrlEmail:       template.Must(template.New(LoginUrlEmail).Parse(SendLoginUrlEmailTpl)),
-	}
-}
 
-func GetParsedContent(name string, data map[string]interface{}) (content string, err error) {
-	tpl, ok := tpls[name]
-	if !ok {
-		return "", ErrEmailTemplateNotFound
-	}
-	buf := new(bytes.Buffer)
-	err = tpl.Execute(buf, data)
+	eg := errgroup.Group{}
+	eg.Go(func() error {
+		return email.RegisterTemplateWithText(RegisterVerifyEmail, RegisterVerifyEmailTpl)
+	})
+	eg.Go(func() error {
+		return email.RegisterTemplateWithText(ResetPwdEmail, ResetPwdEmailTpl)
+	})
+	eg.Go(func() error {
+		return email.RegisterTemplateWithText(LoginUrlEmail, LoginUrlEmailTpl)
+	})
+	eg.Go(func() error {
+		return email.RegisterTemplateWithText(UserInviteEmail, UserInviteEmailTpl)
+	})
+	eg.Go(func() error {
+		return email.RegisterTemplateWithText(SelfPreApprovalNotification, SelfPreApprovalNotificationTpl)
+	})
+	eg.Go(func() error {
+		return email.RegisterTemplateWithText(ThirdPartyPreApprovalNotification, ThirdPartyPreApprovalNotificationTpl)
+	})
+	eg.Go(func() error {
+		return email.RegisterTemplateWithText(QuoteEmail, QuoteEmailTpl)
+	})
+	err := eg.Wait()
 	if err != nil {
-		return "", err
+		panic(err)
 	}
-	return buf.String(), nil
 }

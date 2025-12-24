@@ -6,8 +6,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/stores/redis"
+
+	"zeebee-backend/common/errorx"
 )
 
 type Redisx struct {
@@ -33,11 +34,11 @@ func GetRedis(opt Opt) (rds *Redisx, err error) {
 		Tls:  opt.Tls,
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "new redis error")
+		return nil, errorx.Wrap(err, "New Redis Error")
 	}
 
 	if !rdsCli.Ping() {
-		return nil, errors.New("redis ping failed")
+		return nil, errorx.New("Redis Ping Failed")
 	}
 	return &Redisx{
 		rds:    rdsCli,
@@ -105,6 +106,11 @@ func (r *Redisx) IncreaseBy(ctx context.Context, key string, val int64) (newVal 
 func (r *Redisx) Del(ctx context.Context, key string) (err error) {
 	_, err = r.rds.DelCtx(ctx, r.buildKey(key))
 	return
+}
+
+// IsExisted
+func (r *Redisx) IsExisted(ctx context.Context, key string) (bool, error) {
+	return r.rds.ExistsCtx(ctx, r.buildKey(key))
 }
 
 func (r *Redisx) buildKey(key string) string {

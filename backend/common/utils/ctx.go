@@ -4,100 +4,60 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/pkg/errors"
+	"zeebee-backend/common/errorx"
+)
 
-	"zeebee-backend/common/constants"
+const (
+	UserClaimCtxKey = "user_claim"
+	UserIdCtxKey    = "user_id"
 )
 
 func GetInt64FromCtx(ctx context.Context, key string) int64 {
 	val := ctx.Value(key)
-	switch val.(type) {
+	switch v := val.(type) {
 	case string:
-		i, err := strconv.Atoi(val.(string))
+		i, err := strconv.Atoi(v)
 		if err != nil {
 			return 0
 		}
 		return int64(i)
 	case int64:
-		return val.(int64)
+		return v
 	case int:
-		return int64(val.(int))
+		return int64(v)
 	case int32:
-		return int64(val.(int32))
+		return int64(v)
 	case int16:
-		return int64(val.(int16))
+		return int64(v)
 	case int8:
-		return int64(val.(int8))
+		return int64(v)
 	default:
 		return 0
 	}
 }
 
 func GetUserClaimFromCtx(ctx context.Context) (claim *JWTClaims, err error) {
-	val, ok := ctx.Value(constants.BorrowerUserKey).(*JWTClaims)
-	if !ok {
-		return nil, errors.WithStack(errors.New("Invalid user claim"))
+	// get from ctx
+	val, ok := ctx.Value(UserClaimCtxKey).(*JWTClaims)
+	if ok {
+		return val, nil
 	}
-	return val, nil
+	return nil, errorx.New("Invalid User Claim")
+
 }
 
-func GetAccountIdFromCtx(ctx context.Context) (accountId int64, err error) {
+func GetOrganizationIdFromCtx(ctx context.Context) (organizationId int64, err error) {
 	claim, err := GetUserClaimFromCtx(ctx)
 	if err != nil {
 		return 0, err
 	}
-	accountId, err = strconv.ParseInt(claim.AccountId, 10, 64)
-	if err != nil {
-		return 0, errors.Wrap(err, "Invalid account id")
-	}
-
-	return accountId, nil
+	return claim.OrganizationId, nil
 }
 
-func GetLenderUserClaimFromCtx(ctx context.Context) (claim *JWTClaims, err error) {
-	val, ok := ctx.Value(constants.LenderUserKey).(*JWTClaims)
-	if !ok {
-		return nil, errors.WithStack(errors.New("Invalid user claim"))
-	}
-	return val, nil
-}
-
-func GetLenderAccountIdFromCtx(ctx context.Context) (accountId int64, err error) {
-	claim, err := GetLenderUserClaimFromCtx(ctx)
-	if err != nil {
-		return 0, err
-	}
-	accountId, err = strconv.ParseInt(claim.AccountId, 10, 64)
-	if err != nil {
-		return 0, errors.Wrap(err, "Invalid account id")
-	}
-
-	return accountId, nil
-}
-
-func GetLenderCompanyIdFromCtx(ctx context.Context) (lenderCompanyId int64, err error) {
-	claim, err := GetLenderUserClaimFromCtx(ctx)
-	if err != nil {
-		return 0, err
-	}
-
-	lenderCompanyId = claim.LenderCompanyId
-	if lenderCompanyId == 0 {
-		return 0, errors.WithStack(errors.New("Invalid lender company id"))
-	}
-
-	return lenderCompanyId, nil
-}
-
-func GetLenderCompanyAndEmployeeId(ctx context.Context) (companyId, employeeId int64, err error) {
-	claim, err := GetLenderUserClaimFromCtx(ctx)
+func GetOrganizationAndUserId(ctx context.Context) (organizationId, userId int64, err error) {
+	claim, err := GetUserClaimFromCtx(ctx)
 	if err != nil {
 		return 0, 0, err
 	}
-	companyId = claim.LenderCompanyId
-	employeeId, err = strconv.ParseInt(claim.AccountId, 10, 64)
-	if err != nil {
-		return 0, 0, errors.Wrap(err, "Invalid employee Id")
-	}
-	return companyId, employeeId, nil
+	return claim.OrganizationId, claim.UserId, nil
 }

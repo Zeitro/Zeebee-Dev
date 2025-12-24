@@ -4,14 +4,12 @@ import (
 	"context"
 
 	"github.com/jinzhu/copier"
-	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
 )
 
 type UpdateCommentLogic struct {
@@ -49,17 +47,12 @@ func (l *UpdateCommentLogic) UpdateComment(req *types.LoanDocumentUpdateCommentR
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
-
-	// Get lender company id and employee id from context
-	rpcReq.Data.LenderCompanyId, rpcReq.Data.LenderEmployeeId, err = utils.GetLenderCompanyAndEmployeeId(l.ctx)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
+	// UserId and OrganizationId will be obtained from context in RPC layer
 
 	// Call RPC method
 	_, err = l.svcCtx.LoanDocumentRpcClient.UpdateComment(l.ctx, rpcReq)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 
 	return &types.EmptyResponse{}, nil

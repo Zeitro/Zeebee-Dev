@@ -3,22 +3,20 @@ package userlogic
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/duke-git/lancet/v2/random"
 
-	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/email_tpl"
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/constants"
 	email2 "zeebee-backend/common/email"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/limiter"
 	"zeebee-backend/common/stringx"
+	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/limiter"
 )
 
 type SendResetPasswordEmailLogic struct {
@@ -44,38 +42,34 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *borrower.SendRe
 
 	email := in.Data.Email
 	if email == "" {
-		return nil, errors.WithStack(errors.New("Email is required"))
+		return nil, errorx.WithStack(errorx.New("Email Is Required"))
 	}
 
 	// rate limit
-	key := stringx.Format(constants.BorrowerResetPwdEmail, email)
-	limitOpt := limiter.WithRedisLimit(
-		global.Config.LimiterConf.SendResetPwdEmail.Rate,
-		time.Second*time.Duration(global.Config.LimiterConf.SendResetPwdEmail.Period),
-	)
-	ok, err := global.SendResetPasswordEmailLimiter.Limit(l.ctx, key, limitOpt)
+	key := stringx.Format(constants.ResetPwdEmail, constants.UserTypeBorrower, email)
+	ok, err := global.LimiterMgr.Limit(l.ctx, limiter.StrategySendResetPwdEmail, key)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	if !ok {
-		return nil, errors.Errorf("Email %s try too many times", email)
+		return nil, errorx.Errorf("Email %s Try Too Many Times", email)
 	}
 
 	// get user
-	user, err := l.svcCtx.UserRepo.GetBorrowerUserByEmail(l.ctx, email)
+	user, err := l.svcCtx.UserRepo.GetUserByEmail(l.ctx, email, constants.UserTypeBorrower)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
-	if user == nil || user.Borrower == nil {
-		return nil, errors.WithStack(errors.New("User not found"))
+	if user == nil {
+		return nil, errorx.WithStack(errorx.New("User Not Found"))
 	}
 
 	go func() {
 		ctx := context.WithoutCancel(l.ctx)
 		// send email
-		err := l.sendResetPwdEmail(email, user.Borrower.FirstName)
+		err := l.sendResetPwdEmail(email, user.FirstName)
 		if err != nil {
-			err = errors.Wrap(err, "send reset password email error")
+			err = errorx.Wrap(err, "Send Reset Password Email Error")
 			l.WithContext(ctx).Error(err)
 		}
 	}()
@@ -86,14 +80,14 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *borrower.SendRe
 func (l *SendResetPasswordEmailLogic) sendResetPwdEmail(email string, firstName string) (err error) {
 	ctx := context.WithoutCancel(l.ctx)
 	var code string
-	redisKey := stringx.Format(constants.BorrowerResetPwdCode, email)
+	redisKey := stringx.Format(constants.ResetPwdCode, constants.UserTypeBorrower, email)
 	code, _ = global.GetRedis().Get(ctx, redisKey)
 	if len(code) == 0 {
 		code = random.RandNumeral(10)
 		expireSeconds := global.Config.ResetPwdExpireSeconds
 		err = global.GetRedis().SetExpire(ctx, redisKey, code, expireSeconds)
 		if err != nil {
-			return errors.WithStack(errors.Wrap(err, "Failed to cache reset password code"))
+			return errorx.WithStack(errorx.Wrap(err, "Failed To Cache Reset Password Code"))
 		}
 	}
 
@@ -102,11 +96,11 @@ func (l *SendResetPasswordEmailLogic) sendResetPwdEmail(email string, firstName 
 		"url":        fmt.Sprintf("%s?code=%s&email=%s", global.Config.ResetPwdUrl, code, email),
 		"first_name": firstName,
 	}
-	content, err := email_tpl.GetParsedContent(email_tpl.ResetPwdEmail, data)
+	content, err := email2.ParseTemplate(email_tpl.ResetPwdEmail, data)
 	if err != nil {
-		return errors.WithStack(err)
+		return errorx.WithStack(err)
 	}
-	msg := email2.EmailMessage{
+	msg := email2.Message{
 		Subject: "Reset your password",
 		From:    global.Config.EmailConf.Username,
 		To:      []string{email},
@@ -115,5 +109,5 @@ func (l *SendResetPasswordEmailLogic) sendResetPwdEmail(email string, firstName 
 	}
 	err = global.EmailClient.SendEmail(msg)
 
-	return errors.WithStack(err)
+	return errorx.WithStack(err)
 }

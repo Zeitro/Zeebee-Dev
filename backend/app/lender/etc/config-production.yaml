@@ -1,0 +1,71 @@
+ApiConf:
+  Name: lender-api
+  Host: 0.0.0.0
+  Port: 10100
+  Timeout: 10000
+  Log:
+    Stat: false
+
+  JwtAuth:
+    AccessSecret: iV6jQ7sK0mO2yZ1qX7oF9rC8oB0lW8wR
+    AccessExpire: 86000
+
+  RpcConf:
+    Endpoints:
+      - 127.0.0.1:10101
+    Timeout: 10000
+    NonBlock: true
+
+RpcConf:
+  Name: borrower.rpc
+  ListenOn: 0.0.0.0:10101
+  Mode: dev
+  Timeout: 10000
+  LimiterConf:
+    Login:
+      Rate: 5
+      Period: 300
+    SendLoginEmail:
+      Rate: 5
+      Period: 300
+    SendVerityEmail:
+      Rate: 5
+      Period: 300
+    SendResetPwdEmail:
+      Rate: 5
+      Period: 300
+  VerifyEmailExpireSeconds: 86400
+  ResetPwdExpireSeconds: 3600
+  EmailConf:
+    Host: smtp.gmail.com
+    Port: 587
+    Password: plqaccqomowwrszl
+    Username: info@zeebeeloans.com
+
+  JwtAuth:
+    AccessSecret: iV6jQ7sK0mO2yZ1qX7oF9rC8oB0lW8wR
+    AccessExpire: 864000
+    RefreshSecret: iT0jA2bW3hM6iS6wB3dR2pD1dD4gQ8xS
+    RefreshExpire: 864000
+
+  RedisConf:
+    Host: zeebee-backend-redis-pro-001.zeebee-backend-redis-pro.uwixeb.usw1.cache.amazonaws.com:6379
+    Type: node
+    Prefix: zeebee
+    Tls: true
+    PingTimeout: 10s
+
+  DbConf:
+    dsn: "host=database-2.cj0ksq4g8d6c.us-west-1.rds.amazonaws.com user=zeebee_user password=zeebee_password dbname=zeebee port=5432 sslmode=require TimeZone=UTC"
+
+  AwsS3Conf:
+    AccessKey: AKIA4RT6FLQ5X2TPIFEV
+    AccessSecret: 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
+    Region: us-west-1
+    Bucket: zeebee-files-production
+    FileFolder: files-production
+    PreSigneUrlExpireSeconds: 60
+  LoginUrl: https://agent.zeebeeloans.com/login
+  BorrowerLoginUrl: https://app.zeebeeloans.com/login
+  VerifyEmailUrl: https://agent.zeebeeloans.com/login/verifyEmail
+  ResetPwdUrl: https://agent.zeebeeloans.com/login/resetPassword

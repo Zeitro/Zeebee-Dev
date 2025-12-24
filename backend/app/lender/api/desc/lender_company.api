@@ -1,0 +1,16 @@
+syntax = "v1"
+
+info(
+    title: "lender-company-api"
+    desc: "lender-comapny-api http service description"
+    version: "v1"
+)
+
+type (
+    UserInfoCompanyEntity {
+        Id int64 `json:"id"`
+        Name string `json:"name"`
+        Status string `json:"status"`
+        IsDefault bool `json:"is_default"`
+    }
+)

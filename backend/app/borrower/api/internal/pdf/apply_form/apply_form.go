@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/duke-git/lancet/v2/slice"
-	"github.com/pkg/errors"
 	"github.com/signintech/gopdf"
 
 	"zeebee-backend/app/borrower/api/internal/pdf"
@@ -31,7 +30,7 @@ type ApplyForm struct {
 
 func NewApplyForm(info *types.ApplyFormPdfRequest) (form *ApplyForm, err error) {
 	if info == nil {
-		return nil, errors.New("pdf info is empty")
+		return nil, errorx.New("PDF Info Is Empty")
 	}
 	if info.Signatures == nil {
 		info.Signatures = &types.Signatures{}
@@ -245,11 +244,17 @@ func (form *ApplyForm) buildMultiCheckbox(startX, startY float64, optName string
 }
 
 func (form *ApplyForm) buildTitleWithBg(title string, grayBgPos position, blueBgPos position) (err error) {
-	_ = form.pdf.ImageFrom(pdf.GrayBg, grayBgPos.x, grayBgPos.y, &gopdf.Rect{W: grayBgPos.w, H: grayBgPos.h})
-	_ = form.pdf.ImageFrom(pdf.BlueBg, blueBgPos.x, blueBgPos.y, &gopdf.Rect{W: blueBgPos.w, H: blueBgPos.h})
+	err = form.pdf.ImageFrom(pdf.GrayBg, grayBgPos.x, grayBgPos.y, &gopdf.Rect{W: grayBgPos.w, H: grayBgPos.h})
+	if err != nil {
+		return err
+	}
+	err = form.pdf.ImageFrom(pdf.BlueBg, blueBgPos.x, blueBgPos.y, &gopdf.Rect{W: blueBgPos.w, H: blueBgPos.h})
+	if err != nil {
+		return err
+	}
 	form.pdf.SetWhiteBoldFont()
 	form.pdf.SetXY(blueBgPos.x+10, blueBgPos.y)
-	_ = form.pdf.CellWithOption(&gopdf.Rect{W: blueBgPos.w, H: blueBgPos.h}, title, gopdf.CellOption{
+	err = form.pdf.CellWithOption(&gopdf.Rect{W: blueBgPos.w, H: blueBgPos.h}, title, gopdf.CellOption{
 		Align: gopdf.Left | gopdf.Middle,
 	})
 	form.pdf.SetBlackRegularFont()
@@ -257,10 +262,13 @@ func (form *ApplyForm) buildTitleWithBg(title string, grayBgPos position, blueBg
 }
 
 func (form *ApplyForm) buildSmallTitle(title string, position position) (err error) {
-	_ = form.pdf.ImageFrom(pdf.BlueBg, position.x, position.y, &gopdf.Rect{W: position.w, H: position.h})
+	err = form.pdf.ImageFrom(pdf.BlueBg, position.x, position.y, &gopdf.Rect{W: position.w, H: position.h})
+	if err != nil {
+		return err
+	}
 	form.pdf.SetWhiteBoldFont()
 	form.pdf.SetXY(position.x, position.y)
-	_ = form.pdf.CellWithOption(&gopdf.Rect{W: position.w, H: position.h}, title, gopdf.CellOption{
+	err = form.pdf.CellWithOption(&gopdf.Rect{W: position.w, H: position.h}, title, gopdf.CellOption{
 		Align: gopdf.Center | gopdf.Middle,
 	})
 	form.pdf.SetBlackRegularFont()
@@ -268,23 +276,29 @@ func (form *ApplyForm) buildSmallTitle(title string, position position) (err err
 }
 
 func (form *ApplyForm) buildGraySmallTitle(title string, position position) (err error) {
-	_ = form.pdf.ImageFrom(pdf.GrayBg, position.x, position.y, &gopdf.Rect{W: position.w, H: position.h})
+	err = form.pdf.ImageFrom(pdf.GrayBg, position.x, position.y, &gopdf.Rect{W: position.w, H: position.h})
+	if err != nil {
+		return err
+	}
 
 	form.pdf.SetWhiteBoldFont()
-	_ = form.pdf.SetFontSize(10)
+	err = form.pdf.SetFontSize(10)
+	if err != nil {
+		return err
+	}
 	form.pdf.SetTextColor(71, 117, 255)
 	form.pdf.SetXY(position.x, position.y)
-	_ = form.pdf.CellWithOption(&gopdf.Rect{W: position.w, H: position.h}, title, gopdf.CellOption{
+	err = form.pdf.CellWithOption(&gopdf.Rect{W: position.w, H: position.h}, title, gopdf.CellOption{
 		Align: gopdf.Left | gopdf.Middle,
 	})
 	form.pdf.SetBlackRegularFont()
 	return err
 }
 
-func (form *ApplyForm) buildSignature(targetSignature []*types.SignatureEntry) (err error) {
+func (form *ApplyForm) buildSignature(targetSignature []*types.SignatureEntity) (err error) {
 
 	if len(targetSignature) > 0 && len(targetSignature) != len(form.info.Applicants) {
-		err = errors.New("signature number not match the applicants number")
+		err = errorx.New("Signature Number Not Match The Applicants Number")
 		return err
 	}
 
@@ -293,9 +307,9 @@ func (form *ApplyForm) buildSignature(targetSignature []*types.SignatureEntry) (
 	form.pdf.Br(20)
 
 	for i := 0; i < 2; i++ {
-		var signature *types.SignatureEntry
+		var signature *types.SignatureEntity
 		if i > len(targetSignature)-1 {
-			signature = &types.SignatureEntry{}
+			signature = &types.SignatureEntity{}
 		} else {
 			signature = targetSignature[i]
 		}
@@ -427,14 +441,15 @@ func (form *ApplyForm) buildLists(lists []string, position position, fontHeight 
 	return err
 }
 
-func formateAddress(addr *types.AddressEntry) string {
-	if addr == nil {
-		return ""
-	}
-	return fmt.Sprintf("%s %s %s %s", addr.Address1, addr.City, addr.State, addr.ZipCode)
+// func formateAddress(addr *types.AddressEntry) string {
+// 	if addr == nil {
+// 		return ""
+// 	}
+// 	return fmt.Sprintf("%s %s %s %s", addr.Address1, addr.City, addr.State, addr.ZipCode)
+//
+// }
 
-}
-
+// base64ToImage convert base64 string to image
 func base64ToImage(content string) (img image.Image, err error) {
 	if content == "" {
 		return nil, nil

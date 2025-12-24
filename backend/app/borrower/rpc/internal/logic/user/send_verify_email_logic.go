@@ -2,19 +2,16 @@ package userlogic
 
 import (
 	"context"
-	"time"
-
-	"github.com/pkg/errors"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/limiter"
 	"zeebee-backend/common/stringx"
+	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/limiter"
 )
 
 type SendVerifyEmailLogic struct {
@@ -40,51 +37,38 @@ func (l *SendVerifyEmailLogic) SendVerifyEmail(in *borrower.SendVerifyEmailReque
 
 	email := in.Data.Email
 	// check send email limit
-	key := stringx.Format(constants.BorrowerRegisterVerifyEmail, email)
-	limitOpt := limiter.WithRedisLimit(
-		global.Config.LimiterConf.SendVerityEmail.Rate,
-		time.Second*time.Duration(global.Config.LimiterConf.SendVerityEmail.Period),
-	)
-	ok, err := global.SendRegisterEmailLimiter.Limit(l.ctx, key, limitOpt)
+	key := stringx.Format(constants.RegisterVerifyEmail, constants.UserTypeBorrower, email)
+	ok, err := global.LimiterMgr.Limit(l.ctx, limiter.StrategySendVerifyEmail, key)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 	if !ok {
-		return nil, errors.WithStack(errors.Errorf("Email %s try too many times", email))
+		return nil, errorx.Errorf("Email %s Try Too Many Times", email)
 	}
 
 	// check user status
-	user, err := l.svcCtx.UserRepo.GetBorrowerUserByEmail(l.ctx, email)
+	user, err := l.svcCtx.UserRepo.GetUserByEmail(l.ctx, email, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}
 
 	if user.Status != constants.UserStatusUnverified {
-		return nil, errors.WithStack(errors.New("User is verified"))
-	}
-
-	if user.Borrower == nil {
-		return nil, errors.WithStack(errors.New("User is not found"))
+		return nil, errorx.WithStack(errorx.New("User Is Verified"))
 	}
 
 	// send email
 	go func() {
 		// send account validate email
 		ctx := context.WithoutCancel(l.ctx)
-		err := sendRegisterVerifyUrlEmail(ctx, email, user.Borrower.FirstName)
+		err := sendRegisterVerifyUrlEmail(ctx, email, user.FirstName)
 		if err != nil {
 			l.WithContext(ctx).Error(err)
 		}
 		if err != nil {
-			err = errors.Wrap(err, "send register verify email error")
+			err = errorx.Wrap(err, "Send Register Verify Email Error")
 			l.WithContext(ctx).Error(err)
 		}
 	}()
-
-	// err = sendRegisterVerifyUrlEmail(l.ctx, email, user.Borrower.FirstName)
-	// if err != nil {
-	// 	return nil, err
-	// }
 
 	return &borrower.SendVerifyEmailResponse{}, nil
 }

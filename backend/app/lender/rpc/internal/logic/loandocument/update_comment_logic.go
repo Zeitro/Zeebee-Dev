@@ -3,15 +3,13 @@ package loandocumentlogic
 import (
 	"context"
 
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
-	"zeebee-backend/app/lender/rpc/internal/repo/model"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/constants"
-	"zeebee-backend/common/types"
+	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -43,7 +41,12 @@ func (l *UpdateCommentLogic) UpdateComment(in *lender.LoanDocumentUpdateCommentR
 	var loan *model.Loan
 	var loanDocument *model.LoanDocument
 
-	loan, loanDocument, err = l.prepare(in)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, errorx.WithStack(err)
+	}
+
+	loan, loanDocument, err = l.prepare(in, claim.OrganizationId)
 	if err != nil {
 		return nil, err
 	}
@@ -55,23 +58,23 @@ func (l *UpdateCommentLogic) UpdateComment(in *lender.LoanDocumentUpdateCommentR
 			"comment": in.Data.Comment,
 		})
 		if innerErr != nil {
-			return errors.Wrap(innerErr, "failed to update loan document comment")
+			return errorx.Wrap(innerErr, "Failed To Update Loan Document Comment")
 		}
 
 		innerErr = l.baseLogic.CreateLoanOperationLog(
 			tx,
 			in.Data.Id,
-			in.Data.LenderEmployeeId,
-			types.LoanOperationStatus{
+			claim.OrganizationUserId,
+			model.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
-			types.LoanOperationStatus{
+			model.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
 			constants.LoanOperationActionComment,
-			&types.LoanOperationMetadata{
+			&model.LoanOperationMetadata{
 				Comment: in.Data.Comment,
 			},
 		)
@@ -86,6 +89,6 @@ func (l *UpdateCommentLogic) UpdateComment(in *lender.LoanDocumentUpdateCommentR
 	return &lender.EmptyResponse{}, nil
 }
 
-func (l *UpdateCommentLogic) prepare(in *lender.LoanDocumentUpdateCommentRequest) (loan *model.Loan, loanDocument *model.LoanDocument, err error) {
-	return l.baseLogic.GetLoanAndDocumentByDocumentId(in.Data.Id, in.Data.LenderCompanyId)
+func (l *UpdateCommentLogic) prepare(in *lender.LoanDocumentUpdateCommentRequest, organizationId int64) (loan *model.Loan, loanDocument *model.LoanDocument, err error) {
+	return l.baseLogic.GetLoanAndDocumentByDocumentId(in.Data.Id, organizationId)
 }

@@ -4,14 +4,12 @@ import (
 	"context"
 
 	"github.com/jinzhu/copier"
-	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
 )
 
 type AddFilesLogic struct {
@@ -44,16 +42,10 @@ func (l *AddFilesLogic) AddFiles(req *types.LoanDocumentAddFilesRequest) (resp *
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
 
-	// Get borrower id from context
-	rpcReq.Data.BorrowerId, err = utils.GetAccountIdFromCtx(l.ctx)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-
 	// Call RPC method
 	_, err = l.svcCtx.LoanDocumentRpcClient.AddFiles(l.ctx, rpcReq)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 
 	return &types.EmptyResponse{}, nil
