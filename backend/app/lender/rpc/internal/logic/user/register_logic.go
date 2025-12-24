@@ -83,6 +83,8 @@ func (l *RegisterLogic) Register(in *lender.UserRegisterRequest) (resp *lender.U
 			ContactEmail: in.Data.ContactEmail,
 			ContactPhone: in.Data.ContactPhone,
 			ContactName:  in.Data.ContactName,
+			Logo:         in.Data.Logo,
+			Website:      in.Data.Website,
 		}
 	default:
 		err = errorx.New("Invalid Organization Type")
