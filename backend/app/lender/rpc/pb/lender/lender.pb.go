@@ -797,6 +797,8 @@ type UserRegisterRequestData struct {
 	ContactPhone     string                 `protobuf:"bytes,8,opt,name=contact_phone,json=contactPhone,proto3" json:"contact_phone,omitempty"`
 	ContactEmail     string                 `protobuf:"bytes,9,opt,name=contact_email,json=contactEmail,proto3" json:"contact_email,omitempty"`
 	ContactName      string                 `protobuf:"bytes,10,opt,name=contact_name,json=contactName,proto3" json:"contact_name,omitempty"`
+	Logo             string                 `protobuf:"bytes,11,opt,name=logo,proto3" json:"logo,omitempty"`
+	Website          string                 `protobuf:"bytes,12,opt,name=website,proto3" json:"website,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -897,6 +899,20 @@ func (x *UserRegisterRequestData) GetContactEmail() string {
 func (x *UserRegisterRequestData) GetContactName() string {
 	if x != nil {
 		return x.ContactName
+	}
+	return ""
+}
+
+func (x *UserRegisterRequestData) GetLogo() string {
+	if x != nil {
+		return x.Logo
+	}
+	return ""
+}
+
+func (x *UserRegisterRequestData) GetWebsite() string {
+	if x != nil {
+		return x.Website
 	}
 	return ""
 }
@@ -7463,7 +7479,7 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x13UserRegisterRequest\x123\n" +
 	"\x04data\x18\x01 \x01(\v2\x1f.lender.UserRegisterRequestDataR\x04data\"L\n" +
 	"\x14UserRegisterResponse\x124\n" +
-	"\x04data\x18\x01 \x01(\v2 .lender.UserRegisterResponseDataR\x04data\"\xde\x02\n" +
+	"\x04data\x18\x01 \x01(\v2 .lender.UserRegisterResponseDataR\x04data\"\x8c\x03\n" +
 	"\x17UserRegisterRequestData\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x1d\n" +
@@ -7476,7 +7492,9 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\rcontact_phone\x18\b \x01(\tR\fcontactPhone\x12#\n" +
 	"\rcontact_email\x18\t \x01(\tR\fcontactEmail\x12!\n" +
 	"\fcontact_name\x18\n" +
-	" \x01(\tR\vcontactName\"\xc4\x01\n" +
+	" \x01(\tR\vcontactName\x12\x12\n" +
+	"\x04logo\x18\v \x01(\tR\x04logo\x12\x18\n" +
+	"\awebsite\x18\f \x01(\tR\awebsite\"\xc4\x01\n" +
 	"\x18UserRegisterResponseData\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
 	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\x12.\n" +
