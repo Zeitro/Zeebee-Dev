@@ -3298,6 +3298,9 @@
                 "last_name": {
                   "type": "string"
                 },
+                "logo": {
+                  "type": "string"
+                },
                 "organization_id": {
                   "type": "integer"
                 },
@@ -3308,6 +3311,9 @@
                   "type": "string"
                 },
                 "type": {
+                  "type": "string"
+                },
+                "website": {
                   "type": "string"
                 }
               }
@@ -3511,7 +3517,7 @@
       }
     }
   },
-  "x-date": "2025-12-22 13:25:38",
+  "x-date": "2025-12-24 09:43:58",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
