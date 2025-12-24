@@ -21,4 +21,6 @@ type OrganizationRegisterRequestDto struct {
 	ContactEmail string                          `json:"contact_email"`
 	ContactPhone string                          `json:"contact_phone"`
 	ContactName  string                          `json:"contact_name"`
+	Logo         string                          `json:"logo"`
+	Website      string                          `json:"website"`
 }

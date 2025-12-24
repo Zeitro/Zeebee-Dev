@@ -95,6 +95,8 @@ message UserRegisterRequestData {
   string contact_phone = 8;
   string contact_email = 9;
   string contact_name = 10;
+  string logo = 11;
+  string website = 12;
 
 }
 message UserRegisterResponseData {
