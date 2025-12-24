@@ -128,6 +128,9 @@ func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingL
 			if innerErr != nil {
 				return innerErr
 			}
+
+			// sync total amount and loan count
+			innerErr = l.svcCtx.BorrowerPropertyRepo.SyncTotalAmountAndLoanCountWithTx(l.ctx, tx, borrowerProperty.Id)
 		}
 
 		return innerErr
