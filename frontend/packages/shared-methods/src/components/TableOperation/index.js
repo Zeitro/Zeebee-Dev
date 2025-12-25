@@ -73,7 +73,7 @@ export const TableOperation = ({ list, className, onSelect, getItems, disabled }
 			{(list || newItems).map((item, index) => {
 				const { key, icon, label, disabled, ...props } = item;
 				return (
-					item.children || (
+					item.children ?? (
 						<Button
 							size="small"
 							type="link"

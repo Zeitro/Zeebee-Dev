@@ -89,6 +89,7 @@ const useLenderDetails = () => {
 	const [errorList, setErrorList] = useState([]);
 	const [isChange, setIsChange] = useState(false); // 记录是否操作过form
 	const [confirmLoading, setConfirmLoading] = useState(false); // 保存
+	const [detailsLoading, setDetailsLoading] = useState(false);
 	const [rowData, setRowData] = useState({}); // loan详情
 	const [newRowData, setNewRowData] = useState({}); // loan详情
 	const [disabled, setDisabled] = useState(true); //控制application内的页面不可编辑，只有点击Edit才可修改
@@ -102,26 +103,32 @@ const useLenderDetails = () => {
 
 	// 获取详情
 	const getLoanDetail = useCallback(async () => {
-		const res = (await request(`/loan/${searchParams.get('id')}`)) || {};
-		const str = assemblyAddress(res?.loan_property?.address);
-		eventBus.emit('changeCrumbs', {
-			2: `Loan Details(${str})`,
-		});
-		// res.loan_borrower = {
-		// 	...(res?.loan_borrower || {}),
-		// 	// tin: {
-		// 	// 	tin_type: res?.loan_borrower?.tin_type,
-		// 	// 	tin: res?.loan_borrower?.tin,
-		// 	// },
-		// };
+		try {
+			setDetailsLoading(true);
+			const res = (await request(`/loan/${searchParams.get('id')}`)) || {};
+			const str = assemblyAddress(res?.loan_property?.address);
+			eventBus.emit('changeCrumbs', {
+				2: `Loan Details(${str})`,
+			});
+			// res.loan_borrower = {
+			// 	...(res?.loan_borrower || {}),
+			// 	// tin: {
+			// 	// 	tin_type: res?.loan_borrower?.tin_type,
+			// 	// 	tin: res?.loan_borrower?.tin,
+			// 	// },
+			// };
 
-		if (!res?.applicants?.length) {
-			res.applicants = initialValues.applicants;
+			if (!res?.applicants?.length) {
+				res.applicants = initialValues.applicants;
+			}
+			// 保存两份，一份用于展示和修改（可能出现修改了就离开了，并未保存），一份用于最新数据保存
+			setRowData(res);
+			setNewRowData(res);
+			form.setFieldsValue(res);
+			setDetailsLoading(false);
+		} catch {
+			setDetailsLoading(false);
 		}
-		// 保存两份，一份用于展示和修改（可能出现修改了就离开了，并未保存），一份用于最新数据保存
-		setRowData(res);
-		setNewRowData(res);
-		form.setFieldsValue(res);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [form, searchParams]);
 
@@ -436,6 +443,7 @@ const useLenderDetails = () => {
 		tabList,
 		selectIndex,
 		loanProgress,
+		detailsLoading,
 	};
 };
 
