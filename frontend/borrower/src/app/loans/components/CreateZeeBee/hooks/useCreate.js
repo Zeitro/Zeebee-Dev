@@ -54,6 +54,7 @@ const useCreate = (pageType = 'create') => {
 	const [loading, setLoading] = useState(false);
 	const [isChange, setIsChange] = useState(true); // 记录是否操作过form,暂时不记录
 	const [confirmLoading, setConfirmLoading] = useState(false); // 保存草稿
+	const [detailsLoading, setDetailsLoading] = useState(false);
 	const [rowData, setRowData] = useState({}); // loan详情
 	const [unitInfo, setUnitInfo] = useState({
 		// unit: {},
@@ -77,25 +78,31 @@ const useCreate = (pageType = 'create') => {
 		form.setFieldsValue(newData);
 	};
 
-	// 获取详情（草稿使用）
+	// 获取详情
 	const getLoanDetail = async () => {
-		const res = await request(`/loan/${searchParams.get('id')}`);
-		const str = assemblyAddress(res?.loan_property?.address);
-		eventBus.emit('changeCrumbs', {
-			2: isDetails ? `ZeeBee Loan Details(${str})` : `Edit Draft(${str})`,
-		});
-		// res.loan_borrower.tin = {
-		// 	tin_type: res?.loan_borrower?.tin_type,
-		// 	tin: res?.loan_borrower?.tin,
-		// };
-		if (!res?.applicants?.length) {
-			res.applicants = initialValues.applicants;
+		try {
+			setDetailsLoading(true);
+			const res = await request(`/loan/${searchParams.get('id')}`);
+			const str = assemblyAddress(res?.loan_property?.address);
+			eventBus.emit('changeCrumbs', {
+				2: isDetails ? `ZeeBee Loan Details(${str})` : `Edit Draft(${str})`,
+			});
+			// res.loan_borrower.tin = {
+			// 	tin_type: res?.loan_borrower?.tin_type,
+			// 	tin: res?.loan_borrower?.tin,
+			// };
+			if (!res?.applicants?.length) {
+				res.applicants = initialValues.applicants;
+			}
+			setRowData(res);
+			form.setFieldsValue(res);
+			setDetailsLoading(false);
+		} catch {
+			setDetailsLoading(false);
 		}
-		setRowData(res);
-		form.setFieldsValue(res);
 	};
 
-	// 获取property/草稿详情
+	// 获取property/loan详情
 	useEffect(() => {
 		if (searchParams.has('propertyId')) getProperty();
 		if (searchParams.has('id')) getLoanDetail();
@@ -596,6 +603,7 @@ const useCreate = (pageType = 'create') => {
 		rowData,
 		unitInfo,
 		setUnitInfo,
+		detailsLoading,
 	};
 };
 
