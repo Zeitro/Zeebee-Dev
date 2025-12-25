@@ -211,7 +211,7 @@ const CreateLoan = ({ form, stepBtn, gutter, isRadioStyle, ...colProps }) => {
 						<Form.Item label="Pricing" name={['extend', 'pricing']}>
 							<Input.TextArea
 								placeholder="Enter pricing"
-								autoSize={{ minRows: 2, maxRows: 3 }}
+								autoSize={{ minRows: 4, maxRows: 4 }}
 							/>
 						</Form.Item>
 					</Col>
@@ -222,7 +222,7 @@ const CreateLoan = ({ form, stepBtn, gutter, isRadioStyle, ...colProps }) => {
 						>
 							<Input.TextArea
 								placeholder="Enter loan status updates"
-								autoSize={{ minRows: 2, maxRows: 3 }}
+								autoSize={{ minRows: 4, maxRows: 4 }}
 							/>
 						</Form.Item>
 					</Col>
@@ -230,7 +230,7 @@ const CreateLoan = ({ form, stepBtn, gutter, isRadioStyle, ...colProps }) => {
 						<Form.Item label="Meeting notes" name={['extend', 'meeting_notes']}>
 							<Input.TextArea
 								placeholder="Enter meeting notes"
-								autoSize={{ minRows: 2, maxRows: 3 }}
+								autoSize={{ minRows: 4, maxRows: 4 }}
 							/>
 						</Form.Item>
 					</Col>
@@ -238,7 +238,7 @@ const CreateLoan = ({ form, stepBtn, gutter, isRadioStyle, ...colProps }) => {
 						<Form.Item label="Action list" name={['extend', 'action_list']}>
 							<Input.TextArea
 								placeholder="Enter action list"
-								autoSize={{ minRows: 2, maxRows: 3 }}
+								autoSize={{ minRows: 4, maxRows: 4 }}
 							/>
 						</Form.Item>
 					</Col>
