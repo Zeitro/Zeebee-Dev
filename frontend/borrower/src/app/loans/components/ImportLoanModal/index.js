@@ -74,7 +74,7 @@ const ImportLoanModal = ({ setOpen }) => {
 				title="Import loans"
 				okText={percent ? `${percent}% Importing...` : `Import loans`}
 				confirmLoading={confirmLoading}
-				cancelButtonProps={{ style: { display: 'none' } }}
+				cancelButtonProps={{ style: { opacity: 0, cursor: 'auto' }, onClick: () => {} }}
 				okButtonProps={{ disabled: !fileList?.length }}
 				closable={!confirmLoading}
 				onOk={handleUpload}

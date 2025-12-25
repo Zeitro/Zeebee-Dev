@@ -15,7 +15,7 @@ const ArchivedLoans = ({
 	dataSource,
 	isNotAddress,
 	loading,
-	scrollX = 1800,
+	scrollX = 2050,
 	stage = 'Archived',
 	filterName,
 }) => {
