@@ -76,28 +76,28 @@ const Pipeline = () => {
 							className="flex items-center text-base-gray  gap-2"
 							title={`Total amount: ${total_amount}`}
 						>
-							<PaidSvg />
+							<PaidSvg className="flex-shrink-0" />
 							{total_amount}
 						</div>
 						<div
 							className="flex items-center text-base-gray  gap-2"
 							title={`Borrower: ${borrower}`}
 						>
-							<AccountCircle />
-							{borrower || '--'}
+							<AccountCircle className="flex-shrink-0" />
+							<span className="common-ellipsis">{borrower || '--'}</span>
 						</div>
 						<div
 							className="flex items-center  text-base-gray  gap-2"
 							title={`Loan type: ${item?.loan_type} (Loan purpose: ${item?.loan_purpose})`}
 						>
-							<SellSvg title="Loan type" />
+							<SellSvg title="Loan type" className="flex-shrink-0" />
 							{item?.loan_type} ({item?.loan_purpose})
 						</div>
 						<div
 							className="flex items-center text-base-gray  gap-2"
 							title={`Created time: ${created_time}`}
 						>
-							<Calender />
+							<Calender className="flex-shrink-0" />
 							{created_time || '--'}
 						</div>
 					</div>
