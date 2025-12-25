@@ -78,9 +78,9 @@ const common = (isNotAddress) => {
 
 const getOpt = (showDeleteModal) => {
 	return {
-		title: '',
+		title: 'Action',
 		dataIndex: 'operation',
-		width: 50,
+		width: 110,
 		align: 'left',
 		fixed: 'right',
 		render: (_, record) => (

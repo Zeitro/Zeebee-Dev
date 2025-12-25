@@ -57,7 +57,7 @@ const ListView = ({ className }) => {
 							api={api}
 							stage="Rejected"
 							key="Rejected"
-							scrollX={2550}
+							scrollX={2610}
 						/>
 					),
 				},
@@ -70,7 +70,7 @@ const ListView = ({ className }) => {
 							api={api}
 							stage="Draft"
 							key="Draft"
-							scrollX={2400}
+							scrollX={2460}
 						/>
 					),
 				},

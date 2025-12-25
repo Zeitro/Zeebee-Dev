@@ -73,16 +73,16 @@ const common = (isNotAddress) => {
 				if (isNotAddress) return get3rdPartyMark(value, row);
 				return value;
 			},
-			width: isNotAddress ? 200 : 160,
+			width: isNotAddress ? 240 : 180,
 		},
 	];
 };
 
 const getOpt = (showDeleteModal, stage) => {
 	return {
-		title: '',
+		title: 'Action',
 		dataIndex: 'operation',
-		width: 50,
+		width: 280,
 		align: 'left',
 		fixed: 'right',
 		render: (_, record) => (
@@ -95,14 +95,17 @@ const getOpt = (showDeleteModal, stage) => {
 					);
 					const arr = [
 						{
-							label: (
+							children: (
 								<QuoteBtn
+									key="quote"
 									disabled={quoteDisabled}
 									rowData={record}
-									isBtn={false}
 									tooltipProps={{ placement: 'leftTop' }}
+									type="link"
+									ghost={false}
+									size="small"
 								>
-									<SendOutlined style={{ marginRight: 8 }} />
+									<SendOutlined />
 									Request quote
 								</QuoteBtn>
 							),
