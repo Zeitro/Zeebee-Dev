@@ -1,0 +1,13 @@
+@startuml
+start
+:Invite User (FullName/Email/Phone);
+if (Check if user exists by Email) then (yes)
+  if (Check if user is in organization) then (yes)
+    stop;
+  else (no)
+  endif
+else (no)
+  :Create a user account;
+endif
+:Send invitation email;
+@enduml
