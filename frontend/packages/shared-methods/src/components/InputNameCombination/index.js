@@ -21,6 +21,7 @@ export const InputNameCombination = ({
 	// form,
 	listName,
 	disabled,
+	hideMiddleName,
 }) => {
 	const form = Form.useFormInstance();
 	const first = Form.useWatch(getPathArr(firstName, listName), form);
@@ -63,19 +64,26 @@ export const InputNameCombination = ({
 					<Input placeholder={`Enter ${firstLabel.toLowerCase()}`} disabled={disabled} />
 				</Form.Item>
 			</Col>
-			<Col {...layoutCol}>
-				<Form.Item
-					label={middleLabel}
-					name={middleName}
-					rules={[{ validator: (_, value) => validatedName(value, index, applicants) }]}
-					dependencies={getDependencies('middleName')}
-					getValueFromEvent={(v) => {
-						return capitalizeFirstLetter(v.target.value);
-					}}
-				>
-					<Input placeholder={`Enter ${middleLabel.toLowerCase()}`} disabled={disabled} />
-				</Form.Item>
-			</Col>
+			{!hideMiddleName && (
+				<Col {...layoutCol}>
+					<Form.Item
+						label={middleLabel}
+						name={middleName}
+						rules={[
+							{ validator: (_, value) => validatedName(value, index, applicants) },
+						]}
+						dependencies={getDependencies('middleName')}
+						getValueFromEvent={(v) => {
+							return capitalizeFirstLetter(v.target.value);
+						}}
+					>
+						<Input
+							placeholder={`Enter ${middleLabel.toLowerCase()}`}
+							disabled={disabled}
+						/>
+					</Form.Item>
+				</Col>
+			)}
 			<Col {...layoutCol}>
 				<Form.Item
 					label={lastLabel}

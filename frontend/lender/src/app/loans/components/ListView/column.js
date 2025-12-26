@@ -1,5 +1,5 @@
-import { formatAmount } from '@repo/shared-methods/utils';
-import { LoanStage, LoanPendingStatus } from './ChangeStageStatus';
+import { formatAmount, formatTime } from '@repo/shared-methods/utils';
+import { LoanStage, LoanPendingStatus } from '../ChangeStageStatus';
 import { TableOperation } from '@repo/shared-methods';
 export const get3rdPartyMark = (v, { source }) => (
 	<div className="flex items-center">
@@ -52,6 +52,16 @@ const common = (isNotAddress) => {
 	return [
 		...(isNotAddress ? [] : addressArr),
 		{
+			title: 'Created time',
+			dataIndex: 'created_at',
+			key: 'created_at',
+			ellipsis: true,
+			sorter: true,
+			width: 170,
+			defaultSortOrder: 'descend',
+			render: (v) => formatTime(v) || '--',
+		},
+		{
 			title: 'Borrower',
 			dataIndex: 'applicants',
 			key: 'applicants',
@@ -68,9 +78,9 @@ const common = (isNotAddress) => {
 
 const getOpt = (showDeleteModal) => {
 	return {
-		title: '',
+		title: 'Action',
 		dataIndex: 'operation',
-		width: 50,
+		width: 110,
 		align: 'left',
 		fixed: 'right',
 		render: (_, record) => (
@@ -78,15 +88,15 @@ const getOpt = (showDeleteModal) => {
 				record={record}
 				getItems={(editItem, deleteItem, detailsItem) => {
 					const arr = [];
-					if (record?.source === 'borrower') {
-						arr.push({ ...editItem, url: `/loans/${record?.id}` });
-						arr.push(deleteItem);
-					} else {
-						arr.push({
-							...detailsItem,
-							url: `/loans/zeeBeeDetails?id=${record?.id}`,
-						});
-					}
+					// if (record?.source === 'borrower') {
+					// 	arr.push({ ...editItem, url: `/loans/${record?.id}` });
+					// 	arr.push(deleteItem);
+					// } else {
+					arr.push({
+						...detailsItem,
+						url: `/loans/zeeBeeDetails?id=${record?.id}`,
+					});
+					// }
 					return arr;
 				}}
 				onSelect={(key) => {

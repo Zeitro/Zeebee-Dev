@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { ConfigProvider } from 'antd';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
 import SiderBar from '@/components/Sidebar';
-import NewHeader from '@/components/NewHeader';
+import { NewHeader } from '@repo/shared-methods';
 import { getCurrentRouterItem } from '@config/common';
 import { noNavRouter, navRouter } from '@config/routes';
 import { usePathname, useRouter } from 'next/navigation';

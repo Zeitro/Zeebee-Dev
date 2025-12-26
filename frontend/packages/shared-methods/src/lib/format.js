@@ -212,9 +212,9 @@ export const assemblyAddress = (address = {}, isHaveZip) => {
 export const formatFirstLetterName = (userInfo) => {
 	if (!userInfo) return '';
 	const { first_name, last_name } = userInfo;
-	const name1 = first_name?.[0]?.toUpperCase();
-	const name2 = last_name?.[0]?.toUpperCase();
-	return `${name1}${name2}`;
+	const name1 = first_name?.[0]?.toUpperCase() || '';
+	const name2 = last_name?.[0]?.toUpperCase() || '';
+	return name1 && name2 ? `${name1}${name2}` : '';
 };
 
 /**

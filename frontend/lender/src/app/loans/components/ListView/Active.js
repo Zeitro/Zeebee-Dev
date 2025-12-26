@@ -1,12 +1,12 @@
 'use client';
 import React, { useMemo, useState, useRef } from 'react';
-import { FilterTable } from '@repo/shared-methods';
-import { archivedColumns } from './column';
-import { transformArrayStructure, createRequest } from '@repo/shared-methods/utils';
-import { useOptionsStore } from '@repo/shared-methods/store';
 import { ReloadOutlined } from '@ant-design/icons';
+import { FilterTable } from '@repo/shared-methods';
+import { activeColumns } from './column';
+import { useOptionsStore } from '@repo/shared-methods/store';
+import { transformArrayStructure, createRequest } from '@repo/shared-methods/utils';
 import useOpt from './useOpt';
-const ArchivedLoans = ({
+const ActiveLoans = ({
 	hasFilterField,
 	hasPagination,
 	filterWrapClassName,
@@ -15,16 +15,17 @@ const ArchivedLoans = ({
 	dataSource,
 	isNotAddress,
 	loading,
-	scrollX = 1700,
+	scrollX = 2860,
 	successCallback,
-	stage = 'Archived',
+	stage = 'Active',
 }) => {
-	const { loanTypeOptions } = useOptionsStore();
+	const { loanPurposeOptions, loanTypeOptions } = useOptionsStore();
 	const { request } = createRequest();
 	const tableFilterRef = useRef();
 	const { showDeleteModal, contextHolder, handleSelectedRow } = useOpt(tableFilterRef);
 	const [type, setType] = useState('address');
 	const [searchValue, setSearchValue] = useState('');
+	const [loanPurpose, setLoanPurpose] = useState([]);
 	const [loanType, setLoanType] = useState([]);
 	const filterList = useMemo(
 		() => [
@@ -32,11 +33,11 @@ const ArchivedLoans = ({
 				filterType: 'select-input',
 				selectValue: type,
 				value: searchValue,
-				selectParamsKey: 'keyword_type',
-				paramsKey: 'keyword',
 				selectProps: {
 					onChange: (e) => setType(e),
 				},
+				selectParamsKey: 'keyword_type',
+				paramsKey: 'keyword',
 				onChange: ({ target: { value } }) => setSearchValue(value),
 				options: [
 					{
@@ -56,6 +57,18 @@ const ArchivedLoans = ({
 						value: 'borrower',
 					},
 				],
+			},
+			{
+				filterType: 'treeSelect',
+				label: 'Loan purpose',
+				placeholder: 'Loan purpose',
+				value: loanPurpose,
+				paramsKey: 'loan_purpose',
+				onChange: (value) => setLoanPurpose(value),
+				treeData: transformArrayStructure({
+					sourceArray: loanPurposeOptions,
+					outputKey: 'title',
+				}).map((i) => ({ ...i, key: i.value })),
 			},
 			{
 				filterType: 'treeSelect',
@@ -84,6 +97,7 @@ const ArchivedLoans = ({
 				onClick: () => {
 					setType('address');
 					setSearchValue('');
+					setLoanPurpose([]);
 					setLoanType([]);
 					setTimeout(() => {
 						tableFilterRef?.current?.handleSearch?.();
@@ -91,14 +105,14 @@ const ArchivedLoans = ({
 				},
 			},
 		],
-		[searchValue, type, loanType, loanTypeOptions],
+		[searchValue, type, loanPurpose, loanType, loanPurposeOptions, loanTypeOptions],
 	);
 
 	return (
 		<>
 			<FilterTable
 				ref={tableFilterRef}
-				columns={archivedColumns(
+				columns={activeColumns(
 					isNotAddress,
 					// eslint-disable-next-line react-hooks/refs
 					() =>
@@ -148,4 +162,4 @@ const ArchivedLoans = ({
 		</>
 	);
 };
-export default ArchivedLoans;
+export default ActiveLoans;

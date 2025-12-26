@@ -72,7 +72,12 @@ export function flattenObjectPaths(obj, parentPath = []) {
 	return paths;
 }
 
-// 拼装key，可用于表单中，例如useWatch
+/**
+ * 拼装key，可用于表单中，例如useWatch传入的name可以是字符串，也可以是数组
+ * @param {*string | Array} name Form.Item中的name
+ * @param {*string | Array} listName 当Form.Item用于Form.List时，Form.List中的name
+ * @returns {*Array} 返回拼装的
+ */
 export const getPathArr = (name, listName) => {
 	const listNameArr = Array.isArray(listName) ? listName : [listName];
 	let pathArr = Array.isArray(name) ? name : [name];
@@ -82,7 +87,7 @@ export const getPathArr = (name, listName) => {
 	return pathArr;
 };
 
-// 将多层嵌套数组扁平化
+// 将多层嵌套数组扁平化(多层嵌套变为一维数组，不需要再递归处理)
 export function flattenArray(list = [], childKey = 'children', isHaveChildParent) {
 	return list?.reduce((acc, next) => {
 		if (next?.[childKey]) {
@@ -95,6 +100,17 @@ export function flattenArray(list = [], childKey = 'children', isHaveChildParent
 		return [...acc, next];
 	}, []);
 }
+
+/**
+ * 可匹配动态路由
+ * dynamicPath 动态路由/loans/123455
+ * path 比较的固定路由/loans/:id
+ * */
+export const matchRoute = (path, dynamicPath) => {
+	if (path === dynamicPath) return true;
+	const pattern = '^' + path.replace(/:[^/]+/g, '[^/]+') + '$';
+	return new RegExp(pattern).test(dynamicPath);
+};
 
 // 递归查找,返回查找到的某一项数据
 export const findItem = ({
@@ -116,12 +132,12 @@ export const findItem = ({
 			i.parentKey = parentKey || null;
 			i.parentIndex = parentIndex || null;
 		}
-		if (i?.[keyName] === key) {
+		if (matchRoute(i?.[keyName], key)) {
 			result = i;
 		}
 		if (i?.[childName]) {
 			const childResult = findItem({
-				list: i.children,
+				list: i?.[childName],
 				key,
 				keyName,
 				childName,

@@ -63,12 +63,14 @@ const Userinfo = ({ userInfo, sidebarCollapsed }) => {
 						`w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-sm text-base-label bg-base-active`,
 					].join(' ')}
 				>
-					{formatFirstLetterName(userInfo)}
+					{formatFirstLetterName(userInfo) || ''}
 				</div>
 				{!sidebarCollapsed && (
 					<div className="flex-1">
 						<p className={`text-base/4 text-black-dark font-medium pb-[3px]`}>
-							{userInfo?.first_name} {userInfo?.last_name}
+							{userInfo?.first_name && userInfo?.last_name
+								? `${userInfo?.first_name} ${userInfo?.last_name}`
+								: '--'}
 						</p>
 						<span className="text-gray-medium text-ellipsis overflow-hidden whitespace-nowrap">
 							{userInfo?.email}
