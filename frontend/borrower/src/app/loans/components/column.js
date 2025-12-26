@@ -95,20 +95,23 @@ const getOpt = (showDeleteModal, stage) => {
 					);
 					const arr = [
 						{
-							children: (
-								<QuoteBtn
-									key="quote"
-									disabled={quoteDisabled}
-									rowData={record}
-									tooltipProps={{ placement: 'leftTop' }}
-									type="link"
-									ghost={false}
-									size="small"
-								>
-									<SendOutlined />
-									Request quote
-								</QuoteBtn>
-							),
+							children:
+								record?.source === 'Borrower' ? (
+									<QuoteBtn
+										key="quote"
+										disabled={quoteDisabled}
+										rowData={record}
+										tooltipProps={{ placement: 'leftTop' }}
+										type="link"
+										ghost={false}
+										size="small"
+									>
+										<SendOutlined />
+										Request quote
+									</QuoteBtn>
+								) : (
+									''
+								),
 							key: 'quote',
 							disabled: quoteDisabled,
 						},
