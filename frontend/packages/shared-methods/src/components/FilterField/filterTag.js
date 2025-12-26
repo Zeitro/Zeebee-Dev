@@ -8,7 +8,7 @@ import { Col, Row, Tag } from 'antd';
  */
 export const FilterTag = ({ filterList, filterName = '' }) => {
 	const newList = useMemo(() => {
-		return filterList?.filter((i) => i.filterType === 'treeSelect' && i.value?.length);
+		return filterList?.filter((i) => i.filterType === 'treeSelect' && i.value?.length > 0);
 	}, [filterList]);
 
 	return newList.length > 0 ? (
@@ -19,11 +19,11 @@ export const FilterTag = ({ filterList, filterName = '' }) => {
 					return (
 						<Col key={index}>
 							<span className="pr-2">{item.label}:</span>
-							{item.value?.map((vItem, vIndex) => {
+							{item.value?.map((vItem) => {
 								const labelItem = item?.treeData?.find((i) => i.value === vItem);
 								return (
 									<Tag
-										key={vIndex}
+										key={vItem}
 										closeIcon
 										color="processing"
 										onClose={() => {
