@@ -338,8 +338,102 @@ type LoanUpdateApplicantEntity struct {
 	Address          *AddressEntity `json:"address,optional" validate:"required"`
 }
 
+type OrganizationUserCreateResponse struct {
+	OrganizationUserEntity
+}
+
+type OrganizationUserDetailResponse struct {
+	OrganizationUserEntity
+}
+
+type OrganizationUserPageEntity struct {
+	Id        int64         `json:"id"`
+	Status    string        `json:"status"`
+	FirstName string        `json:"first_name"`
+	MidName   string        `json:"mid_name"`
+	LastName  string        `json:"last_name"`
+	FullName  string        `json:"full_name"`
+	Phone     string        `json:"phone"`
+	Remark    string        `json:"remark"`
+	CreatedAt string        `json:"created_at"`
+	UpdatedAt string        `json:"updated_at"`
+	Email     string        `json:"email"`
+	IsOwner   bool          `json:"is_owner"`
+	Roles     []*RoleEntity `json:"roles"`
+}
+
+type OrganizationUserPageRequestFilter struct {
+	Keyword string `json:"keyword,optional"`
+	Status  string `json:"status,optional"`
+	RoleId  int64  `json:"role_id,optional"`
+}
+
+type OrganizationUserPageRequestSorter struct {
+	Column string `json:"column,optional"`
+	Sort   string `json:"sort,optional"`
+}
+
+type OrganizationUserUpdateResponse struct {
+	OrganizationUserEntity
+}
+
 type PathIdRequest struct {
 	Id int64 `path:"id" validate:"required,gt=0"`
+}
+
+type ResourceEntity struct {
+	Id                 int64  `json:"id"`
+	ParentId           int64  `json:"parent_id"`
+	Type               string `json:"type"`
+	ResourceType       string `json:"resource_type"`
+	Name               string `json:"name"`
+	Path               string `json:"path"`
+	Icon               string `json:"icon"`
+	Tag                string `json:"tag"`
+	IsShow             bool   `json:"is_show"`
+	Status             string `json:"status"`
+	SortOrder          int32  `json:"sort_order"`
+	CreatedAt          string `json:"created_at"`
+	UpdatedAt          string `json:"updated_at"`
+	PivotRoleDataScope string `json:"pivot_role_data_scope,omitempty"`
+}
+
+type ResourceTreeEntity struct {
+	Id           int64                 `json:"id"`
+	ParentId     int64                 `json:"parent_id"`
+	Type         string                `json:"type"`
+	ResourceType string                `json:"resource_type"`
+	Name         string                `json:"name"`
+	Path         string                `json:"path"`
+	Icon         string                `json:"icon"`
+	Tag          string                `json:"tag"`
+	IsShow       bool                  `json:"is_show"`
+	Status       string                `json:"status"`
+	SortOrder    int32                 `json:"sort_order"`
+	CreatedAt    string                `json:"created_at"`
+	UpdatedAt    string                `json:"updated_at"`
+	Children     []*ResourceTreeEntity `json:"children,omitempty"`
+}
+
+type ResourceTreeRequest struct {
+	Type string `form:"type" validate:"required,oneof=Borrower Lender Admin"`
+}
+
+type ResourceTreeResponse struct {
+	List []*ResourceTreeEntity `json:"list"`
+}
+
+type RoleDeleteRequest struct {
+	Id int64 `path:"id" validate:"required,gt=0"`
+}
+
+type RolePageFilter struct {
+	Keyword string `json:"keyword"`
+}
+
+type RolePageSort struct {
+	Column string `json:"column"`
+	Sort   string `json:"sort"`
 }
 
 type SelectOptionEntity struct {
@@ -372,4 +466,11 @@ type UserInfoOrganizationEntity struct {
 	Name      string `json:"name"`
 	Status    string `json:"status"`
 	IsDefault bool   `json:"is_default"`
+}
+
+type UserLoginResponse struct {
+	AccessToken        string `json:"access_token"`
+	AccessTokenExpire  int64  `json:"access_token_expire"`
+	RefreshToken       string `json:"refresh_token"`
+	RefreshTokenExpire int64  `json:"refresh_token_expire"`
 }

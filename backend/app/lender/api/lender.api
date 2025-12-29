@@ -13,6 +13,9 @@ import "desc/us_geography.api"
 import "desc/loan.api"
 import "desc/storage.api"
 import "desc/loan_document.api"
+import "desc/resource.api"
+import "desc/role.api"
+import "desc/organization_user.api"
 
 type (
     EmptyRequest{
@@ -193,5 +196,104 @@ service lender-api {
 	@doc "create aws s3 presign url"
 	@handler CreateAwsS3PresignUrl
 	post /storage/presign_url (S3PresignUrlCreateRequest) returns (S3PresignUrlCreateResponse)
+}
+
+// ============== role =============
+@server(
+    desc: "lender-api service"
+    version: v1
+    group: role
+    prefix:     /api/v1
+    middleware: AuthMiddleware
+    tags: role
+)
+service lender-api {
+    @doc "detail"
+    @handler RoleDetail
+    get /role/:id (PathIdRequest) returns (RoleEntity)
+
+    @doc "page"
+    @handler RolePage
+    post /role/page (RolePageRequest) returns (RolePageResponse)
+
+    @doc "all"
+    @handler RoleAll
+    get /role/all (EmptyRequest) returns (RoleAllResponse)
+
+    @doc "create"
+    @handler RoleCreate
+    post /role (RoleCreateRequest) returns (RoleEntity)
+
+    @doc "update"
+    @handler RoleUpdate
+    put /role/:id (RoleUpdateRequest) returns (RoleEntity)
+
+    @doc "delete"
+    @handler RoleDelete
+    delete /role/:id (PathIdRequest) returns (EmptyResponse)
+
+    @doc "update status"
+    @handler RoleUpdateStatus
+    patch /role/:id/status (RoleUpdateStatusRequest) returns (EmptyResponse)
+}
+
+// ============== organization_user =============
+@server(
+    desc: "lender-api service"
+    version: v1
+    group: organization_user
+    prefix:  /api/v1
+    tags: organization_user
+)
+service lender-api {
+    @doc "accept invitation"
+    @handler OrganizationUserAcceptInvitation
+    post /organization_user/accept_invitation (OrganizationUserAcceptInvitationRequest) returns (UserLoginResponse)
+}
+
+@server(
+    desc: "lender-api service"
+    version: v1
+    group: organization_user
+    prefix:     /api/v1
+    middleware: AuthMiddleware
+    tags: organization_user
+)
+service lender-api {
+    @doc "detail"
+    @handler OrganizationUserDetail
+    get /organization_user/:id (PathIdRequest) returns (OrganizationUserEntity)
+
+    @doc "page"
+    @handler OrganizationUserPage
+    post /organization_user/page (OrganizationUserPageRequest) returns (OrganizationUserPageResponse)
+
+    @doc "all"
+    @handler OrganizationUserAll
+    get /organization_user/all (EmptyRequest) returns (OrganizationUserAllResponse)
+
+    @doc "create"
+    @handler OrganizationUserCreate
+    post /organization_user (OrganizationUserCreateRequest) returns (OrganizationUserEntity)
+
+    @doc "update"
+    @handler OrganizationUserUpdate
+    put /organization_user/:id (OrganizationUserUpdateRequest) returns (OrganizationUserEntity)
+
+    @doc "delete"
+    @handler OrganizationUserDelete
+    delete /organization_user/:id (PathIdRequest) returns (EmptyResponse)
+
+    @doc "switch status"
+    @handler OrganizationUserSwitchStatus
+    patch /organization_user/:id/status (OrganizationUserSwitchStatusRequest) returns (EmptyResponse)
+
+    @doc "assign roles"
+    @handler OrganizationUserAssignRoles
+    post /organization_user/:id/assign_roles (OrganizationUserAssignRolesRequest) returns (EmptyResponse)
+
+    @doc "send email"
+    @handler OrganizationUserSendEmail
+    post /organization_user/:id/send_email (PathIdRequest) returns (EmptyResponse)
 }
 
