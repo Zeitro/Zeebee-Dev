@@ -69,3 +69,6 @@ RpcConf:
   BorrowerLoginUrl: https://app.zeebeeloans.com/login
   VerifyEmailUrl: https://agent.zeebeeloans.com/login/verifyEmail
   ResetPwdUrl: https://agent.zeebeeloans.com/login/resetPassword
+  InviteUserUrl: https://agent.zeebeeloans.com/login/joinOrganization
+  InviteUserExpireSeconds: 86400
+  SendInviteEmailPeriodSeconds: 60
