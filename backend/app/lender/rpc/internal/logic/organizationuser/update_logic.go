@@ -41,13 +41,14 @@ func (l *UpdateLogic) Update(in *lender.OrganizationUserUpdateRequest) (resp *le
 	if err != nil {
 		return nil, err
 	}
-	input := dto.OrganizationUserUpdateRequestDto{
-		Id:             in.Data.Id,
-		OrganizationId: claim.OrganizationId,
-		Remark:         in.Data.Remark,
-		RoleIds:        in.Data.RoleIds,
+	input, err := copierx.Trans[lender.OrganizationUserUpdateRequestData, dto.OrganizationUserUpdateRequestDto](in.Data)
+	if err != nil {
+		return nil, err
 	}
-	result, err := l.baseLogic.OrganizationUserLogic.UpdateOrganizationUser(l.ctx, input)
+	input.UserType = claim.UserType
+	input.OrganizationId = claim.OrganizationId
+
+	result, err := l.baseLogic.OrganizationUserLogic.UpdateOrganizationUser(l.ctx, *input)
 	if err != nil {
 		return nil, err
 	}
