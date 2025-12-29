@@ -3,14 +3,13 @@ package organizationuserlogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"zeebee-backend/app/lender/rpc/internal/email_tpl"
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/bo"
 	"zeebee-backend/domains/zeebee/data/dto"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -65,13 +64,7 @@ func (l *CreateLogic) Create(in *lender.OrganizationUserCreateRequest) (resp *le
 	if err != nil {
 		return nil, err
 	}
-	data := &lender.OrganizationUserEntity{}
-	err = copier.CopyWithOption(data, result, copier.Option{
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
-	})
+	data, err := copierx.Trans[bo.OrganizationUserBo, lender.OrganizationUserEntity](result, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

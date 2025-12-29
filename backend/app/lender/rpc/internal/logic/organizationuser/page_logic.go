@@ -9,8 +9,6 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
-	"zeebee-backend/common/gormx"
-	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/bo"
 	"zeebee-backend/domains/zeebee/data/dto"
 
@@ -45,41 +43,35 @@ func (l *PageLogic) Page(in *lender.OrganizationUserPageRequest) (resp *lender.O
 	if err != nil {
 		return nil, err
 	}
-	input := dto.OrganizationUserPageDto{
-		OrganizationId: claim.OrganizationId,
-		Page:           in.Data.Page,
-		PageSize:       in.Data.PageSize,
-		Keyword:        in.Data.Keyword,
-		Status:         in.Data.Status,
-		UserType:       constants.UserTypeLender,
-	}
-	var result *gormx.PageResponse[*bo.OrganizationUserBo]
-	if claim.UserType == constants.UserTypeSuperAdmin {
-		result, err = l.baseLogic.OrganizationUserLogic.Page(l.ctx, input, 0)
-	} else {
-		result, err = l.baseLogic.OrganizationUserLogic.Page(l.ctx, input, claim.OrganizationId)
-	}
+	pageReq := dto.OrganizationUserPageRequestDto{}
+	err = copier.Copy(&pageReq, &in.Data)
 	if err != nil {
 		return nil, err
 	}
-	var list []*lender.OrganizationUserEntity
-	for _, v := range result.List {
-		item, err := copier.CopyWithOption(&lender.OrganizationUserEntity{}, v, copier.Option{
-			CaseSensitive: true,
-			Converters: []copier.TypeConverter{
-				copierx.TimeToRFC3339Str(),
-			},
-		})
+	pageReq.Filter.UserType = claim.UserType
+	pageReq.Filter.OrganizationId = claim.OrganizationId
+	pageReq.Filter.UserId = claim.UserId
+
+	results, err := l.baseLogic.OrganizationUserLogic.Page(l.ctx, pageReq)
+	if err != nil {
+		return nil, err
+	}
+	var list []*lender.OrganizationUserPageEntity
+	for _, v := range results.List {
+		item, err := copierx.Trans[bo.OrganizationUserBo, lender.OrganizationUserPageEntity](v, copierx.TimeToRFC3339Str())
 		if err != nil {
 			return nil, errorx.GetFailedTransRespErr(err)
 		}
-		list = append(list, item.(*lender.OrganizationUserEntity))
+		list = append(list, item)
 	}
 
 	return &lender.OrganizationUserPageResponse{
-		Data: &lender.PageResponseOrganizationUserEntity{
-			Total: result.Total,
-			List:  list,
+		Data: &lender.OrganizationUserPageResponseData{
+			Page:      results.Page,
+			Limit:     results.Limit,
+			Total:     results.Total,
+			TotalPage: results.TotalPage,
+			List:      list,
 		},
 	}, nil
 }
