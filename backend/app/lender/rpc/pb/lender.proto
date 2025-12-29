@@ -873,3 +873,346 @@ service Storage {
   rpc CreatePresignedUrl(StorageCreatePresignedUrlRequest) returns(StorageCreatePresignedUrlResponse);
 }
 // ===================== storage service end ======================
+
+// ====================== resource service start =================
+message ResourceTreeEntity{
+  int64 id = 1;
+  int64 parent_id = 2;
+  string type = 3;
+  string resource_type = 4;
+  string name = 5;
+  string path = 6;
+  string icon = 7;
+  string tag = 8;
+  bool is_show = 9;
+  string status = 10;
+  int32  sort_order = 11;
+  string created_at = 12;
+  string updated_at = 13;
+  repeated ResourceTreeEntity children = 14;
+}
+
+message ResourceEntity{
+  int64 id = 1;
+  int64 parent_id = 2;
+  string type = 3;
+  string resource_type = 4;
+  string name = 5;
+  string path = 6;
+  string icon = 7;
+  string tag = 8;
+  bool is_show = 9;
+  string status = 10;
+  int32  sort_order = 11;
+  string created_at = 12;
+  string updated_at = 13;
+  string pivot_role_data_scope = 14;
+}
+
+// resource tree
+message ResourceTreeRequest {
+  ResourceTreeRequestData data = 1;
+}
+message ResourceTreeRequestData {
+  string type = 1;
+}
+
+message ResourceTreeResponse {
+  repeated ResourceTreeEntity data = 1;
+}
+service resource {
+  rpc ResourceTree(ResourceTreeRequest) returns(ResourceTreeResponse);
+}
+// =================== resource service end =================
+// =================== role service start =================
+message RoleEntity {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  string type = 4;
+  string status = 5;
+  string created_at = 6;
+  string updated_at = 7;
+  int64 organization_id = 8;
+  repeated ResourceEntity resources = 9;
+}
+
+message RolePageRequest {
+  RolePageRequestData data = 1;
+}
+message RolePageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  RolePageRequestFilter filter = 3;
+  RolePageRequestSorter sorter = 4;
+}
+message RolePageRequestFilter {
+  string keyword = 1;
+}
+message RolePageRequestSorter {
+  string column = 1;
+  string sort = 2;
+}
+
+message RolePageResponse {
+  RolePageResponseData data = 1;
+}
+
+message RolePageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated RoleEntity list = 5;
+}
+
+//  create
+message RoleCreateRequest {
+  RoleCreateRequestData data = 1;
+}
+message RoleCreateRequestData {
+  string name = 1;
+  string description = 2;
+  string status = 3;
+  repeated RoleAndResourceRelationEntity role_and_resources = 4;
+}
+message RoleCreateResponse {
+  RoleEntity data = 1;
+}
+//  update
+message RoleUpdateRequest {
+  RoleUpdateRequestData data = 1;
+}
+message RoleUpdateRequestData {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  string status = 4;
+  repeated RoleAndResourceRelationEntity role_and_resources = 5;
+}
+
+message RoleAndResourceRelationEntity{
+  int64 role_id = 1;
+  int64 resource_id = 2;
+  string data_scope = 3;
+}
+
+
+message RoleUpdateResponse {
+  RoleEntity data = 1;
+}
+//  delete
+message RoleDeleteRequest {
+  RoleDeleteRequestData data = 1;
+}
+message RoleDeleteRequestData {
+  int64 id = 1;
+}
+
+//  detail
+message RoleDetailRequest {
+  RoleDetailRequestData data = 1;
+}
+message RoleDetailRequestData {
+  int64 id = 1;
+}
+message RoleDetailResponse {
+  RoleEntity data = 1;
+}
+// update status
+message RoleUpdateStatusRequest {
+  RoleUpdateStatusRequestData data = 1;
+}
+message RoleUpdateStatusRequestData {
+  int64 id = 1;
+  string status = 2;
+}
+
+// all roles
+message RoleAllRequest {
+  RoleAllRequestData data = 1;
+}
+message RoleAllRequestData {
+}
+message RoleAllResponse {
+  repeated RoleEntity  data = 1;
+}
+
+service role {
+  rpc Page(RolePageRequest) returns(RolePageResponse);
+  rpc Create(RoleCreateRequest) returns(RoleCreateResponse);
+  rpc Update(RoleUpdateRequest) returns(RoleUpdateResponse);
+  rpc Delete(RoleDeleteRequest) returns(EmptyResponse);
+  rpc Detail(RoleDetailRequest) returns(RoleDetailResponse);
+  rpc UpdateStatus(RoleUpdateStatusRequest) returns(EmptyResponse);
+  rpc All(RoleAllRequest) returns(RoleAllResponse);
+}
+
+// ================== role service end =================
+// ================== organization user service start =================
+message OrganizationUserEntity {
+  int64 id = 1;
+  int64 organization_id = 2;
+  int64 user_id = 3;
+  string status = 4;
+  string first_name = 5;
+  string mid_name = 6;
+  string last_name = 7;
+  string full_name = 8;
+  string phone = 9;
+  string remark = 10;
+  string created_at = 11;
+  string updated_at = 12;
+  string email = 13;
+  repeated RoleEntity roles = 14;
+}
+
+message OrganizationUserPageEntity {
+  int64 id = 1;
+  string status = 2;
+  string first_name = 3;
+  string mid_name = 4;
+  string last_name = 5;
+  string full_name = 6;
+  string phone = 7;
+  string remark = 8;
+  string created_at = 9;
+  string updated_at = 10;
+  string email = 11;
+  repeated RoleEntity roles = 12;
+  bool is_owner = 13;
+}
+// page --  request
+message OrganizationUserPageRequest {
+  OrganizationUserPageRequestData data = 1;
+}
+message OrganizationUserPageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  OrganizationUserPageRequestFilter filter = 3;
+  OrganizationUserPageRequestSorter sorter = 4;
+}
+message OrganizationUserPageRequestFilter {
+  string keyword = 2;
+  string status = 3;
+  int64 role_id = 4;
+}
+message OrganizationUserPageRequestSorter {
+  string column = 1;
+  string sort = 2;
+}
+// page --  response
+message OrganizationUserPageResponse {
+  OrganizationUserPageResponseData data = 1;
+}
+message OrganizationUserPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated OrganizationUserPageEntity list = 5;
+}
+//  create --  request
+message OrganizationUserCreateRequest {
+  OrganizationUserCreateRequestData data = 1;
+}
+message OrganizationUserCreateRequestData {
+  string email = 1;
+  string phone = 2;
+  string remark = 3;
+  repeated int64 role_ids = 4;
+}
+//  create --  response
+message OrganizationUserCreateResponse {
+  OrganizationUserEntity data = 1;
+}
+//  update --  request
+message OrganizationUserUpdateRequest {
+  OrganizationUserUpdateRequestData data = 1;
+}
+message OrganizationUserUpdateRequestData {
+  int64 id = 1;
+  string phone = 2;
+  string remark = 3;
+  repeated int64 role_ids = 4;
+  string first_name = 5;
+  string last_name = 6;
+}
+//  update --  response
+message OrganizationUserUpdateResponse {
+  OrganizationUserEntity data = 1;
+}
+//  detail --  request
+message OrganizationUserDetailRequest {
+  OrganizationUserDetailRequestData data = 1;
+}
+message OrganizationUserDetailRequestData {
+  int64 id = 1;
+}
+//  detail --  response
+message OrganizationUserDetailResponse {
+  OrganizationUserEntity data = 1;
+}
+//  delete --  request
+message OrganizationUserDeleteRequest {
+  OrganizationUserDeleteRequestData data = 1;
+}
+message OrganizationUserDeleteRequestData {
+  int64 id = 1;
+}
+//  switch status --  request
+message OrganizationUserUpdateStatusRequest {
+  OrganizationUserUpdateStatusRequestData data = 1;
+}
+message OrganizationUserUpdateStatusRequestData {
+  int64 id = 1;
+  string status = 2;
+}
+// all --  request
+message OrganizationUserAllResponse {
+  repeated OrganizationUserEntity data = 1;
+}
+
+// send invitation email --  request
+message OrganizationUserSendInvitationEmailRequest {
+  OrganizationUserSendInvitationEmailRequestData data = 1;
+}
+message OrganizationUserSendInvitationEmailRequestData {
+  int64 id = 1;
+}
+
+// accept invitation email --  request
+message OrganizationUserAcceptInvitationRequest {
+  OrganizationUserAcceptInvitationRequestData data = 1;
+}
+message OrganizationUserAcceptInvitationRequestData {
+  string code = 1;
+  string email = 2;
+  int64 organization_id = 3;
+  string first_name = 4;
+  string last_name = 5;
+}
+
+// assign roles --  request
+message OrganizationUserAssignRolesRequest {
+  OrganizationUserAssignRolesRequestData data = 1;
+}
+message OrganizationUserAssignRolesRequestData {
+  int64 id = 1;
+  repeated int64 role_ids = 2;
+}
+
+service OrganizationUser {
+  rpc Page(OrganizationUserPageRequest) returns(OrganizationUserPageResponse);
+  rpc Create(OrganizationUserCreateRequest) returns(OrganizationUserCreateResponse);
+  rpc Update(OrganizationUserUpdateRequest) returns(OrganizationUserUpdateResponse);
+  rpc Delete(OrganizationUserDeleteRequest) returns(EmptyResponse);
+  rpc Detail(OrganizationUserDetailRequest) returns(OrganizationUserDetailResponse);
+  rpc SwitchStatus(OrganizationUserUpdateStatusRequest) returns(EmptyResponse);
+  rpc All(EmptyRequest) returns(OrganizationUserAllResponse);
+  rpc SendInvitationEmail(OrganizationUserSendInvitationEmailRequest) returns(EmptyResponse);
+  rpc AcceptInvitation(OrganizationUserAcceptInvitationRequest) returns(UserLoginResponse);
+  rpc AssignRoles(OrganizationUserAssignRolesRequest) returns(EmptyResponse);
+}
+
+// ================= organization user service end =================
