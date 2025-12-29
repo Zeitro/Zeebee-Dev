@@ -10,8 +10,8 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/bo"
 	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -54,12 +54,10 @@ func (l *AcceptInvitationLogic) AcceptInvitation(in *lender.OrganizationUserAcce
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[model.Token, lender.UserLoginResponseData](token)
+	data, err := copierx.Trans[bo.UserJwtTokenBo, lender.UserLoginResponseData](token)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 
-	return &lender.UserLoginResponse{
-		Data: data,
-	}, nil
+	return &lender.UserLoginResponse{Data: data}, nil
 }

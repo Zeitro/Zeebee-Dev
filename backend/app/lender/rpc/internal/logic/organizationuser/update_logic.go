@@ -7,8 +7,8 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/data/bo"
 	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -47,11 +47,11 @@ func (l *UpdateLogic) Update(in *lender.OrganizationUserUpdateRequest) (resp *le
 		Remark:         in.Data.Remark,
 		RoleIds:        in.Data.RoleIds,
 	}
-	result, err := l.baseLogic.OrganizationUserLogic.Update(l.ctx, input)
+	result, err := l.baseLogic.OrganizationUserLogic.UpdateOrganizationUser(l.ctx, input)
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[model.OrganizationUser, lender.OrganizationUserEntity](result, copierx.TimeToRFC3339Str())
+	data, err := copierx.Trans[bo.OrganizationUserBo, lender.OrganizationUserEntity](result, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

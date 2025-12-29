@@ -11,7 +11,8 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/data/bo"
+	"zeebee-backend/domains/zeebee/data/dto"
 )
 
 type UpdateLogic struct {
@@ -36,19 +37,24 @@ func (l *UpdateLogic) Update(in *lender.RoleUpdateRequest) (resp *lender.RoleUpd
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-
-	roleModel, err := copierx.Trans[lender.RoleUpdateRequestData, model.Role](in.Data)
-	if err != nil {
-		return nil, err
-	}
-	roleModel.Type = constants.UserTypeLender
-
-	role, err := l.baseLogic.RoleLogic.Update(l.ctx, in.Data.Id, roleModel)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	data, err := copierx.Trans[model.Role, lender.RoleEntity](role, copierx.TimeToRFC3339Str())
+	input, err := copierx.Trans[lender.RoleUpdateRequestData, dto.RoleUpdateRequestDto](in.Data)
+	if err != nil {
+		return nil, err
+	}
+	input.Type = constants.UserTypeLender
+	input.OrganizationId = claim.OrganizationId
+
+	role, err := l.baseLogic.RoleLogic.Update(l.ctx, in.Data.Id, *input)
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := copierx.Trans[bo.RoleBo, lender.RoleEntity](role, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

@@ -115,22 +115,25 @@ func (l *RoleLogic) Create(ctx context.Context, input dto.RoleCreateRequestDto) 
 }
 
 // Update updates a role
-func (l *RoleLogic) Update(ctx context.Context, id int64, data *model.Role) (role *model.Role, err error) {
-	if err := l.checkRoleName(data.Name); err != nil {
+func (l *RoleLogic) Update(ctx context.Context, id int64, input dto.RoleUpdateRequestDto) (result *bo.RoleBo, err error) {
+	if err := l.checkRoleName(input.Name); err != nil {
 		return nil, err
 	}
 	// First get the existing record
-	result, err := l.repos.RoleRepo.GetRole(ctx, id, data.OrganizationId, data.Type)
+	roleModel, err := l.repos.RoleRepo.GetRole(ctx, id, input.OrganizationId, input.Type)
 	if err != nil {
 		return nil, err
 	}
-	err = copier.CopyWithOption(result, data, copier.Option{DeepCopy: true})
+
+	roleModel, err = copierx.Trans[dto.RoleUpdateRequestDto, model.Role](&input)
+
+	// err = copier.CopyWithOption(result, data, copier.Option{DeepCopy: true})
 	if err != nil {
 		return nil, err
 	}
 
 	// check existed
-	isExisted, err := l.repos.RoleRepo.IsExisted(ctx, result)
+	isExisted, err := l.repos.RoleRepo.IsExisted(ctx, roleModel)
 	if err != nil {
 		return nil, err
 	}
@@ -138,35 +141,35 @@ func (l *RoleLogic) Update(ctx context.Context, id int64, data *model.Role) (rol
 		return nil, errorx.New("Role Already Exists")
 	}
 
-	resourceIds := slice.Map[*model.RoleAndResource, int64](data.RoleAndResources, func(i int, item *model.RoleAndResource) int64 {
+	resourceIds := slice.Map[*model.RoleAndResource, int64](roleModel.RoleAndResources, func(i int, item *model.RoleAndResource) int64 {
 		return item.ResourceId
 	})
 	err = l.repos.RoleRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
 		var resources []*model.Resource
 		var validResourceIds []int64
-		// create role
-		role, innerErr = l.repos.RoleRepo.UpdateOneWithTx(ctx, tx, data)
+		// update role
+		roleModel, innerErr = l.repos.RoleRepo.UpdateOneWithTx(ctx, tx, roleModel)
 		if innerErr != nil {
 			return innerErr
 		}
 
 		// save role and resource relationship
-		resources, innerErr = l.repos.ResourceRepo.GetResourcesWithTx(ctx, tx, resourceIds, data.Type)
+		resources, innerErr = l.repos.ResourceRepo.GetResourcesWithTx(ctx, tx, resourceIds, roleModel.Type)
 		if innerErr != nil {
 			return innerErr
 		}
 		validResourceIds = slice.Map[*model.Resource, int64](resources, func(i int, item *model.Resource) int64 {
 			return item.Id
 		})
-		rolesAndResources := slice.FilterMap[*model.RoleAndResource, *model.RoleAndResource](data.RoleAndResources, func(i int, item *model.RoleAndResource) (*model.RoleAndResource, bool) {
+		rolesAndResources := slice.FilterMap[*model.RoleAndResource, *model.RoleAndResource](roleModel.RoleAndResources, func(i int, item *model.RoleAndResource) (*model.RoleAndResource, bool) {
 			if slice.Contain(validResourceIds, item.ResourceId) {
-				data.RoleAndResources[i].RoleId = role.Id
-				return data.RoleAndResources[i], true
+				roleModel.RoleAndResources[i].RoleId = roleModel.Id
+				return roleModel.RoleAndResources[i], true
 			}
 			return nil, false
 		})
-		oldRelations, innerErr := l.repos.RoleAndResourceRepo.GetRoleRelationsWithTx(ctx, tx, role.Id)
+		oldRelations, innerErr := l.repos.RoleAndResourceRepo.GetRoleRelationsWithTx(ctx, tx, roleModel.Id)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -224,7 +227,8 @@ func (l *RoleLogic) Update(ctx context.Context, id int64, data *model.Role) (rol
 	}
 	// todo update user's permissions
 
-	return role, nil
+	result, err = copierx.Trans[model.Role, bo.RoleBo](roleModel)
+	return result, nil
 }
 
 // GetRole returns a role by id

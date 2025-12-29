@@ -7,7 +7,6 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -41,10 +40,10 @@ func (l *SendInvitationEmailLogic) SendInvitationEmail(in *lender.OrganizationUs
 	if err != nil {
 		return nil, err
 	}
-	input := dto.SendInvitationEmailDto{
-		OrganizationUserId: in.Data.Id,
-		OrganizationId:     claim.OrganizationId,
-		UserType:           constants.UserTypeLender,
+	input := dto.OrganizationUserSendInviteEmailRequestDto{
+		Id:             in.Data.Id,
+		UserType:       claim.UserType,
+		OrganizationId: claim.OrganizationId,
 		EmailConfig: dto.SendInviteUserEmailConfig{
 			HostEmail:         l.svcCtx.Config.EmailConf.Username,
 			TplName:           email_tpl.UserInviteEmail,
@@ -54,7 +53,7 @@ func (l *SendInvitationEmailLogic) SendInvitationEmail(in *lender.OrganizationUs
 		},
 		Operator: claim.Username,
 	}
-	err = l.baseLogic.OrganizationUserLogic.SendInvitationEmail(l.ctx, input)
+	err = l.baseLogic.OrganizationUserLogic.SendInviteEmail(l.ctx, input)
 	if err != nil {
 		return nil, err
 	}

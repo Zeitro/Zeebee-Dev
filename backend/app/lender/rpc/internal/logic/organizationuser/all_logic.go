@@ -3,12 +3,11 @@ package organizationuserlogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -46,19 +45,12 @@ func (l *AllLogic) All(in *lender.EmptyRequest) (resp *lender.OrganizationUserAl
 	if err != nil {
 		return nil, err
 	}
-	data := []*lender.OrganizationUserEntity{}
-	err = copier.CopyWithOption(&data, &results, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
-	})
+	data, err := copierx.Trans[[]*model.OrganizationUser, []*lender.OrganizationUserEntity](&results, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 
 	return &lender.OrganizationUserAllResponse{
-		Data: data,
+		Data: *data,
 	}, nil
 }

@@ -7,7 +7,7 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
-	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/data/bo"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -40,11 +40,11 @@ func (l *DetailLogic) Detail(in *lender.OrganizationUserDetailRequest) (resp *le
 	if err != nil {
 		return nil, err
 	}
-	result, err := l.baseLogic.OrganizationUserLogic.Detail(l.ctx, in.Data.Id, claim.OrganizationId, claim.UserType)
+	result, err := l.baseLogic.OrganizationUserLogic.Detail(l.ctx, in.Data.Id, claim.OrganizationId)
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[model.OrganizationUser, lender.OrganizationUserEntity](result, copierx.TimeToRFC3339Str())
+	data, err := copierx.Trans[bo.OrganizationUserBo, lender.OrganizationUserEntity](result, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

@@ -6,6 +6,7 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/domains/zeebee/constants"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -38,7 +39,8 @@ func (l *SwitchStatusLogic) SwitchStatus(in *lender.OrganizationUserUpdateStatus
 	if err != nil {
 		return nil, err
 	}
-	err = l.baseLogic.OrganizationUserLogic.SwitchStatus(l.ctx, in.Data.Id, in.Data.Status, claim.OrganizationId, claim.UserType)
+	status := constants.OrganizationUserStatus(in.Data.Status)
+	err = l.baseLogic.OrganizationUserLogic.SwitchStatus(l.ctx, in.Data.Id, claim.OrganizationId, status, claim.UserType)
 	if err != nil {
 		return nil, err
 	}
