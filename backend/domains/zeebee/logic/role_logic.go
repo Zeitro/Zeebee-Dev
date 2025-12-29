@@ -17,10 +17,10 @@ import (
 	"zeebee-backend/domains/zeebee/repo"
 )
 
-type Role struct {
-	model.Role
-	Resources []*ResourceWithPivot
-}
+// type Role struct {
+// 	model.Role
+// 	Resources []*ResourceWithPivot
+// }
 
 type RoleLogic struct {
 	repos *repo.AllRepos
@@ -109,9 +109,9 @@ func (l *RoleLogic) Create(ctx context.Context, input dto.RoleCreateRequestDto) 
 		return nil, err
 	}
 
-	result = l.transToBo(role)
+	result, err = copierx.Trans[model.Role, bo.RoleBo](role)
 
-	return result, nil
+	return result, err
 }
 
 // Update updates a role
@@ -228,26 +228,20 @@ func (l *RoleLogic) Update(ctx context.Context, id int64, input dto.RoleUpdateRe
 	// todo update user's permissions
 
 	result, err = copierx.Trans[model.Role, bo.RoleBo](roleModel)
-	return result, nil
+	return result, err
 }
 
 // GetRole returns a role by id
-func (l *RoleLogic) GetRole(ctx context.Context, id int64, organizationId int64, roleType constants.UserType) (result *Role, err error) {
+func (l *RoleLogic) GetRole(ctx context.Context, id int64, organizationId int64, roleType constants.UserType) (result *bo.RoleBo, err error) {
 	role, err := l.repos.RoleRepo.GetRole(ctx, id, organizationId, roleType)
 	if err != nil {
 		return nil, err
 	}
-	result = &Role{}
-	err = copier.CopyWithOption(result, role, copier.Option{
-		DeepCopy: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
-	})
+	result, err = copierx.Trans[model.Role, bo.RoleBo](role)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
-	slice.ForEach(result.Resources, func(index int, item *ResourceWithPivot) {
+	slice.ForEach(result.Resources, func(index int, item *bo.ResourceBo) {
 		relation, err := l.repos.RoleAndResourceRepo.GetRelation(ctx, role.Id, item.Id)
 		if err != nil {
 			return
@@ -305,34 +299,6 @@ func (l *RoleLogic) All(ctx context.Context, organizationId int64, roleType cons
 	if err != nil {
 		return nil, err
 	}
-	result = l.batchTransToBo(roles)
-	return result, err
-}
-
-// transToBo
-func (l *RoleLogic) transToBo(src *model.Role) (result *bo.RoleBo) {
-	if src == nil {
-		return nil
-	}
-	result = &bo.RoleBo{}
-	_ = copier.CopyWithOption(result, src, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
-	})
-	return result
-}
-
-// batchTransToBo batch trans to bo
-func (l *RoleLogic) batchTransToBo(src []*model.Role) (result []*bo.RoleBo) {
-	result = make([]*bo.RoleBo, 0, len(src))
-	if len(src) == 0 {
-		return result
-	}
-	for i := range src {
-		result = append(result, l.transToBo(src[i]))
-	}
-	return result
+	results, err := copierx.Trans[[]*model.Role, []*bo.RoleBo](&roles)
+	return *results, err
 }
