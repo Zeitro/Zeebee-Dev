@@ -3,15 +3,12 @@ import { Menu } from 'antd';
 import React, { useMemo, useState } from 'react';
 import { useGlobalStore } from '@/store/global';
 import styles from './index.module.scss';
-import { navRouter } from '@config/routes';
 import { generateMenuBar } from '@config/common';
-import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import { RightCircleTwoTone, LeftCircleTwoTone } from '@ant-design/icons';
 import { useUserStore } from '@/store/user';
-import { sidebarIcon } from './icon';
 import UserInfo from './UserInfo';
-import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
+import { useDeferredSyncEffect, useElementSize } from '@repo/shared-methods/hooks';
 import { findItem } from '@repo/shared-methods/utils';
 
 const homePathname = '/';
@@ -19,7 +16,13 @@ const initTwoToneColor = ['var(--base-label)', 'var(--gray-light)'];
 /**
  * 侧边栏组件
  */
-const SidebarDom = () => {
+export const CommonSidebar = ({
+	routerList,
+	personalList,
+	handleClickPersonalItem,
+	sidebarIcon,
+	renderLogo,
+}) => {
 	const router = useRouter();
 	const pathname = usePathname();
 	const { userInfo } = useUserStore();
@@ -27,24 +30,26 @@ const SidebarDom = () => {
 	const [selectedKey, setSelectedKey] = useState('');
 	const [openKey, setOpenKey] = useState('');
 	const [twoToneColor, setTwoToneColor] = useState(initTwoToneColor);
+	const [rect, rectDom] = useElementSize();
+
 	// 获取当前路由的配置
 	const config = useMemo(
 		() =>
 			findItem({
-				list: navRouter,
+				list: routerList,
 				key: pathname,
 				keyName: 'path',
 				childName: 'router',
 				isPushParent: true,
 			}),
-		[pathname],
+		[pathname, routerList],
 	);
 	const items = useMemo(() => {
-		const arr = generateMenuBar([...navRouter], sidebarIcon, sidebarCollapsed).filter(
+		const arr = generateMenuBar([...routerList], sidebarIcon, sidebarCollapsed).filter(
 			(i) => i.key !== '/',
 		);
 		return arr;
-	}, [sidebarCollapsed]);
+	}, [sidebarCollapsed, routerList, sidebarIcon]);
 	const handleSelect = ({ key }) => {
 		// if (selectedKey === key) return;
 		router.push(key);
@@ -83,6 +88,7 @@ const SidebarDom = () => {
 				'relative shrink-0 h-full flex flex-col border-r border-base-border',
 				styles.sidebar,
 			].join(' ')}
+			ref={rectDom}
 		>
 			<div
 				className={[
@@ -91,7 +97,7 @@ const SidebarDom = () => {
 				].join(' ')}
 				onClick={() => handleSelect({ key: homePathname })}
 			>
-				<Image src="/images/logo.svg" width={95} height={30} alt="ZeeBee Logo" />
+				{renderLogo?.({ rect })}
 			</div>
 			<Menu
 				mode="inline"
@@ -111,7 +117,12 @@ const SidebarDom = () => {
 					return customRoot;
 				}}
 			/>
-			<UserInfo userInfo={userInfo} sidebarCollapsed={sidebarCollapsed} />
+			<UserInfo
+				userInfo={userInfo}
+				sidebarCollapsed={sidebarCollapsed}
+				personalList={personalList}
+				handleClickPersonalItem={handleClickPersonalItem}
+			/>
 			<div
 				className="absolute right-[-8px] top-[18px] cursor-pointer"
 				onClick={handleExpand}
@@ -129,4 +140,4 @@ const SidebarDom = () => {
 		''
 	);
 };
-export default SidebarDom;
+export default CommonSidebar;

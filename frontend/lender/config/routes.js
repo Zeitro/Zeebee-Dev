@@ -23,6 +23,27 @@ export const navRouter = [
 			},
 		],
 	},
+	{
+		path: '/setting',
+		title: 'Setting',
+		icon: 'setting',
+		isPageNotFound: true, // 只是用于侧边栏显示,并无此页面
+		router: [
+			{
+				path: '/setting/user',
+				title: 'User',
+			},
+			{
+				path: '/setting/system',
+				title: 'System',
+			},
+			// {
+			// 	path: '/setting/role',
+			// 	title: 'Setting ( Role )',
+			// 	menuTitle: 'Role',
+			// },
+		],
+	},
 ];
 
 export const noTokenRouter = [
