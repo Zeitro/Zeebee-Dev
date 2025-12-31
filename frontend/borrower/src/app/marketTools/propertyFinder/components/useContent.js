@@ -78,7 +78,7 @@ const useContent = () => {
 	const getList = async () => {
 		try {
 			setLoading(true);
-			const response = await request('/los/openhousesearch', {
+			const response = await request('https://lo.zeitro.us/los/openhousesearch', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',

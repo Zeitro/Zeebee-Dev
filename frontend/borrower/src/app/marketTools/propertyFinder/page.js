@@ -1,12 +1,8 @@
 'use client';
-import GeoLocationInput from '@/components/GeoLocationInput/index';
 import { DownOutlined, SearchOutlined } from '@ant-design/icons';
-import { FilterTable, NewTable, NoData } from '@repo/shared-methods';
-import { formatAmount, getPagination } from '@repo/shared-methods/utils';
-import { Button, Divider, InputNumber, Select, Tooltip } from 'antd';
-import { use, useEffect, useRef, useState } from 'react';
-import Agent, { getCopyContent } from './components/Agent';
-import { createRequest } from '@repo/shared-methods/utils';
+import { NewTable, NoData, GeoLocationInput } from '@repo/shared-methods';
+import { Button, InputNumber, Select } from 'antd';
+import { useRef, useState } from 'react';
 import useContent from './components/useContent';
 import Income from './components/Income';
 // 根据输入地址，查找周围已售房屋估值
@@ -28,7 +24,6 @@ const PropertyFinder = () => {
 		handleSearch,
 		loading,
 		list,
-		dataSource,
 		radius,
 		setRadius,
 		setLocation,
