@@ -33,10 +33,10 @@ export const navRouter = [
 				path: '/setting/user',
 				title: 'User',
 			},
-			{
-				path: '/setting/system',
-				title: 'System',
-			},
+			// {
+			// 	path: '/setting/system',
+			// 	title: 'System',
+			// },
 			// {
 			// 	path: '/setting/role',
 			// 	title: 'Setting ( Role )',
@@ -74,6 +74,12 @@ export const noTokenRouter = [
 			{
 				path: '/login/verifyEmail',
 				title: 'Verify Email',
+				hideMenu: true,
+				hideCrumbs: true,
+			},
+			{
+				path: '/login/joinOrganization',
+				title: 'Join Organization',
 				hideMenu: true,
 				hideCrumbs: true,
 			},
