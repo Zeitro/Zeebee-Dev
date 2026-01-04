@@ -388,7 +388,7 @@ func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, us
 	})
 
 	organizationUser, ok := slice.FindBy(user.OrganizationUsers, func(index int, item *model.OrganizationUser) bool {
-		return item.OrganizationId == organizationId
+		return item.OrganizationId == organizationId && item.IsDel == 0
 	})
 	if !ok {
 		err = errorx.New("Organization User Is Not Found")
