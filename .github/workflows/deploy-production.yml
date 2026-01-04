@@ -94,10 +94,11 @@ jobs:
           images=$(docker images --filter "reference=${{ env.IMAGE_NAME }}:*" --format "{{.Repository}}:{{.Tag}}")
           count=$(echo "$images" | wc -l)
           if [ "$count" -gt 10 ]; then
-            echo "Found $count images. Deleting the oldest 10..."
-            echo "$images" | tail -n 10 | xargs -r docker rmi
+            delete_count=$(expr $count - 10)
+            echo "Found $count images. Deleting the oldest $delete_count..."
+            echo "$images" | tail -n $delete_count | xargs -r docker rmi
           else
-            echo "Only $count images found (≤5). Skipping deletion."
+            echo "Only $count images found (≤10). Skipping deletion."
           fi
 
       - name: Remove dangling images

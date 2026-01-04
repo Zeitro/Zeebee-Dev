@@ -43,7 +43,7 @@ func (l *RegisterLogic) Register(in *lender.UserRegisterRequest) (resp *lender.U
 	}()
 	// check if user already exists
 	var existedUser *model.User
-	existedUser, _ = l.svcCtx.UserRepo.GetLenderUserByEmail(l.ctx, in.Data.Email)
+	existedUser, _ = l.svcCtx.UserRepo.GetUserByEmail(l.ctx, in.Data.Email, constants.UserTypeLender)
 
 	if existedUser != nil && existedUser.Id > 0 {
 		return nil, errorx.New("User Already Exists")
