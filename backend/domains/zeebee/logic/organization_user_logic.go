@@ -395,6 +395,7 @@ func (l *OrganizationUserLogic) UpdateOrganizationUser(ctx context.Context, reqD
 	if err != nil {
 		return nil, err
 	}
+	user := organizationUser.User
 	// saveModel := &model.OrganizationUser{}
 	err = copier.CopyWithOption(organizationUser, reqDto, copier.Option{
 		DeepCopy:      true,
@@ -452,6 +453,7 @@ func (l *OrganizationUserLogic) UpdateOrganizationUser(ctx context.Context, reqD
 	}
 	// todo update user's permissions
 
+	organizationUser.User = user
 	result = l.transToBo(organizationUser)
 
 	return result, nil
@@ -664,17 +666,21 @@ func (l *OrganizationUserLogic) Delete(ctx context.Context, id int64, organizati
 
 // transToBo
 func (l *OrganizationUserLogic) transToBo(src *model.OrganizationUser) (result *bo.OrganizationUserBo) {
-	if src == nil {
+	result, err := copierx.Trans[model.OrganizationUser, bo.OrganizationUserBo](src)
+	if err != nil {
 		return nil
 	}
-	result = &bo.OrganizationUserBo{}
-	_ = copier.CopyWithOption(result, src, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
-	})
+	// if src == nil {
+	// 	return nil
+	// }
+	// result = &bo.OrganizationUserBo{}
+	// _ = copier.CopyWithOption(result, src, copier.Option{
+	// 	DeepCopy:      true,
+	// 	CaseSensitive: true,
+	// 	Converters: []copier.TypeConverter{
+	// 		copierx.TimeToRFC3339Str(),
+	// 	},
+	// })
 	if src.User != nil {
 		result.Email = src.User.Email
 	}
