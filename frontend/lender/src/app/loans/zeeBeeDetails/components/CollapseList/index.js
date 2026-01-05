@@ -1,61 +1,70 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Checkbox, Collapse } from 'antd';
 import styles from './index.module.scss';
 const CollapseList = ({ list = [], setList, hideCollapsible, isHideCheck = false }) => {
 	const [items, setItems] = useState([]);
 
-	const changeList = (checked, index, childIndex) => {
-		if (typeof childIndex === 'number') {
-			list[index].children[childIndex].checked = checked;
-			const allCheck = list[index].children.every((item) => item.checked);
-			list[index].checked = allCheck;
-		} else {
-			list[index].checked = checked;
-		}
-		setList([...list]);
-	};
-
-	const formatList = (list) => {
-		const newList = list?.map?.((item, i) => {
-			if (item.children) {
-				item.children = (
-					<div>
-						{item.children.map?.((child, index) => {
-							return (
-								<div
-									key={index}
-									className="flex justify-between items-center w-full"
-								>
-									<div>{child.label}</div>
-									{!isHideCheck && (
-										<Checkbox
-											checked={child.checked}
-											onChange={(e) => changeList(e.target.checked, i, index)}
-										/>
-									)}
-								</div>
-							);
-						})}
-					</div>
-				);
+	const changeList = useCallback(
+		(checked, index, childIndex) => {
+			let newList = [...list];
+			if (typeof childIndex === 'number') {
+				newList[index].children[childIndex].checked = checked;
+				const allCheck = newList[index].children.every((item) => item.checked);
+				newList[index].checked = allCheck;
 			} else {
-				item.collapsible = 'icon';
+				newList[index].checked = checked;
 			}
-			item.extra = !isHideCheck ? (
-				<Checkbox
-					checked={item.checked}
-					onChange={(e) => changeList(e.target.checked, i)}
-				/>
-			) : (
-				''
-			);
-			return item;
-		});
-		return newList;
-	};
+			setList([...newList]);
+		},
+		[list, setList],
+	);
+
+	const formatList = useCallback(
+		(list) => {
+			const newList = list?.map?.((item, i) => {
+				if (item.children) {
+					item.children = (
+						<div>
+							{item.children.map?.((child, index) => {
+								return (
+									<div
+										key={index}
+										className="flex justify-between items-center w-full"
+									>
+										<div>{child.label}</div>
+										{!isHideCheck && (
+											<Checkbox
+												checked={child.checked}
+												onChange={(e) =>
+													changeList(e.target.checked, i, index)
+												}
+											/>
+										)}
+									</div>
+								);
+							})}
+						</div>
+					);
+				} else {
+					item.collapsible = 'icon';
+				}
+				item.extra = !isHideCheck ? (
+					<Checkbox
+						checked={item.checked}
+						onChange={(e) => changeList(e.target.checked, i)}
+					/>
+				) : (
+					''
+				);
+				return item;
+			});
+			return newList;
+		},
+		[changeList, isHideCheck],
+	);
 	useEffect(() => {
 		setItems(formatList(list));
-	}, [list]);
+	}, [formatList, list]);
 	return (
 		<Collapse
 			accordion

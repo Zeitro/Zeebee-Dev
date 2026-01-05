@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Button, Form, Input } from 'antd';
 import { useUserStore } from '@/store/user';
-import { emailRegex } from '@/lib/format';
+import { emailRegex } from '@repo/shared-methods/utils';
 import { MailOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 const SendResetPasswordEmail = ({ form, setPageType }) => {

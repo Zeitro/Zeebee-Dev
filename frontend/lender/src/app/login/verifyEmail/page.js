@@ -4,7 +4,7 @@ import { Button } from 'antd';
 import { useUserStore } from '@/store/user';
 import { CheckCircleTwoTone } from '@ant-design/icons';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { setCookie } from '@/lib/cookie';
+import { setCookie } from '@repo/shared-methods/utils';
 import { throttle } from 'lodash';
 
 // 注册成功后，邮箱打开此页面，触发验证并登录

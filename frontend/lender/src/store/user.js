@@ -1,12 +1,13 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { createRequest } from '@/lib/fetch';
+import { createRequest } from '@repo/shared-methods/utils';
 const { request } = createRequest();
 export const useUserStore = create(
 	persist(
 		(set, get, api) => ({
 			userInfo: {},
 			access: {},
+			organization: {},
 			login: async (values, config = {}) => {
 				const access = await request('/user/login', {
 					method: 'POST',
@@ -16,7 +17,9 @@ export const useUserStore = create(
 				set({ access });
 				return access;
 			},
-
+			updateAccess: (access) => {
+				set({ access });
+			},
 			clearUserInfo: () => {
 				api.persist.clearStorage(); // 清除持久化数据
 				set({ access: null, userInfo: null }); // 重置内存状态
@@ -68,6 +71,25 @@ export const useUserStore = create(
 				});
 				set({ access });
 				return access;
+			},
+			changePassword: async (body) => {
+				// 修改密码
+				await request('/user/change_password', {
+					method: 'POST',
+					body,
+				});
+				return true;
+			},
+			getOrganization: async () => {
+				// 获取组织信息
+				const organization = await request('/organization/info', {
+					method: 'GET',
+				});
+				set({ organization });
+				return organization;
+			},
+			setOrganization: (organization) => {
+				set({ organization });
 			},
 		}),
 		{

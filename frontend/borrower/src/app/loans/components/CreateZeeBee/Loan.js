@@ -1,22 +1,26 @@
 import React, { useEffect } from 'react';
 import styles from './index.module.scss';
 import { Row, Col, Form, Radio, Input, InputNumber } from 'antd';
-import CommonFormDate from '@/components/CommonDate';
-import InputNumAmount from '@/components/InputNumAmount';
-import { yesNoOptions } from '@/enum/common';
-import { useGetOptions } from '@/hooks/useGetOptions';
-import { layoutCol, titleCol } from '@/enum/common';
-import { maxTerm, maxAmount } from '@/lib/format';
+import { InputNumAmount, CommonFormDate } from '@repo/shared-methods';
+import { useGetOptions } from '@repo/shared-methods/hooks';
+import { layoutCol, titleCol, yesNoOptions } from '@/enum/common';
+import { maxTerm, maxAmount } from '@repo/shared-methods/utils';
 
 const LoanDetail = ({ gutter = 24, form }) => {
 	const loanPurpose = Form.useWatch('loan_purpose', form);
 	const loanType = Form.useWatch('loan_type', form) || 'Rental';
 	const total_amount = Form.useWatch('total_amount', form) || maxAmount;
 
-	const est_yearly_rental_income = Form.useWatch('est_yearly_rental_income', form);
-	const yearly_liability_expense = Form.useWatch('yearly_liability_expense', form);
-	const has_assignment_fee = Form.useWatch('has_assignment_fee', form);
-	const has_subordinate_debt = Form.useWatch('has_subordinate_debt', form);
+	const est_yearly_rental_income_amount = Form.useWatch(
+		['loan_property', 'est_yearly_rental_income_amount'],
+		form,
+	);
+	const yearly_liability_expense_amount = Form.useWatch(
+		['loan_property', 'yearly_liability_expense_amount'],
+		form,
+	);
+	const has_assignment_fee = Form.useWatch(['loan_property', 'has_assignment_fee'], form);
+	const has_subordinate_debt = Form.useWatch(['loan_property', 'has_subordinate_debt'], form);
 	const isPurchase = loanPurpose === 'Purchase';
 
 	const { getSelectFormDom } = useGetOptions([
@@ -31,11 +35,11 @@ const LoanDetail = ({ gutter = 24, form }) => {
 	]);
 
 	useEffect(() => {
-		if (est_yearly_rental_income && yearly_liability_expense) {
-			const num = est_yearly_rental_income / yearly_liability_expense;
+		if (est_yearly_rental_income_amount && yearly_liability_expense_amount) {
+			const num = est_yearly_rental_income_amount / yearly_liability_expense_amount;
 			form.setFieldsValue({ dscr: Math.round(num * 100) / 100 });
 		}
-	}, [est_yearly_rental_income, yearly_liability_expense]);
+	}, [est_yearly_rental_income_amount, form, yearly_liability_expense_amount]);
 	return (
 		<Row className={styles.createZeeBee} gutter={gutter}>
 			<Col {...titleCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">
@@ -44,7 +48,7 @@ const LoanDetail = ({ gutter = 24, form }) => {
 			<Col {...layoutCol}>
 				<Form.Item
 					label="Purchase price"
-					name="purchase_amount"
+					name={['loan_property', 'purchase_amount']}
 					rules={[{ required: true, message: 'Please select purchase price!' }]}
 				>
 					<InputNumAmount placeholder="Enter purchase price" />
@@ -55,7 +59,7 @@ const LoanDetail = ({ gutter = 24, form }) => {
 					<Col {...layoutCol} md={12}>
 						<Form.Item
 							label="Assignment fee"
-							name="has_assignment_fee"
+							name={['loan_property', 'has_assignment_fee']}
 							rules={[
 								{
 									required: true,
@@ -74,7 +78,7 @@ const LoanDetail = ({ gutter = 24, form }) => {
 						<Col {...layoutCol} md={12}>
 							<Form.Item
 								label="Assignment fee"
-								name="assignment_fee_amount"
+								name={['loan_property', 'assignment_fee_amount']}
 								rules={[
 									{
 										required: true,
@@ -93,7 +97,7 @@ const LoanDetail = ({ gutter = 24, form }) => {
 				{isPurchase ? (
 					<Form.Item
 						label="Scheduled close of escrow date" // 预定房产交易日
-						name="scheduled_close_escrow_date"
+						name={['loan_property', 'scheduled_close_escrow_date']}
 						rules={[
 							{
 								required: true,
@@ -106,7 +110,7 @@ const LoanDetail = ({ gutter = 24, form }) => {
 				) : (
 					<Form.Item
 						label="Date of purchase"
-						name="purchase_date"
+						name={['loan_property', 'purchase_date']}
 						rules={[
 							{
 								required: true,
@@ -180,7 +184,7 @@ const LoanDetail = ({ gutter = 24, form }) => {
 				<Col {...layoutCol}>
 					<Form.Item
 						label="Estimated Current Value (LTV)" // 预计当前估值
-						name="est_property_value_amount"
+						name={['loan_property', 'est_property_value_amount']}
 						rules={[
 							{
 								required: true,
@@ -195,7 +199,7 @@ const LoanDetail = ({ gutter = 24, form }) => {
 			<Col {...layoutCol}>
 				<Form.Item
 					label="Estimated after repair value (ARV)" // 修复后预计估值
-					name="arv"
+					name={['loan_property', 'arv']}
 					rules={[
 						{
 							required: true,
@@ -228,7 +232,7 @@ const LoanDetail = ({ gutter = 24, form }) => {
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Existing Lender" // 现有贷款方，出借人（房子抵押贷款前购买时的出借人）
-							name="existing_lender_company"
+							name={['loan_property', 'existing_lender_company']}
 							rules={[{ required: true, message: 'Please enter existing Lender!' }]}
 						>
 							<Input style={{ width: '100%' }} placeholder="Enter existing Lender" />
@@ -237,7 +241,7 @@ const LoanDetail = ({ gutter = 24, form }) => {
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Existing loan rate" // 房子抵押贷款前购买时的贷款利率
-							name="existing_rate"
+							name={['existing_rate', 'existing_rate']}
 							rules={[
 								{ required: true, message: 'Please enter existing loan rate!' },
 							]}
@@ -255,7 +259,7 @@ const LoanDetail = ({ gutter = 24, form }) => {
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Existing loan Maturity date" // 现有贷款到期日
-							name="existing_maturity_date"
+							name={['loan_property', 'existing_maturity_date']}
 							rules={[{ required: true, message: 'Please select date!' }]}
 						>
 							<CommonFormDate placeholder="Enter existing loan maturity date" />
@@ -264,7 +268,7 @@ const LoanDetail = ({ gutter = 24, form }) => {
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Subordinate debt"
-							name="has_subordinate_debt"
+							name={['loan_property', 'has_subordinate_debt']}
 							rules={[
 								{
 									required: true,
@@ -279,7 +283,7 @@ const LoanDetail = ({ gutter = 24, form }) => {
 						<Col {...layoutCol}>
 							<Form.Item
 								label="Subordinate debt"
-								name="subordinate_debt_amount"
+								name={['loan_property', 'subordinate_debt_amount']}
 								rules={[
 									{
 										required: true,
@@ -296,7 +300,7 @@ const LoanDetail = ({ gutter = 24, form }) => {
 			<Col {...layoutCol}>
 				<Form.Item
 					label="Liquidity" // 流动资金
-					name="liquidity_amount"
+					name={['loan_property', 'liquidity_amount']}
 					rules={[
 						{
 							required: true,
@@ -322,7 +326,7 @@ const LoanDetail = ({ gutter = 24, form }) => {
 				<Col {...layoutCol}>
 					<Form.Item
 						label="Mid construction" // 中建
-						name="mid_construction"
+						name={['loan_property', 'mid_construction']}
 						rules={[
 							{
 								required: true,
@@ -342,7 +346,7 @@ const LoanDetail = ({ gutter = 24, form }) => {
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Original budget" // 最初预算
-							name={['budget', 'original_budget']}
+							name={['loan_property', 'budget', 'original_budget']}
 							rules={[
 								{
 									required: true,
@@ -356,7 +360,7 @@ const LoanDetail = ({ gutter = 24, form }) => {
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Remaining budget" // 剩余预算
-							name={['budget', 'remaining_budget']}
+							name={['loan_property', 'budget', 'remaining_budget']}
 							rules={[
 								{
 									required: true,
@@ -370,7 +374,7 @@ const LoanDetail = ({ gutter = 24, form }) => {
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Cost spent to date" // 截至目前所用花费
-							name={['budget', 'cost_spent_to_date_amount']}
+							name={['loan_property', 'budget', 'cost_spent_to_date_amount']}
 							rules={[
 								{
 									required: true,
@@ -391,7 +395,7 @@ const LoanDetail = ({ gutter = 24, form }) => {
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Estimated net yearly rental income" // 预计年租金净收入
-							name="est_yearly_rental_income"
+							name={['loan_property', 'est_yearly_rental_income_amount']}
 							rules={[
 								{
 									required: true,
@@ -405,7 +409,7 @@ const LoanDetail = ({ gutter = 24, form }) => {
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Yearly liability expenses" // 年度负债支出
-							name="yearly_liability_expense"
+							name={['loan_property', 'yearly_liability_expense_amount']}
 							rules={[
 								{
 									required: true,
@@ -419,7 +423,7 @@ const LoanDetail = ({ gutter = 24, form }) => {
 					<Col {...layoutCol}>
 						<Form.Item
 							label="DSCR" // 债务覆盖率，衡量企业偿债能力的关键指标
-							name="dscr"
+							name={['loan_property', 'dscr']}
 							rules={[{ required: true, message: 'Please enter DSCR!' }]}
 						>
 							<InputNumber
@@ -463,7 +467,7 @@ const LoanDetail = ({ gutter = 24, form }) => {
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Delayed financing" // 延期融资
-							name="has_delayed_financing"
+							name={['loan_property', 'has_delayed_financing']}
 							rules={[
 								{
 									required: true,
@@ -477,7 +481,7 @@ const LoanDetail = ({ gutter = 24, form }) => {
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Collateralized/Blanket" // 抵押/保函
-							name="has_collateralized_blanket"
+							name={['loan_property', 'has_collateralized_blanket']}
 							rules={[
 								{
 									required: true,
@@ -491,7 +495,7 @@ const LoanDetail = ({ gutter = 24, form }) => {
 					<Col {...layoutCol}>
 						<Form.Item
 							label="Short term rental" // 短期租赁
-							name="has_short_term_rental"
+							name={['loan_property', 'has_short_term_rental']}
 							rules={[
 								{
 									required: true,

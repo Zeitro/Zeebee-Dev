@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import NewModal from '@/components/NewModal';
+import { NewModal } from '@repo/shared-methods';
 import { Form, Input, message } from 'antd';
-import { createRequest } from '@/lib/fetch';
-import eventBus from '@/lib/bus';
+import { eventBus, createRequest } from '@repo/shared-methods/utils';
 const { TextArea } = Input;
 const EditCommentModal = ({ open, setOpen, record = {} }) => {
 	const [form] = Form.useForm();
