@@ -35,7 +35,7 @@ func (l *GetOptLogic) GetOpt(in *borrower.OptionRequest) (resp *borrower.OptionR
 		}
 	}()
 	resp = &borrower.OptionResponse{
-		Data: []*borrower.OptionEntry{},
+		Data: []*borrower.OptionEntity{},
 	}
 	opts := enums.Get(in.Data.Name)
 	err = copier.Copy(&resp.Data, &opts)

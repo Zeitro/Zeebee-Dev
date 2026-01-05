@@ -1,0 +1,51 @@
+@startuml Organization Email Configuration and Authorization Flow Chart
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontSize 12
+skinparam packageStyle rectangle
+
+title Organization Email Configuration and Authorization Business Process
+
+start
+:User accesses email configuration page;
+
+if (Configuration exists?) then (Yes)
+  :Get current configuration;
+  :Display existing email and policy;
+else (No)
+  :Display blank configuration form;
+endif
+
+:Setting email and authorization strategy;
+
+if (Select authorization policy?) then (Organization Policy)
+  :Set as organization unified email;
+  :Subsequent emails sent using organization email;
+else (Personal Policy)
+  :Subsequent emails sent using user's own email;
+endif
+
+if (Policy changed?) then (Yes)
+  :Delete previous authorization email authorization records;
+  :Update configuration;
+else (No)
+  if (Email address changed?) then (Yes)
+    if (Current policy is organization policy?) then (Yes)
+      :Change authorization status to pending verification;
+      :Update email address;
+    else (No)
+    endif
+  else (No)
+    :Save configuration;
+  endif
+endif
+
+:Generate verification link;
+:Redirect to gmail/outlook email verification page;
+:User completes email authorization;
+:Get authorization code;
+:Get user information and token;
+:Save authorization information;
+
+stop
+@enduml

@@ -6,7 +6,7 @@ info(
     version: "v1"
 )
 
-type FileEntry {
+type FileEntity {
     Id int64 `json:"id"`
     EntityType string `json:"entity_type"`
     EntityId int64 `json:"entity_id"`
@@ -14,11 +14,3 @@ type FileEntry {
     CreatedAt string `json:"created_at"`
     UpdatedAt string `json:"updated_at"`
 }
-
-    //type FileEditEntry {
-    //    Id int64 `json:"id,optional"`
-    //    FileType string `json:"file_type,optional" validate:"required,oneof=Identification Income Property Assets Credit Miscellaneous InternalDocument"`
-    //    BizType string `json:"biz_type,optional"`
-    //    RefId int64 `json:"ref_id,optional"`
-    //    File string `json:"file,optional" validate:"required,url"`
-    //}

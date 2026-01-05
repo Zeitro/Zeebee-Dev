@@ -3,15 +3,12 @@ package commonlogic
 import (
 	"context"
 
-	"github.com/pkg/errors"
-
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/uuid"
 
 	"github.com/zeromicro/go-zero/core/logx"
-
-	"zeebee-backend/common/errorx"
 )
 
 type GetUuidLogic struct {
@@ -36,7 +33,7 @@ func (l *GetUuidLogic) GetUuid(in *borrower.EmptyRequest) (resp *borrower.GetUui
 	}()
 	uid, err := uuid.GetSonyflakeIDString()
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 
 	return &borrower.GetUuidResponse{

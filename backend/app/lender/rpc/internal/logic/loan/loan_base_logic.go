@@ -7,10 +7,10 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
 
-	"zeebee-backend/app/lender/rpc/internal/repo/model"
 	"zeebee-backend/app/lender/rpc/internal/svc"
-	"zeebee-backend/common/constants"
-	"zeebee-backend/common/types"
+	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/model"
 )
 
 type LoanBaseLogic struct {
@@ -28,27 +28,28 @@ func NewLoanBaseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoanBase
 }
 
 // get lender loan
-func (l *LoanBaseLogic) GetLenderLoan(loanId int64, lenderCompanyId int64, preloads []string) (loan *model.Loan, err error) {
+func (l *LoanBaseLogic) GetLenderLoan(loanId int64, lenderOrganizationId int64, preloads []string) (loan *model.Loan, err error) {
 	loan, err = l.svcCtx.LoanRepo.FindOneWithPreloadById(l.ctx, loanId, preloads)
 	if err != nil {
 		return nil, err
 	}
-	if loan.LenderCompanyId != lenderCompanyId {
-		return nil, errors.WithStack(errors.New("invalid lender company"))
+	if loan.LenderOrganizationId != lenderOrganizationId {
+		return nil, errorx.New("Invalid Lender Organization")
 	}
 
-	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreApproval {
-		return nil, errors.WithStack(errors.New("invalid loan source"))
+	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreapproval {
+		return nil, errorx.New("Invalid Loan Source")
 	}
 
 	return
 }
 
 // CreateLoanOperationLog creates a loan operation log record
-func (l *LoanBaseLogic) CreateLoanOperationLog(tx *gorm.DB, loanId, operatorId int64, from, to types.LoanOperationStatus, action constants.LoanOperationAction, metadata *types.LoanOperationMetadata) error {
-	operator, err := l.svcCtx.LenderEmployeeRepo.FindOneByIdWithTx(l.ctx, tx, operatorId)
+func (l *LoanBaseLogic) CreateLoanOperationLog(tx *gorm.DB, loanId, operatorId int64, from, to model.LoanOperationStatus, action constants.LoanOperationAction, metadata *model.LoanOperationMetadata) error {
+	// operator, err := l.svcCtx.UserRepo.FindOneByIdWithTx(l.ctx, tx, operatorId)
+	operator, err := l.svcCtx.OrganizationUserRepo.FindOneByIdWithTx(l.ctx, tx, operatorId)
 	if err != nil {
-		return errors.Wrap(err, "failed to get operator")
+		return errors.Wrap(err, "Failed To Get Operator")
 	}
 
 	operatorName := ""
@@ -68,7 +69,7 @@ func (l *LoanBaseLogic) CreateLoanOperationLog(tx *gorm.DB, loanId, operatorId i
 	}
 	_, err = l.svcCtx.LoanOperationRepo.CreateWithTx(l.ctx, tx, operation, false)
 	if err != nil {
-		return errors.Wrap(err, "failed to create operation log")
+		return errors.Wrap(err, "Failed To Create Operation Log")
 	}
 
 	return nil
@@ -102,7 +103,7 @@ func (l *LoanBaseLogic) GetNextPendingStatus(currentStatus constants.LoanPending
 
 	trans, ok := loanPendingStatusTransMap[currentStatus]
 	if !ok {
-		return constants.LoanPendingStatusNone, errors.Errorf("Invalid current status %v", currentStatus)
+		return constants.LoanPendingStatusNone, errorx.Errorf("Invalid Current Status %v", currentStatus)
 	}
 	switch action {
 	case constants.LoanOperationActionApprove:
@@ -111,13 +112,13 @@ func (l *LoanBaseLogic) GetNextPendingStatus(currentStatus constants.LoanPending
 		nextStatus = trans.rejectTarget
 	default:
 		nextStatus = constants.LoanPendingStatusNone
-		err = errors.Errorf("Invalid action %v", action)
+		err = errorx.Errorf("Invalid Action %v", action)
 	}
 	if err != nil {
 		return constants.LoanPendingStatusNone, err
 	}
 	if currentStatus != constants.LoanPendingStatusClosing && nextStatus == constants.LoanPendingStatusNone {
-		return constants.LoanPendingStatusNone, errors.Errorf("Invalid action %v for current status %v", action, currentStatus)
+		return constants.LoanPendingStatusNone, errorx.Errorf("Invalid Action %v For Current Status %v", action, currentStatus)
 	}
 
 	return nextStatus, err

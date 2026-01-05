@@ -8,7 +8,7 @@ info(
 
 import "file.api"
 
-type LoanDocumentEntry {
+type LoanDocumentEntity {
     Id int64 `json:"id"`
     LoanId int64 `json:"loan_id"`
     Category string `json:"category"`
@@ -19,10 +19,10 @@ type LoanDocumentEntry {
     CreatedAt string `json:"created_at"`
     UpdatedAt string `json:"updated_at"`
 
-    Files []FileEntry `json:"files"`
+    Files []FileEntity `json:"files"`
 }
 
-type LoanDocumentOptEntry {
+type LoanDocumentOptEntity {
     Id int64 `json:"id"`
     Category string `json:"category"`
     FileType string `json:"file_type"`
@@ -35,14 +35,14 @@ type LoanDocumentCreateRequest {
 }
 
 type LoanDocumentCreateResponse {
-    LoanDocuments []*LoanDocumentOptEntry `json:"loan_documents"`
+    LoanDocuments []*LoanDocumentOptEntity `json:"loan_documents"`
 }
 
 type LoanDocumentSendRequestsRequest {
-    Documents []LoanDocumentSendRequestEntry `json:"documents" validate:"required,min=1,dive,required"`
+    Documents []LoanDocumentSendRequestEntity `json:"documents" validate:"required,min=1,dive,required"`
 }
 
-type LoanDocumentSendRequestEntry {
+type LoanDocumentSendRequestEntity {
     Id int64 `json:"id"`
     Comment string `json:"comment,optional"`
 }
@@ -58,5 +58,5 @@ type LoanDocumentAddFilesRequest {
 }
 
 type LoanDocumentOptResponse {
-    Options []LoanDocumentOptEntry `json:"options"`
+    Options []LoanDocumentOptEntity `json:"options"`
 }

@@ -9,7 +9,6 @@ import (
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -47,11 +46,6 @@ func (l *PageLogic) Page(req *types.LoanPageRequest) (resp *types.LoanPageRespon
 	})
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
-	}
-	// get borrower id
-	rpcReq.Data.Filter.BorrowerId, err = utils.GetAccountIdFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
 	}
 	rpcResp, err = l.svcCtx.LoanRpcClient.BorrowerLoanPage(l.ctx, rpcReq)
 	if err != nil {
