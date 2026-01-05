@@ -2,13 +2,13 @@
 import React, { useState } from 'react';
 import { Dropdown } from 'antd';
 import { formatFirstLetterName } from '@repo/shared-methods/utils';
-import useContent from './useContent';
+// import useContent from './useContent';
 import { usePathname } from 'next/navigation';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
-const Userinfo = ({ userInfo, sidebarCollapsed }) => {
+const Userinfo = ({ userInfo, sidebarCollapsed, personalList, handleClickPersonalItem }) => {
 	const pathname = usePathname();
 	const [selectedKey, setSelectedKey] = useState('');
-	const { personalList, handleClickPersonalItem } = useContent();
+	// const { personalList, handleClickPersonalItem } = useContent();
 
 	// 路由与个人中心的选项匹配，则设置选中
 	useDeferredSyncEffect({
@@ -31,6 +31,7 @@ const Userinfo = ({ userInfo, sidebarCollapsed }) => {
 			}}
 			placement="topLeft"
 			trigger={['click']}
+			className="overflow-hidden"
 		>
 			<div
 				className={`h-16 border-t border-solid border-base-border text-base-primary p-3.5 gap-2.5 cursor-pointer flex items-center`}
@@ -51,7 +52,7 @@ const Userinfo = ({ userInfo, sidebarCollapsed }) => {
 					{formatFirstLetterName(userInfo) || ''}
 				</div>
 				<div
-					className="flex-1"
+					className="flex-1 overflow-hidden"
 					style={{
 						opacity: sidebarCollapsed ? 0 : 1,
 						transition: 'opacity 0.3s cubic-bezier(0.2, 0, 0, 1) 0s',
@@ -62,7 +63,7 @@ const Userinfo = ({ userInfo, sidebarCollapsed }) => {
 							? `${userInfo?.first_name} ${userInfo?.last_name}`
 							: '--'}
 					</p>
-					<span className="text-gray-medium text-ellipsis overflow-hidden whitespace-nowrap">
+					<span className="text-gray-medium text-ellipsis overflow-hidden whitespace-nowrap block">
 						{userInfo?.email || '--'}
 					</span>
 				</div>
