@@ -151,7 +151,7 @@ func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalReque
 	}
 	go func() {
 		ctx := context.WithoutCancel(l.ctx)
-		err := sendPreApprovalNotification(ctx, l.svcCtx.OrganizationRepo, requestId, selfOrganization.Id)
+		err := sendPreApprovalNotification(ctx, l.svcCtx.OrganizationRepo, requestId, selfOrganization.Id, false)
 		if err != nil {
 			logx.WithContext(ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
@@ -162,7 +162,7 @@ func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalReque
 	}, nil
 }
 
-func sendPreApprovalNotification(ctx context.Context, repo *repo.OrganizationRepo, requestId string, organizationId int64) (err error) {
+func sendPreApprovalNotification(ctx context.Context, repo *repo.OrganizationRepo, requestId string, organizationId int64, isThirdParty bool) (err error) {
 	var organization *model.Organization
 	// check if send already
 	sendKey := fmt.Sprintf(constants.BorrowerSendAprApprovalNotificationKey, organizationId, requestId)
@@ -209,10 +209,11 @@ func sendPreApprovalNotification(ctx context.Context, repo *repo.OrganizationRep
 
 	// parse template
 	tplVars := map[string]interface{}{
-		"request": cacheData.RequestData,
-		"result":  cacheData.ResultData,
-		"company": organization.Name,
-		"url":     global.Config.LenderUrl,
+		"request":        cacheData.RequestData,
+		"result":         cacheData.ResultData,
+		"company":        organization.Name,
+		"url":            global.Config.LenderUrl,
+		"is_third_party": isThirdParty,
 	}
 	emailContent := ""
 	emailContent, err = email.ParseTemplate(email_tpl.SelfPreApprovalNotification, tplVars)
@@ -221,11 +222,16 @@ func sendPreApprovalNotification(ctx context.Context, repo *repo.OrganizationRep
 		return errorx.WithStack(err)
 	}
 
+	targetEmail := organization.ContactEmail
+	if isThirdParty {
+		targetEmail = global.Config.ZeebeeAgentEmail
+	}
+
 	// send email
 	emailMsg := email.Message{
 		Subject: "New Pre-Approval-Ready for Review in Zeebee",
 		From:    global.Config.EmailConf.Username,
-		To:      []string{organization.ContactEmail},
+		To:      []string{targetEmail},
 		Body:    emailContent,
 		IsHTML:  true,
 	}

@@ -45,13 +45,13 @@
         {{if .result.IsApproved}}
         <!-- 成功提示文案 -->
         <span>
-          A new loan application has been pre-approved by the Zeebee automated
+          A new loan application sent for {{ .company }} has been pre-approved by the Zeebee automated
           system and is now available for your review.
         </span>
         {{else}}
         <!-- 拒绝文案 -->
         <span
-        >A new loan application has been submitted by the Zeebee automated
+        >A new loan application sent for {{ .company }} has been submitted by the Zeebee automated
           system and is now available for your review.</span
         >
         {{end}}

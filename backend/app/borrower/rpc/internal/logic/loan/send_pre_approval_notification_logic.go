@@ -33,7 +33,7 @@ func (l *SendPreApprovalNotificationLogic) SendPreApprovalNotification(in *borro
 	}()
 	go func() {
 		ctx := context.WithoutCancel(l.ctx)
-		err := sendPreApprovalNotification(ctx, l.svcCtx.OrganizationRepo, in.Data.RequestId, in.Data.LenderCompanyId)
+		err := sendPreApprovalNotification(ctx, l.svcCtx.OrganizationRepo, in.Data.RequestId, in.Data.LenderCompanyId, true)
 		if err != nil {
 			l.WithContext(ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}

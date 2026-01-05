@@ -61,7 +61,7 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *lender.SendRese
 	}
 
 	// get user
-	user, err := l.svcCtx.UserRepo.GetLenderUserByEmail(l.ctx, email)
+	user, err := l.svcCtx.UserRepo.GetUserByEmail(l.ctx, email, constants.UserTypeLender)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}

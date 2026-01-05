@@ -101,3 +101,33 @@ func (repo *OrganizationRepo) Page(ctx context.Context, pageReq dto.Organization
 	})
 	return page, errorx.WithStack(err)
 }
+
+// GetUserOrganizations
+func (repo *OrganizationRepo) GetUserOrganizations(ctx context.Context, userId int64, userType constants.UserType) (result []*model.Organization, err error) {
+	organizationUserTable := model.OrganizationUser{}.TableName()
+	organizationTable := model.Organization{}.TableName()
+	err = repo.Client(ctx).
+		Joins(
+			fmt.Sprintf("left join %s on %s.id = %s.organization_id", organizationUserTable, organizationTable, organizationUserTable),
+		).
+		Where(
+			fmt.Sprintf("%s.user_id = ? and %s.type = ? and %s.is_del = 0", organizationUserTable, organizationTable, organizationUserTable),
+			userId, userType).
+		Find(&result).Error
+	return result, errorx.WithStack(err)
+}
+
+// GetUserOrganizationsWithTx
+func (repo *OrganizationRepo) GetUserOrganizationsWithTx(ctx context.Context, tx *gorm.DB, userId int64, userType constants.UserType) (result []*model.Organization, err error) {
+	organizationUserTable := model.OrganizationUser{}.TableName()
+	organizationTable := model.Organization{}.TableName()
+	err = tx.WithContext(ctx).Model(&model.Organization{}).
+		Joins(
+			fmt.Sprintf("left join %s on %s.id = %s.organization_id", organizationUserTable, organizationTable, organizationUserTable),
+		).
+		Where(
+			fmt.Sprintf("%s.user_id = ? and %s.type = ? and %s.is_del = 0", organizationUserTable, organizationTable, organizationUserTable),
+			userId, userType).
+		Find(&result).Error
+	return result, errorx.WithStack(err)
+}
