@@ -10,7 +10,7 @@ import {
 import { DeleteBtn, SwitchOrganization } from '@repo/shared-methods';
 import { useRouter } from 'next/navigation';
 import { useUserStore } from '@/store/user';
-import styles from './index.module.scss';
+// import styles from './index.module.scss';
 import { useState } from 'react';
 import { eventBus } from '@repo/shared-methods/utils';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
@@ -103,7 +103,7 @@ const useContent = () => {
 					align={{ offset: [17, -5] }}
 					arrow={false}
 					classNames={{
-						root: styles.organizationsRoot,
+						root: '[&_.ant-tooltip-inner]:!py-1 !px-1 text-sm',
 					}}
 					color="white"
 				>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Row, Col, Form, Select, Input } from 'antd';
+import { Row, Col, Form, Select, Input, message } from 'antd';
 import { emailRegex, phoneRegex, validateRule, createRequest } from '@repo/shared-methods/utils';
 import { layoutCol, titleCol } from '@/enum/common';
 import { InputNameCombination, InputPhone, NewModal } from '@repo/shared-methods';
@@ -17,9 +17,12 @@ const MainModal = ({ setOpen, rowData, handleSearch, roles }) => {
 			const value = await form.validateFields();
 			let url = '/organization_user';
 			let method = 'POST';
+			let msg =
+				'User creation successful. Invitation email has been sent, please check your inbox.';
 			if (rowData?.id) {
 				url = `/organization_user/${rowData?.id}`;
 				method = 'PUT';
+				msg = 'User update successful.';
 			}
 			const res = await request(url, {
 				method,
@@ -30,6 +33,7 @@ const MainModal = ({ setOpen, rowData, handleSearch, roles }) => {
 				await getUserInfo();
 				// await getOrganization();
 			}
+			message.open({ type: 'success', content: msg });
 			setConfirmLoading(false);
 			setOpen(false);
 		} catch {

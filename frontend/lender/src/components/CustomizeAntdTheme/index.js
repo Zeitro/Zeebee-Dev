@@ -2,13 +2,15 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ConfigProvider } from 'antd';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
-import SiderBar from '@/components/Sidebar';
-import { NewHeader } from '@repo/shared-methods';
+import { NewHeader, CommonSidebar } from '@repo/shared-methods';
 import { getCurrentRouterItem } from '@config/common';
 import { noNavRouter, navRouter } from '@config/routes';
 import { usePathname, useRouter } from 'next/navigation';
 import { useUserStore } from '@/store/user';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
+import useContent from './useContent';
+import { sidebarIcon } from './icon';
+import Image from 'next/image';
 const defaultToken = {
 	colorPrimary: '#1677ff',
 	colorTextBase: 'rgba(0, 0, 0, 0.88)',
@@ -37,6 +39,7 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 	const [antdToken, setAntdToken] = useState({});
 	const pathname = usePathname();
 	const router = useRouter();
+	const { personalList, handleClickPersonalItem } = useContent();
 	const validateMessages = {
 		required: 'Please enter ${label}!',
 	};
@@ -113,8 +116,42 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 				{isNoNav ? (
 					children
 				) : (
-					<div className="h-full flex items-stretch">
-						<SiderBar />
+					<div className="h-full flex items-stretch customRoot">
+						<CommonSidebar
+							routerList={navRouter}
+							personalList={personalList}
+							handleClickPersonalItem={handleClickPersonalItem}
+							sidebarIcon={sidebarIcon}
+							renderLogo={({ rect }) => (
+								<div
+									className={[
+										'relative overflow-hidden w-[149px] h-[30px] transition-all duration-300 ease-in-out',
+										rect?.width < 150 && 'w-[27px]',
+									].join(' ')}
+								>
+									<Image
+										src="/images/logo.png"
+										width={149}
+										height={30}
+										alt="ZeeBee Logo"
+										className={[
+											'absolute top-1/2 left-0 w-[149px] -translate-y-1/2 transition-opacity duration-300 ease-in-out',
+											rect?.width < 150 ? 'opacity-0' : 'opacity-100',
+										].join(' ')}
+									/>
+									<Image
+										src="/images/logo_abbreviated.png"
+										width={27}
+										height={27}
+										alt="ZeeBee Logo"
+										className={[
+											'absolute top-1/2 left-0 w-[27px] -translate-y-1/2 transition-opacity duration-300 ease-in-out z-10',
+											rect?.width >= 150 ? 'opacity-0' : 'opacity-100',
+										].join(' ')}
+									/>
+								</div>
+							)}
+						/>
 						<div className="flex-1 overflow-hidden flex flex-col">
 							<NewHeader />
 							<div className="flex-1 overflow-hidden">{children}</div>
