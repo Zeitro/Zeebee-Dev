@@ -10,6 +10,8 @@ import (
 	file "zeebee-backend/app/lender/api/internal/handler/file"
 	loan "zeebee-backend/app/lender/api/internal/handler/loan"
 	loan_document "zeebee-backend/app/lender/api/internal/handler/loan_document"
+	organization_user "zeebee-backend/app/lender/api/internal/handler/organization_user"
+	role "zeebee-backend/app/lender/api/internal/handler/role"
 	storage "zeebee-backend/app/lender/api/internal/handler/storage"
 	user "zeebee-backend/app/lender/api/internal/handler/user"
 	"zeebee-backend/app/lender/api/internal/svc"
@@ -141,6 +143,132 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/loan_document/send_requests",
 					Handler: loan_document.SendLoanDocumentRequestsHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// accept invitation
+				Method:  http.MethodPost,
+				Path:    "/organization_user/accept_invitation",
+				Handler: organization_user.OrganizationUserAcceptInvitationHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// create
+					Method:  http.MethodPost,
+					Path:    "/organization_user",
+					Handler: organization_user.OrganizationUserCreateHandler(serverCtx),
+				},
+				{
+					// detail
+					Method:  http.MethodGet,
+					Path:    "/organization_user/:id",
+					Handler: organization_user.OrganizationUserDetailHandler(serverCtx),
+				},
+				{
+					// update
+					Method:  http.MethodPut,
+					Path:    "/organization_user/:id",
+					Handler: organization_user.OrganizationUserUpdateHandler(serverCtx),
+				},
+				{
+					// delete
+					Method:  http.MethodDelete,
+					Path:    "/organization_user/:id",
+					Handler: organization_user.OrganizationUserDeleteHandler(serverCtx),
+				},
+				{
+					// assign roles
+					Method:  http.MethodPost,
+					Path:    "/organization_user/:id/assign_roles",
+					Handler: organization_user.OrganizationUserAssignRolesHandler(serverCtx),
+				},
+				{
+					// send email
+					Method:  http.MethodPost,
+					Path:    "/organization_user/:id/send_email",
+					Handler: organization_user.OrganizationUserSendEmailHandler(serverCtx),
+				},
+				{
+					// switch status
+					Method:  http.MethodPatch,
+					Path:    "/organization_user/:id/status",
+					Handler: organization_user.OrganizationUserSwitchStatusHandler(serverCtx),
+				},
+				{
+					// all
+					Method:  http.MethodGet,
+					Path:    "/organization_user/all",
+					Handler: organization_user.OrganizationUserAllHandler(serverCtx),
+				},
+				{
+					// page
+					Method:  http.MethodPost,
+					Path:    "/organization_user/page",
+					Handler: organization_user.OrganizationUserPageHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// create
+					Method:  http.MethodPost,
+					Path:    "/role",
+					Handler: role.RoleCreateHandler(serverCtx),
+				},
+				{
+					// detail
+					Method:  http.MethodGet,
+					Path:    "/role/:id",
+					Handler: role.RoleDetailHandler(serverCtx),
+				},
+				{
+					// update
+					Method:  http.MethodPut,
+					Path:    "/role/:id",
+					Handler: role.RoleUpdateHandler(serverCtx),
+				},
+				{
+					// delete
+					Method:  http.MethodDelete,
+					Path:    "/role/:id",
+					Handler: role.RoleDeleteHandler(serverCtx),
+				},
+				{
+					// update status
+					Method:  http.MethodPatch,
+					Path:    "/role/:id/status",
+					Handler: role.RoleUpdateStatusHandler(serverCtx),
+				},
+				{
+					// all
+					Method:  http.MethodGet,
+					Path:    "/role/all",
+					Handler: role.RoleAllHandler(serverCtx),
+				},
+				{
+					// page
+					Method:  http.MethodPost,
+					Path:    "/role/page",
+					Handler: role.RolePageHandler(serverCtx),
 				},
 			}...,
 		),

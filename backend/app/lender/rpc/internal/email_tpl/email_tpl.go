@@ -30,6 +30,9 @@ var SendLoginUrlEmailTpl string
 //go:embed send_loan_document_request.html
 var SendLoanDocumentRequestEmailTpl string
 
+//go:embed user_invite_email.html
+var UserInviteEmailTpl string
+
 const (
 	// RegisterVerifyEmail = "register_verify_email"
 	// ResetPwdEmail is the key for password reset email template.
@@ -37,9 +40,12 @@ const (
 	// LoginUrlEmail       = "login_url_email"
 	// SendLoanDocumentRequestEmail is the key for loan document request email
 	SendLoanDocumentRequestEmail = "send_loan_document_request"
+	// UserInviteEmail is the key for user invite email template
+	UserInviteEmail = "user_invite_email"
 )
 
 func init() {
 	_ = email.RegisterTemplateWithText(ResetPwdEmail, SendResetPwdEmailTpl)
 	_ = email.RegisterTemplateWithText(SendLoanDocumentRequestEmail, SendLoanDocumentRequestEmailTpl)
+	_ = email.RegisterTemplateWithText(UserInviteEmail, UserInviteEmailTpl)
 }
