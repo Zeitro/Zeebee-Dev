@@ -69,7 +69,8 @@ func (repo *UserRepo) Page(ctx context.Context, pageReq *UserPageRequest) (page 
 	query := repo.Client(ctx).Model(&model.User{}).
 		Joins(fmt.Sprintf("left join %s on %s.user_id = %s.id", organizationUserTable, organizationUserTable, userTable)).
 		Where(fmt.Sprintf("%s.type = ?", userTable), filter.UserType).
-		Where(fmt.Sprintf("%s.organization_id = ?", organizationUserTable), filter.OrganizationId)
+		Where(fmt.Sprintf("%s.organization_id = ? and is_del = 0", organizationUserTable), filter.OrganizationId)
+
 	if len(filter.Keyword) > 0 {
 		query = query.Where(fmt.Sprintf("%s.email like ? or %s.full_name like ? or %s.phone like ?", userTable, userTable, userTable),
 			"%"+filter.Keyword+"%",
@@ -119,18 +120,23 @@ func (repo *UserRepo) Page(ctx context.Context, pageReq *UserPageRequest) (page 
 
 // GetUser return user by id
 func (repo *UserRepo) GetUser(ctx context.Context, id int64, userType constants.UserType, withPreloads bool) (res *model.User, err error) {
+	// organizationUserTable := model.OrganizationUser{}.TableName()
+	// organizationTable := model.Organization{}.TableName()
 	query := repo.BaseRepo.Client(ctx).
 		Where("id = ? and type = ?", id, userType)
 	if withPreloads {
-		query = query.Preload("Organizations").
+		query = query.
 			Preload("OrganizationUsers")
 	}
 	err = query.First(&res).Error
+	if err != nil {
+		return res, errorx.WithStack(err)
+	}
+	organizationRepo := NewOrganizationRepo(repo.GetDB())
 
-	// err = repo.BaseRepo.Client(ctx).
-	// 	Where("id = ? and type = ?", id, userType).
-	// 	Preload("Organizations").
-	// 	Preload("OrganizationUsers").First(&res).Error
+	organizations, _ := organizationRepo.GetUserOrganizations(ctx, id, userType)
+	res.Organizations = organizations
+
 	return res, errorx.WithStack(err)
 }
 
@@ -138,18 +144,33 @@ func (repo *UserRepo) GetUser(ctx context.Context, id int64, userType constants.
 func (repo *UserRepo) GetUserByEmail(ctx context.Context, email string, userType constants.UserType) (res *model.User, err error) {
 	err = repo.BaseRepo.Client(ctx).
 		Where("email = ? and type = ?", email, userType).
-		Preload("Organizations").
+		// Preload("Organizations").
 		Preload("OrganizationUsers").
 		First(&res).Error
+	if err != nil {
+		return res, errorx.WithStack(err)
+	}
+	organizationRepo := NewOrganizationRepo(repo.GetDB())
+
+	organizations, _ := organizationRepo.GetUserOrganizations(ctx, res.Id, userType)
+	res.Organizations = organizations
+
 	return res, errorx.WithStack(err)
 }
 
 func (repo *UserRepo) GetUserByEmailWithTx(ctx context.Context, tx *gorm.DB, email string, userType constants.UserType) (res *model.User, err error) {
 	err = tx.WithContext(ctx).
 		Where("email = ? and type = ?", email, userType).
-		Preload("Organizations").
+		// Preload("Organizations").
 		Preload("OrganizationUsers").
 		First(&res).Error
+	if err != nil {
+		return res, errorx.WithStack(err)
+	}
+	organizationRepo := NewOrganizationRepo(repo.GetDB())
+
+	organizations, _ := organizationRepo.GetUserOrganizationsWithTx(ctx, tx, res.Id, userType)
+	res.Organizations = organizations
 	return res, errorx.WithStack(err)
 }
 
@@ -163,14 +184,6 @@ func (repo *UserRepo) UpdateUserStatus(ctx context.Context, id int64, status con
 func (repo *UserRepo) UpdateUserPassword(ctx context.Context, id int64, password string) (err error) {
 	err = repo.BaseRepo.Client(ctx).Where("id = ?", id).Update("password_hash", password).Error
 	return errorx.WithStack(err)
-}
-
-func (repo *UserRepo) GetLenderUserByEmail(ctx context.Context, email string) (res *model.User, err error) {
-	err = repo.BaseRepo.Client(ctx).
-		Where("email = ? and type = ?", email, constants.UserTypeLender).
-		Preload("Organizations").
-		First(&res).Error
-	return res, errorx.WithStack(err)
 }
 
 // CheckOrganizationUserExistWithTx check organization user exist by organization id and email

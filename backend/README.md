@@ -263,13 +263,6 @@ Current test coverage: <2% (Target: 80%+)
 
 ## 📚 Documentation
 
-### Project Documentation
-
-- **[Project Knowledge Base](.claude/docs/INDEX.md)** - Complete project knowledge base and navigation
-- **[Development Standards](.claude/CLAUDE.md)** - Claude Code development standards and workflows
-- **[Architecture Analysis](.claude/docs/analysis/)** - In-depth system architecture analysis
-- **[API Documentation](.claude/docs/guides/api_documentation_index_2025.md)** - Complete API index
-
 ### API Documentation
 
 - **Borrower API**: http://localhost:10000/swagger/
@@ -336,16 +329,6 @@ docker-compose -f deploy/service/docker-compose.yml up -d
 - Use go-zero framework conventions
 - Write unit tests
 - Add necessary comments
-
-## 📞 Support
-
-- **Bug Reports**: [GitHub Issues](https://github.com/your-org/zeebee-backend/issues)
-- **Feature Requests**: [GitHub Discussions](https://github.com/your-org/zeebee-backend/discussions)
-- **Security Vulnerabilities**: [security@yourcompany.com](mailto:security@yourcompany.com)
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
 ## 📝 Changelog
 

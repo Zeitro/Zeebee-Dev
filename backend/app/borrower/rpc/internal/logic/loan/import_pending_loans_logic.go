@@ -71,11 +71,6 @@ func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingL
 			},
 		}, nil
 	}
-	// creatorId := claim.OrganizationUserId
-	// creator, err := l.svcCtx.UserRepo.GetUser(l.ctx, creatorId, constants.UserTypeBorrower)
-	// if err != nil {
-	// 	return nil, err
-	// }
 
 	// create  loan
 	err = l.svcCtx.LoanRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
@@ -133,6 +128,9 @@ func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingL
 			if innerErr != nil {
 				return innerErr
 			}
+
+			// sync total amount and loan count
+			innerErr = l.svcCtx.BorrowerPropertyRepo.SyncTotalAmountAndLoanCountWithTx(l.ctx, tx, borrowerProperty.Id)
 		}
 
 		return innerErr
@@ -175,10 +173,6 @@ func (l *ImportPendingLoansLogic) buildImportModel(in *borrower.ImportPendingLoa
 	if err != nil {
 		return nil, errorx.GetFailedTransErr(err)
 	}
-	// creator, err := l.svcCtx.UserRepo.GetUser(l.ctx, claim.UserId, constants.UserTypeBorrower)
-	// if err != nil {
-	// 	return nil, err
-	// }
 	loan.CreatorId = claim.OrganizationUserId
 	loan.CreatorName = claim.Username
 	loan.BorrowerOrganizationId = claim.OrganizationId
@@ -246,13 +240,13 @@ func (l *ImportPendingLoansLogic) buildImportModel(in *borrower.ImportPendingLoa
 	if err != nil {
 		return nil, errorx.GetFailedTransErr(err)
 	}
-	// loanProperty.Unit = loanProperty.BorrowerProperty.Unit
 
 	// BorrowerProperty
 	borrowerProperty := &model.BorrowerProperty{}
 	borrowerProperty.CreatorId = claim.OrganizationUserId
 	borrowerProperty.CreatorName = claim.Username
 	borrowerProperty.Address = loanProperty.Address
+	borrowerProperty.OrganizationId = claim.OrganizationId
 
 	return &importPendingLoanModelData{
 		loan:             loan,
