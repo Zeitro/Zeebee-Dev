@@ -225,7 +225,7 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int6
 				return err
 			},
 		)
-		innerErr = eg.Error()
+		innerErr = eg.Wait()
 		return innerErr
 	})
 	if err != nil {
