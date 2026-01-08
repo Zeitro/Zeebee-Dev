@@ -16,11 +16,12 @@ import "desc/loan_document.api"
 import "desc/resource.api"
 import "desc/role.api"
 import "desc/organization_user.api"
+import "desc/organization.api"
 
 type (
-	EmptyRequest {
+	EmptyRequest{
 	}
-	EmptyResponse {
+	EmptyResponse{
 	}
 )
 
@@ -303,5 +304,24 @@ service lender-api {
 	@doc "send email"
 	@handler OrganizationUserSendEmail
 	post /organization_user/:id/send_email (PathIdRequest) returns (EmptyResponse)
+}
+
+// ============== organization =============
+@server(
+	desc: "lender-api service"
+	version: v1
+	group: organization
+	prefix:     /api/v1
+	tags: organization
+	middleware: AuthMiddleware
+)
+service lender-api {
+	@doc "profile"
+	@handler OrganizationProfile
+	get /organization/profile (EmptyRequest) returns (OrganizationEntity)
+
+	@doc "update profile"
+	@handler OrganizationUpdateProfile
+	put /organization/profile (OrganizationUpdateProfileRequest) returns (OrganizationEntity)
 }
 

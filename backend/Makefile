@@ -7,7 +7,7 @@ help:
 	@echo "  create-api-validate <service> Create API validate"
 	@echo "  create-proto <service>      Create proto file"
 	@echo "  create-rpc-service <service> Create RPC service"
-
+	@echo "  create-sql <service> <name> Create SQL file with timestamp"
 
 .PHONY: create-api
 # Create API Service
@@ -52,3 +52,16 @@ create-service:
 	$(MAKE) create-api-service SERVICE=$(SERVICE)
 	$(MAKE) create-rpc-service SERVICE=$(SERVICE)
 	$(MAKE) create-swagger SERVICE=$(SERVICE)
+
+.PHONY: create-sql
+# Create SQL file with timestamp
+create-sql:
+	$(eval INPUT_ARGS := $(filter-out create-sql,$(MAKECMDGOALS)))
+	$(eval SERVICE := $(word 1,$(INPUT_ARGS)))
+	$(eval NAME := $(word 2,$(INPUT_ARGS)))
+	@if [ ! -d "app/$(SERVICE)/docs/sql" ]; then \
+		mkdir -p app/$(SERVICE)/docs/sql; \
+	fi
+	@TIMESTAMP=$$(date +%Y%m%d%H%M%S); \
+	touch "app/$(SERVICE)/docs/sql/$${TIMESTAMP}_$(NAME).sql"
+	@echo "Created SQL file: app/$(SERVICE)/docs/sql/$${TIMESTAMP}_$(NAME).sql"

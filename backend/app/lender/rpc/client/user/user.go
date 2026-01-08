@@ -84,6 +84,12 @@ type (
 	OptionRequest                                  = lender.OptionRequest
 	OptionRequestData                              = lender.OptionRequestData
 	OptionResponse                                 = lender.OptionResponse
+	OrganizationEmailEntity                        = lender.OrganizationEmailEntity
+	OrganizationEntity                             = lender.OrganizationEntity
+	OrganizationLenderMetadataEntity               = lender.OrganizationLenderMetadataEntity
+	OrganizationMetadataEntity                     = lender.OrganizationMetadataEntity
+	OrganizationUpdateProfileRequest               = lender.OrganizationUpdateProfileRequest
+	OrganizationUpdateProfileRequestData           = lender.OrganizationUpdateProfileRequestData
 	OrganizationUserAcceptInvitationRequest        = lender.OrganizationUserAcceptInvitationRequest
 	OrganizationUserAcceptInvitationRequestData    = lender.OrganizationUserAcceptInvitationRequestData
 	OrganizationUserAllResponse                    = lender.OrganizationUserAllResponse
@@ -112,6 +118,9 @@ type (
 	OrganizationUserUpdateResponse                 = lender.OrganizationUserUpdateResponse
 	OrganizationUserUpdateStatusRequest            = lender.OrganizationUserUpdateStatusRequest
 	OrganizationUserUpdateStatusRequestData        = lender.OrganizationUserUpdateStatusRequestData
+	RangeFloat                                     = lender.RangeFloat
+	RangeInt32                                     = lender.RangeInt32
+	RangeInt64                                     = lender.RangeInt64
 	RefreshTokenRequest                            = lender.RefreshTokenRequest
 	RefreshTokenRequestData                        = lender.RefreshTokenRequestData
 	ResetPasswordRequest                           = lender.ResetPasswordRequest

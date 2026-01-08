@@ -2345,3 +2345,143 @@ var OrganizationUser_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "app/lender/rpc/pb/lender.proto",
 }
+
+const (
+	Organization_Profile_FullMethodName       = "/lender.Organization/Profile"
+	Organization_UpdateProfile_FullMethodName = "/lender.Organization/UpdateProfile"
+)
+
+// OrganizationClient is the client API for Organization service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type OrganizationClient interface {
+	Profile(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationEntity, error)
+	UpdateProfile(ctx context.Context, in *OrganizationUpdateProfileRequest, opts ...grpc.CallOption) (*OrganizationEntity, error)
+}
+
+type organizationClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewOrganizationClient(cc grpc.ClientConnInterface) OrganizationClient {
+	return &organizationClient{cc}
+}
+
+func (c *organizationClient) Profile(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationEntity, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OrganizationEntity)
+	err := c.cc.Invoke(ctx, Organization_Profile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationClient) UpdateProfile(ctx context.Context, in *OrganizationUpdateProfileRequest, opts ...grpc.CallOption) (*OrganizationEntity, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OrganizationEntity)
+	err := c.cc.Invoke(ctx, Organization_UpdateProfile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// OrganizationServer is the server API for Organization service.
+// All implementations must embed UnimplementedOrganizationServer
+// for forward compatibility.
+type OrganizationServer interface {
+	Profile(context.Context, *EmptyRequest) (*OrganizationEntity, error)
+	UpdateProfile(context.Context, *OrganizationUpdateProfileRequest) (*OrganizationEntity, error)
+	mustEmbedUnimplementedOrganizationServer()
+}
+
+// UnimplementedOrganizationServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedOrganizationServer struct{}
+
+func (UnimplementedOrganizationServer) Profile(context.Context, *EmptyRequest) (*OrganizationEntity, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Profile not implemented")
+}
+func (UnimplementedOrganizationServer) UpdateProfile(context.Context, *OrganizationUpdateProfileRequest) (*OrganizationEntity, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateProfile not implemented")
+}
+func (UnimplementedOrganizationServer) mustEmbedUnimplementedOrganizationServer() {}
+func (UnimplementedOrganizationServer) testEmbeddedByValue()                      {}
+
+// UnsafeOrganizationServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to OrganizationServer will
+// result in compilation errors.
+type UnsafeOrganizationServer interface {
+	mustEmbedUnimplementedOrganizationServer()
+}
+
+func RegisterOrganizationServer(s grpc.ServiceRegistrar, srv OrganizationServer) {
+	// If the following call pancis, it indicates UnimplementedOrganizationServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&Organization_ServiceDesc, srv)
+}
+
+func _Organization_Profile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServer).Profile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Organization_Profile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServer).Profile(ctx, req.(*EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Organization_UpdateProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationUpdateProfileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServer).UpdateProfile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Organization_UpdateProfile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServer).UpdateProfile(ctx, req.(*OrganizationUpdateProfileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Organization_ServiceDesc is the grpc.ServiceDesc for Organization service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Organization_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "lender.Organization",
+	HandlerType: (*OrganizationServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Profile",
+			Handler:    _Organization_Profile_Handler,
+		},
+		{
+			MethodName: "UpdateProfile",
+			Handler:    _Organization_UpdateProfile_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "app/lender/rpc/pb/lender.proto",
+}

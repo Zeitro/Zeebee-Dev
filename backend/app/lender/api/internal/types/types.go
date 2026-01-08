@@ -338,6 +338,25 @@ type LoanUpdateApplicantEntity struct {
 	Address          *AddressEntity `json:"address,optional" validate:"required"`
 }
 
+type OrganizationEmailEntity struct {
+	Id           int64  `json:"id"`
+	Email        string `json:"email"`
+	AuthStrategy string `json:"auth_strategy"`
+	Purpose      string `json:"purpose"`
+	IsAuthorized bool   `json:"is_authorized"`
+}
+
+type OrganizationLenderMetadataEntity struct {
+	LoanAmountRange RangeFloat64 `json:"loan_amount_range"`
+	LoanTermRange   RangeInt     `json:"loan_term_range"`
+	LoanTateRange   RangeFloat64 `json:"loan_tate_range"`
+	LoanPointRange  RangeFloat64 `json:"loan_point_range"`
+}
+
+type OrganizationMetadataEntity struct {
+	Lender *OrganizationLenderMetadataEntity `json:"lender,omitempty"`
+}
+
 type OrganizationUserCreateResponse struct {
 	OrganizationUserEntity
 }
@@ -379,6 +398,16 @@ type OrganizationUserUpdateResponse struct {
 
 type PathIdRequest struct {
 	Id int64 `path:"id" validate:"required,gt=0"`
+}
+
+type RangeFloat64 struct {
+	Min float64 `json:"min"`
+	Max float64 `json:"max"`
+}
+
+type RangeInt struct {
+	Min int `json:"min"`
+	Max int `json:"max"`
 }
 
 type ResourceEntity struct {
