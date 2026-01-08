@@ -114,12 +114,9 @@ type (
 	OrganizationUserUpdateStatusRequestData        = lender.OrganizationUserUpdateStatusRequestData
 	RefreshTokenRequest                            = lender.RefreshTokenRequest
 	RefreshTokenRequestData                        = lender.RefreshTokenRequestData
-	RefreshTokenResponse                           = lender.RefreshTokenResponse
-	RefreshTokenResponseData                       = lender.RefreshTokenResponseData
 	ResetPasswordRequest                           = lender.ResetPasswordRequest
 	ResetPasswordRequestData                       = lender.ResetPasswordRequestData
 	ResetPasswordResponse                          = lender.ResetPasswordResponse
-	ResetPasswordResponseData                      = lender.ResetPasswordResponseData
 	ResourceEntity                                 = lender.ResourceEntity
 	ResourceTreeEntity                             = lender.ResourceTreeEntity
 	ResourceTreeRequest                            = lender.ResourceTreeRequest
@@ -153,6 +150,9 @@ type (
 	SendResetPasswordEmailRequest                  = lender.SendResetPasswordEmailRequest
 	SendResetPasswordEmailRequestData              = lender.SendResetPasswordEmailRequestData
 	SendResetPasswordEmailResponse                 = lender.SendResetPasswordEmailResponse
+	SendVerifyEmailRequest                         = lender.SendVerifyEmailRequest
+	SendVerifyEmailRequestData                     = lender.SendVerifyEmailRequestData
+	SendVerifyEmailResponse                        = lender.SendVerifyEmailResponse
 	StorageCreatePresignedUrlRequest               = lender.StorageCreatePresignedUrlRequest
 	StorageCreatePresignedUrlRequestData           = lender.StorageCreatePresignedUrlRequestData
 	StorageCreatePresignedUrlResponse              = lender.StorageCreatePresignedUrlResponse
@@ -164,27 +164,28 @@ type (
 	UsCitiesRequestData                            = lender.UsCitiesRequestData
 	UserInfoRequest                                = lender.UserInfoRequest
 	UserInfoRequestData                            = lender.UserInfoRequestData
+	UserJwtResponse                                = lender.UserJwtResponse
+	UserJwtResponseData                            = lender.UserJwtResponseData
 	UserLoginRequest                               = lender.UserLoginRequest
 	UserLoginRequestData                           = lender.UserLoginRequestData
-	UserLoginResponse                              = lender.UserLoginResponse
-	UserLoginResponseData                          = lender.UserLoginResponseData
 	UserRegisterRequest                            = lender.UserRegisterRequest
 	UserRegisterRequestData                        = lender.UserRegisterRequestData
-	UserRegisterResponse                           = lender.UserRegisterResponse
-	UserRegisterResponseData                       = lender.UserRegisterResponseData
 	UserinfoResponse                               = lender.UserinfoResponse
 	UserinfoResponseData                           = lender.UserinfoResponseData
 	UserinfoResponseData_Organization              = lender.UserinfoResponseData_Organization
+	VerifyEmailRequest                             = lender.VerifyEmailRequest
+	VerifyEmailRequestData                         = lender.VerifyEmailRequestData
 
 	User interface {
-		// user
-		Login(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserLoginResponse, error)
-		Register(ctx context.Context, in *UserRegisterRequest, opts ...grpc.CallOption) (*UserRegisterResponse, error)
-		RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
-		ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*ResetPasswordResponse, error)
+		Login(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserJwtResponse, error)
+		Register(ctx context.Context, in *UserRegisterRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+		RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*UserJwtResponse, error)
+		ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*UserJwtResponse, error)
 		SendResetPasswordEmail(ctx context.Context, in *SendResetPasswordEmailRequest, opts ...grpc.CallOption) (*SendResetPasswordEmailResponse, error)
+		VerifyEmail(ctx context.Context, in *VerifyEmailRequest, opts ...grpc.CallOption) (*UserJwtResponse, error)
+		SendVerifyEmail(ctx context.Context, in *SendVerifyEmailRequest, opts ...grpc.CallOption) (*SendVerifyEmailResponse, error)
 		UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
-		SwitchOrganization(ctx context.Context, in *SwitchOrganizationRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
+		SwitchOrganization(ctx context.Context, in *SwitchOrganizationRequest, opts ...grpc.CallOption) (*UserJwtResponse, error)
 	}
 
 	defaultUser struct {
@@ -198,23 +199,22 @@ func NewUser(cli zrpc.Client) User {
 	}
 }
 
-// user
-func (m *defaultUser) Login(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserLoginResponse, error) {
+func (m *defaultUser) Login(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserJwtResponse, error) {
 	client := lender.NewUserClient(m.cli.Conn())
 	return client.Login(ctx, in, opts...)
 }
 
-func (m *defaultUser) Register(ctx context.Context, in *UserRegisterRequest, opts ...grpc.CallOption) (*UserRegisterResponse, error) {
+func (m *defaultUser) Register(ctx context.Context, in *UserRegisterRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	client := lender.NewUserClient(m.cli.Conn())
 	return client.Register(ctx, in, opts...)
 }
 
-func (m *defaultUser) RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error) {
+func (m *defaultUser) RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*UserJwtResponse, error) {
 	client := lender.NewUserClient(m.cli.Conn())
 	return client.RefreshToken(ctx, in, opts...)
 }
 
-func (m *defaultUser) ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*ResetPasswordResponse, error) {
+func (m *defaultUser) ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*UserJwtResponse, error) {
 	client := lender.NewUserClient(m.cli.Conn())
 	return client.ResetPassword(ctx, in, opts...)
 }
@@ -224,12 +224,22 @@ func (m *defaultUser) SendResetPasswordEmail(ctx context.Context, in *SendResetP
 	return client.SendResetPasswordEmail(ctx, in, opts...)
 }
 
+func (m *defaultUser) VerifyEmail(ctx context.Context, in *VerifyEmailRequest, opts ...grpc.CallOption) (*UserJwtResponse, error) {
+	client := lender.NewUserClient(m.cli.Conn())
+	return client.VerifyEmail(ctx, in, opts...)
+}
+
+func (m *defaultUser) SendVerifyEmail(ctx context.Context, in *SendVerifyEmailRequest, opts ...grpc.CallOption) (*SendVerifyEmailResponse, error) {
+	client := lender.NewUserClient(m.cli.Conn())
+	return client.SendVerifyEmail(ctx, in, opts...)
+}
+
 func (m *defaultUser) UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error) {
 	client := lender.NewUserClient(m.cli.Conn())
 	return client.UserInfo(ctx, in, opts...)
 }
 
-func (m *defaultUser) SwitchOrganization(ctx context.Context, in *SwitchOrganizationRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error) {
+func (m *defaultUser) SwitchOrganization(ctx context.Context, in *SwitchOrganizationRequest, opts ...grpc.CallOption) (*UserJwtResponse, error) {
 	client := lender.NewUserClient(m.cli.Conn())
 	return client.SwitchOrganization(ctx, in, opts...)
 }

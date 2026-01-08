@@ -1,10 +1,10 @@
 syntax = "v1"
 
 info(
-    title: "lender-api http service"
-    desc: "lender-api http service description"
+	title: "lender-api http service"
+	desc: "lender-api http service description"
 	author: "Wei Zeng"
-    email: "wei@yeelee-capital.com"
+	email: "wei@yeelee-capital.com"
 )
 
 import "desc/user.api"
@@ -18,10 +18,10 @@ import "desc/role.api"
 import "desc/organization_user.api"
 
 type (
-    EmptyRequest{
-    }
-    EmptyResponse{
-    }
+	EmptyRequest {
+	}
+	EmptyResponse {
+	}
 )
 
 type PathIdRequest {
@@ -30,11 +30,11 @@ type PathIdRequest {
 
 // ============== common =============
 @server(
-    desc: "lender-api service"
+	desc: "lender-api service"
 	version: v1
-    group: common
+	group: common
 	prefix:  /api/v1
-    tags: common
+	tags: common
 )
 service lender-api {
 	@doc "select options"
@@ -52,28 +52,36 @@ service lender-api {
 
 // ============== user =============
 @server(
-    desc: "lender-api service"
+	desc: "lender-api service"
 	version: v1
-    group: user
+	group: user
 	prefix:  /api/v1
-    tags: user
+	tags: user
 )
 service lender-api {
 	@doc "register"
 	@handler Register
-	post /user/register (UserRegisterRequest) returns (UserRegisterResponse)
+	post /user/register (UserRegisterRequest) returns (EmptyResponse)
 
 	@doc "login"
 	@handler Login
-	post /user/login (UserLoginRequest) returns (UserLoginResponse)
+	post /user/login (UserLoginRequest) returns (UserJwtResponse)
 
 	@doc "refresh"
 	@handler RefreshToken
-	post /user/refresh (UserRefreshTokenRequest) returns (UserRefreshTokenResponse)
+	post /user/refresh (UserRefreshTokenRequest) returns (UserJwtResponse)
+
+	@doc "verify email"
+	@handler VerifyEmail
+	post /user/verify_email (UserVerifyEmailRequest) returns (UserJwtResponse)
+
+	@doc "send verify email"
+	@handler SendVerifyEmail
+	post /user/send_verify_email (UserSendVerifyEmailRequest) returns (EmptyResponse)
 
 	@doc "reset password"
 	@handler ResetPassword
-	post /user/reset_password (UserResetPasswordRequest) returns (UserLoginResponse)
+	post /user/reset_password (UserResetPasswordRequest) returns (UserJwtResponse)
 
 	@doc "send reset password email"
 	@handler SendResetPassword
@@ -81,12 +89,12 @@ service lender-api {
 }
 
 @server(
-    desc: "lender-api service"
-    version: v1
-    group: user
+	desc: "lender-api service"
+	version: v1
+	group: user
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: user
+	tags: user
 )
 service lender-api {
 	@doc "info"
@@ -95,17 +103,17 @@ service lender-api {
 
 	@doc "switch organization"
 	@handler SwitchOrganization
-	post /user/switch_organization (UserSwitchOrganizationRequest) returns (UserRefreshTokenResponse)
+	post /user/switch_organization (UserSwitchOrganizationRequest) returns (UserJwtResponse)
 }
 
 // ============== loan =============
 @server(
-    desc: "loan service"
-    version: v1
-    group: loan
+	desc: "loan service"
+	version: v1
+	group: loan
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: loan
+	tags: loan
 )
 service lender-api {
 	@doc "detail"
@@ -139,12 +147,12 @@ service lender-api {
 
 // ============== loan document =============
 @server(
-    desc: "loan document service"
-    version: v1
-    group: loan_document
+	desc: "loan document service"
+	version: v1
+	group: loan_document
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: loan_document
+	tags: loan_document
 )
 service lender-api {
 	@doc "create loan document"
@@ -170,12 +178,12 @@ service lender-api {
 
 // =============== file ==============
 @server(
-    desc: "file service"
-    version: v1
-    group: file
+	desc: "file service"
+	version: v1
+	group: file
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: file
+	tags: file
 )
 service lender-api {
 	@doc "delete"
@@ -185,12 +193,12 @@ service lender-api {
 
 // =============== storage ==============
 @server(
-    desc: "storage service"
-    version: v1
-    group: storage
+	desc: "storage service"
+	version: v1
+	group: storage
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: storage
+	tags: storage
 )
 service lender-api {
 	@doc "create aws s3 presign url"
@@ -200,100 +208,100 @@ service lender-api {
 
 // ============== role =============
 @server(
-    desc: "lender-api service"
-    version: v1
-    group: role
-    prefix:     /api/v1
-    middleware: AuthMiddleware
-    tags: role
+	desc: "lender-api service"
+	version: v1
+	group: role
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: role
 )
 service lender-api {
-    @doc "detail"
-    @handler RoleDetail
-    get /role/:id (PathIdRequest) returns (RoleEntity)
+	@doc "detail"
+	@handler RoleDetail
+	get /role/:id (PathIdRequest) returns (RoleEntity)
 
-    @doc "page"
-    @handler RolePage
-    post /role/page (RolePageRequest) returns (RolePageResponse)
+	@doc "page"
+	@handler RolePage
+	post /role/page (RolePageRequest) returns (RolePageResponse)
 
-    @doc "all"
-    @handler RoleAll
-    get /role/all (EmptyRequest) returns (RoleAllResponse)
+	@doc "all"
+	@handler RoleAll
+	get /role/all (EmptyRequest) returns (RoleAllResponse)
 
-    @doc "create"
-    @handler RoleCreate
-    post /role (RoleCreateRequest) returns (RoleEntity)
+	@doc "create"
+	@handler RoleCreate
+	post /role (RoleCreateRequest) returns (RoleEntity)
 
-    @doc "update"
-    @handler RoleUpdate
-    put /role/:id (RoleUpdateRequest) returns (RoleEntity)
+	@doc "update"
+	@handler RoleUpdate
+	put /role/:id (RoleUpdateRequest) returns (RoleEntity)
 
-    @doc "delete"
-    @handler RoleDelete
-    delete /role/:id (PathIdRequest) returns (EmptyResponse)
+	@doc "delete"
+	@handler RoleDelete
+	delete /role/:id (PathIdRequest) returns (EmptyResponse)
 
-    @doc "update status"
-    @handler RoleUpdateStatus
-    patch /role/:id/status (RoleUpdateStatusRequest) returns (EmptyResponse)
+	@doc "update status"
+	@handler RoleUpdateStatus
+	patch /role/:id/status (RoleUpdateStatusRequest) returns (EmptyResponse)
 }
 
 // ============== organization_user =============
 @server(
-    desc: "lender-api service"
-    version: v1
-    group: organization_user
-    prefix:  /api/v1
-    tags: organization_user
+	desc: "lender-api service"
+	version: v1
+	group: organization_user
+	prefix:  /api/v1
+	tags: organization_user
 )
 service lender-api {
-    @doc "accept invitation"
-    @handler OrganizationUserAcceptInvitation
-    post /organization_user/accept_invitation (OrganizationUserAcceptInvitationRequest) returns (UserLoginResponse)
+	@doc "accept invitation"
+	@handler OrganizationUserAcceptInvitation
+	post /organization_user/accept_invitation (OrganizationUserAcceptInvitationRequest) returns (UserJwtResponse)
 }
 
 @server(
-    desc: "lender-api service"
-    version: v1
-    group: organization_user
-    prefix:     /api/v1
-    middleware: AuthMiddleware
-    tags: organization_user
+	desc: "lender-api service"
+	version: v1
+	group: organization_user
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: organization_user
 )
 service lender-api {
-    @doc "detail"
-    @handler OrganizationUserDetail
-    get /organization_user/:id (PathIdRequest) returns (OrganizationUserEntity)
+	@doc "detail"
+	@handler OrganizationUserDetail
+	get /organization_user/:id (PathIdRequest) returns (OrganizationUserEntity)
 
-    @doc "page"
-    @handler OrganizationUserPage
-    post /organization_user/page (OrganizationUserPageRequest) returns (OrganizationUserPageResponse)
+	@doc "page"
+	@handler OrganizationUserPage
+	post /organization_user/page (OrganizationUserPageRequest) returns (OrganizationUserPageResponse)
 
-    @doc "all"
-    @handler OrganizationUserAll
-    get /organization_user/all (EmptyRequest) returns (OrganizationUserAllResponse)
+	@doc "all"
+	@handler OrganizationUserAll
+	get /organization_user/all (EmptyRequest) returns (OrganizationUserAllResponse)
 
-    @doc "create"
-    @handler OrganizationUserCreate
-    post /organization_user (OrganizationUserCreateRequest) returns (OrganizationUserEntity)
+	@doc "create"
+	@handler OrganizationUserCreate
+	post /organization_user (OrganizationUserCreateRequest) returns (OrganizationUserEntity)
 
-    @doc "update"
-    @handler OrganizationUserUpdate
-    put /organization_user/:id (OrganizationUserUpdateRequest) returns (OrganizationUserEntity)
+	@doc "update"
+	@handler OrganizationUserUpdate
+	put /organization_user/:id (OrganizationUserUpdateRequest) returns (OrganizationUserEntity)
 
-    @doc "delete"
-    @handler OrganizationUserDelete
-    delete /organization_user/:id (PathIdRequest) returns (EmptyResponse)
+	@doc "delete"
+	@handler OrganizationUserDelete
+	delete /organization_user/:id (PathIdRequest) returns (EmptyResponse)
 
-    @doc "switch status"
-    @handler OrganizationUserSwitchStatus
-    patch /organization_user/:id/status (OrganizationUserSwitchStatusRequest) returns (EmptyResponse)
+	@doc "switch status"
+	@handler OrganizationUserSwitchStatus
+	patch /organization_user/:id/status (OrganizationUserSwitchStatusRequest) returns (EmptyResponse)
 
-    @doc "assign roles"
-    @handler OrganizationUserAssignRoles
-    post /organization_user/:id/assign_roles (OrganizationUserAssignRolesRequest) returns (EmptyResponse)
+	@doc "assign roles"
+	@handler OrganizationUserAssignRoles
+	post /organization_user/:id/assign_roles (OrganizationUserAssignRolesRequest) returns (EmptyResponse)
 
-    @doc "send email"
-    @handler OrganizationUserSendEmail
-    post /organization_user/:id/send_email (PathIdRequest) returns (EmptyResponse)
+	@doc "send email"
+	@handler OrganizationUserSendEmail
+	post /organization_user/:id/send_email (PathIdRequest) returns (EmptyResponse)
 }
 

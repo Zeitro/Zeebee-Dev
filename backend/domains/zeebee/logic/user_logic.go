@@ -505,8 +505,8 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 	}
 
 	// check organization exist
-	if len(organizationInput.Name) == 0 && organizationInput.Id == 0 {
-		return nil, nil, errorx.New("Organization Is Empty")
+	if len(organizationInput.Name) == 0 {
+		return nil, nil, errorx.New("Organization Name Is Empty")
 	}
 	isExisted, err = l.repos.OrganizationRepo.IsExistedByColumns(ctx, map[string]interface{}{
 		"name": organizationInput.Name,
@@ -525,15 +525,10 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 
 	err = l.repos.UserRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
-		var isCreateOrganization bool
-		// create  organization
-		if organization.Id == 0 {
-			organization.Status = constants.OrganizationStatusInactive
-			organization, innerErr = l.repos.OrganizationRepo.CreateWithTx(ctx, tx, organization, false)
-			if innerErr != nil {
-				return innerErr
-			}
-			isCreateOrganization = true
+		organization.Status = constants.OrganizationStatusInactive
+		organization, innerErr = l.repos.OrganizationRepo.CreateWithTx(ctx, tx, organization, false)
+		if innerErr != nil {
+			return innerErr
 		}
 
 		user.DefaultOrganizationId = organization.Id
@@ -551,16 +546,13 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 			return innerErr
 		}
 		// update organization's owner
-		if isCreateOrganization {
-			organization.OwnerId = user.Id
-			innerErr = l.repos.OrganizationRepo.UpdateOwnerIdWithTx(ctx, tx, organization.Id, user.Id)
-			if innerErr != nil {
-				return innerErr
-			}
-			user.DefaultOrganizationId = organization.Id
-		} else {
-			roles = nil
+		organization.OwnerId = user.Id
+		innerErr = l.repos.OrganizationRepo.UpdateOwnerIdWithTx(ctx, tx, organization.Id, user.Id)
+		if innerErr != nil {
+			return innerErr
 		}
+		user.DefaultOrganizationId = organization.Id
+
 		// create organization user
 		organizationUser = &model.OrganizationUser{
 			OrganizationId: organization.Id,
@@ -599,6 +591,12 @@ func (l *UserLogic) VerifyUserEmail(ctx context.Context, email string, code stri
 	if len(token) == 0 || token != code {
 		return nil, errorx.New("Invalid Or Expired Code")
 	}
+	defer func() {
+		if err == nil {
+			_ = l.redisCli.Del(ctx, verifyCodeKey)
+		}
+	}()
+
 	err = l.repos.UserRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
 		// get user

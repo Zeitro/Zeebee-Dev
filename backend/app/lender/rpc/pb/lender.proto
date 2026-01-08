@@ -56,32 +56,30 @@ service common {
 
 
 // ================= user service start ==================
-// login
+// login -- request
 message UserLoginRequest {
   UserLoginRequestData data = 1;
-}
-message UserLoginResponse {
-  UserLoginResponseData data = 1;
 }
 
 message UserLoginRequestData {
   string email = 1;
   string password = 2;
 }
+// login -- response
+message UserJwtResponse {
+  UserJwtResponseData data = 1;
+}
 
-message UserLoginResponseData {
+message UserJwtResponseData {
   string access_token = 1;
   string refresh_token = 2;
   int64 access_token_expire = 3;
   int64 refresh_token_expire = 4;
 }
 
-// register
+// register -- request
 message UserRegisterRequest {
   UserRegisterRequestData data = 1;
-}
-message UserRegisterResponse {
-  UserRegisterResponseData data = 1;
 }
 
 message UserRegisterRequestData {
@@ -89,25 +87,10 @@ message UserRegisterRequestData {
   string password = 2;
   string first_name = 3;
   string last_name = 4;
-  string type = 5;
-  int64 organization_id = 6;
-  string organization_name = 7;
-  string contact_phone = 8;
-  string contact_email = 9;
-  string contact_name = 10;
-  string logo = 11;
-  string website = 12;
-
-}
-message UserRegisterResponseData {
-  string access_token = 1;
-  string refresh_token = 2;
-  int64 access_token_expire = 3;
-  int64 refresh_token_expire = 4;
-
+  string organization_name = 5;
 }
 
-// refresh
+// refresh -- request
 message RefreshTokenRequest {
   RefreshTokenRequestData data = 1;
 }
@@ -116,29 +99,39 @@ message RefreshTokenRequestData {
   string refresh_token = 1;
 }
 
-message RefreshTokenResponse {
-  RefreshTokenResponseData data = 1;
+// verify email -- request
+message VerifyEmailRequest {
+  VerifyEmailRequestData data = 1;
+}
+message VerifyEmailRequestData {
+  string email = 1;
+  string code = 2;
 }
 
-message RefreshTokenResponseData {
-  string access_token = 1;
-  string refresh_token = 2;
-  int64 access_token_expire = 3;
-  int64 refresh_token_expire = 4;
+// send verify email -- request
+message SendVerifyEmailRequest {
+  SendVerifyEmailRequestData data = 1;
+}
+message SendVerifyEmailResponse {
+  EmptyResponse data = 1;
+}
+message SendVerifyEmailRequestData {
+  string email = 1;
 }
 
-// reset password
+// reset password -- request
 message ResetPasswordRequest {
   ResetPasswordRequestData data = 1;
 }
 message ResetPasswordResponse {
-  UserLoginResponseData data = 1;
+  UserJwtResponseData data = 1;
 }
 
-// send reset password email
+// send reset password email -- request
 message SendResetPasswordEmailRequest {
   SendResetPasswordEmailRequestData data = 1;
 }
+// send reset password email -- response
 message SendResetPasswordEmailResponse {
   EmptyResponse data = 1;
 }
@@ -151,14 +144,8 @@ message ResetPasswordRequestData {
   string code = 2;
   string email = 3;
 }
-message ResetPasswordResponseData {
-  string access_token = 1;
-  string refresh_token = 2;
-  int64 access_token_expire = 3;
-  int64 refresh_token_expire = 4;
-}
 
-// userinfo
+// userinfo -- request
 message UserInfoRequest {
   UserInfoRequestData data = 1;
 }
@@ -166,7 +153,7 @@ message UserInfoRequest {
 message UserInfoRequestData {
   int64 id = 1;
 }
-
+// userinfo -- response
 message UserinfoResponse {
   UserinfoResponseData data = 1;
 }
@@ -192,24 +179,24 @@ message UserinfoResponseData {
   bool is_admin = 11;
   int64 organization_user_id = 12;
 }
-// switch organization
+// switch organization -- request
 message SwitchOrganizationRequest {
   SwitchOrganizationRequestData data = 1;
 }
 message SwitchOrganizationRequestData {
-  //  int64 user_id = 1;
-  int64 organization_id = 2;
+  int64 organization_id = 1;
 }
-
+// user service
 service user {
-  // user
-  rpc Login(UserLoginRequest) returns(UserLoginResponse);
-  rpc Register(UserRegisterRequest) returns(UserRegisterResponse);
-  rpc RefreshToken(RefreshTokenRequest) returns(RefreshTokenResponse);
-  rpc ResetPassword(ResetPasswordRequest) returns(ResetPasswordResponse);
+  rpc Login(UserLoginRequest) returns(UserJwtResponse);
+  rpc Register(UserRegisterRequest) returns(EmptyResponse);
+  rpc RefreshToken(RefreshTokenRequest) returns(UserJwtResponse);
+  rpc ResetPassword(ResetPasswordRequest) returns(UserJwtResponse);
   rpc SendResetPasswordEmail(SendResetPasswordEmailRequest) returns(SendResetPasswordEmailResponse);
+  rpc VerifyEmail(VerifyEmailRequest) returns(UserJwtResponse);
+  rpc SendVerifyEmail(SendVerifyEmailRequest) returns(SendVerifyEmailResponse);
   rpc UserInfo(UserInfoRequest) returns(UserinfoResponse);
-  rpc SwitchOrganization(SwitchOrganizationRequest) returns(RefreshTokenResponse);
+  rpc SwitchOrganization(SwitchOrganizationRequest) returns(UserJwtResponse);
 }
 // ================= user service end =================
 
@@ -247,8 +234,6 @@ message LoanEntity {
   double ltv = 30;
   int32 est_credit_score = 31;
   double reserves_amount = 32;
-
-
   repeated LoanExperienceEntity transaction_experiences = 33;
   repeated LoanExperienceEntity real_estate_experiences = 34;
   LoanBorrowerEntity loan_borrower = 35;
@@ -1211,7 +1196,7 @@ service OrganizationUser {
   rpc SwitchStatus(OrganizationUserUpdateStatusRequest) returns(EmptyResponse);
   rpc All(EmptyRequest) returns(OrganizationUserAllResponse);
   rpc SendInvitationEmail(OrganizationUserSendInvitationEmailRequest) returns(EmptyResponse);
-  rpc AcceptInvitation(OrganizationUserAcceptInvitationRequest) returns(UserLoginResponse);
+  rpc AcceptInvitation(OrganizationUserAcceptInvitationRequest) returns(UserJwtResponse);
   rpc AssignRoles(OrganizationUserAssignRolesRequest) returns(EmptyResponse);
 }
 

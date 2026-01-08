@@ -24,7 +24,7 @@ func InitGlobal(c config.RpcConf) (err error) {
 		return initRedis(c.RedisConf)
 	})
 	eg.Go(func() error {
-		return initLimiter(c.RedisConf)
+		return initLimiter(c)
 	})
 
 	eg.Go(func() error {

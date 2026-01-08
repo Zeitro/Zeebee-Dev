@@ -468,7 +468,7 @@ type UserInfoOrganizationEntity struct {
 	IsDefault bool   `json:"is_default"`
 }
 
-type UserLoginResponse struct {
+type UserJwtResponse struct {
 	AccessToken        string `json:"access_token"`
 	AccessTokenExpire  int64  `json:"access_token_expire"`
 	RefreshToken       string `json:"refresh_token"`

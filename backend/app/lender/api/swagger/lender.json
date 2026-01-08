@@ -5279,12 +5279,7 @@
               "type": "object",
               "required": [
                 "email",
-                "type",
-                "organization_id",
                 "organization_name",
-                "contact_email",
-                "contact_phone",
-                "contact_name",
                 "password",
                 "confirm_password",
                 "first_name",
@@ -5292,15 +5287,6 @@
               ],
               "properties": {
                 "confirm_password": {
-                  "type": "string"
-                },
-                "contact_email": {
-                  "type": "string"
-                },
-                "contact_name": {
-                  "type": "string"
-                },
-                "contact_phone": {
                   "type": "string"
                 },
                 "email": {
@@ -5312,22 +5298,10 @@
                 "last_name": {
                   "type": "string"
                 },
-                "logo": {
-                  "type": "string"
-                },
-                "organization_id": {
-                  "type": "integer"
-                },
                 "organization_name": {
                   "type": "string"
                 },
                 "password": {
-                  "type": "string"
-                },
-                "type": {
-                  "type": "string"
-                },
-                "website": {
                   "type": "string"
                 }
               }
@@ -5338,21 +5312,7 @@
           "200": {
             "description": "",
             "schema": {
-              "type": "object",
-              "properties": {
-                "access_token": {
-                  "type": "string"
-                },
-                "access_token_expire": {
-                  "type": "integer"
-                },
-                "refresh_token": {
-                  "type": "string"
-                },
-                "refresh_token_expire": {
-                  "type": "integer"
-                }
-              }
+              "type": "object"
             }
           }
         }
@@ -5472,6 +5432,50 @@
         }
       }
     },
+    "/api/v1/user/send_verify_email": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "user"
+        ],
+        "summary": "send verify email",
+        "operationId": "userSendVerifyEmail",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "email"
+              ],
+              "properties": {
+                "email": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/user/switch_organization": {
       "post": {
         "consumes": [
@@ -5529,9 +5533,71 @@
           }
         }
       }
+    },
+    "/api/v1/user/verify_email": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "user"
+        ],
+        "summary": "verify email",
+        "operationId": "userVerifyEmail",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "email",
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "access_token": {
+                  "type": "string"
+                },
+                "access_token_expire": {
+                  "type": "integer"
+                },
+                "refresh_token": {
+                  "type": "string"
+                },
+                "refresh_token_expire": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
-  "x-date": "2025-12-29 14:02:47",
+  "x-date": "2026-01-08 16:03:31",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

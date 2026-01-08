@@ -487,7 +487,7 @@ func (x *UsCitiesRequestData) GetStateUsps() string {
 }
 
 // ================= user service start ==================
-// login
+// login -- request
 type UserLoginRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Data          *UserLoginRequestData  `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -532,50 +532,6 @@ func (x *UserLoginRequest) GetData() *UserLoginRequestData {
 	return nil
 }
 
-type UserLoginResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          *UserLoginResponseData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UserLoginResponse) Reset() {
-	*x = UserLoginResponse{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[11]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UserLoginResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UserLoginResponse) ProtoMessage() {}
-
-func (x *UserLoginResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[11]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UserLoginResponse.ProtoReflect.Descriptor instead.
-func (*UserLoginResponse) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{11}
-}
-
-func (x *UserLoginResponse) GetData() *UserLoginResponseData {
-	if x != nil {
-		return x.Data
-	}
-	return nil
-}
-
 type UserLoginRequestData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
@@ -586,7 +542,7 @@ type UserLoginRequestData struct {
 
 func (x *UserLoginRequestData) Reset() {
 	*x = UserLoginRequestData{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[12]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -598,7 +554,7 @@ func (x *UserLoginRequestData) String() string {
 func (*UserLoginRequestData) ProtoMessage() {}
 
 func (x *UserLoginRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[12]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -611,7 +567,7 @@ func (x *UserLoginRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserLoginRequestData.ProtoReflect.Descriptor instead.
 func (*UserLoginRequestData) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{12}
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *UserLoginRequestData) GetEmail() string {
@@ -628,7 +584,52 @@ func (x *UserLoginRequestData) GetPassword() string {
 	return ""
 }
 
-type UserLoginResponseData struct {
+// login -- response
+type UserJwtResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Data          *UserJwtResponseData   `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UserJwtResponse) Reset() {
+	*x = UserJwtResponse{}
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserJwtResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserJwtResponse) ProtoMessage() {}
+
+func (x *UserJwtResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserJwtResponse.ProtoReflect.Descriptor instead.
+func (*UserJwtResponse) Descriptor() ([]byte, []int) {
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *UserJwtResponse) GetData() *UserJwtResponseData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type UserJwtResponseData struct {
 	state              protoimpl.MessageState `protogen:"open.v1"`
 	AccessToken        string                 `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
 	RefreshToken       string                 `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
@@ -638,20 +639,20 @@ type UserLoginResponseData struct {
 	sizeCache          protoimpl.SizeCache
 }
 
-func (x *UserLoginResponseData) Reset() {
-	*x = UserLoginResponseData{}
+func (x *UserJwtResponseData) Reset() {
+	*x = UserJwtResponseData{}
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UserLoginResponseData) String() string {
+func (x *UserJwtResponseData) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserLoginResponseData) ProtoMessage() {}
+func (*UserJwtResponseData) ProtoMessage() {}
 
-func (x *UserLoginResponseData) ProtoReflect() protoreflect.Message {
+func (x *UserJwtResponseData) ProtoReflect() protoreflect.Message {
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -663,40 +664,40 @@ func (x *UserLoginResponseData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserLoginResponseData.ProtoReflect.Descriptor instead.
-func (*UserLoginResponseData) Descriptor() ([]byte, []int) {
+// Deprecated: Use UserJwtResponseData.ProtoReflect.Descriptor instead.
+func (*UserJwtResponseData) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{13}
 }
 
-func (x *UserLoginResponseData) GetAccessToken() string {
+func (x *UserJwtResponseData) GetAccessToken() string {
 	if x != nil {
 		return x.AccessToken
 	}
 	return ""
 }
 
-func (x *UserLoginResponseData) GetRefreshToken() string {
+func (x *UserJwtResponseData) GetRefreshToken() string {
 	if x != nil {
 		return x.RefreshToken
 	}
 	return ""
 }
 
-func (x *UserLoginResponseData) GetAccessTokenExpire() int64 {
+func (x *UserJwtResponseData) GetAccessTokenExpire() int64 {
 	if x != nil {
 		return x.AccessTokenExpire
 	}
 	return 0
 }
 
-func (x *UserLoginResponseData) GetRefreshTokenExpire() int64 {
+func (x *UserJwtResponseData) GetRefreshTokenExpire() int64 {
 	if x != nil {
 		return x.RefreshTokenExpire
 	}
 	return 0
 }
 
-// register
+// register -- request
 type UserRegisterRequest struct {
 	state         protoimpl.MessageState   `protogen:"open.v1"`
 	Data          *UserRegisterRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -741,71 +742,20 @@ func (x *UserRegisterRequest) GetData() *UserRegisterRequestData {
 	return nil
 }
 
-type UserRegisterResponse struct {
-	state         protoimpl.MessageState    `protogen:"open.v1"`
-	Data          *UserRegisterResponseData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UserRegisterResponse) Reset() {
-	*x = UserRegisterResponse{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[15]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UserRegisterResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UserRegisterResponse) ProtoMessage() {}
-
-func (x *UserRegisterResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[15]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UserRegisterResponse.ProtoReflect.Descriptor instead.
-func (*UserRegisterResponse) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{15}
-}
-
-func (x *UserRegisterResponse) GetData() *UserRegisterResponseData {
-	if x != nil {
-		return x.Data
-	}
-	return nil
-}
-
 type UserRegisterRequestData struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	Email            string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
 	Password         string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
 	FirstName        string                 `protobuf:"bytes,3,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
 	LastName         string                 `protobuf:"bytes,4,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
-	Type             string                 `protobuf:"bytes,5,opt,name=type,proto3" json:"type,omitempty"`
-	OrganizationId   int64                  `protobuf:"varint,6,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	OrganizationName string                 `protobuf:"bytes,7,opt,name=organization_name,json=organizationName,proto3" json:"organization_name,omitempty"`
-	ContactPhone     string                 `protobuf:"bytes,8,opt,name=contact_phone,json=contactPhone,proto3" json:"contact_phone,omitempty"`
-	ContactEmail     string                 `protobuf:"bytes,9,opt,name=contact_email,json=contactEmail,proto3" json:"contact_email,omitempty"`
-	ContactName      string                 `protobuf:"bytes,10,opt,name=contact_name,json=contactName,proto3" json:"contact_name,omitempty"`
-	Logo             string                 `protobuf:"bytes,11,opt,name=logo,proto3" json:"logo,omitempty"`
-	Website          string                 `protobuf:"bytes,12,opt,name=website,proto3" json:"website,omitempty"`
+	OrganizationName string                 `protobuf:"bytes,5,opt,name=organization_name,json=organizationName,proto3" json:"organization_name,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
 
 func (x *UserRegisterRequestData) Reset() {
 	*x = UserRegisterRequestData{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[16]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -817,7 +767,7 @@ func (x *UserRegisterRequestData) String() string {
 func (*UserRegisterRequestData) ProtoMessage() {}
 
 func (x *UserRegisterRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[16]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -830,7 +780,7 @@ func (x *UserRegisterRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserRegisterRequestData.ProtoReflect.Descriptor instead.
 func (*UserRegisterRequestData) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{16}
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *UserRegisterRequestData) GetEmail() string {
@@ -861,20 +811,6 @@ func (x *UserRegisterRequestData) GetLastName() string {
 	return ""
 }
 
-func (x *UserRegisterRequestData) GetType() string {
-	if x != nil {
-		return x.Type
-	}
-	return ""
-}
-
-func (x *UserRegisterRequestData) GetOrganizationId() int64 {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return 0
-}
-
 func (x *UserRegisterRequestData) GetOrganizationName() string {
 	if x != nil {
 		return x.OrganizationName
@@ -882,110 +818,7 @@ func (x *UserRegisterRequestData) GetOrganizationName() string {
 	return ""
 }
 
-func (x *UserRegisterRequestData) GetContactPhone() string {
-	if x != nil {
-		return x.ContactPhone
-	}
-	return ""
-}
-
-func (x *UserRegisterRequestData) GetContactEmail() string {
-	if x != nil {
-		return x.ContactEmail
-	}
-	return ""
-}
-
-func (x *UserRegisterRequestData) GetContactName() string {
-	if x != nil {
-		return x.ContactName
-	}
-	return ""
-}
-
-func (x *UserRegisterRequestData) GetLogo() string {
-	if x != nil {
-		return x.Logo
-	}
-	return ""
-}
-
-func (x *UserRegisterRequestData) GetWebsite() string {
-	if x != nil {
-		return x.Website
-	}
-	return ""
-}
-
-type UserRegisterResponseData struct {
-	state              protoimpl.MessageState `protogen:"open.v1"`
-	AccessToken        string                 `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
-	RefreshToken       string                 `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
-	AccessTokenExpire  int64                  `protobuf:"varint,3,opt,name=access_token_expire,json=accessTokenExpire,proto3" json:"access_token_expire,omitempty"`
-	RefreshTokenExpire int64                  `protobuf:"varint,4,opt,name=refresh_token_expire,json=refreshTokenExpire,proto3" json:"refresh_token_expire,omitempty"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
-}
-
-func (x *UserRegisterResponseData) Reset() {
-	*x = UserRegisterResponseData{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[17]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UserRegisterResponseData) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UserRegisterResponseData) ProtoMessage() {}
-
-func (x *UserRegisterResponseData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[17]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UserRegisterResponseData.ProtoReflect.Descriptor instead.
-func (*UserRegisterResponseData) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{17}
-}
-
-func (x *UserRegisterResponseData) GetAccessToken() string {
-	if x != nil {
-		return x.AccessToken
-	}
-	return ""
-}
-
-func (x *UserRegisterResponseData) GetRefreshToken() string {
-	if x != nil {
-		return x.RefreshToken
-	}
-	return ""
-}
-
-func (x *UserRegisterResponseData) GetAccessTokenExpire() int64 {
-	if x != nil {
-		return x.AccessTokenExpire
-	}
-	return 0
-}
-
-func (x *UserRegisterResponseData) GetRefreshTokenExpire() int64 {
-	if x != nil {
-		return x.RefreshTokenExpire
-	}
-	return 0
-}
-
-// refresh
+// refresh -- request
 type RefreshTokenRequest struct {
 	state         protoimpl.MessageState   `protogen:"open.v1"`
 	Data          *RefreshTokenRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -995,7 +828,7 @@ type RefreshTokenRequest struct {
 
 func (x *RefreshTokenRequest) Reset() {
 	*x = RefreshTokenRequest{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[18]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1007,7 +840,7 @@ func (x *RefreshTokenRequest) String() string {
 func (*RefreshTokenRequest) ProtoMessage() {}
 
 func (x *RefreshTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[18]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1020,7 +853,7 @@ func (x *RefreshTokenRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RefreshTokenRequest.ProtoReflect.Descriptor instead.
 func (*RefreshTokenRequest) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{18}
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *RefreshTokenRequest) GetData() *RefreshTokenRequestData {
@@ -1039,7 +872,7 @@ type RefreshTokenRequestData struct {
 
 func (x *RefreshTokenRequestData) Reset() {
 	*x = RefreshTokenRequestData{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[19]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1051,7 +884,7 @@ func (x *RefreshTokenRequestData) String() string {
 func (*RefreshTokenRequestData) ProtoMessage() {}
 
 func (x *RefreshTokenRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[19]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1064,7 +897,7 @@ func (x *RefreshTokenRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RefreshTokenRequestData.ProtoReflect.Descriptor instead.
 func (*RefreshTokenRequestData) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{19}
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *RefreshTokenRequestData) GetRefreshToken() string {
@@ -1074,28 +907,29 @@ func (x *RefreshTokenRequestData) GetRefreshToken() string {
 	return ""
 }
 
-type RefreshTokenResponse struct {
-	state         protoimpl.MessageState    `protogen:"open.v1"`
-	Data          *RefreshTokenResponseData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+// verify email -- request
+type VerifyEmailRequest struct {
+	state         protoimpl.MessageState  `protogen:"open.v1"`
+	Data          *VerifyEmailRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *RefreshTokenResponse) Reset() {
-	*x = RefreshTokenResponse{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[20]
+func (x *VerifyEmailRequest) Reset() {
+	*x = VerifyEmailRequest{}
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *RefreshTokenResponse) String() string {
+func (x *VerifyEmailRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*RefreshTokenResponse) ProtoMessage() {}
+func (*VerifyEmailRequest) ProtoMessage() {}
 
-func (x *RefreshTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[20]
+func (x *VerifyEmailRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1106,42 +940,136 @@ func (x *RefreshTokenResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RefreshTokenResponse.ProtoReflect.Descriptor instead.
-func (*RefreshTokenResponse) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{20}
+// Deprecated: Use VerifyEmailRequest.ProtoReflect.Descriptor instead.
+func (*VerifyEmailRequest) Descriptor() ([]byte, []int) {
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{18}
 }
 
-func (x *RefreshTokenResponse) GetData() *RefreshTokenResponseData {
+func (x *VerifyEmailRequest) GetData() *VerifyEmailRequestData {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type RefreshTokenResponseData struct {
-	state              protoimpl.MessageState `protogen:"open.v1"`
-	AccessToken        string                 `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
-	RefreshToken       string                 `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
-	AccessTokenExpire  int64                  `protobuf:"varint,3,opt,name=access_token_expire,json=accessTokenExpire,proto3" json:"access_token_expire,omitempty"`
-	RefreshTokenExpire int64                  `protobuf:"varint,4,opt,name=refresh_token_expire,json=refreshTokenExpire,proto3" json:"refresh_token_expire,omitempty"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
+type VerifyEmailRequestData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
+	Code          string                 `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
-func (x *RefreshTokenResponseData) Reset() {
-	*x = RefreshTokenResponseData{}
+func (x *VerifyEmailRequestData) Reset() {
+	*x = VerifyEmailRequestData{}
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *VerifyEmailRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*VerifyEmailRequestData) ProtoMessage() {}
+
+func (x *VerifyEmailRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use VerifyEmailRequestData.ProtoReflect.Descriptor instead.
+func (*VerifyEmailRequestData) Descriptor() ([]byte, []int) {
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *VerifyEmailRequestData) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *VerifyEmailRequestData) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+// send verify email -- request
+type SendVerifyEmailRequest struct {
+	state         protoimpl.MessageState      `protogen:"open.v1"`
+	Data          *SendVerifyEmailRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SendVerifyEmailRequest) Reset() {
+	*x = SendVerifyEmailRequest{}
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SendVerifyEmailRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SendVerifyEmailRequest) ProtoMessage() {}
+
+func (x *SendVerifyEmailRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SendVerifyEmailRequest.ProtoReflect.Descriptor instead.
+func (*SendVerifyEmailRequest) Descriptor() ([]byte, []int) {
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *SendVerifyEmailRequest) GetData() *SendVerifyEmailRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type SendVerifyEmailResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Data          *EmptyResponse         `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SendVerifyEmailResponse) Reset() {
+	*x = SendVerifyEmailResponse{}
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *RefreshTokenResponseData) String() string {
+func (x *SendVerifyEmailResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*RefreshTokenResponseData) ProtoMessage() {}
+func (*SendVerifyEmailResponse) ProtoMessage() {}
 
-func (x *RefreshTokenResponseData) ProtoReflect() protoreflect.Message {
+func (x *SendVerifyEmailResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1153,40 +1081,63 @@ func (x *RefreshTokenResponseData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RefreshTokenResponseData.ProtoReflect.Descriptor instead.
-func (*RefreshTokenResponseData) Descriptor() ([]byte, []int) {
+// Deprecated: Use SendVerifyEmailResponse.ProtoReflect.Descriptor instead.
+func (*SendVerifyEmailResponse) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{21}
 }
 
-func (x *RefreshTokenResponseData) GetAccessToken() string {
+func (x *SendVerifyEmailResponse) GetData() *EmptyResponse {
 	if x != nil {
-		return x.AccessToken
+		return x.Data
+	}
+	return nil
+}
+
+type SendVerifyEmailRequestData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SendVerifyEmailRequestData) Reset() {
+	*x = SendVerifyEmailRequestData{}
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SendVerifyEmailRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SendVerifyEmailRequestData) ProtoMessage() {}
+
+func (x *SendVerifyEmailRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SendVerifyEmailRequestData.ProtoReflect.Descriptor instead.
+func (*SendVerifyEmailRequestData) Descriptor() ([]byte, []int) {
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *SendVerifyEmailRequestData) GetEmail() string {
+	if x != nil {
+		return x.Email
 	}
 	return ""
 }
 
-func (x *RefreshTokenResponseData) GetRefreshToken() string {
-	if x != nil {
-		return x.RefreshToken
-	}
-	return ""
-}
-
-func (x *RefreshTokenResponseData) GetAccessTokenExpire() int64 {
-	if x != nil {
-		return x.AccessTokenExpire
-	}
-	return 0
-}
-
-func (x *RefreshTokenResponseData) GetRefreshTokenExpire() int64 {
-	if x != nil {
-		return x.RefreshTokenExpire
-	}
-	return 0
-}
-
-// reset password
+// reset password -- request
 type ResetPasswordRequest struct {
 	state         protoimpl.MessageState    `protogen:"open.v1"`
 	Data          *ResetPasswordRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -1196,7 +1147,7 @@ type ResetPasswordRequest struct {
 
 func (x *ResetPasswordRequest) Reset() {
 	*x = ResetPasswordRequest{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[22]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1208,7 +1159,7 @@ func (x *ResetPasswordRequest) String() string {
 func (*ResetPasswordRequest) ProtoMessage() {}
 
 func (x *ResetPasswordRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[22]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1221,7 +1172,7 @@ func (x *ResetPasswordRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResetPasswordRequest.ProtoReflect.Descriptor instead.
 func (*ResetPasswordRequest) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{22}
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *ResetPasswordRequest) GetData() *ResetPasswordRequestData {
@@ -1233,14 +1184,14 @@ func (x *ResetPasswordRequest) GetData() *ResetPasswordRequestData {
 
 type ResetPasswordResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          *UserLoginResponseData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	Data          *UserJwtResponseData   `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ResetPasswordResponse) Reset() {
 	*x = ResetPasswordResponse{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[23]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1252,7 +1203,7 @@ func (x *ResetPasswordResponse) String() string {
 func (*ResetPasswordResponse) ProtoMessage() {}
 
 func (x *ResetPasswordResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[23]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1265,17 +1216,17 @@ func (x *ResetPasswordResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResetPasswordResponse.ProtoReflect.Descriptor instead.
 func (*ResetPasswordResponse) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{23}
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{24}
 }
 
-func (x *ResetPasswordResponse) GetData() *UserLoginResponseData {
+func (x *ResetPasswordResponse) GetData() *UserJwtResponseData {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-// send reset password email
+// send reset password email -- request
 type SendResetPasswordEmailRequest struct {
 	state         protoimpl.MessageState             `protogen:"open.v1"`
 	Data          *SendResetPasswordEmailRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -1285,7 +1236,7 @@ type SendResetPasswordEmailRequest struct {
 
 func (x *SendResetPasswordEmailRequest) Reset() {
 	*x = SendResetPasswordEmailRequest{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[24]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1297,7 +1248,7 @@ func (x *SendResetPasswordEmailRequest) String() string {
 func (*SendResetPasswordEmailRequest) ProtoMessage() {}
 
 func (x *SendResetPasswordEmailRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[24]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1310,7 +1261,7 @@ func (x *SendResetPasswordEmailRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SendResetPasswordEmailRequest.ProtoReflect.Descriptor instead.
 func (*SendResetPasswordEmailRequest) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{24}
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *SendResetPasswordEmailRequest) GetData() *SendResetPasswordEmailRequestData {
@@ -1320,6 +1271,7 @@ func (x *SendResetPasswordEmailRequest) GetData() *SendResetPasswordEmailRequest
 	return nil
 }
 
+// send reset password email -- response
 type SendResetPasswordEmailResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Data          *EmptyResponse         `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -1329,7 +1281,7 @@ type SendResetPasswordEmailResponse struct {
 
 func (x *SendResetPasswordEmailResponse) Reset() {
 	*x = SendResetPasswordEmailResponse{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[25]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1341,7 +1293,7 @@ func (x *SendResetPasswordEmailResponse) String() string {
 func (*SendResetPasswordEmailResponse) ProtoMessage() {}
 
 func (x *SendResetPasswordEmailResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[25]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1354,7 +1306,7 @@ func (x *SendResetPasswordEmailResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SendResetPasswordEmailResponse.ProtoReflect.Descriptor instead.
 func (*SendResetPasswordEmailResponse) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{25}
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *SendResetPasswordEmailResponse) GetData() *EmptyResponse {
@@ -1373,7 +1325,7 @@ type SendResetPasswordEmailRequestData struct {
 
 func (x *SendResetPasswordEmailRequestData) Reset() {
 	*x = SendResetPasswordEmailRequestData{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[26]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1385,7 +1337,7 @@ func (x *SendResetPasswordEmailRequestData) String() string {
 func (*SendResetPasswordEmailRequestData) ProtoMessage() {}
 
 func (x *SendResetPasswordEmailRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[26]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1398,7 +1350,7 @@ func (x *SendResetPasswordEmailRequestData) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use SendResetPasswordEmailRequestData.ProtoReflect.Descriptor instead.
 func (*SendResetPasswordEmailRequestData) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{26}
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *SendResetPasswordEmailRequestData) GetEmail() string {
@@ -1419,7 +1371,7 @@ type ResetPasswordRequestData struct {
 
 func (x *ResetPasswordRequestData) Reset() {
 	*x = ResetPasswordRequestData{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[27]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1431,7 +1383,7 @@ func (x *ResetPasswordRequestData) String() string {
 func (*ResetPasswordRequestData) ProtoMessage() {}
 
 func (x *ResetPasswordRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[27]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1444,7 +1396,7 @@ func (x *ResetPasswordRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResetPasswordRequestData.ProtoReflect.Descriptor instead.
 func (*ResetPasswordRequestData) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{27}
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *ResetPasswordRequestData) GetPassword() string {
@@ -1468,75 +1420,7 @@ func (x *ResetPasswordRequestData) GetEmail() string {
 	return ""
 }
 
-type ResetPasswordResponseData struct {
-	state              protoimpl.MessageState `protogen:"open.v1"`
-	AccessToken        string                 `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
-	RefreshToken       string                 `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
-	AccessTokenExpire  int64                  `protobuf:"varint,3,opt,name=access_token_expire,json=accessTokenExpire,proto3" json:"access_token_expire,omitempty"`
-	RefreshTokenExpire int64                  `protobuf:"varint,4,opt,name=refresh_token_expire,json=refreshTokenExpire,proto3" json:"refresh_token_expire,omitempty"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
-}
-
-func (x *ResetPasswordResponseData) Reset() {
-	*x = ResetPasswordResponseData{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[28]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ResetPasswordResponseData) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ResetPasswordResponseData) ProtoMessage() {}
-
-func (x *ResetPasswordResponseData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[28]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ResetPasswordResponseData.ProtoReflect.Descriptor instead.
-func (*ResetPasswordResponseData) Descriptor() ([]byte, []int) {
-	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{28}
-}
-
-func (x *ResetPasswordResponseData) GetAccessToken() string {
-	if x != nil {
-		return x.AccessToken
-	}
-	return ""
-}
-
-func (x *ResetPasswordResponseData) GetRefreshToken() string {
-	if x != nil {
-		return x.RefreshToken
-	}
-	return ""
-}
-
-func (x *ResetPasswordResponseData) GetAccessTokenExpire() int64 {
-	if x != nil {
-		return x.AccessTokenExpire
-	}
-	return 0
-}
-
-func (x *ResetPasswordResponseData) GetRefreshTokenExpire() int64 {
-	if x != nil {
-		return x.RefreshTokenExpire
-	}
-	return 0
-}
-
-// userinfo
+// userinfo -- request
 type UserInfoRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Data          *UserInfoRequestData   `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -1625,6 +1509,7 @@ func (x *UserInfoRequestData) GetId() int64 {
 	return 0
 }
 
+// userinfo -- response
 type UserinfoResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Data          *UserinfoResponseData  `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -1801,7 +1686,7 @@ func (x *UserinfoResponseData) GetOrganizationUserId() int64 {
 	return 0
 }
 
-// switch organization
+// switch organization -- request
 type SwitchOrganizationRequest struct {
 	state         protoimpl.MessageState         `protogen:"open.v1"`
 	Data          *SwitchOrganizationRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -1847,9 +1732,8 @@ func (x *SwitchOrganizationRequest) GetData() *SwitchOrganizationRequestData {
 }
 
 type SwitchOrganizationRequestData struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	//  int64 user_id = 1;
-	OrganizationId int64 `protobuf:"varint,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	OrganizationId int64                  `protobuf:"varint,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -10799,56 +10683,45 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\n" +
 	"state_usps\x18\x01 \x01(\tR\tstateUsps\"D\n" +
 	"\x10UserLoginRequest\x120\n" +
-	"\x04data\x18\x01 \x01(\v2\x1c.lender.UserLoginRequestDataR\x04data\"F\n" +
-	"\x11UserLoginResponse\x121\n" +
-	"\x04data\x18\x01 \x01(\v2\x1d.lender.UserLoginResponseDataR\x04data\"H\n" +
+	"\x04data\x18\x01 \x01(\v2\x1c.lender.UserLoginRequestDataR\x04data\"H\n" +
 	"\x14UserLoginRequestData\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\"\xc1\x01\n" +
-	"\x15UserLoginResponseData\x12!\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\"B\n" +
+	"\x0fUserJwtResponse\x12/\n" +
+	"\x04data\x18\x01 \x01(\v2\x1b.lender.UserJwtResponseDataR\x04data\"\xbf\x01\n" +
+	"\x13UserJwtResponseData\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
 	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\x12.\n" +
 	"\x13access_token_expire\x18\x03 \x01(\x03R\x11accessTokenExpire\x120\n" +
 	"\x14refresh_token_expire\x18\x04 \x01(\x03R\x12refreshTokenExpire\"J\n" +
 	"\x13UserRegisterRequest\x123\n" +
-	"\x04data\x18\x01 \x01(\v2\x1f.lender.UserRegisterRequestDataR\x04data\"L\n" +
-	"\x14UserRegisterResponse\x124\n" +
-	"\x04data\x18\x01 \x01(\v2 .lender.UserRegisterResponseDataR\x04data\"\x8c\x03\n" +
+	"\x04data\x18\x01 \x01(\v2\x1f.lender.UserRegisterRequestDataR\x04data\"\xb4\x01\n" +
 	"\x17UserRegisterRequestData\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x1d\n" +
 	"\n" +
 	"first_name\x18\x03 \x01(\tR\tfirstName\x12\x1b\n" +
-	"\tlast_name\x18\x04 \x01(\tR\blastName\x12\x12\n" +
-	"\x04type\x18\x05 \x01(\tR\x04type\x12'\n" +
-	"\x0forganization_id\x18\x06 \x01(\x03R\x0eorganizationId\x12+\n" +
-	"\x11organization_name\x18\a \x01(\tR\x10organizationName\x12#\n" +
-	"\rcontact_phone\x18\b \x01(\tR\fcontactPhone\x12#\n" +
-	"\rcontact_email\x18\t \x01(\tR\fcontactEmail\x12!\n" +
-	"\fcontact_name\x18\n" +
-	" \x01(\tR\vcontactName\x12\x12\n" +
-	"\x04logo\x18\v \x01(\tR\x04logo\x12\x18\n" +
-	"\awebsite\x18\f \x01(\tR\awebsite\"\xc4\x01\n" +
-	"\x18UserRegisterResponseData\x12!\n" +
-	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
-	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\x12.\n" +
-	"\x13access_token_expire\x18\x03 \x01(\x03R\x11accessTokenExpire\x120\n" +
-	"\x14refresh_token_expire\x18\x04 \x01(\x03R\x12refreshTokenExpire\"J\n" +
+	"\tlast_name\x18\x04 \x01(\tR\blastName\x12+\n" +
+	"\x11organization_name\x18\x05 \x01(\tR\x10organizationName\"J\n" +
 	"\x13RefreshTokenRequest\x123\n" +
 	"\x04data\x18\x01 \x01(\v2\x1f.lender.RefreshTokenRequestDataR\x04data\">\n" +
 	"\x17RefreshTokenRequestData\x12#\n" +
-	"\rrefresh_token\x18\x01 \x01(\tR\frefreshToken\"L\n" +
-	"\x14RefreshTokenResponse\x124\n" +
-	"\x04data\x18\x01 \x01(\v2 .lender.RefreshTokenResponseDataR\x04data\"\xc4\x01\n" +
-	"\x18RefreshTokenResponseData\x12!\n" +
-	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
-	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\x12.\n" +
-	"\x13access_token_expire\x18\x03 \x01(\x03R\x11accessTokenExpire\x120\n" +
-	"\x14refresh_token_expire\x18\x04 \x01(\x03R\x12refreshTokenExpire\"L\n" +
+	"\rrefresh_token\x18\x01 \x01(\tR\frefreshToken\"H\n" +
+	"\x12VerifyEmailRequest\x122\n" +
+	"\x04data\x18\x01 \x01(\v2\x1e.lender.VerifyEmailRequestDataR\x04data\"B\n" +
+	"\x16VerifyEmailRequestData\x12\x14\n" +
+	"\x05email\x18\x01 \x01(\tR\x05email\x12\x12\n" +
+	"\x04code\x18\x02 \x01(\tR\x04code\"P\n" +
+	"\x16SendVerifyEmailRequest\x126\n" +
+	"\x04data\x18\x01 \x01(\v2\".lender.SendVerifyEmailRequestDataR\x04data\"D\n" +
+	"\x17SendVerifyEmailResponse\x12)\n" +
+	"\x04data\x18\x01 \x01(\v2\x15.lender.EmptyResponseR\x04data\"2\n" +
+	"\x1aSendVerifyEmailRequestData\x12\x14\n" +
+	"\x05email\x18\x01 \x01(\tR\x05email\"L\n" +
 	"\x14ResetPasswordRequest\x124\n" +
-	"\x04data\x18\x01 \x01(\v2 .lender.ResetPasswordRequestDataR\x04data\"J\n" +
-	"\x15ResetPasswordResponse\x121\n" +
-	"\x04data\x18\x01 \x01(\v2\x1d.lender.UserLoginResponseDataR\x04data\"^\n" +
+	"\x04data\x18\x01 \x01(\v2 .lender.ResetPasswordRequestDataR\x04data\"H\n" +
+	"\x15ResetPasswordResponse\x12/\n" +
+	"\x04data\x18\x01 \x01(\v2\x1b.lender.UserJwtResponseDataR\x04data\"^\n" +
 	"\x1dSendResetPasswordEmailRequest\x12=\n" +
 	"\x04data\x18\x01 \x01(\v2).lender.SendResetPasswordEmailRequestDataR\x04data\"K\n" +
 	"\x1eSendResetPasswordEmailResponse\x12)\n" +
@@ -10858,12 +10731,7 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x18ResetPasswordRequestData\x12\x1a\n" +
 	"\bpassword\x18\x01 \x01(\tR\bpassword\x12\x12\n" +
 	"\x04code\x18\x02 \x01(\tR\x04code\x12\x14\n" +
-	"\x05email\x18\x03 \x01(\tR\x05email\"\xc5\x01\n" +
-	"\x19ResetPasswordResponseData\x12!\n" +
-	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
-	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\x12.\n" +
-	"\x13access_token_expire\x18\x03 \x01(\x03R\x11accessTokenExpire\x120\n" +
-	"\x14refresh_token_expire\x18\x04 \x01(\x03R\x12refreshTokenExpire\"B\n" +
+	"\x05email\x18\x03 \x01(\tR\x05email\"B\n" +
 	"\x0fUserInfoRequest\x12/\n" +
 	"\x04data\x18\x01 \x01(\v2\x1b.lender.UserInfoRequestDataR\x04data\"%\n" +
 	"\x13UserInfoRequestData\x12\x0e\n" +
@@ -10894,7 +10762,7 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x19SwitchOrganizationRequest\x129\n" +
 	"\x04data\x18\x01 \x01(\v2%.lender.SwitchOrganizationRequestDataR\x04data\"H\n" +
 	"\x1dSwitchOrganizationRequestData\x12'\n" +
-	"\x0forganization_id\x18\x02 \x01(\x03R\x0eorganizationId\"\xc8\x0e\n" +
+	"\x0forganization_id\x18\x01 \x01(\x03R\x0eorganizationId\"\xc8\x0e\n" +
 	"\n" +
 	"LoanEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
@@ -11635,15 +11503,17 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x06GetOpt\x12\x15.lender.OptionRequest\x1a\x16.lender.OptionResponse\x12?\n" +
 	"\n" +
 	"GetUsState\x12\x14.lender.EmptyRequest\x1a\x1b.lender.StringSliceResponse\x12C\n" +
-	"\vGetUsCities\x12\x17.lender.UsCitiesRequest\x1a\x1b.lender.StringSliceResponse2\xa3\x04\n" +
-	"\x04user\x12<\n" +
-	"\x05Login\x12\x18.lender.UserLoginRequest\x1a\x19.lender.UserLoginResponse\x12E\n" +
-	"\bRegister\x12\x1b.lender.UserRegisterRequest\x1a\x1c.lender.UserRegisterResponse\x12I\n" +
-	"\fRefreshToken\x12\x1b.lender.RefreshTokenRequest\x1a\x1c.lender.RefreshTokenResponse\x12L\n" +
-	"\rResetPassword\x12\x1c.lender.ResetPasswordRequest\x1a\x1d.lender.ResetPasswordResponse\x12g\n" +
-	"\x16SendResetPasswordEmail\x12%.lender.SendResetPasswordEmailRequest\x1a&.lender.SendResetPasswordEmailResponse\x12=\n" +
-	"\bUserInfo\x12\x17.lender.UserInfoRequest\x1a\x18.lender.UserinfoResponse\x12U\n" +
-	"\x12SwitchOrganization\x12!.lender.SwitchOrganizationRequest\x1a\x1c.lender.RefreshTokenResponse2\xf2\x04\n" +
+	"\vGetUsCities\x12\x17.lender.UsCitiesRequest\x1a\x1b.lender.StringSliceResponse2\xa2\x05\n" +
+	"\x04user\x12:\n" +
+	"\x05Login\x12\x18.lender.UserLoginRequest\x1a\x17.lender.UserJwtResponse\x12>\n" +
+	"\bRegister\x12\x1b.lender.UserRegisterRequest\x1a\x15.lender.EmptyResponse\x12D\n" +
+	"\fRefreshToken\x12\x1b.lender.RefreshTokenRequest\x1a\x17.lender.UserJwtResponse\x12F\n" +
+	"\rResetPassword\x12\x1c.lender.ResetPasswordRequest\x1a\x17.lender.UserJwtResponse\x12g\n" +
+	"\x16SendResetPasswordEmail\x12%.lender.SendResetPasswordEmailRequest\x1a&.lender.SendResetPasswordEmailResponse\x12B\n" +
+	"\vVerifyEmail\x12\x1a.lender.VerifyEmailRequest\x1a\x17.lender.UserJwtResponse\x12R\n" +
+	"\x0fSendVerifyEmail\x12\x1e.lender.SendVerifyEmailRequest\x1a\x1f.lender.SendVerifyEmailResponse\x12=\n" +
+	"\bUserInfo\x12\x17.lender.UserInfoRequest\x1a\x18.lender.UserinfoResponse\x12P\n" +
+	"\x12SwitchOrganization\x12!.lender.SwitchOrganizationRequest\x1a\x17.lender.UserJwtResponse2\xf2\x04\n" +
 	"\x04Loan\x12C\n" +
 	"\n" +
 	"LoanDetail\x12\x19.lender.LoanDetailRequest\x1a\x1a.lender.LoanDetailResponse\x12=\n" +
@@ -11677,7 +11547,7 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x06Delete\x12\x19.lender.RoleDeleteRequest\x1a\x15.lender.EmptyResponse\x12?\n" +
 	"\x06Detail\x12\x19.lender.RoleDetailRequest\x1a\x1a.lender.RoleDetailResponse\x12F\n" +
 	"\fUpdateStatus\x12\x1f.lender.RoleUpdateStatusRequest\x1a\x15.lender.EmptyResponse\x126\n" +
-	"\x03All\x12\x16.lender.RoleAllRequest\x1a\x17.lender.RoleAllResponse2\xe2\x06\n" +
+	"\x03All\x12\x16.lender.RoleAllRequest\x1a\x17.lender.RoleAllResponse2\xe0\x06\n" +
 	"\x10OrganizationUser\x12Q\n" +
 	"\x04Page\x12#.lender.OrganizationUserPageRequest\x1a$.lender.OrganizationUserPageResponse\x12W\n" +
 	"\x06Create\x12%.lender.OrganizationUserCreateRequest\x1a&.lender.OrganizationUserCreateResponse\x12W\n" +
@@ -11686,8 +11556,8 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x06Detail\x12%.lender.OrganizationUserDetailRequest\x1a&.lender.OrganizationUserDetailResponse\x12R\n" +
 	"\fSwitchStatus\x12+.lender.OrganizationUserUpdateStatusRequest\x1a\x15.lender.EmptyResponse\x12@\n" +
 	"\x03All\x12\x14.lender.EmptyRequest\x1a#.lender.OrganizationUserAllResponse\x12`\n" +
-	"\x13SendInvitationEmail\x122.lender.OrganizationUserSendInvitationEmailRequest\x1a\x15.lender.EmptyResponse\x12^\n" +
-	"\x10AcceptInvitation\x12/.lender.OrganizationUserAcceptInvitationRequest\x1a\x19.lender.UserLoginResponse\x12P\n" +
+	"\x13SendInvitationEmail\x122.lender.OrganizationUserSendInvitationEmailRequest\x1a\x15.lender.EmptyResponse\x12\\\n" +
+	"\x10AcceptInvitation\x12/.lender.OrganizationUserAcceptInvitationRequest\x1a\x17.lender.UserJwtResponse\x12P\n" +
 	"\vAssignRoles\x12*.lender.OrganizationUserAssignRolesRequest\x1a\x15.lender.EmptyResponseB\n" +
 	"Z\b./lenderb\x06proto3"
 
@@ -11716,24 +11586,24 @@ var file_app_lender_rpc_pb_lender_proto_goTypes = []any{
 	(*UsCitiesRequest)(nil),                                // 8: lender.UsCitiesRequest
 	(*UsCitiesRequestData)(nil),                            // 9: lender.UsCitiesRequestData
 	(*UserLoginRequest)(nil),                               // 10: lender.UserLoginRequest
-	(*UserLoginResponse)(nil),                              // 11: lender.UserLoginResponse
-	(*UserLoginRequestData)(nil),                           // 12: lender.UserLoginRequestData
-	(*UserLoginResponseData)(nil),                          // 13: lender.UserLoginResponseData
+	(*UserLoginRequestData)(nil),                           // 11: lender.UserLoginRequestData
+	(*UserJwtResponse)(nil),                                // 12: lender.UserJwtResponse
+	(*UserJwtResponseData)(nil),                            // 13: lender.UserJwtResponseData
 	(*UserRegisterRequest)(nil),                            // 14: lender.UserRegisterRequest
-	(*UserRegisterResponse)(nil),                           // 15: lender.UserRegisterResponse
-	(*UserRegisterRequestData)(nil),                        // 16: lender.UserRegisterRequestData
-	(*UserRegisterResponseData)(nil),                       // 17: lender.UserRegisterResponseData
-	(*RefreshTokenRequest)(nil),                            // 18: lender.RefreshTokenRequest
-	(*RefreshTokenRequestData)(nil),                        // 19: lender.RefreshTokenRequestData
-	(*RefreshTokenResponse)(nil),                           // 20: lender.RefreshTokenResponse
-	(*RefreshTokenResponseData)(nil),                       // 21: lender.RefreshTokenResponseData
-	(*ResetPasswordRequest)(nil),                           // 22: lender.ResetPasswordRequest
-	(*ResetPasswordResponse)(nil),                          // 23: lender.ResetPasswordResponse
-	(*SendResetPasswordEmailRequest)(nil),                  // 24: lender.SendResetPasswordEmailRequest
-	(*SendResetPasswordEmailResponse)(nil),                 // 25: lender.SendResetPasswordEmailResponse
-	(*SendResetPasswordEmailRequestData)(nil),              // 26: lender.SendResetPasswordEmailRequestData
-	(*ResetPasswordRequestData)(nil),                       // 27: lender.ResetPasswordRequestData
-	(*ResetPasswordResponseData)(nil),                      // 28: lender.ResetPasswordResponseData
+	(*UserRegisterRequestData)(nil),                        // 15: lender.UserRegisterRequestData
+	(*RefreshTokenRequest)(nil),                            // 16: lender.RefreshTokenRequest
+	(*RefreshTokenRequestData)(nil),                        // 17: lender.RefreshTokenRequestData
+	(*VerifyEmailRequest)(nil),                             // 18: lender.VerifyEmailRequest
+	(*VerifyEmailRequestData)(nil),                         // 19: lender.VerifyEmailRequestData
+	(*SendVerifyEmailRequest)(nil),                         // 20: lender.SendVerifyEmailRequest
+	(*SendVerifyEmailResponse)(nil),                        // 21: lender.SendVerifyEmailResponse
+	(*SendVerifyEmailRequestData)(nil),                     // 22: lender.SendVerifyEmailRequestData
+	(*ResetPasswordRequest)(nil),                           // 23: lender.ResetPasswordRequest
+	(*ResetPasswordResponse)(nil),                          // 24: lender.ResetPasswordResponse
+	(*SendResetPasswordEmailRequest)(nil),                  // 25: lender.SendResetPasswordEmailRequest
+	(*SendResetPasswordEmailResponse)(nil),                 // 26: lender.SendResetPasswordEmailResponse
+	(*SendResetPasswordEmailRequestData)(nil),              // 27: lender.SendResetPasswordEmailRequestData
+	(*ResetPasswordRequestData)(nil),                       // 28: lender.ResetPasswordRequestData
 	(*UserInfoRequest)(nil),                                // 29: lender.UserInfoRequest
 	(*UserInfoRequestData)(nil),                            // 30: lender.UserInfoRequestData
 	(*UserinfoResponse)(nil),                               // 31: lender.UserinfoResponse
@@ -11871,210 +11741,215 @@ var file_app_lender_rpc_pb_lender_proto_depIdxs = []int32{
 	5,   // 0: lender.OptionRequest.data:type_name -> lender.OptionRequestData
 	7,   // 1: lender.OptionResponse.data:type_name -> lender.OptionEntity
 	9,   // 2: lender.UsCitiesRequest.data:type_name -> lender.UsCitiesRequestData
-	12,  // 3: lender.UserLoginRequest.data:type_name -> lender.UserLoginRequestData
-	13,  // 4: lender.UserLoginResponse.data:type_name -> lender.UserLoginResponseData
-	16,  // 5: lender.UserRegisterRequest.data:type_name -> lender.UserRegisterRequestData
-	17,  // 6: lender.UserRegisterResponse.data:type_name -> lender.UserRegisterResponseData
-	19,  // 7: lender.RefreshTokenRequest.data:type_name -> lender.RefreshTokenRequestData
-	21,  // 8: lender.RefreshTokenResponse.data:type_name -> lender.RefreshTokenResponseData
-	27,  // 9: lender.ResetPasswordRequest.data:type_name -> lender.ResetPasswordRequestData
-	13,  // 10: lender.ResetPasswordResponse.data:type_name -> lender.UserLoginResponseData
-	26,  // 11: lender.SendResetPasswordEmailRequest.data:type_name -> lender.SendResetPasswordEmailRequestData
-	1,   // 12: lender.SendResetPasswordEmailResponse.data:type_name -> lender.EmptyResponse
-	30,  // 13: lender.UserInfoRequest.data:type_name -> lender.UserInfoRequestData
-	32,  // 14: lender.UserinfoResponse.data:type_name -> lender.UserinfoResponseData
-	160, // 15: lender.UserinfoResponseData.organizations:type_name -> lender.UserinfoResponseData.Organization
-	34,  // 16: lender.SwitchOrganizationRequest.data:type_name -> lender.SwitchOrganizationRequestData
-	65,  // 17: lender.LoanEntity.loan_property:type_name -> lender.LoanPropertyEntity
-	67,  // 18: lender.LoanEntity.applicants:type_name -> lender.LoanApplicantEntity
-	86,  // 19: lender.LoanEntity.transaction_experiences:type_name -> lender.LoanExperienceEntity
-	86,  // 20: lender.LoanEntity.real_estate_experiences:type_name -> lender.LoanExperienceEntity
-	85,  // 21: lender.LoanEntity.loan_borrower:type_name -> lender.LoanBorrowerEntity
-	88,  // 22: lender.LoanEntity.loan_demographic:type_name -> lender.LoanDemographicEntity
-	87,  // 23: lender.LoanEntity.loan_third_services:type_name -> lender.LoanThirdServiceEntity
-	53,  // 24: lender.LoanEntity.extend:type_name -> lender.LoanExtendValueEntity
-	69,  // 25: lender.LoanEntity.loan_documents:type_name -> lender.LoanDocumentEntity
-	39,  // 26: lender.LoanDetailRequest.data:type_name -> lender.LoanDetailRequestData
-	35,  // 27: lender.LoanDetailResponse.data:type_name -> lender.LoanEntity
-	42,  // 28: lender.LoanDeleteRequest.data:type_name -> lender.LoanDeleteRequestData
-	47,  // 29: lender.LoanPageRequest.data:type_name -> lender.LoanPageRequestData
-	48,  // 30: lender.LoanPageResponse.data:type_name -> lender.LoanPageResponseData
-	45,  // 31: lender.LoanPageRequestData.filter:type_name -> lender.LoanPageRequestFilter
-	46,  // 32: lender.LoanPageRequestData.sorter:type_name -> lender.LoanPageRequestSorter
-	35,  // 33: lender.LoanPageResponseData.list:type_name -> lender.LoanEntity
-	50,  // 34: lender.LoanUpdateRequest.data:type_name -> lender.LoanUpdateRequestData
-	66,  // 35: lender.LoanUpdateRequestData.loan_property:type_name -> lender.LoanPropertyEditEntity
-	68,  // 36: lender.LoanUpdateRequestData.applicants:type_name -> lender.LoanApplicantLoanEditEntity
-	86,  // 37: lender.LoanUpdateRequestData.transaction_experiences:type_name -> lender.LoanExperienceEntity
-	86,  // 38: lender.LoanUpdateRequestData.real_estate_experiences:type_name -> lender.LoanExperienceEntity
-	88,  // 39: lender.LoanUpdateRequestData.loan_demographic:type_name -> lender.LoanDemographicEntity
-	87,  // 40: lender.LoanUpdateRequestData.loan_third_services:type_name -> lender.LoanThirdServiceEntity
-	52,  // 41: lender.LoanUpdateResponse.data:type_name -> lender.LoanUpdateResponseData
-	55,  // 42: lender.LoanUpdateDocumentsRequest.data:type_name -> lender.LoanUpdateDocumentsRequestData
-	96,  // 43: lender.LoanUpdateDocumentsRequestData.documents:type_name -> lender.FileEntity
-	57,  // 44: lender.LoanUpdateStageRequest.data:type_name -> lender.LoanUpdateStageRequestData
-	59,  // 45: lender.LoanUpdatePendingStatusRequest.data:type_name -> lender.LoanUpdatePendingStatusRequestData
-	61,  // 46: lender.LoanPendingStatusReviewRequest.data:type_name -> lender.LoanPendingStatusReviewRequestData
-	63,  // 47: lender.LoanDocumentOptsRequest.data:type_name -> lender.LoanDocumentOptsRequestData
-	70,  // 48: lender.LoanDocumentOptsResponse.data:type_name -> lender.LoanDocumentOptEntity
-	93,  // 49: lender.LoanPropertyEntity.borrower_property:type_name -> lender.BorrowerPropertyEntity
-	36,  // 50: lender.LoanPropertyEntity.budget:type_name -> lender.LoanBudgetEntity
-	3,   // 51: lender.LoanPropertyEntity.address:type_name -> lender.AddressEntity
-	36,  // 52: lender.LoanPropertyEditEntity.budget:type_name -> lender.LoanBudgetEntity
-	3,   // 53: lender.LoanApplicantEntity.address:type_name -> lender.AddressEntity
-	96,  // 54: lender.LoanDocumentEntity.files:type_name -> lender.FileEntity
-	72,  // 55: lender.LoanDocumentUpdateCommentRequest.data:type_name -> lender.LoanDocumentUpdateCommentRequestData
-	74,  // 56: lender.LoanDocumentDeleteRequestRequest.data:type_name -> lender.LoanDocumentDeleteRequestRequestData
-	76,  // 57: lender.LoanDocumentDeleteFileRequest.data:type_name -> lender.LoanDocumentDeleteFileRequestData
-	78,  // 58: lender.LoanDocumentSendRequestsRequest.data:type_name -> lender.LoanDocumentSendRequestsRequestData
-	79,  // 59: lender.LoanDocumentSendRequestsRequestData.documents:type_name -> lender.SendDocumentRequestEntity
-	81,  // 60: lender.LoanDocumentCreateExtendTypeRequest.data:type_name -> lender.LoanDocumentCreateExtendTypeRequestData
-	70,  // 61: lender.LoanDocumentCreateExtendTypeResponse.data:type_name -> lender.LoanDocumentOptEntity
-	84,  // 62: lender.LoanDocumentAddFilesRequest.data:type_name -> lender.LoanDocumentAddFilesRequestData
-	3,   // 63: lender.LoanBorrowerEntity.mailing_address:type_name -> lender.AddressEntity
-	3,   // 64: lender.LoanExperienceEntity.address:type_name -> lender.AddressEntity
-	89,  // 65: lender.LoanDemographicEntity.property:type_name -> lender.LoanDemographicPropertyEntity
-	90,  // 66: lender.LoanDemographicEntity.ethnicity:type_name -> lender.LoanDemographicEthnicityEntity
-	91,  // 67: lender.LoanDemographicEntity.race:type_name -> lender.LoanDemographicRaceEntity
-	3,   // 68: lender.BorrowerPropertyEntity.address:type_name -> lender.AddressEntity
-	3,   // 69: lender.BorrowerEntityEntity.mailing_address:type_name -> lender.AddressEntity
-	3,   // 70: lender.BorrowerApplicantEntity.address:type_name -> lender.AddressEntity
-	98,  // 71: lender.FileDeleteRequest.data:type_name -> lender.FileDeleteRequestData
-	100, // 72: lender.StorageCreatePresignedUrlRequest.data:type_name -> lender.StorageCreatePresignedUrlRequestData
-	102, // 73: lender.StorageCreatePresignedUrlResponse.data:type_name -> lender.StorageCreatePresignedUrlResponseData
-	103, // 74: lender.ResourceTreeEntity.children:type_name -> lender.ResourceTreeEntity
-	106, // 75: lender.ResourceTreeRequest.data:type_name -> lender.ResourceTreeRequestData
-	103, // 76: lender.ResourceTreeResponse.data:type_name -> lender.ResourceTreeEntity
-	104, // 77: lender.RoleEntity.resources:type_name -> lender.ResourceEntity
-	110, // 78: lender.RolePageRequest.data:type_name -> lender.RolePageRequestData
-	111, // 79: lender.RolePageRequestData.filter:type_name -> lender.RolePageRequestFilter
-	112, // 80: lender.RolePageRequestData.sorter:type_name -> lender.RolePageRequestSorter
-	114, // 81: lender.RolePageResponse.data:type_name -> lender.RolePageResponseData
-	108, // 82: lender.RolePageResponseData.list:type_name -> lender.RoleEntity
-	116, // 83: lender.RoleCreateRequest.data:type_name -> lender.RoleCreateRequestData
-	120, // 84: lender.RoleCreateRequestData.role_and_resources:type_name -> lender.RoleAndResourceRelationEntity
-	108, // 85: lender.RoleCreateResponse.data:type_name -> lender.RoleEntity
-	119, // 86: lender.RoleUpdateRequest.data:type_name -> lender.RoleUpdateRequestData
-	120, // 87: lender.RoleUpdateRequestData.role_and_resources:type_name -> lender.RoleAndResourceRelationEntity
-	108, // 88: lender.RoleUpdateResponse.data:type_name -> lender.RoleEntity
-	123, // 89: lender.RoleDeleteRequest.data:type_name -> lender.RoleDeleteRequestData
-	125, // 90: lender.RoleDetailRequest.data:type_name -> lender.RoleDetailRequestData
-	108, // 91: lender.RoleDetailResponse.data:type_name -> lender.RoleEntity
-	128, // 92: lender.RoleUpdateStatusRequest.data:type_name -> lender.RoleUpdateStatusRequestData
-	130, // 93: lender.RoleAllRequest.data:type_name -> lender.RoleAllRequestData
-	108, // 94: lender.RoleAllResponse.data:type_name -> lender.RoleEntity
-	108, // 95: lender.OrganizationUserEntity.roles:type_name -> lender.RoleEntity
-	108, // 96: lender.OrganizationUserPageEntity.roles:type_name -> lender.RoleEntity
-	135, // 97: lender.OrganizationUserPageRequest.data:type_name -> lender.OrganizationUserPageRequestData
-	136, // 98: lender.OrganizationUserPageRequestData.filter:type_name -> lender.OrganizationUserPageRequestFilter
-	137, // 99: lender.OrganizationUserPageRequestData.sorter:type_name -> lender.OrganizationUserPageRequestSorter
-	139, // 100: lender.OrganizationUserPageResponse.data:type_name -> lender.OrganizationUserPageResponseData
-	133, // 101: lender.OrganizationUserPageResponseData.list:type_name -> lender.OrganizationUserPageEntity
-	141, // 102: lender.OrganizationUserCreateRequest.data:type_name -> lender.OrganizationUserCreateRequestData
-	132, // 103: lender.OrganizationUserCreateResponse.data:type_name -> lender.OrganizationUserEntity
-	144, // 104: lender.OrganizationUserUpdateRequest.data:type_name -> lender.OrganizationUserUpdateRequestData
-	132, // 105: lender.OrganizationUserUpdateResponse.data:type_name -> lender.OrganizationUserEntity
-	147, // 106: lender.OrganizationUserDetailRequest.data:type_name -> lender.OrganizationUserDetailRequestData
-	132, // 107: lender.OrganizationUserDetailResponse.data:type_name -> lender.OrganizationUserEntity
-	150, // 108: lender.OrganizationUserDeleteRequest.data:type_name -> lender.OrganizationUserDeleteRequestData
-	152, // 109: lender.OrganizationUserUpdateStatusRequest.data:type_name -> lender.OrganizationUserUpdateStatusRequestData
-	132, // 110: lender.OrganizationUserAllResponse.data:type_name -> lender.OrganizationUserEntity
-	155, // 111: lender.OrganizationUserSendInvitationEmailRequest.data:type_name -> lender.OrganizationUserSendInvitationEmailRequestData
-	157, // 112: lender.OrganizationUserAcceptInvitationRequest.data:type_name -> lender.OrganizationUserAcceptInvitationRequestData
-	159, // 113: lender.OrganizationUserAssignRolesRequest.data:type_name -> lender.OrganizationUserAssignRolesRequestData
-	4,   // 114: lender.common.GetOpt:input_type -> lender.OptionRequest
-	0,   // 115: lender.common.GetUsState:input_type -> lender.EmptyRequest
-	8,   // 116: lender.common.GetUsCities:input_type -> lender.UsCitiesRequest
-	10,  // 117: lender.user.Login:input_type -> lender.UserLoginRequest
-	14,  // 118: lender.user.Register:input_type -> lender.UserRegisterRequest
-	18,  // 119: lender.user.RefreshToken:input_type -> lender.RefreshTokenRequest
-	22,  // 120: lender.user.ResetPassword:input_type -> lender.ResetPasswordRequest
-	24,  // 121: lender.user.SendResetPasswordEmail:input_type -> lender.SendResetPasswordEmailRequest
-	29,  // 122: lender.user.UserInfo:input_type -> lender.UserInfoRequest
-	33,  // 123: lender.user.SwitchOrganization:input_type -> lender.SwitchOrganizationRequest
-	38,  // 124: lender.Loan.LoanDetail:input_type -> lender.LoanDetailRequest
-	43,  // 125: lender.Loan.LoanPage:input_type -> lender.LoanPageRequest
-	49,  // 126: lender.Loan.UpdateLoan:input_type -> lender.LoanUpdateRequest
-	54,  // 127: lender.Loan.UpdateLoanDocuments:input_type -> lender.LoanUpdateDocumentsRequest
-	56,  // 128: lender.Loan.UpdateLoanStage:input_type -> lender.LoanUpdateStageRequest
-	58,  // 129: lender.Loan.UpdateLoanPendingStatus:input_type -> lender.LoanUpdatePendingStatusRequest
-	60,  // 130: lender.Loan.PendingStatusReview:input_type -> lender.LoanPendingStatusReviewRequest
-	62,  // 131: lender.Loan.LoanDocumentOpts:input_type -> lender.LoanDocumentOptsRequest
-	80,  // 132: lender.LoanDocument.Create:input_type -> lender.LoanDocumentCreateExtendTypeRequest
-	77,  // 133: lender.LoanDocument.SendRequests:input_type -> lender.LoanDocumentSendRequestsRequest
-	75,  // 134: lender.LoanDocument.DeleteFile:input_type -> lender.LoanDocumentDeleteFileRequest
-	73,  // 135: lender.LoanDocument.DeleteRequest:input_type -> lender.LoanDocumentDeleteRequestRequest
-	71,  // 136: lender.LoanDocument.UpdateComment:input_type -> lender.LoanDocumentUpdateCommentRequest
-	83,  // 137: lender.LoanDocument.AddFiles:input_type -> lender.LoanDocumentAddFilesRequest
-	97,  // 138: lender.File.DeleteFile:input_type -> lender.FileDeleteRequest
-	99,  // 139: lender.Storage.CreatePresignedUrl:input_type -> lender.StorageCreatePresignedUrlRequest
-	105, // 140: lender.resource.ResourceTree:input_type -> lender.ResourceTreeRequest
-	109, // 141: lender.role.Page:input_type -> lender.RolePageRequest
-	115, // 142: lender.role.Create:input_type -> lender.RoleCreateRequest
-	118, // 143: lender.role.Update:input_type -> lender.RoleUpdateRequest
-	122, // 144: lender.role.Delete:input_type -> lender.RoleDeleteRequest
-	124, // 145: lender.role.Detail:input_type -> lender.RoleDetailRequest
-	127, // 146: lender.role.UpdateStatus:input_type -> lender.RoleUpdateStatusRequest
-	129, // 147: lender.role.All:input_type -> lender.RoleAllRequest
-	134, // 148: lender.OrganizationUser.Page:input_type -> lender.OrganizationUserPageRequest
-	140, // 149: lender.OrganizationUser.Create:input_type -> lender.OrganizationUserCreateRequest
-	143, // 150: lender.OrganizationUser.Update:input_type -> lender.OrganizationUserUpdateRequest
-	149, // 151: lender.OrganizationUser.Delete:input_type -> lender.OrganizationUserDeleteRequest
-	146, // 152: lender.OrganizationUser.Detail:input_type -> lender.OrganizationUserDetailRequest
-	151, // 153: lender.OrganizationUser.SwitchStatus:input_type -> lender.OrganizationUserUpdateStatusRequest
-	0,   // 154: lender.OrganizationUser.All:input_type -> lender.EmptyRequest
-	154, // 155: lender.OrganizationUser.SendInvitationEmail:input_type -> lender.OrganizationUserSendInvitationEmailRequest
-	156, // 156: lender.OrganizationUser.AcceptInvitation:input_type -> lender.OrganizationUserAcceptInvitationRequest
-	158, // 157: lender.OrganizationUser.AssignRoles:input_type -> lender.OrganizationUserAssignRolesRequest
-	6,   // 158: lender.common.GetOpt:output_type -> lender.OptionResponse
-	2,   // 159: lender.common.GetUsState:output_type -> lender.StringSliceResponse
-	2,   // 160: lender.common.GetUsCities:output_type -> lender.StringSliceResponse
-	11,  // 161: lender.user.Login:output_type -> lender.UserLoginResponse
-	15,  // 162: lender.user.Register:output_type -> lender.UserRegisterResponse
-	20,  // 163: lender.user.RefreshToken:output_type -> lender.RefreshTokenResponse
-	23,  // 164: lender.user.ResetPassword:output_type -> lender.ResetPasswordResponse
-	25,  // 165: lender.user.SendResetPasswordEmail:output_type -> lender.SendResetPasswordEmailResponse
-	31,  // 166: lender.user.UserInfo:output_type -> lender.UserinfoResponse
-	20,  // 167: lender.user.SwitchOrganization:output_type -> lender.RefreshTokenResponse
-	40,  // 168: lender.Loan.LoanDetail:output_type -> lender.LoanDetailResponse
-	44,  // 169: lender.Loan.LoanPage:output_type -> lender.LoanPageResponse
-	51,  // 170: lender.Loan.UpdateLoan:output_type -> lender.LoanUpdateResponse
-	1,   // 171: lender.Loan.UpdateLoanDocuments:output_type -> lender.EmptyResponse
-	1,   // 172: lender.Loan.UpdateLoanStage:output_type -> lender.EmptyResponse
-	1,   // 173: lender.Loan.UpdateLoanPendingStatus:output_type -> lender.EmptyResponse
-	1,   // 174: lender.Loan.PendingStatusReview:output_type -> lender.EmptyResponse
-	64,  // 175: lender.Loan.LoanDocumentOpts:output_type -> lender.LoanDocumentOptsResponse
-	82,  // 176: lender.LoanDocument.Create:output_type -> lender.LoanDocumentCreateExtendTypeResponse
-	1,   // 177: lender.LoanDocument.SendRequests:output_type -> lender.EmptyResponse
-	1,   // 178: lender.LoanDocument.DeleteFile:output_type -> lender.EmptyResponse
-	1,   // 179: lender.LoanDocument.DeleteRequest:output_type -> lender.EmptyResponse
-	1,   // 180: lender.LoanDocument.UpdateComment:output_type -> lender.EmptyResponse
-	1,   // 181: lender.LoanDocument.AddFiles:output_type -> lender.EmptyResponse
-	1,   // 182: lender.File.DeleteFile:output_type -> lender.EmptyResponse
-	101, // 183: lender.Storage.CreatePresignedUrl:output_type -> lender.StorageCreatePresignedUrlResponse
-	107, // 184: lender.resource.ResourceTree:output_type -> lender.ResourceTreeResponse
-	113, // 185: lender.role.Page:output_type -> lender.RolePageResponse
-	117, // 186: lender.role.Create:output_type -> lender.RoleCreateResponse
-	121, // 187: lender.role.Update:output_type -> lender.RoleUpdateResponse
-	1,   // 188: lender.role.Delete:output_type -> lender.EmptyResponse
-	126, // 189: lender.role.Detail:output_type -> lender.RoleDetailResponse
-	1,   // 190: lender.role.UpdateStatus:output_type -> lender.EmptyResponse
-	131, // 191: lender.role.All:output_type -> lender.RoleAllResponse
-	138, // 192: lender.OrganizationUser.Page:output_type -> lender.OrganizationUserPageResponse
-	142, // 193: lender.OrganizationUser.Create:output_type -> lender.OrganizationUserCreateResponse
-	145, // 194: lender.OrganizationUser.Update:output_type -> lender.OrganizationUserUpdateResponse
-	1,   // 195: lender.OrganizationUser.Delete:output_type -> lender.EmptyResponse
-	148, // 196: lender.OrganizationUser.Detail:output_type -> lender.OrganizationUserDetailResponse
-	1,   // 197: lender.OrganizationUser.SwitchStatus:output_type -> lender.EmptyResponse
-	153, // 198: lender.OrganizationUser.All:output_type -> lender.OrganizationUserAllResponse
-	1,   // 199: lender.OrganizationUser.SendInvitationEmail:output_type -> lender.EmptyResponse
-	11,  // 200: lender.OrganizationUser.AcceptInvitation:output_type -> lender.UserLoginResponse
-	1,   // 201: lender.OrganizationUser.AssignRoles:output_type -> lender.EmptyResponse
-	158, // [158:202] is the sub-list for method output_type
-	114, // [114:158] is the sub-list for method input_type
-	114, // [114:114] is the sub-list for extension type_name
-	114, // [114:114] is the sub-list for extension extendee
-	0,   // [0:114] is the sub-list for field type_name
+	11,  // 3: lender.UserLoginRequest.data:type_name -> lender.UserLoginRequestData
+	13,  // 4: lender.UserJwtResponse.data:type_name -> lender.UserJwtResponseData
+	15,  // 5: lender.UserRegisterRequest.data:type_name -> lender.UserRegisterRequestData
+	17,  // 6: lender.RefreshTokenRequest.data:type_name -> lender.RefreshTokenRequestData
+	19,  // 7: lender.VerifyEmailRequest.data:type_name -> lender.VerifyEmailRequestData
+	22,  // 8: lender.SendVerifyEmailRequest.data:type_name -> lender.SendVerifyEmailRequestData
+	1,   // 9: lender.SendVerifyEmailResponse.data:type_name -> lender.EmptyResponse
+	28,  // 10: lender.ResetPasswordRequest.data:type_name -> lender.ResetPasswordRequestData
+	13,  // 11: lender.ResetPasswordResponse.data:type_name -> lender.UserJwtResponseData
+	27,  // 12: lender.SendResetPasswordEmailRequest.data:type_name -> lender.SendResetPasswordEmailRequestData
+	1,   // 13: lender.SendResetPasswordEmailResponse.data:type_name -> lender.EmptyResponse
+	30,  // 14: lender.UserInfoRequest.data:type_name -> lender.UserInfoRequestData
+	32,  // 15: lender.UserinfoResponse.data:type_name -> lender.UserinfoResponseData
+	160, // 16: lender.UserinfoResponseData.organizations:type_name -> lender.UserinfoResponseData.Organization
+	34,  // 17: lender.SwitchOrganizationRequest.data:type_name -> lender.SwitchOrganizationRequestData
+	65,  // 18: lender.LoanEntity.loan_property:type_name -> lender.LoanPropertyEntity
+	67,  // 19: lender.LoanEntity.applicants:type_name -> lender.LoanApplicantEntity
+	86,  // 20: lender.LoanEntity.transaction_experiences:type_name -> lender.LoanExperienceEntity
+	86,  // 21: lender.LoanEntity.real_estate_experiences:type_name -> lender.LoanExperienceEntity
+	85,  // 22: lender.LoanEntity.loan_borrower:type_name -> lender.LoanBorrowerEntity
+	88,  // 23: lender.LoanEntity.loan_demographic:type_name -> lender.LoanDemographicEntity
+	87,  // 24: lender.LoanEntity.loan_third_services:type_name -> lender.LoanThirdServiceEntity
+	53,  // 25: lender.LoanEntity.extend:type_name -> lender.LoanExtendValueEntity
+	69,  // 26: lender.LoanEntity.loan_documents:type_name -> lender.LoanDocumentEntity
+	39,  // 27: lender.LoanDetailRequest.data:type_name -> lender.LoanDetailRequestData
+	35,  // 28: lender.LoanDetailResponse.data:type_name -> lender.LoanEntity
+	42,  // 29: lender.LoanDeleteRequest.data:type_name -> lender.LoanDeleteRequestData
+	47,  // 30: lender.LoanPageRequest.data:type_name -> lender.LoanPageRequestData
+	48,  // 31: lender.LoanPageResponse.data:type_name -> lender.LoanPageResponseData
+	45,  // 32: lender.LoanPageRequestData.filter:type_name -> lender.LoanPageRequestFilter
+	46,  // 33: lender.LoanPageRequestData.sorter:type_name -> lender.LoanPageRequestSorter
+	35,  // 34: lender.LoanPageResponseData.list:type_name -> lender.LoanEntity
+	50,  // 35: lender.LoanUpdateRequest.data:type_name -> lender.LoanUpdateRequestData
+	66,  // 36: lender.LoanUpdateRequestData.loan_property:type_name -> lender.LoanPropertyEditEntity
+	68,  // 37: lender.LoanUpdateRequestData.applicants:type_name -> lender.LoanApplicantLoanEditEntity
+	86,  // 38: lender.LoanUpdateRequestData.transaction_experiences:type_name -> lender.LoanExperienceEntity
+	86,  // 39: lender.LoanUpdateRequestData.real_estate_experiences:type_name -> lender.LoanExperienceEntity
+	88,  // 40: lender.LoanUpdateRequestData.loan_demographic:type_name -> lender.LoanDemographicEntity
+	87,  // 41: lender.LoanUpdateRequestData.loan_third_services:type_name -> lender.LoanThirdServiceEntity
+	52,  // 42: lender.LoanUpdateResponse.data:type_name -> lender.LoanUpdateResponseData
+	55,  // 43: lender.LoanUpdateDocumentsRequest.data:type_name -> lender.LoanUpdateDocumentsRequestData
+	96,  // 44: lender.LoanUpdateDocumentsRequestData.documents:type_name -> lender.FileEntity
+	57,  // 45: lender.LoanUpdateStageRequest.data:type_name -> lender.LoanUpdateStageRequestData
+	59,  // 46: lender.LoanUpdatePendingStatusRequest.data:type_name -> lender.LoanUpdatePendingStatusRequestData
+	61,  // 47: lender.LoanPendingStatusReviewRequest.data:type_name -> lender.LoanPendingStatusReviewRequestData
+	63,  // 48: lender.LoanDocumentOptsRequest.data:type_name -> lender.LoanDocumentOptsRequestData
+	70,  // 49: lender.LoanDocumentOptsResponse.data:type_name -> lender.LoanDocumentOptEntity
+	93,  // 50: lender.LoanPropertyEntity.borrower_property:type_name -> lender.BorrowerPropertyEntity
+	36,  // 51: lender.LoanPropertyEntity.budget:type_name -> lender.LoanBudgetEntity
+	3,   // 52: lender.LoanPropertyEntity.address:type_name -> lender.AddressEntity
+	36,  // 53: lender.LoanPropertyEditEntity.budget:type_name -> lender.LoanBudgetEntity
+	3,   // 54: lender.LoanApplicantEntity.address:type_name -> lender.AddressEntity
+	96,  // 55: lender.LoanDocumentEntity.files:type_name -> lender.FileEntity
+	72,  // 56: lender.LoanDocumentUpdateCommentRequest.data:type_name -> lender.LoanDocumentUpdateCommentRequestData
+	74,  // 57: lender.LoanDocumentDeleteRequestRequest.data:type_name -> lender.LoanDocumentDeleteRequestRequestData
+	76,  // 58: lender.LoanDocumentDeleteFileRequest.data:type_name -> lender.LoanDocumentDeleteFileRequestData
+	78,  // 59: lender.LoanDocumentSendRequestsRequest.data:type_name -> lender.LoanDocumentSendRequestsRequestData
+	79,  // 60: lender.LoanDocumentSendRequestsRequestData.documents:type_name -> lender.SendDocumentRequestEntity
+	81,  // 61: lender.LoanDocumentCreateExtendTypeRequest.data:type_name -> lender.LoanDocumentCreateExtendTypeRequestData
+	70,  // 62: lender.LoanDocumentCreateExtendTypeResponse.data:type_name -> lender.LoanDocumentOptEntity
+	84,  // 63: lender.LoanDocumentAddFilesRequest.data:type_name -> lender.LoanDocumentAddFilesRequestData
+	3,   // 64: lender.LoanBorrowerEntity.mailing_address:type_name -> lender.AddressEntity
+	3,   // 65: lender.LoanExperienceEntity.address:type_name -> lender.AddressEntity
+	89,  // 66: lender.LoanDemographicEntity.property:type_name -> lender.LoanDemographicPropertyEntity
+	90,  // 67: lender.LoanDemographicEntity.ethnicity:type_name -> lender.LoanDemographicEthnicityEntity
+	91,  // 68: lender.LoanDemographicEntity.race:type_name -> lender.LoanDemographicRaceEntity
+	3,   // 69: lender.BorrowerPropertyEntity.address:type_name -> lender.AddressEntity
+	3,   // 70: lender.BorrowerEntityEntity.mailing_address:type_name -> lender.AddressEntity
+	3,   // 71: lender.BorrowerApplicantEntity.address:type_name -> lender.AddressEntity
+	98,  // 72: lender.FileDeleteRequest.data:type_name -> lender.FileDeleteRequestData
+	100, // 73: lender.StorageCreatePresignedUrlRequest.data:type_name -> lender.StorageCreatePresignedUrlRequestData
+	102, // 74: lender.StorageCreatePresignedUrlResponse.data:type_name -> lender.StorageCreatePresignedUrlResponseData
+	103, // 75: lender.ResourceTreeEntity.children:type_name -> lender.ResourceTreeEntity
+	106, // 76: lender.ResourceTreeRequest.data:type_name -> lender.ResourceTreeRequestData
+	103, // 77: lender.ResourceTreeResponse.data:type_name -> lender.ResourceTreeEntity
+	104, // 78: lender.RoleEntity.resources:type_name -> lender.ResourceEntity
+	110, // 79: lender.RolePageRequest.data:type_name -> lender.RolePageRequestData
+	111, // 80: lender.RolePageRequestData.filter:type_name -> lender.RolePageRequestFilter
+	112, // 81: lender.RolePageRequestData.sorter:type_name -> lender.RolePageRequestSorter
+	114, // 82: lender.RolePageResponse.data:type_name -> lender.RolePageResponseData
+	108, // 83: lender.RolePageResponseData.list:type_name -> lender.RoleEntity
+	116, // 84: lender.RoleCreateRequest.data:type_name -> lender.RoleCreateRequestData
+	120, // 85: lender.RoleCreateRequestData.role_and_resources:type_name -> lender.RoleAndResourceRelationEntity
+	108, // 86: lender.RoleCreateResponse.data:type_name -> lender.RoleEntity
+	119, // 87: lender.RoleUpdateRequest.data:type_name -> lender.RoleUpdateRequestData
+	120, // 88: lender.RoleUpdateRequestData.role_and_resources:type_name -> lender.RoleAndResourceRelationEntity
+	108, // 89: lender.RoleUpdateResponse.data:type_name -> lender.RoleEntity
+	123, // 90: lender.RoleDeleteRequest.data:type_name -> lender.RoleDeleteRequestData
+	125, // 91: lender.RoleDetailRequest.data:type_name -> lender.RoleDetailRequestData
+	108, // 92: lender.RoleDetailResponse.data:type_name -> lender.RoleEntity
+	128, // 93: lender.RoleUpdateStatusRequest.data:type_name -> lender.RoleUpdateStatusRequestData
+	130, // 94: lender.RoleAllRequest.data:type_name -> lender.RoleAllRequestData
+	108, // 95: lender.RoleAllResponse.data:type_name -> lender.RoleEntity
+	108, // 96: lender.OrganizationUserEntity.roles:type_name -> lender.RoleEntity
+	108, // 97: lender.OrganizationUserPageEntity.roles:type_name -> lender.RoleEntity
+	135, // 98: lender.OrganizationUserPageRequest.data:type_name -> lender.OrganizationUserPageRequestData
+	136, // 99: lender.OrganizationUserPageRequestData.filter:type_name -> lender.OrganizationUserPageRequestFilter
+	137, // 100: lender.OrganizationUserPageRequestData.sorter:type_name -> lender.OrganizationUserPageRequestSorter
+	139, // 101: lender.OrganizationUserPageResponse.data:type_name -> lender.OrganizationUserPageResponseData
+	133, // 102: lender.OrganizationUserPageResponseData.list:type_name -> lender.OrganizationUserPageEntity
+	141, // 103: lender.OrganizationUserCreateRequest.data:type_name -> lender.OrganizationUserCreateRequestData
+	132, // 104: lender.OrganizationUserCreateResponse.data:type_name -> lender.OrganizationUserEntity
+	144, // 105: lender.OrganizationUserUpdateRequest.data:type_name -> lender.OrganizationUserUpdateRequestData
+	132, // 106: lender.OrganizationUserUpdateResponse.data:type_name -> lender.OrganizationUserEntity
+	147, // 107: lender.OrganizationUserDetailRequest.data:type_name -> lender.OrganizationUserDetailRequestData
+	132, // 108: lender.OrganizationUserDetailResponse.data:type_name -> lender.OrganizationUserEntity
+	150, // 109: lender.OrganizationUserDeleteRequest.data:type_name -> lender.OrganizationUserDeleteRequestData
+	152, // 110: lender.OrganizationUserUpdateStatusRequest.data:type_name -> lender.OrganizationUserUpdateStatusRequestData
+	132, // 111: lender.OrganizationUserAllResponse.data:type_name -> lender.OrganizationUserEntity
+	155, // 112: lender.OrganizationUserSendInvitationEmailRequest.data:type_name -> lender.OrganizationUserSendInvitationEmailRequestData
+	157, // 113: lender.OrganizationUserAcceptInvitationRequest.data:type_name -> lender.OrganizationUserAcceptInvitationRequestData
+	159, // 114: lender.OrganizationUserAssignRolesRequest.data:type_name -> lender.OrganizationUserAssignRolesRequestData
+	4,   // 115: lender.common.GetOpt:input_type -> lender.OptionRequest
+	0,   // 116: lender.common.GetUsState:input_type -> lender.EmptyRequest
+	8,   // 117: lender.common.GetUsCities:input_type -> lender.UsCitiesRequest
+	10,  // 118: lender.user.Login:input_type -> lender.UserLoginRequest
+	14,  // 119: lender.user.Register:input_type -> lender.UserRegisterRequest
+	16,  // 120: lender.user.RefreshToken:input_type -> lender.RefreshTokenRequest
+	23,  // 121: lender.user.ResetPassword:input_type -> lender.ResetPasswordRequest
+	25,  // 122: lender.user.SendResetPasswordEmail:input_type -> lender.SendResetPasswordEmailRequest
+	18,  // 123: lender.user.VerifyEmail:input_type -> lender.VerifyEmailRequest
+	20,  // 124: lender.user.SendVerifyEmail:input_type -> lender.SendVerifyEmailRequest
+	29,  // 125: lender.user.UserInfo:input_type -> lender.UserInfoRequest
+	33,  // 126: lender.user.SwitchOrganization:input_type -> lender.SwitchOrganizationRequest
+	38,  // 127: lender.Loan.LoanDetail:input_type -> lender.LoanDetailRequest
+	43,  // 128: lender.Loan.LoanPage:input_type -> lender.LoanPageRequest
+	49,  // 129: lender.Loan.UpdateLoan:input_type -> lender.LoanUpdateRequest
+	54,  // 130: lender.Loan.UpdateLoanDocuments:input_type -> lender.LoanUpdateDocumentsRequest
+	56,  // 131: lender.Loan.UpdateLoanStage:input_type -> lender.LoanUpdateStageRequest
+	58,  // 132: lender.Loan.UpdateLoanPendingStatus:input_type -> lender.LoanUpdatePendingStatusRequest
+	60,  // 133: lender.Loan.PendingStatusReview:input_type -> lender.LoanPendingStatusReviewRequest
+	62,  // 134: lender.Loan.LoanDocumentOpts:input_type -> lender.LoanDocumentOptsRequest
+	80,  // 135: lender.LoanDocument.Create:input_type -> lender.LoanDocumentCreateExtendTypeRequest
+	77,  // 136: lender.LoanDocument.SendRequests:input_type -> lender.LoanDocumentSendRequestsRequest
+	75,  // 137: lender.LoanDocument.DeleteFile:input_type -> lender.LoanDocumentDeleteFileRequest
+	73,  // 138: lender.LoanDocument.DeleteRequest:input_type -> lender.LoanDocumentDeleteRequestRequest
+	71,  // 139: lender.LoanDocument.UpdateComment:input_type -> lender.LoanDocumentUpdateCommentRequest
+	83,  // 140: lender.LoanDocument.AddFiles:input_type -> lender.LoanDocumentAddFilesRequest
+	97,  // 141: lender.File.DeleteFile:input_type -> lender.FileDeleteRequest
+	99,  // 142: lender.Storage.CreatePresignedUrl:input_type -> lender.StorageCreatePresignedUrlRequest
+	105, // 143: lender.resource.ResourceTree:input_type -> lender.ResourceTreeRequest
+	109, // 144: lender.role.Page:input_type -> lender.RolePageRequest
+	115, // 145: lender.role.Create:input_type -> lender.RoleCreateRequest
+	118, // 146: lender.role.Update:input_type -> lender.RoleUpdateRequest
+	122, // 147: lender.role.Delete:input_type -> lender.RoleDeleteRequest
+	124, // 148: lender.role.Detail:input_type -> lender.RoleDetailRequest
+	127, // 149: lender.role.UpdateStatus:input_type -> lender.RoleUpdateStatusRequest
+	129, // 150: lender.role.All:input_type -> lender.RoleAllRequest
+	134, // 151: lender.OrganizationUser.Page:input_type -> lender.OrganizationUserPageRequest
+	140, // 152: lender.OrganizationUser.Create:input_type -> lender.OrganizationUserCreateRequest
+	143, // 153: lender.OrganizationUser.Update:input_type -> lender.OrganizationUserUpdateRequest
+	149, // 154: lender.OrganizationUser.Delete:input_type -> lender.OrganizationUserDeleteRequest
+	146, // 155: lender.OrganizationUser.Detail:input_type -> lender.OrganizationUserDetailRequest
+	151, // 156: lender.OrganizationUser.SwitchStatus:input_type -> lender.OrganizationUserUpdateStatusRequest
+	0,   // 157: lender.OrganizationUser.All:input_type -> lender.EmptyRequest
+	154, // 158: lender.OrganizationUser.SendInvitationEmail:input_type -> lender.OrganizationUserSendInvitationEmailRequest
+	156, // 159: lender.OrganizationUser.AcceptInvitation:input_type -> lender.OrganizationUserAcceptInvitationRequest
+	158, // 160: lender.OrganizationUser.AssignRoles:input_type -> lender.OrganizationUserAssignRolesRequest
+	6,   // 161: lender.common.GetOpt:output_type -> lender.OptionResponse
+	2,   // 162: lender.common.GetUsState:output_type -> lender.StringSliceResponse
+	2,   // 163: lender.common.GetUsCities:output_type -> lender.StringSliceResponse
+	12,  // 164: lender.user.Login:output_type -> lender.UserJwtResponse
+	1,   // 165: lender.user.Register:output_type -> lender.EmptyResponse
+	12,  // 166: lender.user.RefreshToken:output_type -> lender.UserJwtResponse
+	12,  // 167: lender.user.ResetPassword:output_type -> lender.UserJwtResponse
+	26,  // 168: lender.user.SendResetPasswordEmail:output_type -> lender.SendResetPasswordEmailResponse
+	12,  // 169: lender.user.VerifyEmail:output_type -> lender.UserJwtResponse
+	21,  // 170: lender.user.SendVerifyEmail:output_type -> lender.SendVerifyEmailResponse
+	31,  // 171: lender.user.UserInfo:output_type -> lender.UserinfoResponse
+	12,  // 172: lender.user.SwitchOrganization:output_type -> lender.UserJwtResponse
+	40,  // 173: lender.Loan.LoanDetail:output_type -> lender.LoanDetailResponse
+	44,  // 174: lender.Loan.LoanPage:output_type -> lender.LoanPageResponse
+	51,  // 175: lender.Loan.UpdateLoan:output_type -> lender.LoanUpdateResponse
+	1,   // 176: lender.Loan.UpdateLoanDocuments:output_type -> lender.EmptyResponse
+	1,   // 177: lender.Loan.UpdateLoanStage:output_type -> lender.EmptyResponse
+	1,   // 178: lender.Loan.UpdateLoanPendingStatus:output_type -> lender.EmptyResponse
+	1,   // 179: lender.Loan.PendingStatusReview:output_type -> lender.EmptyResponse
+	64,  // 180: lender.Loan.LoanDocumentOpts:output_type -> lender.LoanDocumentOptsResponse
+	82,  // 181: lender.LoanDocument.Create:output_type -> lender.LoanDocumentCreateExtendTypeResponse
+	1,   // 182: lender.LoanDocument.SendRequests:output_type -> lender.EmptyResponse
+	1,   // 183: lender.LoanDocument.DeleteFile:output_type -> lender.EmptyResponse
+	1,   // 184: lender.LoanDocument.DeleteRequest:output_type -> lender.EmptyResponse
+	1,   // 185: lender.LoanDocument.UpdateComment:output_type -> lender.EmptyResponse
+	1,   // 186: lender.LoanDocument.AddFiles:output_type -> lender.EmptyResponse
+	1,   // 187: lender.File.DeleteFile:output_type -> lender.EmptyResponse
+	101, // 188: lender.Storage.CreatePresignedUrl:output_type -> lender.StorageCreatePresignedUrlResponse
+	107, // 189: lender.resource.ResourceTree:output_type -> lender.ResourceTreeResponse
+	113, // 190: lender.role.Page:output_type -> lender.RolePageResponse
+	117, // 191: lender.role.Create:output_type -> lender.RoleCreateResponse
+	121, // 192: lender.role.Update:output_type -> lender.RoleUpdateResponse
+	1,   // 193: lender.role.Delete:output_type -> lender.EmptyResponse
+	126, // 194: lender.role.Detail:output_type -> lender.RoleDetailResponse
+	1,   // 195: lender.role.UpdateStatus:output_type -> lender.EmptyResponse
+	131, // 196: lender.role.All:output_type -> lender.RoleAllResponse
+	138, // 197: lender.OrganizationUser.Page:output_type -> lender.OrganizationUserPageResponse
+	142, // 198: lender.OrganizationUser.Create:output_type -> lender.OrganizationUserCreateResponse
+	145, // 199: lender.OrganizationUser.Update:output_type -> lender.OrganizationUserUpdateResponse
+	1,   // 200: lender.OrganizationUser.Delete:output_type -> lender.EmptyResponse
+	148, // 201: lender.OrganizationUser.Detail:output_type -> lender.OrganizationUserDetailResponse
+	1,   // 202: lender.OrganizationUser.SwitchStatus:output_type -> lender.EmptyResponse
+	153, // 203: lender.OrganizationUser.All:output_type -> lender.OrganizationUserAllResponse
+	1,   // 204: lender.OrganizationUser.SendInvitationEmail:output_type -> lender.EmptyResponse
+	12,  // 205: lender.OrganizationUser.AcceptInvitation:output_type -> lender.UserJwtResponse
+	1,   // 206: lender.OrganizationUser.AssignRoles:output_type -> lender.EmptyResponse
+	161, // [161:207] is the sub-list for method output_type
+	115, // [115:161] is the sub-list for method input_type
+	115, // [115:115] is the sub-list for extension type_name
+	115, // [115:115] is the sub-list for extension extendee
+	0,   // [0:115] is the sub-list for field type_name
 }
 
 func init() { file_app_lender_rpc_pb_lender_proto_init() }

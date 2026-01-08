@@ -13,7 +13,7 @@ type OrganizationPageFilter struct {
 	Status           constants.OrganizationStatus `json:"status"`
 }
 type OrganizationRegisterRequestDto struct {
-	Id           int64                           `json:"id"`
+	// Id           int64                           `json:"id"`
 	Name         string                          `json:"name"`
 	Status       constants.OrganizationStatus    `json:"status"`
 	OwnerType    constants.OrganizationOwnerType `json:"owner_type"`
