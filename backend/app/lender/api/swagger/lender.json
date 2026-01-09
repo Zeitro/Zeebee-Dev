@@ -3031,6 +3031,53 @@
                     }
                   }
                 },
+                "owner": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "email",
+                    "first_name",
+                    "mid_name",
+                    "last_name",
+                    "full_name",
+                    "status",
+                    "type",
+                    "created_at",
+                    "updated_at"
+                  ],
+                  "properties": {
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "first_name": {
+                      "type": "string"
+                    },
+                    "full_name": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "last_name": {
+                      "type": "string"
+                    },
+                    "mid_name": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    }
+                  }
+                },
                 "owner_id": {
                   "type": "integer"
                 },
@@ -3339,6 +3386,53 @@
                       "purpose": {
                         "type": "string"
                       }
+                    }
+                  }
+                },
+                "owner": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "email",
+                    "first_name",
+                    "mid_name",
+                    "last_name",
+                    "full_name",
+                    "status",
+                    "type",
+                    "created_at",
+                    "updated_at"
+                  ],
+                  "properties": {
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "first_name": {
+                      "type": "string"
+                    },
+                    "full_name": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "last_name": {
+                      "type": "string"
+                    },
+                    "mid_name": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "updated_at": {
+                      "type": "string"
                     }
                   }
                 },
@@ -6104,7 +6198,7 @@
       }
     }
   },
-  "x-date": "2026-01-08 18:12:52",
+  "x-date": "2026-01-09 11:08:03",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

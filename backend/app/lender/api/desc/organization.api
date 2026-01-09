@@ -9,15 +9,7 @@ info(
 import "address.api"
 import "organization_email.api"
 import "common.api"
-
-type (
-    UserInfoOrganizationEntity {
-        Id int64 `json:"id"`
-        Name string `json:"name"`
-        Status string `json:"status"`
-        IsDefault bool `json:"is_default"`
-    }
-)
+import "user.api"
 
 type OrganizationEntity {
     Id int64 `json:"id"`
@@ -38,6 +30,7 @@ type OrganizationEntity {
     UpdatedAt string `json:"updated_at"`
 
     OrganizationEmails []*OrganizationEmailEntity `json:"organization_emails"`
+    Owner *UserEntity `json:"owner"`
 }
 
 type OrganizationMetadataEntity {

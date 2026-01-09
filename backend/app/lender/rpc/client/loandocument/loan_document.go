@@ -84,6 +84,9 @@ type (
 	OptionRequest                                  = lender.OptionRequest
 	OptionRequestData                              = lender.OptionRequestData
 	OptionResponse                                 = lender.OptionResponse
+	OrganizationCreateRequest                      = lender.OrganizationCreateRequest
+	OrganizationCreateRequestData                  = lender.OrganizationCreateRequestData
+	OrganizationCreateResponse                     = lender.OrganizationCreateResponse
 	OrganizationEmailEntity                        = lender.OrganizationEmailEntity
 	OrganizationEntity                             = lender.OrganizationEntity
 	OrganizationLenderMetadataEntity               = lender.OrganizationLenderMetadataEntity
@@ -171,6 +174,7 @@ type (
 	SwitchOrganizationRequestData                  = lender.SwitchOrganizationRequestData
 	UsCitiesRequest                                = lender.UsCitiesRequest
 	UsCitiesRequestData                            = lender.UsCitiesRequestData
+	UserEntity                                     = lender.UserEntity
 	UserInfoRequest                                = lender.UserInfoRequest
 	UserInfoRequestData                            = lender.UserInfoRequestData
 	UserJwtResponse                                = lender.UserJwtResponse

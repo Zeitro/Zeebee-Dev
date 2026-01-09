@@ -2349,6 +2349,7 @@ var OrganizationUser_ServiceDesc = grpc.ServiceDesc{
 const (
 	Organization_Profile_FullMethodName       = "/lender.Organization/Profile"
 	Organization_UpdateProfile_FullMethodName = "/lender.Organization/UpdateProfile"
+	Organization_Create_FullMethodName        = "/lender.Organization/Create"
 )
 
 // OrganizationClient is the client API for Organization service.
@@ -2357,6 +2358,7 @@ const (
 type OrganizationClient interface {
 	Profile(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationEntity, error)
 	UpdateProfile(ctx context.Context, in *OrganizationUpdateProfileRequest, opts ...grpc.CallOption) (*OrganizationEntity, error)
+	Create(ctx context.Context, in *OrganizationCreateRequest, opts ...grpc.CallOption) (*OrganizationCreateResponse, error)
 }
 
 type organizationClient struct {
@@ -2387,12 +2389,23 @@ func (c *organizationClient) UpdateProfile(ctx context.Context, in *Organization
 	return out, nil
 }
 
+func (c *organizationClient) Create(ctx context.Context, in *OrganizationCreateRequest, opts ...grpc.CallOption) (*OrganizationCreateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OrganizationCreateResponse)
+	err := c.cc.Invoke(ctx, Organization_Create_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OrganizationServer is the server API for Organization service.
 // All implementations must embed UnimplementedOrganizationServer
 // for forward compatibility.
 type OrganizationServer interface {
 	Profile(context.Context, *EmptyRequest) (*OrganizationEntity, error)
 	UpdateProfile(context.Context, *OrganizationUpdateProfileRequest) (*OrganizationEntity, error)
+	Create(context.Context, *OrganizationCreateRequest) (*OrganizationCreateResponse, error)
 	mustEmbedUnimplementedOrganizationServer()
 }
 
@@ -2408,6 +2421,9 @@ func (UnimplementedOrganizationServer) Profile(context.Context, *EmptyRequest) (
 }
 func (UnimplementedOrganizationServer) UpdateProfile(context.Context, *OrganizationUpdateProfileRequest) (*OrganizationEntity, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateProfile not implemented")
+}
+func (UnimplementedOrganizationServer) Create(context.Context, *OrganizationCreateRequest) (*OrganizationCreateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
 func (UnimplementedOrganizationServer) mustEmbedUnimplementedOrganizationServer() {}
 func (UnimplementedOrganizationServer) testEmbeddedByValue()                      {}
@@ -2466,6 +2482,24 @@ func _Organization_UpdateProfile_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Organization_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationCreateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServer).Create(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Organization_Create_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServer).Create(ctx, req.(*OrganizationCreateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Organization_ServiceDesc is the grpc.ServiceDesc for Organization service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -2480,6 +2514,10 @@ var Organization_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateProfile",
 			Handler:    _Organization_UpdateProfile_Handler,
+		},
+		{
+			MethodName: "Create",
+			Handler:    _Organization_Create_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

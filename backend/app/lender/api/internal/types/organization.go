@@ -21,6 +21,7 @@ type OrganizationEntity struct {
 	CreatedAt          string                      `json:"created_at"`
 	UpdatedAt          string                      `json:"updated_at"`
 	OrganizationEmails []*OrganizationEmailEntity  `json:"organization_emails"`
+	Owner              *UserEntity                 `json:"owner"`
 }
 
 type OrganizationUpdateProfileRequest struct {

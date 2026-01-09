@@ -475,6 +475,19 @@ type UpdateDocumentsRequest struct {
 	Documents []*FileEditEntity `json:"documents" validate:"required,gt=0,dive,required"`
 }
 
+type UserEntity struct {
+	Id        int64  `json:"id"`
+	Email     string `json:"email"`
+	FirstName string `json:"first_name"`
+	MidName   string `json:"mid_name"`
+	LastName  string `json:"last_name"`
+	FullName  string `json:"full_name"`
+	Status    string `json:"status"`
+	Type      string `json:"type"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
+}
+
 type UserInfo struct {
 	Id                 int64                         `json:"id"`
 	OrganizationUserId int64                         `json:"organization_user_id"`

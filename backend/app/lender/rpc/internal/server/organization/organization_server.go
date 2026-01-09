@@ -32,3 +32,8 @@ func (s *OrganizationServer) UpdateProfile(ctx context.Context, in *lender.Organ
 	l := organizationlogic.NewUpdateProfileLogic(ctx, s.svcCtx)
 	return l.UpdateProfile(in)
 }
+
+func (s *OrganizationServer) Create(ctx context.Context, in *lender.OrganizationCreateRequest) (*lender.OrganizationCreateResponse, error) {
+	l := organizationlogic.NewCreateLogic(ctx, s.svcCtx)
+	return l.Create(in)
+}

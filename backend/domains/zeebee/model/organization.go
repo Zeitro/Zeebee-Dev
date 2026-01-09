@@ -32,6 +32,7 @@ type Organization struct {
 	//  relationships
 	Users              []*User              `json:"users" gorm:"many2many:organization_and_users;joinForeignKey:organization_id;joinReferences:user_id"`
 	OrganizationEmails []*OrganizationEmail `json:"email_authorizations" gorm:"foreignKey:organization_id"`
+	Owner              *User                `json:"owner" gorm:"foreignKey:OwnerId;references:Id"`
 }
 
 func (m Organization) TableName() string {
@@ -40,4 +41,5 @@ func (m Organization) TableName() string {
 func (m *Organization) RemoveRelationships() {
 	m.Users = nil
 	m.OrganizationEmails = nil
+	m.Owner = nil
 }
