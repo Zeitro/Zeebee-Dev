@@ -78,7 +78,8 @@ Call → RPC Logic → Repository → Model → Database。
 - **Git 提交信息**：使用英文，遵循 conventional commits 格式
 - **交流沟通**：使用中文，确保表达清晰准确
 - **Markdown 文件**：使用中文编写项目文档
-- **AI 生成文档**：统一使用中文，存储在 `.claude/docs/`、`.specify/` 和 `specs/` 目录
+  - **AI 生成文档**：统一使用中文，存储在 `.claude/docs/`、`.specify/` 和 `specs/` 目录,`README.md`类型文档除外，`README.md`
+    使用英文。
 
 ### 本地 AI 文档策略
 
@@ -136,7 +137,7 @@ Call → RPC Logic → Repository → Model → Database。
 
 详细的开发工作流程和模式，请参考：
 
-- `.claude/CLAUDE.md` - 完整开发标准
+- `CLAUDE.md` - 完整开发标准
 - `.claude/docs/INDEX.md` - 项目文档索引
 - `README.md` - 项目概览和快速入门
 
