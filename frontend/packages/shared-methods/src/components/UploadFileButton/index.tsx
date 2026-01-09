@@ -176,11 +176,19 @@ export const UploadFileButton = forwardRef<CommonUploadRef, CommonUploadProps>(
 					.then((url) => {
 						onAntdSuccess?.({ url });
 						onSuccess?.(url, file);
-						message.success(`${file.name} Upload successful`);
+						message.destroy();
+						message.open({
+							type: 'success',
+							content: `${file.name} Upload successful`,
+						});
 					})
 					.catch((err) => {
 						onError?.(err);
-						message.error(`${file.name} Upload failed`);
+						message.destroy();
+						message.open({
+							type: 'error',
+							content: `${file.name} Upload failed`,
+						});
 					});
 			};
 		} else {
