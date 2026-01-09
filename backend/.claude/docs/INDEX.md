@@ -155,6 +155,16 @@
     - `config.yaml` - 开发环境配置
     - `config-staging.yaml` - 预发布环境配置
 
+#### 外部集成
+
+- **[Zeitro API Proxy](specs/004-borrower-zeitro-proxy/)** - Zeitro 房产搜索代理服务 ⭐
+    - [功能规格](specs/004-borrower-zeitro-proxy/spec.md) - Zeitro API 集成需求说明
+    - [实施计划](specs/004-borrower-zeitro-proxy/plan.md) - 技术设计和架构决策
+    - [任务清单](specs/004-borrower-zeitro-proxy/tasks.md) - 开发任务和进度跟踪
+    - [快速入门](specs/004-borrower-zeitro-proxy/quickstart.md) - 使用指南和示例
+    - `domains/zeebee/zeitro/client.go` - Zeitro 客户端实现
+    - `app/borrower/api/desc/zeitro.api` - API 定义
+
 ### 4. 📊 分析报告
 
 #### 代码质量报告

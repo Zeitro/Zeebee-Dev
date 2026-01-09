@@ -6558,6 +6558,85 @@
                 "logo": {
                   "type": "string"
                 },
+                "metadata": {
+                  "type": "object",
+                  "required": [
+                    "lender"
+                  ],
+                  "properties": {
+                    "lender": {
+                      "type": "object",
+                      "required": [
+                        "loan_amount_range",
+                        "loan_term_range",
+                        "loan_tate_range",
+                        "loan_point_range"
+                      ],
+                      "properties": {
+                        "loan_amount_range": {
+                          "type": "object",
+                          "required": [
+                            "min",
+                            "max"
+                          ],
+                          "properties": {
+                            "max": {
+                              "type": "number"
+                            },
+                            "min": {
+                              "type": "number"
+                            }
+                          }
+                        },
+                        "loan_point_range": {
+                          "type": "object",
+                          "required": [
+                            "min",
+                            "max"
+                          ],
+                          "properties": {
+                            "max": {
+                              "type": "number"
+                            },
+                            "min": {
+                              "type": "number"
+                            }
+                          }
+                        },
+                        "loan_tate_range": {
+                          "type": "object",
+                          "required": [
+                            "min",
+                            "max"
+                          ],
+                          "properties": {
+                            "max": {
+                              "type": "number"
+                            },
+                            "min": {
+                              "type": "number"
+                            }
+                          }
+                        },
+                        "loan_term_range": {
+                          "type": "object",
+                          "required": [
+                            "min",
+                            "max"
+                          ],
+                          "properties": {
+                            "max": {
+                              "type": "integer"
+                            },
+                            "min": {
+                              "type": "integer"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
                 "name": {
                   "type": "string"
                 },
@@ -6598,6 +6677,9 @@
                   "type": "string"
                 },
                 "status": {
+                  "type": "string"
+                },
+                "tagline": {
                   "type": "string"
                 },
                 "type": {
@@ -6694,6 +6776,8 @@
                       "type",
                       "logo",
                       "website",
+                      "tagline",
+                      "metadata",
                       "created_at",
                       "updated_at",
                       "organization_emails"
@@ -6737,6 +6821,17 @@
                       "logo": {
                         "type": "string"
                       },
+                      "metadata": {
+                        "type": "object",
+                        "required": [
+                          "lender"
+                        ],
+                        "properties": {
+                          "lender": {
+                            "type": "object"
+                          }
+                        }
+                      },
                       "name": {
                         "type": "string"
                       },
@@ -6777,6 +6872,9 @@
                         "type": "string"
                       },
                       "status": {
+                        "type": "string"
+                      },
+                      "tagline": {
                         "type": "string"
                       },
                       "type": {
@@ -13845,9 +13943,143 @@
           }
         }
       }
+    },
+    "/api/v1/zeitro/listings/search": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "zertro"
+        ],
+        "summary": "Search property listings from Zeitro API",
+        "operationId": "zeitroZeitroListingSearch",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "lat",
+                "lon",
+                "dist"
+              ],
+              "properties": {
+                "addr": {
+                  "type": "string"
+                },
+                "dist": {
+                  "type": "number"
+                },
+                "lat": {
+                  "type": "number"
+                },
+                "lon": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "list": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "full_address",
+                      "state",
+                      "county",
+                      "city",
+                      "zip_code",
+                      "property_type",
+                      "price"
+                    ],
+                    "properties": {
+                      "agent_email": {
+                        "type": "string"
+                      },
+                      "agent_name": {
+                        "type": "string"
+                      },
+                      "agent_phone": {
+                        "type": "string"
+                      },
+                      "asian": {
+                        "type": "string"
+                      },
+                      "black": {
+                        "type": "string"
+                      },
+                      "city": {
+                        "type": "string"
+                      },
+                      "county": {
+                        "type": "string"
+                      },
+                      "days_on_market": {
+                        "type": "string"
+                      },
+                      "distance": {
+                        "type": "string"
+                      },
+                      "full_address": {
+                        "type": "string"
+                      },
+                      "hispanic": {
+                        "type": "string"
+                      },
+                      "income_indicator": {
+                        "type": "string"
+                      },
+                      "minority_percent": {
+                        "type": "string"
+                      },
+                      "msa_code": {
+                        "type": "string"
+                      },
+                      "pacific": {
+                        "type": "string"
+                      },
+                      "price": {
+                        "type": "string"
+                      },
+                      "property_type": {
+                        "type": "string"
+                      },
+                      "state": {
+                        "type": "string"
+                      },
+                      "total_population": {
+                        "type": "string"
+                      },
+                      "zip_code": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
-  "x-date": "2025-12-25 16:51:01",
+  "x-date": "2026-01-09 18:14:36",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

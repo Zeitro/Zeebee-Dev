@@ -1,0 +1,50 @@
+syntax = "v1"
+
+info(
+    title: "zeitro-listing-api"
+    desc: "Zeitro listing proxy API for borrower service"
+    author: "Zeebee Team"
+    version: "v1"
+)
+
+import "common.api"
+
+type (
+    // ===== Request Structures =====
+
+    ZeitroListingSearchRequest {
+        Lat  float64  `json:"lat" validate:"required,min=-90,max=90"`
+        Lon float64  `json:"lon" validate:"required,min=-180,max=180"`
+        Dist  float64  `json:"dist" validate:"required,min=0,max=100"`
+        Addr   string   `json:"addr,optional"`
+    }
+
+    // ===== Response Structures =====
+
+    ZeitroPropertyEntity {
+        FullAddress     string  `json:"full_address"`
+        State           string  `json:"state"`
+        County          string  `json:"county"`
+        City            string  `json:"city"`
+        ZipCode         string  `json:"zip_code"`
+        PropertyType    string  `json:"property_type"`
+        Price           string  `json:"price"`
+        IncomeIndicator string  `json:"income_indicator,optional"`
+        MinorityPercent string  `json:"minority_percent,optional"`
+        TotalPopulation string  `json:"total_population,optional"`
+        Hispanic        string  `json:"hispanic,optional"`
+        Black           string  `json:"black,optional"`
+        Asian           string  `json:"asian,optional"`
+        Pacific         string  `json:"pacific,optional"`
+        MsaCode         string  `json:"msa_code,optional"`
+        DaysOnMarket    string  `json:"days_on_market,optional"`
+        AgentName       string  `json:"agent_name,optional"`
+        AgentPhone      string  `json:"agent_phone,optional"`
+        AgentEmail      string  `json:"agent_email,optional"`
+        Distance        string  `json:"distance,optional"`
+    }
+
+    ZeitroListingSearchResponse {
+        List []ZeitroPropertyEntity `json:"list"`
+    }
+)

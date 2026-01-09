@@ -22,6 +22,7 @@ import "desc/role.api"
 import "desc/organization_user.api"
 import "desc/organization.api"
 import "desc/organization_email.api"
+import "desc/zeitro.api"
 
 type (
 	EmptyRequest  {}
@@ -125,12 +126,12 @@ service borrower-api {
 
 // ============== user end =============
 // ============== loan start =============
-@server(
-    desc: "loan service"
+@server (
+	desc:    "loan service"
 	version: v1
-    group: loan
+	group:   loan
 	prefix:  /api/v1
-    tags: loan
+	tags:    loan
 )
 service borrower-api {
 	@doc "preapproval"
@@ -211,9 +212,9 @@ service borrower-api {
 // ============== loan end =============
 // =============== borrower property start ==============
 @server (
-    desc: "borrower property service"
+	desc:       "borrower property service"
 	version:    v1
-    group: borrower_property
+	group:      borrower_property
 	prefix:     /api/v1
 	middleware: AuthMiddleware
 	tags:       property
@@ -250,13 +251,13 @@ service borrower-api {
 
 // =============== borrower property end ==============
 // =============== borrower entity start ==============
-@server(
-    desc: "borrower entity service"
-    version: v1
-    group: borrower_entity
+@server (
+	desc:       "borrower entity service"
+	version:    v1
+	group:      borrower_entity
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: borrower_entity
+	tags:       borrower_entity
 )
 service borrower-api {
 	@doc "page"
@@ -290,13 +291,13 @@ service borrower-api {
 
 // =============== borrower entity end ==============
 // =============== borrower applicant start ==============
-@server(
-    desc: "borrower applicant service"
-    version: v1
-    group: borrower_applicant
+@server (
+	desc:       "borrower applicant service"
+	version:    v1
+	group:      borrower_applicant
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: borrower_applicant
+	tags:       borrower_applicant
 )
 service borrower-api {
 	@doc "page"
@@ -331,9 +332,9 @@ service borrower-api {
 // ================ borrower applicant end ==============
 // =============== loan applicant start ==============
 @server (
-    desc: "loan applicant service"
+	desc:       "loan applicant service"
 	version:    v1
-    group: loan_applicant
+	group:      loan_applicant
 	prefix:     /api/v1
 	middleware: AuthMiddleware
 	tags:       applicant
@@ -346,13 +347,13 @@ service borrower-api {
 
 // =============== loan applicant end ==============
 // =============== pdf start ==============
-@server(
-    desc: "pdf service"
-    version: v1
-    group: pdf
+@server (
+	desc:       "pdf service"
+	version:    v1
+	group:      pdf
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: pdf
+	tags:       pdf
 )
 service borrower-api {
 	@doc "create apply form pdf"
@@ -362,13 +363,13 @@ service borrower-api {
 
 // =============== pdf end ==============
 // =============== storage start ==============
-@server(
-    desc: "storage service"
-    version: v1
-    group: storage
+@server (
+	desc:       "storage service"
+	version:    v1
+	group:      storage
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: storage
+	tags:       storage
 )
 service borrower-api {
 	@doc "create aws s3 presign url"
@@ -378,13 +379,13 @@ service borrower-api {
 
 // =============== storage end ==============
 // =============== file start ==============
-@server(
-    desc: "file service"
-    version: v1
-    group: file
+@server (
+	desc:       "file service"
+	version:    v1
+	group:      file
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: file
+	tags:       file
 )
 service borrower-api {
 	@doc "delete"
@@ -394,13 +395,13 @@ service borrower-api {
 
 // =============== file end ==============
 // ============== loan document start =============
-@server(
-    desc: "loan document service"
-    version: v1
-    group: loan_document
+@server (
+	desc:       "loan document service"
+	version:    v1
+	group:      loan_document
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: loan_document
+	tags:       loan_document
 )
 service borrower-api {
 	@doc "add files"
@@ -410,13 +411,13 @@ service borrower-api {
 
 // ============== loan document end =============
 // ============== role start ============
-@server(
-    desc: "borrower-api service"
-    version: v1
-    group: role
+@server (
+	desc:       "borrower-api service"
+	version:    v1
+	group:      role
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: role
+	tags:       role
 )
 service borrower-api {
 	@doc "detail"
@@ -450,12 +451,12 @@ service borrower-api {
 
 // ============== role end =============
 // ============== organization user start ============
-@server(
-    desc: "organization user service"
+@server (
+	desc:    "organization user service"
 	version: v1
-    group: organization_user
+	group:   organization_user
 	prefix:  /api/v1
-    tags: organization_user
+	tags:    organization_user
 )
 service borrower-api {
 	@doc "accept invitation"
@@ -463,13 +464,13 @@ service borrower-api {
 	post /organization_user/accept_invitation (OrganizationUserAcceptInvitationRequest) returns (UserLoginResponse)
 }
 
-@server(
-    desc: "organization user service"
-    version: v1
-    group: organization_user
+@server (
+	desc:       "organization user service"
+	version:    v1
+	group:      organization_user
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: organization_user
+	tags:       organization_user
 )
 service borrower-api {
 	@doc "detail"
@@ -511,13 +512,13 @@ service borrower-api {
 
 // ============== organization user end =============
 // ============== organization start ============
-@server(
-    desc: "organization service"
-    version: v1
-    group: organization
+@server (
+	desc:       "organization service"
+	version:    v1
+	group:      organization
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: organization
+	tags:       organization
 )
 service borrower-api {
 	@doc "info"
@@ -535,13 +536,13 @@ service borrower-api {
 
 // ============= organization end =============
 // ============= organization email start ============
-@server(
-    desc: "organization email service"
-    version: v1
-    group: organization_email
+@server (
+	desc:       "organization email service"
+	version:    v1
+	group:      organization_email
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: organization_email
+	tags:       organization_email
 )
 service borrower-api {
 	@doc "generate auth code url"
@@ -557,4 +558,20 @@ service borrower-api {
 	post /organization_email/authorize (OrganizationEmailAuthorizeRequest) returns (EmptyResponse)
 }
 
-    // ============= organization email end =============
+// ============= organization email end =============
+// ============== zeitro start ============
+@server (
+	desc:       "Zeitro API"
+	version:    v1
+	prefix:     /api/v1
+	group:      zeitro
+	middleware: AuthMiddleware
+	tags:       zertro
+)
+service borrower-api {
+	@doc "Search property listings from Zeitro API"
+	@handler zeitroListingSearch
+	post /zeitro/listings/search (ZeitroListingSearchRequest) returns (ZeitroListingSearchResponse)
+}
+
+// ============== zeitro end =============
