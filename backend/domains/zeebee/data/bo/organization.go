@@ -18,10 +18,14 @@ type OrganizationBo struct {
 	OwnerType          constants.OrganizationOwnerType `json:"owner_type"`
 	Type               constants.UserType              `json:"type"`
 	OrganizationEmails []*OrganizationEmailBo          `json:"organization_emails"`
+	Logo               string                          `json:"logo"`
+	Website            string                          `json:"website"`
 	Tagline            string                          `json:"tagline"`
 	Metadata           *OrganizationMetadata           `json:"metadata"`
-	CreatedAt          time.Time                       `json:"created_at"`
-	UpdatedAt          time.Time                       `json:"updated_at"`
+	Owner              *UserBo                         `json:"owner"`
+
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type OrganizationMetadata struct {
@@ -31,6 +35,6 @@ type OrganizationMetadata struct {
 type OrganizationLenderMetadata struct {
 	LoanAmountRange RangeFloat64 `json:"loan_amount_range"`
 	LoanTermRange   RangeInt     `json:"loan_term_range"`
-	LoanTateRange   RangeFloat64 `json:"loan_tate_range"`
+	LoanRateRange   RangeFloat64 `json:"loan_rate_range"`
 	LoanPointRange  RangeFloat64 `json:"loan_point_range"`
 }

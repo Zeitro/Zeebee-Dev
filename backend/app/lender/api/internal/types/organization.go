@@ -3,6 +3,17 @@
 
 package types
 
+type OrganizationCreateRequest struct {
+	Name           string                            `json:"name" validate:"required,min=2,max=50"`
+	ContactEmail   string                            `json:"contact_email" validate:"required,email"`
+	ContactPhone   string                            `json:"contact_phone" validate:"required,min=8,max=20"`
+	ContactName    string                            `json:"contact_name" validate:"required,min=2,max=50"`
+	Logo           string                            `json:"logo,optional"`
+	Website        string                            `json:"website,optional"`
+	Tagline        string                            `json:"tagline,optional"`
+	LenderMetadata *OrganizationLenderMetadataEntity `json:"lender_metadata,optional"`
+}
+
 type OrganizationEntity struct {
 	Id                 int64                       `json:"id"`
 	Name               string                      `json:"name"`
@@ -25,11 +36,11 @@ type OrganizationEntity struct {
 }
 
 type OrganizationUpdateProfileRequest struct {
-	ContactEmail string                      `json:"contact_email" validate:"required,email"`
-	ContactPhone string                      `json:"contact_phone" validate:"required,min=8,max=20"`
-	ContactName  string                      `json:"contact_name" validate:"required,min=2,max=50"`
-	Logo         string                      `json:"logo,optional"`
-	Website      string                      `json:"website,optional"`
-	Tagline      string                      `json:"tagline,optional"`
-	Metadata     *OrganizationMetadataEntity `json:"metadata,optional"`
+	ContactEmail   string                            `json:"contact_email" validate:"required,email"`
+	ContactPhone   string                            `json:"contact_phone" validate:"required,min=8,max=20"`
+	ContactName    string                            `json:"contact_name" validate:"required,min=2,max=50"`
+	Logo           string                            `json:"logo,optional"`
+	Website        string                            `json:"website,optional"`
+	Tagline        string                            `json:"tagline,optional"`
+	LenderMetadata *OrganizationLenderMetadataEntity `json:"lender_metadata,optional"`
 }

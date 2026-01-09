@@ -40,7 +40,7 @@ type (
     OrganizationLenderMetadataEntity {
         LoanAmountRange RangeFloat64 `json:"loan_amount_range"`
         LoanTermRange RangeInt `json:"loan_term_range"`
-        LoanTateRange RangeFloat64 `json:"loan_tate_range"`
+        LoanRateRange RangeFloat64 `json:"loan_rate_range"`
         LoanPointRange RangeFloat64 `json:"loan_point_range"`
     }
 )
@@ -52,5 +52,16 @@ type OrganizationUpdateProfileRequest {
     Logo string `json:"logo,optional"`
     Website string `json:"website,optional"`
     Tagline string `json:"tagline,optional"`
-    Metadata *OrganizationMetadataEntity `json:"metadata,optional"`
+    LenderMetadata *OrganizationLenderMetadataEntity `json:"lender_metadata,optional"`
+}
+type OrganizationCreateRequest {
+    Name string `json:"name" validate:"required,min=2,max=50"`
+    ContactEmail string `json:"contact_email" validate:"required,email"`
+    ContactPhone string `json:"contact_phone" validate:"required,min=8,max=20"`
+    ContactName string `json:"contact_name" validate:"required,min=2,max=50"`
+    Logo string `json:"logo,optional"`
+    Website string `json:"website,optional"`
+    Tagline string `json:"tagline,optional"`
+    LenderMetadata *OrganizationLenderMetadataEntity `json:"lender_metadata,optional"`
+
 }

@@ -174,7 +174,13 @@ fi
 
 cd "$REPO_ROOT"
 
-SPECS_DIR="$REPO_ROOT/specs"
+# For backend projects in monorepo, use backend/specs instead of specs
+# Check if we're in a backend project structure
+if [ -d "$REPO_ROOT/backend" ] && [ "$SCRIPT_DIR" == "$REPO_ROOT/backend/.specify"* ]; then
+    SPECS_DIR="$REPO_ROOT/backend/specs"
+else
+    SPECS_DIR="$REPO_ROOT/specs"
+fi
 mkdir -p "$SPECS_DIR"
 
 # Function to generate branch name with stop word filtering and length filtering

@@ -29,6 +29,20 @@ func (l *OrganizationLogic) Detail(ctx context.Context, id int64, organizationTy
 	if err != nil {
 		return
 	}
+	owner := organization.Owner
+	if organization.Owner != nil {
+		organizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUserByUserId(ctx, organization.Id, owner.Id)
+		if err != nil {
+			return nil, err
+		}
+		if len(organizationUser.FullName) > 0 {
+			owner.FullName = organizationUser.FullName
+			owner.FirstName = organizationUser.FirstName
+			owner.LastName = organizationUser.LastName
+		}
+		organization.Owner = owner
+	}
+
 	result, err = copierx.Trans[model.Organization, bo.OrganizationBo](organization)
 	if err != nil {
 		return
@@ -43,6 +57,7 @@ func (l *OrganizationLogic) Detail(ctx context.Context, id int64, organizationTy
 		})
 		result.OrganizationEmails[i].IsAuthorized = isExisted
 	}
+
 	return result, nil
 }
 

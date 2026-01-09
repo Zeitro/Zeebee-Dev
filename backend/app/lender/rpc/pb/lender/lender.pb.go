@@ -319,8 +319,8 @@ func (x *RangeInt32) GetMax() int32 {
 
 type RangeFloat struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Min           float32                `protobuf:"fixed32,1,opt,name=min,proto3" json:"min,omitempty"`
-	Max           float32                `protobuf:"fixed32,2,opt,name=max,proto3" json:"max,omitempty"`
+	Min           float64                `protobuf:"fixed64,1,opt,name=min,proto3" json:"min,omitempty"`
+	Max           float64                `protobuf:"fixed64,2,opt,name=max,proto3" json:"max,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -355,14 +355,14 @@ func (*RangeFloat) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *RangeFloat) GetMin() float32 {
+func (x *RangeFloat) GetMin() float64 {
 	if x != nil {
 		return x.Min
 	}
 	return 0
 }
 
-func (x *RangeFloat) GetMax() float32 {
+func (x *RangeFloat) GetMax() float64 {
 	if x != nil {
 		return x.Max
 	}
@@ -8391,7 +8391,7 @@ func (x *RolePageResponseData) GetList() []*RoleEntity {
 	return nil
 }
 
-// create
+//  create
 type RoleCreateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Data          *RoleCreateRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -8548,7 +8548,7 @@ func (x *RoleCreateResponse) GetData() *RoleEntity {
 	return nil
 }
 
-// update
+//  update
 type RoleUpdateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Data          *RoleUpdateRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -8773,7 +8773,7 @@ func (x *RoleUpdateResponse) GetData() *RoleEntity {
 	return nil
 }
 
-// delete
+//  delete
 type RoleDeleteRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Data          *RoleDeleteRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -8862,7 +8862,7 @@ func (x *RoleDeleteRequestData) GetId() int64 {
 	return 0
 }
 
-// detail
+//  detail
 type RoleDetailRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Data          *RoleDetailRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -9853,7 +9853,7 @@ func (x *OrganizationUserPageResponseData) GetList() []*OrganizationUserPageEnti
 	return nil
 }
 
-// create --  request
+//  create --  request
 type OrganizationUserCreateRequest struct {
 	state         protoimpl.MessageState             `protogen:"open.v1"`
 	Data          *OrganizationUserCreateRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -9966,7 +9966,7 @@ func (x *OrganizationUserCreateRequestData) GetRoleIds() []int64 {
 	return nil
 }
 
-// create --  response
+//  create --  response
 type OrganizationUserCreateResponse struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
 	Data          *OrganizationUserEntity `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -10011,7 +10011,7 @@ func (x *OrganizationUserCreateResponse) GetData() *OrganizationUserEntity {
 	return nil
 }
 
-// update --  request
+//  update --  request
 type OrganizationUserUpdateRequest struct {
 	state         protoimpl.MessageState             `protogen:"open.v1"`
 	Data          *OrganizationUserUpdateRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -10140,7 +10140,7 @@ func (x *OrganizationUserUpdateRequestData) GetLastName() string {
 	return ""
 }
 
-// update --  response
+//  update --  response
 type OrganizationUserUpdateResponse struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
 	Data          *OrganizationUserEntity `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -10185,7 +10185,7 @@ func (x *OrganizationUserUpdateResponse) GetData() *OrganizationUserEntity {
 	return nil
 }
 
-// detail --  request
+//  detail --  request
 type OrganizationUserDetailRequest struct {
 	state         protoimpl.MessageState             `protogen:"open.v1"`
 	Data          *OrganizationUserDetailRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -10274,7 +10274,7 @@ func (x *OrganizationUserDetailRequestData) GetId() int64 {
 	return 0
 }
 
-// detail --  response
+//  detail --  response
 type OrganizationUserDetailResponse struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
 	Data          *OrganizationUserEntity `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -10319,7 +10319,7 @@ func (x *OrganizationUserDetailResponse) GetData() *OrganizationUserEntity {
 	return nil
 }
 
-// delete --  request
+//  delete --  request
 type OrganizationUserDeleteRequest struct {
 	state         protoimpl.MessageState             `protogen:"open.v1"`
 	Data          *OrganizationUserDeleteRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -10408,7 +10408,7 @@ func (x *OrganizationUserDeleteRequestData) GetId() int64 {
 	return 0
 }
 
-// switch status --  request
+//  switch status --  request
 type OrganizationUserUpdateStatusRequest struct {
 	state         protoimpl.MessageState                   `protogen:"open.v1"`
 	Data          *OrganizationUserUpdateStatusRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -11087,7 +11087,7 @@ type OrganizationLenderMetadataEntity struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	LoanAmountRange *RangeFloat            `protobuf:"bytes,1,opt,name=loan_amount_range,json=loanAmountRange,proto3" json:"loan_amount_range,omitempty"`
 	LoanTermRange   *RangeInt32            `protobuf:"bytes,2,opt,name=loan_term_range,json=loanTermRange,proto3" json:"loan_term_range,omitempty"`
-	LoanTateRange   *RangeFloat            `protobuf:"bytes,3,opt,name=loan_tate_range,json=loanTateRange,proto3" json:"loan_tate_range,omitempty"`
+	LoanRateRange   *RangeFloat            `protobuf:"bytes,3,opt,name=loan_rate_range,json=loanRateRange,proto3" json:"loan_rate_range,omitempty"`
 	LoanPointRange  *RangeFloat            `protobuf:"bytes,4,opt,name=loan_point_range,json=loanPointRange,proto3" json:"loan_point_range,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
@@ -11137,9 +11137,9 @@ func (x *OrganizationLenderMetadataEntity) GetLoanTermRange() *RangeInt32 {
 	return nil
 }
 
-func (x *OrganizationLenderMetadataEntity) GetLoanTateRange() *RangeFloat {
+func (x *OrganizationLenderMetadataEntity) GetLoanRateRange() *RangeFloat {
 	if x != nil {
-		return x.LoanTateRange
+		return x.LoanRateRange
 	}
 	return nil
 }
@@ -11339,12 +11339,10 @@ type OrganizationCreateRequestData struct {
 	ContactEmail   string                            `protobuf:"bytes,5,opt,name=contact_email,json=contactEmail,proto3" json:"contact_email,omitempty"`
 	ContactPhone   string                            `protobuf:"bytes,6,opt,name=contact_phone,json=contactPhone,proto3" json:"contact_phone,omitempty"`
 	ContactName    string                            `protobuf:"bytes,7,opt,name=contact_name,json=contactName,proto3" json:"contact_name,omitempty"`
-	OwnerType      string                            `protobuf:"bytes,8,opt,name=owner_type,json=ownerType,proto3" json:"owner_type,omitempty"`
-	Type           string                            `protobuf:"bytes,9,opt,name=type,proto3" json:"type,omitempty"`
-	Logo           string                            `protobuf:"bytes,10,opt,name=logo,proto3" json:"logo,omitempty"`
-	Website        string                            `protobuf:"bytes,11,opt,name=website,proto3" json:"website,omitempty"`
-	Tagline        string                            `protobuf:"bytes,12,opt,name=tagline,proto3" json:"tagline,omitempty"`
-	LenderMetadata *OrganizationLenderMetadataEntity `protobuf:"bytes,13,opt,name=lender_metadata,json=lenderMetadata,proto3" json:"lender_metadata,omitempty"`
+	Logo           string                            `protobuf:"bytes,8,opt,name=logo,proto3" json:"logo,omitempty"`
+	Website        string                            `protobuf:"bytes,9,opt,name=website,proto3" json:"website,omitempty"`
+	Tagline        string                            `protobuf:"bytes,10,opt,name=tagline,proto3" json:"tagline,omitempty"`
+	LenderMetadata *OrganizationLenderMetadataEntity `protobuf:"bytes,11,opt,name=lender_metadata,json=lenderMetadata,proto3" json:"lender_metadata,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -11403,20 +11401,6 @@ func (x *OrganizationCreateRequestData) GetContactPhone() string {
 func (x *OrganizationCreateRequestData) GetContactName() string {
 	if x != nil {
 		return x.ContactName
-	}
-	return ""
-}
-
-func (x *OrganizationCreateRequestData) GetOwnerType() string {
-	if x != nil {
-		return x.OwnerType
-	}
-	return ""
-}
-
-func (x *OrganizationCreateRequestData) GetType() string {
-	if x != nil {
-		return x.Type
 	}
 	return ""
 }
@@ -11672,8 +11656,8 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x03max\x18\x02 \x01(\x05R\x03max\"0\n" +
 	"\n" +
 	"RangeFloat\x12\x10\n" +
-	"\x03min\x18\x01 \x01(\x02R\x03min\x12\x10\n" +
-	"\x03max\x18\x02 \x01(\x02R\x03max\">\n" +
+	"\x03min\x18\x01 \x01(\x01R\x03min\x12\x10\n" +
+	"\x03max\x18\x02 \x01(\x01R\x03max\">\n" +
 	"\rOptionRequest\x12-\n" +
 	"\x04data\x18\x01 \x01(\v2\x19.lender.OptionRequestDataR\x04data\"'\n" +
 	"\x11OptionRequestData\x12\x12\n" +
@@ -12549,7 +12533,7 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	" OrganizationLenderMetadataEntity\x12>\n" +
 	"\x11loan_amount_range\x18\x01 \x01(\v2\x12.lender.RangeFloatR\x0floanAmountRange\x12:\n" +
 	"\x0floan_term_range\x18\x02 \x01(\v2\x12.lender.RangeInt32R\rloanTermRange\x12:\n" +
-	"\x0floan_tate_range\x18\x03 \x01(\v2\x12.lender.RangeFloatR\rloanTateRange\x12<\n" +
+	"\x0floan_rate_range\x18\x03 \x01(\v2\x12.lender.RangeFloatR\rloanRateRange\x12<\n" +
 	"\x10loan_point_range\x18\x04 \x01(\v2\x12.lender.RangeFloatR\x0eloanPointRange\"d\n" +
 	" OrganizationUpdateProfileRequest\x12@\n" +
 	"\x04data\x18\x01 \x01(\v2,.lender.OrganizationUpdateProfileRequestDataR\x04data\"\xae\x02\n" +
@@ -12562,20 +12546,17 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\atagline\x18\x06 \x01(\tR\atagline\x12Q\n" +
 	"\x0flender_metadata\x18\a \x01(\v2(.lender.OrganizationLenderMetadataEntityR\x0elenderMetadata\"V\n" +
 	"\x19OrganizationCreateRequest\x129\n" +
-	"\x04data\x18\x01 \x01(\v2%.lender.OrganizationCreateRequestDataR\x04data\"\xee\x02\n" +
+	"\x04data\x18\x01 \x01(\v2%.lender.OrganizationCreateRequestDataR\x04data\"\xbb\x02\n" +
 	"\x1dOrganizationCreateRequestData\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12#\n" +
 	"\rcontact_email\x18\x05 \x01(\tR\fcontactEmail\x12#\n" +
 	"\rcontact_phone\x18\x06 \x01(\tR\fcontactPhone\x12!\n" +
-	"\fcontact_name\x18\a \x01(\tR\vcontactName\x12\x1d\n" +
-	"\n" +
-	"owner_type\x18\b \x01(\tR\townerType\x12\x12\n" +
-	"\x04type\x18\t \x01(\tR\x04type\x12\x12\n" +
-	"\x04logo\x18\n" +
-	" \x01(\tR\x04logo\x12\x18\n" +
-	"\awebsite\x18\v \x01(\tR\awebsite\x12\x18\n" +
-	"\atagline\x18\f \x01(\tR\atagline\x12Q\n" +
-	"\x0flender_metadata\x18\r \x01(\v2(.lender.OrganizationLenderMetadataEntityR\x0elenderMetadata\"L\n" +
+	"\fcontact_name\x18\a \x01(\tR\vcontactName\x12\x12\n" +
+	"\x04logo\x18\b \x01(\tR\x04logo\x12\x18\n" +
+	"\awebsite\x18\t \x01(\tR\awebsite\x12\x18\n" +
+	"\atagline\x18\n" +
+	" \x01(\tR\atagline\x12Q\n" +
+	"\x0flender_metadata\x18\v \x01(\v2(.lender.OrganizationLenderMetadataEntityR\x0elenderMetadata\"L\n" +
 	"\x1aOrganizationCreateResponse\x12.\n" +
 	"\x04data\x18\x01 \x01(\v2\x1a.lender.OrganizationEntityR\x04data\"\xcc\x01\n" +
 	"\x17OrganizationEmailEntity\x12\x0e\n" +
@@ -12963,7 +12944,7 @@ var file_app_lender_rpc_pb_lender_proto_depIdxs = []int32{
 	166, // 119: lender.OrganizationMetadataEntity.lender:type_name -> lender.OrganizationLenderMetadataEntity
 	6,   // 120: lender.OrganizationLenderMetadataEntity.loan_amount_range:type_name -> lender.RangeFloat
 	5,   // 121: lender.OrganizationLenderMetadataEntity.loan_term_range:type_name -> lender.RangeInt32
-	6,   // 122: lender.OrganizationLenderMetadataEntity.loan_tate_range:type_name -> lender.RangeFloat
+	6,   // 122: lender.OrganizationLenderMetadataEntity.loan_rate_range:type_name -> lender.RangeFloat
 	6,   // 123: lender.OrganizationLenderMetadataEntity.loan_point_range:type_name -> lender.RangeFloat
 	168, // 124: lender.OrganizationUpdateProfileRequest.data:type_name -> lender.OrganizationUpdateProfileRequestData
 	166, // 125: lender.OrganizationUpdateProfileRequestData.lender_metadata:type_name -> lender.OrganizationLenderMetadataEntity

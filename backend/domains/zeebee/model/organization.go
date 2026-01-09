@@ -9,7 +9,7 @@ type OrganizationMetadata struct {
 type OrganizationLenderMetadata struct {
 	LoanAmountRange RangeFloat64 `json:"loan_amount_range"`
 	LoanTermRange   RangeInt     `json:"loan_term_range"`
-	LoanTateRange   RangeFloat64 `json:"loan_tate_range"`
+	LoanRateRange   RangeFloat64 `json:"loan_rate_range"`
 	LoanPointRange  RangeFloat64 `json:"loan_point_range"`
 }
 

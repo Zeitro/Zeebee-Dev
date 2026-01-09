@@ -155,6 +155,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
 				{
+					// create
+					Method:  http.MethodPost,
+					Path:    "/organization",
+					Handler: organization.OrganizationCreateHandler(serverCtx),
+				},
+				{
 					// profile
 					Method:  http.MethodGet,
 					Path:    "/organization/profile",

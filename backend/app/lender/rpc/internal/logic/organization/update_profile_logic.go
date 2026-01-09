@@ -3,25 +3,32 @@ package organizationlogic
 import (
 	"context"
 
+	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/model"
 
+	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/common/errorx"
 )
 
 type UpdateProfileLogic struct {
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx       context.Context
+	svcCtx    *svc.ServiceContext
+	baseLogic *logic.BaseLogic
 	logx.Logger
 }
 
 func NewUpdateProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateProfileLogic {
 	return &UpdateProfileLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		Logger:    logx.WithContext(ctx),
 	}
 }
 
@@ -31,7 +38,56 @@ func (l *UpdateProfileLogic) UpdateProfile(in *lender.OrganizationUpdateProfileR
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	// todo: add your logic here and delete this line
 
-	return &lender.OrganizationEntity{}, nil
+	// Get current user claim from gRPC metadata (JWT token)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, errorx.Wrap(err, "Failed To Get User Claim From Context")
+	}
+
+	// Get organization details to verify ownership
+	organization, err := l.svcCtx.OrganizationRepo.GetOrganization(l.ctx, claim.OrganizationId, constants.UserTypeLender, false)
+
+	if err != nil {
+		return nil, errorx.Wrap(err, "Failed To Get Organization")
+	}
+
+	// Verify user is the organization owner
+	if organization.OwnerId != claim.UserId {
+		return nil, errorx.New("Only Owner Can Update Organization Information")
+	}
+
+	// Copy request fields to existing model (only copies non-zero fields)
+	err = copier.Copy(&organization, in.Data)
+	if err != nil {
+		return nil, errorx.Wrap(err, "Failed To Copy Request Data")
+	}
+
+	// Initialize metadata if nil
+	if organization.Metadata == nil {
+		organization.Metadata = &model.OrganizationMetadata{}
+	}
+	var lenderMetadata *model.OrganizationLenderMetadata
+	// Manually assign metadata if provided
+	if in.Data.LenderMetadata != nil {
+		// Convert lender metadata from proto to model
+		lenderMetadata, err = copierx.Trans[lender.OrganizationLenderMetadataEntity, model.OrganizationLenderMetadata](
+			in.Data.LenderMetadata,
+		)
+		if err != nil {
+			return nil, errorx.Wrap(err, "Failed To Convert Lender Metadata")
+		}
+	}
+	// Update only the lender field in metadata
+	organization.Metadata.Lender = lenderMetadata
+
+	// Update the model
+	_, err = l.svcCtx.OrganizationRepo.UpdateOneById(l.ctx, claim.OrganizationId, organization)
+	if err != nil {
+		return nil, errorx.Wrap(err, "Failed To Update Organization")
+	}
+
+	// Return updated organization by calling Profile again
+	profileLogic := NewProfileLogic(l.ctx, l.svcCtx)
+	return profileLogic.Profile(&lender.EmptyRequest{})
 }

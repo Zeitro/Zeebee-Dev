@@ -52,7 +52,13 @@
 - **目录用途**：
   - `.claude/`：Claude Code 生成的分析文档、项目索引、进度跟踪等
   - `.specify/`：SpecKit 工具生成的功能规格、计划、任务清单等
-  - `specs/`：功能规格文档目录，包含 spec.md、plan.md、tasks.md 等实施文档
+  - `backend/specs/`：后端功能规格文档目录，包含 spec.md、plan.md、tasks.md 等实施文档
+
+**重要配置说明**：
+
+1. **SpecKit 规格目录**：后端项目使用 monorepo 结构，所有功能规格文档必须放在 `backend/specs/` 目录下，而不是项目根目录的 `specs/` 目录
+2. **创建功能脚本**：`.specify/scripts/bash/create-new-feature.sh` 已自动配置为在 `backend/specs/` 下创建规格文档
+3. **分支命名**：功能分支仍从项目根目录创建，但规格文档位于 `backend/specs/` 子目录中
 
 #### AI 生成的文档类型
 

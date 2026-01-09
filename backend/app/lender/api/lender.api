@@ -1,10 +1,10 @@
 syntax = "v1"
 
-info(
-    title: "lender-api http service"
-    desc: "lender-api http service description"
+info (
+	title:  "lender-api http service"
+	desc:   "lender-api http service description"
 	author: "Wei Zeng"
-    email: "wei@yeelee-capital.com"
+	email:  "wei@yeelee-capital.com"
 )
 
 import "desc/user.api"
@@ -19,10 +19,8 @@ import "desc/organization_user.api"
 import "desc/organization.api"
 
 type (
-    EmptyRequest{
-    }
-    EmptyResponse{
-    }
+	EmptyRequest  {}
+	EmptyResponse  {}
 )
 
 type PathIdRequest {
@@ -30,12 +28,12 @@ type PathIdRequest {
 }
 
 // ============== common =============
-@server(
-    desc: "lender-api service"
+@server (
+	desc:    "lender-api service"
 	version: v1
-    group: common
+	group:   common
 	prefix:  /api/v1
-    tags: common
+	tags:    common
 )
 service lender-api {
 	@doc "select options"
@@ -52,12 +50,12 @@ service lender-api {
 }
 
 // ============== user =============
-@server(
-    desc: "lender-api service"
+@server (
+	desc:    "lender-api service"
 	version: v1
-    group: user
+	group:   user
 	prefix:  /api/v1
-    tags: user
+	tags:    user
 )
 service lender-api {
 	@doc "register"
@@ -89,13 +87,13 @@ service lender-api {
 	post /user/send_reset_password (UserSendResetPasswordEmailRequest) returns (EmptyResponse)
 }
 
-@server(
-    desc: "lender-api service"
-    version: v1
-    group: user
+@server (
+	desc:       "lender-api service"
+	version:    v1
+	group:      user
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: user
+	tags:       user
 )
 service lender-api {
 	@doc "info"
@@ -108,13 +106,13 @@ service lender-api {
 }
 
 // ============== loan =============
-@server(
-    desc: "loan service"
-    version: v1
-    group: loan
+@server (
+	desc:       "loan service"
+	version:    v1
+	group:      loan
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: loan
+	tags:       loan
 )
 service lender-api {
 	@doc "detail"
@@ -147,13 +145,13 @@ service lender-api {
 }
 
 // ============== loan document =============
-@server(
-    desc: "loan document service"
-    version: v1
-    group: loan_document
+@server (
+	desc:       "loan document service"
+	version:    v1
+	group:      loan_document
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: loan_document
+	tags:       loan_document
 )
 service lender-api {
 	@doc "create loan document"
@@ -178,13 +176,13 @@ service lender-api {
 }
 
 // =============== file ==============
-@server(
-    desc: "file service"
-    version: v1
-    group: file
+@server (
+	desc:       "file service"
+	version:    v1
+	group:      file
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: file
+	tags:       file
 )
 service lender-api {
 	@doc "delete"
@@ -193,13 +191,13 @@ service lender-api {
 }
 
 // =============== storage ==============
-@server(
-    desc: "storage service"
-    version: v1
-    group: storage
+@server (
+	desc:       "storage service"
+	version:    v1
+	group:      storage
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: storage
+	tags:       storage
 )
 service lender-api {
 	@doc "create aws s3 presign url"
@@ -208,13 +206,13 @@ service lender-api {
 }
 
 // ============== role =============
-@server(
-    desc: "lender-api service"
-    version: v1
-    group: role
+@server (
+	desc:       "lender-api service"
+	version:    v1
+	group:      role
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: role
+	tags:       role
 )
 service lender-api {
 	@doc "detail"
@@ -247,12 +245,12 @@ service lender-api {
 }
 
 // ============== organization_user =============
-@server(
-    desc: "lender-api service"
+@server (
+	desc:    "lender-api service"
 	version: v1
-    group: organization_user
+	group:   organization_user
 	prefix:  /api/v1
-    tags: organization_user
+	tags:    organization_user
 )
 service lender-api {
 	@doc "accept invitation"
@@ -260,13 +258,13 @@ service lender-api {
 	post /organization_user/accept_invitation (OrganizationUserAcceptInvitationRequest) returns (UserJwtResponse)
 }
 
-@server(
-    desc: "lender-api service"
-    version: v1
-    group: organization_user
+@server (
+	desc:       "lender-api service"
+	version:    v1
+	group:      organization_user
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: organization_user
+	tags:       organization_user
 )
 service lender-api {
 	@doc "detail"
@@ -307,12 +305,12 @@ service lender-api {
 }
 
 // ============== organization =============
-@server(
-    desc: "lender-api service"
-    version: v1
-    group: organization
+@server (
+	desc:       "lender-api service"
+	version:    v1
+	group:      organization
 	prefix:     /api/v1
-    tags: organization
+	tags:       organization
 	middleware: AuthMiddleware
 )
 service lender-api {
@@ -323,5 +321,9 @@ service lender-api {
 	@doc "update profile"
 	@handler OrganizationUpdateProfile
 	put /organization/profile (OrganizationUpdateProfileRequest) returns (OrganizationEntity)
+
+	@doc "create"
+	@handler OrganizationCreate
+	post /organization (OrganizationCreateRequest) returns (OrganizationEntity)
 }
 

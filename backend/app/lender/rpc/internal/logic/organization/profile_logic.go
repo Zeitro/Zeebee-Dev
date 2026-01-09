@@ -3,8 +3,12 @@ package organizationlogic
 import (
 	"context"
 
+	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/bo"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -12,16 +16,18 @@ import (
 )
 
 type ProfileLogic struct {
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx       context.Context
+	svcCtx    *svc.ServiceContext
+	baseLogic *logic.BaseLogic
 	logx.Logger
 }
 
 func NewProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ProfileLogic {
 	return &ProfileLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		Logger:    logx.WithContext(ctx),
 	}
 }
 
@@ -31,7 +37,36 @@ func (l *ProfileLogic) Profile(in *lender.EmptyRequest) (resp *lender.Organizati
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	// todo: add your logic here and delete this line
 
-	return &lender.OrganizationEntity{}, nil
+	// Get current user claim from gRPC metadata (JWT token)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, errorx.Wrap(err, "Failed To Get User Claim From Context")
+	}
+
+	// Validate user belongs to an organization
+	if claim.OrganizationId == 0 {
+		return nil, errorx.New("User Not Belong To Any Organization")
+	}
+
+	// Get organization details with preloaded associations (emails, etc.)
+	organization, err := l.baseLogic.OrganizationLogic.Detail(
+		l.ctx,
+		claim.OrganizationId,
+		constants.UserTypeLender,
+	)
+	if err != nil {
+		return nil, errorx.Wrap(err, "Failed To Get Organization")
+	}
+
+	// Convert business object to proto entity with time field conversion
+	resp, err = copierx.Trans[bo.OrganizationBo, lender.OrganizationEntity](
+		organization,
+		copierx.TimeToRFC3339Str(),
+	)
+	if err != nil {
+		return nil, errorx.GetFailedTransRespErr(err)
+	}
+
+	return resp, nil
 }
