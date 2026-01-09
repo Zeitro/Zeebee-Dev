@@ -4,6 +4,7 @@ env
 .idea
 .vscode
 .lingma
+CLAUDE.md
 /frontend/borrower/node_modules
 /frontend/lender/node_modules
 /frontend/borrower/.next
