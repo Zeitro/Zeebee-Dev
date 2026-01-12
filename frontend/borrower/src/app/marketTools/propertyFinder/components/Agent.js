@@ -19,6 +19,7 @@ export const getCopyContent = (content, options = {}) => {
 					placement: 'bottom',
 				},
 			}}
+			{...options}
 			className={['!mb-0', options.className].join(' ')}
 		>
 			{content}
@@ -38,16 +39,17 @@ const Agent = ({ record }) => {
 						<span className="text-base font-medium">SELLER AGENT</span>
 						<CloseOutlined className="cursor-pointer" onClick={() => setOpen(false)} />
 					</div>
-					{record.agentname &&
-						getCopyContent(record.agentname, {
-							className: 'text-base pt-1 font-medium',
+					{record.agent_name &&
+						getCopyContent(record.agent_name, {
+							className: 'text-base pt-1',
+							strong: true,
 						})}
-					{record.agentphone &&
-						getCopyContent(formatPhone(record.agentphone), {
+					{record.agent_phone &&
+						getCopyContent(formatPhone(record.agent_phone), {
 							className: 'text-base pt-1',
 						})}
-					{record.agentemail &&
-						getCopyContent(record.agentemail, {
+					{record.agent_email &&
+						getCopyContent(record.agent_email, {
 							className: 'text-base pt-1',
 						})}
 				</div>
@@ -55,7 +57,7 @@ const Agent = ({ record }) => {
 			trigger="click"
 			placement="right"
 		>
-			<span className="text-base-primary">{record.agentname}</span>
+			<span className="text-base-primary cursor-pointer">{record.agent_name}</span>
 		</Popover>
 	);
 };

@@ -1,25 +1,20 @@
-import { useRef, useState } from 'react';
-import { createRequest, formatAmount } from '@repo/shared-methods/utils';
+import { useState } from 'react';
+import { createRequest, formatAmount, getPagination } from '@repo/shared-methods/utils';
 import Agent, { getCopyContent } from './Agent';
-const useContent = () => {
+const useContent = ({ setErrorTips }) => {
 	const { request } = createRequest();
 	const [loading, setLoading] = useState(false);
-	const [list, setList] = useState([
-		{
-			address: '123 Main St, Anytown, CA 12345',
-			agentphone: '5555555555',
-			agentname: 'miko',
-			id: 1,
-		},
-	]);
+	const [list, setList] = useState([]);
 	const [dataSource, setDataSource] = useState([]);
 	const [filterValue, setFilterValue] = useState('all'); //price筛选
 	const [radius, setRadius] = useState(8);
 	const [location, setLocation] = useState(null);
+	const [pagination, setPagination] = useState(getPagination());
+	const [isSearch, setIsSearch] = useState(false);
 
 	// 根据price过滤
-	const handleFilterUpdate = (value = filterValue) => {
-		let filtered = [...list];
+	const handleFilterUpdate = (arr = list, value = filterValue) => {
+		let filtered = [...arr];
 
 		if (value === 'less500') {
 			filtered = filtered.filter((listing) => listing.price <= 500000);
@@ -34,23 +29,28 @@ const useContent = () => {
 		} else if (value === 'over3000') {
 			filtered = filtered.filter((listing) => listing.price > 3000000);
 		}
-
-		setList(filtered);
+		setPagination((v) => ({ ...v, total: filtered.length, current: 1 }));
+		setDataSource(filtered);
 	};
 	const columns = [
 		{
 			title: 'Address',
-			dataIndex: 'address',
-			key: 'address',
-			render: (v) => <div>{getCopyContent(v)}</div>,
-			// render: (address, record) => renderAddressColumn(address, record),
+			dataIndex: 'full_address',
+			key: 'full_address',
+			render: (v) =>
+				getCopyContent(v, {
+					className: '!font-roboto',
+				}),
+			ellipsis: true,
+			width: 360,
 		},
 		{
 			title: 'Days listed',
-			dataIndex: 'daysonmarket',
-			key: 'daysonmarket',
-			sorter: (a, b) => a.daysonmarket - b.daysonmarket,
+			dataIndex: 'days_on_market',
+			key: 'days_on_market',
+			sorter: (a, b) => a.days_on_market - b.days_on_market,
 			defaultSortOrder: 'ascend',
+			ellipsis: true,
 		},
 		{
 			title: 'Listed price',
@@ -58,6 +58,7 @@ const useContent = () => {
 			key: 'price',
 			render: (price) => formatAmount(price),
 			sorter: (a, b) => a.price - b.price,
+			ellipsis: true,
 		},
 		{
 			title: 'Distance',
@@ -65,62 +66,58 @@ const useContent = () => {
 			key: 'distance',
 			render: (distance) => `${distance} mi`,
 			sorter: (a, b) => a.distance - b.distance,
+			ellipsis: true,
 		},
 		{
 			title: 'Agent',
-			dataIndex: 'agentname',
-			key: 'agentname',
+			dataIndex: 'agent_name',
+			key: 'agent_name',
 			render: (v, record) => <Agent record={record} />,
-			sorter: (a, b) => a.agentname.localeCompare(b.agentname),
+			sorter: (a, b) => a.agent_name.localeCompare(b.agent_name),
+			ellipsis: true,
 		},
 	];
 
 	const getList = async () => {
 		try {
 			setLoading(true);
-			const response = await request('https://lo.zeitro.us/los/openhousesearch', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					Lat: location.lat,
-					Lon: location.lng,
-					Dist: parseFloat(radius),
-					Addr: location.address,
-				}),
-				isExternalLink: true,
+			setIsSearch(true);
+			const params = new URLSearchParams({
+				lat: location.lat,
+				lon: location.lng,
+				dist: parseFloat(radius),
+				addr: location.address,
 			});
-			const arr = response.map((listing, index) => ({
+			const { list } = await request(`/zeitro/listings/search?${params}`);
+			const arr = list.map((listing, index) => ({
+				...listing,
 				id: index,
-				address: listing.FullAddress,
-				city: listing.City,
-				county: listing.County,
-				state: listing.State,
-				zip: listing.ZipCode,
-				price: parseFloat(listing.Price.trim()),
-				daysonmarket: listing.DaysOnMarket,
-				agentname: listing.AgentName,
-				agentphone: listing.AgentPhone,
-				agentemail: listing.AgentEmail,
-				distance: listing.Distance,
+				price: parseFloat(listing.price?.trim?.()),
 			}));
 			setList(arr);
+			handleFilterUpdate(arr);
 			setLoading(false);
-		} catch (error) {
-			console.log(error, '----list---');
+		} catch {
 			setLoading(false);
 		}
 	};
 
 	const handleSearch = async () => {
-		// if (!location) {
-		// 	return geoInputRef.current.setErrorTips(
-		// 		'Please select an option after input your location.',
-		// 	);
-		// }
+		if (!location) {
+			return setErrorTips('Please select an option after input your location.');
+		}
 		await getList();
-		handleFilterUpdate();
+	};
+
+	const onChange = (paginationObj) => {
+		setPagination((v) => {
+			if (paginationObj.current !== v.current) {
+				v.current = paginationObj.current;
+			} else {
+				v.current = 1;
+			}
+			return { ...v };
+		});
 	};
 	return {
 		columns,
@@ -131,9 +128,13 @@ const useContent = () => {
 		dataSource,
 		radius,
 		setRadius,
+		location,
 		setLocation,
 		filterValue,
 		setFilterValue,
+		onChange,
+		pagination,
+		isSearch,
 	};
 };
 export default useContent;

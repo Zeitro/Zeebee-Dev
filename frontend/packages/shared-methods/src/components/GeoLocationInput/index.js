@@ -42,8 +42,7 @@ export const GeoLocationInput = forwardRef(
 			}
 		};
 		const initAutocomplete = () => {
-			if (!inputRef.current?.input) return;
-
+			if (!inputRef.current?.input || !window.google?.maps?.places) return;
 			const options = {
 				types: ['(regions)'], // This restricts to cities, states, and zip codes
 				componentRestrictions: { country: 'us' }, // Optional: restrict to US
@@ -58,19 +57,34 @@ export const GeoLocationInput = forwardRef(
 		};
 
 		const handleInputChange = (e) => {
+			if (!e.target.value) {
+				setErrorTips('Enter a city, zip code, or state to find open houses near you.');
+			} else {
+				setErrorTips('');
+			}
 			setInputValue(e.target.value);
 			setIsSelecting(false);
-			setErrorTips('');
 		};
 
 		useEffect(() => {
-			if (window.google) {
-				initAutocomplete();
-			}
-
 			// 保存当前的input引用用于清理
 			const currentInputRef = inputRef.current;
+			let checkGoogleMapsLoaded = null;
+			if (window.google) {
+				initAutocomplete();
+			} else {
+				checkGoogleMapsLoaded = setInterval(() => {
+					if (window.google?.maps?.places) {
+						clearInterval(checkGoogleMapsLoaded);
+						initAutocomplete();
+					}
+				}, 100);
+			}
+
 			return () => {
+				if (checkGoogleMapsLoaded) {
+					clearInterval(checkGoogleMapsLoaded);
+				}
 				if (autocompleteRef.current) {
 					if (currentInputRef?.input) {
 						window.google.maps.event.clearInstanceListeners(currentInputRef.input);
@@ -83,7 +97,10 @@ export const GeoLocationInput = forwardRef(
 
 		useEffect(() => {
 			onError?.(errorTips);
-		}, [errorTips, onError]);
+			if (errorTips) {
+				onLocationSelect?.(null);
+			}
+		}, [errorTips, onError, onLocationSelect]);
 
 		useImperativeHandle(ref, () => ({
 			setErrorTips,

@@ -1,15 +1,15 @@
 'use client';
-import { DownOutlined, SearchOutlined } from '@ant-design/icons';
+import { SearchOutlined } from '@ant-design/icons';
 import { NewTable, NoData, GeoLocationInput } from '@repo/shared-methods';
 import { Button, InputNumber, Select } from 'antd';
 import { useRef, useState } from 'react';
 import useContent from './components/useContent';
-import Income from './components/Income';
+import Image from 'next/image';
 // 根据输入地址，查找周围已售房屋估值
 const PropertyFinder = () => {
 	const geoInputRef = useRef(null);
 	const [errorMessage, setErrorMessage] = useState('');
-	const [expandedRowKey, setExpandedRowKey] = useState(null);
+	// const [expandedRowKey, setExpandedRowKey] = useState(null);
 	const [options] = useState([
 		{ value: 'all', label: 'Price range' },
 		{ value: 'less500', label: 'Up to $500K' },
@@ -17,19 +17,28 @@ const PropertyFinder = () => {
 		{ value: '1000to3000', label: 'Between $1M - $3M' },
 		{ value: 'over3000', label: 'Over$0' },
 	]);
-	// const [pagination, setPagination] = useState(getPagination());
 	const {
 		columns,
 		handleFilterUpdate,
 		handleSearch,
 		loading,
 		list,
+		dataSource,
 		radius,
 		setRadius,
 		setLocation,
 		filterValue,
 		setFilterValue,
-	} = useContent();
+		onChange,
+		pagination,
+		isSearch,
+	} = useContent({
+		setErrorTips: (message) => {
+			if (geoInputRef.current && geoInputRef.current?.setErrorTips) {
+				geoInputRef.current.setErrorTips(message);
+			}
+		},
+	});
 
 	return (
 		<div className="flex-1 overflow-hidden pt-8 px-8 flex flex-col">
@@ -49,7 +58,7 @@ const PropertyFinder = () => {
 					className="!w-[160px]"
 					controls={false}
 					value={radius}
-					onChange={({ target: { value } }) => setRadius(value)}
+					onChange={(value) => setRadius(value)}
 				/>
 				<Button
 					type="primary"
@@ -71,56 +80,73 @@ const PropertyFinder = () => {
 				<Select
 					options={options}
 					value={filterValue}
-					onChange={({ target: { value } }) => {
+					onChange={(value) => {
 						setFilterValue(value);
-						handleFilterUpdate(value);
+						handleFilterUpdate(list, value);
 					}}
-					className="!w-[160px]"
+					className="!w-[170px]"
 				/>
 			</div>
-			<NewTable
-				className="flex-1 overflow-hidden [&_.ant-spin-nested-loading]:h-full [&_.ant-spin-container]:h-full [&_.ant-table-container]:h-full [&_.ant-table]:h-[calc(100%-64px)]"
-				columns={columns}
-				scroll={{ x: 800 }}
-				dataSource={list}
-				locale={{
-					emptyText: (
-						<NoData
-							text={
-								<>
-									<div className="text-lg font-medium pb-2">
-										No open houses found in this area.
-									</div>
-									<div className="text-sm">
-										Try adjusting your search radius or explore other nearby
-										cities.
-									</div>
-								</>
-							}
-						/>
-					),
-				}}
-				expandable={{
-					expandedRowRender: (record) => <Income record={record} />,
-					rowExpandable: () => true,
-					expandedRowKeys: expandedRowKey ? [expandedRowKey] : [],
-					onExpand: (expanded, record) => {
-						setExpandedRowKey(expanded ? record?.id : null);
-					},
-					fixed: 'right',
-					expandIcon: ({ expanded, onExpand, record }) => {
-						return (
-							<DownOutlined
-								onClick={(e) => onExpand(record, e)}
-								className={`${
-									expanded ? 'rotate-180' : ''
-								} transition-all duration-300 ease-in-out`}
+			{!isSearch ? (
+				<div className="flex items-center flex-col flex-1 pt-[100px]">
+					<Image
+						src="/images/searchOpenHouse.png"
+						alt="searchOpenHouse"
+						width={191}
+						height={109}
+					/>
+					<div className="text-lg font-medium text-base-gray pt-4">
+						Enter a city, zip code, or state to find open houses near you.
+					</div>
+				</div>
+			) : (
+				<NewTable
+					className="flex-1 overflow-hidden [&_.ant-spin-nested-loading]:h-full [&_.ant-spin-container]:h-full [&_.ant-table-container]:h-full [&_.ant-table]:h-[calc(100%-64px)]"
+					columns={columns}
+					scroll={{ x: 1200 }}
+					dataSource={dataSource}
+					locale={{
+						emptyText: (
+							<NoData
+								text={
+									<>
+										<div className="text-lg font-medium pb-2">
+											No open houses found in this area.
+										</div>
+										<div className="text-sm">
+											Try adjusting your search radius or explore other nearby
+											cities.
+										</div>
+									</>
+								}
 							/>
-						);
-					},
-				}}
-				// pagination={hasPagination}
-			/>
+						),
+					}}
+					onChange={onChange}
+					pagination={pagination}
+					loading={loading}
+					// expandable={{
+					// 	expandedRowRender: (record) => <Income record={record} />,
+					// 	rowExpandable: () => true,
+					// 	expandedRowKeys: expandedRowKey ? [expandedRowKey] : [],
+					// 	onExpand: (expanded, record) => {
+					// 		setExpandedRowKey(expanded ? record?.id : null);
+					// 	},
+					// 	fixed: 'right',
+					// 	expandIcon: ({ expanded, onExpand, record }) => {
+					// 		return (
+					// 			<DownOutlined
+					// 				onClick={(e) => onExpand(record, e)}
+					// 				className={`${
+					// 					expanded ? 'rotate-180' : ''
+					// 				} transition-all duration-300 ease-in-out`}
+					// 			/>
+					// 		);
+					// 	},
+					// }}
+					// pagination={hasPagination}
+				/>
+			)}
 		</div>
 	);
 };
