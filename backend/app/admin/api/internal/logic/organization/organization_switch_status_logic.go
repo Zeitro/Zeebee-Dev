@@ -5,6 +5,9 @@ import (
 
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
+	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/common/copierx"
+	"zeebee-backend/common/errorx"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +28,26 @@ func NewOrganizationSwitchStatusLogic(ctx context.Context, svcCtx *svc.ServiceCo
 }
 
 func (l *OrganizationSwitchStatusLogic) OrganizationSwitchStatus(req *types.OrganizationSwitchStatusRequest) (resp *types.EmptyResponse, err error) {
-	// todo: add your logic here and delete this line
+	defer func() {
+		if err != nil {
+			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+		}
+	}()
 
-	return
+	// Convert types to pb request
+	rpcReq := &admin.OrganizationSwitchStatusRequest{
+		Data: &admin.OrganizationSwitchStatusRequestData{},
+	}
+	rpcReq.Data, err = copierx.Trans[types.OrganizationSwitchStatusRequest, admin.OrganizationSwitchStatusRequestData](req)
+	if err != nil {
+		return nil, errorx.GetFailedTransRespErr(err)
+	}
+
+	// Call RPC server
+	_, err = l.svcCtx.OrganizationRpcClient.SwitchStatus(l.ctx, rpcReq)
+	if err != nil {
+		return nil, errorx.WithStack(err)
+	}
+
+	return &types.EmptyResponse{}, nil
 }

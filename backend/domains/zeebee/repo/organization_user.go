@@ -202,3 +202,21 @@ func (repo *OrganizationUserRepo) UpdateRolesWithTx(ctx context.Context, tx *gor
 	}
 	return nil
 }
+
+// UpdateStatusByOrganizationId batch update organization user status by organization id
+// Used for organization status switching - single SQL for performance with 1000+ users
+func (repo *OrganizationUserRepo) UpdateStatusByOrganizationId(ctx context.Context, organizationId int64, status constants.OrganizationUserStatus) (err error) {
+	err = repo.Client(ctx).Model(&model.OrganizationUser{}).
+		Where("organization_id = ?", organizationId).
+		Update("status", status).Error
+	return errorx.WithStack(err)
+}
+
+// DeleteByOrganizationIdWithTx delete all organization users by organization id with transaction
+// Used for organization deletion - cascading delete of all organization user relationships
+func (repo *OrganizationUserRepo) DeleteByOrganizationIdWithTx(ctx context.Context, tx *gorm.DB, organizationId int64) (err error) {
+	err = tx.WithContext(ctx).
+		Where("organization_id = ?", organizationId).
+		Delete(&model.OrganizationUser{}).Error
+	return errorx.WithStack(err)
+}
