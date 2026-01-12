@@ -110,6 +110,13 @@ func (repo *OrganizationUserRepo) GetOrganizationUserByUserId(ctx context.Contex
 	return res, nil
 }
 
+// ActiveByUserIdWithTx active organization user by userId with transaction
+func (repo *OrganizationUserRepo) ActiveByUserIdWithTx(ctx context.Context, tx *gorm.DB, userId int64) (err error) {
+	return tx.WithContext(ctx).Model(&model.OrganizationUser{}).
+		Where("user_id = ? and status = ?", userId, constants.OrganizationUserStatusNotActivated).
+		Update("status", constants.OrganizationUserStatusActive).Error
+}
+
 // GetOrganizationUserById get organization user by id
 func (repo *OrganizationUserRepo) GetOrganizationUserById(ctx context.Context, id int64, organizationId int64) (result *model.OrganizationUser, err error) {
 	err = repo.Client(ctx).

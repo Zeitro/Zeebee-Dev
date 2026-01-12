@@ -525,7 +525,7 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 
 	err = l.repos.UserRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
-		organization.Status = constants.OrganizationStatusInactive
+		organization.Status = constants.OrganizationStatusNotActivated
 		organization, innerErr = l.repos.OrganizationRepo.CreateWithTx(ctx, tx, organization, false)
 		if innerErr != nil {
 			return innerErr
@@ -560,7 +560,7 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 			FirstName:      user.FirstName,
 			MidName:        user.MidName,
 			LastName:       user.LastName,
-			Status:         constants.OrganizationUserStatusActive,
+			Status:         constants.OrganizationUserStatusNotActivated,
 			FullName:       user.FullName,
 			Roles:          roles,
 		}
@@ -620,7 +620,13 @@ func (l *UserLogic) VerifyUserEmail(ctx context.Context, email string, code stri
 			return innerErr
 		}
 
-		return innerErr
+		// update organization user  status
+		innerErr = l.repos.OrganizationUserRepo.ActiveByUserIdWithTx(ctx, tx, user.Id)
+		if innerErr != nil {
+			return innerErr
+		}
+
+		return nil
 	})
 	return
 }
