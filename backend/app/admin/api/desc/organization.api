@@ -62,7 +62,10 @@ type (
         Tagline string `json:"tagline"`
         CreatedAt string `json:"created_at"`
         UpdatedAt string `json:"updated_at"`
-        Owner *UserEntity `json:"owner"`
+        OwnerEmail string `json:"owner_email"`
+        OwnerFullName string `json:"owner_full_name"`
+        OwnerFirstName string `json:"owner_first_name"`
+        OwnerLastName string `json:"owner_last_name"`
     }
 
     OrganizationPageRequestFilter {
@@ -71,9 +74,15 @@ type (
     }
     OrganizationPageRequest {
         BasePageRequest
-        Filter *BasePageFilter `json:"filter,optional"`
+        Filter *OrganizationPageFilter `json:"filter,optional"`
         Sort *BasePageSort `json:"sort,optional"`
     }
+    OrganizationPageFilter {
+        Keyword string `json:"keyword,optional"`
+        OrganizationType string `json:"type" validate:"required,oneof=Lender Borrower"`
+        Status string `json:"status,optional"`
+    }
+
     OrganizationPageResponse {
         BasePageResponse
         List []*OrganizationPageEntity `json:"list"`

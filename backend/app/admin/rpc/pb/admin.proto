@@ -684,8 +684,11 @@ message OrganizationPageEntity {
   string tagline = 11;
   string created_at = 12;
   string updated_at = 13;
-  UserEntity owner = 14;
-  AddressEntity address = 15;
+  AddressEntity address = 14;
+  string owner_email = 15;
+  string owner_full_name = 16;
+  string owner_first_name = 17;
+  string owner_last_name = 18;
 }
 
 message OrganizationMetadataEntity {
@@ -710,6 +713,8 @@ message OrganizationPageRequestData {
 }
 message OrganizationPageRequestFilter {
   string keyword = 1;
+  string status = 2;
+  string organization_type = 3;
 }
 message OrganizationPageRequestSorter {
   string column = 1;

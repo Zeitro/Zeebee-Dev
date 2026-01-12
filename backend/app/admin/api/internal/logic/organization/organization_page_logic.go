@@ -5,6 +5,9 @@ import (
 
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
+	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/common/copierx"
+	"zeebee-backend/common/errorx"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +28,19 @@ func NewOrganizationPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *OrganizationPageLogic) OrganizationPage(req *types.OrganizationPageRequest) (resp *types.OrganizationPageResponse, err error) {
-	// todo: add your logic here and delete this line
+	rpcReq := &admin.OrganizationPageRequest{}
+	rpcReq.Data, err = copierx.Trans[types.OrganizationPageRequest, admin.OrganizationPageRequestData](req)
 
-	return
+	if err != nil {
+		return nil, err
+	}
+
+	rpcResp, err := l.svcCtx.OrganizationRpcClient.Page(l.ctx, rpcReq)
+	if err != nil {
+		return nil, errorx.WithStack(err)
+	}
+
+	resp, err = copierx.Trans[admin.OrganizationPageResponseData, types.OrganizationPageResponse](rpcResp.Data)
+
+	return resp, err
 }

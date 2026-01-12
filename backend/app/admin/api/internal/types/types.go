@@ -95,20 +95,29 @@ type OrganizationMetadataEntity struct {
 }
 
 type OrganizationPageEntity struct {
-	Id           int64       `json:"id"`
-	Name         string      `json:"name"`
-	Status       string      `json:"status"`
-	ContactEmail string      `json:"contact_email"`
-	ContactPhone string      `json:"contact_phone"`
-	ContactName  string      `json:"contact_name"`
-	OwnerType    string      `json:"owner_type"`
-	Type         string      `json:"type"`
-	Logo         string      `json:"logo"`
-	Website      string      `json:"website"`
-	Tagline      string      `json:"tagline"`
-	CreatedAt    string      `json:"created_at"`
-	UpdatedAt    string      `json:"updated_at"`
-	Owner        *UserEntity `json:"owner"`
+	Id             int64  `json:"id"`
+	Name           string `json:"name"`
+	Status         string `json:"status"`
+	ContactEmail   string `json:"contact_email"`
+	ContactPhone   string `json:"contact_phone"`
+	ContactName    string `json:"contact_name"`
+	OwnerType      string `json:"owner_type"`
+	Type           string `json:"type"`
+	Logo           string `json:"logo"`
+	Website        string `json:"website"`
+	Tagline        string `json:"tagline"`
+	CreatedAt      string `json:"created_at"`
+	UpdatedAt      string `json:"updated_at"`
+	OwnerEmail     string `json:"owner_email"`
+	OwnerFullName  string `json:"owner_full_name"`
+	OwnerFirstName string `json:"owner_first_name"`
+	OwnerLastName  string `json:"owner_last_name"`
+}
+
+type OrganizationPageFilter struct {
+	Keyword          string `json:"keyword,optional"`
+	OrganizationType string `json:"type" validate:"required,oneof=Lender Borrower"`
+	Status           string `json:"status,optional"`
 }
 
 type OrganizationPageRequestFilter struct {

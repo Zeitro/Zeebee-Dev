@@ -1824,8 +1824,17 @@
               "properties": {
                 "filter": {
                   "type": "object",
+                  "required": [
+                    "type"
+                  ],
                   "properties": {
                     "keyword": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "type": {
                       "type": "string"
                     }
                   }
@@ -1878,7 +1887,10 @@
                       "tagline",
                       "created_at",
                       "updated_at",
-                      "owner"
+                      "owner_email",
+                      "owner_full_name",
+                      "owner_first_name",
+                      "owner_last_name"
                     ],
                     "properties": {
                       "contact_email": {
@@ -1902,67 +1914,17 @@
                       "name": {
                         "type": "string"
                       },
-                      "owner": {
-                        "type": "object",
-                        "required": [
-                          "id",
-                          "email",
-                          "status",
-                          "type",
-                          "first_name",
-                          "mid_name",
-                          "last_name",
-                          "full_name",
-                          "default_organization_id",
-                          "created_at",
-                          "updated_at",
-                          "pivot_organization_status",
-                          "roles"
-                        ],
-                        "properties": {
-                          "created_at": {
-                            "type": "string"
-                          },
-                          "default_organization_id": {
-                            "type": "integer"
-                          },
-                          "email": {
-                            "type": "string"
-                          },
-                          "first_name": {
-                            "type": "string"
-                          },
-                          "full_name": {
-                            "type": "string"
-                          },
-                          "id": {
-                            "type": "integer"
-                          },
-                          "last_name": {
-                            "type": "string"
-                          },
-                          "mid_name": {
-                            "type": "string"
-                          },
-                          "pivot_organization_status": {
-                            "type": "string"
-                          },
-                          "roles": {
-                            "type": "array",
-                            "items": {
-                              "type": "object"
-                            }
-                          },
-                          "status": {
-                            "type": "string"
-                          },
-                          "type": {
-                            "type": "string"
-                          },
-                          "updated_at": {
-                            "type": "string"
-                          }
-                        }
+                      "owner_email": {
+                        "type": "string"
+                      },
+                      "owner_first_name": {
+                        "type": "string"
+                      },
+                      "owner_full_name": {
+                        "type": "string"
+                      },
+                      "owner_last_name": {
+                        "type": "string"
                       },
                       "owner_type": {
                         "type": "string"
@@ -5772,7 +5734,7 @@
       }
     }
   },
-  "x-date": "2026-01-12 15:13:20",
+  "x-date": "2026-01-12 16:36:24",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

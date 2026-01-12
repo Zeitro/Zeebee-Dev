@@ -4,8 +4,10 @@ import (
 	"context"
 
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/bo"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/repo"
 )
@@ -20,6 +22,19 @@ func NewOrganizationLogic(repos *repo.AllRepos) *OrganizationLogic {
 	return &OrganizationLogic{
 		repos: repos,
 	}
+}
+
+// Page
+func (l *OrganizationLogic) Page(ctx context.Context, pageReq dto.OrganizationPageRequestDto) (page bo.PageResultBo[bo.OrganizationPageEntityBo], err error) {
+	results, err := l.repos.OrganizationRepo.Page(ctx, pageReq)
+	if err != nil {
+		return page, err
+	}
+	pageResult, err := copierx.Trans[gormx.PageResponse[*repo.OrganizationPageEntity], bo.PageResultBo[bo.OrganizationPageEntityBo]](&results)
+	if err != nil {
+		return page, err
+	}
+	return *pageResult, nil
 }
 
 // Detail retrieves organization details by ID and type.

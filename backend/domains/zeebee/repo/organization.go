@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"gorm.io/gorm"
 
@@ -12,6 +13,28 @@ import (
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 )
+
+type OrganizationPageEntity struct {
+	Id     int64                        `json:"id"`
+	Name   string                       `json:"name"`
+	Status constants.OrganizationStatus `json:"status"`
+	// Address        *model.Address                  `json:"address"`
+	ContactEmail   string                          `json:"contact_email"`
+	ContactPhone   string                          `json:"contact_phone"`
+	ContactName    string                          `json:"contact_name"`
+	OwnerType      constants.OrganizationOwnerType `json:"owner_type"`
+	Type           constants.UserType              `json:"type"`
+	Logo           string                          `json:"logo"`
+	Website        string                          `json:"website"`
+	Tagline        string                          `json:"tagline"`
+	OwnerEmail     string                          `json:"owner_email"`
+	OwnerFullName  string                          `json:"owner_full_name"`
+	OwnerFirstName string                          `json:"owner_first_name"`
+	OwnerMidName   string                          `json:"owner_mid_name"`
+	OwnerLastName  string                          `json:"owner_last_name"`
+	CreatedAt      time.Time                       `json:"created_at"`
+	UpdatedAt      time.Time                       `json:"updated_at"`
+}
 
 type OrganizationRepo struct {
 	*gormx.BaseRepo[*model.Organization]
@@ -76,29 +99,64 @@ func (repo *OrganizationRepo) All(ctx context.Context, organizationType constant
 }
 
 // Page
-func (repo *OrganizationRepo) Page(ctx context.Context, pageReq dto.OrganizationPageRequestDto) (page gormx.PageResponse[*model.Organization], err error) {
+func (repo *OrganizationRepo) Page(ctx context.Context, pageReq dto.OrganizationPageRequestDto) (page gormx.PageResponse[*OrganizationPageEntity], err error) {
 	filter := pageReq.Filter
 	sorter := pageReq.Sorter
-	query := repo.Client(ctx)
+	organizationTable := model.Organization{}.TableName()
+	userTable := model.User{}.TableName()
+	fields := []string{
+		fmt.Sprintf("%s.id", organizationTable),
+		fmt.Sprintf("%s.name", organizationTable),
+		fmt.Sprintf("%s.status", organizationTable),
+		fmt.Sprintf("%s.contact_email", organizationTable),
+		fmt.Sprintf("%s.contact_phone", organizationTable),
+		fmt.Sprintf("%s.contact_name", organizationTable),
+		fmt.Sprintf("%s.owner_type", organizationTable),
+		fmt.Sprintf("%s.type", organizationTable),
+		fmt.Sprintf("%s.logo", organizationTable),
+		fmt.Sprintf("%s.website", organizationTable),
+		fmt.Sprintf("%s.tagline", organizationTable),
+		fmt.Sprintf("%s.owner_id", organizationTable),
+		fmt.Sprintf("%s.created_at", organizationTable),
+		fmt.Sprintf("%s.updated_at", organizationTable),
+		fmt.Sprintf("%s.email as owner_email", userTable),
+		fmt.Sprintf("%s.first_name as owner_first_name", userTable),
+		fmt.Sprintf("%s.mid_name as owner_mid_name", userTable),
+		fmt.Sprintf("%s.last_name as owner_last_name", userTable),
+		fmt.Sprintf("%s.full_name as owner_full_name", userTable),
+	}
+
+	query := repo.Client(ctx).
+		Model(&model.Organization{}).
+		Joins(fmt.Sprintf("left join %s on %s.owner_id = %s.id", userTable, organizationTable, userTable))
 	if len(filter.Keyword) > 0 {
 		keyword := "%" + filter.Keyword + "%"
-		query = query.Where("name LIKE @keyword OR contact_email LIKE @keyword OR contact_name LIKE @keyword OR contact_phone LIKE @keyword", map[string]interface{}{
+		query = query.Where(fmt.Sprintf(
+			"%s.name LIKE @keyword OR %s.contact_email LIKE @keyword OR %s.contact_name LIKE @keyword OR %s.contact_phone LIKE @keyword or %s.email LIKE @keyword or %s.full_name LIKE @keyword",
+			organizationTable,
+			organizationTable,
+			organizationTable,
+			organizationTable,
+			userTable,
+			userTable,
+		), map[string]interface{}{
 			"keyword": keyword,
 		})
 	}
 	if len(filter.OrganizationType) > 0 {
-		query = query.Where("type = ?", filter.OrganizationType)
+		query = query.Where(fmt.Sprintf("%s.type = ?", organizationTable), filter.OrganizationType)
 	}
 	if len(filter.Status) > 0 {
-		query = query.Where("status = ?", filter.Status)
+		query = query.Where(fmt.Sprintf("%s.status = ?", organizationTable), filter.Status)
 	}
 	if len(sorter.Column) > 0 {
 		query = query.Order(fmt.Sprintf("%s %s", sorter.Column, sorter.Sort))
 	}
-	query = query.Order("id asc")
-	page, err = gormx.Page[*model.Organization](query, gormx.PageRequest{
-		Page:  pageReq.Page,
-		Limit: pageReq.Limit,
+	query = query.Order(fmt.Sprintf("%s.id desc", organizationTable))
+	page, err = gormx.Page[*OrganizationPageEntity](query, gormx.PageRequest{
+		Page:         pageReq.Page,
+		Limit:        pageReq.Limit,
+		SelectFields: fields,
 	})
 	return page, errorx.WithStack(err)
 }

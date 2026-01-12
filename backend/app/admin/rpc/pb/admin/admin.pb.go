@@ -6271,24 +6271,27 @@ func (x *OrganizationEntity) GetOwner() *UserEntity {
 }
 
 type OrganizationPageEntity struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Status        string                 `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"`
-	ContactEmail  string                 `protobuf:"bytes,4,opt,name=contact_email,json=contactEmail,proto3" json:"contact_email,omitempty"`
-	ContactPhone  string                 `protobuf:"bytes,5,opt,name=contact_phone,json=contactPhone,proto3" json:"contact_phone,omitempty"`
-	ContactName   string                 `protobuf:"bytes,6,opt,name=contact_name,json=contactName,proto3" json:"contact_name,omitempty"`
-	OwnerType     string                 `protobuf:"bytes,7,opt,name=owner_type,json=ownerType,proto3" json:"owner_type,omitempty"`
-	Type          string                 `protobuf:"bytes,8,opt,name=type,proto3" json:"type,omitempty"`
-	Logo          string                 `protobuf:"bytes,9,opt,name=logo,proto3" json:"logo,omitempty"`
-	Website       string                 `protobuf:"bytes,10,opt,name=website,proto3" json:"website,omitempty"`
-	Tagline       string                 `protobuf:"bytes,11,opt,name=tagline,proto3" json:"tagline,omitempty"`
-	CreatedAt     string                 `protobuf:"bytes,12,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt     string                 `protobuf:"bytes,13,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	Owner         *UserEntity            `protobuf:"bytes,14,opt,name=owner,proto3" json:"owner,omitempty"`
-	Address       *AddressEntity         `protobuf:"bytes,15,opt,name=address,proto3" json:"address,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name           string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Status         string                 `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"`
+	ContactEmail   string                 `protobuf:"bytes,4,opt,name=contact_email,json=contactEmail,proto3" json:"contact_email,omitempty"`
+	ContactPhone   string                 `protobuf:"bytes,5,opt,name=contact_phone,json=contactPhone,proto3" json:"contact_phone,omitempty"`
+	ContactName    string                 `protobuf:"bytes,6,opt,name=contact_name,json=contactName,proto3" json:"contact_name,omitempty"`
+	OwnerType      string                 `protobuf:"bytes,7,opt,name=owner_type,json=ownerType,proto3" json:"owner_type,omitempty"`
+	Type           string                 `protobuf:"bytes,8,opt,name=type,proto3" json:"type,omitempty"`
+	Logo           string                 `protobuf:"bytes,9,opt,name=logo,proto3" json:"logo,omitempty"`
+	Website        string                 `protobuf:"bytes,10,opt,name=website,proto3" json:"website,omitempty"`
+	Tagline        string                 `protobuf:"bytes,11,opt,name=tagline,proto3" json:"tagline,omitempty"`
+	CreatedAt      string                 `protobuf:"bytes,12,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt      string                 `protobuf:"bytes,13,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Address        *AddressEntity         `protobuf:"bytes,14,opt,name=address,proto3" json:"address,omitempty"`
+	OwnerEmail     string                 `protobuf:"bytes,15,opt,name=owner_email,json=ownerEmail,proto3" json:"owner_email,omitempty"`
+	OwnerFullName  string                 `protobuf:"bytes,16,opt,name=owner_full_name,json=ownerFullName,proto3" json:"owner_full_name,omitempty"`
+	OwnerFirstName string                 `protobuf:"bytes,17,opt,name=owner_first_name,json=ownerFirstName,proto3" json:"owner_first_name,omitempty"`
+	OwnerLastName  string                 `protobuf:"bytes,18,opt,name=owner_last_name,json=ownerLastName,proto3" json:"owner_last_name,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *OrganizationPageEntity) Reset() {
@@ -6412,18 +6415,39 @@ func (x *OrganizationPageEntity) GetUpdatedAt() string {
 	return ""
 }
 
-func (x *OrganizationPageEntity) GetOwner() *UserEntity {
-	if x != nil {
-		return x.Owner
-	}
-	return nil
-}
-
 func (x *OrganizationPageEntity) GetAddress() *AddressEntity {
 	if x != nil {
 		return x.Address
 	}
 	return nil
+}
+
+func (x *OrganizationPageEntity) GetOwnerEmail() string {
+	if x != nil {
+		return x.OwnerEmail
+	}
+	return ""
+}
+
+func (x *OrganizationPageEntity) GetOwnerFullName() string {
+	if x != nil {
+		return x.OwnerFullName
+	}
+	return ""
+}
+
+func (x *OrganizationPageEntity) GetOwnerFirstName() string {
+	if x != nil {
+		return x.OwnerFirstName
+	}
+	return ""
+}
+
+func (x *OrganizationPageEntity) GetOwnerLastName() string {
+	if x != nil {
+		return x.OwnerLastName
+	}
+	return ""
 }
 
 type OrganizationMetadataEntity struct {
@@ -6652,10 +6676,12 @@ func (x *OrganizationPageRequestData) GetSorter() *OrganizationPageRequestSorter
 }
 
 type OrganizationPageRequestFilter struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Keyword       string                 `protobuf:"bytes,1,opt,name=keyword,proto3" json:"keyword,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Keyword          string                 `protobuf:"bytes,1,opt,name=keyword,proto3" json:"keyword,omitempty"`
+	Status           string                 `protobuf:"bytes,2,opt,name=status,proto3" json:"status,omitempty"`
+	OrganizationType string                 `protobuf:"bytes,3,opt,name=organization_type,json=organizationType,proto3" json:"organization_type,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *OrganizationPageRequestFilter) Reset() {
@@ -6691,6 +6717,20 @@ func (*OrganizationPageRequestFilter) Descriptor() ([]byte, []int) {
 func (x *OrganizationPageRequestFilter) GetKeyword() string {
 	if x != nil {
 		return x.Keyword
+	}
+	return ""
+}
+
+func (x *OrganizationPageRequestFilter) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *OrganizationPageRequestFilter) GetOrganizationType() string {
+	if x != nil {
+		return x.OrganizationType
 	}
 	return ""
 }
@@ -8055,7 +8095,7 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x0f \x01(\tR\tupdatedAt\x12O\n" +
 	"\x13organization_emails\x18\x10 \x03(\v2\x1e.admin.OrganizationEmailEntityR\x12organizationEmails\x12'\n" +
-	"\x05owner\x18\x11 \x01(\v2\x11.admin.UserEntityR\x05owner\"\xd3\x03\n" +
+	"\x05owner\x18\x11 \x01(\v2\x11.admin.UserEntityR\x05owner\"\xc5\x04\n" +
 	"\x16OrganizationPageEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +
@@ -8073,9 +8113,13 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\f \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\r \x01(\tR\tupdatedAt\x12'\n" +
-	"\x05owner\x18\x0e \x01(\v2\x11.admin.UserEntityR\x05owner\x12.\n" +
-	"\aaddress\x18\x0f \x01(\v2\x14.admin.AddressEntityR\aaddress\"]\n" +
+	"updated_at\x18\r \x01(\tR\tupdatedAt\x12.\n" +
+	"\aaddress\x18\x0e \x01(\v2\x14.admin.AddressEntityR\aaddress\x12\x1f\n" +
+	"\vowner_email\x18\x0f \x01(\tR\n" +
+	"ownerEmail\x12&\n" +
+	"\x0fowner_full_name\x18\x10 \x01(\tR\rownerFullName\x12(\n" +
+	"\x10owner_first_name\x18\x11 \x01(\tR\x0eownerFirstName\x12&\n" +
+	"\x0fowner_last_name\x18\x12 \x01(\tR\rownerLastName\"]\n" +
 	"\x1aOrganizationMetadataEntity\x12?\n" +
 	"\x06lender\x18\x01 \x01(\v2'.admin.OrganizationLenderMetadataEntityR\x06lender\"\x94\x02\n" +
 	" OrganizationLenderMetadataEntity\x12=\n" +
@@ -8089,9 +8133,11 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x04page\x18\x01 \x01(\x03R\x04page\x12\x14\n" +
 	"\x05limit\x18\x02 \x01(\x03R\x05limit\x12<\n" +
 	"\x06filter\x18\x03 \x01(\v2$.admin.OrganizationPageRequestFilterR\x06filter\x12<\n" +
-	"\x06sorter\x18\x04 \x01(\v2$.admin.OrganizationPageRequestSorterR\x06sorter\"9\n" +
+	"\x06sorter\x18\x04 \x01(\v2$.admin.OrganizationPageRequestSorterR\x06sorter\"~\n" +
 	"\x1dOrganizationPageRequestFilter\x12\x18\n" +
-	"\akeyword\x18\x01 \x01(\tR\akeyword\"K\n" +
+	"\akeyword\x18\x01 \x01(\tR\akeyword\x12\x16\n" +
+	"\x06status\x18\x02 \x01(\tR\x06status\x12+\n" +
+	"\x11organization_type\x18\x03 \x01(\tR\x10organizationType\"K\n" +
 	"\x1dOrganizationPageRequestSorter\x12\x16\n" +
 	"\x06column\x18\x01 \x01(\tR\x06column\x12\x12\n" +
 	"\x04sort\x18\x02 \x01(\tR\x04sort\"S\n" +
@@ -8394,99 +8440,98 @@ var file_app_admin_rpc_pb_admin_proto_depIdxs = []int32{
 	103, // 63: admin.OrganizationEntity.metadata:type_name -> admin.OrganizationMetadataEntity
 	120, // 64: admin.OrganizationEntity.organization_emails:type_name -> admin.OrganizationEmailEntity
 	8,   // 65: admin.OrganizationEntity.owner:type_name -> admin.UserEntity
-	8,   // 66: admin.OrganizationPageEntity.owner:type_name -> admin.UserEntity
-	4,   // 67: admin.OrganizationPageEntity.address:type_name -> admin.AddressEntity
-	104, // 68: admin.OrganizationMetadataEntity.lender:type_name -> admin.OrganizationLenderMetadataEntity
-	7,   // 69: admin.OrganizationLenderMetadataEntity.loan_amount_range:type_name -> admin.RangeFloat
-	6,   // 70: admin.OrganizationLenderMetadataEntity.loan_term_range:type_name -> admin.RangeInt32
-	7,   // 71: admin.OrganizationLenderMetadataEntity.loan_rate_range:type_name -> admin.RangeFloat
-	7,   // 72: admin.OrganizationLenderMetadataEntity.loan_point_range:type_name -> admin.RangeFloat
-	106, // 73: admin.OrganizationPageRequest.data:type_name -> admin.OrganizationPageRequestData
-	107, // 74: admin.OrganizationPageRequestData.filter:type_name -> admin.OrganizationPageRequestFilter
-	108, // 75: admin.OrganizationPageRequestData.sorter:type_name -> admin.OrganizationPageRequestSorter
-	110, // 76: admin.OrganizationPageResponse.data:type_name -> admin.OrganizationPageResponseData
-	102, // 77: admin.OrganizationPageResponseData.list:type_name -> admin.OrganizationPageEntity
-	112, // 78: admin.OrganizationCreateLenderRequest.data:type_name -> admin.OrganizationCreateLenderRequestData
-	113, // 79: admin.OrganizationCreateLenderRequestData.user:type_name -> admin.OrganizationCreateLenderUserEntity
-	114, // 80: admin.OrganizationCreateLenderRequestData.organization:type_name -> admin.OrganizationCreateLenderOrganizationEntity
-	104, // 81: admin.OrganizationCreateLenderOrganizationEntity.lender_metadata:type_name -> admin.OrganizationLenderMetadataEntity
-	116, // 82: admin.OrganizationUpdateLenderRequest.data:type_name -> admin.OrganizationUpdateLenderRequestData
-	104, // 83: admin.OrganizationUpdateLenderRequestData.lender_metadata:type_name -> admin.OrganizationLenderMetadataEntity
-	101, // 84: admin.OrganizationDetailResponse.data:type_name -> admin.OrganizationEntity
-	119, // 85: admin.OrganizationSwitchStatusRequest.data:type_name -> admin.OrganizationSwitchStatusRequestData
-	9,   // 86: admin.User.Login:input_type -> admin.UserLoginRequest
-	13,  // 87: admin.User.RefreshToken:input_type -> admin.RefreshTokenRequest
-	21,  // 88: admin.User.UserInfo:input_type -> admin.UserInfoRequest
-	17,  // 89: admin.User.ResetPassword:input_type -> admin.ResetPasswordRequest
-	25,  // 90: admin.User.EditProfile:input_type -> admin.UserProfileEditRequest
-	29,  // 91: admin.OrganizationUser.Page:input_type -> admin.OrganizationUserPageRequest
-	35,  // 92: admin.OrganizationUser.Create:input_type -> admin.OrganizationUserCreateRequest
-	38,  // 93: admin.OrganizationUser.Update:input_type -> admin.OrganizationUserUpdateRequest
-	41,  // 94: admin.OrganizationUser.Delete:input_type -> admin.OrganizationUserDeleteRequest
-	43,  // 95: admin.OrganizationUser.Detail:input_type -> admin.OrganizationUserDetailRequest
-	46,  // 96: admin.OrganizationUser.SwitchStatus:input_type -> admin.OrganizationUserSwitchStatusRequest
-	50,  // 97: admin.api.ApiTree:input_type -> admin.ApiTreeRequest
-	53,  // 98: admin.api.Create:input_type -> admin.ApiCreateRequest
-	56,  // 99: admin.api.Update:input_type -> admin.ApiUpdateRequest
-	58,  // 100: admin.api.Delete:input_type -> admin.ApiDeleteRequest
-	60,  // 101: admin.api.Detail:input_type -> admin.ApiDetailRequest
-	64,  // 102: admin.resource.ResourceTree:input_type -> admin.ResourceTreeRequest
-	67,  // 103: admin.resource.Create:input_type -> admin.ResourceCreateRequest
-	70,  // 104: admin.resource.Update:input_type -> admin.ResourceUpdateRequest
-	72,  // 105: admin.resource.Delete:input_type -> admin.ResourceDeleteRequest
-	74,  // 106: admin.resource.Detail:input_type -> admin.ResourceDetailRequest
-	78,  // 107: admin.role.Page:input_type -> admin.RolePageRequest
-	84,  // 108: admin.role.Create:input_type -> admin.RoleCreateRequest
-	87,  // 109: admin.role.Update:input_type -> admin.RoleUpdateRequest
-	91,  // 110: admin.role.Delete:input_type -> admin.RoleDeleteRequest
-	93,  // 111: admin.role.Detail:input_type -> admin.RoleDetailRequest
-	96,  // 112: admin.role.UpdateStatus:input_type -> admin.RoleUpdateStatusRequest
-	98,  // 113: admin.role.All:input_type -> admin.RoleAllRequest
-	105, // 114: admin.organization.Page:input_type -> admin.OrganizationPageRequest
-	111, // 115: admin.organization.CreateLender:input_type -> admin.OrganizationCreateLenderRequest
-	115, // 116: admin.organization.UpdateLender:input_type -> admin.OrganizationUpdateLenderRequest
-	3,   // 117: admin.organization.Detail:input_type -> admin.IdRequest
-	3,   // 118: admin.organization.Delete:input_type -> admin.IdRequest
-	118, // 119: admin.organization.SwitchStatus:input_type -> admin.OrganizationSwitchStatusRequest
-	11,  // 120: admin.User.Login:output_type -> admin.UserLoginResponse
-	15,  // 121: admin.User.RefreshToken:output_type -> admin.RefreshTokenResponse
-	23,  // 122: admin.User.UserInfo:output_type -> admin.UserinfoResponse
-	19,  // 123: admin.User.ResetPassword:output_type -> admin.ResetPasswordResponse
-	23,  // 124: admin.User.EditProfile:output_type -> admin.UserinfoResponse
-	33,  // 125: admin.OrganizationUser.Page:output_type -> admin.OrganizationUserPageResponse
-	36,  // 126: admin.OrganizationUser.Create:output_type -> admin.OrganizationUserCreateResponse
-	39,  // 127: admin.OrganizationUser.Update:output_type -> admin.OrganizationUserUpdateResponse
-	1,   // 128: admin.OrganizationUser.Delete:output_type -> admin.EmptyResponse
-	44,  // 129: admin.OrganizationUser.Detail:output_type -> admin.OrganizationUserDetailResponse
-	1,   // 130: admin.OrganizationUser.SwitchStatus:output_type -> admin.EmptyResponse
-	52,  // 131: admin.api.ApiTree:output_type -> admin.ApiTreeResponse
-	55,  // 132: admin.api.Create:output_type -> admin.ApiCreateResponse
-	55,  // 133: admin.api.Update:output_type -> admin.ApiCreateResponse
-	1,   // 134: admin.api.Delete:output_type -> admin.EmptyResponse
-	55,  // 135: admin.api.Detail:output_type -> admin.ApiCreateResponse
-	66,  // 136: admin.resource.ResourceTree:output_type -> admin.ResourceTreeResponse
-	76,  // 137: admin.resource.Create:output_type -> admin.ResourceDetailResponse
-	76,  // 138: admin.resource.Update:output_type -> admin.ResourceDetailResponse
-	1,   // 139: admin.resource.Delete:output_type -> admin.EmptyResponse
-	76,  // 140: admin.resource.Detail:output_type -> admin.ResourceDetailResponse
-	82,  // 141: admin.role.Page:output_type -> admin.RolePageResponse
-	86,  // 142: admin.role.Create:output_type -> admin.RoleCreateResponse
-	88,  // 143: admin.role.Update:output_type -> admin.RoleUpdateResponse
-	1,   // 144: admin.role.Delete:output_type -> admin.EmptyResponse
-	95,  // 145: admin.role.Detail:output_type -> admin.RoleDetailResponse
-	1,   // 146: admin.role.UpdateStatus:output_type -> admin.EmptyResponse
-	100, // 147: admin.role.All:output_type -> admin.RoleAllResponse
-	109, // 148: admin.organization.Page:output_type -> admin.OrganizationPageResponse
-	117, // 149: admin.organization.CreateLender:output_type -> admin.OrganizationDetailResponse
-	117, // 150: admin.organization.UpdateLender:output_type -> admin.OrganizationDetailResponse
-	117, // 151: admin.organization.Detail:output_type -> admin.OrganizationDetailResponse
-	1,   // 152: admin.organization.Delete:output_type -> admin.EmptyResponse
-	1,   // 153: admin.organization.SwitchStatus:output_type -> admin.EmptyResponse
-	120, // [120:154] is the sub-list for method output_type
-	86,  // [86:120] is the sub-list for method input_type
-	86,  // [86:86] is the sub-list for extension type_name
-	86,  // [86:86] is the sub-list for extension extendee
-	0,   // [0:86] is the sub-list for field type_name
+	4,   // 66: admin.OrganizationPageEntity.address:type_name -> admin.AddressEntity
+	104, // 67: admin.OrganizationMetadataEntity.lender:type_name -> admin.OrganizationLenderMetadataEntity
+	7,   // 68: admin.OrganizationLenderMetadataEntity.loan_amount_range:type_name -> admin.RangeFloat
+	6,   // 69: admin.OrganizationLenderMetadataEntity.loan_term_range:type_name -> admin.RangeInt32
+	7,   // 70: admin.OrganizationLenderMetadataEntity.loan_rate_range:type_name -> admin.RangeFloat
+	7,   // 71: admin.OrganizationLenderMetadataEntity.loan_point_range:type_name -> admin.RangeFloat
+	106, // 72: admin.OrganizationPageRequest.data:type_name -> admin.OrganizationPageRequestData
+	107, // 73: admin.OrganizationPageRequestData.filter:type_name -> admin.OrganizationPageRequestFilter
+	108, // 74: admin.OrganizationPageRequestData.sorter:type_name -> admin.OrganizationPageRequestSorter
+	110, // 75: admin.OrganizationPageResponse.data:type_name -> admin.OrganizationPageResponseData
+	102, // 76: admin.OrganizationPageResponseData.list:type_name -> admin.OrganizationPageEntity
+	112, // 77: admin.OrganizationCreateLenderRequest.data:type_name -> admin.OrganizationCreateLenderRequestData
+	113, // 78: admin.OrganizationCreateLenderRequestData.user:type_name -> admin.OrganizationCreateLenderUserEntity
+	114, // 79: admin.OrganizationCreateLenderRequestData.organization:type_name -> admin.OrganizationCreateLenderOrganizationEntity
+	104, // 80: admin.OrganizationCreateLenderOrganizationEntity.lender_metadata:type_name -> admin.OrganizationLenderMetadataEntity
+	116, // 81: admin.OrganizationUpdateLenderRequest.data:type_name -> admin.OrganizationUpdateLenderRequestData
+	104, // 82: admin.OrganizationUpdateLenderRequestData.lender_metadata:type_name -> admin.OrganizationLenderMetadataEntity
+	101, // 83: admin.OrganizationDetailResponse.data:type_name -> admin.OrganizationEntity
+	119, // 84: admin.OrganizationSwitchStatusRequest.data:type_name -> admin.OrganizationSwitchStatusRequestData
+	9,   // 85: admin.User.Login:input_type -> admin.UserLoginRequest
+	13,  // 86: admin.User.RefreshToken:input_type -> admin.RefreshTokenRequest
+	21,  // 87: admin.User.UserInfo:input_type -> admin.UserInfoRequest
+	17,  // 88: admin.User.ResetPassword:input_type -> admin.ResetPasswordRequest
+	25,  // 89: admin.User.EditProfile:input_type -> admin.UserProfileEditRequest
+	29,  // 90: admin.OrganizationUser.Page:input_type -> admin.OrganizationUserPageRequest
+	35,  // 91: admin.OrganizationUser.Create:input_type -> admin.OrganizationUserCreateRequest
+	38,  // 92: admin.OrganizationUser.Update:input_type -> admin.OrganizationUserUpdateRequest
+	41,  // 93: admin.OrganizationUser.Delete:input_type -> admin.OrganizationUserDeleteRequest
+	43,  // 94: admin.OrganizationUser.Detail:input_type -> admin.OrganizationUserDetailRequest
+	46,  // 95: admin.OrganizationUser.SwitchStatus:input_type -> admin.OrganizationUserSwitchStatusRequest
+	50,  // 96: admin.api.ApiTree:input_type -> admin.ApiTreeRequest
+	53,  // 97: admin.api.Create:input_type -> admin.ApiCreateRequest
+	56,  // 98: admin.api.Update:input_type -> admin.ApiUpdateRequest
+	58,  // 99: admin.api.Delete:input_type -> admin.ApiDeleteRequest
+	60,  // 100: admin.api.Detail:input_type -> admin.ApiDetailRequest
+	64,  // 101: admin.resource.ResourceTree:input_type -> admin.ResourceTreeRequest
+	67,  // 102: admin.resource.Create:input_type -> admin.ResourceCreateRequest
+	70,  // 103: admin.resource.Update:input_type -> admin.ResourceUpdateRequest
+	72,  // 104: admin.resource.Delete:input_type -> admin.ResourceDeleteRequest
+	74,  // 105: admin.resource.Detail:input_type -> admin.ResourceDetailRequest
+	78,  // 106: admin.role.Page:input_type -> admin.RolePageRequest
+	84,  // 107: admin.role.Create:input_type -> admin.RoleCreateRequest
+	87,  // 108: admin.role.Update:input_type -> admin.RoleUpdateRequest
+	91,  // 109: admin.role.Delete:input_type -> admin.RoleDeleteRequest
+	93,  // 110: admin.role.Detail:input_type -> admin.RoleDetailRequest
+	96,  // 111: admin.role.UpdateStatus:input_type -> admin.RoleUpdateStatusRequest
+	98,  // 112: admin.role.All:input_type -> admin.RoleAllRequest
+	105, // 113: admin.organization.Page:input_type -> admin.OrganizationPageRequest
+	111, // 114: admin.organization.CreateLender:input_type -> admin.OrganizationCreateLenderRequest
+	115, // 115: admin.organization.UpdateLender:input_type -> admin.OrganizationUpdateLenderRequest
+	3,   // 116: admin.organization.Detail:input_type -> admin.IdRequest
+	3,   // 117: admin.organization.Delete:input_type -> admin.IdRequest
+	118, // 118: admin.organization.SwitchStatus:input_type -> admin.OrganizationSwitchStatusRequest
+	11,  // 119: admin.User.Login:output_type -> admin.UserLoginResponse
+	15,  // 120: admin.User.RefreshToken:output_type -> admin.RefreshTokenResponse
+	23,  // 121: admin.User.UserInfo:output_type -> admin.UserinfoResponse
+	19,  // 122: admin.User.ResetPassword:output_type -> admin.ResetPasswordResponse
+	23,  // 123: admin.User.EditProfile:output_type -> admin.UserinfoResponse
+	33,  // 124: admin.OrganizationUser.Page:output_type -> admin.OrganizationUserPageResponse
+	36,  // 125: admin.OrganizationUser.Create:output_type -> admin.OrganizationUserCreateResponse
+	39,  // 126: admin.OrganizationUser.Update:output_type -> admin.OrganizationUserUpdateResponse
+	1,   // 127: admin.OrganizationUser.Delete:output_type -> admin.EmptyResponse
+	44,  // 128: admin.OrganizationUser.Detail:output_type -> admin.OrganizationUserDetailResponse
+	1,   // 129: admin.OrganizationUser.SwitchStatus:output_type -> admin.EmptyResponse
+	52,  // 130: admin.api.ApiTree:output_type -> admin.ApiTreeResponse
+	55,  // 131: admin.api.Create:output_type -> admin.ApiCreateResponse
+	55,  // 132: admin.api.Update:output_type -> admin.ApiCreateResponse
+	1,   // 133: admin.api.Delete:output_type -> admin.EmptyResponse
+	55,  // 134: admin.api.Detail:output_type -> admin.ApiCreateResponse
+	66,  // 135: admin.resource.ResourceTree:output_type -> admin.ResourceTreeResponse
+	76,  // 136: admin.resource.Create:output_type -> admin.ResourceDetailResponse
+	76,  // 137: admin.resource.Update:output_type -> admin.ResourceDetailResponse
+	1,   // 138: admin.resource.Delete:output_type -> admin.EmptyResponse
+	76,  // 139: admin.resource.Detail:output_type -> admin.ResourceDetailResponse
+	82,  // 140: admin.role.Page:output_type -> admin.RolePageResponse
+	86,  // 141: admin.role.Create:output_type -> admin.RoleCreateResponse
+	88,  // 142: admin.role.Update:output_type -> admin.RoleUpdateResponse
+	1,   // 143: admin.role.Delete:output_type -> admin.EmptyResponse
+	95,  // 144: admin.role.Detail:output_type -> admin.RoleDetailResponse
+	1,   // 145: admin.role.UpdateStatus:output_type -> admin.EmptyResponse
+	100, // 146: admin.role.All:output_type -> admin.RoleAllResponse
+	109, // 147: admin.organization.Page:output_type -> admin.OrganizationPageResponse
+	117, // 148: admin.organization.CreateLender:output_type -> admin.OrganizationDetailResponse
+	117, // 149: admin.organization.UpdateLender:output_type -> admin.OrganizationDetailResponse
+	117, // 150: admin.organization.Detail:output_type -> admin.OrganizationDetailResponse
+	1,   // 151: admin.organization.Delete:output_type -> admin.EmptyResponse
+	1,   // 152: admin.organization.SwitchStatus:output_type -> admin.EmptyResponse
+	119, // [119:153] is the sub-list for method output_type
+	85,  // [85:119] is the sub-list for method input_type
+	85,  // [85:85] is the sub-list for extension type_name
+	85,  // [85:85] is the sub-list for extension extendee
+	0,   // [0:85] is the sub-list for field type_name
 }
 
 func init() { file_app_admin_rpc_pb_admin_proto_init() }

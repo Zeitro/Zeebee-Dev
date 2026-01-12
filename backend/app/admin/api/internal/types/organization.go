@@ -31,8 +31,8 @@ type OrganizationEntity struct {
 
 type OrganizationPageRequest struct {
 	BasePageRequest
-	Filter *BasePageFilter `json:"filter,optional"`
-	Sort   *BasePageSort   `json:"sort,optional"`
+	Filter *OrganizationPageFilter `json:"filter,optional"`
+	Sort   *BasePageSort           `json:"sort,optional"`
 }
 
 type OrganizationPageResponse struct {
