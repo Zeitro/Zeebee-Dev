@@ -40,10 +40,12 @@ func (l *ZeitroListingSearchLogic) ZeitroListingSearch(req *types.ZeitroListingS
 	}
 
 	// Convert RPC response to API response using copierx.Trans
-	resp, err = copierx.Trans[borrower.ZeitroListingSearchResponse, types.ZeitroListingSearchResponse](rpcResp)
+	entities, err := copierx.Trans[[]*borrower.ZeitroPropertyEntity, []types.ZeitroPropertyEntity](&rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}
 
-	return resp, nil
+	return &types.ZeitroListingSearchResponse{
+		List: *entities,
+	}, nil
 }
