@@ -10,6 +10,7 @@ import "desc/api.api"
 import "desc/resource.api"
 import "desc/role.api"
 import "desc/organization_user.api"
+import "desc/organization.api"
 
 type (
 	EmptyRequest{
@@ -202,4 +203,40 @@ service admin-api {
 	patch /role/:id/status (RoleUpdateStatusRequest) returns (EmptyResponse)
 }
 
-	// ============== role end =============
+// ============== role end =============
+// ============= organization start ============
+@server(
+	desc: "admin-api service"
+	version: v1
+	group: organization
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: organization
+)
+service admin-api {
+	@doc "detail"
+	@handler OrganizationDetail
+	get /organization/:id (PathIdRequest) returns (OrganizationEntity)
+
+	@doc "page"
+	@handler OrganizationPage
+	post /organization/page (OrganizationPageRequest) returns (OrganizationPageResponse)
+
+	@doc "lender create"
+	@handler OrganizationCreateLender
+	post /organization/lender (OrganizationCreateLenderRequest) returns (OrganizationEntity)
+
+	@doc "lender update"
+	@handler OrganizationUpdateLender
+	put /organization/lender/:id (OrganizationUpdateLenderRequest) returns (OrganizationEntity)
+
+	@doc "delete"
+	@handler OrganizationDelete
+	delete /organization/:id (PathIdRequest) returns (EmptyResponse)
+
+	@doc "switch status"
+	@handler OrganizationSwitchStatus
+	patch /organization/:id/status (OrganizationSwitchStatusRequest) returns (EmptyResponse)
+}
+
+	// ============= organization end =============

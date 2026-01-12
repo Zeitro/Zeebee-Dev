@@ -1,0 +1,15 @@
+syntax = "v1"
+
+info(
+    title: "borrower-address-api"
+    desc: "address-api http service description"
+    version: "v1"
+)
+
+type AddressEntity {
+    State string `json:"state,optional" validate:"required"`
+    City string `json:"city,optional" validate:"required"`
+    Address1 string `json:"address1,optional" validate:"required"`
+    Address2 string `json:"address2,optional"`
+    ZipCode string `json:"zip_code,optional"`
+}

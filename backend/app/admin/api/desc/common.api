@@ -1,0 +1,40 @@
+syntax = "v1"
+
+info(
+    title: "lender-common-api"
+    desc: "common-api http service description"
+    version: "v1"
+)
+
+type (
+    RangeInt {
+        Min int `json:"min"`
+        Max int `json:"max"`
+    }
+    RangeFloat64 {
+        Min float64 `json:"min"`
+        Max float64 `json:"max"`
+    }
+)
+
+// page
+type (
+    BasePageRequest {
+        PageNum int `json:"pageNum,optional"`
+        PageSize int `json:"pageSize, optional"`
+    }
+    BasePageFilter {
+        Keyword string `json:"keyword,optional"`
+    }
+    BasePageSort {
+        Column string `json:"column,optional"`
+        Sort string `json:"sort,optional"`
+    }
+
+    BasePageResponse {
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
+        Total int64 `json:"total"`
+        TotalPage int64 `json:"total_page"`
+    }
+)
