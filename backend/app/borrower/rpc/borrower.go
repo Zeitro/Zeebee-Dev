@@ -1,6 +1,8 @@
 package rpc
 
 import (
+	"time"
+
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -40,6 +42,7 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 	if err != nil {
 		return nil, err
 	}
+	zrpc.SetClientSlowThreshold(time.Second * 2)
 
 	ctx := svc.NewServiceContext(rpcConfig)
 	rpcServer := zrpc.MustNewServer(rpcConfig.RpcServerConf, func(grpcServer *grpc.Server) {
