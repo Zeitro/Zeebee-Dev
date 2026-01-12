@@ -4,18 +4,17 @@ import (
 	"context"
 
 	"github.com/duke-git/lancet/v2/slice"
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/lender/rpc/internal/email_tpl"
 	"zeebee-backend/app/lender/rpc/internal/global"
 	"zeebee-backend/app/lender/rpc/internal/logic"
-	"zeebee-backend/app/lender/rpc/internal/repo/model"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/constants"
 	email2 "zeebee-backend/common/email"
-	"zeebee-backend/common/types"
+	"zeebee-backend/common/utils"
+	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -47,8 +46,12 @@ func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequ
 	var loan *model.Loan
 
 	var loanDocuments []*model.LoanDocument
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 
-	loan, err = l.prepare(in)
+	loan, err = l.prepare(in, claim)
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +71,7 @@ func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequ
 				continue
 			}
 			if document.LoanId != loan.Id {
-				return errors.WithStack(errors.New("document loan id not match"))
+				return errorx.WithStack(errorx.New("Document Loan Id Not Match"))
 			}
 
 			loanDocuments = append(loanDocuments, document)
@@ -82,7 +85,7 @@ func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequ
 			}
 		}
 		// add loan operation
-		comments := slice.FlatMap[*lender.SendDocumentRequestEntry, string](in.Data.Documents, func(index int, item *lender.SendDocumentRequestEntry) []string {
+		comments := slice.FlatMap[*lender.SendDocumentRequestEntity, string](in.Data.Documents, func(index int, item *lender.SendDocumentRequestEntity) []string {
 			return []string{item.Comment}
 		})
 		comments = slice.Filter(comments, func(index int, item string) bool {
@@ -92,17 +95,17 @@ func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequ
 		innerErr = l.baseLogic.CreateLoanOperationLog(
 			tx,
 			loan.Id,
-			in.Data.LenderEmployeeId,
-			types.LoanOperationStatus{
+			claim.OrganizationUserId,
+			model.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
-			types.LoanOperationStatus{
+			model.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
 			constants.LoanOperationActionSendDocumentRequest,
-			&types.LoanOperationMetadata{
+			&model.LoanOperationMetadata{
 				Comment: slice.Join(comments, "/"),
 			},
 		)
@@ -119,7 +122,7 @@ func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequ
 		ctx := context.WithoutCancel(l.ctx)
 		err := l.sendDocumentRequestEmail(ctx, loan, loanDocuments)
 		if err != nil {
-			err = errors.Wrap(err, "send document request email error")
+			err = errorx.Wrap(err, "Send Document Request Email Error")
 			l.WithContext(ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
@@ -128,19 +131,19 @@ func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequ
 }
 
 // prepare
-func (l *SendRequestsLogic) prepare(in *lender.LoanDocumentSendRequestsRequest) (loan *model.Loan, err error) {
+func (l *SendRequestsLogic) prepare(in *lender.LoanDocumentSendRequestsRequest, claim utils.JwtUser) (loan *model.Loan, err error) {
 	if len(in.Data.Documents) == 0 {
-		return nil, errors.WithStack(errors.New("no document type found"))
+		return nil, errorx.WithStack(errorx.New("No Document Type Found"))
 	}
 	// var document *model.LoanDocument
-	loan, _, err = l.baseLogic.GetLoanAndDocumentByDocumentId(in.Data.Documents[0].Id, in.Data.LenderCompanyId)
+	loan, _, err = l.baseLogic.GetLoanAndDocumentByDocumentId(in.Data.Documents[0].Id, claim.OrganizationId)
 	return loan, err
 }
 
 func (l *SendRequestsLogic) sendDocumentRequestEmail(ctx context.Context, loan *model.Loan, loanDocuments []*model.LoanDocument) error {
 
 	if loan.LoanBorrower == nil || len(loan.LoanBorrower.ContactEmail) == 0 {
-		return errors.New("no contact email found for the loan")
+		return errorx.New("No Contact Email Found For The Loan")
 	}
 
 	emailData := map[string]interface{}{
@@ -152,7 +155,7 @@ func (l *SendRequestsLogic) sendDocumentRequestEmail(ctx context.Context, loan *
 	// parse email template
 	content, err := email2.ParseTemplate(email_tpl.SendLoanDocumentRequestEmail, emailData)
 	if err != nil {
-		return errors.Wrap(err, "failed to parse email template")
+		return errorx.Wrap(err, "Failed To Parse Email Template")
 	}
 
 	// send email
@@ -166,7 +169,7 @@ func (l *SendRequestsLogic) sendDocumentRequestEmail(ctx context.Context, loan *
 
 	err = global.EmailClient.SendEmail(msg)
 	if err != nil {
-		return errors.Wrap(err, "failed to send email")
+		return errorx.Wrap(err, "Failed To Send Email")
 	}
 
 	return nil

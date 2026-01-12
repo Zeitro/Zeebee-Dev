@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/duke-git/lancet/v2/slice"
-	"github.com/pkg/errors"
 	"github.com/signintech/gopdf"
 
 	"zeebee-backend/app/borrower/api/internal/pdf"
@@ -31,7 +30,7 @@ type ApplyForm struct {
 
 func NewApplyForm(info *types.ApplyFormPdfRequest) (form *ApplyForm, err error) {
 	if info == nil {
-		return nil, errors.New("pdf info is empty")
+		return nil, errorx.New("PDF Info Is Empty")
 	}
 	if info.Signatures == nil {
 		info.Signatures = &types.Signatures{}
@@ -296,10 +295,10 @@ func (form *ApplyForm) buildGraySmallTitle(title string, position position) (err
 	return err
 }
 
-func (form *ApplyForm) buildSignature(targetSignature []*types.SignatureEntry) (err error) {
+func (form *ApplyForm) buildSignature(targetSignature []*types.SignatureEntity) (err error) {
 
 	if len(targetSignature) > 0 && len(targetSignature) != len(form.info.Applicants) {
-		err = errors.New("signature number not match the applicants number")
+		err = errorx.New("Signature Number Not Match The Applicants Number")
 		return err
 	}
 
@@ -308,9 +307,9 @@ func (form *ApplyForm) buildSignature(targetSignature []*types.SignatureEntry) (
 	form.pdf.Br(20)
 
 	for i := 0; i < 2; i++ {
-		var signature *types.SignatureEntry
+		var signature *types.SignatureEntity
 		if i > len(targetSignature)-1 {
-			signature = &types.SignatureEntry{}
+			signature = &types.SignatureEntity{}
 		} else {
 			signature = targetSignature[i]
 		}

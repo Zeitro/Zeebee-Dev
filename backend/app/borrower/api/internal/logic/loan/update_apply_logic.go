@@ -5,13 +5,11 @@ import (
 
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
-	"github.com/pkg/errors"
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -38,38 +36,21 @@ func (l *UpdateApplyLogic) UpdateApply(req *types.LoanApplyRequest) (resp *types
 
 	err = copier.CopyWithOption(&rpcReq.Data, req, copier.Option{
 		DeepCopy:      true,
-		IgnoreEmpty:   true,
+		IgnoreEmpty:   false,
 		CaseSensitive: true,
 	})
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
 
-	applicants := make([]*borrower.ApplicantEntry, 0, len(rpcReq.Data.Applicants))
-	for _, applicant := range rpcReq.Data.Applicants {
-		applicant := applicant
-		if len(applicant.FirstName) > 0 {
-			applicants = append(applicants, applicant)
-		}
-	}
-	if len(applicants) > 0 {
-		primaryCount := slice.CountBy(applicants, func(index int, item *borrower.ApplicantEntry) bool {
-			return item.IsPrimary
-		})
-		if primaryCount == 0 {
-			applicants[0].IsPrimary = true
-		}
-		if primaryCount > 1 {
-			return nil, errors.WithStack(errors.New("multiple primary applicant"))
-		}
-	}
-	rpcReq.Data.Applicants = applicants
-
-	// get borrower id
-	rpcReq.Data.BorrowerId, err = utils.GetAccountIdFromCtx(l.ctx)
-	if err != nil {
+	rpcApplicants := slice.UniqueByComparator(rpcReq.Data.Applicants, func(item *borrower.LoanApplicantApplyEntity, other *borrower.LoanApplicantApplyEntity) bool {
+		return item.BorrowerApplicantId == other.BorrowerApplicantId
+	})
+	if len(rpcApplicants) == 0 {
+		err = errorx.WithStack(errorx.New("No Applicant"))
 		return nil, err
 	}
+	rpcReq.Data.Applicants = rpcApplicants
 
 	rpcReq.Data.LenderCompanyId = 1
 
@@ -77,5 +58,5 @@ func (l *UpdateApplyLogic) UpdateApply(req *types.LoanApplyRequest) (resp *types
 	if err != nil {
 		return nil, err
 	}
-	return
+	return &types.EmptyResponse{}, nil
 }

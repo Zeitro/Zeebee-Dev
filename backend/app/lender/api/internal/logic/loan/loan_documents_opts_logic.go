@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/jinzhu/copier"
-	"github.com/pkg/errors"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -37,7 +36,7 @@ func (l *LoanDocumentsOptsLogic) LoanDocumentsOpts(req *types.PathIdRequest) (re
 		},
 	})
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
 
 	// Convert RPC response to API response

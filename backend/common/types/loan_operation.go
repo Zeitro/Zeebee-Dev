@@ -1,6 +1,6 @@
 package types
 
-import "zeebee-backend/common/constants"
+import "zeebee-backend/domains/zeebee/constants"
 
 type LoanOperationStatus struct {
 	Stage         constants.LoanStage         `json:"stage"`

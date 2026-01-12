@@ -6,7 +6,7 @@ import (
 	"github.com/duke-git/lancet/v2/convertor"
 	"github.com/go-playground/validator/v10"
 
-	"zeebee-backend/common/constants"
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 var unitTag = "unit"

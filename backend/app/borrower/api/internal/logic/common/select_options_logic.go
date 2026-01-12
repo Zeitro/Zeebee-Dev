@@ -31,7 +31,7 @@ func NewSelectOptionsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sel
 func (l *SelectOptionsLogic) SelectOptions(req *types.GetSelectOptionRequest) (resp *types.GetSelectOptionResponse, err error) {
 	var rpcResp *borrower.OptionResponse
 	resp = &types.GetSelectOptionResponse{
-		Options: make([]types.SelectOptionEntry, 0),
+		Options: make([]types.SelectOptionEntity, 0),
 	}
 	rpcResp, err = l.svcCtx.CommonRpcClient.GetOpt(l.ctx, &borrower.OptionRequest{
 		Data: &borrower.OptionRequestData{

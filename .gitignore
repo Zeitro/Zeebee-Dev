@@ -8,3 +8,5 @@ env
 /frontend/lender/node_modules
 /frontend/borrower/.next
 /frontend/lender/.next
+/frontend/docker-compose-local.yml
+/frontend/Dockerfile-*-local

@@ -6,7 +6,7 @@ info(
     version: "v1"
 )
 
-type FileEntry {
+type FileEntity {
     Id int64 `json:"id"`
     EntityType string `json:"entity_type"`
     EntityId int64 `json:"entity_id"`
@@ -15,7 +15,7 @@ type FileEntry {
     UpdatedAt string `json:"updated_at"`
 }
 
-type FileEditEntry {
+type FileEditEntity {
     Id int64 `json:"id,optional"`
     FileType string `json:"file_type,optional" validate:"required,oneof=Identification Income Property Assets Credit Miscellaneous InternalDocument"`
     BizType string `json:"biz_type,optional"`

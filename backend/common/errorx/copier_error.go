@@ -1,15 +1,13 @@
 package errorx
 
-import "github.com/pkg/errors"
-
 func GetFailedTransReqErr(err error) error {
-	return errors.Wrap(err, "trans request error")
+	return Wrap(err, "Trans Request Error")
 }
 
 func GetFailedTransRespErr(err error) error {
-	return errors.Wrap(err, "trans response error")
+	return Wrap(err, "Trans Response Error")
 }
 
 func GetFailedTransErr(err error) error {
-	return errors.Wrap(err, "trans data error")
+	return Wrap(err, "Trans Data Error")
 }

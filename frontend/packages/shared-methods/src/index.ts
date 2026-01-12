@@ -30,6 +30,7 @@ export * from './components/FilterTableCard/index';
 export * from './components/SwitchOrganization/index';
 export * from './components/InfiniteList/index';
 export * from './components/GeoLocationInput/index';
+export * from './components/CommonSidebar/index';
 
 // 创建ZeeBee Loan表单组件，Borrower和Lender端共用
 export * from './components/CreateZBLoan/ApplicantInfo';

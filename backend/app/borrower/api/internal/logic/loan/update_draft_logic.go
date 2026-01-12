@@ -10,7 +10,6 @@ import (
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -46,28 +45,10 @@ func (l *UpdateDraftLogic) UpdateDraft(req *types.LoanApplyRequest) (resp *types
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
 
-	applicants := make([]*borrower.ApplicantEntry, 0, len(rpcReq.Data.Applicants))
-	for _, applicant := range rpcReq.Data.Applicants {
-		applicant := applicant
-		if len(applicant.FirstName) > 0 {
-			applicants = append(applicants, applicant)
-		}
-	}
-	if len(applicants) > 0 {
-		primaryCount := slice.CountBy(applicants, func(index int, item *borrower.ApplicantEntry) bool {
-			return item.IsPrimary
-		})
-		if primaryCount == 0 {
-			applicants[0].IsPrimary = true
-		}
-	}
-	rpcReq.Data.Applicants = applicants
-
-	// get borrower id
-	rpcReq.Data.BorrowerId, err = utils.GetAccountIdFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
+	rpcApplicants := slice.UniqueByComparator(rpcReq.Data.Applicants, func(item *borrower.LoanApplicantApplyEntity, other *borrower.LoanApplicantApplyEntity) bool {
+		return item.BorrowerApplicantId == other.BorrowerApplicantId
+	})
+	rpcReq.Data.Applicants = rpcApplicants
 
 	rpcReq.Data.LenderCompanyId = 1
 
