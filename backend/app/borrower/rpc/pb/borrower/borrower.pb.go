@@ -14161,7 +14161,7 @@ func (x *RolePageResponseData) GetList() []*RoleEntity {
 	return nil
 }
 
-//  create
+// create
 type RoleCreateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Data          *RoleCreateRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -14318,7 +14318,7 @@ func (x *RoleCreateResponse) GetData() *RoleEntity {
 	return nil
 }
 
-//  update
+// update
 type RoleUpdateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Data          *RoleUpdateRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -14543,7 +14543,7 @@ func (x *RoleUpdateResponse) GetData() *RoleEntity {
 	return nil
 }
 
-//  delete
+// delete
 type RoleDeleteRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Data          *RoleDeleteRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -14632,7 +14632,7 @@ func (x *RoleDeleteRequestData) GetId() int64 {
 	return 0
 }
 
-//  detail
+// detail
 type RoleDetailRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Data          *RoleDetailRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -15623,7 +15623,7 @@ func (x *OrganizationUserPageResponseData) GetList() []*OrganizationUserPageEnti
 	return nil
 }
 
-//  create --  request
+// create --  request
 type OrganizationUserCreateRequest struct {
 	state         protoimpl.MessageState             `protogen:"open.v1"`
 	Data          *OrganizationUserCreateRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -15736,7 +15736,7 @@ func (x *OrganizationUserCreateRequestData) GetRoleIds() []int64 {
 	return nil
 }
 
-//  create --  response
+// create --  response
 type OrganizationUserCreateResponse struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
 	Data          *OrganizationUserEntity `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -15781,7 +15781,7 @@ func (x *OrganizationUserCreateResponse) GetData() *OrganizationUserEntity {
 	return nil
 }
 
-//  update --  request
+// update --  request
 type OrganizationUserUpdateRequest struct {
 	state         protoimpl.MessageState             `protogen:"open.v1"`
 	Data          *OrganizationUserUpdateRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -15910,7 +15910,7 @@ func (x *OrganizationUserUpdateRequestData) GetLastName() string {
 	return ""
 }
 
-//  update --  response
+// update --  response
 type OrganizationUserUpdateResponse struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
 	Data          *OrganizationUserEntity `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -15955,7 +15955,7 @@ func (x *OrganizationUserUpdateResponse) GetData() *OrganizationUserEntity {
 	return nil
 }
 
-//  detail --  request
+// detail --  request
 type OrganizationUserDetailRequest struct {
 	state         protoimpl.MessageState             `protogen:"open.v1"`
 	Data          *OrganizationUserDetailRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -16044,7 +16044,7 @@ func (x *OrganizationUserDetailRequestData) GetId() int64 {
 	return 0
 }
 
-//  detail --  response
+// detail --  response
 type OrganizationUserDetailResponse struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
 	Data          *OrganizationUserEntity `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -16089,7 +16089,7 @@ func (x *OrganizationUserDetailResponse) GetData() *OrganizationUserEntity {
 	return nil
 }
 
-//  delete --  request
+// delete --  request
 type OrganizationUserDeleteRequest struct {
 	state         protoimpl.MessageState             `protogen:"open.v1"`
 	Data          *OrganizationUserDeleteRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -16178,7 +16178,7 @@ func (x *OrganizationUserDeleteRequestData) GetId() int64 {
 	return 0
 }
 
-//  switch status --  request
+// switch status --  request
 type OrganizationUserUpdateStatusRequest struct {
 	state         protoimpl.MessageState                   `protogen:"open.v1"`
 	Data          *OrganizationUserUpdateStatusRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -18201,8 +18201,8 @@ func (x *ZeitroPropertyEntity) GetDistance() string {
 // Zeitro ListingSearch --  request
 type ZeitroListingSearchRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Lat           float64                `protobuf:"fixed64,1,opt,name=lat,proto3" json:"lat,omitempty"` //  (-90 到 90)
-	Lon           float64                `protobuf:"fixed64,2,opt,name=lon,proto3" json:"lon,omitempty"` // (-180 到 180)
+	Lat           float64                `protobuf:"fixed64,1,opt,name=lat,proto3" json:"lat,omitempty"`
+	Lon           float64                `protobuf:"fixed64,2,opt,name=lon,proto3" json:"lon,omitempty"`
 	Dist          float64                `protobuf:"fixed64,3,opt,name=dist,proto3" json:"dist,omitempty"`
 	Addr          string                 `protobuf:"bytes,4,opt,name=addr,proto3" json:"addr,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -18267,7 +18267,7 @@ func (x *ZeitroListingSearchRequest) GetAddr() string {
 	return ""
 }
 
-// Zeitro
+// Zeitro ListingSearch --  response
 type ZeitroListingSearchResponse struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
 	Data          []*ZeitroPropertyEntity `protobuf:"bytes,1,rep,name=data,proto3" json:"data,omitempty"`

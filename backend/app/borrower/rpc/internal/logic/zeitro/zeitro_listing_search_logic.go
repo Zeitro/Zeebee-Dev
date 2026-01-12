@@ -2,10 +2,15 @@ package zeitrologic
 
 import (
 	"context"
+	"strings"
+
+	"github.com/duke-git/lancet/v2/convertor"
+	"github.com/duke-git/lancet/v2/slice"
 
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/common/stringx"
 	"zeebee-backend/domains/zeebee/zeitro"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -44,6 +49,12 @@ func (l *ZeitroListingSearchLogic) ZeitroListingSearch(in *borrower.ZeitroListin
 	if err != nil {
 		return nil, err
 	}
+
+	slice.ForEach(listings, func(index int, item zeitro.PropertyListing) {
+		price := strings.TrimSpace(item.Price)
+		priceNum, _ := convertor.ToInt(price)
+		listings[index].Price = stringx.FormatUsDollarCurrency(float64(priceNum))
+	})
 
 	// Convert domain model to protobuf using copierx.Trans
 	result, err := copierx.Trans[[]zeitro.PropertyListing, []*borrower.ZeitroPropertyEntity](&listings)

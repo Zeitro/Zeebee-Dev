@@ -664,7 +664,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Route{
 				{
 					// Search property listings from Zeitro API
-					Method:  http.MethodPost,
+					Method:  http.MethodGet,
 					Path:    "/zeitro/listings/search",
 					Handler: zeitro.ZeitroListingSearchHandler(serverCtx),
 				},

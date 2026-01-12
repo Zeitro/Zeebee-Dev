@@ -4,10 +4,10 @@
 package types
 
 type ZeitroListingSearchRequest struct {
-	Lat  float64 `json:"lat" validate:"required,min=-90,max=90"`
-	Lon  float64 `json:"lon" validate:"required,min=-180,max=180"`
-	Dist float64 `json:"dist" validate:"required,min=0,max=100"`
-	Addr string  `json:"addr,optional"`
+	Lat  float64 `form:"lat" validate:"required,min=-90,max=90"`
+	Lon  float64 `form:"lon" validate:"required,min=-180,max=180"`
+	Dist float64 `form:"dist" validate:"required,min=0,max=100"`
+	Addr string  `form:"addr,optional"`
 }
 
 type ZeitroListingSearchResponse struct {

@@ -571,7 +571,7 @@ service borrower-api {
 service borrower-api {
 	@doc "Search property listings from Zeitro API"
 	@handler zeitroListingSearch
-	post /zeitro/listings/search (ZeitroListingSearchRequest) returns (ZeitroListingSearchResponse)
+	get /zeitro/listings/search (ZeitroListingSearchRequest) returns (ZeitroListingSearchResponse)
 }
 
 // ============== zeitro end =============

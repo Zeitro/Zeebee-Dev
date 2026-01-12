@@ -51,30 +51,6 @@ type TokenResponse struct {
 	ExpiresIn   int64  `json:"expires_in"`
 }
 
-// Token represents the authentication token for Zeitro API
-type Token struct {
-	AccessToken string
-	TokenType   string
-	ExpiresIn   int64
-	CreatedAt   time.Time
-	ExpiresAt   time.Time
-}
-
-// IsExpired checks if the token is expired or will expire soon
-func (t *Token) IsExpired() bool {
-	if t.ExpiresAt.IsZero() {
-		return true
-	}
-	// Consider token expired if less than 10% of lifetime remains
-	threshold := time.Duration(t.ExpiresIn/10) * time.Second
-	return time.Until(t.ExpiresAt) < threshold
-}
-
-// IsValid checks if the token is valid and not expired
-func (t *Token) IsValid() bool {
-	return t.AccessToken != "" && !t.ExpiresAt.IsZero() && !t.IsExpired()
-}
-
 // ZeitroProperty represents a property from Zeitro API response
 type ZeitroProperty struct {
 	FullAddress     string `json:"FullAddress"`
@@ -176,7 +152,7 @@ func (c *Client) GetToken(ctx context.Context) (*Token, error) {
 
 	token, ok := result.(*Token)
 	if !ok {
-		return nil, errorx.New("Failed to get token")
+		return nil, errorx.New("Failed To Get Token")
 	}
 
 	// Update cached token
@@ -204,19 +180,19 @@ func (c *Client) fetchToken(ctx context.Context) (*Token, error) {
 	// Execute request using injected HTTP client
 	resp, err := c.client.Do(req)
 	if err != nil {
-		return nil, errorx.New("Failed to fetch token: " + err.Error())
+		return nil, errorx.New("Failed To Fetch Token: " + err.Error())
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		bodyBytes, _ := io.ReadAll(resp.Body)
-		return nil, errorx.New(fmt.Sprintf("Token request failed with status %d: %s", resp.StatusCode, string(bodyBytes)))
+		return nil, errorx.New(fmt.Sprintf("Token Request Failed With Status %d: %s", resp.StatusCode, string(bodyBytes)))
 	}
 
 	// Parse response
 	var tokenResp TokenResponse
 	if err := json.NewDecoder(resp.Body).Decode(&tokenResp); err != nil {
-		return nil, errorx.New("Failed to decode token response: " + err.Error())
+		return nil, errorx.New("Failed To Decode Token Response: " + err.Error())
 	}
 
 	// Create token with expiration times
@@ -250,14 +226,14 @@ func (c *Client) SearchListings(ctx context.Context, req SearchRequest) ([]Prope
 
 	bodyBytes, err := json.Marshal(req)
 	if err != nil {
-		return nil, errorx.New("Failed to marshal request: " + err.Error())
+		return nil, errorx.New("Failed To Marshal Request: " + err.Error())
 	}
 
 	// Build HTTP request
 	reqURL := fmt.Sprintf("%s/los/openhousesearch", strings.TrimSuffix(c.config.URL, "/"))
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, reqURL, bytes.NewReader(bodyBytes))
 	if err != nil {
-		return nil, errorx.New("Failed to create request: " + err.Error())
+		return nil, errorx.New("Failed To Create Request: " + err.Error())
 	}
 
 	httpReq.Header.Set("Content-Type", "application/json")
@@ -268,23 +244,23 @@ func (c *Client) SearchListings(ctx context.Context, req SearchRequest) ([]Prope
 	resp, err = c.client.Do(httpReq)
 
 	if err != nil {
-		return nil, errorx.New("Failed to search listings: " + err.Error())
+		return nil, errorx.New("Failed To Search Listings: " + err.Error())
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		bodyBytes, _ := io.ReadAll(resp.Body)
-		return nil, errorx.New(fmt.Sprintf("Search request failed with status %d: %s", resp.StatusCode, string(bodyBytes)))
+		return nil, errorx.New(fmt.Sprintf("Search Request Failed With Status %d: %s", resp.StatusCode, string(bodyBytes)))
 	}
 
 	// Parse response
-	var zeitroResp []ZeitroProperty
+	var zeitroResp []PropertyListing
 	if err := json.NewDecoder(resp.Body).Decode(&zeitroResp); err != nil {
-		return nil, errorx.New("Failed to decode response: " + err.Error())
+		return nil, errorx.New("Failed To Decode Response: " + err.Error())
 	}
 
 	// Convert to internal model
-	return c.convertProperties(zeitroResp), nil
+	return zeitroResp, nil
 }
 
 // convertProperties converts Zeitro properties to internal model

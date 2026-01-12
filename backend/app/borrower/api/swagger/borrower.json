@@ -13945,10 +13945,7 @@
       }
     },
     "/api/v1/zeitro/listings/search": {
-      "post": {
-        "consumes": [
-          "application/json"
-        ],
+      "get": {
         "produces": [
           "application/json"
         ],
@@ -13962,31 +13959,28 @@
         "operationId": "zeitroZeitroListingSearch",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": [
-                "lat",
-                "lon",
-                "dist"
-              ],
-              "properties": {
-                "addr": {
-                  "type": "string"
-                },
-                "dist": {
-                  "type": "number"
-                },
-                "lat": {
-                  "type": "number"
-                },
-                "lon": {
-                  "type": "number"
-                }
-              }
-            }
+            "type": "number",
+            "name": "lat",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "number",
+            "name": "lon",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "number",
+            "name": "dist",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "addr",
+            "in": "query",
+            "allowEmptyValue": true
           }
         ],
         "responses": {
@@ -14079,7 +14073,7 @@
       }
     }
   },
-  "x-date": "2026-01-09 18:14:36",
+  "x-date": "2026-01-12 10:54:57",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
