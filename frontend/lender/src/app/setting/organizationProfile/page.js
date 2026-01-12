@@ -1,7 +1,13 @@
 'use client';
 import { titleCol } from '@/enum/common';
 import { InfoCircleOutlined, MailTwoTone, PlusOutlined } from '@ant-design/icons';
-import { FieldTips, InputNumAmount, InputPhone, UploadFileButton } from '@repo/shared-methods';
+import {
+	FieldTips,
+	InputNumAmount,
+	InputPhone,
+	UploadFileButton,
+	OrgProfile,
+} from '@repo/shared-methods';
 import {
 	capitalizeFirstLetter,
 	emailRegex,
@@ -22,7 +28,8 @@ const OrganizationProfile = () => {
 	);
 	return (
 		<div className="py-6 px-8 flex-1 overflow-hidden w-full xl:w-1/2 overflow-y-auto">
-			<Form
+			<OrgProfile />
+			{/* <Form
 				form={form}
 				name="org-profile-form"
 				layout="vertical"
@@ -211,7 +218,7 @@ const OrganizationProfile = () => {
 						</Button>
 					</Col>
 				</Row>
-			</Form>
+			</Form> */}
 		</div>
 	);
 };

@@ -31,7 +31,7 @@ export * from './components/SwitchOrganization/index';
 export * from './components/InfiniteList/index';
 export * from './components/CommonSidebar/index';
 
-// 创建ZeeBee Loan表单组件，Borrower和Lender端共用
+// 创建ZeeBee Loan表单页面，Borrower和Lender端共用
 export * from './components/CreateZBLoan/ApplicantInfo';
 export * from './components/CreateZBLoan/BorrowerInfo';
 export * from './components/CreateZBLoan/PropertyInfo';
@@ -41,3 +41,6 @@ export * from './components/CreateZBLoan/ThirdPartyService';
 export * from './components/CreateZBLoan/Declaration';
 export * from './components/CreateZBLoan/Demographics';
 export * from './components/CreateZBLoan/ReviewAndSign';
+
+// borrower端、lender端、admin端共用的页面封装的组件
+export * from './componentsUi/OrgProfile/index';

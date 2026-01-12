@@ -4,6 +4,10 @@ export const navRouter = [
 		title: 'Home',
 		hideCrumbs: true,
 	},
+	{
+		path: '/lenders',
+		title: 'Lenders',
+	},
 ];
 
 export const noTokenRouter = [
