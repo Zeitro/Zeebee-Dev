@@ -37,10 +37,9 @@
 每个服务通过双层架构暴露功能；API 层（HTTP）处理验证和路由；RPC 层（gRPC）处理业务逻辑；数据流向：API Handler → API Logic → RPC
 Call → RPC Logic → Repository → Model → Database。
 
-### III. 使用 go-zero 代码生成
+### III. 使用 make 代码生成
 
-代码生成为服务和 API 的强制要求；使用 `goctl` 从 `.api` 定义生成 API 服务；使用 `goctl` 从 `.proto` 定义生成 RPC 服务；遵循
-`third_party/goctl_template/` 中的自定义模板以保持一致性。
+代码生成为服务和 API 的强制要求；使用`Makefile`中封装的命令来创建代码，例如`make create-service lender` 来生成rpc与api服务代码。
 
 ### IV. 数据转换标准
 
