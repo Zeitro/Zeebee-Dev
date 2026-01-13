@@ -41,7 +41,7 @@ type OrganizationPageResponse struct {
 
 type OrganizationSwitchStatusRequest struct {
 	Id     int64  `path:"id" validate:"required,min=1"`
-	Status string `json:"status" validate:"required,oneof=Active 'Not activated'"`
+	Status string `json:"status" validate:"required,oneof=Active Disabled"`
 }
 
 type OrganizationUpdateLenderRequest struct {

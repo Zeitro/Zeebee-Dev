@@ -42,12 +42,13 @@ func (l *SwitchStatusLogic) SwitchStatus(in *admin.OrganizationSwitchStatusReque
 
 	// Validate status
 	newStatus := constants.OrganizationStatus(in.Data.Status)
-	if newStatus != constants.OrganizationStatusActive && newStatus != constants.OrganizationStatusDisabled {
-		return nil, errorx.New("Invalid Status. Only Active and Disabled are allowed")
+	err = newStatus.Validate()
+	if err != nil {
+		return nil, errorx.WithStack(err)
 	}
 
 	// Get existing organization
-	organization, err := l.svcCtx.AllRepos.OrganizationRepo.GetOrganization(l.ctx, in.Data.Id, constants.UserTypeLender, false)
+	organization, err := l.svcCtx.AllRepos.OrganizationRepo.GetOrganizationWithId(l.ctx, in.Data.Id, true)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
@@ -63,20 +64,18 @@ func (l *SwitchStatusLogic) SwitchStatus(in *admin.OrganizationSwitchStatusReque
 			return innerErr
 		}
 
-		// Batch update all organization users' status
-		// This uses a single SQL UPDATE for performance (1000+ users < 3 seconds)
-		var orgUserStatus constants.OrganizationUserStatus
-		if newStatus == constants.OrganizationStatusActive {
-			orgUserStatus = constants.OrganizationUserStatusActive
-		} else {
-			orgUserStatus = constants.OrganizationUserStatusDisabled
+		// Update organization owner status
+		owner := organization.Owner
+		if owner == nil {
+			return nil
 		}
-		innerErr = l.svcCtx.AllRepos.OrganizationUserRepo.UpdateStatusByOrganizationId(l.ctx, organization.Id, orgUserStatus)
-		if innerErr != nil {
-			return innerErr
+		if owner.Status == constants.UserStatusInactive && newStatus == constants.OrganizationStatusActive {
+			owner.Status = constants.UserStatusActive
+			innerErr = l.svcCtx.UserRepo.UpdateColumnsByIdWithTx(l.ctx, tx, owner.Id, map[string]interface{}{
+				"status": constants.UserStatusActive,
+			})
 		}
-
-		return nil
+		return innerErr
 	})
 
 	if err != nil {
