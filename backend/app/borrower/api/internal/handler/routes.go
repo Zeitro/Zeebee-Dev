@@ -372,12 +372,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
 				{
-					// info
-					Method:  http.MethodGet,
-					Path:    "/organization/info",
-					Handler: organization.OrganizationInfoHandler(serverCtx),
-				},
-				{
 					// lender page
 					Method:  http.MethodPost,
 					Path:    "/organization/lender/page",
@@ -388,6 +382,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/organization/lenders",
 					Handler: organization.OrganizationLendersHandler(serverCtx),
+				},
+				{
+					// profile
+					Method:  http.MethodGet,
+					Path:    "/organization/profile",
+					Handler: organization.OrganizationProfileHandler(serverCtx),
 				},
 			}...,
 		),

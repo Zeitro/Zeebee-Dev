@@ -1928,7 +1928,7 @@ message OrganizationLenderPageResponseData {
 }
 
 service Organization {
-  rpc Info(EmptyRequest) returns(OrganizationInfoResponse);
+  rpc Profile(EmptyRequest) returns(OrganizationInfoResponse);
   rpc AllLender(EmptyRequest) returns(OrganizationAllLenderResponse);
   rpc LenderPage(OrganizationLenderPageRequest) returns(OrganizationLenderPageResponse);
 }

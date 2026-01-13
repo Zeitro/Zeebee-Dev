@@ -521,9 +521,9 @@ service borrower-api {
 	tags:       organization
 )
 service borrower-api {
-	@doc "info"
-	@handler OrganizationInfo
-	get /organization/info (EmptyRequest) returns (OrganizationEntity)
+	@doc "profile"
+	@handler OrganizationProfile
+	get /organization/profile (EmptyRequest) returns (OrganizationEntity)
 
 	@doc "lenders"
 	@handler OrganizationLenders

@@ -3,7 +3,10 @@ package logic
 import (
 	"context"
 
+	"gorm.io/gorm"
+
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/bo"
@@ -51,7 +54,7 @@ func (l *OrganizationLogic) DetailWithType(ctx context.Context, id int64, organi
 // Detail retrieves detailed information about an organization by its ID.
 // It returns the organization details in the form of OrganizationBo.
 func (l *OrganizationLogic) Detail(ctx context.Context, id int64) (result *bo.OrganizationBo, err error) {
-	organization, err := l.repos.OrganizationRepo.GetOrganizationWithId(ctx, id, true)
+	organization, err := l.repos.OrganizationRepo.GetOrganizationById(ctx, id, true)
 	if err != nil {
 		return
 	}
@@ -71,6 +74,57 @@ func (l *OrganizationLogic) All(ctx context.Context, organizationType constants.
 	}
 	return *resultBo, nil
 
+}
+
+// Delete removes an organization and all its associated data from the system.
+// It performs the following operations within a database transaction:
+// 1. Retrieves the organization by ID
+// 2. Removes all associated roles
+// 3. Removes all associated organization emails
+// 4. Removes all organization-user relationships
+// 5. Finally deletes the organization itself
+func (l *OrganizationLogic) Delete(ctx context.Context, id int64) (err error) {
+	organization, err := l.repos.OrganizationRepo.GetOrganizationById(ctx, id, true)
+	if err != nil {
+		return err
+	}
+	if organization.OwnerType == constants.OrganizationOwnerTypeSelf || organization.Type == constants.UserTypeAdmin {
+		return errorx.New("Cannot delete self-owned organization")
+	}
+
+	err = l.repos.OrganizationRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		var innerErr error
+		organization.Owner = nil
+		organization.Users = nil
+		// delete related roles
+		for i := range organization.Roles {
+			innerErr = l.repos.RoleRepo.DeleteByIdWithTx(ctx, tx, organization.Roles[i].Id)
+			if innerErr != nil {
+				return innerErr
+			}
+		}
+		// delete related organization_emails
+		for i := range organization.OrganizationEmails {
+			innerErr = l.repos.OrganizationEmailRepo.DeleteByIdWithTx(ctx, tx, organization.OrganizationEmails[i].Id)
+			if innerErr != nil {
+				return innerErr
+			}
+		}
+		// delete related organization_users
+		innerErr = l.repos.OrganizationUserRepo.DeleteByOrganizationIdWithTx(ctx, tx, organization.Id)
+		if innerErr != nil {
+			return innerErr
+		}
+		_, innerErr = l.repos.OrganizationRepo.DeleteByIDWithTx(ctx, tx, id)
+
+		return innerErr
+
+	})
+	if err != nil {
+		return errorx.WithStack(err)
+	}
+
+	return nil
 }
 
 // tranToBo converts a model.Organization entity to a bo.OrganizationBo business object.

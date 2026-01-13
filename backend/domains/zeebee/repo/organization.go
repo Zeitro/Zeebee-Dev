@@ -78,12 +78,25 @@ func (repo *OrganizationRepo) GetOrganization(ctx context.Context, id int64, org
 	return result, errorx.WithStack(err)
 }
 
-func (repo *OrganizationRepo) GetOrganizationWithId(ctx context.Context, id int64, withPreloads bool) (result *model.Organization, err error) {
+func (repo *OrganizationRepo) GetOrganizationById(ctx context.Context, id int64, withPreloads bool) (result *model.Organization, err error) {
 	query := repo.Client(ctx).
 		Where("id = ? ", id)
 	if withPreloads {
 		query = query.Preload("OrganizationEmails").
-			Preload("Owner")
+			Preload("Owner").
+			Preload("Roles")
+	}
+	err = query.First(&result).Error
+	return result, errorx.WithStack(err)
+}
+
+func (repo *OrganizationRepo) GetOrganizationByIdWithTx(ctx context.Context, tx *gorm.DB, id int64, withPreloads bool) (result *model.Organization, err error) {
+	query := tx.WithContext(ctx).Model(&model.Organization{}).
+		Where("id = ? ", id)
+	if withPreloads {
+		query = query.Preload("OrganizationEmails").
+			Preload("Owner").
+			Preload("Roles")
 	}
 	err = query.First(&result).Error
 	return result, errorx.WithStack(err)
@@ -200,4 +213,14 @@ func (repo *OrganizationRepo) GetUserOrganizationsWithTx(ctx context.Context, tx
 			userId, userType).
 		Find(&result).Error
 	return result, errorx.WithStack(err)
+}
+
+// DeleteByIdWithTx deletes an organization by its ID within a database transaction.
+func (repo *OrganizationRepo) DeleteWithTx(ctx context.Context, tx *gorm.DB, organization *model.Organization) (err error) {
+	if organization == nil {
+		return errorx.New("organization is nil")
+	}
+	err = tx.WithContext(ctx).Select("Roles", "OrganizationEmails").Delete(organization).Error
+
+	return errorx.WithStack(err)
 }

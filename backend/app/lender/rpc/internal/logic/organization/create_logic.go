@@ -57,7 +57,7 @@ func (l *CreateLogic) Create(in *lender.OrganizationCreateRequest) (resp *lender
 	}
 
 	// Set required default values for new organization
-	organization.Status = constants.OrganizationStatusInactive
+	organization.Status = constants.OrganizationStatusNotActivated
 	organization.OwnerType = constants.OrganizationOwnerTypeThirdParty
 	organization.Type = constants.UserTypeLender
 	organization.OwnerId = claim.UserId

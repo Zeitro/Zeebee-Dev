@@ -48,7 +48,7 @@ func (l *SwitchStatusLogic) SwitchStatus(in *admin.OrganizationSwitchStatusReque
 	}
 
 	// Get existing organization
-	organization, err := l.svcCtx.AllRepos.OrganizationRepo.GetOrganizationWithId(l.ctx, in.Data.Id, true)
+	organization, err := l.svcCtx.AllRepos.OrganizationRepo.GetOrganizationById(l.ctx, in.Data.Id, true)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}

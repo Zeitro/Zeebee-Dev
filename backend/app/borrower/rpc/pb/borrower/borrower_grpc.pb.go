@@ -3589,7 +3589,7 @@ var OrganizationUser_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	Organization_Info_FullMethodName       = "/borrower.Organization/Info"
+	Organization_Profile_FullMethodName    = "/borrower.Organization/Profile"
 	Organization_AllLender_FullMethodName  = "/borrower.Organization/AllLender"
 	Organization_LenderPage_FullMethodName = "/borrower.Organization/LenderPage"
 )
@@ -3598,7 +3598,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OrganizationClient interface {
-	Info(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationInfoResponse, error)
+	Profile(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationInfoResponse, error)
 	AllLender(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationAllLenderResponse, error)
 	LenderPage(ctx context.Context, in *OrganizationLenderPageRequest, opts ...grpc.CallOption) (*OrganizationLenderPageResponse, error)
 }
@@ -3611,10 +3611,10 @@ func NewOrganizationClient(cc grpc.ClientConnInterface) OrganizationClient {
 	return &organizationClient{cc}
 }
 
-func (c *organizationClient) Info(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationInfoResponse, error) {
+func (c *organizationClient) Profile(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationInfoResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(OrganizationInfoResponse)
-	err := c.cc.Invoke(ctx, Organization_Info_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Organization_Profile_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -3645,7 +3645,7 @@ func (c *organizationClient) LenderPage(ctx context.Context, in *OrganizationLen
 // All implementations must embed UnimplementedOrganizationServer
 // for forward compatibility.
 type OrganizationServer interface {
-	Info(context.Context, *EmptyRequest) (*OrganizationInfoResponse, error)
+	Profile(context.Context, *EmptyRequest) (*OrganizationInfoResponse, error)
 	AllLender(context.Context, *EmptyRequest) (*OrganizationAllLenderResponse, error)
 	LenderPage(context.Context, *OrganizationLenderPageRequest) (*OrganizationLenderPageResponse, error)
 	mustEmbedUnimplementedOrganizationServer()
@@ -3658,8 +3658,8 @@ type OrganizationServer interface {
 // pointer dereference when methods are called.
 type UnimplementedOrganizationServer struct{}
 
-func (UnimplementedOrganizationServer) Info(context.Context, *EmptyRequest) (*OrganizationInfoResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Info not implemented")
+func (UnimplementedOrganizationServer) Profile(context.Context, *EmptyRequest) (*OrganizationInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Profile not implemented")
 }
 func (UnimplementedOrganizationServer) AllLender(context.Context, *EmptyRequest) (*OrganizationAllLenderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AllLender not implemented")
@@ -3688,20 +3688,20 @@ func RegisterOrganizationServer(s grpc.ServiceRegistrar, srv OrganizationServer)
 	s.RegisterService(&Organization_ServiceDesc, srv)
 }
 
-func _Organization_Info_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Organization_Profile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(EmptyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OrganizationServer).Info(ctx, in)
+		return srv.(OrganizationServer).Profile(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Organization_Info_FullMethodName,
+		FullMethod: Organization_Profile_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrganizationServer).Info(ctx, req.(*EmptyRequest))
+		return srv.(OrganizationServer).Profile(ctx, req.(*EmptyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3750,8 +3750,8 @@ var Organization_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*OrganizationServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Info",
-			Handler:    _Organization_Info_Handler,
+			MethodName: "Profile",
+			Handler:    _Organization_Profile_Handler,
 		},
 		{
 			MethodName: "AllLender",

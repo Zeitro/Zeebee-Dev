@@ -20384,9 +20384,9 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x03All\x12\x16.borrower.EmptyRequest\x1a%.borrower.OrganizationUserAllResponse\x12d\n" +
 	"\x13SendInvitationEmail\x124.borrower.OrganizationUserSendInvitationEmailRequest\x1a\x17.borrower.EmptyResponse\x12b\n" +
 	"\x10AcceptInvitation\x121.borrower.OrganizationUserAcceptInvitationRequest\x1a\x1b.borrower.UserLoginResponse\x12T\n" +
-	"\vAssignRoles\x12,.borrower.OrganizationUserAssignRolesRequest\x1a\x17.borrower.EmptyResponse2\x81\x02\n" +
-	"\fOrganization\x12B\n" +
-	"\x04Info\x12\x16.borrower.EmptyRequest\x1a\".borrower.OrganizationInfoResponse\x12L\n" +
+	"\vAssignRoles\x12,.borrower.OrganizationUserAssignRolesRequest\x1a\x17.borrower.EmptyResponse2\x84\x02\n" +
+	"\fOrganization\x12E\n" +
+	"\aProfile\x12\x16.borrower.EmptyRequest\x1a\".borrower.OrganizationInfoResponse\x12L\n" +
 	"\tAllLender\x12\x16.borrower.EmptyRequest\x1a'.borrower.OrganizationAllLenderResponse\x12_\n" +
 	"\n" +
 	"LenderPage\x12'.borrower.OrganizationLenderPageRequest\x1a(.borrower.OrganizationLenderPageResponse2\xc0\x02\n" +
@@ -20984,7 +20984,7 @@ var file_app_borrower_rpc_pb_borrower_proto_depIdxs = []int32{
 	246, // 284: borrower.OrganizationUser.SendInvitationEmail:input_type -> borrower.OrganizationUserSendInvitationEmailRequest
 	248, // 285: borrower.OrganizationUser.AcceptInvitation:input_type -> borrower.OrganizationUserAcceptInvitationRequest
 	250, // 286: borrower.OrganizationUser.AssignRoles:input_type -> borrower.OrganizationUserAssignRolesRequest
-	0,   // 287: borrower.Organization.Info:input_type -> borrower.EmptyRequest
+	0,   // 287: borrower.Organization.Profile:input_type -> borrower.EmptyRequest
 	0,   // 288: borrower.Organization.AllLender:input_type -> borrower.EmptyRequest
 	258, // 289: borrower.Organization.LenderPage:input_type -> borrower.OrganizationLenderPageRequest
 	265, // 290: borrower.OrganizationEmail.SaveEmail:input_type -> borrower.OrganizationEmailSaveEmailRequest
@@ -21063,7 +21063,7 @@ var file_app_borrower_rpc_pb_borrower_proto_depIdxs = []int32{
 	1,   // 363: borrower.OrganizationUser.SendInvitationEmail:output_type -> borrower.EmptyResponse
 	15,  // 364: borrower.OrganizationUser.AcceptInvitation:output_type -> borrower.UserLoginResponse
 	1,   // 365: borrower.OrganizationUser.AssignRoles:output_type -> borrower.EmptyResponse
-	256, // 366: borrower.Organization.Info:output_type -> borrower.OrganizationInfoResponse
+	256, // 366: borrower.Organization.Profile:output_type -> borrower.OrganizationInfoResponse
 	257, // 367: borrower.Organization.AllLender:output_type -> borrower.OrganizationAllLenderResponse
 	262, // 368: borrower.Organization.LenderPage:output_type -> borrower.OrganizationLenderPageResponse
 	1,   // 369: borrower.OrganizationEmail.SaveEmail:output_type -> borrower.EmptyResponse

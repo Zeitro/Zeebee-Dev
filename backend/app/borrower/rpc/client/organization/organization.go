@@ -299,7 +299,7 @@ type (
 	ZeitroPropertyEntity                             = borrower.ZeitroPropertyEntity
 
 	Organization interface {
-		Info(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationInfoResponse, error)
+		Profile(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationInfoResponse, error)
 		AllLender(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationAllLenderResponse, error)
 		LenderPage(ctx context.Context, in *OrganizationLenderPageRequest, opts ...grpc.CallOption) (*OrganizationLenderPageResponse, error)
 	}
@@ -315,9 +315,9 @@ func NewOrganization(cli zrpc.Client) Organization {
 	}
 }
 
-func (m *defaultOrganization) Info(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationInfoResponse, error) {
+func (m *defaultOrganization) Profile(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationInfoResponse, error) {
 	client := borrower.NewOrganizationClient(m.cli.Conn())
-	return client.Info(ctx, in, opts...)
+	return client.Profile(ctx, in, opts...)
 }
 
 func (m *defaultOrganization) AllLender(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationAllLenderResponse, error) {

@@ -15,15 +15,15 @@ import (
 	"zeebee-backend/common/errorx"
 )
 
-type InfoLogic struct {
+type ProfileLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 	baseLogic *logic.BaseLogic
 }
 
-func NewInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *InfoLogic {
-	return &InfoLogic{
+func NewProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ProfileLogic {
+	return &ProfileLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
@@ -31,7 +31,7 @@ func NewInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *InfoLogic {
 	}
 }
 
-func (l *InfoLogic) Info(in *borrower.EmptyRequest) (resp *borrower.OrganizationInfoResponse, err error) {
+func (l *ProfileLogic) Profile(in *borrower.EmptyRequest) (resp *borrower.OrganizationInfoResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)

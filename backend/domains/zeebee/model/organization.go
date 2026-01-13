@@ -33,6 +33,7 @@ type Organization struct {
 	Users              []*User              `json:"users" gorm:"many2many:organization_and_users;joinForeignKey:organization_id;joinReferences:user_id"`
 	OrganizationEmails []*OrganizationEmail `json:"email_authorizations" gorm:"foreignKey:organization_id"`
 	Owner              *User                `json:"owner" gorm:"foreignKey:OwnerId;references:Id"`
+	Roles              []*Role              `json:"roles" gorm:"foreignKey:OrganizationId;references:Id"`
 }
 
 func (m Organization) TableName() string {
