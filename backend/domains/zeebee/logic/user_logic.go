@@ -482,7 +482,7 @@ func (l *UserLogic) SwitchOrganization(ctx context.Context, userId int64, organi
 // It validates both user and organization inputs, checks for existence, and creates the necessary
 // relationships between them. The function handles both cases of creating a new organization
 // or using an existing one.
-func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.UserRegisterRequestDto, organizationInput dto.OrganizationRegisterRequestDto, userType constants.UserType) (newUser *model.User, organizationUser *model.OrganizationUser, err error) {
+func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.UserRegisterRequestDto, organizationInput dto.OrganizationRegisterRequestDto, userType constants.UserType, isManual bool) (newUser *model.User, organizationUser *model.OrganizationUser, err error) {
 	var user *model.User
 	var organization *model.Organization
 	// check user exist
@@ -525,7 +525,8 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 
 	err = l.repos.UserRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
-		organization.Status = constants.OrganizationStatusNotActivated
+		organization.Status = condition.Ternary(isManual, organizationInput.Status, constants.OrganizationStatusNotActivated)
+		// organization.Status = constants.OrganizationStatusNotActivated
 		organization, innerErr = l.repos.OrganizationRepo.CreateWithTx(ctx, tx, organization, false)
 		if innerErr != nil {
 			return innerErr
@@ -560,7 +561,7 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 			FirstName:      user.FirstName,
 			MidName:        user.MidName,
 			LastName:       user.LastName,
-			Status:         constants.OrganizationUserStatusNotActivated,
+			Status:         condition.Ternary(isManual, constants.OrganizationUserStatusActive, constants.OrganizationUserStatusNotActivated),
 			FullName:       user.FullName,
 			Roles:          roles,
 		}

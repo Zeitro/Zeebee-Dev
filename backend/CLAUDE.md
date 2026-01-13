@@ -36,6 +36,13 @@ Common Layer         → common/                 → 通用工具、错误处理
 - **lender**（贷款方）：端口 11000（HTTP）/ 11001（RPC）
 - **admin**（管理后台）：端口 12000（HTTP）/ 12001（RPC）
 
+**入口文件**：
+
+```
+app/{service}/cmd/main.go  -> 入口文件
+app/{service}/etc/config-{env}.yaml  -> 配置文件
+```
+
 **关键设计原则**：
 
 1. **代码复用**：通过 `domains/zeebee/` 实现跨服务代码复用
@@ -89,12 +96,6 @@ Common Layer         → common/                 → 通用工具、错误处理
 #### 本地 AI 文档策略
 
 - **目录范围**：`.claude/`、`.specify/` 和 `specs/` 目录
-- **Git 状态**：已在 `.gitignore` 中配置忽略，不提交到代码仓库
-- **使用目的**：仅用于本地开发和 AI 辅助，保留个人开发上下文
-- **Claude 访问权限**：
-  - ✅ 完全可读取：Claude 可以读取这些目录下的所有文件
-  - ✅ 完全可写入：Claude 可以创建和更新这些目录下的文件
-  - ✅ 支持 @ 引用：在对话中使用 `@` 符号可以引入这些目录下的文件作为上下文
 - **目录用途**：
   - `.claude/`：Claude Code 生成的分析文档、项目索引、进度跟踪等
   - `.specify/`：SpecKit 工具生成的功能规格、计划、任务清单等

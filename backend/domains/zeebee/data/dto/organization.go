@@ -23,4 +23,17 @@ type OrganizationRegisterRequestDto struct {
 	ContactName  string                          `json:"contact_name"`
 	Logo         string                          `json:"logo"`
 	Website      string                          `json:"website"`
+	Tagline      string                          `json:"tagline"`
+	Metadata     *OrganizationMetadata           `json:"metadata,omitempty"`
+}
+
+type OrganizationMetadata struct {
+	Lender *OrganizationLenderMetadata `json:"lender,omitempty"`
+}
+
+type OrganizationLenderMetadata struct {
+	LoanAmountRange RangeFloat64 `json:"loan_amount_range"`
+	LoanTermRange   RangeInt     `json:"loan_term_range"`
+	LoanRateRange   RangeFloat64 `json:"loan_rate_range"`
+	LoanPointRange  RangeFloat64 `json:"loan_point_range"`
 }

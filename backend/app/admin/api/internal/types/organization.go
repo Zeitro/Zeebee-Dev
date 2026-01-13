@@ -12,7 +12,6 @@ type OrganizationEntity struct {
 	Id                 int64                       `json:"id"`
 	Name               string                      `json:"name"`
 	Status             string                      `json:"status"`
-	OwnerId            int64                       `json:"owner_id"`
 	Address            AddressEntity               `json:"address"`
 	ContactEmail       string                      `json:"contact_email"`
 	ContactPhone       string                      `json:"contact_phone"`

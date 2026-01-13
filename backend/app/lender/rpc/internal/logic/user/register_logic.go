@@ -97,7 +97,7 @@ func (l *RegisterLogic) Register(in *lender.UserRegisterRequest) (resp *lender.E
 		Type:      constants.UserTypeLender,
 	}
 
-	userModel, _, err := l.baseLogic.UserLogic.RegisterWithOrganization(l.ctx, userInput, *organizationInput, constants.UserTypeLender)
+	userModel, _, err := l.baseLogic.UserLogic.RegisterWithOrganization(l.ctx, userInput, *organizationInput, constants.UserTypeLender, false)
 	if err != nil {
 		return nil, err
 	}
