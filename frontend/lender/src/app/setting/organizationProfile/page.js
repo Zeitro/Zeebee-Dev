@@ -19,15 +19,9 @@ import { useState } from 'react';
 const OrganizationProfile = () => {
 	const [form] = Form.useForm();
 	const [confirmLoading, setConfirmLoading] = useState(false);
-	const to = <div className="flex items-center justify-center px-2 flex-shrink-0">to</div>;
-	const uploadButton = (
-		<button style={{ border: 0, background: 'none' }} type="button">
-			<PlusOutlined />
-			<div style={{ marginTop: 8 }}>Upload</div>
-		</button>
-	);
+
 	return (
-		<div className="py-6 px-8 flex-1 overflow-hidden w-full xl:w-1/2 overflow-y-auto">
+		<div className=" py-6 px-8 flex-1 overflow-hidden w-full overflow-y-auto">
 			<OrgProfile />
 			{/* <Form
 				form={form}

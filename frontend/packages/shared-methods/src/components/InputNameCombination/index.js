@@ -61,7 +61,11 @@ export const InputNameCombination = ({
 					}}
 					dependencies={getDependencies('firstName')}
 				>
-					<Input placeholder={`Enter ${firstLabel.toLowerCase()}`} disabled={disabled} />
+					<Input
+						placeholder={`Enter ${firstLabel.toLowerCase()}`}
+						disabled={disabled}
+						allowClear
+					/>
 				</Form.Item>
 			</Col>
 			{!hideMiddleName && (
@@ -80,6 +84,7 @@ export const InputNameCombination = ({
 						<Input
 							placeholder={`Enter ${middleLabel.toLowerCase()}`}
 							disabled={disabled}
+							allowClear
 						/>
 					</Form.Item>
 				</Col>
