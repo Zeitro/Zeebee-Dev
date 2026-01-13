@@ -3,22 +3,21 @@ package organizationlogic
 import (
 	"context"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/model"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/domains/zeebee/data/bo"
 )
 
 type DetailLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
-	*logic.BaseLogic
+	baseLogic *logic.BaseLogic
 }
 
 func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogic {
@@ -26,7 +25,7 @@ func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogi
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		BaseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -39,31 +38,14 @@ func (l *DetailLogic) Detail(in *admin.IdRequest) (resp *admin.OrganizationDetai
 		}
 	}()
 
-	// Get organization with preloaded relations
-	organization, err := l.svcCtx.AllRepos.OrganizationRepo.GetOrganization(l.ctx, in.Data, constants.UserTypeLender, true)
+	organization, err := l.baseLogic.OrganizationLogic.Detail(l.ctx, in.Data)
 	if err != nil {
-		return nil, errorx.WithStack(err)
+		return nil, err
 	}
-
-	// Update Owner info from OrganizationUser
-	if organization.Owner != nil {
-		organizationUser, err := l.svcCtx.AllRepos.OrganizationUserRepo.GetOrganizationUserByUserId(l.ctx, organization.Id, organization.Owner.Id)
-		if err == nil && organizationUser != nil {
-			if len(organizationUser.FullName) > 0 {
-				organization.Owner.FullName = organizationUser.FullName
-				organization.Owner.FirstName = organizationUser.FirstName
-				organization.Owner.LastName = organizationUser.LastName
-			}
-		}
-	}
-
 	// Convert to response
-	data, err := copierx.Trans[*model.Organization, admin.OrganizationEntity](&organization, copierx.TimeToRFC3339Str())
-	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
-	}
+	data, err := copierx.Trans[bo.OrganizationBo, admin.OrganizationEntity](organization, copierx.TimeToRFC3339Str())
 
 	return &admin.OrganizationDetailResponse{
 		Data: data,
-	}, nil
+	}, err
 }

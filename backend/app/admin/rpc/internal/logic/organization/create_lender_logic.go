@@ -3,6 +3,8 @@ package organizationlogic
 import (
 	"context"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
@@ -11,17 +13,15 @@ import (
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/bo"
 	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/model"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type CreateLenderLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
-	*logic.BaseLogic
+	baseLogic *logic.BaseLogic
 }
 
 func NewCreateLenderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLenderLogic {
@@ -29,7 +29,7 @@ func NewCreateLenderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Crea
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		BaseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -81,24 +81,21 @@ func (l *CreateLenderLogic) CreateLender(in *admin.OrganizationCreateLenderReque
 	orgInput.Metadata = &dto.OrganizationMetadata{
 		Lender: lenderMetadata,
 	}
-
-	_, organizationUser, err := l.BaseLogic.UserLogic.RegisterWithOrganization(l.ctx, *userInput, *orgInput, constants.UserTypeLender, true)
+	// Register with organization
+	_, organizationUser, err := l.baseLogic.UserLogic.RegisterWithOrganization(l.ctx, *userInput, *orgInput, constants.UserTypeLender, true)
 	if err != nil {
 		return nil, err
 	}
+
 	// Load organization with relations for response
-	organization, err := l.svcCtx.AllRepos.OrganizationRepo.GetOrganization(l.ctx, organizationUser.OrganizationId, constants.UserTypeLender, true)
+	organization, err := l.baseLogic.OrganizationLogic.DetailWithType(l.ctx, organizationUser.OrganizationId, constants.UserTypeLender)
 	if err != nil {
 		return nil, err
 	}
 
 	// Convert to response
-	data, err := copierx.Trans[*model.Organization, admin.OrganizationEntity](&organization, copierx.TimeToRFC3339Str())
-	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
-	}
-
+	data, err := copierx.Trans[bo.OrganizationBo, admin.OrganizationEntity](organization, copierx.TimeToRFC3339Str())
 	return &admin.OrganizationDetailResponse{
 		Data: data,
-	}, nil
+	}, err
 }

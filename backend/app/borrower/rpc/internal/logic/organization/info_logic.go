@@ -41,7 +41,7 @@ func (l *InfoLogic) Info(in *borrower.EmptyRequest) (resp *borrower.Organization
 	if err != nil {
 		return nil, err
 	}
-	organization, err := l.baseLogic.OrganizationLogic.Detail(l.ctx, claim.OrganizationId, constants.UserTypeBorrower)
+	organization, err := l.baseLogic.OrganizationLogic.DetailWithType(l.ctx, claim.OrganizationId, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}

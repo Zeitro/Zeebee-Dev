@@ -78,6 +78,17 @@ func (repo *OrganizationRepo) GetOrganization(ctx context.Context, id int64, org
 	return result, errorx.WithStack(err)
 }
 
+func (repo *OrganizationRepo) GetOrganizationWithId(ctx context.Context, id int64, withPreloads bool) (result *model.Organization, err error) {
+	query := repo.Client(ctx).
+		Where("id = ? ", id)
+	if withPreloads {
+		query = query.Preload("OrganizationEmails").
+			Preload("Owner")
+	}
+	err = query.First(&result).Error
+	return result, errorx.WithStack(err)
+}
+
 // GetOrganizationWithTx return organization with transaction
 func (repo *OrganizationRepo) GetOrganizationWithTx(ctx context.Context, tx *gorm.DB, id int64, organizationType constants.UserType, withPreloads bool) (result *model.Organization, err error) {
 	query := tx.WithContext(ctx).Model(&model.Organization{}).

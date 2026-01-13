@@ -50,7 +50,7 @@ func (l *ProfileLogic) Profile(in *lender.EmptyRequest) (resp *lender.Organizati
 	}
 
 	// Get organization details with preloaded associations (emails, etc.)
-	organization, err := l.baseLogic.OrganizationLogic.Detail(
+	organization, err := l.baseLogic.OrganizationLogic.DetailWithType(
 		l.ctx,
 		claim.OrganizationId,
 		constants.UserTypeLender,

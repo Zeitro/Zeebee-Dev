@@ -37,43 +37,26 @@ func (l *OrganizationLogic) Page(ctx context.Context, pageReq dto.OrganizationPa
 	return *pageResult, nil
 }
 
-// Detail retrieves organization details by ID and type.
-// It fetches the organization from the repository and transforms it to the business object format.
-func (l *OrganizationLogic) Detail(ctx context.Context, id int64, organizationType constants.UserType) (result *bo.OrganizationBo, err error) {
+// DetailWithType retrieves organization details based on the specified type.
+// It fetches the organization from the repository and transforms it into a business object.
+func (l *OrganizationLogic) DetailWithType(ctx context.Context, id int64, organizationType constants.UserType) (result *bo.OrganizationBo, err error) {
 	organization, err := l.repos.OrganizationRepo.GetOrganization(ctx, id, organizationType, true)
 	if err != nil {
 		return
 	}
-	owner := organization.Owner
-	if organization.Owner != nil {
-		organizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUserByUserId(ctx, organization.Id, owner.Id)
-		if err != nil {
-			return nil, err
-		}
-		if len(organizationUser.FullName) > 0 {
-			owner.FullName = organizationUser.FullName
-			owner.FirstName = organizationUser.FirstName
-			owner.LastName = organizationUser.LastName
-		}
-		organization.Owner = owner
-	}
+	result, err = l.tranToBo(ctx, organization)
+	return result, err
+}
 
-	result, err = copierx.Trans[model.Organization, bo.OrganizationBo](organization)
+// Detail retrieves detailed information about an organization by its ID.
+// It returns the organization details in the form of OrganizationBo.
+func (l *OrganizationLogic) Detail(ctx context.Context, id int64) (result *bo.OrganizationBo, err error) {
+	organization, err := l.repos.OrganizationRepo.GetOrganizationWithId(ctx, id, true)
 	if err != nil {
 		return
 	}
-
-	for i := range result.OrganizationEmails {
-		isExisted, _ := l.repos.EmailAuthorizationRepo.IsExistedByColumns(ctx, map[string]interface{}{
-			"organization_email_id": result.OrganizationEmails[i].Id,
-			"purpose":               result.OrganizationEmails[i].Purpose,
-			"is_authorized":         true,
-			"user_id":               0,
-		})
-		result.OrganizationEmails[i].IsAuthorized = isExisted
-	}
-
-	return result, nil
+	result, err = l.tranToBo(ctx, organization)
+	return result, err
 }
 
 // All
@@ -88,4 +71,46 @@ func (l *OrganizationLogic) All(ctx context.Context, organizationType constants.
 	}
 	return *resultBo, nil
 
+}
+
+// tranToBo converts a model.Organization entity to a bo.OrganizationBo business object.
+// It enriches the owner's information if present and checks authorization status for organization emails.
+func (l *OrganizationLogic) tranToBo(ctx context.Context, organization *model.Organization) (transBo *bo.OrganizationBo, err error) {
+	if organization == nil {
+		return nil, nil
+	}
+	owner := organization.Owner
+	if organization.Owner != nil {
+		// Get organization user details to enrich owner information
+		organizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUserByUserId(ctx, organization.Id, owner.Id)
+		if err != nil {
+			return nil, err
+		}
+		// Update owner's name information if available in organization user
+		if len(organizationUser.FullName) > 0 {
+			owner.FullName = organizationUser.FullName
+			owner.FirstName = organizationUser.FirstName
+			owner.LastName = organizationUser.LastName
+		}
+		organization.Owner = owner
+	}
+
+	// Transform the organization model to business object
+	transBo, err = copierx.Trans[model.Organization, bo.OrganizationBo](organization)
+	if err != nil {
+		return nil, err
+	}
+
+	// Check authorization status for each organization email
+	for i := range transBo.OrganizationEmails {
+		isExisted, _ := l.repos.EmailAuthorizationRepo.IsExistedByColumns(ctx, map[string]interface{}{
+			"organization_email_id": transBo.OrganizationEmails[i].Id,
+			"purpose":               transBo.OrganizationEmails[i].Purpose,
+			"is_authorized":         true,
+			"user_id":               0,
+		})
+		transBo.OrganizationEmails[i].IsAuthorized = isExisted
+	}
+
+	return transBo, nil
 }
