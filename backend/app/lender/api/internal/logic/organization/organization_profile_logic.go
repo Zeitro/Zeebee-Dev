@@ -35,7 +35,7 @@ func (l *OrganizationProfileLogic) OrganizationProfile(req *types.EmptyRequest) 
 
 	// Convert proto response to API types
 	resp, err = copierx.Trans[lender.OrganizationEntity, types.OrganizationEntity](
-		rpcResp,
+		rpcResp.Data,
 		copierx.TimeToRFC3339Str(),
 	)
 	if err != nil {

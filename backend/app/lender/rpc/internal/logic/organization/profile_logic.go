@@ -31,7 +31,7 @@ func NewProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ProfileLo
 	}
 }
 
-func (l *ProfileLogic) Profile(in *lender.EmptyRequest) (resp *lender.OrganizationEntity, err error) {
+func (l *ProfileLogic) Profile(in *lender.EmptyRequest) (resp *lender.OrganizationDetailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -60,13 +60,18 @@ func (l *ProfileLogic) Profile(in *lender.EmptyRequest) (resp *lender.Organizati
 	}
 
 	// Convert business object to proto entity with time field conversion
-	resp, err = copierx.Trans[bo.OrganizationBo, lender.OrganizationEntity](
+	data, err := copierx.Trans[bo.OrganizationBo, lender.OrganizationEntity](
 		organization,
 		copierx.TimeToRFC3339Str(),
 	)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
+	if claim.UserId == organization.OwnerId {
+		data.IsEditable = true
+	}
 
-	return resp, nil
+	return &lender.OrganizationDetailResponse{
+		Data: data,
+	}, nil
 }

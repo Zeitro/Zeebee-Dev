@@ -86,7 +86,7 @@ type (
 	OptionResponse                                 = lender.OptionResponse
 	OrganizationCreateRequest                      = lender.OrganizationCreateRequest
 	OrganizationCreateRequestData                  = lender.OrganizationCreateRequestData
-	OrganizationCreateResponse                     = lender.OrganizationCreateResponse
+	OrganizationDetailResponse                     = lender.OrganizationDetailResponse
 	OrganizationEmailEntity                        = lender.OrganizationEmailEntity
 	OrganizationEntity                             = lender.OrganizationEntity
 	OrganizationLenderMetadataEntity               = lender.OrganizationLenderMetadataEntity
@@ -190,9 +190,9 @@ type (
 	VerifyEmailRequestData                         = lender.VerifyEmailRequestData
 
 	Organization interface {
-		Profile(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationEntity, error)
-		UpdateProfile(ctx context.Context, in *OrganizationUpdateProfileRequest, opts ...grpc.CallOption) (*OrganizationEntity, error)
-		Create(ctx context.Context, in *OrganizationCreateRequest, opts ...grpc.CallOption) (*OrganizationCreateResponse, error)
+		Profile(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error)
+		UpdateProfile(ctx context.Context, in *OrganizationUpdateProfileRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error)
+		Create(ctx context.Context, in *OrganizationCreateRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error)
 	}
 
 	defaultOrganization struct {
@@ -206,17 +206,17 @@ func NewOrganization(cli zrpc.Client) Organization {
 	}
 }
 
-func (m *defaultOrganization) Profile(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationEntity, error) {
+func (m *defaultOrganization) Profile(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error) {
 	client := lender.NewOrganizationClient(m.cli.Conn())
 	return client.Profile(ctx, in, opts...)
 }
 
-func (m *defaultOrganization) UpdateProfile(ctx context.Context, in *OrganizationUpdateProfileRequest, opts ...grpc.CallOption) (*OrganizationEntity, error) {
+func (m *defaultOrganization) UpdateProfile(ctx context.Context, in *OrganizationUpdateProfileRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error) {
 	client := lender.NewOrganizationClient(m.cli.Conn())
 	return client.UpdateProfile(ctx, in, opts...)
 }
 
-func (m *defaultOrganization) Create(ctx context.Context, in *OrganizationCreateRequest, opts ...grpc.CallOption) (*OrganizationCreateResponse, error) {
+func (m *defaultOrganization) Create(ctx context.Context, in *OrganizationCreateRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error) {
 	client := lender.NewOrganizationClient(m.cli.Conn())
 	return client.Create(ctx, in, opts...)
 }

@@ -86,7 +86,7 @@ type (
 	OptionResponse                                 = lender.OptionResponse
 	OrganizationCreateRequest                      = lender.OrganizationCreateRequest
 	OrganizationCreateRequestData                  = lender.OrganizationCreateRequestData
-	OrganizationCreateResponse                     = lender.OrganizationCreateResponse
+	OrganizationDetailResponse                     = lender.OrganizationDetailResponse
 	OrganizationEmailEntity                        = lender.OrganizationEmailEntity
 	OrganizationEntity                             = lender.OrganizationEntity
 	OrganizationLenderMetadataEntity               = lender.OrganizationLenderMetadataEntity

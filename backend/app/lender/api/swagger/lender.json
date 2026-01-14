@@ -3029,6 +3029,9 @@
                 "id": {
                   "type": "integer"
                 },
+                "is_editable": {
+                  "type": "boolean"
+                },
                 "logo": {
                   "type": "string"
                 },
@@ -3190,9 +3193,6 @@
                       "type": "string"
                     }
                   }
-                },
-                "owner_id": {
-                  "type": "integer"
                 },
                 "owner_type": {
                   "type": "string"
@@ -3272,6 +3272,9 @@
                 "id": {
                   "type": "integer"
                 },
+                "is_editable": {
+                  "type": "boolean"
+                },
                 "logo": {
                   "type": "string"
                 },
@@ -3433,9 +3436,6 @@
                       "type": "string"
                     }
                   }
-                },
-                "owner_id": {
-                  "type": "integer"
                 },
                 "owner_type": {
                   "type": "string"
@@ -3622,6 +3622,9 @@
                 "id": {
                   "type": "integer"
                 },
+                "is_editable": {
+                  "type": "boolean"
+                },
                 "logo": {
                   "type": "string"
                 },
@@ -3783,9 +3786,6 @@
                       "type": "string"
                     }
                   }
-                },
-                "owner_id": {
-                  "type": "integer"
                 },
                 "owner_type": {
                   "type": "string"
@@ -6546,7 +6546,7 @@
       }
     }
   },
-  "x-date": "2026-01-09 18:08:39",
+  "x-date": "2026-01-14 10:45:15",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

@@ -8391,7 +8391,7 @@ func (x *RolePageResponseData) GetList() []*RoleEntity {
 	return nil
 }
 
-//  create
+// create
 type RoleCreateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Data          *RoleCreateRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -8548,7 +8548,7 @@ func (x *RoleCreateResponse) GetData() *RoleEntity {
 	return nil
 }
 
-//  update
+// update
 type RoleUpdateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Data          *RoleUpdateRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -8773,7 +8773,7 @@ func (x *RoleUpdateResponse) GetData() *RoleEntity {
 	return nil
 }
 
-//  delete
+// delete
 type RoleDeleteRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Data          *RoleDeleteRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -8862,7 +8862,7 @@ func (x *RoleDeleteRequestData) GetId() int64 {
 	return 0
 }
 
-//  detail
+// detail
 type RoleDetailRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Data          *RoleDetailRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -9853,7 +9853,7 @@ func (x *OrganizationUserPageResponseData) GetList() []*OrganizationUserPageEnti
 	return nil
 }
 
-//  create --  request
+// create --  request
 type OrganizationUserCreateRequest struct {
 	state         protoimpl.MessageState             `protogen:"open.v1"`
 	Data          *OrganizationUserCreateRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -9966,7 +9966,7 @@ func (x *OrganizationUserCreateRequestData) GetRoleIds() []int64 {
 	return nil
 }
 
-//  create --  response
+// create --  response
 type OrganizationUserCreateResponse struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
 	Data          *OrganizationUserEntity `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -10011,7 +10011,7 @@ func (x *OrganizationUserCreateResponse) GetData() *OrganizationUserEntity {
 	return nil
 }
 
-//  update --  request
+// update --  request
 type OrganizationUserUpdateRequest struct {
 	state         protoimpl.MessageState             `protogen:"open.v1"`
 	Data          *OrganizationUserUpdateRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -10140,7 +10140,7 @@ func (x *OrganizationUserUpdateRequestData) GetLastName() string {
 	return ""
 }
 
-//  update --  response
+// update --  response
 type OrganizationUserUpdateResponse struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
 	Data          *OrganizationUserEntity `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -10185,7 +10185,7 @@ func (x *OrganizationUserUpdateResponse) GetData() *OrganizationUserEntity {
 	return nil
 }
 
-//  detail --  request
+// detail --  request
 type OrganizationUserDetailRequest struct {
 	state         protoimpl.MessageState             `protogen:"open.v1"`
 	Data          *OrganizationUserDetailRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -10274,7 +10274,7 @@ func (x *OrganizationUserDetailRequestData) GetId() int64 {
 	return 0
 }
 
-//  detail --  response
+// detail --  response
 type OrganizationUserDetailResponse struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
 	Data          *OrganizationUserEntity `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -10319,7 +10319,7 @@ func (x *OrganizationUserDetailResponse) GetData() *OrganizationUserEntity {
 	return nil
 }
 
-//  delete --  request
+// delete --  request
 type OrganizationUserDeleteRequest struct {
 	state         protoimpl.MessageState             `protogen:"open.v1"`
 	Data          *OrganizationUserDeleteRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -10408,7 +10408,7 @@ func (x *OrganizationUserDeleteRequestData) GetId() int64 {
 	return 0
 }
 
-//  switch status --  request
+// switch status --  request
 type OrganizationUserUpdateStatusRequest struct {
 	state         protoimpl.MessageState                   `protogen:"open.v1"`
 	Data          *OrganizationUserUpdateStatusRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -10879,6 +10879,7 @@ type OrganizationEntity struct {
 	Tagline            string                      `protobuf:"bytes,16,opt,name=tagline,proto3" json:"tagline,omitempty"`
 	Metadata           *OrganizationMetadataEntity `protobuf:"bytes,17,opt,name=metadata,proto3" json:"metadata,omitempty"`
 	Owner              *UserEntity                 `protobuf:"bytes,18,opt,name=owner,proto3" json:"owner,omitempty"`
+	IsEditable         bool                        `protobuf:"varint,19,opt,name=is_editable,json=isEditable,proto3" json:"is_editable,omitempty"`
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
 }
@@ -11037,6 +11038,13 @@ func (x *OrganizationEntity) GetOwner() *UserEntity {
 		return x.Owner
 	}
 	return nil
+}
+
+func (x *OrganizationEntity) GetIsEditable() bool {
+	if x != nil {
+		return x.IsEditable
+	}
+	return false
 }
 
 type OrganizationMetadataEntity struct {
@@ -11434,27 +11442,27 @@ func (x *OrganizationCreateRequestData) GetLenderMetadata() *OrganizationLenderM
 }
 
 // create organization --  response
-type OrganizationCreateResponse struct {
+type OrganizationDetailResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Data          *OrganizationEntity    `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *OrganizationCreateResponse) Reset() {
-	*x = OrganizationCreateResponse{}
+func (x *OrganizationDetailResponse) Reset() {
+	*x = OrganizationDetailResponse{}
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[171]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *OrganizationCreateResponse) String() string {
+func (x *OrganizationDetailResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*OrganizationCreateResponse) ProtoMessage() {}
+func (*OrganizationDetailResponse) ProtoMessage() {}
 
-func (x *OrganizationCreateResponse) ProtoReflect() protoreflect.Message {
+func (x *OrganizationDetailResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[171]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -11466,12 +11474,12 @@ func (x *OrganizationCreateResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use OrganizationCreateResponse.ProtoReflect.Descriptor instead.
-func (*OrganizationCreateResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use OrganizationDetailResponse.ProtoReflect.Descriptor instead.
+func (*OrganizationDetailResponse) Descriptor() ([]byte, []int) {
 	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{171}
 }
 
-func (x *OrganizationCreateResponse) GetData() *OrganizationEntity {
+func (x *OrganizationDetailResponse) GetData() *OrganizationEntity {
 	if x != nil {
 		return x.Data
 	}
@@ -12504,7 +12512,7 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x04data\x18\x01 \x01(\v2..lender.OrganizationUserAssignRolesRequestDataR\x04data\"S\n" +
 	"&OrganizationUserAssignRolesRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
-	"\brole_ids\x18\x02 \x03(\x03R\aroleIds\"\xfe\x04\n" +
+	"\brole_ids\x18\x02 \x03(\x03R\aroleIds\"\x9f\x05\n" +
 	"\x12OrganizationEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +
@@ -12527,7 +12535,9 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\awebsite\x18\x0f \x01(\tR\awebsite\x12\x18\n" +
 	"\atagline\x18\x10 \x01(\tR\atagline\x12>\n" +
 	"\bmetadata\x18\x11 \x01(\v2\".lender.OrganizationMetadataEntityR\bmetadata\x12(\n" +
-	"\x05owner\x18\x12 \x01(\v2\x12.lender.UserEntityR\x05owner\"^\n" +
+	"\x05owner\x18\x12 \x01(\v2\x12.lender.UserEntityR\x05owner\x12\x1f\n" +
+	"\vis_editable\x18\x13 \x01(\bR\n" +
+	"isEditable\"^\n" +
 	"\x1aOrganizationMetadataEntity\x12@\n" +
 	"\x06lender\x18\x01 \x01(\v2(.lender.OrganizationLenderMetadataEntityR\x06lender\"\x98\x02\n" +
 	" OrganizationLenderMetadataEntity\x12>\n" +
@@ -12557,7 +12567,7 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\atagline\x18\n" +
 	" \x01(\tR\atagline\x12Q\n" +
 	"\x0flender_metadata\x18\v \x01(\v2(.lender.OrganizationLenderMetadataEntityR\x0elenderMetadata\"L\n" +
-	"\x1aOrganizationCreateResponse\x12.\n" +
+	"\x1aOrganizationDetailResponse\x12.\n" +
 	"\x04data\x18\x01 \x01(\v2\x1a.lender.OrganizationEntityR\x04data\"\xcc\x01\n" +
 	"\x17OrganizationEmailEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12'\n" +
@@ -12625,11 +12635,11 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x03All\x12\x14.lender.EmptyRequest\x1a#.lender.OrganizationUserAllResponse\x12`\n" +
 	"\x13SendInvitationEmail\x122.lender.OrganizationUserSendInvitationEmailRequest\x1a\x15.lender.EmptyResponse\x12\\\n" +
 	"\x10AcceptInvitation\x12/.lender.OrganizationUserAcceptInvitationRequest\x1a\x17.lender.UserJwtResponse\x12P\n" +
-	"\vAssignRoles\x12*.lender.OrganizationUserAssignRolesRequest\x1a\x15.lender.EmptyResponse2\xf3\x01\n" +
-	"\fOrganization\x12;\n" +
-	"\aProfile\x12\x14.lender.EmptyRequest\x1a\x1a.lender.OrganizationEntity\x12U\n" +
-	"\rUpdateProfile\x12(.lender.OrganizationUpdateProfileRequest\x1a\x1a.lender.OrganizationEntity\x12O\n" +
-	"\x06Create\x12!.lender.OrganizationCreateRequest\x1a\".lender.OrganizationCreateResponseB\n" +
+	"\vAssignRoles\x12*.lender.OrganizationUserAssignRolesRequest\x1a\x15.lender.EmptyResponse2\x83\x02\n" +
+	"\fOrganization\x12C\n" +
+	"\aProfile\x12\x14.lender.EmptyRequest\x1a\".lender.OrganizationDetailResponse\x12]\n" +
+	"\rUpdateProfile\x12(.lender.OrganizationUpdateProfileRequest\x1a\".lender.OrganizationDetailResponse\x12O\n" +
+	"\x06Create\x12!.lender.OrganizationCreateRequest\x1a\".lender.OrganizationDetailResponseB\n" +
 	"Z\b./lenderb\x06proto3"
 
 var (
@@ -12817,7 +12827,7 @@ var file_app_lender_rpc_pb_lender_proto_goTypes = []any{
 	(*OrganizationUpdateProfileRequestData)(nil),           // 168: lender.OrganizationUpdateProfileRequestData
 	(*OrganizationCreateRequest)(nil),                      // 169: lender.OrganizationCreateRequest
 	(*OrganizationCreateRequestData)(nil),                  // 170: lender.OrganizationCreateRequestData
-	(*OrganizationCreateResponse)(nil),                     // 171: lender.OrganizationCreateResponse
+	(*OrganizationDetailResponse)(nil),                     // 171: lender.OrganizationDetailResponse
 	(*OrganizationEmailEntity)(nil),                        // 172: lender.OrganizationEmailEntity
 	(*UserinfoResponseData_Organization)(nil),              // 173: lender.UserinfoResponseData.Organization
 }
@@ -12950,7 +12960,7 @@ var file_app_lender_rpc_pb_lender_proto_depIdxs = []int32{
 	166, // 125: lender.OrganizationUpdateProfileRequestData.lender_metadata:type_name -> lender.OrganizationLenderMetadataEntity
 	170, // 126: lender.OrganizationCreateRequest.data:type_name -> lender.OrganizationCreateRequestData
 	166, // 127: lender.OrganizationCreateRequestData.lender_metadata:type_name -> lender.OrganizationLenderMetadataEntity
-	164, // 128: lender.OrganizationCreateResponse.data:type_name -> lender.OrganizationEntity
+	164, // 128: lender.OrganizationDetailResponse.data:type_name -> lender.OrganizationEntity
 	7,   // 129: lender.common.GetOpt:input_type -> lender.OptionRequest
 	0,   // 130: lender.common.GetUsState:input_type -> lender.EmptyRequest
 	11,  // 131: lender.common.GetUsCities:input_type -> lender.UsCitiesRequest
@@ -13046,9 +13056,9 @@ var file_app_lender_rpc_pb_lender_proto_depIdxs = []int32{
 	1,   // 221: lender.OrganizationUser.SendInvitationEmail:output_type -> lender.EmptyResponse
 	16,  // 222: lender.OrganizationUser.AcceptInvitation:output_type -> lender.UserJwtResponse
 	1,   // 223: lender.OrganizationUser.AssignRoles:output_type -> lender.EmptyResponse
-	164, // 224: lender.Organization.Profile:output_type -> lender.OrganizationEntity
-	164, // 225: lender.Organization.UpdateProfile:output_type -> lender.OrganizationEntity
-	171, // 226: lender.Organization.Create:output_type -> lender.OrganizationCreateResponse
+	171, // 224: lender.Organization.Profile:output_type -> lender.OrganizationDetailResponse
+	171, // 225: lender.Organization.UpdateProfile:output_type -> lender.OrganizationDetailResponse
+	171, // 226: lender.Organization.Create:output_type -> lender.OrganizationDetailResponse
 	178, // [178:227] is the sub-list for method output_type
 	129, // [129:178] is the sub-list for method input_type
 	129, // [129:129] is the sub-list for extension type_name

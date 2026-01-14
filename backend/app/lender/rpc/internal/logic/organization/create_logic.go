@@ -34,7 +34,7 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 	}
 }
 
-func (l *CreateLogic) Create(in *lender.OrganizationCreateRequest) (resp *lender.OrganizationCreateResponse, err error) {
+func (l *CreateLogic) Create(in *lender.OrganizationCreateRequest) (resp *lender.OrganizationDetailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -138,7 +138,7 @@ func (l *CreateLogic) Create(in *lender.OrganizationCreateRequest) (resp *lender
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 
-	return &lender.OrganizationCreateResponse{
+	return &lender.OrganizationDetailResponse{
 		Data: resultOrganization,
 	}, nil
 }

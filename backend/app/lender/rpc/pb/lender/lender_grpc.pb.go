@@ -2356,9 +2356,9 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OrganizationClient interface {
-	Profile(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationEntity, error)
-	UpdateProfile(ctx context.Context, in *OrganizationUpdateProfileRequest, opts ...grpc.CallOption) (*OrganizationEntity, error)
-	Create(ctx context.Context, in *OrganizationCreateRequest, opts ...grpc.CallOption) (*OrganizationCreateResponse, error)
+	Profile(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error)
+	UpdateProfile(ctx context.Context, in *OrganizationUpdateProfileRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error)
+	Create(ctx context.Context, in *OrganizationCreateRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error)
 }
 
 type organizationClient struct {
@@ -2369,9 +2369,9 @@ func NewOrganizationClient(cc grpc.ClientConnInterface) OrganizationClient {
 	return &organizationClient{cc}
 }
 
-func (c *organizationClient) Profile(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationEntity, error) {
+func (c *organizationClient) Profile(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(OrganizationEntity)
+	out := new(OrganizationDetailResponse)
 	err := c.cc.Invoke(ctx, Organization_Profile_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -2379,9 +2379,9 @@ func (c *organizationClient) Profile(ctx context.Context, in *EmptyRequest, opts
 	return out, nil
 }
 
-func (c *organizationClient) UpdateProfile(ctx context.Context, in *OrganizationUpdateProfileRequest, opts ...grpc.CallOption) (*OrganizationEntity, error) {
+func (c *organizationClient) UpdateProfile(ctx context.Context, in *OrganizationUpdateProfileRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(OrganizationEntity)
+	out := new(OrganizationDetailResponse)
 	err := c.cc.Invoke(ctx, Organization_UpdateProfile_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -2389,9 +2389,9 @@ func (c *organizationClient) UpdateProfile(ctx context.Context, in *Organization
 	return out, nil
 }
 
-func (c *organizationClient) Create(ctx context.Context, in *OrganizationCreateRequest, opts ...grpc.CallOption) (*OrganizationCreateResponse, error) {
+func (c *organizationClient) Create(ctx context.Context, in *OrganizationCreateRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(OrganizationCreateResponse)
+	out := new(OrganizationDetailResponse)
 	err := c.cc.Invoke(ctx, Organization_Create_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -2403,9 +2403,9 @@ func (c *organizationClient) Create(ctx context.Context, in *OrganizationCreateR
 // All implementations must embed UnimplementedOrganizationServer
 // for forward compatibility.
 type OrganizationServer interface {
-	Profile(context.Context, *EmptyRequest) (*OrganizationEntity, error)
-	UpdateProfile(context.Context, *OrganizationUpdateProfileRequest) (*OrganizationEntity, error)
-	Create(context.Context, *OrganizationCreateRequest) (*OrganizationCreateResponse, error)
+	Profile(context.Context, *EmptyRequest) (*OrganizationDetailResponse, error)
+	UpdateProfile(context.Context, *OrganizationUpdateProfileRequest) (*OrganizationDetailResponse, error)
+	Create(context.Context, *OrganizationCreateRequest) (*OrganizationDetailResponse, error)
 	mustEmbedUnimplementedOrganizationServer()
 }
 
@@ -2416,13 +2416,13 @@ type OrganizationServer interface {
 // pointer dereference when methods are called.
 type UnimplementedOrganizationServer struct{}
 
-func (UnimplementedOrganizationServer) Profile(context.Context, *EmptyRequest) (*OrganizationEntity, error) {
+func (UnimplementedOrganizationServer) Profile(context.Context, *EmptyRequest) (*OrganizationDetailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Profile not implemented")
 }
-func (UnimplementedOrganizationServer) UpdateProfile(context.Context, *OrganizationUpdateProfileRequest) (*OrganizationEntity, error) {
+func (UnimplementedOrganizationServer) UpdateProfile(context.Context, *OrganizationUpdateProfileRequest) (*OrganizationDetailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateProfile not implemented")
 }
-func (UnimplementedOrganizationServer) Create(context.Context, *OrganizationCreateRequest) (*OrganizationCreateResponse, error) {
+func (UnimplementedOrganizationServer) Create(context.Context, *OrganizationCreateRequest) (*OrganizationDetailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
 func (UnimplementedOrganizationServer) mustEmbedUnimplementedOrganizationServer() {}

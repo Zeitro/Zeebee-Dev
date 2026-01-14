@@ -1249,6 +1249,7 @@ message OrganizationEntity {
   string tagline = 16;
   OrganizationMetadataEntity metadata = 17;
   UserEntity owner = 18;
+  bool is_editable = 19;
 }
 
 message OrganizationMetadataEntity {
@@ -1291,14 +1292,14 @@ message OrganizationCreateRequestData {
   OrganizationLenderMetadataEntity lender_metadata = 11;
 }
 // create organization --  response
-message OrganizationCreateResponse {
+message OrganizationDetailResponse {
   OrganizationEntity data = 1;
 }
 
 service Organization {
-  rpc Profile(EmptyRequest) returns(OrganizationEntity);
-  rpc UpdateProfile(OrganizationUpdateProfileRequest) returns(OrganizationEntity);
-  rpc Create(OrganizationCreateRequest) returns(OrganizationCreateResponse);
+  rpc Profile(EmptyRequest) returns(OrganizationDetailResponse);
+  rpc UpdateProfile(OrganizationUpdateProfileRequest) returns(OrganizationDetailResponse);
+  rpc Create(OrganizationCreateRequest) returns(OrganizationDetailResponse);
 }
 
 // ================== organization service end =================

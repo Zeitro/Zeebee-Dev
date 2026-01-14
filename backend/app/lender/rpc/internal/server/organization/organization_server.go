@@ -23,17 +23,17 @@ func NewOrganizationServer(svcCtx *svc.ServiceContext) *OrganizationServer {
 	}
 }
 
-func (s *OrganizationServer) Profile(ctx context.Context, in *lender.EmptyRequest) (*lender.OrganizationEntity, error) {
+func (s *OrganizationServer) Profile(ctx context.Context, in *lender.EmptyRequest) (*lender.OrganizationDetailResponse, error) {
 	l := organizationlogic.NewProfileLogic(ctx, s.svcCtx)
 	return l.Profile(in)
 }
 
-func (s *OrganizationServer) UpdateProfile(ctx context.Context, in *lender.OrganizationUpdateProfileRequest) (*lender.OrganizationEntity, error) {
+func (s *OrganizationServer) UpdateProfile(ctx context.Context, in *lender.OrganizationUpdateProfileRequest) (*lender.OrganizationDetailResponse, error) {
 	l := organizationlogic.NewUpdateProfileLogic(ctx, s.svcCtx)
 	return l.UpdateProfile(in)
 }
 
-func (s *OrganizationServer) Create(ctx context.Context, in *lender.OrganizationCreateRequest) (*lender.OrganizationCreateResponse, error) {
+func (s *OrganizationServer) Create(ctx context.Context, in *lender.OrganizationCreateRequest) (*lender.OrganizationDetailResponse, error) {
 	l := organizationlogic.NewCreateLogic(ctx, s.svcCtx)
 	return l.Create(in)
 }
