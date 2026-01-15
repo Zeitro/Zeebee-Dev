@@ -59,9 +59,9 @@ create-sql:
 	$(eval INPUT_ARGS := $(filter-out create-sql,$(MAKECMDGOALS)))
 	$(eval SERVICE := $(word 1,$(INPUT_ARGS)))
 	$(eval NAME := $(word 2,$(INPUT_ARGS)))
-	@if [ ! -d "app/$(SERVICE)/docs/sql" ]; then \
-		mkdir -p app/$(SERVICE)/docs/sql; \
+	@if [ ! -d "deploy/$(SERVICE)/sql" ]; then \
+		mkdir -p deploy/$(SERVICE)/sql; \
 	fi
 	@TIMESTAMP=$$(date +%Y%m%d%H%M%S); \
-	touch "app/$(SERVICE)/docs/sql/$${TIMESTAMP}_$(NAME).sql"
-	@echo "Created SQL file: app/$(SERVICE)/docs/sql/$${TIMESTAMP}_$(NAME).sql"
+	touch "deploy/$(SERVICE)/sql/$${TIMESTAMP}_$(NAME).sql"
+	@echo "Created SQL file: deploy/$(SERVICE)/sql/$${TIMESTAMP}_$(NAME).sql"
