@@ -1,35 +1,19 @@
 'use client';
 import React, { useMemo, useRef, useState } from 'react';
-import { message, Space } from 'antd';
-import { BtnPopUpModal, DeleteBtn, FilterTable, NewModal, OrgProfile } from '@repo/shared-methods';
-import { createRequest, formatPhone } from '@repo/shared-methods/utils';
+import { message, Space, Image } from 'antd';
+import { BtnPopUpModal, DeleteBtn, FilterTable } from '@repo/shared-methods';
+import { createRequest, formatPhone, formatTime } from '@repo/shared-methods/utils';
 import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
-const api = '';
+import MainModal from './components/Main';
+import { userStatusColor } from '@repo/shared-methods/enum';
+const api = '/organization/page';
 const Lenders = () => {
 	const tableFilterRef = useRef();
-	const mainRef = useRef();
 	const { request } = createRequest();
 	const [searchValue, setSearchValue] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [statusLoading, setStatusLoading] = useState(false);
 
-	const mainModal = (setOpen, rowData) => {
-		return (
-			<NewModal
-				width={800}
-				title={rowData?.id ? 'Edit Lender' : 'Add Lender'}
-				onCancel={() => setOpen(false)}
-				onOk={() => mainRef?.current?.handleSaveOrgProfile?.()}
-			>
-				<OrgProfile
-					ref={mainRef}
-					rowData={rowData}
-					className="h-[70vh] overflow-hidden overflow-y-auto"
-					successCallback={() => tableFilterRef?.current?.handleSearch?.()}
-				/>
-			</NewModal>
-		);
-	};
 	const filterList = useMemo(
 		() => [
 			{
@@ -65,12 +49,19 @@ const Lenders = () => {
 				filterType: 'button',
 				children: (
 					<BtnPopUpModal
-						getContent={(setOpen) => mainModal(setOpen, {})}
+						getContent={(setOpen) => (
+							<MainModal
+								setOpen={setOpen}
+								successCallback={async () =>
+									tableFilterRef?.current?.handleSearch?.()
+								}
+							/>
+						)}
 						type="primary"
 						icon={<PlusOutlined />}
 						size="large"
 					>
-						Add Lender
+						Add Lender org
 					</BtnPopUpModal>
 				),
 			},
@@ -81,17 +72,17 @@ const Lenders = () => {
 	const handleChangeStatus = async (id, status = 'Active') => {
 		try {
 			setStatusLoading(true);
-			await request(`/organization_user/${id}/status`, {
+			await request(`/organization/${id}/status`, {
 				method: 'PATCH',
 				body: {
 					status,
 				},
 			});
 			setStatusLoading(false);
-			// handleSearch();
+			tableFilterRef?.current?.getList?.();
 			message.open({
 				type: 'success',
-				content: 'Lender status updated successfully！',
+				content: 'Status updated successfully！',
 			});
 		} catch (error) {
 			console.log(error);
@@ -103,11 +94,15 @@ const Lenders = () => {
 	const handleDelete = async (id) => {
 		try {
 			setLoading(true);
-			await request(`/organization_user/${id}`, {
+			await request(`/organization/${id}`, {
 				method: 'DELETE',
 			});
 			setLoading(false);
-			// handleSearch();
+			tableFilterRef?.current?.handleSearch?.();
+			message.open({
+				type: 'success',
+				content: 'deleted successfully！',
+			});
 		} catch (error) {
 			console.log(error);
 			setLoading(false);
@@ -115,27 +110,47 @@ const Lenders = () => {
 	};
 
 	return (
-		<div className="h-full w-full flex items-center justify-center py-4 px-4">
+		<div className="flex-1 overflow-hidden w-full flex items-center justify-center py-4 px-4">
 			<FilterTable
 				ref={tableFilterRef}
 				columns={[
 					{
-						title: 'Lender name',
+						title: 'Logo',
+						dataIndex: 'logo',
+						key: 'logo',
+						ellipsis: true,
+						render: (v) => (
+							<Image
+								src={v || null}
+								width={40}
+								height={40}
+								alt=""
+								preview={false}
+								fallback="/images/noImg.png"
+								className="object-contain"
+							/>
+						),
+					},
+					{
+						title: 'Organization name',
 						dataIndex: 'name',
 						key: 'name',
 						ellipsis: true,
+						render: (v) => v || '--',
 					},
 					{
 						title: 'Email account',
-						dataIndex: 'email_account',
-						key: 'email_account',
+						dataIndex: 'owner_email',
+						key: 'owner_email',
 						ellipsis: true,
+						render: (v) => v || '--',
 					},
 					{
 						title: 'Contact name',
 						dataIndex: 'contact_name',
 						key: 'contact_name',
 						ellipsis: true,
+						render: (v) => v || '--',
 					},
 					{
 						title: 'Contact phone',
@@ -149,12 +164,35 @@ const Lenders = () => {
 						dataIndex: 'contact_email',
 						key: 'contact_email',
 						ellipsis: true,
+						render: (v) => v || '--',
+					},
+					{
+						title: 'Created time',
+						dataIndex: 'created_at',
+						key: 'created_at',
+						ellipsis: true,
+						sorter: true,
+						defaultSortOrder: 'descend',
+						render: (v) => formatTime(v) || '--',
 					},
 					{
 						title: 'Status',
 						dataIndex: 'status',
 						key: 'status',
 						ellipsis: true,
+						fixed: 'right',
+						render: (v) => (
+							<div
+								className={'text-xs/5 px-2 border rounded-sm w-max'}
+								style={{
+									borderColor: userStatusColor[v]?.border,
+									backgroundColor: userStatusColor[v]?.bg,
+									color: userStatusColor[v]?.color,
+								}}
+							>
+								{v}
+							</div>
+						),
 					},
 					{
 						title: 'Action',
@@ -163,56 +201,59 @@ const Lenders = () => {
 						align: 'left',
 						fixed: 'right',
 						render: (_, record) => {
-							const isDisabled = record?.is_owner;
 							return (
 								<Space>
 									<BtnPopUpModal
-										getContent={(setOpen) => mainModal(setOpen, record)}
+										getContent={(setOpen) => (
+											<MainModal
+												rowData={record}
+												setOpen={setOpen}
+												successCallback={async () =>
+													tableFilterRef?.current?.getList?.()
+												}
+											/>
+										)}
 										size="small"
 										icon={null}
 										isStopPropagation={false}
-										// disabled={isDisabled}
 									>
 										Edit
 									</BtnPopUpModal>
 
 									{record?.status === 'Active' && (
 										<DeleteBtn
-											title="Are you sure you want to disable this lender?"
-											content={record.email}
+											title="Are you sure you want to disable this lender organization?"
+											content={record.name}
 											onOk={() => handleChangeStatus(record.id, 'Disabled')}
 											loading={statusLoading}
 											isStopPropagation={false}
 											okText="Disable"
 											danger={false}
-											disabled={isDisabled}
 										>
 											Disable
 										</DeleteBtn>
 									)}
 									{record?.status === 'Disabled' && (
 										<DeleteBtn
-											title="Are you sure you want to enable this lender?"
-											content={record.email}
+											title="Are you sure you want to enable this lender organization?"
+											content={record.name}
 											onOk={() => handleChangeStatus(record.id, 'Active')}
 											loading={statusLoading}
 											isStopPropagation={false}
 											okText="Enable"
 											danger={false}
-											disabled={isDisabled}
 											okButtonProps={{ danger: false }}
 										>
 											Enable
 										</DeleteBtn>
 									)}
 									<DeleteBtn
-										title="Are you sure delete this user?"
-										content={record.email}
+										title="Are you sure delete this lender organization?"
+										content={record.name}
 										// isButton={false}
 										onOk={() => handleDelete(record.id)}
 										loading={loading}
 										isStopPropagation={false}
-										disabled={isDisabled}
 									>
 										Delete
 									</DeleteBtn>
@@ -229,13 +270,15 @@ const Lenders = () => {
 					if (!api) return;
 					const filter = {
 						...(params?.filter || {}),
+						type: 'Lender',
 					};
 					const payload = {
 						method: 'POST',
-						...params,
-						filter,
+						body: {
+							...params,
+							filter,
+						},
 					};
-
 					return request(api, payload);
 				}}
 			/>

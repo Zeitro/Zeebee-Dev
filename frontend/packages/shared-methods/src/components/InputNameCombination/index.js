@@ -1,5 +1,5 @@
 import { Col, Form, Input } from 'antd';
-import { titleCol } from '@/enum/common';
+import { titleCol } from '@repo/shared-methods/enum';
 import { getPathArr } from '../../lib/common';
 import { validatedName, capitalizeFirstLetter } from '../../lib/format';
 // 姓名组合（firstName + middleName + lastName）

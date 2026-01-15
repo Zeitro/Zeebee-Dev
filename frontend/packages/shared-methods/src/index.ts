@@ -8,7 +8,7 @@ export * from './components/FieldTips/index';
 export * from './components/FilterField/index';
 export * from './components/FilterTable/index';
 export * from './components/GoogleAutoComplete/index';
-// export * from './components/GoogleAutoComplete/AddressForm';
+export * from './components/GoogleAutoComplete/AddressForm';
 export * from './components/InputNameCombination/index';
 export * from './components/InputNumAmount/index';
 export * from './components/InputPhone/index';
@@ -45,3 +45,4 @@ export * from './components/CreateZBLoan/ReviewAndSign';
 
 // borrower端、lender端、admin端共用的页面封装的组件
 export * from './componentsUi/OrgProfile/index';
+export * from './componentsUi/SelectCard/index';

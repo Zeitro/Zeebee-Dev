@@ -15,7 +15,7 @@ import {
 	createRequest,
 } from '@repo/shared-methods/utils';
 import { Button, Col, Form, Input, InputNumber, Row, Image } from 'antd';
-import { useState, forwardRef, useImperativeHandle, useEffect, useCallback, useRef } from 'react';
+import { useState, forwardRef, useImperativeHandle, useEffect, useRef } from 'react';
 import _ from 'lodash';
 const { TextArea } = Input;
 // 组织信息填写
@@ -29,9 +29,27 @@ const OrganizationProfile = (
 		leftCol = { lg: 8, sm: 24, xl: 6 },
 		rightCol = { lg: 16, sm: 24, xl: 12 },
 		isShowAccountInput,
-		metadataName = [],
-		initMetadataName = [],
 		children,
+		passwordName = 'password',
+		confirmPasswordName = 'confirm_password',
+		firstName = 'first_name',
+		lastName = 'last_name',
+		orgName = 'name',
+		emailName = 'email',
+		contactName = 'contact_name',
+		contactEmailName = 'contact_email',
+		contactPhoneName = 'contact_phone',
+		taglineName = 'tagline',
+		websiteName = 'website',
+		loanAmountMinName = ['metadata', 'loan_amount_range', 'min'],
+		loanAmountMaxName = ['metadata', 'loan_amount_range', 'max'],
+		loanRateMinName = ['metadata', 'loan_rate_range', 'min'],
+		loanRateMaxName = ['metadata', 'loan_rate_range', 'max'],
+		loanPointMinName = ['metadata', 'loan_point_range', 'min'],
+		loanPointMaxName = ['metadata', 'loan_point_range', 'max'],
+		loanTermMinName = ['metadata', 'loan_term_range', 'min'],
+		loanTermMaxName = ['metadata', 'loan_term_range', 'max'],
+		logoName = 'logo',
 	},
 	ref,
 ) => {
@@ -40,7 +58,6 @@ const OrganizationProfile = (
 	const { request } = createRequest();
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const [fileList, setFileList] = useState([]);
-	const isInit = useRef(true);
 	const to = <div className="flex items-center justify-center px-4 flex-shrink-0">to</div>;
 
 	const handleSaveOrgProfile = async () => {
@@ -49,15 +66,19 @@ const OrganizationProfile = (
 			const values = await form.validateFields();
 			setConfirmLoading(true);
 			let urls = [];
+			const oldLogo = _.get(rowData, logoName);
+			if (rowData?.id && oldLogo) {
+				urls = [oldLogo];
+			}
 			if (fileList?.length) {
 				urls = await uploadRef?.current?.triggerUpload();
 			}
+			_.set(values, logoName, urls?.[0]);
+			const website = _.get(values, websiteName);
+			_.set(values, websiteName, `https://${website}`);
 			await request(api, {
 				method,
-				body: {
-					...values,
-					logo: urls?.[0],
-				},
+				body: values,
 			});
 			setConfirmLoading(false);
 			successCallback?.();
@@ -67,22 +88,14 @@ const OrganizationProfile = (
 		}
 	};
 
-	// 初始化赋值
-	const setFormValue = useCallback(() => {
+	useEffect(() => {
 		if (rowData?.id) {
 			const info = _.cloneDeep(rowData);
-			if (initMetadataName?.length && isInit.current) {
-				const v = _.get(info, initMetadataName);
-				_.set(info, metadataName, v);
-				form.setFieldsValue(info);
-				isInit.current = false;
-			}
+			const website = _.get(rowData, websiteName)?.replace(/^https?:\/\//, '');
+			_.set(info, websiteName, website);
+			form.setFieldsValue(info);
 		}
-	}, [rowData, initMetadataName, metadataName, form]);
-
-	useEffect(() => {
-		setFormValue();
-	}, [setFormValue]);
+	}, [form, rowData, websiteName]);
 
 	useImperativeHandle(ref, () => ({
 		handleSaveOrgProfile,
@@ -96,19 +109,18 @@ const OrganizationProfile = (
 			size="large"
 			disabled={confirmLoading}
 			scrollToFirstError
-			initialValues={{ ...rowData }}
 			className={className}
 		>
 			<Row gutter={24}>
-				<Col {...leftCol} className="!flex flex-col items-center">
+				<Col {...leftCol} className="!flex flex-col items-center overflow-hidden">
 					<div className="w-[104px] h-[104px] border border-base-border rounded-xs px-1 py-1 mb-4">
 						<Image
-							src={fileList?.[0]?.thumbUrl || rowData?.logo || null}
+							src={fileList?.[0]?.thumbUrl || _.get(rowData, logoName) || null}
 							alt=""
 							fallback="/images/noImg.png"
 							width={'100%'}
 							height={'100%'}
-							preview={!!fileList?.[0]?.thumbUrl || !!rowData?.logo}
+							preview={!!fileList?.[0]?.thumbUrl || !!_.get(rowData, logoName)}
 							className="object-contain"
 						/>
 					</div>
@@ -128,11 +140,11 @@ const OrganizationProfile = (
 
 					{!isShowAccountInput && (
 						<>
-							<div className="text-2xl font-medium text-black-dark pt-6">
-								{rowData?.name}
+							<div className="text-2xl font-medium text-black-dark pt-6 break-words w-full overflow-hidden text-center">
+								{_.get(rowData, orgName)}
 							</div>
-							<div className="text-xl font-medium text-[rgba(0,0,0,0.65)] pt-3">
-								{rowData?.owner?.email}
+							<div className="text-xl font-medium text-[rgba(0,0,0,0.65)] pt-3 break-words w-full overflow-hidden text-center">
+								{_.get(rowData, emailName)}
 							</div>
 						</>
 					)}
@@ -143,14 +155,14 @@ const OrganizationProfile = (
 							<Row gutter={16}>
 								<InputNameCombination
 									layoutCol={{ span: 12 }}
-									firstName={['first_name']}
-									lastName={['last_name']}
+									firstName={firstName}
+									lastName={lastName}
 									hideMiddleName={true}
 								/>
 							</Row>
 							<Form.Item
 								label="Organization name"
-								name={['org_name']}
+								name={orgName}
 								rules={[
 									{
 										required: true,
@@ -161,7 +173,7 @@ const OrganizationProfile = (
 							</Form.Item>
 							<Form.Item
 								label="Email account"
-								name={['email']}
+								name={emailName}
 								rules={[
 									{
 										required: true,
@@ -175,13 +187,17 @@ const OrganizationProfile = (
 							>
 								<Input placeholder="Email account" allowClear />
 							</Form.Item>
-							<ConfirmPassWord isShowRule={false} />
+							<ConfirmPassWord
+								isShowRule={false}
+								passwordName={passwordName}
+								confirmPasswordName={confirmPasswordName}
+							/>
 						</>
 					)}
 
 					<Form.Item
 						label="Contact name"
-						name={['contact_name']}
+						name={contactName}
 						rules={[
 							{
 								required: true,
@@ -195,7 +211,7 @@ const OrganizationProfile = (
 					</Form.Item>
 					<Form.Item
 						label="Contact email"
-						name={['contact_email']}
+						name={contactEmailName}
 						rules={[
 							{
 								required: true,
@@ -210,7 +226,7 @@ const OrganizationProfile = (
 					</Form.Item>
 					<Form.Item
 						label="Contact phone"
-						name={['contact_phone']}
+						name={contactPhoneName}
 						rules={[
 							{
 								required: true,
@@ -223,36 +239,36 @@ const OrganizationProfile = (
 					>
 						<InputPhone placeholder="Contact phone" />
 					</Form.Item>
-					<Form.Item label="Organization tagline" name={['tagline']}>
+					<Form.Item label="Organization tagline" name={taglineName}>
 						<TextArea
 							placeholder="Organization tagline"
 							autoSize={{ minRows: 2, maxRows: 2 }}
 						/>
 					</Form.Item>
-					<Form.Item label="Website link" name={['website']}>
+					<Form.Item
+						label="Website link"
+						name={websiteName}
+						getValueFromEvent={(v) => v.target.value?.replace(/^https?:\/\//, '')}
+					>
 						<Input addonBefore="https://" placeholder="Website link" allowClear />
 					</Form.Item>
 					<div className="!flex">
 						<Form.Item
 							label="Loan amount (US $)"
-							name={[...metadataName, 'loan_amount_range', 'min']}
+							name={loanAmountMinName}
 							className="flex-1"
 						>
 							<InputNumAmount placeholder="Min.loan amount" className="!w-full" />
 						</Form.Item>
 						{to}
-						<Form.Item
-							label=" "
-							name={[...metadataName, 'loan_amount_range', 'max']}
-							className="flex-1"
-						>
+						<Form.Item label=" " name={loanAmountMaxName} className="flex-1">
 							<InputNumAmount placeholder="Max.loan amount" className="!w-full" />
 						</Form.Item>
 					</div>
 					<div className="!flex">
 						<Form.Item
 							label="Loan term (Months)"
-							name={[...metadataName, 'loan_term_range', 'min']}
+							name={loanTermMinName}
 							className="flex-1"
 						>
 							<InputNumber
@@ -263,11 +279,7 @@ const OrganizationProfile = (
 							/>
 						</Form.Item>
 						{to}
-						<Form.Item
-							label=" "
-							name={[...metadataName, 'loan_term_range', 'max']}
-							className="flex-1"
-						>
+						<Form.Item label=" " name={loanTermMaxName} className="flex-1">
 							<InputNumber
 								placeholder="Max.loan term"
 								className="!w-full"
@@ -277,11 +289,7 @@ const OrganizationProfile = (
 						</Form.Item>
 					</div>
 					<div className="!flex">
-						<Form.Item
-							label="Loan rate"
-							name={[...metadataName, 'loan_rate_range', 'min']}
-							className="flex-1"
-						>
+						<Form.Item label="Loan rate" name={loanRateMinName} className="flex-1">
 							<InputNumber
 								placeholder="Min.loan rate"
 								className="!w-full"
@@ -291,11 +299,7 @@ const OrganizationProfile = (
 							/>
 						</Form.Item>
 						{to}
-						<Form.Item
-							label=" "
-							name={[...metadataName, 'loan_rate_range', 'max']}
-							className="flex-1"
-						>
+						<Form.Item label=" " name={loanRateMaxName} className="flex-1">
 							<InputNumber
 								placeholder="Max.loan rate"
 								className="!w-full"
@@ -306,11 +310,7 @@ const OrganizationProfile = (
 						</Form.Item>
 					</div>
 					<div className="!flex">
-						<Form.Item
-							label="Loan points"
-							name={[...metadataName, 'loan_point_range', 'min']}
-							className="flex-1"
-						>
+						<Form.Item label="Loan points" name={loanPointMinName} className="flex-1">
 							<InputNumber
 								placeholder="Min.loan points"
 								className="!w-full"
@@ -320,11 +320,7 @@ const OrganizationProfile = (
 							/>
 						</Form.Item>
 						{to}
-						<Form.Item
-							label=" "
-							name={[...metadataName, 'loan_point_range', 'max']}
-							className="flex-1"
-						>
+						<Form.Item label=" " name={loanPointMaxName} className="flex-1">
 							<InputNumber
 								placeholder="Max.loan points"
 								className="!w-full"

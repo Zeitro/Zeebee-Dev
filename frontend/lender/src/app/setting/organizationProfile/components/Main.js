@@ -1,12 +1,16 @@
+'use client';
 import { NewModal, OrgProfile } from '@repo/shared-methods';
+import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 import { Alert, message } from 'antd';
 import { useRef, useState } from 'react';
+import _ from 'lodash';
 
 // 用于登录、注册等位置，首次注册用户填写组织信息，才可登录系统
 const MainModal = ({ rowData, setOpen, successCallback }) => {
 	const orgRef = useRef();
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const [okText, setOkText] = useState('Save & Login');
+	const [orgData, setOrgData] = useState({});
 	const handleSave = async () => {
 		try {
 			setConfirmLoading(true);
@@ -27,6 +31,15 @@ const MainModal = ({ rowData, setOpen, successCallback }) => {
 			setConfirmLoading(false);
 		}
 	};
+	useDeferredSyncEffect({
+		deferred: () => {
+			const org = _.cloneDeep(rowData);
+			org.metadata = org?.metadata?.lender;
+			setOrgData(org);
+		},
+		deps: [rowData],
+		isUseMicrotask: true,
+	});
 	return (
 		<NewModal
 			width={800}
@@ -44,9 +57,8 @@ const MainModal = ({ rowData, setOpen, successCallback }) => {
 			<OrgProfile
 				ref={orgRef}
 				api="/organization/profile"
-				rowData={rowData}
-				metadataName={['lender_metadata']}
-				initMetadataName={['metadata', 'lender']}
+				rowData={orgData}
+				emailName={['owner', 'email']}
 				className={'h-[65vh] overflow-hidden overflow-y-auto'}
 				leftCol={{ lg: 8, sm: 24, xl: 8 }}
 				rightCol={{ lg: 16, sm: 24, xl: 16 }}

@@ -94,30 +94,30 @@ const useContent = () => {
 		{
 			type: 'divider',
 		},
-		{
-			key: 'organization',
-			label: (
-				<Tooltip
-					title={organizationContent}
-					placement="rightTop"
-					align={{ offset: [17, -5] }}
-					arrow={false}
-					classNames={{
-						root: '[&_.ant-tooltip-inner]:!py-1 !px-1 text-sm',
-					}}
-					color="white"
-				>
-					<div className="flex justify-between items-center">
-						<span className="pr-10">Change organization</span>
-						<RightOutlined style={{ fontSize: 9 }} />
-					</div>
-				</Tooltip>
-			),
-			icon: <SwapOutlined />,
-		},
-		{
-			type: 'divider',
-		},
+		// {
+		// 	key: 'organization',
+		// 	label: (
+		// 		<Tooltip
+		// 			title={organizationContent}
+		// 			placement="rightTop"
+		// 			align={{ offset: [17, -5] }}
+		// 			arrow={false}
+		// 			classNames={{
+		// 				root: '[&_.ant-tooltip-inner]:!py-1 !px-1 text-sm',
+		// 			}}
+		// 			color="white"
+		// 		>
+		// 			<div className="flex justify-between items-center">
+		// 				<span className="pr-10">Change organization</span>
+		// 				<RightOutlined style={{ fontSize: 9 }} />
+		// 			</div>
+		// 		</Tooltip>
+		// 	),
+		// 	icon: <SwapOutlined />,
+		// },
+		// {
+		// 	type: 'divider',
+		// },
 		// {
 		// 	key: '/personalCenter/changePassword',
 		// 	label: 'Change password',

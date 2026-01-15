@@ -3,10 +3,13 @@ import { OrgProfile } from '@repo/shared-methods';
 import { Button, message } from 'antd';
 import { useRef, useState } from 'react';
 import { useUserStore } from '@/store/user';
+import _ from 'lodash';
+import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 const OrganizationProfile = () => {
 	const { organization, getOrganization } = useUserStore();
 	const orgRef = useRef();
 	const [confirmLoading, setConfirmLoading] = useState(false);
+	const [orgData, setOrgData] = useState({});
 
 	const handleSave = async () => {
 		try {
@@ -24,14 +27,23 @@ const OrganizationProfile = () => {
 		}
 	};
 
+	useDeferredSyncEffect({
+		deferred: () => {
+			const org = _.cloneDeep(organization);
+			org.metadata = org?.metadata?.lender;
+			setOrgData(org);
+		},
+		deps: [organization],
+		isUseMicrotask: true,
+	});
+
 	return (
 		<div className=" py-6 px-8 flex-1 overflow-hidden w-full overflow-y-auto">
 			<OrgProfile
 				ref={orgRef}
-				rowData={organization}
+				rowData={orgData}
 				api="/organization/profile"
-				metadataName={['lender_metadata']}
-				initMetadataName={['metadata', 'lender']}
+				emailName={['owner', 'email']}
 			>
 				<div className="flex justify-end">
 					<Button type="primary" loading={confirmLoading} onClick={handleSave}>

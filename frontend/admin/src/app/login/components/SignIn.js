@@ -91,7 +91,9 @@ const SignIn = ({ form, setPageType }) => {
 	return (
 		<>
 			{contextHolder}
-			<div className="text-[30px]/[40px] font-medium pb-6">Sign in to ZeeBee Lender</div>
+			<div className="text-[30px]/[40px] font-medium pb-6">
+				Sign in to Zeebee Admin Console
+			</div>
 			<Form.Item
 				label="Email"
 				name="email"
@@ -166,12 +168,12 @@ const SignIn = ({ form, setPageType }) => {
 					Login
 				</Button>
 			</Form.Item>
-			<div className="flex items-center justify-end">
+			{/* <div className="flex items-center justify-end">
 				Don’t have an account?
 				<Button type="link" size="small" onClick={() => router.push('/login/register')}>
 					Create one!
 				</Button>
-			</div>
+			</div> */}
 		</>
 	);
 };
