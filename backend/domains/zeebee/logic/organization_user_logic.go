@@ -670,17 +670,6 @@ func (l *OrganizationUserLogic) transToBo(src *model.OrganizationUser) (result *
 	if err != nil {
 		return nil
 	}
-	// if src == nil {
-	// 	return nil
-	// }
-	// result = &bo.OrganizationUserBo{}
-	// _ = copier.CopyWithOption(result, src, copier.Option{
-	// 	DeepCopy:      true,
-	// 	CaseSensitive: true,
-	// 	Converters: []copier.TypeConverter{
-	// 		copierx.TimeToRFC3339Str(),
-	// 	},
-	// })
 	if src.User != nil {
 		result.Email = src.User.Email
 	}
