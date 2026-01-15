@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import { Form } from 'antd';
 
 const ApplicationFormViewPDF = dynamic(
-	() => import('@/components/ApplicationFormViewPDF'), // Adjust the path to your component
+	() => import('@repo/shared-methods/components/ApplicationFormViewPDF'), // Adjust the path to your component
 	{
 		ssr: false, // This is the crucial part
 		// Optional: Add a loading component to improve UX

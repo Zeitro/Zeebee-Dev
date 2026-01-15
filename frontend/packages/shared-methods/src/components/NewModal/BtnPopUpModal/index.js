@@ -35,7 +35,7 @@ export const BtnPopUpModal = ({
 	getContent = () => {}, // 弹框组件
 	isButton = true,
 	predicate = () => true, // 用于条件判断不通过,则不弹出弹框
-	isStopPropagation = true,
+	isStopPropagation,
 	...props
 }) => {
 	const [modal, contextHolder] = Modal.useModal();
@@ -82,7 +82,7 @@ export const DeleteBtn = ({
 	size = 'small',
 	disabled,
 	className,
-	isStopPropagation = true,
+	isStopPropagation,
 	predicate = () => true,
 	...props
 }) => {
