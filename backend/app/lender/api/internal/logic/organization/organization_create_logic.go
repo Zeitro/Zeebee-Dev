@@ -30,11 +30,21 @@ func (l *OrganizationCreateLogic) OrganizationCreate(req *types.OrganizationCrea
 	// Convert API request to proto request
 	rpcReqData, err := copierx.Trans[types.OrganizationCreateRequest, lender.OrganizationCreateRequestData](
 		req,
-		copierx.TimeToRFC3339Str(),
 	)
 	if err != nil {
 		return nil, err
 	}
+
+	lenderMetadata, err := copierx.Trans[types.OrganizationLenderMetadataEntity, lender.OrganizationLenderMetadataEntity](
+		req.Metadata,
+	)
+	if err != nil {
+		return nil, err
+	}
+	if rpcReqData.Metadata == nil {
+		rpcReqData.Metadata = &lender.OrganizationMetadataEntity{}
+	}
+	rpcReqData.Metadata.Lender = lenderMetadata
 
 	// Build RPC request
 	rpcReq := &lender.OrganizationCreateRequest{

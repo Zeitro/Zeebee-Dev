@@ -15,7 +15,6 @@ type OrganizationEntity {
     Id int64 `json:"id"`
     Name string `json:"name"`
     Status string `json:"status"`
-    //    OwnerId int64 `json:"owner_id"`
     Address AddressEntity `json:"address"`
     ContactEmail string `json:"contact_email"`
     ContactPhone string `json:"contact_phone"`
@@ -53,7 +52,7 @@ type OrganizationUpdateProfileRequest {
     Logo string `json:"logo,optional"`
     Website string `json:"website,optional"`
     Tagline string `json:"tagline,optional"`
-    LenderMetadata *OrganizationLenderMetadataEntity `json:"lender_metadata,optional"`
+    Metadata *OrganizationLenderMetadataEntity `json:"metadata,optional"`
 }
 type OrganizationCreateRequest {
     Name string `json:"name" validate:"required,min=2,max=50"`
@@ -63,6 +62,6 @@ type OrganizationCreateRequest {
     Logo string `json:"logo,optional"`
     Website string `json:"website,optional"`
     Tagline string `json:"tagline,optional"`
-    LenderMetadata *OrganizationLenderMetadataEntity `json:"lender_metadata,optional"`
+    Metadata *OrganizationLenderMetadataEntity `json:"metadata,optional"`
 
 }

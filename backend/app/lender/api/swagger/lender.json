@@ -2901,7 +2901,10 @@
                 "contact_phone": {
                   "type": "string"
                 },
-                "lender_metadata": {
+                "logo": {
+                  "type": "string"
+                },
+                "metadata": {
                   "type": "object",
                   "required": [
                     "loan_amount_range",
@@ -2971,9 +2974,6 @@
                       }
                     }
                   }
-                },
-                "logo": {
-                  "type": "string"
                 },
                 "name": {
                   "type": "string"
@@ -3497,7 +3497,10 @@
                 "contact_phone": {
                   "type": "string"
                 },
-                "lender_metadata": {
+                "logo": {
+                  "type": "string"
+                },
+                "metadata": {
                   "type": "object",
                   "required": [
                     "loan_amount_range",
@@ -3567,9 +3570,6 @@
                       }
                     }
                   }
-                },
-                "logo": {
-                  "type": "string"
                 },
                 "tagline": {
                   "type": "string"
@@ -6546,7 +6546,7 @@
       }
     }
   },
-  "x-date": "2026-01-14 10:45:15",
+  "x-date": "2026-01-15 16:29:39",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

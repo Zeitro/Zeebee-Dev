@@ -3,15 +3,13 @@ package organizationlogic
 import (
 	"context"
 
+	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/model"
-
-	"github.com/jinzhu/copier"
-	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/common/errorx"
 )
@@ -64,22 +62,22 @@ func (l *UpdateProfileLogic) UpdateProfile(in *lender.OrganizationUpdateProfileR
 	}
 
 	// Initialize metadata if nil
-	if organization.Metadata == nil {
-		organization.Metadata = &model.OrganizationMetadata{}
-	}
-	var lenderMetadata *model.OrganizationLenderMetadata
+	// if organization.Metadata == nil {
+	// 	organization.Metadata = &model.OrganizationMetadata{}
+	// }
+	// var lenderMetadata *model.OrganizationLenderMetadata
 	// Manually assign metadata if provided
-	if in.Data.LenderMetadata != nil {
-		// Convert lender metadata from proto to model
-		lenderMetadata, err = copierx.Trans[lender.OrganizationLenderMetadataEntity, model.OrganizationLenderMetadata](
-			in.Data.LenderMetadata,
-		)
-		if err != nil {
-			return nil, errorx.Wrap(err, "Failed To Convert Lender Metadata")
-		}
-	}
+	// if in.Data.LenderMetadata != nil {
+	// 	// Convert lender metadata from proto to model
+	// 	lenderMetadata, err = copierx.Trans[lender.OrganizationLenderMetadataEntity, model.OrganizationLenderMetadata](
+	// 		in.Data.LenderMetadata,
+	// 	)
+	// 	if err != nil {
+	// 		return nil, errorx.Wrap(err, "Failed To Convert Lender Metadata")
+	// 	}
+	// }
 	// Update only the lender field in metadata
-	organization.Metadata.Lender = lenderMetadata
+	// organization.Metadata.Lender = lenderMetadata
 
 	// Update the model
 	_, err = l.svcCtx.OrganizationRepo.UpdateOneById(l.ctx, claim.OrganizationId, organization)

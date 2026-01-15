@@ -35,6 +35,16 @@ func (l *OrganizationUpdateProfileLogic) OrganizationUpdateProfile(req *types.Or
 	if err != nil {
 		return nil, err
 	}
+	lenderMetadata, err := copierx.Trans[types.OrganizationLenderMetadataEntity, lender.OrganizationLenderMetadataEntity](
+		req.Metadata,
+	)
+	if err != nil {
+		return nil, err
+	}
+	if rpcReqData.Metadata == nil {
+		rpcReqData.Metadata = &lender.OrganizationMetadataEntity{}
+	}
+	rpcReqData.Metadata.Lender = lenderMetadata
 
 	// Build RPC request
 	rpcReq := &lender.OrganizationUpdateProfileRequest{

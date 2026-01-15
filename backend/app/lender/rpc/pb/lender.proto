@@ -1274,7 +1274,7 @@ message OrganizationUpdateProfileRequestData {
   string logo = 4;
   string website = 5;
   string tagline = 6;
-  OrganizationLenderMetadataEntity lender_metadata = 7;
+  OrganizationMetadataEntity metadata = 7;
 }
 
 // create organization --  request
@@ -1289,7 +1289,7 @@ message OrganizationCreateRequestData {
   string logo = 8;
   string website = 9;
   string tagline = 10;
-  OrganizationLenderMetadataEntity lender_metadata = 11;
+  OrganizationMetadataEntity metadata = 11;
 }
 // create organization --  response
 message OrganizationDetailResponse {
