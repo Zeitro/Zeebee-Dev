@@ -41,6 +41,7 @@ type RpcConf struct {
 	SendInviteEmailPeriodSeconds int
 	PreApprovalLoanConf          []PreApprovalLoanConf
 	ZeebeeAgentEmail             string
+	ZeitroConf                   ZeitroConf
 }
 
 type DbConf struct {
@@ -110,4 +111,10 @@ type EmailAuthConf struct {
 		ClientSecret string
 		CallbackUrl  string
 	}
+}
+
+type ZeitroConf struct {
+	Url      string
+	Username string
+	Password string
 }

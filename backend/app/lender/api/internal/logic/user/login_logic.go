@@ -3,14 +3,12 @@ package user
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/errorx"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/common/copierx"
 )
 
 type LoginLogic struct {
@@ -28,8 +26,8 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 	}
 }
 
-func (l *LoginLogic) Login(req *types.UserLoginRequest) (resp *types.UserLoginResponse, err error) {
-	resp = &types.UserLoginResponse{}
+func (l *LoginLogic) Login(req *types.UserLoginRequest) (resp *types.UserJwtResponse, err error) {
+
 	// call rpc
 	rpcResp, err := l.svcCtx.UserRpcClient.Login(l.ctx, &lender.UserLoginRequest{
 		Data: &lender.UserLoginRequestData{
@@ -40,11 +38,11 @@ func (l *LoginLogic) Login(req *types.UserLoginRequest) (resp *types.UserLoginRe
 	if err != nil {
 		return nil, err
 	}
-
 	// trans response
-	err = copier.Copy(resp, &rpcResp.Data)
+	resp, err = copierx.Trans[lender.UserJwtResponseData, types.UserJwtResponse](rpcResp.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
+
 	return resp, err
 }

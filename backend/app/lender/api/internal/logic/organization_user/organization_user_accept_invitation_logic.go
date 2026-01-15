@@ -26,7 +26,7 @@ func NewOrganizationUserAcceptInvitationLogic(ctx context.Context, svcCtx *svc.S
 	}
 }
 
-func (l *OrganizationUserAcceptInvitationLogic) OrganizationUserAcceptInvitation(req *types.OrganizationUserAcceptInvitationRequest) (resp *types.UserLoginResponse, err error) {
+func (l *OrganizationUserAcceptInvitationLogic) OrganizationUserAcceptInvitation(req *types.OrganizationUserAcceptInvitationRequest) (resp *types.UserJwtResponse, err error) {
 	data, err := copierx.Trans[types.OrganizationUserAcceptInvitationRequest, lender.OrganizationUserAcceptInvitationRequestData](req)
 	if err != nil {
 		return nil, err
@@ -41,7 +41,7 @@ func (l *OrganizationUserAcceptInvitationLogic) OrganizationUserAcceptInvitation
 		return nil, err
 	}
 
-	resp, err = copierx.Trans[lender.UserLoginResponseData, types.UserLoginResponse](rpcResp.Data)
+	resp, err = copierx.Trans[lender.UserJwtResponseData, types.UserJwtResponse](rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

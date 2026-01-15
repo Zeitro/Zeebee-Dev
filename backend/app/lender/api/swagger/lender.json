@@ -2862,6 +2862,955 @@
         }
       }
     },
+    "/api/v1/organization": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization"
+        ],
+        "summary": "create",
+        "operationId": "organizationOrganizationCreate",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "name",
+                "contact_email",
+                "contact_phone",
+                "contact_name"
+              ],
+              "properties": {
+                "contact_email": {
+                  "type": "string"
+                },
+                "contact_name": {
+                  "type": "string"
+                },
+                "contact_phone": {
+                  "type": "string"
+                },
+                "logo": {
+                  "type": "string"
+                },
+                "metadata": {
+                  "type": "object",
+                  "required": [
+                    "loan_amount_range",
+                    "loan_term_range",
+                    "loan_rate_range",
+                    "loan_point_range"
+                  ],
+                  "properties": {
+                    "loan_amount_range": {
+                      "type": "object",
+                      "required": [
+                        "min",
+                        "max"
+                      ],
+                      "properties": {
+                        "max": {
+                          "type": "number"
+                        },
+                        "min": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "loan_point_range": {
+                      "type": "object",
+                      "required": [
+                        "min",
+                        "max"
+                      ],
+                      "properties": {
+                        "max": {
+                          "type": "number"
+                        },
+                        "min": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "loan_rate_range": {
+                      "type": "object",
+                      "required": [
+                        "min",
+                        "max"
+                      ],
+                      "properties": {
+                        "max": {
+                          "type": "number"
+                        },
+                        "min": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "loan_term_range": {
+                      "type": "object",
+                      "required": [
+                        "min",
+                        "max"
+                      ],
+                      "properties": {
+                        "max": {
+                          "type": "integer"
+                        },
+                        "min": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                },
+                "name": {
+                  "type": "string"
+                },
+                "tagline": {
+                  "type": "string"
+                },
+                "website": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "address": {
+                  "type": "object",
+                  "properties": {
+                    "address1": {
+                      "type": "string"
+                    },
+                    "address2": {
+                      "type": "string"
+                    },
+                    "city": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "zip_code": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "contact_email": {
+                  "type": "string"
+                },
+                "contact_name": {
+                  "type": "string"
+                },
+                "contact_phone": {
+                  "type": "string"
+                },
+                "created_at": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "is_editable": {
+                  "type": "boolean"
+                },
+                "logo": {
+                  "type": "string"
+                },
+                "metadata": {
+                  "type": "object",
+                  "required": [
+                    "lender"
+                  ],
+                  "properties": {
+                    "lender": {
+                      "type": "object",
+                      "required": [
+                        "loan_amount_range",
+                        "loan_term_range",
+                        "loan_rate_range",
+                        "loan_point_range"
+                      ],
+                      "properties": {
+                        "loan_amount_range": {
+                          "type": "object",
+                          "required": [
+                            "min",
+                            "max"
+                          ],
+                          "properties": {
+                            "max": {
+                              "type": "number"
+                            },
+                            "min": {
+                              "type": "number"
+                            }
+                          }
+                        },
+                        "loan_point_range": {
+                          "type": "object",
+                          "required": [
+                            "min",
+                            "max"
+                          ],
+                          "properties": {
+                            "max": {
+                              "type": "number"
+                            },
+                            "min": {
+                              "type": "number"
+                            }
+                          }
+                        },
+                        "loan_rate_range": {
+                          "type": "object",
+                          "required": [
+                            "min",
+                            "max"
+                          ],
+                          "properties": {
+                            "max": {
+                              "type": "number"
+                            },
+                            "min": {
+                              "type": "number"
+                            }
+                          }
+                        },
+                        "loan_term_range": {
+                          "type": "object",
+                          "required": [
+                            "min",
+                            "max"
+                          ],
+                          "properties": {
+                            "max": {
+                              "type": "integer"
+                            },
+                            "min": {
+                              "type": "integer"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "name": {
+                  "type": "string"
+                },
+                "organization_emails": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "email",
+                      "auth_strategy",
+                      "purpose",
+                      "is_authorized"
+                    ],
+                    "properties": {
+                      "auth_strategy": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "is_authorized": {
+                        "type": "boolean"
+                      },
+                      "purpose": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "owner": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "email",
+                    "first_name",
+                    "mid_name",
+                    "last_name",
+                    "full_name",
+                    "status",
+                    "type",
+                    "created_at",
+                    "updated_at"
+                  ],
+                  "properties": {
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "first_name": {
+                      "type": "string"
+                    },
+                    "full_name": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "last_name": {
+                      "type": "string"
+                    },
+                    "mid_name": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "owner_type": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "tagline": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "updated_at": {
+                  "type": "string"
+                },
+                "website": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organization/profile": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization"
+        ],
+        "summary": "profile",
+        "operationId": "organizationOrganizationProfile",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "address": {
+                  "type": "object",
+                  "properties": {
+                    "address1": {
+                      "type": "string"
+                    },
+                    "address2": {
+                      "type": "string"
+                    },
+                    "city": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "zip_code": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "contact_email": {
+                  "type": "string"
+                },
+                "contact_name": {
+                  "type": "string"
+                },
+                "contact_phone": {
+                  "type": "string"
+                },
+                "created_at": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "is_editable": {
+                  "type": "boolean"
+                },
+                "logo": {
+                  "type": "string"
+                },
+                "metadata": {
+                  "type": "object",
+                  "required": [
+                    "lender"
+                  ],
+                  "properties": {
+                    "lender": {
+                      "type": "object",
+                      "required": [
+                        "loan_amount_range",
+                        "loan_term_range",
+                        "loan_rate_range",
+                        "loan_point_range"
+                      ],
+                      "properties": {
+                        "loan_amount_range": {
+                          "type": "object",
+                          "required": [
+                            "min",
+                            "max"
+                          ],
+                          "properties": {
+                            "max": {
+                              "type": "number"
+                            },
+                            "min": {
+                              "type": "number"
+                            }
+                          }
+                        },
+                        "loan_point_range": {
+                          "type": "object",
+                          "required": [
+                            "min",
+                            "max"
+                          ],
+                          "properties": {
+                            "max": {
+                              "type": "number"
+                            },
+                            "min": {
+                              "type": "number"
+                            }
+                          }
+                        },
+                        "loan_rate_range": {
+                          "type": "object",
+                          "required": [
+                            "min",
+                            "max"
+                          ],
+                          "properties": {
+                            "max": {
+                              "type": "number"
+                            },
+                            "min": {
+                              "type": "number"
+                            }
+                          }
+                        },
+                        "loan_term_range": {
+                          "type": "object",
+                          "required": [
+                            "min",
+                            "max"
+                          ],
+                          "properties": {
+                            "max": {
+                              "type": "integer"
+                            },
+                            "min": {
+                              "type": "integer"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "name": {
+                  "type": "string"
+                },
+                "organization_emails": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "email",
+                      "auth_strategy",
+                      "purpose",
+                      "is_authorized"
+                    ],
+                    "properties": {
+                      "auth_strategy": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "is_authorized": {
+                        "type": "boolean"
+                      },
+                      "purpose": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "owner": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "email",
+                    "first_name",
+                    "mid_name",
+                    "last_name",
+                    "full_name",
+                    "status",
+                    "type",
+                    "created_at",
+                    "updated_at"
+                  ],
+                  "properties": {
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "first_name": {
+                      "type": "string"
+                    },
+                    "full_name": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "last_name": {
+                      "type": "string"
+                    },
+                    "mid_name": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "owner_type": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "tagline": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "updated_at": {
+                  "type": "string"
+                },
+                "website": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization"
+        ],
+        "summary": "update profile",
+        "operationId": "organizationOrganizationUpdateProfile",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "contact_email",
+                "contact_phone",
+                "contact_name"
+              ],
+              "properties": {
+                "contact_email": {
+                  "type": "string"
+                },
+                "contact_name": {
+                  "type": "string"
+                },
+                "contact_phone": {
+                  "type": "string"
+                },
+                "logo": {
+                  "type": "string"
+                },
+                "metadata": {
+                  "type": "object",
+                  "required": [
+                    "loan_amount_range",
+                    "loan_term_range",
+                    "loan_rate_range",
+                    "loan_point_range"
+                  ],
+                  "properties": {
+                    "loan_amount_range": {
+                      "type": "object",
+                      "required": [
+                        "min",
+                        "max"
+                      ],
+                      "properties": {
+                        "max": {
+                          "type": "number"
+                        },
+                        "min": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "loan_point_range": {
+                      "type": "object",
+                      "required": [
+                        "min",
+                        "max"
+                      ],
+                      "properties": {
+                        "max": {
+                          "type": "number"
+                        },
+                        "min": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "loan_rate_range": {
+                      "type": "object",
+                      "required": [
+                        "min",
+                        "max"
+                      ],
+                      "properties": {
+                        "max": {
+                          "type": "number"
+                        },
+                        "min": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "loan_term_range": {
+                      "type": "object",
+                      "required": [
+                        "min",
+                        "max"
+                      ],
+                      "properties": {
+                        "max": {
+                          "type": "integer"
+                        },
+                        "min": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                },
+                "tagline": {
+                  "type": "string"
+                },
+                "website": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "address": {
+                  "type": "object",
+                  "properties": {
+                    "address1": {
+                      "type": "string"
+                    },
+                    "address2": {
+                      "type": "string"
+                    },
+                    "city": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "zip_code": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "contact_email": {
+                  "type": "string"
+                },
+                "contact_name": {
+                  "type": "string"
+                },
+                "contact_phone": {
+                  "type": "string"
+                },
+                "created_at": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "is_editable": {
+                  "type": "boolean"
+                },
+                "logo": {
+                  "type": "string"
+                },
+                "metadata": {
+                  "type": "object",
+                  "required": [
+                    "lender"
+                  ],
+                  "properties": {
+                    "lender": {
+                      "type": "object",
+                      "required": [
+                        "loan_amount_range",
+                        "loan_term_range",
+                        "loan_rate_range",
+                        "loan_point_range"
+                      ],
+                      "properties": {
+                        "loan_amount_range": {
+                          "type": "object",
+                          "required": [
+                            "min",
+                            "max"
+                          ],
+                          "properties": {
+                            "max": {
+                              "type": "number"
+                            },
+                            "min": {
+                              "type": "number"
+                            }
+                          }
+                        },
+                        "loan_point_range": {
+                          "type": "object",
+                          "required": [
+                            "min",
+                            "max"
+                          ],
+                          "properties": {
+                            "max": {
+                              "type": "number"
+                            },
+                            "min": {
+                              "type": "number"
+                            }
+                          }
+                        },
+                        "loan_rate_range": {
+                          "type": "object",
+                          "required": [
+                            "min",
+                            "max"
+                          ],
+                          "properties": {
+                            "max": {
+                              "type": "number"
+                            },
+                            "min": {
+                              "type": "number"
+                            }
+                          }
+                        },
+                        "loan_term_range": {
+                          "type": "object",
+                          "required": [
+                            "min",
+                            "max"
+                          ],
+                          "properties": {
+                            "max": {
+                              "type": "integer"
+                            },
+                            "min": {
+                              "type": "integer"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "name": {
+                  "type": "string"
+                },
+                "organization_emails": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "email",
+                      "auth_strategy",
+                      "purpose",
+                      "is_authorized"
+                    ],
+                    "properties": {
+                      "auth_strategy": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "is_authorized": {
+                        "type": "boolean"
+                      },
+                      "purpose": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "owner": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "email",
+                    "first_name",
+                    "mid_name",
+                    "last_name",
+                    "full_name",
+                    "status",
+                    "type",
+                    "created_at",
+                    "updated_at"
+                  ],
+                  "properties": {
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "first_name": {
+                      "type": "string"
+                    },
+                    "full_name": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "last_name": {
+                      "type": "string"
+                    },
+                    "mid_name": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "owner_type": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "tagline": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "updated_at": {
+                  "type": "string"
+                },
+                "website": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/organization_user": {
       "post": {
         "consumes": [
@@ -5279,12 +6228,7 @@
               "type": "object",
               "required": [
                 "email",
-                "type",
-                "organization_id",
                 "organization_name",
-                "contact_email",
-                "contact_phone",
-                "contact_name",
                 "password",
                 "confirm_password",
                 "first_name",
@@ -5292,15 +6236,6 @@
               ],
               "properties": {
                 "confirm_password": {
-                  "type": "string"
-                },
-                "contact_email": {
-                  "type": "string"
-                },
-                "contact_name": {
-                  "type": "string"
-                },
-                "contact_phone": {
                   "type": "string"
                 },
                 "email": {
@@ -5312,22 +6247,10 @@
                 "last_name": {
                   "type": "string"
                 },
-                "logo": {
-                  "type": "string"
-                },
-                "organization_id": {
-                  "type": "integer"
-                },
                 "organization_name": {
                   "type": "string"
                 },
                 "password": {
-                  "type": "string"
-                },
-                "type": {
-                  "type": "string"
-                },
-                "website": {
                   "type": "string"
                 }
               }
@@ -5338,21 +6261,7 @@
           "200": {
             "description": "",
             "schema": {
-              "type": "object",
-              "properties": {
-                "access_token": {
-                  "type": "string"
-                },
-                "access_token_expire": {
-                  "type": "integer"
-                },
-                "refresh_token": {
-                  "type": "string"
-                },
-                "refresh_token_expire": {
-                  "type": "integer"
-                }
-              }
+              "type": "object"
             }
           }
         }
@@ -5472,6 +6381,50 @@
         }
       }
     },
+    "/api/v1/user/send_verify_email": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "user"
+        ],
+        "summary": "send verify email",
+        "operationId": "userSendVerifyEmail",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "email"
+              ],
+              "properties": {
+                "email": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/user/switch_organization": {
       "post": {
         "consumes": [
@@ -5529,9 +6482,71 @@
           }
         }
       }
+    },
+    "/api/v1/user/verify_email": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "user"
+        ],
+        "summary": "verify email",
+        "operationId": "userVerifyEmail",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "email",
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "access_token": {
+                  "type": "string"
+                },
+                "access_token_expire": {
+                  "type": "integer"
+                },
+                "refresh_token": {
+                  "type": "string"
+                },
+                "refresh_token_expire": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
-  "x-date": "2025-12-29 14:02:47",
+  "x-date": "2026-01-15 16:29:39",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

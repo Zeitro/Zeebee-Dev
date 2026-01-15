@@ -3,14 +3,12 @@ package user
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/errorx"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/common/copierx"
 )
 
 type ResetPasswordLogic struct {
@@ -28,8 +26,7 @@ func NewResetPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Res
 	}
 }
 
-func (l *ResetPasswordLogic) ResetPassword(req *types.UserResetPasswordRequest) (resp *types.UserLoginResponse, err error) {
-	resp = &types.UserLoginResponse{}
+func (l *ResetPasswordLogic) ResetPassword(req *types.UserResetPasswordRequest) (resp *types.UserJwtResponse, err error) {
 
 	rpcResp, err := l.svcCtx.UserRpcClient.ResetPassword(l.ctx, &lender.ResetPasswordRequest{
 		Data: &lender.ResetPasswordRequestData{
@@ -42,9 +39,6 @@ func (l *ResetPasswordLogic) ResetPassword(req *types.UserResetPasswordRequest) 
 		return nil, err
 	}
 	// trans response data
-	err = copier.Copy(resp, &rpcResp.Data)
-	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
-	}
-	return resp, nil
+	resp, err = copierx.Trans[lender.UserJwtResponseData, types.UserJwtResponse](rpcResp.Data)
+	return resp, err
 }

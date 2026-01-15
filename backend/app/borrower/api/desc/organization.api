@@ -8,6 +8,7 @@ info(
 
 import "address.api"
 import "organization_email.api"
+import "common.api"
 
 type (
     UserInfoOrganizationEntity {
@@ -30,11 +31,26 @@ type OrganizationEntity {
     Type string `json:"type"`
     Logo string `json:"logo"`
     Website string `json:"website"`
+    Tagline string `json:"tagline"`
+    Metadata *OrganizationMetadataEntity `json:"metadata"`
     CreatedAt string `json:"created_at"`
     UpdatedAt string `json:"updated_at"`
 
     OrganizationEmails []*OrganizationEmailEntity `json:"organization_emails"`
 }
+
+type OrganizationMetadataEntity {
+    Lender *OrganizationLenderMetadataEntity `json:"lender,omitempty"`
+}
+type (
+    OrganizationLenderMetadataEntity {
+        LoanAmountRange RangeFloat64 `json:"loan_amount_range"`
+        LoanTermRange RangeInt `json:"loan_term_range"`
+        LoanTateRange RangeFloat64 `json:"loan_tate_range"`
+        LoanPointRange RangeFloat64 `json:"loan_point_range"`
+    }
+)
+
 
 type OrganizationOptionEntity {
     Id int64 `json:"id"`

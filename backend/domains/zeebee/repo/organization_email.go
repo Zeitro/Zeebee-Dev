@@ -74,3 +74,18 @@ func (repo *OrganizationEmailRepo) GetOrCreateOrganizationEmailWithTx(ctx contex
 	}
 	return result, isNew, nil
 }
+
+// DeleteByIdWithTx deletes an email authorization record by its ID within a transaction.
+func (repo *OrganizationEmailRepo) DeleteByIdWithTx(ctx context.Context, tx *gorm.DB, id int64) (err error) {
+	var data *model.OrganizationEmail
+	err = tx.WithContext(ctx).
+		Model(&model.OrganizationEmail{}).
+		Preload("EmailAuthorizations").
+		Where("id = ?", id).
+		First(&data).Error
+	if err != nil {
+		return errorx.WithStack(err)
+	}
+	err = tx.WithContext(ctx).Select("EmailAuthorizations").Delete(data).Error
+	return err
+}

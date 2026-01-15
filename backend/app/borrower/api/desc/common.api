@@ -27,3 +27,14 @@ type (
         Uuid string `json:"uuid"`
     }
 )
+
+type (
+    RangeInt {
+        Min int `json:"min"`
+        Max int `json:"max"`
+    }
+    RangeFloat64 {
+        Min float64 `json:"min"`
+        Max float64 `json:"max"`
+    }
+)
