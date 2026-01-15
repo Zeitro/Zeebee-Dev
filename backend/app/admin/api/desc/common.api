@@ -20,8 +20,8 @@ type (
 // page
 type (
     BasePageRequest {
-        PageNum int `json:"pageNum,optional"`
-        PageSize int `json:"pageSize, optional"`
+        Limit int `json:"limit,optional"`
+        Page int `json:"page, optional"`
     }
     BasePageFilter {
         Keyword string `json:"keyword,optional"`

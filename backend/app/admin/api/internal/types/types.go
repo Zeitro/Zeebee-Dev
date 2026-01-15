@@ -30,8 +30,8 @@ type BasePageFilter struct {
 }
 
 type BasePageRequest struct {
-	PageNum  int `json:"pageNum,optional"`
-	PageSize int `json:"pageSize, optional"`
+	Limit int `json:"limit,optional"`
+	Page  int `json:"page, optional"`
 }
 
 type BasePageResponse struct {
