@@ -1,35 +1,35 @@
 services:
-  staging-admin-backend:
-    image: staging-admin-backend:${IMAGE_TAG:-latest}
+  staging-lender-backend:
+    image: staging-lender-backend:${IMAGE_TAG:-latest}
     build:
       context: ../../
-      dockerfile: deploy/admin/Dockerfile
+      dockerfile: deploy/lender/Dockerfile
       args:
         - CONFIG_ENV=staging
-    container_name: staging-admin-backend
+    container_name: staging-lender-backend
     network_mode: host
     logging:
       driver: awslogs
       options:
         awslogs-region: us-west-1
-        awslogs-group: /zeebee/admin-staging
+        awslogs-group: /zeebee/lender-staging
         awslogs-create-group: "true"
         awslogs-stream: backend-${HOSTNAME}
 
-  prod-admin-backend:
-    image: prod-admin-backend:${IMAGE_TAG:-latest}
+  prod-lender-backend:
+    image: prod-lender-backend:${IMAGE_TAG:-latest}
     build:
       context: ../../
-      dockerfile: deploy/admin/Dockerfile
+      dockerfile: deploy/lender/Dockerfile
       args:
         - CONFIG_ENV=production
-    container_name: prod-admin-backend
+    container_name: prod-lender-backend
     network_mode: host
     logging:
       driver: awslogs
       options:
         awslogs-region: us-west-1
-        awslogs-group: /zeebee/admin-production
+        awslogs-group: /zeebee/lender-production
         awslogs-create-group: "true"
         awslogs-stream: backend-${HOSTNAME}
 

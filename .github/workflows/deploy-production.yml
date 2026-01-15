@@ -5,6 +5,7 @@ on:
     branches:
       - prod-borrower-backend
       - prod-lender-backend
+      - prod-admin-backend
 
 jobs:
   deploy:
