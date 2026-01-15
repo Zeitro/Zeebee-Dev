@@ -5,6 +5,8 @@ import (
 
 	"github.com/jinzhu/copier"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
@@ -12,9 +14,6 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/bo"
-	"zeebee-backend/domains/zeebee/model"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type UpdateLenderLogic struct {
@@ -55,14 +54,6 @@ func (l *UpdateLenderLogic) UpdateLender(in *admin.OrganizationUpdateLenderReque
 	if err != nil {
 		return nil, errorx.GetFailedTransErr(err)
 	}
-	if organization.Metadata == nil {
-		organization.Metadata = &model.OrganizationMetadata{}
-	}
-	lenderMetadata, err := copierx.Trans[admin.OrganizationLenderMetadataEntity, model.OrganizationLenderMetadata](in.Data.LenderMetadata)
-	if err != nil {
-		return nil, err
-	}
-	organization.Metadata.Lender = lenderMetadata
 
 	// Update the model
 	_, err = l.svcCtx.OrganizationRepo.UpdateOneById(l.ctx, in.Data.Id, organization)

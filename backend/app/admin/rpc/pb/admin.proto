@@ -737,7 +737,7 @@ message OrganizationCreateLenderRequest {
   OrganizationCreateLenderRequestData data = 1;
 }
 message OrganizationCreateLenderRequestData {
-  OrganizationCreateLenderUserEntity user = 1;
+  OrganizationCreateLenderUserEntity owner = 1;
   OrganizationCreateLenderOrganizationEntity organization = 2;
 }
 message OrganizationCreateLenderUserEntity {
@@ -754,7 +754,7 @@ message OrganizationCreateLenderOrganizationEntity {
   string logo = 5;
   string website = 6;
   string tagline = 7;
-  OrganizationLenderMetadataEntity lender_metadata = 8;
+  OrganizationMetadataEntity metadata = 8;
 }
 
 
@@ -770,7 +770,7 @@ message OrganizationUpdateLenderRequestData {
   string logo = 5;
   string website = 6;
   string tagline = 7;
-  OrganizationLenderMetadataEntity lender_metadata = 8;
+  OrganizationMetadataEntity metadata = 8;
 }
 
 // detail -- response

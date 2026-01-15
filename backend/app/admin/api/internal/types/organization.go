@@ -4,7 +4,7 @@
 package types
 
 type OrganizationCreateLenderRequest struct {
-	User         *OrganizationCreateLenterUserEntity         `json:"user" validate:"required"`
+	Owner        *OrganizationCreateLenterUserEntity         `json:"owner" validate:"required"`
 	Organization *OrganizationCreateLenderOrganizationEntity `json:"organization" validate:"required"`
 }
 
@@ -12,7 +12,7 @@ type OrganizationEntity struct {
 	Id                 int64                       `json:"id"`
 	Name               string                      `json:"name"`
 	Status             string                      `json:"status"`
-	Address            AddressEntity               `json:"address"`
+	Address            *AddressEntity              `json:"address,omitempty"`
 	ContactEmail       string                      `json:"contact_email"`
 	ContactPhone       string                      `json:"contact_phone"`
 	ContactName        string                      `json:"contact_name"`
@@ -24,7 +24,7 @@ type OrganizationEntity struct {
 	Metadata           *OrganizationMetadataEntity `json:"metadata"`
 	CreatedAt          string                      `json:"created_at"`
 	UpdatedAt          string                      `json:"updated_at"`
-	OrganizationEmails []*OrganizationEmailEntity  `json:"organization_emails"`
+	OrganizationEmails []*OrganizationEmailEntity  `json:"organization_emails,omitempty"`
 	Owner              *UserEntity                 `json:"owner"`
 }
 
@@ -45,12 +45,12 @@ type OrganizationSwitchStatusRequest struct {
 }
 
 type OrganizationUpdateLenderRequest struct {
-	Id             int64                             `path:"id" validate:"required,min=1"`
-	ContactEmail   string                            `json:"contact_email" validate:"required,email"`
-	ContactPhone   string                            `json:"contact_phone" validate:"required,min=8,max=20"`
-	ContactName    string                            `json:"contact_name" validate:"required,min=2,max=100"`
-	Logo           string                            `json:"logo,optional"`
-	Website        string                            `json:"website,optional"`
-	Tagline        string                            `json:"tagline,optional"`
-	LenderMetadata *OrganizationLenderMetadataEntity `json:"lender_metadata,optional"`
+	Id           int64                             `path:"id" validate:"required,min=1"`
+	ContactEmail string                            `json:"contact_email" validate:"required,email"`
+	ContactPhone string                            `json:"contact_phone" validate:"required,min=8,max=20"`
+	ContactName  string                            `json:"contact_name" validate:"required,min=2,max=100"`
+	Logo         string                            `json:"logo,optional"`
+	Website      string                            `json:"website,optional"`
+	Tagline      string                            `json:"tagline,optional"`
+	Metadata     *OrganizationLenderMetadataEntity `json:"metadata,optional"`
 }

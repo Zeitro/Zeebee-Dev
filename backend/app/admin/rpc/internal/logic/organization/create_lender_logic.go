@@ -45,32 +45,27 @@ func (l *CreateLenderLogic) CreateLender(in *admin.OrganizationCreateLenderReque
 		}
 	}()
 
-	if in.Data == nil || in.Data.User == nil || in.Data.Organization == nil {
+	if in.Data == nil || in.Data.Owner == nil || in.Data.Organization == nil {
 		return nil, errorx.New("Request Data Is Required")
 	}
 
 	// Hash password
-	pwdHash, err := utils.HashPassword(in.Data.User.Password)
+	pwdHash, err := utils.HashPassword(in.Data.Owner.Password)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
 
 	// Prepare user input
-	userInput, err := copierx.Trans[admin.OrganizationCreateLenderUserEntity, dto.UserRegisterRequestDto](in.Data.User)
+	userInput, err := copierx.Trans[admin.OrganizationCreateLenderUserEntity, dto.UserRegisterRequestDto](in.Data.Owner)
 	if err != nil {
 		return nil, err
 	}
 	userInput.Status = constants.UserStatusActive
 	userInput.Type = constants.UserTypeLender
 	userInput.PasswordHash = pwdHash
-	userInput.FullName = stringx.FormatFullName(in.Data.User.FirstName, "", in.Data.User.LastName)
+	userInput.FullName = stringx.FormatFullName(in.Data.Owner.FirstName, "", in.Data.Owner.LastName)
 
 	// Prepare organization input
-	lenderMetadata, err := copierx.Trans[admin.OrganizationLenderMetadataEntity, dto.OrganizationLenderMetadata](in.Data.Organization.LenderMetadata)
-	if err != nil {
-		return nil, err
-	}
-
 	orgInput, err := copierx.Trans[admin.OrganizationCreateLenderOrganizationEntity, dto.OrganizationRegisterRequestDto](in.Data.Organization)
 	if err != nil {
 		return nil, err
@@ -78,9 +73,7 @@ func (l *CreateLenderLogic) CreateLender(in *admin.OrganizationCreateLenderReque
 	orgInput.Status = constants.OrganizationStatusActive
 	orgInput.Type = constants.UserTypeLender
 	orgInput.OwnerType = constants.OrganizationOwnerTypeThirdParty
-	orgInput.Metadata = &dto.OrganizationMetadata{
-		Lender: lenderMetadata,
-	}
+
 	// Register with organization
 	_, organizationUser, err := l.baseLogic.UserLogic.RegisterWithOrganization(l.ctx, *userInput, *orgInput, constants.UserTypeLender, true)
 	if err != nil {

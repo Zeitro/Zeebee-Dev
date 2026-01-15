@@ -43,6 +43,14 @@ func (l *OrganizationCreateLenderLogic) OrganizationCreateLender(req *types.Orga
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 
+	lenderMetadata, err := copierx.Trans[types.OrganizationLenderMetadataEntity, admin.OrganizationLenderMetadataEntity](req.Organization.Metadata)
+	if err != nil {
+		return nil, err
+	}
+	rpcReq.Data.Organization.Metadata = &admin.OrganizationMetadataEntity{
+		Lender: lenderMetadata,
+	}
+
 	// Call RPC server
 	rpcResp, err := l.svcCtx.OrganizationRpcClient.CreateLender(l.ctx, rpcReq)
 	if err != nil {

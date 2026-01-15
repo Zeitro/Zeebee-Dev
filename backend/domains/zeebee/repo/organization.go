@@ -176,7 +176,7 @@ func (repo *OrganizationRepo) Page(ctx context.Context, pageReq dto.Organization
 	if len(sorter.Column) > 0 {
 		query = query.Order(fmt.Sprintf("%s %s", sorter.Column, sorter.Sort))
 	}
-	query = query.Order(fmt.Sprintf("%s.id desc", organizationTable))
+	query = query.Order(fmt.Sprintf("%s.created_at desc", organizationTable))
 	page, err = gormx.Page[*OrganizationPageEntity](query, gormx.PageRequest{
 		Page:         pageReq.Page,
 		Limit:        pageReq.Limit,

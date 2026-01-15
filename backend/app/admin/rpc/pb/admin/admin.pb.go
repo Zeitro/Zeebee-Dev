@@ -6955,7 +6955,7 @@ func (x *OrganizationCreateLenderRequest) GetData() *OrganizationCreateLenderReq
 
 type OrganizationCreateLenderRequestData struct {
 	state         protoimpl.MessageState                      `protogen:"open.v1"`
-	User          *OrganizationCreateLenderUserEntity         `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+	Owner         *OrganizationCreateLenderUserEntity         `protobuf:"bytes,1,opt,name=owner,proto3" json:"owner,omitempty"`
 	Organization  *OrganizationCreateLenderOrganizationEntity `protobuf:"bytes,2,opt,name=organization,proto3" json:"organization,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -6991,9 +6991,9 @@ func (*OrganizationCreateLenderRequestData) Descriptor() ([]byte, []int) {
 	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{112}
 }
 
-func (x *OrganizationCreateLenderRequestData) GetUser() *OrganizationCreateLenderUserEntity {
+func (x *OrganizationCreateLenderRequestData) GetOwner() *OrganizationCreateLenderUserEntity {
 	if x != nil {
-		return x.User
+		return x.Owner
 	}
 	return nil
 }
@@ -7074,17 +7074,17 @@ func (x *OrganizationCreateLenderUserEntity) GetLastName() string {
 }
 
 type OrganizationCreateLenderOrganizationEntity struct {
-	state          protoimpl.MessageState            `protogen:"open.v1"`
-	Name           string                            `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	ContactEmail   string                            `protobuf:"bytes,2,opt,name=contact_email,json=contactEmail,proto3" json:"contact_email,omitempty"`
-	ContactPhone   string                            `protobuf:"bytes,3,opt,name=contact_phone,json=contactPhone,proto3" json:"contact_phone,omitempty"`
-	ContactName    string                            `protobuf:"bytes,4,opt,name=contact_name,json=contactName,proto3" json:"contact_name,omitempty"`
-	Logo           string                            `protobuf:"bytes,5,opt,name=logo,proto3" json:"logo,omitempty"`
-	Website        string                            `protobuf:"bytes,6,opt,name=website,proto3" json:"website,omitempty"`
-	Tagline        string                            `protobuf:"bytes,7,opt,name=tagline,proto3" json:"tagline,omitempty"`
-	LenderMetadata *OrganizationLenderMetadataEntity `protobuf:"bytes,8,opt,name=lender_metadata,json=lenderMetadata,proto3" json:"lender_metadata,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state         protoimpl.MessageState      `protogen:"open.v1"`
+	Name          string                      `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	ContactEmail  string                      `protobuf:"bytes,2,opt,name=contact_email,json=contactEmail,proto3" json:"contact_email,omitempty"`
+	ContactPhone  string                      `protobuf:"bytes,3,opt,name=contact_phone,json=contactPhone,proto3" json:"contact_phone,omitempty"`
+	ContactName   string                      `protobuf:"bytes,4,opt,name=contact_name,json=contactName,proto3" json:"contact_name,omitempty"`
+	Logo          string                      `protobuf:"bytes,5,opt,name=logo,proto3" json:"logo,omitempty"`
+	Website       string                      `protobuf:"bytes,6,opt,name=website,proto3" json:"website,omitempty"`
+	Tagline       string                      `protobuf:"bytes,7,opt,name=tagline,proto3" json:"tagline,omitempty"`
+	Metadata      *OrganizationMetadataEntity `protobuf:"bytes,8,opt,name=metadata,proto3" json:"metadata,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *OrganizationCreateLenderOrganizationEntity) Reset() {
@@ -7166,9 +7166,9 @@ func (x *OrganizationCreateLenderOrganizationEntity) GetTagline() string {
 	return ""
 }
 
-func (x *OrganizationCreateLenderOrganizationEntity) GetLenderMetadata() *OrganizationLenderMetadataEntity {
+func (x *OrganizationCreateLenderOrganizationEntity) GetMetadata() *OrganizationMetadataEntity {
 	if x != nil {
-		return x.LenderMetadata
+		return x.Metadata
 	}
 	return nil
 }
@@ -7219,17 +7219,17 @@ func (x *OrganizationUpdateLenderRequest) GetData() *OrganizationUpdateLenderReq
 }
 
 type OrganizationUpdateLenderRequestData struct {
-	state          protoimpl.MessageState            `protogen:"open.v1"`
-	Id             int64                             `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	ContactEmail   string                            `protobuf:"bytes,2,opt,name=contact_email,json=contactEmail,proto3" json:"contact_email,omitempty"`
-	ContactPhone   string                            `protobuf:"bytes,3,opt,name=contact_phone,json=contactPhone,proto3" json:"contact_phone,omitempty"`
-	ContactName    string                            `protobuf:"bytes,4,opt,name=contact_name,json=contactName,proto3" json:"contact_name,omitempty"`
-	Logo           string                            `protobuf:"bytes,5,opt,name=logo,proto3" json:"logo,omitempty"`
-	Website        string                            `protobuf:"bytes,6,opt,name=website,proto3" json:"website,omitempty"`
-	Tagline        string                            `protobuf:"bytes,7,opt,name=tagline,proto3" json:"tagline,omitempty"`
-	LenderMetadata *OrganizationLenderMetadataEntity `protobuf:"bytes,8,opt,name=lender_metadata,json=lenderMetadata,proto3" json:"lender_metadata,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state         protoimpl.MessageState      `protogen:"open.v1"`
+	Id            int64                       `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	ContactEmail  string                      `protobuf:"bytes,2,opt,name=contact_email,json=contactEmail,proto3" json:"contact_email,omitempty"`
+	ContactPhone  string                      `protobuf:"bytes,3,opt,name=contact_phone,json=contactPhone,proto3" json:"contact_phone,omitempty"`
+	ContactName   string                      `protobuf:"bytes,4,opt,name=contact_name,json=contactName,proto3" json:"contact_name,omitempty"`
+	Logo          string                      `protobuf:"bytes,5,opt,name=logo,proto3" json:"logo,omitempty"`
+	Website       string                      `protobuf:"bytes,6,opt,name=website,proto3" json:"website,omitempty"`
+	Tagline       string                      `protobuf:"bytes,7,opt,name=tagline,proto3" json:"tagline,omitempty"`
+	Metadata      *OrganizationMetadataEntity `protobuf:"bytes,8,opt,name=metadata,proto3" json:"metadata,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *OrganizationUpdateLenderRequestData) Reset() {
@@ -7311,9 +7311,9 @@ func (x *OrganizationUpdateLenderRequestData) GetTagline() string {
 	return ""
 }
 
-func (x *OrganizationUpdateLenderRequestData) GetLenderMetadata() *OrganizationLenderMetadataEntity {
+func (x *OrganizationUpdateLenderRequestData) GetMetadata() *OrganizationMetadataEntity {
 	if x != nil {
-		return x.LenderMetadata
+		return x.Metadata
 	}
 	return nil
 }
@@ -8151,16 +8151,16 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"total_page\x18\x04 \x01(\x03R\ttotalPage\x121\n" +
 	"\x04list\x18\x05 \x03(\v2\x1d.admin.OrganizationPageEntityR\x04list\"a\n" +
 	"\x1fOrganizationCreateLenderRequest\x12>\n" +
-	"\x04data\x18\x01 \x01(\v2*.admin.OrganizationCreateLenderRequestDataR\x04data\"\xbb\x01\n" +
-	"#OrganizationCreateLenderRequestData\x12=\n" +
-	"\x04user\x18\x01 \x01(\v2).admin.OrganizationCreateLenderUserEntityR\x04user\x12U\n" +
+	"\x04data\x18\x01 \x01(\v2*.admin.OrganizationCreateLenderRequestDataR\x04data\"\xbd\x01\n" +
+	"#OrganizationCreateLenderRequestData\x12?\n" +
+	"\x05owner\x18\x01 \x01(\v2).admin.OrganizationCreateLenderUserEntityR\x05owner\x12U\n" +
 	"\forganization\x18\x02 \x01(\v21.admin.OrganizationCreateLenderOrganizationEntityR\forganization\"\x92\x01\n" +
 	"\"OrganizationCreateLenderUserEntity\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x1d\n" +
 	"\n" +
 	"first_name\x18\x05 \x01(\tR\tfirstName\x12\x1b\n" +
-	"\tlast_name\x18\x06 \x01(\tR\blastName\"\xc7\x02\n" +
+	"\tlast_name\x18\x06 \x01(\tR\blastName\"\xb4\x02\n" +
 	"*OrganizationCreateLenderOrganizationEntity\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12#\n" +
 	"\rcontact_email\x18\x02 \x01(\tR\fcontactEmail\x12#\n" +
@@ -8168,10 +8168,10 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\fcontact_name\x18\x04 \x01(\tR\vcontactName\x12\x12\n" +
 	"\x04logo\x18\x05 \x01(\tR\x04logo\x12\x18\n" +
 	"\awebsite\x18\x06 \x01(\tR\awebsite\x12\x18\n" +
-	"\atagline\x18\a \x01(\tR\atagline\x12P\n" +
-	"\x0flender_metadata\x18\b \x01(\v2'.admin.OrganizationLenderMetadataEntityR\x0elenderMetadata\"a\n" +
+	"\atagline\x18\a \x01(\tR\atagline\x12=\n" +
+	"\bmetadata\x18\b \x01(\v2!.admin.OrganizationMetadataEntityR\bmetadata\"a\n" +
 	"\x1fOrganizationUpdateLenderRequest\x12>\n" +
-	"\x04data\x18\x01 \x01(\v2*.admin.OrganizationUpdateLenderRequestDataR\x04data\"\xbc\x02\n" +
+	"\x04data\x18\x01 \x01(\v2*.admin.OrganizationUpdateLenderRequestDataR\x04data\"\xa9\x02\n" +
 	"#OrganizationUpdateLenderRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
 	"\rcontact_email\x18\x02 \x01(\tR\fcontactEmail\x12#\n" +
@@ -8179,8 +8179,8 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\fcontact_name\x18\x04 \x01(\tR\vcontactName\x12\x12\n" +
 	"\x04logo\x18\x05 \x01(\tR\x04logo\x12\x18\n" +
 	"\awebsite\x18\x06 \x01(\tR\awebsite\x12\x18\n" +
-	"\atagline\x18\a \x01(\tR\atagline\x12P\n" +
-	"\x0flender_metadata\x18\b \x01(\v2'.admin.OrganizationLenderMetadataEntityR\x0elenderMetadata\"K\n" +
+	"\atagline\x18\a \x01(\tR\atagline\x12=\n" +
+	"\bmetadata\x18\b \x01(\v2!.admin.OrganizationMetadataEntityR\bmetadata\"K\n" +
 	"\x1aOrganizationDetailResponse\x12-\n" +
 	"\x04data\x18\x01 \x01(\v2\x19.admin.OrganizationEntityR\x04data\"a\n" +
 	"\x1fOrganizationSwitchStatusRequest\x12>\n" +
@@ -8452,11 +8452,11 @@ var file_app_admin_rpc_pb_admin_proto_depIdxs = []int32{
 	110, // 75: admin.OrganizationPageResponse.data:type_name -> admin.OrganizationPageResponseData
 	102, // 76: admin.OrganizationPageResponseData.list:type_name -> admin.OrganizationPageEntity
 	112, // 77: admin.OrganizationCreateLenderRequest.data:type_name -> admin.OrganizationCreateLenderRequestData
-	113, // 78: admin.OrganizationCreateLenderRequestData.user:type_name -> admin.OrganizationCreateLenderUserEntity
+	113, // 78: admin.OrganizationCreateLenderRequestData.owner:type_name -> admin.OrganizationCreateLenderUserEntity
 	114, // 79: admin.OrganizationCreateLenderRequestData.organization:type_name -> admin.OrganizationCreateLenderOrganizationEntity
-	104, // 80: admin.OrganizationCreateLenderOrganizationEntity.lender_metadata:type_name -> admin.OrganizationLenderMetadataEntity
+	103, // 80: admin.OrganizationCreateLenderOrganizationEntity.metadata:type_name -> admin.OrganizationMetadataEntity
 	116, // 81: admin.OrganizationUpdateLenderRequest.data:type_name -> admin.OrganizationUpdateLenderRequestData
-	104, // 82: admin.OrganizationUpdateLenderRequestData.lender_metadata:type_name -> admin.OrganizationLenderMetadataEntity
+	103, // 82: admin.OrganizationUpdateLenderRequestData.metadata:type_name -> admin.OrganizationMetadataEntity
 	101, // 83: admin.OrganizationDetailResponse.data:type_name -> admin.OrganizationEntity
 	119, // 84: admin.OrganizationSwitchStatusRequest.data:type_name -> admin.OrganizationSwitchStatusRequestData
 	9,   // 85: admin.User.Login:input_type -> admin.UserLoginRequest
