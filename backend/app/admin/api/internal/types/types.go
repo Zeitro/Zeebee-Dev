@@ -84,10 +84,10 @@ type OrganizationEmailEntity struct {
 }
 
 type OrganizationLenderMetadataEntity struct {
-	LoanAmountRange RangeFloat64 `json:"loan_amount_range"`
-	LoanTermRange   RangeInt     `json:"loan_term_range"`
-	LoanRateRange   RangeFloat64 `json:"loan_rate_range"`
-	LoanPointRange  RangeFloat64 `json:"loan_point_range"`
+	LoanAmountRange RangeFloat64 `json:"loan_amount_range,optional"`
+	LoanTermRange   RangeInt     `json:"loan_term_range,optional"`
+	LoanRateRange   RangeFloat64 `json:"loan_rate_range,optional"`
+	LoanPointRange  RangeFloat64 `json:"loan_point_range,optional"`
 }
 
 type OrganizationMetadataEntity struct {
@@ -172,13 +172,13 @@ type PathIdRequest struct {
 }
 
 type RangeFloat64 struct {
-	Min float64 `json:"min"`
-	Max float64 `json:"max"`
+	Min float64 `json:"min, optional"`
+	Max float64 `json:"max, optional"`
 }
 
 type RangeInt struct {
-	Min int `json:"min"`
-	Max int `json:"max"`
+	Min int `json:"min, optional"`
+	Max int `json:"max, optional"`
 }
 
 type ResourceTreeEntity struct {

@@ -11,6 +11,7 @@ import (
 	organization_user "zeebee-backend/app/admin/api/internal/handler/organization_user"
 	resource "zeebee-backend/app/admin/api/internal/handler/resource"
 	role "zeebee-backend/app/admin/api/internal/handler/role"
+	storage "zeebee-backend/app/admin/api/internal/handler/storage"
 	user "zeebee-backend/app/admin/api/internal/handler/user"
 	"zeebee-backend/app/admin/api/internal/svc"
 
@@ -231,6 +232,21 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/role/all",
 					Handler: role.RoleAllHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// create aws s3 presign url
+					Method:  http.MethodPost,
+					Path:    "/storage/presign_url",
+					Handler: storage.CreateAwsS3PresignUrlHandler(serverCtx),
 				},
 			}...,
 		),

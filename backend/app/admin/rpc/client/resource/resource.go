@@ -123,6 +123,10 @@ type (
 	RoleUpdateResponse                         = admin.RoleUpdateResponse
 	RoleUpdateStatusRequest                    = admin.RoleUpdateStatusRequest
 	RoleUpdateStatusRequestData                = admin.RoleUpdateStatusRequestData
+	StorageCreatePresignedUrlRequest           = admin.StorageCreatePresignedUrlRequest
+	StorageCreatePresignedUrlRequestData       = admin.StorageCreatePresignedUrlRequestData
+	StorageCreatePresignedUrlResponse          = admin.StorageCreatePresignedUrlResponse
+	StorageCreatePresignedUrlResponseData      = admin.StorageCreatePresignedUrlResponseData
 	StringSliceResponse                        = admin.StringSliceResponse
 	UserEntity                                 = admin.UserEntity
 	UserInfoRequest                            = admin.UserInfoRequest

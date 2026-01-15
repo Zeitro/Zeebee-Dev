@@ -750,12 +750,6 @@
                     },
                     "metadata": {
                       "type": "object",
-                      "required": [
-                        "loan_amount_range",
-                        "loan_term_range",
-                        "loan_rate_range",
-                        "loan_point_range"
-                      ],
                       "properties": {
                         "loan_amount_range": {
                           "type": "object",
@@ -913,12 +907,6 @@
                   "properties": {
                     "lender": {
                       "type": "object",
-                      "required": [
-                        "loan_amount_range",
-                        "loan_term_range",
-                        "loan_rate_range",
-                        "loan_point_range"
-                      ],
                       "properties": {
                         "loan_amount_range": {
                           "type": "object",
@@ -1310,12 +1298,6 @@
                 },
                 "metadata": {
                   "type": "object",
-                  "required": [
-                    "loan_amount_range",
-                    "loan_term_range",
-                    "loan_rate_range",
-                    "loan_point_range"
-                  ],
                   "properties": {
                     "loan_amount_range": {
                       "type": "object",
@@ -1441,12 +1423,6 @@
                   "properties": {
                     "lender": {
                       "type": "object",
-                      "required": [
-                        "loan_amount_range",
-                        "loan_term_range",
-                        "loan_rate_range",
-                        "loan_point_range"
-                      ],
                       "properties": {
                         "loan_amount_range": {
                           "type": "object",
@@ -2029,12 +2005,6 @@
                   "properties": {
                     "lender": {
                       "type": "object",
-                      "required": [
-                        "loan_amount_range",
-                        "loan_term_range",
-                        "loan_rate_range",
-                        "loan_point_range"
-                      ],
                       "properties": {
                         "loan_amount_range": {
                           "type": "object",
@@ -5337,6 +5307,59 @@
         }
       }
     },
+    "/api/v1/storage/presign_url": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "storage"
+        ],
+        "summary": "create aws s3 presign url",
+        "operationId": "storageCreateAwsS3PresignUrl",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "type",
+                "file_suffix"
+              ],
+              "properties": {
+                "file_suffix": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/user/info": {
       "get": {
         "produces": [
@@ -5725,7 +5748,7 @@
       }
     }
   },
-  "x-date": "2026-01-15 14:12:18",
+  "x-date": "2026-01-15 15:28:57",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

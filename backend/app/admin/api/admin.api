@@ -11,6 +11,7 @@ import "desc/resource.api"
 import "desc/role.api"
 import "desc/organization_user.api"
 import "desc/organization.api"
+import "desc/storage.api"
 
 type (
 	EmptyRequest{
@@ -239,4 +240,20 @@ service admin-api {
 	patch /organization/:id/status (OrganizationSwitchStatusRequest) returns (EmptyResponse)
 }
 
-	// ============= organization end =============
+// ============= organization end =============
+// ============= storage start ============
+@server(
+	desc: "storage service"
+	version: v1
+	group: storage
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: storage
+)
+service admin-api {
+	@doc "create aws s3 presign url"
+	@handler CreateAwsS3PresignUrl
+	post /storage/presign_url (S3PresignUrlCreateRequest) returns (S3PresignUrlCreateResponse)
+}
+
+	// ============= storage end =============

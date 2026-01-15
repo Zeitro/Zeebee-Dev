@@ -7545,6 +7545,191 @@ func (x *OrganizationEmailEntity) GetIsAuthorized() bool {
 	return false
 }
 
+// ================= storage service start =================
+type StorageCreatePresignedUrlRequest struct {
+	state         protoimpl.MessageState                `protogen:"open.v1"`
+	Data          *StorageCreatePresignedUrlRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StorageCreatePresignedUrlRequest) Reset() {
+	*x = StorageCreatePresignedUrlRequest{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[121]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StorageCreatePresignedUrlRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StorageCreatePresignedUrlRequest) ProtoMessage() {}
+
+func (x *StorageCreatePresignedUrlRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[121]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StorageCreatePresignedUrlRequest.ProtoReflect.Descriptor instead.
+func (*StorageCreatePresignedUrlRequest) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{121}
+}
+
+func (x *StorageCreatePresignedUrlRequest) GetData() *StorageCreatePresignedUrlRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type StorageCreatePresignedUrlRequestData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Type          string                 `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
+	FileSuffix    string                 `protobuf:"bytes,2,opt,name=file_suffix,json=fileSuffix,proto3" json:"file_suffix,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StorageCreatePresignedUrlRequestData) Reset() {
+	*x = StorageCreatePresignedUrlRequestData{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[122]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StorageCreatePresignedUrlRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StorageCreatePresignedUrlRequestData) ProtoMessage() {}
+
+func (x *StorageCreatePresignedUrlRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[122]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StorageCreatePresignedUrlRequestData.ProtoReflect.Descriptor instead.
+func (*StorageCreatePresignedUrlRequestData) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{122}
+}
+
+func (x *StorageCreatePresignedUrlRequestData) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *StorageCreatePresignedUrlRequestData) GetFileSuffix() string {
+	if x != nil {
+		return x.FileSuffix
+	}
+	return ""
+}
+
+type StorageCreatePresignedUrlResponse struct {
+	state         protoimpl.MessageState                 `protogen:"open.v1"`
+	Data          *StorageCreatePresignedUrlResponseData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StorageCreatePresignedUrlResponse) Reset() {
+	*x = StorageCreatePresignedUrlResponse{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[123]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StorageCreatePresignedUrlResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StorageCreatePresignedUrlResponse) ProtoMessage() {}
+
+func (x *StorageCreatePresignedUrlResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[123]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StorageCreatePresignedUrlResponse.ProtoReflect.Descriptor instead.
+func (*StorageCreatePresignedUrlResponse) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{123}
+}
+
+func (x *StorageCreatePresignedUrlResponse) GetData() *StorageCreatePresignedUrlResponseData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type StorageCreatePresignedUrlResponseData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Url           string                 `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StorageCreatePresignedUrlResponseData) Reset() {
+	*x = StorageCreatePresignedUrlResponseData{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[124]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StorageCreatePresignedUrlResponseData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StorageCreatePresignedUrlResponseData) ProtoMessage() {}
+
+func (x *StorageCreatePresignedUrlResponseData) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[124]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StorageCreatePresignedUrlResponseData.ProtoReflect.Descriptor instead.
+func (*StorageCreatePresignedUrlResponseData) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{124}
+}
+
+func (x *StorageCreatePresignedUrlResponseData) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
 type UserinfoResponseData_Organization struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -7557,7 +7742,7 @@ type UserinfoResponseData_Organization struct {
 
 func (x *UserinfoResponseData_Organization) Reset() {
 	*x = UserinfoResponseData_Organization{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[121]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[125]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7569,7 +7754,7 @@ func (x *UserinfoResponseData_Organization) String() string {
 func (*UserinfoResponseData_Organization) ProtoMessage() {}
 
 func (x *UserinfoResponseData_Organization) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[121]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[125]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8194,7 +8379,17 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x05email\x18\x03 \x01(\tR\x05email\x12#\n" +
 	"\rauth_strategy\x18\x04 \x01(\tR\fauthStrategy\x12\x18\n" +
 	"\apurpose\x18\x05 \x01(\tR\apurpose\x12#\n" +
-	"\ris_authorized\x18\x06 \x01(\bR\fisAuthorized2\xdb\x02\n" +
+	"\ris_authorized\x18\x06 \x01(\bR\fisAuthorized\"c\n" +
+	" StorageCreatePresignedUrlRequest\x12?\n" +
+	"\x04data\x18\x01 \x01(\v2+.admin.StorageCreatePresignedUrlRequestDataR\x04data\"[\n" +
+	"$StorageCreatePresignedUrlRequestData\x12\x12\n" +
+	"\x04type\x18\x01 \x01(\tR\x04type\x12\x1f\n" +
+	"\vfile_suffix\x18\x02 \x01(\tR\n" +
+	"fileSuffix\"e\n" +
+	"!StorageCreatePresignedUrlResponse\x12@\n" +
+	"\x04data\x18\x01 \x01(\v2,.admin.StorageCreatePresignedUrlResponseDataR\x04data\"9\n" +
+	"%StorageCreatePresignedUrlResponseData\x12\x10\n" +
+	"\x03url\x18\x01 \x01(\tR\x03url2\xdb\x02\n" +
 	"\x04User\x12:\n" +
 	"\x05Login\x12\x17.admin.UserLoginRequest\x1a\x18.admin.UserLoginResponse\x12G\n" +
 	"\fRefreshToken\x12\x1a.admin.RefreshTokenRequest\x1a\x1b.admin.RefreshTokenResponse\x12;\n" +
@@ -8234,7 +8429,9 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\fUpdateLender\x12&.admin.OrganizationUpdateLenderRequest\x1a!.admin.OrganizationDetailResponse\x12=\n" +
 	"\x06Detail\x12\x10.admin.IdRequest\x1a!.admin.OrganizationDetailResponse\x120\n" +
 	"\x06Delete\x12\x10.admin.IdRequest\x1a\x14.admin.EmptyResponse\x12L\n" +
-	"\fSwitchStatus\x12&.admin.OrganizationSwitchStatusRequest\x1a\x14.admin.EmptyResponseB\tZ\a./adminb\x06proto3"
+	"\fSwitchStatus\x12&.admin.OrganizationSwitchStatusRequest\x1a\x14.admin.EmptyResponse2r\n" +
+	"\aStorage\x12g\n" +
+	"\x12CreatePresignedUrl\x12'.admin.StorageCreatePresignedUrlRequest\x1a(.admin.StorageCreatePresignedUrlResponseB\tZ\a./adminb\x06proto3"
 
 var (
 	file_app_admin_rpc_pb_admin_proto_rawDescOnce sync.Once
@@ -8248,7 +8445,7 @@ func file_app_admin_rpc_pb_admin_proto_rawDescGZIP() []byte {
 	return file_app_admin_rpc_pb_admin_proto_rawDescData
 }
 
-var file_app_admin_rpc_pb_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 122)
+var file_app_admin_rpc_pb_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 126)
 var file_app_admin_rpc_pb_admin_proto_goTypes = []any{
 	(*EmptyRequest)(nil),                               // 0: admin.EmptyRequest
 	(*EmptyResponse)(nil),                              // 1: admin.EmptyResponse
@@ -8371,7 +8568,11 @@ var file_app_admin_rpc_pb_admin_proto_goTypes = []any{
 	(*OrganizationSwitchStatusRequest)(nil),            // 118: admin.OrganizationSwitchStatusRequest
 	(*OrganizationSwitchStatusRequestData)(nil),        // 119: admin.OrganizationSwitchStatusRequestData
 	(*OrganizationEmailEntity)(nil),                    // 120: admin.OrganizationEmailEntity
-	(*UserinfoResponseData_Organization)(nil),          // 121: admin.UserinfoResponseData.Organization
+	(*StorageCreatePresignedUrlRequest)(nil),           // 121: admin.StorageCreatePresignedUrlRequest
+	(*StorageCreatePresignedUrlRequestData)(nil),       // 122: admin.StorageCreatePresignedUrlRequestData
+	(*StorageCreatePresignedUrlResponse)(nil),          // 123: admin.StorageCreatePresignedUrlResponse
+	(*StorageCreatePresignedUrlResponseData)(nil),      // 124: admin.StorageCreatePresignedUrlResponseData
+	(*UserinfoResponseData_Organization)(nil),          // 125: admin.UserinfoResponseData.Organization
 }
 var file_app_admin_rpc_pb_admin_proto_depIdxs = []int32{
 	77,  // 0: admin.UserEntity.roles:type_name -> admin.RoleEntity
@@ -8383,7 +8584,7 @@ var file_app_admin_rpc_pb_admin_proto_depIdxs = []int32{
 	12,  // 6: admin.ResetPasswordResponse.data:type_name -> admin.UserLoginResponseData
 	22,  // 7: admin.UserInfoRequest.data:type_name -> admin.UserInfoRequestData
 	24,  // 8: admin.UserinfoResponse.data:type_name -> admin.UserinfoResponseData
-	121, // 9: admin.UserinfoResponseData.organizations:type_name -> admin.UserinfoResponseData.Organization
+	125, // 9: admin.UserinfoResponseData.organizations:type_name -> admin.UserinfoResponseData.Organization
 	26,  // 10: admin.UserProfileEditRequest.data:type_name -> admin.UserProfileEditRequestData
 	77,  // 11: admin.OrganizationUserEntity.roles:type_name -> admin.RoleEntity
 	77,  // 12: admin.OrganizationUserPageEntity.roles:type_name -> admin.RoleEntity
@@ -8459,79 +8660,83 @@ var file_app_admin_rpc_pb_admin_proto_depIdxs = []int32{
 	103, // 82: admin.OrganizationUpdateLenderRequestData.metadata:type_name -> admin.OrganizationMetadataEntity
 	101, // 83: admin.OrganizationDetailResponse.data:type_name -> admin.OrganizationEntity
 	119, // 84: admin.OrganizationSwitchStatusRequest.data:type_name -> admin.OrganizationSwitchStatusRequestData
-	9,   // 85: admin.User.Login:input_type -> admin.UserLoginRequest
-	13,  // 86: admin.User.RefreshToken:input_type -> admin.RefreshTokenRequest
-	21,  // 87: admin.User.UserInfo:input_type -> admin.UserInfoRequest
-	17,  // 88: admin.User.ResetPassword:input_type -> admin.ResetPasswordRequest
-	25,  // 89: admin.User.EditProfile:input_type -> admin.UserProfileEditRequest
-	29,  // 90: admin.OrganizationUser.Page:input_type -> admin.OrganizationUserPageRequest
-	35,  // 91: admin.OrganizationUser.Create:input_type -> admin.OrganizationUserCreateRequest
-	38,  // 92: admin.OrganizationUser.Update:input_type -> admin.OrganizationUserUpdateRequest
-	41,  // 93: admin.OrganizationUser.Delete:input_type -> admin.OrganizationUserDeleteRequest
-	43,  // 94: admin.OrganizationUser.Detail:input_type -> admin.OrganizationUserDetailRequest
-	46,  // 95: admin.OrganizationUser.SwitchStatus:input_type -> admin.OrganizationUserSwitchStatusRequest
-	50,  // 96: admin.api.ApiTree:input_type -> admin.ApiTreeRequest
-	53,  // 97: admin.api.Create:input_type -> admin.ApiCreateRequest
-	56,  // 98: admin.api.Update:input_type -> admin.ApiUpdateRequest
-	58,  // 99: admin.api.Delete:input_type -> admin.ApiDeleteRequest
-	60,  // 100: admin.api.Detail:input_type -> admin.ApiDetailRequest
-	64,  // 101: admin.resource.ResourceTree:input_type -> admin.ResourceTreeRequest
-	67,  // 102: admin.resource.Create:input_type -> admin.ResourceCreateRequest
-	70,  // 103: admin.resource.Update:input_type -> admin.ResourceUpdateRequest
-	72,  // 104: admin.resource.Delete:input_type -> admin.ResourceDeleteRequest
-	74,  // 105: admin.resource.Detail:input_type -> admin.ResourceDetailRequest
-	78,  // 106: admin.role.Page:input_type -> admin.RolePageRequest
-	84,  // 107: admin.role.Create:input_type -> admin.RoleCreateRequest
-	87,  // 108: admin.role.Update:input_type -> admin.RoleUpdateRequest
-	91,  // 109: admin.role.Delete:input_type -> admin.RoleDeleteRequest
-	93,  // 110: admin.role.Detail:input_type -> admin.RoleDetailRequest
-	96,  // 111: admin.role.UpdateStatus:input_type -> admin.RoleUpdateStatusRequest
-	98,  // 112: admin.role.All:input_type -> admin.RoleAllRequest
-	105, // 113: admin.organization.Page:input_type -> admin.OrganizationPageRequest
-	111, // 114: admin.organization.CreateLender:input_type -> admin.OrganizationCreateLenderRequest
-	115, // 115: admin.organization.UpdateLender:input_type -> admin.OrganizationUpdateLenderRequest
-	3,   // 116: admin.organization.Detail:input_type -> admin.IdRequest
-	3,   // 117: admin.organization.Delete:input_type -> admin.IdRequest
-	118, // 118: admin.organization.SwitchStatus:input_type -> admin.OrganizationSwitchStatusRequest
-	11,  // 119: admin.User.Login:output_type -> admin.UserLoginResponse
-	15,  // 120: admin.User.RefreshToken:output_type -> admin.RefreshTokenResponse
-	23,  // 121: admin.User.UserInfo:output_type -> admin.UserinfoResponse
-	19,  // 122: admin.User.ResetPassword:output_type -> admin.ResetPasswordResponse
-	23,  // 123: admin.User.EditProfile:output_type -> admin.UserinfoResponse
-	33,  // 124: admin.OrganizationUser.Page:output_type -> admin.OrganizationUserPageResponse
-	36,  // 125: admin.OrganizationUser.Create:output_type -> admin.OrganizationUserCreateResponse
-	39,  // 126: admin.OrganizationUser.Update:output_type -> admin.OrganizationUserUpdateResponse
-	1,   // 127: admin.OrganizationUser.Delete:output_type -> admin.EmptyResponse
-	44,  // 128: admin.OrganizationUser.Detail:output_type -> admin.OrganizationUserDetailResponse
-	1,   // 129: admin.OrganizationUser.SwitchStatus:output_type -> admin.EmptyResponse
-	52,  // 130: admin.api.ApiTree:output_type -> admin.ApiTreeResponse
-	55,  // 131: admin.api.Create:output_type -> admin.ApiCreateResponse
-	55,  // 132: admin.api.Update:output_type -> admin.ApiCreateResponse
-	1,   // 133: admin.api.Delete:output_type -> admin.EmptyResponse
-	55,  // 134: admin.api.Detail:output_type -> admin.ApiCreateResponse
-	66,  // 135: admin.resource.ResourceTree:output_type -> admin.ResourceTreeResponse
-	76,  // 136: admin.resource.Create:output_type -> admin.ResourceDetailResponse
-	76,  // 137: admin.resource.Update:output_type -> admin.ResourceDetailResponse
-	1,   // 138: admin.resource.Delete:output_type -> admin.EmptyResponse
-	76,  // 139: admin.resource.Detail:output_type -> admin.ResourceDetailResponse
-	82,  // 140: admin.role.Page:output_type -> admin.RolePageResponse
-	86,  // 141: admin.role.Create:output_type -> admin.RoleCreateResponse
-	88,  // 142: admin.role.Update:output_type -> admin.RoleUpdateResponse
-	1,   // 143: admin.role.Delete:output_type -> admin.EmptyResponse
-	95,  // 144: admin.role.Detail:output_type -> admin.RoleDetailResponse
-	1,   // 145: admin.role.UpdateStatus:output_type -> admin.EmptyResponse
-	100, // 146: admin.role.All:output_type -> admin.RoleAllResponse
-	109, // 147: admin.organization.Page:output_type -> admin.OrganizationPageResponse
-	117, // 148: admin.organization.CreateLender:output_type -> admin.OrganizationDetailResponse
-	117, // 149: admin.organization.UpdateLender:output_type -> admin.OrganizationDetailResponse
-	117, // 150: admin.organization.Detail:output_type -> admin.OrganizationDetailResponse
-	1,   // 151: admin.organization.Delete:output_type -> admin.EmptyResponse
-	1,   // 152: admin.organization.SwitchStatus:output_type -> admin.EmptyResponse
-	119, // [119:153] is the sub-list for method output_type
-	85,  // [85:119] is the sub-list for method input_type
-	85,  // [85:85] is the sub-list for extension type_name
-	85,  // [85:85] is the sub-list for extension extendee
-	0,   // [0:85] is the sub-list for field type_name
+	122, // 85: admin.StorageCreatePresignedUrlRequest.data:type_name -> admin.StorageCreatePresignedUrlRequestData
+	124, // 86: admin.StorageCreatePresignedUrlResponse.data:type_name -> admin.StorageCreatePresignedUrlResponseData
+	9,   // 87: admin.User.Login:input_type -> admin.UserLoginRequest
+	13,  // 88: admin.User.RefreshToken:input_type -> admin.RefreshTokenRequest
+	21,  // 89: admin.User.UserInfo:input_type -> admin.UserInfoRequest
+	17,  // 90: admin.User.ResetPassword:input_type -> admin.ResetPasswordRequest
+	25,  // 91: admin.User.EditProfile:input_type -> admin.UserProfileEditRequest
+	29,  // 92: admin.OrganizationUser.Page:input_type -> admin.OrganizationUserPageRequest
+	35,  // 93: admin.OrganizationUser.Create:input_type -> admin.OrganizationUserCreateRequest
+	38,  // 94: admin.OrganizationUser.Update:input_type -> admin.OrganizationUserUpdateRequest
+	41,  // 95: admin.OrganizationUser.Delete:input_type -> admin.OrganizationUserDeleteRequest
+	43,  // 96: admin.OrganizationUser.Detail:input_type -> admin.OrganizationUserDetailRequest
+	46,  // 97: admin.OrganizationUser.SwitchStatus:input_type -> admin.OrganizationUserSwitchStatusRequest
+	50,  // 98: admin.api.ApiTree:input_type -> admin.ApiTreeRequest
+	53,  // 99: admin.api.Create:input_type -> admin.ApiCreateRequest
+	56,  // 100: admin.api.Update:input_type -> admin.ApiUpdateRequest
+	58,  // 101: admin.api.Delete:input_type -> admin.ApiDeleteRequest
+	60,  // 102: admin.api.Detail:input_type -> admin.ApiDetailRequest
+	64,  // 103: admin.resource.ResourceTree:input_type -> admin.ResourceTreeRequest
+	67,  // 104: admin.resource.Create:input_type -> admin.ResourceCreateRequest
+	70,  // 105: admin.resource.Update:input_type -> admin.ResourceUpdateRequest
+	72,  // 106: admin.resource.Delete:input_type -> admin.ResourceDeleteRequest
+	74,  // 107: admin.resource.Detail:input_type -> admin.ResourceDetailRequest
+	78,  // 108: admin.role.Page:input_type -> admin.RolePageRequest
+	84,  // 109: admin.role.Create:input_type -> admin.RoleCreateRequest
+	87,  // 110: admin.role.Update:input_type -> admin.RoleUpdateRequest
+	91,  // 111: admin.role.Delete:input_type -> admin.RoleDeleteRequest
+	93,  // 112: admin.role.Detail:input_type -> admin.RoleDetailRequest
+	96,  // 113: admin.role.UpdateStatus:input_type -> admin.RoleUpdateStatusRequest
+	98,  // 114: admin.role.All:input_type -> admin.RoleAllRequest
+	105, // 115: admin.organization.Page:input_type -> admin.OrganizationPageRequest
+	111, // 116: admin.organization.CreateLender:input_type -> admin.OrganizationCreateLenderRequest
+	115, // 117: admin.organization.UpdateLender:input_type -> admin.OrganizationUpdateLenderRequest
+	3,   // 118: admin.organization.Detail:input_type -> admin.IdRequest
+	3,   // 119: admin.organization.Delete:input_type -> admin.IdRequest
+	118, // 120: admin.organization.SwitchStatus:input_type -> admin.OrganizationSwitchStatusRequest
+	121, // 121: admin.Storage.CreatePresignedUrl:input_type -> admin.StorageCreatePresignedUrlRequest
+	11,  // 122: admin.User.Login:output_type -> admin.UserLoginResponse
+	15,  // 123: admin.User.RefreshToken:output_type -> admin.RefreshTokenResponse
+	23,  // 124: admin.User.UserInfo:output_type -> admin.UserinfoResponse
+	19,  // 125: admin.User.ResetPassword:output_type -> admin.ResetPasswordResponse
+	23,  // 126: admin.User.EditProfile:output_type -> admin.UserinfoResponse
+	33,  // 127: admin.OrganizationUser.Page:output_type -> admin.OrganizationUserPageResponse
+	36,  // 128: admin.OrganizationUser.Create:output_type -> admin.OrganizationUserCreateResponse
+	39,  // 129: admin.OrganizationUser.Update:output_type -> admin.OrganizationUserUpdateResponse
+	1,   // 130: admin.OrganizationUser.Delete:output_type -> admin.EmptyResponse
+	44,  // 131: admin.OrganizationUser.Detail:output_type -> admin.OrganizationUserDetailResponse
+	1,   // 132: admin.OrganizationUser.SwitchStatus:output_type -> admin.EmptyResponse
+	52,  // 133: admin.api.ApiTree:output_type -> admin.ApiTreeResponse
+	55,  // 134: admin.api.Create:output_type -> admin.ApiCreateResponse
+	55,  // 135: admin.api.Update:output_type -> admin.ApiCreateResponse
+	1,   // 136: admin.api.Delete:output_type -> admin.EmptyResponse
+	55,  // 137: admin.api.Detail:output_type -> admin.ApiCreateResponse
+	66,  // 138: admin.resource.ResourceTree:output_type -> admin.ResourceTreeResponse
+	76,  // 139: admin.resource.Create:output_type -> admin.ResourceDetailResponse
+	76,  // 140: admin.resource.Update:output_type -> admin.ResourceDetailResponse
+	1,   // 141: admin.resource.Delete:output_type -> admin.EmptyResponse
+	76,  // 142: admin.resource.Detail:output_type -> admin.ResourceDetailResponse
+	82,  // 143: admin.role.Page:output_type -> admin.RolePageResponse
+	86,  // 144: admin.role.Create:output_type -> admin.RoleCreateResponse
+	88,  // 145: admin.role.Update:output_type -> admin.RoleUpdateResponse
+	1,   // 146: admin.role.Delete:output_type -> admin.EmptyResponse
+	95,  // 147: admin.role.Detail:output_type -> admin.RoleDetailResponse
+	1,   // 148: admin.role.UpdateStatus:output_type -> admin.EmptyResponse
+	100, // 149: admin.role.All:output_type -> admin.RoleAllResponse
+	109, // 150: admin.organization.Page:output_type -> admin.OrganizationPageResponse
+	117, // 151: admin.organization.CreateLender:output_type -> admin.OrganizationDetailResponse
+	117, // 152: admin.organization.UpdateLender:output_type -> admin.OrganizationDetailResponse
+	117, // 153: admin.organization.Detail:output_type -> admin.OrganizationDetailResponse
+	1,   // 154: admin.organization.Delete:output_type -> admin.EmptyResponse
+	1,   // 155: admin.organization.SwitchStatus:output_type -> admin.EmptyResponse
+	123, // 156: admin.Storage.CreatePresignedUrl:output_type -> admin.StorageCreatePresignedUrlResponse
+	122, // [122:157] is the sub-list for method output_type
+	87,  // [87:122] is the sub-list for method input_type
+	87,  // [87:87] is the sub-list for extension type_name
+	87,  // [87:87] is the sub-list for extension extendee
+	0,   // [0:87] is the sub-list for field type_name
 }
 
 func init() { file_app_admin_rpc_pb_admin_proto_init() }
@@ -8545,9 +8750,9 @@ func file_app_admin_rpc_pb_admin_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_app_admin_rpc_pb_admin_proto_rawDesc), len(file_app_admin_rpc_pb_admin_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   122,
+			NumMessages:   126,
 			NumExtensions: 0,
-			NumServices:   6,
+			NumServices:   7,
 		},
 		GoTypes:           file_app_admin_rpc_pb_admin_proto_goTypes,
 		DependencyIndexes: file_app_admin_rpc_pb_admin_proto_depIdxs,

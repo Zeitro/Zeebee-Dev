@@ -805,3 +805,26 @@ message OrganizationEmailEntity {
   bool is_authorized = 6;
 }
 // ================= organization email service end =================
+
+// ================= storage service start =================
+message StorageCreatePresignedUrlRequest {
+  StorageCreatePresignedUrlRequestData data = 1;
+}
+
+message StorageCreatePresignedUrlRequestData {
+  string type = 1;
+  string file_suffix = 2;
+}
+
+message StorageCreatePresignedUrlResponse {
+  StorageCreatePresignedUrlResponseData data = 1;
+}
+
+message StorageCreatePresignedUrlResponseData {
+  string url = 1;
+}
+
+service Storage {
+  rpc CreatePresignedUrl(StorageCreatePresignedUrlRequest) returns(StorageCreatePresignedUrlResponse);
+}
+// ================= storage service end =================
