@@ -3,18 +3,21 @@ package email
 import (
 	"bytes"
 	"html/template"
+	"sync"
 
-	"github.com/pkg/errors"
+	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/stringx"
 )
 
 // global template manager
 var defaultTemplates *Templates
 
 // ErrEmailTemplateNotFound not found template  error
-var ErrEmailTemplateNotFound = errors.New("email template not found")
+var ErrEmailTemplateNotFound = errorx.New("Email Template Not Found")
 
 func init() {
 	defaultTemplates = &Templates{
+		mux:       sync.RWMutex{},
 		templates: make(map[string]*template.Template),
 	}
 }
@@ -36,13 +39,21 @@ func ParseTemplate(name string, data map[string]interface{}) (content string, er
 
 // Templates  template manager
 type Templates struct {
+	mux       sync.RWMutex
 	templates map[string]*template.Template
 }
 
 // RegisterWithContent register template with text content
 func (t *Templates) RegisterWithText(name string, tplContent string) (err error) {
+	t.mux.Lock()
+	defer t.mux.Unlock()
+	funcMap := template.FuncMap{
+		"usd":      stringx.FormatUsDollarCurrency,
+		"usaphone": stringx.FormatUsPhoneNumber,
+	}
+
 	var tpl *template.Template
-	tpl, err = template.New(name).Parse(tplContent)
+	tpl, err = template.New(name).Funcs(funcMap).Parse(tplContent)
 	if err != nil {
 		return
 	}
@@ -52,6 +63,8 @@ func (t *Templates) RegisterWithText(name string, tplContent string) (err error)
 
 // GetTemplate return template by
 func (t *Templates) GetTemplate(name string) (tpl *template.Template, err error) {
+	t.mux.RLock()
+	defer t.mux.RUnlock()
 	var ok bool
 	tpl, ok = t.templates[name]
 	if !ok {
@@ -62,6 +75,8 @@ func (t *Templates) GetTemplate(name string) (tpl *template.Template, err error)
 
 // Parse return parsed template content
 func (t *Templates) Parse(name string, data map[string]interface{}) (content string, err error) {
+	t.mux.RLock()
+	defer t.mux.RUnlock()
 	var tpl *template.Template
 	tpl, err = t.GetTemplate(name)
 	if err != nil {
