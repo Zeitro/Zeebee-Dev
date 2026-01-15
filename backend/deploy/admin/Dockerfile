@@ -14,4 +14,4 @@ WORKDIR /app
 COPY --from=builder /app/admin /app/admin
 COPY ./app/admin/etc/config-${CONFIG_ENV}.yaml /app/etc/config-${CONFIG_ENV}.yaml
 EXPOSE 10100
-ENTRYPOINT ./admin -f /app/etc/config-${CONFIG_ENV}.yaml
+ENTRYPOINT /app/admin -f /app/etc/config-${CONFIG_ENV}.yaml
