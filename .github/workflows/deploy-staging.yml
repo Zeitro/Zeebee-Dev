@@ -5,6 +5,7 @@ on:
     branches:
       - staging-borrower-backend
       - staging-lender-backend
+      - staging-admin-backend
 
 jobs:
   deploy:
