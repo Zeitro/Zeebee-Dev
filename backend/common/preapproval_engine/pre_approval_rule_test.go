@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"zeebee-backend/common/constants"
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 func TestPreApprovalRule_CalPreApprovaldLoanAmount(t *testing.T) {

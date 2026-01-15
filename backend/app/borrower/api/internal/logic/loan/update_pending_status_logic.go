@@ -6,7 +6,6 @@ import (
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/utils"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,19 +26,12 @@ func NewUpdatePendingStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 func (l *UpdatePendingStatusLogic) UpdatePendingStatus(req *types.LoanUpdatePendingStatusRequest) (resp *types.EmptyResponse, err error) {
-	// get borrower id
-	borrowerId, err := utils.GetAccountIdFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	_, err = l.svcCtx.LoanRpcClient.UpdateBorrowerLoanPendingStatus(l.ctx, &borrower.LoanUpdatePendingStatusRequest{
 		Data: &borrower.LoanUpdatePendingStatusRequestData{
 			Id:            req.Id,
-			BorrowerId:    borrowerId,
 			PendingStatus: req.PendingStatus,
 		},
 	})
 
-	return
+	return &types.EmptyResponse{}, err
 }

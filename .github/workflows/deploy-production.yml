@@ -1,0 +1,106 @@
+name: Zeebee Backend Deploy to production
+
+on:
+  push:
+    branches:
+      - prod-borrower-backend
+      - prod-lender-backend
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, production]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          clean: true
+
+      - name: Get Git Commit ID
+        id: vars
+        run: |
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+      - name: Set environment variables
+        id: set_env
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/prod-borrower-backend" ]]; then
+             SERVICE_NAME=borrower
+          elif [[ "${{ github.ref }}" == "refs/heads/prod-lender-backend" ]]; then
+            SERVICE_NAME=lender
+          else
+            echo "Invalid Branch ${{ github.ref }}"
+            exit 1
+          fi
+          SERVICE_ENVIRONMENT="prod"
+          FULL_SERVICE_NAME="${SERVICE_ENVIRONMENT}-${SERVICE_NAME}-backend"
+          IMAGE_NAME="${SERVICE_ENVIRONMENT}-${SERVICE_NAME}-backend"
+          CONTAINER_NAME="${SERVICE_ENVIRONMENT}-${SERVICE_NAME}-backend"
+          DOCKER_COMPOSE_FILE="deploy/${SERVICE_NAME}/docker-compose.yml"
+          
+          echo "SERVICE_NAME=${SERVICE_NAME}" >> $GITHUB_ENV
+          echo "SERVICE_ENVIRONMENT=${SERVICE_ENVIRONMENT}" >> $GITHUB_ENV
+          echo "FULL_SERVICE_NAME=${FULL_SERVICE_NAME}" >> $GITHUB_ENV
+          echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_ENV
+          echo "CONTAINER_NAME=${CONTAINER_NAME}" >> $GITHUB_ENV
+          echo "DOCKER_COMPOSE_FILE=${DOCKER_COMPOSE_FILE}" >> $GITHUB_ENV
+
+
+      - name: Show environment variables
+        run: |
+          echo "Branch: ${{ github.ref }}"
+          echo "SERVICE_NAME: ${{ env.SERVICE_NAME }}"
+          echo "SERVICE_ENVIRONMENT: ${{ env.SERVICE_ENVIRONMENT }}"
+          echo "CONTAINER_NAME: ${{ env.CONTAINER_NAME }}"
+          echo "IMAGE_NAME: ${{ env.IMAGE_NAME }}"
+          echo "DOCKER_COMPOSE_FILE: ${{ env.DOCKER_COMPOSE_FILE }}"
+
+      - name: Remove old container
+        run: |
+          docker rm -f ${{ env.FULL_SERVICE_NAME }} || true
+
+      - name: Build and deploy
+        working-directory: backend
+        env:
+          IMAGE_TAG: ${{ env.sha_short }}
+          SERVICE_NAME: ${{ env.SERVICE_NAME }}
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
+          CONTAINER_NAME: ${{ env.CONTAINER_NAME }}
+        run: |
+          echo "Deploying service:  ${{ env.SERVICE_NAME }}"
+          docker-compose -f ${{ env.DOCKER_COMPOSE_FILE }} build --no-cache  ${{ env.FULL_SERVICE_NAME }}
+          docker-compose -f ${{ env.DOCKER_COMPOSE_FILE }} up -d ${{ env.FULL_SERVICE_NAME }}
+
+      - name: Verify container is running
+        run: |
+          echo "Checking container status for ${{ env.CONTAINER_NAME }}..."
+          for i in {1..12}; do
+            status=$(docker inspect -f '{{.State.Status}}' ${{ env.CONTAINER_NAME }} 2>/dev/null || echo "not_found")
+            if [ "$status" = "running" ]; then
+              echo "✅ Container ${{ env.CONTAINER_NAME }} is running."
+              exit 0
+            fi
+            echo "⏳ Waiting for container to start... ($i/12)"
+            sleep 5
+          done
+
+          echo "❌ Container ${{ env.CONTAINER_NAME }} failed to start."
+          echo "------ Container Logs ------"
+          docker logs ${{ env.CONTAINER_NAME }} || echo "No logs available"
+          echo "-----------------------------"
+          exit 1
+
+      - name: Remove old images
+        run: |
+          images=$(docker images --filter "reference=${{ env.IMAGE_NAME }}:*" --format "{{.Repository}}:{{.Tag}}")
+          count=$(echo "$images" | wc -l)
+          if [ "$count" -gt 10 ]; then
+            delete_count=$(expr $count - 10)
+            echo "Found $count images. Deleting the oldest $delete_count..."
+            echo "$images" | tail -n $delete_count | xargs -r docker rmi
+          else
+            echo "Only $count images found (≤10). Skipping deletion."
+          fi
+
+      - name: Remove dangling images
+        run: |
+          docker image prune -f

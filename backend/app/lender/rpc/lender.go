@@ -13,6 +13,8 @@ import (
 	fileServer "zeebee-backend/app/lender/rpc/internal/server/file"
 	loanServer "zeebee-backend/app/lender/rpc/internal/server/loan"
 	loanDocumentServer "zeebee-backend/app/lender/rpc/internal/server/loandocument"
+	organizationUserServer "zeebee-backend/app/lender/rpc/internal/server/organizationuser"
+	roleServer "zeebee-backend/app/lender/rpc/internal/server/role"
 	storageServer "zeebee-backend/app/lender/rpc/internal/server/storage"
 	userServer "zeebee-backend/app/lender/rpc/internal/server/user"
 	"zeebee-backend/app/lender/rpc/internal/svc"
@@ -39,6 +41,8 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		lender.RegisterLoanServer(grpcServer, loanServer.NewLoanServer(ctx))
 		lender.RegisterFileServer(grpcServer, fileServer.NewFileServer(ctx))
 		lender.RegisterLoanDocumentServer(grpcServer, loanDocumentServer.NewLoanDocumentServer(ctx))
+		lender.RegisterRoleServer(grpcServer, roleServer.NewRoleServer(ctx))
+		lender.RegisterOrganizationUserServer(grpcServer, organizationUserServer.NewOrganizationUserServer(ctx))
 
 		if rpcConfig.Mode == service.DevMode || rpcConfig.Mode == service.TestMode {
 			reflection.Register(grpcServer)

@@ -6,7 +6,7 @@ info(
     version: "v1"
 )
 
-type SelectOptionEntry {
+type SelectOptionEntity {
     Label string `json:"label"`
     Value string `json:"value"`
 }
@@ -17,6 +17,6 @@ type (
     }
 
     GetSelectOptionResponse {
-        Options []SelectOptionEntry `json:"options"`
+        Options []SelectOptionEntity `json:"options"`
     }
 )

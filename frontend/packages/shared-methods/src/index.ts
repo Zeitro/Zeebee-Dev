@@ -8,7 +8,7 @@ export * from './components/FieldTips/index';
 export * from './components/FilterField/index';
 export * from './components/FilterTable/index';
 export * from './components/GoogleAutoComplete/index';
-// export * from './components/GoogleAutoComplete/AddressForm';
+export * from './components/GoogleAutoComplete/AddressForm';
 export * from './components/InputNameCombination/index';
 export * from './components/InputNumAmount/index';
 export * from './components/InputPhone/index';
@@ -30,8 +30,9 @@ export * from './components/FilterTableCard/index';
 export * from './components/SwitchOrganization/index';
 export * from './components/InfiniteList/index';
 export * from './components/CommonSidebar/index';
+export * from './components/ConfirmPassword';
 
-// 创建ZeeBee Loan表单组件，Borrower和Lender端共用
+// 创建ZeeBee Loan表单页面，Borrower和Lender端共用
 export * from './components/CreateZBLoan/ApplicantInfo';
 export * from './components/CreateZBLoan/BorrowerInfo';
 export * from './components/CreateZBLoan/PropertyInfo';
@@ -41,3 +42,7 @@ export * from './components/CreateZBLoan/ThirdPartyService';
 export * from './components/CreateZBLoan/Declaration';
 export * from './components/CreateZBLoan/Demographics';
 export * from './components/CreateZBLoan/ReviewAndSign';
+
+// borrower端、lender端、admin端共用的页面封装的组件
+export * from './componentsUi/OrgProfile/index';
+export * from './componentsUi/SelectCard/index';

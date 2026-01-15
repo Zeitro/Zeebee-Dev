@@ -29,6 +29,15 @@ const nextConfig: NextConfig = {
 		}
 		return [];
 	},
+	images: {
+		remotePatterns: [
+			{
+				protocol: 'https',
+				hostname: 'zeebee-files-staging.s3.us-west-1.amazonaws.com',
+				pathname: '/**',
+			},
+		],
+	},
 };
 
 export default nextConfig;

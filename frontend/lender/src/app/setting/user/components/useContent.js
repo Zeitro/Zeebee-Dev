@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { message, Space } from 'antd';
 import { getSelectOptions } from '@repo/shared-methods/api';
 import { useUserStore } from '@/store/user';
+import { userStatusColor } from '@repo/shared-methods/enum';
 const useUser = ({ handleSearch }) => {
 	const { request } = createRequest();
 	const { userInfo } = useUserStore();
@@ -14,24 +15,6 @@ const useUser = ({ handleSearch }) => {
 	const [rolesLoading, setRolesLoading] = useState(false);
 	const [userStatusOptions, setUserStatusOptions] = useState([]);
 	const [sendLoading, setSendLoading] = useState(false);
-
-	const statusColor = {
-		Active: {
-			border: '#B7EB8F',
-			bg: '#F6FFED',
-			color: '#52C41A',
-		},
-		'Not activated': {
-			border: '#FFD591',
-			bg: '#FFF7E6',
-			color: '#FA8C16',
-		},
-		Disabled: {
-			border: 'var(--base-border)',
-			bg: '#FAFAFA',
-			color: 'rgba(0, 0, 0, 0.85)',
-		},
-	};
 
 	// 删除用户
 	const handleDelete = async (id) => {
@@ -153,9 +136,9 @@ const useUser = ({ handleSearch }) => {
 				<div
 					className={'text-xs/5 px-2 border rounded-sm w-max'}
 					style={{
-						borderColor: statusColor[v]?.border,
-						backgroundColor: statusColor[v]?.bg,
-						color: statusColor[v]?.color,
+						borderColor: userStatusColor[v]?.border,
+						backgroundColor: userStatusColor[v]?.bg,
+						color: userStatusColor[v]?.color,
 					}}
 				>
 					{v}

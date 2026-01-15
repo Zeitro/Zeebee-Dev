@@ -4,8 +4,8 @@ import (
 	"github.com/signintech/gopdf"
 
 	"zeebee-backend/app/borrower/api/internal/pdf"
-	"zeebee-backend/common/constants"
 	"zeebee-backend/common/stringx"
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 func (form *ApplyForm) page7() (err error) {

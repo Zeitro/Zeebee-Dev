@@ -3,9 +3,13 @@ import { Breadcrumb } from 'antd';
 import React, { useLayoutEffect, useMemo, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { navRouter } from '@config/routes';
-import { getCurrentRouterItem, flattenNavRouter, getCrumbs } from '@config/common';
 import Link from 'next/link';
-import { eventBus } from '@repo/shared-methods/utils';
+import {
+	eventBus,
+	getCurrentRouterItem,
+	flattenNavRouter,
+	getCrumbs,
+} from '@repo/shared-methods/utils';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 /**
  * 面包屑导航
