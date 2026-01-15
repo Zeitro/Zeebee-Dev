@@ -8,7 +8,6 @@ info(
     version: "v1"
 )
 
-import "organization.api"
 import "role.api"
 
 type UserInfo {
@@ -41,6 +40,15 @@ type UserEntity {
     PivotOrganizationStatus string `json:"pivot_organization_status,omitempty"`
     Roles []*RoleEntity `json:"roles"`
 }
+
+type (
+    UserInfoOrganizationEntity {
+        Id int64 `json:"id"`
+        Name string `json:"name"`
+        Status string `json:"status"`
+        IsDefault bool `json:"is_default"`
+    }
+)
 
 // login
 type (
