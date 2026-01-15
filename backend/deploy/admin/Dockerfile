@@ -4,7 +4,7 @@ FROM golang:1.24.11-alpine AS builder
 WORKDIR /app
 COPY . /app
 RUN go mod download
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o lender /app/app/admin/cmd/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o admin /app/app/admin/cmd/main.go
 
 # Stage 2: Final stage
 FROM alpine:3.22.1 AS final
