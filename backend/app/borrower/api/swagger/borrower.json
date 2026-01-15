@@ -6820,12 +6820,6 @@
                   "properties": {
                     "lender": {
                       "type": "object",
-                      "required": [
-                        "loan_amount_range",
-                        "loan_term_range",
-                        "loan_tate_range",
-                        "loan_point_range"
-                      ],
                       "properties": {
                         "loan_amount_range": {
                           "type": "object",
@@ -14073,7 +14067,7 @@
       }
     }
   },
-  "x-date": "2026-01-13 14:49:52",
+  "x-date": "2026-01-15 18:01:20",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

@@ -629,10 +629,10 @@ type OrganizationInfoResponse struct {
 }
 
 type OrganizationLenderMetadataEntity struct {
-	LoanAmountRange RangeFloat64 `json:"loan_amount_range"`
-	LoanTermRange   RangeInt     `json:"loan_term_range"`
-	LoanTateRange   RangeFloat64 `json:"loan_tate_range"`
-	LoanPointRange  RangeFloat64 `json:"loan_point_range"`
+	LoanAmountRange RangeFloat64 `json:"loan_amount_range,optional"`
+	LoanTermRange   RangeInt     `json:"loan_term_range,optional"`
+	LoanTateRange   RangeFloat64 `json:"loan_tate_range,optional"`
+	LoanPointRange  RangeFloat64 `json:"loan_point_range,optional"`
 }
 
 type OrganizationLenderPageFilter struct {
