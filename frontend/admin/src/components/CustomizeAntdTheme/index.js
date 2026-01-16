@@ -129,8 +129,8 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 										rect?.width < 150 && 'w-[27px]',
 									].join(' ')}
 								>
-									{/* <Image
-										src="/images/logo.png"
+									<Image
+										src="/images/logo.svg"
 										width={149}
 										height={30}
 										alt="ZeeBee Logo"
@@ -140,7 +140,7 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 										].join(' ')}
 									/>
 									<Image
-										src="/images/logo_abbreviated.png"
+										src="/images/logo_abbreviated.svg"
 										width={27}
 										height={27}
 										alt="ZeeBee Logo"
@@ -148,7 +148,7 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 											'absolute top-1/2 left-0 w-[27px] -translate-y-1/2 transition-opacity duration-300 ease-in-out z-10',
 											rect?.width >= 150 ? 'opacity-0' : 'opacity-100',
 										].join(' ')}
-									/> */}
+									/>
 								</div>
 							)}
 						/>
