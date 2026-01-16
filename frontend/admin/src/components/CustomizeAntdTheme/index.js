@@ -50,11 +50,11 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 	}, [pathname]);
 
 	useEffect(() => {
-		// const haveSiderRoute = getCurrentRouterItem(pathname, navRouter);
-		// if (haveSiderRoute?.path && userInfo === null) {
-		// 	router.replace('/login');
-		// 	console.log('---退出---');
-		// }
+		const haveSiderRoute = getCurrentRouterItem(pathname, navRouter);
+		if (haveSiderRoute?.path && userInfo === null) {
+			router.replace('/login');
+			console.log('---退出---');
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userInfo, pathname]);
 
