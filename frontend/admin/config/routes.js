@@ -7,6 +7,7 @@ export const navRouter = [
 	{
 		path: '/lenders',
 		title: 'Lenders',
+		icon: 'business',
 	},
 ];
 
