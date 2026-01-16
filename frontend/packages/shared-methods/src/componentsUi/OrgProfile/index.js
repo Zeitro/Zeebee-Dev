@@ -53,6 +53,7 @@ const OrganizationProfile = (
 	},
 	ref,
 ) => {
+	const isInit = useRef(true);
 	const uploadRef = useRef(null);
 	const [form] = Form.useForm();
 	const { request } = createRequest();
@@ -89,11 +90,12 @@ const OrganizationProfile = (
 	};
 
 	useEffect(() => {
-		if (rowData?.id) {
+		if (rowData?.id && isInit?.current) {
 			const info = _.cloneDeep(rowData);
 			const website = _.get(rowData, websiteName)?.replace(/^https?:\/\//, '');
 			_.set(info, websiteName, website);
 			form.setFieldsValue(info);
+			isInit.current = false;
 		}
 	}, [form, rowData, websiteName]);
 
