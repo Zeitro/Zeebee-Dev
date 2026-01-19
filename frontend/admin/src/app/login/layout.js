@@ -27,7 +27,7 @@ const LoginLayout = ({ children }) => {
 			<div className="h-20 flex-shrink-0 flex items-center pl-6">
 				<div className="h-7">
 					<Image
-						src="/images/logo.png"
+						src="/images/logo.svg"
 						width={149}
 						height={30}
 						alt="logo"

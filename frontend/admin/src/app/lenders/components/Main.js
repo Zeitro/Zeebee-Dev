@@ -1,6 +1,6 @@
 import { NewModal, OrgProfile } from '@repo/shared-methods';
-import { Alert, message, Spin } from 'antd';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { message, Spin } from 'antd';
+import { useCallback, useRef, useState } from 'react';
 import { createRequest } from '@repo/shared-methods/utils';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 import _ from 'lodash';
@@ -38,7 +38,7 @@ const MainModal = ({ rowData, setOpen, successCallback }) => {
 			res.metadata = metadata;
 			setData(res);
 			setLoading(false);
-		} catch (error) {
+		} catch {
 			setLoading(false);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
