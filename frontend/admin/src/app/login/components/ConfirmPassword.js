@@ -65,7 +65,7 @@ const ConfirmPassWord = ({
 			</Form.Item>
 			<Form.Item
 				label={confirmPasswordLabel}
-				name="comfired_password"
+				name="confirm_password"
 				rules={[
 					{
 						required: true,
