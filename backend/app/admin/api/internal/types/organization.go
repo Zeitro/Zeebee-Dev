@@ -49,8 +49,9 @@ type OrganizationUpdateLenderRequest struct {
 	ContactEmail string                            `json:"contact_email" validate:"required,email"`
 	ContactPhone string                            `json:"contact_phone" validate:"required,min=8,max=20"`
 	ContactName  string                            `json:"contact_name" validate:"required,min=2,max=100"`
-	Logo         string                            `json:"logo,optional"`
-	Website      string                            `json:"website,optional"`
+	Address      *AddressEntity                    `json:"address" validate:"required"`
+	Logo         string                            `json:"logo" validate:"required,url"`
+	Website      string                            `json:"website,optional" validate:"omitempty,url"`
 	Tagline      string                            `json:"tagline,optional"`
 	Metadata     *OrganizationLenderMetadataEntity `json:"metadata,optional"`
 }

@@ -62,21 +62,6 @@ func (l *CreateLogic) Create(in *lender.OrganizationCreateRequest) (resp *lender
 	organization.Type = constants.UserTypeLender
 	organization.OwnerId = claim.UserId
 
-	// // Handle lender metadata if provided
-	// if in.Data.LenderMetadata != nil {
-	// 	// Convert lender metadata from proto to model
-	// 	lenderMetadata, err := copierx.Trans[lender.OrganizationLenderMetadataEntity, model.OrganizationLenderMetadata](
-	// 		in.Data.LenderMetadata,
-	// 	)
-	// 	if err != nil {
-	// 		return nil, errorx.Wrap(err, "Failed To Convert Lender Metadata")
-	// 	}
-	// 	// Set metadata with lender field
-	// 	organization.Metadata = &model.OrganizationMetadata{
-	// 		Lender: lenderMetadata,
-	// 	}
-	// }
-
 	// Check if organization with the same name already exists
 	exists, err := l.svcCtx.OrganizationRepo.IsExistedByColumns(l.ctx, map[string]interface{}{
 		"name": organization.Name,

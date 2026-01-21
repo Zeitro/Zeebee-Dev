@@ -253,6 +253,8 @@ func (l *OrganizationUserLogic) InviteOrganizationUser(ctx context.Context, crea
 			OrganizationName: organization.Name,
 			OrganizationId:   organizationUser.OrganizationId,
 			Operator:         createDto.Operator,
+			Logo:             organization.Logo,
+			Address:          organization.Address,
 		})
 		if err != nil {
 			err = errorx.Wrap(err, "Send invite Email Error")
@@ -306,6 +308,8 @@ func (l *OrganizationUserLogic) SendInviteEmail(ctx context.Context, input dto.O
 		OrganizationId:   input.OrganizationId,
 		Operator:         input.Operator,
 		Pwd:              pwd,
+		Logo:             organization.Logo,
+		Address:          organization.Address,
 	}
 	go func() {
 		newCtx := context.WithoutCancel(ctx)
@@ -480,6 +484,8 @@ type SendInviteUserEmailInput struct {
 	LastName    string
 	TargetEmail string
 	UserType    constants.UserType
+	Logo        string
+	Address     model.Address
 	// HasPwd           bool
 	Pwd              string
 	OrganizationName string
@@ -539,6 +545,14 @@ func (l *OrganizationUserLogic) sendInviteEmail(ctx context.Context, input SendI
 		"pwd":               input.Pwd,
 		"operator":          input.Operator,
 		"organization_name": input.OrganizationName,
+		"logo":              input.Logo,
+		"address": fmt.Sprintf("%s | %s | %s, %s, %s",
+			input.OrganizationName,
+			input.Address.Address1,
+			input.Address.City,
+			input.Address.State,
+			input.Address.ZipCode,
+		),
 	}
 	content, err := email2.ParseTemplate(input.EmailConfig.TplName, data)
 	if err != nil {

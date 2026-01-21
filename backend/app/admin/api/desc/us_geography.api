@@ -1,0 +1,21 @@
+syntax = "v1"
+
+info(
+    title: "lender-us-geography-api"
+    desc: "us-geography-api http service description"
+    version: "v1"
+)
+
+type (
+    GetUsCitiesRequest {
+        State string `form:"state"`
+    }
+
+    GetUsCitiesResponse {
+        List []string `json:"list"`
+    }
+
+    GetUsStatesResponse {
+        List []string `json:"list"`
+    }
+)

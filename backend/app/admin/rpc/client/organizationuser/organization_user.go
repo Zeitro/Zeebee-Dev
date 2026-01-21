@@ -32,6 +32,10 @@ type (
 	EmptyRequest                               = admin.EmptyRequest
 	EmptyResponse                              = admin.EmptyResponse
 	IdRequest                                  = admin.IdRequest
+	OptionEntity                               = admin.OptionEntity
+	OptionRequest                              = admin.OptionRequest
+	OptionRequestData                          = admin.OptionRequestData
+	OptionResponse                             = admin.OptionResponse
 	OrganizationCreateLenderOrganizationEntity = admin.OrganizationCreateLenderOrganizationEntity
 	OrganizationCreateLenderRequest            = admin.OrganizationCreateLenderRequest
 	OrganizationCreateLenderRequestData        = admin.OrganizationCreateLenderRequestData
@@ -128,6 +132,8 @@ type (
 	StorageCreatePresignedUrlResponse          = admin.StorageCreatePresignedUrlResponse
 	StorageCreatePresignedUrlResponseData      = admin.StorageCreatePresignedUrlResponseData
 	StringSliceResponse                        = admin.StringSliceResponse
+	UsCitiesRequest                            = admin.UsCitiesRequest
+	UsCitiesRequestData                        = admin.UsCitiesRequestData
 	UserEntity                                 = admin.UserEntity
 	UserInfoRequest                            = admin.UserInfoRequest
 	UserInfoRequestData                        = admin.UserInfoRequestData
