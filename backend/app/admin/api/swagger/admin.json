@@ -733,9 +733,31 @@
                     "name",
                     "contact_email",
                     "contact_phone",
-                    "contact_name"
+                    "contact_name",
+                    "address",
+                    "logo"
                   ],
                   "properties": {
+                    "address": {
+                      "type": "object",
+                      "properties": {
+                        "address1": {
+                          "type": "string"
+                        },
+                        "address2": {
+                          "type": "string"
+                        },
+                        "city": {
+                          "type": "string"
+                        },
+                        "state": {
+                          "type": "string"
+                        },
+                        "zip_code": {
+                          "type": "string"
+                        }
+                      }
+                    },
                     "contact_email": {
                       "type": "string"
                     },
@@ -1281,9 +1303,31 @@
               "required": [
                 "contact_email",
                 "contact_phone",
-                "contact_name"
+                "contact_name",
+                "address",
+                "logo"
               ],
               "properties": {
+                "address": {
+                  "type": "object",
+                  "properties": {
+                    "address1": {
+                      "type": "string"
+                    },
+                    "address2": {
+                      "type": "string"
+                    },
+                    "city": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "zip_code": {
+                      "type": "string"
+                    }
+                  }
+                },
                 "contact_email": {
                   "type": "string"
                 },
@@ -5307,6 +5351,57 @@
         }
       }
     },
+    "/api/v1/select_options": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "common"
+        ],
+        "summary": "select options",
+        "operationId": "commonSelectOptions",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "options": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "label",
+                      "value"
+                    ],
+                    "properties": {
+                      "label": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/storage/presign_url": {
       "post": {
         "consumes": [
@@ -5353,6 +5448,76 @@
               "properties": {
                 "url": {
                   "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/us_cities": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "common"
+        ],
+        "summary": "get us city",
+        "operationId": "commonGetUsCities",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "state",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "list": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/us_states": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "common"
+        ],
+        "summary": "get us states",
+        "operationId": "commonGetUsStates",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "list": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -5748,7 +5913,7 @@
       }
     }
   },
-  "x-date": "2026-01-15 15:28:57",
+  "x-date": "2026-01-21 14:54:32",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

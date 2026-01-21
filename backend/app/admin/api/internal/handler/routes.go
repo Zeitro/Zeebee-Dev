@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	api "zeebee-backend/app/admin/api/internal/handler/api"
+	common "zeebee-backend/app/admin/api/internal/handler/common"
 	organization "zeebee-backend/app/admin/api/internal/handler/organization"
 	organization_user "zeebee-backend/app/admin/api/internal/handler/organization_user"
 	resource "zeebee-backend/app/admin/api/internal/handler/resource"
@@ -55,6 +56,30 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 			}...,
 		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// select options
+				Method:  http.MethodGet,
+				Path:    "/select_options",
+				Handler: common.SelectOptionsHandler(serverCtx),
+			},
+			{
+				// get us city
+				Method:  http.MethodGet,
+				Path:    "/us_cities",
+				Handler: common.GetUsCitiesHandler(serverCtx),
+			},
+			{
+				// get us states
+				Method:  http.MethodGet,
+				Path:    "/us_states",
+				Handler: common.GetUsStatesHandler(serverCtx),
+			},
+		},
 		rest.WithPrefix("/api/v1"),
 	)
 

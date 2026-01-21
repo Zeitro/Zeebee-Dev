@@ -1,5 +1,13 @@
 package dto
 
+type AddressDto struct {
+	State    string `json:"state" copier:"State"`
+	City     string `json:"city"`
+	Address1 string `json:"address1"`
+	Address2 string `json:"address2"`
+	ZipCode  string `json:"zip_code"`
+}
+
 type BasePageRequestDto struct {
 	Page  int64 `json:"page"`
 	Limit int64 `json:"limit"`
