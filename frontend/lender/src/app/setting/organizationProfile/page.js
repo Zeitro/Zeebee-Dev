@@ -3,10 +3,9 @@ import { OrgProfile } from '@repo/shared-methods';
 import { Button, message } from 'antd';
 import { useRef, useState } from 'react';
 import { useUserStore } from '@/store/user';
-import _ from 'lodash';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 const OrganizationProfile = () => {
-	const { organization, getOrganization } = useUserStore();
+	const { getOrganization } = useUserStore();
 	const orgRef = useRef();
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const [orgData, setOrgData] = useState({});
@@ -28,12 +27,12 @@ const OrganizationProfile = () => {
 	};
 
 	useDeferredSyncEffect({
-		deferred: () => {
-			const org = _.cloneDeep(organization);
+		deferred: async () => {
+			const org = await getOrganization();
 			org.metadata = org?.metadata?.lender;
 			setOrgData(org);
 		},
-		deps: [organization],
+		deps: [],
 		isUseMicrotask: true,
 	});
 
