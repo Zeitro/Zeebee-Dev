@@ -6,6 +6,21 @@ info(
     version: "v1"
 )
 
+type SelectOptionEntity {
+    Label string `json:"label"`
+    Value string `json:"value"`
+}
+
+type (
+    GetSelectOptionRequest {
+        Name string `form:"name"`
+    }
+
+    GetSelectOptionResponse {
+        Options []SelectOptionEntity `json:"options"`
+    }
+)
+
 type (
     RangeInt {
         Min int `json:"min, optional"`

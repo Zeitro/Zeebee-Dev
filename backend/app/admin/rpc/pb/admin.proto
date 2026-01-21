@@ -755,6 +755,7 @@ message OrganizationCreateLenderOrganizationEntity {
   string website = 6;
   string tagline = 7;
   OrganizationMetadataEntity metadata = 8;
+  AddressEntity address = 9;
 }
 
 
@@ -771,6 +772,7 @@ message OrganizationUpdateLenderRequestData {
   string website = 6;
   string tagline = 7;
   OrganizationMetadataEntity metadata = 8;
+  AddressEntity address = 9;
 }
 
 // detail -- response
@@ -828,3 +830,35 @@ service Storage {
   rpc CreatePresignedUrl(StorageCreatePresignedUrlRequest) returns(StorageCreatePresignedUrlResponse);
 }
 // ================= storage service end =================
+// ========================== common service start =================
+message OptionRequest {
+  OptionRequestData data = 1;
+}
+
+message OptionRequestData {
+  string name = 1;
+}
+
+message OptionResponse {
+  repeated OptionEntity data = 1;
+}
+
+message OptionEntity{
+  string label = 1;
+  string value = 2;
+}
+
+message UsCitiesRequest {
+  UsCitiesRequestData data = 1;
+}
+
+message UsCitiesRequestData {
+  string state_usps = 1;
+}
+
+service common {
+  rpc GetOpt(OptionRequest) returns(OptionResponse);
+  rpc GetUsState(EmptyRequest) returns(StringSliceResponse);
+  rpc GetUsCities(UsCitiesRequest) returns(StringSliceResponse);
+}
+// ========================== common service end =================
