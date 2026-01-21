@@ -172,3 +172,24 @@ export const getFileTypeBySuffix = (suffix) => {
 			return '';
 	}
 };
+
+// 简单的复制到剪贴板函数
+export const copyToClipboard = async (text) => {
+	try {
+		if (navigator.clipboard) {
+			await navigator.clipboard.writeText(text);
+			return true;
+		} else {
+			// 降级处理
+			const textArea = document.createElement('textarea');
+			textArea.value = text;
+			document.body.appendChild(textArea);
+			textArea.select();
+			document.execCommand('copy');
+			document.body.removeChild(textArea);
+			return true;
+		}
+	} catch {
+		return false;
+	}
+};
