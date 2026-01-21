@@ -1,7 +1,7 @@
 import { NewModal, OrgProfile } from '@repo/shared-methods';
-import { message, Spin } from 'antd';
+import { Button, message, Space, Spin } from 'antd';
 import { useCallback, useRef, useState } from 'react';
-import { createRequest } from '@repo/shared-methods/utils';
+import { createRequest, copyToClipboard } from '@repo/shared-methods/utils';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 import _ from 'lodash';
 
@@ -26,6 +26,19 @@ const MainModal = ({ rowData, setOpen, successCallback }) => {
 			setOpen(false);
 		} catch {
 			setConfirmLoading(false);
+		}
+	};
+
+	const handleCopy = () => {
+		const info = orgRef?.current?.getInfo();
+		const text = `Email account: ${info?.owner?.email || 'N/A'}\nPassword: ${info?.owner?.password || 'N/A'}\n\n----------ZeeBee Lender login address----------\n${process.env.NEXT_PUBLIC_ZEEBEE_LENDER}`;
+		const isSuccess = copyToClipboard(text);
+		if (isSuccess) {
+			message.destroy();
+			message.open({
+				content: `Account copied successfully.`,
+				type: 'success',
+			});
 		}
 	};
 
@@ -60,6 +73,21 @@ const MainModal = ({ rowData, setOpen, successCallback }) => {
 			confirmLoading={confirmLoading}
 			onOk={handleSave}
 			onCancel={() => setOpen(false)}
+			footer={[
+				<Button key="back" onClick={() => setOpen(false)}>
+					Cancel
+				</Button>,
+				<Space key="ok">
+					{!rowData?.id && (
+						<Button key="copy" type="primary" onClick={handleCopy} ghost>
+							Copy account
+						</Button>
+					)}
+					<Button key="ok" type="primary" onClick={handleSave} loading={confirmLoading}>
+						Save
+					</Button>
+				</Space>,
+			]}
 		>
 			{/* <Alert
 				message="Please fill in your organization's complete information before you can log in to this system."
@@ -144,6 +172,10 @@ const MainModal = ({ rowData, setOpen, successCallback }) => {
 						'max',
 					]}
 					logoName={rowData?.id ? ['logo'] : ['organization', 'logo']}
+					addressName={[...(rowData?.id ? [] : ['organization']), 'address', 'address1']}
+					stateName={[...(rowData?.id ? [] : ['organization']), 'address', 'state']}
+					cityName={[...(rowData?.id ? [] : ['organization']), 'address', 'city']}
+					zipName={[...(rowData?.id ? [] : ['organization']), 'address', 'zip_code']}
 				/>
 			</Spin>
 		</NewModal>

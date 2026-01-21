@@ -1,6 +1,7 @@
 'use client';
 import { UploadOutlined } from '@ant-design/icons';
 import {
+	AddressForm,
 	ConfirmPassWord,
 	InputNameCombination,
 	InputNumAmount,
@@ -14,7 +15,7 @@ import {
 	validateRule,
 	createRequest,
 } from '@repo/shared-methods/utils';
-import { Button, Col, Form, Input, InputNumber, Row, Image } from 'antd';
+import { Button, Col, Form, Input, InputNumber, Row, Image, message } from 'antd';
 import { useState, forwardRef, useImperativeHandle, useEffect, useRef } from 'react';
 import _ from 'lodash';
 const { TextArea } = Input;
@@ -50,6 +51,10 @@ const OrganizationProfile = (
 		loanTermMinName = ['metadata', 'loan_term_range', 'min'],
 		loanTermMaxName = ['metadata', 'loan_term_range', 'max'],
 		logoName = 'logo',
+		addressName = ['address', 'address1'],
+		cityName = ['address', 'city'],
+		stateName = ['address', 'state'],
+		zipName = ['address', 'zip_code'],
 	},
 	ref,
 ) => {
@@ -65,7 +70,6 @@ const OrganizationProfile = (
 		try {
 			if (!api) return;
 			const values = await form.validateFields();
-			setConfirmLoading(true);
 			let urls = [];
 			const oldLogo = _.get(rowData, logoName);
 			if (rowData?.id && oldLogo) {
@@ -74,9 +78,19 @@ const OrganizationProfile = (
 			if (fileList?.length) {
 				urls = await uploadRef?.current?.triggerUpload();
 			}
+			if (!urls?.[0]) {
+				message.open({
+					content: 'Please select a logo',
+					type: 'error',
+				});
+				return Promise.reject('logo is required');
+			}
 			_.set(values, logoName, urls?.[0]);
 			const website = _.get(values, websiteName);
-			_.set(values, websiteName, `https://${website}`);
+			if (website) {
+				_.set(values, websiteName, `https://${website}`);
+			}
+			setConfirmLoading(true);
 			await request(api, {
 				method,
 				body: values,
@@ -93,7 +107,7 @@ const OrganizationProfile = (
 		if (rowData?.id && isInit?.current) {
 			const info = _.cloneDeep(rowData);
 			const website = _.get(rowData, websiteName)?.replace(/^https?:\/\//, '');
-			_.set(info, websiteName, website);
+			_.set(info, websiteName, website || '');
 			form.setFieldsValue(info);
 			isInit.current = false;
 		}
@@ -101,6 +115,9 @@ const OrganizationProfile = (
 
 	useImperativeHandle(ref, () => ({
 		handleSaveOrgProfile,
+		getInfo: () => {
+			return form.getFieldsValue();
+		},
 	}));
 	return (
 		<Form
@@ -241,6 +258,18 @@ const OrganizationProfile = (
 					>
 						<InputPhone placeholder="Contact phone" />
 					</Form.Item>
+					<AddressForm
+						addressName={addressName}
+						cityName={cityName}
+						stateName={stateName}
+						zipName={zipName}
+						stateCol={{ xs: 24, sm: 24, md: 8 }}
+						cityCol={{ xs: 24, sm: 24, md: 8 }}
+						zipCol={{ xs: 24, sm: 24, md: 8 }}
+						isHaveCol={false}
+						isShowAddress2={false}
+						isShowRow={true}
+					/>
 					<Form.Item label="Organization tagline" name={taglineName}>
 						<TextArea
 							placeholder="Organization tagline"
