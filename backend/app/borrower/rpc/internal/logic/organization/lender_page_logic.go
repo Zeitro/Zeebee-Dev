@@ -3,15 +3,15 @@ package organizationlogic
 import (
 	"context"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
+	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
-	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/bo"
 	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/model"
-
-	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/common/errorx"
 )
@@ -20,13 +20,15 @@ type LenderPageLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	baseLogic *logic.BaseLogic
 }
 
 func NewLenderPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LenderPageLogic {
 	return &LenderPageLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -44,11 +46,12 @@ func (l *LenderPageLogic) LenderPage(in *borrower.OrganizationLenderPageRequest)
 	pageReq.Filter.OrganizationType = constants.UserTypeLender
 	pageReq.Filter.Status = constants.OrganizationStatusActive
 
-	results, err := l.svcCtx.OrganizationRepo.Page(l.ctx, *pageReq)
+	pageResult, err := l.baseLogic.OrganizationLogic.Page(l.ctx, *pageReq)
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[gormx.PageResponse[*model.Organization], borrower.OrganizationLenderPageResponseData](&results, copierx.TimeToRFC3339Str())
+
+	data, err := copierx.Trans[bo.PageResultBo[bo.OrganizationPageEntityBo], borrower.OrganizationLenderPageResponseData](&pageResult, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

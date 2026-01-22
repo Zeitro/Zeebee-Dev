@@ -188,7 +188,7 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 			},
 		)
 
-		innerErr = eg.Error()
+		innerErr = eg.Wait()
 		return innerErr
 	})
 

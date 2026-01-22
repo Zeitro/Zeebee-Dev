@@ -23,9 +23,9 @@ func NewOrganizationServer(svcCtx *svc.ServiceContext) *OrganizationServer {
 	}
 }
 
-func (s *OrganizationServer) Info(ctx context.Context, in *borrower.EmptyRequest) (*borrower.OrganizationInfoResponse, error) {
-	l := organizationlogic.NewInfoLogic(ctx, s.svcCtx)
-	return l.Info(in)
+func (s *OrganizationServer) Profile(ctx context.Context, in *borrower.EmptyRequest) (*borrower.OrganizationInfoResponse, error) {
+	l := organizationlogic.NewProfileLogic(ctx, s.svcCtx)
+	return l.Profile(in)
 }
 
 func (s *OrganizationServer) AllLender(ctx context.Context, in *borrower.EmptyRequest) (*borrower.OrganizationAllLenderResponse, error) {
