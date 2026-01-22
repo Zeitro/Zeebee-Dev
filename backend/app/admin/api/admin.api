@@ -12,6 +12,8 @@ import "desc/role.api"
 import "desc/organization_user.api"
 import "desc/organization.api"
 import "desc/storage.api"
+import "desc/us_geography.api"
+import "desc/common.api"
 
 type (
 	EmptyRequest{
@@ -24,6 +26,29 @@ type PathIdRequest {
 	id int64 `path:"id" validate:"required,gt=0"`
 }
 
+// ============== common start =============
+@server(
+	desc: "admin-api service"
+	version: v1
+	group: common
+	prefix:  /api/v1
+	tags: common
+)
+service admin-api {
+	@doc "select options"
+	@handler SelectOptions
+	get /select_options (GetSelectOptionRequest) returns (GetSelectOptionResponse)
+
+	@doc "get us states"
+	@handler GetUsStates
+	get /us_states (EmptyRequest) returns (GetUsStatesResponse)
+
+	@doc "get us city"
+	@handler GetUsCities
+	get /us_cities (GetUsCitiesRequest) returns (GetUsCitiesResponse)
+}
+
+// ============== common end =============
 // ============== user start =============
 @server(
 	desc: "admin-api service"

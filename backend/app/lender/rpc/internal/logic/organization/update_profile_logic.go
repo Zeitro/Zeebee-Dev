@@ -56,28 +56,12 @@ func (l *UpdateProfileLogic) UpdateProfile(in *lender.OrganizationUpdateProfileR
 	}
 
 	// Copy request fields to existing model (only copies non-zero fields)
-	err = copier.Copy(&organization, in.Data)
+	err = copier.CopyWithOption(&organization, in.Data, copier.Option{
+		CaseSensitive: true,
+	})
 	if err != nil {
 		return nil, errorx.Wrap(err, "Failed To Copy Request Data")
 	}
-
-	// Initialize metadata if nil
-	// if organization.Metadata == nil {
-	// 	organization.Metadata = &model.OrganizationMetadata{}
-	// }
-	// var lenderMetadata *model.OrganizationLenderMetadata
-	// Manually assign metadata if provided
-	// if in.Data.LenderMetadata != nil {
-	// 	// Convert lender metadata from proto to model
-	// 	lenderMetadata, err = copierx.Trans[lender.OrganizationLenderMetadataEntity, model.OrganizationLenderMetadata](
-	// 		in.Data.LenderMetadata,
-	// 	)
-	// 	if err != nil {
-	// 		return nil, errorx.Wrap(err, "Failed To Convert Lender Metadata")
-	// 	}
-	// }
-	// Update only the lender field in metadata
-	// organization.Metadata.Lender = lenderMetadata
 
 	// Update the model
 	_, err = l.svcCtx.OrganizationRepo.UpdateOneById(l.ctx, claim.OrganizationId, organization)

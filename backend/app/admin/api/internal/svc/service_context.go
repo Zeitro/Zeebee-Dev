@@ -23,6 +23,7 @@ type ServiceContext struct {
 	OrganizationUserRpcClient admin.OrganizationUserClient
 	OrganizationRpcClient     admin.OrganizationClient
 	StorageRpcClient          admin.StorageClient
+	CommonRpcClient           admin.CommonClient
 }
 
 func NewServiceContext(c config.ApiConf) *ServiceContext {
@@ -38,5 +39,6 @@ func NewServiceContext(c config.ApiConf) *ServiceContext {
 		OrganizationUserRpcClient: admin.NewOrganizationUserClient(zrpc.MustNewClient(c.RpcConf).Conn()),
 		OrganizationRpcClient:     admin.NewOrganizationClient(zrpc.MustNewClient(c.RpcConf).Conn()),
 		StorageRpcClient:          admin.NewStorageClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		CommonRpcClient:           admin.NewCommonClient(zrpc.MustNewClient(c.RpcConf).Conn()),
 	}
 }
