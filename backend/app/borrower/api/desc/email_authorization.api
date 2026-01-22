@@ -1,0 +1,20 @@
+syntax = "v1"
+
+info(
+    title: "email-authorization-api"
+    desc: "email-authorization-api http service description"
+    version: "v1"
+)
+
+type EmailAuthorizationEntity {
+    Id int64 `json:"id"`
+    OrganizationId int64 `json:"organization_id"`
+    UserId int64 `json:"user_id"`
+    EmailAuthStrategy string `json:"email_auth_strategy"`
+    Email string `json:"email"`
+    EmailProvider string `json:"email_provider"`
+    IsAuthorized bool `json:"is_authorized"`
+    EmailScope string `json:"email_scope"`
+    CreatedAt string `json:"created_at"`
+    UpdatedAt string `json:"updated_at"`
+}

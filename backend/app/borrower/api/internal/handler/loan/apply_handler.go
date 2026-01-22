@@ -10,7 +10,6 @@ import (
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/api/internal/validate_rules"
-
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/response"
 	"zeebee-backend/common/validator"
@@ -32,16 +31,13 @@ func ApplyHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
 		}
-		if req.LoanProperty != nil && req.LoanProperty.PropertyBase != nil {
-			req.LoanProperty.Unit = req.LoanProperty.PropertyBase.Unit
-		}
 
 		v, err := validator.GetEnValidator()
 		if err != nil {
 			response.InternalServerError(w, errorx.GetErrorMsg(err))
 			return
 		}
-		v.RegisterStructRule(validate_rules.LoanApplyPropertyEntry, types.LoanApplyPropertyEntry{})
+		v.RegisterStructRule(validate_rules.LoanPropertyApplyEntity, types.LoanPropertyApplyEntity{})
 		_ = v.RegisterTansMsg(validate_rules.PropertyUnitTag, validate_rules.PropertyUnitMsgTpl)
 		if err := v.Validate(&req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))

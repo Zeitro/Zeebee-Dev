@@ -33,6 +33,7 @@ export const InputPhone = (props) => {
 			onChange={handleChange}
 			placeholder="(XXX) XXX-XXXX"
 			maxLength={14}
+			allowClear
 		/>
 	);
 };

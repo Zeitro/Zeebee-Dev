@@ -3,13 +3,12 @@ import { Menu } from 'antd';
 import React, { useMemo, useState } from 'react';
 import { useGlobalStore } from '@/store/global';
 import styles from './index.module.scss';
-import { generateMenuBar } from '@config/common';
 import { useRouter, usePathname } from 'next/navigation';
 import { RightCircleTwoTone, LeftCircleTwoTone } from '@ant-design/icons';
 import { useUserStore } from '@/store/user';
 import UserInfo from './UserInfo';
 import { useDeferredSyncEffect, useElementSize } from '@repo/shared-methods/hooks';
-import { findItem } from '@repo/shared-methods/utils';
+import { findItem, generateMenuBar } from '@repo/shared-methods/utils';
 
 const homePathname = '/';
 const initTwoToneColor = ['var(--base-label)', 'var(--gray-light)'];

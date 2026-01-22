@@ -70,6 +70,7 @@ export const documentsColumns = () => {
 					isChangeType={false}
 					record={record}
 					disabled={record.status === 'Pending upload'}
+					isStopPropagation={true}
 				>
 					Upload document
 				</UploadModalBtn>

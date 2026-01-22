@@ -1,0 +1,46 @@
+syntax = "v1"
+
+info(
+    title: "loan-applicant-api"
+    version: "v1"
+)
+
+import "address.api"
+
+
+type LoanApplicantEntity {
+    Id int64 `json:"id"`
+    BorrowerApplicantId int64 `json:"borrower_applicant_id"`
+    FirstName string `json:"first_name"`
+    MidName string `json:"mid_name"`
+    LastName string `json:"last_name"`
+    FullName string `json:"full_name"`
+    BorrowerId int64 `json:"borrower_id"`
+    LoanId int64 `json:"loan_id"`
+    IsPrimary bool `json:"is_primary"`
+    Type string `json:"type"`
+    InvitationStatus string `json:"invitation_status"`
+    LoanPropertyId int64 `json:"loan_property_id"`
+    Ssn string `json:"ssn"`
+    Dob string `json:"dob"`
+    MaritalStatus string `json:"marital_status"`
+    Email string `json:"email"`
+    EstCreditScore int32 `json:"est_credit_score"`
+    DriverLicenseNum string `json:"driver_license_num"`
+    Address *AddressEntity `json:"address"`
+    LoanBorrowerId int64 `json:"loan_borrower_id"`
+    Phone string `json:"phone"`
+    OwnPercent int32 `json:"own_percent"`
+    CreatedAt string `json:"created_at,omitempty"`
+    UpdatedAt string `json:"updated_at,omitempty"`
+}
+
+type LoanApplicantEditLoanEntity {
+    Id int64 `json:"id,omitempty,optional"`
+    BorrowerApplicantId int64 `json:"borrower_applicant_id,omitempty, optional"`
+    IsPrimary bool `json:"is_primary,omitempty, optional"`
+    OwnPercent int32 `json:"own_percent, optional" validate:"gt=0,max=100"`
+}
+
+
+

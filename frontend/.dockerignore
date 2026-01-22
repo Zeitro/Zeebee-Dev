@@ -1,2 +1,4 @@
 ./borrower/node_modules
 ./lender/node_modules
+./borrower/.next
+./lender/.next

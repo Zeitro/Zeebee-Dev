@@ -5,9 +5,10 @@ import (
 
 	"github.com/duke-git/lancet/v2/condition"
 	"github.com/duke-git/lancet/v2/slice"
-	"github.com/pkg/errors"
 
-	"zeebee-backend/common/constants"
+	"zeebee-backend/common/errorx"
+
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 // HighValueState represents a high value state info
@@ -201,7 +202,7 @@ func (r *PreApprovalRule) CalPreApprovalLoanAmount(input InputLoanInfo) (result 
 	result.LoanTerm = input.LoanTerm
 
 	if input.EstCurrentPropertyValue <= 0 {
-		return result, errors.WithStack(errors.New("Invalid Estimated Current Value"))
+		return result, errorx.WithStack(errorx.New("Invalid Estimated Current Value"))
 	}
 
 	// Calculate output LTC and LTARV ratios
@@ -329,7 +330,7 @@ func (r *PreApprovalRule) getTotalLoanCap(input InputLoanInfo) (ltaiv float64, l
 	if input.LoanType == constants.LoanTypeRehab {
 		rehabPriceRule, ok = priceRule.(RehabRules)
 		if !ok {
-			return 0, 0, 0, errors.WithStack(errors.New("invalid rehab rules"))
+			return 0, 0, 0, errorx.WithStack(errorx.New("Invalid Rehab Rules"))
 		}
 		if isHeavyRehab {
 			generalPriceCap, highValueZonePriceCap = rehabPriceRule.GetHeavyRules()

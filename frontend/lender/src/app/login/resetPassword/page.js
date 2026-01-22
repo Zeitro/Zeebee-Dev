@@ -3,15 +3,16 @@ import React, { useState } from 'react';
 import { Button, Form } from 'antd';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useUserStore } from '@/store/user';
-import { setCookie } from '@repo/shared-methods/utils';
 import styles from '../index.module.scss';
 import ConfirmPassWord from '../components/ConfirmPassword';
 import { throttle } from 'lodash';
+import useContent from '../components/useContent';
 const ResetPassword = () => {
 	const [form] = Form.useForm();
 	const router = useRouter();
 	const searchParams = useSearchParams();
-	const { getUserInfo, resetPassword } = useUserStore();
+	const { resetPassword } = useUserStore();
+	const { loginByToken } = useContent();
 	const [loading, setLoading] = useState(false);
 
 	// 重置密码并登录
@@ -27,11 +28,8 @@ const ResetPassword = () => {
 				code,
 				...values,
 			});
-			await getUserInfo();
-			setCookie('token', access?.access_token, access?.access_token_expire * 1000);
-			setLoading(false);
-			router.push('/');
-		} catch (error) {
+			loginByToken(access, { setLoading });
+		} catch {
 			setLoading(false);
 		}
 	}, 1000);

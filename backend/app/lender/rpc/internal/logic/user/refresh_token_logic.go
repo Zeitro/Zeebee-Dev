@@ -2,18 +2,14 @@ package userlogic
 
 import (
 	"context"
-	"strconv"
-	"zeebee-backend/app/lender/rpc/internal/logic"
-
-	"github.com/pkg/errors"
-
-	"zeebee-backend/app/lender/rpc/internal/svc"
-	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/constants"
-	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
 
 	"github.com/zeromicro/go-zero/core/logx"
+
+	"zeebee-backend/app/lender/rpc/internal/logic"
+	"zeebee-backend/app/lender/rpc/internal/svc"
+	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 type RefreshTokenLogic struct {
@@ -38,44 +34,15 @@ func (l *RefreshTokenLogic) RefreshToken(in *lender.RefreshTokenRequest) (resp *
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	var claims *utils.JWTClaims
-	// parse refresh token
-	claims, err = utils.ParseToken(in.Data.RefreshToken, l.svcCtx.Config.JwtAuth.RefreshSecret)
+
+	token, err := l.baseLogic.UserLogic.RefreshToken(l.ctx, in.Data.RefreshToken, constants.UserTypeLender)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, err
 	}
-	id, _ := strconv.ParseInt(claims.UserID, 10, 64)
-
-	user, err := l.svcCtx.UserRepo.GetLenderUser(l.ctx, id)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-
-	if user.Status == constants.UserStatusInactive {
-		return nil, errors.New("User is inactive")
-	}
-
-	employee, err := l.baseLogic.CheckAndUpdateActiveLenderCompanyByEmployee(user.LenderEmployee)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	user.LenderEmployee = employee
-
-	token, err := generateLenderToken(user, l.svcCtx)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-
 	return &lender.RefreshTokenResponse{
 		Data: &lender.RefreshTokenResponseData{
-			AccessToken:        token.AccessToken,
-			AccessTokenExpire:  token.AccessTokenExpire,
-			RefreshToken:       token.RefreshToken,
-			RefreshTokenExpire: token.RefreshTokenExpire,
+			AccessToken:       token.AccessToken,
+			AccessTokenExpire: token.AccessTokenExpire,
 		},
 	}, nil
 }

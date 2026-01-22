@@ -6,6 +6,7 @@ version: 2
 # 运行时设置
 run:
   timeout: 5m
+  concurrency: 2
   tests: true  # 检查测试文件（默认 true）
   skip-dirs:
     - vendor

@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
-	"github.com/pkg/errors"
 
 	"zeebee-backend/app/lender/rpc/internal/global"
 	"zeebee-backend/app/lender/rpc/internal/svc"
@@ -44,7 +43,7 @@ func (l *CreatePresignedUrlLogic) CreatePresignedUrl(in *lender.StorageCreatePre
 	typ := in.Data.Type
 	suffix := strings.ToLower(in.Data.FileSuffix)
 	if len(typ) == 0 {
-		err = errors.New("type is empty")
+		err = errorx.New("Type Is Empty")
 	}
 	name := uuid.New().String()
 
