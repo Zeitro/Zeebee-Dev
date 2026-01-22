@@ -61,14 +61,16 @@ const EditCommentModal = ({ open, setOpen, record = {} }) => {
 };
 
 export default EditCommentModal;
-export const EditCommentModalBtn = ({ children, record }) => {
+export const EditCommentModalBtn = ({ children, isStopPropagation, record }) => {
 	const [open, setOpen] = useState(false);
 	return (
 		<>
 			<div
 				onClick={(e) => {
-					e.stopPropagation();
-					e.preventDefault();
+					if (isStopPropagation) {
+						e.stopPropagation();
+						e.preventDefault();
+					}
 					setOpen(true);
 				}}
 			>

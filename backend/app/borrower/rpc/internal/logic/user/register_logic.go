@@ -105,7 +105,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 		OwnerType: constants.OrganizationOwnerTypeNone,
 	}
 
-	userModel, organizationUserModel, err := l.baseLogic.UserLogic.RegisterWithOrganization(l.ctx, userInput, organizationInput, constants.UserTypeBorrower)
+	userModel, organizationUserModel, err := l.baseLogic.UserLogic.RegisterWithOrganization(l.ctx, userInput, organizationInput, constants.UserTypeBorrower, false)
 	if err != nil {
 		return nil, err
 	}
@@ -225,7 +225,7 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int6
 				return err
 			},
 		)
-		innerErr = eg.Error()
+		innerErr = eg.Wait()
 		return innerErr
 	})
 	if err != nil {

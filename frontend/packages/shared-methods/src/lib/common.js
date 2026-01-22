@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { matchRoute } from './commonRouter';
 /**
  * 公共方法封装（格式化或验证相关写在format文件）
  * */
@@ -106,11 +107,11 @@ export function flattenArray(list = [], childKey = 'children', isHaveChildParent
  * dynamicPath 动态路由/loans/123455
  * path 比较的固定路由/loans/:id
  * */
-export const matchRoute = (path, dynamicPath) => {
-	if (path === dynamicPath) return true;
-	const pattern = '^' + path.replace(/:[^/]+/g, '[^/]+') + '$';
-	return new RegExp(pattern).test(dynamicPath);
-};
+// export const matchRoute = (path, dynamicPath) => {
+// 	if (path === dynamicPath) return true;
+// 	const pattern = '^' + path.replace(/:[^/]+/g, '[^/]+') + '$';
+// 	return new RegExp(pattern).test(dynamicPath);
+// };
 
 // 递归查找,返回查找到的某一项数据
 export const findItem = ({
@@ -169,5 +170,26 @@ export const getFileTypeBySuffix = (suffix) => {
 			return 'doc';
 		default:
 			return '';
+	}
+};
+
+// 简单的复制到剪贴板函数
+export const copyToClipboard = async (text) => {
+	try {
+		if (navigator.clipboard) {
+			await navigator.clipboard.writeText(text);
+			return true;
+		} else {
+			// 降级处理
+			const textArea = document.createElement('textarea');
+			textArea.value = text;
+			document.body.appendChild(textArea);
+			textArea.select();
+			document.execCommand('copy');
+			document.body.removeChild(textArea);
+			return true;
+		}
+	} catch {
+		return false;
 	}
 };

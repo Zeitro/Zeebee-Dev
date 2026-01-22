@@ -628,6 +628,13 @@ type OrganizationInfoResponse struct {
 	Data OrganizationEntity `json:"data"`
 }
 
+type OrganizationLenderMetadataEntity struct {
+	LoanAmountRange RangeFloat64 `json:"loan_amount_range,optional"`
+	LoanTermRange   RangeInt     `json:"loan_term_range,optional"`
+	LoanTateRange   RangeFloat64 `json:"loan_tate_range,optional"`
+	LoanPointRange  RangeFloat64 `json:"loan_point_range,optional"`
+}
+
 type OrganizationLenderPageFilter struct {
 	Keyword string `json:"keyword,optional"`
 }
@@ -635,6 +642,10 @@ type OrganizationLenderPageFilter struct {
 type OrganizationLenderPageSorter struct {
 	Column string `json:"column,optional"`
 	Sort   string `json:"sort,optional"`
+}
+
+type OrganizationMetadataEntity struct {
+	Lender *OrganizationLenderMetadataEntity `json:"lender,omitempty"`
 }
 
 type OrganizationOptionEntity struct {
@@ -735,6 +746,16 @@ type PropertyPageFilter struct {
 type PropertyPageSorter struct {
 	Column string `json:"column,optional"`
 	Sort   string `json:"sort,optional"`
+}
+
+type RangeFloat64 struct {
+	Min float64 `json:"min"`
+	Max float64 `json:"max"`
+}
+
+type RangeInt struct {
+	Min int `json:"min"`
+	Max int `json:"max"`
 }
 
 type ResourceEntity struct {
@@ -877,4 +898,27 @@ type UserLoginResponse struct {
 	AccessTokenExpire  int64  `json:"access_token_expire"`
 	RefreshToken       string `json:"refresh_token"`
 	RefreshTokenExpire int64  `json:"refresh_token_expire"`
+}
+
+type ZeitroPropertyEntity struct {
+	FullAddress     string `json:"full_address"`
+	State           string `json:"state"`
+	County          string `json:"county"`
+	City            string `json:"city"`
+	ZipCode         string `json:"zip_code"`
+	PropertyType    string `json:"property_type"`
+	Price           string `json:"price"`
+	IncomeIndicator string `json:"income_indicator,optional"`
+	MinorityPercent string `json:"minority_percent,optional"`
+	TotalPopulation string `json:"total_population,optional"`
+	Hispanic        string `json:"hispanic,optional"`
+	Black           string `json:"black,optional"`
+	Asian           string `json:"asian,optional"`
+	Pacific         string `json:"pacific,optional"`
+	MsaCode         string `json:"msa_code,optional"`
+	DaysOnMarket    string `json:"days_on_market,optional"`
+	AgentName       string `json:"agent_name,optional"`
+	AgentPhone      string `json:"agent_phone,optional"`
+	AgentEmail      string `json:"agent_email,optional"`
+	Distance        string `json:"distance,optional"`
 }

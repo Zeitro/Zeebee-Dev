@@ -1,0 +1,482 @@
+# API 契约定义
+
+**Feature**: 004-borrower-zeitro-proxy
+**Date**: 2025-01-09
+**Phase**: Phase 1 - Design & Contracts
+
+## 1. go-zero API 定义
+
+**文件位置**: `app/borrower/api/desc/zeitro.api`
+
+```go
+syntax = "v1"
+
+info(
+    title: "zeitro-listing-api"
+    desc: "Zeitro listing proxy API for borrower service"
+    author: "Zeebee Team"
+    version: "v1"
+)
+
+import "common.api"
+
+type (
+    // ===== 请求结构 =====
+
+    ZeitroListingSearchRequest {
+        Latitude  float64  `json:"lat" validate:"required,min=-90,max=90"`
+        Longitude float64  `json:"lon" validate:"required,min=-180,max=180"`
+        Distance  float64  `json:"dist" validate:"required,min=0,max=100"`
+        Address   string   `json:"addr,optional"`
+    }
+
+    // ===== 响应结构 =====
+
+    ZeitroPropertyEntity {
+        FullAddress     string  `json:"full_address"`
+        State           string  `json:"state"`
+        County          string  `json:"county"`
+        City            string  `json:"city"`
+        ZipCode         string  `json:"zip_code"`
+        PropertyType    string  `json:"property_type"`
+        Price           string  `json:"price"`
+        IncomeIndicator string  `json:"income_indicator,optional"`
+        MinorityPercent string  `json:"minority_percent,optional"`
+        TotalPopulation string  `json:"total_population,optional"`
+        Hispanic        string  `json:"hispanic,optional"`
+        Black           string  `json:"black,optional"`
+        Asian           string  `json:"asian,optional"`
+        Pacific         string  `json:"pacific,optional"`
+        MsaCode         string  `json:"msa_code,optional"`
+        DaysOnMarket    string  `json:"days_on_market,optional"`
+        AgentName       string  `json:"agent_name,optional"`
+        AgentPhone      string  `json:"agent_phone,optional"`
+        AgentEmail      string  `json:"agent_email,optional"`
+        Distance        string  `json:"distance,optional"`
+    }
+
+    ZeitroListingSearchResponse {
+        List []ZeitroPropertyEntity `json:"list"`
+    }
+)
+
+@server(
+    prefix: /borrower/v1
+    group: zeitro
+    middleware: Authority
+)
+service borrower-api {
+    @doc "Search property listings from Zeitro API"
+    @handler zeitroListingSearch
+    post /zeitro/listings/search (ZeitroListingSearchRequest) returns (ZeitroListingSearchResponse)
+}
+```
+
+## 2. OpenAPI 3.0 规范
+
+**文件位置**: `backend/specs/004-borrower-zeitro-proxy/contracts/openapi.yaml`
+
+```yaml
+openapi: 3.0.0
+info:
+  title: Borrower Zeitro Listing API
+  description: Proxy API for searching property listings from Zeitro
+  version: 1.0.0
+  contact:
+    name: Zeebee Team
+    email: dev@zeebee.com
+
+servers:
+  - url: http://localhost:10000/borrower/v1
+    description: Local development
+  - url: https://api.zeebee.com/borrower/v1
+    description: Production
+
+paths:
+  /zeitro/listings/search:
+    post:
+      summary: Search property listings
+      description: Search for property listings from Zeitro API based on location and radius
+      operationId: searchListings
+      tags:
+        - Zeitro Listings
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZeitroListingSearchRequest'
+            examples:
+              sanJoseSearch:
+                summary: San Jose area search
+                value:
+                  lat: 37.33874
+                  lon: -121.8852525
+                  dist: 5
+                  addr: "San Jose, CA, USA"
+      responses:
+        '200':
+          description: Successful search
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZeitroListingSearchResponse'
+              examples:
+                successResponse:
+                  summary: Successful search with results
+                  value:
+                    list:
+                      - full_address: "523 Union Ave, Campbell, CA 95008"
+                        state: "CA"
+                        county: "Santa Clara"
+                        city: "Campbell"
+                        zip_code: "95008"
+                        property_type: "Townhouse"
+                        price: "1699000"
+                        income_indicator: "4"
+                        minority_percent: "93.91"
+                        total_population: "3662"
+                        hispanic: "3302"
+                        black: "9"
+                        asian: "75"
+                        pacific: "10"
+                        msa_code: "31084"
+                        days_on_market: "31"
+                        agent_name: "Jina Lee"
+                        agent_phone: "3109855462"
+                        agent_email: "jina@metisre.com"
+                        distance: "4"
+        '400':
+          description: Bad request - Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 400
+                msg: "Invalid latitude: must be between -90 and 90"
+        '401':
+          description: Unauthorized - Invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 401
+                msg: "Unauthorized access"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 500
+                msg: "Failed to connect to Zeitro API"
+        '503':
+          description: Service unavailable - Zeitro API timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 503
+                msg: "Zeitro API service temporarily unavailable"
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT authentication token
+
+  schemas:
+    ZeitroListingSearchRequest:
+      type: object
+      required:
+        - lat
+        - lon
+        - dist
+      properties:
+        lat:
+          type: number
+          format: double
+          minimum: -90
+          maximum: 90
+          description: Latitude in decimal degrees
+          example: 37.33874
+        lon:
+          type: number
+          format: double
+          minimum: -180
+          maximum: 180
+          description: Longitude in decimal degrees
+          example: -121.8852525
+        dist:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: Search radius in miles
+          example: 5
+        addr:
+          type: string
+          description: Human-readable address for logging
+          example: "San Jose, CA, USA"
+
+    ZeitroPropertyEntity:
+      type: object
+      properties:
+        full_address:
+          type: string
+          description: Complete property address
+          example: "523 Union Ave, Campbell, CA 95008"
+        state:
+          type: string
+          description: State code
+          example: "CA"
+        county:
+          type: string
+          description: County name
+          example: "Santa Clara"
+        city:
+          type: string
+          description: City name
+          example: "Campbell"
+        zip_code:
+          type: string
+          description: ZIP code
+          example: "95008"
+        property_type:
+          type: string
+          description: Type of property
+          example: "Townhouse"
+        price:
+          type: string
+          description: Listing price
+          example: "1699000"
+        income_indicator:
+          type: string
+          description: Income level indicator
+          example: "4"
+        minority_percent:
+          type: string
+          description: Minority population percentage
+          example: "93.91"
+        total_population:
+          type: string
+          description: Total population count
+          example: "3662"
+        hispanic:
+          type: string
+          description: Hispanic population count
+          example: "3302"
+        black:
+          type: string
+          description: Black population count
+          example: "9"
+        asian:
+          type: string
+          description: Asian population count
+          example: "75"
+        pacific:
+          type: string
+          description: Pacific islander population count
+          example: "10"
+        msa_code:
+          type: string
+          description: Metropolitan Statistical Area code
+          example: "31084"
+        days_on_market:
+          type: string
+          description: Days listed on market
+          example: "31"
+        agent_name:
+          type: string
+          description: Agent's name
+          example: "Jina Lee"
+        agent_phone:
+          type: string
+          description: Agent's phone number
+          example: "3109855462"
+        agent_email:
+          type: string
+          description: Agent's email address
+          example: "jina@metisre.com"
+        distance:
+          type: string
+          description: Distance from search location
+          example: "4"
+
+    ZeitroListingSearchResponse:
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            $ref: '#/components/schemas/ZeitroPropertyEntity'
+          description: List of property listings
+
+    Error:
+      type: object
+      required:
+        - code
+        - msg
+      properties:
+        code:
+          type: integer
+          description: HTTP status code
+          example: 400
+        msg:
+          type: string
+          description: Error message
+          example: "Invalid request parameters"
+
+tags:
+  - name: Zeitro Listings
+    description: Property listing search operations
+```
+
+## 3. Zeitro API 集成契约
+
+### Zeitro Token API
+
+**端点**: `POST /auth/access-token`
+
+**请求**:
+```http
+POST /auth/access-token HTTP/1.1
+Host: lo.zeitro.com
+Content-Type: application/x-www-form-urlencoded
+Authorization: Basic base64(cli_hu4tKiltzCfQfheOa3:sec_8SyshMSf1ZORJrH6mT38FMtDAItSLAox8ysd)
+
+grant_type=client_credentials
+```
+
+**响应**:
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "Bearer",
+  "expires_in": 3600
+}
+```
+
+### Zeitro Listing Search API
+
+**端点**: `POST /los/openhousesearch`
+
+**请求**:
+```http
+POST /los/openhousesearch HTTP/1.1
+Host: lo.zeitro.com
+Content-Type: application/json
+Authorization: Bearer {access_token}
+
+{
+  "Lat": 37.33874,
+  "Lon": -121.8852525,
+  "Dist": 5,
+  "Addr": "San Jose, CA, USA"
+}
+```
+
+**响应**:
+```json
+[
+  {
+    "FullAddress": "523 Union Ave, Campbell, CA 95008",
+    "State": "CA",
+    "County": "Santa Clara",
+    "City": "Campbell",
+    "ZipCode": "95008",
+    "PropertyType": "Townhouse",
+    "Price": "1699000                             ",
+    "IncomeIndicator": "4",
+    "MinorityPercent": "93.91",
+    "TotalPopulation": "3662",
+    "Hispanic": "3302",
+    "Black": "9",
+    "Asian": "75",
+    "Pacific": "10",
+    "MsaCode": "31084",
+    "DaysOnMarket": "31",
+    "AgentName": "Jina Lee",
+    "AgentPhone": "3109855462",
+    "AgentEmail": "jina@metisre.com",
+    "Distance": "4"
+  }
+]
+```
+
+## 4. 数据转换契约
+
+### Zeitro 字段 → Borrower 字段映射
+
+| Zeitro 字段 | Borrower 字段 | 数据类型 | 转换规则 |
+|------------|--------------|---------|---------|
+| FullAddress | full_address | string | TrimSpace |
+| State | state | string | TrimSpace |
+| County | county | string | TrimSpace |
+| City | city | string | TrimSpace |
+| ZipCode | zip_code | string | TrimSpace |
+| PropertyType | property_type | string | TrimSpace |
+| Price | price | string | TrimSpace |
+| IncomeIndicator | income_indicator | string | TrimSpace |
+| MinorityPercent | minority_percent | string | TrimSpace |
+| TotalPopulation | total_population | string | TrimSpace |
+| Hispanic | hispanic | string | TrimSpace |
+| Black | black | string | TrimSpace |
+| Asian | asian | string | TrimSpace |
+| Pacific | pacific | string | TrimSpace |
+| MsaCode | msa_code | string | TrimSpace |
+| DaysOnMarket | days_on_market | string | TrimSpace |
+| AgentName | agent_name | string | TrimSpace |
+| AgentPhone | agent_phone | string | 去除非数字字符 |
+| AgentEmail | agent_email | string | TrimSpace + 可选格式验证 |
+| Distance | distance | string | TrimSpace |
+
+## 5. 错误代码契约
+
+| 错误代码 | HTTP 状态 | 描述 | 重试策略 |
+|---------|----------|------|---------|
+| CONFIG_INVALID | 500 | Zeitro 配置无效 | 不重试 |
+| AUTH_FAILED | 401 | Zeitro 认证失败 | 不重试 |
+| TOKEN_EXPIRED | 401 | Token 已过期 | 自动刷新后重试 |
+| CONNECTION_FAILED | 503 | 无法连接 Zeitro API | 指数退避重试 |
+| TIMEOUT | 503 | Zeitro API 超时 | 指数退避重试 |
+| RATE_LIMITED | 429 | 超过速率限制 | 延迟后重试 |
+| API_ERROR | 502 | Zeitro API 错误 | 根据错误类型决定 |
+| INVALID_INPUT | 400 | 请求参数无效 | 不重试 |
+
+## 6. 性能契约
+
+| 指标 | 目标值 | 测量方法 |
+|------|--------|---------|
+| 平均响应时间 | < 2 秒 | 不包括 Zeitro API 时间 |
+| Token 缓存命中率 | > 95% | 缓存命中次数 / 总请求次数 |
+| Token 刷新成功率 | > 99.9% | 成功刷新次数 / 总刷新尝试 |
+| 并发处理能力 | ≥ 100 QPS | 负载测试 |
+| 超时时间 | 5 秒 | Zeitro API 调用超时 |
+
+## 7. 安全契约
+
+### 认证
+- 使用 JWT Bearer Token 认证
+- Token 由 borrower API Gateway 验证
+
+### 授权
+- 所有端点需要认证
+- 使用 `Authority` 中间件
+
+### 数据保护
+- 不记录敏感信息（密码）
+- 日志中不记录完整的 API 响应
+- 错误消息不暴露内部细节
+
+## 下一步
+
+API 契约已定义完成，接下来生成 quickstart.md 和更新 agent 上下文。
