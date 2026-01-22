@@ -17,7 +17,7 @@
       "
 >
     <img
-            src="https://zeebee-files-production.s3.us-west-1.amazonaws.com/files-production/image/zeebeelender_logo.png"
+            src="{{ .logo }}"
             alt="logo"
             style="height: 28px"
     />
@@ -79,7 +79,7 @@
     <!-- 未注册账户显示--end -->
     {{end}}
 
-    <div style="display: flex; justify-content: center">
+    <div style="text-align: center;">
         <a
                 href="{{ .url }}"
                 class="button"
@@ -124,7 +124,7 @@
           font-family: Roboto, sans-serif;
         "
     >
-        ZeeBee | 123 Business St | San Francisco, CA, 94105
+        {{ .address }}
     </div>
 </div>
 </body>

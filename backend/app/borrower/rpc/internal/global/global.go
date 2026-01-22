@@ -47,7 +47,7 @@ func InitGlobal(c config.RpcConf) (err error) {
 		return initStateHighCostLimitMgr(statics.FullCountyLoanLimitListContent, c.HighCostLimitValue)
 	})
 
-	err = eg.Error()
+	err = eg.Wait()
 	if err != nil {
 		return err
 	}
