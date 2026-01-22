@@ -225,7 +225,7 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 			},
 		)
 
-		innerErr = eg.Error()
+		innerErr = eg.Wait()
 		return innerErr
 	})
 

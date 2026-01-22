@@ -8,10 +8,10 @@ run:
   timeout: 5m
   concurrency: 2
   tests: true  # 检查测试文件（默认 true）
-  skip-dirs:
-    - vendor
-    - docs
-    - examples
+  #  skip-dirs:
+  #    - vendor
+  #    - docs
+  #    - examples
   # 并发数（可选，默认为 CPU 数）
   # concurrency: 4
   fix: true
