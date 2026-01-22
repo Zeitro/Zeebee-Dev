@@ -5,7 +5,7 @@ import { Row, Col, Form, Radio, Input, InputNumber } from 'antd';
 import { CommonFormDate } from '../CommonFormDate';
 import { InputNumAmount } from '../InputNumAmount';
 import { useGetOptions } from '@repo/shared-methods/hooks';
-import { layoutCol, titleCol, yesNoOptions } from '@/enum/common';
+import { layoutCol, titleCol, yesNoOptions } from '@repo/shared-methods/enum';
 import { maxTerm, maxAmount } from '../../lib/format';
 
 export const LoanDetail = ({ gutter = 24, form }) => {

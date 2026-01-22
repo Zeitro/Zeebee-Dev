@@ -130,15 +130,22 @@ const UploadModal = ({ open, setOpen, isChangeType = true, record = {}, loan_id 
 };
 
 export default UploadModal;
-export const UploadModalBtn = ({ children, isChangeType, isButton = true, record, ...props }) => {
+export const UploadModalBtn = ({
+	children,
+	isChangeType,
+	isButton = true,
+	record,
+	isStopPropagation,
+	...props
+}) => {
 	const [open, setOpen] = useState(false);
 	return (
-		<div onClick={(e) => e.stopPropagation()}>
+		<div onClick={(e) => isStopPropagation && e.stopPropagation()}>
 			{isButton ? (
 				<Button
 					type="default"
 					size="small"
-					onClick={(e) => {
+					onClick={() => {
 						setOpen(true);
 					}}
 					{...props}
@@ -147,7 +154,7 @@ export const UploadModalBtn = ({ children, isChangeType, isButton = true, record
 				</Button>
 			) : (
 				<div
-					onClick={(e) => {
+					onClick={() => {
 						setOpen(true);
 					}}
 				>

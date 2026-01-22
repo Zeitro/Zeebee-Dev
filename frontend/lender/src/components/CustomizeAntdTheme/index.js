@@ -154,7 +154,8 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 						/>
 						<div className="flex-1 overflow-hidden flex flex-col">
 							<NewHeader />
-							<div className="flex-1 overflow-hidden">{children}</div>
+							{/* <div className="flex-1 overflow-hidden">{}</div> */}
+							{children}
 						</div>
 					</div>
 				)}

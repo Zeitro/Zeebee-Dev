@@ -20,9 +20,12 @@ export const useUserStore = create(
 			updateAccess: (access) => {
 				set({ access });
 			},
+			updateUserInfo: (userInfo) => {
+				set({ userInfo });
+			},
 			clearUserInfo: () => {
 				api.persist.clearStorage(); // 清除持久化数据
-				set({ access: null, userInfo: null }); // 重置内存状态
+				set({ access: null, userInfo: null, organization: null }); // 重置内存状态
 			},
 			getUserInfo: async () => {
 				const userInfo = await request('/user/info', {
@@ -82,7 +85,7 @@ export const useUserStore = create(
 			},
 			getOrganization: async () => {
 				// 获取组织信息
-				const organization = await request('/organization/info', {
+				const organization = await request('/organization/profile', {
 					method: 'GET',
 				});
 				set({ organization });
@@ -98,6 +101,7 @@ export const useUserStore = create(
 			partialize: (state) => ({
 				userInfo: state.userInfo,
 				access: state.access,
+				organization: state.organization,
 			}),
 		},
 	),
