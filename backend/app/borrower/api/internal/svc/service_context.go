@@ -30,6 +30,7 @@ type ServiceContext struct {
 	OrganizationUserRpcClient  borrower.OrganizationUserClient
 	OrganizationRpcClient      borrower.OrganizationClient
 	OrganizationEmailRpcClient borrower.OrganizationEmailClient
+	ZeitroRpcClient            borrower.ZeitroClient
 }
 
 func NewServiceContext(c config.ApiConf) *ServiceContext {
@@ -51,5 +52,6 @@ func NewServiceContext(c config.ApiConf) *ServiceContext {
 		OrganizationUserRpcClient:  borrower.NewOrganizationUserClient(zrpc.MustNewClient(c.RpcConf).Conn()),
 		OrganizationRpcClient:      borrower.NewOrganizationClient(zrpc.MustNewClient(c.RpcConf).Conn()),
 		OrganizationEmailRpcClient: borrower.NewOrganizationEmailClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		ZeitroRpcClient:            borrower.NewZeitroClient(zrpc.MustNewClient(c.RpcConf).Conn()),
 	}
 }

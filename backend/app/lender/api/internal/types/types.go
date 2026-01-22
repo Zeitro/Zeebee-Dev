@@ -338,6 +338,25 @@ type LoanUpdateApplicantEntity struct {
 	Address          *AddressEntity `json:"address,optional" validate:"required"`
 }
 
+type OrganizationEmailEntity struct {
+	Id           int64  `json:"id"`
+	Email        string `json:"email"`
+	AuthStrategy string `json:"auth_strategy"`
+	Purpose      string `json:"purpose"`
+	IsAuthorized bool   `json:"is_authorized"`
+}
+
+type OrganizationLenderMetadataEntity struct {
+	LoanAmountRange RangeFloat64 `json:"loan_amount_range,"`
+	LoanTermRange   RangeInt     `json:"loan_term_range,optional"`
+	LoanRateRange   RangeFloat64 `json:"loan_rate_range,optional"`
+	LoanPointRange  RangeFloat64 `json:"loan_point_range,optional"`
+}
+
+type OrganizationMetadataEntity struct {
+	Lender *OrganizationLenderMetadataEntity `json:"lender,omitempty"`
+}
+
 type OrganizationUserCreateResponse struct {
 	OrganizationUserEntity
 }
@@ -379,6 +398,16 @@ type OrganizationUserUpdateResponse struct {
 
 type PathIdRequest struct {
 	Id int64 `path:"id" validate:"required,gt=0"`
+}
+
+type RangeFloat64 struct {
+	Min float64 `json:"min,optional"`
+	Max float64 `json:"max,optional"`
+}
+
+type RangeInt struct {
+	Min int `json:"min,optional"`
+	Max int `json:"max,optional"`
 }
 
 type ResourceEntity struct {
@@ -446,6 +475,19 @@ type UpdateDocumentsRequest struct {
 	Documents []*FileEditEntity `json:"documents" validate:"required,gt=0,dive,required"`
 }
 
+type UserEntity struct {
+	Id        int64  `json:"id"`
+	Email     string `json:"email"`
+	FirstName string `json:"first_name"`
+	MidName   string `json:"mid_name"`
+	LastName  string `json:"last_name"`
+	FullName  string `json:"full_name"`
+	Status    string `json:"status"`
+	Type      string `json:"type"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
+}
+
 type UserInfo struct {
 	Id                 int64                         `json:"id"`
 	OrganizationUserId int64                         `json:"organization_user_id"`
@@ -468,7 +510,7 @@ type UserInfoOrganizationEntity struct {
 	IsDefault bool   `json:"is_default"`
 }
 
-type UserLoginResponse struct {
+type UserJwtResponse struct {
 	AccessToken        string `json:"access_token"`
 	AccessTokenExpire  int64  `json:"access_token_expire"`
 	RefreshToken       string `json:"refresh_token"`

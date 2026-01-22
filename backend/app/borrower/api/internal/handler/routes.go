@@ -21,6 +21,7 @@ import (
 	role "zeebee-backend/app/borrower/api/internal/handler/role"
 	storage "zeebee-backend/app/borrower/api/internal/handler/storage"
 	user "zeebee-backend/app/borrower/api/internal/handler/user"
+	zeitro "zeebee-backend/app/borrower/api/internal/handler/zeitro"
 	"zeebee-backend/app/borrower/api/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
@@ -371,12 +372,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
 				{
-					// info
-					Method:  http.MethodGet,
-					Path:    "/organization/info",
-					Handler: organization.OrganizationInfoHandler(serverCtx),
-				},
-				{
 					// lender page
 					Method:  http.MethodPost,
 					Path:    "/organization/lender/page",
@@ -387,6 +382,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/organization/lenders",
 					Handler: organization.OrganizationLendersHandler(serverCtx),
+				},
+				{
+					// profile
+					Method:  http.MethodGet,
+					Path:    "/organization/profile",
+					Handler: organization.OrganizationProfileHandler(serverCtx),
 				},
 			}...,
 		),
@@ -651,6 +652,21 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/user/switch_organization",
 					Handler: user.SwitchOrganizationHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// Search property listings from Zeitro API
+					Method:  http.MethodGet,
+					Path:    "/zeitro/listings/search",
+					Handler: zeitro.ZeitroListingSearchHandler(serverCtx),
 				},
 			}...,
 		),

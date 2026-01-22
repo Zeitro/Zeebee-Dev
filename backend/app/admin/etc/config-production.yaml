@@ -1,5 +1,5 @@
 ApiConf:
-  Name: borrower-api
+  Name: admin-api
   Host: 0.0.0.0
   Port: 10000
   Timeout: 10000
@@ -7,36 +7,24 @@ ApiConf:
     Stat: false
 
   JwtAuth:
-    AccessSecret: nR1oP0lP2zF5cE9cW2eY2qN6pP4bX5mA
+    AccessSecret: mD8sL2kS2qY2dN0fO1gT8nU7eE8sW4yY
     AccessExpire: 86000
 
   RpcConf:
     Endpoints:
-      - 127.0.0.1:10001
+      - 127.0.0.1:10201
     Timeout: 10000
     NonBlock: true
 
 RpcConf:
-  Name: borrower.rpc
-  ListenOn: 0.0.0.0:10001
-  Mode: dev
+  Name: admin.rpc
+  ListenOn: 0.0.0.0:10201
   Timeout: 10000
   LimiterConf:
     Login:
       Rate: 5
       Period: 300
-    SendLoginEmail:
-      Rate: 5
-      Period: 300
-    SendVerityEmail:
-      Rate: 5
-      Period: 300
-    SendResetPwdEmail:
-      Rate: 5
-      Period: 300
-  VerifyEmailExpireSeconds: 86400
-  ResetPwdExpireSeconds: 3600
-  PreApproveLoanExpireSeconds: 86400
+
   EmailConf:
     Host: smtp.gmail.com
     Port: 587
@@ -44,9 +32,9 @@ RpcConf:
     Username: info@zeebeeloans.com
 
   JwtAuth:
-    AccessSecret: nR1oP0lP2zF5cE9cW2eY2qN6pP4bX5mA
+    AccessSecret: mD8sL2kS2qY2dN0fO1gT8nU7eE8sW4yY
     AccessExpire: 864000
-    RefreshSecret: kQ8qH6kK7mZ1wV5zM7tI4cM3fR5dF6wH
+    RefreshSecret: qI8kK9mX8kW0yZ1uG5pQ3qS7kT4xD9uD
     RefreshExpire: 864000
 
   RedisConf:
@@ -66,33 +54,3 @@ RpcConf:
     Bucket: zeebee-files-production
     FileFolder: files-production
     PreSigneUrlExpireSeconds: 60
-
-  PreApprovalLoanConf:
-    - LenderCompanyId: 2
-      LenderCompanyName: "RBI Private Lending"
-      TotalAmount:
-        Min: 75000
-        Max: 500000
-      Rate:
-        Min: 9
-        Max: 12
-      LoanTerm:
-        Min: 3
-        Max: 24
-    - LenderCompanyId: 3
-      LenderCompanyName: "Anchor Loans"
-      TotalAmount:
-        Min: 500000
-        Max: 5000000
-      Rate:
-        Min: 8
-        Max: 13
-      LoanTerm:
-        Min: 6
-        Max: 18
-  LoginUrl: https://app.zeebeeloans.com/login
-  LenderUrl: https://agent.zeebeeloans.com
-  VerifyEmailUrl: https://app.zeebeeloans.com/login/verifyEmail
-  ResetPwdUrl: https://app.zeebeeloans.com/login/resetPassword
-  PreApprovalLoanExpireSeconds: 86400
-  HighCostLimitValue: 806500
