@@ -34,13 +34,16 @@ RpcConf:
     SendResetPwdEmail:
       Rate: 5
       Period: 300
+    SendLoanQuoteEmail:
+      Rate: 1
+      Period: 60
   VerifyEmailExpireSeconds: 86400
   ResetPwdExpireSeconds: 3600
   PreApproveLoanExpireSeconds: 86400
   EmailConf:
     Host: smtp.gmail.com
     Port: 587
-    Password: fyxxgqlqqxzitzef
+    Password: plqaccqomowwrszl
     Username: info@zeebeeloans.com
 
   JwtAuth:
@@ -90,8 +93,18 @@ RpcConf:
       LoanTerm:
         Min: 6
         Max: 18
+  EmailAuthConf:
+    Gmail:
+      ClientId: 808134957644-2savep4tlp45sln5v9f21hq06628vvia.apps.googleusercontent.com
+      ClientSecret: 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
+      CallbackUrl: https://app.zeebeeloans.net/gmailAuth
+  ZeebeeAgentEmail: loan@alphax-capital.com
   LoginUrl: https://app.zeebeeloans.net/login
+  LenderUrl: https://agent.zeebeeloans.net
   VerifyEmailUrl: https://app.zeebeeloans.net/login/verifyEmail
   ResetPwdUrl: https://app.zeebeeloans.net/login/resetPassword
+  InviteUserUrl: https://app.zeebeeloans.net/login/joinOrganization
+  InviteUserExpireSeconds: 86400
+  SendInviteEmailPeriodSeconds: 60
   PreApprovalLoanExpireSeconds: 86400
   HighCostLimitValue: 806500

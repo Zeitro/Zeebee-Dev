@@ -6,3 +6,4 @@ export * from './lib/date';
 export * from './lib/fetch';
 export * from './lib/format';
 export * from './lib/local';
+export * from './lib/commonRouter';

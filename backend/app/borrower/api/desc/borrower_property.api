@@ -1,0 +1,148 @@
+syntax = "v1"
+
+info(
+    title: "borrower-property-api"
+    desc: "property-api http service description"
+    version: "v1"
+)
+
+import "address.api"
+import "loan.api"
+
+type (
+    BorrowerPropertyEntity {
+        Id int64 `json:"id"`
+        CreatorId int64 `json:"creator_id"`
+        CreatorName string `json:"creator_name"`
+        OrganizationId int64 `json:"organization_id"`
+        PropertyType string `json:"property_type"`
+        TotalAmount float64 `json:"total_amount"`
+        Unit int32 `json:"unit"`
+        LivingAreaSqft float32 `json:"living_area_sqft"`
+        Bedrooms int32 `json:"bedrooms"`
+        Bathrooms float32 `json:"bathrooms"`
+        Address *AddressEntity `json:"address"`
+        CreatedAt string `json:"created_at"`
+        UpdatedAt string `json:"updated_at"`
+        LoanCount int32 `json:"loan_count"`
+    }
+)
+
+// page
+type (
+    PropertyPageEntity {
+        Id int64 `json:"id"`
+        CreatorId int64 `json:"creator_id"`
+        CreatorName string `json:"creator_name"`
+        PropertyType string `json:"property_type"`
+        LivingAreaSqft float32 `json:"living_area_sqft"`
+        Bedrooms int32 `json:"bedrooms"`
+        Bathrooms float32 `json:"bathrooms"`
+        Unit int32 `json:"unit"`
+        TotalAmount float64 `json:"total_amount"`
+        Address *AddressEntity `json:"address"`
+        TotalPrincipalAmount float64 `json:"total_principal_amount"`
+        AvgRate float32 `json:"avg_rate"`
+        TotalMonthlyPaymentAmount float64 `json:"total_monthly_payment_amount"`
+        Applicants []string `json:"applicants"`
+        Lenders []string `json:"lenders"`
+        NearestMaturityDate string `json:"nearest_maturity_date"`
+        PendingLoanCount int64 `json:"pending_loan_count"`
+        ActiveLoanCount int64 `json:"active_loan_count"`
+        ArchivedLoanCount int64 `json:"archived_loan_count"`
+        LoanCount int32 `json:"loan_count"`
+    }
+
+    PropertyPageFilter {
+        Keyword string `json:"keyword,optional"`
+        Applicant []string `json:"applicant,optional"`
+    }
+
+    PropertyPageSorter {
+        Column string `json:"column,optional"`
+        Sort string `json:"sort,optional"`
+    }
+
+    PropertyPageRequest {
+        Page int64 `json:"page,optional"`
+        Limit int64 `json:"limit,optional"`
+        Filter PropertyPageFilter `json:"filter,optional"`
+        Sorter PropertyPageSorter `json:"sorter,optional"`
+    }
+
+    PropertyPageResponse {
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
+        Total int64 `json:"total"`
+        TotalPage int64 `json:"total_page"`
+        List []PropertyPageEntity `json:"list"`
+    }
+)
+
+// detail with loans
+type (
+    PropertyDetailRequest {
+        Id int64 `path:"id"`
+    }
+
+    PropertyDetailSummaryResponse {
+        Id int64 `json:"id"`
+        CreatorId int64 `json:"creator_id"`
+        CreatorName string `json:"creator_name"`
+        PropertyType string `json:"property_type"`
+        TotalAmount float64 `json:"total_amount"`
+        Unit int32 `json:"unit"`
+        LivingAreaSqft float32 `json:"living_area_sqft"`
+        Bedrooms int32 `json:"bedrooms"`
+        Bathrooms float32 `json:"bathrooms"`
+        Address *AddressEntity `json:"address"`
+        TotalClosingFundAmount float64 `json:"total_closing_fund_amount"`
+        TotalPrincipalAmount float64 `json:"total_principal_amount"`
+        AvgRate float32 `json:"avg_rate"`
+        TotalMonthlyPaymentAmount float64 `json:"total_monthly_payment_amount"`
+        PendingLoans []LoanEntity `json:"pending_loans"`
+        ActiveLoans []LoanEntity `json:"active_loans"`
+        ArchivedLoans []LoanEntity `json:"archived_loans"`
+    }
+)
+
+//  detail
+type (
+    PropertyDetailResponse {
+        BorrowerPropertyEntity
+    }
+)
+
+//  create
+type (
+    PropertyCreateRequest {
+        PropertyType string `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
+        Unit int32 `json:"unit" validate:"required,gt=0"`
+        LivingAreaSqft float32 `json:"living_area_sqft" validate:"required,gt=0"`
+        Bedrooms int32 `json:"bedrooms" validate:"required,gt=0"`
+        Bathrooms float32 `json:"bathrooms" validate:"required,gt=0"`
+        Address *AddressEntity `json:"address" validate:"required"`
+    }
+    PropertyCreateResponse {
+        BorrowerPropertyEntity
+    }
+)
+
+// update
+type (
+    PropertyUpdateRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        PropertyType string `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
+        Unit int32 `json:"unit" validate:"required,gt=0"`
+        LivingAreaSqft float32 `json:"living_area_sqft" validate:"required,gt=0"`
+        Bedrooms int32 `json:"bedrooms" validate:"required,gt=0"`
+        Bathrooms float32 `json:"bathrooms" validate:"required,gt=0"`
+    }
+)
+// all properties
+type (
+    PropertyAllResponse {
+        Lists []*BorrowerPropertyEntity `json:"lists"`
+    }
+)
+

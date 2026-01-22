@@ -1,0 +1,64 @@
+@startuml Organization Email Configuration and Authorization Sequence Diagram
+!theme plain
+autonumber
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontSize 12
+skinparam sequenceMessageAlign center
+
+title Organization Email Configuration and Authorization Call Sequence Diagram
+
+'--- participant ---
+box "Organization System" #F8F9FA
+    actor "Org User" as OrgUser
+    participant "Frontend" as frontend
+    participant "Backend" as backend
+end box
+
+box "External Services" #E9ECEF
+    participant "Authorization Server" as authorizationServer
+end box
+
+'--- email configuration ---
+group Organization Email Configuration
+    OrgUser -> frontend: Input email and authorization strategy
+    frontend -> backend: Submit email configuration (SaveEmailConfig)
+    backend -> backend: Update configuration and handle email authorization records
+
+    activate backend
+    alt Policy changed
+        backend -> backend: Delete previous authorization records
+        backend -> backend: Update configuration
+    else Policy unchanged
+        alt Email address changed
+            alt Current policy is organization policy
+                backend -> backend: Change status to pending verification
+                backend -> backend: Update email address
+            end
+        else Email address unchanged
+            backend -> backend: Save configuration
+        end
+    end
+    deactivate backend
+end
+
+'--- authorization flow ---
+group User Email Authorization
+    OrgUser -> frontend: Select email server
+    frontend -> backend: Submit request (GetAuthorizationLink)
+    backend -> backend: Generate OAuth link (Gmail/Outlook)
+
+    backend --> frontend: Return authorization link
+    frontend --> OrgUser: Provide authorization link
+
+    OrgUser -> authorizationServer: Click authorization link & Login
+    authorizationServer -> authorizationServer: Authenticate user
+    authorizationServer --> frontend: Redirect to email verification page
+    frontend -> backend: Submit authorization code
+    backend -> authorizationServer: Request token with authorization code
+    authorizationServer --> backend: Return token
+    backend -> backend: Save authorization information
+    backend --> frontend: Authorization complete
+    frontend --> OrgUser: Authorization complete
+end
+
+@enduml

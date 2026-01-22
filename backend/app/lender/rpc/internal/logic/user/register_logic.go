@@ -3,16 +3,18 @@ package userlogic
 import (
 	"context"
 
-	"github.com/pkg/errors"
-	"gorm.io/gorm"
+	"github.com/jinzhu/copier"
 
-	"zeebee-backend/app/lender/rpc/internal/repo/model"
+	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/constants"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/utils"
+	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -21,13 +23,15 @@ type RegisterLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	baseLogic *logic.BaseLogic
 }
 
 func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RegisterLogic {
 	return &RegisterLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
 	}
 }
 
@@ -39,83 +43,72 @@ func (l *RegisterLogic) Register(in *lender.UserRegisterRequest) (resp *lender.U
 	}()
 	// check if user already exists
 	var existedUser *model.User
-	existedUser, _ = l.svcCtx.UserRepo.GetLenderUserByEmail(l.ctx, in.Data.Email)
+	existedUser, _ = l.svcCtx.UserRepo.GetUserByEmail(l.ctx, in.Data.Email, constants.UserTypeLender)
 
 	if existedUser != nil && existedUser.Id > 0 {
-		return nil, errors.WithStack(errors.New("User already exists"))
-	}
-
-	// check company
-	isExisted, err := l.svcCtx.LenderCompanyRepo.IsExistedByColumns(l.ctx, map[string]interface{}{
-		"id": in.Data.LenderCompanyId,
-	})
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	if !isExisted {
-		return nil, errors.WithStack(errors.New("Lender company is not exists"))
+		return nil, errorx.New("User Already Exists")
 	}
 
 	var pwd string
 	pwd, err = utils.HashPassword(in.Data.Password)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errorx.WithStack(err)
 	}
-	userModel := &model.User{
-		Email:        in.Data.Email,
-		PasswordHash: pwd,
-		Status:       constants.UserStatusActive,
-		Type:         constants.UserTypeLender,
+	userInput := dto.UserRegisterRequestDto{
+		Email:                 in.Data.Email,
+		PasswordHash:          pwd,
+		Status:                constants.UserStatusActive,
+		Type:                  constants.UserTypeLender,
+		FirstName:             in.Data.FirstName,
+		LastName:              in.Data.LastName,
+		FullName:              stringx.FormatFullName(in.Data.FirstName, "", in.Data.LastName),
+		DefaultOrganizationId: in.Data.OrganizationId,
 	}
-	lenderEmployeeModel := &model.LenderEmployee{
-		FirstName:              in.Data.FirstName,
-		LastName:               in.Data.LastName,
-		FullName:               stringx.FormatFullName(in.Data.FirstName, "", in.Data.LastName),
-		DefaultLenderCompanyId: in.Data.LenderCompanyId,
-	}
-	err = l.svcCtx.UserRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
-		var innerErr error
-		var company *model.LenderCompany
-		company, innerErr = l.svcCtx.LenderCompanyRepo.FindOneByIdWithTx(l.ctx, tx, in.Data.LenderCompanyId)
-		if innerErr != nil {
-			return innerErr
-		}
-		if company.Status != constants.LenderCompanyStatusActive {
-			return errors.WithStack(errors.New("Lender company is not active"))
-		}
 
-		// create user
-		userModel, innerErr = l.svcCtx.UserRepo.CreateWithTx(l.ctx, tx, userModel, false)
-		if innerErr != nil {
-			return innerErr
+	var organizationInput *dto.OrganizationRegisterRequestDto
+	switch in.Data.Type {
+	case "Join":
+		organization, err := l.svcCtx.OrganizationRepo.GetOrganization(l.ctx, in.Data.OrganizationId, constants.UserTypeLender, false)
+		if err != nil {
+			return nil, errorx.WithStack(err)
 		}
-		// create lender employee
-		lenderEmployeeModel.UserId = userModel.Id
-		lenderEmployeeModel.LenderCompanies = []*model.LenderCompany{
-			company,
-		}
-		_, innerErr = l.svcCtx.LenderEmployeeRepo.CreateEmployeeWithTx(l.ctx, tx, lenderEmployeeModel)
-		if innerErr != nil {
-			return innerErr
-		}
+		organizationInput, err = copierx.Trans[model.Organization, dto.OrganizationRegisterRequestDto](organization)
+	case "Create":
 
-		return innerErr
-	})
+		organizationInput = &dto.OrganizationRegisterRequestDto{
+			Name:         in.Data.OrganizationName,
+			Status:       constants.OrganizationStatusActive,
+			OwnerType:    constants.OrganizationOwnerTypeThirdParty,
+			Type:         constants.UserTypeLender,
+			ContactEmail: in.Data.ContactEmail,
+			ContactPhone: in.Data.ContactPhone,
+			ContactName:  in.Data.ContactName,
+			Logo:         in.Data.Logo,
+			Website:      in.Data.Website,
+		}
+	default:
+		err = errorx.New("Invalid Organization Type")
+	}
+
 	if err != nil {
-		return nil, err
+		return nil, errorx.WithStack(err)
 	}
-	userModel.LenderEmployee = lenderEmployeeModel
-	token, err := generateLenderToken(userModel, l.svcCtx)
+
+	userModel, organizationUser, err := l.baseLogic.UserLogic.RegisterWithOrganization(l.ctx, userInput, *organizationInput, constants.UserTypeLender)
 	if err != nil {
 		return nil, err
 	}
 
+	token, err := l.baseLogic.UserLogic.GenerateJwtToken(userModel, organizationUser, constants.UserTypeLender)
+	if err != nil {
+		return nil, err
+	}
+	data := &lender.UserRegisterResponseData{}
+	err = copier.CopyWithOption(data, token, copier.Option{CaseSensitive: true})
+	if err != nil {
+		return nil, errorx.GetFailedTransRespErr(err)
+	}
 	return &lender.UserRegisterResponse{
-		Data: &lender.UserRegisterResponseData{
-			AccessToken:        token.AccessToken,
-			RefreshToken:       token.RefreshToken,
-			AccessTokenExpire:  token.AccessTokenExpire,
-			RefreshTokenExpire: token.RefreshTokenExpire,
-		},
+		Data: data,
 	}, err
 }

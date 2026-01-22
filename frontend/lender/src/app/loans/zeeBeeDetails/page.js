@@ -103,7 +103,7 @@ const ZeeBeeDetails = () => {
 		loading: detailsLoading,
 	};
 	return (
-		<div className="flex flex-col h-full">
+		<div className="flex flex-col flex-1 overflow-hidden">
 			<Skeleton
 				{...skeletonProps}
 				className="pt-4 pb-[23px] px-4"

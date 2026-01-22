@@ -23,6 +23,7 @@ func GetErrorMsg(err error) string {
 				msg = strings.Join(msgArr[2:], "=")
 			}
 		}
+		msg = strings.TrimSpace(msg)
 		return msg
 	}
 
@@ -63,4 +64,43 @@ func GetErrorStack(err error) []string {
 	}
 	// to string
 	return lineArr
+}
+
+func New(text string) (err error) {
+	return WithStack(errors.New(text))
+}
+
+func Errorf(format string, args ...interface{}) (err error) {
+	return errors.Errorf(format, args...)
+}
+
+func Wrap(err error, text string) (newErr error) {
+	return errors.Wrap(err, text)
+}
+func Wrapf(err error, format string, args ...interface{}) (newErr error) {
+	return errors.Wrapf(err, format, args...)
+}
+func Unwrap(err error) (newErr error) {
+	if err == nil {
+		return nil
+	}
+	if u := errors.Unwrap(err); u != nil {
+		return u
+	}
+	return errors.Cause(err)
+}
+
+func Cause(err error) (newErr error) {
+	return errors.Cause(err)
+}
+
+func WithStack(err error) (newErr error) {
+	return errors.WithStack(err)
+}
+
+func NotFound(record string) (err error) {
+	if len(record) == 0 {
+		return New("Record Not Found")
+	}
+	return Errorf("%s Not Found", record)
 }
