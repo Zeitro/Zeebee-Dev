@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import NodataSvg from '@/assets/images/nodata.svg';
+import NodataSvg from '@repo/shared-methods/assets/images/nodata.svg';
 export const NoData = ({
 	url,
 	text = 'No Data',

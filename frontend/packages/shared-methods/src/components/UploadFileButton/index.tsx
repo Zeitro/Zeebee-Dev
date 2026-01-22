@@ -3,7 +3,8 @@
 import React, { useState, forwardRef, useImperativeHandle, useEffect } from 'react';
 import { Upload, Button, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import type { UploadProps, UploadFile, RcFile } from 'antd/es/upload/interface';
+import type { RcFile } from 'antd/es/upload/interface';
+import type { GetProp, UploadFile, UploadProps } from 'antd';
 import { uploadAwsS3 } from '../../api/common';
 const MAX_SIZE_MB = 10;
 export interface CommonUploadRef {
@@ -24,6 +25,7 @@ interface CommonUploadProps {
 	children?: React.ReactNode;
 	onGetUploadList?: () => UploadFile[];
 }
+type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
 export const UploadFileButton = forwardRef<CommonUploadRef, CommonUploadProps>(
 	(
@@ -55,16 +57,21 @@ export const UploadFileButton = forwardRef<CommonUploadRef, CommonUploadProps>(
 			return isLt10M;
 		};
 
+		const getBase64 = (file: FileType): Promise<string> =>
+			new Promise((resolve, reject) => {
+				const reader = new FileReader();
+				reader.readAsDataURL(file);
+				reader.onload = () => resolve(reader.result as string);
+				reader.onerror = (error) => reject(error);
+			});
+
 		const handleUpload = async (
 			file: UploadFile,
 			progressCallback: (percent: number) => void,
 		): Promise<string> => {
-			const formData = new FormData();
-			formData.append('file', file.originFileObj as RcFile);
-
 			const url = await uploadAwsS3({
 				url: '/storage/presign_url',
-				file,
+				file: file.originFileObj,
 				onProgress: progressCallback,
 			});
 
@@ -176,22 +183,38 @@ export const UploadFileButton = forwardRef<CommonUploadRef, CommonUploadProps>(
 					.then((url) => {
 						onAntdSuccess?.({ url });
 						onSuccess?.(url, file);
-						message.success(`${file.name} Upload successful`);
+						message.destroy();
+						message.open({
+							type: 'success',
+							content: `${file.name} Upload successful`,
+						});
 					})
 					.catch((err) => {
 						onError?.(err);
-						message.error(`${file.name} Upload failed`);
+						message.destroy();
+						message.open({
+							type: 'error',
+							content: `${file.name} Upload failed`,
+						});
 					});
 			};
 		} else {
 			// 模式二：阻止直接上传，拿到所有文件统一自定义上传
-			uploadProps.beforeUpload = (file: RcFile) => {
+			uploadProps.beforeUpload = async (file: RcFile) => {
 				if (!checkFileSize(file)) return Upload.LIST_IGNORE;
+				const thumbUrl = await getBase64(file);
+				const uploadFile: UploadFile = {
+					uid: file.uid,
+					name: file.name,
+					status: 'uploading', // 或 'uploading'，但预览用 'done' 更好
+					originFileObj: file,
+					thumbUrl, // 关键
+				};
 				setFileList((currentList) => {
-					const newList = [...currentList, file];
+					const newList = [...currentList, uploadFile];
 					return maxCount ? newList.slice(-maxCount) : newList;
 				});
-				return false;
+				return false; // 阻止自动上传
 			};
 		}
 

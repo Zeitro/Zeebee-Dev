@@ -1,9 +1,9 @@
 import React from 'react';
 import { Col, Form, Row } from 'antd';
 import styles from './index.module.scss';
-import { titleCol } from '@/enum/common';
+import { titleCol, raceOptions, ethnicityOptions } from '@repo/shared-methods/enum';
 import { NestedCheckboxes } from '../NestedCheckboxes';
-import { raceOptions, ethnicityOptions } from '@/enum/loan';
+// import { raceOptions, ethnicityOptions } from '@/enum/loan';
 import { useGetOptions } from '@repo/shared-methods/hooks';
 export const Demographics = ({ gutter = 24, form }) => {
 	const { getSelectFormDom } = useGetOptions([
