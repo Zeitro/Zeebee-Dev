@@ -1975,3 +1975,333 @@ var Common_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "app/admin/rpc/pb/admin.proto",
 }
+
+const (
+	BaseTemplate_Create_FullMethodName       = "/admin.BaseTemplate/Create"
+	BaseTemplate_Update_FullMethodName       = "/admin.BaseTemplate/Update"
+	BaseTemplate_Detail_FullMethodName       = "/admin.BaseTemplate/Detail"
+	BaseTemplate_Page_FullMethodName         = "/admin.BaseTemplate/Page"
+	BaseTemplate_SwitchStatus_FullMethodName = "/admin.BaseTemplate/SwitchStatus"
+	BaseTemplate_Delete_FullMethodName       = "/admin.BaseTemplate/Delete"
+	BaseTemplate_ExistsByTag_FullMethodName  = "/admin.BaseTemplate/ExistsByTag"
+)
+
+// BaseTemplateClient is the client API for BaseTemplate service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type BaseTemplateClient interface {
+	Create(ctx context.Context, in *CreateBaseTemplateRequest, opts ...grpc.CallOption) (*CreateBaseTemplateResponse, error)
+	Update(ctx context.Context, in *UpdateBaseTemplateRequest, opts ...grpc.CallOption) (*UpdateBaseTemplateResponse, error)
+	Detail(ctx context.Context, in *GetBaseTemplateRequest, opts ...grpc.CallOption) (*GetBaseTemplateResponse, error)
+	Page(ctx context.Context, in *BaseTemplatePageRequest, opts ...grpc.CallOption) (*BaseTemplatePageResponse, error)
+	SwitchStatus(ctx context.Context, in *SwitchBaseTemplateStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	Delete(ctx context.Context, in *DeleteBaseTemplateRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	ExistsByTag(ctx context.Context, in *ExistsByTagRequest, opts ...grpc.CallOption) (*ExistsByTagResponse, error)
+}
+
+type baseTemplateClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewBaseTemplateClient(cc grpc.ClientConnInterface) BaseTemplateClient {
+	return &baseTemplateClient{cc}
+}
+
+func (c *baseTemplateClient) Create(ctx context.Context, in *CreateBaseTemplateRequest, opts ...grpc.CallOption) (*CreateBaseTemplateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateBaseTemplateResponse)
+	err := c.cc.Invoke(ctx, BaseTemplate_Create_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *baseTemplateClient) Update(ctx context.Context, in *UpdateBaseTemplateRequest, opts ...grpc.CallOption) (*UpdateBaseTemplateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateBaseTemplateResponse)
+	err := c.cc.Invoke(ctx, BaseTemplate_Update_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *baseTemplateClient) Detail(ctx context.Context, in *GetBaseTemplateRequest, opts ...grpc.CallOption) (*GetBaseTemplateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetBaseTemplateResponse)
+	err := c.cc.Invoke(ctx, BaseTemplate_Detail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *baseTemplateClient) Page(ctx context.Context, in *BaseTemplatePageRequest, opts ...grpc.CallOption) (*BaseTemplatePageResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(BaseTemplatePageResponse)
+	err := c.cc.Invoke(ctx, BaseTemplate_Page_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *baseTemplateClient) SwitchStatus(ctx context.Context, in *SwitchBaseTemplateStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, BaseTemplate_SwitchStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *baseTemplateClient) Delete(ctx context.Context, in *DeleteBaseTemplateRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, BaseTemplate_Delete_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *baseTemplateClient) ExistsByTag(ctx context.Context, in *ExistsByTagRequest, opts ...grpc.CallOption) (*ExistsByTagResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ExistsByTagResponse)
+	err := c.cc.Invoke(ctx, BaseTemplate_ExistsByTag_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// BaseTemplateServer is the server API for BaseTemplate service.
+// All implementations must embed UnimplementedBaseTemplateServer
+// for forward compatibility.
+type BaseTemplateServer interface {
+	Create(context.Context, *CreateBaseTemplateRequest) (*CreateBaseTemplateResponse, error)
+	Update(context.Context, *UpdateBaseTemplateRequest) (*UpdateBaseTemplateResponse, error)
+	Detail(context.Context, *GetBaseTemplateRequest) (*GetBaseTemplateResponse, error)
+	Page(context.Context, *BaseTemplatePageRequest) (*BaseTemplatePageResponse, error)
+	SwitchStatus(context.Context, *SwitchBaseTemplateStatusRequest) (*EmptyResponse, error)
+	Delete(context.Context, *DeleteBaseTemplateRequest) (*EmptyResponse, error)
+	ExistsByTag(context.Context, *ExistsByTagRequest) (*ExistsByTagResponse, error)
+	mustEmbedUnimplementedBaseTemplateServer()
+}
+
+// UnimplementedBaseTemplateServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedBaseTemplateServer struct{}
+
+func (UnimplementedBaseTemplateServer) Create(context.Context, *CreateBaseTemplateRequest) (*CreateBaseTemplateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedBaseTemplateServer) Update(context.Context, *UpdateBaseTemplateRequest) (*UpdateBaseTemplateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+}
+func (UnimplementedBaseTemplateServer) Detail(context.Context, *GetBaseTemplateRequest) (*GetBaseTemplateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Detail not implemented")
+}
+func (UnimplementedBaseTemplateServer) Page(context.Context, *BaseTemplatePageRequest) (*BaseTemplatePageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Page not implemented")
+}
+func (UnimplementedBaseTemplateServer) SwitchStatus(context.Context, *SwitchBaseTemplateStatusRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SwitchStatus not implemented")
+}
+func (UnimplementedBaseTemplateServer) Delete(context.Context, *DeleteBaseTemplateRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedBaseTemplateServer) ExistsByTag(context.Context, *ExistsByTagRequest) (*ExistsByTagResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ExistsByTag not implemented")
+}
+func (UnimplementedBaseTemplateServer) mustEmbedUnimplementedBaseTemplateServer() {}
+func (UnimplementedBaseTemplateServer) testEmbeddedByValue()                      {}
+
+// UnsafeBaseTemplateServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to BaseTemplateServer will
+// result in compilation errors.
+type UnsafeBaseTemplateServer interface {
+	mustEmbedUnimplementedBaseTemplateServer()
+}
+
+func RegisterBaseTemplateServer(s grpc.ServiceRegistrar, srv BaseTemplateServer) {
+	// If the following call pancis, it indicates UnimplementedBaseTemplateServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&BaseTemplate_ServiceDesc, srv)
+}
+
+func _BaseTemplate_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateBaseTemplateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BaseTemplateServer).Create(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BaseTemplate_Create_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BaseTemplateServer).Create(ctx, req.(*CreateBaseTemplateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BaseTemplate_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateBaseTemplateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BaseTemplateServer).Update(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BaseTemplate_Update_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BaseTemplateServer).Update(ctx, req.(*UpdateBaseTemplateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BaseTemplate_Detail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBaseTemplateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BaseTemplateServer).Detail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BaseTemplate_Detail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BaseTemplateServer).Detail(ctx, req.(*GetBaseTemplateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BaseTemplate_Page_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BaseTemplatePageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BaseTemplateServer).Page(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BaseTemplate_Page_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BaseTemplateServer).Page(ctx, req.(*BaseTemplatePageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BaseTemplate_SwitchStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SwitchBaseTemplateStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BaseTemplateServer).SwitchStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BaseTemplate_SwitchStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BaseTemplateServer).SwitchStatus(ctx, req.(*SwitchBaseTemplateStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BaseTemplate_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteBaseTemplateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BaseTemplateServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BaseTemplate_Delete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BaseTemplateServer).Delete(ctx, req.(*DeleteBaseTemplateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BaseTemplate_ExistsByTag_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ExistsByTagRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BaseTemplateServer).ExistsByTag(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BaseTemplate_ExistsByTag_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BaseTemplateServer).ExistsByTag(ctx, req.(*ExistsByTagRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// BaseTemplate_ServiceDesc is the grpc.ServiceDesc for BaseTemplate service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var BaseTemplate_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "admin.BaseTemplate",
+	HandlerType: (*BaseTemplateServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Create",
+			Handler:    _BaseTemplate_Create_Handler,
+		},
+		{
+			MethodName: "Update",
+			Handler:    _BaseTemplate_Update_Handler,
+		},
+		{
+			MethodName: "Detail",
+			Handler:    _BaseTemplate_Detail_Handler,
+		},
+		{
+			MethodName: "Page",
+			Handler:    _BaseTemplate_Page_Handler,
+		},
+		{
+			MethodName: "SwitchStatus",
+			Handler:    _BaseTemplate_SwitchStatus_Handler,
+		},
+		{
+			MethodName: "Delete",
+			Handler:    _BaseTemplate_Delete_Handler,
+		},
+		{
+			MethodName: "ExistsByTag",
+			Handler:    _BaseTemplate_ExistsByTag_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "app/admin/rpc/pb/admin.proto",
+}

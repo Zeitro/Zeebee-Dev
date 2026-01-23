@@ -3565,7 +3565,7 @@ func (x *ApiUpdateRequestData) GetSortOrder() int32 {
 	return 0
 }
 
-// delete -- request
+//  delete -- request
 type ApiDeleteRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Data          *ApiDeleteRequestData  `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -4588,7 +4588,7 @@ func (x *ResourceUpdateRequestData) GetApiIds() []int64 {
 	return nil
 }
 
-// delete -- request
+//  delete -- request
 type ResourceDeleteRequest struct {
 	state         protoimpl.MessageState     `protogen:"open.v1"`
 	Data          *ResourceDeleteRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -5267,7 +5267,7 @@ func (x *RolePageResponseData) GetList() []*RoleEntity {
 	return nil
 }
 
-// create -- request
+//  create -- request
 type RoleCreateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Data          *RoleCreateRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -5425,7 +5425,7 @@ func (x *RoleCreateResponse) GetData() *RoleEntity {
 	return nil
 }
 
-// update -- request
+//  update -- request
 type RoleUpdateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Data          *RoleUpdateRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -5651,7 +5651,7 @@ func (x *RoleAndResourceRelationEntity) GetDataScope() string {
 	return ""
 }
 
-// delete -- request
+//  delete -- request
 type RoleDeleteRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Data          *RoleDeleteRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -5740,7 +5740,7 @@ func (x *RoleDeleteRequestData) GetId() int64 {
 	return 0
 }
 
-// detail -- request
+//  detail -- request
 type RoleDetailRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Data          *RoleDetailRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -8020,6 +8020,1547 @@ func (x *UsCitiesRequestData) GetStateUsps() string {
 	return ""
 }
 
+// ========================== base template service start =================
+// Template variable entity for JSONB variable_group_schema field
+type TemplateVariableEntity struct {
+	state         protoimpl.MessageState             `protogen:"open.v1"`
+	Label         string                             `protobuf:"bytes,1,opt,name=label,proto3" json:"label,omitempty"`
+	Type          string                             `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"` // string, number, boolean, array, object
+	Key           string                             `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+	IsEditable    bool                               `protobuf:"varint,4,opt,name=is_editable,json=isEditable,proto3" json:"is_editable,omitempty"`
+	Source        string                             `protobuf:"bytes,5,opt,name=source,proto3" json:"source,omitempty"` // Fixed, Dynamic
+	FixedValue    string                             `protobuf:"bytes,6,opt,name=fixed_value,json=fixedValue,proto3" json:"fixed_value,omitempty"`
+	ExampleValue  string                             `protobuf:"bytes,7,opt,name=example_value,json=exampleValue,proto3" json:"example_value,omitempty"`
+	Properties    map[string]*TemplateVariableEntity `protobuf:"bytes,8,rep,name=properties,proto3" json:"properties,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"` // for object type
+	Items         []*TemplateVariableEntity          `protobuf:"bytes,9,rep,name=items,proto3" json:"items,omitempty"`                                                                                     // for array type
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TemplateVariableEntity) Reset() {
+	*x = TemplateVariableEntity{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[131]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TemplateVariableEntity) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TemplateVariableEntity) ProtoMessage() {}
+
+func (x *TemplateVariableEntity) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[131]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TemplateVariableEntity.ProtoReflect.Descriptor instead.
+func (*TemplateVariableEntity) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{131}
+}
+
+func (x *TemplateVariableEntity) GetLabel() string {
+	if x != nil {
+		return x.Label
+	}
+	return ""
+}
+
+func (x *TemplateVariableEntity) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *TemplateVariableEntity) GetKey() string {
+	if x != nil {
+		return x.Key
+	}
+	return ""
+}
+
+func (x *TemplateVariableEntity) GetIsEditable() bool {
+	if x != nil {
+		return x.IsEditable
+	}
+	return false
+}
+
+func (x *TemplateVariableEntity) GetSource() string {
+	if x != nil {
+		return x.Source
+	}
+	return ""
+}
+
+func (x *TemplateVariableEntity) GetFixedValue() string {
+	if x != nil {
+		return x.FixedValue
+	}
+	return ""
+}
+
+func (x *TemplateVariableEntity) GetExampleValue() string {
+	if x != nil {
+		return x.ExampleValue
+	}
+	return ""
+}
+
+func (x *TemplateVariableEntity) GetProperties() map[string]*TemplateVariableEntity {
+	if x != nil {
+		return x.Properties
+	}
+	return nil
+}
+
+func (x *TemplateVariableEntity) GetItems() []*TemplateVariableEntity {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+// Template variable group entity
+type TemplateVariableGroupEntity struct {
+	state         protoimpl.MessageState    `protogen:"open.v1"`
+	Name          string                    `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Variables     []*TemplateVariableEntity `protobuf:"bytes,2,rep,name=variables,proto3" json:"variables,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TemplateVariableGroupEntity) Reset() {
+	*x = TemplateVariableGroupEntity{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[132]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TemplateVariableGroupEntity) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TemplateVariableGroupEntity) ProtoMessage() {}
+
+func (x *TemplateVariableGroupEntity) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[132]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TemplateVariableGroupEntity.ProtoReflect.Descriptor instead.
+func (*TemplateVariableGroupEntity) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{132}
+}
+
+func (x *TemplateVariableGroupEntity) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *TemplateVariableGroupEntity) GetVariables() []*TemplateVariableEntity {
+	if x != nil {
+		return x.Variables
+	}
+	return nil
+}
+
+// Base template entity
+type BaseTemplateEntity struct {
+	state               protoimpl.MessageState         `protogen:"open.v1"`
+	Id                  int64                          `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                string                         `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Type                string                         `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`         // Borrower, Lender
+	Category            string                         `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty"` // Email, Contract
+	Tag                 string                         `protobuf:"bytes,5,opt,name=tag,proto3" json:"tag,omitempty"`
+	Content             string                         `protobuf:"bytes,6,opt,name=content,proto3" json:"content,omitempty"`
+	VariableGroupSchema []*TemplateVariableGroupEntity `protobuf:"bytes,7,rep,name=variable_group_schema,json=variableGroupSchema,proto3" json:"variable_group_schema,omitempty"`
+	Status              string                         `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"` // Active, Disabled
+	Description         string                         `protobuf:"bytes,9,opt,name=description,proto3" json:"description,omitempty"`
+	CreatedAt           string                         `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt           string                         `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
+}
+
+func (x *BaseTemplateEntity) Reset() {
+	*x = BaseTemplateEntity{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[133]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BaseTemplateEntity) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BaseTemplateEntity) ProtoMessage() {}
+
+func (x *BaseTemplateEntity) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[133]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BaseTemplateEntity.ProtoReflect.Descriptor instead.
+func (*BaseTemplateEntity) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{133}
+}
+
+func (x *BaseTemplateEntity) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *BaseTemplateEntity) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *BaseTemplateEntity) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *BaseTemplateEntity) GetCategory() string {
+	if x != nil {
+		return x.Category
+	}
+	return ""
+}
+
+func (x *BaseTemplateEntity) GetTag() string {
+	if x != nil {
+		return x.Tag
+	}
+	return ""
+}
+
+func (x *BaseTemplateEntity) GetContent() string {
+	if x != nil {
+		return x.Content
+	}
+	return ""
+}
+
+func (x *BaseTemplateEntity) GetVariableGroupSchema() []*TemplateVariableGroupEntity {
+	if x != nil {
+		return x.VariableGroupSchema
+	}
+	return nil
+}
+
+func (x *BaseTemplateEntity) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *BaseTemplateEntity) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *BaseTemplateEntity) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *BaseTemplateEntity) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
+}
+
+// Base template page entity (for list display)
+type BaseTemplatePageEntity struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Type          string                 `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
+	Category      string                 `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty"`
+	Tag           string                 `protobuf:"bytes,5,opt,name=tag,proto3" json:"tag,omitempty"`
+	Status        string                 `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
+	Description   string                 `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
+	CreatedAt     string                 `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     string                 `protobuf:"bytes,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BaseTemplatePageEntity) Reset() {
+	*x = BaseTemplatePageEntity{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[134]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BaseTemplatePageEntity) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BaseTemplatePageEntity) ProtoMessage() {}
+
+func (x *BaseTemplatePageEntity) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[134]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BaseTemplatePageEntity.ProtoReflect.Descriptor instead.
+func (*BaseTemplatePageEntity) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{134}
+}
+
+func (x *BaseTemplatePageEntity) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *BaseTemplatePageEntity) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *BaseTemplatePageEntity) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *BaseTemplatePageEntity) GetCategory() string {
+	if x != nil {
+		return x.Category
+	}
+	return ""
+}
+
+func (x *BaseTemplatePageEntity) GetTag() string {
+	if x != nil {
+		return x.Tag
+	}
+	return ""
+}
+
+func (x *BaseTemplatePageEntity) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *BaseTemplatePageEntity) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *BaseTemplatePageEntity) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *BaseTemplatePageEntity) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
+}
+
+// Create ---- request
+type CreateBaseTemplateRequest struct {
+	state         protoimpl.MessageState         `protogen:"open.v1"`
+	Data          *CreateBaseTemplateRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateBaseTemplateRequest) Reset() {
+	*x = CreateBaseTemplateRequest{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[135]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateBaseTemplateRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateBaseTemplateRequest) ProtoMessage() {}
+
+func (x *CreateBaseTemplateRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[135]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateBaseTemplateRequest.ProtoReflect.Descriptor instead.
+func (*CreateBaseTemplateRequest) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{135}
+}
+
+func (x *CreateBaseTemplateRequest) GetData() *CreateBaseTemplateRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type CreateBaseTemplateRequestData struct {
+	state               protoimpl.MessageState         `protogen:"open.v1"`
+	Name                string                         `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Type                string                         `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
+	Category            string                         `protobuf:"bytes,3,opt,name=category,proto3" json:"category,omitempty"`
+	Tag                 string                         `protobuf:"bytes,4,opt,name=tag,proto3" json:"tag,omitempty"`
+	Content             string                         `protobuf:"bytes,5,opt,name=content,proto3" json:"content,omitempty"`
+	VariableGroupSchema []*TemplateVariableGroupEntity `protobuf:"bytes,6,rep,name=variable_group_schema,json=variableGroupSchema,proto3" json:"variable_group_schema,omitempty"`
+	Description         string                         `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
+}
+
+func (x *CreateBaseTemplateRequestData) Reset() {
+	*x = CreateBaseTemplateRequestData{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[136]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateBaseTemplateRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateBaseTemplateRequestData) ProtoMessage() {}
+
+func (x *CreateBaseTemplateRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[136]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateBaseTemplateRequestData.ProtoReflect.Descriptor instead.
+func (*CreateBaseTemplateRequestData) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{136}
+}
+
+func (x *CreateBaseTemplateRequestData) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *CreateBaseTemplateRequestData) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *CreateBaseTemplateRequestData) GetCategory() string {
+	if x != nil {
+		return x.Category
+	}
+	return ""
+}
+
+func (x *CreateBaseTemplateRequestData) GetTag() string {
+	if x != nil {
+		return x.Tag
+	}
+	return ""
+}
+
+func (x *CreateBaseTemplateRequestData) GetContent() string {
+	if x != nil {
+		return x.Content
+	}
+	return ""
+}
+
+func (x *CreateBaseTemplateRequestData) GetVariableGroupSchema() []*TemplateVariableGroupEntity {
+	if x != nil {
+		return x.VariableGroupSchema
+	}
+	return nil
+}
+
+func (x *CreateBaseTemplateRequestData) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+// Create ---- response
+type CreateBaseTemplateResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Data          *BaseTemplateEntity    `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateBaseTemplateResponse) Reset() {
+	*x = CreateBaseTemplateResponse{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[137]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateBaseTemplateResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateBaseTemplateResponse) ProtoMessage() {}
+
+func (x *CreateBaseTemplateResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[137]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateBaseTemplateResponse.ProtoReflect.Descriptor instead.
+func (*CreateBaseTemplateResponse) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{137}
+}
+
+func (x *CreateBaseTemplateResponse) GetData() *BaseTemplateEntity {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+// Update ---- request
+type UpdateBaseTemplateRequest struct {
+	state         protoimpl.MessageState         `protogen:"open.v1"`
+	Data          *UpdateBaseTemplateRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateBaseTemplateRequest) Reset() {
+	*x = UpdateBaseTemplateRequest{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[138]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateBaseTemplateRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateBaseTemplateRequest) ProtoMessage() {}
+
+func (x *UpdateBaseTemplateRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[138]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateBaseTemplateRequest.ProtoReflect.Descriptor instead.
+func (*UpdateBaseTemplateRequest) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{138}
+}
+
+func (x *UpdateBaseTemplateRequest) GetData() *UpdateBaseTemplateRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type UpdateBaseTemplateRequestData struct {
+	state               protoimpl.MessageState         `protogen:"open.v1"`
+	Id                  int64                          `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                string                         `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Type                string                         `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
+	Category            string                         `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty"`
+	Tag                 string                         `protobuf:"bytes,5,opt,name=tag,proto3" json:"tag,omitempty"`
+	Content             string                         `protobuf:"bytes,6,opt,name=content,proto3" json:"content,omitempty"`
+	VariableGroupSchema []*TemplateVariableGroupEntity `protobuf:"bytes,7,rep,name=variable_group_schema,json=variableGroupSchema,proto3" json:"variable_group_schema,omitempty"`
+	Description         string                         `protobuf:"bytes,8,opt,name=description,proto3" json:"description,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
+}
+
+func (x *UpdateBaseTemplateRequestData) Reset() {
+	*x = UpdateBaseTemplateRequestData{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[139]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateBaseTemplateRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateBaseTemplateRequestData) ProtoMessage() {}
+
+func (x *UpdateBaseTemplateRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[139]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateBaseTemplateRequestData.ProtoReflect.Descriptor instead.
+func (*UpdateBaseTemplateRequestData) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{139}
+}
+
+func (x *UpdateBaseTemplateRequestData) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *UpdateBaseTemplateRequestData) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *UpdateBaseTemplateRequestData) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *UpdateBaseTemplateRequestData) GetCategory() string {
+	if x != nil {
+		return x.Category
+	}
+	return ""
+}
+
+func (x *UpdateBaseTemplateRequestData) GetTag() string {
+	if x != nil {
+		return x.Tag
+	}
+	return ""
+}
+
+func (x *UpdateBaseTemplateRequestData) GetContent() string {
+	if x != nil {
+		return x.Content
+	}
+	return ""
+}
+
+func (x *UpdateBaseTemplateRequestData) GetVariableGroupSchema() []*TemplateVariableGroupEntity {
+	if x != nil {
+		return x.VariableGroupSchema
+	}
+	return nil
+}
+
+func (x *UpdateBaseTemplateRequestData) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+// Update ---- response
+type UpdateBaseTemplateResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Data          *BaseTemplateEntity    `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateBaseTemplateResponse) Reset() {
+	*x = UpdateBaseTemplateResponse{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[140]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateBaseTemplateResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateBaseTemplateResponse) ProtoMessage() {}
+
+func (x *UpdateBaseTemplateResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[140]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateBaseTemplateResponse.ProtoReflect.Descriptor instead.
+func (*UpdateBaseTemplateResponse) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{140}
+}
+
+func (x *UpdateBaseTemplateResponse) GetData() *BaseTemplateEntity {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+// detail ---- request
+type GetBaseTemplateRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Data          *IdRequest             `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetBaseTemplateRequest) Reset() {
+	*x = GetBaseTemplateRequest{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[141]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetBaseTemplateRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetBaseTemplateRequest) ProtoMessage() {}
+
+func (x *GetBaseTemplateRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[141]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetBaseTemplateRequest.ProtoReflect.Descriptor instead.
+func (*GetBaseTemplateRequest) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{141}
+}
+
+func (x *GetBaseTemplateRequest) GetData() *IdRequest {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+// detail ---- response
+type GetBaseTemplateResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Data          *BaseTemplateEntity    `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetBaseTemplateResponse) Reset() {
+	*x = GetBaseTemplateResponse{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[142]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetBaseTemplateResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetBaseTemplateResponse) ProtoMessage() {}
+
+func (x *GetBaseTemplateResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[142]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetBaseTemplateResponse.ProtoReflect.Descriptor instead.
+func (*GetBaseTemplateResponse) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{142}
+}
+
+func (x *GetBaseTemplateResponse) GetData() *BaseTemplateEntity {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+// Page ---- request
+type BaseTemplatePageRequest struct {
+	state         protoimpl.MessageState       `protogen:"open.v1"`
+	Data          *BaseTemplatePageRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BaseTemplatePageRequest) Reset() {
+	*x = BaseTemplatePageRequest{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[143]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BaseTemplatePageRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BaseTemplatePageRequest) ProtoMessage() {}
+
+func (x *BaseTemplatePageRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[143]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BaseTemplatePageRequest.ProtoReflect.Descriptor instead.
+func (*BaseTemplatePageRequest) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{143}
+}
+
+func (x *BaseTemplatePageRequest) GetData() *BaseTemplatePageRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type BaseTemplatePageRequestData struct {
+	state         protoimpl.MessageState         `protogen:"open.v1"`
+	Page          int64                          `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
+	Limit         int64                          `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	Filter        *BaseTemplatePageRequestFilter `protobuf:"bytes,3,opt,name=filter,proto3" json:"filter,omitempty"`
+	Sorter        *BaseTemplatePageRequestSorter `protobuf:"bytes,4,opt,name=sorter,proto3" json:"sorter,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BaseTemplatePageRequestData) Reset() {
+	*x = BaseTemplatePageRequestData{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[144]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BaseTemplatePageRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BaseTemplatePageRequestData) ProtoMessage() {}
+
+func (x *BaseTemplatePageRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[144]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BaseTemplatePageRequestData.ProtoReflect.Descriptor instead.
+func (*BaseTemplatePageRequestData) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{144}
+}
+
+func (x *BaseTemplatePageRequestData) GetPage() int64 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *BaseTemplatePageRequestData) GetLimit() int64 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *BaseTemplatePageRequestData) GetFilter() *BaseTemplatePageRequestFilter {
+	if x != nil {
+		return x.Filter
+	}
+	return nil
+}
+
+func (x *BaseTemplatePageRequestData) GetSorter() *BaseTemplatePageRequestSorter {
+	if x != nil {
+		return x.Sorter
+	}
+	return nil
+}
+
+type BaseTemplatePageRequestFilter struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Keyword       string                 `protobuf:"bytes,1,opt,name=keyword,proto3" json:"keyword,omitempty"`
+	Type          string                 `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
+	Category      string                 `protobuf:"bytes,3,opt,name=category,proto3" json:"category,omitempty"`
+	Status        string                 `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BaseTemplatePageRequestFilter) Reset() {
+	*x = BaseTemplatePageRequestFilter{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[145]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BaseTemplatePageRequestFilter) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BaseTemplatePageRequestFilter) ProtoMessage() {}
+
+func (x *BaseTemplatePageRequestFilter) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[145]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BaseTemplatePageRequestFilter.ProtoReflect.Descriptor instead.
+func (*BaseTemplatePageRequestFilter) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{145}
+}
+
+func (x *BaseTemplatePageRequestFilter) GetKeyword() string {
+	if x != nil {
+		return x.Keyword
+	}
+	return ""
+}
+
+func (x *BaseTemplatePageRequestFilter) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *BaseTemplatePageRequestFilter) GetCategory() string {
+	if x != nil {
+		return x.Category
+	}
+	return ""
+}
+
+func (x *BaseTemplatePageRequestFilter) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+type BaseTemplatePageRequestSorter struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Column        string                 `protobuf:"bytes,1,opt,name=column,proto3" json:"column,omitempty"`
+	Sort          string                 `protobuf:"bytes,2,opt,name=sort,proto3" json:"sort,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BaseTemplatePageRequestSorter) Reset() {
+	*x = BaseTemplatePageRequestSorter{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[146]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BaseTemplatePageRequestSorter) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BaseTemplatePageRequestSorter) ProtoMessage() {}
+
+func (x *BaseTemplatePageRequestSorter) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[146]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BaseTemplatePageRequestSorter.ProtoReflect.Descriptor instead.
+func (*BaseTemplatePageRequestSorter) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{146}
+}
+
+func (x *BaseTemplatePageRequestSorter) GetColumn() string {
+	if x != nil {
+		return x.Column
+	}
+	return ""
+}
+
+func (x *BaseTemplatePageRequestSorter) GetSort() string {
+	if x != nil {
+		return x.Sort
+	}
+	return ""
+}
+
+// Page ---- response
+type BaseTemplatePageResponse struct {
+	state         protoimpl.MessageState        `protogen:"open.v1"`
+	Data          *BaseTemplatePageResponseData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BaseTemplatePageResponse) Reset() {
+	*x = BaseTemplatePageResponse{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[147]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BaseTemplatePageResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BaseTemplatePageResponse) ProtoMessage() {}
+
+func (x *BaseTemplatePageResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[147]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BaseTemplatePageResponse.ProtoReflect.Descriptor instead.
+func (*BaseTemplatePageResponse) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{147}
+}
+
+func (x *BaseTemplatePageResponse) GetData() *BaseTemplatePageResponseData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type BaseTemplatePageResponseData struct {
+	state         protoimpl.MessageState    `protogen:"open.v1"`
+	Page          int64                     `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
+	Limit         int64                     `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	Total         int64                     `protobuf:"varint,3,opt,name=total,proto3" json:"total,omitempty"`
+	TotalPage     int64                     `protobuf:"varint,4,opt,name=total_page,json=totalPage,proto3" json:"total_page,omitempty"`
+	List          []*BaseTemplatePageEntity `protobuf:"bytes,5,rep,name=list,proto3" json:"list,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BaseTemplatePageResponseData) Reset() {
+	*x = BaseTemplatePageResponseData{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[148]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BaseTemplatePageResponseData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BaseTemplatePageResponseData) ProtoMessage() {}
+
+func (x *BaseTemplatePageResponseData) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[148]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BaseTemplatePageResponseData.ProtoReflect.Descriptor instead.
+func (*BaseTemplatePageResponseData) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{148}
+}
+
+func (x *BaseTemplatePageResponseData) GetPage() int64 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *BaseTemplatePageResponseData) GetLimit() int64 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *BaseTemplatePageResponseData) GetTotal() int64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+func (x *BaseTemplatePageResponseData) GetTotalPage() int64 {
+	if x != nil {
+		return x.TotalPage
+	}
+	return 0
+}
+
+func (x *BaseTemplatePageResponseData) GetList() []*BaseTemplatePageEntity {
+	if x != nil {
+		return x.List
+	}
+	return nil
+}
+
+// Switch ---- request
+type SwitchBaseTemplateStatusRequest struct {
+	state         protoimpl.MessageState               `protogen:"open.v1"`
+	Data          *SwitchBaseTemplateStatusRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SwitchBaseTemplateStatusRequest) Reset() {
+	*x = SwitchBaseTemplateStatusRequest{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[149]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SwitchBaseTemplateStatusRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SwitchBaseTemplateStatusRequest) ProtoMessage() {}
+
+func (x *SwitchBaseTemplateStatusRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[149]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SwitchBaseTemplateStatusRequest.ProtoReflect.Descriptor instead.
+func (*SwitchBaseTemplateStatusRequest) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{149}
+}
+
+func (x *SwitchBaseTemplateStatusRequest) GetData() *SwitchBaseTemplateStatusRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type SwitchBaseTemplateStatusRequestData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Status        string                 `protobuf:"bytes,2,opt,name=status,proto3" json:"status,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SwitchBaseTemplateStatusRequestData) Reset() {
+	*x = SwitchBaseTemplateStatusRequestData{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[150]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SwitchBaseTemplateStatusRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SwitchBaseTemplateStatusRequestData) ProtoMessage() {}
+
+func (x *SwitchBaseTemplateStatusRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[150]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SwitchBaseTemplateStatusRequestData.ProtoReflect.Descriptor instead.
+func (*SwitchBaseTemplateStatusRequestData) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{150}
+}
+
+func (x *SwitchBaseTemplateStatusRequestData) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *SwitchBaseTemplateStatusRequestData) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+// Delete ---- request
+type DeleteBaseTemplateRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Data          *IdRequest             `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteBaseTemplateRequest) Reset() {
+	*x = DeleteBaseTemplateRequest{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[151]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteBaseTemplateRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteBaseTemplateRequest) ProtoMessage() {}
+
+func (x *DeleteBaseTemplateRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[151]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteBaseTemplateRequest.ProtoReflect.Descriptor instead.
+func (*DeleteBaseTemplateRequest) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{151}
+}
+
+func (x *DeleteBaseTemplateRequest) GetData() *IdRequest {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+// Exists by tag ---- request
+type ExistsByTagRequest struct {
+	state         protoimpl.MessageState  `protogen:"open.v1"`
+	Data          *ExistsByTagRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ExistsByTagRequest) Reset() {
+	*x = ExistsByTagRequest{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[152]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExistsByTagRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExistsByTagRequest) ProtoMessage() {}
+
+func (x *ExistsByTagRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[152]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExistsByTagRequest.ProtoReflect.Descriptor instead.
+func (*ExistsByTagRequest) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{152}
+}
+
+func (x *ExistsByTagRequest) GetData() *ExistsByTagRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type ExistsByTagRequestData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Tag           string                 `protobuf:"bytes,1,opt,name=tag,proto3" json:"tag,omitempty"`
+	Type          string                 `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ExistsByTagRequestData) Reset() {
+	*x = ExistsByTagRequestData{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[153]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExistsByTagRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExistsByTagRequestData) ProtoMessage() {}
+
+func (x *ExistsByTagRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[153]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExistsByTagRequestData.ProtoReflect.Descriptor instead.
+func (*ExistsByTagRequestData) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{153}
+}
+
+func (x *ExistsByTagRequestData) GetTag() string {
+	if x != nil {
+		return x.Tag
+	}
+	return ""
+}
+
+func (x *ExistsByTagRequestData) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+// Exists by tag ---- response
+type ExistsByTagResponse struct {
+	state         protoimpl.MessageState   `protogen:"open.v1"`
+	Data          *ExistsByTagResponseData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ExistsByTagResponse) Reset() {
+	*x = ExistsByTagResponse{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[154]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExistsByTagResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExistsByTagResponse) ProtoMessage() {}
+
+func (x *ExistsByTagResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[154]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExistsByTagResponse.ProtoReflect.Descriptor instead.
+func (*ExistsByTagResponse) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{154}
+}
+
+func (x *ExistsByTagResponse) GetData() *ExistsByTagResponseData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type ExistsByTagResponseData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Exists        bool                   `protobuf:"varint,1,opt,name=exists,proto3" json:"exists,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ExistsByTagResponseData) Reset() {
+	*x = ExistsByTagResponseData{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[155]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExistsByTagResponseData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExistsByTagResponseData) ProtoMessage() {}
+
+func (x *ExistsByTagResponseData) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[155]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExistsByTagResponseData.ProtoReflect.Descriptor instead.
+func (*ExistsByTagResponseData) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{155}
+}
+
+func (x *ExistsByTagResponseData) GetExists() bool {
+	if x != nil {
+		return x.Exists
+	}
+	return false
+}
+
 type UserinfoResponseData_Organization struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -8032,7 +9573,7 @@ type UserinfoResponseData_Organization struct {
 
 func (x *UserinfoResponseData_Organization) Reset() {
 	*x = UserinfoResponseData_Organization{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[131]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[156]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8044,7 +9585,7 @@ func (x *UserinfoResponseData_Organization) String() string {
 func (*UserinfoResponseData_Organization) ProtoMessage() {}
 
 func (x *UserinfoResponseData_Organization) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[131]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[156]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8695,7 +10236,123 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x04data\x18\x01 \x01(\v2\x1a.admin.UsCitiesRequestDataR\x04data\"4\n" +
 	"\x13UsCitiesRequestData\x12\x1d\n" +
 	"\n" +
-	"state_usps\x18\x01 \x01(\tR\tstateUsps2\xdb\x02\n" +
+	"state_usps\x18\x01 \x01(\tR\tstateUsps\"\xb5\x03\n" +
+	"\x16TemplateVariableEntity\x12\x14\n" +
+	"\x05label\x18\x01 \x01(\tR\x05label\x12\x12\n" +
+	"\x04type\x18\x02 \x01(\tR\x04type\x12\x10\n" +
+	"\x03key\x18\x03 \x01(\tR\x03key\x12\x1f\n" +
+	"\vis_editable\x18\x04 \x01(\bR\n" +
+	"isEditable\x12\x16\n" +
+	"\x06source\x18\x05 \x01(\tR\x06source\x12\x1f\n" +
+	"\vfixed_value\x18\x06 \x01(\tR\n" +
+	"fixedValue\x12#\n" +
+	"\rexample_value\x18\a \x01(\tR\fexampleValue\x12M\n" +
+	"\n" +
+	"properties\x18\b \x03(\v2-.admin.TemplateVariableEntity.PropertiesEntryR\n" +
+	"properties\x123\n" +
+	"\x05items\x18\t \x03(\v2\x1d.admin.TemplateVariableEntityR\x05items\x1a\\\n" +
+	"\x0fPropertiesEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x123\n" +
+	"\x05value\x18\x02 \x01(\v2\x1d.admin.TemplateVariableEntityR\x05value:\x028\x01\"n\n" +
+	"\x1bTemplateVariableGroupEntity\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12;\n" +
+	"\tvariables\x18\x02 \x03(\v2\x1d.admin.TemplateVariableEntityR\tvariables\"\xe4\x02\n" +
+	"\x12BaseTemplateEntity\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
+	"\x04type\x18\x03 \x01(\tR\x04type\x12\x1a\n" +
+	"\bcategory\x18\x04 \x01(\tR\bcategory\x12\x10\n" +
+	"\x03tag\x18\x05 \x01(\tR\x03tag\x12\x18\n" +
+	"\acontent\x18\x06 \x01(\tR\acontent\x12V\n" +
+	"\x15variable_group_schema\x18\a \x03(\v2\".admin.TemplateVariableGroupEntityR\x13variableGroupSchema\x12\x16\n" +
+	"\x06status\x18\b \x01(\tR\x06status\x12 \n" +
+	"\vdescription\x18\t \x01(\tR\vdescription\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\n" +
+	" \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\v \x01(\tR\tupdatedAt\"\xf6\x01\n" +
+	"\x16BaseTemplatePageEntity\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
+	"\x04type\x18\x03 \x01(\tR\x04type\x12\x1a\n" +
+	"\bcategory\x18\x04 \x01(\tR\bcategory\x12\x10\n" +
+	"\x03tag\x18\x05 \x01(\tR\x03tag\x12\x16\n" +
+	"\x06status\x18\x06 \x01(\tR\x06status\x12 \n" +
+	"\vdescription\x18\a \x01(\tR\vdescription\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\b \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\t \x01(\tR\tupdatedAt\"U\n" +
+	"\x19CreateBaseTemplateRequest\x128\n" +
+	"\x04data\x18\x01 \x01(\v2$.admin.CreateBaseTemplateRequestDataR\x04data\"\x89\x02\n" +
+	"\x1dCreateBaseTemplateRequestData\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
+	"\x04type\x18\x02 \x01(\tR\x04type\x12\x1a\n" +
+	"\bcategory\x18\x03 \x01(\tR\bcategory\x12\x10\n" +
+	"\x03tag\x18\x04 \x01(\tR\x03tag\x12\x18\n" +
+	"\acontent\x18\x05 \x01(\tR\acontent\x12V\n" +
+	"\x15variable_group_schema\x18\x06 \x03(\v2\".admin.TemplateVariableGroupEntityR\x13variableGroupSchema\x12 \n" +
+	"\vdescription\x18\a \x01(\tR\vdescription\"K\n" +
+	"\x1aCreateBaseTemplateResponse\x12-\n" +
+	"\x04data\x18\x01 \x01(\v2\x19.admin.BaseTemplateEntityR\x04data\"U\n" +
+	"\x19UpdateBaseTemplateRequest\x128\n" +
+	"\x04data\x18\x01 \x01(\v2$.admin.UpdateBaseTemplateRequestDataR\x04data\"\x99\x02\n" +
+	"\x1dUpdateBaseTemplateRequestData\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
+	"\x04type\x18\x03 \x01(\tR\x04type\x12\x1a\n" +
+	"\bcategory\x18\x04 \x01(\tR\bcategory\x12\x10\n" +
+	"\x03tag\x18\x05 \x01(\tR\x03tag\x12\x18\n" +
+	"\acontent\x18\x06 \x01(\tR\acontent\x12V\n" +
+	"\x15variable_group_schema\x18\a \x03(\v2\".admin.TemplateVariableGroupEntityR\x13variableGroupSchema\x12 \n" +
+	"\vdescription\x18\b \x01(\tR\vdescription\"K\n" +
+	"\x1aUpdateBaseTemplateResponse\x12-\n" +
+	"\x04data\x18\x01 \x01(\v2\x19.admin.BaseTemplateEntityR\x04data\">\n" +
+	"\x16GetBaseTemplateRequest\x12$\n" +
+	"\x04data\x18\x01 \x01(\v2\x10.admin.IdRequestR\x04data\"H\n" +
+	"\x17GetBaseTemplateResponse\x12-\n" +
+	"\x04data\x18\x01 \x01(\v2\x19.admin.BaseTemplateEntityR\x04data\"Q\n" +
+	"\x17BaseTemplatePageRequest\x126\n" +
+	"\x04data\x18\x01 \x01(\v2\".admin.BaseTemplatePageRequestDataR\x04data\"\xc3\x01\n" +
+	"\x1bBaseTemplatePageRequestData\x12\x12\n" +
+	"\x04page\x18\x01 \x01(\x03R\x04page\x12\x14\n" +
+	"\x05limit\x18\x02 \x01(\x03R\x05limit\x12<\n" +
+	"\x06filter\x18\x03 \x01(\v2$.admin.BaseTemplatePageRequestFilterR\x06filter\x12<\n" +
+	"\x06sorter\x18\x04 \x01(\v2$.admin.BaseTemplatePageRequestSorterR\x06sorter\"\x81\x01\n" +
+	"\x1dBaseTemplatePageRequestFilter\x12\x18\n" +
+	"\akeyword\x18\x01 \x01(\tR\akeyword\x12\x12\n" +
+	"\x04type\x18\x02 \x01(\tR\x04type\x12\x1a\n" +
+	"\bcategory\x18\x03 \x01(\tR\bcategory\x12\x16\n" +
+	"\x06status\x18\x04 \x01(\tR\x06status\"K\n" +
+	"\x1dBaseTemplatePageRequestSorter\x12\x16\n" +
+	"\x06column\x18\x01 \x01(\tR\x06column\x12\x12\n" +
+	"\x04sort\x18\x02 \x01(\tR\x04sort\"S\n" +
+	"\x18BaseTemplatePageResponse\x127\n" +
+	"\x04data\x18\x01 \x01(\v2#.admin.BaseTemplatePageResponseDataR\x04data\"\xb0\x01\n" +
+	"\x1cBaseTemplatePageResponseData\x12\x12\n" +
+	"\x04page\x18\x01 \x01(\x03R\x04page\x12\x14\n" +
+	"\x05limit\x18\x02 \x01(\x03R\x05limit\x12\x14\n" +
+	"\x05total\x18\x03 \x01(\x03R\x05total\x12\x1d\n" +
+	"\n" +
+	"total_page\x18\x04 \x01(\x03R\ttotalPage\x121\n" +
+	"\x04list\x18\x05 \x03(\v2\x1d.admin.BaseTemplatePageEntityR\x04list\"a\n" +
+	"\x1fSwitchBaseTemplateStatusRequest\x12>\n" +
+	"\x04data\x18\x01 \x01(\v2*.admin.SwitchBaseTemplateStatusRequestDataR\x04data\"M\n" +
+	"#SwitchBaseTemplateStatusRequestData\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x16\n" +
+	"\x06status\x18\x02 \x01(\tR\x06status\"A\n" +
+	"\x19DeleteBaseTemplateRequest\x12$\n" +
+	"\x04data\x18\x01 \x01(\v2\x10.admin.IdRequestR\x04data\"G\n" +
+	"\x12ExistsByTagRequest\x121\n" +
+	"\x04data\x18\x01 \x01(\v2\x1d.admin.ExistsByTagRequestDataR\x04data\">\n" +
+	"\x16ExistsByTagRequestData\x12\x10\n" +
+	"\x03tag\x18\x01 \x01(\tR\x03tag\x12\x12\n" +
+	"\x04type\x18\x02 \x01(\tR\x04type\"I\n" +
+	"\x13ExistsByTagResponse\x122\n" +
+	"\x04data\x18\x01 \x01(\v2\x1e.admin.ExistsByTagResponseDataR\x04data\"1\n" +
+	"\x17ExistsByTagResponseData\x12\x16\n" +
+	"\x06exists\x18\x01 \x01(\bR\x06exists2\xdb\x02\n" +
 	"\x04User\x12:\n" +
 	"\x05Login\x12\x17.admin.UserLoginRequest\x1a\x18.admin.UserLoginResponse\x12G\n" +
 	"\fRefreshToken\x12\x1a.admin.RefreshTokenRequest\x1a\x1b.admin.RefreshTokenResponse\x12;\n" +
@@ -8742,7 +10399,15 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x06GetOpt\x12\x14.admin.OptionRequest\x1a\x15.admin.OptionResponse\x12=\n" +
 	"\n" +
 	"GetUsState\x12\x13.admin.EmptyRequest\x1a\x1a.admin.StringSliceResponse\x12A\n" +
-	"\vGetUsCities\x12\x16.admin.UsCitiesRequest\x1a\x1a.admin.StringSliceResponseB\tZ\a./adminb\x06proto3"
+	"\vGetUsCities\x12\x16.admin.UsCitiesRequest\x1a\x1a.admin.StringSliceResponse2\x94\x04\n" +
+	"\fBaseTemplate\x12M\n" +
+	"\x06Create\x12 .admin.CreateBaseTemplateRequest\x1a!.admin.CreateBaseTemplateResponse\x12M\n" +
+	"\x06Update\x12 .admin.UpdateBaseTemplateRequest\x1a!.admin.UpdateBaseTemplateResponse\x12G\n" +
+	"\x06Detail\x12\x1d.admin.GetBaseTemplateRequest\x1a\x1e.admin.GetBaseTemplateResponse\x12G\n" +
+	"\x04Page\x12\x1e.admin.BaseTemplatePageRequest\x1a\x1f.admin.BaseTemplatePageResponse\x12L\n" +
+	"\fSwitchStatus\x12&.admin.SwitchBaseTemplateStatusRequest\x1a\x14.admin.EmptyResponse\x12@\n" +
+	"\x06Delete\x12 .admin.DeleteBaseTemplateRequest\x1a\x14.admin.EmptyResponse\x12D\n" +
+	"\vExistsByTag\x12\x19.admin.ExistsByTagRequest\x1a\x1a.admin.ExistsByTagResponseB\tZ\a./adminb\x06proto3"
 
 var (
 	file_app_admin_rpc_pb_admin_proto_rawDescOnce sync.Once
@@ -8756,7 +10421,7 @@ func file_app_admin_rpc_pb_admin_proto_rawDescGZIP() []byte {
 	return file_app_admin_rpc_pb_admin_proto_rawDescData
 }
 
-var file_app_admin_rpc_pb_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 132)
+var file_app_admin_rpc_pb_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 158)
 var file_app_admin_rpc_pb_admin_proto_goTypes = []any{
 	(*EmptyRequest)(nil),                               // 0: admin.EmptyRequest
 	(*EmptyResponse)(nil),                              // 1: admin.EmptyResponse
@@ -8889,7 +10554,33 @@ var file_app_admin_rpc_pb_admin_proto_goTypes = []any{
 	(*OptionEntity)(nil),                               // 128: admin.OptionEntity
 	(*UsCitiesRequest)(nil),                            // 129: admin.UsCitiesRequest
 	(*UsCitiesRequestData)(nil),                        // 130: admin.UsCitiesRequestData
-	(*UserinfoResponseData_Organization)(nil),          // 131: admin.UserinfoResponseData.Organization
+	(*TemplateVariableEntity)(nil),                     // 131: admin.TemplateVariableEntity
+	(*TemplateVariableGroupEntity)(nil),                // 132: admin.TemplateVariableGroupEntity
+	(*BaseTemplateEntity)(nil),                         // 133: admin.BaseTemplateEntity
+	(*BaseTemplatePageEntity)(nil),                     // 134: admin.BaseTemplatePageEntity
+	(*CreateBaseTemplateRequest)(nil),                  // 135: admin.CreateBaseTemplateRequest
+	(*CreateBaseTemplateRequestData)(nil),              // 136: admin.CreateBaseTemplateRequestData
+	(*CreateBaseTemplateResponse)(nil),                 // 137: admin.CreateBaseTemplateResponse
+	(*UpdateBaseTemplateRequest)(nil),                  // 138: admin.UpdateBaseTemplateRequest
+	(*UpdateBaseTemplateRequestData)(nil),              // 139: admin.UpdateBaseTemplateRequestData
+	(*UpdateBaseTemplateResponse)(nil),                 // 140: admin.UpdateBaseTemplateResponse
+	(*GetBaseTemplateRequest)(nil),                     // 141: admin.GetBaseTemplateRequest
+	(*GetBaseTemplateResponse)(nil),                    // 142: admin.GetBaseTemplateResponse
+	(*BaseTemplatePageRequest)(nil),                    // 143: admin.BaseTemplatePageRequest
+	(*BaseTemplatePageRequestData)(nil),                // 144: admin.BaseTemplatePageRequestData
+	(*BaseTemplatePageRequestFilter)(nil),              // 145: admin.BaseTemplatePageRequestFilter
+	(*BaseTemplatePageRequestSorter)(nil),              // 146: admin.BaseTemplatePageRequestSorter
+	(*BaseTemplatePageResponse)(nil),                   // 147: admin.BaseTemplatePageResponse
+	(*BaseTemplatePageResponseData)(nil),               // 148: admin.BaseTemplatePageResponseData
+	(*SwitchBaseTemplateStatusRequest)(nil),            // 149: admin.SwitchBaseTemplateStatusRequest
+	(*SwitchBaseTemplateStatusRequestData)(nil),        // 150: admin.SwitchBaseTemplateStatusRequestData
+	(*DeleteBaseTemplateRequest)(nil),                  // 151: admin.DeleteBaseTemplateRequest
+	(*ExistsByTagRequest)(nil),                         // 152: admin.ExistsByTagRequest
+	(*ExistsByTagRequestData)(nil),                     // 153: admin.ExistsByTagRequestData
+	(*ExistsByTagResponse)(nil),                        // 154: admin.ExistsByTagResponse
+	(*ExistsByTagResponseData)(nil),                    // 155: admin.ExistsByTagResponseData
+	(*UserinfoResponseData_Organization)(nil),          // 156: admin.UserinfoResponseData.Organization
+	nil, // 157: admin.TemplateVariableEntity.PropertiesEntry
 }
 var file_app_admin_rpc_pb_admin_proto_depIdxs = []int32{
 	77,  // 0: admin.UserEntity.roles:type_name -> admin.RoleEntity
@@ -8901,7 +10592,7 @@ var file_app_admin_rpc_pb_admin_proto_depIdxs = []int32{
 	12,  // 6: admin.ResetPasswordResponse.data:type_name -> admin.UserLoginResponseData
 	22,  // 7: admin.UserInfoRequest.data:type_name -> admin.UserInfoRequestData
 	24,  // 8: admin.UserinfoResponse.data:type_name -> admin.UserinfoResponseData
-	131, // 9: admin.UserinfoResponseData.organizations:type_name -> admin.UserinfoResponseData.Organization
+	156, // 9: admin.UserinfoResponseData.organizations:type_name -> admin.UserinfoResponseData.Organization
 	26,  // 10: admin.UserProfileEditRequest.data:type_name -> admin.UserProfileEditRequestData
 	77,  // 11: admin.OrganizationUserEntity.roles:type_name -> admin.RoleEntity
 	77,  // 12: admin.OrganizationUserPageEntity.roles:type_name -> admin.RoleEntity
@@ -8984,87 +10675,123 @@ var file_app_admin_rpc_pb_admin_proto_depIdxs = []int32{
 	126, // 89: admin.OptionRequest.data:type_name -> admin.OptionRequestData
 	128, // 90: admin.OptionResponse.data:type_name -> admin.OptionEntity
 	130, // 91: admin.UsCitiesRequest.data:type_name -> admin.UsCitiesRequestData
-	9,   // 92: admin.User.Login:input_type -> admin.UserLoginRequest
-	13,  // 93: admin.User.RefreshToken:input_type -> admin.RefreshTokenRequest
-	21,  // 94: admin.User.UserInfo:input_type -> admin.UserInfoRequest
-	17,  // 95: admin.User.ResetPassword:input_type -> admin.ResetPasswordRequest
-	25,  // 96: admin.User.EditProfile:input_type -> admin.UserProfileEditRequest
-	29,  // 97: admin.OrganizationUser.Page:input_type -> admin.OrganizationUserPageRequest
-	35,  // 98: admin.OrganizationUser.Create:input_type -> admin.OrganizationUserCreateRequest
-	38,  // 99: admin.OrganizationUser.Update:input_type -> admin.OrganizationUserUpdateRequest
-	41,  // 100: admin.OrganizationUser.Delete:input_type -> admin.OrganizationUserDeleteRequest
-	43,  // 101: admin.OrganizationUser.Detail:input_type -> admin.OrganizationUserDetailRequest
-	46,  // 102: admin.OrganizationUser.SwitchStatus:input_type -> admin.OrganizationUserSwitchStatusRequest
-	50,  // 103: admin.api.ApiTree:input_type -> admin.ApiTreeRequest
-	53,  // 104: admin.api.Create:input_type -> admin.ApiCreateRequest
-	56,  // 105: admin.api.Update:input_type -> admin.ApiUpdateRequest
-	58,  // 106: admin.api.Delete:input_type -> admin.ApiDeleteRequest
-	60,  // 107: admin.api.Detail:input_type -> admin.ApiDetailRequest
-	64,  // 108: admin.resource.ResourceTree:input_type -> admin.ResourceTreeRequest
-	67,  // 109: admin.resource.Create:input_type -> admin.ResourceCreateRequest
-	70,  // 110: admin.resource.Update:input_type -> admin.ResourceUpdateRequest
-	72,  // 111: admin.resource.Delete:input_type -> admin.ResourceDeleteRequest
-	74,  // 112: admin.resource.Detail:input_type -> admin.ResourceDetailRequest
-	78,  // 113: admin.role.Page:input_type -> admin.RolePageRequest
-	84,  // 114: admin.role.Create:input_type -> admin.RoleCreateRequest
-	87,  // 115: admin.role.Update:input_type -> admin.RoleUpdateRequest
-	91,  // 116: admin.role.Delete:input_type -> admin.RoleDeleteRequest
-	93,  // 117: admin.role.Detail:input_type -> admin.RoleDetailRequest
-	96,  // 118: admin.role.UpdateStatus:input_type -> admin.RoleUpdateStatusRequest
-	98,  // 119: admin.role.All:input_type -> admin.RoleAllRequest
-	105, // 120: admin.organization.Page:input_type -> admin.OrganizationPageRequest
-	111, // 121: admin.organization.CreateLender:input_type -> admin.OrganizationCreateLenderRequest
-	115, // 122: admin.organization.UpdateLender:input_type -> admin.OrganizationUpdateLenderRequest
-	3,   // 123: admin.organization.Detail:input_type -> admin.IdRequest
-	3,   // 124: admin.organization.Delete:input_type -> admin.IdRequest
-	118, // 125: admin.organization.SwitchStatus:input_type -> admin.OrganizationSwitchStatusRequest
-	121, // 126: admin.Storage.CreatePresignedUrl:input_type -> admin.StorageCreatePresignedUrlRequest
-	125, // 127: admin.common.GetOpt:input_type -> admin.OptionRequest
-	0,   // 128: admin.common.GetUsState:input_type -> admin.EmptyRequest
-	129, // 129: admin.common.GetUsCities:input_type -> admin.UsCitiesRequest
-	11,  // 130: admin.User.Login:output_type -> admin.UserLoginResponse
-	15,  // 131: admin.User.RefreshToken:output_type -> admin.RefreshTokenResponse
-	23,  // 132: admin.User.UserInfo:output_type -> admin.UserinfoResponse
-	19,  // 133: admin.User.ResetPassword:output_type -> admin.ResetPasswordResponse
-	23,  // 134: admin.User.EditProfile:output_type -> admin.UserinfoResponse
-	33,  // 135: admin.OrganizationUser.Page:output_type -> admin.OrganizationUserPageResponse
-	36,  // 136: admin.OrganizationUser.Create:output_type -> admin.OrganizationUserCreateResponse
-	39,  // 137: admin.OrganizationUser.Update:output_type -> admin.OrganizationUserUpdateResponse
-	1,   // 138: admin.OrganizationUser.Delete:output_type -> admin.EmptyResponse
-	44,  // 139: admin.OrganizationUser.Detail:output_type -> admin.OrganizationUserDetailResponse
-	1,   // 140: admin.OrganizationUser.SwitchStatus:output_type -> admin.EmptyResponse
-	52,  // 141: admin.api.ApiTree:output_type -> admin.ApiTreeResponse
-	55,  // 142: admin.api.Create:output_type -> admin.ApiCreateResponse
-	55,  // 143: admin.api.Update:output_type -> admin.ApiCreateResponse
-	1,   // 144: admin.api.Delete:output_type -> admin.EmptyResponse
-	55,  // 145: admin.api.Detail:output_type -> admin.ApiCreateResponse
-	66,  // 146: admin.resource.ResourceTree:output_type -> admin.ResourceTreeResponse
-	76,  // 147: admin.resource.Create:output_type -> admin.ResourceDetailResponse
-	76,  // 148: admin.resource.Update:output_type -> admin.ResourceDetailResponse
-	1,   // 149: admin.resource.Delete:output_type -> admin.EmptyResponse
-	76,  // 150: admin.resource.Detail:output_type -> admin.ResourceDetailResponse
-	82,  // 151: admin.role.Page:output_type -> admin.RolePageResponse
-	86,  // 152: admin.role.Create:output_type -> admin.RoleCreateResponse
-	88,  // 153: admin.role.Update:output_type -> admin.RoleUpdateResponse
-	1,   // 154: admin.role.Delete:output_type -> admin.EmptyResponse
-	95,  // 155: admin.role.Detail:output_type -> admin.RoleDetailResponse
-	1,   // 156: admin.role.UpdateStatus:output_type -> admin.EmptyResponse
-	100, // 157: admin.role.All:output_type -> admin.RoleAllResponse
-	109, // 158: admin.organization.Page:output_type -> admin.OrganizationPageResponse
-	117, // 159: admin.organization.CreateLender:output_type -> admin.OrganizationDetailResponse
-	117, // 160: admin.organization.UpdateLender:output_type -> admin.OrganizationDetailResponse
-	117, // 161: admin.organization.Detail:output_type -> admin.OrganizationDetailResponse
-	1,   // 162: admin.organization.Delete:output_type -> admin.EmptyResponse
-	1,   // 163: admin.organization.SwitchStatus:output_type -> admin.EmptyResponse
-	123, // 164: admin.Storage.CreatePresignedUrl:output_type -> admin.StorageCreatePresignedUrlResponse
-	127, // 165: admin.common.GetOpt:output_type -> admin.OptionResponse
-	2,   // 166: admin.common.GetUsState:output_type -> admin.StringSliceResponse
-	2,   // 167: admin.common.GetUsCities:output_type -> admin.StringSliceResponse
-	130, // [130:168] is the sub-list for method output_type
-	92,  // [92:130] is the sub-list for method input_type
-	92,  // [92:92] is the sub-list for extension type_name
-	92,  // [92:92] is the sub-list for extension extendee
-	0,   // [0:92] is the sub-list for field type_name
+	157, // 92: admin.TemplateVariableEntity.properties:type_name -> admin.TemplateVariableEntity.PropertiesEntry
+	131, // 93: admin.TemplateVariableEntity.items:type_name -> admin.TemplateVariableEntity
+	131, // 94: admin.TemplateVariableGroupEntity.variables:type_name -> admin.TemplateVariableEntity
+	132, // 95: admin.BaseTemplateEntity.variable_group_schema:type_name -> admin.TemplateVariableGroupEntity
+	136, // 96: admin.CreateBaseTemplateRequest.data:type_name -> admin.CreateBaseTemplateRequestData
+	132, // 97: admin.CreateBaseTemplateRequestData.variable_group_schema:type_name -> admin.TemplateVariableGroupEntity
+	133, // 98: admin.CreateBaseTemplateResponse.data:type_name -> admin.BaseTemplateEntity
+	139, // 99: admin.UpdateBaseTemplateRequest.data:type_name -> admin.UpdateBaseTemplateRequestData
+	132, // 100: admin.UpdateBaseTemplateRequestData.variable_group_schema:type_name -> admin.TemplateVariableGroupEntity
+	133, // 101: admin.UpdateBaseTemplateResponse.data:type_name -> admin.BaseTemplateEntity
+	3,   // 102: admin.GetBaseTemplateRequest.data:type_name -> admin.IdRequest
+	133, // 103: admin.GetBaseTemplateResponse.data:type_name -> admin.BaseTemplateEntity
+	144, // 104: admin.BaseTemplatePageRequest.data:type_name -> admin.BaseTemplatePageRequestData
+	145, // 105: admin.BaseTemplatePageRequestData.filter:type_name -> admin.BaseTemplatePageRequestFilter
+	146, // 106: admin.BaseTemplatePageRequestData.sorter:type_name -> admin.BaseTemplatePageRequestSorter
+	148, // 107: admin.BaseTemplatePageResponse.data:type_name -> admin.BaseTemplatePageResponseData
+	134, // 108: admin.BaseTemplatePageResponseData.list:type_name -> admin.BaseTemplatePageEntity
+	150, // 109: admin.SwitchBaseTemplateStatusRequest.data:type_name -> admin.SwitchBaseTemplateStatusRequestData
+	3,   // 110: admin.DeleteBaseTemplateRequest.data:type_name -> admin.IdRequest
+	153, // 111: admin.ExistsByTagRequest.data:type_name -> admin.ExistsByTagRequestData
+	155, // 112: admin.ExistsByTagResponse.data:type_name -> admin.ExistsByTagResponseData
+	131, // 113: admin.TemplateVariableEntity.PropertiesEntry.value:type_name -> admin.TemplateVariableEntity
+	9,   // 114: admin.User.Login:input_type -> admin.UserLoginRequest
+	13,  // 115: admin.User.RefreshToken:input_type -> admin.RefreshTokenRequest
+	21,  // 116: admin.User.UserInfo:input_type -> admin.UserInfoRequest
+	17,  // 117: admin.User.ResetPassword:input_type -> admin.ResetPasswordRequest
+	25,  // 118: admin.User.EditProfile:input_type -> admin.UserProfileEditRequest
+	29,  // 119: admin.OrganizationUser.Page:input_type -> admin.OrganizationUserPageRequest
+	35,  // 120: admin.OrganizationUser.Create:input_type -> admin.OrganizationUserCreateRequest
+	38,  // 121: admin.OrganizationUser.Update:input_type -> admin.OrganizationUserUpdateRequest
+	41,  // 122: admin.OrganizationUser.Delete:input_type -> admin.OrganizationUserDeleteRequest
+	43,  // 123: admin.OrganizationUser.Detail:input_type -> admin.OrganizationUserDetailRequest
+	46,  // 124: admin.OrganizationUser.SwitchStatus:input_type -> admin.OrganizationUserSwitchStatusRequest
+	50,  // 125: admin.api.ApiTree:input_type -> admin.ApiTreeRequest
+	53,  // 126: admin.api.Create:input_type -> admin.ApiCreateRequest
+	56,  // 127: admin.api.Update:input_type -> admin.ApiUpdateRequest
+	58,  // 128: admin.api.Delete:input_type -> admin.ApiDeleteRequest
+	60,  // 129: admin.api.Detail:input_type -> admin.ApiDetailRequest
+	64,  // 130: admin.resource.ResourceTree:input_type -> admin.ResourceTreeRequest
+	67,  // 131: admin.resource.Create:input_type -> admin.ResourceCreateRequest
+	70,  // 132: admin.resource.Update:input_type -> admin.ResourceUpdateRequest
+	72,  // 133: admin.resource.Delete:input_type -> admin.ResourceDeleteRequest
+	74,  // 134: admin.resource.Detail:input_type -> admin.ResourceDetailRequest
+	78,  // 135: admin.role.Page:input_type -> admin.RolePageRequest
+	84,  // 136: admin.role.Create:input_type -> admin.RoleCreateRequest
+	87,  // 137: admin.role.Update:input_type -> admin.RoleUpdateRequest
+	91,  // 138: admin.role.Delete:input_type -> admin.RoleDeleteRequest
+	93,  // 139: admin.role.Detail:input_type -> admin.RoleDetailRequest
+	96,  // 140: admin.role.UpdateStatus:input_type -> admin.RoleUpdateStatusRequest
+	98,  // 141: admin.role.All:input_type -> admin.RoleAllRequest
+	105, // 142: admin.organization.Page:input_type -> admin.OrganizationPageRequest
+	111, // 143: admin.organization.CreateLender:input_type -> admin.OrganizationCreateLenderRequest
+	115, // 144: admin.organization.UpdateLender:input_type -> admin.OrganizationUpdateLenderRequest
+	3,   // 145: admin.organization.Detail:input_type -> admin.IdRequest
+	3,   // 146: admin.organization.Delete:input_type -> admin.IdRequest
+	118, // 147: admin.organization.SwitchStatus:input_type -> admin.OrganizationSwitchStatusRequest
+	121, // 148: admin.Storage.CreatePresignedUrl:input_type -> admin.StorageCreatePresignedUrlRequest
+	125, // 149: admin.common.GetOpt:input_type -> admin.OptionRequest
+	0,   // 150: admin.common.GetUsState:input_type -> admin.EmptyRequest
+	129, // 151: admin.common.GetUsCities:input_type -> admin.UsCitiesRequest
+	135, // 152: admin.BaseTemplate.Create:input_type -> admin.CreateBaseTemplateRequest
+	138, // 153: admin.BaseTemplate.Update:input_type -> admin.UpdateBaseTemplateRequest
+	141, // 154: admin.BaseTemplate.Detail:input_type -> admin.GetBaseTemplateRequest
+	143, // 155: admin.BaseTemplate.Page:input_type -> admin.BaseTemplatePageRequest
+	149, // 156: admin.BaseTemplate.SwitchStatus:input_type -> admin.SwitchBaseTemplateStatusRequest
+	151, // 157: admin.BaseTemplate.Delete:input_type -> admin.DeleteBaseTemplateRequest
+	152, // 158: admin.BaseTemplate.ExistsByTag:input_type -> admin.ExistsByTagRequest
+	11,  // 159: admin.User.Login:output_type -> admin.UserLoginResponse
+	15,  // 160: admin.User.RefreshToken:output_type -> admin.RefreshTokenResponse
+	23,  // 161: admin.User.UserInfo:output_type -> admin.UserinfoResponse
+	19,  // 162: admin.User.ResetPassword:output_type -> admin.ResetPasswordResponse
+	23,  // 163: admin.User.EditProfile:output_type -> admin.UserinfoResponse
+	33,  // 164: admin.OrganizationUser.Page:output_type -> admin.OrganizationUserPageResponse
+	36,  // 165: admin.OrganizationUser.Create:output_type -> admin.OrganizationUserCreateResponse
+	39,  // 166: admin.OrganizationUser.Update:output_type -> admin.OrganizationUserUpdateResponse
+	1,   // 167: admin.OrganizationUser.Delete:output_type -> admin.EmptyResponse
+	44,  // 168: admin.OrganizationUser.Detail:output_type -> admin.OrganizationUserDetailResponse
+	1,   // 169: admin.OrganizationUser.SwitchStatus:output_type -> admin.EmptyResponse
+	52,  // 170: admin.api.ApiTree:output_type -> admin.ApiTreeResponse
+	55,  // 171: admin.api.Create:output_type -> admin.ApiCreateResponse
+	55,  // 172: admin.api.Update:output_type -> admin.ApiCreateResponse
+	1,   // 173: admin.api.Delete:output_type -> admin.EmptyResponse
+	55,  // 174: admin.api.Detail:output_type -> admin.ApiCreateResponse
+	66,  // 175: admin.resource.ResourceTree:output_type -> admin.ResourceTreeResponse
+	76,  // 176: admin.resource.Create:output_type -> admin.ResourceDetailResponse
+	76,  // 177: admin.resource.Update:output_type -> admin.ResourceDetailResponse
+	1,   // 178: admin.resource.Delete:output_type -> admin.EmptyResponse
+	76,  // 179: admin.resource.Detail:output_type -> admin.ResourceDetailResponse
+	82,  // 180: admin.role.Page:output_type -> admin.RolePageResponse
+	86,  // 181: admin.role.Create:output_type -> admin.RoleCreateResponse
+	88,  // 182: admin.role.Update:output_type -> admin.RoleUpdateResponse
+	1,   // 183: admin.role.Delete:output_type -> admin.EmptyResponse
+	95,  // 184: admin.role.Detail:output_type -> admin.RoleDetailResponse
+	1,   // 185: admin.role.UpdateStatus:output_type -> admin.EmptyResponse
+	100, // 186: admin.role.All:output_type -> admin.RoleAllResponse
+	109, // 187: admin.organization.Page:output_type -> admin.OrganizationPageResponse
+	117, // 188: admin.organization.CreateLender:output_type -> admin.OrganizationDetailResponse
+	117, // 189: admin.organization.UpdateLender:output_type -> admin.OrganizationDetailResponse
+	117, // 190: admin.organization.Detail:output_type -> admin.OrganizationDetailResponse
+	1,   // 191: admin.organization.Delete:output_type -> admin.EmptyResponse
+	1,   // 192: admin.organization.SwitchStatus:output_type -> admin.EmptyResponse
+	123, // 193: admin.Storage.CreatePresignedUrl:output_type -> admin.StorageCreatePresignedUrlResponse
+	127, // 194: admin.common.GetOpt:output_type -> admin.OptionResponse
+	2,   // 195: admin.common.GetUsState:output_type -> admin.StringSliceResponse
+	2,   // 196: admin.common.GetUsCities:output_type -> admin.StringSliceResponse
+	137, // 197: admin.BaseTemplate.Create:output_type -> admin.CreateBaseTemplateResponse
+	140, // 198: admin.BaseTemplate.Update:output_type -> admin.UpdateBaseTemplateResponse
+	142, // 199: admin.BaseTemplate.Detail:output_type -> admin.GetBaseTemplateResponse
+	147, // 200: admin.BaseTemplate.Page:output_type -> admin.BaseTemplatePageResponse
+	1,   // 201: admin.BaseTemplate.SwitchStatus:output_type -> admin.EmptyResponse
+	1,   // 202: admin.BaseTemplate.Delete:output_type -> admin.EmptyResponse
+	154, // 203: admin.BaseTemplate.ExistsByTag:output_type -> admin.ExistsByTagResponse
+	159, // [159:204] is the sub-list for method output_type
+	114, // [114:159] is the sub-list for method input_type
+	114, // [114:114] is the sub-list for extension type_name
+	114, // [114:114] is the sub-list for extension extendee
+	0,   // [0:114] is the sub-list for field type_name
 }
 
 func init() { file_app_admin_rpc_pb_admin_proto_init() }
@@ -9078,9 +10805,9 @@ func file_app_admin_rpc_pb_admin_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_app_admin_rpc_pb_admin_proto_rawDesc), len(file_app_admin_rpc_pb_admin_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   132,
+			NumMessages:   158,
 			NumExtensions: 0,
-			NumServices:   8,
+			NumServices:   9,
 		},
 		GoTypes:           file_app_admin_rpc_pb_admin_proto_goTypes,
 		DependencyIndexes: file_app_admin_rpc_pb_admin_proto_depIdxs,

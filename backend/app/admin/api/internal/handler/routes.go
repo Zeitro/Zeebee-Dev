@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	api "zeebee-backend/app/admin/api/internal/handler/api"
+	base_template "zeebee-backend/app/admin/api/internal/handler/base_template"
 	common "zeebee-backend/app/admin/api/internal/handler/common"
 	organization "zeebee-backend/app/admin/api/internal/handler/organization"
 	organization_user "zeebee-backend/app/admin/api/internal/handler/organization_user"
@@ -53,6 +54,51 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/api/tree",
 					Handler: api.TreeHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// Create base template
+					Method:  http.MethodPost,
+					Path:    "/base_template",
+					Handler: base_template.BaseTemplateCreateHandler(serverCtx),
+				},
+				{
+					// Update base template
+					Method:  http.MethodPut,
+					Path:    "/base_template/:id",
+					Handler: base_template.BaseTemplateUpdateHandler(serverCtx),
+				},
+				{
+					// Get base template detail
+					Method:  http.MethodGet,
+					Path:    "/base_template/:id",
+					Handler: base_template.BaseTemplateDetailHandler(serverCtx),
+				},
+				{
+					// Delete base template
+					Method:  http.MethodDelete,
+					Path:    "/base_template/:id",
+					Handler: base_template.BaseTemplateDeleteHandler(serverCtx),
+				},
+				{
+					// Switch base template status
+					Method:  http.MethodPut,
+					Path:    "/base_template/:id/status",
+					Handler: base_template.BaseTemplateSwitchStatusHandler(serverCtx),
+				},
+				{
+					// Base template page list
+					Method:  http.MethodPost,
+					Path:    "/base_template/page",
+					Handler: base_template.BaseTemplatePageHandler(serverCtx),
 				},
 			}...,
 		),
