@@ -3,8 +3,15 @@
 
 package types
 
-type BaseTemplateDetailRequest struct {
-	Id int64 `path:"id" validate:"required,min=1"`
+type BaseTemplateCreateRequest struct {
+	Name                string                         `json:"name" validate:"required,min=1,max=100"`
+	Type                string                         `json:"type" validate:"required,oneof=Borrower Lender"`
+	Category            string                         `json:"category" validate:"required,oneof=Email Contract"`
+	Purpose             string                         `json:"purpose" validate:"required,min=1,max=100"`
+	Content             string                         `json:"content" validate:"required,max=10485760"`
+	VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema,optional" validate:"omitempty,dive"`
+	Description         string                         `json:"description,optional" validate:"max=255"`
+	ExampleVariables    string                         `json:"example_variables,omitempty,optional" validate:"omitempty,json"`
 }
 
 type BaseTemplateDetailResponse struct {
@@ -38,22 +45,7 @@ type BaseTemplateSwitchStatusRequest struct {
 	Status string `json:"status" validate:"required,oneof=Active Disabled"`
 }
 
-type CreateBaseTemplateRequest struct {
-	Name                string                         `json:"name" validate:"required,min=1,max=100"`
-	Type                string                         `json:"type" validate:"required,oneof=Borrower Lender"`
-	Category            string                         `json:"category" validate:"required,oneof=Email Contract"`
-	Purpose             string                         `json:"purpose" validate:"required,min=1,max=100"`
-	Content             string                         `json:"content" validate:"required,max=10485760"`
-	VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema,optional" validate:"omitempty,dive"`
-	Description         string                         `json:"description,optional" validate:"max=255"`
-	ExampleVariables    string                         `json:"example_variables,omitempty,optional" validate:"omitempty,json"`
-}
-
-type DeleteBaseTemplateRequest struct {
-	Id int64 `path:"id" validate:"required,min=1"`
-}
-
-type UpdateBaseTemplateRequest struct {
+type BaseTemplateUpdateRequest struct {
 	Id                  int64                          `path:"id" validate:"required,min=1"`
 	Name                string                         `json:"name" validate:"required,min=1,max=100"`
 	Category            string                         `json:"category" validate:"required,oneof=Email Contract"`

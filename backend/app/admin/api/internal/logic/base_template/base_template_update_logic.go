@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
@@ -26,7 +27,7 @@ func NewBaseTemplateUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	}
 }
 
-func (l *BaseTemplateUpdateLogic) BaseTemplateUpdate(req *types.UpdateBaseTemplateRequest) (resp *types.BaseTemplateDetailResponse, err error) {
+func (l *BaseTemplateUpdateLogic) BaseTemplateUpdate(req *types.BaseTemplateUpdateRequest) (resp *types.BaseTemplateDetailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -37,7 +38,7 @@ func (l *BaseTemplateUpdateLogic) BaseTemplateUpdate(req *types.UpdateBaseTempla
 	rpcReq := &admin.UpdateBaseTemplateRequest{
 		Data: &admin.UpdateBaseTemplateRequestData{},
 	}
-	rpcReq.Data, err = copierx.Trans[types.UpdateBaseTemplateRequest, admin.UpdateBaseTemplateRequestData](req)
+	rpcReq.Data, err = copierx.Trans[types.BaseTemplateUpdateRequest, admin.UpdateBaseTemplateRequestData](req)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

@@ -295,15 +295,15 @@ service admin-api {
 service admin-api {
 	@doc "Create"
 	@handler BaseTemplateCreate
-	post /base_template (CreateBaseTemplateRequest) returns (BaseTemplateDetailResponse)
+	post /base_template (BaseTemplateCreateRequest) returns (BaseTemplateDetailResponse)
 
 	@doc "Update"
 	@handler BaseTemplateUpdate
-	put /base_template/:id (UpdateBaseTemplateRequest) returns (BaseTemplateDetailResponse)
+	put /base_template/:id (BaseTemplateUpdateRequest) returns (BaseTemplateDetailResponse)
 
 	@doc "Detail"
 	@handler BaseTemplateDetail
-	get /base_template/:id (BaseTemplateDetailRequest) returns (BaseTemplateDetailResponse)
+	get /base_template/:id (PathIdRequest) returns (BaseTemplateDetailResponse)
 
 	@doc "page"
 	@handler BaseTemplatePage
@@ -315,7 +315,7 @@ service admin-api {
 
 	@doc "Delete"
 	@handler BaseTemplateDelete
-	delete /base_template/:id (DeleteBaseTemplateRequest) returns (EmptyResponse)
+	delete /base_template/:id (PathIdRequest) returns (EmptyResponse)
 
 	@doc "Preview"
 	@handler BaseTemplatePreview

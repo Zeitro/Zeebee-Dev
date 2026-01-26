@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
@@ -26,7 +27,7 @@ func NewBaseTemplateDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	}
 }
 
-func (l *BaseTemplateDetailLogic) BaseTemplateDetail(req *types.BaseTemplateDetailRequest) (resp *types.BaseTemplateDetailResponse, err error) {
+func (l *BaseTemplateDetailLogic) BaseTemplateDetail(req *types.PathIdRequest) (resp *types.BaseTemplateDetailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
