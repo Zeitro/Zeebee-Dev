@@ -2,7 +2,7 @@ syntax = "v1"
 
 info(
 	title: "admin-api http service"
-	desc: "admin-api http service description"
+    desc: "admin-api http service description"
 )
 
 import "desc/user.api"
@@ -14,12 +14,13 @@ import "desc/organization.api"
 import "desc/storage.api"
 import "desc/us_geography.api"
 import "desc/common.api"
+import "desc/base_template.api"
 
 type (
-	EmptyRequest{
-	}
-	EmptyResponse{
-	}
+    EmptyRequest{
+    }
+    EmptyResponse{
+    }
 )
 
 type PathIdRequest {
@@ -28,11 +29,11 @@ type PathIdRequest {
 
 // ============== common start =============
 @server(
-	desc: "admin-api service"
+    desc: "admin-api service"
 	version: v1
-	group: common
+    group: common
 	prefix:  /api/v1
-	tags: common
+    tags: common
 )
 service admin-api {
 	@doc "select options"
@@ -51,11 +52,11 @@ service admin-api {
 // ============== common end =============
 // ============== user start =============
 @server(
-	desc: "admin-api service"
+    desc: "admin-api service"
 	version: v1
-	group: user
+    group: user
 	prefix:  /api/v1
-	tags: user
+    tags: user
 )
 service admin-api {
 	@doc "login"
@@ -72,12 +73,12 @@ service admin-api {
 }
 
 @server(
-	desc: "admin-api service"
-	version: v1
-	group: user
+    desc: "admin-api service"
+    version: v1
+    group: user
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-	tags: user
+    tags: user
 )
 service admin-api {
 	@doc "info"
@@ -92,12 +93,12 @@ service admin-api {
 // ============== user end =============
 // ============== organization user start ============
 @server(
-	desc: "admin-api service"
-	version: v1
-	group: organization_user
+    desc: "admin-api service"
+    version: v1
+    group: organization_user
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-	tags: organization_user
+    tags: organization_user
 )
 service admin-api {
 	@doc "page"
@@ -128,12 +129,12 @@ service admin-api {
 // ============== organization user end ============
 // ============== api start ============
 @server(
-	desc: "admin-api service"
-	version: v1
-	group: api
+    desc: "admin-api service"
+    version: v1
+    group: api
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-	tags: api
+    tags: api
 )
 service admin-api {
 	@doc "detail"
@@ -160,12 +161,12 @@ service admin-api {
 // ============= api end =============
 // ============== resource start ============
 @server(
-	desc: "admin-api service"
-	version: v1
-	group: resource
+    desc: "admin-api service"
+    version: v1
+    group: resource
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-	tags: resource
+    tags: resource
 )
 service admin-api {
 	@doc "detail"
@@ -192,12 +193,12 @@ service admin-api {
 // ============== resource end =============
 // ============== role start ============
 @server(
-	desc: "admin-api service"
-	version: v1
-	group: role
+    desc: "admin-api service"
+    version: v1
+    group: role
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-	tags: role
+    tags: role
 )
 service admin-api {
 	@doc "detail"
@@ -232,12 +233,12 @@ service admin-api {
 // ============== role end =============
 // ============= organization start ============
 @server(
-	desc: "admin-api service"
-	version: v1
-	group: organization
+    desc: "admin-api service"
+    version: v1
+    group: organization
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-	tags: organization
+    tags: organization
 )
 service admin-api {
 	@doc "detail"
@@ -268,12 +269,12 @@ service admin-api {
 // ============= organization end =============
 // ============= storage start ============
 @server(
-	desc: "storage service"
-	version: v1
-	group: storage
+    desc: "storage service"
+    version: v1
+    group: storage
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-	tags: storage
+    tags: storage
 )
 service admin-api {
 	@doc "create aws s3 presign url"
@@ -281,4 +282,40 @@ service admin-api {
 	post /storage/presign_url (S3PresignUrlCreateRequest) returns (S3PresignUrlCreateResponse)
 }
 
-	// ============= storage end =============
+// ============= storage end =============
+// ============== base template start ============
+@server(
+    desc: "base template service"
+    version: v1
+    prefix:     /api/v1
+    group: base_template
+    middleware: AuthMiddleware
+    tags: base_template
+)
+service admin-api {
+    @doc "Create base template"
+    @handler BaseTemplateCreate
+    post /base_template (CreateBaseTemplateRequest) returns (BaseTemplateDetailResponse)
+
+    @doc "Update base template"
+    @handler BaseTemplateUpdate
+    put /base_template/:id (UpdateBaseTemplateRequest) returns (BaseTemplateDetailResponse)
+
+    @doc "Get base template detail"
+    @handler BaseTemplateDetail
+    get /base_template/:id (BaseTemplateDetailRequest) returns (BaseTemplateDetailResponse)
+
+    @doc "Base template page list"
+    @handler BaseTemplatePage
+    post /base_template/page (BaseTemplatePageRequest) returns (BaseTemplatePageResponse)
+
+    @doc "Switch base template status"
+    @handler BaseTemplateSwitchStatus
+    put /base_template/:id/status (BaseTemplateSwitchStatusRequest) returns (EmptyResponse)
+
+    @doc "Delete base template"
+    @handler BaseTemplateDelete
+    delete /base_template/:id (DeleteBaseTemplateRequest) returns (EmptyResponse)
+}
+
+    // ============== base template end ============

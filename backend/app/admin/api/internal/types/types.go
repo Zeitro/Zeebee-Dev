@@ -46,6 +46,39 @@ type BasePageSort struct {
 	Sort   string `json:"sort,optional"`
 }
 
+type BaseTemplateEntity struct {
+	Id                  int64                          `json:"id"`
+	Name                string                         `json:"name"`
+	Type                string                         `json:"type"`
+	Category            string                         `json:"category"`
+	Tag                 string                         `json:"tag"`
+	Content             string                         `json:"content"`
+	VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema"`
+	Status              string                         `json:"status"`
+	Description         string                         `json:"description"`
+	CreatedAt           string                         `json:"created_at"`
+	UpdatedAt           string                         `json:"updated_at"`
+}
+
+type BaseTemplateFilter struct {
+	Keyword  string `json:"keyword,optional"`
+	Type     string `json:"type,optional" validate:"omitempty,oneof=Borrower Lender"`
+	Category string `json:"category,optional" validate:"omitempty,oneof=Email Contract"`
+	Status   string `json:"status,optional" validate:"omitempty,oneof=Active Disabled"`
+}
+
+type BaseTemplatePageEntity struct {
+	Id          int64  `json:"id"`
+	Name        string `json:"name"`
+	Type        string `json:"type"`
+	Category    string `json:"category"`
+	Tag         string `json:"tag"`
+	Status      string `json:"status"`
+	Description string `json:"description"`
+	CreatedAt   string `json:"created_at"`
+	UpdatedAt   string `json:"updated_at"`
+}
+
 type EmptyRequest struct {
 }
 
@@ -215,6 +248,23 @@ type RolePageSort struct {
 type SelectOptionEntity struct {
 	Label string `json:"label"`
 	Value string `json:"value"`
+}
+
+type TemplateVariableEntity struct {
+	Label        string                             `json:"label"`
+	Type         string                             `json:"type"`
+	Key          string                             `json:"key"`
+	IsEditable   bool                               `json:"is_editable"`
+	Source       string                             `json:"source"`
+	FixedValue   string                             `json:"fixed_value"`
+	ExampleValue string                             `json:"example_value,omitempty"`
+	Properties   map[string]*TemplateVariableEntity `json:"properties,omitempty"`
+	Items        []*TemplateVariableEntity          `json:"items,omitempty"`
+}
+
+type TemplateVariableGroupEntity struct {
+	Name      string                    `json:"name"`
+	Variables []*TemplateVariableEntity `json:"variables"`
 }
 
 type UserEntity struct {
