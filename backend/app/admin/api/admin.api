@@ -316,6 +316,10 @@ service admin-api {
 	@doc "Delete"
 	@handler BaseTemplateDelete
 	delete /base_template/:id (DeleteBaseTemplateRequest) returns (EmptyResponse)
+
+	@doc "Preview"
+	@handler BaseTemplatePreview
+	post /base_template/preview (BaseTemplatePreviewRequest) returns (BaseTemplatePreviewResponse)
 }
 
 	// ============== base template end ============

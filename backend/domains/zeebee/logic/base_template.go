@@ -1,7 +1,10 @@
 package logic
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
+	"html/template"
 
 	"gorm.io/gorm"
 
@@ -29,7 +32,7 @@ func NewBaseTemplateLogic(repos *repo.AllRepos) *BaseTemplateLogic {
 // Create creates a new base template
 func (l *BaseTemplateLogic) Create(ctx context.Context, req dto.BaseTemplateCreateDto) (result *bo.BaseTemplateBo, err error) {
 	// check tag uniqueness within the same type
-	exists, err := l.ExistsByTag(ctx, req.Tag, req.Type)
+	exists, err := l.ExistsByPurpose(ctx, req.Purpose, req.Type)
 	if err != nil {
 		return nil, err
 	}
@@ -185,12 +188,47 @@ func (l *BaseTemplateLogic) Delete(ctx context.Context, id int64) (err error) {
 }
 
 // ExistsByTag checks if a template tag exists within the same type and category
-func (l *BaseTemplateLogic) ExistsByTag(ctx context.Context, tag string, templateType constants.UserType) (exists bool, err error) {
-	return l.repos.BaseTemplateRepo.ExistsByTag(ctx, tag, templateType)
+func (l *BaseTemplateLogic) ExistsByPurpose(ctx context.Context, purpose string, templateType constants.UserType) (exists bool, err error) {
+	return l.repos.BaseTemplateRepo.ExistsByPurpose(ctx, purpose, templateType)
 }
 
 // GetByIDForUpdate retrieves a base template model by ID for internal update operations
 // This returns model for use in RPC layer where model modifications are needed
-func (l *BaseTemplateLogic) GetByIDForUpdate(ctx context.Context, id int64) (*model.BaseTemplate, error) {
-	return l.repos.BaseTemplateRepo.GetByID(ctx, id)
+// func (l *BaseTemplateLogic) GetByIDForUpdate(ctx context.Context, id int64) (*model.BaseTemplate, error) {
+// 	return l.repos.BaseTemplateRepo.GetByID(ctx, id)
+// }
+
+// Preview retrieves a preview of a base template
+func (l *BaseTemplateLogic) Preview(ctx context.Context, req dto.BaseTemplatePreviewDto) (result string, err error) {
+	tpl, err := template.New(req.Name).Parse(req.Content)
+	if err != nil {
+		return "", errorx.Wrap(err, "Failed To Parse Template")
+	}
+	data := map[string]interface{}{}
+	for _, groupDto := range req.VariableGroupSchema {
+
+		for _, variableDto := range groupDto.Variables {
+			if variableDto.Source == constants.TemplateVariableSourceFixed || variableDto.Source == constants.TemplateVariableSourceTemplate {
+				data[variableDto.Key] = variableDto.FixedValue
+			}
+		}
+	}
+	if len(req.ExampleVariables) > 0 {
+		var exampleData map[string]interface{}
+		err = json.Unmarshal([]byte(req.ExampleVariables), &exampleData)
+		if err != nil {
+			return
+		}
+		for k, v := range exampleData {
+			data[k] = v
+		}
+	}
+	buf := bytes.NewBuffer(nil)
+	err = tpl.Execute(buf, data)
+	if err != nil {
+		return "", errorx.Wrap(err, "Failed To Render Template")
+	}
+	result = buf.String()
+
+	return result, nil
 }

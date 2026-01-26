@@ -37,6 +37,10 @@ type (
 	BaseTemplatePageRequestSorter              = admin.BaseTemplatePageRequestSorter
 	BaseTemplatePageResponse                   = admin.BaseTemplatePageResponse
 	BaseTemplatePageResponseData               = admin.BaseTemplatePageResponseData
+	BaseTemplatePreviewRequest                 = admin.BaseTemplatePreviewRequest
+	BaseTemplatePreviewRequestData             = admin.BaseTemplatePreviewRequestData
+	BaseTemplatePreviewResponse                = admin.BaseTemplatePreviewResponse
+	BaseTemplatePreviewResponseData            = admin.BaseTemplatePreviewResponseData
 	CreateBaseTemplateRequest                  = admin.CreateBaseTemplateRequest
 	CreateBaseTemplateRequestData              = admin.CreateBaseTemplateRequestData
 	CreateBaseTemplateResponse                 = admin.CreateBaseTemplateResponse
@@ -179,7 +183,8 @@ type (
 		Page(ctx context.Context, in *BaseTemplatePageRequest, opts ...grpc.CallOption) (*BaseTemplatePageResponse, error)
 		SwitchStatus(ctx context.Context, in *SwitchBaseTemplateStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		Delete(ctx context.Context, in *DeleteBaseTemplateRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
-		ExistsByTag(ctx context.Context, in *ExistsByTagRequest, opts ...grpc.CallOption) (*ExistsByTagResponse, error)
+		// rpc ExistsByTag(ExistsByTagRequest) returns(ExistsByTagResponse);
+		Preview(ctx context.Context, in *BaseTemplatePreviewRequest, opts ...grpc.CallOption) (*BaseTemplatePreviewResponse, error)
 	}
 
 	defaultBaseTemplate struct {
@@ -223,7 +228,8 @@ func (m *defaultBaseTemplate) Delete(ctx context.Context, in *DeleteBaseTemplate
 	return client.Delete(ctx, in, opts...)
 }
 
-func (m *defaultBaseTemplate) ExistsByTag(ctx context.Context, in *ExistsByTagRequest, opts ...grpc.CallOption) (*ExistsByTagResponse, error) {
+// rpc ExistsByTag(ExistsByTagRequest) returns(ExistsByTagResponse);
+func (m *defaultBaseTemplate) Preview(ctx context.Context, in *BaseTemplatePreviewRequest, opts ...grpc.CallOption) (*BaseTemplatePreviewResponse, error) {
 	client := admin.NewBaseTemplateClient(m.cli.Conn())
-	return client.ExistsByTag(ctx, in, opts...)
+	return client.Preview(ctx, in, opts...)
 }

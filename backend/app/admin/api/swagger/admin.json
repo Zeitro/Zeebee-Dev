@@ -726,7 +726,7 @@
                 "name",
                 "type",
                 "category",
-                "tag",
+                "purpose",
                 "content"
               ],
               "properties": {
@@ -745,7 +745,7 @@
                 "name": {
                   "type": "string"
                 },
-                "tag": {
+                "purpose": {
                   "type": "string"
                 },
                 "type": {
@@ -932,10 +932,10 @@
                 "name": {
                   "type": "string"
                 },
-                "status": {
+                "purpose": {
                   "type": "string"
                 },
-                "tag": {
+                "status": {
                   "type": "string"
                 },
                 "type": {
@@ -1183,7 +1183,7 @@
                       "name",
                       "type",
                       "category",
-                      "tag",
+                      "purpose",
                       "status",
                       "description",
                       "created_at",
@@ -1205,10 +1205,10 @@
                       "name": {
                         "type": "string"
                       },
-                      "status": {
+                      "purpose": {
                         "type": "string"
                       },
-                      "tag": {
+                      "status": {
                         "type": "string"
                       },
                       "type": {
@@ -1228,6 +1228,212 @@
                 },
                 "total_page": {
                   "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/base_template/preview": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "base_template"
+        ],
+        "summary": "Preview",
+        "operationId": "baseTemplateBaseTemplatePreview",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "name",
+                "content"
+              ],
+              "properties": {
+                "content": {
+                  "type": "string"
+                },
+                "example_variables": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "variable_group_schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "name",
+                      "variables"
+                    ],
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "variables": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "label",
+                            "type",
+                            "key",
+                            "is_editable",
+                            "source",
+                            "format"
+                          ],
+                          "properties": {
+                            "fixed_value": {
+                              "type": "string"
+                            },
+                            "format": {
+                              "type": "string"
+                            },
+                            "is_editable": {
+                              "type": "boolean"
+                            },
+                            "items": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "required": [
+                                  "label",
+                                  "type",
+                                  "key",
+                                  "is_editable",
+                                  "source",
+                                  "format"
+                                ],
+                                "properties": {
+                                  "fixed_value": {
+                                    "type": "string"
+                                  },
+                                  "format": {
+                                    "type": "string"
+                                  },
+                                  "is_editable": {
+                                    "type": "boolean"
+                                  },
+                                  "items": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object"
+                                    }
+                                  },
+                                  "key": {
+                                    "type": "string"
+                                  },
+                                  "label": {
+                                    "type": "string"
+                                  },
+                                  "properties": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                      "type": "object"
+                                    }
+                                  },
+                                  "source": {
+                                    "type": "string"
+                                  },
+                                  "type": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            },
+                            "key": {
+                              "type": "string"
+                            },
+                            "label": {
+                              "type": "string"
+                            },
+                            "properties": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "object",
+                                "required": [
+                                  "label",
+                                  "type",
+                                  "key",
+                                  "is_editable",
+                                  "source",
+                                  "format"
+                                ],
+                                "properties": {
+                                  "fixed_value": {
+                                    "type": "string"
+                                  },
+                                  "format": {
+                                    "type": "string"
+                                  },
+                                  "is_editable": {
+                                    "type": "boolean"
+                                  },
+                                  "items": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object"
+                                    }
+                                  },
+                                  "key": {
+                                    "type": "string"
+                                  },
+                                  "label": {
+                                    "type": "string"
+                                  },
+                                  "properties": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                      "type": "object"
+                                    }
+                                  },
+                                  "source": {
+                                    "type": "string"
+                                  },
+                                  "type": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            },
+                            "source": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "string"
                 }
               }
             }
@@ -1283,10 +1489,10 @@
                 "name": {
                   "type": "string"
                 },
-                "status": {
+                "purpose": {
                   "type": "string"
                 },
-                "tag": {
+                "status": {
                   "type": "string"
                 },
                 "type": {
@@ -1680,10 +1886,10 @@
                 "name": {
                   "type": "string"
                 },
-                "status": {
+                "purpose": {
                   "type": "string"
                 },
-                "tag": {
+                "status": {
                   "type": "string"
                 },
                 "type": {
@@ -7144,7 +7350,7 @@
       }
     }
   },
-  "x-date": "2026-01-26 13:53:49",
+  "x-date": "2026-01-26 15:16:29",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

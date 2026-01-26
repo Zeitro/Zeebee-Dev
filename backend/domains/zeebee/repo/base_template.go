@@ -86,7 +86,7 @@ func (repo *BaseTemplateRepo) Page(ctx context.Context, pageReq dto.BaseTemplate
 	// Apply filters
 	if len(filter.Keyword) > 0 {
 		keyword := "%" + filter.Keyword + "%"
-		query = query.Where("name LIKE ? OR tag LIKE ?", keyword, keyword)
+		query = query.Where("name LIKE ? OR purpose LIKE ?", keyword, keyword)
 	}
 	if len(filter.Type) > 0 {
 		query = query.Where("type = ?", filter.Type)
@@ -110,10 +110,10 @@ func (repo *BaseTemplateRepo) Page(ctx context.Context, pageReq dto.BaseTemplate
 	})
 }
 
-// ExistsByTag checks if a template with the given tag exists within the same type and category
-func (repo *BaseTemplateRepo) ExistsByTag(ctx context.Context, tag string, templateType constants.UserType) (exists bool, err error) {
+// ExistsByPurpose checks if a template with the given tag exists within the same type and category
+func (repo *BaseTemplateRepo) ExistsByPurpose(ctx context.Context, purpose string, templateType constants.UserType) (exists bool, err error) {
 	return repo.BaseRepo.IsExistedByColumns(ctx, map[string]interface{}{
-		"tag":  tag,
-		"type": templateType,
+		"purpose": purpose,
+		"type":    templateType,
 	})
 }

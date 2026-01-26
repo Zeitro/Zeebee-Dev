@@ -51,7 +51,7 @@ type BaseTemplateEntity struct {
 	Name                string                         `json:"name"`
 	Type                string                         `json:"type"`
 	Category            string                         `json:"category"`
-	Tag                 string                         `json:"tag"`
+	Purpose             string                         `json:"purpose"`
 	Content             string                         `json:"content"`
 	VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema"`
 	Status              string                         `json:"status"`
@@ -73,7 +73,7 @@ type BaseTemplatePageEntity struct {
 	Name        string `json:"name"`
 	Type        string `json:"type"`
 	Category    string `json:"category"`
-	Tag         string `json:"tag"`
+	Purpose     string `json:"purpose"`
 	Status      string `json:"status"`
 	Description string `json:"description"`
 	CreatedAt   string `json:"created_at"`

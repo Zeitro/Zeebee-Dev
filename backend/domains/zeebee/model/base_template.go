@@ -14,7 +14,7 @@ type BaseTemplate struct {
 	Name                string                     `json:"name" gorm:"column:name;type:varchar(100);not null;default:''"`
 	Type                constants.UserType         `json:"type" gorm:"column:type;type:varchar(20);not null;default:''"`         // Borrower,Lender
 	Category            constants.TemplateCategory `json:"category" gorm:"column:category;type:varchar(20);not null;default:''"` // Email,Contract
-	Tag                 string                     `json:"tag" gorm:"column:tag;type:varchar(100);not null;default:''"`
+	Purpose             string                     `json:"purpose" gorm:"column:purpose;type:varchar(100);not null;default:''"`
 	Content             string                     `json:"content" gorm:"column:content;type:text;not null;default:''"`
 	VariableGroupSchema []*TemplateVariableGroup   `json:"variable_group_schema" gorm:"column:variable_group_schema;type:jsonb;not null;default:'[]';serializer:json"`
 	Status              constants.CommonStatus     `json:"status" gorm:"column:status;type:varchar(20);not null;default:''"` // Active,Disabled

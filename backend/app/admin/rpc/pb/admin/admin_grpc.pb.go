@@ -1983,7 +1983,7 @@ const (
 	BaseTemplate_Page_FullMethodName         = "/admin.BaseTemplate/Page"
 	BaseTemplate_SwitchStatus_FullMethodName = "/admin.BaseTemplate/SwitchStatus"
 	BaseTemplate_Delete_FullMethodName       = "/admin.BaseTemplate/Delete"
-	BaseTemplate_ExistsByTag_FullMethodName  = "/admin.BaseTemplate/ExistsByTag"
+	BaseTemplate_Preview_FullMethodName      = "/admin.BaseTemplate/Preview"
 )
 
 // BaseTemplateClient is the client API for BaseTemplate service.
@@ -1996,7 +1996,8 @@ type BaseTemplateClient interface {
 	Page(ctx context.Context, in *BaseTemplatePageRequest, opts ...grpc.CallOption) (*BaseTemplatePageResponse, error)
 	SwitchStatus(ctx context.Context, in *SwitchBaseTemplateStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	Delete(ctx context.Context, in *DeleteBaseTemplateRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
-	ExistsByTag(ctx context.Context, in *ExistsByTagRequest, opts ...grpc.CallOption) (*ExistsByTagResponse, error)
+	//  rpc ExistsByTag(ExistsByTagRequest) returns(ExistsByTagResponse);
+	Preview(ctx context.Context, in *BaseTemplatePreviewRequest, opts ...grpc.CallOption) (*BaseTemplatePreviewResponse, error)
 }
 
 type baseTemplateClient struct {
@@ -2067,10 +2068,10 @@ func (c *baseTemplateClient) Delete(ctx context.Context, in *DeleteBaseTemplateR
 	return out, nil
 }
 
-func (c *baseTemplateClient) ExistsByTag(ctx context.Context, in *ExistsByTagRequest, opts ...grpc.CallOption) (*ExistsByTagResponse, error) {
+func (c *baseTemplateClient) Preview(ctx context.Context, in *BaseTemplatePreviewRequest, opts ...grpc.CallOption) (*BaseTemplatePreviewResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ExistsByTagResponse)
-	err := c.cc.Invoke(ctx, BaseTemplate_ExistsByTag_FullMethodName, in, out, cOpts...)
+	out := new(BaseTemplatePreviewResponse)
+	err := c.cc.Invoke(ctx, BaseTemplate_Preview_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2087,7 +2088,8 @@ type BaseTemplateServer interface {
 	Page(context.Context, *BaseTemplatePageRequest) (*BaseTemplatePageResponse, error)
 	SwitchStatus(context.Context, *SwitchBaseTemplateStatusRequest) (*EmptyResponse, error)
 	Delete(context.Context, *DeleteBaseTemplateRequest) (*EmptyResponse, error)
-	ExistsByTag(context.Context, *ExistsByTagRequest) (*ExistsByTagResponse, error)
+	//  rpc ExistsByTag(ExistsByTagRequest) returns(ExistsByTagResponse);
+	Preview(context.Context, *BaseTemplatePreviewRequest) (*BaseTemplatePreviewResponse, error)
 	mustEmbedUnimplementedBaseTemplateServer()
 }
 
@@ -2116,8 +2118,8 @@ func (UnimplementedBaseTemplateServer) SwitchStatus(context.Context, *SwitchBase
 func (UnimplementedBaseTemplateServer) Delete(context.Context, *DeleteBaseTemplateRequest) (*EmptyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
-func (UnimplementedBaseTemplateServer) ExistsByTag(context.Context, *ExistsByTagRequest) (*ExistsByTagResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ExistsByTag not implemented")
+func (UnimplementedBaseTemplateServer) Preview(context.Context, *BaseTemplatePreviewRequest) (*BaseTemplatePreviewResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Preview not implemented")
 }
 func (UnimplementedBaseTemplateServer) mustEmbedUnimplementedBaseTemplateServer() {}
 func (UnimplementedBaseTemplateServer) testEmbeddedByValue()                      {}
@@ -2248,20 +2250,20 @@ func _BaseTemplate_Delete_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-func _BaseTemplate_ExistsByTag_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ExistsByTagRequest)
+func _BaseTemplate_Preview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BaseTemplatePreviewRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BaseTemplateServer).ExistsByTag(ctx, in)
+		return srv.(BaseTemplateServer).Preview(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: BaseTemplate_ExistsByTag_FullMethodName,
+		FullMethod: BaseTemplate_Preview_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BaseTemplateServer).ExistsByTag(ctx, req.(*ExistsByTagRequest))
+		return srv.(BaseTemplateServer).Preview(ctx, req.(*BaseTemplatePreviewRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2298,8 +2300,8 @@ var BaseTemplate_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _BaseTemplate_Delete_Handler,
 		},
 		{
-			MethodName: "ExistsByTag",
-			Handler:    _BaseTemplate_ExistsByTag_Handler,
+			MethodName: "Preview",
+			Handler:    _BaseTemplate_Preview_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

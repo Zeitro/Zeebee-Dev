@@ -53,7 +53,8 @@ func (s *BaseTemplateServer) Delete(ctx context.Context, in *admin.DeleteBaseTem
 	return l.Delete(in)
 }
 
-func (s *BaseTemplateServer) ExistsByTag(ctx context.Context, in *admin.ExistsByTagRequest) (*admin.ExistsByTagResponse, error) {
-	l := basetemplatelogic.NewExistsByTagLogic(ctx, s.svcCtx)
-	return l.ExistsByTag(in)
+// rpc ExistsByTag(ExistsByTagRequest) returns(ExistsByTagResponse);
+func (s *BaseTemplateServer) Preview(ctx context.Context, in *admin.BaseTemplatePreviewRequest) (*admin.BaseTemplatePreviewResponse, error) {
+	l := basetemplatelogic.NewPreviewLogic(ctx, s.svcCtx)
+	return l.Preview(in)
 }

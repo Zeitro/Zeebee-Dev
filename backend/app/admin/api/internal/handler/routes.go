@@ -100,6 +100,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/base_template/page",
 					Handler: base_template.BaseTemplatePageHandler(serverCtx),
 				},
+				{
+					// Preview
+					Method:  http.MethodPost,
+					Path:    "/base_template/preview",
+					Handler: base_template.BaseTemplatePreviewHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithPrefix("/api/v1"),

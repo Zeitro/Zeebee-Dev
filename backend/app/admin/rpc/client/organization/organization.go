@@ -37,6 +37,10 @@ type (
 	BaseTemplatePageRequestSorter              = admin.BaseTemplatePageRequestSorter
 	BaseTemplatePageResponse                   = admin.BaseTemplatePageResponse
 	BaseTemplatePageResponseData               = admin.BaseTemplatePageResponseData
+	BaseTemplatePreviewRequest                 = admin.BaseTemplatePreviewRequest
+	BaseTemplatePreviewRequestData             = admin.BaseTemplatePreviewRequestData
+	BaseTemplatePreviewResponse                = admin.BaseTemplatePreviewResponse
+	BaseTemplatePreviewResponseData            = admin.BaseTemplatePreviewResponseData
 	CreateBaseTemplateRequest                  = admin.CreateBaseTemplateRequest
 	CreateBaseTemplateRequestData              = admin.CreateBaseTemplateRequestData
 	CreateBaseTemplateResponse                 = admin.CreateBaseTemplateResponse

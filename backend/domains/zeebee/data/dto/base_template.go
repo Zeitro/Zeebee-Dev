@@ -22,7 +22,7 @@ type BaseTemplateCreateDto struct {
 	Name                string                      `json:"name"`
 	Type                constants.UserType          `json:"type"`
 	Category            constants.TemplateCategory  `json:"category"`
-	Tag                 string                      `json:"tag"`
+	Purpose             string                      `json:"purpose"`
 	Content             string                      `json:"content"`
 	VariableGroupSchema []*TemplateVariableGroupDto `json:"variable_group_schema"`
 	ExampleVariables    string                      `json:"example_variables"`
@@ -52,9 +52,16 @@ type TemplateVariableDto struct {
 	Type       string                           `json:"type"`
 	Key        string                           `json:"key"`
 	IsEditable bool                             `json:"is_editable"`
-	Source     string                           `json:"source"`
+	Source     constants.TemplateVariableSource `json:"source"`
 	Format     constants.TemplateVariableFormat `json:"format,omitempty"`
 	FixedValue string                           `json:"fixed_value"`
 	Properties map[string]*TemplateVariableDto  `json:"properties,omitempty"`
 	Items      []*TemplateVariableDto           `json:"items,omitempty"`
+}
+
+type BaseTemplatePreviewDto struct {
+	Name                string                      `json:"name"`
+	Content             string                      `json:"content"`
+	VariableGroupSchema []*TemplateVariableGroupDto `json:"variable_group_schema"`
+	ExampleVariables    string                      `json:"example_variables"`
 }

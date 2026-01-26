@@ -31,7 +31,7 @@ type BaseTemplateBo struct {
 	Name                string                     `json:"name"`
 	Type                constants.UserType         `json:"type"`
 	Category            constants.TemplateCategory `json:"category"`
-	Tag                 string                     `json:"tag"`
+	Purpose             string                     `json:"purpose"`
 	Content             string                     `json:"content"`
 	VariableGroupSchema []*TemplateVariableGroupBo `json:"variable_group_schema"`
 	Status              constants.CommonStatus     `json:"status"`
@@ -47,7 +47,7 @@ type BaseTemplatePageBo struct {
 	Name        string                     `json:"name"`
 	Type        constants.UserType         `json:"type"`
 	Category    constants.TemplateCategory `json:"category"`
-	Tag         string                     `json:"tag"`
+	Purpose     string                     `json:"purpose"`
 	Status      constants.CommonStatus     `json:"status"`
 	Description string                     `json:"description"`
 	CreatedAt   time.Time                  `json:"created_at"`

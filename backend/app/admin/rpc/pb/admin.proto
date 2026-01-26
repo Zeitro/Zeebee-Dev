@@ -889,7 +889,7 @@ message BaseTemplateEntity {
   string name = 2;
   string type = 3;           // Borrower, Lender
   string category = 4;       // Email, Contract
-  string tag = 5;
+  string purpose = 5;
   string content = 6;
   repeated TemplateVariableGroupEntity variable_group_schema = 7;
   string status = 8;         // Active, Disabled
@@ -905,7 +905,7 @@ message BaseTemplatePageEntity {
   string name = 2;
   string type = 3;
   string category = 4;
-  string tag = 5;
+  string purpose = 5;
   string status = 6;
   string description = 7;
   string created_at = 8;
@@ -920,7 +920,7 @@ message CreateBaseTemplateRequestData {
   string name = 1;
   string type = 2;
   string category = 3;
-  string tag = 4;
+  string purpose = 4;
   string content = 5;
   repeated TemplateVariableGroupEntity variable_group_schema = 6;
   string description = 7;
@@ -938,9 +938,7 @@ message UpdateBaseTemplateRequest {
 message UpdateBaseTemplateRequestData {
   int64 id = 1;
   string name = 2;
-  //  string type = 3;
   string category = 4;
-  //  string tag = 5;
   string content = 6;
   repeated TemplateVariableGroupEntity variable_group_schema = 7;
   string description = 8;
@@ -1022,6 +1020,24 @@ message ExistsByTagResponseData {
   bool exists = 1;
 }
 
+// preview ---- request
+message BaseTemplatePreviewRequest {
+  BaseTemplatePreviewRequestData data = 1;
+}
+message BaseTemplatePreviewRequestData {
+  string content = 1;
+  repeated TemplateVariableGroupEntity variable_group_schema = 2;
+  string example_variables = 3;
+  string name = 4;
+}
+// preview ---- response
+message BaseTemplatePreviewResponse {
+  BaseTemplatePreviewResponseData data = 1;
+}
+message BaseTemplatePreviewResponseData {
+  string content = 1;
+}
+
 service BaseTemplate {
   rpc Create(CreateBaseTemplateRequest) returns(CreateBaseTemplateResponse);
   rpc Update(UpdateBaseTemplateRequest) returns(UpdateBaseTemplateResponse);
@@ -1029,6 +1045,7 @@ service BaseTemplate {
   rpc Page(BaseTemplatePageRequest) returns(BaseTemplatePageResponse);
   rpc SwitchStatus(SwitchBaseTemplateStatusRequest) returns(EmptyResponse);
   rpc Delete(DeleteBaseTemplateRequest) returns(EmptyResponse);
-  rpc ExistsByTag(ExistsByTagRequest) returns(ExistsByTagResponse);
+  //  rpc ExistsByTag(ExistsByTagRequest) returns(ExistsByTagResponse);
+  rpc Preview(BaseTemplatePreviewRequest) returns(BaseTemplatePreviewResponse);
 }
 // ========================== base template service end =================
