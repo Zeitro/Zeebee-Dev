@@ -49,3 +49,9 @@ COMMENT ON COLUMN "public"."organization_templates"."status" IS 'Active/Disabled
 ALTER TABLE "public"."organization_templates"
     ADD COLUMN "base_template_id" int4 NOT NULL DEFAULT 0;
 CREATE INDEX "idx_org_base_tpl_id" ON "public"."organization_templates" ("base_template_id");
+
+ALTER TABLE "public"."base_templates"
+    ADD COLUMN "example_variables" jsonb NOT NULL DEFAULT '{}';
+
+ALTER TABLE "public"."organization_templates"
+    ADD COLUMN "example_variables" jsonb NOT NULL DEFAULT '{}';

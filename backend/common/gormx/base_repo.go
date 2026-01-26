@@ -125,6 +125,9 @@ func (repo *BaseRepo[T]) CreateWithTx(ctx context.Context, tx *gorm.DB, data T, 
 // BatchCreateWithTx batch create with tx
 func (repo *BaseRepo[T]) BatchCreateWithTx(ctx context.Context, tx *gorm.DB, data []T, withAssociation bool) ([]T, error) {
 	var err error
+	if len(data) == 0 {
+		return data, nil
+	}
 	if withAssociation {
 		err = tx.WithContext(ctx).Create(&data).Error
 	} else {

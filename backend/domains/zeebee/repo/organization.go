@@ -224,3 +224,13 @@ func (repo *OrganizationRepo) DeleteWithTx(ctx context.Context, tx *gorm.DB, org
 
 	return errorx.WithStack(err)
 }
+
+// GetIdsWithTx
+func (repo *OrganizationRepo) GetIdsWithTx(ctx context.Context, tx *gorm.DB, organizationType constants.UserType) (result []int64, err error) {
+	err = tx.WithContext(ctx).Model(&model.Organization{}).
+		Select("id").
+		Where("type = ?", organizationType).
+		Pluck("id", &result).
+		Error
+	return result, errorx.WithStack(err)
+}

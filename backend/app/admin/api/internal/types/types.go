@@ -56,6 +56,7 @@ type BaseTemplateEntity struct {
 	VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema"`
 	Status              string                         `json:"status"`
 	Description         string                         `json:"description"`
+	ExampleVariables    string                         `json:"example_variables,omitempty,optional"`
 	CreatedAt           string                         `json:"created_at"`
 	UpdatedAt           string                         `json:"updated_at"`
 }
@@ -251,15 +252,15 @@ type SelectOptionEntity struct {
 }
 
 type TemplateVariableEntity struct {
-	Label        string                             `json:"label"`
-	Type         string                             `json:"type"`
-	Key          string                             `json:"key"`
-	IsEditable   bool                               `json:"is_editable"`
-	Source       string                             `json:"source"`
-	FixedValue   string                             `json:"fixed_value"`
-	ExampleValue string                             `json:"example_value,omitempty"`
-	Properties   map[string]*TemplateVariableEntity `json:"properties,omitempty"`
-	Items        []*TemplateVariableEntity          `json:"items,omitempty"`
+	Label      string                             `json:"label"`
+	Type       string                             `json:"type" validate:"oneof=String Object Array"`
+	Key        string                             `json:"key"`
+	IsEditable bool                               `json:"is_editable"`
+	Source     string                             `json:"source" validate:"omitempty,oneof=Fixed Dynamic Template"`
+	Format     string                             `json:"format" validate:"omitempty,oneof=Email Phone Currency"`
+	FixedValue string                             `json:"fixed_value,optional" validate:"required_if=Source Fixed,required_if=Source Template"`
+	Properties map[string]*TemplateVariableEntity `json:"properties,omitempty,optional"`
+	Items      []*TemplateVariableEntity          `json:"items,omitempty,optional"`
 }
 
 type TemplateVariableGroupEntity struct {

@@ -15,8 +15,8 @@ import (
 )
 
 type UpdateLogic struct {
-	ctx       context.Context
-	svcCtx    *svc.ServiceContext
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
 	logx.Logger
 	baseLogic *logic.BaseLogic
 }
@@ -39,16 +39,11 @@ func (l *UpdateLogic) Update(in *admin.UpdateBaseTemplateRequest) (resp *admin.U
 		}
 	}()
 
-	// Get existing template to verify immutability
-	existing, err := l.baseLogic.BaseTemplateLogic.GetByIDForUpdate(l.ctx, in.Data.Id)
-	if err != nil {
-		return nil, err
-	}
-
-	// Validate tag immutability (FR-016: tag cannot be changed after creation)
-	if existing.Tag != in.Data.Tag {
-		return nil, errorx.New("Template tag is immutable and cannot be changed")
-	}
+	// // Get existing template to verify immutability
+	// existing, err := l.baseLogic.BaseTemplateLogic.GetByIDForUpdate(l.ctx, in.Data.Id)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	// Convert proto request to DTO
 	updateReq, err := copierx.Trans[admin.UpdateBaseTemplateRequestData, dto.BaseTemplateUpdateDto](in.Data)

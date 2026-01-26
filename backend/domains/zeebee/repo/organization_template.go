@@ -35,7 +35,6 @@ func (repo *OrganizationTemplateRepo) CascadeStatus(ctx context.Context, tx *gor
 // CascadeDelete performs a hard delete on all organization templates derived from the given base template
 func (repo *OrganizationTemplateRepo) CascadeDelete(ctx context.Context, tx *gorm.DB, baseTemplateID int64) (err error) {
 	err = tx.WithContext(ctx).
-		Unscoped().
 		Where("base_template_id = ?", baseTemplateID).
 		Delete(&model.OrganizationTemplate{}).Error
 	return errorx.WithStack(err)

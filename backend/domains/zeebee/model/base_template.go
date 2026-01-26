@@ -19,6 +19,7 @@ type BaseTemplate struct {
 	VariableGroupSchema []*TemplateVariableGroup   `json:"variable_group_schema" gorm:"column:variable_group_schema;type:jsonb;not null;default:'[]';serializer:json"`
 	Status              constants.CommonStatus     `json:"status" gorm:"column:status;type:varchar(20);not null;default:''"` // Active,Disabled
 	Description         string                     `json:"description" gorm:"column:description;type:text;not null;default:''"`
+	ExampleVariables    string                     `json:"example_variables,omitempty" gorm:"column:example_variables;type:jsonb;not null;default:'{}'"`
 
 	// Relationships - derived templates that use this base template
 	OrganizationTemplates []*OrganizationTemplate `json:"organization_templates,omitempty" gorm:"foreignKey:BaseTemplateId;references:Id"`
@@ -49,15 +50,16 @@ func (bt *BaseTemplate) RemoveRelationships() {
 
 // TemplateVariable represents a variable definition in the template schema
 type TemplateVariable struct {
-	Label        string                       `json:"label"`
-	Type         string                       `json:"type"` // string,number,boolean,array,object
-	Key          string                       `json:"key"`
-	IsEditable   bool                         `json:"is_editable"`
-	Source       string                       `json:"source"` // Fixed/Dynamic
-	FixedValue   string                       `json:"fixed_value"`
-	ExampleValue string                       `json:"example_value,omitempty"`
-	Properties   map[string]*TemplateVariable `json:"properties,omitempty"` // for object type
-	Items        []*TemplateVariable          `json:"items,omitempty"`      // for array type
+	Label      string                           `json:"label"`
+	Type       string                           `json:"type"` // string,number,boolean,array,object
+	Key        string                           `json:"key"`
+	IsEditable bool                             `json:"is_editable"`
+	Source     constants.TemplateVariableSource `json:"source"` // Fixed,Dynamic,Template
+	FixedValue string                           `json:"fixed_value"`
+	Format     constants.TemplateVariableFormat `json:"format,omitempty"` // Email,Phone,Currency
+	// ExampleValue string                           `json:"example_value,omitempty"`
+	Properties map[string]*TemplateVariable `json:"properties,omitempty"` // for object type
+	Items      []*TemplateVariable          `json:"items,omitempty"`      // for array type
 }
 
 // Scan implements sql.Scanner interface for TemplateVariable

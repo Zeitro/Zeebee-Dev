@@ -15,8 +15,8 @@ import (
 )
 
 type CreateLogic struct {
-	ctx       context.Context
-	svcCtx    *svc.ServiceContext
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
 	logx.Logger
 	baseLogic *logic.BaseLogic
 }
@@ -42,15 +42,6 @@ func (l *CreateLogic) Create(in *admin.CreateBaseTemplateRequest) (resp *admin.C
 	dtoData, err := copierx.Trans[admin.CreateBaseTemplateRequestData, dto.BaseTemplateCreateDto](in.Data)
 	if err != nil {
 		return nil, err
-	}
-
-	// Check tag uniqueness within the same type and category
-	exists, err := l.baseLogic.BaseTemplateLogic.ExistsByTag(l.ctx, dtoData.Tag, dtoData.Type, dtoData.Category, 0)
-	if err != nil {
-		return nil, errorx.WithStack(err)
-	}
-	if exists {
-		return nil, errorx.New("Template tag already exists within the same type and category")
 	}
 
 	// Create base template

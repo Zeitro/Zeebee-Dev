@@ -33,8 +33,9 @@ type CreateBaseTemplateRequest struct {
 	Category            string                         `json:"category" validate:"required,oneof=Email Contract"`
 	Tag                 string                         `json:"tag" validate:"required,min=1,max=100"`
 	Content             string                         `json:"content" validate:"required,max=10485760"`
-	VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema,optional" validate:"omitempty"`
+	VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema,optional" validate:"omitempty,dive"`
 	Description         string                         `json:"description,optional" validate:"max=255"`
+	ExampleVariables    string                         `json:"example_variables,omitempty,optional" validate:"omitempty,json"`
 }
 
 type DeleteBaseTemplateRequest struct {
@@ -44,10 +45,9 @@ type DeleteBaseTemplateRequest struct {
 type UpdateBaseTemplateRequest struct {
 	Id                  int64                          `path:"id" validate:"required,min=1"`
 	Name                string                         `json:"name" validate:"required,min=1,max=100"`
-	Type                string                         `json:"type" validate:"required,oneof=Borrower Lender"`
 	Category            string                         `json:"category" validate:"required,oneof=Email Contract"`
-	Tag                 string                         `json:"tag" validate:"required,min=1,max=100"`
 	Content             string                         `json:"content" validate:"required,max=10485760"`
-	VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema,optional" validate:"omitempty"`
-	Description         string                         `json:"description, optional" validate:"max=255"`
+	VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema,optional" validate:"omitempty,dive"`
+	Description         string                         `json:"description,optional" validate:"max=255"`
+	ExampleVariables    string                         `json:"example_variables,omitempty,optional" validate:"omitempty,json"`
 }

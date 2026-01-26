@@ -8,19 +8,20 @@ info(
 
 import "common.api"
 
-type TemplateVariableEntity  {
+type TemplateVariableEntity {
     Label string `json:"label"`
-    Type string `json:"type"`
+    Type string `json:"type" validate:"oneof=String Object Array"`
     Key string `json:"key"`
     IsEditable bool `json:"is_editable"`
-    Source string `json:"source"`
-    FixedValue string `json:"fixed_value"`
-    ExampleValue string `json:"example_value,omitempty"`
-    Properties map[string]*TemplateVariableEntity `json:"properties,omitempty"`
-    Items []*TemplateVariableEntity `json:"items,omitempty"`
+    Source string `json:"source" validate:"omitempty,oneof=Fixed Dynamic Template"`
+    Format string `json:"format" validate:"omitempty,oneof=Email Phone Currency"`
+    FixedValue string `json:"fixed_value,optional" validate:"required_if=Source Fixed,required_if=Source Template"`
+    //    ExampleValue string `json:"example_value,omitempty"`
+    Properties map[string]*TemplateVariableEntity `json:"properties,omitempty,optional"`
+    Items []*TemplateVariableEntity `json:"items,omitempty,optional"`
 }
 
-type TemplateVariableGroupEntity  {
+type TemplateVariableGroupEntity {
     Name string `json:"name"`
     Variables []*TemplateVariableEntity `json:"variables"`
 }
@@ -37,6 +38,7 @@ type (
         VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema"`
         Status string `json:"status"`
         Description string `json:"description"`
+        ExampleVariables string `json:"example_variables,omitempty,optional"`
         CreatedAt string `json:"created_at"`
         UpdatedAt string `json:"updated_at"`
     }
@@ -83,8 +85,9 @@ type (
         Category string `json:"category" validate:"required,oneof=Email Contract"`
         Tag string `json:"tag" validate:"required,min=1,max=100"`
         Content string `json:"content" validate:"required,max=10485760"`
-        VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema,optional" validate:"omitempty"`
+        VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema,optional" validate:"omitempty,dive"`
         Description string `json:"description,optional" validate:"max=255"`
+        ExampleVariables string `json:"example_variables,omitempty,optional" validate:"omitempty,json"`
     }
 )
 
@@ -93,12 +96,13 @@ type (
     UpdateBaseTemplateRequest {
         Id int64 `path:"id" validate:"required,min=1"`
         Name string `json:"name" validate:"required,min=1,max=100"`
-        Type string `json:"type" validate:"required,oneof=Borrower Lender"`
+        //        Type string `json:"type" validate:"required,oneof=Borrower Lender"`
         Category string `json:"category" validate:"required,oneof=Email Contract"`
-        Tag string `json:"tag" validate:"required,min=1,max=100"`
+        //        Tag string `json:"tag" validate:"required,min=1,max=100"`
         Content string `json:"content" validate:"required,max=10485760"`
-        VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema,optional" validate:"omitempty"`
-        Description string `json:"description, optional" validate:"max=255"`
+        VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema,optional" validate:"omitempty,dive"`
+        Description string `json:"description,optional" validate:"max=255"`
+        ExampleVariables string `json:"example_variables,omitempty,optional" validate:"omitempty,json"`
     }
 )
 

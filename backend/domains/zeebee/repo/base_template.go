@@ -64,17 +64,14 @@ func (repo *BaseTemplateRepo) UpdateStatusWithTx(ctx context.Context, tx *gorm.D
 }
 
 // Delete performs a hard delete on a base template
-/*******************    💫 Codegeex Suggestion    *******************/
 func (repo *BaseTemplateRepo) Delete(ctx context.Context, id int64) (err error) {
-	err = repo.Client(ctx).Unscoped().Delete(&model.BaseTemplate{}, id).Error
+	err = repo.Client(ctx).Delete(&model.BaseTemplate{}, id).Error
 	return errorx.WithStack(err)
 }
 
-/****************  ab5ad261a926432299b6ca7f8207cb45  ****************/
-
 // DeleteWithTx performs a hard delete on a base template within a transaction
 func (repo *BaseTemplateRepo) DeleteWithTx(ctx context.Context, tx *gorm.DB, id int64) (err error) {
-	err = tx.WithContext(ctx).Unscoped().Delete(&model.BaseTemplate{}, id).Error
+	err = tx.WithContext(ctx).Delete(&model.BaseTemplate{}, id).Error
 	return errorx.WithStack(err)
 }
 
@@ -114,20 +111,9 @@ func (repo *BaseTemplateRepo) Page(ctx context.Context, pageReq dto.BaseTemplate
 }
 
 // ExistsByTag checks if a template with the given tag exists within the same type and category
-// excludeID is used to exclude the current template when updating (0 for create operations)
-func (repo *BaseTemplateRepo) ExistsByTag(ctx context.Context, tag string, templateType constants.UserType, category constants.TemplateCategory, excludeID int64) (exists bool, err error) {
-	query := repo.Client(ctx).Where("tag = ? AND type = ? AND category = ?", tag, templateType, category)
-	if excludeID > 0 {
-		query = query.Where("id != ?", excludeID)
-	}
+func (repo *BaseTemplateRepo) ExistsByTag(ctx context.Context, tag string, templateType constants.UserType) (exists bool, err error) {
 	return repo.BaseRepo.IsExistedByColumns(ctx, map[string]interface{}{
-		"tag":      tag,
-		"type":     templateType,
-		"category": category,
+		"tag":  tag,
+		"type": templateType,
 	})
-}
-
-// Transaction executes a function within a transaction
-func (repo *BaseTemplateRepo) Transaction(ctx context.Context, fn func(tx *gorm.DB) error) (err error) {
-	return repo.BaseRepo.Transaction(ctx, fn)
 }

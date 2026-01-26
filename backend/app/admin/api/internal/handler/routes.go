@@ -65,37 +65,37 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
 				{
-					// Create base template
+					// Create
 					Method:  http.MethodPost,
 					Path:    "/base_template",
 					Handler: base_template.BaseTemplateCreateHandler(serverCtx),
 				},
 				{
-					// Update base template
+					// Update
 					Method:  http.MethodPut,
 					Path:    "/base_template/:id",
 					Handler: base_template.BaseTemplateUpdateHandler(serverCtx),
 				},
 				{
-					// Get base template detail
+					// Detail
 					Method:  http.MethodGet,
 					Path:    "/base_template/:id",
 					Handler: base_template.BaseTemplateDetailHandler(serverCtx),
 				},
 				{
-					// Delete base template
+					// Delete
 					Method:  http.MethodDelete,
 					Path:    "/base_template/:id",
 					Handler: base_template.BaseTemplateDeleteHandler(serverCtx),
 				},
 				{
-					// Switch base template status
+					// Switch status
 					Method:  http.MethodPut,
 					Path:    "/base_template/:id/status",
 					Handler: base_template.BaseTemplateSwitchStatusHandler(serverCtx),
 				},
 				{
-					// Base template page list
+					// page
 					Method:  http.MethodPost,
 					Path:    "/base_template/page",
 					Handler: base_template.BaseTemplatePageHandler(serverCtx),

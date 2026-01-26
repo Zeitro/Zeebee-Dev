@@ -713,7 +713,7 @@
         "tags": [
           "base_template"
         ],
-        "summary": "Create base template",
+        "summary": "Create",
         "operationId": "baseTemplateBaseTemplateCreate",
         "parameters": [
           {
@@ -737,6 +737,9 @@
                   "type": "string"
                 },
                 "description": {
+                  "type": "string"
+                },
+                "example_variables": {
                   "type": "string"
                 },
                 "name": {
@@ -770,16 +773,13 @@
                             "key",
                             "is_editable",
                             "source",
-                            "fixed_value",
-                            "example_value",
-                            "properties",
-                            "items"
+                            "format"
                           ],
                           "properties": {
-                            "example_value": {
+                            "fixed_value": {
                               "type": "string"
                             },
-                            "fixed_value": {
+                            "format": {
                               "type": "string"
                             },
                             "is_editable": {
@@ -795,16 +795,13 @@
                                   "key",
                                   "is_editable",
                                   "source",
-                                  "fixed_value",
-                                  "example_value",
-                                  "properties",
-                                  "items"
+                                  "format"
                                 ],
                                 "properties": {
-                                  "example_value": {
+                                  "fixed_value": {
                                     "type": "string"
                                   },
-                                  "fixed_value": {
+                                  "format": {
                                     "type": "string"
                                   },
                                   "is_editable": {
@@ -853,16 +850,13 @@
                                   "key",
                                   "is_editable",
                                   "source",
-                                  "fixed_value",
-                                  "example_value",
-                                  "properties",
-                                  "items"
+                                  "format"
                                 ],
                                 "properties": {
-                                  "example_value": {
+                                  "fixed_value": {
                                     "type": "string"
                                   },
-                                  "fixed_value": {
+                                  "format": {
                                     "type": "string"
                                   },
                                   "is_editable": {
@@ -929,6 +923,9 @@
                 "description": {
                   "type": "string"
                 },
+                "example_variables": {
+                  "type": "string"
+                },
                 "id": {
                   "type": "integer"
                 },
@@ -969,16 +966,13 @@
                             "key",
                             "is_editable",
                             "source",
-                            "fixed_value",
-                            "example_value",
-                            "properties",
-                            "items"
+                            "format"
                           ],
                           "properties": {
-                            "example_value": {
+                            "fixed_value": {
                               "type": "string"
                             },
-                            "fixed_value": {
+                            "format": {
                               "type": "string"
                             },
                             "is_editable": {
@@ -994,16 +988,13 @@
                                   "key",
                                   "is_editable",
                                   "source",
-                                  "fixed_value",
-                                  "example_value",
-                                  "properties",
-                                  "items"
+                                  "format"
                                 ],
                                 "properties": {
-                                  "example_value": {
+                                  "fixed_value": {
                                     "type": "string"
                                   },
-                                  "fixed_value": {
+                                  "format": {
                                     "type": "string"
                                   },
                                   "is_editable": {
@@ -1052,16 +1043,13 @@
                                   "key",
                                   "is_editable",
                                   "source",
-                                  "fixed_value",
-                                  "example_value",
-                                  "properties",
-                                  "items"
+                                  "format"
                                 ],
                                 "properties": {
-                                  "example_value": {
+                                  "fixed_value": {
                                     "type": "string"
                                   },
-                                  "fixed_value": {
+                                  "format": {
                                     "type": "string"
                                   },
                                   "is_editable": {
@@ -1126,7 +1114,7 @@
         "tags": [
           "base_template"
         ],
-        "summary": "Base template page list",
+        "summary": "page",
         "operationId": "baseTemplateBaseTemplatePage",
         "parameters": [
           {
@@ -1258,7 +1246,7 @@
         "tags": [
           "base_template"
         ],
-        "summary": "Get base template detail",
+        "summary": "Detail",
         "operationId": "baseTemplateBaseTemplateDetail",
         "parameters": [
           {
@@ -1284,6 +1272,9 @@
                   "type": "string"
                 },
                 "description": {
+                  "type": "string"
+                },
+                "example_variables": {
                   "type": "string"
                 },
                 "id": {
@@ -1326,16 +1317,13 @@
                             "key",
                             "is_editable",
                             "source",
-                            "fixed_value",
-                            "example_value",
-                            "properties",
-                            "items"
+                            "format"
                           ],
                           "properties": {
-                            "example_value": {
+                            "fixed_value": {
                               "type": "string"
                             },
-                            "fixed_value": {
+                            "format": {
                               "type": "string"
                             },
                             "is_editable": {
@@ -1351,16 +1339,13 @@
                                   "key",
                                   "is_editable",
                                   "source",
-                                  "fixed_value",
-                                  "example_value",
-                                  "properties",
-                                  "items"
+                                  "format"
                                 ],
                                 "properties": {
-                                  "example_value": {
+                                  "fixed_value": {
                                     "type": "string"
                                   },
-                                  "fixed_value": {
+                                  "format": {
                                     "type": "string"
                                   },
                                   "is_editable": {
@@ -1409,16 +1394,13 @@
                                   "key",
                                   "is_editable",
                                   "source",
-                                  "fixed_value",
-                                  "example_value",
-                                  "properties",
-                                  "items"
+                                  "format"
                                 ],
                                 "properties": {
-                                  "example_value": {
+                                  "fixed_value": {
                                     "type": "string"
                                   },
-                                  "fixed_value": {
+                                  "format": {
                                     "type": "string"
                                   },
                                   "is_editable": {
@@ -1481,7 +1463,7 @@
         "tags": [
           "base_template"
         ],
-        "summary": "Update base template",
+        "summary": "Update",
         "operationId": "baseTemplateBaseTemplateUpdate",
         "parameters": [
           {
@@ -1498,11 +1480,8 @@
               "type": "object",
               "required": [
                 "name",
-                "type",
                 "category",
-                "tag",
-                "content",
-                "description"
+                "content"
               ],
               "properties": {
                 "category": {
@@ -1514,13 +1493,10 @@
                 "description": {
                   "type": "string"
                 },
+                "example_variables": {
+                  "type": "string"
+                },
                 "name": {
-                  "type": "string"
-                },
-                "tag": {
-                  "type": "string"
-                },
-                "type": {
                   "type": "string"
                 },
                 "variable_group_schema": {
@@ -1545,16 +1521,13 @@
                             "key",
                             "is_editable",
                             "source",
-                            "fixed_value",
-                            "example_value",
-                            "properties",
-                            "items"
+                            "format"
                           ],
                           "properties": {
-                            "example_value": {
+                            "fixed_value": {
                               "type": "string"
                             },
-                            "fixed_value": {
+                            "format": {
                               "type": "string"
                             },
                             "is_editable": {
@@ -1570,16 +1543,13 @@
                                   "key",
                                   "is_editable",
                                   "source",
-                                  "fixed_value",
-                                  "example_value",
-                                  "properties",
-                                  "items"
+                                  "format"
                                 ],
                                 "properties": {
-                                  "example_value": {
+                                  "fixed_value": {
                                     "type": "string"
                                   },
-                                  "fixed_value": {
+                                  "format": {
                                     "type": "string"
                                   },
                                   "is_editable": {
@@ -1628,16 +1598,13 @@
                                   "key",
                                   "is_editable",
                                   "source",
-                                  "fixed_value",
-                                  "example_value",
-                                  "properties",
-                                  "items"
+                                  "format"
                                 ],
                                 "properties": {
-                                  "example_value": {
+                                  "fixed_value": {
                                     "type": "string"
                                   },
-                                  "fixed_value": {
+                                  "format": {
                                     "type": "string"
                                   },
                                   "is_editable": {
@@ -1704,6 +1671,9 @@
                 "description": {
                   "type": "string"
                 },
+                "example_variables": {
+                  "type": "string"
+                },
                 "id": {
                   "type": "integer"
                 },
@@ -1744,16 +1714,13 @@
                             "key",
                             "is_editable",
                             "source",
-                            "fixed_value",
-                            "example_value",
-                            "properties",
-                            "items"
+                            "format"
                           ],
                           "properties": {
-                            "example_value": {
+                            "fixed_value": {
                               "type": "string"
                             },
-                            "fixed_value": {
+                            "format": {
                               "type": "string"
                             },
                             "is_editable": {
@@ -1769,16 +1736,13 @@
                                   "key",
                                   "is_editable",
                                   "source",
-                                  "fixed_value",
-                                  "example_value",
-                                  "properties",
-                                  "items"
+                                  "format"
                                 ],
                                 "properties": {
-                                  "example_value": {
+                                  "fixed_value": {
                                     "type": "string"
                                   },
-                                  "fixed_value": {
+                                  "format": {
                                     "type": "string"
                                   },
                                   "is_editable": {
@@ -1827,16 +1791,13 @@
                                   "key",
                                   "is_editable",
                                   "source",
-                                  "fixed_value",
-                                  "example_value",
-                                  "properties",
-                                  "items"
+                                  "format"
                                 ],
                                 "properties": {
-                                  "example_value": {
+                                  "fixed_value": {
                                     "type": "string"
                                   },
-                                  "fixed_value": {
+                                  "format": {
                                     "type": "string"
                                   },
                                   "is_editable": {
@@ -1899,7 +1860,7 @@
         "tags": [
           "base_template"
         ],
-        "summary": "Delete base template",
+        "summary": "Delete",
         "operationId": "baseTemplateBaseTemplateDelete",
         "parameters": [
           {
@@ -1933,7 +1894,7 @@
         "tags": [
           "base_template"
         ],
-        "summary": "Switch base template status",
+        "summary": "Switch status",
         "operationId": "baseTemplateBaseTemplateSwitchStatus",
         "parameters": [
           {
@@ -7183,7 +7144,7 @@
       }
     }
   },
-  "x-date": "2026-01-23 16:46:49",
+  "x-date": "2026-01-26 13:53:49",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

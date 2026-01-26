@@ -13,8 +13,8 @@ import (
 )
 
 type ExistsByTagLogic struct {
-	ctx       context.Context
-	svcCtx    *svc.ServiceContext
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
 	logx.Logger
 	baseLogic *logic.BaseLogic
 }
@@ -41,8 +41,6 @@ func (l *ExistsByTagLogic) ExistsByTag(in *admin.ExistsByTagRequest) (resp *admi
 		l.ctx,
 		in.Data.Tag,
 		constants.UserType(in.Data.Type),
-		"", // category not in proto request
-		0,  // excludeId not in proto request
 	)
 	if err != nil {
 		return nil, err

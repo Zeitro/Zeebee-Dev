@@ -3565,7 +3565,7 @@ func (x *ApiUpdateRequestData) GetSortOrder() int32 {
 	return 0
 }
 
-//  delete -- request
+// delete -- request
 type ApiDeleteRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Data          *ApiDeleteRequestData  `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -4588,7 +4588,7 @@ func (x *ResourceUpdateRequestData) GetApiIds() []int64 {
 	return nil
 }
 
-//  delete -- request
+// delete -- request
 type ResourceDeleteRequest struct {
 	state         protoimpl.MessageState     `protogen:"open.v1"`
 	Data          *ResourceDeleteRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -5267,7 +5267,7 @@ func (x *RolePageResponseData) GetList() []*RoleEntity {
 	return nil
 }
 
-//  create -- request
+// create -- request
 type RoleCreateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Data          *RoleCreateRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -5425,7 +5425,7 @@ func (x *RoleCreateResponse) GetData() *RoleEntity {
 	return nil
 }
 
-//  update -- request
+// update -- request
 type RoleUpdateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Data          *RoleUpdateRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -5651,7 +5651,7 @@ func (x *RoleAndResourceRelationEntity) GetDataScope() string {
 	return ""
 }
 
-//  delete -- request
+// delete -- request
 type RoleDeleteRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Data          *RoleDeleteRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -5740,7 +5740,7 @@ func (x *RoleDeleteRequestData) GetId() int64 {
 	return 0
 }
 
-//  detail -- request
+// detail -- request
 type RoleDetailRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Data          *RoleDetailRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -8025,14 +8025,14 @@ func (x *UsCitiesRequestData) GetStateUsps() string {
 type TemplateVariableEntity struct {
 	state         protoimpl.MessageState             `protogen:"open.v1"`
 	Label         string                             `protobuf:"bytes,1,opt,name=label,proto3" json:"label,omitempty"`
-	Type          string                             `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"` // string, number, boolean, array, object
+	Type          string                             `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"` // String, Array, Object
 	Key           string                             `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
 	IsEditable    bool                               `protobuf:"varint,4,opt,name=is_editable,json=isEditable,proto3" json:"is_editable,omitempty"`
-	Source        string                             `protobuf:"bytes,5,opt,name=source,proto3" json:"source,omitempty"` // Fixed, Dynamic
+	Source        string                             `protobuf:"bytes,5,opt,name=source,proto3" json:"source,omitempty"` // Fixed, Dynamic,Template
 	FixedValue    string                             `protobuf:"bytes,6,opt,name=fixed_value,json=fixedValue,proto3" json:"fixed_value,omitempty"`
-	ExampleValue  string                             `protobuf:"bytes,7,opt,name=example_value,json=exampleValue,proto3" json:"example_value,omitempty"`
 	Properties    map[string]*TemplateVariableEntity `protobuf:"bytes,8,rep,name=properties,proto3" json:"properties,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"` // for object type
 	Items         []*TemplateVariableEntity          `protobuf:"bytes,9,rep,name=items,proto3" json:"items,omitempty"`                                                                                     // for array type
+	Format        string                             `protobuf:"bytes,10,opt,name=format,proto3" json:"format,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -8109,13 +8109,6 @@ func (x *TemplateVariableEntity) GetFixedValue() string {
 	return ""
 }
 
-func (x *TemplateVariableEntity) GetExampleValue() string {
-	if x != nil {
-		return x.ExampleValue
-	}
-	return ""
-}
-
 func (x *TemplateVariableEntity) GetProperties() map[string]*TemplateVariableEntity {
 	if x != nil {
 		return x.Properties
@@ -8128,6 +8121,13 @@ func (x *TemplateVariableEntity) GetItems() []*TemplateVariableEntity {
 		return x.Items
 	}
 	return nil
+}
+
+func (x *TemplateVariableEntity) GetFormat() string {
+	if x != nil {
+		return x.Format
+	}
+	return ""
 }
 
 // Template variable group entity
@@ -8197,6 +8197,7 @@ type BaseTemplateEntity struct {
 	Description         string                         `protobuf:"bytes,9,opt,name=description,proto3" json:"description,omitempty"`
 	CreatedAt           string                         `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt           string                         `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	ExampleVariables    string                         `protobuf:"bytes,12,opt,name=example_variables,json=exampleVariables,proto3" json:"example_variables,omitempty"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -8304,6 +8305,13 @@ func (x *BaseTemplateEntity) GetCreatedAt() string {
 func (x *BaseTemplateEntity) GetUpdatedAt() string {
 	if x != nil {
 		return x.UpdatedAt
+	}
+	return ""
+}
+
+func (x *BaseTemplateEntity) GetExampleVariables() string {
+	if x != nil {
+		return x.ExampleVariables
 	}
 	return ""
 }
@@ -8471,6 +8479,7 @@ type CreateBaseTemplateRequestData struct {
 	Content             string                         `protobuf:"bytes,5,opt,name=content,proto3" json:"content,omitempty"`
 	VariableGroupSchema []*TemplateVariableGroupEntity `protobuf:"bytes,6,rep,name=variable_group_schema,json=variableGroupSchema,proto3" json:"variable_group_schema,omitempty"`
 	Description         string                         `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
+	ExampleVariables    string                         `protobuf:"bytes,8,opt,name=example_variables,json=exampleVariables,proto3" json:"example_variables,omitempty"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -8550,6 +8559,13 @@ func (x *CreateBaseTemplateRequestData) GetVariableGroupSchema() []*TemplateVari
 func (x *CreateBaseTemplateRequestData) GetDescription() string {
 	if x != nil {
 		return x.Description
+	}
+	return ""
+}
+
+func (x *CreateBaseTemplateRequestData) GetExampleVariables() string {
+	if x != nil {
+		return x.ExampleVariables
 	}
 	return ""
 }
@@ -8645,15 +8661,16 @@ func (x *UpdateBaseTemplateRequest) GetData() *UpdateBaseTemplateRequestData {
 }
 
 type UpdateBaseTemplateRequestData struct {
-	state               protoimpl.MessageState         `protogen:"open.v1"`
-	Id                  int64                          `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name                string                         `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Type                string                         `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
-	Category            string                         `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty"`
-	Tag                 string                         `protobuf:"bytes,5,opt,name=tag,proto3" json:"tag,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Id    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name  string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	//  string type = 3;
+	Category string `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty"`
+	//  string tag = 5;
 	Content             string                         `protobuf:"bytes,6,opt,name=content,proto3" json:"content,omitempty"`
 	VariableGroupSchema []*TemplateVariableGroupEntity `protobuf:"bytes,7,rep,name=variable_group_schema,json=variableGroupSchema,proto3" json:"variable_group_schema,omitempty"`
 	Description         string                         `protobuf:"bytes,8,opt,name=description,proto3" json:"description,omitempty"`
+	ExampleVariables    string                         `protobuf:"bytes,9,opt,name=example_variables,json=exampleVariables,proto3" json:"example_variables,omitempty"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -8702,23 +8719,9 @@ func (x *UpdateBaseTemplateRequestData) GetName() string {
 	return ""
 }
 
-func (x *UpdateBaseTemplateRequestData) GetType() string {
-	if x != nil {
-		return x.Type
-	}
-	return ""
-}
-
 func (x *UpdateBaseTemplateRequestData) GetCategory() string {
 	if x != nil {
 		return x.Category
-	}
-	return ""
-}
-
-func (x *UpdateBaseTemplateRequestData) GetTag() string {
-	if x != nil {
-		return x.Tag
 	}
 	return ""
 }
@@ -8740,6 +8743,13 @@ func (x *UpdateBaseTemplateRequestData) GetVariableGroupSchema() []*TemplateVari
 func (x *UpdateBaseTemplateRequestData) GetDescription() string {
 	if x != nil {
 		return x.Description
+	}
+	return ""
+}
+
+func (x *UpdateBaseTemplateRequestData) GetExampleVariables() string {
+	if x != nil {
+		return x.ExampleVariables
 	}
 	return ""
 }
@@ -10236,7 +10246,7 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x04data\x18\x01 \x01(\v2\x1a.admin.UsCitiesRequestDataR\x04data\"4\n" +
 	"\x13UsCitiesRequestData\x12\x1d\n" +
 	"\n" +
-	"state_usps\x18\x01 \x01(\tR\tstateUsps\"\xb5\x03\n" +
+	"state_usps\x18\x01 \x01(\tR\tstateUsps\"\xa8\x03\n" +
 	"\x16TemplateVariableEntity\x12\x14\n" +
 	"\x05label\x18\x01 \x01(\tR\x05label\x12\x12\n" +
 	"\x04type\x18\x02 \x01(\tR\x04type\x12\x10\n" +
@@ -10245,18 +10255,19 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"isEditable\x12\x16\n" +
 	"\x06source\x18\x05 \x01(\tR\x06source\x12\x1f\n" +
 	"\vfixed_value\x18\x06 \x01(\tR\n" +
-	"fixedValue\x12#\n" +
-	"\rexample_value\x18\a \x01(\tR\fexampleValue\x12M\n" +
+	"fixedValue\x12M\n" +
 	"\n" +
 	"properties\x18\b \x03(\v2-.admin.TemplateVariableEntity.PropertiesEntryR\n" +
 	"properties\x123\n" +
-	"\x05items\x18\t \x03(\v2\x1d.admin.TemplateVariableEntityR\x05items\x1a\\\n" +
+	"\x05items\x18\t \x03(\v2\x1d.admin.TemplateVariableEntityR\x05items\x12\x16\n" +
+	"\x06format\x18\n" +
+	" \x01(\tR\x06format\x1a\\\n" +
 	"\x0fPropertiesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x123\n" +
 	"\x05value\x18\x02 \x01(\v2\x1d.admin.TemplateVariableEntityR\x05value:\x028\x01\"n\n" +
 	"\x1bTemplateVariableGroupEntity\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12;\n" +
-	"\tvariables\x18\x02 \x03(\v2\x1d.admin.TemplateVariableEntityR\tvariables\"\xe4\x02\n" +
+	"\tvariables\x18\x02 \x03(\v2\x1d.admin.TemplateVariableEntityR\tvariables\"\x91\x03\n" +
 	"\x12BaseTemplateEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
@@ -10271,7 +10282,8 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"created_at\x18\n" +
 	" \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\v \x01(\tR\tupdatedAt\"\xf6\x01\n" +
+	"updated_at\x18\v \x01(\tR\tupdatedAt\x12+\n" +
+	"\x11example_variables\x18\f \x01(\tR\x10exampleVariables\"\xf6\x01\n" +
 	"\x16BaseTemplatePageEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
@@ -10285,7 +10297,7 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\t \x01(\tR\tupdatedAt\"U\n" +
 	"\x19CreateBaseTemplateRequest\x128\n" +
-	"\x04data\x18\x01 \x01(\v2$.admin.CreateBaseTemplateRequestDataR\x04data\"\x89\x02\n" +
+	"\x04data\x18\x01 \x01(\v2$.admin.CreateBaseTemplateRequestDataR\x04data\"\xb6\x02\n" +
 	"\x1dCreateBaseTemplateRequestData\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
 	"\x04type\x18\x02 \x01(\tR\x04type\x12\x1a\n" +
@@ -10293,20 +10305,20 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x03tag\x18\x04 \x01(\tR\x03tag\x12\x18\n" +
 	"\acontent\x18\x05 \x01(\tR\acontent\x12V\n" +
 	"\x15variable_group_schema\x18\x06 \x03(\v2\".admin.TemplateVariableGroupEntityR\x13variableGroupSchema\x12 \n" +
-	"\vdescription\x18\a \x01(\tR\vdescription\"K\n" +
+	"\vdescription\x18\a \x01(\tR\vdescription\x12+\n" +
+	"\x11example_variables\x18\b \x01(\tR\x10exampleVariables\"K\n" +
 	"\x1aCreateBaseTemplateResponse\x12-\n" +
 	"\x04data\x18\x01 \x01(\v2\x19.admin.BaseTemplateEntityR\x04data\"U\n" +
 	"\x19UpdateBaseTemplateRequest\x128\n" +
-	"\x04data\x18\x01 \x01(\v2$.admin.UpdateBaseTemplateRequestDataR\x04data\"\x99\x02\n" +
+	"\x04data\x18\x01 \x01(\v2$.admin.UpdateBaseTemplateRequestDataR\x04data\"\xa0\x02\n" +
 	"\x1dUpdateBaseTemplateRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
-	"\x04type\x18\x03 \x01(\tR\x04type\x12\x1a\n" +
-	"\bcategory\x18\x04 \x01(\tR\bcategory\x12\x10\n" +
-	"\x03tag\x18\x05 \x01(\tR\x03tag\x12\x18\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1a\n" +
+	"\bcategory\x18\x04 \x01(\tR\bcategory\x12\x18\n" +
 	"\acontent\x18\x06 \x01(\tR\acontent\x12V\n" +
 	"\x15variable_group_schema\x18\a \x03(\v2\".admin.TemplateVariableGroupEntityR\x13variableGroupSchema\x12 \n" +
-	"\vdescription\x18\b \x01(\tR\vdescription\"K\n" +
+	"\vdescription\x18\b \x01(\tR\vdescription\x12+\n" +
+	"\x11example_variables\x18\t \x01(\tR\x10exampleVariables\"K\n" +
 	"\x1aUpdateBaseTemplateResponse\x12-\n" +
 	"\x04data\x18\x01 \x01(\v2\x19.admin.BaseTemplateEntityR\x04data\">\n" +
 	"\x16GetBaseTemplateRequest\x12$\n" +
