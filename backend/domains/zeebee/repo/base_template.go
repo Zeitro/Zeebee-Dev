@@ -42,9 +42,9 @@ func (repo *BaseTemplateRepo) GetByID(ctx context.Context, id int64) (result *mo
 // Update updates an existing base template
 func (repo *BaseTemplateRepo) Update(ctx context.Context, data *model.BaseTemplate) (result *model.BaseTemplate, err error) {
 	// Validate variable group schema before updating
-	if err = data.BeforeValidate(); err != nil {
-		return nil, errorx.WithStack(err)
-	}
+	// if err = data.BeforeValidate(); err != nil {
+	// 	return nil, errorx.WithStack(err)
+	// }
 	updated, err := repo.BaseRepo.UpdateOneById(ctx, data.Id, data)
 	return updated, errorx.WithStack(err)
 }

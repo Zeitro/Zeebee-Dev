@@ -74,6 +74,9 @@ func (l *BaseTemplateLogic) Create(ctx context.Context, req dto.BaseTemplateCrea
 
 		return innerErr
 	})
+	if err != nil {
+		return nil, errorx.Wrap(err, "Failed To Create Template")
+	}
 
 	result, err = copierx.Trans[model.BaseTemplate, bo.BaseTemplateBo](created)
 	if err != nil {
@@ -192,12 +195,6 @@ func (l *BaseTemplateLogic) ExistsByPurpose(ctx context.Context, purpose string,
 	return l.repos.BaseTemplateRepo.ExistsByPurpose(ctx, purpose, templateType)
 }
 
-// GetByIDForUpdate retrieves a base template model by ID for internal update operations
-// This returns model for use in RPC layer where model modifications are needed
-// func (l *BaseTemplateLogic) GetByIDForUpdate(ctx context.Context, id int64) (*model.BaseTemplate, error) {
-// 	return l.repos.BaseTemplateRepo.GetByID(ctx, id)
-// }
-
 // Preview retrieves a preview of a base template
 func (l *BaseTemplateLogic) Preview(ctx context.Context, req dto.BaseTemplatePreviewDto) (result string, err error) {
 	tpl, err := template.New(req.Name).Parse(req.Content)
@@ -205,14 +202,6 @@ func (l *BaseTemplateLogic) Preview(ctx context.Context, req dto.BaseTemplatePre
 		return "", errorx.Wrap(err, "Failed To Parse Template")
 	}
 	data := map[string]interface{}{}
-	for _, groupDto := range req.VariableGroupSchema {
-
-		for _, variableDto := range groupDto.Variables {
-			if variableDto.Source == constants.TemplateVariableSourceFixed || variableDto.Source == constants.TemplateVariableSourceTemplate {
-				data[variableDto.Key] = variableDto.FixedValue
-			}
-		}
-	}
 	if len(req.ExampleVariables) > 0 {
 		var exampleData map[string]interface{}
 		err = json.Unmarshal([]byte(req.ExampleVariables), &exampleData)
@@ -223,6 +212,15 @@ func (l *BaseTemplateLogic) Preview(ctx context.Context, req dto.BaseTemplatePre
 			data[k] = v
 		}
 	}
+	for _, groupDto := range req.VariableGroupSchema {
+
+		for _, variableDto := range groupDto.Variables {
+			if variableDto.Source == constants.TemplateVariableSourceFixed || variableDto.Source == constants.TemplateVariableSourceTemplate {
+				data[variableDto.Key] = variableDto.FixedValue
+			}
+		}
+	}
+
 	buf := bytes.NewBuffer(nil)
 	err = tpl.Execute(buf, data)
 	if err != nil {

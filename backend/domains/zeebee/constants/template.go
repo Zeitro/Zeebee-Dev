@@ -16,10 +16,12 @@ const (
 )
 
 func (c TemplateCategory) Validate() error {
-	if c != TemplateCategoryEmail && c != TemplateCategoryContract {
-		return fmt.Errorf("Invalid Template Category:%v", c)
+	switch c {
+	case TemplateCategoryEmail,
+		TemplateCategoryContract:
+		return nil
 	}
-	return nil
+	return fmt.Errorf("Invalid Template Category:%v", c)
 }
 
 type TemplateVariableSource string
@@ -33,10 +35,13 @@ const (
 )
 
 func (s TemplateVariableSource) Validate() error {
-	if s != TemplateVariableSourceFixed && s != TemplateVariableSourceDynamic && s != TemplateVariableSourceTemplate {
-		return fmt.Errorf("Invalid Template Variable Source:%v", s)
+	switch s {
+	case TemplateVariableSourceFixed,
+		TemplateVariableSourceDynamic,
+		TemplateVariableSourceTemplate:
+		return nil
 	}
-	return nil
+	return fmt.Errorf("Invalid Template Variable Source:%v", s)
 }
 
 type TemplateVariableFormat string
@@ -44,16 +49,24 @@ type TemplateVariableFormat string
 var TemplateVariableFormatName = "template_variable_format"
 
 const (
-	TemplateVariableFormatString  TemplateVariableFormat = "Email"
-	TemplateVariableFormatNumber  TemplateVariableFormat = "Phone"
-	TemplateVariableFormatBoolean TemplateVariableFormat = "Currency"
+	TemplateVariableFormatString   TemplateVariableFormat = "Email"
+	TemplateVariableFormatNumber   TemplateVariableFormat = "Phone"
+	TemplateVariableFormatCurrency TemplateVariableFormat = "Currency"
+	TemplateVariableFormatInput    TemplateVariableFormat = "Input"
+	TemplateVariableFormatTextArea TemplateVariableFormat = "TextArea"
 )
 
 func (f TemplateVariableFormat) Validate() error {
-	if f != TemplateVariableFormatString && f != TemplateVariableFormatNumber && f != TemplateVariableFormatBoolean {
-		return fmt.Errorf("Invalid Template Variable Format:%v", f)
+	switch f {
+	case TemplateVariableFormatString,
+		TemplateVariableFormatNumber,
+		TemplateVariableFormatCurrency,
+		TemplateVariableFormatInput,
+		TemplateVariableFormatTextArea:
+		return nil
 	}
-	return nil
+	return fmt.Errorf("Invalid Template Variable Format:%v", f)
+
 }
 
 func init() {
@@ -93,8 +106,16 @@ func init() {
 			Value: string(TemplateVariableFormatNumber),
 		},
 		{
-			Label: string(TemplateVariableFormatBoolean),
-			Value: string(TemplateVariableFormatBoolean),
+			Label: string(TemplateVariableFormatCurrency),
+			Value: string(TemplateVariableFormatCurrency),
+		},
+		{
+			Label: string(TemplateVariableFormatInput),
+			Value: string(TemplateVariableFormatInput),
+		},
+		{
+			Label: string(TemplateVariableFormatTextArea),
+			Value: string(TemplateVariableFormatTextArea),
 		},
 	})
 }

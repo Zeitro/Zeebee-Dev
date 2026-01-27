@@ -16,7 +16,6 @@ type TemplateVariableEntity {
     Source string `json:"source" validate:"omitempty,oneof=Fixed Dynamic Template"`
     Format string `json:"format" validate:"omitempty,oneof=Email Phone Currency"`
     FixedValue string `json:"fixed_value,optional" validate:"required_if=Source Fixed,required_if=Source Template"`
-    //    ExampleValue string `json:"example_value,omitempty"`
     Properties map[string]*TemplateVariableEntity `json:"properties,omitempty,optional"`
     Items []*TemplateVariableEntity `json:"items,omitempty,optional"`
 }
@@ -106,10 +105,6 @@ type (
 
 // Detail
 type (
-    //    BaseTemplateDetailRequest {
-    //        Id int64 `path:"id" validate:"required,min=1"`
-    //    }
-
     BaseTemplateDetailResponse {
         BaseTemplateEntity
     }
@@ -122,13 +117,6 @@ type (
         Status string `json:"status" validate:"required,oneof=Active Disabled"`
     }
 )
-
-// Delete
-//type (
-//    BaseTemplateDeleteRequest {
-//        Id int64 `path:"id" validate:"required,min=1"`
-//    }
-//)
 
 // Preview
 type (

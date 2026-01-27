@@ -1004,22 +1004,6 @@ message DeleteBaseTemplateRequest {
   IdRequest data = 1;
 }
 
-// Exists by tag ---- request
-message ExistsByTagRequest {
-  ExistsByTagRequestData data = 1;
-}
-message ExistsByTagRequestData {
-  string tag = 1;
-  string type = 2;
-}
-// Exists by tag ---- response
-message ExistsByTagResponse {
-  ExistsByTagResponseData data = 1;
-}
-message ExistsByTagResponseData {
-  bool exists = 1;
-}
-
 // preview ---- request
 message BaseTemplatePreviewRequest {
   BaseTemplatePreviewRequestData data = 1;

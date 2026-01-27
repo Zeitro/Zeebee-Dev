@@ -31,3 +31,25 @@ type (
         Max float64 `json:"max,optional"`
     }
 )
+
+// page
+type (
+    BasePageRequest {
+        Limit int `json:"limit,optional"`
+        Page int `json:"page, optional"`
+    }
+    BasePageFilter {
+        Keyword string `json:"keyword,optional"`
+    }
+    BasePageSort {
+        Column string `json:"column,optional"`
+        Sort string `json:"sort,optional"`
+    }
+
+    BasePageResponse {
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
+        Total int64 `json:"total"`
+        TotalPage int64 `json:"total_page"`
+    }
+)

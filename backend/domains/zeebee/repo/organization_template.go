@@ -8,6 +8,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 )
 
@@ -38,4 +39,49 @@ func (repo *OrganizationTemplateRepo) CascadeDelete(ctx context.Context, tx *gor
 		Where("base_template_id = ?", baseTemplateID).
 		Delete(&model.OrganizationTemplate{}).Error
 	return errorx.WithStack(err)
+}
+
+// Detail retrieves an organization template by its ID.
+// It optionally preloads the associated BaseTemplate if withPreload is true.
+func (repo *OrganizationTemplateRepo) Detail(ctx context.Context, id int64, withPreload bool) (result *model.OrganizationTemplate, err error) {
+	query := repo.Client(ctx).Where("id = ?", id)
+	if withPreload {
+		query = query.Preload("BaseTemplate")
+	}
+	err = query.First(&result).Error
+	return result, errorx.WithStack(err)
+}
+
+func (repo *OrganizationTemplateRepo) Page(ctx context.Context, pageReq dto.OrganizationTemplatePageRequestDto) (page gormx.PageResponse[*model.OrganizationTemplate], err error) {
+	filter := pageReq.Filter
+	sorter := pageReq.Sorter
+	baseTemplateTable := model.OrganizationTemplate{}.TableName()
+
+	query := repo.Client(ctx).Model(&model.OrganizationTemplate{}).Where("organization_id = ?", filter.OrganizationId)
+
+	// Apply filters
+	if len(filter.Keyword) > 0 {
+		keyword := "%" + filter.Keyword + "%"
+		query = query.Where("name LIKE ? OR purpose LIKE ?", keyword, keyword)
+	}
+	if len(filter.Type) > 0 {
+		query = query.Where("type = ?", filter.Type)
+	}
+	if len(filter.Category) > 0 {
+		query = query.Where("category = ?", filter.Category)
+	}
+	if len(filter.Status) > 0 {
+		query = query.Where("status = ?", filter.Status)
+	}
+
+	// Apply sorting
+	if len(sorter.Column) > 0 {
+		query = query.Order(sorter.Column + " " + sorter.Sort)
+	}
+	query = query.Order(baseTemplateTable + ".created_at DESC")
+
+	return repo.BaseRepo.Page(query, gormx.PageRequest{
+		Page:  pageReq.Page,
+		Limit: pageReq.Limit,
+	})
 }

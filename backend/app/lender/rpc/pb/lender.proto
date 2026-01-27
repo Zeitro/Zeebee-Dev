@@ -11,6 +11,9 @@ message EmptyResponse {}
 message StringSliceResponse {
   repeated string data = 1;
 }
+message IdRequest {
+  int64 data = 1;
+}
 
 message AddressEntity{
   string state = 1;
@@ -1316,3 +1319,132 @@ message OrganizationEmailEntity {
   bool is_authorized = 6;
 }
 // ================== organization email service end =================
+// ================= organization template service start =================
+// Template variable entity for JSONB variable_group_schema field
+message TemplateVariableEntity {
+  string label = 1;
+  string type = 2;           // String, Array, Object
+  string key = 3;
+  bool is_editable = 4;
+  string source = 5;         // Fixed, Dynamic,Template
+  string fixed_value = 6;
+  map<string, TemplateVariableEntity> properties = 8;  // for object type
+  repeated TemplateVariableEntity items = 9;            // for array type
+  string format = 10;
+}
+
+// Template variable group entity
+message TemplateVariableGroupEntity {
+  string name = 1;
+  repeated TemplateVariableEntity variables = 2;
+}
+
+// Organization template entity
+message OrganizationTemplateEntity {
+  int64 id = 1;
+  string name = 2;
+  string type = 3;           // Borrower, Lender
+  string category = 4;       // Email, Contract
+  string purpose = 5;
+  string content = 6;
+  repeated TemplateVariableGroupEntity variable_group_schema = 7;
+  string status = 8;         // Active, Disabled
+  string description = 9;
+  string created_at = 10;
+  string updated_at = 11;
+  string example_variables = 12;
+}
+
+// Base template page entity (for list display)
+message OrganizationTemplatePageEntity {
+  int64 id = 1;
+  string name = 2;
+  string type = 3;
+  string category = 4;
+  string purpose = 5;
+  string status = 6;
+  string description = 7;
+  string created_at = 8;
+  string updated_at = 9;
+}
+
+// Update ---- request
+message UpdateOrganizationTemplateRequest {
+  UpdateOrganizationTemplateRequestData data = 1;
+}
+message UpdateOrganizationTemplateRequestData {
+  int64 id = 1;
+  repeated TemplateVariableGroupEntity variable_group_schema = 7;
+}
+// Update ---- response
+message UpdateOrganizationTemplateResponse {
+  OrganizationTemplateEntity data = 1;
+}
+// detail ---- request
+//message OrganizationTemplateDetailRequest {
+//  IdRequest data = 1;
+//}
+// detail ---- response
+message OrganizationTemplateDetailResponse {
+  OrganizationTemplateEntity data = 1;
+}
+
+// Page ---- request
+message OrganizationTemplatePageRequest {
+  OrganizationTemplatePageRequestData data = 1;
+}
+message OrganizationTemplatePageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  OrganizationTemplatePageRequestFilter filter = 3;
+  OrganizationTemplatePageRequestSorter sorter = 4;
+}
+message OrganizationTemplatePageRequestFilter {
+  string keyword = 1;
+  string type = 2;
+  string category = 3;
+  string status = 4;
+}
+message OrganizationTemplatePageRequestSorter {
+  string column = 1;
+  string sort = 2;
+}
+// Page ---- response
+message OrganizationTemplatePageResponse {
+  OrganizationTemplatePageResponseData data = 1;
+}
+message OrganizationTemplatePageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated OrganizationTemplatePageEntity list = 5;
+}
+
+// preview ---- request
+message OrganizationTemplatePreviewRequest {
+  OrganizationTemplatePreviewRequestData data = 1;
+}
+message OrganizationTemplatePreviewRequestData {
+  string content = 1;
+  repeated TemplateVariableGroupEntity variable_group_schema = 2;
+  string example_variables = 3;
+  string name = 4;
+}
+// preview ---- response
+message OrganizationTemplatePreviewResponse {
+  OrganizationTemplatePreviewResponseData data = 1;
+}
+message OrganizationTemplatePreviewResponseData {
+  string content = 1;
+}
+
+service OrganizationTemplate {
+  rpc Update(UpdateOrganizationTemplateRequest) returns(UpdateOrganizationTemplateResponse);
+  rpc Detail(IdRequest) returns(OrganizationTemplateDetailResponse);
+  rpc Page(OrganizationTemplatePageRequest) returns(OrganizationTemplatePageResponse);
+  rpc Preview(OrganizationTemplatePreviewRequest) returns(OrganizationTemplatePreviewResponse);
+  rpc Reset(IdRequest) returns(OrganizationTemplateDetailResponse);
+}
+
+// ================== organization template service end =================

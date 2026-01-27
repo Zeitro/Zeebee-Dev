@@ -47,10 +47,6 @@ type (
 	DeleteBaseTemplateRequest                  = admin.DeleteBaseTemplateRequest
 	EmptyRequest                               = admin.EmptyRequest
 	EmptyResponse                              = admin.EmptyResponse
-	ExistsByTagRequest                         = admin.ExistsByTagRequest
-	ExistsByTagRequestData                     = admin.ExistsByTagRequestData
-	ExistsByTagResponse                        = admin.ExistsByTagResponse
-	ExistsByTagResponseData                    = admin.ExistsByTagResponseData
 	GetBaseTemplateRequest                     = admin.GetBaseTemplateRequest
 	GetBaseTemplateResponse                    = admin.GetBaseTemplateResponse
 	IdRequest                                  = admin.IdRequest
