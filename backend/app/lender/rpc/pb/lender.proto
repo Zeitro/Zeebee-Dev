@@ -1439,9 +1439,18 @@ message OrganizationTemplatePreviewResponseData {
   string content = 1;
 }
 
+// detail by purpose ---- request
+message OrganizationTemplateDetailByPurposeRequest {
+  OrganizationTemplateDetailByPurposeRequestData data = 1;
+}
+message OrganizationTemplateDetailByPurposeRequestData {
+  string purpose = 1;
+}
+
 service OrganizationTemplate {
   rpc Update(UpdateOrganizationTemplateRequest) returns(UpdateOrganizationTemplateResponse);
   rpc Detail(IdRequest) returns(OrganizationTemplateDetailResponse);
+  rpc DetailByPurpose(OrganizationTemplateDetailByPurposeRequest) returns(OrganizationTemplateDetailResponse);
   rpc Page(OrganizationTemplatePageRequest) returns(OrganizationTemplatePageResponse);
   rpc Preview(OrganizationTemplatePreviewRequest) returns(OrganizationTemplatePreviewResponse);
   rpc Reset(IdRequest) returns(OrganizationTemplateDetailResponse);

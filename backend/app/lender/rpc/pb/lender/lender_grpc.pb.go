@@ -2525,11 +2525,12 @@ var Organization_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	OrganizationTemplate_Update_FullMethodName  = "/lender.OrganizationTemplate/Update"
-	OrganizationTemplate_Detail_FullMethodName  = "/lender.OrganizationTemplate/Detail"
-	OrganizationTemplate_Page_FullMethodName    = "/lender.OrganizationTemplate/Page"
-	OrganizationTemplate_Preview_FullMethodName = "/lender.OrganizationTemplate/Preview"
-	OrganizationTemplate_Reset_FullMethodName   = "/lender.OrganizationTemplate/Reset"
+	OrganizationTemplate_Update_FullMethodName          = "/lender.OrganizationTemplate/Update"
+	OrganizationTemplate_Detail_FullMethodName          = "/lender.OrganizationTemplate/Detail"
+	OrganizationTemplate_DetailByPurpose_FullMethodName = "/lender.OrganizationTemplate/DetailByPurpose"
+	OrganizationTemplate_Page_FullMethodName            = "/lender.OrganizationTemplate/Page"
+	OrganizationTemplate_Preview_FullMethodName         = "/lender.OrganizationTemplate/Preview"
+	OrganizationTemplate_Reset_FullMethodName           = "/lender.OrganizationTemplate/Reset"
 )
 
 // OrganizationTemplateClient is the client API for OrganizationTemplate service.
@@ -2538,6 +2539,7 @@ const (
 type OrganizationTemplateClient interface {
 	Update(ctx context.Context, in *UpdateOrganizationTemplateRequest, opts ...grpc.CallOption) (*UpdateOrganizationTemplateResponse, error)
 	Detail(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*OrganizationTemplateDetailResponse, error)
+	DetailByPurpose(ctx context.Context, in *OrganizationTemplateDetailByPurposeRequest, opts ...grpc.CallOption) (*OrganizationTemplateDetailResponse, error)
 	Page(ctx context.Context, in *OrganizationTemplatePageRequest, opts ...grpc.CallOption) (*OrganizationTemplatePageResponse, error)
 	Preview(ctx context.Context, in *OrganizationTemplatePreviewRequest, opts ...grpc.CallOption) (*OrganizationTemplatePreviewResponse, error)
 	Reset(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*OrganizationTemplateDetailResponse, error)
@@ -2565,6 +2567,16 @@ func (c *organizationTemplateClient) Detail(ctx context.Context, in *IdRequest, 
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(OrganizationTemplateDetailResponse)
 	err := c.cc.Invoke(ctx, OrganizationTemplate_Detail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationTemplateClient) DetailByPurpose(ctx context.Context, in *OrganizationTemplateDetailByPurposeRequest, opts ...grpc.CallOption) (*OrganizationTemplateDetailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OrganizationTemplateDetailResponse)
+	err := c.cc.Invoke(ctx, OrganizationTemplate_DetailByPurpose_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2607,6 +2619,7 @@ func (c *organizationTemplateClient) Reset(ctx context.Context, in *IdRequest, o
 type OrganizationTemplateServer interface {
 	Update(context.Context, *UpdateOrganizationTemplateRequest) (*UpdateOrganizationTemplateResponse, error)
 	Detail(context.Context, *IdRequest) (*OrganizationTemplateDetailResponse, error)
+	DetailByPurpose(context.Context, *OrganizationTemplateDetailByPurposeRequest) (*OrganizationTemplateDetailResponse, error)
 	Page(context.Context, *OrganizationTemplatePageRequest) (*OrganizationTemplatePageResponse, error)
 	Preview(context.Context, *OrganizationTemplatePreviewRequest) (*OrganizationTemplatePreviewResponse, error)
 	Reset(context.Context, *IdRequest) (*OrganizationTemplateDetailResponse, error)
@@ -2625,6 +2638,9 @@ func (UnimplementedOrganizationTemplateServer) Update(context.Context, *UpdateOr
 }
 func (UnimplementedOrganizationTemplateServer) Detail(context.Context, *IdRequest) (*OrganizationTemplateDetailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Detail not implemented")
+}
+func (UnimplementedOrganizationTemplateServer) DetailByPurpose(context.Context, *OrganizationTemplateDetailByPurposeRequest) (*OrganizationTemplateDetailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DetailByPurpose not implemented")
 }
 func (UnimplementedOrganizationTemplateServer) Page(context.Context, *OrganizationTemplatePageRequest) (*OrganizationTemplatePageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Page not implemented")
@@ -2688,6 +2704,24 @@ func _OrganizationTemplate_Detail_Handler(srv interface{}, ctx context.Context, 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(OrganizationTemplateServer).Detail(ctx, req.(*IdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationTemplate_DetailByPurpose_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationTemplateDetailByPurposeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationTemplateServer).DetailByPurpose(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationTemplate_DetailByPurpose_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationTemplateServer).DetailByPurpose(ctx, req.(*OrganizationTemplateDetailByPurposeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2760,6 +2794,10 @@ var OrganizationTemplate_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Detail",
 			Handler:    _OrganizationTemplate_Detail_Handler,
+		},
+		{
+			MethodName: "DetailByPurpose",
+			Handler:    _OrganizationTemplate_DetailByPurpose_Handler,
 		},
 		{
 			MethodName: "Page",

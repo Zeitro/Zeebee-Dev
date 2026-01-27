@@ -348,6 +348,10 @@ service lender-api {
 	@handler OrganizationTemplateDetail
 	get /organization_template/:id (PathIdRequest) returns (OrganizationTemplateDetailResponse)
 
+	@doc "Get Detail by purpose"
+	@handler OrganizationTemplateDetailByPurpose
+	get /organization_template/detail_by_purpose (OrganizationTemplateDetailByPurposeRequest) returns (OrganizationTemplateDetailResponse)
+
 	@doc "page"
 	@handler OrganizationTemplatePage
 	post /organization_template/page (OrganizationTemplatePageRequest) returns (OrganizationTemplatePageResponse)

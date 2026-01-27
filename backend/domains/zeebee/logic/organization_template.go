@@ -39,6 +39,22 @@ func (l *OrganizationTemplateLogic) Detail(ctx context.Context, id int64) (resul
 	return result, nil
 }
 
+// DetailByPurpose retrieves an organization template by its purpose and organization ID.
+func (l *OrganizationTemplateLogic) DetailByPurpose(ctx context.Context, organizationId int64, purpose string) (result *bo.OrganizationTemplateBo, err error) {
+	template, err := l.repos.OrganizationTemplateRepo.FindOneByColumns(ctx, map[string]interface{}{
+		"organization_id": organizationId,
+		"purpose":         purpose,
+	})
+	if err != nil {
+		return nil, errorx.WithStack(err)
+	}
+	result, err = copierx.Trans[model.OrganizationTemplate, bo.OrganizationTemplateBo](template)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
 func (l *OrganizationTemplateLogic) UpdateVariableGroup(ctx context.Context, req dto.OrganizationTemplateUpdateVariableGroupDto) (result *bo.OrganizationTemplateBo, err error) {
 	// Get existing template
 	existing, err := l.repos.OrganizationTemplateRepo.Detail(ctx, req.Id, false)

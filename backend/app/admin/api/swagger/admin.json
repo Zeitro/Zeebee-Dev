@@ -2087,7 +2087,7 @@
       }
     },
     "/api/v1/base_template/{id}/status": {
-      "put": {
+      "patch": {
         "consumes": [
           "application/json"
         ],
@@ -7350,7 +7350,7 @@
       }
     }
   },
-  "x-date": "2026-01-26 18:25:13",
+  "x-date": "2026-01-27 15:17:56",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

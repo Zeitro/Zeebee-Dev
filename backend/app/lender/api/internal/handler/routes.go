@@ -201,6 +201,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: organization_template.OrganizationTemplateResetHandler(serverCtx),
 				},
 				{
+					// Get Detail by purpose
+					Method:  http.MethodGet,
+					Path:    "/organization_template/detail_by_purpose",
+					Handler: organization_template.OrganizationTemplateDetailByPurposeHandler(serverCtx),
+				},
+				{
 					// page
 					Method:  http.MethodPost,
 					Path:    "/organization_template/page",

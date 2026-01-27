@@ -85,3 +85,11 @@ func (repo *OrganizationTemplateRepo) Page(ctx context.Context, pageReq dto.Orga
 		Limit: pageReq.Limit,
 	})
 }
+
+// GetOrganizationIdsWithTx
+func (repo *OrganizationTemplateRepo) GetOrganizationIdsWithTx(ctx context.Context, tx *gorm.DB, baseTemplateId int64) (result []int64, err error) {
+	err = tx.WithContext(ctx).Model(&model.OrganizationTemplate{}).
+		Where("base_template_id = ?", baseTemplateId).
+		Pluck("organization_id", &result).Error
+	return result, errorx.WithStack(err)
+}

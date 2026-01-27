@@ -3,6 +3,10 @@
 
 package types
 
+type OrganizationTemplateDetailByPurposeRequest struct {
+	Purpose string `form:"purpose" validate:"required"`
+}
+
 type OrganizationTemplateDetailResponse struct {
 	OrganizationTemplateEntity
 }

@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"html/template"
 
+	"github.com/duke-git/lancet/v2/slice"
 	"gorm.io/gorm"
 
 	"zeebee-backend/common/copierx"
@@ -158,28 +159,63 @@ func (l *BaseTemplateLogic) Page(ctx context.Context, pageReq dto.BaseTemplatePa
 
 // SwitchStatus switches the status of a base template
 func (l *BaseTemplateLogic) SwitchStatus(ctx context.Context, id int64, status constants.CommonStatus) (err error) {
+	tpl, err := l.repos.BaseTemplateRepo.FindOneById(ctx, id)
+	if err != nil {
+		return err
+	}
 	// Use transaction to cascade status changes
 	err = l.repos.BaseTemplateRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		var innerErr error
 		// Update base template status
-		if err = l.repos.BaseTemplateRepo.UpdateStatusWithTx(ctx, tx, id, status); err != nil {
-			return err
+		if innerErr = l.repos.BaseTemplateRepo.UpdateStatusWithTx(ctx, tx, id, status); innerErr != nil {
+			return innerErr
 		}
 		// Cascade to organization templates
-		return l.repos.OrganizationTemplateRepo.CascadeStatus(ctx, tx, id, status)
+		innerErr = l.repos.OrganizationTemplateRepo.CascadeStatus(ctx, tx, id, status)
+		if innerErr != nil {
+			return innerErr
+		}
+		// Create missing organization templates
+		if status == constants.CommonStatusActive {
+			var allOrganizationIds []int64
+			var tplOrganizationIds []int64
+			// Get all active organization IDs
+			allOrganizationIds, innerErr = l.repos.OrganizationRepo.GetActiveIdsWithTx(ctx, tx, tpl.Type)
+			if innerErr != nil {
+				return innerErr
+			}
+			// Get organization IDs of the template
+			tplOrganizationIds, innerErr = l.repos.OrganizationTemplateRepo.GetOrganizationIdsWithTx(ctx, tx, id)
+			if innerErr != nil {
+				return innerErr
+			}
+			diffOrganizationIds := slice.Difference(allOrganizationIds, tplOrganizationIds)
+			var organizationTemplates []*model.OrganizationTemplate
+			for _, organizationId := range diffOrganizationIds {
+				organizationTemplate, innerErr := copierx.Trans[model.BaseTemplate, model.OrganizationTemplate](tpl)
+				if innerErr != nil {
+					return innerErr
+				}
+				organizationTemplate.BaseTemplateId = tpl.Id
+				organizationTemplate.OrganizationId = organizationId
+				organizationTemplate.Status = constants.CommonStatusActive
+				organizationTemplates = append(organizationTemplates, organizationTemplate)
+			}
+			_, innerErr = l.repos.OrganizationTemplateRepo.BatchCreateWithTx(ctx, tx, organizationTemplates, false)
+		}
+		return innerErr
 	})
-	if err != nil {
-		return errorx.WithStack(err)
-	}
-	return nil
+	return errorx.WithStack(err)
 }
 
 // Delete deletes a base template by ID (hard delete with cascade)
 func (l *BaseTemplateLogic) Delete(ctx context.Context, id int64) (err error) {
 	// Use transaction to cascade delete
 	err = l.repos.BaseTemplateRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		var innerErr error
 		// Cascade delete to organization templates first
-		if err = l.repos.OrganizationTemplateRepo.CascadeDelete(ctx, tx, id); err != nil {
-			return err
+		if innerErr = l.repos.OrganizationTemplateRepo.CascadeDelete(ctx, tx, id); innerErr != nil {
+			return innerErr
 		}
 		// Hard delete base template
 		return l.repos.BaseTemplateRepo.DeleteWithTx(ctx, tx, id)

@@ -12786,6 +12786,95 @@ func (x *OrganizationTemplatePreviewResponseData) GetContent() string {
 	return ""
 }
 
+// detail by purpose ---- request
+type OrganizationTemplateDetailByPurposeRequest struct {
+	state         protoimpl.MessageState                          `protogen:"open.v1"`
+	Data          *OrganizationTemplateDetailByPurposeRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OrganizationTemplateDetailByPurposeRequest) Reset() {
+	*x = OrganizationTemplateDetailByPurposeRequest{}
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[192]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrganizationTemplateDetailByPurposeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrganizationTemplateDetailByPurposeRequest) ProtoMessage() {}
+
+func (x *OrganizationTemplateDetailByPurposeRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[192]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrganizationTemplateDetailByPurposeRequest.ProtoReflect.Descriptor instead.
+func (*OrganizationTemplateDetailByPurposeRequest) Descriptor() ([]byte, []int) {
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{192}
+}
+
+func (x *OrganizationTemplateDetailByPurposeRequest) GetData() *OrganizationTemplateDetailByPurposeRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type OrganizationTemplateDetailByPurposeRequestData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Purpose       string                 `protobuf:"bytes,1,opt,name=purpose,proto3" json:"purpose,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OrganizationTemplateDetailByPurposeRequestData) Reset() {
+	*x = OrganizationTemplateDetailByPurposeRequestData{}
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[193]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrganizationTemplateDetailByPurposeRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrganizationTemplateDetailByPurposeRequestData) ProtoMessage() {}
+
+func (x *OrganizationTemplateDetailByPurposeRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[193]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrganizationTemplateDetailByPurposeRequestData.ProtoReflect.Descriptor instead.
+func (*OrganizationTemplateDetailByPurposeRequestData) Descriptor() ([]byte, []int) {
+	return file_app_lender_rpc_pb_lender_proto_rawDescGZIP(), []int{193}
+}
+
+func (x *OrganizationTemplateDetailByPurposeRequestData) GetPurpose() string {
+	if x != nil {
+		return x.Purpose
+	}
+	return ""
+}
+
 type UserinfoResponseData_Organization struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -12798,7 +12887,7 @@ type UserinfoResponseData_Organization struct {
 
 func (x *UserinfoResponseData_Organization) Reset() {
 	*x = UserinfoResponseData_Organization{}
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[192]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[194]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12810,7 +12899,7 @@ func (x *UserinfoResponseData_Organization) String() string {
 func (*UserinfoResponseData_Organization) ProtoMessage() {}
 
 func (x *UserinfoResponseData_Organization) ProtoReflect() protoreflect.Message {
-	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[192]
+	mi := &file_app_lender_rpc_pb_lender_proto_msgTypes[194]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13886,7 +13975,11 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"#OrganizationTemplatePreviewResponse\x12C\n" +
 	"\x04data\x18\x01 \x01(\v2/.lender.OrganizationTemplatePreviewResponseDataR\x04data\"C\n" +
 	"'OrganizationTemplatePreviewResponseData\x12\x18\n" +
-	"\acontent\x18\x01 \x01(\tR\acontent2\xc7\x01\n" +
+	"\acontent\x18\x01 \x01(\tR\acontent\"x\n" +
+	"*OrganizationTemplateDetailByPurposeRequest\x12J\n" +
+	"\x04data\x18\x01 \x01(\v26.lender.OrganizationTemplateDetailByPurposeRequestDataR\x04data\"J\n" +
+	".OrganizationTemplateDetailByPurposeRequestData\x12\x18\n" +
+	"\apurpose\x18\x01 \x01(\tR\apurpose2\xc7\x01\n" +
 	"\x06common\x127\n" +
 	"\x06GetOpt\x12\x15.lender.OptionRequest\x1a\x16.lender.OptionResponse\x12?\n" +
 	"\n" +
@@ -13950,10 +14043,11 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\fOrganization\x12C\n" +
 	"\aProfile\x12\x14.lender.EmptyRequest\x1a\".lender.OrganizationDetailResponse\x12]\n" +
 	"\rUpdateProfile\x12(.lender.OrganizationUpdateProfileRequest\x1a\".lender.OrganizationDetailResponse\x12O\n" +
-	"\x06Create\x12!.lender.OrganizationCreateRequest\x1a\".lender.OrganizationDetailResponse2\xc7\x03\n" +
+	"\x06Create\x12!.lender.OrganizationCreateRequest\x1a\".lender.OrganizationDetailResponse2\xba\x04\n" +
 	"\x14OrganizationTemplate\x12_\n" +
 	"\x06Update\x12).lender.UpdateOrganizationTemplateRequest\x1a*.lender.UpdateOrganizationTemplateResponse\x12G\n" +
-	"\x06Detail\x12\x11.lender.IdRequest\x1a*.lender.OrganizationTemplateDetailResponse\x12Y\n" +
+	"\x06Detail\x12\x11.lender.IdRequest\x1a*.lender.OrganizationTemplateDetailResponse\x12q\n" +
+	"\x0fDetailByPurpose\x122.lender.OrganizationTemplateDetailByPurposeRequest\x1a*.lender.OrganizationTemplateDetailResponse\x12Y\n" +
 	"\x04Page\x12'.lender.OrganizationTemplatePageRequest\x1a(.lender.OrganizationTemplatePageResponse\x12b\n" +
 	"\aPreview\x12*.lender.OrganizationTemplatePreviewRequest\x1a+.lender.OrganizationTemplatePreviewResponse\x12F\n" +
 	"\x05Reset\x12\x11.lender.IdRequest\x1a*.lender.OrganizationTemplateDetailResponseB\n" +
@@ -13971,7 +14065,7 @@ func file_app_lender_rpc_pb_lender_proto_rawDescGZIP() []byte {
 	return file_app_lender_rpc_pb_lender_proto_rawDescData
 }
 
-var file_app_lender_rpc_pb_lender_proto_msgTypes = make([]protoimpl.MessageInfo, 194)
+var file_app_lender_rpc_pb_lender_proto_msgTypes = make([]protoimpl.MessageInfo, 196)
 var file_app_lender_rpc_pb_lender_proto_goTypes = []any{
 	(*EmptyRequest)(nil),                                   // 0: lender.EmptyRequest
 	(*EmptyResponse)(nil),                                  // 1: lender.EmptyResponse
@@ -14165,8 +14259,10 @@ var file_app_lender_rpc_pb_lender_proto_goTypes = []any{
 	(*OrganizationTemplatePreviewRequestData)(nil),         // 189: lender.OrganizationTemplatePreviewRequestData
 	(*OrganizationTemplatePreviewResponse)(nil),            // 190: lender.OrganizationTemplatePreviewResponse
 	(*OrganizationTemplatePreviewResponseData)(nil),        // 191: lender.OrganizationTemplatePreviewResponseData
-	(*UserinfoResponseData_Organization)(nil),              // 192: lender.UserinfoResponseData.Organization
-	nil, // 193: lender.TemplateVariableEntity.PropertiesEntry
+	(*OrganizationTemplateDetailByPurposeRequest)(nil),     // 192: lender.OrganizationTemplateDetailByPurposeRequest
+	(*OrganizationTemplateDetailByPurposeRequestData)(nil), // 193: lender.OrganizationTemplateDetailByPurposeRequestData
+	(*UserinfoResponseData_Organization)(nil),              // 194: lender.UserinfoResponseData.Organization
+	nil, // 195: lender.TemplateVariableEntity.PropertiesEntry
 }
 var file_app_lender_rpc_pb_lender_proto_depIdxs = []int32{
 	9,   // 0: lender.OptionRequest.data:type_name -> lender.OptionRequestData
@@ -14185,7 +14281,7 @@ var file_app_lender_rpc_pb_lender_proto_depIdxs = []int32{
 	1,   // 13: lender.SendResetPasswordEmailResponse.data:type_name -> lender.EmptyResponse
 	35,  // 14: lender.UserInfoRequest.data:type_name -> lender.UserInfoRequestData
 	37,  // 15: lender.UserinfoResponse.data:type_name -> lender.UserinfoResponseData
-	192, // 16: lender.UserinfoResponseData.organizations:type_name -> lender.UserinfoResponseData.Organization
+	194, // 16: lender.UserinfoResponseData.organizations:type_name -> lender.UserinfoResponseData.Organization
 	39,  // 17: lender.SwitchOrganizationRequest.data:type_name -> lender.SwitchOrganizationRequestData
 	70,  // 18: lender.LoanEntity.loan_property:type_name -> lender.LoanPropertyEntity
 	72,  // 19: lender.LoanEntity.applicants:type_name -> lender.LoanApplicantEntity
@@ -14300,7 +14396,7 @@ var file_app_lender_rpc_pb_lender_proto_depIdxs = []int32{
 	166, // 128: lender.OrganizationCreateRequestData.metadata:type_name -> lender.OrganizationMetadataEntity
 	4,   // 129: lender.OrganizationCreateRequestData.address:type_name -> lender.AddressEntity
 	165, // 130: lender.OrganizationDetailResponse.data:type_name -> lender.OrganizationEntity
-	193, // 131: lender.TemplateVariableEntity.properties:type_name -> lender.TemplateVariableEntity.PropertiesEntry
+	195, // 131: lender.TemplateVariableEntity.properties:type_name -> lender.TemplateVariableEntity.PropertiesEntry
 	174, // 132: lender.TemplateVariableEntity.items:type_name -> lender.TemplateVariableEntity
 	174, // 133: lender.TemplateVariableGroupEntity.variables:type_name -> lender.TemplateVariableEntity
 	175, // 134: lender.OrganizationTemplateEntity.variable_group_schema:type_name -> lender.TemplateVariableGroupEntity
@@ -14316,120 +14412,123 @@ var file_app_lender_rpc_pb_lender_proto_depIdxs = []int32{
 	189, // 144: lender.OrganizationTemplatePreviewRequest.data:type_name -> lender.OrganizationTemplatePreviewRequestData
 	175, // 145: lender.OrganizationTemplatePreviewRequestData.variable_group_schema:type_name -> lender.TemplateVariableGroupEntity
 	191, // 146: lender.OrganizationTemplatePreviewResponse.data:type_name -> lender.OrganizationTemplatePreviewResponseData
-	174, // 147: lender.TemplateVariableEntity.PropertiesEntry.value:type_name -> lender.TemplateVariableEntity
-	8,   // 148: lender.common.GetOpt:input_type -> lender.OptionRequest
-	0,   // 149: lender.common.GetUsState:input_type -> lender.EmptyRequest
-	12,  // 150: lender.common.GetUsCities:input_type -> lender.UsCitiesRequest
-	15,  // 151: lender.user.Login:input_type -> lender.UserLoginRequest
-	19,  // 152: lender.user.Register:input_type -> lender.UserRegisterRequest
-	21,  // 153: lender.user.RefreshToken:input_type -> lender.RefreshTokenRequest
-	28,  // 154: lender.user.ResetPassword:input_type -> lender.ResetPasswordRequest
-	30,  // 155: lender.user.SendResetPasswordEmail:input_type -> lender.SendResetPasswordEmailRequest
-	23,  // 156: lender.user.VerifyEmail:input_type -> lender.VerifyEmailRequest
-	25,  // 157: lender.user.SendVerifyEmail:input_type -> lender.SendVerifyEmailRequest
-	34,  // 158: lender.user.UserInfo:input_type -> lender.UserInfoRequest
-	38,  // 159: lender.user.SwitchOrganization:input_type -> lender.SwitchOrganizationRequest
-	43,  // 160: lender.Loan.LoanDetail:input_type -> lender.LoanDetailRequest
-	48,  // 161: lender.Loan.LoanPage:input_type -> lender.LoanPageRequest
-	54,  // 162: lender.Loan.UpdateLoan:input_type -> lender.LoanUpdateRequest
-	59,  // 163: lender.Loan.UpdateLoanDocuments:input_type -> lender.LoanUpdateDocumentsRequest
-	61,  // 164: lender.Loan.UpdateLoanStage:input_type -> lender.LoanUpdateStageRequest
-	63,  // 165: lender.Loan.UpdateLoanPendingStatus:input_type -> lender.LoanUpdatePendingStatusRequest
-	65,  // 166: lender.Loan.PendingStatusReview:input_type -> lender.LoanPendingStatusReviewRequest
-	67,  // 167: lender.Loan.LoanDocumentOpts:input_type -> lender.LoanDocumentOptsRequest
-	85,  // 168: lender.LoanDocument.Create:input_type -> lender.LoanDocumentCreateExtendTypeRequest
-	82,  // 169: lender.LoanDocument.SendRequests:input_type -> lender.LoanDocumentSendRequestsRequest
-	80,  // 170: lender.LoanDocument.DeleteFile:input_type -> lender.LoanDocumentDeleteFileRequest
-	78,  // 171: lender.LoanDocument.DeleteRequest:input_type -> lender.LoanDocumentDeleteRequestRequest
-	76,  // 172: lender.LoanDocument.UpdateComment:input_type -> lender.LoanDocumentUpdateCommentRequest
-	88,  // 173: lender.LoanDocument.AddFiles:input_type -> lender.LoanDocumentAddFilesRequest
-	102, // 174: lender.File.DeleteFile:input_type -> lender.FileDeleteRequest
-	104, // 175: lender.Storage.CreatePresignedUrl:input_type -> lender.StorageCreatePresignedUrlRequest
-	110, // 176: lender.resource.ResourceTree:input_type -> lender.ResourceTreeRequest
-	114, // 177: lender.role.Page:input_type -> lender.RolePageRequest
-	120, // 178: lender.role.Create:input_type -> lender.RoleCreateRequest
-	123, // 179: lender.role.Update:input_type -> lender.RoleUpdateRequest
-	127, // 180: lender.role.Delete:input_type -> lender.RoleDeleteRequest
-	129, // 181: lender.role.Detail:input_type -> lender.RoleDetailRequest
-	132, // 182: lender.role.UpdateStatus:input_type -> lender.RoleUpdateStatusRequest
-	134, // 183: lender.role.All:input_type -> lender.RoleAllRequest
-	139, // 184: lender.OrganizationUser.Page:input_type -> lender.OrganizationUserPageRequest
-	145, // 185: lender.OrganizationUser.Create:input_type -> lender.OrganizationUserCreateRequest
-	148, // 186: lender.OrganizationUser.Update:input_type -> lender.OrganizationUserUpdateRequest
-	154, // 187: lender.OrganizationUser.Delete:input_type -> lender.OrganizationUserDeleteRequest
-	151, // 188: lender.OrganizationUser.Detail:input_type -> lender.OrganizationUserDetailRequest
-	156, // 189: lender.OrganizationUser.SwitchStatus:input_type -> lender.OrganizationUserUpdateStatusRequest
-	0,   // 190: lender.OrganizationUser.All:input_type -> lender.EmptyRequest
-	159, // 191: lender.OrganizationUser.SendInvitationEmail:input_type -> lender.OrganizationUserSendInvitationEmailRequest
-	161, // 192: lender.OrganizationUser.AcceptInvitation:input_type -> lender.OrganizationUserAcceptInvitationRequest
-	163, // 193: lender.OrganizationUser.AssignRoles:input_type -> lender.OrganizationUserAssignRolesRequest
-	0,   // 194: lender.Organization.Profile:input_type -> lender.EmptyRequest
-	168, // 195: lender.Organization.UpdateProfile:input_type -> lender.OrganizationUpdateProfileRequest
-	170, // 196: lender.Organization.Create:input_type -> lender.OrganizationCreateRequest
-	178, // 197: lender.OrganizationTemplate.Update:input_type -> lender.UpdateOrganizationTemplateRequest
-	3,   // 198: lender.OrganizationTemplate.Detail:input_type -> lender.IdRequest
-	182, // 199: lender.OrganizationTemplate.Page:input_type -> lender.OrganizationTemplatePageRequest
-	188, // 200: lender.OrganizationTemplate.Preview:input_type -> lender.OrganizationTemplatePreviewRequest
-	3,   // 201: lender.OrganizationTemplate.Reset:input_type -> lender.IdRequest
-	10,  // 202: lender.common.GetOpt:output_type -> lender.OptionResponse
-	2,   // 203: lender.common.GetUsState:output_type -> lender.StringSliceResponse
-	2,   // 204: lender.common.GetUsCities:output_type -> lender.StringSliceResponse
-	17,  // 205: lender.user.Login:output_type -> lender.UserJwtResponse
-	1,   // 206: lender.user.Register:output_type -> lender.EmptyResponse
-	17,  // 207: lender.user.RefreshToken:output_type -> lender.UserJwtResponse
-	17,  // 208: lender.user.ResetPassword:output_type -> lender.UserJwtResponse
-	31,  // 209: lender.user.SendResetPasswordEmail:output_type -> lender.SendResetPasswordEmailResponse
-	17,  // 210: lender.user.VerifyEmail:output_type -> lender.UserJwtResponse
-	26,  // 211: lender.user.SendVerifyEmail:output_type -> lender.SendVerifyEmailResponse
-	36,  // 212: lender.user.UserInfo:output_type -> lender.UserinfoResponse
-	17,  // 213: lender.user.SwitchOrganization:output_type -> lender.UserJwtResponse
-	45,  // 214: lender.Loan.LoanDetail:output_type -> lender.LoanDetailResponse
-	49,  // 215: lender.Loan.LoanPage:output_type -> lender.LoanPageResponse
-	56,  // 216: lender.Loan.UpdateLoan:output_type -> lender.LoanUpdateResponse
-	1,   // 217: lender.Loan.UpdateLoanDocuments:output_type -> lender.EmptyResponse
-	1,   // 218: lender.Loan.UpdateLoanStage:output_type -> lender.EmptyResponse
-	1,   // 219: lender.Loan.UpdateLoanPendingStatus:output_type -> lender.EmptyResponse
-	1,   // 220: lender.Loan.PendingStatusReview:output_type -> lender.EmptyResponse
-	69,  // 221: lender.Loan.LoanDocumentOpts:output_type -> lender.LoanDocumentOptsResponse
-	87,  // 222: lender.LoanDocument.Create:output_type -> lender.LoanDocumentCreateExtendTypeResponse
-	1,   // 223: lender.LoanDocument.SendRequests:output_type -> lender.EmptyResponse
-	1,   // 224: lender.LoanDocument.DeleteFile:output_type -> lender.EmptyResponse
-	1,   // 225: lender.LoanDocument.DeleteRequest:output_type -> lender.EmptyResponse
-	1,   // 226: lender.LoanDocument.UpdateComment:output_type -> lender.EmptyResponse
-	1,   // 227: lender.LoanDocument.AddFiles:output_type -> lender.EmptyResponse
-	1,   // 228: lender.File.DeleteFile:output_type -> lender.EmptyResponse
-	106, // 229: lender.Storage.CreatePresignedUrl:output_type -> lender.StorageCreatePresignedUrlResponse
-	112, // 230: lender.resource.ResourceTree:output_type -> lender.ResourceTreeResponse
-	118, // 231: lender.role.Page:output_type -> lender.RolePageResponse
-	122, // 232: lender.role.Create:output_type -> lender.RoleCreateResponse
-	126, // 233: lender.role.Update:output_type -> lender.RoleUpdateResponse
-	1,   // 234: lender.role.Delete:output_type -> lender.EmptyResponse
-	131, // 235: lender.role.Detail:output_type -> lender.RoleDetailResponse
-	1,   // 236: lender.role.UpdateStatus:output_type -> lender.EmptyResponse
-	136, // 237: lender.role.All:output_type -> lender.RoleAllResponse
-	143, // 238: lender.OrganizationUser.Page:output_type -> lender.OrganizationUserPageResponse
-	147, // 239: lender.OrganizationUser.Create:output_type -> lender.OrganizationUserCreateResponse
-	150, // 240: lender.OrganizationUser.Update:output_type -> lender.OrganizationUserUpdateResponse
-	1,   // 241: lender.OrganizationUser.Delete:output_type -> lender.EmptyResponse
-	153, // 242: lender.OrganizationUser.Detail:output_type -> lender.OrganizationUserDetailResponse
-	1,   // 243: lender.OrganizationUser.SwitchStatus:output_type -> lender.EmptyResponse
-	158, // 244: lender.OrganizationUser.All:output_type -> lender.OrganizationUserAllResponse
-	1,   // 245: lender.OrganizationUser.SendInvitationEmail:output_type -> lender.EmptyResponse
-	17,  // 246: lender.OrganizationUser.AcceptInvitation:output_type -> lender.UserJwtResponse
-	1,   // 247: lender.OrganizationUser.AssignRoles:output_type -> lender.EmptyResponse
-	172, // 248: lender.Organization.Profile:output_type -> lender.OrganizationDetailResponse
-	172, // 249: lender.Organization.UpdateProfile:output_type -> lender.OrganizationDetailResponse
-	172, // 250: lender.Organization.Create:output_type -> lender.OrganizationDetailResponse
-	180, // 251: lender.OrganizationTemplate.Update:output_type -> lender.UpdateOrganizationTemplateResponse
-	181, // 252: lender.OrganizationTemplate.Detail:output_type -> lender.OrganizationTemplateDetailResponse
-	186, // 253: lender.OrganizationTemplate.Page:output_type -> lender.OrganizationTemplatePageResponse
-	190, // 254: lender.OrganizationTemplate.Preview:output_type -> lender.OrganizationTemplatePreviewResponse
-	181, // 255: lender.OrganizationTemplate.Reset:output_type -> lender.OrganizationTemplateDetailResponse
-	202, // [202:256] is the sub-list for method output_type
-	148, // [148:202] is the sub-list for method input_type
-	148, // [148:148] is the sub-list for extension type_name
-	148, // [148:148] is the sub-list for extension extendee
-	0,   // [0:148] is the sub-list for field type_name
+	193, // 147: lender.OrganizationTemplateDetailByPurposeRequest.data:type_name -> lender.OrganizationTemplateDetailByPurposeRequestData
+	174, // 148: lender.TemplateVariableEntity.PropertiesEntry.value:type_name -> lender.TemplateVariableEntity
+	8,   // 149: lender.common.GetOpt:input_type -> lender.OptionRequest
+	0,   // 150: lender.common.GetUsState:input_type -> lender.EmptyRequest
+	12,  // 151: lender.common.GetUsCities:input_type -> lender.UsCitiesRequest
+	15,  // 152: lender.user.Login:input_type -> lender.UserLoginRequest
+	19,  // 153: lender.user.Register:input_type -> lender.UserRegisterRequest
+	21,  // 154: lender.user.RefreshToken:input_type -> lender.RefreshTokenRequest
+	28,  // 155: lender.user.ResetPassword:input_type -> lender.ResetPasswordRequest
+	30,  // 156: lender.user.SendResetPasswordEmail:input_type -> lender.SendResetPasswordEmailRequest
+	23,  // 157: lender.user.VerifyEmail:input_type -> lender.VerifyEmailRequest
+	25,  // 158: lender.user.SendVerifyEmail:input_type -> lender.SendVerifyEmailRequest
+	34,  // 159: lender.user.UserInfo:input_type -> lender.UserInfoRequest
+	38,  // 160: lender.user.SwitchOrganization:input_type -> lender.SwitchOrganizationRequest
+	43,  // 161: lender.Loan.LoanDetail:input_type -> lender.LoanDetailRequest
+	48,  // 162: lender.Loan.LoanPage:input_type -> lender.LoanPageRequest
+	54,  // 163: lender.Loan.UpdateLoan:input_type -> lender.LoanUpdateRequest
+	59,  // 164: lender.Loan.UpdateLoanDocuments:input_type -> lender.LoanUpdateDocumentsRequest
+	61,  // 165: lender.Loan.UpdateLoanStage:input_type -> lender.LoanUpdateStageRequest
+	63,  // 166: lender.Loan.UpdateLoanPendingStatus:input_type -> lender.LoanUpdatePendingStatusRequest
+	65,  // 167: lender.Loan.PendingStatusReview:input_type -> lender.LoanPendingStatusReviewRequest
+	67,  // 168: lender.Loan.LoanDocumentOpts:input_type -> lender.LoanDocumentOptsRequest
+	85,  // 169: lender.LoanDocument.Create:input_type -> lender.LoanDocumentCreateExtendTypeRequest
+	82,  // 170: lender.LoanDocument.SendRequests:input_type -> lender.LoanDocumentSendRequestsRequest
+	80,  // 171: lender.LoanDocument.DeleteFile:input_type -> lender.LoanDocumentDeleteFileRequest
+	78,  // 172: lender.LoanDocument.DeleteRequest:input_type -> lender.LoanDocumentDeleteRequestRequest
+	76,  // 173: lender.LoanDocument.UpdateComment:input_type -> lender.LoanDocumentUpdateCommentRequest
+	88,  // 174: lender.LoanDocument.AddFiles:input_type -> lender.LoanDocumentAddFilesRequest
+	102, // 175: lender.File.DeleteFile:input_type -> lender.FileDeleteRequest
+	104, // 176: lender.Storage.CreatePresignedUrl:input_type -> lender.StorageCreatePresignedUrlRequest
+	110, // 177: lender.resource.ResourceTree:input_type -> lender.ResourceTreeRequest
+	114, // 178: lender.role.Page:input_type -> lender.RolePageRequest
+	120, // 179: lender.role.Create:input_type -> lender.RoleCreateRequest
+	123, // 180: lender.role.Update:input_type -> lender.RoleUpdateRequest
+	127, // 181: lender.role.Delete:input_type -> lender.RoleDeleteRequest
+	129, // 182: lender.role.Detail:input_type -> lender.RoleDetailRequest
+	132, // 183: lender.role.UpdateStatus:input_type -> lender.RoleUpdateStatusRequest
+	134, // 184: lender.role.All:input_type -> lender.RoleAllRequest
+	139, // 185: lender.OrganizationUser.Page:input_type -> lender.OrganizationUserPageRequest
+	145, // 186: lender.OrganizationUser.Create:input_type -> lender.OrganizationUserCreateRequest
+	148, // 187: lender.OrganizationUser.Update:input_type -> lender.OrganizationUserUpdateRequest
+	154, // 188: lender.OrganizationUser.Delete:input_type -> lender.OrganizationUserDeleteRequest
+	151, // 189: lender.OrganizationUser.Detail:input_type -> lender.OrganizationUserDetailRequest
+	156, // 190: lender.OrganizationUser.SwitchStatus:input_type -> lender.OrganizationUserUpdateStatusRequest
+	0,   // 191: lender.OrganizationUser.All:input_type -> lender.EmptyRequest
+	159, // 192: lender.OrganizationUser.SendInvitationEmail:input_type -> lender.OrganizationUserSendInvitationEmailRequest
+	161, // 193: lender.OrganizationUser.AcceptInvitation:input_type -> lender.OrganizationUserAcceptInvitationRequest
+	163, // 194: lender.OrganizationUser.AssignRoles:input_type -> lender.OrganizationUserAssignRolesRequest
+	0,   // 195: lender.Organization.Profile:input_type -> lender.EmptyRequest
+	168, // 196: lender.Organization.UpdateProfile:input_type -> lender.OrganizationUpdateProfileRequest
+	170, // 197: lender.Organization.Create:input_type -> lender.OrganizationCreateRequest
+	178, // 198: lender.OrganizationTemplate.Update:input_type -> lender.UpdateOrganizationTemplateRequest
+	3,   // 199: lender.OrganizationTemplate.Detail:input_type -> lender.IdRequest
+	192, // 200: lender.OrganizationTemplate.DetailByPurpose:input_type -> lender.OrganizationTemplateDetailByPurposeRequest
+	182, // 201: lender.OrganizationTemplate.Page:input_type -> lender.OrganizationTemplatePageRequest
+	188, // 202: lender.OrganizationTemplate.Preview:input_type -> lender.OrganizationTemplatePreviewRequest
+	3,   // 203: lender.OrganizationTemplate.Reset:input_type -> lender.IdRequest
+	10,  // 204: lender.common.GetOpt:output_type -> lender.OptionResponse
+	2,   // 205: lender.common.GetUsState:output_type -> lender.StringSliceResponse
+	2,   // 206: lender.common.GetUsCities:output_type -> lender.StringSliceResponse
+	17,  // 207: lender.user.Login:output_type -> lender.UserJwtResponse
+	1,   // 208: lender.user.Register:output_type -> lender.EmptyResponse
+	17,  // 209: lender.user.RefreshToken:output_type -> lender.UserJwtResponse
+	17,  // 210: lender.user.ResetPassword:output_type -> lender.UserJwtResponse
+	31,  // 211: lender.user.SendResetPasswordEmail:output_type -> lender.SendResetPasswordEmailResponse
+	17,  // 212: lender.user.VerifyEmail:output_type -> lender.UserJwtResponse
+	26,  // 213: lender.user.SendVerifyEmail:output_type -> lender.SendVerifyEmailResponse
+	36,  // 214: lender.user.UserInfo:output_type -> lender.UserinfoResponse
+	17,  // 215: lender.user.SwitchOrganization:output_type -> lender.UserJwtResponse
+	45,  // 216: lender.Loan.LoanDetail:output_type -> lender.LoanDetailResponse
+	49,  // 217: lender.Loan.LoanPage:output_type -> lender.LoanPageResponse
+	56,  // 218: lender.Loan.UpdateLoan:output_type -> lender.LoanUpdateResponse
+	1,   // 219: lender.Loan.UpdateLoanDocuments:output_type -> lender.EmptyResponse
+	1,   // 220: lender.Loan.UpdateLoanStage:output_type -> lender.EmptyResponse
+	1,   // 221: lender.Loan.UpdateLoanPendingStatus:output_type -> lender.EmptyResponse
+	1,   // 222: lender.Loan.PendingStatusReview:output_type -> lender.EmptyResponse
+	69,  // 223: lender.Loan.LoanDocumentOpts:output_type -> lender.LoanDocumentOptsResponse
+	87,  // 224: lender.LoanDocument.Create:output_type -> lender.LoanDocumentCreateExtendTypeResponse
+	1,   // 225: lender.LoanDocument.SendRequests:output_type -> lender.EmptyResponse
+	1,   // 226: lender.LoanDocument.DeleteFile:output_type -> lender.EmptyResponse
+	1,   // 227: lender.LoanDocument.DeleteRequest:output_type -> lender.EmptyResponse
+	1,   // 228: lender.LoanDocument.UpdateComment:output_type -> lender.EmptyResponse
+	1,   // 229: lender.LoanDocument.AddFiles:output_type -> lender.EmptyResponse
+	1,   // 230: lender.File.DeleteFile:output_type -> lender.EmptyResponse
+	106, // 231: lender.Storage.CreatePresignedUrl:output_type -> lender.StorageCreatePresignedUrlResponse
+	112, // 232: lender.resource.ResourceTree:output_type -> lender.ResourceTreeResponse
+	118, // 233: lender.role.Page:output_type -> lender.RolePageResponse
+	122, // 234: lender.role.Create:output_type -> lender.RoleCreateResponse
+	126, // 235: lender.role.Update:output_type -> lender.RoleUpdateResponse
+	1,   // 236: lender.role.Delete:output_type -> lender.EmptyResponse
+	131, // 237: lender.role.Detail:output_type -> lender.RoleDetailResponse
+	1,   // 238: lender.role.UpdateStatus:output_type -> lender.EmptyResponse
+	136, // 239: lender.role.All:output_type -> lender.RoleAllResponse
+	143, // 240: lender.OrganizationUser.Page:output_type -> lender.OrganizationUserPageResponse
+	147, // 241: lender.OrganizationUser.Create:output_type -> lender.OrganizationUserCreateResponse
+	150, // 242: lender.OrganizationUser.Update:output_type -> lender.OrganizationUserUpdateResponse
+	1,   // 243: lender.OrganizationUser.Delete:output_type -> lender.EmptyResponse
+	153, // 244: lender.OrganizationUser.Detail:output_type -> lender.OrganizationUserDetailResponse
+	1,   // 245: lender.OrganizationUser.SwitchStatus:output_type -> lender.EmptyResponse
+	158, // 246: lender.OrganizationUser.All:output_type -> lender.OrganizationUserAllResponse
+	1,   // 247: lender.OrganizationUser.SendInvitationEmail:output_type -> lender.EmptyResponse
+	17,  // 248: lender.OrganizationUser.AcceptInvitation:output_type -> lender.UserJwtResponse
+	1,   // 249: lender.OrganizationUser.AssignRoles:output_type -> lender.EmptyResponse
+	172, // 250: lender.Organization.Profile:output_type -> lender.OrganizationDetailResponse
+	172, // 251: lender.Organization.UpdateProfile:output_type -> lender.OrganizationDetailResponse
+	172, // 252: lender.Organization.Create:output_type -> lender.OrganizationDetailResponse
+	180, // 253: lender.OrganizationTemplate.Update:output_type -> lender.UpdateOrganizationTemplateResponse
+	181, // 254: lender.OrganizationTemplate.Detail:output_type -> lender.OrganizationTemplateDetailResponse
+	181, // 255: lender.OrganizationTemplate.DetailByPurpose:output_type -> lender.OrganizationTemplateDetailResponse
+	186, // 256: lender.OrganizationTemplate.Page:output_type -> lender.OrganizationTemplatePageResponse
+	190, // 257: lender.OrganizationTemplate.Preview:output_type -> lender.OrganizationTemplatePreviewResponse
+	181, // 258: lender.OrganizationTemplate.Reset:output_type -> lender.OrganizationTemplateDetailResponse
+	204, // [204:259] is the sub-list for method output_type
+	149, // [149:204] is the sub-list for method input_type
+	149, // [149:149] is the sub-list for extension type_name
+	149, // [149:149] is the sub-list for extension extendee
+	0,   // [0:149] is the sub-list for field type_name
 }
 
 func init() { file_app_lender_rpc_pb_lender_proto_init() }
@@ -14443,7 +14542,7 @@ func file_app_lender_rpc_pb_lender_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_app_lender_rpc_pb_lender_proto_rawDesc), len(file_app_lender_rpc_pb_lender_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   194,
+			NumMessages:   196,
 			NumExtensions: 0,
 			NumServices:   11,
 		},

@@ -33,6 +33,11 @@ func (s *OrganizationTemplateServer) Detail(ctx context.Context, in *lender.IdRe
 	return l.Detail(in)
 }
 
+func (s *OrganizationTemplateServer) DetailByPurpose(ctx context.Context, in *lender.OrganizationTemplateDetailByPurposeRequest) (*lender.OrganizationTemplateDetailResponse, error) {
+	l := organizationtemplatelogic.NewDetailByPurposeLogic(ctx, s.svcCtx)
+	return l.DetailByPurpose(in)
+}
+
 func (s *OrganizationTemplateServer) Page(ctx context.Context, in *lender.OrganizationTemplatePageRequest) (*lender.OrganizationTemplatePageResponse, error) {
 	l := organizationtemplatelogic.NewPageLogic(ctx, s.svcCtx)
 	return l.Page(in)

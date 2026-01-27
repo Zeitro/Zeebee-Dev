@@ -90,7 +90,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					// Switch status
-					Method:  http.MethodPut,
+					Method:  http.MethodPatch,
 					Path:    "/base_template/:id/status",
 					Handler: base_template.BaseTemplateSwitchStatusHandler(serverCtx),
 				},

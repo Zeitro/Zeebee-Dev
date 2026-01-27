@@ -92,6 +92,8 @@ type (
 	OrganizationEntity                             = lender.OrganizationEntity
 	OrganizationLenderMetadataEntity               = lender.OrganizationLenderMetadataEntity
 	OrganizationMetadataEntity                     = lender.OrganizationMetadataEntity
+	OrganizationTemplateDetailByPurposeRequest     = lender.OrganizationTemplateDetailByPurposeRequest
+	OrganizationTemplateDetailByPurposeRequestData = lender.OrganizationTemplateDetailByPurposeRequestData
 	OrganizationTemplateDetailResponse             = lender.OrganizationTemplateDetailResponse
 	OrganizationTemplateEntity                     = lender.OrganizationTemplateEntity
 	OrganizationTemplatePageEntity                 = lender.OrganizationTemplatePageEntity
@@ -211,6 +213,7 @@ type (
 	OrganizationTemplate interface {
 		Update(ctx context.Context, in *UpdateOrganizationTemplateRequest, opts ...grpc.CallOption) (*UpdateOrganizationTemplateResponse, error)
 		Detail(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*OrganizationTemplateDetailResponse, error)
+		DetailByPurpose(ctx context.Context, in *OrganizationTemplateDetailByPurposeRequest, opts ...grpc.CallOption) (*OrganizationTemplateDetailResponse, error)
 		Page(ctx context.Context, in *OrganizationTemplatePageRequest, opts ...grpc.CallOption) (*OrganizationTemplatePageResponse, error)
 		Preview(ctx context.Context, in *OrganizationTemplatePreviewRequest, opts ...grpc.CallOption) (*OrganizationTemplatePreviewResponse, error)
 		Reset(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*OrganizationTemplateDetailResponse, error)
@@ -235,6 +238,11 @@ func (m *defaultOrganizationTemplate) Update(ctx context.Context, in *UpdateOrga
 func (m *defaultOrganizationTemplate) Detail(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*OrganizationTemplateDetailResponse, error) {
 	client := lender.NewOrganizationTemplateClient(m.cli.Conn())
 	return client.Detail(ctx, in, opts...)
+}
+
+func (m *defaultOrganizationTemplate) DetailByPurpose(ctx context.Context, in *OrganizationTemplateDetailByPurposeRequest, opts ...grpc.CallOption) (*OrganizationTemplateDetailResponse, error) {
+	client := lender.NewOrganizationTemplateClient(m.cli.Conn())
+	return client.DetailByPurpose(ctx, in, opts...)
 }
 
 func (m *defaultOrganizationTemplate) Page(ctx context.Context, in *OrganizationTemplatePageRequest, opts ...grpc.CallOption) (*OrganizationTemplatePageResponse, error) {

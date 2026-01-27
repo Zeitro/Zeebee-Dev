@@ -92,6 +92,8 @@ type (
 	OrganizationEntity                             = lender.OrganizationEntity
 	OrganizationLenderMetadataEntity               = lender.OrganizationLenderMetadataEntity
 	OrganizationMetadataEntity                     = lender.OrganizationMetadataEntity
+	OrganizationTemplateDetailByPurposeRequest     = lender.OrganizationTemplateDetailByPurposeRequest
+	OrganizationTemplateDetailByPurposeRequestData = lender.OrganizationTemplateDetailByPurposeRequestData
 	OrganizationTemplateDetailResponse             = lender.OrganizationTemplateDetailResponse
 	OrganizationTemplateEntity                     = lender.OrganizationTemplateEntity
 	OrganizationTemplatePageEntity                 = lender.OrganizationTemplatePageEntity
