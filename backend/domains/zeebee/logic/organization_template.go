@@ -67,7 +67,7 @@ func (l *OrganizationTemplateLogic) UpdateVariableGroup(ctx context.Context, req
 			return nil, errorx.New("Variable Number Not Match")
 		}
 		for subIndex, newVariable := range newGroup.Variables {
-			if oldGroups[index].Variables[subIndex].Source != constants.TemplateVariableSourceTemplate && newVariable.Source != constants.TemplateVariableSourceTemplate {
+			if oldGroups[index].Variables[subIndex].Source == constants.TemplateVariableSourceTemplate && newVariable.Source != constants.TemplateVariableSourceTemplate {
 				return nil, errorx.Errorf("Source Type Template Can Not Be Changed To %v", newVariable.Source)
 			}
 		}

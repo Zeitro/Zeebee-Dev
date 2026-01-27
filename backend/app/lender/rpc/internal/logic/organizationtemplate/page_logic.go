@@ -55,7 +55,7 @@ func (l *PageLogic) Page(in *lender.OrganizationTemplatePageRequest) (resp *lend
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[bo.PageResultBo[bo.OrganizationTemplatePageBo], lender.OrganizationTemplatePageResponseData](&page)
+	data, err := copierx.Trans[bo.PageResultBo[bo.OrganizationTemplatePageBo], lender.OrganizationTemplatePageResponseData](&page, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}
