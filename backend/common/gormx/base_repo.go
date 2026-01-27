@@ -331,6 +331,17 @@ func (repo *BaseRepo[T]) FindAll(ctx context.Context, filter map[string]interfac
 	return data, errorx.WithStack(err)
 }
 
+func (repo *BaseRepo[T]) FindAllWithTx(ctx context.Context, tx *gorm.DB, filter map[string]interface{}) ([]T, error) {
+	query := tx.WithContext(ctx)
+	for k, v := range filter {
+		query = query.Where(k+" = ?", v)
+	}
+
+	var data []T
+	err := query.Find(&data).Error
+	return data, errorx.WithStack(err)
+}
+
 // FindStrDistinctColumn find string distinct column
 func (repo *BaseRepo[T]) FindStrDistinctColumn(ctx context.Context, columnName string, filter map[string]interface{}) ([]string, error) {
 	query := repo.Client(ctx)

@@ -3,6 +3,8 @@ package logic
 import (
 	"context"
 
+	"gorm.io/gorm"
+
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
@@ -151,4 +153,69 @@ func (l *OrganizationTemplateLogic) Reset(ctx context.Context, id int64, organiz
 	}
 
 	return result, nil
+}
+
+// BatchCreateWithTx creates multiple organization templates in a single database transaction.
+// It can optionally check for existing templates before creation to avoid duplicates.
+func (l *OrganizationTemplateLogic) BatchCreateWithTx(ctx context.Context, tx *gorm.DB, templates []*model.OrganizationTemplate, checkExist bool) (err error) {
+	if checkExist {
+		var tmpTemplates []*model.OrganizationTemplate
+		for index, tpl := range templates {
+			exist, err := l.repos.OrganizationTemplateRepo.IsExistedByColumnsWithTx(ctx, tx, map[string]interface{}{
+				"organization_id":  tpl.OrganizationId,
+				"base_template_id": tpl.BaseTemplateId,
+			})
+			if err != nil {
+				return err
+			}
+			if !exist {
+				tmpTemplates = append(tmpTemplates, templates[index])
+			}
+		}
+		templates = tmpTemplates
+	}
+	if len(templates) == 0 {
+		return nil
+	}
+	_, err = l.repos.OrganizationTemplateRepo.BatchCreateWithTx(ctx, tx, templates, false)
+
+	return err
+}
+
+// SyncByOrganizationIdWithTx synchronizes organization templates based on the organization ID within a transaction.
+// It retrieves the organization details and all active base templates matching the organization type,
+// then creates corresponding organization templates.
+func (l *OrganizationTemplateLogic) SyncByOrganizationIdWithTx(ctx context.Context, tx *gorm.DB, organizationId int64) (err error) {
+	// Find the organization by its ID within the transaction
+	organization, err := l.repos.OrganizationRepo.FindOneByIdWithTx(ctx, tx, organizationId)
+	if err != nil {
+		return err
+	}
+	// Get all base templates that are active and match the organization type
+	baseTemplates, err := l.repos.BaseTemplateRepo.FindAllWithTx(ctx, tx, map[string]interface{}{
+		"status": constants.CommonStatusActive,
+		"type":   organization.Type,
+	})
+	if err != nil {
+		return err
+	}
+	// Prepare a slice of organization templates based on base templates
+	templates := make([]*model.OrganizationTemplate, 0, len(baseTemplates))
+	for _, baseTemplate := range baseTemplates {
+		// Create a local copy of the base template to avoid reference issues
+		baseTemplate := baseTemplate
+		// Copy base template properties to organization template
+		tpl, err := copierx.Trans[model.BaseTemplate, model.OrganizationTemplate](baseTemplate)
+		if err != nil {
+			return err
+		}
+		// Reset the ID and set organization-specific fields
+		tpl.Id = 0
+		tpl.OrganizationId = organizationId
+		tpl.BaseTemplateId = baseTemplate.Id
+		templates = append(templates, tpl)
+	}
+
+	// Batch create all organization templates within the transaction
+	return l.BatchCreateWithTx(ctx, tx, templates, true)
 }

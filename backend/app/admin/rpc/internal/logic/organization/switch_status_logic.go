@@ -75,6 +75,17 @@ func (l *SwitchStatusLogic) SwitchStatus(in *admin.OrganizationSwitchStatusReque
 				"status": constants.UserStatusActive,
 			})
 		}
+		if innerErr != nil {
+			return innerErr
+		}
+		// Sync organization template
+		if newStatus == constants.OrganizationStatusActive {
+			organizationTemplateLogic := logic.NewBaseLogic(l.ctx, l.svcCtx)
+			innerErr = organizationTemplateLogic.
+				OrganizationTemplateLogic.
+				SyncByOrganizationIdWithTx(l.ctx, tx, organization.Id)
+		}
+
 		return innerErr
 	})
 

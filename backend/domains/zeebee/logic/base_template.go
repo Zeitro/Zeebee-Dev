@@ -56,7 +56,7 @@ func (l *BaseTemplateLogic) Create(ctx context.Context, req dto.BaseTemplateCrea
 			return errorx.WithStack(err)
 		}
 		// Sync to organization templates
-		organizationIds, innerErr := l.repos.OrganizationRepo.GetIdsWithTx(ctx, tx, req.Type)
+		organizationIds, innerErr := l.repos.OrganizationRepo.GetActiveIdsWithTx(ctx, tx, req.Type)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -71,7 +71,9 @@ func (l *BaseTemplateLogic) Create(ctx context.Context, req dto.BaseTemplateCrea
 			organizationTemplate.Status = constants.CommonStatusActive
 			organizationTemplates = append(organizationTemplates, organizationTemplate)
 		}
-		_, innerErr = l.repos.OrganizationTemplateRepo.BatchCreateWithTx(ctx, tx, organizationTemplates, false)
+		// Create organization templates
+		organizationTemplateLogic := NewOrganizationTemplateLogic(l.repos)
+		innerErr = organizationTemplateLogic.BatchCreateWithTx(ctx, tx, organizationTemplates, false)
 
 		return innerErr
 	})
@@ -201,7 +203,9 @@ func (l *BaseTemplateLogic) SwitchStatus(ctx context.Context, id int64, status c
 				organizationTemplate.Status = constants.CommonStatusActive
 				organizationTemplates = append(organizationTemplates, organizationTemplate)
 			}
-			_, innerErr = l.repos.OrganizationTemplateRepo.BatchCreateWithTx(ctx, tx, organizationTemplates, false)
+			// Create organization templates
+			organizationTemplateLogic := NewOrganizationTemplateLogic(l.repos)
+			innerErr = organizationTemplateLogic.BatchCreateWithTx(ctx, tx, organizationTemplates, false)
 		}
 		return innerErr
 	})
