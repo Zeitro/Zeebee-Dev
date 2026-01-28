@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"html/template"
+	"strings"
 
 	"github.com/duke-git/lancet/v2/slice"
 	"gorm.io/gorm"
@@ -257,6 +258,7 @@ func (l *BaseTemplateLogic) Preview(_ context.Context, req dto.BaseTemplatePrevi
 			return
 		}
 		for k, v := range exampleData {
+			k := strings.Trim(k, ".")
 			data[k] = v
 		}
 	}
@@ -264,7 +266,8 @@ func (l *BaseTemplateLogic) Preview(_ context.Context, req dto.BaseTemplatePrevi
 
 		for _, variableDto := range groupDto.Variables {
 			if variableDto.Source == constants.TemplateVariableSourceFixed || variableDto.Source == constants.TemplateVariableSourceTemplate {
-				data[variableDto.Key] = variableDto.FixedValue
+				k := strings.Trim(variableDto.Key, ".")
+				data[k] = variableDto.FixedValue
 			}
 		}
 	}

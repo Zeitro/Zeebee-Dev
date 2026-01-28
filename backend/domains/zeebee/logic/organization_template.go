@@ -105,6 +105,16 @@ func (l *OrganizationTemplateLogic) UpdateVariableGroup(ctx context.Context, req
 		return nil, err
 	}
 
+	organization, err := l.repos.OrganizationRepo.FindOneById(ctx, updated.OrganizationId)
+	if err != nil {
+		return nil, err
+	}
+	updated.Organization = organization
+	updated, err = l.renderOrganizationSystemInfo(updated)
+	if err != nil {
+		return nil, err
+	}
+
 	result, err = copierx.Trans[model.OrganizationTemplate, bo.OrganizationTemplateBo](updated)
 	if err != nil {
 		return nil, err
@@ -155,6 +165,18 @@ func (l *OrganizationTemplateLogic) Reset(ctx context.Context, id int64, organiz
 	if err != nil {
 		return nil, err
 	}
+
+	organization, err := l.repos.OrganizationRepo.FindOneById(ctx, template.OrganizationId)
+	if err != nil {
+		return nil, err
+	}
+	updated.Organization = organization
+
+	updated, err = l.renderOrganizationSystemInfo(updated)
+	if err != nil {
+		return nil, err
+	}
+
 	// Convert the updated model to the business object format
 	result, err = copierx.Trans[model.OrganizationTemplate, bo.OrganizationTemplateBo](updated)
 	if err != nil {
