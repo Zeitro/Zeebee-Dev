@@ -52,28 +52,14 @@ func (l *BaseTemplateLogic) Create(ctx context.Context, req dto.BaseTemplateCrea
 		var innerErr error
 		// Create base template
 		created, innerErr = l.repos.BaseTemplateRepo.CreateWithTx(ctx, tx, data, false)
+
 		if err != nil {
 			return errorx.WithStack(err)
 		}
 		// Sync to organization templates
-		organizationIds, innerErr := l.repos.OrganizationRepo.GetActiveIdsWithTx(ctx, tx, req.Type)
-		if innerErr != nil {
-			return innerErr
+		if req.Scope == constants.BaseTemplateScopeOrganization {
+			innerErr = l.syncOrganizationTemplates(ctx, tx, created, created.Type, false)
 		}
-		var organizationTemplates []*model.OrganizationTemplate
-		for _, organizationId := range organizationIds {
-			organizationTemplate, innerErr := copierx.Trans[dto.BaseTemplateCreateDto, model.OrganizationTemplate](&req)
-			if innerErr != nil {
-				return innerErr
-			}
-			organizationTemplate.BaseTemplateId = created.Id
-			organizationTemplate.OrganizationId = organizationId
-			organizationTemplate.Status = constants.CommonStatusActive
-			organizationTemplates = append(organizationTemplates, organizationTemplate)
-		}
-		// Create organization templates
-		organizationTemplateLogic := NewOrganizationTemplateLogic(l.repos)
-		innerErr = organizationTemplateLogic.BatchCreateWithTx(ctx, tx, organizationTemplates, false)
 
 		return innerErr
 	})
@@ -109,6 +95,8 @@ func (l *BaseTemplateLogic) Update(ctx context.Context, req dto.BaseTemplateUpda
 		return nil, errorx.WithStack(err)
 	}
 
+	oldScope := existing.Scope
+
 	// Convert DTO to model for update
 	updateData, err := copierx.Trans[dto.BaseTemplateUpdateDto, model.BaseTemplate](&req)
 	if err != nil {
@@ -122,8 +110,28 @@ func (l *BaseTemplateLogic) Update(ctx context.Context, req dto.BaseTemplateUpda
 	existing.ExampleVariables = updateData.ExampleVariables
 	existing.Description = updateData.Description
 	existing.VariableGroupSchema = updateData.VariableGroupSchema
+	existing.Scope = updateData.Scope
+	var updated *model.BaseTemplate
+	err = l.repos.BaseTemplateRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		var innerErr error
+		updated, innerErr = l.repos.BaseTemplateRepo.UpdateOneByIdWithTx(ctx, tx, existing.Id, existing)
+		if innerErr != nil {
+			return innerErr
+		}
+		if oldScope == req.Scope {
+			return innerErr
+		}
+		switch req.Scope {
+		case constants.BaseTemplateScopeOrganization:
+			innerErr = l.syncOrganizationTemplates(ctx, tx, updated, updated.Type, true)
+		case constants.BaseTemplateScopeSystem:
+			innerErr = l.repos.OrganizationTemplateRepo.CascadeStatus(ctx, tx, updated.Id, constants.CommonStatusActive)
+		default:
+			innerErr = errorx.Errorf("Invalid Scope:%v", req.Scope)
+		}
 
-	updated, err := l.repos.BaseTemplateRepo.Update(ctx, existing)
+		return innerErr
+	})
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
@@ -269,4 +277,36 @@ func (l *BaseTemplateLogic) Preview(ctx context.Context, req dto.BaseTemplatePre
 	result = buf.String()
 
 	return result, nil
+}
+
+func (l *BaseTemplateLogic) syncOrganizationTemplates(ctx context.Context, tx *gorm.DB, baseTemplate *model.BaseTemplate, organizationType constants.UserType, checkExisted bool) (err error) {
+	if baseTemplate == nil {
+		err = errorx.New("Base Template Must Be Existed")
+		return
+	}
+	if baseTemplate.Scope != constants.BaseTemplateScopeOrganization {
+		err = errorx.New("Template Scope Must Be Organization")
+		return
+	}
+	// Sync to organization templates
+	organizationIds, err := l.repos.OrganizationRepo.GetActiveIdsWithTx(ctx, tx, organizationType)
+	if err != nil {
+		return err
+	}
+	var organizationTemplates []*model.OrganizationTemplate
+	for _, organizationId := range organizationIds {
+		organizationTemplate, err := copierx.Trans[model.BaseTemplate, model.OrganizationTemplate](baseTemplate)
+		if err != nil {
+			return err
+		}
+		organizationTemplate.Id = 0
+		organizationTemplate.BaseTemplateId = baseTemplate.Id
+		organizationTemplate.OrganizationId = organizationId
+		organizationTemplate.Status = constants.CommonStatusActive
+		organizationTemplates = append(organizationTemplates, organizationTemplate)
+	}
+	// Create organization templates
+	organizationTemplateLogic := NewOrganizationTemplateLogic(l.repos)
+	err = organizationTemplateLogic.BatchCreateWithTx(ctx, tx, organizationTemplates, checkExisted)
+	return err
 }

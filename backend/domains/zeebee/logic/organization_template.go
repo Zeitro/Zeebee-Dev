@@ -195,6 +195,7 @@ func (l *OrganizationTemplateLogic) SyncByOrganizationIdWithTx(ctx context.Conte
 	baseTemplates, err := l.repos.BaseTemplateRepo.FindAllWithTx(ctx, tx, map[string]interface{}{
 		"status": constants.CommonStatusActive,
 		"type":   organization.Type,
+		"scope":  constants.BaseTemplateScopeOrganization,
 	})
 	if err != nil {
 		return err

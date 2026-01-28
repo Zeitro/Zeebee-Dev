@@ -69,6 +69,24 @@ func (f TemplateVariableFormat) Validate() error {
 
 }
 
+type BaseTemplateScope string
+
+var BaseTemplateScopeName = "base_template_scope"
+
+const (
+	BaseTemplateScopeSystem       BaseTemplateScope = "System"
+	BaseTemplateScopeOrganization BaseTemplateScope = "Organization"
+)
+
+func (s BaseTemplateScope) Validate() error {
+	switch s {
+	case BaseTemplateScopeSystem,
+		BaseTemplateScopeOrganization:
+		return nil
+	}
+	return fmt.Errorf("Invalid Base Template Scope:%v", s)
+}
+
 func init() {
 	// register template category
 	enums.Register(TemplateCategoryName, []enums.EnumOpt{
@@ -96,6 +114,7 @@ func init() {
 			Value: string(TemplateVariableSourceTemplate),
 		},
 	})
+	// register template variable format
 	enums.Register(TemplateVariableFormatName, []enums.EnumOpt{
 		{
 			Label: string(TemplateVariableFormatString),
@@ -116,6 +135,17 @@ func init() {
 		{
 			Label: string(TemplateVariableFormatTextArea),
 			Value: string(TemplateVariableFormatTextArea),
+		},
+	})
+	// register template scope
+	enums.Register(BaseTemplateScopeName, []enums.EnumOpt{
+		{
+			Label: string(BaseTemplateScopeSystem),
+			Value: string(BaseTemplateScopeSystem),
+		},
+		{
+			Label: string(BaseTemplateScopeOrganization),
+			Value: string(BaseTemplateScopeOrganization),
 		},
 	})
 }

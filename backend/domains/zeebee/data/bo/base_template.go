@@ -15,6 +15,7 @@ type TemplateVariableBo struct {
 	Source     string                           `json:"source"` // Fixed/Dynamic
 	FixedValue string                           `json:"fixed_value"`
 	Format     constants.TemplateVariableFormat `json:"format,omitempty"`
+	Scope      constants.BaseTemplateScope      `json:"scope"`
 	Properties map[string]*TemplateVariableBo   `json:"properties,omitempty"` // for object type
 	Items      []*TemplateVariableBo            `json:"items,omitempty"`      // for array type
 }
@@ -43,13 +44,14 @@ type BaseTemplateBo struct {
 
 // BaseTemplatePageBo represents a base template in page list
 type BaseTemplatePageBo struct {
-	Id          int64                      `json:"id"`
-	Name        string                     `json:"name"`
-	Type        constants.UserType         `json:"type"`
-	Category    constants.TemplateCategory `json:"category"`
-	Purpose     string                     `json:"purpose"`
-	Status      constants.CommonStatus     `json:"status"`
-	Description string                     `json:"description"`
-	CreatedAt   time.Time                  `json:"created_at"`
-	UpdatedAt   time.Time                  `json:"updated_at"`
+	Id          int64                       `json:"id"`
+	Name        string                      `json:"name"`
+	Type        constants.UserType          `json:"type"`
+	Category    constants.TemplateCategory  `json:"category"`
+	Purpose     string                      `json:"purpose"`
+	Status      constants.CommonStatus      `json:"status"`
+	Scope       constants.BaseTemplateScope `json:"scope"`
+	Description string                      `json:"description"`
+	CreatedAt   time.Time                   `json:"created_at"`
+	UpdatedAt   time.Time                   `json:"updated_at"`
 }

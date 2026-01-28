@@ -57,6 +57,7 @@ type BaseTemplateEntity struct {
 	Status              string                         `json:"status"`
 	Description         string                         `json:"description"`
 	ExampleVariables    string                         `json:"example_variables,omitempty,optional"`
+	Scope               string                         `json:"scope"`
 	CreatedAt           string                         `json:"created_at"`
 	UpdatedAt           string                         `json:"updated_at"`
 }
@@ -66,6 +67,7 @@ type BaseTemplateFilter struct {
 	Type     string `json:"type,optional" validate:"omitempty,oneof=Borrower Lender"`
 	Category string `json:"category,optional" validate:"omitempty,oneof=Email Contract"`
 	Status   string `json:"status,optional" validate:"omitempty,oneof=Active Disabled"`
+	Scope    string `json:"scope,optional" validate:"omitempty,oneof=System Organization"`
 }
 
 type BaseTemplatePageEntity struct {
@@ -76,6 +78,7 @@ type BaseTemplatePageEntity struct {
 	Purpose     string `json:"purpose"`
 	Status      string `json:"status"`
 	Description string `json:"description"`
+	Scope       string `json:"scope"`
 	CreatedAt   string `json:"created_at"`
 	UpdatedAt   string `json:"updated_at"`
 }

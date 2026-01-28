@@ -179,7 +179,6 @@ type (
 		Page(ctx context.Context, in *BaseTemplatePageRequest, opts ...grpc.CallOption) (*BaseTemplatePageResponse, error)
 		SwitchStatus(ctx context.Context, in *SwitchBaseTemplateStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		Delete(ctx context.Context, in *DeleteBaseTemplateRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
-		// rpc ExistsByTag(ExistsByTagRequest) returns(ExistsByTagResponse);
 		Preview(ctx context.Context, in *BaseTemplatePreviewRequest, opts ...grpc.CallOption) (*BaseTemplatePreviewResponse, error)
 	}
 
@@ -224,7 +223,6 @@ func (m *defaultBaseTemplate) Delete(ctx context.Context, in *DeleteBaseTemplate
 	return client.Delete(ctx, in, opts...)
 }
 
-// rpc ExistsByTag(ExistsByTagRequest) returns(ExistsByTagResponse);
 func (m *defaultBaseTemplate) Preview(ctx context.Context, in *BaseTemplatePreviewRequest, opts ...grpc.CallOption) (*BaseTemplatePreviewResponse, error) {
 	client := admin.NewBaseTemplateClient(m.cli.Conn())
 	return client.Preview(ctx, in, opts...)

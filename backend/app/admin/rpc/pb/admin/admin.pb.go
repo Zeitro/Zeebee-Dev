@@ -8198,6 +8198,7 @@ type BaseTemplateEntity struct {
 	CreatedAt           string                         `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt           string                         `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	ExampleVariables    string                         `protobuf:"bytes,12,opt,name=example_variables,json=exampleVariables,proto3" json:"example_variables,omitempty"`
+	Scope               string                         `protobuf:"bytes,13,opt,name=scope,proto3" json:"scope,omitempty"` // System, Organization
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -8316,6 +8317,13 @@ func (x *BaseTemplateEntity) GetExampleVariables() string {
 	return ""
 }
 
+func (x *BaseTemplateEntity) GetScope() string {
+	if x != nil {
+		return x.Scope
+	}
+	return ""
+}
+
 // Base template page entity (for list display)
 type BaseTemplatePageEntity struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -8328,6 +8336,7 @@ type BaseTemplatePageEntity struct {
 	Description   string                 `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
 	CreatedAt     string                 `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt     string                 `protobuf:"bytes,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Scope         string                 `protobuf:"bytes,10,opt,name=scope,proto3" json:"scope,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -8425,6 +8434,13 @@ func (x *BaseTemplatePageEntity) GetUpdatedAt() string {
 	return ""
 }
 
+func (x *BaseTemplatePageEntity) GetScope() string {
+	if x != nil {
+		return x.Scope
+	}
+	return ""
+}
+
 // Create ---- request
 type CreateBaseTemplateRequest struct {
 	state         protoimpl.MessageState         `protogen:"open.v1"`
@@ -8480,6 +8496,7 @@ type CreateBaseTemplateRequestData struct {
 	VariableGroupSchema []*TemplateVariableGroupEntity `protobuf:"bytes,6,rep,name=variable_group_schema,json=variableGroupSchema,proto3" json:"variable_group_schema,omitempty"`
 	Description         string                         `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
 	ExampleVariables    string                         `protobuf:"bytes,8,opt,name=example_variables,json=exampleVariables,proto3" json:"example_variables,omitempty"`
+	Scope               string                         `protobuf:"bytes,9,opt,name=scope,proto3" json:"scope,omitempty"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -8566,6 +8583,13 @@ func (x *CreateBaseTemplateRequestData) GetDescription() string {
 func (x *CreateBaseTemplateRequestData) GetExampleVariables() string {
 	if x != nil {
 		return x.ExampleVariables
+	}
+	return ""
+}
+
+func (x *CreateBaseTemplateRequestData) GetScope() string {
+	if x != nil {
+		return x.Scope
 	}
 	return ""
 }
@@ -8669,6 +8693,7 @@ type UpdateBaseTemplateRequestData struct {
 	VariableGroupSchema []*TemplateVariableGroupEntity `protobuf:"bytes,7,rep,name=variable_group_schema,json=variableGroupSchema,proto3" json:"variable_group_schema,omitempty"`
 	Description         string                         `protobuf:"bytes,8,opt,name=description,proto3" json:"description,omitempty"`
 	ExampleVariables    string                         `protobuf:"bytes,9,opt,name=example_variables,json=exampleVariables,proto3" json:"example_variables,omitempty"`
+	Scope               string                         `protobuf:"bytes,10,opt,name=scope,proto3" json:"scope,omitempty"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -8748,6 +8773,13 @@ func (x *UpdateBaseTemplateRequestData) GetDescription() string {
 func (x *UpdateBaseTemplateRequestData) GetExampleVariables() string {
 	if x != nil {
 		return x.ExampleVariables
+	}
+	return ""
+}
+
+func (x *UpdateBaseTemplateRequestData) GetScope() string {
+	if x != nil {
+		return x.Scope
 	}
 	return ""
 }
@@ -9006,6 +9038,7 @@ type BaseTemplatePageRequestFilter struct {
 	Type          string                 `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
 	Category      string                 `protobuf:"bytes,3,opt,name=category,proto3" json:"category,omitempty"`
 	Status        string                 `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
+	Scope         string                 `protobuf:"bytes,5,opt,name=scope,proto3" json:"scope,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -9064,6 +9097,13 @@ func (x *BaseTemplatePageRequestFilter) GetCategory() string {
 func (x *BaseTemplatePageRequestFilter) GetStatus() string {
 	if x != nil {
 		return x.Status
+	}
+	return ""
+}
+
+func (x *BaseTemplatePageRequestFilter) GetScope() string {
+	if x != nil {
+		return x.Scope
 	}
 	return ""
 }
@@ -10281,7 +10321,7 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x05value\x18\x02 \x01(\v2\x1d.admin.TemplateVariableEntityR\x05value:\x028\x01\"n\n" +
 	"\x1bTemplateVariableGroupEntity\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12;\n" +
-	"\tvariables\x18\x02 \x03(\v2\x1d.admin.TemplateVariableEntityR\tvariables\"\x99\x03\n" +
+	"\tvariables\x18\x02 \x03(\v2\x1d.admin.TemplateVariableEntityR\tvariables\"\xaf\x03\n" +
 	"\x12BaseTemplateEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
@@ -10297,7 +10337,8 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	" \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
 	"updated_at\x18\v \x01(\tR\tupdatedAt\x12+\n" +
-	"\x11example_variables\x18\f \x01(\tR\x10exampleVariables\"\xfe\x01\n" +
+	"\x11example_variables\x18\f \x01(\tR\x10exampleVariables\x12\x14\n" +
+	"\x05scope\x18\r \x01(\tR\x05scope\"\x94\x02\n" +
 	"\x16BaseTemplatePageEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
@@ -10309,9 +10350,11 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\b \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\t \x01(\tR\tupdatedAt\"U\n" +
+	"updated_at\x18\t \x01(\tR\tupdatedAt\x12\x14\n" +
+	"\x05scope\x18\n" +
+	" \x01(\tR\x05scope\"U\n" +
 	"\x19CreateBaseTemplateRequest\x128\n" +
-	"\x04data\x18\x01 \x01(\v2$.admin.CreateBaseTemplateRequestDataR\x04data\"\xbe\x02\n" +
+	"\x04data\x18\x01 \x01(\v2$.admin.CreateBaseTemplateRequestDataR\x04data\"\xd4\x02\n" +
 	"\x1dCreateBaseTemplateRequestData\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
 	"\x04type\x18\x02 \x01(\tR\x04type\x12\x1a\n" +
@@ -10320,11 +10363,12 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\acontent\x18\x05 \x01(\tR\acontent\x12V\n" +
 	"\x15variable_group_schema\x18\x06 \x03(\v2\".admin.TemplateVariableGroupEntityR\x13variableGroupSchema\x12 \n" +
 	"\vdescription\x18\a \x01(\tR\vdescription\x12+\n" +
-	"\x11example_variables\x18\b \x01(\tR\x10exampleVariables\"K\n" +
+	"\x11example_variables\x18\b \x01(\tR\x10exampleVariables\x12\x14\n" +
+	"\x05scope\x18\t \x01(\tR\x05scope\"K\n" +
 	"\x1aCreateBaseTemplateResponse\x12-\n" +
 	"\x04data\x18\x01 \x01(\v2\x19.admin.BaseTemplateEntityR\x04data\"U\n" +
 	"\x19UpdateBaseTemplateRequest\x128\n" +
-	"\x04data\x18\x01 \x01(\v2$.admin.UpdateBaseTemplateRequestDataR\x04data\"\xa0\x02\n" +
+	"\x04data\x18\x01 \x01(\v2$.admin.UpdateBaseTemplateRequestDataR\x04data\"\xb6\x02\n" +
 	"\x1dUpdateBaseTemplateRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1a\n" +
@@ -10332,7 +10376,9 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\acontent\x18\x06 \x01(\tR\acontent\x12V\n" +
 	"\x15variable_group_schema\x18\a \x03(\v2\".admin.TemplateVariableGroupEntityR\x13variableGroupSchema\x12 \n" +
 	"\vdescription\x18\b \x01(\tR\vdescription\x12+\n" +
-	"\x11example_variables\x18\t \x01(\tR\x10exampleVariables\"K\n" +
+	"\x11example_variables\x18\t \x01(\tR\x10exampleVariables\x12\x14\n" +
+	"\x05scope\x18\n" +
+	" \x01(\tR\x05scope\"K\n" +
 	"\x1aUpdateBaseTemplateResponse\x12-\n" +
 	"\x04data\x18\x01 \x01(\v2\x19.admin.BaseTemplateEntityR\x04data\">\n" +
 	"\x16GetBaseTemplateRequest\x12$\n" +
@@ -10345,12 +10391,13 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x04page\x18\x01 \x01(\x03R\x04page\x12\x14\n" +
 	"\x05limit\x18\x02 \x01(\x03R\x05limit\x12<\n" +
 	"\x06filter\x18\x03 \x01(\v2$.admin.BaseTemplatePageRequestFilterR\x06filter\x12<\n" +
-	"\x06sorter\x18\x04 \x01(\v2$.admin.BaseTemplatePageRequestSorterR\x06sorter\"\x81\x01\n" +
+	"\x06sorter\x18\x04 \x01(\v2$.admin.BaseTemplatePageRequestSorterR\x06sorter\"\x97\x01\n" +
 	"\x1dBaseTemplatePageRequestFilter\x12\x18\n" +
 	"\akeyword\x18\x01 \x01(\tR\akeyword\x12\x12\n" +
 	"\x04type\x18\x02 \x01(\tR\x04type\x12\x1a\n" +
 	"\bcategory\x18\x03 \x01(\tR\bcategory\x12\x16\n" +
-	"\x06status\x18\x04 \x01(\tR\x06status\"K\n" +
+	"\x06status\x18\x04 \x01(\tR\x06status\x12\x14\n" +
+	"\x05scope\x18\x05 \x01(\tR\x05scope\"K\n" +
 	"\x1dBaseTemplatePageRequestSorter\x12\x16\n" +
 	"\x06column\x18\x01 \x01(\tR\x06column\x12\x12\n" +
 	"\x04sort\x18\x02 \x01(\tR\x04sort\"S\n" +

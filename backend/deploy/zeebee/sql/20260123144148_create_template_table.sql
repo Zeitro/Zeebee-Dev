@@ -55,3 +55,7 @@ ALTER TABLE "public"."base_templates"
 
 ALTER TABLE "public"."organization_templates"
     ADD COLUMN "example_variables" jsonb NOT NULL DEFAULT '{}';
+ALTER TABLE "public"."base_templates"
+    ADD COLUMN "scope" varchar(20) NOT NULL DEFAULT 'System';
+COMMENT
+ON COLUMN "public"."base_templates"."scope" IS 'System/Organization';

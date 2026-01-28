@@ -897,6 +897,7 @@ message BaseTemplateEntity {
   string created_at = 10;
   string updated_at = 11;
   string example_variables = 12;
+  string scope = 13; // System, Organization
 }
 
 // Base template page entity (for list display)
@@ -910,6 +911,7 @@ message BaseTemplatePageEntity {
   string description = 7;
   string created_at = 8;
   string updated_at = 9;
+  string scope = 10;
 }
 
 // Create ---- request
@@ -925,6 +927,7 @@ message CreateBaseTemplateRequestData {
   repeated TemplateVariableGroupEntity variable_group_schema = 6;
   string description = 7;
   string example_variables = 8;
+  string scope = 9;
 }
 // Create ---- response
 message CreateBaseTemplateResponse {
@@ -943,6 +946,7 @@ message UpdateBaseTemplateRequestData {
   repeated TemplateVariableGroupEntity variable_group_schema = 7;
   string description = 8;
   string example_variables = 9;
+  string scope = 10;
 }
 // Update ---- response
 message UpdateBaseTemplateResponse {
@@ -973,6 +977,7 @@ message BaseTemplatePageRequestFilter {
   string type = 2;
   string category = 3;
   string status = 4;
+  string scope = 5;
 }
 message BaseTemplatePageRequestSorter {
   string column = 1;
@@ -1029,7 +1034,6 @@ service BaseTemplate {
   rpc Page(BaseTemplatePageRequest) returns(BaseTemplatePageResponse);
   rpc SwitchStatus(SwitchBaseTemplateStatusRequest) returns(EmptyResponse);
   rpc Delete(DeleteBaseTemplateRequest) returns(EmptyResponse);
-  //  rpc ExistsByTag(ExistsByTagRequest) returns(ExistsByTagResponse);
   rpc Preview(BaseTemplatePreviewRequest) returns(BaseTemplatePreviewResponse);
 }
 // ========================== base template service end =================

@@ -12,6 +12,7 @@ type BaseTemplateCreateRequest struct {
 	VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema,optional" validate:"omitempty,dive"`
 	Description         string                         `json:"description,optional" validate:"max=255"`
 	ExampleVariables    string                         `json:"example_variables,omitempty,optional" validate:"omitempty,json"`
+	Scope               string                         `json:"scope" validate:"oneof=System Organization"`
 }
 
 type BaseTemplateDetailResponse struct {
@@ -53,4 +54,5 @@ type BaseTemplateUpdateRequest struct {
 	VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema,optional" validate:"omitempty,dive"`
 	Description         string                         `json:"description,optional" validate:"max=255"`
 	ExampleVariables    string                         `json:"example_variables,omitempty,optional" validate:"omitempty,json"`
+	Scope               string                         `json:"scope" validate:"oneof=System Organization"`
 }

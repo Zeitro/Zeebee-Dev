@@ -1996,7 +1996,6 @@ type BaseTemplateClient interface {
 	Page(ctx context.Context, in *BaseTemplatePageRequest, opts ...grpc.CallOption) (*BaseTemplatePageResponse, error)
 	SwitchStatus(ctx context.Context, in *SwitchBaseTemplateStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	Delete(ctx context.Context, in *DeleteBaseTemplateRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
-	//  rpc ExistsByTag(ExistsByTagRequest) returns(ExistsByTagResponse);
 	Preview(ctx context.Context, in *BaseTemplatePreviewRequest, opts ...grpc.CallOption) (*BaseTemplatePreviewResponse, error)
 }
 
@@ -2088,7 +2087,6 @@ type BaseTemplateServer interface {
 	Page(context.Context, *BaseTemplatePageRequest) (*BaseTemplatePageResponse, error)
 	SwitchStatus(context.Context, *SwitchBaseTemplateStatusRequest) (*EmptyResponse, error)
 	Delete(context.Context, *DeleteBaseTemplateRequest) (*EmptyResponse, error)
-	//  rpc ExistsByTag(ExistsByTagRequest) returns(ExistsByTagResponse);
 	Preview(context.Context, *BaseTemplatePreviewRequest) (*BaseTemplatePreviewResponse, error)
 	mustEmbedUnimplementedBaseTemplateServer()
 }

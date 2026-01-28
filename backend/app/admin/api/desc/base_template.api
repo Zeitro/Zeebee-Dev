@@ -38,6 +38,7 @@ type (
         Status string `json:"status"`
         Description string `json:"description"`
         ExampleVariables string `json:"example_variables,omitempty,optional"`
+        Scope string `json:"scope"`
         CreatedAt string `json:"created_at"`
         UpdatedAt string `json:"updated_at"`
     }
@@ -50,6 +51,7 @@ type (
         Purpose string `json:"purpose"`
         Status string `json:"status"`
         Description string `json:"description"`
+        Scope string `json:"scope"`
         CreatedAt string `json:"created_at"`
         UpdatedAt string `json:"updated_at"`
     }
@@ -62,6 +64,7 @@ type (
         Type string `json:"type,optional" validate:"omitempty,oneof=Borrower Lender"`
         Category string `json:"category,optional" validate:"omitempty,oneof=Email Contract"`
         Status string `json:"status,optional" validate:"omitempty,oneof=Active Disabled"`
+        Scope string `json:"scope,optional" validate:"omitempty,oneof=System Organization"`
     }
 
     BaseTemplatePageRequest {
@@ -87,6 +90,7 @@ type (
         VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema,optional" validate:"omitempty,dive"`
         Description string `json:"description,optional" validate:"max=255"`
         ExampleVariables string `json:"example_variables,omitempty,optional" validate:"omitempty,json"`
+        Scope string `json:"scope" validate:"oneof=System Organization"`
     }
 )
 
@@ -100,6 +104,7 @@ type (
         VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema,optional" validate:"omitempty,dive"`
         Description string `json:"description,optional" validate:"max=255"`
         ExampleVariables string `json:"example_variables,omitempty,optional" validate:"omitempty,json"`
+        Scope string `json:"scope" validate:"oneof=System Organization"`
     }
 )
 

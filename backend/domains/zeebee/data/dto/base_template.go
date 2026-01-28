@@ -11,10 +11,11 @@ type BaseTemplatePageRequestDto struct {
 
 // BaseTemplatePageFilter represents filter criteria for base template page queries
 type BaseTemplatePageFilter struct {
-	Keyword  string                     `json:"keyword"`
-	Type     constants.UserType         `json:"type"`
-	Category constants.TemplateCategory `json:"category"`
-	Status   constants.CommonStatus     `json:"status"`
+	Keyword  string                      `json:"keyword"`
+	Type     constants.UserType          `json:"type"`
+	Category constants.TemplateCategory  `json:"category"`
+	Status   constants.CommonStatus      `json:"status"`
+	Scope    constants.BaseTemplateScope `json:"scope"`
 }
 
 // BaseTemplateCreateDto represents the request for creating a base template
@@ -27,6 +28,7 @@ type BaseTemplateCreateDto struct {
 	VariableGroupSchema []*TemplateVariableGroupDto `json:"variable_group_schema"`
 	ExampleVariables    string                      `json:"example_variables"`
 	Description         string                      `json:"description"`
+	Scope               constants.BaseTemplateScope `json:"scope"`
 }
 
 // BaseTemplateUpdateDto represents the request for updating a base template
@@ -38,6 +40,7 @@ type BaseTemplateUpdateDto struct {
 	VariableGroupSchema []*TemplateVariableGroupDto `json:"variable_group_schema"`
 	Description         string                      `json:"description"`
 	ExampleVariables    string                      `json:"example_variables"`
+	Scope               constants.BaseTemplateScope `json:"scope"`
 }
 
 // TemplateVariableGroupDto represents a group of variables in DTO

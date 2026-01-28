@@ -727,7 +727,8 @@
                 "type",
                 "category",
                 "purpose",
-                "content"
+                "content",
+                "scope"
               ],
               "properties": {
                 "category": {
@@ -746,6 +747,9 @@
                   "type": "string"
                 },
                 "purpose": {
+                  "type": "string"
+                },
+                "scope": {
                   "type": "string"
                 },
                 "type": {
@@ -933,6 +937,9 @@
                   "type": "string"
                 },
                 "purpose": {
+                  "type": "string"
+                },
+                "scope": {
                   "type": "string"
                 },
                 "status": {
@@ -1136,6 +1143,9 @@
                     "keyword": {
                       "type": "string"
                     },
+                    "scope": {
+                      "type": "string"
+                    },
                     "status": {
                       "type": "string"
                     },
@@ -1186,6 +1196,7 @@
                       "purpose",
                       "status",
                       "description",
+                      "scope",
                       "created_at",
                       "updated_at"
                     ],
@@ -1206,6 +1217,9 @@
                         "type": "string"
                       },
                       "purpose": {
+                        "type": "string"
+                      },
+                      "scope": {
                         "type": "string"
                       },
                       "status": {
@@ -1492,6 +1506,9 @@
                 "purpose": {
                   "type": "string"
                 },
+                "scope": {
+                  "type": "string"
+                },
                 "status": {
                   "type": "string"
                 },
@@ -1687,7 +1704,8 @@
               "required": [
                 "name",
                 "category",
-                "content"
+                "content",
+                "scope"
               ],
               "properties": {
                 "category": {
@@ -1703,6 +1721,9 @@
                   "type": "string"
                 },
                 "name": {
+                  "type": "string"
+                },
+                "scope": {
                   "type": "string"
                 },
                 "variable_group_schema": {
@@ -1887,6 +1908,9 @@
                   "type": "string"
                 },
                 "purpose": {
+                  "type": "string"
+                },
+                "scope": {
                   "type": "string"
                 },
                 "status": {
@@ -7350,7 +7374,7 @@
       }
     }
   },
-  "x-date": "2026-01-27 15:17:56",
+  "x-date": "2026-01-28 11:00:23",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
