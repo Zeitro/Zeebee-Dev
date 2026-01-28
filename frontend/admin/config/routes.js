@@ -9,6 +9,11 @@ export const navRouter = [
 		title: 'Lenders',
 		icon: 'business',
 	},
+	{
+		path: '/editorTemplate',
+		title: 'Template',
+		icon: 'template',
+	},
 ];
 
 export const noTokenRouter = [
