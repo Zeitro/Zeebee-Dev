@@ -15,7 +15,6 @@ type TemplateVariableBo struct {
 	Source     string                           `json:"source"` // Fixed/Dynamic
 	FixedValue string                           `json:"fixed_value"`
 	Format     constants.TemplateVariableFormat `json:"format,omitempty"`
-	Scope      constants.BaseTemplateScope      `json:"scope"`
 	Properties map[string]*TemplateVariableBo   `json:"properties,omitempty"` // for object type
 	Items      []*TemplateVariableBo            `json:"items,omitempty"`      // for array type
 }
@@ -28,18 +27,19 @@ type TemplateVariableGroupBo struct {
 
 // BaseTemplateBo represents a base template in the system
 type BaseTemplateBo struct {
-	Id                  int64                      `json:"id"`
-	Name                string                     `json:"name"`
-	Type                constants.UserType         `json:"type"`
-	Category            constants.TemplateCategory `json:"category"`
-	Purpose             string                     `json:"purpose"`
-	Content             string                     `json:"content"`
-	VariableGroupSchema []*TemplateVariableGroupBo `json:"variable_group_schema"`
-	Status              constants.CommonStatus     `json:"status"`
-	Description         string                     `json:"description"`
-	ExampleVariables    string                     `json:"example_variables"`
-	CreatedAt           time.Time                  `json:"created_at"`
-	UpdatedAt           time.Time                  `json:"updated_at"`
+	Id                  int64                       `json:"id"`
+	Name                string                      `json:"name"`
+	Type                constants.UserType          `json:"type"`
+	Category            constants.TemplateCategory  `json:"category"`
+	Purpose             string                      `json:"purpose"`
+	Content             string                      `json:"content"`
+	VariableGroupSchema []*TemplateVariableGroupBo  `json:"variable_group_schema"`
+	Status              constants.CommonStatus      `json:"status"`
+	Scope               constants.BaseTemplateScope `json:"scope"`
+	Description         string                      `json:"description"`
+	ExampleVariables    string                      `json:"example_variables"`
+	CreatedAt           time.Time                   `json:"created_at"`
+	UpdatedAt           time.Time                   `json:"updated_at"`
 }
 
 // BaseTemplatePageBo represents a base template in page list

@@ -244,6 +244,14 @@ func (repo *OrganizationRepo) GetActiveIdsWithTx(ctx context.Context, tx *gorm.D
 	return result, errorx.WithStack(err)
 }
 
+func (repo *OrganizationRepo) GetActiveOrganizationsWithTx(ctx context.Context, tx *gorm.DB, organizationType constants.UserType) (results []*model.Organization, err error) {
+	err = tx.WithContext(ctx).Model(&model.Organization{}).
+		Where("type = ? and status = ?", organizationType, constants.OrganizationStatusActive).
+		Find(&results).
+		Error
+	return results, errorx.WithStack(err)
+}
+
 // GetIdsByOwnerIdWithTx
 func (repo *OrganizationRepo) GetIdsByOwnerIdWithTx(ctx context.Context, tx *gorm.DB, ownerId int64, organizationType constants.UserType) (result []int64, err error) {
 	err = tx.WithContext(ctx).Model(&model.Organization{}).

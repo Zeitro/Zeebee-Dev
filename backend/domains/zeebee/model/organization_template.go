@@ -19,6 +19,7 @@ type OrganizationTemplate struct {
 
 	// Relationships
 	BaseTemplate *BaseTemplate `json:"base_template,omitempty" gorm:"foreignKey:BaseTemplateId;references:Id"`
+	Organization *Organization `json:"organization,omitempty" gorm:"foreignKey:OrganizationId;references:Id"`
 }
 
 // TableName specifies the table name for OrganizationTemplate
@@ -29,4 +30,5 @@ func (OrganizationTemplate) TableName() string {
 // RemoveRelationships removes relationship data to avoid circular references
 func (ot *OrganizationTemplate) RemoveRelationships() {
 	ot.BaseTemplate = nil
+	ot.Organization = nil
 }

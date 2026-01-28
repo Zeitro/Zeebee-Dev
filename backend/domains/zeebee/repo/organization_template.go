@@ -46,7 +46,17 @@ func (repo *OrganizationTemplateRepo) CascadeDelete(ctx context.Context, tx *gor
 func (repo *OrganizationTemplateRepo) Detail(ctx context.Context, id int64, withPreload bool) (result *model.OrganizationTemplate, err error) {
 	query := repo.Client(ctx).Where("id = ?", id)
 	if withPreload {
-		query = query.Preload("BaseTemplate")
+		query = query.Preload("BaseTemplate").Preload("Organization")
+	}
+	err = query.First(&result).Error
+	return result, errorx.WithStack(err)
+}
+
+// DetailByPurpose retrieves an organization template by its purpose and organization ID.
+func (repo *OrganizationTemplateRepo) DetailByPurpose(ctx context.Context, organizationId int64, purpose string, withPreload bool) (result *model.OrganizationTemplate, err error) {
+	query := repo.Client(ctx).Where("organization_id = ?", organizationId).Where("purpose = ?", purpose)
+	if withPreload {
+		query = query.Preload("BaseTemplate").Preload("Organization")
 	}
 	err = query.First(&result).Error
 	return result, errorx.WithStack(err)

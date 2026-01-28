@@ -244,7 +244,7 @@ func (l *BaseTemplateLogic) ExistsByPurpose(ctx context.Context, purpose string,
 }
 
 // Preview retrieves a preview of a base template
-func (l *BaseTemplateLogic) Preview(ctx context.Context, req dto.BaseTemplatePreviewDto) (result string, err error) {
+func (l *BaseTemplateLogic) Preview(_ context.Context, req dto.BaseTemplatePreviewDto) (result string, err error) {
 	tpl, err := template.New(req.Name).Parse(req.Content)
 	if err != nil {
 		return "", errorx.Wrap(err, "Failed To Parse Template")

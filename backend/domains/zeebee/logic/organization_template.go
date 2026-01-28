@@ -1,7 +1,9 @@
 package logic
 
 import (
+	"bytes"
 	"context"
+	"text/template"
 
 	"gorm.io/gorm"
 
@@ -30,11 +32,15 @@ func NewOrganizationTemplateLogic(repos *repo.AllRepos) *OrganizationTemplateLog
 // Detail retrieves detailed information about an organization template by its ID.
 // It fetches the template from the repository and converts it to a business object.
 func (l *OrganizationTemplateLogic) Detail(ctx context.Context, id int64) (result *bo.OrganizationTemplateBo, err error) {
-	template, err := l.repos.OrganizationTemplateRepo.Detail(ctx, id, true)
+	organizationTemplate, err := l.repos.OrganizationTemplateRepo.Detail(ctx, id, true)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	result, err = copierx.Trans[model.OrganizationTemplate, bo.OrganizationTemplateBo](template)
+	organizationTemplate, err = l.renderOrganizationSystemInfo(organizationTemplate)
+	if err != nil {
+		return nil, err
+	}
+	result, err = copierx.Trans[model.OrganizationTemplate, bo.OrganizationTemplateBo](organizationTemplate)
 	if err != nil {
 		return nil, err
 	}
@@ -43,14 +49,17 @@ func (l *OrganizationTemplateLogic) Detail(ctx context.Context, id int64) (resul
 
 // DetailByPurpose retrieves an organization template by its purpose and organization ID.
 func (l *OrganizationTemplateLogic) DetailByPurpose(ctx context.Context, organizationId int64, purpose string) (result *bo.OrganizationTemplateBo, err error) {
-	template, err := l.repos.OrganizationTemplateRepo.FindOneByColumns(ctx, map[string]interface{}{
-		"organization_id": organizationId,
-		"purpose":         purpose,
-	})
+	organizationTemplate, err := l.repos.OrganizationTemplateRepo.DetailByPurpose(ctx, organizationId, purpose, true)
 	if err != nil {
-		return nil, errorx.WithStack(err)
+		return nil, err
 	}
-	result, err = copierx.Trans[model.OrganizationTemplate, bo.OrganizationTemplateBo](template)
+
+	organizationTemplate, err = l.renderOrganizationSystemInfo(organizationTemplate)
+	if err != nil {
+		return nil, err
+	}
+
+	result, err = copierx.Trans[model.OrganizationTemplate, bo.OrganizationTemplateBo](organizationTemplate)
 	if err != nil {
 		return nil, err
 	}
@@ -219,4 +228,32 @@ func (l *OrganizationTemplateLogic) SyncByOrganizationIdWithTx(ctx context.Conte
 
 	// Batch create all organization templates within the transaction
 	return l.BatchCreateWithTx(ctx, tx, templates, true)
+}
+
+func (l *OrganizationTemplateLogic) renderOrganizationSystemInfo(organizationTemplate *model.OrganizationTemplate) (result *model.OrganizationTemplate, err error) {
+	if organizationTemplate == nil {
+		return nil, errorx.New("Organization Template Not Found")
+	}
+	organization := organizationTemplate.Organization
+	if organization != nil {
+		tpl, err := template.New(organizationTemplate.Name).
+			Delims("[[", "]]").
+			Parse(organizationTemplate.Content)
+		if err != nil {
+			return nil, errorx.Wrap(err, "Failed To Parse Template")
+		}
+		renderData := map[string]interface{}{
+			"system": map[string]interface{}{
+				"organization": organization,
+			},
+		}
+		var buf bytes.Buffer
+		err = tpl.Execute(&buf, renderData)
+		if err != nil {
+			return nil, errorx.Wrap(err, "Failed To Render Template")
+		}
+		organizationTemplate.Content = buf.String()
+	}
+
+	return organizationTemplate, nil
 }
