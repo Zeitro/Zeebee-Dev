@@ -88,6 +88,18 @@ func (l *BaseTemplateLogic) Detail(ctx context.Context, id int64) (result *bo.Ba
 	return result, nil
 }
 
+// GetContentByPurpose retrieves base template's content by purpose and type
+func (l *BaseTemplateLogic) GetContentByPurpose(ctx context.Context, purpose string, tplType constants.UserType) (content string, err error) {
+	template, err := l.repos.BaseTemplateRepo.FindOneByColumns(ctx, map[string]interface{}{
+		"purpose": purpose,
+		"type":    tplType,
+	})
+	if err != nil {
+		return content, err
+	}
+	return template.Content, nil
+}
+
 // Update updates an existing base template
 func (l *BaseTemplateLogic) Update(ctx context.Context, req dto.BaseTemplateUpdateDto) (result *bo.BaseTemplateBo, err error) {
 	// Get existing template

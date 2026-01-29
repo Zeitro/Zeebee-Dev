@@ -103,6 +103,7 @@ func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalReque
 		DeepCopy:      true,
 		CaseSensitive: true,
 	})
+	result.RequestId = requestId
 	responseData.Primary.RequestId = requestId
 	if result.IsApproved {
 		responseData.Primary.TotalAmount = mathutil.RoundToFloat(responseData.Primary.TotalAmount, 0)
@@ -124,7 +125,7 @@ func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalReque
 	// save original data and result to redis
 	cacheData := types.PreApproveLoanCacheData{
 		RequestData: types.LoanPreApprovalRequest{},
-		ResultData:  &types.LoanPreApprovalResult{},
+		ResultData:  types.LoanPreApprovalResult{},
 	}
 	_ = copier.CopyWithOption(&cacheData.RequestData, in.Data, copier.Option{
 		DeepCopy:      true,
@@ -193,9 +194,9 @@ func sendPreApprovalNotification(ctx context.Context, repo *repo.OrganizationRep
 	if err != nil {
 		return errorx.WithStack(err)
 	}
-	if cacheData.ResultData == nil {
-		cacheData.ResultData = &types.LoanPreApprovalResult{}
-	}
+	// if cacheData.ResultData == nil {
+	// 	cacheData.ResultData = types.LoanPreApprovalResult{}
+	// }
 	cacheData.ResultData.TotalAmount = mathutil.RoundToFloat(cacheData.ResultData.TotalAmount, 0)
 	cacheData.ResultData.MonthlyPayment = mathutil.RoundToFloat(cacheData.ResultData.MonthlyPayment, 0)
 	cacheData.ResultData.InitialAmount = mathutil.RoundToFloat(cacheData.ResultData.InitialAmount, 0)

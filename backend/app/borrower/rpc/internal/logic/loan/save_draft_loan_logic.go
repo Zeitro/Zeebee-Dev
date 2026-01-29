@@ -262,6 +262,9 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 		_ = copier.CopyWithOption(loan, oldLoan, copier.Option{
 			CaseSensitive: true,
 			DeepCopy:      true,
+			Converters: []copier.TypeConverter{
+				copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
+			},
 		})
 		loan.RemoveRelationships()
 	}

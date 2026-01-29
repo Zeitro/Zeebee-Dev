@@ -19,6 +19,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
 	email2 "zeebee-backend/common/email"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/stringx"
@@ -176,8 +177,8 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int6
 	}
 	preApproveRequest := cacheData.RequestData
 	calcResult := cacheData.ResultData
-	if calcResult.LenderCompanyId != organizationId {
-		calcResult = nil
+	if calcResult.LenderOrganizationId != organizationId {
+		calcResult = types.LoanPreApprovalResult{}
 	}
 
 	// get lender company
@@ -232,6 +233,10 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int6
 		return err
 	}
 
+	loanPreapprovalInfo := &borrower.LoanPreapproveInfo{}
+	loanPreapprovalInfo.Input, _ = copierx.Trans[types.LoanPreApprovalRequest, borrower.LoanPreApprovalRequestData](&preApproveRequest)
+	loanPreapprovalInfo.Result, _ = copierx.Trans[types.LoanPreApprovalResult, borrower.LoanPreapproveResult](&calcResult)
+
 	// create draft loan
 	saveDraftLogic := loanlogic.NewSaveDraftLoanLogic(ctx, l.svcCtx)
 	// build LoanApplyRequest
@@ -266,11 +271,12 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int6
 					BorrowerApplicantId: borrowerApplicant.Id,
 				},
 			},
-			LoanTerm:       preApproveRequest.Loan.LoanTerm,
-			EstCreditScore: preApproveRequest.Borrower.FicoScore,
+			LoanTerm:           preApproveRequest.Loan.LoanTerm,
+			EstCreditScore:     preApproveRequest.Borrower.FicoScore,
+			LoanPreapproveInfo: loanPreapprovalInfo,
 		},
 	}
-	if calcResult != nil {
+	if len(calcResult.RequestId) > 0 || calcResult.TotalAmount > 0 {
 		loanApplyRequest.Data.ReservesAmount = calcResult.InterestReservedAmount
 		loanApplyRequest.Data.TotalAmount = calcResult.TotalAmount
 		loanApplyRequest.Data.InitialAmount = calcResult.InitialAmount
