@@ -1,9 +1,19 @@
+'use client';
 import { InputNumAmount, InputPhone } from '@repo/shared-methods';
 import { emailRegex, phoneRegex, validateRule } from '@repo/shared-methods/utils';
 import { DatePicker, Form, Input, Select } from 'antd';
 import _ from 'lodash';
 
-export const CustomFormItem = ({
+/**
+ *  获取输入框/选择框/日期选择框/金额输入框/手机输入框/email输入/动态选择(可自定义/系统指定值)
+ * @param {*} item
+ * @param {*} isHaveFormItem 是否有Form.Item包裹
+ * @param {*} formListName 表单名称(当用于Form.List时，需要传入)
+ * @param {*} formListRestField 当用于Form.List时，需要传入
+ * @param {*} allFormListName 当用于多层嵌套Form.List时,动态选择组件获取source值时需要传入完整的表单名称,此时formListName传入的不是完整的表单名
+ * @returns
+ */
+export const AssemblyFormItem = ({
 	item,
 	isHaveFormItem = true,
 	formListName = [],
@@ -84,6 +94,7 @@ export const CustomFormItem = ({
 		if (item.source === 'Template') {
 			return getCurrentElement();
 		}
+		const names = allFormListName?.length ? allFormListName : formListName;
 		return (
 			<>
 				<Form.Item
@@ -108,14 +119,14 @@ export const CustomFormItem = ({
 				</Form.Item>
 				<Form.Item
 					shouldUpdate={(prevValues, curValues) => {
-						const prevSource = _.get(prevValues, [...allFormListName, 'source']);
-						const curSource = _.get(curValues, [...allFormListName, 'source']);
+						const prevSource = _.get(prevValues, [...names, 'source']);
+						const curSource = _.get(curValues, [...names, 'source']);
 						return prevSource !== curSource;
 					}}
 					noStyle
 				>
 					{({ getFieldValue }) => {
-						const currentSource = getFieldValue([...allFormListName, 'source']);
+						const currentSource = getFieldValue([...names, 'source']);
 						return (
 							currentSource === 'Fixed' &&
 							getCurrentElement({ noStyle: false, label: null })

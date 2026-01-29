@@ -2,9 +2,8 @@
 import { Button, Form, message, Spin } from 'antd';
 import { useEffect, useState } from 'react';
 import _ from 'lodash';
-import { FieldTips } from '@repo/shared-methods';
+import { FieldTips, AssemblyFormItem } from '@repo/shared-methods';
 import { createRequest } from '@repo/shared-methods/utils';
-import { CustomFormItem } from './components/CustomFormItem';
 const PreApprovedLetter = () => {
 	const { request } = createRequest();
 	const [form] = Form.useForm();
@@ -21,10 +20,7 @@ const PreApprovedLetter = () => {
 			const doc = new window.DOMParser().parseFromString(html, 'text/html');
 			const headNodes = doc.head ? Array.from(doc.head.children) : [];
 			headNodes.forEach((node) => {
-				if (
-					['LINK', 'STYLE', 'META', 'TITLE'].includes(node.tagName) ||
-					node.tagName.startsWith('FONT')
-				) {
+				if (['LINK', 'STYLE'].includes(node.tagName) || node.tagName.startsWith('FONT')) {
 					const clone = node.cloneNode(true);
 					clone.setAttribute('data-template-preview', '1');
 					document.head.appendChild(clone);
@@ -196,18 +192,14 @@ const PreApprovedLetter = () => {
 														) => {
 															const variableItem =
 																item?.variables?.[i];
-
 															return (
-																<CustomFormItem
+																<AssemblyFormItem
 																	key={variableItemKey}
 																	item={variableItem}
 																	formListRestField={
 																		variableItemRestField
 																	}
 																	formListName={[
-																		// 'variable_group_schema',
-																		// name,
-																		// 'variables',
 																		variableItemName,
 																	]}
 																	allFormListName={[

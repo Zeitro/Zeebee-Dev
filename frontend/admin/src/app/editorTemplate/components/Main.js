@@ -85,6 +85,7 @@ const MainDrawer = ({ rowData, open, setOpen, successCallback }) => {
 			});
 			setConfirmLoading(false);
 			successCallback?.();
+			form.resetFields();
 			setOpen(false);
 		} catch {
 			setConfirmLoading(false);
@@ -117,7 +118,10 @@ const MainDrawer = ({ rowData, open, setOpen, successCallback }) => {
 			title={`${rowData?.id ? 'Edit' : 'Add'} editor template`}
 			placement="right"
 			size="large"
-			onClose={() => setOpen(false)}
+			onClose={() => {
+				setOpen(false);
+				form.resetFields();
+			}}
 			open={open}
 			extra={
 				<Button type="primary" onClick={handleSave} loading={confirmLoading}>
@@ -174,20 +178,12 @@ const MainDrawer = ({ rowData, open, setOpen, successCallback }) => {
 						</Col>
 
 						<Col md={12} xs={24}>
-							<Form.Item
-								label="Variable"
-								name="variable_group_schema"
-								rules={[{ required: true }]}
-							>
+							<Form.Item label="Variable" name="variable_group_schema">
 								<VariableBtn />
 							</Form.Item>
 						</Col>
 						<Col md={24} xs={24}>
-							<Form.Item
-								label="Description"
-								name="description"
-								rules={[{ required: true }]}
-							>
+							<Form.Item label="Description" name="description">
 								<TextArea
 									placeholder="Description"
 									allowClear

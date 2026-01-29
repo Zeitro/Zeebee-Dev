@@ -279,7 +279,10 @@ const EditorTemplate = () => {
 			<MainDrawer
 				rowData={rowData}
 				open={open}
-				setOpen={setOpen}
+				setOpen={(value) => {
+					setOpen(value);
+					setRowData({});
+				}}
 				successCallback={async () => {
 					if (rowData?.id) {
 						tableFilterRef?.current?.getList?.();

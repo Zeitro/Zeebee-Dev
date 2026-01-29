@@ -32,6 +32,7 @@ export * from './components/InfiniteList/index';
 export * from './components/GeoLocationInput/index';
 export * from './components/CommonSidebar/index';
 export * from './components/ConfirmPassword';
+export * from './components/AssemblyFormItem';
 
 // 创建ZeeBee Loan表单页面，Borrower和Lender端共用
 export * from './components/CreateZBLoan/ApplicantInfo';
