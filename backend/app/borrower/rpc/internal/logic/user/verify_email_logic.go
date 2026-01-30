@@ -3,6 +3,7 @@ package userlogic
 import (
 	"bytes"
 	"context"
+	"errors"
 	"time"
 
 	"github.com/jinzhu/copier"
@@ -15,6 +16,7 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/templater"
+	"zeebee-backend/domains/zeebee/templater/loader"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -132,6 +134,10 @@ func (l *VerifyEmailLogic) handlePreapprovalLoan(ctx context.Context, user *mode
 		FileType:         templater.FileTypePDF,
 	}
 	pdfContent, pdfContentType, err := global.Templater.Export(ctx, pdfTemplateConfig, renderData)
+	if errors.Is(err, loader.ErrTemplateNotActive) {
+		l.WithContext(ctx).Info("Pdf Template Is Not Active")
+		return nil
+	}
 	if err != nil {
 		return errorx.WithStack(err)
 	}
@@ -152,6 +158,10 @@ func (l *VerifyEmailLogic) handlePreapprovalLoan(ctx context.Context, user *mode
 		FileType:         templater.FileTypeHTML,
 	}
 	emailContent, _, err := global.Templater.Export(ctx, emailTemplateConfig, renderData)
+	if errors.Is(err, loader.ErrTemplateNotActive) {
+		l.WithContext(ctx).Info("Email Template Is Not Active")
+		return nil
+	}
 	if err != nil {
 		return errorx.WithStack(err)
 	}
