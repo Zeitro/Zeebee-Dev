@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 
+	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 )
 
@@ -52,7 +53,7 @@ func (bt *BaseTemplate) RemoveRelationships() {
 // TemplateVariable represents a variable definition in the template schema
 type TemplateVariable struct {
 	Label      string                           `json:"label"`
-	Type       string                           `json:"type"` // string,number,boolean,array,object
+	Type       constants.TemplateVariableType   `json:"type"` // String,Array,Object
 	Key        string                           `json:"key"`
 	IsEditable bool                             `json:"is_editable"`
 	Source     constants.TemplateVariableSource `json:"source"` // Fixed,Dynamic,Template
@@ -82,12 +83,13 @@ func (tv TemplateVariable) Value() (driver.Value, error) {
 
 // Validate checks if the TemplateVariable has valid configuration
 func (tv *TemplateVariable) Validate() error {
-	validTypes := map[string]bool{
-		"string": true, "number": true, "boolean": true,
-		"array": true, "object": true,
+	validTypes := map[constants.TemplateVariableType]bool{
+		constants.TemplateVariableTypeString: true,
+		constants.TemplateVariableTypeArray:  true,
+		constants.TemplateVariableTypeObject: true,
 	}
 	if !validTypes[tv.Type] {
-		return errors.New("invalid variable type: " + tv.Type)
+		return errorx.Errorf("invalid variable type: %v", tv.Type)
 	}
 
 	// Validate nested structures based on type

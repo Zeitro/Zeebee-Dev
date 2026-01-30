@@ -297,6 +297,10 @@ service admin-api {
 	@handler BaseTemplateCreate
 	post /base_template (BaseTemplateCreateRequest) returns (BaseTemplateDetailResponse)
 
+	@doc "Reset"
+	@handler BaseTemplateReset
+	post /base_template/:id/reset (PathIdRequest) returns (BaseTemplateDetailResponse)
+
 	@doc "Update"
 	@handler BaseTemplateUpdate
 	put /base_template/:id (BaseTemplateUpdateRequest) returns (BaseTemplateDetailResponse)
@@ -320,10 +324,6 @@ service admin-api {
 	@doc "Preview"
 	@handler BaseTemplatePreview
 	post /base_template/preview (BaseTemplatePreviewRequest) returns (BaseTemplatePreviewResponse)
-
-	@doc "Reset"
-	@handler BaseTemplateReset
-	post /base_template/:id/reset (PathIdRequest) returns (EmptyResponse)
 }
 
 	// ============== base template end ============

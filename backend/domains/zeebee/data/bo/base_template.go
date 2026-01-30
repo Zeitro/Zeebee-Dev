@@ -9,14 +9,14 @@ import (
 // TemplateVariableBo represents a variable definition in the template schema
 type TemplateVariableBo struct {
 	Label      string                           `json:"label"`
-	Type       string                           `json:"type"` // string,number,boolean,array,object
+	Type       constants.TemplateVariableType   `json:"type"` // String,Array,Object
 	Key        string                           `json:"key"`
 	IsEditable bool                             `json:"is_editable"`
 	Source     string                           `json:"source"` // Fixed/Dynamic
 	FixedValue string                           `json:"fixed_value"`
 	Format     constants.TemplateVariableFormat `json:"format,omitempty"`
-	Properties map[string]*TemplateVariableBo   `json:"properties,omitempty"` // for object type
-	Items      []*TemplateVariableBo            `json:"items,omitempty"`      // for array type
+	Properties map[string]*TemplateVariableBo   `json:"properties,omitempty"` // for Object type
+	Items      []*TemplateVariableBo            `json:"items,omitempty"`      // for Array type
 }
 
 // TemplateVariableGroupBo represents a group of variables

@@ -5,6 +5,7 @@ import (
 	"context"
 	"text/template"
 
+	"github.com/duke-git/lancet/v2/slice"
 	"gorm.io/gorm"
 
 	"zeebee-backend/common/copierx"
@@ -153,7 +154,7 @@ func (l *OrganizationTemplateLogic) Reset(ctx context.Context, id int64, organiz
 	}
 	// Reset all template properties to match the base template
 	template.Content = baseTemplate.Content
-	template.VariableGroupSchema = baseTemplate.VariableGroupSchema
+	template.VariableGroupSchema = l.mergeTemplateVariableGroup(template.VariableGroupSchema, baseTemplate.VariableGroupSchema)
 	template.ExampleVariables = baseTemplate.ExampleVariables
 	template.Name = baseTemplate.Name
 	template.Purpose = baseTemplate.Purpose
@@ -198,7 +199,7 @@ func (l *OrganizationTemplateLogic) ResetByBaseTemplateId(ctx context.Context, b
 			organizationTemplate := organizationTemplate
 
 			organizationTemplate.Content = baseTemplate.Content
-			organizationTemplate.VariableGroupSchema = baseTemplate.VariableGroupSchema
+			organizationTemplate.VariableGroupSchema = l.mergeTemplateVariableGroup(organizationTemplate.VariableGroupSchema, baseTemplate.VariableGroupSchema)
 			organizationTemplate.ExampleVariables = baseTemplate.ExampleVariables
 			organizationTemplate.Name = baseTemplate.Name
 			organizationTemplate.Purpose = baseTemplate.Purpose
@@ -309,4 +310,91 @@ func (l *OrganizationTemplateLogic) renderOrganizationSystemInfo(organizationTem
 	}
 
 	return organizationTemplate, nil
+}
+
+// mergeTemplateVariables merges template variables from different sources
+func (l *OrganizationTemplateLogic) mergeTemplateVariableGroup(oldVariableGroup, newVariableGroup []*model.TemplateVariableGroup) (result []*model.TemplateVariableGroup) {
+	if len(oldVariableGroup) == 0 {
+		return newVariableGroup
+	}
+	result = make([]*model.TemplateVariableGroup, 0, len(newVariableGroup))
+	for _, newGroup := range newVariableGroup {
+		newGroup := newGroup
+
+		oldGroup, ok := slice.FindBy(oldVariableGroup, func(index int, item *model.TemplateVariableGroup) bool {
+			return newGroup.Name == item.Name
+		})
+		if !ok || oldGroup == nil || oldGroup.Variables == nil {
+			result = append(result, newGroup)
+			continue
+		}
+
+		mergedVariables := make([]*model.TemplateVariable, 0, len(newGroup.Variables))
+		for _, newVariable := range newGroup.Variables {
+			newVariable := newVariable
+			oldVar, ok := slice.FindBy(oldGroup.Variables, func(index int, item *model.TemplateVariable) bool {
+				return newVariable.Key == item.Key &&
+					newVariable.Type == item.Type &&
+					newVariable.Format == item.Format
+			})
+			if !ok || oldVar == nil {
+				mergedVariables = append(mergedVariables, newVariable)
+				continue
+			}
+			newVariable.FixedValue = oldVar.FixedValue
+			mergedVar := l.mergeVariable(newVariable, oldVar)
+			mergedVariables = append(mergedVariables, mergedVar)
+		}
+
+		mergedGroup := &model.TemplateVariableGroup{
+			Name:      newGroup.Name,
+			Variables: mergedVariables,
+		}
+		result = append(result, mergedGroup)
+	}
+
+	return result
+}
+
+func (l *OrganizationTemplateLogic) mergeVariable(newVar *model.TemplateVariable, oldVar *model.TemplateVariable) (result *model.TemplateVariable) {
+	if oldVar == nil || newVar == nil {
+		return newVar
+	}
+
+	result, _ = copierx.Trans[model.TemplateVariable, model.TemplateVariable](newVar)
+	if !newVar.IsEditable {
+		return result
+	}
+
+	if (newVar.Source == constants.TemplateVariableSourceTemplate && oldVar.Source != constants.TemplateVariableSourceTemplate) ||
+		(newVar.Source != constants.TemplateVariableSourceTemplate && oldVar.Source == constants.TemplateVariableSourceTemplate) {
+		return result
+	}
+	result.FixedValue = oldVar.FixedValue
+
+	if result.Type == constants.TemplateVariableTypeObject {
+		if oldVar.Properties == nil {
+			oldVar.Properties = make(map[string]*model.TemplateVariable)
+		}
+
+		for key := range result.Properties {
+			result.Properties[key] = l.mergeVariable(result.Properties[key], oldVar.Properties[key])
+		}
+	}
+
+	if result.Type == constants.TemplateVariableTypeArray {
+		for key := range result.Items {
+			subOldVar, ok := slice.FindBy(oldVar.Items, func(index int, item *model.TemplateVariable) bool {
+				return result.Items[key].Key == item.Key &&
+					result.Items[key].Type == item.Type &&
+					result.Items[key].Format == item.Format
+			})
+			if ok {
+				result.Items[key].FixedValue = subOldVar.FixedValue
+				result.Items[key] = l.mergeVariable(result.Items[key], subOldVar)
+			}
+		}
+	}
+
+	return result
 }

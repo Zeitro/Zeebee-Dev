@@ -52,7 +52,7 @@ type TemplateVariableGroupDto struct {
 // TemplateVariableDto represents a variable definition in DTO
 type TemplateVariableDto struct {
 	Label      string                           `json:"label"`
-	Type       string                           `json:"type"`
+	Type       constants.TemplateVariableType   `json:"type"`
 	Key        string                           `json:"key"`
 	IsEditable bool                             `json:"is_editable"`
 	Source     constants.TemplateVariableSource `json:"source"`

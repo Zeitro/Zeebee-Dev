@@ -47,6 +47,26 @@ func (s TemplateVariableSource) Validate() error {
 	return fmt.Errorf("Invalid Template Variable Source:%v", s)
 }
 
+type TemplateVariableType string
+
+var TemplateVariableTypeName = "template_variable_type"
+
+const (
+	TemplateVariableTypeString TemplateVariableType = "String"
+	TemplateVariableTypeArray  TemplateVariableType = "Array"
+	TemplateVariableTypeObject TemplateVariableType = "Object"
+)
+
+func (t TemplateVariableType) Validate() error {
+	switch t {
+	case TemplateVariableTypeString,
+		TemplateVariableTypeArray,
+		TemplateVariableTypeObject:
+		return nil
+	}
+	return fmt.Errorf("Invalid Template Variable Type:%v", t)
+}
+
 type TemplateVariableFormat string
 
 var TemplateVariableFormatName = "template_variable_format"
@@ -149,6 +169,21 @@ func init() {
 		{
 			Label: string(BaseTemplateScopeOrganization),
 			Value: string(BaseTemplateScopeOrganization),
+		},
+	})
+	// register template variable type
+	enums.Register(TemplateVariableTypeName, []enums.EnumOpt{
+		{
+			Label: string(TemplateVariableTypeString),
+			Value: string(TemplateVariableTypeString),
+		},
+		{
+			Label: string(TemplateVariableTypeArray),
+			Value: string(TemplateVariableTypeArray),
+		},
+		{
+			Label: string(TemplateVariableTypeObject),
+			Value: string(TemplateVariableTypeObject),
 		},
 	})
 }

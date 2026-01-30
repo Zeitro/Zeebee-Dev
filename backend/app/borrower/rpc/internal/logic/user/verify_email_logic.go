@@ -90,6 +90,10 @@ func (l *VerifyEmailLogic) handlePreapprovalLoan(ctx context.Context, user *mode
 		return nil
 	}
 
+	if lenderOrganization.Status != constants.OrganizationStatusActive {
+		return nil
+	}
+
 	draftLoan, _ := l.svcCtx.LoanRepo.FindOneByColumns(ctx, map[string]interface{}{
 		"lender_organization_id": lenderOrganizationId,
 		"stage":                  constants.LoanStageDraft,
