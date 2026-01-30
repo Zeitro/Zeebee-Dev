@@ -186,6 +186,37 @@ func (l *OrganizationTemplateLogic) Reset(ctx context.Context, id int64, organiz
 	return result, nil
 }
 
+// ResetByBaseTemplateId
+func (l *OrganizationTemplateLogic) ResetByBaseTemplateId(ctx context.Context, baseTemplateId int64) (err error) {
+	baseTemplate, err := l.repos.BaseTemplateRepo.Detail(ctx, baseTemplateId, true)
+	if err != nil {
+		return err
+	}
+	err = l.repos.OrganizationTemplateRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		var innerErr error
+		for _, organizationTemplate := range baseTemplate.OrganizationTemplates {
+			organizationTemplate := organizationTemplate
+
+			organizationTemplate.Content = baseTemplate.Content
+			organizationTemplate.VariableGroupSchema = baseTemplate.VariableGroupSchema
+			organizationTemplate.ExampleVariables = baseTemplate.ExampleVariables
+			organizationTemplate.Name = baseTemplate.Name
+			organizationTemplate.Purpose = baseTemplate.Purpose
+			organizationTemplate.Description = baseTemplate.Description
+			organizationTemplate.Category = baseTemplate.Category
+
+			_, innerErr = l.repos.OrganizationTemplateRepo.UpdateOneByIdWithTx(ctx, tx, organizationTemplate.Id, organizationTemplate)
+			if innerErr != nil {
+				return innerErr
+			}
+		}
+
+		return innerErr
+	})
+
+	return errorx.WithStack(err)
+}
+
 // BatchCreateWithTx creates multiple organization templates in a single database transaction.
 // It can optionally check for existing templates before creation to avoid duplicates.
 func (l *OrganizationTemplateLogic) BatchCreateWithTx(ctx context.Context, tx *gorm.DB, templates []*model.OrganizationTemplate, checkExist bool) (err error) {

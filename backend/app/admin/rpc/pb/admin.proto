@@ -1027,6 +1027,7 @@ message BaseTemplatePreviewResponseData {
   string content = 1;
 }
 
+
 service BaseTemplate {
   rpc Create(CreateBaseTemplateRequest) returns(CreateBaseTemplateResponse);
   rpc Update(UpdateBaseTemplateRequest) returns(UpdateBaseTemplateResponse);
@@ -1035,5 +1036,6 @@ service BaseTemplate {
   rpc SwitchStatus(SwitchBaseTemplateStatusRequest) returns(EmptyResponse);
   rpc Delete(DeleteBaseTemplateRequest) returns(EmptyResponse);
   rpc Preview(BaseTemplatePreviewRequest) returns(BaseTemplatePreviewResponse);
+  rpc Reset(IdRequest) returns(EmptyResponse);
 }
 // ========================== base template service end =================

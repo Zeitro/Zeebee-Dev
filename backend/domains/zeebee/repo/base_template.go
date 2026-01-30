@@ -35,8 +35,17 @@ func (repo *BaseTemplateRepo) Create(ctx context.Context, data *model.BaseTempla
 }
 
 // GetByID retrieves a base template by ID
-func (repo *BaseTemplateRepo) GetByID(ctx context.Context, id int64) (result *model.BaseTemplate, err error) {
-	return repo.BaseRepo.FindOneById(ctx, id)
+// func (repo *BaseTemplateRepo) GetByID(ctx context.Context, id int64) (result *model.BaseTemplate, err error) {
+// 	return repo.BaseRepo.FindOneById(ctx, id)
+// }
+
+func (repo *BaseTemplateRepo) Detail(ctx context.Context, id int64, withPreload bool) (result *model.BaseTemplate, err error) {
+	query := repo.Client(ctx).Where("id = ?", id)
+	if withPreload {
+		query = query.Preload("OrganizationTemplates")
+	}
+	err = query.First(&result).Error
+	return result, errorx.WithStack(err)
 }
 
 // Update updates an existing base template

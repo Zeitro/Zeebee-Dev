@@ -1984,6 +1984,7 @@ const (
 	BaseTemplate_SwitchStatus_FullMethodName = "/admin.BaseTemplate/SwitchStatus"
 	BaseTemplate_Delete_FullMethodName       = "/admin.BaseTemplate/Delete"
 	BaseTemplate_Preview_FullMethodName      = "/admin.BaseTemplate/Preview"
+	BaseTemplate_Reset_FullMethodName        = "/admin.BaseTemplate/Reset"
 )
 
 // BaseTemplateClient is the client API for BaseTemplate service.
@@ -1997,6 +1998,7 @@ type BaseTemplateClient interface {
 	SwitchStatus(ctx context.Context, in *SwitchBaseTemplateStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	Delete(ctx context.Context, in *DeleteBaseTemplateRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	Preview(ctx context.Context, in *BaseTemplatePreviewRequest, opts ...grpc.CallOption) (*BaseTemplatePreviewResponse, error)
+	Reset(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 }
 
 type baseTemplateClient struct {
@@ -2077,6 +2079,16 @@ func (c *baseTemplateClient) Preview(ctx context.Context, in *BaseTemplatePrevie
 	return out, nil
 }
 
+func (c *baseTemplateClient) Reset(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, BaseTemplate_Reset_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BaseTemplateServer is the server API for BaseTemplate service.
 // All implementations must embed UnimplementedBaseTemplateServer
 // for forward compatibility.
@@ -2088,6 +2100,7 @@ type BaseTemplateServer interface {
 	SwitchStatus(context.Context, *SwitchBaseTemplateStatusRequest) (*EmptyResponse, error)
 	Delete(context.Context, *DeleteBaseTemplateRequest) (*EmptyResponse, error)
 	Preview(context.Context, *BaseTemplatePreviewRequest) (*BaseTemplatePreviewResponse, error)
+	Reset(context.Context, *IdRequest) (*EmptyResponse, error)
 	mustEmbedUnimplementedBaseTemplateServer()
 }
 
@@ -2118,6 +2131,9 @@ func (UnimplementedBaseTemplateServer) Delete(context.Context, *DeleteBaseTempla
 }
 func (UnimplementedBaseTemplateServer) Preview(context.Context, *BaseTemplatePreviewRequest) (*BaseTemplatePreviewResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Preview not implemented")
+}
+func (UnimplementedBaseTemplateServer) Reset(context.Context, *IdRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Reset not implemented")
 }
 func (UnimplementedBaseTemplateServer) mustEmbedUnimplementedBaseTemplateServer() {}
 func (UnimplementedBaseTemplateServer) testEmbeddedByValue()                      {}
@@ -2266,6 +2282,24 @@ func _BaseTemplate_Preview_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BaseTemplate_Reset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BaseTemplateServer).Reset(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BaseTemplate_Reset_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BaseTemplateServer).Reset(ctx, req.(*IdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BaseTemplate_ServiceDesc is the grpc.ServiceDesc for BaseTemplate service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -2300,6 +2334,10 @@ var BaseTemplate_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Preview",
 			Handler:    _BaseTemplate_Preview_Handler,
+		},
+		{
+			MethodName: "Reset",
+			Handler:    _BaseTemplate_Reset_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

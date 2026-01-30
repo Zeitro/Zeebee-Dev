@@ -77,7 +77,7 @@ func (l *BaseTemplateLogic) Create(ctx context.Context, req dto.BaseTemplateCrea
 
 // Detail retrieves base template details by ID
 func (l *BaseTemplateLogic) Detail(ctx context.Context, id int64) (result *bo.BaseTemplateBo, err error) {
-	template, err := l.repos.BaseTemplateRepo.GetByID(ctx, id)
+	template, err := l.repos.BaseTemplateRepo.Detail(ctx, id, false)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
@@ -103,7 +103,7 @@ func (l *BaseTemplateLogic) GetContentByPurpose(ctx context.Context, purpose str
 // Update updates an existing base template
 func (l *BaseTemplateLogic) Update(ctx context.Context, req dto.BaseTemplateUpdateDto) (result *bo.BaseTemplateBo, err error) {
 	// Get existing template
-	existing, err := l.repos.BaseTemplateRepo.GetByID(ctx, req.Id)
+	existing, err := l.repos.BaseTemplateRepo.Detail(ctx, req.Id, false)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}

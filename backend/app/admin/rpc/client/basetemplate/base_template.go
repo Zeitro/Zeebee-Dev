@@ -180,6 +180,7 @@ type (
 		SwitchStatus(ctx context.Context, in *SwitchBaseTemplateStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		Delete(ctx context.Context, in *DeleteBaseTemplateRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		Preview(ctx context.Context, in *BaseTemplatePreviewRequest, opts ...grpc.CallOption) (*BaseTemplatePreviewResponse, error)
+		Reset(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	}
 
 	defaultBaseTemplate struct {
@@ -226,4 +227,9 @@ func (m *defaultBaseTemplate) Delete(ctx context.Context, in *DeleteBaseTemplate
 func (m *defaultBaseTemplate) Preview(ctx context.Context, in *BaseTemplatePreviewRequest, opts ...grpc.CallOption) (*BaseTemplatePreviewResponse, error) {
 	client := admin.NewBaseTemplateClient(m.cli.Conn())
 	return client.Preview(ctx, in, opts...)
+}
+
+func (m *defaultBaseTemplate) Reset(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	client := admin.NewBaseTemplateClient(m.cli.Conn())
+	return client.Reset(ctx, in, opts...)
 }

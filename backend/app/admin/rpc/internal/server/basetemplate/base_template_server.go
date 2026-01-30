@@ -57,3 +57,8 @@ func (s *BaseTemplateServer) Preview(ctx context.Context, in *admin.BaseTemplate
 	l := basetemplatelogic.NewPreviewLogic(ctx, s.svcCtx)
 	return l.Preview(in)
 }
+
+func (s *BaseTemplateServer) Reset(ctx context.Context, in *admin.IdRequest) (*admin.EmptyResponse, error) {
+	l := basetemplatelogic.NewResetLogic(ctx, s.svcCtx)
+	return l.Reset(in)
+}

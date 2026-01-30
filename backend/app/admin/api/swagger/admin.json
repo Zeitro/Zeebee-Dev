@@ -2110,6 +2110,40 @@
         }
       }
     },
+    "/api/v1/base_template/{id}/reset": {
+      "post": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "base_template"
+        ],
+        "summary": "Reset",
+        "operationId": "baseTemplateBaseTemplateReset",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/base_template/{id}/status": {
       "patch": {
         "consumes": [
@@ -7374,7 +7408,7 @@
       }
     }
   },
-  "x-date": "2026-01-28 11:00:23",
+  "x-date": "2026-01-30 11:11:35",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

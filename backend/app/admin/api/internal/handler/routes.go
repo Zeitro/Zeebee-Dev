@@ -89,6 +89,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: base_template.BaseTemplateDeleteHandler(serverCtx),
 				},
 				{
+					// Reset
+					Method:  http.MethodPost,
+					Path:    "/base_template/:id/reset",
+					Handler: base_template.BaseTemplateResetHandler(serverCtx),
+				},
+				{
 					// Switch status
 					Method:  http.MethodPatch,
 					Path:    "/base_template/:id/status",
