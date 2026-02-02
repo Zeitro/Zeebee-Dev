@@ -601,7 +601,7 @@ func (l *UserLogic) VerifyUserEmail(ctx context.Context, email string, code stri
 	}
 	defer func() {
 		if err == nil {
-			// _ = l.redisCli.Del(ctx, verifyCodeKey)
+			_ = l.redisCli.Del(ctx, verifyCodeKey)
 		}
 	}()
 
@@ -623,7 +623,6 @@ func (l *UserLogic) VerifyUserEmail(ctx context.Context, email string, code stri
 			return innerErr
 		}
 		// update user's organization status
-		// innerErr = l.repos.OrganizationRepo.UpdateOwnerOrganizationStatusWithTx(ctx, tx, user.Id, constants.OrganizationStatusActive)
 		innerErr = l.handleOwnedOrganizationWithTx(ctx, tx, user)
 		if innerErr != nil {
 			return innerErr

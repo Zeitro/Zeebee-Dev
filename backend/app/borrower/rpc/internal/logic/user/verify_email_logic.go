@@ -135,16 +135,6 @@ func (l *VerifyEmailLogic) handlePreapprovalLoan(ctx context.Context, user *mode
 		"interestRate":  mathutil.RoundToFloat(preapprovalResult.Rate*100.0, 2),
 	}
 
-	// for _, groupDto := range req.VariableGroupSchema {
-	//
-	// 	for _, variableDto := range groupDto.Variables {
-	// 		if variableDto.Source == constants.TemplateVariableSourceFixed || variableDto.Source == constants.TemplateVariableSourceTemplate {
-	// 			k := strings.Trim(variableDto.Key, ".")
-	// 			data[k] = variableDto.FixedValue
-	// 		}
-	// 	}
-	// }
-
 	pdfConfig, ok := global.Config.TemplateConf[constants.BorrowerPreapprovalLetterPdfName]
 	if !ok {
 		return errorx.New("Preapproval Letter Pdf Template Is Not Set")
