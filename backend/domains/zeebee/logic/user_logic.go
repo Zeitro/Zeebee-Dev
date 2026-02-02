@@ -601,7 +601,7 @@ func (l *UserLogic) VerifyUserEmail(ctx context.Context, email string, code stri
 	}
 	defer func() {
 		if err == nil {
-			_ = l.redisCli.Del(ctx, verifyCodeKey)
+			// _ = l.redisCli.Del(ctx, verifyCodeKey)
 		}
 	}()
 

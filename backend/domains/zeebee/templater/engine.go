@@ -22,11 +22,12 @@ func NewEngine(templateLoader loader.TemplateLoader, convertor convertor.Convert
 
 func (e *Engine) Export(ctx context.Context, conf TemplateConf, data map[string]interface{}) (content []byte, contentType string, err error) {
 	var template string
+	var templateRenderData map[string]interface{}
 	switch conf.Scope {
 	case ScopeSystem:
-		template, err = e.TemplateLoader.LoadSystemTemplate(ctx, conf.Purpose, conf.OrganizationType)
+		template, templateRenderData, err = e.TemplateLoader.LoadSystemTemplate(ctx, conf.Purpose, conf.OrganizationType)
 	case ScopeOrganization:
-		template, err = e.TemplateLoader.LoadOrganizationTemplate(ctx, conf.Purpose, conf.OrganizationId)
+		template, templateRenderData, err = e.TemplateLoader.LoadOrganizationTemplate(ctx, conf.Purpose, conf.OrganizationId)
 	default:
 		err = fmt.Errorf("Unknown Scope: %s", conf.Scope)
 	}
@@ -36,6 +37,9 @@ func (e *Engine) Export(ctx context.Context, conf TemplateConf, data map[string]
 	if len(template) == 0 {
 		err = fmt.Errorf("Template Is Empty")
 		return
+	}
+	for key := range templateRenderData {
+		data[key] = templateRenderData[key]
 	}
 
 	switch conf.FileType {

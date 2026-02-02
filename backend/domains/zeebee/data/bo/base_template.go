@@ -12,7 +12,7 @@ type TemplateVariableBo struct {
 	Type       constants.TemplateVariableType   `json:"type"` // String,Array,Object
 	Key        string                           `json:"key"`
 	IsEditable bool                             `json:"is_editable"`
-	Source     string                           `json:"source"` // Fixed/Dynamic
+	Source     constants.TemplateVariableSource `json:"source"` // Fixed/Dynamic
 	FixedValue string                           `json:"fixed_value"`
 	Format     constants.TemplateVariableFormat `json:"format,omitempty"`
 	Properties map[string]*TemplateVariableBo   `json:"properties,omitempty"` // for Object type

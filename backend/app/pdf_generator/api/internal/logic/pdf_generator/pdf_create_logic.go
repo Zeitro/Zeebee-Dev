@@ -2,7 +2,6 @@ package pdf_generator
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
 	"zeebee-backend/app/pdf_generator/api/internal/global"
@@ -44,7 +43,7 @@ func (l *PdfCreateLogic) PdfCreate(req *types.CreatePdfRequest) (resp *types.Cre
 	pdfContent, err = global.ChromePool.GeneratePDF(ctx, pdfType, l.getContent(req))
 
 	if err != nil {
-		err = fmt.Errorf("failed to create pdf: %w", err)
+		err = errorx.Wrap(err, "failed to create pdf")
 		return
 	}
 

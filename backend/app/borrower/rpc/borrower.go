@@ -48,6 +48,10 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		return nil, err
 	}
 	zrpc.SetClientSlowThreshold(time.Second * 2)
+	// logx.WithContext(context.Background()).WithFields(
+	// 	logx.Field("template", global.Config.TemplateConf),
+	// 	logx.Field("detail", global.Config.TemplateConf[constants.BorrowerPreapprovalLetterPdfName]),
+	// ).Info("template info")
 
 	ctx := svc.NewServiceContext(rpcConfig)
 

@@ -159,6 +159,9 @@ func (p *ChromePool) HTMLToPDF(ctx context.Context, html string, opts ...PDFOpti
 		opt(cfg)
 	}
 
+	// Compress HTML: remove newlines and excess whitespace
+	html = compressHTML(html)
+
 	tabCtx, tabCancel := chromedp.NewContext(p.allocCtx)
 	defer tabCancel()
 
@@ -172,7 +175,19 @@ func (p *ChromePool) HTMLToPDF(ctx context.Context, html string, opts ...PDFOpti
 			}
 			return page.SetDocumentContent(frameTree.Frame.ID, html).Do(ctx)
 		}),
-		chromedp.WaitVisible("body"),
+		// chromedp.WaitVisible("body"),
+		chromedp.ActionFunc(func(ctx context.Context) error {
+			var readyState string
+			for {
+				if err := chromedp.Evaluate(`document.readyState`, &readyState).Do(ctx); err != nil {
+					return err
+				}
+				if readyState == "complete" {
+					return nil
+				}
+				time.Sleep(50 * time.Millisecond)
+			}
+		}),
 		chromedp.Sleep(cfg.waitTime),
 		chromedp.ActionFunc(func(ctx context.Context) error {
 			var err error
@@ -328,4 +343,46 @@ func WithWaitTime(d time.Duration) PDFOption {
 	return func(c *pdfConfig) {
 		c.waitTime = d
 	}
+}
+
+// compressHTML removes newlines and excess whitespace from HTML for chromedp
+func compressHTML(html string) string {
+	// Remove carriage returns and newlines
+	html = strings.ReplaceAll(html, "\r\n", "")
+	html = strings.ReplaceAll(html, "\n", " ")
+	html = strings.ReplaceAll(html, "\r", " ")
+	// Fix escaped quotes from JSON transport: \" → "
+	// html = strings.ReplaceAll(html, "\\\"", "\"")
+
+	// Replace multiple spaces with single space (except within tags)
+	var result strings.Builder
+	inTag := false
+	prevSpace := false
+
+	for _, r := range html {
+		if r == '<' {
+			inTag = true
+			result.WriteRune(r)
+			prevSpace = false
+		} else if r == '>' {
+			inTag = false
+			result.WriteRune(r)
+			prevSpace = false
+		} else if inTag {
+			// Inside tags, keep original spacing
+			result.WriteRune(r)
+			prevSpace = false
+		} else if r == ' ' || r == '\t' {
+			// Outside tags, collapse multiple spaces to one
+			if !prevSpace {
+				result.WriteRune(' ')
+				prevSpace = true
+			}
+		} else {
+			result.WriteRune(r)
+			prevSpace = false
+		}
+	}
+
+	return result.String()
 }

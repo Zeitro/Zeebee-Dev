@@ -6,8 +6,8 @@ import (
 	"zeebee-backend/common/enums"
 )
 
-const BorrowerPreapprovalLetterPdfName = "PreApprovedLetter"
-const BorrowerPreapprovalLetterEmailName = "PreApprovedLetterEmail"
+const BorrowerPreapprovalLetterPdfName = "PreApprovalLetterPdf"
+const BorrowerPreapprovalLetterEmailName = "PreApprovalLetterEmail"
 
 type TemplateCategory string
 

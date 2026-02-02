@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/duke-git/lancet/v2/random"
+	"google.golang.org/grpc/metadata"
 	"gorm.io/gorm"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -25,6 +26,7 @@ import (
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/bo"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/limiter"
 	"zeebee-backend/domains/zeebee/model"
@@ -126,12 +128,41 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 	}()
 
 	go func() {
+		var err error
+		var tokenInfo *bo.UserJwtTokenBo
+		ctx := context.WithoutCancel(newCxt)
+		md, _ := metadata.FromIncomingContext(ctx)
+		newMd := md.Copy()
+		defer func() {
+			panicInfo := recover()
+			if panicInfo != nil {
+				err = errorx.Wrap(panicInfo.(error), "Send Register Verify Email Panic Error")
+				l.WithContext(ctx).Error(err)
+			}
+
+			if err != nil {
+				err = errorx.Wrap(err, "Send Register Verify Email Error")
+				l.WithContext(ctx).Error(err)
+			}
+		}()
 		if len(in.Data.PreApprovalRequestId) == 0 || in.Data.LenderOrganizationId == 0 {
 			return
 		}
-		// create draft loan
-		ctx := context.WithoutCancel(newCxt)
-		err := l.handlePreapproveLoan(newCxt, organizationUserModel.Id, organizationUserModel.FullName, in.Data.PreApprovalRequestId, in.Data.LenderOrganizationId)
+
+		tokenInfo, err = l.baseLogic.UserLogic.GenerateJwtToken(userModel, organizationUserModel, constants.UserTypeBorrower)
+		if err != nil {
+			return
+		}
+		newMd.Set(utils.JwtTokenCtxKey, tokenInfo.AccessToken)
+		ctx = metadata.NewIncomingContext(ctx, newMd)
+		// create a draft loan
+		err = l.handlePreapproveLoan(
+			ctx,
+			organizationUserModel.Id,
+			organizationUserModel.FullName,
+			in.Data.PreApprovalRequestId,
+			organizationUserModel.OrganizationId,
+			in.Data.LenderOrganizationId)
 		if err != nil {
 			if errors.Is(err, context.Canceled) {
 				l.WithContext(ctx).
@@ -150,7 +181,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 	}, err
 }
 
-func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int64, creatorName string, requestId string, organizationId int64) (err error) {
+func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int64, creatorName string, requestId string, borrowerOrganizationId int64, lenderOrganizationId int64) (err error) {
 	// get pre-approve loan data from cache
 	key := fmt.Sprintf(constants.BorrowerPreApprovalCacheKey, requestId)
 	cacheDataStr, err := global.GetRedis().Get(ctx, key)
@@ -177,12 +208,12 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int6
 	}
 	preApproveRequest := cacheData.RequestData
 	calcResult := cacheData.ResultData
-	if calcResult.LenderOrganizationId != organizationId {
+	if calcResult.LenderOrganizationId != lenderOrganizationId {
 		calcResult = types.LoanPreApprovalResult{}
 	}
 
 	// get lender company
-	lenderOrganization, err := l.svcCtx.OrganizationRepo.FindOneById(ctx, organizationId)
+	lenderOrganization, err := l.svcCtx.OrganizationRepo.FindOneById(ctx, lenderOrganizationId)
 	if err != nil {
 		return errorx.WithStack(err)
 	}
@@ -201,7 +232,7 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int6
 			// get BorrowerProperty
 			func() error {
 				var err error
-				borrowerProperty, err = l.svcCtx.BorrowerPropertyRepo.GetOrCreateBorrowerPropertyWithTxForBorrower(ctx, tx, organizationId, creatorId, creatorName, model.Address{
+				borrowerProperty, err = l.svcCtx.BorrowerPropertyRepo.GetOrCreateBorrowerPropertyWithTxForBorrower(ctx, tx, borrowerOrganizationId, creatorId, creatorName, model.Address{
 					State:    preApproveRequest.Property.Address.State,
 					City:     preApproveRequest.Property.Address.City,
 					Address1: preApproveRequest.Property.Address.Address1,
@@ -216,7 +247,7 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int6
 				borrowerApplicant = &model.BorrowerApplicant{
 					CreatorId:      creatorId,
 					CreatorName:    creatorName,
-					OrganizationId: organizationId,
+					OrganizationId: borrowerOrganizationId,
 					FirstName:      preApproveRequest.Borrower.Name,
 					Email:          preApproveRequest.Borrower.Email,
 					Phone:          preApproveRequest.Borrower.Phone,
@@ -263,7 +294,7 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int6
 			},
 			HoldbackAmount:  preApproveRequest.Loan.HoldbackAmount,
 			PrincipalAmount: preApproveRequest.Loan.PrincipalAmount,
-			LenderCompanyId: organizationId,
+			LenderCompanyId: lenderOrganizationId,
 			// UserId:          creatorId,
 			Applicants: []*borrower.LoanApplicantApplyEntity{
 				{
