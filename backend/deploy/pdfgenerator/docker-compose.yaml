@@ -1,17 +1,9 @@
 services:
-  chromedp2pdf:
-    build:
-      context: ..
-      dockerfile: chromedp_service/Dockerfile
-    container_name: chromedp2pdf
-    ports:
-      - "18849:8081"
-
   staging-pdfgenerator-backend:
     image: staging-pdfgenerator-backend:${IMAGE_TAG:-latest}
     build:
       context: ../../
-      dockerfile: deploy/lender/Dockerfile
+      dockerfile: deploy/pdfgenerator/Dockerfile
       args:
         - CONFIG_ENV=staging
     container_name: staging-pdfgenerator-backend
@@ -28,7 +20,7 @@ services:
     image: prod-pdfgenerator-backend:${IMAGE_TAG:-latest}
     build:
       context: ../../
-      dockerfile: deploy/lender/Dockerfile
+      dockerfile: deploy/pdfgenerator/Dockerfile
       args:
         - CONFIG_ENV=production
     container_name: prod-pdfgenerator-backend
