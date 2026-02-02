@@ -1,6 +1,6 @@
 'use client';
 import React, { useMemo, useRef, useState } from 'react';
-import { message, Space, Button } from 'antd';
+import { message, Space, Button, Alert } from 'antd';
 import { DeleteBtn, FilterTable } from '@repo/shared-methods';
 import { createRequest, formatTime } from '@repo/shared-methods/utils';
 import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
@@ -18,6 +18,7 @@ const EditorTemplate = () => {
 	const [open, setOpen] = useState(false);
 	const [rowData, setRowData] = useState({});
 	const [statusLoading, setStatusLoading] = useState(false);
+	const [updateLoading, setUpdateLoading] = useState(false);
 
 	const statusOptions = [
 		{
@@ -132,6 +133,24 @@ const EditorTemplate = () => {
 		}
 	};
 
+	const handleUpdate = async (id) => {
+		try {
+			setUpdateLoading(true);
+			await request(`/base_template/${id}/reset`, {
+				method: 'POST',
+			});
+			setUpdateLoading(false);
+			tableFilterRef?.current?.getList?.();
+			message.open({
+				type: 'success',
+				content: 'Template force an updated successfully！',
+			});
+		} catch (error) {
+			console.log(error);
+			setUpdateLoading(false);
+		}
+	};
+
 	return (
 		<div className="flex-1 overflow-hidden w-full flex items-center justify-center py-4 px-4">
 			<FilterTable
@@ -198,7 +217,7 @@ const EditorTemplate = () => {
 					{
 						title: 'Action',
 						dataIndex: 'operation',
-						width: 150,
+						width: 170,
 						align: 'left',
 						fixed: 'right',
 						render: (_, record) => {
@@ -241,6 +260,27 @@ const EditorTemplate = () => {
 											Enable
 										</DeleteBtn>
 									)}
+									<DeleteBtn
+										title="Are you sure you want to force a template update?"
+										content={
+											<div>
+												<Alert
+													message="Users will use the latest template."
+													type="warning"
+													className="!mb-4"
+												/>
+												<span>{record.name}</span>
+											</div>
+										}
+										onOk={() => handleUpdate(record.id)}
+										loading={updateLoading}
+										isStopPropagation={false}
+										okText="Update"
+										danger={false}
+										okButtonProps={{ danger: false }}
+									>
+										Update
+									</DeleteBtn>
 
 									<DeleteBtn
 										title="Are you sure delete this editor template?"
