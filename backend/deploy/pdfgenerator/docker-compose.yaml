@@ -1,0 +1,42 @@
+services:
+  chromedp2pdf:
+    build:
+      context: ..
+      dockerfile: chromedp_service/Dockerfile
+    container_name: chromedp2pdf
+    ports:
+      - "18849:8081"
+
+  staging-pdfgenerator-backend:
+    image: staging-pdfgenerator-backend:${IMAGE_TAG:-latest}
+    build:
+      context: ../../
+      dockerfile: deploy/lender/Dockerfile
+      args:
+        - CONFIG_ENV=staging
+    container_name: staging-pdfgenerator-backend
+    network_mode: host
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: us-west-1
+        awslogs-group: /zeebee/lender-staging
+        awslogs-create-group: "true"
+        awslogs-stream: backend-${HOSTNAME}
+
+  prod-pdfgenerator-backend:
+    image: prod-pdfgenerator-backend:${IMAGE_TAG:-latest}
+    build:
+      context: ../../
+      dockerfile: deploy/lender/Dockerfile
+      args:
+        - CONFIG_ENV=production
+    container_name: prod-pdfgenerator-backend
+    network_mode: host
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: us-west-1
+        awslogs-group: /zeebee/lender-production
+        awslogs-create-group: "true"
+        awslogs-stream: backend-${HOSTNAME}
