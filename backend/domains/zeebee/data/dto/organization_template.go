@@ -1,6 +1,9 @@
 package dto
 
-import "zeebee-backend/domains/zeebee/constants"
+import (
+	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data"
+)
 
 // OrganizationTemplatePageRequestDto represents the request for paginated base template list
 type OrganizationTemplatePageRequestDto struct {
@@ -20,14 +23,14 @@ type OrganizationTemplatePageFilter struct {
 
 // OrganizationTemplateUpdateDto represents the request for updating a base template
 type OrganizationTemplateUpdateVariableGroupDto struct {
-	Id                  int64                       `json:"id"`
-	OrganizationId      int64                       `json:"organization_id"`
-	VariableGroupSchema []*TemplateVariableGroupDto `json:"variable_group_schema"`
+	Id                  int64                         `json:"id"`
+	OrganizationId      int64                         `json:"organization_id"`
+	VariableGroupSchema []*data.TemplateVariableGroup `json:"variable_group_schema"`
 }
 
 type OrganizationTemplatePreviewDto struct {
-	Name                string                      `json:"name"`
-	Content             string                      `json:"content"`
-	VariableGroupSchema []*TemplateVariableGroupDto `json:"variable_group_schema"`
-	ExampleVariables    string                      `json:"example_variables"`
+	Name                string                        `json:"name"`
+	Content             string                        `json:"content"`
+	VariableGroupSchema []*data.TemplateVariableGroup `json:"variable_group_schema"`
+	ExampleVariables    string                        `json:"example_variables"`
 }

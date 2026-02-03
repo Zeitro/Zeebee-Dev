@@ -12,6 +12,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data"
 	"zeebee-backend/domains/zeebee/data/bo"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
@@ -78,11 +79,11 @@ func (l *OrganizationTemplateLogic) UpdateVariableGroup(ctx context.Context, req
 	}
 
 	oldGroups := existing.VariableGroupSchema
-	groupsPtr, err := copierx.Trans[[]*dto.TemplateVariableGroupDto, []*model.TemplateVariableGroup](&req.VariableGroupSchema)
-	if err != nil {
-		return nil, err
-	}
-	groups := *groupsPtr
+	// groupsPtr, err := copierx.Trans[[]*dto.TemplateVariableGroupDto, []*model.TemplateVariableGroup](&req.VariableGroupSchema)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	groups := req.VariableGroupSchema
 	if len(groups) != len(oldGroups) {
 		return nil, errorx.New("Variable Group Number Not Match")
 	}
@@ -313,15 +314,15 @@ func (l *OrganizationTemplateLogic) renderOrganizationSystemInfo(organizationTem
 }
 
 // mergeTemplateVariables merges template variables from different sources
-func (l *OrganizationTemplateLogic) mergeTemplateVariableGroup(oldVariableGroup, newVariableGroup []*model.TemplateVariableGroup) (result []*model.TemplateVariableGroup) {
+func (l *OrganizationTemplateLogic) mergeTemplateVariableGroup(oldVariableGroup, newVariableGroup []*data.TemplateVariableGroup) (result []*data.TemplateVariableGroup) {
 	if len(oldVariableGroup) == 0 {
 		return newVariableGroup
 	}
-	result = make([]*model.TemplateVariableGroup, 0, len(newVariableGroup))
+	result = make([]*data.TemplateVariableGroup, 0, len(newVariableGroup))
 	for _, newGroup := range newVariableGroup {
 		newGroup := newGroup
 
-		oldGroup, ok := slice.FindBy(oldVariableGroup, func(index int, item *model.TemplateVariableGroup) bool {
+		oldGroup, ok := slice.FindBy(oldVariableGroup, func(index int, item *data.TemplateVariableGroup) bool {
 			return newGroup.Name == item.Name
 		})
 		if !ok || oldGroup == nil || oldGroup.Variables == nil {
@@ -329,10 +330,10 @@ func (l *OrganizationTemplateLogic) mergeTemplateVariableGroup(oldVariableGroup,
 			continue
 		}
 
-		mergedVariables := make([]*model.TemplateVariable, 0, len(newGroup.Variables))
+		mergedVariables := make([]*data.TemplateVariable, 0, len(newGroup.Variables))
 		for _, newVariable := range newGroup.Variables {
 			newVariable := newVariable
-			oldVar, ok := slice.FindBy(oldGroup.Variables, func(index int, item *model.TemplateVariable) bool {
+			oldVar, ok := slice.FindBy(oldGroup.Variables, func(index int, item *data.TemplateVariable) bool {
 				return newVariable.Key == item.Key &&
 					newVariable.Type == item.Type &&
 					newVariable.Format == item.Format
@@ -346,7 +347,7 @@ func (l *OrganizationTemplateLogic) mergeTemplateVariableGroup(oldVariableGroup,
 			mergedVariables = append(mergedVariables, mergedVar)
 		}
 
-		mergedGroup := &model.TemplateVariableGroup{
+		mergedGroup := &data.TemplateVariableGroup{
 			Name:      newGroup.Name,
 			Variables: mergedVariables,
 		}
@@ -356,12 +357,12 @@ func (l *OrganizationTemplateLogic) mergeTemplateVariableGroup(oldVariableGroup,
 	return result
 }
 
-func (l *OrganizationTemplateLogic) mergeVariable(newVar *model.TemplateVariable, oldVar *model.TemplateVariable) (result *model.TemplateVariable) {
+func (l *OrganizationTemplateLogic) mergeVariable(newVar *data.TemplateVariable, oldVar *data.TemplateVariable) (result *data.TemplateVariable) {
 	if oldVar == nil || newVar == nil {
 		return newVar
 	}
 
-	result, _ = copierx.Trans[model.TemplateVariable, model.TemplateVariable](newVar)
+	result, _ = copierx.Trans[data.TemplateVariable, data.TemplateVariable](newVar)
 	if !newVar.IsEditable {
 		return result
 	}
@@ -374,7 +375,7 @@ func (l *OrganizationTemplateLogic) mergeVariable(newVar *model.TemplateVariable
 
 	if result.Type == constants.TemplateVariableTypeObject {
 		if oldVar.Properties == nil {
-			oldVar.Properties = make(map[string]*model.TemplateVariable)
+			oldVar.Properties = make(map[string]*data.TemplateVariable)
 		}
 
 		for key := range result.Properties {
@@ -384,7 +385,7 @@ func (l *OrganizationTemplateLogic) mergeVariable(newVar *model.TemplateVariable
 
 	if result.Type == constants.TemplateVariableTypeArray {
 		for key := range result.Items {
-			subOldVar, ok := slice.FindBy(oldVar.Items, func(index int, item *model.TemplateVariable) bool {
+			subOldVar, ok := slice.FindBy(oldVar.Items, func(index int, item *data.TemplateVariable) bool {
 				return result.Items[key].Key == item.Key &&
 					result.Items[key].Type == item.Type &&
 					result.Items[key].Format == item.Format

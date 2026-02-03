@@ -3841,6 +3841,7 @@
                             "type",
                             "key",
                             "is_editable",
+                            "is_required",
                             "source",
                             "format"
                           ],
@@ -3854,6 +3855,9 @@
                             "is_editable": {
                               "type": "boolean"
                             },
+                            "is_required": {
+                              "type": "boolean"
+                            },
                             "items": {
                               "type": "array",
                               "items": {
@@ -3863,6 +3867,7 @@
                                   "type",
                                   "key",
                                   "is_editable",
+                                  "is_required",
                                   "source",
                                   "format"
                                 ],
@@ -3874,6 +3879,9 @@
                                     "type": "string"
                                   },
                                   "is_editable": {
+                                    "type": "boolean"
+                                  },
+                                  "is_required": {
                                     "type": "boolean"
                                   },
                                   "items": {
@@ -3918,6 +3926,7 @@
                                   "type",
                                   "key",
                                   "is_editable",
+                                  "is_required",
                                   "source",
                                   "format"
                                 ],
@@ -3929,6 +3938,9 @@
                                     "type": "string"
                                   },
                                   "is_editable": {
+                                    "type": "boolean"
+                                  },
+                                  "is_required": {
                                     "type": "boolean"
                                   },
                                   "items": {
@@ -4163,6 +4175,7 @@
                             "type",
                             "key",
                             "is_editable",
+                            "is_required",
                             "source",
                             "format"
                           ],
@@ -4176,6 +4189,9 @@
                             "is_editable": {
                               "type": "boolean"
                             },
+                            "is_required": {
+                              "type": "boolean"
+                            },
                             "items": {
                               "type": "array",
                               "items": {
@@ -4185,6 +4201,7 @@
                                   "type",
                                   "key",
                                   "is_editable",
+                                  "is_required",
                                   "source",
                                   "format"
                                 ],
@@ -4196,6 +4213,9 @@
                                     "type": "string"
                                   },
                                   "is_editable": {
+                                    "type": "boolean"
+                                  },
+                                  "is_required": {
                                     "type": "boolean"
                                   },
                                   "items": {
@@ -4240,6 +4260,7 @@
                                   "type",
                                   "key",
                                   "is_editable",
+                                  "is_required",
                                   "source",
                                   "format"
                                 ],
@@ -4251,6 +4272,9 @@
                                     "type": "string"
                                   },
                                   "is_editable": {
+                                    "type": "boolean"
+                                  },
+                                  "is_required": {
                                     "type": "boolean"
                                   },
                                   "items": {
@@ -4392,6 +4416,7 @@
                             "type",
                             "key",
                             "is_editable",
+                            "is_required",
                             "source",
                             "format"
                           ],
@@ -4405,6 +4430,9 @@
                             "is_editable": {
                               "type": "boolean"
                             },
+                            "is_required": {
+                              "type": "boolean"
+                            },
                             "items": {
                               "type": "array",
                               "items": {
@@ -4414,6 +4442,7 @@
                                   "type",
                                   "key",
                                   "is_editable",
+                                  "is_required",
                                   "source",
                                   "format"
                                 ],
@@ -4425,6 +4454,9 @@
                                     "type": "string"
                                   },
                                   "is_editable": {
+                                    "type": "boolean"
+                                  },
+                                  "is_required": {
                                     "type": "boolean"
                                   },
                                   "items": {
@@ -4469,6 +4501,7 @@
                                   "type",
                                   "key",
                                   "is_editable",
+                                  "is_required",
                                   "source",
                                   "format"
                                 ],
@@ -4480,6 +4513,9 @@
                                     "type": "string"
                                   },
                                   "is_editable": {
+                                    "type": "boolean"
+                                  },
+                                  "is_required": {
                                     "type": "boolean"
                                   },
                                   "items": {
@@ -4576,6 +4612,7 @@
                             "type",
                             "key",
                             "is_editable",
+                            "is_required",
                             "source",
                             "format"
                           ],
@@ -4589,6 +4626,9 @@
                             "is_editable": {
                               "type": "boolean"
                             },
+                            "is_required": {
+                              "type": "boolean"
+                            },
                             "items": {
                               "type": "array",
                               "items": {
@@ -4598,6 +4638,7 @@
                                   "type",
                                   "key",
                                   "is_editable",
+                                  "is_required",
                                   "source",
                                   "format"
                                 ],
@@ -4609,6 +4650,9 @@
                                     "type": "string"
                                   },
                                   "is_editable": {
+                                    "type": "boolean"
+                                  },
+                                  "is_required": {
                                     "type": "boolean"
                                   },
                                   "items": {
@@ -4653,6 +4697,7 @@
                                   "type",
                                   "key",
                                   "is_editable",
+                                  "is_required",
                                   "source",
                                   "format"
                                 ],
@@ -4664,6 +4709,9 @@
                                     "type": "string"
                                   },
                                   "is_editable": {
+                                    "type": "boolean"
+                                  },
+                                  "is_required": {
                                     "type": "boolean"
                                   },
                                   "items": {
@@ -4769,6 +4817,7 @@
                             "type",
                             "key",
                             "is_editable",
+                            "is_required",
                             "source",
                             "format"
                           ],
@@ -4782,6 +4831,9 @@
                             "is_editable": {
                               "type": "boolean"
                             },
+                            "is_required": {
+                              "type": "boolean"
+                            },
                             "items": {
                               "type": "array",
                               "items": {
@@ -4791,6 +4843,7 @@
                                   "type",
                                   "key",
                                   "is_editable",
+                                  "is_required",
                                   "source",
                                   "format"
                                 ],
@@ -4802,6 +4855,9 @@
                                     "type": "string"
                                   },
                                   "is_editable": {
+                                    "type": "boolean"
+                                  },
+                                  "is_required": {
                                     "type": "boolean"
                                   },
                                   "items": {
@@ -4846,6 +4902,7 @@
                                   "type",
                                   "key",
                                   "is_editable",
+                                  "is_required",
                                   "source",
                                   "format"
                                 ],
@@ -4857,6 +4914,9 @@
                                     "type": "string"
                                   },
                                   "is_editable": {
+                                    "type": "boolean"
+                                  },
+                                  "is_required": {
                                     "type": "boolean"
                                   },
                                   "items": {
@@ -7673,7 +7733,7 @@
       }
     }
   },
-  "x-date": "2026-01-27 15:34:36",
+  "x-date": "2026-02-03 10:47:12",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

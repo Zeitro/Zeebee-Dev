@@ -1,0 +1,34 @@
+// Code scaffolded by goctl. Safe to edit.
+// goctl 1.9.2
+
+package resource
+
+import (
+	"context"
+
+	"zeebee-backend/app/admin/api/internal/types/internal/svc"
+	"zeebee-backend/app/admin/api/internal/types/internal/types"
+
+	"github.com/zeromicro/go-zero/core/logx"
+)
+
+type ResourceCreateLogic struct {
+	logx.Logger
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+}
+
+// create
+func NewResourceCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ResourceCreateLogic {
+	return &ResourceCreateLogic{
+		Logger: logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+	}
+}
+
+func (l *ResourceCreateLogic) ResourceCreate(req *types.ResourceCreateRequest) (resp *types.ResourceEntity, err error) {
+	// todo: add your logic here and delete this line
+
+	return
+}

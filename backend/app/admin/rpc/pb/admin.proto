@@ -872,9 +872,10 @@ message TemplateVariableEntity {
   bool is_editable = 4;
   string source = 5;         // Fixed, Dynamic,Template
   string fixed_value = 6;
-  map<string, TemplateVariableEntity> properties = 8;  // for object type
-  repeated TemplateVariableEntity items = 9;            // for array type
+  map<string, TemplateVariableEntity> properties = 8;  // for Object type
+  repeated TemplateVariableEntity items = 9;            // for Array type
   string format = 10;
+  bool is_required = 11;
 }
 
 // Template variable group entity

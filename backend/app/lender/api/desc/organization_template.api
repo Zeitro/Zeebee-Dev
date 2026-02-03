@@ -13,16 +13,17 @@ type TemplateVariableEntity {
     Type string `json:"type" validate:"oneof=String Object Array"`
     Key string `json:"key"`
     IsEditable bool `json:"is_editable"`
+    IsRequired bool `json:"is_required"`
     Source string `json:"source" validate:"omitempty,oneof=Fixed Dynamic Template"`
     Format string `json:"format" validate:"omitempty,oneof=Email Phone Currency Input TextArea"`
-    FixedValue string `json:"fixed_value,optional" validate:"required_if=Source Fixed,required_if=Source Template"`
+    FixedValue string `json:"fixed_value,optional" validate:"required_if=Source Fixed IsRequired true,required_if=Source Template IsRequired true"`
     Properties map[string]*TemplateVariableEntity `json:"properties,omitempty,optional"`
     Items []*TemplateVariableEntity `json:"items,omitempty,optional"`
 }
 
 type TemplateVariableGroupEntity {
     Name string `json:"name"`
-    Variables []*TemplateVariableEntity `json:"variables"`
+    Variables []*TemplateVariableEntity `json:"variables" validate:"dive"`
 }
 
 // Entity
