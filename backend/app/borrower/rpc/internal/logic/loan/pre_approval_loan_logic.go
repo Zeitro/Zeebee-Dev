@@ -116,6 +116,8 @@ func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalReque
 		responseData.Primary.Ltc = float32(mathutil.RoundToFloat(responseData.Primary.Ltc*100.0, 2))
 		responseData.Primary.Ltv = float32(mathutil.RoundToFloat(responseData.Primary.Ltv*100.0, 2))
 		responseData.Primary.Ltarv = float32(mathutil.RoundToFloat(responseData.Primary.Ltarv*100.0, 2))
+		responseData.Primary.LenderCompanyId = 1
+		responseData.Primary.LenderCompanyName = "Zeebee"
 	}
 	_ = copier.CopyWithOption(&responseData.Secondaries, &global.Config.PreApprovalLoanConf, copier.Option{
 		DeepCopy:      true,

@@ -133,6 +133,10 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 		ctx := context.WithoutCancel(newCxt)
 		md, _ := metadata.FromIncomingContext(ctx)
 		newMd := md.Copy()
+		logx.WithContext(ctx).WithFields(
+			logx.Field("pre_approval_request_id", in.Data.PreApprovalRequestId),
+			logx.Field("lender_organization_id", in.Data.LenderOrganizationId),
+		).Info("create draft loan for preapproval loan")
 		defer func() {
 			panicInfo := recover()
 			if panicInfo != nil {
