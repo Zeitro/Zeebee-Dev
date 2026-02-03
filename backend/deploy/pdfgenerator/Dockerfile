@@ -16,5 +16,6 @@ ENV CONFIG_ENV=${CONFIG_ENV}
 WORKDIR /app
 COPY --from=builder /app/app /app/app
 COPY ./app/pdf_generator/etc/config-${CONFIG_ENV}.yaml /app/etc/config-${CONFIG_ENV}.yaml
+RUN chmod +x /app/app
 EXPOSE 10300
-ENTRYPOINT /app/app -f /app/etc/config-${CONFIG_ENV}.yaml
+ENTRYPOINT ["/app/app", "-f", "/app/etc/config-${CONFIG_ENV}.yaml"]
