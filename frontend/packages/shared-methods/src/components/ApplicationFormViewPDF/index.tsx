@@ -53,6 +53,15 @@ const config = {
 	title: 'Signature prompt!',
 	content: 'You have already signed, do you want to sign again?',
 };
+/**
+ * 预览pdf文件 + 签名
+ * @param {String} url 请求pdf流文件的api地址
+ * @param {Array} zones 签名区配置数组
+ * @param {Object} params 请求参数
+ * @param {Boolean} isFullLink 是否完整链接,如果是,请求时api地址不会去拼装配置的域名相关
+ * @param {Function} changeSignatures 签名回调函数
+ * 因pdf默认会调用浏览器相关方法,所以不能ssr渲染,必须用next/dynamic导入
+ */
 export default function ContractViewer({
 	url,
 	zones,

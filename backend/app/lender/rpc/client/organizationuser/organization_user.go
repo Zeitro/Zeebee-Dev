@@ -84,6 +84,15 @@ type (
 	OptionRequest                                  = lender.OptionRequest
 	OptionRequestData                              = lender.OptionRequestData
 	OptionResponse                                 = lender.OptionResponse
+	OrganizationCreateRequest                      = lender.OrganizationCreateRequest
+	OrganizationCreateRequestData                  = lender.OrganizationCreateRequestData
+	OrganizationDetailResponse                     = lender.OrganizationDetailResponse
+	OrganizationEmailEntity                        = lender.OrganizationEmailEntity
+	OrganizationEntity                             = lender.OrganizationEntity
+	OrganizationLenderMetadataEntity               = lender.OrganizationLenderMetadataEntity
+	OrganizationMetadataEntity                     = lender.OrganizationMetadataEntity
+	OrganizationUpdateProfileRequest               = lender.OrganizationUpdateProfileRequest
+	OrganizationUpdateProfileRequestData           = lender.OrganizationUpdateProfileRequestData
 	OrganizationUserAcceptInvitationRequest        = lender.OrganizationUserAcceptInvitationRequest
 	OrganizationUserAcceptInvitationRequestData    = lender.OrganizationUserAcceptInvitationRequestData
 	OrganizationUserAllResponse                    = lender.OrganizationUserAllResponse
@@ -112,14 +121,14 @@ type (
 	OrganizationUserUpdateResponse                 = lender.OrganizationUserUpdateResponse
 	OrganizationUserUpdateStatusRequest            = lender.OrganizationUserUpdateStatusRequest
 	OrganizationUserUpdateStatusRequestData        = lender.OrganizationUserUpdateStatusRequestData
+	RangeFloat                                     = lender.RangeFloat
+	RangeInt32                                     = lender.RangeInt32
+	RangeInt64                                     = lender.RangeInt64
 	RefreshTokenRequest                            = lender.RefreshTokenRequest
 	RefreshTokenRequestData                        = lender.RefreshTokenRequestData
-	RefreshTokenResponse                           = lender.RefreshTokenResponse
-	RefreshTokenResponseData                       = lender.RefreshTokenResponseData
 	ResetPasswordRequest                           = lender.ResetPasswordRequest
 	ResetPasswordRequestData                       = lender.ResetPasswordRequestData
 	ResetPasswordResponse                          = lender.ResetPasswordResponse
-	ResetPasswordResponseData                      = lender.ResetPasswordResponseData
 	ResourceEntity                                 = lender.ResourceEntity
 	ResourceTreeEntity                             = lender.ResourceTreeEntity
 	ResourceTreeRequest                            = lender.ResourceTreeRequest
@@ -153,6 +162,9 @@ type (
 	SendResetPasswordEmailRequest                  = lender.SendResetPasswordEmailRequest
 	SendResetPasswordEmailRequestData              = lender.SendResetPasswordEmailRequestData
 	SendResetPasswordEmailResponse                 = lender.SendResetPasswordEmailResponse
+	SendVerifyEmailRequest                         = lender.SendVerifyEmailRequest
+	SendVerifyEmailRequestData                     = lender.SendVerifyEmailRequestData
+	SendVerifyEmailResponse                        = lender.SendVerifyEmailResponse
 	StorageCreatePresignedUrlRequest               = lender.StorageCreatePresignedUrlRequest
 	StorageCreatePresignedUrlRequestData           = lender.StorageCreatePresignedUrlRequestData
 	StorageCreatePresignedUrlResponse              = lender.StorageCreatePresignedUrlResponse
@@ -162,19 +174,20 @@ type (
 	SwitchOrganizationRequestData                  = lender.SwitchOrganizationRequestData
 	UsCitiesRequest                                = lender.UsCitiesRequest
 	UsCitiesRequestData                            = lender.UsCitiesRequestData
+	UserEntity                                     = lender.UserEntity
 	UserInfoRequest                                = lender.UserInfoRequest
 	UserInfoRequestData                            = lender.UserInfoRequestData
+	UserJwtResponse                                = lender.UserJwtResponse
+	UserJwtResponseData                            = lender.UserJwtResponseData
 	UserLoginRequest                               = lender.UserLoginRequest
 	UserLoginRequestData                           = lender.UserLoginRequestData
-	UserLoginResponse                              = lender.UserLoginResponse
-	UserLoginResponseData                          = lender.UserLoginResponseData
 	UserRegisterRequest                            = lender.UserRegisterRequest
 	UserRegisterRequestData                        = lender.UserRegisterRequestData
-	UserRegisterResponse                           = lender.UserRegisterResponse
-	UserRegisterResponseData                       = lender.UserRegisterResponseData
 	UserinfoResponse                               = lender.UserinfoResponse
 	UserinfoResponseData                           = lender.UserinfoResponseData
 	UserinfoResponseData_Organization              = lender.UserinfoResponseData_Organization
+	VerifyEmailRequest                             = lender.VerifyEmailRequest
+	VerifyEmailRequestData                         = lender.VerifyEmailRequestData
 
 	OrganizationUser interface {
 		Page(ctx context.Context, in *OrganizationUserPageRequest, opts ...grpc.CallOption) (*OrganizationUserPageResponse, error)
@@ -185,7 +198,7 @@ type (
 		SwitchStatus(ctx context.Context, in *OrganizationUserUpdateStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		All(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationUserAllResponse, error)
 		SendInvitationEmail(ctx context.Context, in *OrganizationUserSendInvitationEmailRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
-		AcceptInvitation(ctx context.Context, in *OrganizationUserAcceptInvitationRequest, opts ...grpc.CallOption) (*UserLoginResponse, error)
+		AcceptInvitation(ctx context.Context, in *OrganizationUserAcceptInvitationRequest, opts ...grpc.CallOption) (*UserJwtResponse, error)
 		AssignRoles(ctx context.Context, in *OrganizationUserAssignRolesRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	}
 
@@ -240,7 +253,7 @@ func (m *defaultOrganizationUser) SendInvitationEmail(ctx context.Context, in *O
 	return client.SendInvitationEmail(ctx, in, opts...)
 }
 
-func (m *defaultOrganizationUser) AcceptInvitation(ctx context.Context, in *OrganizationUserAcceptInvitationRequest, opts ...grpc.CallOption) (*UserLoginResponse, error) {
+func (m *defaultOrganizationUser) AcceptInvitation(ctx context.Context, in *OrganizationUserAcceptInvitationRequest, opts ...grpc.CallOption) (*UserJwtResponse, error) {
 	client := lender.NewOrganizationUserClient(m.cli.Conn())
 	return client.AcceptInvitation(ctx, in, opts...)
 }

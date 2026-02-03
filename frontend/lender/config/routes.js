@@ -46,6 +46,10 @@ export const navRouter = [
 				path: '/setting/organizationProfile',
 				title: 'Organization profile',
 			},
+			{
+				path: '/setting/preApprovedLetter',
+				title: 'Pre-approved letter',
+			},
 		],
 	},
 ];

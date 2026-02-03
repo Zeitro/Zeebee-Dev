@@ -3,15 +3,16 @@ package userlogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/lender/rpc/internal/global"
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/bo"
 	"zeebee-backend/domains/zeebee/data/dto"
 )
 
@@ -32,7 +33,7 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 }
 
 // user
-func (l *LoginLogic) Login(in *lender.UserLoginRequest) (resp *lender.UserLoginResponse, err error) {
+func (l *LoginLogic) Login(in *lender.UserLoginRequest) (resp *lender.UserJwtResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -52,12 +53,13 @@ func (l *LoginLogic) Login(in *lender.UserLoginRequest) (resp *lender.UserLoginR
 	if err != nil {
 		return nil, err
 	}
-	data := &lender.UserLoginResponseData{}
-	err = copier.CopyWithOption(&data, token, copier.Option{CaseSensitive: true})
+
+	data, err := copierx.Trans[bo.UserJwtTokenBo, lender.UserJwtResponseData](token)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
-	return &lender.UserLoginResponse{
+
+	return &lender.UserJwtResponse{
 		Data: data,
 	}, nil
 }

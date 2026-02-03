@@ -1,0 +1,45 @@
+package organization
+
+import (
+	"context"
+
+	"zeebee-backend/app/admin/api/internal/svc"
+	"zeebee-backend/app/admin/api/internal/types"
+	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/common/errorx"
+
+	"github.com/zeromicro/go-zero/core/logx"
+)
+
+type OrganizationDeleteLogic struct {
+	logx.Logger
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+}
+
+// delete organization
+func NewOrganizationDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OrganizationDeleteLogic {
+	return &OrganizationDeleteLogic{
+		Logger: logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+	}
+}
+
+func (l *OrganizationDeleteLogic) OrganizationDelete(req *types.PathIdRequest) (resp *types.EmptyResponse, err error) {
+	defer func() {
+		if err != nil {
+			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+		}
+	}()
+
+	// Call RPC server
+	_, err = l.svcCtx.OrganizationRpcClient.Delete(l.ctx, &admin.IdRequest{
+		Data: req.Id,
+	})
+	if err != nil {
+		return nil, errorx.WithStack(err)
+	}
+
+	return &types.EmptyResponse{}, nil
+}
