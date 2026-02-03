@@ -3,13 +3,12 @@ package user
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
-	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/copierx"
 )
 
 type RefreshTokenLogic struct {
@@ -42,9 +41,6 @@ func (l *RefreshTokenLogic) RefreshToken(req *types.UserRefreshTokenRequest) (re
 	}
 
 	// trans response
-	err = copier.Copy(resp, &rpcResp.Data)
-	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
-	}
+	resp, err = copierx.Trans[admin.RefreshTokenResponseData, types.UserRefreshTokenResponse](rpcResp.Data)
 	return resp, err
 }

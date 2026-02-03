@@ -108,3 +108,32 @@ func (repo *RoleRepo) GetOrganizationUserRoles(ctx context.Context, organization
 		Find(&result).Error
 	return result, errorx.WithStack(err)
 }
+
+// DeleteByIdWithTx deletes a role by its ID within a transaction.
+// It also removes all associated resources and organization users before deletion.
+// The function ensures all operations are executed within the provided transaction context.
+func (repo *RoleRepo) DeleteByIdWithTx(ctx context.Context, tx *gorm.DB, id int64) (err error) {
+	var role *model.Role
+	ctxQuery := tx.WithContext(ctx)
+	err = ctxQuery.
+		Model(&model.Role{}).
+		Preload("Resources").
+		Preload("OrganizationUsers").
+		Where("id = ?", id).
+		First(&role).Error
+	if err != nil {
+		return errorx.WithStack(err)
+	}
+	err = ctxQuery.Model(role).Association("Resources").Clear()
+	if err != nil {
+		return errorx.WithStack(err)
+	}
+	err = ctxQuery.Model(role).Association("OrganizationUsers").Clear()
+	if err != nil {
+		return errorx.WithStack(err)
+	}
+	role.RemoveRelationships()
+	err = ctxQuery.Delete(&role).Error
+
+	return errorx.WithStack(err)
+}

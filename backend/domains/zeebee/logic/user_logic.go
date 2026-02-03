@@ -482,7 +482,7 @@ func (l *UserLogic) SwitchOrganization(ctx context.Context, userId int64, organi
 // It validates both user and organization inputs, checks for existence, and creates the necessary
 // relationships between them. The function handles both cases of creating a new organization
 // or using an existing one.
-func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.UserRegisterRequestDto, organizationInput dto.OrganizationRegisterRequestDto, userType constants.UserType) (newUser *model.User, organizationUser *model.OrganizationUser, err error) {
+func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.UserRegisterRequestDto, organizationInput dto.OrganizationRegisterRequestDto, userType constants.UserType, isManual bool) (newUser *model.User, organizationUser *model.OrganizationUser, err error) {
 	var user *model.User
 	var organization *model.Organization
 	// check user exist
@@ -505,8 +505,8 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 	}
 
 	// check organization exist
-	if len(organizationInput.Name) == 0 && organizationInput.Id == 0 {
-		return nil, nil, errorx.New("Organization Is Empty")
+	if len(organizationInput.Name) == 0 {
+		return nil, nil, errorx.New("Organization Name Is Empty")
 	}
 	isExisted, err = l.repos.OrganizationRepo.IsExistedByColumns(ctx, map[string]interface{}{
 		"name": organizationInput.Name,
@@ -525,15 +525,11 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 
 	err = l.repos.UserRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
-		var isCreateOrganization bool
-		// create  organization
-		if organization.Id == 0 {
-			organization.Status = constants.OrganizationStatusInactive
-			organization, innerErr = l.repos.OrganizationRepo.CreateWithTx(ctx, tx, organization, false)
-			if innerErr != nil {
-				return innerErr
-			}
-			isCreateOrganization = true
+		organization.Status = condition.Ternary(isManual, organizationInput.Status, constants.OrganizationStatusNotActivated)
+		// organization.Status = constants.OrganizationStatusNotActivated
+		organization, innerErr = l.repos.OrganizationRepo.CreateWithTx(ctx, tx, organization, false)
+		if innerErr != nil {
+			return innerErr
 		}
 
 		user.DefaultOrganizationId = organization.Id
@@ -551,16 +547,13 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 			return innerErr
 		}
 		// update organization's owner
-		if isCreateOrganization {
-			organization.OwnerId = user.Id
-			innerErr = l.repos.OrganizationRepo.UpdateOwnerIdWithTx(ctx, tx, organization.Id, user.Id)
-			if innerErr != nil {
-				return innerErr
-			}
-			user.DefaultOrganizationId = organization.Id
-		} else {
-			roles = nil
+		organization.OwnerId = user.Id
+		innerErr = l.repos.OrganizationRepo.UpdateOwnerIdWithTx(ctx, tx, organization.Id, user.Id)
+		if innerErr != nil {
+			return innerErr
 		}
+		user.DefaultOrganizationId = organization.Id
+
 		// create organization user
 		organizationUser = &model.OrganizationUser{
 			OrganizationId: organization.Id,
@@ -568,7 +561,7 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 			FirstName:      user.FirstName,
 			MidName:        user.MidName,
 			LastName:       user.LastName,
-			Status:         constants.OrganizationUserStatusActive,
+			Status:         condition.Ternary(isManual, constants.OrganizationUserStatusActive, constants.OrganizationUserStatusNotActivated),
 			FullName:       user.FullName,
 			Roles:          roles,
 		}
@@ -599,6 +592,12 @@ func (l *UserLogic) VerifyUserEmail(ctx context.Context, email string, code stri
 	if len(token) == 0 || token != code {
 		return nil, errorx.New("Invalid Or Expired Code")
 	}
+	defer func() {
+		if err == nil {
+			_ = l.redisCli.Del(ctx, verifyCodeKey)
+		}
+	}()
+
 	err = l.repos.UserRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
 		// get user
@@ -622,7 +621,13 @@ func (l *UserLogic) VerifyUserEmail(ctx context.Context, email string, code stri
 			return innerErr
 		}
 
-		return innerErr
+		// update organization user  status
+		innerErr = l.repos.OrganizationUserRepo.ActiveByUserIdWithTx(ctx, tx, user.Id)
+		if innerErr != nil {
+			return innerErr
+		}
+
+		return nil
 	})
 	return
 }

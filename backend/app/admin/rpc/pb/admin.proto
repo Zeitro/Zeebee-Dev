@@ -12,12 +12,31 @@ message StringSliceResponse {
   repeated string data = 1;
 }
 
+message IdRequest {
+  int64 data = 1;
+}
+
 message AddressEntity{
   string state = 1;
   string city = 2;
   string address1 = 3;
   string address2 = 4;
   string zip_code = 5;
+}
+
+message RangeInt64 {
+  int64 min = 1;
+  int64 max = 2;
+}
+
+message RangeInt32 {
+  int32 min = 1;
+  int32 max = 2;
+}
+
+message RangeFloat {
+  double min = 1;
+  double max = 2;
 }
 
 // ================= user service start ==================
@@ -37,19 +56,18 @@ message UserEntity {
   repeated RoleEntity roles = 13;
 }
 
-// login
+// login -- request
 message UserLoginRequest {
   UserLoginRequestData data = 1;
 }
-message UserLoginResponse {
-  UserLoginResponseData data = 1;
-}
-
 message UserLoginRequestData {
   string email = 1;
   string password = 2;
 }
-
+// login -- response
+message UserLoginResponse {
+  UserLoginResponseData data = 1;
+}
 message UserLoginResponseData {
   string access_token = 1;
   string refresh_token = 2;
@@ -57,7 +75,7 @@ message UserLoginResponseData {
   int64 refresh_token_expire = 4;
 }
 
-// refresh
+// refresh -- request
 message RefreshTokenRequest {
   RefreshTokenRequestData data = 1;
 }
@@ -65,7 +83,7 @@ message RefreshTokenRequest {
 message RefreshTokenRequestData {
   string refresh_token = 1;
 }
-
+// refresh -- response
 message RefreshTokenResponse {
   RefreshTokenResponseData data = 1;
 }
@@ -75,18 +93,18 @@ message RefreshTokenResponseData {
   int64 access_token_expire = 2;
 }
 
-// reset password
+// reset password -- request
 message ResetPasswordRequest {
   ResetPasswordRequestData data = 1;
 }
-message ResetPasswordResponse {
-  UserLoginResponseData data = 1;
-}
-
 message ResetPasswordRequestData {
   string password = 1;
   string code = 2;
   string email = 3;
+}
+// reset password -- response
+message ResetPasswordResponse {
+  UserLoginResponseData data = 1;
 }
 message ResetPasswordResponseData {
   string access_token = 1;
@@ -95,7 +113,7 @@ message ResetPasswordResponseData {
   int64 refresh_token_expire = 4;
 }
 
-// userinfo
+// userinfo -- request
 message UserInfoRequest {
   UserInfoRequestData data = 1;
 }
@@ -103,7 +121,7 @@ message UserInfoRequest {
 message UserInfoRequestData {
   int64 id = 1;
 }
-
+// userinfo -- response
 message UserinfoResponse {
   UserinfoResponseData data = 1;
 }
@@ -130,12 +148,11 @@ message UserinfoResponseData {
   int64 organization_user_id = 12;
 }
 
-// edit profile
+// edit profile -- request
 message UserProfileEditRequest {
   UserProfileEditRequestData data = 1;
 }
 message UserProfileEditRequestData {
-  //  int64 user_id = 1;
   string first_name = 2;
   string last_name = 3;
   string phone = 4;
@@ -183,12 +200,9 @@ message OrganizationUserPageEntity {
   repeated RoleEntity roles = 12;
   bool is_owner = 13;
 }
-// page
+// page --  request
 message OrganizationUserPageRequest {
   OrganizationUserPageRequestData data = 1;
-}
-message OrganizationUserPageResponse {
-  OrganizationUserPageResponseData data = 1;
 }
 message OrganizationUserPageRequestData {
   int64 page = 1;
@@ -205,6 +219,12 @@ message OrganizationUserPageRequestSorter {
   string column = 1;
   string sort = 2;
 }
+// page --  response
+message OrganizationUserPageResponse {
+  OrganizationUserPageResponseData data = 1;
+}
+
+
 message OrganizationUserPageResponseData {
   int64 page = 1;
   int64 limit = 2;
@@ -212,7 +232,7 @@ message OrganizationUserPageResponseData {
   int64 total_page = 4;
   repeated OrganizationUserPageEntity list = 5;
 }
-// create
+// create -- request
 message OrganizationUserCreateRequest {
   OrganizationUserCreateRequestData data = 1;
 }
@@ -227,7 +247,7 @@ message OrganizationUserCreateRequestData {
   string phone = 5;
   repeated int64 role_ids = 6;
 }
-// update
+// update -- request
 message OrganizationUserUpdateRequest {
   OrganizationUserUpdateRequestData data = 1;
 }
@@ -241,7 +261,7 @@ message OrganizationUserUpdateRequestData {
   string phone = 5;
   repeated int64 role_ids = 6;
 }
-// delete
+// delete -- request
 message OrganizationUserDeleteRequest {
   OrganizationUserDeleteRequestData data = 1;
 }
@@ -250,7 +270,7 @@ message OrganizationUserDeleteRequestData {
   int64 id = 1;
 }
 
-// detail
+// detail -- request
 message OrganizationUserDetailRequest {
   OrganizationUserDetailRequestData data = 1;
 }
@@ -260,7 +280,7 @@ message OrganizationUserDetailResponse {
 message OrganizationUserDetailRequestData {
   int64 id = 1;
 }
-// switch status
+// switch status -- request
 message OrganizationUserSwitchStatusRequest {
   OrganizationUserSwitchStatusRequestData data = 1;
 }
@@ -309,7 +329,7 @@ message ApiEntity{
   string updated_at = 11;
 }
 
-// api tree
+// api tree -- request
 message ApiTreeRequest {
   ApiTreeRequestData data = 1;
 }
@@ -318,11 +338,11 @@ message ApiTreeRequestData {
   int64 organization_id = 2;
   string type = 3;
 }
-
+// api tree -- response
 message ApiTreeResponse {
   repeated ApiTreeEntity data = 1;
 }
-// create
+// create -- request
 message ApiCreateRequest {
   ApiCreateRequestData data = 1;
 }
@@ -335,13 +355,12 @@ message ApiCreateRequestData {
   string description = 6;
   string status = 7;
   int32 sort_order = 8;
-  //  int64 user_id = 9;
-  //  int64 organization_id = 10;
 }
+// create -- response
 message ApiCreateResponse {
   ApiTreeEntity data = 1;
 }
-// update
+// update -- request
 message ApiUpdateRequest {
   ApiUpdateRequestData data = 1;
 }
@@ -355,29 +374,23 @@ message ApiUpdateRequestData {
   string description = 7;
   string status = 8;
   int32 sort_order = 9;
-  //  int64 user_id = 10;
-  //  int64 organization_id = 11;
 }
 
-//  delete
+//  delete -- request
 message ApiDeleteRequest {
   ApiDeleteRequestData data = 1;
 }
 message ApiDeleteRequestData {
   int64 id = 1;
-  //  int64 user_id = 2;
-  //  int64 organization_id = 3;
-  string type = 4;
+  string type = 2;
 }
-// detail
+// detail -- request
 message ApiDetailRequest {
   ApiDetailRequestData data = 1;
 }
 message ApiDetailRequestData {
   int64 id = 1;
-  //  int64 user_id = 2;
-  //  int64 organization_id = 3;
-  string type = 4;
+  string type = 2;
 }
 
 service api {
@@ -425,20 +438,18 @@ message ResourceEntity{
   string pivot_role_data_scope = 15;
 }
 
-// resource tree
+// resource tree -- request
 message ResourceTreeRequest {
   ResourceTreeRequestData data = 1;
 }
 message ResourceTreeRequestData {
-  //  int64 user_id = 1;
-  //  int64 organization_id = 2;
-  string type = 3;
+  string type = 1;
 }
-
+// resource tree -- response
 message ResourceTreeResponse {
   repeated ResourceTreeEntity data = 1;
 }
-// create
+// create -- request
 message ResourceCreateRequest {
   ResourceCreateRequestData data = 1;
 }
@@ -453,14 +464,12 @@ message ResourceCreateRequestData {
   bool is_show = 8;
   string status = 9;
   int32 sort_order = 10;
-  //  int64 user_id = 11;
-  //  int64 organization_id = 12;
-  repeated int64 api_ids = 13;
+  repeated int64 api_ids = 11;
 }
 message ResourceCreateResponse {
   ResourceTreeEntity data = 1;
 }
-// update
+// update -- request
 message ResourceUpdateRequest {
   ResourceUpdateRequestData data = 1;
 }
@@ -476,30 +485,24 @@ message ResourceUpdateRequestData {
   bool is_show = 9;
   string status = 10;
   int32 sort_order = 11;
-  //  int64 user_id = 12;
-  //  int64 organization_id = 13;
-  repeated int64 api_ids = 14;
+  repeated int64 api_ids = 12;
 }
 
-//  delete
+//  delete -- request
 message ResourceDeleteRequest {
   ResourceDeleteRequestData data = 1;
 }
 message ResourceDeleteRequestData {
   int64 id = 1;
-  //  int64 user_id = 2;
-  //  int64 organization_id = 3;
-  string type = 4;
+  string type = 2;
 }
-// detail
+// detail -- request
 message ResourceDetailRequest {
   ResourceDetailRequestData data = 1;
 }
 message ResourceDetailRequestData {
   int64 id = 1;
-  //  int64 user_id = 2;
-  //  int64 organization_id = 3;
-  string type = 4;
+  string type = 2;
 }
 
 message ResourceDetailResponse {
@@ -527,7 +530,7 @@ message RoleEntity {
   int64 organization_id = 8;
   repeated ResourceEntity resources = 9;
 }
-
+// role page -- request
 message RolePageRequest {
   RolePageRequestData data = 1;
 }
@@ -546,7 +549,7 @@ message RolePageRequestSorter {
   string column = 1;
   string sort = 2;
 }
-
+// role page -- response
 message RolePageResponse {
   RolePageResponseData data = 1;
 }
@@ -559,7 +562,7 @@ message RolePageResponseData {
   repeated RoleEntity list = 5;
 }
 
-//  create
+//  create -- request
 message RoleCreateRequest {
   RoleCreateRequestData data = 1;
 }
@@ -567,26 +570,26 @@ message RoleCreateRequestData {
   string name = 1;
   string description = 2;
   string status = 4;
-  //  int64 user_id = 5;
-  //  int64 organization_id = 6;
-  repeated RoleAndResourceRelationEntity role_and_resources = 7;
+  repeated RoleAndResourceRelationEntity role_and_resources = 5;
 }
+// create -- response
 message RoleCreateResponse {
   RoleEntity data = 1;
 }
-//  update
+//  update -- request
 message RoleUpdateRequest {
   RoleUpdateRequestData data = 1;
+}
+// update -- response
+message RoleUpdateResponse {
+  RoleEntity data = 1;
 }
 message RoleUpdateRequestData {
   int64 id = 1;
   string name = 2;
   string description = 3;
-  //  string type = 4;
-  string status = 5;
-  //  int64 user_id = 6;
-  //  int64 organization_id = 7;
-  repeated RoleAndResourceRelationEntity role_and_resources = 8;
+  string status = 4;
+  repeated RoleAndResourceRelationEntity role_and_resources = 5;
 }
 
 message RoleAndResourceRelationEntity{
@@ -595,54 +598,41 @@ message RoleAndResourceRelationEntity{
   string data_scope = 3;
 }
 
-
-message RoleUpdateResponse {
-  RoleEntity data = 1;
-}
-//  delete
+//  delete -- request
 message RoleDeleteRequest {
   RoleDeleteRequestData data = 1;
 }
 message RoleDeleteRequestData {
   int64 id = 1;
-  //  int64 user_id = 2;
-  //  int64 organization_id = 3;
-  //  string type = 4;
 }
 
-//  detail
+//  detail -- request
 message RoleDetailRequest {
   RoleDetailRequestData data = 1;
 }
 message RoleDetailRequestData {
   int64 id = 1;
-  //  int64 user_id = 2;
-  //  int64 organization_id = 3;
-  //  string type = 4;
 }
+// detail -- response
 message RoleDetailResponse {
   RoleEntity data = 1;
 }
-// update status
+// update status -- request
 message RoleUpdateStatusRequest {
   RoleUpdateStatusRequestData data = 1;
 }
 message RoleUpdateStatusRequestData {
   int64 id = 1;
   string status = 2;
-  //  int64 user_id = 3;
-  //  int64 organization_id = 4;
-  //  string type = 5;
 }
 
-// all roles
+// all roles -- request
 message RoleAllRequest {
   RoleAllRequestData data = 1;
 }
 message RoleAllRequestData {
-  //  int64 user_id = 1;
-  //  int64 organization_id = 2;
 }
+// all roles -- response
 message RoleAllResponse {
   repeated RoleEntity data = 1;
 }
@@ -658,3 +648,217 @@ service role {
 }
 
 // ================== role service end =================
+
+// ================== organization service start =================
+message OrganizationEntity {
+  int64 id = 1;
+  string name = 2;
+  string status = 3;
+  AddressEntity address = 4;
+  string contact_email = 5;
+  string contact_phone = 6;
+  string contact_name = 7;
+  string owner_type = 8;
+  string type = 9;
+  string logo = 10;
+  string website = 11;
+  string tagline = 12;
+  OrganizationMetadataEntity metadata = 13;
+  string created_at = 14;
+  string updated_at = 15;
+  repeated OrganizationEmailEntity organization_emails = 16;
+  UserEntity owner = 17;
+}
+
+message OrganizationPageEntity {
+  int64 id = 1;
+  string name = 2;
+  string status = 3;
+  string contact_email = 4;
+  string contact_phone = 5;
+  string contact_name = 6;
+  string owner_type = 7;
+  string type = 8;
+  string logo = 9;
+  string website = 10;
+  string tagline = 11;
+  string created_at = 12;
+  string updated_at = 13;
+  AddressEntity address = 14;
+  string owner_email = 15;
+  string owner_full_name = 16;
+  string owner_first_name = 17;
+  string owner_last_name = 18;
+}
+
+message OrganizationMetadataEntity {
+  OrganizationLenderMetadataEntity lender = 1;
+}
+message OrganizationLenderMetadataEntity {
+  RangeFloat loan_amount_range = 1;
+  RangeInt32 loan_term_range = 2;
+  RangeFloat loan_rate_range = 3;
+  RangeFloat loan_point_range = 4;
+}
+
+// page -- request
+message OrganizationPageRequest {
+  OrganizationPageRequestData data = 1;
+}
+message OrganizationPageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  OrganizationPageRequestFilter filter = 3;
+  OrganizationPageRequestSorter sorter = 4;
+}
+message OrganizationPageRequestFilter {
+  string keyword = 1;
+  string status = 2;
+  string organization_type = 3;
+}
+message OrganizationPageRequestSorter {
+  string column = 1;
+  string sort = 2;
+}
+// page -- response
+message OrganizationPageResponse {
+  OrganizationPageResponseData data = 1;
+}
+message OrganizationPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated OrganizationPageEntity list = 5;
+}
+
+// create lender -- request
+message OrganizationCreateLenderRequest {
+  OrganizationCreateLenderRequestData data = 1;
+}
+message OrganizationCreateLenderRequestData {
+  OrganizationCreateLenderUserEntity owner = 1;
+  OrganizationCreateLenderOrganizationEntity organization = 2;
+}
+message OrganizationCreateLenderUserEntity {
+  string email = 1;
+  string password = 2;
+  string first_name = 5;
+  string last_name = 6;
+}
+message OrganizationCreateLenderOrganizationEntity {
+  string name = 1;
+  string contact_email = 2;
+  string contact_phone = 3;
+  string contact_name = 4;
+  string logo = 5;
+  string website = 6;
+  string tagline = 7;
+  OrganizationMetadataEntity metadata = 8;
+  AddressEntity address = 9;
+}
+
+
+// update lender -- request
+message OrganizationUpdateLenderRequest {
+  OrganizationUpdateLenderRequestData data = 1;
+}
+message OrganizationUpdateLenderRequestData {
+  int64 id = 1;
+  string contact_email = 2;
+  string contact_phone = 3;
+  string contact_name = 4;
+  string logo = 5;
+  string website = 6;
+  string tagline = 7;
+  OrganizationMetadataEntity metadata = 8;
+  AddressEntity address = 9;
+}
+
+// detail -- response
+message OrganizationDetailResponse {
+  OrganizationEntity data = 1;
+}
+// switch status -- request
+message OrganizationSwitchStatusRequest {
+  OrganizationSwitchStatusRequestData data = 1;
+}
+message OrganizationSwitchStatusRequestData {
+  int64 id = 1;
+  string status = 2;
+}
+service organization {
+  rpc Page(OrganizationPageRequest) returns(OrganizationPageResponse);
+  rpc CreateLender(OrganizationCreateLenderRequest) returns(OrganizationDetailResponse);
+  rpc UpdateLender(OrganizationUpdateLenderRequest) returns(OrganizationDetailResponse);
+  rpc Detail(IdRequest) returns(OrganizationDetailResponse);
+  rpc Delete(IdRequest) returns(EmptyResponse);
+  rpc SwitchStatus(OrganizationSwitchStatusRequest) returns(EmptyResponse);
+}
+// =================== organization service end =================
+
+// ================= organization email service start =================
+message OrganizationEmailEntity {
+  int64 id = 1;
+  int64 organization_id = 2;
+  string email = 3;
+  string auth_strategy = 4;
+  string purpose = 5;
+  bool is_authorized = 6;
+}
+// ================= organization email service end =================
+
+// ================= storage service start =================
+message StorageCreatePresignedUrlRequest {
+  StorageCreatePresignedUrlRequestData data = 1;
+}
+
+message StorageCreatePresignedUrlRequestData {
+  string type = 1;
+  string file_suffix = 2;
+}
+
+message StorageCreatePresignedUrlResponse {
+  StorageCreatePresignedUrlResponseData data = 1;
+}
+
+message StorageCreatePresignedUrlResponseData {
+  string url = 1;
+}
+
+service Storage {
+  rpc CreatePresignedUrl(StorageCreatePresignedUrlRequest) returns(StorageCreatePresignedUrlResponse);
+}
+// ================= storage service end =================
+// ========================== common service start =================
+message OptionRequest {
+  OptionRequestData data = 1;
+}
+
+message OptionRequestData {
+  string name = 1;
+}
+
+message OptionResponse {
+  repeated OptionEntity data = 1;
+}
+
+message OptionEntity{
+  string label = 1;
+  string value = 2;
+}
+
+message UsCitiesRequest {
+  UsCitiesRequestData data = 1;
+}
+
+message UsCitiesRequestData {
+  string state_usps = 1;
+}
+
+service common {
+  rpc GetOpt(OptionRequest) returns(OptionResponse);
+  rpc GetUsState(EmptyRequest) returns(StringSliceResponse);
+  rpc GetUsCities(UsCitiesRequest) returns(StringSliceResponse);
+}
+// ========================== common service end =================

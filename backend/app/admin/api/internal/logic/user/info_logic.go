@@ -3,12 +3,12 @@ package user
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/utils"
 )
@@ -50,9 +50,9 @@ func (l *InfoLogic) Info(req *types.EmptyRequest) (resp *types.UserInfoResponse,
 	}
 
 	// trans response
-	err = copier.Copy(resp, &rpcResp.Data)
+	resp, err = copierx.Trans[admin.UserinfoResponseData, types.UserInfoResponse](rpcResp.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
 	return resp, err
 }

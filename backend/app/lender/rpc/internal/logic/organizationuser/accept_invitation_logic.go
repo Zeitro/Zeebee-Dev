@@ -34,7 +34,7 @@ func NewAcceptInvitationLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	}
 }
 
-func (l *AcceptInvitationLogic) AcceptInvitation(in *lender.OrganizationUserAcceptInvitationRequest) (resp *lender.UserLoginResponse, err error) {
+func (l *AcceptInvitationLogic) AcceptInvitation(in *lender.OrganizationUserAcceptInvitationRequest) (resp *lender.UserJwtResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -54,10 +54,12 @@ func (l *AcceptInvitationLogic) AcceptInvitation(in *lender.OrganizationUserAcce
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[bo.UserJwtTokenBo, lender.UserLoginResponseData](token)
+	data, err := copierx.Trans[bo.UserJwtTokenBo, lender.UserJwtResponseData](token)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 
-	return &lender.UserLoginResponse{Data: data}, nil
+	return &lender.UserJwtResponse{
+		Data: data,
+	}, nil
 }
