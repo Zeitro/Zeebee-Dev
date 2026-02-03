@@ -5,10 +5,10 @@ import { Row, Col, Form, Select, Input } from 'antd';
 import AddressForm from '../GoogleAutoComplete/AddressForm';
 import { InputPhone } from '../InputPhone';
 import { SelectFormTINType } from '../InputTIN/SelectTINType';
-import { emailRegex, phoneRegex, validateRule } from '../../lib/format';
-import { layoutCol, titleCol } from '@/enum/common';
+import { emailRegex, phoneRegex, validateRule } from '@repo/shared-methods/utils';
 // import { useGetOptions } from '@repo/shared-methods/hooks';
-import SelectCard from '@/components/SelectCard';
+import { SelectCard } from '@repo/shared-methods';
+import { layoutCol, titleCol } from '@repo/shared-methods/enum';
 const name = 'loan_borrower';
 export const ApplicantInfo = ({
 	gutter = 24,

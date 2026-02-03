@@ -531,6 +531,30 @@ message LoanApplyRequestData {
   string apply_form_file = 22;
   bool is_preapprove_loan = 23;
   string code = 24;
+  LoanPreapproveInfo loan_preapprove_info = 25;
+}
+
+message LoanPreapproveInfo {
+  LoanPreApprovalRequestData input = 1;
+  LoanPreapproveResult result = 2;
+}
+message LoanPreapproveResult {
+  string lender_organization_name = 1;
+  int64 lender_organization_id = 2;
+  bool is_approved = 3;
+  string reject_reason = 4;
+  double total_amount = 5;
+  double interest_reserved_amount = 6;
+  float rate = 7;
+  double monthly_payment = 8;
+  double cash_to_close = 9;
+  double initial_amount = 10;
+  double holdback_amount = 11;
+  int32 loan_term = 12;
+  float ltv = 13;
+  float ltc = 14;
+  float ltarv = 15;
+  string experience_level = 16;
 }
 
 message LoanApplyResponse {

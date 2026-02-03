@@ -42,6 +42,10 @@ export const navRouter = [
 			// 	title: 'Setting ( Role )',
 			// 	menuTitle: 'Role',
 			// },
+			{
+				path: '/setting/organizationProfile',
+				title: 'Organization profile',
+			},
 		],
 	},
 ];

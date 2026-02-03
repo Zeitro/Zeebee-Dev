@@ -4,9 +4,10 @@ import styles from './index.module.scss';
 import { Row, Col, Form, Select, InputNumber } from 'antd';
 import AddressForm from '../GoogleAutoComplete/AddressForm';
 import { useGetOptions } from '@repo/shared-methods/hooks';
-import { layoutCol, titleCol } from '@/enum/common';
+import { layoutCol, titleCol } from '@repo/shared-methods/enum';
 import { livingAreaProps } from '../../lib/format';
-import SelectCard from '@/components/SelectCard/index';
+// import SelectCard from '@/components/SelectCard/index';
+import { SelectCard } from '@repo/shared-methods';
 let name = 'loan_property';
 export const PropertyInfo = ({
 	gutter = 24,

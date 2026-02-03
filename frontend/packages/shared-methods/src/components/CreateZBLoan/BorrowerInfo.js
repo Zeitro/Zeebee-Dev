@@ -13,13 +13,14 @@ import {
 	tinOrSSNRegex,
 } from '../../lib/format';
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
-import { layoutCol, titleCol } from '@/enum/common';
+import { layoutCol, titleCol } from '@repo/shared-methods/enum';
 // import { useGetOptions } from '@repo/shared-methods/hooks';
 import { CommonFormDate } from '../CommonFormDate';
 import { InputNameCombination } from '../InputNameCombination';
 import { InputPhone } from '../InputPhone';
 import { InputTIN } from '../InputTIN';
-import SelectCard from '@/components/SelectCard';
+// import SelectCard from '@/components/SelectCard';
+import { SelectCard } from '@repo/shared-methods';
 import _ from 'lodash';
 export const BorrowerInfo = ({
 	gutter = 24,

@@ -104,6 +104,18 @@ export const navRouter = [
 			},
 		],
 	},
+	{
+		path: '/marketTools',
+		title: 'Market Tools',
+		icon: 'marketTools',
+		isPageNotFound: true,
+		router: [
+			{
+				path: '/marketTools/propertyFinder',
+				title: 'Property Finder',
+			},
+		],
+	},
 ];
 
 export const noTokenRouter = [

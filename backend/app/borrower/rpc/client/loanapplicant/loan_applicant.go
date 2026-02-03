@@ -128,6 +128,8 @@ type (
 	LoanPreApprovalRequestData_Property              = borrower.LoanPreApprovalRequestData_Property
 	LoanPreApprovalResponse                          = borrower.LoanPreApprovalResponse
 	LoanPreApprovalResponseData                      = borrower.LoanPreApprovalResponseData
+	LoanPreapproveInfo                               = borrower.LoanPreapproveInfo
+	LoanPreapproveResult                             = borrower.LoanPreapproveResult
 	LoanPropertyApplyEntity                          = borrower.LoanPropertyApplyEntity
 	LoanPropertyEntity                               = borrower.LoanPropertyEntity
 	LoanSendPreApprovalNotificationRequest           = borrower.LoanSendPreApprovalNotificationRequest

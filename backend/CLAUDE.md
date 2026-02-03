@@ -171,33 +171,50 @@ app/{service}/etc/config-{env}.yaml  -> 配置文件
 // copierx.Trans 泛型函数签名
 // func Trans[T, U any](src *T, opts ...copier.TypeConverter) (dist *U, err error)
 //
-// 注意：泛型参数 T 和 U 不包括指针符号 *
-//       src 参数本身是指针类型 *T
+// ⚠️ 重要：泛型参数 T 和 U 必须是非指针类型（不包含 * 符号）
+//          src 参数本身是指针类型 *T
+//          返回值也是指针类型 *U
 
-// 单个对象转换
-data, err := copierx.Trans[bo.OrganizationUserBo, lender.OrganizationUserEntity](result, copierx.TimeToRFC3339Str())
+// 单个对象转换 - DTO 转 Model
+data, err := copierx.Trans[dto.BaseTemplateCreateDto, model.BaseTemplate](&req)
 if err != nil {
-return nil, errorx.GetFailedTransRespErr(err)
+    return nil, err
 }
 
-// 切表转换
-data, err := copierx.Trans[[]*model.OrganizationUser, []*lender.OrganizationUserEntity](&results, copierx.TimeToRFC3339Str())
+// 单个对象转换 - Model 转 BO
+result, err := copierx.Trans[model.BaseTemplate, bo.BaseTemplateBo](modelData)
 if err != nil {
-return nil, errorx.GetFailedTransRespErr(err)
+    return nil, err
 }
 
-// 返回值是指针类型，使用时需要解引用
-return &lender.OrganizationUserAllResponse{
-Data: *data, // 解引用
+// 单个对象转换 - BO 转 Proto Entity，带时间格式化
+protoData, err := copierx.Trans[bo.BaseTemplateBo, admin.BaseTemplateEntity](boData, copierx.TimeToRFC3339Str())
+if err != nil {
+    return nil, err
+}
+
+// 返回值是指针类型，使用时根据需要解引用
+return &admin.CreateBaseTemplateResponse{
+    Data: protoData, // 直接使用指针
 }, nil
 ```
 
+**泛型参数规则**：
+
+| 转换方向 | T (源类型，非指针) | U (目标类型，非指针) | src 入参 | 返回值 |
+|---------|-------------------|-------------------|---------|--------|
+| DTO → Model | `dto.XxxDto` | `model.Xxx` | `&dtoData` | `*model.Xxx` |
+| Model → BO | `model.Xxx` | `bo.XxxBo` | `modelData` | `*bo.XxxBo` |
+| BO → Proto | `bo.XxxBo` | `admin.XxxEntity` | `boData` | `*admin.XxxEntity` |
+| Proto → DTO | `admin.XxxEntity` | `dto.XxxDto` | `protoData` | `*dto.XxxDto` |
+
 **类型转换规则**：
 
-- BO (Business Object) → Proto Entity: `bo.XxxBo → lender.XxxEntity`
-- Model → Proto Entity: `model.Xxx → lender.XxxEntity`
-- 时间字段转换: 使用 `copierx.TimeToRFC3339Str()` 作为选项
-- 切表转换: 泛型参数包含指针，如 `[]*model.Xxx → []*lender.XxxEntity`
+- DTO (Data Transfer Object) → Model: 用于创建/更新数据
+- Model → BO (Business Object): 用于返回业务对象
+- BO → Proto Entity: 用于 RPC 响应，带时间格式化 `copierx.TimeToRFC3339Str()`
+- Proto Entity → DTO: 用于 RPC 请求处理
+- 泛型参数永远使用**非指针类型**，入参和返回值才是指针
 
 ### Git 提交规范
 

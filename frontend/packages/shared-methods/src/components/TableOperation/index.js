@@ -1,6 +1,6 @@
 'use client';
 import { Button, Dropdown, Space } from 'antd';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { EditOutlined, EllipsisOutlined, DeleteOutlined, ProfileOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 
@@ -9,8 +9,9 @@ import { useRouter } from 'next/navigation';
  * list: 下拉列表，传值就不包含edit和delete，不传默认用edit/delete
  * getItems: 获取下拉列表的函数，可拿到edit/delete配置，重新组装顺序或在edit/delete前后添加其他项
  * onSelect：选择下拉项的回调函数
+ * sliceCount: null横向展示所有；传数字则横向展示指定个数，多出的用...hover显示下拉菜单
  */
-export const TableOperation = ({ list, className, onSelect, getItems, disabled }) => {
+export const TableOperation = ({ list, className, onSelect, getItems, disabled, sliceCount }) => {
 	const editItem = {
 		label: 'Edit',
 		key: 'edit',
@@ -29,39 +30,29 @@ export const TableOperation = ({ list, className, onSelect, getItems, disabled }
 	};
 	const [selectedKey, setSelectedKey] = useState(null);
 	const router = useRouter();
-	const newItems = getItems?.(editItem, deleteItem, detailsItem) || [editItem, deleteItem];
+	const info = useMemo(() => {
+		const newItems = getItems?.(editItem, deleteItem, detailsItem) || [editItem, deleteItem];
+		const arr = list || newItems;
+		const count = sliceCount === null ? arr.length : sliceCount;
+		const showList = arr.slice(0, count);
+		return {
+			showList,
+			moreList: arr.slice(count, arr.length - showList.length),
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [list, sliceCount]);
 
-	const handleSelect = async ({ key, domEvent, item }) => {
-		domEvent?.stopPropagation();
-		domEvent?.preventDefault();
-		// setSelectedKey(key);
-		// const arr = list || newItems;
-		// const optItem = arr.find((i) => i.key === key);
+	const handleSelect = async ({ key }) => {
+		setSelectedKey(key);
+		const arr = info.showList.concat(info.moreList);
+		const optItem = arr.find((i) => i.key === key);
 		await onSelect?.(key);
-		if (item?.url) {
-			router.push(item.url);
+		if (optItem?.url) {
+			router.push(optItem.url);
 		}
 	};
 
 	return (
-		// <Dropdown
-		// 	menu={{
-		// 		items: newItems.length && !list?.length ? newItems : [...(list || [])],
-		// 		selectable: true,
-		// 		selectedKeys: [selectedKey],
-		// 		onClick: handleSelect,
-		// 	}}
-		// 	className={[styles.tableOperation, disabled && '!text-base-disabled', className].join(
-		// 		' ',
-		// 	)}
-		// 	disabled={disabled}
-		// 	onClick={(domEvent) => {
-		// 		domEvent?.stopPropagation();
-		// 		domEvent?.preventDefault();
-		// 	}}
-		// >
-		// 	<EllipsisOutlined />
-		// </Dropdown>
 		<Space
 			size={0}
 			onClick={(domEvent) => {
@@ -70,7 +61,7 @@ export const TableOperation = ({ list, className, onSelect, getItems, disabled }
 			}}
 			className="[&_.ant-btn]:!gap-1"
 		>
-			{(list || newItems).map((item, index) => {
+			{info.showList.map((item, index) => {
 				const { key, icon, label, disabled, ...props } = item;
 				return (
 					item.children ?? (
@@ -80,7 +71,7 @@ export const TableOperation = ({ list, className, onSelect, getItems, disabled }
 							key={index}
 							icon={icon}
 							disabled={disabled}
-							onClick={(domEvent) => handleSelect({ key, domEvent, item })}
+							onClick={(domEvent) => handleSelect({ key, domEvent })}
 							{...props}
 							className={['!h-[22px]', props.className].join(' ')}
 						>
@@ -89,6 +80,20 @@ export const TableOperation = ({ list, className, onSelect, getItems, disabled }
 					)
 				);
 			})}
+			{info.moreList?.length > 0 && (
+				<Dropdown
+					menu={{
+						items: info.moreList,
+						selectable: true,
+						selectedKeys: [selectedKey],
+						onClick: handleSelect,
+					}}
+					className={[disabled && '!text-base-disabled', className].join(' ')}
+					disabled={disabled}
+				>
+					<EllipsisOutlined />
+				</Dropdown>
+			)}
 		</Space>
 	);
 };

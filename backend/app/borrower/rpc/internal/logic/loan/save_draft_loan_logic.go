@@ -262,6 +262,9 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 		_ = copier.CopyWithOption(loan, oldLoan, copier.Option{
 			CaseSensitive: true,
 			DeepCopy:      true,
+			Converters: []copier.TypeConverter{
+				copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
+			},
 		})
 		loan.RemoveRelationships()
 	}
@@ -276,10 +279,6 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 		return nil, errorx.GetFailedTransErr(err)
 	}
 	if loan.Id == 0 {
-		// creator, err := l.svcCtx.UserRepo.GetUser(l.ctx, reqData.UserId, constants.UserTypeBorrower)
-		// if err != nil {
-		// 	return nil, err
-		// }
 		loan.CreatorId = claim.OrganizationUserId
 		loan.CreatorName = claim.Username
 		loan.BorrowerOrganizationId = claim.OrganizationId
@@ -288,6 +287,11 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	loan.PendingStatus = constants.LoanPendingStatusNone
 	// loan.Source = constants.LoanSourceSystem
 	loan.Source = condition.Ternary(reqData.IsPreapproveLoan, constants.LoanSourcePreapproval, constants.LoanSourceSystem)
+	if reqData.IsPreapproveLoan {
+		preapprovalInfo, _ := copierx.Trans[borrower.LoanPreapproveInfo, model.LoanPreapprovalInfo](reqData.LoanPreapproveInfo)
+		loan.Extend.LoanPreapprovalInfo = preapprovalInfo
+	}
+
 	if reqData.LenderCompanyId > 0 {
 		lender, err := l.svcCtx.OrganizationRepo.FindOneById(l.ctx, reqData.LenderCompanyId)
 		if err != nil {
@@ -299,7 +303,7 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 
 	// LoanBorrower
 	var loanBorrower *model.LoanBorrower
-	if reqData.LoanBorrower.BorrowerEntityId > 0 {
+	if reqData.LoanBorrower != nil && reqData.LoanBorrower.BorrowerEntityId > 0 {
 		loanBorrower, err = l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, reqData.LoanBorrower.BorrowerEntityId, claim.OrganizationId)
 		if err != nil {
 			return nil, err
