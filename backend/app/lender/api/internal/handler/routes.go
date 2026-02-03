@@ -10,6 +10,7 @@ import (
 	file "zeebee-backend/app/lender/api/internal/handler/file"
 	loan "zeebee-backend/app/lender/api/internal/handler/loan"
 	loan_document "zeebee-backend/app/lender/api/internal/handler/loan_document"
+	organization "zeebee-backend/app/lender/api/internal/handler/organization"
 	organization_user "zeebee-backend/app/lender/api/internal/handler/organization_user"
 	role "zeebee-backend/app/lender/api/internal/handler/role"
 	storage "zeebee-backend/app/lender/api/internal/handler/storage"
@@ -143,6 +144,33 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/loan_document/send_requests",
 					Handler: loan_document.SendLoanDocumentRequestsHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// create
+					Method:  http.MethodPost,
+					Path:    "/organization",
+					Handler: organization.OrganizationCreateHandler(serverCtx),
+				},
+				{
+					// profile
+					Method:  http.MethodGet,
+					Path:    "/organization/profile",
+					Handler: organization.OrganizationProfileHandler(serverCtx),
+				},
+				{
+					// update profile
+					Method:  http.MethodPut,
+					Path:    "/organization/profile",
+					Handler: organization.OrganizationUpdateProfileHandler(serverCtx),
 				},
 			}...,
 		),
@@ -321,6 +349,18 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodPost,
 				Path:    "/user/send_reset_password",
 				Handler: user.SendResetPasswordHandler(serverCtx),
+			},
+			{
+				// send verify email
+				Method:  http.MethodPost,
+				Path:    "/user/send_verify_email",
+				Handler: user.SendVerifyEmailHandler(serverCtx),
+			},
+			{
+				// verify email
+				Method:  http.MethodPost,
+				Path:    "/user/verify_email",
+				Handler: user.VerifyEmailHandler(serverCtx),
 			},
 		},
 		rest.WithPrefix("/api/v1"),

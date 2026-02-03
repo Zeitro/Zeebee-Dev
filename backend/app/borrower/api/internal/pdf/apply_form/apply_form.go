@@ -115,7 +115,7 @@ func (form *ApplyForm) Generate(w io.Writer) (err error) {
 			return err
 		},
 	)
-	err = eg.Error()
+	err = eg.Wait()
 	return err
 }
 

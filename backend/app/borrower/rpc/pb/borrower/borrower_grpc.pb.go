@@ -3589,7 +3589,7 @@ var OrganizationUser_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	Organization_Info_FullMethodName       = "/borrower.Organization/Info"
+	Organization_Profile_FullMethodName    = "/borrower.Organization/Profile"
 	Organization_AllLender_FullMethodName  = "/borrower.Organization/AllLender"
 	Organization_LenderPage_FullMethodName = "/borrower.Organization/LenderPage"
 )
@@ -3598,7 +3598,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OrganizationClient interface {
-	Info(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationInfoResponse, error)
+	Profile(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationInfoResponse, error)
 	AllLender(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationAllLenderResponse, error)
 	LenderPage(ctx context.Context, in *OrganizationLenderPageRequest, opts ...grpc.CallOption) (*OrganizationLenderPageResponse, error)
 }
@@ -3611,10 +3611,10 @@ func NewOrganizationClient(cc grpc.ClientConnInterface) OrganizationClient {
 	return &organizationClient{cc}
 }
 
-func (c *organizationClient) Info(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationInfoResponse, error) {
+func (c *organizationClient) Profile(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationInfoResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(OrganizationInfoResponse)
-	err := c.cc.Invoke(ctx, Organization_Info_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Organization_Profile_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -3645,7 +3645,7 @@ func (c *organizationClient) LenderPage(ctx context.Context, in *OrganizationLen
 // All implementations must embed UnimplementedOrganizationServer
 // for forward compatibility.
 type OrganizationServer interface {
-	Info(context.Context, *EmptyRequest) (*OrganizationInfoResponse, error)
+	Profile(context.Context, *EmptyRequest) (*OrganizationInfoResponse, error)
 	AllLender(context.Context, *EmptyRequest) (*OrganizationAllLenderResponse, error)
 	LenderPage(context.Context, *OrganizationLenderPageRequest) (*OrganizationLenderPageResponse, error)
 	mustEmbedUnimplementedOrganizationServer()
@@ -3658,8 +3658,8 @@ type OrganizationServer interface {
 // pointer dereference when methods are called.
 type UnimplementedOrganizationServer struct{}
 
-func (UnimplementedOrganizationServer) Info(context.Context, *EmptyRequest) (*OrganizationInfoResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Info not implemented")
+func (UnimplementedOrganizationServer) Profile(context.Context, *EmptyRequest) (*OrganizationInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Profile not implemented")
 }
 func (UnimplementedOrganizationServer) AllLender(context.Context, *EmptyRequest) (*OrganizationAllLenderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AllLender not implemented")
@@ -3688,20 +3688,20 @@ func RegisterOrganizationServer(s grpc.ServiceRegistrar, srv OrganizationServer)
 	s.RegisterService(&Organization_ServiceDesc, srv)
 }
 
-func _Organization_Info_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Organization_Profile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(EmptyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OrganizationServer).Info(ctx, in)
+		return srv.(OrganizationServer).Profile(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Organization_Info_FullMethodName,
+		FullMethod: Organization_Profile_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrganizationServer).Info(ctx, req.(*EmptyRequest))
+		return srv.(OrganizationServer).Profile(ctx, req.(*EmptyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3750,8 +3750,8 @@ var Organization_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*OrganizationServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Info",
-			Handler:    _Organization_Info_Handler,
+			MethodName: "Profile",
+			Handler:    _Organization_Profile_Handler,
 		},
 		{
 			MethodName: "AllLender",
@@ -3938,6 +3938,108 @@ var OrganizationEmail_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GenerateAuthCodeUrl",
 			Handler:    _OrganizationEmail_GenerateAuthCodeUrl_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "app/borrower/rpc/pb/borrower.proto",
+}
+
+const (
+	Zeitro_ZeitroListingSearch_FullMethodName = "/borrower.Zeitro/ZeitroListingSearch"
+)
+
+// ZeitroClient is the client API for Zeitro service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type ZeitroClient interface {
+	ZeitroListingSearch(ctx context.Context, in *ZeitroListingSearchRequest, opts ...grpc.CallOption) (*ZeitroListingSearchResponse, error)
+}
+
+type zeitroClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewZeitroClient(cc grpc.ClientConnInterface) ZeitroClient {
+	return &zeitroClient{cc}
+}
+
+func (c *zeitroClient) ZeitroListingSearch(ctx context.Context, in *ZeitroListingSearchRequest, opts ...grpc.CallOption) (*ZeitroListingSearchResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ZeitroListingSearchResponse)
+	err := c.cc.Invoke(ctx, Zeitro_ZeitroListingSearch_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// ZeitroServer is the server API for Zeitro service.
+// All implementations must embed UnimplementedZeitroServer
+// for forward compatibility.
+type ZeitroServer interface {
+	ZeitroListingSearch(context.Context, *ZeitroListingSearchRequest) (*ZeitroListingSearchResponse, error)
+	mustEmbedUnimplementedZeitroServer()
+}
+
+// UnimplementedZeitroServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedZeitroServer struct{}
+
+func (UnimplementedZeitroServer) ZeitroListingSearch(context.Context, *ZeitroListingSearchRequest) (*ZeitroListingSearchResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ZeitroListingSearch not implemented")
+}
+func (UnimplementedZeitroServer) mustEmbedUnimplementedZeitroServer() {}
+func (UnimplementedZeitroServer) testEmbeddedByValue()                {}
+
+// UnsafeZeitroServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ZeitroServer will
+// result in compilation errors.
+type UnsafeZeitroServer interface {
+	mustEmbedUnimplementedZeitroServer()
+}
+
+func RegisterZeitroServer(s grpc.ServiceRegistrar, srv ZeitroServer) {
+	// If the following call pancis, it indicates UnimplementedZeitroServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&Zeitro_ServiceDesc, srv)
+}
+
+func _Zeitro_ZeitroListingSearch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ZeitroListingSearchRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ZeitroServer).ZeitroListingSearch(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Zeitro_ZeitroListingSearch_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ZeitroServer).ZeitroListingSearch(ctx, req.(*ZeitroListingSearchRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Zeitro_ServiceDesc is the grpc.ServiceDesc for Zeitro service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Zeitro_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "borrower.Zeitro",
+	HandlerType: (*ZeitroServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ZeitroListingSearch",
+			Handler:    _Zeitro_ZeitroListingSearch_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

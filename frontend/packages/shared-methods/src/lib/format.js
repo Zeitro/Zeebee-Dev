@@ -143,8 +143,9 @@ export const formatPhone = (phoneNumber) => {
 export const formatThousands = (amount) => {
 	if (!amount) return '';
 	if (typeof amount === 'string') {
-		amount = Number(amount);
+		amount = Number(amount.replace(/[^\d.-]/g, ''));
 	}
+	if (isNaN(amount)) return '';
 
 	let [integerPart, decimalPart = ''] = amount.toString().split('.');
 	if (decimalPart.length > 2) {

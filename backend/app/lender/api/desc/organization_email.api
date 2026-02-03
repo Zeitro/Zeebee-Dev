@@ -1,0 +1,15 @@
+syntax = "v1"
+
+info(
+    title: "organization-email-api"
+    desc: "organization-email-api http service description"
+    version: "v1"
+)
+
+type OrganizationEmailEntity {
+    Id int64 `json:"id"`
+    Email string `json:"email"`
+    AuthStrategy string `json:"auth_strategy"`
+    Purpose string `json:"purpose"`
+    IsAuthorized bool `json:"is_authorized"`
+}
