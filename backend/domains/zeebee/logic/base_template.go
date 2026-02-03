@@ -223,6 +223,7 @@ func (l *BaseTemplateLogic) SwitchStatus(ctx context.Context, id int64, status c
 				if innerErr != nil {
 					return innerErr
 				}
+				organizationTemplate.Id = 0
 				organizationTemplate.BaseTemplateId = tpl.Id
 				organizationTemplate.OrganizationId = organizationId
 				organizationTemplate.Status = constants.CommonStatusActive
