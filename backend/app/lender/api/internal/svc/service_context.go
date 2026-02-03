@@ -16,15 +16,16 @@ type ServiceContext struct {
 	AuthMiddleware rest.Middleware
 
 	// rpc client
-	UserRpcClient             lender.UserClient
-	LoanRpcClient             lender.LoanClient
-	CommonRpcClient           lender.CommonClient
-	StorageRpcClient          lender.StorageClient
-	FileRpcClient             lender.FileClient
-	LoanDocumentRpcClient     lender.LoanDocumentClient
-	RoleRpcClient             lender.RoleClient
-	OrganizationUserRpcClient lender.OrganizationUserClient
-	OrganizationRpcClient     lender.OrganizationClient
+	UserRpcClient                 lender.UserClient
+	LoanRpcClient                 lender.LoanClient
+	CommonRpcClient               lender.CommonClient
+	StorageRpcClient              lender.StorageClient
+	FileRpcClient                 lender.FileClient
+	LoanDocumentRpcClient         lender.LoanDocumentClient
+	RoleRpcClient                 lender.RoleClient
+	OrganizationUserRpcClient     lender.OrganizationUserClient
+	OrganizationRpcClient         lender.OrganizationClient
+	OrganizationTemplateRpcClient lender.OrganizationTemplateClient
 }
 
 func NewServiceContext(c config.ApiConf) *ServiceContext {
@@ -33,14 +34,15 @@ func NewServiceContext(c config.ApiConf) *ServiceContext {
 		AuthMiddleware: middleware.NewHttpAuthMiddleware(c.JwtAuth.AccessSecret, constants.UserTypeLender).Handle,
 
 		// rpc client
-		UserRpcClient:             lender.NewUserClient(zrpc.MustNewClient(c.RpcConf).Conn()),
-		LoanRpcClient:             lender.NewLoanClient(zrpc.MustNewClient(c.RpcConf).Conn()),
-		CommonRpcClient:           lender.NewCommonClient(zrpc.MustNewClient(c.RpcConf).Conn()),
-		StorageRpcClient:          lender.NewStorageClient(zrpc.MustNewClient(c.RpcConf).Conn()),
-		FileRpcClient:             lender.NewFileClient(zrpc.MustNewClient(c.RpcConf).Conn()),
-		LoanDocumentRpcClient:     lender.NewLoanDocumentClient(zrpc.MustNewClient(c.RpcConf).Conn()),
-		RoleRpcClient:             lender.NewRoleClient(zrpc.MustNewClient(c.RpcConf).Conn()),
-		OrganizationUserRpcClient: lender.NewOrganizationUserClient(zrpc.MustNewClient(c.RpcConf).Conn()),
-		OrganizationRpcClient:     lender.NewOrganizationClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		UserRpcClient:                 lender.NewUserClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		LoanRpcClient:                 lender.NewLoanClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		CommonRpcClient:               lender.NewCommonClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		StorageRpcClient:              lender.NewStorageClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		FileRpcClient:                 lender.NewFileClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		LoanDocumentRpcClient:         lender.NewLoanDocumentClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		RoleRpcClient:                 lender.NewRoleClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		OrganizationUserRpcClient:     lender.NewOrganizationUserClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		OrganizationRpcClient:         lender.NewOrganizationClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		OrganizationTemplateRpcClient: lender.NewOrganizationTemplateClient(zrpc.MustNewClient(c.RpcConf).Conn()),
 	}
 }

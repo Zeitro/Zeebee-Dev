@@ -1,6 +1,6 @@
 'use client';
 import { Button, Form, Space, Steps } from 'antd';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import styles from './index.module.scss';
 import BorrowerInfo from './BorrowerInfo';
 import Property from './Property';
@@ -8,8 +8,8 @@ import Loan from './Loan';
 import { useRouter } from 'next/navigation';
 import { useLoanStore } from '@/store/loan';
 import _ from 'lodash';
-import { createRequest } from '@/lib/fetch';
-import { changeUnitByPropertyType } from '@/lib/format';
+import { changeUnitByPropertyType, createRequest } from '@repo/shared-methods/utils';
+import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 
 // pre-approval,提交简易loan计算
 const EstimateLoan = ({ setIsResult, setResult }) => {
@@ -27,8 +27,8 @@ const EstimateLoan = ({ setIsResult, setResult }) => {
 		clearExpiredPreApprovedInStorage,
 	} = useLoanStore();
 	const [unitInfo, setUnitInfo] = useState({});
-	const loanSteps = useMemo(
-		() => [
+	const loanSteps = useMemo(() => {
+		return [
 			{
 				title: 'Borrower information',
 				key: 'Borrower',
@@ -57,14 +57,13 @@ const EstimateLoan = ({ setIsResult, setResult }) => {
 					/>
 				),
 			},
-		],
-		[
-			estimateLoan?.loan?.loan_purpose,
-			estimateLoan?.loan?.loan_type,
-			estimateLoan?.property?.property_type,
-			unitInfo,
-		],
-	);
+		];
+	}, [
+		estimateLoan?.loan?.loan_purpose,
+		estimateLoan?.loan?.loan_type,
+		estimateLoan?.property?.property_type,
+		unitInfo,
+	]);
 	const currentStepData = useMemo(() => loanSteps[currentStep], [currentStep, loanSteps]);
 
 	const nextBtnInfo = useMemo(() => {
@@ -95,6 +94,7 @@ const EstimateLoan = ({ setIsResult, setResult }) => {
 			savePreApprovedResult(res?.primary);
 			setIsResult(true);
 			setLoading(false);
+			console.log(`失败原因：${res?.primary?.reject_reason || '暂无'}`);
 		} catch (error) {
 			console.log(error);
 			setLoading(false);
@@ -140,12 +140,20 @@ const EstimateLoan = ({ setIsResult, setResult }) => {
 		</div>
 	);
 
-	useEffect(() => {
-		if (currentStep !== oldCurrentStep) {
+	useDeferredSyncEffect({
+		predicate: () => currentStep !== oldCurrentStep,
+		immediate: () => {
+			// 同步更新表单（立即执行）
 			form?.setFieldsValue?.(estimateLoan);
+		},
+		deferred: () => {
+			// 延迟执行会触发 React setState 的操作，避免同步在 effect 内 setState
 			setUnitInfo(changeUnitByPropertyType(estimateLoan?.property?.property_type));
-		}
-	}, [currentStep, estimateLoan, form, oldCurrentStep]);
+		},
+		deps: [currentStep, oldCurrentStep, estimateLoan, form],
+		delay: 0, // 放到 macrotask（可改为 useMicrotask: true）
+	});
+
 	return (
 		<div className={['flex h-full items-stretch', styles.estimateLoan].join(' ')}>
 			<div className="flex-1 pl-[5%] overflow-hidden">

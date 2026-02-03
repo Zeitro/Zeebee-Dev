@@ -2,12 +2,12 @@
 import { Col, Form, Radio, Row, Select, Input } from 'antd';
 import React from 'react';
 import styles from './index.module.scss';
-import InputNumAmount from '@/components/InputNumAmount';
-import { useGetOptions } from '@/hooks/useGetOptions';
+import { InputNumAmount, CommonFormDate } from '@repo/shared-methods';
+import { useGetOptions } from '@repo/shared-methods/hooks';
 import { loan_active, loan_archived, loan_pending } from '@/enum/common';
-import { capitalizeFirstLetter, maxAmount } from '@/lib/format';
-import CommonFormDate from '@/components/CommonDate';
+import { capitalizeFirstLetter, maxAmount } from '@repo/shared-methods/utils';
 const MAX_COUNT = 5;
+
 const CreateLoan = ({ form, stepBtn, gutter, isRadioStyle, ...colProps }) => {
 	const stage = Form.useWatch('stage', form);
 	const total_amount = Form.useWatch('total_amount', form) || maxAmount;
@@ -195,7 +195,7 @@ const CreateLoan = ({ form, stepBtn, gutter, isRadioStyle, ...colProps }) => {
 					<Col {...layoutCol} {...(colProps || {})}>
 						<Form.Item
 							label="Existing lender"
-							name="existing_lender_company"
+							name={['loan_property', 'existing_lender_company']}
 							getValueFromEvent={(v) => capitalizeFirstLetter(v.target.value)}
 						>
 							<Input placeholder="Enter existing lender" />
@@ -211,7 +211,7 @@ const CreateLoan = ({ form, stepBtn, gutter, isRadioStyle, ...colProps }) => {
 						<Form.Item label="Pricing" name={['extend', 'pricing']}>
 							<Input.TextArea
 								placeholder="Enter pricing"
-								autoSize={{ minRows: 2, maxRows: 3 }}
+								autoSize={{ minRows: 4, maxRows: 4 }}
 							/>
 						</Form.Item>
 					</Col>
@@ -222,7 +222,7 @@ const CreateLoan = ({ form, stepBtn, gutter, isRadioStyle, ...colProps }) => {
 						>
 							<Input.TextArea
 								placeholder="Enter loan status updates"
-								autoSize={{ minRows: 2, maxRows: 3 }}
+								autoSize={{ minRows: 4, maxRows: 4 }}
 							/>
 						</Form.Item>
 					</Col>
@@ -230,7 +230,7 @@ const CreateLoan = ({ form, stepBtn, gutter, isRadioStyle, ...colProps }) => {
 						<Form.Item label="Meeting notes" name={['extend', 'meeting_notes']}>
 							<Input.TextArea
 								placeholder="Enter meeting notes"
-								autoSize={{ minRows: 2, maxRows: 3 }}
+								autoSize={{ minRows: 4, maxRows: 4 }}
 							/>
 						</Form.Item>
 					</Col>
@@ -238,7 +238,7 @@ const CreateLoan = ({ form, stepBtn, gutter, isRadioStyle, ...colProps }) => {
 						<Form.Item label="Action list" name={['extend', 'action_list']}>
 							<Input.TextArea
 								placeholder="Enter action list"
-								autoSize={{ minRows: 2, maxRows: 3 }}
+								autoSize={{ minRows: 4, maxRows: 4 }}
 							/>
 						</Form.Item>
 					</Col>

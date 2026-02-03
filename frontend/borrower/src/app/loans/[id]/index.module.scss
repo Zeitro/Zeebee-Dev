@@ -1,18 +1,18 @@
-.editLoan{
-    :global{
-        .ant-anchor-link{
-            padding: 8px 24px !important;
-            margin-top: 16px;
-        }
-        .ant-anchor-ink{
-            left: 199px !important;
-            height: 40px !important;
-        }
-        .ant-anchor::before{
-            display: none !important;
-        }
-        .ant-anchor{
-            font-size: 16px !important;
-        }
-    }
+.editLoan {
+	:global {
+		.ant-anchor-link {
+			padding: 8px 24px !important;
+			margin-top: 16px;
+		}
+		.ant-anchor-ink {
+			left: 199px !important;
+			height: 40px !important;
+		}
+		.ant-anchor::before {
+			display: none !important;
+		}
+		.ant-anchor {
+			font-size: 16px !important;
+		}
+	}
 }

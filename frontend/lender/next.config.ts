@@ -4,8 +4,9 @@ import path from 'path';
 const isLocal = process.env.NEXT_PUBLIC_ENV === 'local';
 const nextConfig: NextConfig = {
 	/* config options here */
-	output: 'standalone',
+	// output: isLocal ? undefined : 'standalone',
 	reactStrictMode: !isLocal, // 开启 React 严格模式
+	serverExternalPackages: ['react-pdf', 'pdfjs-dist'],
 	env: {
 		NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL, // 注入环境变量
 	},
@@ -27,6 +28,15 @@ const nextConfig: NextConfig = {
 			];
 		}
 		return [];
+	},
+	images: {
+		remotePatterns: [
+			{
+				protocol: 'https',
+				hostname: 'zeebee-files-staging.s3.us-west-1.amazonaws.com',
+				pathname: '/**',
+			},
+		],
 	},
 };
 

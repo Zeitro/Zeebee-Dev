@@ -146,11 +146,11 @@ export const contractSignatureZones = [
 	// ... 如果有更多签名区，继续在这里添加
 ];
 // isNotRequest 用于已有合同的链接查看，不请求接口返回数据流
-const ReviewAndSign = ({ form, rowData, isNotRequest = false }) => {
-	const applicants = Form.useWatch('loan_borrower', form);
+const ReviewAndSign = ({ form, rowData, isNotRequest = false, loanUuid }) => {
+	const applicants = Form.useWatch('applicants', form);
 	const params = useMemo(() => {
 		// 因zeeBee详情会点击步骤跳到最后一步，导致getFieldsValue取不到全部数据，所以需将rowData直接传入
-		const values = rowData || form.getFieldsValue() || {};
+		const values = { ...(rowData || form.getFieldsValue() || {}) };
 		if (values?.loan_borrower?.tin?.tin_type) {
 			values.loan_borrower.tin_type = values?.loan_borrower?.tin?.tin_type;
 		}
@@ -160,8 +160,11 @@ const ReviewAndSign = ({ form, rowData, isNotRequest = false }) => {
 		if (values?.signatures) {
 			delete values.signatures;
 		}
+		if (loanUuid) {
+			values.code = loanUuid;
+		}
 		return values;
-	}, [form, rowData]);
+	}, [form, rowData, loanUuid]);
 
 	// zeeBee详情时，拿到签订合同的外部链接
 	const fullLink = useMemo(() => {

@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	api "zeebee-backend/app/admin/api/internal/handler/api"
+	base_template "zeebee-backend/app/admin/api/internal/handler/base_template"
 	common "zeebee-backend/app/admin/api/internal/handler/common"
 	organization "zeebee-backend/app/admin/api/internal/handler/organization"
 	organization_user "zeebee-backend/app/admin/api/internal/handler/organization_user"
@@ -53,6 +54,63 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/api/tree",
 					Handler: api.TreeHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// Create
+					Method:  http.MethodPost,
+					Path:    "/base_template",
+					Handler: base_template.BaseTemplateCreateHandler(serverCtx),
+				},
+				{
+					// Update
+					Method:  http.MethodPut,
+					Path:    "/base_template/:id",
+					Handler: base_template.BaseTemplateUpdateHandler(serverCtx),
+				},
+				{
+					// Detail
+					Method:  http.MethodGet,
+					Path:    "/base_template/:id",
+					Handler: base_template.BaseTemplateDetailHandler(serverCtx),
+				},
+				{
+					// Delete
+					Method:  http.MethodDelete,
+					Path:    "/base_template/:id",
+					Handler: base_template.BaseTemplateDeleteHandler(serverCtx),
+				},
+				{
+					// Reset
+					Method:  http.MethodPost,
+					Path:    "/base_template/:id/reset",
+					Handler: base_template.BaseTemplateResetHandler(serverCtx),
+				},
+				{
+					// Switch status
+					Method:  http.MethodPatch,
+					Path:    "/base_template/:id/status",
+					Handler: base_template.BaseTemplateSwitchStatusHandler(serverCtx),
+				},
+				{
+					// page
+					Method:  http.MethodPost,
+					Path:    "/base_template/page",
+					Handler: base_template.BaseTemplatePageHandler(serverCtx),
+				},
+				{
+					// Preview
+					Method:  http.MethodPost,
+					Path:    "/base_template/preview",
+					Handler: base_template.BaseTemplatePreviewHandler(serverCtx),
 				},
 			}...,
 		),

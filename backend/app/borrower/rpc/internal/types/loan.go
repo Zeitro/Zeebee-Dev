@@ -11,8 +11,8 @@ type LoanBudget struct {
 
 type LoanPreApprovalResult struct {
 	RequestId              string                             `json:"request_id"`
-	LenderCompanyName      string                             `json:"lender_company_name"`
-	LenderCompanyId        int64                              `json:"lender_company_id"`
+	LenderOrganizationName string                             `json:"lender_organization_name"`
+	LenderOrganizationId   int64                              `json:"lender_organization_id"`
 	IsApproved             bool                               `json:"is_approved"`
 	RejectReason           string                             `json:"reject_reason"`
 	TotalAmount            float64                            `json:"total_amount"`
@@ -72,5 +72,5 @@ type LoanPreApprovalRequest struct {
 
 type PreApproveLoanCacheData struct {
 	RequestData LoanPreApprovalRequest
-	ResultData  *LoanPreApprovalResult
+	ResultData  LoanPreApprovalResult
 }

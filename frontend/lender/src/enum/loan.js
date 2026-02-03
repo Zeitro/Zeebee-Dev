@@ -1,4 +1,4 @@
-import { formatAmount } from '@/lib/format';
+import { formatAmount } from '@repo/shared-methods/utils';
 import { HomeOutlined } from '@ant-design/icons';
 // 创建或编辑loan时的步骤
 export const createLoanSteps = [
