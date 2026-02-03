@@ -195,7 +195,11 @@ const MainDrawer = ({ rowData, open, setOpen, successCallback }) => {
 							</Form.Item>
 						</Col>
 						<Col md={24} xs={24}>
-							<Form.Item label="Example data" name="example_variables">
+							<Form.Item
+								label="Example data"
+								name="example_variables"
+								extra="Example data, passing a JSON string."
+							>
 								<TextArea
 									placeholder="Example data"
 									allowClear
@@ -211,7 +215,21 @@ const MainDrawer = ({ rowData, open, setOpen, successCallback }) => {
 								className="!absolute right-0 top-0 z-10"
 								value={templateContent}
 							/>
-							<Form.Item label="Template" name="content" rules={[{ required: true }]}>
+							<Form.Item
+								label="Template"
+								name="content"
+								rules={[{ required: true }]}
+								extra={
+									<>
+										HTML templates do not allow styles to be added to the
+										html/body element. If there are corresponding variables, the
+										element must have the data-variable attribute added.
+										<br />
+										For example：
+										{`<span data-variable=".name">{{ .name }}</span>`}
+									</>
+								}
+							>
 								{/* <WangEditor
 								wrapperProps={{
 									className: '!h-[65vh]',

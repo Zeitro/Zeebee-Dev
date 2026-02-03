@@ -3,7 +3,13 @@ import { Button, Form, message, Spin } from 'antd';
 import { useEffect, useState } from 'react';
 import _ from 'lodash';
 import { FieldTips, AssemblyFormItem } from '@repo/shared-methods';
-import { createRequest } from '@repo/shared-methods/utils';
+import {
+	createRequest,
+	formatAmount,
+	formatPhone,
+	injectHeadResources,
+	getBodyInnerHTML,
+} from '@repo/shared-methods/utils';
 const PreApprovedLetter = () => {
 	const { request } = createRequest();
 	const [form] = Form.useForm();
@@ -12,33 +18,42 @@ const PreApprovedLetter = () => {
 	const [data, setData] = useState({});
 	const [loading, setLoading] = useState(false);
 
-	// 工具函数：插入head资源
-	const injectHeadResources = (html) => {
-		// 清理旧的
-		document.querySelectorAll('[data-template-preview]').forEach((el) => el.remove());
-		try {
-			const doc = new window.DOMParser().parseFromString(html, 'text/html');
-			const headNodes = doc.head ? Array.from(doc.head.children) : [];
-			headNodes.forEach((node) => {
-				if (['LINK', 'STYLE'].includes(node.tagName) || node.tagName.startsWith('FONT')) {
-					const clone = node.cloneNode(true);
-					clone.setAttribute('data-template-preview', '1');
-					document.head.appendChild(clone);
-				}
-			});
-		} catch {
-			// dd
+	const formatValue = (format, value) => {
+		switch (format) {
+			case 'Currency':
+				return formatAmount(value);
+			case 'Phone':
+				return formatPhone(value);
+			default:
+				break;
 		}
+		return value;
 	};
 
-	// 工具函数：取body内容
-	const getBodyInnerHTML = (html) => {
-		try {
-			const doc = new window.DOMParser().parseFromString(html, 'text/html');
-			return doc.body.innerHTML;
-		} catch {
-			return html;
+	// 更新HTML中的变量
+	const updateVariablesInHtml = (html, value, idKey, format, isHave = true) => {
+		// 创建一个临时DOM元素来处理HTML
+		const tempDiv = document.createElement('div');
+		tempDiv.innerHTML = html;
+
+		// 查找所有带有 data-variable 属性的元素
+		const variableElements = tempDiv.querySelectorAll('[data-variable]');
+
+		variableElements.forEach((element) => {
+			const variableName = element.getAttribute('data-variable');
+
+			// 检查是否在表单数据中有对应的值
+			if (idKey === variableName) {
+				// 更新元素的文本内容
+				element.textContent = formatValue(format, value);
+			}
+		});
+
+		// 更新预览内容
+		if (isHave) {
+			setValueHtml(tempDiv.innerHTML);
 		}
+		return tempDiv.innerHTML;
 	};
 
 	const handlePreview = async (result) => {
@@ -49,7 +64,22 @@ const PreApprovedLetter = () => {
 			},
 		});
 		injectHeadResources(content);
-		const newHtml = getBodyInnerHTML(content);
+		let bodyHtml = getBodyInnerHTML(content);
+		let newHtml = bodyHtml;
+
+		const exampleVariablesObj = JSON.parse(result?.example_variables);
+
+		result?.variable_group_schema?.map((item) => {
+			item.variables.map((i) => {
+				const vKey = i.key.replace('.', '');
+				if (i.source !== 'Template') {
+					const exampleValue = exampleVariablesObj[vKey] || `{${vKey}}`;
+					let v = i.source === 'Fixed' ? i.fixed_value : exampleValue;
+					newHtml = updateVariablesInHtml(newHtml, v, i.key, i.format, false);
+				}
+			});
+		});
+
 		setValueHtml(newHtml);
 	};
 
@@ -103,37 +133,17 @@ const PreApprovedLetter = () => {
 		}
 	};
 
-	// 更新HTML中的变量
-	const updateVariablesInHtml = (html, value, idKey) => {
-		// 创建一个临时DOM元素来处理HTML
-		const tempDiv = document.createElement('div');
-		tempDiv.innerHTML = html;
-
-		// 查找所有带有 data-variable 属性的元素
-		const variableElements = tempDiv.querySelectorAll('[data-variable]');
-
-		variableElements.forEach((element) => {
-			const variableName = element.getAttribute('data-variable');
-
-			// 检查是否在表单数据中有对应的值
-			if (idKey === variableName) {
-				// 更新元素的文本内容
-				element.textContent = value;
-			}
-		});
-
-		// 更新预览内容
-		setValueHtml(tempDiv.innerHTML);
-	};
-
+	// 输入框修改更改html
 	const handleFieldsChange = (changedValues, allValues) => {
-		const formNameArr = changedValues?.[0]?.name;
+		const formNameArr = _.cloneDeep(changedValues?.[0]?.name);
+		let itemNameArr = formNameArr.slice(0, -1);
 		if (formNameArr[formNameArr.length - 1] === 'fixed_value') {
 			formNameArr[formNameArr.length - 1] = 'key';
 		}
 		const idKey = _.get(data, formNameArr);
+		const item = _.get(data, itemNameArr);
 		const changeItem = allValues.find((i) => _.isEqual(i.name, changedValues?.[0]?.name));
-		updateVariablesInHtml(valueHtml, changeItem?.value, idKey);
+		updateVariablesInHtml(valueHtml, changeItem?.value, idKey, item.format);
 	};
 
 	useEffect(() => {
@@ -145,11 +155,30 @@ const PreApprovedLetter = () => {
 
 	return (
 		<div className="flex-1 flex overflow-hidden bg-[#f5f5f5] mt-[2px]">
-			<div className="border-r border-base-border w-[300px] flex-shrink-0 h-full bg-background flex flex-col relative">
-				<h2 className="border-b border-base-border text-xl font-medium py-2 px-4 flex items-center justify-between flex-shrink-0">
-					<span>Configuration</span>
-					<FieldTips title={'Reset data and get the latest configuration.'}>
-						<Button type="primary" size="small" onClick={handleReset} ghost>
+			<div className="border-r border-base-border w-[450px] flex-shrink-0 h-full bg-background flex flex-col relative px-8 pt-6">
+				<h2 className="border-b-2 border-base-border text-xl font-medium pb-4 mb-4 flex items-center justify-between flex-shrink-0 text-black-dark">
+					<span>
+						Configuration
+						<FieldTips
+							title={
+								<>
+									For example data, please set your own pre-approved letter, which
+									will be used for the pre-approved loan submitted by the
+									borrower. Zeebee will automatically send this attachment to the
+									borrower.
+									<br />
+									<br />
+									Note: The "Default" option is calculated by the system, while
+									"Customize" is set by yourself.
+								</>
+							}
+							isShowDescription={true}
+							rootClassName="!max-w-[300px]"
+							className="ml-1"
+						/>
+					</span>
+					<FieldTips title={'Reset data and get the latest configuration template.'}>
+						<Button size="small" onClick={handleReset}>
 							Reset
 						</Button>
 					</FieldTips>
@@ -159,7 +188,9 @@ const PreApprovedLetter = () => {
 					name="preApproved-form"
 					layout="vertical"
 					autoComplete="off"
-					className={['flex-1 overflow-hidden overflow-y-auto !px-4'].join(' ')}
+					className={[
+						'flex-1 overflow-hidden overflow-y-auto [&_.ant-form-item]:mb-4 [&_.ant-form-item-explain-error]:leading-4',
+					].join(' ')}
 					size="large"
 					disabled={confirmLoading}
 					scrollToFirstError
@@ -172,7 +203,7 @@ const PreApprovedLetter = () => {
 									const item = data?.variable_group_schema?.[index];
 									return (
 										<div key={key}>
-											<div className="border-b border-base-border font-medium pt-3 mb-2">
+											<div className="border-b border-base-border font-medium py-1 mb-4 text-base/[22px] text-black-dark">
 												{item?.name}
 											</div>
 											<Form.List
@@ -208,6 +239,21 @@ const PreApprovedLetter = () => {
 																		'variables',
 																		variableItemName,
 																	]}
+																	example_variables={
+																		data?.example_variables
+																	}
+																	changeHtml={(
+																		key,
+																		value,
+																		format,
+																	) => {
+																		updateVariablesInHtml(
+																			valueHtml,
+																			value,
+																			key,
+																			format,
+																		);
+																	}}
 																/>
 															);
 														},
@@ -221,7 +267,7 @@ const PreApprovedLetter = () => {
 						</Form.List>
 					</Spin>
 				</Form>
-				<div className="w-full flex-shrink-0 bg-background py-2 px-4">
+				<div className="w-full flex-shrink-0 bg-background pt-2 pb-6">
 					<Button
 						type="primary"
 						className="w-full"

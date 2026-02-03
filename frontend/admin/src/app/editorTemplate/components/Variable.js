@@ -1,7 +1,7 @@
 'use client';
 import { NewModal } from '@repo/shared-methods';
 import { Button, Form, Input, Select, Space, Spin } from 'antd';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import _ from 'lodash';
 const { TextArea } = Input;
@@ -17,7 +17,7 @@ export const VariableModal = ({ setOpen, onChange, value }) => {
 			onChange(values?.variable_group_schema || []);
 			setConfirmLoading(false);
 			setOpen(false);
-		} catch (errpr) {
+		} catch {
 			setConfirmLoading(false);
 		}
 	};
@@ -28,12 +28,23 @@ export const VariableModal = ({ setOpen, onChange, value }) => {
 		source: 'Dynamic',
 		format: 'Input',
 		is_editable: true,
+		is_required: false,
 		type: 'String',
 	};
 	const initValue = {
 		name: '',
 		variables: [initVariable],
 	};
+	const options = [
+		{
+			label: 'true',
+			value: true,
+		},
+		{
+			label: 'false',
+			value: false,
+		},
+	];
 
 	useEffect(() => {
 		// 因为数据太多,导致弹框点击了打开很卡顿，所以加个定时器增加loading效果缓解
@@ -277,44 +288,23 @@ export const VariableModal = ({ setOpen, onChange, value }) => {
 																	<Select
 																		placeholder="Is editable"
 																		allowClear
-																		options={[
-																			{
-																				label: 'true',
-																				value: true,
-																			},
-																			{
-																				label: 'false',
-																				value: false,
-																			},
-																		]}
+																		options={options}
 																		style={{ width: 90 }}
 																	/>
 																</Form.Item>
-																{/* <Form.Item
-															{...restField2}
-															name={[name2, 'type']}
-															rules={[{ required: true }]}
-														>
-															<Select
-																placeholder="Type"
-																allowClear
-																options={[
-																	{
-																		label: 'String',
-																		value: 'String',
-																	},
-																	{
-																		label: 'Object',
-																		value: 'Object',
-																	},
-																	{
-																		label: 'Array',
-																		value: 'Array',
-																	},
-																]}
-																style={{ width: 150 }}
-															/>
-														</Form.Item> */}
+																<Form.Item
+																	{...restField2}
+																	label="Is required"
+																	name={[name2, 'is_required']}
+																	rules={[{ required: true }]}
+																>
+																	<Select
+																		placeholder="Is required"
+																		allowClear
+																		options={options}
+																		style={{ width: 90 }}
+																	/>
+																</Form.Item>
 																<div className="w-[40px] flex gap-2">
 																	{fields2?.length ===
 																		index2 + 1 && (
@@ -355,6 +345,13 @@ export const VariableModal = ({ setOpen, onChange, value }) => {
 
 export const VariableBtn = ({ value, onChange }) => {
 	const [open, setOpen] = useState(false);
+	const variableLength = useMemo(() => {
+		const list = [];
+		value?.map?.((i) => {
+			list.push(...i.variables);
+		});
+		return list.length;
+	}, [value]);
 	return (
 		<>
 			<Button
@@ -363,7 +360,7 @@ export const VariableBtn = ({ value, onChange }) => {
 				ghost
 				onClick={() => setOpen(true)}
 			>
-				Add Variable ({value?.length || 0})
+				Add Variable ({variableLength || 0})
 			</Button>
 			{open && <VariableModal value={value} onChange={onChange} setOpen={setOpen} />}
 		</>

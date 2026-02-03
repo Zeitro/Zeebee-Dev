@@ -1,7 +1,13 @@
 'use client';
 import { InputNumAmount, InputPhone } from '@repo/shared-methods';
-import { emailRegex, phoneRegex, validateRule } from '@repo/shared-methods/utils';
-import { DatePicker, Form, Input, Select } from 'antd';
+import {
+	emailRegex,
+	formatAmount,
+	formatPhone,
+	phoneRegex,
+	validateRule,
+} from '@repo/shared-methods/utils';
+import { DatePicker, Form, Input, Radio } from 'antd';
 import _ from 'lodash';
 
 /**
@@ -19,41 +25,52 @@ export const AssemblyFormItem = ({
 	formListName = [],
 	formListRestField = {},
 	allFormListName = [],
+	example_variables = '{}', //示例数据用于source==='Fixed'/'Dynamic'
+	changeHtml,
 }) => {
+	const form = Form.useFormInstance();
+	const exampleVariablesObj = JSON.parse(example_variables);
 	const getFormItem = (children, options) => {
 		return (
 			<Form.Item
 				{...formListRestField}
 				label={item.label}
 				name={[...formListName, 'fixed_value']}
-				rules={[{ required: true }]}
+				rules={[{ required: item.is_required }]}
 				{...options}
 			>
 				{children}
 			</Form.Item>
 		);
 	};
-	const getCurrentElement = (options = {}) => {
+	const getCurrentElement = (options = {}, isHave = isHaveFormItem) => {
 		let defaultProps = {
 			placeholder: item.label,
 			disabled: !item.is_editable,
+			...options,
 		};
-		let ele = <Input {...defaultProps} />;
+		let ele = <Input allowClear {...defaultProps} />;
 		if (item.format === 'Input') {
 			// ele = <Input {...defaultProps} />;
 		}
 		if (item.format === 'TextArea') {
-			ele = <Input.TextArea {...defaultProps} />;
+			ele = (
+				<Input.TextArea
+					autoSize={{ minRows: 5, maxRows: 5 }}
+					allowClear
+					{...defaultProps}
+				/>
+			);
 		}
 		if (item.format === 'Date') {
-			ele = <DatePicker {...defaultProps} />;
+			ele = <DatePicker allowClear {...defaultProps} />;
 		}
 		if (item.format === 'Phone') {
 			ele = <InputPhone {...defaultProps} />;
-			return isHaveFormItem
+			return isHave
 				? getFormItem(ele, {
 						rules: [
-							{ required: true },
+							{ required: item.is_required },
 							{
 								validator: (_, value) =>
 									validateRule(value, phoneRegex, 'Invalid phone number'),
@@ -64,10 +81,10 @@ export const AssemblyFormItem = ({
 				: ele;
 		}
 		if (item.format === 'Email') {
-			return isHaveFormItem
+			return isHave
 				? getFormItem(ele, {
 						rules: [
-							{ required: true },
+							{ required: item.is_required },
 							{
 								validator: (_, value) =>
 									validateRule(value, emailRegex, 'Invalid email format'),
@@ -80,14 +97,14 @@ export const AssemblyFormItem = ({
 		if (item.format === 'Currency') {
 			ele = <InputNumAmount {...defaultProps} />;
 			// 因为在模板的情况下,后端框架只支持字符串,所以此处需将金额相关转成字符串(仅限于模板)
-			return isHaveFormItem
+			return isHave
 				? getFormItem(ele, {
 						getValueFromEvent: (e) => e?.toString?.(),
 						...options,
 					})
 				: ele;
 		}
-		return isHaveFormItem ? getFormItem(ele, options) : ele;
+		return isHave ? getFormItem(ele, options) : ele;
 	};
 
 	const getComponents = (item) => {
@@ -95,15 +112,38 @@ export const AssemblyFormItem = ({
 			return getCurrentElement();
 		}
 		const names = allFormListName?.length ? allFormListName : formListName;
+		const vKey = item.key.replace('.', '');
+		const exampleValue = exampleVariablesObj[vKey] || `{${vKey}}`;
 		return (
 			<>
 				<Form.Item
 					{...formListRestField}
 					label={item.label}
 					name={[...formListName, 'source']}
-					rules={[{ required: true }]}
+					rules={[{ required: item.is_required }]}
+					size="small"
+					style={{ marginBottom: 0 }}
 				>
-					<Select
+					<Radio.Group
+						options={[
+							{
+								value: 'Dynamic',
+								label: 'Default',
+							},
+							{
+								value: 'Fixed',
+								label: 'Customize',
+							},
+						]}
+						disabled={!item.is_editable}
+						size="small"
+						onChange={({ target: { value } }) => {
+							const fixedValue = form.getFieldValue([...names, 'fixed_value']);
+							let v = value === 'Fixed' ? fixedValue : exampleValue;
+							changeHtml(item.key, v, item.format);
+						}}
+					/>
+					{/* <Select
 						placeholder={item.label}
 						options={[
 							{
@@ -115,7 +155,7 @@ export const AssemblyFormItem = ({
 								label: 'Default',
 							},
 						]}
-					/>
+					/> */}
 				</Form.Item>
 				<Form.Item
 					shouldUpdate={(prevValues, curValues) => {
@@ -127,10 +167,15 @@ export const AssemblyFormItem = ({
 				>
 					{({ getFieldValue }) => {
 						const currentSource = getFieldValue([...names, 'source']);
-						return (
-							currentSource === 'Fixed' &&
-							getCurrentElement({ noStyle: false, label: null })
-						);
+
+						return currentSource === 'Fixed'
+							? getCurrentElement({
+									label: null,
+								})
+							: getCurrentElement(
+									{ value: exampleValue, disabled: true, className: '!mb-4' },
+									false,
+								);
 					}}
 				</Form.Item>
 			</>

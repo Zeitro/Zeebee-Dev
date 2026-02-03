@@ -161,6 +161,7 @@ const EditorTemplate = () => {
 						dataIndex: 'purpose',
 						key: 'purpose',
 						ellipsis: true,
+						width: 240,
 					},
 					{
 						title: 'Template name',
@@ -168,6 +169,7 @@ const EditorTemplate = () => {
 						key: 'name',
 						ellipsis: true,
 						render: (v) => v || '--',
+						width: 240,
 					},
 					// {
 					// 	title: 'Type',
@@ -217,7 +219,7 @@ const EditorTemplate = () => {
 					{
 						title: 'Action',
 						dataIndex: 'operation',
-						width: 170,
+						width: 260,
 						align: 'left',
 						fixed: 'right',
 						render: (_, record) => {
@@ -298,7 +300,7 @@ const EditorTemplate = () => {
 					},
 				]}
 				filterList={filterList}
-				// scroll={{ x: scrollX }}
+				scroll={{ x: 1300 }}
 				// pagination={true}
 
 				getData={(params) => {
