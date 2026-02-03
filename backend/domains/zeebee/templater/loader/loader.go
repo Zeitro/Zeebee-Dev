@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/bo"
+	"zeebee-backend/domains/zeebee/data"
 	"zeebee-backend/domains/zeebee/logic"
 )
 
@@ -56,7 +56,7 @@ func (l *DefaultTemplateLoader) LoadOrganizationTemplate(ctx context.Context, pu
 	return content, templateRenderData, err
 }
 
-func getTemplateRenderData(variableGroups []*bo.TemplateVariableGroupBo) (templateRenderData map[string]interface{}) {
+func getTemplateRenderData(variableGroups []*data.TemplateVariableGroup) (templateRenderData map[string]interface{}) {
 	templateRenderData = make(map[string]interface{})
 
 	for _, variableGroup := range variableGroups {
