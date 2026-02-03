@@ -4,7 +4,7 @@ import { Button } from 'antd';
 import { useUserStore } from '@/store/user';
 import { CheckCircleTwoTone } from '@ant-design/icons';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { setCookie } from '@/lib/cookie';
+import { setCookie } from '@repo/shared-methods/utils';
 import { throttle } from 'lodash';
 
 // 注册成功后，邮箱打开此页面，触发验证并登录
@@ -24,7 +24,7 @@ const VerifyEmail = () => {
 			setCookie('token', access?.access_token, access?.access_token_expire * 1000);
 			setLoading(false);
 			router.replace('/');
-		} catch (error) {
+		} catch {
 			setLoading(false);
 		}
 	}, 1000);

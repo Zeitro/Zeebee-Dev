@@ -567,6 +567,13 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 		}
 		// create organization and user relation
 		organizationUser, innerErr = l.repos.OrganizationUserRepo.CreateWithTx(ctx, tx, organizationUser, true)
+		if innerErr != nil {
+			return innerErr
+		}
+		// sync organization template
+		organizationTemplateLogic := NewOrganizationTemplateLogic(l.repos)
+		innerErr = organizationTemplateLogic.SyncByOrganizationIdWithTx(ctx, tx, organization.Id)
+
 		return innerErr
 	})
 	if err != nil {
@@ -616,7 +623,7 @@ func (l *UserLogic) VerifyUserEmail(ctx context.Context, email string, code stri
 			return innerErr
 		}
 		// update user's organization status
-		innerErr = l.repos.OrganizationRepo.UpdateOwnerOrganizationStatusWithTx(ctx, tx, user.Id, constants.OrganizationStatusActive)
+		innerErr = l.handleOwnedOrganizationWithTx(ctx, tx, user)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -626,7 +633,6 @@ func (l *UserLogic) VerifyUserEmail(ctx context.Context, email string, code stri
 		if innerErr != nil {
 			return innerErr
 		}
-
 		return nil
 	})
 	return
@@ -665,4 +671,31 @@ func (l *UserLogic) validatePassword(password string) bool {
 	hasUpper := regexp.MustCompile(`[A-Z]`).MatchString(password)
 	hasNumber := regexp.MustCompile(`\d`).MatchString(password)
 	return hasLower && hasUpper && hasNumber
+}
+
+// handleOwnedOrganization
+func (l *UserLogic) handleOwnedOrganizationWithTx(ctx context.Context, tx *gorm.DB, user *model.User) (err error) {
+	if user == nil {
+		return errorx.New("User Is Nil")
+	}
+	// update owned organization status
+	err = l.repos.OrganizationRepo.UpdateOwnerOrganizationStatusWithTx(ctx, tx, user.Id, constants.OrganizationStatusActive)
+	if err != nil {
+		return err
+	}
+	// get owned organization ids
+	organizationIds, err := l.repos.OrganizationRepo.GetIdsByOwnerIdWithTx(ctx, tx, user.Id, user.Type)
+	if err != nil {
+		return err
+	}
+	// sync owned organization templates
+	organizationTemplateLogic := NewOrganizationTemplateLogic(l.repos)
+	for _, organizationId := range organizationIds {
+		err = organizationTemplateLogic.SyncByOrganizationIdWithTx(ctx, tx, organizationId)
+		if err != nil {
+			return err
+		}
+	}
+
+	return err
 }

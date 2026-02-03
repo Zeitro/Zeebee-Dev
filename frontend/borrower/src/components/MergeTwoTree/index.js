@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Col, Row, Tree } from 'antd';
+import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 
 /**
  * 多层嵌套多选的tree
@@ -66,17 +67,20 @@ const MergeTwoTree = ({ options, options2, onChange, value }) => {
 	const [rightKeys, setRightKeys] = useState([]);
 	const isInit = useRef(true);
 	// 只有初始化拿到传入值操作
-	useEffect(() => {
-		if (isInit.current) {
+	useDeferredSyncEffect({
+		predicate: () => isInit.current,
+		deferred: () => {
 			isInit.current = false;
 			setLeftKeys(filterArr(value, newOptions) || []);
 			setRightKeys(filterArr(value, newOptions2) || []);
-		}
-	}, [value]);
+		},
+		deps: [value],
+		delay: 0,
+	});
 
 	useEffect(() => {
 		onChange([...new Set([...leftKeys, ...rightKeys])]);
-	}, [leftKeys, rightKeys]);
+	}, [leftKeys, onChange, rightKeys]);
 
 	const onSelect = (key, checkedKeys, setFun) => {
 		let newCheckedKeys = [...checkedKeys];

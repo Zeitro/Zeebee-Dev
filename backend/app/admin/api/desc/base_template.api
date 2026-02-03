@@ -1,0 +1,139 @@
+syntax = "v1"
+
+info(
+    title: "template-api"
+    desc: "template management http service description"
+    version: "v1"
+)
+
+import "common.api"
+
+type TemplateVariableEntity {
+    Label string `json:"label"`
+    Type string `json:"type" validate:"oneof=String Object Array"`
+    Key string `json:"key"`
+    IsEditable bool `json:"is_editable"`
+    IsRequired bool `json:"is_required"`
+    Source string `json:"source" validate:"omitempty,oneof=Fixed Dynamic Template"`
+    Format string `json:"format" validate:"omitempty,oneof=Email Phone Currency TextArea Input"`
+    FixedValue string `json:"fixed_value,optional" validate:"required_if=IsRequired trye Source Fixed,required_if=IsRequired trye Source Template"`
+    Properties map[string]*TemplateVariableEntity `json:"properties,omitempty,optional"`
+    Items []*TemplateVariableEntity `json:"items,omitempty,optional"`
+}
+
+type TemplateVariableGroupEntity {
+    Name string `json:"name"`
+    Variables []*TemplateVariableEntity `json:"variables" validate:"dive"`
+}
+
+// Entity
+type (
+    BaseTemplateEntity {
+        Id int64 `json:"id"`
+        Name string `json:"name"`
+        Type string `json:"type"`
+        Category string `json:"category"`
+        Purpose string `json:"purpose"`
+        Content string `json:"content"`
+        VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema"`
+        Status string `json:"status"`
+        Description string `json:"description"`
+        ExampleVariables string `json:"example_variables,omitempty,optional"`
+        Scope string `json:"scope"`
+        CreatedAt string `json:"created_at"`
+        UpdatedAt string `json:"updated_at"`
+    }
+
+    BaseTemplatePageEntity {
+        Id int64 `json:"id"`
+        Name string `json:"name"`
+        Type string `json:"type"`
+        Category string `json:"category"`
+        Purpose string `json:"purpose"`
+        Status string `json:"status"`
+        Description string `json:"description"`
+        Scope string `json:"scope"`
+        CreatedAt string `json:"created_at"`
+        UpdatedAt string `json:"updated_at"`
+    }
+)
+
+// Page
+type (
+    BaseTemplateFilter {
+        Keyword string `json:"keyword,optional"`
+        Type string `json:"type,optional" validate:"omitempty,oneof=Borrower Lender"`
+        Category string `json:"category,optional" validate:"omitempty,oneof=Email Contract"`
+        Status string `json:"status,optional" validate:"omitempty,oneof=Active Disabled"`
+        Scope string `json:"scope,optional" validate:"omitempty,oneof=System Organization"`
+    }
+
+    BaseTemplatePageRequest {
+        BasePageRequest
+        Filter *BaseTemplateFilter `json:"filter,optional"`
+        Sort *BasePageSort `json:"sort,optional"`
+    }
+
+    BaseTemplatePageResponse {
+        BasePageResponse
+        List []*BaseTemplatePageEntity `json:"list"`
+    }
+)
+
+// Create
+type (
+    BaseTemplateCreateRequest {
+        Name string `json:"name" validate:"required,min=1,max=100"`
+        Type string `json:"type" validate:"required,oneof=Borrower Lender"`
+        Category string `json:"category" validate:"required,oneof=Email Contract"`
+        Purpose string `json:"purpose" validate:"required,min=1,max=100"`
+        Content string `json:"content" validate:"required,max=10485760"`
+        VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema,optional" validate:"omitempty,dive"`
+        Description string `json:"description,optional" validate:"max=255"`
+        ExampleVariables string `json:"example_variables,omitempty,optional" validate:"omitempty,json"`
+        Scope string `json:"scope" validate:"oneof=System Organization"`
+    }
+)
+
+// Update
+type (
+    BaseTemplateUpdateRequest {
+        Id int64 `path:"id" validate:"required,min=1"`
+        Name string `json:"name" validate:"required,min=1,max=100"`
+        Category string `json:"category" validate:"required,oneof=Email Contract"`
+        Content string `json:"content" validate:"required,max=10485760"`
+        VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema,optional" validate:"omitempty,dive"`
+        Description string `json:"description,optional" validate:"max=255"`
+        ExampleVariables string `json:"example_variables,omitempty,optional" validate:"omitempty,json"`
+        Scope string `json:"scope" validate:"oneof=System Organization"`
+    }
+)
+
+// Detail
+type (
+    BaseTemplateDetailResponse {
+        BaseTemplateEntity
+    }
+)
+
+// Switch Status
+type (
+    BaseTemplateSwitchStatusRequest {
+        Id int64 `path:"id" validate:"required,min=1"`
+        Status string `json:"status" validate:"required,oneof=Active Disabled"`
+    }
+)
+
+// Preview
+type (
+    BaseTemplatePreviewRequest {
+        Name string `json:"name" validate:"required,min=1,max=100"`
+        Content string `json:"content" validate:"required,max=10485760"`
+        VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema,optional" validate:"omitempty,dive"`
+        ExampleVariables string `json:"example_variables,omitempty,optional" validate:"omitempty,json"`
+    }
+
+    BaseTemplatePreviewResponse {
+        Content string `json:"content"`
+    }
+)
