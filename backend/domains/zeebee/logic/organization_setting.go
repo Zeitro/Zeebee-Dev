@@ -3,6 +3,8 @@ package logic
 import (
 	"context"
 
+	"gorm.io/gorm"
+
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
@@ -61,6 +63,28 @@ func (l *OrganizationSettingLogic) SwitchStatus(ctx context.Context, id int64, o
 	err = l.repos.OrganizationSettingRepo.UpdateColumnsById(ctx, id, map[string]interface{}{
 		"enabled": enabled,
 	})
+	return err
+}
+
+// InitLenderOrganizationSettingWithTx
+func (l *OrganizationSettingLogic) InitLenderOrganizationSettingWithTx(ctx context.Context, tx *gorm.DB, organization *model.Organization) (err error) {
+	if organization == nil {
+		return errorx.New("Organization is empty")
+	}
+
+	if organization.Type != constants.UserTypeLender {
+		return nil
+	}
+	var organizationSettings []*model.OrganizationSetting
+	// init preapproval letter template
+	organizationSettings = append(organizationSettings, &model.OrganizationSetting{
+		OrganizationId: organization.Id,
+		Purpose:        constants.OrganizationPurposePreapprovalLetter,
+		Enabled:        false,
+		Setting:        nil,
+	})
+	_, err = l.repos.OrganizationSettingRepo.BatchCreateWithTx(ctx, tx, organizationSettings, false)
+
 	return err
 }
 

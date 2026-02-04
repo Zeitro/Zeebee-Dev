@@ -260,3 +260,10 @@ func (repo *OrganizationRepo) GetIdsByOwnerIdWithTx(ctx context.Context, tx *gor
 		Pluck("id", &result).Error
 	return result, errorx.WithStack(err)
 }
+
+func (repo *OrganizationRepo) GetOrganizationsByOwnerIdWithTx(ctx context.Context, tx *gorm.DB, ownerId int64, organizationType constants.UserType) (results []*model.Organization, err error) {
+	err = tx.WithContext(ctx).Model(&model.Organization{}).
+		Where("owner_id = ? and type = ?", ownerId, organizationType).
+		Find(&results).Error
+	return results, errorx.WithStack(err)
+}

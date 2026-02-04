@@ -325,12 +325,15 @@ func (l *OrganizationTemplateLogic) BatchCreateWithTx(ctx context.Context, tx *g
 // SyncByOrganizationIdWithTx synchronizes organization templates based on the organization ID within a transaction.
 // It retrieves the organization details and all active base templates matching the organization type,
 // then creates corresponding organization templates.
-func (l *OrganizationTemplateLogic) SyncByOrganizationIdWithTx(ctx context.Context, tx *gorm.DB, organizationId int64) (err error) {
-	// Find the organization by its ID within the transaction
-	organization, err := l.repos.OrganizationRepo.FindOneByIdWithTx(ctx, tx, organizationId)
-	if err != nil {
-		return err
+func (l *OrganizationTemplateLogic) SyncByOrganizationIdWithTx(ctx context.Context, tx *gorm.DB, organization *model.Organization) (err error) {
+	if organization == nil {
+		return errorx.New("Organization is empty")
 	}
+	// Find the organization by its ID within the transaction
+	// organization, err := l.repos.OrganizationRepo.FindOneByIdWithTx(ctx, tx, organizationId)
+	// if err != nil {
+	// 	return err
+	// }
 	// Get all base templates that are active and match the organization type
 	baseTemplates, err := l.repos.BaseTemplateRepo.FindAllWithTx(ctx, tx, map[string]interface{}{
 		"status": constants.CommonStatusActive,
@@ -352,7 +355,7 @@ func (l *OrganizationTemplateLogic) SyncByOrganizationIdWithTx(ctx context.Conte
 		}
 		// Reset the ID and set organization-specific fields
 		tpl.Id = 0
-		tpl.OrganizationId = organizationId
+		tpl.OrganizationId = organization.Id
 		tpl.BaseTemplateId = baseTemplate.Id
 		tpl.HasConfigured = !baseTemplate.IsConfigurable
 		templates = append(templates, tpl)

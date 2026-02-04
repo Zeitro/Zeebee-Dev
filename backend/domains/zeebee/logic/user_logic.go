@@ -7,6 +7,7 @@ import (
 	"github.com/duke-git/lancet/v2/condition"
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
+	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
@@ -311,7 +312,7 @@ func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limi
 		if err != nil {
 			return nil, errorx.WithStack(err)
 		}
-		return nil, errorx.WithStack(errorx.New("The Email And Password You Entered Don't Match."))
+		return nil, errorx.WithStack(errorx.New("The email and password uou entered don't match."))
 	}
 
 	if limiter.Rate > 0 {
@@ -323,19 +324,11 @@ func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limi
 
 	// check status
 	if user.Status == constants.UserStatusInactive {
-		return nil, errorx.New("User Is Not Active")
+		return nil, errorx.New("User is not active")
 	}
 	if user.Status == constants.UserStatusUnverified {
-		err = status.Error(codes.PermissionDenied, "User Is Unverified")
+		err = status.Error(codes.PermissionDenied, "User is unverified")
 		return nil, err
-	}
-
-	// check status
-	if user.Status == constants.UserStatusInactive {
-		return nil, errorx.WithStack(errorx.New("User Is Not Active"))
-	}
-	if user.Status == constants.UserStatusUnverified {
-		return nil, errorx.WithStack(errorx.New("User Is Unverified"))
 	}
 
 	user, orgUser, err = l.CheckAndUpdateActiveOrganizationByUser(ctx, user)
@@ -358,7 +351,7 @@ func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, us
 		return nil, err
 	}
 	if user == nil {
-		return nil, errorx.WithStack(errorx.New("User Not Found"))
+		return nil, errorx.WithStack(errorx.New("User not found"))
 	}
 	if len(user.Organizations) > 0 {
 		err = copier.CopyWithOption(&organizations, user.Organizations, copier.Option{
@@ -366,7 +359,7 @@ func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, us
 			CaseSensitive: true,
 		})
 		if err != nil {
-			return nil, errorx.Wrap(err, "Failed To Copy Organization")
+			return nil, errorx.Wrap(err, "Failed to copy organization")
 		}
 	}
 	var currentOrganization *bo.UserOrganizationBo
@@ -448,16 +441,19 @@ func (l *UserLogic) SwitchOrganization(ctx context.Context, userId int64, organi
 		return organization.Id == organizationId
 	})
 	if !ok {
-		return nil, errorx.New("User Is Not Member Of This Organization")
+		return nil, errorx.New("User is not member of this organization")
 	}
 
 	if organization.Status != constants.OrganizationStatusActive {
-		return nil, errorx.New("Organization Is Not Active")
+		return nil, errorx.New("Organization is not active")
 	}
 
-	organizationUser, _ := l.repos.OrganizationUserRepo.GetOrganizationUserByUserId(ctx, organizationId, userModel.Id)
+	organizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUserByUserId(ctx, organizationId, userModel.Id)
+	if err != nil {
+		return nil, err
+	}
 	if organizationUser == nil || organizationUser.Status != constants.OrganizationUserStatusActive {
-		return nil, errorx.New("User Is Not Member Of This Organization")
+		return nil, errorx.New("User is not member of this organization")
 	}
 
 	userModel.DefaultOrganizationId = organizationId
@@ -570,11 +566,19 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 		if innerErr != nil {
 			return innerErr
 		}
+		eg, _ := errgroup.WithContext(ctx)
 		// sync organization template
-		organizationTemplateLogic := NewOrganizationTemplateLogic(l.repos)
-		innerErr = organizationTemplateLogic.SyncByOrganizationIdWithTx(ctx, tx, organization.Id)
-
-		return innerErr
+		eg.Go(func() error {
+			organizationTemplateLogic := NewOrganizationTemplateLogic(l.repos)
+			return organizationTemplateLogic.SyncByOrganizationIdWithTx(ctx, tx, organization)
+		})
+		// init lender organization setting
+		eg.Go(func() error {
+			organizationSettingLogic := NewOrganizationSettingLogic(l.repos)
+			return organizationSettingLogic.InitLenderOrganizationSettingWithTx(ctx, tx, organization)
+		})
+		innerErr = eg.Wait()
+		return errorx.WithStack(innerErr)
 	})
 	if err != nil {
 		return nil, nil, err
@@ -676,7 +680,7 @@ func (l *UserLogic) validatePassword(password string) bool {
 // handleOwnedOrganization
 func (l *UserLogic) handleOwnedOrganizationWithTx(ctx context.Context, tx *gorm.DB, user *model.User) (err error) {
 	if user == nil {
-		return errorx.New("User Is Nil")
+		return errorx.New("User is empty")
 	}
 	// update owned organization status
 	err = l.repos.OrganizationRepo.UpdateOwnerOrganizationStatusWithTx(ctx, tx, user.Id, constants.OrganizationStatusActive)
@@ -684,14 +688,14 @@ func (l *UserLogic) handleOwnedOrganizationWithTx(ctx context.Context, tx *gorm.
 		return err
 	}
 	// get owned organization ids
-	organizationIds, err := l.repos.OrganizationRepo.GetIdsByOwnerIdWithTx(ctx, tx, user.Id, user.Type)
+	organizations, err := l.repos.OrganizationRepo.GetOrganizationsByOwnerIdWithTx(ctx, tx, user.Id, user.Type)
 	if err != nil {
 		return err
 	}
 	// sync owned organization templates
 	organizationTemplateLogic := NewOrganizationTemplateLogic(l.repos)
-	for _, organizationId := range organizationIds {
-		err = organizationTemplateLogic.SyncByOrganizationIdWithTx(ctx, tx, organizationId)
+	for index := range organizations {
+		err = organizationTemplateLogic.SyncByOrganizationIdWithTx(ctx, tx, organizations[index])
 		if err != nil {
 			return err
 		}
