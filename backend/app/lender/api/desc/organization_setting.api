@@ -1,0 +1,51 @@
+syntax = "v1"
+
+info(
+    title: "organization-Setting-api"
+    desc: "organization Setting management http service description"
+    version: "v1"
+)
+
+// Entity
+type (
+    OrganizationSettingEntity {
+        Id int64 `json:"id"`
+        CreatedAt string `json:"created_at"`
+        UpdatedAt string `json:"updated_at"`
+        Enabled bool `json:"enabled"`
+        Setting map[string]interface{} `json:"setting"`
+        Purpose string `json:"purpose"`
+    }
+
+    OrganizationSettingPageEntity {
+        Id int64 `json:"id"`
+        Name string `json:"name"`
+        Type string `json:"type"`
+        Category string `json:"category"`
+        Purpose string `json:"purpose"`
+        Status string `json:"status"`
+        HasConfigured bool `json:"has_configured"`
+        Description string `json:"description"`
+        CreatedAt string `json:"created_at"`
+        UpdatedAt string `json:"updated_at"`
+    }
+)
+
+type (
+    // Detail --- request
+    OrganizationSettingDetailByPurposeRequest {
+        Purpose string `form:"purpose" validate:"required"`
+    }
+        // Detail --- response
+    OrganizationSettingDetailResponse {
+        OrganizationSettingEntity
+    }
+)
+
+type (
+    // SwitchStatus --- request
+    OrganizationSettingSwitchStatusRequest {
+        Id int64 `path:"id" validate:"required,min=1"`
+        Enabled bool `json:"enabled,optional"`
+    }
+)

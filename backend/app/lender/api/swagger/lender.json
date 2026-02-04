@@ -3760,6 +3760,105 @@
         }
       }
     },
+    "/api/v1/organization_setting/detail_by_purpose": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization_setting"
+        ],
+        "summary": "Detail by purpose",
+        "operationId": "organizationSettingOrganizationSettingDetailByPurpose",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "purpose",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "created_at": {
+                  "type": "string"
+                },
+                "enabled": {
+                  "type": "boolean"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "purpose": {
+                  "type": "string"
+                },
+                "setting": {
+                  "type": "object",
+                  "additionalProperties": {}
+                },
+                "updated_at": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organization_setting/{id}/status": {
+      "patch": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization_setting"
+        ],
+        "summary": "switch status",
+        "operationId": "organizationSettingOrganizationSettingSwitchStatus",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/organization_template/detail_by_purpose": {
       "get": {
         "produces": [
@@ -7769,7 +7868,7 @@
       }
     }
   },
-  "x-date": "2026-02-04 15:56:10",
+  "x-date": "2026-02-04 17:26:14",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

@@ -378,6 +378,28 @@ type OrganizationMetadataEntity struct {
 	Lender *OrganizationLenderMetadataEntity `json:"lender,omitempty"`
 }
 
+type OrganizationSettingEntity struct {
+	Id        int64                  `json:"id"`
+	CreatedAt string                 `json:"created_at"`
+	UpdatedAt string                 `json:"updated_at"`
+	Enabled   bool                   `json:"enabled"`
+	Setting   map[string]interface{} `json:"setting"`
+	Purpose   string                 `json:"purpose"`
+}
+
+type OrganizationSettingPageEntity struct {
+	Id            int64  `json:"id"`
+	Name          string `json:"name"`
+	Type          string `json:"type"`
+	Category      string `json:"category"`
+	Purpose       string `json:"purpose"`
+	Status        string `json:"status"`
+	HasConfigured bool   `json:"has_configured"`
+	Description   string `json:"description"`
+	CreatedAt     string `json:"created_at"`
+	UpdatedAt     string `json:"updated_at"`
+}
+
 type OrganizationTemplateDetailRequest struct {
 	Id int64 `path:"id" validate:"required,min=1"`
 }

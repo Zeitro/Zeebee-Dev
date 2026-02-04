@@ -11,6 +11,7 @@ import (
 	loan "zeebee-backend/app/lender/api/internal/handler/loan"
 	loan_document "zeebee-backend/app/lender/api/internal/handler/loan_document"
 	organization "zeebee-backend/app/lender/api/internal/handler/organization"
+	organization_setting "zeebee-backend/app/lender/api/internal/handler/organization_setting"
 	organization_template "zeebee-backend/app/lender/api/internal/handler/organization_template"
 	organization_user "zeebee-backend/app/lender/api/internal/handler/organization_user"
 	role "zeebee-backend/app/lender/api/internal/handler/role"
@@ -178,6 +179,27 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPut,
 					Path:    "/organization/profile",
 					Handler: organization.OrganizationUpdateProfileHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// switch status
+					Method:  http.MethodPatch,
+					Path:    "/organization_setting/:id/status",
+					Handler: organization_setting.OrganizationSettingSwitchStatusHandler(serverCtx),
+				},
+				{
+					// Detail by purpose
+					Method:  http.MethodGet,
+					Path:    "/organization_setting/detail_by_purpose",
+					Handler: organization_setting.OrganizationSettingDetailByPurposeHandler(serverCtx),
 				},
 			}...,
 		),

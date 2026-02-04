@@ -2,6 +2,7 @@ package copierx
 
 import (
 	"database/sql"
+	"encoding/json"
 	"time"
 
 	"github.com/jinzhu/copier"
@@ -124,6 +125,45 @@ func StrToTime(format string) copier.TypeConverter {
 			dst, err = time.Parse(format, val)
 
 			return dst, err
+		},
+	}
+}
+
+// StrMapToBytes map[string]interface{} -> []byte
+func StrMapToBytes() copier.TypeConverter {
+	return copier.TypeConverter{
+		SrcType: map[string]interface{}{},
+		DstType: []byte{},
+		Fn: func(src interface{}) (dst interface{}, err error) {
+			val, ok := src.(map[string]interface{})
+			if !ok {
+				return "", errorx.Errorf("Invalid Src Type:%T", val)
+			}
+			if len(val) == 0 {
+				return nil, nil
+			}
+			return json.Marshal(val)
+		},
+	}
+}
+
+// BytesToStrMap []byte -> map[string]interface{}
+func BytesToStrMap() copier.TypeConverter {
+	return copier.TypeConverter{
+		SrcType: []byte{},
+		DstType: map[string]interface{}{},
+		Fn: func(src interface{}) (dst interface{}, err error) {
+			val, ok := src.([]byte)
+			if !ok {
+				return "", errorx.Errorf("Invalid Src Type:%T", val)
+			}
+			if len(val) == 0 {
+				return map[string]interface{}{}, nil
+			}
+
+			var dstMap map[string]interface{}
+			err = json.Unmarshal(val, &dstMap)
+			return dstMap, err
 		},
 	}
 }

@@ -18,6 +18,7 @@ import "desc/role.api"
 import "desc/organization_user.api"
 import "desc/organization.api"
 import "desc/organization_template.api"
+import "desc/organization_setting.api"
 
 type (
 	EmptyRequest  {}
@@ -369,4 +370,24 @@ service lender-api {
 	post /organization_template/:id/reset (PathIdRequest) returns (EmptyResponse)
 }
 
-	// ============== organization template service end ============
+// ============== organization template service end ============
+// ============= organization setting service start =============
+@server(
+	desc: "organization setting service"
+	version: v1
+	prefix:     /api/v1
+	group: organization_setting
+	middleware: AuthMiddleware
+	tags: organization_setting
+)
+service lender-api {
+	@doc "Detail by purpose"
+	@handler OrganizationSettingDetailByPurpose
+	get /organization_setting/detail_by_purpose (OrganizationSettingDetailByPurposeRequest) returns (OrganizationSettingDetailResponse)
+
+	@doc "switch status"
+	@handler OrganizationSettingSwitchStatus
+	patch /organization_setting/:id/status (OrganizationSettingSwitchStatusRequest) returns (EmptyResponse)
+}
+
+	// ============= organization setting service end =============
