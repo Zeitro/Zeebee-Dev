@@ -32,7 +32,7 @@ type BaseTemplateCreateDto struct {
 	ExampleVariables    string                        `json:"example_variables"`
 	Description         string                        `json:"description"`
 	Scope               constants.BaseTemplateScope   `json:"scope"`
-	Configurable        bool                          `json:"configurable"`
+	IsConfigurable      bool                          `json:"is_configurable"`
 }
 
 // BaseTemplateUpdateDto represents the request for updating a base template
@@ -44,7 +44,7 @@ type BaseTemplateUpdateDto struct {
 	VariableGroupSchema []*data.TemplateVariableGroup `json:"variable_group_schema"`
 	Description         string                        `json:"description"`
 	ExampleVariables    string                        `json:"example_variables"`
-	Configurable        bool                          `json:"configurable"`
+	IsConfigurable      bool                          `json:"is_configurable"`
 	Scope               constants.BaseTemplateScope   `json:"scope"`
 }
 

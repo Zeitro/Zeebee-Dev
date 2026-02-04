@@ -31,6 +31,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: common.SelectOptionsHandler(serverCtx),
 			},
 			{
+				// sync data
+				Method:  http.MethodGet,
+				Path:    "/sync_data",
+				Handler: common.SyncDataHandler(serverCtx),
+			},
+			{
 				// get us city
 				Method:  http.MethodGet,
 				Path:    "/us_cities",

@@ -227,7 +227,7 @@ func (l *BaseTemplateLogic) SwitchStatus(ctx context.Context, id int64, status c
 				organizationTemplate.BaseTemplateId = tpl.Id
 				organizationTemplate.OrganizationId = organizationId
 				organizationTemplate.Status = constants.CommonStatusActive
-				organizationTemplate.HasConfigured = !tpl.EnableConfigure
+				organizationTemplate.HasConfigured = !tpl.IsConfigurable
 				organizationTemplates = append(organizationTemplates, organizationTemplate)
 			}
 			// Create organization templates
@@ -324,7 +324,7 @@ func (l *BaseTemplateLogic) syncOrganizationTemplates(ctx context.Context, tx *g
 		organizationTemplate.BaseTemplateId = baseTemplate.Id
 		organizationTemplate.OrganizationId = organizationId
 		organizationTemplate.Status = constants.CommonStatusActive
-		organizationTemplate.HasConfigured = !baseTemplate.EnableConfigure
+		organizationTemplate.HasConfigured = !baseTemplate.IsConfigurable
 		organizationTemplates = append(organizationTemplates, organizationTemplate)
 	}
 	// Create organization templates

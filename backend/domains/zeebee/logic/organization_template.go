@@ -235,7 +235,7 @@ func (l *OrganizationTemplateLogic) Reset(ctx context.Context, id int64, organiz
 	template.Purpose = baseTemplate.Purpose
 	template.Description = baseTemplate.Description
 	template.Category = baseTemplate.Category
-	template.HasConfigured = !baseTemplate.EnableConfigure
+	template.HasConfigured = !baseTemplate.IsConfigurable
 
 	// Update the template in the repository
 	updated, err := l.repos.OrganizationTemplateRepo.UpdateOneById(ctx, id, template)
@@ -281,7 +281,7 @@ func (l *OrganizationTemplateLogic) ResetByBaseTemplateId(ctx context.Context, b
 			organizationTemplate.Purpose = baseTemplate.Purpose
 			organizationTemplate.Description = baseTemplate.Description
 			organizationTemplate.Category = baseTemplate.Category
-			organizationTemplate.HasConfigured = !baseTemplate.EnableConfigure
+			organizationTemplate.HasConfigured = !baseTemplate.IsConfigurable
 
 			_, innerErr = l.repos.OrganizationTemplateRepo.UpdateOneByIdWithTx(ctx, tx, organizationTemplate.Id, organizationTemplate)
 			if innerErr != nil {
@@ -354,7 +354,7 @@ func (l *OrganizationTemplateLogic) SyncByOrganizationIdWithTx(ctx context.Conte
 		tpl.Id = 0
 		tpl.OrganizationId = organizationId
 		tpl.BaseTemplateId = baseTemplate.Id
-		tpl.HasConfigured = !baseTemplate.EnableConfigure
+		tpl.HasConfigured = !baseTemplate.IsConfigurable
 		templates = append(templates, tpl)
 	}
 

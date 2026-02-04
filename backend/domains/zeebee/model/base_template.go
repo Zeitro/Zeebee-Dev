@@ -18,7 +18,7 @@ type BaseTemplate struct {
 	Scope               constants.BaseTemplateScope   `json:"scope" gorm:"column:scope;type:varchar(20);not null;default:''"`
 	Description         string                        `json:"description" gorm:"column:description;type:text;not null;default:''"`
 	ExampleVariables    string                        `json:"example_variables,omitempty" gorm:"column:example_variables;type:jsonb;not null;default:'{}'"`
-	Configurable        bool                          `json:"configurable" gorm:"column:configurable;type:boolean;not null;default:false"`
+	IsConfigurable      bool                          `json:"is_configurable" gorm:"column:is_configurable;type:boolean;not null;default:false"`
 
 	// Relationships - derived templates that use this base template
 	OrganizationTemplates []*OrganizationTemplate `json:"organization_templates,omitempty" gorm:"foreignKey:BaseTemplateId;references:Id"`
