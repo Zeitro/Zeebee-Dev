@@ -1354,6 +1354,7 @@ message OrganizationTemplateEntity {
   string created_at = 10;
   string updated_at = 11;
   string example_variables = 12;
+  bool has_configured = 13;
 }
 
 // Base template page entity (for list display)
@@ -1367,6 +1368,7 @@ message OrganizationTemplatePageEntity {
   string description = 7;
   string created_at = 8;
   string updated_at = 9;
+  bool has_configured = 10;
 }
 
 // Update ---- request
@@ -1381,10 +1383,6 @@ message UpdateOrganizationTemplateRequestData {
 message UpdateOrganizationTemplateResponse {
   OrganizationTemplateEntity data = 1;
 }
-// detail ---- request
-//message OrganizationTemplateDetailRequest {
-//  IdRequest data = 1;
-//}
 // detail ---- response
 message OrganizationTemplateDetailResponse {
   OrganizationTemplateEntity data = 1;

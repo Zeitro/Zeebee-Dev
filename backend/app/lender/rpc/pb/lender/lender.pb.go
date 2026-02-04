@@ -11818,6 +11818,7 @@ type OrganizationTemplateEntity struct {
 	CreatedAt           string                         `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt           string                         `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	ExampleVariables    string                         `protobuf:"bytes,12,opt,name=example_variables,json=exampleVariables,proto3" json:"example_variables,omitempty"`
+	HasConfigured       bool                           `protobuf:"varint,13,opt,name=has_configured,json=hasConfigured,proto3" json:"has_configured,omitempty"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -11936,6 +11937,13 @@ func (x *OrganizationTemplateEntity) GetExampleVariables() string {
 	return ""
 }
 
+func (x *OrganizationTemplateEntity) GetHasConfigured() bool {
+	if x != nil {
+		return x.HasConfigured
+	}
+	return false
+}
+
 // Base template page entity (for list display)
 type OrganizationTemplatePageEntity struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -11948,6 +11956,7 @@ type OrganizationTemplatePageEntity struct {
 	Description   string                 `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
 	CreatedAt     string                 `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt     string                 `protobuf:"bytes,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	HasConfigured bool                   `protobuf:"varint,10,opt,name=has_configured,json=hasConfigured,proto3" json:"has_configured,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -12043,6 +12052,13 @@ func (x *OrganizationTemplatePageEntity) GetUpdatedAt() string {
 		return x.UpdatedAt
 	}
 	return ""
+}
+
+func (x *OrganizationTemplatePageEntity) GetHasConfigured() bool {
+	if x != nil {
+		return x.HasConfigured
+	}
+	return false
 }
 
 // Update ---- request
@@ -12187,12 +12203,6 @@ func (x *UpdateOrganizationTemplateResponse) GetData() *OrganizationTemplateEnti
 	return nil
 }
 
-// detail ---- request
-//
-//	message OrganizationTemplateDetailRequest {
-//	 IdRequest data = 1;
-//	}
-//
 // detail ---- response
 type OrganizationTemplateDetailResponse struct {
 	state         protoimpl.MessageState      `protogen:"open.v1"`
@@ -13913,7 +13923,7 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x05value\x18\x02 \x01(\v2\x1e.lender.TemplateVariableEntityR\x05value:\x028\x01\"o\n" +
 	"\x1bTemplateVariableGroupEntity\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12<\n" +
-	"\tvariables\x18\x02 \x03(\v2\x1e.lender.TemplateVariableEntityR\tvariables\"\xa2\x03\n" +
+	"\tvariables\x18\x02 \x03(\v2\x1e.lender.TemplateVariableEntityR\tvariables\"\xc9\x03\n" +
 	"\x1aOrganizationTemplateEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
@@ -13929,7 +13939,8 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	" \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
 	"updated_at\x18\v \x01(\tR\tupdatedAt\x12+\n" +
-	"\x11example_variables\x18\f \x01(\tR\x10exampleVariables\"\x86\x02\n" +
+	"\x11example_variables\x18\f \x01(\tR\x10exampleVariables\x12%\n" +
+	"\x0ehas_configured\x18\r \x01(\bR\rhasConfigured\"\xad\x02\n" +
 	"\x1eOrganizationTemplatePageEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
@@ -13941,7 +13952,9 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\b \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\t \x01(\tR\tupdatedAt\"f\n" +
+	"updated_at\x18\t \x01(\tR\tupdatedAt\x12%\n" +
+	"\x0ehas_configured\x18\n" +
+	" \x01(\bR\rhasConfigured\"f\n" +
 	"!UpdateOrganizationTemplateRequest\x12A\n" +
 	"\x04data\x18\x01 \x01(\v2-.lender.UpdateOrganizationTemplateRequestDataR\x04data\"\x90\x01\n" +
 	"%UpdateOrganizationTemplateRequestData\x12\x0e\n" +

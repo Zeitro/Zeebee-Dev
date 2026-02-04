@@ -8,6 +8,40 @@ info(
 
 import "common.api"
 
+// Entity
+type (
+    BaseTemplateEntity {
+        Id int64 `json:"id"`
+        Name string `json:"name"`
+        Type string `json:"type"`
+        Category string `json:"category"`
+        Purpose string `json:"purpose"`
+        Content string `json:"content"`
+        VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema"`
+        Status string `json:"status"`
+        Configurable bool `json:"enable_configured"`
+        Description string `json:"description"`
+        ExampleVariables string `json:"example_variables,omitempty,optional"`
+        Scope string `json:"scope"`
+        CreatedAt string `json:"created_at"`
+        UpdatedAt string `json:"updated_at"`
+    }
+
+    BaseTemplatePageEntity {
+        Id int64 `json:"id"`
+        Name string `json:"name"`
+        Type string `json:"type"`
+        Category string `json:"category"`
+        Purpose string `json:"purpose"`
+        Status string `json:"status"`
+        Configurable bool `json:"configurable"`
+        Description string `json:"description"`
+        Scope string `json:"scope"`
+        CreatedAt string `json:"created_at"`
+        UpdatedAt string `json:"updated_at"`
+    }
+)
+
 type TemplateVariableEntity {
     Label string `json:"label"`
     Type string `json:"type" validate:"oneof=String Object Array"`
@@ -25,38 +59,6 @@ type TemplateVariableGroupEntity {
     Name string `json:"name"`
     Variables []*TemplateVariableEntity `json:"variables" validate:"dive"`
 }
-
-// Entity
-type (
-    BaseTemplateEntity {
-        Id int64 `json:"id"`
-        Name string `json:"name"`
-        Type string `json:"type"`
-        Category string `json:"category"`
-        Purpose string `json:"purpose"`
-        Content string `json:"content"`
-        VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema"`
-        Status string `json:"status"`
-        Description string `json:"description"`
-        ExampleVariables string `json:"example_variables,omitempty,optional"`
-        Scope string `json:"scope"`
-        CreatedAt string `json:"created_at"`
-        UpdatedAt string `json:"updated_at"`
-    }
-
-    BaseTemplatePageEntity {
-        Id int64 `json:"id"`
-        Name string `json:"name"`
-        Type string `json:"type"`
-        Category string `json:"category"`
-        Purpose string `json:"purpose"`
-        Status string `json:"status"`
-        Description string `json:"description"`
-        Scope string `json:"scope"`
-        CreatedAt string `json:"created_at"`
-        UpdatedAt string `json:"updated_at"`
-    }
-)
 
 // Page
 type (
@@ -92,6 +94,7 @@ type (
         Description string `json:"description,optional" validate:"max=255"`
         ExampleVariables string `json:"example_variables,omitempty,optional" validate:"omitempty,json"`
         Scope string `json:"scope" validate:"oneof=System Organization"`
+        Configurable bool `json:"configurable"`
     }
 )
 
@@ -106,6 +109,7 @@ type (
         Description string `json:"description,optional" validate:"max=255"`
         ExampleVariables string `json:"example_variables,omitempty,optional" validate:"omitempty,json"`
         Scope string `json:"scope" validate:"oneof=System Organization"`
+        Configurable bool `json:"configurable"`
     }
 )
 
