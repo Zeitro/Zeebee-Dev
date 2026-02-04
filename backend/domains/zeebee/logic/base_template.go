@@ -54,8 +54,8 @@ func (l *BaseTemplateLogic) Create(ctx context.Context, req dto.BaseTemplateCrea
 		// Create base template
 		created, innerErr = l.repos.BaseTemplateRepo.CreateWithTx(ctx, tx, data, false)
 
-		if err != nil {
-			return errorx.WithStack(err)
+		if innerErr != nil {
+			return errorx.WithStack(innerErr)
 		}
 		// Sync to organization templates
 		if req.Scope == constants.BaseTemplateScopeOrganization {
@@ -227,6 +227,7 @@ func (l *BaseTemplateLogic) SwitchStatus(ctx context.Context, id int64, status c
 				organizationTemplate.BaseTemplateId = tpl.Id
 				organizationTemplate.OrganizationId = organizationId
 				organizationTemplate.Status = constants.CommonStatusActive
+				organizationTemplate.HasConfigured = !tpl.EnableConfigure
 				organizationTemplates = append(organizationTemplates, organizationTemplate)
 			}
 			// Create organization templates
@@ -323,6 +324,7 @@ func (l *BaseTemplateLogic) syncOrganizationTemplates(ctx context.Context, tx *g
 		organizationTemplate.BaseTemplateId = baseTemplate.Id
 		organizationTemplate.OrganizationId = organizationId
 		organizationTemplate.Status = constants.CommonStatusActive
+		organizationTemplate.HasConfigured = !baseTemplate.EnableConfigure
 		organizationTemplates = append(organizationTemplates, organizationTemplate)
 	}
 	// Create organization templates

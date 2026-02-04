@@ -97,3 +97,30 @@ func (tv *TemplateVariable) Validate() error {
 
 	return nil
 }
+
+func (tv *TemplateVariable) ValidateRequiredField() (err error) {
+	if tv == nil {
+		return nil
+	}
+	if tv.IsRequired &&
+		tv.Type == constants.TemplateVariableTypeString &&
+		len(tv.FixedValue) == 0 &&
+		(tv.Source == constants.TemplateVariableSourceFixed || tv.Source == constants.TemplateVariableSourceTemplate) {
+		return errorx.Errorf("%s is required", tv.Label)
+	}
+	if tv.Type == constants.TemplateVariableTypeObject && tv.Properties != nil {
+		for _, prop := range tv.Properties {
+			if err = prop.ValidateRequiredField(); err != nil {
+				return err
+			}
+		}
+	} else if tv.Type == constants.TemplateVariableTypeArray && tv.Items != nil {
+		for _, item := range tv.Items {
+			if err = item.ValidateRequiredField(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
