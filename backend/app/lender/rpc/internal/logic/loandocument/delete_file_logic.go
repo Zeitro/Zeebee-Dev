@@ -133,7 +133,7 @@ func (l *DeleteFileLogic) prepare(in *lender.LoanDocumentDeleteFileRequest, clai
 	}
 
 	if file.EntityType != constants.FileEntityTypeLoanDocument {
-		return nil, nil, nil, errorx.WithStack(errorx.New("File Is Not Associated With A Loan Document"))
+		return nil, nil, nil, errorx.WithStack(errorx.New("File is not associated with a loan document"))
 	}
 	loan, loanDocument, err = l.baseLogic.GetLoanAndDocumentByDocumentId(file.EntityId, claim.OrganizationId)
 

@@ -272,6 +272,6 @@ func stringifyPanic(v interface{}) string {
 	case string:
 		return v
 	default:
-		return "unknown panic"
+		return "Unknown panic"
 	}
 }

@@ -101,14 +101,14 @@ func (l *OrganizationEmailLogic) SaveEmail(ctx context.Context, input dto.Organi
 // updates email provider information, and generates the final authentication URL.
 func (l *OrganizationEmailLogic) GenerateAuthCodeUrl(ctx context.Context, input dto.OrganizationEmailGenerateAuthCodeUrlRequestDto) (url string, err error) {
 	if input.AuthCodeGenerator == nil {
-		return "", errorx.New("Auth Code Url Generator is Nil")
+		return "", errorx.New("Auth code url generator is nil")
 	}
 	organization, err := l.repos.OrganizationRepo.GetOrganization(ctx, input.OrganizationId, input.OrganizationType, false)
 	if err != nil {
 		return "", err
 	}
 	if organization.Status != constants.OrganizationStatusActive {
-		return "", errorx.New("The Organization Is Not Active")
+		return "", errorx.New("The organization is not active")
 	}
 
 	organizationEmail, err := l.repos.OrganizationEmailRepo.GetOrganizationEmailByOrganizationId(ctx, input.OrganizationId, input.Purpose)
@@ -161,13 +161,13 @@ func (l *OrganizationEmailLogic) GenerateAuthCodeUrl(ctx context.Context, input 
 		}
 
 	default:
-		err = errorx.New("Invalid Email Auth Strategy")
+		err = errorx.New("Invalid email auth strategy")
 	}
 	if err != nil {
 		return "", err
 	}
 	if emailAuthorization == nil || emailAuthorization.Id == 0 {
-		return "", errorx.New("Email Authorization Not Found")
+		return "", errorx.New("Email authorization not found")
 	}
 
 	emailAuthorization.EmailProvider = input.EmailProvider
@@ -193,7 +193,7 @@ func (l *OrganizationEmailLogic) EmailAuthorize(ctx context.Context, input dto.O
 		emailClient, err = client.NewGmailClient(input.Oauth2Config, input.Code)
 	default:
 		// Return error for unsupported email providers
-		err = errorx.New("Invalid Email Provider")
+		err = errorx.New("Invalid email provider")
 	}
 	if err != nil {
 		return "", nil, err
@@ -215,7 +215,7 @@ func (l *OrganizationEmailLogic) EmailAuthorize(ctx context.Context, input dto.O
 		emailAuthorization, err = l.repos.EmailAuthorizationRepo.GetEmailAuthorizationByOrganizationEmailId(ctx, organizationEmail.Id, input.UserId, input.Purpose)
 	default:
 		// Return error for invalid authorization strategy
-		err = errorx.New("Invalid Email Auth Strategy")
+		err = errorx.New("Invalid email auth strategy")
 	}
 
 	if err != nil {
@@ -230,7 +230,7 @@ func (l *OrganizationEmailLogic) EmailAuthorize(ctx context.Context, input dto.O
 
 	// Verify that the authenticated email matches the stored authorization email
 	if emailAuthorization.Email != authEmail {
-		return "", nil, errorx.New("Email Not Match")
+		return "", nil, errorx.New("Email does not match")
 	}
 
 	// Refresh the authorization token

@@ -131,7 +131,7 @@ func (l *CreateLogic) prepare(in *lender.LoanDocumentCreateExtendTypeRequest, cl
 		constants.LoanDocumentCategoryExtend,
 		constants.LoanDocumentCategoryLenderClosingExtend,
 	}, category) {
-		return nil, errorx.WithStack(errorx.New("Loan Document Category Not Supported"))
+		return nil, errorx.WithStack(errorx.New("Loan document category not supported"))
 	}
 
 	loan, err = l.baseLogic.GetLenderLoan(in.Data.LoanId, claim.OrganizationId, nil)
@@ -143,7 +143,7 @@ func (l *CreateLogic) prepare(in *lender.LoanDocumentCreateExtendTypeRequest, cl
 	// check unique
 	fileTypes = slice.Unique(fileTypes)
 	if len(fileTypes) == 0 {
-		return nil, errorx.WithStack(errorx.New("File Types Cannot Be Empty"))
+		return nil, errorx.WithStack(errorx.New("File types cannot be empty"))
 	}
 
 	// checked repeated file types

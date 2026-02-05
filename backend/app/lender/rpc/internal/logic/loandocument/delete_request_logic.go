@@ -82,7 +82,7 @@ func (l *DeleteRequestLogic) DeleteRequest(in *lender.LoanDocumentDeleteRequestR
 				return errorx.Wrap(innerErr, "Failed To Update Loan Document Status")
 			}
 		default:
-			return errorx.WithStack(errorx.New("Invalid Loan Document Category"))
+			return errorx.WithStack(errorx.New("Invalid loan document category"))
 
 		}
 		operationLoanDocument := &model.OperationLoanDocument{}

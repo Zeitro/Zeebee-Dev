@@ -62,14 +62,14 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 			return nil, err
 		}
 		if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreapproval {
-			return nil, errorx.WithStack(errorx.New("Invalid Loan Source"))
+			return nil, errorx.WithStack(errorx.New("Invalid loan source"))
 		}
 
 		stages := []constants.LoanStage{
 			constants.LoanStageDraft,
 		}
 		if !slice.Contain(stages, loan.Stage) && loan.PendingStatus != constants.LoanPendingStatusNone {
-			return nil, errorx.New("Loan's Stage Should Be Draft")
+			return nil, errorx.New("Loan's stage should be draft")
 		}
 		oldApplicants = loan.Applicants
 		if loan.LoanProperty != nil {
@@ -249,11 +249,11 @@ func (l *SaveDraftLoanLogic) updateLoanDemographic(tx *gorm.DB, loanDemographic 
 func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, oldLoan *model.Loan, claim utils.JwtUser) (data *applyLoanModelData, err error) {
 
 	if reqData == nil {
-		return nil, errorx.New("Invalid Request Data")
+		return nil, errorx.New("Invalid request data")
 	}
 
 	if reqData.LenderCompanyId == 0 {
-		return nil, errorx.New("Invalid Lender Id")
+		return nil, errorx.New("Invalid lender id")
 	}
 
 	// loan
@@ -262,6 +262,9 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 		_ = copier.CopyWithOption(loan, oldLoan, copier.Option{
 			CaseSensitive: true,
 			DeepCopy:      true,
+			Converters: []copier.TypeConverter{
+				copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
+			},
 		})
 		loan.RemoveRelationships()
 	}
@@ -276,10 +279,6 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 		return nil, errorx.GetFailedTransErr(err)
 	}
 	if loan.Id == 0 {
-		// creator, err := l.svcCtx.UserRepo.GetUser(l.ctx, reqData.UserId, constants.UserTypeBorrower)
-		// if err != nil {
-		// 	return nil, err
-		// }
 		loan.CreatorId = claim.OrganizationUserId
 		loan.CreatorName = claim.Username
 		loan.BorrowerOrganizationId = claim.OrganizationId
@@ -288,6 +287,11 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	loan.PendingStatus = constants.LoanPendingStatusNone
 	// loan.Source = constants.LoanSourceSystem
 	loan.Source = condition.Ternary(reqData.IsPreapproveLoan, constants.LoanSourcePreapproval, constants.LoanSourceSystem)
+	if reqData.IsPreapproveLoan {
+		preapprovalInfo, _ := copierx.Trans[borrower.LoanPreapproveInfo, model.LoanPreapprovalInfo](reqData.LoanPreapproveInfo)
+		loan.Extend.LoanPreapprovalInfo = preapprovalInfo
+	}
+
 	if reqData.LenderCompanyId > 0 {
 		lender, err := l.svcCtx.OrganizationRepo.FindOneById(l.ctx, reqData.LenderCompanyId)
 		if err != nil {
@@ -299,7 +303,7 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 
 	// LoanBorrower
 	var loanBorrower *model.LoanBorrower
-	if reqData.LoanBorrower.BorrowerEntityId > 0 {
+	if reqData.LoanBorrower != nil && reqData.LoanBorrower.BorrowerEntityId > 0 {
 		loanBorrower, err = l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, reqData.LoanBorrower.BorrowerEntityId, claim.OrganizationId)
 		if err != nil {
 			return nil, err
@@ -350,7 +354,7 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 		applicants = append(applicants, loanApplicant)
 	}
 	if totalOwnPercent > 100 {
-		return nil, errorx.New("Total Own Percent Greater Than 100")
+		return nil, errorx.New("Total own percent is greater than 100")
 	}
 
 	// transaction experience

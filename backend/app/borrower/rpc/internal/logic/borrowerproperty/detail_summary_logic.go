@@ -52,11 +52,11 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 		return nil, err
 	}
 	if borrowerProperty == nil || borrowerProperty.Id == 0 {
-		return nil, errorx.WithStack(errorx.New("Property Is Invalid"))
+		return nil, errorx.WithStack(errorx.New("Property is invalid"))
 	}
 	// todo check organization
 	if borrowerProperty.OrganizationId != claim.OrganizationId {
-		return nil, errorx.WithStack(errorx.New("Access Denied"))
+		return nil, errorx.WithStack(errorx.New("Access denied"))
 	}
 
 	loanProperties := borrowerProperty.LoanProperties

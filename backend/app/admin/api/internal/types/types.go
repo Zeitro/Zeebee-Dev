@@ -46,6 +46,45 @@ type BasePageSort struct {
 	Sort   string `json:"sort,optional"`
 }
 
+type BaseTemplateEntity struct {
+	Id                  int64                          `json:"id"`
+	Name                string                         `json:"name"`
+	Type                string                         `json:"type"`
+	Category            string                         `json:"category"`
+	Purpose             string                         `json:"purpose"`
+	Content             string                         `json:"content"`
+	VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema"`
+	Status              string                         `json:"status"`
+	IsConfigurable      bool                           `json:"is_configurable"`
+	Description         string                         `json:"description"`
+	ExampleVariables    string                         `json:"example_variables,omitempty,optional"`
+	Scope               string                         `json:"scope"`
+	CreatedAt           string                         `json:"created_at"`
+	UpdatedAt           string                         `json:"updated_at"`
+}
+
+type BaseTemplateFilter struct {
+	Keyword  string `json:"keyword,optional"`
+	Type     string `json:"type,optional" validate:"omitempty,oneof=Borrower Lender"`
+	Category string `json:"category,optional" validate:"omitempty,oneof=Email Contract"`
+	Status   string `json:"status,optional" validate:"omitempty,oneof=Active Disabled"`
+	Scope    string `json:"scope,optional" validate:"omitempty,oneof=System Organization"`
+}
+
+type BaseTemplatePageEntity struct {
+	Id             int64  `json:"id"`
+	Name           string `json:"name"`
+	Type           string `json:"type"`
+	Category       string `json:"category"`
+	Purpose        string `json:"purpose"`
+	Status         string `json:"status"`
+	IsConfigurable bool   `json:"is_configurable"`
+	Description    string `json:"description"`
+	Scope          string `json:"scope"`
+	CreatedAt      string `json:"created_at"`
+	UpdatedAt      string `json:"updated_at"`
+}
+
 type EmptyRequest struct {
 }
 
@@ -215,6 +254,24 @@ type RolePageSort struct {
 type SelectOptionEntity struct {
 	Label string `json:"label"`
 	Value string `json:"value"`
+}
+
+type TemplateVariableEntity struct {
+	Label      string                             `json:"label"`
+	Type       string                             `json:"type" validate:"oneof=String Object Array"`
+	Key        string                             `json:"key"`
+	IsEditable bool                               `json:"is_editable"`
+	IsRequired bool                               `json:"is_required"`
+	Source     string                             `json:"source" validate:"omitempty,oneof=Fixed Dynamic Template"`
+	Format     string                             `json:"format" validate:"omitempty,oneof=Email Phone Currency TextArea Input"`
+	FixedValue string                             `json:"fixed_value,optional" validate:"required_if=IsRequired trye Source Fixed,required_if=IsRequired trye Source Template"`
+	Properties map[string]*TemplateVariableEntity `json:"properties,omitempty,optional"`
+	Items      []*TemplateVariableEntity          `json:"items,omitempty,optional"`
+}
+
+type TemplateVariableGroupEntity struct {
+	Name      string                    `json:"name"`
+	Variables []*TemplateVariableEntity `json:"variables" validate:"dive"`
 }
 
 type UserEntity struct {

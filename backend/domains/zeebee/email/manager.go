@@ -64,13 +64,13 @@ func (m *Manager) SendMail(ctx context.Context, strategy limiter.LimiterStrategy
 			return errorx.WithStack(err)
 		}
 		if !allowed {
-			return errorx.New("Rate Limit Exceeded")
+			return errorx.New("Rate limit exceeded")
 		}
 	}
 
 	emailClient, existed := m.GetClient(email)
 	if !existed {
-		return errorx.New("Email Not Found")
+		return errorx.New("Email not found")
 	}
 	return emailClient.SendEmail(ctx, msg)
 }
@@ -79,7 +79,7 @@ func (m *Manager) SendMail(ctx context.Context, strategy limiter.LimiterStrategy
 func (m *Manager) SendMailWithoutLimit(ctx context.Context, email string, msg commonemail.Message) error {
 	emailClient, existed := m.GetClient(email)
 	if !existed {
-		return errorx.New("Email Not Found")
+		return errorx.New("Email not found")
 	}
 	return emailClient.SendEmail(ctx, msg)
 }

@@ -56,17 +56,17 @@ func (l *PendingStatusReviewLogic) PendingStatusReview(in *lender.LoanPendingSta
 
 	// validate loan pending status
 	if loan.Stage != constants.LoanStagePending {
-		return nil, errorx.WithStack(errorx.New("Loan Is Not In Pending Stage"))
+		return nil, errorx.WithStack(errorx.New("Loan is not in pending stage"))
 	}
 	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreapproval {
-		return nil, errorx.WithStack(errorx.New("Invalid Loan Source"))
+		return nil, errorx.WithStack(errorx.New("Invalid loan source"))
 	}
 
 	if loan.PendingStatus != currentStatus {
-		return nil, errorx.WithStack(errorx.New("Current Pending Status Is Not Valid"))
+		return nil, errorx.WithStack(errorx.New("Current pending status is not valid"))
 	}
 	if action == constants.LoanOperationActionReject && in.Data.Comment == "" {
-		return nil, errorx.WithStack(errorx.New("Comment Is Empty"))
+		return nil, errorx.WithStack(errorx.New("Comment is empty"))
 	}
 	var targetStatus constants.LoanPendingStatus
 	loanBaseLogic := NewLoanBaseLogic(l.ctx, l.svcCtx)

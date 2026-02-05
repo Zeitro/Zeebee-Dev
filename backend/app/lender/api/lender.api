@@ -17,6 +17,8 @@ import "desc/resource.api"
 import "desc/role.api"
 import "desc/organization_user.api"
 import "desc/organization.api"
+import "desc/organization_template.api"
+import "desc/organization_setting.api"
 
 type (
 	EmptyRequest  {}
@@ -47,6 +49,10 @@ service lender-api {
 	@doc "get us city"
 	@handler GetUsCities
 	get /us_cities (GetUsCitiesRequest) returns (GetUsCitiesResponse)
+
+	@doc "sync data"
+	@handler SyncData
+	get /sync_data (EmptyRequest) returns (EmptyResponse)
 }
 
 // ============== user =============
@@ -244,7 +250,7 @@ service lender-api {
 	patch /role/:id/status (RoleUpdateStatusRequest) returns (EmptyResponse)
 }
 
-// ============== organization_user =============
+// ============== organization user start =============
 @server (
 	desc:    "lender-api service"
 	version: v1
@@ -304,7 +310,8 @@ service lender-api {
 	post /organization_user/:id/send_email (PathIdRequest) returns (EmptyResponse)
 }
 
-// ============== organization =============
+// ============== organization user end =============
+// ============== organization service start =============
 @server (
 	desc:       "lender-api service"
 	version:    v1
@@ -316,7 +323,7 @@ service lender-api {
 service lender-api {
 	@doc "profile"
 	@handler OrganizationProfile
-	get /organization/profile (EmptyRequest) returns (OrganizationEntity)
+	get /organization/profile (EmptyRequest) returns (OrganizationProfileEntity)
 
 	@doc "update profile"
 	@handler OrganizationUpdateProfile
@@ -327,3 +334,60 @@ service lender-api {
 	post /organization (OrganizationCreateRequest) returns (OrganizationEntity)
 }
 
+// ============== organization service end =============
+// ============== organization template service start ============
+@server(
+	desc: "organization template service"
+	version: v1
+	prefix:     /api/v1
+	group: organization_template
+	middleware: AuthMiddleware
+	tags: organization_template
+)
+service lender-api {
+	@doc "Update"
+	@handler OrganizationTemplateUpdate
+	put /organization_template/:id (OrganizationTemplateUpdateRequest) returns (OrganizationTemplateDetailResponse)
+
+	@doc "Detail"
+	@handler OrganizationTemplateDetail
+	get /organization_template/:id (PathIdRequest) returns (OrganizationTemplateDetailResponse)
+
+	@doc "Get Detail by purpose"
+	@handler OrganizationTemplateDetailByPurpose
+	get /organization_template/detail_by_purpose (OrganizationTemplateDetailByPurposeRequest) returns (OrganizationTemplateDetailResponse)
+
+	@doc "page"
+	@handler OrganizationTemplatePage
+	post /organization_template/page (OrganizationTemplatePageRequest) returns (OrganizationTemplatePageResponse)
+
+	@doc "Preview"
+	@handler OrganizationTemplatePreview
+	post /organization_template/preview (OrganizationTemplatePreviewRequest) returns (OrganizationTemplatePreviewResponse)
+
+	@doc "Reset"
+	@handler OrganizationTemplateReset
+	post /organization_template/:id/reset (PathIdRequest) returns (EmptyResponse)
+}
+
+// ============== organization template service end ============
+// ============= organization setting service start =============
+@server(
+	desc: "organization setting service"
+	version: v1
+	prefix:     /api/v1
+	group: organization_setting
+	middleware: AuthMiddleware
+	tags: organization_setting
+)
+service lender-api {
+	@doc "Detail by purpose"
+	@handler OrganizationSettingDetailByPurpose
+	get /organization_setting/detail_by_purpose (OrganizationSettingDetailByPurposeRequest) returns (OrganizationSettingDetailResponse)
+
+	@doc "switch status"
+	@handler OrganizationSettingSwitchStatus
+	patch /organization_setting/:id/status (OrganizationSettingSwitchStatusRequest) returns (EmptyResponse)
+}
+
+	// ============= organization setting service end =============
