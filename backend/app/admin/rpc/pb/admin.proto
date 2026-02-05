@@ -899,7 +899,7 @@ message BaseTemplateEntity {
   string updated_at = 11;
   string example_variables = 12;
   string scope = 13; // System, Organization
-  bool configurable = 14;
+  bool is_configurable = 14;
 }
 
 // Base template page entity (for list display)
@@ -914,7 +914,7 @@ message BaseTemplatePageEntity {
   string created_at = 8;
   string updated_at = 9;
   string scope = 10;
-  bool configurable = 11;
+  bool is_configurable = 11;
 }
 
 // Create ---- request
@@ -931,7 +931,7 @@ message CreateBaseTemplateRequestData {
   string description = 7;
   string example_variables = 8;
   string scope = 9;
-  bool configurable = 10;
+  bool is_configurable = 10;
 }
 // Create ---- response
 message CreateBaseTemplateResponse {
@@ -951,7 +951,7 @@ message UpdateBaseTemplateRequestData {
   string description = 8;
   string example_variables = 9;
   string scope = 10;
-  bool configurable = 11;
+  bool is_configurable = 11;
 }
 // Update ---- response
 message UpdateBaseTemplateResponse {
