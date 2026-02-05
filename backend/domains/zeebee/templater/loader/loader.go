@@ -10,7 +10,7 @@ import (
 	"zeebee-backend/domains/zeebee/logic"
 )
 
-var ErrTemplateNotActive = fmt.Errorf("Template Is Not Active")
+var ErrTemplateNotActive = fmt.Errorf("Template is not active")
 
 type TemplateLoader interface {
 	LoadSystemTemplate(ctx context.Context, purpose string, organizationType string) (string, map[string]interface{}, error)
@@ -51,6 +51,10 @@ func (l *DefaultTemplateLoader) LoadOrganizationTemplate(ctx context.Context, pu
 	if tpl.Status != constants.CommonStatusActive {
 		return "", nil, ErrTemplateNotActive
 	}
+	if !tpl.HasConfigured {
+		return "", nil, fmt.Errorf("Template is not configured")
+	}
+
 	content = tpl.Content
 	templateRenderData = getTemplateRenderData(tpl.VariableGroupSchema)
 	return content, templateRenderData, err

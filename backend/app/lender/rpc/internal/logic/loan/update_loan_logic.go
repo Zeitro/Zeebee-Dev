@@ -70,7 +70,7 @@ func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender
 		return nil, err
 	}
 	if oldLoan.Source != constants.LoanSourceSystem && oldLoan.Source != constants.LoanSourcePreapproval {
-		return nil, errorx.WithStack(errorx.New("Invalid Loan Source"))
+		return nil, errorx.WithStack(errorx.New("Invalid loan source"))
 	}
 
 	// oldApplicants := oldLoan.Applicants
@@ -308,14 +308,14 @@ func (l *UpdateLoanLogic) updateThirdServices(tx *gorm.DB, oldItems []*model.Loa
 // buildModelData builds model data
 func (l *UpdateLoanLogic) buildModelData(reqData *lender.LoanUpdateRequestData, oldLoan *model.Loan) (data *updateLoanModelData, err error) {
 	if oldLoan == nil {
-		return nil, errorx.WithStack(errorx.New("Invalid Loan"))
+		return nil, errorx.WithStack(errorx.New("Invalid loan"))
 	}
 
 	if reqData == nil {
-		return nil, errorx.WithStack(errorx.New("Invalid Request Data"))
+		return nil, errorx.WithStack(errorx.New("Invalid request data"))
 	}
 	if reqData.LoanProperty == nil {
-		return nil, errorx.WithStack(errorx.New("Invalid Loan Property"))
+		return nil, errorx.WithStack(errorx.New("Invalid loan property"))
 	}
 
 	// loan
@@ -377,7 +377,7 @@ func (l *UpdateLoanLogic) buildModelData(reqData *lender.LoanUpdateRequestData, 
 		applicants = append(applicants, applicantModel)
 	}
 	if totalOwnPercent > 100 {
-		return nil, errorx.WithStack(errorx.New("Total Own Percent Greater Than 100"))
+		return nil, errorx.WithStack(errorx.New("Total own percent greater than 100"))
 	}
 
 	// transaction experience

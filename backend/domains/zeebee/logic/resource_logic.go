@@ -68,13 +68,13 @@ func (l *ResourceLogic) ResourceTree(ctx context.Context, resourceType constants
 	return
 }
 
-// DeleteResource
+// DeleteResource deletes resource and its children recursively
 func (l *ResourceLogic) DeleteResource(ctx context.Context, id int64, resourceType constants.UserType) (err error) {
 	resource, err := l.repos.ResourceRepo.GetResource(ctx, id, resourceType)
 	if err != nil {
 		return
 	}
-	// get children and delete them
+	// Get children and delete them
 	children, err := l.repos.ResourceRepo.GetResourceByParentId(ctx, resource.Id, resourceType)
 	if err != nil {
 		return err
@@ -85,9 +85,9 @@ func (l *ResourceLogic) DeleteResource(ctx context.Context, id int64, resourceTy
 			return err
 		}
 	}
-	// todo delete resource and api relation
+	// TODO delete resource and api relation
 
-	// todo delete resource and role relation
+	// TODO delete resource and role relation
 
 	_, err = l.repos.ApiRepo.DeleteByID(ctx, resource.Id)
 	return

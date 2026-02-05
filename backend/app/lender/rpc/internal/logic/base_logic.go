@@ -46,11 +46,11 @@ func (l *BaseLogic) GetLenderLoan(loanId int64, lenderOrganizationId int64, prel
 		return nil, err
 	}
 	if loan.LenderOrganizationId != lenderOrganizationId {
-		return nil, errorx.WithStack(errorx.New("Invalid Lender Company"))
+		return nil, errorx.WithStack(errorx.New("Invalid lender company"))
 	}
 
 	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreapproval {
-		return nil, errorx.WithStack(errorx.New("Invalid Loan Source"))
+		return nil, errorx.WithStack(errorx.New("Invalid loan source"))
 	}
 
 	return
@@ -103,7 +103,7 @@ func (l *BaseLogic) GetLoanAndDocumentByDocumentId(documentId int64, organizatio
 // GetActiveOrganizationByUser returns the active organization for the given user
 func (l *BaseLogic) GetActiveOrganizationByUser(user *model.User) (currentOrganization *model.Organization, isChanged bool, err error) {
 	if user == nil {
-		return nil, false, errorx.New("User Is Empty")
+		return nil, false, errorx.New("User is empty")
 	}
 	organizations := user.Organizations
 	// find current company

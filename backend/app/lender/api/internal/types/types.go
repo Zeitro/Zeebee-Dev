@@ -378,6 +378,33 @@ type OrganizationMetadataEntity struct {
 	Lender *OrganizationLenderMetadataEntity `json:"lender,omitempty"`
 }
 
+type OrganizationSettingEntity struct {
+	Id        int64                  `json:"id"`
+	CreatedAt string                 `json:"created_at"`
+	UpdatedAt string                 `json:"updated_at"`
+	Enabled   bool                   `json:"enabled"`
+	Setting   map[string]interface{} `json:"setting"`
+	Purpose   string                 `json:"purpose"`
+}
+
+type OrganizationSettingPageEntity struct {
+	Id            int64  `json:"id"`
+	Name          string `json:"name"`
+	Type          string `json:"type"`
+	Category      string `json:"category"`
+	Purpose       string `json:"purpose"`
+	Status        string `json:"status"`
+	HasConfigured bool   `json:"has_configured"`
+	Description   string `json:"description"`
+	CreatedAt     string `json:"created_at"`
+	UpdatedAt     string `json:"updated_at"`
+}
+
+type OrganizationSettingProfileEntity struct {
+	OrganizationSettingEntity
+	HasConfigured bool `json:"has_configured"`
+}
+
 type OrganizationTemplateDetailRequest struct {
 	Id int64 `path:"id" validate:"required,min=1"`
 }
@@ -391,6 +418,7 @@ type OrganizationTemplateEntity struct {
 	Content             string                         `json:"content"`
 	VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema"`
 	Status              string                         `json:"status"`
+	HasConfigured       bool                           `json:"has_configured"`
 	Description         string                         `json:"description"`
 	ExampleVariables    string                         `json:"example_variables,omitempty,optional"`
 	CreatedAt           string                         `json:"created_at"`
@@ -403,15 +431,16 @@ type OrganizationTemplateFilter struct {
 }
 
 type OrganizationTemplatePageEntity struct {
-	Id          int64  `json:"id"`
-	Name        string `json:"name"`
-	Type        string `json:"type"`
-	Category    string `json:"category"`
-	Purpose     string `json:"purpose"`
-	Status      string `json:"status"`
-	Description string `json:"description"`
-	CreatedAt   string `json:"created_at"`
-	UpdatedAt   string `json:"updated_at"`
+	Id            int64  `json:"id"`
+	Name          string `json:"name"`
+	Type          string `json:"type"`
+	Category      string `json:"category"`
+	Purpose       string `json:"purpose"`
+	Status        string `json:"status"`
+	HasConfigured bool   `json:"has_configured"`
+	Description   string `json:"description"`
+	CreatedAt     string `json:"created_at"`
+	UpdatedAt     string `json:"updated_at"`
 }
 
 type OrganizationUserCreateResponse struct {

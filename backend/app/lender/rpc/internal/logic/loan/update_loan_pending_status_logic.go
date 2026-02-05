@@ -52,10 +52,10 @@ func (l *UpdateLoanPendingStatusLogic) UpdateLoanPendingStatus(in *lender.LoanUp
 
 	// Validate loan is in pending stage
 	if loan.Stage != constants.LoanStagePending {
-		return nil, errorx.New("Loan Is Not In Pending Stage")
+		return nil, errorx.New("Loan is not in pending stage")
 	}
 	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreapproval {
-		return nil, errorx.WithStack(errorx.New("Invalid Loan Source"))
+		return nil, errorx.WithStack(errorx.New("Invalid loan source"))
 	}
 	// Save original status for operation log
 	originalStage := loan.Stage

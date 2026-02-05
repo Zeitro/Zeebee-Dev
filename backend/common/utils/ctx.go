@@ -42,7 +42,7 @@ func GetUserClaimFromCtx(ctx context.Context) (claim *JWTClaims, err error) {
 	if ok {
 		return val, nil
 	}
-	return nil, errorx.New("Invalid User Claim")
+	return nil, errorx.New("Invalid user claim")
 
 }
 

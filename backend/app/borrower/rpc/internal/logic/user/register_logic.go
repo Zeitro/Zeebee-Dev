@@ -194,7 +194,7 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int6
 	}
 
 	if len(cacheDataStr) == 0 {
-		return errorx.WithStack(errorx.New("Pre-Approve Loan Data Not Found In Cache"))
+		return errorx.WithStack(errorx.New("Pre-approve loan data not found in cache"))
 	}
 
 	defer func() {
@@ -223,7 +223,7 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int6
 	}
 
 	if lenderOrganization.Status != constants.OrganizationStatusActive {
-		return errorx.WithStack(errorx.New("Lender Organization Is Not Active"))
+		return errorx.WithStack(errorx.New("Lender organization is not active"))
 	}
 	// prepare data
 	var borrowerProperty *model.BorrowerProperty
@@ -335,7 +335,7 @@ func sendLoginUrlEmail(ctx context.Context, email string, firstName string) (err
 		return errorx.WithStack(err)
 	}
 	if !ok {
-		return errorx.WithStack(errorx.Errorf("Email %s Try Too Many Times", email))
+		return errorx.WithStack(errorx.Errorf("Email %s try too many times", email))
 	}
 
 	// send login email

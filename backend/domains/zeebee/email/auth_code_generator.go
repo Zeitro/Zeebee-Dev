@@ -8,13 +8,6 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 )
 
-const (
-	_oauthOrganizationIdKey   = "organization_id"
-	_oauthEmailScopeKey       = "email_scope"
-	_oauthEmailKey            = "auth_email"
-	_oauthOrganizationTypeKey = "organization_type"
-)
-
 type AuthCodeUrlGenerator interface {
 	GenerateAuthCodeUrl(emailScope constants.EmailPurpose) (url string)
 	GetConfig() *oauth2.Config
@@ -31,7 +24,6 @@ func NewGmailAuthCodeUrlGenerator(config *oauth2.Config) *GmailAuthCodeUrlGenera
 }
 
 func (g *GmailAuthCodeUrlGenerator) GenerateAuthCodeUrl(emailScope constants.EmailPurpose) (url string) {
-	// randomState := random.RandString(10)
 	opts := []oauth2.AuthCodeOption{
 		oauth2.AccessTypeOffline,
 		oauth2.ApprovalForce,

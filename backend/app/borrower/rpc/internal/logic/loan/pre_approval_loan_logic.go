@@ -47,7 +47,7 @@ func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalReque
 	}()
 
 	if in.Data.Property == nil || in.Data.Property.Address == nil {
-		return nil, errorx.New("Invalid Property Address")
+		return nil, errorx.New("Invalid property address")
 	}
 
 	// get geo data
@@ -57,7 +57,7 @@ func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalReque
 	})
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errorx.Errorf("Property Address Is Not Found")
+			return nil, errorx.Errorf("Property address is not found")
 		}
 
 		return nil, errorx.WithStack(err)

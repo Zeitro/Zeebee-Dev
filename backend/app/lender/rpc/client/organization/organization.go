@@ -92,6 +92,15 @@ type (
 	OrganizationEntity                             = lender.OrganizationEntity
 	OrganizationLenderMetadataEntity               = lender.OrganizationLenderMetadataEntity
 	OrganizationMetadataEntity                     = lender.OrganizationMetadataEntity
+	OrganizationProfileEntity                      = lender.OrganizationProfileEntity
+	OrganizationProfileResponse                    = lender.OrganizationProfileResponse
+	OrganizationSettingDetailByPurposeRequest      = lender.OrganizationSettingDetailByPurposeRequest
+	OrganizationSettingDetailByPurposeRequestData  = lender.OrganizationSettingDetailByPurposeRequestData
+	OrganizationSettingDetailResponse              = lender.OrganizationSettingDetailResponse
+	OrganizationSettingEntity                      = lender.OrganizationSettingEntity
+	OrganizationSettingProfileEntity               = lender.OrganizationSettingProfileEntity
+	OrganizationSettingSwitchStatusRequest         = lender.OrganizationSettingSwitchStatusRequest
+	OrganizationSettingSwitchStatusRequestData     = lender.OrganizationSettingSwitchStatusRequestData
 	OrganizationTemplateDetailByPurposeRequest     = lender.OrganizationTemplateDetailByPurposeRequest
 	OrganizationTemplateDetailByPurposeRequestData = lender.OrganizationTemplateDetailByPurposeRequestData
 	OrganizationTemplateDetailResponse             = lender.OrganizationTemplateDetailResponse
@@ -211,8 +220,8 @@ type (
 	VerifyEmailRequestData                         = lender.VerifyEmailRequestData
 
 	Organization interface {
-		Profile(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error)
-		UpdateProfile(ctx context.Context, in *OrganizationUpdateProfileRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error)
+		Profile(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationProfileResponse, error)
+		UpdateProfile(ctx context.Context, in *OrganizationUpdateProfileRequest, opts ...grpc.CallOption) (*OrganizationProfileResponse, error)
 		Create(ctx context.Context, in *OrganizationCreateRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error)
 	}
 
@@ -227,12 +236,12 @@ func NewOrganization(cli zrpc.Client) Organization {
 	}
 }
 
-func (m *defaultOrganization) Profile(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error) {
+func (m *defaultOrganization) Profile(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationProfileResponse, error) {
 	client := lender.NewOrganizationClient(m.cli.Conn())
 	return client.Profile(ctx, in, opts...)
 }
 
-func (m *defaultOrganization) UpdateProfile(ctx context.Context, in *OrganizationUpdateProfileRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error) {
+func (m *defaultOrganization) UpdateProfile(ctx context.Context, in *OrganizationUpdateProfileRequest, opts ...grpc.CallOption) (*OrganizationProfileResponse, error) {
 	client := lender.NewOrganizationClient(m.cli.Conn())
 	return client.UpdateProfile(ctx, in, opts...)
 }

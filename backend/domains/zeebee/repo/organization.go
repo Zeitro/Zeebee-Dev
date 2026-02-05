@@ -72,7 +72,8 @@ func (repo *OrganizationRepo) GetOrganization(ctx context.Context, id int64, org
 		Where("id = ? and type = ?", id, organizationType)
 	if withPreloads {
 		query = query.Preload("OrganizationEmails").
-			Preload("Owner")
+			Preload("Owner").
+			Preload("OrganizationSettings")
 	}
 	err = query.First(&result).Error
 	return result, errorx.WithStack(err)
@@ -259,4 +260,11 @@ func (repo *OrganizationRepo) GetIdsByOwnerIdWithTx(ctx context.Context, tx *gor
 		Where("owner_id = ? and type = ?", ownerId, organizationType).
 		Pluck("id", &result).Error
 	return result, errorx.WithStack(err)
+}
+
+func (repo *OrganizationRepo) GetOrganizationsByOwnerIdWithTx(ctx context.Context, tx *gorm.DB, ownerId int64, organizationType constants.UserType) (results []*model.Organization, err error) {
+	err = tx.WithContext(ctx).Model(&model.Organization{}).
+		Where("owner_id = ? and type = ?", ownerId, organizationType).
+		Find(&results).Error
+	return results, errorx.WithStack(err)
 }
