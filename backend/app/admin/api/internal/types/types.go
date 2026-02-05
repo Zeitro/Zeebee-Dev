@@ -55,7 +55,7 @@ type BaseTemplateEntity struct {
 	Content             string                         `json:"content"`
 	VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema"`
 	Status              string                         `json:"status"`
-	Configurable        bool                           `json:"enable_configured"`
+	IsConfigurable      bool                           `json:"is_configurable"`
 	Description         string                         `json:"description"`
 	ExampleVariables    string                         `json:"example_variables,omitempty,optional"`
 	Scope               string                         `json:"scope"`
@@ -72,17 +72,17 @@ type BaseTemplateFilter struct {
 }
 
 type BaseTemplatePageEntity struct {
-	Id           int64  `json:"id"`
-	Name         string `json:"name"`
-	Type         string `json:"type"`
-	Category     string `json:"category"`
-	Purpose      string `json:"purpose"`
-	Status       string `json:"status"`
-	Configurable bool   `json:"configurable"`
-	Description  string `json:"description"`
-	Scope        string `json:"scope"`
-	CreatedAt    string `json:"created_at"`
-	UpdatedAt    string `json:"updated_at"`
+	Id             int64  `json:"id"`
+	Name           string `json:"name"`
+	Type           string `json:"type"`
+	Category       string `json:"category"`
+	Purpose        string `json:"purpose"`
+	Status         string `json:"status"`
+	IsConfigurable bool   `json:"is_configurable"`
+	Description    string `json:"description"`
+	Scope          string `json:"scope"`
+	CreatedAt      string `json:"created_at"`
+	UpdatedAt      string `json:"updated_at"`
 }
 
 type EmptyRequest struct {

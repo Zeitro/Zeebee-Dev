@@ -19,7 +19,7 @@ type (
         Content string `json:"content"`
         VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema"`
         Status string `json:"status"`
-        Configurable bool `json:"enable_configured"`
+        IsConfigurable bool `json:"is_configurable"`
         Description string `json:"description"`
         ExampleVariables string `json:"example_variables,omitempty,optional"`
         Scope string `json:"scope"`
@@ -34,7 +34,7 @@ type (
         Category string `json:"category"`
         Purpose string `json:"purpose"`
         Status string `json:"status"`
-        Configurable bool `json:"configurable"`
+        IsConfigurable bool `json:"is_configurable"`
         Description string `json:"description"`
         Scope string `json:"scope"`
         CreatedAt string `json:"created_at"`
@@ -94,7 +94,7 @@ type (
         Description string `json:"description,optional" validate:"max=255"`
         ExampleVariables string `json:"example_variables,omitempty,optional" validate:"omitempty,json"`
         Scope string `json:"scope" validate:"oneof=System Organization"`
-        Configurable bool `json:"configurable"`
+        IsConfigurable bool `json:"is_configurable"`
     }
 )
 
@@ -109,7 +109,7 @@ type (
         Description string `json:"description,optional" validate:"max=255"`
         ExampleVariables string `json:"example_variables,omitempty,optional" validate:"omitempty,json"`
         Scope string `json:"scope" validate:"oneof=System Organization"`
-        Configurable bool `json:"configurable"`
+        IsConfigurable bool `json:"is_configurable"`
     }
 )
 

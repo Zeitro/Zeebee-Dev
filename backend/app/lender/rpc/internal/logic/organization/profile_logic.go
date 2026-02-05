@@ -41,12 +41,12 @@ func (l *ProfileLogic) Profile(in *lender.EmptyRequest) (resp *lender.Organizati
 	// Get current user claim from gRPC metadata (JWT token)
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed To Get User Claim From Context")
+		return nil, errorx.Wrap(err, "Failed to get user claim from context")
 	}
 
 	// Validate user belongs to an organization
 	if claim.OrganizationId == 0 {
-		return nil, errorx.New("User Not Belong To Any Organization")
+		return nil, errorx.New("User does not belong to any organization")
 	}
 
 	// Get organization details with preloaded associations (emails, etc.)
@@ -56,13 +56,14 @@ func (l *ProfileLogic) Profile(in *lender.EmptyRequest) (resp *lender.Organizati
 		constants.UserTypeLender,
 	)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed To Get Organization")
+		return nil, errorx.Wrap(err, "Failed to get organization")
 	}
 
 	// Convert business object to proto entity with time field conversion
 	data, err := copierx.Trans[bo.OrganizationBo, lender.OrganizationEntity](
 		organization,
 		copierx.TimeToRFC3339Str(),
+		copierx.StrMapToBytes(),
 	)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)

@@ -72,7 +72,8 @@ func (repo *OrganizationRepo) GetOrganization(ctx context.Context, id int64, org
 		Where("id = ? and type = ?", id, organizationType)
 	if withPreloads {
 		query = query.Preload("OrganizationEmails").
-			Preload("Owner")
+			Preload("Owner").
+			Preload("OrganizationSettings")
 	}
 	err = query.First(&result).Error
 	return result, errorx.WithStack(err)

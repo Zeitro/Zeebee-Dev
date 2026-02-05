@@ -1254,6 +1254,7 @@ message OrganizationEntity {
   OrganizationMetadataEntity metadata = 17;
   UserEntity owner = 18;
   bool is_editable = 19;
+  repeated OrganizationSettingEntity organization_settings = 20;
 }
 
 message OrganizationMetadataEntity {

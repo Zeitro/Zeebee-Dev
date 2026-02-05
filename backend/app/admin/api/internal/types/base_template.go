@@ -13,7 +13,7 @@ type BaseTemplateCreateRequest struct {
 	Description         string                         `json:"description,optional" validate:"max=255"`
 	ExampleVariables    string                         `json:"example_variables,omitempty,optional" validate:"omitempty,json"`
 	Scope               string                         `json:"scope" validate:"oneof=System Organization"`
-	Configurable        bool                           `json:"configurable"`
+	IsConfigurable      bool                           `json:"is_configurable"`
 }
 
 type BaseTemplateDetailResponse struct {
@@ -56,5 +56,5 @@ type BaseTemplateUpdateRequest struct {
 	Description         string                         `json:"description,optional" validate:"max=255"`
 	ExampleVariables    string                         `json:"example_variables,omitempty,optional" validate:"omitempty,json"`
 	Scope               string                         `json:"scope" validate:"oneof=System Organization"`
-	Configurable        bool                           `json:"configurable"`
+	IsConfigurable      bool                           `json:"is_configurable"`
 }

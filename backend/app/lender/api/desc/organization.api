@@ -10,6 +10,7 @@ import "address.api"
 import "organization_email.api"
 import "common.api"
 import "user.api"
+import "organization_setting.api"
 
 type OrganizationEntity {
     Id int64 `json:"id"`
@@ -31,6 +32,7 @@ type OrganizationEntity {
 
     OrganizationEmails []*OrganizationEmailEntity `json:"organization_emails"`
     Owner *UserEntity `json:"owner"`
+    OrganizationSettings []*OrganizationSettingEntity `json:"organization_settings"`
 }
 
 type OrganizationMetadataEntity {

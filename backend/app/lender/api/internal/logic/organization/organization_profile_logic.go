@@ -37,6 +37,7 @@ func (l *OrganizationProfileLogic) OrganizationProfile(req *types.EmptyRequest) 
 	resp, err = copierx.Trans[lender.OrganizationEntity, types.OrganizationEntity](
 		rpcResp.Data,
 		copierx.TimeToRFC3339Str(),
+		copierx.BytesToStrMap(),
 	)
 	if err != nil {
 		return nil, err
