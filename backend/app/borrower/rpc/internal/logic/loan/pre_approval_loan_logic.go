@@ -47,7 +47,7 @@ func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalReque
 	}()
 
 	if in.Data.Property == nil || in.Data.Property.Address == nil {
-		return nil, errorx.New("Invalid Property Address")
+		return nil, errorx.New("Invalid property address")
 	}
 
 	// get geo data
@@ -57,7 +57,7 @@ func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalReque
 	})
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errorx.Errorf("Property Address Is Not Found")
+			return nil, errorx.Errorf("Property address is not found")
 		}
 
 		return nil, errorx.WithStack(err)
@@ -116,6 +116,8 @@ func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalReque
 		responseData.Primary.Ltc = float32(mathutil.RoundToFloat(responseData.Primary.Ltc*100.0, 2))
 		responseData.Primary.Ltv = float32(mathutil.RoundToFloat(responseData.Primary.Ltv*100.0, 2))
 		responseData.Primary.Ltarv = float32(mathutil.RoundToFloat(responseData.Primary.Ltarv*100.0, 2))
+		responseData.Primary.LenderCompanyId = 1
+		responseData.Primary.LenderCompanyName = "Zeebee"
 	}
 	_ = copier.CopyWithOption(&responseData.Secondaries, &global.Config.PreApprovalLoanConf, copier.Option{
 		DeepCopy:      true,

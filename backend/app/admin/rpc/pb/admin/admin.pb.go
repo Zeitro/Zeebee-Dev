@@ -8207,6 +8207,7 @@ type BaseTemplateEntity struct {
 	UpdatedAt           string                         `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	ExampleVariables    string                         `protobuf:"bytes,12,opt,name=example_variables,json=exampleVariables,proto3" json:"example_variables,omitempty"`
 	Scope               string                         `protobuf:"bytes,13,opt,name=scope,proto3" json:"scope,omitempty"` // System, Organization
+	Configurable        bool                           `protobuf:"varint,14,opt,name=configurable,proto3" json:"configurable,omitempty"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -8332,6 +8333,13 @@ func (x *BaseTemplateEntity) GetScope() string {
 	return ""
 }
 
+func (x *BaseTemplateEntity) GetConfigurable() bool {
+	if x != nil {
+		return x.Configurable
+	}
+	return false
+}
+
 // Base template page entity (for list display)
 type BaseTemplatePageEntity struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -8345,6 +8353,7 @@ type BaseTemplatePageEntity struct {
 	CreatedAt     string                 `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt     string                 `protobuf:"bytes,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	Scope         string                 `protobuf:"bytes,10,opt,name=scope,proto3" json:"scope,omitempty"`
+	Configurable  bool                   `protobuf:"varint,11,opt,name=configurable,proto3" json:"configurable,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -8449,6 +8458,13 @@ func (x *BaseTemplatePageEntity) GetScope() string {
 	return ""
 }
 
+func (x *BaseTemplatePageEntity) GetConfigurable() bool {
+	if x != nil {
+		return x.Configurable
+	}
+	return false
+}
+
 // Create ---- request
 type CreateBaseTemplateRequest struct {
 	state         protoimpl.MessageState         `protogen:"open.v1"`
@@ -8505,6 +8521,7 @@ type CreateBaseTemplateRequestData struct {
 	Description         string                         `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
 	ExampleVariables    string                         `protobuf:"bytes,8,opt,name=example_variables,json=exampleVariables,proto3" json:"example_variables,omitempty"`
 	Scope               string                         `protobuf:"bytes,9,opt,name=scope,proto3" json:"scope,omitempty"`
+	Configurable        bool                           `protobuf:"varint,10,opt,name=configurable,proto3" json:"configurable,omitempty"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -8600,6 +8617,13 @@ func (x *CreateBaseTemplateRequestData) GetScope() string {
 		return x.Scope
 	}
 	return ""
+}
+
+func (x *CreateBaseTemplateRequestData) GetConfigurable() bool {
+	if x != nil {
+		return x.Configurable
+	}
+	return false
 }
 
 // Create ---- response
@@ -8702,6 +8726,7 @@ type UpdateBaseTemplateRequestData struct {
 	Description         string                         `protobuf:"bytes,8,opt,name=description,proto3" json:"description,omitempty"`
 	ExampleVariables    string                         `protobuf:"bytes,9,opt,name=example_variables,json=exampleVariables,proto3" json:"example_variables,omitempty"`
 	Scope               string                         `protobuf:"bytes,10,opt,name=scope,proto3" json:"scope,omitempty"`
+	Configurable        bool                           `protobuf:"varint,11,opt,name=configurable,proto3" json:"configurable,omitempty"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -8790,6 +8815,13 @@ func (x *UpdateBaseTemplateRequestData) GetScope() string {
 		return x.Scope
 	}
 	return ""
+}
+
+func (x *UpdateBaseTemplateRequestData) GetConfigurable() bool {
+	if x != nil {
+		return x.Configurable
+	}
+	return false
 }
 
 // Update ---- response
@@ -10331,7 +10363,7 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x05value\x18\x02 \x01(\v2\x1d.admin.TemplateVariableEntityR\x05value:\x028\x01\"n\n" +
 	"\x1bTemplateVariableGroupEntity\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12;\n" +
-	"\tvariables\x18\x02 \x03(\v2\x1d.admin.TemplateVariableEntityR\tvariables\"\xaf\x03\n" +
+	"\tvariables\x18\x02 \x03(\v2\x1d.admin.TemplateVariableEntityR\tvariables\"\xd3\x03\n" +
 	"\x12BaseTemplateEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
@@ -10348,7 +10380,8 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\v \x01(\tR\tupdatedAt\x12+\n" +
 	"\x11example_variables\x18\f \x01(\tR\x10exampleVariables\x12\x14\n" +
-	"\x05scope\x18\r \x01(\tR\x05scope\"\x94\x02\n" +
+	"\x05scope\x18\r \x01(\tR\x05scope\x12\"\n" +
+	"\fconfigurable\x18\x0e \x01(\bR\fconfigurable\"\xb8\x02\n" +
 	"\x16BaseTemplatePageEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
@@ -10362,9 +10395,10 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\t \x01(\tR\tupdatedAt\x12\x14\n" +
 	"\x05scope\x18\n" +
-	" \x01(\tR\x05scope\"U\n" +
+	" \x01(\tR\x05scope\x12\"\n" +
+	"\fconfigurable\x18\v \x01(\bR\fconfigurable\"U\n" +
 	"\x19CreateBaseTemplateRequest\x128\n" +
-	"\x04data\x18\x01 \x01(\v2$.admin.CreateBaseTemplateRequestDataR\x04data\"\xd4\x02\n" +
+	"\x04data\x18\x01 \x01(\v2$.admin.CreateBaseTemplateRequestDataR\x04data\"\xf8\x02\n" +
 	"\x1dCreateBaseTemplateRequestData\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
 	"\x04type\x18\x02 \x01(\tR\x04type\x12\x1a\n" +
@@ -10374,11 +10408,13 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x15variable_group_schema\x18\x06 \x03(\v2\".admin.TemplateVariableGroupEntityR\x13variableGroupSchema\x12 \n" +
 	"\vdescription\x18\a \x01(\tR\vdescription\x12+\n" +
 	"\x11example_variables\x18\b \x01(\tR\x10exampleVariables\x12\x14\n" +
-	"\x05scope\x18\t \x01(\tR\x05scope\"K\n" +
+	"\x05scope\x18\t \x01(\tR\x05scope\x12\"\n" +
+	"\fconfigurable\x18\n" +
+	" \x01(\bR\fconfigurable\"K\n" +
 	"\x1aCreateBaseTemplateResponse\x12-\n" +
 	"\x04data\x18\x01 \x01(\v2\x19.admin.BaseTemplateEntityR\x04data\"U\n" +
 	"\x19UpdateBaseTemplateRequest\x128\n" +
-	"\x04data\x18\x01 \x01(\v2$.admin.UpdateBaseTemplateRequestDataR\x04data\"\xb6\x02\n" +
+	"\x04data\x18\x01 \x01(\v2$.admin.UpdateBaseTemplateRequestDataR\x04data\"\xda\x02\n" +
 	"\x1dUpdateBaseTemplateRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1a\n" +
@@ -10388,7 +10424,8 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\vdescription\x18\b \x01(\tR\vdescription\x12+\n" +
 	"\x11example_variables\x18\t \x01(\tR\x10exampleVariables\x12\x14\n" +
 	"\x05scope\x18\n" +
-	" \x01(\tR\x05scope\"K\n" +
+	" \x01(\tR\x05scope\x12\"\n" +
+	"\fconfigurable\x18\v \x01(\bR\fconfigurable\"K\n" +
 	"\x1aUpdateBaseTemplateResponse\x12-\n" +
 	"\x04data\x18\x01 \x01(\v2\x19.admin.BaseTemplateEntityR\x04data\">\n" +
 	"\x16GetBaseTemplateRequest\x12$\n" +

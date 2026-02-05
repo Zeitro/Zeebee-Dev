@@ -89,28 +89,28 @@ func (l *OrganizationLogic) Delete(ctx context.Context, id int64) (err error) {
 		return err
 	}
 	if organization.OwnerType == constants.OrganizationOwnerTypeSelf || organization.Type == constants.UserTypeAdmin {
-		return errorx.New("Cannot delete self-owned organization")
+		return errorx.New("Cannot delete self owned organization")
 	}
 
 	err = l.repos.OrganizationRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
 		organization.Owner = nil
 		organization.Users = nil
-		// delete related roles
+		// Delete related roles
 		for i := range organization.Roles {
 			innerErr = l.repos.RoleRepo.DeleteByIdWithTx(ctx, tx, organization.Roles[i].Id)
 			if innerErr != nil {
 				return innerErr
 			}
 		}
-		// delete related organization_emails
+		// Delete related organization emails
 		for i := range organization.OrganizationEmails {
 			innerErr = l.repos.OrganizationEmailRepo.DeleteByIdWithTx(ctx, tx, organization.OrganizationEmails[i].Id)
 			if innerErr != nil {
 				return innerErr
 			}
 		}
-		// delete related organization_users
+		// Delete related organization users
 		innerErr = l.repos.OrganizationUserRepo.DeleteByOrganizationIdWithTx(ctx, tx, organization.Id)
 		if innerErr != nil {
 			return innerErr

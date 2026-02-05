@@ -160,7 +160,7 @@ func (r *PreApprovalRule) CalPreApprovalLoanAmount(input InputLoanInfo) (result 
 	}
 	// Check if loan is rejected based on calculated values
 	if ltaiv == 0 && ltc == 0 && ltarv == 0 {
-		result.RejectReason = "Can Not Get ltaiv/ltc/ltarv"
+		result.RejectReason = "Can not get ltaiv/ltc/ltarv"
 		result.Ltc = float32(ltc)
 		result.Ltarv = float32(ltarv)
 		return result, nil
@@ -176,7 +176,7 @@ func (r *PreApprovalRule) CalPreApprovalLoanAmount(input InputLoanInfo) (result 
 		return totalLoanAmount > 0
 	})
 	if len(totalLoanAmounts) == 0 {
-		result.RejectReason = "Can Not Get Loan Amount"
+		result.RejectReason = "Can not get loan amount"
 		return result, nil
 	}
 	slice.Sort(totalLoanAmounts, "asc")
@@ -202,7 +202,7 @@ func (r *PreApprovalRule) CalPreApprovalLoanAmount(input InputLoanInfo) (result 
 	result.LoanTerm = input.LoanTerm
 
 	if input.EstCurrentPropertyValue <= 0 {
-		return result, errorx.WithStack(errorx.New("Invalid Estimated Current Value"))
+		return result, errorx.WithStack(errorx.New("Invalid estimated current value"))
 	}
 
 	// Calculate output LTC and LTARV ratios

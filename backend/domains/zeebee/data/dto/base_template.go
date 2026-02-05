@@ -32,6 +32,7 @@ type BaseTemplateCreateDto struct {
 	ExampleVariables    string                        `json:"example_variables"`
 	Description         string                        `json:"description"`
 	Scope               constants.BaseTemplateScope   `json:"scope"`
+	IsConfigurable      bool                          `json:"is_configurable"`
 }
 
 // BaseTemplateUpdateDto represents the request for updating a base template
@@ -43,29 +44,9 @@ type BaseTemplateUpdateDto struct {
 	VariableGroupSchema []*data.TemplateVariableGroup `json:"variable_group_schema"`
 	Description         string                        `json:"description"`
 	ExampleVariables    string                        `json:"example_variables"`
+	IsConfigurable      bool                          `json:"is_configurable"`
 	Scope               constants.BaseTemplateScope   `json:"scope"`
 }
-
-// TemplateVariableGroupDto represents a group of variables in DTO
-// type TemplateVariableGroupDto struct {
-// 	// Name      string                 `json:"name"`
-// 	// Variables []*TemplateVariableDto `json:"variables"`
-// 	data.TemplateVariableGroup
-// }
-
-// TemplateVariableDto represents a variable definition in DTO
-// type TemplateVariableDto struct {
-// 	Label      string                           `json:"label"`
-// 	Type       constants.TemplateVariableType   `json:"type"`
-// 	Key        string                           `json:"key"`
-// 	IsEditable bool                             `json:"is_editable"`
-// 	IsRequired bool                             `json:"is_required"`
-// 	Source     constants.TemplateVariableSource `json:"source"`
-// 	Format     constants.TemplateVariableFormat `json:"format,omitempty"`
-// 	FixedValue string                           `json:"fixed_value"`
-// 	Properties map[string]*TemplateVariableDto  `json:"properties,omitempty"`
-// 	Items      []*TemplateVariableDto           `json:"items,omitempty"`
-// }
 
 type BaseTemplatePreviewDto struct {
 	Name                string                        `json:"name"`

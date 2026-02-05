@@ -19,6 +19,7 @@ type OrganizationTemplate struct {
 	Status              constants.CommonStatus        `json:"status" gorm:"column:status;type:varchar(20);not null;default:''"` // Active,Disabled
 	Description         string                        `json:"description" gorm:"column:description;type:text;not null;default:''"`
 	ExampleVariables    string                        `json:"example_variables,omitempty" gorm:"column:example_variables;type:jsonb;not null;default:'{}'"`
+	HasConfigured       bool                          `json:"has_configured" gorm:"column:has_configured;default:false"`
 
 	// Relationships
 	BaseTemplate *BaseTemplate `json:"base_template,omitempty" gorm:"foreignKey:BaseTemplateId;references:Id"`

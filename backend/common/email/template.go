@@ -13,7 +13,7 @@ import (
 var defaultTemplates *Templates
 
 // ErrEmailTemplateNotFound not found template  error
-var ErrEmailTemplateNotFound = errorx.New("Email Template Not Found")
+var ErrEmailTemplateNotFound = errorx.New("Email template not found")
 
 func init() {
 	defaultTemplates = &Templates{

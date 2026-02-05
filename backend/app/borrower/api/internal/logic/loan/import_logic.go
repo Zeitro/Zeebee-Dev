@@ -107,7 +107,7 @@ func (l *ImportLogic) Import(fileContents []byte, stage string) (resp *types.Imp
 		// todo import active loans
 		fallthrough
 	default:
-		err = errorx.WithStack(errorx.Errorf("Invalid Loan Stage: %s", stage))
+		err = errorx.WithStack(errorx.Errorf("Invalid loan stage: %s", stage))
 	}
 	return &types.ImportLoanResponse{
 		RecordCount: recordCount,
@@ -139,7 +139,7 @@ func (l *ImportLogic) importPendingLoans(content []byte, userId int64, organizat
 	}
 	for field := range pendingLoanFields {
 		if _, ok := headerMap[field]; !ok {
-			return 0, errorx.Errorf("Field %s Not Found In Header", field)
+			return 0, errorx.Errorf("Field %s not found in header", field)
 		}
 	}
 	// get loans
@@ -223,13 +223,13 @@ func parsePendingLoans(rows [][]string, borrowerId int64, organizationId int64) 
 		if idx, ok := columnIndex[pendingColPurchasePrice]; ok && idx < len(row) {
 			amount, err := parseFloat(row[idx])
 			if err != nil {
-				return nil, errorx.Errorf("Invalid Purchase Price At Row %d", i)
+				return nil, errorx.Errorf("Invalid purchase price at row %d", i)
 			}
 			loanData.LoanProperty.PurchaseAmount = amount
 		}
 		if idx, ok := columnIndex[pendingColPurchaseDate]; ok && idx < len(row) {
 			if !validateDate(row[idx]) {
-				return nil, errorx.Errorf("Invalid Date Format For Purchase Date At Row %d", i)
+				return nil, errorx.Errorf("Invalid date format for purchase date at row %d", i)
 			}
 			loanData.LoanProperty.PurchaseDate = row[idx]
 		}
@@ -279,21 +279,21 @@ func parsePendingLoans(rows [][]string, borrowerId int64, organizationId int64) 
 		// loan
 		if idx, ok := columnIndex[pendingColTargetCloseDate]; ok && idx < len(row) {
 			if !validateDate(row[idx]) {
-				return nil, errorx.Errorf("Invalid Date Format For Target Close Date At Row %d", i)
+				return nil, errorx.Errorf("Invalid date format for target close date at row %d", i)
 			}
 			loanData.ClosingDate = row[idx]
 		}
 
 		if idx, ok := columnIndex[pendingColLoanMaturityDate]; ok && idx < len(row) {
 			if !validateDate(row[idx]) {
-				return nil, errorx.Errorf("Invalid Date Format For Loan Maturity Date At Row %d", i)
+				return nil, errorx.Errorf("Invalid date format for loan maturity date at row %d", i)
 			}
 			loanData.MaturityDate = row[idx]
 		}
 		if idx, ok := columnIndex[pendingColEstClosingFunds]; ok && idx < len(row) {
 			amount, err := parseFloat(row[idx])
 			if err != nil {
-				return nil, errorx.Errorf("Invalid Closing Funds At Row %d", i)
+				return nil, errorx.Errorf("Invalid closing funds at row %d", i)
 			}
 			loanData.ClosingFund = amount
 		}
@@ -306,14 +306,14 @@ func parsePendingLoans(rows [][]string, borrowerId int64, organizationId int64) 
 		if idx, ok := columnIndex[pendingColEstimatedLoanAmt]; ok && idx < len(row) {
 			amount, err := parseFloat(row[idx])
 			if err != nil {
-				return nil, errorx.Errorf("Invalid Estimated Loan Amount At Row %d", i)
+				return nil, errorx.Errorf("Invalid estimated loan amount at row %d", i)
 			}
 			loanData.TotalAmount = amount
 		}
 		if idx, ok := columnIndex[pendingColRehabLoan]; ok && idx < len(row) {
 			amount, err := parseFloat(row[idx])
 			if err != nil {
-				return nil, errorx.Errorf("Invalid Rehab Loan Amount At Row %d", i)
+				return nil, errorx.Errorf("Invalid rehab loan amount at row %d", i)
 			}
 			loanData.HoldbackAmount = amount
 		}
@@ -326,7 +326,7 @@ func parsePendingLoans(rows [][]string, borrowerId int64, organizationId int64) 
 		}
 		if idx, ok := columnIndex[pendingColExtensionDate]; ok && idx < len(row) {
 			if !validateDate(row[idx]) {
-				return nil, errorx.Errorf("Invalid Date Format For Extension Date At Row %d", i)
+				return nil, errorx.Errorf("Invalid date format for extension date at row %d", i)
 			}
 			loanData.ExtensionDate = row[idx]
 		}

@@ -62,14 +62,14 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 			return nil, err
 		}
 		if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreapproval {
-			return nil, errorx.WithStack(errorx.New("Invalid Loan Source"))
+			return nil, errorx.WithStack(errorx.New("Invalid loan source"))
 		}
 
 		stages := []constants.LoanStage{
 			constants.LoanStageDraft,
 		}
 		if !slice.Contain(stages, loan.Stage) && loan.PendingStatus != constants.LoanPendingStatusNone {
-			return nil, errorx.New("Loan's Stage Should Be Draft")
+			return nil, errorx.New("Loan's stage should be draft")
 		}
 		oldApplicants = loan.Applicants
 		if loan.LoanProperty != nil {
@@ -249,11 +249,11 @@ func (l *SaveDraftLoanLogic) updateLoanDemographic(tx *gorm.DB, loanDemographic 
 func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, oldLoan *model.Loan, claim utils.JwtUser) (data *applyLoanModelData, err error) {
 
 	if reqData == nil {
-		return nil, errorx.New("Invalid Request Data")
+		return nil, errorx.New("Invalid request data")
 	}
 
 	if reqData.LenderCompanyId == 0 {
-		return nil, errorx.New("Invalid Lender Id")
+		return nil, errorx.New("Invalid lender id")
 	}
 
 	// loan
@@ -354,7 +354,7 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 		applicants = append(applicants, loanApplicant)
 	}
 	if totalOwnPercent > 100 {
-		return nil, errorx.New("Total Own Percent Greater Than 100")
+		return nil, errorx.New("Total own percent is greater than 100")
 	}
 
 	// transaction experience

@@ -17,6 +17,7 @@ type OrganizationTemplateBo struct {
 	Content             string                        `json:"content"`
 	VariableGroupSchema []*data.TemplateVariableGroup `json:"variable_group_schema"`
 	Status              constants.CommonStatus        `json:"status"`
+	HasConfigured       bool                          `json:"has_configured"`
 	Description         string                        `json:"description"`
 	ExampleVariables    string                        `json:"example_variables"`
 	CreatedAt           time.Time                     `json:"created_at"`
@@ -27,13 +28,14 @@ type OrganizationTemplateBo struct {
 
 // OrganizationTemplatePageBo represents a base template in page list
 type OrganizationTemplatePageBo struct {
-	Id          int64                      `json:"id"`
-	Name        string                     `json:"name"`
-	Type        constants.UserType         `json:"type"`
-	Category    constants.TemplateCategory `json:"category"`
-	Purpose     string                     `json:"purpose"`
-	Status      constants.CommonStatus     `json:"status"`
-	Description string                     `json:"description"`
-	CreatedAt   time.Time                  `json:"created_at"`
-	UpdatedAt   time.Time                  `json:"updated_at"`
+	Id            int64                      `json:"id"`
+	Name          string                     `json:"name"`
+	Type          constants.UserType         `json:"type"`
+	Category      constants.TemplateCategory `json:"category"`
+	Purpose       string                     `json:"purpose"`
+	Status        constants.CommonStatus     `json:"status"`
+	HasConfigured bool                       `json:"has_configured"`
+	Description   string                     `json:"description"`
+	CreatedAt     time.Time                  `json:"created_at"`
+	UpdatedAt     time.Time                  `json:"updated_at"`
 }

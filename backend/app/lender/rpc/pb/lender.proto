@@ -69,6 +69,7 @@ service common {
   rpc GetOpt(OptionRequest) returns(OptionResponse);
   rpc GetUsState(EmptyRequest) returns(StringSliceResponse);
   rpc GetUsCities(UsCitiesRequest) returns(StringSliceResponse);
+  rpc SyncData(EmptyRequest) returns(EmptyResponse);
 }
 // ========================== common service end =================
 
@@ -1253,6 +1254,30 @@ message OrganizationEntity {
   OrganizationMetadataEntity metadata = 17;
   UserEntity owner = 18;
   bool is_editable = 19;
+  repeated OrganizationSettingEntity organization_settings = 20;
+}
+
+message OrganizationProfileEntity {
+  int64 id = 1;
+  string name = 2;
+  string status = 3;
+  int64 owner_id = 4;
+  AddressEntity address = 5;
+  string contact_email = 6;
+  string contact_phone = 7;
+  string contact_name = 8;
+  string owner_type = 9;
+  string type = 10;
+  string created_at = 11;
+  string updated_at = 12;
+  repeated OrganizationEmailEntity organization_emails = 13;
+  string logo = 14;
+  string website = 15;
+  string tagline = 16;
+  OrganizationMetadataEntity metadata = 17;
+  UserEntity owner = 18;
+  bool is_editable = 19;
+  repeated OrganizationSettingProfileEntity organization_settings = 20;
 }
 
 message OrganizationMetadataEntity {
@@ -1266,6 +1291,12 @@ message OrganizationLenderMetadataEntity {
   RangeFloat       loan_rate_range = 3;
   RangeFloat       loan_point_range = 4;
 }
+
+// profile -- response
+message OrganizationProfileResponse {
+  OrganizationProfileEntity data = 1;
+}
+
 // update profile --  request
 message OrganizationUpdateProfileRequest {
   OrganizationUpdateProfileRequestData data = 1;
@@ -1302,8 +1333,8 @@ message OrganizationDetailResponse {
 }
 
 service Organization {
-  rpc Profile(EmptyRequest) returns(OrganizationDetailResponse);
-  rpc UpdateProfile(OrganizationUpdateProfileRequest) returns(OrganizationDetailResponse);
+  rpc Profile(EmptyRequest) returns(OrganizationProfileResponse);
+  rpc UpdateProfile(OrganizationUpdateProfileRequest) returns(OrganizationProfileResponse);
   rpc Create(OrganizationCreateRequest) returns(OrganizationDetailResponse);
 }
 
@@ -1354,6 +1385,7 @@ message OrganizationTemplateEntity {
   string created_at = 10;
   string updated_at = 11;
   string example_variables = 12;
+  bool has_configured = 13;
 }
 
 // Base template page entity (for list display)
@@ -1367,6 +1399,7 @@ message OrganizationTemplatePageEntity {
   string description = 7;
   string created_at = 8;
   string updated_at = 9;
+  bool has_configured = 10;
 }
 
 // Update ---- request
@@ -1381,10 +1414,6 @@ message UpdateOrganizationTemplateRequestData {
 message UpdateOrganizationTemplateResponse {
   OrganizationTemplateEntity data = 1;
 }
-// detail ---- request
-//message OrganizationTemplateDetailRequest {
-//  IdRequest data = 1;
-//}
 // detail ---- response
 message OrganizationTemplateDetailResponse {
   OrganizationTemplateEntity data = 1;
@@ -1458,3 +1487,51 @@ service OrganizationTemplate {
 }
 
 // ================== organization template service end =================
+
+// ================== organization setting service start =================
+message OrganizationSettingEntity {
+  int64 id = 1;
+  string created_at = 2;
+  string updated_at = 3;
+  bool enabled = 4;
+  bytes setting = 5;
+  string purpose = 6;
+}
+
+message OrganizationSettingProfileEntity {
+  int64 id = 1;
+  string created_at = 2;
+  string updated_at = 3;
+  bool enabled = 4;
+  bytes setting = 5;
+  string purpose = 6;
+  bool has_configured = 7;
+}
+
+// detail by purpose ---- request
+message OrganizationSettingDetailByPurposeRequest {
+  OrganizationSettingDetailByPurposeRequestData data = 1;
+}
+message OrganizationSettingDetailByPurposeRequestData {
+  string purpose = 1;
+}
+
+// detail ---- response
+message OrganizationSettingDetailResponse {
+  OrganizationSettingEntity data = 1;
+}
+
+// switch status ---- request
+message OrganizationSettingSwitchStatusRequest {
+  OrganizationSettingSwitchStatusRequestData data = 1;
+}
+message OrganizationSettingSwitchStatusRequestData {
+  int64 id = 1;
+  bool enabled = 2;
+}
+
+service OrganizationSetting {
+  rpc DetailByPurpose(OrganizationSettingDetailByPurposeRequest) returns(OrganizationSettingDetailResponse);
+  rpc SwitchStatus(OrganizationSettingSwitchStatusRequest) returns(OrganizationSettingDetailResponse);
+}
+// =============== organization setting service end =================

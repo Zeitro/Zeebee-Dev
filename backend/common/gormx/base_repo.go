@@ -276,7 +276,7 @@ func (repo *BaseRepo[T]) Delete(ctx context.Context, filters map[string]interfac
 // DeleteWithTx delete with tx
 func (repo *BaseRepo[T]) DeleteWithTx(ctx context.Context, tx *gorm.DB, filters map[string]interface{}) (effectRaws int64, err error) {
 	if len(filters) == 0 {
-		return 0, errorx.New("Filters Is Empty")
+		return 0, errorx.New("Filters is empty")
 	}
 	query := tx.WithContext(ctx)
 	for k, v := range filters {

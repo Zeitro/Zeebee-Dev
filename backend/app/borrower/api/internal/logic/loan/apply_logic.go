@@ -50,7 +50,7 @@ func (l *ApplyLogic) Apply(req *types.LoanApplyRequest) (resp *types.LoanApplyRe
 		return item.BorrowerApplicantId == other.BorrowerApplicantId
 	})
 	if len(rpcApplicants) == 0 {
-		err = errorx.WithStack(errorx.New("No Applicant"))
+		err = errorx.WithStack(errorx.New("No applicant"))
 		return nil, err
 	}
 	rpcReq.Data.Applicants = rpcApplicants

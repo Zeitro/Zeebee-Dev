@@ -62,7 +62,7 @@ func (l *UpdateLogic) Update(in *admin.ResourceUpdateRequest) (resp *admin.Resou
 			return innerErr
 		}
 		if isExisted {
-			innerErr = errorx.New("Resource is Existed")
+			innerErr = errorx.New("Resource is existed")
 			return innerErr
 		}
 		// handle apis
