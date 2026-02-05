@@ -128,6 +128,7 @@ func (l *BaseTemplateLogic) Update(ctx context.Context, req dto.BaseTemplateUpda
 	existing.Description = updateData.Description
 	existing.VariableGroupSchema = updateData.VariableGroupSchema
 	existing.Scope = updateData.Scope
+	existing.IsConfigurable = updateData.IsConfigurable
 	var updated *model.BaseTemplate
 	err = l.repos.BaseTemplateRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
