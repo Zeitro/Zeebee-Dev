@@ -67,6 +67,16 @@ const MainDrawer = ({ rowData, open, setOpen, successCallback }) => {
 			value: 'System',
 		},
 	];
+	const options = [
+		{
+			label: 'True',
+			value: true,
+		},
+		{
+			label: 'False',
+			value: false,
+		},
+	];
 	const handleSave = async () => {
 		try {
 			setConfirmLoading(true);
@@ -176,7 +186,15 @@ const MainDrawer = ({ rowData, open, setOpen, successCallback }) => {
 								<Select placeholder="Scope" allowClear options={scopeOptions} />
 							</Form.Item>
 						</Col>
-
+						<Col md={12} xs={24}>
+							<Form.Item
+								label="Configurable"
+								name="is_configurable"
+								rules={[{ required: true }]}
+							>
+								<Select placeholder="Configurable" allowClear options={options} />
+							</Form.Item>
+						</Col>
 						<Col md={12} xs={24}>
 							<Form.Item label="Variable" name="variable_group_schema">
 								<VariableBtn />
