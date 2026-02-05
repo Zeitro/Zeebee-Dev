@@ -30,10 +30,11 @@ type Organization struct {
 	Metadata     *OrganizationMetadata           `gorm:"column:metadata;type:jsonb;default:'{}';serializer:json" json:"metadata"`
 
 	//  relationships
-	Users              []*User              `json:"users" gorm:"many2many:organization_and_users;joinForeignKey:organization_id;joinReferences:user_id"`
-	OrganizationEmails []*OrganizationEmail `json:"email_authorizations" gorm:"foreignKey:organization_id"`
-	Owner              *User                `json:"owner" gorm:"foreignKey:OwnerId;references:Id"`
-	Roles              []*Role              `json:"roles" gorm:"foreignKey:OrganizationId;references:Id"`
+	Users                []*User                `json:"users" gorm:"many2many:organization_and_users;joinForeignKey:organization_id;joinReferences:user_id"`
+	OrganizationEmails   []*OrganizationEmail   `json:"email_authorizations" gorm:"foreignKey:organization_id"`
+	Owner                *User                  `json:"owner" gorm:"foreignKey:OwnerId;references:Id"`
+	Roles                []*Role                `json:"roles" gorm:"foreignKey:OrganizationId;references:Id"`
+	OrganizationSettings []*OrganizationSetting `json:"organization_settings" gorm:"foreignKey:OrganizationId;references:Id"`
 }
 
 func (m Organization) TableName() string {
@@ -43,4 +44,6 @@ func (m *Organization) RemoveRelationships() {
 	m.Users = nil
 	m.OrganizationEmails = nil
 	m.Owner = nil
+	m.Roles = nil
+	m.OrganizationSettings = nil
 }

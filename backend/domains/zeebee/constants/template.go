@@ -9,6 +9,10 @@ import (
 const BorrowerPreapprovalLetterPdfName = "PreApprovalLetterPdf"
 const BorrowerPreapprovalLetterEmailName = "PreApprovalLetterEmail"
 
+const (
+	OrganizationPurposePreapprovalLetter = "preApprovedLetter"
+)
+
 type TemplateCategory string
 
 var TemplateCategoryName = "template_category"

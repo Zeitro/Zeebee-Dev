@@ -79,7 +79,7 @@ func (e *PreApprovalEngine) CalPreApprovalLoanAmount(input InputLoanInfo) (resul
 	experienceLevel := e.ExperienceLevelRule.getExperienceLevel(input.TransactionHistoryCount)
 	rule, ok := e.PreApprovalRules[experienceLevel]
 	if !ok {
-		return nil, errorx.WithStack(errorx.New("No Rule Found For Experience Level"))
+		return nil, errorx.WithStack(errorx.New("No rule found for experience level"))
 	}
 	result, err = rule.CalPreApprovalLoanAmount(input)
 	if err != nil {

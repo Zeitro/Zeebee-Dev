@@ -7,22 +7,23 @@ import (
 )
 
 type OrganizationBo struct {
-	Id                 int64                           `json:"id"`
-	Name               string                          `json:"name"`
-	Status             constants.OrganizationStatus    `json:"status"`
-	OwnerId            int64                           `json:"owner_id"`
-	Address            *AddressBo                      `json:"address"`
-	ContactEmail       string                          `json:"contact_email"`
-	ContactPhone       string                          `json:"contact_phone"`
-	ContactName        string                          `json:"contact_name"`
-	OwnerType          constants.OrganizationOwnerType `json:"owner_type"`
-	Type               constants.UserType              `json:"type"`
-	OrganizationEmails []*OrganizationEmailBo          `json:"organization_emails"`
-	Logo               string                          `json:"logo"`
-	Website            string                          `json:"website"`
-	Tagline            string                          `json:"tagline"`
-	Metadata           *OrganizationMetadata           `json:"metadata"`
-	Owner              *UserBo                         `json:"owner"`
+	Id                   int64                           `json:"id"`
+	Name                 string                          `json:"name"`
+	Status               constants.OrganizationStatus    `json:"status"`
+	OwnerId              int64                           `json:"owner_id"`
+	Address              *AddressBo                      `json:"address"`
+	ContactEmail         string                          `json:"contact_email"`
+	ContactPhone         string                          `json:"contact_phone"`
+	ContactName          string                          `json:"contact_name"`
+	OwnerType            constants.OrganizationOwnerType `json:"owner_type"`
+	Type                 constants.UserType              `json:"type"`
+	OrganizationEmails   []*OrganizationEmailBo          `json:"organization_emails"`
+	OrganizationSettings []*OrganizationSettingBo        `json:"organization_settings"`
+	Logo                 string                          `json:"logo"`
+	Website              string                          `json:"website"`
+	Tagline              string                          `json:"tagline"`
+	Metadata             *OrganizationMetadata           `json:"metadata"`
+	Owner                *UserBo                         `json:"owner"`
 
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`

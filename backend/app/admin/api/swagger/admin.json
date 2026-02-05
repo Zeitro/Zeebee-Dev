@@ -728,7 +728,8 @@
                 "category",
                 "purpose",
                 "content",
-                "scope"
+                "scope",
+                "is_configurable"
               ],
               "properties": {
                 "category": {
@@ -742,6 +743,9 @@
                 },
                 "example_variables": {
                   "type": "string"
+                },
+                "is_configurable": {
+                  "type": "boolean"
                 },
                 "name": {
                   "type": "string"
@@ -944,6 +948,9 @@
                 },
                 "id": {
                   "type": "integer"
+                },
+                "is_configurable": {
+                  "type": "boolean"
                 },
                 "name": {
                   "type": "string"
@@ -1219,6 +1226,7 @@
                       "category",
                       "purpose",
                       "status",
+                      "is_configurable",
                       "description",
                       "scope",
                       "created_at",
@@ -1236,6 +1244,9 @@
                       },
                       "id": {
                         "type": "integer"
+                      },
+                      "is_configurable": {
+                        "type": "boolean"
                       },
                       "name": {
                         "type": "string"
@@ -1536,6 +1547,9 @@
                 "id": {
                   "type": "integer"
                 },
+                "is_configurable": {
+                  "type": "boolean"
+                },
                 "name": {
                   "type": "string"
                 },
@@ -1753,7 +1767,8 @@
                 "name",
                 "category",
                 "content",
-                "scope"
+                "scope",
+                "is_configurable"
               ],
               "properties": {
                 "category": {
@@ -1767,6 +1782,9 @@
                 },
                 "example_variables": {
                   "type": "string"
+                },
+                "is_configurable": {
+                  "type": "boolean"
                 },
                 "name": {
                   "type": "string"
@@ -1963,6 +1981,9 @@
                 },
                 "id": {
                   "type": "integer"
+                },
+                "is_configurable": {
+                  "type": "boolean"
                 },
                 "name": {
                   "type": "string"
@@ -2229,6 +2250,9 @@
                 },
                 "id": {
                   "type": "integer"
+                },
+                "is_configurable": {
+                  "type": "boolean"
                 },
                 "name": {
                   "type": "string"
@@ -7680,7 +7704,7 @@
       }
     }
   },
-  "x-date": "2026-02-03 10:47:07",
+  "x-date": "2026-02-05 10:46:22",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

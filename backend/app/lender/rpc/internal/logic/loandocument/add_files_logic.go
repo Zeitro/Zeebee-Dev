@@ -148,7 +148,7 @@ func (l *AddFilesLogic) prepare(in *lender.LoanDocumentAddFilesRequest, claim ut
 	existingFileCount := int64(len(loanDocument.Files))
 	newFileCount := int64(len(in.Data.FileUrls))
 	if existingFileCount+newFileCount > 10 {
-		return nil, nil, errorx.WithStack(errorx.New("Total Number Of Files (Existing + New) Cannot Exceed 10"))
+		return nil, nil, errorx.WithStack(errorx.New("Total number of files (existing + new) cannot exceed 10"))
 	}
 
 	loan, err = l.baseLogic.GetLenderLoan(loanDocument.LoanId, claim.OrganizationId, nil)

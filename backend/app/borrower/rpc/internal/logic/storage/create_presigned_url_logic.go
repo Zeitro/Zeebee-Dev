@@ -43,7 +43,7 @@ func (l *CreatePresignedUrlLogic) CreatePresignedUrl(in *borrower.StorageCreateP
 	typ := in.Data.Type
 	suffix := strings.ToLower(in.Data.FileSuffix)
 	if len(typ) == 0 {
-		err = errorx.New("Type Is Empty")
+		err = errorx.New("Type is empty")
 	}
 	name := uuid.New().String()
 

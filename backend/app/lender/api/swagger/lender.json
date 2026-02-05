@@ -3131,6 +3131,41 @@
                     }
                   }
                 },
+                "organization_settings": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "created_at",
+                      "updated_at",
+                      "enabled",
+                      "setting",
+                      "purpose"
+                    ],
+                    "properties": {
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "enabled": {
+                        "type": "boolean"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "purpose": {
+                        "type": "string"
+                      },
+                      "setting": {
+                        "type": "object",
+                        "additionalProperties": {}
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
                 "owner": {
                   "type": "object",
                   "required": [
@@ -3350,6 +3385,45 @@
                         "type": "boolean"
                       },
                       "purpose": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "organization_settings": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "created_at",
+                      "updated_at",
+                      "enabled",
+                      "setting",
+                      "purpose",
+                      "has_configured"
+                    ],
+                    "properties": {
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "enabled": {
+                        "type": "boolean"
+                      },
+                      "has_configured": {
+                        "type": "boolean"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "purpose": {
+                        "type": "string"
+                      },
+                      "setting": {
+                        "type": "object",
+                        "additionalProperties": {}
+                      },
+                      "updated_at": {
                         "type": "string"
                       }
                     }
@@ -3689,6 +3763,41 @@
                     }
                   }
                 },
+                "organization_settings": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "created_at",
+                      "updated_at",
+                      "enabled",
+                      "setting",
+                      "purpose"
+                    ],
+                    "properties": {
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "enabled": {
+                        "type": "boolean"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "purpose": {
+                        "type": "string"
+                      },
+                      "setting": {
+                        "type": "object",
+                        "additionalProperties": {}
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
                 "owner": {
                   "type": "object",
                   "required": [
@@ -3760,6 +3869,105 @@
         }
       }
     },
+    "/api/v1/organization_setting/detail_by_purpose": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization_setting"
+        ],
+        "summary": "Detail by purpose",
+        "operationId": "organizationSettingOrganizationSettingDetailByPurpose",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "purpose",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "created_at": {
+                  "type": "string"
+                },
+                "enabled": {
+                  "type": "boolean"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "purpose": {
+                  "type": "string"
+                },
+                "setting": {
+                  "type": "object",
+                  "additionalProperties": {}
+                },
+                "updated_at": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organization_setting/{id}/status": {
+      "patch": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization_setting"
+        ],
+        "summary": "switch status",
+        "operationId": "organizationSettingOrganizationSettingSwitchStatus",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/organization_template/detail_by_purpose": {
       "get": {
         "produces": [
@@ -3801,6 +4009,9 @@
                 },
                 "example_variables": {
                   "type": "string"
+                },
+                "has_configured": {
+                  "type": "boolean"
                 },
                 "id": {
                   "type": "integer"
@@ -4067,6 +4278,7 @@
                       "category",
                       "purpose",
                       "status",
+                      "has_configured",
                       "description",
                       "created_at",
                       "updated_at"
@@ -4080,6 +4292,9 @@
                       },
                       "description": {
                         "type": "string"
+                      },
+                      "has_configured": {
+                        "type": "boolean"
                       },
                       "id": {
                         "type": "integer"
@@ -4376,6 +4591,9 @@
                 },
                 "example_variables": {
                   "type": "string"
+                },
+                "has_configured": {
+                  "type": "boolean"
                 },
                 "id": {
                   "type": "integer"
@@ -4777,6 +4995,9 @@
                 },
                 "example_variables": {
                   "type": "string"
+                },
+                "has_configured": {
+                  "type": "boolean"
                 },
                 "id": {
                   "type": "integer"
@@ -7116,6 +7337,29 @@
         }
       }
     },
+    "/api/v1/sync_data": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "common"
+        ],
+        "summary": "sync data",
+        "operationId": "commonSyncData",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/us_cities": {
       "get": {
         "produces": [
@@ -7733,7 +7977,7 @@
       }
     }
   },
-  "x-date": "2026-02-03 10:47:12",
+  "x-date": "2026-02-05 14:05:00",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

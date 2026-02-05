@@ -79,7 +79,7 @@ func (c *DefaultConvertor) ConvertToPdf(ctx context.Context, name string, templa
 		return nil, contentType, fmt.Errorf(generatePdfResponse.Message)
 	}
 	if generatePdfResponse.Data.Data == nil {
-		return nil, contentType, fmt.Errorf("No Data Returned")
+		return nil, contentType, fmt.Errorf("No data returned")
 	}
 	return generatePdfResponse.Data.Data, contentType, nil
 }

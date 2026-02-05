@@ -43,7 +43,7 @@ func (l *SendVerifyEmailLogic) SendVerifyEmail(in *borrower.SendVerifyEmailReque
 		return nil, errorx.WithStack(err)
 	}
 	if !ok {
-		return nil, errorx.Errorf("Email %s Try Too Many Times", email)
+		return nil, errorx.Errorf("Email %s try too many times", email)
 	}
 
 	// check user status
@@ -53,7 +53,7 @@ func (l *SendVerifyEmailLogic) SendVerifyEmail(in *borrower.SendVerifyEmailReque
 	}
 
 	if user.Status != constants.UserStatusUnverified {
-		return nil, errorx.WithStack(errorx.New("User Is Verified"))
+		return nil, errorx.WithStack(errorx.New("User is verified"))
 	}
 
 	// send email
@@ -65,7 +65,7 @@ func (l *SendVerifyEmailLogic) SendVerifyEmail(in *borrower.SendVerifyEmailReque
 			l.WithContext(ctx).Error(err)
 		}
 		if err != nil {
-			err = errorx.Wrap(err, "Send Register Verify Email Error")
+			err = errorx.Wrap(err, "Send register verify email error")
 			l.WithContext(ctx).Error(err)
 		}
 	}()
