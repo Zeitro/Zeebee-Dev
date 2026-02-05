@@ -75,13 +75,13 @@ func (l *OrganizationTemplateLogic) UpdateVariableGroup(ctx context.Context, req
 		return nil, errorx.WithStack(err)
 	}
 	if existing.OrganizationId != req.OrganizationId {
-		return nil, errorx.New("Template Not Belong To Organization")
+		return nil, errorx.New("Template does not belong to organization")
 	}
 
 	oldGroups := existing.VariableGroupSchema
 	groups := req.VariableGroupSchema
 	if len(groups) != len(oldGroups) {
-		return nil, errorx.Errorf("Variable Group Number Not Match: expected %d, got %d", len(oldGroups), len(groups))
+		return nil, errorx.Errorf("Variable group number not match: expected %d, got %d", len(oldGroups), len(groups))
 	}
 	// Check variable group
 	var checkVariableFn func(oldVariable *data.TemplateVariable, newVariable *data.TemplateVariable) (err error)
@@ -90,11 +90,11 @@ func (l *OrganizationTemplateLogic) UpdateVariableGroup(ctx context.Context, req
 			return nil
 		}
 		if newVariable == nil {
-			return errorx.Errorf("Variable %s Not Found", oldVariable.Label)
+			return errorx.Errorf("Variable %s not Found", oldVariable.Label)
 		}
 
 		if oldVariable.Source == constants.TemplateVariableSourceTemplate && newVariable.Source != constants.TemplateVariableSourceTemplate {
-			return errorx.Errorf("%s Source Type Template Can Not Be Changed To %v", oldVariable.Label, newVariable.Source)
+			return errorx.Errorf("%s source type template can not be changed To %v", oldVariable.Label, newVariable.Source)
 		}
 
 		if oldVariable.Type == constants.TemplateVariableTypeObject {
@@ -220,12 +220,12 @@ func (l *OrganizationTemplateLogic) Reset(ctx context.Context, id int64, organiz
 	}
 	// Verify that the template belongs to the specified organization
 	if template.OrganizationId != organizationId {
-		return nil, errorx.New("Template Not Belong To Organization")
+		return nil, errorx.New("Template does not belong to organization")
 	}
 	// Get the base template reference
 	baseTemplate := template.BaseTemplate
 	if baseTemplate == nil {
-		return nil, errorx.New("Template Not Base Template")
+		return nil, errorx.New("Template has no base template")
 	}
 	// Reset all template properties to match the base template
 	template.Content = baseTemplate.Content
@@ -367,7 +367,7 @@ func (l *OrganizationTemplateLogic) SyncByOrganizationIdWithTx(ctx context.Conte
 
 func (l *OrganizationTemplateLogic) renderOrganizationSystemInfo(organizationTemplate *model.OrganizationTemplate) (result *model.OrganizationTemplate, err error) {
 	if organizationTemplate == nil {
-		return nil, errorx.New("Organization Template Not Found")
+		return nil, errorx.New("Organization template not found")
 	}
 	organization := organizationTemplate.Organization
 	if organization != nil {
@@ -375,7 +375,7 @@ func (l *OrganizationTemplateLogic) renderOrganizationSystemInfo(organizationTem
 			Delims("[[", "]]").
 			Parse(organizationTemplate.Content)
 		if err != nil {
-			return nil, errorx.Wrap(err, "Failed To Parse Template")
+			return nil, errorx.Wrap(err, "Failed to parse template")
 		}
 		renderData := map[string]interface{}{
 			"system": map[string]interface{}{
@@ -385,7 +385,7 @@ func (l *OrganizationTemplateLogic) renderOrganizationSystemInfo(organizationTem
 		var buf bytes.Buffer
 		err = tpl.Execute(&buf, renderData)
 		if err != nil {
-			return nil, errorx.Wrap(err, "Failed To Render Template")
+			return nil, errorx.Wrap(err, "Failed to render template")
 		}
 		organizationTemplate.Content = buf.String()
 	}

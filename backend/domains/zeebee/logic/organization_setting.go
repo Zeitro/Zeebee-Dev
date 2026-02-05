@@ -66,7 +66,7 @@ func (l *OrganizationSettingLogic) SwitchStatus(ctx context.Context, id int64, o
 	return err
 }
 
-// InitLenderOrganizationSettingWithTx
+// InitLenderOrganizationSettingWithTx initializes lender organization setting
 func (l *OrganizationSettingLogic) InitLenderOrganizationSettingWithTx(ctx context.Context, tx *gorm.DB, organization *model.Organization) (err error) {
 	if organization == nil {
 		return errorx.New("Organization is empty")
@@ -76,7 +76,7 @@ func (l *OrganizationSettingLogic) InitLenderOrganizationSettingWithTx(ctx conte
 		return nil
 	}
 	var organizationSettings []*model.OrganizationSetting
-	// init preapproval letter template
+	// Init preapproval letter template
 	organizationSettings = append(organizationSettings, &model.OrganizationSetting{
 		OrganizationId: organization.Id,
 		Purpose:        constants.OrganizationPurposePreapprovalLetter,
@@ -88,7 +88,7 @@ func (l *OrganizationSettingLogic) InitLenderOrganizationSettingWithTx(ctx conte
 	return err
 }
 
-// checkPreapprovalTemplate
+// checkPreapprovalTemplate checks preapproval template
 func (l *OrganizationSettingLogic) checkPreapprovalTemplate(ctx context.Context, organization int64) (err error) {
 	organizationTemplate, err := l.repos.OrganizationTemplateRepo.DetailByPurpose(ctx, organization, constants.OrganizationPurposePreapprovalLetter, false)
 	if err != nil {
@@ -107,7 +107,7 @@ func (l *OrganizationSettingLogic) checkPreapprovalTemplate(ctx context.Context,
 			}
 		}
 	}
-	// update HasConfigured
+	// Update HasConfigured
 	organizationTemplate.HasConfigured = true
 	_, err = l.repos.OrganizationTemplateRepo.UpdateOneById(ctx, organizationTemplate.Id, organizationTemplate)
 	return err

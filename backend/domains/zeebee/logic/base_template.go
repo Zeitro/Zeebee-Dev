@@ -39,7 +39,7 @@ func (l *BaseTemplateLogic) Create(ctx context.Context, req dto.BaseTemplateCrea
 		return nil, err
 	}
 	if exists {
-		return nil, errorx.New("Template Tag Already Exists Within The Same Type")
+		return nil, errorx.New("Template purpose already exists within the same type")
 	}
 
 	// Convert DTO to model
@@ -65,7 +65,7 @@ func (l *BaseTemplateLogic) Create(ctx context.Context, req dto.BaseTemplateCrea
 		return innerErr
 	})
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed To Create Template")
+		return nil, errorx.Wrap(err, "Failed to create template")
 	}
 
 	result, err = copierx.Trans[model.BaseTemplate, bo.BaseTemplateBo](created)
@@ -144,7 +144,7 @@ func (l *BaseTemplateLogic) Update(ctx context.Context, req dto.BaseTemplateUpda
 		case constants.BaseTemplateScopeSystem:
 			innerErr = l.repos.OrganizationTemplateRepo.CascadeStatus(ctx, tx, updated.Id, constants.CommonStatusActive)
 		default:
-			innerErr = errorx.Errorf("Invalid Scope:%v", req.Scope)
+			innerErr = errorx.Errorf("Invalid scope:%v", req.Scope)
 		}
 
 		return innerErr
@@ -266,7 +266,7 @@ func (l *BaseTemplateLogic) ExistsByPurpose(ctx context.Context, purpose string,
 func (l *BaseTemplateLogic) Preview(_ context.Context, req dto.BaseTemplatePreviewDto) (result string, err error) {
 	tpl, err := template.New(req.Name).Parse(req.Content)
 	if err != nil {
-		return "", errorx.Wrap(err, "Failed To Parse Template")
+		return "", errorx.Wrap(err, "Failed to parse template")
 	}
 	data := map[string]interface{}{}
 	if len(req.ExampleVariables) > 0 {
@@ -293,7 +293,7 @@ func (l *BaseTemplateLogic) Preview(_ context.Context, req dto.BaseTemplatePrevi
 	buf := bytes.NewBuffer(nil)
 	err = tpl.Execute(buf, data)
 	if err != nil {
-		return "", errorx.Wrap(err, "Failed To Render Template")
+		return "", errorx.Wrap(err, "Failed to render template")
 	}
 	result = buf.String()
 
@@ -302,11 +302,11 @@ func (l *BaseTemplateLogic) Preview(_ context.Context, req dto.BaseTemplatePrevi
 
 func (l *BaseTemplateLogic) syncOrganizationTemplates(ctx context.Context, tx *gorm.DB, baseTemplate *model.BaseTemplate, organizationType constants.UserType, checkExisted bool) (err error) {
 	if baseTemplate == nil {
-		err = errorx.New("Base Template Must Be Existed")
+		err = errorx.New("Base template must exist")
 		return
 	}
 	if baseTemplate.Scope != constants.BaseTemplateScopeOrganization {
-		err = errorx.New("Template Scope Must Be Organization")
+		err = errorx.New("Template scope must be organization")
 		return
 	}
 	// Sync to organization templates
