@@ -49,7 +49,7 @@ func (l *UpdateLoanStageLogic) UpdateLoanStage(in *lender.LoanUpdateStageRequest
 	}
 
 	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreapproval {
-		return nil, errorx.WithStack(errorx.New("Invalid Loan Source"))
+		return nil, errorx.WithStack(errorx.New("Invalid loan source"))
 	}
 
 	// Save original status for operation log

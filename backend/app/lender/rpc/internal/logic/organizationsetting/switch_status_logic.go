@@ -35,7 +35,7 @@ func (l *SwitchStatusLogic) SwitchStatus(in *lender.OrganizationSettingSwitchSta
 		}
 	}()
 	if in.Data == nil {
-		return nil, errorx.New("Data Is Required")
+		return nil, errorx.New("Data is required")
 	}
 
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)

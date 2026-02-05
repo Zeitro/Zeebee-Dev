@@ -34,11 +34,11 @@ func (l *LoanBaseLogic) GetLenderLoan(loanId int64, lenderOrganizationId int64, 
 		return nil, err
 	}
 	if loan.LenderOrganizationId != lenderOrganizationId {
-		return nil, errorx.New("Invalid Lender Organization")
+		return nil, errorx.New("Invalid lender organization")
 	}
 
 	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreapproval {
-		return nil, errorx.New("Invalid Loan Source")
+		return nil, errorx.New("Invalid loan source")
 	}
 
 	return
