@@ -10,7 +10,9 @@ import {
 	injectHeadResources,
 	getBodyInnerHTML,
 } from '@repo/shared-methods/utils';
+import useContent from '../system/components/PreApprovalLetter/useContent';
 const PreApprovedLetter = () => {
+	const { switchBtn } = useContent();
 	const { request } = createRequest();
 	const [form] = Form.useForm();
 	const [valueHtml, setValueHtml] = useState('');
@@ -267,7 +269,7 @@ const PreApprovedLetter = () => {
 						</Form.List>
 					</Spin>
 				</Form>
-				<div className="w-full flex-shrink-0 bg-background pt-2 pb-6">
+				<div className="w-full flex-shrink-0 bg-background pt-1 pb-4">
 					<Button
 						type="primary"
 						className="w-full"
@@ -277,6 +279,18 @@ const PreApprovedLetter = () => {
 					>
 						Save
 					</Button>
+					<div className="flex items-center justify-between pt-3">
+						<div className="text-xs text-base-label font-semibold">
+							Send Pre-Approval Letter
+							<FieldTips
+								title="Note: When activated, your borrower will automatically receive the pre-approval letter configured on this page."
+								isShowDescription={true}
+								rootClassName="!max-w-[300px]"
+								className="ml-1 text-xs"
+							/>
+						</div>
+						{switchBtn}
+					</div>
 				</div>
 			</div>
 
