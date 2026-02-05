@@ -76,7 +76,7 @@ const ListView = ({ className }) => {
 				},
 			]}
 			onChange={(v) => setTabKey(v)}
-			className={`h-[calc(100%-84px)] overflow-hidden ${styles.loans} ${className}`}
+			className={`flex-1 overflow-hidden ${styles.loans} ${className}`}
 			destroyOnHidden
 		/>
 	);
