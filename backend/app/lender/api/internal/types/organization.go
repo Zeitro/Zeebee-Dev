@@ -37,6 +37,28 @@ type OrganizationEntity struct {
 	OrganizationSettings []*OrganizationSettingEntity `json:"organization_settings"`
 }
 
+type OrganizationProfileEntity struct {
+	Id                   int64                               `json:"id"`
+	Name                 string                              `json:"name"`
+	Status               string                              `json:"status"`
+	Address              AddressEntity                       `json:"address"`
+	ContactEmail         string                              `json:"contact_email"`
+	ContactPhone         string                              `json:"contact_phone"`
+	ContactName          string                              `json:"contact_name"`
+	OwnerType            string                              `json:"owner_type"`
+	Type                 string                              `json:"type"`
+	Logo                 string                              `json:"logo"`
+	Website              string                              `json:"website"`
+	Tagline              string                              `json:"tagline"`
+	Metadata             *OrganizationMetadataEntity         `json:"metadata"`
+	CreatedAt            string                              `json:"created_at"`
+	UpdatedAt            string                              `json:"updated_at"`
+	IsEditable           bool                                `json:"is_editable"`
+	OrganizationEmails   []*OrganizationEmailEntity          `json:"organization_emails"`
+	Owner                *UserEntity                         `json:"owner"`
+	OrganizationSettings []*OrganizationSettingProfileEntity `json:"organization_settings"`
+}
+
 type OrganizationUpdateProfileRequest struct {
 	ContactEmail string                            `json:"contact_email" validate:"required,email"`
 	ContactPhone string                            `json:"contact_phone" validate:"required,min=8,max=20"`

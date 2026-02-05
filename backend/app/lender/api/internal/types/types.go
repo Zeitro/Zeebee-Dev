@@ -400,6 +400,11 @@ type OrganizationSettingPageEntity struct {
 	UpdatedAt     string `json:"updated_at"`
 }
 
+type OrganizationSettingProfileEntity struct {
+	OrganizationSettingEntity
+	HasConfigured bool `json:"has_configured"`
+}
+
 type OrganizationTemplateDetailRequest struct {
 	Id int64 `path:"id" validate:"required,min=1"`
 }

@@ -17,6 +17,11 @@ type (
         Purpose string `json:"purpose"`
     }
 
+    OrganizationSettingProfileEntity {
+        OrganizationSettingEntity
+        HasConfigured bool `json:"has_configured"`
+    }
+
     OrganizationSettingPageEntity {
         Id int64 `json:"id"`
         Name string `json:"name"`

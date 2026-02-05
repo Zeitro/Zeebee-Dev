@@ -3400,13 +3400,17 @@
                       "updated_at",
                       "enabled",
                       "setting",
-                      "purpose"
+                      "purpose",
+                      "has_configured"
                     ],
                     "properties": {
                       "created_at": {
                         "type": "string"
                       },
                       "enabled": {
+                        "type": "boolean"
+                      },
+                      "has_configured": {
                         "type": "boolean"
                       },
                       "id": {
@@ -7973,7 +7977,7 @@
       }
     }
   },
-  "x-date": "2026-02-05 10:34:33",
+  "x-date": "2026-02-05 14:05:00",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

@@ -31,7 +31,7 @@ func NewProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ProfileLo
 	}
 }
 
-func (l *ProfileLogic) Profile(in *lender.EmptyRequest) (resp *lender.OrganizationDetailResponse, err error) {
+func (l *ProfileLogic) Profile(in *lender.EmptyRequest) (resp *lender.OrganizationProfileResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -60,19 +60,32 @@ func (l *ProfileLogic) Profile(in *lender.EmptyRequest) (resp *lender.Organizati
 	}
 
 	// Convert business object to proto entity with time field conversion
-	data, err := copierx.Trans[bo.OrganizationBo, lender.OrganizationEntity](
+	data, err := copierx.Trans[bo.OrganizationBo, lender.OrganizationProfileEntity](
 		organization,
 		copierx.TimeToRFC3339Str(),
 		copierx.StrMapToBytes(),
 	)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	if claim.UserId == organization.OwnerId {
 		data.IsEditable = true
 	}
+	for _, setting := range data.OrganizationSettings {
+		if setting.Purpose == constants.OrganizationPurposePreapprovalLetter {
+			preapprovalLetterTemplate, err := l.svcCtx.AllRepos.OrganizationTemplateRepo.DetailByPurpose(l.ctx, claim.OrganizationId, constants.OrganizationPurposePreapprovalLetter, false)
+			if err != nil {
+				return nil, err
+			}
+			setting.HasConfigured = preapprovalLetterTemplate.HasConfigured
 
-	return &lender.OrganizationDetailResponse{
+		} else {
+			setting.HasConfigured = true
+		}
+
+	}
+
+	return &lender.OrganizationProfileResponse{
 		Data: data,
 	}, nil
 }

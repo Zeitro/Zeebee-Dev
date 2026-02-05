@@ -26,7 +26,7 @@ func NewOrganizationProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext
 	}
 }
 
-func (l *OrganizationProfileLogic) OrganizationProfile(req *types.EmptyRequest) (resp *types.OrganizationEntity, err error) {
+func (l *OrganizationProfileLogic) OrganizationProfile(req *types.EmptyRequest) (resp *types.OrganizationProfileEntity, err error) {
 	// Call RPC client to get organization profile
 	rpcResp, err := l.svcCtx.OrganizationRpcClient.Profile(l.ctx, &lender.EmptyRequest{})
 	if err != nil {
@@ -34,7 +34,7 @@ func (l *OrganizationProfileLogic) OrganizationProfile(req *types.EmptyRequest) 
 	}
 
 	// Convert proto response to API types
-	resp, err = copierx.Trans[lender.OrganizationEntity, types.OrganizationEntity](
+	resp, err = copierx.Trans[lender.OrganizationProfileEntity, types.OrganizationProfileEntity](
 		rpcResp.Data,
 		copierx.TimeToRFC3339Str(),
 		copierx.BytesToStrMap(),

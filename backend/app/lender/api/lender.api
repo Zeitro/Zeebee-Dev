@@ -323,7 +323,7 @@ service lender-api {
 service lender-api {
 	@doc "profile"
 	@handler OrganizationProfile
-	get /organization/profile (EmptyRequest) returns (OrganizationEntity)
+	get /organization/profile (EmptyRequest) returns (OrganizationProfileEntity)
 
 	@doc "update profile"
 	@handler OrganizationUpdateProfile
@@ -337,12 +337,12 @@ service lender-api {
 // ============== organization service end =============
 // ============== organization template service start ============
 @server(
-    desc: "organization template service"
-    version: v1
+	desc: "organization template service"
+	version: v1
 	prefix:     /api/v1
-    group: organization_template
+	group: organization_template
 	middleware: AuthMiddleware
-    tags: organization_template
+	tags: organization_template
 )
 service lender-api {
 	@doc "Update"
@@ -373,12 +373,12 @@ service lender-api {
 // ============== organization template service end ============
 // ============= organization setting service start =============
 @server(
-    desc: "organization setting service"
-    version: v1
+	desc: "organization setting service"
+	version: v1
 	prefix:     /api/v1
-    group: organization_setting
+	group: organization_setting
 	middleware: AuthMiddleware
-    tags: organization_setting
+	tags: organization_setting
 )
 service lender-api {
 	@doc "Detail by purpose"
@@ -390,4 +390,4 @@ service lender-api {
 	patch /organization_setting/:id/status (OrganizationSettingSwitchStatusRequest) returns (EmptyResponse)
 }
 
-    // ============= organization setting service end =============
+	// ============= organization setting service end =============
