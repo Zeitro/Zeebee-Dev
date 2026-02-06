@@ -268,3 +268,13 @@ func (repo *OrganizationRepo) GetOrganizationsByOwnerIdWithTx(ctx context.Contex
 		Find(&results).Error
 	return results, errorx.WithStack(err)
 }
+
+// SelectOptions retrieves organization options based on the specified type.
+// It returns a slice of Organization pointers containing only the id, name, and type fields.
+func (repo *OrganizationRepo) SelectOptions(ctx context.Context, organizationType constants.UserType) (result []*model.Organization, err error) {
+	err = repo.Client(ctx).Model(&model.Organization{}).
+		Select("id", "name", "type").
+		Where("type = ?", organizationType).
+		Find(&result).Error
+	return result, errorx.WithStack(err)
+}

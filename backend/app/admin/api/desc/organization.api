@@ -47,6 +47,20 @@ type (
 
 // page
 type (
+
+    // page --  request
+    OrganizationPageRequest {
+        BasePageRequest
+        Filter *OrganizationPageFilter `json:"filter,optional"`
+        Sort *BasePageSort `json:"sort,optional"`
+    }
+
+        // page -- response
+    OrganizationPageResponse {
+        BasePageResponse
+        List []*OrganizationPageEntity `json:"list"`
+    }
+
     OrganizationPageEntity {
         Id int64 `json:"id"`
         Name string `json:"name"`
@@ -66,30 +80,29 @@ type (
         OwnerFirstName string `json:"owner_first_name"`
         OwnerLastName string `json:"owner_last_name"`
     }
-
-    OrganizationPageRequestFilter {
-        Name string `json:"name,optional"`
-        Status string
-    }
-    OrganizationPageRequest {
-        BasePageRequest
-        Filter *OrganizationPageFilter `json:"filter,optional"`
-        Sort *BasePageSort `json:"sort,optional"`
-    }
     OrganizationPageFilter {
         Keyword string `json:"keyword,optional"`
         OrganizationType string `json:"type" validate:"required,oneof=Lender Borrower"`
         Status string `json:"status,optional"`
     }
-
-    OrganizationPageResponse {
-        BasePageResponse
-        List []*OrganizationPageEntity `json:"list"`
+    OrganizationPageRequestFilter {
+        Name string `json:"name,optional"`
+        Status string
     }
 )
 
-// create lender
 type (
+    // create lender -- request
+    OrganizationCreateLenderRequest {
+        Owner *OrganizationCreateLenterUserEntity `json:"owner" validate:"required"`
+        Organization *OrganizationCreateLenderOrganizationEntity `json:"organization" validate:"required"`
+    }
+
+        // create lender -- response
+    OrganizationCreateLenderResponse {
+        OrganizationEntity
+    }
+
     OrganizationCreateLenterUserEntity {
         Email string `json:"email" validate:"required,email"`
         Password string `json:"password" validate:"required,min=8,max=32"`
@@ -108,19 +121,10 @@ type (
         Tagline string `json:"tagline,optional"`
         Metadata *OrganizationLenderMetadataEntity `json:"metadata,optional"`
     }
-
-    OrganizationCreateLenderRequest {
-        Owner *OrganizationCreateLenterUserEntity `json:"owner" validate:"required"`
-        Organization *OrganizationCreateLenderOrganizationEntity `json:"organization" validate:"required"`
-    }
-
-    OrganizationCreateLenderResponse {
-        OrganizationEntity
-    }
 )
 
-// update lender
 type (
+    // update lender -- request
     OrganizationUpdateLenderRequest {
         Id int64 `path:"id" validate:"required,min=1"`
         ContactEmail string `json:"contact_email" validate:"required,email"`
@@ -134,10 +138,27 @@ type (
     }
 )
 
-// switch status
 type (
+    // switch status -- request
     OrganizationSwitchStatusRequest {
         Id int64 `path:"id" validate:"required,min=1"`
         Status string `json:"status" validate:"required,oneof=Active Disabled"`
+    }
+)
+
+type (
+    // select option -- request
+    OrganizationSelectOptionRequest {
+        Type string `form:"type" validate:"required,oneof=Lender Borrower"`
+    }
+        // select option -- response
+    OrganizationOptResponse {
+        Options []*OrganizationSelectOptionEntity `json:"options"`
+    }
+
+    OrganizationSelectOptionEntity {
+        Id int64 `json:"id"`
+        Name string `json:"name"`
+        Type string `json:"type"`
     }
 )

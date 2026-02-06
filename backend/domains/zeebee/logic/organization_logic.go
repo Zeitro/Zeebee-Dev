@@ -127,6 +127,17 @@ func (l *OrganizationLogic) Delete(ctx context.Context, id int64) (err error) {
 	return nil
 }
 
+// SelectOptions retrieves a list of organization options based on the specified type.
+func (l *OrganizationLogic) SelectOptions(ctx context.Context, organizationType constants.UserType) (results []*bo.OrganizationOptionBo, err error) {
+	organizations, err := l.repos.OrganizationRepo.SelectOptions(ctx, organizationType)
+	if err != nil {
+		return
+	}
+	resultsPtr, err := copierx.Trans[[]*model.Organization, []*bo.OrganizationOptionBo](&organizations)
+	results = *resultsPtr
+	return results, err
+}
+
 // tranToBo converts a model.Organization entity to a bo.OrganizationBo business object.
 // It enriches the owner's information if present and checks authorization status for organization emails.
 func (l *OrganizationLogic) tranToBo(ctx context.Context, organization *model.Organization) (transBo *bo.OrganizationBo, err error) {

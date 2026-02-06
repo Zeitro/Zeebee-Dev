@@ -6795,7 +6795,7 @@ type BorrowerPropertyEntity struct {
 	Unit           int32                  `protobuf:"varint,4,opt,name=unit,proto3" json:"unit,omitempty"`
 	LivingAreaSqft float32                `protobuf:"fixed32,5,opt,name=living_area_sqft,json=livingAreaSqft,proto3" json:"living_area_sqft,omitempty"`
 	Bedrooms       int32                  `protobuf:"varint,6,opt,name=bedrooms,proto3" json:"bedrooms,omitempty"`
-	Bathrooms      float32                `protobuf:"fixed32,7,opt,name=bathrooms,proto3" json:"bathrooms,omitempty"`
+	Bathrooms      int32                  `protobuf:"varint,7,opt,name=bathrooms,proto3" json:"bathrooms,omitempty"`
 	Address        *AddressEntity         `protobuf:"bytes,8,opt,name=address,proto3" json:"address,omitempty"`
 	CreatedAt      string                 `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt      string                 `protobuf:"bytes,10,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
@@ -6876,7 +6876,7 @@ func (x *BorrowerPropertyEntity) GetBedrooms() int32 {
 	return 0
 }
 
-func (x *BorrowerPropertyEntity) GetBathrooms() float32 {
+func (x *BorrowerPropertyEntity) GetBathrooms() int32 {
 	if x != nil {
 		return x.Bathrooms
 	}
@@ -14182,7 +14182,7 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x04unit\x18\x04 \x01(\x05R\x04unit\x12(\n" +
 	"\x10living_area_sqft\x18\x05 \x01(\x02R\x0elivingAreaSqft\x12\x1a\n" +
 	"\bbedrooms\x18\x06 \x01(\x05R\bbedrooms\x12\x1c\n" +
-	"\tbathrooms\x18\a \x01(\x02R\tbathrooms\x12/\n" +
+	"\tbathrooms\x18\a \x01(\x05R\tbathrooms\x12/\n" +
 	"\aaddress\x18\b \x01(\v2\x15.lender.AddressEntityR\aaddress\x12\x1d\n" +
 	"\n" +
 	"created_at\x18\t \x01(\tR\tcreatedAt\x12\x1d\n" +

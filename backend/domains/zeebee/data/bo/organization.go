@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data"
 )
 
 type OrganizationBo struct {
@@ -11,7 +12,7 @@ type OrganizationBo struct {
 	Name                 string                          `json:"name"`
 	Status               constants.OrganizationStatus    `json:"status"`
 	OwnerId              int64                           `json:"owner_id"`
-	Address              *AddressBo                      `json:"address"`
+	Address              data.Address                    `json:"address"`
 	ContactEmail         string                          `json:"contact_email"`
 	ContactPhone         string                          `json:"contact_phone"`
 	ContactName          string                          `json:"contact_name"`
@@ -33,7 +34,7 @@ type OrganizationPageEntityBo struct {
 	Id             int64                           `json:"id"`
 	Name           string                          `json:"name"`
 	Status         constants.OrganizationStatus    `json:"status"`
-	Address        *AddressBo                      `json:"address"`
+	Address        data.Address                    `json:"address"`
 	ContactEmail   string                          `json:"contact_email"`
 	ContactPhone   string                          `json:"contact_phone"`
 	ContactName    string                          `json:"contact_name"`
@@ -49,6 +50,12 @@ type OrganizationPageEntityBo struct {
 	OwnerLastName  string                          `json:"owner_last_name"`
 	CreatedAt      time.Time                       `json:"created_at"`
 	UpdatedAt      time.Time                       `json:"updated_at"`
+}
+
+type OrganizationOptionBo struct {
+	Id   int64              `json:"id"`
+	Name string             `json:"name"`
+	Type constants.UserType `json:"type"`
 }
 
 type OrganizationMetadata struct {

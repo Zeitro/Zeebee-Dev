@@ -1405,12 +1405,13 @@ var Role_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	Organization_Page_FullMethodName         = "/admin.organization/Page"
-	Organization_CreateLender_FullMethodName = "/admin.organization/CreateLender"
-	Organization_UpdateLender_FullMethodName = "/admin.organization/UpdateLender"
-	Organization_Detail_FullMethodName       = "/admin.organization/Detail"
-	Organization_Delete_FullMethodName       = "/admin.organization/Delete"
-	Organization_SwitchStatus_FullMethodName = "/admin.organization/SwitchStatus"
+	Organization_Page_FullMethodName          = "/admin.organization/Page"
+	Organization_CreateLender_FullMethodName  = "/admin.organization/CreateLender"
+	Organization_UpdateLender_FullMethodName  = "/admin.organization/UpdateLender"
+	Organization_Detail_FullMethodName        = "/admin.organization/Detail"
+	Organization_Delete_FullMethodName        = "/admin.organization/Delete"
+	Organization_SwitchStatus_FullMethodName  = "/admin.organization/SwitchStatus"
+	Organization_SelectOptions_FullMethodName = "/admin.organization/SelectOptions"
 )
 
 // OrganizationClient is the client API for Organization service.
@@ -1423,6 +1424,7 @@ type OrganizationClient interface {
 	Detail(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error)
 	Delete(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	SwitchStatus(ctx context.Context, in *OrganizationSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	SelectOptions(ctx context.Context, in *OrganizationSelectOptionsRequest, opts ...grpc.CallOption) (*OrganizationSelectOptionsResponse, error)
 }
 
 type organizationClient struct {
@@ -1493,6 +1495,16 @@ func (c *organizationClient) SwitchStatus(ctx context.Context, in *OrganizationS
 	return out, nil
 }
 
+func (c *organizationClient) SelectOptions(ctx context.Context, in *OrganizationSelectOptionsRequest, opts ...grpc.CallOption) (*OrganizationSelectOptionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OrganizationSelectOptionsResponse)
+	err := c.cc.Invoke(ctx, Organization_SelectOptions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OrganizationServer is the server API for Organization service.
 // All implementations must embed UnimplementedOrganizationServer
 // for forward compatibility.
@@ -1503,6 +1515,7 @@ type OrganizationServer interface {
 	Detail(context.Context, *IdRequest) (*OrganizationDetailResponse, error)
 	Delete(context.Context, *IdRequest) (*EmptyResponse, error)
 	SwitchStatus(context.Context, *OrganizationSwitchStatusRequest) (*EmptyResponse, error)
+	SelectOptions(context.Context, *OrganizationSelectOptionsRequest) (*OrganizationSelectOptionsResponse, error)
 	mustEmbedUnimplementedOrganizationServer()
 }
 
@@ -1530,6 +1543,9 @@ func (UnimplementedOrganizationServer) Delete(context.Context, *IdRequest) (*Emp
 }
 func (UnimplementedOrganizationServer) SwitchStatus(context.Context, *OrganizationSwitchStatusRequest) (*EmptyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SwitchStatus not implemented")
+}
+func (UnimplementedOrganizationServer) SelectOptions(context.Context, *OrganizationSelectOptionsRequest) (*OrganizationSelectOptionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SelectOptions not implemented")
 }
 func (UnimplementedOrganizationServer) mustEmbedUnimplementedOrganizationServer() {}
 func (UnimplementedOrganizationServer) testEmbeddedByValue()                      {}
@@ -1660,6 +1676,24 @@ func _Organization_SwitchStatus_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Organization_SelectOptions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationSelectOptionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServer).SelectOptions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Organization_SelectOptions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServer).SelectOptions(ctx, req.(*OrganizationSelectOptionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Organization_ServiceDesc is the grpc.ServiceDesc for Organization service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1690,6 +1724,10 @@ var Organization_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SwitchStatus",
 			Handler:    _Organization_SwitchStatus_Handler,
+		},
+		{
+			MethodName: "SelectOptions",
+			Handler:    _Organization_SelectOptions_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -2338,6 +2376,184 @@ var BaseTemplate_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Reset",
 			Handler:    _BaseTemplate_Reset_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "app/admin/rpc/pb/admin.proto",
+}
+
+const (
+	Loan_LoanPage_FullMethodName     = "/admin.Loan/LoanPage"
+	Loan_LoanDetail_FullMethodName   = "/admin.Loan/LoanDetail"
+	Loan_ReassignLoan_FullMethodName = "/admin.Loan/ReassignLoan"
+)
+
+// LoanClient is the client API for Loan service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type LoanClient interface {
+	LoanPage(ctx context.Context, in *LoanPageRequest, opts ...grpc.CallOption) (*LoanPageResponse, error)
+	LoanDetail(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*LoanDetailResponse, error)
+	ReassignLoan(ctx context.Context, in *ReassignLoanRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+}
+
+type loanClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewLoanClient(cc grpc.ClientConnInterface) LoanClient {
+	return &loanClient{cc}
+}
+
+func (c *loanClient) LoanPage(ctx context.Context, in *LoanPageRequest, opts ...grpc.CallOption) (*LoanPageResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LoanPageResponse)
+	err := c.cc.Invoke(ctx, Loan_LoanPage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *loanClient) LoanDetail(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*LoanDetailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LoanDetailResponse)
+	err := c.cc.Invoke(ctx, Loan_LoanDetail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *loanClient) ReassignLoan(ctx context.Context, in *ReassignLoanRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, Loan_ReassignLoan_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// LoanServer is the server API for Loan service.
+// All implementations must embed UnimplementedLoanServer
+// for forward compatibility.
+type LoanServer interface {
+	LoanPage(context.Context, *LoanPageRequest) (*LoanPageResponse, error)
+	LoanDetail(context.Context, *IdRequest) (*LoanDetailResponse, error)
+	ReassignLoan(context.Context, *ReassignLoanRequest) (*EmptyResponse, error)
+	mustEmbedUnimplementedLoanServer()
+}
+
+// UnimplementedLoanServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedLoanServer struct{}
+
+func (UnimplementedLoanServer) LoanPage(context.Context, *LoanPageRequest) (*LoanPageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LoanPage not implemented")
+}
+func (UnimplementedLoanServer) LoanDetail(context.Context, *IdRequest) (*LoanDetailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LoanDetail not implemented")
+}
+func (UnimplementedLoanServer) ReassignLoan(context.Context, *ReassignLoanRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReassignLoan not implemented")
+}
+func (UnimplementedLoanServer) mustEmbedUnimplementedLoanServer() {}
+func (UnimplementedLoanServer) testEmbeddedByValue()              {}
+
+// UnsafeLoanServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to LoanServer will
+// result in compilation errors.
+type UnsafeLoanServer interface {
+	mustEmbedUnimplementedLoanServer()
+}
+
+func RegisterLoanServer(s grpc.ServiceRegistrar, srv LoanServer) {
+	// If the following call pancis, it indicates UnimplementedLoanServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&Loan_ServiceDesc, srv)
+}
+
+func _Loan_LoanPage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanPageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanServer).LoanPage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Loan_LoanPage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanServer).LoanPage(ctx, req.(*LoanPageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Loan_LoanDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanServer).LoanDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Loan_LoanDetail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanServer).LoanDetail(ctx, req.(*IdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Loan_ReassignLoan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReassignLoanRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanServer).ReassignLoan(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Loan_ReassignLoan_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanServer).ReassignLoan(ctx, req.(*ReassignLoanRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Loan_ServiceDesc is the grpc.ServiceDesc for Loan service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Loan_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "admin.Loan",
+	HandlerType: (*LoanServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "LoanPage",
+			Handler:    _Loan_LoanPage_Handler,
+		},
+		{
+			MethodName: "LoanDetail",
+			Handler:    _Loan_LoanDetail_Handler,
+		},
+		{
+			MethodName: "ReassignLoan",
+			Handler:    _Loan_ReassignLoan_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -15,17 +15,7 @@ import "desc/storage.api"
 import "desc/us_geography.api"
 import "desc/common.api"
 import "desc/base_template.api"
-
-type (
-    EmptyRequest{
-    }
-    EmptyResponse{
-    }
-)
-
-type PathIdRequest {
-	id int64 `path:"id" validate:"required,gt=0"`
-}
+import "desc/loan.api"
 
 // ============== common start =============
 @server(
@@ -91,6 +81,46 @@ service admin-api {
 }
 
 // ============== user end =============
+// ============== organization service start ============
+@server(
+    desc: "admin-api service"
+    version: v1
+    group: organization
+    prefix:     /api/v1
+    middleware: AuthMiddleware
+    tags: organization
+)
+service admin-api {
+    @doc "detail"
+    @handler OrganizationDetail
+    get /organization/:id (PathIdRequest) returns (OrganizationEntity)
+
+    @doc "page"
+    @handler OrganizationPage
+    post /organization/page (OrganizationPageRequest) returns (OrganizationPageResponse)
+
+    @doc "lender create"
+    @handler OrganizationCreateLender
+    post /organization/lender (OrganizationCreateLenderRequest) returns (OrganizationEntity)
+
+    @doc "lender update"
+    @handler OrganizationUpdateLender
+    put /organization/lender/:id (OrganizationUpdateLenderRequest) returns (OrganizationEntity)
+
+    @doc "delete"
+    @handler OrganizationDelete
+    delete /organization/:id (PathIdRequest) returns (EmptyResponse)
+
+    @doc "switch status"
+    @handler OrganizationSwitchStatus
+    patch /organization/:id/status (OrganizationSwitchStatusRequest) returns (EmptyResponse)
+
+    @doc "select option"
+    @handler OrganizationSelectOption
+    get /organization/select_options (OrganizationSelectOptionRequest) returns (OrganizationOptResponse)
+}
+
+// ============= organization service end ============
 // ============== organization user start ============
 @server(
     desc: "admin-api service"
@@ -231,42 +261,6 @@ service admin-api {
 }
 
 // ============== role end =============
-// ============= organization start ============
-@server(
-    desc: "admin-api service"
-    version: v1
-    group: organization
-	prefix:     /api/v1
-	middleware: AuthMiddleware
-    tags: organization
-)
-service admin-api {
-	@doc "detail"
-	@handler OrganizationDetail
-	get /organization/:id (PathIdRequest) returns (OrganizationEntity)
-
-	@doc "page"
-	@handler OrganizationPage
-	post /organization/page (OrganizationPageRequest) returns (OrganizationPageResponse)
-
-	@doc "lender create"
-	@handler OrganizationCreateLender
-	post /organization/lender (OrganizationCreateLenderRequest) returns (OrganizationEntity)
-
-	@doc "lender update"
-	@handler OrganizationUpdateLender
-	put /organization/lender/:id (OrganizationUpdateLenderRequest) returns (OrganizationEntity)
-
-	@doc "delete"
-	@handler OrganizationDelete
-	delete /organization/:id (PathIdRequest) returns (EmptyResponse)
-
-	@doc "switch status"
-	@handler OrganizationSwitchStatus
-	patch /organization/:id/status (OrganizationSwitchStatusRequest) returns (EmptyResponse)
-}
-
-// ============= organization end =============
 // ============= storage start ============
 @server(
     desc: "storage service"
@@ -326,4 +320,28 @@ service admin-api {
 	post /base_template/preview (BaseTemplatePreviewRequest) returns (BaseTemplatePreviewResponse)
 }
 
-    // ============== base template end ============
+// ============== base template end ============
+// ============== loan service end ============
+@server(
+    desc: "loan service"
+    version: v1
+    prefix:     /api/v1
+    group: loan
+    middleware: AuthMiddleware
+    tags: loan
+)
+service admin-api {
+    @doc "page"
+    @handler LoanPage
+    post /loan/page (LoanPageRequest) returns (LoanPageResponse)
+
+    @doc "detail"
+    @handler LoanDetail
+    get /loan/:id (PathIdRequest) returns (LoanDetailResponse)
+
+    @doc "reassign"
+    @handler LoanReassign
+    patch /loan/:id/reassign (LoanReassignRequest) returns (EmptyResponse)
+}
+
+    // ============== loan service end ============
