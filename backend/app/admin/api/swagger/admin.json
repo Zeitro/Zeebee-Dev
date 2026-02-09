@@ -5518,57 +5518,6 @@
         }
       }
     },
-    "/api/v1/organization/lenders": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "organization"
-        ],
-        "summary": "all lender",
-        "operationId": "organizationOrganizationLenders",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "list": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "required": [
-                      "id",
-                      "name",
-                      "type",
-                      "contact_email"
-                    ],
-                    "properties": {
-                      "contact_email": {
-                        "type": "string"
-                      },
-                      "id": {
-                        "type": "integer"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "type": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v1/organization/page": {
       "post": {
         "consumes": [
@@ -9732,7 +9681,7 @@
       }
     }
   },
-  "x-date": "2026-02-09 15:31:23",
+  "x-date": "2026-02-09 15:44:48",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

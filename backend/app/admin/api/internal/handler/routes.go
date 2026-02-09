@@ -210,12 +210,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: organization.OrganizationUpdateLenderHandler(serverCtx),
 				},
 				{
-					// all lender
-					Method:  http.MethodGet,
-					Path:    "/organization/lenders",
-					Handler: organization.OrganizationLendersHandler(serverCtx),
-				},
-				{
 					// page
 					Method:  http.MethodPost,
 					Path:    "/organization/page",

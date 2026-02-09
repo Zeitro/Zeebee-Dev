@@ -815,7 +815,7 @@ service organization {
   rpc Delete(IdRequest) returns(EmptyResponse);
   rpc SwitchStatus(OrganizationSwitchStatusRequest) returns(EmptyResponse);
   rpc SelectOptions(OrganizationSelectOptionsRequest) returns(OrganizationSelectOptionsResponse);
-  rpc AllLender(EmptyRequest) returns(OrganizationSelectOptionsResponse);
+  //  rpc AllLender(EmptyRequest) returns(OrganizationSelectOptionsResponse);
 }
 // =================== organization service end =================
 

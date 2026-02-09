@@ -13971,7 +13971,7 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x06Delete\x12\x18.admin.RoleDeleteRequest\x1a\x14.admin.EmptyResponse\x12=\n" +
 	"\x06Detail\x12\x18.admin.RoleDetailRequest\x1a\x19.admin.RoleDetailResponse\x12D\n" +
 	"\fUpdateStatus\x12\x1e.admin.RoleUpdateStatusRequest\x1a\x14.admin.EmptyResponse\x124\n" +
-	"\x03All\x12\x15.admin.RoleAllRequest\x1a\x16.admin.RoleAllResponse2\xfc\x04\n" +
+	"\x03All\x12\x15.admin.RoleAllRequest\x1a\x16.admin.RoleAllResponse2\xb0\x04\n" +
 	"\forganization\x12G\n" +
 	"\x04Page\x12\x1e.admin.OrganizationPageRequest\x1a\x1f.admin.OrganizationPageResponse\x12Y\n" +
 	"\fCreateLender\x12&.admin.OrganizationCreateLenderRequest\x1a!.admin.OrganizationDetailResponse\x12Y\n" +
@@ -13979,8 +13979,7 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x06Detail\x12\x10.admin.IdRequest\x1a!.admin.OrganizationDetailResponse\x120\n" +
 	"\x06Delete\x12\x10.admin.IdRequest\x1a\x14.admin.EmptyResponse\x12L\n" +
 	"\fSwitchStatus\x12&.admin.OrganizationSwitchStatusRequest\x1a\x14.admin.EmptyResponse\x12b\n" +
-	"\rSelectOptions\x12'.admin.OrganizationSelectOptionsRequest\x1a(.admin.OrganizationSelectOptionsResponse\x12J\n" +
-	"\tAllLender\x12\x13.admin.EmptyRequest\x1a(.admin.OrganizationSelectOptionsResponse2r\n" +
+	"\rSelectOptions\x12'.admin.OrganizationSelectOptionsRequest\x1a(.admin.OrganizationSelectOptionsResponse2r\n" +
 	"\aStorage\x12g\n" +
 	"\x12CreatePresignedUrl\x12'.admin.StorageCreatePresignedUrlRequest\x1a(.admin.StorageCreatePresignedUrlResponse2\xc1\x01\n" +
 	"\x06common\x125\n" +
@@ -14389,77 +14388,75 @@ var file_app_admin_rpc_pb_admin_proto_depIdxs = []int32{
 	3,   // 177: admin.organization.Delete:input_type -> admin.IdRequest
 	119, // 178: admin.organization.SwitchStatus:input_type -> admin.OrganizationSwitchStatusRequest
 	121, // 179: admin.organization.SelectOptions:input_type -> admin.OrganizationSelectOptionsRequest
-	0,   // 180: admin.organization.AllLender:input_type -> admin.EmptyRequest
-	125, // 181: admin.Storage.CreatePresignedUrl:input_type -> admin.StorageCreatePresignedUrlRequest
-	129, // 182: admin.common.GetOpt:input_type -> admin.OptionRequest
-	0,   // 183: admin.common.GetUsState:input_type -> admin.EmptyRequest
-	133, // 184: admin.common.GetUsCities:input_type -> admin.UsCitiesRequest
-	139, // 185: admin.BaseTemplate.Create:input_type -> admin.CreateBaseTemplateRequest
-	142, // 186: admin.BaseTemplate.Update:input_type -> admin.UpdateBaseTemplateRequest
-	145, // 187: admin.BaseTemplate.Detail:input_type -> admin.GetBaseTemplateRequest
-	147, // 188: admin.BaseTemplate.Page:input_type -> admin.BaseTemplatePageRequest
-	153, // 189: admin.BaseTemplate.SwitchStatus:input_type -> admin.SwitchBaseTemplateStatusRequest
-	155, // 190: admin.BaseTemplate.Delete:input_type -> admin.DeleteBaseTemplateRequest
-	156, // 191: admin.BaseTemplate.Preview:input_type -> admin.BaseTemplatePreviewRequest
-	3,   // 192: admin.BaseTemplate.Reset:input_type -> admin.IdRequest
-	163, // 193: admin.Loan.LoanPage:input_type -> admin.LoanPageRequest
-	3,   // 194: admin.Loan.LoanDetail:input_type -> admin.IdRequest
-	170, // 195: admin.Loan.ReassignLoan:input_type -> admin.ReassignLoanRequest
-	0,   // 196: admin.Loan.LoanLenderCompanies:input_type -> admin.EmptyRequest
-	11,  // 197: admin.User.Login:output_type -> admin.UserLoginResponse
-	15,  // 198: admin.User.RefreshToken:output_type -> admin.RefreshTokenResponse
-	23,  // 199: admin.User.UserInfo:output_type -> admin.UserinfoResponse
-	19,  // 200: admin.User.ResetPassword:output_type -> admin.ResetPasswordResponse
-	23,  // 201: admin.User.EditProfile:output_type -> admin.UserinfoResponse
-	33,  // 202: admin.OrganizationUser.Page:output_type -> admin.OrganizationUserPageResponse
-	36,  // 203: admin.OrganizationUser.Create:output_type -> admin.OrganizationUserCreateResponse
-	39,  // 204: admin.OrganizationUser.Update:output_type -> admin.OrganizationUserUpdateResponse
-	1,   // 205: admin.OrganizationUser.Delete:output_type -> admin.EmptyResponse
-	44,  // 206: admin.OrganizationUser.Detail:output_type -> admin.OrganizationUserDetailResponse
-	1,   // 207: admin.OrganizationUser.SwitchStatus:output_type -> admin.EmptyResponse
-	52,  // 208: admin.api.ApiTree:output_type -> admin.ApiTreeResponse
-	55,  // 209: admin.api.Create:output_type -> admin.ApiCreateResponse
-	55,  // 210: admin.api.Update:output_type -> admin.ApiCreateResponse
-	1,   // 211: admin.api.Delete:output_type -> admin.EmptyResponse
-	55,  // 212: admin.api.Detail:output_type -> admin.ApiCreateResponse
-	66,  // 213: admin.resource.ResourceTree:output_type -> admin.ResourceTreeResponse
-	76,  // 214: admin.resource.Create:output_type -> admin.ResourceDetailResponse
-	76,  // 215: admin.resource.Update:output_type -> admin.ResourceDetailResponse
-	1,   // 216: admin.resource.Delete:output_type -> admin.EmptyResponse
-	76,  // 217: admin.resource.Detail:output_type -> admin.ResourceDetailResponse
-	82,  // 218: admin.role.Page:output_type -> admin.RolePageResponse
-	86,  // 219: admin.role.Create:output_type -> admin.RoleCreateResponse
-	88,  // 220: admin.role.Update:output_type -> admin.RoleUpdateResponse
-	1,   // 221: admin.role.Delete:output_type -> admin.EmptyResponse
-	95,  // 222: admin.role.Detail:output_type -> admin.RoleDetailResponse
-	1,   // 223: admin.role.UpdateStatus:output_type -> admin.EmptyResponse
-	100, // 224: admin.role.All:output_type -> admin.RoleAllResponse
-	110, // 225: admin.organization.Page:output_type -> admin.OrganizationPageResponse
-	118, // 226: admin.organization.CreateLender:output_type -> admin.OrganizationDetailResponse
-	118, // 227: admin.organization.UpdateLender:output_type -> admin.OrganizationDetailResponse
-	118, // 228: admin.organization.Detail:output_type -> admin.OrganizationDetailResponse
-	1,   // 229: admin.organization.Delete:output_type -> admin.EmptyResponse
-	1,   // 230: admin.organization.SwitchStatus:output_type -> admin.EmptyResponse
-	123, // 231: admin.organization.SelectOptions:output_type -> admin.OrganizationSelectOptionsResponse
-	123, // 232: admin.organization.AllLender:output_type -> admin.OrganizationSelectOptionsResponse
-	127, // 233: admin.Storage.CreatePresignedUrl:output_type -> admin.StorageCreatePresignedUrlResponse
-	131, // 234: admin.common.GetOpt:output_type -> admin.OptionResponse
-	2,   // 235: admin.common.GetUsState:output_type -> admin.StringSliceResponse
-	2,   // 236: admin.common.GetUsCities:output_type -> admin.StringSliceResponse
-	141, // 237: admin.BaseTemplate.Create:output_type -> admin.CreateBaseTemplateResponse
-	144, // 238: admin.BaseTemplate.Update:output_type -> admin.UpdateBaseTemplateResponse
-	146, // 239: admin.BaseTemplate.Detail:output_type -> admin.GetBaseTemplateResponse
-	151, // 240: admin.BaseTemplate.Page:output_type -> admin.BaseTemplatePageResponse
-	1,   // 241: admin.BaseTemplate.SwitchStatus:output_type -> admin.EmptyResponse
-	1,   // 242: admin.BaseTemplate.Delete:output_type -> admin.EmptyResponse
-	158, // 243: admin.BaseTemplate.Preview:output_type -> admin.BaseTemplatePreviewResponse
-	1,   // 244: admin.BaseTemplate.Reset:output_type -> admin.EmptyResponse
-	164, // 245: admin.Loan.LoanPage:output_type -> admin.LoanPageResponse
-	169, // 246: admin.Loan.LoanDetail:output_type -> admin.LoanDetailResponse
-	1,   // 247: admin.Loan.ReassignLoan:output_type -> admin.EmptyResponse
-	172, // 248: admin.Loan.LoanLenderCompanies:output_type -> admin.LoanLenderCompaniesResponse
-	197, // [197:249] is the sub-list for method output_type
-	145, // [145:197] is the sub-list for method input_type
+	125, // 180: admin.Storage.CreatePresignedUrl:input_type -> admin.StorageCreatePresignedUrlRequest
+	129, // 181: admin.common.GetOpt:input_type -> admin.OptionRequest
+	0,   // 182: admin.common.GetUsState:input_type -> admin.EmptyRequest
+	133, // 183: admin.common.GetUsCities:input_type -> admin.UsCitiesRequest
+	139, // 184: admin.BaseTemplate.Create:input_type -> admin.CreateBaseTemplateRequest
+	142, // 185: admin.BaseTemplate.Update:input_type -> admin.UpdateBaseTemplateRequest
+	145, // 186: admin.BaseTemplate.Detail:input_type -> admin.GetBaseTemplateRequest
+	147, // 187: admin.BaseTemplate.Page:input_type -> admin.BaseTemplatePageRequest
+	153, // 188: admin.BaseTemplate.SwitchStatus:input_type -> admin.SwitchBaseTemplateStatusRequest
+	155, // 189: admin.BaseTemplate.Delete:input_type -> admin.DeleteBaseTemplateRequest
+	156, // 190: admin.BaseTemplate.Preview:input_type -> admin.BaseTemplatePreviewRequest
+	3,   // 191: admin.BaseTemplate.Reset:input_type -> admin.IdRequest
+	163, // 192: admin.Loan.LoanPage:input_type -> admin.LoanPageRequest
+	3,   // 193: admin.Loan.LoanDetail:input_type -> admin.IdRequest
+	170, // 194: admin.Loan.ReassignLoan:input_type -> admin.ReassignLoanRequest
+	0,   // 195: admin.Loan.LoanLenderCompanies:input_type -> admin.EmptyRequest
+	11,  // 196: admin.User.Login:output_type -> admin.UserLoginResponse
+	15,  // 197: admin.User.RefreshToken:output_type -> admin.RefreshTokenResponse
+	23,  // 198: admin.User.UserInfo:output_type -> admin.UserinfoResponse
+	19,  // 199: admin.User.ResetPassword:output_type -> admin.ResetPasswordResponse
+	23,  // 200: admin.User.EditProfile:output_type -> admin.UserinfoResponse
+	33,  // 201: admin.OrganizationUser.Page:output_type -> admin.OrganizationUserPageResponse
+	36,  // 202: admin.OrganizationUser.Create:output_type -> admin.OrganizationUserCreateResponse
+	39,  // 203: admin.OrganizationUser.Update:output_type -> admin.OrganizationUserUpdateResponse
+	1,   // 204: admin.OrganizationUser.Delete:output_type -> admin.EmptyResponse
+	44,  // 205: admin.OrganizationUser.Detail:output_type -> admin.OrganizationUserDetailResponse
+	1,   // 206: admin.OrganizationUser.SwitchStatus:output_type -> admin.EmptyResponse
+	52,  // 207: admin.api.ApiTree:output_type -> admin.ApiTreeResponse
+	55,  // 208: admin.api.Create:output_type -> admin.ApiCreateResponse
+	55,  // 209: admin.api.Update:output_type -> admin.ApiCreateResponse
+	1,   // 210: admin.api.Delete:output_type -> admin.EmptyResponse
+	55,  // 211: admin.api.Detail:output_type -> admin.ApiCreateResponse
+	66,  // 212: admin.resource.ResourceTree:output_type -> admin.ResourceTreeResponse
+	76,  // 213: admin.resource.Create:output_type -> admin.ResourceDetailResponse
+	76,  // 214: admin.resource.Update:output_type -> admin.ResourceDetailResponse
+	1,   // 215: admin.resource.Delete:output_type -> admin.EmptyResponse
+	76,  // 216: admin.resource.Detail:output_type -> admin.ResourceDetailResponse
+	82,  // 217: admin.role.Page:output_type -> admin.RolePageResponse
+	86,  // 218: admin.role.Create:output_type -> admin.RoleCreateResponse
+	88,  // 219: admin.role.Update:output_type -> admin.RoleUpdateResponse
+	1,   // 220: admin.role.Delete:output_type -> admin.EmptyResponse
+	95,  // 221: admin.role.Detail:output_type -> admin.RoleDetailResponse
+	1,   // 222: admin.role.UpdateStatus:output_type -> admin.EmptyResponse
+	100, // 223: admin.role.All:output_type -> admin.RoleAllResponse
+	110, // 224: admin.organization.Page:output_type -> admin.OrganizationPageResponse
+	118, // 225: admin.organization.CreateLender:output_type -> admin.OrganizationDetailResponse
+	118, // 226: admin.organization.UpdateLender:output_type -> admin.OrganizationDetailResponse
+	118, // 227: admin.organization.Detail:output_type -> admin.OrganizationDetailResponse
+	1,   // 228: admin.organization.Delete:output_type -> admin.EmptyResponse
+	1,   // 229: admin.organization.SwitchStatus:output_type -> admin.EmptyResponse
+	123, // 230: admin.organization.SelectOptions:output_type -> admin.OrganizationSelectOptionsResponse
+	127, // 231: admin.Storage.CreatePresignedUrl:output_type -> admin.StorageCreatePresignedUrlResponse
+	131, // 232: admin.common.GetOpt:output_type -> admin.OptionResponse
+	2,   // 233: admin.common.GetUsState:output_type -> admin.StringSliceResponse
+	2,   // 234: admin.common.GetUsCities:output_type -> admin.StringSliceResponse
+	141, // 235: admin.BaseTemplate.Create:output_type -> admin.CreateBaseTemplateResponse
+	144, // 236: admin.BaseTemplate.Update:output_type -> admin.UpdateBaseTemplateResponse
+	146, // 237: admin.BaseTemplate.Detail:output_type -> admin.GetBaseTemplateResponse
+	151, // 238: admin.BaseTemplate.Page:output_type -> admin.BaseTemplatePageResponse
+	1,   // 239: admin.BaseTemplate.SwitchStatus:output_type -> admin.EmptyResponse
+	1,   // 240: admin.BaseTemplate.Delete:output_type -> admin.EmptyResponse
+	158, // 241: admin.BaseTemplate.Preview:output_type -> admin.BaseTemplatePreviewResponse
+	1,   // 242: admin.BaseTemplate.Reset:output_type -> admin.EmptyResponse
+	164, // 243: admin.Loan.LoanPage:output_type -> admin.LoanPageResponse
+	169, // 244: admin.Loan.LoanDetail:output_type -> admin.LoanDetailResponse
+	1,   // 245: admin.Loan.ReassignLoan:output_type -> admin.EmptyResponse
+	172, // 246: admin.Loan.LoanLenderCompanies:output_type -> admin.LoanLenderCompaniesResponse
+	196, // [196:247] is the sub-list for method output_type
+	145, // [145:196] is the sub-list for method input_type
 	145, // [145:145] is the sub-list for extension type_name
 	145, // [145:145] is the sub-list for extension extendee
 	0,   // [0:145] is the sub-list for field type_name

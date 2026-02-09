@@ -211,7 +211,6 @@ type (
 		Delete(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		SwitchStatus(ctx context.Context, in *OrganizationSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		SelectOptions(ctx context.Context, in *OrganizationSelectOptionsRequest, opts ...grpc.CallOption) (*OrganizationSelectOptionsResponse, error)
-		AllLender(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationSelectOptionsResponse, error)
 	}
 
 	defaultOrganization struct {
@@ -258,9 +257,4 @@ func (m *defaultOrganization) SwitchStatus(ctx context.Context, in *Organization
 func (m *defaultOrganization) SelectOptions(ctx context.Context, in *OrganizationSelectOptionsRequest, opts ...grpc.CallOption) (*OrganizationSelectOptionsResponse, error) {
 	client := admin.NewOrganizationClient(m.cli.Conn())
 	return client.SelectOptions(ctx, in, opts...)
-}
-
-func (m *defaultOrganization) AllLender(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationSelectOptionsResponse, error) {
-	client := admin.NewOrganizationClient(m.cli.Conn())
-	return client.AllLender(ctx, in, opts...)
 }

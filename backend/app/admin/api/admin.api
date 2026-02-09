@@ -118,10 +118,9 @@ service admin-api {
 	@doc "select option"
 	@handler OrganizationSelectOption
 	get /organization/select_options (OrganizationSelectOptionRequest) returns (OrganizationOptionResponse)
-
-	@doc "all lender"
-	@handler OrganizationLenders
-	get /organization/lenders (EmptyRequest) returns (OrganizationOptionResponse)
+	// @doc "all lender"
+	// @handler OrganizationLenders
+	// get /organization/lenders (EmptyRequest) returns (OrganizationOptionResponse)
 }
 
 // ============= organization service end ============
