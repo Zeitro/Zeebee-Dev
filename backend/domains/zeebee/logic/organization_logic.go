@@ -115,9 +115,24 @@ func (l *OrganizationLogic) Delete(ctx context.Context, id int64) (err error) {
 		if innerErr != nil {
 			return innerErr
 		}
-		_, innerErr = l.repos.OrganizationRepo.DeleteByIDWithTx(ctx, tx, id)
 
-		return innerErr
+		// delete organization template
+		innerErr = l.repos.OrganizationTemplateRepo.DeleteByOrganizationIdWithTx(ctx, tx, organization.Id)
+		if innerErr != nil {
+			return innerErr
+		}
+		// delete organization setting
+		innerErr = l.repos.OrganizationSettingRepo.DeleteByOrganizationIdWithTx(ctx, tx, organization.Id)
+		if innerErr != nil {
+			return innerErr
+		}
+
+		// delete organization
+		_, innerErr = l.repos.OrganizationRepo.DeleteByIDWithTx(ctx, tx, id)
+		if innerErr != nil {
+			return innerErr
+		}
+		return nil
 
 	})
 	if err != nil {
