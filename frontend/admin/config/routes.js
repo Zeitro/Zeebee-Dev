@@ -5,6 +5,11 @@ export const navRouter = [
 		hideCrumbs: true,
 	},
 	{
+		path: '/loans',
+		title: 'All Loans',
+		icon: 'business',
+	},
+	{
 		path: '/lenders',
 		title: 'Lenders',
 		icon: 'business',
