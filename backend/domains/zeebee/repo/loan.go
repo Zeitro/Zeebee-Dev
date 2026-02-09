@@ -330,7 +330,7 @@ func (repo *LoanRepo) PageForAdmin(ctx context.Context, pageReq dto.LoanAdminPag
 	loanTable := model.Loan{}.TableName()
 	loanPropertyTable := model.LoanProperty{}.TableName()
 	applicantTable := model.LoanApplicant{}.TableName()
-	organizationTable := model.Organization{}.TableName()
+	// organizationTable := model.Organization{}.TableName()
 	loanPropertyRepo := NewLoanPropertyRepo(repo.BaseRepo.GetDB())
 	applicantRepo := NewLoanApplicantRepo(repo.BaseRepo.GetDB())
 
@@ -368,9 +368,10 @@ func (repo *LoanRepo) PageForAdmin(ctx context.Context, pageReq dto.LoanAdminPag
 		case "code":
 			query = query.Where(fmt.Sprintf("%s.code like ?", loanTable), "%"+filter.Keyword+"%")
 		case "lender_organization_name":
-			query = query.Joins(fmt.Sprintf("left join %s on %s.lender_organization_id = %s.id", organizationTable, loanTable, organizationTable)).
-				Where(fmt.Sprintf("%s.name like ?", organizationTable), "%"+filter.Keyword+"%").
-				Where(fmt.Sprintf("%s.type = ?", organizationTable), constants.UserTypeLender)
+			// query = query.Joins(fmt.Sprintf("left join %s on %s.lender_organization_id = %s.id", organizationTable, loanTable, organizationTable)).
+			// 	Where(fmt.Sprintf("%s.name like ?", organizationTable), "%"+filter.Keyword+"%").
+			// 	Where(fmt.Sprintf("%s.type = ?", organizationTable), constants.UserTypeLender)
+			query = query.Where(fmt.Sprintf("%s.lender_company like ?", loanTable), "%"+filter.Keyword+"%")
 		case "address":
 			hasJoinProperty = true
 			query = query.Joins(fmt.Sprintf("left join %s on %s.id = %s.loan_id", loanPropertyTable, loanTable, loanPropertyTable)).
@@ -470,6 +471,7 @@ func (repo *LoanRepo) GetLenderCompanyForBorrower(ctx context.Context, creatorId
 func (repo *LoanRepo) GetLenderCompanyForAdmin(ctx context.Context) (result []string, err error) {
 	query := repo.BaseRepo.Client(ctx).
 		Select("lender_company").
+		Where("source in ?", []constants.LoanSource{constants.LoanSourceSystem, constants.LoanSourcePreapproval}).
 		Distinct("lender_company").
 		Order("lender_company asc")
 	err = query.Pluck("lender_company", &result).
