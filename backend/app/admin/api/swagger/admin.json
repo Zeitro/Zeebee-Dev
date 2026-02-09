@@ -2490,6 +2490,37 @@
         }
       }
     },
+    "/api/v1/loan/lender_companies": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "loan"
+        ],
+        "summary": "lender companies list",
+        "operationId": "loanLenderCompanies",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "lender_companies": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/loan/page": {
       "post": {
         "consumes": [
@@ -9701,7 +9732,7 @@
       }
     }
   },
-  "x-date": "2026-02-09 14:33:28",
+  "x-date": "2026-02-09 15:31:23",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

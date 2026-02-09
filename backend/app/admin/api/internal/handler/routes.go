@@ -159,6 +159,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: loan.LoanReassignHandler(serverCtx),
 				},
 				{
+					// lender companies list
+					Method:  http.MethodGet,
+					Path:    "/loan/lender_companies",
+					Handler: loan.LenderCompaniesHandler(serverCtx),
+				},
+				{
 					// page
 					Method:  http.MethodPost,
 					Path:    "/loan/page",

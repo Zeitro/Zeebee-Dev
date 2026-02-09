@@ -37,3 +37,8 @@ func (s *LoanServer) ReassignLoan(ctx context.Context, in *admin.ReassignLoanReq
 	l := loanlogic.NewReassignLoanLogic(ctx, s.svcCtx)
 	return l.ReassignLoan(in)
 }
+
+func (s *LoanServer) LoanLenderCompanies(ctx context.Context, in *admin.EmptyRequest) (*admin.LoanLenderCompaniesResponse, error) {
+	l := loanlogic.NewLoanLenderCompaniesLogic(ctx, s.svcCtx)
+	return l.LoanLenderCompanies(in)
+}

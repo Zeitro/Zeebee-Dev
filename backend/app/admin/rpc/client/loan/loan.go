@@ -66,6 +66,7 @@ type (
 	LoanEntity                                 = admin.LoanEntity
 	LoanExperienceEntity                       = admin.LoanExperienceEntity
 	LoanExtendValueEntity                      = admin.LoanExtendValueEntity
+	LoanLenderCompaniesResponse                = admin.LoanLenderCompaniesResponse
 	LoanPageRequest                            = admin.LoanPageRequest
 	LoanPageRequestData                        = admin.LoanPageRequestData
 	LoanPageRequestFilter                      = admin.LoanPageRequestFilter
@@ -206,6 +207,7 @@ type (
 		LoanPage(ctx context.Context, in *LoanPageRequest, opts ...grpc.CallOption) (*LoanPageResponse, error)
 		LoanDetail(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*LoanDetailResponse, error)
 		ReassignLoan(ctx context.Context, in *ReassignLoanRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+		LoanLenderCompanies(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*LoanLenderCompaniesResponse, error)
 	}
 
 	defaultLoan struct {
@@ -232,4 +234,9 @@ func (m *defaultLoan) LoanDetail(ctx context.Context, in *IdRequest, opts ...grp
 func (m *defaultLoan) ReassignLoan(ctx context.Context, in *ReassignLoanRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	client := admin.NewLoanClient(m.cli.Conn())
 	return client.ReassignLoan(ctx, in, opts...)
+}
+
+func (m *defaultLoan) LoanLenderCompanies(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*LoanLenderCompaniesResponse, error) {
+	client := admin.NewLoanClient(m.cli.Conn())
+	return client.LoanLenderCompanies(ctx, in, opts...)
 }

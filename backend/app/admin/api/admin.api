@@ -346,6 +346,10 @@ service admin-api {
 	@doc "reassign"
 	@handler LoanReassign
 	post /loan/:id/reassign (LoanReassignRequest) returns (EmptyResponse)
+
+	@doc "lender companies list"
+	@handler LenderCompanies
+	get /loan/lender_companies (EmptyRequest) returns (LoanLenderCompanyResponse)
 }
 
 	// ============== loan service end ============

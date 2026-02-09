@@ -66,6 +66,7 @@ type (
 	LoanEntity                                 = admin.LoanEntity
 	LoanExperienceEntity                       = admin.LoanExperienceEntity
 	LoanExtendValueEntity                      = admin.LoanExtendValueEntity
+	LoanLenderCompaniesResponse                = admin.LoanLenderCompaniesResponse
 	LoanPageRequest                            = admin.LoanPageRequest
 	LoanPageRequestData                        = admin.LoanPageRequestData
 	LoanPageRequestFilter                      = admin.LoanPageRequestFilter

@@ -455,11 +455,23 @@ func (repo *LoanRepo) GetLenderCompanyForBorrower(ctx context.Context, creatorId
 	query := repo.BaseRepo.Client(ctx).
 		Select("lender_company").
 		Where("borrower_organization_id = ?", organizationId).
-		Distinct("lender_company")
+		Distinct("lender_company").
+		Order("lender_company asc")
 
 	if creatorId > 0 {
 		query = query.Where("creator_id = ?", creatorId)
 	}
+	err = query.Pluck("lender_company", &result).
+		Error
+	return result, errorx.WithStack(err)
+}
+
+// GetLenderCompanyForAdmin get lender company for admin
+func (repo *LoanRepo) GetLenderCompanyForAdmin(ctx context.Context) (result []string, err error) {
+	query := repo.BaseRepo.Client(ctx).
+		Select("lender_company").
+		Distinct("lender_company").
+		Order("lender_company asc")
 	err = query.Pluck("lender_company", &result).
 		Error
 	return result, errorx.WithStack(err)

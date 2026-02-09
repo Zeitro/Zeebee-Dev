@@ -7,6 +7,10 @@ type LoanDetailResponse struct {
 	LoanEntity
 }
 
+type LoanLenderCompanyResponse struct {
+	LenderCompanies []string `json:"lender_companies"`
+}
+
 type LoanPageRequest struct {
 	Page   int64          `json:"page,optional"`
 	Limit  int64          `json:"limit,optional"`

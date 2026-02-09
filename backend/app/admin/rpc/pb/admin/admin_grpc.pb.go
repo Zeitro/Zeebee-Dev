@@ -2421,9 +2421,10 @@ var BaseTemplate_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	Loan_LoanPage_FullMethodName     = "/admin.Loan/LoanPage"
-	Loan_LoanDetail_FullMethodName   = "/admin.Loan/LoanDetail"
-	Loan_ReassignLoan_FullMethodName = "/admin.Loan/ReassignLoan"
+	Loan_LoanPage_FullMethodName            = "/admin.Loan/LoanPage"
+	Loan_LoanDetail_FullMethodName          = "/admin.Loan/LoanDetail"
+	Loan_ReassignLoan_FullMethodName        = "/admin.Loan/ReassignLoan"
+	Loan_LoanLenderCompanies_FullMethodName = "/admin.Loan/LoanLenderCompanies"
 )
 
 // LoanClient is the client API for Loan service.
@@ -2433,6 +2434,7 @@ type LoanClient interface {
 	LoanPage(ctx context.Context, in *LoanPageRequest, opts ...grpc.CallOption) (*LoanPageResponse, error)
 	LoanDetail(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*LoanDetailResponse, error)
 	ReassignLoan(ctx context.Context, in *ReassignLoanRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	LoanLenderCompanies(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*LoanLenderCompaniesResponse, error)
 }
 
 type loanClient struct {
@@ -2473,6 +2475,16 @@ func (c *loanClient) ReassignLoan(ctx context.Context, in *ReassignLoanRequest, 
 	return out, nil
 }
 
+func (c *loanClient) LoanLenderCompanies(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*LoanLenderCompaniesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LoanLenderCompaniesResponse)
+	err := c.cc.Invoke(ctx, Loan_LoanLenderCompanies_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // LoanServer is the server API for Loan service.
 // All implementations must embed UnimplementedLoanServer
 // for forward compatibility.
@@ -2480,6 +2492,7 @@ type LoanServer interface {
 	LoanPage(context.Context, *LoanPageRequest) (*LoanPageResponse, error)
 	LoanDetail(context.Context, *IdRequest) (*LoanDetailResponse, error)
 	ReassignLoan(context.Context, *ReassignLoanRequest) (*EmptyResponse, error)
+	LoanLenderCompanies(context.Context, *EmptyRequest) (*LoanLenderCompaniesResponse, error)
 	mustEmbedUnimplementedLoanServer()
 }
 
@@ -2498,6 +2511,9 @@ func (UnimplementedLoanServer) LoanDetail(context.Context, *IdRequest) (*LoanDet
 }
 func (UnimplementedLoanServer) ReassignLoan(context.Context, *ReassignLoanRequest) (*EmptyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReassignLoan not implemented")
+}
+func (UnimplementedLoanServer) LoanLenderCompanies(context.Context, *EmptyRequest) (*LoanLenderCompaniesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LoanLenderCompanies not implemented")
 }
 func (UnimplementedLoanServer) mustEmbedUnimplementedLoanServer() {}
 func (UnimplementedLoanServer) testEmbeddedByValue()              {}
@@ -2574,6 +2590,24 @@ func _Loan_ReassignLoan_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Loan_LoanLenderCompanies_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanServer).LoanLenderCompanies(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Loan_LoanLenderCompanies_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanServer).LoanLenderCompanies(ctx, req.(*EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Loan_ServiceDesc is the grpc.ServiceDesc for Loan service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -2592,6 +2626,10 @@ var Loan_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ReassignLoan",
 			Handler:    _Loan_ReassignLoan_Handler,
+		},
+		{
+			MethodName: "LoanLenderCompanies",
+			Handler:    _Loan_LoanLenderCompanies_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -115,6 +115,13 @@ type (
     }
 )
 
+// loan lender companies
+type (
+    LoanLenderCompanyResponse {
+        LenderCompanies []string `json:"lender_companies"`
+    }
+)
+
 
 type (
     // reassign --- request

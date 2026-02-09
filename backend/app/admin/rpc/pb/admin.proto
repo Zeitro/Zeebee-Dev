@@ -1181,11 +1181,17 @@ message ReassignLoanRequestData {
   int64 lender_organization_id = 2;
 }
 
+// loan lender companies ---- response
+message LoanLenderCompaniesResponse {
+  repeated string data = 1;
+}
+
 
 service Loan {
   rpc LoanPage(LoanPageRequest) returns(LoanPageResponse);
   rpc LoanDetail(IdRequest) returns(LoanDetailResponse);
   rpc ReassignLoan(ReassignLoanRequest) returns(EmptyResponse);
+  rpc LoanLenderCompanies(EmptyRequest) returns(LoanLenderCompaniesResponse);
 }
 
 // =========================== loan service end =================
