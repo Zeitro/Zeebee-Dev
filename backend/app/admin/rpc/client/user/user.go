@@ -87,6 +87,7 @@ type (
 	OrganizationEntity                         = admin.OrganizationEntity
 	OrganizationLenderMetadataEntity           = admin.OrganizationLenderMetadataEntity
 	OrganizationMetadataEntity                 = admin.OrganizationMetadataEntity
+	OrganizationOptionsEntity                  = admin.OrganizationOptionsEntity
 	OrganizationPageEntity                     = admin.OrganizationPageEntity
 	OrganizationPageRequest                    = admin.OrganizationPageRequest
 	OrganizationPageRequestData                = admin.OrganizationPageRequestData
@@ -94,7 +95,6 @@ type (
 	OrganizationPageRequestSorter              = admin.OrganizationPageRequestSorter
 	OrganizationPageResponse                   = admin.OrganizationPageResponse
 	OrganizationPageResponseData               = admin.OrganizationPageResponseData
-	OrganizationSelectOptionEntity             = admin.OrganizationSelectOptionEntity
 	OrganizationSelectOptionsRequest           = admin.OrganizationSelectOptionsRequest
 	OrganizationSelectOptionsRequestData       = admin.OrganizationSelectOptionsRequestData
 	OrganizationSelectOptionsResponse          = admin.OrganizationSelectOptionsResponse

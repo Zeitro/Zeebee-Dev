@@ -53,9 +53,10 @@ type OrganizationPageEntityBo struct {
 }
 
 type OrganizationOptionBo struct {
-	Id   int64              `json:"id"`
-	Name string             `json:"name"`
-	Type constants.UserType `json:"type"`
+	Id           int64              `json:"id"`
+	Name         string             `json:"name"`
+	Type         constants.UserType `json:"type"`
+	ContactEmail string             `json:"contact_email"`
 }
 
 type OrganizationMetadata struct {

@@ -28,8 +28,8 @@ type OrganizationEntity struct {
 	Owner              *UserEntity                 `json:"owner"`
 }
 
-type OrganizationOptResponse struct {
-	Options []*OrganizationSelectOptionEntity `json:"options"`
+type OrganizationOptionResponse struct {
+	List []*OrganizationOptionEntity `json:"list"`
 }
 
 type OrganizationPageRequest struct {

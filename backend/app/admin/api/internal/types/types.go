@@ -462,6 +462,13 @@ type OrganizationMetadataEntity struct {
 	Lender *OrganizationLenderMetadataEntity `json:"lender,omitempty"`
 }
 
+type OrganizationOptionEntity struct {
+	Id           int64  `json:"id"`
+	Name         string `json:"name"`
+	Type         string `json:"type"`
+	ContactEmail string `json:"contact_email"`
+}
+
 type OrganizationPageEntity struct {
 	Id             int64  `json:"id"`
 	Name           string `json:"name"`
@@ -491,12 +498,6 @@ type OrganizationPageFilter struct {
 type OrganizationPageRequestFilter struct {
 	Name   string `json:"name,optional"`
 	Status string
-}
-
-type OrganizationSelectOptionEntity struct {
-	Id   int64  `json:"id"`
-	Name string `json:"name"`
-	Type string `json:"type"`
 }
 
 type OrganizationUserEntity struct {

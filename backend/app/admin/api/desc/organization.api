@@ -152,13 +152,14 @@ type (
         Type string `form:"type" validate:"required,oneof=Lender Borrower"`
     }
         // select option -- response
-    OrganizationOptResponse {
-        Options []*OrganizationSelectOptionEntity `json:"options"`
+    OrganizationOptionResponse {
+        List []*OrganizationOptionEntity `json:"list"`
     }
 
-    OrganizationSelectOptionEntity {
+    OrganizationOptionEntity {
         Id int64 `json:"id"`
         Name string `json:"name"`
         Type string `json:"type"`
+        ContactEmail string `json:"contact_email"`
     }
 )

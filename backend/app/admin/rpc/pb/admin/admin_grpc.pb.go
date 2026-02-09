@@ -1412,6 +1412,7 @@ const (
 	Organization_Delete_FullMethodName        = "/admin.organization/Delete"
 	Organization_SwitchStatus_FullMethodName  = "/admin.organization/SwitchStatus"
 	Organization_SelectOptions_FullMethodName = "/admin.organization/SelectOptions"
+	Organization_AllLender_FullMethodName     = "/admin.organization/AllLender"
 )
 
 // OrganizationClient is the client API for Organization service.
@@ -1425,6 +1426,7 @@ type OrganizationClient interface {
 	Delete(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	SwitchStatus(ctx context.Context, in *OrganizationSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	SelectOptions(ctx context.Context, in *OrganizationSelectOptionsRequest, opts ...grpc.CallOption) (*OrganizationSelectOptionsResponse, error)
+	AllLender(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationSelectOptionsResponse, error)
 }
 
 type organizationClient struct {
@@ -1505,6 +1507,16 @@ func (c *organizationClient) SelectOptions(ctx context.Context, in *Organization
 	return out, nil
 }
 
+func (c *organizationClient) AllLender(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationSelectOptionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OrganizationSelectOptionsResponse)
+	err := c.cc.Invoke(ctx, Organization_AllLender_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OrganizationServer is the server API for Organization service.
 // All implementations must embed UnimplementedOrganizationServer
 // for forward compatibility.
@@ -1516,6 +1528,7 @@ type OrganizationServer interface {
 	Delete(context.Context, *IdRequest) (*EmptyResponse, error)
 	SwitchStatus(context.Context, *OrganizationSwitchStatusRequest) (*EmptyResponse, error)
 	SelectOptions(context.Context, *OrganizationSelectOptionsRequest) (*OrganizationSelectOptionsResponse, error)
+	AllLender(context.Context, *EmptyRequest) (*OrganizationSelectOptionsResponse, error)
 	mustEmbedUnimplementedOrganizationServer()
 }
 
@@ -1546,6 +1559,9 @@ func (UnimplementedOrganizationServer) SwitchStatus(context.Context, *Organizati
 }
 func (UnimplementedOrganizationServer) SelectOptions(context.Context, *OrganizationSelectOptionsRequest) (*OrganizationSelectOptionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SelectOptions not implemented")
+}
+func (UnimplementedOrganizationServer) AllLender(context.Context, *EmptyRequest) (*OrganizationSelectOptionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AllLender not implemented")
 }
 func (UnimplementedOrganizationServer) mustEmbedUnimplementedOrganizationServer() {}
 func (UnimplementedOrganizationServer) testEmbeddedByValue()                      {}
@@ -1694,6 +1710,24 @@ func _Organization_SelectOptions_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Organization_AllLender_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServer).AllLender(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Organization_AllLender_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServer).AllLender(ctx, req.(*EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Organization_ServiceDesc is the grpc.ServiceDesc for Organization service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1728,6 +1762,10 @@ var Organization_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SelectOptions",
 			Handler:    _Organization_SelectOptions_Handler,
+		},
+		{
+			MethodName: "AllLender",
+			Handler:    _Organization_AllLender_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -6734,6 +6734,7 @@
                     "required": [
                       "id",
                       "name",
+                      "type",
                       "contact_email"
                     ],
                     "properties": {
@@ -6744,6 +6745,9 @@
                         "type": "integer"
                       },
                       "name": {
+                        "type": "string"
+                      },
+                      "type": {
                         "type": "string"
                       }
                     }
@@ -14067,7 +14071,7 @@
       }
     }
   },
-  "x-date": "2026-02-09 11:01:07",
+  "x-date": "2026-02-09 14:33:38",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

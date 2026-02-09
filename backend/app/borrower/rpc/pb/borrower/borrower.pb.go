@@ -17142,6 +17142,7 @@ type OrganizationOptionsEntity struct {
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	ContactEmail  string                 `protobuf:"bytes,3,opt,name=contact_email,json=contactEmail,proto3" json:"contact_email,omitempty"`
+	Type          string                 `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -17193,6 +17194,13 @@ func (x *OrganizationOptionsEntity) GetName() string {
 func (x *OrganizationOptionsEntity) GetContactEmail() string {
 	if x != nil {
 		return x.ContactEmail
+	}
+	return ""
+}
+
+func (x *OrganizationOptionsEntity) GetType() string {
+	if x != nil {
+		return x.Type
 	}
 	return ""
 }
@@ -20440,11 +20448,12 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x11loan_amount_range\x18\x01 \x01(\v2\x14.borrower.RangeFloatR\x0floanAmountRange\x12<\n" +
 	"\x0floan_term_range\x18\x02 \x01(\v2\x14.borrower.RangeInt32R\rloanTermRange\x12<\n" +
 	"\x0floan_tate_range\x18\x03 \x01(\v2\x14.borrower.RangeFloatR\rloanTateRange\x12>\n" +
-	"\x10loan_point_range\x18\x04 \x01(\v2\x14.borrower.RangeFloatR\x0eloanPointRange\"d\n" +
+	"\x10loan_point_range\x18\x04 \x01(\v2\x14.borrower.RangeFloatR\x0eloanPointRange\"x\n" +
 	"\x19OrganizationOptionsEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12#\n" +
-	"\rcontact_email\x18\x03 \x01(\tR\fcontactEmail\"L\n" +
+	"\rcontact_email\x18\x03 \x01(\tR\fcontactEmail\x12\x12\n" +
+	"\x04type\x18\x04 \x01(\tR\x04type\"L\n" +
 	"\x18OrganizationInfoResponse\x120\n" +
 	"\x04data\x18\x01 \x01(\v2\x1c.borrower.OrganizationEntityR\x04data\"X\n" +
 	"\x1dOrganizationAllLenderResponse\x127\n" +

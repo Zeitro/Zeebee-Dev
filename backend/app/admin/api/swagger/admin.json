@@ -5487,6 +5487,57 @@
         }
       }
     },
+    "/api/v1/organization/lenders": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization"
+        ],
+        "summary": "all lender",
+        "operationId": "organizationOrganizationLenders",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "list": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "type",
+                      "contact_email"
+                    ],
+                    "properties": {
+                      "contact_email": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/organization/page": {
       "post": {
         "consumes": [
@@ -5681,16 +5732,20 @@
             "schema": {
               "type": "object",
               "properties": {
-                "options": {
+                "list": {
                   "type": "array",
                   "items": {
                     "type": "object",
                     "required": [
                       "id",
                       "name",
-                      "type"
+                      "type",
+                      "contact_email"
                     ],
                     "properties": {
+                      "contact_email": {
+                        "type": "string"
+                      },
                       "id": {
                         "type": "integer"
                       },
@@ -9646,7 +9701,7 @@
       }
     }
   },
-  "x-date": "2026-02-09 14:07:54",
+  "x-date": "2026-02-09 14:33:28",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

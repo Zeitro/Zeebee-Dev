@@ -57,3 +57,8 @@ func (s *OrganizationServer) SelectOptions(ctx context.Context, in *admin.Organi
 	l := organizationlogic.NewSelectOptionsLogic(ctx, s.svcCtx)
 	return l.SelectOptions(in)
 }
+
+func (s *OrganizationServer) AllLender(ctx context.Context, in *admin.EmptyRequest) (*admin.OrganizationSelectOptionsResponse, error) {
+	l := organizationlogic.NewAllLenderLogic(ctx, s.svcCtx)
+	return l.AllLender(in)
+}

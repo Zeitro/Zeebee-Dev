@@ -6562,29 +6562,30 @@ func (x *OrganizationLenderMetadataEntity) GetLoanPointRange() *RangeFloat {
 	return nil
 }
 
-type OrganizationSelectOptionEntity struct {
+type OrganizationOptionsEntity struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Type          string                 `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
+	ContactEmail  string                 `protobuf:"bytes,3,opt,name=contact_email,json=contactEmail,proto3" json:"contact_email,omitempty"`
+	Type          string                 `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *OrganizationSelectOptionEntity) Reset() {
-	*x = OrganizationSelectOptionEntity{}
+func (x *OrganizationOptionsEntity) Reset() {
+	*x = OrganizationOptionsEntity{}
 	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[105]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *OrganizationSelectOptionEntity) String() string {
+func (x *OrganizationOptionsEntity) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*OrganizationSelectOptionEntity) ProtoMessage() {}
+func (*OrganizationOptionsEntity) ProtoMessage() {}
 
-func (x *OrganizationSelectOptionEntity) ProtoReflect() protoreflect.Message {
+func (x *OrganizationOptionsEntity) ProtoReflect() protoreflect.Message {
 	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[105]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -6596,26 +6597,33 @@ func (x *OrganizationSelectOptionEntity) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use OrganizationSelectOptionEntity.ProtoReflect.Descriptor instead.
-func (*OrganizationSelectOptionEntity) Descriptor() ([]byte, []int) {
+// Deprecated: Use OrganizationOptionsEntity.ProtoReflect.Descriptor instead.
+func (*OrganizationOptionsEntity) Descriptor() ([]byte, []int) {
 	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{105}
 }
 
-func (x *OrganizationSelectOptionEntity) GetId() int64 {
+func (x *OrganizationOptionsEntity) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *OrganizationSelectOptionEntity) GetName() string {
+func (x *OrganizationOptionsEntity) GetName() string {
 	if x != nil {
 		return x.Name
 	}
 	return ""
 }
 
-func (x *OrganizationSelectOptionEntity) GetType() string {
+func (x *OrganizationOptionsEntity) GetContactEmail() string {
+	if x != nil {
+		return x.ContactEmail
+	}
+	return ""
+}
+
+func (x *OrganizationOptionsEntity) GetType() string {
 	if x != nil {
 		return x.Type
 	}
@@ -7627,8 +7635,8 @@ func (x *OrganizationSelectOptionsRequestData) GetType() string {
 
 // select options -- response
 type OrganizationSelectOptionsResponse struct {
-	state         protoimpl.MessageState            `protogen:"open.v1"`
-	Data          []*OrganizationSelectOptionEntity `protobuf:"bytes,1,rep,name=data,proto3" json:"data,omitempty"`
+	state         protoimpl.MessageState       `protogen:"open.v1"`
+	Data          []*OrganizationOptionsEntity `protobuf:"bytes,1,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -7663,7 +7671,7 @@ func (*OrganizationSelectOptionsResponse) Descriptor() ([]byte, []int) {
 	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{123}
 }
 
-func (x *OrganizationSelectOptionsResponse) GetData() []*OrganizationSelectOptionEntity {
+func (x *OrganizationSelectOptionsResponse) GetData() []*OrganizationOptionsEntity {
 	if x != nil {
 		return x.Data
 	}
@@ -13337,11 +13345,12 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x11loan_amount_range\x18\x01 \x01(\v2\x11.admin.RangeFloatR\x0floanAmountRange\x129\n" +
 	"\x0floan_term_range\x18\x02 \x01(\v2\x11.admin.RangeInt32R\rloanTermRange\x129\n" +
 	"\x0floan_rate_range\x18\x03 \x01(\v2\x11.admin.RangeFloatR\rloanRateRange\x12;\n" +
-	"\x10loan_point_range\x18\x04 \x01(\v2\x11.admin.RangeFloatR\x0eloanPointRange\"X\n" +
-	"\x1eOrganizationSelectOptionEntity\x12\x0e\n" +
+	"\x10loan_point_range\x18\x04 \x01(\v2\x11.admin.RangeFloatR\x0eloanPointRange\"x\n" +
+	"\x19OrganizationOptionsEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
-	"\x04type\x18\x03 \x01(\tR\x04type\"Q\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12#\n" +
+	"\rcontact_email\x18\x03 \x01(\tR\fcontactEmail\x12\x12\n" +
+	"\x04type\x18\x04 \x01(\tR\x04type\"Q\n" +
 	"\x17OrganizationPageRequest\x126\n" +
 	"\x04data\x18\x01 \x01(\v2\".admin.OrganizationPageRequestDataR\x04data\"\xc3\x01\n" +
 	"\x1bOrganizationPageRequestData\x12\x12\n" +
@@ -13408,9 +13417,9 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	" OrganizationSelectOptionsRequest\x12?\n" +
 	"\x04data\x18\x01 \x01(\v2+.admin.OrganizationSelectOptionsRequestDataR\x04data\":\n" +
 	"$OrganizationSelectOptionsRequestData\x12\x12\n" +
-	"\x04type\x18\x01 \x01(\tR\x04type\"^\n" +
-	"!OrganizationSelectOptionsResponse\x129\n" +
-	"\x04data\x18\x01 \x03(\v2%.admin.OrganizationSelectOptionEntityR\x04data\"\xcc\x01\n" +
+	"\x04type\x18\x01 \x01(\tR\x04type\"Y\n" +
+	"!OrganizationSelectOptionsResponse\x124\n" +
+	"\x04data\x18\x01 \x03(\v2 .admin.OrganizationOptionsEntityR\x04data\"\xcc\x01\n" +
 	"\x17OrganizationEmailEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12'\n" +
 	"\x0forganization_id\x18\x02 \x01(\x03R\x0eorganizationId\x12\x14\n" +
@@ -13915,7 +13924,7 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x06Delete\x12\x18.admin.RoleDeleteRequest\x1a\x14.admin.EmptyResponse\x12=\n" +
 	"\x06Detail\x12\x18.admin.RoleDetailRequest\x1a\x19.admin.RoleDetailResponse\x12D\n" +
 	"\fUpdateStatus\x12\x1e.admin.RoleUpdateStatusRequest\x1a\x14.admin.EmptyResponse\x124\n" +
-	"\x03All\x12\x15.admin.RoleAllRequest\x1a\x16.admin.RoleAllResponse2\xb0\x04\n" +
+	"\x03All\x12\x15.admin.RoleAllRequest\x1a\x16.admin.RoleAllResponse2\xfc\x04\n" +
 	"\forganization\x12G\n" +
 	"\x04Page\x12\x1e.admin.OrganizationPageRequest\x1a\x1f.admin.OrganizationPageResponse\x12Y\n" +
 	"\fCreateLender\x12&.admin.OrganizationCreateLenderRequest\x1a!.admin.OrganizationDetailResponse\x12Y\n" +
@@ -13923,7 +13932,8 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x06Detail\x12\x10.admin.IdRequest\x1a!.admin.OrganizationDetailResponse\x120\n" +
 	"\x06Delete\x12\x10.admin.IdRequest\x1a\x14.admin.EmptyResponse\x12L\n" +
 	"\fSwitchStatus\x12&.admin.OrganizationSwitchStatusRequest\x1a\x14.admin.EmptyResponse\x12b\n" +
-	"\rSelectOptions\x12'.admin.OrganizationSelectOptionsRequest\x1a(.admin.OrganizationSelectOptionsResponse2r\n" +
+	"\rSelectOptions\x12'.admin.OrganizationSelectOptionsRequest\x1a(.admin.OrganizationSelectOptionsResponse\x12J\n" +
+	"\tAllLender\x12\x13.admin.EmptyRequest\x1a(.admin.OrganizationSelectOptionsResponse2r\n" +
 	"\aStorage\x12g\n" +
 	"\x12CreatePresignedUrl\x12'.admin.StorageCreatePresignedUrlRequest\x1a(.admin.StorageCreatePresignedUrlResponse2\xc1\x01\n" +
 	"\x06common\x125\n" +
@@ -14065,7 +14075,7 @@ var file_app_admin_rpc_pb_admin_proto_goTypes = []any{
 	(*OrganizationPageEntity)(nil),                     // 102: admin.OrganizationPageEntity
 	(*OrganizationMetadataEntity)(nil),                 // 103: admin.OrganizationMetadataEntity
 	(*OrganizationLenderMetadataEntity)(nil),           // 104: admin.OrganizationLenderMetadataEntity
-	(*OrganizationSelectOptionEntity)(nil),             // 105: admin.OrganizationSelectOptionEntity
+	(*OrganizationOptionsEntity)(nil),                  // 105: admin.OrganizationOptionsEntity
 	(*OrganizationPageRequest)(nil),                    // 106: admin.OrganizationPageRequest
 	(*OrganizationPageRequestData)(nil),                // 107: admin.OrganizationPageRequestData
 	(*OrganizationPageRequestFilter)(nil),              // 108: admin.OrganizationPageRequestFilter
@@ -14238,7 +14248,7 @@ var file_app_admin_rpc_pb_admin_proto_depIdxs = []int32{
 	101, // 85: admin.OrganizationDetailResponse.data:type_name -> admin.OrganizationEntity
 	120, // 86: admin.OrganizationSwitchStatusRequest.data:type_name -> admin.OrganizationSwitchStatusRequestData
 	122, // 87: admin.OrganizationSelectOptionsRequest.data:type_name -> admin.OrganizationSelectOptionsRequestData
-	105, // 88: admin.OrganizationSelectOptionsResponse.data:type_name -> admin.OrganizationSelectOptionEntity
+	105, // 88: admin.OrganizationSelectOptionsResponse.data:type_name -> admin.OrganizationOptionsEntity
 	126, // 89: admin.StorageCreatePresignedUrlRequest.data:type_name -> admin.StorageCreatePresignedUrlRequestData
 	128, // 90: admin.StorageCreatePresignedUrlResponse.data:type_name -> admin.StorageCreatePresignedUrlResponseData
 	130, // 91: admin.OptionRequest.data:type_name -> admin.OptionRequestData
@@ -14330,73 +14340,75 @@ var file_app_admin_rpc_pb_admin_proto_depIdxs = []int32{
 	3,   // 177: admin.organization.Delete:input_type -> admin.IdRequest
 	119, // 178: admin.organization.SwitchStatus:input_type -> admin.OrganizationSwitchStatusRequest
 	121, // 179: admin.organization.SelectOptions:input_type -> admin.OrganizationSelectOptionsRequest
-	125, // 180: admin.Storage.CreatePresignedUrl:input_type -> admin.StorageCreatePresignedUrlRequest
-	129, // 181: admin.common.GetOpt:input_type -> admin.OptionRequest
-	0,   // 182: admin.common.GetUsState:input_type -> admin.EmptyRequest
-	133, // 183: admin.common.GetUsCities:input_type -> admin.UsCitiesRequest
-	139, // 184: admin.BaseTemplate.Create:input_type -> admin.CreateBaseTemplateRequest
-	142, // 185: admin.BaseTemplate.Update:input_type -> admin.UpdateBaseTemplateRequest
-	145, // 186: admin.BaseTemplate.Detail:input_type -> admin.GetBaseTemplateRequest
-	147, // 187: admin.BaseTemplate.Page:input_type -> admin.BaseTemplatePageRequest
-	153, // 188: admin.BaseTemplate.SwitchStatus:input_type -> admin.SwitchBaseTemplateStatusRequest
-	155, // 189: admin.BaseTemplate.Delete:input_type -> admin.DeleteBaseTemplateRequest
-	156, // 190: admin.BaseTemplate.Preview:input_type -> admin.BaseTemplatePreviewRequest
-	3,   // 191: admin.BaseTemplate.Reset:input_type -> admin.IdRequest
-	163, // 192: admin.Loan.LoanPage:input_type -> admin.LoanPageRequest
-	3,   // 193: admin.Loan.LoanDetail:input_type -> admin.IdRequest
-	170, // 194: admin.Loan.ReassignLoan:input_type -> admin.ReassignLoanRequest
-	11,  // 195: admin.User.Login:output_type -> admin.UserLoginResponse
-	15,  // 196: admin.User.RefreshToken:output_type -> admin.RefreshTokenResponse
-	23,  // 197: admin.User.UserInfo:output_type -> admin.UserinfoResponse
-	19,  // 198: admin.User.ResetPassword:output_type -> admin.ResetPasswordResponse
-	23,  // 199: admin.User.EditProfile:output_type -> admin.UserinfoResponse
-	33,  // 200: admin.OrganizationUser.Page:output_type -> admin.OrganizationUserPageResponse
-	36,  // 201: admin.OrganizationUser.Create:output_type -> admin.OrganizationUserCreateResponse
-	39,  // 202: admin.OrganizationUser.Update:output_type -> admin.OrganizationUserUpdateResponse
-	1,   // 203: admin.OrganizationUser.Delete:output_type -> admin.EmptyResponse
-	44,  // 204: admin.OrganizationUser.Detail:output_type -> admin.OrganizationUserDetailResponse
-	1,   // 205: admin.OrganizationUser.SwitchStatus:output_type -> admin.EmptyResponse
-	52,  // 206: admin.api.ApiTree:output_type -> admin.ApiTreeResponse
-	55,  // 207: admin.api.Create:output_type -> admin.ApiCreateResponse
-	55,  // 208: admin.api.Update:output_type -> admin.ApiCreateResponse
-	1,   // 209: admin.api.Delete:output_type -> admin.EmptyResponse
-	55,  // 210: admin.api.Detail:output_type -> admin.ApiCreateResponse
-	66,  // 211: admin.resource.ResourceTree:output_type -> admin.ResourceTreeResponse
-	76,  // 212: admin.resource.Create:output_type -> admin.ResourceDetailResponse
-	76,  // 213: admin.resource.Update:output_type -> admin.ResourceDetailResponse
-	1,   // 214: admin.resource.Delete:output_type -> admin.EmptyResponse
-	76,  // 215: admin.resource.Detail:output_type -> admin.ResourceDetailResponse
-	82,  // 216: admin.role.Page:output_type -> admin.RolePageResponse
-	86,  // 217: admin.role.Create:output_type -> admin.RoleCreateResponse
-	88,  // 218: admin.role.Update:output_type -> admin.RoleUpdateResponse
-	1,   // 219: admin.role.Delete:output_type -> admin.EmptyResponse
-	95,  // 220: admin.role.Detail:output_type -> admin.RoleDetailResponse
-	1,   // 221: admin.role.UpdateStatus:output_type -> admin.EmptyResponse
-	100, // 222: admin.role.All:output_type -> admin.RoleAllResponse
-	110, // 223: admin.organization.Page:output_type -> admin.OrganizationPageResponse
-	118, // 224: admin.organization.CreateLender:output_type -> admin.OrganizationDetailResponse
-	118, // 225: admin.organization.UpdateLender:output_type -> admin.OrganizationDetailResponse
-	118, // 226: admin.organization.Detail:output_type -> admin.OrganizationDetailResponse
-	1,   // 227: admin.organization.Delete:output_type -> admin.EmptyResponse
-	1,   // 228: admin.organization.SwitchStatus:output_type -> admin.EmptyResponse
-	123, // 229: admin.organization.SelectOptions:output_type -> admin.OrganizationSelectOptionsResponse
-	127, // 230: admin.Storage.CreatePresignedUrl:output_type -> admin.StorageCreatePresignedUrlResponse
-	131, // 231: admin.common.GetOpt:output_type -> admin.OptionResponse
-	2,   // 232: admin.common.GetUsState:output_type -> admin.StringSliceResponse
-	2,   // 233: admin.common.GetUsCities:output_type -> admin.StringSliceResponse
-	141, // 234: admin.BaseTemplate.Create:output_type -> admin.CreateBaseTemplateResponse
-	144, // 235: admin.BaseTemplate.Update:output_type -> admin.UpdateBaseTemplateResponse
-	146, // 236: admin.BaseTemplate.Detail:output_type -> admin.GetBaseTemplateResponse
-	151, // 237: admin.BaseTemplate.Page:output_type -> admin.BaseTemplatePageResponse
-	1,   // 238: admin.BaseTemplate.SwitchStatus:output_type -> admin.EmptyResponse
-	1,   // 239: admin.BaseTemplate.Delete:output_type -> admin.EmptyResponse
-	158, // 240: admin.BaseTemplate.Preview:output_type -> admin.BaseTemplatePreviewResponse
-	1,   // 241: admin.BaseTemplate.Reset:output_type -> admin.EmptyResponse
-	164, // 242: admin.Loan.LoanPage:output_type -> admin.LoanPageResponse
-	169, // 243: admin.Loan.LoanDetail:output_type -> admin.LoanDetailResponse
-	1,   // 244: admin.Loan.ReassignLoan:output_type -> admin.EmptyResponse
-	195, // [195:245] is the sub-list for method output_type
-	145, // [145:195] is the sub-list for method input_type
+	0,   // 180: admin.organization.AllLender:input_type -> admin.EmptyRequest
+	125, // 181: admin.Storage.CreatePresignedUrl:input_type -> admin.StorageCreatePresignedUrlRequest
+	129, // 182: admin.common.GetOpt:input_type -> admin.OptionRequest
+	0,   // 183: admin.common.GetUsState:input_type -> admin.EmptyRequest
+	133, // 184: admin.common.GetUsCities:input_type -> admin.UsCitiesRequest
+	139, // 185: admin.BaseTemplate.Create:input_type -> admin.CreateBaseTemplateRequest
+	142, // 186: admin.BaseTemplate.Update:input_type -> admin.UpdateBaseTemplateRequest
+	145, // 187: admin.BaseTemplate.Detail:input_type -> admin.GetBaseTemplateRequest
+	147, // 188: admin.BaseTemplate.Page:input_type -> admin.BaseTemplatePageRequest
+	153, // 189: admin.BaseTemplate.SwitchStatus:input_type -> admin.SwitchBaseTemplateStatusRequest
+	155, // 190: admin.BaseTemplate.Delete:input_type -> admin.DeleteBaseTemplateRequest
+	156, // 191: admin.BaseTemplate.Preview:input_type -> admin.BaseTemplatePreviewRequest
+	3,   // 192: admin.BaseTemplate.Reset:input_type -> admin.IdRequest
+	163, // 193: admin.Loan.LoanPage:input_type -> admin.LoanPageRequest
+	3,   // 194: admin.Loan.LoanDetail:input_type -> admin.IdRequest
+	170, // 195: admin.Loan.ReassignLoan:input_type -> admin.ReassignLoanRequest
+	11,  // 196: admin.User.Login:output_type -> admin.UserLoginResponse
+	15,  // 197: admin.User.RefreshToken:output_type -> admin.RefreshTokenResponse
+	23,  // 198: admin.User.UserInfo:output_type -> admin.UserinfoResponse
+	19,  // 199: admin.User.ResetPassword:output_type -> admin.ResetPasswordResponse
+	23,  // 200: admin.User.EditProfile:output_type -> admin.UserinfoResponse
+	33,  // 201: admin.OrganizationUser.Page:output_type -> admin.OrganizationUserPageResponse
+	36,  // 202: admin.OrganizationUser.Create:output_type -> admin.OrganizationUserCreateResponse
+	39,  // 203: admin.OrganizationUser.Update:output_type -> admin.OrganizationUserUpdateResponse
+	1,   // 204: admin.OrganizationUser.Delete:output_type -> admin.EmptyResponse
+	44,  // 205: admin.OrganizationUser.Detail:output_type -> admin.OrganizationUserDetailResponse
+	1,   // 206: admin.OrganizationUser.SwitchStatus:output_type -> admin.EmptyResponse
+	52,  // 207: admin.api.ApiTree:output_type -> admin.ApiTreeResponse
+	55,  // 208: admin.api.Create:output_type -> admin.ApiCreateResponse
+	55,  // 209: admin.api.Update:output_type -> admin.ApiCreateResponse
+	1,   // 210: admin.api.Delete:output_type -> admin.EmptyResponse
+	55,  // 211: admin.api.Detail:output_type -> admin.ApiCreateResponse
+	66,  // 212: admin.resource.ResourceTree:output_type -> admin.ResourceTreeResponse
+	76,  // 213: admin.resource.Create:output_type -> admin.ResourceDetailResponse
+	76,  // 214: admin.resource.Update:output_type -> admin.ResourceDetailResponse
+	1,   // 215: admin.resource.Delete:output_type -> admin.EmptyResponse
+	76,  // 216: admin.resource.Detail:output_type -> admin.ResourceDetailResponse
+	82,  // 217: admin.role.Page:output_type -> admin.RolePageResponse
+	86,  // 218: admin.role.Create:output_type -> admin.RoleCreateResponse
+	88,  // 219: admin.role.Update:output_type -> admin.RoleUpdateResponse
+	1,   // 220: admin.role.Delete:output_type -> admin.EmptyResponse
+	95,  // 221: admin.role.Detail:output_type -> admin.RoleDetailResponse
+	1,   // 222: admin.role.UpdateStatus:output_type -> admin.EmptyResponse
+	100, // 223: admin.role.All:output_type -> admin.RoleAllResponse
+	110, // 224: admin.organization.Page:output_type -> admin.OrganizationPageResponse
+	118, // 225: admin.organization.CreateLender:output_type -> admin.OrganizationDetailResponse
+	118, // 226: admin.organization.UpdateLender:output_type -> admin.OrganizationDetailResponse
+	118, // 227: admin.organization.Detail:output_type -> admin.OrganizationDetailResponse
+	1,   // 228: admin.organization.Delete:output_type -> admin.EmptyResponse
+	1,   // 229: admin.organization.SwitchStatus:output_type -> admin.EmptyResponse
+	123, // 230: admin.organization.SelectOptions:output_type -> admin.OrganizationSelectOptionsResponse
+	123, // 231: admin.organization.AllLender:output_type -> admin.OrganizationSelectOptionsResponse
+	127, // 232: admin.Storage.CreatePresignedUrl:output_type -> admin.StorageCreatePresignedUrlResponse
+	131, // 233: admin.common.GetOpt:output_type -> admin.OptionResponse
+	2,   // 234: admin.common.GetUsState:output_type -> admin.StringSliceResponse
+	2,   // 235: admin.common.GetUsCities:output_type -> admin.StringSliceResponse
+	141, // 236: admin.BaseTemplate.Create:output_type -> admin.CreateBaseTemplateResponse
+	144, // 237: admin.BaseTemplate.Update:output_type -> admin.UpdateBaseTemplateResponse
+	146, // 238: admin.BaseTemplate.Detail:output_type -> admin.GetBaseTemplateResponse
+	151, // 239: admin.BaseTemplate.Page:output_type -> admin.BaseTemplatePageResponse
+	1,   // 240: admin.BaseTemplate.SwitchStatus:output_type -> admin.EmptyResponse
+	1,   // 241: admin.BaseTemplate.Delete:output_type -> admin.EmptyResponse
+	158, // 242: admin.BaseTemplate.Preview:output_type -> admin.BaseTemplatePreviewResponse
+	1,   // 243: admin.BaseTemplate.Reset:output_type -> admin.EmptyResponse
+	164, // 244: admin.Loan.LoanPage:output_type -> admin.LoanPageResponse
+	169, // 245: admin.Loan.LoanDetail:output_type -> admin.LoanDetailResponse
+	1,   // 246: admin.Loan.ReassignLoan:output_type -> admin.EmptyResponse
+	196, // [196:247] is the sub-list for method output_type
+	145, // [145:196] is the sub-list for method input_type
 	145, // [145:145] is the sub-list for extension type_name
 	145, // [145:145] is the sub-list for extension extendee
 	0,   // [0:145] is the sub-list for field type_name

@@ -27,7 +27,7 @@ func NewOrganizationSelectOptionLogic(ctx context.Context, svcCtx *svc.ServiceCo
 	}
 }
 
-func (l *OrganizationSelectOptionLogic) OrganizationSelectOption(req *types.OrganizationSelectOptionRequest) (resp *types.OrganizationOptResponse, err error) {
+func (l *OrganizationSelectOptionLogic) OrganizationSelectOption(req *types.OrganizationSelectOptionRequest) (resp *types.OrganizationOptionResponse, err error) {
 	rpcReq := &admin.OrganizationSelectOptionsRequest{}
 	rpcReq.Data, err = copierx.Trans[types.OrganizationSelectOptionRequest, admin.OrganizationSelectOptionsRequestData](req)
 
@@ -40,12 +40,12 @@ func (l *OrganizationSelectOptionLogic) OrganizationSelectOption(req *types.Orga
 		return nil, errorx.WithStack(err)
 	}
 
-	resp = &types.OrganizationOptResponse{}
-	options, err := copierx.Trans[[]*admin.OrganizationSelectOptionEntity, []*types.OrganizationSelectOptionEntity](&rpcResp.Data)
+	resp = &types.OrganizationOptionResponse{}
+	options, err := copierx.Trans[[]*admin.OrganizationOptionsEntity, []*types.OrganizationOptionEntity](&rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}
-	resp.Options = *options
+	resp.List = *options
 
 	return resp, nil
 }

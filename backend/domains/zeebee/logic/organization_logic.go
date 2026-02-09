@@ -73,7 +73,18 @@ func (l *OrganizationLogic) All(ctx context.Context, organizationType constants.
 		return nil, err
 	}
 	return *resultBo, nil
+}
 
+func (l *OrganizationLogic) AllForOption(ctx context.Context, organizationType constants.UserType, status constants.OrganizationStatus) (result []*bo.OrganizationOptionBo, err error) {
+	organizations, err := l.repos.OrganizationRepo.AllForOption(ctx, organizationType, status)
+	if err != nil {
+		return
+	}
+	resultBo, err := copierx.Trans[[]*model.Organization, []*bo.OrganizationOptionBo](&organizations)
+	if err != nil {
+		return nil, err
+	}
+	return *resultBo, nil
 }
 
 // Delete removes an organization and all its associated data from the system.

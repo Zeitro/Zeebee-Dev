@@ -701,10 +701,11 @@ message OrganizationLenderMetadataEntity {
   RangeFloat loan_point_range = 4;
 }
 
-message OrganizationSelectOptionEntity {
+message OrganizationOptionsEntity {
   int64 id = 1;
   string name = 2;
-  string type = 3;
+  string contact_email = 3;
+  string type = 4;
 }
 
 // page -- request
@@ -803,7 +804,7 @@ message OrganizationSelectOptionsRequestData {
 }
 // select options -- response
 message OrganizationSelectOptionsResponse {
-  repeated OrganizationSelectOptionEntity data = 1;
+  repeated OrganizationOptionsEntity data = 1;
 }
 
 service organization {
@@ -814,6 +815,7 @@ service organization {
   rpc Delete(IdRequest) returns(EmptyResponse);
   rpc SwitchStatus(OrganizationSwitchStatusRequest) returns(EmptyResponse);
   rpc SelectOptions(OrganizationSelectOptionsRequest) returns(OrganizationSelectOptionsResponse);
+  rpc AllLender(EmptyRequest) returns(OrganizationSelectOptionsResponse);
 }
 // =================== organization service end =================
 

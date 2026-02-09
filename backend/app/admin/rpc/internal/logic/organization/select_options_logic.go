@@ -43,11 +43,11 @@ func (l *SelectOptionsLogic) SelectOptions(in *admin.OrganizationSelectOptionsRe
 
 	organizationType := constants.UserType(in.Data.Type)
 
-	organization, err := l.baseLogic.OrganizationLogic.SelectOptions(l.ctx, organizationType)
+	organization, err := l.baseLogic.OrganizationLogic.AllForOption(l.ctx, organizationType, constants.OrganizationStatusActive)
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[[]*bo.OrganizationOptionBo, []*admin.OrganizationSelectOptionEntity](&organization)
+	data, err := copierx.Trans[[]*bo.OrganizationOptionBo, []*admin.OrganizationOptionsEntity](&organization)
 	if err != nil {
 		return nil, err
 	}
