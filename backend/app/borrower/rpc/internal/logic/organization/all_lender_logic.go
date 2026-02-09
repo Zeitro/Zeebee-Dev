@@ -38,7 +38,7 @@ func (l *AllLenderLogic) AllLender(in *borrower.EmptyRequest) (*borrower.Organiz
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	allLender, err = l.baseLogic.OrganizationLogic.AllForOption(l.ctx, constants.UserTypeLender, constants.OrganizationStatusNone)
+	allLender, err = l.baseLogic.OrganizationLogic.AllForOption(l.ctx, constants.UserTypeLender, constants.OrganizationStatusActive)
 	if err != nil {
 		return nil, err
 	}
