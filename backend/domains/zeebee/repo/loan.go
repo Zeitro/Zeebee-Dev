@@ -348,12 +348,15 @@ func (repo *LoanRepo) PageForAdmin(ctx context.Context, pageReq dto.LoanAdminPag
 		Omit(omitFields...).
 		Preload("Property").
 		Preload("Applicants")
+	sources := []constants.LoanSource{constants.LoanSourceSystem}
 	if len(filter.Stage) > 0 {
 		query = query.Where(fmt.Sprintf("%s.stage = ?", loanTable), filter.Stage)
 		if filter.Stage == string(constants.LoanStageDraft) {
-			query = query.Where(fmt.Sprintf("%s.source in ?", loanTable), []constants.LoanSource{constants.LoanSourcePreapproval, constants.LoanSourceSystem})
+			sources = append(sources, constants.LoanSourcePreapproval)
 		}
 	}
+	query = query.Where(fmt.Sprintf("%s.source in ?", loanTable), sources)
+
 	hasJoinProperty := false
 
 	// keyword
@@ -362,6 +365,8 @@ func (repo *LoanRepo) PageForAdmin(ctx context.Context, pageReq dto.LoanAdminPag
 		case "id":
 			id, _ := strconv.ParseInt(filter.Keyword, 10, 64)
 			query = query.Where(fmt.Sprintf("%s.id = ?", loanTable), id)
+		case "code":
+			query = query.Where(fmt.Sprintf("%s.code like ?", loanTable), "%"+filter.Keyword+"%")
 		case "lender_organization_name":
 			query = query.Joins(fmt.Sprintf("left join %s on %s.lender_organization_id = %s.id", organizationTable, loanTable, organizationTable)).
 				Where(fmt.Sprintf("%s.name like ?", organizationTable), "%"+filter.Keyword+"%").
