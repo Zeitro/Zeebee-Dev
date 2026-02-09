@@ -67,90 +67,18 @@ func (repo *LoanRepo) GetBorrowerLoan(ctx context.Context, id int64, organizatio
 	query := repo.BaseRepo.Client(ctx).
 		Where("id = ? and borrower_organization_id = ?", id, organizationId)
 	return repo.getDetailByQuery(query, true)
-
-	// err = repo.BaseRepo.Client(ctx).
-	// 	Where("id = ? and borrower_organization_id = ?", id, organizationId).
-	// 	Preload("Applicants", func(db *gorm.DB) *gorm.DB {
-	// 		return db.Order("loan_applicants.is_primary desc")
-	// 	}).
-	// 	Preload("LoanProperty").
-	// 	Preload("LoanBorrower").
-	// 	Preload("LoanExperiences", func(db *gorm.DB) *gorm.DB {
-	// 		return db.Order("loan_experiences.id asc")
-	// 	}).
-	// 	Preload("LoanThirdServices", func(db *gorm.DB) *gorm.DB {
-	// 		return db.Order("loan_third_services.id asc")
-	// 	}).
-	// 	Preload("LoanDemographic").
-	// 	Preload("LoanDocuments", func(db *gorm.DB) *gorm.DB {
-	// 		return db.Order("loan_documents.id asc")
-	// 	}).
-	// 	Preload("LoanDocuments.Files", func(db *gorm.DB) *gorm.DB {
-	// 		return db.Order("files.id asc")
-	// 	}).
-	// 	First(&result).Error
-	// return result, errorx.WithStack(err)
 }
 
 func (repo *LoanRepo) GetBorrowerLoanWithTx(ctx context.Context, tx *gorm.DB, id int64, organizationId int64) (result *model.Loan, err error) {
 	query := tx.WithContext(ctx).
 		Where("id = ? and borrower_organization_id = ?", id, organizationId)
 	return repo.getDetailByQuery(query, true)
-	// err = tx.WithContext(ctx).
-	// 	Where("id = ? and borrower_organization_id = ?", id, organizationId).
-	// 	Preload("Applicants", func(db *gorm.DB) *gorm.DB {
-	// 		return db.Order("loan_applicants.is_primary desc")
-	// 	}).
-	// 	Preload("LoanProperty").
-	// 	Preload("LoanBorrower").
-	// 	Preload("LoanExperiences", func(db *gorm.DB) *gorm.DB {
-	// 		return db.Order("loan_experiences.id asc")
-	// 	}).
-	// 	Preload("LoanThirdServices", func(db *gorm.DB) *gorm.DB {
-	// 		return db.Order("loan_third_services.id asc")
-	// 	}).
-	// 	Preload("LoanDemographic", func(db *gorm.DB) *gorm.DB {
-	// 		return db.Order("loan_demographics.id asc")
-	// 	}).
-	// 	Preload("LoanDocuments", func(db *gorm.DB) *gorm.DB {
-	// 		return db.Order("loan_documents.id asc")
-	// 	}).
-	// 	Preload("LoanDocuments.Files", func(db *gorm.DB) *gorm.DB {
-	// 		return db.Order("files.id asc")
-	// 	}).
-	// 	First(&result).Error
-	// return result, errorx.WithStack(err)
 }
 
 func (repo *LoanRepo) GetLenderLoan(ctx context.Context, id int64, lenderOrganizationId int64, withPreload bool) (result *model.Loan, err error) {
 	query := repo.BaseRepo.Client(ctx).
 		Where("id = ? and lender_organization_id = ?", id, lenderOrganizationId)
 	return repo.getDetailByQuery(query, withPreload)
-
-	// query := repo.BaseRepo.Client(ctx).
-	// 	Where("id = ? and lender_organization_id = ?", id, lenderOrganizationId)
-	// if withPreload {
-	// 	query = query.Preload("Applicants", func(db *gorm.DB) *gorm.DB {
-	// 		return db.Order("loan_applicants.is_primary desc")
-	// 	}).
-	// 		Preload("LoanProperty").
-	// 		Preload("LoanBorrower").
-	// 		Preload("LoanExperiences", func(db *gorm.DB) *gorm.DB {
-	// 			return db.Order("loan_experiences.id asc")
-	// 		}).
-	// 		Preload("LoanThirdServices", func(db *gorm.DB) *gorm.DB {
-	// 			return db.Order("loan_third_services.id asc")
-	// 		}).
-	// 		Preload("LoanDemographic").
-	// 		Preload("LoanDocuments", func(db *gorm.DB) *gorm.DB {
-	// 			return db.Order("loan_documents.id asc")
-	// 		}).
-	// 		Preload("LoanDocuments.Files", func(db *gorm.DB) *gorm.DB {
-	// 			return db.Order("files.id asc")
-	// 		})
-	// }
-	// err = query.First(&result).Error
-	// return result, errorx.WithStack(err)
 }
 
 // UpdateOneWithTx update with tx

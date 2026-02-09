@@ -2582,7 +2582,7 @@ type LoanEntity struct {
 	PaidOffDate                string                    `protobuf:"bytes,21,opt,name=paid_off_date,json=paidOffDate,proto3" json:"paid_off_date,omitempty"`
 	CreatedAt                  string                    `protobuf:"bytes,22,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt                  string                    `protobuf:"bytes,23,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	LenderId                   int64                     `protobuf:"varint,24,opt,name=lender_id,json=lenderId,proto3" json:"lender_id,omitempty"`
+	LenderOrganizationId       int64                     `protobuf:"varint,24,opt,name=lender_organization_id,json=lenderOrganizationId,proto3" json:"lender_organization_id,omitempty"`
 	CreatorId                  int64                     `protobuf:"varint,25,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
 	BusinessStrategy           []string                  `protobuf:"bytes,26,rep,name=business_strategy,json=businessStrategy,proto3" json:"business_strategy,omitempty"`
 	Applicants                 []*LoanApplicantEntity    `protobuf:"bytes,27,rep,name=applicants,proto3" json:"applicants,omitempty"`
@@ -2799,9 +2799,9 @@ func (x *LoanEntity) GetUpdatedAt() string {
 	return ""
 }
 
-func (x *LoanEntity) GetLenderId() int64 {
+func (x *LoanEntity) GetLenderOrganizationId() int64 {
 	if x != nil {
-		return x.LenderId
+		return x.LenderOrganizationId
 	}
 	return 0
 }
@@ -19182,7 +19182,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x04data\x18\x01 \x01(\v2#.borrower.ChangePasswordRequestDataR\x04data\"a\n" +
 	"\x19ChangePasswordRequestData\x12!\n" +
 	"\fold_password\x18\x01 \x01(\tR\voldPassword\x12!\n" +
-	"\fnew_password\x18\x02 \x01(\tR\vnewPassword\"\xaf\x0f\n" +
+	"\fnew_password\x18\x02 \x01(\tR\vnewPassword\"\xc8\x0f\n" +
 	"\n" +
 	"LoanEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
@@ -19210,8 +19210,8 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x16 \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\x17 \x01(\tR\tupdatedAt\x12\x1b\n" +
-	"\tlender_id\x18\x18 \x01(\x03R\blenderId\x12\x1d\n" +
+	"updated_at\x18\x17 \x01(\tR\tupdatedAt\x124\n" +
+	"\x16lender_organization_id\x18\x18 \x01(\x03R\x14lenderOrganizationId\x12\x1d\n" +
 	"\n" +
 	"creator_id\x18\x19 \x01(\x03R\tcreatorId\x12+\n" +
 	"\x11business_strategy\x18\x1a \x03(\tR\x10businessStrategy\x12=\n" +

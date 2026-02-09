@@ -2,7 +2,7 @@ syntax = "v1"
 
 info(
 	title: "admin-api http service"
-    desc: "admin-api http service description"
+	desc: "admin-api http service description"
 )
 
 import "desc/user.api"
@@ -19,11 +19,11 @@ import "desc/loan.api"
 
 // ============== common start =============
 @server(
-    desc: "admin-api service"
+	desc: "admin-api service"
 	version: v1
-    group: common
+	group: common
 	prefix:  /api/v1
-    tags: common
+	tags: common
 )
 service admin-api {
 	@doc "select options"
@@ -42,11 +42,11 @@ service admin-api {
 // ============== common end =============
 // ============== user start =============
 @server(
-    desc: "admin-api service"
+	desc: "admin-api service"
 	version: v1
-    group: user
+	group: user
 	prefix:  /api/v1
-    tags: user
+	tags: user
 )
 service admin-api {
 	@doc "login"
@@ -63,12 +63,12 @@ service admin-api {
 }
 
 @server(
-    desc: "admin-api service"
-    version: v1
-    group: user
+	desc: "admin-api service"
+	version: v1
+	group: user
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: user
+	tags: user
 )
 service admin-api {
 	@doc "info"
@@ -83,52 +83,52 @@ service admin-api {
 // ============== user end =============
 // ============== organization service start ============
 @server(
-    desc: "admin-api service"
-    version: v1
-    group: organization
-    prefix:     /api/v1
-    middleware: AuthMiddleware
-    tags: organization
+	desc: "admin-api service"
+	version: v1
+	group: organization
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: organization
 )
 service admin-api {
-    @doc "detail"
-    @handler OrganizationDetail
-    get /organization/:id (PathIdRequest) returns (OrganizationEntity)
+	@doc "detail"
+	@handler OrganizationDetail
+	get /organization/:id (PathIdRequest) returns (OrganizationEntity)
 
-    @doc "page"
-    @handler OrganizationPage
-    post /organization/page (OrganizationPageRequest) returns (OrganizationPageResponse)
+	@doc "page"
+	@handler OrganizationPage
+	post /organization/page (OrganizationPageRequest) returns (OrganizationPageResponse)
 
-    @doc "lender create"
-    @handler OrganizationCreateLender
-    post /organization/lender (OrganizationCreateLenderRequest) returns (OrganizationEntity)
+	@doc "lender create"
+	@handler OrganizationCreateLender
+	post /organization/lender (OrganizationCreateLenderRequest) returns (OrganizationEntity)
 
-    @doc "lender update"
-    @handler OrganizationUpdateLender
-    put /organization/lender/:id (OrganizationUpdateLenderRequest) returns (OrganizationEntity)
+	@doc "lender update"
+	@handler OrganizationUpdateLender
+	put /organization/lender/:id (OrganizationUpdateLenderRequest) returns (OrganizationEntity)
 
-    @doc "delete"
-    @handler OrganizationDelete
-    delete /organization/:id (PathIdRequest) returns (EmptyResponse)
+	@doc "delete"
+	@handler OrganizationDelete
+	delete /organization/:id (PathIdRequest) returns (EmptyResponse)
 
-    @doc "switch status"
-    @handler OrganizationSwitchStatus
-    patch /organization/:id/status (OrganizationSwitchStatusRequest) returns (EmptyResponse)
+	@doc "switch status"
+	@handler OrganizationSwitchStatus
+	patch /organization/:id/status (OrganizationSwitchStatusRequest) returns (EmptyResponse)
 
-    @doc "select option"
-    @handler OrganizationSelectOption
-    get /organization/select_options (OrganizationSelectOptionRequest) returns (OrganizationOptResponse)
+	@doc "select option"
+	@handler OrganizationSelectOption
+	get /organization/select_options (OrganizationSelectOptionRequest) returns (OrganizationOptResponse)
 }
 
 // ============= organization service end ============
 // ============== organization user start ============
 @server(
-    desc: "admin-api service"
-    version: v1
-    group: organization_user
+	desc: "admin-api service"
+	version: v1
+	group: organization_user
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: organization_user
+	tags: organization_user
 )
 service admin-api {
 	@doc "page"
@@ -159,12 +159,12 @@ service admin-api {
 // ============== organization user end ============
 // ============== api start ============
 @server(
-    desc: "admin-api service"
-    version: v1
-    group: api
+	desc: "admin-api service"
+	version: v1
+	group: api
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: api
+	tags: api
 )
 service admin-api {
 	@doc "detail"
@@ -191,12 +191,12 @@ service admin-api {
 // ============= api end =============
 // ============== resource start ============
 @server(
-    desc: "admin-api service"
-    version: v1
-    group: resource
+	desc: "admin-api service"
+	version: v1
+	group: resource
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: resource
+	tags: resource
 )
 service admin-api {
 	@doc "detail"
@@ -223,12 +223,12 @@ service admin-api {
 // ============== resource end =============
 // ============== role start ============
 @server(
-    desc: "admin-api service"
-    version: v1
-    group: role
+	desc: "admin-api service"
+	version: v1
+	group: role
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: role
+	tags: role
 )
 service admin-api {
 	@doc "detail"
@@ -263,12 +263,12 @@ service admin-api {
 // ============== role end =============
 // ============= storage start ============
 @server(
-    desc: "storage service"
-    version: v1
-    group: storage
+	desc: "storage service"
+	version: v1
+	group: storage
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: storage
+	tags: storage
 )
 service admin-api {
 	@doc "create aws s3 presign url"
@@ -279,12 +279,12 @@ service admin-api {
 // ============= storage end =============
 // ============== base template start ============
 @server(
-    desc: "base template service"
-    version: v1
+	desc: "base template service"
+	version: v1
 	prefix:     /api/v1
-    group: base_template
+	group: base_template
 	middleware: AuthMiddleware
-    tags: base_template
+	tags: base_template
 )
 service admin-api {
 	@doc "Create"
@@ -323,25 +323,25 @@ service admin-api {
 // ============== base template end ============
 // ============== loan service end ============
 @server(
-    desc: "loan service"
-    version: v1
-    prefix:     /api/v1
-    group: loan
-    middleware: AuthMiddleware
-    tags: loan
+	desc: "loan service"
+	version: v1
+	prefix:     /api/v1
+	group: loan
+	middleware: AuthMiddleware
+	tags: loan
 )
 service admin-api {
-    @doc "page"
-    @handler LoanPage
-    post /loan/page (LoanPageRequest) returns (LoanPageResponse)
+	@doc "page"
+	@handler LoanPage
+	post /loan/page (LoanPageRequest) returns (LoanPageResponse)
 
-    @doc "detail"
-    @handler LoanDetail
-    get /loan/:id (PathIdRequest) returns (LoanDetailResponse)
+	@doc "detail"
+	@handler LoanDetail
+	get /loan/:id (PathIdRequest) returns (LoanDetailResponse)
 
-    @doc "reassign"
-    @handler LoanReassign
-    patch /loan/:id/reassign (LoanReassignRequest) returns (EmptyResponse)
+	@doc "reassign"
+	@handler LoanReassign
+	post /loan/:id/reassign (LoanReassignRequest) returns (EmptyResponse)
 }
 
-    // ============== loan service end ============
+	// ============== loan service end ============

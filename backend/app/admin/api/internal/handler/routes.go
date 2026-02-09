@@ -154,7 +154,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					// reassign
-					Method:  http.MethodPatch,
+					Method:  http.MethodPost,
 					Path:    "/loan/:id/reassign",
 					Handler: loan.LoanReassignHandler(serverCtx),
 				},

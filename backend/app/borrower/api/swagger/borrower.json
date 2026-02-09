@@ -2961,8 +2961,8 @@
                       "paid_off_date",
                       "business_strategy",
                       "applicants",
-                      "lender_id",
-                      "borrower_id",
+                      "lender_organization_id",
+                      "borrower_organization_id",
                       "created_at",
                       "updated_at",
                       "source",
@@ -3105,7 +3105,7 @@
                           }
                         }
                       },
-                      "borrower_id": {
+                      "borrower_organization_id": {
                         "type": "integer"
                       },
                       "business_strategy": {
@@ -3173,7 +3173,7 @@
                       "lender_company": {
                         "type": "string"
                       },
-                      "lender_id": {
+                      "lender_organization_id": {
                         "type": "integer"
                       },
                       "lien_position": {
@@ -4419,7 +4419,7 @@
                     }
                   }
                 },
-                "borrower_id": {
+                "borrower_organization_id": {
                   "type": "integer"
                 },
                 "business_strategy": {
@@ -4487,7 +4487,7 @@
                 "lender_company": {
                   "type": "string"
                 },
-                "lender_id": {
+                "lender_organization_id": {
                   "type": "integer"
                 },
                 "lien_position": {
@@ -9665,8 +9665,8 @@
                       "paid_off_date",
                       "business_strategy",
                       "applicants",
-                      "lender_id",
-                      "borrower_id",
+                      "lender_organization_id",
+                      "borrower_organization_id",
                       "created_at",
                       "updated_at",
                       "source",
@@ -9809,7 +9809,7 @@
                           }
                         }
                       },
-                      "borrower_id": {
+                      "borrower_organization_id": {
                         "type": "integer"
                       },
                       "business_strategy": {
@@ -9877,7 +9877,7 @@
                       "lender_company": {
                         "type": "string"
                       },
-                      "lender_id": {
+                      "lender_organization_id": {
                         "type": "integer"
                       },
                       "lien_position": {
@@ -10511,8 +10511,8 @@
                       "paid_off_date",
                       "business_strategy",
                       "applicants",
-                      "lender_id",
-                      "borrower_id",
+                      "lender_organization_id",
+                      "borrower_organization_id",
                       "created_at",
                       "updated_at",
                       "source",
@@ -10655,7 +10655,7 @@
                           }
                         }
                       },
-                      "borrower_id": {
+                      "borrower_organization_id": {
                         "type": "integer"
                       },
                       "business_strategy": {
@@ -10723,7 +10723,7 @@
                       "lender_company": {
                         "type": "string"
                       },
-                      "lender_id": {
+                      "lender_organization_id": {
                         "type": "integer"
                       },
                       "lien_position": {
@@ -11358,8 +11358,8 @@
                       "paid_off_date",
                       "business_strategy",
                       "applicants",
-                      "lender_id",
-                      "borrower_id",
+                      "lender_organization_id",
+                      "borrower_organization_id",
                       "created_at",
                       "updated_at",
                       "source",
@@ -11502,7 +11502,7 @@
                           }
                         }
                       },
-                      "borrower_id": {
+                      "borrower_organization_id": {
                         "type": "integer"
                       },
                       "business_strategy": {
@@ -11570,7 +11570,7 @@
                       "lender_company": {
                         "type": "string"
                       },
-                      "lender_id": {
+                      "lender_organization_id": {
                         "type": "integer"
                       },
                       "lien_position": {
@@ -14067,7 +14067,7 @@
       }
     }
   },
-  "x-date": "2026-02-06 18:20:44",
+  "x-date": "2026-02-09 11:01:07",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

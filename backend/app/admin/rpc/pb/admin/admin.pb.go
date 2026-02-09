@@ -9885,8 +9885,8 @@ type LoanEntity struct {
 	PaidOffDate            string                    `protobuf:"bytes,21,opt,name=paid_off_date,json=paidOffDate,proto3" json:"paid_off_date,omitempty"`
 	CreatedAt              string                    `protobuf:"bytes,22,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt              string                    `protobuf:"bytes,23,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	OrganizationId         int64                     `protobuf:"varint,24,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	BorrowerId             int64                     `protobuf:"varint,25,opt,name=borrower_id,json=borrowerId,proto3" json:"borrower_id,omitempty"`
+	LenderOrganizationId   int64                     `protobuf:"varint,24,opt,name=lender_organization_id,json=lenderOrganizationId,proto3" json:"lender_organization_id,omitempty"`
+	BorrowerOrganizationId int64                     `protobuf:"varint,25,opt,name=borrower_organization_id,json=borrowerOrganizationId,proto3" json:"borrower_organization_id,omitempty"`
 	BusinessStrategy       []string                  `protobuf:"bytes,26,rep,name=business_strategy,json=businessStrategy,proto3" json:"business_strategy,omitempty"`
 	Applicants             []*LoanApplicantEntity    `protobuf:"bytes,27,rep,name=applicants,proto3" json:"applicants,omitempty"`
 	Source                 string                    `protobuf:"bytes,28,opt,name=source,proto3" json:"source,omitempty"`
@@ -10100,16 +10100,16 @@ func (x *LoanEntity) GetUpdatedAt() string {
 	return ""
 }
 
-func (x *LoanEntity) GetOrganizationId() int64 {
+func (x *LoanEntity) GetLenderOrganizationId() int64 {
 	if x != nil {
-		return x.OrganizationId
+		return x.LenderOrganizationId
 	}
 	return 0
 }
 
-func (x *LoanEntity) GetBorrowerId() int64 {
+func (x *LoanEntity) GetBorrowerOrganizationId() int64 {
 	if x != nil {
-		return x.BorrowerId
+		return x.BorrowerOrganizationId
 	}
 	return 0
 }
@@ -13567,7 +13567,7 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x1bBaseTemplatePreviewResponse\x12:\n" +
 	"\x04data\x18\x01 \x01(\v2&.admin.BaseTemplatePreviewResponseDataR\x04data\";\n" +
 	"\x1fBaseTemplatePreviewResponseData\x12\x18\n" +
-	"\acontent\x18\x01 \x01(\tR\acontent\"\xbf\x0e\n" +
+	"\acontent\x18\x01 \x01(\tR\acontent\"\xe5\x0e\n" +
 	"\n" +
 	"LoanEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
@@ -13595,10 +13595,9 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x16 \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\x17 \x01(\tR\tupdatedAt\x12'\n" +
-	"\x0forganization_id\x18\x18 \x01(\x03R\x0eorganizationId\x12\x1f\n" +
-	"\vborrower_id\x18\x19 \x01(\x03R\n" +
-	"borrowerId\x12+\n" +
+	"updated_at\x18\x17 \x01(\tR\tupdatedAt\x124\n" +
+	"\x16lender_organization_id\x18\x18 \x01(\x03R\x14lenderOrganizationId\x128\n" +
+	"\x18borrower_organization_id\x18\x19 \x01(\x03R\x16borrowerOrganizationId\x12+\n" +
 	"\x11business_strategy\x18\x1a \x03(\tR\x10businessStrategy\x12:\n" +
 	"\n" +
 	"applicants\x18\x1b \x03(\v2\x1a.admin.LoanApplicantEntityR\n" +

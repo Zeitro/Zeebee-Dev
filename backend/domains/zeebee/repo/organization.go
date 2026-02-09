@@ -275,6 +275,7 @@ func (repo *OrganizationRepo) SelectOptions(ctx context.Context, organizationTyp
 	err = repo.Client(ctx).Model(&model.Organization{}).
 		Select("id", "name", "type").
 		Where("type = ?", organizationType).
+		Order("id asc").
 		Find(&result).Error
 	return result, errorx.WithStack(err)
 }
