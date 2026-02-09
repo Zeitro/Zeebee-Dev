@@ -1142,6 +1142,7 @@ message  LoanPageRequestFilter {
   repeated string loan_purpose = 5;
   repeated string loan_type = 6;
   repeated string pending_status = 7;
+  repeated string lender = 8;
 }
 
 message  LoanPageRequestSorter {

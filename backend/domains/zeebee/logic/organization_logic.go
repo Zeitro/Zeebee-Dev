@@ -77,12 +77,6 @@ func (l *OrganizationLogic) All(ctx context.Context, organizationType constants.
 }
 
 // Delete removes an organization and all its associated data from the system.
-// It performs the following operations within a database transaction:
-// 1. Retrieves the organization by ID
-// 2. Removes all associated roles
-// 3. Removes all associated organization emails
-// 4. Removes all organization-user relationships
-// 5. Finally deletes the organization itself
 func (l *OrganizationLogic) Delete(ctx context.Context, id int64) (err error) {
 	organization, err := l.repos.OrganizationRepo.GetOrganizationById(ctx, id, true)
 	if err != nil {

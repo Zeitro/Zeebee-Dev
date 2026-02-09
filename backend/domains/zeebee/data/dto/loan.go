@@ -49,4 +49,5 @@ type LoanAdminPageRequestFilter struct {
 	LoanPurpose   []string `json:"loan_purpose,omitempty"`
 	LoanType      []string `json:"loan_type,omitempty"`
 	PendingStatus []string `json:"pending_status,omitempty"`
+	Lender        []string `json:"lender,omitempty"`
 }

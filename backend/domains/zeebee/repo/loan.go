@@ -27,7 +27,7 @@ func NewLoanRepo(db *gorm.DB) *LoanRepo {
 	}
 }
 
-// Detail
+// Detail retrieves a loan record by its ID.
 func (repo *LoanRepo) Detail(ctx context.Context, id int64, withPreload bool) (result *model.Loan, err error) {
 	query := repo.Client(ctx).
 		Where("id = ?", id)
@@ -97,7 +97,7 @@ func (repo *LoanRepo) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, id int64
 	return data, nil
 }
 
-// UpdateStageWithTx
+// UpdateStageWithTx update stage with tx
 func (repo *LoanRepo) UpdateStageWithTx(ctx context.Context, tx *gorm.DB, id int64, stage constants.LoanStage) (err error) {
 	err = tx.WithContext(ctx).Model(&model.Loan{}).
 		Where("id = ?", id).
@@ -105,7 +105,7 @@ func (repo *LoanRepo) UpdateStageWithTx(ctx context.Context, tx *gorm.DB, id int
 	return errorx.WithStack(err)
 }
 
-// UpdatePendingStatusWithTx
+// UpdatePendingStatusWithTx update pending status with tx
 func (repo *LoanRepo) UpdatePendingStatusWithTx(ctx context.Context, tx *gorm.DB, id int64, pendingStatus constants.LoanPendingStatus, stage constants.LoanStage) (err error) {
 	err = tx.WithContext(ctx).Model(&model.Loan{}).
 		Where("id = ?", id).
@@ -117,7 +117,7 @@ func (repo *LoanRepo) UpdatePendingStatusWithTx(ctx context.Context, tx *gorm.DB
 	return errorx.WithStack(err)
 }
 
-// page
+// PageForBorrower page for borrower
 func (repo *LoanRepo) PageForBorrower(ctx context.Context, pageReq dto.LoanBorrowerPageRequestDto) (page gormx.PageResponse[*model.Loan], err error) {
 	loanTable := model.Loan{}.TableName()
 	loanPropertyTable := model.LoanProperty{}.TableName()
@@ -400,6 +400,11 @@ func (repo *LoanRepo) PageForAdmin(ctx context.Context, pageReq dto.LoanAdminPag
 	if len(filter.PendingStatus) > 0 {
 		query = query.Where(fmt.Sprintf("%s.pending_status in ?", loanTable), filter.PendingStatus)
 	}
+	// lender
+	if len(filter.Lender) > 0 {
+		query = query.Where(fmt.Sprintf("%s.lender_company in ?", loanTable), filter.Lender)
+	}
+
 	sortColumns := []string{}
 
 	// sort

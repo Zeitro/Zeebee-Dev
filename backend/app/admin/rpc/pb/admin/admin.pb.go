@@ -10474,6 +10474,7 @@ type LoanPageRequestFilter struct {
 	LoanPurpose   []string               `protobuf:"bytes,5,rep,name=loan_purpose,json=loanPurpose,proto3" json:"loan_purpose,omitempty"`
 	LoanType      []string               `protobuf:"bytes,6,rep,name=loan_type,json=loanType,proto3" json:"loan_type,omitempty"`
 	PendingStatus []string               `protobuf:"bytes,7,rep,name=pending_status,json=pendingStatus,proto3" json:"pending_status,omitempty"`
+	Lender        []string               `protobuf:"bytes,8,rep,name=lender,proto3" json:"lender,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -10546,6 +10547,13 @@ func (x *LoanPageRequestFilter) GetLoanType() []string {
 func (x *LoanPageRequestFilter) GetPendingStatus() []string {
 	if x != nil {
 		return x.PendingStatus
+	}
+	return nil
+}
+
+func (x *LoanPageRequestFilter) GetLender() []string {
+	if x != nil {
+		return x.Lender
 	}
 	return nil
 }
@@ -13632,14 +13640,15 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x0fLoanPageRequest\x12.\n" +
 	"\x04data\x18\x01 \x01(\v2\x1a.admin.LoanPageRequestDataR\x04data\"C\n" +
 	"\x10LoanPageResponse\x12/\n" +
-	"\x04data\x18\x01 \x01(\v2\x1b.admin.LoanPageResponseDataR\x04data\"\xd1\x01\n" +
+	"\x04data\x18\x01 \x01(\v2\x1b.admin.LoanPageResponseDataR\x04data\"\xe9\x01\n" +
 	"\x15LoanPageRequestFilter\x12\x14\n" +
 	"\x05stage\x18\x02 \x01(\tR\x05stage\x12\x18\n" +
 	"\akeyword\x18\x03 \x01(\tR\akeyword\x12!\n" +
 	"\fkeyword_type\x18\x04 \x01(\tR\vkeywordType\x12!\n" +
 	"\floan_purpose\x18\x05 \x03(\tR\vloanPurpose\x12\x1b\n" +
 	"\tloan_type\x18\x06 \x03(\tR\bloanType\x12%\n" +
-	"\x0epending_status\x18\a \x03(\tR\rpendingStatus\"C\n" +
+	"\x0epending_status\x18\a \x03(\tR\rpendingStatus\x12\x16\n" +
+	"\x06lender\x18\b \x03(\tR\x06lender\"C\n" +
 	"\x15LoanPageRequestSorter\x12\x16\n" +
 	"\x06column\x18\x01 \x01(\tR\x06column\x12\x12\n" +
 	"\x04sort\x18\x02 \x01(\tR\x04sort\"\xab\x01\n" +
