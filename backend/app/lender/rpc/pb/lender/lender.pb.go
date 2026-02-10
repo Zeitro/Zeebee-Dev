@@ -2117,8 +2117,8 @@ type LoanEntity struct {
 	PaidOffDate            string                    `protobuf:"bytes,21,opt,name=paid_off_date,json=paidOffDate,proto3" json:"paid_off_date,omitempty"`
 	CreatedAt              string                    `protobuf:"bytes,22,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt              string                    `protobuf:"bytes,23,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	OrganizationId         int64                     `protobuf:"varint,24,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	BorrowerId             int64                     `protobuf:"varint,25,opt,name=borrower_id,json=borrowerId,proto3" json:"borrower_id,omitempty"`
+	LenderOrganizationId   int64                     `protobuf:"varint,24,opt,name=lender_organization_id,json=lenderOrganizationId,proto3" json:"lender_organization_id,omitempty"`
+	BorrowerOrganizationId int64                     `protobuf:"varint,25,opt,name=borrower_organization_id,json=borrowerOrganizationId,proto3" json:"borrower_organization_id,omitempty"`
 	BusinessStrategy       []string                  `protobuf:"bytes,26,rep,name=business_strategy,json=businessStrategy,proto3" json:"business_strategy,omitempty"`
 	Applicants             []*LoanApplicantEntity    `protobuf:"bytes,27,rep,name=applicants,proto3" json:"applicants,omitempty"`
 	Source                 string                    `protobuf:"bytes,28,opt,name=source,proto3" json:"source,omitempty"`
@@ -2332,16 +2332,16 @@ func (x *LoanEntity) GetUpdatedAt() string {
 	return ""
 }
 
-func (x *LoanEntity) GetOrganizationId() int64 {
+func (x *LoanEntity) GetLenderOrganizationId() int64 {
 	if x != nil {
-		return x.OrganizationId
+		return x.LenderOrganizationId
 	}
 	return 0
 }
 
-func (x *LoanEntity) GetBorrowerId() int64 {
+func (x *LoanEntity) GetBorrowerOrganizationId() int64 {
 	if x != nil {
-		return x.BorrowerId
+		return x.BorrowerOrganizationId
 	}
 	return 0
 }
@@ -6795,7 +6795,7 @@ type BorrowerPropertyEntity struct {
 	Unit           int32                  `protobuf:"varint,4,opt,name=unit,proto3" json:"unit,omitempty"`
 	LivingAreaSqft float32                `protobuf:"fixed32,5,opt,name=living_area_sqft,json=livingAreaSqft,proto3" json:"living_area_sqft,omitempty"`
 	Bedrooms       int32                  `protobuf:"varint,6,opt,name=bedrooms,proto3" json:"bedrooms,omitempty"`
-	Bathrooms      float32                `protobuf:"fixed32,7,opt,name=bathrooms,proto3" json:"bathrooms,omitempty"`
+	Bathrooms      int32                  `protobuf:"varint,7,opt,name=bathrooms,proto3" json:"bathrooms,omitempty"`
 	Address        *AddressEntity         `protobuf:"bytes,8,opt,name=address,proto3" json:"address,omitempty"`
 	CreatedAt      string                 `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt      string                 `protobuf:"bytes,10,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
@@ -6876,7 +6876,7 @@ func (x *BorrowerPropertyEntity) GetBedrooms() int32 {
 	return 0
 }
 
-func (x *BorrowerPropertyEntity) GetBathrooms() float32 {
+func (x *BorrowerPropertyEntity) GetBathrooms() int32 {
 	if x != nil {
 		return x.Bathrooms
 	}
@@ -13757,7 +13757,7 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x19SwitchOrganizationRequest\x129\n" +
 	"\x04data\x18\x01 \x01(\v2%.lender.SwitchOrganizationRequestDataR\x04data\"H\n" +
 	"\x1dSwitchOrganizationRequestData\x12'\n" +
-	"\x0forganization_id\x18\x01 \x01(\x03R\x0eorganizationId\"\xc8\x0e\n" +
+	"\x0forganization_id\x18\x01 \x01(\x03R\x0eorganizationId\"\xee\x0e\n" +
 	"\n" +
 	"LoanEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
@@ -13785,10 +13785,9 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x16 \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\x17 \x01(\tR\tupdatedAt\x12'\n" +
-	"\x0forganization_id\x18\x18 \x01(\x03R\x0eorganizationId\x12\x1f\n" +
-	"\vborrower_id\x18\x19 \x01(\x03R\n" +
-	"borrowerId\x12+\n" +
+	"updated_at\x18\x17 \x01(\tR\tupdatedAt\x124\n" +
+	"\x16lender_organization_id\x18\x18 \x01(\x03R\x14lenderOrganizationId\x128\n" +
+	"\x18borrower_organization_id\x18\x19 \x01(\x03R\x16borrowerOrganizationId\x12+\n" +
 	"\x11business_strategy\x18\x1a \x03(\tR\x10businessStrategy\x12;\n" +
 	"\n" +
 	"applicants\x18\x1b \x03(\v2\x1b.lender.LoanApplicantEntityR\n" +
@@ -14182,7 +14181,7 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\x04unit\x18\x04 \x01(\x05R\x04unit\x12(\n" +
 	"\x10living_area_sqft\x18\x05 \x01(\x02R\x0elivingAreaSqft\x12\x1a\n" +
 	"\bbedrooms\x18\x06 \x01(\x05R\bbedrooms\x12\x1c\n" +
-	"\tbathrooms\x18\a \x01(\x02R\tbathrooms\x12/\n" +
+	"\tbathrooms\x18\a \x01(\x05R\tbathrooms\x12/\n" +
 	"\aaddress\x18\b \x01(\v2\x15.lender.AddressEntityR\aaddress\x12\x1d\n" +
 	"\n" +
 	"created_at\x18\t \x01(\tR\tcreatedAt\x12\x1d\n" +

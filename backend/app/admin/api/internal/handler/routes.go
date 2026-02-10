@@ -9,6 +9,7 @@ import (
 	api "zeebee-backend/app/admin/api/internal/handler/api"
 	base_template "zeebee-backend/app/admin/api/internal/handler/base_template"
 	common "zeebee-backend/app/admin/api/internal/handler/common"
+	loan "zeebee-backend/app/admin/api/internal/handler/loan"
 	organization "zeebee-backend/app/admin/api/internal/handler/organization"
 	organization_user "zeebee-backend/app/admin/api/internal/handler/organization_user"
 	resource "zeebee-backend/app/admin/api/internal/handler/resource"
@@ -148,6 +149,39 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				{
 					// detail
 					Method:  http.MethodGet,
+					Path:    "/loan/:id",
+					Handler: loan.LoanDetailHandler(serverCtx),
+				},
+				{
+					// reassign
+					Method:  http.MethodPost,
+					Path:    "/loan/:id/reassign",
+					Handler: loan.LoanReassignHandler(serverCtx),
+				},
+				{
+					// lender companies list
+					Method:  http.MethodGet,
+					Path:    "/loan/lender_companies",
+					Handler: loan.LenderCompaniesHandler(serverCtx),
+				},
+				{
+					// page
+					Method:  http.MethodPost,
+					Path:    "/loan/page",
+					Handler: loan.LoanPageHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// detail
+					Method:  http.MethodGet,
 					Path:    "/organization/:id",
 					Handler: organization.OrganizationDetailHandler(serverCtx),
 				},
@@ -180,6 +214,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/organization/page",
 					Handler: organization.OrganizationPageHandler(serverCtx),
+				},
+				{
+					// select option
+					Method:  http.MethodGet,
+					Path:    "/organization/select_options",
+					Handler: organization.OrganizationSelectOptionHandler(serverCtx),
 				},
 			}...,
 		),
