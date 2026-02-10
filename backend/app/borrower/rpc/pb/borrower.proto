@@ -295,7 +295,7 @@ message LoanEntity {
   string paid_off_date = 21;
   string created_at = 22;
   string updated_at = 23;
-  int64 lender_id = 24;
+  int64 lender_organization_id = 24;
   int64 creator_id = 25;
   repeated string business_strategy = 26;
   repeated LoanApplicantEntity applicants = 27;
@@ -1911,6 +1911,7 @@ message OrganizationOptionsEntity {
   int64 id = 1;
   string name = 2;
   string contact_email = 3;
+  string type = 4;
 }
 
 // info --  response

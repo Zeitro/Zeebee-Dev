@@ -42,3 +42,11 @@ func (repo *OrganizationSettingRepo) DetailByPurpose(ctx context.Context, organi
 	err = query.First(&result).Error
 	return result, errorx.WithStack(err)
 }
+
+// DeleteByOrganizationIdWithTx
+func (repo *OrganizationSettingRepo) DeleteByOrganizationIdWithTx(ctx context.Context, tx *gorm.DB, organizationId int64) (err error) {
+	err = tx.WithContext(ctx).
+		Where("organization_id = ?", organizationId).
+		Delete(&model.OrganizationSetting{}).Error
+	return errorx.WithStack(err)
+}

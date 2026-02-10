@@ -41,15 +41,40 @@ type (
 	BaseTemplatePreviewRequestData             = admin.BaseTemplatePreviewRequestData
 	BaseTemplatePreviewResponse                = admin.BaseTemplatePreviewResponse
 	BaseTemplatePreviewResponseData            = admin.BaseTemplatePreviewResponseData
+	BorrowerEntityEntity                       = admin.BorrowerEntityEntity
+	BorrowerPropertyEntity                     = admin.BorrowerPropertyEntity
 	CreateBaseTemplateRequest                  = admin.CreateBaseTemplateRequest
 	CreateBaseTemplateRequestData              = admin.CreateBaseTemplateRequestData
 	CreateBaseTemplateResponse                 = admin.CreateBaseTemplateResponse
 	DeleteBaseTemplateRequest                  = admin.DeleteBaseTemplateRequest
 	EmptyRequest                               = admin.EmptyRequest
 	EmptyResponse                              = admin.EmptyResponse
+	FileEntity                                 = admin.FileEntity
 	GetBaseTemplateRequest                     = admin.GetBaseTemplateRequest
 	GetBaseTemplateResponse                    = admin.GetBaseTemplateResponse
 	IdRequest                                  = admin.IdRequest
+	LoanApplicantEntity                        = admin.LoanApplicantEntity
+	LoanBorrowerEntity                         = admin.LoanBorrowerEntity
+	LoanBudgetEntity                           = admin.LoanBudgetEntity
+	LoanDemographicEntity                      = admin.LoanDemographicEntity
+	LoanDemographicEthnicityEntity             = admin.LoanDemographicEthnicityEntity
+	LoanDemographicExtraDemographicEntity      = admin.LoanDemographicExtraDemographicEntity
+	LoanDemographicPropertyEntity              = admin.LoanDemographicPropertyEntity
+	LoanDemographicRaceEntity                  = admin.LoanDemographicRaceEntity
+	LoanDetailResponse                         = admin.LoanDetailResponse
+	LoanDocumentEntity                         = admin.LoanDocumentEntity
+	LoanEntity                                 = admin.LoanEntity
+	LoanExperienceEntity                       = admin.LoanExperienceEntity
+	LoanExtendValueEntity                      = admin.LoanExtendValueEntity
+	LoanLenderCompaniesResponse                = admin.LoanLenderCompaniesResponse
+	LoanPageRequest                            = admin.LoanPageRequest
+	LoanPageRequestData                        = admin.LoanPageRequestData
+	LoanPageRequestFilter                      = admin.LoanPageRequestFilter
+	LoanPageRequestSorter                      = admin.LoanPageRequestSorter
+	LoanPageResponse                           = admin.LoanPageResponse
+	LoanPageResponseData                       = admin.LoanPageResponseData
+	LoanPropertyEntity                         = admin.LoanPropertyEntity
+	LoanThirdServiceEntity                     = admin.LoanThirdServiceEntity
 	OptionEntity                               = admin.OptionEntity
 	OptionRequest                              = admin.OptionRequest
 	OptionRequestData                          = admin.OptionRequestData
@@ -63,6 +88,7 @@ type (
 	OrganizationEntity                         = admin.OrganizationEntity
 	OrganizationLenderMetadataEntity           = admin.OrganizationLenderMetadataEntity
 	OrganizationMetadataEntity                 = admin.OrganizationMetadataEntity
+	OrganizationOptionsEntity                  = admin.OrganizationOptionsEntity
 	OrganizationPageEntity                     = admin.OrganizationPageEntity
 	OrganizationPageRequest                    = admin.OrganizationPageRequest
 	OrganizationPageRequestData                = admin.OrganizationPageRequestData
@@ -70,6 +96,9 @@ type (
 	OrganizationPageRequestSorter              = admin.OrganizationPageRequestSorter
 	OrganizationPageResponse                   = admin.OrganizationPageResponse
 	OrganizationPageResponseData               = admin.OrganizationPageResponseData
+	OrganizationSelectOptionsRequest           = admin.OrganizationSelectOptionsRequest
+	OrganizationSelectOptionsRequestData       = admin.OrganizationSelectOptionsRequestData
+	OrganizationSelectOptionsResponse          = admin.OrganizationSelectOptionsResponse
 	OrganizationSwitchStatusRequest            = admin.OrganizationSwitchStatusRequest
 	OrganizationSwitchStatusRequestData        = admin.OrganizationSwitchStatusRequestData
 	OrganizationUpdateLenderRequest            = admin.OrganizationUpdateLenderRequest
@@ -98,6 +127,8 @@ type (
 	RangeFloat                                 = admin.RangeFloat
 	RangeInt32                                 = admin.RangeInt32
 	RangeInt64                                 = admin.RangeInt64
+	ReassignLoanRequest                        = admin.ReassignLoanRequest
+	ReassignLoanRequestData                    = admin.ReassignLoanRequestData
 	RefreshTokenRequest                        = admin.RefreshTokenRequest
 	RefreshTokenRequestData                    = admin.RefreshTokenRequestData
 	RefreshTokenResponse                       = admin.RefreshTokenResponse
@@ -179,6 +210,7 @@ type (
 		Detail(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error)
 		Delete(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		SwitchStatus(ctx context.Context, in *OrganizationSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+		SelectOptions(ctx context.Context, in *OrganizationSelectOptionsRequest, opts ...grpc.CallOption) (*OrganizationSelectOptionsResponse, error)
 	}
 
 	defaultOrganization struct {
@@ -220,4 +252,9 @@ func (m *defaultOrganization) Delete(ctx context.Context, in *IdRequest, opts ..
 func (m *defaultOrganization) SwitchStatus(ctx context.Context, in *OrganizationSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	client := admin.NewOrganizationClient(m.cli.Conn())
 	return client.SwitchStatus(ctx, in, opts...)
+}
+
+func (m *defaultOrganization) SelectOptions(ctx context.Context, in *OrganizationSelectOptionsRequest, opts ...grpc.CallOption) (*OrganizationSelectOptionsResponse, error) {
+	client := admin.NewOrganizationClient(m.cli.Conn())
+	return client.SelectOptions(ctx, in, opts...)
 }
