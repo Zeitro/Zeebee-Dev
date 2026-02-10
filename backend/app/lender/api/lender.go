@@ -4,6 +4,7 @@ import (
 	"github.com/zeromicro/go-zero/core/service"
 	"github.com/zeromicro/go-zero/rest"
 
+	"zeebee-backend/app/lender/api/internal/global"
 	"zeebee-backend/app/lender/api/internal/handler"
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/config"
@@ -16,6 +17,9 @@ type ApiServer struct {
 
 func NewApiServer(c config.Config) (s service.Service) {
 	apiConfig := c.ApiConf
+
+	global.SetGlobalConfig(c.ApiConf)
+
 	runOpts := []rest.RunOption{
 		rest.WithNotFoundHandler(response.NotFoundHandler{}),
 		rest.WithNotAllowedHandler(response.NotFoundHandler{}),

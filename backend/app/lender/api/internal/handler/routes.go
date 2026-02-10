@@ -14,6 +14,7 @@ import (
 	organization_setting "zeebee-backend/app/lender/api/internal/handler/organization_setting"
 	organization_template "zeebee-backend/app/lender/api/internal/handler/organization_template"
 	organization_user "zeebee-backend/app/lender/api/internal/handler/organization_user"
+	pdf "zeebee-backend/app/lender/api/internal/handler/pdf"
 	role "zeebee-backend/app/lender/api/internal/handler/role"
 	storage "zeebee-backend/app/lender/api/internal/handler/storage"
 	user "zeebee-backend/app/lender/api/internal/handler/user"
@@ -320,6 +321,21 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/organization_user/page",
 					Handler: organization_user.OrganizationUserPageHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// create apply form pdf
+					Method:  http.MethodPost,
+					Path:    "/pdf/html_to_pdf",
+					Handler: pdf.HtmlToPdfHandler(serverCtx),
 				},
 			}...,
 		),
