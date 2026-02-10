@@ -236,6 +236,9 @@ func (repo *LoanRepo) PageForLender(ctx context.Context, pageReq dto.LoanLenderP
 		fmt.Sprintf("%s.loan_processor", loanTable),
 		fmt.Sprintf("%s.bugdet", loanTable),
 	}
+	resources := []constants.LoanSource{
+		constants.LoanSourceSystem,
+	}
 	query := repo.Client(ctx).
 		Omit(omitFields...).
 		Where(fmt.Sprintf("%s.lender_organization_id = ?", loanTable), filter.OrganizationId).
@@ -244,9 +247,11 @@ func (repo *LoanRepo) PageForLender(ctx context.Context, pageReq dto.LoanLenderP
 	if len(filter.Stage) > 0 {
 		query = query.Where(fmt.Sprintf("%s.stage = ?", loanTable), filter.Stage)
 		if filter.Stage == string(constants.LoanStageDraft) {
-			query = query.Where(fmt.Sprintf("%s.source in ?", loanTable), []constants.LoanSource{constants.LoanSourcePreapproval, constants.LoanSourceSystem})
+			resources = append(resources, constants.LoanSourcePreapproval)
 		}
 	}
+	query = query.Where(fmt.Sprintf("%s.source in ?", loanTable), resources)
+
 	hasJoinProperty := false
 
 	// keyword
