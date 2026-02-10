@@ -1,17 +1,165 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { message, Modal } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { assemblyAddress, createRequest } from '@repo/shared-methods/utils';
+import {
+	assemblyAddress,
+	createRequest,
+	transformArrayStructure,
+} from '@repo/shared-methods/utils';
 import { useRouter } from 'next/navigation';
 import { useGlobalStore } from '@/store/global';
+import { useOptionsStore } from '@repo/shared-methods/store';
+import { ReloadOutlined } from '@ant-design/icons';
 
-export default function useOpt(tableFilterRef) {
+export default function useOpt({ stage }) {
 	const [modal, contextHolder] = Modal.useModal();
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const { request } = createRequest();
 	const router = useRouter();
 	const { changeSidebarCollapsed } = useGlobalStore();
+
+	const tableFilterRef = useRef();
+	const { loanPendingStatus, loanPurposeOptions, loanTypeOptions, lenderOptions } =
+		useOptionsStore();
+
+	const [lender, setLender] = useState([]);
+	const [type, setType] = useState('address');
+	const [searchValue, setSearchValue] = useState('');
+	const [loanPurpose, setLoanPurpose] = useState([]);
+	const [loanType, setLoanType] = useState([]);
+	const [status, setStatus] = useState([]);
+
+	const filterList = useMemo(() => {
+		const purposeSetting = {
+			filterType: 'treeSelect',
+			label: 'Loan purpose',
+			paramsKey: 'loan_purpose',
+			placeholder: 'Loan purpose',
+			value: loanPurpose,
+			onChange: (value) => setLoanPurpose(value),
+			treeData: transformArrayStructure({
+				sourceArray: loanPurposeOptions,
+				outputKey: 'title',
+			}).map((i) => ({ ...i, key: i.value })),
+		};
+		const statusSetting = {
+			filterType: 'treeSelect',
+			label: 'Status',
+			value: status,
+			paramsKey: 'pending_status',
+			placeholder: 'Status',
+			style: { width: 160 },
+			popupMatchSelectWidth: 172,
+			onChange: (value) => setStatus(value),
+			treeData: transformArrayStructure({
+				sourceArray: loanPendingStatus,
+				outputKey: 'title',
+			}).map((i) => ({ ...i, key: i.value })),
+		};
+		let setting = [
+			{
+				filterType: 'select-input',
+				selectValue: type,
+				selectParamsKey: 'keyword_type',
+				paramsKey: 'keyword',
+				value: searchValue,
+				selectProps: {
+					onChange: (e) => setType(e),
+				},
+				onChange: ({ target: { value } }) => setSearchValue(value),
+				options: [
+					{
+						label: 'Address',
+						value: 'address',
+					},
+					{
+						label: 'State',
+						value: 'state',
+					},
+					{
+						label: 'City',
+						value: 'city',
+					},
+					{
+						label: 'Borrower',
+						value: 'borrower',
+					},
+					{
+						label: 'Loan number',
+						value: 'code',
+					},
+				],
+			},
+			...(stage !== 'Archived' ? [purposeSetting] : []),
+			{
+				filterType: 'treeSelect',
+				label: 'Loan type',
+				paramsKey: 'loan_type',
+				style: { width: 160 },
+				popupMatchSelectWidth: 205,
+				value: loanType,
+				placeholder: 'Loan type',
+				onChange: (value) => setLoanType(value),
+				treeData: transformArrayStructure({
+					sourceArray: loanTypeOptions,
+					outputKey: 'title',
+				}).map((i) => ({ ...i, key: i.value })),
+			},
+			{
+				filterType: 'treeSelect',
+				label: 'Lender',
+				paramsKey: 'lender',
+				placeholder: 'Lender',
+				style: { width: 160 },
+				popupMatchSelectWidth: 172,
+				value: lender,
+				onChange: (value) => setLender(value),
+				treeData: transformArrayStructure({
+					sourceArray: lenderOptions,
+					outputKey: 'title',
+				}).map((i) => ({ ...i, key: i.value })),
+			},
+			...(['Archived', 'Active'].includes(stage) ? [] : [statusSetting]),
+			{
+				filterType: 'button',
+				onClick: () => {
+					tableFilterRef?.current?.handleSearch?.();
+				},
+			},
+			{
+				filterType: 'button',
+				type: 'default',
+				text: 'Reset',
+				icon: <ReloadOutlined />,
+				onClick: () => {
+					setType('address');
+					setSearchValue('');
+					setLoanPurpose([]);
+					setLoanType([]);
+					setStatus([]);
+					setLender([]);
+					setTimeout(() => {
+						tableFilterRef?.current?.handleSearch?.();
+					}, 300);
+				},
+			},
+		];
+		return setting;
+	}, [
+		searchValue,
+		type,
+		loanPurpose,
+		loanType,
+		status,
+		loanPurposeOptions,
+		loanTypeOptions,
+		loanPendingStatus,
+		lender,
+		lenderOptions,
+		stage,
+	]);
+
 	const handleDelete = async (id) => {
 		try {
 			setConfirmLoading(true);
@@ -53,7 +201,7 @@ export default function useOpt(tableFilterRef) {
 
 	const handleSelectedRow = (record) => {
 		let url;
-		if (record?.source === 'borrower') {
+		if (record?.source === 'Borrower') {
 			url = `/loans/${record?.id}`;
 		} else {
 			url = `/loans/zeeBeeDetails?id=${record?.id}`;
@@ -61,5 +209,5 @@ export default function useOpt(tableFilterRef) {
 		router.push(url);
 		setTimeout(() => changeSidebarCollapsed(true), 300);
 	};
-	return { showDeleteModal, contextHolder, handleSelectedRow };
+	return { showDeleteModal, contextHolder, handleSelectedRow, tableFilterRef, filterList };
 }

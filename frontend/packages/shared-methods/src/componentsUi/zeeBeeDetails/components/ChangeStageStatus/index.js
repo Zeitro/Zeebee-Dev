@@ -8,7 +8,7 @@ import { DropdownStatus } from '@repo/shared-methods';
 /**
  * 修改pending loans列表内的状态
  * */
-export const LoanPendingStatus = ({ data, successCallback }) => {
+export const LoanPendingStatus = ({ data, successCallback, ...props }) => {
 	const { loanPendingStatus } = useOptionsStore();
 	const items = transformArrayStructure({
 		sourceArray: loanPendingStatus,
@@ -22,7 +22,8 @@ export const LoanPendingStatus = ({ data, successCallback }) => {
 			items={items}
 			statusKey="pending_status"
 			api={`/loan/${data.id}/pending_status`}
-			className={styles?.[data?.pending_status]}
+			{...props}
+			className={[styles?.[data?.pending_status], props?.className].join(' ')}
 		/>
 	);
 };
@@ -30,7 +31,7 @@ export const LoanPendingStatus = ({ data, successCallback }) => {
 /**
  * 修改loans列表内的状态
  * */
-export const LoanStage = ({ data, successCallback }) => {
+export const LoanStage = ({ data, successCallback, ...props }) => {
 	const { loanStatusOptions } = useOptionsStore();
 	const items = transformArrayStructure({
 		sourceArray: loanStatusOptions,
@@ -44,7 +45,8 @@ export const LoanStage = ({ data, successCallback }) => {
 			items={items}
 			statusKey="stage"
 			api={`/loan/${data.id}/stage`}
-			className={styles?.[data?.stage]}
+			{...props}
+			className={[styles?.[data?.stage], props?.className].join(' ')}
 		/>
 	);
 };

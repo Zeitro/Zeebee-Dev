@@ -103,13 +103,22 @@ const Processing = ({
 							loan_id={loan_id}
 							category="Extend"
 						/>
-						<SendRequestBtn list={sendList} size="middle" disabled={!sendList.length}>
+						<SendRequestBtn
+							list={sendList}
+							size="middle"
+							disabled={disabledOperate || !sendList.length}
+						>
 							Send multiple request
 						</SendRequestBtn>
 					</div>
 				)}
 				<DocumentList
-					columns={borrowerUploadColumns(isHide, handleClickOpt, deleteLoading)}
+					columns={borrowerUploadColumns({
+						isHide,
+						handleClickOpt,
+						deleteLoading,
+						disabledOperate,
+					})}
 					dataSource={[...borrowerList]}
 					isHide={isHide}
 					loading={loading}

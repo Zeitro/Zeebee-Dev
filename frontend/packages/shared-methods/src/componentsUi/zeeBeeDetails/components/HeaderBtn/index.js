@@ -22,7 +22,7 @@ const HeaderBtn = ({
 			>
 				{title || children}
 			</div>
-			{getContent() || (
+			{getContent() ?? (
 				<Space className="shrink-0" size={16}>
 					{isHaveRejectBtn && (
 						<ApproveRejectModal

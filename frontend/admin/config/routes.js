@@ -7,7 +7,14 @@ export const navRouter = [
 	{
 		path: '/loans',
 		title: 'All Loans',
-		icon: 'business',
+		icon: 'loan',
+		router: [
+			{
+				path: '/loans/zeeBeeDetails',
+				title: 'ZeeBee Loan Details',
+				hideMenu: true,
+			},
+		],
 	},
 	{
 		path: '/lenders',

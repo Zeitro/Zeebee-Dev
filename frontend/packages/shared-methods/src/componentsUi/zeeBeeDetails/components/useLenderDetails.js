@@ -48,7 +48,14 @@ import SaveSvg from '@repo/shared-methods/assets/images/save.svg';
 const initialValues = {
 	applicants: [{ type: 'Individual', is_primary: true }],
 };
-const CommonSave = ({ children, title, setDisabled, handleUpdate, confirmLoading }) => {
+const CommonSave = ({
+	children,
+	title,
+	setDisabled,
+	handleUpdate,
+	confirmLoading,
+	isAllReadonly,
+}) => {
 	const [isSave, setIsSave] = useState(false);
 	const handleClick = async () => {
 		if (isSave) {
@@ -58,7 +65,9 @@ const CommonSave = ({ children, title, setDisabled, handleUpdate, confirmLoading
 		setIsSave(!isSave);
 	};
 	const changeHeaderBtnDom = () => {
-		return (
+		return isAllReadonly ? (
+			''
+		) : (
 			<Button
 				type={isSave ? 'primary' : 'default'}
 				onClick={handleClick}
@@ -81,8 +90,9 @@ const CommonSave = ({ children, title, setDisabled, handleUpdate, confirmLoading
 /**
  * hooks组件，用于 新建/详情/草稿 三种ZeeBee Loan
  * @param {*} pageType 区分详情页 create/ details
+ * @param {*} isAllReadonly 详情页所有都不可操作，只能只读
  */
-const useLenderDetails = () => {
+const useLenderDetails = ({ isAllReadonly }) => {
 	const searchParams = useSearchParams();
 	const api = `/property/${searchParams.get('propertyId')}`;
 	const [form] = Form.useForm();
@@ -228,7 +238,8 @@ const useLenderDetails = () => {
 		</div>
 	);
 
-	const getContent = (pageKey, disabledOperate) => {
+	const getContent = (pageKey, disabledLoanProgress) => {
+		// disabledLoanProgress只是限制审核步骤的，未到的步骤不允许操作
 		const item = findItem({ list: lenderDetailsSteps, key: pageKey });
 		switch (pageKey) {
 			case 'general':
@@ -240,6 +251,7 @@ const useLenderDetails = () => {
 						title={item?.title}
 						handleUpdate={handleSave}
 						confirmLoading={confirmLoading}
+						isAllReadonly={isAllReadonly}
 					>
 						<ApplicantInfo
 							form={form}
@@ -262,6 +274,7 @@ const useLenderDetails = () => {
 						title={item?.title}
 						handleUpdate={handleSave}
 						confirmLoading={confirmLoading}
+						isAllReadonly={isAllReadonly}
 					>
 						<PropertyInfo
 							form={form}
@@ -279,6 +292,7 @@ const useLenderDetails = () => {
 						title={item?.title}
 						handleUpdate={handleSave}
 						confirmLoading={confirmLoading}
+						isAllReadonly={isAllReadonly}
 					>
 						<Experience
 							form={form}
@@ -308,6 +322,7 @@ const useLenderDetails = () => {
 						title={item?.title}
 						handleUpdate={handleSave}
 						confirmLoading={confirmLoading}
+						isAllReadonly={isAllReadonly}
 					>
 						<Declaration form={form} disabled={disabled} />
 						<Demographics form={form} />
@@ -324,7 +339,7 @@ const useLenderDetails = () => {
 					<Quoting
 						id={id}
 						setNextStep={() => setCurrentStep('Processing')}
-						disabledOperate={disabledOperate}
+						disabledOperate={disabledLoanProgress}
 					/>
 				);
 			case 'Processing':
@@ -332,7 +347,7 @@ const useLenderDetails = () => {
 					<Processing
 						id={id}
 						setNextStep={() => setCurrentStep('Underwriting')}
-						disabledOperate={disabledOperate}
+						disabledOperate={disabledLoanProgress}
 						rowData={rowData}
 					/>
 				);
@@ -345,7 +360,7 @@ const useLenderDetails = () => {
 						id={id}
 						setRejectStep={() => setCurrentStep('Processing')}
 						setNextStep={() => setCurrentStep('Closing')}
-						disabledOperate={disabledOperate}
+						disabledOperate={disabledLoanProgress}
 						rowData={rowData}
 					/>
 				);
@@ -353,7 +368,7 @@ const useLenderDetails = () => {
 				return (
 					<Closing
 						// setNextStep={() => setCurrentStep('Active')}
-						disabledOperate={disabledOperate}
+						disabledOperate={disabledLoanProgress}
 						rowData={rowData}
 						id={id}
 					/>
@@ -367,8 +382,8 @@ const useLenderDetails = () => {
 		}
 	};
 
-	const getDetailsComponents = (disabledOperate) => {
-		// disabledOperate 可查看，不可操作页面
+	const getDetailsComponents = (disabledLoanProgress) => {
+		// disabledLoanProgress 审核步骤还未到此页面，则只可查看，不可操作页面
 		return {
 			General: getContent('general'),
 			borrowerInformation: getContent('borrowerInformation'),
@@ -376,10 +391,10 @@ const useLenderDetails = () => {
 			experienceAndThirdService: getContent('experienceAndThirdService'),
 			declarationAndDemographics: getContent('declarationAndDemographics'),
 			reviewAndSign: getContent('reviewAndSign'),
-			Quoting: getContent('Quoting', disabledOperate),
-			Processing: getContent('Processing', disabledOperate),
-			Underwriting: getContent('Underwriting', disabledOperate),
-			Closing: getContent('Closing', disabledOperate),
+			Quoting: getContent('Quoting', disabledLoanProgress),
+			Processing: getContent('Processing', disabledLoanProgress),
+			Underwriting: getContent('Underwriting', disabledLoanProgress),
+			Closing: getContent('Closing', disabledLoanProgress),
 			Funded: getContent('Funded'),
 		};
 	};
@@ -413,7 +428,7 @@ const useLenderDetails = () => {
 		.map((i, index) => ({
 			key: i.key,
 			label: i.title,
-			children: getDetailsComponents(index !== loanProgress.index)[i.key],
+			children: getDetailsComponents(isAllReadonly || index !== loanProgress.index)[i.key], //loanProgress比较审核的步骤，未到的步骤不可操作
 		}))
 		.filter((i) => i.children);
 	const selectIndex = useMemo(

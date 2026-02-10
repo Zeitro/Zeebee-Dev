@@ -50,7 +50,12 @@ const getUploadCommonColumns = (typeTitle, isHaveComments = true, statusWidth) =
 
 	return arr;
 };
-export const borrowerUploadColumns = (isHide, handleClickOpt, deleteLoading) => {
+export const borrowerUploadColumns = ({
+	isHide,
+	handleClickOpt,
+	deleteLoading,
+	disabledOperate,
+}) => {
 	const getOpt = () => {
 		return {
 			title: '',
@@ -67,12 +72,13 @@ export const borrowerUploadColumns = (isHide, handleClickOpt, deleteLoading) => 
 								id: record.id,
 							},
 						]}
-						disabled={record.status !== 'Pending request'}
+						disabled={disabledOperate || record.status !== 'Pending request'}
 					>
 						Send request
 					</SendRequestBtn>
 					<TableOperation
 						sliceCount={0}
+						disabled={disabledOperate}
 						list={[
 							{
 								key: 'Upload',

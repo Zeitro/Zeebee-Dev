@@ -9,7 +9,8 @@ import HomeSvg from '@repo/shared-methods/assets/images/home.svg';
 import _ from 'lodash';
 import { CheckOutlined } from '@ant-design/icons';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
-const ZeeBeeDetails = () => {
+// loan详情页面组件（lender端/admin端使用）
+const ZeeBeeDetails = ({ isAllReadonly }) => {
 	const {
 		scrollRef,
 		currentStep,
@@ -27,7 +28,7 @@ const ZeeBeeDetails = () => {
 		unitInfo,
 		setUnitInfo,
 		detailsLoading,
-	} = useLenderDetails();
+	} = useLenderDetails({ isAllReadonly });
 	let [lenderMenu, setLenderMenu] = useState([]);
 	// 计算总步骤，方便跟loanProgress比较。
 	let count = useRef({ index: -1, key: '' });
@@ -196,7 +197,7 @@ const ZeeBeeDetails = () => {
 							autoComplete="off"
 							className=""
 							size="large"
-							disabled={disabled}
+							disabled={isAllReadonly || disabled}
 							initialValues={initialValues}
 							scrollToFirstError
 							onValuesChange={(v) => {

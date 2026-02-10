@@ -2,9 +2,7 @@
 import { Tabs } from 'antd';
 import React, { useState } from 'react';
 import styles from './index.module.scss';
-import PendingPage from './Pending';
-import ActiveLoans from './Active';
-import ArchivedLoans from './Archived';
+import LoansPage from './LoansPage';
 import { useGetOptions } from '@repo/shared-methods/hooks';
 const api = '/loan/page';
 const ListView = ({ className }) => {
@@ -26,6 +24,9 @@ const ListView = ({ className }) => {
 			key: 'loan_stage',
 			valueName: 'loanStatusOptions',
 		},
+		{
+			type: 'lender',
+		},
 	]);
 	return (
 		<Tabs
@@ -34,29 +35,41 @@ const ListView = ({ className }) => {
 				{
 					key: 'pending',
 					label: 'Pending',
-					children: (
-						<PendingPage filterWrapClassName="px-4 pb-4" api={api} key="Pending" />
-					),
+					children: <LoansPage filterWrapClassName="px-4 pb-4" stage="Pending" />,
 				},
 				{
 					key: 'active',
 					label: 'Active',
-					children: <ActiveLoans filterWrapClassName="px-4 pb-4" api={api} />,
+					children: (
+						<LoansPage
+							filterWrapClassName="px-4 pb-4"
+							// key="Active"
+							stage="Active"
+							scrollX={2860}
+						/>
+					),
 				},
 				{
 					key: 'archived',
 					label: 'Archived',
-					children: <ArchivedLoans filterWrapClassName="px-4 pb-4" api={api} />,
+					children: (
+						<LoansPage
+							filterWrapClassName="px-4 pb-4"
+							// key="Archived"
+							stage="Archived"
+							scrollX={1880}
+						/>
+					),
 				},
 				{
 					key: 'rejected',
 					label: 'Rejected',
 					children: (
-						<PendingPage
+						<LoansPage
 							filterWrapClassName="px-4 pb-4"
 							api={api}
 							stage="Rejected"
-							key="Rejected"
+							// key="Rejected"
 							scrollX={2610}
 						/>
 					),
@@ -65,7 +78,7 @@ const ListView = ({ className }) => {
 					key: 'Draft',
 					label: 'Pre approval',
 					children: (
-						<PendingPage
+						<LoansPage
 							filterWrapClassName="px-4 pb-4"
 							api={api}
 							stage="Draft"

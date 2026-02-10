@@ -5,14 +5,17 @@ import {
 	LoanPendingStatus,
 } from '@repo/shared-methods/componentsUi/zeeBeeDetails/components/ChangeStageStatus';
 import { TableOperation } from '@repo/shared-methods';
+import { useState } from 'react';
 
 export default function useColumn({ isNotAddress, successCallback, showDeleteModal, stage }) {
+	const [rowData, setRowData] = useState({});
+	const [openReassignLender, setOpenReassignLender] = useState(false);
 	const get3rdPartyMark = (v, { source }) => (
 		<div className="flex items-center">
 			<p className="overflow-hidden text-ellipsis whitespace-nowrap" title={v}>
 				{v}
 			</p>
-			{source === 'borrower' && (
+			{source === 'Borrower' && (
 				<div className="ml-2 px-2 bg-blue-light-1 text-blue-medium-default rounded-xs">
 					3rd party
 				</div>
@@ -30,7 +33,7 @@ export default function useColumn({ isNotAddress, successCallback, showDeleteMod
 				sortDirections: ['ascend', 'descend'],
 				// defaultSortOrder: 'descend',
 				fixed: 'left',
-				minWidth: 200,
+				width: 260,
 				render: get3rdPartyMark,
 			},
 			{
@@ -57,18 +60,18 @@ export default function useColumn({ isNotAddress, successCallback, showDeleteMod
 		];
 		return [
 			{
-				title: 'Loan ID',
-				dataIndex: 'id',
-				key: 'id',
+				title: 'Loan number',
+				dataIndex: 'code',
+				key: 'code',
 				ellipsis: true,
-				width: 170,
+				width: 180,
 			},
 			{
-				title: 'target lender',
-				dataIndex: 'lender',
-				key: 'lender',
+				title: stage === 'Pending' ? 'Target lender' : 'Lender',
+				dataIndex: 'lender_company',
+				key: 'lender_company',
 				ellipsis: true,
-				width: 170,
+				width: 180,
 			},
 			...(isNotAddress ? [] : addressArr),
 			{
@@ -100,28 +103,33 @@ export default function useColumn({ isNotAddress, successCallback, showDeleteMod
 		return {
 			title: 'Action',
 			dataIndex: 'operation',
-			width: 110,
+			width: stage === 'Draft' ? 220 : 110,
 			align: 'left',
 			fixed: 'right',
 			render: (_, record) => (
 				<TableOperation
 					record={record}
 					getItems={(editItem, deleteItem, detailsItem) => {
-						const arr = [];
-						// if (record?.source === 'borrower') {
-						// 	arr.push({ ...editItem, url: `/loans/${record?.id}` });
-						// 	arr.push(deleteItem);
-						// } else {
-						arr.push({
-							...detailsItem,
-							url: `/loans/zeeBeeDetails?id=${record?.id}`,
-						});
-						// }
+						const arr = [
+							{
+								...detailsItem,
+								url: `/loans/zeeBeeDetails?id=${record?.id}`,
+							},
+						];
+						if (stage === 'Draft') {
+							arr.push({
+								label: 'Reassign Lender',
+								key: 'reassignLender',
+							});
+						}
 						return arr;
 					}}
 					onSelect={(key) => {
+						setRowData({ ...record });
 						if (key === 'delete') {
 							showDeleteModal(record);
+						} else if (key === 'reassignLender') {
+							setOpenReassignLender(true);
 						}
 					}}
 				/>
@@ -138,7 +146,14 @@ export default function useColumn({ isNotAddress, successCallback, showDeleteMod
 			width: 150,
 			align: 'center',
 			fixed: 'right',
-			render: (v, record) => <LoanStage data={record} successCallback={successCallback} />,
+			render: (v, record) => (
+				<LoanStage
+					data={record}
+					successCallback={successCallback}
+					disabled={true}
+					className="[&_.ant-btn]:!text-foreground [&_.ant-btn]:!bg-none"
+				/>
+			),
 		};
 	};
 
@@ -152,7 +167,11 @@ export default function useColumn({ isNotAddress, successCallback, showDeleteMod
 			align: 'center',
 			fixed: 'right',
 			render: (v, record) => (
-				<LoanPendingStatus data={record} successCallback={successCallback} />
+				<LoanPendingStatus
+					data={record}
+					successCallback={successCallback}
+					disabled={true}
+				/>
 			),
 		};
 		let arr = [
@@ -182,13 +201,7 @@ export default function useColumn({ isNotAddress, successCallback, showDeleteMod
 				render: (v) => v?.join(',') || '--',
 				width: 160,
 			},
-			{
-				title: 'Target lender',
-				dataIndex: 'lender_company',
-				key: 'lender_company',
-				ellipsis: true,
-				width: 180,
-			},
+
 			{
 				title: 'Total loan amount',
 				dataIndex: 'total_amount',
@@ -241,7 +254,7 @@ export default function useColumn({ isNotAddress, successCallback, showDeleteMod
 				ellipsis: true,
 				width: 180,
 			},
-			...(stage !== 'Draft' ? [getStageOpt(successCallback)] : []),
+			// ...(stage !== 'Draft' ? [getStageOpt(successCallback)] : []),
 			...(stage === 'Pending' ? [status] : []),
 			getOpt(showDeleteModal, stage),
 		];
@@ -264,13 +277,6 @@ export default function useColumn({ isNotAddress, successCallback, showDeleteMod
 				ellipsis: true,
 				width: 120,
 				render: (v) => v || '--',
-			},
-			{
-				title: 'Lender',
-				dataIndex: 'lender_company',
-				key: 'lender_company',
-				ellipsis: true,
-				width: 180,
 			},
 			{
 				title: 'Loan type',
@@ -362,7 +368,7 @@ export default function useColumn({ isNotAddress, successCallback, showDeleteMod
 				width: 160,
 				render: (v) => v || '--',
 			},
-			getStageOpt(successCallback),
+			// getStageOpt(successCallback),
 			getOpt(showDeleteModal),
 		];
 		if (spliceList) {
@@ -394,13 +400,6 @@ export default function useColumn({ isNotAddress, successCallback, showDeleteMod
 				render: (v) => formatAmount(v),
 			},
 			{
-				title: 'Lender',
-				dataIndex: 'lender_company',
-				key: 'lender_company',
-				ellipsis: true,
-				width: 180,
-			},
-			{
 				title: 'Rate',
 				dataIndex: 'rate',
 				key: 'rate',
@@ -418,7 +417,7 @@ export default function useColumn({ isNotAddress, successCallback, showDeleteMod
 				width: 160,
 				render: (v) => v || '--',
 			},
-			getStageOpt(successCallback),
+			// getStageOpt(successCallback),
 			getOpt(showDeleteModal),
 		];
 		if (spliceList) {
@@ -430,10 +429,29 @@ export default function useColumn({ isNotAddress, successCallback, showDeleteMod
 		return arr;
 	};
 
+	const getColumnsByStage = () => {
+		switch (stage) {
+			case 'Pending':
+			case 'Draft':
+			case 'Rejected':
+				return pendingColumns();
+			case 'Active':
+				return activeColumns();
+			case 'Archived':
+				return archivedColumns();
+			default:
+				return [];
+		}
+	};
+
 	return {
 		pendingColumns,
 		activeColumns,
 		archivedColumns,
 		get3rdPartyMark,
+		getColumnsByStage,
+		rowData,
+		openReassignLender,
+		setOpenReassignLender,
 	};
 }
