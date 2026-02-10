@@ -73,16 +73,21 @@ func (l *OrganizationLogic) All(ctx context.Context, organizationType constants.
 		return nil, err
 	}
 	return *resultBo, nil
+}
 
+func (l *OrganizationLogic) AllForOption(ctx context.Context, organizationType constants.UserType, status constants.OrganizationStatus) (result []*bo.OrganizationOptionBo, err error) {
+	organizations, err := l.repos.OrganizationRepo.AllForOption(ctx, organizationType, status)
+	if err != nil {
+		return
+	}
+	resultBo, err := copierx.Trans[[]*model.Organization, []*bo.OrganizationOptionBo](&organizations)
+	if err != nil {
+		return nil, err
+	}
+	return *resultBo, nil
 }
 
 // Delete removes an organization and all its associated data from the system.
-// It performs the following operations within a database transaction:
-// 1. Retrieves the organization by ID
-// 2. Removes all associated roles
-// 3. Removes all associated organization emails
-// 4. Removes all organization-user relationships
-// 5. Finally deletes the organization itself
 func (l *OrganizationLogic) Delete(ctx context.Context, id int64) (err error) {
 	organization, err := l.repos.OrganizationRepo.GetOrganizationById(ctx, id, true)
 	if err != nil {
@@ -115,9 +120,24 @@ func (l *OrganizationLogic) Delete(ctx context.Context, id int64) (err error) {
 		if innerErr != nil {
 			return innerErr
 		}
-		_, innerErr = l.repos.OrganizationRepo.DeleteByIDWithTx(ctx, tx, id)
 
-		return innerErr
+		// delete organization template
+		innerErr = l.repos.OrganizationTemplateRepo.DeleteByOrganizationIdWithTx(ctx, tx, organization.Id)
+		if innerErr != nil {
+			return innerErr
+		}
+		// delete organization setting
+		innerErr = l.repos.OrganizationSettingRepo.DeleteByOrganizationIdWithTx(ctx, tx, organization.Id)
+		if innerErr != nil {
+			return innerErr
+		}
+
+		// delete organization
+		_, innerErr = l.repos.OrganizationRepo.DeleteByIDWithTx(ctx, tx, id)
+		if innerErr != nil {
+			return innerErr
+		}
+		return nil
 
 	})
 	if err != nil {
@@ -125,6 +145,17 @@ func (l *OrganizationLogic) Delete(ctx context.Context, id int64) (err error) {
 	}
 
 	return nil
+}
+
+// SelectOptions retrieves a list of organization options based on the specified type.
+func (l *OrganizationLogic) SelectOptions(ctx context.Context, organizationType constants.UserType) (results []*bo.OrganizationOptionBo, err error) {
+	organizations, err := l.repos.OrganizationRepo.SelectOptions(ctx, organizationType)
+	if err != nil {
+		return
+	}
+	resultsPtr, err := copierx.Trans[[]*model.Organization, []*bo.OrganizationOptionBo](&organizations)
+	results = *resultsPtr
+	return results, err
 }
 
 // tranToBo converts a model.Organization entity to a bo.OrganizationBo business object.

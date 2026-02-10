@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data"
 	"zeebee-backend/domains/zeebee/model"
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
@@ -94,7 +95,7 @@ func (l *DeleteFileLogic) DeleteFile(in *lender.FileDeleteRequest) (resp *lender
 		}
 
 		// create operation log
-		operationFile := &model.OperationFile{
+		operationFile := &data.OperationFile{
 			EntityId:   file.EntityId,
 			EntityType: file.EntityType,
 			FileUrl:    file.FileUrl,
@@ -103,23 +104,23 @@ func (l *DeleteFileLogic) DeleteFile(in *lender.FileDeleteRequest) (resp *lender
 		innerErr = l.baseLogic.CreateLoanOperationLog(
 			tx,
 			loanDocument.LoanId,
-			claim.UserId,
-			model.LoanOperationStatus{
+			claim.OrganizationUserId,
+			data.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
-			model.LoanOperationStatus{
+			data.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
 			constants.LoanOperationActionDeleteDocumentFile,
-			&model.LoanOperationMetadata{
-				LoanDocuments: []*model.OperationLoanDocument{
+			&data.LoanOperationMetadata{
+				LoanDocuments: []*data.OperationLoanDocument{
 					{
 						Category: loanDocument.Category,
 						FileType: loanDocument.FileType,
 						Status:   loanDocument.Status,
-						Files:    []*model.OperationFile{operationFile},
+						Files:    []*data.OperationFile{operationFile},
 					},
 				},
 			},

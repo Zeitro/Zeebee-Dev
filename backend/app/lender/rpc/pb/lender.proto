@@ -257,8 +257,8 @@ message LoanEntity {
   string paid_off_date = 21;
   string created_at = 22;
   string updated_at = 23;
-  int64 organization_id = 24;
-  int64 borrower_id = 25;
+  int64 lender_organization_id = 24;
+  int64 borrower_organization_id = 25;
   repeated string business_strategy = 26;
   repeated LoanApplicantEntity applicants = 27;
   string source = 28;
@@ -797,7 +797,7 @@ message BorrowerPropertyEntity{
   int32  unit = 4;
   float living_area_sqft = 5;
   int32 bedrooms = 6;
-  float bathrooms = 7;
+  int32 bathrooms = 7;
   AddressEntity address = 8;
   string created_at = 9;
   string updated_at = 10;

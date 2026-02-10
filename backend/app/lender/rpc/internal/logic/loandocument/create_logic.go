@@ -12,6 +12,7 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -85,7 +86,7 @@ func (l *CreateLogic) Create(in *lender.LoanDocumentCreateExtendTypeRequest) (re
 			return errorx.GetFailedTransErr(innerErr)
 		}
 
-		operationDocs := []*model.OperationLoanDocument{}
+		operationDocs := []*data.OperationLoanDocument{}
 		innerErr = copier.CopyWithOption(&operationDocs, loanDocuments, copier.Option{
 			IgnoreEmpty:   false,
 			DeepCopy:      true,
@@ -99,16 +100,16 @@ func (l *CreateLogic) Create(in *lender.LoanDocumentCreateExtendTypeRequest) (re
 			tx,
 			in.Data.LoanId,
 			claim.OrganizationUserId,
-			model.LoanOperationStatus{
+			data.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
-			model.LoanOperationStatus{
+			data.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
 			constants.LoanOperationActionCreateDocumentType,
-			&model.LoanOperationMetadata{
+			&data.LoanOperationMetadata{
 				LoanDocuments: operationDocs,
 			},
 		)
