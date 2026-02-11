@@ -62,6 +62,7 @@ const DownloadPdf = ({
 						configurationForm={form}
 						name="downloadForm"
 						isAllEditable={true}
+						className="[&::-webkit-scrollbar-thumb]:border-[#f5f5f5] [&::-webkit-scrollbar]:bg-[#f5f5f5]"
 					/>
 				</div>
 				<div
