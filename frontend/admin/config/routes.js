@@ -5,9 +5,26 @@ export const navRouter = [
 		hideCrumbs: true,
 	},
 	{
+		path: '/loans',
+		title: 'All Loans',
+		icon: 'loan',
+		router: [
+			{
+				path: '/loans/zeeBeeDetails',
+				title: 'ZeeBee Loan Details',
+				hideMenu: true,
+			},
+		],
+	},
+	{
 		path: '/lenders',
 		title: 'Lenders',
 		icon: 'business',
+	},
+	{
+		path: '/editorTemplate',
+		title: 'Template',
+		icon: 'template',
 	},
 ];
 

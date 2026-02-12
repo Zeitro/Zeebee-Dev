@@ -6,6 +6,7 @@ import (
 	"html/template"
 
 	"zeebee-backend/app/pdf_generator/client"
+	"zeebee-backend/common/stringx"
 )
 
 type Convertor interface {
@@ -28,7 +29,10 @@ func NewDefaultConvertor(pdfGeneratorUrl string) *DefaultConvertor {
 
 func (c *DefaultConvertor) ConvertToHtml(ctx context.Context, name string, templateContent string, data map[string]interface{}) (content []byte, contentType string, err error) {
 	contentType = "text/html"
-	tpl, err := template.New(name).Parse(templateContent)
+	tpl, err := template.
+		New(name).
+		Funcs(TplFunc()).
+		Parse(templateContent)
 	if err != nil {
 		return nil, contentType, err
 	}
@@ -56,45 +60,6 @@ func (c *DefaultConvertor) ConvertToPdf(ctx context.Context, name string, templa
 		return nil, contentType, err
 	}
 	return result, contentType, nil
-
-	// client := &http.Client{}
-	// payload := GeneratePdfRequest{
-	// 	Type: "Text",
-	// 	Text: string(content),
-	// }
-	// requestBody, err := json.Marshal(payload)
-	// if err != nil {
-	// 	return nil, contentType, err
-	// }
-	//
-	// req, err := http.NewRequestWithContext(
-	// 	ctx,
-	// 	http.MethodPost,
-	// 	c.pdfGeneratorUrl,
-	// 	bytes.NewReader(requestBody),
-	// )
-	// if err != nil {
-	// 	return nil, contentType, err
-	// }
-	// req.Header.Set("Content-Type", "application/json")
-	//
-	// resp, err := client.Do(req)
-	// if err != nil {
-	// 	return nil, contentType, err
-	// }
-	// defer resp.Body.Close()
-	// var generatePdfResponse GeneratePdfResponse
-	// err = json.NewDecoder(resp.Body).Decode(&generatePdfResponse)
-	// if err != nil {
-	// 	return nil, contentType, err
-	// }
-	// if generatePdfResponse.Code != http.StatusOK {
-	// 	return nil, contentType, fmt.Errorf(generatePdfResponse.Message)
-	// }
-	// if generatePdfResponse.Data.Data == nil {
-	// 	return nil, contentType, fmt.Errorf("No data returned")
-	// }
-	// return generatePdfResponse.Data.Data, contentType, nil
 }
 
 type GeneratePdfRequest struct {
@@ -109,4 +74,12 @@ type GeneratePdfResponse struct {
 	Data    struct {
 		Data []byte `json:"data"`
 	} `json:"data"`
+}
+
+func TplFunc() template.FuncMap {
+	return template.FuncMap{
+		"usd":      stringx.FormatUsDollarCurrency,
+		"usaphone": stringx.FormatUsPhoneNumber,
+		"percent":  stringx.PercentFormat,
+	}
 }
