@@ -6,10 +6,11 @@ import CreateProperty from '../components/Create/property';
 import CreateTerm from '../components/Create/term';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createLoanSteps } from '@/enum/loan';
-import { createRequest } from '@/lib/fetch';
+import { createRequest } from '@repo/shared-methods/utils';
 import { loan_pending } from '@/enum/common';
-import { BtnPopUpModal } from '@/components/NewModal/BtnPopUpModal';
-import { changeUnitByPropertyType } from '@/lib/format';
+import { BtnPopUpModal } from '@repo/shared-methods';
+import _ from 'lodash';
+import QuoteBtn from '../components/Quote';
 const CreateLoanPage = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -50,11 +51,7 @@ const CreateLoanPage = () => {
 				return;
 			}
 			// add loan
-			const body = {
-				...(loanData[0] || {}),
-				...(loanData[1] || {}),
-				...(values || {}),
-			};
+			const body = _.merge({}, loanData[0] || {}, loanData[1] || {}, values || {});
 
 			body.applicants = body?.applicants.filter(
 				(i) => i.first_name || i.mid_name || i.last_name,
@@ -70,10 +67,13 @@ const CreateLoanPage = () => {
 			});
 			setLoading(false);
 			router.back();
-		} catch (error) {
+		} catch {
 			setLoading(false);
 		}
 	}, [currentStep, form, loanData, request, router]);
+
+	// 询价
+	const handleQuote = () => {};
 
 	// 从property详情跳转的创建loan
 	const getProperty = async () => {
@@ -81,10 +81,11 @@ const CreateLoanPage = () => {
 		const newData = {
 			loan_property: {
 				// property_type: data.property_type,
-				property_base: {
-					unit: data.unit,
-					address: data.address,
-				},
+				// property_base: {
+				unit: data.unit,
+				address: data.address,
+				borrower_property_id: Number(searchParams.get('propertyId')),
+				// },
 			},
 		};
 		form.setFieldsValue(newData);
@@ -111,13 +112,34 @@ const CreateLoanPage = () => {
 					{!!currentStep && (
 						<Button onClick={() => setCurrentStep((v) => v - 1)}>Back</Button>
 					)}
+					{currentStep === 2 && (
+						<QuoteBtn
+							disabled={
+								!(
+									loanData[0]?.stage === 'Pending' &&
+									loanData[0]?.pending_status === 'Quoting'
+								)
+							}
+							onSave={handleNext}
+							getRowData={async () => {
+								const values = await form.validateFields();
+								return _.merge(
+									{},
+									loanData[0] || {},
+									loanData[1] || {},
+									values || {},
+								);
+							}}
+							isGetOrganization={true}
+						/>
+					)}
 					<Button type="primary" onClick={handleNext} loading={loading}>
 						{currentStep < 2 ? 'Next' : 'Add Loan'}
 					</Button>
 				</Space>
 			</Col>
 		),
-		[currentStep, handleNext, loading, router],
+		[currentStep, handleNext, loading, loanData, router, form],
 	);
 	const stepContent = useMemo(
 		() => ({
@@ -130,6 +152,9 @@ const CreateLoanPage = () => {
 					gutter={16}
 					isRequestProperty={searchParams.has('propertyId')}
 					unitInfo={unitInfo}
+					selectCardCol={{ xl: 18, sm: 18, xs: 24 }}
+					btnCol={{ xl: 6, sm: 6, xs: 24 }}
+					sliceIndex={1}
 				/>
 			),
 			2: (
@@ -138,6 +163,9 @@ const CreateLoanPage = () => {
 					stepBtn={stepBtn}
 					form={form}
 					gutter={16}
+					selectCardCol={{ xl: 18, sm: 18, xs: 24 }}
+					btnCol={{ xl: 6, sm: 6, xs: 24 }}
+					sliceIndex={1}
 				/>
 			),
 		}),
@@ -145,7 +173,7 @@ const CreateLoanPage = () => {
 	);
 
 	return (
-		<div className="flex flex-col h-full">
+		<div className="flex flex-col h-full flex-1 overflow-hidden">
 			<div className="px-4 py-6 shrink-0 flex items-center justify-center border-b border-[#f0f0f0]">
 				<Steps
 					size="default"
@@ -166,24 +194,18 @@ const CreateLoanPage = () => {
 					disabled={loading}
 					initialValues={{
 						stage: loan_pending,
-						applicants: [
-							{ is_primary: true, type: 'Individual' },
-							{ is_primary: false, type: 'Individual' },
-						],
+						applicants: [{ is_primary: true, type: 'Individual' }],
 					}}
-					onValuesChange={(v) => {
-						// 根据property_type设置unit
-						const property_type = v?.loan_property?.property_type;
-						if (property_type) {
-							const info = changeUnitByPropertyType(property_type);
+					// onValuesChange={(v) => {
+					// 	// 根据property_type设置unit
+					// 	const property_type = v?.loan_property?.property_type;
+					// 	if (property_type) {
+					// 		const info = changeUnitByPropertyType(property_type);
 
-							setUnitInfo({ ...info });
-							form.setFieldValue(
-								['loan_property', 'property_base', 'unit'],
-								info.unit,
-							);
-						}
-					}}
+					// 		setUnitInfo({ ...info });
+					// 		form.setFieldValue(['loan_property', 'unit'], info.unit);
+					// 	}
+					// }}
 				>
 					{stepContent[currentStep]}
 				</Form>

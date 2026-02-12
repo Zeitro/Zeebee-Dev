@@ -25,7 +25,9 @@
       "@/api/*": ["./src/api/*"] ,
       "@/assets/*": ["./src/assets/*"] ,
       "@config/*": ["./config/*"] ,
-      "@images/*": ["./public/images*"] 
+      "@images/*": ["./public/images*"],
+      "@repo/shared-methods": ["../packages/shared-methods/src"],
+			"@repo/shared-methods/*": ["../packages/shared-methods/src/*"] 
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

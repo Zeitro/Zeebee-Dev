@@ -1,0 +1,62 @@
+syntax = "v1"
+
+info(
+    title: "admin-loan-document-api"
+    desc: "loan-document-api http service description"
+    version: "v1"
+)
+
+import "file.api"
+
+type LoanDocumentEntity {
+    Id int64 `json:"id"`
+    LoanId int64 `json:"loan_id"`
+    Category string `json:"category"`
+    FileType string `json:"file_type"`
+    Status string `json:"status"`
+    Comment string `json:"comment"`
+    LastUploadedAt string `json:"last_uploaded_at"`
+    CreatedAt string `json:"created_at"`
+    UpdatedAt string `json:"updated_at"`
+
+    Files []FileEntity `json:"files"`
+}
+
+type LoanDocumentOptEntity {
+    Id int64 `json:"id"`
+    Category string `json:"category"`
+    FileType string `json:"file_type"`
+}
+
+type LoanDocumentCreateRequest {
+    LoanId int64 `json:"loan_id"`
+    Category string `json:"category" validate:"required,oneof=Extend LenderClosingExtend"`
+    FileTypes []string `json:"file_types" validate:"required,min=1,dive,required"`
+}
+
+type LoanDocumentCreateResponse {
+    LoanDocuments []*LoanDocumentOptEntity `json:"loan_documents"`
+}
+
+type LoanDocumentSendRequestsRequest {
+    Documents []LoanDocumentSendRequestEntity `json:"documents" validate:"required,min=1,dive,required"`
+}
+
+type LoanDocumentSendRequestEntity {
+    Id int64 `json:"id"`
+    Comment string `json:"comment,optional"`
+}
+
+type LoanDocumentUpdateCommentRequest {
+    Id int64 `path:"id"`
+    Comment string `json:"comment" validate:"required,max=255"`
+}
+
+type LoanDocumentAddFilesRequest {
+    Id int64 `path:"id"`
+    FileUrls []string `json:"file_urls" validate:"required,dive,url"`
+}
+
+type LoanDocumentOptResponse {
+    Options []LoanDocumentOptEntity `json:"options"`
+}

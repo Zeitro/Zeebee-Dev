@@ -9,17 +9,8 @@ export const navRouter = [
 		title: 'All loans',
 		icon: 'loan',
 		roles: [],
+		hideCrumbs: true,
 		router: [
-			{
-				path: '/loans/createLoan',
-				title: 'Add 3rd Party Loan',
-				hideMenu: true,
-			},
-			{
-				path: '/loans/:id',
-				title: 'Edit 3rd Party Loan',
-				hideMenu: true,
-			},
 			{
 				path: '/loans/createZeeBeeLoan',
 				title: 'Apply ZeeBee Loan',
@@ -33,17 +24,31 @@ export const navRouter = [
 		],
 	},
 	{
-		path: '/properties',
-		title: 'My properties',
-		icon: 'property',
-		roles: [],
-		hideMenu: true,
-		hideCrumbs: true,
+		path: '/setting',
+		title: 'Setting',
+		icon: 'setting',
+		isPageNotFound: true, // 只是用于侧边栏显示,并无此页面
 		router: [
 			{
-				path: '/properties/:id',
-				title: 'Details',
-				hideMenu: true,
+				path: '/setting/user',
+				title: 'User',
+			},
+			{
+				path: '/setting/system',
+				title: 'System',
+			},
+			// {
+			// 	path: '/setting/role',
+			// 	title: 'Setting ( Role )',
+			// 	menuTitle: 'Role',
+			// },
+			{
+				path: '/setting/organizationProfile',
+				title: 'Organization profile',
+			},
+			{
+				path: '/setting/preApprovedLetter',
+				title: 'Pre-approval letter',
 			},
 		],
 	},
@@ -80,18 +85,18 @@ export const noTokenRouter = [
 				hideMenu: true,
 				hideCrumbs: true,
 			},
+			{
+				path: '/login/joinOrganization',
+				title: 'Join Organization',
+				hideMenu: true,
+				hideCrumbs: true,
+			},
 		],
 	},
 ];
 
 export const noNavRouter = [
 	...noTokenRouter,
-	{
-		path: '/pdf',
-		title: 'pdf',
-		hideMenu: true,
-		hideCrumbs: true,
-	},
 	{
 		path: '/not-found',
 		title: '404',

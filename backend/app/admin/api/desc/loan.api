@@ -1,0 +1,133 @@
+syntax = "v1"
+
+info(
+    title: "admin-loan-api"
+    desc: "loan-api http service description"
+    version: "v1"
+)
+
+import "address.api"
+import "loan_property.api"
+import "loan_applicant.api"
+import "loan_third_service.api"
+import "loan_experience.api"
+import "loan_borrower.api"
+import "loan_demographic.api"
+import "loan_document.api"
+import "file.api"
+
+
+type LoanEntity {
+    Id int64 `json:"id"`
+    Code string `json:"code"`
+    Stage string `json:"stage"`
+    PendingStatus string `json:"pending_status"`
+    LoanPurpose string `json:"loan_purpose"`
+    LoanType string `json:"loan_type"`
+    TotalAmount float64 `json:"total_amount"`
+    InitialAmount float64 `json:"initial_amount"`
+    LoanProperty *LoanPropertyEntity `json:"loan_property"`
+    LenderCompany string `json:"lender_company"`
+    ClosingDate string `json:"closing_date"`
+    ClosingFund float64 `json:"closing_fund"`
+    HoldbackAmount float64 `json:"holdback_amount"`
+    Rate float32 `json:"rate" validate:"required,gt=0"`
+    PrincipalAmount float64 `json:"principal_amount"`
+    MonthlyPayment float64 `json:"monthly_payment"`
+    LienPosition string `json:"lien_position"`
+    MaturityDate string `json:"maturity_date"`
+    PrepaymentPenalty int32 `json:"prepayment_penalty"`
+    ServiceCompany string `json:"service_company"`
+    PaidOffDate string `json:"paid_off_date"`
+    BusinessStrategy []string `json:"business_strategy"`
+    Applicants []LoanApplicantEntity `json:"applicants"`
+    LenderOrganizationId int64 `json:"lender_organization_id"`
+    BorrowerOrganizationId int64 `json:"borrower_organization_id"`
+    CreatedAt string `json:"created_at"`
+    UpdatedAt string `json:"updated_at"`
+    Source string `json:"source"`
+    LoanTerm int32 `json:"loan_term"`
+    Ltv float64 `json:"ltv"`
+    EstCreditScore int32 `json:"est_credit_score"`
+    ReservesAmount float64 `json:"reserves_amount"`
+    TransactionExperiences []*LoanExperienceEntity `json:"transaction_experiences"`
+    RealEstateExperiences []*LoanExperienceEntity `json:"real_estate_experiences"`
+    LoanThirdServices []*LoanThirdServiceEntity `json:"loan_third_services"`
+    LoanBorrower *LoanBorrowerEntity `json:"loan_borrower"`
+    LoanDemographic *LoanDemographicEntity `json:"loan_demographic"`
+    OriginalContractDate string `json:"original_contract_date"`
+    ExtensionDate string `json:"extension_date"`
+    LoanProcessor string `json:"loan_processor"`
+    Extend *ImportLoanExtendEntity `json:"extend"`
+    LoanDocuments []*LoanDocumentEntity `json:"loan_documents"`
+}
+
+type ImportLoanExtendEntity {
+    Pricing string `json:"pricing,optional"`
+    LoanStatusUpdates string `json:"loan_status_updates,optional"`
+    MeetingNotes string `json:"meeting_notes,optional"`
+    ActionList string `json:"action_list,optional"`
+    BusinessLine string `json:"business_line,optional"`
+}
+
+// loan detail
+type (
+    // loan detail --- request
+    LoanDetailRequest {
+        Id int64 `path:"id"`
+    }
+        // loan detail --- response
+    LoanDetailResponse {
+        LoanEntity
+    }
+)
+
+// loan page
+type (
+    LoanPageFilter {
+        Stage string `json:"stage,optional"`
+        Keyword string `json:"keyword,optional"`
+        KeywordType string `json:"keyword_type,optional"`
+        PendingStatus []string `json:"pending_status,optional"`
+        LoanPurpose []string `json:"loan_purpose,optional"`
+        LoanType []string `json:"loan_type,optional"`
+        Lender []string `json:"lender,optional"`
+    }
+
+    LoanPageSorter {
+        Column string `json:"column,optional"`
+        Sort string `json:"sort,optional"`
+    }
+        // loan page ---  request
+    LoanPageRequest {
+        Page int64 `json:"page,optional"`
+        Limit int64 `json:"limit,optional"`
+        Filter LoanPageFilter `json:"filter,optional"`
+        Sorter LoanPageSorter `json:"sorter,optional"`
+    }
+        // loan page --- response
+    LoanPageResponse {
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
+        Total int64 `json:"total"`
+        TotalPage int64 `json:"total_page"`
+        List []LoanEntity `json:"list"`
+    }
+)
+
+// loan lender companies
+type (
+    LoanLenderCompanyResponse {
+        LenderCompanies []string `json:"lender_companies"`
+    }
+)
+
+
+type (
+    // reassign --- request
+    LoanReassignRequest {
+        Id int64 `path:"id" validate:"required,min=1"`
+        LenderOrganizationId int64 `json:"lender_organization_id" validate:"required,min=1"`
+    }
+)
+

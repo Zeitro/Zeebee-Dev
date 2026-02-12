@@ -3,9 +3,7 @@ package loanlogic
 import (
 	"context"
 
-	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
-	"gorm.io/gorm"
 
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/common/errorx"
@@ -34,46 +32,46 @@ func (l *LoanBaseLogic) GetLenderLoan(loanId int64, lenderOrganizationId int64, 
 		return nil, err
 	}
 	if loan.LenderOrganizationId != lenderOrganizationId {
-		return nil, errorx.New("Invalid Lender Organization")
+		return nil, errorx.New("Invalid lender organization")
 	}
 
 	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreapproval {
-		return nil, errorx.New("Invalid Loan Source")
+		return nil, errorx.New("Invalid loan source")
 	}
 
 	return
 }
 
 // CreateLoanOperationLog creates a loan operation log record
-func (l *LoanBaseLogic) CreateLoanOperationLog(tx *gorm.DB, loanId, operatorId int64, from, to model.LoanOperationStatus, action constants.LoanOperationAction, metadata *model.LoanOperationMetadata) error {
-	// operator, err := l.svcCtx.UserRepo.FindOneByIdWithTx(l.ctx, tx, operatorId)
-	operator, err := l.svcCtx.OrganizationUserRepo.FindOneByIdWithTx(l.ctx, tx, operatorId)
-	if err != nil {
-		return errors.Wrap(err, "Failed To Get Operator")
-	}
-
-	operatorName := ""
-	if operator != nil {
-		operatorName = operator.FullName
-	}
-
-	operation := &model.LoanOperation{
-		LoanId:       loanId,
-		OperatorId:   operatorId,
-		OperatorName: operatorName,
-		OperatorType: constants.LoanOperationOperatorTypeLender,
-		Action:       action,
-		From:         from,
-		To:           to,
-		Metadata:     metadata,
-	}
-	_, err = l.svcCtx.LoanOperationRepo.CreateWithTx(l.ctx, tx, operation, false)
-	if err != nil {
-		return errors.Wrap(err, "Failed To Create Operation Log")
-	}
-
-	return nil
-}
+// func (l *LoanBaseLogic) CreateLoanOperationLog(tx *gorm.DB, loanId, operatorId int64, from, to model.LoanOperationStatus, action constants.LoanOperationAction, metadata *model.LoanOperationMetadata) (err error) {
+// 	// operator, err := l.svcCtx.UserRepo.FindOneByIdWithTx(l.ctx, tx, operatorId)
+// 	operator, err := l.svcCtx.OrganizationUserRepo.FindOneByIdWithTx(l.ctx, tx, operatorId)
+// 	if err != nil {
+// 		return errors.Wrap(err, "Failed To Get Operator")
+// 	}
+//
+// 	operatorName := ""
+// 	if operator != nil {
+// 		operatorName = operator.FullName
+// 	}
+//
+// 	operation := &model.LoanOperation{
+// 		LoanId:       loanId,
+// 		OperatorId:   operatorId,
+// 		OperatorName: operatorName,
+// 		OperatorType: constants.LoanOperationOperatorTypeLender,
+// 		Action:       action,
+// 		From:         from,
+// 		To:           to,
+// 		Metadata:     metadata,
+// 	}
+// 	_, err = l.svcCtx.LoanOperationRepo.CreateWithTx(l.ctx, tx, operation, false)
+// 	if err != nil {
+// 		return errors.Wrap(err, "Failed To Create Operation Log")
+// 	}
+//
+// 	return nil
+// }
 
 type loanPendingStatusTransition struct {
 	rejectTarget  constants.LoanPendingStatus

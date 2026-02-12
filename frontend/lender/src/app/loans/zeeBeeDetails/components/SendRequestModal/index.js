@@ -1,11 +1,8 @@
-import React, { use, useMemo, useState } from 'react';
-import NewModal from '@/components/NewModal';
-import { Button, Dropdown, Form, Input, message, Select } from 'antd';
-import CommonUpload from '@/components/CommonUpload';
-import { CloseOutlined, FileTextOutlined, InboxOutlined, UploadOutlined } from '@ant-design/icons';
+import React, { useMemo, useState } from 'react';
+import { NewModal } from '@repo/shared-methods';
+import { Button, Dropdown, Form, Input, message } from 'antd';
 const { TextArea } = Input;
-import { createRequest } from '@/lib/fetch';
-import eventBus from '@/lib/bus';
+import { eventBus, createRequest } from '@repo/shared-methods/utils';
 const SendRequestModal = ({ open, setOpen, maxCount, list = [] }) => {
 	const { request } = createRequest();
 	const [form] = Form.useForm();

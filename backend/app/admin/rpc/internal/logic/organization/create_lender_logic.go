@@ -46,7 +46,7 @@ func (l *CreateLenderLogic) CreateLender(in *admin.OrganizationCreateLenderReque
 	}()
 
 	if in.Data == nil || in.Data.Owner == nil || in.Data.Organization == nil {
-		return nil, errorx.New("Request Data Is Required")
+		return nil, errorx.New("Request data is required")
 	}
 
 	// Hash password

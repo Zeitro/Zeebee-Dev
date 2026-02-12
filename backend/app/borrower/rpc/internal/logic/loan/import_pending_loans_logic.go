@@ -211,20 +211,20 @@ func (l *ImportPendingLoansLogic) buildImportModel(in *borrower.ImportPendingLoa
 		return nil, errorx.GetFailedTransErr(err)
 	}
 	if len(applicants) == 0 {
-		return nil, errorx.New("No Applicant")
+		return nil, errorx.New("No applicant")
 	}
 	primaryCount := slice.CountBy(applicants, func(index int, item *model.LoanApplicant) bool {
 		return item.IsPrimary
 	})
 	if primaryCount == 0 {
-		return nil, errorx.New("No Primary Applicant")
+		return nil, errorx.New("No primary applicant")
 	}
 	slice.ForEach(applicants, func(index int, item *model.LoanApplicant) {
 		item.BorrowerOrganizationId = claim.OrganizationId
 		totalOwnPercent += item.OwnPercent
 	})
 	if totalOwnPercent > 100 {
-		return nil, errorx.New("Total Own Percent Greater Than 100")
+		return nil, errorx.New("Total own percent is greater than 100")
 	}
 
 	// loan property

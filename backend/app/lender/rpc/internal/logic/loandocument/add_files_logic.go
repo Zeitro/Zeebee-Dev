@@ -12,6 +12,7 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -84,7 +85,7 @@ func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *
 		}
 
 		// convert files
-		operationFiles := make([]*model.OperationFile, 0, len(files))
+		operationFiles := make([]*data.OperationFile, 0, len(files))
 		innerErr = copier.CopyWithOption(&operationFiles, files, copier.Option{
 			DeepCopy:      true,
 			CaseSensitive: true,
@@ -98,17 +99,17 @@ func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *
 			tx,
 			in.Data.Id,
 			claim.OrganizationUserId,
-			model.LoanOperationStatus{
+			data.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
-			model.LoanOperationStatus{
+			data.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
 			constants.LoanOperationActionUploadDocumentFile,
-			&model.LoanOperationMetadata{
-				LoanDocuments: []*model.OperationLoanDocument{
+			&data.LoanOperationMetadata{
+				LoanDocuments: []*data.OperationLoanDocument{
 					{
 						Category: loanDocument.Category,
 						FileType: loanDocument.FileType,
@@ -148,7 +149,7 @@ func (l *AddFilesLogic) prepare(in *lender.LoanDocumentAddFilesRequest, claim ut
 	existingFileCount := int64(len(loanDocument.Files))
 	newFileCount := int64(len(in.Data.FileUrls))
 	if existingFileCount+newFileCount > 10 {
-		return nil, nil, errorx.WithStack(errorx.New("Total Number Of Files (Existing + New) Cannot Exceed 10"))
+		return nil, nil, errorx.WithStack(errorx.New("Total number of files (existing + new) cannot exceed 10"))
 	}
 
 	loan, err = l.baseLogic.GetLenderLoan(loanDocument.LoanId, claim.OrganizationId, nil)

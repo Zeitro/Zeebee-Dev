@@ -14,6 +14,7 @@ import (
 	email2 "zeebee-backend/common/email"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -71,7 +72,7 @@ func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequ
 				continue
 			}
 			if document.LoanId != loan.Id {
-				return errorx.WithStack(errorx.New("Document Loan Id Not Match"))
+				return errorx.WithStack(errorx.New("Document loan id not match"))
 			}
 
 			loanDocuments = append(loanDocuments, document)
@@ -96,16 +97,16 @@ func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequ
 			tx,
 			loan.Id,
 			claim.OrganizationUserId,
-			model.LoanOperationStatus{
+			data.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
-			model.LoanOperationStatus{
+			data.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
 			constants.LoanOperationActionSendDocumentRequest,
-			&model.LoanOperationMetadata{
+			&data.LoanOperationMetadata{
 				Comment: slice.Join(comments, "/"),
 			},
 		)
@@ -133,7 +134,7 @@ func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequ
 // prepare
 func (l *SendRequestsLogic) prepare(in *lender.LoanDocumentSendRequestsRequest, claim utils.JwtUser) (loan *model.Loan, err error) {
 	if len(in.Data.Documents) == 0 {
-		return nil, errorx.WithStack(errorx.New("No Document Type Found"))
+		return nil, errorx.WithStack(errorx.New("No document type found"))
 	}
 	// var document *model.LoanDocument
 	loan, _, err = l.baseLogic.GetLoanAndDocumentByDocumentId(in.Data.Documents[0].Id, claim.OrganizationId)
@@ -143,7 +144,7 @@ func (l *SendRequestsLogic) prepare(in *lender.LoanDocumentSendRequestsRequest, 
 func (l *SendRequestsLogic) sendDocumentRequestEmail(ctx context.Context, loan *model.Loan, loanDocuments []*model.LoanDocument) error {
 
 	if loan.LoanBorrower == nil || len(loan.LoanBorrower.ContactEmail) == 0 {
-		return errorx.New("No Contact Email Found For The Loan")
+		return errorx.New("No contact email found for the loan")
 	}
 
 	emailData := map[string]interface{}{

@@ -47,13 +47,13 @@ func (l *ApiLogic) ApiTree(ctx context.Context, apiType constants.UserType) (tre
 	return
 }
 
-// DeleteApi delete api and its children recursively
+// DeleteApi deletes api and its children recursively
 func (l *ApiLogic) DeleteApi(ctx context.Context, id int64, apiType constants.UserType) (err error) {
 	api, err := l.repos.ApiRepo.GetApi(ctx, id, apiType)
 	if err != nil {
 		return err
 	}
-	// get children and delete them
+	// Get children and delete them
 	children, err := l.repos.ApiRepo.GetApisByParentId(ctx, api.Id, apiType)
 	if err != nil {
 		return err

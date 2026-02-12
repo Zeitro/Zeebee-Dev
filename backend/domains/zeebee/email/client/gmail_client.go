@@ -23,7 +23,7 @@ type GmailClient struct {
 func NewGmailClient(config *oauth2.Config, code string) (client *GmailClient, err error) {
 	token, err := config.Exchange(context.Background(), code, oauth2.AccessTypeOffline)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Exchange Token Failed")
+		return nil, errorx.Wrap(err, "Exchange token failed")
 	}
 	return &GmailClient{
 		mu:        sync.Mutex{},
@@ -62,11 +62,11 @@ func (cli *GmailClient) RefreshToken(ctx context.Context) (token *oauth2.Token, 
 	cli.mu.Lock()
 	defer cli.mu.Unlock()
 	if cli.token == nil {
-		return nil, errorx.New("Token Is Nil")
+		return nil, errorx.New("Token is nil")
 	}
 
 	if cli.token.RefreshToken == "" {
-		return nil, errorx.New("Refresh Token Is Nil")
+		return nil, errorx.New("Refresh token is nil")
 	}
 	if cli.token.Valid() {
 		return cli.token, nil
@@ -74,10 +74,10 @@ func (cli *GmailClient) RefreshToken(ctx context.Context) (token *oauth2.Token, 
 	ts := cli.config.TokenSource(ctx, cli.token)
 	token, err = ts.Token()
 	if err != nil {
-		return nil, errorx.Wrap(err, "Refresh Token Failed")
+		return nil, errorx.Wrap(err, "Refresh token failed")
 	}
 	if token == nil {
-		return nil, errorx.New("New Token Is Nil")
+		return nil, errorx.New("New token is nil")
 	}
 
 	cli.token = token
@@ -94,7 +94,7 @@ func (cli *GmailClient) SendEmail(ctx context.Context, msg commonemail.Message) 
 	}
 	raw, err := buildRawMessage(msg)
 	if err != nil {
-		return errorx.Wrap(err, "Build Raw Message Failed")
+		return errorx.Wrap(err, "Build raw message failed")
 	}
 	_, err = srv.Users.Messages.Send("me", &gmailapi.Message{Raw: raw}).Do()
 	return err

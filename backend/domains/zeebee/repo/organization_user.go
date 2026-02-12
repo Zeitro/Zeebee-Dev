@@ -215,21 +215,22 @@ func (repo *OrganizationUserRepo) UpdateStatusByOrganizationId(ctx context.Conte
 // DeleteByOrganizationIdWithTx delete all organization users by organization id with transaction
 // Used for organization deletion - cascading delete of all organization user relationships
 func (repo *OrganizationUserRepo) DeleteByOrganizationIdWithTx(ctx context.Context, tx *gorm.DB, organizationId int64) (err error) {
-	var organizationUser *model.OrganizationUser
+	var organizationUsers []*model.OrganizationUser
 	err = tx.WithContext(ctx).
 		Where("organization_id = ?", organizationId).
 		Preload("Roles").
-		First(&organizationUser).Error
+		Find(&organizationUsers).Error
 	if err != nil {
 		return errorx.WithStack(err)
 	}
 
-	err = tx.WithContext(ctx).Model(organizationUser).Association("Roles").Clear()
-	if err != nil {
-		return errorx.WithStack(err)
+	for _, organizationUser := range organizationUsers {
+		organizationUser := organizationUser
+		err = repo.DeleteOrganizationUserWithTx(ctx, tx, organizationUser)
+		if err != nil {
+			return errorx.WithStack(err)
+		}
 	}
-	organizationUser.RemoveRelationships()
-	err = tx.WithContext(ctx).Delete(organizationUser).Error
 
 	return errorx.WithStack(err)
 }

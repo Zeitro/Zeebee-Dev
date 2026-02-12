@@ -1,17 +1,19 @@
 'use client';
 import React, { useMemo } from 'react';
 import { Form, Input } from 'antd';
-import { passwordRegex } from '@/lib/format';
+import { passwordRegex } from '@repo/shared-methods/utils';
 import { CheckCircleOutlined } from '@ant-design/icons';
 
 const ConfirmPassWord = ({
-	form,
 	passwordLabel = 'Password',
 	confirmPasswordLabel = 'Confirm password',
 	passwordPlaceholder = 'Password',
 	confirmPasswordPlaceholder = 'Re-enter password',
+	passwordName = 'password',
+	confirmPasswordName = 'confirm_password',
 }) => {
-	const password = Form.useWatch('password', form);
+	const form = Form.useFormInstance();
+	const password = Form.useWatch(passwordName, form);
 	const passwordRules = useMemo(() => {
 		let arr = [
 			{
@@ -49,7 +51,7 @@ const ConfirmPassWord = ({
 		<>
 			<Form.Item
 				label={passwordLabel}
-				name="password"
+				name={passwordName}
 				rules={[
 					{
 						required: true,
@@ -65,7 +67,7 @@ const ConfirmPassWord = ({
 			</Form.Item>
 			<Form.Item
 				label={confirmPasswordLabel}
-				name="comfired_password"
+				name={confirmPasswordName}
 				rules={[
 					{
 						required: true,
@@ -80,7 +82,7 @@ const ConfirmPassWord = ({
 						},
 					},
 				]}
-				dependencies={['password']}
+				dependencies={[passwordName]}
 			>
 				<Input.Password
 					placeholder={confirmPasswordPlaceholder}

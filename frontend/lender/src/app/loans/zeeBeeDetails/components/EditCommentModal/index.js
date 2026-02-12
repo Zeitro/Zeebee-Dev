@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import NewModal from '@/components/NewModal';
+import { NewModal } from '@repo/shared-methods';
 import { Form, Input, message } from 'antd';
-import { createRequest } from '@/lib/fetch';
-import eventBus from '@/lib/bus';
+import { eventBus, createRequest } from '@repo/shared-methods/utils';
 const { TextArea } = Input;
 const EditCommentModal = ({ open, setOpen, record = {} }) => {
 	const [form] = Form.useForm();
@@ -62,14 +61,16 @@ const EditCommentModal = ({ open, setOpen, record = {} }) => {
 };
 
 export default EditCommentModal;
-export const EditCommentModalBtn = ({ children, record }) => {
+export const EditCommentModalBtn = ({ children, isStopPropagation, record }) => {
 	const [open, setOpen] = useState(false);
 	return (
 		<>
 			<div
 				onClick={(e) => {
-					e.stopPropagation();
-					e.preventDefault();
+					if (isStopPropagation) {
+						e.stopPropagation();
+						e.preventDefault();
+					}
 					setOpen(true);
 				}}
 			>

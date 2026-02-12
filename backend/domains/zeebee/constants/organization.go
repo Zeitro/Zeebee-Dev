@@ -20,6 +20,7 @@ type OrganizationStatus string
 var OrganizationStatusName = "organization_status"
 
 const (
+	OrganizationStatusNone         OrganizationStatus = ""
 	OrganizationStatusActive       OrganizationStatus = "Active"
 	OrganizationStatusNotActivated OrganizationStatus = "Not activated"
 	OrganizationStatusDisabled     OrganizationStatus = "Disabled"

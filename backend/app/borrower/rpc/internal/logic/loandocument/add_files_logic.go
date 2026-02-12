@@ -102,7 +102,7 @@ func (l *AddFilesLogic) prepare(in *borrower.LoanDocumentAddFilesRequest) (loan 
 	existingFileCount := int64(len(loanDocument.Files))
 	newFileCount := int64(len(in.Data.FileUrls))
 	if existingFileCount+newFileCount > 10 {
-		return nil, nil, errorx.WithStack(errorx.New("Total Number Of Files (Existing + New) Cannot Exceed 10"))
+		return nil, nil, errorx.WithStack(errorx.New("Total number of files (existing + new) cannot exceed 10"))
 	}
 
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
@@ -116,29 +116,29 @@ func (l *AddFilesLogic) prepare(in *borrower.LoanDocumentAddFilesRequest) (loan 
 	}
 
 	if loan == nil || loanDocument == nil {
-		return nil, nil, errorx.WithStack(errorx.New("Loan Or Loan Document Not Found"))
+		return nil, nil, errorx.WithStack(errorx.New("Loan or loan document not found"))
 	}
 	validCategories := []constants.LoanDocumentCategory{
 		constants.LoanDocumentCategoryBorrower,
 		constants.LoanDocumentCategoryExtend,
 	}
 	if !slice.Contain(validCategories, loanDocument.Category) {
-		return nil, nil, errorx.WithStack(errorx.New("Loan Document Category Not Supported"))
+		return nil, nil, errorx.WithStack(errorx.New("Loan document category not supported"))
 	}
 
 	if loanDocument.Status != constants.LoanDocumentStatusRequested && loanDocument.Status != constants.LoanDocumentStatusReadyForReview {
-		return nil, nil, errorx.WithStack(errorx.New("Loan Document Is Not In Requested Or Ready For View Status"))
+		return nil, nil, errorx.WithStack(errorx.New("Loan document is not in requested or ready for review status"))
 	}
 
 	if loan.Stage != constants.LoanStagePending {
-		return nil, nil, errorx.WithStack(errorx.New("Loan Is Not In Pending Stage"))
+		return nil, nil, errorx.WithStack(errorx.New("Loan is not in pending stage"))
 	}
 	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreapproval {
-		return nil, nil, errorx.WithStack(errorx.New("Loan Source Is Not System"))
+		return nil, nil, errorx.WithStack(errorx.New("Loan source is not System"))
 	}
 
 	if loan.BorrowerOrganizationId != claim.OrganizationId {
-		return nil, nil, errorx.WithStack(errorx.New("Loan Does Not Belong To Borrower"))
+		return nil, nil, errorx.WithStack(errorx.New("Loan does not belong to borrower"))
 	}
 
 	return loan, loanDocument, nil

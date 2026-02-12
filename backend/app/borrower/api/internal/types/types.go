@@ -383,8 +383,8 @@ type LoanEntity struct {
 	PaidOffDate                string                    `json:"paid_off_date" `
 	BusinessStrategy           []string                  `json:"business_strategy"`
 	Applicants                 []LoanApplicantEntity     `json:"applicants"`
-	LenderID                   int64                     `json:"lender_id"`
-	BorrowerID                 int64                     `json:"borrower_id"`
+	LenderOrganizationId       int64                     `json:"lender_organization_id"`
+	BorrowerOrganizationId     int64                     `json:"borrower_organization_id"`
 	CreatedAt                  string                    `json:"created_at"`
 	UpdatedAt                  string                    `json:"updated_at"`
 	Source                     string                    `json:"source"`
@@ -651,6 +651,7 @@ type OrganizationMetadataEntity struct {
 type OrganizationOptionEntity struct {
 	Id           int64  `json:"id"`
 	Name         string `json:"name"`
+	Type         string `json:"type"`
 	ContactEmail string `json:"contact_email"`
 }
 
