@@ -383,7 +383,7 @@ func (l *OrganizationTemplateLogic) renderOrganizationSystemInfo(organizationTem
 			"system": map[string]interface{}{
 				"organization": organization,
 				"now_format1":  now.Format("02/01/2006"),
-				"now_format2":  now.Month().String() + now.Format(" 02,2006"),
+				"now_format2":  now.Month().String() + now.Format(" 02, 2006"),
 			},
 		}
 		var buf bytes.Buffer
