@@ -163,6 +163,7 @@ const PreApprovedLetter = () => {
 								(item) => {
 									item.variables = item.variables.map((i) => {
 										i.source = 'Template';
+										i.is_editable = true;
 										return i;
 									});
 									return item;

@@ -162,6 +162,7 @@ export const formatThousands = (amount) => {
 
 // 判断是否为数字
 export function isNumberFn(str) {
+	if (typeof str === 'number') return true;
 	const value = str.replace(/[^\d.-]/g, ''); //去除字符串中所有非数字、小数点和负号的字符
 	return !isNaN(value) && !isNaN(parseFloat(value)) && isFinite(value);
 }
