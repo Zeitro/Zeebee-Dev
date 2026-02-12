@@ -218,3 +218,11 @@ export const getBodyInnerHTML = (html) => {
 		return html;
 	}
 };
+
+// 完整的html，替换body内容
+export function replaceBodyContent(html, newBodyHtml) {
+	const parser = new DOMParser();
+	const doc = parser.parseFromString(html, 'text/html');
+	doc.body.innerHTML = newBodyHtml;
+	return doc.documentElement.outerHTML;
+}
