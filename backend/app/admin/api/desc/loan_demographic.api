@@ -1,0 +1,47 @@
+syntax = "v1"
+
+info(
+    title: "admin-loan-demographic-api"
+    desc: "admin-loan-demographic-api http service description"
+    version: "v1"
+)
+
+type LoanDemographicEntity {
+    Id int64 `json:"id,optional"`
+    LoanId int64 `json:"loan_id,optional"`
+    Sex string `json:"sex,optional" validate:"required,oneof=Male Female Hidden"`
+    Property *LoanDemographicPropertyEntity `json:"property,optional" validate:"required"`
+    Ethnicity *LoanDemographicEthnicityEntity `json:"ethnicity,optional" validate:"required"`
+    Race *LoanDemographicRaceEntity `json:"race,optional" validate:"required"`
+}
+
+
+type LoanDemographicPropertyEntity {
+    AsPrimaryResident bool `json:"as_primary_resident,optional"`
+    HasTransactionRelationship bool `json:"has_transaction_relationship,optional"`
+    HasBorrowedMoney bool `json:"has_borrowed_money,optional"`
+    BorrowedMoneyAmount float64 `json:"borrowed_money_amount,optional" validate:"required_if=HasBorrowedMoney true,gte=0"`
+    HasAnotherMortgageLoan bool `json:"has_another_mortgage_loan,optional"`
+    HasPriorityOver1st bool `json:"has_priority_over_1st,optional"`
+    HasOutstandingJudgments bool `json:"has_outstanding_judgments,optional"`
+    HasFederalDebt bool `json:"has_federal_debt,optional"`
+    HasALawsuit bool `json:"has_a_lawsuit,optional"`
+    HasConveyedTitle bool `json:"has_conveyed_title,optional"`
+    HasAPreForeclosureSale bool `json:"has_a_pre_foreclosure_sale,optional"`
+    HasForeclosedUpon bool `json:"has_foreclosed_upon,optional"`
+    HasABankruptcy bool `json:"has_a_bankruptcy,optional"`
+    BankruptcyChapter string `json:"bankruptcy_chapter,optional" validate:"required_if=HasBankruptcy true,omitempty,oneof='Chapter 7' 'Chapter 11' 'Chapter 12' 'Chapter 13'"`
+}
+
+type LoanDemographicEthnicityEntity {
+    Values []string `json:"values,optional" validate:"required,min=1,dive,required,oneof='Hispanic or Latino' 'Other Hispanic or Latino' Mexican Cuban 'Not Hispanic or Latino' Hidden"`
+    OtherHispanicOrLatinoName string `json:"other_hispanic_or_latino_name,optional"`
+}
+
+type LoanDemographicRaceEntity {
+    Values []string `json:"values,optional" validate:"required,min=1,dive,required,oneof='American Indian or Alaska Native' Asian 'Black or African American' 'Native Hawaiian or Other Pacific Islander' White 'Native Hawaiian Guamanian or Chamorro Samoan' 'Other Pacific Islander' Hidden"`
+    AsianValues []string `json:"asian_values,optional"`
+    OtherPacificIslanderName string `json:"other_pacific_islander_name,optional"`
+    AsianOtherName string `json:"asian_other_name,optional"`
+    AmericanIndianOrAlaskaNativeName string `json:"american_indian_or_alaska_native_name,optional"`
+}

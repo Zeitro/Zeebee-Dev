@@ -1,0 +1,16 @@
+syntax = "v1"
+
+info(
+    title: "lender-file-api"
+    desc: "file-api http service description"
+    version: "v1"
+)
+
+type FileEntity {
+    Id int64 `json:"id"`
+    EntityType string `json:"entity_type"`
+    EntityId int64 `json:"entity_id"`
+    FileUrl string `json:"file_url"`
+    CreatedAt string `json:"created_at"`
+    UpdatedAt string `json:"updated_at"`
+}

@@ -13,7 +13,3 @@ type Config struct {
 	JwtAuth     types.JwtAuth      `json:",optional"`
 	RpcConf     zrpc.RpcClientConf `json:",optional"`
 }
-
-// type RpcConf struct {
-// 	UserConf zrpc.RpcClientConf
-// }

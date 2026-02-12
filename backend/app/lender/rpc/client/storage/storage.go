@@ -92,6 +92,15 @@ type (
 	OrganizationEntity                             = lender.OrganizationEntity
 	OrganizationLenderMetadataEntity               = lender.OrganizationLenderMetadataEntity
 	OrganizationMetadataEntity                     = lender.OrganizationMetadataEntity
+	OrganizationProfileEntity                      = lender.OrganizationProfileEntity
+	OrganizationProfileResponse                    = lender.OrganizationProfileResponse
+	OrganizationSettingDetailByPurposeRequest      = lender.OrganizationSettingDetailByPurposeRequest
+	OrganizationSettingDetailByPurposeRequestData  = lender.OrganizationSettingDetailByPurposeRequestData
+	OrganizationSettingDetailResponse              = lender.OrganizationSettingDetailResponse
+	OrganizationSettingEntity                      = lender.OrganizationSettingEntity
+	OrganizationSettingProfileEntity               = lender.OrganizationSettingProfileEntity
+	OrganizationSettingSwitchStatusRequest         = lender.OrganizationSettingSwitchStatusRequest
+	OrganizationSettingSwitchStatusRequestData     = lender.OrganizationSettingSwitchStatusRequestData
 	OrganizationTemplateDetailByPurposeRequest     = lender.OrganizationTemplateDetailByPurposeRequest
 	OrganizationTemplateDetailByPurposeRequestData = lender.OrganizationTemplateDetailByPurposeRequestData
 	OrganizationTemplateDetailResponse             = lender.OrganizationTemplateDetailResponse

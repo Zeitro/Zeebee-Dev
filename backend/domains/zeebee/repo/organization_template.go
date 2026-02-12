@@ -103,3 +103,11 @@ func (repo *OrganizationTemplateRepo) GetOrganizationIdsWithTx(ctx context.Conte
 		Pluck("organization_id", &result).Error
 	return result, errorx.WithStack(err)
 }
+
+// DeleteByOrganizationIdWithTx
+func (repo *OrganizationTemplateRepo) DeleteByOrganizationIdWithTx(ctx context.Context, tx *gorm.DB, organizationId int64) (err error) {
+	err = tx.WithContext(ctx).
+		Where("organization_id = ?", organizationId).
+		Delete(&model.OrganizationTemplate{}).Error
+	return errorx.WithStack(err)
+}

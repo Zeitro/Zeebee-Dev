@@ -18,6 +18,7 @@ import (
 	"zeebee-backend/common/utils"
 	"zeebee-backend/common/uuid"
 	"zeebee-backend/domains/zeebee/constants"
+	data2 "zeebee-backend/domains/zeebee/data"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -62,14 +63,14 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 			return nil, err
 		}
 		if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreapproval {
-			return nil, errorx.WithStack(errorx.New("Invalid Loan Source"))
+			return nil, errorx.WithStack(errorx.New("Invalid loan source"))
 		}
 
 		stages := []constants.LoanStage{
 			constants.LoanStageDraft,
 		}
 		if !slice.Contain(stages, loan.Stage) && loan.PendingStatus != constants.LoanPendingStatusNone {
-			return nil, errorx.New("Loan's Stage Should Be Draft")
+			return nil, errorx.New("Loan's stage should be draft")
 		}
 		oldApplicants = loan.Applicants
 		if loan.LoanProperty != nil {
@@ -249,11 +250,11 @@ func (l *SaveDraftLoanLogic) updateLoanDemographic(tx *gorm.DB, loanDemographic 
 func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, oldLoan *model.Loan, claim utils.JwtUser) (data *applyLoanModelData, err error) {
 
 	if reqData == nil {
-		return nil, errorx.New("Invalid Request Data")
+		return nil, errorx.New("Invalid request data")
 	}
 
 	if reqData.LenderCompanyId == 0 {
-		return nil, errorx.New("Invalid Lender Id")
+		return nil, errorx.New("Invalid lender id")
 	}
 
 	// loan
@@ -288,7 +289,7 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	// loan.Source = constants.LoanSourceSystem
 	loan.Source = condition.Ternary(reqData.IsPreapproveLoan, constants.LoanSourcePreapproval, constants.LoanSourceSystem)
 	if reqData.IsPreapproveLoan {
-		preapprovalInfo, _ := copierx.Trans[borrower.LoanPreapproveInfo, model.LoanPreapprovalInfo](reqData.LoanPreapproveInfo)
+		preapprovalInfo, _ := copierx.Trans[borrower.LoanPreapproveInfo, data2.LoanPreapprovalInfo](reqData.LoanPreapproveInfo)
 		loan.Extend.LoanPreapprovalInfo = preapprovalInfo
 	}
 
@@ -354,7 +355,7 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 		applicants = append(applicants, loanApplicant)
 	}
 	if totalOwnPercent > 100 {
-		return nil, errorx.New("Total Own Percent Greater Than 100")
+		return nil, errorx.New("Total own percent is greater than 100")
 	}
 
 	// transaction experience

@@ -22,6 +22,7 @@ const (
 	Common_GetOpt_FullMethodName      = "/lender.common/GetOpt"
 	Common_GetUsState_FullMethodName  = "/lender.common/GetUsState"
 	Common_GetUsCities_FullMethodName = "/lender.common/GetUsCities"
+	Common_SyncData_FullMethodName    = "/lender.common/SyncData"
 )
 
 // CommonClient is the client API for Common service.
@@ -31,6 +32,7 @@ type CommonClient interface {
 	GetOpt(ctx context.Context, in *OptionRequest, opts ...grpc.CallOption) (*OptionResponse, error)
 	GetUsState(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*StringSliceResponse, error)
 	GetUsCities(ctx context.Context, in *UsCitiesRequest, opts ...grpc.CallOption) (*StringSliceResponse, error)
+	SyncData(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 }
 
 type commonClient struct {
@@ -71,6 +73,16 @@ func (c *commonClient) GetUsCities(ctx context.Context, in *UsCitiesRequest, opt
 	return out, nil
 }
 
+func (c *commonClient) SyncData(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, Common_SyncData_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CommonServer is the server API for Common service.
 // All implementations must embed UnimplementedCommonServer
 // for forward compatibility.
@@ -78,6 +90,7 @@ type CommonServer interface {
 	GetOpt(context.Context, *OptionRequest) (*OptionResponse, error)
 	GetUsState(context.Context, *EmptyRequest) (*StringSliceResponse, error)
 	GetUsCities(context.Context, *UsCitiesRequest) (*StringSliceResponse, error)
+	SyncData(context.Context, *EmptyRequest) (*EmptyResponse, error)
 	mustEmbedUnimplementedCommonServer()
 }
 
@@ -96,6 +109,9 @@ func (UnimplementedCommonServer) GetUsState(context.Context, *EmptyRequest) (*St
 }
 func (UnimplementedCommonServer) GetUsCities(context.Context, *UsCitiesRequest) (*StringSliceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUsCities not implemented")
+}
+func (UnimplementedCommonServer) SyncData(context.Context, *EmptyRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SyncData not implemented")
 }
 func (UnimplementedCommonServer) mustEmbedUnimplementedCommonServer() {}
 func (UnimplementedCommonServer) testEmbeddedByValue()                {}
@@ -172,6 +188,24 @@ func _Common_GetUsCities_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Common_SyncData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommonServer).SyncData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Common_SyncData_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommonServer).SyncData(ctx, req.(*EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Common_ServiceDesc is the grpc.ServiceDesc for Common service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -190,6 +224,10 @@ var Common_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUsCities",
 			Handler:    _Common_GetUsCities_Handler,
+		},
+		{
+			MethodName: "SyncData",
+			Handler:    _Common_SyncData_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -2356,8 +2394,8 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OrganizationClient interface {
-	Profile(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error)
-	UpdateProfile(ctx context.Context, in *OrganizationUpdateProfileRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error)
+	Profile(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationProfileResponse, error)
+	UpdateProfile(ctx context.Context, in *OrganizationUpdateProfileRequest, opts ...grpc.CallOption) (*OrganizationProfileResponse, error)
 	Create(ctx context.Context, in *OrganizationCreateRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error)
 }
 
@@ -2369,9 +2407,9 @@ func NewOrganizationClient(cc grpc.ClientConnInterface) OrganizationClient {
 	return &organizationClient{cc}
 }
 
-func (c *organizationClient) Profile(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error) {
+func (c *organizationClient) Profile(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationProfileResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(OrganizationDetailResponse)
+	out := new(OrganizationProfileResponse)
 	err := c.cc.Invoke(ctx, Organization_Profile_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -2379,9 +2417,9 @@ func (c *organizationClient) Profile(ctx context.Context, in *EmptyRequest, opts
 	return out, nil
 }
 
-func (c *organizationClient) UpdateProfile(ctx context.Context, in *OrganizationUpdateProfileRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error) {
+func (c *organizationClient) UpdateProfile(ctx context.Context, in *OrganizationUpdateProfileRequest, opts ...grpc.CallOption) (*OrganizationProfileResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(OrganizationDetailResponse)
+	out := new(OrganizationProfileResponse)
 	err := c.cc.Invoke(ctx, Organization_UpdateProfile_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -2403,8 +2441,8 @@ func (c *organizationClient) Create(ctx context.Context, in *OrganizationCreateR
 // All implementations must embed UnimplementedOrganizationServer
 // for forward compatibility.
 type OrganizationServer interface {
-	Profile(context.Context, *EmptyRequest) (*OrganizationDetailResponse, error)
-	UpdateProfile(context.Context, *OrganizationUpdateProfileRequest) (*OrganizationDetailResponse, error)
+	Profile(context.Context, *EmptyRequest) (*OrganizationProfileResponse, error)
+	UpdateProfile(context.Context, *OrganizationUpdateProfileRequest) (*OrganizationProfileResponse, error)
 	Create(context.Context, *OrganizationCreateRequest) (*OrganizationDetailResponse, error)
 	mustEmbedUnimplementedOrganizationServer()
 }
@@ -2416,10 +2454,10 @@ type OrganizationServer interface {
 // pointer dereference when methods are called.
 type UnimplementedOrganizationServer struct{}
 
-func (UnimplementedOrganizationServer) Profile(context.Context, *EmptyRequest) (*OrganizationDetailResponse, error) {
+func (UnimplementedOrganizationServer) Profile(context.Context, *EmptyRequest) (*OrganizationProfileResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Profile not implemented")
 }
-func (UnimplementedOrganizationServer) UpdateProfile(context.Context, *OrganizationUpdateProfileRequest) (*OrganizationDetailResponse, error) {
+func (UnimplementedOrganizationServer) UpdateProfile(context.Context, *OrganizationUpdateProfileRequest) (*OrganizationProfileResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateProfile not implemented")
 }
 func (UnimplementedOrganizationServer) Create(context.Context, *OrganizationCreateRequest) (*OrganizationDetailResponse, error) {
@@ -2810,6 +2848,146 @@ var OrganizationTemplate_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Reset",
 			Handler:    _OrganizationTemplate_Reset_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "app/lender/rpc/pb/lender.proto",
+}
+
+const (
+	OrganizationSetting_DetailByPurpose_FullMethodName = "/lender.OrganizationSetting/DetailByPurpose"
+	OrganizationSetting_SwitchStatus_FullMethodName    = "/lender.OrganizationSetting/SwitchStatus"
+)
+
+// OrganizationSettingClient is the client API for OrganizationSetting service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type OrganizationSettingClient interface {
+	DetailByPurpose(ctx context.Context, in *OrganizationSettingDetailByPurposeRequest, opts ...grpc.CallOption) (*OrganizationSettingDetailResponse, error)
+	SwitchStatus(ctx context.Context, in *OrganizationSettingSwitchStatusRequest, opts ...grpc.CallOption) (*OrganizationSettingDetailResponse, error)
+}
+
+type organizationSettingClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewOrganizationSettingClient(cc grpc.ClientConnInterface) OrganizationSettingClient {
+	return &organizationSettingClient{cc}
+}
+
+func (c *organizationSettingClient) DetailByPurpose(ctx context.Context, in *OrganizationSettingDetailByPurposeRequest, opts ...grpc.CallOption) (*OrganizationSettingDetailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OrganizationSettingDetailResponse)
+	err := c.cc.Invoke(ctx, OrganizationSetting_DetailByPurpose_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationSettingClient) SwitchStatus(ctx context.Context, in *OrganizationSettingSwitchStatusRequest, opts ...grpc.CallOption) (*OrganizationSettingDetailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OrganizationSettingDetailResponse)
+	err := c.cc.Invoke(ctx, OrganizationSetting_SwitchStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// OrganizationSettingServer is the server API for OrganizationSetting service.
+// All implementations must embed UnimplementedOrganizationSettingServer
+// for forward compatibility.
+type OrganizationSettingServer interface {
+	DetailByPurpose(context.Context, *OrganizationSettingDetailByPurposeRequest) (*OrganizationSettingDetailResponse, error)
+	SwitchStatus(context.Context, *OrganizationSettingSwitchStatusRequest) (*OrganizationSettingDetailResponse, error)
+	mustEmbedUnimplementedOrganizationSettingServer()
+}
+
+// UnimplementedOrganizationSettingServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedOrganizationSettingServer struct{}
+
+func (UnimplementedOrganizationSettingServer) DetailByPurpose(context.Context, *OrganizationSettingDetailByPurposeRequest) (*OrganizationSettingDetailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DetailByPurpose not implemented")
+}
+func (UnimplementedOrganizationSettingServer) SwitchStatus(context.Context, *OrganizationSettingSwitchStatusRequest) (*OrganizationSettingDetailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SwitchStatus not implemented")
+}
+func (UnimplementedOrganizationSettingServer) mustEmbedUnimplementedOrganizationSettingServer() {}
+func (UnimplementedOrganizationSettingServer) testEmbeddedByValue()                             {}
+
+// UnsafeOrganizationSettingServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to OrganizationSettingServer will
+// result in compilation errors.
+type UnsafeOrganizationSettingServer interface {
+	mustEmbedUnimplementedOrganizationSettingServer()
+}
+
+func RegisterOrganizationSettingServer(s grpc.ServiceRegistrar, srv OrganizationSettingServer) {
+	// If the following call pancis, it indicates UnimplementedOrganizationSettingServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&OrganizationSetting_ServiceDesc, srv)
+}
+
+func _OrganizationSetting_DetailByPurpose_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationSettingDetailByPurposeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationSettingServer).DetailByPurpose(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationSetting_DetailByPurpose_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationSettingServer).DetailByPurpose(ctx, req.(*OrganizationSettingDetailByPurposeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationSetting_SwitchStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationSettingSwitchStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationSettingServer).SwitchStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationSetting_SwitchStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationSettingServer).SwitchStatus(ctx, req.(*OrganizationSettingSwitchStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// OrganizationSetting_ServiceDesc is the grpc.ServiceDesc for OrganizationSetting service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var OrganizationSetting_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "lender.OrganizationSetting",
+	HandlerType: (*OrganizationSettingServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "DetailByPurpose",
+			Handler:    _OrganizationSetting_DetailByPurpose_Handler,
+		},
+		{
+			MethodName: "SwitchStatus",
+			Handler:    _OrganizationSetting_SwitchStatus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

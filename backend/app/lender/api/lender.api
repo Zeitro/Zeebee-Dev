@@ -18,6 +18,8 @@ import "desc/role.api"
 import "desc/organization_user.api"
 import "desc/organization.api"
 import "desc/organization_template.api"
+import "desc/organization_setting.api"
+import "desc/pdf.api"
 
 type (
 	EmptyRequest  {}
@@ -48,6 +50,10 @@ service lender-api {
 	@doc "get us city"
 	@handler GetUsCities
 	get /us_cities (GetUsCitiesRequest) returns (GetUsCitiesResponse)
+
+	@doc "sync data"
+	@handler SyncData
+	get /sync_data (EmptyRequest) returns (EmptyResponse)
 }
 
 // ============== user =============
@@ -318,7 +324,7 @@ service lender-api {
 service lender-api {
 	@doc "profile"
 	@handler OrganizationProfile
-	get /organization/profile (EmptyRequest) returns (OrganizationEntity)
+	get /organization/profile (EmptyRequest) returns (OrganizationProfileEntity)
 
 	@doc "update profile"
 	@handler OrganizationUpdateProfile
@@ -332,12 +338,12 @@ service lender-api {
 // ============== organization service end =============
 // ============== organization template service start ============
 @server(
-    desc: "organization template service"
-    version: v1
+	desc: "organization template service"
+	version: v1
 	prefix:     /api/v1
-    group: organization_template
+	group: organization_template
 	middleware: AuthMiddleware
-    tags: organization_template
+	tags: organization_template
 )
 service lender-api {
 	@doc "Update"
@@ -365,4 +371,40 @@ service lender-api {
 	post /organization_template/:id/reset (PathIdRequest) returns (EmptyResponse)
 }
 
-    // ============== organization template service end ============
+// ============== organization template service end ============
+// ============= organization setting service start =============
+@server(
+	desc: "organization setting service"
+	version: v1
+	prefix:     /api/v1
+	group: organization_setting
+	middleware: AuthMiddleware
+	tags: organization_setting
+)
+service lender-api {
+	@doc "Detail by purpose"
+	@handler OrganizationSettingDetailByPurpose
+	get /organization_setting/detail_by_purpose (OrganizationSettingDetailByPurposeRequest) returns (OrganizationSettingDetailResponse)
+
+	@doc "switch status"
+	@handler OrganizationSettingSwitchStatus
+	patch /organization_setting/:id/status (OrganizationSettingSwitchStatusRequest) returns (EmptyResponse)
+}
+
+// ============= organization setting service end =============
+// =============== pdf service start ==============
+@server(
+	desc: "pdf service"
+	version: v1
+	group: pdf
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: pdf
+)
+service lender-api {
+	@doc "convert html to pdf"
+	@handler HtmlToPdf
+	post /pdf/html_to_pdf (HtmlToPdfRequest) returns (EmptyResponse)
+}
+
+	// =============== pdf service end ==============

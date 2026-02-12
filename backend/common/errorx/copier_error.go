@@ -1,13 +1,13 @@
 package errorx
 
 func GetFailedTransReqErr(err error) error {
-	return Wrap(err, "Trans Request Error")
+	return Wrap(err, "Trans request error")
 }
 
 func GetFailedTransRespErr(err error) error {
-	return Wrap(err, "Trans Response Error")
+	return Wrap(err, "Trans response error")
 }
 
 func GetFailedTransErr(err error) error {
-	return Wrap(err, "Trans Data Error")
+	return Wrap(err, "Trans data error")
 }

@@ -72,7 +72,8 @@ func (repo *OrganizationRepo) GetOrganization(ctx context.Context, id int64, org
 		Where("id = ? and type = ?", id, organizationType)
 	if withPreloads {
 		query = query.Preload("OrganizationEmails").
-			Preload("Owner")
+			Preload("Owner").
+			Preload("OrganizationSettings")
 	}
 	err = query.First(&result).Error
 	return result, errorx.WithStack(err)
@@ -113,7 +114,7 @@ func (repo *OrganizationRepo) GetOrganizationWithTx(ctx context.Context, tx *gor
 	return result, errorx.WithStack(err)
 }
 
-// All
+// All return all organizations
 func (repo *OrganizationRepo) All(ctx context.Context, organizationType constants.UserType) (result []*model.Organization, err error) {
 	err = repo.Client(ctx).
 		Where("type = ? and status = ?", organizationType, constants.OrganizationStatusActive).
@@ -122,7 +123,20 @@ func (repo *OrganizationRepo) All(ctx context.Context, organizationType constant
 	return result, errorx.WithStack(err)
 }
 
-// Page
+// AllForOption all for option
+func (repo *OrganizationRepo) AllForOption(ctx context.Context, organizationType constants.UserType, status constants.OrganizationStatus) (result []*model.Organization, err error) {
+	query := repo.Client(ctx).
+		Select("id", "name", "contact_email", "type").
+		Where("type = ?", organizationType)
+	if status != constants.OrganizationStatusNone {
+		query = query.Where("status = ?", status)
+	}
+	err = query.Order("id asc").
+		Find(&result).Error
+	return result, errorx.WithStack(err)
+}
+
+// Page retrieve organizations for pagination
 func (repo *OrganizationRepo) Page(ctx context.Context, pageReq dto.OrganizationPageRequestDto) (page gormx.PageResponse[*OrganizationPageEntity], err error) {
 	filter := pageReq.Filter
 	sorter := pageReq.Sorter
@@ -258,5 +272,23 @@ func (repo *OrganizationRepo) GetIdsByOwnerIdWithTx(ctx context.Context, tx *gor
 		Select("id").
 		Where("owner_id = ? and type = ?", ownerId, organizationType).
 		Pluck("id", &result).Error
+	return result, errorx.WithStack(err)
+}
+
+func (repo *OrganizationRepo) GetOrganizationsByOwnerIdWithTx(ctx context.Context, tx *gorm.DB, ownerId int64, organizationType constants.UserType) (results []*model.Organization, err error) {
+	err = tx.WithContext(ctx).Model(&model.Organization{}).
+		Where("owner_id = ? and type = ?", ownerId, organizationType).
+		Find(&results).Error
+	return results, errorx.WithStack(err)
+}
+
+// SelectOptions retrieves organization options based on the specified type.
+// It returns a slice of Organization pointers containing only the id, name, and type fields.
+func (repo *OrganizationRepo) SelectOptions(ctx context.Context, organizationType constants.UserType) (result []*model.Organization, err error) {
+	err = repo.Client(ctx).Model(&model.Organization{}).
+		Select("id", "name", "type", "contact_email").
+		Where("type = ? and status = ?", organizationType, constants.OrganizationStatusActive).
+		Order("id asc").
+		Find(&result).Error
 	return result, errorx.WithStack(err)
 }

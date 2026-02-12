@@ -92,6 +92,15 @@ type (
 	OrganizationEntity                             = lender.OrganizationEntity
 	OrganizationLenderMetadataEntity               = lender.OrganizationLenderMetadataEntity
 	OrganizationMetadataEntity                     = lender.OrganizationMetadataEntity
+	OrganizationProfileEntity                      = lender.OrganizationProfileEntity
+	OrganizationProfileResponse                    = lender.OrganizationProfileResponse
+	OrganizationSettingDetailByPurposeRequest      = lender.OrganizationSettingDetailByPurposeRequest
+	OrganizationSettingDetailByPurposeRequestData  = lender.OrganizationSettingDetailByPurposeRequestData
+	OrganizationSettingDetailResponse              = lender.OrganizationSettingDetailResponse
+	OrganizationSettingEntity                      = lender.OrganizationSettingEntity
+	OrganizationSettingProfileEntity               = lender.OrganizationSettingProfileEntity
+	OrganizationSettingSwitchStatusRequest         = lender.OrganizationSettingSwitchStatusRequest
+	OrganizationSettingSwitchStatusRequestData     = lender.OrganizationSettingSwitchStatusRequestData
 	OrganizationTemplateDetailByPurposeRequest     = lender.OrganizationTemplateDetailByPurposeRequest
 	OrganizationTemplateDetailByPurposeRequestData = lender.OrganizationTemplateDetailByPurposeRequestData
 	OrganizationTemplateDetailResponse             = lender.OrganizationTemplateDetailResponse
@@ -214,6 +223,7 @@ type (
 		GetOpt(ctx context.Context, in *OptionRequest, opts ...grpc.CallOption) (*OptionResponse, error)
 		GetUsState(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*StringSliceResponse, error)
 		GetUsCities(ctx context.Context, in *UsCitiesRequest, opts ...grpc.CallOption) (*StringSliceResponse, error)
+		SyncData(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	}
 
 	defaultCommon struct {
@@ -240,4 +250,9 @@ func (m *defaultCommon) GetUsState(ctx context.Context, in *EmptyRequest, opts .
 func (m *defaultCommon) GetUsCities(ctx context.Context, in *UsCitiesRequest, opts ...grpc.CallOption) (*StringSliceResponse, error) {
 	client := lender.NewCommonClient(m.cli.Conn())
 	return client.GetUsCities(ctx, in, opts...)
+}
+
+func (m *defaultCommon) SyncData(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	client := lender.NewCommonClient(m.cli.Conn())
+	return client.SyncData(ctx, in, opts...)
 }

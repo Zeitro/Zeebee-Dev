@@ -26,7 +26,7 @@ func NewOrganizationUpdateProfileLogic(ctx context.Context, svcCtx *svc.ServiceC
 	}
 }
 
-func (l *OrganizationUpdateProfileLogic) OrganizationUpdateProfile(req *types.OrganizationUpdateProfileRequest) (resp *types.OrganizationEntity, err error) {
+func (l *OrganizationUpdateProfileLogic) OrganizationUpdateProfile(req *types.OrganizationUpdateProfileRequest) (resp *types.OrganizationProfileEntity, err error) {
 	// Convert API request to proto request
 	rpcReqData, err := copierx.Trans[types.OrganizationUpdateProfileRequest, lender.OrganizationUpdateProfileRequestData](
 		req,
@@ -58,9 +58,10 @@ func (l *OrganizationUpdateProfileLogic) OrganizationUpdateProfile(req *types.Or
 	}
 
 	// Convert proto response to API types
-	resp, err = copierx.Trans[lender.OrganizationEntity, types.OrganizationEntity](
+	resp, err = copierx.Trans[lender.OrganizationProfileEntity, types.OrganizationProfileEntity](
 		rpcResp.Data,
 		copierx.TimeToRFC3339Str(),
+		copierx.BytesToStrMap(),
 	)
 	if err != nil {
 		return nil, err
