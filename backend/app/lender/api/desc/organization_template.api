@@ -1,0 +1,118 @@
+syntax = "v1"
+
+info(
+    title: "organization-template-api"
+    desc: "organization template management http service description"
+    version: "v1"
+)
+
+import "common.api"
+
+type TemplateVariableEntity {
+    Label string `json:"label"`
+    Type string `json:"type" validate:"oneof=String Object Array"`
+    Key string `json:"key"`
+    IsEditable bool `json:"is_editable"`
+    IsRequired bool `json:"is_required"`
+    Source string `json:"source" validate:"omitempty,oneof=Fixed Dynamic Template"`
+    Format string `json:"format" validate:"omitempty,oneof=Email Phone Currency Input TextArea"`
+    FixedValue string `json:"fixed_value,optional" validate:"required_if=Source Fixed IsRequired true,required_if=Source Template IsRequired true"`
+    Properties map[string]*TemplateVariableEntity `json:"properties,omitempty,optional"`
+    Items []*TemplateVariableEntity `json:"items,omitempty,optional"`
+}
+
+type TemplateVariableGroupEntity {
+    Name string `json:"name"`
+    Variables []*TemplateVariableEntity `json:"variables" validate:"dive"`
+}
+
+// Entity
+type (
+    OrganizationTemplateEntity {
+        Id int64 `json:"id"`
+        Name string `json:"name"`
+        Type string `json:"type"`
+        Category string `json:"category"`
+        Purpose string `json:"purpose"`
+        Content string `json:"content"`
+        VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema"`
+        Status string `json:"status"`
+        HasConfigured bool `json:"has_configured"`
+        Description string `json:"description"`
+        ExampleVariables string `json:"example_variables,omitempty,optional"`
+        CreatedAt string `json:"created_at"`
+        UpdatedAt string `json:"updated_at"`
+    }
+
+    OrganizationTemplatePageEntity {
+        Id int64 `json:"id"`
+        Name string `json:"name"`
+        Type string `json:"type"`
+        Category string `json:"category"`
+        Purpose string `json:"purpose"`
+        Status string `json:"status"`
+        HasConfigured bool `json:"has_configured"`
+        Description string `json:"description"`
+        CreatedAt string `json:"created_at"`
+        UpdatedAt string `json:"updated_at"`
+    }
+)
+
+// Page
+type (
+    OrganizationTemplateFilter {
+        Keyword string `json:"keyword,optional"`
+        Category string `json:"category,optional" validate:"omitempty,oneof=Email Contract"`
+    }
+
+    OrganizationTemplatePageRequest {
+        BasePageRequest
+        Filter *OrganizationTemplateFilter `json:"filter,optional"`
+        Sort *BasePageSort `json:"sort,optional"`
+    }
+
+    OrganizationTemplatePageResponse {
+        BasePageResponse
+        List []*OrganizationTemplatePageEntity `json:"list"`
+    }
+)
+
+// Update
+type (
+    OrganizationTemplateUpdateRequest {
+        Id int64 `path:"id" validate:"required,min=1"`
+        VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema,optional" validate:"omitempty,dive"`
+    }
+)
+
+// Detail
+type (
+    OrganizationTemplateDetailRequest {
+        Id int64 `path:"id" validate:"required,min=1"`
+    }
+
+    OrganizationTemplateDetailResponse {
+        OrganizationTemplateEntity
+    }
+)
+
+// DetailByPurpose
+type (
+    OrganizationTemplateDetailByPurposeRequest {
+        Purpose string `form:"purpose" validate:"required"`
+    }
+)
+
+// Preview
+type (
+    OrganizationTemplatePreviewRequest {
+        Name string `json:"name" validate:"required,min=1,max=100"`
+        Content string `json:"content" validate:"required,max=10485760"`
+        VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema,optional" validate:"omitempty,dive"`
+        ExampleVariables string `json:"example_variables,omitempty,optional" validate:"omitempty,json"`
+    }
+
+    OrganizationTemplatePreviewResponse {
+        Content string `json:"content"`
+    }
+)

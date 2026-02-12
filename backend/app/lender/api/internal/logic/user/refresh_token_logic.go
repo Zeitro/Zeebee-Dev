@@ -34,7 +34,7 @@ func (l *RefreshTokenLogic) RefreshToken(req *types.UserRefreshTokenRequest) (re
 		},
 	})
 	if err != nil {
-		return nil, errorx.New("Refresh Token Error")
+		return nil, errorx.New("Refresh token error")
 	}
 
 	resp, err = copierx.Trans[lender.UserJwtResponseData, types.UserJwtResponse](rpcResp.Data)

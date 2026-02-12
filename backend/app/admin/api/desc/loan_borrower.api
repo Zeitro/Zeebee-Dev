@@ -1,0 +1,25 @@
+syntax = "v1"
+
+info(
+    title: "admin-loan-borrower-api"
+    desc: "admin-loan-borrower-api http service description"
+    version: "v1"
+)
+import "address.api"
+
+type LoanBorrowerEntity {
+    Id int64 `json:"id"`
+    BorrowerEntityId int64 `json:"borrower_entity_id"`
+    LoanId int64 `json:"loan_id"`
+    Type string `json:"type" `
+    Name string `json:"name"`
+    TinType string `json:"tin_type"`
+    Tin string `json:"tin" `
+    MailingAddress AddressEntity `json:"mailing_address"`
+    ContactEmail string `json:"contact_email"`
+    ContactPhone string `json:"contact_phone"`
+    ContactName string `json:"contact_name"`
+    OwnPercent int32 `json:"own_percent"`
+    CreateAt string `json:"create_at"`
+    UpdateAt string `json:"update_at"`
+}

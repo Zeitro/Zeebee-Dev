@@ -11,6 +11,7 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -82,10 +83,10 @@ func (l *DeleteRequestLogic) DeleteRequest(in *lender.LoanDocumentDeleteRequestR
 				return errorx.Wrap(innerErr, "Failed To Update Loan Document Status")
 			}
 		default:
-			return errorx.WithStack(errorx.New("Invalid Loan Document Category"))
+			return errorx.WithStack(errorx.New("Invalid loan document category"))
 
 		}
-		operationLoanDocument := &model.OperationLoanDocument{}
+		operationLoanDocument := &data.OperationLoanDocument{}
 		innerErr = copier.CopyWithOption(operationLoanDocument, loanDocument, copier.Option{
 			CaseSensitive: true,
 			DeepCopy:      true,
@@ -98,17 +99,17 @@ func (l *DeleteRequestLogic) DeleteRequest(in *lender.LoanDocumentDeleteRequestR
 			tx,
 			loanDocument.LoanId,
 			claim.OrganizationUserId,
-			model.LoanOperationStatus{
+			data.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
-			model.LoanOperationStatus{
+			data.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
 			constants.LoanOperationActionDeleteDocumentRequest,
-			&model.LoanOperationMetadata{
-				LoanDocuments: []*model.OperationLoanDocument{
+			&data.LoanOperationMetadata{
+				LoanDocuments: []*data.OperationLoanDocument{
 					operationLoanDocument,
 				},
 			},

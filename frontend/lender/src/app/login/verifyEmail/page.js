@@ -3,15 +3,15 @@ import React, { useState } from 'react';
 import { Button } from 'antd';
 import { useUserStore } from '@/store/user';
 import { CheckCircleTwoTone } from '@ant-design/icons';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { setCookie } from '@repo/shared-methods/utils';
+import { useSearchParams } from 'next/navigation';
 import { throttle } from 'lodash';
+import useContent from '../components/useContent';
 
 // 注册成功后，邮箱打开此页面，触发验证并登录
 const VerifyEmail = () => {
-	const router = useRouter();
 	const searchParams = useSearchParams();
-	const { verifyEmail, getUserInfo } = useUserStore();
+	const { verifyEmail } = useUserStore();
+	const { loginByToken } = useContent();
 	const [loading, setLoading] = useState(false);
 	const handleActivateAccount = throttle(async () => {
 		try {
@@ -20,11 +20,8 @@ const VerifyEmail = () => {
 			if (!email || !code) return;
 			setLoading(true);
 			const access = await verifyEmail({ email, code });
-			await getUserInfo();
-			setCookie('token', access?.access_token, access?.access_token_expire * 1000);
-			setLoading(false);
-			router.replace('/');
-		} catch (error) {
+			loginByToken(access, { setLoading });
+		} catch {
 			setLoading(false);
 		}
 	}, 1000);

@@ -2,7 +2,7 @@
 import React, { useMemo } from 'react';
 import { Col, Form, Radio, Row } from 'antd';
 import styles from './index.module.scss';
-import { titleCol, yesNoOptions } from '@/enum/common';
+import { titleCol, yesNoOptions } from '@repo/shared-methods/enum';
 import { InputNumAmount } from '../InputNumAmount';
 import { useGetOptions } from '@repo/shared-methods/hooks';
 export const Declaration = ({ gutter, form, disabled }) => {

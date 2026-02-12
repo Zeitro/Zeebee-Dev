@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -65,16 +66,16 @@ func (l *UpdateCommentLogic) UpdateComment(in *lender.LoanDocumentUpdateCommentR
 			tx,
 			in.Data.Id,
 			claim.OrganizationUserId,
-			model.LoanOperationStatus{
+			data.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
-			model.LoanOperationStatus{
+			data.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
 			constants.LoanOperationActionComment,
-			&model.LoanOperationMetadata{
+			&data.LoanOperationMetadata{
 				Comment: in.Data.Comment,
 			},
 		)

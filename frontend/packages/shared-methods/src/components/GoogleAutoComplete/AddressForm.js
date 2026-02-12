@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect } from 'react';
-import { Form, Input, Col, Select } from 'antd';
+import { Form, Input, Col, Select, Row } from 'antd';
 import { GoogleAutoComplete } from './index';
 import { set } from 'lodash';
 import { useAddressStore } from '@repo/shared-methods/store';
@@ -42,7 +42,9 @@ export const AddressForm = ({
 	isShowAddress2 = true,
 	isShowZip = true,
 	listName = '', // 此组件使用在Form.List内时传此字段,且Form.List上的name属性值与此listName字段值一致；方便用于设置form.setFieldsValue
-	isRequest = true,
+	isRequest = true, //true时请求地址接口
+	isHaveCol = true, //true时,每个Form.Item配合Col使用,方便布局
+	isShowRow = false, //true时为state/city/zip三个字段使用Row布局(一般是不用,除非某些特殊场景需要)
 }) => {
 	const form = Form.useFormInstance();
 	const { getStateList, getCityList, stateOptions, cityOptions } = useAddressStore();
@@ -79,29 +81,16 @@ export const AddressForm = ({
 		return _.get(prevValues, allAddressName) !== _.get(curValues, allAddressName);
 	};
 
-	return (
+	const getColItem = (children, isHaveCol = true, options = {}) => {
+		if (isHaveCol) {
+			return <Col {...options}>{children}</Col>;
+		}
+		return children;
+	};
+
+	const stateCityZip = (
 		<>
-			<Col {...layoutCol} {...addressCol}>
-				<Form.Item
-					name={addressName}
-					label={addressLabel}
-					rules={[{ required: true, message: 'Please enter your address' }]}
-				>
-					<GoogleAutoComplete
-						onPlaceSelected={handlePlaceSelected}
-						placeholder={`Enter ${addressLabel}`}
-						disabled={disabled}
-					/>
-				</Form.Item>
-			</Col>
-			{isShowAddress2 && (
-				<Col {...layoutCol} {...address2Col}>
-					<Form.Item name={addressName2} label={addressLabel2}>
-						<Input placeholder={`Enter ${addressLabel2}`} disabled={disabled} />
-					</Form.Item>
-				</Col>
-			)}
-			<Col {...layoutCol} {...stateCol}>
+			{getColItem(
 				<Form.Item shouldUpdate={shouldUpdate} noStyle>
 					{() => {
 						return (
@@ -121,9 +110,11 @@ export const AddressForm = ({
 							</Form.Item>
 						);
 					}}
-				</Form.Item>
-			</Col>
-			<Col md={12} {...layoutCol} {...cityCol}>
+				</Form.Item>,
+				isShowRow || isHaveCol,
+				{ ...layoutCol, ...stateCol },
+			)}
+			{getColItem(
 				<Form.Item shouldUpdate={shouldUpdate} noStyle>
 					{() => (
 						<Form.Item
@@ -141,10 +132,12 @@ export const AddressForm = ({
 							/>
 						</Form.Item>
 					)}
-				</Form.Item>
-			</Col>
-			{isShowZip && (
-				<Col md={12} {...layoutCol} {...zipCol}>
+				</Form.Item>,
+				isShowRow || isHaveCol,
+				{ ...layoutCol, ...cityCol },
+			)}
+			{isShowZip &&
+				getColItem(
 					<Form.Item shouldUpdate={shouldUpdate} noStyle>
 						{() => (
 							<Form.Item
@@ -156,9 +149,38 @@ export const AddressForm = ({
 								<Input placeholder="Enter zip" disabled={disabled} />
 							</Form.Item>
 						)}
-					</Form.Item>
-				</Col>
+					</Form.Item>,
+					isShowRow || isHaveCol,
+					{ ...layoutCol, ...zipCol },
+				)}
+		</>
+	);
+	return (
+		<>
+			{getColItem(
+				<Form.Item
+					name={addressName}
+					label={addressLabel}
+					rules={[{ required: true, message: 'Please enter your address' }]}
+				>
+					<GoogleAutoComplete
+						onPlaceSelected={handlePlaceSelected}
+						placeholder={`Enter ${addressLabel}`}
+						disabled={disabled}
+					/>
+				</Form.Item>,
+				isHaveCol,
+				{ ...layoutCol, ...addressCol },
 			)}
+			{isShowAddress2 &&
+				getColItem(
+					<Form.Item name={addressName2} label={addressLabel2}>
+						<Input placeholder={`Enter ${addressLabel2}`} disabled={disabled} />
+					</Form.Item>,
+					isHaveCol,
+					{ ...layoutCol, ...address2Col },
+				)}
+			{isShowRow ? <Row gutter={16}>{stateCityZip}</Row> : stateCityZip}
 		</>
 	);
 };

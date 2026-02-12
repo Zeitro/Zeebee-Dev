@@ -1,7 +1,7 @@
 'use client';
 import { Button, Image } from 'antd';
 import React, { useState } from 'react';
-import ViewSvg from '@/assets/images/view.svg';
+import ViewSvg from '@repo/shared-methods/assets/images/view.svg';
 import styles from './index.module.scss';
 // 预览文件
 export const ViewFile = ({ children, file, fileKey = 'file_url', ...rest }) => {

@@ -47,8 +47,8 @@ type InputLoanInfo struct {
 // CalculatePreApprovalLoanAmountResult represents the result of calculating pre-approved loan amount
 type CalculatePreApprovalLoanAmountResult struct {
 	RequestId              string          `json:"request_id"`
-	LenderCompanyName      string          `json:"lender_company_name"`
-	LenderCompanyId        int64           `json:"lender_company_id"`
+	LenderOrganizationName string          `json:"lender_organization_name"`
+	LenderOrganizationId   int64           `json:"lender_organization_id"`
 	IsApproved             bool            `json:"is_approved"`
 	RejectReason           string          `json:"reject_reason"`
 	TotalAmount            float64         `json:"total_amount"`
@@ -67,9 +67,9 @@ type CalculatePreApprovalLoanAmountResult struct {
 
 // PreApprovalEngine represents the pre-approval engine
 type PreApprovalEngine struct {
-	LenderCompanyName string                               `json:"lender_company_name"`
-	LenderCompanyId   int64                                `json:"lender_company_id"`
-	PreApprovalRules  map[ExperienceLevel]*PreApprovalRule `json:"pre_approve_rules"`
+	LenderOrganizationName string                               `json:"lender_organization_name"`
+	LenderOrganizationId   int64                                `json:"lender_organization_id"`
+	PreApprovalRules       map[ExperienceLevel]*PreApprovalRule `json:"pre_approve_rules"`
 	// ExperienceLevelRule defines rules for determining experience level
 	ExperienceLevelRule ExperienceLevelRule `json:"experience_level_rule"`
 }
@@ -79,14 +79,14 @@ func (e *PreApprovalEngine) CalPreApprovalLoanAmount(input InputLoanInfo) (resul
 	experienceLevel := e.ExperienceLevelRule.getExperienceLevel(input.TransactionHistoryCount)
 	rule, ok := e.PreApprovalRules[experienceLevel]
 	if !ok {
-		return nil, errorx.WithStack(errorx.New("No Rule Found For Experience Level"))
+		return nil, errorx.WithStack(errorx.New("No rule found for experience level"))
 	}
 	result, err = rule.CalPreApprovalLoanAmount(input)
 	if err != nil {
 		return nil, err
 	}
-	result.LenderCompanyId = e.LenderCompanyId
-	result.LenderCompanyName = e.LenderCompanyName
+	result.LenderOrganizationId = e.LenderOrganizationId
+	result.LenderOrganizationName = e.LenderOrganizationName
 	return result, nil
 }
 
@@ -195,8 +195,8 @@ func GetDefaultPreApprovalEngines() map[string]*PreApprovalEngine {
 
 	engines := make(map[string]*PreApprovalEngine)
 	engines["zeebee"] = &PreApprovalEngine{
-		LenderCompanyName: "ZeeBee",
-		LenderCompanyId:   1,
+		LenderOrganizationName: "ZeeBee",
+		LenderOrganizationId:   1,
 		ExperienceLevelRule: ExperienceLevelRule{
 			MaxTransactionHistoryCountForExperienced:  9,
 			MaxTransactionHistoryCountForNoExperience: 2,

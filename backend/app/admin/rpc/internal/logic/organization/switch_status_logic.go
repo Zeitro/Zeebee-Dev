@@ -71,10 +71,22 @@ func (l *SwitchStatusLogic) SwitchStatus(in *admin.OrganizationSwitchStatusReque
 		}
 		if owner.Status == constants.UserStatusInactive && newStatus == constants.OrganizationStatusActive {
 			owner.Status = constants.UserStatusActive
-			innerErr = l.svcCtx.UserRepo.UpdateColumnsByIdWithTx(l.ctx, tx, owner.Id, map[string]interface{}{
+			innerErr = l.svcCtx.AllRepos.UserRepo.UpdateColumnsByIdWithTx(l.ctx, tx, owner.Id, map[string]interface{}{
 				"status": constants.UserStatusActive,
 			})
+			if innerErr != nil {
+				return innerErr
+			}
 		}
+
+		// Sync organization template
+		if newStatus == constants.OrganizationStatusActive {
+			organizationTemplateLogic := logic.NewBaseLogic(l.ctx, l.svcCtx)
+			innerErr = organizationTemplateLogic.
+				OrganizationTemplateLogic.
+				SyncByOrganizationIdWithTx(l.ctx, tx, organization)
+		}
+
 		return innerErr
 	})
 

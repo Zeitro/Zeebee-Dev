@@ -3,6 +3,8 @@ package loanlogic
 import (
 	"context"
 
+	"github.com/duke-git/lancet/v2/slice"
+
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
@@ -45,6 +47,10 @@ func (l *BorrowerLoanLenderCompaniesLogic) BorrowerLoanLenderCompanies(in *borro
 	if err != nil {
 		return nil, errorx.Wrap(err, "Failed To Get Lender Companies")
 	}
+
+	lenderCompanies = slice.Filter(lenderCompanies, func(index int, item string) bool {
+		return len(item) > 0
+	})
 
 	return &borrower.LoanLenderCompaniesResponse{
 		Data: lenderCompanies,

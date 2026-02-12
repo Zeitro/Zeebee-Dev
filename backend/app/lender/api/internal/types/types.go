@@ -11,6 +11,27 @@ type AddressEntity struct {
 	ZipCode  string `json:"zip_code,optional"`
 }
 
+type BasePageFilter struct {
+	Keyword string `json:"keyword,optional"`
+}
+
+type BasePageRequest struct {
+	Limit int `json:"limit,optional"`
+	Page  int `json:"page, optional"`
+}
+
+type BasePageResponse struct {
+	Page      int64 `json:"page"`
+	Limit     int64 `json:"limit"`
+	Total     int64 `json:"total"`
+	TotalPage int64 `json:"total_page"`
+}
+
+type BasePageSort struct {
+	Column string `json:"column,optional"`
+	Sort   string `json:"sort,optional"`
+}
+
 type EmptyRequest struct {
 }
 
@@ -186,8 +207,8 @@ type LoanEntity struct {
 	PaidOffDate            string                    `json:"paid_off_date,optional" validate:"required_if=Stage Archived,omitempty,datetime=01/02/2006"`
 	BusinessStrategy       []string                  `json:"business_strategy" validate:"required,dive,required,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
 	Applicants             []LoanApplicantEntity     `json:"applicants"`
-	LenderCompanyId        int64                     `json:"lender_company_id"`
-	BorrowerId             int64                     `json:"borrower_id"`
+	LenderOrganizationId   int64                     `json:"lender_organization_id"`
+	BorrowerOrganizationId int64                     `json:"borrower_organization_id"`
 	CreatedAt              string                    `json:"created_at"`
 	UpdatedAt              string                    `json:"updated_at"`
 	Source                 string                    `json:"source"`
@@ -357,6 +378,71 @@ type OrganizationMetadataEntity struct {
 	Lender *OrganizationLenderMetadataEntity `json:"lender,omitempty"`
 }
 
+type OrganizationSettingEntity struct {
+	Id        int64                  `json:"id"`
+	CreatedAt string                 `json:"created_at"`
+	UpdatedAt string                 `json:"updated_at"`
+	Enabled   bool                   `json:"enabled"`
+	Setting   map[string]interface{} `json:"setting"`
+	Purpose   string                 `json:"purpose"`
+}
+
+type OrganizationSettingPageEntity struct {
+	Id            int64  `json:"id"`
+	Name          string `json:"name"`
+	Type          string `json:"type"`
+	Category      string `json:"category"`
+	Purpose       string `json:"purpose"`
+	Status        string `json:"status"`
+	HasConfigured bool   `json:"has_configured"`
+	Description   string `json:"description"`
+	CreatedAt     string `json:"created_at"`
+	UpdatedAt     string `json:"updated_at"`
+}
+
+type OrganizationSettingProfileEntity struct {
+	OrganizationSettingEntity
+	HasConfigured bool `json:"has_configured"`
+}
+
+type OrganizationTemplateDetailRequest struct {
+	Id int64 `path:"id" validate:"required,min=1"`
+}
+
+type OrganizationTemplateEntity struct {
+	Id                  int64                          `json:"id"`
+	Name                string                         `json:"name"`
+	Type                string                         `json:"type"`
+	Category            string                         `json:"category"`
+	Purpose             string                         `json:"purpose"`
+	Content             string                         `json:"content"`
+	VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema"`
+	Status              string                         `json:"status"`
+	HasConfigured       bool                           `json:"has_configured"`
+	Description         string                         `json:"description"`
+	ExampleVariables    string                         `json:"example_variables,omitempty,optional"`
+	CreatedAt           string                         `json:"created_at"`
+	UpdatedAt           string                         `json:"updated_at"`
+}
+
+type OrganizationTemplateFilter struct {
+	Keyword  string `json:"keyword,optional"`
+	Category string `json:"category,optional" validate:"omitempty,oneof=Email Contract"`
+}
+
+type OrganizationTemplatePageEntity struct {
+	Id            int64  `json:"id"`
+	Name          string `json:"name"`
+	Type          string `json:"type"`
+	Category      string `json:"category"`
+	Purpose       string `json:"purpose"`
+	Status        string `json:"status"`
+	HasConfigured bool   `json:"has_configured"`
+	Description   string `json:"description"`
+	CreatedAt     string `json:"created_at"`
+	UpdatedAt     string `json:"updated_at"`
+}
+
 type OrganizationUserCreateResponse struct {
 	OrganizationUserEntity
 }
@@ -468,6 +554,24 @@ type RolePageSort struct {
 type SelectOptionEntity struct {
 	Label string `json:"label"`
 	Value string `json:"value"`
+}
+
+type TemplateVariableEntity struct {
+	Label      string                             `json:"label"`
+	Type       string                             `json:"type" validate:"oneof=String Object Array"`
+	Key        string                             `json:"key"`
+	IsEditable bool                               `json:"is_editable"`
+	IsRequired bool                               `json:"is_required"`
+	Source     string                             `json:"source" validate:"omitempty,oneof=Fixed Dynamic Template"`
+	Format     string                             `json:"format" validate:"omitempty,oneof=Email Phone Currency Input TextArea"`
+	FixedValue string                             `json:"fixed_value,optional" validate:"required_if=Source Fixed IsRequired true,required_if=Source Template IsRequired true"`
+	Properties map[string]*TemplateVariableEntity `json:"properties,omitempty,optional"`
+	Items      []*TemplateVariableEntity          `json:"items,omitempty,optional"`
+}
+
+type TemplateVariableGroupEntity struct {
+	Name      string                    `json:"name"`
+	Variables []*TemplateVariableEntity `json:"variables" validate:"dive"`
 }
 
 type UpdateDocumentsRequest struct {
