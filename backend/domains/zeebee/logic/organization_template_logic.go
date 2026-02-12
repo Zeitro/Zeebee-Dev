@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"text/template"
+	"time"
 
 	"github.com/duke-git/lancet/v2/slice"
 	"gorm.io/gorm"
@@ -377,9 +378,12 @@ func (l *OrganizationTemplateLogic) renderOrganizationSystemInfo(organizationTem
 		if err != nil {
 			return nil, errorx.Wrap(err, "Failed to parse template")
 		}
+		now := time.Now()
 		renderData := map[string]interface{}{
 			"system": map[string]interface{}{
 				"organization": organization,
+				"now_format1":  now.Format("02/01/2006"),
+				"now_format2":  now.Month().String() + now.Format(" 02,2006"),
 			},
 		}
 		var buf bytes.Buffer

@@ -5,7 +5,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/duke-git/lancet/v2/mathutil"
 	"github.com/jinzhu/copier"
@@ -139,9 +138,9 @@ func (l *VerifyEmailLogic) handlePreapprovalLoan(ctx context.Context, user *mode
 	}
 
 	// Get PDF
-	now := time.Now()
+	// now := time.Now()
 	renderData := map[string]interface{}{
-		"pdfCreateTime": now.Month().String() + now.Format(" 02,2006"),
+		// "pdfCreateTime": now.Month().String() + now.Format(" 02,2006"),
 		"loanBorrower":  user.FirstName,
 		"salesPrice":    stringx.FormatUsDollarCurrency(preapprovalInput.Loan.PurchaseAmount),
 		"maxLoanAmount": stringx.FormatUsDollarCurrency(preapprovalResult.TotalAmount),
