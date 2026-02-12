@@ -17,6 +17,7 @@ import (
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/repo"
+	"zeebee-backend/domains/zeebee/templater/convertor"
 )
 
 // BaseTemplateLogic provides base template business logic
@@ -265,7 +266,9 @@ func (l *BaseTemplateLogic) ExistsByPurpose(ctx context.Context, purpose string,
 
 // Preview retrieves a preview of a base template
 func (l *BaseTemplateLogic) Preview(_ context.Context, req dto.BaseTemplatePreviewDto) (result string, err error) {
-	tpl, err := template.New(req.Name).Parse(req.Content)
+	tpl, err := template.New(req.Name).
+		Funcs(convertor.TplFunc()).
+		Parse(req.Content)
 	if err != nil {
 		return "", errorx.Wrap(err, "Failed to parse template")
 	}

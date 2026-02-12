@@ -2,6 +2,7 @@ package stringx
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/Rhymond/go-money"
@@ -90,4 +91,12 @@ func FormatUsDollarCurrency(amount float64) string {
 func ToTitle(s string) string {
 	caser := cases.Title(language.Und)
 	return caser.String(s)
+}
+
+func PercentFormat(s string) string {
+	f, err := strconv.ParseFloat(s, 64)
+	if err != nil {
+		return s
+	}
+	return fmt.Sprintf("%.2f%%", f)
 }
