@@ -1,10 +1,16 @@
-import { formatAmount, formatPhone } from '@repo/shared-methods/utils';
+import { formatAmount, formatPhone, isNumberFn } from '@repo/shared-methods/utils';
 import _ from 'lodash';
 const useConfiguration = ({ valueHtml, setValueHtml, data }) => {
 	const formatValue = (format, value) => {
 		switch (format) {
-			case 'Currency':
+			case 'Currency': {
+				// 当选中default项时，默认展示的'{amount}',所以需要单独处理
+				const isNumber = isNumberFn(value);
+				if (!isNumber) {
+					return value;
+				}
 				return formatAmount(value);
+			}
 			case 'Phone':
 				return formatPhone(value);
 			default:
