@@ -19,6 +19,21 @@ message AddressEntity{
   string zip_code = 5;
 }
 
+message RangeInt64 {
+  int64 min = 1;
+  int64 max = 2;
+}
+
+message RangeInt32 {
+  int32 min = 1;
+  int32 max = 2;
+}
+
+message RangeFloat {
+  float min = 1;
+  float max = 2;
+}
+
 // ========================== common service start =================
 message OptionRequest {
   OptionRequestData data = 1;
@@ -280,7 +295,7 @@ message LoanEntity {
   string paid_off_date = 21;
   string created_at = 22;
   string updated_at = 23;
-  int64 lender_id = 24;
+  int64 lender_organization_id = 24;
   int64 creator_id = 25;
   repeated string business_strategy = 26;
   repeated LoanApplicantEntity applicants = 27;
@@ -516,6 +531,30 @@ message LoanApplyRequestData {
   string apply_form_file = 22;
   bool is_preapprove_loan = 23;
   string code = 24;
+  LoanPreapproveInfo loan_preapprove_info = 25;
+}
+
+message LoanPreapproveInfo {
+  LoanPreApprovalRequestData input = 1;
+  LoanPreapproveResult result = 2;
+}
+message LoanPreapproveResult {
+  string lender_organization_name = 1;
+  int64 lender_organization_id = 2;
+  bool is_approved = 3;
+  string reject_reason = 4;
+  double total_amount = 5;
+  double interest_reserved_amount = 6;
+  float rate = 7;
+  double monthly_payment = 8;
+  double cash_to_close = 9;
+  double initial_amount = 10;
+  double holdback_amount = 11;
+  int32 loan_term = 12;
+  float ltv = 13;
+  float ltc = 14;
+  float ltarv = 15;
+  string experience_level = 16;
 }
 
 message LoanApplyResponse {
@@ -1851,12 +1890,28 @@ message OrganizationEntity {
   repeated OrganizationEmailEntity organization_emails = 13;
   string logo = 14;
   string website = 15;
+  string tagline = 16;
+  OrganizationMetadataEntity metadata = 17;
 }
+
+message OrganizationMetadataEntity {
+  OrganizationLenderMetadataEntity lender = 1;
+
+}
+
+message OrganizationLenderMetadataEntity {
+  RangeFloat loan_amount_range = 1;
+  RangeInt32       loan_term_range = 2;
+  RangeFloat       loan_tate_range = 3;
+  RangeFloat       loan_point_range = 4;
+}
+
 
 message OrganizationOptionsEntity {
   int64 id = 1;
   string name = 2;
   string contact_email = 3;
+  string type = 4;
 }
 
 // info --  response
@@ -1898,7 +1953,7 @@ message OrganizationLenderPageResponseData {
 }
 
 service Organization {
-  rpc Info(EmptyRequest) returns(OrganizationInfoResponse);
+  rpc Profile(EmptyRequest) returns(OrganizationInfoResponse);
   rpc AllLender(EmptyRequest) returns(OrganizationAllLenderResponse);
   rpc LenderPage(OrganizationLenderPageRequest) returns(OrganizationLenderPageResponse);
 }
@@ -1969,3 +2024,47 @@ message EmailAuthorizationEntity {
 }
 
 // ================= email authorization end =================
+// ================= zeitro listing service start =================
+
+// Zeitro
+message ZeitroPropertyEntity {
+  string full_address = 1;
+  string state = 2;
+  string county = 3;
+  string city = 4;
+  string zip_code = 5;
+  string property_type = 6;
+  string price = 7;
+  string income_indicator = 8;
+  string minority_percent = 9;
+  string total_population = 10;
+  string hispanic = 11;
+  string black = 12;
+  string asian = 13;
+  string pacific = 14;
+  string msa_code = 15;
+  string days_on_market = 16;
+  string agent_name = 17;
+  string agent_phone = 18;
+  string agent_email = 19;
+  string distance = 20;
+}
+
+// Zeitro ListingSearch --  request
+message ZeitroListingSearchRequest {
+  double lat = 1;
+  double lon = 2;
+  double dist = 3;
+  string addr = 4;
+}
+
+// Zeitro ListingSearch --  response
+message ZeitroListingSearchResponse {
+  repeated ZeitroPropertyEntity data = 1;
+}
+
+service Zeitro {
+  rpc ZeitroListingSearch(ZeitroListingSearchRequest) returns(ZeitroListingSearchResponse);
+}
+
+// ================= zeitro listing service end =================

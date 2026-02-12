@@ -383,8 +383,8 @@ type LoanEntity struct {
 	PaidOffDate                string                    `json:"paid_off_date" `
 	BusinessStrategy           []string                  `json:"business_strategy"`
 	Applicants                 []LoanApplicantEntity     `json:"applicants"`
-	LenderID                   int64                     `json:"lender_id"`
-	BorrowerID                 int64                     `json:"borrower_id"`
+	LenderOrganizationId       int64                     `json:"lender_organization_id"`
+	BorrowerOrganizationId     int64                     `json:"borrower_organization_id"`
 	CreatedAt                  string                    `json:"created_at"`
 	UpdatedAt                  string                    `json:"updated_at"`
 	Source                     string                    `json:"source"`
@@ -628,6 +628,13 @@ type OrganizationInfoResponse struct {
 	Data OrganizationEntity `json:"data"`
 }
 
+type OrganizationLenderMetadataEntity struct {
+	LoanAmountRange RangeFloat64 `json:"loan_amount_range,optional"`
+	LoanTermRange   RangeInt     `json:"loan_term_range,optional"`
+	LoanTateRange   RangeFloat64 `json:"loan_tate_range,optional"`
+	LoanPointRange  RangeFloat64 `json:"loan_point_range,optional"`
+}
+
 type OrganizationLenderPageFilter struct {
 	Keyword string `json:"keyword,optional"`
 }
@@ -637,9 +644,14 @@ type OrganizationLenderPageSorter struct {
 	Sort   string `json:"sort,optional"`
 }
 
+type OrganizationMetadataEntity struct {
+	Lender *OrganizationLenderMetadataEntity `json:"lender,omitempty"`
+}
+
 type OrganizationOptionEntity struct {
 	Id           int64  `json:"id"`
 	Name         string `json:"name"`
+	Type         string `json:"type"`
 	ContactEmail string `json:"contact_email"`
 }
 
@@ -735,6 +747,16 @@ type PropertyPageFilter struct {
 type PropertyPageSorter struct {
 	Column string `json:"column,optional"`
 	Sort   string `json:"sort,optional"`
+}
+
+type RangeFloat64 struct {
+	Min float64 `json:"min"`
+	Max float64 `json:"max"`
+}
+
+type RangeInt struct {
+	Min int `json:"min"`
+	Max int `json:"max"`
 }
 
 type ResourceEntity struct {
@@ -877,4 +899,27 @@ type UserLoginResponse struct {
 	AccessTokenExpire  int64  `json:"access_token_expire"`
 	RefreshToken       string `json:"refresh_token"`
 	RefreshTokenExpire int64  `json:"refresh_token_expire"`
+}
+
+type ZeitroPropertyEntity struct {
+	FullAddress     string `json:"full_address"`
+	State           string `json:"state"`
+	County          string `json:"county"`
+	City            string `json:"city"`
+	ZipCode         string `json:"zip_code"`
+	PropertyType    string `json:"property_type"`
+	Price           string `json:"price"`
+	IncomeIndicator string `json:"income_indicator,optional"`
+	MinorityPercent string `json:"minority_percent,optional"`
+	TotalPopulation string `json:"total_population,optional"`
+	Hispanic        string `json:"hispanic,optional"`
+	Black           string `json:"black,optional"`
+	Asian           string `json:"asian,optional"`
+	Pacific         string `json:"pacific,optional"`
+	MsaCode         string `json:"msa_code,optional"`
+	DaysOnMarket    string `json:"days_on_market,optional"`
+	AgentName       string `json:"agent_name,optional"`
+	AgentPhone      string `json:"agent_phone,optional"`
+	AgentEmail      string `json:"agent_email,optional"`
+	Distance        string `json:"distance,optional"`
 }

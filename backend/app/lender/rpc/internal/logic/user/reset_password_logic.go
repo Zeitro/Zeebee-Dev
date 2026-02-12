@@ -10,8 +10,10 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/bo"
 	"zeebee-backend/domains/zeebee/data/dto"
 )
 
@@ -31,7 +33,7 @@ func NewResetPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Res
 	}
 }
 
-func (l *ResetPasswordLogic) ResetPassword(in *lender.ResetPasswordRequest) (resp *lender.ResetPasswordResponse, err error) {
+func (l *ResetPasswordLogic) ResetPassword(in *lender.ResetPasswordRequest) (resp *lender.UserJwtResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -49,12 +51,16 @@ func (l *ResetPasswordLogic) ResetPassword(in *lender.ResetPasswordRequest) (res
 		return nil, err
 	}
 
-	jwtInfo := &lender.UserLoginResponseData{}
+	jwtInfo, err := copierx.Trans[bo.UserJwtTokenBo, lender.UserJwtResponseData](token)
+	if err != nil {
+		return nil, err
+	}
+
 	err = copier.CopyWithOption(jwtInfo, token, copier.Option{CaseSensitive: true})
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
-	return &lender.ResetPasswordResponse{
+	return &lender.UserJwtResponse{
 		Data: jwtInfo,
 	}, nil
 }

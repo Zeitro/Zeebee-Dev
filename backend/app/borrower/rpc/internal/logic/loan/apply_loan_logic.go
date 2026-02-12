@@ -74,14 +74,14 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrowe
 
 		// check loan
 		if len(data.loan.Code) == 0 {
-			innerErr = errorx.WithStack(errorx.New("Code Is Empty"))
+			innerErr = errorx.WithStack(errorx.New("Code is empty"))
 		}
 		isExisted, innerErr := l.svcCtx.LoanRepo.IsExistedByColumnsWithTx(l.ctx, tx, map[string]interface{}{"code": data.loan.Code})
 		if innerErr != nil {
 			return innerErr
 		}
 		if isExisted {
-			return errorx.WithStack(errorx.New("Code Already Exists"))
+			return errorx.WithStack(errorx.New("Code already exists"))
 		}
 		// todo check code whether generate by system
 
@@ -215,14 +215,14 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, 
 	var borrowerProperty *model.BorrowerProperty
 
 	if reqData == nil {
-		return nil, errorx.New("Invalid Request Data")
+		return nil, errorx.New("Invalid request data")
 	}
 	if reqData.LoanProperty == nil {
-		return nil, errorx.New("Invalid Loan Property")
+		return nil, errorx.New("Invalid loan property")
 	}
 
 	if reqData.LoanProperty.BorrowerPropertyId == 0 {
-		return nil, errorx.New("Invalid Borrower Property")
+		return nil, errorx.New("Invalid borrower property")
 	}
 
 	// loan
@@ -272,7 +272,7 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, 
 	// LoanBorrower
 	loanBorrowerData := reqData.LoanBorrower
 	if loanBorrowerData == nil {
-		return nil, errorx.WithStack(errorx.New("Invalid Loan Borrower"))
+		return nil, errorx.WithStack(errorx.New("Invalid loan borrower"))
 	}
 	loanBorrower, err := l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, loanBorrowerData.BorrowerEntityId, claim.OrganizationId)
 	if err != nil {
@@ -311,7 +311,7 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, 
 		applicants = append(applicants, applicantItem)
 	}
 	if totalOwnPercent > 100 {
-		return nil, errorx.New("Total Own Percent Is Greater Than 100")
+		return nil, errorx.New("Total own percent is greater than 100")
 	}
 
 	slice.SortBy(applicants, func(a, b *model.LoanApplicant) bool {
@@ -321,10 +321,10 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, 
 		return item.IsPrimary
 	})
 	if primaryCount == 0 {
-		return nil, errorx.New("No Primary Applicant")
+		return nil, errorx.New("No primary applicant")
 	}
 	if primaryCount > 1 {
-		return nil, errorx.New("Multiple Primary Applicant")
+		return nil, errorx.New("Multiple primary applicants")
 	}
 
 	// loan_property

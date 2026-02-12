@@ -20,12 +20,14 @@ type OrganizationStatus string
 var OrganizationStatusName = "organization_status"
 
 const (
-	OrganizationStatusActive   OrganizationStatus = "Active"
-	OrganizationStatusInactive OrganizationStatus = "Inactive"
+	OrganizationStatusNone         OrganizationStatus = ""
+	OrganizationStatusActive       OrganizationStatus = "Active"
+	OrganizationStatusNotActivated OrganizationStatus = "Not activated"
+	OrganizationStatusDisabled     OrganizationStatus = "Disabled"
 )
 
 func (v OrganizationStatus) Validate() error {
-	if v == OrganizationStatusActive || v == OrganizationStatusInactive {
+	if v == OrganizationStatusActive || v == OrganizationStatusNotActivated || v == OrganizationStatusDisabled {
 		return nil
 	}
 	return errorx.Errorf("Invalid Organization Status: %v", v)
@@ -94,8 +96,12 @@ func init() {
 			Value: string(OrganizationStatusActive),
 		},
 		{
-			Label: string(OrganizationStatusInactive),
-			Value: string(OrganizationStatusInactive),
+			Label: string(OrganizationStatusNotActivated),
+			Value: string(OrganizationStatusNotActivated),
+		},
+		{
+			Label: string(OrganizationStatusDisabled),
+			Value: string(OrganizationStatusDisabled),
 		},
 	})
 	// register organization and user status

@@ -11,6 +11,9 @@ message EmptyResponse {}
 message StringSliceResponse {
   repeated string data = 1;
 }
+message IdRequest {
+  int64 data = 1;
+}
 
 message AddressEntity{
   string state = 1;
@@ -18,6 +21,21 @@ message AddressEntity{
   string address1 = 3;
   string address2 = 4;
   string zip_code = 5;
+}
+
+message RangeInt64 {
+  int64 min = 1;
+  int64 max = 2;
+}
+
+message RangeInt32 {
+  int32 min = 1;
+  int32 max = 2;
+}
+
+message RangeFloat {
+  double min = 1;
+  double max = 2;
 }
 
 
@@ -51,37 +69,49 @@ service common {
   rpc GetOpt(OptionRequest) returns(OptionResponse);
   rpc GetUsState(EmptyRequest) returns(StringSliceResponse);
   rpc GetUsCities(UsCitiesRequest) returns(StringSliceResponse);
+  rpc SyncData(EmptyRequest) returns(EmptyResponse);
 }
 // ========================== common service end =================
 
 
 // ================= user service start ==================
-// login
+message UserEntity {
+  int64 id = 1;
+  string email = 2;
+  string first_name = 3;
+  string mid_name = 4;
+  string last_name = 5;
+  string full_name = 6;
+  string status = 7;
+  string type = 8;
+  string created_at = 9;
+  string updated_at = 10;
+}
+
+// login -- request
 message UserLoginRequest {
   UserLoginRequestData data = 1;
-}
-message UserLoginResponse {
-  UserLoginResponseData data = 1;
 }
 
 message UserLoginRequestData {
   string email = 1;
   string password = 2;
 }
+// login -- response
+message UserJwtResponse {
+  UserJwtResponseData data = 1;
+}
 
-message UserLoginResponseData {
+message UserJwtResponseData {
   string access_token = 1;
   string refresh_token = 2;
   int64 access_token_expire = 3;
   int64 refresh_token_expire = 4;
 }
 
-// register
+// register -- request
 message UserRegisterRequest {
   UserRegisterRequestData data = 1;
-}
-message UserRegisterResponse {
-  UserRegisterResponseData data = 1;
 }
 
 message UserRegisterRequestData {
@@ -89,25 +119,10 @@ message UserRegisterRequestData {
   string password = 2;
   string first_name = 3;
   string last_name = 4;
-  string type = 5;
-  int64 organization_id = 6;
-  string organization_name = 7;
-  string contact_phone = 8;
-  string contact_email = 9;
-  string contact_name = 10;
-  string logo = 11;
-  string website = 12;
-
-}
-message UserRegisterResponseData {
-  string access_token = 1;
-  string refresh_token = 2;
-  int64 access_token_expire = 3;
-  int64 refresh_token_expire = 4;
-
+  string organization_name = 5;
 }
 
-// refresh
+// refresh -- request
 message RefreshTokenRequest {
   RefreshTokenRequestData data = 1;
 }
@@ -116,29 +131,39 @@ message RefreshTokenRequestData {
   string refresh_token = 1;
 }
 
-message RefreshTokenResponse {
-  RefreshTokenResponseData data = 1;
+// verify email -- request
+message VerifyEmailRequest {
+  VerifyEmailRequestData data = 1;
+}
+message VerifyEmailRequestData {
+  string email = 1;
+  string code = 2;
 }
 
-message RefreshTokenResponseData {
-  string access_token = 1;
-  string refresh_token = 2;
-  int64 access_token_expire = 3;
-  int64 refresh_token_expire = 4;
+// send verify email -- request
+message SendVerifyEmailRequest {
+  SendVerifyEmailRequestData data = 1;
+}
+message SendVerifyEmailResponse {
+  EmptyResponse data = 1;
+}
+message SendVerifyEmailRequestData {
+  string email = 1;
 }
 
-// reset password
+// reset password -- request
 message ResetPasswordRequest {
   ResetPasswordRequestData data = 1;
 }
 message ResetPasswordResponse {
-  UserLoginResponseData data = 1;
+  UserJwtResponseData data = 1;
 }
 
-// send reset password email
+// send reset password email -- request
 message SendResetPasswordEmailRequest {
   SendResetPasswordEmailRequestData data = 1;
 }
+// send reset password email -- response
 message SendResetPasswordEmailResponse {
   EmptyResponse data = 1;
 }
@@ -151,14 +176,8 @@ message ResetPasswordRequestData {
   string code = 2;
   string email = 3;
 }
-message ResetPasswordResponseData {
-  string access_token = 1;
-  string refresh_token = 2;
-  int64 access_token_expire = 3;
-  int64 refresh_token_expire = 4;
-}
 
-// userinfo
+// userinfo -- request
 message UserInfoRequest {
   UserInfoRequestData data = 1;
 }
@@ -166,7 +185,7 @@ message UserInfoRequest {
 message UserInfoRequestData {
   int64 id = 1;
 }
-
+// userinfo -- response
 message UserinfoResponse {
   UserinfoResponseData data = 1;
 }
@@ -192,24 +211,24 @@ message UserinfoResponseData {
   bool is_admin = 11;
   int64 organization_user_id = 12;
 }
-// switch organization
+// switch organization -- request
 message SwitchOrganizationRequest {
   SwitchOrganizationRequestData data = 1;
 }
 message SwitchOrganizationRequestData {
-  //  int64 user_id = 1;
-  int64 organization_id = 2;
+  int64 organization_id = 1;
 }
-
+// user service
 service user {
-  // user
-  rpc Login(UserLoginRequest) returns(UserLoginResponse);
-  rpc Register(UserRegisterRequest) returns(UserRegisterResponse);
-  rpc RefreshToken(RefreshTokenRequest) returns(RefreshTokenResponse);
-  rpc ResetPassword(ResetPasswordRequest) returns(ResetPasswordResponse);
+  rpc Login(UserLoginRequest) returns(UserJwtResponse);
+  rpc Register(UserRegisterRequest) returns(EmptyResponse);
+  rpc RefreshToken(RefreshTokenRequest) returns(UserJwtResponse);
+  rpc ResetPassword(ResetPasswordRequest) returns(UserJwtResponse);
   rpc SendResetPasswordEmail(SendResetPasswordEmailRequest) returns(SendResetPasswordEmailResponse);
+  rpc VerifyEmail(VerifyEmailRequest) returns(UserJwtResponse);
+  rpc SendVerifyEmail(SendVerifyEmailRequest) returns(SendVerifyEmailResponse);
   rpc UserInfo(UserInfoRequest) returns(UserinfoResponse);
-  rpc SwitchOrganization(SwitchOrganizationRequest) returns(RefreshTokenResponse);
+  rpc SwitchOrganization(SwitchOrganizationRequest) returns(UserJwtResponse);
 }
 // ================= user service end =================
 
@@ -238,8 +257,8 @@ message LoanEntity {
   string paid_off_date = 21;
   string created_at = 22;
   string updated_at = 23;
-  int64 organization_id = 24;
-  int64 borrower_id = 25;
+  int64 lender_organization_id = 24;
+  int64 borrower_organization_id = 25;
   repeated string business_strategy = 26;
   repeated LoanApplicantEntity applicants = 27;
   string source = 28;
@@ -247,8 +266,6 @@ message LoanEntity {
   double ltv = 30;
   int32 est_credit_score = 31;
   double reserves_amount = 32;
-
-
   repeated LoanExperienceEntity transaction_experiences = 33;
   repeated LoanExperienceEntity real_estate_experiences = 34;
   LoanBorrowerEntity loan_borrower = 35;
@@ -780,7 +797,7 @@ message BorrowerPropertyEntity{
   int32  unit = 4;
   float living_area_sqft = 5;
   int32 bedrooms = 6;
-  float bathrooms = 7;
+  int32 bathrooms = 7;
   AddressEntity address = 8;
   string created_at = 9;
   string updated_at = 10;
@@ -1211,8 +1228,310 @@ service OrganizationUser {
   rpc SwitchStatus(OrganizationUserUpdateStatusRequest) returns(EmptyResponse);
   rpc All(EmptyRequest) returns(OrganizationUserAllResponse);
   rpc SendInvitationEmail(OrganizationUserSendInvitationEmailRequest) returns(EmptyResponse);
-  rpc AcceptInvitation(OrganizationUserAcceptInvitationRequest) returns(UserLoginResponse);
+  rpc AcceptInvitation(OrganizationUserAcceptInvitationRequest) returns(UserJwtResponse);
   rpc AssignRoles(OrganizationUserAssignRolesRequest) returns(EmptyResponse);
 }
 
 // ================= organization user service end =================
+// ================= organization service start =================
+message OrganizationEntity {
+  int64 id = 1;
+  string name = 2;
+  string status = 3;
+  int64 owner_id = 4;
+  AddressEntity address = 5;
+  string contact_email = 6;
+  string contact_phone = 7;
+  string contact_name = 8;
+  string owner_type = 9;
+  string type = 10;
+  string created_at = 11;
+  string updated_at = 12;
+  repeated OrganizationEmailEntity organization_emails = 13;
+  string logo = 14;
+  string website = 15;
+  string tagline = 16;
+  OrganizationMetadataEntity metadata = 17;
+  UserEntity owner = 18;
+  bool is_editable = 19;
+  repeated OrganizationSettingEntity organization_settings = 20;
+}
+
+message OrganizationProfileEntity {
+  int64 id = 1;
+  string name = 2;
+  string status = 3;
+  int64 owner_id = 4;
+  AddressEntity address = 5;
+  string contact_email = 6;
+  string contact_phone = 7;
+  string contact_name = 8;
+  string owner_type = 9;
+  string type = 10;
+  string created_at = 11;
+  string updated_at = 12;
+  repeated OrganizationEmailEntity organization_emails = 13;
+  string logo = 14;
+  string website = 15;
+  string tagline = 16;
+  OrganizationMetadataEntity metadata = 17;
+  UserEntity owner = 18;
+  bool is_editable = 19;
+  repeated OrganizationSettingProfileEntity organization_settings = 20;
+}
+
+message OrganizationMetadataEntity {
+  OrganizationLenderMetadataEntity lender = 1;
+
+}
+
+message OrganizationLenderMetadataEntity {
+  RangeFloat loan_amount_range = 1;
+  RangeInt32       loan_term_range = 2;
+  RangeFloat       loan_rate_range = 3;
+  RangeFloat       loan_point_range = 4;
+}
+
+// profile -- response
+message OrganizationProfileResponse {
+  OrganizationProfileEntity data = 1;
+}
+
+// update profile --  request
+message OrganizationUpdateProfileRequest {
+  OrganizationUpdateProfileRequestData data = 1;
+}
+message OrganizationUpdateProfileRequestData {
+  string contact_email = 1;
+  string contact_phone = 2;
+  string contact_name = 3;
+  string logo = 4;
+  string website = 5;
+  string tagline = 6;
+  OrganizationMetadataEntity metadata = 7;
+  AddressEntity address = 8;
+}
+
+// create organization --  request
+message OrganizationCreateRequest {
+  OrganizationCreateRequestData data = 1;
+}
+message OrganizationCreateRequestData {
+  string name = 1;
+  string contact_email = 2;
+  string contact_phone = 3;
+  string contact_name = 4;
+  string logo = 5;
+  string website = 6;
+  string tagline = 7;
+  OrganizationMetadataEntity metadata = 8;
+  AddressEntity address = 9;
+}
+// create organization --  response
+message OrganizationDetailResponse {
+  OrganizationEntity data = 1;
+}
+
+service Organization {
+  rpc Profile(EmptyRequest) returns(OrganizationProfileResponse);
+  rpc UpdateProfile(OrganizationUpdateProfileRequest) returns(OrganizationProfileResponse);
+  rpc Create(OrganizationCreateRequest) returns(OrganizationDetailResponse);
+}
+
+// ================== organization service end =================
+
+// ================= organization email service start =================
+message OrganizationEmailEntity {
+  int64 id = 1;
+  int64 organization_id = 2;
+  string email = 3;
+  string auth_strategy = 4;
+  string purpose = 5;
+  bool is_authorized = 6;
+}
+// ================== organization email service end =================
+// ================= organization template service start =================
+// Template variable entity for JSONB variable_group_schema field
+message TemplateVariableEntity {
+  string label = 1;
+  string type = 2;           // String, Array, Object
+  string key = 3;
+  bool is_editable = 4;
+  string source = 5;         // Fixed, Dynamic,Template
+  string fixed_value = 6;
+  map<string, TemplateVariableEntity> properties = 8;  // for Object type
+  repeated TemplateVariableEntity items = 9;            // for Array type
+  string format = 10;
+  bool is_required = 11;
+}
+
+// Template variable group entity
+message TemplateVariableGroupEntity {
+  string name = 1;
+  repeated TemplateVariableEntity variables = 2;
+}
+
+// Organization template entity
+message OrganizationTemplateEntity {
+  int64 id = 1;
+  string name = 2;
+  string type = 3;           // Borrower, Lender
+  string category = 4;       // Email, Contract
+  string purpose = 5;
+  string content = 6;
+  repeated TemplateVariableGroupEntity variable_group_schema = 7;
+  string status = 8;         // Active, Disabled
+  string description = 9;
+  string created_at = 10;
+  string updated_at = 11;
+  string example_variables = 12;
+  bool has_configured = 13;
+}
+
+// Base template page entity (for list display)
+message OrganizationTemplatePageEntity {
+  int64 id = 1;
+  string name = 2;
+  string type = 3;
+  string category = 4;
+  string purpose = 5;
+  string status = 6;
+  string description = 7;
+  string created_at = 8;
+  string updated_at = 9;
+  bool has_configured = 10;
+}
+
+// Update ---- request
+message UpdateOrganizationTemplateRequest {
+  UpdateOrganizationTemplateRequestData data = 1;
+}
+message UpdateOrganizationTemplateRequestData {
+  int64 id = 1;
+  repeated TemplateVariableGroupEntity variable_group_schema = 7;
+}
+// Update ---- response
+message UpdateOrganizationTemplateResponse {
+  OrganizationTemplateEntity data = 1;
+}
+// detail ---- response
+message OrganizationTemplateDetailResponse {
+  OrganizationTemplateEntity data = 1;
+}
+
+// Page ---- request
+message OrganizationTemplatePageRequest {
+  OrganizationTemplatePageRequestData data = 1;
+}
+message OrganizationTemplatePageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  OrganizationTemplatePageRequestFilter filter = 3;
+  OrganizationTemplatePageRequestSorter sorter = 4;
+}
+message OrganizationTemplatePageRequestFilter {
+  string keyword = 1;
+  string type = 2;
+  string category = 3;
+  string status = 4;
+}
+message OrganizationTemplatePageRequestSorter {
+  string column = 1;
+  string sort = 2;
+}
+// Page ---- response
+message OrganizationTemplatePageResponse {
+  OrganizationTemplatePageResponseData data = 1;
+}
+message OrganizationTemplatePageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated OrganizationTemplatePageEntity list = 5;
+}
+
+// preview ---- request
+message OrganizationTemplatePreviewRequest {
+  OrganizationTemplatePreviewRequestData data = 1;
+}
+message OrganizationTemplatePreviewRequestData {
+  string content = 1;
+  repeated TemplateVariableGroupEntity variable_group_schema = 2;
+  string example_variables = 3;
+  string name = 4;
+}
+// preview ---- response
+message OrganizationTemplatePreviewResponse {
+  OrganizationTemplatePreviewResponseData data = 1;
+}
+message OrganizationTemplatePreviewResponseData {
+  string content = 1;
+}
+
+// detail by purpose ---- request
+message OrganizationTemplateDetailByPurposeRequest {
+  OrganizationTemplateDetailByPurposeRequestData data = 1;
+}
+message OrganizationTemplateDetailByPurposeRequestData {
+  string purpose = 1;
+}
+
+service OrganizationTemplate {
+  rpc Update(UpdateOrganizationTemplateRequest) returns(UpdateOrganizationTemplateResponse);
+  rpc Detail(IdRequest) returns(OrganizationTemplateDetailResponse);
+  rpc DetailByPurpose(OrganizationTemplateDetailByPurposeRequest) returns(OrganizationTemplateDetailResponse);
+  rpc Page(OrganizationTemplatePageRequest) returns(OrganizationTemplatePageResponse);
+  rpc Preview(OrganizationTemplatePreviewRequest) returns(OrganizationTemplatePreviewResponse);
+  rpc Reset(IdRequest) returns(OrganizationTemplateDetailResponse);
+}
+
+// ================== organization template service end =================
+
+// ================== organization setting service start =================
+message OrganizationSettingEntity {
+  int64 id = 1;
+  string created_at = 2;
+  string updated_at = 3;
+  bool enabled = 4;
+  bytes setting = 5;
+  string purpose = 6;
+}
+
+message OrganizationSettingProfileEntity {
+  int64 id = 1;
+  string created_at = 2;
+  string updated_at = 3;
+  bool enabled = 4;
+  bytes setting = 5;
+  string purpose = 6;
+  bool has_configured = 7;
+}
+
+// detail by purpose ---- request
+message OrganizationSettingDetailByPurposeRequest {
+  OrganizationSettingDetailByPurposeRequestData data = 1;
+}
+message OrganizationSettingDetailByPurposeRequestData {
+  string purpose = 1;
+}
+
+// detail ---- response
+message OrganizationSettingDetailResponse {
+  OrganizationSettingEntity data = 1;
+}
+
+// switch status ---- request
+message OrganizationSettingSwitchStatusRequest {
+  OrganizationSettingSwitchStatusRequestData data = 1;
+}
+message OrganizationSettingSwitchStatusRequestData {
+  int64 id = 1;
+  bool enabled = 2;
+}
+
+service OrganizationSetting {
+  rpc DetailByPurpose(OrganizationSettingDetailByPurposeRequest) returns(OrganizationSettingDetailResponse);
+  rpc SwitchStatus(OrganizationSettingSwitchStatusRequest) returns(OrganizationSettingDetailResponse);
+}
+// =============== organization setting service end =================

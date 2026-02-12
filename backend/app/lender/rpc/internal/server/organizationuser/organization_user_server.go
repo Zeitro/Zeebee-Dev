@@ -63,7 +63,7 @@ func (s *OrganizationUserServer) SendInvitationEmail(ctx context.Context, in *le
 	return l.SendInvitationEmail(in)
 }
 
-func (s *OrganizationUserServer) AcceptInvitation(ctx context.Context, in *lender.OrganizationUserAcceptInvitationRequest) (*lender.UserLoginResponse, error) {
+func (s *OrganizationUserServer) AcceptInvitation(ctx context.Context, in *lender.OrganizationUserAcceptInvitationRequest) (*lender.UserJwtResponse, error) {
 	l := organizationuserlogic.NewAcceptInvitationLogic(ctx, s.svcCtx)
 	return l.AcceptInvitation(in)
 }

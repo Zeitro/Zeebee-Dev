@@ -6,11 +6,160 @@ info(
     version: "v1"
 )
 
+import "address.api"
+import "organization_email.api"
+import "user.api"
+import "common.api"
+
+
+type OrganizationEntity {
+    Id int64 `json:"id"`
+    Name string `json:"name"`
+    Status string `json:"status"`
+    Address *AddressEntity `json:"address,omitempty"`
+    ContactEmail string `json:"contact_email"`
+    ContactPhone string `json:"contact_phone"`
+    ContactName string `json:"contact_name"`
+    OwnerType string `json:"owner_type"`
+    Type string `json:"type"`
+    Logo string `json:"logo"`
+    Website string `json:"website"`
+    Tagline string `json:"tagline"`
+    Metadata *OrganizationMetadataEntity `json:"metadata"`
+    CreatedAt string `json:"created_at"`
+    UpdatedAt string `json:"updated_at"`
+
+    OrganizationEmails []*OrganizationEmailEntity `json:"organization_emails,omitempty"`
+    Owner *UserEntity `json:"owner"`
+}
+
+type OrganizationMetadataEntity {
+    Lender *OrganizationLenderMetadataEntity `json:"lender,omitempty"`
+}
 type (
-    UserInfoOrganizationEntity {
+    OrganizationLenderMetadataEntity {
+        LoanAmountRange RangeFloat64 `json:"loan_amount_range,optional"`
+        LoanTermRange RangeInt `json:"loan_term_range,optional"`
+        LoanRateRange RangeFloat64 `json:"loan_rate_range,optional"`
+        LoanPointRange RangeFloat64 `json:"loan_point_range,optional"`
+    }
+)
+
+// page
+type (
+
+    // page --  request
+    OrganizationPageRequest {
+        BasePageRequest
+        Filter *OrganizationPageFilter `json:"filter,optional"`
+        Sort *BasePageSort `json:"sort,optional"`
+    }
+
+        // page -- response
+    OrganizationPageResponse {
+        BasePageResponse
+        List []*OrganizationPageEntity `json:"list"`
+    }
+
+    OrganizationPageEntity {
         Id int64 `json:"id"`
         Name string `json:"name"`
         Status string `json:"status"`
-        IsDefault bool `json:"is_default"`
+        ContactEmail string `json:"contact_email"`
+        ContactPhone string `json:"contact_phone"`
+        ContactName string `json:"contact_name"`
+        OwnerType string `json:"owner_type"`
+        Type string `json:"type"`
+        Logo string `json:"logo"`
+        Website string `json:"website"`
+        Tagline string `json:"tagline"`
+        CreatedAt string `json:"created_at"`
+        UpdatedAt string `json:"updated_at"`
+        OwnerEmail string `json:"owner_email"`
+        OwnerFullName string `json:"owner_full_name"`
+        OwnerFirstName string `json:"owner_first_name"`
+        OwnerLastName string `json:"owner_last_name"`
+    }
+    OrganizationPageFilter {
+        Keyword string `json:"keyword,optional"`
+        OrganizationType string `json:"type" validate:"required,oneof=Lender Borrower"`
+        Status string `json:"status,optional"`
+    }
+    OrganizationPageRequestFilter {
+        Name string `json:"name,optional"`
+        Status string
+    }
+)
+
+type (
+    // create lender -- request
+    OrganizationCreateLenderRequest {
+        Owner *OrganizationCreateLenterUserEntity `json:"owner" validate:"required"`
+        Organization *OrganizationCreateLenderOrganizationEntity `json:"organization" validate:"required"`
+    }
+
+        // create lender -- response
+    OrganizationCreateLenderResponse {
+        OrganizationEntity
+    }
+
+    OrganizationCreateLenterUserEntity {
+        Email string `json:"email" validate:"required,email"`
+        Password string `json:"password" validate:"required,min=8,max=32"`
+        ConfirmPassword string `json:"confirm_password" validate:"required,eqfield=Password"`
+        FirstName string `json:"first_name" validate:"required,min=2,max=100"`
+        LastName string `json:"last_name" validate:"required,min=2,max=100"`
+    }
+    OrganizationCreateLenderOrganizationEntity {
+        Name string `json:"name" validate:"required,min=2,max=100"`
+        ContactEmail string `json:"contact_email" validate:"required,email"`
+        ContactPhone string `json:"contact_phone" validate:"required,min=8,max=20"`
+        ContactName string `json:"contact_name" validate:"required,min=2,max=100"`
+        Address *AddressEntity `json:"address" validate:"required"`
+        Logo string `json:"logo" validate:"required,url"`
+        Website string `json:"website,optional" validate:"omitempty,url"`
+        Tagline string `json:"tagline,optional"`
+        Metadata *OrganizationLenderMetadataEntity `json:"metadata,optional"`
+    }
+)
+
+type (
+    // update lender -- request
+    OrganizationUpdateLenderRequest {
+        Id int64 `path:"id" validate:"required,min=1"`
+        ContactEmail string `json:"contact_email" validate:"required,email"`
+        ContactPhone string `json:"contact_phone" validate:"required,min=8,max=20"`
+        ContactName string `json:"contact_name" validate:"required,min=2,max=100"`
+        Address *AddressEntity `json:"address" validate:"required"`
+        Logo string `json:"logo" validate:"required,url"`
+        Website string `json:"website,optional" validate:"omitempty,url"`
+        Tagline string `json:"tagline,optional"`
+        Metadata *OrganizationLenderMetadataEntity `json:"metadata,optional"`
+    }
+)
+
+type (
+    // switch status -- request
+    OrganizationSwitchStatusRequest {
+        Id int64 `path:"id" validate:"required,min=1"`
+        Status string `json:"status" validate:"required,oneof=Active Disabled"`
+    }
+)
+
+type (
+    // select option -- request
+    OrganizationSelectOptionRequest {
+        Type string `form:"type" validate:"required,oneof=Lender Borrower"`
+    }
+        // select option -- response
+    OrganizationOptionResponse {
+        List []*OrganizationOptionEntity `json:"list"`
+    }
+
+    OrganizationOptionEntity {
+        Id int64 `json:"id"`
+        Name string `json:"name"`
+        Type string `json:"type"`
+        ContactEmail string `json:"contact_email"`
     }
 )

@@ -15,6 +15,7 @@ import (
 	"zeebee-backend/common/timex"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
+	data2 "zeebee-backend/domains/zeebee/data"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -70,7 +71,7 @@ func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender
 		return nil, err
 	}
 	if oldLoan.Source != constants.LoanSourceSystem && oldLoan.Source != constants.LoanSourcePreapproval {
-		return nil, errorx.WithStack(errorx.New("Invalid Loan Source"))
+		return nil, errorx.WithStack(errorx.New("Invalid loan source"))
 	}
 
 	// oldApplicants := oldLoan.Applicants
@@ -95,9 +96,6 @@ func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender
 			// update loan
 			func() error {
 				data.loan.RemoveRelationships()
-				// if in.Data.OrganizationId == 0 {
-				// 	in.Data.OrganizationId = oldLoan.LenderOrganizationId
-				// }
 				_, err := l.svcCtx.LoanRepo.UpdateOneWithTx(l.ctx, tx, in.Data.Id, data.loan)
 				return err
 			},
@@ -160,22 +158,22 @@ func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender
 			func() error {
 				operatorId := claim.OrganizationUserId
 
-				fromStatus := model.LoanOperationStatus{
+				fromStatus := data2.LoanOperationStatus{
 					Stage:         oldLoan.Stage,
 					PendingStatus: oldLoan.PendingStatus,
 				}
 
-				toStatus := model.LoanOperationStatus{
+				toStatus := data2.LoanOperationStatus{
 					Stage:         data.loan.Stage,
 					PendingStatus: data.loan.PendingStatus,
 				}
 
-				loanBaseLogic := NewLoanBaseLogic(l.ctx, l.svcCtx)
-				return loanBaseLogic.CreateLoanOperationLog(tx, oldLoan.Id, operatorId, fromStatus, toStatus, constants.LoanOperationActionUpdate, nil)
+				// loanBaseLogic := NewLoanBaseLogic(l.ctx, l.svcCtx)
+				return l.baseLogic.CreateLoanOperationLog(tx, oldLoan.Id, operatorId, fromStatus, toStatus, constants.LoanOperationActionUpdate, nil)
 			},
 		)
 
-		innerErr = eg.Error()
+		innerErr = eg.Wait()
 		return innerErr
 	})
 	if err != nil {
@@ -308,14 +306,14 @@ func (l *UpdateLoanLogic) updateThirdServices(tx *gorm.DB, oldItems []*model.Loa
 // buildModelData builds model data
 func (l *UpdateLoanLogic) buildModelData(reqData *lender.LoanUpdateRequestData, oldLoan *model.Loan) (data *updateLoanModelData, err error) {
 	if oldLoan == nil {
-		return nil, errorx.WithStack(errorx.New("Invalid Loan"))
+		return nil, errorx.WithStack(errorx.New("Invalid loan"))
 	}
 
 	if reqData == nil {
-		return nil, errorx.WithStack(errorx.New("Invalid Request Data"))
+		return nil, errorx.WithStack(errorx.New("Invalid request data"))
 	}
 	if reqData.LoanProperty == nil {
-		return nil, errorx.WithStack(errorx.New("Invalid Loan Property"))
+		return nil, errorx.WithStack(errorx.New("Invalid loan property"))
 	}
 
 	// loan
@@ -377,7 +375,7 @@ func (l *UpdateLoanLogic) buildModelData(reqData *lender.LoanUpdateRequestData, 
 		applicants = append(applicants, applicantModel)
 	}
 	if totalOwnPercent > 100 {
-		return nil, errorx.WithStack(errorx.New("Total Own Percent Greater Than 100"))
+		return nil, errorx.WithStack(errorx.New("Total own percent greater than 100"))
 	}
 
 	// transaction experience

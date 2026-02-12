@@ -51,7 +51,7 @@ func (l *LoanPageLogic) LoanPage(in *lender.LoanPageRequest) (resp *lender.LoanP
 	})
 	pageRep.Filter.OrganizationId = claim.OrganizationId
 
-	pageResult, err := l.svcCtx.LoanRepo.PageForLenderCompany(l.ctx, pageRep)
+	pageResult, err := l.svcCtx.LoanRepo.PageForLender(l.ctx, pageRep)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}

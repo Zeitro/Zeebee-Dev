@@ -2,6 +2,17 @@ package model
 
 import "zeebee-backend/domains/zeebee/constants"
 
+type OrganizationMetadata struct {
+	Lender *OrganizationLenderMetadata `json:"lender,omitempty"`
+}
+
+type OrganizationLenderMetadata struct {
+	LoanAmountRange RangeFloat64 `json:"loan_amount_range"`
+	LoanTermRange   RangeInt     `json:"loan_term_range"`
+	LoanRateRange   RangeFloat64 `json:"loan_rate_range"`
+	LoanPointRange  RangeFloat64 `json:"loan_point_range"`
+}
+
 type Organization struct {
 	Base
 	Name         string                          `gorm:"column:name;default:''" json:"name"`
@@ -15,10 +26,15 @@ type Organization struct {
 	Type         constants.UserType              `gorm:"column:type;default:''" json:"type"`
 	Logo         string                          `gorm:"column:logo;type:varchar(255);default:''" json:"logo"`
 	Website      string                          `gorm:"column:website;type:varchar(255);default:''" json:"website"`
+	Tagline      string                          `gorm:"column:tagline;type:varchar(255);default:''" json:"tagline"`
+	Metadata     *OrganizationMetadata           `gorm:"column:metadata;type:jsonb;default:'{}';serializer:json" json:"metadata"`
 
 	//  relationships
-	Users              []*User              `json:"users" gorm:"many2many:organization_and_users;joinForeignKey:organization_id;joinReferences:user_id"`
-	OrganizationEmails []*OrganizationEmail `json:"email_authorizations" gorm:"foreignKey:organization_id"`
+	Users                []*User                `json:"users" gorm:"many2many:organization_and_users;joinForeignKey:organization_id;joinReferences:user_id"`
+	OrganizationEmails   []*OrganizationEmail   `json:"email_authorizations" gorm:"foreignKey:organization_id"`
+	Owner                *User                  `json:"owner" gorm:"foreignKey:OwnerId;references:Id"`
+	Roles                []*Role                `json:"roles" gorm:"foreignKey:OrganizationId;references:Id"`
+	OrganizationSettings []*OrganizationSetting `json:"organization_settings" gorm:"foreignKey:OrganizationId;references:Id"`
 }
 
 func (m Organization) TableName() string {
@@ -27,4 +43,7 @@ func (m Organization) TableName() string {
 func (m *Organization) RemoveRelationships() {
 	m.Users = nil
 	m.OrganizationEmails = nil
+	m.Owner = nil
+	m.Roles = nil
+	m.OrganizationSettings = nil
 }

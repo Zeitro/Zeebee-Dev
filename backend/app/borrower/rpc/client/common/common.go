@@ -128,6 +128,8 @@ type (
 	LoanPreApprovalRequestData_Property              = borrower.LoanPreApprovalRequestData_Property
 	LoanPreApprovalResponse                          = borrower.LoanPreApprovalResponse
 	LoanPreApprovalResponseData                      = borrower.LoanPreApprovalResponseData
+	LoanPreapproveInfo                               = borrower.LoanPreapproveInfo
+	LoanPreapproveResult                             = borrower.LoanPreapproveResult
 	LoanPropertyApplyEntity                          = borrower.LoanPropertyApplyEntity
 	LoanPropertyEntity                               = borrower.LoanPropertyEntity
 	LoanSendPreApprovalNotificationRequest           = borrower.LoanSendPreApprovalNotificationRequest
@@ -155,12 +157,14 @@ type (
 	OrganizationEmailSaveEmailRequestData            = borrower.OrganizationEmailSaveEmailRequestData
 	OrganizationEntity                               = borrower.OrganizationEntity
 	OrganizationInfoResponse                         = borrower.OrganizationInfoResponse
+	OrganizationLenderMetadataEntity                 = borrower.OrganizationLenderMetadataEntity
 	OrganizationLenderPageRequest                    = borrower.OrganizationLenderPageRequest
 	OrganizationLenderPageRequestData                = borrower.OrganizationLenderPageRequestData
 	OrganizationLenderPageRequestFilter              = borrower.OrganizationLenderPageRequestFilter
 	OrganizationLenderPageRequestSorter              = borrower.OrganizationLenderPageRequestSorter
 	OrganizationLenderPageResponse                   = borrower.OrganizationLenderPageResponse
 	OrganizationLenderPageResponseData               = borrower.OrganizationLenderPageResponseData
+	OrganizationMetadataEntity                       = borrower.OrganizationMetadataEntity
 	OrganizationOptionsEntity                        = borrower.OrganizationOptionsEntity
 	OrganizationUserAcceptInvitationRequest          = borrower.OrganizationUserAcceptInvitationRequest
 	OrganizationUserAcceptInvitationRequestData      = borrower.OrganizationUserAcceptInvitationRequestData
@@ -213,6 +217,9 @@ type (
 	PropertyPageResponseData                         = borrower.PropertyPageResponseData
 	PropertyUpdateRequest                            = borrower.PropertyUpdateRequest
 	PropertyUpdateRequestData                        = borrower.PropertyUpdateRequestData
+	RangeFloat                                       = borrower.RangeFloat
+	RangeInt32                                       = borrower.RangeInt32
+	RangeInt64                                       = borrower.RangeInt64
 	RefreshTokenRequest                              = borrower.RefreshTokenRequest
 	RefreshTokenRequestData                          = borrower.RefreshTokenRequestData
 	RefreshTokenResponse                             = borrower.RefreshTokenResponse
@@ -289,6 +296,9 @@ type (
 	VerifyEmailRequestData                           = borrower.VerifyEmailRequestData
 	VerifyEmailResponse                              = borrower.VerifyEmailResponse
 	VerifyEmailResponseData                          = borrower.VerifyEmailResponseData
+	ZeitroListingSearchRequest                       = borrower.ZeitroListingSearchRequest
+	ZeitroListingSearchResponse                      = borrower.ZeitroListingSearchResponse
+	ZeitroPropertyEntity                             = borrower.ZeitroPropertyEntity
 
 	Common interface {
 		GetOpt(ctx context.Context, in *OptionRequest, opts ...grpc.CallOption) (*OptionResponse, error)

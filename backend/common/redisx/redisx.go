@@ -34,11 +34,11 @@ func GetRedis(opt Opt) (rds *Redisx, err error) {
 		Tls:  opt.Tls,
 	})
 	if err != nil {
-		return nil, errorx.Wrap(err, "New Redis Error")
+		return nil, errorx.Wrap(err, "New redis error")
 	}
 
 	if !rdsCli.Ping() {
-		return nil, errorx.New("Redis Ping Failed")
+		return nil, errorx.New("Redis ping failed")
 	}
 	return &Redisx{
 		rds:    rdsCli,
