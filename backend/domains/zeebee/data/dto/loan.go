@@ -34,3 +34,20 @@ type LoanLenderPageRequestFilter struct {
 	LoanType       []string `json:"loan_type,omitempty"`
 	PendingStatus  []string `json:"pending_status,omitempty"`
 }
+
+type LoanAdminPageRequestDto struct {
+	BasePageRequestDto
+	Filter LoanAdminPageRequestFilter `json:"filter,omitempty"`
+	Sorter BasePageSorter             `json:"sorter"`
+}
+
+type LoanAdminPageRequestFilter struct {
+	// OrganizationId int64    `json:"organization_id"`
+	Stage         string   `json:"stage,omitempty"`
+	Keyword       string   `json:"keyword,omitempty"`
+	KeywordType   string   `json:"keyword_type,omitempty"`
+	LoanPurpose   []string `json:"loan_purpose,omitempty"`
+	LoanType      []string `json:"loan_type,omitempty"`
+	PendingStatus []string `json:"pending_status,omitempty"`
+	Lender        []string `json:"lender,omitempty"`
+}

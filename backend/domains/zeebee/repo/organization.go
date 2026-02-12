@@ -114,7 +114,7 @@ func (repo *OrganizationRepo) GetOrganizationWithTx(ctx context.Context, tx *gor
 	return result, errorx.WithStack(err)
 }
 
-// All
+// All return all organizations
 func (repo *OrganizationRepo) All(ctx context.Context, organizationType constants.UserType) (result []*model.Organization, err error) {
 	err = repo.Client(ctx).
 		Where("type = ? and status = ?", organizationType, constants.OrganizationStatusActive).
@@ -123,7 +123,20 @@ func (repo *OrganizationRepo) All(ctx context.Context, organizationType constant
 	return result, errorx.WithStack(err)
 }
 
-// Page
+// AllForOption all for option
+func (repo *OrganizationRepo) AllForOption(ctx context.Context, organizationType constants.UserType, status constants.OrganizationStatus) (result []*model.Organization, err error) {
+	query := repo.Client(ctx).
+		Select("id", "name", "contact_email", "type").
+		Where("type = ?", organizationType)
+	if status != constants.OrganizationStatusNone {
+		query = query.Where("status = ?", status)
+	}
+	err = query.Order("id asc").
+		Find(&result).Error
+	return result, errorx.WithStack(err)
+}
+
+// Page retrieve organizations for pagination
 func (repo *OrganizationRepo) Page(ctx context.Context, pageReq dto.OrganizationPageRequestDto) (page gormx.PageResponse[*OrganizationPageEntity], err error) {
 	filter := pageReq.Filter
 	sorter := pageReq.Sorter
@@ -267,4 +280,15 @@ func (repo *OrganizationRepo) GetOrganizationsByOwnerIdWithTx(ctx context.Contex
 		Where("owner_id = ? and type = ?", ownerId, organizationType).
 		Find(&results).Error
 	return results, errorx.WithStack(err)
+}
+
+// SelectOptions retrieves organization options based on the specified type.
+// It returns a slice of Organization pointers containing only the id, name, and type fields.
+func (repo *OrganizationRepo) SelectOptions(ctx context.Context, organizationType constants.UserType) (result []*model.Organization, err error) {
+	err = repo.Client(ctx).Model(&model.Organization{}).
+		Select("id", "name", "type", "contact_email").
+		Where("type = ? and status = ?", organizationType, constants.OrganizationStatusActive).
+		Order("id asc").
+		Find(&result).Error
+	return result, errorx.WithStack(err)
 }

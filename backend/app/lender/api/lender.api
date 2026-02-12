@@ -19,6 +19,7 @@ import "desc/organization_user.api"
 import "desc/organization.api"
 import "desc/organization_template.api"
 import "desc/organization_setting.api"
+import "desc/pdf.api"
 
 type (
 	EmptyRequest  {}
@@ -390,4 +391,20 @@ service lender-api {
 	patch /organization_setting/:id/status (OrganizationSettingSwitchStatusRequest) returns (EmptyResponse)
 }
 
-	// ============= organization setting service end =============
+// ============= organization setting service end =============
+// =============== pdf service start ==============
+@server(
+	desc: "pdf service"
+	version: v1
+	group: pdf
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: pdf
+)
+service lender-api {
+	@doc "convert html to pdf"
+	@handler HtmlToPdf
+	post /pdf/html_to_pdf (HtmlToPdfRequest) returns (EmptyResponse)
+}
+
+	// =============== pdf service end ==============

@@ -18,6 +18,7 @@ import (
 	"zeebee-backend/common/utils"
 	"zeebee-backend/common/uuid"
 	"zeebee-backend/domains/zeebee/constants"
+	data2 "zeebee-backend/domains/zeebee/data"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -288,7 +289,7 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	// loan.Source = constants.LoanSourceSystem
 	loan.Source = condition.Ternary(reqData.IsPreapproveLoan, constants.LoanSourcePreapproval, constants.LoanSourceSystem)
 	if reqData.IsPreapproveLoan {
-		preapprovalInfo, _ := copierx.Trans[borrower.LoanPreapproveInfo, model.LoanPreapprovalInfo](reqData.LoanPreapproveInfo)
+		preapprovalInfo, _ := copierx.Trans[borrower.LoanPreapproveInfo, data2.LoanPreapprovalInfo](reqData.LoanPreapproveInfo)
 		loan.Extend.LoanPreapprovalInfo = preapprovalInfo
 	}
 

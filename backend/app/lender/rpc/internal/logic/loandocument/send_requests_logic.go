@@ -14,6 +14,7 @@ import (
 	email2 "zeebee-backend/common/email"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -96,16 +97,16 @@ func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequ
 			tx,
 			loan.Id,
 			claim.OrganizationUserId,
-			model.LoanOperationStatus{
+			data.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
-			model.LoanOperationStatus{
+			data.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
 			constants.LoanOperationActionSendDocumentRequest,
-			&model.LoanOperationMetadata{
+			&data.LoanOperationMetadata{
 				Comment: slice.Join(comments, "/"),
 			},
 		)

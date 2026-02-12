@@ -12,6 +12,7 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data"
 	"zeebee-backend/domains/zeebee/logic"
 	"zeebee-backend/domains/zeebee/model"
 )
@@ -57,11 +58,25 @@ func (l *BaseLogic) GetLenderLoan(loanId int64, lenderOrganizationId int64, prel
 }
 
 // CreateLoanOperationLog creates a loan operation log record
-func (l *BaseLogic) CreateLoanOperationLog(tx *gorm.DB, loanId, operatorId int64, from, to model.LoanOperationStatus, action constants.LoanOperationAction, metadata *model.LoanOperationMetadata) error {
-	operator, err := l.svcCtx.UserRepo.FindOneByIdWithTx(l.ctx, tx, operatorId)
-	if err != nil {
-		return errorx.Wrap(err, "Failed To Get Operator")
-	}
+func (l *BaseLogic) CreateLoanOperationLog(tx *gorm.DB, loanId, operatorId int64, from, to data.LoanOperationStatus, action constants.LoanOperationAction, metadata *data.LoanOperationMetadata) (err error) {
+	defer func() {
+		if err != nil {
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("loan_id", loanId),
+				logx.Field("operator_id", operatorId),
+				logx.Field("from", from),
+				logx.Field("to", to),
+				logx.Field("action", action),
+				logx.Field("metadata", metadata),
+				logx.Field("OperatorType", constants.LoanOperationOperatorTypeLender),
+			).Error("failed to create loan operation log")
+		}
+	}()
+	operator, _ := l.svcCtx.OrganizationUserRepo.FindOneByIdWithTx(l.ctx, tx, operatorId)
+	// if err != nil {
+	// 	return errorx.Wrap(err, "Failed To Get Operator")
+	// }
 
 	operatorName := ""
 	if operator != nil {
@@ -80,7 +95,7 @@ func (l *BaseLogic) CreateLoanOperationLog(tx *gorm.DB, loanId, operatorId int64
 	}
 	_, err = l.svcCtx.LoanOperationRepo.CreateWithTx(l.ctx, tx, operation, false)
 	if err != nil {
-		return errorx.Wrap(err, "Failed To Create Operation Log")
+		return errorx.Wrap(err, "Failed to create operation log")
 	}
 
 	return nil
