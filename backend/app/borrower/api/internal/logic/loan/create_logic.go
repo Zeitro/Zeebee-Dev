@@ -49,7 +49,7 @@ func (l *CreateLogic) Create(req *types.LoanCreateRequest) (resp *types.LoanCrea
 		return item.BorrowerApplicantId == other.BorrowerApplicantId
 	})
 	if len(rpcApplicants) == 0 {
-		err = errorx.WithStack(errorx.New("No Applicant"))
+		err = errorx.WithStack(errorx.New("No applicant"))
 		return nil, err
 	}
 	rpcReq.Data.Applicants = rpcApplicants

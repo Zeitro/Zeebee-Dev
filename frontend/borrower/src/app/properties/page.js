@@ -147,11 +147,7 @@ const Properties = () => {
 	}, [getList]);
 
 	return (
-		<div
-			className={['h-[calc(100% - 84px)] flex flex-col px-8 pt-10 pb-8 overflow-hidden'].join(
-				' ',
-			)}
-		>
+		<div className={['flex-1 flex flex-col px-8 pt-10 pb-8 overflow-hidden'].join(' ')}>
 			<FilterField ref={filterFieldRef} list={filterList} className="pb-8" />
 			<div className="flex items-center justify-between flex-shrink-0 mb-4 text-base font-medium pb-2 border-b border-base-disabled">
 				<p className="text-base font-medium">{pagination?.total || 0} Properties</p>

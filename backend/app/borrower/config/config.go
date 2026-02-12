@@ -41,6 +41,9 @@ type RpcConf struct {
 	SendInviteEmailPeriodSeconds int
 	PreApprovalLoanConf          []PreApprovalLoanConf
 	ZeebeeAgentEmail             string
+	ZeitroConf                   ZeitroConf
+	PdfGeneratorUrl              string
+	TemplateConf                 map[string]TemplateConf
 }
 
 type DbConf struct {
@@ -110,4 +113,18 @@ type EmailAuthConf struct {
 		ClientSecret string
 		CallbackUrl  string
 	}
+}
+
+type TemplateConf struct {
+	Purpose  string
+	Scope    string
+	Category string
+	FileType string
+	Title    string `json:",optional"`
+}
+
+type ZeitroConf struct {
+	Url      string
+	Username string
+	Password string
 }

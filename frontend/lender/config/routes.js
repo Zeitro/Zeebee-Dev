@@ -33,10 +33,10 @@ export const navRouter = [
 				path: '/setting/user',
 				title: 'User',
 			},
-			// {
-			// 	path: '/setting/system',
-			// 	title: 'System',
-			// },
+			{
+				path: '/setting/system',
+				title: 'System',
+			},
 			// {
 			// 	path: '/setting/role',
 			// 	title: 'Setting ( Role )',
@@ -45,6 +45,10 @@ export const navRouter = [
 			{
 				path: '/setting/organizationProfile',
 				title: 'Organization profile',
+			},
+			{
+				path: '/setting/preApprovedLetter',
+				title: 'Pre-approval letter',
 			},
 		],
 	},

@@ -50,7 +50,7 @@ func (l *CreateLogic) Create(in *admin.ApiCreateRequest) (resp *admin.ApiCreateR
 		return nil, err
 	}
 	if isExisted {
-		err = errorx.New("Api is Existed")
+		err = errorx.New("API already exists")
 		return nil, err
 	}
 	result, err := l.svcCtx.ApiRepo.Create(l.ctx, apiModel)

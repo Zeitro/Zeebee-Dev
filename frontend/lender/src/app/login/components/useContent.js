@@ -8,11 +8,20 @@ const useContent = () => {
 	const { getUserInfo, getOrganization, setOrganization } = useUserStore();
 
 	// 组织信息完整后登录
-	const getInfoGoLogin = async (access, setLoadingFn) => {
+	const getInfoGoLogin = async (access, setLoadingFn, org) => {
 		await getUserInfo();
 		setCookie('token', access?.access_token, access?.access_token_expire * 1000);
 		setLoadingFn?.(false);
-		router.replace('/');
+		if (!org) return;
+		const list = org?.organization_settings;
+		const preSetting = list?.find((item) => item.purpose === 'preApprovedLetter');
+		// 预授权信件未配置,跳转配置页面
+		if (!preSetting?.has_configured) {
+			const params = new URLSearchParams({ isSettingPreApprovedLetter: true });
+			router.replace(`/setting/system?${params}`);
+		} else {
+			router.replace('/');
+		}
 	};
 	// 拿到用户token后登录
 	const loginByToken = async (access, options) => {
@@ -28,14 +37,14 @@ const useContent = () => {
 					rowData={org}
 					setOpen={() => eventBus.emit('removePortalComponent')}
 					successCallback={async (setLoadingFn) => {
-						await getOrganization();
-						getInfoGoLogin(access, setLoadingFn);
+						let newOrg = await getOrganization();
+						getInfoGoLogin(access, setLoadingFn, newOrg);
 					}}
 				/>,
 			);
 			return;
 		}
-		getInfoGoLogin(access, options?.setLoading);
+		getInfoGoLogin(access, options?.setLoading, org);
 	};
 	return {
 		loginByToken,
