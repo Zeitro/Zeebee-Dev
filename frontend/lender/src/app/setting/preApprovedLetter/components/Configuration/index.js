@@ -59,7 +59,7 @@ const Configuration = ({
 													i,
 												) => {
 													const variableItem = item?.variables?.[i];
-													return (
+													return variableItem?.is_editable ? (
 														<AssemblyFormItem
 															key={variableItemKey}
 															item={variableItem}
@@ -86,6 +86,8 @@ const Configuration = ({
 															}}
 															isAllEditable={isAllEditable}
 														/>
+													) : (
+														''
 													);
 												},
 											)
