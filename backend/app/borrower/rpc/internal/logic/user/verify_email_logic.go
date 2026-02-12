@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/duke-git/lancet/v2/mathutil"
@@ -145,7 +146,7 @@ func (l *VerifyEmailLogic) handlePreapprovalLoan(ctx context.Context, user *mode
 		"salesPrice":    stringx.FormatUsDollarCurrency(preapprovalInput.Loan.PurchaseAmount),
 		"maxLoanAmount": stringx.FormatUsDollarCurrency(preapprovalResult.TotalAmount),
 		"terms":         preapprovalResult.LoanTerm,
-		"interestRate":  mathutil.RoundToFloat(preapprovalResult.Rate*100.0, 2),
+		"interestRate":  fmt.Sprintf("%.2f %%", mathutil.RoundToFloat(preapprovalResult.Rate*100.0, 2)),
 	}
 
 	pdfConfig, ok := global.Config.TemplateConf[constants.BorrowerPreapprovalLetterPdfName]

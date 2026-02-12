@@ -1,0 +1,12 @@
+syntax = "v1"
+
+info(
+    title: "pdf-api"
+    desc: "pdf-api http service description"
+    version: "v1"
+)
+
+type HtmlToPdfRequest {
+    Name string `json:"name"`
+    Content string `json:"content"`
+}
