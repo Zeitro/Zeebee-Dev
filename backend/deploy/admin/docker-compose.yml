@@ -1,0 +1,35 @@
+services:
+  staging-admin-backend:
+    image: staging-admin-backend:${IMAGE_TAG:-latest}
+    build:
+      context: ../../
+      dockerfile: deploy/admin/Dockerfile
+      args:
+        - CONFIG_ENV=staging
+    container_name: staging-admin-backend
+    network_mode: host
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: us-west-1
+        awslogs-group: /zeebee/admin-staging
+        awslogs-create-group: "true"
+        awslogs-stream: backend-${HOSTNAME}
+
+  prod-admin-backend:
+    image: prod-admin-backend:${IMAGE_TAG:-latest}
+    build:
+      context: ../../
+      dockerfile: deploy/admin/Dockerfile
+      args:
+        - CONFIG_ENV=production
+    container_name: prod-admin-backend
+    network_mode: host
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: us-west-1
+        awslogs-group: /zeebee/admin-production
+        awslogs-create-group: "true"
+        awslogs-stream: backend-${HOSTNAME}
+

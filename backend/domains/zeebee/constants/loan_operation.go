@@ -18,6 +18,7 @@ const (
 	LoanOperationActionDeleteDocumentRequest LoanOperationAction = "DeleteDocumentRequest"
 	LoanOperationActionUploadDocumentFile    LoanOperationAction = "UpdateDocumentFile"
 	LoanOperationActionDeleteDocumentFile    LoanOperationAction = "DeleteDocumentFile"
+	LoanOperationActionReassignLender        LoanOperationAction = "ReassignLender"
 )
 
 type LoanOperationOperatorType string
@@ -27,6 +28,7 @@ const (
 	LoanOperationOperatorTypeBorrower LoanOperationOperatorType = "Borrower"
 	LoanOperationOperatorTypeLender   LoanOperationOperatorType = "Lender"
 	LoanOperationOperatorTypeSystem   LoanOperationOperatorType = "System"
+	LoanOperationOperatorTypeAdmin    LoanOperationOperatorType = "Admin"
 )
 
 func init() {
@@ -91,6 +93,10 @@ func init() {
 		{
 			Label: string(LoanOperationOperatorTypeSystem),
 			Value: string(LoanOperationOperatorTypeSystem),
+		},
+		{
+			Label: string(LoanOperationOperatorTypeAdmin),
+			Value: string(LoanOperationOperatorTypeAdmin),
 		},
 	})
 }

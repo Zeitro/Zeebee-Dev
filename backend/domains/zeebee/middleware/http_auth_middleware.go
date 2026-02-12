@@ -32,11 +32,11 @@ func (m *HttpAuthMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 		}
 		claims, err := utils.ParseToken(token, m.secretKey)
 		if err != nil {
-			response.Unauthorized(w, "Invalid Token")
+			response.Unauthorized(w, "Invalid token")
 			return
 		}
 		if claims.UserType != m.userType {
-			response.Unauthorized(w, "Invalid User Type")
+			response.Unauthorized(w, "Invalid user type")
 			return
 		}
 

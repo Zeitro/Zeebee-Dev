@@ -1,0 +1,66 @@
+syntax = "v1"
+
+info(
+    title: "lender-common-api"
+    desc: "common-api http service description"
+    version: "v1"
+)
+
+type SelectOptionEntity {
+    Label string `json:"label"`
+    Value string `json:"value"`
+}
+
+type (
+    GetSelectOptionRequest {
+        Name string `form:"name"`
+    }
+
+    GetSelectOptionResponse {
+        Options []SelectOptionEntity `json:"options"`
+    }
+)
+
+type (
+    RangeInt {
+        Min int `json:"min, optional"`
+        Max int `json:"max, optional"`
+    }
+    RangeFloat64 {
+        Min float64 `json:"min, optional"`
+        Max float64 `json:"max, optional"`
+    }
+)
+
+// page
+type (
+    BasePageRequest {
+        Limit int `json:"limit,optional"`
+        Page int `json:"page, optional"`
+    }
+    BasePageFilter {
+        Keyword string `json:"keyword,optional"`
+    }
+    BasePageSort {
+        Column string `json:"column,optional"`
+        Sort string `json:"sort,optional"`
+    }
+
+    BasePageResponse {
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
+        Total int64 `json:"total"`
+        TotalPage int64 `json:"total_page"`
+    }
+)
+
+type (
+    EmptyRequest {
+    }
+    EmptyResponse {
+    }
+)
+
+type PathIdRequest {
+    id int64 `path:"id" validate:"required,gt=0"`
+}

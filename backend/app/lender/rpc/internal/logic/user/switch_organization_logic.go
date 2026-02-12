@@ -3,14 +3,14 @@ package userlogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/bo"
 
 	"zeebee-backend/common/errorx"
 )
@@ -31,7 +31,7 @@ func NewSwitchOrganizationLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	}
 }
 
-func (l *SwitchOrganizationLogic) SwitchOrganization(in *lender.SwitchOrganizationRequest) (resp *lender.RefreshTokenResponse, err error) {
+func (l *SwitchOrganizationLogic) SwitchOrganization(in *lender.SwitchOrganizationRequest) (resp *lender.UserJwtResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -52,10 +52,12 @@ func (l *SwitchOrganizationLogic) SwitchOrganization(in *lender.SwitchOrganizati
 	if err != nil {
 		return nil, err
 	}
-	data := &lender.RefreshTokenResponseData{}
-	err = copier.CopyWithOption(data, token, copier.Option{DeepCopy: true})
+	data, err := copierx.Trans[bo.UserJwtTokenBo, lender.UserJwtResponseData](token)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
-	return &lender.RefreshTokenResponse{Data: data}, nil
+
+	return &lender.UserJwtResponse{
+		Data: data,
+	}, nil
 }

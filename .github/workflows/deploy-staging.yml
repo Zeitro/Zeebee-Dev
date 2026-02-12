@@ -5,6 +5,8 @@ on:
     branches:
       - staging-borrower-backend
       - staging-lender-backend
+      - staging-admin-backend
+      - staging-pdfgenerator-backend
 
 jobs:
   deploy:
@@ -27,6 +29,10 @@ jobs:
              SERVICE_NAME=borrower
           elif [[ "${{ github.ref }}" == "refs/heads/staging-lender-backend" ]]; then
             SERVICE_NAME=lender
+          elif [[ "${{ github.ref }}" == "refs/heads/staging-admin-backend" ]]; then
+            SERVICE_NAME=admin
+          elif [[ "${{ github.ref }}" == "refs/heads/staging-pdfgenerator-backend" ]]; then
+            SERVICE_NAME=pdfgenerator
           else
             echo "Invalid Branch ${{ github.ref }}"
             exit 1

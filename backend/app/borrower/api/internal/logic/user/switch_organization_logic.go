@@ -40,7 +40,7 @@ func (l *SwitchOrganizationLogic) SwitchOrganization(req *types.UserSwitchOrgani
 	}
 	userId := claim.UserId
 	if userId == 0 {
-		return nil, errorx.WithStack(errorx.New("User Id Not Found"))
+		return nil, errorx.WithStack(errorx.New("User ID not found"))
 	}
 	rpcReq.Data.UserId = userId
 	rpcReq.Data.OrganizationId = req.OrganizationId

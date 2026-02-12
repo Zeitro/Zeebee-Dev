@@ -193,3 +193,36 @@ export const copyToClipboard = async (text) => {
 		return false;
 	}
 };
+
+// 完整的html中，只将link/style标签插入head标签内，用于引入资源
+export const injectHeadResources = (html) => {
+	// 清理旧的
+	document.querySelectorAll('[data-template-preview]').forEach((el) => el.remove());
+	const doc = new window.DOMParser().parseFromString(html, 'text/html');
+	const headNodes = doc.head ? Array.from(doc.head.children) : [];
+	headNodes.forEach((node) => {
+		if (['LINK', 'STYLE'].includes(node.tagName) || node.tagName.startsWith('FONT')) {
+			const clone = node.cloneNode(true);
+			clone.setAttribute('data-template-preview', '1');
+			document.head.appendChild(clone);
+		}
+	});
+};
+
+// html中取出body的内容
+export const getBodyInnerHTML = (html) => {
+	try {
+		const doc = new window.DOMParser().parseFromString(html, 'text/html');
+		return doc.body.innerHTML;
+	} catch {
+		return html;
+	}
+};
+
+// 完整的html，替换body内容
+export function replaceBodyContent(html, newBodyHtml) {
+	const parser = new DOMParser();
+	const doc = parser.parseFromString(html, 'text/html');
+	doc.body.innerHTML = newBodyHtml;
+	return doc.documentElement.outerHTML;
+}

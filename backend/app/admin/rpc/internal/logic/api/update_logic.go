@@ -55,7 +55,7 @@ func (l *UpdateLogic) Update(in *admin.ApiUpdateRequest) (resp *admin.ApiCreateR
 		return nil, err
 	}
 	if isExisted {
-		err = errorx.New("Api is Existed")
+		err = errorx.New("API already exists")
 		return nil, err
 	}
 

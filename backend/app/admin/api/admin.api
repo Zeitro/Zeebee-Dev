@@ -10,18 +10,36 @@ import "desc/api.api"
 import "desc/resource.api"
 import "desc/role.api"
 import "desc/organization_user.api"
+import "desc/organization.api"
+import "desc/storage.api"
+import "desc/us_geography.api"
+import "desc/common.api"
+import "desc/base_template.api"
+import "desc/loan.api"
 
-type (
-	EmptyRequest{
-	}
-	EmptyResponse{
-	}
+// ============== common start =============
+@server(
+	desc: "admin-api service"
+	version: v1
+	group: common
+	prefix:  /api/v1
+	tags: common
 )
+service admin-api {
+	@doc "select options"
+	@handler SelectOptions
+	get /select_options (GetSelectOptionRequest) returns (GetSelectOptionResponse)
 
-type PathIdRequest {
-	id int64 `path:"id" validate:"required,gt=0"`
+	@doc "get us states"
+	@handler GetUsStates
+	get /us_states (EmptyRequest) returns (GetUsStatesResponse)
+
+	@doc "get us city"
+	@handler GetUsCities
+	get /us_cities (GetUsCitiesRequest) returns (GetUsCitiesResponse)
 }
 
+// ============== common end =============
 // ============== user start =============
 @server(
 	desc: "admin-api service"
@@ -63,6 +81,49 @@ service admin-api {
 }
 
 // ============== user end =============
+// ============== organization service start ============
+@server(
+	desc: "admin-api service"
+	version: v1
+	group: organization
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: organization
+)
+service admin-api {
+	@doc "detail"
+	@handler OrganizationDetail
+	get /organization/:id (PathIdRequest) returns (OrganizationEntity)
+
+	@doc "page"
+	@handler OrganizationPage
+	post /organization/page (OrganizationPageRequest) returns (OrganizationPageResponse)
+
+	@doc "lender create"
+	@handler OrganizationCreateLender
+	post /organization/lender (OrganizationCreateLenderRequest) returns (OrganizationEntity)
+
+	@doc "lender update"
+	@handler OrganizationUpdateLender
+	put /organization/lender/:id (OrganizationUpdateLenderRequest) returns (OrganizationEntity)
+
+	@doc "delete"
+	@handler OrganizationDelete
+	delete /organization/:id (PathIdRequest) returns (EmptyResponse)
+
+	@doc "switch status"
+	@handler OrganizationSwitchStatus
+	patch /organization/:id/status (OrganizationSwitchStatusRequest) returns (EmptyResponse)
+
+	@doc "select option"
+	@handler OrganizationSelectOption
+	get /organization/select_options (OrganizationSelectOptionRequest) returns (OrganizationOptionResponse)
+	// @doc "all lender"
+	// @handler OrganizationLenders
+	// get /organization/lenders (EmptyRequest) returns (OrganizationOptionResponse)
+}
+
+// ============= organization service end ============
 // ============== organization user start ============
 @server(
 	desc: "admin-api service"
@@ -202,4 +263,92 @@ service admin-api {
 	patch /role/:id/status (RoleUpdateStatusRequest) returns (EmptyResponse)
 }
 
-	// ============== role end =============
+// ============== role end =============
+// ============= storage start ============
+@server(
+	desc: "storage service"
+	version: v1
+	group: storage
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: storage
+)
+service admin-api {
+	@doc "create aws s3 presign url"
+	@handler CreateAwsS3PresignUrl
+	post /storage/presign_url (S3PresignUrlCreateRequest) returns (S3PresignUrlCreateResponse)
+}
+
+// ============= storage end =============
+// ============== base template start ============
+@server(
+	desc: "base template service"
+	version: v1
+	prefix:     /api/v1
+	group: base_template
+	middleware: AuthMiddleware
+	tags: base_template
+)
+service admin-api {
+	@doc "Create"
+	@handler BaseTemplateCreate
+	post /base_template (BaseTemplateCreateRequest) returns (BaseTemplateDetailResponse)
+
+	@doc "Reset"
+	@handler BaseTemplateReset
+	post /base_template/:id/reset (PathIdRequest) returns (BaseTemplateDetailResponse)
+
+	@doc "Update"
+	@handler BaseTemplateUpdate
+	put /base_template/:id (BaseTemplateUpdateRequest) returns (BaseTemplateDetailResponse)
+
+	@doc "Detail"
+	@handler BaseTemplateDetail
+	get /base_template/:id (PathIdRequest) returns (BaseTemplateDetailResponse)
+
+	@doc "page"
+	@handler BaseTemplatePage
+	post /base_template/page (BaseTemplatePageRequest) returns (BaseTemplatePageResponse)
+
+	@doc "Switch status"
+	@handler BaseTemplateSwitchStatus
+	patch /base_template/:id/status (BaseTemplateSwitchStatusRequest) returns (EmptyResponse)
+
+	@doc "Delete"
+	@handler BaseTemplateDelete
+	delete /base_template/:id (PathIdRequest) returns (EmptyResponse)
+
+	@doc "Preview"
+	@handler BaseTemplatePreview
+	post /base_template/preview (BaseTemplatePreviewRequest) returns (BaseTemplatePreviewResponse)
+}
+
+// ============== base template end ============
+// ============== loan service end ============
+@server(
+	desc: "loan service"
+	version: v1
+	prefix:     /api/v1
+	group: loan
+	middleware: AuthMiddleware
+	tags: loan
+)
+service admin-api {
+	@doc "page"
+	@handler LoanPage
+	post /loan/page (LoanPageRequest) returns (LoanPageResponse)
+
+	@doc "detail"
+	@handler LoanDetail
+	get /loan/:id (PathIdRequest) returns (LoanDetailResponse)
+
+	@doc "reassign"
+	@handler LoanReassign
+	post /loan/:id/reassign (LoanReassignRequest) returns (EmptyResponse)
+
+	@doc "lender companies list"
+	@handler LenderCompanies
+	get /loan/lender_companies (EmptyRequest) returns (LoanLenderCompanyResponse)
+}
+
+	// ============== loan service end ============

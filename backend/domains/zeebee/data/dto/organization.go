@@ -13,7 +13,7 @@ type OrganizationPageFilter struct {
 	Status           constants.OrganizationStatus `json:"status"`
 }
 type OrganizationRegisterRequestDto struct {
-	Id           int64                           `json:"id"`
+	// Id           int64                           `json:"id"`
 	Name         string                          `json:"name"`
 	Status       constants.OrganizationStatus    `json:"status"`
 	OwnerType    constants.OrganizationOwnerType `json:"owner_type"`
@@ -21,6 +21,20 @@ type OrganizationRegisterRequestDto struct {
 	ContactEmail string                          `json:"contact_email"`
 	ContactPhone string                          `json:"contact_phone"`
 	ContactName  string                          `json:"contact_name"`
+	Address      *AddressDto                     `json:"address"`
 	Logo         string                          `json:"logo"`
 	Website      string                          `json:"website"`
+	Tagline      string                          `json:"tagline"`
+	Metadata     *OrganizationMetadata           `json:"metadata,omitempty"`
+}
+
+type OrganizationMetadata struct {
+	Lender *OrganizationLenderMetadata `json:"lender,omitempty"`
+}
+
+type OrganizationLenderMetadata struct {
+	LoanAmountRange RangeFloat64 `json:"loan_amount_range"`
+	LoanTermRange   RangeInt     `json:"loan_term_range"`
+	LoanRateRange   RangeFloat64 `json:"loan_rate_range"`
+	LoanPointRange  RangeFloat64 `json:"loan_point_range"`
 }
