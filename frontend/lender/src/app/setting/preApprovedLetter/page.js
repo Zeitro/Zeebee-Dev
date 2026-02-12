@@ -1,62 +1,29 @@
 'use client';
-import { Button, Form, message, Spin } from 'antd';
+import { Button, Form, message } from 'antd';
 import { useEffect, useState } from 'react';
-import _ from 'lodash';
-import { FieldTips, AssemblyFormItem } from '@repo/shared-methods';
-import {
-	createRequest,
-	formatAmount,
-	formatPhone,
-	injectHeadResources,
-	getBodyInnerHTML,
-} from '@repo/shared-methods/utils';
+import { FieldTips } from '@repo/shared-methods';
+import { createRequest, injectHeadResources, getBodyInnerHTML } from '@repo/shared-methods/utils';
 import useContent from '../system/components/PreApprovalLetter/useContent';
+import Configuration from './components/Configuration';
+import useConfiguration from './components/Configuration/useConfiguration';
+import DownloadPdf from './components/DownloadPdf';
+import _ from 'lodash';
 const PreApprovedLetter = () => {
 	const { switchBtn } = useContent();
 	const { request } = createRequest();
 	const [form] = Form.useForm();
-	const [valueHtml, setValueHtml] = useState('');
+	const [valueHtml, setValueHtml] = useState(''); // 模板内容（只有body内的html）
+	const [completeTemplate, setCompleteTemplate] = useState(''); // 最新的模板数据(包含head/link/style/body)
+	const [data, setData] = useState({}); //左侧配置项
 	const [confirmLoading, setConfirmLoading] = useState(false);
-	const [data, setData] = useState({});
 	const [loading, setLoading] = useState(false);
-
-	const formatValue = (format, value) => {
-		switch (format) {
-			case 'Currency':
-				return formatAmount(value);
-			case 'Phone':
-				return formatPhone(value);
-			default:
-				break;
-		}
-		return value;
-	};
-
-	// 更新HTML中的变量
-	const updateVariablesInHtml = (html, value, idKey, format, isHave = true) => {
-		// 创建一个临时DOM元素来处理HTML
-		const tempDiv = document.createElement('div');
-		tempDiv.innerHTML = html;
-
-		// 查找所有带有 data-variable 属性的元素
-		const variableElements = tempDiv.querySelectorAll('[data-variable]');
-
-		variableElements.forEach((element) => {
-			const variableName = element.getAttribute('data-variable');
-
-			// 检查是否在表单数据中有对应的值
-			if (idKey === variableName) {
-				// 更新元素的文本内容
-				element.textContent = formatValue(format, value);
-			}
-		});
-
-		// 更新预览内容
-		if (isHave) {
-			setValueHtml(tempDiv.innerHTML);
-		}
-		return tempDiv.innerHTML;
-	};
+	const [open, setOpen] = useState(false);
+	const [params, setParams] = useState({});
+	const { updateVariablesInHtml } = useConfiguration({
+		valueHtml,
+		setValueHtml,
+		data,
+	});
 
 	const handlePreview = async (result) => {
 		const { content } = await request('/organization_template/preview', {
@@ -65,6 +32,7 @@ const PreApprovedLetter = () => {
 				...result,
 			},
 		});
+		setCompleteTemplate(content);
 		injectHeadResources(content);
 		let bodyHtml = getBodyInnerHTML(content);
 		let newHtml = bodyHtml;
@@ -74,14 +42,13 @@ const PreApprovedLetter = () => {
 		result?.variable_group_schema?.map((item) => {
 			item.variables.map((i) => {
 				const vKey = i.key.replace('.', '');
-				if (i.source !== 'Template') {
-					const exampleValue = exampleVariablesObj[vKey] || `{${vKey}}`;
-					let v = i.source === 'Fixed' ? i.fixed_value : exampleValue;
-					newHtml = updateVariablesInHtml(newHtml, v, i.key, i.format, false);
-				}
+				const exampleValue = exampleVariablesObj[vKey] || `{${vKey}}`;
+				let v = i.source === 'Dynamic' ? exampleValue : i.fixed_value;
+				newHtml = updateVariablesInHtml(newHtml, v, i.key, i.format, false);
 			});
 		});
-
+		setData(result);
+		form.setFieldsValue(result);
 		setValueHtml(newHtml);
 	};
 
@@ -90,8 +57,6 @@ const PreApprovedLetter = () => {
 			setLoading(true);
 			const params = new URLSearchParams({ purpose: 'preApprovedLetter' });
 			const res = await request(`/organization_template/detail_by_purpose?${params}`);
-			setData(res);
-			form.setFieldsValue(res);
 			await handlePreview(res);
 			setLoading(false);
 		} catch {
@@ -105,8 +70,6 @@ const PreApprovedLetter = () => {
 			const res = await request(`/organization_template/${data?.id}/reset`, {
 				method: 'POST',
 			});
-			setData(res);
-			form.setFieldsValue(res);
 			await handlePreview(res);
 			setLoading(false);
 		} catch {
@@ -133,19 +96,6 @@ const PreApprovedLetter = () => {
 		} catch {
 			setConfirmLoading(false);
 		}
-	};
-
-	// 输入框修改更改html
-	const handleFieldsChange = (changedValues, allValues) => {
-		const formNameArr = _.cloneDeep(changedValues?.[0]?.name);
-		let itemNameArr = formNameArr.slice(0, -1);
-		if (formNameArr[formNameArr.length - 1] === 'fixed_value') {
-			formNameArr[formNameArr.length - 1] = 'key';
-		}
-		const idKey = _.get(data, formNameArr);
-		const item = _.get(data, itemNameArr);
-		const changeItem = allValues.find((i) => _.isEqual(i.name, changedValues?.[0]?.name));
-		updateVariablesInHtml(valueHtml, changeItem?.value, idKey, item.format);
 	};
 
 	useEffect(() => {
@@ -185,91 +135,15 @@ const PreApprovedLetter = () => {
 						</Button>
 					</FieldTips>
 				</h2>
-				<Form
-					form={form}
-					name="preApproved-form"
-					layout="vertical"
-					autoComplete="off"
-					className={[
-						'flex-1 overflow-hidden overflow-y-auto [&_.ant-form-item]:mb-4 [&_.ant-form-item-explain-error]:leading-4',
-					].join(' ')}
-					size="large"
-					disabled={confirmLoading}
-					scrollToFirstError
-					onFieldsChange={handleFieldsChange}
-				>
-					<Spin spinning={loading}>
-						<Form.List name="variable_group_schema">
-							{(fields) =>
-								fields.map(({ key, name, ...restField }, index) => {
-									const item = data?.variable_group_schema?.[index];
-									return (
-										<div key={key}>
-											<div className="border-b border-base-border font-medium py-1 mb-4 text-base/[22px] text-black-dark">
-												{item?.name}
-											</div>
-											<Form.List
-												name={[name, 'variables']}
-												{...restField}
-												rules={[{ required: true }]}
-											>
-												{(fields2) =>
-													fields2.map(
-														(
-															{
-																key: variableItemKey,
-																name: variableItemName,
-																...variableItemRestField
-															},
-															i,
-														) => {
-															const variableItem =
-																item?.variables?.[i];
-															return (
-																<AssemblyFormItem
-																	key={variableItemKey}
-																	item={variableItem}
-																	formListRestField={
-																		variableItemRestField
-																	}
-																	formListName={[
-																		variableItemName,
-																	]}
-																	allFormListName={[
-																		'variable_group_schema',
-																		name,
-																		'variables',
-																		variableItemName,
-																	]}
-																	example_variables={
-																		data?.example_variables
-																	}
-																	changeHtml={(
-																		key,
-																		value,
-																		format,
-																	) => {
-																		updateVariablesInHtml(
-																			valueHtml,
-																			value,
-																			key,
-																			format,
-																		);
-																	}}
-																/>
-															);
-														},
-													)
-												}
-											</Form.List>
-										</div>
-									);
-								})
-							}
-						</Form.List>
-					</Spin>
-				</Form>
-				<div className="w-full flex-shrink-0 bg-background pt-1 pb-4">
+				<Configuration
+					valueHtml={valueHtml}
+					setValueHtml={setValueHtml}
+					data={data}
+					configurationForm={form}
+					loading={loading}
+					confirmLoading={confirmLoading}
+				/>
+				<div className="w-full flex-shrink-0 bg-background pt-1 pb-4 flex flex-col gap-3">
 					<Button
 						type="primary"
 						className="w-full"
@@ -279,7 +153,30 @@ const PreApprovedLetter = () => {
 					>
 						Save
 					</Button>
-					<div className="flex items-center justify-between pt-3">
+					<Button
+						className="w-full"
+						onClick={() => {
+							// 下载弹框内左侧设置列表全用input框，所以source改为Template
+							const v = form.getFieldsValue();
+							const newList = _.cloneDeep(v);
+							newList.variable_group_schema = newList?.variable_group_schema?.map(
+								(item) => {
+									item.variables = item.variables.map((i) => {
+										i.source = 'Template';
+										i.is_editable = true;
+										return i;
+									});
+									return item;
+								},
+							);
+							setParams(_.cloneDeep(newList));
+							setOpen(true);
+						}}
+						size="large"
+					>
+						Download
+					</Button>
+					<div className="flex items-center justify-between">
 						<div className="text-xs text-base-label font-semibold">
 							Send Pre-Approval Letter
 							<FieldTips
@@ -298,6 +195,16 @@ const PreApprovedLetter = () => {
 				className="flex-1 overflow-hidden overflow-y-auto py-6 flex justify-center items-center [&>.page]:max-w-[800px]"
 				dangerouslySetInnerHTML={{ __html: valueHtml }}
 			></div>
+			{open && (
+				<DownloadPdf
+					setOpen={setOpen}
+					valueHtml={valueHtml}
+					data={data}
+					inputSettingParams={params}
+					completeTemplate={completeTemplate}
+					updateVariablesInHtml={updateVariablesInHtml}
+				/>
+			)}
 		</div>
 	);
 };
