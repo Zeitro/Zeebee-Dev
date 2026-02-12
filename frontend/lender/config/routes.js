@@ -48,7 +48,7 @@ export const navRouter = [
 			},
 			{
 				path: '/setting/preApprovedLetter',
-				title: 'Pre-approved letter',
+				title: 'Pre-approval letter',
 			},
 		],
 	},
