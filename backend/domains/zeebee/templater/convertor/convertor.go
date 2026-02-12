@@ -3,10 +3,10 @@ package convertor
 import (
 	"bytes"
 	"context"
-	"encoding/json"
-	"fmt"
 	"html/template"
-	"net/http"
+
+	"zeebee-backend/app/pdf_generator/client"
+	"zeebee-backend/common/stringx"
 )
 
 type Convertor interface {
@@ -15,18 +15,24 @@ type Convertor interface {
 }
 
 type DefaultConvertor struct {
-	pdfGeneratorUrl string
+	// pdfGeneratorUrl string
+
+	pdfClient *client.Client
 }
 
 func NewDefaultConvertor(pdfGeneratorUrl string) *DefaultConvertor {
 	return &DefaultConvertor{
-		pdfGeneratorUrl: pdfGeneratorUrl,
+		// pdfGeneratorUrl: pdfGeneratorUrl,
+		pdfClient: client.NewClient(pdfGeneratorUrl),
 	}
 }
 
 func (c *DefaultConvertor) ConvertToHtml(ctx context.Context, name string, templateContent string, data map[string]interface{}) (content []byte, contentType string, err error) {
 	contentType = "text/html"
-	tpl, err := template.New(name).Parse(templateContent)
+	tpl, err := template.
+		New(name).
+		Funcs(TplFunc()).
+		Parse(templateContent)
 	if err != nil {
 		return nil, contentType, err
 	}
@@ -44,44 +50,16 @@ func (c *DefaultConvertor) ConvertToPdf(ctx context.Context, name string, templa
 		return nil, contentType, err
 	}
 
-	client := &http.Client{}
-	payload := GeneratePdfRequest{
-		Type: "Text",
+	req := client.GeneratePdfRequest{
+		Type: client.SourceTypeText,
 		Text: string(content),
 	}
-	requestBody, err := json.Marshal(payload)
-	if err != nil {
-		return nil, contentType, err
-	}
 
-	req, err := http.NewRequestWithContext(
-		ctx,
-		http.MethodPost,
-		c.pdfGeneratorUrl,
-		bytes.NewReader(requestBody),
-	)
+	result, err := c.pdfClient.GeneratePdf(ctx, req)
 	if err != nil {
 		return nil, contentType, err
 	}
-	req.Header.Set("Content-Type", "application/json")
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, contentType, err
-	}
-	defer resp.Body.Close()
-	var generatePdfResponse GeneratePdfResponse
-	err = json.NewDecoder(resp.Body).Decode(&generatePdfResponse)
-	if err != nil {
-		return nil, contentType, err
-	}
-	if generatePdfResponse.Code != http.StatusOK {
-		return nil, contentType, fmt.Errorf(generatePdfResponse.Message)
-	}
-	if generatePdfResponse.Data.Data == nil {
-		return nil, contentType, fmt.Errorf("No data returned")
-	}
-	return generatePdfResponse.Data.Data, contentType, nil
+	return result, contentType, nil
 }
 
 type GeneratePdfRequest struct {
@@ -96,4 +74,12 @@ type GeneratePdfResponse struct {
 	Data    struct {
 		Data []byte `json:"data"`
 	} `json:"data"`
+}
+
+func TplFunc() template.FuncMap {
+	return template.FuncMap{
+		"usd":      stringx.FormatUsDollarCurrency,
+		"usaphone": stringx.FormatUsPhoneNumber,
+		"percent":  stringx.PercentFormat,
+	}
 }
