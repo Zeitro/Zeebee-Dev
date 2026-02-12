@@ -156,15 +156,19 @@ const PreApprovedLetter = () => {
 					<Button
 						className="w-full"
 						onClick={() => {
+							// 下载弹框内左侧设置列表全用input框，所以source改为Template
 							const v = form.getFieldsValue();
-							v.variable_group_schema = v?.variable_group_schema?.map((item) => {
-								item.variables = item.variables.map((i) => {
-									i.source = 'Template';
-									return i;
-								});
-								return item;
-							});
-							setParams(_.cloneDeep(v));
+							const newList = _.cloneDeep(v);
+							newList.variable_group_schema = newList?.variable_group_schema?.map(
+								(item) => {
+									item.variables = item.variables.map((i) => {
+										i.source = 'Template';
+										return i;
+									});
+									return item;
+								},
+							);
+							setParams(_.cloneDeep(newList));
 							setOpen(true);
 						}}
 						size="large"
