@@ -1,19 +1,28 @@
 'use client';
-import { Col, Form, Input, InputNumber, Row, Select } from 'antd';
-import React from 'react';
+import { Button, Col, Form, Input, InputNumber, Row, Select } from 'antd';
 import styles from './index.module.scss';
-import InputNumAmount from '@/components/InputNumAmount';
-import { useGetOptions } from '@/hooks/useGetOptions';
-import { loan_active, loan_pending } from '@/enum/common';
-import InputName from '@/components/InputName';
-import CommonFormDate from '@/components/CommonDate';
-import { capitalizeFirstLetter } from '@/lib/format';
+import { InputNumAmount, CommonFormDate, InputNameCombination } from '@repo/shared-methods';
+import { useGetOptions } from '@repo/shared-methods/hooks';
+import { loan_active, loan_pending, titleCol } from '@/enum/common';
+import { capitalizeFirstLetter } from '@repo/shared-methods/utils';
+import SelectCard from '@/components/SelectCard';
+import { PlusCircleOutlined, MinusCircleOutlined } from '@ant-design/icons';
 const layoutCol = {
 	xs: 24,
 	sm: 24,
 };
-const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
+const CreateTerm = ({
+	stage,
+	stepBtn,
+	gutter,
+	form,
+	selectCardCol = { xl: 6, sm: 24, xs: 24 },
+	btnCol = { xl: 6, sm: 24, xs: 24 },
+	sliceIndex = 3,
+	...colProps
+}) => {
 	const total_amount = Form.useWatch('total_amount', form);
+	const applicants = Form.useWatch('applicants', form);
 	const { lienPositionOptions, prepaymentPenaltyOptions } = useGetOptions([
 		{
 			key: 'lien_position',
@@ -30,11 +39,11 @@ const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
 			<Form.Item
 				label="Rate"
 				name="rate"
-				rules={[{ required: true, message: 'Please input!' }]}
+				// rules={[{ required: true, message: 'Please input!' }]}
 			>
 				<InputNumber
 					style={{ width: '100%' }}
-					min={1}
+					min={0}
 					max={100}
 					controls={false}
 					placeholder="Enter Rate"
@@ -49,7 +58,7 @@ const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
 			<Form.Item
 				label={stage === 'Pending' ? 'Target lender' : 'Lender'}
 				name="lender_company"
-				rules={[{ required: true, message: 'Please input!' }]}
+				// rules={[{ required: true, message: 'Please input!' }]}
 				getValueFromEvent={(v) => capitalizeFirstLetter(v.target.value)}
 			>
 				<Input placeholder={`Enter ${stage === 'Pending' ? 'target ' : ''}lender`} />
@@ -59,25 +68,88 @@ const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
 	return (
 		<Row className={styles.create} gutter={gutter}>
 			<Form.List name="applicants">
-				{(fields) => {
+				{(fields, { add, remove }) => {
 					return (
 						<>
 							{fields?.map((field, index) => (
-								<InputName
-									key={field.key}
-									layoutCol={{ ...layoutCol, md: 8 }}
-									firstName={[field.name, 'first_name']}
-									middleName={[field.name, 'mid_name']}
-									lastName={[field.name, 'last_name']}
-									title={`Borrower ${index + 1}`}
-									config={{
-										firstNameRequired: !index,
-										lastNameRequired: !index,
-									}}
-									listName="applicants"
-									form={form}
-									className="!ml-0 !mr-0"
-								/>
+								<div key={field.key} className="w-full">
+									<Col
+										{...titleCol}
+										className="!text-xl font-medium text-[#000000a6] pb-6 !flex items-end justify-between"
+									>
+										Borrower {index + 1}
+										{fields.length > 1 && (
+											<Button
+												type="link"
+												size="small"
+												icon={<MinusCircleOutlined />}
+												onClick={() => remove(field.name)}
+												className="!h-4"
+											>
+												Delete borrower
+											</Button>
+										)}
+									</Col>
+									<SelectCard
+										type="borrower"
+										api="/borrower_applicant/all"
+										title="Choose a borrower"
+										addTitle="Add a borrower"
+										className="mb-8"
+										changeFormValue={(values) => {
+											const borrower_applicant_id = values.id;
+											delete values.id;
+											applicants[field.name] = {
+												...values,
+												borrower_applicant_id,
+												type: 'Individual',
+												is_primary:
+													applicants?.[field.name]?.is_primary ??
+													!field.name,
+											};
+											form.setFieldsValue({
+												applicants,
+											});
+										}}
+										name={[field.name, 'borrower_applicant_id']}
+										id={applicants?.[field.name]?.borrower_applicant_id}
+										required={!index}
+										sliceIndex={sliceIndex}
+										{...selectCardCol}
+										btnCol={btnCol}
+									/>
+									<Row gutter={gutter} className="px-3">
+										<InputNameCombination
+											key={field.key}
+											layoutCol={{ ...layoutCol, md: 8 }}
+											firstName={[field.name, 'first_name']}
+											middleName={[field.name, 'mid_name']}
+											lastName={[field.name, 'last_name']}
+											config={{
+												firstNameRequired: !index,
+												lastNameRequired: !index,
+											}}
+											listName="applicants"
+											form={form}
+											className="!ml-0 !mr-0"
+											disabled={true}
+										/>
+									</Row>
+									{fields.length === index + 1 && fields.length < 2 && (
+										<Col {...layoutCol} className="mb-4">
+											<Button
+												type="link"
+												size="small"
+												icon={<PlusCircleOutlined />}
+												onClick={() =>
+													add({ type: 'Individual', is_primary: false })
+												}
+											>
+												Add borrower
+											</Button>
+										</Col>
+									)}
+								</div>
 							))}
 						</>
 					);
@@ -90,7 +162,7 @@ const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
 						<Form.Item
 							label="Target closing date"
 							name="closing_date"
-							rules={[{ required: true, message: 'Please select date!' }]}
+							// rules={[{ required: true, message: 'Please select date!' }]}
 						>
 							<CommonFormDate placeholder="Select target closing date" />
 						</Form.Item>
@@ -99,7 +171,7 @@ const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
 						<Form.Item
 							label="Holdback"
 							name="holdback_amount"
-							rules={[{ required: true, message: 'Please input!' }]}
+							// rules={[{ required: true, message: 'Please input!' }]}
 						>
 							<InputNumAmount placeholder="Enter holdback amount" />
 						</Form.Item>
@@ -109,7 +181,7 @@ const CreateTerm = ({ stage, stepBtn, gutter, form, ...colProps }) => {
 						<Form.Item
 							label="Estimated closing fund"
 							name="closing_fund"
-							rules={[{ required: true, message: 'Please input!' }]}
+							// rules={[{ required: true, message: 'Please input!' }]}
 						>
 							<InputNumAmount
 								placeholder="Enter Estimated closing fund"

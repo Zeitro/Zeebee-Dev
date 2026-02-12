@@ -1,22 +1,33 @@
 import { routers } from './routes';
 // 生成菜单栏
-export const generateMenuBar = (list, iconConfig) => {
+export const generateMenuBar = (list, iconConfig, sidebarCollapsed) => {
 	return JSON.parse(JSON.stringify(list))
 		.filter((i) => !i.hideMenu)
-		.map((item) => {
-			if (item.router) {
-				item.router = generateMenuBar(item.router);
-			}
+		.map((item, index) => {
 			const newItem = {
 				key: item.path,
-				label: item.title,
+				label: item?.menuTitle || item.title,
 			};
 			if (iconConfig) {
 				newItem.icon = iconConfig[item.icon];
 			}
-			if (item?.router?.length) {
-				newItem.children = item.router;
+
+			if (item.router?.length) {
+				const children = generateMenuBar(item.router, iconConfig);
+				if (children.length) {
+					newItem.children = sidebarCollapsed
+						? [
+								{
+									...newItem,
+									key: `group-${newItem.key}-${index}`,
+									type: 'group',
+									children,
+								},
+							]
+						: children;
+				}
 			}
+
 			return newItem;
 		});
 };
@@ -67,7 +78,7 @@ export const getCrumbs = (currentPath, routes) => {
 				title,
 			};
 			// 最后一个不需要path
-			if (segments.length - 1 !== i) {
+			if (segments.length - 1 !== i && !match?.isPageNotFound) {
 				crumbItem.path = path;
 			}
 			breadcrumbs.push(crumbItem);

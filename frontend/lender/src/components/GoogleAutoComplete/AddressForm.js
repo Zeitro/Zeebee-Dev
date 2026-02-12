@@ -3,8 +3,8 @@ import React, { useEffect } from 'react';
 import { Form, Input, Col, Select } from 'antd';
 import GoogleAutoComplete from './index';
 import { set } from 'lodash';
-import { useAddressStore } from '@/store/address';
-import { useDisUpdateEffect } from '@/hooks/common';
+import { useAddressStore } from '@repo/shared-methods/store';
+import { useDisUpdateEffect } from '@repo/shared-methods/hooks';
 import _ from 'lodash';
 const layoutCol = {
 	xs: 24,
@@ -32,7 +32,7 @@ const AddressForm = ({
 	stateName = 'state',
 	stateLabel = 'State',
 	zipName = 'zip_code',
-	zipLabel = 'Zip',
+	zipLabel = 'Zip code',
 	addressCol = {},
 	address2Col = {},
 	cityCol = {},

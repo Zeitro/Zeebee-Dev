@@ -1,12 +1,14 @@
-import { formatAmount } from '@/lib/format';
+import { formatAmount, formatTime } from '@repo/shared-methods/utils';
 import { LoanPendingStatus } from './ChangeStageStatus';
-import TableOperation from '@/components/TableOperation';
+import { TableOperation } from '@repo/shared-methods';
+import QuoteBtn from './Quote';
+import { SendOutlined } from '@ant-design/icons';
 export const get3rdPartyMark = (v, { source }) => (
 	<div className="flex items-center">
 		<p className="overflow-hidden text-ellipsis whitespace-nowrap" title={v}>
 			{v}
 		</p>
-		{source === 'borrower' && (
+		{source === 'Borrower' && (
 			<div className="ml-2 px-2 bg-blue-light-1 text-blue-medium-default rounded-xs">
 				3rd party
 			</div>
@@ -17,7 +19,7 @@ const common = (isNotAddress) => {
 	const addressArr = [
 		{
 			title: 'Property address',
-			dataIndex: ['loan_property', 'property_base', 'address', 'address1'],
+			dataIndex: ['loan_property', 'address', 'address1'],
 			key: 'address',
 			ellipsis: true,
 			sorter: true,
@@ -29,21 +31,21 @@ const common = (isNotAddress) => {
 		},
 		{
 			title: 'City',
-			dataIndex: ['loan_property', 'property_base', 'address', 'city'],
+			dataIndex: ['loan_property', 'address', 'city'],
 			key: 'city',
 			width: 120,
 			ellipsis: true,
 		},
 		{
 			title: 'State',
-			dataIndex: ['loan_property', 'property_base', 'address', 'state'],
+			dataIndex: ['loan_property', 'address', 'state'],
 			key: 'state',
 			width: 70,
 			ellipsis: true,
 		},
 		{
 			title: 'Zip code',
-			dataIndex: ['loan_property', 'property_base', 'address', 'zip_code'],
+			dataIndex: ['loan_property', 'address', 'zip_code'],
 			key: 'zip_code',
 			ellipsis: true,
 			width: 120,
@@ -51,6 +53,16 @@ const common = (isNotAddress) => {
 	];
 	return [
 		...(isNotAddress ? [] : addressArr),
+		{
+			title: 'Created time',
+			dataIndex: 'created_at',
+			key: 'created_at',
+			ellipsis: true,
+			sorter: true,
+			width: 170,
+			defaultSortOrder: 'descend',
+			render: (v) => formatTime(v) || '--',
+		},
 		{
 			title: 'Borrower',
 			dataIndex: 'applicants',
@@ -61,16 +73,16 @@ const common = (isNotAddress) => {
 				if (isNotAddress) return get3rdPartyMark(value, row);
 				return value;
 			},
-			width: isNotAddress ? 200 : 160,
+			width: isNotAddress ? 240 : 180,
 		},
 	];
 };
 
 const getOpt = (showDeleteModal, stage) => {
 	return {
-		title: '',
+		title: 'Action',
 		dataIndex: 'operation',
-		width: 50,
+		width: 280,
 		align: 'left',
 		fixed: 'right',
 		render: (_, record) => (
@@ -78,16 +90,41 @@ const getOpt = (showDeleteModal, stage) => {
 				record={record}
 				// disabled={stage !== 'Draft' && record?.source !== 'borrower'}
 				getItems={(editItem, deleteItem, detailsItem) => {
-					const arr = [];
+					const quoteDisabled = !(
+						record?.stage === 'Pending' && record?.pending_status === 'Quoting'
+					);
+					const arr = [
+						{
+							children:
+								record?.source === 'Borrower' ? (
+									<QuoteBtn
+										key="quote"
+										disabled={quoteDisabled}
+										rowData={record}
+										tooltipProps={{ placement: 'leftTop' }}
+										type="link"
+										ghost={false}
+										size="small"
+									>
+										<SendOutlined />
+										Request quote
+									</QuoteBtn>
+								) : (
+									''
+								),
+							key: 'quote',
+							disabled: quoteDisabled,
+						},
+					];
 					if (stage === 'Draft') {
 						const url =
-							record?.source === 'borrower'
+							record?.source === 'Borrower'
 								? `/loans/${record?.id}`
 								: `/loans/createZeeBeeLoan?id=${record?.id}`;
 						arr.push({ ...editItem, url });
 						arr.push(deleteItem);
 					} else {
-						if (record?.source === 'borrower') {
+						if (record?.source === 'Borrower') {
 							arr.push({ ...editItem, url: `/loans/${record?.id}` });
 							arr.push(deleteItem);
 						} else {
@@ -97,6 +134,7 @@ const getOpt = (showDeleteModal, stage) => {
 							});
 						}
 					}
+
 					return arr;
 				}}
 				onSelect={(key) => {
@@ -121,7 +159,7 @@ export const pendingColumns = (isNotAddress, successCallback, showDeleteModal, s
 			<LoanPendingStatus
 				data={record}
 				successCallback={successCallback}
-				disabled={record?.source !== 'borrower'}
+				disabled={record?.source !== 'Borrower'}
 				tooltipProps={{
 					title: 'Zeebee-connected loans are managed automatically and cannot be edited manually by users.',
 				}}
@@ -336,7 +374,7 @@ export const archivedColumns = (isNotAddress, showDeleteModal) => [
 		dataIndex: 'loan_type',
 		key: 'loan_type',
 		ellipsis: true,
-		width: 180,
+		width: isNotAddress ? null : 180,
 	},
 	{
 		title: 'Principal Balance',
@@ -344,7 +382,7 @@ export const archivedColumns = (isNotAddress, showDeleteModal) => [
 		key: 'principal_amount',
 		ellipsis: true,
 		sorter: true,
-		width: 180,
+		width: isNotAddress ? null : 180,
 		render: (v) => formatAmount(v),
 	},
 	{
@@ -352,7 +390,7 @@ export const archivedColumns = (isNotAddress, showDeleteModal) => [
 		dataIndex: 'lender_company',
 		key: 'lender_company',
 		ellipsis: true,
-		width: 180,
+		width: isNotAddress ? null : 180,
 	},
 	{
 		title: 'Rate',
@@ -360,7 +398,7 @@ export const archivedColumns = (isNotAddress, showDeleteModal) => [
 		key: 'rate',
 		ellipsis: true,
 		sorter: true,
-		width: 90,
+		width: isNotAddress ? null : 90,
 		render: (v) => (v ? `${v}%` : '--'),
 	},
 	{
@@ -369,7 +407,7 @@ export const archivedColumns = (isNotAddress, showDeleteModal) => [
 		key: 'paid_off_date',
 		ellipsis: true,
 		sorter: true,
-		width: 160,
+		width: isNotAddress ? null : 160,
 		render: (v) => v || '--',
 	},
 	getOpt(showDeleteModal),

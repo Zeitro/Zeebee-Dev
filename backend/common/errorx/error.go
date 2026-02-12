@@ -100,7 +100,7 @@ func WithStack(err error) (newErr error) {
 
 func NotFound(record string) (err error) {
 	if len(record) == 0 {
-		return New("Record Not Found")
+		return New("Record not found")
 	}
-	return Errorf("%s Not Found", record)
+	return Errorf("%s not found", record)
 }

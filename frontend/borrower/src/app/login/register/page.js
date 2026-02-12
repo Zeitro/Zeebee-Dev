@@ -3,7 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { Button, Checkbox, Col, Form, Input, Row } from 'antd';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useUserStore } from '@/store/user';
-import { validateRule, emailRegex, capitalizeFirstLetter } from '@/lib/format';
+import { validateRule, emailRegex, capitalizeFirstLetter } from '@repo/shared-methods/utils';
 import styles from '../index.module.scss';
 import ConfirmPassWord from '../components/ConfirmPassword';
 import { throttle } from 'lodash';
@@ -40,7 +40,7 @@ const Register = () => {
 			await registerAndSendEmail(values);
 			setLoading(false);
 			router.replace(`/login/sendRegisterTips?email=${newEmail}`);
-		} catch (error) {
+		} catch {
 			setLoading(false);
 		}
 	}, 1000);
@@ -65,7 +65,7 @@ const Register = () => {
 					perApprovedInfo.isPerApproved ? 'w-[500px]' : 'w-[400px]',
 					'rounded-lg bg-background !px-6 !py-6 max-h-[95%] overflow-y-auto',
 				].join(' ')}
-				name="resetPasswordForm"
+				name="registerForm"
 				size="large"
 				layout="vertical"
 				autoComplete="off"
@@ -125,6 +125,17 @@ const Register = () => {
 						</Form.Item>
 					</Col>
 				</Row>
+				<Form.Item
+					label="Organization name"
+					name="organization_name"
+					rules={[
+						{
+							required: true,
+						},
+					]}
+				>
+					<Input placeholder="Organization name" allowClear minLength={2} />
+				</Form.Item>
 				<Form.Item
 					label="Email address"
 					name="email"

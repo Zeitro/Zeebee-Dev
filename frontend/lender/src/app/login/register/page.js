@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button, Checkbox, Col, Form, Input, Row } from 'antd';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useUserStore } from '@/store/user';
-import { validateRule, emailRegex } from '@/lib/format';
+import { validateRule, emailRegex } from '@repo/shared-methods/utils';
 import styles from '../index.module.scss';
 import ConfirmPassWord from '../components/ConfirmPassword';
 import { throttle } from 'lodash';
@@ -92,6 +92,17 @@ const Register = () => {
 						</Form.Item>
 					</Col>
 				</Row>
+				<Form.Item
+					label="Organization name"
+					name="organization_name"
+					rules={[
+						{
+							required: true,
+						},
+					]}
+				>
+					<Input placeholder="Organization name" allowClear minLength={2} />
+				</Form.Item>
 				<Form.Item
 					label="Email address"
 					name="email"

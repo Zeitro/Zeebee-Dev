@@ -61,7 +61,7 @@ func (c *S3Client) GetPresignUrl(ctx context.Context, objectName string, expire 
 	suffix = strings.ToLower(suffix)
 	contentType, ok := ContentTypeMap[suffix]
 	if !ok {
-		err = errorx.Errorf("Invalid File Type:%s", suffix)
+		err = errorx.Errorf("Invalid file type:%s", suffix)
 		return nil, err
 	}
 
@@ -113,9 +113,9 @@ func (c *S3Client) UploadFile(ctx context.Context, presignedReq *v4.PresignedHTT
 		// get error response
 		content, readErr := io.ReadAll(resp.Body)
 		if readErr != nil {
-			err = errorx.Errorf("HTTP Status Code: %v", resp.Status)
+			err = errorx.Errorf("HTTP status code: %v", resp.Status)
 		} else {
-			err = errorx.Errorf("HTTP Status Code: %v, Response: %s", resp.Status, string(content))
+			err = errorx.Errorf("HTTP status code: %v, response: %s", resp.Status, string(content))
 		}
 		return
 	}

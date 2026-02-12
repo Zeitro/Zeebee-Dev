@@ -2,7 +2,7 @@
 import { useRef } from 'react';
 import type { ComponentRef } from 'react';
 import SignaturePad from 'react-signature-pad-wrapper';
-import NewModal from '../NewModal';
+import { NewModal } from '@repo/shared-methods';
 import { message } from 'antd';
 //使用 ComponentRef 和 typeof 来获取组件的实例类型
 type SignaturePadType = ComponentRef<typeof SignaturePad>;
@@ -10,6 +10,7 @@ type SignaturePadType = ComponentRef<typeof SignaturePad>;
 interface SignatureModalProps {
 	isOpen: boolean;
 	onClose: () => void;
+	// eslint-disable-next-line no-unused-vars
 	onConfirm: (signature: string) => void;
 }
 

@@ -2,6 +2,7 @@ module.exports = {
 	content: [
 		'./src/**/*.{js,ts,jsx,tsx}', // 根据你的项目结构调整
 		'./src/**/*.{css,scss}',
+		'../packages/shared-methods/src/**/*.{js,jsx,ts,tsx}'
 	],
 	theme: {
 		extend: {
@@ -15,8 +16,9 @@ module.exports = {
 					error: 'var(--base-error)',
 					disabled: 'var(--base-disabled)',
 					border: 'var(--base-border)',
-					label:'var(--base-label)',
-					active:'var(--base-active)',
+					label: 'var(--base-label)',
+					gray: 'var(--base-gray)',
+					active: 'var(--base-active)',
 				},
 				black: {
 					light: 'var(--black-light)', // 浅黑色
@@ -33,18 +35,17 @@ module.exports = {
 					light: 'var(--blue-light)',
 					medium: 'var(--blue-medium)',
 					dark: 'var(--blue-dark)',
-					'light-1':'var(--blue-light-1)',
-					'medium-default':'var(--blue-medium-default)'
+					'light-1': 'var(--blue-light-1)',
+					'medium-default': 'var(--blue-medium-default)',
 				},
-				green:{
+				green: {
 					light: 'var(--green-light)',
-					medium:'var(--green-medium)'
+					medium: 'var(--green-medium)',
 				},
-				purple:{
-					light:'var(--purple-light)',
-					medium:'var(--purple-medium)',
-				}
-				
+				purple: {
+					light: 'var(--purple-light)',
+					medium: 'var(--purple-medium)',
+				},
 			},
 			fontFamily: {
 				roboto: ['var(--font-roboto)', 'sans-serif'],
