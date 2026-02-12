@@ -3,7 +3,6 @@ package rolelogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/admin/rpc/internal/logic"
@@ -12,7 +11,8 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/data/bo"
+	"zeebee-backend/domains/zeebee/data/dto"
 )
 
 type UpdateLogic struct {
@@ -43,32 +43,24 @@ func (l *UpdateLogic) Update(in *admin.RoleUpdateRequest) (resp *admin.RoleUpdat
 		return nil, err
 	}
 
-	roleModel := &model.Role{}
-	err = copier.CopyWithOption(roleModel, in.Data, copier.Option{DeepCopy: true})
+	input, err := copierx.Trans[admin.RoleUpdateRequestData, dto.RoleUpdateRequestDto](in.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
-	roleModel.Type = constants.UserTypeAdmin
-	roleModel.OrganizationId = claim.OrganizationId
+	input.Type = constants.UserTypeAdmin
+	input.OrganizationId = claim.OrganizationId
 
-	role, err := l.baseLogic.RoleLogic.Update(l.ctx, in.Data.Id, roleModel)
+	role, err := l.baseLogic.RoleLogic.Update(l.ctx, in.Data.Id, *input)
 	if err != nil {
 		return nil, err
 	}
 
-	respData := &admin.RoleEntity{}
-	err = copier.CopyWithOption(respData, role, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
-	})
+	data, err := copierx.Trans[bo.RoleBo, admin.RoleEntity](role, copierx.TimeToRFC3339Str())
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 
 	return &admin.RoleUpdateResponse{
-		Data: respData,
+		Data: data,
 	}, nil
 }

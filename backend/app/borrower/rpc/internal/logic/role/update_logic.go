@@ -3,7 +3,6 @@ package rolelogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
@@ -12,7 +11,8 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/data/bo"
+	"zeebee-backend/domains/zeebee/data/dto"
 )
 
 type UpdateLogic struct {
@@ -38,31 +38,29 @@ func (l *UpdateLogic) Update(in *borrower.RoleUpdateRequest) (resp *borrower.Rol
 		}
 	}()
 
-	roleModel := &model.Role{}
-	err = copier.CopyWithOption(roleModel, in.Data, copier.Option{DeepCopy: true})
-	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
-	}
-	roleModel.Type = constants.UserTypeBorrower
-
-	role, err := l.baseLogic.RoleLogic.Update(l.ctx, in.Data.Id, roleModel)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	respData := &borrower.RoleEntity{}
-	err = copier.CopyWithOption(respData, role, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
-	})
+	input, err := copierx.Trans[borrower.RoleUpdateRequestData, dto.RoleUpdateRequestDto](in.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
+	}
+	input.Type = constants.UserTypeBorrower
+	input.OrganizationId = claim.OrganizationId
+
+	role, err := l.baseLogic.RoleLogic.Update(l.ctx, in.Data.Id, *input)
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := copierx.Trans[bo.RoleBo, borrower.RoleEntity](role, copierx.TimeToRFC3339Str())
+	if err != nil {
+		return nil, err
 	}
 
 	return &borrower.RoleUpdateResponse{
-		Data: respData,
+		Data: data,
 	}, nil
 }

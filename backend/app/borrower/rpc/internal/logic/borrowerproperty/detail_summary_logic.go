@@ -81,7 +81,7 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 	respData.ArchivedLoans = make([]*borrower.LoanEntity, 0)
 
 	if len(loanProperties) > 0 {
-		for _, loanProperty := range loanProperties {
+		for i, loanProperty := range loanProperties {
 			loan := loanProperty.Loan
 			if loan == nil || loan.Id == 0 {
 				continue
@@ -90,6 +90,8 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 			loanEntry := &borrower.LoanEntity{
 				Applicants: []*borrower.LoanApplicantEntity{},
 			}
+			loan.LoanProperty = loanProperties[i]
+
 			err = copier.CopyWithOption(loanEntry, loan, copier.Option{
 				CaseSensitive: true,
 				Converters: []copier.TypeConverter{

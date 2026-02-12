@@ -24,6 +24,16 @@ type RoleCreateRequestDto struct {
 	Status           constants.CommonStatus `json:"status"`
 }
 
+type RoleUpdateRequestDto struct {
+	Id               int64                  `json:"id"`
+	Name             string                 `json:"name"`
+	Type             constants.UserType     `json:"type"`
+	Description      string                 `json:"description"`
+	OrganizationId   int64                  `json:"organization_id"`
+	RoleAndResources []RoleAndResourceDto   `json:"role_and_resources"`
+	Status           constants.CommonStatus `json:"status"`
+}
+
 type RoleAndResourceDto struct {
 	Id         int64               `json:"id"`
 	RoleId     int64               `json:"role_id"`

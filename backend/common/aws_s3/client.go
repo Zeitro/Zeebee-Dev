@@ -37,6 +37,7 @@ var ContentTypeMap = map[string]string{
 	"png":  "image/png",
 	"gif":  "image/gif",
 	"pdf":  "application/pdf",
+	"txt":  "text/plain",
 	"doc":  "application/msword",
 	"docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 }

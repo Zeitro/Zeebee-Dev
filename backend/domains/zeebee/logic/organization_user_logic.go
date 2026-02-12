@@ -253,6 +253,8 @@ func (l *OrganizationUserLogic) InviteOrganizationUser(ctx context.Context, crea
 			OrganizationName: organization.Name,
 			OrganizationId:   organizationUser.OrganizationId,
 			Operator:         createDto.Operator,
+			Logo:             organization.Logo,
+			Address:          organization.Address,
 		})
 		if err != nil {
 			err = errorx.Wrap(err, "Send invite Email Error")
@@ -306,6 +308,8 @@ func (l *OrganizationUserLogic) SendInviteEmail(ctx context.Context, input dto.O
 		OrganizationId:   input.OrganizationId,
 		Operator:         input.Operator,
 		Pwd:              pwd,
+		Logo:             organization.Logo,
+		Address:          organization.Address,
 	}
 	go func() {
 		newCtx := context.WithoutCancel(ctx)
@@ -395,6 +399,7 @@ func (l *OrganizationUserLogic) UpdateOrganizationUser(ctx context.Context, reqD
 	if err != nil {
 		return nil, err
 	}
+	user := organizationUser.User
 	// saveModel := &model.OrganizationUser{}
 	err = copier.CopyWithOption(organizationUser, reqDto, copier.Option{
 		DeepCopy:      true,
@@ -452,6 +457,7 @@ func (l *OrganizationUserLogic) UpdateOrganizationUser(ctx context.Context, reqD
 	}
 	// todo update user's permissions
 
+	organizationUser.User = user
 	result = l.transToBo(organizationUser)
 
 	return result, nil
@@ -478,6 +484,8 @@ type SendInviteUserEmailInput struct {
 	LastName    string
 	TargetEmail string
 	UserType    constants.UserType
+	Logo        string
+	Address     model.Address
 	// HasPwd           bool
 	Pwd              string
 	OrganizationName string
@@ -537,6 +545,14 @@ func (l *OrganizationUserLogic) sendInviteEmail(ctx context.Context, input SendI
 		"pwd":               input.Pwd,
 		"operator":          input.Operator,
 		"organization_name": input.OrganizationName,
+		"logo":              input.Logo,
+		"address": fmt.Sprintf("%s | %s | %s, %s, %s",
+			input.OrganizationName,
+			input.Address.Address1,
+			input.Address.City,
+			input.Address.State,
+			input.Address.ZipCode,
+		),
 	}
 	content, err := email2.ParseTemplate(input.EmailConfig.TplName, data)
 	if err != nil {
@@ -664,17 +680,10 @@ func (l *OrganizationUserLogic) Delete(ctx context.Context, id int64, organizati
 
 // transToBo
 func (l *OrganizationUserLogic) transToBo(src *model.OrganizationUser) (result *bo.OrganizationUserBo) {
-	if src == nil {
+	result, err := copierx.Trans[model.OrganizationUser, bo.OrganizationUserBo](src)
+	if err != nil {
 		return nil
 	}
-	result = &bo.OrganizationUserBo{}
-	_ = copier.CopyWithOption(result, src, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
-	})
 	if src.User != nil {
 		result.Email = src.User.Email
 	}

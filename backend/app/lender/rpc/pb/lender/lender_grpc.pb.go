@@ -202,6 +202,8 @@ const (
 	User_RefreshToken_FullMethodName           = "/lender.user/RefreshToken"
 	User_ResetPassword_FullMethodName          = "/lender.user/ResetPassword"
 	User_SendResetPasswordEmail_FullMethodName = "/lender.user/SendResetPasswordEmail"
+	User_VerifyEmail_FullMethodName            = "/lender.user/VerifyEmail"
+	User_SendVerifyEmail_FullMethodName        = "/lender.user/SendVerifyEmail"
 	User_UserInfo_FullMethodName               = "/lender.user/UserInfo"
 	User_SwitchOrganization_FullMethodName     = "/lender.user/SwitchOrganization"
 )
@@ -209,15 +211,18 @@ const (
 // UserClient is the client API for User service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// user service
 type UserClient interface {
-	// user
-	Login(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserLoginResponse, error)
-	Register(ctx context.Context, in *UserRegisterRequest, opts ...grpc.CallOption) (*UserRegisterResponse, error)
-	RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
-	ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*ResetPasswordResponse, error)
+	Login(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserJwtResponse, error)
+	Register(ctx context.Context, in *UserRegisterRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*UserJwtResponse, error)
+	ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*UserJwtResponse, error)
 	SendResetPasswordEmail(ctx context.Context, in *SendResetPasswordEmailRequest, opts ...grpc.CallOption) (*SendResetPasswordEmailResponse, error)
+	VerifyEmail(ctx context.Context, in *VerifyEmailRequest, opts ...grpc.CallOption) (*UserJwtResponse, error)
+	SendVerifyEmail(ctx context.Context, in *SendVerifyEmailRequest, opts ...grpc.CallOption) (*SendVerifyEmailResponse, error)
 	UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
-	SwitchOrganization(ctx context.Context, in *SwitchOrganizationRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
+	SwitchOrganization(ctx context.Context, in *SwitchOrganizationRequest, opts ...grpc.CallOption) (*UserJwtResponse, error)
 }
 
 type userClient struct {
@@ -228,9 +233,9 @@ func NewUserClient(cc grpc.ClientConnInterface) UserClient {
 	return &userClient{cc}
 }
 
-func (c *userClient) Login(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserLoginResponse, error) {
+func (c *userClient) Login(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserJwtResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UserLoginResponse)
+	out := new(UserJwtResponse)
 	err := c.cc.Invoke(ctx, User_Login_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -238,9 +243,9 @@ func (c *userClient) Login(ctx context.Context, in *UserLoginRequest, opts ...gr
 	return out, nil
 }
 
-func (c *userClient) Register(ctx context.Context, in *UserRegisterRequest, opts ...grpc.CallOption) (*UserRegisterResponse, error) {
+func (c *userClient) Register(ctx context.Context, in *UserRegisterRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UserRegisterResponse)
+	out := new(EmptyResponse)
 	err := c.cc.Invoke(ctx, User_Register_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -248,9 +253,9 @@ func (c *userClient) Register(ctx context.Context, in *UserRegisterRequest, opts
 	return out, nil
 }
 
-func (c *userClient) RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error) {
+func (c *userClient) RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*UserJwtResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(RefreshTokenResponse)
+	out := new(UserJwtResponse)
 	err := c.cc.Invoke(ctx, User_RefreshToken_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -258,9 +263,9 @@ func (c *userClient) RefreshToken(ctx context.Context, in *RefreshTokenRequest, 
 	return out, nil
 }
 
-func (c *userClient) ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*ResetPasswordResponse, error) {
+func (c *userClient) ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*UserJwtResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ResetPasswordResponse)
+	out := new(UserJwtResponse)
 	err := c.cc.Invoke(ctx, User_ResetPassword_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -278,6 +283,26 @@ func (c *userClient) SendResetPasswordEmail(ctx context.Context, in *SendResetPa
 	return out, nil
 }
 
+func (c *userClient) VerifyEmail(ctx context.Context, in *VerifyEmailRequest, opts ...grpc.CallOption) (*UserJwtResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserJwtResponse)
+	err := c.cc.Invoke(ctx, User_VerifyEmail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userClient) SendVerifyEmail(ctx context.Context, in *SendVerifyEmailRequest, opts ...grpc.CallOption) (*SendVerifyEmailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SendVerifyEmailResponse)
+	err := c.cc.Invoke(ctx, User_SendVerifyEmail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *userClient) UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UserinfoResponse)
@@ -288,9 +313,9 @@ func (c *userClient) UserInfo(ctx context.Context, in *UserInfoRequest, opts ...
 	return out, nil
 }
 
-func (c *userClient) SwitchOrganization(ctx context.Context, in *SwitchOrganizationRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error) {
+func (c *userClient) SwitchOrganization(ctx context.Context, in *SwitchOrganizationRequest, opts ...grpc.CallOption) (*UserJwtResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(RefreshTokenResponse)
+	out := new(UserJwtResponse)
 	err := c.cc.Invoke(ctx, User_SwitchOrganization_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -301,15 +326,18 @@ func (c *userClient) SwitchOrganization(ctx context.Context, in *SwitchOrganizat
 // UserServer is the server API for User service.
 // All implementations must embed UnimplementedUserServer
 // for forward compatibility.
+//
+// user service
 type UserServer interface {
-	// user
-	Login(context.Context, *UserLoginRequest) (*UserLoginResponse, error)
-	Register(context.Context, *UserRegisterRequest) (*UserRegisterResponse, error)
-	RefreshToken(context.Context, *RefreshTokenRequest) (*RefreshTokenResponse, error)
-	ResetPassword(context.Context, *ResetPasswordRequest) (*ResetPasswordResponse, error)
+	Login(context.Context, *UserLoginRequest) (*UserJwtResponse, error)
+	Register(context.Context, *UserRegisterRequest) (*EmptyResponse, error)
+	RefreshToken(context.Context, *RefreshTokenRequest) (*UserJwtResponse, error)
+	ResetPassword(context.Context, *ResetPasswordRequest) (*UserJwtResponse, error)
 	SendResetPasswordEmail(context.Context, *SendResetPasswordEmailRequest) (*SendResetPasswordEmailResponse, error)
+	VerifyEmail(context.Context, *VerifyEmailRequest) (*UserJwtResponse, error)
+	SendVerifyEmail(context.Context, *SendVerifyEmailRequest) (*SendVerifyEmailResponse, error)
 	UserInfo(context.Context, *UserInfoRequest) (*UserinfoResponse, error)
-	SwitchOrganization(context.Context, *SwitchOrganizationRequest) (*RefreshTokenResponse, error)
+	SwitchOrganization(context.Context, *SwitchOrganizationRequest) (*UserJwtResponse, error)
 	mustEmbedUnimplementedUserServer()
 }
 
@@ -320,25 +348,31 @@ type UserServer interface {
 // pointer dereference when methods are called.
 type UnimplementedUserServer struct{}
 
-func (UnimplementedUserServer) Login(context.Context, *UserLoginRequest) (*UserLoginResponse, error) {
+func (UnimplementedUserServer) Login(context.Context, *UserLoginRequest) (*UserJwtResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
-func (UnimplementedUserServer) Register(context.Context, *UserRegisterRequest) (*UserRegisterResponse, error) {
+func (UnimplementedUserServer) Register(context.Context, *UserRegisterRequest) (*EmptyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
 }
-func (UnimplementedUserServer) RefreshToken(context.Context, *RefreshTokenRequest) (*RefreshTokenResponse, error) {
+func (UnimplementedUserServer) RefreshToken(context.Context, *RefreshTokenRequest) (*UserJwtResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RefreshToken not implemented")
 }
-func (UnimplementedUserServer) ResetPassword(context.Context, *ResetPasswordRequest) (*ResetPasswordResponse, error) {
+func (UnimplementedUserServer) ResetPassword(context.Context, *ResetPasswordRequest) (*UserJwtResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ResetPassword not implemented")
 }
 func (UnimplementedUserServer) SendResetPasswordEmail(context.Context, *SendResetPasswordEmailRequest) (*SendResetPasswordEmailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendResetPasswordEmail not implemented")
 }
+func (UnimplementedUserServer) VerifyEmail(context.Context, *VerifyEmailRequest) (*UserJwtResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method VerifyEmail not implemented")
+}
+func (UnimplementedUserServer) SendVerifyEmail(context.Context, *SendVerifyEmailRequest) (*SendVerifyEmailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendVerifyEmail not implemented")
+}
 func (UnimplementedUserServer) UserInfo(context.Context, *UserInfoRequest) (*UserinfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserInfo not implemented")
 }
-func (UnimplementedUserServer) SwitchOrganization(context.Context, *SwitchOrganizationRequest) (*RefreshTokenResponse, error) {
+func (UnimplementedUserServer) SwitchOrganization(context.Context, *SwitchOrganizationRequest) (*UserJwtResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SwitchOrganization not implemented")
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
@@ -452,6 +486,42 @@ func _User_SendResetPasswordEmail_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _User_VerifyEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VerifyEmailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).VerifyEmail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_VerifyEmail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).VerifyEmail(ctx, req.(*VerifyEmailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _User_SendVerifyEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendVerifyEmailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).SendVerifyEmail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_SendVerifyEmail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).SendVerifyEmail(ctx, req.(*SendVerifyEmailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _User_UserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UserInfoRequest)
 	if err := dec(in); err != nil {
@@ -514,6 +584,14 @@ var User_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SendResetPasswordEmail",
 			Handler:    _User_SendResetPasswordEmail_Handler,
+		},
+		{
+			MethodName: "VerifyEmail",
+			Handler:    _User_VerifyEmail_Handler,
+		},
+		{
+			MethodName: "SendVerifyEmail",
+			Handler:    _User_SendVerifyEmail_Handler,
 		},
 		{
 			MethodName: "UserInfo",
@@ -1386,6 +1464,1060 @@ var Storage_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreatePresignedUrl",
 			Handler:    _Storage_CreatePresignedUrl_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "app/lender/rpc/pb/lender.proto",
+}
+
+const (
+	Resource_ResourceTree_FullMethodName = "/lender.resource/ResourceTree"
+)
+
+// ResourceClient is the client API for Resource service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type ResourceClient interface {
+	ResourceTree(ctx context.Context, in *ResourceTreeRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error)
+}
+
+type resourceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewResourceClient(cc grpc.ClientConnInterface) ResourceClient {
+	return &resourceClient{cc}
+}
+
+func (c *resourceClient) ResourceTree(ctx context.Context, in *ResourceTreeRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ResourceTreeResponse)
+	err := c.cc.Invoke(ctx, Resource_ResourceTree_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// ResourceServer is the server API for Resource service.
+// All implementations must embed UnimplementedResourceServer
+// for forward compatibility.
+type ResourceServer interface {
+	ResourceTree(context.Context, *ResourceTreeRequest) (*ResourceTreeResponse, error)
+	mustEmbedUnimplementedResourceServer()
+}
+
+// UnimplementedResourceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedResourceServer struct{}
+
+func (UnimplementedResourceServer) ResourceTree(context.Context, *ResourceTreeRequest) (*ResourceTreeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResourceTree not implemented")
+}
+func (UnimplementedResourceServer) mustEmbedUnimplementedResourceServer() {}
+func (UnimplementedResourceServer) testEmbeddedByValue()                  {}
+
+// UnsafeResourceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ResourceServer will
+// result in compilation errors.
+type UnsafeResourceServer interface {
+	mustEmbedUnimplementedResourceServer()
+}
+
+func RegisterResourceServer(s grpc.ServiceRegistrar, srv ResourceServer) {
+	// If the following call pancis, it indicates UnimplementedResourceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&Resource_ServiceDesc, srv)
+}
+
+func _Resource_ResourceTree_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResourceTreeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ResourceServer).ResourceTree(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Resource_ResourceTree_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ResourceServer).ResourceTree(ctx, req.(*ResourceTreeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Resource_ServiceDesc is the grpc.ServiceDesc for Resource service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Resource_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "lender.resource",
+	HandlerType: (*ResourceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ResourceTree",
+			Handler:    _Resource_ResourceTree_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "app/lender/rpc/pb/lender.proto",
+}
+
+const (
+	Role_Page_FullMethodName         = "/lender.role/Page"
+	Role_Create_FullMethodName       = "/lender.role/Create"
+	Role_Update_FullMethodName       = "/lender.role/Update"
+	Role_Delete_FullMethodName       = "/lender.role/Delete"
+	Role_Detail_FullMethodName       = "/lender.role/Detail"
+	Role_UpdateStatus_FullMethodName = "/lender.role/UpdateStatus"
+	Role_All_FullMethodName          = "/lender.role/All"
+)
+
+// RoleClient is the client API for Role service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type RoleClient interface {
+	Page(ctx context.Context, in *RolePageRequest, opts ...grpc.CallOption) (*RolePageResponse, error)
+	Create(ctx context.Context, in *RoleCreateRequest, opts ...grpc.CallOption) (*RoleCreateResponse, error)
+	Update(ctx context.Context, in *RoleUpdateRequest, opts ...grpc.CallOption) (*RoleUpdateResponse, error)
+	Delete(ctx context.Context, in *RoleDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	Detail(ctx context.Context, in *RoleDetailRequest, opts ...grpc.CallOption) (*RoleDetailResponse, error)
+	UpdateStatus(ctx context.Context, in *RoleUpdateStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	All(ctx context.Context, in *RoleAllRequest, opts ...grpc.CallOption) (*RoleAllResponse, error)
+}
+
+type roleClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewRoleClient(cc grpc.ClientConnInterface) RoleClient {
+	return &roleClient{cc}
+}
+
+func (c *roleClient) Page(ctx context.Context, in *RolePageRequest, opts ...grpc.CallOption) (*RolePageResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RolePageResponse)
+	err := c.cc.Invoke(ctx, Role_Page_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *roleClient) Create(ctx context.Context, in *RoleCreateRequest, opts ...grpc.CallOption) (*RoleCreateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RoleCreateResponse)
+	err := c.cc.Invoke(ctx, Role_Create_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *roleClient) Update(ctx context.Context, in *RoleUpdateRequest, opts ...grpc.CallOption) (*RoleUpdateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RoleUpdateResponse)
+	err := c.cc.Invoke(ctx, Role_Update_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *roleClient) Delete(ctx context.Context, in *RoleDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, Role_Delete_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *roleClient) Detail(ctx context.Context, in *RoleDetailRequest, opts ...grpc.CallOption) (*RoleDetailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RoleDetailResponse)
+	err := c.cc.Invoke(ctx, Role_Detail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *roleClient) UpdateStatus(ctx context.Context, in *RoleUpdateStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, Role_UpdateStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *roleClient) All(ctx context.Context, in *RoleAllRequest, opts ...grpc.CallOption) (*RoleAllResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RoleAllResponse)
+	err := c.cc.Invoke(ctx, Role_All_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// RoleServer is the server API for Role service.
+// All implementations must embed UnimplementedRoleServer
+// for forward compatibility.
+type RoleServer interface {
+	Page(context.Context, *RolePageRequest) (*RolePageResponse, error)
+	Create(context.Context, *RoleCreateRequest) (*RoleCreateResponse, error)
+	Update(context.Context, *RoleUpdateRequest) (*RoleUpdateResponse, error)
+	Delete(context.Context, *RoleDeleteRequest) (*EmptyResponse, error)
+	Detail(context.Context, *RoleDetailRequest) (*RoleDetailResponse, error)
+	UpdateStatus(context.Context, *RoleUpdateStatusRequest) (*EmptyResponse, error)
+	All(context.Context, *RoleAllRequest) (*RoleAllResponse, error)
+	mustEmbedUnimplementedRoleServer()
+}
+
+// UnimplementedRoleServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedRoleServer struct{}
+
+func (UnimplementedRoleServer) Page(context.Context, *RolePageRequest) (*RolePageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Page not implemented")
+}
+func (UnimplementedRoleServer) Create(context.Context, *RoleCreateRequest) (*RoleCreateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedRoleServer) Update(context.Context, *RoleUpdateRequest) (*RoleUpdateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+}
+func (UnimplementedRoleServer) Delete(context.Context, *RoleDeleteRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedRoleServer) Detail(context.Context, *RoleDetailRequest) (*RoleDetailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Detail not implemented")
+}
+func (UnimplementedRoleServer) UpdateStatus(context.Context, *RoleUpdateStatusRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateStatus not implemented")
+}
+func (UnimplementedRoleServer) All(context.Context, *RoleAllRequest) (*RoleAllResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method All not implemented")
+}
+func (UnimplementedRoleServer) mustEmbedUnimplementedRoleServer() {}
+func (UnimplementedRoleServer) testEmbeddedByValue()              {}
+
+// UnsafeRoleServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to RoleServer will
+// result in compilation errors.
+type UnsafeRoleServer interface {
+	mustEmbedUnimplementedRoleServer()
+}
+
+func RegisterRoleServer(s grpc.ServiceRegistrar, srv RoleServer) {
+	// If the following call pancis, it indicates UnimplementedRoleServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&Role_ServiceDesc, srv)
+}
+
+func _Role_Page_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RolePageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoleServer).Page(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Role_Page_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoleServer).Page(ctx, req.(*RolePageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Role_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RoleCreateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoleServer).Create(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Role_Create_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoleServer).Create(ctx, req.(*RoleCreateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Role_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RoleUpdateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoleServer).Update(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Role_Update_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoleServer).Update(ctx, req.(*RoleUpdateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Role_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RoleDeleteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoleServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Role_Delete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoleServer).Delete(ctx, req.(*RoleDeleteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Role_Detail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RoleDetailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoleServer).Detail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Role_Detail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoleServer).Detail(ctx, req.(*RoleDetailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Role_UpdateStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RoleUpdateStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoleServer).UpdateStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Role_UpdateStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoleServer).UpdateStatus(ctx, req.(*RoleUpdateStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Role_All_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RoleAllRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoleServer).All(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Role_All_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoleServer).All(ctx, req.(*RoleAllRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Role_ServiceDesc is the grpc.ServiceDesc for Role service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Role_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "lender.role",
+	HandlerType: (*RoleServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Page",
+			Handler:    _Role_Page_Handler,
+		},
+		{
+			MethodName: "Create",
+			Handler:    _Role_Create_Handler,
+		},
+		{
+			MethodName: "Update",
+			Handler:    _Role_Update_Handler,
+		},
+		{
+			MethodName: "Delete",
+			Handler:    _Role_Delete_Handler,
+		},
+		{
+			MethodName: "Detail",
+			Handler:    _Role_Detail_Handler,
+		},
+		{
+			MethodName: "UpdateStatus",
+			Handler:    _Role_UpdateStatus_Handler,
+		},
+		{
+			MethodName: "All",
+			Handler:    _Role_All_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "app/lender/rpc/pb/lender.proto",
+}
+
+const (
+	OrganizationUser_Page_FullMethodName                = "/lender.OrganizationUser/Page"
+	OrganizationUser_Create_FullMethodName              = "/lender.OrganizationUser/Create"
+	OrganizationUser_Update_FullMethodName              = "/lender.OrganizationUser/Update"
+	OrganizationUser_Delete_FullMethodName              = "/lender.OrganizationUser/Delete"
+	OrganizationUser_Detail_FullMethodName              = "/lender.OrganizationUser/Detail"
+	OrganizationUser_SwitchStatus_FullMethodName        = "/lender.OrganizationUser/SwitchStatus"
+	OrganizationUser_All_FullMethodName                 = "/lender.OrganizationUser/All"
+	OrganizationUser_SendInvitationEmail_FullMethodName = "/lender.OrganizationUser/SendInvitationEmail"
+	OrganizationUser_AcceptInvitation_FullMethodName    = "/lender.OrganizationUser/AcceptInvitation"
+	OrganizationUser_AssignRoles_FullMethodName         = "/lender.OrganizationUser/AssignRoles"
+)
+
+// OrganizationUserClient is the client API for OrganizationUser service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type OrganizationUserClient interface {
+	Page(ctx context.Context, in *OrganizationUserPageRequest, opts ...grpc.CallOption) (*OrganizationUserPageResponse, error)
+	Create(ctx context.Context, in *OrganizationUserCreateRequest, opts ...grpc.CallOption) (*OrganizationUserCreateResponse, error)
+	Update(ctx context.Context, in *OrganizationUserUpdateRequest, opts ...grpc.CallOption) (*OrganizationUserUpdateResponse, error)
+	Delete(ctx context.Context, in *OrganizationUserDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	Detail(ctx context.Context, in *OrganizationUserDetailRequest, opts ...grpc.CallOption) (*OrganizationUserDetailResponse, error)
+	SwitchStatus(ctx context.Context, in *OrganizationUserUpdateStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	All(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationUserAllResponse, error)
+	SendInvitationEmail(ctx context.Context, in *OrganizationUserSendInvitationEmailRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	AcceptInvitation(ctx context.Context, in *OrganizationUserAcceptInvitationRequest, opts ...grpc.CallOption) (*UserJwtResponse, error)
+	AssignRoles(ctx context.Context, in *OrganizationUserAssignRolesRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+}
+
+type organizationUserClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewOrganizationUserClient(cc grpc.ClientConnInterface) OrganizationUserClient {
+	return &organizationUserClient{cc}
+}
+
+func (c *organizationUserClient) Page(ctx context.Context, in *OrganizationUserPageRequest, opts ...grpc.CallOption) (*OrganizationUserPageResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OrganizationUserPageResponse)
+	err := c.cc.Invoke(ctx, OrganizationUser_Page_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationUserClient) Create(ctx context.Context, in *OrganizationUserCreateRequest, opts ...grpc.CallOption) (*OrganizationUserCreateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OrganizationUserCreateResponse)
+	err := c.cc.Invoke(ctx, OrganizationUser_Create_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationUserClient) Update(ctx context.Context, in *OrganizationUserUpdateRequest, opts ...grpc.CallOption) (*OrganizationUserUpdateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OrganizationUserUpdateResponse)
+	err := c.cc.Invoke(ctx, OrganizationUser_Update_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationUserClient) Delete(ctx context.Context, in *OrganizationUserDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, OrganizationUser_Delete_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationUserClient) Detail(ctx context.Context, in *OrganizationUserDetailRequest, opts ...grpc.CallOption) (*OrganizationUserDetailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OrganizationUserDetailResponse)
+	err := c.cc.Invoke(ctx, OrganizationUser_Detail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationUserClient) SwitchStatus(ctx context.Context, in *OrganizationUserUpdateStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, OrganizationUser_SwitchStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationUserClient) All(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationUserAllResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OrganizationUserAllResponse)
+	err := c.cc.Invoke(ctx, OrganizationUser_All_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationUserClient) SendInvitationEmail(ctx context.Context, in *OrganizationUserSendInvitationEmailRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, OrganizationUser_SendInvitationEmail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationUserClient) AcceptInvitation(ctx context.Context, in *OrganizationUserAcceptInvitationRequest, opts ...grpc.CallOption) (*UserJwtResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserJwtResponse)
+	err := c.cc.Invoke(ctx, OrganizationUser_AcceptInvitation_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationUserClient) AssignRoles(ctx context.Context, in *OrganizationUserAssignRolesRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, OrganizationUser_AssignRoles_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// OrganizationUserServer is the server API for OrganizationUser service.
+// All implementations must embed UnimplementedOrganizationUserServer
+// for forward compatibility.
+type OrganizationUserServer interface {
+	Page(context.Context, *OrganizationUserPageRequest) (*OrganizationUserPageResponse, error)
+	Create(context.Context, *OrganizationUserCreateRequest) (*OrganizationUserCreateResponse, error)
+	Update(context.Context, *OrganizationUserUpdateRequest) (*OrganizationUserUpdateResponse, error)
+	Delete(context.Context, *OrganizationUserDeleteRequest) (*EmptyResponse, error)
+	Detail(context.Context, *OrganizationUserDetailRequest) (*OrganizationUserDetailResponse, error)
+	SwitchStatus(context.Context, *OrganizationUserUpdateStatusRequest) (*EmptyResponse, error)
+	All(context.Context, *EmptyRequest) (*OrganizationUserAllResponse, error)
+	SendInvitationEmail(context.Context, *OrganizationUserSendInvitationEmailRequest) (*EmptyResponse, error)
+	AcceptInvitation(context.Context, *OrganizationUserAcceptInvitationRequest) (*UserJwtResponse, error)
+	AssignRoles(context.Context, *OrganizationUserAssignRolesRequest) (*EmptyResponse, error)
+	mustEmbedUnimplementedOrganizationUserServer()
+}
+
+// UnimplementedOrganizationUserServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedOrganizationUserServer struct{}
+
+func (UnimplementedOrganizationUserServer) Page(context.Context, *OrganizationUserPageRequest) (*OrganizationUserPageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Page not implemented")
+}
+func (UnimplementedOrganizationUserServer) Create(context.Context, *OrganizationUserCreateRequest) (*OrganizationUserCreateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedOrganizationUserServer) Update(context.Context, *OrganizationUserUpdateRequest) (*OrganizationUserUpdateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+}
+func (UnimplementedOrganizationUserServer) Delete(context.Context, *OrganizationUserDeleteRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedOrganizationUserServer) Detail(context.Context, *OrganizationUserDetailRequest) (*OrganizationUserDetailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Detail not implemented")
+}
+func (UnimplementedOrganizationUserServer) SwitchStatus(context.Context, *OrganizationUserUpdateStatusRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SwitchStatus not implemented")
+}
+func (UnimplementedOrganizationUserServer) All(context.Context, *EmptyRequest) (*OrganizationUserAllResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method All not implemented")
+}
+func (UnimplementedOrganizationUserServer) SendInvitationEmail(context.Context, *OrganizationUserSendInvitationEmailRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendInvitationEmail not implemented")
+}
+func (UnimplementedOrganizationUserServer) AcceptInvitation(context.Context, *OrganizationUserAcceptInvitationRequest) (*UserJwtResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AcceptInvitation not implemented")
+}
+func (UnimplementedOrganizationUserServer) AssignRoles(context.Context, *OrganizationUserAssignRolesRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AssignRoles not implemented")
+}
+func (UnimplementedOrganizationUserServer) mustEmbedUnimplementedOrganizationUserServer() {}
+func (UnimplementedOrganizationUserServer) testEmbeddedByValue()                          {}
+
+// UnsafeOrganizationUserServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to OrganizationUserServer will
+// result in compilation errors.
+type UnsafeOrganizationUserServer interface {
+	mustEmbedUnimplementedOrganizationUserServer()
+}
+
+func RegisterOrganizationUserServer(s grpc.ServiceRegistrar, srv OrganizationUserServer) {
+	// If the following call pancis, it indicates UnimplementedOrganizationUserServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&OrganizationUser_ServiceDesc, srv)
+}
+
+func _OrganizationUser_Page_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationUserPageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationUserServer).Page(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationUser_Page_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationUserServer).Page(ctx, req.(*OrganizationUserPageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationUser_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationUserCreateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationUserServer).Create(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationUser_Create_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationUserServer).Create(ctx, req.(*OrganizationUserCreateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationUser_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationUserUpdateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationUserServer).Update(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationUser_Update_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationUserServer).Update(ctx, req.(*OrganizationUserUpdateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationUser_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationUserDeleteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationUserServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationUser_Delete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationUserServer).Delete(ctx, req.(*OrganizationUserDeleteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationUser_Detail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationUserDetailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationUserServer).Detail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationUser_Detail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationUserServer).Detail(ctx, req.(*OrganizationUserDetailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationUser_SwitchStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationUserUpdateStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationUserServer).SwitchStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationUser_SwitchStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationUserServer).SwitchStatus(ctx, req.(*OrganizationUserUpdateStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationUser_All_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationUserServer).All(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationUser_All_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationUserServer).All(ctx, req.(*EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationUser_SendInvitationEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationUserSendInvitationEmailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationUserServer).SendInvitationEmail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationUser_SendInvitationEmail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationUserServer).SendInvitationEmail(ctx, req.(*OrganizationUserSendInvitationEmailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationUser_AcceptInvitation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationUserAcceptInvitationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationUserServer).AcceptInvitation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationUser_AcceptInvitation_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationUserServer).AcceptInvitation(ctx, req.(*OrganizationUserAcceptInvitationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationUser_AssignRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationUserAssignRolesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationUserServer).AssignRoles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationUser_AssignRoles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationUserServer).AssignRoles(ctx, req.(*OrganizationUserAssignRolesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// OrganizationUser_ServiceDesc is the grpc.ServiceDesc for OrganizationUser service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var OrganizationUser_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "lender.OrganizationUser",
+	HandlerType: (*OrganizationUserServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Page",
+			Handler:    _OrganizationUser_Page_Handler,
+		},
+		{
+			MethodName: "Create",
+			Handler:    _OrganizationUser_Create_Handler,
+		},
+		{
+			MethodName: "Update",
+			Handler:    _OrganizationUser_Update_Handler,
+		},
+		{
+			MethodName: "Delete",
+			Handler:    _OrganizationUser_Delete_Handler,
+		},
+		{
+			MethodName: "Detail",
+			Handler:    _OrganizationUser_Detail_Handler,
+		},
+		{
+			MethodName: "SwitchStatus",
+			Handler:    _OrganizationUser_SwitchStatus_Handler,
+		},
+		{
+			MethodName: "All",
+			Handler:    _OrganizationUser_All_Handler,
+		},
+		{
+			MethodName: "SendInvitationEmail",
+			Handler:    _OrganizationUser_SendInvitationEmail_Handler,
+		},
+		{
+			MethodName: "AcceptInvitation",
+			Handler:    _OrganizationUser_AcceptInvitation_Handler,
+		},
+		{
+			MethodName: "AssignRoles",
+			Handler:    _OrganizationUser_AssignRoles_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "app/lender/rpc/pb/lender.proto",
+}
+
+const (
+	Organization_Profile_FullMethodName       = "/lender.Organization/Profile"
+	Organization_UpdateProfile_FullMethodName = "/lender.Organization/UpdateProfile"
+	Organization_Create_FullMethodName        = "/lender.Organization/Create"
+)
+
+// OrganizationClient is the client API for Organization service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type OrganizationClient interface {
+	Profile(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error)
+	UpdateProfile(ctx context.Context, in *OrganizationUpdateProfileRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error)
+	Create(ctx context.Context, in *OrganizationCreateRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error)
+}
+
+type organizationClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewOrganizationClient(cc grpc.ClientConnInterface) OrganizationClient {
+	return &organizationClient{cc}
+}
+
+func (c *organizationClient) Profile(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OrganizationDetailResponse)
+	err := c.cc.Invoke(ctx, Organization_Profile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationClient) UpdateProfile(ctx context.Context, in *OrganizationUpdateProfileRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OrganizationDetailResponse)
+	err := c.cc.Invoke(ctx, Organization_UpdateProfile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationClient) Create(ctx context.Context, in *OrganizationCreateRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OrganizationDetailResponse)
+	err := c.cc.Invoke(ctx, Organization_Create_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// OrganizationServer is the server API for Organization service.
+// All implementations must embed UnimplementedOrganizationServer
+// for forward compatibility.
+type OrganizationServer interface {
+	Profile(context.Context, *EmptyRequest) (*OrganizationDetailResponse, error)
+	UpdateProfile(context.Context, *OrganizationUpdateProfileRequest) (*OrganizationDetailResponse, error)
+	Create(context.Context, *OrganizationCreateRequest) (*OrganizationDetailResponse, error)
+	mustEmbedUnimplementedOrganizationServer()
+}
+
+// UnimplementedOrganizationServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedOrganizationServer struct{}
+
+func (UnimplementedOrganizationServer) Profile(context.Context, *EmptyRequest) (*OrganizationDetailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Profile not implemented")
+}
+func (UnimplementedOrganizationServer) UpdateProfile(context.Context, *OrganizationUpdateProfileRequest) (*OrganizationDetailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateProfile not implemented")
+}
+func (UnimplementedOrganizationServer) Create(context.Context, *OrganizationCreateRequest) (*OrganizationDetailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedOrganizationServer) mustEmbedUnimplementedOrganizationServer() {}
+func (UnimplementedOrganizationServer) testEmbeddedByValue()                      {}
+
+// UnsafeOrganizationServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to OrganizationServer will
+// result in compilation errors.
+type UnsafeOrganizationServer interface {
+	mustEmbedUnimplementedOrganizationServer()
+}
+
+func RegisterOrganizationServer(s grpc.ServiceRegistrar, srv OrganizationServer) {
+	// If the following call pancis, it indicates UnimplementedOrganizationServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&Organization_ServiceDesc, srv)
+}
+
+func _Organization_Profile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServer).Profile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Organization_Profile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServer).Profile(ctx, req.(*EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Organization_UpdateProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationUpdateProfileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServer).UpdateProfile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Organization_UpdateProfile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServer).UpdateProfile(ctx, req.(*OrganizationUpdateProfileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Organization_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationCreateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServer).Create(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Organization_Create_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServer).Create(ctx, req.(*OrganizationCreateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Organization_ServiceDesc is the grpc.ServiceDesc for Organization service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Organization_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "lender.Organization",
+	HandlerType: (*OrganizationServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Profile",
+			Handler:    _Organization_Profile_Handler,
+		},
+		{
+			MethodName: "UpdateProfile",
+			Handler:    _Organization_UpdateProfile_Handler,
+		},
+		{
+			MethodName: "Create",
+			Handler:    _Organization_Create_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

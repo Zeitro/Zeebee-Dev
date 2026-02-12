@@ -17,11 +17,8 @@ type User struct {
 	Phone                 string               `json:"phone" gorm:"column:phone;varchar(20);not null;default:''"`
 	DefaultOrganizationId int64                `json:"default_organization_id" gorm:"column:default_organization_id;default:0"`
 	// relationships
-	Organizations     []*Organization     `json:"borrower_organizations" gorm:"many2many:organization_users;joinForeignKey:user_id;joinReferences:organization_id;"`
+	Organizations     []*Organization     `json:"organizations" gorm:"many2many:organization_users;joinForeignKey:user_id;joinReferences:organization_id;"`
 	OrganizationUsers []*OrganizationUser `json:"organization_users" gorm:"foreignKey:UserId;references:Id"`
-	// Roles             []*Role             `json:"roles" gorm:"many2many:user_and_roles;joinForeignKey:user_id;joinReferences:role_id;"`
-	// Borrower       *Borrower       `json:"borrower" gorm:"foreignKey:UserId;references:Id"`
-	// LenderEmployee *LenderEmployee `json:"lender_employee" gorm:"foreignKey:UserId;references:Id"`
 }
 
 func (m User) TableName() string {

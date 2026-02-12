@@ -61,9 +61,10 @@ func (repo *BorrowerPropertyRepo) GetOrCreateBorrowerPropertyWithTxForBorrower(c
 	}
 	if result == nil || result.Id == 0 {
 		data := &model.BorrowerProperty{
-			CreatorId:   creatorId,
-			CreatorName: creatorName,
-			Address:     address,
+			CreatorId:      creatorId,
+			CreatorName:    creatorName,
+			Address:        address,
+			OrganizationId: organizationId,
 		}
 		err = tx.WithContext(ctx).Omit(clause.Associations).Create(data).Error
 		if err != nil {

@@ -451,13 +451,13 @@ type LoanPreApprovalRequestLoan struct {
 	EstPropertyValueAmount float64 `json:"est_property_value_amount" validate:"required,gt=0"`
 	Arv                    float64 `json:"arv,optional" validate:"required,gt=0"`
 	TotalAmount            float64 `json:"total_amount,optional" validate:"required,gt=0"`
-	PrincipalAmount        float64 `json:"principal_amount,optional" validate:"required_if=LoanPurpose 'Rate-term refi'|required_if=LoanPurpose 'Cash-out refi'"`
-	PurchaseDate           string  `json:"purchase_date,optional" validate:"required_if=LoanPurpose 'Rate-term refi'|required_if=LoanPurpose 'Cash-out refi',omitempty,datetime=01/02/2006"`
+	PrincipalAmount        float64 `json:"principal_amount,optional" validate:"required_if=LoanPurpose 'Rate-term refi',required_if=LoanPurpose 'Cash-out refi'"`
+	PurchaseDate           string  `json:"purchase_date,optional" validate:"required_if=LoanPurpose 'Rate-term refi',required_if=LoanPurpose 'Cash-out refi',omitempty,datetime=01/02/2006"`
 	PurchaseAmount         float64 `json:"purchase_amount" validate:"required,gt=0"`
-	CostSpentToDateAmount  float64 `json:"cost_spent_to_date_amount,optional" validate:"required_if=LoanPurpose 'Rate-term refi'|required_if=LoanPurpose 'Cash-out refi',gte=0"`
+	CostSpentToDateAmount  float64 `json:"cost_spent_to_date_amount,optional" validate:"required_if=LoanPurpose 'Rate-term refi',required_if=LoanPurpose 'Cash-out refi',gte=0"`
 	BudgetAmount           float64 `json:"budget_amount,optional" validate:"required_if=LoanType Rehab,gte=0"`
-	InitialAmount          float64 `json:"initial_amount,optional" validate:"required_if=LoanType Rehab|required_if=LoanType 'Ground up construction',gte=0"`
-	HoldbackAmount         float64 `json:"holdback_amount,optional" validate:"required_if=LoanType Rehab|required_if=LoanType 'Ground up construction',gte=0"`
+	InitialAmount          float64 `json:"initial_amount,optional" validate:"required_if=LoanType Rehab,required_if=LoanType 'Ground up construction',gte=0"`
+	HoldbackAmount         float64 `json:"holdback_amount,optional" validate:"required_if=LoanType Rehab,required_if=LoanType 'Ground up construction',gte=0"`
 	InterestReserveMonths  int32   `json:"interest_reserve_months,optional" validate:"gte=0"`
 	LoanPurpose            string  `json:"loan_purpose" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
 	LoanType               string  `json:"loan_type" validate:"required,oneof=Bridge Rehab 'Ground up construction'"`
@@ -628,6 +628,13 @@ type OrganizationInfoResponse struct {
 	Data OrganizationEntity `json:"data"`
 }
 
+type OrganizationLenderMetadataEntity struct {
+	LoanAmountRange RangeFloat64 `json:"loan_amount_range,optional"`
+	LoanTermRange   RangeInt     `json:"loan_term_range,optional"`
+	LoanTateRange   RangeFloat64 `json:"loan_tate_range,optional"`
+	LoanPointRange  RangeFloat64 `json:"loan_point_range,optional"`
+}
+
 type OrganizationLenderPageFilter struct {
 	Keyword string `json:"keyword,optional"`
 }
@@ -635,6 +642,10 @@ type OrganizationLenderPageFilter struct {
 type OrganizationLenderPageSorter struct {
 	Column string `json:"column,optional"`
 	Sort   string `json:"sort,optional"`
+}
+
+type OrganizationMetadataEntity struct {
+	Lender *OrganizationLenderMetadataEntity `json:"lender,omitempty"`
 }
 
 type OrganizationOptionEntity struct {
@@ -735,6 +746,16 @@ type PropertyPageFilter struct {
 type PropertyPageSorter struct {
 	Column string `json:"column,optional"`
 	Sort   string `json:"sort,optional"`
+}
+
+type RangeFloat64 struct {
+	Min float64 `json:"min"`
+	Max float64 `json:"max"`
+}
+
+type RangeInt struct {
+	Min int `json:"min"`
+	Max int `json:"max"`
 }
 
 type ResourceEntity struct {
@@ -877,4 +898,27 @@ type UserLoginResponse struct {
 	AccessTokenExpire  int64  `json:"access_token_expire"`
 	RefreshToken       string `json:"refresh_token"`
 	RefreshTokenExpire int64  `json:"refresh_token_expire"`
+}
+
+type ZeitroPropertyEntity struct {
+	FullAddress     string `json:"full_address"`
+	State           string `json:"state"`
+	County          string `json:"county"`
+	City            string `json:"city"`
+	ZipCode         string `json:"zip_code"`
+	PropertyType    string `json:"property_type"`
+	Price           string `json:"price"`
+	IncomeIndicator string `json:"income_indicator,optional"`
+	MinorityPercent string `json:"minority_percent,optional"`
+	TotalPopulation string `json:"total_population,optional"`
+	Hispanic        string `json:"hispanic,optional"`
+	Black           string `json:"black,optional"`
+	Asian           string `json:"asian,optional"`
+	Pacific         string `json:"pacific,optional"`
+	MsaCode         string `json:"msa_code,optional"`
+	DaysOnMarket    string `json:"days_on_market,optional"`
+	AgentName       string `json:"agent_name,optional"`
+	AgentPhone      string `json:"agent_phone,optional"`
+	AgentEmail      string `json:"agent_email,optional"`
+	Distance        string `json:"distance,optional"`
 }

@@ -3,7 +3,6 @@ package userlogic
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/duke-git/lancet/v2/random"
 
@@ -13,9 +12,9 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	email2 "zeebee-backend/common/email"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/limiter"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/limiter"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -48,11 +47,7 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *lender.SendRese
 
 	// rate limit
 	key := stringx.Format(constants.ResetPwdEmail, constants.UserTypeLender, email)
-	limitOpt := limiter.WithRedisLimit(
-		global.Config.LimiterConf.SendResetPwdEmail.Rate,
-		time.Second*time.Duration(global.Config.LimiterConf.SendResetPwdEmail.Period),
-	)
-	ok, err := global.SendResetPasswordEmailLimiter.Limit(l.ctx, key, limitOpt)
+	ok, err := global.LimiterMgr.Limit(l.ctx, limiter.StrategySendResetPwdEmail, key)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
@@ -61,7 +56,7 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *lender.SendRese
 	}
 
 	// get user
-	user, err := l.svcCtx.UserRepo.GetLenderUserByEmail(l.ctx, email)
+	user, err := l.svcCtx.UserRepo.GetUserByEmail(l.ctx, email, constants.UserTypeLender)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}

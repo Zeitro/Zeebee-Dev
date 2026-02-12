@@ -17,10 +17,10 @@ import (
 	"zeebee-backend/domains/zeebee/repo"
 )
 
-type Role struct {
-	model.Role
-	Resources []*ResourceWithPivot
-}
+// type Role struct {
+// 	model.Role
+// 	Resources []*ResourceWithPivot
+// }
 
 type RoleLogic struct {
 	repos *repo.AllRepos
@@ -109,28 +109,31 @@ func (l *RoleLogic) Create(ctx context.Context, input dto.RoleCreateRequestDto) 
 		return nil, err
 	}
 
-	result = l.transToBo(role)
+	result, err = copierx.Trans[model.Role, bo.RoleBo](role)
 
-	return result, nil
+	return result, err
 }
 
 // Update updates a role
-func (l *RoleLogic) Update(ctx context.Context, id int64, data *model.Role) (role *model.Role, err error) {
-	if err := l.checkRoleName(data.Name); err != nil {
+func (l *RoleLogic) Update(ctx context.Context, id int64, input dto.RoleUpdateRequestDto) (result *bo.RoleBo, err error) {
+	if err := l.checkRoleName(input.Name); err != nil {
 		return nil, err
 	}
 	// First get the existing record
-	result, err := l.repos.RoleRepo.GetRole(ctx, id, data.OrganizationId, data.Type)
+	roleModel, err := l.repos.RoleRepo.GetRole(ctx, id, input.OrganizationId, input.Type)
 	if err != nil {
 		return nil, err
 	}
-	err = copier.CopyWithOption(result, data, copier.Option{DeepCopy: true})
+
+	roleModel, err = copierx.Trans[dto.RoleUpdateRequestDto, model.Role](&input)
+
+	// err = copier.CopyWithOption(result, data, copier.Option{DeepCopy: true})
 	if err != nil {
 		return nil, err
 	}
 
 	// check existed
-	isExisted, err := l.repos.RoleRepo.IsExisted(ctx, result)
+	isExisted, err := l.repos.RoleRepo.IsExisted(ctx, roleModel)
 	if err != nil {
 		return nil, err
 	}
@@ -138,35 +141,35 @@ func (l *RoleLogic) Update(ctx context.Context, id int64, data *model.Role) (rol
 		return nil, errorx.New("Role Already Exists")
 	}
 
-	resourceIds := slice.Map[*model.RoleAndResource, int64](data.RoleAndResources, func(i int, item *model.RoleAndResource) int64 {
+	resourceIds := slice.Map[*model.RoleAndResource, int64](roleModel.RoleAndResources, func(i int, item *model.RoleAndResource) int64 {
 		return item.ResourceId
 	})
 	err = l.repos.RoleRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
 		var resources []*model.Resource
 		var validResourceIds []int64
-		// create role
-		role, innerErr = l.repos.RoleRepo.UpdateOneWithTx(ctx, tx, data)
+		// update role
+		roleModel, innerErr = l.repos.RoleRepo.UpdateOneWithTx(ctx, tx, roleModel)
 		if innerErr != nil {
 			return innerErr
 		}
 
 		// save role and resource relationship
-		resources, innerErr = l.repos.ResourceRepo.GetResourcesWithTx(ctx, tx, resourceIds, data.Type)
+		resources, innerErr = l.repos.ResourceRepo.GetResourcesWithTx(ctx, tx, resourceIds, roleModel.Type)
 		if innerErr != nil {
 			return innerErr
 		}
 		validResourceIds = slice.Map[*model.Resource, int64](resources, func(i int, item *model.Resource) int64 {
 			return item.Id
 		})
-		rolesAndResources := slice.FilterMap[*model.RoleAndResource, *model.RoleAndResource](data.RoleAndResources, func(i int, item *model.RoleAndResource) (*model.RoleAndResource, bool) {
+		rolesAndResources := slice.FilterMap[*model.RoleAndResource, *model.RoleAndResource](roleModel.RoleAndResources, func(i int, item *model.RoleAndResource) (*model.RoleAndResource, bool) {
 			if slice.Contain(validResourceIds, item.ResourceId) {
-				data.RoleAndResources[i].RoleId = role.Id
-				return data.RoleAndResources[i], true
+				roleModel.RoleAndResources[i].RoleId = roleModel.Id
+				return roleModel.RoleAndResources[i], true
 			}
 			return nil, false
 		})
-		oldRelations, innerErr := l.repos.RoleAndResourceRepo.GetRoleRelationsWithTx(ctx, tx, role.Id)
+		oldRelations, innerErr := l.repos.RoleAndResourceRepo.GetRoleRelationsWithTx(ctx, tx, roleModel.Id)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -224,26 +227,21 @@ func (l *RoleLogic) Update(ctx context.Context, id int64, data *model.Role) (rol
 	}
 	// todo update user's permissions
 
-	return role, nil
+	result, err = copierx.Trans[model.Role, bo.RoleBo](roleModel)
+	return result, err
 }
 
 // GetRole returns a role by id
-func (l *RoleLogic) GetRole(ctx context.Context, id int64, organizationId int64, roleType constants.UserType) (result *Role, err error) {
+func (l *RoleLogic) GetRole(ctx context.Context, id int64, organizationId int64, roleType constants.UserType) (result *bo.RoleBo, err error) {
 	role, err := l.repos.RoleRepo.GetRole(ctx, id, organizationId, roleType)
 	if err != nil {
 		return nil, err
 	}
-	result = &Role{}
-	err = copier.CopyWithOption(result, role, copier.Option{
-		DeepCopy: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
-	})
+	result, err = copierx.Trans[model.Role, bo.RoleBo](role)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
-	slice.ForEach(result.Resources, func(index int, item *ResourceWithPivot) {
+	slice.ForEach(result.Resources, func(index int, item *bo.ResourceBo) {
 		relation, err := l.repos.RoleAndResourceRepo.GetRelation(ctx, role.Id, item.Id)
 		if err != nil {
 			return
@@ -301,34 +299,6 @@ func (l *RoleLogic) All(ctx context.Context, organizationId int64, roleType cons
 	if err != nil {
 		return nil, err
 	}
-	result = l.batchTransToBo(roles)
-	return result, err
-}
-
-// transToBo
-func (l *RoleLogic) transToBo(src *model.Role) (result *bo.RoleBo) {
-	if src == nil {
-		return nil
-	}
-	result = &bo.RoleBo{}
-	_ = copier.CopyWithOption(result, src, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
-	})
-	return result
-}
-
-// batchTransToBo batch trans to bo
-func (l *RoleLogic) batchTransToBo(src []*model.Role) (result []*bo.RoleBo) {
-	result = make([]*bo.RoleBo, 0, len(src))
-	if len(src) == 0 {
-		return result
-	}
-	for i := range src {
-		result = append(result, l.transToBo(src[i]))
-	}
-	return result
+	results, err := copierx.Trans[[]*model.Role, []*bo.RoleBo](&roles)
+	return *results, err
 }

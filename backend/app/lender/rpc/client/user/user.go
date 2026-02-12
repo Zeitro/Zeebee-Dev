@@ -14,120 +14,191 @@ import (
 )
 
 type (
-	AddressEntity                           = lender.AddressEntity
-	BorrowerApplicantEntity                 = lender.BorrowerApplicantEntity
-	BorrowerEditApplicantEntity             = lender.BorrowerEditApplicantEntity
-	BorrowerEntityEntity                    = lender.BorrowerEntityEntity
-	BorrowerPropertyEntity                  = lender.BorrowerPropertyEntity
-	EmptyRequest                            = lender.EmptyRequest
-	EmptyResponse                           = lender.EmptyResponse
-	FileDeleteRequest                       = lender.FileDeleteRequest
-	FileDeleteRequestData                   = lender.FileDeleteRequestData
-	FileEntity                              = lender.FileEntity
-	LoanApplicantEntity                     = lender.LoanApplicantEntity
-	LoanApplicantLoanEditEntity             = lender.LoanApplicantLoanEditEntity
-	LoanBorrowerEntity                      = lender.LoanBorrowerEntity
-	LoanBudgetEntity                        = lender.LoanBudgetEntity
-	LoanDeleteRequest                       = lender.LoanDeleteRequest
-	LoanDeleteRequestData                   = lender.LoanDeleteRequestData
-	LoanDemographicEntity                   = lender.LoanDemographicEntity
-	LoanDemographicEthnicityEntity          = lender.LoanDemographicEthnicityEntity
-	LoanDemographicExtraDemographicEntity   = lender.LoanDemographicExtraDemographicEntity
-	LoanDemographicPropertyEntity           = lender.LoanDemographicPropertyEntity
-	LoanDemographicRaceEntity               = lender.LoanDemographicRaceEntity
-	LoanDetailRequest                       = lender.LoanDetailRequest
-	LoanDetailRequestData                   = lender.LoanDetailRequestData
-	LoanDetailResponse                      = lender.LoanDetailResponse
-	LoanDocumentAddFilesRequest             = lender.LoanDocumentAddFilesRequest
-	LoanDocumentAddFilesRequestData         = lender.LoanDocumentAddFilesRequestData
-	LoanDocumentCreateExtendTypeRequest     = lender.LoanDocumentCreateExtendTypeRequest
-	LoanDocumentCreateExtendTypeRequestData = lender.LoanDocumentCreateExtendTypeRequestData
-	LoanDocumentCreateExtendTypeResponse    = lender.LoanDocumentCreateExtendTypeResponse
-	LoanDocumentDeleteFileRequest           = lender.LoanDocumentDeleteFileRequest
-	LoanDocumentDeleteFileRequestData       = lender.LoanDocumentDeleteFileRequestData
-	LoanDocumentDeleteRequestRequest        = lender.LoanDocumentDeleteRequestRequest
-	LoanDocumentDeleteRequestRequestData    = lender.LoanDocumentDeleteRequestRequestData
-	LoanDocumentEntity                      = lender.LoanDocumentEntity
-	LoanDocumentOptEntity                   = lender.LoanDocumentOptEntity
-	LoanDocumentOptsRequest                 = lender.LoanDocumentOptsRequest
-	LoanDocumentOptsRequestData             = lender.LoanDocumentOptsRequestData
-	LoanDocumentOptsResponse                = lender.LoanDocumentOptsResponse
-	LoanDocumentSendRequestsRequest         = lender.LoanDocumentSendRequestsRequest
-	LoanDocumentSendRequestsRequestData     = lender.LoanDocumentSendRequestsRequestData
-	LoanDocumentUpdateCommentRequest        = lender.LoanDocumentUpdateCommentRequest
-	LoanDocumentUpdateCommentRequestData    = lender.LoanDocumentUpdateCommentRequestData
-	LoanEntity                              = lender.LoanEntity
-	LoanExperienceEntity                    = lender.LoanExperienceEntity
-	LoanExtendValueEntity                   = lender.LoanExtendValueEntity
-	LoanPageRequest                         = lender.LoanPageRequest
-	LoanPageRequestData                     = lender.LoanPageRequestData
-	LoanPageRequestFilter                   = lender.LoanPageRequestFilter
-	LoanPageRequestSorter                   = lender.LoanPageRequestSorter
-	LoanPageResponse                        = lender.LoanPageResponse
-	LoanPageResponseData                    = lender.LoanPageResponseData
-	LoanPendingStatusReviewRequest          = lender.LoanPendingStatusReviewRequest
-	LoanPendingStatusReviewRequestData      = lender.LoanPendingStatusReviewRequestData
-	LoanPropertyEditEntity                  = lender.LoanPropertyEditEntity
-	LoanPropertyEntity                      = lender.LoanPropertyEntity
-	LoanThirdServiceEntity                  = lender.LoanThirdServiceEntity
-	LoanUpdateDocumentsRequest              = lender.LoanUpdateDocumentsRequest
-	LoanUpdateDocumentsRequestData          = lender.LoanUpdateDocumentsRequestData
-	LoanUpdatePendingStatusRequest          = lender.LoanUpdatePendingStatusRequest
-	LoanUpdatePendingStatusRequestData      = lender.LoanUpdatePendingStatusRequestData
-	LoanUpdateRequest                       = lender.LoanUpdateRequest
-	LoanUpdateRequestData                   = lender.LoanUpdateRequestData
-	LoanUpdateResponse                      = lender.LoanUpdateResponse
-	LoanUpdateResponseData                  = lender.LoanUpdateResponseData
-	LoanUpdateStageRequest                  = lender.LoanUpdateStageRequest
-	LoanUpdateStageRequestData              = lender.LoanUpdateStageRequestData
-	OptionEntity                            = lender.OptionEntity
-	OptionRequest                           = lender.OptionRequest
-	OptionRequestData                       = lender.OptionRequestData
-	OptionResponse                          = lender.OptionResponse
-	RefreshTokenRequest                     = lender.RefreshTokenRequest
-	RefreshTokenRequestData                 = lender.RefreshTokenRequestData
-	RefreshTokenResponse                    = lender.RefreshTokenResponse
-	RefreshTokenResponseData                = lender.RefreshTokenResponseData
-	ResetPasswordRequest                    = lender.ResetPasswordRequest
-	ResetPasswordRequestData                = lender.ResetPasswordRequestData
-	ResetPasswordResponse                   = lender.ResetPasswordResponse
-	ResetPasswordResponseData               = lender.ResetPasswordResponseData
-	SendDocumentRequestEntity               = lender.SendDocumentRequestEntity
-	SendResetPasswordEmailRequest           = lender.SendResetPasswordEmailRequest
-	SendResetPasswordEmailRequestData       = lender.SendResetPasswordEmailRequestData
-	SendResetPasswordEmailResponse          = lender.SendResetPasswordEmailResponse
-	StorageCreatePresignedUrlRequest        = lender.StorageCreatePresignedUrlRequest
-	StorageCreatePresignedUrlRequestData    = lender.StorageCreatePresignedUrlRequestData
-	StorageCreatePresignedUrlResponse       = lender.StorageCreatePresignedUrlResponse
-	StorageCreatePresignedUrlResponseData   = lender.StorageCreatePresignedUrlResponseData
-	StringSliceResponse                     = lender.StringSliceResponse
-	SwitchOrganizationRequest               = lender.SwitchOrganizationRequest
-	SwitchOrganizationRequestData           = lender.SwitchOrganizationRequestData
-	UsCitiesRequest                         = lender.UsCitiesRequest
-	UsCitiesRequestData                     = lender.UsCitiesRequestData
-	UserInfoRequest                         = lender.UserInfoRequest
-	UserInfoRequestData                     = lender.UserInfoRequestData
-	UserLoginRequest                        = lender.UserLoginRequest
-	UserLoginRequestData                    = lender.UserLoginRequestData
-	UserLoginResponse                       = lender.UserLoginResponse
-	UserLoginResponseData                   = lender.UserLoginResponseData
-	UserRegisterRequest                     = lender.UserRegisterRequest
-	UserRegisterRequestData                 = lender.UserRegisterRequestData
-	UserRegisterResponse                    = lender.UserRegisterResponse
-	UserRegisterResponseData                = lender.UserRegisterResponseData
-	UserinfoResponse                        = lender.UserinfoResponse
-	UserinfoResponseData                    = lender.UserinfoResponseData
-	UserinfoResponseData_Organization       = lender.UserinfoResponseData_Organization
+	AddressEntity                                  = lender.AddressEntity
+	BorrowerApplicantEntity                        = lender.BorrowerApplicantEntity
+	BorrowerEditApplicantEntity                    = lender.BorrowerEditApplicantEntity
+	BorrowerEntityEntity                           = lender.BorrowerEntityEntity
+	BorrowerPropertyEntity                         = lender.BorrowerPropertyEntity
+	EmptyRequest                                   = lender.EmptyRequest
+	EmptyResponse                                  = lender.EmptyResponse
+	FileDeleteRequest                              = lender.FileDeleteRequest
+	FileDeleteRequestData                          = lender.FileDeleteRequestData
+	FileEntity                                     = lender.FileEntity
+	LoanApplicantEntity                            = lender.LoanApplicantEntity
+	LoanApplicantLoanEditEntity                    = lender.LoanApplicantLoanEditEntity
+	LoanBorrowerEntity                             = lender.LoanBorrowerEntity
+	LoanBudgetEntity                               = lender.LoanBudgetEntity
+	LoanDeleteRequest                              = lender.LoanDeleteRequest
+	LoanDeleteRequestData                          = lender.LoanDeleteRequestData
+	LoanDemographicEntity                          = lender.LoanDemographicEntity
+	LoanDemographicEthnicityEntity                 = lender.LoanDemographicEthnicityEntity
+	LoanDemographicExtraDemographicEntity          = lender.LoanDemographicExtraDemographicEntity
+	LoanDemographicPropertyEntity                  = lender.LoanDemographicPropertyEntity
+	LoanDemographicRaceEntity                      = lender.LoanDemographicRaceEntity
+	LoanDetailRequest                              = lender.LoanDetailRequest
+	LoanDetailRequestData                          = lender.LoanDetailRequestData
+	LoanDetailResponse                             = lender.LoanDetailResponse
+	LoanDocumentAddFilesRequest                    = lender.LoanDocumentAddFilesRequest
+	LoanDocumentAddFilesRequestData                = lender.LoanDocumentAddFilesRequestData
+	LoanDocumentCreateExtendTypeRequest            = lender.LoanDocumentCreateExtendTypeRequest
+	LoanDocumentCreateExtendTypeRequestData        = lender.LoanDocumentCreateExtendTypeRequestData
+	LoanDocumentCreateExtendTypeResponse           = lender.LoanDocumentCreateExtendTypeResponse
+	LoanDocumentDeleteFileRequest                  = lender.LoanDocumentDeleteFileRequest
+	LoanDocumentDeleteFileRequestData              = lender.LoanDocumentDeleteFileRequestData
+	LoanDocumentDeleteRequestRequest               = lender.LoanDocumentDeleteRequestRequest
+	LoanDocumentDeleteRequestRequestData           = lender.LoanDocumentDeleteRequestRequestData
+	LoanDocumentEntity                             = lender.LoanDocumentEntity
+	LoanDocumentOptEntity                          = lender.LoanDocumentOptEntity
+	LoanDocumentOptsRequest                        = lender.LoanDocumentOptsRequest
+	LoanDocumentOptsRequestData                    = lender.LoanDocumentOptsRequestData
+	LoanDocumentOptsResponse                       = lender.LoanDocumentOptsResponse
+	LoanDocumentSendRequestsRequest                = lender.LoanDocumentSendRequestsRequest
+	LoanDocumentSendRequestsRequestData            = lender.LoanDocumentSendRequestsRequestData
+	LoanDocumentUpdateCommentRequest               = lender.LoanDocumentUpdateCommentRequest
+	LoanDocumentUpdateCommentRequestData           = lender.LoanDocumentUpdateCommentRequestData
+	LoanEntity                                     = lender.LoanEntity
+	LoanExperienceEntity                           = lender.LoanExperienceEntity
+	LoanExtendValueEntity                          = lender.LoanExtendValueEntity
+	LoanPageRequest                                = lender.LoanPageRequest
+	LoanPageRequestData                            = lender.LoanPageRequestData
+	LoanPageRequestFilter                          = lender.LoanPageRequestFilter
+	LoanPageRequestSorter                          = lender.LoanPageRequestSorter
+	LoanPageResponse                               = lender.LoanPageResponse
+	LoanPageResponseData                           = lender.LoanPageResponseData
+	LoanPendingStatusReviewRequest                 = lender.LoanPendingStatusReviewRequest
+	LoanPendingStatusReviewRequestData             = lender.LoanPendingStatusReviewRequestData
+	LoanPropertyEditEntity                         = lender.LoanPropertyEditEntity
+	LoanPropertyEntity                             = lender.LoanPropertyEntity
+	LoanThirdServiceEntity                         = lender.LoanThirdServiceEntity
+	LoanUpdateDocumentsRequest                     = lender.LoanUpdateDocumentsRequest
+	LoanUpdateDocumentsRequestData                 = lender.LoanUpdateDocumentsRequestData
+	LoanUpdatePendingStatusRequest                 = lender.LoanUpdatePendingStatusRequest
+	LoanUpdatePendingStatusRequestData             = lender.LoanUpdatePendingStatusRequestData
+	LoanUpdateRequest                              = lender.LoanUpdateRequest
+	LoanUpdateRequestData                          = lender.LoanUpdateRequestData
+	LoanUpdateResponse                             = lender.LoanUpdateResponse
+	LoanUpdateResponseData                         = lender.LoanUpdateResponseData
+	LoanUpdateStageRequest                         = lender.LoanUpdateStageRequest
+	LoanUpdateStageRequestData                     = lender.LoanUpdateStageRequestData
+	OptionEntity                                   = lender.OptionEntity
+	OptionRequest                                  = lender.OptionRequest
+	OptionRequestData                              = lender.OptionRequestData
+	OptionResponse                                 = lender.OptionResponse
+	OrganizationCreateRequest                      = lender.OrganizationCreateRequest
+	OrganizationCreateRequestData                  = lender.OrganizationCreateRequestData
+	OrganizationDetailResponse                     = lender.OrganizationDetailResponse
+	OrganizationEmailEntity                        = lender.OrganizationEmailEntity
+	OrganizationEntity                             = lender.OrganizationEntity
+	OrganizationLenderMetadataEntity               = lender.OrganizationLenderMetadataEntity
+	OrganizationMetadataEntity                     = lender.OrganizationMetadataEntity
+	OrganizationUpdateProfileRequest               = lender.OrganizationUpdateProfileRequest
+	OrganizationUpdateProfileRequestData           = lender.OrganizationUpdateProfileRequestData
+	OrganizationUserAcceptInvitationRequest        = lender.OrganizationUserAcceptInvitationRequest
+	OrganizationUserAcceptInvitationRequestData    = lender.OrganizationUserAcceptInvitationRequestData
+	OrganizationUserAllResponse                    = lender.OrganizationUserAllResponse
+	OrganizationUserAssignRolesRequest             = lender.OrganizationUserAssignRolesRequest
+	OrganizationUserAssignRolesRequestData         = lender.OrganizationUserAssignRolesRequestData
+	OrganizationUserCreateRequest                  = lender.OrganizationUserCreateRequest
+	OrganizationUserCreateRequestData              = lender.OrganizationUserCreateRequestData
+	OrganizationUserCreateResponse                 = lender.OrganizationUserCreateResponse
+	OrganizationUserDeleteRequest                  = lender.OrganizationUserDeleteRequest
+	OrganizationUserDeleteRequestData              = lender.OrganizationUserDeleteRequestData
+	OrganizationUserDetailRequest                  = lender.OrganizationUserDetailRequest
+	OrganizationUserDetailRequestData              = lender.OrganizationUserDetailRequestData
+	OrganizationUserDetailResponse                 = lender.OrganizationUserDetailResponse
+	OrganizationUserEntity                         = lender.OrganizationUserEntity
+	OrganizationUserPageEntity                     = lender.OrganizationUserPageEntity
+	OrganizationUserPageRequest                    = lender.OrganizationUserPageRequest
+	OrganizationUserPageRequestData                = lender.OrganizationUserPageRequestData
+	OrganizationUserPageRequestFilter              = lender.OrganizationUserPageRequestFilter
+	OrganizationUserPageRequestSorter              = lender.OrganizationUserPageRequestSorter
+	OrganizationUserPageResponse                   = lender.OrganizationUserPageResponse
+	OrganizationUserPageResponseData               = lender.OrganizationUserPageResponseData
+	OrganizationUserSendInvitationEmailRequest     = lender.OrganizationUserSendInvitationEmailRequest
+	OrganizationUserSendInvitationEmailRequestData = lender.OrganizationUserSendInvitationEmailRequestData
+	OrganizationUserUpdateRequest                  = lender.OrganizationUserUpdateRequest
+	OrganizationUserUpdateRequestData              = lender.OrganizationUserUpdateRequestData
+	OrganizationUserUpdateResponse                 = lender.OrganizationUserUpdateResponse
+	OrganizationUserUpdateStatusRequest            = lender.OrganizationUserUpdateStatusRequest
+	OrganizationUserUpdateStatusRequestData        = lender.OrganizationUserUpdateStatusRequestData
+	RangeFloat                                     = lender.RangeFloat
+	RangeInt32                                     = lender.RangeInt32
+	RangeInt64                                     = lender.RangeInt64
+	RefreshTokenRequest                            = lender.RefreshTokenRequest
+	RefreshTokenRequestData                        = lender.RefreshTokenRequestData
+	ResetPasswordRequest                           = lender.ResetPasswordRequest
+	ResetPasswordRequestData                       = lender.ResetPasswordRequestData
+	ResetPasswordResponse                          = lender.ResetPasswordResponse
+	ResourceEntity                                 = lender.ResourceEntity
+	ResourceTreeEntity                             = lender.ResourceTreeEntity
+	ResourceTreeRequest                            = lender.ResourceTreeRequest
+	ResourceTreeRequestData                        = lender.ResourceTreeRequestData
+	ResourceTreeResponse                           = lender.ResourceTreeResponse
+	RoleAllRequest                                 = lender.RoleAllRequest
+	RoleAllRequestData                             = lender.RoleAllRequestData
+	RoleAllResponse                                = lender.RoleAllResponse
+	RoleAndResourceRelationEntity                  = lender.RoleAndResourceRelationEntity
+	RoleCreateRequest                              = lender.RoleCreateRequest
+	RoleCreateRequestData                          = lender.RoleCreateRequestData
+	RoleCreateResponse                             = lender.RoleCreateResponse
+	RoleDeleteRequest                              = lender.RoleDeleteRequest
+	RoleDeleteRequestData                          = lender.RoleDeleteRequestData
+	RoleDetailRequest                              = lender.RoleDetailRequest
+	RoleDetailRequestData                          = lender.RoleDetailRequestData
+	RoleDetailResponse                             = lender.RoleDetailResponse
+	RoleEntity                                     = lender.RoleEntity
+	RolePageRequest                                = lender.RolePageRequest
+	RolePageRequestData                            = lender.RolePageRequestData
+	RolePageRequestFilter                          = lender.RolePageRequestFilter
+	RolePageRequestSorter                          = lender.RolePageRequestSorter
+	RolePageResponse                               = lender.RolePageResponse
+	RolePageResponseData                           = lender.RolePageResponseData
+	RoleUpdateRequest                              = lender.RoleUpdateRequest
+	RoleUpdateRequestData                          = lender.RoleUpdateRequestData
+	RoleUpdateResponse                             = lender.RoleUpdateResponse
+	RoleUpdateStatusRequest                        = lender.RoleUpdateStatusRequest
+	RoleUpdateStatusRequestData                    = lender.RoleUpdateStatusRequestData
+	SendDocumentRequestEntity                      = lender.SendDocumentRequestEntity
+	SendResetPasswordEmailRequest                  = lender.SendResetPasswordEmailRequest
+	SendResetPasswordEmailRequestData              = lender.SendResetPasswordEmailRequestData
+	SendResetPasswordEmailResponse                 = lender.SendResetPasswordEmailResponse
+	SendVerifyEmailRequest                         = lender.SendVerifyEmailRequest
+	SendVerifyEmailRequestData                     = lender.SendVerifyEmailRequestData
+	SendVerifyEmailResponse                        = lender.SendVerifyEmailResponse
+	StorageCreatePresignedUrlRequest               = lender.StorageCreatePresignedUrlRequest
+	StorageCreatePresignedUrlRequestData           = lender.StorageCreatePresignedUrlRequestData
+	StorageCreatePresignedUrlResponse              = lender.StorageCreatePresignedUrlResponse
+	StorageCreatePresignedUrlResponseData          = lender.StorageCreatePresignedUrlResponseData
+	StringSliceResponse                            = lender.StringSliceResponse
+	SwitchOrganizationRequest                      = lender.SwitchOrganizationRequest
+	SwitchOrganizationRequestData                  = lender.SwitchOrganizationRequestData
+	UsCitiesRequest                                = lender.UsCitiesRequest
+	UsCitiesRequestData                            = lender.UsCitiesRequestData
+	UserEntity                                     = lender.UserEntity
+	UserInfoRequest                                = lender.UserInfoRequest
+	UserInfoRequestData                            = lender.UserInfoRequestData
+	UserJwtResponse                                = lender.UserJwtResponse
+	UserJwtResponseData                            = lender.UserJwtResponseData
+	UserLoginRequest                               = lender.UserLoginRequest
+	UserLoginRequestData                           = lender.UserLoginRequestData
+	UserRegisterRequest                            = lender.UserRegisterRequest
+	UserRegisterRequestData                        = lender.UserRegisterRequestData
+	UserinfoResponse                               = lender.UserinfoResponse
+	UserinfoResponseData                           = lender.UserinfoResponseData
+	UserinfoResponseData_Organization              = lender.UserinfoResponseData_Organization
+	VerifyEmailRequest                             = lender.VerifyEmailRequest
+	VerifyEmailRequestData                         = lender.VerifyEmailRequestData
 
 	User interface {
-		// user
-		Login(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserLoginResponse, error)
-		Register(ctx context.Context, in *UserRegisterRequest, opts ...grpc.CallOption) (*UserRegisterResponse, error)
-		RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
-		ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*ResetPasswordResponse, error)
+		Login(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserJwtResponse, error)
+		Register(ctx context.Context, in *UserRegisterRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+		RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*UserJwtResponse, error)
+		ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*UserJwtResponse, error)
 		SendResetPasswordEmail(ctx context.Context, in *SendResetPasswordEmailRequest, opts ...grpc.CallOption) (*SendResetPasswordEmailResponse, error)
+		VerifyEmail(ctx context.Context, in *VerifyEmailRequest, opts ...grpc.CallOption) (*UserJwtResponse, error)
+		SendVerifyEmail(ctx context.Context, in *SendVerifyEmailRequest, opts ...grpc.CallOption) (*SendVerifyEmailResponse, error)
 		UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
-		SwitchOrganization(ctx context.Context, in *SwitchOrganizationRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
+		SwitchOrganization(ctx context.Context, in *SwitchOrganizationRequest, opts ...grpc.CallOption) (*UserJwtResponse, error)
 	}
 
 	defaultUser struct {
@@ -141,23 +212,22 @@ func NewUser(cli zrpc.Client) User {
 	}
 }
 
-// user
-func (m *defaultUser) Login(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserLoginResponse, error) {
+func (m *defaultUser) Login(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserJwtResponse, error) {
 	client := lender.NewUserClient(m.cli.Conn())
 	return client.Login(ctx, in, opts...)
 }
 
-func (m *defaultUser) Register(ctx context.Context, in *UserRegisterRequest, opts ...grpc.CallOption) (*UserRegisterResponse, error) {
+func (m *defaultUser) Register(ctx context.Context, in *UserRegisterRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	client := lender.NewUserClient(m.cli.Conn())
 	return client.Register(ctx, in, opts...)
 }
 
-func (m *defaultUser) RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error) {
+func (m *defaultUser) RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*UserJwtResponse, error) {
 	client := lender.NewUserClient(m.cli.Conn())
 	return client.RefreshToken(ctx, in, opts...)
 }
 
-func (m *defaultUser) ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*ResetPasswordResponse, error) {
+func (m *defaultUser) ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*UserJwtResponse, error) {
 	client := lender.NewUserClient(m.cli.Conn())
 	return client.ResetPassword(ctx, in, opts...)
 }
@@ -167,12 +237,22 @@ func (m *defaultUser) SendResetPasswordEmail(ctx context.Context, in *SendResetP
 	return client.SendResetPasswordEmail(ctx, in, opts...)
 }
 
+func (m *defaultUser) VerifyEmail(ctx context.Context, in *VerifyEmailRequest, opts ...grpc.CallOption) (*UserJwtResponse, error) {
+	client := lender.NewUserClient(m.cli.Conn())
+	return client.VerifyEmail(ctx, in, opts...)
+}
+
+func (m *defaultUser) SendVerifyEmail(ctx context.Context, in *SendVerifyEmailRequest, opts ...grpc.CallOption) (*SendVerifyEmailResponse, error) {
+	client := lender.NewUserClient(m.cli.Conn())
+	return client.SendVerifyEmail(ctx, in, opts...)
+}
+
 func (m *defaultUser) UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error) {
 	client := lender.NewUserClient(m.cli.Conn())
 	return client.UserInfo(ctx, in, opts...)
 }
 
-func (m *defaultUser) SwitchOrganization(ctx context.Context, in *SwitchOrganizationRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error) {
+func (m *defaultUser) SwitchOrganization(ctx context.Context, in *SwitchOrganizationRequest, opts ...grpc.CallOption) (*UserJwtResponse, error) {
 	client := lender.NewUserClient(m.cli.Conn())
 	return client.SwitchOrganization(ctx, in, opts...)
 }

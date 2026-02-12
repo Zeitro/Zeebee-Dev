@@ -23,23 +23,22 @@ func NewUserServer(svcCtx *svc.ServiceContext) *UserServer {
 	}
 }
 
-// user
-func (s *UserServer) Login(ctx context.Context, in *lender.UserLoginRequest) (*lender.UserLoginResponse, error) {
+func (s *UserServer) Login(ctx context.Context, in *lender.UserLoginRequest) (*lender.UserJwtResponse, error) {
 	l := userlogic.NewLoginLogic(ctx, s.svcCtx)
 	return l.Login(in)
 }
 
-func (s *UserServer) Register(ctx context.Context, in *lender.UserRegisterRequest) (*lender.UserRegisterResponse, error) {
+func (s *UserServer) Register(ctx context.Context, in *lender.UserRegisterRequest) (*lender.EmptyResponse, error) {
 	l := userlogic.NewRegisterLogic(ctx, s.svcCtx)
 	return l.Register(in)
 }
 
-func (s *UserServer) RefreshToken(ctx context.Context, in *lender.RefreshTokenRequest) (*lender.RefreshTokenResponse, error) {
+func (s *UserServer) RefreshToken(ctx context.Context, in *lender.RefreshTokenRequest) (*lender.UserJwtResponse, error) {
 	l := userlogic.NewRefreshTokenLogic(ctx, s.svcCtx)
 	return l.RefreshToken(in)
 }
 
-func (s *UserServer) ResetPassword(ctx context.Context, in *lender.ResetPasswordRequest) (*lender.ResetPasswordResponse, error) {
+func (s *UserServer) ResetPassword(ctx context.Context, in *lender.ResetPasswordRequest) (*lender.UserJwtResponse, error) {
 	l := userlogic.NewResetPasswordLogic(ctx, s.svcCtx)
 	return l.ResetPassword(in)
 }
@@ -49,12 +48,22 @@ func (s *UserServer) SendResetPasswordEmail(ctx context.Context, in *lender.Send
 	return l.SendResetPasswordEmail(in)
 }
 
+func (s *UserServer) VerifyEmail(ctx context.Context, in *lender.VerifyEmailRequest) (*lender.UserJwtResponse, error) {
+	l := userlogic.NewVerifyEmailLogic(ctx, s.svcCtx)
+	return l.VerifyEmail(in)
+}
+
+func (s *UserServer) SendVerifyEmail(ctx context.Context, in *lender.SendVerifyEmailRequest) (*lender.SendVerifyEmailResponse, error) {
+	l := userlogic.NewSendVerifyEmailLogic(ctx, s.svcCtx)
+	return l.SendVerifyEmail(in)
+}
+
 func (s *UserServer) UserInfo(ctx context.Context, in *lender.UserInfoRequest) (*lender.UserinfoResponse, error) {
 	l := userlogic.NewUserInfoLogic(ctx, s.svcCtx)
 	return l.UserInfo(in)
 }
 
-func (s *UserServer) SwitchOrganization(ctx context.Context, in *lender.SwitchOrganizationRequest) (*lender.RefreshTokenResponse, error) {
+func (s *UserServer) SwitchOrganization(ctx context.Context, in *lender.SwitchOrganizationRequest) (*lender.UserJwtResponse, error) {
 	l := userlogic.NewSwitchOrganizationLogic(ctx, s.svcCtx)
 	return l.SwitchOrganization(in)
 }

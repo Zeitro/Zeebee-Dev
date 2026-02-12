@@ -12,45 +12,17 @@ type UserLoginRequest struct {
 	Password string `json:"password" validate:"required,min=8,max=32"`
 }
 
-type UserLoginResponse struct {
-	AccessToken        string `json:"access_token"`
-	AccessTokenExpire  int64  `json:"access_token_expire"`
-	RefreshToken       string `json:"refresh_token"`
-	RefreshTokenExpire int64  `json:"refresh_token_expire"`
-}
-
 type UserRefreshTokenRequest struct {
 	RefreshToken string `json:"refresh_token" validate:"required"`
 }
 
-type UserRefreshTokenResponse struct {
-	AccessToken        string `json:"access_token"`
-	AccessTokenExpire  int64  `json:"access_token_expire"`
-	RefreshToken       string `json:"refresh_token"`
-	RefreshTokenExpire int64  `json:"refresh_token_expire"`
-}
-
 type UserRegisterRequest struct {
 	Email            string `json:"email" validate:"required,email"`
-	Type             string `json:"type" validate:"required,oneof=Join Create"`
-	OrganizationId   int64  `json:"organization_id" validate:"required_if=Type Join,gte=0"`
-	OrganizationName string `json:"organization_name" validate:"required_if=Type Create,max=100"`
-	ContactEmail     string `json:"contact_email" validate:"required_if=Type Create,omitempty,email"`
-	ContactPhone     string `json:"contact_phone" validate:"required_if=Type Create,max=20"`
-	ContactName      string `json:"contact_name" validate:"required_if=Type Create,max=100"`
-	Logo             string `json:"logo,optional" validate:"omitempty,url"`
-	Website          string `json:"website,optional" validate:"omitempty,url"`
+	OrganizationName string `json:"organization_name" validate:"required,max=100"`
 	Password         string `json:"password" validate:"required,min=8,max=32,password"`
 	ConfirmPassword  string `json:"confirm_password" validate:"required,eqfield=Password"`
 	FirstName        string `json:"first_name" validate:"required,min=2,max=30"`
 	LastName         string `json:"last_name" validate:"required,min=2,max=30"`
-}
-
-type UserRegisterResponse struct {
-	AccessToken        string `json:"access_token"`
-	AccessTokenExpire  int64  `json:"access_token_expire"`
-	RefreshToken       string `json:"refresh_token"`
-	RefreshTokenExpire int64  `json:"refresh_token_expire"`
 }
 
 type UserResetPasswordRequest struct {
@@ -64,6 +36,15 @@ type UserSendResetPasswordEmailRequest struct {
 	Email string `json:"email" validate:"required,email"`
 }
 
+type UserSendVerifyEmailRequest struct {
+	Email string `json:"email" validate:"required,email"`
+}
+
 type UserSwitchOrganizationRequest struct {
 	OrganizationId int64 `json:"organization_id" validate:"required,gt=0"`
+}
+
+type UserVerifyEmailRequest struct {
+	Email string `json:"email" validate:"required,email"`
+	Code  string `json:"code" validate:"required,len=10"`
 }
