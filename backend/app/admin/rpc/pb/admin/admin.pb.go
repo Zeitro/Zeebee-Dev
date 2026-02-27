@@ -2817,21 +2817,23 @@ func (x *OrganizationUserSwitchStatusRequestData) GetStatus() string {
 
 // ================= api service start =================
 type ApiTreeEntity struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	ParentId      int64                  `protobuf:"varint,2,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
-	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	Path          string                 `protobuf:"bytes,4,opt,name=path,proto3" json:"path,omitempty"`
-	Method        string                 `protobuf:"bytes,5,opt,name=method,proto3" json:"method,omitempty"`
-	Status        string                 `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
-	Description   string                 `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
-	Type          string                 `protobuf:"bytes,8,opt,name=type,proto3" json:"type,omitempty"`
-	SortOrder     int32                  `protobuf:"varint,9,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
-	CreatedAt     string                 `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt     string                 `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	Children      []*ApiTreeEntity       `protobuf:"bytes,12,rep,name=children,proto3" json:"children,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	Id                 int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	ParentId           int64                  `protobuf:"varint,2,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
+	Name               string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Path               string                 `protobuf:"bytes,4,opt,name=path,proto3" json:"path,omitempty"`
+	Method             string                 `protobuf:"bytes,5,opt,name=method,proto3" json:"method,omitempty"`
+	Status             string                 `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
+	Description        string                 `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
+	Type               string                 `protobuf:"bytes,8,opt,name=type,proto3" json:"type,omitempty"`
+	SortOrder          int32                  `protobuf:"varint,9,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
+	CreatedAt          string                 `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt          string                 `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Children           []*ApiTreeEntity       `protobuf:"bytes,12,rep,name=children,proto3" json:"children,omitempty"`
+	AuthRequired       bool                   `protobuf:"varint,13,opt,name=auth_required,json=authRequired,proto3" json:"auth_required,omitempty"`
+	PermissionRequired bool                   `protobuf:"varint,14,opt,name=permission_required,json=permissionRequired,proto3" json:"permission_required,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *ApiTreeEntity) Reset() {
@@ -2948,21 +2950,37 @@ func (x *ApiTreeEntity) GetChildren() []*ApiTreeEntity {
 	return nil
 }
 
+func (x *ApiTreeEntity) GetAuthRequired() bool {
+	if x != nil {
+		return x.AuthRequired
+	}
+	return false
+}
+
+func (x *ApiTreeEntity) GetPermissionRequired() bool {
+	if x != nil {
+		return x.PermissionRequired
+	}
+	return false
+}
+
 type ApiEntity struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	ParentId      int64                  `protobuf:"varint,2,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
-	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	Path          string                 `protobuf:"bytes,4,opt,name=path,proto3" json:"path,omitempty"`
-	Method        string                 `protobuf:"bytes,5,opt,name=method,proto3" json:"method,omitempty"`
-	Status        string                 `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
-	Description   string                 `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
-	Type          string                 `protobuf:"bytes,8,opt,name=type,proto3" json:"type,omitempty"`
-	SortOrder     int32                  `protobuf:"varint,9,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
-	CreatedAt     string                 `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt     string                 `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	Id                 int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	ParentId           int64                  `protobuf:"varint,2,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
+	Name               string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Path               string                 `protobuf:"bytes,4,opt,name=path,proto3" json:"path,omitempty"`
+	Method             string                 `protobuf:"bytes,5,opt,name=method,proto3" json:"method,omitempty"`
+	Status             string                 `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
+	Description        string                 `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
+	Type               string                 `protobuf:"bytes,8,opt,name=type,proto3" json:"type,omitempty"`
+	SortOrder          int32                  `protobuf:"varint,9,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
+	CreatedAt          string                 `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt          string                 `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	AuthRequired       bool                   `protobuf:"varint,13,opt,name=auth_required,json=authRequired,proto3" json:"auth_required,omitempty"`
+	PermissionRequired bool                   `protobuf:"varint,14,opt,name=permission_required,json=permissionRequired,proto3" json:"permission_required,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *ApiEntity) Reset() {
@@ -3070,6 +3088,20 @@ func (x *ApiEntity) GetUpdatedAt() string {
 		return x.UpdatedAt
 	}
 	return ""
+}
+
+func (x *ApiEntity) GetAuthRequired() bool {
+	if x != nil {
+		return x.AuthRequired
+	}
+	return false
+}
+
+func (x *ApiEntity) GetPermissionRequired() bool {
+	if x != nil {
+		return x.PermissionRequired
+	}
+	return false
 }
 
 // api tree -- request
@@ -3268,17 +3300,19 @@ func (x *ApiCreateRequest) GetData() *ApiCreateRequestData {
 }
 
 type ApiCreateRequestData struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ParentId      int64                  `protobuf:"varint,1,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
-	Type          string                 `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
-	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	Path          string                 `protobuf:"bytes,4,opt,name=path,proto3" json:"path,omitempty"`
-	Method        string                 `protobuf:"bytes,5,opt,name=method,proto3" json:"method,omitempty"`
-	Description   string                 `protobuf:"bytes,6,opt,name=description,proto3" json:"description,omitempty"`
-	Status        string                 `protobuf:"bytes,7,opt,name=status,proto3" json:"status,omitempty"`
-	SortOrder     int32                  `protobuf:"varint,8,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	ParentId           int64                  `protobuf:"varint,1,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
+	Type               string                 `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
+	Name               string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Path               string                 `protobuf:"bytes,4,opt,name=path,proto3" json:"path,omitempty"`
+	Method             string                 `protobuf:"bytes,5,opt,name=method,proto3" json:"method,omitempty"`
+	Description        string                 `protobuf:"bytes,6,opt,name=description,proto3" json:"description,omitempty"`
+	Status             string                 `protobuf:"bytes,7,opt,name=status,proto3" json:"status,omitempty"`
+	SortOrder          int32                  `protobuf:"varint,8,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
+	AuthRequired       bool                   `protobuf:"varint,9,opt,name=auth_required,json=authRequired,proto3" json:"auth_required,omitempty"`
+	PermissionRequired bool                   `protobuf:"varint,10,opt,name=permission_required,json=permissionRequired,proto3" json:"permission_required,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *ApiCreateRequestData) Reset() {
@@ -3367,49 +3401,18 @@ func (x *ApiCreateRequestData) GetSortOrder() int32 {
 	return 0
 }
 
-// create -- response
-type ApiCreateResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          *ApiTreeEntity         `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ApiCreateResponse) Reset() {
-	*x = ApiCreateResponse{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[55]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ApiCreateResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ApiCreateResponse) ProtoMessage() {}
-
-func (x *ApiCreateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[55]
+func (x *ApiCreateRequestData) GetAuthRequired() bool {
 	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
+		return x.AuthRequired
 	}
-	return mi.MessageOf(x)
+	return false
 }
 
-// Deprecated: Use ApiCreateResponse.ProtoReflect.Descriptor instead.
-func (*ApiCreateResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{55}
-}
-
-func (x *ApiCreateResponse) GetData() *ApiTreeEntity {
+func (x *ApiCreateRequestData) GetPermissionRequired() bool {
 	if x != nil {
-		return x.Data
+		return x.PermissionRequired
 	}
-	return nil
+	return false
 }
 
 // update -- request
@@ -3422,7 +3425,7 @@ type ApiUpdateRequest struct {
 
 func (x *ApiUpdateRequest) Reset() {
 	*x = ApiUpdateRequest{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[56]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3434,7 +3437,7 @@ func (x *ApiUpdateRequest) String() string {
 func (*ApiUpdateRequest) ProtoMessage() {}
 
 func (x *ApiUpdateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[56]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3447,7 +3450,7 @@ func (x *ApiUpdateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiUpdateRequest.ProtoReflect.Descriptor instead.
 func (*ApiUpdateRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{56}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{55}
 }
 
 func (x *ApiUpdateRequest) GetData() *ApiUpdateRequestData {
@@ -3458,23 +3461,25 @@ func (x *ApiUpdateRequest) GetData() *ApiUpdateRequestData {
 }
 
 type ApiUpdateRequestData struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	ParentId      int64                  `protobuf:"varint,2,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
-	Type          string                 `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
-	Name          string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
-	Path          string                 `protobuf:"bytes,5,opt,name=path,proto3" json:"path,omitempty"`
-	Method        string                 `protobuf:"bytes,6,opt,name=method,proto3" json:"method,omitempty"`
-	Description   string                 `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
-	Status        string                 `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`
-	SortOrder     int32                  `protobuf:"varint,9,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	Id                 int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	ParentId           int64                  `protobuf:"varint,2,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
+	Type               string                 `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
+	Name               string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	Path               string                 `protobuf:"bytes,5,opt,name=path,proto3" json:"path,omitempty"`
+	Method             string                 `protobuf:"bytes,6,opt,name=method,proto3" json:"method,omitempty"`
+	Description        string                 `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
+	Status             string                 `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`
+	SortOrder          int32                  `protobuf:"varint,9,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
+	AuthRequired       bool                   `protobuf:"varint,10,opt,name=auth_required,json=authRequired,proto3" json:"auth_required,omitempty"`
+	PermissionRequired bool                   `protobuf:"varint,11,opt,name=permission_required,json=permissionRequired,proto3" json:"permission_required,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *ApiUpdateRequestData) Reset() {
 	*x = ApiUpdateRequestData{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[57]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3486,7 +3491,7 @@ func (x *ApiUpdateRequestData) String() string {
 func (*ApiUpdateRequestData) ProtoMessage() {}
 
 func (x *ApiUpdateRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[57]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3499,7 +3504,7 @@ func (x *ApiUpdateRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiUpdateRequestData.ProtoReflect.Descriptor instead.
 func (*ApiUpdateRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{57}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{56}
 }
 
 func (x *ApiUpdateRequestData) GetId() int64 {
@@ -3565,6 +3570,20 @@ func (x *ApiUpdateRequestData) GetSortOrder() int32 {
 	return 0
 }
 
+func (x *ApiUpdateRequestData) GetAuthRequired() bool {
+	if x != nil {
+		return x.AuthRequired
+	}
+	return false
+}
+
+func (x *ApiUpdateRequestData) GetPermissionRequired() bool {
+	if x != nil {
+		return x.PermissionRequired
+	}
+	return false
+}
+
 // delete -- request
 type ApiDeleteRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -3575,7 +3594,7 @@ type ApiDeleteRequest struct {
 
 func (x *ApiDeleteRequest) Reset() {
 	*x = ApiDeleteRequest{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[58]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[57]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3587,7 +3606,7 @@ func (x *ApiDeleteRequest) String() string {
 func (*ApiDeleteRequest) ProtoMessage() {}
 
 func (x *ApiDeleteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[58]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[57]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3600,7 +3619,7 @@ func (x *ApiDeleteRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiDeleteRequest.ProtoReflect.Descriptor instead.
 func (*ApiDeleteRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{58}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{57}
 }
 
 func (x *ApiDeleteRequest) GetData() *ApiDeleteRequestData {
@@ -3620,7 +3639,7 @@ type ApiDeleteRequestData struct {
 
 func (x *ApiDeleteRequestData) Reset() {
 	*x = ApiDeleteRequestData{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[59]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[58]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3632,7 +3651,7 @@ func (x *ApiDeleteRequestData) String() string {
 func (*ApiDeleteRequestData) ProtoMessage() {}
 
 func (x *ApiDeleteRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[59]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[58]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3645,7 +3664,7 @@ func (x *ApiDeleteRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiDeleteRequestData.ProtoReflect.Descriptor instead.
 func (*ApiDeleteRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{59}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{58}
 }
 
 func (x *ApiDeleteRequestData) GetId() int64 {
@@ -3672,7 +3691,7 @@ type ApiDetailRequest struct {
 
 func (x *ApiDetailRequest) Reset() {
 	*x = ApiDetailRequest{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[60]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[59]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3684,7 +3703,7 @@ func (x *ApiDetailRequest) String() string {
 func (*ApiDetailRequest) ProtoMessage() {}
 
 func (x *ApiDetailRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[60]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[59]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3697,7 +3716,7 @@ func (x *ApiDetailRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiDetailRequest.ProtoReflect.Descriptor instead.
 func (*ApiDetailRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{60}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{59}
 }
 
 func (x *ApiDetailRequest) GetData() *ApiDetailRequestData {
@@ -3717,7 +3736,7 @@ type ApiDetailRequestData struct {
 
 func (x *ApiDetailRequestData) Reset() {
 	*x = ApiDetailRequestData{}
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[61]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[60]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3729,7 +3748,7 @@ func (x *ApiDetailRequestData) String() string {
 func (*ApiDetailRequestData) ProtoMessage() {}
 
 func (x *ApiDetailRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[61]
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[60]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3742,7 +3761,7 @@ func (x *ApiDetailRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiDetailRequestData.ProtoReflect.Descriptor instead.
 func (*ApiDetailRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{61}
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{60}
 }
 
 func (x *ApiDetailRequestData) GetId() int64 {
@@ -3759,25 +3778,71 @@ func (x *ApiDetailRequestData) GetType() string {
 	return ""
 }
 
-// ================= resource service start =================
-type ResourceTreeEntity struct {
+// detail -- response
+type ApiDetailResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	ParentId      int64                  `protobuf:"varint,2,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
-	Type          string                 `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
-	ResourceType  string                 `protobuf:"bytes,4,opt,name=resource_type,json=resourceType,proto3" json:"resource_type,omitempty"`
-	Name          string                 `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
-	Path          string                 `protobuf:"bytes,6,opt,name=path,proto3" json:"path,omitempty"`
-	Icon          string                 `protobuf:"bytes,7,opt,name=icon,proto3" json:"icon,omitempty"`
-	Tag           string                 `protobuf:"bytes,8,opt,name=tag,proto3" json:"tag,omitempty"`
-	IsShow        bool                   `protobuf:"varint,9,opt,name=is_show,json=isShow,proto3" json:"is_show,omitempty"`
-	Status        string                 `protobuf:"bytes,10,opt,name=status,proto3" json:"status,omitempty"`
-	SortOrder     int32                  `protobuf:"varint,11,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
-	CreatedAt     string                 `protobuf:"bytes,12,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt     string                 `protobuf:"bytes,13,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	Children      []*ResourceTreeEntity  `protobuf:"bytes,14,rep,name=children,proto3" json:"children,omitempty"`
+	Data          *ApiEntity             `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ApiDetailResponse) Reset() {
+	*x = ApiDetailResponse{}
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[61]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ApiDetailResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ApiDetailResponse) ProtoMessage() {}
+
+func (x *ApiDetailResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[61]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ApiDetailResponse.ProtoReflect.Descriptor instead.
+func (*ApiDetailResponse) Descriptor() ([]byte, []int) {
+	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{61}
+}
+
+func (x *ApiDetailResponse) GetData() *ApiEntity {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+// ================= resource service start =================
+type ResourceTreeEntity struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	ParentId        int64                  `protobuf:"varint,2,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
+	Type            string                 `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
+	ResourceType    string                 `protobuf:"bytes,4,opt,name=resource_type,json=resourceType,proto3" json:"resource_type,omitempty"`
+	Name            string                 `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
+	Path            string                 `protobuf:"bytes,6,opt,name=path,proto3" json:"path,omitempty"`
+	Icon            string                 `protobuf:"bytes,7,opt,name=icon,proto3" json:"icon,omitempty"`
+	Tag             string                 `protobuf:"bytes,8,opt,name=tag,proto3" json:"tag,omitempty"`
+	IsShow          bool                   `protobuf:"varint,9,opt,name=is_show,json=isShow,proto3" json:"is_show,omitempty"`
+	Status          string                 `protobuf:"bytes,10,opt,name=status,proto3" json:"status,omitempty"`
+	SortOrder       int32                  `protobuf:"varint,11,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
+	CreatedAt       string                 `protobuf:"bytes,12,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt       string                 `protobuf:"bytes,13,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Children        []*ResourceTreeEntity  `protobuf:"bytes,14,rep,name=children,proto3" json:"children,omitempty"`
+	EnableDataScope bool                   `protobuf:"varint,15,opt,name=enable_data_scope,json=enableDataScope,proto3" json:"enable_data_scope,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *ResourceTreeEntity) Reset() {
@@ -3908,6 +3973,13 @@ func (x *ResourceTreeEntity) GetChildren() []*ResourceTreeEntity {
 	return nil
 }
 
+func (x *ResourceTreeEntity) GetEnableDataScope() bool {
+	if x != nil {
+		return x.EnableDataScope
+	}
+	return false
+}
+
 type ResourceEntity struct {
 	state              protoimpl.MessageState `protogen:"open.v1"`
 	Id                 int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -3925,6 +3997,7 @@ type ResourceEntity struct {
 	UpdatedAt          string                 `protobuf:"bytes,13,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	Apis               []*ApiEntity           `protobuf:"bytes,14,rep,name=apis,proto3" json:"apis,omitempty"`
 	PivotRoleDataScope string                 `protobuf:"bytes,15,opt,name=pivot_role_data_scope,json=pivotRoleDataScope,proto3" json:"pivot_role_data_scope,omitempty"`
+	EnableDataScope    bool                   `protobuf:"varint,16,opt,name=enable_data_scope,json=enableDataScope,proto3" json:"enable_data_scope,omitempty"`
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
 }
@@ -4062,6 +4135,13 @@ func (x *ResourceEntity) GetPivotRoleDataScope() string {
 		return x.PivotRoleDataScope
 	}
 	return ""
+}
+
+func (x *ResourceEntity) GetEnableDataScope() bool {
+	if x != nil {
+		return x.EnableDataScope
+	}
+	return false
 }
 
 // resource tree -- request
@@ -4244,20 +4324,21 @@ func (x *ResourceCreateRequest) GetData() *ResourceCreateRequestData {
 }
 
 type ResourceCreateRequestData struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ParentId      int64                  `protobuf:"varint,1,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
-	Type          string                 `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
-	ResourceType  string                 `protobuf:"bytes,3,opt,name=resource_type,json=resourceType,proto3" json:"resource_type,omitempty"`
-	Name          string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
-	Path          string                 `protobuf:"bytes,5,opt,name=path,proto3" json:"path,omitempty"`
-	Icon          string                 `protobuf:"bytes,6,opt,name=icon,proto3" json:"icon,omitempty"`
-	Tag           string                 `protobuf:"bytes,7,opt,name=tag,proto3" json:"tag,omitempty"`
-	IsShow        bool                   `protobuf:"varint,8,opt,name=is_show,json=isShow,proto3" json:"is_show,omitempty"`
-	Status        string                 `protobuf:"bytes,9,opt,name=status,proto3" json:"status,omitempty"`
-	SortOrder     int32                  `protobuf:"varint,10,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
-	ApiIds        []int64                `protobuf:"varint,11,rep,packed,name=api_ids,json=apiIds,proto3" json:"api_ids,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	ParentId        int64                  `protobuf:"varint,1,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
+	Type            string                 `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
+	ResourceType    string                 `protobuf:"bytes,3,opt,name=resource_type,json=resourceType,proto3" json:"resource_type,omitempty"`
+	Name            string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	Path            string                 `protobuf:"bytes,5,opt,name=path,proto3" json:"path,omitempty"`
+	Icon            string                 `protobuf:"bytes,6,opt,name=icon,proto3" json:"icon,omitempty"`
+	Tag             string                 `protobuf:"bytes,7,opt,name=tag,proto3" json:"tag,omitempty"`
+	IsShow          bool                   `protobuf:"varint,8,opt,name=is_show,json=isShow,proto3" json:"is_show,omitempty"`
+	Status          string                 `protobuf:"bytes,9,opt,name=status,proto3" json:"status,omitempty"`
+	SortOrder       int32                  `protobuf:"varint,10,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
+	ApiIds          []int64                `protobuf:"varint,11,rep,packed,name=api_ids,json=apiIds,proto3" json:"api_ids,omitempty"`
+	EnableDataScope bool                   `protobuf:"varint,12,opt,name=enable_data_scope,json=enableDataScope,proto3" json:"enable_data_scope,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *ResourceCreateRequestData) Reset() {
@@ -4367,6 +4448,13 @@ func (x *ResourceCreateRequestData) GetApiIds() []int64 {
 	return nil
 }
 
+func (x *ResourceCreateRequestData) GetEnableDataScope() bool {
+	if x != nil {
+		return x.EnableDataScope
+	}
+	return false
+}
+
 type ResourceCreateResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Data          *ResourceTreeEntity    `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -4457,21 +4545,22 @@ func (x *ResourceUpdateRequest) GetData() *ResourceUpdateRequestData {
 }
 
 type ResourceUpdateRequestData struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	ParentId      int64                  `protobuf:"varint,2,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
-	Type          string                 `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
-	ResourceType  string                 `protobuf:"bytes,4,opt,name=resource_type,json=resourceType,proto3" json:"resource_type,omitempty"`
-	Name          string                 `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
-	Path          string                 `protobuf:"bytes,6,opt,name=path,proto3" json:"path,omitempty"`
-	Icon          string                 `protobuf:"bytes,7,opt,name=icon,proto3" json:"icon,omitempty"`
-	Tag           string                 `protobuf:"bytes,8,opt,name=tag,proto3" json:"tag,omitempty"`
-	IsShow        bool                   `protobuf:"varint,9,opt,name=is_show,json=isShow,proto3" json:"is_show,omitempty"`
-	Status        string                 `protobuf:"bytes,10,opt,name=status,proto3" json:"status,omitempty"`
-	SortOrder     int32                  `protobuf:"varint,11,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
-	ApiIds        []int64                `protobuf:"varint,12,rep,packed,name=api_ids,json=apiIds,proto3" json:"api_ids,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	ParentId        int64                  `protobuf:"varint,2,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
+	Type            string                 `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
+	ResourceType    string                 `protobuf:"bytes,4,opt,name=resource_type,json=resourceType,proto3" json:"resource_type,omitempty"`
+	Name            string                 `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
+	Path            string                 `protobuf:"bytes,6,opt,name=path,proto3" json:"path,omitempty"`
+	Icon            string                 `protobuf:"bytes,7,opt,name=icon,proto3" json:"icon,omitempty"`
+	Tag             string                 `protobuf:"bytes,8,opt,name=tag,proto3" json:"tag,omitempty"`
+	IsShow          bool                   `protobuf:"varint,9,opt,name=is_show,json=isShow,proto3" json:"is_show,omitempty"`
+	Status          string                 `protobuf:"bytes,10,opt,name=status,proto3" json:"status,omitempty"`
+	SortOrder       int32                  `protobuf:"varint,11,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
+	ApiIds          []int64                `protobuf:"varint,12,rep,packed,name=api_ids,json=apiIds,proto3" json:"api_ids,omitempty"`
+	EnableDataScope bool                   `protobuf:"varint,13,opt,name=enable_data_scope,json=enableDataScope,proto3" json:"enable_data_scope,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *ResourceUpdateRequestData) Reset() {
@@ -4586,6 +4675,13 @@ func (x *ResourceUpdateRequestData) GetApiIds() []int64 {
 		return x.ApiIds
 	}
 	return nil
+}
+
+func (x *ResourceUpdateRequestData) GetEnableDataScope() bool {
+	if x != nil {
+		return x.EnableDataScope
+	}
+	return false
 }
 
 // delete -- request
@@ -13088,7 +13184,7 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x04data\x18\x01 \x01(\v2..admin.OrganizationUserSwitchStatusRequestDataR\x04data\"Q\n" +
 	"'OrganizationUserSwitchStatusRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x16\n" +
-	"\x06status\x18\x04 \x01(\tR\x06status\"\xd9\x02\n" +
+	"\x06status\x18\x04 \x01(\tR\x06status\"\xaf\x03\n" +
 	"\rApiTreeEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12\x12\n" +
@@ -13105,7 +13201,9 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	" \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
 	"updated_at\x18\v \x01(\tR\tupdatedAt\x120\n" +
-	"\bchildren\x18\f \x03(\v2\x14.admin.ApiTreeEntityR\bchildren\"\xa3\x02\n" +
+	"\bchildren\x18\f \x03(\v2\x14.admin.ApiTreeEntityR\bchildren\x12#\n" +
+	"\rauth_required\x18\r \x01(\bR\fauthRequired\x12/\n" +
+	"\x13permission_required\x18\x0e \x01(\bR\x12permissionRequired\"\xf9\x02\n" +
 	"\tApiEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12\x12\n" +
@@ -13121,7 +13219,9 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"created_at\x18\n" +
 	" \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\v \x01(\tR\tupdatedAt\"?\n" +
+	"updated_at\x18\v \x01(\tR\tupdatedAt\x12#\n" +
+	"\rauth_required\x18\r \x01(\bR\fauthRequired\x12/\n" +
+	"\x13permission_required\x18\x0e \x01(\bR\x12permissionRequired\"?\n" +
 	"\x0eApiTreeRequest\x12-\n" +
 	"\x04data\x18\x01 \x01(\v2\x19.admin.ApiTreeRequestDataR\x04data\"j\n" +
 	"\x12ApiTreeRequestData\x12\x17\n" +
@@ -13131,7 +13231,7 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x0fApiTreeResponse\x12(\n" +
 	"\x04data\x18\x01 \x03(\v2\x14.admin.ApiTreeEntityR\x04data\"C\n" +
 	"\x10ApiCreateRequest\x12/\n" +
-	"\x04data\x18\x01 \x01(\v2\x1b.admin.ApiCreateRequestDataR\x04data\"\xe0\x01\n" +
+	"\x04data\x18\x01 \x01(\v2\x1b.admin.ApiCreateRequestDataR\x04data\"\xb6\x02\n" +
 	"\x14ApiCreateRequestData\x12\x1b\n" +
 	"\tparent_id\x18\x01 \x01(\x03R\bparentId\x12\x12\n" +
 	"\x04type\x18\x02 \x01(\tR\x04type\x12\x12\n" +
@@ -13141,11 +13241,12 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\vdescription\x18\x06 \x01(\tR\vdescription\x12\x16\n" +
 	"\x06status\x18\a \x01(\tR\x06status\x12\x1d\n" +
 	"\n" +
-	"sort_order\x18\b \x01(\x05R\tsortOrder\"=\n" +
-	"\x11ApiCreateResponse\x12(\n" +
-	"\x04data\x18\x01 \x01(\v2\x14.admin.ApiTreeEntityR\x04data\"C\n" +
+	"sort_order\x18\b \x01(\x05R\tsortOrder\x12#\n" +
+	"\rauth_required\x18\t \x01(\bR\fauthRequired\x12/\n" +
+	"\x13permission_required\x18\n" +
+	" \x01(\bR\x12permissionRequired\"C\n" +
 	"\x10ApiUpdateRequest\x12/\n" +
-	"\x04data\x18\x01 \x01(\v2\x1b.admin.ApiUpdateRequestDataR\x04data\"\xf0\x01\n" +
+	"\x04data\x18\x01 \x01(\v2\x1b.admin.ApiUpdateRequestDataR\x04data\"\xc6\x02\n" +
 	"\x14ApiUpdateRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12\x12\n" +
@@ -13156,7 +13257,10 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\vdescription\x18\a \x01(\tR\vdescription\x12\x16\n" +
 	"\x06status\x18\b \x01(\tR\x06status\x12\x1d\n" +
 	"\n" +
-	"sort_order\x18\t \x01(\x05R\tsortOrder\"C\n" +
+	"sort_order\x18\t \x01(\x05R\tsortOrder\x12#\n" +
+	"\rauth_required\x18\n" +
+	" \x01(\bR\fauthRequired\x12/\n" +
+	"\x13permission_required\x18\v \x01(\bR\x12permissionRequired\"C\n" +
 	"\x10ApiDeleteRequest\x12/\n" +
 	"\x04data\x18\x01 \x01(\v2\x1b.admin.ApiDeleteRequestDataR\x04data\":\n" +
 	"\x14ApiDeleteRequestData\x12\x0e\n" +
@@ -13166,7 +13270,9 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x04data\x18\x01 \x01(\v2\x1b.admin.ApiDetailRequestDataR\x04data\":\n" +
 	"\x14ApiDetailRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
-	"\x04type\x18\x02 \x01(\tR\x04type\"\x8d\x03\n" +
+	"\x04type\x18\x02 \x01(\tR\x04type\"9\n" +
+	"\x11ApiDetailResponse\x12$\n" +
+	"\x04data\x18\x01 \x01(\v2\x10.admin.ApiEntityR\x04data\"\xb9\x03\n" +
 	"\x12ResourceTreeEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12\x12\n" +
@@ -13185,7 +13291,8 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"created_at\x18\f \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
 	"updated_at\x18\r \x01(\tR\tupdatedAt\x125\n" +
-	"\bchildren\x18\x0e \x03(\v2\x19.admin.ResourceTreeEntityR\bchildren\"\xab\x03\n" +
+	"\bchildren\x18\x0e \x03(\v2\x19.admin.ResourceTreeEntityR\bchildren\x12*\n" +
+	"\x11enable_data_scope\x18\x0f \x01(\bR\x0fenableDataScope\"\xd7\x03\n" +
 	"\x0eResourceEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12\x12\n" +
@@ -13205,7 +13312,8 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\r \x01(\tR\tupdatedAt\x12$\n" +
 	"\x04apis\x18\x0e \x03(\v2\x10.admin.ApiEntityR\x04apis\x121\n" +
-	"\x15pivot_role_data_scope\x18\x0f \x01(\tR\x12pivotRoleDataScope\"I\n" +
+	"\x15pivot_role_data_scope\x18\x0f \x01(\tR\x12pivotRoleDataScope\x12*\n" +
+	"\x11enable_data_scope\x18\x10 \x01(\bR\x0fenableDataScope\"I\n" +
 	"\x13ResourceTreeRequest\x122\n" +
 	"\x04data\x18\x01 \x01(\v2\x1e.admin.ResourceTreeRequestDataR\x04data\"-\n" +
 	"\x17ResourceTreeRequestData\x12\x12\n" +
@@ -13213,7 +13321,7 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x14ResourceTreeResponse\x12-\n" +
 	"\x04data\x18\x01 \x03(\v2\x19.admin.ResourceTreeEntityR\x04data\"M\n" +
 	"\x15ResourceCreateRequest\x124\n" +
-	"\x04data\x18\x01 \x01(\v2 .admin.ResourceCreateRequestDataR\x04data\"\xa8\x02\n" +
+	"\x04data\x18\x01 \x01(\v2 .admin.ResourceCreateRequestDataR\x04data\"\xd4\x02\n" +
 	"\x19ResourceCreateRequestData\x12\x1b\n" +
 	"\tparent_id\x18\x01 \x01(\x03R\bparentId\x12\x12\n" +
 	"\x04type\x18\x02 \x01(\tR\x04type\x12#\n" +
@@ -13227,11 +13335,12 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\n" +
 	"sort_order\x18\n" +
 	" \x01(\x05R\tsortOrder\x12\x17\n" +
-	"\aapi_ids\x18\v \x03(\x03R\x06apiIds\"G\n" +
+	"\aapi_ids\x18\v \x03(\x03R\x06apiIds\x12*\n" +
+	"\x11enable_data_scope\x18\f \x01(\bR\x0fenableDataScope\"G\n" +
 	"\x16ResourceCreateResponse\x12-\n" +
 	"\x04data\x18\x01 \x01(\v2\x19.admin.ResourceTreeEntityR\x04data\"M\n" +
 	"\x15ResourceUpdateRequest\x124\n" +
-	"\x04data\x18\x01 \x01(\v2 .admin.ResourceUpdateRequestDataR\x04data\"\xb8\x02\n" +
+	"\x04data\x18\x01 \x01(\v2 .admin.ResourceUpdateRequestDataR\x04data\"\xe4\x02\n" +
 	"\x19ResourceUpdateRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12\x12\n" +
@@ -13246,7 +13355,8 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	" \x01(\tR\x06status\x12\x1d\n" +
 	"\n" +
 	"sort_order\x18\v \x01(\x05R\tsortOrder\x12\x17\n" +
-	"\aapi_ids\x18\f \x03(\x03R\x06apiIds\"M\n" +
+	"\aapi_ids\x18\f \x03(\x03R\x06apiIds\x12*\n" +
+	"\x11enable_data_scope\x18\r \x01(\bR\x0fenableDataScope\"M\n" +
 	"\x15ResourceDeleteRequest\x124\n" +
 	"\x04data\x18\x01 \x01(\v2 .admin.ResourceDeleteRequestDataR\x04data\"?\n" +
 	"\x19ResourceDeleteRequestData\x12\x0e\n" +
@@ -13954,10 +14064,10 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\fSwitchStatus\x12*.admin.OrganizationUserSwitchStatusRequest\x1a\x14.admin.EmptyResponse2\xaf\x02\n" +
 	"\x03api\x128\n" +
 	"\aApiTree\x12\x15.admin.ApiTreeRequest\x1a\x16.admin.ApiTreeResponse\x12;\n" +
-	"\x06Create\x12\x17.admin.ApiCreateRequest\x1a\x18.admin.ApiCreateResponse\x12;\n" +
-	"\x06Update\x12\x17.admin.ApiUpdateRequest\x1a\x18.admin.ApiCreateResponse\x127\n" +
+	"\x06Create\x12\x17.admin.ApiCreateRequest\x1a\x18.admin.ApiDetailResponse\x12;\n" +
+	"\x06Update\x12\x17.admin.ApiUpdateRequest\x1a\x18.admin.ApiDetailResponse\x127\n" +
 	"\x06Delete\x12\x17.admin.ApiDeleteRequest\x1a\x14.admin.EmptyResponse\x12;\n" +
-	"\x06Detail\x12\x17.admin.ApiDetailRequest\x1a\x18.admin.ApiCreateResponse2\xe6\x02\n" +
+	"\x06Detail\x12\x17.admin.ApiDetailRequest\x1a\x18.admin.ApiDetailResponse2\xe6\x02\n" +
 	"\bresource\x12G\n" +
 	"\fResourceTree\x12\x1a.admin.ResourceTreeRequest\x1a\x1b.admin.ResourceTreeResponse\x12E\n" +
 	"\x06Create\x12\x1c.admin.ResourceCreateRequest\x1a\x1d.admin.ResourceDetailResponse\x12E\n" +
@@ -14072,13 +14182,13 @@ var file_app_admin_rpc_pb_admin_proto_goTypes = []any{
 	(*ApiTreeResponse)(nil),                            // 52: admin.ApiTreeResponse
 	(*ApiCreateRequest)(nil),                           // 53: admin.ApiCreateRequest
 	(*ApiCreateRequestData)(nil),                       // 54: admin.ApiCreateRequestData
-	(*ApiCreateResponse)(nil),                          // 55: admin.ApiCreateResponse
-	(*ApiUpdateRequest)(nil),                           // 56: admin.ApiUpdateRequest
-	(*ApiUpdateRequestData)(nil),                       // 57: admin.ApiUpdateRequestData
-	(*ApiDeleteRequest)(nil),                           // 58: admin.ApiDeleteRequest
-	(*ApiDeleteRequestData)(nil),                       // 59: admin.ApiDeleteRequestData
-	(*ApiDetailRequest)(nil),                           // 60: admin.ApiDetailRequest
-	(*ApiDetailRequestData)(nil),                       // 61: admin.ApiDetailRequestData
+	(*ApiUpdateRequest)(nil),                           // 55: admin.ApiUpdateRequest
+	(*ApiUpdateRequestData)(nil),                       // 56: admin.ApiUpdateRequestData
+	(*ApiDeleteRequest)(nil),                           // 57: admin.ApiDeleteRequest
+	(*ApiDeleteRequestData)(nil),                       // 58: admin.ApiDeleteRequestData
+	(*ApiDetailRequest)(nil),                           // 59: admin.ApiDetailRequest
+	(*ApiDetailRequestData)(nil),                       // 60: admin.ApiDetailRequestData
+	(*ApiDetailResponse)(nil),                          // 61: admin.ApiDetailResponse
 	(*ResourceTreeEntity)(nil),                         // 62: admin.ResourceTreeEntity
 	(*ResourceEntity)(nil),                             // 63: admin.ResourceEntity
 	(*ResourceTreeRequest)(nil),                        // 64: admin.ResourceTreeRequest
@@ -14238,10 +14348,10 @@ var file_app_admin_rpc_pb_admin_proto_depIdxs = []int32{
 	51,  // 27: admin.ApiTreeRequest.data:type_name -> admin.ApiTreeRequestData
 	48,  // 28: admin.ApiTreeResponse.data:type_name -> admin.ApiTreeEntity
 	54,  // 29: admin.ApiCreateRequest.data:type_name -> admin.ApiCreateRequestData
-	48,  // 30: admin.ApiCreateResponse.data:type_name -> admin.ApiTreeEntity
-	57,  // 31: admin.ApiUpdateRequest.data:type_name -> admin.ApiUpdateRequestData
-	59,  // 32: admin.ApiDeleteRequest.data:type_name -> admin.ApiDeleteRequestData
-	61,  // 33: admin.ApiDetailRequest.data:type_name -> admin.ApiDetailRequestData
+	56,  // 30: admin.ApiUpdateRequest.data:type_name -> admin.ApiUpdateRequestData
+	58,  // 31: admin.ApiDeleteRequest.data:type_name -> admin.ApiDeleteRequestData
+	60,  // 32: admin.ApiDetailRequest.data:type_name -> admin.ApiDetailRequestData
+	49,  // 33: admin.ApiDetailResponse.data:type_name -> admin.ApiEntity
 	62,  // 34: admin.ResourceTreeEntity.children:type_name -> admin.ResourceTreeEntity
 	49,  // 35: admin.ResourceEntity.apis:type_name -> admin.ApiEntity
 	65,  // 36: admin.ResourceTreeRequest.data:type_name -> admin.ResourceTreeRequestData
@@ -14366,9 +14476,9 @@ var file_app_admin_rpc_pb_admin_proto_depIdxs = []int32{
 	46,  // 155: admin.OrganizationUser.SwitchStatus:input_type -> admin.OrganizationUserSwitchStatusRequest
 	50,  // 156: admin.api.ApiTree:input_type -> admin.ApiTreeRequest
 	53,  // 157: admin.api.Create:input_type -> admin.ApiCreateRequest
-	56,  // 158: admin.api.Update:input_type -> admin.ApiUpdateRequest
-	58,  // 159: admin.api.Delete:input_type -> admin.ApiDeleteRequest
-	60,  // 160: admin.api.Detail:input_type -> admin.ApiDetailRequest
+	55,  // 158: admin.api.Update:input_type -> admin.ApiUpdateRequest
+	57,  // 159: admin.api.Delete:input_type -> admin.ApiDeleteRequest
+	59,  // 160: admin.api.Detail:input_type -> admin.ApiDetailRequest
 	64,  // 161: admin.resource.ResourceTree:input_type -> admin.ResourceTreeRequest
 	67,  // 162: admin.resource.Create:input_type -> admin.ResourceCreateRequest
 	70,  // 163: admin.resource.Update:input_type -> admin.ResourceUpdateRequest
@@ -14416,10 +14526,10 @@ var file_app_admin_rpc_pb_admin_proto_depIdxs = []int32{
 	44,  // 205: admin.OrganizationUser.Detail:output_type -> admin.OrganizationUserDetailResponse
 	1,   // 206: admin.OrganizationUser.SwitchStatus:output_type -> admin.EmptyResponse
 	52,  // 207: admin.api.ApiTree:output_type -> admin.ApiTreeResponse
-	55,  // 208: admin.api.Create:output_type -> admin.ApiCreateResponse
-	55,  // 209: admin.api.Update:output_type -> admin.ApiCreateResponse
+	61,  // 208: admin.api.Create:output_type -> admin.ApiDetailResponse
+	61,  // 209: admin.api.Update:output_type -> admin.ApiDetailResponse
 	1,   // 210: admin.api.Delete:output_type -> admin.EmptyResponse
-	55,  // 211: admin.api.Detail:output_type -> admin.ApiCreateResponse
+	61,  // 211: admin.api.Detail:output_type -> admin.ApiDetailResponse
 	66,  // 212: admin.resource.ResourceTree:output_type -> admin.ResourceTreeResponse
 	76,  // 213: admin.resource.Create:output_type -> admin.ResourceDetailResponse
 	76,  // 214: admin.resource.Update:output_type -> admin.ResourceDetailResponse

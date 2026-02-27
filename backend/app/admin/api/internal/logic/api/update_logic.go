@@ -28,8 +28,8 @@ func NewUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLogi
 	}
 }
 
-func (l *UpdateLogic) Update(req *types.ApiUpdateRequest) (resp *types.EmptyResponse, err error) {
-	resp = &types.EmptyResponse{}
+func (l *UpdateLogic) Update(req *types.ApiUpdateRequest) (resp *types.ApiEntity, err error) {
+	resp = &types.ApiEntity{}
 	rpcReq := &admin.ApiUpdateRequest{
 		Data: &admin.ApiUpdateRequestData{},
 	}
@@ -38,10 +38,15 @@ func (l *UpdateLogic) Update(req *types.ApiUpdateRequest) (resp *types.EmptyResp
 		return nil, errorx.GetFailedTransReqErr(err)
 	}
 
-	_, err = l.svcCtx.ApiRpcClient.Update(l.ctx, rpcReq)
+	rpcResp, err := l.svcCtx.ApiRpcClient.Update(l.ctx, rpcReq)
 	if err != nil {
 		return nil, err
 	}
 
+	// trans response
+	err = copier.CopyWithOption(resp, &rpcResp.Data, copier.Option{DeepCopy: true})
+	if err != nil {
+		return nil, errorx.GetFailedTransReqErr(err)
+	}
 	return resp, err
 }

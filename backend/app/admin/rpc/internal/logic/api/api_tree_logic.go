@@ -3,13 +3,13 @@ package apilogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/dto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -40,13 +40,13 @@ func (l *ApiTreeLogic) ApiTree(in *admin.ApiTreeRequest) (resp *admin.ApiTreeRes
 	if err != nil {
 		return nil, err
 	}
-	data := []*admin.ApiTreeEntity{}
-	err = copier.CopyWithOption(&data, &trees, copier.Option{DeepCopy: true})
+
+	data, err := copierx.Trans[[]*dto.ApiEntityDto, []*admin.ApiTreeEntity](&trees, copierx.TimeToRFC3339Str())
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 
 	return &admin.ApiTreeResponse{
-		Data: data,
+		Data: *data,
 	}, nil
 }

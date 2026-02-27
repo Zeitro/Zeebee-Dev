@@ -11,18 +11,21 @@ type AddressEntity struct {
 	ZipCode  string `json:"zip_code,optional"`
 }
 
-type ApiEntity struct {
-	Id          int64  `json:"id"`
-	ParentId    int64  `json:"parent_id"`
-	Name        string `json:"name"`
-	Path        string `json:"path"`
-	Method      string `json:"method"`
-	Status      string `json:"status"`
-	Description string `json:"description"`
-	Type        string `json:"type"`
-	SortOrder   int32  `json:"sort_order"`
-	CreatedAt   string `json:"created_at"`
-	UpdatedAt   string `json:"updated_at"`
+type ApiTreeEntity struct {
+	Id                 int64            `json:"id"`
+	ParentId           int64            `json:"parent_id"`
+	Name               string           `json:"name"`
+	Path               string           `json:"path"`
+	Method             string           `json:"method"`
+	Status             string           `json:"status"`
+	Description        string           `json:"description"`
+	Type               string           `json:"type"`
+	SortOrder          int32            `json:"sort_order"`
+	AuthRequired       bool             `json:"auth_required"`
+	PermissionRequired bool             `json:"permission_required"`
+	CreatedAt          string           `json:"created_at"`
+	UpdatedAt          string           `json:"updated_at"`
+	Children           []*ApiTreeEntity `json:"children,omitempty"`
 }
 
 type BasePageFilter struct {

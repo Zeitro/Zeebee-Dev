@@ -4,14 +4,16 @@
 package types
 
 type ApiCreateRequest struct {
-	ParentId    int64  `json:"parent_id" validate:"min=0"`
-	Name        string `json:"name" validate:"required,min=2,max=100"`
-	Path        string `json:"path" validate:"max=100"`
-	Method      string `json:"method" validate:"oneof='' GET POST PUT DELETE PATCH OPTIONS HEAD"`
-	Status      string `json:"status" validate:"required,oneof=Active Inactive"`
-	Description string `json:"description" validate:"max=255"`
-	Type        string `json:"type" validate:"required,oneof=Borrower Lender Admin"`
-	SortOrder   int32  `json:"sort_order" validate:"min=0"`
+	ParentId           int64  `json:"parent_id" validate:"min=0"`
+	Name               string `json:"name" validate:"required,min=2,max=100"`
+	Path               string `json:"path" validate:"max=100"`
+	Method             string `json:"method" validate:"oneof='' GET POST PUT DELETE PATCH OPTIONS HEAD"`
+	Status             string `json:"status" validate:"required,oneof=Active Disabled"`
+	Description        string `json:"description" validate:"max=255"`
+	Type               string `json:"type" validate:"required,oneof=Borrower Lender Admin"`
+	SortOrder          int32  `json:"sort_order" validate:"min=0"`
+	AuthRequired       bool   `json:"auth_required"`
+	PermissionRequired bool   `json:"permission_required"`
 }
 
 type ApiDeleteRequest struct {
@@ -24,19 +26,20 @@ type ApiDetailRequest struct {
 	Type string `form:"type" validate:"required,oneof=Borrower Lender Admin"`
 }
 
-type ApiTreeEntity struct {
-	Id          int64            `json:"id"`
-	ParentId    int64            `json:"parent_id"`
-	Name        string           `json:"name"`
-	Path        string           `json:"path"`
-	Method      string           `json:"method"`
-	Status      string           `json:"status"`
-	Description string           `json:"description"`
-	Type        string           `json:"type"`
-	SortOrder   int32            `json:"sort_order"`
-	CreatedAt   string           `json:"created_at"`
-	UpdatedAt   string           `json:"updated_at"`
-	Children    []*ApiTreeEntity `json:"children,omitempty"`
+type ApiEntity struct {
+	Id                 int64  `json:"id"`
+	ParentId           int64  `json:"parent_id"`
+	Name               string `json:"name"`
+	Path               string `json:"path"`
+	Method             string `json:"method"`
+	Status             string `json:"status"`
+	Description        string `json:"description"`
+	Type               string `json:"type"`
+	SortOrder          int32  `json:"sort_order"`
+	AuthRequired       bool   `json:"auth_required"`
+	PermissionRequired bool   `json:"permission_required"`
+	CreatedAt          string `json:"created_at"`
+	UpdatedAt          string `json:"updated_at"`
 }
 
 type ApiTreeRequest struct {
@@ -48,13 +51,15 @@ type ApiTreeResponse struct {
 }
 
 type ApiUpdateRequest struct {
-	Id          int64  `path:"id" validate:"required,gt=0"`
-	ParentId    int64  `json:"parent_id" validate:"min=0"`
-	Name        string `json:"name" validate:"required,min=2,max=100"`
-	Path        string `json:"path" validate:"max=100"`
-	Method      string `json:"method" validate:"oneof='' GET POST PUT DELETE PATCH OPTIONS HEAD"`
-	Status      string `json:"status" validate:"required,oneof=Active Inactive"`
-	Description string `json:"description" validate:"max=255"`
-	Type        string `json:"type" validate:"required,oneof=Borrower Lender Admin"`
-	SortOrder   int32  `json:"sort_order" validate:"min=0"`
+	Id                 int64  `path:"id" validate:"required,gt=0"`
+	ParentId           int64  `json:"parent_id" validate:"min=0"`
+	Name               string `json:"name" validate:"required,min=2,max=100"`
+	Path               string `json:"path" validate:"max=100"`
+	Method             string `json:"method" validate:"oneof='' GET POST PUT DELETE PATCH OPTIONS HEAD"`
+	Status             string `json:"status" validate:"required,oneof=Active Disabled"`
+	Description        string `json:"description" validate:"max=255"`
+	Type               string `json:"type" validate:"required,oneof=Borrower Lender Admin"`
+	SortOrder          int32  `json:"sort_order" validate:"min=0"`
+	AuthRequired       bool   `json:"auth_required"`
+	PermissionRequired bool   `json:"permission_required"`
 }

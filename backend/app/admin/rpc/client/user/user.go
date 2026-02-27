@@ -17,11 +17,11 @@ type (
 	AddressEntity                              = admin.AddressEntity
 	ApiCreateRequest                           = admin.ApiCreateRequest
 	ApiCreateRequestData                       = admin.ApiCreateRequestData
-	ApiCreateResponse                          = admin.ApiCreateResponse
 	ApiDeleteRequest                           = admin.ApiDeleteRequest
 	ApiDeleteRequestData                       = admin.ApiDeleteRequestData
 	ApiDetailRequest                           = admin.ApiDetailRequest
 	ApiDetailRequestData                       = admin.ApiDetailRequestData
+	ApiDetailResponse                          = admin.ApiDetailResponse
 	ApiEntity                                  = admin.ApiEntity
 	ApiTreeEntity                              = admin.ApiTreeEntity
 	ApiTreeRequest                             = admin.ApiTreeRequest

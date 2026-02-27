@@ -49,12 +49,41 @@ func (repo *ApiRepo) IsExisted(ctx context.Context, data *model.Api) (isExisted 
 }
 
 // GetApi return api by id
-func (repo *ApiRepo) GetApi(ctx context.Context, id int64, apiType constants.UserType) (result *model.Api, err error) {
-	err = repo.Client(ctx).
+func (repo *ApiRepo) GetApi(ctx context.Context, id int64, apiType constants.UserType, withPreload bool) (result *model.Api, err error) {
+	query := repo.Client(ctx).
 		Where("id = ?", id).
-		Where("type = ?", apiType).
-		First(&result).Error
+		Where("type = ?", apiType)
+	if withPreload {
+		query = query.
+			Preload("Resources")
+	}
+	err = query.First(&result).Error
 	return result, errorx.WithStack(err)
+}
+
+// DeleteApi
+func (repo *ApiRepo) DeleteApi(ctx context.Context, api *model.Api) (err error) {
+	if api == nil {
+		return nil
+	}
+	err = repo.Transaction(ctx, func(tx *gorm.DB) error {
+		var innerErr error
+		resources := api.Resources
+		if len(resources) > 0 {
+			innerErr = tx.WithContext(ctx).
+				Model(api).
+				Association("Resources").
+				Clear()
+			if innerErr != nil {
+				return innerErr
+			}
+		}
+		innerErr = tx.WithContext(ctx).
+			Delete(api).Error
+		return innerErr
+	})
+
+	return errorx.WithStack(err)
 }
 
 // GetApisByParentId return apis by parent id

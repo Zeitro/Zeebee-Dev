@@ -313,6 +313,8 @@ message ApiTreeEntity{
   string created_at = 10;
   string updated_at = 11;
   repeated ApiTreeEntity children = 12;
+  bool auth_required = 13;
+  bool permission_required = 14;
 }
 
 message ApiEntity{
@@ -327,6 +329,8 @@ message ApiEntity{
   int32  sort_order = 9;
   string created_at = 10;
   string updated_at = 11;
+  bool auth_required = 13;
+  bool permission_required = 14;
 }
 
 // api tree -- request
@@ -355,11 +359,10 @@ message ApiCreateRequestData {
   string description = 6;
   string status = 7;
   int32 sort_order = 8;
+  bool auth_required = 9;
+  bool permission_required = 10;
 }
-// create -- response
-message ApiCreateResponse {
-  ApiTreeEntity data = 1;
-}
+
 // update -- request
 message ApiUpdateRequest {
   ApiUpdateRequestData data = 1;
@@ -374,6 +377,8 @@ message ApiUpdateRequestData {
   string description = 7;
   string status = 8;
   int32 sort_order = 9;
+  bool auth_required = 10;
+  bool permission_required = 11;
 }
 
 //  delete -- request
@@ -393,12 +398,17 @@ message ApiDetailRequestData {
   string type = 2;
 }
 
+// detail -- response
+message ApiDetailResponse {
+  ApiEntity data = 1;
+}
+
 service api {
   rpc ApiTree(ApiTreeRequest) returns(ApiTreeResponse);
-  rpc Create(ApiCreateRequest) returns(ApiCreateResponse);
-  rpc Update(ApiUpdateRequest) returns(ApiCreateResponse);
+  rpc Create(ApiCreateRequest) returns(ApiDetailResponse);
+  rpc Update(ApiUpdateRequest) returns(ApiDetailResponse);
   rpc Delete(ApiDeleteRequest) returns(EmptyResponse);
-  rpc Detail(ApiDetailRequest) returns(ApiCreateResponse);
+  rpc Detail(ApiDetailRequest) returns(ApiDetailResponse);
 }
 // =================== api service end =================
 
@@ -418,6 +428,7 @@ message ResourceTreeEntity{
   string created_at = 12;
   string updated_at = 13;
   repeated ResourceTreeEntity children = 14;
+  bool enable_data_scope = 15;
 }
 
 message ResourceEntity{
@@ -436,6 +447,7 @@ message ResourceEntity{
   string updated_at = 13;
   repeated ApiEntity apis = 14;
   string pivot_role_data_scope = 15;
+  bool enable_data_scope = 16;
 }
 
 // resource tree -- request
@@ -465,6 +477,7 @@ message ResourceCreateRequestData {
   string status = 9;
   int32 sort_order = 10;
   repeated int64 api_ids = 11;
+  bool enable_data_scope = 12;
 }
 message ResourceCreateResponse {
   ResourceTreeEntity data = 1;
@@ -486,6 +499,7 @@ message ResourceUpdateRequestData {
   string status = 10;
   int32 sort_order = 11;
   repeated int64 api_ids = 12;
+  bool enable_data_scope = 13;
 }
 
 //  delete -- request

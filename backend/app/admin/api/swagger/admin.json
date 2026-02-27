@@ -46,9 +46,14 @@
                 "status",
                 "description",
                 "type",
-                "sort_order"
+                "sort_order",
+                "auth_required",
+                "permission_required"
               ],
               "properties": {
+                "auth_required": {
+                  "type": "boolean"
+                },
                 "description": {
                   "type": "string"
                 },
@@ -63,6 +68,9 @@
                 },
                 "path": {
                   "type": "string"
+                },
+                "permission_required": {
+                  "type": "boolean"
                 },
                 "sort_order": {
                   "type": "integer"
@@ -83,121 +91,8 @@
             "schema": {
               "type": "object",
               "properties": {
-                "children": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "required": [
-                      "id",
-                      "parent_id",
-                      "name",
-                      "path",
-                      "method",
-                      "status",
-                      "description",
-                      "type",
-                      "sort_order",
-                      "created_at",
-                      "updated_at",
-                      "children"
-                    ],
-                    "properties": {
-                      "children": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "required": [
-                            "id",
-                            "parent_id",
-                            "name",
-                            "path",
-                            "method",
-                            "status",
-                            "description",
-                            "type",
-                            "sort_order",
-                            "created_at",
-                            "updated_at",
-                            "children"
-                          ],
-                          "properties": {
-                            "children": {
-                              "type": "array",
-                              "items": {
-                                "type": "object"
-                              }
-                            },
-                            "created_at": {
-                              "type": "string"
-                            },
-                            "description": {
-                              "type": "string"
-                            },
-                            "id": {
-                              "type": "integer"
-                            },
-                            "method": {
-                              "type": "string"
-                            },
-                            "name": {
-                              "type": "string"
-                            },
-                            "parent_id": {
-                              "type": "integer"
-                            },
-                            "path": {
-                              "type": "string"
-                            },
-                            "sort_order": {
-                              "type": "integer"
-                            },
-                            "status": {
-                              "type": "string"
-                            },
-                            "type": {
-                              "type": "string"
-                            },
-                            "updated_at": {
-                              "type": "string"
-                            }
-                          }
-                        }
-                      },
-                      "created_at": {
-                        "type": "string"
-                      },
-                      "description": {
-                        "type": "string"
-                      },
-                      "id": {
-                        "type": "integer"
-                      },
-                      "method": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "parent_id": {
-                        "type": "integer"
-                      },
-                      "path": {
-                        "type": "string"
-                      },
-                      "sort_order": {
-                        "type": "integer"
-                      },
-                      "status": {
-                        "type": "string"
-                      },
-                      "type": {
-                        "type": "string"
-                      },
-                      "updated_at": {
-                        "type": "string"
-                      }
-                    }
-                  }
+                "auth_required": {
+                  "type": "boolean"
                 },
                 "created_at": {
                   "type": "string"
@@ -219,6 +114,9 @@
                 },
                 "path": {
                   "type": "string"
+                },
+                "permission_required": {
+                  "type": "boolean"
                 },
                 "sort_order": {
                   "type": "integer"
@@ -279,11 +177,16 @@
                       "description",
                       "type",
                       "sort_order",
+                      "auth_required",
+                      "permission_required",
                       "created_at",
                       "updated_at",
                       "children"
                     ],
                     "properties": {
+                      "auth_required": {
+                        "type": "boolean"
+                      },
                       "children": {
                         "type": "array",
                         "items": {
@@ -298,11 +201,16 @@
                             "description",
                             "type",
                             "sort_order",
+                            "auth_required",
+                            "permission_required",
                             "created_at",
                             "updated_at",
                             "children"
                           ],
                           "properties": {
+                            "auth_required": {
+                              "type": "boolean"
+                            },
                             "children": {
                               "type": "array",
                               "items": {
@@ -329,6 +237,9 @@
                             },
                             "path": {
                               "type": "string"
+                            },
+                            "permission_required": {
+                              "type": "boolean"
                             },
                             "sort_order": {
                               "type": "integer"
@@ -365,6 +276,9 @@
                       },
                       "path": {
                         "type": "string"
+                      },
+                      "permission_required": {
+                        "type": "boolean"
                       },
                       "sort_order": {
                         "type": "integer"
@@ -420,121 +334,8 @@
             "schema": {
               "type": "object",
               "properties": {
-                "children": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "required": [
-                      "id",
-                      "parent_id",
-                      "name",
-                      "path",
-                      "method",
-                      "status",
-                      "description",
-                      "type",
-                      "sort_order",
-                      "created_at",
-                      "updated_at",
-                      "children"
-                    ],
-                    "properties": {
-                      "children": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "required": [
-                            "id",
-                            "parent_id",
-                            "name",
-                            "path",
-                            "method",
-                            "status",
-                            "description",
-                            "type",
-                            "sort_order",
-                            "created_at",
-                            "updated_at",
-                            "children"
-                          ],
-                          "properties": {
-                            "children": {
-                              "type": "array",
-                              "items": {
-                                "type": "object"
-                              }
-                            },
-                            "created_at": {
-                              "type": "string"
-                            },
-                            "description": {
-                              "type": "string"
-                            },
-                            "id": {
-                              "type": "integer"
-                            },
-                            "method": {
-                              "type": "string"
-                            },
-                            "name": {
-                              "type": "string"
-                            },
-                            "parent_id": {
-                              "type": "integer"
-                            },
-                            "path": {
-                              "type": "string"
-                            },
-                            "sort_order": {
-                              "type": "integer"
-                            },
-                            "status": {
-                              "type": "string"
-                            },
-                            "type": {
-                              "type": "string"
-                            },
-                            "updated_at": {
-                              "type": "string"
-                            }
-                          }
-                        }
-                      },
-                      "created_at": {
-                        "type": "string"
-                      },
-                      "description": {
-                        "type": "string"
-                      },
-                      "id": {
-                        "type": "integer"
-                      },
-                      "method": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "parent_id": {
-                        "type": "integer"
-                      },
-                      "path": {
-                        "type": "string"
-                      },
-                      "sort_order": {
-                        "type": "integer"
-                      },
-                      "status": {
-                        "type": "string"
-                      },
-                      "type": {
-                        "type": "string"
-                      },
-                      "updated_at": {
-                        "type": "string"
-                      }
-                    }
-                  }
+                "auth_required": {
+                  "type": "boolean"
                 },
                 "created_at": {
                   "type": "string"
@@ -556,6 +357,9 @@
                 },
                 "path": {
                   "type": "string"
+                },
+                "permission_required": {
+                  "type": "boolean"
                 },
                 "sort_order": {
                   "type": "integer"
@@ -610,9 +414,14 @@
                 "status",
                 "description",
                 "type",
-                "sort_order"
+                "sort_order",
+                "auth_required",
+                "permission_required"
               ],
               "properties": {
+                "auth_required": {
+                  "type": "boolean"
+                },
                 "description": {
                   "type": "string"
                 },
@@ -627,6 +436,9 @@
                 },
                 "path": {
                   "type": "string"
+                },
+                "permission_required": {
+                  "type": "boolean"
                 },
                 "sort_order": {
                   "type": "integer"
@@ -645,7 +457,48 @@
           "200": {
             "description": "",
             "schema": {
-              "type": "object"
+              "type": "object",
+              "properties": {
+                "auth_required": {
+                  "type": "boolean"
+                },
+                "created_at": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "parent_id": {
+                  "type": "integer"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "permission_required": {
+                  "type": "boolean"
+                },
+                "sort_order": {
+                  "type": "integer"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "updated_at": {
+                  "type": "string"
+                }
+              }
             }
           }
         }
@@ -4848,10 +4701,15 @@
                                       "description",
                                       "type",
                                       "sort_order",
+                                      "auth_required",
+                                      "permission_required",
                                       "created_at",
                                       "updated_at"
                                     ],
                                     "properties": {
+                                      "auth_required": {
+                                        "type": "boolean"
+                                      },
                                       "created_at": {
                                         "type": "string"
                                       },
@@ -4872,6 +4730,9 @@
                                       },
                                       "path": {
                                         "type": "string"
+                                      },
+                                      "permission_required": {
+                                        "type": "boolean"
                                       },
                                       "sort_order": {
                                         "type": "integer"
@@ -5386,10 +5247,15 @@
                                       "description",
                                       "type",
                                       "sort_order",
+                                      "auth_required",
+                                      "permission_required",
                                       "created_at",
                                       "updated_at"
                                     ],
                                     "properties": {
+                                      "auth_required": {
+                                        "type": "boolean"
+                                      },
                                       "created_at": {
                                         "type": "string"
                                       },
@@ -5410,6 +5276,9 @@
                                       },
                                       "path": {
                                         "type": "string"
+                                      },
+                                      "permission_required": {
+                                        "type": "boolean"
                                       },
                                       "sort_order": {
                                         "type": "integer"
@@ -6027,10 +5896,15 @@
                                       "description",
                                       "type",
                                       "sort_order",
+                                      "auth_required",
+                                      "permission_required",
                                       "created_at",
                                       "updated_at"
                                     ],
                                     "properties": {
+                                      "auth_required": {
+                                        "type": "boolean"
+                                      },
                                       "created_at": {
                                         "type": "string"
                                       },
@@ -6051,6 +5925,9 @@
                                       },
                                       "path": {
                                         "type": "string"
+                                      },
+                                      "permission_required": {
+                                        "type": "boolean"
                                       },
                                       "sort_order": {
                                         "type": "integer"
@@ -6400,10 +6277,15 @@
                                   "description",
                                   "type",
                                   "sort_order",
+                                  "auth_required",
+                                  "permission_required",
                                   "created_at",
                                   "updated_at"
                                 ],
                                 "properties": {
+                                  "auth_required": {
+                                    "type": "boolean"
+                                  },
                                   "created_at": {
                                     "type": "string"
                                   },
@@ -6424,6 +6306,9 @@
                                   },
                                   "path": {
                                     "type": "string"
+                                  },
+                                  "permission_required": {
+                                    "type": "boolean"
                                   },
                                   "sort_order": {
                                     "type": "integer"
@@ -6818,10 +6703,15 @@
                                   "description",
                                   "type",
                                   "sort_order",
+                                  "auth_required",
+                                  "permission_required",
                                   "created_at",
                                   "updated_at"
                                 ],
                                 "properties": {
+                                  "auth_required": {
+                                    "type": "boolean"
+                                  },
                                   "created_at": {
                                     "type": "string"
                                   },
@@ -6842,6 +6732,9 @@
                                   },
                                   "path": {
                                     "type": "string"
+                                  },
+                                  "permission_required": {
+                                    "type": "boolean"
                                   },
                                   "sort_order": {
                                     "type": "integer"
@@ -7085,10 +6978,15 @@
                                   "description",
                                   "type",
                                   "sort_order",
+                                  "auth_required",
+                                  "permission_required",
                                   "created_at",
                                   "updated_at"
                                 ],
                                 "properties": {
+                                  "auth_required": {
+                                    "type": "boolean"
+                                  },
                                   "created_at": {
                                     "type": "string"
                                   },
@@ -7109,6 +7007,9 @@
                                   },
                                   "path": {
                                     "type": "string"
+                                  },
+                                  "permission_required": {
+                                    "type": "boolean"
                                   },
                                   "sort_order": {
                                     "type": "integer"
@@ -7376,10 +7277,15 @@
                       "description",
                       "type",
                       "sort_order",
+                      "auth_required",
+                      "permission_required",
                       "created_at",
                       "updated_at"
                     ],
                     "properties": {
+                      "auth_required": {
+                        "type": "boolean"
+                      },
                       "created_at": {
                         "type": "string"
                       },
@@ -7400,6 +7306,9 @@
                       },
                       "path": {
                         "type": "string"
+                      },
+                      "permission_required": {
+                        "type": "boolean"
                       },
                       "sort_order": {
                         "type": "integer"
@@ -7676,10 +7585,15 @@
                       "description",
                       "type",
                       "sort_order",
+                      "auth_required",
+                      "permission_required",
                       "created_at",
                       "updated_at"
                     ],
                     "properties": {
+                      "auth_required": {
+                        "type": "boolean"
+                      },
                       "created_at": {
                         "type": "string"
                       },
@@ -7700,6 +7614,9 @@
                       },
                       "path": {
                         "type": "string"
+                      },
+                      "permission_required": {
+                        "type": "boolean"
                       },
                       "sort_order": {
                         "type": "integer"
@@ -7865,10 +7782,15 @@
                       "description",
                       "type",
                       "sort_order",
+                      "auth_required",
+                      "permission_required",
                       "created_at",
                       "updated_at"
                     ],
                     "properties": {
+                      "auth_required": {
+                        "type": "boolean"
+                      },
                       "created_at": {
                         "type": "string"
                       },
@@ -7889,6 +7811,9 @@
                       },
                       "path": {
                         "type": "string"
+                      },
+                      "permission_required": {
+                        "type": "boolean"
                       },
                       "sort_order": {
                         "type": "integer"
@@ -8144,10 +8069,15 @@
                                   "description",
                                   "type",
                                   "sort_order",
+                                  "auth_required",
+                                  "permission_required",
                                   "created_at",
                                   "updated_at"
                                 ],
                                 "properties": {
+                                  "auth_required": {
+                                    "type": "boolean"
+                                  },
                                   "created_at": {
                                     "type": "string"
                                   },
@@ -8168,6 +8098,9 @@
                                   },
                                   "path": {
                                     "type": "string"
+                                  },
+                                  "permission_required": {
+                                    "type": "boolean"
                                   },
                                   "sort_order": {
                                     "type": "integer"
@@ -8360,10 +8293,15 @@
                             "description",
                             "type",
                             "sort_order",
+                            "auth_required",
+                            "permission_required",
                             "created_at",
                             "updated_at"
                           ],
                           "properties": {
+                            "auth_required": {
+                              "type": "boolean"
+                            },
                             "created_at": {
                               "type": "string"
                             },
@@ -8384,6 +8322,9 @@
                             },
                             "path": {
                               "type": "string"
+                            },
+                            "permission_required": {
+                              "type": "boolean"
                             },
                             "sort_order": {
                               "type": "integer"
@@ -8546,10 +8487,15 @@
                                   "description",
                                   "type",
                                   "sort_order",
+                                  "auth_required",
+                                  "permission_required",
                                   "created_at",
                                   "updated_at"
                                 ],
                                 "properties": {
+                                  "auth_required": {
+                                    "type": "boolean"
+                                  },
                                   "created_at": {
                                     "type": "string"
                                   },
@@ -8570,6 +8516,9 @@
                                   },
                                   "path": {
                                     "type": "string"
+                                  },
+                                  "permission_required": {
+                                    "type": "boolean"
                                   },
                                   "sort_order": {
                                     "type": "integer"
@@ -8727,10 +8676,15 @@
                             "description",
                             "type",
                             "sort_order",
+                            "auth_required",
+                            "permission_required",
                             "created_at",
                             "updated_at"
                           ],
                           "properties": {
+                            "auth_required": {
+                              "type": "boolean"
+                            },
                             "created_at": {
                               "type": "string"
                             },
@@ -8751,6 +8705,9 @@
                             },
                             "path": {
                               "type": "string"
+                            },
+                            "permission_required": {
+                              "type": "boolean"
                             },
                             "sort_order": {
                               "type": "integer"
@@ -8937,10 +8894,15 @@
                             "description",
                             "type",
                             "sort_order",
+                            "auth_required",
+                            "permission_required",
                             "created_at",
                             "updated_at"
                           ],
                           "properties": {
+                            "auth_required": {
+                              "type": "boolean"
+                            },
                             "created_at": {
                               "type": "string"
                             },
@@ -8961,6 +8923,9 @@
                             },
                             "path": {
                               "type": "string"
+                            },
+                            "permission_required": {
+                              "type": "boolean"
                             },
                             "sort_order": {
                               "type": "integer"
@@ -9681,7 +9646,7 @@
       }
     }
   },
-  "x-date": "2026-02-09 15:44:48",
+  "x-date": "2026-02-27 17:00:38",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

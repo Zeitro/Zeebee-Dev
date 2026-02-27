@@ -579,10 +579,10 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ApiClient interface {
 	ApiTree(ctx context.Context, in *ApiTreeRequest, opts ...grpc.CallOption) (*ApiTreeResponse, error)
-	Create(ctx context.Context, in *ApiCreateRequest, opts ...grpc.CallOption) (*ApiCreateResponse, error)
-	Update(ctx context.Context, in *ApiUpdateRequest, opts ...grpc.CallOption) (*ApiCreateResponse, error)
+	Create(ctx context.Context, in *ApiCreateRequest, opts ...grpc.CallOption) (*ApiDetailResponse, error)
+	Update(ctx context.Context, in *ApiUpdateRequest, opts ...grpc.CallOption) (*ApiDetailResponse, error)
 	Delete(ctx context.Context, in *ApiDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
-	Detail(ctx context.Context, in *ApiDetailRequest, opts ...grpc.CallOption) (*ApiCreateResponse, error)
+	Detail(ctx context.Context, in *ApiDetailRequest, opts ...grpc.CallOption) (*ApiDetailResponse, error)
 }
 
 type apiClient struct {
@@ -603,9 +603,9 @@ func (c *apiClient) ApiTree(ctx context.Context, in *ApiTreeRequest, opts ...grp
 	return out, nil
 }
 
-func (c *apiClient) Create(ctx context.Context, in *ApiCreateRequest, opts ...grpc.CallOption) (*ApiCreateResponse, error) {
+func (c *apiClient) Create(ctx context.Context, in *ApiCreateRequest, opts ...grpc.CallOption) (*ApiDetailResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ApiCreateResponse)
+	out := new(ApiDetailResponse)
 	err := c.cc.Invoke(ctx, Api_Create_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -613,9 +613,9 @@ func (c *apiClient) Create(ctx context.Context, in *ApiCreateRequest, opts ...gr
 	return out, nil
 }
 
-func (c *apiClient) Update(ctx context.Context, in *ApiUpdateRequest, opts ...grpc.CallOption) (*ApiCreateResponse, error) {
+func (c *apiClient) Update(ctx context.Context, in *ApiUpdateRequest, opts ...grpc.CallOption) (*ApiDetailResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ApiCreateResponse)
+	out := new(ApiDetailResponse)
 	err := c.cc.Invoke(ctx, Api_Update_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -633,9 +633,9 @@ func (c *apiClient) Delete(ctx context.Context, in *ApiDeleteRequest, opts ...gr
 	return out, nil
 }
 
-func (c *apiClient) Detail(ctx context.Context, in *ApiDetailRequest, opts ...grpc.CallOption) (*ApiCreateResponse, error) {
+func (c *apiClient) Detail(ctx context.Context, in *ApiDetailRequest, opts ...grpc.CallOption) (*ApiDetailResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ApiCreateResponse)
+	out := new(ApiDetailResponse)
 	err := c.cc.Invoke(ctx, Api_Detail_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -648,10 +648,10 @@ func (c *apiClient) Detail(ctx context.Context, in *ApiDetailRequest, opts ...gr
 // for forward compatibility.
 type ApiServer interface {
 	ApiTree(context.Context, *ApiTreeRequest) (*ApiTreeResponse, error)
-	Create(context.Context, *ApiCreateRequest) (*ApiCreateResponse, error)
-	Update(context.Context, *ApiUpdateRequest) (*ApiCreateResponse, error)
+	Create(context.Context, *ApiCreateRequest) (*ApiDetailResponse, error)
+	Update(context.Context, *ApiUpdateRequest) (*ApiDetailResponse, error)
 	Delete(context.Context, *ApiDeleteRequest) (*EmptyResponse, error)
-	Detail(context.Context, *ApiDetailRequest) (*ApiCreateResponse, error)
+	Detail(context.Context, *ApiDetailRequest) (*ApiDetailResponse, error)
 	mustEmbedUnimplementedApiServer()
 }
 
@@ -665,16 +665,16 @@ type UnimplementedApiServer struct{}
 func (UnimplementedApiServer) ApiTree(context.Context, *ApiTreeRequest) (*ApiTreeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ApiTree not implemented")
 }
-func (UnimplementedApiServer) Create(context.Context, *ApiCreateRequest) (*ApiCreateResponse, error) {
+func (UnimplementedApiServer) Create(context.Context, *ApiCreateRequest) (*ApiDetailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedApiServer) Update(context.Context, *ApiUpdateRequest) (*ApiCreateResponse, error) {
+func (UnimplementedApiServer) Update(context.Context, *ApiUpdateRequest) (*ApiDetailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
 func (UnimplementedApiServer) Delete(context.Context, *ApiDeleteRequest) (*EmptyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
-func (UnimplementedApiServer) Detail(context.Context, *ApiDetailRequest) (*ApiCreateResponse, error) {
+func (UnimplementedApiServer) Detail(context.Context, *ApiDetailRequest) (*ApiDetailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Detail not implemented")
 }
 func (UnimplementedApiServer) mustEmbedUnimplementedApiServer() {}

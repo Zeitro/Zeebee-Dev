@@ -17,11 +17,11 @@ type (
 	AddressEntity                              = admin.AddressEntity
 	ApiCreateRequest                           = admin.ApiCreateRequest
 	ApiCreateRequestData                       = admin.ApiCreateRequestData
-	ApiCreateResponse                          = admin.ApiCreateResponse
 	ApiDeleteRequest                           = admin.ApiDeleteRequest
 	ApiDeleteRequestData                       = admin.ApiDeleteRequestData
 	ApiDetailRequest                           = admin.ApiDetailRequest
 	ApiDetailRequestData                       = admin.ApiDetailRequestData
+	ApiDetailResponse                          = admin.ApiDetailResponse
 	ApiEntity                                  = admin.ApiEntity
 	ApiTreeEntity                              = admin.ApiTreeEntity
 	ApiTreeRequest                             = admin.ApiTreeRequest
@@ -205,10 +205,10 @@ type (
 
 	Api interface {
 		ApiTree(ctx context.Context, in *ApiTreeRequest, opts ...grpc.CallOption) (*ApiTreeResponse, error)
-		Create(ctx context.Context, in *ApiCreateRequest, opts ...grpc.CallOption) (*ApiCreateResponse, error)
-		Update(ctx context.Context, in *ApiUpdateRequest, opts ...grpc.CallOption) (*ApiCreateResponse, error)
+		Create(ctx context.Context, in *ApiCreateRequest, opts ...grpc.CallOption) (*ApiDetailResponse, error)
+		Update(ctx context.Context, in *ApiUpdateRequest, opts ...grpc.CallOption) (*ApiDetailResponse, error)
 		Delete(ctx context.Context, in *ApiDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
-		Detail(ctx context.Context, in *ApiDetailRequest, opts ...grpc.CallOption) (*ApiCreateResponse, error)
+		Detail(ctx context.Context, in *ApiDetailRequest, opts ...grpc.CallOption) (*ApiDetailResponse, error)
 	}
 
 	defaultApi struct {
@@ -227,12 +227,12 @@ func (m *defaultApi) ApiTree(ctx context.Context, in *ApiTreeRequest, opts ...gr
 	return client.ApiTree(ctx, in, opts...)
 }
 
-func (m *defaultApi) Create(ctx context.Context, in *ApiCreateRequest, opts ...grpc.CallOption) (*ApiCreateResponse, error) {
+func (m *defaultApi) Create(ctx context.Context, in *ApiCreateRequest, opts ...grpc.CallOption) (*ApiDetailResponse, error) {
 	client := admin.NewApiClient(m.cli.Conn())
 	return client.Create(ctx, in, opts...)
 }
 
-func (m *defaultApi) Update(ctx context.Context, in *ApiUpdateRequest, opts ...grpc.CallOption) (*ApiCreateResponse, error) {
+func (m *defaultApi) Update(ctx context.Context, in *ApiUpdateRequest, opts ...grpc.CallOption) (*ApiDetailResponse, error) {
 	client := admin.NewApiClient(m.cli.Conn())
 	return client.Update(ctx, in, opts...)
 }
@@ -242,7 +242,7 @@ func (m *defaultApi) Delete(ctx context.Context, in *ApiDeleteRequest, opts ...g
 	return client.Delete(ctx, in, opts...)
 }
 
-func (m *defaultApi) Detail(ctx context.Context, in *ApiDetailRequest, opts ...grpc.CallOption) (*ApiCreateResponse, error) {
+func (m *defaultApi) Detail(ctx context.Context, in *ApiDetailRequest, opts ...grpc.CallOption) (*ApiDetailResponse, error) {
 	client := admin.NewApiClient(m.cli.Conn())
 	return client.Detail(ctx, in, opts...)
 }

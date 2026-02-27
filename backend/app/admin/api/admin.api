@@ -172,7 +172,7 @@ service admin-api {
 service admin-api {
 	@doc "detail"
 	@handler Detail
-	get /api/:id (ApiDetailRequest) returns (ApiTreeEntity)
+	get /api/:id (ApiDetailRequest) returns (ApiEntity)
 
 	@doc "tree"
 	@handler Tree
@@ -180,11 +180,11 @@ service admin-api {
 
 	@doc "create"
 	@handler Create
-	post /api (ApiCreateRequest) returns (ApiTreeEntity)
+	post /api (ApiCreateRequest) returns (ApiEntity)
 
 	@doc "update"
 	@handler Update
-	put /api/:id (ApiUpdateRequest) returns (EmptyResponse)
+	put /api/:id (ApiUpdateRequest) returns (ApiEntity)
 
 	@doc "delete"
 	@handler Delete

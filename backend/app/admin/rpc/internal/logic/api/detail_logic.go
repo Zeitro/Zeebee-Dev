@@ -3,14 +3,13 @@ package apilogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/dto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -31,30 +30,23 @@ func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogi
 	}
 }
 
-func (l *DetailLogic) Detail(in *admin.ApiDetailRequest) (resp *admin.ApiCreateResponse, err error) {
+func (l *DetailLogic) Detail(in *admin.ApiDetailRequest) (resp *admin.ApiDetailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
 
-	result, err := l.svcCtx.ApiRepo.GetApi(l.ctx, in.Data.Id, constants.UserType(in.Data.Type))
+	result, err := l.baseLogic.ApiLogic.Detail(l.ctx, in.Data.Id, constants.UserType(in.Data.Type))
+	if err != nil {
+		return nil, err
+	}
+	respData, err := copierx.Trans[dto.ApiEntityDto, admin.ApiEntity](result, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}
 
-	respData := &admin.ApiTreeEntity{}
-	err = copier.CopyWithOption(respData, result, copier.Option{
-		DeepCopy: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
-	})
-	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
-	}
-
-	return &admin.ApiCreateResponse{
+	return &admin.ApiDetailResponse{
 		Data: respData,
 	}, nil
 }

@@ -15,6 +15,8 @@ import (
 	"zeebee-backend/domains/zeebee/model"
 )
 
+var ErrorInvalidRequest = errorx.New("Invalid request")
+
 type BaseLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
