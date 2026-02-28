@@ -37,3 +37,24 @@ func Trans[T, U any](src *T, opts ...copier.TypeConverter) (dist *U, err error) 
 	}
 	return dist, err
 }
+
+// Assign assigns the values from src to dist. It performs a deep copy of the source value to the destination with case sensitivity.
+func Assign[T, U any](src *T, dist *U, opts ...copier.TypeConverter) (err error) {
+	if src == nil {
+		return nil
+	}
+
+	if dist == nil {
+		dist = new(U)
+	}
+
+	err = copier.CopyWithOption(dist, src, copier.Option{
+		DeepCopy:      true,
+		CaseSensitive: true,
+		Converters:    opts,
+	})
+	if err != nil {
+		return errorx.GetFailedTransErr(err)
+	}
+	return err
+}

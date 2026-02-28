@@ -3,7 +3,7 @@ package resourcelogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
@@ -11,8 +11,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/domains/zeebee/data/dto"
 )
 
 type DetailLogic struct {
@@ -38,20 +37,14 @@ func (l *DetailLogic) Detail(in *admin.ResourceDetailRequest) (resp *admin.Resou
 		}
 	}()
 
-	result, err := l.svcCtx.ResourceRepo.GetResource(l.ctx, in.Data.Id, constants.UserType(in.Data.Type))
+	result, err := l.baseLogic.ResourceLogic.Detail(l.ctx, in.Data.Id, constants.UserType(in.Data.Type))
 	if err != nil {
 		return nil, err
 	}
 
-	respData := &admin.ResourceEntity{}
-	err = copier.CopyWithOption(respData, result, copier.Option{
-		DeepCopy: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
-	})
+	respData, err := copierx.Trans[dto.ResourceEntityDto, admin.ResourceEntity](result, copierx.TimeToRFC3339Str())
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 
 	return &admin.ResourceDetailResponse{
