@@ -577,17 +577,14 @@ type ResourceTreeEntity struct {
 	Children        []*ResourceTreeEntity `json:"children,omitempty"`
 }
 
+type RoleAndResourceRelation struct {
+	RoleId     int64  `json:"role_id,optional" validate:"min=0"`
+	ResourceId int64  `json:"resource_id" validate:"min=1"`
+	DataScope  string `json:"data_scope" validate:"oneof=All Own"`
+}
+
 type RoleDeleteRequest struct {
 	Id int64 `path:"id" validate:"required,gt=0"`
-}
-
-type RolePageFilter struct {
-	Keyword string `json:"keyword"`
-}
-
-type RolePageSort struct {
-	Column string `json:"column"`
-	Sort   string `json:"sort"`
 }
 
 type SelectOptionEntity struct {

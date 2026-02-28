@@ -38,7 +38,7 @@ type ResourceEntityDto struct {
 	Tag             string              `json:"tag"`
 	SortOrder       int32               `json:"sort_order"`
 	IsShow          bool                `json:"is_show"`
-	RoleDataScope   constants.DataScope `json:"role_data_scope"`
+	DataScope       constants.DataScope `json:"data_scope"`
 	EnableDataScope bool                `json:"enable_data_scope"`
 	Apis            []*ApiEntityDto     `json:"apis"`
 	CreatedAt       time.Time           `json:"created_at"`

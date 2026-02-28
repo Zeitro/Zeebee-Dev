@@ -7,6 +7,7 @@ info(
 )
 
 import "resource.api"
+import "common.api"
 
 type RoleEntity {
     Id int64 `json:"id"`
@@ -22,20 +23,24 @@ type RoleEntity {
 
 // page
 type RolePageRequest {
-    Page int64 `json:"page,default=1"`
-    Limit int64 `json:"limit,default=10"`
-    Filter RolePageFilter `json:"filter"`
-    Sort RolePageSort `json:"sort"`
+    BasePageRequest
+    Filter BasePageFilter `json:"filter"`
+    Sort BasePageSort `json:"sort"`
+
+    //    Page int64 `json:"page,default=1"`
+    //    Limit int64 `json:"limit,default=10"`
+    //    Filter RolePageFilter `json:"filter"`
+    //    Sort RolePageSort `json:"sort"`
 }
 
-type RolePageFilter {
-    Keyword string `json:"keyword"`
-}
-
-type RolePageSort {
-    Column string `json:"column"`
-    Sort string `json:"sort"`
-}
+//type RolePageFilter {
+//    Keyword string `json:"keyword"`
+//}
+//
+//type RolePageSort {
+//    Column string `json:"column"`
+//    Sort string `json:"sort"`
+//}
 
 type RolePageResponse {
     Page int64 `json:"page"`
@@ -45,30 +50,36 @@ type RolePageResponse {
     List []RoleEntity `json:"list"`
 }
 
+type RoleAndResourceRelation {
+    RoleId int64 `json:"role_id,optional" validate:"min=0"`
+    ResourceId int64 `json:"resource_id" validate:"min=1"`
+    DataScope string `json:"data_scope" validate:"oneof=All Own"`
+}
+
 //  create
 type RoleCreateRequest {
     Name string `json:"name" validate:"required,min=2,max=100,ne='admin'"`
     Description string `json:"description" validate:"max=255"`
-    Status string `json:"status" validate:"required,oneof=Active Inactive"`
-    ResourceIds []int64 `json:"resource_ids"`
+    Status string `json:"status" validate:"required,oneof=Active Disabled"`
+    Resources []RoleAndResourceRelation `json:"resources,optional" validate:"dive"`
 }
 //  update
 type RoleUpdateRequest {
     Id int64 `path:"id" validate:"required,gt=0"`
     Name string `json:"name" validate:"required,min=2,max=100,ne='admin'"`
     Description string `json:"description" validate:"max=255"`
-    Status string `json:"status" validate:"required,oneof=Active Inactive"`
-    ResourceIds []int64 `json:"resource_ids"`
+    Status string `json:"status" validate:"required,oneof=Active Disabled"`
+    Resources []RoleAndResourceRelation `json:"resources,optional" validate:"dive"`
 }
 //  delete
 type RoleDeleteRequest {
     Id int64 `path:"id" validate:"required,gt=0"`
 }
 
-// update status
-type RoleUpdateStatusRequest {
+// switch status
+type RoleSwitchStatusRequest {
     Id int64 `path:"id" validate:"required,gt=0"`
-    Status string `json:"status" validate:"required,oneof=Active Inactive"`
+    Status string `json:"status" validate:"required,oneof=Active Disabled"`
 }
 
 // all

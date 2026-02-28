@@ -7997,16 +7997,12 @@
               "type": "object",
               "required": [
                 "page",
-                "limit",
                 "filter",
                 "sort"
               ],
               "properties": {
                 "filter": {
                   "type": "object",
-                  "required": [
-                    "keyword"
-                  ],
                   "properties": {
                     "keyword": {
                       "type": "string"
@@ -8014,21 +8010,13 @@
                   }
                 },
                 "limit": {
-                  "type": "integer",
-                  "default": 10,
-                  "example": 10
+                  "type": "integer"
                 },
                 "page": {
-                  "type": "integer",
-                  "default": 1,
-                  "example": 1
+                  "type": "integer"
                 },
                 "sort": {
                   "type": "object",
-                  "required": [
-                    "column",
-                    "sort"
-                  ],
                   "properties": {
                     "column": {
                       "type": "string"
@@ -8266,8 +8254,7 @@
               "required": [
                 "name",
                 "description",
-                "status",
-                "resource_ids"
+                "status"
               ],
               "properties": {
                 "description": {
@@ -8276,10 +8263,25 @@
                 "name": {
                   "type": "string"
                 },
-                "resource_ids": {
+                "resources": {
                   "type": "array",
                   "items": {
-                    "type": "integer"
+                    "type": "object",
+                    "required": [
+                      "resource_id",
+                      "data_scope"
+                    ],
+                    "properties": {
+                      "data_scope": {
+                        "type": "string"
+                      },
+                      "resource_id": {
+                        "type": "integer"
+                      },
+                      "role_id": {
+                        "type": "integer"
+                      }
+                    }
                   }
                 },
                 "status": {
@@ -8879,8 +8881,7 @@
               "required": [
                 "name",
                 "description",
-                "status",
-                "resource_ids"
+                "status"
               ],
               "properties": {
                 "description": {
@@ -8889,10 +8890,25 @@
                 "name": {
                   "type": "string"
                 },
-                "resource_ids": {
+                "resources": {
                   "type": "array",
                   "items": {
-                    "type": "integer"
+                    "type": "object",
+                    "required": [
+                      "resource_id",
+                      "data_scope"
+                    ],
+                    "properties": {
+                      "data_scope": {
+                        "type": "string"
+                      },
+                      "resource_id": {
+                        "type": "integer"
+                      },
+                      "role_id": {
+                        "type": "integer"
+                      }
+                    }
                   }
                 },
                 "status": {
@@ -9117,8 +9133,8 @@
         "tags": [
           "role"
         ],
-        "summary": "update status",
-        "operationId": "roleRoleUpdateStatus",
+        "summary": "switch status",
+        "operationId": "roleRoleSwitchStatus",
         "parameters": [
           {
             "type": "integer",
@@ -9715,7 +9731,7 @@
       }
     }
   },
-  "x-date": "2026-02-28 13:22:18",
+  "x-date": "2026-02-28 17:55:06",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

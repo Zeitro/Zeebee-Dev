@@ -1080,7 +1080,7 @@ const (
 	Role_Update_FullMethodName       = "/admin.role/Update"
 	Role_Delete_FullMethodName       = "/admin.role/Delete"
 	Role_Detail_FullMethodName       = "/admin.role/Detail"
-	Role_UpdateStatus_FullMethodName = "/admin.role/UpdateStatus"
+	Role_SwitchStatus_FullMethodName = "/admin.role/SwitchStatus"
 	Role_All_FullMethodName          = "/admin.role/All"
 )
 
@@ -1093,7 +1093,7 @@ type RoleClient interface {
 	Update(ctx context.Context, in *RoleUpdateRequest, opts ...grpc.CallOption) (*RoleUpdateResponse, error)
 	Delete(ctx context.Context, in *RoleDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	Detail(ctx context.Context, in *RoleDetailRequest, opts ...grpc.CallOption) (*RoleDetailResponse, error)
-	UpdateStatus(ctx context.Context, in *RoleUpdateStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	SwitchStatus(ctx context.Context, in *RoleSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	All(ctx context.Context, in *RoleAllRequest, opts ...grpc.CallOption) (*RoleAllResponse, error)
 }
 
@@ -1155,10 +1155,10 @@ func (c *roleClient) Detail(ctx context.Context, in *RoleDetailRequest, opts ...
 	return out, nil
 }
 
-func (c *roleClient) UpdateStatus(ctx context.Context, in *RoleUpdateStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+func (c *roleClient) SwitchStatus(ctx context.Context, in *RoleSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(EmptyResponse)
-	err := c.cc.Invoke(ctx, Role_UpdateStatus_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Role_SwitchStatus_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1184,7 +1184,7 @@ type RoleServer interface {
 	Update(context.Context, *RoleUpdateRequest) (*RoleUpdateResponse, error)
 	Delete(context.Context, *RoleDeleteRequest) (*EmptyResponse, error)
 	Detail(context.Context, *RoleDetailRequest) (*RoleDetailResponse, error)
-	UpdateStatus(context.Context, *RoleUpdateStatusRequest) (*EmptyResponse, error)
+	SwitchStatus(context.Context, *RoleSwitchStatusRequest) (*EmptyResponse, error)
 	All(context.Context, *RoleAllRequest) (*RoleAllResponse, error)
 	mustEmbedUnimplementedRoleServer()
 }
@@ -1211,8 +1211,8 @@ func (UnimplementedRoleServer) Delete(context.Context, *RoleDeleteRequest) (*Emp
 func (UnimplementedRoleServer) Detail(context.Context, *RoleDetailRequest) (*RoleDetailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Detail not implemented")
 }
-func (UnimplementedRoleServer) UpdateStatus(context.Context, *RoleUpdateStatusRequest) (*EmptyResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateStatus not implemented")
+func (UnimplementedRoleServer) SwitchStatus(context.Context, *RoleSwitchStatusRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SwitchStatus not implemented")
 }
 func (UnimplementedRoleServer) All(context.Context, *RoleAllRequest) (*RoleAllResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method All not implemented")
@@ -1328,20 +1328,20 @@ func _Role_Detail_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Role_UpdateStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RoleUpdateStatusRequest)
+func _Role_SwitchStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RoleSwitchStatusRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RoleServer).UpdateStatus(ctx, in)
+		return srv.(RoleServer).SwitchStatus(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Role_UpdateStatus_FullMethodName,
+		FullMethod: Role_SwitchStatus_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RoleServer).UpdateStatus(ctx, req.(*RoleUpdateStatusRequest))
+		return srv.(RoleServer).SwitchStatus(ctx, req.(*RoleSwitchStatusRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1392,8 +1392,8 @@ var Role_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Role_Detail_Handler,
 		},
 		{
-			MethodName: "UpdateStatus",
-			Handler:    _Role_UpdateStatus_Handler,
+			MethodName: "SwitchStatus",
+			Handler:    _Role_SwitchStatus_Handler,
 		},
 		{
 			MethodName: "All",

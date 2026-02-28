@@ -553,9 +553,7 @@ message RolePageRequestData {
   RolePageRequestSorter sorter = 4;
 }
 message RolePageRequestFilter {
-  //  int64 user_id = 1;
   string keyword = 2;
-  //  int64 organization_id = 3;
 }
 message RolePageRequestSorter {
   string column = 1;
@@ -629,11 +627,11 @@ message RoleDetailRequestData {
 message RoleDetailResponse {
   RoleEntity data = 1;
 }
-// update status -- request
-message RoleUpdateStatusRequest {
-  RoleUpdateStatusRequestData data = 1;
+// switch status -- request
+message RoleSwitchStatusRequest {
+  RoleSwitchStatusRequestData data = 1;
 }
-message RoleUpdateStatusRequestData {
+message RoleSwitchStatusRequestData {
   int64 id = 1;
   string status = 2;
 }
@@ -655,7 +653,7 @@ service role {
   rpc Update(RoleUpdateRequest) returns(RoleUpdateResponse);
   rpc Delete(RoleDeleteRequest) returns(EmptyResponse);
   rpc Detail(RoleDetailRequest) returns(RoleDetailResponse);
-  rpc UpdateStatus(RoleUpdateStatusRequest) returns(EmptyResponse);
+  rpc SwitchStatus(RoleSwitchStatusRequest) returns(EmptyResponse);
   rpc All(RoleAllRequest) returns(RoleAllResponse);
 }
 

@@ -11,7 +11,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/bo"
+	"zeebee-backend/domains/zeebee/data/dto"
 )
 
 type DetailLogic struct {
@@ -42,12 +42,12 @@ func (l *DetailLogic) Detail(in *borrower.RoleDetailRequest) (resp *borrower.Rol
 		return nil, err
 	}
 
-	role, err := l.baseLogic.RoleLogic.GetRole(l.ctx, in.Data.Id, claim.OrganizationId, constants.UserTypeBorrower)
+	role, err := l.baseLogic.RoleLogic.Detail(l.ctx, in.Data.Id, claim.OrganizationId, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}
 
-	respData, err := copierx.Trans[bo.RoleBo, borrower.RoleEntity](role, copierx.TimeToRFC3339Str())
+	respData, err := copierx.Trans[dto.RoleEntityDto, borrower.RoleEntity](role, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

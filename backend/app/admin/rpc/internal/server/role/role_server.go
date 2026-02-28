@@ -48,9 +48,9 @@ func (s *RoleServer) Detail(ctx context.Context, in *admin.RoleDetailRequest) (*
 	return l.Detail(in)
 }
 
-func (s *RoleServer) UpdateStatus(ctx context.Context, in *admin.RoleUpdateStatusRequest) (*admin.EmptyResponse, error) {
-	l := rolelogic.NewUpdateStatusLogic(ctx, s.svcCtx)
-	return l.UpdateStatus(in)
+func (s *RoleServer) SwitchStatus(ctx context.Context, in *admin.RoleSwitchStatusRequest) (*admin.EmptyResponse, error) {
+	l := rolelogic.NewSwitchStatusLogic(ctx, s.svcCtx)
+	return l.SwitchStatus(in)
 }
 
 func (s *RoleServer) All(ctx context.Context, in *admin.RoleAllRequest) (*admin.RoleAllResponse, error) {

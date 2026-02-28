@@ -87,7 +87,7 @@ func (repo *RoleRepo) Page(ctx context.Context, req dto.RolePageRequestDto) (pag
 	if len(sorter.Sort) == 0 {
 		sorter.Sort = "asc"
 	}
-	query = query.Order("CASE status WHEN 'Active' THEN 1 WHEN 'Inactive' THEN 2 ELSE 3 END").
+	query = query.Order("CASE status WHEN 'Active' THEN 1 WHEN 'Disabled' THEN 2 ELSE 3 END").
 		Order(fmt.Sprintf("%s %s", sorter.Column, sorter.Sort))
 
 	result, err := gormx.Page[*model.Role](query, gormx.PageRequest{
@@ -124,10 +124,12 @@ func (repo *RoleRepo) DeleteByIdWithTx(ctx context.Context, tx *gorm.DB, id int6
 	if err != nil {
 		return errorx.WithStack(err)
 	}
+	// remove resource relations
 	err = ctxQuery.Model(role).Association("Resources").Clear()
 	if err != nil {
 		return errorx.WithStack(err)
 	}
+	// remove organization user relations
 	err = ctxQuery.Model(role).Association("OrganizationUsers").Clear()
 	if err != nil {
 		return errorx.WithStack(err)

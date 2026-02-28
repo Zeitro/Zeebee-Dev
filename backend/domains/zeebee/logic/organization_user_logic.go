@@ -41,7 +41,7 @@ func NewOrganizationUserLogic(repos *repo.AllRepos, redisCli *redisx.Redisx, ema
 }
 
 // Page returns organization user list
-func (l *OrganizationUserLogic) Page(ctx context.Context, pageReq dto.OrganizationUserPageRequestDto) (page bo.PageResultBo[*bo.OrganizationUserBo], err error) {
+func (l *OrganizationUserLogic) Page(ctx context.Context, pageReq dto.OrganizationUserPageRequestDto) (page bo.PageResultBo[*dto.OrganizationUserEntityDto], err error) {
 	organizationId := pageReq.Filter.OrganizationId
 	organization, err := l.repos.OrganizationRepo.FindOneById(ctx, organizationId)
 	if err != nil {
@@ -73,14 +73,14 @@ func (l *OrganizationUserLogic) Page(ctx context.Context, pageReq dto.Organizati
 		return page, errorx.GetFailedTransRespErr(err)
 	}
 
-	slice.ForEach(page.List, func(index int, item *bo.OrganizationUserBo) {
+	slice.ForEach(page.List, func(index int, item *dto.OrganizationUserEntityDto) {
 		page.List[index].IsOwner = item.UserId == organizationOwnerId
 	})
 	return page, err
 }
 
 // CreateAdminOrganizationUser creates admin organization user
-func (l *OrganizationUserLogic) CreateAdminOrganizationUser(ctx context.Context, input dto.OrganizationUserCreateAdminRequestDto) (result *bo.OrganizationUserBo, err error) {
+func (l *OrganizationUserLogic) CreateAdminOrganizationUser(ctx context.Context, input dto.OrganizationUserCreateAdminRequestDto) (result *dto.OrganizationUserEntityDto, err error) {
 	isInOrganization, err := l.repos.OrganizationUserRepo.CheckOrganizationUserExistedByEmail(ctx, input.OrganizationId, input.Email, input.UserType)
 	if err != nil {
 		return nil, err
@@ -163,7 +163,7 @@ func (l *OrganizationUserLogic) CreateAdminOrganizationUser(ctx context.Context,
 }
 
 // InviteOrganizationUser invites organization user to join organization
-func (l *OrganizationUserLogic) InviteOrganizationUser(ctx context.Context, createDto dto.OrganizationUserCreateRequestDto) (result *bo.OrganizationUserBo, err error) {
+func (l *OrganizationUserLogic) InviteOrganizationUser(ctx context.Context, createDto dto.OrganizationUserCreateRequestDto) (result *dto.OrganizationUserEntityDto, err error) {
 	isInOrganization, err := l.repos.OrganizationUserRepo.CheckOrganizationUserExistedByEmail(ctx, createDto.OrganizationId, createDto.Email, createDto.UserType)
 	if err != nil {
 		return nil, err
@@ -394,7 +394,7 @@ func (l *OrganizationUserLogic) AcceptInvitation(ctx context.Context, input dto.
 }
 
 // UpdateOrganizationUser updates organization user information
-func (l *OrganizationUserLogic) UpdateOrganizationUser(ctx context.Context, reqDto dto.OrganizationUserUpdateRequestDto) (result *bo.OrganizationUserBo, err error) {
+func (l *OrganizationUserLogic) UpdateOrganizationUser(ctx context.Context, reqDto dto.OrganizationUserUpdateRequestDto) (result *dto.OrganizationUserEntityDto, err error) {
 	organizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUserById(ctx, reqDto.Id, reqDto.OrganizationId)
 	if err != nil {
 		return nil, err
@@ -570,7 +570,7 @@ func (l *OrganizationUserLogic) sendInviteEmail(ctx context.Context, input SendI
 }
 
 // AllOrganizationUsers
-func (l *OrganizationUserLogic) AllOrganizationUsers(ctx context.Context, organizationId int64) (result []*bo.OrganizationUserBo, err error) {
+func (l *OrganizationUserLogic) AllOrganizationUsers(ctx context.Context, organizationId int64) (result []*dto.OrganizationUserEntityDto, err error) {
 	repoResults, err := l.repos.OrganizationUserRepo.AllOrganizationUsers(ctx, organizationId)
 	if err != nil {
 		return nil, err
@@ -580,7 +580,7 @@ func (l *OrganizationUserLogic) AllOrganizationUsers(ctx context.Context, organi
 }
 
 // Detail
-func (l *OrganizationUserLogic) Detail(ctx context.Context, id int64, organizationId int64) (result *bo.OrganizationUserBo, err error) {
+func (l *OrganizationUserLogic) Detail(ctx context.Context, id int64, organizationId int64) (result *dto.OrganizationUserEntityDto, err error) {
 	organizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUserById(ctx, id, organizationId)
 	if err != nil {
 		return nil, err
@@ -590,7 +590,7 @@ func (l *OrganizationUserLogic) Detail(ctx context.Context, id int64, organizati
 		err = errorx.New("User not existed")
 		return nil, err
 	}
-	result = &bo.OrganizationUserBo{}
+	result = &dto.OrganizationUserEntityDto{}
 	err = copier.CopyWithOption(result, organizationUser, copier.Option{
 		DeepCopy:      true,
 		CaseSensitive: true,
@@ -679,8 +679,8 @@ func (l *OrganizationUserLogic) Delete(ctx context.Context, id int64, organizati
 }
 
 // transToBo
-func (l *OrganizationUserLogic) transToBo(src *model.OrganizationUser) (result *bo.OrganizationUserBo) {
-	result, err := copierx.Trans[model.OrganizationUser, bo.OrganizationUserBo](src)
+func (l *OrganizationUserLogic) transToBo(src *model.OrganizationUser) (result *dto.OrganizationUserEntityDto) {
+	result, err := copierx.Trans[model.OrganizationUser, dto.OrganizationUserEntityDto](src)
 	if err != nil {
 		return nil
 	}
@@ -691,8 +691,8 @@ func (l *OrganizationUserLogic) transToBo(src *model.OrganizationUser) (result *
 }
 
 // batchTransToBo batch transforms to bo
-func (l *OrganizationUserLogic) batchTransToBo(src []*model.OrganizationUser) (result []*bo.OrganizationUserBo) {
-	result = make([]*bo.OrganizationUserBo, 0, len(src))
+func (l *OrganizationUserLogic) batchTransToBo(src []*model.OrganizationUser) (result []*dto.OrganizationUserEntityDto) {
+	result = make([]*dto.OrganizationUserEntityDto, 0, len(src))
 	if len(src) == 0 {
 		return result
 	}

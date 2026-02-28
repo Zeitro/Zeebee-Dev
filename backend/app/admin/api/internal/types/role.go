@@ -8,10 +8,10 @@ type RoleAllResponse struct {
 }
 
 type RoleCreateRequest struct {
-	Name        string  `json:"name" validate:"required,min=2,max=100,ne='admin'"`
-	Description string  `json:"description" validate:"max=255"`
-	Status      string  `json:"status" validate:"required,oneof=Active Inactive"`
-	ResourceIds []int64 `json:"resource_ids"`
+	Name        string                    `json:"name" validate:"required,min=2,max=100,ne='admin'"`
+	Description string                    `json:"description" validate:"max=255"`
+	Status      string                    `json:"status" validate:"required,oneof=Active Disabled"`
+	Resources   []RoleAndResourceRelation `json:"resources,optional" validate:"dive"`
 }
 
 type RoleEntity struct {
@@ -27,10 +27,9 @@ type RoleEntity struct {
 }
 
 type RolePageRequest struct {
-	Page   int64          `json:"page,default=1"`
-	Limit  int64          `json:"limit,default=10"`
-	Filter RolePageFilter `json:"filter"`
-	Sort   RolePageSort   `json:"sort"`
+	BasePageRequest
+	Filter BasePageFilter `json:"filter"`
+	Sort   BasePageSort   `json:"sort"`
 }
 
 type RolePageResponse struct {
@@ -41,15 +40,15 @@ type RolePageResponse struct {
 	List      []RoleEntity `json:"list"`
 }
 
-type RoleUpdateRequest struct {
-	Id          int64   `path:"id" validate:"required,gt=0"`
-	Name        string  `json:"name" validate:"required,min=2,max=100,ne='admin'"`
-	Description string  `json:"description" validate:"max=255"`
-	Status      string  `json:"status" validate:"required,oneof=Active Inactive"`
-	ResourceIds []int64 `json:"resource_ids"`
+type RoleSwitchStatusRequest struct {
+	Id     int64  `path:"id" validate:"required,gt=0"`
+	Status string `json:"status" validate:"required,oneof=Active Disabled"`
 }
 
-type RoleUpdateStatusRequest struct {
-	Id     int64  `path:"id" validate:"required,gt=0"`
-	Status string `json:"status" validate:"required,oneof=Active Inactive"`
+type RoleUpdateRequest struct {
+	Id          int64                     `path:"id" validate:"required,gt=0"`
+	Name        string                    `json:"name" validate:"required,min=2,max=100,ne='admin'"`
+	Description string                    `json:"description" validate:"max=255"`
+	Status      string                    `json:"status" validate:"required,oneof=Active Disabled"`
+	Resources   []RoleAndResourceRelation `json:"resources,optional" validate:"dive"`
 }

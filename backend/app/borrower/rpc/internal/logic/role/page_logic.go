@@ -11,6 +11,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 )
@@ -50,23 +51,28 @@ func (l *PageLogic) Page(in *borrower.RolePageRequest) (resp *borrower.RolePageR
 
 	pageReq.Filter.RoleType = constants.UserTypeBorrower
 	pageReq.Filter.OrganizationId = claim.OrganizationId
-	pageReq.Filter.UserId = claim.OrganizationUserId
+	// pageReq.Filter.UserId = claim.OrganizationUserId
 
 	result, err := l.baseLogic.RoleLogic.Page(l.ctx, pageReq)
 	if err != nil {
 		return nil, err
 	}
 
-	data := &borrower.RolePageResponseData{}
-	err = copier.CopyWithOption(data, &result, copier.Option{
-		DeepCopy: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
-	})
+	data, err := copierx.Trans[gormx.PageResponse[dto.RoleEntityDto], borrower.RolePageResponseData](&result, copierx.TimeToRFC3339Str())
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
+
+	// data := &borrower.RolePageResponseData{}
+	// err = copier.CopyWithOption(data, &result, copier.Option{
+	// 	DeepCopy: true,
+	// 	Converters: []copier.TypeConverter{
+	// 		copierx.TimeToRFC3339Str(),
+	// 	},
+	// })
+	// if err != nil {
+	// 	return nil, errorx.GetFailedTransRespErr(err)
+	// }
 
 	return &borrower.RolePageResponse{
 		Data: data,

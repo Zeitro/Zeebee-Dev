@@ -3,7 +3,6 @@ package rolelogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/admin/rpc/internal/logic"
@@ -43,31 +42,24 @@ func (l *CreateLogic) Create(in *admin.RoleCreateRequest) (resp *admin.RoleCreat
 		return nil, err
 	}
 
-	input := dto.RoleCreateRequestDto{}
-	err = copier.CopyWithOption(input, in.Data, copier.Option{DeepCopy: true})
-	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
-	}
-	input.Type = constants.UserTypeAdmin
-	input.OrganizationId = claim.OrganizationId
-
-	role, err := l.baseLogic.RoleLogic.Create(l.ctx, input)
+	input, err := copierx.Trans[admin.RoleCreateRequestData, dto.RoleCreateRequestDto](in.Data)
 	if err != nil {
 		return nil, err
 	}
 
-	respData := &admin.RoleEntity{}
-	err = copier.CopyWithOption(respData, role, copier.Option{
-		DeepCopy: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
-	})
+	input.Type = constants.UserTypeAdmin
+	input.OrganizationId = claim.OrganizationId
+
+	role, err := l.baseLogic.RoleLogic.Create(l.ctx, *input)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 
+	data, err := copierx.Trans[dto.RoleEntityDto, admin.RoleEntity](role, copierx.TimeToRFC3339Str())
+	if err != nil {
+		return nil, err
+	}
 	return &admin.RoleCreateResponse{
-		Data: respData,
+		Data: data,
 	}, nil
 }

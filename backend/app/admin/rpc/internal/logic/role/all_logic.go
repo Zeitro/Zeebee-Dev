@@ -3,7 +3,6 @@ package rolelogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/admin/rpc/internal/logic"
@@ -12,6 +11,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/dto"
 )
 
 type AllLogic struct {
@@ -47,19 +47,12 @@ func (l *AllLogic) All(in *admin.RoleAllRequest) (resp *admin.RoleAllResponse, e
 		return nil, err
 	}
 
-	respData := []*admin.RoleEntity{}
-	err = copier.CopyWithOption(&respData, result, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
-	})
+	data, err := copierx.Trans[[]*dto.RoleEntityDto, []*admin.RoleEntity](&result, copierx.TimeToRFC3339Str())
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 
 	return &admin.RoleAllResponse{
-		Data: respData,
+		Data: *data,
 	}, nil
 }

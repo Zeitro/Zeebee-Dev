@@ -5102,9 +5102,8 @@ func (x *RolePageRequestData) GetSorter() *RolePageRequestSorter {
 }
 
 type RolePageRequestFilter struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	//  int64 user_id = 1;
-	Keyword       string `protobuf:"bytes,2,opt,name=keyword,proto3" json:"keyword,omitempty"` //  int64 organization_id = 3;
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Keyword       string                 `protobuf:"bytes,2,opt,name=keyword,proto3" json:"keyword,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -5926,28 +5925,28 @@ func (x *RoleDetailResponse) GetData() *RoleEntity {
 	return nil
 }
 
-// update status -- request
-type RoleUpdateStatusRequest struct {
+// switch status -- request
+type RoleSwitchStatusRequest struct {
 	state         protoimpl.MessageState       `protogen:"open.v1"`
-	Data          *RoleUpdateStatusRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	Data          *RoleSwitchStatusRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *RoleUpdateStatusRequest) Reset() {
-	*x = RoleUpdateStatusRequest{}
+func (x *RoleSwitchStatusRequest) Reset() {
+	*x = RoleSwitchStatusRequest{}
 	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[95]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *RoleUpdateStatusRequest) String() string {
+func (x *RoleSwitchStatusRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*RoleUpdateStatusRequest) ProtoMessage() {}
+func (*RoleSwitchStatusRequest) ProtoMessage() {}
 
-func (x *RoleUpdateStatusRequest) ProtoReflect() protoreflect.Message {
+func (x *RoleSwitchStatusRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[95]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -5959,19 +5958,19 @@ func (x *RoleUpdateStatusRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RoleUpdateStatusRequest.ProtoReflect.Descriptor instead.
-func (*RoleUpdateStatusRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use RoleSwitchStatusRequest.ProtoReflect.Descriptor instead.
+func (*RoleSwitchStatusRequest) Descriptor() ([]byte, []int) {
 	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{95}
 }
 
-func (x *RoleUpdateStatusRequest) GetData() *RoleUpdateStatusRequestData {
+func (x *RoleSwitchStatusRequest) GetData() *RoleSwitchStatusRequestData {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type RoleUpdateStatusRequestData struct {
+type RoleSwitchStatusRequestData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Status        string                 `protobuf:"bytes,2,opt,name=status,proto3" json:"status,omitempty"`
@@ -5979,20 +5978,20 @@ type RoleUpdateStatusRequestData struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *RoleUpdateStatusRequestData) Reset() {
-	*x = RoleUpdateStatusRequestData{}
+func (x *RoleSwitchStatusRequestData) Reset() {
+	*x = RoleSwitchStatusRequestData{}
 	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[96]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *RoleUpdateStatusRequestData) String() string {
+func (x *RoleSwitchStatusRequestData) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*RoleUpdateStatusRequestData) ProtoMessage() {}
+func (*RoleSwitchStatusRequestData) ProtoMessage() {}
 
-func (x *RoleUpdateStatusRequestData) ProtoReflect() protoreflect.Message {
+func (x *RoleSwitchStatusRequestData) ProtoReflect() protoreflect.Message {
 	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[96]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -6004,19 +6003,19 @@ func (x *RoleUpdateStatusRequestData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RoleUpdateStatusRequestData.ProtoReflect.Descriptor instead.
-func (*RoleUpdateStatusRequestData) Descriptor() ([]byte, []int) {
+// Deprecated: Use RoleSwitchStatusRequestData.ProtoReflect.Descriptor instead.
+func (*RoleSwitchStatusRequestData) Descriptor() ([]byte, []int) {
 	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{96}
 }
 
-func (x *RoleUpdateStatusRequestData) GetId() int64 {
+func (x *RoleSwitchStatusRequestData) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *RoleUpdateStatusRequestData) GetStatus() string {
+func (x *RoleSwitchStatusRequestData) GetStatus() string {
 	if x != nil {
 		return x.Status
 	}
@@ -13392,9 +13391,9 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\";\n" +
 	"\x12RoleDetailResponse\x12%\n" +
 	"\x04data\x18\x01 \x01(\v2\x11.admin.RoleEntityR\x04data\"Q\n" +
-	"\x17RoleUpdateStatusRequest\x126\n" +
-	"\x04data\x18\x01 \x01(\v2\".admin.RoleUpdateStatusRequestDataR\x04data\"E\n" +
-	"\x1bRoleUpdateStatusRequestData\x12\x0e\n" +
+	"\x17RoleSwitchStatusRequest\x126\n" +
+	"\x04data\x18\x01 \x01(\v2\".admin.RoleSwitchStatusRequestDataR\x04data\"E\n" +
+	"\x1bRoleSwitchStatusRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x16\n" +
 	"\x06status\x18\x02 \x01(\tR\x06status\"?\n" +
 	"\x0eRoleAllRequest\x12-\n" +
@@ -14034,7 +14033,7 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x06Update\x12\x18.admin.RoleUpdateRequest\x1a\x19.admin.RoleUpdateResponse\x128\n" +
 	"\x06Delete\x12\x18.admin.RoleDeleteRequest\x1a\x14.admin.EmptyResponse\x12=\n" +
 	"\x06Detail\x12\x18.admin.RoleDetailRequest\x1a\x19.admin.RoleDetailResponse\x12D\n" +
-	"\fUpdateStatus\x12\x1e.admin.RoleUpdateStatusRequest\x1a\x14.admin.EmptyResponse\x124\n" +
+	"\fSwitchStatus\x12\x1e.admin.RoleSwitchStatusRequest\x1a\x14.admin.EmptyResponse\x124\n" +
 	"\x03All\x12\x15.admin.RoleAllRequest\x1a\x16.admin.RoleAllResponse2\xb0\x04\n" +
 	"\forganization\x12G\n" +
 	"\x04Page\x12\x1e.admin.OrganizationPageRequest\x1a\x1f.admin.OrganizationPageResponse\x12Y\n" +
@@ -14176,8 +14175,8 @@ var file_app_admin_rpc_pb_admin_proto_goTypes = []any{
 	(*RoleDetailRequest)(nil),                          // 92: admin.RoleDetailRequest
 	(*RoleDetailRequestData)(nil),                      // 93: admin.RoleDetailRequestData
 	(*RoleDetailResponse)(nil),                         // 94: admin.RoleDetailResponse
-	(*RoleUpdateStatusRequest)(nil),                    // 95: admin.RoleUpdateStatusRequest
-	(*RoleUpdateStatusRequestData)(nil),                // 96: admin.RoleUpdateStatusRequestData
+	(*RoleSwitchStatusRequest)(nil),                    // 95: admin.RoleSwitchStatusRequest
+	(*RoleSwitchStatusRequestData)(nil),                // 96: admin.RoleSwitchStatusRequestData
 	(*RoleAllRequest)(nil),                             // 97: admin.RoleAllRequest
 	(*RoleAllRequestData)(nil),                         // 98: admin.RoleAllRequestData
 	(*RoleAllResponse)(nil),                            // 99: admin.RoleAllResponse
@@ -14329,7 +14328,7 @@ var file_app_admin_rpc_pb_admin_proto_depIdxs = []int32{
 	91,  // 55: admin.RoleDeleteRequest.data:type_name -> admin.RoleDeleteRequestData
 	93,  // 56: admin.RoleDetailRequest.data:type_name -> admin.RoleDetailRequestData
 	76,  // 57: admin.RoleDetailResponse.data:type_name -> admin.RoleEntity
-	96,  // 58: admin.RoleUpdateStatusRequest.data:type_name -> admin.RoleUpdateStatusRequestData
+	96,  // 58: admin.RoleSwitchStatusRequest.data:type_name -> admin.RoleSwitchStatusRequestData
 	98,  // 59: admin.RoleAllRequest.data:type_name -> admin.RoleAllRequestData
 	76,  // 60: admin.RoleAllResponse.data:type_name -> admin.RoleEntity
 	4,   // 61: admin.OrganizationEntity.address:type_name -> admin.AddressEntity
@@ -14441,7 +14440,7 @@ var file_app_admin_rpc_pb_admin_proto_depIdxs = []int32{
 	86,  // 167: admin.role.Update:input_type -> admin.RoleUpdateRequest
 	90,  // 168: admin.role.Delete:input_type -> admin.RoleDeleteRequest
 	92,  // 169: admin.role.Detail:input_type -> admin.RoleDetailRequest
-	95,  // 170: admin.role.UpdateStatus:input_type -> admin.RoleUpdateStatusRequest
+	95,  // 170: admin.role.SwitchStatus:input_type -> admin.RoleSwitchStatusRequest
 	97,  // 171: admin.role.All:input_type -> admin.RoleAllRequest
 	105, // 172: admin.organization.Page:input_type -> admin.OrganizationPageRequest
 	111, // 173: admin.organization.CreateLender:input_type -> admin.OrganizationCreateLenderRequest
@@ -14492,7 +14491,7 @@ var file_app_admin_rpc_pb_admin_proto_depIdxs = []int32{
 	87,  // 218: admin.role.Update:output_type -> admin.RoleUpdateResponse
 	1,   // 219: admin.role.Delete:output_type -> admin.EmptyResponse
 	94,  // 220: admin.role.Detail:output_type -> admin.RoleDetailResponse
-	1,   // 221: admin.role.UpdateStatus:output_type -> admin.EmptyResponse
+	1,   // 221: admin.role.SwitchStatus:output_type -> admin.EmptyResponse
 	99,  // 222: admin.role.All:output_type -> admin.RoleAllResponse
 	109, // 223: admin.organization.Page:output_type -> admin.OrganizationPageResponse
 	117, // 224: admin.organization.CreateLender:output_type -> admin.OrganizationDetailResponse

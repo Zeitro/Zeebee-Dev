@@ -345,10 +345,10 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: role.RoleDeleteHandler(serverCtx),
 				},
 				{
-					// update status
+					// switch status
 					Method:  http.MethodPatch,
 					Path:    "/role/:id/status",
-					Handler: role.RoleUpdateStatusHandler(serverCtx),
+					Handler: role.RoleSwitchStatusHandler(serverCtx),
 				},
 				{
 					// all

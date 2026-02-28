@@ -170,11 +170,11 @@ type (
 	RolePageRequestSorter                      = admin.RolePageRequestSorter
 	RolePageResponse                           = admin.RolePageResponse
 	RolePageResponseData                       = admin.RolePageResponseData
+	RoleSwitchStatusRequest                    = admin.RoleSwitchStatusRequest
+	RoleSwitchStatusRequestData                = admin.RoleSwitchStatusRequestData
 	RoleUpdateRequest                          = admin.RoleUpdateRequest
 	RoleUpdateRequestData                      = admin.RoleUpdateRequestData
 	RoleUpdateResponse                         = admin.RoleUpdateResponse
-	RoleUpdateStatusRequest                    = admin.RoleUpdateStatusRequest
-	RoleUpdateStatusRequestData                = admin.RoleUpdateStatusRequestData
 	StorageCreatePresignedUrlRequest           = admin.StorageCreatePresignedUrlRequest
 	StorageCreatePresignedUrlRequestData       = admin.StorageCreatePresignedUrlRequestData
 	StorageCreatePresignedUrlResponse          = admin.StorageCreatePresignedUrlResponse
