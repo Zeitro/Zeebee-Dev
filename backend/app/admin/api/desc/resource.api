@@ -21,6 +21,7 @@ type ResourceTreeEntity {
     IsShow bool `json:"is_show"`
     Status string `json:"status"`
     SortOrder int32 `json:"sort_order"`
+    EnableDataScope bool `json:"enable_data_scope"`
     CreatedAt string `json:"created_at"`
     UpdatedAt string `json:"updated_at"`
     Children []*ResourceTreeEntity `json:"children,omitempty"`
@@ -38,6 +39,7 @@ type ResourceEntity {
     IsShow bool `json:"is_show"`
     Status string `json:"status"`
     SortOrder int32 `json:"sort_order"`
+    EnableDataScope bool `json:"enable_data_scope"`
     CreatedAt string `json:"created_at"`
     UpdatedAt string `json:"updated_at"`
     Apis []*ApiEntity `json:"apis,omitempty"`
@@ -61,8 +63,9 @@ type ResourceCreateRequest {
     Icon string `json:"icon" validate:"max=100"`
     Tag string `json:"tag" validate:"max=100,required_if=ResourceType Button"`
     IsShow bool `json:"is_show"`
-    Status string `json:"status" validate:"required,oneof=Active Inactive"`
+    Status string `json:"status" validate:"required,oneof=Active Disabled"`
     SortOrder int32 `json:"sort_order" validate:"min=0"`
+    EnableDataScope bool `json:"enable_data_scope"`
     ApiIds []int64 `json:"api_ids"`
 }
 
@@ -76,8 +79,9 @@ type ResourceUpdateRequest {
     Icon string `json:"icon" validate:"max=100"`
     Tag string `json:"tag" validate:"max=100,required_if=ResourceType Button"`
     IsShow bool `json:"is_show"`
-    Status string `json:"status" validate:"required,oneof=Active Inactive"`
+    Status string `json:"status" validate:"required,oneof=Active Disabled"`
     SortOrder int32 `json:"sort_order" validate:"min=0"`
+    EnableDataScope bool `json:"enable_data_scope"`
     ApiIds []int64 `json:"api_ids"`
 }
 

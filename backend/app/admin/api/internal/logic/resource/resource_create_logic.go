@@ -28,8 +28,8 @@ func NewResourceCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Re
 	}
 }
 
-func (l *ResourceCreateLogic) ResourceCreate(req *types.ResourceCreateRequest) (resp *types.ResourceTreeEntity, err error) {
-	resp = &types.ResourceTreeEntity{}
+func (l *ResourceCreateLogic) ResourceCreate(req *types.ResourceCreateRequest) (resp *types.ResourceEntity, err error) {
+	resp = &types.ResourceEntity{}
 	rpcReq := &admin.ResourceCreateRequest{
 		Data: &admin.ResourceCreateRequestData{},
 	}

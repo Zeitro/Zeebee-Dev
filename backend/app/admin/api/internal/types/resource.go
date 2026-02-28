@@ -4,17 +4,18 @@
 package types
 
 type ResourceCreateRequest struct {
-	ParentId     int64   `json:"parent_id" validate:"min=0"`
-	Type         string  `json:"type" validate:"required,oneof=Borrower Lender Admin"`
-	ResourceType string  `json:"resource_type" validate:"required,oneof=Menu Button"`
-	Name         string  `json:"name" validate:"required,min=2,max=100"`
-	Path         string  `json:"path" validate:"max=100,required_if=ResourceType Menu"`
-	Icon         string  `json:"icon" validate:"max=100"`
-	Tag          string  `json:"tag" validate:"max=100,required_if=ResourceType Button"`
-	IsShow       bool    `json:"is_show"`
-	Status       string  `json:"status" validate:"required,oneof=Active Inactive"`
-	SortOrder    int32   `json:"sort_order" validate:"min=0"`
-	ApiIds       []int64 `json:"api_ids"`
+	ParentId        int64   `json:"parent_id" validate:"min=0"`
+	Type            string  `json:"type" validate:"required,oneof=Borrower Lender Admin"`
+	ResourceType    string  `json:"resource_type" validate:"required,oneof=Menu Button"`
+	Name            string  `json:"name" validate:"required,min=2,max=100"`
+	Path            string  `json:"path" validate:"max=100,required_if=ResourceType Menu"`
+	Icon            string  `json:"icon" validate:"max=100"`
+	Tag             string  `json:"tag" validate:"max=100,required_if=ResourceType Button"`
+	IsShow          bool    `json:"is_show"`
+	Status          string  `json:"status" validate:"required,oneof=Active Disabled"`
+	SortOrder       int32   `json:"sort_order" validate:"min=0"`
+	EnableDataScope bool    `json:"enable_data_scope"`
+	ApiIds          []int64 `json:"api_ids"`
 }
 
 type ResourceDeleteRequest struct {
@@ -39,6 +40,7 @@ type ResourceEntity struct {
 	IsShow             bool         `json:"is_show"`
 	Status             string       `json:"status"`
 	SortOrder          int32        `json:"sort_order"`
+	EnableDataScope    bool         `json:"enable_data_scope"`
 	CreatedAt          string       `json:"created_at"`
 	UpdatedAt          string       `json:"updated_at"`
 	Apis               []*ApiEntity `json:"apis,omitempty"`
@@ -54,16 +56,17 @@ type ResourceTreeResponse struct {
 }
 
 type ResourceUpdateRequest struct {
-	Id           int64   `path:"id" validate:"required,gt=0"`
-	ParentId     int64   `json:"parent_id" validate:"min=0"`
-	Type         string  `json:"type" validate:"required,oneof=Borrower Lender Admin"`
-	ResourceType string  `json:"resource_type" validate:"required,oneof=Menu Button"`
-	Name         string  `json:"name" validate:"required,min=2,max=100"`
-	Path         string  `json:"path" validate:"max=100,required_if=ResourceType Menu"`
-	Icon         string  `json:"icon" validate:"max=100"`
-	Tag          string  `json:"tag" validate:"max=100,required_if=ResourceType Button"`
-	IsShow       bool    `json:"is_show"`
-	Status       string  `json:"status" validate:"required,oneof=Active Inactive"`
-	SortOrder    int32   `json:"sort_order" validate:"min=0"`
-	ApiIds       []int64 `json:"api_ids"`
+	Id              int64   `path:"id" validate:"required,gt=0"`
+	ParentId        int64   `json:"parent_id" validate:"min=0"`
+	Type            string  `json:"type" validate:"required,oneof=Borrower Lender Admin"`
+	ResourceType    string  `json:"resource_type" validate:"required,oneof=Menu Button"`
+	Name            string  `json:"name" validate:"required,min=2,max=100"`
+	Path            string  `json:"path" validate:"max=100,required_if=ResourceType Menu"`
+	Icon            string  `json:"icon" validate:"max=100"`
+	Tag             string  `json:"tag" validate:"max=100,required_if=ResourceType Button"`
+	IsShow          bool    `json:"is_show"`
+	Status          string  `json:"status" validate:"required,oneof=Active Disabled"`
+	SortOrder       int32   `json:"sort_order" validate:"min=0"`
+	EnableDataScope bool    `json:"enable_data_scope"`
+	ApiIds          []int64 `json:"api_ids"`
 }

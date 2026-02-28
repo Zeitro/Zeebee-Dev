@@ -479,9 +479,7 @@ message ResourceCreateRequestData {
   repeated int64 api_ids = 11;
   bool enable_data_scope = 12;
 }
-message ResourceCreateResponse {
-  ResourceTreeEntity data = 1;
-}
+
 // update -- request
 message ResourceUpdateRequest {
   ResourceUpdateRequestData data = 1;

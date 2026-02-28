@@ -139,7 +139,6 @@ type (
 	ResetPasswordResponseData                  = admin.ResetPasswordResponseData
 	ResourceCreateRequest                      = admin.ResourceCreateRequest
 	ResourceCreateRequestData                  = admin.ResourceCreateRequestData
-	ResourceCreateResponse                     = admin.ResourceCreateResponse
 	ResourceDeleteRequest                      = admin.ResourceDeleteRequest
 	ResourceDeleteRequestData                  = admin.ResourceDeleteRequestData
 	ResourceDetailRequest                      = admin.ResourceDetailRequest

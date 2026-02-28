@@ -28,8 +28,8 @@ func NewResourceUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Re
 	}
 }
 
-func (l *ResourceUpdateLogic) ResourceUpdate(req *types.ResourceUpdateRequest) (resp *types.ResourceTreeEntity, err error) {
-	resp = &types.ResourceTreeEntity{}
+func (l *ResourceUpdateLogic) ResourceUpdate(req *types.ResourceUpdateRequest) (resp *types.ResourceEntity, err error) {
+	resp = &types.ResourceEntity{}
 	rpcReq := &admin.ResourceUpdateRequest{
 		Data: &admin.ResourceUpdateRequestData{},
 	}

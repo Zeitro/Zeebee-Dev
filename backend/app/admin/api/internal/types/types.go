@@ -560,20 +560,21 @@ type RangeInt struct {
 }
 
 type ResourceTreeEntity struct {
-	Id           int64                 `json:"id"`
-	ParentId     int64                 `json:"parent_id"`
-	Type         string                `json:"type"`
-	ResourceType string                `json:"resource_type"`
-	Name         string                `json:"name"`
-	Path         string                `json:"path"`
-	Icon         string                `json:"icon"`
-	Tag          string                `json:"tag"`
-	IsShow       bool                  `json:"is_show"`
-	Status       string                `json:"status"`
-	SortOrder    int32                 `json:"sort_order"`
-	CreatedAt    string                `json:"created_at"`
-	UpdatedAt    string                `json:"updated_at"`
-	Children     []*ResourceTreeEntity `json:"children,omitempty"`
+	Id              int64                 `json:"id"`
+	ParentId        int64                 `json:"parent_id"`
+	Type            string                `json:"type"`
+	ResourceType    string                `json:"resource_type"`
+	Name            string                `json:"name"`
+	Path            string                `json:"path"`
+	Icon            string                `json:"icon"`
+	Tag             string                `json:"tag"`
+	IsShow          bool                  `json:"is_show"`
+	Status          string                `json:"status"`
+	SortOrder       int32                 `json:"sort_order"`
+	EnableDataScope bool                  `json:"enable_data_scope"`
+	CreatedAt       string                `json:"created_at"`
+	UpdatedAt       string                `json:"updated_at"`
+	Children        []*ResourceTreeEntity `json:"children,omitempty"`
 }
 
 type RoleDeleteRequest struct {
