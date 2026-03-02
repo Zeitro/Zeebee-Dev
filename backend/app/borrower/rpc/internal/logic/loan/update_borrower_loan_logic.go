@@ -60,14 +60,14 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 
 	oldApplicants := loanModel.Applicants
 	if len(oldApplicants) == 0 {
-		return nil, errorx.WithStack(errorx.New("Applicant Is Not Found"))
+		return nil, errorx.WithStack(errorx.New("Applicant is not found"))
 	}
 	if loanModel.Source != constants.LoanSourceBorrower && loanModel.Source != constants.LoanSourcePreapproval {
-		return nil, errorx.WithStack(errorx.New("Loan Source Is Not Third Party"))
+		return nil, errorx.WithStack(errorx.New("Loan source is not third party"))
 	}
 	loanPropertyModel := loanModel.LoanProperty
 	if loanPropertyModel == nil {
-		return nil, errorx.WithStack(errorx.New("Loan Property Is Not Found"))
+		return nil, errorx.WithStack(errorx.New("Loan property is not found"))
 	}
 
 	// create loan
@@ -202,7 +202,7 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 		applicants = append(applicants, applicantItem)
 	}
 	if totalOwnPercent > 100 {
-		return nil, nil, nil, nil, errorx.New("Total Own Percent Must Be Less Than 100")
+		return nil, nil, nil, nil, errorx.New("Total own percent must be less than 100")
 	}
 
 	slice.SortBy(applicants, func(a, b *model.LoanApplicant) bool {
@@ -212,16 +212,16 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 		return item.FullName == other.FullName
 	})
 	if len(applicants) == 0 {
-		return nil, nil, nil, nil, errorx.New("No Applicant")
+		return nil, nil, nil, nil, errorx.New("No applicant")
 	}
 	primaryCount := slice.CountBy(applicants, func(index int, item *model.LoanApplicant) bool {
 		return item.IsPrimary
 	})
 	if primaryCount == 0 {
-		return nil, nil, nil, nil, errorx.New("No Primary Applicant")
+		return nil, nil, nil, nil, errorx.New("No primary applicant")
 	}
 	if primaryCount > 1 {
-		return nil, nil, nil, nil, errorx.New("Multiple Primary Applicant")
+		return nil, nil, nil, nil, errorx.New("Multiple primary applicants")
 	}
 
 	// LoanBorrower
@@ -283,12 +283,12 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 	}
 	loan.RemoveRelationships()
 	if loan.TotalAmount < loan.InitialAmount {
-		return nil, nil, nil, nil, errorx.New("Total Amount Cannot Be Less Than Initial Amount")
+		return nil, nil, nil, nil, errorx.New("Total amount cannot be less than initial amount")
 	}
 	switch constants.LoanStage(in.Stage) {
 	case constants.LoanStagePending:
 		if loan.ClosingDate == nil {
-			return nil, nil, nil, nil, errorx.New("Closing Date Is Required")
+			return nil, nil, nil, nil, errorx.New("Closing date is required")
 		}
 		loan.HoldbackAmount = loan.TotalAmount - loan.InitialAmount
 		loan.PrincipalAmount = loan.TotalAmount
@@ -298,15 +298,15 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 
 		// loan.PrincipalAmount = in.PrincipalAmount
 		if loan.MaturityDate == nil {
-			return nil, nil, nil, nil, errorx.New("Maturity Date Is Required")
+			return nil, nil, nil, nil, errorx.New("Maturity date is required")
 		}
 	case constants.LoanStageArchived:
 		// loan.PrincipalAmount = in.PrincipalAmount
 		if loan.PaidOffDate == nil {
-			return nil, nil, nil, nil, errorx.New("Paid Off Date Is Required")
+			return nil, nil, nil, nil, errorx.New("Paid off date is required")
 		}
 	default:
-		return nil, nil, nil, nil, errorx.New("Invalid Loan Stage")
+		return nil, nil, nil, nil, errorx.New("Invalid loan stage")
 	}
 	return
 }

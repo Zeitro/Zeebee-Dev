@@ -24,6 +24,7 @@ type (
 	FileDeleteRequest                              = lender.FileDeleteRequest
 	FileDeleteRequestData                          = lender.FileDeleteRequestData
 	FileEntity                                     = lender.FileEntity
+	IdRequest                                      = lender.IdRequest
 	LoanApplicantEntity                            = lender.LoanApplicantEntity
 	LoanApplicantLoanEditEntity                    = lender.LoanApplicantLoanEditEntity
 	LoanBorrowerEntity                             = lender.LoanBorrowerEntity
@@ -91,6 +92,30 @@ type (
 	OrganizationEntity                             = lender.OrganizationEntity
 	OrganizationLenderMetadataEntity               = lender.OrganizationLenderMetadataEntity
 	OrganizationMetadataEntity                     = lender.OrganizationMetadataEntity
+	OrganizationProfileEntity                      = lender.OrganizationProfileEntity
+	OrganizationProfileResponse                    = lender.OrganizationProfileResponse
+	OrganizationSettingDetailByPurposeRequest      = lender.OrganizationSettingDetailByPurposeRequest
+	OrganizationSettingDetailByPurposeRequestData  = lender.OrganizationSettingDetailByPurposeRequestData
+	OrganizationSettingDetailResponse              = lender.OrganizationSettingDetailResponse
+	OrganizationSettingEntity                      = lender.OrganizationSettingEntity
+	OrganizationSettingProfileEntity               = lender.OrganizationSettingProfileEntity
+	OrganizationSettingSwitchStatusRequest         = lender.OrganizationSettingSwitchStatusRequest
+	OrganizationSettingSwitchStatusRequestData     = lender.OrganizationSettingSwitchStatusRequestData
+	OrganizationTemplateDetailByPurposeRequest     = lender.OrganizationTemplateDetailByPurposeRequest
+	OrganizationTemplateDetailByPurposeRequestData = lender.OrganizationTemplateDetailByPurposeRequestData
+	OrganizationTemplateDetailResponse             = lender.OrganizationTemplateDetailResponse
+	OrganizationTemplateEntity                     = lender.OrganizationTemplateEntity
+	OrganizationTemplatePageEntity                 = lender.OrganizationTemplatePageEntity
+	OrganizationTemplatePageRequest                = lender.OrganizationTemplatePageRequest
+	OrganizationTemplatePageRequestData            = lender.OrganizationTemplatePageRequestData
+	OrganizationTemplatePageRequestFilter          = lender.OrganizationTemplatePageRequestFilter
+	OrganizationTemplatePageRequestSorter          = lender.OrganizationTemplatePageRequestSorter
+	OrganizationTemplatePageResponse               = lender.OrganizationTemplatePageResponse
+	OrganizationTemplatePageResponseData           = lender.OrganizationTemplatePageResponseData
+	OrganizationTemplatePreviewRequest             = lender.OrganizationTemplatePreviewRequest
+	OrganizationTemplatePreviewRequestData         = lender.OrganizationTemplatePreviewRequestData
+	OrganizationTemplatePreviewResponse            = lender.OrganizationTemplatePreviewResponse
+	OrganizationTemplatePreviewResponseData        = lender.OrganizationTemplatePreviewResponseData
 	OrganizationUpdateProfileRequest               = lender.OrganizationUpdateProfileRequest
 	OrganizationUpdateProfileRequestData           = lender.OrganizationUpdateProfileRequestData
 	OrganizationUserAcceptInvitationRequest        = lender.OrganizationUserAcceptInvitationRequest
@@ -172,6 +197,11 @@ type (
 	StringSliceResponse                            = lender.StringSliceResponse
 	SwitchOrganizationRequest                      = lender.SwitchOrganizationRequest
 	SwitchOrganizationRequestData                  = lender.SwitchOrganizationRequestData
+	TemplateVariableEntity                         = lender.TemplateVariableEntity
+	TemplateVariableGroupEntity                    = lender.TemplateVariableGroupEntity
+	UpdateOrganizationTemplateRequest              = lender.UpdateOrganizationTemplateRequest
+	UpdateOrganizationTemplateRequestData          = lender.UpdateOrganizationTemplateRequestData
+	UpdateOrganizationTemplateResponse             = lender.UpdateOrganizationTemplateResponse
 	UsCitiesRequest                                = lender.UsCitiesRequest
 	UsCitiesRequestData                            = lender.UsCitiesRequestData
 	UserEntity                                     = lender.UserEntity
@@ -193,6 +223,7 @@ type (
 		GetOpt(ctx context.Context, in *OptionRequest, opts ...grpc.CallOption) (*OptionResponse, error)
 		GetUsState(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*StringSliceResponse, error)
 		GetUsCities(ctx context.Context, in *UsCitiesRequest, opts ...grpc.CallOption) (*StringSliceResponse, error)
+		SyncData(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	}
 
 	defaultCommon struct {
@@ -219,4 +250,9 @@ func (m *defaultCommon) GetUsState(ctx context.Context, in *EmptyRequest, opts .
 func (m *defaultCommon) GetUsCities(ctx context.Context, in *UsCitiesRequest, opts ...grpc.CallOption) (*StringSliceResponse, error) {
 	client := lender.NewCommonClient(m.cli.Conn())
 	return client.GetUsCities(ctx, in, opts...)
+}
+
+func (m *defaultCommon) SyncData(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	client := lender.NewCommonClient(m.cli.Conn())
+	return client.SyncData(ctx, in, opts...)
 }
