@@ -36,7 +36,7 @@ const useContent = (handleSearch = () => {}) => {
 		{
 			title: '',
 			dataIndex: 'operation',
-			width: 50,
+			width: 240,
 			align: 'left',
 			fixed: 'right',
 			render: (_, record) => (

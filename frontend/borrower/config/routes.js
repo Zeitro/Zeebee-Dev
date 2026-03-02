@@ -79,11 +79,11 @@ export const navRouter = [
 				path: '/setting/system',
 				title: 'System',
 			},
-			// {
-			// 	path: '/setting/role',
-			// 	title: 'Setting ( Role )',
-			// 	menuTitle: 'Role',
-			// },
+			{
+				path: '/setting/role',
+				title: 'Setting ( Role )',
+				menuTitle: 'Role',
+			},
 		],
 	},
 	{

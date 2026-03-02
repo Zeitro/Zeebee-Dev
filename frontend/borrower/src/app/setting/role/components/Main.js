@@ -29,6 +29,8 @@ const MainModal = ({ setOpen, rowData, handleSearch }) => {
 	const [form] = Form.useForm();
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const [loading, setLoading] = useState(false);
+	const [operationsValue, setOperationsValue] = useState([]);
+
 	// const { maritalStatusOptions } = useGetOptions([
 	// 	{
 	// 		key: 'marital_status',
@@ -84,7 +86,7 @@ const MainModal = ({ setOpen, rowData, handleSearch }) => {
 	return (
 		<NewModal
 			width={600}
-			title={`${rowData?.id ? 'Edit' : 'Add'} user`}
+			title={`${rowData?.id ? 'Edit' : 'Add'} role`}
 			okText="Save"
 			confirmLoading={confirmLoading}
 			onOk={handleSave}
@@ -96,13 +98,16 @@ const MainModal = ({ setOpen, rowData, handleSearch }) => {
 					name="user-form"
 					layout="vertical"
 					autoComplete="off"
-					className="h-[40vh] overflow-hidden overflow-y-auto"
+					className="h-[60vh] overflow-hidden overflow-y-auto"
 					size="large"
 					disabled={confirmLoading}
 					scrollToFirstError
 				>
 					<Row gutter={16}>
-						<Col {...layoutCol}>
+						<Col {...titleCol} className="!text-xl font-medium pb-5 text-base-gray">
+							Role information
+						</Col>
+						<Col md={24}>
 							<Form.Item
 								label="Role name"
 								name={['name']}
@@ -111,7 +116,10 @@ const MainModal = ({ setOpen, rowData, handleSearch }) => {
 								<Input placeholder="Enter name" />
 							</Form.Item>
 						</Col>
-						<Col {...layoutCol}>
+						<Col {...titleCol} className="!text-xl font-medium pb-5 text-base-gray">
+							Role permissions
+						</Col>
+						<Col md={24}>
 							<Form.Item
 								label="Date permission"
 								name={['permission']}
@@ -124,7 +132,24 @@ const MainModal = ({ setOpen, rowData, handleSearch }) => {
 								<Select options={[]} placeholder="Select role" />
 							</Form.Item>
 						</Col>
-						<Col {...layoutCol}>
+						<Col md={24} className="relative">
+							<Checkbox.Group
+								options={[
+									{
+										label: 'Fold',
+										value: 'fold',
+									},
+									{
+										label: 'Select all',
+										value: 'all',
+									},
+								]}
+								value={operationsValue}
+								onChange={(e) => {
+									setOperationsValue(e);
+								}}
+								className="absolute top-0 right-0"
+							/>
 							<Form.Item
 								label="Menu permission"
 								name={['menu']}
@@ -140,6 +165,9 @@ const MainModal = ({ setOpen, rowData, handleSearch }) => {
 										},
 										{ label: 'my properties', value: 'properties' },
 									]}
+									isFold={operationsValue.includes('fold')}
+									isSelectAll={operationsValue.includes('all')}
+									className="border border-base-border rounded-lg !py-4 !px-4"
 								/>
 							</Form.Item>
 						</Col>

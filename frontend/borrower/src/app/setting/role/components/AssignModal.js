@@ -104,6 +104,13 @@ const AssignModal = ({ setOpen, rowData, handleSearch }) => {
 			onOk={handleSave}
 			onCancel={() => setOpen(false)}
 		>
+			<div className="text-xl font-medium text-base-gray pb-4">
+				{rowData?.name}销售部
+				<span className="text-sm font-normal pl-2">
+					(<span className="text-base-error pr-1">*</span>Please add users within this
+					permission range.)
+				</span>
+			</div>
 			<FilterTable
 				filterWrapClassName="!h-[60vh] overflow-hidden"
 				ref={tableFilterRef}
