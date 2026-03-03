@@ -8,7 +8,6 @@ import (
 	"github.com/duke-git/lancet/v2/random"
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/duke-git/lancet/v2/strutil"
-	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
@@ -21,7 +20,6 @@ import (
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/bo"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/repo"
@@ -42,7 +40,7 @@ func NewOrganizationUserLogic(repos *repo.AllRepos, redisCli *redisx.Redisx, ema
 }
 
 // Page returns organization user list
-func (l *OrganizationUserLogic) Page(ctx context.Context, pageReq dto.OrganizationUserPageRequestDto) (page bo.PageResultBo[*dto.OrganizationUserEntityDto], err error) {
+func (l *OrganizationUserLogic) Page(ctx context.Context, pageReq dto.OrganizationUserPageRequestDto) (page dto.PageResultDto[*dto.OrganizationUserEntityDto], err error) {
 	organizationId := pageReq.Filter.OrganizationId
 	organization, err := l.repos.OrganizationRepo.FindOneById(ctx, organizationId)
 	if err != nil {
@@ -62,21 +60,11 @@ func (l *OrganizationUserLogic) Page(ctx context.Context, pageReq dto.Organizati
 		}
 		results.List[i].Roles = roles
 	}
-	pagePtr, err := copierx.Trans[gormx.PageResponse[*repo.OrganizationUserPageEntity], bo.PageResultBo[*dto.OrganizationUserEntityDto]](&results)
+	pagePtr, err := copierx.Trans[gormx.PageResponse[*repo.OrganizationUserPageEntity], dto.PageResultDto[*dto.OrganizationUserEntityDto]](&results)
 	if err != nil {
 		return page, err
 	}
 	page = *pagePtr
-	// err = copier.CopyWithOption(&page, results, copier.Option{
-	// 	DeepCopy:      true,
-	// 	CaseSensitive: true,
-	// 	Converters: []copier.TypeConverter{
-	// 		copierx.TimeToRFC3339Str(),
-	// 	},
-	// })
-	// if err != nil {
-	// 	return page, errorx.GetFailedTransRespErr(err)
-	// }
 
 	slice.ForEach(page.List, func(index int, item *dto.OrganizationUserEntityDto) {
 		page.List[index].IsOwner = item.UserId == organizationOwnerId
@@ -98,7 +86,7 @@ func (l *OrganizationUserLogic) CreateAdminOrganizationUser(ctx context.Context,
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}
-	if l.validatePassword(input.Password) {
+	if !l.validatePassword(input.Password) {
 		err = errorx.New("The password is invalid")
 		return nil, err
 	}
@@ -116,6 +104,7 @@ func (l *OrganizationUserLogic) CreateAdminOrganizationUser(ctx context.Context,
 			innerErr = errorx.New("The organization is not active")
 			return innerErr
 		}
+		firstName, lastName, fullName := input.FirstName, input.LastName, stringx.FormatFullName(input.FirstName, "", input.LastName)
 		// Create user if not exist
 		if user == nil || user.Id == 0 {
 
@@ -129,6 +118,9 @@ func (l *OrganizationUserLogic) CreateAdminOrganizationUser(ctx context.Context,
 				Status:                constants.UserStatusActive,
 				PasswordHash:          pwdHash,
 				DefaultOrganizationId: input.OrganizationId,
+				FirstName:             firstName,
+				LastName:              lastName,
+				FullName:              fullName,
 			}
 			user, innerErr = l.repos.UserRepo.CreateWithTx(ctx, tx, user, false)
 			if innerErr != nil {
@@ -143,6 +135,10 @@ func (l *OrganizationUserLogic) CreateAdminOrganizationUser(ctx context.Context,
 			Phone:          input.Phone,
 			Remark:         input.Remark,
 			Status:         constants.OrganizationUserStatusActive,
+			FirstName:      firstName,
+			MidName:        "",
+			LastName:       lastName,
+			FullName:       fullName,
 		}
 
 		// Get organization roles
@@ -330,7 +326,7 @@ func (l *OrganizationUserLogic) SendInviteEmail(ctx context.Context, input dto.O
 }
 
 // AcceptInvitation accepts organization invitation to join organization
-func (l *OrganizationUserLogic) AcceptInvitation(ctx context.Context, input dto.OrganizationUserAcceptInvitationRequestDto) (user bo.UserBo, err error) {
+func (l *OrganizationUserLogic) AcceptInvitation(ctx context.Context, input dto.OrganizationUserAcceptInvitationRequestDto) (user dto.UserEntityDto, err error) {
 	key := stringx.Format(constants.UserInviteCode, input.UserType, input.Email, input.OrganizationId)
 	code, err := l.redisCli.Get(ctx, key)
 	if err != nil {
@@ -389,31 +385,34 @@ func (l *OrganizationUserLogic) AcceptInvitation(ctx context.Context, input dto.
 	if err != nil {
 		return user, err
 	}
-	err = copier.CopyWithOption(&user, userModel, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
-	})
-	return user, nil
+
+	userPtr, err := copierx.Trans[model.User, dto.UserEntityDto](userModel, copierx.TimeToRFC3339Str())
+	if err != nil {
+		return user, err
+	}
+
+	// err = copier.CopyWithOption(&user, userModel, copier.Option{
+	// 	DeepCopy:      true,
+	// 	CaseSensitive: true,
+	// 	Converters: []copier.TypeConverter{
+	// 		copierx.TimeToRFC3339Str(),
+	// 	},
+	// })
+	return *userPtr, nil
 }
 
 // UpdateOrganizationUser updates organization user information
-func (l *OrganizationUserLogic) UpdateOrganizationUser(ctx context.Context, reqDto dto.OrganizationUserUpdateRequestDto) (result *dto.OrganizationUserEntityDto, err error) {
-	organizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUserById(ctx, reqDto.Id, reqDto.OrganizationId)
+func (l *OrganizationUserLogic) UpdateOrganizationUser(ctx context.Context, input dto.OrganizationUserUpdateRequestDto) (result *dto.OrganizationUserEntityDto, err error) {
+	organizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUserById(ctx, input.Id, input.OrganizationId)
 	if err != nil {
 		return nil, err
 	}
 	user := organizationUser.User
-	// saveModel := &model.OrganizationUser{}
-	err = copier.CopyWithOption(organizationUser, reqDto, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-	})
+	err = copierx.Assign[dto.OrganizationUserUpdateRequestDto, model.OrganizationUser](&input, organizationUser)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
+
 	organizationUser.FullName = stringx.FormatFullName(organizationUser.FirstName, organizationUser.MidName, organizationUser.LastName)
 
 	// var organizationUser *model.OrganizationUser
@@ -422,7 +421,7 @@ func (l *OrganizationUserLogic) UpdateOrganizationUser(ctx context.Context, reqD
 		var innerErr error
 		oldRoles := organizationUser.Roles
 		// Get organization
-		organization, innerErr = l.repos.OrganizationRepo.GetOrganizationWithTx(ctx, tx, reqDto.OrganizationId, reqDto.UserType, false)
+		organization, innerErr = l.repos.OrganizationRepo.GetOrganizationWithTx(ctx, tx, input.OrganizationId, input.UserType, false)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -437,7 +436,7 @@ func (l *OrganizationUserLogic) UpdateOrganizationUser(ctx context.Context, reqD
 			return innerErr
 		}
 		// Update roles
-		roles, innerErr := l.repos.RoleRepo.GetOrganizationRolesByIdsWithTx(ctx, tx, reqDto.OrganizationId, reqDto.RoleIds, reqDto.UserType)
+		roles, innerErr := l.repos.RoleRepo.GetOrganizationRolesByIdsWithTx(ctx, tx, input.OrganizationId, input.RoleIds, input.UserType)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -461,7 +460,7 @@ func (l *OrganizationUserLogic) UpdateOrganizationUser(ctx context.Context, reqD
 	if err != nil {
 		return nil, err
 	}
-	// TODO update user's permissions
+	// TODO update user's role cache
 
 	organizationUser.User = user
 	result = l.transToBo(organizationUser)

@@ -4,12 +4,12 @@
 package types
 
 type ApiCreateRequest struct {
-	ParentId           int64  `json:"parent_id" validate:"min=0"`
+	ParentId           int64  `json:"parent_id,optional" validate:"min=0"`
 	Name               string `json:"name" validate:"required,min=2,max=100"`
-	Path               string `json:"path" validate:"max=100"`
-	Method             string `json:"method" validate:"oneof='' GET POST PUT DELETE PATCH OPTIONS HEAD"`
+	Path               string `json:"path,optional" validate:"max=100"`
+	Method             string `json:"method,optional" validate:"oneof='' GET POST PUT DELETE PATCH OPTIONS HEAD"`
 	Status             string `json:"status" validate:"required,oneof=Active Disabled"`
-	Description        string `json:"description" validate:"max=255"`
+	Description        string `json:"description,optional" validate:"max=255"`
 	Type               string `json:"type" validate:"required,oneof=Borrower Lender Admin"`
 	SortOrder          int32  `json:"sort_order" validate:"min=0"`
 	AuthRequired       bool   `json:"auth_required"`
@@ -52,12 +52,12 @@ type ApiTreeResponse struct {
 
 type ApiUpdateRequest struct {
 	Id                 int64  `path:"id" validate:"required,gt=0"`
-	ParentId           int64  `json:"parent_id" validate:"min=0"`
+	ParentId           int64  `json:"parent_id,optional" validate:"min=0"`
 	Name               string `json:"name" validate:"required,min=2,max=100"`
-	Path               string `json:"path" validate:"max=100"`
-	Method             string `json:"method" validate:"oneof='' GET POST PUT DELETE PATCH OPTIONS HEAD"`
+	Path               string `json:"path,optional" validate:"max=100"`
+	Method             string `json:"method,optional" validate:"oneof='' GET POST PUT DELETE PATCH OPTIONS HEAD"`
 	Status             string `json:"status" validate:"required,oneof=Active Disabled"`
-	Description        string `json:"description" validate:"max=255"`
+	Description        string `json:"description,optional" validate:"max=255"`
 	Type               string `json:"type" validate:"required,oneof=Borrower Lender Admin"`
 	SortOrder          int32  `json:"sort_order" validate:"min=0"`
 	AuthRequired       bool   `json:"auth_required"`

@@ -13,7 +13,6 @@ import (
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/bo"
 	"zeebee-backend/domains/zeebee/data/dto"
 )
 
@@ -87,7 +86,7 @@ func (l *CreateLenderLogic) CreateLender(in *admin.OrganizationCreateLenderReque
 	}
 
 	// Convert to response
-	data, err := copierx.Trans[bo.OrganizationBo, admin.OrganizationEntity](organization, copierx.TimeToRFC3339Str())
+	data, err := copierx.Trans[dto.OrganizationEntityDto, admin.OrganizationEntity](organization, copierx.TimeToRFC3339Str())
 	return &admin.OrganizationDetailResponse{
 		Data: data,
 	}, err

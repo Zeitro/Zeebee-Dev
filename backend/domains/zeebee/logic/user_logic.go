@@ -6,7 +6,6 @@ import (
 
 	"github.com/duke-git/lancet/v2/condition"
 	"github.com/duke-git/lancet/v2/slice"
-	"github.com/jinzhu/copier"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -19,7 +18,6 @@ import (
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/bo"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/repo"
@@ -69,7 +67,7 @@ func (l *UserLogic) GetUserClaimFromCtx(ctx context.Context) (claim utils.JwtUse
 }
 
 // GenerateJwtToken generate jwt token for user
-func (l *UserLogic) GenerateJwtToken(user *model.User, organizationUser *model.OrganizationUser, userType constants.UserType) (token *bo.UserJwtTokenBo, err error) {
+func (l *UserLogic) GenerateJwtToken(user *model.User, organizationUser *model.OrganizationUser, userType constants.UserType) (token *dto.UserJwtTokenDto, err error) {
 	if user == nil {
 		return nil, errorx.WithStack(errorx.New("User is empty"))
 	}
@@ -102,7 +100,7 @@ func (l *UserLogic) GenerateJwtToken(user *model.User, organizationUser *model.O
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	token = &bo.UserJwtTokenBo{
+	token = &dto.UserJwtTokenDto{
 		AccessToken:        accessToken,
 		RefreshToken:       refreshToken,
 		AccessTokenExpire:  l.jwtConfig.AccessExpire,
@@ -111,7 +109,7 @@ func (l *UserLogic) GenerateJwtToken(user *model.User, organizationUser *model.O
 	return
 }
 
-func (l *UserLogic) GenerateJwtTokenById(ctx context.Context, userId int64, organizationId int64, userType constants.UserType) (token *bo.UserJwtTokenBo, err error) {
+func (l *UserLogic) GenerateJwtTokenById(ctx context.Context, userId int64, organizationId int64, userType constants.UserType) (token *dto.UserJwtTokenDto, err error) {
 	user, err := l.repos.UserRepo.GetUser(ctx, userId, userType, false)
 	if err != nil {
 		return nil, errorx.WithStack(err)
@@ -125,7 +123,7 @@ func (l *UserLogic) GenerateJwtTokenById(ctx context.Context, userId int64, orga
 }
 
 // RefreshToken refresh token
-func (l *UserLogic) RefreshToken(ctx context.Context, refreshToken string, userType constants.UserType) (token *bo.UserJwtTokenBo, err error) {
+func (l *UserLogic) RefreshToken(ctx context.Context, refreshToken string, userType constants.UserType) (token *dto.UserJwtTokenDto, err error) {
 	// Parse refresh token
 	claim, err := utils.ParseToken(refreshToken, l.jwtConfig.RefreshSecret)
 	if err != nil {
@@ -155,7 +153,7 @@ func (l *UserLogic) RefreshToken(ctx context.Context, refreshToken string, userT
 }
 
 // ResetPasswordWithEmail reset password with email
-func (l *UserLogic) ResetPasswordWithEmail(ctx context.Context, input dto.UserResetPasswordByEmailRequestDto) (token *bo.UserJwtTokenBo, err error) {
+func (l *UserLogic) ResetPasswordWithEmail(ctx context.Context, input dto.UserResetPasswordByEmailRequestDto) (token *dto.UserJwtTokenDto, err error) {
 	email := input.Email
 	code := input.Code
 	newPwd := input.NewPassword
@@ -283,7 +281,7 @@ func (l *UserLogic) CheckAndUpdateActiveOrganizationByUser(ctx context.Context, 
 }
 
 // Login
-func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limiter dto.LoginLimiterDto) (token *bo.UserJwtTokenBo, err error) {
+func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limiter dto.LoginLimiterDto) (token *dto.UserJwtTokenDto, err error) {
 	redisKey := stringx.Format(constants.UserLoginFailedTimes, req.UserType, req.Email)
 	var loginFailedTimes int
 	var orgUser *model.OrganizationUser
@@ -344,8 +342,8 @@ func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limi
 }
 
 // Info return user info
-func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, userType constants.UserType) (userInfo *bo.UserinfoBo, err error) {
-	organizations := []*bo.UserOrganizationBo{}
+func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, userType constants.UserType) (userInfo *dto.UserinfoDto, err error) {
+	organizations := []*dto.UserOrganizationDto{}
 	user, err := l.repos.UserRepo.GetUser(ctx, id, userType, true)
 	if err != nil {
 		return nil, err
@@ -354,18 +352,17 @@ func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, us
 		return nil, errorx.WithStack(errorx.New("User not found"))
 	}
 	if len(user.Organizations) > 0 {
-		err = copier.CopyWithOption(&organizations, user.Organizations, copier.Option{
-			DeepCopy:      true,
-			CaseSensitive: true,
-		})
+		organizationsPtr := &[]*dto.UserOrganizationDto{}
+		err = copierx.Assign[[]*model.Organization, []*dto.UserOrganizationDto](&user.Organizations, organizationsPtr)
 		if err != nil {
-			return nil, errorx.Wrap(err, "Failed to copy organization")
+			return nil, err
 		}
+		organizations = *organizationsPtr
 	}
-	var currentOrganization *bo.UserOrganizationBo
+	var currentOrganization *dto.UserOrganizationDto
 	var organizationUser *model.OrganizationUser
 
-	organizations = slice.Filter(organizations, func(i int, organization *bo.UserOrganizationBo) bool {
+	organizations = slice.Filter(organizations, func(i int, organization *dto.UserOrganizationDto) bool {
 		if organization.Status != constants.OrganizationStatusActive {
 			return false
 		}
@@ -413,7 +410,7 @@ func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, us
 		})
 	}
 
-	userInfo = &bo.UserinfoBo{
+	userInfo = &dto.UserinfoDto{
 		Id:                 user.Id,
 		OrganizationUserId: organizationUser.Id,
 		Email:              user.Email,
@@ -431,7 +428,7 @@ func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, us
 }
 
 // SwitchOrganization switch user default organization
-func (l *UserLogic) SwitchOrganization(ctx context.Context, userId int64, organizationId int64, userType constants.UserType) (user *bo.UserBo, err error) {
+func (l *UserLogic) SwitchOrganization(ctx context.Context, userId int64, organizationId int64, userType constants.UserType) (user *dto.UserEntityDto, err error) {
 	userModel, err := l.repos.UserRepo.GetUser(ctx, userId, userType, true)
 	if err != nil {
 		return nil, err
@@ -463,13 +460,10 @@ func (l *UserLogic) SwitchOrganization(ctx context.Context, userId int64, organi
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	user = &bo.UserBo{}
-	err = copier.CopyWithOption(user, userModel, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-	})
+
+	user, err = copierx.Trans[model.User, dto.UserEntityDto](userModel)
 	if err != nil {
-		return nil, errorx.GetFailedTransErr(err)
+		return nil, err
 	}
 	return user, nil
 }

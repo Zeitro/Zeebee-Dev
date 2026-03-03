@@ -8,7 +8,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/bo"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/repo"
 )
@@ -26,13 +26,13 @@ func NewOrganizationSettingLogic(repos *repo.AllRepos) *OrganizationSettingLogic
 }
 
 // DetailByPurpose retrieves the details of an organization setting by its purpose and organization id.
-func (l *OrganizationSettingLogic) DetailByPurpose(ctx context.Context, organizationId int64, purpose string) (result *bo.OrganizationSettingBo, err error) {
+func (l *OrganizationSettingLogic) DetailByPurpose(ctx context.Context, organizationId int64, purpose string) (result *dto.OrganizationSettingEntityDto, err error) {
 	organizationSetting, err := l.repos.OrganizationSettingRepo.DetailByPurpose(ctx, organizationId, purpose, true)
 	if err != nil {
 		return nil, err
 	}
 
-	result, err = copierx.Trans[model.OrganizationSetting, bo.OrganizationSettingBo](organizationSetting)
+	result, err = copierx.Trans[model.OrganizationSetting, dto.OrganizationSettingEntityDto](organizationSetting)
 	if err != nil {
 		return nil, err
 	}

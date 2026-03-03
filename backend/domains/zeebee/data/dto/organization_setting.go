@@ -1,11 +1,8 @@
-package bo
+package dto
 
-import (
-	"time"
-)
+import "time"
 
-// OrganizationSettingBo represents an organization setting in the system
-type OrganizationSettingBo struct {
+type OrganizationSettingEntityDto struct {
 	Id             int64                  `json:"id"`
 	Purpose        string                 `json:"purpose"`
 	OrganizationId int64                  `json:"organization_id"`
@@ -14,5 +11,5 @@ type OrganizationSettingBo struct {
 	CreatedAt      time.Time              `json:"created_at"`
 	UpdatedAt      time.Time              `json:"updated_at"`
 
-	Organization *OrganizationBo `json:"organization,omitempty"`
+	Organization *OrganizationEntityDto `json:"organization,omitempty"`
 }

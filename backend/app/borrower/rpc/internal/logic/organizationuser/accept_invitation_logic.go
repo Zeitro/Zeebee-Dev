@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 
@@ -38,13 +39,14 @@ func (l *AcceptInvitationLogic) AcceptInvitation(in *borrower.OrganizationUserAc
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	input := dto.OrganizationUserAcceptInvitationRequestDto{}
-	err = copier.Copy(&input, &in.Data)
+
+	input, err := copierx.Trans[borrower.OrganizationUserAcceptInvitationRequestData, dto.OrganizationUserAcceptInvitationRequestDto](in.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
+
 	input.UserType = constants.UserTypeBorrower
-	userBo, err := l.baseLogic.OrganizationUserLogic.AcceptInvitation(l.ctx, input)
+	userBo, err := l.baseLogic.OrganizationUserLogic.AcceptInvitation(l.ctx, *input)
 	if err != nil {
 		return nil, err
 	}

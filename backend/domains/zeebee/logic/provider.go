@@ -37,7 +37,7 @@ func NewAllLogics(
 		RoleLogic:                 NewRoleLogic(repos, currentEnforcer),
 		UserLogic:                 NewUserLogic(repos, redisCli, jwtConfig),
 		OrganizationUserLogic:     NewOrganizationUserLogic(repos, redisCli, emailClient),
-		OrganizationLogic:         NewOrganizationLogic(repos),
+		OrganizationLogic:         NewOrganizationLogic(repos, enforcerMap),
 		OrganizationEmailLogic:    NewOrganizationEmailLogic(repos),
 		BaseTemplateLogic:         NewBaseTemplateLogic(repos),
 		OrganizationTemplateLogic: NewOrganizationTemplateLogic(repos),

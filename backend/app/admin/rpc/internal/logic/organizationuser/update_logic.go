@@ -41,16 +41,11 @@ func (l *UpdateLogic) Update(in *admin.OrganizationUserUpdateRequest) (resp *adm
 		return nil, err
 	}
 
-	input, err := copierx.Trans[admin.OrganizationUserUpdateRequest, dto.OrganizationUserUpdateRequestDto](in)
+	input, err := copierx.Trans[admin.OrganizationUserUpdateRequestData, dto.OrganizationUserUpdateRequestDto](in.Data)
 	if err != nil {
 		return nil, err
 	}
 
-	// input := dto.OrganizationUserUpdateRequestDto{}
-	// err = copier.CopyWithOption(&input, &in.Data, copier.Option{CaseSensitive: true, DeepCopy: true})
-	// if err != nil {
-	// 	return nil, err
-	// }
 	input.UserType = claim.UserType
 	input.OrganizationId = claim.OrganizationId
 
@@ -62,17 +57,6 @@ func (l *UpdateLogic) Update(in *admin.OrganizationUserUpdateRequest) (resp *adm
 	if err != nil {
 		return nil, err
 	}
-	// data := &admin.OrganizationUserEntity{}
-	// err = copier.CopyWithOption(data, result, copier.Option{
-	// 	CaseSensitive: true,
-	// 	DeepCopy:      true,
-	// 	Converters: []copier.TypeConverter{
-	// 		copierx.TimeToRFC3339Str(),
-	// 	},
-	// })
-	// if err != nil {
-	// 	return nil, err
-	// }
 
 	return &admin.OrganizationUserDetailResponse{
 		Data: data,

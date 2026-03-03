@@ -3,8 +3,6 @@ package organizationlogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/admin/rpc/internal/logic"
@@ -13,7 +11,8 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/bo"
+	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/model"
 )
 
 type UpdateLenderLogic struct {
@@ -47,12 +46,9 @@ func (l *UpdateLenderLogic) UpdateLender(in *admin.OrganizationUpdateLenderReque
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-
-	err = copier.CopyWithOption(organization, in.Data, copier.Option{
-		CaseSensitive: true,
-	})
+	err = copierx.Assign[admin.OrganizationUpdateLenderRequestData, model.Organization](in.Data, organization)
 	if err != nil {
-		return nil, errorx.GetFailedTransErr(err)
+		return nil, err
 	}
 
 	// Update the model
@@ -66,7 +62,7 @@ func (l *UpdateLenderLogic) UpdateLender(in *admin.OrganizationUpdateLenderReque
 		return nil, err
 	}
 	// Convert to response
-	data, err := copierx.Trans[bo.OrganizationBo, admin.OrganizationEntity](organizationBo, copierx.TimeToRFC3339Str())
+	data, err := copierx.Trans[dto.OrganizationEntityDto, admin.OrganizationEntity](organizationBo, copierx.TimeToRFC3339Str())
 
 	return &admin.OrganizationDetailResponse{
 		Data: data,

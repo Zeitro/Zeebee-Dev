@@ -39,12 +39,8 @@
             "schema": {
               "type": "object",
               "required": [
-                "parent_id",
                 "name",
-                "path",
-                "method",
                 "status",
-                "description",
                 "type",
                 "sort_order",
                 "auth_required",
@@ -407,12 +403,8 @@
             "schema": {
               "type": "object",
               "required": [
-                "parent_id",
                 "name",
-                "path",
-                "method",
                 "status",
-                "description",
                 "type",
                 "sort_order",
                 "auth_required",
@@ -9737,7 +9729,7 @@
       }
     }
   },
-  "x-date": "2026-03-02 10:53:47",
+  "x-date": "2026-03-03 13:55:13",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

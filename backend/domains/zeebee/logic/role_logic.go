@@ -113,14 +113,7 @@ func (l *RoleLogic) Create(ctx context.Context, input dto.RoleCreateRequestDto) 
 		}
 
 		// add role permissions
-		policies := make([][]string, 0, len(resources))
-		for _, resource := range resources {
-			policies = append(policies, []string{
-				fmt.Sprintf("Role:%d", role.Id),
-				string(input.Type),
-				fmt.Sprintf("Resource:%d", resource.Id),
-			})
-		}
+		policies := l.createRolePolicy(role.Id, input.Type, rolesAndResources)
 		if len(policies) > 0 && input.Status == constants.CommonStatusActive {
 			innerErr = l.enforcer.AddPolicies(policies)
 		}
@@ -370,8 +363,7 @@ func (l *RoleLogic) SwitchStatus(ctx context.Context, id int64, organizationId i
 
 		return nil
 	})
-	// Save the updated record
-	_, err = l.repos.RoleRepo.UpdateOneById(ctx, id, result)
+
 	if err != nil {
 		return err
 	}

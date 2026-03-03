@@ -9,7 +9,6 @@ import (
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
-	"zeebee-backend/domains/zeebee/data/bo"
 	"zeebee-backend/domains/zeebee/data/dto"
 
 	"zeebee-backend/common/errorx"
@@ -59,7 +58,7 @@ func (l *PageLogic) Page(in *admin.OrganizationUserPageRequest) (resp *admin.Org
 		return nil, err
 	}
 
-	data, err := copierx.Trans[bo.PageResultBo[*dto.OrganizationUserEntityDto], admin.OrganizationUserPageResponseData](&results, copierx.TimeToRFC3339Str())
+	data, err := copierx.Trans[dto.PageResultDto[*dto.OrganizationUserEntityDto], admin.OrganizationUserPageResponseData](&results, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}
