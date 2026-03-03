@@ -32,11 +32,12 @@ func NewBaseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BaseLogic {
 		RefreshSecret: svcCtx.Config.JwtAuth.RefreshSecret,
 		RefreshExpire: svcCtx.Config.JwtAuth.RefreshExpire,
 	}
+	currentEnforcer := global.LenderEnforcer
 	return &BaseLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		AllLogics: logic.NewAllLogics(svcCtx.AllRepos, redisCli, jwtConfig, global.EmailClient),
+		AllLogics: logic.NewAllLogics(svcCtx.AllRepos, redisCli, jwtConfig, global.EmailClient, currentEnforcer, nil),
 	}
 }
 

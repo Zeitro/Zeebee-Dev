@@ -105,7 +105,6 @@ type (
 	OrganizationUpdateLenderRequestData        = admin.OrganizationUpdateLenderRequestData
 	OrganizationUserCreateRequest              = admin.OrganizationUserCreateRequest
 	OrganizationUserCreateRequestData          = admin.OrganizationUserCreateRequestData
-	OrganizationUserCreateResponse             = admin.OrganizationUserCreateResponse
 	OrganizationUserDeleteRequest              = admin.OrganizationUserDeleteRequest
 	OrganizationUserDeleteRequestData          = admin.OrganizationUserDeleteRequestData
 	OrganizationUserDetailRequest              = admin.OrganizationUserDetailRequest
@@ -123,7 +122,6 @@ type (
 	OrganizationUserSwitchStatusRequestData    = admin.OrganizationUserSwitchStatusRequestData
 	OrganizationUserUpdateRequest              = admin.OrganizationUserUpdateRequest
 	OrganizationUserUpdateRequestData          = admin.OrganizationUserUpdateRequestData
-	OrganizationUserUpdateResponse             = admin.OrganizationUserUpdateResponse
 	RangeFloat                                 = admin.RangeFloat
 	RangeInt32                                 = admin.RangeInt32
 	RangeInt64                                 = admin.RangeInt64
@@ -204,8 +202,8 @@ type (
 
 	OrganizationUser interface {
 		Page(ctx context.Context, in *OrganizationUserPageRequest, opts ...grpc.CallOption) (*OrganizationUserPageResponse, error)
-		Create(ctx context.Context, in *OrganizationUserCreateRequest, opts ...grpc.CallOption) (*OrganizationUserCreateResponse, error)
-		Update(ctx context.Context, in *OrganizationUserUpdateRequest, opts ...grpc.CallOption) (*OrganizationUserUpdateResponse, error)
+		Create(ctx context.Context, in *OrganizationUserCreateRequest, opts ...grpc.CallOption) (*OrganizationUserDetailResponse, error)
+		Update(ctx context.Context, in *OrganizationUserUpdateRequest, opts ...grpc.CallOption) (*OrganizationUserDetailResponse, error)
 		Delete(ctx context.Context, in *OrganizationUserDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		Detail(ctx context.Context, in *OrganizationUserDetailRequest, opts ...grpc.CallOption) (*OrganizationUserDetailResponse, error)
 		SwitchStatus(ctx context.Context, in *OrganizationUserSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
@@ -227,12 +225,12 @@ func (m *defaultOrganizationUser) Page(ctx context.Context, in *OrganizationUser
 	return client.Page(ctx, in, opts...)
 }
 
-func (m *defaultOrganizationUser) Create(ctx context.Context, in *OrganizationUserCreateRequest, opts ...grpc.CallOption) (*OrganizationUserCreateResponse, error) {
+func (m *defaultOrganizationUser) Create(ctx context.Context, in *OrganizationUserCreateRequest, opts ...grpc.CallOption) (*OrganizationUserDetailResponse, error) {
 	client := admin.NewOrganizationUserClient(m.cli.Conn())
 	return client.Create(ctx, in, opts...)
 }
 
-func (m *defaultOrganizationUser) Update(ctx context.Context, in *OrganizationUserUpdateRequest, opts ...grpc.CallOption) (*OrganizationUserUpdateResponse, error) {
+func (m *defaultOrganizationUser) Update(ctx context.Context, in *OrganizationUserUpdateRequest, opts ...grpc.CallOption) (*OrganizationUserDetailResponse, error) {
 	client := admin.NewOrganizationUserClient(m.cli.Conn())
 	return client.Update(ctx, in, opts...)
 }

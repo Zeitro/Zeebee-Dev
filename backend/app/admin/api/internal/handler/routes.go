@@ -262,7 +262,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					// page
-					Method:  http.MethodGet,
+					Method:  http.MethodPost,
 					Path:    "/organization_user/page",
 					Handler: organization_user.OrganizationUserPageHandler(serverCtx),
 				},

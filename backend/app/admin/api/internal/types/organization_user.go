@@ -12,27 +12,19 @@ type OrganizationUserCreateRequest struct {
 	RoleIds   []int64 `json:"role_ids,optional"`
 }
 
-type OrganizationUserCreateResponse struct {
-	OrganizationUserEntity
-}
-
 type OrganizationUserDetailResponse struct {
 	OrganizationUserEntity
 }
 
 type OrganizationUserPageRequest struct {
-	Page   int64                              `json:"page,optional"`
-	Limit  int64                              `json:"limit,optional"`
-	Filter *OrganizationUserPageRequestFilter `json:"filter,optional"`
-	Sorter *OrganizationUserPageRequestSorter `json:"sorter,optional"`
+	BasePageRequest
+	Filter BasePageFilter `json:"filter,optional"`
+	Sorter BasePageSort   `json:"sorter,optional"`
 }
 
 type OrganizationUserPageResponse struct {
-	Page      int64                         `json:"page"`
-	Limit     int64                         `json:"limit"`
-	Total     int64                         `json:"total"`
-	TotalPage int64                         `json:"total_page"`
-	List      []*OrganizationUserPageEntity `json:"list"`
+	BasePageResponse
+	List []*OrganizationUserPageEntity `json:"list"`
 }
 
 type OrganizationUserSwitchStatusRequest struct {
@@ -46,8 +38,4 @@ type OrganizationUserUpdateRequest struct {
 	LastName  string  `json:"last_name" validate:"min=2,max=100"`
 	Phone     string  `json:"phone, optional"`
 	RoleIds   []int64 `json:"role_ids,optional"`
-}
-
-type OrganizationUserUpdateResponse struct {
-	OrganizationUserEntity
 }

@@ -60,9 +60,9 @@ func (repo *RoleRepo) GetRole(ctx context.Context, id int64, organizationId int6
 }
 
 // GetOrganizationRolesByIdsWithTx return roles by ids
-func (repo *RoleRepo) GetOrganizationRolesByIdsWithTx(ctx context.Context, tx *gorm.DB, organizationId int64, roleIds []int64) (result []*model.Role, err error) {
+func (repo *RoleRepo) GetOrganizationRolesByIdsWithTx(ctx context.Context, tx *gorm.DB, organizationId int64, roleIds []int64, roleType constants.UserType) (result []*model.Role, err error) {
 	err = tx.WithContext(ctx).Model(new(model.Role)).
-		Where("id in (?) and organization_id = ?", roleIds, organizationId).
+		Where("id in (?) and organization_id = ? and type = ?", roleIds, organizationId, roleType).
 		Preload("Resources").
 		Find(&result).Error
 	return result, errorx.WithStack(err)

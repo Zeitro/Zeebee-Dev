@@ -288,8 +288,8 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OrganizationUserClient interface {
 	Page(ctx context.Context, in *OrganizationUserPageRequest, opts ...grpc.CallOption) (*OrganizationUserPageResponse, error)
-	Create(ctx context.Context, in *OrganizationUserCreateRequest, opts ...grpc.CallOption) (*OrganizationUserCreateResponse, error)
-	Update(ctx context.Context, in *OrganizationUserUpdateRequest, opts ...grpc.CallOption) (*OrganizationUserUpdateResponse, error)
+	Create(ctx context.Context, in *OrganizationUserCreateRequest, opts ...grpc.CallOption) (*OrganizationUserDetailResponse, error)
+	Update(ctx context.Context, in *OrganizationUserUpdateRequest, opts ...grpc.CallOption) (*OrganizationUserDetailResponse, error)
 	Delete(ctx context.Context, in *OrganizationUserDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	Detail(ctx context.Context, in *OrganizationUserDetailRequest, opts ...grpc.CallOption) (*OrganizationUserDetailResponse, error)
 	SwitchStatus(ctx context.Context, in *OrganizationUserSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
@@ -313,9 +313,9 @@ func (c *organizationUserClient) Page(ctx context.Context, in *OrganizationUserP
 	return out, nil
 }
 
-func (c *organizationUserClient) Create(ctx context.Context, in *OrganizationUserCreateRequest, opts ...grpc.CallOption) (*OrganizationUserCreateResponse, error) {
+func (c *organizationUserClient) Create(ctx context.Context, in *OrganizationUserCreateRequest, opts ...grpc.CallOption) (*OrganizationUserDetailResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(OrganizationUserCreateResponse)
+	out := new(OrganizationUserDetailResponse)
 	err := c.cc.Invoke(ctx, OrganizationUser_Create_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -323,9 +323,9 @@ func (c *organizationUserClient) Create(ctx context.Context, in *OrganizationUse
 	return out, nil
 }
 
-func (c *organizationUserClient) Update(ctx context.Context, in *OrganizationUserUpdateRequest, opts ...grpc.CallOption) (*OrganizationUserUpdateResponse, error) {
+func (c *organizationUserClient) Update(ctx context.Context, in *OrganizationUserUpdateRequest, opts ...grpc.CallOption) (*OrganizationUserDetailResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(OrganizationUserUpdateResponse)
+	out := new(OrganizationUserDetailResponse)
 	err := c.cc.Invoke(ctx, OrganizationUser_Update_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -368,8 +368,8 @@ func (c *organizationUserClient) SwitchStatus(ctx context.Context, in *Organizat
 // for forward compatibility.
 type OrganizationUserServer interface {
 	Page(context.Context, *OrganizationUserPageRequest) (*OrganizationUserPageResponse, error)
-	Create(context.Context, *OrganizationUserCreateRequest) (*OrganizationUserCreateResponse, error)
-	Update(context.Context, *OrganizationUserUpdateRequest) (*OrganizationUserUpdateResponse, error)
+	Create(context.Context, *OrganizationUserCreateRequest) (*OrganizationUserDetailResponse, error)
+	Update(context.Context, *OrganizationUserUpdateRequest) (*OrganizationUserDetailResponse, error)
 	Delete(context.Context, *OrganizationUserDeleteRequest) (*EmptyResponse, error)
 	Detail(context.Context, *OrganizationUserDetailRequest) (*OrganizationUserDetailResponse, error)
 	SwitchStatus(context.Context, *OrganizationUserSwitchStatusRequest) (*EmptyResponse, error)
@@ -386,10 +386,10 @@ type UnimplementedOrganizationUserServer struct{}
 func (UnimplementedOrganizationUserServer) Page(context.Context, *OrganizationUserPageRequest) (*OrganizationUserPageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Page not implemented")
 }
-func (UnimplementedOrganizationUserServer) Create(context.Context, *OrganizationUserCreateRequest) (*OrganizationUserCreateResponse, error) {
+func (UnimplementedOrganizationUserServer) Create(context.Context, *OrganizationUserCreateRequest) (*OrganizationUserDetailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedOrganizationUserServer) Update(context.Context, *OrganizationUserUpdateRequest) (*OrganizationUserUpdateResponse, error) {
+func (UnimplementedOrganizationUserServer) Update(context.Context, *OrganizationUserUpdateRequest) (*OrganizationUserDetailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
 func (UnimplementedOrganizationUserServer) Delete(context.Context, *OrganizationUserDeleteRequest) (*EmptyResponse, error) {

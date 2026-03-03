@@ -2,7 +2,9 @@ package logic
 
 import (
 	"zeebee-backend/common/email"
+	"zeebee-backend/common/rbac"
 	"zeebee-backend/common/redisx"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/repo"
 )
 
@@ -21,11 +23,18 @@ type AllLogics struct {
 	LoanOperationLogic        *LoanOperationLogic
 }
 
-func NewAllLogics(repos *repo.AllRepos, redisCli *redisx.Redisx, jwtConfig JwtConfig, emailClient *email.Email) *AllLogics {
+func NewAllLogics(
+	repos *repo.AllRepos,
+	redisCli *redisx.Redisx,
+	jwtConfig JwtConfig,
+	emailClient *email.Email,
+	currentEnforcer *rbac.Enforcer,
+	enforcerMap map[constants.UserType]*rbac.Enforcer,
+) *AllLogics {
 	return &AllLogics{
 		ApiLogic:                  NewApiLogic(repos),
 		ResourceLogic:             NewResourceLogic(repos),
-		RoleLogic:                 NewRoleLogic(repos),
+		RoleLogic:                 NewRoleLogic(repos, currentEnforcer),
 		UserLogic:                 NewUserLogic(repos, redisCli, jwtConfig),
 		OrganizationUserLogic:     NewOrganizationUserLogic(repos, redisCli, emailClient),
 		OrganizationLogic:         NewOrganizationLogic(repos),

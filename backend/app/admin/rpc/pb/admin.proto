@@ -223,8 +223,6 @@ message OrganizationUserPageRequestSorter {
 message OrganizationUserPageResponse {
   OrganizationUserPageResponseData data = 1;
 }
-
-
 message OrganizationUserPageResponseData {
   int64 page = 1;
   int64 limit = 2;
@@ -235,9 +233,6 @@ message OrganizationUserPageResponseData {
 // create -- request
 message OrganizationUserCreateRequest {
   OrganizationUserCreateRequestData data = 1;
-}
-message OrganizationUserCreateResponse {
-  OrganizationUserEntity data = 1;
 }
 message OrganizationUserCreateRequestData {
   string email = 1;
@@ -251,9 +246,6 @@ message OrganizationUserCreateRequestData {
 message OrganizationUserUpdateRequest {
   OrganizationUserUpdateRequestData data = 1;
 }
-message OrganizationUserUpdateResponse {
-  OrganizationUserEntity data = 1;
-}
 message OrganizationUserUpdateRequestData {
   int64 id = 1;
   string first_name = 2;
@@ -261,6 +253,8 @@ message OrganizationUserUpdateRequestData {
   string phone = 5;
   repeated int64 role_ids = 6;
 }
+
+
 // delete -- request
 message OrganizationUserDeleteRequest {
   OrganizationUserDeleteRequestData data = 1;
@@ -274,12 +268,14 @@ message OrganizationUserDeleteRequestData {
 message OrganizationUserDetailRequest {
   OrganizationUserDetailRequestData data = 1;
 }
-message OrganizationUserDetailResponse {
-  OrganizationUserEntity data = 1;
-}
 message OrganizationUserDetailRequestData {
   int64 id = 1;
 }
+// detail -- response
+message OrganizationUserDetailResponse {
+  OrganizationUserEntity data = 1;
+}
+
 // switch status -- request
 message OrganizationUserSwitchStatusRequest {
   OrganizationUserSwitchStatusRequestData data = 1;
@@ -291,8 +287,8 @@ message OrganizationUserSwitchStatusRequestData {
 
 service OrganizationUser {
   rpc Page(OrganizationUserPageRequest) returns(OrganizationUserPageResponse);
-  rpc Create(OrganizationUserCreateRequest) returns(OrganizationUserCreateResponse);
-  rpc Update(OrganizationUserUpdateRequest) returns(OrganizationUserUpdateResponse);
+  rpc Create(OrganizationUserCreateRequest) returns(OrganizationUserDetailResponse);
+  rpc Update(OrganizationUserUpdateRequest) returns(OrganizationUserDetailResponse);
   rpc Delete(OrganizationUserDeleteRequest) returns(EmptyResponse);
   rpc Detail(OrganizationUserDetailRequest) returns(OrganizationUserDetailResponse);
   rpc SwitchStatus(OrganizationUserSwitchStatusRequest) returns(EmptyResponse);

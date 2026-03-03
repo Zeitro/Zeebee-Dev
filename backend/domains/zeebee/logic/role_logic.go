@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/duke-git/lancet/v2/slice"
 	"gorm.io/gorm"
@@ -9,6 +10,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
+	"zeebee-backend/common/rbac"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
@@ -16,12 +18,14 @@ import (
 )
 
 type RoleLogic struct {
-	repos *repo.AllRepos
+	repos    *repo.AllRepos
+	enforcer *rbac.Enforcer
 }
 
-func NewRoleLogic(repos *repo.AllRepos) *RoleLogic {
+func NewRoleLogic(repos *repo.AllRepos, enforcer *rbac.Enforcer) *RoleLogic {
 	return &RoleLogic{
-		repos: repos,
+		repos:    repos,
+		enforcer: enforcer,
 	}
 }
 
@@ -72,10 +76,10 @@ func (l *RoleLogic) Create(ctx context.Context, input dto.RoleCreateRequestDto) 
 	resourceIds := slice.Map[dto.RoleAndResourceDto, int64](input.RoleAndResources, func(i int, item dto.RoleAndResourceDto) int64 {
 		return item.ResourceId
 	})
-
+	var resources []*model.Resource
 	err = l.repos.RoleRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
-		var resources []*model.Resource
+
 		var validResourceIds []int64
 		// create role
 		role, innerErr = l.repos.RoleRepo.CreateWithTx(ctx, tx, role, false)
@@ -108,13 +112,32 @@ func (l *RoleLogic) Create(ctx context.Context, input dto.RoleCreateRequestDto) 
 			}
 		}
 
+		// add role permissions
+		policies := make([][]string, 0, len(resources))
+		for _, resource := range resources {
+			policies = append(policies, []string{
+				fmt.Sprintf("Role:%d", role.Id),
+				string(input.Type),
+				fmt.Sprintf("Resource:%d", resource.Id),
+			})
+		}
+		if len(policies) > 0 && input.Status == constants.CommonStatusActive {
+			innerErr = l.enforcer.AddPolicies(policies)
+		}
+		if innerErr != nil {
+			return innerErr
+		}
+
 		return nil
 	})
 	if err != nil {
 		return nil, err
 	}
-	result, err = l.Detail(ctx, role.Id, role.OrganizationId, role.Type)
 
+	result, err = l.Detail(ctx, role.Id, role.OrganizationId, role.Type)
+	if err != nil {
+		return nil, err
+	}
 	return result, err
 }
 
@@ -226,12 +249,26 @@ func (l *RoleLogic) Update(ctx context.Context, id int64, input dto.RoleUpdateRe
 			}
 		}
 
+		// update role permissions
+		var addPolicies [][]string
+		var removedPolicies [][]string
+		switch input.Status {
+		case constants.CommonStatusActive:
+			addPolicies = l.createRolePolicy(id, input.Type, newRelations)
+			removedPolicies = l.createRolePolicy(id, input.Type, removedRelations)
+		case constants.CommonStatusDisabled:
+			removedPolicies = l.createRolePolicy(id, input.Type, oldRelations)
+		}
+		innerErr = l.handleRolePolicies(addPolicies, removedPolicies)
+		if innerErr != nil {
+			return innerErr
+		}
+
 		return nil
 	})
 	if err != nil {
 		return nil, err
 	}
-	// TODO update user's permissions
 
 	result, err = l.Detail(ctx, roleModel.Id, roleModel.OrganizationId, roleModel.Type)
 	return result, err
@@ -270,14 +307,27 @@ func (l *RoleLogic) Delete(ctx context.Context, id int64, organizationId int64, 
 
 	err = l.repos.RoleRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
+		oldRelations, innerErr := l.repos.RoleAndResourceRepo.GetRoleRelationsWithTx(ctx, tx, role.Id)
+		if innerErr != nil {
+			return innerErr
+		}
 		innerErr = l.repos.RoleRepo.DeleteByIdWithTx(ctx, tx, id)
+		if innerErr != nil {
+			return innerErr
+		}
+		// remove role policies
+		removedPolicies := l.createRolePolicy(id, roleType, oldRelations)
+		innerErr = l.handleRolePolicies(nil, removedPolicies)
 
-		return innerErr
+		if innerErr != nil {
+			return innerErr
+		}
+
+		return nil
 	})
 	if err != nil {
 		return err
 	}
-	// todo update roles  permissions
 	return err
 }
 
@@ -293,13 +343,38 @@ func (l *RoleLogic) SwitchStatus(ctx context.Context, id int64, organizationId i
 	}
 
 	result.Status = status
+
+	err = l.repos.RoleRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		var innerErr error
+		oldRelations, innerErr := l.repos.RoleAndResourceRepo.GetRoleRelationsWithTx(ctx, tx, id)
+		if innerErr != nil {
+			return innerErr
+		}
+		_, innerErr = l.repos.RoleRepo.UpdateOneByIdWithTx(ctx, tx, id, result)
+		if innerErr != nil {
+			return innerErr
+		}
+		// update role permissions
+		addPolicies := make([][]string, 0, len(oldRelations))
+		removedPolicies := make([][]string, 0, len(oldRelations))
+		switch status {
+		case constants.CommonStatusActive:
+			addPolicies = l.createRolePolicy(id, roleType, oldRelations)
+		case constants.CommonStatusDisabled:
+			removedPolicies = l.createRolePolicy(id, roleType, oldRelations)
+		}
+		innerErr = l.handleRolePolicies(addPolicies, removedPolicies)
+		if innerErr != nil {
+			return innerErr
+		}
+
+		return nil
+	})
 	// Save the updated record
 	_, err = l.repos.RoleRepo.UpdateOneById(ctx, id, result)
 	if err != nil {
 		return err
 	}
-
-	// TODO update user's permissions
 
 	return nil
 }
@@ -312,4 +387,31 @@ func (l *RoleLogic) All(ctx context.Context, organizationId int64, roleType cons
 	}
 	resultPtr, err := copierx.Trans[[]*model.Role, []*dto.RoleEntityDto](&roles)
 	return *resultPtr, err
+}
+
+func (l *RoleLogic) createRolePolicy(roleId int64, roleType constants.UserType, relations []*model.RoleAndResource) [][]string {
+	return slice.Map[*model.RoleAndResource, []string](relations, func(i int, item *model.RoleAndResource) []string {
+		return []string{
+			fmt.Sprintf("Role:%d", roleId),
+			string(roleType),
+			fmt.Sprintf("Resource:%d", item.ResourceId),
+			"allow",
+		}
+	})
+}
+
+func (l *RoleLogic) handleRolePolicies(addPolicies [][]string, removedPolicies [][]string) (err error) {
+	if len(addPolicies) > 0 {
+		err = l.enforcer.AddPolicies(addPolicies)
+		if err != nil {
+			return err
+		}
+	}
+	if len(removedPolicies) > 0 {
+		err = l.enforcer.RemovePolicies(removedPolicies)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

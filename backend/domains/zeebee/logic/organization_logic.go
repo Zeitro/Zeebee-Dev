@@ -107,6 +107,7 @@ func (l *OrganizationLogic) Delete(ctx context.Context, id int64) (err error) {
 			if innerErr != nil {
 				return innerErr
 			}
+			// todo handle casbin policy
 		}
 		// Delete related organization emails
 		for i := range organization.OrganizationEmails {

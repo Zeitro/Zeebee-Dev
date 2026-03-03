@@ -6,6 +6,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/domains/zeebee/constants"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -39,7 +40,7 @@ func (l *AssignRolesLogic) AssignRoles(in *borrower.OrganizationUserAssignRolesR
 		return nil, err
 	}
 
-	err = l.baseLogic.OrganizationUserLogic.AssignRoles(l.ctx, in.Data.Id, claim.OrganizationId, in.Data.RoleIds)
+	err = l.baseLogic.OrganizationUserLogic.AssignRoles(l.ctx, in.Data.Id, claim.OrganizationId, in.Data.RoleIds, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}

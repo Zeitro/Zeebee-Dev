@@ -105,7 +105,6 @@ type (
 	OrganizationUpdateLenderRequestData        = admin.OrganizationUpdateLenderRequestData
 	OrganizationUserCreateRequest              = admin.OrganizationUserCreateRequest
 	OrganizationUserCreateRequestData          = admin.OrganizationUserCreateRequestData
-	OrganizationUserCreateResponse             = admin.OrganizationUserCreateResponse
 	OrganizationUserDeleteRequest              = admin.OrganizationUserDeleteRequest
 	OrganizationUserDeleteRequestData          = admin.OrganizationUserDeleteRequestData
 	OrganizationUserDetailRequest              = admin.OrganizationUserDetailRequest
@@ -123,7 +122,6 @@ type (
 	OrganizationUserSwitchStatusRequestData    = admin.OrganizationUserSwitchStatusRequestData
 	OrganizationUserUpdateRequest              = admin.OrganizationUserUpdateRequest
 	OrganizationUserUpdateRequestData          = admin.OrganizationUserUpdateRequestData
-	OrganizationUserUpdateResponse             = admin.OrganizationUserUpdateResponse
 	RangeFloat                                 = admin.RangeFloat
 	RangeInt32                                 = admin.RangeInt32
 	RangeInt64                                 = admin.RangeInt64

@@ -37,6 +37,7 @@ type RpcConf struct {
 	InviteUserUrl                string
 	InviteUserExpireSeconds      int
 	SendInviteEmailPeriodSeconds int
+	CasbinConf                   CasbinConf
 }
 
 type DbConf struct {
@@ -75,4 +76,15 @@ type EmailConf struct {
 	Port     int
 	Password string
 	Username string
+}
+
+type CasbinConf struct {
+	ModelPath string
+	Watcher   CasbinWatcher
+}
+
+type CasbinWatcher struct {
+	Host          string
+	Pwd           string
+	LenderChannel string
 }

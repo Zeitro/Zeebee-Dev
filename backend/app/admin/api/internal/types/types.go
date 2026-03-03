@@ -536,15 +536,6 @@ type OrganizationUserPageEntity struct {
 	Roles     []*RoleEntity `json:"roles"`
 }
 
-type OrganizationUserPageRequestFilter struct {
-	Keyword string `json:"keyword,optional"`
-}
-
-type OrganizationUserPageRequestSorter struct {
-	Column string `json:"column,optional"`
-	Sort   string `json:"sort,optional"`
-}
-
 type PathIdRequest struct {
 	Id int64 `path:"id" validate:"required,gt=0"`
 }

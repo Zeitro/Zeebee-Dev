@@ -3,12 +3,14 @@ package logic
 import (
 	"context"
 
+	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/admin/rpc/internal/global"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/rbac"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data"
 	"zeebee-backend/domains/zeebee/logic"
@@ -33,11 +35,28 @@ func NewBaseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BaseLogic {
 		RefreshExpire: svcCtx.Config.JwtAuth.RefreshExpire,
 	}
 	emailClient := global.EmailClient
+	enforcerMap := map[constants.UserType]*rbac.Enforcer{
+		constants.UserTypeAdmin:    global.AdminEnforcer,
+		constants.UserTypeLender:   global.LenderEnforcer,
+		constants.UserTypeBorrower: global.BorrowerEnforcer,
+	}
+
+	currentEnforcer := global.AdminEnforcer
+	_ = currentEnforcer.LoadFilteredPolicy(gormadapter.Filter{
+		Ptype: []string{"p"},
+		V0:    nil,
+		V1:    []string{string(constants.UserTypeAdmin)},
+		V2:    nil,
+		V3:    nil,
+		V4:    nil,
+		V5:    nil,
+	})
+
 	return &BaseLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		AllLogics: logic.NewAllLogics(svcCtx.AllRepos, redisCli, jwtConfig, emailClient),
+		AllLogics: logic.NewAllLogics(svcCtx.AllRepos, redisCli, jwtConfig, emailClient, currentEnforcer, enforcerMap),
 	}
 }
 

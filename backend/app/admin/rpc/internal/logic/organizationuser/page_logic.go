@@ -3,15 +3,14 @@ package organizationuserlogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/data/bo"
 	"zeebee-backend/domains/zeebee/data/dto"
-
-	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/common/errorx"
 )
@@ -42,27 +41,25 @@ func (l *PageLogic) Page(in *admin.OrganizationUserPageRequest) (resp *admin.Org
 	if err != nil {
 		return nil, err
 	}
-	pageReq := dto.OrganizationUserPageRequestDto{}
-	err = copier.Copy(&pageReq, &in.Data)
+	// pageReq := dto.OrganizationUserPageRequestDto{}
+	pageReq, err := copierx.Trans[admin.OrganizationUserPageRequestData, dto.OrganizationUserPageRequestDto](in.Data)
 	if err != nil {
 		return nil, err
 	}
+	if pageReq == nil {
+		return nil, logic.ErrorInvalidRequest
+	}
+
 	pageReq.Filter.UserType = claim.UserType
 	pageReq.Filter.OrganizationId = claim.OrganizationId
 	pageReq.Filter.UserId = claim.UserId
 
-	results, err := l.baseLogic.OrganizationUserLogic.Page(l.ctx, pageReq)
+	results, err := l.baseLogic.OrganizationUserLogic.Page(l.ctx, *pageReq)
 	if err != nil {
 		return nil, err
 	}
-	data := &admin.OrganizationUserPageResponseData{}
-	err = copier.CopyWithOption(data, &results, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
-	})
+
+	data, err := copierx.Trans[bo.PageResultBo[*dto.OrganizationUserEntityDto], admin.OrganizationUserPageResponseData](&results, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

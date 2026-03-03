@@ -16,6 +16,7 @@ import (
 	"zeebee-backend/common/copierx"
 	email2 "zeebee-backend/common/email"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/gormx"
 	"zeebee-backend/common/redisx"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/utils"
@@ -61,17 +62,21 @@ func (l *OrganizationUserLogic) Page(ctx context.Context, pageReq dto.Organizati
 		}
 		results.List[i].Roles = roles
 	}
-
-	err = copier.CopyWithOption(&page, results, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
-	})
+	pagePtr, err := copierx.Trans[gormx.PageResponse[*repo.OrganizationUserPageEntity], bo.PageResultBo[*dto.OrganizationUserEntityDto]](&results)
 	if err != nil {
-		return page, errorx.GetFailedTransRespErr(err)
+		return page, err
 	}
+	page = *pagePtr
+	// err = copier.CopyWithOption(&page, results, copier.Option{
+	// 	DeepCopy:      true,
+	// 	CaseSensitive: true,
+	// 	Converters: []copier.TypeConverter{
+	// 		copierx.TimeToRFC3339Str(),
+	// 	},
+	// })
+	// if err != nil {
+	// 	return page, errorx.GetFailedTransRespErr(err)
+	// }
 
 	slice.ForEach(page.List, func(index int, item *dto.OrganizationUserEntityDto) {
 		page.List[index].IsOwner = item.UserId == organizationOwnerId
@@ -142,7 +147,7 @@ func (l *OrganizationUserLogic) CreateAdminOrganizationUser(ctx context.Context,
 
 		// Get organization roles
 		if len(input.RoleIds) > 0 {
-			roles, innerErr := l.repos.RoleRepo.GetOrganizationRolesByIdsWithTx(ctx, tx, input.OrganizationId, input.RoleIds)
+			roles, innerErr := l.repos.RoleRepo.GetOrganizationRolesByIdsWithTx(ctx, tx, input.OrganizationId, input.RoleIds, constants.UserTypeAdmin)
 			if innerErr != nil {
 				return innerErr
 			}
@@ -158,6 +163,7 @@ func (l *OrganizationUserLogic) CreateAdminOrganizationUser(ctx context.Context,
 	if err != nil {
 		return nil, err
 	}
+
 	result = l.transToBo(organizationUser)
 	return result, nil
 }
@@ -224,7 +230,7 @@ func (l *OrganizationUserLogic) InviteOrganizationUser(ctx context.Context, crea
 
 		// Get organization roles
 		if len(createDto.RoleIds) > 0 {
-			roles, innerErr := l.repos.RoleRepo.GetOrganizationRolesByIdsWithTx(ctx, tx, createDto.OrganizationId, createDto.RoleIds)
+			roles, innerErr := l.repos.RoleRepo.GetOrganizationRolesByIdsWithTx(ctx, tx, createDto.OrganizationId, createDto.RoleIds, createDto.UserType)
 			if innerErr != nil {
 				return innerErr
 			}
@@ -431,7 +437,7 @@ func (l *OrganizationUserLogic) UpdateOrganizationUser(ctx context.Context, reqD
 			return innerErr
 		}
 		// Update roles
-		roles, innerErr := l.repos.RoleRepo.GetOrganizationRolesByIdsWithTx(ctx, tx, reqDto.OrganizationId, reqDto.RoleIds)
+		roles, innerErr := l.repos.RoleRepo.GetOrganizationRolesByIdsWithTx(ctx, tx, reqDto.OrganizationId, reqDto.RoleIds, reqDto.UserType)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -590,18 +596,8 @@ func (l *OrganizationUserLogic) Detail(ctx context.Context, id int64, organizati
 		err = errorx.New("User not existed")
 		return nil, err
 	}
-	result = &dto.OrganizationUserEntityDto{}
-	err = copier.CopyWithOption(result, organizationUser, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
-	})
-	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
-	}
-	result.Email = user.Email
+
+	result = l.transToBo(organizationUser)
 	return result, nil
 }
 
@@ -628,14 +624,14 @@ func (l *OrganizationUserLogic) SwitchStatus(ctx context.Context, id int64, orga
 }
 
 // AssignRoles assign roles for organization user
-func (l *OrganizationUserLogic) AssignRoles(ctx context.Context, id int64, organizationId int64, roleIds []int64) (err error) {
+func (l *OrganizationUserLogic) AssignRoles(ctx context.Context, id int64, organizationId int64, roleIds []int64, userType constants.UserType) (err error) {
 	organizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUserById(ctx, id, organizationId)
 	if err != nil {
 		return err
 	}
 	err = l.repos.OrganizationUserRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
-		roles, innerErr := l.repos.RoleRepo.GetOrganizationRolesByIdsWithTx(ctx, tx, organizationId, roleIds)
+		roles, innerErr := l.repos.RoleRepo.GetOrganizationRolesByIdsWithTx(ctx, tx, organizationId, roleIds, userType)
 		if innerErr != nil {
 			return innerErr
 		}

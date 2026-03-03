@@ -6414,7 +6414,10 @@
       }
     },
     "/api/v1/organization_user/page": {
-      "get": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
         "produces": [
           "application/json"
         ],
@@ -6433,6 +6436,9 @@
             "required": true,
             "schema": {
               "type": "object",
+              "required": [
+                "page"
+              ],
               "properties": {
                 "filter": {
                   "type": "object",
@@ -9731,7 +9737,7 @@
       }
     }
   },
-  "x-date": "2026-02-28 17:55:06",
+  "x-date": "2026-03-02 10:53:47",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
