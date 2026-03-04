@@ -31,7 +31,7 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 	return &CreateLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 		Logger:    logx.WithContext(ctx),
 	}
 }
@@ -97,6 +97,7 @@ func (l *CreateLogic) Create(in *lender.LoanDocumentCreateExtendTypeRequest) (re
 		}
 
 		innerErr = l.baseLogic.CreateLoanOperationLog(
+			l.ctx,
 			tx,
 			in.Data.LoanId,
 			claim.OrganizationUserId,
@@ -135,7 +136,7 @@ func (l *CreateLogic) prepare(in *lender.LoanDocumentCreateExtendTypeRequest, cl
 		return nil, errorx.WithStack(errorx.New("Loan document category not supported"))
 	}
 
-	loan, err = l.baseLogic.GetLenderLoan(in.Data.LoanId, claim.OrganizationId, nil)
+	loan, err = l.baseLogic.GetLenderLoan(l.ctx, in.Data.LoanId, claim.OrganizationId, nil)
 	if err != nil {
 		return nil, err
 	}

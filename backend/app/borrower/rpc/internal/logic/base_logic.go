@@ -1,10 +1,9 @@
 package logic
 
 import (
-	"context"
+	"sync"
 
 	gormadapter "github.com/casbin/gorm-adapter/v3"
-	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
@@ -12,14 +11,24 @@ import (
 	"zeebee-backend/domains/zeebee/logic"
 )
 
+var baseLogic *BaseLogic
+var onceBase sync.Once
+
 type BaseLogic struct {
-	ctx    context.Context
+	// ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+	// logx.Logger
 	*logic.AllLogics
 }
 
-func NewBaseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BaseLogic {
+func GetBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
+	onceBase.Do(func() {
+		baseLogic = NewBaseLogic(svcCtx)
+	})
+	return baseLogic
+}
+
+func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 	redisCli := global.GetRedis()
 	jwtConfig := logic.JwtConfig{
 		AccessSecret:  svcCtx.Config.JwtAuth.AccessSecret,
@@ -43,9 +52,9 @@ func NewBaseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BaseLogic {
 		V5:    nil,
 	})
 	return &BaseLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		// ctx:       ctx,
+		svcCtx: svcCtx,
+		// Logger:    logx.WithContext(ctx),
 		AllLogics: logic.NewAllLogics(svcCtx.AllRepos, redisCli, jwtConfig, global.EmailClient, currentEnforcer, nil),
 	}
 }

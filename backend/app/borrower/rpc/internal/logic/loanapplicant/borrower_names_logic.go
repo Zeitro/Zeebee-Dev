@@ -24,7 +24,7 @@ func NewBorrowerNamesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Bor
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 

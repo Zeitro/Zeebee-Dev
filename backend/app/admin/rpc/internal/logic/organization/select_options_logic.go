@@ -27,7 +27,7 @@ func NewSelectOptionsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sel
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 

@@ -31,7 +31,7 @@ func NewAddFilesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddFiles
 	return &AddFilesLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 		Logger:    logx.WithContext(ctx),
 	}
 }
@@ -96,6 +96,7 @@ func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *
 
 		// Create operation log
 		innerErr = l.baseLogic.CreateLoanOperationLog(
+			l.ctx,
 			tx,
 			in.Data.Id,
 			claim.OrganizationUserId,
@@ -152,7 +153,7 @@ func (l *AddFilesLogic) prepare(in *lender.LoanDocumentAddFilesRequest, claim ut
 		return nil, nil, errorx.WithStack(errorx.New("Total number of files (existing + new) cannot exceed 10"))
 	}
 
-	loan, err = l.baseLogic.GetLenderLoan(loanDocument.LoanId, claim.OrganizationId, nil)
+	loan, err = l.baseLogic.GetLenderLoan(l.ctx, loanDocument.LoanId, claim.OrganizationId, nil)
 	if err != nil {
 		return nil, nil, err
 	}

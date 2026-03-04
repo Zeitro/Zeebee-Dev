@@ -47,7 +47,7 @@ func NewUpdateLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Update
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -169,7 +169,7 @@ func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender
 				}
 
 				// loanBaseLogic := NewLoanBaseLogic(l.ctx, l.svcCtx)
-				return l.baseLogic.CreateLoanOperationLog(tx, oldLoan.Id, operatorId, fromStatus, toStatus, constants.LoanOperationActionUpdate, nil)
+				return l.baseLogic.CreateLoanOperationLog(l.ctx, tx, oldLoan.Id, operatorId, fromStatus, toStatus, constants.LoanOperationActionUpdate, nil)
 			},
 		)
 

@@ -26,7 +26,7 @@ func NewSwitchStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Swit
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		BaseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		BaseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -81,7 +81,7 @@ func (l *SwitchStatusLogic) SwitchStatus(in *admin.OrganizationSwitchStatusReque
 
 		// Sync organization template
 		if newStatus == constants.OrganizationStatusActive {
-			organizationTemplateLogic := logic.NewBaseLogic(l.ctx, l.svcCtx)
+			organizationTemplateLogic := logic.GetBaseLogic(l.svcCtx)
 			innerErr = organizationTemplateLogic.
 				OrganizationTemplateLogic.
 				SyncByOrganizationIdWithTx(l.ctx, tx, organization)

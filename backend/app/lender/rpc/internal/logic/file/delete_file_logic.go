@@ -28,7 +28,7 @@ func NewDeleteFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Delete
 	return &DeleteFileLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 		Logger:    logx.WithContext(ctx),
 	}
 }
@@ -58,7 +58,7 @@ func (l *DeleteFileLogic) DeleteFile(in *lender.FileDeleteRequest) (resp *lender
 		return nil, errorx.WithStack(errorx.New("File is not associated with a loan document"))
 	}
 
-	loan, loanDocument, err = l.baseLogic.GetLoanAndDocumentByDocumentId(file.EntityId, claim.OrganizationId)
+	loan, loanDocument, err = l.baseLogic.GetLoanAndDocumentByDocumentId(l.ctx, file.EntityId, claim.OrganizationId)
 	if err != nil {
 		return nil, err
 	}
@@ -102,6 +102,7 @@ func (l *DeleteFileLogic) DeleteFile(in *lender.FileDeleteRequest) (resp *lender
 		}
 
 		innerErr = l.baseLogic.CreateLoanOperationLog(
+			l.ctx,
 			tx,
 			loanDocument.LoanId,
 			claim.OrganizationUserId,

@@ -1,7 +1,6 @@
 package rpc
 
 import (
-	"context"
 	"time"
 
 	"github.com/zeromicro/go-zero/zrpc"
@@ -55,7 +54,7 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 
 	ctx := svc.NewServiceContext(rpcConfig)
 
-	baseLogic := logic.NewBaseLogic(context.Background(), ctx)
+	baseLogic := logic.NewBaseLogic(ctx)
 	tplLoader := loader.NewDefaultTemplateLoader(baseLogic.BaseTemplateLogic, baseLogic.OrganizationTemplateLogic)
 	tplConvertor := convertor.NewDefaultConvertor(rpcConfig.PdfGeneratorUrl)
 	tpl := templater.NewEngine(tplLoader, tplConvertor)

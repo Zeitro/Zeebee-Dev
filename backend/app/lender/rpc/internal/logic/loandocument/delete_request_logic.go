@@ -30,7 +30,7 @@ func NewDeleteRequestLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Del
 	return &DeleteRequestLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 		Logger:    logx.WithContext(ctx),
 	}
 }
@@ -96,6 +96,7 @@ func (l *DeleteRequestLogic) DeleteRequest(in *lender.LoanDocumentDeleteRequestR
 		}
 
 		innerErr = l.baseLogic.CreateLoanOperationLog(
+			l.ctx,
 			tx,
 			loanDocument.LoanId,
 			claim.OrganizationUserId,
@@ -130,5 +131,5 @@ func (l *DeleteRequestLogic) DeleteRequest(in *lender.LoanDocumentDeleteRequestR
 
 func (l *DeleteRequestLogic) prepare(in *lender.LoanDocumentDeleteRequestRequest, organizationId int64) (loan *model.Loan, loanDocument *model.LoanDocument, err error) {
 
-	return l.baseLogic.GetLoanAndDocumentByDocumentId(in.Data.Id, organizationId)
+	return l.baseLogic.GetLoanAndDocumentByDocumentId(l.ctx, in.Data.Id, organizationId)
 }

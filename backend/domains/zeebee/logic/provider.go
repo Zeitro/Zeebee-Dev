@@ -21,6 +21,7 @@ type AllLogics struct {
 	OrganizationSettingLogic  *OrganizationSettingLogic
 	LoanLogic                 *LoanLogic
 	LoanOperationLogic        *LoanOperationLogic
+	AuthLogic                 *AuthLogic
 }
 
 func NewAllLogics(
@@ -44,5 +45,6 @@ func NewAllLogics(
 		OrganizationSettingLogic:  NewOrganizationSettingLogic(repos),
 		LoanLogic:                 NewLoanLogic(repos),
 		LoanOperationLogic:        NewLoanOperationLogic(repos),
+		AuthLogic:                 NewAuthLogic(repos, redisCli, jwtConfig),
 	}
 }

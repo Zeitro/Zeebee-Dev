@@ -1429,3 +1429,27 @@ message FileEntity {
   string updated_at = 6;
 }
 // ===================== file service end ======================
+
+// ===================== auth service start ======================
+
+message CheckAuthRequest {
+  string method = 1;
+  string route = 2;
+  string type = 3;
+}
+message CheckAuthResponse {
+  CheckAuthResponseData data = 1;
+}
+message CheckAuthResponseData {
+  bool authentication_required = 1;
+  bool authorized_required = 2;
+  string data_scope = 3;
+  bool authenticated = 4;
+  string authorized = 5;
+}
+
+service AuthService {
+  rpc CheckAuth(CheckAuthRequest) returns (CheckAuthResponse);
+}
+
+// ========== auth service end ======================

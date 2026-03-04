@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"sync"
 
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -19,14 +20,24 @@ import (
 
 var ErrorInvalidRequest = errorx.New("Invalid request")
 
+var baseLogic *BaseLogic
+var onceBase sync.Once
+
 type BaseLogic struct {
-	ctx    context.Context
+	// ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+	// logx.Logger
 	*logic.AllLogics
 }
 
-func NewBaseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BaseLogic {
+func GetBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
+	onceBase.Do(func() {
+		baseLogic = NewBaseLogic(svcCtx)
+	})
+	return baseLogic
+}
+
+func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 	redisCli := global.GetRedis()
 	jwtConfig := logic.JwtConfig{
 		AccessSecret:  svcCtx.Config.JwtAuth.AccessSecret,
@@ -53,17 +64,17 @@ func NewBaseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BaseLogic {
 	})
 
 	return &BaseLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		// ctx:       ctx,
+		svcCtx: svcCtx,
+		// Logger:    logx.WithContext(ctx),
 		AllLogics: logic.NewAllLogics(svcCtx.AllRepos, redisCli, jwtConfig, emailClient, currentEnforcer, enforcerMap),
 	}
 }
 
-func (l *BaseLogic) CreateLoanOperationLog(tx *gorm.DB, loanId, operatorId int64, from, to data.LoanOperationStatus, action constants.LoanOperationAction, metadata *data.LoanOperationMetadata) (err error) {
+func (l *BaseLogic) CreateLoanOperationLog(ctx context.Context, tx *gorm.DB, loanId, operatorId int64, from, to data.LoanOperationStatus, action constants.LoanOperationAction, metadata *data.LoanOperationMetadata) (err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			logx.WithContext(ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
 				logx.Field("loan_id", loanId),
 				logx.Field("operator_id", operatorId),
@@ -75,7 +86,7 @@ func (l *BaseLogic) CreateLoanOperationLog(tx *gorm.DB, loanId, operatorId int64
 			).Error("failed to create loan operation log")
 		}
 	}()
-	operator, _ := l.svcCtx.OrganizationUserRepo.FindOneByIdWithTx(l.ctx, tx, operatorId)
+	operator, _ := l.svcCtx.OrganizationUserRepo.FindOneByIdWithTx(ctx, tx, operatorId)
 
 	operatorName := ""
 	if operator != nil {
@@ -92,7 +103,7 @@ func (l *BaseLogic) CreateLoanOperationLog(tx *gorm.DB, loanId, operatorId int64
 		To:           to,
 		Metadata:     metadata,
 	}
-	_, err = l.svcCtx.LoanOperationRepo.CreateWithTx(l.ctx, tx, operation, false)
+	_, err = l.svcCtx.LoanOperationRepo.CreateWithTx(ctx, tx, operation, false)
 	if err != nil {
 		return errorx.Wrap(err, "Failed to create operation log")
 	}
