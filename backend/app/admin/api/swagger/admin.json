@@ -7226,7 +7226,6 @@
             "schema": {
               "type": "object",
               "required": [
-                "parent_id",
                 "type",
                 "resource_type",
                 "name",
@@ -7749,7 +7748,6 @@
             "schema": {
               "type": "object",
               "required": [
-                "parent_id",
                 "type",
                 "resource_type",
                 "name",
@@ -7974,259 +7972,6 @@
       }
     },
     "/api/v1/role": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "role"
-        ],
-        "summary": "page",
-        "operationId": "roleRolePage",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": [
-                "page",
-                "filter",
-                "sort"
-              ],
-              "properties": {
-                "filter": {
-                  "type": "object",
-                  "properties": {
-                    "keyword": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "limit": {
-                  "type": "integer"
-                },
-                "page": {
-                  "type": "integer"
-                },
-                "sort": {
-                  "type": "object",
-                  "properties": {
-                    "column": {
-                      "type": "string"
-                    },
-                    "sort": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "limit": {
-                  "type": "integer"
-                },
-                "list": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "required": [
-                      "id",
-                      "organization_id",
-                      "name",
-                      "description",
-                      "type",
-                      "status",
-                      "created_at",
-                      "updated_at",
-                      "resources"
-                    ],
-                    "properties": {
-                      "created_at": {
-                        "type": "string"
-                      },
-                      "description": {
-                        "type": "string"
-                      },
-                      "id": {
-                        "type": "integer"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "organization_id": {
-                        "type": "integer"
-                      },
-                      "resources": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "required": [
-                            "id",
-                            "parent_id",
-                            "type",
-                            "resource_type",
-                            "name",
-                            "path",
-                            "icon",
-                            "tag",
-                            "is_show",
-                            "status",
-                            "sort_order",
-                            "enable_data_scope",
-                            "created_at",
-                            "updated_at",
-                            "apis",
-                            "pivot_role_data_scope"
-                          ],
-                          "properties": {
-                            "apis": {
-                              "type": "array",
-                              "items": {
-                                "type": "object",
-                                "required": [
-                                  "id",
-                                  "parent_id",
-                                  "name",
-                                  "path",
-                                  "method",
-                                  "status",
-                                  "description",
-                                  "type",
-                                  "sort_order",
-                                  "auth_required",
-                                  "permission_required",
-                                  "created_at",
-                                  "updated_at"
-                                ],
-                                "properties": {
-                                  "auth_required": {
-                                    "type": "boolean"
-                                  },
-                                  "created_at": {
-                                    "type": "string"
-                                  },
-                                  "description": {
-                                    "type": "string"
-                                  },
-                                  "id": {
-                                    "type": "integer"
-                                  },
-                                  "method": {
-                                    "type": "string"
-                                  },
-                                  "name": {
-                                    "type": "string"
-                                  },
-                                  "parent_id": {
-                                    "type": "integer"
-                                  },
-                                  "path": {
-                                    "type": "string"
-                                  },
-                                  "permission_required": {
-                                    "type": "boolean"
-                                  },
-                                  "sort_order": {
-                                    "type": "integer"
-                                  },
-                                  "status": {
-                                    "type": "string"
-                                  },
-                                  "type": {
-                                    "type": "string"
-                                  },
-                                  "updated_at": {
-                                    "type": "string"
-                                  }
-                                }
-                              }
-                            },
-                            "created_at": {
-                              "type": "string"
-                            },
-                            "enable_data_scope": {
-                              "type": "boolean"
-                            },
-                            "icon": {
-                              "type": "string"
-                            },
-                            "id": {
-                              "type": "integer"
-                            },
-                            "is_show": {
-                              "type": "boolean"
-                            },
-                            "name": {
-                              "type": "string"
-                            },
-                            "parent_id": {
-                              "type": "integer"
-                            },
-                            "path": {
-                              "type": "string"
-                            },
-                            "pivot_role_data_scope": {
-                              "type": "string"
-                            },
-                            "resource_type": {
-                              "type": "string"
-                            },
-                            "sort_order": {
-                              "type": "integer"
-                            },
-                            "status": {
-                              "type": "string"
-                            },
-                            "tag": {
-                              "type": "string"
-                            },
-                            "type": {
-                              "type": "string"
-                            },
-                            "updated_at": {
-                              "type": "string"
-                            }
-                          }
-                        }
-                      },
-                      "status": {
-                        "type": "string"
-                      },
-                      "type": {
-                        "type": "string"
-                      },
-                      "updated_at": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                "page": {
-                  "type": "integer"
-                },
-                "total": {
-                  "type": "integer"
-                },
-                "total_page": {
-                  "type": "integer"
-                }
-              }
-            }
-          }
-        }
-      },
       "post": {
         "consumes": [
           "application/json"
@@ -8652,6 +8397,264 @@
                       }
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/role/page": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "role"
+        ],
+        "summary": "page",
+        "operationId": "roleRolePage",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "page",
+                "filter",
+                "sort"
+              ],
+              "properties": {
+                "filter": {
+                  "type": "object",
+                  "properties": {
+                    "keyword": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "limit": {
+                  "type": "integer"
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "sort": {
+                  "type": "object",
+                  "properties": {
+                    "column": {
+                      "type": "string"
+                    },
+                    "sort": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "limit": {
+                  "type": "integer"
+                },
+                "list": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "organization_id",
+                      "name",
+                      "description",
+                      "type",
+                      "status",
+                      "created_at",
+                      "updated_at",
+                      "resources"
+                    ],
+                    "properties": {
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "organization_id": {
+                        "type": "integer"
+                      },
+                      "resources": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "parent_id",
+                            "type",
+                            "resource_type",
+                            "name",
+                            "path",
+                            "icon",
+                            "tag",
+                            "is_show",
+                            "status",
+                            "sort_order",
+                            "enable_data_scope",
+                            "created_at",
+                            "updated_at",
+                            "apis",
+                            "pivot_role_data_scope"
+                          ],
+                          "properties": {
+                            "apis": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "required": [
+                                  "id",
+                                  "parent_id",
+                                  "name",
+                                  "path",
+                                  "method",
+                                  "status",
+                                  "description",
+                                  "type",
+                                  "sort_order",
+                                  "auth_required",
+                                  "permission_required",
+                                  "created_at",
+                                  "updated_at"
+                                ],
+                                "properties": {
+                                  "auth_required": {
+                                    "type": "boolean"
+                                  },
+                                  "created_at": {
+                                    "type": "string"
+                                  },
+                                  "description": {
+                                    "type": "string"
+                                  },
+                                  "id": {
+                                    "type": "integer"
+                                  },
+                                  "method": {
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "parent_id": {
+                                    "type": "integer"
+                                  },
+                                  "path": {
+                                    "type": "string"
+                                  },
+                                  "permission_required": {
+                                    "type": "boolean"
+                                  },
+                                  "sort_order": {
+                                    "type": "integer"
+                                  },
+                                  "status": {
+                                    "type": "string"
+                                  },
+                                  "type": {
+                                    "type": "string"
+                                  },
+                                  "updated_at": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "enable_data_scope": {
+                              "type": "boolean"
+                            },
+                            "icon": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "is_show": {
+                              "type": "boolean"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "parent_id": {
+                              "type": "integer"
+                            },
+                            "path": {
+                              "type": "string"
+                            },
+                            "pivot_role_data_scope": {
+                              "type": "string"
+                            },
+                            "resource_type": {
+                              "type": "string"
+                            },
+                            "sort_order": {
+                              "type": "integer"
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "tag": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "total": {
+                  "type": "integer"
+                },
+                "total_page": {
+                  "type": "integer"
                 }
               }
             }
@@ -9729,7 +9732,7 @@
       }
     }
   },
-  "x-date": "2026-03-03 13:55:13",
+  "x-date": "2026-03-04 10:36:43",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

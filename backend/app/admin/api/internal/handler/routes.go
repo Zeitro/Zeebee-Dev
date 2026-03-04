@@ -315,12 +315,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
 				{
-					// page
-					Method:  http.MethodGet,
-					Path:    "/role",
-					Handler: role.RolePageHandler(serverCtx),
-				},
-				{
 					// create
 					Method:  http.MethodPost,
 					Path:    "/role",
@@ -355,6 +349,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/role/all",
 					Handler: role.RoleAllHandler(serverCtx),
+				},
+				{
+					// page
+					Method:  http.MethodPost,
+					Path:    "/role/page",
+					Handler: role.RolePageHandler(serverCtx),
 				},
 			}...,
 		),

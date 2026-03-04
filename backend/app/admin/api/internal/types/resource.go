@@ -4,7 +4,7 @@
 package types
 
 type ResourceCreateRequest struct {
-	ParentId        int64   `json:"parent_id" validate:"min=0"`
+	ParentId        int64   `json:"parent_id,optional" validate:"min=0"`
 	Type            string  `json:"type" validate:"required,oneof=Borrower Lender Admin"`
 	ResourceType    string  `json:"resource_type" validate:"required,oneof=Menu Button"`
 	Name            string  `json:"name" validate:"required,min=2,max=100"`
@@ -57,7 +57,7 @@ type ResourceTreeResponse struct {
 
 type ResourceUpdateRequest struct {
 	Id              int64   `path:"id" validate:"required,gt=0"`
-	ParentId        int64   `json:"parent_id" validate:"min=0"`
+	ParentId        int64   `json:"parent_id,optional" validate:"min=0"`
 	Type            string  `json:"type" validate:"required,oneof=Borrower Lender Admin"`
 	ResourceType    string  `json:"resource_type" validate:"required,oneof=Menu Button"`
 	Name            string  `json:"name" validate:"required,min=2,max=100"`

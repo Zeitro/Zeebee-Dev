@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/duke-git/lancet/v2/slice"
-	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 
 	"zeebee-backend/common/copierx"
@@ -87,9 +86,9 @@ func (l *ResourceLogic) UpdateResource(ctx context.Context, input *dto.ResourceU
 			return innerErr
 		}
 
-		innerErr = copier.CopyWithOption(resourceModel, input.ResourceCreateRequestDto, copier.Option{DeepCopy: true})
+		innerErr = copierx.Assign[dto.ResourceUpdateRequestDto, model.Resource](input, resourceModel)
 		if innerErr != nil {
-			return errorx.GetFailedTransReqErr(innerErr)
+			return innerErr
 		}
 
 		// check existed
@@ -125,6 +124,12 @@ func (l *ResourceLogic) UpdateResource(ctx context.Context, input *dto.ResourceU
 			return innerErr
 		}
 		innerErr = l.repos.ResourceRepo.AddApisWithTx(ctx, tx, resourceModel, newApis)
+		if innerErr != nil {
+			return innerErr
+		}
+
+		// update resource
+		resourceModel, innerErr = l.repos.ResourceRepo.UpdateOneByIdWithTx(ctx, tx, input.Id, resourceModel)
 		if innerErr != nil {
 			return innerErr
 		}

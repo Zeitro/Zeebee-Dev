@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/grpc/metadata"
 
 	"zeebee-backend/common/response"
@@ -23,6 +24,10 @@ func NewHttpAuthMiddleware(secretKey string, userType constants.UserType) *HttpA
 
 func (m *HttpAuthMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		path := r.URL.Path
+		method := r.Method
+		logx.Infof("path: %s, method: %s", path, method)
+
 		// get user info from header
 		token := r.Header.Get("Authorization")
 		token = strings.TrimPrefix(token, "Bearer ")
