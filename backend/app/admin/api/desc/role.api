@@ -26,21 +26,8 @@ type RolePageRequest {
     BasePageRequest
     Filter BasePageFilter `json:"filter"`
     Sort BasePageSort `json:"sort"`
-
-    //    Page int64 `json:"page,default=1"`
-    //    Limit int64 `json:"limit,default=10"`
-    //    Filter RolePageFilter `json:"filter"`
-    //    Sort RolePageSort `json:"sort"`
 }
 
-//type RolePageFilter {
-//    Keyword string `json:"keyword"`
-//}
-//
-//type RolePageSort {
-//    Column string `json:"column"`
-//    Sort string `json:"sort"`
-//}
 
 type RolePageResponse {
     Page int64 `json:"page"`

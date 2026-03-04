@@ -139,3 +139,5 @@ func (repo *RoleRepo) DeleteByIdWithTx(ctx context.Context, tx *gorm.DB, id int6
 
 	return errorx.WithStack(err)
 }
+
+// IsAdmin

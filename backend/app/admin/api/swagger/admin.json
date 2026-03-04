@@ -4677,7 +4677,7 @@
                                 "created_at",
                                 "updated_at",
                                 "apis",
-                                "pivot_role_data_scope"
+                                "data_scope"
                               ],
                               "properties": {
                                 "apis": {
@@ -4745,6 +4745,9 @@
                                 "created_at": {
                                   "type": "string"
                                 },
+                                "data_scope": {
+                                  "type": "string"
+                                },
                                 "enable_data_scope": {
                                   "type": "boolean"
                                 },
@@ -4764,9 +4767,6 @@
                                   "type": "integer"
                                 },
                                 "path": {
-                                  "type": "string"
-                                },
-                                "pivot_role_data_scope": {
                                   "type": "string"
                                 },
                                 "resource_type": {
@@ -5227,7 +5227,7 @@
                                 "created_at",
                                 "updated_at",
                                 "apis",
-                                "pivot_role_data_scope"
+                                "data_scope"
                               ],
                               "properties": {
                                 "apis": {
@@ -5295,6 +5295,9 @@
                                 "created_at": {
                                   "type": "string"
                                 },
+                                "data_scope": {
+                                  "type": "string"
+                                },
                                 "enable_data_scope": {
                                   "type": "boolean"
                                 },
@@ -5314,9 +5317,6 @@
                                   "type": "integer"
                                 },
                                 "path": {
-                                  "type": "string"
-                                },
-                                "pivot_role_data_scope": {
                                   "type": "string"
                                 },
                                 "resource_type": {
@@ -5880,7 +5880,7 @@
                                 "created_at",
                                 "updated_at",
                                 "apis",
-                                "pivot_role_data_scope"
+                                "data_scope"
                               ],
                               "properties": {
                                 "apis": {
@@ -5948,6 +5948,9 @@
                                 "created_at": {
                                   "type": "string"
                                 },
+                                "data_scope": {
+                                  "type": "string"
+                                },
                                 "enable_data_scope": {
                                   "type": "boolean"
                                 },
@@ -5967,9 +5970,6 @@
                                   "type": "integer"
                                 },
                                 "path": {
-                                  "type": "string"
-                                },
-                                "pivot_role_data_scope": {
                                   "type": "string"
                                 },
                                 "resource_type": {
@@ -6265,7 +6265,7 @@
                             "created_at",
                             "updated_at",
                             "apis",
-                            "pivot_role_data_scope"
+                            "data_scope"
                           ],
                           "properties": {
                             "apis": {
@@ -6333,6 +6333,9 @@
                             "created_at": {
                               "type": "string"
                             },
+                            "data_scope": {
+                              "type": "string"
+                            },
                             "enable_data_scope": {
                               "type": "boolean"
                             },
@@ -6352,9 +6355,6 @@
                               "type": "integer"
                             },
                             "path": {
-                              "type": "string"
-                            },
-                            "pivot_role_data_scope": {
                               "type": "string"
                             },
                             "resource_type": {
@@ -6701,7 +6701,7 @@
                             "created_at",
                             "updated_at",
                             "apis",
-                            "pivot_role_data_scope"
+                            "data_scope"
                           ],
                           "properties": {
                             "apis": {
@@ -6769,6 +6769,9 @@
                             "created_at": {
                               "type": "string"
                             },
+                            "data_scope": {
+                              "type": "string"
+                            },
                             "enable_data_scope": {
                               "type": "boolean"
                             },
@@ -6788,9 +6791,6 @@
                               "type": "integer"
                             },
                             "path": {
-                              "type": "string"
-                            },
-                            "pivot_role_data_scope": {
                               "type": "string"
                             },
                             "resource_type": {
@@ -6980,7 +6980,7 @@
                             "created_at",
                             "updated_at",
                             "apis",
-                            "pivot_role_data_scope"
+                            "data_scope"
                           ],
                           "properties": {
                             "apis": {
@@ -7048,6 +7048,9 @@
                             "created_at": {
                               "type": "string"
                             },
+                            "data_scope": {
+                              "type": "string"
+                            },
                             "enable_data_scope": {
                               "type": "boolean"
                             },
@@ -7067,9 +7070,6 @@
                               "type": "integer"
                             },
                             "path": {
-                              "type": "string"
-                            },
-                            "pivot_role_data_scope": {
                               "type": "string"
                             },
                             "resource_type": {
@@ -7353,6 +7353,9 @@
                 "created_at": {
                   "type": "string"
                 },
+                "data_scope": {
+                  "type": "string"
+                },
                 "enable_data_scope": {
                   "type": "boolean"
                 },
@@ -7372,9 +7375,6 @@
                   "type": "integer"
                 },
                 "path": {
-                  "type": "string"
-                },
-                "pivot_role_data_scope": {
                   "type": "string"
                 },
                 "resource_type": {
@@ -7672,6 +7672,9 @@
                 "created_at": {
                   "type": "string"
                 },
+                "data_scope": {
+                  "type": "string"
+                },
                 "enable_data_scope": {
                   "type": "boolean"
                 },
@@ -7691,9 +7694,6 @@
                   "type": "integer"
                 },
                 "path": {
-                  "type": "string"
-                },
-                "pivot_role_data_scope": {
                   "type": "string"
                 },
                 "resource_type": {
@@ -7875,6 +7875,9 @@
                 "created_at": {
                   "type": "string"
                 },
+                "data_scope": {
+                  "type": "string"
+                },
                 "enable_data_scope": {
                   "type": "boolean"
                 },
@@ -7894,9 +7897,6 @@
                   "type": "integer"
                 },
                 "path": {
-                  "type": "string"
-                },
-                "pivot_role_data_scope": {
                   "type": "string"
                 },
                 "resource_type": {
@@ -8075,7 +8075,7 @@
                       "created_at",
                       "updated_at",
                       "apis",
-                      "pivot_role_data_scope"
+                      "data_scope"
                     ],
                     "properties": {
                       "apis": {
@@ -8143,6 +8143,9 @@
                       "created_at": {
                         "type": "string"
                       },
+                      "data_scope": {
+                        "type": "string"
+                      },
                       "enable_data_scope": {
                         "type": "boolean"
                       },
@@ -8162,9 +8165,6 @@
                         "type": "integer"
                       },
                       "path": {
-                        "type": "string"
-                      },
-                      "pivot_role_data_scope": {
                         "type": "string"
                       },
                       "resource_type": {
@@ -8273,7 +8273,7 @@
                             "created_at",
                             "updated_at",
                             "apis",
-                            "pivot_role_data_scope"
+                            "data_scope"
                           ],
                           "properties": {
                             "apis": {
@@ -8341,6 +8341,9 @@
                             "created_at": {
                               "type": "string"
                             },
+                            "data_scope": {
+                              "type": "string"
+                            },
                             "enable_data_scope": {
                               "type": "boolean"
                             },
@@ -8360,9 +8363,6 @@
                               "type": "integer"
                             },
                             "path": {
-                              "type": "string"
-                            },
-                            "pivot_role_data_scope": {
                               "type": "string"
                             },
                             "resource_type": {
@@ -8522,7 +8522,7 @@
                             "created_at",
                             "updated_at",
                             "apis",
-                            "pivot_role_data_scope"
+                            "data_scope"
                           ],
                           "properties": {
                             "apis": {
@@ -8590,6 +8590,9 @@
                             "created_at": {
                               "type": "string"
                             },
+                            "data_scope": {
+                              "type": "string"
+                            },
                             "enable_data_scope": {
                               "type": "boolean"
                             },
@@ -8609,9 +8612,6 @@
                               "type": "integer"
                             },
                             "path": {
-                              "type": "string"
-                            },
-                            "pivot_role_data_scope": {
                               "type": "string"
                             },
                             "resource_type": {
@@ -8724,7 +8724,7 @@
                       "created_at",
                       "updated_at",
                       "apis",
-                      "pivot_role_data_scope"
+                      "data_scope"
                     ],
                     "properties": {
                       "apis": {
@@ -8792,6 +8792,9 @@
                       "created_at": {
                         "type": "string"
                       },
+                      "data_scope": {
+                        "type": "string"
+                      },
                       "enable_data_scope": {
                         "type": "boolean"
                       },
@@ -8811,9 +8814,6 @@
                         "type": "integer"
                       },
                       "path": {
-                        "type": "string"
-                      },
-                      "pivot_role_data_scope": {
                         "type": "string"
                       },
                       "resource_type": {
@@ -8960,7 +8960,7 @@
                       "created_at",
                       "updated_at",
                       "apis",
-                      "pivot_role_data_scope"
+                      "data_scope"
                     ],
                     "properties": {
                       "apis": {
@@ -9028,6 +9028,9 @@
                       "created_at": {
                         "type": "string"
                       },
+                      "data_scope": {
+                        "type": "string"
+                      },
                       "enable_data_scope": {
                         "type": "boolean"
                       },
@@ -9047,9 +9050,6 @@
                         "type": "integer"
                       },
                       "path": {
-                        "type": "string"
-                      },
-                      "pivot_role_data_scope": {
                         "type": "string"
                       },
                       "resource_type": {
@@ -9732,7 +9732,7 @@
       }
     }
   },
-  "x-date": "2026-03-04 11:29:12",
+  "x-date": "2026-03-04 17:45:48",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

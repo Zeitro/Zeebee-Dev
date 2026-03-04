@@ -45,6 +45,6 @@ func NewAllLogics(
 		OrganizationSettingLogic:  NewOrganizationSettingLogic(repos),
 		LoanLogic:                 NewLoanLogic(repos),
 		LoanOperationLogic:        NewLoanOperationLogic(repos),
-		AuthLogic:                 NewAuthLogic(repos, redisCli, jwtConfig),
+		AuthLogic:                 NewAuthLogic(repos, redisCli, jwtConfig, currentEnforcer),
 	}
 }

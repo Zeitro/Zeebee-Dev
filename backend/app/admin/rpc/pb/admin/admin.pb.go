@@ -3894,25 +3894,25 @@ func (x *ResourceTreeEntity) GetEnableDataScope() bool {
 }
 
 type ResourceEntity struct {
-	state              protoimpl.MessageState `protogen:"open.v1"`
-	Id                 int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	ParentId           int64                  `protobuf:"varint,2,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
-	Type               string                 `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
-	ResourceType       string                 `protobuf:"bytes,4,opt,name=resource_type,json=resourceType,proto3" json:"resource_type,omitempty"`
-	Name               string                 `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
-	Path               string                 `protobuf:"bytes,6,opt,name=path,proto3" json:"path,omitempty"`
-	Icon               string                 `protobuf:"bytes,7,opt,name=icon,proto3" json:"icon,omitempty"`
-	Tag                string                 `protobuf:"bytes,8,opt,name=tag,proto3" json:"tag,omitempty"`
-	IsShow             bool                   `protobuf:"varint,9,opt,name=is_show,json=isShow,proto3" json:"is_show,omitempty"`
-	Status             string                 `protobuf:"bytes,10,opt,name=status,proto3" json:"status,omitempty"`
-	SortOrder          int32                  `protobuf:"varint,11,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
-	CreatedAt          string                 `protobuf:"bytes,12,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt          string                 `protobuf:"bytes,13,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	Apis               []*ApiEntity           `protobuf:"bytes,14,rep,name=apis,proto3" json:"apis,omitempty"`
-	PivotRoleDataScope string                 `protobuf:"bytes,15,opt,name=pivot_role_data_scope,json=pivotRoleDataScope,proto3" json:"pivot_role_data_scope,omitempty"`
-	EnableDataScope    bool                   `protobuf:"varint,16,opt,name=enable_data_scope,json=enableDataScope,proto3" json:"enable_data_scope,omitempty"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	ParentId        int64                  `protobuf:"varint,2,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
+	Type            string                 `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
+	ResourceType    string                 `protobuf:"bytes,4,opt,name=resource_type,json=resourceType,proto3" json:"resource_type,omitempty"`
+	Name            string                 `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
+	Path            string                 `protobuf:"bytes,6,opt,name=path,proto3" json:"path,omitempty"`
+	Icon            string                 `protobuf:"bytes,7,opt,name=icon,proto3" json:"icon,omitempty"`
+	Tag             string                 `protobuf:"bytes,8,opt,name=tag,proto3" json:"tag,omitempty"`
+	IsShow          bool                   `protobuf:"varint,9,opt,name=is_show,json=isShow,proto3" json:"is_show,omitempty"`
+	Status          string                 `protobuf:"bytes,10,opt,name=status,proto3" json:"status,omitempty"`
+	SortOrder       int32                  `protobuf:"varint,11,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
+	CreatedAt       string                 `protobuf:"bytes,12,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt       string                 `protobuf:"bytes,13,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Apis            []*ApiEntity           `protobuf:"bytes,14,rep,name=apis,proto3" json:"apis,omitempty"`
+	DataScope       string                 `protobuf:"bytes,15,opt,name=data_scope,json=dataScope,proto3" json:"data_scope,omitempty"`
+	EnableDataScope bool                   `protobuf:"varint,16,opt,name=enable_data_scope,json=enableDataScope,proto3" json:"enable_data_scope,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *ResourceEntity) Reset() {
@@ -4043,9 +4043,9 @@ func (x *ResourceEntity) GetApis() []*ApiEntity {
 	return nil
 }
 
-func (x *ResourceEntity) GetPivotRoleDataScope() string {
+func (x *ResourceEntity) GetDataScope() string {
 	if x != nil {
-		return x.PivotRoleDataScope
+		return x.DataScope
 	}
 	return ""
 }
@@ -12776,7 +12776,7 @@ func (x *FileEntity) GetUpdatedAt() string {
 type CheckAuthRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Method        string                 `protobuf:"bytes,1,opt,name=method,proto3" json:"method,omitempty"`
-	Route         string                 `protobuf:"bytes,2,opt,name=route,proto3" json:"route,omitempty"`
+	Path          string                 `protobuf:"bytes,2,opt,name=path,proto3" json:"path,omitempty"`
 	Type          string                 `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -12819,9 +12819,9 @@ func (x *CheckAuthRequest) GetMethod() string {
 	return ""
 }
 
-func (x *CheckAuthRequest) GetRoute() string {
+func (x *CheckAuthRequest) GetPath() string {
 	if x != nil {
-		return x.Route
+		return x.Path
 	}
 	return ""
 }
@@ -12880,7 +12880,7 @@ func (x *CheckAuthResponse) GetData() *CheckAuthResponseData {
 type CheckAuthResponseData struct {
 	state                  protoimpl.MessageState `protogen:"open.v1"`
 	AuthenticationRequired bool                   `protobuf:"varint,1,opt,name=authentication_required,json=authenticationRequired,proto3" json:"authentication_required,omitempty"`
-	AuthorizedRequired     bool                   `protobuf:"varint,2,opt,name=authorized_required,json=authorizedRequired,proto3" json:"authorized_required,omitempty"`
+	AuthorizationRequired  bool                   `protobuf:"varint,2,opt,name=authorization_required,json=authorizationRequired,proto3" json:"authorization_required,omitempty"`
 	DataScope              string                 `protobuf:"bytes,3,opt,name=data_scope,json=dataScope,proto3" json:"data_scope,omitempty"`
 	Authenticated          bool                   `protobuf:"varint,4,opt,name=authenticated,proto3" json:"authenticated,omitempty"`
 	Authorized             string                 `protobuf:"bytes,5,opt,name=authorized,proto3" json:"authorized,omitempty"`
@@ -12925,9 +12925,9 @@ func (x *CheckAuthResponseData) GetAuthenticationRequired() bool {
 	return false
 }
 
-func (x *CheckAuthResponseData) GetAuthorizedRequired() bool {
+func (x *CheckAuthResponseData) GetAuthorizationRequired() bool {
 	if x != nil {
-		return x.AuthorizedRequired
+		return x.AuthorizationRequired
 	}
 	return false
 }
@@ -13336,7 +13336,7 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\r \x01(\tR\tupdatedAt\x125\n" +
 	"\bchildren\x18\x0e \x03(\v2\x19.admin.ResourceTreeEntityR\bchildren\x12*\n" +
-	"\x11enable_data_scope\x18\x0f \x01(\bR\x0fenableDataScope\"\xd7\x03\n" +
+	"\x11enable_data_scope\x18\x0f \x01(\bR\x0fenableDataScope\"\xc3\x03\n" +
 	"\x0eResourceEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12\x12\n" +
@@ -13355,8 +13355,9 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"created_at\x18\f \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
 	"updated_at\x18\r \x01(\tR\tupdatedAt\x12$\n" +
-	"\x04apis\x18\x0e \x03(\v2\x10.admin.ApiEntityR\x04apis\x121\n" +
-	"\x15pivot_role_data_scope\x18\x0f \x01(\tR\x12pivotRoleDataScope\x12*\n" +
+	"\x04apis\x18\x0e \x03(\v2\x10.admin.ApiEntityR\x04apis\x12\x1d\n" +
+	"\n" +
+	"data_scope\x18\x0f \x01(\tR\tdataScope\x12*\n" +
 	"\x11enable_data_scope\x18\x10 \x01(\bR\x0fenableDataScope\"I\n" +
 	"\x13ResourceTreeRequest\x122\n" +
 	"\x04data\x18\x01 \x01(\v2\x1e.admin.ResourceTreeRequestDataR\x04data\"-\n" +
@@ -14090,16 +14091,16 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x05 \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\x06 \x01(\tR\tupdatedAt\"T\n" +
+	"updated_at\x18\x06 \x01(\tR\tupdatedAt\"R\n" +
 	"\x10CheckAuthRequest\x12\x16\n" +
-	"\x06method\x18\x01 \x01(\tR\x06method\x12\x14\n" +
-	"\x05route\x18\x02 \x01(\tR\x05route\x12\x12\n" +
+	"\x06method\x18\x01 \x01(\tR\x06method\x12\x12\n" +
+	"\x04path\x18\x02 \x01(\tR\x04path\x12\x12\n" +
 	"\x04type\x18\x03 \x01(\tR\x04type\"E\n" +
 	"\x11CheckAuthResponse\x120\n" +
-	"\x04data\x18\x01 \x01(\v2\x1c.admin.CheckAuthResponseDataR\x04data\"\xe6\x01\n" +
+	"\x04data\x18\x01 \x01(\v2\x1c.admin.CheckAuthResponseDataR\x04data\"\xec\x01\n" +
 	"\x15CheckAuthResponseData\x127\n" +
-	"\x17authentication_required\x18\x01 \x01(\bR\x16authenticationRequired\x12/\n" +
-	"\x13authorized_required\x18\x02 \x01(\bR\x12authorizedRequired\x12\x1d\n" +
+	"\x17authentication_required\x18\x01 \x01(\bR\x16authenticationRequired\x125\n" +
+	"\x16authorization_required\x18\x02 \x01(\bR\x15authorizationRequired\x12\x1d\n" +
 	"\n" +
 	"data_scope\x18\x03 \x01(\tR\tdataScope\x12$\n" +
 	"\rauthenticated\x18\x04 \x01(\bR\rauthenticated\x12\x1e\n" +

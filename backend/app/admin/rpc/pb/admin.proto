@@ -442,7 +442,7 @@ message ResourceEntity{
   string created_at = 12;
   string updated_at = 13;
   repeated ApiEntity apis = 14;
-  string pivot_role_data_scope = 15;
+  string data_scope = 15;
   bool enable_data_scope = 16;
 }
 
@@ -1434,7 +1434,7 @@ message FileEntity {
 
 message CheckAuthRequest {
   string method = 1;
-  string route = 2;
+  string path = 2;
   string type = 3;
 }
 message CheckAuthResponse {
@@ -1442,7 +1442,7 @@ message CheckAuthResponse {
 }
 message CheckAuthResponseData {
   bool authentication_required = 1;
-  bool authorized_required = 2;
+  bool authorization_required = 2;
   string data_scope = 3;
   bool authenticated = 4;
   string authorized = 5;

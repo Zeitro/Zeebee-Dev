@@ -104,3 +104,31 @@ func (repo *ApiRepo) GetApisWithTx(ctx context.Context, tx *gorm.DB, ids []int64
 		Find(&result).Error
 	return result, errorx.WithStack(err)
 }
+
+// GetAuthenticationWhitelist return authentication whitelist
+func (repo *ApiRepo) GetAuthenticationWhitelist(ctx context.Context, userType constants.UserType) (whitelist []*model.Api, err error) {
+	err = repo.Client(ctx).
+		Select("id", "type", "path", "method", "status", "auth_required").
+		Where("type = ? and auth_required = ?", userType, false).
+		Find(&whitelist).Error
+	return whitelist, errorx.WithStack(err)
+}
+
+// GetAuthorizationWhitelist return authorized whitelist
+func (repo *ApiRepo) GetAuthorizationWhitelist(ctx context.Context, userType constants.UserType) (whitelist []*model.Api, err error) {
+	err = repo.Client(ctx).
+		Select("id", "type", "path", "method", "status", "permission_required").
+		Where("type = ? and permission_required = ?", userType, false).
+		Find(&whitelist).Error
+	return whitelist, errorx.WithStack(err)
+}
+
+// GetAllApis
+func (repo *ApiRepo) GetAllApis(ctx context.Context, apiType constants.UserType, withPreload bool) (apis []*model.Api, err error) {
+	query := repo.Client(ctx).Where("type = ? and status = ?", apiType, constants.CommonStatusActive)
+	if withPreload {
+		query = query.Preload("Resources")
+	}
+	err = query.Find(&apis).Error
+	return apis, errorx.WithStack(err)
+}

@@ -29,22 +29,22 @@ type ResourceDetailRequest struct {
 }
 
 type ResourceEntity struct {
-	Id                 int64        `json:"id"`
-	ParentId           int64        `json:"parent_id"`
-	Type               string       `json:"type"`
-	ResourceType       string       `json:"resource_type"`
-	Name               string       `json:"name"`
-	Path               string       `json:"path"`
-	Icon               string       `json:"icon"`
-	Tag                string       `json:"tag"`
-	IsShow             bool         `json:"is_show"`
-	Status             string       `json:"status"`
-	SortOrder          int32        `json:"sort_order"`
-	EnableDataScope    bool         `json:"enable_data_scope"`
-	CreatedAt          string       `json:"created_at"`
-	UpdatedAt          string       `json:"updated_at"`
-	Apis               []*ApiEntity `json:"apis,omitempty"`
-	PivotRoleDataScope string       `json:"pivot_role_data_scope,omitempty"`
+	Id              int64        `json:"id"`
+	ParentId        int64        `json:"parent_id"`
+	Type            string       `json:"type"`
+	ResourceType    string       `json:"resource_type"`
+	Name            string       `json:"name"`
+	Path            string       `json:"path"`
+	Icon            string       `json:"icon"`
+	Tag             string       `json:"tag"`
+	IsShow          bool         `json:"is_show"`
+	Status          string       `json:"status"`
+	SortOrder       int32        `json:"sort_order"`
+	EnableDataScope bool         `json:"enable_data_scope"`
+	CreatedAt       string       `json:"created_at"`
+	UpdatedAt       string       `json:"updated_at"`
+	Apis            []*ApiEntity `json:"apis,omitempty"`
+	DataScope       string       `json:"data_scope,omitempty"`
 }
 
 type ResourceTreeRequest struct {
