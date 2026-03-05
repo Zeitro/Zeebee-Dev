@@ -5,13 +5,12 @@ import (
 
 	"github.com/jinzhu/copier"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type InfoLogic struct {
@@ -31,19 +30,7 @@ func NewInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *InfoLogic {
 
 func (l *InfoLogic) Info(req *types.EmptyRequest) (resp *types.UserInfoResponse, err error) {
 	resp = &types.UserInfoResponse{}
-	claim, err := utils.GetUserClaimFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-	userId := claim.UserId
-	if userId == 0 {
-		return nil, errorx.WithStack(errorx.New("User ID not found"))
-	}
-	userInfo, err := l.svcCtx.UserRpcClient.UserInfo(l.ctx, &borrower.UserInfoRequest{
-		Data: &borrower.UserInfoRequestData{
-			Id: userId,
-		},
-	})
+	userInfo, err := l.svcCtx.UserRpcClient.UserInfo(l.ctx, &borrower.EmptyRequest{})
 	if err != nil {
 		return nil, err
 	}

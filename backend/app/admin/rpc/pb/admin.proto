@@ -161,7 +161,7 @@ service User {
   // user
   rpc Login(UserLoginRequest) returns(UserLoginResponse);
   rpc RefreshToken(RefreshTokenRequest) returns(RefreshTokenResponse);
-  rpc UserInfo(UserInfoRequest) returns(UserinfoResponse);
+  rpc UserInfo(EmptyRequest) returns(UserinfoResponse);
   rpc ResetPassword(ResetPasswordRequest) returns(ResetPasswordResponse);
   rpc EditProfile(UserProfileEditRequest) returns(UserinfoResponse);
 }
@@ -1431,21 +1431,19 @@ message FileEntity {
 // ===================== file service end ======================
 
 // ===================== auth service start ======================
-
-
-message CheckAuthRequest {
-  CheckAuthRequestData data = 1;
+message AuthCheckRequest {
+  AuthCheckRequestData data = 1;
 }
 
-message CheckAuthRequestData {
+message AuthCheckRequestData {
   string method = 1;
   string path = 2;
   string type = 3;
 }
-message CheckAuthResponse {
-  CheckAuthResponseData data = 1;
+message AuthCheckResponse {
+  AuthCheckResponseData data = 1;
 }
-message CheckAuthResponseData {
+message AuthCheckResponseData {
   bool authentication_required = 1;
   bool authorization_required = 2;
   string data_scope = 3;
@@ -1454,7 +1452,7 @@ message CheckAuthResponseData {
 }
 
 service Auth {
-  rpc CheckAuth(CheckAuthRequest) returns (CheckAuthResponse);
+  rpc AuthCheck(AuthCheckRequest) returns (AuthCheckResponse);
 }
 
 // ========== auth service end ======================

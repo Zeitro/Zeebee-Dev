@@ -1,4 +1,4 @@
-package auth
+package authlogic
 
 import (
 	"context"
@@ -14,15 +14,15 @@ import (
 	"zeebee-backend/common/errorx"
 )
 
-type CheckAuthLogic struct {
+type AuthCheckLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 	baseLogic *logic.BaseLogic
 }
 
-func NewCheckAuthLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CheckAuthLogic {
-	return &CheckAuthLogic{
+func NewAuthCheckLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AuthCheckLogic {
+	return &AuthCheckLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
@@ -30,14 +30,14 @@ func NewCheckAuthLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CheckAu
 	}
 }
 
-func (l *CheckAuthLogic) CheckAuth(in *admin.CheckAuthRequest) (resp *admin.CheckAuthResponse, err error) {
+func (l *AuthCheckLogic) AuthCheck(in *admin.AuthCheckRequest) (resp *admin.AuthCheckResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
 
-	input, err := copierx.Trans[admin.CheckAuthRequestData, dto.AuthCheckRequestDto](in.Data)
+	input, err := copierx.Trans[admin.AuthCheckRequestData, dto.AuthCheckRequestDto](in.Data)
 	if err != nil {
 		return nil, err
 	}
@@ -45,12 +45,12 @@ func (l *CheckAuthLogic) CheckAuth(in *admin.CheckAuthRequest) (resp *admin.Chec
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[dto.AuthCheckResponseDto, admin.CheckAuthResponseData](result)
+	data, err := copierx.Trans[dto.AuthCheckResponseDto, admin.AuthCheckResponseData](result)
 	if err != nil {
 		return nil, err
 	}
 
-	return &admin.CheckAuthResponse{
+	return &admin.AuthCheckResponse{
 		Data: data,
 	}, nil
 }

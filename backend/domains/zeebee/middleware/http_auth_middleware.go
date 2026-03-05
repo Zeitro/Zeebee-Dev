@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"context"
 	"net/http"
 	"strings"
 
@@ -63,9 +64,11 @@ func (m *HttpAuthMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 		// get user info from header
 		token := r.Header.Get("Authorization")
 		token = strings.TrimPrefix(token, "Bearer ")
+		nextCtx := context.WithValue(reqCtx, utils.JwtTokenCtxKey, token)
+		nextCtx = metadata.AppendToOutgoingContext(nextCtx, utils.JwtTokenCtxKey, token)
 
-		rpcResp, err := m.authRpcClient.CheckAuth(reqCtx, &admin.CheckAuthRequest{
-			Data: &admin.CheckAuthRequestData{
+		rpcResp, err := m.authRpcClient.AuthCheck(nextCtx, &admin.AuthCheckRequest{
+			Data: &admin.AuthCheckRequestData{
 				Method: method,
 				Path:   routePattern,
 				Type:   string(m.userType),
@@ -94,26 +97,8 @@ func (m *HttpAuthMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		// if token == "" {
-		// 	response.Unauthorized(w, "Unauthorized")
-		// 	return
-		// }
-		// claims, err := utils.ParseToken(token, m.secretKey)
-		// if err != nil {
-		// 	response.Unauthorized(w, "Invalid token")
-		// 	return
-		// }
-		// if claims.UserType != m.userType {
-		// 	response.Unauthorized(w, "Invalid user type")
-		// 	return
-		// }
-
-		// nextCtx := context.WithValue(reqCtx, utils.UserClaimCtxKey, claims)
-		// nextCtx = context.WithValue(nextCtx, utils.UserIdCtxKey, claims.UserId)
-		// nextCtx = metadata.AppendToOutgoingContext(nextCtx, utils.JwtTokenCtxKey, token)
-
-		nextCtx := metadata.AppendToOutgoingContext(reqCtx, utils.JwtTokenCtxKey, token)
 		nextCtx = metadata.AppendToOutgoingContext(nextCtx, constants.DataScopeCtxKey, result.DataScope)
+
 		newReq := r.WithContext(nextCtx)
 
 		next(w, newReq)

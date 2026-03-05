@@ -10,15 +10,13 @@ import (
 	"github.com/xuri/excelize/v2"
 	"github.com/zeromicro/go-zero/core/logx"
 
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
-	"zeebee-backend/common/validator"
-	"zeebee-backend/domains/zeebee/constants"
-
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
+	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
+	"zeebee-backend/common/validator"
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 const (
@@ -95,14 +93,24 @@ func (l *ImportLogic) Import(fileContents []byte, stage string) (resp *types.Imp
 		recordCount int64
 	)
 	// get borrower id
-	claim, err := utils.GetUserClaimFromCtx(l.ctx)
+	// claim, err := utils.GetUserClaimFromCtx(l.ctx)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	userUserRpcRsp, err := l.svcCtx.UserRpcClient.UserInfo(l.ctx, &borrower.EmptyRequest{})
 	if err != nil {
 		return nil, err
 	}
+	if userUserRpcRsp.Data == nil {
+		return nil, errorx.New("Invalid user")
+	}
+	userId := userUserRpcRsp.Data.Id
+	organizationId := userUserRpcRsp.Data.OrganizationId
 
 	switch constants.LoanStage(stage) {
 	case constants.LoanStagePending:
-		recordCount, err = l.importPendingLoans(fileContents, claim.UserId, claim.OrganizationId)
+		recordCount, err = l.importPendingLoans(fileContents, userId, organizationId)
 	case constants.LoanStageActive:
 		// todo import active loans
 		fallthrough

@@ -29,6 +29,10 @@ type (
 	ApiTreeResponse                            = admin.ApiTreeResponse
 	ApiUpdateRequest                           = admin.ApiUpdateRequest
 	ApiUpdateRequestData                       = admin.ApiUpdateRequestData
+	AuthCheckRequest                           = admin.AuthCheckRequest
+	AuthCheckRequestData                       = admin.AuthCheckRequestData
+	AuthCheckResponse                          = admin.AuthCheckResponse
+	AuthCheckResponseData                      = admin.AuthCheckResponseData
 	BaseTemplateEntity                         = admin.BaseTemplateEntity
 	BaseTemplatePageEntity                     = admin.BaseTemplatePageEntity
 	BaseTemplatePageRequest                    = admin.BaseTemplatePageRequest
@@ -43,10 +47,6 @@ type (
 	BaseTemplatePreviewResponseData            = admin.BaseTemplatePreviewResponseData
 	BorrowerEntityEntity                       = admin.BorrowerEntityEntity
 	BorrowerPropertyEntity                     = admin.BorrowerPropertyEntity
-	CheckAuthRequest                           = admin.CheckAuthRequest
-	CheckAuthRequestData                       = admin.CheckAuthRequestData
-	CheckAuthResponse                          = admin.CheckAuthResponse
-	CheckAuthResponseData                      = admin.CheckAuthResponseData
 	CreateBaseTemplateRequest                  = admin.CreateBaseTemplateRequest
 	CreateBaseTemplateRequestData              = admin.CreateBaseTemplateRequestData
 	CreateBaseTemplateResponse                 = admin.CreateBaseTemplateResponse

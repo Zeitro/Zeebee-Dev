@@ -192,13 +192,13 @@ message ResetPasswordResponseData {
 }
 
 // userinfo
-message UserInfoRequest {
-  UserInfoRequestData data = 1;
-}
-
-message UserInfoRequestData {
-  int64 id = 1;
-}
+//message UserInfoRequest {
+//  UserInfoRequestData data = 1;
+//}
+//
+//message UserInfoRequestData {
+//  int64 id = 1;
+//}
 
 message UserinfoResponse {
   UserinfoResponseData data = 1;
@@ -231,7 +231,7 @@ message SwitchOrganizationRequest {
   SwitchOrganizationRequestData data = 1;
 }
 message SwitchOrganizationRequestData {
-  int64 user_id = 1;
+  //  int64 user_id = 1;
   int64 organization_id = 2;
 }
 
@@ -260,7 +260,7 @@ service user {
   rpc Login(UserLoginRequest) returns(UserLoginResponse);
   rpc Register(UserRegisterRequest) returns(UserRegisterResponse);
   rpc RefreshToken(RefreshTokenRequest) returns(RefreshTokenResponse);
-  rpc UserInfo(UserInfoRequest) returns(UserinfoResponse);
+  rpc UserInfo(EmptyRequest) returns(UserinfoResponse);
   rpc VerifyEmail(VerifyEmailRequest) returns(VerifyEmailResponse);
   rpc SendVerifyEmail(SendVerifyEmailRequest) returns(SendVerifyEmailResponse);
   rpc ResetPassword(ResetPasswordRequest) returns(ResetPasswordResponse);

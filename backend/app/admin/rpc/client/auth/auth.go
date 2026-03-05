@@ -29,6 +29,10 @@ type (
 	ApiTreeResponse                            = admin.ApiTreeResponse
 	ApiUpdateRequest                           = admin.ApiUpdateRequest
 	ApiUpdateRequestData                       = admin.ApiUpdateRequestData
+	AuthCheckRequest                           = admin.AuthCheckRequest
+	AuthCheckRequestData                       = admin.AuthCheckRequestData
+	AuthCheckResponse                          = admin.AuthCheckResponse
+	AuthCheckResponseData                      = admin.AuthCheckResponseData
 	BaseTemplateEntity                         = admin.BaseTemplateEntity
 	BaseTemplatePageEntity                     = admin.BaseTemplatePageEntity
 	BaseTemplatePageRequest                    = admin.BaseTemplatePageRequest
@@ -43,10 +47,6 @@ type (
 	BaseTemplatePreviewResponseData            = admin.BaseTemplatePreviewResponseData
 	BorrowerEntityEntity                       = admin.BorrowerEntityEntity
 	BorrowerPropertyEntity                     = admin.BorrowerPropertyEntity
-	CheckAuthRequest                           = admin.CheckAuthRequest
-	CheckAuthRequestData                       = admin.CheckAuthRequestData
-	CheckAuthResponse                          = admin.CheckAuthResponse
-	CheckAuthResponseData                      = admin.CheckAuthResponseData
 	CreateBaseTemplateRequest                  = admin.CreateBaseTemplateRequest
 	CreateBaseTemplateRequestData              = admin.CreateBaseTemplateRequestData
 	CreateBaseTemplateResponse                 = admin.CreateBaseTemplateResponse
@@ -205,7 +205,7 @@ type (
 	UserinfoResponseData_Organization          = admin.UserinfoResponseData_Organization
 
 	Auth interface {
-		CheckAuth(ctx context.Context, in *CheckAuthRequest, opts ...grpc.CallOption) (*CheckAuthResponse, error)
+		AuthCheck(ctx context.Context, in *AuthCheckRequest, opts ...grpc.CallOption) (*AuthCheckResponse, error)
 	}
 
 	defaultAuth struct {
@@ -219,7 +219,7 @@ func NewAuth(cli zrpc.Client) Auth {
 	}
 }
 
-func (m *defaultAuth) CheckAuth(ctx context.Context, in *CheckAuthRequest, opts ...grpc.CallOption) (*CheckAuthResponse, error) {
+func (m *defaultAuth) AuthCheck(ctx context.Context, in *AuthCheckRequest, opts ...grpc.CallOption) (*AuthCheckResponse, error) {
 	client := admin.NewAuthClient(m.cli.Conn())
-	return client.CheckAuth(ctx, in, opts...)
+	return client.AuthCheck(ctx, in, opts...)
 }

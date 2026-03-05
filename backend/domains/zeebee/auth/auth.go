@@ -64,6 +64,8 @@ func (l *Auth) AuthCheck(ctx context.Context, input dto.AuthCheckRequestDto) (re
 
 	// Check authentication status and requirements
 	ok, isRequired := l.CheckAuthentication(ctx, input)
+	result.Authenticated = ok
+	result.AuthenticationRequired = isRequired
 	if !isRequired {
 		// If authentication is not required, skip authorization
 		result.AuthenticationRequired = false
@@ -379,6 +381,9 @@ func (l *Auth) loadRoles(ctx context.Context, organizationUserId int64, organiza
 		}
 		return AuthRole{RoleId: item.Id, IsAdmin: item.Name == constants.AdminRoleName}, true
 	})
+	if len(roles) == 0 {
+		return []AuthRole{}, nil
+	}
 
 	rolesContent, err := json.Marshal(roles)
 	if err != nil {

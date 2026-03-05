@@ -277,8 +277,6 @@ type (
 	ThirdPartyLoanPropertyEditEntity                 = borrower.ThirdPartyLoanPropertyEditEntity
 	UsCitiesRequest                                  = borrower.UsCitiesRequest
 	UsCitiesRequestData                              = borrower.UsCitiesRequestData
-	UserInfoRequest                                  = borrower.UserInfoRequest
-	UserInfoRequestData                              = borrower.UserInfoRequestData
 	UserLoginRequest                                 = borrower.UserLoginRequest
 	UserLoginRequestData                             = borrower.UserLoginRequestData
 	UserLoginResponse                                = borrower.UserLoginResponse

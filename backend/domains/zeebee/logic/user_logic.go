@@ -560,16 +560,16 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 		if innerErr != nil {
 			return innerErr
 		}
-		eg, _ := errgroup.WithContext(ctx)
+		eg, egCtx := errgroup.WithContext(ctx)
 		// Sync organization template
 		eg.Go(func() error {
 			organizationTemplateLogic := NewOrganizationTemplateLogic(l.repos)
-			return organizationTemplateLogic.SyncByOrganizationIdWithTx(ctx, tx, organization)
+			return organizationTemplateLogic.SyncByOrganizationIdWithTx(egCtx, tx, organization)
 		})
 		// Init lender organization setting
 		eg.Go(func() error {
 			organizationSettingLogic := NewOrganizationSettingLogic(l.repos)
-			return organizationSettingLogic.InitLenderOrganizationSettingWithTx(ctx, tx, organization)
+			return organizationSettingLogic.InitLenderOrganizationSettingWithTx(egCtx, tx, organization)
 		})
 		innerErr = eg.Wait()
 		return errorx.WithStack(innerErr)

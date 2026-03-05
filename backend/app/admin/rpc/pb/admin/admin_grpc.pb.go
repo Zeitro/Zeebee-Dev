@@ -33,7 +33,7 @@ type UserClient interface {
 	// user
 	Login(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserLoginResponse, error)
 	RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
-	UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
+	UserInfo(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
 	ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*ResetPasswordResponse, error)
 	EditProfile(ctx context.Context, in *UserProfileEditRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
 }
@@ -66,7 +66,7 @@ func (c *userClient) RefreshToken(ctx context.Context, in *RefreshTokenRequest, 
 	return out, nil
 }
 
-func (c *userClient) UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error) {
+func (c *userClient) UserInfo(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*UserinfoResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UserinfoResponse)
 	err := c.cc.Invoke(ctx, User_UserInfo_FullMethodName, in, out, cOpts...)
@@ -103,7 +103,7 @@ type UserServer interface {
 	// user
 	Login(context.Context, *UserLoginRequest) (*UserLoginResponse, error)
 	RefreshToken(context.Context, *RefreshTokenRequest) (*RefreshTokenResponse, error)
-	UserInfo(context.Context, *UserInfoRequest) (*UserinfoResponse, error)
+	UserInfo(context.Context, *EmptyRequest) (*UserinfoResponse, error)
 	ResetPassword(context.Context, *ResetPasswordRequest) (*ResetPasswordResponse, error)
 	EditProfile(context.Context, *UserProfileEditRequest) (*UserinfoResponse, error)
 	mustEmbedUnimplementedUserServer()
@@ -122,7 +122,7 @@ func (UnimplementedUserServer) Login(context.Context, *UserLoginRequest) (*UserL
 func (UnimplementedUserServer) RefreshToken(context.Context, *RefreshTokenRequest) (*RefreshTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RefreshToken not implemented")
 }
-func (UnimplementedUserServer) UserInfo(context.Context, *UserInfoRequest) (*UserinfoResponse, error) {
+func (UnimplementedUserServer) UserInfo(context.Context, *EmptyRequest) (*UserinfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserInfo not implemented")
 }
 func (UnimplementedUserServer) ResetPassword(context.Context, *ResetPasswordRequest) (*ResetPasswordResponse, error) {
@@ -189,7 +189,7 @@ func _User_RefreshToken_Handler(srv interface{}, ctx context.Context, dec func(i
 }
 
 func _User_UserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserInfoRequest)
+	in := new(EmptyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -201,7 +201,7 @@ func _User_UserInfo_Handler(srv interface{}, ctx context.Context, dec func(inter
 		FullMethod: User_UserInfo_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServer).UserInfo(ctx, req.(*UserInfoRequest))
+		return srv.(UserServer).UserInfo(ctx, req.(*EmptyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2599,14 +2599,14 @@ var Loan_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	Auth_CheckAuth_FullMethodName = "/admin.Auth/CheckAuth"
+	Auth_AuthCheck_FullMethodName = "/admin.Auth/AuthCheck"
 )
 
 // AuthClient is the client API for Auth service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthClient interface {
-	CheckAuth(ctx context.Context, in *CheckAuthRequest, opts ...grpc.CallOption) (*CheckAuthResponse, error)
+	AuthCheck(ctx context.Context, in *AuthCheckRequest, opts ...grpc.CallOption) (*AuthCheckResponse, error)
 }
 
 type authClient struct {
@@ -2617,10 +2617,10 @@ func NewAuthClient(cc grpc.ClientConnInterface) AuthClient {
 	return &authClient{cc}
 }
 
-func (c *authClient) CheckAuth(ctx context.Context, in *CheckAuthRequest, opts ...grpc.CallOption) (*CheckAuthResponse, error) {
+func (c *authClient) AuthCheck(ctx context.Context, in *AuthCheckRequest, opts ...grpc.CallOption) (*AuthCheckResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CheckAuthResponse)
-	err := c.cc.Invoke(ctx, Auth_CheckAuth_FullMethodName, in, out, cOpts...)
+	out := new(AuthCheckResponse)
+	err := c.cc.Invoke(ctx, Auth_AuthCheck_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2631,7 +2631,7 @@ func (c *authClient) CheckAuth(ctx context.Context, in *CheckAuthRequest, opts .
 // All implementations must embed UnimplementedAuthServer
 // for forward compatibility.
 type AuthServer interface {
-	CheckAuth(context.Context, *CheckAuthRequest) (*CheckAuthResponse, error)
+	AuthCheck(context.Context, *AuthCheckRequest) (*AuthCheckResponse, error)
 	mustEmbedUnimplementedAuthServer()
 }
 
@@ -2642,8 +2642,8 @@ type AuthServer interface {
 // pointer dereference when methods are called.
 type UnimplementedAuthServer struct{}
 
-func (UnimplementedAuthServer) CheckAuth(context.Context, *CheckAuthRequest) (*CheckAuthResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CheckAuth not implemented")
+func (UnimplementedAuthServer) AuthCheck(context.Context, *AuthCheckRequest) (*AuthCheckResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AuthCheck not implemented")
 }
 func (UnimplementedAuthServer) mustEmbedUnimplementedAuthServer() {}
 func (UnimplementedAuthServer) testEmbeddedByValue()              {}
@@ -2666,20 +2666,20 @@ func RegisterAuthServer(s grpc.ServiceRegistrar, srv AuthServer) {
 	s.RegisterService(&Auth_ServiceDesc, srv)
 }
 
-func _Auth_CheckAuth_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CheckAuthRequest)
+func _Auth_AuthCheck_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AuthCheckRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServer).CheckAuth(ctx, in)
+		return srv.(AuthServer).AuthCheck(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Auth_CheckAuth_FullMethodName,
+		FullMethod: Auth_AuthCheck_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServer).CheckAuth(ctx, req.(*CheckAuthRequest))
+		return srv.(AuthServer).AuthCheck(ctx, req.(*AuthCheckRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2692,8 +2692,8 @@ var Auth_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*AuthServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CheckAuth",
-			Handler:    _Auth_CheckAuth_Handler,
+			MethodName: "AuthCheck",
+			Handler:    _Auth_AuthCheck_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

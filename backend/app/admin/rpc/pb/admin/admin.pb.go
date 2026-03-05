@@ -12773,27 +12773,28 @@ func (x *FileEntity) GetUpdatedAt() string {
 	return ""
 }
 
-type CheckAuthRequest struct {
+// ===================== auth service start ======================
+type AuthCheckRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          *CheckAuthRequestData  `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	Data          *AuthCheckRequestData  `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *CheckAuthRequest) Reset() {
-	*x = CheckAuthRequest{}
+func (x *AuthCheckRequest) Reset() {
+	*x = AuthCheckRequest{}
 	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[184]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *CheckAuthRequest) String() string {
+func (x *AuthCheckRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CheckAuthRequest) ProtoMessage() {}
+func (*AuthCheckRequest) ProtoMessage() {}
 
-func (x *CheckAuthRequest) ProtoReflect() protoreflect.Message {
+func (x *AuthCheckRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[184]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -12805,19 +12806,19 @@ func (x *CheckAuthRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CheckAuthRequest.ProtoReflect.Descriptor instead.
-func (*CheckAuthRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use AuthCheckRequest.ProtoReflect.Descriptor instead.
+func (*AuthCheckRequest) Descriptor() ([]byte, []int) {
 	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{184}
 }
 
-func (x *CheckAuthRequest) GetData() *CheckAuthRequestData {
+func (x *AuthCheckRequest) GetData() *AuthCheckRequestData {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type CheckAuthRequestData struct {
+type AuthCheckRequestData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Method        string                 `protobuf:"bytes,1,opt,name=method,proto3" json:"method,omitempty"`
 	Path          string                 `protobuf:"bytes,2,opt,name=path,proto3" json:"path,omitempty"`
@@ -12826,20 +12827,20 @@ type CheckAuthRequestData struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *CheckAuthRequestData) Reset() {
-	*x = CheckAuthRequestData{}
+func (x *AuthCheckRequestData) Reset() {
+	*x = AuthCheckRequestData{}
 	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[185]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *CheckAuthRequestData) String() string {
+func (x *AuthCheckRequestData) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CheckAuthRequestData) ProtoMessage() {}
+func (*AuthCheckRequestData) ProtoMessage() {}
 
-func (x *CheckAuthRequestData) ProtoReflect() protoreflect.Message {
+func (x *AuthCheckRequestData) ProtoReflect() protoreflect.Message {
 	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[185]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -12851,53 +12852,53 @@ func (x *CheckAuthRequestData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CheckAuthRequestData.ProtoReflect.Descriptor instead.
-func (*CheckAuthRequestData) Descriptor() ([]byte, []int) {
+// Deprecated: Use AuthCheckRequestData.ProtoReflect.Descriptor instead.
+func (*AuthCheckRequestData) Descriptor() ([]byte, []int) {
 	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{185}
 }
 
-func (x *CheckAuthRequestData) GetMethod() string {
+func (x *AuthCheckRequestData) GetMethod() string {
 	if x != nil {
 		return x.Method
 	}
 	return ""
 }
 
-func (x *CheckAuthRequestData) GetPath() string {
+func (x *AuthCheckRequestData) GetPath() string {
 	if x != nil {
 		return x.Path
 	}
 	return ""
 }
 
-func (x *CheckAuthRequestData) GetType() string {
+func (x *AuthCheckRequestData) GetType() string {
 	if x != nil {
 		return x.Type
 	}
 	return ""
 }
 
-type CheckAuthResponse struct {
+type AuthCheckResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          *CheckAuthResponseData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	Data          *AuthCheckResponseData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *CheckAuthResponse) Reset() {
-	*x = CheckAuthResponse{}
+func (x *AuthCheckResponse) Reset() {
+	*x = AuthCheckResponse{}
 	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[186]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *CheckAuthResponse) String() string {
+func (x *AuthCheckResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CheckAuthResponse) ProtoMessage() {}
+func (*AuthCheckResponse) ProtoMessage() {}
 
-func (x *CheckAuthResponse) ProtoReflect() protoreflect.Message {
+func (x *AuthCheckResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[186]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -12909,19 +12910,19 @@ func (x *CheckAuthResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CheckAuthResponse.ProtoReflect.Descriptor instead.
-func (*CheckAuthResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use AuthCheckResponse.ProtoReflect.Descriptor instead.
+func (*AuthCheckResponse) Descriptor() ([]byte, []int) {
 	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{186}
 }
 
-func (x *CheckAuthResponse) GetData() *CheckAuthResponseData {
+func (x *AuthCheckResponse) GetData() *AuthCheckResponseData {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type CheckAuthResponseData struct {
+type AuthCheckResponseData struct {
 	state                  protoimpl.MessageState `protogen:"open.v1"`
 	AuthenticationRequired bool                   `protobuf:"varint,1,opt,name=authentication_required,json=authenticationRequired,proto3" json:"authentication_required,omitempty"`
 	AuthorizationRequired  bool                   `protobuf:"varint,2,opt,name=authorization_required,json=authorizationRequired,proto3" json:"authorization_required,omitempty"`
@@ -12932,20 +12933,20 @@ type CheckAuthResponseData struct {
 	sizeCache              protoimpl.SizeCache
 }
 
-func (x *CheckAuthResponseData) Reset() {
-	*x = CheckAuthResponseData{}
+func (x *AuthCheckResponseData) Reset() {
+	*x = AuthCheckResponseData{}
 	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[187]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *CheckAuthResponseData) String() string {
+func (x *AuthCheckResponseData) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CheckAuthResponseData) ProtoMessage() {}
+func (*AuthCheckResponseData) ProtoMessage() {}
 
-func (x *CheckAuthResponseData) ProtoReflect() protoreflect.Message {
+func (x *AuthCheckResponseData) ProtoReflect() protoreflect.Message {
 	mi := &file_app_admin_rpc_pb_admin_proto_msgTypes[187]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -12957,40 +12958,40 @@ func (x *CheckAuthResponseData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CheckAuthResponseData.ProtoReflect.Descriptor instead.
-func (*CheckAuthResponseData) Descriptor() ([]byte, []int) {
+// Deprecated: Use AuthCheckResponseData.ProtoReflect.Descriptor instead.
+func (*AuthCheckResponseData) Descriptor() ([]byte, []int) {
 	return file_app_admin_rpc_pb_admin_proto_rawDescGZIP(), []int{187}
 }
 
-func (x *CheckAuthResponseData) GetAuthenticationRequired() bool {
+func (x *AuthCheckResponseData) GetAuthenticationRequired() bool {
 	if x != nil {
 		return x.AuthenticationRequired
 	}
 	return false
 }
 
-func (x *CheckAuthResponseData) GetAuthorizationRequired() bool {
+func (x *AuthCheckResponseData) GetAuthorizationRequired() bool {
 	if x != nil {
 		return x.AuthorizationRequired
 	}
 	return false
 }
 
-func (x *CheckAuthResponseData) GetDataScope() string {
+func (x *AuthCheckResponseData) GetDataScope() string {
 	if x != nil {
 		return x.DataScope
 	}
 	return ""
 }
 
-func (x *CheckAuthResponseData) GetAuthenticated() bool {
+func (x *AuthCheckResponseData) GetAuthenticated() bool {
 	if x != nil {
 		return x.Authenticated
 	}
 	return false
 }
 
-func (x *CheckAuthResponseData) GetAuthorized() bool {
+func (x *AuthCheckResponseData) GetAuthorized() bool {
 	if x != nil {
 		return x.Authorized
 	}
@@ -14136,15 +14137,15 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"created_at\x18\x05 \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
 	"updated_at\x18\x06 \x01(\tR\tupdatedAt\"C\n" +
-	"\x10CheckAuthRequest\x12/\n" +
-	"\x04data\x18\x01 \x01(\v2\x1b.admin.CheckAuthRequestDataR\x04data\"V\n" +
-	"\x14CheckAuthRequestData\x12\x16\n" +
+	"\x10AuthCheckRequest\x12/\n" +
+	"\x04data\x18\x01 \x01(\v2\x1b.admin.AuthCheckRequestDataR\x04data\"V\n" +
+	"\x14AuthCheckRequestData\x12\x16\n" +
 	"\x06method\x18\x01 \x01(\tR\x06method\x12\x12\n" +
 	"\x04path\x18\x02 \x01(\tR\x04path\x12\x12\n" +
 	"\x04type\x18\x03 \x01(\tR\x04type\"E\n" +
-	"\x11CheckAuthResponse\x120\n" +
-	"\x04data\x18\x01 \x01(\v2\x1c.admin.CheckAuthResponseDataR\x04data\"\xec\x01\n" +
-	"\x15CheckAuthResponseData\x127\n" +
+	"\x11AuthCheckResponse\x120\n" +
+	"\x04data\x18\x01 \x01(\v2\x1c.admin.AuthCheckResponseDataR\x04data\"\xec\x01\n" +
+	"\x15AuthCheckResponseData\x127\n" +
 	"\x17authentication_required\x18\x01 \x01(\bR\x16authenticationRequired\x125\n" +
 	"\x16authorization_required\x18\x02 \x01(\bR\x15authorizationRequired\x12\x1d\n" +
 	"\n" +
@@ -14152,11 +14153,11 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\rauthenticated\x18\x04 \x01(\bR\rauthenticated\x12\x1e\n" +
 	"\n" +
 	"authorized\x18\x05 \x01(\bR\n" +
-	"authorized2\xdb\x02\n" +
+	"authorized2\xd8\x02\n" +
 	"\x04User\x12:\n" +
 	"\x05Login\x12\x17.admin.UserLoginRequest\x1a\x18.admin.UserLoginResponse\x12G\n" +
-	"\fRefreshToken\x12\x1a.admin.RefreshTokenRequest\x1a\x1b.admin.RefreshTokenResponse\x12;\n" +
-	"\bUserInfo\x12\x16.admin.UserInfoRequest\x1a\x17.admin.UserinfoResponse\x12J\n" +
+	"\fRefreshToken\x12\x1a.admin.RefreshTokenRequest\x1a\x1b.admin.RefreshTokenResponse\x128\n" +
+	"\bUserInfo\x12\x13.admin.EmptyRequest\x1a\x17.admin.UserinfoResponse\x12J\n" +
 	"\rResetPassword\x12\x1b.admin.ResetPasswordRequest\x1a\x1c.admin.ResetPasswordResponse\x12E\n" +
 	"\vEditProfile\x12\x1d.admin.UserProfileEditRequest\x1a\x17.admin.UserinfoResponse2\x80\x04\n" +
 	"\x10OrganizationUser\x12O\n" +
@@ -14217,7 +14218,7 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\fReassignLoan\x12\x1a.admin.ReassignLoanRequest\x1a\x14.admin.EmptyResponse\x12N\n" +
 	"\x13LoanLenderCompanies\x12\x13.admin.EmptyRequest\x1a\".admin.LoanLenderCompaniesResponse2F\n" +
 	"\x04Auth\x12>\n" +
-	"\tCheckAuth\x12\x17.admin.CheckAuthRequest\x1a\x18.admin.CheckAuthResponseB\tZ\a./adminb\x06proto3"
+	"\tAuthCheck\x12\x17.admin.AuthCheckRequest\x1a\x18.admin.AuthCheckResponseB\tZ\a./adminb\x06proto3"
 
 var (
 	file_app_admin_rpc_pb_admin_proto_rawDescOnce sync.Once
@@ -14417,10 +14418,10 @@ var file_app_admin_rpc_pb_admin_proto_goTypes = []any{
 	(*LoanBorrowerEntity)(nil),                         // 181: admin.LoanBorrowerEntity
 	(*LoanDocumentEntity)(nil),                         // 182: admin.LoanDocumentEntity
 	(*FileEntity)(nil),                                 // 183: admin.FileEntity
-	(*CheckAuthRequest)(nil),                           // 184: admin.CheckAuthRequest
-	(*CheckAuthRequestData)(nil),                       // 185: admin.CheckAuthRequestData
-	(*CheckAuthResponse)(nil),                          // 186: admin.CheckAuthResponse
-	(*CheckAuthResponseData)(nil),                      // 187: admin.CheckAuthResponseData
+	(*AuthCheckRequest)(nil),                           // 184: admin.AuthCheckRequest
+	(*AuthCheckRequestData)(nil),                       // 185: admin.AuthCheckRequestData
+	(*AuthCheckResponse)(nil),                          // 186: admin.AuthCheckResponse
+	(*AuthCheckResponseData)(nil),                      // 187: admin.AuthCheckResponseData
 	(*UserinfoResponseData_Organization)(nil),          // 188: admin.UserinfoResponseData.Organization
 	nil, // 189: admin.TemplateVariableEntity.PropertiesEntry
 }
@@ -14566,12 +14567,12 @@ var file_app_admin_rpc_pb_admin_proto_depIdxs = []int32{
 	4,   // 138: admin.BorrowerEntityEntity.mailing_address:type_name -> admin.AddressEntity
 	4,   // 139: admin.LoanBorrowerEntity.mailing_address:type_name -> admin.AddressEntity
 	183, // 140: admin.LoanDocumentEntity.files:type_name -> admin.FileEntity
-	185, // 141: admin.CheckAuthRequest.data:type_name -> admin.CheckAuthRequestData
-	187, // 142: admin.CheckAuthResponse.data:type_name -> admin.CheckAuthResponseData
+	185, // 141: admin.AuthCheckRequest.data:type_name -> admin.AuthCheckRequestData
+	187, // 142: admin.AuthCheckResponse.data:type_name -> admin.AuthCheckResponseData
 	132, // 143: admin.TemplateVariableEntity.PropertiesEntry.value:type_name -> admin.TemplateVariableEntity
 	9,   // 144: admin.User.Login:input_type -> admin.UserLoginRequest
 	13,  // 145: admin.User.RefreshToken:input_type -> admin.RefreshTokenRequest
-	21,  // 146: admin.User.UserInfo:input_type -> admin.UserInfoRequest
+	0,   // 146: admin.User.UserInfo:input_type -> admin.EmptyRequest
 	17,  // 147: admin.User.ResetPassword:input_type -> admin.ResetPasswordRequest
 	25,  // 148: admin.User.EditProfile:input_type -> admin.UserProfileEditRequest
 	29,  // 149: admin.OrganizationUser.Page:input_type -> admin.OrganizationUserPageRequest
@@ -14620,7 +14621,7 @@ var file_app_admin_rpc_pb_admin_proto_depIdxs = []int32{
 	3,   // 192: admin.Loan.LoanDetail:input_type -> admin.IdRequest
 	167, // 193: admin.Loan.ReassignLoan:input_type -> admin.ReassignLoanRequest
 	0,   // 194: admin.Loan.LoanLenderCompanies:input_type -> admin.EmptyRequest
-	184, // 195: admin.Auth.CheckAuth:input_type -> admin.CheckAuthRequest
+	184, // 195: admin.Auth.AuthCheck:input_type -> admin.AuthCheckRequest
 	11,  // 196: admin.User.Login:output_type -> admin.UserLoginResponse
 	15,  // 197: admin.User.RefreshToken:output_type -> admin.RefreshTokenResponse
 	23,  // 198: admin.User.UserInfo:output_type -> admin.UserinfoResponse
@@ -14672,7 +14673,7 @@ var file_app_admin_rpc_pb_admin_proto_depIdxs = []int32{
 	166, // 244: admin.Loan.LoanDetail:output_type -> admin.LoanDetailResponse
 	1,   // 245: admin.Loan.ReassignLoan:output_type -> admin.EmptyResponse
 	169, // 246: admin.Loan.LoanLenderCompanies:output_type -> admin.LoanLenderCompaniesResponse
-	186, // 247: admin.Auth.CheckAuth:output_type -> admin.CheckAuthResponse
+	186, // 247: admin.Auth.AuthCheck:output_type -> admin.AuthCheckResponse
 	196, // [196:248] is the sub-list for method output_type
 	144, // [144:196] is the sub-list for method input_type
 	144, // [144:144] is the sub-list for extension type_name

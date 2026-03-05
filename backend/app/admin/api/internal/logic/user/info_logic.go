@@ -9,8 +9,6 @@ import (
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
-	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
 )
 
 type InfoLogic struct {
@@ -31,20 +29,16 @@ func NewInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *InfoLogic {
 func (l *InfoLogic) Info(req *types.EmptyRequest) (resp *types.UserInfoResponse, err error) {
 	resp = &types.UserInfoResponse{}
 
-	claim, err := utils.GetUserClaimFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-	userId := claim.UserId
-	if userId == 0 {
-		return nil, errorx.WithStack(errorx.New("User Id Not Found"))
-	}
+	// claim, err := utils.GetUserClaimFromCtx(l.ctx)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// userId := claim.UserId
+	// if userId == 0 {
+	// 	return nil, errorx.WithStack(errorx.New("User Id Not Found"))
+	// }
 
-	rpcResp, err := l.svcCtx.UserRpcClient.UserInfo(l.ctx, &admin.UserInfoRequest{
-		Data: &admin.UserInfoRequestData{
-			Id: userId,
-		},
-	})
+	rpcResp, err := l.svcCtx.UserRpcClient.UserInfo(l.ctx, &admin.EmptyRequest{})
 	if err != nil {
 		return nil, err
 	}

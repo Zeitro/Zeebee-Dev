@@ -29,6 +29,10 @@ type (
 	ApiTreeResponse                            = admin.ApiTreeResponse
 	ApiUpdateRequest                           = admin.ApiUpdateRequest
 	ApiUpdateRequestData                       = admin.ApiUpdateRequestData
+	AuthCheckRequest                           = admin.AuthCheckRequest
+	AuthCheckRequestData                       = admin.AuthCheckRequestData
+	AuthCheckResponse                          = admin.AuthCheckResponse
+	AuthCheckResponseData                      = admin.AuthCheckResponseData
 	BaseTemplateEntity                         = admin.BaseTemplateEntity
 	BaseTemplatePageEntity                     = admin.BaseTemplatePageEntity
 	BaseTemplatePageRequest                    = admin.BaseTemplatePageRequest
@@ -43,10 +47,6 @@ type (
 	BaseTemplatePreviewResponseData            = admin.BaseTemplatePreviewResponseData
 	BorrowerEntityEntity                       = admin.BorrowerEntityEntity
 	BorrowerPropertyEntity                     = admin.BorrowerPropertyEntity
-	CheckAuthRequest                           = admin.CheckAuthRequest
-	CheckAuthRequestData                       = admin.CheckAuthRequestData
-	CheckAuthResponse                          = admin.CheckAuthResponse
-	CheckAuthResponseData                      = admin.CheckAuthResponseData
 	CreateBaseTemplateRequest                  = admin.CreateBaseTemplateRequest
 	CreateBaseTemplateRequestData              = admin.CreateBaseTemplateRequestData
 	CreateBaseTemplateResponse                 = admin.CreateBaseTemplateResponse
@@ -208,7 +208,7 @@ type (
 		// user
 		Login(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserLoginResponse, error)
 		RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
-		UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
+		UserInfo(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
 		ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*ResetPasswordResponse, error)
 		EditProfile(ctx context.Context, in *UserProfileEditRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
 	}
@@ -235,7 +235,7 @@ func (m *defaultUser) RefreshToken(ctx context.Context, in *RefreshTokenRequest,
 	return client.RefreshToken(ctx, in, opts...)
 }
 
-func (m *defaultUser) UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error) {
+func (m *defaultUser) UserInfo(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*UserinfoResponse, error) {
 	client := admin.NewUserClient(m.cli.Conn())
 	return client.UserInfo(ctx, in, opts...)
 }

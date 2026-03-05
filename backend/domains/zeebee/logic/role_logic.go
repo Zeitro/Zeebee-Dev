@@ -285,7 +285,9 @@ func (l *RoleLogic) Detail(ctx context.Context, id int64, organizationId int64, 
 		if err != nil {
 			return
 		}
-		item.DataScope = relation.DataScope
+		if relation != nil {
+			item.DataScope = relation.DataScope
+		}
 	})
 
 	return result, nil

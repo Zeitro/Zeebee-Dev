@@ -2,10 +2,10 @@ package auth
 
 import "zeebee-backend/domains/zeebee/constants"
 
-var routeFormat = "%s:%s"
-var organizationUserRoleFormat = "%s:organization:%d:organizationuser:%d:roles" // <type>:organization:<organizationId>:organizationuser:<organizationUserId>:roles
-var roleResourceFormat = "%d:%d"                                                // <roleId>:<resourceId>
-var organizationUserRoleExpireSeconds = 3600
+const routeFormat = "%s:%s"
+const organizationUserRoleFormat = "%s:organization:%d:organizationuser:%d:roles" // <type>:organization:<organizationId>:organizationuser:<organizationUserId>:roles
+const roleResourceFormat = "%d:%d"                                                // <roleId>:<resourceId>
+const organizationUserRoleExpireSeconds = 3600
 
 type AuthRole struct {
 	RoleId  int64 `json:"role_id"`

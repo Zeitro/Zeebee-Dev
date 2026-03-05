@@ -10,8 +10,6 @@ import (
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
-	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/utils"
 )
 
 type EditProfileLogic struct {
@@ -32,14 +30,14 @@ func NewEditProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *EditP
 func (l *EditProfileLogic) EditProfile(req *types.UserEditProfileRequest) (resp *types.UserInfoResponse, err error) {
 	resp = &types.UserInfoResponse{}
 
-	claim, err := utils.GetUserClaimFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-	userId := claim.UserId
-	if userId == 0 {
-		return nil, errorx.WithStack(errorx.New("User Id Not Found"))
-	}
+	// claim, err := utils.GetUserClaimFromCtx(l.ctx)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// userId := claim.UserId
+	// if userId == 0 {
+	// 	return nil, errorx.WithStack(errorx.New("User Id Not Found"))
+	// }
 
 	rpcReq := &admin.UserProfileEditRequest{
 		Data: &admin.UserProfileEditRequestData{

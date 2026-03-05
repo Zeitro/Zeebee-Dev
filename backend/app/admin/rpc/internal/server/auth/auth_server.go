@@ -23,7 +23,7 @@ func NewAuthServer(svcCtx *svc.ServiceContext) *AuthServer {
 	}
 }
 
-func (s *AuthServer) CheckAuth(ctx context.Context, in *admin.CheckAuthRequest) (*admin.CheckAuthResponse, error) {
-	l := authlogic.NewCheckAuthLogic(ctx, s.svcCtx)
-	return l.CheckAuth(in)
+func (s *AuthServer) AuthCheck(ctx context.Context, in *admin.AuthCheckRequest) (*admin.AuthCheckResponse, error) {
+	l := authlogic.NewAuthCheckLogic(ctx, s.svcCtx)
+	return l.AuthCheck(in)
 }
