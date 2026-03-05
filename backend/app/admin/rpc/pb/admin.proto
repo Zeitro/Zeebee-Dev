@@ -1432,7 +1432,12 @@ message FileEntity {
 
 // ===================== auth service start ======================
 
+
 message CheckAuthRequest {
+  CheckAuthRequestData data = 1;
+}
+
+message CheckAuthRequestData {
   string method = 1;
   string path = 2;
   string type = 3;
@@ -1445,10 +1450,10 @@ message CheckAuthResponseData {
   bool authorization_required = 2;
   string data_scope = 3;
   bool authenticated = 4;
-  string authorized = 5;
+  bool authorized = 5;
 }
 
-service AuthService {
+service Auth {
   rpc CheckAuth(CheckAuthRequest) returns (CheckAuthResponse);
 }
 

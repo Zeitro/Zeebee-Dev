@@ -251,6 +251,9 @@ func (l *RoleLogic) Update(ctx context.Context, id int64, input dto.RoleUpdateRe
 			removedPolicies = l.createRolePolicy(id, input.Type, removedRelations)
 		case constants.CommonStatusDisabled:
 			removedPolicies = l.createRolePolicy(id, input.Type, oldRelations)
+		default:
+			innerErr = errorx.Errorf("Invalid status: %v", input.Status)
+			return innerErr
 		}
 		innerErr = l.handleRolePolicies(addPolicies, removedPolicies)
 		if innerErr != nil {

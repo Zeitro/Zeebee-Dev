@@ -29,9 +29,10 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.ApiConf) *ServiceContext {
+	authRpcClient := admin.NewAuthClient(zrpc.MustNewClient(c.RpcConf).Conn())
 	return &ServiceContext{
 		Config:         c,
-		AuthMiddleware: middleware.NewHttpAuthMiddleware(c.JwtAuth.AccessSecret, constants.UserTypeAdmin).Handle,
+		AuthMiddleware: middleware.NewHttpAuthMiddleware(constants.UserTypeAdmin, authRpcClient).Handle,
 
 		// rpc client
 		UserRpcClient:             admin.NewUserClient(zrpc.MustNewClient(c.RpcConf).Conn()),

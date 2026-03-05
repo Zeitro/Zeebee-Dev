@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"gorm.io/gorm"
 
@@ -12,6 +13,24 @@ import (
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 )
+
+type RoleWithResource struct {
+	Id              int64                  `json:"id"`
+	CreatedAt       time.Time              `json:"created_at"`
+	UpdatedAt       time.Time              `json:"updated_at"`
+	Name            string                 `json:"name"`
+	Type            constants.UserType     `json:"type"`
+	Status          constants.CommonStatus `json:"status"`
+	OrganizationId  int64                  `json:"organization_id"`
+	ResourceId      int64                  `json:"resource_id"`
+	ResourceType    string                 `json:"resource_type"`
+	ResourceName    string                 `json:"resource_name"`
+	ResourceTag     string                 `json:"resource_tag"`
+	ResourcePath    string                 `json:"resource_path"`
+	ResourceStatus  constants.CommonStatus `json:"resource_status"`
+	EnableDataScope bool                   `json:"enable_data_scope"`
+	DataScope       constants.DataScope    `json:"data_scope"`
+}
 
 type RoleRepo struct {
 	*gormx.BaseRepo[*model.Role]
@@ -140,4 +159,39 @@ func (repo *RoleRepo) DeleteByIdWithTx(ctx context.Context, tx *gorm.DB, id int6
 	return errorx.WithStack(err)
 }
 
-// IsAdmin
+// GetOrganizationRoleWithResources
+func (repo *RoleRepo) GetOrganizationRoleWithResources(ctx context.Context, organizationId int64, roleType constants.UserType) (results []RoleWithResource, err error) {
+	roleTable := model.Role{}.TableName()
+	resourceTable := model.Resource{}.TableName()
+	relationTable := model.RoleAndResource{}.TableName()
+	fields := []string{
+		fmt.Sprintf("%s.id as id", roleTable),
+		fmt.Sprintf("%s.created_at as created_at", roleTable),
+		fmt.Sprintf("%s.updated_at as updated_at", roleTable),
+		fmt.Sprintf("%s.name as name", roleTable),
+		fmt.Sprintf("%s.type as type", roleTable),
+		fmt.Sprintf("%s.status as status", roleTable),
+		fmt.Sprintf("%s.organization_id as organization_id", roleTable),
+
+		fmt.Sprintf("%s.id as resource_id", resourceTable),
+		fmt.Sprintf("%s.name as resource_name", resourceTable),
+		fmt.Sprintf("%s.path as resource_path", resourceTable),
+		fmt.Sprintf("%s.status as resource_status", resourceTable),
+		fmt.Sprintf("%s.tag as resource_tag", resourceTable),
+		fmt.Sprintf("%s.type as resource_type", resourceTable),
+		fmt.Sprintf("%s.enable_data_scope as enable_data_scope", resourceTable),
+
+		fmt.Sprintf("%s.data_scope as data_scope", relationTable),
+	}
+
+	err = repo.Client(ctx).Select(fields).
+		Joins(fmt.Sprintf("left join %s on %s.id = %s.role_id", relationTable, roleTable, relationTable)).
+		Joins(fmt.Sprintf("left join %s on %s.resource_id = %s.id", resourceTable, relationTable, resourceTable)).
+		Where(
+			fmt.Sprintf("%s.organization_id = ? and %s.type = ? and %s.status = ? and %s.status = ?", roleTable, roleTable, roleTable, resourceTable),
+			organizationId, roleType, constants.CommonStatusActive, constants.OrganizationStatusActive).
+		Where(fmt.Sprintf("%s.is_del = 0 and %s.is_del = 0", roleTable, resourceTable)).
+		Scan(&results).Error
+
+	return results, errorx.WithStack(err)
+}

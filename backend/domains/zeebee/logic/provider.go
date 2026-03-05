@@ -5,6 +5,7 @@ import (
 	"zeebee-backend/common/rbac"
 	"zeebee-backend/common/redisx"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/repo"
 )
 
@@ -27,7 +28,7 @@ type AllLogics struct {
 func NewAllLogics(
 	repos *repo.AllRepos,
 	redisCli *redisx.Redisx,
-	jwtConfig JwtConfig,
+	jwtConfig dto.JwtConfig,
 	emailClient *email.Email,
 	currentEnforcer *rbac.Enforcer,
 	enforcerMap map[constants.UserType]*rbac.Enforcer,

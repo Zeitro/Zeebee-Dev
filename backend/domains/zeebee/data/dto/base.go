@@ -39,3 +39,10 @@ type RangeFloat64 struct {
 	Min float64 `json:"min"`
 	Max float64 `json:"max"`
 }
+
+type JwtConfig struct {
+	AccessSecret  string
+	AccessExpire  int64
+	RefreshSecret string
+	RefreshExpire int64
+}

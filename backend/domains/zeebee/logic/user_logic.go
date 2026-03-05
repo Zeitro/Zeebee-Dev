@@ -23,20 +23,20 @@ import (
 	"zeebee-backend/domains/zeebee/repo"
 )
 
-type JwtConfig struct {
-	AccessSecret  string
-	AccessExpire  int64
-	RefreshSecret string
-	RefreshExpire int64
-}
+// type JwtConfig struct {
+// 	AccessSecret  string
+// 	AccessExpire  int64
+// 	RefreshSecret string
+// 	RefreshExpire int64
+// }
 
 type UserLogic struct {
 	repos     *repo.AllRepos
 	redisCli  *redisx.Redisx
-	jwtConfig JwtConfig
+	jwtConfig dto.JwtConfig
 }
 
-func NewUserLogic(repos *repo.AllRepos, redisCli *redisx.Redisx, jwtConfig JwtConfig) *UserLogic {
+func NewUserLogic(repos *repo.AllRepos, redisCli *redisx.Redisx, jwtConfig dto.JwtConfig) *UserLogic {
 	return &UserLogic{
 		repos:     repos,
 		redisCli:  redisCli,

@@ -8,6 +8,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/logic"
 )
 
@@ -30,7 +31,7 @@ func GetBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 
 func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 	redisCli := global.GetRedis()
-	jwtConfig := logic.JwtConfig{
+	jwtConfig := dto.JwtConfig{
 		AccessSecret:  svcCtx.Config.JwtAuth.AccessSecret,
 		AccessExpire:  svcCtx.Config.JwtAuth.AccessExpire,
 		RefreshSecret: svcCtx.Config.JwtAuth.RefreshSecret,

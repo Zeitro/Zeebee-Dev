@@ -44,6 +44,7 @@ type (
 	BorrowerEntityEntity                       = admin.BorrowerEntityEntity
 	BorrowerPropertyEntity                     = admin.BorrowerPropertyEntity
 	CheckAuthRequest                           = admin.CheckAuthRequest
+	CheckAuthRequestData                       = admin.CheckAuthRequestData
 	CheckAuthResponse                          = admin.CheckAuthResponse
 	CheckAuthResponseData                      = admin.CheckAuthResponseData
 	CreateBaseTemplateRequest                  = admin.CreateBaseTemplateRequest

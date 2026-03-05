@@ -41,3 +41,10 @@ func (m *Map[K, V]) Clear() {
 	defer m.Unlock()
 	m.m = make(map[K]V)
 }
+
+// Size return size of map
+func (m *Map[K, V]) Size() int {
+	m.RLock()
+	defer m.RUnlock()
+	return len(m.m)
+}

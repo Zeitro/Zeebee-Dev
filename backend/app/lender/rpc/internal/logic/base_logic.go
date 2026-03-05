@@ -14,6 +14,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/logic"
 	"zeebee-backend/domains/zeebee/model"
 )
@@ -37,7 +38,7 @@ func GetBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 
 func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 	redisCli := global.GetRedis()
-	jwtConfig := logic.JwtConfig{
+	jwtConfig := dto.JwtConfig{
 		AccessSecret:  svcCtx.Config.JwtAuth.AccessSecret,
 		AccessExpire:  svcCtx.Config.JwtAuth.AccessExpire,
 		RefreshSecret: svcCtx.Config.JwtAuth.RefreshSecret,
