@@ -40,7 +40,7 @@ func NewAllLogics(config AllLogicConfig) *AllLogics {
 	baseLogic := NewBaseLogic(config.Repos, config.RedisCli)
 	return &AllLogics{
 		ApiLogic:                  NewApiLogic(baseLogic, config.AuthEventTopicMap),
-		ResourceLogic:             NewResourceLogic(baseLogic),
+		ResourceLogic:             NewResourceLogic(baseLogic, config.AuthEventTopicMap),
 		RoleLogic:                 NewRoleLogic(baseLogic, config.CurrentEnforcer),
 		UserLogic:                 NewUserLogic(baseLogic, config.RedisCli, config.JwtConfig),
 		OrganizationUserLogic:     NewOrganizationUserLogic(baseLogic, config.RedisCli, config.EmailClient),

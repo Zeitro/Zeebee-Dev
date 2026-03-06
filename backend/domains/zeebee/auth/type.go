@@ -3,6 +3,7 @@ package auth
 import (
 	"encoding/json"
 
+	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 )
 
@@ -38,22 +39,19 @@ const (
 type Scope string
 
 const (
-	ScopeGlobal       Scope = "Global"
-	ScopeOrganization Scope = "Organization"
+	ScopeGlobal           Scope = "Global"
+	ScopeOrganization     Scope = "Organization"
+	ScopeOrganizationUser Scope = "OrganizationUser"
 )
 
-// type AuthType string
-//
-// const (
-// 	AuthTypeAdmin    AuthType = "Admin"
-// 	AuthTypeBorrower AuthType = "Borrower"
-// 	AuthTypeLender   AuthType = "Lender"
-// )
-
 type Msg struct {
-	Action Action             `json:"action"`
-	Scope  Scope              `json:"scope"`
-	Type   constants.UserType `json:"type"`
+	Action             Action             `json:"action"`
+	Scope              Scope              `json:"scope"`
+	Type               constants.UserType `json:"type"`
+	OrganizationId     int64              `json:"organization_id"`
+	OrganizationUserId int64              `json:"organization_user_id"`
+	AddedPolicies      [][]string         `json:"added_policies"`
+	RemovedPolicies    [][]string         `json:"removed_policies"`
 }
 
 func (msg Msg) String() string {
@@ -64,5 +62,8 @@ func (msg Msg) String() string {
 func ParseMsg(msg string) (Msg, error) {
 	var m Msg
 	err := json.Unmarshal([]byte(msg), &m)
+	if err != nil {
+		return m, errorx.Wrap(err, "Failed to parse auth message")
+	}
 	return m, err
 }

@@ -74,11 +74,19 @@ func (l *Auth) subscribeEvent(ctx context.Context) {
 			return
 		}
 		subPub := l.redisCli.GetClient().Subscribe(ctx, l.eventTopic)
+	handleLoop:
 		for {
 			select {
 			case <-ctx.Done():
+				if subPub != nil {
+					_ = subPub.Close()
+				}
 				return
-			case msg := <-subPub.Channel():
+			case msg, ok := <-subPub.Channel():
+				if !ok {
+					break handleLoop
+				}
+
 				err := l.handleAuthMsg(ctx, msg)
 				if err != nil {
 					logx.WithContext(ctx).WithFields(
@@ -96,23 +104,50 @@ func (l *Auth) subscribeEvent(ctx context.Context) {
 
 // handleAuthMsg
 func (l *Auth) handleAuthMsg(ctx context.Context, msg *redis.Message) (err error) {
+	var eventMsg Msg
 	if msg == nil {
 		err = errorx.New("Auth message is nil")
 		return
 	}
-	eventMsg, err := ParseMsg(msg.Payload)
+	eventMsg, err = ParseMsg(msg.Payload)
 	if err != nil {
-		err = errorx.Wrap(err, "Auth message parse error")
-		return
+		return err
 	}
 	switch eventMsg.Action {
 	case ActionApiReload:
-		_, _ = l.LoadAuthenticationWhitelist(ctx, eventMsg.Type)
-		_, _ = l.LoadAuthorizationWhitelist(ctx, eventMsg.Type)
-		_, _ = l.LoadApiResourceIds(ctx, eventMsg.Type)
+		_, err = l.LoadAuthenticationWhitelist(ctx, eventMsg.Type)
+		if err != nil {
+			return
+		}
+		_, err = l.LoadAuthorizationWhitelist(ctx, eventMsg.Type)
+		if err != nil {
+			return
+		}
+		_, err = l.LoadApiResourceIds(ctx, eventMsg.Type)
+		if err != nil {
+			return
+		}
 	case ActionRoleReload:
+		// TODO: Implement role reload logic if needed
+		// Currently no action required for role reload events
 
 	case ActionResourceReload:
+		_, err = l.LoadApiResourceIds(ctx, eventMsg.Type)
+		if err != nil {
+			return
+		}
+		if len(eventMsg.AddedPolicies) > 0 {
+			err = l.enforcer.AddPolicies(eventMsg.AddedPolicies)
+			if err != nil {
+				return
+			}
+		}
+		if len(eventMsg.RemovedPolicies) > 0 {
+			err = l.enforcer.RemovePolicies(eventMsg.RemovedPolicies)
+			if err != nil {
+				return
+			}
+		}
 	}
 
 	return nil
@@ -343,7 +378,11 @@ func (l *Auth) LoadAuthenticationWhitelist(ctx context.Context, userType constan
 	if result == nil {
 		whitelist = []string{}
 	} else {
-		whitelist = result.([]string)
+		var ok bool
+		whitelist, ok = result.([]string)
+		if !ok {
+			return nil, errorx.New("invalid authentication whitelist")
+		}
 	}
 	l.authenticationWhitelistMap.Set(userType, whitelist)
 
@@ -371,7 +410,11 @@ func (l *Auth) LoadAuthorizationWhitelist(ctx context.Context, userType constant
 	if result == nil {
 		whitelist = []string{}
 	} else {
-		whitelist = result.([]string)
+		var ok bool
+		whitelist, ok = result.([]string)
+		if !ok {
+			return nil, errorx.New("invalid authorization whitelist")
+		}
 	}
 	l.authorizationWhitelistMap.Set(userType, whitelist)
 	return whitelist, nil

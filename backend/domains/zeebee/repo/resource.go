@@ -70,7 +70,8 @@ func (repo *ResourceRepo) GetResourceWithTx(ctx context.Context, tx *gorm.DB, id
 	if withPreload {
 		query = query.Preload("Apis", func(db *gorm.DB) *gorm.DB {
 			return db.Order("apis.sort_order asc")
-		})
+		}).
+			Preload("Roles")
 	}
 	err = query.First(&result).Error
 	return result, errorx.WithStack(err)
@@ -111,7 +112,8 @@ func (repo *ResourceRepo) DeleteResourceWithTx(ctx context.Context, tx *gorm.DB,
 	roleAndResourceTable := model.RoleAndResource{}.TableName()
 	err = tx.WithContext(ctx).
 		Table(roleAndResourceTable).
-		Where("resource_id = ?", resource.Id).Error
+		Where("resource_id = ?", resource.Id).
+		Delete(&model.RoleAndResource{}).Error
 	if err != nil {
 		return errorx.WithStack(err)
 	}
@@ -124,37 +126,6 @@ func (repo *ResourceRepo) DeleteResourceWithTx(ctx context.Context, tx *gorm.DB,
 	}
 
 	return nil
-
-	// err = repo.Transaction(ctx, func(tx *gorm.DB) error {
-	// 	var innerErr error
-	// 	// delete api relations
-	// 	apis := resource.Apis
-	// 	if len(apis) > 0 {
-	// 		innerErr = repo.RemoveApisWithTx(ctx, tx, resource, apis)
-	// 		if innerErr != nil {
-	// 			return innerErr
-	// 		}
-	// 	}
-	//
-	// 	// delete role relations
-	// 	roleAndResourceTable := model.RoleAndResource{}.TableName()
-	// 	innerErr = tx.WithContext(ctx).
-	// 		Table(roleAndResourceTable).
-	// 		Where("resource_id = ?", resource.Id).Error
-	// 	if innerErr != nil {
-	// 		return innerErr
-	// 	}
-	//
-	// 	// delete resource
-	// 	innerErr = tx.WithContext(ctx).
-	// 		Delete(resource).Error
-	// 	if innerErr != nil {
-	// 		return innerErr
-	// 	}
-	//
-	// 	return nil
-	// })
-	// return errorx.WithStack(err)
 }
 
 // RemoveApis remove apis with tx and return error if occurred

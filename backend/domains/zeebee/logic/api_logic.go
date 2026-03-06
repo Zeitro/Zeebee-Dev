@@ -5,6 +5,7 @@ import (
 
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/threading"
 	"gorm.io/gorm"
 
 	"zeebee-backend/common/copierx"
@@ -63,7 +64,7 @@ func (l *ApiLogic) CreateApi(ctx context.Context, input *dto.ApiCreateRequestDto
 		return nil, err
 	}
 
-	go func() {
+	threading.GoSafe(func() {
 		subCtx := context.WithoutCancel(ctx)
 		msg := auth.Msg{
 			Action: auth.ActionApiReload,
@@ -71,8 +72,7 @@ func (l *ApiLogic) CreateApi(ctx context.Context, input *dto.ApiCreateRequestDto
 			Type:   input.Type,
 		}
 		_ = l.BaseLogic.publishAuthEvent(subCtx, l.authTopicMap[input.Type], msg)
-
-	}()
+	})
 
 	return result, nil
 }
@@ -104,7 +104,8 @@ func (l *ApiLogic) UpdateApi(ctx context.Context, input *dto.ApiUpdateRequestDto
 		return nil, err
 	}
 	result, err = copierx.Trans[model.Api, dto.ApiEntityDto](apiModel)
-	go func() {
+	// publish auth event
+	threading.GoSafe(func() {
 		subCtx := context.WithoutCancel(ctx)
 		msg := auth.Msg{
 			Action: auth.ActionApiReload,
@@ -113,7 +114,7 @@ func (l *ApiLogic) UpdateApi(ctx context.Context, input *dto.ApiUpdateRequestDto
 		}
 		_ = l.BaseLogic.publishAuthEvent(subCtx, l.authTopicMap[input.Type], msg)
 
-	}()
+	})
 	return result, err
 }
 
@@ -136,8 +137,8 @@ func (l *ApiLogic) DeleteApi(ctx context.Context, id int64, apiType constants.Us
 	if err != nil {
 		return err
 	}
-
-	go func() {
+	// publish auth event
+	threading.GoSafe(func() {
 		subCtx := context.WithoutCancel(ctx)
 		msg := auth.Msg{
 			Action: auth.ActionApiReload,
@@ -146,7 +147,7 @@ func (l *ApiLogic) DeleteApi(ctx context.Context, id int64, apiType constants.Us
 		}
 		_ = l.BaseLogic.publishAuthEvent(subCtx, l.authTopicMap[apiType], msg)
 
-	}()
+	})
 	return
 }
 
@@ -178,14 +179,7 @@ func (l *ApiLogic) buildTree(apis []*model.Api, parentId int64) (results []*dto.
 		if item.ParentId != parentId {
 			return nil, false
 		}
-		tree := &dto.ApiEntityDto{}
-		err := copier.CopyWithOption(tree, item, copier.Option{
-			CaseSensitive: true,
-			Converters: []copier.TypeConverter{
-				copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
-				copierx.TimeToRFC3339Str(),
-			},
-		})
+		tree, err := copierx.Trans[model.Api, dto.ApiEntityDto](item, copierx.SqlTimePtrToStr(timex.LayoutUsStyle), copierx.TimeToRFC3339Str())
 		if err != nil {
 			return nil, false
 		}

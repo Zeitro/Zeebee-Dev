@@ -2,12 +2,15 @@ package logic
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/duke-git/lancet/v2/slice"
+	"github.com/zeromicro/go-zero/core/threading"
 	"gorm.io/gorm"
 
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/auth"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
@@ -16,12 +19,14 @@ import (
 // ResourceLogic provides resource business logic
 type ResourceLogic struct {
 	*BaseLogic
+	authTopicMap map[constants.UserType]string
 }
 
 // NewResourceLogic creates a new resource logic instance
-func NewResourceLogic(baseLogic *BaseLogic) *ResourceLogic {
+func NewResourceLogic(baseLogic *BaseLogic, authTopicMap map[constants.UserType]string) *ResourceLogic {
 	return &ResourceLogic{
-		BaseLogic: baseLogic,
+		BaseLogic:    baseLogic,
+		authTopicMap: authTopicMap,
 	}
 }
 
@@ -56,7 +61,8 @@ func (l *ResourceLogic) CreateResource(ctx context.Context, input *dto.ResourceC
 
 		// Get apis by ids
 		if len(input.ApiIds) > 0 {
-			apis, innerErr := l.repos.ApiRepo.GetApisWithTx(ctx, tx, input.ApiIds, input.Type)
+			var apis []*model.Api
+			apis, innerErr = l.repos.ApiRepo.GetApisWithTx(ctx, tx, input.ApiIds, input.Type)
 			if innerErr != nil {
 				return innerErr
 			}
@@ -70,6 +76,15 @@ func (l *ResourceLogic) CreateResource(ctx context.Context, input *dto.ResourceC
 	if err != nil {
 		return nil, err
 	}
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action: auth.ActionResourceReload,
+			Scope:  auth.ScopeGlobal,
+			Type:   input.Type,
+		}
+		_ = l.BaseLogic.publishAuthEvent(subCtx, l.authTopicMap[input.Type], msg)
+	})
 
 	result, err = copierx.Trans[model.Resource, dto.ResourceEntityDto](resourceModel)
 	return result, err
@@ -78,6 +93,8 @@ func (l *ResourceLogic) CreateResource(ctx context.Context, input *dto.ResourceC
 // UpdateResource updates an existing resource
 func (l *ResourceLogic) UpdateResource(ctx context.Context, input *dto.ResourceUpdateRequestDto) (result *dto.ResourceEntityDto, err error) {
 	var resourceModel *model.Resource
+	var oldRoles []*model.Role
+	var isStatusChanged bool
 
 	err = l.repos.ResourceRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
@@ -86,6 +103,8 @@ func (l *ResourceLogic) UpdateResource(ctx context.Context, input *dto.ResourceU
 		if innerErr != nil {
 			return innerErr
 		}
+		oldRoles = resourceModel.Roles
+		isStatusChanged = input.Status != resourceModel.Status
 
 		innerErr = copierx.Assign[dto.ResourceUpdateRequestDto, model.Resource](input, resourceModel)
 		if innerErr != nil {
@@ -135,14 +154,35 @@ func (l *ResourceLogic) UpdateResource(ctx context.Context, input *dto.ResourceU
 			return innerErr
 		}
 
-		// TODO: update user permissions
-
 		return nil
 	})
 
 	if err != nil {
 		return nil, err
 	}
+
+	threading.GoSafe(func() {
+		var removedPolicies [][]string
+		var addedPolicies [][]string
+		subCtx := context.WithoutCancel(ctx)
+
+		if isStatusChanged && input.Status == constants.CommonStatusDisabled {
+			removedPolicies = l.createResourcePolices(input.Id, input.Type, oldRoles)
+		}
+		if isStatusChanged && input.Status == constants.CommonStatusActive {
+			addedPolicies = l.createResourcePolices(input.Id, input.Type, oldRoles)
+		}
+
+		msg := auth.Msg{
+			Action:          auth.ActionResourceReload,
+			Scope:           auth.ScopeGlobal,
+			Type:            input.Type,
+			AddedPolicies:   addedPolicies,
+			RemovedPolicies: removedPolicies,
+		}
+
+		_ = l.BaseLogic.publishAuthEvent(subCtx, l.authTopicMap[input.Type], msg)
+	})
 
 	result, err = l.Detail(ctx, resourceModel.Id, resourceModel.Type)
 	return result, err
@@ -160,36 +200,53 @@ func (l *ResourceLogic) Detail(ctx context.Context, id int64, resourceType const
 
 // DeleteResource deletes resource and its children recursively
 func (l *ResourceLogic) DeleteResource(ctx context.Context, id int64, resourceType constants.UserType) (err error) {
+	var policies [][]string
 	err = l.repos.ResourceRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
-		innerErr = l.deleteResource(ctx, tx, id, resourceType)
+		policies, innerErr = l.deleteResource(ctx, tx, id, resourceType)
 		return innerErr
 	})
 	if err != nil {
 		return err
 	}
-	// TODO update user permissions
+
+	// update user permissions
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:          auth.ActionResourceReload,
+			Scope:           auth.ScopeGlobal,
+			Type:            resourceType,
+			RemovedPolicies: policies,
+		}
+
+		_ = l.BaseLogic.publishAuthEvent(subCtx, l.authTopicMap[resourceType], msg)
+	})
+
 	return nil
 }
 
 // deleteResource
-func (l *ResourceLogic) deleteResource(ctx context.Context, tx *gorm.DB, id int64, resourceType constants.UserType) (err error) {
+func (l *ResourceLogic) deleteResource(ctx context.Context, tx *gorm.DB, id int64, resourceType constants.UserType) (policies [][]string, err error) {
 	resource, err := l.repos.ResourceRepo.GetResourceWithTx(ctx, tx, id, resourceType, true)
 	if err != nil {
-		return err
+		return nil, err
 	}
+	policies = l.createResourcePolices(resource.Id, resourceType, resource.Roles)
+
 	children, err := l.repos.ResourceRepo.GetResourceByParentIdWithTx(ctx, tx, resource.Id, resourceType)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	for _, child := range children {
-		err = l.deleteResource(ctx, tx, child.Id, resourceType)
+		subPolices, err := l.deleteResource(ctx, tx, child.Id, resourceType)
 		if err != nil {
-			return err
+			return nil, err
 		}
+		policies = append(policies, subPolices...)
 	}
 	err = l.repos.ResourceRepo.DeleteResourceWithTx(ctx, tx, resource)
-	return err
+	return policies, err
 }
 
 func (l *ResourceLogic) buildTree(resources []*model.Resource, parentId int64) (results []*dto.ResourceTreeDto) {
@@ -208,4 +265,22 @@ func (l *ResourceLogic) buildTree(resources []*model.Resource, parentId int64) (
 		results[i].Children = l.buildTree(resources, result.Id)
 	}
 	return results
+}
+
+// createResourcePolices build resource policies
+func (l *ResourceLogic) createResourcePolices(resourceId int64, resourceType constants.UserType, roles []*model.Role) (polices [][]string) {
+	polices = slice.FilterMap(roles, func(index int, item *model.Role) ([]string, bool) {
+
+		if item == nil || item.Status != constants.CommonStatusActive {
+			return nil, false
+		}
+		return []string{
+			fmt.Sprintf("Role:%d", item.Id),
+			string(resourceType),
+			fmt.Sprintf("Resource:%d", resourceId),
+			"allow",
+		}, true
+	})
+
+	return
 }
