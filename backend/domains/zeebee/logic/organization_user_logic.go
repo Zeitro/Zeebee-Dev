@@ -10,15 +10,16 @@ import (
 	"github.com/duke-git/lancet/v2/strutil"
 	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/threading"
 	"gorm.io/gorm"
 
 	"zeebee-backend/common/copierx"
 	email2 "zeebee-backend/common/email"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
-	"zeebee-backend/common/redisx"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/utils"
+	"zeebee-backend/domains/zeebee/auth"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
@@ -28,16 +29,16 @@ import (
 // OrganizationUserLogic provides organization user business logic
 type OrganizationUserLogic struct {
 	*BaseLogic
-	redisCli    *redisx.Redisx
-	emailClient *email2.Email
+	authTopicMap map[constants.UserType]string
+	emailClient  *email2.Email
 }
 
 // NewOrganizationUserLogic creates a new organization user logic instance
-func NewOrganizationUserLogic(baseLogic *BaseLogic, redisCli *redisx.Redisx, emailClient *email2.Email) *OrganizationUserLogic {
+func NewOrganizationUserLogic(baseLogic *BaseLogic, emailClient *email2.Email, authTopicMap map[constants.UserType]string) *OrganizationUserLogic {
 	return &OrganizationUserLogic{
-		BaseLogic:   baseLogic,
-		redisCli:    redisCli,
-		emailClient: emailClient,
+		BaseLogic:    baseLogic,
+		authTopicMap: authTopicMap,
+		emailClient:  emailClient,
 	}
 }
 
@@ -161,6 +162,18 @@ func (l *OrganizationUserLogic) CreateAdminOrganizationUser(ctx context.Context,
 	if err != nil {
 		return nil, err
 	}
+
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:         auth.ActionRoleReload,
+			Scope:          auth.ScopeOrganizationUser,
+			Type:           organization.Type,
+			OrganizationId: input.OrganizationId,
+		}
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[organization.Type], msg)
+
+	})
 
 	result = l.transToBo(organizationUser)
 	return result, nil
@@ -388,18 +401,23 @@ func (l *OrganizationUserLogic) AcceptInvitation(ctx context.Context, input dto.
 		return user, err
 	}
 
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:         auth.ActionRoleReload,
+			Scope:          auth.ScopeOrganizationUser,
+			Type:           userModel.Type,
+			OrganizationId: input.OrganizationId,
+		}
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[userModel.Type], msg)
+
+	})
+
 	userPtr, err := copierx.Trans[model.User, dto.UserEntityDto](userModel, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return user, err
 	}
 
-	// err = copier.CopyWithOption(&user, userModel, copier.Option{
-	// 	DeepCopy:      true,
-	// 	CaseSensitive: true,
-	// 	Converters: []copier.TypeConverter{
-	// 		copierx.TimeToRFC3339Str(),
-	// 	},
-	// })
 	return *userPtr, nil
 }
 
@@ -462,7 +480,18 @@ func (l *OrganizationUserLogic) UpdateOrganizationUser(ctx context.Context, inpu
 	if err != nil {
 		return nil, err
 	}
-	// TODO update user's role cache
+
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:         auth.ActionRoleReload,
+			Scope:          auth.ScopeOrganizationUser,
+			Type:           organization.Type,
+			OrganizationId: input.OrganizationId,
+		}
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[organization.Type], msg)
+
+	})
 
 	organizationUser.User = user
 	result = l.transToBo(organizationUser)
@@ -620,7 +649,19 @@ func (l *OrganizationUserLogic) SwitchStatus(ctx context.Context, id int64, orga
 
 	err = l.repos.OrganizationUserRepo.UpdateOrganizationUserStatus(ctx, id, organizationId, status)
 
-	// TODO update user's permissions
+	// Reload organization user auth
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:         auth.ActionRoleReload,
+			Scope:          auth.ScopeOrganizationUser,
+			Type:           userType,
+			OrganizationId: organizationId,
+		}
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[userType], msg)
+
+	})
+
 	return err
 }
 
@@ -648,7 +689,19 @@ func (l *OrganizationUserLogic) AssignRoles(ctx context.Context, id int64, organ
 
 		return innerErr
 	})
-	// TODO update user's permissions
+
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:         auth.ActionRoleReload,
+			Scope:          auth.ScopeOrganizationUser,
+			Type:           userType,
+			OrganizationId: organizationId,
+		}
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[userType], msg)
+
+	})
+
 	return err
 }
 
@@ -671,7 +724,19 @@ func (l *OrganizationUserLogic) Delete(ctx context.Context, id int64, organizati
 		innerErr = l.repos.OrganizationUserRepo.DeleteOrganizationUserWithTx(ctx, tx, organizationUser)
 		return innerErr
 	})
-	// TODO delete user's permissions
+
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:         auth.ActionRoleReload,
+			Scope:          auth.ScopeOrganizationUser,
+			Type:           userType,
+			OrganizationId: organizationId,
+		}
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[userType], msg)
+
+	})
+
 	return err
 }
 

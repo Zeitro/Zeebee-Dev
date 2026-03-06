@@ -2,15 +2,23 @@ package auth
 
 import (
 	"encoding/json"
+	"time"
 
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 )
 
-const routeFormat = "%s:%s"
-const organizationUserRoleFormat = "%s:organization:%d:organizationuser:%d:roles" // <type>:organization:<organizationId>:organizationuser:<organizationUserId>:roles
-const roleResourceFormat = "%d:%d"                                                // <roleId>:<resourceId>
-const organizationUserRoleExpireSeconds = 3600
+const (
+	routeFormat                = "%s:%s"                                        // <method>:<path>
+	organizationUserRoleFormat = "%s:organization:%d:organizationuser:%d:roles" // <type>:organization:<organizationId>:organizationuser:<organizationUserId>:roles
+	roleResourceFormat         = "%d:%d"                                        // <roleId>:<resourceId>
+)
+
+const (
+	organizationUserRoleExpireSeconds = 3600
+	maxRetryTimes                     = 10
+	retryInterval                     = time.Second * 5
+)
 
 type AuthRole struct {
 	RoleId  int64 `json:"role_id"`

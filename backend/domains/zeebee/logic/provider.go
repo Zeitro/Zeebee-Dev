@@ -41,10 +41,10 @@ func NewAllLogics(config AllLogicConfig) *AllLogics {
 	return &AllLogics{
 		ApiLogic:                  NewApiLogic(baseLogic, config.AuthEventTopicMap),
 		ResourceLogic:             NewResourceLogic(baseLogic, config.AuthEventTopicMap),
-		RoleLogic:                 NewRoleLogic(baseLogic, config.CurrentEnforcer),
+		RoleLogic:                 NewRoleLogic(baseLogic, config.AuthEventTopicMap),
 		UserLogic:                 NewUserLogic(baseLogic, config.RedisCli, config.JwtConfig),
-		OrganizationUserLogic:     NewOrganizationUserLogic(baseLogic, config.RedisCli, config.EmailClient),
-		OrganizationLogic:         NewOrganizationLogic(baseLogic, config.EnforcerMap),
+		OrganizationUserLogic:     NewOrganizationUserLogic(baseLogic, config.EmailClient, config.AuthEventTopicMap),
+		OrganizationLogic:         NewOrganizationLogic(baseLogic, config.AuthEventTopicMap),
 		OrganizationEmailLogic:    NewOrganizationEmailLogic(baseLogic),
 		BaseTemplateLogic:         NewBaseTemplateLogic(baseLogic),
 		OrganizationTemplateLogic: NewOrganizationTemplateLogic(baseLogic),

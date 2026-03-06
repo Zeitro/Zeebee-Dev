@@ -68,11 +68,11 @@ func (l *Auth) subscribeEvent(ctx context.Context) {
 	if len(l.eventTopic) == 0 {
 		return
 	}
-	maxRetries := 10
+
 	retryCount := 0
 	for {
 		retryCount++
-		if retryCount > maxRetries {
+		if retryCount > maxRetryTimes {
 			return
 		}
 		if ctx.Err() != nil {
@@ -112,7 +112,7 @@ func (l *Auth) subscribeEvent(ctx context.Context) {
 			}
 		}
 		_ = subPub.Close()
-		time.Sleep(time.Second * 5)
+		time.Sleep(retryInterval)
 	}
 }
 
@@ -537,10 +537,12 @@ func (l *Auth) getOrganizationUserRoles(ctx context.Context, organizationUserId 
 
 // loadOrganizationUserRoles load roles from db
 func (l *Auth) loadOrganizationUserRoles(ctx context.Context, organizationUserId int64, organizationId int64, userType constants.UserType) (roles []AuthRole, err error) {
+	roles = []AuthRole{}
 	organizationUser, _ := l.repos.OrganizationUserRepo.GetOrganizationUserById(ctx, organizationUserId, organizationId)
-	if organizationUser == nil || organizationUser.Roles == nil {
-		return []AuthRole{}, nil
+	if organizationUser == nil || organizationUser.Status != constants.OrganizationUserStatusActive || len(organizationUser.Roles) == 0 {
+		goto saveCache
 	}
+
 	roles = slice.FilterMap(organizationUser.Roles, func(index int, item *model.Role) (AuthRole, bool) {
 		if item == nil {
 			return AuthRole{}, false
@@ -550,16 +552,15 @@ func (l *Auth) loadOrganizationUserRoles(ctx context.Context, organizationUserId
 		}
 		return AuthRole{RoleId: item.Id, IsAdmin: item.Name == constants.AdminRoleName}, true
 	})
-	if len(roles) == 0 {
-		return []AuthRole{}, nil
-	}
 
+saveCache:
+	key := stringx.Format(organizationUserRoleFormat, userType, organizationId, organizationUserId)
 	rolesContent, err := json.Marshal(roles)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
 	content := string(rolesContent)
-	key := stringx.Format(organizationUserRoleFormat, userType, organizationId, organizationUserId)
+
 	err = l.redisCli.SetExpire(ctx, key, content, organizationUserRoleExpireSeconds)
 
 	return roles, errorx.WithStack(err)
@@ -570,7 +571,7 @@ func (l *Auth) loadOrganizationRoles(ctx context.Context, organizationId int64, 
 	organizationUsers, _ := l.repos.OrganizationUserRepo.AllOrganizationUsers(ctx, organizationId)
 
 	slice.ForEach(organizationUsers, func(index int, organizationUser *model.OrganizationUser) {
-		if organizationUser == nil {
+		if organizationUser == nil || organizationUser.Status != constants.OrganizationUserStatusActive {
 			return
 		}
 		subRoles := slice.FilterMap(organizationUser.Roles, func(index int, role *model.Role) (AuthRole, bool) {
@@ -582,17 +583,16 @@ func (l *Auth) loadOrganizationRoles(ctx context.Context, organizationId int64, 
 			}
 			return AuthRole{RoleId: role.Id, IsAdmin: role.Name == constants.AdminRoleName}, true
 		})
-		if len(subRoles) == 0 {
-			return
-		}
+		key := stringx.Format(organizationUserRoleFormat, userType, organizationId, organizationUser.Id)
 		roles = append(roles, subRoles...)
-
-		rolesContent, err := json.Marshal(subRoles)
+		var rolesContent []byte
+		rolesContent, err = json.Marshal(subRoles)
 		if err != nil {
+			logx.WithContext(ctx).WithFields(logx.Field("stack", errorx.GetErrorStack(err))).Error(err)
 			return
 		}
 		content := string(rolesContent)
-		key := stringx.Format(organizationUserRoleFormat, userType, organizationId, organizationUser.Id)
+
 		_ = l.redisCli.SetExpire(ctx, key, content, organizationUserRoleExpireSeconds)
 	})
 
