@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Row, Col, Form, Select, Input, message } from 'antd';
 import { emailRegex, phoneRegex, validateRule, createRequest } from '@repo/shared-methods/utils';
-import { layoutCol, titleCol } from '@/enum/common';
+import { layoutCol, titleCol } from '@repo/shared-methods/enum';
 import { InputNameCombination, InputPhone, NewModal } from '@repo/shared-methods';
 import { useUserStore } from '@/store/user';
 const { TextArea } = Input;

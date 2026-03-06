@@ -6,13 +6,19 @@ const defaultSortOrder = {
 	// column: 'address',
 	sort: des,
 };
-const useContent = ({ getData = () => {}, api, method = 'POST' }) => {
+const useContent = ({
+	getData = () => {},
+	api,
+	method = 'POST',
+	hasPaginationRequest,
+	settingPagination = {},
+}) => {
 	const scrollRef = useRef();
 	const isGet = useRef(true);
 	const filterFieldRef = useRef();
 	const { request, cancel } = createRequest();
 	// 因为pagination、sorter改变后就要调用接口，useState是异步，导致getList访问的是旧值，所以用useRef。
-	const pagination = useRef(getPagination());
+	const pagination = useRef(getPagination(settingPagination));
 	const sorter = useRef(defaultSortOrder);
 	// 因为有的页面需要展示排序和total，useRef的pagination、sorter会报错，页面上渲染的数据必须是useState的数据，所以此处做备份展示
 	const [paramsData, setParamsData] = useState({
@@ -78,6 +84,18 @@ const useContent = ({ getData = () => {}, api, method = 'POST' }) => {
 	};
 
 	const onChange = (paginationObj, filters, { order, columnKey }) => {
+		// 不请求分页接口
+		if (!hasPaginationRequest) {
+			setParamsData((v) => {
+				if (paginationObj.current !== v.current) {
+					v.current = paginationObj.current;
+				} else {
+					v.current = 1;
+				}
+				return { ...v };
+			});
+			return;
+		}
 		const orderObj = {
 			[descend]: des,
 			[ascend]: asc,

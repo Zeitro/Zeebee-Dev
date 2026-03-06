@@ -41,6 +41,8 @@ export const BtnPopUpModal = ({
 	const [modal, contextHolder] = Modal.useModal();
 	const [open, setOpen] = useState('');
 	const handleClick = (e) => {
+		console.log('iiii');
+
 		if (isStopPropagation) e?.stopPropagation();
 		const isPass = predicate?.();
 		if (!isPass) return;

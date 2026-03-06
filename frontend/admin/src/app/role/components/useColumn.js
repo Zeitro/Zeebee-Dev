@@ -1,0 +1,296 @@
+import { BtnPopUpModal, DeleteBtn } from '@repo/shared-methods';
+import { userStatusColor } from '@repo/shared-methods/enum';
+import { message, Space } from 'antd';
+import { useState, useRef } from 'react';
+import ApiMainModal from './ApiMain';
+import ResourceMain from './ResourceMain';
+import { createRequest, eventBus } from '@repo/shared-methods/utils';
+const useColumn = ({ eventBusPrefix, api }) => {
+	const { request } = createRequest();
+	const tableFilterRef = useRef(null);
+	const [deleteLoading, setDeleteLoading] = useState(false);
+
+	const handleApiDelete = async (record) => {
+		try {
+			setDeleteLoading(true);
+			await request(`/api/${record?.id}`, {
+				method: 'DELETE',
+				body: {
+					type: record?.type,
+				},
+			});
+			message.open({
+				type: 'success',
+				content: 'Delete API successfully',
+			});
+			eventBus.emit(`${eventBusPrefix}${record?.type}`);
+			setDeleteLoading(false);
+		} catch (error) {
+			setDeleteLoading(false);
+			throw error;
+		}
+	};
+
+	const handleResourceDelete = async (record) => {
+		try {
+			setDeleteLoading(true);
+			await request(`/resource/${record?.id}`, {
+				method: 'DELETE',
+				body: {
+					type: record?.type,
+				},
+			});
+			message.open({
+				type: 'success',
+				content: 'Delete resource successfully',
+			});
+			eventBus.emit(`${eventBusPrefix}${record?.type}`);
+			setDeleteLoading(false);
+		} catch (error) {
+			setDeleteLoading(false);
+			throw error;
+		}
+	};
+
+	const apiColumns = [
+		{
+			title: 'Name',
+			dataIndex: 'name',
+			key: 'name',
+			width: 200,
+			ellipsis: true,
+		},
+		{
+			title: 'Method',
+			dataIndex: 'method',
+			key: 'method',
+			width: 80,
+			ellipsis: true,
+			render: (v) => v || '--',
+		},
+		{
+			title: 'Path',
+			dataIndex: 'path',
+			key: 'path',
+			width: 260,
+			ellipsis: true,
+			render: (v) => v || '--',
+		},
+		{
+			title: 'Status',
+			dataIndex: 'status',
+			key: 'status',
+			width: 120,
+			ellipsis: true,
+			render: (v) => (
+				<div
+					className={'text-xs/5 px-2 border rounded-sm w-max'}
+					style={{
+						borderColor: userStatusColor[v]?.border,
+						backgroundColor: userStatusColor[v]?.bg,
+						color: userStatusColor[v]?.color,
+					}}
+				>
+					{v}
+				</div>
+			),
+		},
+		{
+			title: 'Auth required',
+			dataIndex: 'auth_required',
+			key: 'auth_required',
+			width: 120,
+			ellipsis: true,
+			align: 'center',
+			render: (text) => (text ? 'Yes' : 'No'),
+		},
+		{
+			title: 'Permission required',
+			dataIndex: 'permission_required',
+			key: 'permission_required',
+			width: 160,
+			ellipsis: true,
+			align: 'center',
+			render: (text) => (text ? 'Yes' : 'No'),
+		},
+		{
+			title: 'Description',
+			dataIndex: 'description',
+			key: 'description',
+			width: 200,
+			ellipsis: true,
+			render: (v) => v || '--',
+		},
+		{
+			title: 'Action',
+			dataIndex: 'operation',
+			width: 140,
+			align: 'left',
+			fixed: 'right',
+			render: (_, record) => {
+				return (
+					<Space>
+						<BtnPopUpModal
+							getContent={(setOpen) => (
+								<ApiMainModal
+									setOpen={setOpen}
+									handleSearch={() => tableFilterRef?.current?.handleSearch()}
+									rowData={record}
+									eventBusPrefix={eventBusPrefix}
+								/>
+							)}
+							size="small"
+							icon={null}
+							isStopPropagation={false}
+							// disabled={isDisabled}
+						>
+							Edit
+						</BtnPopUpModal>
+
+						<DeleteBtn
+							title="Are you sure delete this api?"
+							content={record?.path || record.name}
+							// isButton={false}
+							onOk={() => handleApiDelete(record)}
+							loading={deleteLoading}
+							isStopPropagation={false}
+						>
+							Delete
+						</DeleteBtn>
+					</Space>
+				);
+			},
+		},
+	];
+
+	const resourceColumns = [
+		{
+			title: 'Name',
+			dataIndex: 'name',
+			key: 'name',
+			width: 200,
+			ellipsis: true,
+		},
+		{
+			title: 'Resource Type',
+			dataIndex: 'resource_type',
+			key: 'resource_type',
+			width: 120,
+			ellipsis: true,
+		},
+		{
+			title: 'Tag',
+			dataIndex: 'tag',
+			key: 'tag',
+			width: 160,
+			ellipsis: true,
+		},
+		{
+			title: 'Path',
+			dataIndex: 'path',
+			key: 'path',
+			width: 260,
+			ellipsis: true,
+			render: (v) => v || '--',
+		},
+
+		{
+			title: 'Status',
+			dataIndex: 'status',
+			key: 'status',
+			width: 100,
+			ellipsis: true,
+			align: 'center',
+			render: (v) => (
+				<span
+					className={'text-xs/5 px-2 py-[2px] border rounded-sm w-max'}
+					style={{
+						borderColor: userStatusColor[v]?.border,
+						backgroundColor: userStatusColor[v]?.bg,
+						color: userStatusColor[v]?.color,
+					}}
+				>
+					{v}
+				</span>
+			),
+		},
+		{
+			title: 'Show menu',
+			dataIndex: 'is_show',
+			key: 'is_show',
+			width: 120,
+			ellipsis: true,
+			align: 'center',
+			render: (text) => (text ? 'Yes' : 'No'),
+		},
+		{
+			title: 'Icon',
+			dataIndex: 'icon',
+			key: 'icon',
+			width: 120,
+			align: 'center',
+			ellipsis: true,
+		},
+		{
+			title: 'Description',
+			dataIndex: 'description',
+			key: 'description',
+			width: 200,
+			ellipsis: true,
+			render: (v) => v || '--',
+		},
+		{
+			title: 'Action',
+			dataIndex: 'operation',
+			width: 140,
+			align: 'left',
+			fixed: 'right',
+			render: (_, record) => {
+				return (
+					<Space>
+						<BtnPopUpModal
+							getContent={(setOpen) => (
+								<ResourceMain
+									setOpen={setOpen}
+									rowData={record}
+									eventBusPrefix={eventBusPrefix}
+									api={api}
+								/>
+							)}
+							size="small"
+							icon={null}
+							isStopPropagation={false}
+							// disabled={isDisabled}
+						>
+							Edit
+						</BtnPopUpModal>
+
+						<DeleteBtn
+							title="Are you sure delete this resource?"
+							content={record?.path || record.name}
+							// isButton={false}
+							onOk={() => handleResourceDelete(record)}
+							loading={deleteLoading}
+							isStopPropagation={false}
+						>
+							Delete
+						</DeleteBtn>
+					</Space>
+				);
+			},
+		},
+	];
+
+	const getColumnsByMenuKey = (menuKey) => {
+		switch (menuKey) {
+			case 'Api':
+				return apiColumns;
+			case 'Resource':
+				return resourceColumns;
+			default:
+				return [];
+		}
+	};
+	return { getColumnsByMenuKey, tableFilterRef };
+};
+export default useColumn;

@@ -26,6 +26,35 @@ export const navRouter = [
 		title: 'Template',
 		icon: 'template',
 	},
+	{
+		path: '/role',
+		title: 'App resource',
+		icon: 'role',
+		router: [
+			{
+				path: '/role/appApi',
+				title: 'Api',
+				// hideMenu: true,
+			},
+			{
+				path: '/role/resource',
+				title: 'Resource',
+				// hideMenu: true,
+			},
+		],
+	},
+	{
+		path: '/setting',
+		title: 'setting',
+		icon: 'setting',
+		router: [
+			{
+				path: '/setting/role',
+				title: 'role',
+				// hideMenu: true,
+			},
+		],
+	},
 ];
 
 export const noTokenRouter = [

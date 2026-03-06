@@ -37,8 +37,10 @@ export const FilterTable = forwardRef(
 			hasFilterField = true,
 			filterWrapClassName,
 			getData = () => {},
+			hasPaginationRequest = true, // 是否请求分页数据
 			api,
 			method = 'POST',
+			settingPagination,
 			...props
 		},
 		ref,
@@ -59,6 +61,8 @@ export const FilterTable = forwardRef(
 			api,
 			method,
 			getData,
+			hasPaginationRequest,
+			settingPagination,
 		});
 		// const isGet = useRef(true);
 		// const filterFieldRef = useRef();

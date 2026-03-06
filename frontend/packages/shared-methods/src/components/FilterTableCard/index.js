@@ -38,6 +38,7 @@ export const FilterTableCard = forwardRef(
 			hasFilterField = true,
 			filterWrapClassName,
 			getData = () => {},
+			hasPaginationRequest = true, // 是否请求分页数据
 			api,
 			method = 'POST',
 			renderItem = () => {},
@@ -66,6 +67,7 @@ export const FilterTableCard = forwardRef(
 			api,
 			method,
 			getData,
+			hasPaginationRequest,
 		});
 		// const scrollRef = useRef();
 		// const isGet = useRef(true);
