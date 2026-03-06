@@ -25,18 +25,18 @@ func initCasbin(cnf config.CasbinConf) (err error) {
 			Pwd:       cnf.Watcher.Pwd,
 			Channel:   cnf.Watcher.LenderChannel,
 		},
+		DefaultLoadFilteredPolicy: &gormadapter.Filter{
+			Ptype: []string{"p"},
+			V0:    nil,
+			V1:    []string{string(constants.UserTypeLender)},
+			V2:    nil,
+			V3:    nil,
+			V4:    nil,
+			V5:    nil,
+		},
 	})
 	if err != nil {
 		return
 	}
-	err = LenderEnforcer.LoadFilteredPolicy(gormadapter.Filter{
-		Ptype: []string{"p"},
-		V0:    nil,
-		V1:    []string{string(constants.UserTypeLender)},
-		V2:    nil,
-		V3:    nil,
-		V4:    nil,
-		V5:    nil,
-	})
 	return
 }

@@ -1,6 +1,10 @@
 package auth
 
-import "zeebee-backend/domains/zeebee/constants"
+import (
+	"encoding/json"
+
+	"zeebee-backend/domains/zeebee/constants"
+)
 
 const routeFormat = "%s:%s"
 const organizationUserRoleFormat = "%s:organization:%d:organizationuser:%d:roles" // <type>:organization:<organizationId>:organizationuser:<organizationUserId>:roles
@@ -21,4 +25,44 @@ type RoleResource struct {
 	RoleId     int64               `json:"role_id"`
 	ResourceId int64               `json:"resource_id"`
 	DataScope  constants.DataScope `json:"data_scope"`
+}
+
+type Action string
+
+const (
+	ActionApiReload      Action = "ApiReload"
+	ActionResourceReload Action = "ResourceReload"
+	ActionRoleReload     Action = "RoleReload"
+)
+
+type Scope string
+
+const (
+	ScopeGlobal       Scope = "Global"
+	ScopeOrganization Scope = "Organization"
+)
+
+// type AuthType string
+//
+// const (
+// 	AuthTypeAdmin    AuthType = "Admin"
+// 	AuthTypeBorrower AuthType = "Borrower"
+// 	AuthTypeLender   AuthType = "Lender"
+// )
+
+type Msg struct {
+	Action Action             `json:"action"`
+	Scope  Scope              `json:"scope"`
+	Type   constants.UserType `json:"type"`
+}
+
+func (msg Msg) String() string {
+	content, _ := json.Marshal(msg)
+	return string(content)
+}
+
+func ParseMsg(msg string) (Msg, error) {
+	var m Msg
+	err := json.Unmarshal([]byte(msg), &m)
+	return m, err
 }

@@ -5,10 +5,13 @@ import (
 
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
+	"gorm.io/gorm"
 
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/redisx"
 	"zeebee-backend/common/timex"
+	"zeebee-backend/domains/zeebee/auth"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
@@ -16,12 +19,18 @@ import (
 )
 
 type ApiLogic struct {
-	repos *repo.AllRepos
+	*baseLogic
+	redisCli     *redisx.Redisx
+	authTopicMap map[constants.UserType]string
 }
 
-func NewApiLogic(repos *repo.AllRepos) *ApiLogic {
+func NewApiLogic(repos *repo.AllRepos, redisCli *redisx.Redisx, authTopicMap map[constants.UserType]string) *ApiLogic {
 	return &ApiLogic{
-		repos: repos,
+		baseLogic: &baseLogic{
+			repos: repos,
+		},
+		redisCli:     redisCli,
+		authTopicMap: authTopicMap,
 	}
 }
 
@@ -57,6 +66,18 @@ func (l *ApiLogic) CreateApi(ctx context.Context, input *dto.ApiCreateRequestDto
 	if err != nil {
 		return nil, err
 	}
+
+	go func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action: auth.ActionApiReload,
+			Scope:  auth.ScopeGlobal,
+			Type:   input.Type,
+		}
+		_ = l.publishAuthEvent(subCtx, l.redisCli, l.authTopicMap[input.Type], msg)
+
+	}()
+
 	return result, nil
 }
 
@@ -87,6 +108,16 @@ func (l *ApiLogic) UpdateApi(ctx context.Context, input *dto.ApiUpdateRequestDto
 		return nil, err
 	}
 	result, err = copierx.Trans[model.Api, dto.ApiEntityDto](apiModel)
+	go func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action: auth.ActionApiReload,
+			Scope:  auth.ScopeGlobal,
+			Type:   input.Type,
+		}
+		_ = l.publishAuthEvent(subCtx, l.redisCli, l.authTopicMap[input.Type], msg)
+
+	}()
 	return result, err
 }
 
@@ -100,9 +131,32 @@ func (l *ApiLogic) Detail(ctx context.Context, id int64, apiType constants.UserT
 	return result, err
 }
 
-// DeleteApi deletes api and its children recursively
+// DeleteApi deletes an existing api
 func (l *ApiLogic) DeleteApi(ctx context.Context, id int64, apiType constants.UserType) (err error) {
-	api, err := l.repos.ApiRepo.GetApi(ctx, id, apiType, true)
+
+	err = l.repos.ApiRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		return l.deleteApi(ctx, tx, id, apiType)
+	})
+	if err != nil {
+		return err
+	}
+
+	go func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action: auth.ActionApiReload,
+			Scope:  auth.ScopeGlobal,
+			Type:   apiType,
+		}
+		_ = l.publishAuthEvent(subCtx, l.redisCli, l.authTopicMap[apiType], msg)
+
+	}()
+	return
+}
+
+// deleteApi deletes api and its children recursively
+func (l *ApiLogic) deleteApi(ctx context.Context, tx *gorm.DB, id int64, apiType constants.UserType) (err error) {
+	api, err := l.repos.ApiRepo.GetApiWithTx(ctx, tx, id, apiType, true)
 	if err != nil {
 		return err
 	}
@@ -112,14 +166,14 @@ func (l *ApiLogic) DeleteApi(ctx context.Context, id int64, apiType constants.Us
 		return err
 	}
 	for _, child := range children {
-		err := l.DeleteApi(ctx, child.Id, apiType)
+		err = l.deleteApi(ctx, tx, child.Id, apiType)
 		if err != nil {
 			return err
 		}
 	}
 	// delete resource and api relation
-	err = l.repos.ApiRepo.DeleteApi(ctx, api)
-	return
+	err = l.repos.ApiRepo.DeleteApiWithTx(ctx, tx, api)
+	return err
 }
 
 // buildTree builds a tree structure from a list of apis

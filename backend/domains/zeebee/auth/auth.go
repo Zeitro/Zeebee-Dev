@@ -4,8 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/duke-git/lancet/v2/slice"
+	"github.com/redis/go-redis/v9"
+	"github.com/zeromicro/go-zero/core/logx"
 	"golang.org/x/sync/singleflight"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -33,10 +36,13 @@ type Auth struct {
 	apiResourceMap              *mapx.Map[constants.UserType, *mapx.Map[string, []int64]]
 	organizationRoleResourceMap *mapx.Map[int64, *mapx.Map[string, RoleResource]]
 	sf                          singleflight.Group
+	eventTopic                  string
+	eventSubScribeCancelFn      context.CancelFunc
 }
 
-func NewAuth(repos *repo.AllRepos, redisCli *redisx.Redisx, jwtConfig dto.JwtConfig, enforcer *rbac.Enforcer) *Auth {
-	return &Auth{
+func NewAuth(repos *repo.AllRepos, redisCli *redisx.Redisx, jwtConfig dto.JwtConfig, enforcer *rbac.Enforcer, authEventTopic string) *Auth {
+	ctx, cancel := context.WithCancel(context.Background())
+	auth := &Auth{
 		repos:                       repos,
 		redisCli:                    redisCli,
 		jwtConfig:                   jwtConfig,
@@ -45,7 +51,72 @@ func NewAuth(repos *repo.AllRepos, redisCli *redisx.Redisx, jwtConfig dto.JwtCon
 		authorizationWhitelistMap:   mapx.NewMap[constants.UserType, []string](),
 		apiResourceMap:              mapx.NewMap[constants.UserType, *mapx.Map[string, []int64]](),
 		organizationRoleResourceMap: mapx.NewMap[int64, *mapx.Map[string, RoleResource]](),
+		eventTopic:                  authEventTopic,
+		eventSubScribeCancelFn:      cancel,
 	}
+
+	go func() {
+		auth.subscribeEvent(ctx)
+	}()
+
+	return auth
+}
+
+// subscribeEvent
+func (l *Auth) subscribeEvent(ctx context.Context) {
+
+	if len(l.eventTopic) == 0 {
+		return
+	}
+
+	for {
+		if ctx.Err() != nil {
+			return
+		}
+		subPub := l.redisCli.GetClient().Subscribe(ctx, l.eventTopic)
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case msg := <-subPub.Channel():
+				err := l.handleAuthMsg(ctx, msg)
+				if err != nil {
+					logx.WithContext(ctx).WithFields(
+						logx.Field("stack", errorx.GetErrorStack(err)),
+						logx.Field("subscribe_msg", msg),
+					).Errorf("handleAuthMsg error")
+				}
+
+			}
+		}
+		_ = subPub.Close()
+		time.Sleep(time.Second * 5)
+	}
+}
+
+// handleAuthMsg
+func (l *Auth) handleAuthMsg(ctx context.Context, msg *redis.Message) (err error) {
+	if msg == nil {
+		err = errorx.New("Auth message is nil")
+		return
+	}
+	eventMsg, err := ParseMsg(msg.Payload)
+	if err != nil {
+		err = errorx.Wrap(err, "Auth message parse error")
+		return
+	}
+	switch eventMsg.Action {
+	case ActionApiReload:
+		_, _ = l.LoadAuthenticationWhitelist(ctx, eventMsg.Type)
+		_, _ = l.LoadAuthorizationWhitelist(ctx, eventMsg.Type)
+		_, _ = l.LoadApiResourceIds(ctx, eventMsg.Type)
+	case ActionRoleReload:
+
+	case ActionResourceReload:
+	}
+
+	return nil
+
 }
 
 // AuthCheck performs authentication and authorization checks for the given request.

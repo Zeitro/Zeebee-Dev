@@ -25,27 +25,31 @@ type AllLogics struct {
 	AuthLogic                 *AuthLogic
 }
 
-func NewAllLogics(
-	repos *repo.AllRepos,
-	redisCli *redisx.Redisx,
-	jwtConfig dto.JwtConfig,
-	emailClient *email.Email,
-	currentEnforcer *rbac.Enforcer,
-	enforcerMap map[constants.UserType]*rbac.Enforcer,
-) *AllLogics {
+type AllLogicConfig struct {
+	Repos                 *repo.AllRepos
+	RedisCli              *redisx.Redisx
+	JwtConfig             dto.JwtConfig
+	EmailClient           *email.Email
+	CurrentEnforcer       *rbac.Enforcer
+	EnforcerMap           map[constants.UserType]*rbac.Enforcer
+	CurrentAuthEventTopic string
+	AuthEventTopicMap     map[constants.UserType]string
+}
+
+func NewAllLogics(config AllLogicConfig) *AllLogics {
 	return &AllLogics{
-		ApiLogic:                  NewApiLogic(repos),
-		ResourceLogic:             NewResourceLogic(repos),
-		RoleLogic:                 NewRoleLogic(repos, currentEnforcer),
-		UserLogic:                 NewUserLogic(repos, redisCli, jwtConfig),
-		OrganizationUserLogic:     NewOrganizationUserLogic(repos, redisCli, emailClient),
-		OrganizationLogic:         NewOrganizationLogic(repos, enforcerMap),
-		OrganizationEmailLogic:    NewOrganizationEmailLogic(repos),
-		BaseTemplateLogic:         NewBaseTemplateLogic(repos),
-		OrganizationTemplateLogic: NewOrganizationTemplateLogic(repos),
-		OrganizationSettingLogic:  NewOrganizationSettingLogic(repos),
-		LoanLogic:                 NewLoanLogic(repos),
-		LoanOperationLogic:        NewLoanOperationLogic(repos),
-		AuthLogic:                 NewAuthLogic(repos, redisCli, jwtConfig, currentEnforcer),
+		ApiLogic:                  NewApiLogic(config.Repos, config.RedisCli),
+		ResourceLogic:             NewResourceLogic(config.Repos),
+		RoleLogic:                 NewRoleLogic(config.Repos, config.CurrentEnforcer),
+		UserLogic:                 NewUserLogic(config.Repos, config.RedisCli, config.JwtConfig),
+		OrganizationUserLogic:     NewOrganizationUserLogic(config.Repos, config.RedisCli, config.EmailClient),
+		OrganizationLogic:         NewOrganizationLogic(config.Repos, config.EnforcerMap),
+		OrganizationEmailLogic:    NewOrganizationEmailLogic(config.Repos),
+		BaseTemplateLogic:         NewBaseTemplateLogic(config.Repos),
+		OrganizationTemplateLogic: NewOrganizationTemplateLogic(config.Repos),
+		OrganizationSettingLogic:  NewOrganizationSettingLogic(config.Repos),
+		LoanLogic:                 NewLoanLogic(config.Repos),
+		LoanOperationLogic:        NewLoanOperationLogic(config.Repos),
+		AuthLogic:                 NewAuthLogic(config.Repos, config.RedisCli, config.JwtConfig, config.CurrentEnforcer, config.CurrentAuthEventTopic),
 	}
 }

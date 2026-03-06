@@ -28,19 +28,15 @@ func initCasbin(cnf config.CasbinConf) (err error) {
 			Pwd:       cnf.Watcher.Pwd,
 			Channel:   cnf.Watcher.AdminChannel,
 		},
-	})
-	if err != nil {
-		return
-	}
-
-	err = AdminEnforcer.LoadFilteredPolicy(gormadapter.Filter{
-		Ptype: []string{"p"},
-		V0:    nil,
-		V1:    []string{string(constants.UserTypeAdmin)},
-		V2:    nil,
-		V3:    nil,
-		V4:    nil,
-		V5:    nil,
+		DefaultLoadFilteredPolicy: &gormadapter.Filter{
+			Ptype: []string{"p"},
+			V0:    nil,
+			V1:    []string{string(constants.UserTypeAdmin)},
+			V2:    nil,
+			V3:    nil,
+			V4:    nil,
+			V5:    nil,
+		},
 	})
 	if err != nil {
 		return
@@ -54,19 +50,15 @@ func initCasbin(cnf config.CasbinConf) (err error) {
 			Pwd:       cnf.Watcher.Pwd,
 			Channel:   cnf.Watcher.LenderChannel,
 		},
-	})
-	if err != nil {
-		return
-	}
-
-	err = LenderEnforcer.LoadFilteredPolicy(gormadapter.Filter{
-		Ptype: []string{"p"},
-		V0:    nil,
-		V1:    []string{string(constants.UserTypeLender)},
-		V2:    nil,
-		V3:    nil,
-		V4:    nil,
-		V5:    nil,
+		DefaultLoadFilteredPolicy: &gormadapter.Filter{
+			Ptype: []string{"p"},
+			V0:    nil,
+			V1:    []string{string(constants.UserTypeLender)},
+			V2:    nil,
+			V3:    nil,
+			V4:    nil,
+			V5:    nil,
+		},
 	})
 	if err != nil {
 		return
@@ -80,20 +72,19 @@ func initCasbin(cnf config.CasbinConf) (err error) {
 			Pwd:       cnf.Watcher.Pwd,
 			Channel:   cnf.Watcher.BorrowerChannel,
 		},
+		DefaultLoadFilteredPolicy: &gormadapter.Filter{
+			Ptype: []string{"p"},
+			V0:    nil,
+			V1:    []string{string(constants.UserTypeBorrower)},
+			V2:    nil,
+			V3:    nil,
+			V4:    nil,
+			V5:    nil,
+		},
 	})
 	if err != nil {
 		return
 	}
-
-	err = BorrowerEnforcer.LoadFilteredPolicy(gormadapter.Filter{
-		Ptype: []string{"p"},
-		V0:    nil,
-		V1:    []string{string(constants.UserTypeBorrower)},
-		V2:    nil,
-		V3:    nil,
-		V4:    nil,
-		V5:    nil,
-	})
 
 	return
 }

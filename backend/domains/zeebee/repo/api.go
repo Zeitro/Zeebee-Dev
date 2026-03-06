@@ -61,28 +61,36 @@ func (repo *ApiRepo) GetApi(ctx context.Context, id int64, apiType constants.Use
 	return result, errorx.WithStack(err)
 }
 
-// DeleteApi
-func (repo *ApiRepo) DeleteApi(ctx context.Context, api *model.Api) (err error) {
+// GetApiWithTx return api by id with transaction
+func (repo *ApiRepo) GetApiWithTx(ctx context.Context, tx *gorm.DB, id int64, apiType constants.UserType, withPreload bool) (result *model.Api, err error) {
+	query := tx.WithContext(ctx).Model(&model.Api{}).
+		Where("id = ?", id).
+		Where("type = ?", apiType)
+	if withPreload {
+		query = query.
+			Preload("Resources")
+	}
+	err = query.First(&result).Error
+	return result, errorx.WithStack(err)
+}
+
+// DeleteApiWithTx delete api with transaction
+func (repo *ApiRepo) DeleteApiWithTx(ctx context.Context, tx *gorm.DB, api *model.Api) (err error) {
 	if api == nil {
 		return nil
 	}
-	err = repo.Transaction(ctx, func(tx *gorm.DB) error {
-		var innerErr error
-		resources := api.Resources
-		if len(resources) > 0 {
-			innerErr = tx.WithContext(ctx).
-				Model(api).
-				Association("Resources").
-				Clear()
-			if innerErr != nil {
-				return innerErr
-			}
+	resources := api.Resources
+	if len(resources) > 0 {
+		err = tx.WithContext(ctx).
+			Model(api).
+			Association("Resources").
+			Clear()
+		if err != nil {
+			return errorx.WithStack(err)
 		}
-		innerErr = tx.WithContext(ctx).
-			Delete(api).Error
-		return innerErr
-	})
-
+	}
+	err = tx.WithContext(ctx).
+		Delete(api).Error
 	return errorx.WithStack(err)
 }
 

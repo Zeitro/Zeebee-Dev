@@ -4,7 +4,6 @@ import (
 	"context"
 	"sync"
 
-	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
 
@@ -54,19 +53,26 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 	}
 
 	currentEnforcer := global.AdminEnforcer
-	_ = currentEnforcer.LoadFilteredPolicy(gormadapter.Filter{
-		Ptype: []string{"p"},
-		V0:    nil,
-		V1:    []string{string(constants.UserTypeAdmin)},
-		V2:    nil,
-		V3:    nil,
-		V4:    nil,
-		V5:    nil,
-	})
 
+	currentAuthEventTopic := svcCtx.Config.CasbinConf.EventTopic.AdminTopic
+	authEventTopicMap := map[constants.UserType]string{
+		constants.UserTypeAdmin:    svcCtx.Config.CasbinConf.EventTopic.AdminTopic,
+		constants.UserTypeLender:   svcCtx.Config.CasbinConf.EventTopic.LenderTopic,
+		constants.UserTypeBorrower: svcCtx.Config.CasbinConf.EventTopic.BorrowerTopic,
+	}
+	logicConfig := logic.AllLogicConfig{
+		Repos:                 svcCtx.AllRepos,
+		RedisCli:              redisCli,
+		JwtConfig:             jwtConfig,
+		EmailClient:           emailClient,
+		CurrentEnforcer:       currentEnforcer,
+		EnforcerMap:           enforcerMap,
+		CurrentAuthEventTopic: currentAuthEventTopic,
+		AuthEventTopicMap:     authEventTopicMap,
+	}
 	return &BaseLogic{
 		svcCtx:    svcCtx,
-		AllLogics: logic.NewAllLogics(svcCtx.AllRepos, redisCli, jwtConfig, emailClient, currentEnforcer, enforcerMap),
+		AllLogics: logic.NewAllLogics(logicConfig),
 	}
 }
 

@@ -15,13 +15,15 @@ import (
 )
 
 type Enforcer struct {
-	Enforcer *casbin.Enforcer
+	Enforcer                  *casbin.Enforcer
+	defaultLoadFilteredPolicy *gormadapter.Filter
 }
 
 type EnforcerConfig struct {
-	DB          *gorm.DB
-	ModelPolicy string
-	Watcher     WatcherConfig
+	DB                        *gorm.DB
+	ModelPolicy               string
+	Watcher                   WatcherConfig
+	DefaultLoadFilteredPolicy *gormadapter.Filter
 }
 
 type WatcherConfig struct {
@@ -75,9 +77,20 @@ func NewEnforcer(config EnforcerConfig) (*Enforcer, error) {
 
 	}
 
-	return &Enforcer{
-		Enforcer: enforcer,
-	}, nil
+	e := &Enforcer{
+		Enforcer:                  enforcer,
+		defaultLoadFilteredPolicy: config.DefaultLoadFilteredPolicy,
+	}
+	err = e.LoadDefaultFilteredPolicy()
+	return e, errorx.WithStack(err)
+}
+
+func (e *Enforcer) LoadDefaultFilteredPolicy() error {
+	if e.defaultLoadFilteredPolicy == nil {
+		return nil
+	}
+	err := e.Enforcer.LoadFilteredPolicy(*e.defaultLoadFilteredPolicy)
+	return errorx.WithStack(err)
 }
 
 func (e *Enforcer) LoadFilteredPolicy(filter gormadapter.Filter) error {
@@ -90,18 +103,19 @@ func (e *Enforcer) Enforce(rvals ...interface{}) (bool, error) {
 	return result, errorx.WithStack(err)
 }
 
-// AddPolicies
+// AddPolicies adds multiple policies
 func (e *Enforcer) AddPolicies(p [][]string) error {
 	_, err := e.Enforcer.AddPolicies(p)
 	return errorx.WithStack(err)
 }
 
-// RemovePolicies
+// RemovePolicies removes multiple policies
 func (e *Enforcer) RemovePolicies(p [][]string) error {
 	_, err := e.Enforcer.RemovePolicies(p)
 	return errorx.WithStack(err)
 }
 
+// SavePolicy saves all added policies to DB
 func (e *Enforcer) SavePolicy() error {
 	err := e.Enforcer.SavePolicy()
 	return errorx.WithStack(err)

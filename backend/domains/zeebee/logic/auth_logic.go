@@ -15,10 +15,10 @@ type AuthLogic struct {
 	auth  *auth.Auth
 }
 
-func NewAuthLogic(repos *repo.AllRepos, redisCli *redisx.Redisx, jwtConfig dto.JwtConfig, enforcer *rbac.Enforcer) *AuthLogic {
+func NewAuthLogic(repos *repo.AllRepos, redisCli *redisx.Redisx, jwtConfig dto.JwtConfig, enforcer *rbac.Enforcer, authEventTopic string) *AuthLogic {
 	return &AuthLogic{
 		repos: repos,
-		auth:  auth.NewAuth(repos, redisCli, jwtConfig, enforcer),
+		auth:  auth.NewAuth(repos, redisCli, jwtConfig, enforcer, authEventTopic),
 	}
 }
 
