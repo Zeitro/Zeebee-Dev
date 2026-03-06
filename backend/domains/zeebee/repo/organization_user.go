@@ -171,8 +171,9 @@ func (repo *OrganizationUserRepo) CheckOrganizationUserExistedByEmail(ctx contex
 // AllOrganizationUsers return all organization users by organizationId
 func (repo *OrganizationUserRepo) AllOrganizationUsers(ctx context.Context, organizationId int64) (results []*model.OrganizationUser, err error) {
 	err = repo.Client(ctx).
-		Where("organization_id = ? and status = ?", organizationId, constants.OrganizationStatusActive).
+		Where("organization_id = ? and status = ?", organizationId, constants.OrganizationUserStatusActive).
 		Preload("User").
+		Preload("Roles").
 		Find(&results).Error
 	return results, errorx.WithStack(err)
 }

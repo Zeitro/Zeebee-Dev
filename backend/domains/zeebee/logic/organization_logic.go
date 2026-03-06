@@ -4,12 +4,13 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/zeromicro/go-zero/core/threading"
 	"gorm.io/gorm"
 
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
-	"zeebee-backend/common/rbac"
+	"zeebee-backend/domains/zeebee/auth"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
@@ -19,14 +20,15 @@ import (
 // OrganizationLogic provides organization business logic
 type OrganizationLogic struct {
 	*BaseLogic
-	enforcerMap map[constants.UserType]*rbac.Enforcer
+	// enforcerMap map[constants.UserType]*rbac.Enforcer
+	authTopicMap map[constants.UserType]string
 }
 
 // NewOrganizationLogic creates a new organization logic instance
-func NewOrganizationLogic(baseLogic *BaseLogic, enforcerMap map[constants.UserType]*rbac.Enforcer) *OrganizationLogic {
+func NewOrganizationLogic(baseLogic *BaseLogic, authTopicMap map[constants.UserType]string) *OrganizationLogic {
 	return &OrganizationLogic{
-		BaseLogic:   baseLogic,
-		enforcerMap: enforcerMap,
+		BaseLogic:    baseLogic,
+		authTopicMap: authTopicMap,
 	}
 }
 
@@ -99,10 +101,10 @@ func (l *OrganizationLogic) Delete(ctx context.Context, id int64) (err error) {
 	if organization.OwnerType == constants.OrganizationOwnerTypeSelf || organization.Type == constants.UserTypeAdmin {
 		return errorx.New("Cannot delete self owned organization")
 	}
-
+	organizationType := organization.Type
+	var policies [][]string
 	err = l.repos.OrganizationRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
-		var policies [][]string
 		organization.Owner = nil
 		organization.Users = nil
 
@@ -155,18 +157,25 @@ func (l *OrganizationLogic) Delete(ctx context.Context, id int64) (err error) {
 		if innerErr != nil {
 			return innerErr
 		}
-		// remove organization policies
-		enforcer := l.enforcerMap[organization.Type]
-		if enforcer != nil && len(policies) > 0 {
-			innerErr = enforcer.RemovePolicies(policies)
-		}
 
 		return innerErr
 
 	})
 	if err != nil {
-		return errorx.WithStack(err)
+		return err
 	}
+
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:          auth.ActionRoleReload,
+			Scope:           auth.ScopeOrganization,
+			Type:            organizationType,
+			OrganizationId:  id,
+			RemovedPolicies: policies,
+		}
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[organizationType], msg)
+	})
 
 	return nil
 }

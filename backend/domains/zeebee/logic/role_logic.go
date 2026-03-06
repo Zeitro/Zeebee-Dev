@@ -5,12 +5,13 @@ import (
 	"fmt"
 
 	"github.com/duke-git/lancet/v2/slice"
+	"github.com/zeromicro/go-zero/core/threading"
 	"gorm.io/gorm"
 
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
-	"zeebee-backend/common/rbac"
+	"zeebee-backend/domains/zeebee/auth"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
@@ -19,14 +20,16 @@ import (
 // RoleLogic provides role business logic
 type RoleLogic struct {
 	*BaseLogic
-	enforcer *rbac.Enforcer
+	// enforcer *rbac.Enforcer
+	authTopicMap map[constants.UserType]string
 }
 
 // NewRoleLogic creates a new role logic instance
-func NewRoleLogic(baseLogic *BaseLogic, enforcer *rbac.Enforcer) *RoleLogic {
+func NewRoleLogic(baseLogic *BaseLogic, authTopicMap map[constants.UserType]string) *RoleLogic {
 	return &RoleLogic{
-		BaseLogic: baseLogic,
-		enforcer:  enforcer,
+		BaseLogic:    baseLogic,
+		authTopicMap: authTopicMap,
+		// enforcer:  enforcer,
 	}
 }
 
@@ -73,11 +76,11 @@ func (l *RoleLogic) Create(ctx context.Context, input dto.RoleCreateRequestDto) 
 		return nil, errorx.New("Role already exists")
 	}
 
-	// resourceIds := input.ResourceIds
 	resourceIds := slice.Map[dto.RoleAndResourceDto, int64](input.RoleAndResources, func(i int, item dto.RoleAndResourceDto) int64 {
 		return item.ResourceId
 	})
 	var resources []*model.Resource
+	var rolesAndResources []*model.RoleAndResource
 	err = l.repos.RoleRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
 
@@ -96,7 +99,7 @@ func (l *RoleLogic) Create(ctx context.Context, input dto.RoleCreateRequestDto) 
 		validResourceIds = slice.Map[*model.Resource, int64](resources, func(i int, item *model.Resource) int64 {
 			return item.Id
 		})
-		rolesAndResources := slice.FilterMap[dto.RoleAndResourceDto, *model.RoleAndResource](input.RoleAndResources, func(i int, item dto.RoleAndResourceDto) (*model.RoleAndResource, bool) {
+		rolesAndResources = slice.FilterMap[dto.RoleAndResourceDto, *model.RoleAndResource](input.RoleAndResources, func(i int, item dto.RoleAndResourceDto) (*model.RoleAndResource, bool) {
 			if slice.Contain(validResourceIds, item.ResourceId) {
 				return &model.RoleAndResource{
 					RoleId:     role.Id,
@@ -113,11 +116,6 @@ func (l *RoleLogic) Create(ctx context.Context, input dto.RoleCreateRequestDto) 
 			}
 		}
 
-		// add role permissions
-		policies := l.createRolePolicy(role.Id, input.Type, rolesAndResources)
-		if len(policies) > 0 && input.Status == constants.CommonStatusActive {
-			innerErr = l.enforcer.AddPolicies(policies)
-		}
 		if innerErr != nil {
 			return innerErr
 		}
@@ -127,6 +125,22 @@ func (l *RoleLogic) Create(ctx context.Context, input dto.RoleCreateRequestDto) 
 	if err != nil {
 		return nil, err
 	}
+
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:         auth.ActionRoleReload,
+			Scope:          auth.ScopeOrganization,
+			Type:           input.Type,
+			OrganizationId: input.OrganizationId,
+		}
+		policies := l.createRolePolicy(role.Id, input.Type, rolesAndResources)
+		if len(policies) > 0 && input.Status == constants.CommonStatusActive {
+			msg.AddedPolicies = policies
+		}
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[input.Type], msg)
+
+	})
 
 	result, err = l.Detail(ctx, role.Id, role.OrganizationId, role.Type)
 	if err != nil {
@@ -163,6 +177,8 @@ func (l *RoleLogic) Update(ctx context.Context, id int64, input dto.RoleUpdateRe
 	resourceIds := slice.Map[dto.RoleAndResourceDto, int64](input.RoleAndResources, func(i int, item dto.RoleAndResourceDto) int64 {
 		return item.ResourceId
 	})
+	var addPolicies [][]string
+	var removedPolicies [][]string
 	err = l.repos.RoleRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
 		var resources []*model.Resource
@@ -242,30 +258,25 @@ func (l *RoleLogic) Update(ctx context.Context, id int64, input dto.RoleUpdateRe
 				return innerErr
 			}
 		}
-
-		// update role permissions
-		var addPolicies [][]string
-		var removedPolicies [][]string
-		switch input.Status {
-		case constants.CommonStatusActive:
-			addPolicies = l.createRolePolicy(id, input.Type, newRelations)
-			removedPolicies = l.createRolePolicy(id, input.Type, removedRelations)
-		case constants.CommonStatusDisabled:
-			removedPolicies = l.createRolePolicy(id, input.Type, oldRelations)
-		default:
-			innerErr = errorx.Errorf("Invalid status: %v", input.Status)
-			return innerErr
-		}
-		innerErr = l.handleRolePolicies(addPolicies, removedPolicies)
-		if innerErr != nil {
-			return innerErr
-		}
-
 		return nil
 	})
 	if err != nil {
 		return nil, err
 	}
+
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:          auth.ActionRoleReload,
+			Scope:           auth.ScopeOrganization,
+			Type:            input.Type,
+			OrganizationId:  input.OrganizationId,
+			AddedPolicies:   addPolicies,
+			RemovedPolicies: removedPolicies,
+		}
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[input.Type], msg)
+
+	})
 
 	result, err = l.Detail(ctx, roleModel.Id, roleModel.OrganizationId, roleModel.Type)
 	return result, err
@@ -303,7 +314,7 @@ func (l *RoleLogic) Delete(ctx context.Context, id int64, organizationId int64, 
 	if role.Name == constants.AdminRoleName {
 		return errorx.New("Cannot delete admin role")
 	}
-
+	var removedPolicies [][]string
 	err = l.repos.RoleRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
 		oldRelations, innerErr := l.repos.RoleAndResourceRepo.GetRoleRelationsWithTx(ctx, tx, role.Id)
@@ -315,18 +326,27 @@ func (l *RoleLogic) Delete(ctx context.Context, id int64, organizationId int64, 
 			return innerErr
 		}
 		// remove role policies
-		removedPolicies := l.createRolePolicy(id, roleType, oldRelations)
-		innerErr = l.handleRolePolicies(nil, removedPolicies)
-
-		if innerErr != nil {
-			return innerErr
-		}
+		removedPolicies = l.createRolePolicy(id, roleType, oldRelations)
 
 		return nil
 	})
 	if err != nil {
 		return err
 	}
+
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:          auth.ActionRoleReload,
+			Scope:           auth.ScopeOrganization,
+			Type:            roleType,
+			OrganizationId:  organizationId,
+			RemovedPolicies: removedPolicies,
+		}
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[roleType], msg)
+
+	})
+
 	return err
 }
 
@@ -342,6 +362,8 @@ func (l *RoleLogic) SwitchStatus(ctx context.Context, id int64, organizationId i
 	}
 
 	result.Status = status
+	var addPolicies [][]string
+	var removedPolicies [][]string
 
 	err = l.repos.RoleRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
@@ -353,17 +375,14 @@ func (l *RoleLogic) SwitchStatus(ctx context.Context, id int64, organizationId i
 		if innerErr != nil {
 			return innerErr
 		}
-		// update role permissions
-		addPolicies := make([][]string, 0, len(oldRelations))
-		removedPolicies := make([][]string, 0, len(oldRelations))
+
 		switch status {
 		case constants.CommonStatusActive:
 			addPolicies = l.createRolePolicy(id, roleType, oldRelations)
 		case constants.CommonStatusDisabled:
 			removedPolicies = l.createRolePolicy(id, roleType, oldRelations)
-		}
-		innerErr = l.handleRolePolicies(addPolicies, removedPolicies)
-		if innerErr != nil {
+		default:
+			innerErr = errorx.Errorf("Invalid status: %v", status)
 			return innerErr
 		}
 
@@ -373,6 +392,19 @@ func (l *RoleLogic) SwitchStatus(ctx context.Context, id int64, organizationId i
 	if err != nil {
 		return err
 	}
+
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:          auth.ActionRoleReload,
+			Scope:           auth.ScopeOrganization,
+			Type:            roleType,
+			OrganizationId:  organizationId,
+			RemovedPolicies: removedPolicies,
+			AddedPolicies:   addPolicies,
+		}
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[roleType], msg)
+	})
 
 	return nil
 }
@@ -396,20 +428,4 @@ func (l *RoleLogic) createRolePolicy(roleId int64, roleType constants.UserType, 
 			"allow",
 		}
 	})
-}
-
-func (l *RoleLogic) handleRolePolicies(addPolicies [][]string, removedPolicies [][]string) (err error) {
-	if len(addPolicies) > 0 {
-		err = l.enforcer.AddPolicies(addPolicies)
-		if err != nil {
-			return err
-		}
-	}
-	if len(removedPolicies) > 0 {
-		err = l.enforcer.RemovePolicies(removedPolicies)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
 }

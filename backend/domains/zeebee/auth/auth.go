@@ -68,12 +68,25 @@ func (l *Auth) subscribeEvent(ctx context.Context) {
 	if len(l.eventTopic) == 0 {
 		return
 	}
-
+	maxRetries := 10
+	retryCount := 0
 	for {
+		retryCount++
+		if retryCount > maxRetries {
+			return
+		}
 		if ctx.Err() != nil {
 			return
 		}
 		subPub := l.redisCli.GetClient().Subscribe(ctx, l.eventTopic)
+		err := subPub.Ping(ctx, "ping")
+		if err != nil {
+			logx.WithContext(ctx).WithFields(
+				logx.Field("stack", errorx.GetErrorStack(err)),
+			).Errorf("subscribeEvent error")
+			continue
+		}
+		retryCount = 0
 	handleLoop:
 		for {
 			select {
@@ -87,11 +100,12 @@ func (l *Auth) subscribeEvent(ctx context.Context) {
 					break handleLoop
 				}
 
-				err := l.handleAuthMsg(ctx, msg)
+				err = l.handleAuthMsg(ctx, msg)
 				if err != nil {
 					logx.WithContext(ctx).WithFields(
 						logx.Field("stack", errorx.GetErrorStack(err)),
-						logx.Field("subscribe_msg", msg),
+						logx.Field("msg", msg),
+						logx.Field("error", err.Error()),
 					).Errorf("handleAuthMsg error")
 				}
 
@@ -115,41 +129,82 @@ func (l *Auth) handleAuthMsg(ctx context.Context, msg *redis.Message) (err error
 	}
 	switch eventMsg.Action {
 	case ActionApiReload:
-		_, err = l.LoadAuthenticationWhitelist(ctx, eventMsg.Type)
-		if err != nil {
-			return
-		}
-		_, err = l.LoadAuthorizationWhitelist(ctx, eventMsg.Type)
-		if err != nil {
-			return
-		}
-		_, err = l.LoadApiResourceIds(ctx, eventMsg.Type)
-		if err != nil {
-			return
-		}
+		err = l.handleApiReload(ctx, eventMsg)
 	case ActionRoleReload:
-		// TODO: Implement role reload logic if needed
-		// Currently no action required for role reload events
-
+		err = l.handleRoleReload(ctx, eventMsg)
 	case ActionResourceReload:
-		_, err = l.LoadApiResourceIds(ctx, eventMsg.Type)
+		err = l.handleResourceReload(ctx, eventMsg)
+	}
+
+	return err
+
+}
+
+// handleApiReload
+func (l *Auth) handleApiReload(ctx context.Context, msg Msg) (err error) {
+	_, err = l.LoadAuthenticationWhitelist(ctx, msg.Type)
+	if err != nil {
+		return
+	}
+	_, err = l.LoadAuthorizationWhitelist(ctx, msg.Type)
+	if err != nil {
+		return
+	}
+	_, err = l.LoadApiResourceIds(ctx, msg.Type)
+	if err != nil {
+		return
+	}
+	return nil
+}
+
+// handleRoleReload
+func (l *Auth) handleRoleReload(ctx context.Context, msg Msg) (err error) {
+	switch msg.Scope {
+	case ScopeOrganization:
+		_, err = l.loadOrganizationRoles(ctx, msg.OrganizationId, msg.Type)
 		if err != nil {
 			return
 		}
-		if len(eventMsg.AddedPolicies) > 0 {
-			err = l.enforcer.AddPolicies(eventMsg.AddedPolicies)
-			if err != nil {
-				return
-			}
-		}
-		if len(eventMsg.RemovedPolicies) > 0 {
-			err = l.enforcer.RemovePolicies(eventMsg.RemovedPolicies)
-			if err != nil {
-				return
-			}
+	case ScopeOrganizationUser:
+		_, err = l.loadOrganizationUserRoles(ctx, msg.OrganizationUserId, msg.OrganizationId, msg.Type)
+		if err != nil {
+			return
 		}
 	}
 
+	if len(msg.AddedPolicies) > 0 {
+		err = l.enforcer.AddPolicies(msg.AddedPolicies)
+		if err != nil {
+			return
+		}
+	}
+	if len(msg.RemovedPolicies) > 0 {
+		err = l.enforcer.RemovePolicies(msg.RemovedPolicies)
+		if err != nil {
+			return
+		}
+	}
+	return nil
+}
+
+// handleResourceReload
+func (l *Auth) handleResourceReload(ctx context.Context, msg Msg) (err error) {
+	_, err = l.LoadApiResourceIds(ctx, msg.Type)
+	if err != nil {
+		return
+	}
+	if len(msg.AddedPolicies) > 0 {
+		err = l.enforcer.AddPolicies(msg.AddedPolicies)
+		if err != nil {
+			return
+		}
+	}
+	if len(msg.RemovedPolicies) > 0 {
+		err = l.enforcer.RemovePolicies(msg.RemovedPolicies)
+		if err != nil {
+			return
+		}
+	}
 	return nil
 
 }
@@ -469,7 +524,7 @@ func (l *Auth) getOrganizationUserRoles(ctx context.Context, organizationUserId 
 	key := stringx.Format(organizationUserRoleFormat, userType, organizationId, organizationUserId)
 	content, _ := l.redisCli.Get(ctx, key)
 	if len(content) == 0 {
-		roles, err = l.loadRoles(ctx, organizationUserId, organizationId, userType)
+		roles, err = l.loadOrganizationUserRoles(ctx, organizationUserId, organizationId, userType)
 		if err != nil {
 			return nil, err
 		}
@@ -480,8 +535,8 @@ func (l *Auth) getOrganizationUserRoles(ctx context.Context, organizationUserId 
 	return roles, errorx.WithStack(err)
 }
 
-// loadRoles load roles from db
-func (l *Auth) loadRoles(ctx context.Context, organizationUserId int64, organizationId int64, userType constants.UserType) (roles []AuthRole, err error) {
+// loadOrganizationUserRoles load roles from db
+func (l *Auth) loadOrganizationUserRoles(ctx context.Context, organizationUserId int64, organizationId int64, userType constants.UserType) (roles []AuthRole, err error) {
 	organizationUser, _ := l.repos.OrganizationUserRepo.GetOrganizationUserById(ctx, organizationUserId, organizationId)
 	if organizationUser == nil || organizationUser.Roles == nil {
 		return []AuthRole{}, nil
@@ -508,6 +563,40 @@ func (l *Auth) loadRoles(ctx context.Context, organizationUserId int64, organiza
 	err = l.redisCli.SetExpire(ctx, key, content, organizationUserRoleExpireSeconds)
 
 	return roles, errorx.WithStack(err)
+}
+
+// loadOrganizationRoles load organization roles
+func (l *Auth) loadOrganizationRoles(ctx context.Context, organizationId int64, userType constants.UserType) (roles []AuthRole, err error) {
+	organizationUsers, _ := l.repos.OrganizationUserRepo.AllOrganizationUsers(ctx, organizationId)
+
+	slice.ForEach(organizationUsers, func(index int, organizationUser *model.OrganizationUser) {
+		if organizationUser == nil {
+			return
+		}
+		subRoles := slice.FilterMap(organizationUser.Roles, func(index int, role *model.Role) (AuthRole, bool) {
+			if role == nil {
+				return AuthRole{}, false
+			}
+			if role.Status != constants.CommonStatusActive {
+				return AuthRole{}, false
+			}
+			return AuthRole{RoleId: role.Id, IsAdmin: role.Name == constants.AdminRoleName}, true
+		})
+		if len(subRoles) == 0 {
+			return
+		}
+		roles = append(roles, subRoles...)
+
+		rolesContent, err := json.Marshal(subRoles)
+		if err != nil {
+			return
+		}
+		content := string(rolesContent)
+		key := stringx.Format(organizationUserRoleFormat, userType, organizationId, organizationUser.Id)
+		_ = l.redisCli.SetExpire(ctx, key, content, organizationUserRoleExpireSeconds)
+	})
+
+	return
 }
 
 // getResourceIdsByRoute get resource ids by route
