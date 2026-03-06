@@ -25,15 +25,17 @@ import (
 	"zeebee-backend/domains/zeebee/repo"
 )
 
+// OrganizationUserLogic provides organization user business logic
 type OrganizationUserLogic struct {
-	repos       *repo.AllRepos
+	*BaseLogic
 	redisCli    *redisx.Redisx
 	emailClient *email2.Email
 }
 
-func NewOrganizationUserLogic(repos *repo.AllRepos, redisCli *redisx.Redisx, emailClient *email2.Email) *OrganizationUserLogic {
+// NewOrganizationUserLogic creates a new organization user logic instance
+func NewOrganizationUserLogic(baseLogic *BaseLogic, redisCli *redisx.Redisx, emailClient *email2.Email) *OrganizationUserLogic {
 	return &OrganizationUserLogic{
-		repos:       repos,
+		BaseLogic:   baseLogic,
 		redisCli:    redisCli,
 		emailClient: emailClient,
 	}

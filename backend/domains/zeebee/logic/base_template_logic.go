@@ -15,19 +15,18 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
-	"zeebee-backend/domains/zeebee/repo"
 	"zeebee-backend/domains/zeebee/templater/convertor"
 )
 
 // BaseTemplateLogic provides base template business logic
 type BaseTemplateLogic struct {
-	repos *repo.AllRepos
+	*BaseLogic
 }
 
 // NewBaseTemplateLogic creates a new base template logic instance
-func NewBaseTemplateLogic(repos *repo.AllRepos) *BaseTemplateLogic {
+func NewBaseTemplateLogic(baseLogic *BaseLogic) *BaseTemplateLogic {
 	return &BaseTemplateLogic{
-		repos: repos,
+		BaseLogic: baseLogic,
 	}
 }
 
@@ -232,7 +231,7 @@ func (l *BaseTemplateLogic) SwitchStatus(ctx context.Context, id int64, status c
 				organizationTemplates = append(organizationTemplates, organizationTemplate)
 			}
 			// Create organization templates
-			organizationTemplateLogic := NewOrganizationTemplateLogic(l.repos)
+			organizationTemplateLogic := NewOrganizationTemplateLogic(l.BaseLogic)
 			innerErr = organizationTemplateLogic.BatchCreateWithTx(ctx, tx, organizationTemplates, false)
 		}
 		return innerErr
@@ -331,7 +330,7 @@ func (l *BaseTemplateLogic) syncOrganizationTemplates(ctx context.Context, tx *g
 		organizationTemplates = append(organizationTemplates, organizationTemplate)
 	}
 	// Create organization templates
-	organizationTemplateLogic := NewOrganizationTemplateLogic(l.repos)
+	organizationTemplateLogic := NewOrganizationTemplateLogic(l.BaseLogic)
 	err = organizationTemplateLogic.BatchCreateWithTx(ctx, tx, organizationTemplates, checkExisted)
 	return err
 }

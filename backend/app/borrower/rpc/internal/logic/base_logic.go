@@ -52,10 +52,22 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 		V4:    nil,
 		V5:    nil,
 	})
+	logicConfig := logic.AllLogicConfig{
+		Repos:           svcCtx.AllRepos,
+		RedisCli:        redisCli,
+		JwtConfig:       jwtConfig,
+		EmailClient:     global.EmailClient,
+		CurrentEnforcer: currentEnforcer,
+		// EnforcerMap:           enforcerMap,
+		// CurrentAuthEventTopic: currentAuthEventTopic,
+		// AuthEventTopicMap:     authEventTopicMap,
+	}
+
 	return &BaseLogic{
 		// ctx:       ctx,
 		svcCtx: svcCtx,
 		// Logger:    logx.WithContext(ctx),
-		AllLogics: logic.NewAllLogics(svcCtx.AllRepos, redisCli, jwtConfig, global.EmailClient, currentEnforcer, nil),
+		// AllLogics: logic.NewAllLogics(svcCtx.AllRepos, redisCli, jwtConfig, global.EmailClient, currentEnforcer, nil),
+		AllLogics: logic.NewAllLogics(logicConfig),
 	}
 }

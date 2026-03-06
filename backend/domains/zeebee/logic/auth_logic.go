@@ -4,21 +4,21 @@ import (
 	"context"
 
 	"zeebee-backend/common/rbac"
-	"zeebee-backend/common/redisx"
 	"zeebee-backend/domains/zeebee/auth"
 	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/repo"
 )
 
+// AuthLogic provides authentication business logic
 type AuthLogic struct {
-	repos *repo.AllRepos
-	auth  *auth.Auth
+	*BaseLogic
+	auth *auth.Auth
 }
 
-func NewAuthLogic(repos *repo.AllRepos, redisCli *redisx.Redisx, jwtConfig dto.JwtConfig, enforcer *rbac.Enforcer, authEventTopic string) *AuthLogic {
+// NewAuthLogic creates a new authentication logic instance
+func NewAuthLogic(baseLogic *BaseLogic, jwtConfig dto.JwtConfig, enforcer *rbac.Enforcer, authEventTopic string) *AuthLogic {
 	return &AuthLogic{
-		repos: repos,
-		auth:  auth.NewAuth(repos, redisCli, jwtConfig, enforcer, authEventTopic),
+		BaseLogic: baseLogic,
+		auth:      auth.NewAuth(baseLogic.repos, baseLogic.redisCli, jwtConfig, enforcer, authEventTopic),
 	}
 }
 

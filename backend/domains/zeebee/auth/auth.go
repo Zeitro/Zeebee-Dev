@@ -533,3 +533,14 @@ func (l *Auth) LoadOrganizationRoleResources(ctx context.Context, organizationId
 	l.organizationRoleResourceMap.Set(organizationId, resources)
 	return
 }
+
+// Close close auth, save policy and unsubscribe from redis
+func (l *Auth) Close() {
+	if l.enforcer != nil {
+		_ = l.enforcer.SavePolicy()
+	}
+
+	if l.eventSubScribeCancelFn != nil {
+		l.eventSubScribeCancelFn()
+	}
+}

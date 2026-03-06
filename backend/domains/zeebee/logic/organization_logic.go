@@ -16,16 +16,16 @@ import (
 	"zeebee-backend/domains/zeebee/repo"
 )
 
+// OrganizationLogic provides organization business logic
 type OrganizationLogic struct {
-	repos       *repo.AllRepos
+	*BaseLogic
 	enforcerMap map[constants.UserType]*rbac.Enforcer
 }
 
-// NewOrganizationLogic creates a new instance of OrganizationLogic.
-// It initializes the logic with the provided repository dependencies.
-func NewOrganizationLogic(repos *repo.AllRepos, enforcerMap map[constants.UserType]*rbac.Enforcer) *OrganizationLogic {
+// NewOrganizationLogic creates a new organization logic instance
+func NewOrganizationLogic(baseLogic *BaseLogic, enforcerMap map[constants.UserType]*rbac.Enforcer) *OrganizationLogic {
 	return &OrganizationLogic{
-		repos:       repos,
+		BaseLogic:   baseLogic,
 		enforcerMap: enforcerMap,
 	}
 }

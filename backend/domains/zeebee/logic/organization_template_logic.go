@@ -16,18 +16,17 @@ import (
 	"zeebee-backend/domains/zeebee/data"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
-	"zeebee-backend/domains/zeebee/repo"
 )
 
-// OrganizationTemplateLogic provides base template business logic
+// OrganizationTemplateLogic provides organization template business logic
 type OrganizationTemplateLogic struct {
-	repos *repo.AllRepos
+	*BaseLogic
 }
 
-// NewOrganizationTemplateLogic creates a new base template logic instance
-func NewOrganizationTemplateLogic(repos *repo.AllRepos) *OrganizationTemplateLogic {
+// NewOrganizationTemplateLogic creates a new organization template logic instance
+func NewOrganizationTemplateLogic(baseLogic *BaseLogic) *OrganizationTemplateLogic {
 	return &OrganizationTemplateLogic{
-		repos: repos,
+		BaseLogic: baseLogic,
 	}
 }
 

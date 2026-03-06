@@ -11,16 +11,17 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
-	"zeebee-backend/domains/zeebee/repo"
 )
 
+// ResourceLogic provides resource business logic
 type ResourceLogic struct {
-	repos *repo.AllRepos
+	*BaseLogic
 }
 
-func NewResourceLogic(repos *repo.AllRepos) *ResourceLogic {
+// NewResourceLogic creates a new resource logic instance
+func NewResourceLogic(baseLogic *BaseLogic) *ResourceLogic {
 	return &ResourceLogic{
-		repos: repos,
+		BaseLogic: baseLogic,
 	}
 }
 

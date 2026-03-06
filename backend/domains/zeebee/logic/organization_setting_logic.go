@@ -10,18 +10,17 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
-	"zeebee-backend/domains/zeebee/repo"
 )
 
+// OrganizationSettingLogic provides organization setting business logic
 type OrganizationSettingLogic struct {
-	repos *repo.AllRepos
+	*BaseLogic
 }
 
-// NewOrganizationSettingLogic creates a new instance of OrganizationSettingLogic.
-// It initializes the logic with the provided repository dependencies.
-func NewOrganizationSettingLogic(repos *repo.AllRepos) *OrganizationSettingLogic {
+// NewOrganizationSettingLogic creates a new organization setting logic instance
+func NewOrganizationSettingLogic(baseLogic *BaseLogic) *OrganizationSettingLogic {
 	return &OrganizationSettingLogic{
-		repos: repos,
+		BaseLogic: baseLogic,
 	}
 }
 

@@ -9,27 +9,23 @@ import (
 
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/redisx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/auth"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
-	"zeebee-backend/domains/zeebee/repo"
 )
 
+// ApiLogic provides API business logic
 type ApiLogic struct {
-	*baseLogic
-	redisCli     *redisx.Redisx
+	*BaseLogic
 	authTopicMap map[constants.UserType]string
 }
 
-func NewApiLogic(repos *repo.AllRepos, redisCli *redisx.Redisx, authTopicMap map[constants.UserType]string) *ApiLogic {
+// NewApiLogic creates a new API logic instance
+func NewApiLogic(baseLogic *BaseLogic, authTopicMap map[constants.UserType]string) *ApiLogic {
 	return &ApiLogic{
-		baseLogic: &baseLogic{
-			repos: repos,
-		},
-		redisCli:     redisCli,
+		BaseLogic:    baseLogic,
 		authTopicMap: authTopicMap,
 	}
 }
@@ -74,7 +70,7 @@ func (l *ApiLogic) CreateApi(ctx context.Context, input *dto.ApiCreateRequestDto
 			Scope:  auth.ScopeGlobal,
 			Type:   input.Type,
 		}
-		_ = l.publishAuthEvent(subCtx, l.redisCli, l.authTopicMap[input.Type], msg)
+		_ = l.BaseLogic.publishAuthEvent(subCtx, l.authTopicMap[input.Type], msg)
 
 	}()
 
@@ -115,7 +111,7 @@ func (l *ApiLogic) UpdateApi(ctx context.Context, input *dto.ApiUpdateRequestDto
 			Scope:  auth.ScopeGlobal,
 			Type:   input.Type,
 		}
-		_ = l.publishAuthEvent(subCtx, l.redisCli, l.authTopicMap[input.Type], msg)
+		_ = l.BaseLogic.publishAuthEvent(subCtx, l.authTopicMap[input.Type], msg)
 
 	}()
 	return result, err
@@ -148,7 +144,7 @@ func (l *ApiLogic) DeleteApi(ctx context.Context, id int64, apiType constants.Us
 			Scope:  auth.ScopeGlobal,
 			Type:   apiType,
 		}
-		_ = l.publishAuthEvent(subCtx, l.redisCli, l.authTopicMap[apiType], msg)
+		_ = l.BaseLogic.publishAuthEvent(subCtx, l.authTopicMap[apiType], msg)
 
 	}()
 	return

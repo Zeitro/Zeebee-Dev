@@ -14,18 +14,19 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
-	"zeebee-backend/domains/zeebee/repo"
 )
 
+// RoleLogic provides role business logic
 type RoleLogic struct {
-	repos    *repo.AllRepos
+	*BaseLogic
 	enforcer *rbac.Enforcer
 }
 
-func NewRoleLogic(repos *repo.AllRepos, enforcer *rbac.Enforcer) *RoleLogic {
+// NewRoleLogic creates a new role logic instance
+func NewRoleLogic(baseLogic *BaseLogic, enforcer *rbac.Enforcer) *RoleLogic {
 	return &RoleLogic{
-		repos:    repos,
-		enforcer: enforcer,
+		BaseLogic: baseLogic,
+		enforcer:  enforcer,
 	}
 }
 

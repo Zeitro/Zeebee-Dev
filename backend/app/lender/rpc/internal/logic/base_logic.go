@@ -45,11 +45,24 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 		RefreshExpire: svcCtx.Config.JwtAuth.RefreshExpire,
 	}
 	currentEnforcer := global.LenderEnforcer
+
+	logicConfig := logic.AllLogicConfig{
+		Repos:           svcCtx.AllRepos,
+		RedisCli:        redisCli,
+		JwtConfig:       jwtConfig,
+		EmailClient:     global.EmailClient,
+		CurrentEnforcer: currentEnforcer,
+		// EnforcerMap:           enforcerMap,
+		// CurrentAuthEventTopic: currentAuthEventTopic,
+		// AuthEventTopicMap:     authEventTopicMap,
+	}
+
 	return &BaseLogic{
 		// ctx:       ctx,
 		svcCtx: svcCtx,
 		// Logger:    logx.WithContext(ctx),
-		AllLogics: logic.NewAllLogics(svcCtx.AllRepos, redisCli, jwtConfig, global.EmailClient, currentEnforcer, nil),
+		// AllLogics: logic.NewAllLogics(svcCtx.AllRepos, redisCli, jwtConfig, global.EmailClient, currentEnforcer, nil),
+		AllLogics: logic.NewAllLogics(logicConfig),
 	}
 }
 

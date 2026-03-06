@@ -37,19 +37,20 @@ type AllLogicConfig struct {
 }
 
 func NewAllLogics(config AllLogicConfig) *AllLogics {
+	baseLogic := NewBaseLogic(config.Repos, config.RedisCli)
 	return &AllLogics{
-		ApiLogic:                  NewApiLogic(config.Repos, config.RedisCli),
-		ResourceLogic:             NewResourceLogic(config.Repos),
-		RoleLogic:                 NewRoleLogic(config.Repos, config.CurrentEnforcer),
-		UserLogic:                 NewUserLogic(config.Repos, config.RedisCli, config.JwtConfig),
-		OrganizationUserLogic:     NewOrganizationUserLogic(config.Repos, config.RedisCli, config.EmailClient),
-		OrganizationLogic:         NewOrganizationLogic(config.Repos, config.EnforcerMap),
-		OrganizationEmailLogic:    NewOrganizationEmailLogic(config.Repos),
-		BaseTemplateLogic:         NewBaseTemplateLogic(config.Repos),
-		OrganizationTemplateLogic: NewOrganizationTemplateLogic(config.Repos),
-		OrganizationSettingLogic:  NewOrganizationSettingLogic(config.Repos),
-		LoanLogic:                 NewLoanLogic(config.Repos),
-		LoanOperationLogic:        NewLoanOperationLogic(config.Repos),
-		AuthLogic:                 NewAuthLogic(config.Repos, config.RedisCli, config.JwtConfig, config.CurrentEnforcer, config.CurrentAuthEventTopic),
+		ApiLogic:                  NewApiLogic(baseLogic, config.AuthEventTopicMap),
+		ResourceLogic:             NewResourceLogic(baseLogic),
+		RoleLogic:                 NewRoleLogic(baseLogic, config.CurrentEnforcer),
+		UserLogic:                 NewUserLogic(baseLogic, config.RedisCli, config.JwtConfig),
+		OrganizationUserLogic:     NewOrganizationUserLogic(baseLogic, config.RedisCli, config.EmailClient),
+		OrganizationLogic:         NewOrganizationLogic(baseLogic, config.EnforcerMap),
+		OrganizationEmailLogic:    NewOrganizationEmailLogic(baseLogic),
+		BaseTemplateLogic:         NewBaseTemplateLogic(baseLogic),
+		OrganizationTemplateLogic: NewOrganizationTemplateLogic(baseLogic),
+		OrganizationSettingLogic:  NewOrganizationSettingLogic(baseLogic),
+		LoanLogic:                 NewLoanLogic(baseLogic),
+		LoanOperationLogic:        NewLoanOperationLogic(baseLogic),
+		AuthLogic:                 NewAuthLogic(baseLogic, config.JwtConfig, config.CurrentEnforcer, config.CurrentAuthEventTopic),
 	}
 }

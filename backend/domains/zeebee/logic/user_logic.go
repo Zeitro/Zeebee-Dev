@@ -20,7 +20,6 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
-	"zeebee-backend/domains/zeebee/repo"
 )
 
 // type JwtConfig struct {
@@ -30,15 +29,17 @@ import (
 // 	RefreshExpire int64
 // }
 
+// UserLogic provides user business logic
 type UserLogic struct {
-	repos     *repo.AllRepos
+	*BaseLogic
 	redisCli  *redisx.Redisx
 	jwtConfig dto.JwtConfig
 }
 
-func NewUserLogic(repos *repo.AllRepos, redisCli *redisx.Redisx, jwtConfig dto.JwtConfig) *UserLogic {
+// NewUserLogic creates a new user logic instance
+func NewUserLogic(baseLogic *BaseLogic, redisCli *redisx.Redisx, jwtConfig dto.JwtConfig) *UserLogic {
 	return &UserLogic{
-		repos:     repos,
+		BaseLogic: baseLogic,
 		redisCli:  redisCli,
 		jwtConfig: jwtConfig,
 	}
@@ -563,12 +564,12 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 		eg, egCtx := errgroup.WithContext(ctx)
 		// Sync organization template
 		eg.Go(func() error {
-			organizationTemplateLogic := NewOrganizationTemplateLogic(l.repos)
+			organizationTemplateLogic := NewOrganizationTemplateLogic(l.BaseLogic)
 			return organizationTemplateLogic.SyncByOrganizationIdWithTx(egCtx, tx, organization)
 		})
 		// Init lender organization setting
 		eg.Go(func() error {
-			organizationSettingLogic := NewOrganizationSettingLogic(l.repos)
+			organizationSettingLogic := NewOrganizationSettingLogic(l.BaseLogic)
 			return organizationSettingLogic.InitLenderOrganizationSettingWithTx(egCtx, tx, organization)
 		})
 		innerErr = eg.Wait()
@@ -687,7 +688,7 @@ func (l *UserLogic) handleOwnedOrganizationWithTx(ctx context.Context, tx *gorm.
 		return err
 	}
 	// Sync owned organization templates
-	organizationTemplateLogic := NewOrganizationTemplateLogic(l.repos)
+	organizationTemplateLogic := NewOrganizationTemplateLogic(l.BaseLogic)
 	for index := range organizations {
 		err = organizationTemplateLogic.SyncByOrganizationIdWithTx(ctx, tx, organizations[index])
 		if err != nil {
