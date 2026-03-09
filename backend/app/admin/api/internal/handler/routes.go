@@ -417,6 +417,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: user.InfoHandler(serverCtx),
 				},
 				{
+					// user menu
+					Method:  http.MethodGet,
+					Path:    "/user/menu",
+					Handler: user.UserMenuHandler(serverCtx),
+				},
+				{
 					// edit profile
 					Method:  http.MethodPut,
 					Path:    "/user/profile",

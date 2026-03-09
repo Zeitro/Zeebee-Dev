@@ -210,6 +210,7 @@ type (
 		Update(ctx context.Context, in *ResourceUpdateRequest, opts ...grpc.CallOption) (*ResourceDetailResponse, error)
 		Delete(ctx context.Context, in *ResourceDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		Detail(ctx context.Context, in *ResourceDetailRequest, opts ...grpc.CallOption) (*ResourceDetailResponse, error)
+		UserMenu(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error)
 	}
 
 	defaultResource struct {
@@ -246,4 +247,9 @@ func (m *defaultResource) Delete(ctx context.Context, in *ResourceDeleteRequest,
 func (m *defaultResource) Detail(ctx context.Context, in *ResourceDetailRequest, opts ...grpc.CallOption) (*ResourceDetailResponse, error) {
 	client := admin.NewResourceClient(m.cli.Conn())
 	return client.Detail(ctx, in, opts...)
+}
+
+func (m *defaultResource) UserMenu(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error) {
+	client := admin.NewResourceClient(m.cli.Conn())
+	return client.UserMenu(ctx, in, opts...)
 }

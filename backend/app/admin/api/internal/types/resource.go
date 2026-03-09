@@ -51,10 +51,6 @@ type ResourceTreeRequest struct {
 	Type string `form:"type" validate:"required,oneof=Borrower Lender Admin"`
 }
 
-type ResourceTreeResponse struct {
-	List []*ResourceTreeEntity `json:"list"`
-}
-
 type ResourceUpdateRequest struct {
 	Id              int64   `path:"id" validate:"required,gt=0"`
 	ParentId        int64   `json:"parent_id,optional" validate:"min=0"`

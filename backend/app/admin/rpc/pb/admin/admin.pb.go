@@ -3754,6 +3754,7 @@ type ResourceTreeEntity struct {
 	UpdatedAt       string                 `protobuf:"bytes,13,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	Children        []*ResourceTreeEntity  `protobuf:"bytes,14,rep,name=children,proto3" json:"children,omitempty"`
 	EnableDataScope bool                   `protobuf:"varint,15,opt,name=enable_data_scope,json=enableDataScope,proto3" json:"enable_data_scope,omitempty"`
+	Apis            []*ApiEntity           `protobuf:"bytes,16,rep,name=apis,proto3" json:"apis,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -3891,6 +3892,13 @@ func (x *ResourceTreeEntity) GetEnableDataScope() bool {
 		return x.EnableDataScope
 	}
 	return false
+}
+
+func (x *ResourceTreeEntity) GetApis() []*ApiEntity {
+	if x != nil {
+		return x.Apis
+	}
+	return nil
 }
 
 type ResourceEntity struct {
@@ -13376,7 +13384,7 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04type\x18\x02 \x01(\tR\x04type\"9\n" +
 	"\x11ApiDetailResponse\x12$\n" +
-	"\x04data\x18\x01 \x01(\v2\x10.admin.ApiEntityR\x04data\"\xb9\x03\n" +
+	"\x04data\x18\x01 \x01(\v2\x10.admin.ApiEntityR\x04data\"\xdf\x03\n" +
 	"\x12ResourceTreeEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12\x12\n" +
@@ -13396,7 +13404,8 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\r \x01(\tR\tupdatedAt\x125\n" +
 	"\bchildren\x18\x0e \x03(\v2\x19.admin.ResourceTreeEntityR\bchildren\x12*\n" +
-	"\x11enable_data_scope\x18\x0f \x01(\bR\x0fenableDataScope\"\xc3\x03\n" +
+	"\x11enable_data_scope\x18\x0f \x01(\bR\x0fenableDataScope\x12$\n" +
+	"\x04apis\x18\x10 \x03(\v2\x10.admin.ApiEntityR\x04apis\"\xc3\x03\n" +
 	"\x0eResourceEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12\x12\n" +
@@ -14190,13 +14199,14 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x06Create\x12\x17.admin.ApiCreateRequest\x1a\x18.admin.ApiDetailResponse\x12;\n" +
 	"\x06Update\x12\x17.admin.ApiUpdateRequest\x1a\x18.admin.ApiDetailResponse\x127\n" +
 	"\x06Delete\x12\x17.admin.ApiDeleteRequest\x1a\x14.admin.EmptyResponse\x12;\n" +
-	"\x06Detail\x12\x17.admin.ApiDetailRequest\x1a\x18.admin.ApiDetailResponse2\xe6\x02\n" +
+	"\x06Detail\x12\x17.admin.ApiDetailRequest\x1a\x18.admin.ApiDetailResponse2\xa4\x03\n" +
 	"\bresource\x12G\n" +
 	"\fResourceTree\x12\x1a.admin.ResourceTreeRequest\x1a\x1b.admin.ResourceTreeResponse\x12E\n" +
 	"\x06Create\x12\x1c.admin.ResourceCreateRequest\x1a\x1d.admin.ResourceDetailResponse\x12E\n" +
 	"\x06Update\x12\x1c.admin.ResourceUpdateRequest\x1a\x1d.admin.ResourceDetailResponse\x12<\n" +
 	"\x06Delete\x12\x1c.admin.ResourceDeleteRequest\x1a\x14.admin.EmptyResponse\x12E\n" +
-	"\x06Detail\x12\x1c.admin.ResourceDetailRequest\x1a\x1d.admin.ResourceDetailResponse2\x93\x04\n" +
+	"\x06Detail\x12\x1c.admin.ResourceDetailRequest\x1a\x1d.admin.ResourceDetailResponse\x12<\n" +
+	"\bUserMenu\x12\x13.admin.EmptyRequest\x1a\x1b.admin.ResourceTreeResponse2\x93\x04\n" +
 	"\x04role\x127\n" +
 	"\x04Page\x12\x16.admin.RolePageRequest\x1a\x17.admin.RolePageResponse\x12=\n" +
 	"\x06Create\x12\x18.admin.RoleCreateRequest\x1a\x19.admin.RoleDetailResponse\x12=\n" +
@@ -14478,228 +14488,231 @@ var file_app_admin_rpc_pb_admin_proto_depIdxs = []int32{
 	58,  // 30: admin.ApiDetailRequest.data:type_name -> admin.ApiDetailRequestData
 	47,  // 31: admin.ApiDetailResponse.data:type_name -> admin.ApiEntity
 	60,  // 32: admin.ResourceTreeEntity.children:type_name -> admin.ResourceTreeEntity
-	47,  // 33: admin.ResourceEntity.apis:type_name -> admin.ApiEntity
-	63,  // 34: admin.ResourceTreeRequest.data:type_name -> admin.ResourceTreeRequestData
-	60,  // 35: admin.ResourceTreeResponse.data:type_name -> admin.ResourceTreeEntity
-	66,  // 36: admin.ResourceCreateRequest.data:type_name -> admin.ResourceCreateRequestData
-	68,  // 37: admin.ResourceUpdateRequest.data:type_name -> admin.ResourceUpdateRequestData
-	70,  // 38: admin.ResourceDeleteRequest.data:type_name -> admin.ResourceDeleteRequestData
-	72,  // 39: admin.ResourceDetailRequest.data:type_name -> admin.ResourceDetailRequestData
-	61,  // 40: admin.ResourceDetailResponse.data:type_name -> admin.ResourceEntity
-	61,  // 41: admin.RoleEntity.resources:type_name -> admin.ResourceEntity
-	27,  // 42: admin.RoleEntity.organization_users:type_name -> admin.OrganizationUserEntity
-	76,  // 43: admin.RolePageRequest.data:type_name -> admin.RolePageRequestData
-	77,  // 44: admin.RolePageRequestData.filter:type_name -> admin.RolePageRequestFilter
-	78,  // 45: admin.RolePageRequestData.sorter:type_name -> admin.RolePageRequestSorter
-	80,  // 46: admin.RolePageResponse.data:type_name -> admin.RolePageResponseData
-	74,  // 47: admin.RolePageResponseData.list:type_name -> admin.RoleEntity
-	82,  // 48: admin.RoleCreateRequest.data:type_name -> admin.RoleCreateRequestData
-	85,  // 49: admin.RoleCreateRequestData.role_and_resources:type_name -> admin.RoleAndResourceRelationEntity
-	84,  // 50: admin.RoleUpdateRequest.data:type_name -> admin.RoleUpdateRequestData
-	85,  // 51: admin.RoleUpdateRequestData.role_and_resources:type_name -> admin.RoleAndResourceRelationEntity
-	87,  // 52: admin.RoleDeleteRequest.data:type_name -> admin.RoleDeleteRequestData
-	89,  // 53: admin.RoleDetailRequest.data:type_name -> admin.RoleDetailRequestData
-	74,  // 54: admin.RoleDetailResponse.data:type_name -> admin.RoleEntity
-	92,  // 55: admin.RoleSwitchStatusRequest.data:type_name -> admin.RoleSwitchStatusRequestData
-	94,  // 56: admin.RoleAllRequest.data:type_name -> admin.RoleAllRequestData
-	74,  // 57: admin.RoleAllResponse.data:type_name -> admin.RoleEntity
-	97,  // 58: admin.RoleAssignOrganizationUsersRequest.data:type_name -> admin.RoleAssignOrganizationUsersRequestData
-	4,   // 59: admin.OrganizationEntity.address:type_name -> admin.AddressEntity
-	100, // 60: admin.OrganizationEntity.metadata:type_name -> admin.OrganizationMetadataEntity
-	121, // 61: admin.OrganizationEntity.organization_emails:type_name -> admin.OrganizationEmailEntity
-	8,   // 62: admin.OrganizationEntity.owner:type_name -> admin.UserEntity
-	4,   // 63: admin.OrganizationPageEntity.address:type_name -> admin.AddressEntity
-	101, // 64: admin.OrganizationMetadataEntity.lender:type_name -> admin.OrganizationLenderMetadataEntity
-	7,   // 65: admin.OrganizationLenderMetadataEntity.loan_amount_range:type_name -> admin.RangeFloat
-	6,   // 66: admin.OrganizationLenderMetadataEntity.loan_term_range:type_name -> admin.RangeInt32
-	7,   // 67: admin.OrganizationLenderMetadataEntity.loan_rate_range:type_name -> admin.RangeFloat
-	7,   // 68: admin.OrganizationLenderMetadataEntity.loan_point_range:type_name -> admin.RangeFloat
-	104, // 69: admin.OrganizationPageRequest.data:type_name -> admin.OrganizationPageRequestData
-	105, // 70: admin.OrganizationPageRequestData.filter:type_name -> admin.OrganizationPageRequestFilter
-	106, // 71: admin.OrganizationPageRequestData.sorter:type_name -> admin.OrganizationPageRequestSorter
-	108, // 72: admin.OrganizationPageResponse.data:type_name -> admin.OrganizationPageResponseData
-	99,  // 73: admin.OrganizationPageResponseData.list:type_name -> admin.OrganizationPageEntity
-	110, // 74: admin.OrganizationCreateLenderRequest.data:type_name -> admin.OrganizationCreateLenderRequestData
-	111, // 75: admin.OrganizationCreateLenderRequestData.owner:type_name -> admin.OrganizationCreateLenderUserEntity
-	112, // 76: admin.OrganizationCreateLenderRequestData.organization:type_name -> admin.OrganizationCreateLenderOrganizationEntity
-	100, // 77: admin.OrganizationCreateLenderOrganizationEntity.metadata:type_name -> admin.OrganizationMetadataEntity
-	4,   // 78: admin.OrganizationCreateLenderOrganizationEntity.address:type_name -> admin.AddressEntity
-	114, // 79: admin.OrganizationUpdateLenderRequest.data:type_name -> admin.OrganizationUpdateLenderRequestData
-	100, // 80: admin.OrganizationUpdateLenderRequestData.metadata:type_name -> admin.OrganizationMetadataEntity
-	4,   // 81: admin.OrganizationUpdateLenderRequestData.address:type_name -> admin.AddressEntity
-	98,  // 82: admin.OrganizationDetailResponse.data:type_name -> admin.OrganizationEntity
-	117, // 83: admin.OrganizationSwitchStatusRequest.data:type_name -> admin.OrganizationSwitchStatusRequestData
-	119, // 84: admin.OrganizationSelectOptionsRequest.data:type_name -> admin.OrganizationSelectOptionsRequestData
-	102, // 85: admin.OrganizationSelectOptionsResponse.data:type_name -> admin.OrganizationOptionsEntity
-	123, // 86: admin.StorageCreatePresignedUrlRequest.data:type_name -> admin.StorageCreatePresignedUrlRequestData
-	125, // 87: admin.StorageCreatePresignedUrlResponse.data:type_name -> admin.StorageCreatePresignedUrlResponseData
-	127, // 88: admin.OptionRequest.data:type_name -> admin.OptionRequestData
-	129, // 89: admin.OptionResponse.data:type_name -> admin.OptionEntity
-	131, // 90: admin.UsCitiesRequest.data:type_name -> admin.UsCitiesRequestData
-	189, // 91: admin.TemplateVariableEntity.properties:type_name -> admin.TemplateVariableEntity.PropertiesEntry
-	132, // 92: admin.TemplateVariableEntity.items:type_name -> admin.TemplateVariableEntity
-	132, // 93: admin.TemplateVariableGroupEntity.variables:type_name -> admin.TemplateVariableEntity
-	133, // 94: admin.BaseTemplateEntity.variable_group_schema:type_name -> admin.TemplateVariableGroupEntity
-	137, // 95: admin.CreateBaseTemplateRequest.data:type_name -> admin.CreateBaseTemplateRequestData
-	133, // 96: admin.CreateBaseTemplateRequestData.variable_group_schema:type_name -> admin.TemplateVariableGroupEntity
-	134, // 97: admin.CreateBaseTemplateResponse.data:type_name -> admin.BaseTemplateEntity
-	140, // 98: admin.UpdateBaseTemplateRequest.data:type_name -> admin.UpdateBaseTemplateRequestData
-	133, // 99: admin.UpdateBaseTemplateRequestData.variable_group_schema:type_name -> admin.TemplateVariableGroupEntity
-	134, // 100: admin.UpdateBaseTemplateResponse.data:type_name -> admin.BaseTemplateEntity
-	3,   // 101: admin.GetBaseTemplateRequest.data:type_name -> admin.IdRequest
-	134, // 102: admin.GetBaseTemplateResponse.data:type_name -> admin.BaseTemplateEntity
-	145, // 103: admin.BaseTemplatePageRequest.data:type_name -> admin.BaseTemplatePageRequestData
-	146, // 104: admin.BaseTemplatePageRequestData.filter:type_name -> admin.BaseTemplatePageRequestFilter
-	147, // 105: admin.BaseTemplatePageRequestData.sorter:type_name -> admin.BaseTemplatePageRequestSorter
-	149, // 106: admin.BaseTemplatePageResponse.data:type_name -> admin.BaseTemplatePageResponseData
-	135, // 107: admin.BaseTemplatePageResponseData.list:type_name -> admin.BaseTemplatePageEntity
-	151, // 108: admin.SwitchBaseTemplateStatusRequest.data:type_name -> admin.SwitchBaseTemplateStatusRequestData
-	3,   // 109: admin.DeleteBaseTemplateRequest.data:type_name -> admin.IdRequest
-	154, // 110: admin.BaseTemplatePreviewRequest.data:type_name -> admin.BaseTemplatePreviewRequestData
-	133, // 111: admin.BaseTemplatePreviewRequestData.variable_group_schema:type_name -> admin.TemplateVariableGroupEntity
-	156, // 112: admin.BaseTemplatePreviewResponse.data:type_name -> admin.BaseTemplatePreviewResponseData
-	170, // 113: admin.LoanEntity.loan_property:type_name -> admin.LoanPropertyEntity
-	172, // 114: admin.LoanEntity.applicants:type_name -> admin.LoanApplicantEntity
-	173, // 115: admin.LoanEntity.transaction_experiences:type_name -> admin.LoanExperienceEntity
-	173, // 116: admin.LoanEntity.real_estate_experiences:type_name -> admin.LoanExperienceEntity
-	181, // 117: admin.LoanEntity.loan_borrower:type_name -> admin.LoanBorrowerEntity
-	175, // 118: admin.LoanEntity.loan_demographic:type_name -> admin.LoanDemographicEntity
-	174, // 119: admin.LoanEntity.loan_third_services:type_name -> admin.LoanThirdServiceEntity
-	159, // 120: admin.LoanEntity.extend:type_name -> admin.LoanExtendValueEntity
-	182, // 121: admin.LoanEntity.loan_documents:type_name -> admin.LoanDocumentEntity
-	164, // 122: admin.LoanPageRequest.data:type_name -> admin.LoanPageRequestData
-	165, // 123: admin.LoanPageResponse.data:type_name -> admin.LoanPageResponseData
-	162, // 124: admin.LoanPageRequestData.filter:type_name -> admin.LoanPageRequestFilter
-	163, // 125: admin.LoanPageRequestData.sorter:type_name -> admin.LoanPageRequestSorter
-	157, // 126: admin.LoanPageResponseData.list:type_name -> admin.LoanEntity
-	157, // 127: admin.LoanDetailResponse.data:type_name -> admin.LoanEntity
-	168, // 128: admin.ReassignLoanRequest.data:type_name -> admin.ReassignLoanRequestData
-	171, // 129: admin.LoanPropertyEntity.borrower_property:type_name -> admin.BorrowerPropertyEntity
-	158, // 130: admin.LoanPropertyEntity.budget:type_name -> admin.LoanBudgetEntity
-	4,   // 131: admin.LoanPropertyEntity.address:type_name -> admin.AddressEntity
-	4,   // 132: admin.BorrowerPropertyEntity.address:type_name -> admin.AddressEntity
-	4,   // 133: admin.LoanApplicantEntity.address:type_name -> admin.AddressEntity
-	4,   // 134: admin.LoanExperienceEntity.address:type_name -> admin.AddressEntity
-	176, // 135: admin.LoanDemographicEntity.property:type_name -> admin.LoanDemographicPropertyEntity
-	177, // 136: admin.LoanDemographicEntity.ethnicity:type_name -> admin.LoanDemographicEthnicityEntity
-	178, // 137: admin.LoanDemographicEntity.race:type_name -> admin.LoanDemographicRaceEntity
-	4,   // 138: admin.BorrowerEntityEntity.mailing_address:type_name -> admin.AddressEntity
-	4,   // 139: admin.LoanBorrowerEntity.mailing_address:type_name -> admin.AddressEntity
-	183, // 140: admin.LoanDocumentEntity.files:type_name -> admin.FileEntity
-	185, // 141: admin.AuthCheckRequest.data:type_name -> admin.AuthCheckRequestData
-	187, // 142: admin.AuthCheckResponse.data:type_name -> admin.AuthCheckResponseData
-	132, // 143: admin.TemplateVariableEntity.PropertiesEntry.value:type_name -> admin.TemplateVariableEntity
-	9,   // 144: admin.User.Login:input_type -> admin.UserLoginRequest
-	13,  // 145: admin.User.RefreshToken:input_type -> admin.RefreshTokenRequest
-	0,   // 146: admin.User.UserInfo:input_type -> admin.EmptyRequest
-	17,  // 147: admin.User.ResetPassword:input_type -> admin.ResetPasswordRequest
-	25,  // 148: admin.User.EditProfile:input_type -> admin.UserProfileEditRequest
-	29,  // 149: admin.OrganizationUser.Page:input_type -> admin.OrganizationUserPageRequest
-	35,  // 150: admin.OrganizationUser.Create:input_type -> admin.OrganizationUserCreateRequest
-	37,  // 151: admin.OrganizationUser.Update:input_type -> admin.OrganizationUserUpdateRequest
-	39,  // 152: admin.OrganizationUser.Delete:input_type -> admin.OrganizationUserDeleteRequest
-	41,  // 153: admin.OrganizationUser.Detail:input_type -> admin.OrganizationUserDetailRequest
-	44,  // 154: admin.OrganizationUser.SwitchStatus:input_type -> admin.OrganizationUserSwitchStatusRequest
-	48,  // 155: admin.api.ApiTree:input_type -> admin.ApiTreeRequest
-	51,  // 156: admin.api.Create:input_type -> admin.ApiCreateRequest
-	53,  // 157: admin.api.Update:input_type -> admin.ApiUpdateRequest
-	55,  // 158: admin.api.Delete:input_type -> admin.ApiDeleteRequest
-	57,  // 159: admin.api.Detail:input_type -> admin.ApiDetailRequest
-	62,  // 160: admin.resource.ResourceTree:input_type -> admin.ResourceTreeRequest
-	65,  // 161: admin.resource.Create:input_type -> admin.ResourceCreateRequest
-	67,  // 162: admin.resource.Update:input_type -> admin.ResourceUpdateRequest
-	69,  // 163: admin.resource.Delete:input_type -> admin.ResourceDeleteRequest
-	71,  // 164: admin.resource.Detail:input_type -> admin.ResourceDetailRequest
-	75,  // 165: admin.role.Page:input_type -> admin.RolePageRequest
-	81,  // 166: admin.role.Create:input_type -> admin.RoleCreateRequest
-	83,  // 167: admin.role.Update:input_type -> admin.RoleUpdateRequest
-	86,  // 168: admin.role.Delete:input_type -> admin.RoleDeleteRequest
-	88,  // 169: admin.role.Detail:input_type -> admin.RoleDetailRequest
-	91,  // 170: admin.role.SwitchStatus:input_type -> admin.RoleSwitchStatusRequest
-	93,  // 171: admin.role.All:input_type -> admin.RoleAllRequest
-	96,  // 172: admin.role.AssignOrganizationUsers:input_type -> admin.RoleAssignOrganizationUsersRequest
-	103, // 173: admin.organization.Page:input_type -> admin.OrganizationPageRequest
-	109, // 174: admin.organization.CreateLender:input_type -> admin.OrganizationCreateLenderRequest
-	113, // 175: admin.organization.UpdateLender:input_type -> admin.OrganizationUpdateLenderRequest
-	3,   // 176: admin.organization.Detail:input_type -> admin.IdRequest
-	3,   // 177: admin.organization.Delete:input_type -> admin.IdRequest
-	116, // 178: admin.organization.SwitchStatus:input_type -> admin.OrganizationSwitchStatusRequest
-	118, // 179: admin.organization.SelectOptions:input_type -> admin.OrganizationSelectOptionsRequest
-	122, // 180: admin.Storage.CreatePresignedUrl:input_type -> admin.StorageCreatePresignedUrlRequest
-	126, // 181: admin.common.GetOpt:input_type -> admin.OptionRequest
-	0,   // 182: admin.common.GetUsState:input_type -> admin.EmptyRequest
-	130, // 183: admin.common.GetUsCities:input_type -> admin.UsCitiesRequest
-	136, // 184: admin.BaseTemplate.Create:input_type -> admin.CreateBaseTemplateRequest
-	139, // 185: admin.BaseTemplate.Update:input_type -> admin.UpdateBaseTemplateRequest
-	142, // 186: admin.BaseTemplate.Detail:input_type -> admin.GetBaseTemplateRequest
-	144, // 187: admin.BaseTemplate.Page:input_type -> admin.BaseTemplatePageRequest
-	150, // 188: admin.BaseTemplate.SwitchStatus:input_type -> admin.SwitchBaseTemplateStatusRequest
-	152, // 189: admin.BaseTemplate.Delete:input_type -> admin.DeleteBaseTemplateRequest
-	153, // 190: admin.BaseTemplate.Preview:input_type -> admin.BaseTemplatePreviewRequest
-	3,   // 191: admin.BaseTemplate.Reset:input_type -> admin.IdRequest
-	160, // 192: admin.Loan.LoanPage:input_type -> admin.LoanPageRequest
-	3,   // 193: admin.Loan.LoanDetail:input_type -> admin.IdRequest
-	167, // 194: admin.Loan.ReassignLoan:input_type -> admin.ReassignLoanRequest
-	0,   // 195: admin.Loan.LoanLenderCompanies:input_type -> admin.EmptyRequest
-	184, // 196: admin.Auth.AuthCheck:input_type -> admin.AuthCheckRequest
-	11,  // 197: admin.User.Login:output_type -> admin.UserLoginResponse
-	15,  // 198: admin.User.RefreshToken:output_type -> admin.RefreshTokenResponse
-	23,  // 199: admin.User.UserInfo:output_type -> admin.UserinfoResponse
-	19,  // 200: admin.User.ResetPassword:output_type -> admin.ResetPasswordResponse
-	23,  // 201: admin.User.EditProfile:output_type -> admin.UserinfoResponse
-	33,  // 202: admin.OrganizationUser.Page:output_type -> admin.OrganizationUserPageResponse
-	43,  // 203: admin.OrganizationUser.Create:output_type -> admin.OrganizationUserDetailResponse
-	43,  // 204: admin.OrganizationUser.Update:output_type -> admin.OrganizationUserDetailResponse
-	1,   // 205: admin.OrganizationUser.Delete:output_type -> admin.EmptyResponse
-	43,  // 206: admin.OrganizationUser.Detail:output_type -> admin.OrganizationUserDetailResponse
-	1,   // 207: admin.OrganizationUser.SwitchStatus:output_type -> admin.EmptyResponse
-	50,  // 208: admin.api.ApiTree:output_type -> admin.ApiTreeResponse
-	59,  // 209: admin.api.Create:output_type -> admin.ApiDetailResponse
-	59,  // 210: admin.api.Update:output_type -> admin.ApiDetailResponse
-	1,   // 211: admin.api.Delete:output_type -> admin.EmptyResponse
-	59,  // 212: admin.api.Detail:output_type -> admin.ApiDetailResponse
-	64,  // 213: admin.resource.ResourceTree:output_type -> admin.ResourceTreeResponse
-	73,  // 214: admin.resource.Create:output_type -> admin.ResourceDetailResponse
-	73,  // 215: admin.resource.Update:output_type -> admin.ResourceDetailResponse
-	1,   // 216: admin.resource.Delete:output_type -> admin.EmptyResponse
-	73,  // 217: admin.resource.Detail:output_type -> admin.ResourceDetailResponse
-	79,  // 218: admin.role.Page:output_type -> admin.RolePageResponse
-	90,  // 219: admin.role.Create:output_type -> admin.RoleDetailResponse
-	90,  // 220: admin.role.Update:output_type -> admin.RoleDetailResponse
-	1,   // 221: admin.role.Delete:output_type -> admin.EmptyResponse
-	90,  // 222: admin.role.Detail:output_type -> admin.RoleDetailResponse
-	1,   // 223: admin.role.SwitchStatus:output_type -> admin.EmptyResponse
-	95,  // 224: admin.role.All:output_type -> admin.RoleAllResponse
-	90,  // 225: admin.role.AssignOrganizationUsers:output_type -> admin.RoleDetailResponse
-	107, // 226: admin.organization.Page:output_type -> admin.OrganizationPageResponse
-	115, // 227: admin.organization.CreateLender:output_type -> admin.OrganizationDetailResponse
-	115, // 228: admin.organization.UpdateLender:output_type -> admin.OrganizationDetailResponse
-	115, // 229: admin.organization.Detail:output_type -> admin.OrganizationDetailResponse
-	1,   // 230: admin.organization.Delete:output_type -> admin.EmptyResponse
-	1,   // 231: admin.organization.SwitchStatus:output_type -> admin.EmptyResponse
-	120, // 232: admin.organization.SelectOptions:output_type -> admin.OrganizationSelectOptionsResponse
-	124, // 233: admin.Storage.CreatePresignedUrl:output_type -> admin.StorageCreatePresignedUrlResponse
-	128, // 234: admin.common.GetOpt:output_type -> admin.OptionResponse
-	2,   // 235: admin.common.GetUsState:output_type -> admin.StringSliceResponse
-	2,   // 236: admin.common.GetUsCities:output_type -> admin.StringSliceResponse
-	138, // 237: admin.BaseTemplate.Create:output_type -> admin.CreateBaseTemplateResponse
-	141, // 238: admin.BaseTemplate.Update:output_type -> admin.UpdateBaseTemplateResponse
-	143, // 239: admin.BaseTemplate.Detail:output_type -> admin.GetBaseTemplateResponse
-	148, // 240: admin.BaseTemplate.Page:output_type -> admin.BaseTemplatePageResponse
-	1,   // 241: admin.BaseTemplate.SwitchStatus:output_type -> admin.EmptyResponse
-	1,   // 242: admin.BaseTemplate.Delete:output_type -> admin.EmptyResponse
-	155, // 243: admin.BaseTemplate.Preview:output_type -> admin.BaseTemplatePreviewResponse
-	1,   // 244: admin.BaseTemplate.Reset:output_type -> admin.EmptyResponse
-	161, // 245: admin.Loan.LoanPage:output_type -> admin.LoanPageResponse
-	166, // 246: admin.Loan.LoanDetail:output_type -> admin.LoanDetailResponse
-	1,   // 247: admin.Loan.ReassignLoan:output_type -> admin.EmptyResponse
-	169, // 248: admin.Loan.LoanLenderCompanies:output_type -> admin.LoanLenderCompaniesResponse
-	186, // 249: admin.Auth.AuthCheck:output_type -> admin.AuthCheckResponse
-	197, // [197:250] is the sub-list for method output_type
-	144, // [144:197] is the sub-list for method input_type
-	144, // [144:144] is the sub-list for extension type_name
-	144, // [144:144] is the sub-list for extension extendee
-	0,   // [0:144] is the sub-list for field type_name
+	47,  // 33: admin.ResourceTreeEntity.apis:type_name -> admin.ApiEntity
+	47,  // 34: admin.ResourceEntity.apis:type_name -> admin.ApiEntity
+	63,  // 35: admin.ResourceTreeRequest.data:type_name -> admin.ResourceTreeRequestData
+	60,  // 36: admin.ResourceTreeResponse.data:type_name -> admin.ResourceTreeEntity
+	66,  // 37: admin.ResourceCreateRequest.data:type_name -> admin.ResourceCreateRequestData
+	68,  // 38: admin.ResourceUpdateRequest.data:type_name -> admin.ResourceUpdateRequestData
+	70,  // 39: admin.ResourceDeleteRequest.data:type_name -> admin.ResourceDeleteRequestData
+	72,  // 40: admin.ResourceDetailRequest.data:type_name -> admin.ResourceDetailRequestData
+	61,  // 41: admin.ResourceDetailResponse.data:type_name -> admin.ResourceEntity
+	61,  // 42: admin.RoleEntity.resources:type_name -> admin.ResourceEntity
+	27,  // 43: admin.RoleEntity.organization_users:type_name -> admin.OrganizationUserEntity
+	76,  // 44: admin.RolePageRequest.data:type_name -> admin.RolePageRequestData
+	77,  // 45: admin.RolePageRequestData.filter:type_name -> admin.RolePageRequestFilter
+	78,  // 46: admin.RolePageRequestData.sorter:type_name -> admin.RolePageRequestSorter
+	80,  // 47: admin.RolePageResponse.data:type_name -> admin.RolePageResponseData
+	74,  // 48: admin.RolePageResponseData.list:type_name -> admin.RoleEntity
+	82,  // 49: admin.RoleCreateRequest.data:type_name -> admin.RoleCreateRequestData
+	85,  // 50: admin.RoleCreateRequestData.role_and_resources:type_name -> admin.RoleAndResourceRelationEntity
+	84,  // 51: admin.RoleUpdateRequest.data:type_name -> admin.RoleUpdateRequestData
+	85,  // 52: admin.RoleUpdateRequestData.role_and_resources:type_name -> admin.RoleAndResourceRelationEntity
+	87,  // 53: admin.RoleDeleteRequest.data:type_name -> admin.RoleDeleteRequestData
+	89,  // 54: admin.RoleDetailRequest.data:type_name -> admin.RoleDetailRequestData
+	74,  // 55: admin.RoleDetailResponse.data:type_name -> admin.RoleEntity
+	92,  // 56: admin.RoleSwitchStatusRequest.data:type_name -> admin.RoleSwitchStatusRequestData
+	94,  // 57: admin.RoleAllRequest.data:type_name -> admin.RoleAllRequestData
+	74,  // 58: admin.RoleAllResponse.data:type_name -> admin.RoleEntity
+	97,  // 59: admin.RoleAssignOrganizationUsersRequest.data:type_name -> admin.RoleAssignOrganizationUsersRequestData
+	4,   // 60: admin.OrganizationEntity.address:type_name -> admin.AddressEntity
+	100, // 61: admin.OrganizationEntity.metadata:type_name -> admin.OrganizationMetadataEntity
+	121, // 62: admin.OrganizationEntity.organization_emails:type_name -> admin.OrganizationEmailEntity
+	8,   // 63: admin.OrganizationEntity.owner:type_name -> admin.UserEntity
+	4,   // 64: admin.OrganizationPageEntity.address:type_name -> admin.AddressEntity
+	101, // 65: admin.OrganizationMetadataEntity.lender:type_name -> admin.OrganizationLenderMetadataEntity
+	7,   // 66: admin.OrganizationLenderMetadataEntity.loan_amount_range:type_name -> admin.RangeFloat
+	6,   // 67: admin.OrganizationLenderMetadataEntity.loan_term_range:type_name -> admin.RangeInt32
+	7,   // 68: admin.OrganizationLenderMetadataEntity.loan_rate_range:type_name -> admin.RangeFloat
+	7,   // 69: admin.OrganizationLenderMetadataEntity.loan_point_range:type_name -> admin.RangeFloat
+	104, // 70: admin.OrganizationPageRequest.data:type_name -> admin.OrganizationPageRequestData
+	105, // 71: admin.OrganizationPageRequestData.filter:type_name -> admin.OrganizationPageRequestFilter
+	106, // 72: admin.OrganizationPageRequestData.sorter:type_name -> admin.OrganizationPageRequestSorter
+	108, // 73: admin.OrganizationPageResponse.data:type_name -> admin.OrganizationPageResponseData
+	99,  // 74: admin.OrganizationPageResponseData.list:type_name -> admin.OrganizationPageEntity
+	110, // 75: admin.OrganizationCreateLenderRequest.data:type_name -> admin.OrganizationCreateLenderRequestData
+	111, // 76: admin.OrganizationCreateLenderRequestData.owner:type_name -> admin.OrganizationCreateLenderUserEntity
+	112, // 77: admin.OrganizationCreateLenderRequestData.organization:type_name -> admin.OrganizationCreateLenderOrganizationEntity
+	100, // 78: admin.OrganizationCreateLenderOrganizationEntity.metadata:type_name -> admin.OrganizationMetadataEntity
+	4,   // 79: admin.OrganizationCreateLenderOrganizationEntity.address:type_name -> admin.AddressEntity
+	114, // 80: admin.OrganizationUpdateLenderRequest.data:type_name -> admin.OrganizationUpdateLenderRequestData
+	100, // 81: admin.OrganizationUpdateLenderRequestData.metadata:type_name -> admin.OrganizationMetadataEntity
+	4,   // 82: admin.OrganizationUpdateLenderRequestData.address:type_name -> admin.AddressEntity
+	98,  // 83: admin.OrganizationDetailResponse.data:type_name -> admin.OrganizationEntity
+	117, // 84: admin.OrganizationSwitchStatusRequest.data:type_name -> admin.OrganizationSwitchStatusRequestData
+	119, // 85: admin.OrganizationSelectOptionsRequest.data:type_name -> admin.OrganizationSelectOptionsRequestData
+	102, // 86: admin.OrganizationSelectOptionsResponse.data:type_name -> admin.OrganizationOptionsEntity
+	123, // 87: admin.StorageCreatePresignedUrlRequest.data:type_name -> admin.StorageCreatePresignedUrlRequestData
+	125, // 88: admin.StorageCreatePresignedUrlResponse.data:type_name -> admin.StorageCreatePresignedUrlResponseData
+	127, // 89: admin.OptionRequest.data:type_name -> admin.OptionRequestData
+	129, // 90: admin.OptionResponse.data:type_name -> admin.OptionEntity
+	131, // 91: admin.UsCitiesRequest.data:type_name -> admin.UsCitiesRequestData
+	189, // 92: admin.TemplateVariableEntity.properties:type_name -> admin.TemplateVariableEntity.PropertiesEntry
+	132, // 93: admin.TemplateVariableEntity.items:type_name -> admin.TemplateVariableEntity
+	132, // 94: admin.TemplateVariableGroupEntity.variables:type_name -> admin.TemplateVariableEntity
+	133, // 95: admin.BaseTemplateEntity.variable_group_schema:type_name -> admin.TemplateVariableGroupEntity
+	137, // 96: admin.CreateBaseTemplateRequest.data:type_name -> admin.CreateBaseTemplateRequestData
+	133, // 97: admin.CreateBaseTemplateRequestData.variable_group_schema:type_name -> admin.TemplateVariableGroupEntity
+	134, // 98: admin.CreateBaseTemplateResponse.data:type_name -> admin.BaseTemplateEntity
+	140, // 99: admin.UpdateBaseTemplateRequest.data:type_name -> admin.UpdateBaseTemplateRequestData
+	133, // 100: admin.UpdateBaseTemplateRequestData.variable_group_schema:type_name -> admin.TemplateVariableGroupEntity
+	134, // 101: admin.UpdateBaseTemplateResponse.data:type_name -> admin.BaseTemplateEntity
+	3,   // 102: admin.GetBaseTemplateRequest.data:type_name -> admin.IdRequest
+	134, // 103: admin.GetBaseTemplateResponse.data:type_name -> admin.BaseTemplateEntity
+	145, // 104: admin.BaseTemplatePageRequest.data:type_name -> admin.BaseTemplatePageRequestData
+	146, // 105: admin.BaseTemplatePageRequestData.filter:type_name -> admin.BaseTemplatePageRequestFilter
+	147, // 106: admin.BaseTemplatePageRequestData.sorter:type_name -> admin.BaseTemplatePageRequestSorter
+	149, // 107: admin.BaseTemplatePageResponse.data:type_name -> admin.BaseTemplatePageResponseData
+	135, // 108: admin.BaseTemplatePageResponseData.list:type_name -> admin.BaseTemplatePageEntity
+	151, // 109: admin.SwitchBaseTemplateStatusRequest.data:type_name -> admin.SwitchBaseTemplateStatusRequestData
+	3,   // 110: admin.DeleteBaseTemplateRequest.data:type_name -> admin.IdRequest
+	154, // 111: admin.BaseTemplatePreviewRequest.data:type_name -> admin.BaseTemplatePreviewRequestData
+	133, // 112: admin.BaseTemplatePreviewRequestData.variable_group_schema:type_name -> admin.TemplateVariableGroupEntity
+	156, // 113: admin.BaseTemplatePreviewResponse.data:type_name -> admin.BaseTemplatePreviewResponseData
+	170, // 114: admin.LoanEntity.loan_property:type_name -> admin.LoanPropertyEntity
+	172, // 115: admin.LoanEntity.applicants:type_name -> admin.LoanApplicantEntity
+	173, // 116: admin.LoanEntity.transaction_experiences:type_name -> admin.LoanExperienceEntity
+	173, // 117: admin.LoanEntity.real_estate_experiences:type_name -> admin.LoanExperienceEntity
+	181, // 118: admin.LoanEntity.loan_borrower:type_name -> admin.LoanBorrowerEntity
+	175, // 119: admin.LoanEntity.loan_demographic:type_name -> admin.LoanDemographicEntity
+	174, // 120: admin.LoanEntity.loan_third_services:type_name -> admin.LoanThirdServiceEntity
+	159, // 121: admin.LoanEntity.extend:type_name -> admin.LoanExtendValueEntity
+	182, // 122: admin.LoanEntity.loan_documents:type_name -> admin.LoanDocumentEntity
+	164, // 123: admin.LoanPageRequest.data:type_name -> admin.LoanPageRequestData
+	165, // 124: admin.LoanPageResponse.data:type_name -> admin.LoanPageResponseData
+	162, // 125: admin.LoanPageRequestData.filter:type_name -> admin.LoanPageRequestFilter
+	163, // 126: admin.LoanPageRequestData.sorter:type_name -> admin.LoanPageRequestSorter
+	157, // 127: admin.LoanPageResponseData.list:type_name -> admin.LoanEntity
+	157, // 128: admin.LoanDetailResponse.data:type_name -> admin.LoanEntity
+	168, // 129: admin.ReassignLoanRequest.data:type_name -> admin.ReassignLoanRequestData
+	171, // 130: admin.LoanPropertyEntity.borrower_property:type_name -> admin.BorrowerPropertyEntity
+	158, // 131: admin.LoanPropertyEntity.budget:type_name -> admin.LoanBudgetEntity
+	4,   // 132: admin.LoanPropertyEntity.address:type_name -> admin.AddressEntity
+	4,   // 133: admin.BorrowerPropertyEntity.address:type_name -> admin.AddressEntity
+	4,   // 134: admin.LoanApplicantEntity.address:type_name -> admin.AddressEntity
+	4,   // 135: admin.LoanExperienceEntity.address:type_name -> admin.AddressEntity
+	176, // 136: admin.LoanDemographicEntity.property:type_name -> admin.LoanDemographicPropertyEntity
+	177, // 137: admin.LoanDemographicEntity.ethnicity:type_name -> admin.LoanDemographicEthnicityEntity
+	178, // 138: admin.LoanDemographicEntity.race:type_name -> admin.LoanDemographicRaceEntity
+	4,   // 139: admin.BorrowerEntityEntity.mailing_address:type_name -> admin.AddressEntity
+	4,   // 140: admin.LoanBorrowerEntity.mailing_address:type_name -> admin.AddressEntity
+	183, // 141: admin.LoanDocumentEntity.files:type_name -> admin.FileEntity
+	185, // 142: admin.AuthCheckRequest.data:type_name -> admin.AuthCheckRequestData
+	187, // 143: admin.AuthCheckResponse.data:type_name -> admin.AuthCheckResponseData
+	132, // 144: admin.TemplateVariableEntity.PropertiesEntry.value:type_name -> admin.TemplateVariableEntity
+	9,   // 145: admin.User.Login:input_type -> admin.UserLoginRequest
+	13,  // 146: admin.User.RefreshToken:input_type -> admin.RefreshTokenRequest
+	0,   // 147: admin.User.UserInfo:input_type -> admin.EmptyRequest
+	17,  // 148: admin.User.ResetPassword:input_type -> admin.ResetPasswordRequest
+	25,  // 149: admin.User.EditProfile:input_type -> admin.UserProfileEditRequest
+	29,  // 150: admin.OrganizationUser.Page:input_type -> admin.OrganizationUserPageRequest
+	35,  // 151: admin.OrganizationUser.Create:input_type -> admin.OrganizationUserCreateRequest
+	37,  // 152: admin.OrganizationUser.Update:input_type -> admin.OrganizationUserUpdateRequest
+	39,  // 153: admin.OrganizationUser.Delete:input_type -> admin.OrganizationUserDeleteRequest
+	41,  // 154: admin.OrganizationUser.Detail:input_type -> admin.OrganizationUserDetailRequest
+	44,  // 155: admin.OrganizationUser.SwitchStatus:input_type -> admin.OrganizationUserSwitchStatusRequest
+	48,  // 156: admin.api.ApiTree:input_type -> admin.ApiTreeRequest
+	51,  // 157: admin.api.Create:input_type -> admin.ApiCreateRequest
+	53,  // 158: admin.api.Update:input_type -> admin.ApiUpdateRequest
+	55,  // 159: admin.api.Delete:input_type -> admin.ApiDeleteRequest
+	57,  // 160: admin.api.Detail:input_type -> admin.ApiDetailRequest
+	62,  // 161: admin.resource.ResourceTree:input_type -> admin.ResourceTreeRequest
+	65,  // 162: admin.resource.Create:input_type -> admin.ResourceCreateRequest
+	67,  // 163: admin.resource.Update:input_type -> admin.ResourceUpdateRequest
+	69,  // 164: admin.resource.Delete:input_type -> admin.ResourceDeleteRequest
+	71,  // 165: admin.resource.Detail:input_type -> admin.ResourceDetailRequest
+	0,   // 166: admin.resource.UserMenu:input_type -> admin.EmptyRequest
+	75,  // 167: admin.role.Page:input_type -> admin.RolePageRequest
+	81,  // 168: admin.role.Create:input_type -> admin.RoleCreateRequest
+	83,  // 169: admin.role.Update:input_type -> admin.RoleUpdateRequest
+	86,  // 170: admin.role.Delete:input_type -> admin.RoleDeleteRequest
+	88,  // 171: admin.role.Detail:input_type -> admin.RoleDetailRequest
+	91,  // 172: admin.role.SwitchStatus:input_type -> admin.RoleSwitchStatusRequest
+	93,  // 173: admin.role.All:input_type -> admin.RoleAllRequest
+	96,  // 174: admin.role.AssignOrganizationUsers:input_type -> admin.RoleAssignOrganizationUsersRequest
+	103, // 175: admin.organization.Page:input_type -> admin.OrganizationPageRequest
+	109, // 176: admin.organization.CreateLender:input_type -> admin.OrganizationCreateLenderRequest
+	113, // 177: admin.organization.UpdateLender:input_type -> admin.OrganizationUpdateLenderRequest
+	3,   // 178: admin.organization.Detail:input_type -> admin.IdRequest
+	3,   // 179: admin.organization.Delete:input_type -> admin.IdRequest
+	116, // 180: admin.organization.SwitchStatus:input_type -> admin.OrganizationSwitchStatusRequest
+	118, // 181: admin.organization.SelectOptions:input_type -> admin.OrganizationSelectOptionsRequest
+	122, // 182: admin.Storage.CreatePresignedUrl:input_type -> admin.StorageCreatePresignedUrlRequest
+	126, // 183: admin.common.GetOpt:input_type -> admin.OptionRequest
+	0,   // 184: admin.common.GetUsState:input_type -> admin.EmptyRequest
+	130, // 185: admin.common.GetUsCities:input_type -> admin.UsCitiesRequest
+	136, // 186: admin.BaseTemplate.Create:input_type -> admin.CreateBaseTemplateRequest
+	139, // 187: admin.BaseTemplate.Update:input_type -> admin.UpdateBaseTemplateRequest
+	142, // 188: admin.BaseTemplate.Detail:input_type -> admin.GetBaseTemplateRequest
+	144, // 189: admin.BaseTemplate.Page:input_type -> admin.BaseTemplatePageRequest
+	150, // 190: admin.BaseTemplate.SwitchStatus:input_type -> admin.SwitchBaseTemplateStatusRequest
+	152, // 191: admin.BaseTemplate.Delete:input_type -> admin.DeleteBaseTemplateRequest
+	153, // 192: admin.BaseTemplate.Preview:input_type -> admin.BaseTemplatePreviewRequest
+	3,   // 193: admin.BaseTemplate.Reset:input_type -> admin.IdRequest
+	160, // 194: admin.Loan.LoanPage:input_type -> admin.LoanPageRequest
+	3,   // 195: admin.Loan.LoanDetail:input_type -> admin.IdRequest
+	167, // 196: admin.Loan.ReassignLoan:input_type -> admin.ReassignLoanRequest
+	0,   // 197: admin.Loan.LoanLenderCompanies:input_type -> admin.EmptyRequest
+	184, // 198: admin.Auth.AuthCheck:input_type -> admin.AuthCheckRequest
+	11,  // 199: admin.User.Login:output_type -> admin.UserLoginResponse
+	15,  // 200: admin.User.RefreshToken:output_type -> admin.RefreshTokenResponse
+	23,  // 201: admin.User.UserInfo:output_type -> admin.UserinfoResponse
+	19,  // 202: admin.User.ResetPassword:output_type -> admin.ResetPasswordResponse
+	23,  // 203: admin.User.EditProfile:output_type -> admin.UserinfoResponse
+	33,  // 204: admin.OrganizationUser.Page:output_type -> admin.OrganizationUserPageResponse
+	43,  // 205: admin.OrganizationUser.Create:output_type -> admin.OrganizationUserDetailResponse
+	43,  // 206: admin.OrganizationUser.Update:output_type -> admin.OrganizationUserDetailResponse
+	1,   // 207: admin.OrganizationUser.Delete:output_type -> admin.EmptyResponse
+	43,  // 208: admin.OrganizationUser.Detail:output_type -> admin.OrganizationUserDetailResponse
+	1,   // 209: admin.OrganizationUser.SwitchStatus:output_type -> admin.EmptyResponse
+	50,  // 210: admin.api.ApiTree:output_type -> admin.ApiTreeResponse
+	59,  // 211: admin.api.Create:output_type -> admin.ApiDetailResponse
+	59,  // 212: admin.api.Update:output_type -> admin.ApiDetailResponse
+	1,   // 213: admin.api.Delete:output_type -> admin.EmptyResponse
+	59,  // 214: admin.api.Detail:output_type -> admin.ApiDetailResponse
+	64,  // 215: admin.resource.ResourceTree:output_type -> admin.ResourceTreeResponse
+	73,  // 216: admin.resource.Create:output_type -> admin.ResourceDetailResponse
+	73,  // 217: admin.resource.Update:output_type -> admin.ResourceDetailResponse
+	1,   // 218: admin.resource.Delete:output_type -> admin.EmptyResponse
+	73,  // 219: admin.resource.Detail:output_type -> admin.ResourceDetailResponse
+	64,  // 220: admin.resource.UserMenu:output_type -> admin.ResourceTreeResponse
+	79,  // 221: admin.role.Page:output_type -> admin.RolePageResponse
+	90,  // 222: admin.role.Create:output_type -> admin.RoleDetailResponse
+	90,  // 223: admin.role.Update:output_type -> admin.RoleDetailResponse
+	1,   // 224: admin.role.Delete:output_type -> admin.EmptyResponse
+	90,  // 225: admin.role.Detail:output_type -> admin.RoleDetailResponse
+	1,   // 226: admin.role.SwitchStatus:output_type -> admin.EmptyResponse
+	95,  // 227: admin.role.All:output_type -> admin.RoleAllResponse
+	90,  // 228: admin.role.AssignOrganizationUsers:output_type -> admin.RoleDetailResponse
+	107, // 229: admin.organization.Page:output_type -> admin.OrganizationPageResponse
+	115, // 230: admin.organization.CreateLender:output_type -> admin.OrganizationDetailResponse
+	115, // 231: admin.organization.UpdateLender:output_type -> admin.OrganizationDetailResponse
+	115, // 232: admin.organization.Detail:output_type -> admin.OrganizationDetailResponse
+	1,   // 233: admin.organization.Delete:output_type -> admin.EmptyResponse
+	1,   // 234: admin.organization.SwitchStatus:output_type -> admin.EmptyResponse
+	120, // 235: admin.organization.SelectOptions:output_type -> admin.OrganizationSelectOptionsResponse
+	124, // 236: admin.Storage.CreatePresignedUrl:output_type -> admin.StorageCreatePresignedUrlResponse
+	128, // 237: admin.common.GetOpt:output_type -> admin.OptionResponse
+	2,   // 238: admin.common.GetUsState:output_type -> admin.StringSliceResponse
+	2,   // 239: admin.common.GetUsCities:output_type -> admin.StringSliceResponse
+	138, // 240: admin.BaseTemplate.Create:output_type -> admin.CreateBaseTemplateResponse
+	141, // 241: admin.BaseTemplate.Update:output_type -> admin.UpdateBaseTemplateResponse
+	143, // 242: admin.BaseTemplate.Detail:output_type -> admin.GetBaseTemplateResponse
+	148, // 243: admin.BaseTemplate.Page:output_type -> admin.BaseTemplatePageResponse
+	1,   // 244: admin.BaseTemplate.SwitchStatus:output_type -> admin.EmptyResponse
+	1,   // 245: admin.BaseTemplate.Delete:output_type -> admin.EmptyResponse
+	155, // 246: admin.BaseTemplate.Preview:output_type -> admin.BaseTemplatePreviewResponse
+	1,   // 247: admin.BaseTemplate.Reset:output_type -> admin.EmptyResponse
+	161, // 248: admin.Loan.LoanPage:output_type -> admin.LoanPageResponse
+	166, // 249: admin.Loan.LoanDetail:output_type -> admin.LoanDetailResponse
+	1,   // 250: admin.Loan.ReassignLoan:output_type -> admin.EmptyResponse
+	169, // 251: admin.Loan.LoanLenderCompanies:output_type -> admin.LoanLenderCompaniesResponse
+	186, // 252: admin.Auth.AuthCheck:output_type -> admin.AuthCheckResponse
+	199, // [199:253] is the sub-list for method output_type
+	145, // [145:199] is the sub-list for method input_type
+	145, // [145:145] is the sub-list for extension type_name
+	145, // [145:145] is the sub-list for extension extendee
+	0,   // [0:145] is the sub-list for field type_name
 }
 
 func init() { file_app_admin_rpc_pb_admin_proto_init() }

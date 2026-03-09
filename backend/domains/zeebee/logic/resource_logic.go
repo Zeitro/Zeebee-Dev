@@ -225,6 +225,12 @@ func (l *ResourceLogic) DeleteResource(ctx context.Context, id int64, resourceTy
 	return nil
 }
 
+// GetUserResources
+func (l *ResourceLogic) GetUserResources(ctx context.Context, input dto.ResourceUserMenuRequestDto) (result []*dto.ResourceTreeDto, err error) {
+
+	return
+}
+
 // deleteResource
 func (l *ResourceLogic) deleteResource(ctx context.Context, tx *gorm.DB, id int64, resourceType constants.UserType) (policies [][]string, err error) {
 	resource, err := l.repos.ResourceRepo.GetResourceWithTx(ctx, tx, id, resourceType, true)

@@ -826,6 +826,7 @@ const (
 	Resource_Update_FullMethodName       = "/admin.resource/Update"
 	Resource_Delete_FullMethodName       = "/admin.resource/Delete"
 	Resource_Detail_FullMethodName       = "/admin.resource/Detail"
+	Resource_UserMenu_FullMethodName     = "/admin.resource/UserMenu"
 )
 
 // ResourceClient is the client API for Resource service.
@@ -837,6 +838,7 @@ type ResourceClient interface {
 	Update(ctx context.Context, in *ResourceUpdateRequest, opts ...grpc.CallOption) (*ResourceDetailResponse, error)
 	Delete(ctx context.Context, in *ResourceDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	Detail(ctx context.Context, in *ResourceDetailRequest, opts ...grpc.CallOption) (*ResourceDetailResponse, error)
+	UserMenu(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error)
 }
 
 type resourceClient struct {
@@ -897,6 +899,16 @@ func (c *resourceClient) Detail(ctx context.Context, in *ResourceDetailRequest, 
 	return out, nil
 }
 
+func (c *resourceClient) UserMenu(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ResourceTreeResponse)
+	err := c.cc.Invoke(ctx, Resource_UserMenu_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ResourceServer is the server API for Resource service.
 // All implementations must embed UnimplementedResourceServer
 // for forward compatibility.
@@ -906,6 +918,7 @@ type ResourceServer interface {
 	Update(context.Context, *ResourceUpdateRequest) (*ResourceDetailResponse, error)
 	Delete(context.Context, *ResourceDeleteRequest) (*EmptyResponse, error)
 	Detail(context.Context, *ResourceDetailRequest) (*ResourceDetailResponse, error)
+	UserMenu(context.Context, *EmptyRequest) (*ResourceTreeResponse, error)
 	mustEmbedUnimplementedResourceServer()
 }
 
@@ -930,6 +943,9 @@ func (UnimplementedResourceServer) Delete(context.Context, *ResourceDeleteReques
 }
 func (UnimplementedResourceServer) Detail(context.Context, *ResourceDetailRequest) (*ResourceDetailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Detail not implemented")
+}
+func (UnimplementedResourceServer) UserMenu(context.Context, *EmptyRequest) (*ResourceTreeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserMenu not implemented")
 }
 func (UnimplementedResourceServer) mustEmbedUnimplementedResourceServer() {}
 func (UnimplementedResourceServer) testEmbeddedByValue()                  {}
@@ -1042,6 +1058,24 @@ func _Resource_Detail_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Resource_UserMenu_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ResourceServer).UserMenu(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Resource_UserMenu_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ResourceServer).UserMenu(ctx, req.(*EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Resource_ServiceDesc is the grpc.ServiceDesc for Resource service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1068,6 +1102,10 @@ var Resource_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Detail",
 			Handler:    _Resource_Detail_Handler,
+		},
+		{
+			MethodName: "UserMenu",
+			Handler:    _Resource_UserMenu_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

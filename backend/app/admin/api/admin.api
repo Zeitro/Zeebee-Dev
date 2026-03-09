@@ -78,6 +78,10 @@ service admin-api {
 	@doc "edit profile"
 	@handler EditProfile
 	put /user/profile (UserEditProfileRequest) returns (UserInfoResponse)
+
+	@doc "user menu"
+	@handler UserMenu
+	get /user/menu (EmptyRequest) returns (ResourceTreeResponse)
 }
 
 // ============== user end =============

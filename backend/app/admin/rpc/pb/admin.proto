@@ -425,6 +425,7 @@ message ResourceTreeEntity{
   string updated_at = 13;
   repeated ResourceTreeEntity children = 14;
   bool enable_data_scope = 15;
+  repeated ApiEntity apis = 16;
 }
 
 message ResourceEntity{
@@ -524,6 +525,7 @@ service resource {
   rpc Update(ResourceUpdateRequest) returns(ResourceDetailResponse);
   rpc Delete(ResourceDeleteRequest) returns(EmptyResponse);
   rpc Detail(ResourceDetailRequest) returns(ResourceDetailResponse);
+  rpc UserMenu(EmptyRequest) returns(ResourceTreeResponse);
 }
 // =================== resource service end =================
 // ================= role service start =================

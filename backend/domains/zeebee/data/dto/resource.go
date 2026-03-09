@@ -20,6 +20,7 @@ type ResourceTreeDto struct {
 	SortOrder       int32              `json:"sort_order"`
 	IsShow          bool               `json:"is_show"`
 	EnableDataScope bool               `json:"enable_data_scope"`
+	Apis            []*ApiEntityDto    `json:"apis"`
 	CreatedAt       time.Time          `json:"created_at"`
 	UpdatedAt       time.Time          `json:"updated_at"`
 	Children        []*ResourceTreeDto `json:"children,omitempty"`
@@ -63,4 +64,10 @@ type ResourceCreateRequestDto struct {
 type ResourceUpdateRequestDto struct {
 	Id int64 `json:"id"`
 	ResourceCreateRequestDto
+}
+
+type ResourceUserMenuRequestDto struct {
+	OrganizationId     int64              `json:"organization_id"`
+	OrganizationUserId int64              `json:"organization_user_id"`
+	Type               constants.UserType `json:"type"`
 }

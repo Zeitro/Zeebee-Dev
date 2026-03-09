@@ -565,7 +565,12 @@ type ResourceTreeEntity struct {
 	EnableDataScope bool                  `json:"enable_data_scope"`
 	CreatedAt       string                `json:"created_at"`
 	UpdatedAt       string                `json:"updated_at"`
+	Apis            []*ApiEntity          `json:"apis,omitempty"`
 	Children        []*ResourceTreeEntity `json:"children,omitempty"`
+}
+
+type ResourceTreeResponse struct {
+	List []*ResourceTreeEntity `json:"list"`
 }
 
 type RoleAndResourceRelation struct {
