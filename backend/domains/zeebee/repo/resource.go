@@ -165,10 +165,34 @@ func (repo *ResourceRepo) GetResourcesWithTx(ctx context.Context, tx *gorm.DB, i
 }
 
 // AllResourcesForAuth return all resources for auth
-func (repo *ResourceRepo) AllResourcesForAuth(ctx context.Context, apiType constants.UserType) (result []*model.Resource, err error) {
+func (repo *ResourceRepo) AllResourcesForAuth(ctx context.Context, organizationId int64, apiType constants.UserType) (result []*model.Resource, err error) {
 	err = repo.Client(ctx).Where("type = ? and status = ?", apiType, constants.CommonStatusActive).
 		Preload("Roles", func(db *gorm.DB) *gorm.DB {
-			return db.Where("status = ?", constants.CommonStatusActive)
+			query := db.Where("status = ?", constants.CommonStatusActive)
+			if organizationId > 0 {
+				query = query.Where("organization_id = ?", organizationId)
+			}
+
+			return query
 		}).Find(&result).Error
+	return result, errorx.WithStack(err)
+}
+
+// AllResources return all resources
+func (repo *ResourceRepo) AllResources(ctx context.Context, organizationId int64, resourceType constants.UserType, withPreload bool) (result []*model.Resource, err error) {
+	query := repo.Client(ctx).Where("type = ? and status = ?", resourceType, constants.CommonStatusActive)
+	if withPreload {
+		query = query.
+			// Preload("Apis").
+			Preload("Roles", func(db *gorm.DB) *gorm.DB {
+				subQuery := db
+				if organizationId > 0 {
+					subQuery = subQuery.Where("organization_id = ?", organizationId)
+				}
+				return subQuery
+			})
+
+	}
+	err = query.Find(&result).Error
 	return result, errorx.WithStack(err)
 }

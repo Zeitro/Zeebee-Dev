@@ -57,7 +57,7 @@ func (l *OrganizationUserLogic) Page(ctx context.Context, pageReq dto.Organizati
 	}
 
 	for i, entity := range results.List {
-		roles, err := l.repos.RoleRepo.GetOrganizationUserRoles(ctx, entity.Id)
+		roles, err := l.repos.RoleRepo.GetRolesByOrganizationUserId(ctx, entity.Id)
 		if err != nil {
 			return page, err
 		}
@@ -258,7 +258,7 @@ func (l *OrganizationUserLogic) InviteOrganizationUser(ctx context.Context, crea
 		return nil, err
 	}
 	// Send email
-	go func() {
+	threading.GoSafe(func() {
 		newCtx := context.WithoutCancel(ctx)
 		err := l.sendInviteEmail(newCtx, SendInviteUserEmailInput{
 			EmailConfig:      createDto.EmailConfig,
@@ -277,7 +277,7 @@ func (l *OrganizationUserLogic) InviteOrganizationUser(ctx context.Context, crea
 			err = errorx.Wrap(err, "Send invite email error")
 			logx.WithContext(ctx).Error(err)
 		}
-	}()
+	})
 
 	result = l.transToBo(organizationUser)
 

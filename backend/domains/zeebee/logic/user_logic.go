@@ -399,7 +399,7 @@ func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, us
 		organizationId = user.DefaultOrganizationId
 		organizationName = currentOrganization.Name
 
-		roles, err := l.repos.RoleRepo.GetOrganizationUserRoles(ctx, organizationUser.Id)
+		roles, err := l.repos.RoleRepo.GetRolesByOrganizationUserId(ctx, organizationUser.Id)
 		if err != nil {
 			return nil, errorx.WithStack(err)
 		}

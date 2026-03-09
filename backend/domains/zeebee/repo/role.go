@@ -80,6 +80,21 @@ func (repo *RoleRepo) GetRole(ctx context.Context, id int64, organizationId int6
 	return result, errorx.WithStack(err)
 }
 
+func (repo *RoleRepo) GetOrganizationRolesByIds(ctx context.Context, organizationId int64, roleIds []int64, roleType constants.UserType, withPreload bool) (result []*model.Role, err error) {
+	if len(roleIds) == 0 {
+		return []*model.Role{}, nil
+	}
+
+	query := repo.Client(ctx).Model(new(model.Role)).
+		Where("id in (?) and organization_id = ? and type = ?", roleIds, organizationId, roleType)
+	if withPreload {
+		query = query.
+			Preload("Resources")
+	}
+	err = query.Find(&result).Error
+	return result, errorx.WithStack(err)
+}
+
 // GetOrganizationRolesByIdsWithTx return roles by ids
 func (repo *RoleRepo) GetOrganizationRolesByIdsWithTx(ctx context.Context, tx *gorm.DB, organizationId int64, roleIds []int64, roleType constants.UserType) (result []*model.Role, err error) {
 	err = tx.WithContext(ctx).Model(new(model.Role)).
@@ -87,7 +102,6 @@ func (repo *RoleRepo) GetOrganizationRolesByIdsWithTx(ctx context.Context, tx *g
 		Preload("Resources").
 		Find(&result).Error
 	return result, errorx.WithStack(err)
-
 }
 
 // Page returns paginated roles
@@ -119,8 +133,8 @@ func (repo *RoleRepo) Page(ctx context.Context, req dto.RolePageRequestDto) (pag
 	return result, err
 }
 
-// GetUserRoles
-func (repo *RoleRepo) GetOrganizationUserRoles(ctx context.Context, organizationUserId int64) (result []*model.Role, err error) {
+// GetRolesByOrganizationUserId
+func (repo *RoleRepo) GetRolesByOrganizationUserId(ctx context.Context, organizationUserId int64) (result []*model.Role, err error) {
 	roleTable := model.Role{}.TableName()
 	pivotTable := "organization_user_and_roles"
 	err = repo.Client(ctx).
@@ -191,7 +205,7 @@ func (repo *RoleRepo) GetOrganizationRoleWithResources(ctx context.Context, orga
 		Joins(fmt.Sprintf("left join %s on %s.resource_id = %s.id", resourceTable, relationTable, resourceTable)).
 		Where(
 			fmt.Sprintf("%s.organization_id = ? and %s.type = ? and %s.status = ? and %s.status = ?", roleTable, roleTable, roleTable, resourceTable),
-			organizationId, roleType, constants.CommonStatusActive, constants.OrganizationStatusActive).
+			organizationId, roleType, constants.CommonStatusActive, constants.CommonStatusActive).
 		Where(fmt.Sprintf("%s.is_del = 0 and %s.is_del = 0", roleTable, resourceTable)).
 		Scan(&results).Error
 

@@ -235,7 +235,10 @@ func (l *Auth) AuthCheck(ctx context.Context, input dto.AuthCheckRequestDto) (re
 	}
 
 	// Check authentication status and requirements
-	ok, isRequired := l.CheckAuthentication(ctx, input)
+	ok, isRequired, err := l.CheckAuthentication(ctx, input)
+	if err != nil {
+		return
+	}
 	result.Authenticated = ok
 	result.AuthenticationRequired = isRequired
 	if !isRequired {
@@ -251,7 +254,12 @@ func (l *Auth) AuthCheck(ctx context.Context, input dto.AuthCheckRequestDto) (re
 	}
 
 	// If user is admin, grant all permissions and full data scope
-	if l.IsAdmin(ctx, input.Type) {
+	var isAdmin bool
+	isAdmin, err = l.IsAdmin(ctx, input.Type)
+	if err != nil {
+		return
+	}
+	if isAdmin {
 		result.Authenticated = true
 		result.Authorized = true
 		result.DataScope = constants.DataScopeAll
@@ -259,7 +267,10 @@ func (l *Auth) AuthCheck(ctx context.Context, input dto.AuthCheckRequestDto) (re
 	}
 
 	// Check authorization status and requirements
-	ok, isRequired = l.CheckAuthorization(ctx, input)
+	ok, isRequired, err = l.CheckAuthorization(ctx, input)
+	if err != nil {
+		return
+	}
 	result.AuthorizationRequired = isRequired
 	result.Authorized = ok
 
@@ -286,9 +297,10 @@ func (l *Auth) AuthCheck(ctx context.Context, input dto.AuthCheckRequestDto) (re
 
 // CheckAuthentication verifies if the incoming request is authenticated or requires authentication.
 // It checks against a whitelist of routes that don't require authentication.
-func (l *Auth) CheckAuthentication(ctx context.Context, input dto.AuthCheckRequestDto) (authenticated bool, authenticationRequired bool) {
+func (l *Auth) CheckAuthentication(ctx context.Context, input dto.AuthCheckRequestDto) (authenticated bool, authenticationRequired bool, err error) {
 	authenticationRequired = true
-	authenticationWhitelist, err := l.getAuthenticationWhitelist(ctx, input.Type)
+	var authenticationWhitelist []string
+	authenticationWhitelist, err = l.getAuthenticationWhitelist(ctx, input.Type)
 	if err != nil {
 		return
 	}
@@ -307,7 +319,7 @@ func (l *Auth) CheckAuthentication(ctx context.Context, input dto.AuthCheckReque
 // CheckAuthorization checks if a user is authorized to access a specific resource.
 // It first checks if the request path is in the authorization whitelist.
 // If not, it verifies the user's roles and permissions using an enforcer.
-func (l *Auth) CheckAuthorization(ctx context.Context, input dto.AuthCheckRequestDto) (authorized bool, authorizationRequired bool) {
+func (l *Auth) CheckAuthorization(ctx context.Context, input dto.AuthCheckRequestDto) (authorized bool, authorizationRequired bool, err error) {
 	claim, err := l.GetUserClaimFromCtx(ctx)
 	if err != nil {
 		return
@@ -323,7 +335,8 @@ func (l *Auth) CheckAuthorization(ctx context.Context, input dto.AuthCheckReques
 		authorizationRequired = false
 		return
 	}
-	roles, err := l.getOrganizationUserRoles(ctx, claim.OrganizationUserId, claim.OrganizationId, input.Type)
+	var roles []AuthRole
+	roles, err = l.getOrganizationUserRoles(ctx, claim.OrganizationUserId, claim.OrganizationId, input.Type)
 	if err != nil {
 		return
 	}
@@ -405,25 +418,26 @@ func (l *Auth) GetDataScope(ctx context.Context, input dto.AuthCheckRequestDto) 
 }
 
 // IsAdmin checks if the current user is an admin.
-func (l *Auth) IsAdmin(ctx context.Context, userType constants.UserType) (isAdmin bool) {
+func (l *Auth) IsAdmin(ctx context.Context, userType constants.UserType) (isAdmin bool, err error) {
 	claim, err := l.GetUserClaimFromCtx(ctx)
 	if err != nil {
-		return false
+		return false, nil
 	}
 
 	if userType != claim.UserType {
-		return false
+		return
 	}
 	organizationUserId := claim.OrganizationUserId
 	organizationId := claim.OrganizationId
-	roles, err := l.getOrganizationUserRoles(ctx, organizationUserId, organizationId, userType)
+	var roles []AuthRole
+	roles, err = l.getOrganizationUserRoles(ctx, organizationUserId, organizationId, userType)
 	if err != nil {
-		return false
+		return
 	}
 	isAdmin = slice.Some(roles, func(index int, item AuthRole) bool {
 		return item.IsAdmin
 	})
-	return isAdmin
+	return
 }
 
 // LoadAuthenticationWhitelist load authentication whitelist for a given user type.
@@ -513,7 +527,7 @@ func (l *Auth) RebuildPolicy(ctx context.Context, organizationType constants.Use
 	})
 
 	// Get all resources for the given user type
-	resources, err := l.repos.ResourceRepo.AllResourcesForAuth(ctx, organizationType)
+	resources, err := l.repos.ResourceRepo.AllResourcesForAuth(ctx, 0, organizationType)
 	if err != nil {
 		return err
 	}

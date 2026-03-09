@@ -225,10 +225,84 @@ func (l *ResourceLogic) DeleteResource(ctx context.Context, id int64, resourceTy
 	return nil
 }
 
-// GetUserResources
+// GetUserResources returns user's resources as a tree structure
+// 1. Only resources with status "Active" are included
+// 2. Root level resources must be of type "Menu", nested resources can be "Menu" or "Button"
+// 3. User may have multiple roles, resources from all roles are merged and deduplicated
+// 4. If user has admin role, all organization resources are returned
 func (l *ResourceLogic) GetUserResources(ctx context.Context, input dto.ResourceUserMenuRequestDto) (result []*dto.ResourceTreeDto, err error) {
 
-	return
+	// Get user's roles
+	organizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUserById(ctx, input.OrganizationUserId, input.OrganizationId)
+	if err != nil {
+		return nil, err
+	}
+	if organizationUser.Status != constants.OrganizationUserStatusActive {
+		return nil, errorx.New("User is not active")
+	}
+	// filter roles
+	hasAdminRole := false
+	roles := slice.Filter(organizationUser.Roles, func(index int, role *model.Role) bool {
+		if role.Status != constants.CommonStatusActive {
+			return false
+		}
+		if role.Name == constants.AdminRoleName {
+			hasAdminRole = true
+		}
+		return true
+	})
+
+	var allResources []*model.Resource
+	if hasAdminRole {
+		// Get all active resources for the organization
+		allResources, err = l.repos.ResourceRepo.AllResources(ctx, input.OrganizationId, input.Type, false)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		// Get resources from user's roles
+		roleIds := slice.Map(roles, func(index int, role *model.Role) int64 {
+			return role.Id
+		})
+		roleResources, err := l.repos.RoleRepo.GetOrganizationRolesByIds(ctx, input.OrganizationId, roleIds, input.Type, true)
+		if err != nil {
+			return nil, err
+		}
+		roleResources = slice.Filter(roleResources, func(index int, role *model.Role) bool {
+			return role.Status == constants.CommonStatusActive
+		})
+		allResources = make([]*model.Resource, 0, len(roleResources))
+		slice.ForEach(roleResources, func(index int, role *model.Role) {
+			if role.Status != constants.CommonStatusActive {
+				return
+			}
+			subResources := slice.Filter(role.Resources, func(index int, resource *model.Resource) bool {
+				return resource.Status == constants.CommonStatusActive
+			})
+			allResources = append(allResources, subResources...)
+		})
+	}
+
+	slice.SortBy(allResources, func(a, b *model.Resource) bool {
+		if a.SortOrder != b.SortOrder {
+			return a.SortOrder < b.SortOrder
+		}
+		return a.Id < b.Id
+	})
+
+	// Filter root level to only menu type, collect all resource IDs
+	rootResources := slice.Filter(allResources, func(index int, item *model.Resource) bool {
+		return item.ParentId == 0 && item.ResourceType == constants.ResourceTypeMenu
+	})
+
+	// Build resource map for quick lookup and collect all descendant resource IDs
+	resourceMap := make(map[int64]*model.Resource)
+	for _, resource := range allResources {
+		resourceMap[resource.Id] = resource
+	}
+	// Build tree with menu-type roots, allowing menu and button children
+	result = l.buildUserResourceTree(resourceMap, rootResources)
+	return result, nil
 }
 
 // deleteResource
@@ -268,6 +342,39 @@ func (l *ResourceLogic) buildTree(resources []*model.Resource, parentId int64) (
 
 	for i, result := range results {
 		results[i].Children = l.buildTree(resources, result.Id)
+	}
+	return results
+}
+
+// buildUserResourceTree builds user resource tree from resource map and root resources
+// Allows children to be either Menu or Button type
+func (l *ResourceLogic) buildUserResourceTree(resourceMap map[int64]*model.Resource, roots []*model.Resource) (results []*dto.ResourceTreeDto) {
+	results = slice.FilterMap[*model.Resource, *dto.ResourceTreeDto](roots, func(index int, item *model.Resource) (*dto.ResourceTreeDto, bool) {
+		tree, err := copierx.Trans[model.Resource, dto.ResourceTreeDto](item)
+		if err != nil {
+			return nil, false
+		}
+		return tree, true
+	})
+
+	for i, result := range results {
+		results[i].Children = l.buildUserResourceChildren(resourceMap, result.Id)
+	}
+	return results
+}
+
+// buildUserResourceChildren builds children for a resource
+// Children can be either Menu or Button type
+func (l *ResourceLogic) buildUserResourceChildren(resourceMap map[int64]*model.Resource, parentId int64) (results []*dto.ResourceTreeDto) {
+	for _, resource := range resourceMap {
+		if resource.ParentId == parentId {
+			tree, err := copierx.Trans[model.Resource, dto.ResourceTreeDto](resource)
+			if err != nil {
+				continue
+			}
+			tree.Children = l.buildUserResourceChildren(resourceMap, resource.Id)
+			results = append(results, tree)
+		}
 	}
 	return results
 }
