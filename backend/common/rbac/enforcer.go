@@ -120,3 +120,11 @@ func (e *Enforcer) SavePolicy() error {
 	err := e.Enforcer.SavePolicy()
 	return errorx.WithStack(err)
 }
+
+// AllPolicies returns all policies currently loaded in memory.
+// Since LoadDefaultFilteredPolicy is called during initialization,
+// this returns the filtered policies for a specific endpoint (admin/borrower/lender).
+func (e *Enforcer) AllPolicies() (policies [][]string, err error) {
+	policies, err = e.Enforcer.GetPolicy()
+	return policies, err
+}

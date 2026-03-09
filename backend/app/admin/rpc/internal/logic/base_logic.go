@@ -5,12 +5,12 @@ import (
 	"sync"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/threading"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/admin/rpc/internal/global"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/rbac"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data"
 	"zeebee-backend/domains/zeebee/data/dto"
@@ -46,11 +46,6 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 		RefreshExpire: svcCtx.Config.JwtAuth.RefreshExpire,
 	}
 	emailClient := global.EmailClient
-	enforcerMap := map[constants.UserType]*rbac.Enforcer{
-		constants.UserTypeAdmin:    global.AdminEnforcer,
-		constants.UserTypeLender:   global.LenderEnforcer,
-		constants.UserTypeBorrower: global.BorrowerEnforcer,
-	}
 
 	currentEnforcer := global.AdminEnforcer
 
@@ -66,14 +61,26 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 		JwtConfig:             jwtConfig,
 		EmailClient:           emailClient,
 		CurrentEnforcer:       currentEnforcer,
-		EnforcerMap:           enforcerMap,
 		CurrentAuthEventTopic: currentAuthEventTopic,
 		AuthEventTopicMap:     authEventTopicMap,
 	}
-	return &BaseLogic{
+	l := &BaseLogic{
 		svcCtx:    svcCtx,
 		AllLogics: logic.NewAllLogics(logicConfig),
 	}
+
+	threading.GoSafe(func() {
+		ctx := context.Background()
+		err := l.AuthLogic.RebuildPolicy(ctx, constants.UserTypeAdmin)
+		if err != nil {
+			logx.WithContext(ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("user_type", constants.UserTypeAdmin),
+			).Error("failed to rebuild admin policy")
+		}
+	})
+
+	return l
 }
 
 func (l *BaseLogic) CreateLoanOperationLog(ctx context.Context, tx *gorm.DB, loanId, operatorId int64, from, to data.LoanOperationStatus, action constants.LoanOperationAction, metadata *data.LoanOperationMetadata) (err error) {

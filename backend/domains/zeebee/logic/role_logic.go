@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/zeromicro/go-zero/core/threading"
@@ -421,11 +420,6 @@ func (l *RoleLogic) All(ctx context.Context, organizationId int64, roleType cons
 
 func (l *RoleLogic) createRolePolicy(roleId int64, roleType constants.UserType, relations []*model.RoleAndResource) [][]string {
 	return slice.Map[*model.RoleAndResource, []string](relations, func(i int, item *model.RoleAndResource) []string {
-		return []string{
-			fmt.Sprintf("Role:%d", roleId),
-			string(roleType),
-			fmt.Sprintf("Resource:%d", item.ResourceId),
-			"allow",
-		}
+		return auth.BuildPolicy(roleId, item.ResourceId, roleType)
 	})
 }

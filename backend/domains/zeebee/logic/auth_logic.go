@@ -5,6 +5,7 @@ import (
 
 	"zeebee-backend/common/rbac"
 	"zeebee-backend/domains/zeebee/auth"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 )
 
@@ -16,10 +17,11 @@ type AuthLogic struct {
 
 // NewAuthLogic creates a new authentication logic instance
 func NewAuthLogic(baseLogic *BaseLogic, jwtConfig dto.JwtConfig, enforcer *rbac.Enforcer, authEventTopic string) *AuthLogic {
-	return &AuthLogic{
+	l := &AuthLogic{
 		BaseLogic: baseLogic,
 		auth:      auth.NewAuth(baseLogic.repos, baseLogic.redisCli, jwtConfig, enforcer, authEventTopic),
 	}
+	return l
 }
 
 func (l *AuthLogic) AuthCheck(ctx context.Context, input dto.AuthCheckRequestDto) (result *dto.AuthCheckResponseDto, err error) {
@@ -29,4 +31,10 @@ func (l *AuthLogic) AuthCheck(ctx context.Context, input dto.AuthCheckRequestDto
 		return
 	}
 	return result, nil
+}
+
+func (l *AuthLogic) RebuildPolicy(ctx context.Context, organizationType constants.UserType) (err error) {
+	err = l.auth.RebuildPolicy(ctx, organizationType)
+
+	return nil
 }

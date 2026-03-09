@@ -163,3 +163,12 @@ func (repo *ResourceRepo) GetResourcesWithTx(ctx context.Context, tx *gorm.DB, i
 		Find(&result).Error
 	return result, errorx.WithStack(err)
 }
+
+// AllResourcesForAuth return all resources for auth
+func (repo *ResourceRepo) AllResourcesForAuth(ctx context.Context, apiType constants.UserType) (result []*model.Resource, err error) {
+	err = repo.Client(ctx).Where("type = ? and status = ?", apiType, constants.CommonStatusActive).
+		Preload("Roles", func(db *gorm.DB) *gorm.DB {
+			return db.Where("status = ?", constants.CommonStatusActive)
+		}).Find(&result).Error
+	return result, errorx.WithStack(err)
+}

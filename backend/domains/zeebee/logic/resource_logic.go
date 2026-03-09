@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/zeromicro/go-zero/core/threading"
@@ -274,12 +273,7 @@ func (l *ResourceLogic) createResourcePolices(resourceId int64, resourceType con
 		if item == nil || item.Status != constants.CommonStatusActive {
 			return nil, false
 		}
-		return []string{
-			fmt.Sprintf("Role:%d", item.Id),
-			string(resourceType),
-			fmt.Sprintf("Resource:%d", resourceId),
-			"allow",
-		}, true
+		return auth.BuildPolicy(item.Id, resourceId, resourceType), true
 	})
 
 	return

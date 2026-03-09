@@ -31,7 +31,6 @@ type AllLogicConfig struct {
 	JwtConfig             dto.JwtConfig
 	EmailClient           *email.Email
 	CurrentEnforcer       *rbac.Enforcer
-	EnforcerMap           map[constants.UserType]*rbac.Enforcer
 	CurrentAuthEventTopic string
 	AuthEventTopicMap     map[constants.UserType]string
 }

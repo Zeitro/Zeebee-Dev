@@ -36,27 +36,6 @@ func InitGlobal(c config.RpcConf) (err error) {
 		},
 	)
 
-	// eg.Go(func() error {
-	// 	return initTime()
-	// })
-	//
-	// eg.Go(func() error {
-	// 	return initDB(Config.DbConf.Dsn, Config.Mode != service.ProMode)
-	// })
-	// eg.Go(func() error {
-	// 	return initRedis(c.RedisConf)
-	// })
-	// eg.Go(func() error {
-	// 	return initLimiter(c.RedisConf)
-	// })
-	//
-	// eg.Go(func() error {
-	// 	return initS3Client(c.AwsS3Conf)
-	// })
-	// eg.Go(func() error {
-	// 	return initEmailClient(c.EmailConf)
-	// })
-
 	err = eg.Wait()
 	if err != nil {
 		return err

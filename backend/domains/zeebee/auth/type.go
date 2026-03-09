@@ -39,9 +39,10 @@ type RoleResource struct {
 type Action string
 
 const (
-	ActionApiReload      Action = "ApiReload"
-	ActionResourceReload Action = "ResourceReload"
-	ActionRoleReload     Action = "RoleReload"
+	ActionApiReload       Action = "ApiReload"
+	ActionResourceReload  Action = "ResourceReload"
+	ActionRoleReload      Action = "RoleReload"
+	ActionAllPolicyReload Action = "AllPolicyReload"
 )
 
 type Scope string

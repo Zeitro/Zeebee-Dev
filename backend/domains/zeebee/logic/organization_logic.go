@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/zeromicro/go-zero/core/threading"
 	"gorm.io/gorm"
@@ -116,11 +115,7 @@ func (l *OrganizationLogic) Delete(ctx context.Context, id int64) (err error) {
 				return innerErr
 			}
 			for j := range relations {
-				policies = append(policies, []string{
-					fmt.Sprintf("Role:%d", organization.Roles[i].Id),
-					string(organization.Type),
-					fmt.Sprintf("Resource:%d", relations[j].ResourceId),
-				})
+				policies = append(policies, auth.BuildPolicy(organization.Roles[i].Id, relations[j].ResourceId, organization.Type))
 			}
 
 			innerErr = l.repos.RoleRepo.DeleteByIdWithTx(ctx, tx, organization.Roles[i].Id)

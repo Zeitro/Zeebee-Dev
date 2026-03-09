@@ -4,11 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/redis/go-redis/v9"
 	"github.com/zeromicro/go-zero/core/logx"
+	"golang.org/x/sync/errgroup"
 	"golang.org/x/sync/singleflight"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -134,6 +136,10 @@ func (l *Auth) handleAuthMsg(ctx context.Context, msg *redis.Message) (err error
 		err = l.handleRoleReload(ctx, eventMsg)
 	case ActionResourceReload:
 		err = l.handleResourceReload(ctx, eventMsg)
+	case ActionAllPolicyReload:
+		err = l.handleAllPolicyReload(ctx, eventMsg)
+	default:
+		err = errorx.Errorf("Invalid action %v", eventMsg.Action)
 	}
 
 	return err
@@ -207,6 +213,11 @@ func (l *Auth) handleResourceReload(ctx context.Context, msg Msg) (err error) {
 	}
 	return nil
 
+}
+
+// handleAllPolicyReload
+func (l *Auth) handleAllPolicyReload(ctx context.Context, msg Msg) (err error) {
+	return l.enforcer.LoadDefaultFilteredPolicy()
 }
 
 // AuthCheck performs authentication and authorization checks for the given request.
@@ -340,46 +351,51 @@ func (l *Auth) CheckAuthorization(ctx context.Context, input dto.AuthCheckReques
 	return
 }
 
-// GetDataScope gets the data scope for a user.
+// GetDataScope retrieves the data scope for a given user based on their roles and resource permissions.
+// It takes a context and an AuthCheckRequestDto as input, and returns the most restrictive data scope
+// among all applicable role-resource combinations. The function checks JWT claims, user roles,
+// organization role resources, and resource IDs to determine the appropriate data scope.
+// The data scope hierarchy is defined in the scopes map, where lower values indicate more restrictive scopes.
+// Returns the determined data scope and any error encountered during the process.
 func (l *Auth) GetDataScope(ctx context.Context, input dto.AuthCheckRequestDto) (dataScope constants.DataScope, err error) {
-	scopes := map[constants.DataScope]int{
-		constants.DataScopeAll: 0,
-		constants.DataScopeOwn: 1,
-	}
 	dataScope = constants.DataScopeOwn
 
+	// Extract JWT user claims from the context
 	var claim utils.JwtUser
 	claim, err = l.GetUserClaimFromCtx(ctx)
 	if err != nil {
 		return
 	}
+
+	// Get user roles for the specific organization and resource type
 	userRoles, err := l.getOrganizationUserRoles(ctx, claim.OrganizationUserId, claim.OrganizationId, input.Type)
 	if err != nil || len(userRoles) == 0 {
 		return
 	}
 
+	// Retrieve all organization role resources for the given resource type
 	organizationRoleResources, err := l.getOrganizationRoleResources(ctx, claim.OrganizationId, input.Type)
 	if err != nil || organizationRoleResources.Size() == 0 {
 		return
 	}
 
+	// Get resource IDs matching the specific route (method and path)
 	resourceIds, err := l.getResourceIdsByRoute(ctx, stringx.Format(routeFormat, input.Method, input.Path), input.Type)
 	if err != nil || len(resourceIds) == 0 {
 		return
 	}
+
+	// Iterate through user roles and resource IDs to find the most restrictive data scope
 	slice.ForEach(userRoles, func(index int, role AuthRole) {
 		slice.ForEach(resourceIds, func(index int, resourceId int64) {
+			// Create a key to look up role-resource permissions
 			key := stringx.Format(roleResourceFormat, role.RoleId, resourceId)
 			roleResource, ok := organizationRoleResources.Get(key)
 			if !ok {
 				return
 			}
-			_, ok = scopes[roleResource.DataScope]
-			if !ok {
-				return
-			}
-
-			if scopes[roleResource.DataScope] < scopes[dataScope] {
+			// Update data scope if a more restrictive one is found
+			if roleResource.DataScope.Priority() < dataScope.Priority() {
 				dataScope = roleResource.DataScope
 			}
 		})
@@ -473,6 +489,122 @@ func (l *Auth) LoadAuthorizationWhitelist(ctx context.Context, userType constant
 	}
 	l.authorizationWhitelistMap.Set(userType, whitelist)
 	return whitelist, nil
+}
+
+// RebuildPolicy rebuilds the authorization policies for a given user type.
+// It compares the current policies with the ones derived from the resources in the database,
+// identifies new policies to be added and obsolete policies to be removed.
+// The function returns an error if any database or policy operation fails.
+func (l *Auth) RebuildPolicy(ctx context.Context, organizationType constants.UserType) (err error) {
+	buildKeyFn := func(policy []string) string {
+		return strings.Join(policy, ",")
+	}
+
+	// Get existing policies from the enforcer
+	oldPolicies, err := l.enforcer.AllPolicies()
+	if err != nil {
+		return err
+	}
+	// Convert old policies to a map for efficient lookup
+	oldPoliciesMap := map[string]struct{}{}
+	slice.ForEach(oldPolicies, func(index int, item []string) {
+		key := buildKeyFn(item)
+		oldPoliciesMap[key] = struct{}{}
+	})
+
+	// Get all resources for the given user type
+	resources, err := l.repos.ResourceRepo.AllResourcesForAuth(ctx, organizationType)
+	if err != nil {
+		return err
+	}
+	// Initialize slices for tracking policy changes
+	var currentPolicies [][]string
+	var newPolicies [][]string
+	var removePolicies [][]string
+	currentPoliciesMap := map[string]struct{}{}
+
+	// Process each resource and generate policies
+	slice.ForEach(resources, func(index int, resource *model.Resource) {
+		if resource == nil {
+			return
+		}
+		// Generate policies for each active role associated with the resource
+		rolePolicies := slice.FilterMap(resource.Roles, func(index int, role *model.Role) ([]string, bool) {
+			if role == nil || role.Status != constants.CommonStatusActive {
+				return nil, false
+			}
+			// Create a policy entry for the role-resource combination
+			policy := BuildPolicy(role.Id, resource.Id, organizationType)
+
+			key := buildKeyFn(policy)
+			// Check if this is a new policy
+			_, ok := oldPoliciesMap[key]
+			if !ok {
+				newPolicies = append(newPolicies, policy)
+			}
+			currentPoliciesMap[key] = struct{}{}
+			return policy, true
+		})
+		if len(rolePolicies) == 0 {
+			return
+		}
+		currentPolicies = append(currentPolicies, rolePolicies...)
+	})
+
+	// Identify policies that need to be removed
+	slice.ForEach(oldPolicies, func(index int, item []string) {
+		key := buildKeyFn(item)
+		_, ok := currentPoliciesMap[key]
+		if !ok {
+			removePolicies = append(removePolicies, item)
+		}
+	})
+
+	// Execute the policy operations in parallel
+	eg := errgroup.Group{}
+	eg.Go(func() error {
+		var err error
+		// Remove obsolete policies if any
+		if len(removePolicies) > 0 {
+			err = l.enforcer.RemovePolicies(removePolicies)
+			if err != nil {
+				return err
+			}
+		}
+		return err
+	})
+	eg.Go(func() error {
+		var err error
+		// Add new policies if any
+		if len(newPolicies) > 0 {
+			err = l.enforcer.AddPolicies(newPolicies)
+			if err != nil {
+				return err
+			}
+		}
+		return err
+	})
+	err = eg.Wait()
+	if err != nil {
+		return err
+	}
+
+	// check if policy is changed
+	isPolicyChanged := len(newPolicies) > 0 || len(removePolicies) > 0
+	if isPolicyChanged {
+		// send event to reload policy
+		msg := Msg{
+			Action: ActionAllPolicyReload,
+			Scope:  ScopeGlobal,
+			Type:   organizationType,
+		}
+		err = l.redisCli.GetClient().Publish(ctx, l.eventTopic, msg.String()).Err()
+		if err != nil {
+			return errorx.WithStack(err)
+		}
+	}
+
+	return nil
 }
 
 func (l *Auth) GetUserClaimFromCtx(ctx context.Context) (claim utils.JwtUser, err error) {
