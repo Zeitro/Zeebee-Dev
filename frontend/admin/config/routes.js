@@ -45,12 +45,17 @@ export const navRouter = [
 	},
 	{
 		path: '/setting',
-		title: 'setting',
+		title: 'Setting',
 		icon: 'setting',
 		router: [
 			{
 				path: '/setting/role',
-				title: 'role',
+				title: 'Role',
+				// hideMenu: true,
+			},
+			{
+				path: '/setting/user',
+				title: 'User',
 				// hideMenu: true,
 			},
 		],

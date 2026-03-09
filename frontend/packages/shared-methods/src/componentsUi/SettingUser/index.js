@@ -1,0 +1,37 @@
+'use client';
+import { FilterTableCard } from '@repo/shared-methods';
+import useContent from './components/useContent';
+import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
+
+/**
+ * 设置查询user
+ * @param {*} getNewMainModal 获取添加/编辑弹框（与封装的组件差距大，则直接引用自定义的组件）
+ * @returns
+ */
+const SettingUser = ({ getNewMainModal = () => {} }) => {
+	const { columns, getRolesOptions, getUserStatusOptions, filterList, tableFilterRef } =
+		useContent({
+			getNewMainModal,
+		});
+
+	useDeferredSyncEffect({
+		deferred: () => {
+			getRolesOptions();
+			getUserStatusOptions();
+		},
+		deps: [],
+		isUseMicrotask: true,
+	});
+	return (
+		<FilterTableCard
+			filterWrapClassName="px-8 pt-10 pb-8 flex-1 overflow-hidden"
+			ref={tableFilterRef}
+			columns={columns}
+			scroll={{ x: 1200 }}
+			filterList={filterList}
+			hasFilterField={true}
+			api="/organization_user/page"
+		/>
+	);
+};
+export default SettingUser;
