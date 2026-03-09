@@ -30,7 +30,7 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 	}
 }
 
-func (l *CreateLogic) Create(in *admin.RoleCreateRequest) (resp *admin.RoleCreateResponse, err error) {
+func (l *CreateLogic) Create(in *admin.RoleCreateRequest) (resp *admin.RoleDetailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -59,7 +59,7 @@ func (l *CreateLogic) Create(in *admin.RoleCreateRequest) (resp *admin.RoleCreat
 	if err != nil {
 		return nil, err
 	}
-	return &admin.RoleCreateResponse{
+	return &admin.RoleDetailResponse{
 		Data: data,
 	}, nil
 }

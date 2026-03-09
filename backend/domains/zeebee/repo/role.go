@@ -7,6 +7,7 @@ import (
 
 	"gorm.io/gorm"
 
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/constants"
@@ -74,6 +75,7 @@ func (repo *RoleRepo) GetRole(ctx context.Context, id int64, organizationId int6
 		Where("organization_id = ?", organizationId).
 		Where("type = ?", roleType).
 		Preload("Resources").
+		Preload("OrganizationUsers").
 		First(&result).Error
 	return result, errorx.WithStack(err)
 }
@@ -194,4 +196,33 @@ func (repo *RoleRepo) GetOrganizationRoleWithResources(ctx context.Context, orga
 		Scan(&results).Error
 
 	return results, errorx.WithStack(err)
+}
+
+// UpdateOrganizationUsersWithTx update role's organization users with transaction
+func (repo *RoleRepo) UpdateOrganizationUsersWithTx(ctx context.Context, tx *gorm.DB, role *model.Role, newUsers []*model.OrganizationUser, removedUsers []*model.OrganizationUser) (err error) {
+	if role == nil {
+		return errorx.New("Role Is empty")
+	}
+
+	copyRole, err := copierx.Trans[model.Role, model.Role](role)
+	if err != nil {
+		return err
+	}
+
+	copyRole.RemoveRelationships()
+	query := tx.WithContext(ctx).Model(copyRole)
+	if len(newUsers) > 0 {
+		err = query.Association("OrganizationUsers").Append(newUsers)
+		if err != nil {
+			return errorx.WithStack(err)
+		}
+	}
+	copyRole.RemoveRelationships()
+	if len(removedUsers) > 0 {
+		err = query.Association("OrganizationUsers").Delete(removedUsers)
+		if err != nil {
+			return errorx.WithStack(err)
+		}
+	}
+	return nil
 }

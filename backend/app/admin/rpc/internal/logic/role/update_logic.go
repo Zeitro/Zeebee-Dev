@@ -30,7 +30,7 @@ func NewUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLogi
 	}
 }
 
-func (l *UpdateLogic) Update(in *admin.RoleUpdateRequest) (resp *admin.RoleUpdateResponse, err error) {
+func (l *UpdateLogic) Update(in *admin.RoleUpdateRequest) (resp *admin.RoleDetailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -59,7 +59,7 @@ func (l *UpdateLogic) Update(in *admin.RoleUpdateRequest) (resp *admin.RoleUpdat
 		return nil, err
 	}
 
-	return &admin.RoleUpdateResponse{
+	return &admin.RoleDetailResponse{
 		Data: data,
 	}, nil
 }

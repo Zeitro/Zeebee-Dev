@@ -9,6 +9,23 @@ info(
 import "resource.api"
 import "common.api"
 
+
+type RoleOrganizationUserEntity {
+    Id int64 `json:"id"`
+    OrganizationId int64 `json:"organization_id"`
+    UserId int64 `json:"user_id"`
+    Status string `json:"status"`
+    FirstName string `json:"first_name"`
+    MidName string `json:"mid_name"`
+    LastName string `json:"last_name"`
+    FullName string `json:"full_name"`
+    Phone string `json:"phone"`
+    Remark string `json:"remark"`
+    CreatedAt string `json:"created_at"`
+    UpdatedAt string `json:"updated_at"`
+    Email string `json:"email"`
+}
+
 type RoleEntity {
     Id int64 `json:"id"`
     OrganizationId int64 `json:"organization_id"`
@@ -19,6 +36,7 @@ type RoleEntity {
     CreatedAt string `json:"created_at"`
     UpdatedAt string `json:"updated_at"`
     Resources []*ResourceEntity `json:"resources"`
+    OrganizationUsers []*RoleOrganizationUserEntity `json:"organization_users"`
 }
 
 // page
@@ -72,4 +90,10 @@ type RoleSwitchStatusRequest {
 // all
 type RoleAllResponse {
     List []*RoleEntity `json:"list"`
+}
+
+// AssignOrganizationUser
+type RoleAssignOrganizationUserRequest {
+    Id int64 `path:"id" validate:"required,gt=0"`
+    OrganizationUserIds []int64 `json:"organization_user_ids,optional" validate:"dive,gt=0"`
 }

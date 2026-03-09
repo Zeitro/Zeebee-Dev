@@ -28,12 +28,12 @@ func (s *RoleServer) Page(ctx context.Context, in *admin.RolePageRequest) (*admi
 	return l.Page(in)
 }
 
-func (s *RoleServer) Create(ctx context.Context, in *admin.RoleCreateRequest) (*admin.RoleCreateResponse, error) {
+func (s *RoleServer) Create(ctx context.Context, in *admin.RoleCreateRequest) (*admin.RoleDetailResponse, error) {
 	l := rolelogic.NewCreateLogic(ctx, s.svcCtx)
 	return l.Create(in)
 }
 
-func (s *RoleServer) Update(ctx context.Context, in *admin.RoleUpdateRequest) (*admin.RoleUpdateResponse, error) {
+func (s *RoleServer) Update(ctx context.Context, in *admin.RoleUpdateRequest) (*admin.RoleDetailResponse, error) {
 	l := rolelogic.NewUpdateLogic(ctx, s.svcCtx)
 	return l.Update(in)
 }
@@ -56,4 +56,9 @@ func (s *RoleServer) SwitchStatus(ctx context.Context, in *admin.RoleSwitchStatu
 func (s *RoleServer) All(ctx context.Context, in *admin.RoleAllRequest) (*admin.RoleAllResponse, error) {
 	l := rolelogic.NewAllLogic(ctx, s.svcCtx)
 	return l.All(in)
+}
+
+func (s *RoleServer) AssignOrganizationUsers(ctx context.Context, in *admin.RoleAssignOrganizationUsersRequest) (*admin.RoleDetailResponse, error) {
+	l := rolelogic.NewAssignOrganizationUsersLogic(ctx, s.svcCtx)
+	return l.AssignOrganizationUsers(in)
 }

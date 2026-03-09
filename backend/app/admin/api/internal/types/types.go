@@ -578,6 +578,22 @@ type RoleDeleteRequest struct {
 	Id int64 `path:"id" validate:"required,gt=0"`
 }
 
+type RoleOrganizationUserEntity struct {
+	Id             int64  `json:"id"`
+	OrganizationId int64  `json:"organization_id"`
+	UserId         int64  `json:"user_id"`
+	Status         string `json:"status"`
+	FirstName      string `json:"first_name"`
+	MidName        string `json:"mid_name"`
+	LastName       string `json:"last_name"`
+	FullName       string `json:"full_name"`
+	Phone          string `json:"phone"`
+	Remark         string `json:"remark"`
+	CreatedAt      string `json:"created_at"`
+	UpdatedAt      string `json:"updated_at"`
+	Email          string `json:"email"`
+}
+
 type SelectOptionEntity struct {
 	Label string `json:"label"`
 	Value string `json:"value"`

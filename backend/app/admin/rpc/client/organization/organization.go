@@ -157,9 +157,10 @@ type (
 	RoleAllRequestData                         = admin.RoleAllRequestData
 	RoleAllResponse                            = admin.RoleAllResponse
 	RoleAndResourceRelationEntity              = admin.RoleAndResourceRelationEntity
+	RoleAssignOrganizationUsersRequest         = admin.RoleAssignOrganizationUsersRequest
+	RoleAssignOrganizationUsersRequestData     = admin.RoleAssignOrganizationUsersRequestData
 	RoleCreateRequest                          = admin.RoleCreateRequest
 	RoleCreateRequestData                      = admin.RoleCreateRequestData
-	RoleCreateResponse                         = admin.RoleCreateResponse
 	RoleDeleteRequest                          = admin.RoleDeleteRequest
 	RoleDeleteRequestData                      = admin.RoleDeleteRequestData
 	RoleDetailRequest                          = admin.RoleDetailRequest
@@ -176,7 +177,6 @@ type (
 	RoleSwitchStatusRequestData                = admin.RoleSwitchStatusRequestData
 	RoleUpdateRequest                          = admin.RoleUpdateRequest
 	RoleUpdateRequestData                      = admin.RoleUpdateRequestData
-	RoleUpdateResponse                         = admin.RoleUpdateResponse
 	StorageCreatePresignedUrlRequest           = admin.StorageCreatePresignedUrlRequest
 	StorageCreatePresignedUrlRequestData       = admin.StorageCreatePresignedUrlRequestData
 	StorageCreatePresignedUrlResponse          = admin.StorageCreatePresignedUrlResponse

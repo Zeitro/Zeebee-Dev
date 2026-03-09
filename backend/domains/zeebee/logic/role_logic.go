@@ -287,6 +287,17 @@ func (l *RoleLogic) Detail(ctx context.Context, id int64, organizationId int64, 
 	if err != nil {
 		return nil, err
 	}
+	// get admin's resources
+	if role.Name == constants.AdminRoleName {
+
+		var resources []*model.Resource
+		resources, err = l.repos.ResourceRepo.All(ctx, roleType)
+		if err != nil {
+			return nil, err
+		}
+		role.Resources = resources
+	}
+
 	result, err = copierx.Trans[model.Role, dto.RoleEntityDto](role)
 	if err != nil {
 		return nil, err
@@ -416,6 +427,63 @@ func (l *RoleLogic) All(ctx context.Context, organizationId int64, roleType cons
 	}
 	resultPtr, err := copierx.Trans[[]*model.Role, []*dto.RoleEntityDto](&roles)
 	return *resultPtr, err
+}
+
+// AssignOrganizationUsers assign organization users for role
+func (l *RoleLogic) AssignOrganizationUsers(ctx context.Context, input dto.RoleAssignOrganizationUsersRequestDto) (result *dto.RoleEntityDto, err error) {
+	role, err := l.repos.RoleRepo.GetRole(ctx, input.Id, input.OrganizationId, input.Type)
+	if err != nil {
+		return nil, err
+	}
+	if role.Name == constants.AdminRoleName {
+		ownerId, err := l.repos.OrganizationUserRepo.GetOwnerId(ctx, input.OrganizationId, input.Type)
+		if err != nil {
+			return nil, err
+		}
+		input.OrganizationUserIds = append(input.OrganizationUserIds, ownerId)
+	}
+
+	err = l.repos.RoleRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		var innerErr error
+		organizationUsers, innerErr := l.repos.OrganizationUserRepo.GetOrganizationUsersByIdsWithTx(ctx, tx, input.OrganizationId, input.OrganizationUserIds)
+		if innerErr != nil {
+			return innerErr
+		}
+		newUsers := []*model.OrganizationUser{}
+		removedUsers := []*model.OrganizationUser{}
+		newUsers = slice.DifferenceWith(organizationUsers, role.OrganizationUsers, func(item1, item2 *model.OrganizationUser) bool {
+			return item1.Id == item2.Id
+		})
+		removedUsers = slice.DifferenceWith(role.OrganizationUsers, organizationUsers, func(item1, item2 *model.OrganizationUser) bool {
+			return item1.Id == item2.Id
+		})
+		innerErr = l.repos.RoleRepo.UpdateOrganizationUsersWithTx(ctx, tx, role, newUsers, removedUsers)
+		if innerErr != nil {
+			return innerErr
+		}
+		role.OrganizationUsers = organizationUsers
+		return innerErr
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:         auth.ActionRoleReload,
+			Scope:          auth.ScopeOrganization,
+			Type:           input.Type,
+			OrganizationId: input.OrganizationId,
+		}
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[input.Type], msg)
+	})
+
+	result, err = l.Detail(ctx, role.Id, role.OrganizationId, role.Type)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
 }
 
 func (l *RoleLogic) createRolePolicy(roleId int64, roleType constants.UserType, relations []*model.RoleAndResource) [][]string {

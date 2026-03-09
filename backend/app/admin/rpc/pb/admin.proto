@@ -537,6 +537,7 @@ message RoleEntity {
   string updated_at = 7;
   int64 organization_id = 8;
   repeated ResourceEntity resources = 9;
+  repeated OrganizationUserEntity organization_users = 10;
 }
 // role page -- request
 message RolePageRequest {
@@ -578,17 +579,10 @@ message RoleCreateRequestData {
   string status = 4;
   repeated RoleAndResourceRelationEntity role_and_resources = 5;
 }
-// create -- response
-message RoleCreateResponse {
-  RoleEntity data = 1;
-}
+
 //  update -- request
 message RoleUpdateRequest {
   RoleUpdateRequestData data = 1;
-}
-// update -- response
-message RoleUpdateResponse {
-  RoleEntity data = 1;
 }
 message RoleUpdateRequestData {
   int64 id = 1;
@@ -643,14 +637,24 @@ message RoleAllResponse {
   repeated RoleEntity data = 1;
 }
 
+// assign organization users -- request
+message RoleAssignOrganizationUsersRequest {
+  RoleAssignOrganizationUsersRequestData data = 1;
+}
+message RoleAssignOrganizationUsersRequestData {
+  int64 id = 1;
+  repeated int64 organization_user_ids = 2;
+}
+
 service role {
   rpc Page(RolePageRequest) returns(RolePageResponse);
-  rpc Create(RoleCreateRequest) returns(RoleCreateResponse);
-  rpc Update(RoleUpdateRequest) returns(RoleUpdateResponse);
+  rpc Create(RoleCreateRequest) returns(RoleDetailResponse);
+  rpc Update(RoleUpdateRequest) returns(RoleDetailResponse);
   rpc Delete(RoleDeleteRequest) returns(EmptyResponse);
   rpc Detail(RoleDetailRequest) returns(RoleDetailResponse);
   rpc SwitchStatus(RoleSwitchStatusRequest) returns(EmptyResponse);
   rpc All(RoleAllRequest) returns(RoleAllResponse);
+  rpc AssignOrganizationUsers(RoleAssignOrganizationUsersRequest) returns(RoleDetailResponse);
 }
 
 // ================== role service end =================

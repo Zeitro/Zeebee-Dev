@@ -7,15 +7,16 @@ import (
 )
 
 type RoleEntityDto struct {
-	Id             int64                  `json:"id"`
-	Name           string                 `json:"name"`
-	Description    string                 `json:"description"`
-	Type           constants.UserType     `json:"type"`
-	Status         constants.CommonStatus `json:"status"`
-	CreatedAt      time.Time              `json:"created_at"`
-	UpdatedAt      time.Time              `json:"updated_at"`
-	OrganizationId int64                  `json:"organization_id"`
-	Resources      []*ResourceEntityDto   `json:"resources"`
+	Id                int64                        `json:"id"`
+	Name              string                       `json:"name"`
+	Description       string                       `json:"description"`
+	Type              constants.UserType           `json:"type"`
+	Status            constants.CommonStatus       `json:"status"`
+	CreatedAt         time.Time                    `json:"created_at"`
+	UpdatedAt         time.Time                    `json:"updated_at"`
+	OrganizationId    int64                        `json:"organization_id"`
+	Resources         []*ResourceEntityDto         `json:"resources"`
+	OrganizationUsers []*OrganizationUserEntityDto `json:"organization_users"`
 }
 
 type RolePageRequestDto struct {
@@ -50,4 +51,11 @@ type RoleAndResourceDto struct {
 	RoleId     int64               `json:"role_id"`
 	ResourceId int64               `json:"resource_id"`
 	DataScope  constants.DataScope `json:"data_scope"`
+}
+
+type RoleAssignOrganizationUsersRequestDto struct {
+	Id                  int64              `json:"id"`
+	OrganizationId      int64              `json:"organization_id"`
+	OrganizationUserIds []int64            `json:"organization_user_ids"`
+	Type                constants.UserType `json:"type"`
 }
