@@ -3,6 +3,7 @@ package redisx
 import (
 	"context"
 	"crypto/tls"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -58,7 +59,11 @@ func (r *Redisx) GetClient() *redis.Client {
 }
 
 func (r *Redisx) Get(ctx context.Context, key string) (val string, err error) {
-	return r.rds.Get(ctx, r.buildKey(key)).Result()
+	val, err = r.rds.Get(ctx, r.buildKey(key)).Result()
+	if errors.Is(err, redis.Nil) {
+		return "", nil
+	}
+	return val, err
 }
 
 func (r *Redisx) GetInt(ctx context.Context, key string) (val int, err error) {
