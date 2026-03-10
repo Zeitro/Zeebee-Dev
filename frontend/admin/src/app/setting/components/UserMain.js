@@ -10,7 +10,7 @@ import {
 import { layoutCol, titleCol } from '@repo/shared-methods/enum';
 import { InputNameCombination, InputPhone, NewModal } from '@repo/shared-methods';
 import ConfirmPassword from '@repo/shared-methods/componentsUi/ConfirmPassword';
-import { useUserStore } from '@/store/user';
+import { useUserStore } from '@repo/shared-methods/store';
 const { TextArea } = Input;
 // 添加/编辑用户
 const MainModal = ({ setOpen, rowData, handleSearch, roles }) => {

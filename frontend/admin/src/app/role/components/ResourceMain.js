@@ -161,6 +161,7 @@ const ResourceMain = ({ setOpen, rowData, eventBusPrefix, api }) => {
 									required: true,
 								},
 							]}
+							extra="Loan:Create"
 						>
 							<Input placeholder="Enter tag" />
 						</Form.Item>

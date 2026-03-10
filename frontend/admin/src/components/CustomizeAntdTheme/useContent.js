@@ -9,7 +9,7 @@ import {
 } from '@ant-design/icons';
 import { DeleteBtn, SwitchOrganization } from '@repo/shared-methods';
 import { useRouter } from 'next/navigation';
-import { useUserStore } from '@/store/user';
+import { useUserStore } from '@repo/shared-methods/store';
 // import styles from './index.module.scss';
 import { useState } from 'react';
 import { eventBus } from '@repo/shared-methods/utils';

@@ -6,7 +6,7 @@ import { NewHeader, CommonSidebar } from '@repo/shared-methods';
 import { getCurrentRouterItem } from '@repo/shared-methods/utils';
 import { noNavRouter, navRouter } from '@config/routes';
 import { usePathname, useRouter } from 'next/navigation';
-import { useUserStore } from '@/store/user';
+import { useUserStore } from '@repo/shared-methods/store';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 import useContent from './useContent';
 import { sidebarIcon } from './icon';

@@ -5,7 +5,7 @@ import { useGlobalStore } from '@/store/global';
 import styles from './index.module.scss';
 import { useRouter, usePathname } from 'next/navigation';
 import { RightCircleTwoTone, LeftCircleTwoTone } from '@ant-design/icons';
-import { useUserStore } from '@/store/user';
+import { useUserStore } from '@repo/shared-methods/store';
 import UserInfo from './UserInfo';
 import { useDeferredSyncEffect, useElementSize } from '@repo/shared-methods/hooks';
 import { findItem, generateMenuBar } from '@repo/shared-methods/utils';

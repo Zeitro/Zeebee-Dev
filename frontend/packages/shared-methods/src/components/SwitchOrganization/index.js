@@ -1,7 +1,7 @@
 'use client';
 import { Loading3QuartersOutlined } from '@ant-design/icons';
 import { eventBus, createRequest, setCookie } from '@repo/shared-methods/utils';
-import { useUserStore } from '@/store/user';
+import { useUserStore } from '@repo/shared-methods/store';
 import { message } from 'antd';
 import { useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';

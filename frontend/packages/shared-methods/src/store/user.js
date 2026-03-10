@@ -1,28 +1,29 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { createRequest } from '@repo/shared-methods/utils';
+import { createRequest, processMenus } from '@repo/shared-methods/utils';
+
 const { request } = createRequest();
 export const useUserStore = create(
 	persist(
 		(set, get, api) => ({
 			userInfo: {},
-			access: {},
+			// access: {},
 			organization: {},
-			login: async (values, config = {}) => {
-				const access = await request('/user/login', {
-					method: 'POST',
-					body: values,
-					...config,
-				});
-				set({ access });
-				return access;
-			},
-			updateAccess: (access) => {
-				set({ access });
-			},
+			// login: async (values, config = {}) => {
+			// 	const access = await request('/user/login', {
+			// 		method: 'POST',
+			// 		body: values,
+			// 		...config,
+			// 	});
+			// 	set({ access });
+			// 	return access;
+			// },
+			// updateAccess: (access) => {
+			// 	set({ access });
+			// },
 			clearUserInfo: () => {
 				api.persist.clearStorage(); // 清除持久化数据
-				set({ access: null, userInfo: null }); // 重置内存状态
+				set({ organization: null, userInfo: null }); // 重置内存状态
 			},
 			getUserInfo: async () => {
 				const userInfo = await request('/user/info', {
@@ -45,7 +46,6 @@ export const useUserStore = create(
 					method: 'POST',
 					body,
 				});
-				set({ access });
 				return access;
 			},
 			registerAndSendEmail: async (values, config = {}) => {
@@ -69,7 +69,6 @@ export const useUserStore = create(
 					method: 'POST',
 					body,
 				});
-				set({ access });
 				return access;
 			},
 			changePassword: async (body) => {
@@ -91,13 +90,23 @@ export const useUserStore = create(
 			setOrganization: (organization) => {
 				set({ organization });
 			},
+			getUserMenus: async () => {
+				const { list } = await request('/user/menu', {
+					method: 'GET',
+				});
+				const result = processMenus(list);
+				set({
+					accessibleRoutes: result?.filteredMenus,
+				});
+				return result;
+			},
 		}),
 		{
 			name: 'userStore', // 存储唯一标识（必填）
 			storage: createJSONStorage(() => localStorage), // 默认 localStorage
 			partialize: (state) => ({
 				userInfo: state.userInfo,
-				access: state.access,
+				organization: state.organization,
 			}),
 		},
 	),

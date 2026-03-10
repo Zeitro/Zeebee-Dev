@@ -1,35 +1,32 @@
 'use client';
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { createRequest } from '@repo/shared-methods/utils';
 import { FilterTable, NewModal } from '@repo/shared-methods';
-import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 import useContent from './useContent';
+import { message } from 'antd';
 const AssignModal = ({ setOpen, rowData, handleSearch, systemType }) => {
 	const { request } = createRequest();
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-	const [loading, setLoading] = useState(false);
-	const [list, setList] = useState([]);
 	const tableFilterRef = useRef();
 	const { assignColumns } = useContent({ handleSearch, systemType });
 
 	const handleSave = async () => {
 		try {
-			// setConfirmLoading(true);
-			// const value = await form.validateFields();
-			// let url = '/borrower_applicant';
-			// let method = 'POST';
-			// if (rowData?.id) {
-			// 	url = `/borrower_applicant/${rowData?.id}`;
-			// 	method = 'PUT';
-			// }
-			// const res = await request(url, {
-			// 	method,
-			// 	body: { ...value },
-			// });
-			// handleSearch?.(res?.id);
-			// setConfirmLoading(false);
-			// setOpen(false);
+			setConfirmLoading(true);
+			const res = await request(`/role/${rowData?.id}/assign_organization_users`, {
+				method: 'POST',
+				body: {
+					organization_user_ids: selectedRowKeys,
+				},
+			});
+			handleSearch?.(res?.id);
+			setConfirmLoading(false);
+			message.open({
+				type: 'success',
+				content: 'Assign successful.',
+			});
+			setOpen(false);
 		} catch {
 			setConfirmLoading(false);
 		}
@@ -38,18 +35,9 @@ const AssignModal = ({ setOpen, rowData, handleSearch, systemType }) => {
 	const rowSelection = {
 		type: 'checkbox',
 		selectedRowKeys,
-		onChange: (selectedRowKeys, selectedRows) => {
+		onChange: (selectedRowKeys) => {
 			setSelectedRowKeys(selectedRowKeys);
 		},
-		// getCheckboxProps: (record) => {
-		// 	console.log(record);
-		// 	const checkedItem = record.roles?.find((i) => i.id === rowData?.id);
-		// 	return {
-		// 		checked: !!checkedItem,
-		// 		disabled: !!checkedItem, // Column configuration not to be checked
-		// 		name: record.name,
-		// 	};
-		// },
 	};
 	return (
 		<NewModal
@@ -85,7 +73,6 @@ const AssignModal = ({ setOpen, rowData, handleSearch, systemType }) => {
 						?.filter((i) => i.roles?.some((j) => j.id === rowData?.id))
 						?.map((i) => i.id);
 
-					setList(res?.list);
 					setSelectedRowKeys(checkList);
 					return res;
 				}}

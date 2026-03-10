@@ -5,13 +5,13 @@ export function middleware(request) {
 	const { pathname } = request.nextUrl;
 
 	// 2. 获取 cookie/token
-	const token = request.cookies.get('token')?.value;
+	const permissionStore = JSON.parse(request.cookies.get('permissionStore')?.value || '{}');
 	// 路由白名单
 	const noTokenList = flattenNavRouter(noTokenRouter);
 	const whiteList = noTokenList.map((item) => item.path);
 	const routerItem = getCurrentRouterItem(pathname, routers);
 
-	if (!token && !whiteList.includes(pathname)) {
+	if (!permissionStore?.state?.access && !whiteList.includes(pathname)) {
 		console.log('noToken----------middleware---===', pathname);
 
 		// 未登录且非白名单，重定向到登录页
