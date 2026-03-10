@@ -58,6 +58,15 @@ func (l *ResourceLogic) CreateResource(ctx context.Context, input *dto.ResourceC
 			return errorx.New("Resource already exists")
 		}
 
+		// check tag
+		isTagExisted, innerErr := l.repos.ResourceRepo.IsTagExistedWithTx(ctx, tx, input.Tag, 0, input.Type)
+		if innerErr != nil {
+			return innerErr
+		}
+		if isTagExisted {
+			return errorx.New("Tag already exists")
+		}
+
 		// Get apis by ids
 		if len(input.ApiIds) > 0 {
 			var apis []*model.Api
@@ -117,6 +126,15 @@ func (l *ResourceLogic) UpdateResource(ctx context.Context, input *dto.ResourceU
 		}
 		if isExisted {
 			return errorx.New("Resource already exists")
+		}
+
+		// check tag
+		isTagExisted, innerErr := l.repos.ResourceRepo.IsTagExistedWithTx(ctx, tx, input.Tag, resourceModel.Id, input.Type)
+		if innerErr != nil {
+			return innerErr
+		}
+		if isTagExisted {
+			return errorx.New("Tag already exists")
 		}
 
 		// handle apis

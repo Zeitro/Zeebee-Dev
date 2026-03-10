@@ -48,6 +48,17 @@ func (repo *ResourceRepo) IsExistedWithTx(ctx context.Context, tx *gorm.DB, data
 	return count > 0, errorx.WithStack(err)
 }
 
+// IsTagExistedWithTx check resource tag is existed
+func (repo *ResourceRepo) IsTagExistedWithTx(ctx context.Context, tx *gorm.DB, tag string, id int64, resourceType constants.UserType) (isExisted bool, err error) {
+	query := tx.WithContext(ctx).Model(&model.Resource{}).Where("tsg = ? and type = ?", tag, resourceType)
+	if id > 0 {
+		query = query.Where("id != ?", id)
+	}
+	var count int64
+	err = query.Count(&count).Error
+	return count > 0, errorx.WithStack(err)
+}
+
 // GetResource get resource by id and api type
 func (repo *ResourceRepo) GetResource(ctx context.Context, id int64, apiType constants.UserType, withPreload bool) (result *model.Resource, err error) {
 	query := repo.Client(ctx).
