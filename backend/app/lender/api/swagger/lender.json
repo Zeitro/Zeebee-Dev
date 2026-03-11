@@ -6401,7 +6401,7 @@
         "tags": [
           "pdf"
         ],
-        "summary": "create apply form pdf",
+        "summary": "convert html to pdf",
         "operationId": "pdfHtmlToPdf",
         "parameters": [
           {
@@ -8025,7 +8025,7 @@
       }
     }
   },
-  "x-date": "2026-02-10 16:51:08",
+  "x-date": "2026-03-10 18:12:56",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

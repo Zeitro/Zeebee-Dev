@@ -15,6 +15,10 @@ import (
 
 type (
 	AddressEntity                                  = lender.AddressEntity
+	AuthCheckRequest                               = lender.AuthCheckRequest
+	AuthCheckRequestData                           = lender.AuthCheckRequestData
+	AuthCheckResponse                              = lender.AuthCheckResponse
+	AuthCheckResponseData                          = lender.AuthCheckResponseData
 	BorrowerApplicantEntity                        = lender.BorrowerApplicantEntity
 	BorrowerEditApplicantEntity                    = lender.BorrowerEditApplicantEntity
 	BorrowerEntityEntity                           = lender.BorrowerEntityEntity

@@ -14,11 +14,11 @@ import (
 // BaseLogic provides base business logic for all logic types
 type BaseLogic struct {
 	repos    *repo.AllRepos
-	redisCli *redisx.Redisx
+	redisCli *redisx.Client
 }
 
 // NewBaseLogic creates a new base logic instance
-func NewBaseLogic(repos *repo.AllRepos, redisCli *redisx.Redisx) *BaseLogic {
+func NewBaseLogic(repos *repo.AllRepos, redisCli *redisx.Client) *BaseLogic {
 	return &BaseLogic{
 		repos:    repos,
 		redisCli: redisCli,

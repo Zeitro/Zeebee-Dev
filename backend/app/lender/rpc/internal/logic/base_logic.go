@@ -7,6 +7,7 @@ import (
 	"github.com/duke-git/lancet/v2/condition"
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/threading"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/lender/rpc/internal/global"
@@ -45,25 +46,36 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 		RefreshExpire: svcCtx.Config.JwtAuth.RefreshExpire,
 	}
 	currentEnforcer := global.LenderEnforcer
+	authEventTopicMap := map[constants.UserType]string{
+		constants.UserTypeLender: svcCtx.Config.CasbinConf.EventTopic.LenderTopic,
+	}
 
 	logicConfig := logic.AllLogicConfig{
-		Repos:           svcCtx.AllRepos,
-		RedisCli:        redisCli,
-		JwtConfig:       jwtConfig,
-		EmailClient:     global.EmailClient,
-		CurrentEnforcer: currentEnforcer,
-		// EnforcerMap:           enforcerMap,
-		// CurrentAuthEventTopic: currentAuthEventTopic,
-		// AuthEventTopicMap:     authEventTopicMap,
+		Repos:                 svcCtx.AllRepos,
+		RedisCli:              redisCli,
+		JwtConfig:             jwtConfig,
+		EmailClient:           global.EmailClient,
+		CurrentEnforcer:       currentEnforcer,
+		CurrentAuthEventTopic: svcCtx.Config.CasbinConf.EventTopic.LenderTopic,
+		AuthEventTopicMap:     authEventTopicMap,
 	}
 
-	return &BaseLogic{
-		// ctx:       ctx,
-		svcCtx: svcCtx,
-		// Logger:    logx.WithContext(ctx),
-		// AllLogics: logic.NewAllLogics(svcCtx.AllRepos, redisCli, jwtConfig, global.EmailClient, currentEnforcer, nil),
+	l := &BaseLogic{
+		svcCtx:    svcCtx,
 		AllLogics: logic.NewAllLogics(logicConfig),
 	}
+
+	threading.GoSafe(func() {
+		ctx := context.Background()
+		err := l.AuthLogic.RebuildPolicy(ctx, constants.UserTypeLender)
+		if err != nil {
+			logx.WithContext(ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("user_type", constants.UserTypeLender),
+			).Error("failed to rebuild lender policy")
+		}
+	})
+	return l
 }
 
 // get lender loan

@@ -30,7 +30,7 @@ import (
 
 type Auth struct {
 	repos                       *repo.AllRepos
-	redisCli                    *redisx.Redisx
+	redisCli                    *redisx.Client
 	enforcer                    *rbac.Enforcer
 	jwtConfig                   dto.JwtConfig
 	authenticationWhitelistMap  *mapx.Map[constants.UserType, []string]
@@ -42,7 +42,7 @@ type Auth struct {
 	eventSubScribeCancelFn      context.CancelFunc
 }
 
-func NewAuth(repos *repo.AllRepos, redisCli *redisx.Redisx, jwtConfig dto.JwtConfig, enforcer *rbac.Enforcer, authEventTopic string) *Auth {
+func NewAuth(repos *repo.AllRepos, redisCli *redisx.Client, jwtConfig dto.JwtConfig, enforcer *rbac.Enforcer, authEventTopic string) *Auth {
 	ctx, cancel := context.WithCancel(context.Background())
 	auth := &Auth{
 		repos:                       repos,
@@ -114,7 +114,11 @@ func (l *Auth) subscribeEvent(ctx context.Context) {
 			}
 		}
 		_ = subPub.Close()
-		time.Sleep(retryInterval)
+		sleepInterval := retryIntervalTime * (1 << retryCount)
+		if sleepInterval > maxRetryIntervalTime {
+			sleepInterval = maxRetryIntervalTime
+		}
+		time.Sleep(sleepInterval)
 	}
 }
 

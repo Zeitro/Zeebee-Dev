@@ -131,12 +131,17 @@ type ZeitroConf struct {
 }
 
 type CasbinConf struct {
-	ModelPath string
-	Watcher   CasbinWatcher
+	ModelPath  string
+	Watcher    CasbinWatcher
+	EventTopic CasbinEventTopic
 }
 
 type CasbinWatcher struct {
 	Host            string
 	Pwd             string
 	BorrowerChannel string
+}
+
+type CasbinEventTopic struct {
+	BorrowerTopic string
 }

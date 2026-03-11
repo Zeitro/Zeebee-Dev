@@ -332,7 +332,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
 				{
-					// create apply form pdf
+					// convert html to pdf
 					Method:  http.MethodPost,
 					Path:    "/pdf/html_to_pdf",
 					Handler: pdf.HtmlToPdfHandler(serverCtx),

@@ -24,6 +24,7 @@ import (
 
 	"zeebee-backend/app/borrower/config"
 	"zeebee-backend/app/borrower/rpc/internal/global"
+	authServer "zeebee-backend/app/borrower/rpc/internal/server/auth"
 	commonServer "zeebee-backend/app/borrower/rpc/internal/server/common"
 	loanServer "zeebee-backend/app/borrower/rpc/internal/server/loan"
 	loanDocumentServer "zeebee-backend/app/borrower/rpc/internal/server/loandocument"
@@ -47,10 +48,6 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		return nil, err
 	}
 	zrpc.SetClientSlowThreshold(time.Second * 2)
-	// logx.WithContext(context.Background()).WithFields(
-	// 	logx.Field("template", global.Config.TemplateConf),
-	// 	logx.Field("detail", global.Config.TemplateConf[constants.BorrowerPreapprovalLetterPdfName]),
-	// ).Info("template info")
 
 	ctx := svc.NewServiceContext(rpcConfig)
 
@@ -75,6 +72,7 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		borrower.RegisterOrganizationServer(grpcServer, organizationServer.NewOrganizationServer(ctx))
 		borrower.RegisterOrganizationEmailServer(grpcServer, organizationEmailServer.NewOrganizationEmailServer(ctx))
 		borrower.RegisterZeitroServer(grpcServer, zeitroServer.NewZeitroServer(ctx))
+		borrower.RegisterAuthServer(grpcServer, authServer.NewAuthServer(ctx))
 
 		if rpcConfig.Mode == service.DevMode || rpcConfig.Mode == service.TestMode {
 			reflection.Register(grpcServer)

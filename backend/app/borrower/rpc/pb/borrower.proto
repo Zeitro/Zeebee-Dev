@@ -2068,3 +2068,29 @@ service Zeitro {
 }
 
 // ================= zeitro listing service end =================
+// ===================== auth service start ======================
+message AuthCheckRequest {
+  AuthCheckRequestData data = 1;
+}
+
+message AuthCheckRequestData {
+  string method = 1;
+  string path = 2;
+  string type = 3;
+}
+message AuthCheckResponse {
+  AuthCheckResponseData data = 1;
+}
+message AuthCheckResponseData {
+  bool authentication_required = 1;
+  bool authorization_required = 2;
+  string data_scope = 3;
+  bool authenticated = 4;
+  bool authorized = 5;
+}
+
+service Auth {
+  rpc AuthCheck(AuthCheckRequest) returns (AuthCheckResponse);
+}
+
+// ========== auth service end ======================

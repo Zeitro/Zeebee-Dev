@@ -14,7 +14,6 @@ import (
 
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/redisx"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
@@ -22,25 +21,16 @@ import (
 	"zeebee-backend/domains/zeebee/model"
 )
 
-// type JwtConfig struct {
-// 	AccessSecret  string
-// 	AccessExpire  int64
-// 	RefreshSecret string
-// 	RefreshExpire int64
-// }
-
 // UserLogic provides user business logic
 type UserLogic struct {
 	*BaseLogic
-	redisCli  *redisx.Redisx
 	jwtConfig dto.JwtConfig
 }
 
 // NewUserLogic creates a new user logic instance
-func NewUserLogic(baseLogic *BaseLogic, redisCli *redisx.Redisx, jwtConfig dto.JwtConfig) *UserLogic {
+func NewUserLogic(baseLogic *BaseLogic, jwtConfig dto.JwtConfig) *UserLogic {
 	return &UserLogic{
 		BaseLogic: baseLogic,
-		redisCli:  redisCli,
 		jwtConfig: jwtConfig,
 	}
 }

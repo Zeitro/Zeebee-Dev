@@ -79,12 +79,17 @@ type EmailConf struct {
 }
 
 type CasbinConf struct {
-	ModelPath string
-	Watcher   CasbinWatcher
+	ModelPath  string
+	Watcher    CasbinWatcher
+	EventTopic CasbinEventTopic
 }
 
 type CasbinWatcher struct {
 	Host          string
 	Pwd           string
 	LenderChannel string
+}
+
+type CasbinEventTopic struct {
+	LenderTopic string
 }

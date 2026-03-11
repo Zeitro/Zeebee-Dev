@@ -1,12 +1,15 @@
 package logic
 
 import (
+	"context"
 	"sync"
 
-	gormadapter "github.com/casbin/gorm-adapter/v3"
+	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/threading"
 
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
+	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/logic"
@@ -37,37 +40,37 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 		RefreshSecret: svcCtx.Config.JwtAuth.RefreshSecret,
 		RefreshExpire: svcCtx.Config.JwtAuth.RefreshExpire,
 	}
-	// enforcerMap := map[constants.UserType]*rbac.Enforcer{
-	// 	constants.UserTypeAdmin:    global.AdminEnforcer,
-	// 	constants.UserTypeLender:   global.LenderEnforcer,
-	// 	constants.UserTypeBorrower: global.BorrowerEnforcer,
-	// }
 	currentEnforcer := global.BorrowerEnforcer
-	_ = currentEnforcer.LoadFilteredPolicy(gormadapter.Filter{
-		Ptype: []string{"p"},
-		V0:    nil,
-		V1:    []string{string(constants.UserTypeBorrower)},
-		V2:    nil,
-		V3:    nil,
-		V4:    nil,
-		V5:    nil,
-	})
-	logicConfig := logic.AllLogicConfig{
-		Repos:           svcCtx.AllRepos,
-		RedisCli:        redisCli,
-		JwtConfig:       jwtConfig,
-		EmailClient:     global.EmailClient,
-		CurrentEnforcer: currentEnforcer,
-		// EnforcerMap:           enforcerMap,
-		// CurrentAuthEventTopic: currentAuthEventTopic,
-		// AuthEventTopicMap:     authEventTopicMap,
+	authEventTopicMap := map[constants.UserType]string{
+		constants.UserTypeBorrower: svcCtx.Config.CasbinConf.EventTopic.BorrowerTopic,
 	}
 
-	return &BaseLogic{
-		// ctx:       ctx,
-		svcCtx: svcCtx,
-		// Logger:    logx.WithContext(ctx),
-		// AllLogics: logic.NewAllLogics(svcCtx.AllRepos, redisCli, jwtConfig, global.EmailClient, currentEnforcer, nil),
+	logicConfig := logic.AllLogicConfig{
+		Repos:                 svcCtx.AllRepos,
+		RedisCli:              redisCli,
+		JwtConfig:             jwtConfig,
+		EmailClient:           global.EmailClient,
+		CurrentEnforcer:       currentEnforcer,
+		CurrentAuthEventTopic: svcCtx.Config.CasbinConf.EventTopic.BorrowerTopic,
+		AuthEventTopicMap:     authEventTopicMap,
+	}
+
+	l := &BaseLogic{
+
+		svcCtx:    svcCtx,
 		AllLogics: logic.NewAllLogics(logicConfig),
 	}
+
+	threading.GoSafe(func() {
+		ctx := context.Background()
+		err := l.AuthLogic.RebuildPolicy(ctx, constants.UserTypeBorrower)
+		if err != nil {
+			logx.WithContext(ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("user_type", constants.UserTypeBorrower),
+			).Error("failed to rebuild borrower policy")
+		}
+	})
+
+	return l
 }

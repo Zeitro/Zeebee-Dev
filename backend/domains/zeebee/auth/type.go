@@ -17,7 +17,8 @@ const (
 const (
 	organizationUserRoleExpireSeconds = 3600
 	maxRetryTimes                     = 10
-	retryInterval                     = time.Second * 5
+	retryIntervalTime                 = time.Millisecond * 50
+	maxRetryIntervalTime              = time.Minute
 )
 
 type AuthRole struct {

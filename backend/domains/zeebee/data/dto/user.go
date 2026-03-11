@@ -74,7 +74,7 @@ type UserLoginRequestDto struct {
 type LoginLimiterDto struct {
 	Rate     int
 	Period   int
-	RedisCli *redisx.Redisx
+	RedisCli *redisx.Client
 }
 
 type UserRegisterRequestDto struct {

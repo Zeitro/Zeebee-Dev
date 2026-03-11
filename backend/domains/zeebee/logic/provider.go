@@ -27,7 +27,7 @@ type AllLogics struct {
 
 type AllLogicConfig struct {
 	Repos                 *repo.AllRepos
-	RedisCli              *redisx.Redisx
+	RedisCli              *redisx.Client
 	JwtConfig             dto.JwtConfig
 	EmailClient           *email.Email
 	CurrentEnforcer       *rbac.Enforcer
@@ -41,7 +41,7 @@ func NewAllLogics(config AllLogicConfig) *AllLogics {
 		ApiLogic:                  NewApiLogic(baseLogic, config.AuthEventTopicMap),
 		ResourceLogic:             NewResourceLogic(baseLogic, config.AuthEventTopicMap),
 		RoleLogic:                 NewRoleLogic(baseLogic, config.AuthEventTopicMap),
-		UserLogic:                 NewUserLogic(baseLogic, config.RedisCli, config.JwtConfig),
+		UserLogic:                 NewUserLogic(baseLogic, config.JwtConfig),
 		OrganizationUserLogic:     NewOrganizationUserLogic(baseLogic, config.EmailClient, config.AuthEventTopicMap),
 		OrganizationLogic:         NewOrganizationLogic(baseLogic, config.AuthEventTopicMap),
 		OrganizationEmailLogic:    NewOrganizationEmailLogic(baseLogic),
