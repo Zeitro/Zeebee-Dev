@@ -9,6 +9,7 @@ export const useUserStore = create(
 			userInfo: {},
 			// access: {},
 			organization: {},
+			accessibleRoutes: [],
 			// login: async (values, config = {}) => {
 			// 	const access = await request('/user/login', {
 			// 		method: 'POST',
@@ -23,7 +24,7 @@ export const useUserStore = create(
 			// },
 			clearUserInfo: () => {
 				api.persist.clearStorage(); // 清除持久化数据
-				set({ organization: null, userInfo: null }); // 重置内存状态
+				set({ organization: null, userInfo: null, accessibleRoutes: null }); // 重置内存状态
 			},
 			getUserInfo: async () => {
 				const userInfo = await request('/user/info', {
@@ -107,6 +108,7 @@ export const useUserStore = create(
 			partialize: (state) => ({
 				userInfo: state.userInfo,
 				organization: state.organization,
+				accessibleRoutes: state.accessibleRoutes,
 			}),
 		},
 	),

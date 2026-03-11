@@ -1,12 +1,22 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { createRequest } from '@repo/shared-methods/utils';
+import { createRequest, secondsToDate } from '@repo/shared-methods/utils';
 import Cookies from 'js-cookie';
 const { request } = createRequest();
 // 定义 cookie storage 适配器
 const cookieStorage = {
 	getItem: (name) => Cookies.get(name),
-	setItem: (name, value) => Cookies.set(name, value, { path: '/', expires: 7 }),
+	setItem: (name, value) => {
+		const jsonValue = JSON.parse(value || '{}');
+		const tokenExpires = jsonValue?.state?.access?.access_token_expire; // 返回的秒
+		const expires = secondsToDate(tokenExpires);
+		Cookies.set(name, value, {
+			path: '/',
+			expires,
+			secure: process.env.NEXT_PUBLIC_ENV === 'production',
+			sameSite: 'strict',
+		});
+	},
 	removeItem: (name) => Cookies.remove(name),
 };
 export const usePermissionStore = create(

@@ -9,6 +9,7 @@ import { useUserStore } from '@repo/shared-methods/store';
 import UserInfo from './UserInfo';
 import { useDeferredSyncEffect, useElementSize } from '@repo/shared-methods/hooks';
 import { findItem, generateMenuBar } from '@repo/shared-methods/utils';
+import { iconData } from '@repo/shared-methods/enum';
 
 const homePathname = '/';
 const initTwoToneColor = ['var(--base-label)', 'var(--gray-light)'];
@@ -19,7 +20,6 @@ export const CommonSidebar = ({
 	routerList,
 	personalList,
 	handleClickPersonalItem,
-	sidebarIcon,
 	renderLogo,
 }) => {
 	const router = useRouter();
@@ -38,17 +38,14 @@ export const CommonSidebar = ({
 				list: routerList,
 				key: pathname,
 				keyName: 'path',
-				childName: 'router',
+				childName: 'children',
 				isPushParent: true,
 			}),
 		[pathname, routerList],
 	);
 	const items = useMemo(() => {
-		const arr = generateMenuBar([...routerList], sidebarIcon, sidebarCollapsed).filter(
-			(i) => i.key !== '/',
-		);
-		return arr;
-	}, [sidebarCollapsed, routerList, sidebarIcon]);
+		return generateMenuBar([...routerList], iconData, sidebarCollapsed);
+	}, [sidebarCollapsed, routerList]);
 	const handleSelect = ({ key }) => {
 		// if (selectedKey === key) return;
 		router.push(key);
@@ -62,7 +59,7 @@ export const CommonSidebar = ({
 	useDeferredSyncEffect({
 		predicate: () => selectedKey !== pathname,
 		deferred: () => {
-			const path = (config?.hideMenu ? config?.parentKey : config?.path) || homePathname;
+			const path = (!config?.is_show ? config?.parentKey : config?.path) || homePathname;
 			if (selectedKey !== path || path !== pathname) {
 				setSelectedKey(path);
 			}

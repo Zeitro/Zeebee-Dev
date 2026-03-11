@@ -1,5 +1,3 @@
-// import { routers } from './routes';
-
 /**
  * 获取按钮权限标识
  * @param {Array} backendMenus - 后端返回的菜单列表
@@ -45,6 +43,9 @@ export const mergeMenu = (backendMenus, staticMenusSettings) => {
  * 一次性处理菜单：过滤 + 提取权限标签
  * @param {Array} menus - 菜单列表
  * @returns {Object} { filteredMenus, permissionTags }
+ * permissionTags - 权限标识数组
+ * filteredMenus - 过滤后的菜单列表
+ * accessPaths - 访问权限路由
  */
 export const processMenus = (menus) => {
 	const permissionTags = [];
@@ -60,7 +61,7 @@ export const processMenus = (menus) => {
 					accessPaths.push(menu.path);
 				}
 				// 只保留 Menu 类型用于导航
-				return menu.resource_type === 'Menu' && menu.is_show && menu.status === 'Active';
+				return menu.resource_type === 'Menu' && menu.status === 'Active';
 			})
 			.map((menu) => {
 				const filteredChildren = menu.children ? filterAndExtract(menu.children) : [];
@@ -81,21 +82,21 @@ export const processMenus = (menus) => {
 	};
 };
 
-// 生成菜单栏
+// 生成菜单栏，转成Menu组件所需字段（排除需隐藏的菜单）
 export const generateMenuBar = (list, iconConfig, sidebarCollapsed) => {
 	return JSON.parse(JSON.stringify(list))
-		.filter((i) => !i.hideMenu)
+		.filter((i) => i.is_show)
 		.map((item, index) => {
 			const newItem = {
 				key: item.path,
-				label: item?.menuTitle || item.title,
+				label: item?.name,
 			};
 			if (iconConfig) {
 				newItem.icon = iconConfig[item.icon];
 			}
 
-			if (item.router?.length) {
-				const children = generateMenuBar(item.router, iconConfig);
+			if (item.children?.length) {
+				const children = generateMenuBar(item.children, iconConfig);
 				if (children.length) {
 					newItem.children = sidebarCollapsed
 						? [

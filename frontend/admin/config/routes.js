@@ -101,10 +101,6 @@ export const noTokenRouter = [
 			},
 		],
 	},
-];
-
-export const noNavRouter = [
-	...noTokenRouter,
 	{
 		path: '/not-found',
 		title: '404',
@@ -113,4 +109,14 @@ export const noNavRouter = [
 	},
 ];
 
-export const routers = [...noNavRouter, ...navRouter];
+// export const noNavRouter = [
+// 	...noTokenRouter,
+// 	{
+// 		path: '/not-found',
+// 		title: '404',
+// 		hideCrumbs: true,
+// 		hideMenu: true,
+// 	},
+// ];
+
+// export const routers = [...noNavRouter, ...navRouter];

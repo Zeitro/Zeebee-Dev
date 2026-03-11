@@ -4,7 +4,7 @@ import { createRequest, formatPhone } from '@repo/shared-methods/utils';
 import { useRef, useState } from 'react';
 import { message, Space } from 'antd';
 import { getSelectOptions } from '@repo/shared-methods/api';
-import { useUserStore } from '@/store/user';
+import { useUserStore } from '@repo/shared-methods/store';
 import { userStatusColor } from '@repo/shared-methods/enum';
 import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 const useUser = ({ getNewMainModal }) => {
