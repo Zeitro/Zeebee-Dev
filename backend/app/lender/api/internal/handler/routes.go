@@ -476,6 +476,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: user.InfoHandler(serverCtx),
 				},
 				{
+					// user menu
+					Method:  http.MethodGet,
+					Path:    "/user/menu",
+					Handler: user.UserMenuHandler(serverCtx),
+				},
+				{
 					// switch organization
 					Method:  http.MethodPost,
 					Path:    "/user/switch_organization",

@@ -15,6 +15,7 @@ import (
 
 type (
 	AddressEntity                                  = lender.AddressEntity
+	ApiEntity                                      = lender.ApiEntity
 	AuthCheckRequest                               = lender.AuthCheckRequest
 	AuthCheckRequestData                           = lender.AuthCheckRequestData
 	AuthCheckResponse                              = lender.AuthCheckResponse

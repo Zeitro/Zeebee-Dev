@@ -15,6 +15,7 @@ import (
 
 type (
 	AddressEntity                                    = borrower.AddressEntity
+	ApiEntity                                        = borrower.ApiEntity
 	AuthCheckRequest                                 = borrower.AuthCheckRequest
 	AuthCheckRequestData                             = borrower.AuthCheckRequestData
 	AuthCheckResponse                                = borrower.AuthCheckResponse

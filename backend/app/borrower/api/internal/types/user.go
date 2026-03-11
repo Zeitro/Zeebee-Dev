@@ -3,6 +3,10 @@
 
 package types
 
+type ResourceTreeResponse struct {
+	List []*ResourceTreeEntity `json:"list"`
+}
+
 type UserChangePasswordRequest struct {
 	OldPassword     string `json:"old_password" validate:"required,min=8,max=32"`
 	NewPassword     string `json:"new_password" validate:"required,min=8,max=32,password"`

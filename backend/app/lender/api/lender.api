@@ -112,6 +112,10 @@ service lender-api {
 	@doc "switch organization"
 	@handler SwitchOrganization
 	post /user/switch_organization (UserSwitchOrganizationRequest) returns (UserJwtResponse)
+
+	@doc "user menu"
+	@handler UserMenu
+	get /user/menu (EmptyRequest) returns (ResourceTreeResponse)
 }
 
 // ============== loan =============

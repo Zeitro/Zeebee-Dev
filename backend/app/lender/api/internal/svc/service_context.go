@@ -27,6 +27,7 @@ type ServiceContext struct {
 	OrganizationRpcClient         lender.OrganizationClient
 	OrganizationTemplateRpcClient lender.OrganizationTemplateClient
 	OrganizationSettingRpcClient  lender.OrganizationSettingClient
+	ResourceRpcClient             lender.ResourceClient
 }
 
 func NewServiceContext(c config.ApiConf) *ServiceContext {
@@ -48,5 +49,6 @@ func NewServiceContext(c config.ApiConf) *ServiceContext {
 		OrganizationRpcClient:         lender.NewOrganizationClient(rpcClient.Conn()),
 		OrganizationTemplateRpcClient: lender.NewOrganizationTemplateClient(rpcClient.Conn()),
 		OrganizationSettingRpcClient:  lender.NewOrganizationSettingClient(rpcClient.Conn()),
+		ResourceRpcClient:             lender.NewResourceClient(rpcClient.Conn()),
 	}
 }

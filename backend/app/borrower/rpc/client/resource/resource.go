@@ -15,6 +15,7 @@ import (
 
 type (
 	AddressEntity                                    = borrower.AddressEntity
+	ApiEntity                                        = borrower.ApiEntity
 	AuthCheckRequest                                 = borrower.AuthCheckRequest
 	AuthCheckRequestData                             = borrower.AuthCheckRequestData
 	AuthCheckResponse                                = borrower.AuthCheckResponse
@@ -304,6 +305,7 @@ type (
 
 	Resource interface {
 		ResourceTree(ctx context.Context, in *ResourceTreeRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error)
+		UserMenu(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error)
 	}
 
 	defaultResource struct {
@@ -320,4 +322,9 @@ func NewResource(cli zrpc.Client) Resource {
 func (m *defaultResource) ResourceTree(ctx context.Context, in *ResourceTreeRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error) {
 	client := borrower.NewResourceClient(m.cli.Conn())
 	return client.ResourceTree(ctx, in, opts...)
+}
+
+func (m *defaultResource) UserMenu(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error) {
+	client := borrower.NewResourceClient(m.cli.Conn())
+	return client.UserMenu(ctx, in, opts...)
 }

@@ -3,6 +3,10 @@
 
 package types
 
+type ResourceTreeResponse struct {
+	List []*ResourceTreeEntity `json:"list"`
+}
+
 type UserInfoResponse struct {
 	UserInfo
 }

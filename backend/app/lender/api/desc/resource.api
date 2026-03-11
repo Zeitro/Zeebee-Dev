@@ -6,6 +6,8 @@ info(
     version: "v1"
 )
 
+import "api.api"
+
 type ResourceTreeEntity {
     Id int64 `json:"id"`
     ParentId int64 `json:"parent_id"`
@@ -18,9 +20,11 @@ type ResourceTreeEntity {
     IsShow bool `json:"is_show"`
     Status string `json:"status"`
     SortOrder int32 `json:"sort_order"`
+    EnableDataScope bool `json:"enable_data_scope"`
     CreatedAt string `json:"created_at"`
     UpdatedAt string `json:"updated_at"`
     Children []*ResourceTreeEntity `json:"children,omitempty"`
+    Apis []*ApiEntity `json:"apis,omitempty"`
 }
 
 type ResourceEntity {
@@ -35,9 +39,11 @@ type ResourceEntity {
     IsShow bool `json:"is_show"`
     Status string `json:"status"`
     SortOrder int32 `json:"sort_order"`
+    EnableDataScope bool `json:"enable_data_scope"`
     CreatedAt string `json:"created_at"`
     UpdatedAt string `json:"updated_at"`
-    PivotRoleDataScope string `json:"pivot_role_data_scope,omitempty"`
+    Apis []*ApiEntity `json:"apis,omitempty"`
+    DataScope string `json:"data_scope,omitempty"`
 }
 
 type ResourceTreeRequest {

@@ -53,7 +53,7 @@
           "method": "POST",
           "name": "refresh",
           "description": "refresh",
-          "auth_required": true,
+          "auth_required": false,
           "permission_required": false
         },
         {
@@ -651,7 +651,7 @@
           "method": "POST",
           "name": "refresh",
           "description": "refresh",
-          "auth_required": true,
+          "auth_required": false,
           "permission_required": false
         },
         {
@@ -699,6 +699,14 @@
           "method": "POST",
           "name": "switch organization",
           "description": "switch organization",
+          "auth_required": true,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/user/menu",
+          "method": "GET",
+          "name": "user menu",
+          "description": "user menu",
           "auth_required": true,
           "permission_required": false
         }
@@ -905,8 +913,8 @@
           "method": "POST",
           "name": "accept invitation",
           "description": "accept invitation",
-          "auth_required": true,
-          "permission_required": true
+          "auth_required": false,
+          "permission_required": false
         },
         {
           "path": "/api/v1/organization_user/:id",
@@ -1007,7 +1015,7 @@
           "name": "create",
           "description": "create",
           "auth_required": true,
-          "permission_required": true
+          "permission_required": false
         }
       ]
     },
@@ -1238,7 +1246,7 @@
           "method": "GET",
           "name": "get uuid",
           "description": "get uuid",
-          "auth_required": true,
+          "auth_required": false,
           "permission_required": false
         }
       ]
@@ -1267,7 +1275,7 @@
           "method": "POST",
           "name": "refresh",
           "description": "refresh",
-          "auth_required": true,
+          "auth_required": false,
           "permission_required": false
         },
         {
@@ -1283,8 +1291,8 @@
           "method": "POST",
           "name": "send verify email",
           "description": "send verify email",
-          "auth_required": true,
-          "permission_required": true
+          "auth_required": false,
+          "permission_required": false
         },
         {
           "path": "/api/v1/user/reset_password",
@@ -1333,6 +1341,14 @@
           "description": "change password",
           "auth_required": true,
           "permission_required": false
+        },
+        {
+          "path": "/api/v1/user/menu",
+          "method": "GET",
+          "name": "user menu",
+          "description": "user menu",
+          "auth_required": true,
+          "permission_required": false
         }
       ]
     },
@@ -1344,16 +1360,16 @@
           "method": "POST",
           "name": "preapproval",
           "description": "preapproval",
-          "auth_required": true,
-          "permission_required": true
+          "auth_required": false,
+          "permission_required": false
         },
         {
           "path": "/api/v1/loan/send_pre_approval_loan_notification",
           "method": "POST",
-          "name": "send pre approval loan nofification",
-          "description": "send pre approval loan nofification",
-          "auth_required": true,
-          "permission_required": true
+          "name": "send pre approval loan notification",
+          "description": "send pre approval loan notification",
+          "auth_required": false,
+          "permission_required": false
         },
         {
           "path": "/api/v1/loan",
