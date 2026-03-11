@@ -1,26 +1,37 @@
 import { NextResponse } from 'next/server';
-import { getCurrentRouterItem, flattenNavRouter } from '@config/common';
-import { routers, noTokenRouter } from '@config/routes';
+import { flattenNavRouter, matchRoute } from '@repo/shared-methods/lib/commonRouter';
+import { noTokenRouter } from '@config/routes';
 export function middleware(request) {
 	const { pathname } = request.nextUrl;
 
-	// 2. 获取 cookie/token
-	const token = request.cookies.get('token')?.value;
+	// cookie获取token/权限路由
+	const permissionStore = JSON.parse(
+		request.cookies.get(`permissionStore_${process.env.NEXT_PUBLIC_SYSTEM_TYPE}`)?.value ||
+			'{}',
+	);
+	const accessPaths = permissionStore?.state?.accessPaths || [];
+	const access = permissionStore?.state?.access;
 	// 路由白名单
 	const noTokenList = flattenNavRouter(noTokenRouter);
 	const whiteList = noTokenList.map((item) => item.path);
-	const routerItem = getCurrentRouterItem(pathname, routers);
 
-	if (!token && !whiteList.includes(pathname)) {
-		console.log('noToken----------middleware---===', pathname);
+	if (!access && !whiteList.includes(pathname)) {
+		console.log(
+			'noToken----------middleware---===',
+			pathname,
+			'++++',
+			permissionStore?.state?.access,
+		);
 
-		// 未登录且非白名单，重定向到登录页
+		// token到期且非白名单路由，重定向到登录页
 		return NextResponse.redirect(new URL('/login', request.url));
 	}
 
-	const isAuthSuccessful = [].every((role) => routerItem?.roles?.includes(role));
-	//  其他权限逻辑（如角色判断等）
-	if (routerItem && routerItem?.roles?.length && !isAuthSuccessful) {
+	// 权限判断-排除特殊404页面
+	const isAuthSuccessful = accessPaths.some((path) => matchRoute(path, pathname));
+	if (!isAuthSuccessful && !whiteList.includes(pathname)) {
+		console.log('no permission---', pathname, isAuthSuccessful);
+
 		return NextResponse.redirect(new URL('/not-found', request.url));
 	}
 

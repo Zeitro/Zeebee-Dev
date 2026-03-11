@@ -6,7 +6,7 @@ import SiderBar from '@/components/Sidebar';
 import { getCurrentRouterItem } from '@config/common';
 import { noNavRouter, navRouter } from '@config/routes';
 import { usePathname, useRouter } from 'next/navigation';
-import { useUserStore } from '@/store/user';
+import { useUserStore } from '@repo/shared-methods/store';
 import { NewHeader } from '@repo/shared-methods';
 import HeaderCustomAction from './HeaderCustomAction';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';

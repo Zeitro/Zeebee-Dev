@@ -123,7 +123,7 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 					<div className="h-full flex items-stretch customRoot">
 						<CommonSidebar
 							// routerList={navRouter}
-							routerList={accessibleRoutes}
+							routerList={accessibleRoutes || []}
 							personalList={personalList}
 							handleClickPersonalItem={handleClickPersonalItem}
 							renderLogo={({ rect }) => (

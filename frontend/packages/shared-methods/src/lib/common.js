@@ -126,7 +126,7 @@ export const findItem = ({
 	parentIndex,
 }) => {
 	let result = null;
-	list.map((i, index) => {
+	list?.map?.((i, index) => {
 		if (isPushIndex) {
 			i.index = index;
 		}

@@ -24,11 +24,13 @@ const JoinOrganization = () => {
 			body: { organization_id: Number(organization_id), email, code, ...values },
 		});
 		// await updateAccess(access);
-		await getUserPermissions(access);
-		message.open({
-			type: 'success',
-			content: `Successfully joined the ${organizationName} organization. Logging in...`,
+		await getUserPermissions(access, () => {
+			message.open({
+				type: 'success',
+				content: `Successfully joined the ${organizationName} organization. Logging in...`,
+			});
 		});
+
 		// setCookie('token', access?.access_token, access?.access_token_expire * 1000);
 		// await getUserInfo();
 		// router.push('/');

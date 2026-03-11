@@ -5,7 +5,10 @@ export function middleware(request) {
 	const { pathname } = request.nextUrl;
 
 	// cookie获取token/权限路由
-	const permissionStore = JSON.parse(request.cookies.get('permissionStore')?.value || '{}');
+	const permissionStore = JSON.parse(
+		request.cookies.get(`permissionStore_${process.env.NEXT_PUBLIC_SYSTEM_TYPE}`)?.value ||
+			'{}',
+	);
 	const accessPaths = permissionStore?.state?.accessPaths || [];
 	const access = permissionStore?.state?.access;
 	// 路由白名单

@@ -76,7 +76,9 @@ export function createRequest() {
 			isHideTips,
 			...restConfig
 		} = options;
-		const permissionStore = JSON.parse(Cookie.get('permissionStore') || '{}');
+		const permissionStore = JSON.parse(
+			Cookie.get(`permissionStore_${process.env.NEXT_PUBLIC_SYSTEM_TYPE}`) || '{}',
+		);
 		const token = permissionStore?.state?.access?.access_token;
 		const headersConfig = {
 			'Content-Type': 'application/json',

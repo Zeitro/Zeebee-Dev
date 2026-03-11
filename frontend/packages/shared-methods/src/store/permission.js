@@ -25,6 +25,10 @@ export const usePermissionStore = create(
 			access: {}, //token
 			permissionTags: [], //权限keys
 			accessPaths: [], //有权限的页面路由
+			clearPermission: () => {
+				api.persist.clearStorage();
+				set({ access: null, permissionTags: null, accessPaths: null });
+			},
 			login: async (values, config = {}) => {
 				const access = await request('/user/login', {
 					method: 'POST',
@@ -45,7 +49,8 @@ export const usePermissionStore = create(
 			},
 		}),
 		{
-			name: 'permissionStore', // 存储唯一标识（必填）
+			// 存储唯一标识（必填）,区分系统类型主要因为本地调试cookie会互相覆盖
+			name: `permissionStore_${process.env.NEXT_PUBLIC_SYSTEM_TYPE}`,
 			storage: createJSONStorage(() => cookieStorage),
 			partialize: (state) => ({
 				access: state.access,
