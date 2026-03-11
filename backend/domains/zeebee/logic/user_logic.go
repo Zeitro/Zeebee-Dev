@@ -6,6 +6,7 @@ import (
 
 	"github.com/duke-git/lancet/v2/condition"
 	"github.com/duke-git/lancet/v2/slice"
+	"github.com/zeromicro/go-zero/core/threading"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -16,6 +17,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/utils"
+	"zeebee-backend/domains/zeebee/auth"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
@@ -24,14 +26,16 @@ import (
 // UserLogic provides user business logic
 type UserLogic struct {
 	*BaseLogic
-	jwtConfig dto.JwtConfig
+	jwtConfig    dto.JwtConfig
+	authTopicMap map[constants.UserType]string
 }
 
 // NewUserLogic creates a new user logic instance
-func NewUserLogic(baseLogic *BaseLogic, jwtConfig dto.JwtConfig) *UserLogic {
+func NewUserLogic(baseLogic *BaseLogic, jwtConfig dto.JwtConfig, authTopicMap map[constants.UserType]string) *UserLogic {
 	return &UserLogic{
-		BaseLogic: baseLogic,
-		jwtConfig: jwtConfig,
+		BaseLogic:    baseLogic,
+		jwtConfig:    jwtConfig,
+		authTopicMap: authTopicMap,
 	}
 }
 
@@ -329,6 +333,19 @@ func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limi
 	if err != nil {
 		return nil, err
 	}
+
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:             auth.ActionRoleReload,
+			Scope:              auth.ScopeOrganizationUser,
+			Type:               req.UserType,
+			OrganizationId:     orgUser.OrganizationId,
+			OrganizationUserId: orgUser.Id,
+		}
+		_ = l.BaseLogic.publishAuthEvent(subCtx, l.authTopicMap[req.UserType], msg)
+	})
+
 	return
 }
 
@@ -568,6 +585,17 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 	if err != nil {
 		return nil, nil, err
 	}
+
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:         auth.ActionRoleReload,
+			Scope:          auth.ScopeOrganization,
+			Type:           userInput.Type,
+			OrganizationId: organization.Id,
+		}
+		_ = l.BaseLogic.publishAuthEvent(subCtx, l.authTopicMap[userInput.Type], msg)
+	})
 
 	return user, organizationUser, nil
 }

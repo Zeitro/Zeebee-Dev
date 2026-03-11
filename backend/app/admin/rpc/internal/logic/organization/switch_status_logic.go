@@ -3,13 +3,12 @@ package organizationlogic
 import (
 	"context"
 
-	"gorm.io/gorm"
-
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/dto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -40,59 +39,13 @@ func (l *SwitchStatusLogic) SwitchStatus(in *admin.OrganizationSwitchStatusReque
 		}
 	}()
 
-	// Validate status
-	newStatus := constants.OrganizationStatus(in.Data.Status)
-	err = newStatus.Validate()
-	if err != nil {
-		return nil, errorx.WithStack(err)
-	}
-
-	// Get existing organization
-	organization, err := l.svcCtx.AllRepos.OrganizationRepo.GetOrganizationById(l.ctx, in.Data.Id, true)
-	if err != nil {
-		return nil, errorx.WithStack(err)
-	}
-
-	// Use transaction to update both organization and organization users
-	err = l.svcCtx.AllRepos.UserRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
-		var innerErr error
-
-		// Update organization status
-		organization.Status = newStatus
-		_, innerErr = l.svcCtx.AllRepos.OrganizationRepo.UpdateOneByIdWithTx(l.ctx, tx, organization.Id, organization)
-		if innerErr != nil {
-			return innerErr
-		}
-
-		// Update organization owner status
-		owner := organization.Owner
-		if owner == nil {
-			return nil
-		}
-		if owner.Status == constants.UserStatusInactive && newStatus == constants.OrganizationStatusActive {
-			owner.Status = constants.UserStatusActive
-			innerErr = l.svcCtx.AllRepos.UserRepo.UpdateColumnsByIdWithTx(l.ctx, tx, owner.Id, map[string]interface{}{
-				"status": constants.UserStatusActive,
-			})
-			if innerErr != nil {
-				return innerErr
-			}
-		}
-
-		// Sync organization template
-		if newStatus == constants.OrganizationStatusActive {
-			organizationTemplateLogic := logic.GetBaseLogic(l.svcCtx)
-			innerErr = organizationTemplateLogic.
-				OrganizationTemplateLogic.
-				SyncByOrganizationIdWithTx(l.ctx, tx, organization)
-		}
-
-		return innerErr
-	})
-
+	input, err := copierx.Trans[admin.OrganizationSwitchStatusRequestData, dto.OrganizationSwitchStatusRequestDto](in.Data)
 	if err != nil {
 		return nil, err
 	}
-
+	err = l.BaseLogic.OrganizationLogic.SwitchStatus(l.ctx, *input)
+	if err != nil {
+		return nil, err
+	}
 	return &admin.EmptyResponse{}, nil
 }

@@ -70,7 +70,6 @@ type OrganizationPageFilter struct {
 	Status           constants.OrganizationStatus `json:"status"`
 }
 type OrganizationRegisterRequestDto struct {
-	// Id           int64                           `json:"id"`
 	Name         string                          `json:"name"`
 	Status       constants.OrganizationStatus    `json:"status"`
 	OwnerType    constants.OrganizationOwnerType `json:"owner_type"`
@@ -94,4 +93,9 @@ type OrganizationLenderMetadata struct {
 	LoanTermRange   RangeInt     `json:"loan_term_range"`
 	LoanRateRange   RangeFloat64 `json:"loan_rate_range"`
 	LoanPointRange  RangeFloat64 `json:"loan_point_range"`
+}
+
+type OrganizationSwitchStatusRequestDto struct {
+	Id     int64                        `json:"id"`
+	Status constants.OrganizationStatus `json:"status"`
 }

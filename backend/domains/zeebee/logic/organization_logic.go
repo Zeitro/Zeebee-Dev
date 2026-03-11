@@ -175,6 +175,75 @@ func (l *OrganizationLogic) Delete(ctx context.Context, id int64) (err error) {
 	return nil
 }
 
+// SwitchStatus changes the status of an organization.
+func (l *OrganizationLogic) SwitchStatus(ctx context.Context, input dto.OrganizationSwitchStatusRequestDto) (err error) {
+
+	// Validate status
+	newStatus := input.Status
+	err = newStatus.Validate()
+	if err != nil {
+		return
+	}
+	// Get existing organization
+	organization, err := l.repos.OrganizationRepo.GetOrganizationById(ctx, input.Id, true)
+	if err != nil {
+		return
+	}
+
+	// Use transaction to update both organization and organization users
+	err = l.repos.OrganizationRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		var innerErr error
+
+		// Update organization status
+		organization.Status = newStatus
+		_, innerErr = l.repos.OrganizationRepo.UpdateOneByIdWithTx(ctx, tx, organization.Id, organization)
+		if innerErr != nil {
+			return innerErr
+		}
+
+		// Update organization owner status
+		owner := organization.Owner
+		if owner == nil {
+			return nil
+		}
+		if owner.Status == constants.UserStatusInactive && newStatus == constants.OrganizationStatusActive {
+			owner.Status = constants.UserStatusActive
+			innerErr = l.repos.UserRepo.UpdateColumnsByIdWithTx(ctx, tx, owner.Id, map[string]interface{}{
+				"status": constants.UserStatusActive,
+			})
+			if innerErr != nil {
+				return innerErr
+			}
+		}
+
+		// Sync organization template
+		if newStatus == constants.OrganizationStatusActive {
+			organizationTemplateLogic := NewOrganizationTemplateLogic(l.BaseLogic)
+			innerErr = organizationTemplateLogic.
+				SyncByOrganizationIdWithTx(ctx, tx, organization)
+		}
+
+		return innerErr
+	})
+
+	if err != nil {
+		return
+	}
+
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:         auth.ActionRoleReload,
+			Scope:          auth.ScopeOrganization,
+			Type:           organization.Type,
+			OrganizationId: input.Id,
+		}
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[organization.Type], msg)
+	})
+	return
+
+}
+
 // SelectOptions retrieves a list of organization options based on the specified type.
 func (l *OrganizationLogic) SelectOptions(ctx context.Context, organizationType constants.UserType) (results []*dto.OrganizationOptionDto, err error) {
 	organizations, err := l.repos.OrganizationRepo.SelectOptions(ctx, organizationType)
