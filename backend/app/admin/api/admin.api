@@ -23,6 +23,7 @@ import "desc/loan.api"
 	version: v1
 	group: common
 	prefix:  /api/v1
+	//       middleware: AuthMiddleware
 	tags: common
 )
 service admin-api {
@@ -37,6 +38,10 @@ service admin-api {
 	@doc "get us city"
 	@handler GetUsCities
 	get /us_cities (GetUsCitiesRequest) returns (GetUsCitiesResponse)
+
+	@doc "sync data"
+	@handler SyncData
+	get /sync_data (EmptyRequest) returns (EmptyResponse)
 }
 
 // ============== common end =============
@@ -45,7 +50,8 @@ service admin-api {
 	desc: "admin-api service"
 	version: v1
 	group: user
-	prefix:  /api/v1
+	prefix:     /api/v1
+	middleware: AuthMiddleware
 	tags: user
 )
 service admin-api {
@@ -122,9 +128,6 @@ service admin-api {
 	@doc "select option"
 	@handler OrganizationSelectOption
 	get /organization/select_options (OrganizationSelectOptionRequest) returns (OrganizationOptionResponse)
-	// @doc "all lender"
-	// @handler OrganizationLenders
-	// get /organization/lenders (EmptyRequest) returns (OrganizationOptionResponse)
 }
 
 // ============= organization service end ============

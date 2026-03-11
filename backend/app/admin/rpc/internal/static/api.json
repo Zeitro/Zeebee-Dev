@@ -1,0 +1,2044 @@
+{
+  "Admin": [
+    {
+      "group": "common",
+      "apis": [
+        {
+          "path": "/api/v1/select_options",
+          "method": "GET",
+          "name": "select options",
+          "description": "select options",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/us_states",
+          "method": "GET",
+          "name": "get us states",
+          "description": "get us states",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/us_cities",
+          "method": "GET",
+          "name": "get us city",
+          "description": "get us city",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/sync_data",
+          "method": "GET",
+          "name": "sync data",
+          "description": "sync data",
+          "auth_required": false,
+          "permission_required": false
+        }
+      ]
+    },
+    {
+      "group": "user",
+      "apis": [
+        {
+          "path": "/api/v1/user/login",
+          "method": "POST",
+          "name": "login",
+          "description": "login",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/user/refresh",
+          "method": "POST",
+          "name": "refresh",
+          "description": "refresh",
+          "auth_required": true,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/user/reset_password",
+          "method": "POST",
+          "name": "reset password",
+          "description": "reset password",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/user/info",
+          "method": "GET",
+          "name": "info",
+          "description": "info",
+          "auth_required": true,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/user/profile",
+          "method": "PUT",
+          "name": "edit profile",
+          "description": "edit profile",
+          "auth_required": true,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/user/menu",
+          "method": "GET",
+          "name": "user menu",
+          "description": "user menu",
+          "auth_required": true,
+          "permission_required": false
+        }
+      ]
+    },
+    {
+      "group": "organization",
+      "apis": [
+        {
+          "path": "/api/v1/organization/:id",
+          "method": "GET",
+          "name": "detail",
+          "description": "detail",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization/page",
+          "method": "POST",
+          "name": "page",
+          "description": "page",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization/lender",
+          "method": "POST",
+          "name": "lender create",
+          "description": "lender create",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization/lender/:id",
+          "method": "PUT",
+          "name": "lender update",
+          "description": "lender update",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization/:id",
+          "method": "DELETE",
+          "name": "delete",
+          "description": "delete",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization/:id/status",
+          "method": "PATCH",
+          "name": "switch status",
+          "description": "switch status",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization/select_options",
+          "method": "GET",
+          "name": "select option",
+          "description": "select option",
+          "auth_required": true,
+          "permission_required": true
+        }
+      ]
+    },
+    {
+      "group": "organization_user",
+      "apis": [
+        {
+          "path": "/api/v1/organization_user/page",
+          "method": "POST",
+          "name": "page",
+          "description": "page",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization_user/:id",
+          "method": "GET",
+          "name": "detail",
+          "description": "detail",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization_user",
+          "method": "POST",
+          "name": "create",
+          "description": "create",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization_user/:id",
+          "method": "PUT",
+          "name": "update",
+          "description": "update",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization_user/:id",
+          "method": "DELETE",
+          "name": "delete",
+          "description": "delete",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization_user/:id/status",
+          "method": "PATCH",
+          "name": "switch status",
+          "description": "switch status",
+          "auth_required": true,
+          "permission_required": true
+        }
+      ]
+    },
+    {
+      "group": "api",
+      "apis": [
+        {
+          "path": "/api/v1/api/:id",
+          "method": "GET",
+          "name": "detail",
+          "description": "detail",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/api/tree",
+          "method": "GET",
+          "name": "tree",
+          "description": "tree",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/api",
+          "method": "POST",
+          "name": "create",
+          "description": "create",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/api/:id",
+          "method": "PUT",
+          "name": "update",
+          "description": "update",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/api/:id",
+          "method": "DELETE",
+          "name": "delete",
+          "description": "delete",
+          "auth_required": true,
+          "permission_required": true
+        }
+      ]
+    },
+    {
+      "group": "resource",
+      "apis": [
+        {
+          "path": "/api/v1/resource/:id",
+          "method": "GET",
+          "name": "detail",
+          "description": "detail",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/resource/tree",
+          "method": "GET",
+          "name": "tree",
+          "description": "tree",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/resource",
+          "method": "POST",
+          "name": "create",
+          "description": "create",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/resource/:id",
+          "method": "PUT",
+          "name": "update",
+          "description": "update",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/resource/:id",
+          "method": "DELETE",
+          "name": "delete",
+          "description": "delete",
+          "auth_required": true,
+          "permission_required": true
+        }
+      ]
+    },
+    {
+      "group": "role",
+      "apis": [
+        {
+          "path": "/api/v1/role/:id",
+          "method": "GET",
+          "name": "detail",
+          "description": "detail",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/role/page",
+          "method": "POST",
+          "name": "page",
+          "description": "page",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/role/all",
+          "method": "GET",
+          "name": "all",
+          "description": "all",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/role",
+          "method": "POST",
+          "name": "create",
+          "description": "create",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/role/:id",
+          "method": "PUT",
+          "name": "update",
+          "description": "update",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/role/:id",
+          "method": "DELETE",
+          "name": "delete",
+          "description": "delete",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/role/:id/status",
+          "method": "PATCH",
+          "name": "switch status",
+          "description": "switch status",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/role/:id/assign_organization_users",
+          "method": "POST",
+          "name": "assign organization users",
+          "description": "assign organization users",
+          "auth_required": true,
+          "permission_required": true
+        }
+      ]
+    },
+    {
+      "group": "storage",
+      "apis": [
+        {
+          "path": "/api/v1/storage/presign_url",
+          "method": "POST",
+          "name": "create aws s3 presign url",
+          "description": "create aws s3 presign url",
+          "auth_required": true,
+          "permission_required": false
+        }
+      ]
+    },
+    {
+      "group": "base_template",
+      "apis": [
+        {
+          "path": "/api/v1/base_template",
+          "method": "POST",
+          "name": "Create",
+          "description": "Create",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/base_template/:id/reset",
+          "method": "POST",
+          "name": "Reset",
+          "description": "Reset",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/base_template/:id",
+          "method": "PUT",
+          "name": "Update",
+          "description": "Update",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/base_template/:id",
+          "method": "GET",
+          "name": "Detail",
+          "description": "Detail",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/base_template/page",
+          "method": "POST",
+          "name": "page",
+          "description": "page",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/base_template/:id/status",
+          "method": "PATCH",
+          "name": "Switch status",
+          "description": "Switch status",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/base_template/:id",
+          "method": "DELETE",
+          "name": "Delete",
+          "description": "Delete",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/base_template/preview",
+          "method": "POST",
+          "name": "Preview",
+          "description": "Preview",
+          "auth_required": true,
+          "permission_required": true
+        }
+      ]
+    },
+    {
+      "group": "loan",
+      "apis": [
+        {
+          "path": "/api/v1/loan/page",
+          "method": "POST",
+          "name": "page",
+          "description": "page",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/loan/:id",
+          "method": "GET",
+          "name": "detail",
+          "description": "detail",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/loan/:id/reassign",
+          "method": "POST",
+          "name": "reassign",
+          "description": "reassign",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/loan/lender_companies",
+          "method": "GET",
+          "name": "lender companies list",
+          "description": "lender companies list",
+          "auth_required": true,
+          "permission_required": true
+        }
+      ]
+    },
+    {
+      "group": "swagger",
+      "apis": [
+        {
+          "path": "/api/v1/swagger",
+          "method": "GET",
+          "name": "swagger",
+          "description": "swagger",
+          "auth_required": false,
+          "permission_required": false
+        }
+      ]
+    },
+    {
+      "group": "pprof",
+      "apis": [
+        {
+          "path": "/debug/pprof",
+          "method": "GET",
+          "name": "pprof",
+          "description": "pprof",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/debug/pprof/allocs",
+          "method": "GET",
+          "name": "allocs",
+          "description": "allocs",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/debug/pprof/block",
+          "method": "GET",
+          "name": "block",
+          "description": "block",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/debug/pprof/cmdline",
+          "method": "GET",
+          "name": "cmdline",
+          "description": "cmdline",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/debug/pprof/goroutine",
+          "method": "GET",
+          "name": "goroutine",
+          "description": "goroutine",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/debug/pprof/heap",
+          "method": "GET",
+          "name": "heap",
+          "description": "heap",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/debug/pprof/mutex",
+          "method": "GET",
+          "name": "mutex",
+          "description": "mutex",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/debug/pprof/profile",
+          "method": "GET",
+          "name": "profile",
+          "description": "profile",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/debug/pprof/symbol",
+          "method": "GET",
+          "name": "symbol",
+          "description": "symbol",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/debug/pprof/trace",
+          "method": "GET",
+          "name": "trace",
+          "description": "trace",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/debug/pprof/threadcreate",
+          "method": "GET",
+          "name": "threadcreate",
+          "description": "threadcreate",
+          "auth_required": false,
+          "permission_required": false
+        }
+      ]
+    }
+  ],
+  "Lender": [
+    {
+      "group": "common",
+      "apis": [
+        {
+          "path": "/api/v1/select_options",
+          "method": "GET",
+          "name": "select options",
+          "description": "select options",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/us_states",
+          "method": "GET",
+          "name": "get us states",
+          "description": "get us states",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/us_cities",
+          "method": "GET",
+          "name": "get us city",
+          "description": "get us city",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/sync_data",
+          "method": "GET",
+          "name": "sync data",
+          "description": "sync data",
+          "auth_required": false,
+          "permission_required": false
+        }
+      ]
+    },
+    {
+      "group": "user",
+      "apis": [
+        {
+          "path": "/api/v1/user/register",
+          "method": "POST",
+          "name": "register",
+          "description": "register",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/user/login",
+          "method": "POST",
+          "name": "login",
+          "description": "login",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/user/refresh",
+          "method": "POST",
+          "name": "refresh",
+          "description": "refresh",
+          "auth_required": true,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/user/verify_email",
+          "method": "POST",
+          "name": "verify email",
+          "description": "verify email",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/user/send_verify_email",
+          "method": "POST",
+          "name": "send verify email",
+          "description": "send verify email",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/user/reset_password",
+          "method": "POST",
+          "name": "reset password",
+          "description": "reset password",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/user/send_reset_password",
+          "method": "POST",
+          "name": "send reset password email",
+          "description": "send reset password email",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/user/info",
+          "method": "GET",
+          "name": "info",
+          "description": "info",
+          "auth_required": true,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/user/switch_organization",
+          "method": "POST",
+          "name": "switch organization",
+          "description": "switch organization",
+          "auth_required": true,
+          "permission_required": false
+        }
+      ]
+    },
+    {
+      "group": "loan",
+      "apis": [
+        {
+          "path": "/api/v1/loan/:id",
+          "method": "GET",
+          "name": "detail",
+          "description": "detail",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/loan/page",
+          "method": "POST",
+          "name": "page",
+          "description": "page",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/loan/:id",
+          "method": "PUT",
+          "name": "update",
+          "description": "update",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/loan/:id/stage",
+          "method": "PATCH",
+          "name": "update loan stage",
+          "description": "update loan stage",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/loan/:id/pending_status",
+          "method": "PATCH",
+          "name": "update loan pending status",
+          "description": "update loan pending status",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/loan/:id/review_pending_status",
+          "method": "POST",
+          "name": "reveiw loan pending status",
+          "description": "reveiw loan pending status",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/loan/:id/loan_documents_opts",
+          "method": "GET",
+          "name": "loan documents opts",
+          "description": "loan documents opts",
+          "auth_required": true,
+          "permission_required": true
+        }
+      ]
+    },
+    {
+      "group": "loan_document",
+      "apis": [
+        {
+          "path": "/api/v1/loan_document",
+          "method": "POST",
+          "name": "create loan document",
+          "description": "create loan document",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/loan_document/:id/request",
+          "method": "DELETE",
+          "name": "delete loan document request",
+          "description": "delete loan document request",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/loan_document/send_requests",
+          "method": "POST",
+          "name": "send loan document requests",
+          "description": "send loan document requests",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/loan_document/:id/comment",
+          "method": "PATCH",
+          "name": "update comment",
+          "description": "update comment",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/loan_document/:id/files",
+          "method": "POST",
+          "name": "add files",
+          "description": "add files",
+          "auth_required": true,
+          "permission_required": true
+        }
+      ]
+    },
+    {
+      "group": "file",
+      "apis": [
+        {
+          "path": "/api/v1/file/:id",
+          "method": "DELETE",
+          "name": "delete",
+          "description": "delete",
+          "auth_required": true,
+          "permission_required": false
+        }
+      ]
+    },
+    {
+      "group": "storage",
+      "apis": [
+        {
+          "path": "/api/v1/storage/presign_url",
+          "method": "POST",
+          "name": "create aws s3 presign url",
+          "description": "create aws s3 presign url",
+          "auth_required": true,
+          "permission_required": false
+        }
+      ]
+    },
+    {
+      "group": "role",
+      "apis": [
+        {
+          "path": "/api/v1/role/:id",
+          "method": "GET",
+          "name": "detail",
+          "description": "detail",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/role/page",
+          "method": "POST",
+          "name": "page",
+          "description": "page",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/role/all",
+          "method": "GET",
+          "name": "all",
+          "description": "all",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/role",
+          "method": "POST",
+          "name": "create",
+          "description": "create",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/role/:id",
+          "method": "PUT",
+          "name": "update",
+          "description": "update",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/role/:id",
+          "method": "DELETE",
+          "name": "delete",
+          "description": "delete",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/role/:id/status",
+          "method": "PATCH",
+          "name": "update status",
+          "description": "update status",
+          "auth_required": true,
+          "permission_required": true
+        }
+      ]
+    },
+    {
+      "group": "organization_user",
+      "apis": [
+        {
+          "path": "/api/v1/organization_user/accept_invitation",
+          "method": "POST",
+          "name": "accept invitation",
+          "description": "accept invitation",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization_user/:id",
+          "method": "GET",
+          "name": "detail",
+          "description": "detail",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization_user/page",
+          "method": "POST",
+          "name": "page",
+          "description": "page",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization_user/all",
+          "method": "GET",
+          "name": "all",
+          "description": "all",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization_user",
+          "method": "POST",
+          "name": "create",
+          "description": "create",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization_user/:id",
+          "method": "PUT",
+          "name": "update",
+          "description": "update",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization_user/:id",
+          "method": "DELETE",
+          "name": "delete",
+          "description": "delete",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization_user/:id/status",
+          "method": "PATCH",
+          "name": "switch status",
+          "description": "switch status",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization_user/:id/assign_roles",
+          "method": "POST",
+          "name": "assign roles",
+          "description": "assign roles",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization_user/:id/send_email",
+          "method": "POST",
+          "name": "send email",
+          "description": "send email",
+          "auth_required": true,
+          "permission_required": true
+        }
+      ]
+    },
+    {
+      "group": "organization",
+      "apis": [
+        {
+          "path": "/api/v1/organization/profile",
+          "method": "GET",
+          "name": "profile",
+          "description": "profile",
+          "auth_required": true,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/organization/profile",
+          "method": "PUT",
+          "name": "update profile",
+          "description": "update profile",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization",
+          "method": "POST",
+          "name": "create",
+          "description": "create",
+          "auth_required": true,
+          "permission_required": true
+        }
+      ]
+    },
+    {
+      "group": "organization_template",
+      "apis": [
+        {
+          "path": "/api/v1/organization_template/:id",
+          "method": "PUT",
+          "name": "Update",
+          "description": "Update",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization_template/:id",
+          "method": "GET",
+          "name": "Detail",
+          "description": "Detail",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization_template/detail_by_purpose",
+          "method": "GET",
+          "name": "Get Detail by purpose",
+          "description": "Get Detail by purpose",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization_template/page",
+          "method": "POST",
+          "name": "page",
+          "description": "page",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization_template/preview",
+          "method": "POST",
+          "name": "Preview",
+          "description": "Preview",
+          "auth_required": true,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/organization_template/:id/reset",
+          "method": "POST",
+          "name": "Reset",
+          "description": "Reset",
+          "auth_required": true,
+          "permission_required": true
+        }
+      ]
+    },
+    {
+      "group": "organization_setting",
+      "apis": [
+        {
+          "path": "/api/v1/organization_setting/detail_by_purpose",
+          "method": "GET",
+          "name": "Detail by purpose",
+          "description": "Detail by purpose",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization_setting/:id/status",
+          "method": "PATCH",
+          "name": "switch status",
+          "description": "switch status",
+          "auth_required": true,
+          "permission_required": true
+        }
+      ]
+    },
+    {
+      "group": "pdf",
+      "apis": [
+        {
+          "path": "/api/v1/pdf/html_to_pdf",
+          "method": "POST",
+          "name": "convert html to pdf",
+          "description": "convert html to pdf",
+          "auth_required": true,
+          "permission_required": false
+        }
+      ]
+    },
+    {
+      "group": "swagger",
+      "apis": [
+        {
+          "path": "/api/v1/swagger",
+          "method": "GET",
+          "name": "swagger",
+          "description": "swagger",
+          "auth_required": false,
+          "permission_required": false
+        }
+      ]
+    },
+    {
+      "group": "pprof",
+      "apis": [
+        {
+          "path": "/debug/pprof",
+          "method": "GET",
+          "name": "pprof",
+          "description": "pprof",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/debug/pprof/allocs",
+          "method": "GET",
+          "name": "allocs",
+          "description": "allocs",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/debug/pprof/block",
+          "method": "GET",
+          "name": "block",
+          "description": "block",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/debug/pprof/cmdline",
+          "method": "GET",
+          "name": "cmdline",
+          "description": "cmdline",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/debug/pprof/goroutine",
+          "method": "GET",
+          "name": "goroutine",
+          "description": "goroutine",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/debug/pprof/heap",
+          "method": "GET",
+          "name": "heap",
+          "description": "heap",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/debug/pprof/mutex",
+          "method": "GET",
+          "name": "mutex",
+          "description": "mutex",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/debug/pprof/profile",
+          "method": "GET",
+          "name": "profile",
+          "description": "profile",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/debug/pprof/symbol",
+          "method": "GET",
+          "name": "symbol",
+          "description": "symbol",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/debug/pprof/trace",
+          "method": "GET",
+          "name": "trace",
+          "description": "trace",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/debug/pprof/threadcreate",
+          "method": "GET",
+          "name": "threadcreate",
+          "description": "threadcreate",
+          "auth_required": false,
+          "permission_required": false
+        }
+      ]
+    }
+  ],
+  "Borrower": [
+    {
+      "group": "common",
+      "apis": [
+        {
+          "path": "/api/v1/select_options",
+          "method": "GET",
+          "name": "select options",
+          "description": "select options",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/us_states",
+          "method": "GET",
+          "name": "get us states",
+          "description": "get us states",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/us_cities",
+          "method": "GET",
+          "name": "get us city",
+          "description": "get us city",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/uuid",
+          "method": "GET",
+          "name": "get uuid",
+          "description": "get uuid",
+          "auth_required": true,
+          "permission_required": false
+        }
+      ]
+    },
+    {
+      "group": "user",
+      "apis": [
+        {
+          "path": "/api/v1/user/register",
+          "method": "POST",
+          "name": "register",
+          "description": "register",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/user/login",
+          "method": "POST",
+          "name": "login",
+          "description": "login",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/user/refresh",
+          "method": "POST",
+          "name": "refresh",
+          "description": "refresh",
+          "auth_required": true,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/user/verify_email",
+          "method": "POST",
+          "name": "verify email",
+          "description": "verify email",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/user/send_verify_email",
+          "method": "POST",
+          "name": "send verify email",
+          "description": "send verify email",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/user/reset_password",
+          "method": "POST",
+          "name": "reset password",
+          "description": "reset password",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/user/send_reset_password",
+          "method": "POST",
+          "name": "send reset password email",
+          "description": "send reset password email",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/user/info",
+          "method": "GET",
+          "name": "info",
+          "description": "info",
+          "auth_required": true,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/user/profile",
+          "method": "PUT",
+          "name": "edit profile",
+          "description": "edit profile",
+          "auth_required": true,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/user/switch_organization",
+          "method": "POST",
+          "name": "switch organization",
+          "description": "switch organization",
+          "auth_required": true,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/user/change_password",
+          "method": "POST",
+          "name": "change password",
+          "description": "change password",
+          "auth_required": true,
+          "permission_required": false
+        }
+      ]
+    },
+    {
+      "group": "loan",
+      "apis": [
+        {
+          "path": "/api/v1/loan/pre_approval",
+          "method": "POST",
+          "name": "preapproval",
+          "description": "preapproval",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/loan/send_pre_approval_loan_notification",
+          "method": "POST",
+          "name": "send pre approval loan nofification",
+          "description": "send pre approval loan nofification",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/loan",
+          "method": "POST",
+          "name": "create",
+          "description": "create",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/loan/:id",
+          "method": "PUT",
+          "name": "update",
+          "description": "update",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/loan/:id/pending_status",
+          "method": "PATCH",
+          "name": "update pending status",
+          "description": "update pending status",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/loan/:id",
+          "method": "DELETE",
+          "name": "delete",
+          "description": "delete",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/loan/lender_companies",
+          "method": "GET",
+          "name": "lender companies list",
+          "description": "lender companies list",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/loan/:id",
+          "method": "GET",
+          "name": "detail",
+          "description": "detail",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/loan/page",
+          "method": "POST",
+          "name": "page",
+          "description": "page",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/loan/apply",
+          "method": "POST",
+          "name": "apply",
+          "description": "apply",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/loan/draft",
+          "method": "POST",
+          "name": "create draft",
+          "description": "create draft",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/loan/:id/draft",
+          "method": "PUT",
+          "name": "update draft",
+          "description": "update draft",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/loan/:id/update_apply",
+          "method": "PUT",
+          "name": "update apply",
+          "description": "update apply",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/loan/import",
+          "method": "POST",
+          "name": "import",
+          "description": "import",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/loan/import/template",
+          "method": "GET",
+          "name": "download import template",
+          "description": "download import template",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/loan/send_quote_email",
+          "method": "POST",
+          "name": "send quote email",
+          "description": "send quote email",
+          "auth_required": true,
+          "permission_required": true
+        }
+      ]
+    },
+    {
+      "group": "property",
+      "apis": [
+        {
+          "path": "/api/v1/property/page",
+          "method": "POST",
+          "name": "page",
+          "description": "page",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/property/all",
+          "method": "GET",
+          "name": "all",
+          "description": "all",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/property/:id/summary",
+          "method": "GET",
+          "name": "property Summary",
+          "description": "property Summary",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/property/:id",
+          "method": "GET",
+          "name": "detail",
+          "description": "detail",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/property",
+          "method": "POST",
+          "name": "create",
+          "description": "create",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/property/:id",
+          "method": "PUT",
+          "name": "update",
+          "description": "update",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/property/:id",
+          "method": "DELETE",
+          "name": "delete",
+          "description": "delete",
+          "auth_required": true,
+          "permission_required": true
+        }
+      ]
+    },
+    {
+      "group": "borrower_entity",
+      "apis": [
+        {
+          "path": "/api/v1/borrower_entity/page",
+          "method": "POST",
+          "name": "page",
+          "description": "page",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/borrower_entity/all",
+          "method": "GET",
+          "name": "all",
+          "description": "all",
+          "auth_required": true,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/borrower_entity/check_existed",
+          "method": "GET",
+          "name": "existed",
+          "description": "existed",
+          "auth_required": true,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/borrower_entity/:id",
+          "method": "GET",
+          "name": "detail",
+          "description": "detail",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/borrower_entity",
+          "method": "POST",
+          "name": "create",
+          "description": "create",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/borrower_entity/:id",
+          "method": "PUT",
+          "name": "update",
+          "description": "update",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/borrower_entity/:id",
+          "method": "DELETE",
+          "name": "delete",
+          "description": "delete",
+          "auth_required": true,
+          "permission_required": true
+        }
+      ]
+    },
+    {
+      "group": "borrower_applicant",
+      "apis": [
+        {
+          "path": "/api/v1/borrower_applicant/page",
+          "method": "POST",
+          "name": "page",
+          "description": "page",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/borrower_applicant/all",
+          "method": "GET",
+          "name": "all",
+          "description": "all",
+          "auth_required": true,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/borrower_applicant/:id",
+          "method": "GET",
+          "name": "detail",
+          "description": "detail",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/borrower_applicant",
+          "method": "POST",
+          "name": "create",
+          "description": "create",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/borrower_applicant/:id",
+          "method": "PUT",
+          "name": "update",
+          "description": "update",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/borrower_applicant/:id",
+          "method": "DELETE",
+          "name": "delete",
+          "description": "delete",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/borrower_applicant/check_existed",
+          "method": "GET",
+          "name": "existed",
+          "description": "existed",
+          "auth_required": true,
+          "permission_required": false
+        }
+      ]
+    },
+    {
+      "group": "applicant",
+      "apis": [
+        {
+          "path": "/api/v1/applicant/borrower",
+          "method": "POST",
+          "name": "borrower names",
+          "description": "borrower names",
+          "auth_required": true,
+          "permission_required": false
+        }
+      ]
+    },
+    {
+      "group": "pdf",
+      "apis": [
+        {
+          "path": "/api/v1/pdf/apply_form",
+          "method": "POST",
+          "name": "create apply form pdf",
+          "description": "create apply form pdf",
+          "auth_required": true,
+          "permission_required": false
+        }
+      ]
+    },
+    {
+      "group": "storage",
+      "apis": [
+        {
+          "path": "/api/v1/storage/presign_url",
+          "method": "POST",
+          "name": "create aws s3 presign url",
+          "description": "create aws s3 presign url",
+          "auth_required": true,
+          "permission_required": false
+        }
+      ]
+    },
+    {
+      "group": "file",
+      "apis": [
+        {
+          "path": "/api/v1/file/:id",
+          "method": "DELETE",
+          "name": "delete",
+          "description": "delete",
+          "auth_required": true,
+          "permission_required": false
+        }
+      ]
+    },
+    {
+      "group": "loan_document",
+      "apis": [
+        {
+          "path": "/api/v1/loan_document/:id/files",
+          "method": "POST",
+          "name": "add files",
+          "description": "add files",
+          "auth_required": true,
+          "permission_required": true
+        }
+      ]
+    },
+    {
+      "group": "role",
+      "apis": [
+        {
+          "path": "/api/v1/role/:id",
+          "method": "GET",
+          "name": "detail",
+          "description": "detail",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/role/page",
+          "method": "POST",
+          "name": "page",
+          "description": "page",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/role/all",
+          "method": "GET",
+          "name": "all",
+          "description": "all",
+          "auth_required": true,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/role",
+          "method": "POST",
+          "name": "create",
+          "description": "create",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/role/:id",
+          "method": "PUT",
+          "name": "update",
+          "description": "update",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/role/:id",
+          "method": "DELETE",
+          "name": "delete",
+          "description": "delete",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/role/:id/status",
+          "method": "PATCH",
+          "name": "update status",
+          "description": "update status",
+          "auth_required": true,
+          "permission_required": true
+        }
+      ]
+    },
+    {
+      "group": "organization_user",
+      "apis": [
+        {
+          "path": "/api/v1/organization_user/accept_invitation",
+          "method": "POST",
+          "name": "accept invitation",
+          "description": "accept invitation",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/organization_user/:id",
+          "method": "GET",
+          "name": "detail",
+          "description": "detail",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization_user/page",
+          "method": "POST",
+          "name": "page",
+          "description": "page",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization_user/all",
+          "method": "GET",
+          "name": "all",
+          "description": "all",
+          "auth_required": true,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/organization_user",
+          "method": "POST",
+          "name": "create",
+          "description": "create",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization_user/:id",
+          "method": "PUT",
+          "name": "update",
+          "description": "update",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization_user/:id",
+          "method": "DELETE",
+          "name": "delete",
+          "description": "delete",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization_user/:id/status",
+          "method": "PATCH",
+          "name": "switch status",
+          "description": "switch status",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization_user/:id/assign_roles",
+          "method": "POST",
+          "name": "assign roles",
+          "description": "assign roles",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization_user/:id/send_email",
+          "method": "POST",
+          "name": "send email",
+          "description": "send email",
+          "auth_required": true,
+          "permission_required": true
+        }
+      ]
+    },
+    {
+      "group": "organization",
+      "apis": [
+        {
+          "path": "/api/v1/organization/profile",
+          "method": "GET",
+          "name": "profile",
+          "description": "profile",
+          "auth_required": true,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/organization/lenders",
+          "method": "GET",
+          "name": "lenders",
+          "description": "lenders",
+          "auth_required": true,
+          "permission_required": false
+        },
+        {
+          "path": "/api/v1/organization/lender/page",
+          "method": "POST",
+          "name": "lender page",
+          "description": "lender page",
+          "auth_required": true,
+          "permission_required": true
+        }
+      ]
+    },
+    {
+      "group": "organization_email",
+      "apis": [
+        {
+          "path": "/api/v1/organization_email/generate_auth_code_url",
+          "method": "GET",
+          "name": "generate auth code url",
+          "description": "generate auth code url",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization_email/save_email",
+          "method": "POST",
+          "name": "save email",
+          "description": "save email",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization_email/authorize",
+          "method": "POST",
+          "name": "email authorize",
+          "description": "email authorize",
+          "auth_required": true,
+          "permission_required": true
+        }
+      ]
+    },
+    {
+      "group": "zertro",
+      "apis": [
+        {
+          "path": "/api/v1/zeitro/listings/search",
+          "method": "GET",
+          "name": "Search property listings from Zeitro API",
+          "description": "Search property listings from Zeitro API",
+          "auth_required": true,
+          "permission_required": false
+        }
+      ]
+    },
+    {
+      "group": "swagger",
+      "apis": [
+        {
+          "path": "/api/v1/swagger",
+          "method": "GET",
+          "name": "swagger",
+          "description": "swagger",
+          "auth_required": false,
+          "permission_required": false
+        }
+      ]
+    },
+    {
+      "group": "pprof",
+      "apis": [
+        {
+          "path": "/debug/pprof",
+          "method": "GET",
+          "name": "pprof",
+          "description": "pprof",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/debug/pprof/allocs",
+          "method": "GET",
+          "name": "allocs",
+          "description": "allocs",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/debug/pprof/block",
+          "method": "GET",
+          "name": "block",
+          "description": "block",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/debug/pprof/cmdline",
+          "method": "GET",
+          "name": "cmdline",
+          "description": "cmdline",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/debug/pprof/goroutine",
+          "method": "GET",
+          "name": "goroutine",
+          "description": "goroutine",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/debug/pprof/heap",
+          "method": "GET",
+          "name": "heap",
+          "description": "heap",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/debug/pprof/mutex",
+          "method": "GET",
+          "name": "mutex",
+          "description": "mutex",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/debug/pprof/profile",
+          "method": "GET",
+          "name": "profile",
+          "description": "profile",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/debug/pprof/symbol",
+          "method": "GET",
+          "name": "symbol",
+          "description": "symbol",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/debug/pprof/trace",
+          "method": "GET",
+          "name": "trace",
+          "description": "trace",
+          "auth_required": false,
+          "permission_required": false
+        },
+        {
+          "path": "/debug/pprof/threadcreate",
+          "method": "GET",
+          "name": "threadcreate",
+          "description": "threadcreate",
+          "auth_required": false,
+          "permission_required": false
+        }
+      ]
+    }
+  ]
+}

@@ -127,6 +127,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: common.SelectOptionsHandler(serverCtx),
 			},
 			{
+				// sync data
+				Method:  http.MethodGet,
+				Path:    "/sync_data",
+				Handler: common.SyncDataHandler(serverCtx),
+			},
+			{
 				// get us city
 				Method:  http.MethodGet,
 				Path:    "/us_cities",
@@ -383,26 +389,29 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	)
 
 	server.AddRoutes(
-		[]rest.Route{
-			{
-				// login
-				Method:  http.MethodPost,
-				Path:    "/user/login",
-				Handler: user.LoginHandler(serverCtx),
-			},
-			{
-				// refresh
-				Method:  http.MethodPost,
-				Path:    "/user/refresh",
-				Handler: user.RefreshTokenHandler(serverCtx),
-			},
-			{
-				// reset password
-				Method:  http.MethodPost,
-				Path:    "/user/reset_password",
-				Handler: user.ResetPasswordHandler(serverCtx),
-			},
-		},
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// login
+					Method:  http.MethodPost,
+					Path:    "/user/login",
+					Handler: user.LoginHandler(serverCtx),
+				},
+				{
+					// refresh
+					Method:  http.MethodPost,
+					Path:    "/user/refresh",
+					Handler: user.RefreshTokenHandler(serverCtx),
+				},
+				{
+					// reset password
+					Method:  http.MethodPost,
+					Path:    "/user/reset_password",
+					Handler: user.ResetPasswordHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithPrefix("/api/v1"),
 	)
 

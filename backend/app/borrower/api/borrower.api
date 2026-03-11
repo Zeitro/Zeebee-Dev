@@ -35,11 +35,12 @@ type PathIdRequest {
 
 // ============== common start =============
 @server (
-	desc:    "borrower-api service"
+	desc: "borrower-api service"
 	version: v1
-	group:   common
-	prefix:  /api/v1
-	tags:    common
+	group: common
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: common
 )
 service borrower-api {
 	@doc "select options"
@@ -62,11 +63,12 @@ service borrower-api {
 // ============== common end =============
 // ============== user start =============
 @server (
-	desc:    "borrower-api service"
+	desc: "borrower-api service"
 	version: v1
-	group:   user
-	prefix:  /api/v1
-	tags:    user
+	group: user
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: user
 )
 service borrower-api {
 	@doc "register"
@@ -127,11 +129,12 @@ service borrower-api {
 // ============== user end =============
 // ============== loan start =============
 @server (
-	desc:    "loan service"
+	desc: "loan service"
 	version: v1
-	group:   loan
-	prefix:  /api/v1
-	tags:    loan
+	group: loan
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: loan
 )
 service borrower-api {
 	@doc "preapproval"
@@ -452,11 +455,12 @@ service borrower-api {
 // ============== role end =============
 // ============== organization user start ============
 @server (
-	desc:    "organization user service"
+	desc: "organization user service"
 	version: v1
-	group:   organization_user
-	prefix:  /api/v1
-	tags:    organization_user
+	group: organization_user
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: organization_user
 )
 service borrower-api {
 	@doc "accept invitation"

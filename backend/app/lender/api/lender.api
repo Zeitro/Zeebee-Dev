@@ -32,11 +32,12 @@ type PathIdRequest {
 
 // ============== common =============
 @server (
-	desc:    "lender-api service"
+	desc: "lender-api service"
 	version: v1
-	group:   common
-	prefix:  /api/v1
-	tags:    common
+	group: common
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: common
 )
 service lender-api {
 	@doc "select options"
@@ -58,11 +59,12 @@ service lender-api {
 
 // ============== user =============
 @server (
-	desc:    "lender-api service"
+	desc: "lender-api service"
 	version: v1
-	group:   user
-	prefix:  /api/v1
-	tags:    user
+	group: user
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: user
 )
 service lender-api {
 	@doc "register"
@@ -253,11 +255,12 @@ service lender-api {
 
 // ============== organization user start =============
 @server (
-	desc:    "lender-api service"
+	desc: "lender-api service"
 	version: v1
-	group:   organization_user
-	prefix:  /api/v1
-	tags:    organization_user
+	group: organization_user
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: organization_user
 )
 service lender-api {
 	@doc "accept invitation"
@@ -338,12 +341,12 @@ service lender-api {
 // ============== organization service end =============
 // ============== organization template service start ============
 @server(
-    desc: "organization template service"
-    version: v1
+	desc: "organization template service"
+	version: v1
 	prefix:     /api/v1
-    group: organization_template
+	group: organization_template
 	middleware: AuthMiddleware
-    tags: organization_template
+	tags: organization_template
 )
 service lender-api {
 	@doc "Update"
@@ -374,12 +377,12 @@ service lender-api {
 // ============== organization template service end ============
 // ============= organization setting service start =============
 @server(
-    desc: "organization setting service"
-    version: v1
+	desc: "organization setting service"
+	version: v1
 	prefix:     /api/v1
-    group: organization_setting
+	group: organization_setting
 	middleware: AuthMiddleware
-    tags: organization_setting
+	tags: organization_setting
 )
 service lender-api {
 	@doc "Detail by purpose"
@@ -394,12 +397,12 @@ service lender-api {
 // ============= organization setting service end =============
 // =============== pdf service start ==============
 @server(
-    desc: "pdf service"
-    version: v1
-    group: pdf
+	desc: "pdf service"
+	version: v1
+	group: pdf
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: pdf
+	tags: pdf
 )
 service lender-api {
 	@doc "convert html to pdf"
@@ -407,4 +410,4 @@ service lender-api {
 	post /pdf/html_to_pdf (HtmlToPdfRequest) returns (EmptyResponse)
 }
 
-    // =============== pdf service end ==============
+	// =============== pdf service end ==============

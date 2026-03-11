@@ -894,6 +894,7 @@ service common {
   rpc GetOpt(OptionRequest) returns(OptionResponse);
   rpc GetUsState(EmptyRequest) returns(StringSliceResponse);
   rpc GetUsCities(UsCitiesRequest) returns(StringSliceResponse);
+  rpc SyncData(EmptyRequest) returns(EmptyResponse);
 }
 // ========================== common service end =================
 

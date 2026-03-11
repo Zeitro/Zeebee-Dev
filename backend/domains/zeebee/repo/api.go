@@ -140,3 +140,22 @@ func (repo *ApiRepo) GetAllApis(ctx context.Context, apiType constants.UserType,
 	err = query.Find(&apis).Error
 	return apis, errorx.WithStack(err)
 }
+
+// GetOrCreateApiWithTx
+func (repo *ApiRepo) GetOrCreateApiWithTx(ctx context.Context, tx *gorm.DB, api *model.Api) (result *model.Api, err error) {
+	if api == nil {
+		return nil, errorx.New("Api is nil")
+	}
+	query := tx.WithContext(ctx).Model(&model.Api{})
+
+	err = query.Where("name = ? and path = ? and method = ? and type = ?", api.Name, api.Path, api.Method, api.Type).Find(&result).Error
+	if err != nil {
+		return nil, errorx.WithStack(err)
+	}
+	if result != nil && result.Id > 0 {
+		return result, nil
+	}
+	//  create
+	err = query.Create(&api).Error
+	return api, errorx.WithStack(err)
+}

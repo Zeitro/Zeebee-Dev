@@ -1916,6 +1916,7 @@ const (
 	Common_GetOpt_FullMethodName      = "/admin.common/GetOpt"
 	Common_GetUsState_FullMethodName  = "/admin.common/GetUsState"
 	Common_GetUsCities_FullMethodName = "/admin.common/GetUsCities"
+	Common_SyncData_FullMethodName    = "/admin.common/SyncData"
 )
 
 // CommonClient is the client API for Common service.
@@ -1925,6 +1926,7 @@ type CommonClient interface {
 	GetOpt(ctx context.Context, in *OptionRequest, opts ...grpc.CallOption) (*OptionResponse, error)
 	GetUsState(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*StringSliceResponse, error)
 	GetUsCities(ctx context.Context, in *UsCitiesRequest, opts ...grpc.CallOption) (*StringSliceResponse, error)
+	SyncData(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 }
 
 type commonClient struct {
@@ -1965,6 +1967,16 @@ func (c *commonClient) GetUsCities(ctx context.Context, in *UsCitiesRequest, opt
 	return out, nil
 }
 
+func (c *commonClient) SyncData(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, Common_SyncData_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CommonServer is the server API for Common service.
 // All implementations must embed UnimplementedCommonServer
 // for forward compatibility.
@@ -1972,6 +1984,7 @@ type CommonServer interface {
 	GetOpt(context.Context, *OptionRequest) (*OptionResponse, error)
 	GetUsState(context.Context, *EmptyRequest) (*StringSliceResponse, error)
 	GetUsCities(context.Context, *UsCitiesRequest) (*StringSliceResponse, error)
+	SyncData(context.Context, *EmptyRequest) (*EmptyResponse, error)
 	mustEmbedUnimplementedCommonServer()
 }
 
@@ -1990,6 +2003,9 @@ func (UnimplementedCommonServer) GetUsState(context.Context, *EmptyRequest) (*St
 }
 func (UnimplementedCommonServer) GetUsCities(context.Context, *UsCitiesRequest) (*StringSliceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUsCities not implemented")
+}
+func (UnimplementedCommonServer) SyncData(context.Context, *EmptyRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SyncData not implemented")
 }
 func (UnimplementedCommonServer) mustEmbedUnimplementedCommonServer() {}
 func (UnimplementedCommonServer) testEmbeddedByValue()                {}
@@ -2066,6 +2082,24 @@ func _Common_GetUsCities_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Common_SyncData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommonServer).SyncData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Common_SyncData_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommonServer).SyncData(ctx, req.(*EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Common_ServiceDesc is the grpc.ServiceDesc for Common service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -2084,6 +2118,10 @@ var Common_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUsCities",
 			Handler:    _Common_GetUsCities_Handler,
+		},
+		{
+			MethodName: "SyncData",
+			Handler:    _Common_SyncData_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

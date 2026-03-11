@@ -50,7 +50,7 @@ func (repo *ResourceRepo) IsExistedWithTx(ctx context.Context, tx *gorm.DB, data
 
 // IsTagExistedWithTx check resource tag is existed
 func (repo *ResourceRepo) IsTagExistedWithTx(ctx context.Context, tx *gorm.DB, tag string, id int64, resourceType constants.UserType) (isExisted bool, err error) {
-	query := tx.WithContext(ctx).Model(&model.Resource{}).Where("tsg = ? and type = ?", tag, resourceType)
+	query := tx.WithContext(ctx).Model(&model.Resource{}).Where("tag = ? and type = ?", tag, resourceType)
 	if id > 0 {
 		query = query.Where("id != ?", id)
 	}

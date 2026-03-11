@@ -7614,14 +7614,11 @@
                 "type",
                 "resource_type",
                 "name",
-                "path",
-                "icon",
                 "tag",
                 "is_show",
                 "status",
                 "sort_order",
-                "enable_data_scope",
-                "api_ids"
+                "enable_data_scope"
               ],
               "properties": {
                 "api_ids": {
@@ -8206,14 +8203,11 @@
                 "type",
                 "resource_type",
                 "name",
-                "path",
-                "icon",
                 "tag",
                 "is_show",
                 "status",
                 "sort_order",
-                "enable_data_scope",
-                "api_ids"
+                "enable_data_scope"
               ],
               "properties": {
                 "api_ids": {
@@ -10312,6 +10306,29 @@
         }
       }
     },
+    "/api/v1/sync_data": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "common"
+        ],
+        "summary": "sync data",
+        "operationId": "commonSyncData",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/us_cities": {
       "get": {
         "produces": [
@@ -11005,7 +11022,7 @@
       }
     }
   },
-  "x-date": "2026-03-09 15:56:33",
+  "x-date": "2026-03-11 15:39:37",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

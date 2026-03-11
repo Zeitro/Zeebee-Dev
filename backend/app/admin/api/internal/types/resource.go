@@ -8,14 +8,14 @@ type ResourceCreateRequest struct {
 	Type            string  `json:"type" validate:"required,oneof=Borrower Lender Admin"`
 	ResourceType    string  `json:"resource_type" validate:"required,oneof=Menu Button"`
 	Name            string  `json:"name" validate:"required,min=2,max=100"`
-	Path            string  `json:"path" validate:"max=100,required_if=ResourceType Menu"`
-	Icon            string  `json:"icon" validate:"max=100"`
+	Path            string  `json:"path,optional" validate:"max=100,required_if=ResourceType Menu"`
+	Icon            string  `json:"icon,optional" validate:"max=100"`
 	Tag             string  `json:"tag" validate:"max=100,required_if=ResourceType Button"`
 	IsShow          bool    `json:"is_show"`
 	Status          string  `json:"status" validate:"required,oneof=Active Disabled"`
 	SortOrder       int32   `json:"sort_order" validate:"min=0"`
 	EnableDataScope bool    `json:"enable_data_scope"`
-	ApiIds          []int64 `json:"api_ids"`
+	ApiIds          []int64 `json:"api_ids,optional"`
 }
 
 type ResourceDeleteRequest struct {
@@ -57,12 +57,12 @@ type ResourceUpdateRequest struct {
 	Type            string  `json:"type" validate:"required,oneof=Borrower Lender Admin"`
 	ResourceType    string  `json:"resource_type" validate:"required,oneof=Menu Button"`
 	Name            string  `json:"name" validate:"required,min=2,max=100"`
-	Path            string  `json:"path" validate:"max=100,required_if=ResourceType Menu"`
-	Icon            string  `json:"icon" validate:"max=100"`
+	Path            string  `json:"path,optional" validate:"max=100,required_if=ResourceType Menu"`
+	Icon            string  `json:"icon,optional" validate:"max=100"`
 	Tag             string  `json:"tag" validate:"max=100,required_if=ResourceType Button"`
 	IsShow          bool    `json:"is_show"`
 	Status          string  `json:"status" validate:"required,oneof=Active Disabled"`
 	SortOrder       int32   `json:"sort_order" validate:"min=0"`
 	EnableDataScope bool    `json:"enable_data_scope"`
-	ApiIds          []int64 `json:"api_ids"`
+	ApiIds          []int64 `json:"api_ids,optional"`
 }

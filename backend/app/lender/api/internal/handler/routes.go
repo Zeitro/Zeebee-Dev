@@ -25,32 +25,35 @@ import (
 
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
-		[]rest.Route{
-			{
-				// select options
-				Method:  http.MethodGet,
-				Path:    "/select_options",
-				Handler: common.SelectOptionsHandler(serverCtx),
-			},
-			{
-				// sync data
-				Method:  http.MethodGet,
-				Path:    "/sync_data",
-				Handler: common.SyncDataHandler(serverCtx),
-			},
-			{
-				// get us city
-				Method:  http.MethodGet,
-				Path:    "/us_cities",
-				Handler: common.GetUsCitiesHandler(serverCtx),
-			},
-			{
-				// get us states
-				Method:  http.MethodGet,
-				Path:    "/us_states",
-				Handler: common.GetUsStatesHandler(serverCtx),
-			},
-		},
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// select options
+					Method:  http.MethodGet,
+					Path:    "/select_options",
+					Handler: common.SelectOptionsHandler(serverCtx),
+				},
+				{
+					// sync data
+					Method:  http.MethodGet,
+					Path:    "/sync_data",
+					Handler: common.SyncDataHandler(serverCtx),
+				},
+				{
+					// get us city
+					Method:  http.MethodGet,
+					Path:    "/us_cities",
+					Handler: common.GetUsCitiesHandler(serverCtx),
+				},
+				{
+					// get us states
+					Method:  http.MethodGet,
+					Path:    "/us_states",
+					Handler: common.GetUsStatesHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithPrefix("/api/v1"),
 	)
 
@@ -253,14 +256,17 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	)
 
 	server.AddRoutes(
-		[]rest.Route{
-			{
-				// accept invitation
-				Method:  http.MethodPost,
-				Path:    "/organization_user/accept_invitation",
-				Handler: organization_user.OrganizationUserAcceptInvitationHandler(serverCtx),
-			},
-		},
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// accept invitation
+					Method:  http.MethodPost,
+					Path:    "/organization_user/accept_invitation",
+					Handler: organization_user.OrganizationUserAcceptInvitationHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithPrefix("/api/v1"),
 	)
 
@@ -409,50 +415,53 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	)
 
 	server.AddRoutes(
-		[]rest.Route{
-			{
-				// login
-				Method:  http.MethodPost,
-				Path:    "/user/login",
-				Handler: user.LoginHandler(serverCtx),
-			},
-			{
-				// refresh
-				Method:  http.MethodPost,
-				Path:    "/user/refresh",
-				Handler: user.RefreshTokenHandler(serverCtx),
-			},
-			{
-				// register
-				Method:  http.MethodPost,
-				Path:    "/user/register",
-				Handler: user.RegisterHandler(serverCtx),
-			},
-			{
-				// reset password
-				Method:  http.MethodPost,
-				Path:    "/user/reset_password",
-				Handler: user.ResetPasswordHandler(serverCtx),
-			},
-			{
-				// send reset password email
-				Method:  http.MethodPost,
-				Path:    "/user/send_reset_password",
-				Handler: user.SendResetPasswordHandler(serverCtx),
-			},
-			{
-				// send verify email
-				Method:  http.MethodPost,
-				Path:    "/user/send_verify_email",
-				Handler: user.SendVerifyEmailHandler(serverCtx),
-			},
-			{
-				// verify email
-				Method:  http.MethodPost,
-				Path:    "/user/verify_email",
-				Handler: user.VerifyEmailHandler(serverCtx),
-			},
-		},
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// login
+					Method:  http.MethodPost,
+					Path:    "/user/login",
+					Handler: user.LoginHandler(serverCtx),
+				},
+				{
+					// refresh
+					Method:  http.MethodPost,
+					Path:    "/user/refresh",
+					Handler: user.RefreshTokenHandler(serverCtx),
+				},
+				{
+					// register
+					Method:  http.MethodPost,
+					Path:    "/user/register",
+					Handler: user.RegisterHandler(serverCtx),
+				},
+				{
+					// reset password
+					Method:  http.MethodPost,
+					Path:    "/user/reset_password",
+					Handler: user.ResetPasswordHandler(serverCtx),
+				},
+				{
+					// send reset password email
+					Method:  http.MethodPost,
+					Path:    "/user/send_reset_password",
+					Handler: user.SendResetPasswordHandler(serverCtx),
+				},
+				{
+					// send verify email
+					Method:  http.MethodPost,
+					Path:    "/user/send_verify_email",
+					Handler: user.SendVerifyEmailHandler(serverCtx),
+				},
+				{
+					// verify email
+					Method:  http.MethodPost,
+					Path:    "/user/verify_email",
+					Handler: user.VerifyEmailHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithPrefix("/api/v1"),
 	)
 
