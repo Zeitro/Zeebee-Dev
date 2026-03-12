@@ -14,7 +14,7 @@ const MenuPermission = ({
 	isFold, // 是否折叠，默认展开
 	...options
 }) => {
-	const [checkedKeys, setCheckedKeys] = useState();
+	const [checkedKeys, setCheckedKeys] = useState([]);
 	const [expandedKeys, setExpandedKeys] = useState([]);
 	const [dataScope, setDataScope] = useState({});
 
@@ -42,6 +42,29 @@ const MenuPermission = ({
 	};
 	// eslint-disable-next-line react-hooks/preserve-manual-memoization
 	const info = useMemo(() => getAllValueAndExpandedKeys(treeData), [treeData]);
+
+	// 构建 parentMap 和 childrenMap，便于快速查父/子
+	const { parentMap, childrenMap } = useMemo(() => {
+		const pMap = {};
+		const cMap = {};
+		const walk = (nodes, parent) => {
+			nodes.forEach((n) => {
+				if (parent) {
+					pMap[n[keyName]] = parent[keyName];
+				}
+				if (n[childrenName] && n[childrenName].length) {
+					cMap[n[keyName]] = n[childrenName].map((c) => c[keyName]);
+					walk(n[childrenName], n);
+				} else {
+					if (parent) {
+						cMap[parent[keyName]] = cMap[parent[keyName]] || [];
+					}
+				}
+			});
+		};
+		walk(treeData, null);
+		return { parentMap: pMap, childrenMap: cMap };
+	}, [treeData, keyName, childrenName]);
 
 	// 详情时的初始化数据
 	useEffect(() => {
@@ -95,9 +118,58 @@ const MenuPermission = ({
 		updateValues();
 	}, [isSelectAll, info]);
 
+	// 勾选逻辑：使用 checkStrictly，让 antd 不自动联动父子；
+	// 我们手动处理：
+	// - 勾选父级：只勾选父级，不影响子级
+	// - 勾选子级：同时确保该子级的父级被勾选
+	const handleCheck = (checkedKeysParam, event) => {
+		const nodeKey = event?.node?.[keyName];
+		const isChecked = event?.checked;
+		const currentCheckedArr = Array.isArray(checkedKeysParam)
+			? checkedKeysParam
+			: (checkedKeysParam && checkedKeysParam.checked) || [];
+
+		// 基于 antd 返回的当前 checked 列表作为基础
+		const newSet = new Set(currentCheckedArr || []);
+
+		if (isChecked) {
+			// 勾选节点：添加节点本身
+			if (nodeKey !== undefined && nodeKey !== null) newSet.add(nodeKey);
+			// 如果是子节点，确保父节点也被勾选
+			const parent = parentMap[nodeKey];
+			if (parent) newSet.add(parent);
+		} else {
+			// 取消勾选节点：移除该节点
+			if (nodeKey !== undefined && nodeKey !== null) newSet.delete(nodeKey);
+
+			// 如果取消的是父节点，则需要取消其所有后代子节点
+			const children = childrenMap[nodeKey] || [];
+			if (children && children.length) {
+				const stack = [...children];
+				while (stack.length) {
+					const c = stack.pop();
+					newSet.delete(c);
+					const cc = childrenMap[c];
+					if (cc && cc.length) stack.push(...cc);
+				}
+			}
+
+			// 如果取消的是子节点，不再影响父节点（满足“取消最后一个子级不影响父级”的要求）
+		}
+
+		const finalArr = Array.from(newSet);
+		setCheckedKeys(finalArr);
+		const returnArr = finalArr?.map((i) => ({
+			resource_id: i,
+			data_scope: dataScope[i] || 'All',
+		}));
+		onChange?.(returnArr);
+	};
+
 	return (
 		<Tree
 			checkable
+			checkStrictly={true}
 			multiple
 			expandedKeys={expandedKeys}
 			checkedKeys={checkedKeys}
@@ -106,14 +178,7 @@ const MenuPermission = ({
 			onExpand={(expandedKeys) => {
 				setExpandedKeys(expandedKeys);
 			}}
-			onCheck={(checkedArr) => {
-				setCheckedKeys(checkedArr);
-				const returnArr = checkedArr?.map((i) => ({
-					resource_id: i,
-					data_scope: dataScope[i] || 'All',
-				}));
-				onChange?.(returnArr);
-			}}
+			onCheck={handleCheck}
 			titleRender={(item) => {
 				const title = (
 					<>

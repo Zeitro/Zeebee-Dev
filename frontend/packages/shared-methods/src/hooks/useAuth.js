@@ -1,18 +1,17 @@
-// packages/shared-methods/src/hooks/useAuth.js
 import { useCallback, useMemo } from 'react';
-import { useUserStore } from '@/store/user';
+import { usePermissionStore } from '@repo/shared-methods/store';
 export const useAuth = () => {
-	const { permissions, loading } = useUserStore();
+	const { permissionTags } = usePermissionStore();
 
 	// 检查单个权限
 	const hasPermission = useCallback(
 		(permission) => {
 			if (!permission) return true;
 			// 开发环境豁免
-			if (process.env.NODE_ENV === 'development') return true;
-			return permissions?.includes(permission) ?? false;
+			// if (process.env.NODE_ENV === 'development') return true;
+			return permissionTags?.includes(permission) ?? false;
 		},
-		[permissions],
+		[permissionTags],
 	);
 
 	// 检查任一权限（满足一个即可）
@@ -35,13 +34,12 @@ export const useAuth = () => {
 
 	const auth = useMemo(
 		() => ({
-			permissions,
-			loading,
+			permissionTags,
 			hasPermission,
 			hasAnyPermission,
 			hasAllPermissions,
 		}),
-		[permissions, loading, hasPermission, hasAnyPermission, hasAllPermissions],
+		[permissionTags, hasPermission, hasAnyPermission, hasAllPermissions],
 	);
 
 	return auth;

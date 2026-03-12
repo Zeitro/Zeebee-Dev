@@ -7,6 +7,8 @@ import { NewModal, FieldTips } from '@repo/shared-methods';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 import MenuPermission from './MenuPermission';
 const { TextArea } = Input;
+const selectAllKey = 'All';
+const foldKey = 'Fold';
 const MainModal = ({ setOpen, rowData, handleSearch, systemType }) => {
 	const { request } = createRequest();
 	const [form] = Form.useForm();
@@ -61,6 +63,15 @@ const MainModal = ({ setOpen, rowData, handleSearch, systemType }) => {
 		} catch {
 			setConfirmLoading(false);
 		}
+	};
+
+	const handleChangeAction = (e, keyName) => {
+		setOperationsValue((v) => {
+			if (e.target.checked) {
+				return [...v, keyName];
+			}
+			return v.filter((item) => item !== keyName);
+		});
 	};
 
 	useDeferredSyncEffect({
@@ -161,18 +172,14 @@ const MainModal = ({ setOpen, rowData, handleSearch, systemType }) => {
 						<Col md={24} className="relative">
 							<Space className="absolute top-0 right-0">
 								<Checkbox
-									checked={operationsValue?.includes('Fold')}
-									onChange={(e) => {
-										setOperationsValue(e.target.checked ? ['Fold'] : []);
-									}}
+									checked={operationsValue?.includes(foldKey)}
+									onChange={(e) => handleChangeAction(e, foldKey)}
 								>
 									Fold
 								</Checkbox>
 								<Checkbox
-									checked={operationsValue?.includes('All')}
-									onChange={(e) => {
-										setOperationsValue(e.target.checked ? ['All'] : []);
-									}}
+									checked={operationsValue?.includes(selectAllKey)}
+									onChange={(e) => handleChangeAction(e, selectAllKey)}
 								>
 									Select all
 								</Checkbox>
@@ -205,8 +212,8 @@ const MainModal = ({ setOpen, rowData, handleSearch, systemType }) => {
 							>
 								<MenuPermission
 									treeData={menuList}
-									isFold={operationsValue.includes('Fold')}
-									isSelectAll={operationsValue.includes('All')}
+									isFold={operationsValue.includes(foldKey)}
+									isSelectAll={operationsValue.includes(selectAllKey)}
 									className="border border-base-border rounded-lg !py-4 !px-4 [&_.ant-tree-treenode]:!mb-2"
 									titleName="name"
 									keyName="id"

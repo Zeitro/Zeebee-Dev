@@ -10,7 +10,13 @@ import { message } from 'antd';
  * @param {React.ReactNode} children - 子组件
  * @param {React.ReactNode} fallback - 无权限时的替代内容
  */
-const Permission = ({ code, type = 'hidden', children, fallback = null, ...restProps }) => {
+export const PermissionSlot = ({
+	code,
+	type = 'hidden',
+	children,
+	fallback = null,
+	...restProps
+}) => {
 	const { hasPermission, hasAnyPermission } = useAuth();
 
 	// 判断是否有权限
@@ -84,4 +90,4 @@ const Permission = ({ code, type = 'hidden', children, fallback = null, ...restP
 	return fallback;
 };
 
-export default Permission;
+export default PermissionSlot;

@@ -1,11 +1,13 @@
 'use client';
 import React, { useMemo, useRef, useState } from 'react';
 import { message, Space, Image } from 'antd';
-import { BtnPopUpModal, DeleteBtn, FilterTable } from '@repo/shared-methods';
+import { BtnPopUpModal, DeleteBtn, FilterTable, PermissionSlot } from '@repo/shared-methods';
 import { createRequest, formatPhone, formatTime } from '@repo/shared-methods/utils';
 import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import MainModal from './components/Main';
 import { userStatusColor } from '@repo/shared-methods/enum';
+import { useAuth } from '@repo/shared-methods/hooks';
+import { PERMISSIONS } from '@config/permissions';
 const api = '/organization/page';
 const Lenders = () => {
 	const tableFilterRef = useRef();
@@ -13,7 +15,7 @@ const Lenders = () => {
 	const [searchValue, setSearchValue] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [statusLoading, setStatusLoading] = useState(false);
-
+	const { hasPermission } = useAuth();
 	const filterList = useMemo(
 		() => [
 			{
@@ -45,7 +47,7 @@ const Lenders = () => {
 					className: 'flex-1',
 				},
 			},
-			{
+			hasPermission(PERMISSIONS.LENDERS.ADD, {
 				filterType: 'button',
 				children: (
 					<BtnPopUpModal
@@ -64,9 +66,9 @@ const Lenders = () => {
 						Add Lender org
 					</BtnPopUpModal>
 				),
-			},
+			}),
 		],
-		[searchValue],
+		[searchValue, hasPermission],
 	);
 	// 改变状态
 	const handleChangeStatus = async (id, status = 'Active') => {
@@ -203,60 +205,68 @@ const Lenders = () => {
 						render: (_, record) => {
 							return (
 								<Space>
-									<BtnPopUpModal
-										getContent={(setOpen) => (
-											<MainModal
-												rowData={record}
-												setOpen={setOpen}
-												successCallback={async () =>
-													tableFilterRef?.current?.getList?.()
-												}
-											/>
-										)}
-										size="small"
-										icon={null}
-										isStopPropagation={false}
-									>
-										Edit
-									</BtnPopUpModal>
+									<PermissionSlot code={PERMISSIONS.LENDERS.EDIT}>
+										<BtnPopUpModal
+											getContent={(setOpen) => (
+												<MainModal
+													rowData={record}
+													setOpen={setOpen}
+													successCallback={async () =>
+														tableFilterRef?.current?.getList?.()
+													}
+												/>
+											)}
+											size="small"
+											icon={null}
+											isStopPropagation={false}
+										>
+											Edit
+										</BtnPopUpModal>
+									</PermissionSlot>
 
-									{record?.status === 'Active' && (
+									<PermissionSlot code={PERMISSIONS.LENDERS.CHANGE_STATUS}>
+										{record?.status === 'Active' && (
+											<DeleteBtn
+												title="Are you sure you want to disable this lender organization?"
+												content={record.name}
+												onOk={() =>
+													handleChangeStatus(record.id, 'Disabled')
+												}
+												loading={statusLoading}
+												isStopPropagation={false}
+												okText="Disable"
+												danger={false}
+											>
+												Disable
+											</DeleteBtn>
+										)}
+										{record?.status === 'Disabled' && (
+											<DeleteBtn
+												title="Are you sure you want to enable this lender organization?"
+												content={record.name}
+												onOk={() => handleChangeStatus(record.id, 'Active')}
+												loading={statusLoading}
+												isStopPropagation={false}
+												okText="Enable"
+												danger={false}
+												okButtonProps={{ danger: false }}
+											>
+												Enable
+											</DeleteBtn>
+										)}
+									</PermissionSlot>
+									<PermissionSlot code={PERMISSIONS.LENDERS.DELETE}>
 										<DeleteBtn
-											title="Are you sure you want to disable this lender organization?"
+											title="Are you sure delete this lender organization?"
 											content={record.name}
-											onOk={() => handleChangeStatus(record.id, 'Disabled')}
-											loading={statusLoading}
+											// isButton={false}
+											onOk={() => handleDelete(record.id)}
+											loading={loading}
 											isStopPropagation={false}
-											okText="Disable"
-											danger={false}
 										>
-											Disable
+											Delete
 										</DeleteBtn>
-									)}
-									{record?.status === 'Disabled' && (
-										<DeleteBtn
-											title="Are you sure you want to enable this lender organization?"
-											content={record.name}
-											onOk={() => handleChangeStatus(record.id, 'Active')}
-											loading={statusLoading}
-											isStopPropagation={false}
-											okText="Enable"
-											danger={false}
-											okButtonProps={{ danger: false }}
-										>
-											Enable
-										</DeleteBtn>
-									)}
-									<DeleteBtn
-										title="Are you sure delete this lender organization?"
-										content={record.name}
-										// isButton={false}
-										onOk={() => handleDelete(record.id)}
-										loading={loading}
-										isStopPropagation={false}
-									>
-										Delete
-									</DeleteBtn>
+									</PermissionSlot>
 								</Space>
 							);
 						},
