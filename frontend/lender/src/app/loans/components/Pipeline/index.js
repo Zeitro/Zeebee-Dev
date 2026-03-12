@@ -52,7 +52,7 @@ const Pipeline = () => {
 			items={items}
 			setItems={setItems}
 			enableDrag={true}
-			parentClassName="!h-[calc(100%-84px)]  py-4 px-6 gap-4 overflow-x-auto"
+			parentClassName="!flex-1  py-4 px-6 gap-4 overflow-x-auto"
 			columnClassName="w-[338px] min-w-[338px] max-w-[338px]"
 			boxClassName="flex-1 bg-[#F6F6F6] py-4 px-4"
 			renderItem={(item, idx, options) => {
