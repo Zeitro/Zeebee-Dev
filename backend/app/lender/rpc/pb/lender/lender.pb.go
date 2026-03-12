@@ -2952,7 +2952,7 @@ func (x *LoanPageResponse) GetData() *LoanPageResponseData {
 
 type LoanPageRequestFilter struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	//  int64 organization_id = 1;
+	// int64 organization_id = 1;
 	Stage         string   `protobuf:"bytes,2,opt,name=stage,proto3" json:"stage,omitempty"`
 	Keyword       string   `protobuf:"bytes,3,opt,name=keyword,proto3" json:"keyword,omitempty"`
 	KeywordType   string   `protobuf:"bytes,4,opt,name=keyword_type,json=keywordType,proto3" json:"keyword_type,omitempty"`
@@ -3285,11 +3285,11 @@ type LoanUpdateRequestData struct {
 	HoldbackAmount    float64                 `protobuf:"fixed64,6,opt,name=holdback_amount,json=holdbackAmount,proto3" json:"holdback_amount,omitempty"`
 	PrincipalAmount   float64                 `protobuf:"fixed64,7,opt,name=principal_amount,json=principalAmount,proto3" json:"principal_amount,omitempty"`
 	PrepaymentPenalty int32                   `protobuf:"varint,9,opt,name=prepayment_penalty,json=prepaymentPenalty,proto3" json:"prepayment_penalty,omitempty"`
-	//  int64 organization_id = 10;
+	// int64 organization_id = 10;
 	BusinessStrategy []string                       `protobuf:"bytes,11,rep,name=business_strategy,json=businessStrategy,proto3" json:"business_strategy,omitempty"`
 	Applicants       []*LoanApplicantLoanEditEntity `protobuf:"bytes,12,rep,name=applicants,proto3" json:"applicants,omitempty"`
 	LoanTerm         int32                          `protobuf:"varint,13,opt,name=loan_term,json=loanTerm,proto3" json:"loan_term,omitempty"`
-	//  double ltv = 14;
+	// double ltv = 14;
 	EstCreditScore         int32                     `protobuf:"varint,15,opt,name=est_credit_score,json=estCreditScore,proto3" json:"est_credit_score,omitempty"`
 	ReservesAmount         float64                   `protobuf:"fixed64,16,opt,name=reserves_amount,json=reservesAmount,proto3" json:"reserves_amount,omitempty"`
 	TransactionExperiences []*LoanExperienceEntity   `protobuf:"bytes,17,rep,name=transaction_experiences,json=transactionExperiences,proto3" json:"transaction_experiences,omitempty"`
@@ -3297,7 +3297,7 @@ type LoanUpdateRequestData struct {
 	LoanDemographic        *LoanDemographicEntity    `protobuf:"bytes,19,opt,name=loan_demographic,json=loanDemographic,proto3" json:"loan_demographic,omitempty"`
 	LoanThirdServices      []*LoanThirdServiceEntity `protobuf:"bytes,20,rep,name=loan_third_services,json=loanThirdServices,proto3" json:"loan_third_services,omitempty"`
 	Id                     int64                     `protobuf:"varint,21,opt,name=id,proto3" json:"id,omitempty"`
-	//  int64 user_id = 22;
+	// int64 user_id = 22;
 	Stage         string `protobuf:"bytes,23,opt,name=stage,proto3" json:"stage,omitempty"`
 	PendingStatus string `protobuf:"bytes,24,opt,name=pending_status,json=pendingStatus,proto3" json:"pending_status,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -3791,8 +3791,8 @@ func (x *LoanUpdateStageRequest) GetData() *LoanUpdateStageRequestData {
 type LoanUpdateStageRequestData struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Id    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	//  int64 user_id = 2;
-	//  int64 organization_id = 3;
+	// int64 user_id = 2;
+	// int64 organization_id = 3;
 	Stage         string `protobuf:"bytes,4,opt,name=stage,proto3" json:"stage,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -3890,8 +3890,8 @@ func (x *LoanUpdatePendingStatusRequest) GetData() *LoanUpdatePendingStatusReque
 type LoanUpdatePendingStatusRequestData struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Id    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	//  int64 user_id = 2;
-	//  int64 organization_id = 3;
+	// int64 user_id = 2;
+	// int64 organization_id = 3;
 	PendingStatus string `protobuf:"bytes,4,opt,name=pending_status,json=pendingStatus,proto3" json:"pending_status,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -4205,45 +4205,44 @@ func (x *LoanDocumentOptsResponse) GetData() []*LoanDocumentOptEntity {
 
 // ===================== loan property service start ======================
 type LoanPropertyEntity struct {
-	state                protoimpl.MessageState  `protogen:"open.v1"`
-	Id                   int64                   `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	PropertyType         string                  `protobuf:"bytes,2,opt,name=property_type,json=propertyType,proto3" json:"property_type,omitempty"`
-	BorrowerProperty     *BorrowerPropertyEntity `protobuf:"bytes,3,opt,name=borrower_property,json=borrowerProperty,proto3" json:"borrower_property,omitempty"`
-	LivingAreaSqft       float32                 `protobuf:"fixed32,5,opt,name=living_area_sqft,json=livingAreaSqft,proto3" json:"living_area_sqft,omitempty"`
-	Bedrooms             int32                   `protobuf:"varint,6,opt,name=bedrooms,proto3" json:"bedrooms,omitempty"`
-	Bathrooms            int32                   `protobuf:"varint,7,opt,name=bathrooms,proto3" json:"bathrooms,omitempty"`
-	FuturePropertyType   string                  `protobuf:"bytes,8,opt,name=future_property_type,json=futurePropertyType,proto3" json:"future_property_type,omitempty"`
-	FutureUnit           int32                   `protobuf:"varint,9,opt,name=future_unit,json=futureUnit,proto3" json:"future_unit,omitempty"`
-	FutureLivingAreaSqft float32                 `protobuf:"fixed32,10,opt,name=future_living_area_sqft,json=futureLivingAreaSqft,proto3" json:"future_living_area_sqft,omitempty"`
-	FutureBedrooms       int32                   `protobuf:"varint,11,opt,name=future_bedrooms,json=futureBedrooms,proto3" json:"future_bedrooms,omitempty"`
-	FutureBathrooms      int32                   `protobuf:"varint,12,opt,name=future_bathrooms,json=futureBathrooms,proto3" json:"future_bathrooms,omitempty"`
-	Owner                string                  `protobuf:"bytes,13,opt,name=owner,proto3" json:"owner,omitempty"`
-	Unit                 int32                   `protobuf:"varint,14,opt,name=unit,proto3" json:"unit,omitempty"`
-	//
-	ExistingLenderCompany        string            `protobuf:"bytes,15,opt,name=existing_lender_company,json=existingLenderCompany,proto3" json:"existing_lender_company,omitempty"`
-	ExistingRate                 float32           `protobuf:"fixed32,16,opt,name=existing_rate,json=existingRate,proto3" json:"existing_rate,omitempty"`
-	ExistingMaturityDate         string            `protobuf:"bytes,17,opt,name=existing_maturity_date,json=existingMaturityDate,proto3" json:"existing_maturity_date,omitempty"`
-	PurchaseAmount               float64           `protobuf:"fixed64,18,opt,name=purchase_amount,json=purchaseAmount,proto3" json:"purchase_amount,omitempty"`
-	PurchaseDate                 string            `protobuf:"bytes,19,opt,name=purchase_date,json=purchaseDate,proto3" json:"purchase_date,omitempty"`
-	HasAssignmentFee             bool              `protobuf:"varint,20,opt,name=has_assignment_fee,json=hasAssignmentFee,proto3" json:"has_assignment_fee,omitempty"`
-	AssignmentFeeAmount          float64           `protobuf:"fixed64,21,opt,name=assignment_fee_amount,json=assignmentFeeAmount,proto3" json:"assignment_fee_amount,omitempty"`
-	HasSubordinateDebt           bool              `protobuf:"varint,22,opt,name=has_subordinate_debt,json=hasSubordinateDebt,proto3" json:"has_subordinate_debt,omitempty"`
-	SubordinateDebtAmount        float64           `protobuf:"fixed64,23,opt,name=subordinate_debt_amount,json=subordinateDebtAmount,proto3" json:"subordinate_debt_amount,omitempty"`
-	ScheduledCloseEscrowDate     string            `protobuf:"bytes,24,opt,name=scheduled_close_escrow_date,json=scheduledCloseEscrowDate,proto3" json:"scheduled_close_escrow_date,omitempty"`
-	LiquidityAmount              float64           `protobuf:"fixed64,25,opt,name=liquidity_amount,json=liquidityAmount,proto3" json:"liquidity_amount,omitempty"`
-	Budget                       *LoanBudgetEntity `protobuf:"bytes,26,opt,name=budget,proto3" json:"budget,omitempty"`
-	MidConstruction              bool              `protobuf:"varint,27,opt,name=mid_construction,json=midConstruction,proto3" json:"mid_construction,omitempty"`
-	EstYearlyRentalIncomeAmount  float64           `protobuf:"fixed64,28,opt,name=est_yearly_rental_income_amount,json=estYearlyRentalIncomeAmount,proto3" json:"est_yearly_rental_income_amount,omitempty"`
-	YearlyLiabilityExpenseAmount float64           `protobuf:"fixed64,29,opt,name=yearly_liability_expense_amount,json=yearlyLiabilityExpenseAmount,proto3" json:"yearly_liability_expense_amount,omitempty"`
-	Dscr                         float64           `protobuf:"fixed64,30,opt,name=dscr,proto3" json:"dscr,omitempty"`
-	HasDelayedFinancing          bool              `protobuf:"varint,31,opt,name=has_delayed_financing,json=hasDelayedFinancing,proto3" json:"has_delayed_financing,omitempty"`
-	HasCollateralizedBlanket     bool              `protobuf:"varint,32,opt,name=has_collateralized_blanket,json=hasCollateralizedBlanket,proto3" json:"has_collateralized_blanket,omitempty"`
-	HasPropertiesVacant          bool              `protobuf:"varint,33,opt,name=has_properties_vacant,json=hasPropertiesVacant,proto3" json:"has_properties_vacant,omitempty"`
-	HasShortTermRental           bool              `protobuf:"varint,34,opt,name=has_short_term_rental,json=hasShortTermRental,proto3" json:"has_short_term_rental,omitempty"`
-	EstPropertyValueAmount       float64           `protobuf:"fixed64,35,opt,name=est_property_value_amount,json=estPropertyValueAmount,proto3" json:"est_property_value_amount,omitempty"`
-	Address                      *AddressEntity    `protobuf:"bytes,36,opt,name=address,proto3" json:"address,omitempty"`
-	Arv                          float64           `protobuf:"fixed64,37,opt,name=arv,proto3" json:"arv,omitempty"`
-	BorrowerPropertyId           int64             `protobuf:"varint,38,opt,name=borrower_property_id,json=borrowerPropertyId,proto3" json:"borrower_property_id,omitempty"`
+	state                        protoimpl.MessageState  `protogen:"open.v1"`
+	Id                           int64                   `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	PropertyType                 string                  `protobuf:"bytes,2,opt,name=property_type,json=propertyType,proto3" json:"property_type,omitempty"`
+	BorrowerProperty             *BorrowerPropertyEntity `protobuf:"bytes,3,opt,name=borrower_property,json=borrowerProperty,proto3" json:"borrower_property,omitempty"`
+	LivingAreaSqft               float32                 `protobuf:"fixed32,5,opt,name=living_area_sqft,json=livingAreaSqft,proto3" json:"living_area_sqft,omitempty"`
+	Bedrooms                     int32                   `protobuf:"varint,6,opt,name=bedrooms,proto3" json:"bedrooms,omitempty"`
+	Bathrooms                    int32                   `protobuf:"varint,7,opt,name=bathrooms,proto3" json:"bathrooms,omitempty"`
+	FuturePropertyType           string                  `protobuf:"bytes,8,opt,name=future_property_type,json=futurePropertyType,proto3" json:"future_property_type,omitempty"`
+	FutureUnit                   int32                   `protobuf:"varint,9,opt,name=future_unit,json=futureUnit,proto3" json:"future_unit,omitempty"`
+	FutureLivingAreaSqft         float32                 `protobuf:"fixed32,10,opt,name=future_living_area_sqft,json=futureLivingAreaSqft,proto3" json:"future_living_area_sqft,omitempty"`
+	FutureBedrooms               int32                   `protobuf:"varint,11,opt,name=future_bedrooms,json=futureBedrooms,proto3" json:"future_bedrooms,omitempty"`
+	FutureBathrooms              int32                   `protobuf:"varint,12,opt,name=future_bathrooms,json=futureBathrooms,proto3" json:"future_bathrooms,omitempty"`
+	Owner                        string                  `protobuf:"bytes,13,opt,name=owner,proto3" json:"owner,omitempty"`
+	Unit                         int32                   `protobuf:"varint,14,opt,name=unit,proto3" json:"unit,omitempty"`
+	ExistingLenderCompany        string                  `protobuf:"bytes,15,opt,name=existing_lender_company,json=existingLenderCompany,proto3" json:"existing_lender_company,omitempty"`
+	ExistingRate                 float32                 `protobuf:"fixed32,16,opt,name=existing_rate,json=existingRate,proto3" json:"existing_rate,omitempty"`
+	ExistingMaturityDate         string                  `protobuf:"bytes,17,opt,name=existing_maturity_date,json=existingMaturityDate,proto3" json:"existing_maturity_date,omitempty"`
+	PurchaseAmount               float64                 `protobuf:"fixed64,18,opt,name=purchase_amount,json=purchaseAmount,proto3" json:"purchase_amount,omitempty"`
+	PurchaseDate                 string                  `protobuf:"bytes,19,opt,name=purchase_date,json=purchaseDate,proto3" json:"purchase_date,omitempty"`
+	HasAssignmentFee             bool                    `protobuf:"varint,20,opt,name=has_assignment_fee,json=hasAssignmentFee,proto3" json:"has_assignment_fee,omitempty"`
+	AssignmentFeeAmount          float64                 `protobuf:"fixed64,21,opt,name=assignment_fee_amount,json=assignmentFeeAmount,proto3" json:"assignment_fee_amount,omitempty"`
+	HasSubordinateDebt           bool                    `protobuf:"varint,22,opt,name=has_subordinate_debt,json=hasSubordinateDebt,proto3" json:"has_subordinate_debt,omitempty"`
+	SubordinateDebtAmount        float64                 `protobuf:"fixed64,23,opt,name=subordinate_debt_amount,json=subordinateDebtAmount,proto3" json:"subordinate_debt_amount,omitempty"`
+	ScheduledCloseEscrowDate     string                  `protobuf:"bytes,24,opt,name=scheduled_close_escrow_date,json=scheduledCloseEscrowDate,proto3" json:"scheduled_close_escrow_date,omitempty"`
+	LiquidityAmount              float64                 `protobuf:"fixed64,25,opt,name=liquidity_amount,json=liquidityAmount,proto3" json:"liquidity_amount,omitempty"`
+	Budget                       *LoanBudgetEntity       `protobuf:"bytes,26,opt,name=budget,proto3" json:"budget,omitempty"`
+	MidConstruction              bool                    `protobuf:"varint,27,opt,name=mid_construction,json=midConstruction,proto3" json:"mid_construction,omitempty"`
+	EstYearlyRentalIncomeAmount  float64                 `protobuf:"fixed64,28,opt,name=est_yearly_rental_income_amount,json=estYearlyRentalIncomeAmount,proto3" json:"est_yearly_rental_income_amount,omitempty"`
+	YearlyLiabilityExpenseAmount float64                 `protobuf:"fixed64,29,opt,name=yearly_liability_expense_amount,json=yearlyLiabilityExpenseAmount,proto3" json:"yearly_liability_expense_amount,omitempty"`
+	Dscr                         float64                 `protobuf:"fixed64,30,opt,name=dscr,proto3" json:"dscr,omitempty"`
+	HasDelayedFinancing          bool                    `protobuf:"varint,31,opt,name=has_delayed_financing,json=hasDelayedFinancing,proto3" json:"has_delayed_financing,omitempty"`
+	HasCollateralizedBlanket     bool                    `protobuf:"varint,32,opt,name=has_collateralized_blanket,json=hasCollateralizedBlanket,proto3" json:"has_collateralized_blanket,omitempty"`
+	HasPropertiesVacant          bool                    `protobuf:"varint,33,opt,name=has_properties_vacant,json=hasPropertiesVacant,proto3" json:"has_properties_vacant,omitempty"`
+	HasShortTermRental           bool                    `protobuf:"varint,34,opt,name=has_short_term_rental,json=hasShortTermRental,proto3" json:"has_short_term_rental,omitempty"`
+	EstPropertyValueAmount       float64                 `protobuf:"fixed64,35,opt,name=est_property_value_amount,json=estPropertyValueAmount,proto3" json:"est_property_value_amount,omitempty"`
+	Address                      *AddressEntity          `protobuf:"bytes,36,opt,name=address,proto3" json:"address,omitempty"`
+	Arv                          float64                 `protobuf:"fixed64,37,opt,name=arv,proto3" json:"arv,omitempty"`
+	BorrowerPropertyId           int64                   `protobuf:"varint,38,opt,name=borrower_property_id,json=borrowerPropertyId,proto3" json:"borrower_property_id,omitempty"`
 	unknownFields                protoimpl.UnknownFields
 	sizeCache                    protoimpl.SizeCache
 }
@@ -4540,14 +4539,13 @@ func (x *LoanPropertyEntity) GetBorrowerPropertyId() int64 {
 type LoanPropertyEditEntity struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Id    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	//  int64 borrower_property_id = 2;
-	FuturePropertyType   string  `protobuf:"bytes,3,opt,name=future_property_type,json=futurePropertyType,proto3" json:"future_property_type,omitempty"`
-	FutureUnit           int32   `protobuf:"varint,4,opt,name=future_unit,json=futureUnit,proto3" json:"future_unit,omitempty"`
-	FutureLivingAreaSqft float32 `protobuf:"fixed32,5,opt,name=future_living_area_sqft,json=futureLivingAreaSqft,proto3" json:"future_living_area_sqft,omitempty"`
-	FutureBedrooms       int32   `protobuf:"varint,6,opt,name=future_bedrooms,json=futureBedrooms,proto3" json:"future_bedrooms,omitempty"`
-	FutureBathrooms      int32   `protobuf:"varint,7,opt,name=future_bathrooms,json=futureBathrooms,proto3" json:"future_bathrooms,omitempty"`
-	Owner                string  `protobuf:"bytes,8,opt,name=owner,proto3" json:"owner,omitempty"`
-	//
+	// int64 borrower_property_id = 2;
+	FuturePropertyType           string            `protobuf:"bytes,3,opt,name=future_property_type,json=futurePropertyType,proto3" json:"future_property_type,omitempty"`
+	FutureUnit                   int32             `protobuf:"varint,4,opt,name=future_unit,json=futureUnit,proto3" json:"future_unit,omitempty"`
+	FutureLivingAreaSqft         float32           `protobuf:"fixed32,5,opt,name=future_living_area_sqft,json=futureLivingAreaSqft,proto3" json:"future_living_area_sqft,omitempty"`
+	FutureBedrooms               int32             `protobuf:"varint,6,opt,name=future_bedrooms,json=futureBedrooms,proto3" json:"future_bedrooms,omitempty"`
+	FutureBathrooms              int32             `protobuf:"varint,7,opt,name=future_bathrooms,json=futureBathrooms,proto3" json:"future_bathrooms,omitempty"`
+	Owner                        string            `protobuf:"bytes,8,opt,name=owner,proto3" json:"owner,omitempty"`
 	ExistingLenderCompany        string            `protobuf:"bytes,9,opt,name=existing_lender_company,json=existingLenderCompany,proto3" json:"existing_lender_company,omitempty"`
 	ExistingRate                 float32           `protobuf:"fixed32,10,opt,name=existing_rate,json=existingRate,proto3" json:"existing_rate,omitempty"`
 	ExistingMaturityDate         string            `protobuf:"bytes,11,opt,name=existing_maturity_date,json=existingMaturityDate,proto3" json:"existing_maturity_date,omitempty"`
@@ -4563,7 +4561,7 @@ type LoanPropertyEditEntity struct {
 	MidConstruction              bool              `protobuf:"varint,21,opt,name=mid_construction,json=midConstruction,proto3" json:"mid_construction,omitempty"`
 	EstYearlyRentalIncomeAmount  float64           `protobuf:"fixed64,22,opt,name=est_yearly_rental_income_amount,json=estYearlyRentalIncomeAmount,proto3" json:"est_yearly_rental_income_amount,omitempty"`
 	YearlyLiabilityExpenseAmount float64           `protobuf:"fixed64,23,opt,name=yearly_liability_expense_amount,json=yearlyLiabilityExpenseAmount,proto3" json:"yearly_liability_expense_amount,omitempty"`
-	//  double dscr = 24;
+	// double dscr = 24;
 	HasDelayedFinancing      bool    `protobuf:"varint,25,opt,name=has_delayed_financing,json=hasDelayedFinancing,proto3" json:"has_delayed_financing,omitempty"`
 	HasCollateralizedBlanket bool    `protobuf:"varint,26,opt,name=has_collateralized_blanket,json=hasCollateralizedBlanket,proto3" json:"has_collateralized_blanket,omitempty"`
 	HasPropertiesVacant      bool    `protobuf:"varint,27,opt,name=has_properties_vacant,json=hasPropertiesVacant,proto3" json:"has_properties_vacant,omitempty"`
@@ -5322,8 +5320,8 @@ func (x *LoanDocumentUpdateCommentRequest) GetData() *LoanDocumentUpdateCommentR
 type LoanDocumentUpdateCommentRequestData struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Id    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	//  int64 organization_id = 2;
-	//  int64 user_id = 3;
+	// int64 organization_id = 2;
+	// int64 user_id = 3;
 	Comment       string `protobuf:"bytes,4,opt,name=comment,proto3" json:"comment,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -5510,8 +5508,8 @@ func (x *LoanDocumentDeleteFileRequest) GetData() *LoanDocumentDeleteFileRequest
 type LoanDocumentDeleteFileRequestData struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Id    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	//  int64 organization_id = 2;
-	//  int64 user_id = 3;
+	// int64 organization_id = 2;
+	// int64 user_id = 3;
 	FileId        int64 `protobuf:"varint,4,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -5608,8 +5606,8 @@ func (x *LoanDocumentSendRequestsRequest) GetData() *LoanDocumentSendRequestsReq
 
 type LoanDocumentSendRequestsRequestData struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	//  int64 organization_id = 1;
-	//  int64 user_id = 2;
+	// int64 organization_id = 1;
+	// int64 user_id = 2;
 	Documents     []*SendDocumentRequestEntity `protobuf:"bytes,3,rep,name=documents,proto3" json:"documents,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -5752,8 +5750,8 @@ func (x *LoanDocumentCreateExtendTypeRequest) GetData() *LoanDocumentCreateExten
 type LoanDocumentCreateExtendTypeRequestData struct {
 	state  protoimpl.MessageState `protogen:"open.v1"`
 	LoanId int64                  `protobuf:"varint,1,opt,name=loan_id,json=loanId,proto3" json:"loan_id,omitempty"`
-	//  int64 organization_id = 2;
-	//  int64 user_id = 3;
+	// int64 organization_id = 2;
+	// int64 user_id = 3;
 	FileTypes     []string `protobuf:"bytes,4,rep,name=file_types,json=fileTypes,proto3" json:"file_types,omitempty"`
 	Category      string   `protobuf:"bytes,5,opt,name=category,proto3" json:"category,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -5903,8 +5901,8 @@ func (x *LoanDocumentAddFilesRequest) GetData() *LoanDocumentAddFilesRequestData
 type LoanDocumentAddFilesRequestData struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Id    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	//  int64 organization_id = 2;
-	//  int64 user_id = 3;
+	// int64 organization_id = 2;
+	// int64 user_id = 3;
 	FileUrls      []string `protobuf:"bytes,4,rep,name=file_urls,json=fileUrls,proto3" json:"file_urls,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

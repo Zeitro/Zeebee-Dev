@@ -185,7 +185,7 @@ func (l *UserLogic) ResetPasswordWithEmail(ctx context.Context, input dto.UserRe
 
 	user, organizationUser, err := l.CheckAndUpdateActiveOrganizationByUser(ctx, user)
 	if err != nil {
-		return nil, errorx.WithStack(err)
+		return nil, err
 	}
 
 	token, err = l.GenerateJwtToken(user, organizationUser, input.UserType)
@@ -570,13 +570,13 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 
 		// Sync organization template
 		organizationTemplateLogic := NewOrganizationTemplateLogic(l.BaseLogic)
-		innerErr = organizationTemplateLogic.SyncByOrganizationIdWithTx(egCtx, tx, organization)
+		innerErr = organizationTemplateLogic.SyncByOrganizationIdWithTx(ctx, tx, organization)
 		if innerErr != nil {
 			return innerErr
 		}
 		// Init lender organization setting
 		organizationSettingLogic := NewOrganizationSettingLogic(l.BaseLogic)
-		innerErr = organizationSettingLogic.InitLenderOrganizationSettingWithTx(egCtx, tx, organization)
+		innerErr = organizationSettingLogic.InitLenderOrganizationSettingWithTx(ctx, tx, organization)
 		if innerErr != nil {
 			return innerErr
 		}

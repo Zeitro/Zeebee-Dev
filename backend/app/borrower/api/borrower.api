@@ -418,6 +418,22 @@ service borrower-api {
 }
 
 // ============== loan document end =============
+// ============== resource start ============
+@server(
+	desc: "borrower-api service"
+	version: v1
+	group: resource
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags: resource
+)
+service borrower-api {
+	@doc "tree"
+	@handler ResourceTree
+	get /resource/tree (EmptyRequest) returns (ResourceTreeResponse)
+}
+
+// ============== resource end =============
 // ============== role start ============
 @server (
 	desc:       "borrower-api service"

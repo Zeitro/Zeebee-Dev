@@ -266,7 +266,7 @@
           "name": "tree",
           "description": "tree",
           "auth_required": true,
-          "permission_required": true
+          "permission_required": false
         },
         {
           "path": "/api/v1/resource",
@@ -839,6 +839,19 @@
           "method": "POST",
           "name": "create aws s3 presign url",
           "description": "create aws s3 presign url",
+          "auth_required": true,
+          "permission_required": false
+        }
+      ]
+    },
+    {
+      "group": "resource",
+      "apis": [
+        {
+          "path": "/api/v1/resource/tree",
+          "method": "GET",
+          "name": "tree",
+          "description": "tree",
           "auth_required": true,
           "permission_required": false
         }
@@ -1738,6 +1751,19 @@
           "description": "add files",
           "auth_required": true,
           "permission_required": true
+        }
+      ]
+    },
+    {
+      "group": "resource",
+      "apis": [
+        {
+          "path": "/api/v1/resource/tree",
+          "method": "GET",
+          "name": "tree",
+          "description": "tree",
+          "auth_required": true,
+          "permission_required": false
         }
       ]
     },
