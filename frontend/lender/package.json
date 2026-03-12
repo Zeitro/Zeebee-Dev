@@ -27,7 +27,6 @@
 		"@repo/shared-methods": "workspace:*",
 		"@svgr/webpack": "^8.1.0",
 		"antd": "^5.26.2",
-		"aws-sdk": "^2.1692.0",
 		"dayjs": "^1.11.13",
 		"events": "^3.3.0",
 		"lodash": "^4.17.21",

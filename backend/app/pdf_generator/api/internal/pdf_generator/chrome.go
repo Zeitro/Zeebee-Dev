@@ -160,7 +160,7 @@ func (p *ChromePool) HTMLToPDF(ctx context.Context, html string, opts ...PDFOpti
 	}
 
 	// Compress HTML: remove newlines and excess whitespace
-	html = compressHTML(html)
+	// html = compressHTML(html)
 
 	tabCtx, tabCancel := chromedp.NewContext(p.allocCtx)
 	defer tabCancel()

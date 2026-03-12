@@ -7,7 +7,6 @@ import (
 	"github.com/duke-git/lancet/v2/condition"
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
-	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
@@ -566,19 +565,22 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 		if innerErr != nil {
 			return innerErr
 		}
-		eg, _ := errgroup.WithContext(ctx)
+
 		// Sync organization template
-		eg.Go(func() error {
-			organizationTemplateLogic := NewOrganizationTemplateLogic(l.repos)
-			return organizationTemplateLogic.SyncByOrganizationIdWithTx(ctx, tx, organization)
-		})
+		organizationTemplateLogic := NewOrganizationTemplateLogic(l.repos)
+		innerErr = organizationTemplateLogic.SyncByOrganizationIdWithTx(ctx, tx, organization)
+		if innerErr != nil {
+			return innerErr
+		}
+
 		// Init lender organization setting
-		eg.Go(func() error {
-			organizationSettingLogic := NewOrganizationSettingLogic(l.repos)
-			return organizationSettingLogic.InitLenderOrganizationSettingWithTx(ctx, tx, organization)
-		})
-		innerErr = eg.Wait()
-		return errorx.WithStack(innerErr)
+		organizationSettingLogic := NewOrganizationSettingLogic(l.repos)
+		innerErr = organizationSettingLogic.InitLenderOrganizationSettingWithTx(ctx, tx, organization)
+		if innerErr != nil {
+			return innerErr
+		}
+
+		return nil
 	})
 	if err != nil {
 		return nil, nil, err
