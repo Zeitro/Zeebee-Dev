@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Row, Col, Form, Select, Input, message, Radio, TreeSelect, InputNumber, Tag } from 'antd';
 import { NewModal } from '@repo/shared-methods';
-import { yesNoOptions, systemTypeOptions, titleCol } from '@repo/shared-methods/enum';
+import { yesNoOptions, systemTypeOptions, titleCol, iconData } from '@repo/shared-methods/enum';
 import { createRequest, eventBus } from '@repo/shared-methods/utils';
 import useData from './useData';
 const { TextArea } = Input;
-const MAX_COUNT = 5;
 const ResourceMain = ({ setOpen, rowData, eventBusPrefix, api }) => {
 	const { request } = createRequest();
 	const [form] = Form.useForm();
@@ -13,9 +12,13 @@ const ResourceMain = ({ setOpen, rowData, eventBusPrefix, api }) => {
 	const api_ids = Form.useWatch('api_ids', form);
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const [loading, setLoading] = useState(false);
-	const [record, setRecord] = useState({});
+	// const [record, setRecord] = useState({});
 	const [treeData, setTreeData] = useState([]);
 	const { getApiTree, apiTreeData } = useData();
+	const iconList = Object.keys(iconData)?.map((i) => ({
+		label: iconData[i],
+		value: i,
+	}));
 
 	const handleSave = async () => {
 		try {
@@ -52,7 +55,7 @@ const ResourceMain = ({ setOpen, rowData, eventBusPrefix, api }) => {
 			const url = `/resource/${rowData?.id}?${payload}`;
 			const res = await request(url);
 			res.api_ids = res?.apis?.map((item) => item.id);
-			setRecord(res);
+			// setRecord(res);
 			form.setFieldsValue(res);
 			setLoading(false);
 		} catch (error) {
@@ -173,7 +176,7 @@ const ResourceMain = ({ setOpen, rowData, eventBusPrefix, api }) => {
 
 					<Col md={12}>
 						<Form.Item label="Icon" name={['icon']}>
-							<Input placeholder="Enter icon" />
+							<Select options={iconList} placeholder="Select icon" />
 						</Form.Item>
 					</Col>
 					<Col md={12}>

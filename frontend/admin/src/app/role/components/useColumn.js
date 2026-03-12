@@ -1,5 +1,5 @@
 import { BtnPopUpModal, DeleteBtn } from '@repo/shared-methods';
-import { userStatusColor } from '@repo/shared-methods/enum';
+import { userStatusColor, iconData } from '@repo/shared-methods/enum';
 import { message, Space } from 'antd';
 import { useState, useRef } from 'react';
 import ApiMainModal from './ApiMain';
@@ -230,6 +230,12 @@ const useColumn = ({ eventBusPrefix, api }) => {
 			width: 120,
 			align: 'center',
 			ellipsis: true,
+			render: (v) =>
+				iconData[v] ? (
+					<div className="flex justify-center items-center">{iconData[v]}</div>
+				) : (
+					v || '--'
+				),
 		},
 		{
 			title: 'Description',
