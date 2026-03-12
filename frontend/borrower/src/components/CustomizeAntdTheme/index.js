@@ -5,7 +5,6 @@ import { AntdRegistry } from '@ant-design/nextjs-registry';
 import { NewHeader, CommonSidebar } from '@repo/shared-methods';
 import HeaderCustomAction from '../HeaderCustomAction';
 import { matchRoute } from '@repo/shared-methods/utils';
-// import { noNavRouter } from '@config/routes';
 import { usePathname, useRouter } from 'next/navigation';
 import { useUserStore, usePermissionStore } from '@repo/shared-methods/store';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';

@@ -2,7 +2,7 @@
 import { usePathname, useRouter, useParams } from 'next/navigation';
 import { Button, Dropdown } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { matchRoute } from '@config/common';
+import { matchRoute } from '@repo/shared-methods/utils';
 import { useState } from 'react';
 import { BtnPopUpModal } from '@repo/shared-methods';
 import ImportLoansModal from '@/app/loans/components/ImportLoanModal';

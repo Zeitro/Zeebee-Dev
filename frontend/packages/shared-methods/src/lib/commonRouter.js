@@ -42,12 +42,13 @@ export const mergeMenu = (backendMenus, staticMenusSettings) => {
 /**
  * 一次性处理菜单：过滤 + 提取权限标签
  * @param {Array} menus - 菜单列表
+ * @param {Object} menuSetting - 菜单额外配置项
  * @returns {Object} { filteredMenus, permissionTags }
  * permissionTags - 权限标识数组
  * filteredMenus - 过滤后的菜单列表
  * accessPaths - 访问权限路由
  */
-export const processMenus = (menus) => {
+export const processMenus = (menus, menuSetting) => {
 	const permissionTags = [];
 	const accessPaths = [];
 	const filterAndExtract = (items) => {
@@ -65,10 +66,11 @@ export const processMenus = (menus) => {
 			})
 			.map((menu) => {
 				const filteredChildren = menu.children ? filterAndExtract(menu.children) : [];
-
+				const setting = menuSetting?.[menu?.path] || {};
 				return {
 					...menu,
 					...(filteredChildren.length > 0 ? { children: filteredChildren } : {}),
+					...setting,
 				};
 			});
 	};
@@ -137,10 +139,16 @@ export const matchRoute = (path, dynamicPath) => {
 };
 
 //根据路由生成面包屑
-export const getCrumbs = (currentPath, routes) => {
+export const getCrumbs = (currentPath, routes, titleName = 'name') => {
+	const homeRoute = routes.find((r) => r.path === '/');
 	const segments = currentPath.split('/').filter(Boolean);
 	let path = '';
-	const breadcrumbs = [];
+	const breadcrumbs = [
+		{
+			title: homeRoute[titleName],
+			path: homeRoute.path,
+		},
+	];
 
 	for (let i = 0; i < segments.length; i++) {
 		path += '/' + segments[i];
@@ -152,7 +160,7 @@ export const getCrumbs = (currentPath, routes) => {
 		}
 		if (match) {
 			// 动态参数面包屑可自定义显示
-			let title = match.title;
+			let title = match[titleName];
 			// if (/:/.test(match.path)) {
 			// 	// 取实际 id 或自定义
 			// 	title = '详情'; // 或 segments[i]

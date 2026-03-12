@@ -91,11 +91,11 @@ export const useUserStore = create(
 			setOrganization: (organization) => {
 				set({ organization });
 			},
-			getUserMenus: async () => {
+			getUserMenus: async (menuSetting) => {
 				const { list } = await request('/user/menu', {
 					method: 'GET',
 				});
-				const result = processMenus(list);
+				const result = processMenus(list, menuSetting);
 				set({
 					accessibleRoutes: result?.filteredMenus,
 				});

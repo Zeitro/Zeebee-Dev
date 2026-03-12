@@ -281,11 +281,7 @@ const ResourceMain = ({ setOpen, rowData, eventBusPrefix, api }) => {
 						</Form.Item>
 					</Col>
 					<Col {...titleCol}>
-						<Form.Item
-							label="Related APIs"
-							name={['api_ids']}
-							rules={[{ required: true }]}
-						>
+						<Form.Item label="Related APIs" name={['api_ids']}>
 							<TreeSelect
 								showSearch
 								multiple
