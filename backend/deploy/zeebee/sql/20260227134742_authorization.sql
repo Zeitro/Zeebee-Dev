@@ -4,3 +4,8 @@ ALTER TABLE "public"."apis"
 
 ALTER TABLE "public"."resources"
     ADD COLUMN "enable_data_scope" bool NOT NULL DEFAULT false;
+
+ALTER TABLE "public"."resources"
+    ALTER COLUMN "is_show" SET DEFAULT false;
+
+DROP TABLE "public"."api_white_lists";
