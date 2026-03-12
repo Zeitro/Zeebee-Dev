@@ -36,6 +36,7 @@ func (repo *ResourceRepo) All(ctx context.Context, apiType constants.UserType) (
 // IsExistedWithTx check resource is existed
 func (repo *ResourceRepo) IsExistedWithTx(ctx context.Context, tx *gorm.DB, data *model.Resource) (isExisted bool, err error) {
 	query := tx.WithContext(ctx).Model(&model.Resource{}).
+		Where("parent_id = ?", data.ParentId).
 		Where("name = ?", data.Name).
 		Where("type = ?", data.Type).
 		Where("path = ?", data.Path).
