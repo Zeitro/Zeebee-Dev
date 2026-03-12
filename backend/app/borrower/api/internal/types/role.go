@@ -7,6 +7,11 @@ type RoleAllResponse struct {
 	List []*RoleEntity `json:"list"`
 }
 
+type RoleAssignOrganizationUserRequest struct {
+	Id                  int64   `path:"id" validate:"required,gt=0"`
+	OrganizationUserIds []int64 `json:"organization_user_ids,optional" validate:"dive,gt=0"`
+}
+
 type RoleCreateRequest struct {
 	Name        string  `json:"name" validate:"required,min=2,max=100,ne='admin'"`
 	Description string  `json:"description" validate:"max=255"`
@@ -29,8 +34,8 @@ type RoleEntity struct {
 type RolePageRequest struct {
 	Page   int64          `json:"page,default=1"`
 	Limit  int64          `json:"limit,default=10"`
-	Filter RolePageFilter `json:"filter"`
-	Sort   RolePageSort   `json:"sort"`
+	Filter RolePageFilter `json:"filter,optional"`
+	Sort   RolePageSort   `json:"sort,optional"`
 }
 
 type RolePageResponse struct {

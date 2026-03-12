@@ -11,7 +11,7 @@ type Resource struct {
 	Path            string                 `gorm:"column:path;type:varchar(100);default:''" json:"path"`
 	Icon            string                 `gorm:"column:icon;type:varchar(100);default:''" json:"icon"`
 	Tag             string                 `gorm:"column:tag;type:varchar(100);default:''" json:"tag"`
-	IsShow          bool                   `gorm:"column:is_show;default:true" json:"is_show"`
+	IsShow          bool                   `gorm:"column:is_show;default:false" json:"is_show"`
 	Status          constants.CommonStatus `gorm:"column:status;type:varchar(20);default:'Active'" json:"status"`
 	SortOrder       int32                  `gorm:"column:sort_order;default:10" json:"sort_order"`
 	EnableDataScope bool                   `gorm:"column:enable_data_scope;default:false" json:"enable_data_scope"`

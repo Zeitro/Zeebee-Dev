@@ -23,17 +23,17 @@ type RoleEntity {
 type RolePageRequest {
     Page int64 `json:"page,default=1"`
     Limit int64 `json:"limit,default=10"`
-    Filter RolePageFilter `json:"filter"`
-    Sort RolePageSort `json:"sort"`
+    Filter RolePageFilter `json:"filter,optional"`
+    Sort RolePageSort `json:"sort,optional"`
 }
 
 type RolePageFilter {
-    Keyword string `json:"keyword"`
+    Keyword string `json:"keyword,optional"`
 }
 
 type RolePageSort {
-    Column string `json:"column"`
-    Sort string `json:"sort"`
+    Column string `json:"column,optional"`
+    Sort string `json:"sort,optional"`
 }
 
 type RolePageResponse {
@@ -73,4 +73,10 @@ type RoleUpdateStatusRequest {
 // all
 type RoleAllResponse {
     List []*RoleEntity `json:"list"`
+}
+
+// AssignOrganizationUser
+type RoleAssignOrganizationUserRequest {
+    Id int64 `path:"id" validate:"required,gt=0"`
+    OrganizationUserIds []int64 `json:"organization_user_ids,optional" validate:"dive,gt=0"`
 }

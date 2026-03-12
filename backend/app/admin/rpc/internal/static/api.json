@@ -902,6 +902,14 @@
           "description": "update status",
           "auth_required": true,
           "permission_required": true
+        },
+        {
+          "path": "/api/v1/role/:id/assign_organization_users",
+          "method": "POST",
+          "name": "assign organization users",
+          "description": "assign organization users",
+          "auth_required": true,
+          "permission_required": true
         }
       ]
     },
@@ -1789,6 +1797,14 @@
           "method": "PATCH",
           "name": "update status",
           "description": "update status",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/role/:id/assign_organization_users",
+          "method": "POST",
+          "name": "assign organization users",
+          "description": "assign organization users",
           "auth_required": true,
           "permission_required": true
         }

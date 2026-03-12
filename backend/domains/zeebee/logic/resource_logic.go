@@ -49,6 +49,20 @@ func (l *ResourceLogic) CreateResource(ctx context.Context, input *dto.ResourceC
 	// Use transaction for create with associations
 	err = l.repos.ResourceRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
+		// check parent resource
+		if input.ParentId != 0 {
+			isExisted, innerErr := l.repos.ResourceRepo.IsExistedByColumnsWithTx(ctx, tx, map[string]interface{}{
+				"id":   input.ParentId,
+				"type": input.Type,
+			})
+			if innerErr != nil {
+				return innerErr
+			}
+			if !isExisted {
+				return errorx.New("Parent resource not found")
+			}
+		}
+
 		// check existed
 		isExisted, innerErr := l.repos.ResourceRepo.IsExistedWithTx(ctx, tx, resourceModel)
 		if innerErr != nil {
@@ -106,6 +120,20 @@ func (l *ResourceLogic) UpdateResource(ctx context.Context, input *dto.ResourceU
 
 	err = l.repos.ResourceRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
+
+		// check parent resource
+		if input.ParentId != 0 {
+			isExisted, innerErr := l.repos.ResourceRepo.IsExistedByColumnsWithTx(ctx, tx, map[string]interface{}{
+				"id":   input.ParentId,
+				"type": input.Type,
+			})
+			if innerErr != nil {
+				return innerErr
+			}
+			if !isExisted {
+				return errorx.New("Parent resource not found")
+			}
+		}
 
 		resourceModel, innerErr = l.repos.ResourceRepo.GetResourceWithTx(ctx, tx, input.Id, input.Type, true)
 		if innerErr != nil {

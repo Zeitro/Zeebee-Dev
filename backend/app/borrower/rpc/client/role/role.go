@@ -242,6 +242,8 @@ type (
 	RoleAllRequestData                               = borrower.RoleAllRequestData
 	RoleAllResponse                                  = borrower.RoleAllResponse
 	RoleAndResourceRelationEntity                    = borrower.RoleAndResourceRelationEntity
+	RoleAssignOrganizationUsersRequest               = borrower.RoleAssignOrganizationUsersRequest
+	RoleAssignOrganizationUsersRequestData           = borrower.RoleAssignOrganizationUsersRequestData
 	RoleCreateRequest                                = borrower.RoleCreateRequest
 	RoleCreateRequestData                            = borrower.RoleCreateRequestData
 	RoleCreateResponse                               = borrower.RoleCreateResponse
@@ -311,6 +313,7 @@ type (
 		Detail(ctx context.Context, in *RoleDetailRequest, opts ...grpc.CallOption) (*RoleDetailResponse, error)
 		UpdateStatus(ctx context.Context, in *RoleUpdateStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		All(ctx context.Context, in *RoleAllRequest, opts ...grpc.CallOption) (*RoleAllResponse, error)
+		AssignOrganizationUsers(ctx context.Context, in *RoleAssignOrganizationUsersRequest, opts ...grpc.CallOption) (*RoleDetailResponse, error)
 	}
 
 	defaultRole struct {
@@ -357,4 +360,9 @@ func (m *defaultRole) UpdateStatus(ctx context.Context, in *RoleUpdateStatusRequ
 func (m *defaultRole) All(ctx context.Context, in *RoleAllRequest, opts ...grpc.CallOption) (*RoleAllResponse, error) {
 	client := borrower.NewRoleClient(m.cli.Conn())
 	return client.All(ctx, in, opts...)
+}
+
+func (m *defaultRole) AssignOrganizationUsers(ctx context.Context, in *RoleAssignOrganizationUsersRequest, opts ...grpc.CallOption) (*RoleDetailResponse, error) {
+	client := borrower.NewRoleClient(m.cli.Conn())
+	return client.AssignOrganizationUsers(ctx, in, opts...)
 }

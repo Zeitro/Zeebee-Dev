@@ -1076,6 +1076,15 @@ message RoleAllResponse {
   repeated RoleEntity  data = 1;
 }
 
+// assign organization users -- request
+message RoleAssignOrganizationUsersRequest {
+  RoleAssignOrganizationUsersRequestData data = 1;
+}
+message RoleAssignOrganizationUsersRequestData {
+  int64 id = 1;
+  repeated int64 organization_user_ids = 2;
+}
+
 service role {
   rpc Page(RolePageRequest) returns(RolePageResponse);
   rpc Create(RoleCreateRequest) returns(RoleCreateResponse);
@@ -1084,6 +1093,7 @@ service role {
   rpc Detail(RoleDetailRequest) returns(RoleDetailResponse);
   rpc UpdateStatus(RoleUpdateStatusRequest) returns(EmptyResponse);
   rpc All(RoleAllRequest) returns(RoleAllResponse);
+  rpc AssignOrganizationUsers(RoleAssignOrganizationUsersRequest) returns(RoleDetailResponse);
 }
 
 // ================== role service end =================

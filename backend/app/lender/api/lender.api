@@ -255,6 +255,10 @@ service lender-api {
 	@doc "update status"
 	@handler RoleUpdateStatus
 	patch /role/:id/status (RoleUpdateStatusRequest) returns (EmptyResponse)
+
+	@doc "assign organization users"
+	@handler RoleAssignOrganizationUsers
+	post /role/:id/assign_organization_users (RoleAssignOrganizationUserRequest) returns (RoleEntity)
 }
 
 // ============== organization user start =============

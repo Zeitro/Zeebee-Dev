@@ -1649,13 +1649,14 @@ var Resource_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	Role_Page_FullMethodName         = "/lender.role/Page"
-	Role_Create_FullMethodName       = "/lender.role/Create"
-	Role_Update_FullMethodName       = "/lender.role/Update"
-	Role_Delete_FullMethodName       = "/lender.role/Delete"
-	Role_Detail_FullMethodName       = "/lender.role/Detail"
-	Role_UpdateStatus_FullMethodName = "/lender.role/UpdateStatus"
-	Role_All_FullMethodName          = "/lender.role/All"
+	Role_Page_FullMethodName                    = "/lender.role/Page"
+	Role_Create_FullMethodName                  = "/lender.role/Create"
+	Role_Update_FullMethodName                  = "/lender.role/Update"
+	Role_Delete_FullMethodName                  = "/lender.role/Delete"
+	Role_Detail_FullMethodName                  = "/lender.role/Detail"
+	Role_UpdateStatus_FullMethodName            = "/lender.role/UpdateStatus"
+	Role_All_FullMethodName                     = "/lender.role/All"
+	Role_AssignOrganizationUsers_FullMethodName = "/lender.role/AssignOrganizationUsers"
 )
 
 // RoleClient is the client API for Role service.
@@ -1669,6 +1670,7 @@ type RoleClient interface {
 	Detail(ctx context.Context, in *RoleDetailRequest, opts ...grpc.CallOption) (*RoleDetailResponse, error)
 	UpdateStatus(ctx context.Context, in *RoleUpdateStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	All(ctx context.Context, in *RoleAllRequest, opts ...grpc.CallOption) (*RoleAllResponse, error)
+	AssignOrganizationUsers(ctx context.Context, in *RoleAssignOrganizationUsersRequest, opts ...grpc.CallOption) (*RoleDetailResponse, error)
 }
 
 type roleClient struct {
@@ -1749,6 +1751,16 @@ func (c *roleClient) All(ctx context.Context, in *RoleAllRequest, opts ...grpc.C
 	return out, nil
 }
 
+func (c *roleClient) AssignOrganizationUsers(ctx context.Context, in *RoleAssignOrganizationUsersRequest, opts ...grpc.CallOption) (*RoleDetailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RoleDetailResponse)
+	err := c.cc.Invoke(ctx, Role_AssignOrganizationUsers_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RoleServer is the server API for Role service.
 // All implementations must embed UnimplementedRoleServer
 // for forward compatibility.
@@ -1760,6 +1772,7 @@ type RoleServer interface {
 	Detail(context.Context, *RoleDetailRequest) (*RoleDetailResponse, error)
 	UpdateStatus(context.Context, *RoleUpdateStatusRequest) (*EmptyResponse, error)
 	All(context.Context, *RoleAllRequest) (*RoleAllResponse, error)
+	AssignOrganizationUsers(context.Context, *RoleAssignOrganizationUsersRequest) (*RoleDetailResponse, error)
 	mustEmbedUnimplementedRoleServer()
 }
 
@@ -1790,6 +1803,9 @@ func (UnimplementedRoleServer) UpdateStatus(context.Context, *RoleUpdateStatusRe
 }
 func (UnimplementedRoleServer) All(context.Context, *RoleAllRequest) (*RoleAllResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method All not implemented")
+}
+func (UnimplementedRoleServer) AssignOrganizationUsers(context.Context, *RoleAssignOrganizationUsersRequest) (*RoleDetailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AssignOrganizationUsers not implemented")
 }
 func (UnimplementedRoleServer) mustEmbedUnimplementedRoleServer() {}
 func (UnimplementedRoleServer) testEmbeddedByValue()              {}
@@ -1938,6 +1954,24 @@ func _Role_All_Handler(srv interface{}, ctx context.Context, dec func(interface{
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Role_AssignOrganizationUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RoleAssignOrganizationUsersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoleServer).AssignOrganizationUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Role_AssignOrganizationUsers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoleServer).AssignOrganizationUsers(ctx, req.(*RoleAssignOrganizationUsersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Role_ServiceDesc is the grpc.ServiceDesc for Role service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1972,6 +2006,10 @@ var Role_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "All",
 			Handler:    _Role_All_Handler,
+		},
+		{
+			MethodName: "AssignOrganizationUsers",
+			Handler:    _Role_AssignOrganizationUsers_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

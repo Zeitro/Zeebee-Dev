@@ -549,6 +549,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: role.RoleDeleteHandler(serverCtx),
 				},
 				{
+					// assign organization users
+					Method:  http.MethodPost,
+					Path:    "/role/:id/assign_organization_users",
+					Handler: role.RoleAssignOrganizationUsersHandler(serverCtx),
+				},
+				{
 					// update status
 					Method:  http.MethodPatch,
 					Path:    "/role/:id/status",

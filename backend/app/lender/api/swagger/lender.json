@@ -7079,9 +7079,7 @@
               "type": "object",
               "required": [
                 "page",
-                "limit",
-                "filter",
-                "sort"
+                "limit"
               ],
               "properties": {
                 "filter": {
@@ -7762,6 +7760,215 @@
             "description": "",
             "schema": {
               "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/role/{id}/assign_organization_users": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "role"
+        ],
+        "summary": "assign organization users",
+        "operationId": "roleRoleAssignOrganizationUsers",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "organization_user_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "created_at": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "organization_id": {
+                  "type": "integer"
+                },
+                "resources": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "parent_id",
+                      "type",
+                      "resource_type",
+                      "name",
+                      "path",
+                      "icon",
+                      "tag",
+                      "is_show",
+                      "status",
+                      "sort_order",
+                      "enable_data_scope",
+                      "created_at",
+                      "updated_at",
+                      "apis",
+                      "data_scope"
+                    ],
+                    "properties": {
+                      "apis": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "parent_id",
+                            "name",
+                            "path",
+                            "method",
+                            "status",
+                            "description",
+                            "type",
+                            "sort_order",
+                            "auth_required",
+                            "permission_required",
+                            "created_at",
+                            "updated_at"
+                          ],
+                          "properties": {
+                            "auth_required": {
+                              "type": "boolean"
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "method": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "parent_id": {
+                              "type": "integer"
+                            },
+                            "path": {
+                              "type": "string"
+                            },
+                            "permission_required": {
+                              "type": "boolean"
+                            },
+                            "sort_order": {
+                              "type": "integer"
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "data_scope": {
+                        "type": "string"
+                      },
+                      "enable_data_scope": {
+                        "type": "boolean"
+                      },
+                      "icon": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "is_show": {
+                        "type": "boolean"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "parent_id": {
+                        "type": "integer"
+                      },
+                      "path": {
+                        "type": "string"
+                      },
+                      "resource_type": {
+                        "type": "string"
+                      },
+                      "sort_order": {
+                        "type": "integer"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "tag": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "status": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "updated_at": {
+                  "type": "string"
+                }
+              }
             }
           }
         }
@@ -8796,7 +9003,7 @@
       }
     }
   },
-  "x-date": "2026-03-11 16:49:37",
+  "x-date": "2026-03-12 10:09:52",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

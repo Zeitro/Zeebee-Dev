@@ -27,7 +27,6 @@ func NewRoleAssignOrganizationUsersLogic(ctx context.Context, svcCtx *svc.Servic
 }
 
 func (l *RoleAssignOrganizationUsersLogic) RoleAssignOrganizationUsers(req *types.RoleAssignOrganizationUserRequest) (resp *types.RoleEntity, err error) {
-	resp = &types.RoleEntity{}
 	rpcReq := &admin.RoleAssignOrganizationUsersRequest{
 		Data: &admin.RoleAssignOrganizationUsersRequestData{},
 	}

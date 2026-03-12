@@ -576,12 +576,12 @@ type RoleDeleteRequest struct {
 }
 
 type RolePageFilter struct {
-	Keyword string `json:"keyword"`
+	Keyword string `json:"keyword, optional"`
 }
 
 type RolePageSort struct {
-	Column string `json:"column"`
-	Sort   string `json:"sort"`
+	Column string `json:"column, optional"`
+	Sort   string `json:"sort, optional"`
 }
 
 type SelectOptionEntity struct {

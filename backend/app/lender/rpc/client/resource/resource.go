@@ -168,6 +168,8 @@ type (
 	RoleAllRequestData                             = lender.RoleAllRequestData
 	RoleAllResponse                                = lender.RoleAllResponse
 	RoleAndResourceRelationEntity                  = lender.RoleAndResourceRelationEntity
+	RoleAssignOrganizationUsersRequest             = lender.RoleAssignOrganizationUsersRequest
+	RoleAssignOrganizationUsersRequestData         = lender.RoleAssignOrganizationUsersRequestData
 	RoleCreateRequest                              = lender.RoleCreateRequest
 	RoleCreateRequestData                          = lender.RoleCreateRequestData
 	RoleCreateResponse                             = lender.RoleCreateResponse

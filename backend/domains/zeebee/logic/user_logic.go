@@ -384,8 +384,8 @@ func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, us
 		}
 		return true
 	})
-
-	organizationUser, ok := slice.FindBy(user.OrganizationUsers, func(index int, item *model.OrganizationUser) bool {
+	var ok bool
+	organizationUser, ok = slice.FindBy(user.OrganizationUsers, func(index int, item *model.OrganizationUser) bool {
 		return item.OrganizationId == organizationId && item.IsDel == 0
 	})
 	if !ok {
@@ -393,8 +393,8 @@ func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, us
 		return nil, err
 	}
 
-	// var organizationId int64
 	var organizationName string
+	var currentOrganizationId = organizationId
 	var isOwner bool
 	var isAdmin bool
 
@@ -403,7 +403,7 @@ func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, us
 	}
 
 	if currentOrganization != nil {
-		organizationId = user.DefaultOrganizationId
+		currentOrganizationId = user.DefaultOrganizationId
 		organizationName = currentOrganization.Name
 
 		roles, err := l.repos.RoleRepo.GetRolesByOrganizationUserId(ctx, organizationUser.Id)
@@ -425,7 +425,7 @@ func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, us
 		FirstName:          organizationUser.FirstName,
 		LastName:           organizationUser.LastName,
 		FullName:           organizationUser.FullName,
-		OrganizationId:     organizationId,
+		OrganizationId:     currentOrganizationId,
 		OrganizationName:   organizationName,
 		Status:             organizationUser.Status,
 		Organizations:      organizations,
@@ -652,6 +652,21 @@ func (l *UserLogic) VerifyUserEmail(ctx context.Context, email string, code stri
 		}
 		return nil
 	})
+
+	if err != nil {
+		return nil, err
+	}
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:         auth.ActionRoleReload,
+			Scope:          auth.ScopeOrganization,
+			Type:           userType,
+			OrganizationId: user.DefaultOrganizationId,
+		}
+		_ = l.BaseLogic.publishAuthEvent(subCtx, l.authTopicMap[userType], msg)
+	})
+
 	return
 }
 

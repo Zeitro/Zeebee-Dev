@@ -242,6 +242,8 @@ type (
 	RoleAllRequestData                               = borrower.RoleAllRequestData
 	RoleAllResponse                                  = borrower.RoleAllResponse
 	RoleAndResourceRelationEntity                    = borrower.RoleAndResourceRelationEntity
+	RoleAssignOrganizationUsersRequest               = borrower.RoleAssignOrganizationUsersRequest
+	RoleAssignOrganizationUsersRequestData           = borrower.RoleAssignOrganizationUsersRequestData
 	RoleCreateRequest                                = borrower.RoleCreateRequest
 	RoleCreateRequestData                            = borrower.RoleCreateRequestData
 	RoleCreateResponse                               = borrower.RoleCreateResponse

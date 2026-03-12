@@ -239,6 +239,7 @@ func (l *RoleLogic) Update(ctx context.Context, id int64, input dto.RoleUpdateRe
 			if innerErr != nil {
 				return innerErr
 			}
+			addPolicies = l.createRolePolicy(input.Id, input.Type, newRelations)
 		}
 		if len(updateRelations) > 0 {
 			for _, updatedRelation := range updateRelations {
@@ -256,6 +257,7 @@ func (l *RoleLogic) Update(ctx context.Context, id int64, input dto.RoleUpdateRe
 			if innerErr != nil {
 				return innerErr
 			}
+			removedPolicies = l.createRolePolicy(input.Id, input.Type, removedRelations)
 		}
 		return nil
 	})
