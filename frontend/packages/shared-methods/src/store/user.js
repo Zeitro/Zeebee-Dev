@@ -82,7 +82,7 @@ export const useUserStore = create(
 			},
 			getOrganization: async () => {
 				// 获取组织信息
-				const organization = await request('/organization/info', {
+				const organization = await request('/organization/profile', {
 					method: 'GET',
 				});
 				set({ organization });
