@@ -821,7 +821,7 @@ type ResourceCreateRequest struct {
 	Path            string  `json:"path,optional" validate:"max=100,required_if=ResourceType Menu"`
 	Icon            string  `json:"icon,optional" validate:"max=100"`
 	Tag             string  `json:"tag" validate:"max=100,required_if=ResourceType Button"`
-	IsShow          bool    `json:"is_show"`
+	IsShow          bool    `json:"is_show,optional"`
 	Status          string  `json:"status" validate:"required,oneof=Active Disabled"`
 	SortOrder       int32   `json:"sort_order" validate:"min=0"`
 	EnableDataScope bool    `json:"enable_data_scope"`
@@ -893,7 +893,7 @@ type ResourceUpdateRequest struct {
 	Path            string  `json:"path,optional" validate:"max=100,required_if=ResourceType Menu"`
 	Icon            string  `json:"icon,optional" validate:"max=100"`
 	Tag             string  `json:"tag" validate:"max=100,required_if=ResourceType Button"`
-	IsShow          bool    `json:"is_show"`
+	IsShow          bool    `json:"is_show,optional"`
 	Status          string  `json:"status" validate:"required,oneof=Active Disabled"`
 	SortOrder       int32   `json:"sort_order" validate:"min=0"`
 	EnableDataScope bool    `json:"enable_data_scope"`

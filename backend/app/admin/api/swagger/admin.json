@@ -7615,7 +7615,6 @@
                 "resource_type",
                 "name",
                 "tag",
-                "is_show",
                 "status",
                 "sort_order",
                 "enable_data_scope"
@@ -8204,7 +8203,6 @@
                 "resource_type",
                 "name",
                 "tag",
-                "is_show",
                 "status",
                 "sort_order",
                 "enable_data_scope"
@@ -11022,7 +11020,7 @@
       }
     }
   },
-  "x-date": "2026-03-12 15:26:31",
+  "x-date": "2026-03-12 15:46:04",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
