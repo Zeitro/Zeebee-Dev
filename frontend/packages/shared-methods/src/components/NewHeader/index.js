@@ -20,7 +20,7 @@ export const NewHeader = ({ children, isShowCrumbs }) => {
 	const { accessibleRoutes } = useUserStore();
 	const pathname = usePathname();
 	const isShow = useMemo(() => {
-		const item = getCurrentRouterItem(pathname, accessibleRoutes);
+		const item = getCurrentRouterItem(pathname, accessibleRoutes, 'children');
 		if (isShowCrumbs) return true;
 		return item && !item?.hideCrumbs;
 	}, [pathname, isShowCrumbs, accessibleRoutes]); // 获取当前路由的配置
@@ -36,7 +36,7 @@ export const NewHeader = ({ children, isShowCrumbs }) => {
 
 	useDeferredSyncEffect({
 		deferred: () => {
-			const flatRoutes = flattenNavRouter(accessibleRoutes);
+			const flatRoutes = flattenNavRouter(accessibleRoutes, 'children');
 			const breadcrumbs = getCrumbs(pathname, flatRoutes);
 			setCrumbs([...breadcrumbs]);
 		},

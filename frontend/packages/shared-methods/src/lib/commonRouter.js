@@ -118,10 +118,10 @@ export const generateMenuBar = (list, iconConfig, sidebarCollapsed) => {
 };
 
 // 将多层级嵌套路由变为一层级路由，方便查找
-export function flattenNavRouter(routes = []) {
+export function flattenNavRouter(routes = [], childName = 'router') {
 	return routes?.reduce((acc, next) => {
-		if (next.router) {
-			return [...acc, next, ...flattenNavRouter(next.router)];
+		if (next[childName]) {
+			return [...acc, next, ...flattenNavRouter(next[childName])];
 		}
 		return [...acc, next];
 	}, []);
@@ -149,14 +149,19 @@ export const getCrumbs = (currentPath, routes, titleName = 'name') => {
 			path: homeRoute.path,
 		},
 	];
+	// 两层侧边菜单时，第一层只是个组标题无实际路由，例如setting组标题，/setting/users
+	const getUrl = (str) => {
+		return str?.indexOf('/') === -1 ? `/${str}` : str;
+	};
 
 	for (let i = 0; i < segments.length; i++) {
 		path += '/' + segments[i];
+
 		// 依次尝试精确匹配和动态参数匹配
-		let match = routes.find((r) => r.path === path);
+		let match = routes.find((r) => getUrl(r.path) === path);
 		if (!match) {
 			// 动态参数匹配
-			match = routes.find((r) => matchRoute(r.path, path));
+			match = routes.find((r) => matchRoute(getUrl(r.path), path));
 		}
 		if (match) {
 			// 动态参数面包屑可自定义显示
@@ -169,7 +174,7 @@ export const getCrumbs = (currentPath, routes, titleName = 'name') => {
 				title,
 			};
 			// 最后一个不需要path
-			if (segments.length - 1 !== i && !match?.isPageNotFound) {
+			if (segments.length - 1 !== i && match?.path?.indexOf('/') !== -1) {
 				crumbItem.path = path;
 			}
 			breadcrumbs.push(crumbItem);
@@ -179,8 +184,8 @@ export const getCrumbs = (currentPath, routes, titleName = 'name') => {
 };
 
 // 根据pathname获取前端路由配置
-export const getCurrentRouterItem = (currentPathname, allRouters) => {
-	const routers = flattenNavRouter(allRouters);
+export const getCurrentRouterItem = (currentPathname, allRouters, childName) => {
+	const routers = flattenNavRouter(allRouters, childName);
 	const routerItem = routers.find((item) => matchRoute(item.path, currentPathname));
 	return routerItem;
 };

@@ -2,7 +2,7 @@
 import { OrgProfile } from '@repo/shared-methods';
 import { Button, message } from 'antd';
 import { useRef, useState } from 'react';
-import { useUserStore } from '@/store/user';
+import { useUserStore } from '@repo/shared-methods/store';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 const OrganizationProfile = () => {
 	const { getOrganization } = useUserStore();

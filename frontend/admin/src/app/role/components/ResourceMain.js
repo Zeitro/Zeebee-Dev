@@ -148,7 +148,11 @@ const ResourceMain = ({ setOpen, rowData, eventBusPrefix, api }) => {
 						</Form.Item>
 					</Col>
 					<Col md={24}>
-						<Form.Item label="Path" name={['path']}>
+						<Form.Item
+							label="Path"
+							name={['path']}
+							extra="When adding a group title menu without any actual routes, the path should not include '/'."
+						>
 							<Input placeholder="Enter path" />
 						</Form.Item>
 					</Col>

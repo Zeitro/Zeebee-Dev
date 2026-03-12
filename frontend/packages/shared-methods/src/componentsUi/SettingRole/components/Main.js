@@ -159,35 +159,10 @@ const MainModal = ({ setOpen, rowData, handleSearch, systemType }) => {
 							</Form.Item>
 						</Col> */}
 						<Col md={24} className="relative">
-							{/* <Checkbox.Group
-								options={[
-									{
-										label: 'Fold',
-										value: 'fold',
-									},
-									{
-										label: 'Select all',
-										value: 'all',
-									},
-								]}
-								value={operationsValue}
-								onChange={(settingValue) => {
-									setOperationsValue(settingValue);
-									// menuPermissionRef.current.handleChangeSetting({
-									// 	settingValue,
-									// 	checkedValue: resources,
-									// 	isFold: operationsValue.includes('fold'),
-									// 	isSelectAll: operationsValue.includes('all'),
-									// });
-								}}
-								
-							/> */}
 							<Space className="absolute top-0 right-0">
 								<Checkbox
 									checked={operationsValue?.includes('Fold')}
 									onChange={(e) => {
-										console.log(e);
-
 										setOperationsValue(e.target.checked ? ['Fold'] : []);
 									}}
 								>
@@ -235,7 +210,7 @@ const MainModal = ({ setOpen, rowData, handleSearch, systemType }) => {
 									className="border border-base-border rounded-lg !py-4 !px-4 [&_.ant-tree-treenode]:!mb-2"
 									titleName="name"
 									keyName="id"
-									height={300}
+									// height={300}
 									blockNode={true}
 								/>
 							</Form.Item>
