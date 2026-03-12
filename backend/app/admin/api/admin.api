@@ -3,6 +3,9 @@ syntax = "v1"
 info(
 	title: "admin-api http service"
 	desc: "admin-api http service description"
+	wrapCodeMsg:  true
+	bizCodeEnumDescription: "400--Bad request<br>401--Not Login<br>403--No permission"
+
 )
 
 import "desc/user.api"

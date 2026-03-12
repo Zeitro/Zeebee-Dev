@@ -355,12 +355,8 @@ func (l *Auth) CheckAuthorization(ctx context.Context, input dto.AuthCheckReques
 	}
 	authorized = slice.Some(roles, func(index int, item AuthRole) bool {
 		return slice.Some(resourceIds, func(index int, subItem int64) bool {
-			ok, _ := l.enforcer.Enforce(
-				stringx.Format("Role:%d", item.RoleId),
-				input.Type,
-				stringx.Format("Resource:%d", subItem),
-				"allow",
-			)
+			policy := BuildInterfacePolicy(item.RoleId, subItem, input.Type)
+			ok, _ := l.enforcer.Enforce(policy...)
 			return ok
 		})
 	})
@@ -778,7 +774,7 @@ func (l *Auth) LoadApiResourceIds(ctx context.Context, userType constants.UserTy
 			if item.Status != constants.CommonStatusActive {
 				return 0, false
 			}
-			return item.Id, true
+			return api.Resources[index].Id, true
 
 		})
 		apiResourceMap.Set(stringx.Format(routeFormat, api.Method, api.Path), resourceIds)

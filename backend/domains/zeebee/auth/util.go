@@ -14,3 +14,12 @@ func BuildPolicy(roleId int64, resourceId int64, resourceType constants.UserType
 		"allow",
 	}
 }
+
+func BuildInterfacePolicy(roleId int64, resourceId int64, resourceType constants.UserType) []interface{} {
+	return []interface{}{
+		fmt.Sprintf("Role:%d", roleId),
+		string(resourceType),
+		fmt.Sprintf("Resource:%d", resourceId),
+		"allow",
+	}
+}
