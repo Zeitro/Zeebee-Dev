@@ -3,7 +3,9 @@ package commonlogic
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 
+	"github.com/duke-git/lancet/v2/slice"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/admin/rpc/internal/logic"
@@ -11,6 +13,7 @@ import (
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -45,9 +48,15 @@ func (l *SyncDataLogic) SyncData(in *admin.EmptyRequest) (resp *admin.EmptyRespo
 		return nil, err
 	}
 
+	// err = l.createMenuButton()
+	// if err != nil {
+	// 	return nil, err
+	// }
+
 	return &admin.EmptyResponse{}, nil
 }
 
+// ========== sync api start ==========
 type ApiGroup struct {
 	Group string     `json:"group"`
 	Apis  []*ApiItem `json:"apis"`
@@ -121,3 +130,130 @@ func (l *SyncDataLogic) syncApi() (err error) {
 
 	return err
 }
+
+// ========== sync api end ==========
+
+// ========== create button for menu ==========
+
+func (l *SyncDataLogic) createMenuButton() (err error) {
+	types := []constants.UserType{
+		constants.UserTypeLender,
+		constants.UserTypeBorrower,
+	}
+	ctx := l.ctx
+	for _, userType := range types {
+		var resources []*dto.ResourceTreeDto
+		resources, err = l.baseLogic.ResourceLogic.ResourceTree(ctx, userType)
+		if err != nil {
+			return err
+		}
+		for _, resource := range resources {
+			err = l.handleMenu(l.ctx, resource)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return err
+}
+
+func (l *SyncDataLogic) handleMenu(ctx context.Context, resource *dto.ResourceTreeDto) (err error) {
+	if resource == nil || resource.ResourceType != constants.ResourceTypeMenu || !resource.IsShow {
+		return
+	}
+	hasSubMenu := slice.Some(resource.Children, func(index int, item *dto.ResourceTreeDto) bool {
+		return item.ResourceType == constants.ResourceTypeMenu
+	})
+	// handle sub menu
+	if hasSubMenu {
+		for _, child := range resource.Children {
+			if child.ResourceType == constants.ResourceTypeMenu {
+				err = l.handleMenu(ctx, child)
+				if err != nil {
+					return err
+				}
+			}
+		}
+		return
+	}
+	var addButtonName string = "Add"
+	var editButtonName string = "Edit"
+	var deleteButtonName string = "Delete"
+
+	// handle menu
+	hasCreateButton := false
+	hasEditButton := false
+	hasDeleteButton := false
+	slice.ForEach(resource.Children, func(index int, item *dto.ResourceTreeDto) {
+		if item.ResourceType != constants.ResourceTypeButton {
+			return
+		}
+		if item.Name == addButtonName {
+			hasCreateButton = true
+		}
+		if item.Name == editButtonName {
+			hasEditButton = true
+		}
+		if item.Name == deleteButtonName {
+			hasDeleteButton = true
+		}
+	})
+	var input *dto.ResourceCreateRequestDto
+	if !hasCreateButton {
+		input = &dto.ResourceCreateRequestDto{
+			ParentId:        resource.Id,
+			Type:            resource.Type,
+			ResourceType:    constants.ResourceTypeButton,
+			Name:            addButtonName,
+			Tag:             fmt.Sprintf("%s:%s", resource.Tag, addButtonName),
+			IsShow:          true,
+			Status:          constants.CommonStatusActive,
+			SortOrder:       1,
+			ApiIds:          []int64{},
+			EnableDataScope: false,
+		}
+		_, err = l.baseLogic.ResourceLogic.CreateResource(ctx, input)
+		if err != nil {
+			return err
+		}
+	}
+	if !hasEditButton {
+		input = &dto.ResourceCreateRequestDto{
+			ParentId:        resource.Id,
+			Type:            resource.Type,
+			ResourceType:    constants.ResourceTypeButton,
+			Name:            editButtonName,
+			Tag:             fmt.Sprintf("%s:%s", resource.Tag, editButtonName),
+			IsShow:          true,
+			Status:          constants.CommonStatusActive,
+			SortOrder:       2,
+			ApiIds:          []int64{},
+			EnableDataScope: false,
+		}
+		_, err = l.baseLogic.ResourceLogic.CreateResource(ctx, input)
+		if err != nil {
+			return err
+		}
+	}
+	if !hasDeleteButton {
+		input = &dto.ResourceCreateRequestDto{
+			ParentId:        resource.Id,
+			Type:            resource.Type,
+			ResourceType:    constants.ResourceTypeButton,
+			Name:            deleteButtonName,
+			Tag:             fmt.Sprintf("%s:%s", resource.Tag, deleteButtonName),
+			IsShow:          true,
+			Status:          constants.CommonStatusActive,
+			SortOrder:       3,
+			ApiIds:          []int64{},
+			EnableDataScope: false,
+		}
+		_, err = l.baseLogic.ResourceLogic.CreateResource(ctx, input)
+		if err != nil {
+			return err
+		}
+	}
+	return
+}
+
+// ========== create button for menu end ==========
