@@ -183,7 +183,6 @@ func (l *ResourceLogic) UpdateResource(ctx context.Context, input *dto.ResourceU
 		})
 
 		resourceModel.RemoveRelationships()
-
 		innerErr = l.repos.ResourceRepo.RemoveApisWithTx(ctx, tx, resourceModel, removedApis)
 		if innerErr != nil {
 			return innerErr
@@ -192,7 +191,7 @@ func (l *ResourceLogic) UpdateResource(ctx context.Context, input *dto.ResourceU
 		if innerErr != nil {
 			return innerErr
 		}
-
+		resourceModel.RemoveRelationships()
 		// update resource
 		resourceModel, innerErr = l.repos.ResourceRepo.UpdateOneByIdWithTx(ctx, tx, input.Id, resourceModel)
 		if innerErr != nil {

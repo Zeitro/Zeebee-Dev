@@ -775,7 +775,6 @@ func (l *Auth) LoadApiResourceIds(ctx context.Context, userType constants.UserTy
 				return 0, false
 			}
 			return api.Resources[index].Id, true
-
 		})
 		apiResourceMap.Set(stringx.Format(routeFormat, api.Method, api.Path), resourceIds)
 	}
