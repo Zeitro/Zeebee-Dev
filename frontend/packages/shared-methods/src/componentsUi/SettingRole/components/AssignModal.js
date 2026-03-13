@@ -9,7 +9,7 @@ const AssignModal = ({ setOpen, rowData, handleSearch, systemType }) => {
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 	const tableFilterRef = useRef();
-	const { assignColumns } = useContent({ handleSearch, systemType });
+	const { assignColumns } = useContent({ handleSearch, systemType, PERMISSIONS: {} });
 
 	const handleSave = async () => {
 		try {

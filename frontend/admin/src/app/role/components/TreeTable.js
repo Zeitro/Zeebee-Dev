@@ -42,6 +42,7 @@ const TreeTable = ({
 				return request(url);
 			}}
 			hasPaginationRequest={false}
+			scroll={{ x: 'max-content' }}
 		/>
 	);
 };

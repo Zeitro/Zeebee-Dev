@@ -1,11 +1,14 @@
-import { BtnPopUpModal, DeleteBtn } from '@repo/shared-methods';
+import { BtnPopUpModal, DeleteBtn, PermissionSlot } from '@repo/shared-methods';
 import { userStatusColor, iconData } from '@repo/shared-methods/enum';
 import { message, Space } from 'antd';
 import { useState, useRef } from 'react';
 import ApiMainModal from './ApiMain';
 import ResourceMain from './ResourceMain';
 import { createRequest, eventBus } from '@repo/shared-methods/utils';
+import { useAuth } from '@repo/shared-methods/hooks';
+import { PERMISSIONS } from '@config/permissions';
 const useColumn = ({ eventBusPrefix, api }) => {
+	const { getActiveByPermission } = useAuth();
 	const { request } = createRequest();
 	const tableFilterRef = useRef(null);
 	const [deleteLoading, setDeleteLoading] = useState(false);
@@ -117,50 +120,49 @@ const useColumn = ({ eventBusPrefix, api }) => {
 			title: 'Description',
 			dataIndex: 'description',
 			key: 'description',
-			width: 200,
 			ellipsis: true,
 			render: (v) => v || '--',
 		},
-		{
-			title: 'Action',
-			dataIndex: 'operation',
-			width: 140,
-			align: 'left',
-			fixed: 'right',
+		getActiveByPermission({
+			permissionList: [PERMISSIONS.API.EDIT, PERMISSIONS.API.DELETE],
 			render: (_, record) => {
 				return (
 					<Space>
-						<BtnPopUpModal
-							getContent={(setOpen) => (
-								<ApiMainModal
-									setOpen={setOpen}
-									handleSearch={() => tableFilterRef?.current?.handleSearch()}
-									rowData={record}
-									eventBusPrefix={eventBusPrefix}
-								/>
-							)}
-							size="small"
-							icon={null}
-							isStopPropagation={false}
-							// disabled={isDisabled}
-						>
-							Edit
-						</BtnPopUpModal>
+						<PermissionSlot code={PERMISSIONS.API.EDIT}>
+							<BtnPopUpModal
+								getContent={(setOpen) => (
+									<ApiMainModal
+										setOpen={setOpen}
+										handleSearch={() => tableFilterRef?.current?.handleSearch()}
+										rowData={record}
+										eventBusPrefix={eventBusPrefix}
+									/>
+								)}
+								size="small"
+								icon={null}
+								isStopPropagation={false}
+								// disabled={isDisabled}
+							>
+								Edit
+							</BtnPopUpModal>
+						</PermissionSlot>
 
-						<DeleteBtn
-							title="Are you sure delete this api?"
-							content={record?.path || record.name}
-							// isButton={false}
-							onOk={() => handleApiDelete(record)}
-							loading={deleteLoading}
-							isStopPropagation={false}
-						>
-							Delete
-						</DeleteBtn>
+						<PermissionSlot code={PERMISSIONS.API.DELETE}>
+							<DeleteBtn
+								title="Are you sure delete this api?"
+								content={record?.path || record.name}
+								// isButton={false}
+								onOk={() => handleApiDelete(record)}
+								loading={deleteLoading}
+								isStopPropagation={false}
+							>
+								Delete
+							</DeleteBtn>
+						</PermissionSlot>
 					</Space>
 				);
 			},
-		},
+		}),
 	];
 
 	const resourceColumns = [
@@ -241,50 +243,48 @@ const useColumn = ({ eventBusPrefix, api }) => {
 			title: 'Description',
 			dataIndex: 'description',
 			key: 'description',
-			width: 200,
 			ellipsis: true,
 			render: (v) => v || '--',
 		},
-		{
-			title: 'Action',
-			dataIndex: 'operation',
-			width: 140,
-			align: 'left',
-			fixed: 'right',
+		getActiveByPermission({
+			permissionList: [PERMISSIONS.RESOURCE.EDIT, PERMISSIONS.RESOURCE.DELETE],
 			render: (_, record) => {
 				return (
 					<Space>
-						<BtnPopUpModal
-							getContent={(setOpen) => (
-								<ResourceMain
-									setOpen={setOpen}
-									rowData={record}
-									eventBusPrefix={eventBusPrefix}
-									api={api}
-								/>
-							)}
-							size="small"
-							icon={null}
-							isStopPropagation={false}
-							// disabled={isDisabled}
-						>
-							Edit
-						</BtnPopUpModal>
-
-						<DeleteBtn
-							title="Are you sure delete this resource?"
-							content={record?.path || record.name}
-							// isButton={false}
-							onOk={() => handleResourceDelete(record)}
-							loading={deleteLoading}
-							isStopPropagation={false}
-						>
-							Delete
-						</DeleteBtn>
+						<PermissionSlot code={PERMISSIONS.RESOURCE.EDIT}>
+							<BtnPopUpModal
+								getContent={(setOpen) => (
+									<ResourceMain
+										setOpen={setOpen}
+										rowData={record}
+										eventBusPrefix={eventBusPrefix}
+										api={api}
+									/>
+								)}
+								size="small"
+								icon={null}
+								isStopPropagation={false}
+								// disabled={isDisabled}
+							>
+								Edit
+							</BtnPopUpModal>
+						</PermissionSlot>
+						<PermissionSlot code={PERMISSIONS.RESOURCE.DELETE}>
+							<DeleteBtn
+								title="Are you sure delete this resource?"
+								content={record?.path || record.name}
+								// isButton={false}
+								onOk={() => handleResourceDelete(record)}
+								loading={deleteLoading}
+								isStopPropagation={false}
+							>
+								Delete
+							</DeleteBtn>
+						</PermissionSlot>
 					</Space>
 				);
 			},
-		},
+		}),
 	];
 
 	const getColumnsByMenuKey = (menuKey) => {

@@ -32,14 +32,32 @@ export const useAuth = () => {
 		[hasPermission],
 	);
 
+	const getActiveByPermission = useCallback(
+		({ permissionList, render, ...options }) => {
+			const active = {
+				title: 'Action',
+				dataIndex: 'operation',
+				align: 'left',
+				fixed: 'right',
+				minWidth: 100,
+				render,
+				hidden: permissionList?.length ? !hasAnyPermission(permissionList) : false,
+				...options,
+			};
+			return active;
+		},
+		[hasAnyPermission],
+	);
+
 	const auth = useMemo(
 		() => ({
 			permissionTags,
 			hasPermission,
 			hasAnyPermission,
 			hasAllPermissions,
+			getActiveByPermission,
 		}),
-		[permissionTags, hasPermission, hasAnyPermission, hasAllPermissions],
+		[permissionTags, hasPermission, hasAnyPermission, hasAllPermissions, getActiveByPermission],
 	);
 
 	return auth;

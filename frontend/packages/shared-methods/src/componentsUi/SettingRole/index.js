@@ -10,7 +10,9 @@ import { ReloadOutlined, PlusOutlined } from '@ant-design/icons';
 import { BtnPopUpModal, DeleteBtn, FilterTableCard } from '@repo/shared-methods';
 import useContent from './components/useContent';
 import MainModal from './components/Main';
-const SettingRole = ({ api, systemType }) => {
+import { useAuth } from '@repo/shared-methods/hooks';
+const SettingRole = ({ api, systemType, PERMISSIONS }) => {
+	const { hasPermission, getActiveByPermission } = useAuth();
 	const tableFilterRef = useRef();
 	const [searchValue, setSearchValue] = useState('');
 	const { columns } = useContent({
@@ -50,6 +52,7 @@ const SettingRole = ({ api, systemType }) => {
 		},
 		{
 			filterType: 'button',
+			hidden: !hasPermission(PERMISSIONS.SETTING_ROLE.ADD),
 			children: (
 				<BtnPopUpModal
 					getContent={(setOpen) => (

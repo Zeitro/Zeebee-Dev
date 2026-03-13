@@ -1,7 +1,7 @@
 'use client';
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { message, Space, Button, Alert } from 'antd';
-import { DeleteBtn, FilterTable, PermissionSlot } from '@repo/shared-methods';
+import { DeleteBtn, FilterTable } from '@repo/shared-methods';
 import { createRequest, formatTime } from '@repo/shared-methods/utils';
 import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import MainDrawer from './components/Main';
@@ -11,7 +11,7 @@ import { PERMISSIONS } from '@config/permissions';
 const api = '/base_template/page';
 
 const EditorTemplate = () => {
-	const { hasPermission } = useAuth();
+	const { hasPermission, getActiveByPermission } = useAuth();
 	const tableFilterRef = useRef();
 	const { request } = createRequest();
 	const [searchValue, setSearchValue] = useState('');
@@ -34,66 +34,64 @@ const EditorTemplate = () => {
 		},
 	];
 
-	const filterList = useMemo(
-		() => [
-			{
-				filterType: 'input',
-				placeholder: 'Search by any field',
-				paramsKey: 'keyword',
-				value: searchValue,
-				onChange: ({ target: { value } }) => setSearchValue(value),
+	const filterList = [
+		{
+			filterType: 'input',
+			placeholder: 'Search by any field',
+			paramsKey: 'keyword',
+			value: searchValue,
+			onChange: ({ target: { value } }) => setSearchValue(value),
+		},
+		// {
+		// 	filterType: 'select',
+		// 	placeholder: 'System',
+		// 	paramsKey: 'type',
+		// 	value: type,
+		// 	options: systemOptions,
+		// 	onChange: (v) => setType(v),
+		// },
+		{
+			filterType: 'select',
+			placeholder: 'Status',
+			paramsKey: 'status',
+			value: status,
+			options: statusOptions,
+			onChange: (v) => setStatus(v),
+		},
+		{
+			filterType: 'button',
+			onClick: () => {
+				tableFilterRef?.current?.handleSearch?.();
 			},
-			// {
-			// 	filterType: 'select',
-			// 	placeholder: 'System',
-			// 	paramsKey: 'type',
-			// 	value: type,
-			// 	options: systemOptions,
-			// 	onChange: (v) => setType(v),
-			// },
-			{
-				filterType: 'select',
-				placeholder: 'Status',
-				paramsKey: 'status',
-				value: status,
-				options: statusOptions,
-				onChange: (v) => setStatus(v),
-			},
-			{
-				filterType: 'button',
-				onClick: () => {
+		},
+		{
+			filterType: 'button',
+			type: 'default',
+			text: 'Reset',
+			icon: <ReloadOutlined />,
+			onClick: () => {
+				setSearchValue('');
+				setStatus(null);
+				setType(null);
+				setTimeout(() => {
 					tableFilterRef?.current?.handleSearch?.();
-				},
+				}, 300);
 			},
-			{
-				filterType: 'button',
-				type: 'default',
-				text: 'Reset',
-				icon: <ReloadOutlined />,
-				onClick: () => {
-					setSearchValue('');
-					setStatus(null);
-					setType(null);
-					setTimeout(() => {
-						tableFilterRef?.current?.handleSearch?.();
-					}, 300);
-				},
-				colProps: {
-					className: 'flex-1',
-				},
+			colProps: {
+				className: 'flex-1',
 			},
-			hasPermission(PERMISSIONS.TEMPLATE.ADD, {
-				filterType: 'button',
-				text: 'Add template',
-				icon: <PlusOutlined />,
-				onClick: () => {
-					setRowData({});
-					setOpen(true);
-				},
-			}),
-		],
-		[searchValue, type, status, hasPermission],
-	);
+		},
+		{
+			filterType: 'button',
+			text: 'Add template',
+			icon: <PlusOutlined />,
+			hidden: !hasPermission(PERMISSIONS.TEMPLATE.ADD),
+			onClick: () => {
+				setRowData({});
+				setOpen(true);
+			},
+		},
+	];
 
 	// 删除模板
 	const handleDelete = async (id) => {
@@ -188,6 +186,7 @@ const EditorTemplate = () => {
 						key: 'description',
 						ellipsis: true,
 						render: (v) => v || '--',
+						width: 300,
 					},
 					{
 						title: 'Created time',
@@ -219,100 +218,111 @@ const EditorTemplate = () => {
 							</div>
 						),
 					},
-					{
-						title: 'Action',
-						dataIndex: 'operation',
-						width: 260,
-						align: 'left',
-						fixed: 'right',
+					getActiveByPermission({
+						permissionList: [
+							PERMISSIONS.TEMPLATE.EDIT,
+							PERMISSIONS.TEMPLATE.DELETE,
+							PERMISSIONS.TEMPLATE.CHANGE_STATUS,
+							PERMISSIONS.TEMPLATE.UPDATE,
+						],
 						render: (_, record) => {
-							return (
-								<Space>
-									<PermissionSlot code={PERMISSIONS.TEMPLATE.EDIT}>
-										<Button
-											size="small"
-											type="link"
-											onClick={() => {
-												setRowData(record);
-												setOpen(true);
-											}}
-										>
-											Edit
-										</Button>
-									</PermissionSlot>
-									<PermissionSlot code={PERMISSIONS.TEMPLATE.CHANGE_STATUS}>
-										{record?.status === 'Active' && (
-											<DeleteBtn
-												title="Are you sure you want to disable this template?"
-												content={record.name}
-												onOk={() =>
-													handleChangeStatus(record.id, 'Disabled')
-												}
-												loading={statusLoading}
-												isStopPropagation={false}
-												okText="Disable"
-												danger={false}
-											>
-												Disable
-											</DeleteBtn>
-										)}
-										{record?.status === 'Disabled' && (
-											<DeleteBtn
-												title="Are you sure you want to enable this template?"
-												content={record.name}
-												onOk={() => handleChangeStatus(record.id, 'Active')}
-												loading={statusLoading}
-												isStopPropagation={false}
-												okText="Enable"
-												danger={false}
-												okButtonProps={{ danger: false }}
-											>
-												Enable
-											</DeleteBtn>
-										)}
-									</PermissionSlot>
-									<PermissionSlot code={PERMISSIONS.TEMPLATE.UPDATE}>
-										<DeleteBtn
-											title="Are you sure you want to force a template update?"
-											content={
-												<div>
-													<Alert
-														message="Users will use the latest template."
-														type="warning"
-														className="!mb-4"
-													/>
-													<span>{record.name}</span>
-												</div>
-											}
-											onOk={() => handleUpdate(record.id)}
-											loading={updateLoading}
-											isStopPropagation={false}
-											okText="Update"
-											danger={false}
-											okButtonProps={{ danger: false }}
-										>
-											Update
-										</DeleteBtn>
-									</PermissionSlot>
-									<PermissionSlot code={PERMISSIONS.TEMPLATE.DELETE}>
-										<DeleteBtn
-											title="Are you sure delete this editor template?"
-											content={record.name}
-											// isButton={false}
-											onOk={() => handleDelete(record.id)}
-											loading={loading}
-											isStopPropagation={false}
-										>
-											Delete
-										</DeleteBtn>
-									</PermissionSlot>
-								</Space>
-							);
+							const actions = [];
+							if (hasPermission(PERMISSIONS.TEMPLATE.EDIT)) {
+								actions.push(
+									<Button
+										size="small"
+										type="link"
+										onClick={() => {
+											setRowData(record);
+											setOpen(true);
+										}}
+									>
+										Edit
+									</Button>,
+								);
+							}
+							if (
+								hasPermission(PERMISSIONS.TEMPLATE.CHANGE_STATUS) &&
+								record?.status === 'Active'
+							) {
+								actions.push(
+									<DeleteBtn
+										title="Are you sure you want to disable this template?"
+										content={record.name}
+										onOk={() => handleChangeStatus(record.id, 'Disabled')}
+										loading={statusLoading}
+										isStopPropagation={false}
+										okText="Disable"
+										danger={false}
+									>
+										Disable
+									</DeleteBtn>,
+								);
+							}
+							if (
+								hasPermission(PERMISSIONS.TEMPLATE.CHANGE_STATUS) &&
+								record?.status === 'Disabled'
+							) {
+								actions.push(
+									<DeleteBtn
+										title="Are you sure you want to enable this template?"
+										content={record.name}
+										onOk={() => handleChangeStatus(record.id, 'Active')}
+										loading={statusLoading}
+										isStopPropagation={false}
+										okText="Enable"
+										danger={false}
+										okButtonProps={{ danger: false }}
+									>
+										Enable
+									</DeleteBtn>,
+								);
+							}
+							if (hasPermission(PERMISSIONS.TEMPLATE.UPDATE)) {
+								actions.push(
+									<DeleteBtn
+										title="Are you sure you want to force a template update?"
+										content={
+											<div>
+												<Alert
+													message="Users will use the latest template."
+													type="warning"
+													className="!mb-4"
+												/>
+												<span>{record.name}</span>
+											</div>
+										}
+										onOk={() => handleUpdate(record.id)}
+										loading={updateLoading}
+										isStopPropagation={false}
+										okText="Update"
+										danger={false}
+										okButtonProps={{ danger: false }}
+									>
+										Update
+									</DeleteBtn>,
+								);
+							}
+							if (hasPermission(PERMISSIONS.TEMPLATE.DELETE)) {
+								actions.push(
+									<DeleteBtn
+										title="Are you sure delete this editor template?"
+										content={record.name}
+										// isButton={false}
+										onOk={() => handleDelete(record.id)}
+										loading={loading}
+										isStopPropagation={false}
+									>
+										Delete
+									</DeleteBtn>,
+								);
+							}
+							return <Space>{actions}</Space>;
 						},
-					},
+					}),
 				]}
 				filterList={filterList}
-				scroll={{ x: 1300 }}
+				scroll={{ x: 'max-content' }}
 				// pagination={true}
 
 				getData={(params) => {

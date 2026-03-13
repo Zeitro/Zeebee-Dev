@@ -1,4 +1,4 @@
-import { BtnPopUpModal, DeleteBtn } from '@repo/shared-methods';
+import { BtnPopUpModal, DeleteBtn, PermissionSlot } from '@repo/shared-methods';
 import MainModal from './Main';
 import { createRequest, formatPhone } from '@repo/shared-methods/utils';
 import { useRef, useState } from 'react';
@@ -7,7 +7,9 @@ import { getSelectOptions } from '@repo/shared-methods/api';
 import { useUserStore } from '@repo/shared-methods/store';
 import { userStatusColor } from '@repo/shared-methods/enum';
 import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
-const useUser = ({ getNewMainModal }) => {
+import { useAuth } from '@repo/shared-methods/hooks';
+const useUser = ({ getNewMainModal, PERMISSIONS }) => {
+	const { hasPermission, getActiveByPermission } = useAuth();
 	const { request, cancel } = createRequest();
 	const { userInfo } = useUserStore();
 	const [loading, setLoading] = useState(false);
@@ -76,6 +78,7 @@ const useUser = ({ getNewMainModal }) => {
 		},
 		{
 			filterType: 'button',
+			hidden: !hasPermission(PERMISSIONS.SETTING_USER.ADD),
 			children: (
 				<BtnPopUpModal
 					getContent={(setOpen) => {
@@ -178,6 +181,7 @@ const useUser = ({ getNewMainModal }) => {
 		const { options } = await getSelectOptions('organization_user_status');
 		setUserStatusOptions(options);
 	};
+
 	const columns = [
 		{
 			title: 'Email',
@@ -216,6 +220,7 @@ const useUser = ({ getNewMainModal }) => {
 				</Space>
 			),
 		},
+
 		{
 			title: 'Status',
 			dataIndex: 'status',
@@ -234,94 +239,106 @@ const useUser = ({ getNewMainModal }) => {
 				</div>
 			),
 		},
-		{
-			title: 'Action',
-			dataIndex: 'operation',
-			width: 240,
-			align: 'left',
-			fixed: 'right',
+		getActiveByPermission({
+			permissionList: [
+				PERMISSIONS.SETTING_USER.EDIT,
+				PERMISSIONS.SETTING_USER?.SEND_INVITATION,
+				PERMISSIONS.SETTING_USER.CHANGE_STATUS,
+				PERMISSIONS.SETTING_USER.DELETE,
+			],
 			render: (_, record) => {
 				const isDisabled = record?.is_owner;
 				return (
 					<Space>
-						<BtnPopUpModal
-							getContent={(setOpen) => {
-								const mainProps = {
-									setOpen,
-									handleSearch: () => tableFilterRef?.current?.handleSearch(),
-									rowData: record,
-									roles,
-								};
-								return getNewMainModal(mainProps) || <MainModal {...mainProps} />;
-							}}
-							size="small"
-							icon={null}
-							isStopPropagation={false}
-							// disabled={isDisabled}
-						>
-							Edit
-						</BtnPopUpModal>
-						{record?.status === 'Not activated' && (
+						<PermissionSlot code={PERMISSIONS.SETTING_USER.EDIT}>
 							<BtnPopUpModal
-								config={{
-									title: `Are you sure you want to invite this user to join the organization(${userInfo?.organization_name})?`,
-									content: record.email,
-									okText: 'Send Invitation',
-									onOk: () => handleSendEmail(record.id),
-									okButtonProps: { danger: false },
-									confirmLoading: sendLoading,
+								getContent={(setOpen) => {
+									const mainProps = {
+										setOpen,
+										handleSearch: () => tableFilterRef?.current?.handleSearch(),
+										rowData: record,
+										roles,
+									};
+									return (
+										getNewMainModal(mainProps) || <MainModal {...mainProps} />
+									);
 								}}
-								modalType="confirm"
+								size="small"
+								icon={null}
 								isStopPropagation={false}
 								// disabled={isDisabled}
 							>
-								Send Invitation
+								Edit
 							</BtnPopUpModal>
-						)}
-						{record?.status === 'Active' && (
+						</PermissionSlot>
+						{/* admin端默认创建的账号就是active状态，不用发送邀请确认 */}
+						<PermissionSlot permission={PERMISSIONS.SETTING_USER.SEND_INVITATION}>
+							{record?.status === 'Not activated' && (
+								<BtnPopUpModal
+									config={{
+										title: `Are you sure you want to invite this user to join the organization(${userInfo?.organization_name})?`,
+										content: record.email,
+										okText: 'Send Invitation',
+										onOk: () => handleSendEmail(record.id),
+										okButtonProps: { danger: false },
+										confirmLoading: sendLoading,
+									}}
+									modalType="confirm"
+									isStopPropagation={false}
+									// disabled={isDisabled}
+								>
+									Send Invitation
+								</BtnPopUpModal>
+							)}
+						</PermissionSlot>
+						<PermissionSlot permission={PERMISSIONS.SETTING_USER.CHANGE_STATUS}>
+							{record?.status === 'Active' && (
+								<DeleteBtn
+									title="Are you sure you want to disable this user?"
+									content={record.email}
+									onOk={() => handleChangeStatus(record.id, 'Disabled')}
+									loading={statusLoading}
+									isStopPropagation={false}
+									okText="Disable"
+									danger={false}
+									disabled={isDisabled}
+								>
+									Disable
+								</DeleteBtn>
+							)}
+							{record?.status === 'Disabled' && (
+								<DeleteBtn
+									title="Are you sure you want to enable this user?"
+									content={record.email}
+									onOk={() => handleChangeStatus(record.id, 'Active')}
+									loading={statusLoading}
+									isStopPropagation={false}
+									okText="Enable"
+									danger={false}
+									disabled={isDisabled}
+									okButtonProps={{ danger: false }}
+								>
+									Enable
+								</DeleteBtn>
+							)}
+						</PermissionSlot>
+						<PermissionSlot code={PERMISSIONS.SETTING_USER.DELETE}>
 							<DeleteBtn
-								title="Are you sure you want to disable this user?"
+								title="Are you sure delete this user?"
 								content={record.email}
-								onOk={() => handleChangeStatus(record.id, 'Disabled')}
-								loading={statusLoading}
+								// isButton={false}
+								onOk={() => handleDelete(record.id)}
+								loading={loading}
 								isStopPropagation={false}
-								okText="Disable"
-								danger={false}
 								disabled={isDisabled}
 							>
-								Disable
+								Delete
 							</DeleteBtn>
-						)}
-						{record?.status === 'Disabled' && (
-							<DeleteBtn
-								title="Are you sure you want to enable this user?"
-								content={record.email}
-								onOk={() => handleChangeStatus(record.id, 'Active')}
-								loading={statusLoading}
-								isStopPropagation={false}
-								okText="Enable"
-								danger={false}
-								disabled={isDisabled}
-								okButtonProps={{ danger: false }}
-							>
-								Enable
-							</DeleteBtn>
-						)}
-						<DeleteBtn
-							title="Are you sure delete this user?"
-							content={record.email}
-							// isButton={false}
-							onOk={() => handleDelete(record.id)}
-							loading={loading}
-							isStopPropagation={false}
-							disabled={isDisabled}
-						>
-							Delete
-						</DeleteBtn>
+						</PermissionSlot>
 					</Space>
 				);
 			},
-		},
+		}),
 	];
 	return {
 		columns,

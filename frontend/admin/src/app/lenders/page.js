@@ -15,7 +15,7 @@ const Lenders = () => {
 	const [searchValue, setSearchValue] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [statusLoading, setStatusLoading] = useState(false);
-	const { hasPermission } = useAuth();
+	const { hasPermission, getActiveByPermission } = useAuth();
 	const filterList = useMemo(
 		() => [
 			{
@@ -47,7 +47,7 @@ const Lenders = () => {
 					className: 'flex-1',
 				},
 			},
-			hasPermission(PERMISSIONS.LENDERS.ADD, {
+			{
 				filterType: 'button',
 				children: (
 					<BtnPopUpModal
@@ -66,7 +66,8 @@ const Lenders = () => {
 						Add Lender org
 					</BtnPopUpModal>
 				),
-			}),
+				hidden: !hasPermission(PERMISSIONS.LENDERS.ADD),
+			},
 		],
 		[searchValue, hasPermission],
 	);
@@ -196,12 +197,12 @@ const Lenders = () => {
 							</div>
 						),
 					},
-					{
-						title: 'Action',
-						dataIndex: 'operation',
-						width: 240,
-						align: 'left',
-						fixed: 'right',
+					getActiveByPermission({
+						permissionList: [
+							PERMISSIONS.LENDERS.EDIT,
+							PERMISSIONS.LENDERS.CHANGE_STATUS,
+							PERMISSIONS.LENDERS.DELETE,
+						],
 						render: (_, record) => {
 							return (
 								<Space>
@@ -270,7 +271,7 @@ const Lenders = () => {
 								</Space>
 							);
 						},
-					},
+					}),
 				]}
 				filterList={filterList}
 				// scroll={{ x: scrollX }}

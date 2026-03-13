@@ -5,8 +5,9 @@ import { createRequest, formatTime } from '@repo/shared-methods/utils';
 import { useState } from 'react';
 import { userStatusColor } from '@repo/shared-methods/enum';
 import { message, Tooltip } from 'antd';
-
-const useContent = ({ handleSearch = () => {}, systemType }) => {
+import { useAuth } from '@repo/shared-methods/hooks';
+const useContent = ({ handleSearch = () => {}, systemType, PERMISSIONS }) => {
+	const { hasPermission, getActiveByPermission } = useAuth();
 	const { request } = createRequest();
 	const [loading, setLoading] = useState(false);
 	const handleDelete = async (id) => {
@@ -65,16 +66,16 @@ const useContent = ({ handleSearch = () => {}, systemType }) => {
 			title: 'Description',
 			dataIndex: 'description',
 			key: 'description',
-			width: 200,
+			// width: 200,
 			ellipsis: true,
 			render: (v) => v || '--',
 		},
-		{
-			title: 'Action',
-			dataIndex: 'operation',
-			width: 240,
-			align: 'left',
-			fixed: 'right',
+		getActiveByPermission({
+			permissionList: [
+				PERMISSIONS?.SETTING_ROLE?.EDIT,
+				PERMISSIONS?.SETTING_ROLE?.DELETE,
+				PERMISSIONS?.SETTING_ROLE?.ASSIGN,
+			],
 			render: (_, record) => (
 				<TableOperation
 					record={record}
@@ -112,10 +113,15 @@ const useContent = ({ handleSearch = () => {}, systemType }) => {
 						);
 						editItem.icon = null;
 						deleteItem.icon = null;
-						return [
-							editItem,
-							deleteItem,
-							{
+						const arr = [];
+						if (hasPermission(PERMISSIONS?.SETTING_ROLE?.EDIT)) {
+							arr.push(editItem);
+						}
+						if (hasPermission(PERMISSIONS?.SETTING_ROLE?.DELETE)) {
+							arr.push(deleteItem);
+						}
+						if (hasPermission(PERMISSIONS?.SETTING_ROLE?.ASSIGN)) {
+							arr.push({
 								label: (
 									<BtnPopUpModal
 										getContent={(setOpen) => (
@@ -135,12 +141,13 @@ const useContent = ({ handleSearch = () => {}, systemType }) => {
 									</BtnPopUpModal>
 								),
 								value: 'assign',
-							},
-						];
+							});
+						}
+						return arr;
 					}}
 				/>
 			),
-		},
+		}),
 	];
 
 	const assignColumns = [

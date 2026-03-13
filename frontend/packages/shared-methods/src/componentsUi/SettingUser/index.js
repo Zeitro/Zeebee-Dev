@@ -8,10 +8,11 @@ import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
  * @param {*} getNewMainModal 获取添加/编辑弹框（与封装的组件差距大，则直接引用自定义的组件）
  * @returns
  */
-const SettingUser = ({ getNewMainModal = () => {} }) => {
+const SettingUser = ({ getNewMainModal = () => {}, PERMISSIONS }) => {
 	const { columns, getRolesOptions, getUserStatusOptions, filterList, tableFilterRef } =
 		useContent({
 			getNewMainModal,
+			PERMISSIONS,
 		});
 
 	useDeferredSyncEffect({
@@ -27,7 +28,7 @@ const SettingUser = ({ getNewMainModal = () => {} }) => {
 			filterWrapClassName="px-8 pt-10 pb-8 flex-1 overflow-hidden"
 			ref={tableFilterRef}
 			columns={columns}
-			scroll={{ x: 1200 }}
+			scroll={{ x: 'max-content' }}
 			filterList={filterList}
 			hasFilterField={true}
 			api="/organization_user/page"

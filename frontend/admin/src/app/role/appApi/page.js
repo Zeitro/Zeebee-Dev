@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import TreeTable from '../components/TreeTable';
 import ApiMainModal from '../components/ApiMain';
 import { PlusOutlined } from '@ant-design/icons';
+import { PERMISSIONS } from '@config/permissions';
+import { PermissionSlot } from '@repo/shared-methods';
 const AppApi = ({ className }) => {
 	const [tabKey, setTabKey] = useState('Borrower');
 	const [open, setOpen] = useState(false);
@@ -60,17 +62,19 @@ const AppApi = ({ className }) => {
 				destroyOnHidden
 				size="large"
 			/>
-			<Button
-				type="primary"
-				onClick={() => {
-					setOpen(true);
-				}}
-				className="!absolute right-4 top-6"
-				size="large"
-				icon={<PlusOutlined />}
-			>
-				Add
-			</Button>
+			<PermissionSlot code={PERMISSIONS.API.ADD}>
+				<Button
+					type="primary"
+					onClick={() => {
+						setOpen(true);
+					}}
+					className="!absolute right-4 top-6"
+					size="large"
+					icon={<PlusOutlined />}
+				>
+					Add
+				</Button>
+			</PermissionSlot>
 			{open && (
 				<ApiMainModal
 					setOpen={setOpen}
