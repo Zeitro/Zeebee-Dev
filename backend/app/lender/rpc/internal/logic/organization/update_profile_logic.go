@@ -3,13 +3,14 @@ package organizationlogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/model"
 
 	"zeebee-backend/common/errorx"
 )
@@ -51,16 +52,14 @@ func (l *UpdateProfileLogic) UpdateProfile(in *lender.OrganizationUpdateProfileR
 	}
 
 	// Verify user is the organization owner
-	if organization.OwnerId != claim.UserId {
-		return nil, errorx.New("Only owner can update organization information")
+	if organization.Id != claim.OrganizationId {
+		return nil, errorx.New("You do not belong to this organization")
 	}
 
 	// Copy request fields to existing model (only copies non-zero fields)
-	err = copier.CopyWithOption(&organization, in.Data, copier.Option{
-		CaseSensitive: true,
-	})
+	err = copierx.Assign[lender.OrganizationUpdateProfileRequestData, model.Organization](in.Data, organization)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed to copy request data")
+		return nil, err
 	}
 
 	// Update the model
