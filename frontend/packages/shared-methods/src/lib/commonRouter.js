@@ -49,8 +49,21 @@ export const mergeMenu = (backendMenus, staticMenusSettings) => {
  * accessPaths - 访问权限路由
  */
 export const processMenus = (menus, menuSetting) => {
-	const permissionTags = [];
-	const accessPaths = [];
+	// ---start---首页数据（后端不会返回home数据，需自定义）
+	const homeRouter = {
+		path: '/',
+		name: 'Home',
+		resource_type: 'Menu',
+		status: 'Active',
+		isShow: false,
+		tag: 'Home',
+		id: 'Custom-home',
+	};
+	//---end---
+	const permissionTags = [homeRouter.tag];
+	const accessPaths = [homeRouter.path];
+	menus.unshift(homeRouter);
+
 	const filterAndExtract = (items) => {
 		return items
 			.filter((menu) => {
@@ -67,6 +80,7 @@ export const processMenus = (menus, menuSetting) => {
 			.map((menu) => {
 				const filteredChildren = menu.children ? filterAndExtract(menu.children) : [];
 				const setting = menuSetting?.[menu?.path] || {};
+				delete menu.children;
 				return {
 					...menu,
 					...(filteredChildren.length > 0 ? { children: filteredChildren } : {}),
@@ -76,7 +90,6 @@ export const processMenus = (menus, menuSetting) => {
 	};
 
 	const filteredMenus = filterAndExtract(menus);
-
 	return {
 		filteredMenus,
 		permissionTags,

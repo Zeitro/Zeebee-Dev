@@ -23,6 +23,7 @@ const useUser = ({ getNewMainModal, PERMISSIONS }) => {
 	const [searchValue, setSearchValue] = useState('');
 	const [role, setRole] = useState(null);
 	const [status, setStatus] = useState(null);
+
 	const filterList = [
 		{
 			filterType: 'input',
@@ -274,7 +275,7 @@ const useUser = ({ getNewMainModal, PERMISSIONS }) => {
 							</BtnPopUpModal>
 						</PermissionSlot>
 						{/* admin端默认创建的账号就是active状态，不用发送邀请确认 */}
-						<PermissionSlot permission={PERMISSIONS.SETTING_USER.SEND_INVITATION}>
+						<PermissionSlot code={PERMISSIONS.SETTING_USER.SEND_INVITATION}>
 							{record?.status === 'Not activated' && (
 								<BtnPopUpModal
 									config={{
@@ -293,7 +294,7 @@ const useUser = ({ getNewMainModal, PERMISSIONS }) => {
 								</BtnPopUpModal>
 							)}
 						</PermissionSlot>
-						<PermissionSlot permission={PERMISSIONS.SETTING_USER.CHANGE_STATUS}>
+						<PermissionSlot code={PERMISSIONS.SETTING_USER.CHANGE_STATUS}>
 							{record?.status === 'Active' && (
 								<DeleteBtn
 									title="Are you sure you want to disable this user?"

@@ -34,7 +34,7 @@ function getCssVarValue(name, key) {
  * 自定义antd主题，区分有无（导航栏和面包屑）的页面
  */
 export default function CustomizeAntdTheme({ children, fontFamily }) {
-	const { accessibleRoutes } = useUserStore();
+	const { accessibleRoutes, userInfo } = useUserStore();
 	const { accessPaths, access } = usePermissionStore();
 	const [antdToken, setAntdToken] = useState({});
 	const pathname = usePathname();
@@ -55,12 +55,12 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 
 	// 处理特殊情况（有导航栏的页面遇到token到期清空了，则重新登录）
 	useEffect(() => {
-		if (isPermissionPage && access === null) {
+		if (isPermissionPage && (access === null || userInfo === null)) {
 			router.replace('/login');
 			console.log('---退出---');
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [access, isPermissionPage]);
+	}, [access, isPermissionPage, userInfo]);
 
 	useDeferredSyncEffect({
 		deferred: () => {
