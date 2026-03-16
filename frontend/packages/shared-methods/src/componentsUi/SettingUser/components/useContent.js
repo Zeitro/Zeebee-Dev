@@ -188,6 +188,7 @@ const useUser = ({ getNewMainModal, PERMISSIONS }) => {
 			dataIndex: 'email',
 			key: 'email',
 			ellipsis: true,
+			minWidth: 200,
 		},
 		{
 			title: 'Name',
@@ -207,6 +208,7 @@ const useUser = ({ getNewMainModal, PERMISSIONS }) => {
 			dataIndex: 'roles',
 			key: 'roles',
 			ellipsis: true,
+			minWidth: 200,
 			render: (v) => (
 				<Space>
 					{v?.map((item, index) => (

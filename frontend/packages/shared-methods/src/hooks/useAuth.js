@@ -32,21 +32,41 @@ export const useAuth = () => {
 		[hasPermission],
 	);
 
+	// 通过按钮权限，获取table操作栏
 	const getActiveByPermission = useCallback(
-		({ permissionList, render, ...options }) => {
+		({ permissionList, buttonOptions, render, ...options }) => {
+			const minWidth = 100;
 			const active = {
 				title: 'Action',
 				dataIndex: 'operation',
 				align: 'left',
 				fixed: 'right',
-				minWidth: 100,
+				width: 'max-content',
+				minWidth,
 				render,
+				// 第一种传permissionList控制显示操作栏
 				hidden: permissionList?.length ? !hasAnyPermission(permissionList) : false,
 				...options,
 			};
+			// 设置按钮总宽度
+			if (buttonOptions?.length) {
+				// 第二种传buttonOptions控制显示操作栏，并设置操作栏总宽度
+				const permissionArr = buttonOptions.map((item) => item?.permission);
+				if (permissionArr?.length && !permissionList?.length) {
+					active.hidden = !hasAnyPermission(permissionArr);
+				}
+				const widths = buttonOptions.map((item) => {
+					if (item?.permission && hasPermission(item?.permission)) {
+						return item.width;
+					}
+					return 0;
+				});
+				const totalWidth = widths.reduce((a, b) => a + b, 0);
+				active.width = Math.max(minWidth, totalWidth);
+			}
 			return active;
 		},
-		[hasAnyPermission],
+		[hasAnyPermission, hasPermission],
 	);
 
 	const auth = useMemo(

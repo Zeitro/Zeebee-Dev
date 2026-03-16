@@ -162,7 +162,7 @@ const EditorTemplate = () => {
 						dataIndex: 'purpose',
 						key: 'purpose',
 						ellipsis: true,
-						width: 240,
+						minWidth: 240,
 					},
 					{
 						title: 'Template name',
@@ -181,14 +181,6 @@ const EditorTemplate = () => {
 					// 	render: (v) => v || '--',
 					// },
 					{
-						title: 'Description',
-						dataIndex: 'description',
-						key: 'description',
-						ellipsis: true,
-						render: (v) => v || '--',
-						width: 300,
-					},
-					{
 						title: 'Created time',
 						dataIndex: 'created_at',
 						key: 'created_at',
@@ -197,6 +189,14 @@ const EditorTemplate = () => {
 						defaultSortOrder: 'descend',
 						render: (v) => formatTime(v) || '--',
 						width: 180,
+					},
+					{
+						title: 'Description',
+						dataIndex: 'description',
+						key: 'description',
+						ellipsis: true,
+						render: (v) => v || '--',
+						width: 300,
 					},
 					{
 						title: 'Status',

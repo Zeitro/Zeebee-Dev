@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { userStatusColor } from '@repo/shared-methods/enum';
 import { message, Tooltip } from 'antd';
 import { useAuth } from '@repo/shared-methods/hooks';
+import { permission } from 'process';
 const useContent = ({ handleSearch = () => {}, systemType, PERMISSIONS }) => {
 	const { hasPermission, getActiveByPermission } = useAuth();
 	const { request } = createRequest();
@@ -33,12 +34,12 @@ const useContent = ({ handleSearch = () => {}, systemType, PERMISSIONS }) => {
 			dataIndex: 'name',
 			key: 'name',
 			ellipsis: true,
+			minWidth: 300,
 		},
 		{
 			title: 'Status',
 			dataIndex: 'status',
 			key: 'status',
-			width: 100,
 			ellipsis: true,
 			align: 'center',
 			render: (v) => (
@@ -59,22 +60,30 @@ const useContent = ({ handleSearch = () => {}, systemType, PERMISSIONS }) => {
 			dataIndex: 'created_at',
 			key: 'created_at',
 			ellipsis: true,
-			width: 180,
 			render: (v) => formatTime(v) || '--',
 		},
 		{
 			title: 'Description',
 			dataIndex: 'description',
 			key: 'description',
-			// width: 200,
+			minWidth: 300,
 			ellipsis: true,
 			render: (v) => v || '--',
 		},
 		getActiveByPermission({
-			permissionList: [
-				PERMISSIONS?.SETTING_ROLE?.EDIT,
-				PERMISSIONS?.SETTING_ROLE?.DELETE,
-				PERMISSIONS?.SETTING_ROLE?.ASSIGN,
+			buttonOptions: [
+				{
+					permission: PERMISSIONS?.SETTING_ROLE?.EDIT,
+					width: 62,
+				},
+				{
+					permission: PERMISSIONS?.SETTING_ROLE?.DELETE,
+					width: 77,
+				},
+				{
+					permission: PERMISSIONS?.SETTING_ROLE?.ASSIGN,
+					width: 63,
+				},
 			],
 			render: (_, record) => (
 				<TableOperation
