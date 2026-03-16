@@ -873,16 +873,22 @@ type RoleAllResponse struct {
 	List []*RoleEntity `json:"list"`
 }
 
+type RoleAndResourceRelation struct {
+	RoleId     int64  `json:"role_id,optional" validate:"min=0"`
+	ResourceId int64  `json:"resource_id" validate:"min=1"`
+	DataScope  string `json:"data_scope" validate:"oneof=All Own"`
+}
+
 type RoleAssignOrganizationUserRequest struct {
 	Id                  int64   `path:"id" validate:"required,gt=0"`
 	OrganizationUserIds []int64 `json:"organization_user_ids,optional" validate:"dive,gt=0"`
 }
 
 type RoleCreateRequest struct {
-	Name        string  `json:"name" validate:"required,min=2,max=100,ne='admin'"`
-	Description string  `json:"description,optional" validate:"max=255"`
-	Status      string  `json:"status" validate:"required,oneof=Active Inactive"`
-	ResourceIds []int64 `json:"resource_ids,optional"`
+	Name        string                    `json:"name" validate:"required,min=2,max=100,ne='admin'"`
+	Description string                    `json:"description,optional" validate:"max=255"`
+	Status      string                    `json:"status" validate:"required,oneof=Active Inactive"`
+	Resources   []RoleAndResourceRelation `json:"resources,optional" validate:"dive"`
 }
 
 type RoleDeleteRequest struct {
@@ -926,11 +932,11 @@ type RolePageSort struct {
 }
 
 type RoleUpdateRequest struct {
-	Id          int64   `path:"id" validate:"required,gt=0"`
-	Name        string  `json:"name" validate:"required,min=2,max=100,ne='admin'"`
-	Description string  `json:"description,optional" validate:"max=255"`
-	Status      string  `json:"status" validate:"required,oneof=Active Inactive"`
-	ResourceIds []int64 `json:"resource_ids,optional"`
+	Id          int64                     `path:"id" validate:"required,gt=0"`
+	Name        string                    `json:"name" validate:"required,min=2,max=100,ne='admin'"`
+	Description string                    `json:"description,optional" validate:"max=255"`
+	Status      string                    `json:"status" validate:"required,oneof=Active Inactive"`
+	Resources   []RoleAndResourceRelation `json:"resources,optional" validate:"dive"`
 }
 
 type RoleUpdateStatusRequest struct {
