@@ -6896,7 +6896,6 @@
               "type": "object",
               "required": [
                 "name",
-                "description",
                 "status"
               ],
               "properties": {
@@ -7776,7 +7775,6 @@
               "type": "object",
               "required": [
                 "name",
-                "description",
                 "status"
               ],
               "properties": {
@@ -9238,7 +9236,7 @@
       }
     }
   },
-  "x-date": "2026-03-12 15:24:44",
+  "x-date": "2026-03-16 14:01:43",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

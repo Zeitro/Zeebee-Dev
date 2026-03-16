@@ -917,7 +917,7 @@ type RoleAssignOrganizationUserRequest struct {
 
 type RoleCreateRequest struct {
 	Name        string                    `json:"name" validate:"required,min=2,max=100,ne='admin'"`
-	Description string                    `json:"description" validate:"max=255"`
+	Description string                    `json:"description,optional" validate:"max=255"`
 	Status      string                    `json:"status" validate:"required,oneof=Active Disabled"`
 	Resources   []RoleAndResourceRelation `json:"resources,optional" validate:"dive"`
 }
@@ -977,7 +977,7 @@ type RoleSwitchStatusRequest struct {
 type RoleUpdateRequest struct {
 	Id          int64                     `path:"id" validate:"required,gt=0"`
 	Name        string                    `json:"name" validate:"required,min=2,max=100,ne='admin'"`
-	Description string                    `json:"description" validate:"max=255"`
+	Description string                    `json:"description,optional" validate:"max=255"`
 	Status      string                    `json:"status" validate:"required,oneof=Active Disabled"`
 	Resources   []RoleAndResourceRelation `json:"resources,optional" validate:"dive"`
 }
