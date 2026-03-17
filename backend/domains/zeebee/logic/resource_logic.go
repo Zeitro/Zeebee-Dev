@@ -31,7 +31,7 @@ func NewResourceLogic(baseLogic *BaseLogic, authTopicMap map[constants.UserType]
 
 // ResourceTree returns resource tree
 func (l *ResourceLogic) ResourceTree(ctx context.Context, resourceType constants.UserType) (trees []*dto.ResourceTreeDto, err error) {
-	results, err := l.repos.ResourceRepo.All(ctx, resourceType)
+	results, err := l.repos.ResourceRepo.All(ctx, resourceType, true)
 	if err != nil {
 		return
 	}

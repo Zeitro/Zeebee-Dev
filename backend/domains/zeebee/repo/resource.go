@@ -24,10 +24,14 @@ func NewResourceRepo(db *gorm.DB) *ResourceRepo {
 }
 
 // GetResource return all resources
-func (repo *ResourceRepo) All(ctx context.Context, apiType constants.UserType) (result []*model.Resource, err error) {
-	err = repo.Client(ctx).
-		Where("type = ?", apiType).
-		Order("parent_id asc").
+func (repo *ResourceRepo) All(ctx context.Context, apiType constants.UserType, withPreload bool) (result []*model.Resource, err error) {
+	query := repo.Client(ctx).
+		Where("type = ?", apiType)
+	if withPreload {
+		query = query.Preload("Apis")
+	}
+
+	err = query.Order("parent_id asc").
 		Order("sort_order asc").
 		Find(&result).Error
 	return result, errorx.WithStack(err)

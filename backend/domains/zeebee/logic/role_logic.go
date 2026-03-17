@@ -293,7 +293,7 @@ func (l *RoleLogic) Detail(ctx context.Context, id int64, organizationId int64, 
 	if role.Name == constants.AdminRoleName {
 
 		var resources []*model.Resource
-		resources, err = l.repos.ResourceRepo.All(ctx, roleType)
+		resources, err = l.repos.ResourceRepo.All(ctx, roleType, false)
 		if err != nil {
 			return nil, err
 		}
