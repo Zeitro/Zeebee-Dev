@@ -37,7 +37,7 @@ func NewSyncDataLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SyncData
 	}
 }
 
-func (l *SyncDataLogic) SyncData(in *admin.EmptyRequest) (resp *admin.EmptyResponse, err error) {
+func (l *SyncDataLogic) SyncData(_ *admin.EmptyRequest) (resp *admin.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -52,6 +52,10 @@ func (l *SyncDataLogic) SyncData(in *admin.EmptyRequest) (resp *admin.EmptyRespo
 	// if err != nil {
 	// 	return nil, err
 	// }
+	err = l.syncResource()
+	if err != nil {
+		return nil, err
+	}
 
 	return &admin.EmptyResponse{}, nil
 }
@@ -63,12 +67,12 @@ type ApiGroup struct {
 }
 
 type ApiItem struct {
-	Name               string `json:"name"`
-	Path               string `json:"path"`
-	Method             string `json:"method"`
-	Description        string `json:"description"`
-	AuthRequired       bool   `json:"auth_required"`
-	PermissionRequired bool   `json:"permission_required"`
+	Name               string              `json:"name"`
+	Path               string              `json:"path"`
+	Method             constants.ApiMethod `json:"method"`
+	Description        string              `json:"description"`
+	AuthRequired       bool                `json:"auth_required"`
+	PermissionRequired bool                `json:"permission_required"`
 }
 
 func (l *SyncDataLogic) syncApi() (err error) {
@@ -176,9 +180,9 @@ func (l *SyncDataLogic) handleMenu(ctx context.Context, resource *dto.ResourceTr
 		}
 		return
 	}
-	var addButtonName string = "Add"
-	var editButtonName string = "Edit"
-	var deleteButtonName string = "Delete"
+	var addButtonName = "Add"
+	var editButtonName = "Edit"
+	var deleteButtonName = "Delete"
 
 	// handle menu
 	hasCreateButton := false
@@ -257,3 +261,110 @@ func (l *SyncDataLogic) handleMenu(ctx context.Context, resource *dto.ResourceTr
 }
 
 // ========== create button for menu end ==========
+
+// =========== sync resource start ==========
+type Resource struct {
+	// Id              int64                  `json:"id"`
+	// ParentId        int64                  `json:"parent_id"`
+	Type            constants.UserType     `json:"type"`
+	ResourceType    constants.ResourceType `json:"resource_type"`
+	Name            string                 `json:"name"`
+	Path            string                 `json:"path"`
+	Icon            string                 `json:"icon"`
+	Tag             string                 `json:"tag"`
+	IsShow          bool                   `json:"is_show"`
+	Status          constants.CommonStatus `json:"status"`
+	SortOrder       int32                  `json:"sort_order"`
+	EnableDataScope bool                   `json:"enable_data_scope"`
+	Description     string                 `json:"description"`
+	IsPublic        bool                   `json:"is_public"`
+	Children        []*Resource            `json:"children"`
+	Apis            []*ResourceApi         `json:"apis"`
+}
+
+type ResourceApi struct {
+	// Id                 int64                  `json:"id"`
+	// ParentId           int64                  `json:"parent_id"`
+	Name               string                 `json:"name"`
+	Path               string                 `json:"path"`
+	Method             constants.ApiMethod    `json:"method"`
+	Status             constants.CommonStatus `json:"status"`
+	Description        string                 `json:"description"`
+	Type               constants.UserType     `json:"type"`
+	SortOrder          int32                  `json:"sort_order"`
+	AuthRequired       bool                   `json:"auth_required"`
+	PermissionRequired bool                   `json:"permission_required"`
+}
+
+func (l *SyncDataLogic) syncResource() (err error) {
+	resourceMap := map[constants.UserType]*Resource{}
+	err = json.Unmarshal(static.ResourceStatic, &resourceMap)
+	if err != nil {
+		return errorx.Wrap(err, "Failed to unmarshal resource content")
+	}
+	for _, resources := range resourceMap {
+		err = l.handleResource(l.ctx, resources, 0)
+		if err != nil {
+			return err
+		}
+	}
+
+	return err
+}
+
+func (l *SyncDataLogic) handleResource(ctx context.Context, resource *Resource, parentId int64) (err error) {
+	apiModels := slice.FilterMap(resource.Apis, func(index int, resourceApi *ResourceApi) (*model.Api, bool) {
+		if len(resourceApi.Path) == 0 || len(resourceApi.Method) == 0 {
+			return nil, false
+		}
+		api, _ := l.svcCtx.ApiRepo.FindOneByColumns(ctx, map[string]interface{}{
+			"path":   resourceApi.Path,
+			"method": resourceApi.Method,
+			"type":   resource.Type,
+		})
+		if api == nil || api.Id == 0 {
+			return nil, false
+		}
+		return api, true
+	})
+	resourceModel, _ := l.svcCtx.ResourceRepo.FindOneByColumns(ctx, map[string]interface{}{
+		"type":          resource.Type,
+		"resource_type": resource.ResourceType,
+		"tag":           resource.Tag,
+		"path":          resource.Path,
+		"name":          resource.Name,
+	})
+	if resourceModel == nil || resourceModel.Id == 0 {
+		//  create new one
+		input := &model.Resource{
+			ParentId:        parentId,
+			Type:            resource.Type,
+			ResourceType:    resource.ResourceType,
+			Name:            resource.Name,
+			Path:            resource.Path,
+			Icon:            resource.Icon,
+			Tag:             resource.Tag,
+			IsShow:          resource.IsShow,
+			Status:          resource.Status,
+			SortOrder:       resource.SortOrder,
+			EnableDataScope: resource.EnableDataScope,
+			Description:     resource.Description,
+			IsPublic:        resource.IsPublic,
+			Apis:            apiModels,
+		}
+		resourceModel, err = l.svcCtx.ResourceRepo.Create(ctx, input)
+		if err != nil {
+			return errorx.Wrap(err, "Failed to create resource")
+		}
+	}
+	for _, child := range resource.Children {
+		err = l.handleResource(ctx, child, resourceModel.Id)
+		if err != nil {
+			return err
+		}
+	}
+
+	return err
+}
+
+// =========== sync resource end ==========

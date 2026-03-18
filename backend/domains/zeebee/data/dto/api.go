@@ -11,7 +11,7 @@ type ApiEntityDto struct {
 	ParentId           int64                  `json:"parent_id"`
 	Name               string                 `json:"name"`
 	Path               string                 `json:"path"`
-	Method             string                 `json:"method"`
+	Method             constants.ApiMethod    `json:"method"`
 	Status             constants.CommonStatus `json:"status"`
 	Description        string                 `json:"description"`
 	Type               constants.UserType     `json:"type"`
@@ -27,7 +27,7 @@ type ApiCreateRequestDto struct {
 	ParentId           int64                  `json:"parent_id"`
 	Name               string                 `json:"name"`
 	Path               string                 `json:"path"`
-	Method             string                 `json:"method"`
+	Method             constants.ApiMethod    `json:"method"`
 	Description        string                 `json:"description"`
 	Type               constants.UserType     `json:"type"`
 	Status             constants.CommonStatus `json:"status"`
@@ -41,7 +41,7 @@ type ApiUpdateRequestDto struct {
 	ParentId           int64                  `json:"parent_id"`
 	Name               string                 `json:"name"`
 	Path               string                 `json:"path"`
-	Method             string                 `json:"method"`
+	Method             constants.ApiMethod    `json:"method"`
 	Description        string                 `json:"description"`
 	Type               constants.UserType     `json:"type"`
 	SortOrder          int32                  `json:"sort_order"`
