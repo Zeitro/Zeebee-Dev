@@ -15,3 +15,7 @@ ALTER TABLE "public"."resources"
 
 ALTER TABLE "public"."resources"
     ADD COLUMN "is_public" bool NOT NULL DEFAULT false;
+
+INSERT INTO "public"."apis" ("type", "name", "path", "method", "description", "status", "sort_order", "auth_required",
+                             "permission_required")
+VALUES ('Admin', 'sync data', '/api/v1/sync_data', 'GET', 'sync data', 'Active', 4, 'f', 'f');
