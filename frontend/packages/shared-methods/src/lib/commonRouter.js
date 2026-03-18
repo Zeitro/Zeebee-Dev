@@ -49,20 +49,8 @@ export const mergeMenu = (backendMenus, staticMenusSettings) => {
  * accessPaths - 访问权限路由
  */
 export const processMenus = (menus, menuSetting) => {
-	// ---start---首页数据（后端不会返回home数据，需自定义）
-	const homeRouter = {
-		path: '/',
-		name: 'Home',
-		resource_type: 'Menu',
-		status: 'Active',
-		isShow: false,
-		tag: 'Home',
-		id: 'Custom-home',
-	};
-	//---end---
-	const permissionTags = [homeRouter.tag];
-	const accessPaths = [homeRouter.path];
-	menus.unshift(homeRouter);
+	const permissionTags = [];
+	const accessPaths = [];
 
 	const filterAndExtract = (items) => {
 		return items

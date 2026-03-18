@@ -1,6 +1,6 @@
 'use client';
 import { useDeferredSyncEffect, useDisUpdateEffect } from '@repo/shared-methods/hooks';
-import { Radio, Tree } from 'antd';
+import { Radio, Tooltip, Tree } from 'antd';
 import { useEffect, useState, useMemo } from 'react';
 
 const MenuPermission = ({
@@ -19,14 +19,17 @@ const MenuPermission = ({
 	const [dataScope, setDataScope] = useState({});
 
 	// valueArr获取所有选项的值，方便全选；expandedArr获取所有有子级的选项的值，方便展开；
-	const getAllValueAndExpandedKeys = (list) => {
+	const getAllValueAndExpandedKeys = (list, isSelectAll) => {
 		let valueArr = [];
 		let expandedArr = [];
 		list.map((item) => {
-			valueArr.push(item[keyName]);
+			// 全选选中所有，取消全选时需要排除公共权限
+			if (isSelectAll || (!isSelectAll && item.is_public)) {
+				valueArr.push(item[keyName]);
+			}
 			if (item?.[childrenName]?.length) {
 				expandedArr.push(item[keyName]);
-				const childrenInfo = getAllValueAndExpandedKeys(item[childrenName]);
+				const childrenInfo = getAllValueAndExpandedKeys(item[childrenName], isSelectAll);
 				if (childrenInfo?.valueArr?.length) {
 					valueArr = valueArr.concat(childrenInfo?.valueArr);
 				}
@@ -40,15 +43,21 @@ const MenuPermission = ({
 			expandedArr,
 		};
 	};
-	// eslint-disable-next-line react-hooks/preserve-manual-memoization
-	const info = useMemo(() => getAllValueAndExpandedKeys(treeData), [treeData]);
+	const info = useMemo(
+		() => getAllValueAndExpandedKeys(treeData, isSelectAll),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[treeData, isSelectAll],
+	);
 
 	// 构建 parentMap 和 childrenMap，便于快速查父/子
-	const { parentMap, childrenMap } = useMemo(() => {
+	const { parentMap, childrenMap, nodeMap } = useMemo(() => {
 		const pMap = {};
 		const cMap = {};
+		const nMap = {};
 		const walk = (nodes, parent) => {
 			nodes.forEach((n) => {
+				// 存储完整节点以便后续根据 key 查属性（如 is_public）
+				nMap[n[keyName]] = n;
 				if (parent) {
 					pMap[n[keyName]] = parent[keyName];
 				}
@@ -63,7 +72,7 @@ const MenuPermission = ({
 			});
 		};
 		walk(treeData, null);
-		return { parentMap: pMap, childrenMap: cMap };
+		return { parentMap: pMap, childrenMap: cMap, nodeMap: nMap };
 	}, [treeData, keyName, childrenName]);
 
 	// 详情时的初始化数据
@@ -98,7 +107,8 @@ const MenuPermission = ({
 	useDisUpdateEffect(() => {
 		const updateValues = () => {
 			let arr = [];
-			if (isSelectAll) {
+			// 必须判断===false，初始化为null时不生效（只能点击按钮才触发）
+			if (isSelectAll || isSelectAll === false) {
 				arr = info?.valueArr || [];
 				const checkedList =
 					arr?.map((i) => {
@@ -109,10 +119,6 @@ const MenuPermission = ({
 					}) || [];
 				setCheckedKeys(arr);
 				onChange?.(checkedList);
-			} else {
-				arr = [];
-				setCheckedKeys([]);
-				onChange?.([]);
 			}
 		};
 		updateValues();
@@ -135,20 +141,28 @@ const MenuPermission = ({
 		if (isChecked) {
 			// 勾选节点：添加节点本身
 			if (nodeKey !== undefined && nodeKey !== null) newSet.add(nodeKey);
-			// 如果是子节点，确保父节点也被勾选
-			const parent = parentMap[nodeKey];
-			if (parent) newSet.add(parent);
+			// 如果是子节点，确保该节点的所有祖先都被勾选
+			let p = parentMap[nodeKey];
+			while (p) {
+				newSet.add(p);
+				p = parentMap[p];
+			}
 		} else {
 			// 取消勾选节点：移除该节点
 			if (nodeKey !== undefined && nodeKey !== null) newSet.delete(nodeKey);
 
 			// 如果取消的是父节点，则需要取消其所有后代子节点
+			// 但保留后端标记为 is_public 的节点（不可取消）
 			const children = childrenMap[nodeKey] || [];
 			if (children && children.length) {
 				const stack = [...children];
 				while (stack.length) {
 					const c = stack.pop();
-					newSet.delete(c);
+					const childNode = nodeMap ? nodeMap[c] : null;
+					// 只有在节点不存在或不是公共权限时才删除
+					if (!childNode || !childNode.is_public) {
+						newSet.delete(c);
+					}
 					const cc = childrenMap[c];
 					if (cc && cc.length) stack.push(...cc);
 				}
@@ -181,14 +195,14 @@ const MenuPermission = ({
 			onCheck={handleCheck}
 			titleRender={(item) => {
 				const title = (
-					<>
+					<Tooltip title={item?.description} placement="right">
 						{item[titleName]}
 						{item?.resource_type ? (
 							<span className="text-base-label pl-1">({item.resource_type})</span>
 						) : (
 							''
 						)}
-					</>
+					</Tooltip>
 				);
 				return item?.enable_data_scope ? (
 					<div className="flex items-center justify-between px-2 border-b border-base-border">

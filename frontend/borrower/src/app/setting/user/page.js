@@ -1,6 +1,7 @@
 'use client';
 import CommonSettingUser from '@repo/shared-methods/componentsUi/SettingUser';
-const SettingUser = () => <CommonSettingUser />;
+import { PERMISSIONS } from '@config/permissions';
+const SettingUser = () => <CommonSettingUser PERMISSIONS={PERMISSIONS} />;
 export default SettingUser;
 // import { useRef, useState } from 'react';
 // import { createRequest } from '@repo/shared-methods/utils';

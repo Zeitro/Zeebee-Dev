@@ -119,6 +119,7 @@ const ResourceMain = ({ setOpen, rowData, eventBusPrefix, api }) => {
 				disabled={confirmLoading}
 				scrollToFirstError
 				initialValues={{
+					is_public: false,
 					status: 'Active',
 					enable_data_scope: false,
 					sort_order: 6,
@@ -126,69 +127,8 @@ const ResourceMain = ({ setOpen, rowData, eventBusPrefix, api }) => {
 				}}
 			>
 				<Row gutter={16}>
-					<Col md={18}>
-						<Form.Item
-							label="Name"
-							name={['name']}
-							rules={[
-								{
-									required: true,
-								},
-							]}
-						>
-							<Input placeholder="Enter name" />
-						</Form.Item>
-					</Col>
-					<Col md={6}>
-						<Form.Item label="Resource Type" name={['resource_type']}>
-							<Select
-								options={[
-									{ value: 'Menu', label: 'Menu' },
-									{ value: 'Button', label: 'Button' },
-								]}
-								placeholder="Select"
-							/>
-						</Form.Item>
-					</Col>
-					<Col md={24}>
-						<Form.Item
-							label="Path"
-							name={['path']}
-							extra="When adding a group title menu without any actual routes, the path should not include '/'."
-						>
-							<Input placeholder="Enter path" />
-						</Form.Item>
-					</Col>
 					<Col md={12}>
-						<Form.Item
-							label="Tag"
-							name={['tag']}
-							rules={[
-								{
-									required: true,
-								},
-							]}
-							extra="Loan:Create"
-						>
-							<Input placeholder="Enter tag" />
-						</Form.Item>
-					</Col>
-
-					<Col md={12}>
-						<Form.Item label="Icon" name={['icon']}>
-							<Select options={iconList} placeholder="Select icon" />
-						</Form.Item>
-					</Col>
-					<Col md={12}>
-						<Form.Item
-							label="System type"
-							name={['type']}
-							rules={[
-								{
-									required: true,
-								},
-							]}
-						>
+						<Form.Item label="System type" name={['type']} rules={[{ required: true }]}>
 							<Select
 								options={systemTypeOptions}
 								placeholder="Select system type"
@@ -201,15 +141,7 @@ const ResourceMain = ({ setOpen, rowData, eventBusPrefix, api }) => {
 						</Form.Item>
 					</Col>
 					<Col md={12}>
-						<Form.Item
-							label="Status"
-							name={['status']}
-							rules={[
-								{
-									required: true,
-								},
-							]}
-						>
+						<Form.Item label="Status" name={['status']} rules={[{ required: true }]}>
 							<Select
 								options={[
 									{ value: 'Active', label: 'Active' },
@@ -235,16 +167,61 @@ const ResourceMain = ({ setOpen, rowData, eventBusPrefix, api }) => {
 							/>
 						</Form.Item>
 					</Col>
+					<Col md={18}>
+						<Form.Item label="Name" name={['name']} rules={[{ required: true }]}>
+							<Input placeholder="Enter name" />
+						</Form.Item>
+					</Col>
+					<Col md={6}>
+						<Form.Item
+							label="Resource Type"
+							name={['resource_type']}
+							rules={[{ required: true }]}
+						>
+							<Select
+								options={[
+									{ value: 'Menu', label: 'Menu' },
+									{ value: 'Button', label: 'Button' },
+								]}
+								placeholder="Select"
+							/>
+						</Form.Item>
+					</Col>
+					{resource_type === 'Menu' && (
+						<Col md={24}>
+							<Form.Item
+								label="Path"
+								name={['path']}
+								rules={[{ required: true }]}
+								extra="When adding a group title menu without any actual routes, the path should not include '/'."
+							>
+								<Input placeholder="Enter path" />
+							</Form.Item>
+						</Col>
+					)}
+					<Col md={12}>
+						<Form.Item
+							label="Tag"
+							name={['tag']}
+							rules={[{ required: true }]}
+							extra="Loan:Create"
+						>
+							<Input placeholder="Enter tag" />
+						</Form.Item>
+					</Col>
+
+					<Col md={12}>
+						<Form.Item label="Icon" name={['icon']}>
+							<Select options={iconList} placeholder="Select icon" />
+						</Form.Item>
+					</Col>
+
 					{resource_type === 'Menu' && (
 						<Col md={12}>
 							<Form.Item
 								label="Show menu"
 								name={['is_show']}
-								rules={[
-									{
-										required: true,
-									},
-								]}
+								rules={[{ required: true }]}
 								extra="Yes: Show this menu in the sidebar / No: Hide."
 							>
 								<Radio.Group
@@ -259,12 +236,22 @@ const ResourceMain = ({ setOpen, rowData, eventBusPrefix, api }) => {
 						<Form.Item
 							label="Configurable data permissions"
 							name={['enable_data_scope']}
-							rules={[
-								{
-									required: true,
-								},
-							]}
+							rules={[{ required: true }]}
 							extra="Yes: Show,The system can be configured by itself.  No: Hidden configuration"
+						>
+							<Radio.Group
+								options={yesNoOptions}
+								block
+								className="[&_.ant-radio-wrapper]:!justify-start"
+							/>
+						</Form.Item>
+					</Col>
+					<Col md={12}>
+						<Form.Item
+							label="Is public"
+							name={['is_public']}
+							rules={[{ required: true }]}
+							extra="Yes: Available to all users.  No: Not public, requires permission verification."
 						>
 							<Radio.Group
 								options={yesNoOptions}
@@ -276,15 +263,6 @@ const ResourceMain = ({ setOpen, rowData, eventBusPrefix, api }) => {
 					<Col md={12}>
 						<Form.Item label="Order" name={['sort_order']} rules={[{ required: true }]}>
 							<InputNumber placeholder="Enter order" style={{ width: '100%' }} />
-						</Form.Item>
-					</Col>
-
-					<Col {...titleCol}>
-						<Form.Item label="Description" name={['description']}>
-							<TextArea
-								placeholder="Enter description"
-								autoSize={{ minRows: 4, maxRows: 4 }}
-							/>
 						</Form.Item>
 					</Col>
 					<Col {...titleCol}>
@@ -326,6 +304,18 @@ const ResourceMain = ({ setOpen, rowData, eventBusPrefix, api }) => {
 										</Tag>
 									);
 								}}
+							/>
+						</Form.Item>
+					</Col>
+					<Col {...titleCol}>
+						<Form.Item
+							label="Description"
+							name={['description']}
+							extra="When the user selects the menu, the hover displays the Description content"
+						>
+							<TextArea
+								placeholder="Enter description"
+								autoSize={{ minRows: 4, maxRows: 4 }}
 							/>
 						</Form.Item>
 					</Col>

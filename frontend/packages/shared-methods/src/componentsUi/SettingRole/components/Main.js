@@ -1,27 +1,53 @@
 'use client';
-import React, { useState, useCallback, useRef } from 'react';
-import { Row, Col, Form, Select, Input, Spin, Checkbox, Radio, message, Space } from 'antd';
+import React, { useState, useCallback } from 'react';
+import { Row, Col, Form, Select, Input, Spin, Checkbox, message, Space } from 'antd';
 import { createRequest } from '@repo/shared-methods/utils';
 import { titleCol } from '@repo/shared-methods/enum';
 import { NewModal, FieldTips } from '@repo/shared-methods';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 import MenuPermission from './MenuPermission';
 const { TextArea } = Input;
-const selectAllKey = 'All';
-const foldKey = 'Fold';
 const MainModal = ({ setOpen, rowData, handleSearch, systemType }) => {
 	const { request } = createRequest();
 	const [form] = Form.useForm();
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const [loading, setLoading] = useState(false);
-	const [operationsValue, setOperationsValue] = useState([]);
+	const [isFold, setIsFold] = useState(false);
+	const [isSelectAll, setIsSelectAll] = useState(null); //必须为null，避免初始化时触发了（只能点击按钮触发）
 	const [menuList, setMenuList] = useState([]);
+
+	const updateMenuList = (list, initCheckedArr = []) => {
+		const menus = list.map((item) => {
+			if (item.is_public) {
+				item.disableCheckbox = true;
+				initCheckedArr.push({
+					resource_id: item.id,
+					data_scope: item.enable_data_scope,
+				});
+			}
+			if (item.children) {
+				const obj = updateMenuList(item.children, initCheckedArr);
+				item.children = obj.menus;
+			}
+			return item;
+		});
+		return {
+			menus,
+			initCheckedArr,
+		};
+	};
 
 	const handleMenuDetails = useCallback(async () => {
 		const payload = new URLSearchParams({ type: systemType });
 		const url = `/resource/tree?${payload}`;
 		const res = await request(url);
-		setMenuList(res?.list);
+		const menuInfo = updateMenuList(res?.list || []);
+		if (!rowData?.id) {
+			form.setFieldsValue({
+				resources: menuInfo?.initCheckedArr,
+			});
+		}
+		setMenuList(menuInfo?.menus);
 		setLoading(false);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [systemType]);
@@ -63,15 +89,6 @@ const MainModal = ({ setOpen, rowData, handleSearch, systemType }) => {
 		} catch {
 			setConfirmLoading(false);
 		}
-	};
-
-	const handleChangeAction = (e, keyName) => {
-		setOperationsValue((v) => {
-			if (e.target.checked) {
-				return [...v, keyName];
-			}
-			return v.filter((item) => item !== keyName);
-		});
 	};
 
 	useDeferredSyncEffect({
@@ -153,33 +170,17 @@ const MainModal = ({ setOpen, rowData, handleSearch, systemType }) => {
 								/>
 							</Form.Item>
 						</Col>
-						{/* <Col {...titleCol} className="!text-xl font-medium pb-5 text-base-gray">
-							Role permissions
-						</Col> */}
-						{/* <Col md={24}>
-							<Form.Item
-								label="Date permission"
-								name={['permission']}
-								rules={[
-									{
-										required: true,
-									},
-								]}
-							>
-								<Select options={[]} placeholder="Select role" />
-							</Form.Item>
-						</Col> */}
 						<Col md={24} className="relative">
 							<Space className="absolute top-0 right-0">
 								<Checkbox
-									checked={operationsValue?.includes(foldKey)}
-									onChange={(e) => handleChangeAction(e, foldKey)}
+									checked={isFold}
+									onChange={(e) => setIsFold(e.target.checked)}
 								>
 									Fold
 								</Checkbox>
 								<Checkbox
-									checked={operationsValue?.includes(selectAllKey)}
-									onChange={(e) => handleChangeAction(e, selectAllKey)}
+									checked={isSelectAll}
+									onChange={(e) => setIsSelectAll(e.target.checked)}
 								>
 									Select all
 								</Checkbox>
@@ -212,8 +213,8 @@ const MainModal = ({ setOpen, rowData, handleSearch, systemType }) => {
 							>
 								<MenuPermission
 									treeData={menuList}
-									isFold={operationsValue.includes(foldKey)}
-									isSelectAll={operationsValue.includes(selectAllKey)}
+									isFold={isFold}
+									isSelectAll={isSelectAll}
 									className="border border-base-border rounded-lg !py-4 !px-4 [&_.ant-tree-treenode]:!mb-2"
 									titleName="name"
 									keyName="id"

@@ -79,7 +79,7 @@ const useUser = ({ getNewMainModal, PERMISSIONS }) => {
 		},
 		{
 			filterType: 'button',
-			hidden: !hasPermission(PERMISSIONS.SETTING_USER.ADD),
+			hidden: !hasPermission(PERMISSIONS?.SETTING_USER?.ADD),
 			children: (
 				<BtnPopUpModal
 					getContent={(setOpen) => {
@@ -244,16 +244,16 @@ const useUser = ({ getNewMainModal, PERMISSIONS }) => {
 		},
 		getActiveByPermission({
 			permissionList: [
-				PERMISSIONS.SETTING_USER.EDIT,
-				PERMISSIONS.SETTING_USER?.SEND_INVITATION,
-				PERMISSIONS.SETTING_USER.CHANGE_STATUS,
-				PERMISSIONS.SETTING_USER.DELETE,
+				PERMISSIONS?.SETTING_USER?.EDIT,
+				PERMISSIONS?.SETTING_USER?.SEND_INVITATION,
+				PERMISSIONS?.SETTING_USER?.CHANGE_STATUS,
+				PERMISSIONS?.SETTING_USER?.DELETE,
 			],
 			render: (_, record) => {
 				const isDisabled = record?.is_owner;
 				return (
 					<Space>
-						<PermissionSlot code={PERMISSIONS.SETTING_USER.EDIT}>
+						<PermissionSlot code={PERMISSIONS?.SETTING_USER?.EDIT}>
 							<BtnPopUpModal
 								getContent={(setOpen) => {
 									const mainProps = {
@@ -275,7 +275,7 @@ const useUser = ({ getNewMainModal, PERMISSIONS }) => {
 							</BtnPopUpModal>
 						</PermissionSlot>
 						{/* admin端默认创建的账号就是active状态，不用发送邀请确认 */}
-						<PermissionSlot code={PERMISSIONS.SETTING_USER.SEND_INVITATION}>
+						<PermissionSlot code={PERMISSIONS?.SETTING_USER?.SEND_INVITATION}>
 							{record?.status === 'Not activated' && (
 								<BtnPopUpModal
 									config={{
@@ -294,7 +294,7 @@ const useUser = ({ getNewMainModal, PERMISSIONS }) => {
 								</BtnPopUpModal>
 							)}
 						</PermissionSlot>
-						<PermissionSlot code={PERMISSIONS.SETTING_USER.CHANGE_STATUS}>
+						<PermissionSlot code={PERMISSIONS?.SETTING_USER?.CHANGE_STATUS}>
 							{record?.status === 'Active' && (
 								<DeleteBtn
 									title="Are you sure you want to disable this user?"
@@ -325,7 +325,7 @@ const useUser = ({ getNewMainModal, PERMISSIONS }) => {
 								</DeleteBtn>
 							)}
 						</PermissionSlot>
-						<PermissionSlot code={PERMISSIONS.SETTING_USER.DELETE}>
+						<PermissionSlot code={PERMISSIONS?.SETTING_USER?.DELETE}>
 							<DeleteBtn
 								title="Are you sure delete this user?"
 								content={record.email}

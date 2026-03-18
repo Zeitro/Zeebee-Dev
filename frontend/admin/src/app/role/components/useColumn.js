@@ -124,7 +124,16 @@ const useColumn = ({ eventBusPrefix, api }) => {
 			render: (v) => v || '--',
 		},
 		getActiveByPermission({
-			permissionList: [PERMISSIONS.API.EDIT, PERMISSIONS.API.DELETE],
+			buttonOptions: [
+				{
+					permission: PERMISSIONS.API.EDIT,
+					width: 40,
+				},
+				{
+					permission: PERMISSIONS.API.DELETE,
+					width: 56,
+				},
+			],
 			render: (_, record) => {
 				return (
 					<Space>
@@ -247,7 +256,16 @@ const useColumn = ({ eventBusPrefix, api }) => {
 			render: (v) => v || '--',
 		},
 		getActiveByPermission({
-			permissionList: [PERMISSIONS.RESOURCE.EDIT, PERMISSIONS.RESOURCE.DELETE],
+			buttonOptions: [
+				{
+					permission: PERMISSIONS.RESOURCE.EDIT,
+					width: 40,
+				},
+				{
+					permission: PERMISSIONS.RESOURCE.DELETE,
+					width: 56,
+				},
+			],
 			render: (_, record) => {
 				return (
 					<Space>
