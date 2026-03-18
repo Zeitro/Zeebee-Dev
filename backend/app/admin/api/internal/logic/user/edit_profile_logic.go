@@ -3,7 +3,6 @@ package user
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/admin/api/internal/svc"
@@ -29,16 +28,6 @@ func NewEditProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *EditP
 
 func (l *EditProfileLogic) EditProfile(req *types.UserEditProfileRequest) (resp *types.UserInfoResponse, err error) {
 	resp = &types.UserInfoResponse{}
-
-	// claim, err := utils.GetUserClaimFromCtx(l.ctx)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// userId := claim.UserId
-	// if userId == 0 {
-	// 	return nil, errorx.WithStack(errorx.New("User Id Not Found"))
-	// }
-
 	rpcReq := &admin.UserProfileEditRequest{
 		Data: &admin.UserProfileEditRequestData{
 			FirstName: req.FirstName,
@@ -53,7 +42,6 @@ func (l *EditProfileLogic) EditProfile(req *types.UserEditProfileRequest) (resp 
 	}
 
 	// trans response
-	err = copier.Copy(resp, &rpcResp.Data)
 	resp, err = copierx.Trans[admin.UserinfoResponseData, types.UserInfoResponse](rpcResp.Data)
 	if err != nil {
 		return nil, err

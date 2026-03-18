@@ -6,13 +6,13 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/jinzhu/copier"
 	"github.com/xuri/excelize/v2"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/common/validator"
@@ -159,14 +159,12 @@ func (l *ImportLogic) importPendingLoans(content []byte, userId int64, organizat
 	rpcReq := &borrower.ImportPendingLoansRequest{
 		Data: []*borrower.ImportPendingLoansRequestData{},
 	}
-	err = copier.CopyWithOption(&rpcReq.Data, &importLoans, copier.Option{
-		IgnoreEmpty:   false,
-		CaseSensitive: true,
-		DeepCopy:      true,
-	})
+	dataPtr, err := copierx.Trans[[]*types.ImportPendingLoanEntity, []*borrower.ImportPendingLoansRequestData](&importLoans)
 	if err != nil {
-		return 0, errorx.GetFailedTransErr(err)
+		return 0, err
 	}
+	rpcReq.Data = *dataPtr
+
 	var rpcResp *borrower.ImportPendingLoansResponse
 
 	rpcResp, err = l.svcCtx.LoanRpcClient.ImportPendingLoans(l.ctx, rpcReq)

@@ -3,8 +3,6 @@ package organization_user
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
@@ -33,12 +31,8 @@ func (l *OrganizationUserPageLogic) OrganizationUserPage(req *types.Organization
 	rpcReq := &borrower.OrganizationUserPageRequest{
 		Data: &borrower.OrganizationUserPageRequestData{},
 	}
-	err = copier.CopyWithOption(rpcReq.Data, req, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-	})
+	rpcReq.Data, err = copierx.Trans[types.OrganizationUserPageRequest, borrower.OrganizationUserPageRequestData](req)
 	if err != nil {
-		err = errorx.GetFailedTransReqErr(err)
 		return nil, err
 	}
 
@@ -48,15 +42,9 @@ func (l *OrganizationUserPageLogic) OrganizationUserPage(req *types.Organization
 	}
 
 	resp = &types.OrganizationUserPageResponse{}
-	err = copier.CopyWithOption(resp, rpcResp.Data, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
-	})
+	resp, err = copierx.Trans[borrower.OrganizationUserPageResponse, types.OrganizationUserPageResponse](rpcResp, copierx.TimeToRFC3339Str())
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 
 	return resp, nil

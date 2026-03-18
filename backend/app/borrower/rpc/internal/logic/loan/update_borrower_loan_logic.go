@@ -5,7 +5,6 @@ import (
 
 	"github.com/duke-git/lancet/v2/mathutil"
 	"github.com/duke-git/lancet/v2/slice"
-	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -184,16 +183,9 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 			return nil, nil, nil, nil, err
 		}
 		applicantItem := &model.LoanApplicant{}
-		err = copier.CopyWithOption(applicantItem, borrowerApplicant, copier.Option{
-			IgnoreEmpty:   false,
-			DeepCopy:      true,
-			CaseSensitive: true,
-			Converters: []copier.TypeConverter{
-				copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-			},
-		})
+		applicantItem, err = copierx.Trans[model.BorrowerApplicant, model.LoanApplicant](borrowerApplicant, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 		if err != nil {
-			return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
+			return nil, nil, nil, nil, err
 		}
 		applicantItem.Id = applicant.Id
 		applicantItem.IsPrimary = applicant.IsPrimary
@@ -234,26 +226,16 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 		return nil, nil, nil, nil, err
 	}
 	loanProperty = &model.LoanProperty{}
-	err = copier.CopyWithOption(loanProperty, borrowerProperty, copier.Option{
-		IgnoreEmpty:   false,
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-		},
-	})
+	loanProperty, err = copierx.Trans[model.BorrowerProperty, model.LoanProperty](borrowerProperty, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
-		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
+		return nil, nil, nil, nil, err
 	}
-	err = copier.CopyWithOption(loanProperty, in.LoanProperty, copier.Option{
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-		},
-	})
+
+	loanProperty, err = copierx.Trans[borrower.ThirdPartyLoanPropertyEditEntity, model.LoanProperty](in.LoanProperty, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
-		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
+		return nil, nil, nil, nil, err
 	}
+
 	loanProperty.Id = 0
 	if loanProperty.YearlyLiabilityExpenseAmount > 0 {
 		loanProperty.Dscr = mathutil.RoundToFloat((loanProperty.EstYearlyRentalIncomeAmount/loanProperty.YearlyLiabilityExpenseAmount)*100, 2)
@@ -261,26 +243,15 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 
 	// loan
 	loan = &model.Loan{}
-	err = copier.CopyWithOption(loan, oldLoan, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-		},
-	})
+	loan, err = copierx.Trans[model.Loan, model.Loan](oldLoan)
 	if err != nil {
-		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
+		return nil, nil, nil, nil, err
 	}
-	err = copier.CopyWithOption(loan, in, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-		},
-	})
+	loan, err = copierx.Trans[borrower.LoanUpdateRequestData, model.Loan](in, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
-		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
+		return nil, nil, nil, nil, err
 	}
+
 	loan.RemoveRelationships()
 	if loan.TotalAmount < loan.InitialAmount {
 		return nil, nil, nil, nil, errorx.New("Total amount cannot be less than initial amount")
@@ -295,13 +266,11 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 		loan.PendingStatus = constants.LoanPendingStatus(in.PendingStatus)
 
 	case constants.LoanStageActive:
-
-		// loan.PrincipalAmount = in.PrincipalAmount
 		if loan.MaturityDate == nil {
 			return nil, nil, nil, nil, errorx.New("Maturity date is required")
 		}
 	case constants.LoanStageArchived:
-		// loan.PrincipalAmount = in.PrincipalAmount
+
 		if loan.PaidOffDate == nil {
 			return nil, nil, nil, nil, errorx.New("Paid off date is required")
 		}

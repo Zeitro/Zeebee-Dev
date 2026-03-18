@@ -4,12 +4,12 @@ import (
 	"context"
 	"time"
 
-	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data"
@@ -86,13 +86,11 @@ func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *
 
 		// convert files
 		operationFiles := make([]*data.OperationFile, 0, len(files))
-		innerErr = copier.CopyWithOption(&operationFiles, files, copier.Option{
-			DeepCopy:      true,
-			CaseSensitive: true,
-		})
-		if innerErr != nil {
-			return errorx.GetFailedTransErr(innerErr)
+		operationFilesPtr, err := copierx.Trans[[]*model.File, []*data.OperationFile](&files)
+		if err != nil {
+			return err
 		}
+		operationFiles = *operationFilesPtr
 
 		// Create operation log
 		innerErr = l.baseLogic.CreateLoanOperationLog(

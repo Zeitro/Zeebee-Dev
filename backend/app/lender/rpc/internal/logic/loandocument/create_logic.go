@@ -4,12 +4,12 @@ import (
 	"context"
 
 	"github.com/duke-git/lancet/v2/slice"
-	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data"
@@ -77,24 +77,18 @@ func (l *CreateLogic) Create(in *lender.LoanDocumentCreateExtendTypeRequest) (re
 			return innerErr
 		}
 
-		innerErr = copier.CopyWithOption(&results, loanDocuments, copier.Option{
-			IgnoreEmpty:   false,
-			DeepCopy:      true,
-			CaseSensitive: true,
-		})
+		resultsPtr, innerErr := copierx.Trans[[]*model.LoanDocument, []*lender.LoanDocumentOptEntity](&loanDocuments)
 		if innerErr != nil {
-			return errorx.GetFailedTransErr(innerErr)
+			return innerErr
 		}
+		results = *resultsPtr
 
 		operationDocs := []*data.OperationLoanDocument{}
-		innerErr = copier.CopyWithOption(&operationDocs, loanDocuments, copier.Option{
-			IgnoreEmpty:   false,
-			DeepCopy:      true,
-			CaseSensitive: true,
-		})
+		operationDocsPtr, innerErr := copierx.Trans[[]*model.LoanDocument, []*data.OperationLoanDocument](&loanDocuments)
 		if innerErr != nil {
-			return errorx.GetFailedTransErr(innerErr)
+			return innerErr
 		}
+		operationDocs = *operationDocsPtr
 
 		innerErr = l.baseLogic.CreateLoanOperationLog(
 			l.ctx,

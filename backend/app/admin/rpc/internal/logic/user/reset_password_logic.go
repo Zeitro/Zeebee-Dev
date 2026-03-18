@@ -3,13 +3,12 @@ package userlogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 
@@ -50,10 +49,10 @@ func (l *ResetPasswordLogic) ResetPassword(in *admin.ResetPasswordRequest) (resp
 	if err != nil {
 		return nil, err
 	}
-	data := &admin.UserLoginResponseData{}
-	err = copier.CopyWithOption(&data, token, copier.Option{CaseSensitive: true})
+
+	data, err := copierx.Trans[dto.UserJwtTokenDto, admin.UserLoginResponseData](token)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 
 	return &admin.ResetPasswordResponse{

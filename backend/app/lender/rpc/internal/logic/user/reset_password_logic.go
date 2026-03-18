@@ -3,8 +3,6 @@ package userlogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
@@ -55,10 +53,6 @@ func (l *ResetPasswordLogic) ResetPassword(in *lender.ResetPasswordRequest) (res
 		return nil, err
 	}
 
-	err = copier.CopyWithOption(jwtInfo, token, copier.Option{CaseSensitive: true})
-	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
-	}
 	return &lender.UserJwtResponse{
 		Data: jwtInfo,
 	}, nil

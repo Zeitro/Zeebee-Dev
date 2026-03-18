@@ -3,8 +3,6 @@ package api
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/admin/api/internal/svc"
@@ -48,7 +46,6 @@ func (l *CreateLogic) Create(req *types.ApiCreateRequest) (resp *types.ApiEntity
 	// trans response
 	resp, err = copierx.Trans[admin.ApiEntity, types.ApiEntity](rpcResp.Data)
 
-	err = copier.CopyWithOption(resp, &rpcResp.Data, copier.Option{DeepCopy: true})
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
 	}

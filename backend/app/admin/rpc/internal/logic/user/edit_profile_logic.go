@@ -3,11 +3,10 @@ package userlogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 
@@ -61,12 +60,10 @@ func (l *EditProfileLogic) EditProfile(in *admin.UserProfileEditRequest) (resp *
 	if err != nil {
 		return nil, err
 	}
-	data := &admin.UserinfoResponseData{}
-	err = copier.CopyWithOption(data, token, copier.Option{
-		CaseSensitive: true,
-	})
+
+	data, err := copierx.Trans[dto.UserinfoDto, admin.UserinfoResponseData](token)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
 
 	return &admin.UserinfoResponse{

@@ -23,10 +23,11 @@ import (
 //   - Uses copier.CopyWithOption for the actual conversion
 //   - Wraps any conversion error with errorx.GetFailedTransErr
 func Trans[T, U any](src *T, opts ...copier.TypeConverter) (dist *U, err error) {
-	if src == nil {
-		return nil, nil
-	}
 	dist = new(U)
+	if src == nil {
+		return dist, nil
+	}
+
 	err = copier.CopyWithOption(dist, src, copier.Option{
 		DeepCopy:      true,
 		CaseSensitive: true,

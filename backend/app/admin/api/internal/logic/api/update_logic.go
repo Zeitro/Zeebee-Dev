@@ -3,14 +3,12 @@ package api
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
-	"zeebee-backend/common/errorx"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/common/copierx"
 )
 
 type UpdateLogic struct {
@@ -33,9 +31,9 @@ func (l *UpdateLogic) Update(req *types.ApiUpdateRequest) (resp *types.ApiEntity
 	rpcReq := &admin.ApiUpdateRequest{
 		Data: &admin.ApiUpdateRequestData{},
 	}
-	err = copier.CopyWithOption(rpcReq.Data, req, copier.Option{DeepCopy: true})
+	rpcReq.Data, err = copierx.Trans[types.ApiUpdateRequest, admin.ApiUpdateRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
 
 	rpcResp, err := l.svcCtx.ApiRpcClient.Update(l.ctx, rpcReq)
@@ -44,9 +42,9 @@ func (l *UpdateLogic) Update(req *types.ApiUpdateRequest) (resp *types.ApiEntity
 	}
 
 	// trans response
-	err = copier.CopyWithOption(resp, &rpcResp.Data, copier.Option{DeepCopy: true})
+	resp, err = copierx.Trans[admin.ApiEntity, types.ApiEntity](rpcResp.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
 	return resp, err
 }
