@@ -13,7 +13,7 @@ const Resource = ({ className }) => {
 	const api = '/resource/tree';
 	const menuKey = 'Resource';
 	return (
-		<div className="relative flex h-full flex-col">
+		<div className="flex-1 overflow-hidden relative flex flex-col">
 			<Tabs
 				activeKey={tabKey}
 				items={[

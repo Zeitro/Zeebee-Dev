@@ -13,7 +13,7 @@ const AppApi = ({ className }) => {
 	const menuKey = 'Api';
 	const api = '/api/tree';
 	return (
-		<div className="relative flex h-full flex-col">
+		<div className="flex-1 overflow-hidden relative flex h-full flex-col">
 			<Tabs
 				activeKey={tabKey}
 				items={[

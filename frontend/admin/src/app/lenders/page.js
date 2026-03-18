@@ -16,6 +16,7 @@ const Lenders = () => {
 	const [loading, setLoading] = useState(false);
 	const [statusLoading, setStatusLoading] = useState(false);
 	const { hasPermission, getActiveByPermission } = useAuth();
+
 	const filterList = useMemo(
 		() => [
 			{
@@ -39,9 +40,11 @@ const Lenders = () => {
 				icon: <ReloadOutlined />,
 				onClick: () => {
 					setSearchValue('');
-					setTimeout(() => {
-						tableFilterRef?.current?.handleSearch?.();
-					}, 300);
+					tableFilterRef?.current?.handleSearch?.({
+						filter: {
+							keyword: '',
+						},
+					});
 				},
 				colProps: {
 					className: 'flex-1',
@@ -129,8 +132,8 @@ const Lenders = () => {
 								height={40}
 								alt=""
 								preview={false}
-								fallback="/images/noImg.png"
-								className="object-contain"
+								fallback="/images/noOrgLogo.svg"
+								className="object-contain rounded-lg"
 							/>
 						),
 					},
