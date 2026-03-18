@@ -16,6 +16,7 @@ type Resource struct {
 	SortOrder       int32                  `gorm:"column:sort_order;default:10" json:"sort_order"`
 	EnableDataScope bool                   `gorm:"column:enable_data_scope;default:false" json:"enable_data_scope"`
 	Description     string                 `gorm:"column:description;type:varchar(255);default:''" json:"description"`
+	IsPublic        bool                   `gorm:"column:is_public;default:false" json:"is_public"`
 	//  relationships
 	Apis  []*Api  `json:"apis" gorm:"many2many:resource_and_apis;joinForeignKey:resource_id;joinReferences:api_id"`
 	Roles []*Role `json:"roles" gorm:"many2many:role_and_resources;joinForeignKey:resource_id;joinReferences:role_id"`

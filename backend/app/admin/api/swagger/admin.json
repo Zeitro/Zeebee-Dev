@@ -5001,6 +5001,7 @@
                                     "sort_order",
                                     "enable_data_scope",
                                     "description",
+                                    "is_public",
                                     "created_at",
                                     "updated_at",
                                     "apis",
@@ -5086,6 +5087,9 @@
                                     },
                                     "id": {
                                       "type": "integer"
+                                    },
+                                    "is_public": {
+                                      "type": "boolean"
                                     },
                                     "is_show": {
                                       "type": "boolean"
@@ -5633,6 +5637,7 @@
                                     "sort_order",
                                     "enable_data_scope",
                                     "description",
+                                    "is_public",
                                     "created_at",
                                     "updated_at",
                                     "apis",
@@ -5718,6 +5723,9 @@
                                     },
                                     "id": {
                                       "type": "integer"
+                                    },
+                                    "is_public": {
+                                      "type": "boolean"
                                     },
                                     "is_show": {
                                       "type": "boolean"
@@ -6398,6 +6406,7 @@
                                     "sort_order",
                                     "enable_data_scope",
                                     "description",
+                                    "is_public",
                                     "created_at",
                                     "updated_at",
                                     "apis",
@@ -6483,6 +6492,9 @@
                                     },
                                     "id": {
                                       "type": "integer"
+                                    },
+                                    "is_public": {
+                                      "type": "boolean"
                                     },
                                     "is_show": {
                                       "type": "boolean"
@@ -6895,6 +6907,7 @@
                                 "sort_order",
                                 "enable_data_scope",
                                 "description",
+                                "is_public",
                                 "created_at",
                                 "updated_at",
                                 "apis",
@@ -6980,6 +6993,9 @@
                                 },
                                 "id": {
                                   "type": "integer"
+                                },
+                                "is_public": {
+                                  "type": "boolean"
                                 },
                                 "is_show": {
                                   "type": "boolean"
@@ -7435,6 +7451,7 @@
                                 "sort_order",
                                 "enable_data_scope",
                                 "description",
+                                "is_public",
                                 "created_at",
                                 "updated_at",
                                 "apis",
@@ -7520,6 +7537,9 @@
                                 },
                                 "id": {
                                   "type": "integer"
+                                },
+                                "is_public": {
+                                  "type": "boolean"
                                 },
                                 "is_show": {
                                   "type": "boolean"
@@ -7796,6 +7816,7 @@
                                 "sort_order",
                                 "enable_data_scope",
                                 "description",
+                                "is_public",
                                 "created_at",
                                 "updated_at",
                                 "apis",
@@ -7881,6 +7902,9 @@
                                 },
                                 "id": {
                                   "type": "integer"
+                                },
+                                "is_public": {
+                                  "type": "boolean"
                                 },
                                 "is_show": {
                                   "type": "boolean"
@@ -8091,7 +8115,8 @@
                 "tag",
                 "status",
                 "sort_order",
-                "enable_data_scope"
+                "enable_data_scope",
+                "is_public"
               ],
               "properties": {
                 "api_ids": {
@@ -8108,6 +8133,9 @@
                 },
                 "icon": {
                   "type": "string"
+                },
+                "is_public": {
+                  "type": "boolean"
                 },
                 "is_show": {
                   "type": "boolean"
@@ -8234,6 +8262,9 @@
                     "id": {
                       "type": "integer"
                     },
+                    "is_public": {
+                      "type": "boolean"
+                    },
                     "is_show": {
                       "type": "boolean"
                     },
@@ -8330,6 +8361,7 @@
                           "sort_order",
                           "enable_data_scope",
                           "description",
+                          "is_public",
                           "created_at",
                           "updated_at",
                           "apis",
@@ -8416,6 +8448,7 @@
                                 "sort_order",
                                 "enable_data_scope",
                                 "description",
+                                "is_public",
                                 "created_at",
                                 "updated_at",
                                 "apis",
@@ -8448,6 +8481,9 @@
                                 },
                                 "id": {
                                   "type": "integer"
+                                },
+                                "is_public": {
+                                  "type": "boolean"
                                 },
                                 "is_show": {
                                   "type": "boolean"
@@ -8496,6 +8532,9 @@
                           },
                           "id": {
                             "type": "integer"
+                          },
+                          "is_public": {
+                            "type": "boolean"
                           },
                           "is_show": {
                             "type": "boolean"
@@ -8664,6 +8703,9 @@
                     "id": {
                       "type": "integer"
                     },
+                    "is_public": {
+                      "type": "boolean"
+                    },
                     "is_show": {
                       "type": "boolean"
                     },
@@ -8741,6 +8783,7 @@
                 "tag",
                 "status",
                 "sort_order",
+                "is_public",
                 "enable_data_scope"
               ],
               "properties": {
@@ -8758,6 +8801,9 @@
                 },
                 "icon": {
                   "type": "string"
+                },
+                "is_public": {
+                  "type": "boolean"
                 },
                 "is_show": {
                   "type": "boolean"
@@ -8883,6 +8929,9 @@
                     },
                     "id": {
                       "type": "integer"
+                    },
+                    "is_public": {
+                      "type": "boolean"
                     },
                     "is_show": {
                       "type": "boolean"
@@ -9161,6 +9210,7 @@
                           "sort_order",
                           "enable_data_scope",
                           "description",
+                          "is_public",
                           "created_at",
                           "updated_at",
                           "apis",
@@ -9246,6 +9296,9 @@
                           },
                           "id": {
                             "type": "integer"
+                          },
+                          "is_public": {
+                            "type": "boolean"
                           },
                           "is_show": {
                             "type": "boolean"
@@ -9441,6 +9494,7 @@
                                 "sort_order",
                                 "enable_data_scope",
                                 "description",
+                                "is_public",
                                 "created_at",
                                 "updated_at",
                                 "apis",
@@ -9526,6 +9580,9 @@
                                 },
                                 "id": {
                                   "type": "integer"
+                                },
+                                "is_public": {
+                                  "type": "boolean"
                                 },
                                 "is_show": {
                                   "type": "boolean"
@@ -9772,6 +9829,7 @@
                                 "sort_order",
                                 "enable_data_scope",
                                 "description",
+                                "is_public",
                                 "created_at",
                                 "updated_at",
                                 "apis",
@@ -9857,6 +9915,9 @@
                                 },
                                 "id": {
                                   "type": "integer"
+                                },
+                                "is_public": {
+                                  "type": "boolean"
                                 },
                                 "is_show": {
                                   "type": "boolean"
@@ -10055,6 +10116,7 @@
                           "sort_order",
                           "enable_data_scope",
                           "description",
+                          "is_public",
                           "created_at",
                           "updated_at",
                           "apis",
@@ -10140,6 +10202,9 @@
                           },
                           "id": {
                             "type": "integer"
+                          },
+                          "is_public": {
+                            "type": "boolean"
                           },
                           "is_show": {
                             "type": "boolean"
@@ -10371,6 +10436,7 @@
                           "sort_order",
                           "enable_data_scope",
                           "description",
+                          "is_public",
                           "created_at",
                           "updated_at",
                           "apis",
@@ -10456,6 +10522,9 @@
                           },
                           "id": {
                             "type": "integer"
+                          },
+                          "is_public": {
+                            "type": "boolean"
                           },
                           "is_show": {
                             "type": "boolean"
@@ -10708,6 +10777,7 @@
                           "sort_order",
                           "enable_data_scope",
                           "description",
+                          "is_public",
                           "created_at",
                           "updated_at",
                           "apis",
@@ -10793,6 +10863,9 @@
                           },
                           "id": {
                             "type": "integer"
+                          },
+                          "is_public": {
+                            "type": "boolean"
                           },
                           "is_show": {
                             "type": "boolean"
@@ -11410,6 +11483,7 @@
                           "sort_order",
                           "enable_data_scope",
                           "description",
+                          "is_public",
                           "created_at",
                           "updated_at",
                           "apis",
@@ -11496,6 +11570,7 @@
                                 "sort_order",
                                 "enable_data_scope",
                                 "description",
+                                "is_public",
                                 "created_at",
                                 "updated_at",
                                 "apis",
@@ -11528,6 +11603,9 @@
                                 },
                                 "id": {
                                   "type": "integer"
+                                },
+                                "is_public": {
+                                  "type": "boolean"
                                 },
                                 "is_show": {
                                   "type": "boolean"
@@ -11576,6 +11654,9 @@
                           },
                           "id": {
                             "type": "integer"
+                          },
+                          "is_public": {
+                            "type": "boolean"
                           },
                           "is_show": {
                             "type": "boolean"
@@ -11907,7 +11988,7 @@
       }
     }
   },
-  "x-date": "2026-03-18 10:14:46",
+  "x-date": "2026-03-18 10:51:35",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

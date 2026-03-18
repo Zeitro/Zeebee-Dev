@@ -7728,6 +7728,7 @@ type ResourceTreeEntity struct {
 	EnableDataScope bool                   `protobuf:"varint,15,opt,name=enable_data_scope,json=enableDataScope,proto3" json:"enable_data_scope,omitempty"`
 	Apis            []*ApiEntity           `protobuf:"bytes,16,rep,name=apis,proto3" json:"apis,omitempty"`
 	Description     string                 `protobuf:"bytes,17,opt,name=description,proto3" json:"description,omitempty"`
+	IsPublic        bool                   `protobuf:"varint,18,opt,name=is_public,json=isPublic,proto3" json:"is_public,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -7881,6 +7882,13 @@ func (x *ResourceTreeEntity) GetDescription() string {
 	return ""
 }
 
+func (x *ResourceTreeEntity) GetIsPublic() bool {
+	if x != nil {
+		return x.IsPublic
+	}
+	return false
+}
+
 type ResourceEntity struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -7900,6 +7908,7 @@ type ResourceEntity struct {
 	DataScope       string                 `protobuf:"bytes,15,opt,name=data_scope,json=dataScope,proto3" json:"data_scope,omitempty"`
 	EnableDataScope bool                   `protobuf:"varint,16,opt,name=enable_data_scope,json=enableDataScope,proto3" json:"enable_data_scope,omitempty"`
 	Description     string                 `protobuf:"bytes,17,opt,name=description,proto3" json:"description,omitempty"`
+	IsPublic        bool                   `protobuf:"varint,18,opt,name=is_public,json=isPublic,proto3" json:"is_public,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -8051,6 +8060,13 @@ func (x *ResourceEntity) GetDescription() string {
 		return x.Description
 	}
 	return ""
+}
+
+func (x *ResourceEntity) GetIsPublic() bool {
+	if x != nil {
+		return x.IsPublic
+	}
+	return false
 }
 
 // resource tree
@@ -14783,7 +14799,7 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\v \x01(\tR\tupdatedAt\x12#\n" +
 	"\rauth_required\x18\r \x01(\bR\fauthRequired\x12/\n" +
-	"\x13permission_required\x18\x0e \x01(\bR\x12permissionRequired\"\x83\x04\n" +
+	"\x13permission_required\x18\x0e \x01(\bR\x12permissionRequired\"\xa0\x04\n" +
 	"\x12ResourceTreeEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12\x12\n" +
@@ -14805,7 +14821,8 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\bchildren\x18\x0e \x03(\v2\x1a.lender.ResourceTreeEntityR\bchildren\x12*\n" +
 	"\x11enable_data_scope\x18\x0f \x01(\bR\x0fenableDataScope\x12%\n" +
 	"\x04apis\x18\x10 \x03(\v2\x11.lender.ApiEntityR\x04apis\x12 \n" +
-	"\vdescription\x18\x11 \x01(\tR\vdescription\"\xe6\x03\n" +
+	"\vdescription\x18\x11 \x01(\tR\vdescription\x12\x1b\n" +
+	"\tis_public\x18\x12 \x01(\bR\bisPublic\"\x83\x04\n" +
 	"\x0eResourceEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12\x12\n" +
@@ -14828,7 +14845,8 @@ const file_app_lender_rpc_pb_lender_proto_rawDesc = "" +
 	"\n" +
 	"data_scope\x18\x0f \x01(\tR\tdataScope\x12*\n" +
 	"\x11enable_data_scope\x18\x10 \x01(\bR\x0fenableDataScope\x12 \n" +
-	"\vdescription\x18\x11 \x01(\tR\vdescription\"J\n" +
+	"\vdescription\x18\x11 \x01(\tR\vdescription\x12\x1b\n" +
+	"\tis_public\x18\x12 \x01(\bR\bisPublic\"J\n" +
 	"\x13ResourceTreeRequest\x123\n" +
 	"\x04data\x18\x01 \x01(\v2\x1f.lender.ResourceTreeRequestDataR\x04data\"-\n" +
 	"\x17ResourceTreeRequestData\x12\x12\n" +

@@ -826,6 +826,7 @@ type ResourceCreateRequest struct {
 	SortOrder       int32   `json:"sort_order" validate:"min=0"`
 	EnableDataScope bool    `json:"enable_data_scope"`
 	Description     string  `json:"description,optional" validate:"max=255"`
+	IsPublic        bool    `json:"is_public"`
 	ApiIds          []int64 `json:"api_ids,optional"`
 }
 
@@ -853,6 +854,7 @@ type ResourceEntity struct {
 	SortOrder       int32        `json:"sort_order"`
 	EnableDataScope bool         `json:"enable_data_scope"`
 	Description     string       `json:"description"`
+	IsPublic        bool         `json:"is_public"`
 	CreatedAt       string       `json:"created_at"`
 	UpdatedAt       string       `json:"updated_at"`
 	Apis            []*ApiEntity `json:"apis,omitempty"`
@@ -873,6 +875,7 @@ type ResourceTreeEntity struct {
 	SortOrder       int32                 `json:"sort_order"`
 	EnableDataScope bool                  `json:"enable_data_scope"`
 	Description     string                `json:"description"`
+	IsPublic        bool                  `json:"is_public"`
 	CreatedAt       string                `json:"created_at"`
 	UpdatedAt       string                `json:"updated_at"`
 	Apis            []*ApiEntity          `json:"apis,omitempty"`
@@ -900,6 +903,7 @@ type ResourceUpdateRequest struct {
 	Status          string  `json:"status" validate:"required,oneof=Active Disabled"`
 	SortOrder       int32   `json:"sort_order" validate:"min=0"`
 	Description     string  `json:"description,optional" validate:"max=255"`
+	IsPublic        bool    `json:"is_public"`
 	EnableDataScope bool    `json:"enable_data_scope"`
 	ApiIds          []int64 `json:"api_ids,optional"`
 }

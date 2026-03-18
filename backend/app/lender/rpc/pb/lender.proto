@@ -926,6 +926,7 @@ message ResourceTreeEntity{
   bool enable_data_scope = 15;
   repeated ApiEntity apis = 16;
   string description = 17;
+  bool is_public = 18;
 }
 
 message ResourceEntity{
@@ -946,6 +947,7 @@ message ResourceEntity{
   string data_scope = 15;
   bool enable_data_scope = 16;
   string description = 17;
+  bool is_public = 18;
 }
 
 // resource tree

@@ -33,8 +33,8 @@ type Auth struct {
 	redisCli                    *redisx.Client
 	enforcer                    *rbac.Enforcer
 	jwtConfig                   dto.JwtConfig
-	authenticationWhitelistMap  *mapx.Map[constants.UserType, []string]
-	authorizationWhitelistMap   *mapx.Map[constants.UserType, []string]
+	authenticationWhitelistMap  *mapx.Map[constants.UserType, []string] // login api whitelist
+	authorizationWhitelistMap   *mapx.Map[constants.UserType, []string] // permission api whitelist
 	apiResourceMap              *mapx.Map[constants.UserType, *mapx.Map[string, []int64]]
 	organizationRoleResourceMap *mapx.Map[int64, *mapx.Map[string, RoleResource]]
 	sf                          singleflight.Group
@@ -203,6 +203,14 @@ func (l *Auth) handleResourceReload(ctx context.Context, msg Msg) (err error) {
 	if err != nil {
 		return
 	}
+	switch msg.Scope {
+	case ScopeGlobal:
+		_, err = l.LoadAuthorizationWhitelist(ctx, msg.Type)
+		if err != nil {
+			return
+		}
+	}
+
 	if len(msg.AddedPolicies) > 0 {
 		err = l.enforcer.AddPolicies(msg.AddedPolicies)
 		if err != nil {
@@ -486,6 +494,22 @@ func (l *Auth) LoadAuthorizationWhitelist(ctx context.Context, userType constant
 				return "", false
 			}
 			return stringx.Format(routeFormat, item.Method, item.Path), true
+		})
+		// public resource
+		publicResource, err := l.repos.ResourceRepo.PublicResources(ctx, userType, true)
+		if err != nil {
+			return nil, err
+		}
+		slice.ForEach(publicResource, func(_ int, resource *model.Resource) {
+			publicResults := slice.FilterMap(resource.Apis, func(_ int, item *model.Api) (string, bool) {
+				if len(item.Path) == 0 || len(item.Method) == 0 {
+					return "", false
+				}
+				return stringx.Format(routeFormat, item.Method, item.Path), true
+			})
+			if len(publicResults) > 0 {
+				results = append(results, publicResults...)
+			}
 		})
 		return results, nil
 	})
@@ -778,6 +802,7 @@ func (l *Auth) LoadApiResourceIds(ctx context.Context, userType constants.UserTy
 		})
 		apiResourceMap.Set(stringx.Format(routeFormat, api.Method, api.Path), resourceIds)
 	}
+
 	l.apiResourceMap.Set(userType, apiResourceMap)
 	return apiResourceMap, nil
 }

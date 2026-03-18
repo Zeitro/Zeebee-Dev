@@ -427,6 +427,7 @@ message ResourceTreeEntity{
   bool enable_data_scope = 15;
   repeated ApiEntity apis = 16;
   string description = 17;
+  bool is_public = 18;
 }
 
 message ResourceEntity{
@@ -447,6 +448,7 @@ message ResourceEntity{
   string data_scope = 15;
   bool enable_data_scope = 16;
   string description = 17;
+  bool is_public = 18;
 }
 
 // resource tree -- request
@@ -478,6 +480,7 @@ message ResourceCreateRequestData {
   repeated int64 api_ids = 11;
   bool enable_data_scope = 12;
   string description = 13;
+  bool is_public = 14;
 }
 
 // update -- request
@@ -499,6 +502,7 @@ message ResourceUpdateRequestData {
   repeated int64 api_ids = 12;
   bool enable_data_scope = 13;
   string description = 14;
+  bool is_public = 15;
 }
 
 //  delete -- request

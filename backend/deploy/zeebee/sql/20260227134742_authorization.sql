@@ -12,3 +12,6 @@ DROP TABLE "public"."api_white_lists";
 
 ALTER TABLE "public"."resources"
     ADD COLUMN "description" varchar(255) NOT NULL DEFAULT '';
+
+ALTER TABLE "public"."resources"
+    ADD COLUMN "is_public" bool NOT NULL DEFAULT false;

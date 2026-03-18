@@ -5347,6 +5347,7 @@
                             "sort_order",
                             "enable_data_scope",
                             "description",
+                            "is_public",
                             "created_at",
                             "updated_at",
                             "apis",
@@ -5432,6 +5433,9 @@
                             },
                             "id": {
                               "type": "integer"
+                            },
+                            "is_public": {
+                              "type": "boolean"
                             },
                             "is_show": {
                               "type": "boolean"
@@ -6001,6 +6005,7 @@
                             "sort_order",
                             "enable_data_scope",
                             "description",
+                            "is_public",
                             "created_at",
                             "updated_at",
                             "apis",
@@ -6086,6 +6091,9 @@
                             },
                             "id": {
                               "type": "integer"
+                            },
+                            "is_public": {
+                              "type": "boolean"
                             },
                             "is_show": {
                               "type": "boolean"
@@ -6288,6 +6296,7 @@
                             "sort_order",
                             "enable_data_scope",
                             "description",
+                            "is_public",
                             "created_at",
                             "updated_at",
                             "apis",
@@ -6373,6 +6382,9 @@
                             },
                             "id": {
                               "type": "integer"
+                            },
+                            "is_public": {
+                              "type": "boolean"
                             },
                             "is_show": {
                               "type": "boolean"
@@ -6685,6 +6697,7 @@
                       "sort_order",
                       "enable_data_scope",
                       "description",
+                      "is_public",
                       "created_at",
                       "updated_at",
                       "children",
@@ -6771,6 +6784,7 @@
                             "sort_order",
                             "enable_data_scope",
                             "description",
+                            "is_public",
                             "created_at",
                             "updated_at",
                             "children",
@@ -6803,6 +6817,9 @@
                             },
                             "id": {
                               "type": "integer"
+                            },
+                            "is_public": {
+                              "type": "boolean"
                             },
                             "is_show": {
                               "type": "boolean"
@@ -6851,6 +6868,9 @@
                       },
                       "id": {
                         "type": "integer"
+                      },
+                      "is_public": {
+                        "type": "boolean"
                       },
                       "is_show": {
                         "type": "boolean"
@@ -6992,6 +7012,7 @@
                       "sort_order",
                       "enable_data_scope",
                       "description",
+                      "is_public",
                       "created_at",
                       "updated_at",
                       "apis",
@@ -7077,6 +7098,9 @@
                       },
                       "id": {
                         "type": "integer"
+                      },
+                      "is_public": {
+                        "type": "boolean"
                       },
                       "is_show": {
                         "type": "boolean"
@@ -7194,6 +7218,7 @@
                             "sort_order",
                             "enable_data_scope",
                             "description",
+                            "is_public",
                             "created_at",
                             "updated_at",
                             "apis",
@@ -7279,6 +7304,9 @@
                             },
                             "id": {
                               "type": "integer"
+                            },
+                            "is_public": {
+                              "type": "boolean"
                             },
                             "is_show": {
                               "type": "boolean"
@@ -7457,6 +7485,7 @@
                             "sort_order",
                             "enable_data_scope",
                             "description",
+                            "is_public",
                             "created_at",
                             "updated_at",
                             "apis",
@@ -7542,6 +7571,9 @@
                             },
                             "id": {
                               "type": "integer"
+                            },
+                            "is_public": {
+                              "type": "boolean"
                             },
                             "is_show": {
                               "type": "boolean"
@@ -7663,6 +7695,7 @@
                       "sort_order",
                       "enable_data_scope",
                       "description",
+                      "is_public",
                       "created_at",
                       "updated_at",
                       "apis",
@@ -7748,6 +7781,9 @@
                       },
                       "id": {
                         "type": "integer"
+                      },
+                      "is_public": {
+                        "type": "boolean"
                       },
                       "is_show": {
                         "type": "boolean"
@@ -7902,6 +7938,7 @@
                       "sort_order",
                       "enable_data_scope",
                       "description",
+                      "is_public",
                       "created_at",
                       "updated_at",
                       "apis",
@@ -7987,6 +8024,9 @@
                       },
                       "id": {
                         "type": "integer"
+                      },
+                      "is_public": {
+                        "type": "boolean"
                       },
                       "is_show": {
                         "type": "boolean"
@@ -8147,6 +8187,7 @@
                       "sort_order",
                       "enable_data_scope",
                       "description",
+                      "is_public",
                       "created_at",
                       "updated_at",
                       "apis",
@@ -8232,6 +8273,9 @@
                       },
                       "id": {
                         "type": "integer"
+                      },
+                      "is_public": {
+                        "type": "boolean"
                       },
                       "is_show": {
                         "type": "boolean"
@@ -8711,6 +8755,7 @@
                       "sort_order",
                       "enable_data_scope",
                       "description",
+                      "is_public",
                       "created_at",
                       "updated_at",
                       "children",
@@ -8797,6 +8842,7 @@
                             "sort_order",
                             "enable_data_scope",
                             "description",
+                            "is_public",
                             "created_at",
                             "updated_at",
                             "children",
@@ -8829,6 +8875,9 @@
                             },
                             "id": {
                               "type": "integer"
+                            },
+                            "is_public": {
+                              "type": "boolean"
                             },
                             "is_show": {
                               "type": "boolean"
@@ -8877,6 +8926,9 @@
                       },
                       "id": {
                         "type": "integer"
+                      },
+                      "is_public": {
+                        "type": "boolean"
                       },
                       "is_show": {
                         "type": "boolean"
@@ -9318,7 +9370,7 @@
       }
     }
   },
-  "x-date": "2026-03-18 10:15:10",
+  "x-date": "2026-03-18 10:51:23",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

@@ -30,9 +30,8 @@ func (repo *ResourceRepo) All(ctx context.Context, apiType constants.UserType, w
 	if withPreload {
 		query = query.Preload("Apis")
 	}
-
-	err = query.Order("parent_id asc").
-		Order("sort_order asc").
+	err = query.Order("sort_order asc").
+		Order("parent_id asc").
 		Find(&result).Error
 	return result, errorx.WithStack(err)
 }
@@ -208,6 +207,19 @@ func (repo *ResourceRepo) AllResources(ctx context.Context, organizationId int64
 				return subQuery
 			})
 
+	}
+	err = query.Find(&result).Error
+	return result, errorx.WithStack(err)
+}
+
+// PublicResources return public resources
+func (repo *ResourceRepo) PublicResources(ctx context.Context, resourceType constants.UserType, withPreload bool) (result []*model.Resource, err error) {
+	query := repo.Client(ctx).
+		Where("type = ? and status = ? and is_public = ?", resourceType, constants.CommonStatusActive, true)
+	if withPreload {
+		query = query.
+			Preload("Apis")
+		// Preload("Roles")
 	}
 	err = query.Find(&result).Error
 	return result, errorx.WithStack(err)

@@ -20,6 +20,7 @@ type ResourceTreeDto struct {
 	SortOrder       int32                  `json:"sort_order"`
 	IsShow          bool                   `json:"is_show"`
 	EnableDataScope bool                   `json:"enable_data_scope"`
+	IsPublic        bool                   `json:"is_public"`
 	Apis            []*ApiEntityDto        `json:"apis"`
 	CreatedAt       time.Time              `json:"created_at"`
 	UpdatedAt       time.Time              `json:"updated_at"`
@@ -41,6 +42,7 @@ type ResourceEntityDto struct {
 	IsShow          bool                   `json:"is_show"`
 	DataScope       constants.DataScope    `json:"data_scope"`
 	EnableDataScope bool                   `json:"enable_data_scope"`
+	IsPublic        bool                   `json:"is_public"`
 	Apis            []*ApiEntityDto        `json:"apis"`
 	CreatedAt       time.Time              `json:"created_at"`
 	UpdatedAt       time.Time              `json:"updated_at"`
@@ -58,6 +60,7 @@ type ResourceCreateRequestDto struct {
 	Status          constants.CommonStatus `json:"status"`
 	SortOrder       int32                  `json:"sort_order"`
 	Description     string                 `json:"description"`
+	IsPublic        bool                   `json:"is_public"`
 	ApiIds          []int64                `json:"api_ids"`
 	EnableDataScope bool                   `json:"enable_data_scope"`
 }

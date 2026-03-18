@@ -306,6 +306,11 @@ func (l *ResourceLogic) GetUserResources(ctx context.Context, input dto.Resource
 		}
 	} else {
 		// Get resources from user's roles
+		publicResources, err := l.repos.ResourceRepo.PublicResources(ctx, input.Type, false)
+		if err != nil {
+			return nil, err
+		}
+
 		roleIds := slice.Map(roles, func(index int, role *model.Role) int64 {
 			return role.Id
 		})
@@ -316,6 +321,7 @@ func (l *ResourceLogic) GetUserResources(ctx context.Context, input dto.Resource
 		roleResources = slice.Filter(roleResources, func(index int, role *model.Role) bool {
 			return role.Status == constants.CommonStatusActive
 		})
+
 		allResources = make([]*model.Resource, 0, len(roleResources))
 		slice.ForEach(roleResources, func(index int, role *model.Role) {
 			if role.Status != constants.CommonStatusActive {
@@ -326,6 +332,12 @@ func (l *ResourceLogic) GetUserResources(ctx context.Context, input dto.Resource
 			})
 			allResources = append(allResources, subResources...)
 		})
+		allResources = append(allResources, publicResources...)
+
+		allResources = slice.UniqueBy(allResources, func(item *model.Resource) int64 {
+			return item.Id
+		})
+
 	}
 
 	slice.SortBy(allResources, func(a, b *model.Resource) bool {
