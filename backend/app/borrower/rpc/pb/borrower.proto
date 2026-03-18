@@ -1566,6 +1566,7 @@ message ResourceTreeEntity{
   repeated ResourceTreeEntity children = 14;
   bool enable_data_scope = 15;
   repeated ApiEntity apis = 16;
+  string description = 17;
 }
 message ResourceEntity{
   int64 id = 1;
@@ -1584,6 +1585,7 @@ message ResourceEntity{
   repeated ApiEntity apis = 14;
   string data_scope = 15;
   bool enable_data_scope = 16;
+  string description = 17;
 }
 
 // resource tree

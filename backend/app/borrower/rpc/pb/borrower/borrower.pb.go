@@ -13581,6 +13581,7 @@ type ResourceTreeEntity struct {
 	Children        []*ResourceTreeEntity  `protobuf:"bytes,14,rep,name=children,proto3" json:"children,omitempty"`
 	EnableDataScope bool                   `protobuf:"varint,15,opt,name=enable_data_scope,json=enableDataScope,proto3" json:"enable_data_scope,omitempty"`
 	Apis            []*ApiEntity           `protobuf:"bytes,16,rep,name=apis,proto3" json:"apis,omitempty"`
+	Description     string                 `protobuf:"bytes,17,opt,name=description,proto3" json:"description,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -13727,6 +13728,13 @@ func (x *ResourceTreeEntity) GetApis() []*ApiEntity {
 	return nil
 }
 
+func (x *ResourceTreeEntity) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
 type ResourceEntity struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -13745,6 +13753,7 @@ type ResourceEntity struct {
 	Apis            []*ApiEntity           `protobuf:"bytes,14,rep,name=apis,proto3" json:"apis,omitempty"`
 	DataScope       string                 `protobuf:"bytes,15,opt,name=data_scope,json=dataScope,proto3" json:"data_scope,omitempty"`
 	EnableDataScope bool                   `protobuf:"varint,16,opt,name=enable_data_scope,json=enableDataScope,proto3" json:"enable_data_scope,omitempty"`
+	Description     string                 `protobuf:"bytes,17,opt,name=description,proto3" json:"description,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -13889,6 +13898,13 @@ func (x *ResourceEntity) GetEnableDataScope() bool {
 		return x.EnableDataScope
 	}
 	return false
+}
+
+func (x *ResourceEntity) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
 }
 
 // resource tree
@@ -20593,7 +20609,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\v \x01(\tR\tupdatedAt\x12#\n" +
 	"\rauth_required\x18\r \x01(\bR\fauthRequired\x12/\n" +
-	"\x13permission_required\x18\x0e \x01(\bR\x12permissionRequired\"\xe5\x03\n" +
+	"\x13permission_required\x18\x0e \x01(\bR\x12permissionRequired\"\x87\x04\n" +
 	"\x12ResourceTreeEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12\x12\n" +
@@ -20614,7 +20630,8 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"updated_at\x18\r \x01(\tR\tupdatedAt\x128\n" +
 	"\bchildren\x18\x0e \x03(\v2\x1c.borrower.ResourceTreeEntityR\bchildren\x12*\n" +
 	"\x11enable_data_scope\x18\x0f \x01(\bR\x0fenableDataScope\x12'\n" +
-	"\x04apis\x18\x10 \x03(\v2\x13.borrower.ApiEntityR\x04apis\"\xc6\x03\n" +
+	"\x04apis\x18\x10 \x03(\v2\x13.borrower.ApiEntityR\x04apis\x12 \n" +
+	"\vdescription\x18\x11 \x01(\tR\vdescription\"\xe8\x03\n" +
 	"\x0eResourceEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12\x12\n" +
@@ -20636,7 +20653,8 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x04apis\x18\x0e \x03(\v2\x13.borrower.ApiEntityR\x04apis\x12\x1d\n" +
 	"\n" +
 	"data_scope\x18\x0f \x01(\tR\tdataScope\x12*\n" +
-	"\x11enable_data_scope\x18\x10 \x01(\bR\x0fenableDataScope\"L\n" +
+	"\x11enable_data_scope\x18\x10 \x01(\bR\x0fenableDataScope\x12 \n" +
+	"\vdescription\x18\x11 \x01(\tR\vdescription\"L\n" +
 	"\x13ResourceTreeRequest\x125\n" +
 	"\x04data\x18\x01 \x01(\v2!.borrower.ResourceTreeRequestDataR\x04data\"-\n" +
 	"\x17ResourceTreeRequestData\x12\x12\n" +

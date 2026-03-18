@@ -3755,6 +3755,7 @@ type ResourceTreeEntity struct {
 	Children        []*ResourceTreeEntity  `protobuf:"bytes,14,rep,name=children,proto3" json:"children,omitempty"`
 	EnableDataScope bool                   `protobuf:"varint,15,opt,name=enable_data_scope,json=enableDataScope,proto3" json:"enable_data_scope,omitempty"`
 	Apis            []*ApiEntity           `protobuf:"bytes,16,rep,name=apis,proto3" json:"apis,omitempty"`
+	Description     string                 `protobuf:"bytes,17,opt,name=description,proto3" json:"description,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -3901,6 +3902,13 @@ func (x *ResourceTreeEntity) GetApis() []*ApiEntity {
 	return nil
 }
 
+func (x *ResourceTreeEntity) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
 type ResourceEntity struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -3919,6 +3927,7 @@ type ResourceEntity struct {
 	Apis            []*ApiEntity           `protobuf:"bytes,14,rep,name=apis,proto3" json:"apis,omitempty"`
 	DataScope       string                 `protobuf:"bytes,15,opt,name=data_scope,json=dataScope,proto3" json:"data_scope,omitempty"`
 	EnableDataScope bool                   `protobuf:"varint,16,opt,name=enable_data_scope,json=enableDataScope,proto3" json:"enable_data_scope,omitempty"`
+	Description     string                 `protobuf:"bytes,17,opt,name=description,proto3" json:"description,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -4063,6 +4072,13 @@ func (x *ResourceEntity) GetEnableDataScope() bool {
 		return x.EnableDataScope
 	}
 	return false
+}
+
+func (x *ResourceEntity) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
 }
 
 // resource tree -- request
@@ -4258,6 +4274,7 @@ type ResourceCreateRequestData struct {
 	SortOrder       int32                  `protobuf:"varint,10,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
 	ApiIds          []int64                `protobuf:"varint,11,rep,packed,name=api_ids,json=apiIds,proto3" json:"api_ids,omitempty"`
 	EnableDataScope bool                   `protobuf:"varint,12,opt,name=enable_data_scope,json=enableDataScope,proto3" json:"enable_data_scope,omitempty"`
+	Description     string                 `protobuf:"bytes,13,opt,name=description,proto3" json:"description,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -4376,6 +4393,13 @@ func (x *ResourceCreateRequestData) GetEnableDataScope() bool {
 	return false
 }
 
+func (x *ResourceCreateRequestData) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
 // update -- request
 type ResourceUpdateRequest struct {
 	state         protoimpl.MessageState     `protogen:"open.v1"`
@@ -4436,6 +4460,7 @@ type ResourceUpdateRequestData struct {
 	SortOrder       int32                  `protobuf:"varint,11,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
 	ApiIds          []int64                `protobuf:"varint,12,rep,packed,name=api_ids,json=apiIds,proto3" json:"api_ids,omitempty"`
 	EnableDataScope bool                   `protobuf:"varint,13,opt,name=enable_data_scope,json=enableDataScope,proto3" json:"enable_data_scope,omitempty"`
+	Description     string                 `protobuf:"bytes,14,opt,name=description,proto3" json:"description,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -4559,6 +4584,13 @@ func (x *ResourceUpdateRequestData) GetEnableDataScope() bool {
 		return x.EnableDataScope
 	}
 	return false
+}
+
+func (x *ResourceUpdateRequestData) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
 }
 
 // delete -- request
@@ -13383,7 +13415,7 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04type\x18\x02 \x01(\tR\x04type\"9\n" +
 	"\x11ApiDetailResponse\x12$\n" +
-	"\x04data\x18\x01 \x01(\v2\x10.admin.ApiEntityR\x04data\"\xdf\x03\n" +
+	"\x04data\x18\x01 \x01(\v2\x10.admin.ApiEntityR\x04data\"\x81\x04\n" +
 	"\x12ResourceTreeEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12\x12\n" +
@@ -13404,7 +13436,8 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"updated_at\x18\r \x01(\tR\tupdatedAt\x125\n" +
 	"\bchildren\x18\x0e \x03(\v2\x19.admin.ResourceTreeEntityR\bchildren\x12*\n" +
 	"\x11enable_data_scope\x18\x0f \x01(\bR\x0fenableDataScope\x12$\n" +
-	"\x04apis\x18\x10 \x03(\v2\x10.admin.ApiEntityR\x04apis\"\xc3\x03\n" +
+	"\x04apis\x18\x10 \x03(\v2\x10.admin.ApiEntityR\x04apis\x12 \n" +
+	"\vdescription\x18\x11 \x01(\tR\vdescription\"\xe5\x03\n" +
 	"\x0eResourceEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12\x12\n" +
@@ -13426,7 +13459,8 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x04apis\x18\x0e \x03(\v2\x10.admin.ApiEntityR\x04apis\x12\x1d\n" +
 	"\n" +
 	"data_scope\x18\x0f \x01(\tR\tdataScope\x12*\n" +
-	"\x11enable_data_scope\x18\x10 \x01(\bR\x0fenableDataScope\"I\n" +
+	"\x11enable_data_scope\x18\x10 \x01(\bR\x0fenableDataScope\x12 \n" +
+	"\vdescription\x18\x11 \x01(\tR\vdescription\"I\n" +
 	"\x13ResourceTreeRequest\x122\n" +
 	"\x04data\x18\x01 \x01(\v2\x1e.admin.ResourceTreeRequestDataR\x04data\"-\n" +
 	"\x17ResourceTreeRequestData\x12\x12\n" +
@@ -13434,7 +13468,7 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x14ResourceTreeResponse\x12-\n" +
 	"\x04data\x18\x01 \x03(\v2\x19.admin.ResourceTreeEntityR\x04data\"M\n" +
 	"\x15ResourceCreateRequest\x124\n" +
-	"\x04data\x18\x01 \x01(\v2 .admin.ResourceCreateRequestDataR\x04data\"\xd4\x02\n" +
+	"\x04data\x18\x01 \x01(\v2 .admin.ResourceCreateRequestDataR\x04data\"\xf6\x02\n" +
 	"\x19ResourceCreateRequestData\x12\x1b\n" +
 	"\tparent_id\x18\x01 \x01(\x03R\bparentId\x12\x12\n" +
 	"\x04type\x18\x02 \x01(\tR\x04type\x12#\n" +
@@ -13449,9 +13483,10 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"sort_order\x18\n" +
 	" \x01(\x05R\tsortOrder\x12\x17\n" +
 	"\aapi_ids\x18\v \x03(\x03R\x06apiIds\x12*\n" +
-	"\x11enable_data_scope\x18\f \x01(\bR\x0fenableDataScope\"M\n" +
+	"\x11enable_data_scope\x18\f \x01(\bR\x0fenableDataScope\x12 \n" +
+	"\vdescription\x18\r \x01(\tR\vdescription\"M\n" +
 	"\x15ResourceUpdateRequest\x124\n" +
-	"\x04data\x18\x01 \x01(\v2 .admin.ResourceUpdateRequestDataR\x04data\"\xe4\x02\n" +
+	"\x04data\x18\x01 \x01(\v2 .admin.ResourceUpdateRequestDataR\x04data\"\x86\x03\n" +
 	"\x19ResourceUpdateRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12\x12\n" +
@@ -13467,7 +13502,8 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\n" +
 	"sort_order\x18\v \x01(\x05R\tsortOrder\x12\x17\n" +
 	"\aapi_ids\x18\f \x03(\x03R\x06apiIds\x12*\n" +
-	"\x11enable_data_scope\x18\r \x01(\bR\x0fenableDataScope\"M\n" +
+	"\x11enable_data_scope\x18\r \x01(\bR\x0fenableDataScope\x12 \n" +
+	"\vdescription\x18\x0e \x01(\tR\vdescription\"M\n" +
 	"\x15ResourceDeleteRequest\x124\n" +
 	"\x04data\x18\x01 \x01(\v2 .admin.ResourceDeleteRequestDataR\x04data\"?\n" +
 	"\x19ResourceDeleteRequestData\x12\x0e\n" +

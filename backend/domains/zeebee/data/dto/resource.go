@@ -57,6 +57,7 @@ type ResourceCreateRequestDto struct {
 	IsShow          bool                   `json:"is_show"`
 	Status          constants.CommonStatus `json:"status"`
 	SortOrder       int32                  `json:"sort_order"`
+	Description     string                 `json:"description"`
 	ApiIds          []int64                `json:"api_ids"`
 	EnableDataScope bool                   `json:"enable_data_scope"`
 }

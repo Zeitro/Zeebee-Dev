@@ -9,3 +9,6 @@ ALTER TABLE "public"."resources"
     ALTER COLUMN "is_show" SET DEFAULT false;
 
 DROP TABLE "public"."api_white_lists";
+
+ALTER TABLE "public"."resources"
+    ADD COLUMN "description" varchar(255) NOT NULL DEFAULT '';

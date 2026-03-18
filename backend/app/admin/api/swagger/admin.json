@@ -5000,6 +5000,7 @@
                                     "status",
                                     "sort_order",
                                     "enable_data_scope",
+                                    "description",
                                     "created_at",
                                     "updated_at",
                                     "apis",
@@ -5072,6 +5073,9 @@
                                       "type": "string"
                                     },
                                     "data_scope": {
+                                      "type": "string"
+                                    },
+                                    "description": {
                                       "type": "string"
                                     },
                                     "enable_data_scope": {
@@ -5628,6 +5632,7 @@
                                     "status",
                                     "sort_order",
                                     "enable_data_scope",
+                                    "description",
                                     "created_at",
                                     "updated_at",
                                     "apis",
@@ -5700,6 +5705,9 @@
                                       "type": "string"
                                     },
                                     "data_scope": {
+                                      "type": "string"
+                                    },
+                                    "description": {
                                       "type": "string"
                                     },
                                     "enable_data_scope": {
@@ -6389,6 +6397,7 @@
                                     "status",
                                     "sort_order",
                                     "enable_data_scope",
+                                    "description",
                                     "created_at",
                                     "updated_at",
                                     "apis",
@@ -6461,6 +6470,9 @@
                                       "type": "string"
                                     },
                                     "data_scope": {
+                                      "type": "string"
+                                    },
+                                    "description": {
                                       "type": "string"
                                     },
                                     "enable_data_scope": {
@@ -6882,6 +6894,7 @@
                                 "status",
                                 "sort_order",
                                 "enable_data_scope",
+                                "description",
                                 "created_at",
                                 "updated_at",
                                 "apis",
@@ -6954,6 +6967,9 @@
                                   "type": "string"
                                 },
                                 "data_scope": {
+                                  "type": "string"
+                                },
+                                "description": {
                                   "type": "string"
                                 },
                                 "enable_data_scope": {
@@ -7418,6 +7434,7 @@
                                 "status",
                                 "sort_order",
                                 "enable_data_scope",
+                                "description",
                                 "created_at",
                                 "updated_at",
                                 "apis",
@@ -7490,6 +7507,9 @@
                                   "type": "string"
                                 },
                                 "data_scope": {
+                                  "type": "string"
+                                },
+                                "description": {
                                   "type": "string"
                                 },
                                 "enable_data_scope": {
@@ -7775,6 +7795,7 @@
                                 "status",
                                 "sort_order",
                                 "enable_data_scope",
+                                "description",
                                 "created_at",
                                 "updated_at",
                                 "apis",
@@ -7847,6 +7868,9 @@
                                   "type": "string"
                                 },
                                 "data_scope": {
+                                  "type": "string"
+                                },
+                                "description": {
                                   "type": "string"
                                 },
                                 "enable_data_scope": {
@@ -8076,6 +8100,9 @@
                     "type": "integer"
                   }
                 },
+                "description": {
+                  "type": "string"
+                },
                 "enable_data_scope": {
                   "type": "boolean"
                 },
@@ -8195,6 +8222,9 @@
                     "data_scope": {
                       "type": "string"
                     },
+                    "description": {
+                      "type": "string"
+                    },
                     "enable_data_scope": {
                       "type": "boolean"
                     },
@@ -8299,6 +8329,7 @@
                           "status",
                           "sort_order",
                           "enable_data_scope",
+                          "description",
                           "created_at",
                           "updated_at",
                           "apis",
@@ -8384,6 +8415,7 @@
                                 "status",
                                 "sort_order",
                                 "enable_data_scope",
+                                "description",
                                 "created_at",
                                 "updated_at",
                                 "apis",
@@ -8403,6 +8435,9 @@
                                   }
                                 },
                                 "created_at": {
+                                  "type": "string"
+                                },
+                                "description": {
                                   "type": "string"
                                 },
                                 "enable_data_scope": {
@@ -8448,6 +8483,9 @@
                             }
                           },
                           "created_at": {
+                            "type": "string"
+                          },
+                          "description": {
                             "type": "string"
                           },
                           "enable_data_scope": {
@@ -8614,6 +8652,9 @@
                     "data_scope": {
                       "type": "string"
                     },
+                    "description": {
+                      "type": "string"
+                    },
                     "enable_data_scope": {
                       "type": "boolean"
                     },
@@ -8708,6 +8749,9 @@
                   "items": {
                     "type": "integer"
                   }
+                },
+                "description": {
+                  "type": "string"
                 },
                 "enable_data_scope": {
                   "type": "boolean"
@@ -8826,6 +8870,9 @@
                       "type": "string"
                     },
                     "data_scope": {
+                      "type": "string"
+                    },
+                    "description": {
                       "type": "string"
                     },
                     "enable_data_scope": {
@@ -9113,6 +9160,7 @@
                           "status",
                           "sort_order",
                           "enable_data_scope",
+                          "description",
                           "created_at",
                           "updated_at",
                           "apis",
@@ -9185,6 +9233,9 @@
                             "type": "string"
                           },
                           "data_scope": {
+                            "type": "string"
+                          },
+                          "description": {
                             "type": "string"
                           },
                           "enable_data_scope": {
@@ -9389,6 +9440,7 @@
                                 "status",
                                 "sort_order",
                                 "enable_data_scope",
+                                "description",
                                 "created_at",
                                 "updated_at",
                                 "apis",
@@ -9461,6 +9513,9 @@
                                   "type": "string"
                                 },
                                 "data_scope": {
+                                  "type": "string"
+                                },
+                                "description": {
                                   "type": "string"
                                 },
                                 "enable_data_scope": {
@@ -9716,6 +9771,7 @@
                                 "status",
                                 "sort_order",
                                 "enable_data_scope",
+                                "description",
                                 "created_at",
                                 "updated_at",
                                 "apis",
@@ -9788,6 +9844,9 @@
                                   "type": "string"
                                 },
                                 "data_scope": {
+                                  "type": "string"
+                                },
+                                "description": {
                                   "type": "string"
                                 },
                                 "enable_data_scope": {
@@ -9995,6 +10054,7 @@
                           "status",
                           "sort_order",
                           "enable_data_scope",
+                          "description",
                           "created_at",
                           "updated_at",
                           "apis",
@@ -10067,6 +10127,9 @@
                             "type": "string"
                           },
                           "data_scope": {
+                            "type": "string"
+                          },
+                          "description": {
                             "type": "string"
                           },
                           "enable_data_scope": {
@@ -10307,6 +10370,7 @@
                           "status",
                           "sort_order",
                           "enable_data_scope",
+                          "description",
                           "created_at",
                           "updated_at",
                           "apis",
@@ -10379,6 +10443,9 @@
                             "type": "string"
                           },
                           "data_scope": {
+                            "type": "string"
+                          },
+                          "description": {
                             "type": "string"
                           },
                           "enable_data_scope": {
@@ -10640,6 +10707,7 @@
                           "status",
                           "sort_order",
                           "enable_data_scope",
+                          "description",
                           "created_at",
                           "updated_at",
                           "apis",
@@ -10712,6 +10780,9 @@
                             "type": "string"
                           },
                           "data_scope": {
+                            "type": "string"
+                          },
+                          "description": {
                             "type": "string"
                           },
                           "enable_data_scope": {
@@ -11338,6 +11409,7 @@
                           "status",
                           "sort_order",
                           "enable_data_scope",
+                          "description",
                           "created_at",
                           "updated_at",
                           "apis",
@@ -11423,6 +11495,7 @@
                                 "status",
                                 "sort_order",
                                 "enable_data_scope",
+                                "description",
                                 "created_at",
                                 "updated_at",
                                 "apis",
@@ -11442,6 +11515,9 @@
                                   }
                                 },
                                 "created_at": {
+                                  "type": "string"
+                                },
+                                "description": {
                                   "type": "string"
                                 },
                                 "enable_data_scope": {
@@ -11487,6 +11563,9 @@
                             }
                           },
                           "created_at": {
+                            "type": "string"
+                          },
+                          "description": {
                             "type": "string"
                           },
                           "enable_data_scope": {
@@ -11828,7 +11907,7 @@
       }
     }
   },
-  "x-date": "2026-03-16 14:01:23",
+  "x-date": "2026-03-18 10:14:46",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

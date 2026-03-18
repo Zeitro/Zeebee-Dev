@@ -1321,6 +1321,7 @@ type ResourceEntity struct {
 	Status          string       `json:"status"`
 	SortOrder       int32        `json:"sort_order"`
 	EnableDataScope bool         `json:"enable_data_scope"`
+	Description     string       `json:"description"`
 	CreatedAt       string       `json:"created_at"`
 	UpdatedAt       string       `json:"updated_at"`
 	Apis            []*ApiEntity `json:"apis,omitempty"`
@@ -1340,6 +1341,7 @@ type ResourceTreeEntity struct {
 	Status          string                `json:"status"`
 	SortOrder       int32                 `json:"sort_order"`
 	EnableDataScope bool                  `json:"enable_data_scope"`
+	Description     string                `json:"description"`
 	CreatedAt       string                `json:"created_at"`
 	UpdatedAt       string                `json:"updated_at"`
 	Apis            []*ApiEntity          `json:"apis,omitempty"`
