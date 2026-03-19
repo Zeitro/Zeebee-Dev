@@ -27,6 +27,7 @@ const AppApi = ({ className }) => {
 								eventBusPrefix={eventBusPrefix}
 								menuKey={menuKey}
 								api={api}
+								scrollX={1400}
 							/>
 						),
 					},
@@ -40,6 +41,7 @@ const AppApi = ({ className }) => {
 								eventBusPrefix={eventBusPrefix}
 								menuKey={menuKey}
 								api={api}
+								scrollX={1400}
 							/>
 						),
 					},
@@ -53,6 +55,7 @@ const AppApi = ({ className }) => {
 								eventBusPrefix={eventBusPrefix}
 								menuKey={menuKey}
 								api={api}
+								scrollX={1400}
 							/>
 						),
 					},

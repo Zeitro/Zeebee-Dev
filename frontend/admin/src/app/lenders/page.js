@@ -134,6 +134,7 @@ const Lenders = () => {
 								preview={false}
 								fallback="/images/noOrgLogo.svg"
 								className="object-contain rounded-lg"
+								loading="lazy"
 							/>
 						),
 					},

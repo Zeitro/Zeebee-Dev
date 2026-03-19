@@ -135,21 +135,21 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 								>
 									<Image
 										src="/images/logo.png"
-										width={149}
-										height={30}
+										fill
+										sizes="149px"
 										alt="ZeeBee Logo"
 										className={[
-											'absolute top-1/2 left-0 w-[149px] -translate-y-1/2 transition-opacity duration-300 ease-in-out',
+											'absolute top-1/2 left-0 w-[149px] transition-opacity duration-200 ease-in-out',
 											rect?.width < 150 ? 'opacity-0' : 'opacity-100',
 										].join(' ')}
 									/>
 									<Image
 										src="/images/logo_abbreviated.png"
-										width={27}
-										height={27}
+										fill
+										sizes="27px"
 										alt="ZeeBee Logo"
 										className={[
-											'absolute top-1/2 left-0 w-[27px] -translate-y-1/2 transition-opacity duration-300 ease-in-out z-10',
+											'absolute top-1/2 left-0 w-[27px] transition-opacity duration-100 ease-in-out z-10',
 											rect?.width >= 150 ? 'opacity-0' : 'opacity-100',
 										].join(' ')}
 									/>

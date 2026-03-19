@@ -67,7 +67,7 @@ const useColumn = ({ eventBusPrefix, api }) => {
 			title: 'Method',
 			dataIndex: 'method',
 			key: 'method',
-			width: 80,
+			width: 100,
 			ellipsis: true,
 			render: (v) => v || '--',
 		},
@@ -127,11 +127,11 @@ const useColumn = ({ eventBusPrefix, api }) => {
 			buttonOptions: [
 				{
 					permission: PERMISSIONS.API.EDIT,
-					width: 40,
+					width: 50,
 				},
 				{
 					permission: PERMISSIONS.API.DELETE,
-					width: 56,
+					width: 70,
 				},
 			],
 			render: (_, record) => {
@@ -235,6 +235,15 @@ const useColumn = ({ eventBusPrefix, api }) => {
 			render: (text) => (text ? 'Yes' : 'No'),
 		},
 		{
+			title: 'Is public',
+			dataIndex: 'is_public',
+			key: 'is_public',
+			width: 120,
+			ellipsis: true,
+			align: 'center',
+			render: (text) => (text ? 'Yes' : 'No'),
+		},
+		{
 			title: 'Icon',
 			dataIndex: 'icon',
 			key: 'icon',
@@ -254,16 +263,17 @@ const useColumn = ({ eventBusPrefix, api }) => {
 			key: 'description',
 			ellipsis: true,
 			render: (v) => v || '--',
+			minWidth: 300,
 		},
 		getActiveByPermission({
 			buttonOptions: [
 				{
 					permission: PERMISSIONS.RESOURCE.EDIT,
-					width: 40,
+					width: 50,
 				},
 				{
 					permission: PERMISSIONS.RESOURCE.DELETE,
-					width: 56,
+					width: 70,
 				},
 			],
 			render: (_, record) => {

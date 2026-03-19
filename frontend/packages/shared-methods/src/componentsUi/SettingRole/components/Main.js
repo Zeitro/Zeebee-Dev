@@ -128,7 +128,7 @@ const MainModal = ({ setOpen, rowData, handleSearch, systemType }) => {
 					size="large"
 					disabled={confirmLoading}
 					scrollToFirstError
-					// initialValues={{ ...rowData }}
+					initialValues={{ status: 'Active' }}
 				>
 					<Row gutter={16}>
 						{/* <Col md={24} className="!text-xl font-medium pb-5 text-base-gray">
@@ -194,11 +194,11 @@ const MainModal = ({ setOpen, rowData, handleSearch, systemType }) => {
 										isShowDescription
 										title={
 											<>
-												Add a menu to the character.
+												Add menu to the character.
 												<p>Note:</p>
-												1. Selecting the Menu class will display it in the
-												side menu bar. Only selecting the Button class will
-												display the corresponding action button.
+												1. Permission categories: 'Menu' is a page-level
+												permission, and 'Button' is an operation button
+												permission.
 												<br />
 												2. When you have data permissions, please select
 												either "Personal data only" or "All data".

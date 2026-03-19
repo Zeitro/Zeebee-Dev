@@ -15,7 +15,7 @@ const EditorTemplate = () => {
 	const tableFilterRef = useRef();
 	const { request } = createRequest();
 	const [searchValue, setSearchValue] = useState('');
-	const [type, setType] = useState(null);
+	// const [type, setType] = useState(null);
 	const [status, setStatus] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const [open, setOpen] = useState(false);
@@ -72,10 +72,15 @@ const EditorTemplate = () => {
 			onClick: () => {
 				setSearchValue('');
 				setStatus(null);
-				setType(null);
-				setTimeout(() => {
-					tableFilterRef?.current?.handleSearch?.();
-				}, 300);
+				// setType(null);
+				// setTimeout(() => {
+				tableFilterRef?.current?.handleSearch?.({
+					filters: {
+						keyword: '',
+						status: null,
+					},
+				});
+				// }, 300);
 			},
 			colProps: {
 				className: 'flex-1',
@@ -170,7 +175,7 @@ const EditorTemplate = () => {
 						key: 'name',
 						ellipsis: true,
 						render: (v) => v || '--',
-						width: 240,
+						// width: 240,
 					},
 					// {
 					// 	title: 'Type',
@@ -196,7 +201,8 @@ const EditorTemplate = () => {
 						key: 'description',
 						ellipsis: true,
 						render: (v) => v || '--',
-						width: 300,
+						// width: 300,
+						minWidth: 300,
 					},
 					{
 						title: 'Status',
@@ -322,7 +328,7 @@ const EditorTemplate = () => {
 					}),
 				]}
 				filterList={filterList}
-				scroll={{ x: 'max-content' }}
+				scroll={{ x: 1500 }}
 				// pagination={true}
 
 				getData={(params) => {

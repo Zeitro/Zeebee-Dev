@@ -67,6 +67,7 @@ const ContactLender = () => {
 					<>
 						<div className="flex items-center">
 							<Image
+								key={row?.id}
 								src={row?.logo || null}
 								width={48}
 								height={48}

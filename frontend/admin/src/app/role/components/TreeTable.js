@@ -13,6 +13,7 @@ const TreeTable = ({
 	eventBusPrefix,
 	menuKey = 'Api',
 	api,
+	scrollX = 1600,
 }) => {
 	const { getColumnsByMenuKey, tableFilterRef } = useColumn({ eventBusPrefix, api });
 	const { request } = createRequest();
@@ -42,7 +43,7 @@ const TreeTable = ({
 				return request(url);
 			}}
 			hasPaginationRequest={false}
-			scroll={{ x: 'max-content' }}
+			scroll={{ x: scrollX }}
 		/>
 	);
 };
