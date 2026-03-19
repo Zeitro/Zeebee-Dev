@@ -6,7 +6,7 @@ import ApiMainModal from '../components/ApiMain';
 import { PlusOutlined } from '@ant-design/icons';
 import { PERMISSIONS } from '@config/permissions';
 import { PermissionSlot } from '@repo/shared-methods';
-const AppApi = ({ className }) => {
+const AppApi = () => {
 	const [tabKey, setTabKey] = useState('Borrower');
 	const [open, setOpen] = useState(false);
 	const eventBusPrefix = 'searchApi-';
@@ -61,7 +61,9 @@ const AppApi = ({ className }) => {
 					},
 				]}
 				onChange={(v) => setTabKey(v)}
-				className={`flex-1 overflow-hidden !pt-4 !px-4 [&_.ant-tabs-content]:h-full [&_.ant-tabs-tabpane]:h-full ${className}`}
+				className={
+					'flex-1 overflow-hidden !pt-4 !px-4 [&_.ant-tabs-content]:h-full [&_.ant-tabs-tabpane]:h-full'
+				}
 				destroyOnHidden
 				size="large"
 			/>
