@@ -3,7 +3,6 @@ package borrowerentitylogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
@@ -11,6 +10,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/timex"
+	"zeebee-backend/domains/zeebee/model"
 
 	"zeebee-backend/common/errorx"
 )
@@ -48,17 +48,11 @@ func (l *DetailLogic) Detail(in *borrower.BorrowerEntityDetailRequest) (resp *bo
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
-
-	err = copier.CopyWithOption(respData, result, copier.Option{
-		CaseSensitive: true,
-		DeepCopy:      true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-			copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
-		},
-	})
+	respData, err = copierx.Trans[model.BorrowerEntity, borrower.BorrowerEntityEntity](result, copierx.TimeToRFC3339Str(),
+		copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
+	)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 
 	return &borrower.BorrowerEntityDetailResponse{

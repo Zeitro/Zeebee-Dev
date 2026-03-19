@@ -3,12 +3,12 @@ package borrowerentitylogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/model"
 
 	"zeebee-backend/common/errorx"
@@ -47,14 +47,9 @@ func (l *UpdateLogic) Update(in *borrower.BorrowerEntityUpdateRequest) (resp *bo
 	if err != nil {
 		return nil, err
 	}
-
-	err = copier.CopyWithOption(result, in.Data, copier.Option{
-		CaseSensitive: true,
-		DeepCopy:      true,
-		Converters:    []copier.TypeConverter{},
-	})
+	result, err = copierx.Trans[borrower.BorrowerEntityEditEntity, model.BorrowerEntity](in.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 
 	_, err = l.svcCtx.BorrowerEntityRepo.UpdateOneById(l.ctx, in.Data.Id, result)

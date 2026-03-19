@@ -6,7 +6,6 @@ import (
 	"github.com/duke-git/lancet/v2/condition"
 	"github.com/duke-git/lancet/v2/mathutil"
 	"github.com/duke-git/lancet/v2/slice"
-	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
@@ -260,25 +259,17 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	// loan
 	loan := &model.Loan{}
 	if oldLoan != nil && oldLoan.Id > 0 {
-		_ = copier.CopyWithOption(loan, oldLoan, copier.Option{
-			CaseSensitive: true,
-			DeepCopy:      true,
-			Converters: []copier.TypeConverter{
-				copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-			},
-		})
+		loan, err = copierx.Trans[model.Loan, model.Loan](oldLoan)
+		if err != nil {
+			return nil, err
+		}
 		loan.RemoveRelationships()
 	}
-	err = copier.CopyWithOption(loan, reqData, copier.Option{
-		CaseSensitive: true,
-		DeepCopy:      true,
-		Converters: []copier.TypeConverter{
-			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-		},
-	})
+	err = copierx.Assign[borrower.LoanApplyRequestData, model.Loan](reqData, loan, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
-		return nil, errorx.GetFailedTransErr(err)
+		return nil, err
 	}
+
 	if loan.Id == 0 {
 		loan.CreatorId = claim.OrganizationUserId
 		loan.CreatorName = claim.Username
@@ -323,15 +314,9 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 		} else {
 			loanProperty = &model.LoanProperty{}
 		}
-		err = copier.CopyWithOption(loanProperty, reqData.LoanProperty, copier.Option{
-			CaseSensitive: false,
-			DeepCopy:      true,
-			Converters: []copier.TypeConverter{
-				copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-			},
-		})
+		err = copierx.Assign[borrower.LoanPropertyApplyEntity, model.LoanProperty](reqData.LoanProperty, loanProperty, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 		if err != nil {
-			return nil, errorx.GetFailedTransErr(err)
+			return nil, err
 		}
 		if loanProperty.YearlyLiabilityExpenseAmount > 0 {
 			loanProperty.Dscr = mathutil.RoundToFloat((loanProperty.EstYearlyRentalIncomeAmount/loanProperty.YearlyLiabilityExpenseAmount)*100, 2)
@@ -362,63 +347,42 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	var transactionExperiences []*model.LoanExperience
 	if len(reqData.TransactionExperiences) > 0 {
 		transactionExperiences = make([]*model.LoanExperience, 0)
-		err = copier.CopyWithOption(&transactionExperiences, &reqData.TransactionExperiences, copier.Option{
-			IgnoreEmpty: false,
-			DeepCopy:    true,
-			Converters: []copier.TypeConverter{
-				copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-			},
-		})
+		transactionExperiencesPtr, err := copierx.Trans[[]*borrower.LoanExperienceEntity, []*model.LoanExperience](&reqData.TransactionExperiences, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 		if err != nil {
-			return nil, errorx.GetFailedTransErr(err)
+			return nil, err
 		}
+		transactionExperiences = *transactionExperiencesPtr
 	}
 
 	// real_estates experience
 	var realEstatesExperiences []*model.LoanExperience
 	if len(reqData.RealEstateExperiences) > 0 {
 		realEstatesExperiences = make([]*model.LoanExperience, 0)
-		err = copier.CopyWithOption(&realEstatesExperiences, &reqData.RealEstateExperiences, copier.Option{
-			CaseSensitive: false,
-			DeepCopy:      true,
-			Converters: []copier.TypeConverter{
-				copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-			},
-		})
+		realEstatesExperiencesPtr, err := copierx.Trans[[]*borrower.LoanExperienceEntity, []*model.LoanExperience](&reqData.RealEstateExperiences, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 		if err != nil {
-			return nil, errorx.GetFailedTransErr(err)
+			return nil, err
 		}
+		realEstatesExperiences = *realEstatesExperiencesPtr
 	}
 
 	// third services
 	var loanThirdServices []*model.LoanThirdService
 	if len(reqData.LoanThirdServices) > 0 {
 		loanThirdServices = make([]*model.LoanThirdService, 0)
-		err = copier.CopyWithOption(&loanThirdServices, &reqData.LoanThirdServices, copier.Option{
-			CaseSensitive: false,
-			DeepCopy:      true,
-			Converters: []copier.TypeConverter{
-				copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-			},
-		})
+		loanThirdServicesPtr, err := copierx.Trans[[]*borrower.LoanThirdServiceEntity, []*model.LoanThirdService](&reqData.LoanThirdServices, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 		if err != nil {
-			return nil, errorx.GetFailedTransErr(err)
+			return nil, err
 		}
+		loanThirdServices = *loanThirdServicesPtr
 	}
 
 	// demographic
 	var loanDemographic *model.LoanDemographic
 	if reqData.LoanDemographic != nil {
 		loanDemographic = &model.LoanDemographic{}
-		err = copier.CopyWithOption(&loanDemographic, &reqData.LoanDemographic, copier.Option{
-			CaseSensitive: false,
-			DeepCopy:      true,
-			Converters: []copier.TypeConverter{
-				copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-			},
-		})
+		loanDemographic, err = copierx.Trans[borrower.LoanDemographicEntity, model.LoanDemographic](reqData.LoanDemographic, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 		if err != nil {
-			return nil, errorx.GetFailedTransErr(err)
+			return nil, err
 		}
 	}
 

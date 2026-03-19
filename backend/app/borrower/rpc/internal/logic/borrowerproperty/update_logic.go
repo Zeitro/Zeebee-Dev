@@ -3,13 +3,12 @@ package borrowerpropertylogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/model"
 
 	"zeebee-backend/common/errorx"
@@ -43,22 +42,15 @@ func (l *UpdateLogic) Update(in *borrower.PropertyUpdateRequest) (resp *borrower
 		return nil, err
 	}
 
-	// todo check organization
 	var result *model.BorrowerProperty
 	result, err = l.svcCtx.BorrowerPropertyRepo.GetOneByIdForOrganization(l.ctx, in.Data.Id, claim.OrganizationId)
 	if err != nil {
 		return nil, err
 	}
-
-	err = copier.CopyWithOption(result, in.Data, copier.Option{
-		CaseSensitive: true,
-		DeepCopy:      true,
-		Converters:    []copier.TypeConverter{},
-	})
+	err = copierx.Assign[borrower.PropertyUpdateRequestData, model.BorrowerProperty](in.Data, result)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
-
 	_, err = l.svcCtx.BorrowerPropertyRepo.UpdateOne(l.ctx, in.Data.Id, result)
 
 	return &borrower.EmptyResponse{}, err

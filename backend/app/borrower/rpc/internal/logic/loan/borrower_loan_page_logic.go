@@ -3,8 +3,6 @@ package loanlogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
@@ -12,8 +10,10 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/gormx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/model"
 )
 
 type BorrowerLoanPageLogic struct {
@@ -44,31 +44,28 @@ func (l *BorrowerLoanPageLogic) BorrowerLoanPage(in *borrower.LoanPageRequest) (
 		return nil, err
 	}
 
-	pageReq := dto.LoanBorrowerPageRequestDto{}
-	_ = copier.CopyWithOption(&pageReq, in.Data, copier.Option{
-		CaseSensitive: true,
-		DeepCopy:      true,
-	})
+	pageReq := &dto.LoanBorrowerPageRequestDto{}
+	pageReq, err = copierx.Trans[borrower.LoanPageRequestData, dto.LoanBorrowerPageRequestDto](in.Data)
+	if err != nil {
+		return nil, err
+	}
+
 	pageReq.Filter.OrganizationId = claim.OrganizationId
 	pageReq.Filter.UserId = claim.OrganizationUserId
 
-	pageResult, err := l.svcCtx.LoanRepo.PageForBorrower(l.ctx, pageReq)
+	pageResult, err := l.svcCtx.LoanRepo.PageForBorrower(l.ctx, *pageReq)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
 	resp = &borrower.LoanPageResponse{
 		Data: &borrower.LoanPageResponseData{},
 	}
-
-	err = copier.CopyWithOption(&resp.Data, pageResult, copier.Option{
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-			copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
-		},
-	})
+	resp.Data, err = copierx.Trans[gormx.PageResponse[*model.Loan], borrower.LoanPageResponseData](&pageResult,
+		copierx.TimeToRFC3339Str(),
+		copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
+	)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 
 	return resp, nil

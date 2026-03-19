@@ -7,15 +7,16 @@ import (
 	"fmt"
 
 	"github.com/duke-git/lancet/v2/mathutil"
-	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
 
+	"zeebee-backend/app/borrower/config"
 	"zeebee-backend/app/borrower/rpc/internal/email_tpl"
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/email"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/preapproval_engine"
@@ -99,10 +100,11 @@ func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalReque
 		Primary:     &borrower.PrimaryLoanPreApproval{},
 		Secondaries: []*borrower.SecondaryLoanPreApproval{},
 	}
-	_ = copier.CopyWithOption(responseData.Primary, result, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-	})
+	responseData.Primary, _ = copierx.Trans[preapproval_engine.CalculatePreApprovalLoanAmountResult, borrower.PrimaryLoanPreApproval](result)
+	if err != nil {
+		return nil, err
+	}
+
 	result.RequestId = requestId
 	responseData.Primary.RequestId = requestId
 	if result.IsApproved {
@@ -119,24 +121,16 @@ func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalReque
 		responseData.Primary.LenderCompanyId = 1
 		responseData.Primary.LenderCompanyName = "Zeebee"
 	}
-	_ = copier.CopyWithOption(&responseData.Secondaries, &global.Config.PreApprovalLoanConf, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-	})
+
+	_ = copierx.Assign[[]config.PreApprovalLoanConf, []*borrower.SecondaryLoanPreApproval](&global.Config.PreApprovalLoanConf, &responseData.Secondaries)
 
 	// save original data and result to redis
 	cacheData := types.PreApproveLoanCacheData{
 		RequestData: types.LoanPreApprovalRequest{},
 		ResultData:  types.LoanPreApprovalResult{},
 	}
-	_ = copier.CopyWithOption(&cacheData.RequestData, in.Data, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-	})
-	_ = copier.CopyWithOption(&cacheData.ResultData, result, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-	})
+	_ = copierx.Assign[borrower.LoanPreApprovalRequestData, types.LoanPreApprovalRequest](in.Data, &cacheData.RequestData)
+	_ = copierx.Assign[preapproval_engine.CalculatePreApprovalLoanAmountResult, types.LoanPreApprovalResult](result, &cacheData.ResultData)
 	cacheData.RequestData.Borrower.FicoScore = in.Data.Borrower.EstCreditScore
 	key := fmt.Sprintf(constants.BorrowerPreApprovalCacheKey, requestId)
 	contents, _ := json.Marshal(cacheData)

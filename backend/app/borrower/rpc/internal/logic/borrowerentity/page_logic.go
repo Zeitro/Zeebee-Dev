@@ -3,7 +3,6 @@ package borrowerentitylogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
@@ -13,6 +12,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/model"
 )
 
 type PageLogic struct {
@@ -43,31 +43,28 @@ func (l *PageLogic) Page(in *borrower.BorrowerEntityPageRequest) (resp *borrower
 		return nil, err
 	}
 
-	pageReq := dto.BorrowerEntityPageRequestDto{}
-	_ = copier.CopyWithOption(&pageReq, in.Data, copier.Option{
-		CaseSensitive: true,
-		DeepCopy:      true,
-	})
+	pageReq := &dto.BorrowerEntityPageRequestDto{}
+	pageReq, err = copierx.Trans[borrower.BorrowerEntityPageRequestData, dto.BorrowerEntityPageRequestDto](in.Data)
+	if err != nil {
+		return nil, err
+	}
+
 	pageReq.Filter.OrganizationId = claim.OrganizationId
 	pageReq.Filter.UserId = claim.OrganizationUserId
-	pageResult, err := l.svcCtx.BorrowerEntityRepo.PageForBorrower(l.ctx, pageReq)
+	pageResult, err := l.svcCtx.BorrowerEntityRepo.PageForBorrower(l.ctx, *pageReq)
 	if err != nil {
 		return nil, err
 	}
 
 	respData := make([]*borrower.BorrowerEntityPageEntity, 0, len(pageResult.List))
-
-	err = copier.CopyWithOption(&respData, &pageResult.List, copier.Option{
-		CaseSensitive: true,
-		DeepCopy:      true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-			copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
-		},
-	})
+	respDataPtr, err := copierx.Trans[[]*model.BorrowerEntity, []*borrower.BorrowerEntityPageEntity](&pageResult.List,
+		copierx.TimeToRFC3339Str(),
+		copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
+	)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
+	respData = *respDataPtr
 
 	return &borrower.BorrowerEntityPageResponse{
 		Data: &borrower.BorrowerEntityPageResponseData{

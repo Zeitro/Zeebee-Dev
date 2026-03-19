@@ -3,8 +3,6 @@ package organizationuserlogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
@@ -43,7 +41,7 @@ func (l *PageLogic) Page(in *borrower.OrganizationUserPageRequest) (resp *borrow
 		return nil, err
 	}
 	pageReq := dto.OrganizationUserPageRequestDto{}
-	err = copier.Copy(&pageReq, &in.Data)
+	err = copierx.Assign[borrower.OrganizationUserPageRequestData, dto.OrganizationUserPageRequestDto](in.Data, &pageReq)
 	if err != nil {
 		return nil, err
 	}
@@ -56,13 +54,7 @@ func (l *PageLogic) Page(in *borrower.OrganizationUserPageRequest) (resp *borrow
 		return nil, err
 	}
 	data := &borrower.OrganizationUserPageResponseData{}
-	err = copier.CopyWithOption(data, &results, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
-	})
+	data, err = copierx.Trans[dto.PageResultDto[*dto.OrganizationUserEntityDto], borrower.OrganizationUserPageResponseData](&results, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

@@ -3,7 +3,6 @@ package rolelogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
@@ -41,28 +40,24 @@ func (l *CreateLogic) Create(in *borrower.RoleCreateRequest) (resp *borrower.Rol
 	if err != nil {
 		return nil, err
 	}
-	input := dto.RoleCreateRequestDto{}
-	err = copier.CopyWithOption(&input, in.Data, copier.Option{DeepCopy: true})
+	input := &dto.RoleCreateRequestDto{}
+	input, err = copierx.Trans[borrower.RoleCreateRequestData, dto.RoleCreateRequestDto](in.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
+
 	input.Type = constants.UserTypeBorrower
 	input.OrganizationId = claim.OrganizationId
 
-	role, err := l.baseLogic.RoleLogic.Create(l.ctx, input)
+	role, err := l.baseLogic.RoleLogic.Create(l.ctx, *input)
 	if err != nil {
 		return nil, err
 	}
 
 	respData := &borrower.RoleEntity{}
-	err = copier.CopyWithOption(respData, role, copier.Option{
-		DeepCopy: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
-	})
+	respData, err = copierx.Trans[dto.RoleEntityDto, borrower.RoleEntity](role, copierx.TimeToRFC3339Str())
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 
 	return &borrower.RoleCreateResponse{

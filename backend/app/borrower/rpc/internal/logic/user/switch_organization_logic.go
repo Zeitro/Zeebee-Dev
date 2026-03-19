@@ -3,14 +3,14 @@ package userlogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/dto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -53,9 +53,9 @@ func (l *SwitchOrganizationLogic) SwitchOrganization(in *borrower.SwitchOrganiza
 		return nil, err
 	}
 	data := &borrower.UserLoginResponseData{}
-	err = copier.CopyWithOption(data, token, copier.Option{DeepCopy: true})
+	data, err = copierx.Trans[dto.UserJwtTokenDto, borrower.UserLoginResponseData](token)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	return &borrower.UserLoginResponse{Data: data}, nil
 }

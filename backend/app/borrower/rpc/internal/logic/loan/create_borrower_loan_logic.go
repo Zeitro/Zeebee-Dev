@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/duke-git/lancet/v2/slice"
-	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
@@ -121,16 +120,9 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 			return nil, nil, nil, nil, err
 		}
 		applicantItem := &model.LoanApplicant{}
-		err = copier.CopyWithOption(applicantItem, borrowerApplicant, copier.Option{
-			IgnoreEmpty:   false,
-			DeepCopy:      true,
-			CaseSensitive: true,
-			Converters: []copier.TypeConverter{
-				copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-			},
-		})
+		applicantItem, err = copierx.Trans[model.BorrowerApplicant, model.LoanApplicant](borrowerApplicant, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 		if err != nil {
-			return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
+			return nil, nil, nil, nil, err
 		}
 		applicantItem.Id = 0
 		applicantItem.IsPrimary = applicant.IsPrimary
@@ -166,40 +158,23 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 		return nil, nil, nil, nil, err
 	}
 	loanProperty = &model.LoanProperty{}
-	err = copier.CopyWithOption(loanProperty, borrowerProperty, copier.Option{
-		IgnoreEmpty:   false,
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-		},
-	})
+	loanProperty, err = copierx.Trans[model.BorrowerProperty, model.LoanProperty](borrowerProperty, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
-		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
+		return nil, nil, nil, nil, err
 	}
-	err = copier.CopyWithOption(loanProperty, in.LoanProperty, copier.Option{
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-		},
-	})
+
+	err = copierx.Assign[borrower.ThirdPartyLoanPropertyEditEntity, model.LoanProperty](in.LoanProperty, loanProperty, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
-		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
+		return nil, nil, nil, nil, err
 	}
+
 	loanProperty.Id = 0
 
 	// loan
 	loan = &model.Loan{}
-	err = copier.CopyWithOption(loan, in, copier.Option{
-		IgnoreEmpty:   false,
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-		},
-	})
+	loan, err = copierx.Trans[borrower.LoanCreateRequestData, model.Loan](in, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
-		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
+		return nil, nil, nil, nil, err
 	}
 
 	loan.CreatorId = claim.OrganizationUserId

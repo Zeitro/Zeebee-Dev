@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/duke-git/lancet/v2/slice"
-	"github.com/jinzhu/copier"
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
@@ -54,32 +53,24 @@ func (l *BorrowerLoanDetailLogic) BorrowerLoanDetail(in *borrower.LoanDetailRequ
 	resp = &borrower.LoanDetailResponse{
 		Data: &borrower.LoanEntity{},
 	}
-	err = copier.CopyWithOption(&resp.Data, loan, copier.Option{
-		CaseSensitive: true,
-		DeepCopy:      true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-			copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
-		},
-	})
+	resp.Data, err = copierx.Trans[model.Loan, borrower.LoanEntity](loan,
+		copierx.TimeToRFC3339Str(),
+		copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
+	)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
+
 	// loan experiences
 	var transExperiences []*borrower.LoanExperienceEntity
 	var realEstateExperiences []*borrower.LoanExperienceEntity
 	slice.ForEach(loan.LoanExperiences, func(index int, item *model.LoanExperience) {
 		experience := &borrower.LoanExperienceEntity{}
-		_ = copier.CopyWithOption(experience, item, copier.Option{
-			CaseSensitive: true,
-			DeepCopy:      true,
-			IgnoreEmpty:   false,
-			Converters: []copier.TypeConverter{
-				copierx.TimeToRFC3339Str(),
-				copierx.TimePtrToRFC3339Str(),
-				copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
-			},
-		})
+		experience, _ = copierx.Trans[model.LoanExperience, borrower.LoanExperienceEntity](item,
+			copierx.TimeToRFC3339Str(),
+			copierx.TimePtrToRFC3339Str(),
+			copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
+		)
 		if item.Type == constants.LoanExperienceTypeTransaction {
 			transExperiences = append(transExperiences, experience)
 		} else {
