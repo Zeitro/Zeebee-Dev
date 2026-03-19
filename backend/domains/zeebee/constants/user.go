@@ -2,6 +2,8 @@ package constants
 
 import "zeebee-backend/common/enums"
 
+const DataScopeCtxKey = "data_scope"
+
 type UserStatus string
 
 var UserStatusName = "user_status"

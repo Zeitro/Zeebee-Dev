@@ -27,6 +27,7 @@ type RpcConf struct {
 	JwtAuth     types.JwtAuth `json:",optional"`
 	DbConf      DbConf
 	AwsS3Conf   AwsS3Conf
+	CasbinConf  CasbinConf
 }
 
 type DbConf struct {
@@ -62,4 +63,24 @@ type EmailConf struct {
 	Port     int
 	Password string
 	Username string
+}
+
+type CasbinConf struct {
+	ModelPath  string
+	Watcher    CasbinWatcher
+	EventTopic CasbinEventTopic
+}
+
+type CasbinWatcher struct {
+	Host            string
+	Pwd             string
+	AdminChannel    string
+	BorrowerChannel string
+	LenderChannel   string
+}
+
+type CasbinEventTopic struct {
+	AdminTopic    string
+	BorrowerTopic string
+	LenderTopic   string
 }

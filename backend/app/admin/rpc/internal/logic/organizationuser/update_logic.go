@@ -3,15 +3,13 @@ package organizationuserlogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/data/dto"
-
-	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/common/errorx"
 )
@@ -28,11 +26,11 @@ func NewUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLogi
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *UpdateLogic) Update(in *admin.OrganizationUserUpdateRequest) (resp *admin.OrganizationUserUpdateResponse, err error) {
+func (l *UpdateLogic) Update(in *admin.OrganizationUserUpdateRequest) (resp *admin.OrganizationUserDetailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -43,31 +41,24 @@ func (l *UpdateLogic) Update(in *admin.OrganizationUserUpdateRequest) (resp *adm
 		return nil, err
 	}
 
-	input := dto.OrganizationUserUpdateRequestDto{}
-	err = copier.CopyWithOption(&input, &in.Data, copier.Option{CaseSensitive: true, DeepCopy: true})
+	input, err := copierx.Trans[admin.OrganizationUserUpdateRequestData, dto.OrganizationUserUpdateRequestDto](in.Data)
 	if err != nil {
 		return nil, err
 	}
+
 	input.UserType = claim.UserType
 	input.OrganizationId = claim.OrganizationId
 
-	result, err := l.baseLogic.OrganizationUserLogic.UpdateOrganizationUser(l.ctx, input)
+	result, err := l.baseLogic.OrganizationUserLogic.UpdateOrganizationUser(l.ctx, *input)
 	if err != nil {
 		return nil, err
 	}
-	data := &admin.OrganizationUserEntity{}
-	err = copier.CopyWithOption(data, result, copier.Option{
-		CaseSensitive: true,
-		DeepCopy:      true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
-	})
+	data, err := copierx.Trans[dto.OrganizationUserEntityDto, admin.OrganizationUserEntity](result, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}
 
-	return &admin.OrganizationUserUpdateResponse{
+	return &admin.OrganizationUserDetailResponse{
 		Data: data,
 	}, nil
 }

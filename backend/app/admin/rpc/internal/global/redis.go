@@ -6,9 +6,9 @@ import (
 	"zeebee-backend/common/redisx"
 )
 
-var redisDB *redisx.Redisx
+var redisDB *redisx.Client
 
-func GetRedis() *redisx.Redisx {
+func GetRedis() *redisx.Client {
 	return redisDB
 }
 

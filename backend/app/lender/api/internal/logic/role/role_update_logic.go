@@ -3,7 +3,6 @@ package role
 import (
 	"context"
 
-	"github.com/duke-git/lancet/v2/slice"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/lender/api/internal/svc"
@@ -11,7 +10,6 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/constants"
 )
 
 type RoleUpdateLogic struct {
@@ -39,14 +37,12 @@ func (l *RoleUpdateLogic) RoleUpdate(req *types.RoleUpdateRequest) (resp *types.
 	}
 	rpcReq.Data = data
 
-	relations := slice.Map[int64, *lender.RoleAndResourceRelationEntity](req.ResourceIds, func(index int, item int64) *lender.RoleAndResourceRelationEntity {
-		return &lender.RoleAndResourceRelationEntity{
-			RoleId:     req.Id,
-			ResourceId: item,
-			DataScope:  string(constants.DataScopeAll),
-		}
-	})
-	rpcReq.Data.RoleAndResources = relations
+	relations, err := copierx.Trans[[]types.RoleAndResourceRelation, []*lender.RoleAndResourceRelationEntity](&req.Resources)
+	if err != nil {
+		return nil, err
+	}
+
+	rpcReq.Data.RoleAndResources = *relations
 
 	rpcResp, err := l.svcCtx.RoleRpcClient.Update(l.ctx, rpcReq)
 	if err != nil {

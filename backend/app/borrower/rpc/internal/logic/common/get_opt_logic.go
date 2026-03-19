@@ -3,10 +3,9 @@ package commonlogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/enums"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -38,9 +37,9 @@ func (l *GetOptLogic) GetOpt(in *borrower.OptionRequest) (resp *borrower.OptionR
 		Data: []*borrower.OptionEntity{},
 	}
 	opts := enums.Get(in.Data.Name)
-	err = copier.Copy(&resp.Data, &opts)
+	err = copierx.Assign[[]enums.EnumOpt, []*borrower.OptionEntity](&opts, &resp.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 
 	return resp, nil

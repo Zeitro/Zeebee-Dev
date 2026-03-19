@@ -44,6 +44,7 @@ type RpcConf struct {
 	ZeitroConf                   ZeitroConf
 	PdfGeneratorUrl              string
 	TemplateConf                 map[string]TemplateConf
+	CasbinConf                   CasbinConf
 }
 
 type DbConf struct {
@@ -127,4 +128,20 @@ type ZeitroConf struct {
 	Url      string
 	Username string
 	Password string
+}
+
+type CasbinConf struct {
+	ModelPath  string
+	Watcher    CasbinWatcher
+	EventTopic CasbinEventTopic
+}
+
+type CasbinWatcher struct {
+	Host            string
+	Pwd             string
+	BorrowerChannel string
+}
+
+type CasbinEventTopic struct {
+	BorrowerTopic string
 }

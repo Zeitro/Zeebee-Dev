@@ -129,3 +129,12 @@ RpcConf:
     Url:  https://lo.zeitro.com
     Username: cli_hu4tKiltzCfQfheOa3
     Password: sec_8SyshMSf1ZORJrH6mT38FMtDAItSLAox8ysd
+
+  CasbinConf:
+    ModelPath: etc/model.conf
+    EventTopic:
+      BorrowerTopic: /borrower-rbac-event
+    Watcher:
+      Host: zeebee-backend-redis-single-001.zeebee-backend-redis-single.uwixeb.usw1.cache.amazonaws.com:6379
+      Pwd: ''
+      BorrowerChannel: /borrower-channel

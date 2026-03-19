@@ -13,7 +13,6 @@ import (
 	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/model"
 )
 
 type PageLogic struct {
@@ -28,7 +27,7 @@ func NewPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PageLogic {
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -49,17 +48,22 @@ func (l *PageLogic) Page(in *lender.RolePageRequest) (resp *lender.RolePageRespo
 	}
 	pageReq.Filter.RoleType = constants.UserTypeLender
 	pageReq.Filter.OrganizationId = claim.OrganizationId
-	pageReq.Filter.UserId = claim.OrganizationUserId
+	// pageReq.Filter.UserId = claim.OrganizationUserId
 
 	result, err := l.baseLogic.RoleLogic.Page(l.ctx, *pageReq)
 	if err != nil {
 		return nil, err
 	}
 
-	data, err := copierx.Trans[gormx.PageResponse[*model.Role], lender.RolePageResponseData](&result, copierx.TimeToRFC3339Str())
+	data, err := copierx.Trans[gormx.PageResponse[dto.RoleEntityDto], lender.RolePageResponseData](&result, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}
+
+	// data, err := copierx.Trans[gormx.PageResponse[*model.Role], lender.RolePageResponseData](&result, copierx.TimeToRFC3339Str())
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	return &lender.RolePageResponse{
 		Data: data,

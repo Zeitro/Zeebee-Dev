@@ -3,11 +3,10 @@ package organizationuserlogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/data/dto"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -27,11 +26,11 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *CreateLogic) Create(in *admin.OrganizationUserCreateRequest) (resp *admin.OrganizationUserCreateResponse, err error) {
+func (l *CreateLogic) Create(in *admin.OrganizationUserCreateRequest) (resp *admin.OrganizationUserDetailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -41,26 +40,24 @@ func (l *CreateLogic) Create(in *admin.OrganizationUserCreateRequest) (resp *adm
 	if err != nil {
 		return nil, err
 	}
-	input := dto.OrganizationUserCreateAdminRequestDto{}
-	err = copier.Copy(&input, in.Data)
-	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
-	}
-	input.UserType = claim.UserType
-	input.OrganizationId = claim.OrganizationId
-	user, err := l.baseLogic.OrganizationUserLogic.CreateAdminOrganizationUser(l.ctx, input)
+
+	input, err := copierx.Trans[admin.OrganizationUserCreateRequestData, dto.OrganizationUserCreateAdminRequestDto](in.Data)
 	if err != nil {
 		return nil, err
 	}
-	data := &admin.OrganizationUserEntity{}
-	err = copier.CopyWithOption(data, user, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-	})
+
+	input.UserType = claim.UserType
+	input.OrganizationId = claim.OrganizationId
+	user, err := l.baseLogic.OrganizationUserLogic.CreateAdminOrganizationUser(l.ctx, *input)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
-	return &admin.OrganizationUserCreateResponse{
+
+	data, err := copierx.Trans[dto.OrganizationUserEntityDto, admin.OrganizationUserEntity](user, copierx.TimeToRFC3339Str())
+	if err != nil {
+		return nil, err
+	}
+	return &admin.OrganizationUserDetailResponse{
 		Data: data,
 	}, nil
 }

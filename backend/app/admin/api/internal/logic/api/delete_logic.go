@@ -3,14 +3,12 @@ package api
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
-	"zeebee-backend/common/errorx"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/common/copierx"
 )
 
 type DeleteLogic struct {
@@ -33,11 +31,10 @@ func (l *DeleteLogic) Delete(req *types.ApiDeleteRequest) (resp *types.EmptyResp
 	rpcReq := &admin.ApiDeleteRequest{
 		Data: &admin.ApiDeleteRequestData{},
 	}
-	err = copier.CopyWithOption(rpcReq.Data, req, copier.Option{DeepCopy: true})
+	rpcReq.Data, err = copierx.Trans[types.ApiDeleteRequest, admin.ApiDeleteRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
-
 	_, err = l.svcCtx.ApiRpcClient.Delete(l.ctx, rpcReq)
 	if err != nil {
 		return nil, err
