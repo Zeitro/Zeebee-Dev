@@ -6,7 +6,6 @@ import { useState } from 'react';
 import { userStatusColor } from '@repo/shared-methods/enum';
 import { message, Tooltip } from 'antd';
 import { useAuth } from '@repo/shared-methods/hooks';
-import { permission } from 'process';
 const useContent = ({ handleSearch = () => {}, systemType, PERMISSIONS }) => {
 	const { hasPermission, getActiveByPermission } = useAuth();
 	const { request } = createRequest();
@@ -89,7 +88,7 @@ const useContent = ({ handleSearch = () => {}, systemType, PERMISSIONS }) => {
 				<TableOperation
 					record={record}
 					getItems={(editItem, deleteItem) => {
-						editItem.label = (
+						editItem.children = (
 							<BtnPopUpModal
 								getContent={(setOpen) => (
 									<MainModal
@@ -99,23 +98,26 @@ const useContent = ({ handleSearch = () => {}, systemType, PERMISSIONS }) => {
 										systemType={systemType}
 									/>
 								)}
-								type="primary"
-								size="large"
-								isButton={false}
+								type="link"
+								size="small"
+								isButton={true}
 								isStopPropagation={false}
+								disabled={record?.name === 'Admin'}
 							>
 								{editItem.icon}&nbsp;Edit
 							</BtnPopUpModal>
 						);
-						deleteItem.label = (
+						deleteItem.children = (
 							<DeleteBtn
-								type="default"
+								type="link"
 								title="Are you sure delete this role?"
 								content={record.name}
-								isButton={false}
+								isButton={true}
 								onOk={() => handleDelete(record.id)}
 								loading={loading}
 								isStopPropagation={false}
+								disabled={record?.name === 'Admin'}
+								size="small"
 							>
 								{deleteItem?.icon}&nbsp;Delete
 							</DeleteBtn>
