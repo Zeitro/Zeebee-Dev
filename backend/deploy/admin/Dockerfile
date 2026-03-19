@@ -13,5 +13,6 @@ ENV CONFIG_ENV=${CONFIG_ENV}
 WORKDIR /app
 COPY --from=builder /app/admin /app/admin
 COPY ./app/admin/etc/config-${CONFIG_ENV}.yaml /app/etc/config-${CONFIG_ENV}.yaml
+COPY ./app/admin/etc/model.conf /app/etc/model.conf
 EXPOSE 10200
 ENTRYPOINT /app/admin -f /app/etc/config-${CONFIG_ENV}.yaml
