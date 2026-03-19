@@ -88,6 +88,7 @@ type CasbinWatcher struct {
 	Host          string
 	Pwd           string
 	LenderChannel string
+	Tls           bool `json:",default=false"`
 }
 
 type CasbinEventTopic struct {
