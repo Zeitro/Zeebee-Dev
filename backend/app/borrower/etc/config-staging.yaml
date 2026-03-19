@@ -98,6 +98,21 @@ RpcConf:
       ClientId: 808134957644-2savep4tlp45sln5v9f21hq06628vvia.apps.googleusercontent.com
       ClientSecret: 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
       CallbackUrl: https://app.zeebeeloans.net/gmailAuth
+  PdfGeneratorUrl: http://127.0.0.1:10300/api/v1/pdf
+  TemplateConf:
+    PreApprovalLetterPdf:
+      Purpose: preApprovedLetter
+      Scope: Organization
+      Category: Contract
+      FileType: Pdf
+      Title: "Pre-Approval Letter.pdf"
+
+    PreApprovalLetterEmail:
+      Purpose: preApprovedLetterEmailTemplate
+      Scope: Organization
+      Category: Email
+      FileType: Html
+      Title: "Pre-Approval Letter"
   ZeebeeAgentEmail: loan@alphax-capital.com
   LoginUrl: https://app.zeebeeloans.net/login
   LenderUrl: https://agent.zeebeeloans.net

@@ -4,7 +4,7 @@ import { useSearchParams } from 'next/navigation';
 import { createRequest } from '@repo/shared-methods/utils';
 import { Spin } from 'antd';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
-import { useUserStore } from '@/store/user';
+import { useUserStore } from '@repo/shared-methods/store';
 // 授权gmail，以用户邮箱发送邮件<中转页,接收参数>
 const GmailAuth = () => {
 	const searchParams = useSearchParams();

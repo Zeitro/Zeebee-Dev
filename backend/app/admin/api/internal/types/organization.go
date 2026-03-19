@@ -28,6 +28,10 @@ type OrganizationEntity struct {
 	Owner              *UserEntity                 `json:"owner"`
 }
 
+type OrganizationOptionResponse struct {
+	List []*OrganizationOptionEntity `json:"list"`
+}
+
 type OrganizationPageRequest struct {
 	BasePageRequest
 	Filter *OrganizationPageFilter `json:"filter,optional"`
@@ -37,6 +41,10 @@ type OrganizationPageRequest struct {
 type OrganizationPageResponse struct {
 	BasePageResponse
 	List []*OrganizationPageEntity `json:"list"`
+}
+
+type OrganizationSelectOptionRequest struct {
+	Type string `form:"type" validate:"required,oneof=Lender Borrower"`
 }
 
 type OrganizationSwitchStatusRequest struct {

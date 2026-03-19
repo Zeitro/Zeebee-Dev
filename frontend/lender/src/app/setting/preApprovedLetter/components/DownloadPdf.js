@@ -83,6 +83,7 @@ const DownloadPdf = ({
 							name: 'preApprovalLetter.pdf',
 						},
 					}}
+					fileName="preApprovalLetter.pdf"
 				>
 					Download PDF
 				</DownloadFileButton>
