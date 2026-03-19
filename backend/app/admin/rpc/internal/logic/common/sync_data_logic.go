@@ -297,16 +297,19 @@ type ResourceApi struct {
 }
 
 func (l *SyncDataLogic) syncResource() (err error) {
-	resourceMap := map[constants.UserType]*Resource{}
+	resourceMap := map[constants.UserType][]*Resource{}
 	err = json.Unmarshal(static.ResourceStatic, &resourceMap)
 	if err != nil {
 		return errorx.Wrap(err, "Failed to unmarshal resource content")
 	}
 	for _, resources := range resourceMap {
-		err = l.handleResource(l.ctx, resources, 0)
-		if err != nil {
-			return err
+		for _, resource := range resources {
+			err = l.handleResource(l.ctx, resource, 0)
+			if err != nil {
+				return err
+			}
 		}
+
 	}
 
 	return err
