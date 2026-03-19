@@ -6,6 +6,7 @@ import (
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 
 	"zeebee-backend/app/admin/config"
+	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/rbac"
 	"zeebee-backend/domains/zeebee/constants"
 )
@@ -17,6 +18,7 @@ var BorrowerEnforcer *rbac.Enforcer
 func initCasbin(cnf config.CasbinConf) (err error) {
 	policyContent, err := os.ReadFile(cnf.ModelPath)
 	if err != nil {
+		err = errorx.Wrap(err, "Read casbin model conf file error")
 		return
 	}
 
@@ -39,6 +41,7 @@ func initCasbin(cnf config.CasbinConf) (err error) {
 		},
 	})
 	if err != nil {
+		err = errorx.Wrap(err, "Create admin rbac enforcer error")
 		return
 	}
 
@@ -61,6 +64,7 @@ func initCasbin(cnf config.CasbinConf) (err error) {
 		},
 	})
 	if err != nil {
+		err = errorx.Wrap(err, "Create lender rbac enforcer error")
 		return
 	}
 
@@ -83,6 +87,7 @@ func initCasbin(cnf config.CasbinConf) (err error) {
 		},
 	})
 	if err != nil {
+		err = errorx.Wrap(err, "Create borrower rbac enforcer error")
 		return
 	}
 
