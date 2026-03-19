@@ -63,6 +63,7 @@ RpcConf:
     Watcher:
       Host: zeebee-backend-redis-single-001.zeebee-backend-redis-single.uwixeb.usw1.cache.amazonaws.com:6379
       Pwd: ''
+      Tls: true
       AdminChannel: /admin-channel
       BorrowerChannel: /borrower-channel
       LenderChannel: /lender-channel

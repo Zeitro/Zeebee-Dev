@@ -74,6 +74,7 @@ type CasbinConf struct {
 type CasbinWatcher struct {
 	Host            string
 	Pwd             string
+	Tls             bool `json:",default=false"`
 	AdminChannel    string
 	BorrowerChannel string
 	LenderChannel   string
