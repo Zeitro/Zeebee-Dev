@@ -13,7 +13,7 @@ const TreeTable = ({
 	eventBusPrefix,
 	menuKey = 'Api',
 	api,
-	scrollX = 1600,
+	scrollX = 1800,
 }) => {
 	const { getColumnsByMenuKey, tableFilterRef } = useColumn({ eventBusPrefix, api });
 	const { request } = createRequest();
