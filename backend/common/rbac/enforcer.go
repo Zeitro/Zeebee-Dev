@@ -1,6 +1,7 @@
 package rbac
 
 import (
+	"crypto/tls"
 	"strings"
 
 	"github.com/casbin/casbin/v3"
@@ -29,6 +30,7 @@ type EnforcerConfig struct {
 type WatcherConfig struct {
 	RedisHost string
 	Pwd       string
+	Tls       bool
 	Channel   string
 }
 
@@ -54,13 +56,20 @@ func NewEnforcer(config EnforcerConfig) (*Enforcer, error) {
 	redisHost := strings.TrimSpace(config.Watcher.RedisHost)
 	if len(redisHost) > 0 {
 		var watcher persist.Watcher
+		redisOption := redis.Options{
+			Network:  "tcp",
+			Password: config.Watcher.Pwd,
+		}
+		if config.Watcher.Tls {
+			redisOption.TLSConfig = &tls.Config{
+				InsecureSkipVerify: true,
+			}
+		}
+
 		watcher, err = rediswatcher.NewWatcher(redisHost, rediswatcher.WatcherOptions{
 			Channel:    config.Watcher.Channel,
 			IgnoreSelf: true,
-			Options: redis.Options{
-				Network:  "tcp",
-				Password: config.Watcher.Pwd,
-			},
+			Options:    redisOption,
 		})
 		if err != nil {
 			return nil, errorx.WithStack(err)
