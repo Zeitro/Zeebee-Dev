@@ -24,6 +24,7 @@ func initCasbin(cnf config.CasbinConf) (err error) {
 			RedisHost: cnf.Watcher.Host,
 			Pwd:       cnf.Watcher.Pwd,
 			Channel:   cnf.Watcher.LenderChannel,
+			Tls:       cnf.Watcher.Tls,
 		},
 		DefaultLoadFilteredPolicy: &gormadapter.Filter{
 			Ptype: []string{"p"},
