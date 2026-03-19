@@ -6,7 +6,7 @@ import ResourceMain from '../components/ResourceMain';
 import { PlusOutlined } from '@ant-design/icons';
 import { PERMISSIONS } from '@config/permissions';
 import { PermissionSlot } from '@repo/shared-methods';
-const Resource = ({ className }) => {
+const Resource = () => {
 	const [tabKey, setTabKey] = useState('Borrower');
 	const [open, setOpen] = useState(false);
 	const eventBusPrefix = 'searchResource-';
@@ -58,7 +58,9 @@ const Resource = ({ className }) => {
 					},
 				]}
 				onChange={(v) => setTabKey(v)}
-				className={`flex-1 overflow-hidden !pt-4 !px-4 [&_.ant-tabs-content]:h-full [&_.ant-tabs-tabpane]:h-full ${className}`}
+				className={
+					'flex-1 overflow-hidden !pt-4 !px-4 [&_.ant-tabs-content]:h-full [&_.ant-tabs-tabpane]:h-full'
+				}
 				destroyOnHidden
 				size="large"
 			/>
